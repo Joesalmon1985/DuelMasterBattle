@@ -1,6 +1,6 @@
 # Duel Master Battle
 
-Two-player **duelling Mastermind**: 4 pegs, 10 colours, Mastermind feedback (exact + colour-only), max 12 guesses. This release delivers a playable **Human vs Bot** vertical slice in Godot 4.4.1.
+Two-player **duelling Mastermind** reskinned as a **wizard duel**: 4 magical points (Shield, Body, Staff, Mind), 10 magic types, Hit/Weakness feedback, max 12 guesses. Playable **Human vs Bot** in Godot 4.4.1.
 
 ## Quick start — play the game
 ```bash
@@ -8,67 +8,49 @@ export GODOT=$HOME/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64
 export GODOT_USER_DATA_DIR="$(pwd)/godot_project/.godot_user"
 "$GODOT" --path godot_project
 ```
-Press **Human vs Bot** → set 4 secret pegs → **Lock code** → watch bot guess → guess the bot's code → result → **New game**.
+Press **Human vs Bot** → click each point slot to open the magic picker → **Cast pattern** → watch enemy attacks → attack the enemy pattern → result → **New duel**.
+
+**Difficulty:** Easy (random) · Normal · Hard · Expert (default, strongest solver).
+
+Draft placeholder sprites live under `godot_project/assets/` (see `docs/ART_ASSET_MANIFEST.md`).
 
 ## Run tests
 ```bash
-# Python rules (24 tests)
 cd python_prototype && python3 -m pytest -q
-
-# Generate golden fixtures (after rule changes)
-PYTHONPATH=. python3 tests/generate_fixtures.py
-
-# Godot rules tests
+PYTHONPATH=. python3 tests/generate_fixtures.py   # after rule changes
 tools/run_godot_tests.sh
-
-# Godot UI smoke (full Human vs Bot flow via real UI actions)
 tools/run_godot_ui_smoke.sh
-
-# Process check / cleanup
-tools/godot_check.sh
-tools/godot_cleanup.sh
+tools/godot_check.sh && tools/godot_cleanup.sh
 ```
 
-## Python prototype (optional)
+Regenerate draft sprites:
 ```bash
-cd python_prototype && python3 run_prototype.py
+python3 tools/generate_draft_sprites.py
 ```
 
-## Web export (built locally, not deployed)
+Evaluate bot difficulty (Python only):
 ```bash
-tools/export_web.sh
-# Output: godot_project/build/web/index.html
-# See docs/DEPLOY_CLOUDFLARE_PAGES.md
+cd python_prototype && python3 scripts/evaluate_bots.py
 ```
 
 ## Project structure
 ```
-shared_fixtures/     JSON golden files (Python generates, Godot consumes)
-python_prototype/    Pure rules + minimal tkinter UI
+shared_fixtures/     JSON golden files
+python_prototype/    Pure rules, solver, NN experiment (Python only)
 godot_project/
-  sim/               Authoritative rules (headless-testable)
-  client/            UI scenes (non-authoritative)
-tools/               Test runners, export, Godot cleanup
-docs/                Rules, milestones, playtest checklist
+  sim/               Authoritative rules + bots
+  client/            Wizard-duel UI
+  assets/            Draft PNG sprites/icons
+tools/               Test runners, sprite generator
+docs/                Rules, playtest, NN experiment, art manifest
 ```
 
 ## Docs
 - [Game rules](docs/RULES.md)
 - [Manual playtest](docs/MANUAL_PLAYTEST.md)
-- [Test strategy](docs/TEST_STRATEGY.md)
+- [NN experiment](docs/NN_BOT_EXPERIMENT.md)
+- [Art manifest](docs/ART_ASSET_MANIFEST.md)
 - [Release notes](docs/RELEASE_NOTES.md)
-- [Previous repo lessons](docs/audit/PREVIOUS_GODOT_REPO_LESSONS.md)
-
-## Acceptance status
-| Criterion | Status |
-|-----------|--------|
-| Python rules tests | pass |
-| Godot rules tests | pass |
-| Godot UI smoke test | pass |
-| Playable Human vs Bot in Godot | yes |
-| Web export built | yes (local) |
-| Android export built | no (docs only) |
-| Manual playtest | not performed in CI; user should run locally |
 
 ## License
 See repository for license terms.

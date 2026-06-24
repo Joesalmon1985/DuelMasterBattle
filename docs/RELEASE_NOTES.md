@@ -1,46 +1,45 @@
-# Release Notes — Duel Master Battle v0.1.0
+# Release Notes — Wizard Duel Update
 
 ## Branch
-`feature/duel-mastermind-build`
+`feature/wizard-duel-solver-art`
 
 ## Summary
-Playable **Human vs Bot** duelling Mastermind vertical slice in Godot 4.4.1, backed by tested pure rules in Python and GDScript with shared golden fixtures.
+Wizard-duel reskin, click-slot magic picker, candidate-elimination solver with difficulty levels, draft sprite placeholders, and Python-only NN experiment scaffold — while preserving playable Human vs Bot flow.
 
-## What's included
-- Pure game rules: 4 pegs, 10 colours, repeats allowed, Mastermind feedback, 12-guess limit
-- Sequential flow: bot guesses your code → you guess bot's code
-- Random legal bot
-- Python prototype (tkinter) + pytest suite
-- Godot 4.4.1 client: main menu, peg selector, colour picker, bot board, result screen, restart
-- Shared JSON fixtures for Python/Godot parity
-- Headless Godot rules tests + UI smoke test
-- Web export built locally (`godot_project/build/web/`)
+## Track A — Wizard UI
+- 10 magic types with labels, symbols, and colours
+- Four points: Shield, Body, Staff, Mind
+- Click-slot → overlay magic picker (no separate colour row)
+- Feedback: Hit / Weakness / Unaffected
+- Lock → **Cast pattern**, Submit → **Attack**
 
-## Tests run
+## Track B — Bot intelligence
+- `SolverBot` / `DmbSolverBot`: 10,000 candidates, opener `[0,0,1,1]`, feedback filtering, minimax (pool capped for Godot responsiveness)
+- Difficulty: Easy · Normal · Hard · Expert (UI selector, default Expert)
+- Python NN experiment scaffold (`docs/NN_BOT_EXPERIMENT.md`) — not a game dependency
+
+## Track C — Draft art
+- `tools/generate_draft_sprites.py` → 17 PNG placeholders
+- Magic icons integrated in picker; feedback uses text labels; wizard portraits created but not yet on board
+
+## Tests
 | Suite | Result |
 |-------|--------|
-| Python pytest (24 tests) | **passed** |
-| Godot rules tests (4 modules) | **passed** |
-| Godot UI smoke test | **passed** |
+| Python pytest | 37 passed, 1 skipped |
+| Godot rules (6 modules) | pass |
+| Godot UI smoke | pass |
 
 ## Manual playtest
-**Not performed** in this run environment (no visible Godot window). Scripted UI smoke test passed. See `docs/MANUAL_PLAYTEST.md` for local verification steps.
-
-## Deferred
-- Solver bot (feedback-filtering)
-- Advanced animations / styling
-- Cloudflare Pages deployment (export built; not uploaded)
-- Android APK build (templates not installed; see `docs/ANDROID_EXPORT.md`)
-
-## Known issues
-- Harmless Godot shutdown noise: "resources still in use at exit" in headless test runs
-- Web build may need COOP/COEP headers on hosting (see deploy doc)
+Not performed in CI (no visible Godot window). UI smoke test passed. See `docs/MANUAL_PLAYTEST.md`.
 
 ## Launch locally
 ```bash
 export GODOT=$HOME/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64
+export GODOT_USER_DATA_DIR="$(pwd)/godot_project/.godot_user"
 "$GODOT" --path godot_project
 ```
 
-## Stale Godot processes
-None remaining after `tools/godot_cleanup.sh`.
+## Deferred
+- Full NN training run and weight export
+- Wizard portrait sprites on game board
+- Point icons in slot headers (labels used instead)
