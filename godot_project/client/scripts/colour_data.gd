@@ -1,12 +1,24 @@
 class_name DmbColourData
 extends RefCounted
 
+## Wizard-duel presentation for the 10 Mastermind colour ids (0-9).
+## Rules remain mechanically identical; only labels/colours change.
+
 const NAMES := [
-	"Red", "Orange", "Yellow", "Green", "Blue",
-	"Purple", "Pink", "Brown", "Gray", "Black",
+	"Flame", "Frost", "Storm", "Stone", "Light",
+	"Shadow", "Vine", "Metal", "Spirit", "Arcane",
+]
+
+const SYMBOLS := [
+	"Fr", "Fs", "St", "Sn", "Li",
+	"Sh", "Vi", "Me", "Sp", "Ar",
+]
+
+const POINT_NAMES := [
+	"Shield", "Body", "Staff", "Mind",
 ]
 
 const COLOURS := [
-	Color("#e6194b"), Color("#f58231"), Color("#ffe119"), Color("#3cb44b"), Color("#4363d8"),
-	Color("#911eb4"), Color("#f032e6"), Color("#9a6324"), Color("#a9a9a9"), Color("#000000"),
+	Color("#e6194b"), Color("#4fc3f7"), Color("#9e9e9e"), Color("#795548"), Color("#fff176"),
+	Color("#424242"), Color("#66bb6a"), Color("#b0bec5"), Color("#ce93d8"), Color("#7e57c2"),
 ]

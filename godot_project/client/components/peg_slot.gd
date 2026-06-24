@@ -4,13 +4,15 @@ class_name PegSlot
 signal slot_pressed(slot_index: int)
 
 @export var slot_index: int = 0
+@export var point_label: String = ""
 
 var _colour_id: int = -1
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(48, 48)
+	custom_minimum_size = Vector2(56, 56)
 	text = "?"
+	tooltip_text = "Empty slot"
 	pressed.connect(_on_pressed)
 
 
@@ -22,12 +24,16 @@ func set_colour(colour_id: int) -> void:
 	_colour_id = colour_id
 	if colour_id < 0:
 		text = "?"
-		tooltip_text = "Empty peg"
+		tooltip_text = "Empty slot — click to choose magic"
 		modulate = Color.WHITE
 	else:
 		var name: String = DmbColourData.NAMES[colour_id]
-		text = "%d\n%s" % [colour_id, name.substr(0, 1)]
-		tooltip_text = "%d: %s" % [colour_id, name]
+		var sym: String = DmbColourData.SYMBOLS[colour_id]
+		text = "%s\n%d" % [sym, colour_id]
+		var point: String = point_label
+		if point == "" and slot_index < DmbColourData.POINT_NAMES.size():
+			point = DmbColourData.POINT_NAMES[slot_index]
+		tooltip_text = "%s: %d %s (%s)" % [point, colour_id, name, sym]
 		modulate = DmbColourData.COLOURS[colour_id]
 
 

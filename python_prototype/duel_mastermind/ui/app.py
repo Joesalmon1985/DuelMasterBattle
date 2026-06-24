@@ -9,12 +9,17 @@ from typing import List, Optional
 from duel_mastermind import CODE_LENGTH, NUM_COLOURS, GamePhase, SequentialDuelGame
 
 COLOUR_NAMES = [
-    "Red", "Orange", "Yellow", "Green", "Blue",
-    "Purple", "Pink", "Brown", "Gray", "Black",
+    "Flame", "Frost", "Storm", "Stone", "Light",
+    "Shadow", "Vine", "Metal", "Spirit", "Arcane",
 ]
+COLOUR_SYMBOLS = [
+    "Fr", "Fs", "St", "Sn", "Li",
+    "Sh", "Vi", "Me", "Sp", "Ar",
+]
+POINT_NAMES = ["Shield", "Body", "Staff", "Mind"]
 COLOUR_HEX = [
-    "#e6194b", "#f58231", "#ffe119", "#3cb44b", "#4363d8",
-    "#911eb4", "#f032e6", "#9a6324", "#a9a9a9", "#000000",
+    "#e6194b", "#4fc3f7", "#9e9e9e", "#795548", "#fff176",
+    "#424242", "#66bb6a", "#b0bec5", "#ce93d8", "#7e57c2",
 ]
 
 
