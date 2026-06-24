@@ -5,6 +5,7 @@ from enum import Enum, auto
 from typing import Dict, List, Optional, Tuple
 
 from .bot import RandomBot
+from .bot_factory import make_bot
 from .code import CodeValidationError, SecretCode, validate_code, validate_colour
 from .constants import CODE_LENGTH, MAX_GUESSES
 from .feedback import score_guess
@@ -44,14 +45,17 @@ class GameResult:
 class SequentialDuelGame:
     """Sequential Human vs Bot: bot attacks human code, then human attacks bot code."""
 
-    def __init__(self, bot_seed: int = 42) -> None:
+    def __init__(self, bot_seed: int = 42, difficulty: str = "expert") -> None:
         self._bot_seed = bot_seed
+        self._difficulty = difficulty
         self.reset()
 
-    def reset(self, bot_seed: Optional[int] = None) -> None:
+    def reset(self, bot_seed: Optional[int] = None, difficulty: Optional[str] = None) -> None:
         if bot_seed is not None:
             self._bot_seed = bot_seed
-        self._bot = RandomBot(self._bot_seed)
+        if difficulty is not None:
+            self._difficulty = difficulty
+        self._bot = make_bot(self._difficulty, self._bot_seed)
         self.phase = GamePhase.HUMAN_SETUP
         self._human_setup: List[Optional[int]] = [None] * CODE_LENGTH
         self._human_secret: Optional[List[int]] = None
@@ -119,6 +123,8 @@ class SequentialDuelGame:
         exact, colour_only = score_guess(self._human_secret, guess)
         record = GuessRecord(guess=guess, exact=exact, colour_only=colour_only)
         self._bot_guesses.append(record)
+        if hasattr(self._bot, "register_feedback"):
+            self._bot.register_feedback(guess, exact, colour_only)
         if exact == CODE_LENGTH:
             self._bot_solved = True
             self._finish_bot_guessing()

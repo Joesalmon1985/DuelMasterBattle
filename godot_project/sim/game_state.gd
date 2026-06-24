@@ -1,6 +1,8 @@
 class_name DmbSequentialDuelGame
 extends RefCounted
 
+const _BotFactory = preload("res://sim/bot_factory.gd")
+
 enum GamePhase { HUMAN_SETUP, BOT_GUESSING, HUMAN_GUESSING, FINISHED }
 
 var phase: int = GamePhase.HUMAN_SETUP
@@ -11,22 +13,26 @@ var human_guesses: Array = []
 var result: DmbGameResult = null
 
 var _bot_seed: int = 42
-var _bot: DmbRandomBot
+var _difficulty: String = "expert"
+var _bot: RefCounted
 var _human_secret: Array = []
 var _bot_secret: Array = []
 var _bot_solved := false
 var _human_solved := false
 
 
-func _init(bot_seed: int = 42) -> void:
+func _init(bot_seed: int = 42, difficulty: String = "expert") -> void:
 	_bot_seed = bot_seed
+	_difficulty = difficulty
 	reset()
 
 
-func reset(bot_seed: int = -1) -> void:
+func reset(bot_seed: int = -1, difficulty: String = "") -> void:
 	if bot_seed >= 0:
 		_bot_seed = bot_seed
-	_bot = DmbRandomBot.new(_bot_seed)
+	if difficulty != "":
+		_difficulty = difficulty
+	_bot = _BotFactory.make_bot(_difficulty, _bot_seed)
 	phase = GamePhase.HUMAN_SETUP
 	human_setup_pegs = [null, null, null, null]
 	current_human_guess = [null, null, null, null]
@@ -41,6 +47,10 @@ func reset(bot_seed: int = -1) -> void:
 
 func get_bot_secret() -> Array:
 	return _bot_secret.duplicate()
+
+
+func get_difficulty() -> String:
+	return _difficulty
 
 
 func can_lock_human_secret() -> bool:
@@ -77,10 +87,12 @@ func bot_make_guess() -> DmbGuessRecord:
 	assert(phase == GamePhase.BOT_GUESSING)
 	if _bot_solved or bot_guesses.size() >= DmbConstants.MAX_GUESSES:
 		return null
-	var guess := _bot.make_guess()
+	var guess: Array = _bot.make_guess()
 	var fb := DmbFeedback.score_guess(_human_secret, guess)
 	var rec := DmbGuessRecord.new(guess, fb.x, fb.y)
 	bot_guesses.append(rec)
+	if _bot.has_method("register_feedback"):
+		_bot.register_feedback(guess, fb.x, fb.y)
 	if fb.x == DmbConstants.CODE_LENGTH:
 		_bot_solved = true
 		_finish_bot_guessing()

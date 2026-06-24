@@ -20,5 +20,9 @@ func make_guess() -> Array:
 	return generate_code()
 
 
+func register_feedback(_guess: Array, _exact: int, _colour_only: int) -> void:
+	pass  # Random bot ignores feedback
+
+
 func is_legal_guess(guess: Array) -> bool:
 	return DmbCode.is_valid_code(guess)

@@ -8,9 +8,12 @@ from pathlib import Path
 from duel_mastermind import (
     CODE_LENGTH,
     MAX_GUESSES,
+    OPENING_GUESS,
     RandomBot,
     SequentialDuelGame,
+    SolverBot,
     compute_result,
+    generate_all_codes,
     score_guess,
 )
 from duel_mastermind.code import is_valid_code
@@ -111,6 +114,28 @@ def generate_all() -> None:
         )
         assert r.outcome == case["expected_outcome"]
     _write("win_draw_states.json", {"version": 1, "cases": win_draw_cases})
+
+    representative_secrets = [
+        [0, 1, 2, 3],
+        [9, 9, 9, 9],
+        [0, 0, 1, 1],
+        [3, 7, 3, 7],
+        [5, 2, 8, 1],
+        [1, 4, 1, 4],
+    ]
+    solver_cases = {
+        "version": 1,
+        "candidate_count": len(generate_all_codes()),
+        "opening_guess": OPENING_GUESS,
+        "representative_secrets": representative_secrets,
+    }
+    assert solver_cases["candidate_count"] == 10_000
+    bot = SolverBot()
+    assert bot.make_guess() == OPENING_GUESS
+    for secret in representative_secrets:
+        solved, count, _ = bot.solve_secret(secret)
+        assert solved and count <= MAX_GUESSES, f"solver failed on {secret}"
+    _write("solver_cases.json", solver_cases)
 
     print(f"Generated fixtures in {FIXTURES_DIR}")
 

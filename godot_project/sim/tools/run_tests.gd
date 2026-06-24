@@ -5,6 +5,8 @@ const TESTS := [
 	"res://sim/tests/test_feedback.gd",
 	"res://sim/tests/test_fixtures.gd",
 	"res://sim/tests/test_game_state.gd",
+	"res://sim/tests/test_solver_bot.gd",
+	"res://sim/tests/test_assets.gd",
 ]
 
 
