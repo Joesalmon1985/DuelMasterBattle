@@ -19,13 +19,13 @@ todos:
     status: completed
   - id: m5
     content: "M5 (PRIMARY): Scripted Godot UI smoke test driving real UI actions (not pure rules) covering full Human vs Bot flow + restart; must FAIL if clickable UI controls are not wired up even when pure rules work; add docs/MANUAL_PLAYTEST.md with exact script; run headless, ensure no stale Godot processes. Commit."
-    status: in_progress
+    status: completed
   - id: m6
     content: "M6 (deferrable): Optional solver bot (feedback-filtering) + tests, only if vertical slice solid."
-    status: pending
+    status: cancelled
   - id: m7
     content: "M7 (deferrable): Visual polish + accessibility (colour + label/number/shape), responsive desktop/web/mobile layout, optional safe animations."
-    status: pending
+    status: in_progress
   - id: m8
     content: "M8 (deferrable): Web export with 4.4.1 templates into build/web + docs/DEPLOY_CLOUDFLARE_PAGES.md. No deploy claim unless actually run."
     status: pending

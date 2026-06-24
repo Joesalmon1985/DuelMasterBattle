@@ -11,6 +11,7 @@ godot_project/.godot_user_data/
 *.tmp
 *.log
 build/
+godot_project/build/
 export/
 .DS_Store
 *.swp

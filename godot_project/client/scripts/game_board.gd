@@ -142,7 +142,14 @@ func _update_status() -> void:
 		DmbSequentialDuelGame.GamePhase.BOT_GUESSING:
 			status_label.text = "Bot is guessing your code..."
 		DmbSequentialDuelGame.GamePhase.HUMAN_GUESSING:
-			status_label.text = "Guess the bot's code (%d guesses left)" % game.human_guesses_remaining()
+			var bot_msg := ""
+			if game.bot_guesses.size() > 0:
+				var last: DmbGuessRecord = game.bot_guesses[game.bot_guesses.size() - 1]
+				if last.exact == DmbConstants.CODE_LENGTH:
+					bot_msg = "Bot SOLVED your code in %d guesses! " % game.bot_guesses.size()
+				else:
+					bot_msg = "Bot FAILED after %d guesses. " % game.bot_guesses.size()
+			status_label.text = "%sGuess the bot's code (%d left)" % [bot_msg, game.human_guesses_remaining()]
 		DmbSequentialDuelGame.GamePhase.FINISHED:
 			status_label.text = "Game over"
 

@@ -22,9 +22,12 @@ func set_colour(colour_id: int) -> void:
 	_colour_id = colour_id
 	if colour_id < 0:
 		text = "?"
+		tooltip_text = "Empty peg"
 		modulate = Color.WHITE
 	else:
-		text = str(colour_id)
+		var name: String = DmbColourData.NAMES[colour_id]
+		text = "%d\n%s" % [colour_id, name.substr(0, 1)]
+		tooltip_text = "%d: %s" % [colour_id, name]
 		modulate = DmbColourData.COLOURS[colour_id]
 
 
