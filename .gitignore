@@ -1,17 +1,17 @@
-# Godot 4+ specific ignores
+**/__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
 .godot/
-.nomedia
-
-# Godot-specific ignores
-.import/
-export.cfg
-export_credentials.cfg
+godot_project/.godot/
+godot_project/.godot_user/
+godot_project/.godot_user_data/
+*.import
+.godot/imported/
 *.tmp
-
-# Imported translations (automatically generated from CSV files)
-*.translation
-
-# Mono-specific ignores
-.mono/
-data_*/
-mono_crash.*.json
+*.log
+build/
+export/
+.DS_Store
+*.swp
+*~
