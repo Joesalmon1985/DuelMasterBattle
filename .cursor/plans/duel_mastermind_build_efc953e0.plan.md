@@ -13,10 +13,10 @@ todos:
     status: completed
   - id: m3
     content: "M3: Godot 4.4 project skeleton + sim/tools/run_tests.gd headless runner + TestCase base; port pure rules to sim/ GDScript incl RandomBot; unit tests mirroring M1. Godot rules tests must load and pass the SAME JSON golden fixtures generated in M1 (no hand-copied expected values where shared fixtures are possible). Commit after headless tests green."
-    status: in_progress
+    status: completed
   - id: m4
     content: "M4 (PRIMARY): Godot playable Human vs Bot vertical slice - main menu, Human vs Bot start, clickable 4-peg secret setup, 10-colour chooser, lock-enabled-only-when-4-set, bot makes up to 12 visible guesses w/ feedback, bot solved/failed message, bot sets hidden code, human guesses bot code via same peg UI, result screen (who solved what + guess counts) + restart. Launch and verify locally. Commit ONLY after the playable flow works."
-    status: pending
+    status: in_progress
   - id: m5
     content: "M5 (PRIMARY): Scripted Godot UI smoke test driving real UI actions (not pure rules) covering full Human vs Bot flow + restart; must FAIL if clickable UI controls are not wired up even when pure rules work; add docs/MANUAL_PLAYTEST.md with exact script; run headless, ensure no stale Godot processes. Commit."
     status: pending
