@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "human_solved": true,
+      "bot_solved": false,
+      "human_guess_count": 3,
+      "bot_guess_count": 5,
+      "human_guesses": [],
+      "bot_guesses": [],
+      "expected_outcome": "human_win"
+    },
+    {
+      "human_solved": false,
+      "bot_solved": true,
+      "human_guess_count": 5,
+      "bot_guess_count": 2,
+      "human_guesses": [],
+      "bot_guesses": [],
+      "expected_outcome": "bot_win"
+    },
+    {
+      "human_solved": true,
+      "bot_solved": true,
+      "human_guess_count": 3,
+      "bot_guess_count": 3,
+      "human_guesses": [],
+      "bot_guesses": [],
+      "expected_outcome": "draw"
+    },
+    {
+      "human_solved": false,
+      "bot_solved": false,
+      "human_guess_count": 12,
+      "bot_guess_count": 12,
+      "human_guesses": [
+        {
+          "guess": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "exact": 2,
+          "colour_only": 1
+        }
+      ],
+      "bot_guesses": [
+        {
+          "guess": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "exact": 1,
+          "colour_only": 0
+        }
+      ],
+      "expected_outcome": "human_win"
+    }
+  ]
+}

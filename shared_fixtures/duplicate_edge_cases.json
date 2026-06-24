@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "secret": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "guess": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "exact": 2,
+      "colour_only": 2
+    },
+    {
+      "secret": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "guess": [
+        2,
+        2,
+        3,
+        3
+      ],
+      "exact": 2,
+      "colour_only": 0
+    }
+  ]
+}

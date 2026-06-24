@@ -4,13 +4,13 @@ overview: "Build a two-player \"duelling Mastermind\" game end-to-end using a te
 todos:
   - id: m0
     content: "M0: Clone repo, create branch feature/duel-mastermind-build, write docs/audit/PREVIOUS_GODOT_REPO_LESSONS.md, PLAN/MILESTONES/RULES/TEST_STRATEGY/DEPLOYMENT_PLAN, 8 role files, .gitignore, repo skeleton. Commit."
-    status: in_progress
+    status: completed
   - id: m1
     content: "M1: Write pytest tests first for code model, feedback scoring (incl duplicate edge cases), turn/win/draw, 12-guess limit, illegal-guess rejection; implement pure logic in python_prototype/duel_mastermind/. Then generate JSON golden fixtures in shared_fixtures/ covering scoring, duplicate-colour edge cases, illegal guesses, 12-guess limit, bot legal guesses, win/draw states. Commit after green."
-    status: pending
+    status: completed
   - id: m2
     content: "M2: tkinter prototype as fast proof of rules+flow. Keep deliberately minimal. If tkinter UI work threatens the Godot playable slice, stop at a simple functional prototype and prioritise M3/M4. Commit."
-    status: pending
+    status: in_progress
   - id: m3
     content: "M3: Godot 4.4 project skeleton + sim/tools/run_tests.gd headless runner + TestCase base; port pure rules to sim/ GDScript incl RandomBot; unit tests mirroring M1. Godot rules tests must load and pass the SAME JSON golden fixtures generated in M1 (no hand-copied expected values where shared fixtures are possible). Commit after headless tests green."
     status: pending

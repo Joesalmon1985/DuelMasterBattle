@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "guess": [
+        0,
+        1,
+        2
+      ],
+      "valid": false
+    },
+    {
+      "guess": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "valid": false
+    },
+    {
+      "guess": [
+        -1,
+        0,
+        1,
+        2
+      ],
+      "valid": false
+    },
+    {
+      "guess": [
+        0,
+        1,
+        2,
+        10
+      ],
+      "valid": false
+    },
+    {
+      "guess": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "valid": true
+    },
+    {
+      "guess": [
+        9,
+        9,
+        9,
+        9
+      ],
+      "valid": true
+    }
+  ]
+}
