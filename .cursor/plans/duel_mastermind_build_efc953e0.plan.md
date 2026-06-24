@@ -10,10 +10,10 @@ todos:
     status: completed
   - id: m2
     content: "M2: tkinter prototype as fast proof of rules+flow. Keep deliberately minimal. If tkinter UI work threatens the Godot playable slice, stop at a simple functional prototype and prioritise M3/M4. Commit."
-    status: in_progress
+    status: completed
   - id: m3
     content: "M3: Godot 4.4 project skeleton + sim/tools/run_tests.gd headless runner + TestCase base; port pure rules to sim/ GDScript incl RandomBot; unit tests mirroring M1. Godot rules tests must load and pass the SAME JSON golden fixtures generated in M1 (no hand-copied expected values where shared fixtures are possible). Commit after headless tests green."
-    status: pending
+    status: in_progress
   - id: m4
     content: "M4 (PRIMARY): Godot playable Human vs Bot vertical slice - main menu, Human vs Bot start, clickable 4-peg secret setup, 10-colour chooser, lock-enabled-only-when-4-set, bot makes up to 12 visible guesses w/ feedback, bot solved/failed message, bot sets hidden code, human guesses bot code via same peg UI, result screen (who solved what + guess counts) + restart. Launch and verify locally. Commit ONLY after the playable flow works."
     status: pending
