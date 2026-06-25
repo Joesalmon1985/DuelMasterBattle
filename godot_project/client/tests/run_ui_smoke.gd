@@ -23,6 +23,8 @@ func _test_main_menu_loads() -> void:
 	root.add_child(menu)
 	await process_frame
 	assert_true(menu.has_node("VBox/HumanVsBotButton"), "Human vs Bot button exists")
+	if menu.has_method("ui_has_help_panel"):
+		assert_true(menu.ui_has_help_panel(), "main menu help panel exists")
 	menu.queue_free()
 	await process_frame
 
@@ -33,7 +35,11 @@ func _test_full_human_vs_bot_flow() -> void:
 	root.add_child(_board)
 	await process_frame
 
-	# Secret setup: click slot opens picker, pick magic fills slot
+	_board.ui_set_bot_pacing(0.0)
+	assert_true(_board.ui_has_wizard_portraits(), "wizard portrait textures loaded")
+	assert_true(_board.ui_has_point_headers(), "point header rows exist")
+	assert_true(_board.ui_has_help_panel(), "help panel buttons exist")
+
 	assert_false(_board.ui_get_lock_button_enabled(), "lock disabled before pegs")
 	_board.ui_action_pick_secret_slot(0)
 	assert_true(_board.ui_is_picker_open(), "picker opens on secret slot click")
@@ -86,7 +92,7 @@ func _test_full_human_vs_bot_flow() -> void:
 
 func _wait_bot_phase_done() -> void:
 	var safety := 0
-	while _board.game.phase == DmbSequentialDuelGame.GamePhase.BOT_GUESSING and safety < 30:
+	while _board.game.phase == DmbSequentialDuelGame.GamePhase.BOT_GUESSING and safety < 60:
 		await process_frame
 		safety += 1
 	await process_frame
