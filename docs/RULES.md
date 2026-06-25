@@ -33,12 +33,13 @@ Multiset Mastermind scoring is unchanged internally (`exact`, `colour_only`). UI
 
 Example: secret `[0,0,1,2]`, guess `[0,1,0,3]` → Hit=1, Weakness=1.
 
-## Sequential Human vs Bot flow
+## Alternating Human vs Bot flow
 1. Human sets four magical points and **Cast pattern**.
-2. Enemy bot attacks with up to 12 visible guesses + Hit/Weakness feedback.
-3. Bot sets a hidden pattern.
-4. Human attacks with up to 12 guesses via the same click-slot picker.
-5. Result screen compares outcomes; **New duel** restarts.
+2. Bot automatically sets a hidden pattern.
+3. **Human attacks first** — one guess per turn with Hit/Weakness feedback shown in your attack history.
+4. **Bot attacks** — one guess per turn with feedback shown in enemy attack history.
+5. Turns alternate until someone solves, or both use 12 attacks without solving (draw).
+6. Result screen compares outcomes; **New duel** restarts.
 
 ## Win / draw
 Same as Mastermind duel rules (see previous table in release notes).

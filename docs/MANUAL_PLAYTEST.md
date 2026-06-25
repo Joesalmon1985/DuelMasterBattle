@@ -15,10 +15,10 @@ export GODOT_USER_DATA_DIR="$(pwd)/godot_project/.godot_user"
 - [ ] Select a magic type → slot fills (symbol + number).
 - [ ] Repeat for **Body**, **Staff**, **Mind**.
 - [ ] **Cast pattern** enabled only when all four points are set.
-- [ ] Cast pattern → your points hidden (`****`).
-- [ ] Enemy attacks appear **one row at a time** with **Hit / Weakness / Unaffected** feedback (icons + labels).
-- [ ] **Skip enemy attacks** fast-forwards remaining bot rows.
-- [ ] Enemy stops after solve or 12 attacks.
+- [ ] Cast pattern → duel begins on **your turn** (not a bulk enemy attack phase).
+- [ ] **Your attacks against the enemy** history shows each submitted attack with Hit/Weakness/Unaffected.
+- [ ] After **Attack**, exactly **one** enemy attack row appears (not all 12 at once).
+- [ ] Turns alternate: your attack → enemy attack → your attack …
 - [ ] Your attack row activates; click slots → same picker.
 - [ ] **Attack** enabled only when all four guess slots filled.
 - [ ] Continue until win/loss or 12 attacks.

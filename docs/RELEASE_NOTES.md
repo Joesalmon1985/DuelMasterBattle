@@ -1,7 +1,14 @@
 # Release Notes — Wizard Duel Update
 
-## Branch
-`feature/wizard-duel-solver-art`
+## Branch `feature/alternating-duel-flow`
+
+### Alternating duel (latest)
+- Human and bot each set hidden patterns at **Cast pattern**; human attacks first.
+- One attack per turn; turns alternate until solve or 12 attacks each (draw).
+- Dual visible histories: your attacks vs enemy / enemy attacks vs you.
+- Human feedback rows appear immediately after **Attack**.
+
+## Branch `feature/wizard-duel-polish-web-demo`
 
 ## Summary
 Wizard-duel reskin, click-slot magic picker, candidate-elimination solver with difficulty levels, draft sprite placeholders, and Python-only NN experiment scaffold — while preserving playable Human vs Bot flow.

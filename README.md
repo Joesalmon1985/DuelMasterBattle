@@ -10,7 +10,7 @@ export GODOT_USER_DATA_DIR="$(pwd)/godot_project/.godot_user"
 "$GODOT" --path godot_project
 ```
 
-Press **Human vs Bot** → click each point slot to open the magic picker → **Cast pattern** → watch enemy attacks → attack the enemy pattern → result → **New duel**.
+Press **Human vs Bot** → set your pattern → **Cast pattern** → alternate attacks (you go first) → result → **New duel**.
 
 **Difficulty:** Easy (random) · Normal · Hard · Expert (default, strongest responsive solver).
 
