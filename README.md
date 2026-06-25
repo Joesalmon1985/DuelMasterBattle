@@ -1,6 +1,6 @@
 # Duel Master Battle
 
-Two-player **duelling Mastermind** reskinned as a **wizard duel**: 4 magical points (Shield, Body, Staff, Mind), 10 magic types, Hit/Weakness feedback, max 12 guesses. Playable **Human vs Bot** in Godot 4.4.1.
+Two-player **duelling Mastermind** reskinned as a **wizard duel**: configurable encounters (1–4 points, filtered magic pools, variable attack limits). Default **Archmage Duel** is the full game — 4 points, 10 magic types, 12 attacks. Playable **Human vs Bot** in Godot 4.4.1.
 
 ## Quick start — play locally
 
@@ -10,9 +10,9 @@ export GODOT_USER_DATA_DIR="$(pwd)/godot_project/.godot_user"
 "$GODOT" --path godot_project
 ```
 
-Press **Human vs Bot** → set your pattern → **Cast pattern** → alternate attacks (you go first) → result → **New duel**.
+Select an **encounter** on the main menu → **Start duel** → set your pattern → **Cast pattern** → alternate attacks (you go first) → result → **New duel** or **Back to menu**.
 
-**Difficulty:** Easy (random) · Normal · Hard · Expert (default, strongest responsive solver).
+Encounters: **Blue Apprentice** (tutorial) · **Thorn Adept** · **Mirror Mage** · **Archmage Duel** (classic 4/10/12).
 
 Draft placeholder sprites live under `godot_project/assets/` (see `docs/ART_ASSET_MANIFEST.md`).
 
@@ -68,6 +68,7 @@ docs/                Rules, playtest, NN experiment, art manifest
 ## Docs
 
 - [Game rules](docs/RULES.md)
+- [Encounter design](docs/ENCOUNTER_DESIGN.md)
 - [Manual playtest](docs/MANUAL_PLAYTEST.md)
 - [Visual capture checklist](docs/VISUAL_CAPTURE.md)
 - [Bot difficulty tuning](docs/BOT_DIFFICULTY.md)

@@ -1,4 +1,4 @@
-# Manual Human vs Bot Playtest — Wizard Duel
+# Manual Playtest — Encounter Progression Rulesets
 
 ```bash
 export GODOT=$HOME/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64
@@ -6,39 +6,40 @@ export GODOT_USER_DATA_DIR="$(pwd)/godot_project/.godot_user"
 "$GODOT" --path godot_project
 ```
 
-## Checklist
+## Step-by-step checklist (this branch)
 
-- [ ] Launch Godot project and press **Human vs Bot** (or use **How to play** on menu).
-- [ ] Choose difficulty (default **Expert**).
-- [ ] Player and enemy wizard portraits visible; point headers show Shield/Body/Staff/Mind icons + labels.
-- [ ] Click **Shield** slot → magic picker opens with 10 types.
-- [ ] Select a magic type → slot fills (symbol + number).
-- [ ] Repeat for **Body**, **Staff**, **Mind**.
-- [ ] **Cast pattern** enabled only when all four points are set.
-- [ ] Cast pattern → duel begins on **your turn** (not a bulk enemy attack phase).
-- [ ] **Your attacks against the enemy** history shows each submitted attack with Hit/Weakness/Unaffected.
-- [ ] After **Attack**, exactly **one** enemy attack row appears (not all 12 at once).
-- [ ] Turns alternate: your attack → enemy attack → your attack …
-- [ ] Your attack row activates; click slots → same picker.
-- [ ] **Attack** enabled only when all four guess slots filled.
-- [ ] Continue until win/loss or 12 attacks.
-- [ ] Result panel shows winner, solve/fail, attack counts.
-- [ ] **New duel** starts cleanly.
-- [ ] **How to play** / **How feedback works** panels open on board.
+1. Launch the game locally (command above).
+2. On the main menu, select **Blue Apprentice** in the encounter dropdown; confirm detail text (1 point, 4 attack magics, 4 max attacks, enemy tell).
+3. Press **Start duel**.
+4. Confirm **1 slot** appears with point label **Shield**.
+5. Click the slot — confirm picker shows **only** Flame, Frost, Storm, Arcane (4 buttons).
+6. Set secret (e.g. Frost), **Cast pattern**, submit at least one human attack — confirm human feedback row appears.
+7. Confirm bot makes **one** attack with visible feedback.
+8. Finish or abandon duel; press **Back to menu** (or **New duel** then back).
+9. Select **Archmage Duel** → **Start duel**.
+10. Confirm **4 slots** and **10 magic types** in picker.
+11. Play at least **two alternating turns** (human attack → bot attack → human attack).
+12. Confirm **both** human and bot feedback histories update.
+13. Reach result screen; test **New duel** restart.
 
-## Web preview
-
-```bash
-tools/export_web.sh
-cd godot_project/build/web && python3 -m http.server 8080
-```
-
-Repeat checklist in browser at `http://localhost:8080`.
-
-## Report format
-State: **passed** | **partially passed** | **failed**
+Web export preview — **only document if actually run**; not required for this branch.
 
 ## Automated alternative
+
 ```bash
-tools/run_godot_ui_smoke.sh
+tools/run_godot_ui_smoke.sh   # Blue Apprentice + Archmage paths
+tools/run_godot_tests.sh
+cd python_prototype && python3 -m pytest -q
 ```
+
+## Report format
+
+State: **passed** | **partially passed** | **failed** | **not performed**
+
+## Legacy full-game checklist (Archmage)
+
+- [ ] Encounter **Archmage Duel** selected
+- [ ] Player and enemy wizard portraits visible; four point headers
+- [ ] Cast pattern → human turn first (not bulk bot phase)
+- [ ] Alternating turns with dual histories
+- [ ] Result panel and **New duel**

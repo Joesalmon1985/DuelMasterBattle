@@ -1,58 +1,63 @@
 # Game Rules — Duel Master Battle (Wizard Duel)
 
-## Mechanical rules (unchanged Mastermind)
-- Each pattern has exactly **4 slots**.
-- Each slot uses one of **10 magic types** (ids `0`–`9`).
-- **Repeated types are allowed**.
-- Up to **12 guesses** per side.
-- Illegal guesses are rejected and do not consume a guess.
+## Encounter-driven rules
+
+Each duel uses an **encounter ruleset** (`DuelRuleset` / `DmbDuelRuleset`) defining:
+
+- **Slot count** (1–4 points)
+- **Secret magic pool** — types allowed when casting your hidden pattern
+- **Attack magic pool** — types allowed when attacking (must include all secret types)
+- **Max attacks per player** — base cap; modifiers may add `extra_attacks`
+
+See [Encounter design](ENCOUNTER_DESIGN.md) for the four built-in encounters.
+
+**Archmage Duel** (`archmage_duel`) matches classic Mastermind: 4 slots, 10 types, 12 attacks, Expert bot.
+
+## Mechanical rules (Mastermind core)
+- Each pattern has **1–4 slots** (encounter-dependent).
+- Each slot uses a magic type from the relevant pool.
+- **Repeated types** allowed unless the encounter sets `allow_repeats = false`.
+- Illegal guesses are rejected and do not consume an attack.
 
 ## Wizard-duel terminology
 
 | Mastermind | Wizard duel |
 |------------|-------------|
-| Secret code slot | Magical **point** (Shield, Body, Staff, Mind) |
+| Secret code slot | Magical **point** (Shield, Body, Staff, Mind — or fewer per encounter) |
 | Colour / peg | **Magic type** (Flame, Frost, Storm, …) |
 | Exact match (black pin) | **Hit** — correct type, correct point |
 | Colour-only (white pin) | **Weakness** — correct type, wrong point |
 | No pin | **Unaffected** — no matching weakness revealed |
 
-### Four points (positions)
-1. **Shield**
-2. **Body**
-3. **Staff**
-4. **Mind**
-
 ### Ten magic types (options 0–9)
 0 Flame · 1 Frost · 2 Storm · 3 Stone · 4 Light · 5 Shadow · 6 Vine · 7 Metal · 8 Spirit · 9 Arcane
 
-Each type has a distinct colour, text label, and short symbol (not colour alone).
-
 ## Feedback scoring
-Multiset Mastermind scoring is unchanged internally (`exact`, `colour_only`). UI presents Hit / Weakness / Unaffected.
-
-Example: secret `[0,0,1,2]`, guess `[0,1,0,3]` → Hit=1, Weakness=1.
+Multiset Mastermind scoring (`exact`, `colour_only`). UI presents Hit / Weakness / Unaffected.
 
 ## Alternating Human vs Bot flow
-1. Human sets four magical points and **Cast pattern**.
-2. Bot automatically sets a hidden pattern.
-3. **Human attacks first** — one guess per turn with Hit/Weakness feedback shown in your attack history.
-4. **Bot attacks** — one guess per turn with feedback shown in enemy attack history.
-5. Turns alternate until someone solves, or both use 12 attacks without solving (draw).
-6. Result screen compares outcomes; **New duel** restarts.
+1. Select encounter on main menu → **Start duel**.
+2. Human sets pattern points and **Cast pattern** (secret pool).
+3. Bot sets a hidden pattern from the same secret pool rules.
+4. **Human attacks first** — one guess per turn; feedback in your attack history.
+5. **Bot attacks** — one guess per turn; feedback in enemy history.
+6. Turns alternate until someone solves or both exhaust configured max attacks.
+7. Result screen; **New duel** or **Back to menu**.
 
 ## Win / draw
-Same as Mastermind duel rules (see previous table in release notes).
+- Immediate win on full solve (Hits == slot count)
+- Both exhaust max attacks without solving → draw
+- Otherwise tie-break on best Hit/Weakness progress
 
-## Bot difficulty
+## Bot difficulty (per encounter)
 | Level | Behaviour |
 |-------|-----------|
 | Easy | Random legal guesses |
-| Normal | Candidate elimination; picks from remaining possible patterns |
-| Hard | Candidate elimination + minimax partition strategy (capped for responsiveness) |
-| Expert | Strongest deterministic solver implemented (default) |
+| Normal | Candidate elimination; random pick from survivors |
+| Hard | Minimax partition strategy (capped pool) |
+| Expert | Strongest deterministic solver (Archmage default) |
 
-The solver uses candidate elimination with fixed opener `[0,0,1,1]`. It is **not claimed mathematically optimal**.
+Opening guess pattern: first pool id twice, second pool id twice (truncated to slot count). Archmage → `[0,0,1,1]`.
 
 ## Accessibility
 Magic types use labels, numbers, and symbols — not colour alone.

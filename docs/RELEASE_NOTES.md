@@ -1,5 +1,15 @@
 # Release Notes — Wizard Duel Update
 
+## Branch `feature/encounter-progression-rulesets`
+
+### Encounter progression (latest)
+- **DuelRuleset** model: variable slots (1–4), secret vs attack magic pools, configurable max attacks
+- Four built-in encounters: Blue Apprentice, Thorn Adept, Mirror Mage, **Archmage Duel** (classic regression)
+- Main menu encounter select + detail panel; `EncounterSession` autoload
+- Dynamic board slots, filtered magic picker, enemy tell label
+- Modifiers (first pass): `extra_attacks`, `bot_attack_delay_multiplier` (Counterspell Time field stored but inactive)
+- Python + Godot tests; dual UI smoke (Blue Apprentice + Archmage)
+
 ## Branch `feature/alternating-duel-flow`
 
 ### Alternating duel (latest)
