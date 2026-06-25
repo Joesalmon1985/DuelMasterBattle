@@ -13,8 +13,8 @@ from .feedback import score_guess
 
 class GamePhase(Enum):
     HUMAN_SETUP = auto()
-    BOT_GUESSING = auto()
-    HUMAN_GUESSING = auto()
+    HUMAN_TURN = auto()
+    BOT_TURN = auto()
     FINISHED = auto()
 
 
@@ -43,7 +43,7 @@ class GameResult:
 
 
 class SequentialDuelGame:
-    """Sequential Human vs Bot: bot attacks human code, then human attacks bot code."""
+    """Alternating Human vs Bot: one attack per turn, human goes first."""
 
     def __init__(self, bot_seed: int = 42, difficulty: str = "expert") -> None:
         self._bot_seed = bot_seed
@@ -111,11 +111,12 @@ class SequentialDuelGame:
             raise GameActionError("all 4 pegs must be set before lock")
         pegs = [p for p in self._human_setup if p is not None]
         self._human_secret = pegs
-        self.phase = GamePhase.BOT_GUESSING
+        self._bot_secret = self._bot.generate_code()
+        self.phase = GamePhase.HUMAN_TURN
 
     def bot_make_guess(self) -> Optional[GuessRecord]:
-        if self.phase != GamePhase.BOT_GUESSING:
-            raise GameActionError("not in bot guessing phase")
+        if self.phase != GamePhase.BOT_TURN:
+            raise GameActionError("not in bot turn")
         if self._bot_solved or len(self._bot_guesses) >= MAX_GUESSES:
             return None
         guess = self._bot.make_guess()
@@ -127,29 +128,27 @@ class SequentialDuelGame:
             self._bot.register_feedback(guess, exact, colour_only)
         if exact == CODE_LENGTH:
             self._bot_solved = True
-            self._finish_bot_guessing()
-        elif len(self._bot_guesses) >= MAX_GUESSES:
-            self._finish_bot_guessing()
+            self._finish_game()
+        elif self._both_exhausted():
+            self._finish_game()
+        else:
+            self.phase = GamePhase.HUMAN_TURN
         return record
 
-    def _finish_bot_guessing(self) -> None:
-        self._bot_secret = self._bot.generate_code()
-        self.phase = GamePhase.HUMAN_GUESSING
-
     def set_human_guess_peg(self, slot: int, colour: int) -> None:
-        if self.phase != GamePhase.HUMAN_GUESSING:
-            raise GameActionError("not in human guessing phase")
+        if self.phase != GamePhase.HUMAN_TURN:
+            raise GameActionError("not in human turn")
         if slot < 0 or slot >= CODE_LENGTH:
             raise GameActionError(f"slot must be 0-{CODE_LENGTH - 1}")
         validate_colour(colour)
         self._current_human_guess[slot] = colour
 
     def can_submit_human_guess(self) -> bool:
-        return self.phase == GamePhase.HUMAN_GUESSING and all(p is not None for p in self._current_human_guess)
+        return self.phase == GamePhase.HUMAN_TURN and all(p is not None for p in self._current_human_guess)
 
     def submit_human_guess(self, guess: Optional[List[int]] = None) -> GuessRecord:
-        if self.phase != GamePhase.HUMAN_GUESSING:
-            raise GameActionError("not in human guessing phase")
+        if self.phase != GamePhase.HUMAN_TURN:
+            raise GameActionError("not in human turn")
         if len(self._human_guesses) >= MAX_GUESSES:
             raise GameActionError("no guesses remaining")
         if guess is None:
@@ -168,9 +167,19 @@ class SequentialDuelGame:
         if exact == CODE_LENGTH:
             self._human_solved = True
             self._finish_game()
-        elif len(self._human_guesses) >= MAX_GUESSES:
+        elif self._both_exhausted():
             self._finish_game()
+        else:
+            self.phase = GamePhase.BOT_TURN
         return record
+
+    def _both_exhausted(self) -> bool:
+        return (
+            not self._human_solved
+            and not self._bot_solved
+            and len(self._human_guesses) >= MAX_GUESSES
+            and len(self._bot_guesses) >= MAX_GUESSES
+        )
 
     def _finish_game(self) -> None:
         self.phase = GamePhase.FINISHED
@@ -182,16 +191,6 @@ class SequentialDuelGame:
             self._human_guesses,
             self._bot_guesses,
         )
-
-    def run_all_bot_guesses(self) -> List[GuessRecord]:
-        """Convenience for tests/UI: bot guesses until solved or limit."""
-        records = []
-        while self.phase == GamePhase.BOT_GUESSING:
-            r = self.bot_make_guess()
-            if r is None:
-                break
-            records.append(r)
-        return records
 
 
 def compute_result(
@@ -217,7 +216,20 @@ def compute_result(
                               f"Both solved! Bot used fewer guesses ({bot_guess_count} vs {human_guess_count}).")
         return GameResult("draw", True, True, human_guess_count, bot_guess_count,
                           f"Both solved in {human_guess_count} guesses — draw!")
-    # Neither solved — tie-break
+    if (
+        not human_solved
+        and not bot_solved
+        and human_guess_count >= MAX_GUESSES
+        and bot_guess_count >= MAX_GUESSES
+    ):
+        return GameResult(
+            "draw",
+            False,
+            False,
+            human_guess_count,
+            bot_guess_count,
+            "Neither solved after 12 attacks each — draw!",
+        )
     h_best = _best_progress(human_guesses)
     b_best = _best_progress(bot_guesses)
     if h_best > b_best:

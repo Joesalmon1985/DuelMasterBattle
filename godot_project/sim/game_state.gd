@@ -3,7 +3,7 @@ extends RefCounted
 
 const _BotFactory = preload("res://sim/bot_factory.gd")
 
-enum GamePhase { HUMAN_SETUP, BOT_GUESSING, HUMAN_GUESSING, FINISHED }
+enum GamePhase { HUMAN_SETUP, HUMAN_TURN, BOT_TURN, FINISHED }
 
 var phase: int = GamePhase.HUMAN_SETUP
 var human_setup_pegs: Array = [null, null, null, null]
@@ -72,7 +72,8 @@ func set_human_secret_peg(slot: int, colour: int) -> void:
 func lock_human_secret() -> void:
 	assert(can_lock_human_secret(), "all 4 pegs required")
 	_human_secret = human_setup_pegs.duplicate()
-	phase = GamePhase.BOT_GUESSING
+	_bot_secret = _bot.generate_code()
+	phase = GamePhase.HUMAN_TURN
 
 
 func bot_guesses_remaining() -> int:
@@ -84,7 +85,7 @@ func human_guesses_remaining() -> int:
 
 
 func bot_make_guess() -> DmbGuessRecord:
-	assert(phase == GamePhase.BOT_GUESSING)
+	assert(phase == GamePhase.BOT_TURN, "not in bot turn")
 	if _bot_solved or bot_guesses.size() >= DmbConstants.MAX_GUESSES:
 		return null
 	var guess: Array = _bot.make_guess()
@@ -95,26 +96,23 @@ func bot_make_guess() -> DmbGuessRecord:
 		_bot.register_feedback(guess, fb.x, fb.y)
 	if fb.x == DmbConstants.CODE_LENGTH:
 		_bot_solved = true
-		_finish_bot_guessing()
-	elif bot_guesses.size() >= DmbConstants.MAX_GUESSES:
-		_finish_bot_guessing()
+		_finish_game()
+	elif _both_exhausted():
+		_finish_game()
+	else:
+		phase = GamePhase.HUMAN_TURN
 	return rec
 
 
-func _finish_bot_guessing() -> void:
-	_bot_secret = _bot.generate_code()
-	phase = GamePhase.HUMAN_GUESSING
-
-
 func set_human_guess_peg(slot: int, colour: int) -> void:
-	assert(phase == GamePhase.HUMAN_GUESSING)
+	assert(phase == GamePhase.HUMAN_TURN, "not in human turn")
 	assert(slot >= 0 and slot < DmbConstants.CODE_LENGTH)
 	DmbCode.validate_colour(colour)
 	current_human_guess[slot] = colour
 
 
 func can_submit_human_guess() -> bool:
-	if phase != GamePhase.HUMAN_GUESSING:
+	if phase != GamePhase.HUMAN_TURN:
 		return false
 	for p in current_human_guess:
 		if p == null:
@@ -123,7 +121,7 @@ func can_submit_human_guess() -> bool:
 
 
 func submit_human_guess(guess: Array = []) -> DmbGuessRecord:
-	assert(phase == GamePhase.HUMAN_GUESSING)
+	assert(phase == GamePhase.HUMAN_TURN, "not in human turn")
 	assert(human_guesses.size() < DmbConstants.MAX_GUESSES)
 	if guess.is_empty():
 		assert(can_submit_human_guess())
@@ -136,9 +134,20 @@ func submit_human_guess(guess: Array = []) -> DmbGuessRecord:
 	if fb.x == DmbConstants.CODE_LENGTH:
 		_human_solved = true
 		_finish_game()
-	elif human_guesses.size() >= DmbConstants.MAX_GUESSES:
+	elif _both_exhausted():
 		_finish_game()
+	else:
+		phase = GamePhase.BOT_TURN
 	return rec
+
+
+func _both_exhausted() -> bool:
+	return (
+		not _human_solved
+		and not _bot_solved
+		and human_guesses.size() >= DmbConstants.MAX_GUESSES
+		and bot_guesses.size() >= DmbConstants.MAX_GUESSES
+	)
 
 
 func _finish_game() -> void:
@@ -148,13 +157,3 @@ func _finish_game() -> void:
 		human_guesses.size(), bot_guesses.size(),
 		human_guesses, bot_guesses
 	)
-
-
-func run_all_bot_guesses() -> Array:
-	var records: Array = []
-	while phase == GamePhase.BOT_GUESSING:
-		var r := bot_make_guess()
-		if r == null:
-			break
-		records.append(r)
-	return records

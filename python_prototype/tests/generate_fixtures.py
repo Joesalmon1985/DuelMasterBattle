@@ -100,6 +100,13 @@ def generate_all() -> None:
             "human_guess_count": 12, "bot_guess_count": 12,
             "human_guesses": [{"guess": [0, 1, 2, 3], "exact": 2, "colour_only": 1}],
             "bot_guesses": [{"guess": [0, 0, 0, 0], "exact": 1, "colour_only": 0}],
+            "expected_outcome": "draw",
+        },
+        {
+            "human_solved": False, "bot_solved": False,
+            "human_guess_count": 1, "bot_guess_count": 1,
+            "human_guesses": [{"guess": [0, 1, 2, 3], "exact": 2, "colour_only": 1}],
+            "bot_guesses": [{"guess": [0, 0, 0, 0], "exact": 1, "colour_only": 0}],
             "expected_outcome": "human_win",
         },
     ]
