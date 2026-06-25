@@ -7,6 +7,9 @@ config/description="Duelling Mastermind — authoritative sim + client"
 run/main_scene="res://client/scenes/main_menu.tscn"
 config/features=PackedStringArray("4.4")
 
+[autoload]
+EncounterSession="*res://client/scripts/encounter_session.gd"
+
 [display]
 window/size/viewport_width=900
 window/size/viewport_height=700

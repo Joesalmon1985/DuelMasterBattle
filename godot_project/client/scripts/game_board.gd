@@ -38,9 +38,12 @@ signal game_finished
 @onready var result_panel: PanelContainer = $VBox/ResultPanel
 @onready var result_label: Label = $VBox/ResultPanel/ResultLabel
 @onready var restart_button: Button = $VBox/RestartButton
+@onready var back_to_menu_button: Button = $VBox/BackToMenuButton
 @onready var difficulty_option: OptionButton = $VBox/DifficultyRow/DifficultyOption
 @onready var player_wizard: TextureRect = $VBox/DuelPanel/PlayerColumn/PlayerWizardRow/PlayerWizard
 @onready var enemy_wizard: TextureRect = $VBox/DuelPanel/EnemyColumn/EnemyWizardRow/EnemyWizard
+@onready var enemy_wizard_label: Label = $VBox/DuelPanel/EnemyColumn/EnemyWizardRow/EnemyWizardLabel
+@onready var enemy_tell_label: Label = $VBox/DuelPanel/EnemyColumn/EnemyTellLabel
 @onready var secret_point_headers: HBoxContainer = $VBox/DuelPanel/PlayerColumn/SecretSection/SecretPointHeaders
 @onready var human_point_headers: HBoxContainer = $VBox/HumanGuessSection/HumanPointHeaders
 @onready var how_to_play_button: Button = $VBox/HelpRow/HowToPlayButton
@@ -57,24 +60,24 @@ var _human_rows: Array = []
 var _active_mode: String = ""
 var _active_slot: int = -1
 var _bot_seed: int = 42
-var _difficulty: String = "expert"
+var _ruleset: DmbDuelRuleset
+var _active_pool: Array = []
 var _bot_attack_delay_sec: float = 0.75
+var _base_bot_delay_sec: float = 0.75
 var _skip_bot_attacks: bool = false
 var _help_mode: String = ""
 
 
+func _session() -> Node:
+	return get_node("/root/EncounterSession")
+
+
 func _ready() -> void:
-	_secret_slots = _collect_peg_slots(secret_row)
-	_guess_slots = _collect_peg_slots(human_guess_row)
-	for slot in _secret_slots:
-		slot.slot_pressed.connect(_on_secret_slot_pressed)
-	for slot in _guess_slots:
-		slot.slot_pressed.connect(_on_guess_slot_pressed)
-	_setup_difficulty_options()
+	_ruleset = _session().get_ruleset()
+	_build_board_from_ruleset()
 	_setup_art()
-	_setup_point_headers(secret_point_headers, _secret_slots)
-	_setup_point_headers(human_point_headers, _guess_slots)
 	_configure_bot_pacing_for_environment()
+	_apply_encounter_presentation()
 	_magic_picker = _MagicPickerScript.new()
 	_magic_picker.name = "MagicPicker"
 	add_child(_magic_picker)
@@ -82,16 +85,55 @@ func _ready() -> void:
 	lock_button.pressed.connect(_on_lock_pressed)
 	submit_button.pressed.connect(_on_submit_pressed)
 	restart_button.pressed.connect(_on_restart_pressed)
+	back_to_menu_button.pressed.connect(_on_back_to_menu_pressed)
 	skip_button.pressed.connect(_on_skip_pressed)
-	difficulty_option.item_selected.connect(_on_difficulty_changed)
 	how_to_play_button.pressed.connect(_on_how_to_play_pressed)
 	how_feedback_button.pressed.connect(_on_how_feedback_pressed)
 	start_new_game(_bot_seed)
 
 
+func _build_board_from_ruleset() -> void:
+	_secret_slots = _build_slots(secret_row, _ruleset.slot_count, _ruleset.point_names, _on_secret_slot_pressed)
+	_guess_slots = _build_slots(human_guess_row, _ruleset.slot_count, _ruleset.point_names, _on_guess_slot_pressed, 1)
+	_setup_point_headers(secret_point_headers, _ruleset.point_names)
+	_setup_point_headers(human_point_headers, _ruleset.point_names)
+
+
+func _build_slots(row: HBoxContainer, count: int, point_names: Array, callback: Callable, insert_after: int = 0) -> Array:
+	var to_remove: Array = []
+	for child in row.get_children():
+		if child is PegSlot:
+			to_remove.append(child)
+	for child in to_remove:
+		row.remove_child(child)
+		child.queue_free()
+	var slots: Array = []
+	for i in range(count):
+		var slot := PegSlot.new()
+		slot.slot_index = i
+		if i < point_names.size():
+			slot.point_label = str(point_names[i])
+		row.add_child(slot)
+		row.move_child(slot, insert_after + i)
+		slot.slot_pressed.connect(callback)
+		slots.append(slot)
+	return slots
+
+
+func _apply_encounter_presentation() -> void:
+	enemy_wizard_label.text = _ruleset.enemy_name
+	if _ruleset.enemy_visual_hint != "":
+		enemy_tell_label.text = "Enemy tell: %s" % _ruleset.enemy_visual_hint
+		enemy_tell_label.visible = true
+	else:
+		enemy_tell_label.visible = false
+	_bot_attack_delay_sec = _base_bot_delay_sec * _ruleset.bot_delay_multiplier()
+
+
 func _configure_bot_pacing_for_environment() -> void:
+	_base_bot_delay_sec = 0.75
 	if DisplayServer.get_name() == "headless":
-		_bot_attack_delay_sec = 0.0
+		_base_bot_delay_sec = 0.0
 
 
 func _setup_art() -> void:
@@ -108,15 +150,15 @@ func _setup_art() -> void:
 		enemy_wizard.texture = enemy_tex
 
 
-func _setup_point_headers(container: HBoxContainer, slots: Array) -> void:
-	for i in range(DmbColourData.POINT_NAMES.size()):
-		var cell := _make_point_header_cell(i)
+func _setup_point_headers(container: HBoxContainer, point_names: Array) -> void:
+	for c in container.get_children():
+		c.queue_free()
+	for i in range(point_names.size()):
+		var cell := _make_point_header_cell(i, str(point_names[i]))
 		container.add_child(cell)
-		if i < slots.size():
-			slots[i].point_label = DmbColourData.POINT_NAMES[i]
 
 
-func _make_point_header_cell(point_index: int) -> VBoxContainer:
+func _make_point_header_cell(point_index: int, point_name: String) -> VBoxContainer:
 	var cell := VBoxContainer.new()
 	cell.alignment = BoxContainer.ALIGNMENT_CENTER
 	cell.custom_minimum_size = Vector2(56, 0)
@@ -133,25 +175,10 @@ func _make_point_header_cell(point_index: int) -> VBoxContainer:
 		icon_row.add_child(icon)
 	cell.add_child(icon_row)
 	var lbl := Label.new()
-	lbl.text = DmbColourData.POINT_NAMES[point_index]
+	lbl.text = point_name
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cell.add_child(lbl)
 	return cell
-
-
-func _setup_difficulty_options() -> void:
-	difficulty_option.clear()
-	difficulty_option.add_item("Easy", 0)
-	difficulty_option.add_item("Normal", 1)
-	difficulty_option.add_item("Hard", 2)
-	difficulty_option.add_item("Expert", 3)
-	difficulty_option.select(3)
-
-
-func _on_difficulty_changed(index: int) -> void:
-	var levels := ["easy", "normal", "hard", "expert"]
-	_difficulty = levels[index]
-	start_new_game(_bot_seed)
 
 
 func _on_how_to_play_pressed() -> void:
@@ -174,7 +201,9 @@ func _toggle_help(mode: String, text: String) -> void:
 
 func start_new_game(bot_seed: int = 42) -> void:
 	_bot_seed = bot_seed
-	game = DmbSequentialDuelGame.new(bot_seed, _difficulty)
+	_ruleset = _session().get_ruleset()
+	game = DmbSequentialDuelGame.new(_ruleset, bot_seed)
+	_apply_encounter_presentation()
 	_active_mode = ""
 	_active_slot = -1
 	_skip_bot_attacks = false
@@ -188,19 +217,14 @@ func start_new_game(bot_seed: int = 42) -> void:
 	_refresh_all()
 
 
-func _collect_peg_slots(row: HBoxContainer) -> Array:
-	var slots: Array = []
-	for child in row.get_children():
-		if child is PegSlot:
-			slots.append(child)
-	return slots
-
 
 func _on_secret_slot_pressed(slot: int) -> void:
 	if game.phase != DmbSequentialDuelGame.GamePhase.HUMAN_SETUP:
 		return
 	_active_mode = "secret"
 	_active_slot = slot
+	_active_pool = _ruleset.secret_magic_pool
+	_magic_picker.set_allowed_magics(_active_pool)
 	_open_picker_for_slot(_secret_slots[slot])
 
 
@@ -209,6 +233,8 @@ func _on_guess_slot_pressed(slot: int) -> void:
 		return
 	_active_mode = "guess"
 	_active_slot = slot
+	_active_pool = _ruleset.attack_magic_pool
+	_magic_picker.set_allowed_magics(_active_pool)
 	_open_picker_for_slot(_guess_slots[slot])
 
 
@@ -278,6 +304,10 @@ func _run_single_bot_turn() -> void:
 
 func _on_restart_pressed() -> void:
 	start_new_game(_bot_seed)
+
+
+func _on_back_to_menu_pressed() -> void:
+	get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
 
 
 func _add_bot_row(rec: DmbGuessRecord) -> void:
@@ -415,7 +445,8 @@ func _show_result() -> void:
 		elif r.outcome == "bot_win" and r.bot_solved:
 			headline = "The enemy wizard broke your pattern in %d attacks." % r.bot_guess_count
 		elif r.outcome == "draw" and not r.human_solved and not r.bot_solved:
-			headline = "Draw — both wizards used 12 attacks without breaking the pattern."
+			var max_attacks := _ruleset.effective_max_attacks()
+			headline = "Draw — both wizards used %d attacks without breaking the pattern." % max_attacks
 		else:
 			match r.outcome:
 				"human_win":
@@ -546,16 +577,12 @@ func ui_get_bot_feedback_text() -> String:
 	return row.get_feedback_text()
 
 
-func ui_set_difficulty(level: String) -> void:
-	var levels := {"easy": 0, "normal": 1, "hard": 2, "expert": 3}
-	if levels.has(level):
-		_difficulty = level
-		difficulty_option.select(levels[level])
-		start_new_game(_bot_seed)
+func ui_set_difficulty(_level: String) -> void:
+	pass
 
 
 func ui_get_difficulty() -> String:
-	return _difficulty
+	return _ruleset.enemy_difficulty
 
 
 func ui_set_bot_pacing(delay_sec: float, skip_immediately: bool = false) -> void:
@@ -572,7 +599,34 @@ func ui_has_wizard_portraits() -> bool:
 
 
 func ui_has_point_headers() -> bool:
-	return secret_point_headers.get_child_count() == 4 and human_point_headers.get_child_count() == 4
+	return (
+		secret_point_headers.get_child_count() == _ruleset.slot_count
+		and human_point_headers.get_child_count() == _ruleset.slot_count
+	)
+
+
+func ui_load_encounter(encounter_id: String) -> void:
+	_session().set_encounter(encounter_id)
+	_ruleset = _session().get_ruleset()
+	_build_board_from_ruleset()
+	_apply_encounter_presentation()
+	start_new_game(_bot_seed)
+
+
+func ui_get_slot_count() -> int:
+	return _ruleset.slot_count
+
+
+func ui_get_visible_magic_count() -> int:
+	var count := 0
+	for i in range(DmbConstants.NUM_COLOURS):
+		if _magic_picker._buttons[i].visible:
+			count += 1
+	return count
+
+
+func ui_get_enemy_tell_visible() -> bool:
+	return enemy_tell_label.visible and enemy_tell_label.text != ""
 
 
 func ui_has_help_panel() -> bool:

@@ -18,22 +18,40 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -180.0
-offset_top = -120.0
-offset_right = 180.0
-offset_bottom = 120.0
+offset_left = -220.0
+offset_top = -160.0
+offset_right = 220.0
+offset_bottom = 160.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
+theme_override_constants/separation = 8
 
 [node name="TitleLabel" type="Label" parent="VBox"]
 layout_mode = 2
 text = "Duel Master Battle"
 horizontal_alignment = 1
 
-[node name="HumanVsBotButton" type="Button" parent="VBox"]
+[node name="EncounterRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
-text = "Human vs Bot"
+alignment = 1
+
+[node name="EncounterLabel" type="Label" parent="VBox/EncounterRow"]
+layout_mode = 2
+text = "Encounter:"
+
+[node name="EncounterOption" type="OptionButton" parent="VBox/EncounterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EncounterDetail" type="Label" parent="VBox"]
+layout_mode = 2
+autowrap_mode = 2
+custom_minimum_size = Vector2(400, 0)
+
+[node name="StartDuelButton" type="Button" parent="VBox"]
+layout_mode = 2
+text = "Start duel"
 
 [node name="HowToPlayButton" type="Button" parent="VBox"]
 layout_mode = 2

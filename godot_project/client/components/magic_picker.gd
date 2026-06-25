@@ -11,6 +11,7 @@ const BTN_SIZE := Vector2(72, 56)
 var _grid: GridContainer
 var _buttons: Array = []
 var _open := false
+var _allowed: Dictionary = {}
 
 
 func _ready() -> void:
@@ -44,6 +45,24 @@ func _ready() -> void:
 		btn.pressed.connect(func(): _on_magic_pressed(idx))
 		_grid.add_child(btn)
 		_buttons.append(btn)
+	for i in range(DmbConstants.NUM_COLOURS):
+		_allowed[i] = true
+
+
+func set_allowed_magics(pool: Array) -> void:
+	_allowed.clear()
+	for m in pool:
+		_allowed[int(m)] = true
+	for i in range(_buttons.size()):
+		_buttons[i].visible = _allowed.has(i)
+
+
+func _visible_magic_count() -> int:
+	var n := 0
+	for i in range(_buttons.size()):
+		if _buttons[i].visible:
+			n += 1
+	return n
 
 
 func _on_magic_pressed(magic_id: int) -> void:
@@ -55,7 +74,9 @@ func open_at(global_pos: Vector2) -> void:
 	visible = true
 	_open = true
 	var vp := get_viewport().get_visible_rect().size
-	var panel_size := Vector2(COLS * BTN_SIZE.x + 24, ceili(float(DmbConstants.NUM_COLOURS) / COLS) * BTN_SIZE.y + 24)
+	var visible_count := _visible_magic_count()
+	var rows := ceili(float(visible_count) / COLS)
+	var panel_size := Vector2(COLS * BTN_SIZE.x + 24, rows * BTN_SIZE.y + 24)
 	global_position = global_pos
 	if global_position.x + panel_size.x > vp.x:
 		global_position.x = maxf(0, vp.x - panel_size.x)

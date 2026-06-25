@@ -42,6 +42,7 @@ autowrap_mode = 2
 text = "Loading..."
 
 [node name="DifficultyRow" type="HBoxContainer" parent="VBox"]
+visible = false
 layout_mode = 2
 
 [node name="DifficultyLabel" type="Label" parent="VBox/DifficultyRow"]
@@ -50,7 +51,6 @@ text = "Difficulty:"
 
 [node name="DifficultyOption" type="OptionButton" parent="VBox/DifficultyRow"]
 layout_mode = 2
-tooltip_text = "Easy: random · Normal: basic solver · Hard: strong · Expert: strongest (slower attacks)"
 
 [node name="DuelPanel" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
@@ -90,30 +90,6 @@ theme_override_constants/separation = 4
 layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 4
-
-[node name="Secret0" type="Button" parent="VBox/DuelPanel/PlayerColumn/SecretSection/SecretRow"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-script = ExtResource("2")
-slot_index = 0
-
-[node name="Secret1" type="Button" parent="VBox/DuelPanel/PlayerColumn/SecretSection/SecretRow"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-script = ExtResource("2")
-slot_index = 1
-
-[node name="Secret2" type="Button" parent="VBox/DuelPanel/PlayerColumn/SecretSection/SecretRow"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-script = ExtResource("2")
-slot_index = 2
-
-[node name="Secret3" type="Button" parent="VBox/DuelPanel/PlayerColumn/SecretSection/SecretRow"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-script = ExtResource("2")
-slot_index = 3
 
 [node name="LockButton" type="Button" parent="VBox/DuelPanel/PlayerColumn/SecretSection/SecretRow"]
 layout_mode = 2
@@ -160,6 +136,11 @@ stretch_mode = 5
 layout_mode = 2
 text = "Enemy wizard"
 
+[node name="EnemyTellLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn"]
+layout_mode = 2
+autowrap_mode = 2
+text = ""
+
 [node name="BotLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn"]
 layout_mode = 2
 text = "Enemy attacks against you:"
@@ -192,30 +173,6 @@ theme_override_constants/separation = 4
 [node name="GuessLabel" type="Label" parent="VBox/HumanGuessSection/HumanGuessRow"]
 layout_mode = 2
 text = "Your attack:"
-
-[node name="Guess0" type="Button" parent="VBox/HumanGuessSection/HumanGuessRow"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-script = ExtResource("2")
-slot_index = 0
-
-[node name="Guess1" type="Button" parent="VBox/HumanGuessSection/HumanGuessRow"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-script = ExtResource("2")
-slot_index = 1
-
-[node name="Guess2" type="Button" parent="VBox/HumanGuessSection/HumanGuessRow"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-script = ExtResource("2")
-slot_index = 2
-
-[node name="Guess3" type="Button" parent="VBox/HumanGuessSection/HumanGuessRow"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-script = ExtResource("2")
-slot_index = 3
 
 [node name="SubmitButton" type="Button" parent="VBox/HumanGuessSection/HumanGuessRow"]
 layout_mode = 2
@@ -258,3 +215,7 @@ autowrap_mode = 2
 [node name="RestartButton" type="Button" parent="VBox"]
 layout_mode = 2
 text = "New duel"
+
+[node name="BackToMenuButton" type="Button" parent="VBox"]
+layout_mode = 2
+text = "Back to menu"
