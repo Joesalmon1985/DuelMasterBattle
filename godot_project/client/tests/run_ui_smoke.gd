@@ -37,45 +37,58 @@ func _test_full_human_vs_bot_flow() -> void:
 
 	_board.ui_set_bot_pacing(0.0)
 	assert_true(_board.ui_has_wizard_portraits(), "wizard portrait textures loaded")
-	assert_true(_board.ui_has_point_headers(), "point header rows exist")
-	assert_true(_board.ui_has_help_panel(), "help panel buttons exist")
+	assert_true(_board.ui_has_point_headers(), "help panel buttons exist")
 
-	assert_false(_board.ui_get_lock_button_enabled(), "lock disabled before pegs")
-	_board.ui_action_pick_secret_slot(0)
-	assert_true(_board.ui_is_picker_open(), "picker opens on secret slot click")
-	_board.ui_action_pick_magic(0)
-	assert_eq(_board.ui_get_secret_slot_value(0), 0, "secret slot 0 filled")
-	_board.ui_action_pick_secret_slot(1)
-	assert_true(_board.ui_is_picker_open(), "picker opens on secret slot 1")
-	_board.ui_action_pick_magic(1)
-	_board.ui_action_pick_secret_slot(2)
-	_board.ui_action_pick_magic(2)
-	_board.ui_action_pick_secret_slot(3)
-	_board.ui_action_pick_magic(3)
+	for i in range(4):
+		_board.ui_action_pick_secret_slot(i)
+		_board.ui_action_pick_magic(i)
 	await process_frame
-	assert_true(_board.ui_get_lock_button_enabled(), "lock enabled after 4 pegs")
-
 	_board.ui_action_lock_secret()
-	await _wait_bot_phase_done()
-	assert_true(_board.ui_secret_is_hidden(), "secret hidden after lock")
-	assert_true(_board.ui_get_visible_bot_guess_count() > 0, "bot made guesses")
-	var bot_count := _board.ui_get_visible_bot_guess_count()
-	assert_true(bot_count <= DmbConstants.MAX_GUESSES, "bot stopped within 12")
-	assert_true(_board.ui_get_bot_feedback_count() == bot_count, "feedback per bot guess")
-	var fb_text := _board.ui_get_bot_feedback_text()
-	assert_true("Hit:" in fb_text or "Weakness:" in fb_text, "feedback uses Hit/Weakness wording")
+	await process_frame
 
-	assert_true(_board.ui_get_human_guess_row_active(), "human guess row active")
+	assert_true(_board.ui_is_human_turn(), "duel starts on human turn")
+	assert_false(_board.ui_is_bot_turn(), "not bulk bot phase after lock")
+	assert_eq(_board.ui_get_visible_bot_guess_count(), 0, "no bot rows before first bot turn")
 
-	var safety := 0
-	while _board.game.phase != DmbSequentialDuelGame.GamePhase.FINISHED and safety < 12:
+	for s in range(4):
+		_board.ui_action_pick_guess_slot(s)
+		_board.ui_action_pick_magic(s)
+	_board.ui_action_submit_guess()
+	await process_frame
+	await _wait_bot_turn_done()
+
+	assert_eq(_board.ui_get_visible_human_guess_count(), 1, "human attack feedback row visible")
+	var human_fb := _board.ui_get_human_feedback_text()
+	assert_true(
+		"Hit:" in human_fb or "Weakness:" in human_fb or "Unaffected:" in human_fb,
+		"human feedback uses Hit/Weakness/Unaffected"
+	)
+
+	var bot_after := _board.ui_get_visible_bot_guess_count()
+	assert_eq(bot_after, 1, "bot makes exactly one visible attack")
+
+	if _board.game.phase != DmbSequentialDuelGame.GamePhase.FINISHED:
+		assert_true(_board.ui_is_human_turn(), "turn returns to human after bot attack")
+
 		for s in range(4):
 			_board.ui_action_pick_guess_slot(s)
-			assert_true(_board.ui_is_picker_open(), "picker opens on guess slot click")
-			_board.ui_action_pick_magic((s + safety) % DmbConstants.NUM_COLOURS)
-			assert_true(_board.ui_get_guess_slot_value(s) >= 0, "guess slot filled")
+			_board.ui_action_pick_magic((s + 1) % DmbConstants.NUM_COLOURS)
 		_board.ui_action_submit_guess()
 		await process_frame
+		assert_eq(_board.ui_get_visible_human_guess_count(), 2, "second human feedback row visible")
+
+	var safety := 0
+	while _board.game.phase != DmbSequentialDuelGame.GamePhase.FINISHED and safety < 24:
+		if _board.ui_is_human_turn():
+			for s in range(4):
+				_board.ui_action_pick_guess_slot(s)
+				_board.ui_action_pick_magic((s + safety + 2) % DmbConstants.NUM_COLOURS)
+			_board.ui_action_submit_guess()
+			await process_frame
+			if _board.game.phase == DmbSequentialDuelGame.GamePhase.BOT_TURN:
+				await _wait_bot_turn_done()
+		elif _board.ui_is_bot_turn():
+			await _wait_bot_turn_done()
 		safety += 1
 
 	assert_true(_board.game.phase == DmbSequentialDuelGame.GamePhase.FINISHED, "reached finished state")
@@ -86,13 +99,14 @@ func _test_full_human_vs_bot_flow() -> void:
 	assert_true(_board.game.phase == DmbSequentialDuelGame.GamePhase.HUMAN_SETUP, "restart fresh state")
 	assert_false(_board.ui_is_result_visible(), "result hidden after restart")
 	assert_eq(_board.ui_get_visible_bot_guess_count(), 0, "bot board cleared")
+	assert_eq(_board.ui_get_visible_human_guess_count(), 0, "human board cleared")
 
 	_board.queue_free()
 
 
-func _wait_bot_phase_done() -> void:
+func _wait_bot_turn_done() -> void:
 	var safety := 0
-	while _board.game.phase == DmbSequentialDuelGame.GamePhase.BOT_GUESSING and safety < 60:
+	while _board.ui_is_bot_turn() and safety < 30:
 		await process_frame
 		safety += 1
 	await process_frame

@@ -86,7 +86,7 @@ class DuelApp(tk.Tk):
         self._mode = "secret"
 
     def _pick_guess(self, slot: int) -> None:
-        if self.game.phase != GamePhase.HUMAN_GUESSING:
+        if self.game.phase != GamePhase.HUMAN_TURN:
             return
         self._selected_slot = slot
         self._mode = "guess"
@@ -103,11 +103,12 @@ class DuelApp(tk.Tk):
 
     def _lock_secret(self) -> None:
         self.game.lock_human_secret()
-        self.game.run_all_bot_guesses()
         self._refresh()
 
     def _submit_guess(self) -> None:
         self.game.submit_human_guess()
+        if self.game.phase == GamePhase.BOT_TURN:
+            self.game.bot_make_guess()
         self._refresh()
 
     def _new_game(self) -> None:
@@ -118,8 +119,8 @@ class DuelApp(tk.Tk):
         g = self.game
         phase_names = {
             GamePhase.HUMAN_SETUP: "Set your secret code (4 pegs)",
-            GamePhase.BOT_GUESSING: "Bot is guessing...",
-            GamePhase.HUMAN_GUESSING: f"Guess the bot's code ({g.human_guesses_remaining} left)",
+            GamePhase.HUMAN_TURN: f"Your turn ({g.human_guesses_remaining} left)",
+            GamePhase.BOT_TURN: "Bot is attacking...",
             GamePhase.FINISHED: "Game over",
         }
         self.status.config(text=phase_names.get(g.phase, ""))
@@ -139,17 +140,15 @@ class DuelApp(tk.Tk):
         self.bot_board.delete("1.0", tk.END)
         for i, rec in enumerate(g.bot_guesses):
             self.bot_board.insert(tk.END, f"{i+1}: {rec.guess}  exact={rec.exact} colour={rec.colour_only}\n")
-        if g.phase != GamePhase.HUMAN_SETUP and g.phase != GamePhase.BOT_GUESSING:
+        if g.phase != GamePhase.HUMAN_SETUP:
             solved = any(r.exact == CODE_LENGTH for r in g.bot_guesses)
             if solved:
                 n = len(g.bot_guesses)
                 self.bot_board.insert(tk.END, f"\nBot SOLVED in {n} guesses!\n")
-            elif g.phase != GamePhase.BOT_GUESSING:
-                self.bot_board.insert(tk.END, "\nBot FAILED after 12 guesses.\n")
         self.bot_board.config(state=tk.DISABLED)
 
         # Human guess
-        guess_active = g.phase == GamePhase.HUMAN_GUESSING
+        guess_active = g.phase == GamePhase.HUMAN_TURN
         for i, btn in enumerate(self.guess_btns):
             c = g.current_human_guess[i] if guess_active else None
             btn.config(text=str(c) if c is not None else "?", state=tk.NORMAL if guess_active else tk.DISABLED)

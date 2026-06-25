@@ -8,7 +8,9 @@ from duel_mastermind import (
     GuessRecord,
     RandomBot,
     SequentialDuelGame,
+    SolverBot,
     compute_result,
+    score_guess,
 )
 
 
@@ -18,7 +20,7 @@ def _setup_human(game: SequentialDuelGame, code: list) -> None:
     game.lock_human_secret()
 
 
-class TestSequentialGame:
+class TestAlternatingGame:
     def test_human_setup_and_lock(self):
         g = SequentialDuelGame()
         assert g.phase == GamePhase.HUMAN_SETUP
@@ -27,7 +29,9 @@ class TestSequentialGame:
             g.set_human_secret_peg(i, i)
         assert g.can_lock_human_secret()
         g.lock_human_secret()
-        assert g.phase == GamePhase.BOT_GUESSING
+        assert g.phase == GamePhase.HUMAN_TURN
+        assert g._human_secret is not None
+        assert g._bot_secret is not None
 
     def test_lock_requires_all_pegs(self):
         g = SequentialDuelGame()
@@ -35,45 +39,88 @@ class TestSequentialGame:
         with pytest.raises(GameActionError):
             g.lock_human_secret()
 
-    def test_bot_guesses_up_to_12(self):
+    def test_human_attack_records_feedback(self):
         g = SequentialDuelGame(bot_seed=1)
         _setup_human(g, [0, 1, 2, 3])
-        g.run_all_bot_guesses()
-        assert g.phase == GamePhase.HUMAN_GUESSING
-        assert len(g.bot_guesses) <= MAX_GUESSES
-        assert g._bot_secret is not None
+        g.submit_human_guess([1, 1, 1, 1])
+        assert len(g.human_guesses) == 1
+        assert g.human_guesses[0].exact >= 0
 
-    def test_human_win_on_solve(self):
+    def test_human_then_bot_turn(self):
+        g = SequentialDuelGame(bot_seed=1)
+        _setup_human(g, [0, 1, 2, 3])
+        g.submit_human_guess([1, 1, 1, 1])
+        assert g.phase == GamePhase.BOT_TURN
+        g.bot_make_guess()
+        assert g.phase == GamePhase.HUMAN_TURN
+        assert len(g.bot_guesses) == 1
+
+    def test_one_bot_guess_per_turn(self):
+        g = SequentialDuelGame(bot_seed=5)
+        _setup_human(g, [0, 1, 2, 3])
+        g.submit_human_guess([1, 1, 1, 1])
+        g.bot_make_guess()
+        assert len(g.bot_guesses) == 1
+        g.submit_human_guess([2, 2, 2, 2])
+        g.bot_make_guess()
+        assert len(g.bot_guesses) == 2
+
+    def test_human_win_immediate(self):
         g = SequentialDuelGame(bot_seed=99)
         _setup_human(g, [5, 5, 5, 5])
-        g.run_all_bot_guesses()
-        # Force known bot secret via re-init trick: set bot secret directly for test
-        bot = RandomBot(99)
-        bot.generate_code()  # consume bot guesses RNG state
-        # Instead: patch bot secret
         g._bot_secret = [0, 1, 2, 3]
         g.submit_human_guess([0, 1, 2, 3])
         assert g.phase == GamePhase.FINISHED
         assert g.result.outcome == "human_win"
         assert g.result.human_solved
 
-    def test_12_guess_limit_human(self):
-        g = SequentialDuelGame(bot_seed=2)
+    def test_bot_win_immediate(self):
+        g = SequentialDuelGame(bot_seed=42, difficulty="normal")
+        _setup_human(g, [0, 0, 1, 1])
+        g.submit_human_guess([9, 9, 9, 9])
+        assert g.phase == GamePhase.BOT_TURN
+        g.bot_make_guess()
+        assert g.phase == GamePhase.FINISHED
+        assert g.result.bot_solved
+
+    def test_draw_at_12_each(self):
+        g = SequentialDuelGame(bot_seed=2, difficulty="easy")
         _setup_human(g, [0, 0, 0, 0])
-        g.run_all_bot_guesses()
         g._bot_secret = [9, 9, 9, 9]
-        for _ in range(MAX_GUESSES):
-            g.submit_human_guess([1, 1, 1, 1])
+        miss = [1, 1, 1, 1]
+        safety = 0
+        while g.phase != GamePhase.FINISHED and safety < 30:
+            if g.phase == GamePhase.HUMAN_TURN:
+                g.submit_human_guess(miss)
+            elif g.phase == GamePhase.BOT_TURN:
+                g.bot_make_guess()
+            safety += 1
         assert g.phase == GamePhase.FINISHED
         assert not g.result.human_solved
+        assert not g.result.bot_solved
+        assert g.result.outcome == "draw"
         assert len(g.human_guesses) == MAX_GUESSES
+        assert len(g.bot_guesses) == MAX_GUESSES
+
+    def test_bot_memory_persists(self):
+        g = SequentialDuelGame(bot_seed=7, difficulty="normal")
+        _setup_human(g, [2, 5, 8, 1])
+        g.submit_human_guess([0, 0, 0, 0])
+        assert g.phase == GamePhase.BOT_TURN
+        bot = g._bot
+        assert isinstance(bot, SolverBot)
+        count_before = bot.candidate_count
+        g.bot_make_guess()
+        count_after = bot.candidate_count
+        assert count_after < count_before
 
     def test_illegal_guess_rejected(self):
         g = SequentialDuelGame()
         _setup_human(g, [0, 1, 2, 3])
-        g.run_all_bot_guesses()
         with pytest.raises(GameActionError):
             g.submit_human_guess([0, 1, 2])
+        assert len(g.human_guesses) == 0
+        assert g.phase == GamePhase.HUMAN_TURN
 
     def test_bot_only_legal_guesses(self):
         bot = RandomBot(seed=42)
@@ -99,6 +146,11 @@ class TestComputeResult:
     def test_both_solve_equal_draw(self):
         r = compute_result(True, True, 3, 3, [], [])
         assert r.outcome == "draw"
+
+    def test_both_exhausted_is_draw(self):
+        r = compute_result(False, False, MAX_GUESSES, MAX_GUESSES, [], [])
+        assert r.outcome == "draw"
+        assert "12" in r.message
 
     def test_neither_solved_tiebreak(self):
         hg = [GuessRecord([0, 1, 2, 3], 2, 1)]
