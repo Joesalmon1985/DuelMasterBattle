@@ -3,13 +3,18 @@ from __future__ import annotations
 from collections import Counter
 from typing import List, Tuple
 
-from .code import validate_code
+from .code import CodeValidationError, validate_colour
 
 
 def score_guess(secret: List[int], guess: List[int]) -> Tuple[int, int]:
     """Return (exact, colour_only) using multiset Mastermind scoring."""
-    validate_code(secret)
-    validate_code(guess)
+    if len(secret) != len(guess):
+        raise CodeValidationError(
+            f"secret and guess must have equal length, got {len(secret)} vs {len(guess)}"
+        )
+    for s, g in zip(secret, guess):
+        validate_colour(int(s))
+        validate_colour(int(g))
 
     exact = 0
     secret_remaining: List[int] = []

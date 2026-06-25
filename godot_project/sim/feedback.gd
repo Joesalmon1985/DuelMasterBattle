@@ -3,12 +3,13 @@ extends RefCounted
 
 
 static func score_guess(secret: Array, guess: Array) -> Vector2i:
-	DmbCode.validate_code(secret)
-	DmbCode.validate_code(guess)
+	assert(secret.size() == guess.size(), "secret and guess must have equal length")
+	DmbCode.validate_code_length(secret, secret.size())
+	DmbCode.validate_code_length(guess, guess.size())
 	var exact := 0
 	var secret_remaining: Array = []
 	var guess_remaining: Array = []
-	for i in range(DmbConstants.CODE_LENGTH):
+	for i in range(secret.size()):
 		if int(secret[i]) == int(guess[i]):
 			exact += 1
 		else:
