@@ -7,3 +7,5 @@ func run() -> void:
 	assert_eq(fb, Vector2i(1, 2), "mixed")
 	fb = DmbFeedback.score_guess([0, 0, 1, 2], [0, 0, 0, 0])
 	assert_eq(fb, Vector2i(2, 0), "duplicate exact")
+	fb = DmbFeedback.score_guess([2], [2])
+	assert_eq(fb, Vector2i(1, 0), "one slot exact")

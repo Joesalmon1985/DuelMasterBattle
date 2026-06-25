@@ -1,39 +1,42 @@
 import pytest
 
-from duel_mastermind import (
-    CODE_LENGTH,
-    MAX_GUESSES,
-    NUM_COLOURS,
-    CodeValidationError,
-    SecretCode,
-    is_valid_code,
-    score_guess,
-    validate_code,
-)
+from duel_mastermind import score_guess
+from duel_mastermind.code import CodeValidationError, validate_code_for_ruleset
+from duel_mastermind.encounters import get_encounter
 
 
-class TestCodeValidation:
-    def test_valid_code(self):
-        validate_code([0, 1, 2, 3])
-        assert is_valid_code([9, 9, 9, 9])
+class TestVariableSlotFeedback:
+    @pytest.mark.parametrize(
+        "secret,guess,expected",
+        [
+            ([1], [1], (1, 0)),
+            ([1], [2], (0, 0)),
+            ([1, 2], [2, 1], (0, 2)),
+            ([0, 1, 2, 3], [0, 1, 2, 3], (4, 0)),
+        ],
+    )
+    def test_score_guess_variable_lengths(self, secret, guess, expected):
+        assert score_guess(secret, guess) == expected
 
-    def test_wrong_length_rejected(self):
+    def test_mismatched_lengths_rejected(self):
         with pytest.raises(CodeValidationError):
-            validate_code([0, 1, 2])
-        with pytest.raises(CodeValidationError):
-            validate_code([0, 1, 2, 3, 4])
+            score_guess([1, 2], [1])
 
-    def test_out_of_range_rejected(self):
-        with pytest.raises(CodeValidationError):
-            validate_code([-1, 0, 1, 2])
-        with pytest.raises(CodeValidationError):
-            validate_code([0, 1, 2, 10])
 
-    def test_duplicate_colours_allowed(self):
-        c = SecretCode([0, 0, 1, 1])
-        assert c.pegs == [0, 0, 1, 1]
+class TestRulesetCodeValidation:
+    def test_secret_pool_validation(self):
+        rs = get_encounter("blue_apprentice")
+        validate_code_for_ruleset([1], rs, rs.secret_magic_pool)
+        with pytest.raises(CodeValidationError):
+            validate_code_for_ruleset([0], rs, rs.secret_magic_pool)
 
-    def test_constants(self):
-        assert CODE_LENGTH == 4
-        assert NUM_COLOURS == 10
-        assert MAX_GUESSES == 12
+    def test_attack_pool_validation(self):
+        rs = get_encounter("blue_apprentice")
+        validate_code_for_ruleset([0], rs, rs.attack_magic_pool)
+        with pytest.raises(CodeValidationError):
+            validate_code_for_ruleset([5], rs, rs.attack_magic_pool)
+
+    def test_wrong_slot_count(self):
+        rs = get_encounter("thorn_adept")
+        with pytest.raises(CodeValidationError):
+            validate_code_for_ruleset([0], rs, rs.attack_magic_pool)

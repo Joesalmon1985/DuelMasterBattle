@@ -7,8 +7,9 @@ func run() -> void:
 	_test_setup_starts_human_turn()
 	_test_human_then_bot_alternation()
 	_test_human_win()
-	_test_draw_at_twelve_each()
+	_test_draw_at_exhaustion()
 	_test_bot_memory_persists()
+	_test_blue_apprentice_one_slot()
 
 
 func _setup_human(g: DmbSequentialDuelGame, code: Array) -> void:
@@ -18,15 +19,17 @@ func _setup_human(g: DmbSequentialDuelGame, code: Array) -> void:
 
 
 func _test_setup_starts_human_turn() -> void:
-	var g := DmbSequentialDuelGame.new(1)
+	var rs := DmbEncounters.get_encounter("archmage_duel")
+	var g := DmbSequentialDuelGame.new(rs, 1)
 	assert_eq(g.phase, DmbSequentialDuelGame.GamePhase.HUMAN_SETUP)
 	_setup_human(g, [0, 1, 2, 3])
 	assert_eq(g.phase, DmbSequentialDuelGame.GamePhase.HUMAN_TURN)
-	assert_true(g.get_bot_secret().size() == DmbConstants.CODE_LENGTH)
+	assert_true(g.get_bot_secret().size() == rs.slot_count)
 
 
 func _test_human_then_bot_alternation() -> void:
-	var g := DmbSequentialDuelGame.new(5)
+	var rs := DmbEncounters.get_encounter("archmage_duel")
+	var g := DmbSequentialDuelGame.new(rs, 5)
 	_setup_human(g, [0, 1, 2, 3])
 	g.submit_human_guess([1, 1, 1, 1])
 	assert_eq(g.phase, DmbSequentialDuelGame.GamePhase.BOT_TURN)
@@ -37,16 +40,18 @@ func _test_human_then_bot_alternation() -> void:
 
 
 func _test_human_win() -> void:
-	var g := DmbSequentialDuelGame.new(99)
+	var rs := DmbEncounters.get_encounter("archmage_duel")
+	var g := DmbSequentialDuelGame.new(rs, 99)
 	_setup_human(g, [5, 5, 5, 5])
-	# bot secret is generated at lock; override for deterministic test
 	g.submit_human_guess(g.get_bot_secret())
 	assert_eq(g.phase, DmbSequentialDuelGame.GamePhase.FINISHED)
 	assert_true(g.result.human_solved)
 
 
-func _test_draw_at_twelve_each() -> void:
-	var g := DmbSequentialDuelGame.new(2, "easy")
+func _test_draw_at_exhaustion() -> void:
+	var rs := DmbEncounters.get_encounter("archmage_duel")
+	var g := DmbSequentialDuelGame.new(rs, 2)
+	g._bot = DmbRandomBot.new(rs, 2)
 	_setup_human(g, [0, 0, 0, 0])
 	g._bot_secret = [9, 9, 9, 9]
 	var miss := [1, 1, 1, 1]
@@ -59,12 +64,13 @@ func _test_draw_at_twelve_each() -> void:
 		safety += 1
 	assert_eq(g.phase, DmbSequentialDuelGame.GamePhase.FINISHED)
 	assert_eq(g.result.outcome, "draw")
-	assert_eq(g.human_guesses.size(), DmbConstants.MAX_GUESSES)
-	assert_eq(g.bot_guesses.size(), DmbConstants.MAX_GUESSES)
+	assert_eq(g.human_guesses.size(), rs.effective_max_attacks())
+	assert_eq(g.bot_guesses.size(), rs.effective_max_attacks())
 
 
 func _test_bot_memory_persists() -> void:
-	var g := DmbSequentialDuelGame.new(7, "normal")
+	var rs := DmbEncounters.get_encounter("archmage_duel")
+	var g := DmbSequentialDuelGame.new(rs, 7)
 	_setup_human(g, [2, 5, 8, 1])
 	g.submit_human_guess([0, 0, 0, 0])
 	assert_eq(g.phase, DmbSequentialDuelGame.GamePhase.BOT_TURN)
@@ -73,3 +79,14 @@ func _test_bot_memory_persists() -> void:
 	var before: int = bot.candidate_count()
 	g.bot_make_guess()
 	assert_true(bot.candidate_count() < before)
+
+
+func _test_blue_apprentice_one_slot() -> void:
+	var rs := DmbEncounters.get_encounter("blue_apprentice")
+	var g := DmbSequentialDuelGame.new(rs, 3)
+	g._bot = DmbSolverBot.new(rs)
+	_setup_human(g, [1])
+	g.submit_human_guess([0])
+	assert_eq(g.phase, DmbSequentialDuelGame.GamePhase.BOT_TURN)
+	g.bot_make_guess()
+	assert_eq(g.phase, DmbSequentialDuelGame.GamePhase.HUMAN_TURN)

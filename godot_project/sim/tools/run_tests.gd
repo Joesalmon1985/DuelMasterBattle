@@ -3,6 +3,7 @@ extends SceneTree
 const TESTS := [
 	"res://sim/tests/test_code.gd",
 	"res://sim/tests/test_feedback.gd",
+	"res://sim/tests/test_encounters.gd",
 	"res://sim/tests/test_fixtures.gd",
 	"res://sim/tests/test_game_state.gd",
 	"res://sim/tests/test_solver_bot.gd",

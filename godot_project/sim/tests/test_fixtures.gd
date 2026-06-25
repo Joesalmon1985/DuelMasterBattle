@@ -30,7 +30,7 @@ func _test_bot() -> void:
 	for g in data["guesses"]:
 		assert_true(DmbCode.is_valid_code(g), "fixture guess legal")
 	assert_true(DmbCode.is_valid_code(data["code"]), "fixture code legal")
-	var bot := DmbRandomBot.new(42)
+	var bot := DmbRandomBot.new(DmbEncounters.default_encounter(), 42)
 	for _i in range(50):
 		assert_true(bot.is_legal_guess(bot.make_guess()))
 	assert_true(bot.is_legal_guess(bot.generate_code()))

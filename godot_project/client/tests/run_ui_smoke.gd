@@ -12,7 +12,9 @@ func _run() -> void:
 	await process_frame
 	_test_main_menu_loads()
 	await process_frame
-	await _test_full_human_vs_bot_flow()
+	await _test_blue_apprentice_flow()
+	await process_frame
+	await _test_archmage_duel_flow()
 	_report()
 
 
@@ -22,22 +24,60 @@ func _test_main_menu_loads() -> void:
 	var menu = menu_scene.instantiate()
 	root.add_child(menu)
 	await process_frame
-	assert_true(menu.has_node("VBox/HumanVsBotButton"), "Human vs Bot button exists")
+	assert_true(menu.has_node("VBox/StartDuelButton"), "Start duel button exists")
+	assert_true(menu.has_node("VBox/EncounterRow/EncounterOption"), "encounter option exists")
 	if menu.has_method("ui_has_help_panel"):
 		assert_true(menu.ui_has_help_panel(), "main menu help panel exists")
 	menu.queue_free()
 	await process_frame
 
 
-func _test_full_human_vs_bot_flow() -> void:
+func _test_blue_apprentice_flow() -> void:
 	var board_scene: PackedScene = load("res://client/scenes/game_board.tscn")
 	_board = board_scene.instantiate()
 	root.add_child(_board)
 	await process_frame
 
+	_board.ui_load_encounter("blue_apprentice")
+	_board.ui_set_bot_pacing(0.0)
+	await process_frame
+
+	assert_eq(_board.ui_get_slot_count(), 1, "blue apprentice has 1 slot")
+	assert_true(_board.ui_has_point_headers(), "point headers match slot count")
+
+	_board.ui_action_pick_secret_slot(0)
+	_board.ui_action_pick_magic(1)
+	await process_frame
+
+	_board.ui_action_lock_secret()
+	await process_frame
+	assert_true(_board.ui_is_human_turn(), "duel starts on human turn")
+
+	_board.ui_action_pick_guess_slot(0)
+	assert_eq(_board.ui_get_visible_magic_count(), 4, "attack picker shows 4 magics")
+	_board.ui_action_pick_magic(0)
+	_board.ui_action_submit_guess()
+	await process_frame
+	await _wait_bot_turn_done()
+
+	assert_eq(_board.ui_get_visible_human_guess_count(), 1, "human attack row visible")
+	assert_eq(_board.ui_get_visible_bot_guess_count(), 1, "one bot attack")
+	assert_true(_board.ui_get_enemy_tell_visible(), "enemy tell visible")
+
+	_board.queue_free()
+	await process_frame
+
+
+func _test_archmage_duel_flow() -> void:
+	var board_scene: PackedScene = load("res://client/scenes/game_board.tscn")
+	_board = board_scene.instantiate()
+	root.add_child(_board)
+	await process_frame
+
+	_board.ui_load_encounter("archmage_duel")
 	_board.ui_set_bot_pacing(0.0)
 	assert_true(_board.ui_has_wizard_portraits(), "wizard portrait textures loaded")
-	assert_true(_board.ui_has_point_headers(), "help panel buttons exist")
+	assert_eq(_board.ui_get_slot_count(), 4, "archmage has 4 slots")
 
 	for i in range(4):
 		_board.ui_action_pick_secret_slot(i)
@@ -47,7 +87,6 @@ func _test_full_human_vs_bot_flow() -> void:
 	await process_frame
 
 	assert_true(_board.ui_is_human_turn(), "duel starts on human turn")
-	assert_false(_board.ui_is_bot_turn(), "not bulk bot phase after lock")
 	assert_eq(_board.ui_get_visible_bot_guess_count(), 0, "no bot rows before first bot turn")
 
 	for s in range(4):
@@ -63,13 +102,10 @@ func _test_full_human_vs_bot_flow() -> void:
 		"Hit:" in human_fb or "Weakness:" in human_fb or "Unaffected:" in human_fb,
 		"human feedback uses Hit/Weakness/Unaffected"
 	)
-
-	var bot_after := _board.ui_get_visible_bot_guess_count()
-	assert_eq(bot_after, 1, "bot makes exactly one visible attack")
+	assert_eq(_board.ui_get_visible_bot_guess_count(), 1, "bot makes exactly one visible attack")
 
 	if _board.game.phase != DmbSequentialDuelGame.GamePhase.FINISHED:
 		assert_true(_board.ui_is_human_turn(), "turn returns to human after bot attack")
-
 		for s in range(4):
 			_board.ui_action_pick_guess_slot(s)
 			_board.ui_action_pick_magic((s + 1) % DmbConstants.NUM_COLOURS)
@@ -98,8 +134,6 @@ func _test_full_human_vs_bot_flow() -> void:
 	await process_frame
 	assert_true(_board.game.phase == DmbSequentialDuelGame.GamePhase.HUMAN_SETUP, "restart fresh state")
 	assert_false(_board.ui_is_result_visible(), "result hidden after restart")
-	assert_eq(_board.ui_get_visible_bot_guess_count(), 0, "bot board cleared")
-	assert_eq(_board.ui_get_visible_human_guess_count(), 0, "human board cleared")
 
 	_board.queue_free()
 

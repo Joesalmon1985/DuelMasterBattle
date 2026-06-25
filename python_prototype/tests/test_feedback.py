@@ -26,3 +26,9 @@ class TestFeedback:
     def test_invalid_guess_raises(self):
         with pytest.raises(CodeValidationError):
             score_guess([0, 1, 2, 3], [0, 1, 2])
+
+    def test_one_slot(self):
+        assert score_guess([2], [2]) == (1, 0)
+
+    def test_two_slot(self):
+        assert score_guess([1, 2], [2, 1]) == (0, 2)

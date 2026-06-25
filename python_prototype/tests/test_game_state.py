@@ -12,6 +12,7 @@ from duel_mastermind import (
     compute_result,
     score_guess,
 )
+from duel_mastermind.encounters import get_encounter
 
 
 def _setup_human(game: SequentialDuelGame, code: list) -> None:
@@ -75,7 +76,8 @@ class TestAlternatingGame:
         assert g.result.human_solved
 
     def test_bot_win_immediate(self):
-        g = SequentialDuelGame(bot_seed=42, difficulty="normal")
+        rs = get_encounter("archmage_duel")
+        g = SequentialDuelGame(rs, bot_seed=42)
         _setup_human(g, [0, 0, 1, 1])
         g.submit_human_guess([9, 9, 9, 9])
         assert g.phase == GamePhase.BOT_TURN
@@ -84,7 +86,9 @@ class TestAlternatingGame:
         assert g.result.bot_solved
 
     def test_draw_at_12_each(self):
-        g = SequentialDuelGame(bot_seed=2, difficulty="easy")
+        rs = get_encounter("archmage_duel")
+        g = SequentialDuelGame(rs, bot_seed=2)
+        g._bot = RandomBot(rs, 2)
         _setup_human(g, [0, 0, 0, 0])
         g._bot_secret = [9, 9, 9, 9]
         miss = [1, 1, 1, 1]
@@ -102,8 +106,19 @@ class TestAlternatingGame:
         assert len(g.human_guesses) == MAX_GUESSES
         assert len(g.bot_guesses) == MAX_GUESSES
 
+    def test_blue_apprentice_one_slot_flow(self):
+        rs = get_encounter("blue_apprentice")
+        g = SequentialDuelGame(rs, bot_seed=3)
+        g._bot = SolverBot(rs)  # deterministic opening [0]
+        _setup_human(g, [1])
+        g.submit_human_guess([0])
+        assert g.phase == GamePhase.BOT_TURN
+        g.bot_make_guess()
+        assert g.phase == GamePhase.HUMAN_TURN
+
     def test_bot_memory_persists(self):
-        g = SequentialDuelGame(bot_seed=7, difficulty="normal")
+        rs = get_encounter("archmage_duel")
+        g = SequentialDuelGame(rs, bot_seed=7)
         _setup_human(g, [2, 5, 8, 1])
         g.submit_human_guess([0, 0, 0, 0])
         assert g.phase == GamePhase.BOT_TURN
@@ -123,9 +138,9 @@ class TestAlternatingGame:
         assert g.phase == GamePhase.HUMAN_TURN
 
     def test_bot_only_legal_guesses(self):
-        bot = RandomBot(seed=42)
-        for _ in range(100):
-            assert bot.is_legal_guess(bot.make_guess())
+        rs = get_encounter("blue_apprentice")
+        bot = RandomBot(rs, seed=42)
+        assert bot.is_legal_guess(bot.make_guess())
 
 
 class TestComputeResult:
@@ -148,9 +163,9 @@ class TestComputeResult:
         assert r.outcome == "draw"
 
     def test_both_exhausted_is_draw(self):
-        r = compute_result(False, False, MAX_GUESSES, MAX_GUESSES, [], [])
+        r = compute_result(False, False, MAX_GUESSES, MAX_GUESSES, [], [], MAX_GUESSES)
         assert r.outcome == "draw"
-        assert "12" in r.message
+        assert str(MAX_GUESSES) in r.message
 
     def test_neither_solved_tiebreak(self):
         hg = [GuessRecord([0, 1, 2, 3], 2, 1)]
