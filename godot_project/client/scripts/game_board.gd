@@ -7,10 +7,11 @@ const _Art = preload("res://client/scripts/art.gd")
 const HOW_TO_PLAY_TEXT := (
 	"How to play:\n"
 	+ "• Pick a magic type for each point: Shield, Body, Staff, Mind.\n"
-	+ "• Cast pattern to lock your secret; the enemy wizard attacks first.\n"
+	+ "• Cast pattern to lock your secret; the bot sets its hidden pattern too.\n"
+	+ "• You attack first; then turns alternate one attack at a time.\n"
 	+ "• Hit = right magic, right point.\n"
 	+ "• Weakness = right magic, wrong point.\n"
-	+ "• Use enemy attack feedback to deduce their hidden pattern, then Attack."
+	+ "• Use feedback to deduce the enemy pattern before they break yours."
 )
 const HOW_FEEDBACK_TEXT := (
 	"How feedback works:\n"
@@ -27,6 +28,9 @@ signal game_finished
 @onready var lock_button: Button = $VBox/DuelPanel/PlayerColumn/SecretSection/SecretRow/LockButton
 @onready var bot_board: VBoxContainer = $VBox/DuelPanel/EnemyColumn/BotScroll/BotBoard
 @onready var bot_scroll: ScrollContainer = $VBox/DuelPanel/EnemyColumn/BotScroll
+@onready var human_attack_section: VBoxContainer = $VBox/DuelPanel/PlayerColumn/HumanAttackSection
+@onready var human_history_board: VBoxContainer = $VBox/DuelPanel/PlayerColumn/HumanAttackSection/HumanHistoryScroll/HumanHistoryBoard
+@onready var human_history_scroll: ScrollContainer = $VBox/DuelPanel/PlayerColumn/HumanAttackSection/HumanHistoryScroll
 @onready var human_guess_section: VBoxContainer = $VBox/HumanGuessSection
 @onready var human_guess_row: HBoxContainer = $VBox/HumanGuessSection/HumanGuessRow
 @onready var submit_button: Button = $VBox/HumanGuessSection/HumanGuessRow/SubmitButton
@@ -49,6 +53,7 @@ var _magic_picker: PanelContainer
 var _secret_slots: Array = []
 var _guess_slots: Array = []
 var _bot_rows: Array = []
+var _human_rows: Array = []
 var _active_mode: String = ""
 var _active_slot: int = -1
 var _bot_seed: int = 42
@@ -179,6 +184,7 @@ func start_new_game(bot_seed: int = 42) -> void:
 	help_content.visible = false
 	_help_mode = ""
 	_clear_bot_rows()
+	_clear_human_rows()
 	_refresh_all()
 
 
@@ -199,7 +205,7 @@ func _on_secret_slot_pressed(slot: int) -> void:
 
 
 func _on_guess_slot_pressed(slot: int) -> void:
-	if game.phase != DmbSequentialDuelGame.GamePhase.HUMAN_GUESSING:
+	if game.phase != DmbSequentialDuelGame.GamePhase.HUMAN_TURN:
 		return
 	_active_mode = "guess"
 	_active_slot = slot
@@ -227,38 +233,47 @@ func _on_lock_pressed() -> void:
 		return
 	game.lock_human_secret()
 	_refresh_all()
-	_run_bot_guesses_stepwise.call_deferred()
 
 
 func _on_skip_pressed() -> void:
 	_skip_bot_attacks = true
 
 
-func _run_bot_guesses_stepwise() -> void:
-	_skip_bot_attacks = false
-	skip_button.visible = true
-	while game.phase == DmbSequentialDuelGame.GamePhase.BOT_GUESSING:
-		var rec := game.bot_make_guess()
-		if rec == null:
-			break
-		_add_bot_row(rec)
-		_highlight_latest_bot_row()
-		_scroll_bot_board_to_end()
-		_refresh_all()
-		if _skip_bot_attacks or _bot_attack_delay_sec <= 0.0:
-			continue
-		await get_tree().create_timer(_bot_attack_delay_sec).timeout
-	skip_button.visible = false
-	_refresh_all()
-
-
 func _on_submit_pressed() -> void:
 	if not game.can_submit_human_guess():
 		return
-	game.submit_human_guess()
+	var rec := game.submit_human_guess()
+	_add_human_row(rec)
+	_scroll_human_board_to_end()
 	_refresh_all()
 	if game.phase == DmbSequentialDuelGame.GamePhase.FINISHED:
 		_show_result()
+	elif game.phase == DmbSequentialDuelGame.GamePhase.BOT_TURN:
+		_run_single_bot_turn.call_deferred()
+
+
+func _run_single_bot_turn() -> void:
+	_skip_bot_attacks = false
+	skip_button.visible = true
+	if game.phase != DmbSequentialDuelGame.GamePhase.BOT_TURN:
+		skip_button.visible = false
+		return
+	var rec := game.bot_make_guess()
+	if rec != null:
+		_add_bot_row(rec)
+		_highlight_latest_bot_row()
+		_scroll_bot_board_to_end()
+	_refresh_all()
+	if game.phase == DmbSequentialDuelGame.GamePhase.FINISHED:
+		skip_button.visible = false
+		_show_result()
+		return
+	if _skip_bot_attacks or _bot_attack_delay_sec <= 0.0:
+		skip_button.visible = false
+		return
+	await get_tree().create_timer(_bot_attack_delay_sec).timeout
+	skip_button.visible = false
+	_refresh_all()
 
 
 func _on_restart_pressed() -> void:
@@ -276,6 +291,18 @@ func _add_bot_row(rec: DmbGuessRecord) -> void:
 	_bot_rows.append(row)
 
 
+func _add_human_row(rec: DmbGuessRecord) -> void:
+	if _human_rows.size() > 0:
+		var prev: FeedbackDisplay = _human_rows[_human_rows.size() - 1]
+		prev.set_highlighted(false)
+	var row := FeedbackDisplay.new()
+	row.name = "HumanRow%d" % _human_rows.size()
+	human_history_board.add_child(row)
+	row.show_guess(rec.guess, rec.exact, rec.colour_only)
+	row.set_highlighted(true)
+	_human_rows.append(row)
+
+
 func _highlight_latest_bot_row() -> void:
 	if _bot_rows.is_empty():
 		return
@@ -288,6 +315,21 @@ func _scroll_bot_board_to_end() -> void:
 	var vbar := bot_scroll.get_v_scroll_bar()
 	if vbar != null:
 		bot_scroll.scroll_vertical = int(vbar.max_value)
+
+
+func _scroll_human_board_to_end() -> void:
+	await get_tree().process_frame
+	var vbar := human_history_scroll.get_v_scroll_bar()
+	if vbar != null:
+		human_history_scroll.scroll_vertical = int(vbar.max_value)
+
+
+func _clear_human_rows() -> void:
+	for r in _human_rows:
+		r.queue_free()
+	_human_rows.clear()
+	for c in human_history_board.get_children():
+		c.queue_free()
 
 
 func _clear_bot_rows() -> void:
@@ -311,19 +353,10 @@ func _update_status() -> void:
 	match game.phase:
 		DmbSequentialDuelGame.GamePhase.HUMAN_SETUP:
 			status_label.text = "Choose your magical pattern"
-		DmbSequentialDuelGame.GamePhase.BOT_GUESSING:
+		DmbSequentialDuelGame.GamePhase.HUMAN_TURN:
+			status_label.text = "Your turn to attack (%d left)" % game.human_guesses_remaining()
+		DmbSequentialDuelGame.GamePhase.BOT_TURN:
 			status_label.text = "Enemy wizard is attacking"
-		DmbSequentialDuelGame.GamePhase.HUMAN_GUESSING:
-			var bot_msg := ""
-			if game.bot_guesses.size() > 0:
-				var last: DmbGuessRecord = game.bot_guesses[game.bot_guesses.size() - 1]
-				if last.exact == DmbConstants.CODE_LENGTH:
-					bot_msg = "Enemy SOLVED your pattern in %d attacks! " % game.bot_guesses.size()
-				else:
-					bot_msg = "Enemy FAILED after %d attacks. "
-			status_label.text = "%sEnemy pattern hidden — Your turn to attack (%d left)" % [
-				bot_msg, game.human_guesses_remaining()
-			]
 		DmbSequentialDuelGame.GamePhase.FINISHED:
 			status_label.text = "Duel result"
 
@@ -347,16 +380,17 @@ func _update_lock_button() -> void:
 
 func _update_magic_picker() -> void:
 	var active := game.phase == DmbSequentialDuelGame.GamePhase.HUMAN_SETUP \
-		or game.phase == DmbSequentialDuelGame.GamePhase.HUMAN_GUESSING
+		or game.phase == DmbSequentialDuelGame.GamePhase.HUMAN_TURN
 	_magic_picker.set_interactive(active)
 	if not active:
 		_magic_picker.close()
 
 
 func _update_human_guess_row() -> void:
-	var active := game.phase == DmbSequentialDuelGame.GamePhase.HUMAN_GUESSING
-	var show_section := active or game.phase == DmbSequentialDuelGame.GamePhase.FINISHED
-	human_guess_section.visible = show_section
+	var active := game.phase == DmbSequentialDuelGame.GamePhase.HUMAN_TURN
+	var in_duel := game.phase != DmbSequentialDuelGame.GamePhase.HUMAN_SETUP
+	human_attack_section.visible = in_duel
+	human_guess_section.visible = in_duel or game.phase == DmbSequentialDuelGame.GamePhase.FINISHED
 	for i in range(_guess_slots.size()):
 		var slot: PegSlot = _guess_slots[i]
 		slot.disabled = not active
@@ -375,6 +409,21 @@ func _show_result() -> void:
 	result_panel.visible = true
 	if game.result:
 		var r := game.result
+		var headline := ""
+		if r.outcome == "human_win" and r.human_solved:
+			headline = "You broke the enemy pattern in %d attacks." % r.human_guess_count
+		elif r.outcome == "bot_win" and r.bot_solved:
+			headline = "The enemy wizard broke your pattern in %d attacks." % r.bot_guess_count
+		elif r.outcome == "draw" and not r.human_solved and not r.bot_solved:
+			headline = "Draw — both wizards used 12 attacks without breaking the pattern."
+		else:
+			match r.outcome:
+				"human_win":
+					headline = "You win!"
+				"bot_win":
+					headline = "Enemy wizard wins!"
+				_:
+					headline = "Draw!"
 		var winner := "Draw"
 		match r.outcome:
 			"human_win":
@@ -383,10 +432,11 @@ func _show_result() -> void:
 				winner = "Enemy wizard"
 		result_label.text = (
 			"Duel result\n\n"
+			+ "%s\n\n" % headline
 			+ "Winner: %s\n\n" % winner
-			+ "You: %s — %d attacks\n" % ["solved" if r.human_solved else "failed", r.human_guess_count]
-			+ "Enemy: %s — %d attacks"
-			% ["solved" if r.bot_solved else "failed", r.bot_guess_count]
+			+ "Your attacks used: %d\n" % r.human_guess_count
+			+ "Enemy attacks used: %d"
+			% r.bot_guess_count
 		)
 	game_finished.emit()
 
@@ -442,6 +492,29 @@ func ui_action_submit_guess() -> void:
 
 func ui_action_restart() -> void:
 	_on_restart_pressed()
+
+
+func ui_get_visible_human_guess_count() -> int:
+	return _human_rows.size()
+
+
+func ui_get_human_feedback_text() -> String:
+	if _human_rows.is_empty():
+		return ""
+	var row: FeedbackDisplay = _human_rows[_human_rows.size() - 1]
+	return row.get_feedback_text()
+
+
+func ui_get_phase() -> int:
+	return game.phase
+
+
+func ui_is_human_turn() -> bool:
+	return game.phase == DmbSequentialDuelGame.GamePhase.HUMAN_TURN
+
+
+func ui_is_bot_turn() -> bool:
+	return game.phase == DmbSequentialDuelGame.GamePhase.BOT_TURN
 
 
 func ui_get_bot_feedback_count() -> int:

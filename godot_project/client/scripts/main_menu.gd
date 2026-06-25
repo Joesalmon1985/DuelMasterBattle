@@ -3,10 +3,11 @@ extends Control
 const HOW_TO_PLAY_TEXT := (
 	"How to play:\n"
 	+ "• Pick a magic type for each point: Shield, Body, Staff, Mind.\n"
-	+ "• Cast pattern to lock your secret; the enemy wizard attacks first.\n"
+	+ "• Cast pattern to lock your secret; the bot sets its hidden pattern too.\n"
+	+ "• You attack first; then turns alternate one attack at a time.\n"
 	+ "• Hit = right magic, right point.\n"
 	+ "• Weakness = right magic, wrong point.\n"
-	+ "• Use enemy attack feedback to deduce their hidden pattern, then Attack."
+	+ "• Use feedback to deduce the enemy pattern before they break yours."
 )
 
 @onready var human_vs_bot_btn: Button = $VBox/HumanVsBotButton

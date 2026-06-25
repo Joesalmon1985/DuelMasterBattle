@@ -120,6 +120,26 @@ layout_mode = 2
 disabled = true
 text = "Cast pattern"
 
+[node name="HumanAttackSection" type="VBoxContainer" parent="VBox/DuelPanel/PlayerColumn"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="HumanHistoryLabel" type="Label" parent="VBox/DuelPanel/PlayerColumn/HumanAttackSection"]
+layout_mode = 2
+text = "Your attacks against the enemy:"
+
+[node name="HumanHistoryScroll" type="ScrollContainer" parent="VBox/DuelPanel/PlayerColumn/HumanAttackSection"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="HumanHistoryBoard" type="VBoxContainer" parent="VBox/DuelPanel/PlayerColumn/HumanAttackSection/HumanHistoryScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
 [node name="EnemyColumn" type="VBoxContainer" parent="VBox/DuelPanel"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -142,7 +162,7 @@ text = "Enemy wizard"
 
 [node name="BotLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn"]
 layout_mode = 2
-text = "Enemy attacks:"
+text = "Enemy attacks against you:"
 
 [node name="BotScroll" type="ScrollContainer" parent="VBox/DuelPanel/EnemyColumn"]
 layout_mode = 2
@@ -205,7 +225,7 @@ text = "Attack"
 [node name="SkipButton" type="Button" parent="VBox"]
 visible = false
 layout_mode = 2
-text = "Skip enemy attacks"
+text = "Skip enemy attack"
 
 [node name="HelpRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
