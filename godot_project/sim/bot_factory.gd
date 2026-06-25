@@ -12,7 +12,9 @@ static func make_bot(difficulty: String = "expert", seed: int = 42) -> RefCounte
 			return _RandomBot.new(seed)
 		"normal":
 			return _SolverBot.new(_SolverBot.STRATEGY_RANDOM, seed)
-		"hard", "expert":
-			return _SolverBot.new(_SolverBot.STRATEGY_MINIMAX, seed)
+		"hard":
+			return _SolverBot.new(_SolverBot.STRATEGY_MINIMAX, seed, _SolverBot.MAX_MINIMAX_POOL_HARD)
+		"expert":
+			return _SolverBot.new(_SolverBot.STRATEGY_MINIMAX, seed, _SolverBot.MAX_MINIMAX_POOL_EXPERT)
 		_:
-			return _SolverBot.new(_SolverBot.STRATEGY_MINIMAX, seed)
+			return _SolverBot.new(_SolverBot.STRATEGY_MINIMAX, seed, _SolverBot.MAX_MINIMAX_POOL_EXPERT)

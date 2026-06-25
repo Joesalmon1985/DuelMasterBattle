@@ -4,18 +4,21 @@ extends RefCounted
 const OPENING_GUESS := [0, 0, 1, 1]
 const STRATEGY_RANDOM := "random"
 const STRATEGY_MINIMAX := "minimax"
-const MAX_MINIMAX_POOL := 100
+const MAX_MINIMAX_POOL_HARD := 100
+const MAX_MINIMAX_POOL_EXPERT := 500
 
 var _strategy: String = STRATEGY_MINIMAX
 var _seed: int = 0
 var _candidates: Array = []
 var _guess_count: int = 0
 var _all_codes: Array = []
+var _max_minimax_pool: int = MAX_MINIMAX_POOL_HARD
 
 
-func _init(strategy: String = STRATEGY_MINIMAX, seed: int = 0) -> void:
+func _init(strategy: String = STRATEGY_MINIMAX, seed: int = 0, max_minimax_pool: int = MAX_MINIMAX_POOL_HARD) -> void:
 	_strategy = strategy
 	_seed = seed
+	_max_minimax_pool = max_minimax_pool
 	_all_codes = _generate_all_codes()
 	_reset_candidates()
 
@@ -65,8 +68,8 @@ func _pick_minimax_guess() -> Array:
 	var best_worst := 10000
 	var best_is_candidate := false
 	var pool: Array = _candidates
-	if pool.size() > MAX_MINIMAX_POOL:
-		pool = pool.slice(0, MAX_MINIMAX_POOL)
+	if pool.size() > _max_minimax_pool:
+		pool = pool.slice(0, _max_minimax_pool)
 	for guess in pool:
 		var partitions: Dictionary = {}
 		for secret in _candidates:

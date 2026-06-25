@@ -28,10 +28,18 @@ class SolverBot:
 
     STRATEGY_RANDOM = "random"
     STRATEGY_MINIMAX = "minimax"
+    MAX_MINIMAX_POOL_HARD = 100
+    MAX_MINIMAX_POOL_EXPERT = 500
 
-    def __init__(self, strategy: str = STRATEGY_MINIMAX, seed: int = 0) -> None:
+    def __init__(
+        self,
+        strategy: str = STRATEGY_MINIMAX,
+        seed: int = 0,
+        max_minimax_pool: int = MAX_MINIMAX_POOL_HARD,
+    ) -> None:
         self._strategy = strategy
         self._seed = seed
+        self._max_minimax_pool = max_minimax_pool
         self._candidates: List[List[int]] = [list(c) for c in ALL_CODES]
         self._guess_count = 0
         self._last_guess: List[int] = []
@@ -69,7 +77,7 @@ class SolverBot:
         best_worst = 10_000
         best_is_candidate = False
         pool = self._candidates
-        pool = pool[:100]
+        pool = pool[: self._max_minimax_pool]
         for guess in pool:
             partitions: Dict[Tuple[int, int], int] = {}
             for secret in self._candidates:
