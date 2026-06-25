@@ -8,7 +8,8 @@ static func compute_result(
 	human_guess_count: int,
 	bot_guess_count: int,
 	human_guesses: Array,
-	bot_guesses: Array
+	bot_guesses: Array,
+	max_attacks: int = DmbConstants.MAX_GUESSES
 ) -> DmbGameResult:
 	if human_solved and not bot_solved:
 		return DmbGameResult.new("human_win", true, false, human_guess_count, bot_guess_count,
@@ -28,12 +29,12 @@ static func compute_result(
 	if (
 		not human_solved
 		and not bot_solved
-		and human_guess_count >= DmbConstants.MAX_GUESSES
-		and bot_guess_count >= DmbConstants.MAX_GUESSES
+		and human_guess_count >= max_attacks
+		and bot_guess_count >= max_attacks
 	):
 		return DmbGameResult.new(
 			"draw", false, false, human_guess_count, bot_guess_count,
-			"Neither solved after 12 attacks each — draw!"
+			"Neither solved after %d attacks each — draw!" % max_attacks
 		)
 	var h_best := _best_progress(human_guesses)
 	var b_best := _best_progress(bot_guesses)

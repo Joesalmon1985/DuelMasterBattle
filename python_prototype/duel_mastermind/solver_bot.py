@@ -1,23 +1,22 @@
 from __future__ import annotations
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
-from .code import validate_code
-from .constants import CODE_LENGTH, MAX_COLOUR, MIN_COLOUR, NUM_COLOURS
+from .bot import RandomBot
+from .candidate_gen import (
+    candidate_count_for_ruleset,
+    generate_candidate_codes,
+    opening_guess_for_ruleset,
+)
+from .code import validate_code_for_ruleset
+from .duel_ruleset import DuelRuleset
+from .encounters import default_encounter
 from .feedback import score_guess
 
-OPENING_GUESS: List[int] = [0, 0, 1, 1]
 
-
-def generate_all_codes() -> List[List[int]]:
-    """All 10^4 codes for length 4, 10 colours, repeats allowed."""
-    codes: List[List[int]] = []
-    for a in range(NUM_COLOURS):
-        for b in range(NUM_COLOURS):
-            for c in range(NUM_COLOURS):
-                for d in range(NUM_COLOURS):
-                    codes.append([a, b, c, d])
-    return codes
+def generate_all_codes(ruleset: DuelRuleset | None = None) -> List[List[int]]:
+    rs = ruleset or default_encounter()
+    return generate_candidate_codes(rs)
 
 
 ALL_CODES: List[List[int]] = generate_all_codes()
@@ -33,14 +32,17 @@ class SolverBot:
 
     def __init__(
         self,
+        ruleset: DuelRuleset | None = None,
         strategy: str = STRATEGY_MINIMAX,
         seed: int = 0,
         max_minimax_pool: int = MAX_MINIMAX_POOL_HARD,
     ) -> None:
+        self._ruleset = ruleset or default_encounter()
         self._strategy = strategy
         self._seed = seed
         self._max_minimax_pool = max_minimax_pool
-        self._candidates: List[List[int]] = [list(c) for c in ALL_CODES]
+        self._all_codes = generate_candidate_codes(self._ruleset)
+        self._candidates: List[List[int]] = [list(c) for c in self._all_codes]
         self._guess_count = 0
         self._last_guess: List[int] = []
 
@@ -48,9 +50,12 @@ class SolverBot:
     def candidate_count(self) -> int:
         return len(self._candidates)
 
+    def all_code_count(self) -> int:
+        return len(self._all_codes)
+
     @staticmethod
-    def all_code_count() -> int:
-        return len(ALL_CODES)
+    def archmage_code_count() -> int:
+        return candidate_count_for_ruleset(default_encounter())
 
     def register_feedback(self, guess: List[int], exact: int, colour_only: int) -> None:
         target = (exact, colour_only)
@@ -60,7 +65,7 @@ class SolverBot:
 
     def make_guess(self) -> List[int]:
         if self._guess_count == 0:
-            guess = list(OPENING_GUESS)
+            guess = opening_guess_for_ruleset(self._ruleset)
         elif self._strategy == self.STRATEGY_RANDOM:
             idx = (self._seed + self._guess_count) % len(self._candidates)
             guess = list(self._candidates[idx])
@@ -76,8 +81,7 @@ class SolverBot:
         best_guess: List[int] | None = None
         best_worst = 10_000
         best_is_candidate = False
-        pool = self._candidates
-        pool = pool[: self._max_minimax_pool]
+        pool = self._candidates[: self._max_minimax_pool]
         for guess in pool:
             partitions: Dict[Tuple[int, int], int] = {}
             for secret in self._candidates:
@@ -100,25 +104,34 @@ class SolverBot:
         import random
 
         rng = random.Random(self._seed + 999)
-        return [rng.randrange(NUM_COLOURS) for _ in range(CODE_LENGTH)]
+        pool = self._ruleset.secret_magic_pool
+        n = self._ruleset.slot_count
+        if self._ruleset.allow_repeats:
+            return [rng.choice(pool) for _ in range(n)]
+        return rng.sample(pool, n)
 
     def is_legal_guess(self, guess: List[int]) -> bool:
         try:
-            validate_code(guess)
+            validate_code_for_ruleset(guess, self._ruleset, self._ruleset.attack_magic_pool)
             return True
         except Exception:
             return False
 
-    def solve_secret(self, secret: List[int], max_guesses: int = 12) -> Tuple[bool, int, List[List[int]]]:
+    def solve_secret(self, secret: List[int], max_guesses: int | None = None) -> Tuple[bool, int, List[List[int]]]:
         """Deterministic solve loop for tests."""
-        self._candidates = [list(c) for c in ALL_CODES]
+        if max_guesses is None:
+            max_guesses = self._ruleset.effective_max_attacks()
+        self._candidates = [list(c) for c in self._all_codes]
         self._guess_count = 0
         guesses: List[List[int]] = []
         for _ in range(max_guesses):
             g = self.make_guess()
             guesses.append(g)
             exact, colour_only = score_guess(secret, g)
-            if exact == CODE_LENGTH:
+            if self._ruleset.is_solved(exact):
                 return True, len(guesses), guesses
             self.register_feedback(g, exact, colour_only)
         return False, len(guesses), guesses
+
+
+OPENING_GUESS = opening_guess_for_ruleset(default_encounter())

@@ -4,10 +4,11 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Dict, List, Optional, Tuple
 
-from .bot import RandomBot
 from .bot_factory import make_bot
-from .code import CodeValidationError, SecretCode, validate_code, validate_colour
+from .code import CodeValidationError, validate_code_for_ruleset, validate_colour_in_pool
 from .constants import CODE_LENGTH, MAX_GUESSES
+from .duel_ruleset import DuelRuleset
+from .encounters import default_encounter
 from .feedback import score_guess
 
 
@@ -45,24 +46,28 @@ class GameResult:
 class SequentialDuelGame:
     """Alternating Human vs Bot: one attack per turn, human goes first."""
 
-    def __init__(self, bot_seed: int = 42, difficulty: str = "expert") -> None:
+    def __init__(self, ruleset: Optional[DuelRuleset] = None, bot_seed: int = 42) -> None:
+        self._ruleset = ruleset or default_encounter()
         self._bot_seed = bot_seed
-        self._difficulty = difficulty
         self.reset()
 
-    def reset(self, bot_seed: Optional[int] = None, difficulty: Optional[str] = None) -> None:
+    def get_ruleset(self) -> DuelRuleset:
+        return self._ruleset
+
+    def reset(self, bot_seed: Optional[int] = None, ruleset: Optional[DuelRuleset] = None) -> None:
         if bot_seed is not None:
             self._bot_seed = bot_seed
-        if difficulty is not None:
-            self._difficulty = difficulty
-        self._bot = make_bot(self._difficulty, self._bot_seed)
+        if ruleset is not None:
+            self._ruleset = ruleset
+        self._bot = make_bot(self._ruleset, self._bot_seed)
+        n = self._ruleset.slot_count
         self.phase = GamePhase.HUMAN_SETUP
-        self._human_setup: List[Optional[int]] = [None] * CODE_LENGTH
+        self._human_setup: List[Optional[int]] = [None] * n
         self._human_secret: Optional[List[int]] = None
         self._bot_secret: Optional[List[int]] = None
         self._bot_guesses: List[GuessRecord] = []
         self._human_guesses: List[GuessRecord] = []
-        self._current_human_guess: List[Optional[int]] = [None] * CODE_LENGTH
+        self._current_human_guess: List[Optional[int]] = [None] * n
         self._bot_solved = False
         self._human_solved = False
         self._result: Optional[GameResult] = None
@@ -89,11 +94,11 @@ class SequentialDuelGame:
 
     @property
     def bot_guesses_remaining(self) -> int:
-        return MAX_GUESSES - len(self._bot_guesses)
+        return self._ruleset.effective_max_attacks() - len(self._bot_guesses)
 
     @property
     def human_guesses_remaining(self) -> int:
-        return MAX_GUESSES - len(self._human_guesses)
+        return self._ruleset.effective_max_attacks() - len(self._human_guesses)
 
     def can_lock_human_secret(self) -> bool:
         return self.phase == GamePhase.HUMAN_SETUP and all(p is not None for p in self._human_setup)
@@ -101,15 +106,23 @@ class SequentialDuelGame:
     def set_human_secret_peg(self, slot: int, colour: int) -> None:
         if self.phase != GamePhase.HUMAN_SETUP:
             raise GameActionError("not in human setup phase")
-        if slot < 0 or slot >= CODE_LENGTH:
-            raise GameActionError(f"slot must be 0-{CODE_LENGTH - 1}")
-        validate_colour(colour)
+        n = self._ruleset.slot_count
+        if slot < 0 or slot >= n:
+            raise GameActionError(f"slot must be 0-{n - 1}")
+        try:
+            validate_colour_in_pool(colour, self._ruleset.secret_magic_pool)
+        except CodeValidationError as e:
+            raise GameActionError(str(e)) from e
         self._human_setup[slot] = colour
 
     def lock_human_secret(self) -> None:
         if not self.can_lock_human_secret():
-            raise GameActionError("all 4 pegs must be set before lock")
+            raise GameActionError("all pegs must be set before lock")
         pegs = [p for p in self._human_setup if p is not None]
+        try:
+            validate_code_for_ruleset(pegs, self._ruleset, self._ruleset.secret_magic_pool)
+        except CodeValidationError as e:
+            raise GameActionError(str(e)) from e
         self._human_secret = pegs
         self._bot_secret = self._bot.generate_code()
         self.phase = GamePhase.HUMAN_TURN
@@ -117,7 +130,8 @@ class SequentialDuelGame:
     def bot_make_guess(self) -> Optional[GuessRecord]:
         if self.phase != GamePhase.BOT_TURN:
             raise GameActionError("not in bot turn")
-        if self._bot_solved or len(self._bot_guesses) >= MAX_GUESSES:
+        max_attacks = self._ruleset.effective_max_attacks()
+        if self._bot_solved or len(self._bot_guesses) >= max_attacks:
             return None
         guess = self._bot.make_guess()
         assert self._human_secret is not None
@@ -126,7 +140,7 @@ class SequentialDuelGame:
         self._bot_guesses.append(record)
         if hasattr(self._bot, "register_feedback"):
             self._bot.register_feedback(guess, exact, colour_only)
-        if exact == CODE_LENGTH:
+        if self._ruleset.is_solved(exact):
             self._bot_solved = True
             self._finish_game()
         elif self._both_exhausted():
@@ -138,9 +152,13 @@ class SequentialDuelGame:
     def set_human_guess_peg(self, slot: int, colour: int) -> None:
         if self.phase != GamePhase.HUMAN_TURN:
             raise GameActionError("not in human turn")
-        if slot < 0 or slot >= CODE_LENGTH:
-            raise GameActionError(f"slot must be 0-{CODE_LENGTH - 1}")
-        validate_colour(colour)
+        n = self._ruleset.slot_count
+        if slot < 0 or slot >= n:
+            raise GameActionError(f"slot must be 0-{n - 1}")
+        try:
+            validate_colour_in_pool(colour, self._ruleset.attack_magic_pool)
+        except CodeValidationError as e:
+            raise GameActionError(str(e)) from e
         self._current_human_guess[slot] = colour
 
     def can_submit_human_guess(self) -> bool:
@@ -149,22 +167,24 @@ class SequentialDuelGame:
     def submit_human_guess(self, guess: Optional[List[int]] = None) -> GuessRecord:
         if self.phase != GamePhase.HUMAN_TURN:
             raise GameActionError("not in human turn")
-        if len(self._human_guesses) >= MAX_GUESSES:
+        max_attacks = self._ruleset.effective_max_attacks()
+        if len(self._human_guesses) >= max_attacks:
             raise GameActionError("no guesses remaining")
         if guess is None:
             if not self.can_submit_human_guess():
-                raise GameActionError("all 4 pegs must be set")
+                raise GameActionError("all pegs must be set")
             guess = [p for p in self._current_human_guess if p is not None]
         try:
-            validate_code(guess)
+            validate_code_for_ruleset(guess, self._ruleset, self._ruleset.attack_magic_pool)
         except CodeValidationError as e:
             raise GameActionError(str(e)) from e
         assert self._bot_secret is not None
         exact, colour_only = score_guess(self._bot_secret, guess)
         record = GuessRecord(guess=guess, exact=exact, colour_only=colour_only)
         self._human_guesses.append(record)
-        self._current_human_guess = [None] * CODE_LENGTH
-        if exact == CODE_LENGTH:
+        n = self._ruleset.slot_count
+        self._current_human_guess = [None] * n
+        if self._ruleset.is_solved(exact):
             self._human_solved = True
             self._finish_game()
         elif self._both_exhausted():
@@ -174,11 +194,12 @@ class SequentialDuelGame:
         return record
 
     def _both_exhausted(self) -> bool:
+        max_attacks = self._ruleset.effective_max_attacks()
         return (
             not self._human_solved
             and not self._bot_solved
-            and len(self._human_guesses) >= MAX_GUESSES
-            and len(self._bot_guesses) >= MAX_GUESSES
+            and len(self._human_guesses) >= max_attacks
+            and len(self._bot_guesses) >= max_attacks
         )
 
     def _finish_game(self) -> None:
@@ -190,6 +211,7 @@ class SequentialDuelGame:
             len(self._bot_guesses),
             self._human_guesses,
             self._bot_guesses,
+            self._ruleset.effective_max_attacks(),
         )
 
 
@@ -200,6 +222,7 @@ def compute_result(
     bot_guess_count: int,
     human_guesses: List[GuessRecord],
     bot_guesses: List[GuessRecord],
+    max_attacks: int = MAX_GUESSES,
 ) -> GameResult:
     if human_solved and not bot_solved:
         return GameResult("human_win", True, False, human_guess_count, bot_guess_count,
@@ -219,8 +242,8 @@ def compute_result(
     if (
         not human_solved
         and not bot_solved
-        and human_guess_count >= MAX_GUESSES
-        and bot_guess_count >= MAX_GUESSES
+        and human_guess_count >= max_attacks
+        and bot_guess_count >= max_attacks
     ):
         return GameResult(
             "draw",
@@ -228,7 +251,7 @@ def compute_result(
             False,
             human_guess_count,
             bot_guess_count,
-            "Neither solved after 12 attacks each — draw!",
+            f"Neither solved after {max_attacks} attacks each — draw!",
         )
     h_best = _best_progress(human_guesses)
     b_best = _best_progress(bot_guesses)

@@ -1,12 +1,12 @@
 class_name DmbSolverBot
 extends RefCounted
 
-const OPENING_GUESS := [0, 0, 1, 1]
 const STRATEGY_RANDOM := "random"
 const STRATEGY_MINIMAX := "minimax"
 const MAX_MINIMAX_POOL_HARD := 100
 const MAX_MINIMAX_POOL_EXPERT := 500
 
+var _ruleset: DmbDuelRuleset
 var _strategy: String = STRATEGY_MINIMAX
 var _seed: int = 0
 var _candidates: Array = []
@@ -15,16 +15,22 @@ var _all_codes: Array = []
 var _max_minimax_pool: int = MAX_MINIMAX_POOL_HARD
 
 
-func _init(strategy: String = STRATEGY_MINIMAX, seed: int = 0, max_minimax_pool: int = MAX_MINIMAX_POOL_HARD) -> void:
+func _init(
+	ruleset: DmbDuelRuleset = null,
+	strategy: String = STRATEGY_MINIMAX,
+	seed: int = 0,
+	max_minimax_pool: int = MAX_MINIMAX_POOL_HARD
+) -> void:
+	_ruleset = ruleset if ruleset != null else DmbEncounters.default_encounter()
 	_strategy = strategy
 	_seed = seed
 	_max_minimax_pool = max_minimax_pool
-	_all_codes = _generate_all_codes()
+	_all_codes = DmbCandidateGen.generate_candidate_codes(_ruleset)
 	_reset_candidates()
 
 
-static func all_code_count() -> int:
-	return 10_000
+func all_code_count() -> int:
+	return _all_codes.size()
 
 
 func candidate_count() -> int:
@@ -44,7 +50,7 @@ func register_feedback(guess: Array, exact: int, colour_only: int) -> void:
 func make_guess() -> Array:
 	var guess: Array
 	if _guess_count == 0:
-		guess = OPENING_GUESS.duplicate()
+		guess = DmbCandidateGen.opening_guess_for_ruleset(_ruleset).duplicate()
 	elif _strategy == STRATEGY_RANDOM:
 		var idx := (_seed + _guess_count) % _candidates.size()
 		guess = _candidates[idx].duplicate()
@@ -95,17 +101,28 @@ func _pick_minimax_guess() -> Array:
 func generate_code() -> Array:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _seed + 999
+	var pool: Array = _ruleset.secret_magic_pool
 	var code: Array = []
-	for _i in range(DmbConstants.CODE_LENGTH):
-		code.append(rng.randi_range(DmbConstants.MIN_COLOUR, DmbConstants.MAX_COLOUR))
+	if _ruleset.allow_repeats:
+		for _i in range(_ruleset.slot_count):
+			code.append(int(pool[rng.randi_range(0, pool.size() - 1)]))
+	else:
+		var indices: Array = []
+		for i in range(pool.size()):
+			indices.append(i)
+		indices.shuffle()
+		for i in range(_ruleset.slot_count):
+			code.append(int(pool[indices[i]]))
 	return code
 
 
 func is_legal_guess(guess: Array) -> bool:
-	return DmbCode.is_valid_code(guess)
+	return DmbCode.is_valid_code_for_ruleset(guess, _ruleset, _ruleset.attack_magic_pool)
 
 
-func solve_secret(secret: Array, max_guesses: int = 12) -> Dictionary:
+func solve_secret(secret: Array, max_guesses: int = -1) -> Dictionary:
+	if max_guesses < 0:
+		max_guesses = _ruleset.effective_max_attacks()
 	_reset_candidates()
 	_guess_count = 0
 	var guesses: Array = []
@@ -113,7 +130,7 @@ func solve_secret(secret: Array, max_guesses: int = 12) -> Dictionary:
 		var g := make_guess()
 		guesses.append(g)
 		var fb := DmbFeedback.score_guess(secret, g)
-		if fb.x == DmbConstants.CODE_LENGTH:
+		if _ruleset.is_solved(fb.x):
 			return {"solved": true, "count": guesses.size(), "guesses": guesses}
 		register_feedback(g, fb.x, fb.y)
 	return {"solved": false, "count": guesses.size(), "guesses": guesses}
@@ -123,16 +140,6 @@ func _reset_candidates() -> void:
 	_candidates = []
 	for c in _all_codes:
 		_candidates.append(c.duplicate())
-
-
-static func _generate_all_codes() -> Array:
-	var codes: Array = []
-	for a in range(DmbConstants.NUM_COLOURS):
-		for b in range(DmbConstants.NUM_COLOURS):
-			for c in range(DmbConstants.NUM_COLOURS):
-				for d in range(DmbConstants.NUM_COLOURS):
-					codes.append([a, b, c, d])
-	return codes
 
 
 static func _array_in(arr: Array, list: Array) -> bool:

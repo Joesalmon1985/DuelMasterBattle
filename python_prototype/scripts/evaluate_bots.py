@@ -12,8 +12,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from dataclasses import replace
+
 from duel_mastermind.bot_factory import make_bot
 from duel_mastermind.constants import CODE_LENGTH, MAX_GUESSES, NUM_COLOURS
+from duel_mastermind.encounters import get_encounter
 from duel_mastermind.feedback import score_guess
 from duel_mastermind.solver_bot import SolverBot
 
@@ -61,7 +64,8 @@ def evaluate_level(level: str, secrets: list[list[int]]) -> dict:
     counts: list[int] = []
     failures = 0
     for secret in secrets:
-        bot = make_bot(level, MASTER_SEED)
+        rs = replace(get_encounter("archmage_duel"), enemy_difficulty=level)
+        bot = make_bot(rs, MASTER_SEED)
         solved, count = run_bot_on_secret(bot, secret)
         if not solved:
             failures += 1
