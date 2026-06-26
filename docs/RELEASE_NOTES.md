@@ -12,18 +12,26 @@
 - Aggregate-only feedback (no positional leak in UI payload)
 
 ### UI
-- Portrait mobile layout (720×1280)
-- Difficulty + encounter select on main menu
-- Cast timers, pause, expandable history
-- Settings: haptics, reduce motion, help text
-- Attack animation layer (aggregate feedback reveal)
+- Portrait **3-zone duel layout** (rival ward / impact / player action)
+- Composite wizard + ward barrier visuals
+- Gem Cast button, cast timer ring, feedback chips
+- Collapsed history peek + slide-up history sheet
+- Modal help (`?`) — no persistent help text during play
+- `DmbVisualTheme` + `docs/ART_BIBLE.md` art direction
+
+### Visual QA
+- `tools/capture_visual_qa.sh` — 15 screenshot states at 720×1280
+- `tools/visual_qa_report.py` — metrics + montage grid
+- `docs/VISUAL_QA.md` — rubric and workflow
+- `qa/screenshots/`, `qa/reports/`, `qa/montages/`
 
 ### Technical
 - `DmbDifficultyProfile` separate from encounters
 - Python + Godot rules parity updates
 - Real-time sim tests + updated UI smoke tests
 - Android export preset added (requires local Godot Android templates)
-- Draft sprite generator extended for loci, enemy portraits, feedback icons
+- `tools/generate_composite_sprites.py` — 2× layered PNG generator
+- Draft sprite generator retained for legacy icons
 
 ### Legacy
 - `DmbSequentialDuelGame` retained for regression tests (alternating-turn prototype)

@@ -1,12 +1,13 @@
 extends PanelContainer
 class_name MagicPicker
+const _VT = preload("res://client/scripts/visual_theme.gd")
 
 const _Art = preload("res://client/scripts/art.gd")
 
 signal magic_selected(magic_id: int)
 
 const COLS := 5
-const BTN_SIZE := Vector2(72, 56)
+const BTN_SIZE := Vector2(_VT.TOUCH_ESSENCE, _VT.TOUCH_ESSENCE)
 
 var _grid: GridContainer
 var _buttons: Array = []
@@ -29,11 +30,11 @@ func _ready() -> void:
 	for i in range(DmbConstants.NUM_COLOURS):
 		var btn := Button.new()
 		btn.custom_minimum_size = BTN_SIZE
-		btn.text = "%d\n%s\n%s" % [i, DmbColourData.SYMBOLS[i], DmbColourData.NAMES[i].substr(0, 4)]
+		btn.text = DmbColourData.SYMBOLS[i]
 		btn.tooltip_text = "%d: %s" % [i, DmbColourData.NAMES[i]]
-		var style := StyleBoxFlat.new()
+		var style := _VT.gem_button_style()
 		style.bg_color = DmbColourData.COLOURS[i]
-		style.set_corner_radius_all(4)
+		style.set_corner_radius_all(12)
 		btn.add_theme_stylebox_override("normal", style)
 		btn.add_theme_color_override("font_color", Color.WHITE if i in [4, 7, 8] else Color.BLACK)
 		var icon_path := _Art.magic_icon_path(i)

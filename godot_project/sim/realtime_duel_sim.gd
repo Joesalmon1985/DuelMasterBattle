@@ -472,6 +472,21 @@ func _finish_duel(outcome: String, player_solved: bool, enemy_solved: bool) -> v
 	_events.append(_DuelEvent.new(_DuelEvent.DUEL_FINISHED, {"outcome": outcome}))
 
 
+func force_finish_for_test(outcome: String) -> void:
+	if result != null:
+		return
+	phase = Phase.DUELING if phase == Phase.WARD_SETUP else phase
+	match outcome:
+		"victory":
+			_finish_duel("victory", true, false)
+		"defeat":
+			_finish_duel("defeat", false, true)
+		"clash":
+			_finish_duel("clash", true, true)
+		_:
+			_finish_duel("stalemate", false, false)
+
+
 func get_pending_events() -> Array:
 	var copy := _events.duplicate()
 	_events.clear()

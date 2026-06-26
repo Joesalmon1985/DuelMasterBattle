@@ -1,32 +1,50 @@
-# Art Asset Manifest — Draft Placeholders
+# Art Asset Manifest — Composite Visual Polish
 
-Regenerate:
+## Regenerate composite assets
+
+```bash
+python3 tools/generate_composite_sprites.py
+```
+
+Outputs **2× vector-composite cutout PNGs** under `godot_project/assets/generated/composite/`:
+
+| Folder | Contents |
+|--------|----------|
+| `wizards/{archetype}/` | Layered body parts + `manifest.json` |
+| `essences/{slug}/` | core_glyph, inner_glow, outer_aura, trail, spark |
+| `wards/` | Barrier rings, surface, cracks, instability |
+| `effects/` | impact_flash, shockwave, fracture_glyph, echo_ring, fade_mote |
+| `ui/` | button_gem, timer_ring |
+| `loci/{slug}/` | rune_empty, rune_filled |
+
+Legacy flat icons in `assets/icons/` remain as fallbacks.
+
+## Runtime loading
+
+`DmbArt` (`client/scripts/art.gd`) resolves composite paths. Components:
+
+- `CompositeWizard` — layered wizard assembly + idle/cast tweens
+- `WardBarrier` — layered ward states
+- `EssenceToken`, `LocusSocket`, `FeedbackChip`, `CastButton`, `CastTimer`
+- `SpellVfx` — projectile + impact layers
+
+## Visual theme
+
+Constants in `client/scripts/visual_theme.gd` (preload as `_VT`). Art direction: `docs/ART_BIBLE.md`.
+
+## Verification
+
+```bash
+tools/run_godot_tests.sh      # includes test_assets.gd
+tools/run_godot_ui_smoke.sh
+tools/capture_visual_qa.sh    # screenshot QA pipeline
+python3 tools/visual_qa_report.py
+```
+
+## Draft generator (legacy)
+
 ```bash
 python3 tools/generate_draft_sprites.py
 ```
 
-All assets are **draft flat PNG placeholders** (PIL-generated). Not final art.
-
-## Sprites (`godot_project/assets/sprites/`)
-
-| File | Purpose | Integrated |
-|------|---------|------------|
-| `player_wizard.png` | Player wizard portrait | Yes — `game_board.gd` player column |
-| `enemy_wizard.png` | Enemy wizard portrait | Yes — `game_board.gd` enemy column |
-| `duel_background.png` | Panel/background frame | Yes — board background (subtle) |
-
-## Icons (`godot_project/assets/icons/`)
-
-| File | Purpose | Integrated |
-|------|---------|------------|
-| `magic_*.png` (×10) | Magic type picker buttons | Yes — `magic_picker.gd` (filtered per encounter pool) |
-| `point_*.png` (×4) | Shield/Body/Staff/Mind | Yes — point header rows (count matches encounter slots) |
-| `feedback_hit.png` | Hit marker | Partial — feedback text labels in `feedback_display.gd` |
-| `feedback_weakness.png` | Weakness marker | Partial — feedback text labels |
-| `feedback_unaffected.png` | Unaffected marker | Partial — feedback text labels |
-
-## Loading
-Runtime load via `DmbArt.load_texture()` (`client/scripts/art.gd`). Missing files return null without crashing.
-
-## Verification
-Godot headless: `tools/run_godot_tests.sh` includes `test_assets.gd`. UI smoke asserts wizard portraits load.
+Flat placeholders for rapid iteration; superseded by composite generator for in-game visuals.

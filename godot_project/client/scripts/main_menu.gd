@@ -1,43 +1,42 @@
 extends Control
+const _VT = preload("res://client/scripts/visual_theme.gd")
 
 const _Encounters = preload("res://sim/encounters.gd")
 const _DifficultyProfiles = preload("res://sim/difficulty_profiles.gd")
 const _SaveData = preload("res://client/scripts/save_data.gd")
 
 const HOW_TO_PLAY_TEXT := (
-	"How to play:\n"
-	+ "• Choose difficulty and encounter.\n"
-	+ "• Set your hidden ward — one essence per locus.\n"
-	+ "• Cast attacks in real time when your cast window opens.\n"
-	+ "• Read aggregate Fracture / Echo / Fade feedback.\n"
-	+ "• Break the rival's ward before yours collapses."
+	"Choose difficulty and encounter. Set your hidden ward, then cast attacks in real time. "
+	+ "Fracture = exact match. Echo = wrong locus. Fade = miss. Feedback is aggregate only."
 )
 const FEEDBACK_HELP := (
 	"Each attack tells you how many essences were exactly right, "
-	+ "how many were present but displaced, and how many faded. "
-	+ "It never tells you which specific locus caused each result."
+	+ "how many were displaced, and how many faded — never which locus caused each result."
 )
 
-@onready var difficulty_option: OptionButton = $VBox/DifficultyRow/DifficultyOption
-@onready var encounter_option: OptionButton = $VBox/EncounterRow/EncounterOption
-@onready var encounter_detail: Label = $VBox/EncounterDetail
-@onready var start_duel_btn: Button = $VBox/StartDuelButton
-@onready var how_to_play_btn: Button = $VBox/HowToPlayButton
-@onready var settings_btn: Button = $VBox/SettingsButton
-@onready var help_panel: PanelContainer = $VBox/HelpPanel
-@onready var help_label: Label = $VBox/HelpPanel/HelpLabel
-@onready var settings_panel: PanelContainer = $VBox/SettingsPanel
+@onready var difficulty_option: OptionButton = $Margin/VBox/DifficultyRow/DifficultyOption
+@onready var encounter_option: OptionButton = $Margin/VBox/EncounterRow/EncounterOption
+@onready var encounter_detail: Label = $Margin/VBox/EncounterDetail
+@onready var start_duel_btn: Button = $Margin/VBox/StartDuelButton
+@onready var how_to_play_btn: Button = $Margin/VBox/HowToPlayButton
+@onready var settings_btn: Button = $Margin/VBox/SettingsButton
+@onready var help_panel: PanelContainer = $Margin/VBox/HelpPanel
+@onready var help_label: Label = $Margin/VBox/HelpPanel/HelpLabel
+@onready var settings_panel: PanelContainer = $Margin/VBox/SettingsPanel
+@onready var title_label: Label = $Margin/VBox/TitleLabel
+@onready var background: ColorRect = $Background
 
 var _encounters: Array = []
 var _difficulties: Array = []
 
 
 func _ready() -> void:
+	_apply_theme()
 	_difficulties = _DifficultyProfiles.all_profiles()
 	difficulty_option.clear()
 	for i in range(_difficulties.size()):
 		var d = _difficulties[i]
-		difficulty_option.add_item("%s — %s" % [d.display_name, d.description], i)
+		difficulty_option.add_item(d.display_name, i)
 		if d.id == _SaveData.get_last_difficulty():
 			difficulty_option.select(i)
 	_encounters = _Encounters.all_encounters()
@@ -56,6 +55,18 @@ func _ready() -> void:
 	settings_btn.pressed.connect(_on_settings)
 
 
+func _apply_theme() -> void:
+	background.color = _VT.COLOR_BG_DEEP
+	_VT.apply_label_primary(title_label)
+	_VT.apply_label_secondary(encounter_detail)
+	start_duel_btn.add_theme_stylebox_override("normal", _VT.gem_button_style())
+	start_duel_btn.add_theme_font_size_override("font_size", _VT.FONT_BUTTON)
+	how_to_play_btn.add_theme_stylebox_override("normal", _VT.secondary_button_style())
+	settings_btn.add_theme_stylebox_override("normal", _VT.secondary_button_style())
+	help_panel.add_theme_stylebox_override("panel", _VT.panel_style())
+	settings_panel.add_theme_stylebox_override("panel", _VT.panel_style())
+
+
 func _build_settings_panel() -> void:
 	for c in settings_panel.get_children():
 		c.queue_free()
@@ -65,6 +76,7 @@ func _build_settings_panel() -> void:
 		var row := HBoxContainer.new()
 		var lbl := Label.new()
 		lbl.text = key.replace("_", " ").capitalize()
+		_VT.apply_label_secondary(lbl)
 		row.add_child(lbl)
 		var check := CheckButton.new()
 		check.button_pressed = bool(_SaveData.get_setting(key, true)) if key in ["haptics", "screen_shake"] else false
@@ -73,10 +85,6 @@ func _build_settings_panel() -> void:
 		check.toggled.connect(func(on): _SaveData.set_setting(key, on))
 		row.add_child(check)
 		vbox.add_child(row)
-	var help_lbl := Label.new()
-	help_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	help_lbl.text = FEEDBACK_HELP
-	vbox.add_child(help_lbl)
 
 
 func _on_encounter_selected(_index: int) -> void:
@@ -93,15 +101,9 @@ func _update_detail() -> void:
 	if diff_idx >= 0 and diff_idx < _difficulties.size():
 		diff_name = _difficulties[diff_idx].display_name
 	encounter_detail.text = (
-		"%s\n" % rs.enemy_name
-		+ "Loci: %d · Secret essences: %d · Attack essences: %d · Cast limit: %d\n" % [
-			rs.slot_count,
-			rs.secret_magic_pool.size(),
-			rs.attack_magic_pool.size(),
-			rs.effective_max_attacks(),
+		"%s · %d loci · %d casts · %s" % [
+			rs.enemy_name, rs.slot_count, rs.effective_max_attacks(), diff_name,
 		]
-		+ "Difficulty: %s\n" % diff_name
-		+ "Tell: %s" % rs.enemy_visual_hint
 	)
 
 

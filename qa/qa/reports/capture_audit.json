@@ -1,0 +1,935 @@
+{
+	"screenshots": [
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/01_main_menu.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/02_difficulty_select.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/03_encounter_select.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/04_ward_setup.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/05_duel_start.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/06_duel_mid.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/07_duel_dense_history.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/08_cast_ready.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/09_auto_cast_warning.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/10_attack_impact.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/11_feedback_reveal.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/12_last_stand.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/13_victory.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/14_defeat.png",
+		"/home/joe/Projects/DuelMasterBattle/godot_project/../qa/screenshots/current/15_clash.png"
+	],
+	"text_nodes": [
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		},
+		{
+			"text": "⏸",
+			"visible": true
+		},
+		{
+			"text": "Loading...",
+			"visible": true
+		},
+		{
+			"text": "?",
+			"visible": true
+		},
+		{
+			"text": "History",
+			"visible": true
+		},
+		{
+			"text": "Rival wizard",
+			"visible": true
+		},
+		{
+			"text": "Set your ward",
+			"visible": true
+		},
+		{
+			"text": "Lock ward",
+			"visible": true
+		},
+		{
+			"text": "Retry",
+			"visible": true
+		},
+		{
+			"text": "Menu",
+			"visible": true
+		},
+		{
+			"text": "Attack history",
+			"visible": true
+		}
+	],
+	"touch_targets": [
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "PauseButton",
+			"role": "utility",
+			"width": 56.0
+		},
+		{
+			"height": 56.0,
+			"name": "HelpButton",
+			"role": "utility",
+			"width": 48.0
+		},
+		{
+			"height": 56.0,
+			"name": "HistoryToggle",
+			"role": "utility",
+			"width": 88.0
+		},
+		{
+			"height": 56.0,
+			"name": "LockButton",
+			"role": "utility",
+			"width": 96.0
+		},
+		{
+			"height": 56.0,
+			"name": "RestartButton",
+			"role": "utility",
+			"width": 120.0
+		},
+		{
+			"height": 56.0,
+			"name": "BackToMenuButton",
+			"role": "utility",
+			"width": 120.0
+		}
+	]
+}

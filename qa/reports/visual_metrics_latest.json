@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-06-26T19:25:01.194506+00:00",
+  "screenshots_found": 15,
+  "text": {
+    "visible_text_nodes": 0,
+    "visible_char_count": 0,
+    "warnings": [
+      "05_duel_start.png: grey dominance 98% > 60%",
+      "06_duel_mid.png: grey dominance 98% > 60%",
+      "07_duel_dense_history.png: grey dominance 98% > 60%"
+    ]
+  },
+  "touch_target_warnings": [],
+  "grey_dominance": {
+    "01_main_menu.png": 0.865,
+    "02_difficulty_select.png": 0.865,
+    "03_encounter_select.png": 0.865,
+    "04_ward_setup.png": 0.98,
+    "05_duel_start.png": 0.98,
+    "06_duel_mid.png": 0.98,
+    "07_duel_dense_history.png": 0.982,
+    "08_cast_ready.png": 0.98,
+    "09_auto_cast_warning.png": 0.98,
+    "10_attack_impact.png": 0.98,
+    "11_feedback_reveal.png": 0.98,
+    "12_last_stand.png": 0.98,
+    "13_victory.png": 0.98,
+    "14_defeat.png": 0.98,
+    "15_clash.png": 0.98
+  },
+  "contrast_text_on_panel": 15.07,
+  "non_leak_warnings": []
+}
