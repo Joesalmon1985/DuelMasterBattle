@@ -1,6 +1,10 @@
 class_name DmbDuelRuleset
 extends RefCounted
 
+const DEFAULT_LOCUS_NAMES := [
+	"Roach", "Uzag", "Lieana", "Gyse", "Vorr", "Mael", "Oshen", "Keth",
+]
+
 var id: String = ""
 var display_name: String = ""
 var description: String = ""
@@ -10,15 +14,21 @@ var secret_magic_pool: Array = []
 var attack_magic_pool: Array = []
 var max_attacks_per_player: int = 12
 var enemy_name: String = ""
+var enemy_title: String = ""
 var enemy_archetype: String = ""
 var enemy_visual_hint: String = ""
 var enemy_difficulty: String = "expert"
 var player_modifiers: Dictionary = {}
 var enemy_modifiers: Dictionary = {}
-var counterspell_seconds: float = 0.0
 var allow_repeats: bool = true
-var mode: String = "alternating"
 var allow_hidden_secret_types: bool = false
+var base_min_cast_time_seconds: float = 5.0
+var base_max_cast_time_seconds: float = 16.0
+var enemy_traits: Dictionary = {}
+var player_traits: Dictionary = {}
+var last_stand_min_attacks: int = 0
+var last_stand_seconds: float = 0.0
+var tutorial_flags: Dictionary = {}
 
 
 func _init(
@@ -34,7 +44,14 @@ func _init(
 	p_enemy_archetype: String = "",
 	p_enemy_hint: String = "",
 	p_difficulty: String = "expert",
-	p_allow_repeats: bool = true
+	p_allow_repeats: bool = true,
+	p_base_min_cast: float = 5.0,
+	p_base_max_cast: float = 16.0,
+	p_last_stand_min_attacks: int = 0,
+	p_last_stand_seconds: float = 0.0,
+	p_enemy_traits: Dictionary = {},
+	p_player_traits: Dictionary = {},
+	p_tutorial_flags: Dictionary = {}
 ) -> void:
 	id = p_id
 	display_name = p_display_name
@@ -45,15 +62,33 @@ func _init(
 	attack_magic_pool = p_attack_pool
 	max_attacks_per_player = p_max_attacks
 	enemy_name = p_enemy_name
+	enemy_title = p_enemy_name
 	enemy_archetype = p_enemy_archetype
 	enemy_visual_hint = p_enemy_hint
 	enemy_difficulty = p_difficulty
 	allow_repeats = p_allow_repeats
+	base_min_cast_time_seconds = p_base_min_cast
+	base_max_cast_time_seconds = p_base_max_cast
+	last_stand_min_attacks = p_last_stand_min_attacks
+	last_stand_seconds = p_last_stand_seconds
+	enemy_traits = p_enemy_traits
+	player_traits = p_player_traits
+	tutorial_flags = p_tutorial_flags
 	validate()
 
 
+func locus_count() -> int:
+	return slot_count
+
+
+func locus_names() -> Array:
+	return point_names
+
+
 func validate() -> void:
-	assert(slot_count >= 1 and slot_count <= 4, "slot_count must be 1-4")
+	assert(slot_count >= 1 and slot_count <= 8, "slot_count must be 1-8")
+	if point_names.is_empty():
+		point_names = DEFAULT_LOCUS_NAMES.slice(0, slot_count)
 	assert(point_names.size() == slot_count, "point_names length must match slot_count")
 	validate_pools()
 

@@ -3,6 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List
 
+DEFAULT_LOCUS_NAMES = [
+    "Roach", "Uzag", "Lieana", "Gyse", "Vorr", "Mael", "Oshen", "Keth",
+]
+
 
 class RulesetValidationError(ValueError):
     pass
@@ -24,17 +28,24 @@ class DuelRuleset:
     enemy_difficulty: str
     player_modifiers: Dict = field(default_factory=dict)
     enemy_modifiers: Dict = field(default_factory=dict)
-    counterspell_seconds: float = 0.0
     allow_repeats: bool = True
-    mode: str = "alternating"
     allow_hidden_secret_types: bool = False
+    base_min_cast_time_seconds: float = 5.0
+    base_max_cast_time_seconds: float = 16.0
+    enemy_traits: Dict = field(default_factory=dict)
+    player_traits: Dict = field(default_factory=dict)
+    last_stand_min_attacks: int = 0
+    last_stand_seconds: float = 0.0
+    tutorial_flags: Dict = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self.validate()
 
     def validate(self) -> None:
-        if self.slot_count < 1 or self.slot_count > 4:
-            raise RulesetValidationError(f"slot_count must be 1-4, got {self.slot_count}")
+        if self.slot_count < 1 or self.slot_count > 8:
+            raise RulesetValidationError(f"slot_count must be 1-8, got {self.slot_count}")
+        if not self.point_names:
+            self.point_names = DEFAULT_LOCUS_NAMES[: self.slot_count]
         if len(self.point_names) != self.slot_count:
             raise RulesetValidationError(
                 f"point_names length {len(self.point_names)} != slot_count {self.slot_count}"

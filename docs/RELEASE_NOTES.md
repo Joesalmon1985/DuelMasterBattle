@@ -1,66 +1,32 @@
-# Release Notes — Wizard Duel Update
+# Release Notes — Real-Time Wizard Ward Duel
 
-## Branch `feature/encounter-progression-rulesets`
+## Current branch — real-time mobile duel
 
-### Encounter progression (latest)
-- **DuelRuleset** model: variable slots (1–4), secret vs attack magic pools, configurable max attacks
-- Four built-in encounters: Blue Apprentice, Thorn Adept, Mirror Mage, **Archmage Duel** (classic regression)
-- Main menu encounter select + detail panel; `EncounterSession` autoload
-- Dynamic board slots, filtered magic picker, enemy tell label, **Back to menu**
-- Modifiers (first pass): `extra_attacks`, `bot_attack_delay_multiplier` (Counterspell Time field stored but inactive)
-- Difficulty driven by encounter (UI difficulty row removed)
+### Gameplay
+- **Real-time duels** with independent cast windows (`DmbRealtimeDuelSim`)
+- Global **Easy / Medium / Hard** difficulty selection
+- Encounters: Blue Apprentice, Thorn Adept, Mirror Mage, Archmage Duel, Eightfold Warden (boss)
+- 1–8 locus support; PRD terminology (Essence, Locus, Fracture, Echo, Fade)
+- Result states: Victory, Defeat, Clash, Stalemate
+- Last Stand on boss encounter (Eightfold Warden)
+- Aggregate-only feedback (no positional leak in UI payload)
 
-### Tests
-| Suite | Result |
-|-------|--------|
-| Python pytest | 53 passed, 1 skipped |
-| Godot rules (7 modules) | pass |
-| Godot UI smoke | pass (Blue Apprentice + Archmage) |
+### UI
+- Portrait mobile layout (720×1280)
+- Difficulty + encounter select on main menu
+- Cast timers, pause, expandable history
+- Settings: haptics, reduce motion, help text
+- Attack animation layer (aggregate feedback reveal)
 
-### Manual playtest
-Not performed in CI (no visible Godot window). UI smoke test passed. See `docs/MANUAL_PLAYTEST.md`.
+### Technical
+- `DmbDifficultyProfile` separate from encounters
+- Python + Godot rules parity updates
+- Real-time sim tests + updated UI smoke tests
+- Android export preset added (requires local Godot Android templates)
+- Draft sprite generator extended for loci, enemy portraits, feedback icons
 
-### Launch locally
-```bash
-export GODOT=$HOME/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64
-export GODOT_USER_DATA_DIR="$(pwd)/godot_project/.godot_user"
-"$GODOT" --path godot_project
-```
+### Legacy
+- `DmbSequentialDuelGame` retained for regression tests (alternating-turn prototype)
 
-### Deferred
-- Counterspell Time, campaign/unlock progression, hidden secret types
-- Full NN training run and weight export
-- Web export as a branch deliverable (local export still available)
-
----
-
-## Branch `feature/alternating-duel-flow`
-
-### Alternating duel
-- Human and bot each set hidden patterns at **Cast pattern**; human attacks first.
-- One attack per turn; turns alternate until solve or max attacks each (draw).
-- Dual visible histories: your attacks vs enemy / enemy attacks vs you.
-- Human feedback rows appear immediately after **Attack**.
-
----
-
-## Branch `feature/wizard-duel-polish-web-demo`
-
-### Summary
-Wizard-duel reskin, click-slot magic picker, candidate-elimination solver with difficulty levels, draft sprite placeholders, and Python-only NN experiment scaffold.
-
-### Track A — Wizard UI
-- 10 magic types with labels, symbols, and colours
-- Four points: Shield, Body, Staff, Mind
-- Click-slot → overlay magic picker
-- Feedback: Hit / Weakness / Unaffected
-- Lock → **Cast pattern**, Submit → **Attack**
-- Wizard portraits and point header icons on board
-
-### Track B — Bot intelligence
-- `SolverBot` / `DmbSolverBot`: ruleset-driven candidates, opener `[0,0,1,1]` on Archmage, feedback filtering, minimax (pool capped for Godot responsiveness)
-- Difficulty: Easy · Normal · Hard · Expert (per encounter)
-
-### Track C — Draft art
-- `tools/generate_draft_sprites.py` → 17 PNG placeholders
-- Magic icons in picker; feedback text labels; wizard portraits on board
+### Manual QA
+See [MANUAL_PLAYTEST.md](MANUAL_PLAYTEST.md) and PRD §27.5.

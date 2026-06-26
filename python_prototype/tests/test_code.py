@@ -28,7 +28,7 @@ class TestRulesetCodeValidation:
         rs = get_encounter("blue_apprentice")
         validate_code_for_ruleset([1], rs, rs.secret_magic_pool)
         with pytest.raises(CodeValidationError):
-            validate_code_for_ruleset([0], rs, rs.secret_magic_pool)
+            validate_code_for_ruleset([9], rs, rs.secret_magic_pool)
 
     def test_attack_pool_validation(self):
         rs = get_encounter("blue_apprentice")

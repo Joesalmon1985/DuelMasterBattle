@@ -70,9 +70,29 @@ func _on_magic_pressed(magic_id: int) -> void:
 	close()
 
 
+func open_bottom_sheet(parent: Control) -> void:
+	visible = true
+	_open = true
+	var visible_count := _visible_magic_count()
+	var rows := ceili(float(visible_count) / COLS)
+	var panel_h := rows * BTN_SIZE.y + 32
+	anchor_left = 0.0
+	anchor_right = 1.0
+	anchor_top = 1.0
+	anchor_bottom = 1.0
+	offset_left = 8.0
+	offset_right = -8.0
+	offset_top = -panel_h - 8.0
+	offset_bottom = -8.0
+
+
 func open_at(global_pos: Vector2) -> void:
 	visible = true
 	_open = true
+	anchor_left = 0.0
+	anchor_top = 0.0
+	anchor_right = 0.0
+	anchor_bottom = 0.0
 	var vp := get_viewport().get_visible_rect().size
 	var visible_count := _visible_magic_count()
 	var rows := ceili(float(visible_count) / COLS)

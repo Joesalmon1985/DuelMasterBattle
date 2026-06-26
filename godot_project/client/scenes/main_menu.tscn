@@ -19,22 +19,31 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -220.0
-offset_top = -160.0
+offset_top = -280.0
 offset_right = 220.0
-offset_bottom = 160.0
+offset_bottom = 280.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
 [node name="TitleLabel" type="Label" parent="VBox"]
 layout_mode = 2
-text = "Duel Master Battle"
 horizontal_alignment = 1
+text = "Duel Master Battle"
+
+[node name="DifficultyRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="DifficultyLabel" type="Label" parent="VBox/DifficultyRow"]
+layout_mode = 2
+text = "Difficulty:"
+
+[node name="DifficultyOption" type="OptionButton" parent="VBox/DifficultyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="EncounterRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
-alignment = 1
 
 [node name="EncounterLabel" type="Label" parent="VBox/EncounterRow"]
 layout_mode = 2
@@ -57,6 +66,10 @@ text = "Start duel"
 layout_mode = 2
 text = "How to play"
 
+[node name="SettingsButton" type="Button" parent="VBox"]
+layout_mode = 2
+text = "Settings"
+
 [node name="HelpPanel" type="PanelContainer" parent="VBox"]
 visible = false
 layout_mode = 2
@@ -64,3 +77,7 @@ layout_mode = 2
 [node name="HelpLabel" type="Label" parent="VBox/HelpPanel"]
 layout_mode = 2
 autowrap_mode = 2
+
+[node name="SettingsPanel" type="PanelContainer" parent="VBox"]
+visible = false
+layout_mode = 2

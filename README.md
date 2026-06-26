@@ -1,6 +1,6 @@
 # Duel Master Battle
 
-Two-player **duelling Mastermind** reskinned as a **wizard duel**: configurable encounters (1–4 points, filtered magic pools, variable attack limits). Default **Archmage Duel** is the full game — 4 points, 10 magic types, 12 attacks. Playable **Human vs Bot** in Godot 4.4.1.
+**Real-time wizard ward duel** — mobile-first Human vs rival wizard with independent cast windows, encounter-driven rules (1–8 loci), and global difficulty selection. Built in Godot 4.4.1 with tested rules in Python and GDScript.
 
 ## Quick start — play locally
 
@@ -10,32 +10,29 @@ export GODOT_USER_DATA_DIR="$(pwd)/godot_project/.godot_user"
 "$GODOT" --path godot_project
 ```
 
-Select an **encounter** on the main menu → **Start duel** → set your pattern → **Cast pattern** → alternate attacks (you go first) → result → **New duel** or **Back to menu**.
+Select **difficulty** → **encounter** → **Start duel** → set ward → **Lock ward** → build attacks and **Cast** in real time → result.
 
-Encounters: **Blue Apprentice** (tutorial) · **Thorn Adept** · **Mirror Mage** · **Archmage Duel** (classic 4/10/12).
+Encounters: **Blue Apprentice** (tutorial) · **Thorn Adept** · **Mirror Mage** · **Archmage Duel** · **Eightfold Warden** (boss).
 
-Draft placeholder sprites live under `godot_project/assets/` (see `docs/ART_ASSET_MANIFEST.md`).
+See [**PRD**](docs/PRD.md) for full product requirements.
 
 ## Web export (local)
 
 ```bash
 tools/export_web.sh
 cd godot_project/build/web && python3 -m http.server 8080
-# Open http://localhost:8080
 ```
 
-Web build output is **not committed** to git. See [Deploy to Cloudflare Pages](docs/DEPLOY_CLOUDFLARE_PAGES.md) for hosting steps.
+## Android export
 
-**Current limitations:** desktop-oriented layout, draft placeholder art, Expert bot may be slower during enemy attacks, Godot 4 web may need COOP/COEP headers (documented in deploy guide). Cloudflare deployment is **not** claimed unless you verify it yourself.
+Configure Godot Android export templates, then export preset **Android** → `godot_project/build/android/`. See [ANDROID_EXPORT.md](docs/ANDROID_EXPORT.md).
 
 ## Run tests
 
 ```bash
 cd python_prototype && python3 -m pytest -q
-PYTHONPATH=. python3 tests/generate_fixtures.py   # after rule changes
 tools/run_godot_tests.sh
 tools/run_godot_ui_smoke.sh
-tools/godot_check.sh && tools/godot_cleanup.sh
 ```
 
 Regenerate draft sprites:
@@ -44,39 +41,20 @@ Regenerate draft sprites:
 python3 tools/generate_draft_sprites.py
 ```
 
-Evaluate bot difficulty (Python only):
-
-```bash
-cd python_prototype && python3 scripts/evaluate_bots.py          # 100 secrets
-cd python_prototype && python3 scripts/evaluate_bots.py --quick  # 8 secrets
-```
-
 ## Project structure
 
 ```
-shared_fixtures/     JSON golden files
-python_prototype/    Pure rules, encounters, solver, NN experiment (Python only)
 godot_project/
-  sim/               Authoritative rules + bots + encounters.gd / duel_ruleset.gd
-  client/            Wizard-duel UI + EncounterSession autoload
-  assets/            Draft PNG sprites/icons
-  build/web/         Local web export output (gitignored / not committed)
-tools/               Test runners, sprite generator, export_web.sh
-docs/                Rules, encounters, playtest, NN experiment, art manifest
+  sim/               DmbRealtimeDuelSim, rules, bots, encounters
+  client/            Portrait UI, animation layer, EncounterSession
+  assets/            Essence/locus/barrier art (draft placeholders)
+python_prototype/    Pure rules + pytest
+docs/PRD.md          Product requirements (source of truth)
 ```
 
 ## Docs
 
+- [**Product requirements (PRD)**](docs/PRD.md)
 - [Game rules](docs/RULES.md)
 - [Encounter design](docs/ENCOUNTER_DESIGN.md)
-- [Manual playtest](docs/MANUAL_PLAYTEST.md)
-- [Visual capture checklist](docs/VISUAL_CAPTURE.md)
-- [Bot difficulty tuning](docs/BOT_DIFFICULTY.md)
-- [Deploy to Cloudflare Pages](docs/DEPLOY_CLOUDFLARE_PAGES.md)
-- [NN experiment](docs/NN_BOT_EXPERIMENT.md)
-- [Art manifest](docs/ART_ASSET_MANIFEST.md)
 - [Release notes](docs/RELEASE_NOTES.md)
-
-## License
-
-See repository for license terms.

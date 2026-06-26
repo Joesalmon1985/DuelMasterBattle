@@ -11,9 +11,11 @@ config/features=PackedStringArray("4.4")
 EncounterSession="*res://client/scripts/encounter_session.gd"
 
 [display]
-window/size/viewport_width=900
-window/size/viewport_height=700
+window/size/viewport_width=720
+window/size/viewport_height=1280
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
 
 [rendering]
 renderer/rendering_method="gl_compatibility"

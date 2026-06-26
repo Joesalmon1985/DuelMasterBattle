@@ -25,11 +25,11 @@ class TestSolverBot:
 
     def test_candidate_counts_per_encounter(self):
         blue = get_encounter("blue_apprentice")
-        assert SolverBot(blue).all_code_count() == 4
+        assert SolverBot(blue).all_code_count() == 3
         thorn = get_encounter("thorn_adept")
-        assert SolverBot(thorn).all_code_count() == 20
+        assert SolverBot(thorn).all_code_count() == 12
         mirror = get_encounter("mirror_mage")
-        assert SolverBot(mirror).all_code_count() == 64
+        assert SolverBot(mirror).all_code_count() == 125
 
     def test_opening_guess_from_pool(self):
         blue = get_encounter("blue_apprentice")

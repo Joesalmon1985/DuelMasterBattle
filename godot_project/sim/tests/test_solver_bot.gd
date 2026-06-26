@@ -30,15 +30,15 @@ func run() -> void:
 	assert_true(int(result["count"]) <= DmbConstants.MAX_GUESSES, "within 12")
 	var blue := DmbEncounters.get_encounter("blue_apprentice")
 	var blue_bot = _SolverBot.new(blue)
-	assert_eq(blue_bot.all_code_count(), 4, "blue candidate count")
+	assert_eq(blue_bot.all_code_count(), 3, "blue candidate count")
 	var thorn := DmbEncounters.get_encounter("thorn_adept")
-	assert_eq(_SolverBot.new(thorn).all_code_count(), 20, "thorn candidate count")
+	assert_eq(_SolverBot.new(thorn).all_code_count(), 12, "thorn candidate count")
 	for _i in range(3):
 		var b2 = _SolverBot.new(archmage)
 		assert_true(b2.is_legal_guess(b2.make_guess()), "legal opening guess")
 	for enc_id in ["blue_apprentice", "archmage_duel"]:
 		var rs = DmbEncounters.get_encounter(enc_id)
-		var rb = _BotFactory.make_bot(rs, 42)
+		var rb = _BotFactory.make_bot(rs, null, 42)
 		assert_true(rb.is_legal_guess(rb.make_guess()), "legal opening %s" % enc_id)
 
 

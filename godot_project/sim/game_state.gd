@@ -32,7 +32,7 @@ func reset(bot_seed: int = -1, ruleset: DmbDuelRuleset = null) -> void:
 		_bot_seed = bot_seed
 	if ruleset != null:
 		_ruleset = ruleset
-	_bot = _BotFactory.make_bot(_ruleset, _bot_seed)
+	_bot = _BotFactory.make_bot(_ruleset, null, _bot_seed)
 	phase = GamePhase.HUMAN_SETUP
 	human_setup_pegs = _empty_pegs()
 	current_human_guess = _empty_pegs()

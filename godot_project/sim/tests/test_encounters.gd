@@ -11,4 +11,5 @@ func run() -> void:
 	assert_eq(arch.enemy_difficulty, "expert", "archmage difficulty")
 	var blue := DmbEncounters.get_encounter("blue_apprentice")
 	assert_eq(blue.slot_count, 1, "blue apprentice one slot")
-	assert_eq(blue.attack_magic_pool.size(), 4, "blue attack pool size")
+	assert_eq(blue.attack_magic_pool.size(), 3, "blue attack pool size")
+	assert_eq(blue.allow_repeats, false, "blue apprentice no repeats")

@@ -11,5 +11,6 @@ Player-facing rules clarity and encounter progression framing.
 - Accessibility: magic types identified by label, number, and symbol — not colour alone.
 
 ## References
+- **[PRD.md](../PRD.md)** — product requirements (terminology, UX, encounters)
 - [ENCOUNTER_DESIGN.md](../ENCOUNTER_DESIGN.md)
 - [RULES.md](../RULES.md)

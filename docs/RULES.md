@@ -1,63 +1,77 @@
-# Game Rules — Duel Master Battle (Wizard Duel)
+# Game Rules — Duel Master Battle (Wizard Ward Duel)
+
+**Source of truth:** [PRD.md](PRD.md)
+
+## Rules Canon
+
+Duel Master Battle is a real-time wizard ward duel built on hidden-pattern deduction. Each duelist secretly sets a **ward pattern** by placing **essences** into named **loci**. Attacks compare patterns using aggregate feedback only.
+
+### Terminology
+
+| Concept | Term |
+|---------|------|
+| Colour / magic type | **Essence** |
+| Slot / point | **Locus** (Roach, Uzag, Lieana, Gyse, …) |
+| Secret code | **Ward pattern** |
+| Guess | **Attack pattern** |
+| Exact match | **Fracture** |
+| Colour-only match | **Echo** |
+| Miss | **Fade** |
+| Bot | **Rival wizard** |
+| Draw (no solve) | **Stalemate** |
+| Simultaneous solve | **Clash** |
+
+### Feedback rule (hard)
+
+Attacks may travel positionally in animation, but feedback resolves **non-positionally**. The UI receives only aggregate counts: fractures, echoes, fades.
 
 ## Encounter-driven rules
 
-Each duel uses an **encounter ruleset** (`DuelRuleset` / `DmbDuelRuleset`) defining:
+Each duel uses a `DuelRuleset` / `DmbDuelRuleset` defining:
 
-- **Slot count** (1–4 points)
-- **Secret magic pool** — types allowed when casting your hidden pattern
-- **Attack magic pool** — types allowed when attacking (must include all secret types)
-- **Max attacks per player** — base cap; modifiers may add `extra_attacks`
+- **Locus count** (1–8)
+- **Secret essence pool** and **attack essence pool**
+- **Max attacks per duelist**
+- **Cast window** base min/max seconds
+- **Last Stand** optional comeback fields
+- **allow_repeats**
 
-See [Encounter design](ENCOUNTER_DESIGN.md) for the four built-in encounters.
+See [Encounter design](ENCOUNTER_DESIGN.md).
 
-**Archmage Duel** (`archmage_duel`) matches classic Mastermind: 4 slots, 10 types, 12 attacks, Expert bot.
+**Archmage Duel** is the balance anchor: 4 loci, 10 essences, 12 attacks.
 
-## Mechanical rules (Mastermind core)
-- Each pattern has **1–4 slots** (encounter-dependent).
-- Each slot uses a magic type from the relevant pool.
-- **Repeated types** allowed unless the encounter sets `allow_repeats = false`.
-- Illegal guesses are rejected and do not consume an attack.
+## Mechanical rules
 
-## Wizard-duel terminology
+- Multiset Mastermind scoring (`exact` / `colour_only` internally; Fracture / Echo / Fade in UI).
+- Illegal attacks rejected.
+- Repeats per encounter config.
 
-| Mastermind | Wizard duel |
-|------------|-------------|
-| Secret code slot | Magical **point** (Shield, Body, Staff, Mind — or fewer per encounter) |
-| Colour / peg | **Magic type** (Flame, Frost, Storm, …) |
-| Exact match (black pin) | **Hit** — correct type, correct point |
-| Colour-only (white pin) | **Weakness** — correct type, wrong point |
-| No pin | **Unaffected** — no matching weakness revealed |
+## Real-time duel flow
 
-### Ten magic types (options 0–9)
-0 Flame · 1 Frost · 2 Storm · 3 Stone · 4 Light · 5 Shadow · 6 Vine · 7 Metal · 8 Spirit · 9 Arcane
+1. Select difficulty and encounter.
+2. Set hidden ward pattern → **Lock ward**.
+3. Both duelists act in real time with independent **cast windows**.
+4. Cast when min time elapsed; auto-cast at max time.
+5. Aggregate feedback after each attack.
+6. Result: Victory, Defeat, Clash, or Stalemate.
 
-## Feedback scoring
-Multiset Mastermind scoring (`exact`, `colour_only`). UI presents Hit / Weakness / Unaffected.
+## Win conditions
 
-## Alternating Human vs Bot flow
-1. Select encounter on main menu → **Start duel**.
-2. Human sets pattern points and **Cast pattern** (secret pool).
-3. Bot sets a hidden pattern from the same secret pool rules.
-4. **Human attacks first** — one guess per turn; feedback in your attack history.
-5. **Bot attacks** — one guess per turn; feedback in enemy history.
-6. Turns alternate until someone solves or both exhaust configured max attacks.
-7. Result screen; **New duel** or **Back to menu**.
+- **Victory:** player breaks rival ward (rival Last Stand exhausted).
+- **Defeat:** rival breaks player ward.
+- **Clash:** simultaneous ward breaks or comeback clash during Last Stand.
+- **Stalemate:** both exhaust attack limits without a broken ward.
 
-## Win / draw
-- Immediate win on full solve (Hits == slot count)
-- Both exhaust max attacks without solving → draw
-- Otherwise tie-break on best Hit/Weakness progress
+No progress tie-break in v1.
 
-## Bot difficulty (per encounter)
-| Level | Behaviour |
-|-------|-----------|
-| Easy | Random legal guesses |
-| Normal | Candidate elimination; random pick from survivors |
-| Hard | Minimax partition strategy (capped pool) |
-| Expert | Strongest deterministic solver (Archmage default) |
+## Difficulty (global)
 
-Opening guess pattern: first pool id twice, second pool id twice (truncated to slot count). Archmage → `[0,0,1,1]`.
+| Level | Bot behaviour | Cast multiplier |
+|-------|---------------|-----------------|
+| Easy | Random / basic | 1.4× slower rival |
+| Medium | Candidate elimination | 1.0× |
+| Hard | Capped minimax | 0.75× faster rival |
 
 ## Accessibility
-Magic types use labels, numbers, and symbols — not colour alone.
+
+Essences use labels, symbols, and icons — not colour alone.

@@ -24,7 +24,7 @@ func set_colour(colour_id: int) -> void:
 	_colour_id = colour_id
 	if colour_id < 0:
 		text = "?"
-		tooltip_text = "Empty slot — click to choose magic"
+		tooltip_text = "Empty locus — tap to choose essence"
 		modulate = Color.WHITE
 	else:
 		var name: String = DmbColourData.NAMES[colour_id]

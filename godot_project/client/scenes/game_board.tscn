@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://gameboard001"]
+[gd_scene load_steps=2 format=3 uid="uid://gameboard001"]
 
 [ext_resource type="Script" path="res://client/scripts/game_board.gd" id="1"]
-[ext_resource type="Script" path="res://client/components/peg_slot.gd" id="2"]
 
 [node name="GameBoard" type="Control"]
 layout_mode = 3
@@ -41,26 +40,70 @@ layout_mode = 2
 autowrap_mode = 2
 text = "Loading..."
 
-[node name="DifficultyRow" type="HBoxContainer" parent="VBox"]
-visible = false
+[node name="PauseRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
 
-[node name="DifficultyLabel" type="Label" parent="VBox/DifficultyRow"]
+[node name="PauseButton" type="Button" parent="VBox/PauseRow"]
 layout_mode = 2
-text = "Difficulty:"
+text = "Pause"
 
-[node name="DifficultyOption" type="OptionButton" parent="VBox/DifficultyRow"]
+[node name="HistoryToggle" type="Button" parent="VBox/PauseRow"]
 layout_mode = 2
+text = "Hide history"
 
-[node name="DuelPanel" type="HBoxContainer" parent="VBox"]
+[node name="DuelPanel" type="VBoxContainer" parent="VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
-[node name="PlayerColumn" type="VBoxContainer" parent="VBox/DuelPanel"]
-custom_minimum_size = Vector2(280, 0)
+[node name="EnemyColumn" type="VBoxContainer" parent="VBox/DuelPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="EnemyWizardRow" type="HBoxContainer" parent="VBox/DuelPanel/EnemyColumn"]
+layout_mode = 2
+alignment = 1
+
+[node name="EnemyWizard" type="TextureRect" parent="VBox/DuelPanel/EnemyColumn/EnemyWizardRow"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EnemyWizardLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn/EnemyWizardRow"]
+layout_mode = 2
+text = "Rival wizard"
+
+[node name="EnemyTimerLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn"]
+layout_mode = 2
+text = ""
+
+[node name="EnemyTellLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn"]
+layout_mode = 2
+autowrap_mode = 2
+text = ""
+
+[node name="BotLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn"]
+layout_mode = 2
+text = "Rival attacks against your ward:"
+
+[node name="BotScroll" type="ScrollContainer" parent="VBox/DuelPanel/EnemyColumn"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="BotBoard" type="VBoxContainer" parent="VBox/DuelPanel/EnemyColumn/BotScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="AnimationArea" type="Control" parent="VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+
+[node name="PlayerColumn" type="VBoxContainer" parent="VBox/DuelPanel"]
+layout_mode = 2
 theme_override_constants/separation = 6
 
 [node name="PlayerWizardRow" type="HBoxContainer" parent="VBox/DuelPanel/PlayerColumn"]
@@ -94,63 +137,24 @@ theme_override_constants/separation = 4
 [node name="LockButton" type="Button" parent="VBox/DuelPanel/PlayerColumn/SecretSection/SecretRow"]
 layout_mode = 2
 disabled = true
-text = "Cast pattern"
+text = "Lock ward"
 
 [node name="HumanAttackSection" type="VBoxContainer" parent="VBox/DuelPanel/PlayerColumn"]
 visible = false
 layout_mode = 2
-size_flags_vertical = 3
 theme_override_constants/separation = 4
 
 [node name="HumanHistoryLabel" type="Label" parent="VBox/DuelPanel/PlayerColumn/HumanAttackSection"]
 layout_mode = 2
-text = "Your attacks against the enemy:"
+text = "Your attacks against the rival:"
 
 [node name="HumanHistoryScroll" type="ScrollContainer" parent="VBox/DuelPanel/PlayerColumn/HumanAttackSection"]
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
 [node name="HumanHistoryBoard" type="VBoxContainer" parent="VBox/DuelPanel/PlayerColumn/HumanAttackSection/HumanHistoryScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 4
-
-[node name="EnemyColumn" type="VBoxContainer" parent="VBox/DuelPanel"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 1.5
-theme_override_constants/separation = 6
-
-[node name="EnemyWizardRow" type="HBoxContainer" parent="VBox/DuelPanel/EnemyColumn"]
-layout_mode = 2
-alignment = 1
-
-[node name="EnemyWizard" type="TextureRect" parent="VBox/DuelPanel/EnemyColumn/EnemyWizardRow"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="EnemyWizardLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn/EnemyWizardRow"]
-layout_mode = 2
-text = "Enemy wizard"
-
-[node name="EnemyTellLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn"]
-layout_mode = 2
-autowrap_mode = 2
-text = ""
-
-[node name="BotLabel" type="Label" parent="VBox/DuelPanel/EnemyColumn"]
-layout_mode = 2
-text = "Enemy attacks against you:"
-
-[node name="BotScroll" type="ScrollContainer" parent="VBox/DuelPanel/EnemyColumn"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="BotBoard" type="VBoxContainer" parent="VBox/DuelPanel/EnemyColumn/BotScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
@@ -177,12 +181,11 @@ text = "Your attack:"
 [node name="SubmitButton" type="Button" parent="VBox/HumanGuessSection/HumanGuessRow"]
 layout_mode = 2
 disabled = true
-text = "Attack"
+text = "Cast"
 
-[node name="SkipButton" type="Button" parent="VBox"]
-visible = false
+[node name="PlayerTimerLabel" type="Label" parent="VBox"]
 layout_mode = 2
-text = "Skip enemy attack"
+text = ""
 
 [node name="HelpRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
@@ -214,7 +217,7 @@ autowrap_mode = 2
 
 [node name="RestartButton" type="Button" parent="VBox"]
 layout_mode = 2
-text = "New duel"
+text = "Retry duel"
 
 [node name="BackToMenuButton" type="Button" parent="VBox"]
 layout_mode = 2
