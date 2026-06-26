@@ -43,4 +43,40 @@ tools/run_godot_ui_smoke.sh
 tools/godot_cleanup.sh && tools/godot_check.sh
 ```
 
-Final green run on this branch: **37 passed, 1 skipped** (pytest); **6/6** Godot rules; **UI SMOKE: ALL PASSED**.
+Final green run on wizard-duel branch: **37 passed, 1 skipped** (pytest); **6/6** Godot rules; **UI SMOKE: ALL PASSED**.
+
+---
+
+## Encounter rulesets (`feature/encounter-progression-rulesets`, 2026-06)
+
+### What worked well
+
+- **Archmage as regression anchor** — Explicit tests that Archmage matches 4/10/12 prevented silent breakage while adding 1–3 slot encounters.
+- **Mirrored Python + Godot ruleset types** — `encounters.py` / `encounters.gd` kept parity; `validate_pools()` caught invalid configs early.
+- **`EncounterSession` autoload + `get_node("/root/EncounterSession")`** — Avoids compile-time autoload references in scripts run outside normal scene tree (UI smoke).
+- **Dynamic `PegSlot` children** — Removing baked 4-slot nodes from `game_board.tscn` let slot count follow ruleset.
+- **Filtered picker via `set_allowed_magics`** — Single picker component; pool switches on secret vs attack mode.
+- **Dual UI smoke** — Blue Apprentice (1 slot, 4 magics) + Archmage (full path) caught assumptions hardcoded to 4 slots.
+
+### What was challenging
+
+- **New `class_name` scripts** — `DmbEncounters` / `DmbDuelRuleset` needed `.uid` files and `global_script_class_cache.cfg` update before headless tests parsed dependents.
+- **Opening guess pattern** — Truncating `[pool[0], pool[0], pool[1], pool[1]]` preserved Archmage `[0,0,1,1]`; naive padding broke fixture parity.
+- **Expert minimax in tight test loops** — Repeated `make_guess()` without feedback timed out; reduced loop counts in bot legality tests.
+- **Easy bot randomness on 1-slot duels** — Smoke/game tests needed deterministic `SolverBot` override where random easy bot could solve in one guess.
+
+### Lessons
+
+1. **Register new Godot globals immediately** (uid + class cache) when adding `class_name` types used across sim/client/tests.
+2. **Add encounter-specific smoke** whenever UI assumes slot or pool size.
+3. **Use `validate_pools()` at ruleset construction** — subset rule prevents unsolvable encounters.
+4. **Keep difficulty on the ruleset** — removes duplicate UI difficulty row; document per-encounter bot in `BOT_DIFFICULTY.md`.
+
+### Verification (encounter branch)
+
+```bash
+cd python_prototype && python3 -m pytest -q    # 53 passed, 1 skipped
+tools/run_godot_tests.sh                       # 7 modules
+tools/run_godot_ui_smoke.sh                    # Blue Apprentice + Archmage
+```
+

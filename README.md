@@ -55,14 +55,14 @@ cd python_prototype && python3 scripts/evaluate_bots.py --quick  # 8 secrets
 
 ```
 shared_fixtures/     JSON golden files
-python_prototype/    Pure rules, solver, NN experiment (Python only)
+python_prototype/    Pure rules, encounters, solver, NN experiment (Python only)
 godot_project/
-  sim/               Authoritative rules + bots
-  client/            Wizard-duel UI
+  sim/               Authoritative rules + bots + encounters.gd / duel_ruleset.gd
+  client/            Wizard-duel UI + EncounterSession autoload
   assets/            Draft PNG sprites/icons
   build/web/         Local web export output (gitignored / not committed)
 tools/               Test runners, sprite generator, export_web.sh
-docs/                Rules, playtest, NN experiment, art manifest
+docs/                Rules, encounters, playtest, NN experiment, art manifest
 ```
 
 ## Docs

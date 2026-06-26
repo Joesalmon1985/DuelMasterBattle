@@ -11,6 +11,8 @@ tools/export_web.sh
 ls godot_project/build/web/
 ```
 
+Re-export after encounter UI changes — local `build/web/` is gitignored and may be stale.
+
 ## Cloudflare Pages setup
 1. Log in to [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git** (or **Direct Upload**).
 2. **Direct Upload** (simplest for static export):
@@ -32,7 +34,8 @@ Godot 4 web builds often need COOP/COEP for threads; if the game fails to load, 
 
 ## Verification
 - Open the deployed URL in a desktop browser.
-- Confirm main menu loads and Human vs Bot is playable.
+- Confirm main menu loads with **encounter select** and **Start duel** is playable.
+- Try **Blue Apprentice** (1 slot) and **Archmage Duel** (4 slots) if verifying encounter build.
 - **This document does not claim deployment succeeded** — verify after upload.
 
 ## Local preview

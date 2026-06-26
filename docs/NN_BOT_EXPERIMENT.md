@@ -13,7 +13,7 @@ Python-only experiment. **Not used by the Godot game.** No PyTorch/TensorFlow de
 - `nn/model.py` — MLP policy head
 - `nn/policy_bot.py` — wrapper (falls back to solver)
 - `nn/train.py` — time-boxed smoke training (2 epochs, 16 secrets default)
-- `scripts/evaluate_bots.py` — difficulty metrics for Easy/Normal/Hard/Expert
+- `scripts/evaluate_bots.py` — difficulty metrics on **Archmage ruleset** with `enemy_difficulty` overridden per level (`dataclasses.replace`)
 - `tests/test_nn_scaffold.py` — shape/forward-pass tests (1 skipped optional full train)
 
 ## Metrics reported (not “wins in exactly X”)

@@ -16,12 +16,13 @@ Or launch from the Godot editor with `godot_project` as the project path.
 
 | # | Screen | How to reach | What to show |
 |---|--------|--------------|--------------|
-| 1 | Main menu | Launch game | Title, Human vs Bot, How to play |
-| 2 | Secret setup | Human vs Bot | Player wizard, Shield/Body/Staff/Mind headers, empty slots |
-| 3 | Magic picker | Click any secret slot | Overlay grid with magic icons |
-| 4 | Enemy attacking | Cast pattern | Enemy wizard, bot rows appearing, Skip button |
-| 5 | Human attacking | After bot phase ends | Your attack row, phase label |
-| 6 | Result | Finish duel | Winner, solve/fail counts, New duel |
+| 1 | Main menu | Launch game | Title, **encounter** dropdown, detail panel, **Start duel**, How to play |
+| 2 | Blue Apprentice setup | Start duel → Blue Apprentice | 1 slot (Shield), enemy tell, player wizard |
+| 3 | Magic picker (filtered) | Click secret or attack slot | Only encounter-allowed magics (e.g. 4 for Blue Apprentice attack) |
+| 4 | Archmage setup | Back to menu → Archmage Duel | 4 point headers, 10-type picker |
+| 5 | Alternating duel | Cast pattern | Human history + enemy history; one bot row per turn |
+| 6 | Enemy attacking | After human attack | Enemy wizard name, Skip button (if delay enabled) |
+| 7 | Result | Finish duel | Winner, attack counts, New duel, Back to menu |
 
 ## Web build (optional)
 
@@ -30,7 +31,7 @@ tools/export_web.sh
 cd godot_project/build/web && python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080` and repeat key screens in the browser.
+Open `http://localhost:8080` and repeat key screens. Re-export after encounter UI changes — committed `build/` may be stale.
 
 ## Saving screenshots
 
