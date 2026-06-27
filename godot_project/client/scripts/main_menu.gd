@@ -72,16 +72,21 @@ func _build_settings_panel() -> void:
 		c.queue_free()
 	var vbox := VBoxContainer.new()
 	settings_panel.add_child(vbox)
-	for key in ["sound_volume", "music_volume", "haptics", "screen_shake", "reduce_motion"]:
+	for key in ["sound_volume", "music_volume", "haptics", "screen_shake", "reduce_motion", "left_hand_mode", "larger_text"]:
 		var row := HBoxContainer.new()
 		var lbl := Label.new()
 		lbl.text = key.replace("_", " ").capitalize()
 		_VT.apply_label_secondary(lbl)
 		row.add_child(lbl)
 		var check := CheckButton.new()
-		check.button_pressed = bool(_SaveData.get_setting(key, true)) if key in ["haptics", "screen_shake"] else false
-		if key == "reduce_motion":
+		if key in ["haptics", "screen_shake"]:
+			check.button_pressed = bool(_SaveData.get_setting(key, true))
+		elif key == "reduce_motion":
 			check.button_pressed = bool(_SaveData.get_setting(key, false))
+		elif key in ["left_hand_mode", "larger_text"]:
+			check.button_pressed = bool(_SaveData.get_setting(key, false))
+		else:
+			check.button_pressed = bool(_SaveData.get_setting(key, true))
 		check.toggled.connect(func(on): _SaveData.set_setting(key, on))
 		row.add_child(check)
 		vbox.add_child(row)

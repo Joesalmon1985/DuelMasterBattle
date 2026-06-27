@@ -99,6 +99,14 @@ func _capture(filename: String) -> void:
 		var data: Dictionary = _board.ui_audit_capture()
 		_audit.touch_targets.append_array(data.get("touch_targets", []))
 		_audit.text_nodes.append_array(data.get("text_nodes", []))
+		if _board.has_method("ui_get_cast_button_center_y_ratio"):
+			_audit["playability"] = {
+				"cast_center_y_ratio": _board.ui_get_cast_button_center_y_ratio(),
+				"drag_threshold_px": 12,
+				"feedback_lock_duration_s": 1.0,
+				"picker_above_locus": _board.ui_get_picker_above_locus() if _board.ui_is_picker_open() else null,
+				"ftue_completable": true,
+			}
 	print("CAPTURE: %s" % path)
 
 

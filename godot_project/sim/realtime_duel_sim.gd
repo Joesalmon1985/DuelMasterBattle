@@ -120,6 +120,9 @@ func can_lock_player_ward() -> bool:
 
 func set_player_ward_locus(index: int, essence: int) -> void:
 	assert(phase == Phase.WARD_SETUP)
+	if essence < 0:
+		_player_ward[index] = null
+		return
 	DmbCode.validate_colour_in_pool(essence, _ruleset.secret_magic_pool)
 	_player_ward[index] = essence
 
@@ -180,6 +183,9 @@ func _effective_max_cast(for_player: bool) -> float:
 
 func set_player_attack_locus(index: int, essence: int) -> void:
 	if phase != Phase.DUELING or _resolving:
+		return
+	if essence < 0:
+		_player_attack[index] = null
 		return
 	DmbCode.validate_colour_in_pool(essence, _ruleset.attack_magic_pool)
 	_player_attack[index] = essence

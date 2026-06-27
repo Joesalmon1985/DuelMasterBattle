@@ -73,6 +73,16 @@ After capture, `visual_qa_report.py` builds:
 
 Record scores in `qa/reports/visual_qa_latest.md` after each capture pass.
 
+## Playability QA
+
+```bash
+python3 tools/playability_qa_report.py
+```
+
+Reads `qa/reports/capture_audit.json` playability block and touch targets. Writes `qa/reports/playability_qa_latest.md`.
+
+Checks: cast thumb-zone placement, touch target mins, drag threshold, feedback lock duration, picker-above-locus.
+
 ## Automated metrics
 
 | Metric | Target (duel screen) |

@@ -58,13 +58,19 @@ func _test_blue_apprentice_flow() -> void:
 	assert_true(_board.ui_is_human_turn(), "duel starts in realtime phase")
 
 	_board.ui_action_pick_guess_slot(0)
-	assert_eq(_board.ui_get_visible_magic_count(), 3, "attack picker shows 3 essences")
+	await process_frame
+	assert_true(_board.ui_is_picker_open(), "picker opens on locus tap")
+	var picker_above: bool = _board.ui_get_picker_above_locus()
+	assert_true(picker_above or _board.ui_has_essence_tray(), "picker above locus or essence tray available")
 	_board.ui_action_pick_magic(0)
+	assert_eq(_board.ui_get_visible_magic_count(), 3, "attack picker shows 3 essences")
 	assert_true(_board.ui_can_player_cast(), "fast cast test mode allows cast")
 	var cast_size: Vector2 = _board.ui_get_cast_button_size()
 	assert_true(cast_size.x >= 48 or cast_size.y >= 48, "cast button has touch target")
 	_board.ui_action_submit_guess()
 	await process_frame
+	assert_true(_board.ui_get_cast_button_center_y_ratio() > 0.55, "cast button in thumb zone")
+	assert_true(_board.ui_has_essence_tray(), "essence tray visible in duel")
 	_board.ui_advance_time(1.0)
 	await process_frame
 

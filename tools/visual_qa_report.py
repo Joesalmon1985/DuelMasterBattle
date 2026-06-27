@@ -237,15 +237,15 @@ def main() -> None:
             "",
             "## Rubric (manual — score 1–5)",
             "",
-            "| Screen | Read | Hierarchy | Mobile | Juice | Magic | Density | Feedback | A11y | Polish |",
-            "|--------|------|-----------|--------|-------|-------|---------|----------|------|--------|",
+            "| Screen | Read | Hierarchy | Mobile | Playability | Juice | Magic | Density | Feedback | A11y | Polish |",
+            "|--------|------|-----------|--------|-------------|-------|-------|---------|----------|------|--------|",
         ]
     )
     for name in SHOT_ORDER:
         if (CURRENT / name).exists():
-            md.append(f"| {name} | | | | | | | | | |")
+            md.append(f"| {name} | | | | | | | | | | |")
     md.append("")
-    md.append("Pass threshold: ≥4 in all categories for core duel screens.")
+    md.append("Pass threshold: ≥4 in all categories for core duel screens (including Playability).")
     (REPORTS / "visual_qa_latest.md").write_text("\n".join(md))
     print(f"Wrote {REPORTS / 'visual_metrics_latest.json'}")
     print(f"Wrote {REPORTS / 'visual_qa_latest.md'}")

@@ -42,8 +42,27 @@ const DUR_PROJECTILE := 0.50
 const DUR_IMPACT := 0.35
 const DUR_FEEDBACK := 0.55
 const DUR_VICTORY := 1.0
+const DUR_PICKER_OPEN := 0.12
+const DUR_FEEDBACK_ANTICIPATION := 0.20
+const DUR_FEEDBACK_EMPHASIS := 0.40
+const DUR_FEEDBACK_AFTERMATH := 0.40
+const DUR_FEEDBACK_LOCK := 1.0
+
+const DRAG_THRESHOLD_PX := 12
+const LONG_PRESS_MS := 450
+const SAFE_BOTTOM_INSET := 48
 
 const HISTORY_PEEK_MAX := 3
+
+enum InteractionState {
+	IDLE,
+	LOCUS_SELECTED,
+	ESSENCE_PICKER_OPEN,
+	SOCKET_FILLED,
+	CAST_READY,
+	CASTING,
+	FEEDBACK_LOCKED,
+}
 
 
 static func panel_style() -> StyleBoxFlat:

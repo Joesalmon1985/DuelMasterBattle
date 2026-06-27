@@ -6,7 +6,6 @@ const _DuelEvent = preload("res://sim/duel_event.gd")
 const _SpellVfx = preload("res://client/components/spell_vfx.gd")
 const _SaveData = preload("res://client/scripts/save_data.gd")
 const _WardBarrier = preload("res://client/components/ward_barrier.gd")
-const _FeedbackChip = preload("res://client/components/feedback_chip.gd")
 
 var _board
 var _animation_area: Control
@@ -14,7 +13,6 @@ var _travel_layer: Control
 var _result_cluster: HBoxContainer
 var _ward
 var _reduce_motion: bool = false
-var _active_tweens: Array = []
 
 
 func setup(
@@ -32,13 +30,18 @@ func setup(
 	_reduce_motion = bool(_SaveData.get_setting("reduce_motion", false))
 
 
+func refresh_reduce_motion() -> void:
+	_reduce_motion = bool(_SaveData.get_setting("reduce_motion", false))
+
+
 func consume_events(events: Array) -> void:
 	for ev in events:
 		match ev.type:
 			_DuelEvent.ATTACK_LAUNCHED:
 				_on_attack_launched(ev.data)
 			_DuelEvent.FEEDBACK_REVEALED:
-				_on_feedback_revealed(ev.data)
+				if _board != null and _board.has_method("_start_feedback_sequence"):
+					_board.call_deferred("_start_feedback_sequence", ev.data)
 			_DuelEvent.WARD_BROKEN, _DuelEvent.LAST_STAND_STARTED:
 				_on_ward_state(ev.type)
 
@@ -59,14 +62,6 @@ func _on_attack_launched(data: Dictionary) -> void:
 	if _ward:
 		_ward.set_state(_WardBarrier.State.IMPACTED)
 		_SpellVfx.spawn_impact(_travel_layer, target_pos)
-
-
-func _on_feedback_revealed(_data: Dictionary) -> void:
-	if _reduce_motion or _result_cluster == null:
-		return
-	for chip in _result_cluster.get_children():
-		if chip.has_method("pop_in") and chip.visible:
-			chip.pop_in()
 
 
 func _on_ward_state(ev_type: String) -> void:
