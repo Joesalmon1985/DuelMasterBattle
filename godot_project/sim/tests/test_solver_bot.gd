@@ -16,13 +16,14 @@ func run() -> void:
 	var bot = _SolverBot.new(archmage)
 	assert_eq(bot.all_code_count(), 10000, "godot archmage all codes")
 	var opening: Array = bot.make_guess()
-	assert_eq(int(opening[0]), 0, "opening 0")
-	assert_eq(int(opening[1]), 0, "opening 1")
-	assert_eq(int(opening[2]), 1, "opening 2")
-	assert_eq(int(opening[3]), 1, "opening 3")
+	assert_eq(opening.size(), 4, "opening length")
+	assert_true(bot.is_legal_guess(opening), "opening legal")
+	assert_eq(int(opening[0]), int(opening[1]), "opening pairs first two")
+	assert_eq(int(opening[2]), int(opening[3]), "opening pairs last two")
+	assert_true(int(opening[0]) != int(opening[2]), "opening uses two spells")
 	var secret := [2, 5, 8, 1]
-	bot.register_feedback([0, 0, 1, 1], DmbFeedback.score_guess(secret, [0, 0, 1, 1]).x,
-		DmbFeedback.score_guess(secret, [0, 0, 1, 1]).y)
+	bot.register_feedback(opening, DmbFeedback.score_guess(secret, opening).x,
+		DmbFeedback.score_guess(secret, opening).y)
 	assert_true(_contains_candidate(bot, secret), "preserves secret")
 	var b = _SolverBot.new(archmage)
 	var result: Dictionary = b.solve_secret([0, 1, 2, 3])

@@ -2,7 +2,9 @@ extends DmbTestCase
 
 func run() -> void:
 	var all := DmbEncounters.all_encounters()
-	assert_eq(all.size(), 4, "four built-in encounters")
+	assert_eq(all.size(), 4, "four legacy encounters")
+	assert_eq(DmbEncounters.playable_encounters().size(), 1, "one playable encounter for MVP")
+	assert_eq(DmbEncounters.default_encounter().id, "core_duel", "core duel default")
 	var arch := DmbEncounters.get_encounter("archmage_duel")
 	assert_eq(arch.slot_count, DmbConstants.CODE_LENGTH, "archmage slots")
 	assert_eq(arch.secret_magic_pool.size(), DmbConstants.NUM_COLOURS, "archmage secret pool")

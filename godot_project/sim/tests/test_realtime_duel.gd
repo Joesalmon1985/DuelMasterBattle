@@ -36,7 +36,7 @@ func _test_min_cast_blocks_player() -> void:
 	sim.advance_time_for_test(0.1)
 	assert_true(not sim.can_player_cast(), "still blocked under min cast")
 	sim.advance_time_for_test(10.0)
-	assert_true(sim.can_player_cast(), "cast opens after min time")
+	assert_true(sim.is_player_window_open(), "cast opens after min time")
 
 
 func _test_auto_cast_at_max() -> void:

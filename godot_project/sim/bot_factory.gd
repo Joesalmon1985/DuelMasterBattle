@@ -5,6 +5,9 @@ const _RandomBot = preload("res://sim/bot.gd")
 const _SolverBot = preload("res://sim/solver_bot.gd")
 const _DifficultyProfiles = preload("res://sim/difficulty_profiles.gd")
 
+
+## Build the rival's brain for a ruleset + difficulty. New AI personalities plug
+## in here by adding a `bot_logic` id.
 static func make_bot(
 	ruleset: DmbDuelRuleset = null,
 	difficulty = null,
@@ -18,11 +21,11 @@ static func make_bot(
 		"easy_random":
 			return _RandomBot.new(rs, seed)
 		"candidate_filter":
-			return _SolverBot.new(rs, _SolverBot.STRATEGY_RANDOM, seed)
+			return _SolverBot.new(rs, _SolverBot.STRATEGY_RANDOM, seed, 0, diff.bot_mistake_rate)
 		"capped_minimax":
 			var cap: int = int(diff.bot_solver_cap)
 			if cap <= 0:
 				cap = _SolverBot.MAX_MINIMAX_POOL_HARD
-			return _SolverBot.new(rs, _SolverBot.STRATEGY_MINIMAX, seed, cap)
+			return _SolverBot.new(rs, _SolverBot.STRATEGY_MINIMAX, seed, cap, diff.bot_mistake_rate)
 		_:
 			return _SolverBot.new(rs, _SolverBot.STRATEGY_MINIMAX, seed, _SolverBot.MAX_MINIMAX_POOL_EXPERT)

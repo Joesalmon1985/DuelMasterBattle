@@ -2,6 +2,7 @@ class_name DmbDuelEvent
 extends RefCounted
 
 const CAST_STARTED := "cast_started"
+const DUEL_STARTED := "duel_started"
 const ATTACK_LAUNCHED := "attack_launched"
 const ATTACK_IMPACTED := "attack_impacted"
 const FEEDBACK_REVEALED := "feedback_revealed"
