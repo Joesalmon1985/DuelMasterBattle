@@ -13,9 +13,13 @@ static func opening_guess_for_ruleset(ruleset: DmbDuelRuleset) -> Array:
 
 
 static func generate_candidate_codes(ruleset: DmbDuelRuleset) -> Array:
-	if ruleset.allow_repeats:
-		return _generate_with_repeats(ruleset.attack_magic_pool, ruleset.slot_count)
-	return _generate_permutations(ruleset.attack_magic_pool, ruleset.slot_count)
+	return generate_codes(ruleset.attack_magic_pool, ruleset.slot_count, ruleset.allow_repeats)
+
+
+static func generate_codes(pool: Array, slot_count: int, allow_repeats: bool) -> Array:
+	if allow_repeats:
+		return _generate_with_repeats(pool, slot_count)
+	return _generate_permutations(pool, slot_count)
 
 
 static func candidate_count_for_ruleset(ruleset: DmbDuelRuleset) -> int:
