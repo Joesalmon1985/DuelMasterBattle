@@ -8,6 +8,7 @@ const TESTS := [
 	"res://sim/tests/test_game_state.gd",
 	"res://sim/tests/test_realtime_duel.gd",
 	"res://sim/tests/test_core_duel.gd",
+	"res://sim/tests/test_asymmetric_battle.gd",
 	"res://sim/tests/test_solver_bot.gd",
 	"res://sim/tests/test_assets.gd",
 ]

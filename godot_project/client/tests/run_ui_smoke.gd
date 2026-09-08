@@ -37,6 +37,10 @@ func _ensure_autoloads() -> void:
 		var s2 = load("res://client/scripts/sfx.gd").new()
 		s2.name = "Sfx"
 		root.add_child(s2)
+	if root.get_node_or_null("Adventure") == null:
+		var s3 = load("res://client/scripts/adventure.gd").new()
+		s3.name = "Adventure"
+		root.add_child(s3)
 
 
 func _new_board():

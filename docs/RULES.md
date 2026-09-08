@@ -48,6 +48,16 @@ See [Encounter design](ENCOUNTER_DESIGN.md).
 - Illegal attacks rejected.
 - Repeats per encounter config.
 
+## Unequal weaves (asymmetric duels)
+
+Creatures and small wizards don't always match your weave size. Attempt *i*
+(0-based, left to right) targets Ward slot `i mod ward_size` — extra weave
+slots **wrap around** onto Ward slots 0, 1, … A Ward is **broken** when every
+Ward slot has taken at least one exact hit (Fracture), not when every attempt
+is exact. If your weave is smaller than the enemy Ward you are told you
+**cannot break it yet** — the same constraint binds enemy bots. See
+[First Adventure](FIRST_ADVENTURE.md#unequal-weaves-asymmetric-duels).
+
 ## Real-time duel flow
 
 1. Select difficulty and encounter.
