@@ -4,8 +4,12 @@
 **Ward of four spells** (six spell types, repeats allowed) and race to deduce each other's Ward
 with Mastermind-style aggregate feedback, under a 5–60 second casting window. Ten casts each.
 
-This branch is the **core MVP**: one complete, tested duel loop. The wider game (encounters,
-bosses, Last Stand, larger Wards) is designed for but not enabled — see
+This branch is the **first adventure**: John the woodcutter finds magic, crosses a
+small top-down world (the Clearing → the Burnt Wood → Ashwell village), grows
+from one spell and one weave slot to four spells and four slots, and faces the
+Red Wizard — see [docs/FIRST_ADVENTURE.md](docs/FIRST_ADVENTURE.md). The
+standalone duel loop underneath is unchanged. The wider game (bosses, Last
+Stand, larger Wards) is designed for but not enabled — see
 [docs/CORE_MVP.md](docs/CORE_MVP.md).
 
 ## Play
@@ -19,18 +23,22 @@ export GODOT=/path/to/godot4        # optional; tools/find_godot.sh searches com
 tools/play.sh
 ```
 
-Choose a rival (Apprentice / Adept / Archmage) → **Start Duel** → set your Ward → **Lock Ward**
-→ build guesses and **CAST** in real time → result → **Play again**.
+Choose **New Game** (or Resume) → walk with the pad / arrow keys, ✦ or Space to
+interact → opening cutscene → take the staff → douse fires → fight creatures →
+reach Ashwell → face the Red Wizard. **Quick Duel** on the menu plays a
+standalone 4-slot wizard match.
 
 ## Run the checks
 
 ```bash
-tools/run_all_checks.sh        # script parse check + sim tests + UI smoke + real-time playtest (~45 s)
+tools/run_all_checks.sh        # parse check + sim tests + UI smoke + adventure flow + real-time playtest
 tools/run_godot_tests.sh       # rules, feedback, AI, cast windows, win/lose/stalemate
 tools/run_godot_ui_smoke.sh    # drives the real board through a duel (headless)
+tools/run_adventure_flow.sh    # drives the whole first chapter + save/load round trip (headless)
 tools/run_realtime_playtest.sh # wall-clock pacing with synthesised taps (headed)
 tools/run_balance_probe.sh     # AI solve rate / average casts per difficulty
-tools/capture_visual_qa.sh     # screenshots of every screen state → qa/screenshots/current
+tools/capture_visual_qa.sh     # screenshots of duel screen states → qa/screenshots/current
+tools/capture_adventure_qa.sh  # screenshots of the adventure → qa/screenshots/adventure
 ```
 
 Windows: **`Run Tests.bat`**.
@@ -41,18 +49,21 @@ Python prototype tests (rules reference implementation): `cd python_prototype &&
 
 ```
 godot_project/
-  sim/                 Authoritative rules: DmbRealtimeDuelSim, DmbSolverBot, encounters, tests
-  client/scripts/      game_board.gd (duel screen), main_menu.gd, sfx.gd, theme
-  client/components/   spell_slot, feedback_pips, cast_button, composite_wizard, spell_vfx
+  sim/                 Authoritative rules: battle sim, combatants, bestiary, progression, weave bot, tests
+  client/scripts/      game_board.gd (duel screen), main_menu.gd, adventure.gd (save), sfx.gd, theme
+  client/world/        overworld.gd, world_data.gd (areas), story_events.gd, dialogue_box.gd, touch_pad.gd
+  client/components/   spell_slot, feedback_pips, cast_button, pixel_portrait, spell_vfx (+ legacy composite_wizard)
   client/legacy/       Dormant pre-MVP components kept for the wider game
-  assets/              Spell icons (tools/generate_essence_icons.py), wizard art
-docs/CORE_MVP.md       What the MVP is, what changed, what remains
-python_prototype/      Pure-Python rules + pytest
+  assets/pixel/        Committed pixel art (built by tools/build_pixel_assets.py from gitignored Spare Sprites/)
+docs/FIRST_ADVENTURE.md What the opening chapter is, bestiary, asymmetric rules, saves, adding content
+docs/CORE_MVP.md       The duel underneath: scope, architecture, testing, future hooks
+python_prototype/      Pure-Python rules + pytest (predates the adventure; duel rules only)
 ```
 
 ## Docs
 
-- [Core MVP](docs/CORE_MVP.md) — current scope, architecture, testing, future hooks
+- [First Adventure](docs/FIRST_ADVENTURE.md) — chapter path, bestiary, asymmetric duels, saves
+- [Core MVP](docs/CORE_MVP.md) — the duel underneath, architecture, testing, future hooks
 - [Game rules](docs/RULES.md)
 - [Encounter design](docs/ENCOUNTER_DESIGN.md) (future)
 - [PRD](docs/PRD.md) (wider game vision)
