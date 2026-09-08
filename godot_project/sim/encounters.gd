@@ -1,7 +1,13 @@
 class_name DmbEncounters
 extends RefCounted
 
-const DEFAULT_ENCOUNTER_ID := "archmage_duel"
+## Catalogue of duel rulesets.
+##
+## `core_duel` is the MVP duel: 4 loci, 6 spells, 10 casts each, 5–60 s cast window.
+## The other encounters are kept for the wider game (tutorial ladder, boss) and are
+## not offered by the main menu yet.
+
+const DEFAULT_ENCOUNTER_ID := "core_duel"
 const _LOCUS := ["Roach", "Uzag", "Lieana", "Gyse", "Vorr", "Mael", "Oshen", "Keth"]
 
 static var _catalog: Dictionary = {}
@@ -10,6 +16,7 @@ static var _catalog: Dictionary = {}
 static func _build_catalog() -> void:
 	if not _catalog.is_empty():
 		return
+	_register(_make_core_duel())
 	_register(_make_blue_apprentice())
 	_register(_make_thorn_adept())
 	_register(_make_mirror_mage())
@@ -27,6 +34,18 @@ static func get_encounter(encounter_id: String) -> DmbDuelRuleset:
 	return _catalog[encounter_id]
 
 
+static func has_encounter(encounter_id: String) -> bool:
+	_build_catalog()
+	return _catalog.has(encounter_id)
+
+
+## Encounters shown to players. For the MVP this is the core duel only.
+static func playable_encounters() -> Array:
+	_build_catalog()
+	return [_catalog["core_duel"]]
+
+
+## Legacy ladder (dormant): tutorial → adept → mirror → archmage.
 static func all_encounters() -> Array:
 	_build_catalog()
 	return [
@@ -51,6 +70,19 @@ static func default_encounter() -> DmbDuelRuleset:
 
 static func _loci(count: int) -> Array:
 	return _LOCUS.slice(0, count)
+
+
+static func _make_core_duel() -> DmbDuelRuleset:
+	var pool: Array = DmbConstants.CORE_SPELL_POOL.duplicate()
+	return DmbDuelRuleset.new(
+		"core_duel", "Ward Duel",
+		"Four loci, six spells, ten casts each.",
+		DmbConstants.CORE_SLOTS, _loci(DmbConstants.CORE_SLOTS), pool, pool.duplicate(),
+		DmbConstants.CORE_MAX_CASTS,
+		"Rival Wizard", "archmage",
+		"", "normal",
+		true, DmbConstants.CORE_MIN_CAST_SECONDS, DmbConstants.CORE_MAX_CAST_SECONDS
+	)
 
 
 static func _make_blue_apprentice() -> DmbDuelRuleset:

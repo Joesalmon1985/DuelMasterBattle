@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+source "$ROOT/tools/find_godot.sh"
+cd "$ROOT"
+"$ROOT/tools/run_godot_tests.sh"
+"$ROOT/tools/run_godot_ui_smoke.sh"
+"$ROOT/tools/run_realtime_playtest.sh"

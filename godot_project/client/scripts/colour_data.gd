@@ -1,7 +1,8 @@
 class_name DmbColourData
 extends RefCounted
 
-## Presentation data for essences (magic ids 0-9) and loci.
+## Presentation data for essences (spell ids 0-9) and loci.
+## Colours here must match tools/generate_essence_icons.py.
 
 const ESSENCE_NAMES := [
 	"Flame", "Frost", "Storm", "Stone", "Light",
@@ -10,9 +11,16 @@ const ESSENCE_NAMES := [
 
 const NAMES := ESSENCE_NAMES
 
+## Short symbol shown alongside colour (accessibility).
 const SYMBOLS := [
-	"Fr", "Fs", "St", "Sn", "Li",
-	"Sh", "Vi", "Me", "Sp", "Ar",
+	"▲", "❄", "⚡", "■", "☀",
+	"☾", "●", "⬢", "♦", "★",
+]
+
+## Plain-word shape names for hints/tooltips.
+const SHAPE_NAMES := [
+	"triangle", "snowflake", "bolt", "square", "sun",
+	"moon", "leaf", "hexagon", "drop", "star",
 ]
 
 const LOCUS_NAMES := [
@@ -26,8 +34,8 @@ const FEEDBACK_ECHO := "Echo"
 const FEEDBACK_FADE := "Fade"
 
 const COLOURS := [
-	Color("#e6194b"), Color("#4fc3f7"), Color("#9e9e9e"), Color("#795548"), Color("#fff176"),
-	Color("#424242"), Color("#66bb6a"), Color("#b0bec5"), Color("#ce93d8"), Color("#7e57c2"),
+	Color("#e84545"), Color("#3fa9f5"), Color("#8fa3b8"), Color("#e08a2e"), Color("#f5d442"),
+	Color("#5b4a7a"), Color("#3ecf6a"), Color("#b8c4cc"), Color("#f2a2d9"), Color("#9b5de5"),
 ]
 
 
@@ -40,4 +48,16 @@ static func locus_name(index: int) -> String:
 static func essence_name(id: int) -> String:
 	if id >= 0 and id < ESSENCE_NAMES.size():
 		return ESSENCE_NAMES[id]
+	return "?"
+
+
+static func essence_colour(id: int) -> Color:
+	if id >= 0 and id < COLOURS.size():
+		return COLOURS[id]
+	return Color.GRAY
+
+
+static func essence_symbol(id: int) -> String:
+	if id >= 0 and id < SYMBOLS.size():
+		return SYMBOLS[id]
 	return "?"

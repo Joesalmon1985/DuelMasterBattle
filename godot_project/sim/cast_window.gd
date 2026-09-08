@@ -26,7 +26,7 @@ func open_window() -> void:
 	if state == State.EXHAUSTED:
 		return
 	elapsed = 0.0
-	state = State.LOCKED
+	state = State.LOCKED if min_cast_time > 0.0 else State.READY
 	pending_pattern.clear()
 	cast_timestamp = 0.0
 

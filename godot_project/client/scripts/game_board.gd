@@ -1,113 +1,120 @@
 extends Control
 class_name GameBoard
 
+## The duel screen. One portrait layout, three phases:
+##   WARD_SETUP – build your 4-spell ward, then Lock Ward
+##   DUELING    – build guesses, cast inside the 5–60 s window, read results
+##   FINISHED   – result overlay with both wards revealed, Play Again / Menu
+##
+## The sim (DmbRealtimeDuelSim) is authoritative; this script only renders state
+## and forwards taps.
+
 const _VT = preload("res://client/scripts/visual_theme.gd")
 const _RealtimeSim = preload("res://sim/realtime_duel_sim.gd")
-const _MagicPickerScript = preload("res://client/components/magic_picker.gd")
-const _Art = preload("res://client/scripts/art.gd")
-const _AnimController = preload("res://client/scripts/duel_animation_controller.gd")
 const _DuelEvent = preload("res://sim/duel_event.gd")
-const _CompositeWizard = preload("res://client/components/composite_wizard.gd")
-const _WardBarrier = preload("res://client/components/ward_barrier.gd")
+const _Art = preload("res://client/scripts/art.gd")
+const _SpellSlot = preload("res://client/components/spell_slot.gd")
+const _FeedbackPips = preload("res://client/components/feedback_pips.gd")
 const _CastButton = preload("res://client/components/cast_button.gd")
-const _LocusSocket = preload("res://client/components/locus_socket.gd")
-const _CastTimer = preload("res://client/components/cast_timer.gd")
-const _FeedbackChip = preload("res://client/components/feedback_chip.gd")
-const _HistoryRow = preload("res://client/components/history_row.gd")
-const _EssenceTray = preload("res://client/components/essence_tray.gd")
-const _EssenceToken = preload("res://client/components/essence_token.gd")
-const _FtueOverlay = preload("res://client/components/ftue_overlay.gd")
-const _RivalCastIndicator = preload("res://client/components/rival_cast_indicator.gd")
+const _CompositeWizard = preload("res://client/components/composite_wizard.gd")
+const _SpellVfx = preload("res://client/components/spell_vfx.gd")
 const _PlayabilityHaptics = preload("res://client/scripts/playability_haptics.gd")
 const _SaveData = preload("res://client/scripts/save_data.gd")
 
-const HOW_TO_PLAY_TEXT := (
-	"Choose essences for each locus to set your hidden ward. Lock it, then cast attacks "
-	+ "when your cast window opens. Fracture = exact match. Echo = wrong locus. "
-	+ "Fade = miss. Feedback is always aggregate."
-)
-
 signal game_finished
 
-@onready var background: ColorRect = $Background
-@onready var bg_texture: TextureRect = $BgTexture
-@onready var status_label: Label = $Margin/MainVBox/TopBar/StatusLabel
-@onready var player_timer_label: Label = $Margin/MainVBox/BottomZone/PlayerTimerLabel
-@onready var enemy_timer_label: Label = $Margin/MainVBox/TopZone/EnemyRow/EnemyInfo/EnemyTimerLabel
-@onready var secret_row: HBoxContainer = $Margin/MainVBox/BottomZone/SecretSection/SecretRow
-@onready var lock_button: Button = $Margin/MainVBox/BottomZone/SecretSection/SecretRow/LockButton
-@onready var secret_section: VBoxContainer = $Margin/MainVBox/BottomZone/SecretSection
-@onready var attack_section: VBoxContainer = $Margin/MainVBox/BottomZone/AttackSection
-@onready var bot_board: VBoxContainer = $HistorySheet/SheetVBox/BotScroll/BotBoard
-@onready var bot_scroll: ScrollContainer = $HistorySheet/SheetVBox/BotScroll
-@onready var human_history_board: VBoxContainer = $HistorySheet/SheetVBox/HumanHistoryScroll/HumanHistoryBoard
-@onready var human_history_scroll: ScrollContainer = $HistorySheet/SheetVBox/HumanHistoryScroll
-@onready var human_guess_row: HBoxContainer = $Margin/MainVBox/BottomZone/AttackSection/HumanGuessRow
-@onready var result_panel: PanelContainer = $ResultPanel
-@onready var result_label: Label = $ResultPanel/ResultLabel
-@onready var restart_button: Button = $Margin/MainVBox/NavRow/RestartButton
-@onready var back_to_menu_button: Button = $Margin/MainVBox/NavRow/BackToMenuButton
-@onready var enemy_wizard_host: Control = $Margin/MainVBox/TopZone/EnemyRow/EnemyWizardHost
-@onready var player_wizard_host: Control = $Margin/MainVBox/BottomZone/PlayerWizardHost
-@onready var ward_host: Control = $Margin/MainVBox/TopZone/WardHost
-@onready var enemy_wizard_label: Label = $Margin/MainVBox/TopZone/EnemyRow/EnemyInfo/EnemyWizardLabel
-@onready var enemy_tell_label: Label = $Margin/MainVBox/TopZone/EnemyRow/EnemyInfo/EnemyTellLabel
-@onready var secret_point_headers: HBoxContainer = $Margin/MainVBox/BottomZone/SecretSection/SecretPointHeaders
-@onready var human_point_headers: HBoxContainer = $Margin/MainVBox/BottomZone/AttackSection/HumanPointHeaders
-@onready var help_button: Button = $Margin/MainVBox/TopBar/HelpButton
-@onready var help_modal: PanelContainer = $HelpModal
-@onready var help_label: Label = $HelpModal/HelpLabel
-@onready var animation_area: Control = $Margin/MainVBox/MiddleZone/AnimationArea
-@onready var attack_travel_layer: Control = $Margin/MainVBox/MiddleZone/AttackTravelLayer
-@onready var latest_result_cluster: HBoxContainer = $Margin/MainVBox/MiddleZone/LatestResultCluster
-@onready var pause_button: Button = $Margin/MainVBox/TopBar/PauseButton
-@onready var history_toggle: Button = $Margin/MainVBox/TopBar/HistoryToggle
-@onready var history_sheet: PanelContainer = $HistorySheet
-@onready var history_peek: VBoxContainer = $Margin/MainVBox/BottomZone/HistoryPeek
-@onready var cast_timer_host: Control = $Margin/MainVBox/BottomZone/CastRow/CastTimerHost
-@onready var cast_button_host: Control = $Margin/MainVBox/BottomZone/CastRow/CastButtonHost
-@onready var bottom_zone: VBoxContainer = $Margin/MainVBox/BottomZone
-@onready var cast_row: HBoxContainer = $Margin/MainVBox/BottomZone/CastRow
-@onready var enemy_info: VBoxContainer = $Margin/MainVBox/TopZone/EnemyRow/EnemyInfo
+const HOW_TO_PLAY := [
+	"You and the rival wizard each hide a Ward of four spells. Spells may repeat.",
+	"Take turns guessing each other's Ward. After every cast you learn how many spells were right — never which ones.",
+	"●  green — right spell in the right place\n○  amber ring — right spell in the wrong place\n·  grey — spell not in the Ward at all",
+	"You can cast 5 seconds after your window opens. Cast within 60 seconds or the spell fires as it stands.",
+	"Break the rival's Ward first to win. Ten casts each.",
+]
 
 var game
 var sim:
 	get:
 		return game
 
-var _magic_picker: PanelContainer
-var _secret_slots: Array = []
-var _guess_slots: Array = []
-var _bot_rows: Array = []
-var _human_rows: Array = []
-var _peek_rows: Array = []
-var _active_mode: String = ""
-var _active_slot: int = -1
-var _bot_seed: int = 42
 var _ruleset: DmbDuelRuleset
-var _active_pool: Array = []
-var _paused: bool = false
-var _anim
-var _history_expanded: bool = false
-var _enemy_wizard
-var _player_wizard
-var _enemy_ward
-var _cast_button
-var _cast_timer
-var _feedback_chips: Array = []
-var _debug_hold_animation: bool = false
+var _bot_seed: int = 42
 var _screenshot_mode: bool = false
-var _essence_tray
-var _ftue_overlay
-var _rival_cast_indicator
-var _interaction_state: int = _VT.InteractionState.IDLE
-var _feedback_locked: bool = false
-var _player_cast_count: int = 0
-var _ftue_completed: Dictionary = {}
-var _drag_ghost: Control
-var _drag_essence_id: int = -1
-var _warn3_played: bool = false
-var _duel_ftue_started: bool = false
+var _reduce_motion: bool = false
+
+# Layout nodes
+var _root_vbox: VBoxContainer
+var _top_bar: HBoxContainer
+var _menu_btn: Button
+var _phase_lbl: Label
+var _help_btn: Button
+
+var _rival_panel: PanelContainer
+var _rival_wizard
+var _rival_name_lbl: Label
+var _rival_status_lbl: Label
+var _rival_progress: ProgressBar
+var _rival_casts_lbl: Label
+var _rival_ward_row: HBoxContainer
+var _rival_ward_slots: Array = []
+var _rival_last_lbl: Label
+
+var _result_banner: PanelContainer
+var _result_title_lbl: Label
+var _result_pips
+var _result_text_lbl: Label
+var _result_slots_row: HBoxContainer
+var _result_slots: Array = []
+
+var _history_panel: PanelContainer
+var _history_tabs: HBoxContainer
+var _history_tab_you: Button
+var _history_tab_rival: Button
+var _history_scroll: ScrollContainer
+var _history_list: VBoxContainer
+var _history_showing_rival: bool = false
+var _history_empty_lbl: Label
+
+var _intro_panel: PanelContainer
+var _intro_lbl: Label
+
+var _build_header: HBoxContainer
+var _build_title_lbl: Label
+var _clear_btn: Button
+var _random_btn: Button
+var _hint_lbl: Label
+var _loci_row: HBoxContainer
+var _loci_slots: Array = []
+var _tray: HBoxContainer
+var _tray_slots: Array = []
+
+var _action_row: HBoxContainer
+var _cast_button
+var _lock_btn: Button
+var _your_casts_lbl: Label
+var _your_ward_row: HBoxContainer
+var _your_ward_slots: Array = []
+var _your_ward_lbl: Label
+
+var _overlay: ColorRect
+var _overlay_panel: PanelContainer
+var _overlay_vbox: VBoxContainer
+
+var _toast: PanelContainer
+var _toast_lbl: Label
+var _toast_tween: Tween
+
+var _fx_layer: Control
+
+# Interaction state
+var _selected_locus: int = 0
+var _paused_by_menu: bool = false
+var _warn_ticks_played: Dictionary = {}
+var _rival_cast_flash: float = 0.0
+var _last_rival_state: String = ""
+var _first_ready_announced: bool = false
+var _result_shown: bool = false
+var _history_rows: Array = []
+var _time_since_start: float = 0.0
 
 
 func _session() -> Node:
@@ -116,1007 +123,1369 @@ func _session() -> Node:
 
 func _ready() -> void:
 	_screenshot_mode = "--screenshot-mode" in OS.get_cmdline_user_args()
-	_apply_theme()
+	_reduce_motion = bool(_SaveData.get_setting("reduce_motion", false))
 	_ruleset = _session().get_ruleset()
-	_build_board_from_ruleset()
-	_setup_visual_components()
-	_setup_art()
-	_apply_encounter_presentation()
-	_anim = _AnimController.new()
-	_anim.setup(self, animation_area, attack_travel_layer, latest_result_cluster, _enemy_ward)
-	_essence_tray = _EssenceTray.new()
-	_essence_tray.name = "EssenceTray"
-	attack_section.add_child(_essence_tray)
-	attack_section.move_child(_essence_tray, 0)
-	_essence_tray.essence_selected.connect(_on_tray_essence_selected)
-	_essence_tray.essence_drag_started.connect(_on_tray_drag_started)
-	_essence_tray.essence_drag_moved.connect(_on_tray_drag_moved)
-	_essence_tray.essence_drag_ended.connect(_on_tray_drag_ended)
-	_ftue_overlay = _FtueOverlay.new()
-	_ftue_overlay.name = "FtueOverlay"
-	add_child(_ftue_overlay)
-	_ftue_overlay.step_completed.connect(_on_ftue_step_completed)
-	_rival_cast_indicator = _RivalCastIndicator.new()
-	_rival_cast_indicator.name = "RivalCastIndicator"
-	enemy_info.add_child(_rival_cast_indicator)
-	enemy_info.move_child(_rival_cast_indicator, 1)
-	_apply_left_hand_layout()
-	_magic_picker = _MagicPickerScript.new()
-	_magic_picker.name = "MagicPicker"
-	add_child(_magic_picker)
-	_magic_picker.magic_selected.connect(_on_magic_selected)
-	lock_button.pressed.connect(_on_lock_pressed)
-	_cast_button.cast_pressed.connect(_on_submit_pressed)
-	restart_button.pressed.connect(_on_restart_pressed)
-	back_to_menu_button.pressed.connect(_on_back_to_menu_pressed)
-	help_button.pressed.connect(_on_help_pressed)
-	pause_button.pressed.connect(_on_pause_pressed)
-	history_toggle.pressed.connect(_on_history_toggle_pressed)
+	_build_ui()
 	start_new_game(_bot_seed)
+	if not _screenshot_mode and not bool(_SaveData.get_setting("seen_how_to_play", false)):
+		_show_help_overlay(true)
 
 
-func _apply_theme() -> void:
-	background.color = _VT.COLOR_BG_DEEP
-	var text_bump := 4 if bool(_SaveData.get_setting("larger_text", false)) else 0
-	help_modal.add_theme_stylebox_override("panel", _VT.panel_style())
-	history_sheet.add_theme_stylebox_override("panel", _VT.panel_style())
-	result_panel.add_theme_stylebox_override("panel", _VT.panel_style())
-	_VT.apply_label_primary(status_label)
-	status_label.add_theme_font_size_override("font_size", _VT.FONT_PRIMARY + text_bump)
-	_VT.apply_label_secondary(player_timer_label)
-	player_timer_label.add_theme_font_size_override("font_size", _VT.FONT_SECONDARY + text_bump)
-	_VT.apply_label_secondary(enemy_timer_label)
-	enemy_timer_label.add_theme_font_size_override("font_size", _VT.FONT_SECONDARY + text_bump)
-	_VT.apply_label_primary(enemy_wizard_label)
-	_VT.apply_label_secondary(enemy_tell_label)
-	lock_button.add_theme_stylebox_override("normal", _VT.gem_button_style())
-	restart_button.add_theme_stylebox_override("normal", _VT.secondary_button_style())
-	back_to_menu_button.add_theme_stylebox_override("normal", _VT.secondary_button_style())
-	pause_button.add_theme_stylebox_override("normal", _VT.secondary_button_style())
-	history_toggle.add_theme_stylebox_override("normal", _VT.secondary_button_style())
-	help_button.add_theme_stylebox_override("normal", _VT.secondary_button_style())
+# ---------------------------------------------------------------------------
+# UI construction
+# ---------------------------------------------------------------------------
+
+func _build_ui() -> void:
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	var bg := ColorRect.new()
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.color = _VT.COLOR_BG_DEEP
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(bg)
+	var glow := _Vignette.new()
+	glow.set_anchors_preset(Control.PRESET_FULL_RECT)
+	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(glow)
+
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", _VT.PADDING_OUTER)
+	margin.add_theme_constant_override("margin_right", _VT.PADDING_OUTER)
+	margin.add_theme_constant_override("margin_top", 16)
+	margin.add_theme_constant_override("margin_bottom", 20)
+	add_child(margin)
+	_root_vbox = VBoxContainer.new()
+	_root_vbox.add_theme_constant_override("separation", 10)
+	margin.add_child(_root_vbox)
+
+	_build_top_bar()
+	_build_rival_panel()
+	_build_result_banner()
+	_build_history_panel()
+	_build_intro_panel()
+	_build_builder()
+	_build_action_row()
+	_build_your_ward_strip()
+
+	_fx_layer = Control.new()
+	_fx_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_fx_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_fx_layer)
+
+	_build_toast()
+	_build_overlay()
 
 
-func _setup_visual_components() -> void:
-	_enemy_wizard = _CompositeWizard.new()
-	_enemy_wizard.set_anchors_preset(Control.PRESET_FULL_RECT)
-	enemy_wizard_host.add_child(_enemy_wizard)
-	_player_wizard = _CompositeWizard.new()
-	_player_wizard.set_anchors_preset(Control.PRESET_FULL_RECT)
-	player_wizard_host.add_child(_player_wizard)
-	_player_wizard.load_archetype("player")
-	_enemy_ward = _WardBarrier.new()
-	_enemy_ward.set_anchors_preset(Control.PRESET_FULL_RECT)
-	ward_host.add_child(_enemy_ward)
-	_cast_timer = _CastTimer.new()
-	_cast_timer.set_anchors_preset(Control.PRESET_FULL_RECT)
-	cast_timer_host.add_child(_cast_timer)
+func _build_top_bar() -> void:
+	_top_bar = HBoxContainer.new()
+	_top_bar.add_theme_constant_override("separation", 8)
+	_root_vbox.add_child(_top_bar)
+	_menu_btn = Button.new()
+	_menu_btn.text = "≡"
+	_menu_btn.custom_minimum_size = Vector2(_VT.TOUCH_SECONDARY, _VT.TOUCH_SECONDARY)
+	_VT.style_secondary_button(_menu_btn)
+	_menu_btn.add_theme_font_size_override("font_size", 28)
+	_menu_btn.pressed.connect(_on_menu_pressed)
+	_top_bar.add_child(_menu_btn)
+	_phase_lbl = Label.new()
+	_phase_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_phase_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_phase_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_VT.apply_label_primary(_phase_lbl)
+	_top_bar.add_child(_phase_lbl)
+	_help_btn = Button.new()
+	_help_btn.text = "?"
+	_help_btn.custom_minimum_size = Vector2(_VT.TOUCH_SECONDARY, _VT.TOUCH_SECONDARY)
+	_VT.style_secondary_button(_help_btn)
+	_help_btn.add_theme_font_size_override("font_size", 26)
+	_help_btn.pressed.connect(func(): _show_help_overlay(false))
+	_top_bar.add_child(_help_btn)
+
+
+func _build_rival_panel() -> void:
+	_rival_panel = PanelContainer.new()
+	_rival_panel.add_theme_stylebox_override("panel", _VT.flat_panel_style(Color("#221c3d")))
+	_root_vbox.add_child(_rival_panel)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 14)
+	_rival_panel.add_child(h)
+	var host := Control.new()
+	host.custom_minimum_size = Vector2(96, 112)
+	h.add_child(host)
+	_rival_wizard = _CompositeWizard.new()
+	_rival_wizard.set_anchors_preset(Control.PRESET_FULL_RECT)
+	host.add_child(_rival_wizard)
+	var v := VBoxContainer.new()
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_theme_constant_override("separation", 4)
+	h.add_child(v)
+	var name_row := HBoxContainer.new()
+	v.add_child(name_row)
+	_rival_name_lbl = Label.new()
+	_VT.apply_label_primary(_rival_name_lbl)
+	_rival_name_lbl.add_theme_font_size_override("font_size", 24)
+	_rival_name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_row.add_child(_rival_name_lbl)
+	_rival_casts_lbl = Label.new()
+	_VT.apply_label_secondary(_rival_casts_lbl)
+	_rival_casts_lbl.add_theme_font_size_override("font_size", 19)
+	_rival_casts_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_row.add_child(_rival_casts_lbl)
+	_rival_status_lbl = Label.new()
+	_VT.apply_label_secondary(_rival_status_lbl)
+	_rival_status_lbl.add_theme_font_size_override("font_size", 19)
+	v.add_child(_rival_status_lbl)
+	_rival_progress = ProgressBar.new()
+	_rival_progress.custom_minimum_size = Vector2(0, 10)
+	_rival_progress.show_percentage = false
+	_rival_progress.min_value = 0
+	_rival_progress.max_value = 1
+	var pbg := StyleBoxFlat.new()
+	pbg.bg_color = Color("#14102a")
+	pbg.set_corner_radius_all(5)
+	var pfill := StyleBoxFlat.new()
+	pfill.bg_color = Color("#8a7be8")
+	pfill.set_corner_radius_all(5)
+	_rival_progress.add_theme_stylebox_override("background", pbg)
+	_rival_progress.add_theme_stylebox_override("fill", pfill)
+	v.add_child(_rival_progress)
+	var ward_row := HBoxContainer.new()
+	ward_row.add_theme_constant_override("separation", 10)
+	v.add_child(ward_row)
+	var ward_lbl := Label.new()
+	ward_lbl.text = "Their Ward"
+	_VT.apply_label_caption(ward_lbl)
+	ward_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	ward_row.add_child(ward_lbl)
+	_rival_ward_row = HBoxContainer.new()
+	_rival_ward_row.add_theme_constant_override("separation", 6)
+	ward_row.add_child(_rival_ward_row)
+	_rival_last_lbl = Label.new()
+	_VT.apply_label_secondary(_rival_last_lbl)
+	_rival_last_lbl.add_theme_font_size_override("font_size", 18)
+	_rival_last_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_rival_last_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_rival_last_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	ward_row.add_child(_rival_last_lbl)
+
+
+func _build_result_banner() -> void:
+	_result_banner = PanelContainer.new()
+	_result_banner.add_theme_stylebox_override("panel", _VT.flat_panel_style(Color("#2a2350")))
+	_root_vbox.add_child(_result_banner)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 4)
+	_result_banner.add_child(v)
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", 12)
+	v.add_child(top)
+	_result_title_lbl = Label.new()
+	_VT.apply_label_caption(_result_title_lbl)
+	_result_title_lbl.text = "Your last cast"
+	_result_title_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	top.add_child(_result_title_lbl)
+	_result_slots_row = HBoxContainer.new()
+	_result_slots_row.add_theme_constant_override("separation", 6)
+	top.add_child(_result_slots_row)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top.add_child(spacer)
+	_result_pips = _FeedbackPips.new()
+	_result_pips.pip_size = 26
+	top.add_child(_result_pips)
+	_result_text_lbl = Label.new()
+	_VT.apply_label_secondary(_result_text_lbl)
+	_result_text_lbl.add_theme_font_size_override("font_size", 22)
+	_result_text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(_result_text_lbl)
+
+
+func _build_history_panel() -> void:
+	_history_panel = PanelContainer.new()
+	_history_panel.add_theme_stylebox_override("panel", _VT.flat_panel_style(Color("#1b1633")))
+	_history_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_history_panel.custom_minimum_size = Vector2(0, 150)
+	_root_vbox.add_child(_history_panel)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	_history_panel.add_child(v)
+	_history_tabs = HBoxContainer.new()
+	_history_tabs.add_theme_constant_override("separation", 8)
+	v.add_child(_history_tabs)
+	_history_tab_you = Button.new()
+	_history_tab_you.text = "Your casts"
+	_history_tab_you.custom_minimum_size = Vector2(0, 44)
+	_history_tab_you.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_VT.style_secondary_button(_history_tab_you)
+	_history_tab_you.add_theme_font_size_override("font_size", 18)
+	_history_tab_you.pressed.connect(func(): _set_history_tab(false))
+	_history_tabs.add_child(_history_tab_you)
+	_history_tab_rival = Button.new()
+	_history_tab_rival.text = "Rival's casts"
+	_history_tab_rival.custom_minimum_size = Vector2(0, 44)
+	_history_tab_rival.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_VT.style_secondary_button(_history_tab_rival)
+	_history_tab_rival.add_theme_font_size_override("font_size", 18)
+	_history_tab_rival.pressed.connect(func(): _set_history_tab(true))
+	_history_tabs.add_child(_history_tab_rival)
+	_history_scroll = ScrollContainer.new()
+	_history_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_history_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	v.add_child(_history_scroll)
+	_history_list = VBoxContainer.new()
+	_history_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_history_list.add_theme_constant_override("separation", 4)
+	_history_scroll.add_child(_history_list)
+	_history_empty_lbl = Label.new()
+	_VT.apply_label_caption(_history_empty_lbl)
+	_history_empty_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_history_empty_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_history_empty_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_history_list.add_child(_history_empty_lbl)
+
+
+func _build_intro_panel() -> void:
+	_intro_panel = PanelContainer.new()
+	_intro_panel.add_theme_stylebox_override("panel", _VT.flat_panel_style(Color("#1b1633")))
+	_intro_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_root_vbox.add_child(_intro_panel)
+	var v := VBoxContainer.new()
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 10)
+	_intro_panel.add_child(v)
+	var t := Label.new()
+	t.text = "Set your secret Ward"
+	_VT.apply_label_primary(t)
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(t)
+	_intro_lbl = Label.new()
+	_intro_lbl.text = "Pick four spells below. Repeats are allowed.\nThe rival will try to guess this — you will try to guess theirs."
+	_VT.apply_label_secondary(_intro_lbl)
+	_intro_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_intro_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(_intro_lbl)
+	var legend_title := Label.new()
+	legend_title.text = "After each cast you learn how many spells were:"
+	_VT.apply_label_caption(legend_title)
+	legend_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(legend_title)
+	var legend := VBoxContainer.new()
+	legend.add_theme_constant_override("separation", 6)
+	legend.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_child(legend)
+	for entry in [["fracture", "right spell, right place"], ["echo", "right spell, wrong place"], ["fade", "not in the Ward at all"]]:
+		var row := HBoxContainer.new()
+		row.alignment = BoxContainer.ALIGNMENT_CENTER
+		row.add_theme_constant_override("separation", 12)
+		var pip = _FeedbackPips.new()
+		pip.pip_size = 24
+		row.add_child(pip)
+		var counts := [1 if entry[0] == "fracture" else 0, 1 if entry[0] == "echo" else 0, 1 if entry[0] == "fade" else 0]
+		pip.call_deferred("show_counts", 1, counts[0], counts[1], counts[2])
+		var l := Label.new()
+		l.text = entry[1]
+		l.custom_minimum_size = Vector2(260, 0)
+		l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_VT.apply_label_secondary(l)
+		row.add_child(l)
+		legend.add_child(row)
+
+
+func _build_builder() -> void:
+	_build_header = HBoxContainer.new()
+	_build_header.add_theme_constant_override("separation", 8)
+	_root_vbox.add_child(_build_header)
+	_build_title_lbl = Label.new()
+	_VT.apply_label_primary(_build_title_lbl)
+	_build_title_lbl.add_theme_font_size_override("font_size", 22)
+	_build_title_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_build_title_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_build_header.add_child(_build_title_lbl)
+	_random_btn = Button.new()
+	_random_btn.text = "Random"
+	_random_btn.custom_minimum_size = Vector2(0, 44)
+	_VT.style_secondary_button(_random_btn)
+	_random_btn.add_theme_font_size_override("font_size", 18)
+	_random_btn.pressed.connect(_on_random_pressed)
+	_build_header.add_child(_random_btn)
+	_clear_btn = Button.new()
+	_clear_btn.text = "Clear"
+	_clear_btn.custom_minimum_size = Vector2(0, 44)
+	_VT.style_secondary_button(_clear_btn)
+	_clear_btn.add_theme_font_size_override("font_size", 18)
+	_clear_btn.pressed.connect(_on_clear_pressed)
+	_build_header.add_child(_clear_btn)
+
+	_loci_row = HBoxContainer.new()
+	_loci_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_loci_row.add_theme_constant_override("separation", 14)
+	_root_vbox.add_child(_loci_row)
+	for i in range(_ruleset.slot_count):
+		var slot = _SpellSlot.new()
+		slot.slot_index = i
+		slot.slot_size = _VT.TOUCH_ESSENCE
+		slot.caption = str(i + 1)
+		slot.tooltip_text = str(_ruleset.point_names[i]) if i < _ruleset.point_names.size() else ""
+		slot.slot_tapped.connect(_on_locus_tapped)
+		_loci_row.add_child(slot)
+		_loci_slots.append(slot)
+
+	_hint_lbl = Label.new()
+	_VT.apply_label_secondary(_hint_lbl)
+	_hint_lbl.add_theme_font_size_override("font_size", 18)
+	_hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hint_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_root_vbox.add_child(_hint_lbl)
+
+	_tray = HBoxContainer.new()
+	_tray.alignment = BoxContainer.ALIGNMENT_CENTER
+	_tray.add_theme_constant_override("separation", 10)
+	_root_vbox.add_child(_tray)
+	for id in _ruleset.attack_magic_pool:
+		var tok = _SpellSlot.new()
+		tok.slot_index = int(id)
+		tok.slot_size = _VT.TOUCH_TRAY
+		tok.caption = DmbColourData.essence_name(int(id))
+		tok.slot_tapped.connect(_on_tray_tapped)
+		_tray.add_child(tok)
+		_tray_slots.append(tok)
+
+
+func _build_action_row() -> void:
+	_action_row = HBoxContainer.new()
+	_action_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_action_row.add_theme_constant_override("separation", 20)
+	_root_vbox.add_child(_action_row)
+	var left := Control.new()
+	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_action_row.add_child(left)
 	_cast_button = _CastButton.new()
-	_cast_button.set_anchors_preset(Control.PRESET_FULL_RECT)
-	cast_button_host.add_child(_cast_button)
-	for kind in ["fracture", "echo", "fade"]:
-		var chip := _FeedbackChip.new()
-		latest_result_cluster.add_child(chip)
-		chip.setup(kind, 0)
-		chip.visible = false
-		_feedback_chips.append(chip)
+	_cast_button.cast_pressed.connect(_on_cast_pressed)
+	_cast_button.blocked_pressed.connect(_on_cast_blocked_pressed)
+	_action_row.add_child(_cast_button)
+	_lock_btn = Button.new()
+	_lock_btn.text = "Lock Ward"
+	_lock_btn.custom_minimum_size = Vector2(240, 72)
+	_VT.style_primary_button(_lock_btn)
+	_lock_btn.pressed.connect(_on_lock_pressed)
+	_action_row.add_child(_lock_btn)
+	var right := VBoxContainer.new()
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right.alignment = BoxContainer.ALIGNMENT_CENTER
+	_action_row.add_child(right)
+	_your_casts_lbl = Label.new()
+	_VT.apply_label_secondary(_your_casts_lbl)
+	_your_casts_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_your_casts_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	right.add_child(_your_casts_lbl)
+
+
+func _build_your_ward_strip() -> void:
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 10)
+	_root_vbox.add_child(row)
+	_your_ward_lbl = Label.new()
+	_your_ward_lbl.text = "Your Ward"
+	_VT.apply_label_caption(_your_ward_lbl)
+	_your_ward_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(_your_ward_lbl)
+	_your_ward_row = HBoxContainer.new()
+	_your_ward_row.add_theme_constant_override("separation", 6)
+	row.add_child(_your_ward_row)
+	for i in range(_ruleset.slot_count):
+		var s = _SpellSlot.new()
+		s.slot_size = 44
+		s.disabled = true
+		_your_ward_row.add_child(s)
+		_your_ward_slots.append(s)
+
+
+func _build_toast() -> void:
+	_toast = PanelContainer.new()
+	_toast.add_theme_stylebox_override("panel", _VT.panel_style(14))
+	_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast.visible = false
+	_toast.modulate.a = 0.0
+	add_child(_toast)
+	_toast_lbl = Label.new()
+	_VT.apply_label_secondary(_toast_lbl)
+	_toast_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_toast_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_toast_lbl.custom_minimum_size = Vector2(440, 0)
+	_toast.add_child(_toast_lbl)
+
+
+func _build_overlay() -> void:
+	_overlay = ColorRect.new()
+	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay.color = Color(0.05, 0.03, 0.1, 0.78)
+	_overlay.visible = false
+	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(_overlay)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay.add_child(center)
+	_overlay_panel = PanelContainer.new()
+	_overlay_panel.add_theme_stylebox_override("panel", _VT.panel_style(20))
+	_overlay_panel.custom_minimum_size = Vector2(560, 0)
+	center.add_child(_overlay_panel)
+	_overlay_vbox = VBoxContainer.new()
+	_overlay_vbox.add_theme_constant_override("separation", 14)
+	_overlay_panel.add_child(_overlay_vbox)
+
+
+# ---------------------------------------------------------------------------
+# Game lifecycle
+# ---------------------------------------------------------------------------
+
+func start_new_game(bot_seed: int = -1) -> void:
+	if bot_seed < 0:
+		bot_seed = randi() % 1000000
+	_bot_seed = bot_seed
+	_ruleset = _session().get_ruleset()
+	game = _RealtimeSim.new(_ruleset, _session().get_difficulty_profile(), bot_seed)
+	_rival_name_lbl.text = _ruleset.enemy_name
+	_rival_wizard.load_archetype(_Art.wizard_archetype_from_enemy(_ruleset.enemy_archetype))
+	_selected_locus = 0
+	_paused_by_menu = false
+	_warn_ticks_played.clear()
+	_last_rival_state = ""
+	_first_ready_announced = false
+	_result_shown = false
+	_time_since_start = 0.0
+	_history_showing_rival = false
+	_clear_history_rows()
+	_overlay.visible = false
+	_result_banner.visible = false
+	for s in _rival_ward_slots:
+		s.queue_free()
+	_rival_ward_slots.clear()
+	for i in range(_ruleset.slot_count):
+		var s = _SpellSlot.new()
+		s.slot_size = 40
+		s.disabled = true
+		_rival_ward_row.add_child(s)
+		_rival_ward_slots.append(s)
+		s.call_deferred("set_hidden")
+	_refresh_all()
 
 
 func _process(delta: float) -> void:
-	if game == null or game.phase != _RealtimeSim.Phase.DUELING:
+	if game == null:
 		return
-	if _paused and not _debug_hold_animation:
-		return
-	if not _debug_hold_animation:
+	if game.phase == _RealtimeSim.Phase.DUELING and not _paused_by_menu:
 		game.advance_time(delta)
-	_consume_sim_events()
-	_refresh_timers()
-	_refresh_submit()
-	if game.result != null:
+		_time_since_start += delta
+	_consume_events()
+	if game.phase == _RealtimeSim.Phase.DUELING:
+		_refresh_timers()
+		_refresh_rival_status()
+	if game.result != null and not _result_shown:
 		_show_result()
 
 
-func _build_board_from_ruleset() -> void:
-	_secret_slots = _build_slots(secret_row, _ruleset.slot_count, _ruleset.point_names, _on_secret_slot_pressed)
-	_guess_slots = _build_slots(human_guess_row, _ruleset.slot_count, _ruleset.point_names, _on_guess_slot_pressed)
-	_setup_point_headers(secret_point_headers, _ruleset.point_names)
-	_setup_point_headers(human_point_headers, _ruleset.point_names)
+# ---------------------------------------------------------------------------
+# Input handlers
+# ---------------------------------------------------------------------------
 
-
-func _build_slots(row: HBoxContainer, count: int, point_names: Array, callback: Callable, insert_after: int = 0) -> Array:
-	for child in row.get_children():
-		if child is PegSlot:
-			row.remove_child(child)
-			child.queue_free()
-	var slots: Array = []
-	for i in range(count):
-		var slot := PegSlot.new()
-		slot.slot_index = i
-		if i < point_names.size():
-			slot.point_label = str(point_names[i])
-		row.add_child(slot)
-		row.move_child(slot, insert_after + i)
-		slot.slot_pressed.connect(callback)
-		slot.slot_clear_requested.connect(_on_slot_clear_requested)
-		slots.append(slot)
-	return slots
-
-
-func _apply_encounter_presentation() -> void:
-	enemy_wizard_label.text = _ruleset.enemy_name
-	var arch := _Art.wizard_archetype_from_enemy(_ruleset.enemy_archetype)
-	_enemy_wizard.load_archetype(arch)
-	if _ruleset.enemy_visual_hint != "":
-		enemy_tell_label.text = _ruleset.enemy_visual_hint
-		enemy_tell_label.visible = true
-	else:
-		enemy_tell_label.visible = false
-
-
-func _setup_art() -> void:
-	var bg_tex := _Art.load_texture("sprites/duel_background.png")
-	if bg_tex != null:
-		bg_texture.texture = bg_tex
-
-
-func _setup_point_headers(container: HBoxContainer, point_names: Array) -> void:
-	for c in container.get_children():
-		c.queue_free()
-	for i in range(point_names.size()):
-		var lbl := Label.new()
-		lbl.text = str(point_names[i])
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.custom_minimum_size = Vector2(_VT.TOUCH_ESSENCE, 0)
-		_VT.apply_label_secondary(lbl)
-		container.add_child(lbl)
-
-
-func start_new_game(bot_seed: int = 42) -> void:
-	_bot_seed = bot_seed
-	_ruleset = _session().get_ruleset()
-	var diff = _session().get_difficulty_profile()
-	game = _RealtimeSim.new(_ruleset, diff, bot_seed)
-	_apply_encounter_presentation()
-	_active_mode = ""
-	_active_slot = -1
-	_paused = false
-	_interaction_state = _VT.InteractionState.IDLE
-	_feedback_locked = false
-	_player_cast_count = 0
-	_ftue_completed.clear()
-	_duel_ftue_started = false
-	_ftue_overlay.hide_step()
-	_warn3_played = false
-	_magic_picker.close()
-	result_panel.visible = false
-	help_modal.visible = false
-	history_sheet.visible = false
-	_clear_bot_rows()
-	_clear_human_rows()
-	_clear_peek_rows()
-	_clear_latest_result()
-	_enemy_ward.set_state(_WardBarrier.State.STABLE)
-	_refresh_all()
-
-
-func _on_secret_slot_pressed(slot: int) -> void:
-	if game.phase != _RealtimeSim.Phase.WARD_SETUP or _feedback_locked:
-		return
-	_set_interaction_state(_VT.InteractionState.LOCUS_SELECTED)
-	_active_mode = "secret"
-	_active_slot = slot
-	_active_pool = _ruleset.secret_magic_pool
-	_highlight_locus_slots(_secret_slots, slot)
-	_populate_essence_controls(_active_pool)
-	_open_picker_for_slot(_secret_slots[slot])
-
-
-func _on_guess_slot_pressed(slot: int) -> void:
-	if game.phase != _RealtimeSim.Phase.DUELING or _feedback_locked:
-		return
-	_set_interaction_state(_VT.InteractionState.LOCUS_SELECTED)
-	_active_mode = "attack"
-	_active_slot = slot
-	_active_pool = _ruleset.attack_magic_pool
-	_highlight_locus_slots(_guess_slots, slot)
-	_populate_essence_controls(_active_pool)
-	_open_picker_for_slot(_guess_slots[slot])
-	_update_ftue_after_locus_tap()
-
-
-func _on_slot_clear_requested(slot: int) -> void:
-	if _feedback_locked:
-		return
+func _pattern_in_builder() -> Array:
 	if game.phase == _RealtimeSim.Phase.WARD_SETUP:
-		game.set_player_ward_locus(slot, -1)
+		return game.get_player_ward()
+	return game.get_player_attack_pattern()
+
+
+func _set_builder_locus(index: int, spell: int) -> void:
+	if game.phase == _RealtimeSim.Phase.WARD_SETUP:
+		game.set_player_ward_locus(index, spell)
 	elif game.phase == _RealtimeSim.Phase.DUELING:
-		game.set_player_attack_locus(slot, -1)
-	_active_slot = -1
-	_set_interaction_state(_VT.InteractionState.IDLE)
-	_refresh_all()
+		game.set_player_attack_locus(index, spell)
 
 
-func _highlight_locus_slots(slots: Array, active: int) -> void:
-	for i in range(slots.size()):
-		slots[i].set_selected(i == active)
-
-
-func _populate_essence_controls(pool: Array) -> void:
-	_essence_tray.set_allowed_magics(pool)
-	_magic_picker.set_allowed_magics(pool)
-	_essence_tray.set_highlighted(_active_slot >= 0)
-
-
-func _open_picker_for_slot(slot_ctrl: PegSlot) -> void:
-	var socket = slot_ctrl.get_locus_socket()
-	if socket != null:
-		_magic_picker.open_above_anchor(socket)
-		_set_interaction_state(_VT.InteractionState.ESSENCE_PICKER_OPEN)
-	else:
-		_magic_picker.open_bottom_sheet(self)
-
-
-func _on_magic_selected(colour: int) -> void:
-	if _active_slot < 0 or _feedback_locked:
+func _on_locus_tapped(index: int) -> void:
+	if game.phase == _RealtimeSim.Phase.FINISHED:
 		return
-	if _active_mode == "secret":
-		game.set_player_ward_locus(_active_slot, colour)
-	elif _active_mode == "attack":
-		game.set_player_attack_locus(_active_slot, colour)
-		_guess_slots[_active_slot].get_locus_socket().pulse()
-		_update_ftue_after_essence_placed()
-	_active_slot = -1
-	_highlight_locus_slots(_guess_slots if _active_mode == "attack" else _secret_slots, -1)
-	_essence_tray.set_highlighted(false)
-	_magic_picker.close()
-	_set_interaction_state(_VT.InteractionState.SOCKET_FILLED)
+	var pattern := _pattern_in_builder()
+	if _selected_locus == index and pattern[index] != null:
+		_set_builder_locus(index, -1)
+		_sfx("clear_slot")
+		_PlayabilityHaptics.pulse_light()
+	else:
+		_selected_locus = index
+		_sfx("tap")
+	_refresh_builder()
+
+
+func _on_tray_tapped(spell_id: int) -> void:
+	if game.phase == _RealtimeSim.Phase.FINISHED:
+		return
+	var pattern := _pattern_in_builder()
+	var target := _selected_locus
+	if target < 0 or target >= pattern.size():
+		target = 0
+	_set_builder_locus(target, spell_id)
+	_loci_slots[target].pop()
+	_sfx("place")
 	_PlayabilityHaptics.pulse_light()
-	_refresh_all()
+	# Advance selection to the next empty locus (wrapping), else stay.
+	var next := -1
+	pattern = _pattern_in_builder()
+	for k in range(1, pattern.size() + 1):
+		var j := (target + k) % pattern.size()
+		if pattern[j] == null:
+			next = j
+			break
+	_selected_locus = next if next >= 0 else target
+	_refresh_builder()
+	_refresh_cast_button()
 
 
-func _on_tray_essence_selected(colour: int) -> void:
-	if _active_slot < 0:
-		if game.phase == _RealtimeSim.Phase.DUELING and not _guess_slots.is_empty():
-			_on_guess_slot_pressed(0)
-		elif game.phase == _RealtimeSim.Phase.WARD_SETUP and not _secret_slots.is_empty():
-			_on_secret_slot_pressed(0)
-		else:
-			return
-	_on_magic_selected(colour)
+func _on_clear_pressed() -> void:
+	if game.phase == _RealtimeSim.Phase.WARD_SETUP:
+		game.clear_player_ward()
+	elif game.phase == _RealtimeSim.Phase.DUELING:
+		game.clear_player_attack()
+	_selected_locus = 0
+	_sfx("clear_slot")
+	_refresh_builder()
+	_refresh_cast_button()
+
+
+func _on_random_pressed() -> void:
+	if game.phase != _RealtimeSim.Phase.WARD_SETUP:
+		return
+	game.randomise_player_ward()
+	_selected_locus = 0
+	_sfx("place")
+	for s in _loci_slots:
+		s.pop()
+	_refresh_builder()
 
 
 func _on_lock_pressed() -> void:
 	if not game.can_lock_player_ward():
+		_sfx("denied")
+		_show_toast("Choose a spell for every locus first")
+		for i in range(_loci_slots.size()):
+			if game.get_player_ward()[i] == null:
+				_loci_slots[i].flash_wrong()
 		return
 	game.lock_player_ward_and_start()
+	_selected_locus = 0
+	_sfx("cast")
+	_PlayabilityHaptics.pulse_medium()
 	_refresh_all()
+	_show_toast("Ward locked! Your first cast opens in 5 seconds.")
 
 
-func _on_submit_pressed() -> void:
-	if not game.can_player_cast() or _feedback_locked:
+func _on_cast_pressed() -> void:
+	if not game.can_player_cast():
+		_on_cast_blocked_pressed()
 		return
-	_set_interaction_state(_VT.InteractionState.CASTING)
-	_set_feedback_locked(true)
-	_cast_button.bounce_press()
-	_player_wizard.play_cast_windup()
+	var pattern: Array = game.get_player_attack_pattern()
 	if game.submit_player_attack():
-		_player_cast_count += 1
-		_consume_sim_events()
-		_update_ftue_after_cast()
-	_refresh_all()
+		_sfx("cast")
+		_launch_bolts(pattern)
+		_selected_locus = 0
+		_consume_events()
+		_refresh_all()
 
 
-func _consume_sim_events() -> void:
-	var events: Array = game.get_pending_events()
-	_anim.consume_events(events)
-	for ev in events:
-		if ev.type == _DuelEvent.FEEDBACK_REVEALED:
-			_add_history_from_event(ev.data)
-		if ev.type == _DuelEvent.WARD_BROKEN:
-			_enemy_ward.set_state(_WardBarrier.State.FRACTURED)
-		if ev.type == _DuelEvent.LAST_STAND_STARTED:
-			_enemy_ward.set_state(_WardBarrier.State.UNSTABLE)
-			_enemy_wizard.play_last_stand()
-		if ev.type == _DuelEvent.DUEL_FINISHED:
-			_show_result()
+func _on_cast_blocked_pressed() -> void:
+	var reason: String = game.player_cast_block_reason()
+	_sfx("denied")
+	if reason.begins_with("Fill"):
+		var pattern: Array = game.get_player_attack_pattern()
+		for i in range(_loci_slots.size()):
+			if pattern[i] == null:
+				_loci_slots[i].flash_wrong()
+		_show_toast("Choose all four spells before casting")
+	elif reason.begins_with("Weaving"):
+		_show_toast("Your cast opens in %.0f s" % ceil(float(game.get_current_state()["player_time_until_cast"])))
+	elif reason != "":
+		_show_toast(reason)
 
 
-func _show_latest_result(data: Dictionary, animate: bool = true) -> void:
-	var fracture := int(data.get("fracture_count", 0))
-	var echo := int(data.get("echo_count", 0))
-	var fade := int(data.get("fade_count", 0))
-	var kinds := ["fracture", "echo", "fade"]
-	var values := [fracture, echo, fade]
-	for i in range(_feedback_chips.size()):
-		_feedback_chips[i].setup(kinds[i], values[i])
-		_feedback_chips[i].visible = values[i] > 0 or kinds[i] == "fade"
-		if animate:
-			_feedback_chips[i].pop_in()
-		else:
-			_feedback_chips[i].scale = Vector2(0.3, 0.3)
-			_feedback_chips[i].modulate.a = 0.0
-
-
-func _clear_latest_result() -> void:
-	for chip in _feedback_chips:
-		chip.visible = false
-
-
-func _start_feedback_sequence(data: Dictionary) -> void:
-	_set_feedback_locked(true)
-	_show_latest_result(data, false)
-	var tree := get_tree()
-	var anticipation := _VT.DUR_FEEDBACK_ANTICIPATION
-	var emphasis := _VT.DUR_FEEDBACK_EMPHASIS
-	var aftermath := _VT.DUR_FEEDBACK_AFTERMATH
-	if bool(_SaveData.get_setting("reduce_motion", false)):
-		anticipation = 0.05
-		emphasis = 0.05
-	tree.create_timer(anticipation).timeout.connect(func():
-		if _enemy_ward:
-			_enemy_ward.set_state(_WardBarrier.State.IMPACTED)
-		tree.create_timer(emphasis).timeout.connect(func():
-			for chip in _feedback_chips:
-				if chip.visible:
-					chip.pop_in()
-					_PlayabilityHaptics.pulse_light()
-			tree.create_timer(aftermath).timeout.connect(_on_feedback_unlock)
-		)
-	)
-	tree.create_timer(_VT.DUR_FEEDBACK_LOCK).timeout.connect(_on_feedback_unlock)
-
-
-func _on_feedback_unlock() -> void:
-	if not _feedback_locked:
+func _on_history_row_tapped(pattern: Array) -> void:
+	if game.phase != _RealtimeSim.Phase.DUELING:
 		return
-	_set_feedback_locked(false)
-	_set_interaction_state(_VT.InteractionState.IDLE)
-	_refresh_all()
-	_update_ftue_after_feedback()
+	game.load_player_attack(pattern)
+	_selected_locus = 0
+	_sfx("place")
+	for s in _loci_slots:
+		s.pop()
+	_refresh_builder()
+	_refresh_cast_button()
+	_show_toast("Copied into your guess — change what you like")
 
 
-func _set_feedback_locked(on: bool) -> void:
-	_feedback_locked = on
-	if on:
-		_set_interaction_state(_VT.InteractionState.FEEDBACK_LOCKED)
-	_essence_tray.set_busy(on)
-	for slot in _guess_slots:
-		slot.set_busy(on)
-	attack_section.modulate = Color(0.82, 0.82, 0.9) if on else Color.WHITE
+func _on_menu_pressed() -> void:
+	_show_menu_overlay()
 
 
-func _set_interaction_state(state: int) -> void:
-	_interaction_state = state
-	if state == _VT.InteractionState.CAST_READY and game != null and game.can_player_cast():
-		_cast_button.set_cast_ready(true)
+# ---------------------------------------------------------------------------
+# Events from the sim
+# ---------------------------------------------------------------------------
+
+func _consume_events() -> void:
+	for ev in game.get_pending_events():
+		match ev.type:
+			_DuelEvent.FEEDBACK_REVEALED:
+				_on_feedback(ev.data)
+			_DuelEvent.WARD_BROKEN:
+				pass
+			_DuelEvent.DUEL_FINISHED:
+				pass
 
 
-func _apply_left_hand_layout() -> void:
-	var left_hand := bool(_SaveData.get_setting("left_hand_mode", false))
-	if left_hand:
-		cast_row.alignment = BoxContainer.ALIGNMENT_BEGIN
-		cast_row.move_child(cast_button_host, 0)
-		cast_row.move_child(cast_timer_host, 1)
-		human_guess_row.alignment = BoxContainer.ALIGNMENT_BEGIN
-	else:
-		cast_row.alignment = BoxContainer.ALIGNMENT_CENTER
-		cast_row.move_child(cast_timer_host, 0)
-		cast_row.move_child(cast_button_host, 1)
-		human_guess_row.alignment = BoxContainer.ALIGNMENT_CENTER
-
-
-func _on_tray_drag_started(essence_id: int, global_pos: Vector2) -> void:
-	_drag_essence_id = essence_id
-	_spawn_drag_ghost(essence_id, global_pos)
-
-
-func _on_tray_drag_moved(global_pos: Vector2) -> void:
-	if _drag_ghost != null:
-		_drag_ghost.global_position = global_pos - _drag_ghost.size * 0.5
-	_highlight_drop_target(global_pos)
-
-
-func _on_tray_drag_ended(global_pos: Vector2) -> void:
-	var slot := _slot_at_global_point(global_pos)
-	if slot >= 0:
-		if game.phase == _RealtimeSim.Phase.WARD_SETUP:
-			_active_mode = "secret"
-			_active_slot = slot
-			_on_magic_selected(_drag_essence_id)
-		elif game.phase == _RealtimeSim.Phase.DUELING:
-			_active_mode = "attack"
-			_active_slot = slot
-			_on_magic_selected(_drag_essence_id)
-	_clear_drag_ghost()
-	for s in _guess_slots:
-		s.set_drop_highlight(false)
-	_drag_essence_id = -1
-
-
-func _spawn_drag_ghost(essence_id: int, global_pos: Vector2) -> void:
-	_clear_drag_ghost()
-	var token := _EssenceToken.new()
-	token.set_essence(essence_id)
-	token.custom_minimum_size = Vector2(_VT.TOUCH_ESSENCE, _VT.TOUCH_ESSENCE)
-	token.size = token.custom_minimum_size
-	token.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(token)
-	token.global_position = global_pos - token.size * 0.5
-	_drag_ghost = token
-
-
-func _clear_drag_ghost() -> void:
-	if _drag_ghost != null:
-		_drag_ghost.queue_free()
-		_drag_ghost = null
-
-
-func _slot_at_global_point(point: Vector2) -> int:
-	var slots := _guess_slots if game.phase == _RealtimeSim.Phase.DUELING else _secret_slots
-	for i in range(slots.size()):
-		if slots[i].get_global_rect().has_point(point):
-			return i
-	return -1
-
-
-func _highlight_drop_target(global_pos: Vector2) -> void:
-	var slot := _slot_at_global_point(global_pos)
-	for i in range(_guess_slots.size()):
-		_guess_slots[i].set_drop_highlight(i == slot and game.phase == _RealtimeSim.Phase.DUELING)
-
-
-func _is_ftue_encounter() -> bool:
-	return _ruleset.id == "blue_apprentice"
-
-
-func _update_ftue_on_duel_start() -> void:
-	if not _is_ftue_encounter():
-		return
-	if not _ftue_completed.has("locus"):
-		_ftue_overlay.show_step("locus", _guess_slots[0], "Tap the locus socket")
-
-
-func _update_ftue_after_locus_tap() -> void:
-	if not _is_ftue_encounter() or _ftue_completed.has("locus"):
-		return
-	_ftue_overlay.complete_step("locus")
-	if not _ftue_completed.has("essence"):
-		_ftue_overlay.show_step("essence", _essence_tray, "Pick an essence")
-
-
-func _update_ftue_after_essence_placed() -> void:
-	if not _is_ftue_encounter() or _ftue_completed.has("essence"):
-		return
-	_ftue_overlay.complete_step("essence")
-
-
-func _update_ftue_after_cast() -> void:
-	if not _is_ftue_encounter():
-		return
-	if _player_cast_count == 1 and not _ftue_completed.has("cast"):
-		_ftue_overlay.complete_step("cast")
-	if _player_cast_count == 1 and not _ftue_completed.has("history"):
-		_ftue_overlay.show_step("history", latest_result_cluster, "Grouped results — not per locus")
-	if _player_cast_count == 2 and not _ftue_completed.has("timer"):
-		_ftue_overlay.show_step("timer", _cast_timer, "Watch the cast timer")
-
-
-func _update_ftue_after_feedback() -> void:
-	if not _is_ftue_encounter():
-		return
-	if _player_cast_count >= 1 and not _ftue_completed.has("history"):
-		_ftue_overlay.complete_step("history")
-	if _player_cast_count >= 2 and not _ftue_completed.has("timer"):
-		_ftue_overlay.complete_step("timer")
-
-
-func _on_ftue_step_completed(step_id: String) -> void:
-	_ftue_completed[step_id] = true
-	if step_id == "locus" and game.can_player_cast() and not _ftue_completed.has("cast"):
-		_ftue_overlay.show_step("cast", _cast_button, "Cast when ready")
-
-
-func _refresh_ftue_cast_hint() -> void:
-	if not _is_ftue_encounter() or _ftue_completed.has("cast"):
-		return
-	if game != null and game.can_player_cast() and _ftue_overlay.get_active_step() == "essence":
-		_ftue_overlay.complete_step("essence")
-		_ftue_overlay.show_step("cast", _cast_button, "Cast when ready")
-
-
-func _add_history_from_event(data: Dictionary) -> void:
-	var pattern: Array = data.get("pattern_by_locus", [])
-	var fracture := int(data.get("fracture_count", 0))
-	var echo := int(data.get("echo_count", 0))
-	var fade := int(data.get("fade_count", 0))
+func _on_feedback(data: Dictionary) -> void:
 	var attacker := str(data.get("attacker_id", ""))
+	var pattern: Array = data.get("pattern_by_locus", [])
+	var fr := int(data.get("fracture_count", 0))
+	var ec := int(data.get("echo_count", 0))
+	var fa := int(data.get("fade_count", 0))
+	var auto := bool(data.get("was_auto_cast", false))
+	_add_history_row(attacker, int(data.get("attack_number", 0)), pattern, fr, ec, fa, auto)
 	if attacker == "player":
-		_add_human_row_data(pattern, fracture, echo, fade)
+		_show_player_result(pattern, fr, ec, fa, auto)
+		if auto:
+			_show_toast("Time ran out — your spell was cast as it stood")
+		_sfx("fracture", fr)
+		if fr > 0:
+			_PlayabilityHaptics.pulse_medium()
 	else:
-		_add_bot_row_data(pattern, fracture, echo, fade)
+		_rival_last_lbl.text = "Last: %s" % _describe_short(fr, ec, fa)
+		_rival_cast_flash = 1.0
+		_sfx("rival_cast")
+		_flash_your_ward(fr)
+	_refresh_counts()
 
 
-func _on_restart_pressed() -> void:
-	start_new_game(_bot_seed)
-
-
-func _on_back_to_menu_pressed() -> void:
-	get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
-
-
-func _on_pause_pressed() -> void:
-	_paused = not _paused
-	game.set_paused(_paused)
-	pause_button.text = "▶" if _paused else "⏸"
-
-
-func _on_history_toggle_pressed() -> void:
-	_history_expanded = not _history_expanded
-	history_sheet.visible = _history_expanded
-	history_toggle.text = "Close" if _history_expanded else "History"
-
-
-func _on_help_pressed() -> void:
-	help_modal.visible = not help_modal.visible
-	if help_modal.visible:
-		help_label.text = HOW_TO_PLAY_TEXT
-
-
-func _add_bot_row_data(pattern: Array, fracture: int, echo: int, fade: int) -> void:
-	var row := _HistoryRow.new()
-	bot_board.add_child(row)
-	row.show_attack(pattern, fracture, echo, fade)
-	_bot_rows.append(row)
-	_scroll_bot_board_to_end()
-
-
-func _add_human_row_data(pattern: Array, fracture: int, echo: int, fade: int) -> void:
-	var row := _HistoryRow.new()
-	human_history_board.add_child(row)
-	row.show_attack(pattern, fracture, echo, fade)
-	_human_rows.append(row)
-	_add_peek_row(pattern, fracture, echo, fade)
-	_scroll_human_board_to_end()
-
-
-func _add_peek_row(pattern: Array, fracture: int, echo: int, fade: int) -> void:
-	var row := _HistoryRow.new()
-	history_peek.add_child(row)
-	row.show_attack(pattern, fracture, echo, fade)
-	_peek_rows.append(row)
-	while _peek_rows.size() > _VT.HISTORY_PEEK_MAX:
-		var old = _peek_rows.pop_front()
-		old.queue_free()
-
-
-func _scroll_bot_board_to_end() -> void:
-	call_deferred("_deferred_scroll", bot_scroll)
-
-
-func _scroll_human_board_to_end() -> void:
-	call_deferred("_deferred_scroll", human_history_scroll)
-
-
-func _deferred_scroll(scroll: ScrollContainer) -> void:
-	await get_tree().process_frame
-	var vbar := scroll.get_v_scroll_bar()
-	if vbar != null:
-		scroll.scroll_vertical = int(vbar.max_value)
-
-
-func _clear_human_rows() -> void:
-	for r in _human_rows:
-		r.queue_free()
-	_human_rows.clear()
-	for c in human_history_board.get_children():
-		c.queue_free()
-
-
-func _clear_bot_rows() -> void:
-	for r in _bot_rows:
-		r.queue_free()
-	_bot_rows.clear()
-	for c in bot_board.get_children():
-		c.queue_free()
-
-
-func _clear_peek_rows() -> void:
-	for r in _peek_rows:
-		r.queue_free()
-	_peek_rows.clear()
-	for c in history_peek.get_children():
-		c.queue_free()
-
+# ---------------------------------------------------------------------------
+# Rendering
+# ---------------------------------------------------------------------------
 
 func _refresh_all() -> void:
-	_update_status()
-	_update_secret_row()
-	_update_lock_button()
-	_update_magic_picker()
-	_update_attack_row()
-	_refresh_submit()
+	var setup: bool = game.phase == _RealtimeSim.Phase.WARD_SETUP
+	var dueling: bool = game.phase == _RealtimeSim.Phase.DUELING
+	_intro_panel.visible = setup
+	_history_panel.visible = not setup
+	_result_banner.visible = not setup and game.player_history.size() > 0
+	_random_btn.visible = setup
+	_lock_btn.visible = setup
+	_cast_button.visible = not setup
+	_your_ward_lbl.get_parent().visible = not setup
+	_rival_progress.visible = dueling or game.phase == _RealtimeSim.Phase.FINISHED
+	_build_title_lbl.text = "Your Ward" if setup else "Your guess"
+	_phase_lbl.text = "Set your Ward" if setup else "Ward Duel"
+	if setup:
+		_rival_status_lbl.text = "The rival is weaving a Ward…"
+		_rival_last_lbl.text = ""
+		_rival_progress.value = 0
+	_refresh_builder()
+	_refresh_counts()
+	_refresh_cast_button()
+	_refresh_your_ward()
+	_refresh_history()
+
+
+func _refresh_builder() -> void:
+	var pattern := _pattern_in_builder()
+	var setup: bool = game.phase == _RealtimeSim.Phase.WARD_SETUP
+	var finished: bool = game.phase == _RealtimeSim.Phase.FINISHED
+	for i in range(_loci_slots.size()):
+		var s = _loci_slots[i]
+		var v = pattern[i] if i < pattern.size() else null
+		s.set_spell(int(v) if v != null else -1)
+		s.set_selected(i == _selected_locus and not finished)
+		s.disabled = finished
+		s.set_dim(finished)
+	for t in _tray_slots:
+		t.set_spell(t.slot_index)
+		t.disabled = finished
+		t.set_dim(finished)
+	_clear_btn.disabled = finished or not _any_filled(pattern)
+	_lock_btn.disabled = not game.can_lock_player_ward()
+	if setup:
+		var missing := _count_empty(pattern)
+		if missing == 0:
+			_lock_btn.text = "Lock Ward"
+		elif missing == _ruleset.slot_count:
+			_lock_btn.text = "Choose %d spells" % missing
+		else:
+			_lock_btn.text = "Pick %d more spell%s" % [missing, "" if missing == 1 else "s"]
+	if setup:
+		_hint_lbl.text = "Tap a spell to put it in the glowing slot. Tap a filled slot twice to clear it." if not _all_filled(pattern) else "Happy with it? Lock your Ward to begin."
+	elif finished:
+		_hint_lbl.text = ""
+	else:
+		_hint_lbl.text = _duel_hint(pattern)
+
+
+func _duel_hint(pattern: Array) -> String:
+	if not _all_filled(pattern):
+		var n := 0
+		for p in pattern:
+			if p == null:
+				n += 1
+		return "Choose %d more spell%s for your guess." % [n, "" if n == 1 else "s"]
+	if game.is_player_window_open():
+		return "Ready — tap CAST, or keep adjusting."
+	return "Guess ready. Casting opens when the ring fills."
+
+
+func _refresh_counts() -> void:
+	var st: Dictionary = game.get_current_state()
+	var remaining := int(st.get("player_attacks_remaining", 0))
+	var max_a := int(st.get("max_attacks", 10))
+	if game.phase == _RealtimeSim.Phase.WARD_SETUP:
+		_your_casts_lbl.text = ""
+		_rival_casts_lbl.text = ""
+	else:
+		_your_casts_lbl.text = "%d of %d\ncasts left" % [remaining, max_a]
+		_rival_casts_lbl.text = "%d casts left" % int(st.get("enemy_attacks_remaining", 0))
+
+
+func _refresh_cast_button() -> void:
+	if game.phase != _RealtimeSim.Phase.DUELING:
+		_cast_button.set_state(_CastButton.State.DISABLED, 0.0, 0.0, "", "")
+		return
 	_refresh_timers()
-	if game != null and game.phase == _RealtimeSim.Phase.DUELING and not _duel_ftue_started:
-		_duel_ftue_started = true
-		_update_ftue_on_duel_start()
-	elif game != null and game.phase == _RealtimeSim.Phase.WARD_SETUP:
-		_duel_ftue_started = false
-
-
-func _update_status() -> void:
-	match game.phase:
-		_RealtimeSim.Phase.WARD_SETUP:
-			status_label.text = "Set ward"
-		_RealtimeSim.Phase.DUELING:
-			var st = game.get_current_state()
-			status_label.text = "Casts: %d" % int(st.get("player_attacks_remaining", 0))
-		_RealtimeSim.Phase.FINISHED:
-			status_label.text = "Result"
 
 
 func _refresh_timers() -> void:
-	if game.phase != _RealtimeSim.Phase.DUELING:
-		player_timer_label.text = ""
-		enemy_timer_label.text = ""
-		_cast_timer.set_progress(0.0, "")
-		_rival_cast_indicator.set_progress(0.0, false)
+	var st: Dictionary = game.get_current_state()
+	var until_cast := float(st.get("player_time_until_cast", 0.0))
+	var until_auto := float(st.get("player_time_until_auto", 0.0))
+	var min_c := maxf(float(st.get("player_min_cast", 5.0)), 0.01)
+	var max_c := maxf(float(st.get("player_max_cast", 60.0)), 0.01)
+	var elapsed := float(st.get("player_window_elapsed", 0.0))
+	var window_open := bool(st.get("player_window_open", false))
+	var complete := bool(st.get("player_attack_complete", false))
+	var remaining := int(st.get("player_attacks_remaining", 0))
+	if remaining <= 0:
+		_cast_button.set_state(_CastButton.State.DISABLED, 0.0, 0.0, "", "No casts left")
 		return
-	var st = game.get_current_state()
-	var p_ready := float(st.get("player_time_until_cast", 0.0))
-	var p_auto := float(st.get("player_time_until_auto", 0.0))
-	var max_auto := float(_ruleset.base_max_cast_time_seconds)
-	var e_auto := float(st.get("enemy_time_until_auto", 0.0))
-	var suppress_warn: bool = _ruleset.tutorial_flags.get("suppress_auto_cast_warnings", false)
-	if p_ready > 0.01:
-		player_timer_label.text = "Cast in %.0fs" % p_ready
-		_cast_timer.set_progress(1.0 - p_ready / maxf(max_auto, 0.1), "")
-		_cast_timer.set_tier_seconds(999.0)
-		_cast_button.set_visual_state(_CastButton.CastVisualState.CHARGING)
-	elif game.can_player_cast():
-		player_timer_label.text = "Cast ready"
-		_cast_timer.set_progress(1.0, "✓")
-		_cast_timer.set_tier_seconds(999.0)
-		_cast_button.set_cast_ready(true)
-		_set_interaction_state(_VT.InteractionState.CAST_READY)
-		_refresh_ftue_cast_hint()
+	if not window_open:
+		var charge := clampf(elapsed / min_c, 0.0, 1.0)
+		_cast_button.set_state(_CastButton.State.CHARGING, charge, 1.0, "%d" % int(ceil(until_cast)), "")
+		return
+	var remaining_ratio := clampf(until_auto / maxf(max_c - min_c, 0.01), 0.0, 1.0)
+	var secs := int(ceil(until_auto))
+	var warning := until_auto <= _VT.WARNING_SECONDS
+	if warning and not _warn_ticks_played.has(secs) and secs > 0:
+		_warn_ticks_played[secs] = true
+		_sfx("warning_tick")
+		if secs <= 3:
+			_PlayabilityHaptics.pulse_warning()
+	if not complete:
+		_cast_button.set_state(_CastButton.State.BLOCKED, 1.0, remaining_ratio, "%ds" % secs, "pick %d more" % _count_empty(game.get_player_attack_pattern()))
+	elif warning:
+		_cast_button.set_state(_CastButton.State.WARNING, 1.0, remaining_ratio, "%ds left!" % secs, "")
 	else:
-		player_timer_label.text = "Auto %.0fs" % p_auto
-		_cast_timer.set_progress(1.0 - p_auto / maxf(max_auto, 0.1), "!")
-		_cast_timer.set_tier_seconds(p_auto)
-		_cast_button.set_cast_ready(false)
-		if suppress_warn:
-			_cast_button.set_visual_state(_CastButton.CastVisualState.DISABLED)
-			_cast_timer.set_warning(false)
+		if not _first_ready_announced:
+			_first_ready_announced = true
+			_sfx("ready_chime")
+		_cast_button.set_state(_CastButton.State.READY, 1.0, remaining_ratio, "%ds left" % secs, "")
+	if window_open and complete and _hint_lbl.text.begins_with("Guess ready"):
+		_hint_lbl.text = _duel_hint(game.get_player_attack_pattern())
+	if not _warn_ticks_played.is_empty() and until_auto > _VT.WARNING_SECONDS:
+		_warn_ticks_played.clear()
+
+
+func _refresh_rival_status() -> void:
+	var st: Dictionary = game.get_current_state()
+	var progress := float(st.get("enemy_cast_progress", 0.0))
+	_rival_progress.value = progress
+	var state := ""
+	if int(st.get("enemy_attacks_remaining", 0)) <= 0:
+		state = "spent"
+	elif _rival_cast_flash > 0.0:
+		state = "cast"
+	elif progress < 0.55:
+		state = "studying"
+	else:
+		state = "weaving"
+	if _rival_cast_flash > 0.0:
+		_rival_cast_flash = maxf(0.0, _rival_cast_flash - get_process_delta_time() * 0.7)
+	if state != _last_rival_state:
+		_last_rival_state = state
+		match state:
+			"studying":
+				_rival_status_lbl.text = "Studying your Ward…"
+				_rival_status_lbl.add_theme_color_override("font_color", _VT.COLOR_TEXT_SECONDARY)
+			"weaving":
+				_rival_status_lbl.text = "Weaving a spell…"
+				_rival_status_lbl.add_theme_color_override("font_color", _VT.COLOR_ACCENT_GOLD)
+			"cast":
+				_rival_status_lbl.text = "Cast!"
+				_rival_status_lbl.add_theme_color_override("font_color", _VT.COLOR_DANGER)
+				_rival_wizard.play_cast_windup()
+			"spent":
+				_rival_status_lbl.text = "Out of casts"
+				_rival_status_lbl.add_theme_color_override("font_color", _VT.COLOR_TEXT_SECONDARY)
+
+
+func _refresh_your_ward() -> void:
+	var ward: Array = game.get_player_ward()
+	for i in range(_your_ward_slots.size()):
+		var v = ward[i] if i < ward.size() else null
+		_your_ward_slots[i].set_spell(int(v) if v != null else -1)
+
+
+func _show_player_result(pattern: Array, fr: int, ec: int, fa: int, auto: bool) -> void:
+	_result_banner.visible = true
+	for s in _result_slots:
+		s.queue_free()
+	_result_slots.clear()
+	for v in pattern:
+		var s = _SpellSlot.new()
+		s.slot_size = 40
+		s.disabled = true
+		_result_slots_row.add_child(s)
+		s.call_deferred("set_spell", int(v))
+		_result_slots.append(s)
+	_result_pips.show_counts(_ruleset.slot_count, fr, ec, fa)
+	if not _reduce_motion:
+		_result_pips.call_deferred("pop_in")
+	_result_title_lbl.text = "Your cast #%d%s" % [game.player_history.size(), " (auto)" if auto else ""]
+	_result_text_lbl.text = _describe_long(fr, ec, fa)
+	if fr == _ruleset.slot_count:
+		_result_text_lbl.text = "All four exact — the rival's Ward breaks!"
+
+
+static func _describe_short(fr: int, ec: int, fa: int) -> String:
+	if fr == 0 and ec == 0:
+		return "nothing matched"
+	var parts: Array = []
+	if fr > 0:
+		parts.append("%d exact" % fr)
+	if ec > 0:
+		parts.append("%d close" % ec)
+	if fa > 0:
+		parts.append("%d miss" % fa)
+	return ", ".join(PackedStringArray(parts))
+
+
+func _describe_long(fr: int, ec: int, fa: int) -> String:
+	var parts: Array = []
+	if fr > 0:
+		parts.append("%d right spell in the right place" % fr)
+	if ec > 0:
+		parts.append("%d right spell in the wrong place" % ec)
+	if fa > 0:
+		parts.append("%d not in their Ward" % fa)
+	if parts.is_empty():
+		return "Nothing matched."
+	return " · ".join(PackedStringArray(parts))
+
+
+# --- History ---------------------------------------------------------------
+
+func _add_history_row(attacker: String, number: int, pattern: Array, fr: int, ec: int, fa: int, auto: bool) -> void:
+	_history_rows.append({
+		"attacker": attacker, "number": number, "pattern": pattern.duplicate(),
+		"fr": fr, "ec": ec, "fa": fa, "auto": auto,
+	})
+	_refresh_history()
+
+
+func _clear_history_rows() -> void:
+	_history_rows.clear()
+	_refresh_history_list()
+
+
+func _set_history_tab(rival: bool) -> void:
+	_history_showing_rival = rival
+	_sfx("tap")
+	_refresh_history()
+
+
+func _refresh_history() -> void:
+	var you_n := 0
+	var rival_n := 0
+	for r in _history_rows:
+		if r["attacker"] == "player":
+			you_n += 1
 		else:
-			_cast_button.set_auto_cast_tier(p_auto)
-			var warn := p_auto <= 3.0
-			_cast_timer.set_warning(warn)
-			if p_auto <= 3.0 and not _warn3_played:
-				_warn3_played = true
-				_PlayabilityHaptics.pulse_warning()
-	player_timer_label.modulate = Color(1.0, 0.7, 0.7) if p_auto <= 3.0 and not suppress_warn else _VT.COLOR_TEXT_SECONDARY
-	enemy_timer_label.text = "Rival casting" if e_auto <= max_auto * 0.25 else "Rival %.0fs" % e_auto
-	_rival_cast_indicator.set_progress(1.0 - e_auto / maxf(max_auto, 0.1), e_auto <= max_auto * 0.5)
+			rival_n += 1
+	_history_tab_you.text = "Your casts (%d)" % you_n
+	_history_tab_rival.text = "Rival's casts (%d)" % rival_n
+	var active := _VT.secondary_button_style()
+	active.bg_color = Color("#3d3580")
+	active.border_color = _VT.COLOR_ACCENT_GOLD
+	var idle := _VT.secondary_button_style()
+	idle.bg_color = Color("#1b1633")
+	idle.border_color = Color("#3a3160")
+	_history_tab_you.add_theme_stylebox_override("normal", idle if _history_showing_rival else active)
+	_history_tab_rival.add_theme_stylebox_override("normal", active if _history_showing_rival else idle)
+	_refresh_history_list()
 
 
-func _update_secret_row() -> void:
-	var setup = game.phase == _RealtimeSim.Phase.WARD_SETUP
-	secret_section.visible = setup
-	for i in range(_secret_slots.size()):
-		var slot: PegSlot = _secret_slots[i]
-		if setup:
-			slot.disabled = false
-			var ward = game.get_player_ward()
-			var c = ward[i] if i < ward.size() else null
-			slot.set_colour(c if c != null else -1)
-		else:
-			slot.set_hidden_mode()
-	lock_button.visible = setup
+func _refresh_history_list() -> void:
+	for c in _history_list.get_children():
+		if c != _history_empty_lbl:
+			c.queue_free()
+	var shown := 0
+	var rows := _history_rows.duplicate()
+	rows.reverse()
+	for r in rows:
+		var is_player: bool = r["attacker"] == "player"
+		if is_player == _history_showing_rival:
+			continue
+		_history_list.add_child(_make_history_row(r))
+		shown += 1
+	_history_empty_lbl.visible = shown == 0
+	if _history_showing_rival:
+		_history_empty_lbl.text = "The rival has not cast yet.\nTheir results show how close they are to your Ward."
+	else:
+		_history_empty_lbl.text = "Your casts and their results will appear here.\nTap a past cast to copy it into your guess."
+	_history_list.move_child(_history_empty_lbl, 0)
 
 
-func _update_lock_button() -> void:
-	lock_button.disabled = not game.can_lock_player_ward()
+func _make_history_row(r: Dictionary) -> Control:
+	var btn := Button.new()
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.custom_minimum_size = Vector2(0, 52)
+	var style := _VT.flat_panel_style(Color("#241d40"), 10)
+	style.content_margin_top = 4
+	style.content_margin_bottom = 4
+	var pressed_style := _VT.flat_panel_style(Color("#2f2760"), 10)
+	btn.add_theme_stylebox_override("normal", style)
+	btn.add_theme_stylebox_override("hover", style)
+	btn.add_theme_stylebox_override("pressed", pressed_style)
+	btn.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	var is_player: bool = r["attacker"] == "player"
+	if is_player:
+		var pat: Array = r["pattern"]
+		btn.pressed.connect(func(): _on_history_row_tapped(pat))
+	else:
+		btn.disabled = true
+		btn.add_theme_stylebox_override("disabled", style)
+	var h := HBoxContainer.new()
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.set_anchors_preset(Control.PRESET_FULL_RECT)
+	h.add_theme_constant_override("separation", 10)
+	btn.add_child(h)
+	var num := Label.new()
+	num.text = "%d" % int(r["number"])
+	num.custom_minimum_size = Vector2(28, 0)
+	num.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	num.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_VT.apply_label_caption(num)
+	h.add_child(num)
+	var icons := HBoxContainer.new()
+	icons.add_theme_constant_override("separation", 5)
+	h.add_child(icons)
+	for v in r["pattern"]:
+		var s = _SpellSlot.new()
+		s.slot_size = 40
+		s.disabled = true
+		s.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icons.add_child(s)
+		s.call_deferred("set_spell", int(v))
+	if bool(r["auto"]):
+		var a := Label.new()
+		a.text = "auto"
+		_VT.apply_label_caption(a)
+		a.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		h.add_child(a)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(spacer)
+	var pips = _FeedbackPips.new()
+	pips.pip_size = 26
+	h.add_child(pips)
+	pips.call_deferred("show_counts", _ruleset.slot_count, int(r["fr"]), int(r["ec"]), int(r["fa"]))
+	var pad := Control.new()
+	pad.custom_minimum_size = Vector2(6, 0)
+	h.add_child(pad)
+	return btn
 
 
-func _update_magic_picker() -> void:
-	var active = game.phase == _RealtimeSim.Phase.WARD_SETUP or game.phase == _RealtimeSim.Phase.DUELING
-	_magic_picker.set_interactive(active)
-	if not active:
-		_magic_picker.close()
+# --- Effects ---------------------------------------------------------------
+
+func _launch_bolts(pattern: Array) -> void:
+	if _reduce_motion or _fx_layer == null:
+		return
+	var target: Vector2 = _rival_ward_row.get_global_rect().get_center()
+	for i in range(pattern.size()):
+		if pattern[i] == null:
+			continue
+		var bolt := _SpellVfx.new()
+		_fx_layer.add_child(bolt)
+		bolt.setup(int(pattern[i]))
+		bolt.scale = Vector2(0.45, 0.45)
+		bolt.global_position = _loci_slots[i].get_global_rect().get_center()
+		var tw := bolt.launch_toward(target + Vector2((i - 1.5) * 24, 0), _VT.DUR_PROJECTILE)
+		tw.finished.connect(bolt.queue_free)
+	var tree := get_tree()
+	tree.create_timer(_VT.DUR_PROJECTILE).timeout.connect(func():
+		if is_instance_valid(_fx_layer):
+			_SpellVfx.spawn_impact(_fx_layer, target)
+	)
 
 
-func _update_attack_row() -> void:
-	var in_duel = game.phase == _RealtimeSim.Phase.DUELING
-	var finished = game.phase == _RealtimeSim.Phase.FINISHED
-	attack_section.visible = in_duel or finished
+func _flash_your_ward(fractures: int) -> void:
+	var col := Color(1.4, 0.8, 0.8) if fractures > 0 else Color(1.15, 1.15, 1.3)
+	var row := _your_ward_row.get_parent()
+	var tw := create_tween()
+	tw.tween_property(row, "modulate", col, 0.12)
+	tw.tween_property(row, "modulate", Color.WHITE, 0.35)
+
+
+func _show_toast(text_value: String) -> void:
+	_toast_lbl.text = text_value
+	_toast.visible = true
+	_toast.reset_size()
+	var vp := get_viewport_rect().size
+	_toast.position = Vector2((vp.x - _toast.size.x) * 0.5, vp.y * 0.56)
+	if _toast_tween != null and _toast_tween.is_valid():
+		_toast_tween.kill()
+	_toast.modulate.a = 0.0
+	_toast_tween = create_tween()
+	_toast_tween.tween_property(_toast, "modulate:a", 1.0, 0.12)
+	_toast_tween.tween_interval(1.4)
+	_toast_tween.tween_property(_toast, "modulate:a", 0.0, 0.3)
+	_toast_tween.tween_callback(func(): _toast.visible = false)
+
+
+func _sfx(kind: String, arg: int = 0) -> void:
+	var sfx := get_node_or_null("/root/Sfx")
+	if sfx == null:
+		return
+	match kind:
+		"fracture":
+			sfx.fracture(arg)
+		_:
+			if sfx.has_method(kind):
+				sfx.call(kind)
+
+
+# --- Overlays --------------------------------------------------------------
+
+func _clear_overlay() -> void:
+	for c in _overlay_vbox.get_children():
+		c.queue_free()
+
+
+func _overlay_title(text_value: String, colour: Color = _VT.COLOR_ACCENT_GOLD) -> void:
+	var t := Label.new()
+	t.text = text_value
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	t.add_theme_font_size_override("font_size", _VT.FONT_TITLE)
+	t.add_theme_color_override("font_color", colour)
+	_overlay_vbox.add_child(t)
+
+
+func _overlay_text(text_value: String, secondary: bool = true) -> Label:
+	var l := Label.new()
+	l.text = text_value
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if secondary:
+		_VT.apply_label_secondary(l)
+	else:
+		_VT.apply_label_primary(l)
+	_overlay_vbox.add_child(l)
+	return l
+
+
+func _overlay_button(text_value: String, primary: bool, cb: Callable) -> Button:
+	var b := Button.new()
+	b.text = text_value
+	b.custom_minimum_size = Vector2(0, 64)
+	if primary:
+		_VT.style_primary_button(b)
+	else:
+		_VT.style_secondary_button(b)
+	b.pressed.connect(cb)
+	_overlay_vbox.add_child(b)
+	return b
+
+
+func _overlay_ward_row(label: String, ward: Array) -> void:
+	var h := HBoxContainer.new()
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	_overlay_vbox.add_child(h)
+	var l := Label.new()
+	l.text = label
+	l.custom_minimum_size = Vector2(130, 0)
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_VT.apply_label_secondary(l)
+	h.add_child(l)
+	for v in ward:
+		var s = _SpellSlot.new()
+		s.slot_size = 56
+		s.disabled = true
+		h.add_child(s)
+		s.call_deferred("set_spell", int(v) if v != null else -1)
+
+
+func _set_paused(on: bool) -> void:
+	_paused_by_menu = on
+	game.set_paused(on)
+
+
+func _show_menu_overlay() -> void:
+	_clear_overlay()
+	var in_duel: bool = game.phase == _RealtimeSim.Phase.DUELING
+	_set_paused(true)
+	_overlay_title("Paused" if in_duel else "Menu")
 	if in_duel:
-		_essence_tray.set_allowed_magics(_ruleset.attack_magic_pool)
-	elif game.phase == _RealtimeSim.Phase.WARD_SETUP:
-		_essence_tray.set_allowed_magics(_ruleset.secret_magic_pool)
-	for i in range(_guess_slots.size()):
-		var slot: PegSlot = _guess_slots[i]
-		slot.disabled = not in_duel
-		if in_duel:
-			var pattern = game.get_player_attack_pattern()
-			var c = pattern[i] if i < pattern.size() else null
-			slot.set_colour(c if c != null else -1)
+		_overlay_text("The duel is paused. The rival waits too.")
+	_overlay_button("Resume", true, func():
+		_overlay.visible = false
+		_set_paused(false)
+	)
+	_overlay_button("How to play", false, func(): _show_help_overlay(false))
+	_overlay_button("Restart duel", false, func():
+		_overlay.visible = false
+		start_new_game(-1)
+		_sfx("tap")
+	)
+	_overlay_button("Quit to menu", false, _go_to_main_menu)
+	_overlay.visible = true
+
+
+func _show_help_overlay(first_time: bool) -> void:
+	_clear_overlay()
+	var was_paused := _paused_by_menu
+	_set_paused(true)
+	_overlay_title("How to play")
+	for line in HOW_TO_PLAY:
+		_overlay_text(line)
+	_overlay_button("Got it" if first_time else "Back", true, func():
+		_SaveData.set_setting("seen_how_to_play", true)
+		if first_time or not was_paused:
+			_overlay.visible = false
+			_set_paused(false)
 		else:
-			slot.set_colour(-1)
-
-
-func _refresh_submit() -> void:
-	var can_cast: bool = game.can_player_cast() and not _feedback_locked
-	_cast_button.disabled = not can_cast
-	if not can_cast and _cast_button.has_method("set_visual_state"):
-		_cast_button.set_visual_state(_CastButton.CastVisualState.DISABLED)
+			_show_menu_overlay()
+	)
+	_overlay.visible = true
 
 
 func _show_result() -> void:
-	if not result_panel.visible and game.result:
-		result_panel.visible = true
-		var r = game.result
-		var headline = r.message
-		var winner := "Draw"
-		match r.outcome:
-			"victory", "human_win":
-				winner = "Victory"
-			"defeat", "bot_win":
-				winner = "Defeat"
-			"clash":
-				winner = "Clash"
-			"stalemate", "draw":
-				winner = "Stalemate"
-		result_label.text = "%s\n\n%s\n\nYou: %d · Rival: %d" % [
-			winner, headline, r.human_guess_count, r.bot_guess_count,
-		]
-		game_finished.emit()
+	_result_shown = true
+	var r = game.result
+	for i in range(_rival_ward_slots.size()):
+		var w: Array = game.get_enemy_ward()
+		_rival_ward_slots[i].set_spell(int(w[i]))
+	_rival_progress.value = 0
+	_rival_status_lbl.text = ""
+	_refresh_builder()
+	_refresh_cast_button()
+	game_finished.emit()
+	_clear_overlay()
+	var title := "Stalemate"
+	var colour := _VT.COLOR_TEXT_PRIMARY
+	match r.outcome:
+		"victory":
+			title = "Victory!"
+			colour = _VT.COLOR_FRACTURE
+			_sfx("victory")
+		"defeat":
+			title = "Defeat"
+			colour = _VT.COLOR_DANGER
+			_sfx("defeat")
+		"clash":
+			title = "Clash!"
+			colour = _VT.COLOR_ECHO
+			_sfx("victory")
+	_overlay_title(title, colour)
+	_overlay_text(r.message, false)
+	_overlay_ward_row("Their Ward", game.get_enemy_ward())
+	_overlay_ward_row("Your Ward", game.get_player_ward())
+	_overlay_text("You cast %d · Rival cast %d" % [r.human_guess_count, r.bot_guess_count], false)
+	_overlay_button("Play again", true, func():
+		_overlay.visible = false
+		start_new_game(-1)
+		_sfx("tap")
+	)
+	_overlay_button("Menu", false, _go_to_main_menu)
+	if _screenshot_mode:
+		_overlay.visible = true
+	else:
+		get_tree().create_timer(0.9).timeout.connect(func():
+			if is_instance_valid(self) and game != null and game.result != null:
+				_overlay.visible = true
+		)
 
 
-# --- UI smoke / screenshot API ---
-
-func ui_get_lock_button_enabled() -> bool:
-	return not lock_button.disabled
+func _go_to_main_menu() -> void:
+	get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
 
 
-func ui_get_visible_bot_guess_count() -> int:
-	return _bot_rows.size()
+# --- helpers -----------------------------------------------------------------
+
+class _Vignette:
+	extends Control
+	func _draw() -> void:
+		var c := size * Vector2(0.5, 0.42)
+		var r := size.length() * 0.55
+		for i in range(12):
+			var t := float(i) / 12.0
+			var col := Color(0.28, 0.22, 0.5, 0.06 * (1.0 - t))
+			draw_circle(c, r * (0.25 + 0.75 * t), col)
 
 
-func ui_get_human_guess_row_active() -> bool:
-	if not attack_section.visible or _guess_slots.is_empty():
-		return false
-	return not _guess_slots[0].disabled
+static func _all_filled(p: Array) -> bool:
+	for v in p:
+		if v == null:
+			return false
+	return true
 
 
-func ui_is_result_visible() -> bool:
-	return result_panel.visible
+static func _any_filled(p: Array) -> bool:
+	for v in p:
+		if v != null:
+			return true
+	return false
 
 
-func ui_is_picker_open() -> bool:
-	return _magic_picker.is_open()
+static func _count_empty(p: Array) -> int:
+	var n := 0
+	for v in p:
+		if v == null:
+			n += 1
+	return n
 
 
-func ui_is_help_visible() -> bool:
-	return help_modal.visible
-
-
-func ui_get_visible_history_row_count() -> int:
-	return _peek_rows.size()
-
-
-func ui_set_history_expanded(on: bool) -> void:
-	_history_expanded = on
-	history_sheet.visible = on
-
-
-func ui_action_pick_secret_slot(slot: int) -> void:
-	_on_secret_slot_pressed(slot)
-
-
-func ui_action_pick_magic(colour: int) -> void:
-	if _active_slot < 0:
-		if game.phase == _RealtimeSim.Phase.WARD_SETUP and not _secret_slots.is_empty():
-			_on_secret_slot_pressed(0)
-		elif game.phase == _RealtimeSim.Phase.DUELING and not _guess_slots.is_empty():
-			_on_guess_slot_pressed(0)
-	if _active_slot >= 0:
-		_on_magic_selected(colour)
-		return
-	if game.phase == _RealtimeSim.Phase.DUELING:
-		var pattern = game.get_player_attack_pattern()
-		for i in range(pattern.size()):
-			if pattern[i] == null:
-				game.set_player_attack_locus(i, colour)
-				_refresh_all()
-				return
-	_fail_smoke_picker()
-
-
-func ui_action_pick_colour(colour: int) -> void:
-	ui_action_pick_magic(colour)
-
-
-func ui_action_lock_secret() -> void:
-	_on_lock_pressed()
-
-
-func ui_action_pick_guess_slot(slot: int) -> void:
-	_on_guess_slot_pressed(slot)
-
-
-func ui_action_submit_guess() -> void:
-	_on_submit_pressed()
-
-
-func ui_action_restart() -> void:
-	_on_restart_pressed()
-
-
-func ui_get_visible_human_guess_count() -> int:
-	return _human_rows.size()
-
-
-func ui_get_human_feedback_text() -> String:
-	if _human_rows.is_empty():
-		return ""
-	var row = _human_rows[_human_rows.size() - 1]
-	return row.get_feedback_text()
-
+# ---------------------------------------------------------------------------
+# UI smoke / screenshot API
+# ---------------------------------------------------------------------------
 
 func ui_get_phase() -> int:
 	return game.phase
 
 
-func ui_is_human_turn() -> bool:
-	return game.phase == _RealtimeSim.Phase.DUELING
+func ui_is_result_visible() -> bool:
+	return _overlay.visible and _result_shown
 
 
-func ui_is_bot_turn() -> bool:
-	return false
+func ui_is_overlay_visible() -> bool:
+	return _overlay.visible
 
 
-func ui_get_bot_feedback_count() -> int:
-	return _bot_rows.size()
+func ui_dismiss_overlay() -> void:
+	_overlay.visible = false
+	_set_paused(false)
 
 
-func ui_secret_is_hidden() -> bool:
-	if _secret_slots.is_empty():
-		return false
-	return _secret_slots[0].get_locus_socket().is_hidden_mode()
+func ui_action_select_locus(i: int) -> void:
+	_on_locus_tapped(i)
 
 
-func ui_get_secret_slot_value(slot: int) -> int:
-	if slot < 0 or slot >= _secret_slots.size():
-		return -1
-	return _secret_slots[slot].get_colour_id()
+func ui_action_pick_spell(spell_id: int) -> void:
+	_on_tray_tapped(spell_id)
 
 
-func ui_get_guess_slot_value(slot: int) -> int:
-	if slot < 0 or slot >= _guess_slots.size():
-		return -1
-	return _guess_slots[slot].get_colour_id()
+func ui_action_clear() -> void:
+	_on_clear_pressed()
 
 
-func ui_get_bot_feedback_text() -> String:
-	if _bot_rows.is_empty():
-		return ""
-	var row = _bot_rows[_bot_rows.size() - 1]
-	return row.get_feedback_text()
+func ui_action_lock_ward() -> void:
+	_on_lock_pressed()
 
 
-func ui_set_difficulty(level: String) -> void:
-	_session().set_difficulty(level)
+func ui_action_cast() -> void:
+	_on_cast_pressed()
 
 
-func ui_get_difficulty() -> String:
-	return _session().selected_difficulty_id
+func ui_action_play_again() -> void:
+	_overlay.visible = false
+	start_new_game(-1)
 
 
-func ui_set_bot_pacing(_delay_sec: float, _skip_immediately: bool = false) -> void:
-	game.set_testing_fast_cast(true)
+func ui_action_menu() -> void:
+	_on_menu_pressed()
 
 
-func ui_skip_bot_attacks() -> void:
-	pass
+func ui_action_history_tab(rival: bool) -> void:
+	_set_history_tab(rival)
+
+
+func ui_action_tap_history_row(index_from_latest: int) -> void:
+	var count := 0
+	var rows := _history_rows.duplicate()
+	rows.reverse()
+	for r in rows:
+		if r["attacker"] == "player":
+			if count == index_from_latest:
+				_on_history_row_tapped(r["pattern"])
+				return
+			count += 1
 
 
 func ui_advance_time(seconds: float) -> void:
 	game.advance_time_for_test(seconds)
-	_consume_sim_events()
+	_consume_events()
 	_refresh_all()
+
+
+func ui_get_locus_values() -> Array:
+	var out: Array = []
+	for s in _loci_slots:
+		out.append(s.spell_id)
+	return out
+
+
+func ui_get_selected_locus() -> int:
+	return _selected_locus
+
+
+func ui_get_visible_history_count() -> int:
+	var n := 0
+	for r in _history_rows:
+		if (r["attacker"] == "player") != _history_showing_rival:
+			n += 1
+	return n
+
+
+func ui_get_result_banner_visible() -> bool:
+	return _result_banner.visible
+
+
+func ui_get_result_text() -> String:
+	return _result_text_lbl.text
+
+
+func ui_get_hint_text() -> String:
+	return _hint_lbl.text
+
+
+func ui_get_cast_button_state() -> int:
+	return _cast_button.state
+
+
+func ui_get_cast_button_rect() -> Rect2:
+	return _cast_button.get_global_rect()
+
+
+func ui_get_tray_count() -> int:
+	return _tray_slots.size()
 
 
 func ui_can_player_cast() -> bool:
 	return game.can_player_cast()
 
 
-func ui_has_wizard_portraits() -> bool:
-	return _enemy_wizard != null and _player_wizard != null
+func ui_get_rival_ward_revealed() -> bool:
+	for s in _rival_ward_slots:
+		if s.hidden_mode:
+			return false
+	return true
 
 
-func ui_has_point_headers() -> bool:
-	return (
-		secret_point_headers.get_child_count() == _ruleset.slot_count
-		and human_point_headers.get_child_count() == _ruleset.slot_count
-	)
-
-
-func ui_load_encounter(encounter_id: String) -> void:
-	_session().set_encounter(encounter_id)
-	_ruleset = _session().get_ruleset()
-	_build_board_from_ruleset()
-	_apply_encounter_presentation()
-	start_new_game(_bot_seed)
-	game.set_testing_fast_cast(true)
-
-
-func ui_get_slot_count() -> int:
-	return _ruleset.slot_count
-
-
-func ui_get_visible_magic_count() -> int:
-	var count := 0
-	for i in range(DmbConstants.NUM_COLOURS):
-		if _magic_picker._buttons[i].visible:
-			count += 1
-	return count
-
-
-func ui_get_enemy_tell_visible() -> bool:
-	return enemy_tell_label.visible and enemy_tell_label.text != ""
-
-
-func ui_has_help_panel() -> bool:
-	return help_button != null
-
-
-func ui_get_cast_button_size() -> Vector2:
-	return _cast_button.size if _cast_button else Vector2.ZERO
-
-
-func ui_get_cast_button_center_y_ratio() -> float:
-	if _cast_button == null:
-		return 0.0
-	var center: float = _cast_button.get_global_rect().get_center().y
-	return center / maxf(get_viewport_rect().size.y, 1.0)
-
-
-func ui_is_feedback_locked() -> bool:
-	return _feedback_locked
-
-
-func ui_get_interaction_state() -> int:
-	return _interaction_state
-
-
-func ui_get_picker_above_locus() -> bool:
-	if not _magic_picker.is_open() or _guess_slots.is_empty():
-		return false
-	var picker_rect: Rect2 = _magic_picker.get_global_rect()
-	var locus_rect: Rect2 = _guess_slots[0].get_global_rect()
-	return picker_rect.position.y < locus_rect.position.y
-
-
-func ui_get_ftue_active() -> bool:
-	return _ftue_overlay != null and _ftue_overlay.get_active_step() != ""
-
-
-func ui_has_essence_tray() -> bool:
-	return _essence_tray != null and _essence_tray.visible
-
-
-func ui_debug_hold_animation(on: bool) -> void:
-	_debug_hold_animation = on
+func ui_set_fast_cast(on: bool) -> void:
+	game.set_testing_fast_cast(on)
 
 
 func ui_debug_finish_duel(outcome: String) -> void:
 	game.force_finish_for_test(outcome)
 	_show_result()
-
-
-func ui_debug_trigger_last_stand() -> void:
-	_enemy_ward.set_state(_WardBarrier.State.UNSTABLE)
-	_enemy_wizard.play_last_stand()
 
 
 func ui_audit_capture() -> Dictionary:
@@ -1127,38 +1496,22 @@ func ui_audit_capture() -> Dictionary:
 
 
 func _audit_control(node: Node, touch: Array, text_nodes: Array) -> void:
-	if node is Control and (node as Control).visible:
+	if node is Control and (node as Control).is_visible_in_tree():
 		var c := node as Control
-		if node is Button or node is PegSlot or node.name == "CastButton" or _is_essence_token(node):
+		if node is Button and not (node as Button).disabled:
 			var role := "utility"
-			if node.name == "CastButton" or node.get_parent() == cast_button_host:
+			if node.get_parent() == _cast_button:
 				role = "cast"
-			elif node is PegSlot:
+			elif node in _loci_slots:
 				role = "locus"
-			elif _is_essence_token(node):
+			elif node in _tray_slots:
 				role = "essence"
 			touch.append({
-				"name": node.name,
-				"width": c.size.x,
-				"height": c.size.y,
-				"role": role,
+				"name": node.name if node.name != "" else node.get_class(),
+				"width": c.size.x, "height": c.size.y, "role": role,
 				"global_y": c.get_global_rect().position.y,
 			})
-		if node is Label or node is Button:
-			var t := ""
-			if node is Label:
-				t = (node as Label).text
-			elif node is Button:
-				t = (node as Button).text
-			if t != "":
-				text_nodes.append({"visible": true, "text": t})
+		if node is Label and (node as Label).text != "":
+			text_nodes.append({"visible": true, "text": (node as Label).text})
 	for child in node.get_children():
 		_audit_control(child, touch, text_nodes)
-
-
-func _fail_smoke_picker() -> void:
-	push_error("Magic picker not open")
-
-
-func _is_essence_token(node: Node) -> bool:
-	return node.get_script() != null and str(node.get_script().resource_path).ends_with("essence_token.gd")

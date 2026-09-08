@@ -9,20 +9,26 @@ static var _catalog: Dictionary = {}
 static func _build() -> void:
 	if not _catalog.is_empty():
 		return
+	# id, name, description, logic, min-mult, max-mult, mistake-rate, solver-cap, think-min, think-max
+	#
+	# Balance (sim/tools/balance_probe.gd): all three solve ~100% of wards within
+	# 10 casts; average casts easy 5.4 / medium 4.6 / hard 4.5. A typical human
+	# needs 5–7, so the think band is the main lever: apprentice ~37 s/cast,
+	# adept ~23 s/cast, archmage ~15 s/cast.
 	_register(_Profile.new(
-		"easy", "Easy",
-		"Slower rival, simpler attacks.",
-		"easy_random", 1.4, 1.4, 0.35, 0
+		"easy", "Apprentice",
+		"A slow rival who sometimes forgets what it has learned.",
+		"candidate_filter", 1.0, 1.0, 0.4, 0, 26.0, 48.0
 	))
 	_register(_Profile.new(
-		"medium", "Medium",
-		"Balanced duel.",
-		"candidate_filter", 1.0, 1.0, 0.05, 100
+		"medium", "Adept",
+		"A steady rival that never wastes a cast.",
+		"candidate_filter", 1.0, 1.0, 0.0, 0, 16.0, 30.0
 	))
 	_register(_Profile.new(
-		"hard", "Hard",
-		"Faster rival, sharper deduction.",
-		"capped_minimax", 0.75, 0.75, 0.0, 100
+		"hard", "Archmage",
+		"A fast rival that picks the most revealing spells.",
+		"capped_minimax", 1.0, 1.0, 0.0, 60, 10.0, 20.0
 	))
 
 

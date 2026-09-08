@@ -9,6 +9,7 @@ config/features=PackedStringArray("4.4")
 
 [autoload]
 EncounterSession="*res://client/scripts/encounter_session.gd"
+Sfx="*res://client/scripts/sfx.gd"
 
 [display]
 window/size/viewport_width=720
@@ -16,6 +17,12 @@ window/size/viewport_height=1280
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=1
+window/size/window_width_override=450
+window/size/window_height_override=800
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
 
 [rendering]
 renderer/rendering_method="gl_compatibility"
