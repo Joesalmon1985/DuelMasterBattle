@@ -1,115 +1,205 @@
 extends Control
-const _VT = preload("res://client/scripts/visual_theme.gd")
 
+## Main menu: pick a rival difficulty and start the duel. Everything else
+## (rules, settings) lives behind small buttons so the first tap is obvious.
+
+const _VT = preload("res://client/scripts/visual_theme.gd")
 const _Encounters = preload("res://sim/encounters.gd")
 const _DifficultyProfiles = preload("res://sim/difficulty_profiles.gd")
 const _SaveData = preload("res://client/scripts/save_data.gd")
+const _SpellSlot = preload("res://client/components/spell_slot.gd")
+const _Art = preload("res://client/scripts/art.gd")
 
-const HOW_TO_PLAY_TEXT := (
-	"Choose difficulty and encounter. Set your hidden ward, then cast attacks in real time. "
-	+ "Fracture = exact match. Echo = wrong locus. Fade = miss. Feedback is aggregate only."
-)
-const FEEDBACK_HELP := (
-	"Each attack tells you how many essences were exactly right, "
-	+ "how many were displaced, and how many faded — never which locus caused each result."
-)
+const HOW_TO_PLAY := [
+	"You and the rival wizard each hide a Ward of four spells. Spells may repeat.",
+	"Guess each other's Ward. After every cast you learn how many spells were right — never which ones.",
+	"●  green — right spell in the right place\n○  amber ring — right spell in the wrong place\n·  grey — spell not in the Ward at all",
+	"You can cast 5 seconds after your window opens, and must cast within 60. Ten casts each.",
+	"Break the rival's Ward first to win.",
+]
 
-@onready var difficulty_option: OptionButton = $Margin/VBox/DifficultyRow/DifficultyOption
-@onready var encounter_option: OptionButton = $Margin/VBox/EncounterRow/EncounterOption
-@onready var encounter_detail: Label = $Margin/VBox/EncounterDetail
-@onready var start_duel_btn: Button = $Margin/VBox/StartDuelButton
-@onready var how_to_play_btn: Button = $Margin/VBox/HowToPlayButton
-@onready var settings_btn: Button = $Margin/VBox/SettingsButton
-@onready var help_panel: PanelContainer = $Margin/VBox/HelpPanel
-@onready var help_label: Label = $Margin/VBox/HelpPanel/HelpLabel
-@onready var settings_panel: PanelContainer = $Margin/VBox/SettingsPanel
-@onready var title_label: Label = $Margin/VBox/TitleLabel
-@onready var background: ColorRect = $Background
-
-var _encounters: Array = []
 var _difficulties: Array = []
+var _selected_difficulty: String = "medium"
+var _diff_buttons: Array = []
+var _diff_desc_lbl: Label
+var _panel_vbox: VBoxContainer
+var _overlay: ColorRect
+var _overlay_vbox: VBoxContainer
+var _start_btn: Button
 
 
 func _ready() -> void:
-	_apply_theme()
 	_difficulties = _DifficultyProfiles.all_profiles()
-	difficulty_option.clear()
+	_selected_difficulty = _SaveData.get_last_difficulty()
+	_build()
+
+
+func _build() -> void:
+	var bg := ColorRect.new()
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.color = _VT.COLOR_BG_DEEP
+	add_child(bg)
+	var glow := _Vignette.new()
+	glow.set_anchors_preset(Control.PRESET_FULL_RECT)
+	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(glow)
+
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", 28)
+	margin.add_theme_constant_override("margin_right", 28)
+	margin.add_theme_constant_override("margin_top", 60)
+	margin.add_theme_constant_override("margin_bottom", 40)
+	add_child(margin)
+	_panel_vbox = VBoxContainer.new()
+	_panel_vbox.add_theme_constant_override("separation", 18)
+	margin.add_child(_panel_vbox)
+
+	var title := Label.new()
+	title.text = "Duel Master\nBattle"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 56)
+	title.add_theme_color_override("font_color", _VT.COLOR_ACCENT_GOLD)
+	_panel_vbox.add_child(title)
+	var sub := Label.new()
+	sub.text = "Break the rival's Ward before they break yours."
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_VT.apply_label_secondary(sub)
+	_panel_vbox.add_child(sub)
+
+	# Spell strip — a little colour and a preview of the six spells.
+	var strip := HBoxContainer.new()
+	strip.alignment = BoxContainer.ALIGNMENT_CENTER
+	strip.add_theme_constant_override("separation", 10)
+	_panel_vbox.add_child(strip)
+	for id in DmbConstants.CORE_SPELL_POOL:
+		var s = _SpellSlot.new()
+		s.slot_size = 64
+		s.disabled = true
+		s.caption = DmbColourData.essence_name(int(id))
+		strip.add_child(s)
+		s.call_deferred("set_spell", int(id))
+
+	var spacer := Control.new()
+	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_panel_vbox.add_child(spacer)
+
+	var duel_row := HBoxContainer.new()
+	duel_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	duel_row.add_theme_constant_override("separation", 40)
+	_panel_vbox.add_child(duel_row)
+	for arch in ["player", "archmage"]:
+		var host := Control.new()
+		host.custom_minimum_size = Vector2(120, 140)
+		duel_row.add_child(host)
+		var wiz = load("res://client/components/composite_wizard.gd").new()
+		wiz.set_anchors_preset(Control.PRESET_FULL_RECT)
+		host.add_child(wiz)
+		wiz.call_deferred("load_archetype", arch)
+		if arch == "player":
+			var vs := Label.new()
+			vs.text = "vs"
+			vs.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			_VT.apply_label_title(vs)
+			duel_row.add_child(vs)
+
+	var spacer2 := Control.new()
+	spacer2.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_panel_vbox.add_child(spacer2)
+
+	var diff_title := Label.new()
+	diff_title.text = "Choose your rival"
+	diff_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_primary(diff_title)
+	_panel_vbox.add_child(diff_title)
+	var diff_row := HBoxContainer.new()
+	diff_row.add_theme_constant_override("separation", 10)
+	_panel_vbox.add_child(diff_row)
+	for d in _difficulties:
+		var b := Button.new()
+		b.text = d.display_name
+		b.custom_minimum_size = Vector2(0, 64)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_VT.style_secondary_button(b)
+		var id: String = d.id
+		b.pressed.connect(func(): _select_difficulty(id))
+		diff_row.add_child(b)
+		_diff_buttons.append(b)
+	_diff_desc_lbl = Label.new()
+	_diff_desc_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_diff_desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_diff_desc_lbl.custom_minimum_size = Vector2(0, 60)
+	_VT.apply_label_secondary(_diff_desc_lbl)
+	_panel_vbox.add_child(_diff_desc_lbl)
+
+	_start_btn = Button.new()
+	_start_btn.text = "Start Duel"
+	_start_btn.custom_minimum_size = Vector2(0, 76)
+	_VT.style_primary_button(_start_btn)
+	_start_btn.add_theme_font_size_override("font_size", 30)
+	_start_btn.pressed.connect(_on_start_duel)
+	_panel_vbox.add_child(_start_btn)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	_panel_vbox.add_child(row)
+	var how := Button.new()
+	how.text = "How to play"
+	how.custom_minimum_size = Vector2(0, 60)
+	how.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_VT.style_secondary_button(how)
+	how.pressed.connect(_show_how_to_play)
+	row.add_child(how)
+	var settings := Button.new()
+	settings.text = "Settings"
+	settings.custom_minimum_size = Vector2(0, 60)
+	settings.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_VT.style_secondary_button(settings)
+	settings.pressed.connect(_show_settings)
+	row.add_child(settings)
+
+	_overlay = ColorRect.new()
+	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay.color = Color(0.05, 0.03, 0.1, 0.8)
+	_overlay.visible = false
+	add_child(_overlay)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay.add_child(center)
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", _VT.panel_style(20))
+	panel.custom_minimum_size = Vector2(560, 0)
+	center.add_child(panel)
+	_overlay_vbox = VBoxContainer.new()
+	_overlay_vbox.add_theme_constant_override("separation", 14)
+	panel.add_child(_overlay_vbox)
+
+	_select_difficulty(_selected_difficulty)
+
+
+func _select_difficulty(id: String) -> void:
+	var found := false
+	for d in _difficulties:
+		if d.id == id:
+			found = true
+	if not found:
+		id = "medium"
+	_selected_difficulty = id
 	for i in range(_difficulties.size()):
 		var d = _difficulties[i]
-		difficulty_option.add_item(d.display_name, i)
-		if d.id == _SaveData.get_last_difficulty():
-			difficulty_option.select(i)
-	_encounters = _Encounters.all_encounters()
-	encounter_option.clear()
-	for i in range(_encounters.size()):
-		var rs: DmbDuelRuleset = _encounters[i]
-		encounter_option.add_item(rs.display_name, i)
-		if rs.id == _Encounters.DEFAULT_ENCOUNTER_ID:
-			encounter_option.select(i)
-	_build_settings_panel()
-	_update_detail()
-	difficulty_option.item_selected.connect(func(_i): _update_detail())
-	encounter_option.item_selected.connect(_on_encounter_selected)
-	start_duel_btn.pressed.connect(_on_start_duel)
-	how_to_play_btn.pressed.connect(_on_how_to_play)
-	settings_btn.pressed.connect(_on_settings)
-
-
-func _apply_theme() -> void:
-	background.color = _VT.COLOR_BG_DEEP
-	_VT.apply_label_primary(title_label)
-	_VT.apply_label_secondary(encounter_detail)
-	start_duel_btn.add_theme_stylebox_override("normal", _VT.gem_button_style())
-	start_duel_btn.add_theme_font_size_override("font_size", _VT.FONT_BUTTON)
-	how_to_play_btn.add_theme_stylebox_override("normal", _VT.secondary_button_style())
-	settings_btn.add_theme_stylebox_override("normal", _VT.secondary_button_style())
-	help_panel.add_theme_stylebox_override("panel", _VT.panel_style())
-	settings_panel.add_theme_stylebox_override("panel", _VT.panel_style())
-
-
-func _build_settings_panel() -> void:
-	for c in settings_panel.get_children():
-		c.queue_free()
-	var vbox := VBoxContainer.new()
-	settings_panel.add_child(vbox)
-	for key in ["sound_volume", "music_volume", "haptics", "screen_shake", "reduce_motion", "left_hand_mode", "larger_text"]:
-		var row := HBoxContainer.new()
-		var lbl := Label.new()
-		lbl.text = key.replace("_", " ").capitalize()
-		_VT.apply_label_secondary(lbl)
-		row.add_child(lbl)
-		var check := CheckButton.new()
-		if key in ["haptics", "screen_shake"]:
-			check.button_pressed = bool(_SaveData.get_setting(key, true))
-		elif key == "reduce_motion":
-			check.button_pressed = bool(_SaveData.get_setting(key, false))
-		elif key in ["left_hand_mode", "larger_text"]:
-			check.button_pressed = bool(_SaveData.get_setting(key, false))
+		var b: Button = _diff_buttons[i]
+		var s := _VT.secondary_button_style()
+		if d.id == id:
+			s.bg_color = Color("#3d3580")
+			s.border_color = _VT.COLOR_ACCENT_GOLD
+			s.set_border_width_all(3)
+			_diff_desc_lbl.text = d.description
 		else:
-			check.button_pressed = bool(_SaveData.get_setting(key, true))
-		check.toggled.connect(func(on): _SaveData.set_setting(key, on))
-		row.add_child(check)
-		vbox.add_child(row)
-
-
-func _on_encounter_selected(_index: int) -> void:
-	_update_detail()
-
-
-func _update_detail() -> void:
-	var idx := encounter_option.selected
-	if idx < 0 or idx >= _encounters.size():
-		return
-	var rs: DmbDuelRuleset = _encounters[idx]
-	var diff_idx := difficulty_option.selected
-	var diff_name := "Medium"
-	if diff_idx >= 0 and diff_idx < _difficulties.size():
-		diff_name = _difficulties[diff_idx].display_name
-	encounter_detail.text = (
-		"%s · %d loci · %d casts · %s" % [
-			rs.enemy_name, rs.slot_count, rs.effective_max_attacks(), diff_name,
-		]
-	)
+			s.bg_color = Color("#1b1633")
+			s.border_color = Color("#3a3160")
+		b.add_theme_stylebox_override("normal", s)
+		b.add_theme_stylebox_override("hover", s)
 
 
 func _session() -> Node:
@@ -117,55 +207,120 @@ func _session() -> Node:
 
 
 func _on_start_duel() -> void:
-	var idx := encounter_option.selected
-	if idx >= 0 and idx < _encounters.size():
-		_session().set_encounter(_encounters[idx].id)
-	var didx := difficulty_option.selected
-	if didx >= 0 and didx < _difficulties.size():
-		var d = _difficulties[didx]
-		_session().set_difficulty(d.id)
-		_SaveData.set_last_difficulty(d.id)
+	_session().set_encounter(_Encounters.DEFAULT_ENCOUNTER_ID)
+	_session().set_difficulty(_selected_difficulty)
+	_SaveData.set_last_difficulty(_selected_difficulty)
+	var sfx := get_node_or_null("/root/Sfx")
+	if sfx:
+		sfx.cast()
 	get_tree().change_scene_to_file("res://client/scenes/game_board.tscn")
 
 
-func _on_how_to_play() -> void:
-	settings_panel.visible = false
-	if help_panel.visible:
-		help_panel.visible = false
-	else:
-		help_label.text = HOW_TO_PLAY_TEXT + "\n\n" + FEEDBACK_HELP
-		help_panel.visible = true
+func _clear_overlay() -> void:
+	for c in _overlay_vbox.get_children():
+		c.queue_free()
 
 
-func _on_settings() -> void:
-	help_panel.visible = false
-	settings_panel.visible = not settings_panel.visible
+func _overlay_close_button(text_value: String = "Back") -> void:
+	var b := Button.new()
+	b.text = text_value
+	b.custom_minimum_size = Vector2(0, 64)
+	_VT.style_primary_button(b)
+	b.pressed.connect(func(): _overlay.visible = false)
+	_overlay_vbox.add_child(b)
 
 
-func ui_action_start_encounter(encounter_id: String) -> void:
-	for i in range(_encounters.size()):
-		if _encounters[i].id == encounter_id:
-			encounter_option.select(i)
-			break
-	_update_detail()
+func _show_how_to_play() -> void:
+	_clear_overlay()
+	var t := Label.new()
+	t.text = "How to play"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_title(t)
+	_overlay_vbox.add_child(t)
+	for line in HOW_TO_PLAY:
+		var l := Label.new()
+		l.text = line
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_VT.apply_label_secondary(l)
+		_overlay_vbox.add_child(l)
+	_overlay_close_button("Got it")
+	_overlay.visible = true
+
+
+func _show_settings() -> void:
+	_clear_overlay()
+	var t := Label.new()
+	t.text = "Settings"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_title(t)
+	_overlay_vbox.add_child(t)
+	var rows := [
+		["sound", "Sound effects", true],
+		["haptics", "Vibration", true],
+		["reduce_motion", "Reduce motion", false],
+	]
+	for r in rows:
+		var key: String = r[0]
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 12)
+		var lbl := Label.new()
+		lbl.text = r[1]
+		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_VT.apply_label_secondary(lbl)
+		h.add_child(lbl)
+		var check := CheckButton.new()
+		check.focus_mode = Control.FOCUS_NONE
+		check.custom_minimum_size = Vector2(0, 48)
+		check.button_pressed = bool(_SaveData.get_setting(key, r[2]))
+		check.toggled.connect(func(on): _SaveData.set_setting(key, on))
+		h.add_child(check)
+		_overlay_vbox.add_child(h)
+	var reset := Button.new()
+	reset.text = "Show tutorial again next duel"
+	reset.custom_minimum_size = Vector2(0, 56)
+	_VT.style_secondary_button(reset)
+	reset.pressed.connect(func():
+		_SaveData.set_setting("seen_how_to_play", false)
+		reset.text = "Tutorial will show next duel ✓"
+	)
+	_overlay_vbox.add_child(reset)
+	_overlay_close_button("Back")
+	_overlay.visible = true
+
+
+class _Vignette:
+	extends Control
+	func _draw() -> void:
+		var c := size * Vector2(0.5, 0.3)
+		var r := size.length() * 0.5
+		for i in range(12):
+			var t := float(i) / 12.0
+			draw_circle(c, r * (0.2 + 0.8 * t), Color(0.3, 0.22, 0.55, 0.07 * (1.0 - t)))
+
+
+# --- UI smoke API ------------------------------------------------------------
+
+func ui_action_start_encounter(_encounter_id: String = "") -> void:
 	_on_start_duel()
 
 
-func ui_action_select_encounter(encounter_id: String) -> void:
-	for i in range(_encounters.size()):
-		if _encounters[i].id == encounter_id:
-			encounter_option.select(i)
-			break
-	_update_detail()
-
-
 func ui_action_select_difficulty(difficulty_id: String) -> void:
-	for i in range(_difficulties.size()):
-		if _difficulties[i].id == difficulty_id:
-			difficulty_option.select(i)
-			break
-	_update_detail()
+	_select_difficulty(difficulty_id)
+
+
+func ui_get_selected_difficulty() -> String:
+	return _selected_difficulty
 
 
 func ui_has_help_panel() -> bool:
-	return how_to_play_btn != null
+	return _overlay != null
+
+
+func ui_is_overlay_visible() -> bool:
+	return _overlay.visible
+
+
+func ui_show_help() -> void:
+	_show_how_to_play()

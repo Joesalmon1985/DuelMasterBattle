@@ -1,234 +1,224 @@
 extends SceneTree
 
-## Headed screenshot capture for visual QA. Run without --headless.
-## Usage: godot --path godot_project --script res://client/tools/capture_visual_qa.gd [--baseline]
+## Headed screenshot capture for visual QA. Run WITHOUT --headless:
+##   godot --path godot_project --resolution 720x1280 --script res://client/tools/capture_visual_qa.gd -- --screenshot-mode
+## Writes qa/screenshots/current/*.png and qa/reports/capture_audit.json
 
 const _RealtimeSim = preload("res://sim/realtime_duel_sim.gd")
-const _DuelEvent = preload("res://sim/duel_event.gd")
 
 const SHOTS := [
 	{"file": "01_main_menu.png", "fn": "_shot_main_menu"},
-	{"file": "02_difficulty_select.png", "fn": "_shot_difficulty_select"},
-	{"file": "03_encounter_select.png", "fn": "_shot_encounter_select"},
-	{"file": "04_ward_setup.png", "fn": "_shot_ward_setup"},
-	{"file": "05_duel_start.png", "fn": "_shot_duel_start"},
-	{"file": "06_duel_mid.png", "fn": "_shot_duel_mid"},
-	{"file": "07_duel_dense_history.png", "fn": "_shot_dense_history"},
-	{"file": "08_cast_ready.png", "fn": "_shot_cast_ready"},
-	{"file": "09_auto_cast_warning.png", "fn": "_shot_auto_cast_warning"},
-	{"file": "10_attack_impact.png", "fn": "_shot_attack_impact"},
-	{"file": "11_feedback_reveal.png", "fn": "_shot_feedback_reveal"},
-	{"file": "12_last_stand.png", "fn": "_shot_last_stand"},
+	{"file": "02_how_to_play.png", "fn": "_shot_how_to_play"},
+	{"file": "03_ward_setup_empty.png", "fn": "_shot_ward_setup_empty"},
+	{"file": "04_ward_setup_full.png", "fn": "_shot_ward_setup_full"},
+	{"file": "05_duel_start_charging.png", "fn": "_shot_duel_start"},
+	{"file": "06_guess_incomplete_blocked.png", "fn": "_shot_blocked"},
+	{"file": "07_cast_ready.png", "fn": "_shot_cast_ready"},
+	{"file": "08_after_cast_result.png", "fn": "_shot_after_cast"},
+	{"file": "09_dense_history.png", "fn": "_shot_dense_history"},
+	{"file": "10_rival_history_tab.png", "fn": "_shot_rival_tab"},
+	{"file": "11_warning.png", "fn": "_shot_warning"},
+	{"file": "12_pause_menu.png", "fn": "_shot_pause"},
 	{"file": "13_victory.png", "fn": "_shot_victory"},
 	{"file": "14_defeat.png", "fn": "_shot_defeat"},
-	{"file": "15_clash.png", "fn": "_shot_clash"},
 ]
 
 var _out_dir: String
 var _audit: Dictionary = {"screenshots": [], "touch_targets": [], "text_nodes": []}
-var _board: GameBoard
-var _menu: Control
+var _board
+var _menu
 
 
 func _init() -> void:
-	var use_baseline := false
-	for a in OS.get_cmdline_user_args():
-		if str(a) == "--baseline":
-			use_baseline = true
-	var root_path := ProjectSettings.globalize_path("res://../..")
-	if not DirAccess.dir_exists_absolute(root_path + "/qa"):
-		root_path = ProjectSettings.globalize_path("res://..")
-	_out_dir = root_path + "/qa/screenshots/" + ("baseline" if use_baseline else "current")
+	var root_path := ProjectSettings.globalize_path("res://..")
+	_out_dir = root_path + "/qa/screenshots/current"
 	DirAccess.make_dir_recursive_absolute(_out_dir)
 	call_deferred("_run")
 
 
 func _run() -> void:
 	await process_frame
-	_ensure_encounter_session()
+	_ensure_autoloads()
 	await process_frame
 	for spec in SHOTS:
 		await _call_shot(spec)
-		await process_frame
-		await process_frame
-	_save_audit(root_path())
+	_save_audit()
 	quit(0)
 
 
-func root_path() -> String:
-	return _out_dir.get_base_dir().get_base_dir()
-
-
-func _ensure_encounter_session() -> void:
-	if root.get_node_or_null("EncounterSession") != null:
-		return
-	var script: GDScript = load("res://client/scripts/encounter_session.gd")
-	var session = script.new()
-	session.name = "EncounterSession"
-	root.add_child(session)
+func _ensure_autoloads() -> void:
+	if root.get_node_or_null("EncounterSession") == null:
+		var s = load("res://client/scripts/encounter_session.gd").new()
+		s.name = "EncounterSession"
+		root.add_child(s)
+	if root.get_node_or_null("Sfx") == null:
+		var s2 = load("res://client/scripts/sfx.gd").new()
+		s2.name = "Sfx"
+		root.add_child(s2)
 
 
 func _call_shot(spec: Dictionary) -> void:
-	_clear_root()
-	await process_frame
 	var fn: Callable = Callable(self, spec.fn)
 	await fn.call()
+	await process_frame
 	await process_frame
 	await process_frame
 	_capture(spec.file)
 
 
-func _clear_root() -> void:
-	for c in root.get_children():
-		if c.name == "EncounterSession":
-			continue
-		c.queue_free()
-	_board = null
-	_menu = null
-	await process_frame
-	_ensure_encounter_session()
-
-
-func _capture(filename: String) -> void:
-	var vp := root.get_viewport()
-	var img := vp.get_texture().get_image()
-	var path := _out_dir + "/" + filename
+func _capture(file: String) -> void:
+	var img: Image = root.get_viewport().get_texture().get_image()
+	var path := _out_dir + "/" + file
 	img.save_png(path)
-	_audit.screenshots.append(path)
-	if _board != null and _board.has_method("ui_audit_capture"):
-		var data: Dictionary = _board.ui_audit_capture()
-		_audit.touch_targets.append_array(data.get("touch_targets", []))
-		_audit.text_nodes.append_array(data.get("text_nodes", []))
-		if _board.has_method("ui_get_cast_button_center_y_ratio"):
-			_audit["playability"] = {
-				"cast_center_y_ratio": _board.ui_get_cast_button_center_y_ratio(),
-				"drag_threshold_px": 12,
-				"feedback_lock_duration_s": 1.0,
-				"picker_above_locus": _board.ui_get_picker_above_locus() if _board.ui_is_picker_open() else null,
-				"ftue_completable": true,
-			}
-	print("CAPTURE: %s" % path)
+	_audit["screenshots"].append(file)
+	print("shot ", file)
+	if _board != null and is_instance_valid(_board) and _board.has_method("ui_audit_capture"):
+		var a: Dictionary = _board.ui_audit_capture()
+		for t in a.get("touch_targets", []):
+			t["shot"] = file
+			_audit["touch_targets"].append(t)
 
 
-func _save_audit(repo_root: String) -> void:
-	var report_path := repo_root + "/qa/reports/capture_audit.json"
-	DirAccess.make_dir_recursive_absolute(report_path.get_base_dir())
-	var f := FileAccess.open(report_path, FileAccess.WRITE)
-	if f:
-		f.store_string(JSON.stringify(_audit, "\t"))
-		f.close()
+func _clear() -> void:
+	if _menu != null and is_instance_valid(_menu):
+		_menu.queue_free()
+		_menu = null
+	if _board != null and is_instance_valid(_board):
+		_board.queue_free()
+		_board = null
+
+
+func _fresh_board() -> void:
+	_clear()
+	await process_frame
+	_board = load("res://client/scenes/game_board.tscn").instantiate()
+	root.add_child(_board)
+	await process_frame
+	if _board.ui_is_overlay_visible():
+		_board.ui_dismiss_overlay()
+
+
+func _to_duel(ward: Array = [0, 1, 3, 4]) -> void:
+	await _fresh_board()
+	for s in ward:
+		_board.ui_action_pick_spell(s)
+	_board.ui_action_lock_ward()
+	await process_frame
+	_board.game.debug_set_enemy_ward([9, 6, 0, 9])
 
 
 func _shot_main_menu() -> void:
-	var scene: PackedScene = load("res://client/scenes/main_menu.tscn")
-	_menu = scene.instantiate()
+	_clear()
+	await process_frame
+	_menu = load("res://client/scenes/main_menu.tscn").instantiate()
 	root.add_child(_menu)
 
 
-func _shot_difficulty_select() -> void:
-	await _shot_main_menu()
-	if _menu.has_node("VBox/DifficultyRow"):
-		_menu.get_node("VBox/DifficultyRow").show()
+func _shot_how_to_play() -> void:
+	if _menu == null:
+		await _shot_main_menu()
+		await process_frame
+	_menu.ui_show_help()
 
 
-func _shot_encounter_select() -> void:
-	await _shot_main_menu()
+func _shot_ward_setup_empty() -> void:
+	await _fresh_board()
 
 
-func _shot_ward_setup() -> void:
-	await _load_board("blue_apprentice")
-	_board.ui_action_pick_secret_slot(0)
-	_board.ui_action_pick_magic(0)
+func _shot_ward_setup_full() -> void:
+	await _fresh_board()
+	for s in [0, 1, 9, 4]:
+		_board.ui_action_pick_spell(s)
 
 
 func _shot_duel_start() -> void:
-	await _shot_ward_setup()
-	_board.ui_action_lock_secret()
-
-
-func _shot_duel_mid() -> void:
-	await _shot_duel_start()
-	for _i in range(3):
-		if _board.ui_can_player_cast():
-			_fill_attack_pattern()
-			_board.ui_action_submit_guess()
-		_board.ui_advance_time(2.5)
-		await process_frame
-
-
-func _shot_dense_history() -> void:
-	await _shot_duel_mid()
-	if _board.has_method("ui_set_history_expanded"):
-		_board.ui_set_history_expanded(true)
-
-
-func _shot_cast_ready() -> void:
-	await _shot_duel_start()
-	_board.ui_advance_time(0.5)
-
-
-func _shot_auto_cast_warning() -> void:
-	await _shot_duel_start()
-	var st = _board.game.get_current_state()
-	var until_auto := float(st.get("player_time_until_auto", 8.0))
-	_board.ui_advance_time(maxf(0.0, until_auto - 2.5))
-
-
-func _shot_attack_impact() -> void:
-	await _shot_duel_start()
-	_fill_attack_pattern()
-	_board.ui_action_submit_guess()
-	if _board.has_method("ui_debug_hold_animation"):
-		_board.ui_debug_hold_animation(true)
-	await process_frame
-
-
-func _shot_feedback_reveal() -> void:
-	await _shot_duel_start()
-	_fill_attack_pattern()
-	_board.ui_action_submit_guess()
+	await _to_duel()
 	_board.ui_advance_time(1.5)
 
 
-func _shot_last_stand() -> void:
-	await _load_board("eightfold_warden")
-	for i in range(_board.ui_get_slot_count()):
-		_board.ui_action_pick_secret_slot(i)
-		_board.ui_action_pick_magic(i % 3)
-	_board.ui_action_lock_secret()
-	if _board.has_method("ui_debug_trigger_last_stand"):
-		_board.ui_debug_trigger_last_stand()
+func _shot_blocked() -> void:
+	await _to_duel()
+	_board.game.debug_set_enemy_cast_at(999.0)
+	_board.ui_action_pick_spell(9)
+	_board.ui_action_pick_spell(6)
+	_board.ui_advance_time(6.0)
+	_board.game.debug_set_enemy_cast_at(999.0)
+	_board.ui_advance_time(0.01)
+
+
+func _shot_cast_ready() -> void:
+	await _to_duel()
+	_board.game.debug_set_enemy_cast_at(999.0)
+	for s in [9, 6, 6, 1]:
+		_board.ui_action_pick_spell(s)
+	_board.ui_advance_time(6.0)
+	_board.game.debug_set_enemy_cast_at(999.0)
+	_board.ui_advance_time(0.01)
+
+
+func _shot_after_cast() -> void:
+	await _to_duel()
+	_board.game.debug_set_enemy_cast_at(999.0)
+	for s in [9, 6, 6, 1]:
+		_board.ui_action_pick_spell(s)
+	_board.ui_advance_time(6.0)
+	_board.ui_action_cast()
+	_board.game.debug_set_enemy_cast_at(999.0)
+	_board.ui_advance_time(0.5)
+
+
+func _shot_dense_history() -> void:
+	await _to_duel()
+	var guesses := [[0, 0, 1, 1], [3, 3, 4, 4], [6, 6, 9, 9], [9, 6, 3, 9], [9, 6, 1, 9]]
+	var n := 0
+	for g in guesses:
+		# Let the rival cast twice so its tab has content, then hold it back.
+		_board.game.debug_set_enemy_cast_at(8.0 if n < 2 else 999.0)
+		n += 1
+		_board.ui_advance_time(6.0)
+		_board.ui_action_clear()
+		for s in g:
+			_board.ui_action_pick_spell(s)
+		_board.ui_action_cast()
+		_board.ui_advance_time(4.0)
+	_board.game.debug_set_enemy_cast_at(999.0)
+	_board.ui_advance_time(2.0)
+
+
+func _shot_rival_tab() -> void:
+	await _shot_dense_history()
+	_board.ui_action_history_tab(true)
+
+
+func _shot_warning() -> void:
+	await _to_duel()
+	_board.game.debug_set_enemy_cast_at(999.0)
+	for s in [9, 6, 6, 1]:
+		_board.ui_action_pick_spell(s)
+	_board.ui_advance_time(54.0)
+	_board.game.debug_set_enemy_cast_at(999.0)
+	_board.ui_advance_time(0.01)
+
+
+func _shot_pause() -> void:
+	await _to_duel()
+	_board.ui_advance_time(3.0)
+	_board.ui_action_menu()
 
 
 func _shot_victory() -> void:
-	await _load_board("blue_apprentice")
-	if _board.has_method("ui_debug_finish_duel"):
-		_board.ui_debug_finish_duel("victory")
+	await _shot_dense_history()
+	_board.ui_debug_finish_duel("victory")
 
 
 func _shot_defeat() -> void:
-	await _load_board("blue_apprentice")
-	if _board.has_method("ui_debug_finish_duel"):
-		_board.ui_debug_finish_duel("defeat")
+	await _shot_dense_history()
+	_board.ui_debug_finish_duel("defeat")
 
 
-func _shot_clash() -> void:
-	await _load_board("blue_apprentice")
-	if _board.has_method("ui_debug_finish_duel"):
-		_board.ui_debug_finish_duel("clash")
-
-
-func _load_board(encounter_id: String) -> void:
-	var scene: PackedScene = load("res://client/scenes/game_board.tscn")
-	_board = scene.instantiate()
-	root.add_child(_board)
-	await process_frame
-	_board.ui_load_encounter(encounter_id)
-	await process_frame
-
-
-func _fill_attack_pattern() -> void:
-	var n := _board.ui_get_slot_count()
-	for s in range(n):
-		_board.ui_action_pick_guess_slot(s)
-		_board.ui_action_pick_magic(s % 3)
+func _save_audit() -> void:
+	var reports := ProjectSettings.globalize_path("res://..") + "/qa/reports"
+	DirAccess.make_dir_recursive_absolute(reports)
+	var f := FileAccess.open(reports + "/capture_audit.json", FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify(_audit, "  "))

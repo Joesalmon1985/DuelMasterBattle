@@ -3,7 +3,7 @@ class_name LocusSocket
 
 const _VT = preload("res://client/scripts/visual_theme.gd")
 const _Art = preload("res://client/scripts/art.gd")
-const _EssenceToken = preload("res://client/components/essence_token.gd")
+const _EssenceToken = preload("res://client/legacy/essence_token.gd")
 
 signal socket_pressed(slot_index: int)
 signal socket_clear_requested(slot_index: int)

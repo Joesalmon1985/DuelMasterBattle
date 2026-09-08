@@ -2,7 +2,7 @@ extends HBoxContainer
 class_name EssenceTray
 
 const _VT = preload("res://client/scripts/visual_theme.gd")
-const _EssenceToken = preload("res://client/components/essence_token.gd")
+const _EssenceToken = preload("res://client/legacy/essence_token.gd")
 const _PlayabilityHaptics = preload("res://client/scripts/playability_haptics.gd")
 
 signal essence_selected(essence_id: int)

@@ -2,7 +2,7 @@ extends Control
 class_name PegSlot
 
 const _VT = preload("res://client/scripts/visual_theme.gd")
-const _LocusSocket = preload("res://client/components/locus_socket.gd")
+const _LocusSocket = preload("res://client/legacy/locus_socket.gd")
 
 ## Compatibility wrapper — composes LocusSocket for legacy slot_pressed API.
 

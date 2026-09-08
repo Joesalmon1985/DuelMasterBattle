@@ -5,7 +5,7 @@ const _VT = preload("res://client/scripts/visual_theme.gd")
 const _DuelEvent = preload("res://sim/duel_event.gd")
 const _SpellVfx = preload("res://client/components/spell_vfx.gd")
 const _SaveData = preload("res://client/scripts/save_data.gd")
-const _WardBarrier = preload("res://client/components/ward_barrier.gd")
+const _WardBarrier = preload("res://client/legacy/ward_barrier.gd")
 
 var _board
 var _animation_area: Control
