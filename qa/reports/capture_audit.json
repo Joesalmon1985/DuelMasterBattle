@@ -1,0 +1,1485 @@
+{
+  "screenshots": [
+    "01_main_menu.png",
+    "02_how_to_play.png",
+    "03_ward_setup_empty.png",
+    "04_ward_setup_full.png",
+    "05_duel_start_charging.png",
+    "06_guess_incomplete_blocked.png",
+    "07_cast_ready.png",
+    "08_after_cast_result.png",
+    "09_dense_history.png",
+    "10_rival_history_tab.png",
+    "11_warning.png",
+    "12_pause_menu.png",
+    "13_victory.png",
+    "14_defeat.png"
+  ],
+  "text_nodes": [],
+  "touch_targets": [
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@73",
+      "role": "utility",
+      "shot": "03_ward_setup_empty.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@75",
+      "role": "utility",
+      "shot": "03_ward_setup_empty.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 856.0,
+      "height": 46.0,
+      "name": "@Button@123",
+      "role": "utility",
+      "shot": "03_ward_setup_empty.png",
+      "width": 109.0
+    },
+    {
+      "global_y": 912.0,
+      "height": 106.0,
+      "name": "@Button@126",
+      "role": "locus",
+      "shot": "03_ward_setup_empty.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 912.0,
+      "height": 106.0,
+      "name": "@Button@130",
+      "role": "locus",
+      "shot": "03_ward_setup_empty.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 912.0,
+      "height": 106.0,
+      "name": "@Button@134",
+      "role": "locus",
+      "shot": "03_ward_setup_empty.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 912.0,
+      "height": 106.0,
+      "name": "@Button@138",
+      "role": "locus",
+      "shot": "03_ward_setup_empty.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@144",
+      "role": "essence",
+      "shot": "03_ward_setup_empty.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@148",
+      "role": "essence",
+      "shot": "03_ward_setup_empty.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@152",
+      "role": "essence",
+      "shot": "03_ward_setup_empty.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@156",
+      "role": "essence",
+      "shot": "03_ward_setup_empty.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@160",
+      "role": "essence",
+      "shot": "03_ward_setup_empty.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@164",
+      "role": "essence",
+      "shot": "03_ward_setup_empty.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@227",
+      "role": "utility",
+      "shot": "04_ward_setup_full.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@229",
+      "role": "utility",
+      "shot": "04_ward_setup_full.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 856.0,
+      "height": 46.0,
+      "name": "@Button@277",
+      "role": "utility",
+      "shot": "04_ward_setup_full.png",
+      "width": 109.0
+    },
+    {
+      "global_y": 856.0,
+      "height": 46.0,
+      "name": "@Button@278",
+      "role": "utility",
+      "shot": "04_ward_setup_full.png",
+      "width": 81.0
+    },
+    {
+      "global_y": 908.8125,
+      "height": 106.0,
+      "name": "@Button@280",
+      "role": "locus",
+      "shot": "04_ward_setup_full.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 908.8125,
+      "height": 106.0,
+      "name": "@Button@284",
+      "role": "locus",
+      "shot": "04_ward_setup_full.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 908.8125,
+      "height": 106.0,
+      "name": "@Button@288",
+      "role": "locus",
+      "shot": "04_ward_setup_full.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 908.8125,
+      "height": 106.0,
+      "name": "@Button@292",
+      "role": "locus",
+      "shot": "04_ward_setup_full.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@298",
+      "role": "essence",
+      "shot": "04_ward_setup_full.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@302",
+      "role": "essence",
+      "shot": "04_ward_setup_full.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@306",
+      "role": "essence",
+      "shot": "04_ward_setup_full.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@310",
+      "role": "essence",
+      "shot": "04_ward_setup_full.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@314",
+      "role": "essence",
+      "shot": "04_ward_setup_full.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1064.0,
+      "height": 114.0,
+      "name": "@Button@318",
+      "role": "essence",
+      "shot": "04_ward_setup_full.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1188.0,
+      "height": 72.0,
+      "name": "@Button@328",
+      "role": "utility",
+      "shot": "04_ward_setup_full.png",
+      "width": 240.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@381",
+      "role": "utility",
+      "shot": "05_duel_start_charging.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@383",
+      "role": "utility",
+      "shot": "05_duel_start_charging.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@409",
+      "role": "utility",
+      "shot": "05_duel_start_charging.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@410",
+      "role": "utility",
+      "shot": "05_duel_start_charging.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 793.762451171875,
+      "height": 106.0,
+      "name": "@Button@434",
+      "role": "locus",
+      "shot": "05_duel_start_charging.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.762451171875,
+      "height": 106.0,
+      "name": "@Button@438",
+      "role": "locus",
+      "shot": "05_duel_start_charging.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.762451171875,
+      "height": 106.0,
+      "name": "@Button@442",
+      "role": "locus",
+      "shot": "05_duel_start_charging.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.762451171875,
+      "height": 106.0,
+      "name": "@Button@446",
+      "role": "locus",
+      "shot": "05_duel_start_charging.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@452",
+      "role": "essence",
+      "shot": "05_duel_start_charging.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@456",
+      "role": "essence",
+      "shot": "05_duel_start_charging.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@460",
+      "role": "essence",
+      "shot": "05_duel_start_charging.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@464",
+      "role": "essence",
+      "shot": "05_duel_start_charging.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@468",
+      "role": "essence",
+      "shot": "05_duel_start_charging.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@472",
+      "role": "essence",
+      "shot": "05_duel_start_charging.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1074.0,
+      "height": 132.0,
+      "name": "@Button@479",
+      "role": "cast",
+      "shot": "05_duel_start_charging.png",
+      "width": 132.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@535",
+      "role": "utility",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@537",
+      "role": "utility",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@563",
+      "role": "utility",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@564",
+      "role": "utility",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 742.0,
+      "height": 46.0,
+      "name": "@Button@586",
+      "role": "utility",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 81.0
+    },
+    {
+      "global_y": 793.999389648438,
+      "height": 106.0,
+      "name": "@Button@588",
+      "role": "locus",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.999389648438,
+      "height": 106.0,
+      "name": "@Button@592",
+      "role": "locus",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.763122558594,
+      "height": 106.0,
+      "name": "@Button@596",
+      "role": "locus",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.763122558594,
+      "height": 106.0,
+      "name": "@Button@600",
+      "role": "locus",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@606",
+      "role": "essence",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@610",
+      "role": "essence",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@614",
+      "role": "essence",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@618",
+      "role": "essence",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@622",
+      "role": "essence",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@626",
+      "role": "essence",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1074.0,
+      "height": 132.0,
+      "name": "@Button@633",
+      "role": "cast",
+      "shot": "06_guess_incomplete_blocked.png",
+      "width": 132.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@689",
+      "role": "utility",
+      "shot": "07_cast_ready.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@691",
+      "role": "utility",
+      "shot": "07_cast_ready.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@717",
+      "role": "utility",
+      "shot": "07_cast_ready.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@718",
+      "role": "utility",
+      "shot": "07_cast_ready.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 742.0,
+      "height": 46.0,
+      "name": "@Button@740",
+      "role": "utility",
+      "shot": "07_cast_ready.png",
+      "width": 81.0
+    },
+    {
+      "global_y": 794.001098632813,
+      "height": 106.0,
+      "name": "@Button@742",
+      "role": "locus",
+      "shot": "07_cast_ready.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 794.001098632813,
+      "height": 106.0,
+      "name": "@Button@746",
+      "role": "locus",
+      "shot": "07_cast_ready.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 794.001098632813,
+      "height": 106.0,
+      "name": "@Button@750",
+      "role": "locus",
+      "shot": "07_cast_ready.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 794.001098632813,
+      "height": 106.0,
+      "name": "@Button@754",
+      "role": "locus",
+      "shot": "07_cast_ready.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@760",
+      "role": "essence",
+      "shot": "07_cast_ready.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@764",
+      "role": "essence",
+      "shot": "07_cast_ready.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@768",
+      "role": "essence",
+      "shot": "07_cast_ready.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@772",
+      "role": "essence",
+      "shot": "07_cast_ready.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@776",
+      "role": "essence",
+      "shot": "07_cast_ready.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@780",
+      "role": "essence",
+      "shot": "07_cast_ready.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1070.84240722656,
+      "height": 132.0,
+      "name": "@Button@787",
+      "role": "cast",
+      "shot": "07_cast_ready.png",
+      "width": 132.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@843",
+      "role": "utility",
+      "shot": "08_after_cast_result.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@845",
+      "role": "utility",
+      "shot": "08_after_cast_result.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@871",
+      "role": "utility",
+      "shot": "08_after_cast_result.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@872",
+      "role": "utility",
+      "shot": "08_after_cast_result.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 405.0,
+      "height": 52.0,
+      "name": "@Button@1088",
+      "role": "utility",
+      "shot": "08_after_cast_result.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 793.238830566406,
+      "height": 106.0,
+      "name": "@Button@896",
+      "role": "locus",
+      "shot": "08_after_cast_result.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.238830566406,
+      "height": 106.0,
+      "name": "@Button@900",
+      "role": "locus",
+      "shot": "08_after_cast_result.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.238830566406,
+      "height": 106.0,
+      "name": "@Button@904",
+      "role": "locus",
+      "shot": "08_after_cast_result.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.238830566406,
+      "height": 106.0,
+      "name": "@Button@908",
+      "role": "locus",
+      "shot": "08_after_cast_result.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@914",
+      "role": "essence",
+      "shot": "08_after_cast_result.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@918",
+      "role": "essence",
+      "shot": "08_after_cast_result.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@922",
+      "role": "essence",
+      "shot": "08_after_cast_result.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@926",
+      "role": "essence",
+      "shot": "08_after_cast_result.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@930",
+      "role": "essence",
+      "shot": "08_after_cast_result.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@934",
+      "role": "essence",
+      "shot": "08_after_cast_result.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1069.29541015625,
+      "height": 132.0,
+      "name": "@Button@941",
+      "role": "cast",
+      "shot": "08_after_cast_result.png",
+      "width": 132.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@1118",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@1120",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@1146",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@1147",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 405.0,
+      "height": 52.0,
+      "name": "@Button@2811",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 461.0,
+      "height": 52.0,
+      "name": "@Button@2834",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 517.0,
+      "height": 52.0,
+      "name": "@Button@2857",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 573.0,
+      "height": 52.0,
+      "name": "@Button@2880",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 629.0,
+      "height": 52.0,
+      "name": "@Button@2903",
+      "role": "utility",
+      "shot": "09_dense_history.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 798.504028320313,
+      "height": 106.0,
+      "name": "@Button@1171",
+      "role": "locus",
+      "shot": "09_dense_history.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 798.504028320313,
+      "height": 106.0,
+      "name": "@Button@1175",
+      "role": "locus",
+      "shot": "09_dense_history.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 798.504028320313,
+      "height": 106.0,
+      "name": "@Button@1179",
+      "role": "locus",
+      "shot": "09_dense_history.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 798.504028320313,
+      "height": 106.0,
+      "name": "@Button@1183",
+      "role": "locus",
+      "shot": "09_dense_history.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@1189",
+      "role": "essence",
+      "shot": "09_dense_history.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@1193",
+      "role": "essence",
+      "shot": "09_dense_history.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@1197",
+      "role": "essence",
+      "shot": "09_dense_history.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@1201",
+      "role": "essence",
+      "shot": "09_dense_history.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@1205",
+      "role": "essence",
+      "shot": "09_dense_history.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@1209",
+      "role": "essence",
+      "shot": "09_dense_history.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1068.86828613281,
+      "height": 132.0,
+      "name": "@Button@1216",
+      "role": "cast",
+      "shot": "09_dense_history.png",
+      "width": 132.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@3173",
+      "role": "utility",
+      "shot": "10_rival_history_tab.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@3175",
+      "role": "utility",
+      "shot": "10_rival_history_tab.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@3201",
+      "role": "utility",
+      "shot": "10_rival_history_tab.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@3202",
+      "role": "utility",
+      "shot": "10_rival_history_tab.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 798.363586425781,
+      "height": 106.0,
+      "name": "@Button@3226",
+      "role": "locus",
+      "shot": "10_rival_history_tab.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 798.363586425781,
+      "height": 106.0,
+      "name": "@Button@3230",
+      "role": "locus",
+      "shot": "10_rival_history_tab.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 798.363586425781,
+      "height": 106.0,
+      "name": "@Button@3234",
+      "role": "locus",
+      "shot": "10_rival_history_tab.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 798.363586425781,
+      "height": 106.0,
+      "name": "@Button@3238",
+      "role": "locus",
+      "shot": "10_rival_history_tab.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@3244",
+      "role": "essence",
+      "shot": "10_rival_history_tab.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@3248",
+      "role": "essence",
+      "shot": "10_rival_history_tab.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@3252",
+      "role": "essence",
+      "shot": "10_rival_history_tab.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@3256",
+      "role": "essence",
+      "shot": "10_rival_history_tab.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@3260",
+      "role": "essence",
+      "shot": "10_rival_history_tab.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@3264",
+      "role": "essence",
+      "shot": "10_rival_history_tab.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1070.96838378906,
+      "height": 132.0,
+      "name": "@Button@3271",
+      "role": "cast",
+      "shot": "10_rival_history_tab.png",
+      "width": 132.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@5282",
+      "role": "utility",
+      "shot": "11_warning.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@5284",
+      "role": "utility",
+      "shot": "11_warning.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@5310",
+      "role": "utility",
+      "shot": "11_warning.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@5311",
+      "role": "utility",
+      "shot": "11_warning.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 742.0,
+      "height": 46.0,
+      "name": "@Button@5333",
+      "role": "utility",
+      "shot": "11_warning.png",
+      "width": 81.0
+    },
+    {
+      "global_y": 794.112060546875,
+      "height": 106.0,
+      "name": "@Button@5335",
+      "role": "locus",
+      "shot": "11_warning.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 794.112060546875,
+      "height": 106.0,
+      "name": "@Button@5339",
+      "role": "locus",
+      "shot": "11_warning.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 794.112060546875,
+      "height": 106.0,
+      "name": "@Button@5343",
+      "role": "locus",
+      "shot": "11_warning.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 794.112060546875,
+      "height": 106.0,
+      "name": "@Button@5347",
+      "role": "locus",
+      "shot": "11_warning.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5353",
+      "role": "essence",
+      "shot": "11_warning.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5357",
+      "role": "essence",
+      "shot": "11_warning.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5361",
+      "role": "essence",
+      "shot": "11_warning.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5365",
+      "role": "essence",
+      "shot": "11_warning.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5369",
+      "role": "essence",
+      "shot": "11_warning.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5373",
+      "role": "essence",
+      "shot": "11_warning.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1071.26123046875,
+      "height": 132.0,
+      "name": "@Button@5380",
+      "role": "cast",
+      "shot": "11_warning.png",
+      "width": 132.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@5436",
+      "role": "utility",
+      "shot": "12_pause_menu.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@5438",
+      "role": "utility",
+      "shot": "12_pause_menu.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@5464",
+      "role": "utility",
+      "shot": "12_pause_menu.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 248.0,
+      "height": 46.0,
+      "name": "@Button@5465",
+      "role": "utility",
+      "shot": "12_pause_menu.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 793.7646484375,
+      "height": 106.0,
+      "name": "@Button@5489",
+      "role": "locus",
+      "shot": "12_pause_menu.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.7646484375,
+      "height": 106.0,
+      "name": "@Button@5493",
+      "role": "locus",
+      "shot": "12_pause_menu.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.7646484375,
+      "height": 106.0,
+      "name": "@Button@5497",
+      "role": "locus",
+      "shot": "12_pause_menu.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 793.7646484375,
+      "height": 106.0,
+      "name": "@Button@5501",
+      "role": "locus",
+      "shot": "12_pause_menu.png",
+      "width": 84.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5507",
+      "role": "essence",
+      "shot": "12_pause_menu.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5511",
+      "role": "essence",
+      "shot": "12_pause_menu.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5515",
+      "role": "essence",
+      "shot": "12_pause_menu.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5519",
+      "role": "essence",
+      "shot": "12_pause_menu.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5523",
+      "role": "essence",
+      "shot": "12_pause_menu.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 950.0,
+      "height": 114.0,
+      "name": "@Button@5527",
+      "role": "essence",
+      "shot": "12_pause_menu.png",
+      "width": 92.0
+    },
+    {
+      "global_y": 1074.0,
+      "height": 132.0,
+      "name": "@Button@5534",
+      "role": "cast",
+      "shot": "12_pause_menu.png",
+      "width": 132.0
+    },
+    {
+      "global_y": 548.0,
+      "height": 64.0,
+      "name": "@Button@5587",
+      "role": "utility",
+      "shot": "12_pause_menu.png",
+      "width": 528.0
+    },
+    {
+      "global_y": 626.0,
+      "height": 64.0,
+      "name": "@Button@5588",
+      "role": "utility",
+      "shot": "12_pause_menu.png",
+      "width": 528.0
+    },
+    {
+      "global_y": 704.0,
+      "height": 64.0,
+      "name": "@Button@5589",
+      "role": "utility",
+      "shot": "12_pause_menu.png",
+      "width": 528.0
+    },
+    {
+      "global_y": 782.0,
+      "height": 64.0,
+      "name": "@Button@5590",
+      "role": "utility",
+      "shot": "12_pause_menu.png",
+      "width": 528.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@5596",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@5598",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@5624",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@5625",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 405.0,
+      "height": 52.0,
+      "name": "@Button@7289",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 461.0,
+      "height": 52.0,
+      "name": "@Button@7312",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 517.0,
+      "height": 52.0,
+      "name": "@Button@7335",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 573.0,
+      "height": 52.0,
+      "name": "@Button@7358",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 629.0,
+      "height": 52.0,
+      "name": "@Button@7381",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 726.0,
+      "height": 64.0,
+      "name": "@Button@7433",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 528.0
+    },
+    {
+      "global_y": 804.0,
+      "height": 64.0,
+      "name": "@Button@7434",
+      "role": "utility",
+      "shot": "13_victory.png",
+      "width": 528.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@7692",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 16.0,
+      "height": 59.0,
+      "name": "@Button@7694",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 56.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@7720",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 353.0,
+      "height": 46.0,
+      "name": "@Button@7721",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 398.0
+    },
+    {
+      "global_y": 405.0,
+      "height": 52.0,
+      "name": "@Button@9385",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 461.0,
+      "height": 52.0,
+      "name": "@Button@9408",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 517.0,
+      "height": 52.0,
+      "name": "@Button@9431",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 573.0,
+      "height": 52.0,
+      "name": "@Button@9454",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 629.0,
+      "height": 52.0,
+      "name": "@Button@9477",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 804.0
+    },
+    {
+      "global_y": 726.0,
+      "height": 64.0,
+      "name": "@Button@9529",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 528.0
+    },
+    {
+      "global_y": 804.0,
+      "height": 64.0,
+      "name": "@Button@9530",
+      "role": "utility",
+      "shot": "14_defeat.png",
+      "width": 528.0
+    }
+  ]
+}

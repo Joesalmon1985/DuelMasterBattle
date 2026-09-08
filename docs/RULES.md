@@ -38,7 +38,9 @@ Each duel uses a `DuelRuleset` / `DmbDuelRuleset` defining:
 
 See [Encounter design](ENCOUNTER_DESIGN.md).
 
-**Archmage Duel** is the balance anchor: 4 loci, 10 essences, 12 attacks.
+**Core Duel** (the MVP, default) is the balance anchor: 4 loci, 6 essences, 10 casts each,
+5 s minimum / 60 s maximum cast window. See [CORE_MVP.md](CORE_MVP.md). Archmage Duel
+(4 loci, 10 essences, 12 casts) and the other encounters remain defined but dormant.
 
 ## Mechanical rules
 
@@ -60,17 +62,19 @@ See [Encounter design](ENCOUNTER_DESIGN.md).
 - **Victory:** player breaks rival ward (rival Last Stand exhausted).
 - **Defeat:** rival breaks player ward.
 - **Clash:** simultaneous ward breaks or comeback clash during Last Stand.
-- **Stalemate:** both exhaust attack limits without a broken ward.
+- **Defeat (exhaustion):** you use all your casts without breaking the rival's ward.
+- **Victory (exhaustion):** the rival uses all its casts first.
+- **Stalemate:** both exhaust attack limits in the same instant without a broken ward.
 
 No progress tie-break in v1.
 
 ## Difficulty (global)
 
-| Level | Bot behaviour | Cast multiplier |
-|-------|---------------|-----------------|
-| Easy | Random / basic | 1.4× slower rival |
-| Medium | Candidate elimination | 1.0× |
-| Hard | Capped minimax | 0.75× faster rival |
+| Level | Bot behaviour | Casts at |
+|-------|---------------|----------|
+| Apprentice (easy) | Consistent guesses, 40% "forgetful" casts | 26–48 s into its window |
+| Adept (medium) | Consistent guesses | 16–30 s |
+| Archmage (hard) | Capped minimax | 10–20 s |
 
 ## Accessibility
 
