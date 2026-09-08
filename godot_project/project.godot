@@ -10,6 +10,7 @@ config/features=PackedStringArray("4.4")
 [autoload]
 EncounterSession="*res://client/scripts/encounter_session.gd"
 Sfx="*res://client/scripts/sfx.gd"
+Adventure="*res://client/scripts/adventure.gd"
 
 [display]
 window/size/viewport_width=720
@@ -26,3 +27,4 @@ pointing/emulate_touch_from_mouse=true
 
 [rendering]
 renderer/rendering_method="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
