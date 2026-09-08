@@ -11,6 +11,8 @@ class_name GameBoard
 
 const _VT = preload("res://client/scripts/visual_theme.gd")
 const _RealtimeSim = preload("res://sim/realtime_duel_sim.gd")
+const _BattleSim = preload("res://sim/battle_sim.gd")
+const _PixelPortrait = preload("res://client/components/pixel_portrait.gd")
 const _DuelEvent = preload("res://sim/duel_event.gd")
 const _Art = preload("res://client/scripts/art.gd")
 const _SpellSlot = preload("res://client/components/spell_slot.gd")
@@ -24,11 +26,12 @@ const _SaveData = preload("res://client/scripts/save_data.gd")
 signal game_finished
 
 const HOW_TO_PLAY := [
-	"You and the rival wizard each hide a Ward of four spells. Spells may repeat.",
+	"You and your opponent each hide a Ward of spells. Spells may repeat.",
 	"Take turns guessing each other's Ward. After every cast you learn how many spells were right — never which ones.",
 	"●  green — right spell in the right place\n○  amber ring — right spell in the wrong place\n·  grey — spell not in the Ward at all",
 	"You can cast 5 seconds after your window opens. Cast within 60 seconds or the spell fires as it stands.",
-	"Break the rival's Ward first to win. Ten casts each.",
+	"If your weave has more slots than their Ward, extra attempts wrap round to the first slots. If it has fewer, you cannot reach every slot — and cannot break it.",
+	"Break their Ward first to win. Ten casts each.",
 ]
 
 var game
@@ -37,6 +40,11 @@ var sim:
 		return game
 
 var _ruleset: DmbDuelRuleset
+var _player_c: DmbCombatant
+var _enemy_c: DmbCombatant
+var _adventure_mode: bool = false
+var _battle_request: Dictionary = {}
+var _asym_lbl: Label
 var _bot_seed: int = 42
 var _screenshot_mode: bool = false
 var _reduce_motion: bool = false
@@ -125,10 +133,47 @@ func _ready() -> void:
 	_screenshot_mode = "--screenshot-mode" in OS.get_cmdline_user_args()
 	_reduce_motion = bool(_SaveData.get_setting("reduce_motion", false))
 	_ruleset = _session().get_ruleset()
+	_resolve_combatants()
 	_build_ui()
 	start_new_game(_bot_seed)
-	if not _screenshot_mode and not bool(_SaveData.get_setting("seen_how_to_play", false)):
+	if _adventure_mode:
+		_show_encounter_intro()
+	elif not _screenshot_mode and not bool(_SaveData.get_setting("seen_how_to_play", false)):
 		_show_help_overlay(true)
+
+
+func _adventure() -> Node:
+	return get_node_or_null("/root/Adventure")
+
+
+## Decide who is fighting. Adventure battles come from Adventure.pending_battle;
+## otherwise the quick duel uses the session's ruleset as a symmetric pair.
+func _resolve_combatants() -> void:
+	var adv := _adventure()
+	if adv != null and not adv.pending_battle.is_empty():
+		_adventure_mode = true
+		_battle_request = adv.pending_battle.duplicate(true)
+		_player_c = adv.progression.to_combatant()
+		_enemy_c = DmbBestiary.make(str(_battle_request["enemy_id"]))
+	else:
+		_adventure_mode = false
+		var diff = _session().get_difficulty_profile()
+		_player_c = DmbCombatant.make({
+			"id": "player", "display_name": "You", "archetype": "player", "kind": "player",
+			"weave_size": _ruleset.slot_count, "attack_pool": _ruleset.attack_magic_pool.duplicate(),
+			"ward_size": _ruleset.slot_count, "ward_pool": _ruleset.secret_magic_pool.duplicate(),
+			"allow_repeats": _ruleset.allow_repeats, "max_casts": _ruleset.effective_max_attacks(),
+			"min_cast_seconds": _ruleset.base_min_cast_time_seconds, "max_cast_seconds": _ruleset.base_max_cast_time_seconds,
+		})
+		_enemy_c = DmbCombatant.make({
+			"id": "rival", "display_name": _ruleset.enemy_name, "archetype": _ruleset.enemy_archetype, "kind": "wizard",
+			"weave_size": _ruleset.slot_count, "attack_pool": _ruleset.attack_magic_pool.duplicate(),
+			"ward_size": _ruleset.slot_count, "ward_pool": _ruleset.secret_magic_pool.duplicate(),
+			"allow_repeats": _ruleset.allow_repeats, "max_casts": _ruleset.effective_max_attacks(),
+			"min_cast_seconds": _ruleset.base_min_cast_time_seconds, "max_cast_seconds": _ruleset.base_max_cast_time_seconds,
+			"bot_logic": diff.bot_logic, "bot_solver_cap": diff.bot_solver_cap, "bot_mistake_rate": diff.bot_mistake_rate,
+			"think_min_seconds": diff.bot_think_min_seconds, "think_max_seconds": diff.bot_think_max_seconds,
+		})
 
 
 # ---------------------------------------------------------------------------
@@ -212,7 +257,7 @@ func _build_rival_panel() -> void:
 	var host := Control.new()
 	host.custom_minimum_size = Vector2(96, 112)
 	h.add_child(host)
-	_rival_wizard = _CompositeWizard.new()
+	_rival_wizard = _PixelPortrait.new()
 	_rival_wizard.set_anchors_preset(Control.PRESET_FULL_RECT)
 	host.add_child(_rival_wizard)
 	var v := VBoxContainer.new()
@@ -231,6 +276,10 @@ func _build_rival_panel() -> void:
 	_rival_casts_lbl.add_theme_font_size_override("font_size", 19)
 	_rival_casts_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	name_row.add_child(_rival_casts_lbl)
+	var sizes := Label.new()
+	sizes.name = "Sizes"
+	_VT.apply_label_caption(sizes)
+	v.add_child(sizes)
 	_rival_status_lbl = Label.new()
 	_VT.apply_label_secondary(_rival_status_lbl)
 	_rival_status_lbl.add_theme_font_size_override("font_size", 19)
@@ -355,11 +404,13 @@ func _build_intro_panel() -> void:
 	_intro_panel.add_child(v)
 	var t := Label.new()
 	t.text = "Set your secret Ward"
+	if _enemy_c.ward_size == 1 and _player_c.ward_size == 1:
+		t.text = "Set your Ward"
 	_VT.apply_label_primary(t)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(t)
 	_intro_lbl = Label.new()
-	_intro_lbl.text = "Pick four spells below. Repeats are allowed.\nThe rival will try to guess this — you will try to guess theirs."
+	_intro_lbl.text = "Pick %d spell%s below. Repeats are allowed.\n%s will try to guess this — you will try to guess theirs." % [_player_c.ward_size, "" if _player_c.ward_size == 1 else "s", _enemy_c.display_name]
 	_VT.apply_label_secondary(_intro_lbl)
 	_intro_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_intro_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -380,7 +431,7 @@ func _build_intro_panel() -> void:
 		var pip = _FeedbackPips.new()
 		pip.pip_size = 24
 		row.add_child(pip)
-		var counts := [1 if entry[0] == "fracture" else 0, 1 if entry[0] == "echo" else 0, 1 if entry[0] == "fade" else 0]
+		var counts: Array = [1 if entry[0] == "fracture" else 0, 1 if entry[0] == "echo" else 0, 1 if entry[0] == "fade" else 0]
 		pip.call_deferred("show_counts", 1, counts[0], counts[1], counts[2])
 		var l := Label.new()
 		l.text = entry[1]
@@ -420,15 +471,21 @@ func _build_builder() -> void:
 	_loci_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_loci_row.add_theme_constant_override("separation", 14)
 	_root_vbox.add_child(_loci_row)
-	for i in range(_ruleset.slot_count):
+	var max_slots := maxi(_player_c.weave_size, _player_c.ward_size)
+	for i in range(max_slots):
 		var slot = _SpellSlot.new()
 		slot.slot_index = i
-		slot.slot_size = _VT.TOUCH_ESSENCE
+		slot.slot_size = _VT.TOUCH_ESSENCE if max_slots <= 4 else 72
 		slot.caption = str(i + 1)
-		slot.tooltip_text = str(_ruleset.point_names[i]) if i < _ruleset.point_names.size() else ""
 		slot.slot_tapped.connect(_on_locus_tapped)
 		_loci_row.add_child(slot)
 		_loci_slots.append(slot)
+	_asym_lbl = Label.new()
+	_VT.apply_label_caption(_asym_lbl)
+	_asym_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_asym_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_asym_lbl.add_theme_color_override("font_color", _VT.COLOR_ECHO)
+	_root_vbox.add_child(_asym_lbl)
 
 	_hint_lbl = Label.new()
 	_VT.apply_label_secondary(_hint_lbl)
@@ -441,7 +498,7 @@ func _build_builder() -> void:
 	_tray.alignment = BoxContainer.ALIGNMENT_CENTER
 	_tray.add_theme_constant_override("separation", 10)
 	_root_vbox.add_child(_tray)
-	for id in _ruleset.attack_magic_pool:
+	for id in _player_c.attack_pool:
 		var tok = _SpellSlot.new()
 		tok.slot_index = int(id)
 		tok.slot_size = _VT.TOUCH_TRAY
@@ -493,7 +550,7 @@ func _build_your_ward_strip() -> void:
 	_your_ward_row = HBoxContainer.new()
 	_your_ward_row.add_theme_constant_override("separation", 6)
 	row.add_child(_your_ward_row)
-	for i in range(_ruleset.slot_count):
+	for i in range(_player_c.ward_size):
 		var s = _SpellSlot.new()
 		s.slot_size = 44
 		s.disabled = true
@@ -543,10 +600,15 @@ func start_new_game(bot_seed: int = -1) -> void:
 	if bot_seed < 0:
 		bot_seed = randi() % 1000000
 	_bot_seed = bot_seed
-	_ruleset = _session().get_ruleset()
-	game = _RealtimeSim.new(_ruleset, _session().get_difficulty_profile(), bot_seed)
-	_rival_name_lbl.text = _ruleset.enemy_name
-	_rival_wizard.load_archetype(_Art.wizard_archetype_from_enemy(_ruleset.enemy_archetype))
+	game = _BattleSim.new(_player_c, _enemy_c, bot_seed)
+	_rival_name_lbl.text = _enemy_c.display_name
+	_rival_wizard.load_archetype(_enemy_c.archetype if _PixelPortrait.has_portrait(_enemy_c.archetype) else "wizard")
+	var sizes: Label = _rival_panel.find_child("Sizes", true, false)
+	if sizes:
+		var casts_with: Array = []
+		for sp in _enemy_c.attack_pool:
+			casts_with.append(DmbColourData.essence_symbol(int(sp)))
+		sizes.text = "Weaves %d · Ward %d slot%s · casts %s" % [_enemy_c.weave_size, _enemy_c.ward_size, "" if _enemy_c.ward_size == 1 else "s", " ".join(PackedStringArray(casts_with))]
 	_selected_locus = 0
 	_paused_by_menu = false
 	_warn_ticks_played.clear()
@@ -561,7 +623,7 @@ func start_new_game(bot_seed: int = -1) -> void:
 	for s in _rival_ward_slots:
 		s.queue_free()
 	_rival_ward_slots.clear()
-	for i in range(_ruleset.slot_count):
+	for i in range(_enemy_c.ward_size):
 		var s = _SpellSlot.new()
 		s.slot_size = 40
 		s.disabled = true
@@ -606,6 +668,8 @@ func _on_locus_tapped(index: int) -> void:
 	if game.phase == _RealtimeSim.Phase.FINISHED:
 		return
 	var pattern := _pattern_in_builder()
+	if index >= pattern.size():
+		return
 	if _selected_locus == index and pattern[index] != null:
 		_set_builder_locus(index, -1)
 		_sfx("clear_slot")
@@ -623,6 +687,7 @@ func _on_tray_tapped(spell_id: int) -> void:
 	var target := _selected_locus
 	if target < 0 or target >= pattern.size():
 		target = 0
+		_selected_locus = 0
 	_set_builder_locus(target, spell_id)
 	_loci_slots[target].pop()
 	_sfx("place")
@@ -666,8 +731,9 @@ func _on_lock_pressed() -> void:
 	if not game.can_lock_player_ward():
 		_sfx("denied")
 		_show_toast("Choose a spell for every locus first")
-		for i in range(_loci_slots.size()):
-			if game.get_player_ward()[i] == null:
+		var ward: Array = game.get_player_ward()
+		for i in range(mini(_loci_slots.size(), ward.size())):
+			if ward[i] == null:
 				_loci_slots[i].flash_wrong()
 		return
 	game.lock_player_ward_and_start()
@@ -696,10 +762,10 @@ func _on_cast_blocked_pressed() -> void:
 	_sfx("denied")
 	if reason.begins_with("Fill"):
 		var pattern: Array = game.get_player_attack_pattern()
-		for i in range(_loci_slots.size()):
+		for i in range(mini(_loci_slots.size(), pattern.size())):
 			if pattern[i] == null:
 				_loci_slots[i].flash_wrong()
-		_show_toast("Choose all four spells before casting")
+		_show_toast("Choose all %d spell%s before casting" % [_player_c.weave_size, "" if _player_c.weave_size == 1 else "s"])
 	elif reason.begins_with("Weaving"):
 		_show_toast("Your cast opens in %.0f s" % ceil(float(game.get_current_state()["player_time_until_cast"])))
 	elif reason != "":
@@ -793,13 +859,25 @@ func _refresh_builder() -> void:
 	var pattern := _pattern_in_builder()
 	var setup: bool = game.phase == _RealtimeSim.Phase.WARD_SETUP
 	var finished: bool = game.phase == _RealtimeSim.Phase.FINISHED
+	var active_count := pattern.size()
+	var targets: Array = DmbFeedback.targets_by_ward_slot(_player_c.weave_size, _enemy_c.ward_size)
 	for i in range(_loci_slots.size()):
 		var s = _loci_slots[i]
+		s.visible = i < active_count
+		if i >= active_count:
+			continue
 		var v = pattern[i] if i < pattern.size() else null
 		s.set_spell(int(v) if v != null else -1)
 		s.set_selected(i == _selected_locus and not finished)
 		s.disabled = finished
 		s.set_dim(finished)
+		if setup or _player_c.weave_size == _enemy_c.ward_size:
+			s.set_caption(str(i + 1))
+		else:
+			# Which enemy Ward slot does this attempt land on?
+			var t := DmbFeedback.target_slot(i, _enemy_c.ward_size)
+			s.set_caption("→%d" % (t + 1))
+	_refresh_asym_label(setup)
 	for t in _tray_slots:
 		t.set_spell(t.slot_index)
 		t.disabled = finished
@@ -810,8 +888,8 @@ func _refresh_builder() -> void:
 		var missing := _count_empty(pattern)
 		if missing == 0:
 			_lock_btn.text = "Lock Ward"
-		elif missing == _ruleset.slot_count:
-			_lock_btn.text = "Choose %d spells" % missing
+		elif missing == _player_c.ward_size:
+			_lock_btn.text = "Choose %d spell%s" % [missing, "" if missing == 1 else "s"]
 		else:
 			_lock_btn.text = "Pick %d more spell%s" % [missing, "" if missing == 1 else "s"]
 	if setup:
@@ -820,6 +898,21 @@ func _refresh_builder() -> void:
 		_hint_lbl.text = ""
 	else:
 		_hint_lbl.text = _duel_hint(pattern)
+
+
+func _refresh_asym_label(setup: bool) -> void:
+	if _asym_lbl == null:
+		return
+	var w := _player_c.weave_size
+	var ws := _enemy_c.ward_size
+	if setup or w == ws:
+		_asym_lbl.visible = false
+		return
+	_asym_lbl.visible = true
+	if w > ws:
+		_asym_lbl.text = "Your %d attempts wrap onto their %d-slot Ward — each label shows the slot it hits." % [w, ws]
+	else:
+		_asym_lbl.text = "Their Ward has %d slots but you can only reach %d. You cannot break it — but you can learn." % [ws, w]
 
 
 func _duel_hint(pattern: Array) -> String:
@@ -945,13 +1038,13 @@ func _show_player_result(pattern: Array, fr: int, ec: int, fa: int, auto: bool) 
 		_result_slots_row.add_child(s)
 		s.call_deferred("set_spell", int(v))
 		_result_slots.append(s)
-	_result_pips.show_counts(_ruleset.slot_count, fr, ec, fa)
+	_result_pips.show_counts(_player_c.weave_size, fr, ec, fa)
 	if not _reduce_motion:
 		_result_pips.call_deferred("pop_in")
 	_result_title_lbl.text = "Your cast #%d%s" % [game.player_history.size(), " (auto)" if auto else ""]
 	_result_text_lbl.text = _describe_long(fr, ec, fa)
-	if fr == _ruleset.slot_count:
-		_result_text_lbl.text = "All four exact — the rival's Ward breaks!"
+	if fr >= _enemy_c.ward_size and game.player_history.size() > 0 and game.player_history[-1].broke_ward:
+		_result_text_lbl.text = "Every Ward slot struck — %s's Ward breaks!" % _enemy_c.display_name
 
 
 static func _describe_short(fr: int, ec: int, fa: int) -> String:
@@ -1096,7 +1189,8 @@ func _make_history_row(r: Dictionary) -> Control:
 	var pips = _FeedbackPips.new()
 	pips.pip_size = 26
 	h.add_child(pips)
-	pips.call_deferred("show_counts", _ruleset.slot_count, int(r["fr"]), int(r["ec"]), int(r["fa"]))
+	var n_slots := _player_c.weave_size if r["attacker"] == "player" else _enemy_c.weave_size
+	pips.call_deferred("show_counts", n_slots, int(r["fr"]), int(r["ec"]), int(r["fa"]))
 	var pad := Control.new()
 	pad.custom_minimum_size = Vector2(6, 0)
 	h.add_child(pad)
@@ -1109,7 +1203,7 @@ func _launch_bolts(pattern: Array) -> void:
 	if _reduce_motion or _fx_layer == null:
 		return
 	var target: Vector2 = _rival_ward_row.get_global_rect().get_center()
-	for i in range(pattern.size()):
+	for i in range(mini(pattern.size(), _loci_slots.size())):
 		if pattern[i] == null:
 			continue
 		var bolt := _SpellVfx.new()
@@ -1240,12 +1334,15 @@ func _show_menu_overlay() -> void:
 		_set_paused(false)
 	)
 	_overlay_button("How to play", false, func(): _show_help_overlay(false))
-	_overlay_button("Restart duel", false, func():
-		_overlay.visible = false
-		start_new_game(-1)
-		_sfx("tap")
-	)
-	_overlay_button("Quit to menu", false, _go_to_main_menu)
+	if _adventure_mode:
+		_overlay_button("Flee (counts as a loss)", false, func(): _return_to_world("fled"))
+	else:
+		_overlay_button("Restart duel", false, func():
+			_overlay.visible = false
+			start_new_game(-1)
+			_sfx("tap")
+		)
+		_overlay_button("Quit to menu", false, _go_to_main_menu)
 	_overlay.visible = true
 
 
@@ -1270,8 +1367,8 @@ func _show_help_overlay(first_time: bool) -> void:
 func _show_result() -> void:
 	_result_shown = true
 	var r = game.result
-	for i in range(_rival_ward_slots.size()):
-		var w: Array = game.get_enemy_ward()
+	var w: Array = game.get_enemy_ward()
+	for i in range(mini(_rival_ward_slots.size(), w.size())):
 		_rival_ward_slots[i].set_spell(int(w[i]))
 	_rival_progress.value = 0
 	_rival_status_lbl.text = ""
@@ -1299,12 +1396,21 @@ func _show_result() -> void:
 	_overlay_ward_row("Their Ward", game.get_enemy_ward())
 	_overlay_ward_row("Your Ward", game.get_player_ward())
 	_overlay_text("You cast %d · Rival cast %d" % [r.human_guess_count, r.bot_guess_count], false)
-	_overlay_button("Play again", true, func():
-		_overlay.visible = false
-		start_new_game(-1)
-		_sfx("tap")
-	)
-	_overlay_button("Menu", false, _go_to_main_menu)
+	if _adventure_mode:
+		_overlay_button("Continue", true, func(): _return_to_world(r.outcome))
+		if r.outcome != "victory":
+			_overlay_button("Try again", false, func():
+				_overlay.visible = false
+				start_new_game(-1)
+				_sfx("tap")
+			)
+	else:
+		_overlay_button("Play again", true, func():
+			_overlay.visible = false
+			start_new_game(-1)
+			_sfx("tap")
+		)
+		_overlay_button("Menu", false, _go_to_main_menu)
 	if _screenshot_mode:
 		_overlay.visible = true
 	else:
@@ -1316,6 +1422,52 @@ func _show_result() -> void:
 
 func _go_to_main_menu() -> void:
 	get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
+
+
+var _no_scene_change: bool = false  # test harness: report result but do not change scene
+
+
+func _return_to_world(outcome: String) -> void:
+	var adv := _adventure()
+	if adv:
+		var details := {}
+		if game.result != null:
+			details = {"player_casts": game.result.human_guess_count, "enemy_casts": game.result.bot_guess_count}
+		adv.report_battle_result(outcome, details)
+	if _no_scene_change:
+		return
+	get_tree().change_scene_to_file("res://client/scenes/overworld.tscn")
+
+
+func ui_adventure_continue() -> void:
+	## Test API: equivalent of pressing Continue on the result overlay.
+	_no_scene_change = true
+	var outcome := "fled"
+	if game.result != null:
+		outcome = game.result.outcome
+	_return_to_world(outcome)
+
+
+func _show_encounter_intro() -> void:
+	# Brief, skippable framing before Ward setup.
+	_clear_overlay()
+	_set_paused(true)
+	_overlay_title(_enemy_c.display_name, _VT.COLOR_ACCENT_GOLD)
+	_overlay_text(_enemy_c.description)
+	var casts_with: Array = []
+	for sp in _enemy_c.attack_pool:
+		casts_with.append(DmbColourData.essence_name(int(sp)))
+	_overlay_text("Casts: %s\nWard: %d slot%s (hidden)\nWeave: %d" % [", ".join(PackedStringArray(casts_with)), _enemy_c.ward_size, "" if _enemy_c.ward_size == 1 else "s", _enemy_c.weave_size])
+	var mine: Array = []
+	for sp in _player_c.attack_pool:
+		mine.append(DmbColourData.essence_name(int(sp)))
+	_overlay_text("You — casts: %s · Ward: %d · Weave: %d" % [", ".join(PackedStringArray(mine)), _player_c.ward_size, _player_c.weave_size], false)
+	_overlay_button("Set your Ward", true, func():
+		_overlay.visible = false
+		_set_paused(false)
+	)
+	_overlay_button("Walk away", false, func(): _return_to_world("fled"))
+	_overlay.visible = true
 
 
 # --- helpers -----------------------------------------------------------------
