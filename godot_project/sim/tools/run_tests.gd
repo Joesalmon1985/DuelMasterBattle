@@ -18,6 +18,8 @@ const TESTS := [
 	"res://sim/tests/test_hex_board.gd",
 	"res://sim/tests/test_catan.gd",
 	"res://sim/tests/test_carts.gd",
+	"res://sim/tests/test_infection.gd",
+	"res://sim/tests/test_units.gd",
 ]
 
 
