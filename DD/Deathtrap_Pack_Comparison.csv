@@ -1,0 +1,9 @@
+﻿passage,book,existing_pack,assessment,action
+22,Throm/Barbarian alliance at pit; three cooperation/route choices.,Invented Giant Spider combat.,Major canonical failure,Replace pack content/edges with book event.
+60,Dwarf Trialmaster; player may attack with Throm OR persuade Throm to accept the test.,OCR text present but structured choice extraction captures only attack-Dwarf branch.,Canonical text but incomplete graph,Rebuild structured choices from book.
+62,Three-gem positional logic test with six arrangements and aggregate feedback.,OCR material present; choice labels are garbled by OCR although six turn-tos are present.,"Usable topology, poor structured UX",Rebuild as explicit gem-order puzzle.
+281,Dying Elf after Boa rescue; reveals diamond clue and leaves useful belongings.,Invented Skeleton combat.,Major canonical failure,Restore Elf scene.
+302,"Dwarf forces John to fight wounded, delirious Throm.",Invented Giant Spider combat.,Major canonical failure,Restore Throm climax.
+364,Igbut the Gnome appears after Manticore and checks for required gems.,OCR text broadly faithful; one outgoing emerald-presence branch captured.,Good source text but needs explicit state/branch reconstruction,"Retain text meaning, rebuild interaction."
+399,Healing bread follow-up from Elf route; continues to 192.,Converted into Giant Rat death ending.,Severe graph corruption,Remove death sink; restore continuation.
+400,Champion emerges to Fang and receives the prize/acclamation.,Victory ending broadly matches.,Broadly faithful,Retain concept; use book as wording/event authority.

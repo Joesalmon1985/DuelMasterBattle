@@ -1,0 +1,16 @@
+{
+  "passage": 218,
+  "status": "BOOK_VERIFIED",
+  "beat": "A room appears to contain a diamond beside a fallen warrior, but entering can be a lethal trap.",
+  "edges": [
+    {
+      "action": "enter for apparent jewel",
+      "to": 65
+    },
+    {
+      "action": "continue",
+      "to": 252
+    }
+  ],
+  "adaptation_notes": "False-diamond temptation room."
+}

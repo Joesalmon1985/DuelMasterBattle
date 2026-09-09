@@ -1,0 +1,12 @@
+{
+  "passage": 162,
+  "status": "BOOK_VERIFIED",
+  "beat": "A box contains an iron key and a large sapphire.",
+  "edges": [
+    {
+      "action": "take items and continue",
+      "to": 442
+    }
+  ],
+  "adaptation_notes": "Sapphire objective pickup."
+}

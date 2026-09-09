@@ -107,7 +107,7 @@ func _after_ready() -> void:
 		await _story.on_battle_result(r)
 	elif not adv.flag("opening_seen"):
 		adv.set_flag("opening_seen")
-		await _story.opening_text()
+		await _story.prologue_open()
 	_maybe_autosave()
 
 
@@ -277,6 +277,10 @@ func _tile_char(x: int, y: int) -> String:
 	return str(area["rows"][y])[x]
 
 
+func _is_dungeon() -> bool:
+	return str(area.get("id", "")).begins_with("dd_")
+
+
 func _build_tiles() -> void:
 	var tile_tex := {
 		".": "tiles/grass.png", ",": "tiles/grass_dark.png", ":": "tiles/path.png", "~": "tiles/water.png",
@@ -284,6 +288,13 @@ func _build_tiles() -> void:
 		"f": "tiles/fence.png", "a": "tiles/ash.png", "T": "tiles/grass_dark.png", "t": "tiles/ash.png",
 		"r": "tiles/grass.png", "L": "tiles/grass.png", "X": "tiles/ash.png",
 	}
+	var dungeon := _is_dungeon()
+	if dungeon:
+		tile_tex["."] = "tiles/cave_floor.png"
+		tile_tex[":"] = "tiles/cave_floor.png"
+		tile_tex["T"] = "tiles/cave_wall.png"
+		tile_tex["r"] = "tiles/cave_floor.png"
+		tile_tex["L"] = "tiles/cave_floor.png"
 	for y in range(grid_h):
 		for x in range(grid_w):
 			var ch := _tile_char(x, y)
@@ -295,14 +306,20 @@ func _build_tiles() -> void:
 			s.position = Vector2(x, y) * TPX
 			s.texture = _tex(tile_tex.get(ch, "tiles/grass.png"))
 			_tiles_root.add_child(s)
-			if ch == "T":
-				_add_prop(x, y, "props/tree_%d.png" % ((x * 7 + y * 13) % 4), Vector2(0, -16), 2)
-			elif ch == "t":
-				_add_prop(x, y, "props/tree_burnt_%d.png" % ((x + y) % 2), Vector2(0, -16), 2)
-			elif ch == "r":
-				_add_prop(x, y, "props/rock.png", Vector2.ZERO, 1)
-			elif ch == "L":
-				_add_prop(x, y, "props/logs.png", Vector2.ZERO, 1)
+			_add_tile_prop(x, y, ch, dungeon)
+
+
+## Decorative prop implied by a map character (trees, rocks, logs).
+func _add_tile_prop(x: int, y: int, ch: String, dungeon: bool) -> void:
+	if ch == "T":
+		if not dungeon:
+			_add_prop(x, y, "props/tree_%d.png" % ((x * 7 + y * 13) % 4), Vector2(0, -16), 2)
+	elif ch == "t":
+		_add_prop(x, y, "props/tree_burnt_%d.png" % ((x + y) % 2), Vector2(0, -16), 2)
+	elif ch == "r":
+		_add_prop(x, y, "props/stalagmite.png" if dungeon else "props/rock.png", Vector2.ZERO, 1)
+	elif ch == "L":
+		_add_prop(x, y, "props/logs.png", Vector2.ZERO, 1)
 
 
 func _add_prop(x: int, y: int, path: String, offset_px: Vector2, _size_tiles: int) -> Sprite2D:
@@ -328,6 +345,10 @@ func _entity_visible(e: Dictionary) -> bool:
 	var adv := _adv()
 	if e.has("requires_flag") and not adv.flag(str(e["requires_flag"])):
 		return false
+	if e.has("requires_run_flag") and not adv.run_flag(str(e["requires_run_flag"])):
+		return false
+	if e.has("blocked_by_run_flag") and adv.run_flag(str(e["blocked_by_run_flag"])):
+		return false
 	if e.has("requires_spell") and not adv.progression.knows(int(e["requires_spell"])):
 		return false
 	if e.has("requires_defeated") and not adv.marked("defeated", str(e["requires_defeated"])):
@@ -336,6 +357,8 @@ func _entity_visible(e: Dictionary) -> bool:
 		"fire":
 			return not adv.marked("extinguished", str(e["id"]))
 		"pickup":
+			if bool(e.get("run_pickup", false)):
+				return not adv.run_flag("picked_" + str(e["id"]))
 			return not adv.marked("picked", str(e["id"]))
 		"creature":
 			return not adv.marked("defeated", str(e["id"]))
@@ -388,7 +411,20 @@ func _spawn_entity(e: Dictionary) -> void:
 				node.rotation_degrees = 90
 				node.z_index = 2
 		"sign", "door", "logs":
-			pass  # drawn by the tile map; interaction only
+			# Visible marker so interactables read as objects, not empty floor.
+			# Village/forest doors and log piles are already drawn by the tile map.
+			var marker := ""
+			var marker_off := Vector2.ZERO
+			if e.has("marker"):
+				marker = "props/%s.png" % str(e["marker"])
+				marker_off = Vector2(0, -16)  # 32x32 tall props stand a tile up
+			elif e["kind"] == "sign":
+				marker = "props/sign.png"
+			elif _is_dungeon():
+				marker = "props/door_stone.png" if e["kind"] == "door" else "props/box.png"
+			if marker != "":
+				node = _add_prop(pos.x, pos.y, marker, marker_off, 1)
+				node.z_index = 2
 	e["node"] = node
 	_entities.append(e)
 	if e["kind"] in ["fire", "pickup", "creature", "wizard", "npc", "corpse", "sign", "door", "logs"]:
@@ -492,7 +528,7 @@ func is_walkable(p: Vector2i) -> bool:
 		return false
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
-		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup"]:
+		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs"]:
 			return false
 	return true
 
@@ -518,12 +554,15 @@ func _arrived() -> void:
 	for e in _entities:
 		match e["kind"]:
 			"exit":
-				if Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos:
-					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")))
+				if Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos and _entity_visible(e):
+					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")), str(e.get("travel_text", "")))
 					return
 			"trigger":
+				if e.has("requires_phase") and _adv().story_phase() != str(e["requires_phase"]):
+					continue
 				if _in_trigger(e) and not _adv().flag(str(e.get("once_flag", ""))) and _steps_taken >= int(e.get("requires_steps", 0)):
-					_adv().set_flag(str(e["once_flag"]))
+					if not bool(e.get("no_auto_flag", false)):
+						_adv().set_flag(str(e["once_flag"]))
 					_story.run_event(str(e["event"]))
 					return
 
@@ -535,13 +574,26 @@ func _in_trigger(e: Dictionary) -> bool:
 	return Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos
 
 
-func _travel(to_area: String, to_pos: Vector2i, facing: String) -> void:
+## A readable's text, with run-flag keyed variants ("text_run_flag": {flag: text}).
+func _entity_text(e: Dictionary) -> String:
+	var text := str(e.get("text", ""))
+	if e.has("text_run_flag"):
+		for fl in e["text_run_flag"].keys():
+			if _adv().run_flag(str(fl)):
+				text = str(e["text_run_flag"][fl])
+	return text
+
+
+func _travel(to_area: String, to_pos: Vector2i, facing: String, travel_text: String = "") -> void:
 	_input_locked = true
 	_touch.set_enabled(false)
+	if travel_text != "":
+		await _dialogue.say_async("", travel_text)
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.25)
 	await tw.finished
 	load_area(to_area, to_pos, facing)
+	_adv().mark_visited(to_area)
 	_adv().save()
 	_fade_in()
 	_input_locked = false
@@ -555,8 +607,80 @@ func _fade_in() -> void:
 
 
 func _update_john_sprite(frame: int = 0) -> void:
+	# The controllable sprite follows the story's protagonist (Halvard in the
+	# prologue, John afterwards). Halvard is always drawn as the Blue mage.
 	var key := "john_staff" if _adv().progression.has_magic() else "john"
+	if _adv().protagonist() == "halvard":
+		key = "blue_mage"
 	_john.texture = _tex("chars/%s_%s_%d.png" % [key, _john_facing, frame])
+
+
+## Test/inspection API: which way is the player sprite drawn as facing.
+func ui_player_facing() -> String:
+	return _john_facing
+
+
+## Test/inspection API: facing of a cutscene actor or a placed entity, read
+## back from the texture actually assigned (so it catches orientation bugs
+## that coordinate maths alone would not).
+func ui_actor_facing(key: String) -> String:
+	var n: Sprite2D = _john if key == "john" else actor(key)
+	if n == null:
+		for e in _entities:
+			if str(e.get("id", "")) == key and is_instance_valid(e.get("node")):
+				n = e["node"]
+				break
+	if n == null or n.texture == null:
+		return ""
+	var path := n.texture.resource_path
+	for f in ["left", "right", "up", "down"]:
+		if path.ends_with("_%s_0.png" % f) or path.ends_with("_%s_1.png" % f):
+			return f
+	return ""
+
+
+## Two characters confronting one another: the one on the left faces right and
+## vice versa. Works for cutscene actors ("red") and the player ("john").
+func face_each_other(a: String, b: String) -> void:
+	var pa := _actor_or_player_pos(a)
+	var pb := _actor_or_player_pos(b)
+	var a_face := "right" if pa.x < pb.x else ("left" if pa.x > pb.x else ("down" if pa.y < pb.y else "up"))
+	var b_face := _opposite(a_face)
+	_set_facing(a, a_face)
+	_set_facing(b, b_face)
+
+
+func _actor_or_player_pos(key: String) -> Vector2i:
+	if key == "john":
+		return _john_pos
+	var n: Sprite2D = actor(key)
+	if n != null:
+		return Vector2i(roundi(n.position.x / TPX), roundi((n.position.y + 8 * TILE_SCALE) / TPX))
+	for e in _entities:
+		if str(e.get("id", "")) == key:
+			return Vector2i(int(e["pos"][0]), int(e["pos"][1]))
+	return _john_pos
+
+
+func _set_facing(key: String, facing: String) -> void:
+	if key == "john":
+		face_john(facing)
+		return
+	if actor(key) != null:
+		face_actor(key, facing)
+		return
+	for e in _entities:
+		if str(e.get("id", "")) == key and is_instance_valid(e.get("node")):
+			e["node"].texture = _tex("chars/%s_%s_0.png" % [str(e.get("sprite", "villager_a")), facing])
+			e["facing"] = facing
+
+
+func _opposite(f: String) -> String:
+	match f:
+		"left": return "right"
+		"right": return "left"
+		"up": return "down"
+	return "up"
 
 
 func facing_pos() -> Vector2i:
@@ -620,7 +744,15 @@ func _on_action() -> void:
 		return
 	match e["kind"]:
 		"sign", "door", "logs", "corpse":
-			_dialogue.say("", str(e.get("text", "")))
+			if e.has("choice_event"):
+				_input_locked = true
+				_touch.set_enabled(false)
+				await _dialogue.say_async("", _entity_text(e))
+				await _story.run_event(str(e["choice_event"]))
+				_input_locked = false
+				_touch.set_enabled(true)
+			else:
+				_dialogue.say("", _entity_text(e))
 		"fire":
 			_interact_fire(e)
 		"pickup":
@@ -685,7 +817,12 @@ func _interact_pickup(e: Dictionary) -> void:
 	var s := _sfx()
 	if s:
 		s.ready_chime()
-	adv.mark("picked", str(e["id"]))
+	if bool(e.get("run_pickup", false)):
+		adv.set_run_flag("picked_" + str(e["id"]))
+	else:
+		adv.mark("picked", str(e["id"]))
+	if e.has("set_flag"):
+		adv.set_flag(str(e["set_flag"]))
 	if is_instance_valid(e.get("node")):
 		e["node"].queue_free()
 	_entity_at.erase(Vector2i(int(e["pos"][0]), int(e["pos"][1])))
@@ -694,10 +831,20 @@ func _interact_pickup(e: Dictionary) -> void:
 		adv.learn_spell(int(grant["spell"]))
 	if grant.has("weave"):
 		adv.grow_weave(int(grant["weave"]))
+	if grant.has("gem"):
+		adv.add_gem(str(grant["gem"]))
+	if grant.has("run_flag"):
+		adv.set_run_flag(str(grant["run_flag"]))
+	if bool(e.get("clear_conditions", false)):
+		adv.clear_conditions()
+	if e.has("inflict"):
+		adv.add_condition(str(e["inflict"]))
 	_update_john_sprite()
 	_input_locked = true
 	_touch.set_enabled(false)
 	await _dialogue.say_async("", str(e.get("text", "")))
+	if e.has("choice_event"):
+		await _story.run_event(str(e["choice_event"]))
 	if grant.has("spell") or grant.has("weave"):
 		await _show_progression_card(grant)
 	_input_locked = false
@@ -711,10 +858,17 @@ func _interact_npc(e: Dictionary) -> void:
 	var adv := _adv()
 	var id := str(e["id"])
 	var lines: Array = e.get("lines", [])
+	# Story-phase keyed lines win over defaults; flag-keyed lines win over those.
+	if e.has("lines_phase") and e["lines_phase"].has(adv.story_phase()):
+		lines = e["lines_phase"][adv.story_phase()]
 	if e.has("lines_flag"):
 		for fl in e["lines_flag"].keys():
 			if adv.flag(str(fl)):
 				lines = e["lines_flag"][fl]
+	if e.has("lines_run_flag"):
+		for fl in e["lines_run_flag"].keys():
+			if adv.run_flag(str(fl)):
+				lines = e["lines_run_flag"][fl]
 	# Elder-style grant: on a flag, first conversation grants a spell.
 	var grant: Dictionary = e.get("grant_on_flag", {})
 	var will_grant: bool = not grant.is_empty() and adv.flag(str(grant["flag"])) and not adv.flag(str(grant["set_flag"]))
@@ -723,6 +877,8 @@ func _interact_npc(e: Dictionary) -> void:
 	_face_npc_toward_john(e)
 	for line in lines:
 		await _dialogue.say_async(str(e.get("name", "")), str(line))
+	if e.has("choice_event"):
+		await _story.run_event(str(e["choice_event"]))
 	if will_grant:
 		adv.learn_spell(int(grant["spell"]))
 		adv.set_flag(str(grant["set_flag"]))
@@ -774,7 +930,8 @@ func _interact_enemy(e: Dictionary) -> void:
 		warn = "Your weave holds %d. Their Ward has %d slot%s.\n\nYour extra spells wrap round to the first slots — several attempts on one slot at once." % [john.weave_size, int(enemy["ward_size"]), "" if int(enemy["ward_size"]) == 1 else "s"]
 	if warn != "":
 		await _dialogue.say_async("", warn)
-	var choice: String = await _dialogue.choose_async("Face %s?" % str(enemy["display_name"]), ["Fight", "Not yet"])
+	# Brief §26: declining is not a defeat. "Walk away" is the neutral label.
+	var choice: String = await _dialogue.choose_async("Face %s?" % str(enemy["display_name"]), ["Fight", "Walk away"])
 	if choice != "Fight":
 		_input_locked = false
 		_touch.set_enabled(true)
@@ -782,22 +939,84 @@ func _interact_enemy(e: Dictionary) -> void:
 	_start_battle(e)
 
 
-func _start_battle(e: Dictionary) -> void:
-	var req := {
-		"enemy_id": str(e["enemy_id"]),
-		"encounter_id": str(e["id"]),
-		"kind": str(e["kind"]),
-		"on_win_flag": str(e.get("on_win_flag", "")),
-		"grant_on_win": e.get("grant_on_win", {}),
-		"drops": str(e.get("drops", "")),
-		"area": area_id,
-		"return_pos": [_john_pos.x, _john_pos.y],
-		"facing": _john_facing,
-	}
+## P5: exploration knowledge that weakens a specific enemy's Ward.
+## Exploration knowledge/items that weaken a specific enemy's Ward. Data lives
+## in WARD_BANS: enemy_id → [run_flag, banned spell]. Brief §28 "clues which
+## actually alter enemy Ward possibilities".
+const WARD_BANS := {
+	"bloodbeast": [["blood_weakness", 6]],                          # the prisoner's warning: no Vine
+	"manticore": [["has_elf_charm", 6], ["riddle_right", 4]],     # elf's charm: no Vine; old man: no Light
+}
+
+
+func _ward_ban_for(enemy_id: String) -> Array:
+	var out: Array = []
+	for rule in WARD_BANS.get(enemy_id, []):
+		if _adv().run_flag(str(rule[0])):
+			out.append(int(rule[1]))
+	return out
+
+
+## P5: story events start scripted battles through here (no entity needed).
+## Story events start battles through here with an entity-shaped dict
+## ({"id", "enemy_id", "kind", "training", "grant_on_defeat", ...}) so they get
+## the same encounter numbering and policy plumbing as map creatures.
+func start_battle_request(req: Dictionary) -> void:
+	if req.has("enemy_id") and req.has("id"):
+		await _start_battle(req)
+		return
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.35)
 	await tw.finished
 	_adv().request_battle(req)
+	if test_mode:
+		return
+	get_tree().change_scene_to_file("res://client/scenes/game_board.tscn")
+
+
+func _start_battle(e: Dictionary) -> void:
+	var adv := _adv()
+	var n: int = adv.begin_encounter(str(e["id"]))
+	var req := {
+		"enemy_id": str(e["enemy_id"]),
+		"encounter_id": str(e["id"]),
+		"encounter_index": n,
+		"optimal": adv.is_optimal_encounter(str(e["id"])),
+		"kind": str(e["kind"]),
+		"training": bool(e.get("training", false)),
+		"on_win_flag": str(e.get("on_win_flag", "")),
+		"on_win_run_flag": str(e.get("on_win_run_flag", "")),
+		"on_defeat_flag": str(e.get("on_defeat_flag", "")),
+		"grant_on_win": e.get("grant_on_win", {}),
+		"grant_on_defeat": e.get("grant_on_defeat", {}),
+		"enemy_overrides": e.get("enemy_overrides", {}),
+		"drops": str(e.get("drops", "")),
+		"area": area_id,
+		"return_pos": [_john_pos.x, _john_pos.y],
+		"facing": _john_facing,
+		"player_mods": adv.player_mods(),
+		"ward_ban": _ward_ban_for(str(e["enemy_id"])),
+	}
+	if e.has("policy"):
+		req["policy"] = str(e["policy"])
+	if e.has("player_combatant"):
+		req["player_combatant"] = e["player_combatant"]
+	if e.has("forced_defeat_by_cast"):
+		req["forced_defeat_by_cast"] = int(e["forced_defeat_by_cast"])
+	if e.has("intro"):
+		req["intro"] = str(e["intro"])
+	if bool(req["optimal"]):
+		# Every-third-battle rule: the sharp tier. Hard, not perfect — capped
+		# minimax with a mid-size sample (see CORRECTIVE_PASS_PLAN Phase 4).
+		var ov: Dictionary = req["enemy_overrides"].duplicate()
+		ov["bot_logic"] = "capped_minimax"
+		ov["bot_solver_cap"] = maxi(int(ov.get("bot_solver_cap", 0)), 100)
+		ov["bot_mistake_rate"] = 0.0
+		req["enemy_overrides"] = ov
+	var tw := create_tween()
+	tw.tween_property(_fader, "modulate:a", 1.0, 0.35)
+	await tw.finished
+	adv.request_battle(req)
 	if test_mode:
 		return
 	get_tree().change_scene_to_file("res://client/scenes/game_board.tscn")
@@ -816,17 +1035,10 @@ func _rebuild_entities() -> void:
 	_entity_at.clear()
 	_fire_frames.clear()
 	# props from tiles
+	var dungeon := _is_dungeon()
 	for y in range(grid_h):
 		for x in range(grid_w):
-			var ch := _tile_char(x, y)
-			if ch == "T":
-				_add_prop(x, y, "props/tree_%d.png" % ((x * 7 + y * 13) % 4), Vector2(0, -16), 2)
-			elif ch == "t":
-				_add_prop(x, y, "props/tree_burnt_%d.png" % ((x + y) % 2), Vector2(0, -16), 2)
-			elif ch == "r":
-				_add_prop(x, y, "props/rock.png", Vector2.ZERO, 1)
-			elif ch == "L":
-				_add_prop(x, y, "props/logs.png", Vector2.ZERO, 1)
+			_add_tile_prop(x, y, _tile_char(x, y), dungeon)
 	_build_entities()
 	_john_pos = keep_pos
 	_john_facing = keep_face
@@ -892,17 +1104,20 @@ func _on_menu() -> void:
 	_input_locked = true
 	_touch.set_enabled(false)
 	_adv().save()
-	var choice: String = await _dialogue.choose_async("Paused — progress saved.", ["Continue", "How to play", "Main menu"])
-	match choice:
-		"How to play":
-			await _dialogue.say_async("How to play", "Move with the pad (or arrow keys). Tap ✦ (or Space) to talk, take, douse fires and face creatures.\n\nBattles: pick spells for each weave slot, then CAST when the ring is ready. Break their Ward before they break yours.")
-			_input_locked = false
-			_touch.set_enabled(true)
-		"Main menu":
-			get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
-		_:
-			_input_locked = false
-			_touch.set_enabled(true)
+	while true:
+		var choice: String = await _dialogue.choose_async("Paused — progress saved.", ["Continue", "Journal", "How to play", "Main menu"])
+		match choice:
+			"How to play":
+				await _dialogue.say_async("How to play", "Move with the pad (or arrow keys). Tap ✦ (or Space) to talk, take, douse fires and face creatures.\n\nBattles: pick spells for each weave slot, then CAST when the ring is ready. Break their Ward before they break yours.")
+			"Journal":
+				await _dialogue.say_async("", _adv().notebook_text())
+			"Main menu":
+				get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
+				return
+			_:
+				_input_locked = false
+				_touch.set_enabled(true)
+				return
 
 
 func _maybe_autosave() -> void:
@@ -976,6 +1191,14 @@ func flash(color: Color, seconds: float = 0.12) -> void:
 	_fader.color = Color.BLACK
 
 
+## Fade to black and stay there; load_area's own fade-in brings the view back.
+func fade_out(seconds: float = 0.5) -> void:
+	_fader.color = Color.BLACK
+	var tw := create_tween()
+	tw.tween_property(_fader, "modulate:a", 1.0, seconds)
+	await tw.finished
+
+
 func shake(strength: float = 6.0, seconds: float = 0.4) -> void:
 	var t := 0.0
 	while t < seconds:
@@ -1042,6 +1265,8 @@ func ui_dialogue_open() -> bool:
 
 
 func ui_dialogue_advance() -> void:
+	# Test harness taps are deliberate; skip the human-tap debounce.
+	_dialogue._ignore_until_msec = 0
 	_dialogue.advance()
 
 
@@ -1061,6 +1286,39 @@ func ui_input_locked() -> bool:
 	return _input_locked
 
 
+## Test/inspection: the sprite key currently drawn for the controllable character.
+func ui_player_sprite_key() -> String:
+	var path := _john.texture.resource_path if _john.texture else ""
+	var base := path.get_file()
+	for f in ["_left_", "_right_", "_up_", "_down_"]:
+		var i := base.find(f)
+		if i > 0:
+			return base.substr(0, i)
+	return base
+
+
+## Test/inspection: tile position of a cutscene actor or entity.
+func ui_actor_pos(key: String) -> Vector2i:
+	return _actor_or_player_pos(key)
+
+
+## Test/inspection: the lines an NPC would say right now (phase/flag resolved).
+func ui_npc_lines_for(id: String) -> Array:
+	var adv := _adv()
+	for e in _entities:
+		if str(e.get("id", "")) != id:
+			continue
+		var lines: Array = e.get("lines", [])
+		if e.has("lines_phase") and e["lines_phase"].has(adv.story_phase()):
+			lines = e["lines_phase"][adv.story_phase()]
+		if e.has("lines_flag"):
+			for fl in e["lines_flag"].keys():
+				if adv.flag(str(fl)):
+					lines = e["lines_flag"][fl]
+		return lines
+	return []
+
+
 func ui_entity_exists(id: String) -> bool:
 	for e in _entities:
 		if str(e.get("id", "")) == id and e.get("node") != null and is_instance_valid(e["node"]):
@@ -1070,3 +1328,13 @@ func ui_entity_exists(id: String) -> bool:
 
 func ui_tile_walkable(p: Vector2i) -> bool:
 	return is_walkable(p)
+
+
+func ui_is_exit(p: Vector2i) -> bool:
+	# Test pathfinding must route around exits: stepping on one mid-path
+	# triggers area travel and aborts the walk. (The engine rightly allows
+	# stepping on exits; this is a test-harness concern.)
+	for e in _entities:
+		if str(e.get("kind", "")) == "exit" and Vector2i(int(e["pos"][0]), int(e["pos"][1])) == p:
+			return true
+	return false

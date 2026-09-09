@@ -1,0 +1,24 @@
+{
+  "passage": 138,
+  "status": "BOOK_VERIFIED",
+  "beat": "Black book contains an unknown potion; Throm refuses it and distrusts the unknown.",
+  "edges": [
+    {
+      "action": "drink",
+      "to": 397
+    },
+    {
+      "action": "rub on wounds",
+      "to": 25
+    },
+    {
+      "action": "red book",
+      "to": 52
+    },
+    {
+      "action": "continue",
+      "to": 369
+    }
+  ],
+  "adaptation_notes": "Item experimentation with Throm reacting in-world."
+}

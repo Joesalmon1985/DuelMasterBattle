@@ -25,6 +25,8 @@ func _run() -> void:
 	await _test_timer_states_and_auto_cast()
 	await process_frame
 	await _test_play_again_resets()
+	await process_frame
+	await _test_adventure_result_policy()
 	_report()
 
 
@@ -233,6 +235,50 @@ func _test_play_again_resets() -> void:
 	await process_frame
 	assert_eq(_board.ui_get_phase(), _RealtimeSim.Phase.DUELING, "second duel starts")
 	_board.queue_free()
+	await process_frame
+
+
+## Adventure result overlays never offer a retry; the request can override the
+## player combatant (prologue Halvard) and tweak the enemy (optimal tier).
+func _test_adventure_result_policy() -> void:
+	var adv = root.get_node("Adventure")
+	adv.delete_save()
+	adv.new_game()
+	var halvard := {
+		"id": "halvard", "display_name": "Halvard", "archetype": "blue_mage", "kind": "player",
+		"weave_size": 3, "attack_pool": [1, 0, 3], "ward_size": 3, "ward_pool": [1, 0, 3],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+	}
+	adv.request_battle({
+		"enemy_id": "red_wizard", "encounter_id": "halvard_vs_red",
+		"policy": "PROLOGUE_FORCED_DEFEAT",
+		"player_combatant": halvard,
+		"enemy_overrides": {"bot_logic": "capped_minimax", "bot_solver_cap": 500},
+	})
+	_board = _new_board()
+	await process_frame
+	if _board.ui_is_overlay_visible():
+		_board.ui_dismiss_overlay()
+	assert_eq(_board.game.player.display_name, "Halvard", "player combatant override honoured")
+	assert_eq(_board.game.player.weave_size, 3, "override weave used")
+	assert_eq(_board.game.enemy.bot_logic, "capped_minimax", "enemy override honoured")
+	assert_eq(_board.game.enemy.bot_solver_cap, 500, "enemy cap override honoured")
+	for s in [1, 0, 3]:
+		_board.ui_action_pick_spell(s)
+	_board.ui_action_lock_ward()
+	await process_frame
+	_board.ui_debug_finish_duel("defeat")
+	await create_timer(1.2).timeout
+	assert_true(_board.ui_is_result_visible(), "adventure defeat result shown")
+	var labels: Array = _board.ui_overlay_button_labels()
+	assert_true(not ("Try again" in labels), "no Try again on adventure defeat")
+	assert_true("Continue" in labels, "Continue offered")
+	_board.ui_adventure_continue()
+	await process_frame
+	assert_eq(str(adv.last_battle_result.get("policy", "")), "PROLOGUE_FORCED_DEFEAT", "policy reported with result")
+	assert_eq(str(adv.last_battle_result.get("outcome", "")), "defeat", "outcome reported")
+	_board.queue_free()
+	adv.delete_save()
 	await process_frame
 
 

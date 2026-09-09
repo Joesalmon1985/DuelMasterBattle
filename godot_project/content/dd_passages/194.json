@@ -1,0 +1,20 @@
+{
+  "passage": 194,
+  "status": "BOOK_VERIFIED",
+  "beat": "Two leather-bound books; Throm is contemptuous of reading and urges haste.",
+  "edges": [
+    {
+      "action": "red book",
+      "to": 52
+    },
+    {
+      "action": "black book",
+      "to": 138
+    },
+    {
+      "action": "continue",
+      "to": 369
+    }
+  ],
+  "adaptation_notes": "Walkable alcove where companion behaviour communicates personality."
+}

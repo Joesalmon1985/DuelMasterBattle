@@ -1,0 +1,16 @@
+{
+  "passage": 281,
+  "status": "BOOK_VERIFIED",
+  "beat": "After rescuing the Elf from a Boa Constrictor, she is dying; she reveals that gems unlock the final door and identifies diamond as one required gem.",
+  "edges": [
+    {
+      "action": "eat bread",
+      "to": 399
+    },
+    {
+      "action": "take mirror/charm and continue",
+      "to": 192
+    }
+  ],
+  "adaptation_notes": "Character death and crucial clue; her belongings become physical pickups."
+}

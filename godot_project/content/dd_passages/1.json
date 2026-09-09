@@ -1,0 +1,16 @@
+{
+  "passage": 1,
+  "status": "BOOK_VERIFIED",
+  "beat": "Crystal-lit entrance tunnel; six boxes including one bearing the contestant's name.",
+  "edges": [
+    {
+      "action": "open named box",
+      "to": 270
+    },
+    {
+      "action": "continue north",
+      "to": 66
+    }
+  ],
+  "adaptation_notes": "Trial Gate / first physical corridor; optional aid box."
+}

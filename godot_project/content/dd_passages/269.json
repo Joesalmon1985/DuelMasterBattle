@@ -1,0 +1,12 @@
+{
+  "passage": 269,
+  "status": "BOOK_VERIFIED",
+  "beat": "A later hall route allows the player to leave carrying the real diamond.",
+  "edges": [
+    {
+      "action": "leave with diamond",
+      "to": 127
+    }
+  ],
+  "adaptation_notes": "Diamond objective acquisition."
+}

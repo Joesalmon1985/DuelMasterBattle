@@ -1,0 +1,16 @@
+{
+  "passage": 37,
+  "status": "BOOK_VERIFIED",
+  "beat": "Large idol cavern with fist-sized jewelled eyes and two stuffed bird-like guardians.",
+  "edges": [
+    {
+      "action": "climb idol",
+      "to": 351
+    },
+    {
+      "action": "continue through cavern",
+      "to": 239
+    }
+  ],
+  "adaptation_notes": "Emerald objective room."
+}

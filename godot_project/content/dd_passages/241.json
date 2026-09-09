@@ -1,0 +1,12 @@
+{
+  "passage": 241,
+  "status": "BOOK_VERIFIED",
+  "beat": "After the final lock route, Igbut is killed by a final Sukumvit crossbow trap and John reaches daylight.",
+  "edges": [
+    {
+      "action": "exit",
+      "to": 400
+    }
+  ],
+  "adaptation_notes": "Final sting before victory."
+}

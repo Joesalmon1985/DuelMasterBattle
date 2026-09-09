@@ -1,0 +1,16 @@
+{
+  "passage": 66,
+  "status": "BOOK_VERIFIED",
+  "beat": "First major junction: white arrow points west; several footprints went west and one east.",
+  "edges": [
+    {
+      "action": "west",
+      "to": 293
+    },
+    {
+      "action": "east",
+      "to": 119
+    }
+  ],
+  "adaptation_notes": "Physical fork with visible tracks and painted arrow."
+}

@@ -1,0 +1,16 @@
+{
+  "passage": 119,
+  "status": "BOOK_VERIFIED",
+  "beat": "Eastern branch loops toward the soft obstruction / opening route.",
+  "edges": [
+    {
+      "action": "continue east",
+      "to": 56
+    },
+    {
+      "action": "return and go west",
+      "to": 293
+    }
+  ],
+  "adaptation_notes": "Short exploratory loop demonstrating that routes can reconnect."
+}

@@ -153,8 +153,23 @@ func _resolve_combatants() -> void:
 	if adv != null and not adv.pending_battle.is_empty():
 		_adventure_mode = true
 		_battle_request = adv.pending_battle.duplicate(true)
-		_player_c = adv.progression.to_combatant()
+		# Player combatant: the request may name someone other than John
+		# (prologue Halvard). Otherwise John's progression is the source.
+		if _battle_request.has("player_combatant"):
+			_player_c = DmbCombatant.make(_battle_request["player_combatant"])
+		else:
+			_player_c = adv.progression.to_combatant()
+		_apply_player_mods(_player_c, _battle_request.get("player_mods", {}))
 		_enemy_c = DmbBestiary.make(str(_battle_request["enemy_id"]))
+		# Data-driven enemy tweaks from the story layer (optimal tier, prologue
+		# config, opening guess). Never keyed on enemy names here.
+		var overrides: Dictionary = _battle_request.get("enemy_overrides", {})
+		for k in overrides.keys():
+			if k in _enemy_c:
+				_enemy_c.set(k, overrides[k])
+		for banned in _battle_request.get("ward_ban", []):
+			_enemy_c.ward_pool.erase(int(banned))
+		_enemy_c.validate()
 	else:
 		_adventure_mode = false
 		var diff = _session().get_difficulty_profile()
@@ -174,6 +189,18 @@ func _resolve_combatants() -> void:
 			"bot_logic": diff.bot_logic, "bot_solver_cap": diff.bot_solver_cap, "bot_mistake_rate": diff.bot_mistake_rate,
 			"think_min_seconds": diff.bot_think_min_seconds, "think_max_seconds": diff.bot_think_max_seconds,
 		})
+
+
+## P2: run conditions modify John's combatant only. Enemy untouched.
+func _apply_player_mods(c, mods: Dictionary) -> void:
+	if mods.is_empty():
+		return
+	if mods.has("max_casts"):
+		c.max_casts = maxi(1, int(mods["max_casts"]))
+	if mods.has("min_cast_bonus"):
+		c.min_cast_seconds = maxf(0.0, c.min_cast_seconds + float(mods["min_cast_bonus"]))
+	if mods.has("max_cast_bonus"):
+		c.max_cast_seconds = maxf(20.0, c.max_cast_seconds + float(mods["max_cast_bonus"]))
 
 
 # ---------------------------------------------------------------------------
@@ -601,6 +628,11 @@ func start_new_game(bot_seed: int = -1) -> void:
 		bot_seed = randi() % 1000000
 	_bot_seed = bot_seed
 	game = _BattleSim.new(_player_c, _enemy_c, bot_seed)
+	# D3: the authored prologue's guarantee. Only the PROLOGUE_FORCED_DEFEAT policy
+	# can switch this on; every other battle leaves it at 0 (off).
+	var adv := _adventure()
+	if _adventure_mode and adv != null and adv.battle_policy_for(_battle_request) == adv.POLICY_PROLOGUE:
+		game.forced_defeat_by_cast = int(_battle_request.get("forced_defeat_by_cast", 3))
 	_rival_name_lbl.text = _enemy_c.display_name
 	_rival_wizard.load_archetype(_enemy_c.archetype if _PixelPortrait.has_portrait(_enemy_c.archetype) else "wizard")
 	var sizes: Label = _rival_panel.find_child("Sizes", true, false)
@@ -1397,13 +1429,9 @@ func _show_result() -> void:
 	_overlay_ward_row("Your Ward", game.get_player_ward())
 	_overlay_text("You cast %d · Rival cast %d" % [r.human_guess_count, r.bot_guess_count], false)
 	if _adventure_mode:
+		# Story battles never offer a retry here: the combat UI reports the
+		# result and the story layer decides what defeat means (policy).
 		_overlay_button("Continue", true, func(): _return_to_world(r.outcome))
-		if r.outcome != "victory":
-			_overlay_button("Try again", false, func():
-				_overlay.visible = false
-				start_new_game(-1)
-				_sfx("tap")
-			)
 	else:
 		_overlay_button("Play again", true, func():
 			_overlay.visible = false
@@ -1433,6 +1461,7 @@ func _return_to_world(outcome: String) -> void:
 		var details := {}
 		if game.result != null:
 			details = {"player_casts": game.result.human_guess_count, "enemy_casts": game.result.bot_guess_count}
+		details["policy"] = adv.battle_policy_for(_battle_request)
 		adv.report_battle_result(outcome, details)
 	if _no_scene_change:
 		return
@@ -1462,6 +1491,9 @@ func _show_encounter_intro() -> void:
 	for sp in _player_c.attack_pool:
 		mine.append(DmbColourData.essence_name(int(sp)))
 	_overlay_text("You — casts: %s · Ward: %d · Weave: %d" % [", ".join(PackedStringArray(mine)), _player_c.ward_size, _player_c.weave_size], false)
+	if bool(_battle_request.get("optimal", false)):
+		# Data-driven (encounter index), never an enemy-name check.
+		_overlay_text("This one is sharper than the last. It will waste nothing.", false)
 	_overlay_button("Set your Ward", true, func():
 		_overlay.visible = false
 		_set_paused(false)
@@ -1511,6 +1543,17 @@ static func _count_empty(p: Array) -> int:
 
 func ui_get_phase() -> int:
 	return game.phase
+
+
+func ui_overlay_button_labels() -> Array:
+	## Test API: labels of the buttons currently on the overlay.
+	var out: Array = []
+	if _overlay_vbox == null:
+		return out
+	for c in _overlay_vbox.get_children():
+		if c is Button:
+			out.append((c as Button).text)
+	return out
 
 
 func ui_is_result_visible() -> bool:

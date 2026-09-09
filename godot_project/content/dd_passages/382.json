@@ -1,0 +1,20 @@
+{
+  "passage": 382,
+  "status": "BOOK_VERIFIED",
+  "beat": "Old man's statue riddle; the player recognizes the petrified Knight who entered the Trial first.",
+  "edges": [
+    {
+      "action": "answer 100",
+      "to": 44
+    },
+    {
+      "action": "answer 150",
+      "to": 222
+    },
+    {
+      "action": "answer 200",
+      "to": 391
+    }
+  ],
+  "adaptation_notes": "Puzzle room and first concrete evidence of a rival's fate."
+}

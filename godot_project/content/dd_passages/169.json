@@ -1,0 +1,12 @@
+{
+  "passage": 169,
+  "status": "BOOK_VERIFIED",
+  "beat": "Throm hears approaching footsteps first; two Cave Trolls arrive and each adventurer takes one.",
+  "edges": [
+    {
+      "action": "win player's Cave Troll fight",
+      "to": 288
+    }
+  ],
+  "adaptation_notes": "Parallel encounter: Throm visibly occupies one troll while John enters a Duel Master battle with the other."
+}

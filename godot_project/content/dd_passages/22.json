@@ -1,0 +1,20 @@
+{
+  "passage": 22,
+  "status": "BOOK_VERIFIED",
+  "beat": "Uneasy temporary alliance with the Barbarian Throm; both know only one contestant may win; they reach a deep pit.",
+  "edges": [
+    {
+      "action": "accept Barbarian lowering player",
+      "to": 63
+    },
+    {
+      "action": "offer to lower Barbarian",
+      "to": 184
+    },
+    {
+      "action": "jump pit together",
+      "to": 311
+    }
+  ],
+  "adaptation_notes": "Companion choice at a physical pit; preserve mistrust and cooperation."
+}

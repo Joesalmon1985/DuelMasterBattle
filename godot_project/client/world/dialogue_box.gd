@@ -23,6 +23,15 @@ var _type_tween: Tween
 var _waiting_choice: bool = false
 var _ignore_until_msec: int = 0
 
+## Pagination (brief §19): long text is split into pages that fit the panel.
+## First tap while typing completes the page; further taps turn pages; only
+## the final page closes. Nothing is clipped or dropped.
+const PAGE_CHARS := 190          # conservative budget for 24px font in a 210px panel
+var _pages: Array = []
+var _page_index: int = 0
+var _pending_choice_options: Array = []
+var _pending_choice_prompt: String = ""
+
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -99,15 +108,25 @@ func say_async(speaker: String, text: String) -> void:
 
 
 func choose_async(prompt: String, options: Array) -> String:
+	_pending_choice_options = options.duplicate()
+	_pending_choice_prompt = prompt
 	_show("", prompt)
+	if _pages.size() <= 1:
+		_present_choices()
+	# else: _present_choices() runs when the final page is reached in advance().
+	var result: String = await chosen
+	return result
+
+
+func _present_choices() -> void:
 	_typing = false
 	if _type_tween and _type_tween.is_valid():
 		_type_tween.kill()
 	_text_lbl.visible_characters = -1
 	_waiting_choice = true
 	_hint_lbl.visible = false
-	_panel.offset_top = -300 - 56 * options.size()
-	for o in options:
+	_panel.offset_top = -300 - 56 * _pending_choice_options.size()
+	for o in _pending_choice_options:
 		var b := Button.new()
 		b.text = str(o)
 		b.custom_minimum_size = Vector2(0, 56)
@@ -115,12 +134,17 @@ func choose_async(prompt: String, options: Array) -> String:
 		var label := str(o)
 		b.pressed.connect(func(): pick(label))
 		_choices.add_child(b)
-	var result: String = await chosen
-	return result
+	_pending_choice_options = []
 
 
 func pick(label: String) -> void:
 	if not _waiting_choice:
+		return
+	var valid := false
+	for c in _choices.get_children():
+		if c is Button and (c as Button).text == label:
+			valid = true
+	if not valid:
 		return
 	_waiting_choice = false
 	for c in _choices.get_children():
@@ -135,24 +159,60 @@ func _show(speaker: String, text: String) -> void:
 	_name_lbl.text = speaker
 	_name_lbl.visible = speaker != ""
 	_full_text = text
-	_text_lbl.text = text
-	_text_lbl.visible_characters = 0
-	_typing = true
-	_hint_lbl.visible = false
+	_pages = paginate(text)
+	_page_index = 0
 	if not _open:
 		_open = true
 		visible = true
 		opened.emit()
+	_show_page()
+
+
+func _show_page() -> void:
+	var page: String = _pages[_page_index] if _page_index < _pages.size() else ""
+	_text_lbl.text = page
+	_text_lbl.visible_characters = 0
+	_typing = true
+	_hint_lbl.visible = false
+	_hint_lbl.text = "▼ tap to continue" if _page_index >= _pages.size() - 1 else "▼ more (%d/%d)" % [_page_index + 1, _pages.size()]
 	_ignore_until_msec = Time.get_ticks_msec() + 180
 	if _type_tween and _type_tween.is_valid():
 		_type_tween.kill()
-	var chars := text.length()
+	var chars := page.length()
 	_type_tween = create_tween()
 	_type_tween.tween_property(_text_lbl, "visible_characters", chars, clampf(chars * 0.012, 0.15, 1.6))
 	_type_tween.tween_callback(func():
 		_typing = false
 		_hint_lbl.visible = not _waiting_choice
 	)
+
+
+## Split text into panel-sized pages. Paragraph breaks are preferred cut points;
+## an over-long paragraph is cut at the last word boundary before the budget.
+## Concatenating pages (with the joins restored) reproduces the input exactly.
+static func paginate(text: String, budget: int = PAGE_CHARS) -> Array:
+	var pages: Array = []
+	var current := ""
+	for para in text.split("\n\n"):
+		var candidate := para if current == "" else current + "\n\n" + para
+		if candidate.length() <= budget:
+			current = candidate
+			continue
+		if current != "":
+			pages.append(current)
+			current = ""
+		# paragraph alone may still be too long: cut on word boundaries
+		var rest := para
+		while rest.length() > budget:
+			var cut := rest.rfind(" ", budget)
+			if cut <= 0:
+				cut = budget
+			pages.append(rest.substr(0, cut))
+			rest = rest.substr(cut).strip_edges(true, false)
+		current = rest
+	if current != "" or pages.is_empty():
+		pages.append(current)
+	return pages
 
 
 func advance() -> void:
@@ -167,8 +227,32 @@ func advance() -> void:
 		_typing = false
 		_hint_lbl.visible = true
 		return
+	if _page_index < _pages.size() - 1:
+		_page_index += 1
+		_show_page()
+		if _page_index == _pages.size() - 1 and not _pending_choice_options.is_empty():
+			_present_choices()
+		return
 	_close()
 	advanced.emit()
+
+
+# --- Test/inspection API ---------------------------------------------------------
+
+func ui_page_index() -> int:
+	return _page_index
+
+
+func ui_page_count() -> int:
+	return _pages.size()
+
+
+func ui_visible_text() -> String:
+	return _text_lbl.text
+
+
+func ui_is_typing() -> bool:
+	return _typing
 
 
 func _close() -> void:

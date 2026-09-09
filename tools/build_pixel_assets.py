@@ -35,6 +35,7 @@ PAL = {
     "fire_a": (255, 200, 60), "fire_b": (240, 120, 40), "fire_c": (200, 60, 30),
     "skin": (222, 178, 140), "shirt": (150, 60, 50), "trouser": (60, 58, 80), "boot": (50, 36, 28), "hair": (80, 50, 30),
     "steel": (190, 196, 210),
+    "cave_a": (132, 124, 118), "cave_b": (114, 106, 102), "cave_wall": (70, 58, 60), "cave_wall_b": (48, 40, 44), "cave_hl": (160, 150, 146),
 }
 
 
@@ -111,6 +112,19 @@ def make_tiles():
     d.line([(0, 2), (15, 2)], INK + (255,))
     d.line([(0, 13), (15, 13)], INK + (255,))
     save(im, "tiles/bridge.png")
+    # cave floor / cave wall (dungeon theme)
+    im = tile_noise(PAL["cave_a"], PAL["cave_b"], 0.22, 6)
+    save(im, "tiles/cave_floor.png")
+    im, d = new(bg=PAL["cave_wall"] + (255,))
+    rnd = random.Random(9)
+    for y in range(0, TILE, 4):
+        d.line([(0, y), (TILE, y)], PAL["cave_wall_b"] + (255,))
+        off = 0 if (y // 4) % 2 == 0 else 5
+        for x in range(off, TILE, 8):
+            d.line([(x, y), (x, y + 3)], PAL["cave_wall_b"] + (255,))
+    for _ in range(6):
+        px(d, rnd.randrange(TILE), rnd.randrange(TILE), PAL["cave_hl"] + (255,))
+    save(im, "tiles/cave_wall.png")
 
 
 # ---------------------------------------------------------------- props (32x32)
@@ -209,6 +223,37 @@ def make_sign():
     return im
 
 
+def make_box():
+    # Sukumvit's aid box: small chest with a seal.
+    im, d = new(TILE, TILE)
+    d.rectangle([2, 6, 13, 14], PAL["wood_b"] + (255,), outline=INK + (255,))
+    d.rectangle([2, 6, 13, 9], PAL["wood"] + (255,))
+    d.rectangle([7, 8, 8, 12], PAL["fire_a"] + (255,))
+    return im
+
+
+def make_book(red=True):
+    # Leather-bound book, red or black.
+    im, d = new(TILE, TILE)
+    cover = (150, 40, 36) if red else (30, 28, 40)
+    spine = (100, 26, 24) if red else (16, 14, 22)
+    d.polygon([(3, 2), (12, 4), (12, 13), (3, 11)], cover + (255,), outline=INK + (255,))
+    d.line([(3, 2), (3, 11)], spine + (255,), 2)
+    d.line([(5, 5), (10, 6)], (220, 210, 190, 255,))
+    d.line([(5, 8), (10, 9)], (220, 210, 190, 255,))
+    return im
+
+
+def make_ring():
+    # Druidic bone ring.
+    im, d = new(TILE, TILE)
+    d.ellipse([3, 3, 12, 12], (225, 215, 190, 255))
+    d.ellipse([6, 6, 9, 9], (0, 0, 0, 0))
+    px(d, 5, 4, PAL["leaf_b"] + (255,))
+    px(d, 10, 9, PAL["leaf_b"] + (255,))
+    return im
+
+
 def make_props():
     for i in range(4):
         save(make_tree(i), f"props/tree_{i}.png")
@@ -223,6 +268,60 @@ def make_props():
     save(make_seed(), "props/seed.png")
     save(make_staff_pickup(), "props/staff.png")
     save(make_sign(), "props/sign.png")
+    save(make_box(), "props/box.png")
+    save(make_diamond(), "props/diamond.png")
+    save(make_book(True), "props/book_red.png")
+    save(make_book(False), "props/book_black.png")
+    save(make_ring(), "props/ring.png")
+    save(make_stone_door(), "props/door_stone.png")
+    save(make_stalagmite(), "props/stalagmite.png")
+    save(make_idol(), "props/idol.png")
+    save(make_mirror(), "props/mirror.png")
+
+
+def make_idol():
+    # Jewel-eyed idol: 32x32 seated figure over two tiles, green + blue eyes.
+    im, d = new(32, 32)
+    stone, dark = (176, 172, 168), PAL["stone_b"]
+    d.rectangle([6, 24, 25, 31], dark + (255,))            # plinth
+    d.rectangle([9, 12, 22, 24], stone + (255,))           # torso
+    d.rectangle([4, 14, 9, 22], stone + (255,))            # arms
+    d.rectangle([22, 14, 27, 22], stone + (255,))
+    d.rectangle([11, 3, 20, 12], stone + (255,))           # head
+    d.rectangle([12, 0, 19, 3], dark + (255,))             # crown
+    d.rectangle([13, 6, 14, 7], (60, 200, 90, 255))        # emerald eye
+    d.rectangle([17, 6, 18, 7], (70, 120, 230, 255))       # sapphire eye
+    d.line([(13, 10), (18, 10)], dark + (255,))
+    return im
+
+
+def make_mirror():
+    # Tall silver mirror, 16x32 body drawn into a 32x32 canvas so it stands a tile up.
+    im, d = new(32, 32)
+    d.rectangle([9, 2, 22, 31], PAL["wood_b"] + (255,))
+    d.rectangle([11, 4, 20, 28], PAL["steel"] + (255,))
+    d.line([(12, 6), (12, 24)], (230, 236, 250, 255))
+    d.line([(18, 8), (18, 20)], (150, 160, 190, 255))
+    return im
+
+
+def make_stone_door():
+    # Dungeon door marker: dark slab with lighter frame and a keyhole.
+    im, d = new(TILE, TILE)
+    d.rectangle([2, 0, 13, 15], PAL["cave_wall_b"] + (255,), outline=PAL["cave_hl"] + (255,))
+    d.rectangle([4, 2, 11, 15], PAL["cave_wall"] + (255,))
+    d.rectangle([7, 8, 8, 10], PAL["fire_a"] + (255,))
+    return im
+
+
+def make_stalagmite():
+    # Cave rock: pale stalagmite cluster, reads distinct from forest rock.
+    im, d = new(TILE, TILE)
+    d.polygon([(2, 15), (7, 15), (5, 6)], PAL["stone_b"] + (255,))
+    d.polygon([(6, 15), (14, 15), (10, 2)], PAL["stone"] + (255,))
+    d.polygon([(8, 15), (13, 15), (10, 2)], PAL["stone_b"] + (255,))
+    d.line([(10, 2), (10, 6)], PAL["cave_hl"] + (255,))
+    return im
 
 
 # ---------------------------------------------------------------- characters (16x24, 4 dirs x 2 frames)
@@ -243,31 +342,39 @@ def draw_human(d, facing, frame, shirt, hat=None, tool=None, skin=PAL["skin"], h
     elif facing == "up":
         d.rectangle([5, 2, 10, 7], hair + (255,))
     elif facing == "left":
-        d.rectangle([5, 2, 10, 4], hair + (255,)); d.rectangle([9, 4, 10, 7], hair + (255,))
-        px(d, 6, 6, INK + (255,))
+        # Profile facing LEFT: hair covers the back of the head (viewer's right),
+        # the eye sits forward (viewer's left), the nose/brow juts left. Verified
+        # against the imported mage sprites (CORRECTIVE_PASS Phase 2).
+        d.rectangle([5, 2, 10, 4], hair + (255,)); d.rectangle([8, 4, 10, 7], hair + (255,))
+        px(d, 5, 6, INK + (255,)); px(d, 4, 7, skin + (255,))
     else:
-        d.rectangle([5, 2, 10, 4], hair + (255,)); d.rectangle([5, 4, 6, 7], hair + (255,))
-        px(d, 9, 6, INK + (255,))
+        d.rectangle([5, 2, 10, 4], hair + (255,)); d.rectangle([5, 4, 7, 7], hair + (255,))
+        px(d, 10, 6, INK + (255,)); px(d, 11, 7, skin + (255,))
     if hat:
         d.polygon([(4, 3), (11, 3), (8, -2)], hat + (255,))
         d.rectangle([3, 3, 12, 4], hat + (255,))
     # arms
     d.rectangle([3, 9, 4, 15], skin + (255,))
     d.rectangle([11, 9, 12, 15], skin + (255,))
+    tx = 3 if facing == "left" else 12   # tool in the leading hand
     if tool == "axe":
-        d.line([(12, 15), (12, 6)], PAL["wood_b"] + (255,))
-        d.rectangle([12, 5, 14, 8], PAL["steel"] + (255,))
+        d.line([(tx, 15), (tx, 6)], PAL["wood_b"] + (255,))
+        d.rectangle([tx, 5, tx + 2, 8] if tx == 12 else [tx - 2, 5, tx, 8], PAL["steel"] + (255,))
     elif tool == "staff":
-        d.line([(12, 16), (12, 2)], PAL["trunk"] + (255,))
-        d.ellipse([11, 0, 14, 3], PAL["water_b"] + (255,))
+        d.line([(tx, 16), (tx, 2)], PAL["trunk"] + (255,))
+        d.ellipse([tx - 1, 0, tx + 2, 3], PAL["water_b"] + (255,))
 
 
 def make_character(name, shirt, hat=None, tool=None, hair=PAL["hair"], skin=PAL["skin"]):
-    for facing in ("down", "up", "left", "right"):
+    # Right-facing frames are exact mirrors of the left-facing ones, so the two
+    # side views can never disagree (CORRECTIVE_PASS Phase 2; tools/check_facing.py).
+    for facing in ("down", "up", "left"):
         for frame in range(2):
             im, d = new(16, 24)
             draw_human(d, facing, frame, shirt, hat, tool, skin=skin, hair=hair)
             save(im, f"chars/{name}_{facing}_{frame}.png")
+            if facing == "left":
+                save(im.transpose(Image.FLIP_LEFT_RIGHT), f"chars/{name}_right_{frame}.png")
 
 
 def make_characters():
@@ -277,6 +384,15 @@ def make_characters():
     make_character("villager_b", (130, 100, 60), hair=(200, 200, 200))
     make_character("elder", (70, 90, 60), hat=(60, 80, 50), tool="staff", hair=(220, 220, 220))
     make_character("child", (170, 120, 80))
+    # Trial-gate contestants (P1 placeholders; refined in the P7 art pass).
+    make_character("knight", (170, 178, 195), hat=(120, 128, 145), hair=(90, 90, 100))
+    make_character("elf", (60, 140, 90), hair=(225, 205, 150))
+    make_character("assassin", (40, 36, 52), hair=(25, 22, 30))
+    make_character("throm", (200, 150, 110), hair=(120, 70, 35))
+    make_character("official", (105, 90, 165), hat=(80, 65, 130), hair=(200, 200, 200))
+    make_character("dwarf", (120, 90, 60), hat=(90, 70, 50), hair=(200, 200, 200))
+    make_character("ivy", (64, 140, 70), hair=(120, 60, 90))
+    make_character("igbut", (90, 140, 130), hat=(60, 110, 100), hair=(220, 220, 220))
 
 
 # ---------------------------------------------------------------- creatures (battle portraits 64x64 + overworld 16x16)
@@ -391,6 +507,298 @@ def make_shade(size, frame=0):
     return im
 
 
+def make_dog(size, frame=0):
+    # Trialmastiff: low quadruped silhouette, pale eyes. Distinct from wisps/fly.
+    im, d = new(size, size)
+    s = size
+    fur, dark = (96, 84, 72), (52, 44, 38)
+    leg = 0 if frame % 2 == 0 else max(1, s // 16)
+    # body
+    d.ellipse([int(s * 0.18), int(s * 0.48), int(s * 0.82), int(s * 0.78)], fur + (255,))
+    d.ellipse([int(s * 0.24), int(s * 0.52), int(s * 0.76), int(s * 0.72)], dark + (255,))
+    # head (right), raised
+    d.ellipse([int(s * 0.66), int(s * 0.22), int(s * 0.94), int(s * 0.52)], fur + (255,))
+    # ears
+    d.polygon([(int(s * 0.70), int(s * 0.26)), (int(s * 0.76), int(s * 0.26)), (int(s * 0.73), int(s * 0.12))], dark + (255,))
+    d.polygon([(int(s * 0.82), int(s * 0.26)), (int(s * 0.88), int(s * 0.26)), (int(s * 0.85), int(s * 0.12))], dark + (255,))
+    # jaw + eye
+    d.rectangle([int(s * 0.78), int(s * 0.44), int(s * 0.94), int(s * 0.50)], dark + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.74), int(s * 0.32), int(s * 0.74) + e, int(s * 0.32) + e], (230, 220, 150, 255))
+    # tail (left, up)
+    d.line([(int(s * 0.18), int(s * 0.55)), (int(s * 0.06), int(s * 0.35))], fur + (255,), max(1, s // 24))
+    # legs
+    w = max(1, s // 28)
+    for i, dx in enumerate((0.28, 0.44, 0.60, 0.74)):
+        lift = leg if i % 2 == 0 else 0
+        d.line([(int(s * dx), int(s * 0.72)), (int(s * dx), int(s * 0.96) - lift)], dark + (255,), w)
+    return im
+
+
+def make_troll(size, frame=0):
+    # Cave troll: hulking grey-green brute with a club. Biggest silhouette yet.
+    im, d = new(size, size)
+    s = size
+    hide, dark = (110, 128, 104), (58, 68, 58)
+    sway = 0 if frame % 2 == 0 else max(1, s // 20)
+    # legs
+    d.rectangle([int(s * 0.30), int(s * 0.74), int(s * 0.44), int(s * 0.98)], dark + (255,))
+    d.rectangle([int(s * 0.56), int(s * 0.74), int(s * 0.70), int(s * 0.98)], dark + (255,))
+    # torso
+    d.ellipse([int(s * 0.20), int(s * 0.34) + sway, int(s * 0.80), int(s * 0.80) + sway], hide + (255,))
+    d.ellipse([int(s * 0.30), int(s * 0.42) + sway, int(s * 0.70), int(s * 0.72) + sway], dark + (255,))
+    # head: low brow, underbite tusks
+    d.ellipse([int(s * 0.32), int(s * 0.10), int(s * 0.68), int(s * 0.36)], hide + (255,))
+    d.line([(int(s * 0.34), int(s * 0.22)), (int(s * 0.48), int(s * 0.24))], dark + (255,), max(1, s // 24))
+    d.line([(int(s * 0.66), int(s * 0.22)), (int(s * 0.52), int(s * 0.24))], dark + (255,), max(1, s // 24))
+    e = max(1, s // 18)
+    d.rectangle([int(s * 0.40), int(s * 0.26), int(s * 0.40) + e, int(s * 0.26) + e], (240, 200, 80, 255))
+    d.rectangle([int(s * 0.58), int(s * 0.26), int(s * 0.58) + e, int(s * 0.26) + e], (240, 200, 80, 255))
+    d.polygon([(int(s * 0.42), int(s * 0.34)), (int(s * 0.46), int(s * 0.34)), (int(s * 0.44), int(s * 0.28))], (230, 225, 210, 255))
+    d.polygon([(int(s * 0.54), int(s * 0.34)), (int(s * 0.58), int(s * 0.34)), (int(s * 0.56), int(s * 0.28))], (230, 225, 210, 255))
+    # club in right fist
+    d.line([(int(s * 0.84), int(s * 0.90)), (int(s * 0.90), int(s * 0.30) + sway)], PAL["wood_b"] + (255,), max(2, s // 14))
+    d.ellipse([int(s * 0.78), int(s * 0.62) + sway, int(s * 0.94), int(s * 0.76) + sway], hide + (255,))
+    return im
+
+
+def make_barbarian(size, frame=0):
+    # Throm, delirious: bare-chested warrior with war paint and topknot.
+    im, d = new(size, size)
+    s = size
+    skin, paint, dark = (208, 160, 118), (140, 40, 36), (90, 60, 30)
+    sway = 0 if frame % 2 == 0 else max(1, s // 20)
+    # torso
+    d.ellipse([int(s * 0.28), int(s * 0.40) + sway, int(s * 0.72), int(s * 0.95) + sway], skin + (255,))
+    d.line([(int(s * 0.32), int(s * 0.55) + sway), (int(s * 0.68), int(s * 0.62) + sway)], paint + (255,), max(1, s // 24))
+    d.line([(int(s * 0.32), int(s * 0.68) + sway), (int(s * 0.68), int(s * 0.61) + sway)], paint + (255,), max(1, s // 24))
+    # arms
+    d.rectangle([int(s * 0.16), int(s * 0.44) + sway, int(s * 0.28), int(s * 0.82) + sway], skin + (255,))
+    d.rectangle([int(s * 0.72), int(s * 0.44) + sway, int(s * 0.84), int(s * 0.82) + sway], skin + (255,))
+    # head + topknot + beard
+    d.ellipse([int(s * 0.36), int(s * 0.12), int(s * 0.64), int(s * 0.38)], skin + (255,))
+    d.rectangle([int(s * 0.46), int(s * 0.02), int(s * 0.54), int(s * 0.14)], dark + (255,))
+    d.rectangle([int(s * 0.38), int(s * 0.30), int(s * 0.62), int(s * 0.42)], dark + (255,))
+    # fevered eyes
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.42), int(s * 0.22), int(s * 0.42) + e, int(s * 0.22) + e], (240, 220, 120, 255))
+    d.rectangle([int(s * 0.56), int(s * 0.22), int(s * 0.56) + e, int(s * 0.22) + e], (240, 220, 120, 255))
+    return im
+
+
+def make_bird(size, frame=0):
+    # Flying guardian: stuffed bird, beak and staring eyes.
+    im, d = new(size, size)
+    s = size
+    feather, dark = (139, 116, 88), (74, 60, 46)
+    flap = 0 if frame % 2 == 0 else max(1, s // 14)
+    d.ellipse([int(s * 0.10), int(s * 0.30) + flap, int(s * 0.42), int(s * 0.62) + flap], feather + (255,))
+    d.ellipse([int(s * 0.58), int(s * 0.30) + flap, int(s * 0.90), int(s * 0.62) + flap], feather + (255,))
+    d.ellipse([int(s * 0.34), int(s * 0.42), int(s * 0.66), int(s * 0.90)], feather + (255,))
+    d.ellipse([int(s * 0.40), int(s * 0.50), int(s * 0.60), int(s * 0.82)], dark + (255,))
+    # head + beak
+    d.ellipse([int(s * 0.38), int(s * 0.16), int(s * 0.62), int(s * 0.42)], feather + (255,))
+    d.polygon([(int(s * 0.46), int(s * 0.32)), (int(s * 0.54), int(s * 0.32)), (int(s * 0.50), int(s * 0.44))], PAL["fire_a"] + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.42), int(s * 0.24), int(s * 0.42) + e, int(s * 0.24) + e], INK + (255,))
+    d.rectangle([int(s * 0.56), int(s * 0.24), int(s * 0.56) + e, int(s * 0.24) + e], INK + (255,))
+    # feet
+    w = max(1, s // 28)
+    d.line([(int(s * 0.42), int(s * 0.88)), (int(s * 0.42), int(s * 0.98))], dark + (255,), w)
+    d.line([(int(s * 0.58), int(s * 0.88)), (int(s * 0.58), int(s * 0.98))], dark + (255,), w)
+    return im
+
+
+def make_snake(size, frame=0):
+    # Boa constrictor: coiled muscle, flat head, unblinking.
+    im, d = new(size, size)
+    s = size
+    scale, belly = (86, 128, 84), (168, 188, 140)
+    coil = 0 if frame % 2 == 0 else max(1, s // 18)
+    d.ellipse([int(s * 0.12), int(s * 0.55), int(s * 0.88), int(s * 0.95)], scale + (255,))
+    d.ellipse([int(s * 0.20), int(s * 0.62), int(s * 0.80), int(s * 0.90)], belly + (255,))
+    d.ellipse([int(s * 0.28), int(s * 0.38) + coil, int(s * 0.72), int(s * 0.66) + coil], scale + (255,))
+    # head raised right
+    d.ellipse([int(s * 0.58), int(s * 0.10), int(s * 0.92), int(s * 0.38)], scale + (255,))
+    d.rectangle([int(s * 0.62), int(s * 0.30), int(s * 0.88), int(s * 0.36)], belly + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.66), int(s * 0.18), int(s * 0.66) + e, int(s * 0.18) + e], (200, 40, 40, 255))
+    # tongue
+    d.line([(int(s * 0.90), int(s * 0.33)), (int(s * 0.98), int(s * 0.33))], (200, 60, 60, 255), max(1, s // 32))
+    return im
+
+
+def make_diamond():
+    # True gem: cold blue diamond.
+    im, d = new(TILE, TILE)
+    d.polygon([(8, 1), (13, 6), (8, 15), (3, 6)], (120, 200, 240, 255))
+    d.polygon([(8, 4), (11, 7), (8, 12), (5, 7)], (200, 240, 255, 255))
+    d.line([(3, 6), (13, 6)], (240, 250, 255, 255))
+    return im
+
+
+def make_grub(size, frame=0):
+    # Rock grub: blind segmented worm with a lamprey mouth.
+    im, d = new(size, size)
+    s = size
+    hide, dark = (150, 132, 118), (96, 80, 68)
+    squash = 0 if frame % 2 == 0 else max(1, s // 18)
+    for i, (x0, x1, y0, y1) in enumerate([(0.08, 0.34, 0.52, 0.80), (0.28, 0.56, 0.44, 0.74), (0.48, 0.76, 0.40, 0.68)]):
+        d.ellipse([int(s * x0), int(s * y0) + (squash if i == 1 else 0), int(s * x1), int(s * y1) + (squash if i == 1 else 0)], hide + (255,))
+        d.arc([int(s * x0), int(s * y0), int(s * x1), int(s * y1)], 0, 180, dark + (255,), max(1, s // 32))
+    # head + ring mouth
+    d.ellipse([int(s * 0.62), int(s * 0.30), int(s * 0.94), int(s * 0.62)], hide + (255,))
+    d.ellipse([int(s * 0.70), int(s * 0.38), int(s * 0.86), int(s * 0.54)], dark + (255,))
+    d.ellipse([int(s * 0.74), int(s * 0.42), int(s * 0.82), int(s * 0.50)], (140, 30, 30, 255))
+    # heat pits (blind eyes)
+    e = max(1, s // 20)
+    for ex in (0.66, 0.72):
+        d.rectangle([int(s * ex), int(s * 0.34), int(s * ex) + e, int(s * 0.34) + e], PAL["fire_a"] + (255,))
+    return im
+
+
+def make_shard(size, frame=0):
+    # Mirror demon: walking faceted glass, hollow glare.
+    im, d = new(size, size)
+    s = size
+    glass, edge = (170, 200, 220), (110, 140, 170)
+    lean = 0 if frame % 2 == 0 else max(1, s // 20)
+    # legs
+    d.polygon([(int(s * 0.36), int(s * 0.98)), (int(s * 0.46), int(s * 0.98)), (int(s * 0.44), int(s * 0.70))], edge + (255,))
+    d.polygon([(int(s * 0.54), int(s * 0.98)), (int(s * 0.64), int(s * 0.98)), (int(s * 0.56), int(s * 0.70))], edge + (255,))
+    # torso shard
+    d.polygon([(int(s * 0.30), int(s * 0.72) + lean), (int(s * 0.70), int(s * 0.72) + lean), (int(s * 0.60), int(s * 0.40)), (int(s * 0.40), int(s * 0.40))], glass + (255,))
+    d.line([(int(s * 0.34), int(s * 0.68) + lean), (int(s * 0.58), int(s * 0.44))], (235, 245, 255, 255), max(1, s // 32))
+    # arms
+    d.polygon([(int(s * 0.30), int(s * 0.70) + lean), (int(s * 0.24), int(s * 0.70) + lean), (int(s * 0.14), int(s * 0.44))], edge + (255,))
+    d.polygon([(int(s * 0.70), int(s * 0.70) + lean), (int(s * 0.76), int(s * 0.70) + lean), (int(s * 0.86), int(s * 0.44))], edge + (255,))
+    # head: hollow frame with glare
+    d.polygon([(int(s * 0.38), int(s * 0.36)), (int(s * 0.62), int(s * 0.36)), (int(s * 0.56), int(s * 0.12)), (int(s * 0.44), int(s * 0.12))], edge + (255,))
+    d.polygon([(int(s * 0.44), int(s * 0.30)), (int(s * 0.56), int(s * 0.30)), (int(s * 0.53), int(s * 0.18)), (int(s * 0.47), int(s * 0.18))], (240, 250, 255, 255))
+    return im
+
+
+def make_beast(size, frame=0):
+    # Bloodbeast: wall of red maw, weeping eyes, too many teeth.
+    im, d = new(size, size)
+    s = size
+    hide, dark = (150, 44, 40), (88, 26, 26)
+    breathe = 0 if frame % 2 == 0 else max(1, s // 16)
+    d.ellipse([int(s * 0.08), int(s * 0.14) + breathe, int(s * 0.92), int(s * 0.98)], hide + (255,))
+    d.ellipse([int(s * 0.16), int(s * 0.24) + breathe, int(s * 0.84), int(s * 0.90)], dark + (255,))
+    # maw
+    d.ellipse([int(s * 0.24), int(s * 0.46) + breathe, int(s * 0.76), int(s * 0.82)], (30, 12, 12, 255))
+    for i in range(5):
+        x = int(s * (0.30 + 0.10 * i))
+        d.polygon([(x, int(s * 0.48) + breathe), (x + max(1, s // 32), int(s * 0.48) + breathe), (x, int(s * 0.58) + breathe)], (235, 230, 210, 255))
+        d.polygon([(x, int(s * 0.80)), (x + max(1, s // 32), int(s * 0.80)), (x, int(s * 0.70))], (235, 230, 210, 255))
+    # weeping eyes
+    e = max(1, s // 14)
+    for ex in (0.30, 0.66):
+        d.ellipse([int(s * ex) - e, int(s * 0.28) - e, int(s * ex) + e, int(s * 0.28) + e], (250, 230, 150, 255))
+        d.line([(int(s * ex), int(s * 0.28) + e), (int(s * ex), int(s * 0.28) + e * 3)], (250, 230, 150, 255), max(1, s // 40))
+    # horns
+    d.polygon([(int(s * 0.16), int(s * 0.24) + breathe), (int(s * 0.24), int(s * 0.24) + breathe), (int(s * 0.10), int(s * 0.06))], (220, 210, 190, 255))
+    d.polygon([(int(s * 0.84), int(s * 0.24) + breathe), (int(s * 0.76), int(s * 0.24) + breathe), (int(s * 0.90), int(s * 0.06))], (220, 210, 190, 255))
+    return im
+
+
+def make_trog(size, frame=0):
+    # Troglodyte champion: upright lizard with ritual paint and a stone club.
+    im, d = new(size, size)
+    s = size
+    hide, paint = (104, 140, 96), (200, 190, 120)
+    sway = 0 if frame % 2 == 0 else max(1, s // 20)
+    d.rectangle([int(s * 0.34), int(s * 0.70), int(s * 0.46), int(s * 0.98)], hide + (255,))
+    d.rectangle([int(s * 0.54), int(s * 0.70), int(s * 0.66), int(s * 0.98)], hide + (255,))
+    d.ellipse([int(s * 0.28), int(s * 0.34) + sway, int(s * 0.72), int(s * 0.76) + sway], hide + (255,))
+    d.line([(int(s * 0.32), int(s * 0.52) + sway), (int(s * 0.68), int(s * 0.52) + sway)], paint + (255,), max(1, s // 28))
+    # snout head + crest
+    d.ellipse([int(s * 0.34), int(s * 0.10), int(s * 0.66), int(s * 0.36)], hide + (255,))
+    d.rectangle([int(s * 0.34), int(s * 0.24), int(s * 0.52), int(s * 0.32)], (70, 100, 66, 255))
+    for i in range(3):
+        x = int(s * (0.44 + 0.06 * i))
+        d.polygon([(x, int(s * 0.12)), (x + max(1, s // 32), int(s * 0.12)), (x, int(s * 0.04))], paint + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.56), int(s * 0.18), int(s * 0.56) + e, int(s * 0.18) + e], (240, 200, 80, 255))
+    # stone club
+    d.line([(int(s * 0.80), int(s * 0.90)), (int(s * 0.86), int(s * 0.40) + sway)], PAL["wood_b"] + (255,), max(2, s // 16))
+    d.ellipse([int(s * 0.78), int(s * 0.28) + sway, int(s * 0.94), int(s * 0.42) + sway], PAL["stone"] + (255,))
+    return im
+
+
+def make_plant(size, frame=0):
+    # Poison Ivy: thorned figure with a flowering head.
+    im, d = new(size, size)
+    s = size
+    vine, thorn = (64, 140, 70), (200, 220, 130)
+    sway = 0 if frame % 2 == 0 else max(1, s // 20)
+    d.rectangle([int(s * 0.42), int(s * 0.60), int(s * 0.50), int(s * 0.98)], (50, 90, 52, 255))
+    d.rectangle([int(s * 0.50), int(s * 0.60), int(s * 0.58), int(s * 0.98)], (50, 90, 52, 255))
+    d.ellipse([int(s * 0.30), int(s * 0.34) + sway, int(s * 0.70), int(s * 0.68) + sway], vine + (255,))
+    # thorns
+    for (x0, y0, x1, y1) in [(0.30, 0.50, 0.20, 0.44), (0.70, 0.50, 0.80, 0.44), (0.34, 0.62, 0.26, 0.62), (0.66, 0.62, 0.74, 0.62)]:
+        d.line([(int(s * x0), int(s * y0) + sway), (int(s * x1), int(s * y1) + sway)], thorn + (255,), max(1, s // 36))
+    # flowering head
+    for i in range(5):
+        a = 6.2832 * i / 5 + frame * 0.2
+        x = int(s * 0.5 + math.cos(a) * s * 0.10)
+        y = int(s * 0.22 + math.sin(a) * s * 0.10)
+        d.ellipse([x - max(1, s // 24), y - max(1, s // 24), x + max(1, s // 24), y + max(1, s // 24)], (214, 120, 180, 255))
+    d.ellipse([int(s * 0.46), int(s * 0.18), int(s * 0.54), int(s * 0.26)], (250, 220, 120, 255))
+    return im
+
+
+def make_manticore(size, frame=0):
+    # Manticore: lion body, bat wings, scorpion tail.
+    im, d = new(size, size)
+    s = size
+    tawny, dark = (178, 134, 80), (110, 78, 44)
+    crouch = 0 if frame % 2 == 0 else max(1, s // 18)
+    # wings
+    d.polygon([(int(s * 0.30), int(s * 0.50) + crouch), (int(s * 0.44), int(s * 0.50) + crouch), (int(s * 0.20), int(s * 0.16)), (int(s * 0.28), int(s * 0.44) + crouch)], dark + (255,))
+    d.polygon([(int(s * 0.70), int(s * 0.50) + crouch), (int(s * 0.56), int(s * 0.50) + crouch), (int(s * 0.80), int(s * 0.16)), (int(s * 0.72), int(s * 0.44) + crouch)], dark + (255,))
+    # body
+    d.ellipse([int(s * 0.20), int(s * 0.52) + crouch, int(s * 0.80), int(s * 0.88)], tawny + (255,))
+    # legs
+    w = max(1, s // 26)
+    for dx in (0.28, 0.44, 0.58, 0.72):
+        d.line([(int(s * dx), int(s * 0.80)), (int(s * dx), int(s * 0.98))], dark + (255,), w)
+    # mane + face
+    d.ellipse([int(s * 0.60), int(s * 0.30), int(s * 0.96), int(s * 0.62)], dark + (255,))
+    d.ellipse([int(s * 0.66), int(s * 0.36), int(s * 0.90), int(s * 0.58)], tawny + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.70), int(s * 0.42), int(s * 0.70) + e, int(s * 0.42) + e], (200, 40, 40, 255))
+    d.rectangle([int(s * 0.80), int(s * 0.42), int(s * 0.80) + e, int(s * 0.42) + e], (200, 40, 40, 255))
+    # scorpion tail
+    d.line([(int(s * 0.20), int(s * 0.60) + crouch), (int(s * 0.08), int(s * 0.30))], dark + (255,), max(2, s // 20))
+    d.polygon([(int(s * 0.08), int(s * 0.30)), (int(s * 0.04), int(s * 0.30)), (int(s * 0.08), int(s * 0.22))], (60, 50, 40, 255))
+    return im
+
+
+def make_fly(size, frame=0):
+    # Giant horsefly: winged silhouette (distinct from flame wisps), red eyes.
+    im, d = new(size, size)
+    s = size
+    wing, vein = (205, 215, 228), (150, 160, 180)
+    body, dark = (74, 62, 96), (42, 34, 58)
+    lift = 0 if frame % 2 == 0 else max(1, s // 16)
+    d.ellipse([int(s * 0.06), int(s * 0.10) + lift, int(s * 0.44), int(s * 0.42) + lift], wing + (255,))
+    d.ellipse([int(s * 0.56), int(s * 0.10) + lift, int(s * 0.94), int(s * 0.42) + lift], wing + (255,))
+    d.line([(int(s * 0.12), int(s * 0.26) + lift), (int(s * 0.38), int(s * 0.26) + lift)], vein + (255,))
+    d.line([(int(s * 0.62), int(s * 0.26) + lift), (int(s * 0.88), int(s * 0.26) + lift)], vein + (255,))
+    d.ellipse([int(s * 0.32), int(s * 0.34), int(s * 0.68), int(s * 0.92)], body + (255,))
+    d.line([(int(s * 0.5), int(s * 0.36)), (int(s * 0.5), int(s * 0.9))], dark + (255,), max(1, s // 32))
+    d.ellipse([int(s * 0.36), int(s * 0.22), int(s * 0.64), int(s * 0.44)], dark + (255,))
+    e = max(1, s // 12)
+    for ex in (0.40, 0.60):
+        d.ellipse([int(s * ex) - e, int(s * 0.30) - e, int(s * ex) + e, int(s * 0.30) + e], (200, 40, 40, 255))
+    w = max(1, s // 32)
+    for dx in (-0.2, -0.07, 0.07, 0.2):
+        d.line([(int(s * (0.5 + dx * 0.5)), int(s * 0.7)), (int(s * (0.5 + dx)), int(s * 0.94))], dark + (255,), w)
+    return im
+
+
 def make_creatures():
     gens = {
         "flame_wisp": lambda s, f: make_wisp(s, f),
@@ -399,6 +807,18 @@ def make_creatures():
         "steam_brute": lambda s, f: make_steam(s, f, True),
         "cinder_golem": make_golem,
         "moss_shade": make_shade,
+        "giant_fly": make_fly,
+        "guard_dog": make_dog,
+        "cave_troll": make_troll,
+        "throm_duel": make_barbarian,
+        "flying_guardian": make_bird,
+        "boa_constrictor": make_snake,
+        "mirror_demon": make_shard,
+        "bloodbeast": make_beast,
+        "rock_grub": make_grub,
+        "trog_champion": make_trog,
+        "poison_ivy": make_plant,
+        "manticore": make_manticore,
     }
     for name, g in gens.items():
         for f in range(2):
@@ -428,8 +848,13 @@ def import_pack():
             canvas.paste(im, ((96 - im.width) // 2, 96 - im.height), im)
             save(canvas, f"portraits/{key}.png")
     # 8-direction mages -> overworld 16x24-ish cutscene sprites (4 dirs)
-    for key, name in (("red_mage", "FireMage"), ("blue_mage", "IceMage")):
-        for facing, src in (("down", "Front"), ("up", "Back"), ("left", "Left"), ("right", "Right")):
+    # Side views: the pack's "Left.png"/"Right.png" are named for the side of the
+    # SHEET, not the facing — measured eye position shows both Left.png files
+    # face RIGHT. This was the root cause of the confrontation-facing bug. Each
+    # mage uses Right.png (verified LEFT-facing) and mirrors it for right-facing,
+    # so facing is correct by construction. Checked by tools/check_facing.py.
+    for key, name, left_file in (("red_mage", "FireMage", "Right"), ("blue_mage", "IceMage", "Right")):
+        for facing, src in (("down", "Front"), ("up", "Back"), ("left", left_file), ("right", left_file)):
             p = SRC / "Characters" / "NPC" / "EnemyNPC" / f"{name}Sprites" / f"{src}.png"
             if p.exists():
                 im = Image.open(p).convert("RGBA")
@@ -439,6 +864,8 @@ def import_pack():
                 im.thumbnail((18, 26), Image.NEAREST)
                 canvas = Image.new("RGBA", (18, 26), (0, 0, 0, 0))
                 canvas.paste(im, ((18 - im.width) // 2, 26 - im.height), im)
+                if facing == "right":
+                    canvas = canvas.transpose(Image.FLIP_LEFT_RIGHT)  # exact mirror of the left view
                 for f in range(2):
                     save(canvas, f"chars/{key}_{facing}_{f}.png")
     # Hedge wizard (Ashby): recolour the fire mage towards moss green.

@@ -8,7 +8,36 @@ extends Node
 ## content can add its own without schema changes.
 
 const SAVE_PATH := "user://adventure.save"
-const SAVE_VERSION := 1
+const SAVE_VERSION := 3
+
+## Story state machine (CORRECTIVE_PASS_PLAN Phase 0). One authoritative field;
+## local event flags remain in state["flags"].
+const PHASES := ["halvard_prologue", "john_intro", "ashby_training", "pre_trial", "trial", "post_trial_recovery"]
+const PHASE_NEXT := {
+	"halvard_prologue": ["john_intro"],
+	"john_intro": ["ashby_training"],
+	"ashby_training": ["pre_trial"],
+	"pre_trial": ["trial", "post_trial_recovery"],
+	"trial": ["post_trial_recovery"],
+	"post_trial_recovery": [],
+}
+## Battle-result policy categories. The combat UI reports; the story layer decides.
+const POLICY_PROLOGUE := "PROLOGUE_FORCED_DEFEAT"
+const POLICY_TRAINING := "TRAINING_CONTINUE"
+const POLICY_STORY := "STORY_DEFEAT_TRANSITION"
+const POLICY_TRIAL := "TRIAL_STORY_RESULT"
+const POLICY_QUICK := "QUICK_DUEL"
+const OPTIMAL_EVERY := 3
+
+## The single Trial attempt. John's magic and world flags are permanent; the
+## attempt's gems/conditions/contestant states live in state["run"]. There is no
+## reset: defeat is handled by the story-defeat policy, not by restarting the run.
+const RUN_START_AREA := "dd_entrance"
+const RUN_START_POS := [10, 11]
+const RUN_CONTESTANTS := {
+	"knight": "ahead", "elf": "ahead", "throm": "ahead",
+	"assassin": "ahead", "barbarian2": "ahead", "red_wizard": "ahead",
+}
 
 const _Progression = preload("res://sim/progression.gd")
 
@@ -40,15 +69,27 @@ func new_game() -> void:
 	progression = _Progression.new()
 	state = {
 		"version": SAVE_VERSION,
-		"area": "forest_home",
-		"pos": [6, 8],
+		"area": "village",
+		"pos": [11, 6],
 		"facing": "down",
 		"flags": {},
 		"defeated": [],
+		"watching": [],
 		"picked": [],
 		"extinguished": [],
 		"talked": {},
 		"play_seconds": 0.0,
+		"run": null,
+		"dungeon_knowledge": {},
+		"story": {
+			"phase": "halvard_prologue",
+			"protagonist": "halvard",
+			"encounters": {},
+			"encounter_index": 0,
+			"story_defeats": 0,
+			"left_for_dead_used": false,
+			"recovery_pending": false,
+		},
 	}
 	pending_battle = {}
 	last_battle_result = {}
@@ -79,17 +120,31 @@ func load_game() -> bool:
 	if f == null:
 		return false
 	var data = JSON.parse_string(f.get_as_text())
+	f.close()
 	if typeof(data) != TYPE_DICTIONARY or not data.has("state"):
+		return false
+	# Saves older than v3 predate the story state machine (protagonist, phase,
+	# defeat policy). Migrating them would produce impossible states, so they are
+	# invalidated explicitly rather than guessed at.
+	if int(data["state"].get("version", 1)) < SAVE_VERSION or not data["state"].has("story"):
+		push_warning("Adventure: save predates v%d — discarded" % SAVE_VERSION)
+		delete_save()
 		return false
 	state = data["state"]
 	# JSON gives floats; normalise the bits we index with.
 	state["pos"] = [int(state["pos"][0]), int(state["pos"][1])]
-	for k in ["defeated", "picked", "extinguished"]:
+	for k in ["defeated", "picked", "extinguished", "watching"]:
 		if not state.has(k):
 			state[k] = []
 	for k in ["flags", "talked"]:
 		if not state.has(k):
 			state[k] = {}
+	if not state.has("run"):
+		state["run"] = null
+	if not state.has("dungeon_knowledge"):
+		state["dungeon_knowledge"] = {}
+	state["story"]["encounter_index"] = int(state["story"].get("encounter_index", 0))
+	state["story"]["story_defeats"] = int(state["story"].get("story_defeats", 0))
 	progression = _Progression.from_dict(data.get("progression", {}))
 	pending_battle = {}
 	last_battle_result = {}
@@ -173,6 +228,252 @@ func grow_weave(to: int) -> bool:
 	if ok:
 		state_changed.emit()
 	return ok
+
+
+# --- Story state machine ------------------------------------------------------------
+
+func _story() -> Dictionary:
+	return state.get("story", {})
+
+
+func story_phase() -> String:
+	return str(_story().get("phase", "halvard_prologue"))
+
+
+func protagonist() -> String:
+	return str(_story().get("protagonist", "john"))
+
+
+func advance_phase(to: String) -> bool:
+	if not (to in PHASES):
+		return false
+	var allowed: Array = PHASE_NEXT.get(story_phase(), [])
+	if not (to in allowed):
+		return false
+	state["story"]["phase"] = to
+	if to != "halvard_prologue":
+		state["story"]["protagonist"] = "john"
+	state_changed.emit()
+	return true
+
+
+## Authoritative Trial-entry check (brief §14). Normal progression satisfies it;
+## the gate refuses abnormal routes/saves diegetically.
+func trial_ready() -> bool:
+	return flag("has_staff") and progression.weave_size >= 3 and progression.spells_known.size() >= 4
+
+
+## Battle-result policy: explicit `policy` on the request wins; `training`
+## requests continue; anything else in an active adventure is a story battle.
+func battle_policy_for(request: Dictionary) -> String:
+	if request.has("policy"):
+		return str(request["policy"])
+	if not _active:
+		return POLICY_QUICK
+	if bool(request.get("training", false)):
+		return POLICY_TRAINING
+	if story_phase() == "halvard_prologue":
+		return POLICY_PROLOGUE
+	return POLICY_STORY
+
+
+## Story defeat bookkeeping (brief §24). Returns "left_for_dead" the first time,
+## "recovery" afterwards. Training and prologue defeats never call this.
+func record_story_defeat() -> String:
+	state["story"]["story_defeats"] = int(_story().get("story_defeats", 0)) + 1
+	var outcome := "recovery"
+	if not bool(_story().get("left_for_dead_used", false)):
+		state["story"]["left_for_dead_used"] = true
+		outcome = "left_for_dead"
+	else:
+		state["story"]["recovery_pending"] = true
+		if story_phase() != "post_trial_recovery":
+			advance_phase("post_trial_recovery")
+	save()
+	state_changed.emit()
+	return outcome
+
+
+func left_for_dead_used() -> bool:
+	return bool(_story().get("left_for_dead_used", false))
+
+
+func post_trial_recovery_pending() -> bool:
+	return bool(_story().get("recovery_pending", false))
+
+
+## Every-third-battle rule (brief §9). Numbers John's encounters once each; the
+## prologue does not count. Re-challenging an encounter keeps its number.
+func begin_encounter(encounter_id: String) -> int:
+	if story_phase() == "halvard_prologue":
+		return 0
+	var seq: Dictionary = state["story"].get("encounters", {})
+	if seq.has(encounter_id):
+		return int(seq[encounter_id])
+	var n := int(_story().get("encounter_index", 0)) + 1
+	seq[encounter_id] = n
+	state["story"]["encounters"] = seq
+	state["story"]["encounter_index"] = n
+	state_changed.emit()
+	return n
+
+
+func is_optimal_encounter(encounter_id: String) -> bool:
+	var n := int(state["story"].get("encounters", {}).get(encounter_id, 0))
+	return n > 0 and n % OPTIMAL_EVERY == 0
+
+
+# --- Trial attempt state ---------------------------------------------------------------
+
+func run_active() -> bool:
+	return state.get("run") != null and bool(state["run"].get("active", false))
+
+
+func run_state() -> Dictionary:
+	if state.get("run") == null:
+		return {}
+	return state["run"]
+
+
+func start_run() -> void:
+	state["run"] = {
+		"active": true,
+		"area": RUN_START_AREA,
+		"pos": RUN_START_POS.duplicate(),
+		"visited": [RUN_START_AREA],
+		"inventory": [],
+		"gems": [],
+		"conditions": [],
+		"notes": [],
+		"contestants": RUN_CONTESTANTS.duplicate(),
+		"flags": {},
+	}
+	set_location(RUN_START_AREA, int(RUN_START_POS[0]), int(RUN_START_POS[1]), "up")
+	mark_visited(RUN_START_AREA)
+	save()
+	state_changed.emit()
+
+
+func mark_visited(area_id: String) -> void:
+	if run_active() and not area_id in run_state()["visited"]:
+		state["run"]["visited"].append(area_id)
+	if knowledge_status(area_id) == "unknown":
+		state["dungeon_knowledge"][area_id] = "seen"
+
+
+func knowledge_status(area_id: String) -> String:
+	return str(state.get("dungeon_knowledge", {}).get(area_id, "unknown"))
+
+
+## John's journal: persistent knowledge (never what he hasn't learned) + run state.
+func notebook_text() -> String:
+	var _World = load("res://client/world/world_data.gd")
+	var lines := ["JOHN'S JOURNAL"]
+	if run_active():
+		var gems: Array = run_state().get("gems", [])
+		var names := []
+		for gm in gems:
+			names.append(str(gm).capitalize())
+		lines.append("Gems carried: " + (", ".join(PackedStringArray(names)) if not names.is_empty() else "none yet"))
+		var conds: Array = run_state().get("conditions", [])
+		if not conds.is_empty():
+			lines.append("Ailing: " + ", ".join(PackedStringArray(conds)))
+	var known: Array = state.get("dungeon_knowledge", {}).keys()
+	if known.is_empty():
+		lines.append("The dark below is still unknown.")
+	else:
+		lines.append("Known ground:")
+		for id in known:
+			var nm := str(id)
+			if _World.area_ids().has(id):
+				nm = str(_World.get_area(str(id)).get("name", id))
+			lines.append("- %s (%s)" % [nm, knowledge_status(str(id))])
+	if flag("diamond_clue"):
+		lines.append("The Elf's clue: the final door wants gems. One is a diamond.")
+	if run_active():
+		var notes: Array = run_state().get("notes", [])
+		if not notes.is_empty():
+			lines.append("Learned:")
+			for n in notes:
+				lines.append("- " + str(n))
+		var fell := []
+		for cid in run_state().get("contestants", {}).keys():
+			var st := str(run_state()["contestants"][cid])
+			if st != "ahead":
+				fell.append("%s: %s" % [cid, st])
+		if not fell.is_empty():
+			lines.append("Others: " + ", ".join(PackedStringArray(fell)))
+	return "\n".join(PackedStringArray(lines))
+
+
+func add_gem(gem: String) -> void:
+	if run_active() and not gem in run_state()["gems"]:
+		state["run"]["gems"].append(gem)
+		state_changed.emit()
+
+
+func has_gem(gem: String) -> bool:
+	return run_active() and gem in run_state()["gems"]
+
+
+func add_condition(cond: String) -> void:
+	if run_active():
+		state["run"]["conditions"].append(cond)
+		state_changed.emit()
+
+
+func has_condition(cond: String) -> bool:
+	return run_active() and cond in run_state().get("conditions", [])
+
+
+## A discovery made during the attempt (brief §28): appears in the journal.
+func add_knowledge(note: String) -> void:
+	if run_active():
+		if not state["run"].has("notes"):
+			state["run"]["notes"] = []
+		if not note in state["run"]["notes"]:
+			state["run"]["notes"].append(note)
+			state_changed.emit()
+
+
+func clear_conditions() -> void:
+	if run_active():
+		state["run"]["conditions"] = []
+		state_changed.emit()
+
+
+func set_contestant(id: String, st: String) -> void:
+	if run_active():
+		state["run"]["contestants"][id] = st
+		state_changed.emit()
+
+
+func set_run_flag(name: String, value: bool = true) -> void:
+	if run_active():
+		state["run"]["flags"][name] = value
+		state_changed.emit()
+
+
+func run_flag(name: String) -> bool:
+	return run_active() and bool(run_state().get("flags", {}).get(name, false))
+
+
+## Duel modifiers from run conditions (John's combatant only).
+func player_mods() -> Dictionary:
+	var mods := {}
+	if not run_active():
+		return mods
+	var wounds := 0
+	for c in run_state().get("conditions", []):
+		if str(c) == "wounded":
+			wounds += 1
+		elif str(c) == "poisoned":
+			mods["min_cast_bonus"] = 2.0
+		elif str(c) == "slowed":
+			mods["max_cast_bonus"] = -10.0
+	if wounds > 0:
+		mods["max_casts"] = maxi(6, 10 - wounds)
+	return mods
 
 
 # --- Battle bridge ----------------------------------------------------------------

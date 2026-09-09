@@ -44,31 +44,55 @@ func _run() -> void:
 	menu.queue_free()
 	await process_frame
 
-	# 04 opening
+	# 04 prologue: you are Halvard, in Ashwell
 	_adv.new_game()
 	await _new_world()
 	await _frames(20)
-	_capture("04_opening_text.png")
-	_world.ui_dialogue_advance()
-	await _frames(2)
-	_world.ui_dialogue_advance()
-	await _frames(2)
-	_world.ui_dialogue_advance()
-	await _frames(2)
-	_world.ui_dialogue_advance()
-	await _frames(20)
-	_capture("05_clearing_free_roam.png")
+	_capture("04_prologue_text.png")
+	await _drain()
+	await _frames(10)
+	_capture("05_halvard_free_roam.png")
 
-	# 06 post-cutscene burning clearing (skip the scripted scene by setting flags)
+	# 05b Red intercept staging: walk Halvard onto the road until the trigger
+	# fires (the story event locks input and stages Red), then shoot both layouts.
+	for step in [Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(-1, 0), Vector2i(-1, 0)]:
+		if _world.ui_input_locked():
+			break
+		await _step(step)
+	var g := 0
+	while not _world.ui_dialogue_open() and g < 240:
+		await process_frame
+		g += 1
+	_capture("05a_red_intercept_narration.png")
+	_world.ui_dialogue_advance()
+	await _frames(2)
+	_world.ui_dialogue_advance()
+	g = 0
+	while _world.ui_actor_facing("red") == "" and g < 240:
+		await process_frame
+		g += 1
+	await _frames(70)   # Red walks in
+	_capture("05b_red_intercept_facing.png")
+	print("FACING CHECK: red=%s halvard=%s red_pos=%s halvard_pos=%s" % [_world.ui_actor_facing("red"), _world.ui_actor_facing("john"), str(_world.ui_actor_pos("red")), str(_world.john_pos())])
+	_world.ui_dialogue_advance()
+	await _frames(2)
+	_world.ui_dialogue_advance()
+	await _frames(30)
+	_capture("05c_red_intercept_line.png")
+
+	# 06 aftermath: John over Halvard's body, staff in the road
 	await _free_world()
+	_adv.new_game()
 	_adv.set_flag("opening_seen")
-	_adv.set_flag("opening_done")
-	_adv.set_location("forest_home", 7, 9, "up")
+	_adv.set_flag("halvard_dead")
+	_adv.set_flag("red_intercept_done")
+	_adv.advance_phase("john_intro")
+	_adv.set_location("village", 10, 9, "up")
 	await _new_world()
 	await _frames(20)
-	_capture("06_burning_clearing_staff.png")
+	_capture("06_john_over_the_body.png")
 
-	# 07 dialogue box
+	# 07 dialogue box (taking the staff; paginated text)
 	_world.ui_action()
 	await _frames(40)
 	_capture("07_pickup_dialogue.png")
@@ -76,17 +100,25 @@ func _run() -> void:
 	await _frames(5)
 	_capture("08_hud_with_water_magic.png")
 
-	# 09 burnt wood
+	# 08b Ashby in the workshop (2-slot lesson state)
+	_adv.learn_spell(6)
+	_adv.grow_weave(1)
+	_adv.set_flag("ashby_duel1_done")
+	_adv.set_flag("ashby_duel2_done")
 	await _free_world()
-	_adv.learn_spell(0)
-	_adv.grow_weave(2)
+	_adv.set_location("village", 14, 15, "up")
+	await _new_world()
+	await _frames(20)
+	_capture("08b_ashby_workshop.png")
+
+	# 09 burnt wood training detour
+	await _free_world()
 	_adv.set_location("forest_deep", 8, 16, "up")
 	await _new_world()
 	await _frames(20)
 	_capture("09_burnt_wood.png")
 
-	# 10 encounter warning dialogue (asymmetric)
-	_adv.set_flag("first_fire_out")
+	# 10 encounter intro dialogue (imp, facing it)
 	await _free_world()
 	_adv.set_location("forest_deep", 10, 16, "up")
 	await _new_world()
@@ -96,10 +128,8 @@ func _run() -> void:
 	_capture("10_encounter_intro.png")
 	await _drain()
 
-	# 11 village
+	# 11 Ashwell vista
 	await _free_world()
-	_adv.learn_spell(3)
-	_adv.grow_weave(3)
 	_adv.set_location("village", 10, 7, "down")
 	await _new_world()
 	await _frames(20)
@@ -107,8 +137,74 @@ func _run() -> void:
 	_world.ui_action()
 	await _frames(2)
 
-	# 12 pause menu
+
+	# 11b trial road vista
 	await _drain()
+	await _free_world()
+	_adv.set_location("trial_road", 10, 7, "down")
+	await _new_world()
+	await _frames(20)
+	_capture("11b_trial_road.png")
+
+
+	# 11c trial gate roster
+	await _free_world()
+	_adv.set_location("trial_gate", 9, 6, "up")
+	await _new_world()
+	await _frames(20)
+	_capture("11c_trial_gate.png")
+
+
+	# 11d crystal entrance (fresh run state for run-scoped entities)
+	await _free_world()
+	_adv.start_run()
+	await _new_world()
+	await _frames(20)
+	_capture("11d_crystal_entrance.png")
+
+
+	# 11e Throm's pit
+	await _free_world()
+	_adv.set_location("dd_pit", 9, 8, "left")
+	await _new_world()
+	await _frames(20)
+	_capture("11e_throm_pit.png")
+
+
+	# 11f lower route books alcove
+	await _free_world()
+	_adv.set_location("dd_lower", 8, 5, "left")
+	await _new_world()
+	await _frames(20)
+	_capture("11f_lower_books.png")
+
+	# 11g-11p every remaining dungeon zone (P3-P6), one vista each
+	var zone_shots := [
+		["11g_trialmaster", "dd_trialmaster", 8, 8, "up"],
+		["11h_idol", "dd_idol", 9, 8, "up"],
+		["11i_grotto", "dd_grotto", 8, 8, "up"],
+		["11j_vaults", "dd_vaults", 10, 7, "up"],
+		["11k_service", "dd_service", 8, 7, "up"],
+		["11l_mirror", "dd_mirror", 10, 8, "up"],
+		["11m_blood", "dd_blood", 9, 8, "up"],
+		["11n_grub", "dd_grub", 8, 8, "up"],
+		["11o_troglodytes", "dd_troglodytes", 9, 7, "left"],
+		["11p_manticore", "dd_manticore", 8, 7, "right"],
+		["11q_igbut", "dd_igbut", 8, 5, "down"],
+	]
+	for z in zone_shots:
+		await _free_world()
+		_adv.set_location(str(z[1]), int(z[2]), int(z[3]), str(z[4]))
+		await _new_world()
+		await _frames(20)
+		_capture(str(z[0]) + ".png")
+
+
+	# 12 pause menu (fresh world for the menu)
+	await _free_world()
+	_adv.set_location("village", 10, 7, "down")
+	await _new_world()
+	await _frames(10)
 	_world._on_menu()
 	await _frames(10)
 	_capture("12_pause_menu.png")
@@ -185,6 +281,18 @@ func _battle_shots() -> void:
 	_capture("20_battle_1v1_victory.png")
 	board.queue_free()
 	_adv.clear_pending_battle()
+
+
+func _step(dir: Vector2i) -> void:
+	var guard := 0
+	while (_world.ui_is_moving() or _world.ui_input_locked()) and guard < 600:
+		await process_frame
+		guard += 1
+	_world.ui_step(dir)
+	var g2 := 0
+	while _world.ui_is_moving() and g2 < 600:
+		await process_frame
+		g2 += 1
 
 
 func _new_world() -> void:

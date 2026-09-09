@@ -1,0 +1,12 @@
+{
+  "passage": 270,
+  "status": "BOOK_VERIFIED",
+  "beat": "Named box provides two gold pieces and Sukumvit's warning that several items will be needed.",
+  "edges": [
+    {
+      "action": "continue",
+      "to": 56
+    }
+  ],
+  "adaptation_notes": "Optional aid pickup and first explicit hint that the dungeon is an item-dependent puzzle."
+}
