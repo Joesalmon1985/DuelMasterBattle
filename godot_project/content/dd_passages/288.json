@@ -1,0 +1,16 @@
+{
+  "passage": 288,
+  "status": "BOOK_VERIFIED",
+  "beat": "Throm has killed his troll but is wounded. A druidic bone ring is found; he refuses to touch it and advises against it.",
+  "edges": [
+    {
+      "action": "wear ring",
+      "to": 64
+    },
+    {
+      "action": "continue with Throm",
+      "to": 221
+    }
+  ],
+  "adaptation_notes": "Companion commentary changes how a risky pickup feels without removing player agency."
+}

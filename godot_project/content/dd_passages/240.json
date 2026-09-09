@@ -1,0 +1,16 @@
+{
+  "passage": 240,
+  "status": "BOOK_VERIFIED",
+  "beat": "After the Flying Guardians are defeated, the emerald eye can be removed.",
+  "edges": [
+    {
+      "action": "try other eye",
+      "to": 34
+    },
+    {
+      "action": "climb down",
+      "to": 89
+    }
+  ],
+  "adaptation_notes": "Emerald acquired; tempting second eye remains dangerous."
+}

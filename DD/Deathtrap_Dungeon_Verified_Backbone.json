@@ -1,0 +1,502 @@
+{
+  "title": "Deathtrap Dungeon — Book-Verified Backbone for Duel Master Battle",
+  "status": "verified_macrograph_not_full_400_node_adjacency",
+  "source_policy": {
+    "canonical": "Ian Livingstone, Deathtrap Dungeon PDF supplied by user",
+    "comparison_only": "Joesalmon1985/Glen-s-game feat/deathtrap-puca-principles-perf deathtrap_ff pack",
+    "rule": "No judgement_inferred repo passage is accepted as canonical without verification against the book."
+  },
+  "premise": {
+    "location": "Fang / Baron Sukumvit's Trial of Champions",
+    "structure": "A deliberately lethal labyrinth with one successful route, traps, monsters, rival contestants and required items.",
+    "video_game_translation": "Dungeon run with permanent player knowledge/progression outside the run and run-specific dungeon state inside it."
+  },
+  "verified_nodes": [
+    {
+      "passage": 1,
+      "beat": "Crystal-lit entrance tunnel; six boxes including one bearing the contestant's name.",
+      "edges": [
+        {
+          "action": "open named box",
+          "to": 270
+        },
+        {
+          "action": "continue north",
+          "to": 66
+        }
+      ],
+      "adaptation": "Trial Gate / first physical corridor; optional aid box."
+    },
+    {
+      "passage": 270,
+      "beat": "Named box provides two gold pieces and Sukumvit's warning that several items will be needed.",
+      "edges": [
+        {
+          "action": "continue",
+          "to": 56
+        }
+      ],
+      "adaptation": "Optional aid pickup and first explicit hint that the dungeon is an item-dependent puzzle."
+    },
+    {
+      "passage": 66,
+      "beat": "First major junction: white arrow points west; several footprints went west and one east.",
+      "edges": [
+        {
+          "action": "west",
+          "to": 293
+        },
+        {
+          "action": "east",
+          "to": 119
+        }
+      ],
+      "adaptation": "Physical fork with visible tracks and painted arrow."
+    },
+    {
+      "passage": 119,
+      "beat": "Eastern branch loops toward the soft obstruction / opening route.",
+      "edges": [
+        {
+          "action": "continue east",
+          "to": 56
+        },
+        {
+          "action": "return and go west",
+          "to": 293
+        }
+      ],
+      "adaptation": "Short exploratory loop demonstrating that routes can reconnect."
+    },
+    {
+      "passage": 293,
+      "beat": "Three sets of footprints divide: two west, one north.",
+      "edges": [
+        {
+          "action": "follow two sets west",
+          "to": 137
+        },
+        {
+          "action": "follow one set north",
+          "to": 382
+        }
+      ],
+      "adaptation": "Second footprint fork; rivals function as moving breadcrumbs."
+    },
+    {
+      "passage": 382,
+      "beat": "Old man's statue riddle; the player recognizes the petrified Knight who entered the Trial first.",
+      "edges": [
+        {
+          "action": "answer 100",
+          "to": 44
+        },
+        {
+          "action": "answer 150",
+          "to": 222
+        },
+        {
+          "action": "answer 200",
+          "to": 391
+        }
+      ],
+      "adaptation": "Puzzle room and first concrete evidence of a rival's fate."
+    },
+    {
+      "passage": 154,
+      "beat": "Player catches up with the Barbarian and travels west with him.",
+      "edges": [
+        {
+          "action": "continue together",
+          "to": 22
+        }
+      ],
+      "adaptation": "Throm physically joins John as a temporary companion."
+    },
+    {
+      "passage": 22,
+      "beat": "Uneasy temporary alliance with the Barbarian; both know only one contestant may win; they reach a deep pit.",
+      "edges": [
+        {
+          "action": "accept Barbarian lowering player",
+          "to": 63
+        },
+        {
+          "action": "offer to lower Barbarian",
+          "to": 184
+        },
+        {
+          "action": "jump pit together",
+          "to": 311
+        }
+      ],
+      "adaptation": "Companion choice at a physical pit; preserve mistrust and cooperation."
+    },
+    {
+      "passage": 184,
+      "beat": "The Barbarian identifies himself as Throm. His distrust is visible while the player lowers him by rope.",
+      "edges": [
+        {
+          "action": "join Throm below",
+          "to": 323
+        },
+        {
+          "action": "abandon him and cross",
+          "to": 149
+        }
+      ],
+      "adaptation": "Relationship branch: ally versus betrayal."
+    },
+    {
+      "passage": 194,
+      "beat": "Two leather-bound books; Throm is contemptuous of reading and urges haste.",
+      "edges": [
+        {
+          "action": "red book",
+          "to": 52
+        },
+        {
+          "action": "black book",
+          "to": 138
+        },
+        {
+          "action": "continue",
+          "to": 369
+        }
+      ],
+      "adaptation": "Walkable alcove where companion behaviour communicates personality."
+    },
+    {
+      "passage": 138,
+      "beat": "Black book contains an unknown potion; Throm refuses it and distrusts the unknown.",
+      "edges": [
+        {
+          "action": "drink",
+          "to": 397
+        },
+        {
+          "action": "rub on wounds",
+          "to": 25
+        },
+        {
+          "action": "red book",
+          "to": 52
+        },
+        {
+          "action": "continue",
+          "to": 369
+        }
+      ],
+      "adaptation": "Item experimentation with Throm reacting in-world."
+    },
+    {
+      "passage": 169,
+      "beat": "Throm hears approaching footsteps first; two Cave Trolls arrive and each adventurer takes one.",
+      "edges": [
+        {
+          "action": "win player's Cave Troll fight",
+          "to": 288
+        }
+      ],
+      "adaptation": "Parallel encounter: Throm visibly occupies one troll while John enters a Duel Master battle with the other."
+    },
+    {
+      "passage": 288,
+      "beat": "Throm has killed his troll but is wounded. A druidic bone ring is found; he refuses to touch it and advises against it.",
+      "edges": [
+        {
+          "action": "wear ring",
+          "to": 64
+        },
+        {
+          "action": "continue with Throm",
+          "to": 221
+        }
+      ],
+      "adaptation": "Companion commentary changes how a risky pickup feels without removing player agency."
+    },
+    {
+      "passage": 60,
+      "beat": "Dwarf Trialmaster locks John and Throm in a chamber and says only one may continue. Throm proposes attacking him.",
+      "edges": [
+        {
+          "action": "attack Dwarf with Throm",
+          "to": 179
+        },
+        {
+          "action": "persuade Throm to accept test",
+          "to": 365
+        }
+      ],
+      "adaptation": "Major social/puzzle set-piece; Dwarf is controller, not a generic monster."
+    },
+    {
+      "passage": 365,
+      "beat": "John persuades Throm to accept the Trialmaster's procedure; the Dwarf takes John through a secret door and begins a dice-probability test.",
+      "edges": [
+        {
+          "action": "predict same as 8",
+          "to": 290
+        },
+        {
+          "action": "predict less than 8",
+          "to": 191
+        },
+        {
+          "action": "predict more than 8",
+          "to": 84
+        }
+      ],
+      "adaptation": "Interactive Trialmaster mini-test rather than Duel Master combat."
+    },
+    {
+      "passage": 302,
+      "beat": "The Dwarf later sends in a wounded, delirious Throm. The cobra has bitten him. John protests but must defend himself.",
+      "edges": [
+        {
+          "action": "defeat Throm",
+          "to": 379
+        }
+      ],
+      "adaptation": "Mandatory tragic Duel Master encounter; Throm is not a villain."
+    },
+    {
+      "passage": 379,
+      "beat": "After Throm dies, John hates the Dwarf. The Dwarf keeps John at crossbow point and reveals the concealed way onward.",
+      "edges": [
+        {
+          "action": "enter new tunnel",
+          "to": 213
+        },
+        {
+          "action": "punch Dwarf",
+          "to": 95
+        }
+      ],
+      "adaptation": "Post-battle scene must preserve emotional consequence and the Dwarf's control."
+    },
+    {
+      "passage": 281,
+      "beat": "After rescuing the Elf from a Boa Constrictor, she is dying; she reveals that gems unlock the final door and identifies diamond as one required gem.",
+      "edges": [
+        {
+          "action": "eat bread",
+          "to": 399
+        },
+        {
+          "action": "take mirror/charm and continue",
+          "to": 192
+        }
+      ],
+      "adaptation": "Character death and crucial clue; her belongings become physical pickups."
+    },
+    {
+      "passage": 37,
+      "beat": "Large idol cavern with fist-sized jewelled eyes and two stuffed bird-like guardians.",
+      "edges": [
+        {
+          "action": "climb idol",
+          "to": 351
+        },
+        {
+          "action": "continue through cavern",
+          "to": 239
+        }
+      ],
+      "adaptation": "Emerald objective room."
+    },
+    {
+      "passage": 240,
+      "beat": "After the Flying Guardians are defeated, the emerald eye can be removed.",
+      "edges": [
+        {
+          "action": "try other eye",
+          "to": 34
+        },
+        {
+          "action": "climb down",
+          "to": 89
+        }
+      ],
+      "adaptation": "Emerald acquired; tempting second eye remains dangerous."
+    },
+    {
+      "passage": 162,
+      "beat": "A box contains an iron key and a large sapphire.",
+      "edges": [
+        {
+          "action": "take items and continue",
+          "to": 442
+        }
+      ],
+      "adaptation": "Sapphire objective pickup."
+    },
+    {
+      "passage": 218,
+      "beat": "A room appears to contain a diamond beside a fallen warrior, but entering can be a lethal trap.",
+      "edges": [
+        {
+          "action": "enter for apparent jewel",
+          "to": 65
+        },
+        {
+          "action": "continue",
+          "to": 252
+        }
+      ],
+      "adaptation": "False-diamond temptation room."
+    },
+    {
+      "passage": 269,
+      "beat": "A later hall route allows the player to leave carrying the real diamond.",
+      "edges": [
+        {
+          "action": "leave with diamond",
+          "to": 127
+        }
+      ],
+      "adaptation": "Diamond objective acquisition."
+    },
+    {
+      "passage": 364,
+      "beat": "After the Manticore, Igbut the Gnome appears as final Trialmaster and checks for the three required gems.",
+      "edges": [
+        {
+          "action": "has emerald",
+          "to": 31
+        },
+        {
+          "action": "missing emerald",
+          "to": 3
+        }
+      ],
+      "adaptation": "Final checkpoint NPC; no generic battle unless player attacks."
+    },
+    {
+      "passage": 62,
+      "beat": "Final lock has three gem positions. Wrong arrangements cause injury; Igbut gives aggregate positional feedback and allows retries.",
+      "edges": [
+        {
+          "action": "six possible gem permutations",
+          "to": [
+            16,
+            392,
+            177,
+            287,
+            132,
+            249
+          ]
+        }
+      ],
+      "adaptation": "Preserve as a three-position Duel-Master-like logic lock rather than replacing it with combat."
+    },
+    {
+      "passage": 241,
+      "beat": "After the final lock route, Igbut is killed by a final Sukumvit crossbow trap and John reaches daylight.",
+      "edges": [
+        {
+          "action": "exit",
+          "to": 400
+        }
+      ],
+      "adaptation": "Final sting before victory."
+    },
+    {
+      "passage": 399,
+      "beat": "The Elf's bread contains healing herbs; the player packs away the mirror and charm and continues north.",
+      "edges": [
+        {
+          "action": "continue",
+          "to": 192
+        }
+      ],
+      "adaptation": "Not a death ending."
+    },
+    {
+      "passage": 400,
+      "beat": "Victory: the surviving contestant emerges to Fang and is acclaimed as Champion.",
+      "edges": [],
+      "adaptation": "Dungeon completion / return to wider game."
+    }
+  ],
+  "required_items": {
+    "emerald": {
+      "canonical_source": "idol eye",
+      "key_passages": [
+        37,
+        240
+      ]
+    },
+    "sapphire": {
+      "canonical_source": "box with iron key",
+      "key_passages": [
+        162
+      ]
+    },
+    "diamond": {
+      "canonical_source": "later hall/Ninja-related route",
+      "key_passages": [
+        269,
+        330
+      ]
+    },
+    "final_use": {
+      "key_passages": [
+        364,
+        31,
+        376,
+        62
+      ]
+    }
+  },
+  "contestants": {
+    "knight": {
+      "start": "enters first",
+      "known_fate": "later recognized as a petrified statue",
+      "key_passages": [
+        382
+      ]
+    },
+    "elf": {
+      "start": "enters second",
+      "known_fate": "mortally wounded after Boa Constrictor; gives diamond clue if rescued",
+      "key_passages": [
+        281
+      ]
+    },
+    "throm": {
+      "start": "one of the two Barbarian contestants; one Barbarian enters before the player",
+      "states": [
+        "ahead",
+        "met",
+        "uneasy_ally",
+        "betrayed_or_allied",
+        "wounded",
+        "trialmaster_separated",
+        "delirious_forced_opponent",
+        "dead"
+      ],
+      "key_passages": [
+        154,
+        22,
+        184,
+        194,
+        169,
+        288,
+        60,
+        365,
+        302,
+        379,
+        449
+      ]
+    },
+    "black_clad_assassin": {
+      "start": "enters fourth",
+      "note": "A later Ninja is canonical, but this extraction does not prove they are the same individual."
+    },
+    "second_barbarian": {
+      "start": "present among the six contestants",
+      "note": "Do not automatically map every later generic 'Barbarian' reference to Throm without passage-context verification."
+    }
+  }
+}

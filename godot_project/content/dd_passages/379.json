@@ -1,0 +1,16 @@
+{
+  "passage": 379,
+  "status": "BOOK_VERIFIED",
+  "beat": "After Throm dies, John hates the Dwarf. The Dwarf keeps John at crossbow point and reveals the concealed way onward.",
+  "edges": [
+    {
+      "action": "enter new tunnel",
+      "to": 213
+    },
+    {
+      "action": "punch Dwarf",
+      "to": 95
+    }
+  ],
+  "adaptation_notes": "Post-battle scene must preserve emotional consequence and the Dwarf's control."
+}

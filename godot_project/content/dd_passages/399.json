@@ -1,0 +1,12 @@
+{
+  "passage": 399,
+  "status": "BOOK_VERIFIED",
+  "beat": "The Elf's bread contains healing herbs; the player packs away the mirror and charm and continues north.",
+  "edges": [
+    {
+      "action": "continue",
+      "to": 192
+    }
+  ],
+  "adaptation_notes": "Not a death ending."
+}

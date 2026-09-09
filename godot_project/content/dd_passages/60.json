@@ -1,0 +1,16 @@
+{
+  "passage": 60,
+  "status": "BOOK_VERIFIED",
+  "beat": "Dwarf Trialmaster locks John and Throm in a chamber and says only one may continue. Throm proposes attacking him.",
+  "edges": [
+    {
+      "action": "attack Dwarf with Throm",
+      "to": 179
+    },
+    {
+      "action": "persuade Throm to accept test",
+      "to": 365
+    }
+  ],
+  "adaptation_notes": "Major social/puzzle set-piece; Dwarf is controller, not a generic monster."
+}

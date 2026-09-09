@@ -1,0 +1,20 @@
+{
+  "passage": 365,
+  "status": "BOOK_VERIFIED",
+  "beat": "John persuades Throm to accept the Trialmaster's procedure; the Dwarf takes John through a secret door and begins a dice-probability test.",
+  "edges": [
+    {
+      "action": "predict same as 8",
+      "to": 290
+    },
+    {
+      "action": "predict less than 8",
+      "to": 191
+    },
+    {
+      "action": "predict more than 8",
+      "to": 84
+    }
+  ],
+  "adaptation_notes": "Interactive Trialmaster mini-test rather than Duel Master combat. Passing it earns STONE."
+}

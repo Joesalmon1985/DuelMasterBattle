@@ -1,0 +1,12 @@
+{
+  "passage": 302,
+  "status": "BOOK_VERIFIED",
+  "beat": "The Dwarf later sends in a wounded, delirious Throm. The cobra has bitten him. John protests but must defend himself.",
+  "edges": [
+    {
+      "action": "defeat Throm",
+      "to": 379
+    }
+  ],
+  "adaptation_notes": "Mandatory tragic Duel Master encounter; Throm is not a villain."
+}

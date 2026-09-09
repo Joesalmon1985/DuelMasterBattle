@@ -85,8 +85,8 @@ that already involve a found object, so no new lore is invented:
 |---|---|---|
 | Water | Halvard's staff (Level 1) | 1 |
 | **Fire** | the red book in the books alcove (p.194/52) — Throm scoffs at reading | 2 |
-| **Stone** | after the Cave Troll set-piece (p.169/288) — the druidic bone ring is the *risky* pickup; Stone comes from the troll's heart-stone (echo of current golem drop) | 3 |
-| **Vine** | the dying Elf's belongings (p.281/399) — her charm | 4 |
+| **Stone** | the Dwarf Trialmaster's test (p.365) — passing the dice-probability procedure earns it | 3 |
+| **Vine** | the dying Elf's charm (p.281/399), preserved as the canonical item | 4 |
 
 From Vine onward it's the full 4-slot game.
 
@@ -114,21 +114,24 @@ wounds / leave — conditions), Throm objects to unfamiliar substances and to re
 **Cave Trolls**: Throm hears them first; two arrive; **John duels one (2-slot,
 Fire+Water) while Throm visibly fights the other in-world** (authored outcome: he
 wins, wounded). Bone ring pickup: Throm refuses it and warns; player may still wear
-it (curse condition). Stone shard → weave 3.
+it (curse condition).
 
 ### Zone E — Dwarf Trialmaster Complex (`dd_trialmaster`)
 p.60, 179, 365, 290/191/84, 302, 379, 213, 95. Dwarf locks John + Throm in;
 "only one continues". Choice: **attack Dwarf with Throm** (p.179 branch — verify
 consequence in book) / **persuade Throm to accept the test**. Secret room: **dice
 probability test** (same/less/more than 8 — `choose_async`, seeded outcome), **cobra
-reaction test** (timed tap — reuse cast-button timer widget). Then the Dwarf sends in
+reaction test** (timed tap — reuse cast-button timer widget). Passing the
+procedure earns **STONE → weave 3**. Then the Dwarf sends in
 **Throm, cobra-bitten and delirious** — John protests, Dwarf doesn't care →
 **full Duel Master battle, 3-slot** (Throm is a Barbarian, not a wizard: his "weave"
 is fury — flavour text; pools Fire/Stone/Water). No loot screen after: return to
 arena, Throm's body, Dwarf at crossbow point reveals the way on. Option to punch the
 Dwarf (p.95 — verify).
-*Only if allied/not betrayed* — the betrayed branch reaches the complex alone and the
-Dwarf substitutes a different opponent (decision needed; book-check what p.149 leads to).
+*Only if allied/not betrayed* — the betrayed branch reaches the complex alone.
+Per the agreed decision, the betrayal *state* is implemented now, p.149 stays
+`NEEDS_PAGE_IMAGE_CHECK`, and **no invented replacement arena opponent** is built
+until the book route is verified.
 
 ### Zone C — Idol Cavern (`dd_idol`) — **Emerald**
 p.37, 351, 240, 34, 89, 239. Giant idol, jewelled eyes, two "stuffed" bird guardians.
@@ -272,9 +275,9 @@ hasn't learned".
 
 | Phase | Scope | Gate |
 |---|---|---|
-| **P0 Canon & scaffolding** | `content/dd_canon.json` with the verified backbone nodes + provenance schema; canon regression tests; `SECOND_ADVENTURE_PLAN.md` marked superseded | tests green on data alone |
-| **P1 Level 1 overhaul** | Ashwell rework, Halvard duel cutscene, staff, Ashby tutorial(s), `trial_road`, `trial_gate`, roster sprites, ENTER/NOT YET, threshold ending. Old forest areas parked (data kept, unreachable) | flow test: new game → threshold; screenshots |
-| **P2 Run state + first slice** | §4.1, §4.2 kinds, Zones A, B, D (through Cave Trolls, Fire + Stone), Throm companion, conditions bridge, fail/restart loop | flow test A→B→D; die-and-restart test |
+| **P0 Canon & scaffolding** ✅ DONE | `content/dd_canon.json` + `content/dd_passages/` (29 files) + `test_dd_canon.gd`; `SECOND_ADVENTURE_PLAN.md` marked superseded | 11/11 green |
+| **P1 Level 1 overhaul** | Ashwell rework, Halvard duel cutscene, staff, Ashby tutorial(s), `trial_road`, `trial_gate`, roster sprites, ENTER/NOT YET, threshold ending. Burnt Wood kept as optional training area off `trial_road`; `forest_home` parked | flow test: new game → threshold; screenshots |
+| **P2 Run state + first slice** | §4.1, §4.2 kinds, Zones A, B, D (through Cave Trolls: Fire via red book), Throm companion, conditions bridge, fail/restart loop | flow test A→B→D; die-and-restart test |
 | **P3 Trialmaster** | Zone E incl. dice/cobra tests, forced Throm duel, post-battle scene, betrayal variant | both p.60 branches playable |
 | **P4 Gems** | Zones C, I (+ Elf → Vine), diamond trap/real, iron-key door, notebook | three gems obtainable; false diamond kills the run |
 | **P5 Galleries & river** | Zone G (Mirror Demon, Bloodbeast + knowledge modifier, Rock Grub, boulder run), Zone F traversal, Zone H service layer | pacifist flow test |
@@ -298,8 +301,8 @@ every hard thing once.
    the fiction) to keep P3 small?
 5. **Light/Shadow**: add via a Zone G branch (Mirror Demon = Light, Bloodbeast lair =
    Shadow), or keep John at four essences for the whole book?
-6. **Old forest content**: park unreachable (proposed) or repurpose the Burnt Wood as
-   an optional practice area off `trial_road`?
+6. **Old forest content**: ~~park unreachable (proposed) or~~ repurpose the Burnt
+   Wood as an optional practice area off `trial_road` (AGREED).
 7. **Book verification workflow**: do you want a `content/dd_passages/` folder where
    each used passage gets a `status` (BOOK_VERIFIED / NEEDS_PAGE_IMAGE_CHECK) that the
    canon test enforces, so unverified passages can't ship as canon?

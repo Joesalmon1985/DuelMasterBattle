@@ -1,0 +1,12 @@
+{
+  "passage": 154,
+  "status": "BOOK_VERIFIED",
+  "beat": "Player catches up with the Barbarian and travels west with him.",
+  "edges": [
+    {
+      "action": "continue together",
+      "to": 22
+    }
+  ],
+  "adaptation_notes": "Throm physically joins John as a temporary companion."
+}

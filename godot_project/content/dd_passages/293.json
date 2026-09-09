@@ -1,0 +1,16 @@
+{
+  "passage": 293,
+  "status": "BOOK_VERIFIED",
+  "beat": "Three sets of footprints divide: two west, one north.",
+  "edges": [
+    {
+      "action": "follow two sets west",
+      "to": 137
+    },
+    {
+      "action": "follow one set north",
+      "to": 382
+    }
+  ],
+  "adaptation_notes": "Second footprint fork; rivals function as moving breadcrumbs."
+}

@@ -1,5 +1,8 @@
 # Level 2 Plan — "The Trial Pit" (roleplay-first, Deathtrap-style)
 
+> SUPERSEDED by `DEATHTRAP_OVERHAUL_PLAN.md` (P0). Kept for the wound/ledger ideas,
+> which were folded into the book-faithful plan where they fit.
+
 Follow-up to the First Adventure (`docs/FIRST_ADVENTURE.md`). John follows the Red
 Wizard north to a death-trap labyrinth run as a **trial**: enter willingly, few
 return. Duels stay the boss language, but most of the level is **choices, traps,

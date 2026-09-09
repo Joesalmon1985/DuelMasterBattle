@@ -1,0 +1,16 @@
+{
+  "passage": 184,
+  "status": "BOOK_VERIFIED",
+  "beat": "The Barbarian identifies himself as Throm. His distrust is visible while the player lowers him by rope.",
+  "edges": [
+    {
+      "action": "join Throm below",
+      "to": 323
+    },
+    {
+      "action": "abandon him and cross",
+      "to": 149
+    }
+  ],
+  "adaptation_notes": "Relationship branch: ally versus betrayal. The abandon route (149) is UNVERIFIED against the book."
+}

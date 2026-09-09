@@ -1,0 +1,19 @@
+{
+  "passage": 62,
+  "status": "BOOK_VERIFIED",
+  "beat": "Final lock has three gem positions. Wrong arrangements cause injury; Igbut gives aggregate positional feedback and allows retries.",
+  "edges": [
+    {
+      "action": "six possible gem permutations",
+      "to": [
+        16,
+        392,
+        177,
+        287,
+        132,
+        249
+      ]
+    }
+  ],
+  "adaptation_notes": "Preserve as a three-position Duel-Master-like logic lock rather than replacing it with combat."
+}

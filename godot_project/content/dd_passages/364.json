@@ -1,0 +1,16 @@
+{
+  "passage": 364,
+  "status": "BOOK_VERIFIED",
+  "beat": "After the Manticore, Igbut the Gnome appears as final Trialmaster and checks for the three required gems.",
+  "edges": [
+    {
+      "action": "has emerald",
+      "to": 31
+    },
+    {
+      "action": "missing emerald",
+      "to": 3
+    }
+  ],
+  "adaptation_notes": "Final checkpoint NPC; no generic battle unless player attacks."
+}
