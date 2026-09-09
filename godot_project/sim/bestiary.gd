@@ -77,6 +77,28 @@ static func _build() -> void:
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "capped_minimax", "bot_solver_cap": 40, "think_min_seconds": 12.0, "think_max_seconds": 22.0,
 	})
+	# P1: Ashby's teaching Wards + the Trial-road Giant Fly. ----------------------
+	_add({
+		"id": "ashby_lesson1", "display_name": "Ashby's Practice Ward", "archetype": "hedge_ward", "kind": "wizard",
+		"description": "Ashby's teaching Ward: a single slot of Water. Cast what you hold.",
+		"weave_size": 1, "attack_pool": [BLUE], "ward_size": 1, "ward_pool": [BLUE], "fixed_ward": [BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "random", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
+	})
+	_add({
+		"id": "ashby_lesson2", "display_name": "Ashby's Hidden Ward", "archetype": "hedge_ward", "kind": "wizard",
+		"description": "Ashby's second lesson: one Ward slot, Water or Fire. Find out which.",
+		"weave_size": 1, "attack_pool": [BLUE], "ward_size": 1, "ward_pool": [BLUE, RED],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
+	})
+	_add({
+		"id": "giant_fly", "display_name": "Giant Fly", "archetype": "giant_fly", "kind": "creature",
+		"description": "A horsefly the size of a hound. Fast, stupid, and easy to walk away from.",
+		"weave_size": 1, "attack_pool": [RED], "ward_size": 1, "ward_pool": [BLUE], "fixed_ward": [BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "random", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
+	})
 	# Regression anchor: the MVP 4x6x10 duel expressed as a combatant.
 	_add({
 		"id": "rival_wizard", "display_name": "Rival Wizard", "archetype": "wizard", "kind": "wizard",

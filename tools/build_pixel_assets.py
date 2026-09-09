@@ -277,6 +277,12 @@ def make_characters():
     make_character("villager_b", (130, 100, 60), hair=(200, 200, 200))
     make_character("elder", (70, 90, 60), hat=(60, 80, 50), tool="staff", hair=(220, 220, 220))
     make_character("child", (170, 120, 80))
+    # Trial-gate contestants (P1 placeholders; refined in the P7 art pass).
+    make_character("knight", (170, 178, 195), hat=(120, 128, 145), hair=(90, 90, 100))
+    make_character("elf", (60, 140, 90), hair=(225, 205, 150))
+    make_character("assassin", (40, 36, 52), hair=(25, 22, 30))
+    make_character("throm", (200, 150, 110), hair=(120, 70, 35))
+    make_character("official", (105, 90, 165), hat=(80, 65, 130), hair=(200, 200, 200))
 
 
 # ---------------------------------------------------------------- creatures (battle portraits 64x64 + overworld 16x16)
@@ -391,6 +397,29 @@ def make_shade(size, frame=0):
     return im
 
 
+def make_fly(size, frame=0):
+    # Giant horsefly: winged silhouette (distinct from flame wisps), red eyes.
+    im, d = new(size, size)
+    s = size
+    wing, vein = (205, 215, 228), (150, 160, 180)
+    body, dark = (74, 62, 96), (42, 34, 58)
+    lift = 0 if frame % 2 == 0 else max(1, s // 16)
+    d.ellipse([int(s * 0.06), int(s * 0.10) + lift, int(s * 0.44), int(s * 0.42) + lift], wing + (255,))
+    d.ellipse([int(s * 0.56), int(s * 0.10) + lift, int(s * 0.94), int(s * 0.42) + lift], wing + (255,))
+    d.line([(int(s * 0.12), int(s * 0.26) + lift), (int(s * 0.38), int(s * 0.26) + lift)], vein + (255,))
+    d.line([(int(s * 0.62), int(s * 0.26) + lift), (int(s * 0.88), int(s * 0.26) + lift)], vein + (255,))
+    d.ellipse([int(s * 0.32), int(s * 0.34), int(s * 0.68), int(s * 0.92)], body + (255,))
+    d.line([(int(s * 0.5), int(s * 0.36)), (int(s * 0.5), int(s * 0.9))], dark + (255,), max(1, s // 32))
+    d.ellipse([int(s * 0.36), int(s * 0.22), int(s * 0.64), int(s * 0.44)], dark + (255,))
+    e = max(1, s // 12)
+    for ex in (0.40, 0.60):
+        d.ellipse([int(s * ex) - e, int(s * 0.30) - e, int(s * ex) + e, int(s * 0.30) + e], (200, 40, 40, 255))
+    w = max(1, s // 32)
+    for dx in (-0.2, -0.07, 0.07, 0.2):
+        d.line([(int(s * (0.5 + dx * 0.5)), int(s * 0.7)), (int(s * (0.5 + dx)), int(s * 0.94))], dark + (255,), w)
+    return im
+
+
 def make_creatures():
     gens = {
         "flame_wisp": lambda s, f: make_wisp(s, f),
@@ -399,6 +428,7 @@ def make_creatures():
         "steam_brute": lambda s, f: make_steam(s, f, True),
         "cinder_golem": make_golem,
         "moss_shade": make_shade,
+        "giant_fly": make_fly,
     }
     for name, g in gens.items():
         for f in range(2):

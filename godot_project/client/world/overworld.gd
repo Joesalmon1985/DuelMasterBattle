@@ -523,7 +523,8 @@ func _arrived() -> void:
 					return
 			"trigger":
 				if _in_trigger(e) and not _adv().flag(str(e.get("once_flag", ""))) and _steps_taken >= int(e.get("requires_steps", 0)):
-					_adv().set_flag(str(e["once_flag"]))
+					if not bool(e.get("no_auto_flag", false)):
+						_adv().set_flag(str(e["once_flag"]))
 					_story.run_event(str(e["event"]))
 					return
 
@@ -686,6 +687,8 @@ func _interact_pickup(e: Dictionary) -> void:
 	if s:
 		s.ready_chime()
 	adv.mark("picked", str(e["id"]))
+	if e.has("set_flag"):
+		adv.set_flag(str(e["set_flag"]))
 	if is_instance_valid(e.get("node")):
 		e["node"].queue_free()
 	_entity_at.erase(Vector2i(int(e["pos"][0]), int(e["pos"][1])))

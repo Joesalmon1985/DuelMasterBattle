@@ -42,9 +42,12 @@ static func area_ids() -> Array:
 static func _build() -> void:
 	if not _areas.is_empty():
 		return
-	_areas["forest_home"] = _forest_home()
-	_areas["forest_deep"] = _forest_deep()
 	_areas["village"] = _village()
+	_areas["trial_road"] = _trial_road()
+	_areas["trial_gate"] = _trial_gate()
+	_areas["forest_deep"] = _forest_deep()
+	# forest_home is PARKED (P1): the old clearing no longer happens. Builder kept
+	# for reference; nothing links to it.
 
 
 # -------------------------------------------------------------------------------
@@ -153,8 +156,8 @@ static func _forest_deep() -> Dictionary:
 				"intro": "Another imp guards the pendant."},
 			# Progression: the Red wizard's pendant.
 			{"kind": "pickup", "id": "fire_pendant", "pos": [3, 11], "sprite": "pendant",
-				"grant": {"spell": SPELL_RED, "weave": 2},
-				"text": "A pendant of red glass, dropped in the Red wizard's haste. It is warm.\n\nYou have learned FIRE magic.\nYour weave can now hold TWO spells."},
+				"grant": {},
+				"text": "A pendant of red glass. Cold — whatever magic it held burned away with the wood.\n\nA reminder, not a reward. The living wood keeps its own counsel."},
 			# Tier 2
 			{"kind": "creature", "id": "sprite_d1", "enemy_id": "steam_sprite", "pos": [12, 9], "requires_spell": SPELL_RED,
 				"intro": "A Steam Sprite, born where the fire met the pond. One Ward slot: FIRE or WATER.\n\nWith two weave slots you can try both at once."},
@@ -167,11 +170,10 @@ static func _forest_deep() -> Dictionary:
 				"intro": "A Cinder Golem blocks the old road. It throws STONE and FIRE at you — but its Ward is woven only from magic you already know.\n\nWhat a thing attacks with is not what protects it.",
 				"drops": "stone_shard"},
 			{"kind": "pickup", "id": "stone_shard", "pos": [8, 2], "sprite": "stone_shard", "requires_defeated": "golem_d1",
-				"grant": {"spell": SPELL_STONE, "weave": 3},
-				"text": "The golem's heart-stone. Heavy, patient magic.\n\nYou have learned STONE magic.\nYour weave can now hold THREE spells."},
-			{"kind": "exit", "pos": [8, 23], "to_area": "forest_home", "to_pos": [8, 1], "facing": "down"},
-			{"kind": "exit", "pos": [19, 11], "to_area": "village", "to_pos": [1, 8], "facing": "right"},
-			{"kind": "exit", "pos": [19, 12], "to_area": "village", "to_pos": [1, 9], "facing": "right"},
+				"grant": {},
+				"text": "The golem's heart-stone. Grey and silent. Its weight is ordinary weight.\n\nNot every stone answers."},
+			{"kind": "exit", "pos": [19, 12], "to_area": "trial_road", "to_pos": [18, 6], "facing": "left"},
+			{"kind": "sign", "id": "deep_deadend", "pos": [8, 22], "text": "The way south is choked with fallen, half-burnt trees. Nothing that way but ash."},
 		],
 	}
 
@@ -198,7 +200,7 @@ static func _village() -> Dictionary:
 		"TT........:.........TT",
 		"TT,....r..:....L....TT",
 		"TT........:.........TT",
-		"TTTTTTTTTTTTTTTTTTTTTT",
+		"TTTTTTTTTT::TTTTTTTTTT",
 	]
 	return {
 		"id": "village", "name": "Ashwell", "rows": rows,
@@ -211,51 +213,165 @@ static func _village() -> Dictionary:
 			{"kind": "logs", "id": "v_logs", "pos": [15, 15], "text": "Somebody else's woodpile. Neater than yours."},
 			{"kind": "npc", "id": "villager_mara", "name": "Mara", "sprite": "villager_a", "pos": [7, 7], "facing": "down",
 				"lines": [
-					"You came through the wood? With the fires? You're either brave or a wizard.",
-					"...That IS a wizard's staff. Well. Keep it pointed away from the thatch.",
+					"You're not thinking of going up there, are you, John?",
+					"Six wizards through already and it's barely noon.",
 				],
-				"lines_flag": {"knows_vine": ["The elder taught you the green word? He hasn't taught anyone in thirty years.", "Go on then. Show that Red devil what Ashwell is made of."]}},
+				"lines_flag": {"has_staff": ["That's... Halvard's staff. So it's true.", "Keep it pointed away from the thatch. And John — come back."]}},
+			{"kind": "npc", "id": "neighbour_bram", "name": "Bram", "sprite": "villager_b", "pos": [4, 10], "facing": "right",
+				"lines": [
+					"Trial day! Best day of the year for selling beer.",
+					"Worst day for finding anybody sensible to drink it with.",
+				]},
 			{"kind": "npc", "id": "villager_tom", "name": "Tom", "sprite": "villager_b", "pos": [17, 14], "facing": "left",
 				"lines": [
-					"Two of them came through at dawn. Red one, blue one. Throwing the sky at each other.",
-					"The red one went north up the hill after. Didn't even look at us.",
+					"Two wizards came through at dawn. Blue one and a red one.",
+					"They were throwing the sky at each other. Trial Day's started early this year.",
 				]},
 			{"kind": "npc", "id": "child_pip", "name": "Pip", "sprite": "child", "pos": [12, 5], "facing": "down",
-				"lines": ["Are you a wizard? Do the fire one! Do the fire one!", "Mum says wizards weave. I think that means knitting."]},
-			{"kind": "npc", "id": "elder", "name": "Elder Wren", "sprite": "elder", "pos": [16, 6], "facing": "down",
+				"lines": ["Six wizards came through already. One had a bird made of fire!", "When I grow up I'm entering the Trial. Mum says over her dead body."]},
+			{"kind": "npc", "id": "stall_greta", "name": "Greta", "sprite": "villager_a", "pos": [5, 7], "facing": "down",
 				"lines": [
-					"A woodcutter with a dead man's staff. Stranger things have started better stories.",
-					"Listen. The Red one is on the hill north of here, and he weaves FOUR. You weave three. He will take you apart.",
-					"Something has crawled into our well since the fires — a Moss Shade. Clear it out, and I will teach you a fourth word. Then we'll see about your weave.",
+					"Charms! Fresh charms! Guaranteed* to stop anything. (*Not guaranteed.)",
+					"No refunds. Especially not for heroes.",
 				],
-				"lines_flag": {
-					"shade_cleared": [
-						"The well is quiet. You have a steady hand for a woodcutter.",
-						"Here is the green word: VINE. Slow, patient, alive. Weave it like you'd plant it.",
-						"Ashby in the workshop weaves three, same as you. Beat him and he'll owe you a knot — and then you'll have four.",
-					],
-					"knows_vine": [
-						"Four words, four knots. That is a wizard's weave, John, whether you like the name or not.",
-						"The Red one is waiting on the hill. Go and finish the story.",
-					],
-				},
-				"grant_on_flag": {"flag": "shade_cleared", "spell": SPELL_VINE, "set_flag": "knows_vine",
-					"text": "Elder Wren traces a slow spiral in the air.\n\nYou have learned VINE magic."}},
-			{"kind": "creature", "id": "shade_v1", "enemy_id": "moss_shade", "pos": [15, 8], "requires_spell": SPELL_STONE,
-				"intro": "The Moss Shade rises out of the well. Three Ward slots, woven from FIRE, WATER and STONE — things it has drunk from the ground.\n\nIt attacks with VINE, a magic you do not have. That does not matter for its Ward.",
-				"on_win_flag": "shade_cleared"},
-			{"kind": "wizard", "id": "ashby", "enemy_id": "hedge_wizard", "pos": [14, 14], "sprite": "hedge_mage", "facing": "up",
-				"requires_flag": "knows_vine",
-				"intro": "Ashby cracks his knuckles.\n\n\"Three knots against three. FIRE and STONE are my words, but I'll ward with anything. Let's see what the elder sees in you.\"",
-				"on_win_flag": "beat_ashby",
-				"grant_on_win": {"weave": 4, "text": "Ashby laughs and presses a cord knotted four times into your hand.\n\n\"Fair's fair. Fourth knot's yours.\"\n\nYour weave can now hold FOUR spells."},
-				"lines_after": ["Go on. He's on the hill. Four knots — you can actually reach him now."],
-				"lines_before": ["Not yet. The elder says you've three words but no green. Come back when you're whole."]},
-			{"kind": "wizard", "id": "red_wizard", "enemy_id": "red_wizard", "pos": [10, 0], "sprite": "red_mage", "facing": "down",
-				"intro": "The Red wizard does not turn around.\n\n\"The blue fool gave you his stick. Fine. Four knots, then — FIRE, WATER, STONE and the green. Let us see if a woodcutter can count.\"",
-				"on_win_flag": "beat_red_wizard",
-				"lines_after": ["The hill is empty. Only ash, and the smell of a story ending."]},
-			{"kind": "exit", "pos": [0, 8], "to_area": "forest_deep", "to_pos": [18, 11], "facing": "left"},
-			{"kind": "exit", "pos": [0, 9], "to_area": "forest_deep", "to_pos": [18, 12], "facing": "left"},
+				"lines_flag": {"has_staff": ["...Is that a real wizard's staff? Put it away before somebody sees!", "Buy a charm? For luck? No? Worth a try."]}},
+			{"kind": "npc", "id": "elder", "name": "Elder Wren", "sprite": "elder", "pos": [15, 5], "facing": "down",
+				"lines": [
+					"A woodcutter watching wizards. Stranger things have started better stories.",
+					"The Trial takes them up the hill at sunset. Go and look, if you like.",
+				],
+				"lines_flag": {"has_staff": ["Halvard's staff. I knew him when he was younger than you.", "Ashby in the workshop was his friend once. Show him the staff."]}},
+			{"kind": "trigger", "id": "duel_cutscene", "rect": [2, 8, 12, 9], "event": "duel_cutscene", "once_flag": "duel_seen", "requires_steps": 3},
+			{"kind": "pickup", "id": "halvard_staff", "pos": [10, 8], "sprite": "staff", "requires_flag": "duel_seen",
+				"grant": {"spell": SPELL_BLUE, "weave": 1}, "set_flag": "has_staff",
+				"text": "Halvard's staff. It is cold, and it hums.\n\nYou have learned WATER magic.\nYour weave can hold ONE spell."},
+			{"kind": "corpse", "id": "blue_wizard_body", "pos": [9, 8], "sprite": "blue_mage", "facing": "right", "requires_flag": "duel_seen",
+				"text": "Halvard of the Blue. Whatever he was, he is not any more."},
+			{"kind": "wizard", "id": "ashby_lesson1", "enemy_id": "ashby_lesson1", "pos": [14, 14], "sprite": "hedge_mage", "facing": "up",
+				"requires_flag": "has_staff",
+				"intro": "Ashby turns the staff over in his hands, and his face does something complicated.\n\n\"Water, and one knot. That's not wizardry yet.\"\n\n\"But it's enough for me to show you what a Ward is. Cast what you hold.\"",
+				"on_win_flag": "beat_lesson1"},
+			{"kind": "wizard", "id": "ashby_lesson2", "enemy_id": "ashby_lesson2", "pos": [15, 14], "sprite": "hedge_mage", "facing": "up",
+				"requires_flag": "beat_lesson1",
+				"intro": "\"One knot again. But this time my Ward might be Water — or Fire.\"\n\n\"If it's Fire, your one Water can't break it. That's the lesson: find out which.\"",
+				"on_win_flag": "beat_lesson2"},
+			{"kind": "exit", "pos": [10, 17], "to_area": "trial_road", "to_pos": [9, 12], "facing": "down"},
+			{"kind": "exit", "pos": [11, 17], "to_area": "trial_road", "to_pos": [10, 12], "facing": "down"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# AREA 4 — Trial road. 20 wide x 14 tall. Carnival route: village south, gate north,
+# burnt wood (training) east.
+# -------------------------------------------------------------------------------
+static func _trial_road() -> Dictionary:
+	var rows := [
+		"TTTTTTTTT::TTTTTTTTT",
+		"TTT......::....TTTTT",
+		"TT.......::.....TTTT",
+		"TT..f....::.....TTTT",
+		"TT.......::..f..TTTT",
+		"TT...LL..::.....TTTT",
+		":::::::::::...::::::",
+		":::::::::::...::::::",
+		"TT.......::.....TTTT",
+		"TT...r...::..,...TTT",
+		"TT.......::.....TTTT",
+		"TTTT.....::.....TTTT",
+		"TTTT.....::.....TTTT",
+		"TTTTTTTTT::TTTTTTTTT",
+	]
+	return {
+		"id": "trial_road", "name": "Trial Road", "rows": rows,
+		"entities": [
+			{"kind": "sign", "id": "road_sign", "pos": [11, 1], "text": "TRIAL ROAD. Gate north. Ashwell south. Burnt wood east — mind the ash."},
+			{"kind": "npc", "id": "traveller_tam", "name": "Tam", "sprite": "villager_b", "pos": [7, 2], "facing": "down",
+				"lines": [
+					"Walked three days to watch. My cousin entered last year.",
+					"We don't talk about my cousin.",
+				]},
+			{"kind": "npc", "id": "merchant_sella", "name": "Sella", "sprite": "villager_a", "pos": [12, 2], "facing": "down",
+				"lines": [
+					"Ribbons! Roasted nuts! Trial-day prices!",
+					"You look like a man about to do something stupid. Nuts?",
+				]},
+			{"kind": "npc", "id": "charm_odd", "name": "Odd", "sprite": "villager_b", "pos": [11, 6], "facing": "up",
+				"lines": [
+					"This charm belonged to a Champion. Probably.",
+					"This rock is lucky. This stick is lucky. You look lucky.",
+				]},
+			{"kind": "npc", "id": "failed_clem", "name": "Clem", "sprite": "villager_a", "pos": [8, 9], "facing": "down",
+				"lines": [
+					"I got as far as the gate. The gate! Three years training.",
+					"Go on. Laugh. Everyone else does.",
+				]},
+			{"kind": "npc", "id": "book_vess", "name": "Vess", "sprite": "villager_b", "pos": [14, 9], "facing": "down",
+				"lines": [
+					"Three-to-one on the Red! Five-to-one on the Knight!",
+					"You? Entering? ...Twenty-to-one. No offence.",
+				]},
+			{"kind": "npc", "id": "healer_sage", "name": "Sage", "sprite": "elder", "pos": [7, 11], "facing": "down",
+				"lines": [
+					"Bandages, salves, splints. Busiest day of my year.",
+					"If you're going up there: aim to come back.",
+				]},
+			{"kind": "creature", "id": "fly_road1", "enemy_id": "giant_fly", "pos": [13, 8],
+				"intro": "A horsefly the size of a hound drops onto the path, buzzing like a saw.\n\nOne Ward slot of Water, by the smell of it — the same magic you hold. And if it goes badly, just walk away."},
+			{"kind": "exit", "pos": [9, 0], "to_area": "trial_gate", "to_pos": [8, 12], "facing": "up"},
+			{"kind": "exit", "pos": [10, 0], "to_area": "trial_gate", "to_pos": [9, 12], "facing": "up"},
+			{"kind": "exit", "pos": [9, 13], "to_area": "village", "to_pos": [10, 16], "facing": "down"},
+			{"kind": "exit", "pos": [10, 13], "to_area": "village", "to_pos": [11, 16], "facing": "down"},
+			{"kind": "exit", "pos": [19, 6], "to_area": "forest_deep", "to_pos": [18, 12], "facing": "right"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# AREA 5 — Trial gate. 20 wide x 14 tall. Seven entrants wait for sunset.
+# -------------------------------------------------------------------------------
+static func _trial_gate() -> Dictionary:
+	var rows := [
+		"TTTTTTTT##TTTTTTTTTT",
+		"TTTTTTTT##TTTTTTTTTT",
+		"TTT..........TTTTTTT",
+		"TTT..........TTTTTTT",
+		"TT.....ff....TTTTTTT",
+		"TT............TTTTTT",
+		"TT............TTTTTT",
+		"TT......::....TTTTTT",
+		"TT......::....TTTTTT",
+		"TT......::....TTTTTT",
+		"TT......::....TTTTTT",
+		"TTT.....::...TTTTTTT",
+		"TTT.....::...TTTTTTT",
+		"TTTTTTTT::TTTTTTTTTT",
+	]
+	return {
+		"id": "trial_gate", "name": "Trial Gate", "rows": rows,
+		"entities": [
+			{"kind": "sign", "id": "gate_sign", "pos": [6, 4], "text": "TRIAL GATE. Contestants only beyond this point. Spectators: enjoy the screaming."},
+			{"kind": "door", "id": "gate_door_l", "pos": [8, 1], "text": "Enormous doors, shut. They open at sunset."},
+			{"kind": "door", "id": "gate_door_r", "pos": [9, 1], "text": "Someone has scratched tally marks into the wood. Dozens of them."},
+			{"kind": "npc", "id": "contest_knight", "name": "Serra", "sprite": "knight", "pos": [4, 5], "facing": "down",
+				"lines": ["I am Serra of the White Road. First in, first out. That is how it is done."]},
+			{"kind": "npc", "id": "contest_elf", "name": "Elven woman", "sprite": "elf", "pos": [5, 5], "facing": "down",
+				"lines": ["You carry a dead man's staff, villager. The Trial does not care. Neither do I."]},
+			{"kind": "npc", "id": "contest_throm", "name": "Throm", "sprite": "throm", "pos": [4, 6], "facing": "up",
+				"lines": ["Throm. ...That is all you get before the doors."]},
+			{"kind": "npc", "id": "contest_barb2", "name": "Laughing man", "sprite": "elder", "pos": [5, 6], "facing": "up",
+				"lines": ["Hah! Another one come to die famous."]},
+			{"kind": "npc", "id": "contest_assassin", "name": "Quiet one", "sprite": "assassin", "pos": [12, 5], "facing": "down",
+				"lines": ["..."]},
+			{"kind": "npc", "id": "contest_red", "name": "Red Wizard", "sprite": "red_mage", "pos": [12, 6], "facing": "up",
+				"lines": ["Halvard's staff. So the old fool died in a ditch after all.", "Don't stare, villager. You'll see worse before sunset."]},
+			{"kind": "npc", "id": "gate_official", "name": "Rollkeeper", "sprite": "official", "pos": [9, 3], "facing": "down",
+				"lines": [
+					"Names for the roll. ...John? John the woodcutter? Halvard's seal — it's genuine.",
+					"The Trial takes you at sunset, if you choose it. Step to the doors when you're ready.",
+				]},
+			{"kind": "trigger", "id": "gate_choice", "rect": [8, 2, 9, 2], "event": "gate_choice", "no_auto_flag": true},
+			{"kind": "exit", "pos": [8, 13], "to_area": "trial_road", "to_pos": [9, 12], "facing": "down"},
+			{"kind": "exit", "pos": [9, 13], "to_area": "trial_road", "to_pos": [10, 12], "facing": "down"},
 		],
 	}

@@ -40,8 +40,8 @@ func new_game() -> void:
 	progression = _Progression.new()
 	state = {
 		"version": SAVE_VERSION,
-		"area": "forest_home",
-		"pos": [6, 8],
+		"area": "village",
+		"pos": [7, 10],
 		"facing": "down",
 		"flags": {},
 		"defeated": [],

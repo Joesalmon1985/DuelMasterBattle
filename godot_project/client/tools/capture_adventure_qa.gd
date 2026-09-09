@@ -57,16 +57,18 @@ func _run() -> void:
 	await _frames(2)
 	_world.ui_dialogue_advance()
 	await _frames(20)
-	_capture("05_clearing_free_roam.png")
+	_capture("05_village_free_roam.png")
 
-	# 06 post-cutscene burning clearing (skip the scripted scene by setting flags)
+	# 06 duel aftermath: staff waiting on the road (skip the cutscene via flags)
 	await _free_world()
 	_adv.set_flag("opening_seen")
-	_adv.set_flag("opening_done")
-	_adv.set_location("forest_home", 7, 9, "up")
+	_adv.set_flag("duel_seen")
+	_adv.learn_spell(1)
+	_adv.grow_weave(1)
+	_adv.set_location("village", 10, 9, "up")
 	await _new_world()
 	await _frames(20)
-	_capture("06_burning_clearing_staff.png")
+	_capture("06_duel_aftermath_staff.png")
 
 	# 07 dialogue box
 	_world.ui_action()
@@ -76,17 +78,14 @@ func _run() -> void:
 	await _frames(5)
 	_capture("08_hud_with_water_magic.png")
 
-	# 09 burnt wood
+	# 09 burnt wood training detour
 	await _free_world()
-	_adv.learn_spell(0)
-	_adv.grow_weave(2)
 	_adv.set_location("forest_deep", 8, 16, "up")
 	await _new_world()
 	await _frames(20)
 	_capture("09_burnt_wood.png")
 
-	# 10 encounter warning dialogue (asymmetric)
-	_adv.set_flag("first_fire_out")
+	# 10 encounter intro dialogue (imp, facing it)
 	await _free_world()
 	_adv.set_location("forest_deep", 10, 16, "up")
 	await _new_world()
@@ -96,10 +95,8 @@ func _run() -> void:
 	_capture("10_encounter_intro.png")
 	await _drain()
 
-	# 11 village
+	# 11 Ashwell vista
 	await _free_world()
-	_adv.learn_spell(3)
-	_adv.grow_weave(3)
 	_adv.set_location("village", 10, 7, "down")
 	await _new_world()
 	await _frames(20)
@@ -107,8 +104,29 @@ func _run() -> void:
 	_world.ui_action()
 	await _frames(2)
 
-	# 12 pause menu
+
+	# 11b trial road vista
 	await _drain()
+	await _free_world()
+	_adv.set_location("trial_road", 10, 7, "down")
+	await _new_world()
+	await _frames(20)
+	_capture("11b_trial_road.png")
+
+
+	# 11c trial gate roster
+	await _free_world()
+	_adv.set_location("trial_gate", 9, 6, "up")
+	await _new_world()
+	await _frames(20)
+	_capture("11c_trial_gate.png")
+
+
+	# 12 pause menu (fresh world for the menu)
+	await _free_world()
+	_adv.set_location("village", 10, 7, "down")
+	await _new_world()
+	await _frames(10)
 	_world._on_menu()
 	await _frames(10)
 	_capture("12_pause_menu.png")
