@@ -11,6 +11,7 @@ const _Dialogue = preload("res://client/world/dialogue_box.gd")
 const _TouchPad = preload("res://client/world/touch_pad.gd")
 const _Story = preload("res://client/world/story_events.gd")
 const _VT = preload("res://client/scripts/visual_theme.gd")
+var _world_flow := WorldFlow.new()
 const _SaveData = preload("res://client/scripts/save_data.gd")
 
 const TILE := 16
@@ -104,6 +105,11 @@ func _after_ready() -> void:
 	if not adv.last_battle_result.is_empty():
 		var r: Dictionary = adv.last_battle_result
 		adv.last_battle_result = {}
+		var req: Dictionary = r.get("request", {})
+		if str(r.get("outcome", "")) == "victory" and req.has("world_hex") and WorldFlow.is_world_area(area_id):
+			_world_flow.setup(adv)
+			_world_flow.on_victory(req)
+			area = _world_flow.area_for(area_id)
 		await _story.on_battle_result(r)
 	elif not adv.flag("opening_seen"):
 		adv.set_flag("opening_seen")
@@ -237,8 +243,13 @@ func _build_ui() -> void:
 # ---------------------------------------------------------------------------------
 
 func load_area(id: String, at: Vector2i, facing: String = "down") -> void:
-	area_id = id
-	area = _World.get_area(id)
+	if WorldFlow.is_world_area(id):
+		_world_flow.setup(_adv())
+		area = _world_flow.enter(id)
+		area_id = str(area["id"])
+	else:
+		area_id = id
+		area = _World.get_area(id)
 	var rows: Array = area["rows"]
 	grid_h = rows.size()
 	grid_w = str(rows[0]).length()
@@ -1005,6 +1016,8 @@ func _start_battle(e: Dictionary) -> void:
 		req["forced_defeat_by_cast"] = int(e["forced_defeat_by_cast"])
 	if e.has("intro"):
 		req["intro"] = str(e["intro"])
+	if e.has("world_hex"):
+		req["world_hex"] = int(e["world_hex"])
 	if bool(req["optimal"]):
 		# Every-third-battle rule: the sharp tier. Hard, not perfect — capped
 		# minimax with a mid-size sample (see CORRECTIVE_PASS_PLAN Phase 4).

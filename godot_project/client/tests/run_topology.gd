@@ -83,6 +83,8 @@ func _check_area(id: String) -> void:
 			var p := Vector2i(int(e["pos"][0]), int(e["pos"][1]))
 			_check(_walkable(rows, p), "%s: exit at %s stands on a walkable tile" % [id, str(p)])
 			var to: String = str(e.get("to_area", ""))
+			if to.begins_with("wn_"):
+				continue
 			_check(WorldData.area_ids().has(to), "%s: exit → '%s' exists" % [id, to])
 			if WorldData.area_ids().has(to) and e.has("to_pos"):
 				var dest: Dictionary = WorldData.get_area(to)

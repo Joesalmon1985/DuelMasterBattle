@@ -28,7 +28,7 @@ func _test_new_game_phase() -> void:
 	var adv := _fresh()
 	assert_eq(adv.story_phase(), "halvard_prologue", "new game starts in the prologue")
 	assert_eq(adv.protagonist(), "halvard", "player controls Halvard first")
-	assert_eq(int(adv.state.get("version", 0)), 3, "save v3")
+	assert_eq(int(adv.state.get("version", 0)), 4, "save v4")
 
 
 func _test_phase_transitions() -> void:

@@ -8,7 +8,7 @@ extends Node
 ## content can add its own without schema changes.
 
 const SAVE_PATH := "user://adventure.save"
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 
 ## Story state machine (CORRECTIVE_PASS_PLAN Phase 0). One authoritative field;
 ## local event flags remain in state["flags"].
@@ -81,6 +81,9 @@ func new_game() -> void:
 		"play_seconds": 0.0,
 		"run": null,
 		"dungeon_knowledge": {},
+		"world": "",
+		"world_seed": 7,
+		"world_node": -1,
 		"story": {
 			"phase": "halvard_prologue",
 			"protagonist": "halvard",

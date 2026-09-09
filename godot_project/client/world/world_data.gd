@@ -1065,5 +1065,6 @@ static func _jane_placeholder() -> Dictionary:
 		"id": "jane_placeholder", "name": "Somewhere else", "rows": rows, "theme": "interior",
 		"entities": [
 			{"kind": "logs", "id": "jane_kettle", "pos": [6, 2], "text": "A kettle. Somebody has been arguing with it."},
+			{"kind": "exit", "id": "jane_door", "pos": [4, 6], "to_area": "wn_home", "to_pos": [3, 5], "facing": "down", "travel_text": "The door sticks, then gives. Daylight, and a smell of sheep."},
 		],
 	}

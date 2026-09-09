@@ -790,6 +790,6 @@ func jane_wake() -> void:
 	await narrate("You wake because somebody is arguing with a kettle.")
 	await narrate("This is not the Trial. This is not Ashwell. The ceiling has beams, and the beams have herbs hanging from them, and none of that was true a moment ago.")
 	await narrate("A woman named Jane has apparently decided you are not allowed to die.\n\nThat is going to complicate things.")
-	await narrate("— TO BE CONTINUED —\n\n(The wider world begins here. It has not been built yet.)")
+	await narrate("There is a door in the south wall. Beyond it, by the sound of it, a world that has been getting on without you.")
 	adv.save()
 	_w.lock_input(false)
