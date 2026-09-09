@@ -318,6 +318,7 @@ def make_characters():
     make_character("assassin", (40, 36, 52), hair=(25, 22, 30))
     make_character("throm", (200, 150, 110), hair=(120, 70, 35))
     make_character("official", (105, 90, 165), hat=(80, 65, 130), hair=(200, 200, 200))
+    make_character("dwarf", (120, 90, 60), hat=(90, 70, 50), hair=(200, 200, 200))
 
 
 # ---------------------------------------------------------------- creatures (battle portraits 64x64 + overworld 16x16)
@@ -487,6 +488,30 @@ def make_troll(size, frame=0):
     return im
 
 
+def make_barbarian(size, frame=0):
+    # Throm, delirious: bare-chested warrior with war paint and topknot.
+    im, d = new(size, size)
+    s = size
+    skin, paint, dark = (208, 160, 118), (140, 40, 36), (90, 60, 30)
+    sway = 0 if frame % 2 == 0 else max(1, s // 20)
+    # torso
+    d.ellipse([int(s * 0.28), int(s * 0.40) + sway, int(s * 0.72), int(s * 0.95) + sway], skin + (255,))
+    d.line([(int(s * 0.32), int(s * 0.55) + sway), (int(s * 0.68), int(s * 0.62) + sway)], paint + (255,), max(1, s // 24))
+    d.line([(int(s * 0.32), int(s * 0.68) + sway), (int(s * 0.68), int(s * 0.61) + sway)], paint + (255,), max(1, s // 24))
+    # arms
+    d.rectangle([int(s * 0.16), int(s * 0.44) + sway, int(s * 0.28), int(s * 0.82) + sway], skin + (255,))
+    d.rectangle([int(s * 0.72), int(s * 0.44) + sway, int(s * 0.84), int(s * 0.82) + sway], skin + (255,))
+    # head + topknot + beard
+    d.ellipse([int(s * 0.36), int(s * 0.12), int(s * 0.64), int(s * 0.38)], skin + (255,))
+    d.rectangle([int(s * 0.46), int(s * 0.02), int(s * 0.54), int(s * 0.14)], dark + (255,))
+    d.rectangle([int(s * 0.38), int(s * 0.30), int(s * 0.62), int(s * 0.42)], dark + (255,))
+    # fevered eyes
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.42), int(s * 0.22), int(s * 0.42) + e, int(s * 0.22) + e], (240, 220, 120, 255))
+    d.rectangle([int(s * 0.56), int(s * 0.22), int(s * 0.56) + e, int(s * 0.22) + e], (240, 220, 120, 255))
+    return im
+
+
 def make_fly(size, frame=0):
     # Giant horsefly: winged silhouette (distinct from flame wisps), red eyes.
     im, d = new(size, size)
@@ -521,6 +546,7 @@ def make_creatures():
         "giant_fly": make_fly,
         "guard_dog": make_dog,
         "cave_troll": make_troll,
+        "throm_duel": make_barbarian,
     }
     for name, g in gens.items():
         for f in range(2):

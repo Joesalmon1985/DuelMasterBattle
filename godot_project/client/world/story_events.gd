@@ -28,6 +28,8 @@ func run_event(id: String) -> void:
 			await throm_pit()
 		"black_book":
 			await black_book()
+		"dwarf_meet":
+			await dwarf_meet()
 
 
 func opening_text() -> void:
@@ -179,6 +181,63 @@ func black_book() -> void:
 		await _w.say("", "You stopper the vial and leave it. Some things stay unknown.")
 
 
+## P3 Trialmaster scenes (p.60, 365). Choice-owned; no lock handling here.
+func dwarf_meet() -> void:
+	var adv := _adv()
+	if adv.run_flag("trial_done"):
+		return
+	if adv.run_flag("trial_ready"):
+		return
+	var allied: bool = adv.run_flag("pit_ally")
+	var options := ["Accept the test"]
+	if allied:
+		options.append("Attack with Throm")
+	await _w.say("Dwarf", "Locked in, both of you. Only one continues — that is the procedure.")
+	var choice: String = await _w._dialogue.choose_async("The locked chamber?", options)
+	if choice == "Attack with Throm":
+		# p.179 branch exists in the book; its consequence is not yet verified
+		# (see dd_passages). Placeholder: the Dwarf is ready for it.
+		adv.add_condition("wounded")
+		await _w.say("Dwarf", "Oh, we do this every Trial.")
+		await _w.say("", "Something clicks. Throm sits down suddenly, holding his head.\n\n\"We do it MY way,\" the Dwarf says. (You are WOUNDED: −1 cast in your next duel.)")
+	await _w.say("Dwarf", "Through here. Mind the cobra.")
+	adv.set_run_flag("trial_started")
+	await _dwarf_dice(adv)
+	await _dwarf_cobra(adv)
+
+
+func _dwarf_dice(adv: Node) -> void:
+	await _w.say("Dwarf", "Two dice in the cup. When they land: the same as eight, less, or more?")
+	var guess: String = await _w._dialogue.choose_async("Predict the roll?", ["Same as 8", "Less than 8", "More than 8"])
+	var roll := randi_range(2, 12)
+	var won := (guess == "Same as 8" and roll == 8) or (guess == "Less than 8" and roll < 8) or (guess == "More than 8" and roll > 8)
+	if won:
+		await _w.say("Dwarf", "The cup lifts: %d. Hm. Luck or arithmetic." % roll)
+	else:
+		await _w.say("Dwarf", "The cup lifts: %d. Wrong. But you understood the question, which is the point." % roll)
+	adv.set_run_flag("trial_dice")
+
+
+func _dwarf_cobra(adv: Node) -> void:
+	await _w.say("Dwarf", "Last: the basket. Hold its gaze, or snatch it. Choose.")
+	var choice: String = await _w._dialogue.choose_async("The cobra?", ["Hold its gaze", "Snatch it"])
+	if choice == "Snatch it":
+		adv.add_condition("wounded")
+		await _w.say("", "Fast — but fangs graze your wrist. (WOUNDED: −1 cast in your next duel.)")
+	else:
+		await _w.say("", "You hold its gaze until it looks away first. The Dwarf writes something down.")
+	await _w.say("Dwarf", "Procedure complete. The stone is yours.")
+	adv.learn_spell(3)
+	adv.grow_weave(3)
+	adv.set_run_flag("trial_ready")
+	await _w.say("", "The Dwarf presses a grey stone into your hand. It is patient.\n\nYou have learned STONE magic.\nYour weave can now hold THREE spells.")
+	await _w._show_progression_card({"spell": 3, "weave": 3})
+	_w.rebuild()
+	if adv.run_flag("pit_betrayed"):
+		adv.set_run_flag("trial_done")
+		await _w.say("Dwarf", "Alone, and still standing. The concealed way is yours — west, when you're ready.")
+
+
 ## Called by the Overworld after returning from a battle.
 func on_battle_result(r: Dictionary) -> void:
 	var adv := _adv()
@@ -203,7 +262,13 @@ func on_battle_result(r: Dictionary) -> void:
 		else:
 			_w.rebuild()
 			var eid := str(req.get("encounter_id", ""))
-			if eid == "troll_lower1":
+			if eid == "throm_arena":
+				adv.set_contestant("throm", "dead")
+				await _w.say("", "Throm falls. The delirium goes out of him like water, and for a moment he knows you.")
+				await _w.say("Throm", "...Good fight, villager.")
+				await _w.say("", "The Dwarf approaches with a loaded crossbow, and does not lower it.")
+				await _w.say("Dwarf", "Only I know the way onward. West, when you're ready.")
+			elif eid == "troll_lower1":
 				adv.set_contestant("throm", "wounded")
 				await _w.say("", "Your troll goes down. Throm finishes his — but his arm hangs wrong.\n\n\"Keep walking,\" he says. \"Don't look at it.\"")
 				await _w.say("", "Something glints where your troll fell.")

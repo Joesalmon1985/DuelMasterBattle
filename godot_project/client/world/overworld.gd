@@ -522,7 +522,7 @@ func _arrived() -> void:
 	for e in _entities:
 		match e["kind"]:
 			"exit":
-				if Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos:
+				if Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos and _entity_visible(e):
 					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")))
 					return
 			"trigger":

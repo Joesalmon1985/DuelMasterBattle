@@ -79,6 +79,13 @@ static func _build() -> void:
 	})
 	# P2: dungeon fauna. ------------------------------------------------------------
 	_add({
+		"id": "throm_duel", "display_name": "Throm, Delirious", "archetype": "throm_duel", "kind": "wizard",
+		"description": "Cobra-bitten and weaponised by the Dwarf. Three slots of barbarian fury, fast and wrong.",
+		"weave_size": 3, "attack_pool": [RED, STONE, BLUE], "ward_size": 3, "ward_pool": [RED, STONE, BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 8.0, "think_max_seconds": 14.0,
+	})
+	_add({
 		"id": "guard_dog", "display_name": "Guard Dog", "archetype": "guard_dog", "kind": "creature",
 		"description": "A Trialmastiff, bred for the dark. One Ward slot of Water.",
 		"weave_size": 1, "attack_pool": [RED], "ward_size": 1, "ward_pool": [BLUE], "fixed_ward": [BLUE],

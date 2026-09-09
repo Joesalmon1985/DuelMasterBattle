@@ -51,6 +51,7 @@ static func _build() -> void:
 	_areas["dd_galleries"] = _dd_galleries()
 	_areas["dd_pit"] = _dd_pit()
 	_areas["dd_lower"] = _dd_lower()
+	_areas["dd_trialmaster"] = _dd_trialmaster()
 	# forest_home is PARKED (P1): the old clearing no longer happens. Builder kept
 	# for reference; nothing links to it.
 
@@ -577,8 +578,52 @@ static func _dd_lower() -> Dictionary:
 				"requires_defeated": "troll_lower1",
 				"grant": {},
 				"text": "A druidic bone ring. Warm in a way bone should not be.\n\nThrom: \"Don't.\"\n\n(You take it anyway. Nothing happens. Yet.)"},
-			{"kind": "door", "id": "dwarf_door", "pos": [2, 10], "text": "A stone door with dwarfish locks. It is not for you. Yet."},
+			{"kind": "door", "id": "dwarf_door", "pos": [2, 5], "text": "A stone door with dwarfish locks. It is not for you. Yet."},
+			{"kind": "exit", "pos": [0, 5], "to_area": "dd_trialmaster", "to_pos": [20, 7], "facing": "left", "requires_run_flag": "troll_down"},
+			{"kind": "exit", "pos": [0, 6], "to_area": "dd_trialmaster", "to_pos": [20, 8], "facing": "left", "requires_run_flag": "troll_down"},
 			{"kind": "exit", "pos": [21, 5], "to_area": "dd_pit", "to_pos": [1, 8], "facing": "right"},
 			{"kind": "exit", "pos": [21, 6], "to_area": "dd_pit", "to_pos": [1, 9], "facing": "right"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE E — Dwarf Trialmaster complex (p.60, 365, 302, 379). 22 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_trialmaster() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTTTT",
+		"TTTT..............TTTT",
+		"TTTT..............TTTT",
+		"TTTT......::......TTTT",
+		"TTTT......::......TTTT",
+		"TTTT......::......TTTT",
+		"TT..................TT",
+		"TT..................TT",
+		"......................",
+		"......................",
+		"TT..................TT",
+		"TT..................TT",
+		"TTTT..............TTTT",
+		"TTTTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_trialmaster", "name": "Trialmaster Complex", "rows": rows,
+		"entities": [
+			{"kind": "npc", "id": "dd_dwarf", "name": "Dwarf", "sprite": "dwarf", "pos": [9, 4], "facing": "down",
+				"lines": ["John. And Throm. The Trialmaster at your service — locked doors are my speciality."],
+				"lines_run_flag": {
+					"pit_betrayed": ["John. Alone. The Trialmaster at your service — locked doors are my speciality."],
+					"trial_ready": ["The cobra is ready. He waits in the arena. Finish it."],
+					"trial_done": ["The way is open. Go, and don't thank me."]},
+				"choice_event": "dwarf_meet"},
+			{"kind": "sign", "id": "dd_dice_table", "pos": [6, 4], "text": "A stone table with two dice in a cup. Someone has been practising probabilities."},
+			{"kind": "wizard", "id": "throm_arena", "enemy_id": "throm_duel", "pos": [4, 7], "sprite": "throm", "facing": "right",
+				"requires_run_flag": "trial_ready",
+				"intro": "They drag Throm into the arena. His eyes don't know you. The cobra's work.\n\n\"John?\" he says. \"No. Not John. FIGHT.\"\n\nThree slots of barbarian fury — fast, and wrong. Defend yourself.",
+				"on_win_run_flag": "trial_done"},
+			{"kind": "sign", "id": "dd_tunnel_tease", "pos": [3, 8], "text": "A concealed tunnel breathes cold air from the west. The Dwarf's crossbow does not waver. Not yet."},
+			{"kind": "exit", "pos": [20, 7], "to_area": "dd_lower", "to_pos": [1, 5], "facing": "right"},
+			{"kind": "exit", "pos": [20, 8], "to_area": "dd_lower", "to_pos": [1, 6], "facing": "right"},
 		],
 	}
