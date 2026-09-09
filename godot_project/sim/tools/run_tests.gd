@@ -15,6 +15,9 @@ const TESTS := [
 	"res://sim/tests/test_trial_run.gd",
 	"res://sim/tests/test_story_phase.gd",
 	"res://sim/tests/test_early_solver.gd",
+	"res://sim/tests/test_hex_board.gd",
+	"res://sim/tests/test_catan.gd",
+	"res://sim/tests/test_carts.gd",
 ]
 
 
