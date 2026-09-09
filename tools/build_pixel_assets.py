@@ -321,6 +321,7 @@ def make_characters():
     make_character("official", (105, 90, 165), hat=(80, 65, 130), hair=(200, 200, 200))
     make_character("dwarf", (120, 90, 60), hat=(90, 70, 50), hair=(200, 200, 200))
     make_character("ivy", (64, 140, 70), hair=(120, 60, 90))
+    make_character("igbut", (90, 140, 130), hat=(60, 110, 100), hair=(220, 220, 220))
 
 
 # ---------------------------------------------------------------- creatures (battle portraits 64x64 + overworld 16x16)
@@ -677,6 +678,33 @@ def make_plant(size, frame=0):
     return im
 
 
+def make_manticore(size, frame=0):
+    # Manticore: lion body, bat wings, scorpion tail.
+    im, d = new(size, size)
+    s = size
+    tawny, dark = (178, 134, 80), (110, 78, 44)
+    crouch = 0 if frame % 2 == 0 else max(1, s // 18)
+    # wings
+    d.polygon([(int(s * 0.30), int(s * 0.50) + crouch), (int(s * 0.44), int(s * 0.50) + crouch), (int(s * 0.20), int(s * 0.16)), (int(s * 0.28), int(s * 0.44) + crouch)], dark + (255,))
+    d.polygon([(int(s * 0.70), int(s * 0.50) + crouch), (int(s * 0.56), int(s * 0.50) + crouch), (int(s * 0.80), int(s * 0.16)), (int(s * 0.72), int(s * 0.44) + crouch)], dark + (255,))
+    # body
+    d.ellipse([int(s * 0.20), int(s * 0.52) + crouch, int(s * 0.80), int(s * 0.88)], tawny + (255,))
+    # legs
+    w = max(1, s // 26)
+    for dx in (0.28, 0.44, 0.58, 0.72):
+        d.line([(int(s * dx), int(s * 0.80)), (int(s * dx), int(s * 0.98))], dark + (255,), w)
+    # mane + face
+    d.ellipse([int(s * 0.60), int(s * 0.30), int(s * 0.96), int(s * 0.62)], dark + (255,))
+    d.ellipse([int(s * 0.66), int(s * 0.36), int(s * 0.90), int(s * 0.58)], tawny + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.70), int(s * 0.42), int(s * 0.70) + e, int(s * 0.42) + e], (200, 40, 40, 255))
+    d.rectangle([int(s * 0.80), int(s * 0.42), int(s * 0.80) + e, int(s * 0.42) + e], (200, 40, 40, 255))
+    # scorpion tail
+    d.line([(int(s * 0.20), int(s * 0.60) + crouch), (int(s * 0.08), int(s * 0.30))], dark + (255,), max(2, s // 20))
+    d.polygon([(int(s * 0.08), int(s * 0.30)), (int(s * 0.04), int(s * 0.30)), (int(s * 0.08), int(s * 0.22))], (60, 50, 40, 255))
+    return im
+
+
 def make_fly(size, frame=0):
     # Giant horsefly: winged silhouette (distinct from flame wisps), red eyes.
     im, d = new(size, size)
@@ -719,6 +747,7 @@ def make_creatures():
         "rock_grub": make_grub,
         "trog_champion": make_trog,
         "poison_ivy": make_plant,
+        "manticore": make_manticore,
     }
     for name, g in gens.items():
         for f in range(2):

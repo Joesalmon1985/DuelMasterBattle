@@ -1,9 +1,10 @@
 extends SceneTree
 
-## Dungeon flow test, P3 Trialmaster: Dwarf tests (dice/cobra) earn Stone;
-## forced Throm duel on the ally path; betrayal and attack variants.
+## Dungeon flow test, P6 finale: manticore, optional Red duel, Igbut gem check,
+## gem lock (wrong then right), final trap, Champion. Plus missing-gems refusal
+## and triple-wrong lock failure.
 ##
-## godot --headless --path godot_project --script res://client/tests/run_dungeon_p3.gd
+## godot --headless --path godot_project --script res://client/tests/run_dungeon_p6.gd
 
 const _BattleSim = preload("res://sim/battle_sim.gd")
 
@@ -22,9 +23,9 @@ func _run() -> void:
 	_adv = root.get_node("Adventure")
 	_adv.delete_save()
 	await process_frame
-	await _test_ally_path()
-	await _test_betrayed_path()
-	await _test_attack_path()
+	await _test_finale()
+	await _test_missing_gems()
+	await _test_lock_failure()
 	_report()
 
 
@@ -51,7 +52,7 @@ func _free_world() -> void:
 	await process_frame
 
 
-func _drain_dialogue(max_lines: int = 60) -> void:
+func _drain_dialogue(max_lines: int = 80) -> void:
 	# Warm-up: ui_action starts the dialogue asynchronously; do not conclude
 	# "nothing to drain" before it has had a chance to open or lock input.
 	var warm := 0
@@ -155,7 +156,7 @@ func _fight(win: bool, rig_ward: Array = []) -> String:
 	var game = board.game
 	var pc: DmbCombatant = game.player
 	var ec: DmbCombatant = game.enemy
-	for i in range(pc.ward_size):
+	for i in range(pc.weave_size):
 		board.ui_action_select_locus(i)
 		board.ui_action_pick_spell(int(pc.ward_pool[0]))
 	board.ui_action_lock_ward()
@@ -214,105 +215,112 @@ func _fight_from_world(win: bool, rig_ward: Array = []) -> String:
 	return outcome
 
 
+func _go_west(expect: String) -> void:
+	await _walk_to(Vector2i(1, 7))
+	await _walk(Vector2i(-1, 0), 1)
+	var g := 0
+	while _world.area_id != expect and g < 120:
+		await process_frame
+		g += 1
+	assert_eq(_world.area_id, expect, "travelled west to " + expect)
+
+
 # ---------------------------------------------------------------------------------
 
-func _setup_p3(ally: bool) -> void:
+func _setup_p6(with_gems: bool) -> void:
 	_adv.new_game()
 	_adv.set_flag("opening_seen")
 	_adv.set_flag("entered_trial")
-	_adv.learn_spell(1)
-	_adv.learn_spell(0)
-	_adv.grow_weave(2)
+	for s in [1, 0, 3, 6, 4, 5]:
+		_adv.learn_spell(s)
+	_adv.grow_weave(4)
 	_adv.start_run()
-	_adv.set_run_flag("troll_down")
-	_adv.mark("defeated", "troll_lower1")
-	if ally:
-		_adv.set_run_flag("pit_ally")
-		_adv.set_contestant("throm", "uneasy_ally")
-	else:
-		_adv.set_run_flag("pit_betrayed")
-		_adv.set_contestant("throm", "betrayed")
-	_adv.set_location("dd_lower", 3, 5, "left")
+	if with_gems:
+		_adv.add_gem("emerald")
+		_adv.add_gem("sapphire")
+		_adv.add_gem("diamond")
+	_adv.set_location("dd_troglodytes", 2, 7, "left")
 
 
-func _enter_trialmaster() -> void:
+func _test_finale() -> void:
+	await _setup_p6(true)
 	await _new_world()
 	await _drain_dialogue()
-	await _walk_to(Vector2i(1, 5))
-	await _walk(Vector2i(-1, 0), 1)
-	var g := 0
-	while _world.area_id != "dd_trialmaster" and g < 120:
-		await process_frame
-		g += 1
-	assert_eq(_world.area_id, "dd_trialmaster", "entered the Trialmaster complex")
+	await _go_west("dd_manticore")
 
-
-func _do_dwarf_tests(first_choice: String) -> void:
-	await _walk_to(Vector2i(9, 5))
-	await _face(Vector2i(0, -1))
-	assert_true(_world.ui_prompt().begins_with("Talk"), "dwarf prompt")
-	await _interact()
-	await _drain_dialogue()
-	_world.ui_dialogue_choose(first_choice)
-	await process_frame
-	await _drain_dialogue()
-	_world.ui_dialogue_choose("More than 8")
-	await process_frame
-	await _drain_dialogue()
-	_world.ui_dialogue_choose("Hold its gaze")
-	await process_frame
-	await _drain_dialogue()
-	assert_true(_adv.progression.knows(3), "earned Stone from the test")
-	assert_eq(_adv.progression.weave_size, 3, "weave 3 after the test")
-
-
-func _test_ally_path() -> void:
-	await _setup_p3(true)
-	await _enter_trialmaster()
-	await _do_dwarf_tests("Accept the test")
-	assert_true(_adv.run_flag("trial_ready"), "trial ready after tests")
-	assert_true(_world.ui_entity_exists("throm_arena"), "Throm is sent in")
-	await _walk_to(Vector2i(4, 8))
+	# Optional: settle it with the Red Wizard first.
+	await _walk_to(Vector2i(14, 9))
 	await _face(Vector2i(0, -1))
 	await _interact()
 	await _drain_dialogue()
 	_world.ui_dialogue_choose("Fight")
 	await process_frame
 	var out := await _fight_from_world(true)
-	assert_eq(out, "victory", "Throm duel won")
-	assert_true(_adv.run_flag("trial_done"), "trial done after the duel")
-	assert_eq(str(_adv.run_state()["contestants"].get("throm", "")), "dead", "Throm is dead")
-	await _free_world()
+	assert_eq(out, "victory", "Red Wizard beaten")
 
-
-func _test_betrayed_path() -> void:
-	await _setup_p3(false)
-	await _enter_trialmaster()
-	await _do_dwarf_tests("Accept the test")
-	assert_true(_adv.run_flag("trial_done"), "trial done without a duel")
-	assert_true(not _world.ui_entity_exists("throm_duel"), "no invented arena opponent")
-	assert_true(_adv.progression.knows(3), "Stone earned alone too")
-	await _free_world()
-
-
-func _test_attack_path() -> void:
-	await _setup_p3(true)
-	await _enter_trialmaster()
-	await _walk_to(Vector2i(9, 5))
+	# The Manticore: last creature gate.
+	await _walk_to(Vector2i(10, 7))
 	await _face(Vector2i(0, -1))
 	await _interact()
 	await _drain_dialogue()
-	_world.ui_dialogue_choose("Attack with Throm")
+	_world.ui_dialogue_choose("Fight")
+	await process_frame
+	out = await _fight_from_world(true)
+	assert_eq(out, "victory", "manticore beaten")
+
+	# Igbut: wrong order wounds, right order opens.
+	await _go_west("dd_igbut")
+	await _walk_to(Vector2i(8, 5))
+	await _face(Vector2i(0, 1))
+	await _interact()
+	await _drain_dialogue()
+	_world.ui_dialogue_choose("Face the door")
 	await process_frame
 	await _drain_dialogue()
-	assert_true("wounded" in _adv.run_state().get("conditions", []), "attacking the Dwarf wounds")
-	_world.ui_dialogue_choose("More than 8")
+	_world.ui_dialogue_choose("Emerald, Sapphire, Diamond")
 	await process_frame
 	await _drain_dialogue()
-	_world.ui_dialogue_choose("Hold its gaze")
+	assert_true("wounded" in _adv.run_state().get("conditions", []), "wrong order blasts")
+	_world.ui_dialogue_choose("Sapphire, Emerald, Diamond")
+	await process_frame
+	await _drain_dialogue(80)
+	assert_true(_adv.flag("dungeon_complete"), "Champion of the Trial")
+	assert_eq(_world.area_id, "trial_gate", "emerged at the gate")
+	await _free_world()
+
+
+func _test_missing_gems() -> void:
+	await _setup_p6(false)
+	_adv.set_location("dd_igbut", 8, 5, "down")
+	await _new_world()
+	await _drain_dialogue()
+	await _face(Vector2i(0, 1))
+	await _interact()
+	await _drain_dialogue()
+	_world.ui_dialogue_choose("Face the door")
 	await process_frame
 	await _drain_dialogue()
-	assert_true(_adv.progression.knows(3), "test proceeds after the attack")
+	assert_true(not _adv.flag("dungeon_complete"), "no gems, no victory")
+	await _free_world()
+
+
+func _test_lock_failure() -> void:
+	await _setup_p6(true)
+	_adv.set_location("dd_igbut", 8, 5, "down")
+	await _new_world()
+	await _drain_dialogue()
+	await _face(Vector2i(0, 1))
+	await _interact()
+	await _drain_dialogue()
+	_world.ui_dialogue_choose("Face the door")
+	await process_frame
+	await _drain_dialogue()
+	for wrong in ["Emerald, Sapphire, Diamond", "Emerald, Diamond, Sapphire", "Sapphire, Diamond, Emerald"]:
+		_world.ui_dialogue_choose(wrong)
+		await process_frame
+		await _drain_dialogue()
+	assert_true(not _adv.run_active(), "three strikes end the run")
+	assert_eq(_world.area_id, "trial_gate", "failed lock restarts at the gate")
 	await _free_world()
 
 
@@ -332,10 +340,10 @@ func assert_eq(a, b, msg: String) -> void:
 
 func _report() -> void:
 	if _failures.is_empty():
-		print("DUNGEON P3: ALL PASSED")
+		print("DUNGEON P6: ALL PASSED")
 		quit(0)
 	else:
-		print("DUNGEON P3: %d FAILURE(S)" % _failures.size())
+		print("DUNGEON P6: %d FAILURE(S)" % _failures.size())
 		for f in _failures:
 			print("  - %s" % f)
 		quit(1)

@@ -79,6 +79,13 @@ static func _build() -> void:
 	})
 	# P2: dungeon fauna. ------------------------------------------------------------
 	_add({
+		"id": "manticore", "display_name": "Manticore", "archetype": "manticore", "kind": "creature",
+		"description": "The last gate before Igbut. Four slots, and it has been waiting longer than you.",
+		"weave_size": 4, "attack_pool": [RED, BLUE, STONE, 6], "ward_size": 4, "ward_pool": [RED, BLUE, STONE, 6],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "capped_minimax", "bot_solver_cap": 40, "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
+	_add({
 		"id": "mirror_demon", "display_name": "Mirror Demon", "archetype": "mirror_demon", "kind": "creature",
 		"description": "What steps out of the glass. Three slots of reflected things — never what it casts.",
 		"weave_size": 3, "attack_pool": [5, 4, 1], "ward_size": 3, "ward_pool": [RED, BLUE, STONE],

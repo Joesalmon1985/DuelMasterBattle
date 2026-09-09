@@ -122,6 +122,12 @@ func choose_async(prompt: String, options: Array) -> String:
 func pick(label: String) -> void:
 	if not _waiting_choice:
 		return
+	var valid := false
+	for c in _choices.get_children():
+		if c is Button and (c as Button).text == label:
+			valid = true
+	if not valid:
+		return
 	_waiting_choice = false
 	for c in _choices.get_children():
 		c.queue_free()

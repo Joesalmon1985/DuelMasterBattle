@@ -46,6 +46,8 @@ func run_event(id: String) -> void:
 			await boulder_run()
 		"trog_ritual":
 			await trog_ritual()
+		"igbut_door":
+			await igbut_door()
 
 
 func opening_text() -> void:
@@ -383,6 +385,71 @@ func trog_ritual() -> void:
 		})
 
 
+## P6 final door (p.364, 62, 241, 400). Choice-owned; locks like gate_choice.
+func igbut_door() -> void:
+	var adv := _adv()
+	_w.lock_input(true)
+	if adv.flag("dungeon_complete"):
+		await _w.say("Igbut", "The door is open. Fang is waiting, Champion.")
+		_w.lock_input(false)
+		return
+	var choice: String = await _w._dialogue.choose_async("The black door?", ["Face the door", "Not yet"])
+	if choice != "Face the door":
+		_w.lock_input(false)
+		return
+	var gems: Array = adv.run_state().get("gems", [])
+	if not ("emerald" in gems and "sapphire" in gems and "diamond" in gems):
+		await _w.say("Igbut", "The gnome counts on his fingers. Counts again.")
+		await _w.say("Igbut", "Emerald. Sapphire. Diamond. THREE are required, contestant. The Trial does not bargain.")
+		_w.lock_input(false)
+		return
+	await _w.say("Igbut", "Three sockets. Three gems. Place them true, and mind the bite.")
+	await _gem_lock(adv)
+	_w.lock_input(false)
+
+
+func _gem_lock(adv: Node) -> void:
+	# p.62 as positional deduction: six orders, aggregate true/displaced feedback.
+	var correct := ["Sapphire", "Emerald", "Diamond"]
+	var orders := [
+		"Emerald, Sapphire, Diamond", "Emerald, Diamond, Sapphire",
+		"Sapphire, Emerald, Diamond", "Sapphire, Diamond, Emerald",
+		"Diamond, Emerald, Sapphire", "Diamond, Sapphire, Emerald",
+	]
+	var strikes := 0
+	while strikes < 3:
+		var pick: String = await _w._dialogue.choose_async("Place the gems?", orders)
+		if pick == "Sapphire, Emerald, Diamond":
+			await _w.say("", "The sockets drink the gems. The door sighs open.")
+			await _w.say("Igbut", "Ha! Walk through, Champion—")
+			await _w.flash(Color(1.0, 0.9, 0.6), 0.4)
+			await _w.shake(8.0, 0.5)
+			await _w.say("", "A crossbow sings from the dark Sukumvit built. Igbut does not finish.")
+			await _w.say("", "You walk past him into daylight, and Fang roars your name.\n\n— CHAMPION OF THE TRIAL —")
+			adv.set_flag("dungeon_complete")
+			_w.load_area("trial_gate", Vector2i(9, 6), "down")
+			adv.save()
+			return
+		strikes += 1
+		var tried: Array = pick.split(", ")
+		var placed := 0
+		for i in range(3):
+			if tried[i] == correct[i]:
+				placed += 1
+		var present := 0
+		for gm in tried:
+			if gm in correct:
+				present += 1
+		await _w.say("Igbut", "%d placed true, %d displaced." % [placed, present - placed])
+		if strikes < 3:
+			adv.add_condition("wounded")
+			await _w.say("", "The door bites. (WOUNDED: −1 cast in your next duel.)")
+	await _w.say("", "The third blast takes you off your feet. The dark takes the rest.")
+	adv.fail_run("lock")
+	_w.load_area("trial_gate", Vector2i(9, 6), "down")
+	adv.save()
+
+
 ## Called by the Overworld after returning from a battle.
 func on_battle_result(r: Dictionary) -> void:
 	var adv := _adv()
@@ -409,6 +476,9 @@ func on_battle_result(r: Dictionary) -> void:
 			var eid := str(req.get("encounter_id", ""))
 			if eid == "boa_grotto1":
 				await _w.say("", "The snake loosens. The elven woman breathes — barely.")
+			elif eid == "red_settle" or str(req.get("on_win_flag", "")) == "beat_red_wizard":
+				await _w.say("Red Wizard", "...A woodcutter. With half the Trial behind him.")
+				await _w.say("", "He's gone before the dust settles. The rivalry will have to wait for daylight.")
 			elif eid == "trog_champ1":
 				await _w.say("", "Their champion falls. The tribe backs off, drumming — respect, or arithmetic.")
 			elif eid == "throm_arena":

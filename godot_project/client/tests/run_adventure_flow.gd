@@ -76,6 +76,12 @@ func _free_world() -> void:
 
 func _drain_dialogue(max_lines: int = 40) -> void:
 	# Advance through any open dialogue, waiting out cutscene tweens.
+	# Warm-up: ui_action starts the dialogue asynchronously; do not conclude
+	# "nothing to drain" before it has had a chance to open or lock input.
+	var warm := 0
+	while warm < 120 and not _world.ui_dialogue_open() and not _world.ui_input_locked():
+		await process_frame
+		warm += 1
 	var guard := 0
 	while guard < max_lines * 60:
 		guard += 1

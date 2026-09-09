@@ -61,6 +61,8 @@ static func _build() -> void:
 	_areas["dd_blood"] = _dd_blood()
 	_areas["dd_grub"] = _dd_grub()
 	_areas["dd_troglodytes"] = _dd_troglodytes()
+	_areas["dd_manticore"] = _dd_manticore()
+	_areas["dd_igbut"] = _dd_igbut()
 	# forest_home is PARKED (P1): the old clearing no longer happens. Builder kept
 	# for reference; nothing links to it.
 
@@ -985,5 +987,72 @@ static func _dd_troglodytes() -> Dictionary:
 				"text": "A hollow tube, wax-sealed at both ends. For breathing underwater, if it comes to that."},
 			{"kind": "exit", "pos": [19, 7], "to_area": "dd_grub", "to_pos": [1, 7], "facing": "right"},
 			{"kind": "exit", "pos": [19, 8], "to_area": "dd_grub", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_manticore", "to_pos": [19, 7], "facing": "left"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_manticore", "to_pos": [19, 8], "facing": "left"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE J — Manticore gate + optional Red duel. 20 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_manticore() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT......rrrr......TT",
+		"TT......rrrr......TT",
+		"TT................TT",
+		"TT................TT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_manticore", "name": "Manticore Gate", "rows": rows,
+		"entities": [
+			{"kind": "creature", "id": "manticore_gate1", "enemy_id": "manticore", "pos": [10, 6],
+				"intro": "The last gate has teeth, wings, and patience.\n\nFour slots. It has been waiting longer than you."},
+			{"kind": "wizard", "id": "red_settle", "enemy_id": "red_wizard", "pos": [14, 8], "sprite": "red_mage", "facing": "left",
+				"intro": "The Red Wizard is already here, picking his teeth.\n\n\"The woodcutter. Still counting? Four knots, then — settle it, or walk past.\""},
+			{"kind": "exit", "pos": [19, 7], "to_area": "dd_troglodytes", "to_pos": [1, 7], "facing": "right"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_troglodytes", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_igbut", "to_pos": [9, 10], "facing": "left"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_igbut", "to_pos": [9, 10], "facing": "left"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE K — Igbut, gem lock, daylight (p.364, 62, 241, 400). 16 wide x 12 tall.
+# -------------------------------------------------------------------------------
+static func _dd_igbut() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTT",
+		"TTTT........TTTT",
+		"TTT..........TTT",
+		"TT............TT",
+		"TT............TT",
+		"TT............TT",
+		"TT............TT",
+		"TT............TT",
+		"TTT..........TTT",
+		"TTTT........TTTT",
+		"TTTTTT....TTTTTT",
+		"TTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_igbut", "name": "Igbut's Door", "rows": rows,
+		"entities": [
+			{"kind": "npc", "id": "dd_igbut", "name": "Igbut", "sprite": "igbut", "pos": [8, 6], "facing": "down",
+				"lines": ["Three gems, contestant. Emerald. Sapphire. Diamond. The door does the rest."],
+				"choice_event": "igbut_door"},
+			{"kind": "door", "id": "victory_door", "pos": [8, 2], "text": "A door of black stone with three empty sockets, gem-sized, in a row."},
+			{"kind": "exit", "pos": [9, 10], "to_area": "dd_manticore", "to_pos": [1, 7], "facing": "right"},
 		],
 	}
