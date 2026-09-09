@@ -79,6 +79,41 @@ static func _build() -> void:
 	})
 	# P2: dungeon fauna. ------------------------------------------------------------
 	_add({
+		"id": "mirror_demon", "display_name": "Mirror Demon", "archetype": "mirror_demon", "kind": "creature",
+		"description": "What steps out of the glass. Three slots of reflected things — never what it casts.",
+		"weave_size": 3, "attack_pool": [5, 4, 1], "ward_size": 3, "ward_pool": [RED, BLUE, STONE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
+	_add({
+		"id": "bloodbeast", "display_name": "Bloodbeast", "archetype": "bloodbeast", "kind": "creature",
+		"description": "Four slots of hunger. Its eyes water at Vine — a weakness, if anyone lives to use it.",
+		"weave_size": 4, "attack_pool": [RED, BLUE, STONE, 5], "ward_size": 4, "ward_pool": [RED, BLUE, STONE, 6, 4],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "capped_minimax", "bot_solver_cap": 40, "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
+	_add({
+		"id": "rock_grub", "display_name": "Rock Grub", "archetype": "rock_grub", "kind": "creature",
+		"description": "Blind, heat-sensing, and enormous. Three slots; it can smell your torch.",
+		"weave_size": 3, "attack_pool": [STONE, RED, BLUE], "ward_size": 3, "ward_pool": [STONE, RED, BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
+	_add({
+		"id": "trog_champion", "display_name": "Troglodyte Champion", "archetype": "trog_champion", "kind": "wizard",
+		"description": "The tribe's representative, so you don't have to fight the tribe.",
+		"weave_size": 3, "attack_pool": [STONE, 6, BLUE], "ward_size": 3, "ward_pool": [STONE, 6, BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
+	_add({
+		"id": "poison_ivy", "display_name": "Poison Ivy", "archetype": "poison_ivy", "kind": "wizard",
+		"description": "Tribute or thorns. Two slots, and she has heard every excuse.",
+		"weave_size": 2, "attack_pool": [6, BLUE], "ward_size": 2, "ward_pool": [6, BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
+	_add({
 		"id": "flying_guardian", "display_name": "Flying Guardian", "archetype": "flying_guardian", "kind": "creature",
 		"description": "Stuffed birds that are not stuffed. Two Ward slots of whatever shines.",
 		"weave_size": 2, "attack_pool": [RED, BLUE], "ward_size": 2, "ward_pool": [RED, BLUE, STONE],

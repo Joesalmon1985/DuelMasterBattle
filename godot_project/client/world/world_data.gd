@@ -56,6 +56,11 @@ static func _build() -> void:
 	_areas["dd_grotto"] = _dd_grotto()
 	_areas["dd_vaults"] = _dd_vaults()
 	_areas["dd_vault_inner"] = _dd_vault_inner()
+	_areas["dd_service"] = _dd_service()
+	_areas["dd_mirror"] = _dd_mirror()
+	_areas["dd_blood"] = _dd_blood()
+	_areas["dd_grub"] = _dd_grub()
+	_areas["dd_troglodytes"] = _dd_troglodytes()
 	# forest_home is PARKED (P1): the old clearing no longer happens. Builder kept
 	# for reference; nothing links to it.
 
@@ -757,6 +762,8 @@ static func _dd_vaults() -> Dictionary:
 			{"kind": "exit", "pos": [11, 1], "to_area": "dd_vault_inner", "to_pos": [7, 8], "facing": "up", "requires_run_flag": "iron_key"},
 			{"kind": "exit", "pos": [21, 7], "to_area": "dd_grotto", "to_pos": [1, 7], "facing": "right"},
 			{"kind": "exit", "pos": [21, 8], "to_area": "dd_grotto", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_service", "to_pos": [19, 7], "facing": "left"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_service", "to_pos": [19, 8], "facing": "left"},
 		],
 	}
 
@@ -784,5 +791,199 @@ static func _dd_vault_inner() -> Dictionary:
 				"grant": {"gem": "diamond"},
 				"text": "A diamond in a hall of echoes — real, cold, and yours.\n\nDIAMOND acquired."},
 			{"kind": "exit", "pos": [6, 8], "to_area": "dd_vaults", "to_pos": [10, 1], "facing": "down"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE H — Service layer: prisoner, Ivy, basket (P5 support). 20 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_service() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT................TT",
+		"TT................TT",
+		"TT................TT",
+		"TT................TT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_service", "name": "Service Tunnels", "rows": rows,
+		"entities": [
+			{"kind": "npc", "id": "dd_prisoner", "name": "Starved man", "sprite": "villager_a", "pos": [6, 6], "facing": "down",
+				"lines": ["...failed... they took my eyes... no, my boots..."],
+				"lines_run_flag": {"prisoner_free": ["Go. Stones. It loves... no. It HATES the green. Vine. Its eyes water."]},
+				"choice_event": "free_prisoner"},
+			{"kind": "npc", "id": "dd_ivy", "name": "Poison Ivy", "sprite": "ivy", "pos": [12, 6], "facing": "down",
+				"lines": ["Tribute, sweetling. Something useful, or thorns."],
+				"lines_run_flag": {"ivy_paid": ["Paid in full. Walk soft, sweetling."]},
+				"choice_event": "ivy_toll"},
+			{"kind": "npc", "id": "dd_basket", "name": "Basket man", "sprite": "villager_b", "pos": [9, 10], "facing": "up",
+				"lines": ["Up or down? I only work the rope. Don't ask about the screams."]},
+			{"kind": "sign", "id": "dd_servants", "pos": [14, 4], "text": "A duty roster, scratched in charcoal. Names, days, arrows. The Trial is somebody's job."},
+			{"kind": "exit", "pos": [19, 7], "to_area": "dd_vaults", "to_pos": [1, 7], "facing": "right"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_vaults", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_mirror", "to_pos": [19, 7], "facing": "left"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_mirror", "to_pos": [19, 8], "facing": "left"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE G — Mirror gallery: demon + Light (environmental solutions first).
+# -------------------------------------------------------------------------------
+static func _dd_mirror() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT................TT",
+		"TT................TT",
+		"TT................TT",
+		"TT................TT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_mirror", "name": "Mirror Gallery", "rows": rows,
+		"entities": [
+			{"kind": "sign", "id": "dd_mirrors", "pos": [10, 4], "text": "Tall mirrors, silver-backed. Something moves in them a breath after you do.",
+				"choice_event": "mirror_smash"},
+			{"kind": "creature", "id": "demon_mirror1", "enemy_id": "mirror_demon", "pos": [10, 6],
+				"intro": "What steps out of the glass is made of looking back.\n\nThree slots of reflected things — never what it casts. (Or smash the mirrors instead.)"},
+			{"kind": "pickup", "id": "light_shard", "pos": [10, 2], "sprite": "stone_shard", "run_pickup": true,
+				"requires_defeated": "demon_mirror1",
+				"grant": {"spell": 4},
+				"text": "A shard of mirror-light. It wants to be a spell.\n\nYou have learned LIGHT magic."},
+			{"kind": "exit", "pos": [19, 7], "to_area": "dd_service", "to_pos": [1, 7], "facing": "right"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_service", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_blood", "to_pos": [19, 7], "facing": "left"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_blood", "to_pos": [19, 8], "facing": "left"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE G — Bloodbeast lair: knowledge-sensitive boss + Shadow.
+# -------------------------------------------------------------------------------
+static func _dd_blood() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT......rrrr......TT",
+		"TT......rrrr......TT",
+		"TT................TT",
+		"TT................TT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_blood", "name": "Bloodbeast Lair", "rows": rows,
+		"entities": [
+			{"kind": "pickup", "id": "blood_clue", "pos": [8, 5], "sprite": "seed", "run_pickup": true,
+				"grant": {"run_flag": "blood_weakness"},
+				"text": "Bitter herbs, chewed and spat out. Something with a tongue hates Vine the way fire hates water.\n\n(Bloodbeast weakness learned: no Vine in its Ward.)"},
+			{"kind": "creature", "id": "beast_blood1", "enemy_id": "bloodbeast", "pos": [12, 7],
+				"intro": "Four slots of hunger unhinge the dark.\n\nBreak it — and what it was will teach you Shadow.",
+				"grant_on_win": {"spell": 5, "text": "The beast dissolves into its own shadow, and the shadow stays.\n\nYou have learned SHADOW magic."}},
+			{"kind": "exit", "pos": [19, 7], "to_area": "dd_mirror", "to_pos": [1, 7], "facing": "right"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_mirror", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_grub", "to_pos": [19, 7], "facing": "left"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_grub", "to_pos": [19, 8], "facing": "left"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE G — Grub tunnels: duel, boulder run, trapped chest.
+# -------------------------------------------------------------------------------
+static func _dd_grub() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT......rrrr......TT",
+		"TT......rrrr......TT",
+		"TT................TT",
+		"TT................TT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_grub", "name": "Grub Tunnels", "rows": rows,
+		"entities": [
+			{"kind": "creature", "id": "grub_grub1", "enemy_id": "rock_grub", "pos": [10, 7],
+				"intro": "The floor breathes. Then it opens.\n\nBlind, heat-sensing, enormous. Three slots — and it can smell your torch."},
+			{"kind": "sign", "id": "boulder_sign", "pos": [10, 5], "text": "A side tunnel slopes down into the dark. Dust falls. Something heavy is deciding.",
+				"choice_event": "boulder_run"},
+			{"kind": "pickup", "id": "trapped_chest", "pos": [15, 10], "sprite": "box", "run_pickup": true,
+				"grant": {}, "inflict": "wounded",
+				"text": "Teeth. The chest had teeth.\n\n(WOUNDED: −1 cast in your next duel. The gold is real, at least.)"},
+			{"kind": "exit", "pos": [19, 7], "to_area": "dd_blood", "to_pos": [1, 7], "facing": "right"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_blood", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_troglodytes", "to_pos": [19, 7], "facing": "left"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_troglodytes", "to_pos": [19, 8], "facing": "left"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE F — Troglodyte river cavern: ritual, arrow, or champion.
+# -------------------------------------------------------------------------------
+static func _dd_troglodytes() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT......~~~~......TT",
+		"TT......===.......TT",
+		"TT................TT",
+		"TT................TT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_troglodytes", "name": "Troglodyte Cavern", "rows": rows,
+		"entities": [
+			{"kind": "npc", "id": "dd_trog_elder", "name": "Ritual elder", "sprite": "elder", "pos": [10, 5], "facing": "down",
+				"lines": ["The rite, stranger. Dance it, run it, or bleed it. The tribe does not mind which."],
+				"lines_run_flag": {"trog_rite": ["Danced. Witnessed. Go with wet feet, stranger."]},
+				"choice_event": "trog_ritual"},
+			{"kind": "sign", "id": "dd_bridge", "pos": [6, 9], "text": "A bridge of black stone over black water. Drums on the far side."},
+			{"kind": "sign", "id": "dd_river", "pos": [13, 9], "text": "The river pulls hard. A hollow reed-tube bobs against the bank — somebody escaped this way once."},
+			{"kind": "pickup", "id": "dd_tube", "pos": [16, 4], "sprite": "staff", "run_pickup": true,
+				"grant": {},
+				"text": "A hollow tube, wax-sealed at both ends. For breathing underwater, if it comes to that."},
+			{"kind": "exit", "pos": [19, 7], "to_area": "dd_grub", "to_pos": [1, 7], "facing": "right"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_grub", "to_pos": [1, 8], "facing": "right"},
 		],
 	}

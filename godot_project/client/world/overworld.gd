@@ -626,7 +626,15 @@ func _on_action() -> void:
 		return
 	match e["kind"]:
 		"sign", "door", "logs", "corpse":
-			_dialogue.say("", str(e.get("text", "")))
+			if e.has("choice_event"):
+				_input_locked = true
+				_touch.set_enabled(false)
+				await _dialogue.say_async("", str(e.get("text", "")))
+				await _story.run_event(str(e["choice_event"]))
+				_input_locked = false
+				_touch.set_enabled(true)
+			else:
+				_dialogue.say("", str(e.get("text", "")))
 		"fire":
 			_interact_fire(e)
 		"pickup":
@@ -711,6 +719,8 @@ func _interact_pickup(e: Dictionary) -> void:
 		adv.set_run_flag(str(grant["run_flag"]))
 	if bool(e.get("clear_conditions", false)):
 		adv.clear_conditions()
+	if e.has("inflict"):
+		adv.add_condition(str(e["inflict"]))
 	_update_john_sprite()
 	_input_locked = true
 	_touch.set_enabled(false)
@@ -807,6 +817,24 @@ func _interact_enemy(e: Dictionary) -> void:
 	_start_battle(e)
 
 
+## P5: exploration knowledge that weakens a specific enemy's Ward.
+func _ward_ban_for(enemy_id: String) -> Array:
+	if enemy_id == "bloodbeast" and _adv().run_flag("blood_weakness"):
+		return [6]
+	return []
+
+
+## P5: story events start scripted battles through here (no entity needed).
+func start_battle_request(req: Dictionary) -> void:
+	var tw := create_tween()
+	tw.tween_property(_fader, "modulate:a", 1.0, 0.35)
+	await tw.finished
+	_adv().request_battle(req)
+	if test_mode:
+		return
+	get_tree().change_scene_to_file("res://client/scenes/game_board.tscn")
+
+
 func _start_battle(e: Dictionary) -> void:
 	var req := {
 		"enemy_id": str(e["enemy_id"]),
@@ -820,6 +848,7 @@ func _start_battle(e: Dictionary) -> void:
 		"return_pos": [_john_pos.x, _john_pos.y],
 		"facing": _john_facing,
 		"player_mods": _adv().player_mods(),
+		"ward_ban": _ward_ban_for(str(e["enemy_id"])),
 	}
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.35)

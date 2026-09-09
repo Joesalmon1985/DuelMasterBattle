@@ -100,7 +100,7 @@ func _walk(dir: Vector2i, steps: int) -> void:
 			guard += 1
 		_world.ui_step(dir)
 		var g2 := 0
-		while _world.ui_is_moving() and g2 < 60:
+		while _world.ui_is_moving() and g2 < 600:
 			await process_frame
 			g2 += 1
 
@@ -149,9 +149,17 @@ func _face(dir: Vector2i) -> void:
 	# Step into a solid tile just turns John.
 	_world.ui_step(dir)
 	await process_frame
+	var guard := 0
+	while _world.ui_is_moving() and guard < 600:
+		await process_frame
+		guard += 1
 
 
 func _interact() -> void:
+	var guard2 := 0
+	while _world.ui_is_moving() and guard2 < 600:
+		await process_frame
+		guard2 += 1
 	_world.ui_action()
 	await process_frame
 	await process_frame

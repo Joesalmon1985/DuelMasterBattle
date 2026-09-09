@@ -36,6 +36,16 @@ func run_event(id: String) -> void:
 			await false_eye()
 		"false_diamond":
 			await false_diamond()
+		"free_prisoner":
+			await free_prisoner()
+		"ivy_toll":
+			await ivy_toll()
+		"mirror_smash":
+			await mirror_smash()
+		"boulder_run":
+			await boulder_run()
+		"trog_ritual":
+			await trog_ritual()
 
 
 func opening_text() -> void:
@@ -289,6 +299,90 @@ func false_diamond() -> void:
 		_w.rebuild()
 
 
+## P5 service + gallery scenes. Choice-owned; no lock handling here.
+func free_prisoner() -> void:
+	var adv := _adv()
+	if adv.run_flag("prisoner_free"):
+		return
+	var choice: String = await _w._dialogue.choose_async("The starved man?", ["Free him", "Leave him"])
+	if choice == "Free him":
+		adv.set_run_flag("prisoner_free")
+		adv.set_run_flag("blood_weakness")
+		await _w.say("", "You cut his bonds. He presses something into your hand — bitter herbs — and babbles about the beast below.")
+		await _w.say("Starved man", "Go. Stones. It loves... no. It HATES the green. Vine. Its eyes water.")
+		await _w.say("", "(Bloodbeast weakness learned: no Vine in its Ward.)")
+	else:
+		await _w.say("", "You leave him. The dark keeps him.")
+
+
+func ivy_toll() -> void:
+	var adv := _adv()
+	if adv.run_flag("ivy_paid"):
+		return
+	var options := ["Leave", "Attack"]
+	if adv.run_flag("picked_dd_torch"):
+		options.push_front("Offer the torch")
+	await _w.say("Poison Ivy", "Tribute, sweetling. Something useful, or thorns.")
+	var choice: String = await _w._dialogue.choose_async("Ivy's toll?", options)
+	if choice == "Offer the torch":
+		adv.set_run_flag("ivy_paid")
+		await _w.say("Poison Ivy", "A torch? For me? ...Walk soft, sweetling. Walk soft.")
+	elif choice == "Attack":
+		await _w.start_battle_request({
+			"enemy_id": "poison_ivy", "encounter_id": "ivy_fight1", "kind": "wizard",
+			"area": "dd_service", "player_mods": adv.player_mods(), "ward_ban": [],
+		})
+	else:
+		await _w.say("", "You leave her thorns alone.")
+
+
+func mirror_smash() -> void:
+	# Environmental solution first; the duel stays for the proud.
+	var adv := _adv()
+	if adv.marked("defeated", "demon_mirror1"):
+		return
+	var choice: String = await _w._dialogue.choose_async("The mirrors?", ["Smash them", "Leave them"])
+	if choice == "Smash them":
+		adv.mark("defeated", "demon_mirror1")
+		adv.set_run_flag("mirrors_smashed")
+		await _w.say("", "Silver rain. The thing in the glass never finishes stepping out.\n\n(The Mirror Demon is broken without a duel.)")
+		_w.rebuild()
+	else:
+		await _w.say("", "You leave the glass its dignity.")
+
+
+func boulder_run() -> void:
+	var adv := _adv()
+	if adv.run_flag("boulder_done"):
+		return
+	adv.set_run_flag("boulder_done")
+	await _w.say("", "The tunnel exhales dust. Uphill, something heavy decides.")
+	var choice: String = await _w._dialogue.choose_async("Boulder?", ["Run!", "Hold ground"])
+	if choice == "Run!":
+		await _w.say("", "You run like the Trial is behind you. It is. The boulder agrees to miss.")
+	else:
+		adv.add_condition("wounded")
+		await _w.say("", "You hold your ground. The ground holds. You don't.\n\n(WOUNDED: −1 cast in your next duel.)")
+
+
+func trog_ritual() -> void:
+	var adv := _adv()
+	if adv.run_flag("trog_rite"):
+		return
+	var choice: String = await _w._dialogue.choose_async("The tribe waits.", ["Join the ritual", "Run the arrow", "Attack"])
+	if choice == "Join the ritual":
+		adv.set_run_flag("trog_rite")
+		await _w.say("", "You dance badly and sincerely. The tribe approves of sincerity.")
+	elif choice == "Run the arrow":
+		adv.set_run_flag("trog_ran")
+		await _w.say("", "Bridges, drums, black water — and then, impossibly, quiet.")
+	else:
+		await _w.start_battle_request({
+			"enemy_id": "trog_champion", "encounter_id": "trog_champ1", "kind": "wizard",
+			"area": "dd_troglodytes", "player_mods": adv.player_mods(), "ward_ban": [],
+		})
+
+
 ## Called by the Overworld after returning from a battle.
 func on_battle_result(r: Dictionary) -> void:
 	var adv := _adv()
@@ -315,6 +409,8 @@ func on_battle_result(r: Dictionary) -> void:
 			var eid := str(req.get("encounter_id", ""))
 			if eid == "boa_grotto1":
 				await _w.say("", "The snake loosens. The elven woman breathes — barely.")
+			elif eid == "trog_champ1":
+				await _w.say("", "Their champion falls. The tribe backs off, drumming — respect, or arithmetic.")
 			elif eid == "throm_arena":
 				adv.set_contestant("throm", "dead")
 				await _w.say("", "Throm falls. The delirium goes out of him like water, and for a moment he knows you.")

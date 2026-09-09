@@ -320,6 +320,7 @@ def make_characters():
     make_character("throm", (200, 150, 110), hair=(120, 70, 35))
     make_character("official", (105, 90, 165), hat=(80, 65, 130), hair=(200, 200, 200))
     make_character("dwarf", (120, 90, 60), hat=(90, 70, 50), hair=(200, 200, 200))
+    make_character("ivy", (64, 140, 70), hair=(120, 60, 90))
 
 
 # ---------------------------------------------------------------- creatures (battle portraits 64x64 + overworld 16x16)
@@ -564,6 +565,118 @@ def make_diamond():
     return im
 
 
+def make_grub(size, frame=0):
+    # Rock grub: blind segmented worm with a lamprey mouth.
+    im, d = new(size, size)
+    s = size
+    hide, dark = (150, 132, 118), (96, 80, 68)
+    squash = 0 if frame % 2 == 0 else max(1, s // 18)
+    for i, (x0, x1, y0, y1) in enumerate([(0.08, 0.34, 0.52, 0.80), (0.28, 0.56, 0.44, 0.74), (0.48, 0.76, 0.40, 0.68)]):
+        d.ellipse([int(s * x0), int(s * y0) + (squash if i == 1 else 0), int(s * x1), int(s * y1) + (squash if i == 1 else 0)], hide + (255,))
+        d.arc([int(s * x0), int(s * y0), int(s * x1), int(s * y1)], 0, 180, dark + (255,), max(1, s // 32))
+    # head + ring mouth
+    d.ellipse([int(s * 0.62), int(s * 0.30), int(s * 0.94), int(s * 0.62)], hide + (255,))
+    d.ellipse([int(s * 0.70), int(s * 0.38), int(s * 0.86), int(s * 0.54)], dark + (255,))
+    d.ellipse([int(s * 0.74), int(s * 0.42), int(s * 0.82), int(s * 0.50)], (140, 30, 30, 255))
+    # heat pits (blind eyes)
+    e = max(1, s // 20)
+    for ex in (0.66, 0.72):
+        d.rectangle([int(s * ex), int(s * 0.34), int(s * ex) + e, int(s * 0.34) + e], PAL["fire_a"] + (255,))
+    return im
+
+
+def make_shard(size, frame=0):
+    # Mirror demon: walking faceted glass, hollow glare.
+    im, d = new(size, size)
+    s = size
+    glass, edge = (170, 200, 220), (110, 140, 170)
+    lean = 0 if frame % 2 == 0 else max(1, s // 20)
+    # legs
+    d.polygon([(int(s * 0.36), int(s * 0.98)), (int(s * 0.46), int(s * 0.98)), (int(s * 0.44), int(s * 0.70))], edge + (255,))
+    d.polygon([(int(s * 0.54), int(s * 0.98)), (int(s * 0.64), int(s * 0.98)), (int(s * 0.56), int(s * 0.70))], edge + (255,))
+    # torso shard
+    d.polygon([(int(s * 0.30), int(s * 0.72) + lean), (int(s * 0.70), int(s * 0.72) + lean), (int(s * 0.60), int(s * 0.40)), (int(s * 0.40), int(s * 0.40))], glass + (255,))
+    d.line([(int(s * 0.34), int(s * 0.68) + lean), (int(s * 0.58), int(s * 0.44))], (235, 245, 255, 255), max(1, s // 32))
+    # arms
+    d.polygon([(int(s * 0.30), int(s * 0.70) + lean), (int(s * 0.24), int(s * 0.70) + lean), (int(s * 0.14), int(s * 0.44))], edge + (255,))
+    d.polygon([(int(s * 0.70), int(s * 0.70) + lean), (int(s * 0.76), int(s * 0.70) + lean), (int(s * 0.86), int(s * 0.44))], edge + (255,))
+    # head: hollow frame with glare
+    d.polygon([(int(s * 0.38), int(s * 0.36)), (int(s * 0.62), int(s * 0.36)), (int(s * 0.56), int(s * 0.12)), (int(s * 0.44), int(s * 0.12))], edge + (255,))
+    d.polygon([(int(s * 0.44), int(s * 0.30)), (int(s * 0.56), int(s * 0.30)), (int(s * 0.53), int(s * 0.18)), (int(s * 0.47), int(s * 0.18))], (240, 250, 255, 255))
+    return im
+
+
+def make_beast(size, frame=0):
+    # Bloodbeast: wall of red maw, weeping eyes, too many teeth.
+    im, d = new(size, size)
+    s = size
+    hide, dark = (150, 44, 40), (88, 26, 26)
+    breathe = 0 if frame % 2 == 0 else max(1, s // 16)
+    d.ellipse([int(s * 0.08), int(s * 0.14) + breathe, int(s * 0.92), int(s * 0.98)], hide + (255,))
+    d.ellipse([int(s * 0.16), int(s * 0.24) + breathe, int(s * 0.84), int(s * 0.90)], dark + (255,))
+    # maw
+    d.ellipse([int(s * 0.24), int(s * 0.46) + breathe, int(s * 0.76), int(s * 0.82)], (30, 12, 12, 255))
+    for i in range(5):
+        x = int(s * (0.30 + 0.10 * i))
+        d.polygon([(x, int(s * 0.48) + breathe), (x + max(1, s // 32), int(s * 0.48) + breathe), (x, int(s * 0.58) + breathe)], (235, 230, 210, 255))
+        d.polygon([(x, int(s * 0.80)), (x + max(1, s // 32), int(s * 0.80)), (x, int(s * 0.70))], (235, 230, 210, 255))
+    # weeping eyes
+    e = max(1, s // 14)
+    for ex in (0.30, 0.66):
+        d.ellipse([int(s * ex) - e, int(s * 0.28) - e, int(s * ex) + e, int(s * 0.28) + e], (250, 230, 150, 255))
+        d.line([(int(s * ex), int(s * 0.28) + e), (int(s * ex), int(s * 0.28) + e * 3)], (250, 230, 150, 255), max(1, s // 40))
+    # horns
+    d.polygon([(int(s * 0.16), int(s * 0.24) + breathe), (int(s * 0.24), int(s * 0.24) + breathe), (int(s * 0.10), int(s * 0.06))], (220, 210, 190, 255))
+    d.polygon([(int(s * 0.84), int(s * 0.24) + breathe), (int(s * 0.76), int(s * 0.24) + breathe), (int(s * 0.90), int(s * 0.06))], (220, 210, 190, 255))
+    return im
+
+
+def make_trog(size, frame=0):
+    # Troglodyte champion: upright lizard with ritual paint and a stone club.
+    im, d = new(size, size)
+    s = size
+    hide, paint = (104, 140, 96), (200, 190, 120)
+    sway = 0 if frame % 2 == 0 else max(1, s // 20)
+    d.rectangle([int(s * 0.34), int(s * 0.70), int(s * 0.46), int(s * 0.98)], hide + (255,))
+    d.rectangle([int(s * 0.54), int(s * 0.70), int(s * 0.66), int(s * 0.98)], hide + (255,))
+    d.ellipse([int(s * 0.28), int(s * 0.34) + sway, int(s * 0.72), int(s * 0.76) + sway], hide + (255,))
+    d.line([(int(s * 0.32), int(s * 0.52) + sway), (int(s * 0.68), int(s * 0.52) + sway)], paint + (255,), max(1, s // 28))
+    # snout head + crest
+    d.ellipse([int(s * 0.34), int(s * 0.10), int(s * 0.66), int(s * 0.36)], hide + (255,))
+    d.rectangle([int(s * 0.34), int(s * 0.24), int(s * 0.52), int(s * 0.32)], (70, 100, 66, 255))
+    for i in range(3):
+        x = int(s * (0.44 + 0.06 * i))
+        d.polygon([(x, int(s * 0.12)), (x + max(1, s // 32), int(s * 0.12)), (x, int(s * 0.04))], paint + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.56), int(s * 0.18), int(s * 0.56) + e, int(s * 0.18) + e], (240, 200, 80, 255))
+    # stone club
+    d.line([(int(s * 0.80), int(s * 0.90)), (int(s * 0.86), int(s * 0.40) + sway)], PAL["wood_b"] + (255,), max(2, s // 16))
+    d.ellipse([int(s * 0.78), int(s * 0.28) + sway, int(s * 0.94), int(s * 0.42) + sway], PAL["stone"] + (255,))
+    return im
+
+
+def make_plant(size, frame=0):
+    # Poison Ivy: thorned figure with a flowering head.
+    im, d = new(size, size)
+    s = size
+    vine, thorn = (64, 140, 70), (200, 220, 130)
+    sway = 0 if frame % 2 == 0 else max(1, s // 20)
+    d.rectangle([int(s * 0.42), int(s * 0.60), int(s * 0.50), int(s * 0.98)], (50, 90, 52, 255))
+    d.rectangle([int(s * 0.50), int(s * 0.60), int(s * 0.58), int(s * 0.98)], (50, 90, 52, 255))
+    d.ellipse([int(s * 0.30), int(s * 0.34) + sway, int(s * 0.70), int(s * 0.68) + sway], vine + (255,))
+    # thorns
+    for (x0, y0, x1, y1) in [(0.30, 0.50, 0.20, 0.44), (0.70, 0.50, 0.80, 0.44), (0.34, 0.62, 0.26, 0.62), (0.66, 0.62, 0.74, 0.62)]:
+        d.line([(int(s * x0), int(s * y0) + sway), (int(s * x1), int(s * y1) + sway)], thorn + (255,), max(1, s // 36))
+    # flowering head
+    for i in range(5):
+        a = 6.2832 * i / 5 + frame * 0.2
+        x = int(s * 0.5 + math.cos(a) * s * 0.10)
+        y = int(s * 0.22 + math.sin(a) * s * 0.10)
+        d.ellipse([x - max(1, s // 24), y - max(1, s // 24), x + max(1, s // 24), y + max(1, s // 24)], (214, 120, 180, 255))
+    d.ellipse([int(s * 0.46), int(s * 0.18), int(s * 0.54), int(s * 0.26)], (250, 220, 120, 255))
+    return im
+
+
 def make_fly(size, frame=0):
     # Giant horsefly: winged silhouette (distinct from flame wisps), red eyes.
     im, d = new(size, size)
@@ -601,6 +714,11 @@ def make_creatures():
         "throm_duel": make_barbarian,
         "flying_guardian": make_bird,
         "boa_constrictor": make_snake,
+        "mirror_demon": make_shard,
+        "bloodbeast": make_beast,
+        "rock_grub": make_grub,
+        "trog_champion": make_trog,
+        "poison_ivy": make_plant,
     }
     for name, g in gens.items():
         for f in range(2):

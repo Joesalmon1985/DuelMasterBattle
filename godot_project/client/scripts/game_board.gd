@@ -156,6 +156,8 @@ func _resolve_combatants() -> void:
 		_player_c = adv.progression.to_combatant()
 		_apply_player_mods(_player_c, _battle_request.get("player_mods", {}))
 		_enemy_c = DmbBestiary.make(str(_battle_request["enemy_id"]))
+		for banned in _battle_request.get("ward_ban", []):
+			_enemy_c.ward_pool.erase(int(banned))
 	else:
 		_adventure_mode = false
 		var diff = _session().get_difficulty_profile()
