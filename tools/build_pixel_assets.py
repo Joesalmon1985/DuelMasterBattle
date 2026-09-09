@@ -255,6 +255,7 @@ def make_props():
     save(make_staff_pickup(), "props/staff.png")
     save(make_sign(), "props/sign.png")
     save(make_box(), "props/box.png")
+    save(make_diamond(), "props/diamond.png")
     save(make_book(True), "props/book_red.png")
     save(make_book(False), "props/book_black.png")
     save(make_ring(), "props/ring.png")
@@ -512,6 +513,57 @@ def make_barbarian(size, frame=0):
     return im
 
 
+def make_bird(size, frame=0):
+    # Flying guardian: stuffed bird, beak and staring eyes.
+    im, d = new(size, size)
+    s = size
+    feather, dark = (139, 116, 88), (74, 60, 46)
+    flap = 0 if frame % 2 == 0 else max(1, s // 14)
+    d.ellipse([int(s * 0.10), int(s * 0.30) + flap, int(s * 0.42), int(s * 0.62) + flap], feather + (255,))
+    d.ellipse([int(s * 0.58), int(s * 0.30) + flap, int(s * 0.90), int(s * 0.62) + flap], feather + (255,))
+    d.ellipse([int(s * 0.34), int(s * 0.42), int(s * 0.66), int(s * 0.90)], feather + (255,))
+    d.ellipse([int(s * 0.40), int(s * 0.50), int(s * 0.60), int(s * 0.82)], dark + (255,))
+    # head + beak
+    d.ellipse([int(s * 0.38), int(s * 0.16), int(s * 0.62), int(s * 0.42)], feather + (255,))
+    d.polygon([(int(s * 0.46), int(s * 0.32)), (int(s * 0.54), int(s * 0.32)), (int(s * 0.50), int(s * 0.44))], PAL["fire_a"] + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.42), int(s * 0.24), int(s * 0.42) + e, int(s * 0.24) + e], INK + (255,))
+    d.rectangle([int(s * 0.56), int(s * 0.24), int(s * 0.56) + e, int(s * 0.24) + e], INK + (255,))
+    # feet
+    w = max(1, s // 28)
+    d.line([(int(s * 0.42), int(s * 0.88)), (int(s * 0.42), int(s * 0.98))], dark + (255,), w)
+    d.line([(int(s * 0.58), int(s * 0.88)), (int(s * 0.58), int(s * 0.98))], dark + (255,), w)
+    return im
+
+
+def make_snake(size, frame=0):
+    # Boa constrictor: coiled muscle, flat head, unblinking.
+    im, d = new(size, size)
+    s = size
+    scale, belly = (86, 128, 84), (168, 188, 140)
+    coil = 0 if frame % 2 == 0 else max(1, s // 18)
+    d.ellipse([int(s * 0.12), int(s * 0.55), int(s * 0.88), int(s * 0.95)], scale + (255,))
+    d.ellipse([int(s * 0.20), int(s * 0.62), int(s * 0.80), int(s * 0.90)], belly + (255,))
+    d.ellipse([int(s * 0.28), int(s * 0.38) + coil, int(s * 0.72), int(s * 0.66) + coil], scale + (255,))
+    # head raised right
+    d.ellipse([int(s * 0.58), int(s * 0.10), int(s * 0.92), int(s * 0.38)], scale + (255,))
+    d.rectangle([int(s * 0.62), int(s * 0.30), int(s * 0.88), int(s * 0.36)], belly + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.66), int(s * 0.18), int(s * 0.66) + e, int(s * 0.18) + e], (200, 40, 40, 255))
+    # tongue
+    d.line([(int(s * 0.90), int(s * 0.33)), (int(s * 0.98), int(s * 0.33))], (200, 60, 60, 255), max(1, s // 32))
+    return im
+
+
+def make_diamond():
+    # True gem: cold blue diamond.
+    im, d = new(TILE, TILE)
+    d.polygon([(8, 1), (13, 6), (8, 15), (3, 6)], (120, 200, 240, 255))
+    d.polygon([(8, 4), (11, 7), (8, 12), (5, 7)], (200, 240, 255, 255))
+    d.line([(3, 6), (13, 6)], (240, 250, 255, 255))
+    return im
+
+
 def make_fly(size, frame=0):
     # Giant horsefly: winged silhouette (distinct from flame wisps), red eyes.
     im, d = new(size, size)
@@ -547,6 +599,8 @@ def make_creatures():
         "guard_dog": make_dog,
         "cave_troll": make_troll,
         "throm_duel": make_barbarian,
+        "flying_guardian": make_bird,
+        "boa_constrictor": make_snake,
     }
     for name, g in gens.items():
         for f in range(2):

@@ -79,6 +79,20 @@ static func _build() -> void:
 	})
 	# P2: dungeon fauna. ------------------------------------------------------------
 	_add({
+		"id": "flying_guardian", "display_name": "Flying Guardian", "archetype": "flying_guardian", "kind": "creature",
+		"description": "Stuffed birds that are not stuffed. Two Ward slots of whatever shines.",
+		"weave_size": 2, "attack_pool": [RED, BLUE], "ward_size": 2, "ward_pool": [RED, BLUE, STONE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
+	_add({
+		"id": "boa_constrictor", "display_name": "Boa Constrictor", "archetype": "boa_constrictor", "kind": "creature",
+		"description": "A squeeze of muscle around an elven woman. Three slots; break it or bury her.",
+		"weave_size": 3, "attack_pool": [RED, BLUE, STONE], "ward_size": 3, "ward_pool": [RED, BLUE, STONE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
+	_add({
 		"id": "throm_duel", "display_name": "Throm, Delirious", "archetype": "throm_duel", "kind": "wizard",
 		"description": "Cobra-bitten and weaponised by the Dwarf. Three slots of barbarian fury, fast and wrong.",
 		"weave_size": 3, "attack_pool": [RED, STONE, BLUE], "ward_size": 3, "ward_pool": [RED, STONE, BLUE],

@@ -705,6 +705,12 @@ func _interact_pickup(e: Dictionary) -> void:
 		adv.learn_spell(int(grant["spell"]))
 	if grant.has("weave"):
 		adv.grow_weave(int(grant["weave"]))
+	if grant.has("gem"):
+		adv.add_gem(str(grant["gem"]))
+	if grant.has("run_flag"):
+		adv.set_run_flag(str(grant["run_flag"]))
+	if bool(e.get("clear_conditions", false)):
+		adv.clear_conditions()
 	_update_john_sprite()
 	_input_locked = true
 	_touch.set_enabled(false)
@@ -913,17 +919,20 @@ func _on_menu() -> void:
 	_input_locked = true
 	_touch.set_enabled(false)
 	_adv().save()
-	var choice: String = await _dialogue.choose_async("Paused — progress saved.", ["Continue", "How to play", "Main menu"])
-	match choice:
-		"How to play":
-			await _dialogue.say_async("How to play", "Move with the pad (or arrow keys). Tap ✦ (or Space) to talk, take, douse fires and face creatures.\n\nBattles: pick spells for each weave slot, then CAST when the ring is ready. Break their Ward before they break yours.")
-			_input_locked = false
-			_touch.set_enabled(true)
-		"Main menu":
-			get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
-		_:
-			_input_locked = false
-			_touch.set_enabled(true)
+	while true:
+		var choice: String = await _dialogue.choose_async("Paused — progress saved.", ["Continue", "Journal", "How to play", "Main menu"])
+		match choice:
+			"How to play":
+				await _dialogue.say_async("How to play", "Move with the pad (or arrow keys). Tap ✦ (or Space) to talk, take, douse fires and face creatures.\n\nBattles: pick spells for each weave slot, then CAST when the ring is ready. Break their Ward before they break yours.")
+			"Journal":
+				await _dialogue.say_async("", _adv().notebook_text())
+			"Main menu":
+				get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
+				return
+			_:
+				_input_locked = false
+				_touch.set_enabled(true)
+				return
 
 
 func _maybe_autosave() -> void:

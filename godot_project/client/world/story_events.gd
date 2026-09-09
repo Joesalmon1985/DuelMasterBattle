@@ -30,6 +30,12 @@ func run_event(id: String) -> void:
 			await black_book()
 		"dwarf_meet":
 			await dwarf_meet()
+		"elf_rescue":
+			await elf_rescue()
+		"false_eye":
+			await false_eye()
+		"false_diamond":
+			await false_diamond()
 
 
 func opening_text() -> void:
@@ -238,6 +244,51 @@ func _dwarf_cobra(adv: Node) -> void:
 		await _w.say("Dwarf", "Alone, and still standing. The concealed way is yours — west, when you're ready.")
 
 
+## P4 grotto + jewel scenes (p.281, 218). Choice-owned; no lock handling here.
+func elf_rescue() -> void:
+	# p.281: rescue first, clue second. Order-free: the charm works either way.
+	var adv := _adv()
+	if not adv.marked("defeated", "boa_grotto1"):
+		await _w.say("Dying elf", "...the snake... first...")
+		return
+	if adv.run_flag("elf_gone"):
+		return
+	var choice: String = await _w._dialogue.choose_async("She is fading.", ["Stay with her", "Take the charm and go"])
+	adv.set_flag("diamond_clue")
+	adv.set_run_flag("elf_gone")
+	if choice == "Stay with her":
+		await _w.say("", "You hold her hand while she tells you: the final door wants gems, and one of them is a diamond.")
+		await _w.say("Dying elf", "Take the charm. Take the bread. ...Tell the trees I was brave.")
+	else:
+		await _w.say("", "You take the charm. Her voice follows you out: the final door wants gems — one is a diamond.")
+	_w.rebuild()
+
+
+func false_eye() -> void:
+	var adv := _adv()
+	var choice: String = await _w._dialogue.choose_async("The wrong eye?", ["Take it", "Leave it"])
+	if choice == "Take it":
+		adv.add_condition("wounded")
+		await _w.say("", "It comes away — and something in the idol's gaze comes with it.\n\n(WOUNDED: −1 cast in your next duel. It was glass. Flawed glass.)")
+	else:
+		adv.set_run_flag("picked_false_eye", false)
+		await _w.say("", "You leave it where it lies.")
+		_w.rebuild()
+
+
+func false_diamond() -> void:
+	# p.218: risk your life for the wrong jewel, or don't.
+	var adv := _adv()
+	var choice: String = await _w._dialogue.choose_async("The fallen warrior's jewel?", ["Take it", "Leave it"])
+	if choice == "Take it":
+		adv.add_condition("wounded")
+		await _w.say("", "The floor opens its eye. You keep the jewel and lose blood.\n\n(WOUNDED. It is glass. It was always glass.)")
+	else:
+		adv.set_run_flag("picked_false_diamond", false)
+		await _w.say("", "You leave it where it lies.")
+		_w.rebuild()
+
+
 ## Called by the Overworld after returning from a battle.
 func on_battle_result(r: Dictionary) -> void:
 	var adv := _adv()
@@ -262,7 +313,9 @@ func on_battle_result(r: Dictionary) -> void:
 		else:
 			_w.rebuild()
 			var eid := str(req.get("encounter_id", ""))
-			if eid == "throm_arena":
+			if eid == "boa_grotto1":
+				await _w.say("", "The snake loosens. The elven woman breathes — barely.")
+			elif eid == "throm_arena":
 				adv.set_contestant("throm", "dead")
 				await _w.say("", "Throm falls. The delirium goes out of him like water, and for a moment he knows you.")
 				await _w.say("Throm", "...Good fight, villager.")

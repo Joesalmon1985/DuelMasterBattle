@@ -264,6 +264,42 @@ func knowledge_status(area_id: String) -> String:
 	return str(state.get("dungeon_knowledge", {}).get(area_id, "unknown"))
 
 
+## John's journal: persistent knowledge (never what he hasn't learned) + run state.
+func notebook_text() -> String:
+	var _World = load("res://client/world/world_data.gd")
+	var lines := ["JOHN'S JOURNAL"]
+	if run_active():
+		var gems: Array = run_state().get("gems", [])
+		var names := []
+		for gm in gems:
+			names.append(str(gm).capitalize())
+		lines.append("Gems carried: " + (", ".join(PackedStringArray(names)) if not names.is_empty() else "none yet"))
+		var conds: Array = run_state().get("conditions", [])
+		if not conds.is_empty():
+			lines.append("Ailing: " + ", ".join(PackedStringArray(conds)))
+	var known: Array = state.get("dungeon_knowledge", {}).keys()
+	if known.is_empty():
+		lines.append("The dark below is still unknown.")
+	else:
+		lines.append("Known ground:")
+		for id in known:
+			var nm := str(id)
+			if _World.area_ids().has(id):
+				nm = str(_World.get_area(str(id)).get("name", id))
+			lines.append("- %s (%s)" % [nm, knowledge_status(str(id))])
+	if flag("diamond_clue"):
+		lines.append("The Elf's clue: the final door wants gems. One is a diamond.")
+	if run_active():
+		var fell := []
+		for cid in run_state().get("contestants", {}).keys():
+			var st := str(run_state()["contestants"][cid])
+			if st != "ahead":
+				fell.append("%s: %s" % [cid, st])
+		if not fell.is_empty():
+			lines.append("Others: " + ", ".join(PackedStringArray(fell)))
+	return "\n".join(PackedStringArray(lines))
+
+
 func add_gem(gem: String) -> void:
 	if run_active() and not gem in run_state()["gems"]:
 		state["run"]["gems"].append(gem)

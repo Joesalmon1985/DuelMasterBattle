@@ -52,6 +52,10 @@ static func _build() -> void:
 	_areas["dd_pit"] = _dd_pit()
 	_areas["dd_lower"] = _dd_lower()
 	_areas["dd_trialmaster"] = _dd_trialmaster()
+	_areas["dd_idol"] = _dd_idol()
+	_areas["dd_grotto"] = _dd_grotto()
+	_areas["dd_vaults"] = _dd_vaults()
+	_areas["dd_vault_inner"] = _dd_vault_inner()
 	# forest_home is PARKED (P1): the old clearing no longer happens. Builder kept
 	# for reference; nothing links to it.
 
@@ -625,5 +629,160 @@ static func _dd_trialmaster() -> Dictionary:
 			{"kind": "sign", "id": "dd_tunnel_tease", "pos": [3, 8], "text": "A concealed tunnel breathes cold air from the west. The Dwarf's crossbow does not waver. Not yet."},
 			{"kind": "exit", "pos": [20, 7], "to_area": "dd_lower", "to_pos": [1, 5], "facing": "right"},
 			{"kind": "exit", "pos": [20, 8], "to_area": "dd_lower", "to_pos": [1, 6], "facing": "right"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_idol", "to_pos": [18, 8], "facing": "left", "requires_run_flag": "trial_done"},
+			{"kind": "exit", "pos": [0, 9], "to_area": "dd_idol", "to_pos": [18, 9], "facing": "left", "requires_run_flag": "trial_done"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE C — Idol cavern, Emerald (p.37, 240). 20 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_idol() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT................TT",
+		"TT......rrrr......TT",
+		"TT......r..r......TT",
+		"TT......r..r......TT",
+		"TT......rrrr......TT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_idol", "name": "Idol Cavern", "rows": rows,
+		"entities": [
+			{"kind": "sign", "id": "dd_idol_sign", "pos": [10, 2], "text": "An idol twice your height, jewel-eyed, bird-guarded. It is smiling the way doors smile."},
+			{"kind": "creature", "id": "guard_idol1", "enemy_id": "flying_guardian", "pos": [6, 8],
+				"intro": "The stuffed birds open their eyes. All of them.\n\nTwo Ward slots of whatever shines — read them like Ashby taught you."},
+			{"kind": "creature", "id": "guard_idol2", "enemy_id": "flying_guardian", "pos": [12, 8],
+				"intro": "The second guardian unfolds from the idol's shoulder."},
+			{"kind": "pickup", "id": "emerald_eye", "pos": [8, 4], "sprite": "stone_shard", "run_pickup": true,
+				"requires_defeated": "guard_idol2",
+				"grant": {"gem": "emerald"},
+				"text": "The emerald eye comes away in your hand. It is heavier than a sin.\n\nEMERALD acquired."},
+			{"kind": "pickup", "id": "false_eye", "pos": [11, 4], "sprite": "stone_shard", "run_pickup": true,
+				"grant": {},
+				"text": "The other eye glitters. Bigger. Greener. Obviously trapped, and obviously tempting.",
+				"choice_event": "false_eye"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_trialmaster", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [19, 9], "to_area": "dd_trialmaster", "to_pos": [1, 9], "facing": "right"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_grotto", "to_pos": [19, 7], "facing": "left"},
+			{"kind": "exit", "pos": [0, 9], "to_area": "dd_grotto", "to_pos": [19, 8], "facing": "left"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE I — Elf grotto, Boa, Vine (p.281, 399). 20 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_grotto() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT......~~~~......TT",
+		"TT......~~~~......TT",
+		"TT................TT",
+		"TT................TT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_grotto", "name": "Drowned Grotto", "rows": rows,
+		"entities": [
+			{"kind": "creature", "id": "boa_grotto1", "enemy_id": "boa_constrictor", "pos": [10, 6],
+				"intro": "A Boa Constrictor is crushing an elven woman against the rocks. She sees you.\n\nThree slots. Break it or bury her."},
+			{"kind": "npc", "id": "dd_elf", "name": "Dying elf", "sprite": "elf", "pos": [9, 8], "facing": "up",
+				"lines": ["...help... the snake..."],
+				"lines_run_flag": {"elf_gone": ["She is gone. The hollow smells of bread and dust."]},
+				"choice_event": "elf_rescue"},
+			{"kind": "pickup", "id": "elf_bread", "pos": [8, 9], "sprite": "seed", "run_pickup": true,
+				"requires_defeated": "boa_grotto1",
+				"grant": {}, "clear_conditions": true,
+				"text": "Her bread, packed with healing herbs. You eat. The shaking stops.\n\n(Your conditions are cleared.)"},
+			{"kind": "pickup", "id": "elf_charm", "pos": [11, 9], "sprite": "pendant", "run_pickup": true,
+				"requires_defeated": "boa_grotto1",
+				"grant": {"spell": SPELL_VINE, "weave": 4}, "set_flag": "diamond_clue",
+				"text": "Her vine-charm. It curls around your wrist like it was always yours.\n\nYou have learned VINE magic.\nYour weave can now hold FOUR spells."},
+			{"kind": "exit", "pos": [19, 7], "to_area": "dd_idol", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_idol", "to_pos": [1, 9], "facing": "right"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_vaults", "to_pos": [21, 7], "facing": "left"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_vaults", "to_pos": [21, 8], "facing": "left"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE I — Sapphire vaults + diamonds (p.162, 218, 269). 22 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_vaults() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTTTT",
+		"TTTT..............TTTT",
+		"TTTT..............TTTT",
+		"TTTT......::......TTTT",
+		"TTTT......::......TTTT",
+		"TTTT......::......TTTT",
+		"TT..................TT",
+		"......................",
+		"......................",
+		"TT..................TT",
+		"TT..................TT",
+		"TTTT..............TTTT",
+		"TTTT..............TTTT",
+		"TTTTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_vaults", "name": "Sapphire Vaults", "rows": rows,
+		"entities": [
+			{"kind": "pickup", "id": "sapphire_box", "pos": [9, 2], "sprite": "box", "run_pickup": true,
+				"grant": {"gem": "sapphire", "run_flag": "iron_key"},
+				"text": "A box, an iron key, and a sapphire the size of a robin's egg.\n\nSAPPHIRE acquired — and the key fits the northern lock."},
+			{"kind": "pickup", "id": "false_diamond", "pos": [14, 12], "sprite": "diamond", "run_pickup": true,
+				"grant": {},
+				"text": "A diamond beside a fallen warrior, just lying there. Every instinct says trap.",
+				"choice_event": "false_diamond"},
+			{"kind": "exit", "pos": [11, 1], "to_area": "dd_vault_inner", "to_pos": [7, 8], "facing": "up", "requires_run_flag": "iron_key"},
+			{"kind": "exit", "pos": [21, 7], "to_area": "dd_grotto", "to_pos": [1, 7], "facing": "right"},
+			{"kind": "exit", "pos": [21, 8], "to_area": "dd_grotto", "to_pos": [1, 8], "facing": "right"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE I — Inner vault, true Diamond (p.269). 14 wide x 10 tall.
+# -------------------------------------------------------------------------------
+static func _dd_vault_inner() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTT",
+		"TTT........TTT",
+		"TT..........TT",
+		"TT..........TT",
+		"TT..........TT",
+		"TT..........TT",
+		"TT..........TT",
+		"TT..........TT",
+		"TTT........TTT",
+		"TTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_vault_inner", "name": "Inner Vault", "rows": rows,
+		"entities": [
+			{"kind": "pickup", "id": "true_diamond", "pos": [7, 4], "sprite": "diamond", "run_pickup": true,
+				"grant": {"gem": "diamond"},
+				"text": "A diamond in a hall of echoes — real, cold, and yours.\n\nDIAMOND acquired."},
+			{"kind": "exit", "pos": [6, 8], "to_area": "dd_vaults", "to_pos": [10, 1], "facing": "down"},
 		],
 	}
