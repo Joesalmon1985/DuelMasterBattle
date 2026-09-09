@@ -277,7 +277,7 @@ hasn't learned".
 |---|---|---|
 | **P0 Canon & scaffolding** ✅ DONE | `content/dd_canon.json` + `content/dd_passages/` (29 files) + `test_dd_canon.gd`; `SECOND_ADVENTURE_PLAN.md` marked superseded | 11/11 green |
 | **P1 Level 1 overhaul** ✅ DONE | Trial-Day Ashwell, duel cutscene, Ashby lessons, `trial_road`, `trial_gate` (7 entrants), ENTER/NOT YET, threshold ending. Burnt Wood = training detour (grants stripped) | flow test ALL PASSED + sim 11/11 + screenshots reviewed |
-| **P2 Run state + first slice** | §4.1, §4.2 kinds, Zones A, B, D (through Cave Trolls: Fire via red book), Throm companion, conditions bridge, fail/restart loop | flow test A→B→D; die-and-restart test |
+| **P2 Run state + first slice** ✅ DONE | run state (save v2+migration), Zones A/B/D through Cave Trolls (Fire via red book), Throm pit choice, conditions→duel bridge, fail/restart loop | unit 12/12 + dungeon flow ALL PASSED + P1 flow/smoke/playtest green + screenshots |
 | **P3 Trialmaster** | Zone E incl. dice/cobra tests, forced Throm duel, post-battle scene, betrayal variant | both p.60 branches playable |
 | **P4 Gems** | Zones C, I (+ Elf → Vine), diamond trap/real, iron-key door, notebook | three gems obtainable; false diamond kills the run |
 | **P5 Galleries & river** | Zone G (Mirror Demon, Bloodbeast + knowledge modifier, Rock Grub, boulder run), Zone F traversal, Zone H service layer | pacifist flow test |

@@ -124,6 +124,8 @@ func _walk_to(target: Vector2i) -> void:
 				continue
 			if not _world.ui_tile_walkable(nxt):
 				continue
+			if nxt != target and _world.ui_is_exit(nxt):
+				continue
 			prev[nxt] = cur
 			queue.append(nxt)
 	if not found:

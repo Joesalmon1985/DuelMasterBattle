@@ -328,6 +328,8 @@ func _entity_visible(e: Dictionary) -> bool:
 	var adv := _adv()
 	if e.has("requires_flag") and not adv.flag(str(e["requires_flag"])):
 		return false
+	if e.has("requires_run_flag") and not adv.run_flag(str(e["requires_run_flag"])):
+		return false
 	if e.has("requires_spell") and not adv.progression.knows(int(e["requires_spell"])):
 		return false
 	if e.has("requires_defeated") and not adv.marked("defeated", str(e["requires_defeated"])):
@@ -336,6 +338,8 @@ func _entity_visible(e: Dictionary) -> bool:
 		"fire":
 			return not adv.marked("extinguished", str(e["id"]))
 		"pickup":
+			if bool(e.get("run_pickup", false)):
+				return not adv.run_flag("picked_" + str(e["id"]))
 			return not adv.marked("picked", str(e["id"]))
 		"creature":
 			return not adv.marked("defeated", str(e["id"]))
@@ -492,7 +496,7 @@ func is_walkable(p: Vector2i) -> bool:
 		return false
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
-		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup"]:
+		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs"]:
 			return false
 	return true
 
@@ -543,6 +547,7 @@ func _travel(to_area: String, to_pos: Vector2i, facing: String) -> void:
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.25)
 	await tw.finished
 	load_area(to_area, to_pos, facing)
+	_adv().mark_visited(to_area)
 	_adv().save()
 	_fade_in()
 	_input_locked = false
@@ -686,7 +691,10 @@ func _interact_pickup(e: Dictionary) -> void:
 	var s := _sfx()
 	if s:
 		s.ready_chime()
-	adv.mark("picked", str(e["id"]))
+	if bool(e.get("run_pickup", false)):
+		adv.set_run_flag("picked_" + str(e["id"]))
+	else:
+		adv.mark("picked", str(e["id"]))
 	if e.has("set_flag"):
 		adv.set_flag(str(e["set_flag"]))
 	if is_instance_valid(e.get("node")):
@@ -701,6 +709,8 @@ func _interact_pickup(e: Dictionary) -> void:
 	_input_locked = true
 	_touch.set_enabled(false)
 	await _dialogue.say_async("", str(e.get("text", "")))
+	if e.has("choice_event"):
+		await _story.run_event(str(e["choice_event"]))
 	if grant.has("spell") or grant.has("weave"):
 		await _show_progression_card(grant)
 	_input_locked = false
@@ -718,6 +728,10 @@ func _interact_npc(e: Dictionary) -> void:
 		for fl in e["lines_flag"].keys():
 			if adv.flag(str(fl)):
 				lines = e["lines_flag"][fl]
+	if e.has("lines_run_flag"):
+		for fl in e["lines_run_flag"].keys():
+			if adv.run_flag(str(fl)):
+				lines = e["lines_run_flag"][fl]
 	# Elder-style grant: on a flag, first conversation grants a spell.
 	var grant: Dictionary = e.get("grant_on_flag", {})
 	var will_grant: bool = not grant.is_empty() and adv.flag(str(grant["flag"])) and not adv.flag(str(grant["set_flag"]))
@@ -726,6 +740,8 @@ func _interact_npc(e: Dictionary) -> void:
 	_face_npc_toward_john(e)
 	for line in lines:
 		await _dialogue.say_async(str(e.get("name", "")), str(line))
+	if e.has("choice_event"):
+		await _story.run_event(str(e["choice_event"]))
 	if will_grant:
 		adv.learn_spell(int(grant["spell"]))
 		adv.set_flag(str(grant["set_flag"]))
@@ -791,11 +807,13 @@ func _start_battle(e: Dictionary) -> void:
 		"encounter_id": str(e["id"]),
 		"kind": str(e["kind"]),
 		"on_win_flag": str(e.get("on_win_flag", "")),
+		"on_win_run_flag": str(e.get("on_win_run_flag", "")),
 		"grant_on_win": e.get("grant_on_win", {}),
 		"drops": str(e.get("drops", "")),
 		"area": area_id,
 		"return_pos": [_john_pos.x, _john_pos.y],
 		"facing": _john_facing,
+		"player_mods": _adv().player_mods(),
 	}
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.35)
@@ -1073,3 +1091,13 @@ func ui_entity_exists(id: String) -> bool:
 
 func ui_tile_walkable(p: Vector2i) -> bool:
 	return is_walkable(p)
+
+
+func ui_is_exit(p: Vector2i) -> bool:
+	# Test pathfinding must route around exits: stepping on one mid-path
+	# triggers area travel and aborts the walk. (The engine rightly allows
+	# stepping on exits; this is a test-harness concern.)
+	for e in _entities:
+		if str(e.get("kind", "")) == "exit" and Vector2i(int(e["pos"][0]), int(e["pos"][1])) == p:
+			return true
+	return false

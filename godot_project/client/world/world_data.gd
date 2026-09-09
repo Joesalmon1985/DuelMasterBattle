@@ -46,6 +46,11 @@ static func _build() -> void:
 	_areas["trial_road"] = _trial_road()
 	_areas["trial_gate"] = _trial_gate()
 	_areas["forest_deep"] = _forest_deep()
+	_areas["dd_entrance"] = _dd_entrance()
+	_areas["dd_fork"] = _dd_fork()
+	_areas["dd_galleries"] = _dd_galleries()
+	_areas["dd_pit"] = _dd_pit()
+	_areas["dd_lower"] = _dd_lower()
 	# forest_home is PARKED (P1): the old clearing no longer happens. Builder kept
 	# for reference; nothing links to it.
 
@@ -210,7 +215,7 @@ static func _village() -> Dictionary:
 			{"kind": "door", "id": "v_door2", "pos": [15, 4], "text": "The elder's house. He is outside."},
 			{"kind": "door", "id": "v_door3", "pos": [4, 13], "text": "A smell of bread. Nobody answers."},
 			{"kind": "door", "id": "v_door4", "pos": [14, 13], "text": "Ashby's workshop. Scorch marks around the frame."},
-			{"kind": "logs", "id": "v_logs", "pos": [15, 15], "text": "Somebody else's woodpile. Neater than yours."},
+			{"kind": "logs", "id": "v_logs", "pos": [16, 15], "text": "Somebody else's woodpile. Neater than yours."},
 			{"kind": "npc", "id": "villager_mara", "name": "Mara", "sprite": "villager_a", "pos": [7, 7], "facing": "down",
 				"lines": [
 					"You're not thinking of going up there, are you, John?",
@@ -373,5 +378,207 @@ static func _trial_gate() -> Dictionary:
 			{"kind": "trigger", "id": "gate_choice", "rect": [8, 2, 9, 2], "event": "gate_choice", "no_auto_flag": true},
 			{"kind": "exit", "pos": [8, 13], "to_area": "trial_road", "to_pos": [9, 12], "facing": "down"},
 			{"kind": "exit", "pos": [9, 13], "to_area": "trial_road", "to_pos": [10, 12], "facing": "down"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE A — Crystal entrance (p.1, 270). 20 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_entrance() -> Dictionary:
+	var rows := [
+		"TTTTTTTT::TTTTTTTTTT",
+		"TTTT....::....TTTTTT",
+		"TTT.....::.....TTTTT",
+		"TTT.....::.....TTTTT",
+		"TT......::......TTTT",
+		"TT......::......TTTT",
+		"TT......::......TTTT",
+		"TT......::......TTTT",
+		"TT......::......TTTT",
+		"TT......::......TTTT",
+		"TTT.....::.....TTTTT",
+		"TTT.....::.....TTTTT",
+		"TTTT....::....TTTTTT",
+		"TTTTTTTT::TTTTTTTTTT",
+	]
+	return {
+		"id": "dd_entrance", "name": "Crystal Entrance", "rows": rows,
+		"entities": [
+			{"kind": "sign", "id": "dd_crystal", "pos": [11, 3], "text": "Crystal veins in the walls hum faintly. The light has no source."},
+			{"kind": "logs", "id": "dd_table", "pos": [12, 5], "text": "A stone table. Six boxes — five already taken. The contestants ahead of you helped themselves."},
+			{"kind": "pickup", "id": "aid_box", "pos": [7, 5], "sprite": "box", "run_pickup": true,
+				"grant": {},
+				"text": "A box bearing a familiar seal: HALVARD.\n\nInside: two gold pieces, and a note in a sharp hand — SUKUMVIT: 'The Trial wants useful things, not just strong arms. Carry what matters.'"},
+			{"kind": "exit", "pos": [9, 0], "to_area": "dd_fork", "to_pos": [9, 12], "facing": "up"},
+			{"kind": "exit", "pos": [8, 0], "to_area": "dd_fork", "to_pos": [8, 12], "facing": "up"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE A — First footprint fork (p.66, 119). 20 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_fork() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTTT......TTTTTTTTTT",
+		"TTTT......TTTTTTTTTT",
+		"TTTT......TTTTTTTTTT",
+		"TTTT......TTTTTTTTTT",
+		"::::::::::::::::::::",
+		"::::::::::::::::::::",
+		"TTTT......TTTTTTTTTT",
+		"TTTT......TTTTTTTTTT",
+		"TT........TTTTTTTTTT",
+		"TT........TTTTTTTTTT",
+		"TT........TTTTTTTTTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_fork", "name": "Footprint Fork", "rows": rows,
+		"entities": [
+			{"kind": "sign", "id": "dd_arrow", "pos": [6, 3], "text": "A white arrow, painted fresh, points WEST. Below it, in charcoal: 'don't'."},
+			{"kind": "sign", "id": "dd_prints_west", "pos": [5, 5], "text": "Wet footprints — several sets — head west along the road."},
+			{"kind": "sign", "id": "dd_prints_east", "pos": [7, 5], "text": "One set of prints, smaller, goes east."},
+			{"kind": "creature", "id": "fly_east", "enemy_id": "giant_fly", "pos": [16, 6],
+				"intro": "Something huge buzzes in the eastern dark. It smells of Water."},
+			{"kind": "logs", "id": "dd_empty_box", "pos": [17, 7], "text": "An open box, its seal broken. Someone got here first — and went west."},
+			{"kind": "exit", "pos": [0, 6], "to_area": "dd_galleries", "to_pos": [20, 8], "facing": "left"},
+			{"kind": "exit", "pos": [0, 7], "to_area": "dd_galleries", "to_pos": [20, 9], "facing": "left"},
+			{"kind": "exit", "pos": [8, 12], "to_area": "dd_entrance", "to_pos": [9, 1], "facing": "down"},
+			{"kind": "exit", "pos": [9, 12], "to_area": "dd_entrance", "to_pos": [10, 1], "facing": "down"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE B — Footprint galleries + statue riddle (p.293, 382). 22 wide x 16 tall.
+# -------------------------------------------------------------------------------
+static func _dd_galleries() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTTTT",
+		"TTTT..............TTTT",
+		"TTTT..............TTTT",
+		"TTTT......::......TTTT",
+		"TTTT......::......TTTT",
+		"TTTT......::......TTTT",
+		"TT..................TT",
+		"TT..................TT",
+		"::::::::::::::::::::::",
+		"::::::::::::::::::::::",
+		"TT..................TT",
+		"TT..................TT",
+		"TTTT..............TTTT",
+		"TTTT......rr......TTTT",
+		"TTTT..............TTTT",
+		"TTTTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_galleries", "name": "Footprint Galleries", "rows": rows,
+		"entities": [
+			{"kind": "npc", "id": "dd_old_man", "name": "Old man", "sprite": "elder", "pos": [9, 4], "facing": "down",
+				"lines": ["One hundred? One hundred and fifty? Two hundred? Answer, if the stone lets you."],
+				"choice_event": "statue_riddle"},
+			{"kind": "corpse", "id": "dd_knight_statue", "pos": [12, 4], "sprite": "knight", "facing": "down",
+				"text": "Not a statue. A knight in White Road armour, turned to stone mid-step.\n\nSerra went first. This is where first got her."},
+			{"kind": "logs", "id": "dd_bell", "pos": [5, 6], "text": "A bronze bell on a rope. Ringing it would tell EVERYTHING down here where you are. You don't."},
+			{"kind": "logs", "id": "dd_chest", "pos": [16, 6], "text": "A chest, sprung and empty. The scratches around the lock are fresh."},
+			{"kind": "pickup", "id": "dd_torch", "pos": [5, 13], "sprite": "staff", "run_pickup": true,
+				"grant": {},
+				"text": "A dry torch, still good. Someone thoughtful left it. Or careless."},
+			{"kind": "creature", "id": "dog_gal1", "enemy_id": "guard_dog", "pos": [14, 8],
+				"intro": "A Trialmastiff pads out of the dark, silent until it isn't.\n\nOne Ward slot. Water, by the drool."},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_pit", "to_pos": [19, 8], "facing": "left"},
+			{"kind": "exit", "pos": [0, 9], "to_area": "dd_pit", "to_pos": [19, 9], "facing": "left"},
+			{"kind": "exit", "pos": [21, 8], "to_area": "dd_fork", "to_pos": [1, 6], "facing": "right"},
+			{"kind": "exit", "pos": [21, 9], "to_area": "dd_fork", "to_pos": [1, 7], "facing": "right"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE D — Throm pit (p.154, 22, 184). 20 wide x 14 tall.
+# -------------------------------------------------------------------------------
+static func _dd_pit() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT..............TTT",
+		"TT................TT",
+		"TT................TT",
+		"TT.....rrrr......TTT",
+		"TT.....r..r......TTT",
+		"TT.....r..r......TTT",
+		"TT.....rrrr......TTT",
+		"....................",
+		"....................",
+		"TT................TT",
+		"TTT..............TTT",
+		"TTT..............TTT",
+		"TTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_pit", "name": "Throm's Pit", "rows": rows,
+		"entities": [
+			{"kind": "sign", "id": "dd_pit_mouth", "pos": [6, 4], "text": "A deep pit. Black water far below. A rope is tied to a spike — the knots are barbarian work."},
+			{"kind": "npc", "id": "dd_throm", "name": "Throm", "sprite": "throm", "pos": [6, 6], "facing": "right",
+				"lines": ["You walk loud, villager.", "Only one of us wins this. Remember it while I hold the rope."],
+				"lines_run_flag": {
+					"pit_ally": ["Lowered you fair. Don't make me regret it.", "West. And keep up."],
+					"pit_betrayed": ["..."],
+					"pit_jump": ["Ha! Mad. I like mad. West, then."]},
+				"choice_event": "throm_pit"},
+			{"kind": "exit", "pos": [0, 8], "to_area": "dd_lower", "to_pos": [21, 5], "facing": "left"},
+			{"kind": "exit", "pos": [0, 9], "to_area": "dd_lower", "to_pos": [21, 6], "facing": "left"},
+			{"kind": "exit", "pos": [19, 8], "to_area": "dd_galleries", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [19, 9], "to_area": "dd_galleries", "to_pos": [1, 9], "facing": "right"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# ZONE D — Lower route: books + Cave Trolls (p.194, 138, 52, 169, 288). 22 x 14.
+# -------------------------------------------------------------------------------
+static func _dd_lower() -> Dictionary:
+	var rows := [
+		"TTTTTTTTTTTTTTTTTTTTTT",
+		"TTT...............TTTT",
+		"TT..................TT",
+		"TT..................TT",
+		"TT...LL.............TT",
+		"......................",
+		"......................",
+		"TT.........rr.......TT",
+		"TT..................TT",
+		"TT..................TT",
+		"TT..................TT",
+		"TT..................TT",
+		"TTT...............TTTT",
+		"TTTTTTTTTTTTTTTTTTTTTT",
+	]
+	return {
+		"id": "dd_lower", "name": "Lower Route", "rows": rows,
+		"entities": [
+			{"kind": "pickup", "id": "red_book", "pos": [5, 4], "sprite": "book_red", "run_pickup": true,
+				"grant": {"spell": SPELL_RED, "weave": 2},
+				"text": "A red-bound book, chained to the alcove. It opens for you like it was waiting.\n\nYou have learned FIRE magic.\nYour weave can now hold TWO spells."},
+			{"kind": "pickup", "id": "black_book", "pos": [6, 4], "sprite": "book_black", "run_pickup": true,
+				"grant": {},
+				"text": "A black-bound book. Beside it, a vial of something that moves when you don't look.\n\nYou take the vial.",
+				"choice_event": "black_book"},
+			{"kind": "npc", "id": "dd_throm_lower", "name": "Throm", "sprite": "throm", "pos": [4, 5], "facing": "right",
+				"lines": ["Books. We don't have time for books.", "Read the red one if you must. Quickly."],
+				"lines_run_flag": {"troll_down": ["...My arm. Keep walking. Don't look at it."]}},
+			{"kind": "creature", "id": "troll_lower1", "enemy_id": "cave_troll", "pos": [15, 7],
+				"intro": "Two Cave Trolls blunder in, clubs up — and Throm is suddenly beside you, smelling of rope and anger.\n\n\"Mine's the big one,\" he says, and takes it.\n\nYours weaves Fire and Water behind two slots.",
+				"on_win_run_flag": "troll_down"},
+			{"kind": "pickup", "id": "bone_ring", "pos": [15, 9], "sprite": "ring", "run_pickup": true,
+				"requires_defeated": "troll_lower1",
+				"grant": {},
+				"text": "A druidic bone ring. Warm in a way bone should not be.\n\nThrom: \"Don't.\"\n\n(You take it anyway. Nothing happens. Yet.)"},
+			{"kind": "door", "id": "dwarf_door", "pos": [2, 10], "text": "A stone door with dwarfish locks. It is not for you. Yet."},
+			{"kind": "exit", "pos": [21, 5], "to_area": "dd_pit", "to_pos": [1, 8], "facing": "right"},
+			{"kind": "exit", "pos": [21, 6], "to_area": "dd_pit", "to_pos": [1, 9], "facing": "right"},
 		],
 	}

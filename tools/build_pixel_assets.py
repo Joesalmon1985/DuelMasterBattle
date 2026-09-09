@@ -209,6 +209,37 @@ def make_sign():
     return im
 
 
+def make_box():
+    # Sukumvit's aid box: small chest with a seal.
+    im, d = new(TILE, TILE)
+    d.rectangle([2, 6, 13, 14], PAL["wood_b"] + (255,), outline=INK + (255,))
+    d.rectangle([2, 6, 13, 9], PAL["wood"] + (255,))
+    d.rectangle([7, 8, 8, 12], PAL["fire_a"] + (255,))
+    return im
+
+
+def make_book(red=True):
+    # Leather-bound book, red or black.
+    im, d = new(TILE, TILE)
+    cover = (150, 40, 36) if red else (30, 28, 40)
+    spine = (100, 26, 24) if red else (16, 14, 22)
+    d.polygon([(3, 2), (12, 4), (12, 13), (3, 11)], cover + (255,), outline=INK + (255,))
+    d.line([(3, 2), (3, 11)], spine + (255,), 2)
+    d.line([(5, 5), (10, 6)], (220, 210, 190, 255,))
+    d.line([(5, 8), (10, 9)], (220, 210, 190, 255,))
+    return im
+
+
+def make_ring():
+    # Druidic bone ring.
+    im, d = new(TILE, TILE)
+    d.ellipse([3, 3, 12, 12], (225, 215, 190, 255))
+    d.ellipse([6, 6, 9, 9], (0, 0, 0, 0))
+    px(d, 5, 4, PAL["leaf_b"] + (255,))
+    px(d, 10, 9, PAL["leaf_b"] + (255,))
+    return im
+
+
 def make_props():
     for i in range(4):
         save(make_tree(i), f"props/tree_{i}.png")
@@ -223,6 +254,10 @@ def make_props():
     save(make_seed(), "props/seed.png")
     save(make_staff_pickup(), "props/staff.png")
     save(make_sign(), "props/sign.png")
+    save(make_box(), "props/box.png")
+    save(make_book(True), "props/book_red.png")
+    save(make_book(False), "props/book_black.png")
+    save(make_ring(), "props/ring.png")
 
 
 # ---------------------------------------------------------------- characters (16x24, 4 dirs x 2 frames)
@@ -397,6 +432,61 @@ def make_shade(size, frame=0):
     return im
 
 
+def make_dog(size, frame=0):
+    # Trialmastiff: low quadruped silhouette, pale eyes. Distinct from wisps/fly.
+    im, d = new(size, size)
+    s = size
+    fur, dark = (96, 84, 72), (52, 44, 38)
+    leg = 0 if frame % 2 == 0 else max(1, s // 16)
+    # body
+    d.ellipse([int(s * 0.18), int(s * 0.48), int(s * 0.82), int(s * 0.78)], fur + (255,))
+    d.ellipse([int(s * 0.24), int(s * 0.52), int(s * 0.76), int(s * 0.72)], dark + (255,))
+    # head (right), raised
+    d.ellipse([int(s * 0.66), int(s * 0.22), int(s * 0.94), int(s * 0.52)], fur + (255,))
+    # ears
+    d.polygon([(int(s * 0.70), int(s * 0.26)), (int(s * 0.76), int(s * 0.26)), (int(s * 0.73), int(s * 0.12))], dark + (255,))
+    d.polygon([(int(s * 0.82), int(s * 0.26)), (int(s * 0.88), int(s * 0.26)), (int(s * 0.85), int(s * 0.12))], dark + (255,))
+    # jaw + eye
+    d.rectangle([int(s * 0.78), int(s * 0.44), int(s * 0.94), int(s * 0.50)], dark + (255,))
+    e = max(1, s // 16)
+    d.rectangle([int(s * 0.74), int(s * 0.32), int(s * 0.74) + e, int(s * 0.32) + e], (230, 220, 150, 255))
+    # tail (left, up)
+    d.line([(int(s * 0.18), int(s * 0.55)), (int(s * 0.06), int(s * 0.35))], fur + (255,), max(1, s // 24))
+    # legs
+    w = max(1, s // 28)
+    for i, dx in enumerate((0.28, 0.44, 0.60, 0.74)):
+        lift = leg if i % 2 == 0 else 0
+        d.line([(int(s * dx), int(s * 0.72)), (int(s * dx), int(s * 0.96) - lift)], dark + (255,), w)
+    return im
+
+
+def make_troll(size, frame=0):
+    # Cave troll: hulking grey-green brute with a club. Biggest silhouette yet.
+    im, d = new(size, size)
+    s = size
+    hide, dark = (110, 128, 104), (58, 68, 58)
+    sway = 0 if frame % 2 == 0 else max(1, s // 20)
+    # legs
+    d.rectangle([int(s * 0.30), int(s * 0.74), int(s * 0.44), int(s * 0.98)], dark + (255,))
+    d.rectangle([int(s * 0.56), int(s * 0.74), int(s * 0.70), int(s * 0.98)], dark + (255,))
+    # torso
+    d.ellipse([int(s * 0.20), int(s * 0.34) + sway, int(s * 0.80), int(s * 0.80) + sway], hide + (255,))
+    d.ellipse([int(s * 0.30), int(s * 0.42) + sway, int(s * 0.70), int(s * 0.72) + sway], dark + (255,))
+    # head: low brow, underbite tusks
+    d.ellipse([int(s * 0.32), int(s * 0.10), int(s * 0.68), int(s * 0.36)], hide + (255,))
+    d.line([(int(s * 0.34), int(s * 0.22)), (int(s * 0.48), int(s * 0.24))], dark + (255,), max(1, s // 24))
+    d.line([(int(s * 0.66), int(s * 0.22)), (int(s * 0.52), int(s * 0.24))], dark + (255,), max(1, s // 24))
+    e = max(1, s // 18)
+    d.rectangle([int(s * 0.40), int(s * 0.26), int(s * 0.40) + e, int(s * 0.26) + e], (240, 200, 80, 255))
+    d.rectangle([int(s * 0.58), int(s * 0.26), int(s * 0.58) + e, int(s * 0.26) + e], (240, 200, 80, 255))
+    d.polygon([(int(s * 0.42), int(s * 0.34)), (int(s * 0.46), int(s * 0.34)), (int(s * 0.44), int(s * 0.28))], (230, 225, 210, 255))
+    d.polygon([(int(s * 0.54), int(s * 0.34)), (int(s * 0.58), int(s * 0.34)), (int(s * 0.56), int(s * 0.28))], (230, 225, 210, 255))
+    # club in right fist
+    d.line([(int(s * 0.84), int(s * 0.90)), (int(s * 0.90), int(s * 0.30) + sway)], PAL["wood_b"] + (255,), max(2, s // 14))
+    d.ellipse([int(s * 0.78), int(s * 0.62) + sway, int(s * 0.94), int(s * 0.76) + sway], hide + (255,))
+    return im
+
+
 def make_fly(size, frame=0):
     # Giant horsefly: winged silhouette (distinct from flame wisps), red eyes.
     im, d = new(size, size)
@@ -429,6 +519,8 @@ def make_creatures():
         "cinder_golem": make_golem,
         "moss_shade": make_shade,
         "giant_fly": make_fly,
+        "guard_dog": make_dog,
+        "cave_troll": make_troll,
     }
     for name, g in gens.items():
         for f in range(2):

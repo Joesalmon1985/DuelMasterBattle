@@ -22,6 +22,12 @@ func run_event(id: String) -> void:
 			await duel_cutscene()
 		"gate_choice":
 			await gate_choice()
+		"statue_riddle":
+			await statue_riddle()
+		"throm_pit":
+			await throm_pit()
+		"black_book":
+			await black_book()
 
 
 func opening_text() -> void:
@@ -95,11 +101,82 @@ func gate_choice() -> void:
 		await _w.say("", "For the first time since leaving Ashwell, turning around is no longer an option.")
 		await _w.say("", "Ahead, somewhere in the dark, somebody screams.")
 		await _w.say("Red Wizard", "Oh, good. The villager. Try to die somewhere I can see.")
-		await _w.say("", "And he walks on.\n\n— THE TRIAL BEGINS —\n\n(John carries Water and a one-slot weave into the dark. The dungeon opens in the next chapter; Ashwell, the road and the gate remain yours to wander.)")
+		await _w.say("", "And he walks on.\n\n— THE TRIAL BEGINS —")
+		adv.start_run()
+		_w.load_area("dd_entrance", Vector2i(10, 11), "up")
+		await _w.say("", "Crystal light. Six boxes on a stone table — five already taken.\n\nThe doors shut behind you.")
 		adv.save()
 	else:
 		await _w.say("Rollkeeper", "Then stand clear of the doors. The offer stands until sunset.")
 	_w.lock_input(false)
+
+
+## P2 dungeon scenes. These run inside the caller's input lock (npc/pickup
+## interaction), so they never lock/unlock themselves. Only gate_choice (a
+## trigger event) owns the lock.
+func statue_riddle() -> void:
+	var adv := _adv()
+	if adv.run_flag("riddle_answered"):
+		await _w.say("Old man", "The stone keeps its own counsel. So do I, now.")
+		return
+	await _w.say("Old man", "One hundred? One hundred and fifty? Two hundred?")
+	var answer: String = await _w._dialogue.choose_async("Answer the old man?", ["100", "150", "200"])
+	adv.set_run_flag("riddle_answer_" + answer)
+	adv.set_run_flag("riddle_answered")
+	# The canonical correct answer is not yet verified against the book (p.382);
+	# every answer continues, so no run can be bricked by a guess here.
+	await _w.say("Old man", "Hm. The stone keeps its own counsel.")
+	await _w.say("", "Beside him stands a knight in White Road armour, turned to stone mid-step.\n\nSerra went first. This is where first got her.")
+
+
+func throm_pit() -> void:
+	# p.22 (choices) → p.63 / p.184 (→ p.323 / p.149) / p.311, as run flags.
+	var adv := _adv()
+	if adv.run_flag("pit_crossed"):
+		return
+	await _w.say("Throm", "Deep water down there. I hold the rope, or you hold it for me. Or we jump it together, and laugh.")
+	var choice: String = await _w._dialogue.choose_async("The pit?", ["Let him lower you", "Offer to lower him", "Jump together"])
+	if choice == "Offer to lower him":
+		await _w.say("Throm", "...Throm. My name is Throm. Take the rope, then. Tightly.")
+		await _w.say("", "You lower Throm by the rope. He looks very small, and then he waves you off the edge.")
+		var second: String = await _w._dialogue.choose_async("Throm waits below.", ["Climb down after him", "Leave him"])
+		if second == "Leave him":
+			adv.set_run_flag("pit_betrayed")
+			adv.set_contestant("throm", "betrayed")
+			await _w.say("", "You cross alone. Behind you, the rope goes still.\n\nYou will remember this.")
+		else:
+			adv.set_run_flag("pit_ally")
+			adv.set_contestant("throm", "uneasy_ally")
+			await _w.say("Throm", "Hah. An honest villain would've left. Come on.")
+	elif choice == "Jump together":
+		adv.add_condition("wounded")
+		adv.set_run_flag("pit_jump")
+		adv.set_run_flag("pit_ally")
+		adv.set_contestant("throm", "uneasy_ally")
+		await _w.say("", "You jump together, land hard, and laugh until it hurts.\n\n(It hurts. You are WOUNDED: −1 cast in your next duel.)")
+	else:
+		adv.set_run_flag("pit_ally")
+		adv.set_contestant("throm", "uneasy_ally")
+		await _w.say("Throm", "Down you go, villager. I have held worse.")
+	adv.set_run_flag("pit_crossed")
+
+
+func black_book() -> void:
+	# p.138: the unknown potion. Throm wants nothing to do with it.
+	var adv := _adv()
+	if adv.run_flag("potion_used"):
+		return
+	await _w.say("Throm", "Don't. Whatever it is, don't.")
+	var choice: String = await _w._dialogue.choose_async("The vial?", ["Drink it", "Rub it on your wounds", "Leave it"])
+	if choice == "Drink it":
+		adv.add_condition("poisoned")
+		adv.set_run_flag("potion_used")
+		await _w.say("", "It tastes of ink and lightning. Your hands shake.\n\nYou are POISONED: your next duel starts slower (+2s minimum cast).")
+	elif choice == "Rub it on your wounds":
+		adv.set_run_flag("potion_used")
+		await _w.say("", "It burns cold. Where it touches, the skin knits — a little.")
+	else:
+		await _w.say("", "You stopper the vial and leave it. Some things stay unknown.")
 
 
 ## Called by the Overworld after returning from a battle.
@@ -112,6 +189,8 @@ func on_battle_result(r: Dictionary) -> void:
 	if outcome == "victory":
 		if req.get("on_win_flag", "") != "":
 			adv.set_flag(str(req["on_win_flag"]))
+		if req.get("on_win_run_flag", "") != "":
+			adv.set_run_flag(str(req["on_win_run_flag"]))
 		var grant: Dictionary = req.get("grant_on_win", {})
 		if not grant.is_empty():
 			if grant.has("spell"):
@@ -124,7 +203,11 @@ func on_battle_result(r: Dictionary) -> void:
 		else:
 			_w.rebuild()
 			var eid := str(req.get("encounter_id", ""))
-			if eid == "ashby_lesson1" and not adv.flag("first_win_told"):
+			if eid == "troll_lower1":
+				adv.set_contestant("throm", "wounded")
+				await _w.say("", "Your troll goes down. Throm finishes his — but his arm hangs wrong.\n\n\"Keep walking,\" he says. \"Don't look at it.\"")
+				await _w.say("", "Something glints where your troll fell.")
+			elif eid == "ashby_lesson1" and not adv.flag("first_win_told"):
 				adv.set_flag("first_win_told")
 				await _w.say("Ashby", "There. That was a battle: your spell against my Ward, and my Ward gave.\n\nThe next ones will hide better.")
 			elif eid == "ashby_lesson2":
@@ -141,6 +224,14 @@ func on_battle_result(r: Dictionary) -> void:
 			await _w.say("Red wizard", "Count yourself lucky I have somewhere to be.")
 			await _w.say("", "He goes. The hill is quiet.\n\nYou are John. You were a woodcutter. You weave four.\n\n— END OF THE FIRST CHAPTER —\n\nThe forest, the village and every creature in it remain yours to wander.")
 	elif outcome == "defeat":
+		if str(req.get("area", "")).begins_with("dd_"):
+			# Death in the dungeon ends the run, not the game.
+			adv.fail_run("battle")
+			_w.load_area("trial_gate", Vector2i(9, 6), "down")
+			await _w.say("", "The dark takes you, %s.\n\nYou wake at the gate with the taste of crystal in your mouth. The run is over — gems, wounds and all. What you learned, you keep." % enemy_name)
+			adv.save()
+			_w.lock_input(false)
+			return
 		var john: DmbProgression = adv.progression
 		var enemy := DmbBestiary.get_data(str(req.get("enemy_id", "giant_fly")))
 		if john.weave_size < int(enemy["ward_size"]):

@@ -154,6 +154,7 @@ func _resolve_combatants() -> void:
 		_adventure_mode = true
 		_battle_request = adv.pending_battle.duplicate(true)
 		_player_c = adv.progression.to_combatant()
+		_apply_player_mods(_player_c, _battle_request.get("player_mods", {}))
 		_enemy_c = DmbBestiary.make(str(_battle_request["enemy_id"]))
 	else:
 		_adventure_mode = false
@@ -174,6 +175,18 @@ func _resolve_combatants() -> void:
 			"bot_logic": diff.bot_logic, "bot_solver_cap": diff.bot_solver_cap, "bot_mistake_rate": diff.bot_mistake_rate,
 			"think_min_seconds": diff.bot_think_min_seconds, "think_max_seconds": diff.bot_think_max_seconds,
 		})
+
+
+## P2: run conditions modify John's combatant only. Enemy untouched.
+func _apply_player_mods(c, mods: Dictionary) -> void:
+	if mods.is_empty():
+		return
+	if mods.has("max_casts"):
+		c.max_casts = maxi(1, int(mods["max_casts"]))
+	if mods.has("min_cast_bonus"):
+		c.min_cast_seconds = maxf(0.0, c.min_cast_seconds + float(mods["min_cast_bonus"]))
+	if mods.has("max_cast_bonus"):
+		c.max_cast_seconds = maxf(20.0, c.max_cast_seconds + float(mods["max_cast_bonus"]))
 
 
 # ---------------------------------------------------------------------------

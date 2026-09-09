@@ -8,7 +8,19 @@ extends Node
 ## content can add its own without schema changes.
 
 const SAVE_PATH := "user://adventure.save"
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
+
+## P2 dungeon-run state. John's magic (progression) and world flags are permanent;
+## everything inside one Trial attempt lives in state["run"] and resets on fail.
+## Persistent map knowledge lives in state["dungeon_knowledge"].
+const RUN_GATE_AREA := "trial_gate"
+const RUN_GATE_POS := [9, 6]
+const RUN_START_AREA := "dd_entrance"
+const RUN_START_POS := [10, 11]
+const RUN_CONTESTANTS := {
+	"knight": "ahead", "elf": "ahead", "throm": "ahead",
+	"assassin": "ahead", "barbarian2": "ahead", "red_wizard": "ahead",
+}
 
 const _Progression = preload("res://sim/progression.gd")
 
@@ -49,6 +61,8 @@ func new_game() -> void:
 		"extinguished": [],
 		"talked": {},
 		"play_seconds": 0.0,
+		"run": null,
+		"dungeon_knowledge": {},
 	}
 	pending_battle = {}
 	last_battle_result = {}
@@ -90,6 +104,13 @@ func load_game() -> bool:
 	for k in ["flags", "talked"]:
 		if not state.has(k):
 			state[k] = {}
+	# v1 → v2 migration: dungeon-run state did not exist yet.
+	if int(state.get("version", 1)) < 2:
+		state["version"] = 2
+	if not state.has("run"):
+		state["run"] = null
+	if not state.has("dungeon_knowledge"):
+		state["dungeon_knowledge"] = {}
 	progression = _Progression.from_dict(data.get("progression", {}))
 	pending_battle = {}
 	last_battle_result = {}
@@ -175,6 +196,130 @@ func grow_weave(to: int) -> bool:
 	return ok
 
 
+# --- Dungeon-run state (P2) ---------------------------------------------------------
+
+func run_active() -> bool:
+	return state.get("run") != null and bool(state["run"].get("active", false))
+
+
+func run_state() -> Dictionary:
+	if state.get("run") == null:
+		return {}
+	return state["run"]
+
+
+func start_run() -> void:
+	state["run"] = {
+		"active": true,
+		"area": RUN_START_AREA,
+		"pos": RUN_START_POS.duplicate(),
+		"visited": [RUN_START_AREA],
+		"inventory": [],
+		"gems": [],
+		"conditions": [],
+		"contestants": RUN_CONTESTANTS.duplicate(),
+		"flags": {},
+		"fights": [],
+	}
+	set_location(RUN_START_AREA, int(RUN_START_POS[0]), int(RUN_START_POS[1]), "up")
+	mark_visited(RUN_START_AREA)
+	save()
+	state_changed.emit()
+
+
+func fail_run(_reason: String) -> void:
+	# Knowledge persists; everything else about the attempt is wiped.
+	for area_id in run_state().get("visited", []):
+		if knowledge_status(str(area_id)) in ["unknown", "seen"]:
+			state["dungeon_knowledge"][str(area_id)] = "entered"
+	# Dungeon fights are re-fought next run; outside victories stand.
+	for eid in run_state().get("fights", []):
+		if eid in state.get("defeated", []):
+			state["defeated"].erase(eid)
+	state["run"] = {
+		"active": false,
+		"area": "",
+		"pos": [],
+		"visited": [],
+		"inventory": [],
+		"gems": [],
+		"conditions": [],
+		"contestants": RUN_CONTESTANTS.duplicate(),
+		"flags": {},
+		"fights": [],
+	}
+	set_location(RUN_GATE_AREA, int(RUN_GATE_POS[0]), int(RUN_GATE_POS[1]), "down")
+	save()
+	state_changed.emit()
+
+
+func mark_visited(area_id: String) -> void:
+	if run_active() and not area_id in run_state()["visited"]:
+		state["run"]["visited"].append(area_id)
+	if knowledge_status(area_id) == "unknown":
+		state["dungeon_knowledge"][area_id] = "seen"
+
+
+func knowledge_status(area_id: String) -> String:
+	return str(state.get("dungeon_knowledge", {}).get(area_id, "unknown"))
+
+
+func add_gem(gem: String) -> void:
+	if run_active() and not gem in run_state()["gems"]:
+		state["run"]["gems"].append(gem)
+		state_changed.emit()
+
+
+func has_gem(gem: String) -> bool:
+	return run_active() and gem in run_state()["gems"]
+
+
+func add_condition(cond: String) -> void:
+	if run_active():
+		state["run"]["conditions"].append(cond)
+		state_changed.emit()
+
+
+func clear_conditions() -> void:
+	if run_active():
+		state["run"]["conditions"] = []
+		state_changed.emit()
+
+
+func set_contestant(id: String, st: String) -> void:
+	if run_active():
+		state["run"]["contestants"][id] = st
+		state_changed.emit()
+
+
+func set_run_flag(name: String, value: bool = true) -> void:
+	if run_active():
+		state["run"]["flags"][name] = value
+		state_changed.emit()
+
+
+func run_flag(name: String) -> bool:
+	return run_active() and bool(run_state().get("flags", {}).get(name, false))
+
+
+## Duel modifiers from run conditions (John's combatant only).
+func player_mods() -> Dictionary:
+	var mods := {}
+	if not run_active():
+		return mods
+	var wounds := 0
+	for c in run_state().get("conditions", []):
+		if str(c) == "wounded":
+			wounds += 1
+		elif str(c) == "poisoned":
+			mods["min_cast_bonus"] = 2.0
+		elif str(c) == "slowed":
+			mods["max_cast_bonus"] = -10.0
+	if wounds > 0:
+		mods["max_casts"] = maxi(6, 10 - wounds)
+	return mods
+
+
 # --- Battle bridge ----------------------------------------------------------------
 
 ## request: {"enemy_id": String, "encounter_id": String, "intro": String, "on_win_flag": String, ...}
@@ -195,5 +340,7 @@ func report_battle_result(outcome: String, details: Dictionary = {}) -> void:
 		last_battle_result[k] = details[k]
 	if outcome == "victory" and pending_battle.has("encounter_id"):
 		mark("defeated", str(pending_battle["encounter_id"]))
+		if run_active():
+			state["run"]["fights"].append(str(pending_battle["encounter_id"]))
 	pending_battle = {}
 	save()

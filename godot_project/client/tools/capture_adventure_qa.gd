@@ -122,6 +122,30 @@ func _run() -> void:
 	_capture("11c_trial_gate.png")
 
 
+	# 11d crystal entrance (fresh run state for run-scoped entities)
+	await _free_world()
+	_adv.start_run()
+	await _new_world()
+	await _frames(20)
+	_capture("11d_crystal_entrance.png")
+
+
+	# 11e Throm's pit
+	await _free_world()
+	_adv.set_location("dd_pit", 9, 8, "left")
+	await _new_world()
+	await _frames(20)
+	_capture("11e_throm_pit.png")
+
+
+	# 11f lower route books alcove
+	await _free_world()
+	_adv.set_location("dd_lower", 8, 5, "left")
+	await _new_world()
+	await _frames(20)
+	_capture("11f_lower_books.png")
+
+
 	# 12 pause menu (fresh world for the menu)
 	await _free_world()
 	_adv.set_location("village", 10, 7, "down")

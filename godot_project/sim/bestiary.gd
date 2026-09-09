@@ -77,6 +77,21 @@ static func _build() -> void:
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "capped_minimax", "bot_solver_cap": 40, "think_min_seconds": 12.0, "think_max_seconds": 22.0,
 	})
+	# P2: dungeon fauna. ------------------------------------------------------------
+	_add({
+		"id": "guard_dog", "display_name": "Guard Dog", "archetype": "guard_dog", "kind": "creature",
+		"description": "A Trialmastiff, bred for the dark. One Ward slot of Water.",
+		"weave_size": 1, "attack_pool": [RED], "ward_size": 1, "ward_pool": [BLUE], "fixed_ward": [BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "random", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
+	})
+	_add({
+		"id": "cave_troll", "display_name": "Cave Troll", "archetype": "cave_troll", "kind": "creature",
+		"description": "Two Cave Trolls stalk the lower route. Throm takes one. Yours weaves Fire and Water behind two slots.",
+		"weave_size": 2, "attack_pool": [RED, BLUE], "ward_size": 2, "ward_pool": [RED, BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+	})
 	# P1: Ashby's teaching Wards + the Trial-road Giant Fly. ----------------------
 	_add({
 		"id": "ashby_lesson1", "display_name": "Ashby's Practice Ward", "archetype": "hedge_ward", "kind": "wizard",

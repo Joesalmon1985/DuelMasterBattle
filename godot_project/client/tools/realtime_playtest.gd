@@ -57,11 +57,11 @@ func _run() -> void:
 	await _tap(_board._cast_button._button)
 	_check(_board.game.player_history.size() == 0, "tap while charging does not cast")
 
-	# --- Wait for real 5 s window ---
-	var guard := 0
-	while not _board.game.is_player_window_open() and guard < 1200:
+	# --- Wait for real 5 s window (wall-time bounded: at very high FPS a
+	#     frame-count guard would expire long before the window opens) ---
+	var wait_start := Time.get_ticks_msec()
+	while not _board.game.is_player_window_open() and Time.get_ticks_msec() - wait_start < 8000:
 		await process_frame
-		guard += 1
 	var opened_ms := Time.get_ticks_msec() - t0
 	_note("window opened after %d ms" % opened_ms)
 	_check(opened_ms >= 4900 and opened_ms <= 5600, "window opens ~5 s wall-clock (%d ms)" % opened_ms)
@@ -82,10 +82,9 @@ func _run() -> void:
 
 	# --- Let the second window open, leave guess half-built, wait for auto-cast? Too long (60 s);
 	#     instead verify WARNING state appears by fast-forwarding only the sim clock. ---
-	guard = 0
-	while not _board.game.is_player_window_open() and guard < 1200:
+	wait_start = Time.get_ticks_msec()
+	while not _board.game.is_player_window_open() and Time.get_ticks_msec() - wait_start < 8000:
 		await process_frame
-		guard += 1
 	await _tap(_board._tray_slots[_tray_index(9)])
 	await process_frame
 	_check(_board.ui_get_cast_button_state() == _CastButton.State.BLOCKED, "BLOCKED with partial guess")
