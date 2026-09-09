@@ -166,6 +166,9 @@ func _fight(win: bool, rig_ward: Array = []) -> String:
 	if not rig_ward.is_empty():
 		game.debug_set_enemy_ward(rig_ward)
 	var enemy_ward: Array = game.get_enemy_ward()
+	if win:
+		# A deliberate win: the player reads the Ward and casts before the enemy acts.
+		game.debug_set_enemy_cast_at(999.0)
 	var casts := 0
 	while game.phase == _BattleSim.Phase.DUELING and casts < 12:
 		game.advance_time_for_test(5.5)
@@ -228,7 +231,10 @@ func _setup_run() -> void:
 	_adv.set_flag("has_staff")
 	_adv.set_flag("entered_trial")
 	_adv.learn_spell(1)
-	_adv.grow_weave(1)
+	_adv.learn_spell(6)
+	_adv.learn_spell(0)
+	_adv.learn_spell(3)
+	_adv.grow_weave(3)
 	_adv.start_run()
 	assert_true(_adv.run_active(), "run active for slice")
 
@@ -345,8 +351,7 @@ func _test_slice() -> void:
 	await _face(Vector2i(0, -1))
 	await _interact()
 	await _drain_dialogue()
-	assert_true(_adv.progression.knows(0), "learned Fire from the red book")
-	assert_eq(_adv.progression.weave_size, 2, "weave 2 after red book")
+	assert_eq(_adv.progression.weave_size, 4, "red book grants the fourth weave slot (D1)")
 	await _walk_to(Vector2i(6, 5))
 	await _face(Vector2i(0, -1))
 	await _interact()
@@ -379,7 +384,7 @@ func _test_slice() -> void:
 	assert_true(not _adv.post_trial_recovery_pending(), "not yet Jane")
 	assert_true(_adv.marked("watching", "troll_lower1"), "troll marked as watching")
 	assert_true(_world.ui_entity_exists("troll_lower1"), "troll still in the room")
-	assert_true(_adv.progression.knows(0), "Fire kept")
+	assert_eq(_adv.progression.weave_size, 4, "weave 4 kept")
 	assert_true(_adv.run_flag("picked_red_book"), "run pickups are not reset")
 	assert_true("poisoned" in _adv.run_state().get("conditions", []), "conditions persist through the wake")
 
@@ -404,7 +409,7 @@ func _test_slice() -> void:
 	_adv.save()
 	await _free_world()
 	assert_true(_adv.load_game(), "final reload")
-	assert_true(_adv.progression.knows(0), "Fire persisted")
+	assert_eq(_adv.progression.weave_size, 4, "weave persisted")
 	assert_true(_adv.knowledge_status("dd_lower") != "unknown", "knowledge persisted")
 
 

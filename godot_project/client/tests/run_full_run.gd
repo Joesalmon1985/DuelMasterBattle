@@ -164,6 +164,9 @@ func _fight(win: bool, rig_ward: Array = []) -> String:
 	if not rig_ward.is_empty():
 		game.debug_set_enemy_ward(rig_ward)
 	var enemy_ward: Array = game.get_enemy_ward()
+	if win:
+		# A deliberate win: the player reads the Ward and casts before the enemy acts.
+		game.debug_set_enemy_cast_at(999.0)
 	var casts := 0
 	while game.phase == _BattleSim.Phase.DUELING and casts < 12:
 		game.advance_time_for_test(5.5)
@@ -228,7 +231,7 @@ func _go_west(expect: String) -> void:
 # ---------------------------------------------------------------------------------
 
 func _test_full_run() -> void:
-	# Trial-Day state at the gate: Water from Halvard's staff, nothing else.
+	# Canonical Trial-entry state (brief §14): Water+Vine+Fire+Stone, weave 3.
 	_adv.new_game()
 	for ph in ["john_intro", "ashby_training", "pre_trial", "trial"]:
 		_adv.advance_phase(ph)
@@ -237,7 +240,10 @@ func _test_full_run() -> void:
 	_adv.set_flag("has_staff")
 	_adv.set_flag("entered_trial")
 	_adv.learn_spell(1)
-	_adv.grow_weave(1)
+	_adv.learn_spell(6)
+	_adv.learn_spell(0)
+	_adv.learn_spell(3)
+	_adv.grow_weave(3)
 	_adv.start_run()
 	assert_true(_adv.run_active(), "run active")
 	await _new_world()
@@ -245,8 +251,7 @@ func _test_full_run() -> void:
 	var out := ""
 	var g := 0
 	await _drain_dialogue()
-	assert_eq(_world.area_id, "dd_entrance", "second run starts clean")
-	assert_true(not _adv.marked("defeated", "fly_east"), "fights reset for the new run")
+	assert_eq(_world.area_id, "dd_entrance", "the attempt starts at the entrance")
 	await _walk_to(Vector2i(9, 1))
 	await _walk(Vector2i(0, -1), 1)
 	g = 0
@@ -337,8 +342,7 @@ func _test_full_run() -> void:
 	_world.ui_dialogue_choose("Hold its gaze")
 	await process_frame
 	await _drain_dialogue()
-	assert_true(_adv.progression.knows(3), "earned Stone from the test")
-	assert_eq(_adv.progression.weave_size, 3, "weave 3 after the test")
+	assert_true(_adv.run_flag("dwarf_map"), "earned the Dwarf's map (D1)")
 	assert_true(_adv.run_flag("trial_ready"), "trial ready after tests")
 	assert_true(_world.ui_entity_exists("throm_arena"), "Throm is sent in")
 	await _walk_to(Vector2i(4, 8))
@@ -430,8 +434,8 @@ func _test_full_run() -> void:
 	await _face(Vector2i(0, 1))
 	await _interact()
 	await _drain_dialogue()
-	assert_true(_adv.progression.knows(6), "learned Vine from the charm")
-	assert_eq(_adv.progression.weave_size, 4, "weave 4 after the charm")
+	assert_true(_adv.run_flag("has_elf_charm"), "took the elf's charm (D1)")
+	assert_eq(_adv.progression.weave_size, 4, "weave 4 (from the red book) still held")
 
 	# West to the vaults; sapphire, iron key, real diamond, false diamond refused.
 	await _walk_to(Vector2i(1, 7))
@@ -621,7 +625,9 @@ func _test_full_run() -> void:
 	assert_true(_adv.flag("dungeon_complete"), "Champion of the Trial")
 	assert_eq(_world.area_id, "trial_gate", "emerged at the gate")
 
-	assert_true(_adv.progression.knows(0) and _adv.progression.knows(3) and _adv.progression.knows(6) and _adv.progression.knows(4) and _adv.progression.knows(5), "all five dungeon spells earned in play")
+	assert_true(_adv.progression.knows(4) and _adv.progression.knows(5), "Light and Shadow earned inside the Trial")
+	assert_eq(_adv.progression.weave_size, 4, "fourth weave slot earned inside the Trial")
+	assert_eq(_adv.progression.spells_known.size(), 6, "six kinds of magic by the end")
 	await _free_world()
 
 

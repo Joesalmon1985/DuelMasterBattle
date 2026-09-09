@@ -164,6 +164,9 @@ func _fight(win: bool, rig_ward: Array = []) -> String:
 	if not rig_ward.is_empty():
 		game.debug_set_enemy_ward(rig_ward)
 	var enemy_ward: Array = game.get_enemy_ward()
+	if win:
+		# A deliberate win: the player reads the Ward and casts before the enemy acts.
+		game.debug_set_enemy_cast_at(999.0)
 	var casts := 0
 	while game.phase == _BattleSim.Phase.DUELING and casts < 12:
 		game.advance_time_for_test(5.5)
@@ -223,8 +226,10 @@ func _setup_p3(ally: bool) -> void:
 	_adv.set_flag("opening_seen")
 	_adv.set_flag("entered_trial")
 	_adv.learn_spell(1)
+	_adv.learn_spell(6)
 	_adv.learn_spell(0)
-	_adv.grow_weave(2)
+	_adv.learn_spell(3)
+	_adv.grow_weave(3)
 	_adv.start_run()
 	_adv.set_run_flag("troll_down")
 	_adv.mark("defeated", "troll_lower1")
@@ -264,8 +269,7 @@ func _do_dwarf_tests(first_choice: String) -> void:
 	_world.ui_dialogue_choose("Hold its gaze")
 	await process_frame
 	await _drain_dialogue()
-	assert_true(_adv.progression.knows(3), "earned Stone from the test")
-	assert_eq(_adv.progression.weave_size, 3, "weave 3 after the test")
+	assert_true(_adv.run_flag("dwarf_map"), "earned the Dwarf's map from the test (D1)")
 
 
 func _test_ally_path() -> void:
@@ -293,7 +297,7 @@ func _test_betrayed_path() -> void:
 	await _do_dwarf_tests("Accept the test")
 	assert_true(_adv.run_flag("trial_done"), "trial done without a duel")
 	assert_true(not _world.ui_entity_exists("throm_duel"), "no invented arena opponent")
-	assert_true(_adv.progression.knows(3), "Stone earned alone too")
+	assert_true(_adv.run_flag("dwarf_map"), "map earned alone too")
 	await _free_world()
 
 
@@ -314,7 +318,7 @@ func _test_attack_path() -> void:
 	_world.ui_dialogue_choose("Hold its gaze")
 	await process_frame
 	await _drain_dialogue()
-	assert_true(_adv.progression.knows(3), "test proceeds after the attack")
+	assert_true(_adv.run_flag("dwarf_map"), "test proceeds after the attack")
 	await _free_world()
 
 

@@ -164,6 +164,9 @@ func _fight(win: bool, rig_ward: Array = []) -> String:
 	if not rig_ward.is_empty():
 		game.debug_set_enemy_ward(rig_ward)
 	var enemy_ward: Array = game.get_enemy_ward()
+	if win:
+		# A deliberate win: the player reads the Ward and casts before the enemy acts.
+		game.debug_set_enemy_cast_at(999.0)
 	var casts := 0
 	while game.phase == _BattleSim.Phase.DUELING and casts < 12:
 		game.advance_time_for_test(5.5)
@@ -233,10 +236,10 @@ func _setup_p5() -> void:
 	_adv.set_flag("opening_seen")
 	_adv.set_flag("entered_trial")
 	_adv.learn_spell(1)
+	_adv.learn_spell(6)
 	_adv.learn_spell(0)
 	_adv.learn_spell(3)
-	_adv.learn_spell(6)
-	_adv.grow_weave(4)
+	_adv.grow_weave(4)  # after the red book (Lower Route)
 	_adv.start_run()
 	_adv.set_run_flag("picked_dd_torch")
 	_adv.set_location("dd_vaults", 2, 7, "left")

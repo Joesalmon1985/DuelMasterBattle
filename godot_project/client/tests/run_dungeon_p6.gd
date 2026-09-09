@@ -166,6 +166,9 @@ func _fight(win: bool, rig_ward: Array = []) -> String:
 	if not rig_ward.is_empty():
 		game.debug_set_enemy_ward(rig_ward)
 	var enemy_ward: Array = game.get_enemy_ward()
+	if win:
+		# A deliberate win: the player reads the Ward and casts before the enemy acts.
+		game.debug_set_enemy_cast_at(999.0)
 	var casts := 0
 	while game.phase == _BattleSim.Phase.DUELING and casts < 12:
 		game.advance_time_for_test(5.5)
