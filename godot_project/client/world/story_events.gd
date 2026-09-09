@@ -48,6 +48,8 @@ func run_event(id: String) -> void:
 			await trog_ritual()
 		"igbut_door":
 			await igbut_door()
+		"jane_wake":
+			await jane_wake()
 
 
 func opening_text() -> void:
@@ -443,10 +445,19 @@ func _gem_lock(adv: Node) -> void:
 		await _w.say("Igbut", "%d placed true, %d displaced." % [placed, present - placed])
 		if strikes < 3:
 			adv.add_condition("wounded")
-			await _w.say("", "The door bites. (WOUNDED: −1 cast in your next duel.)")
-	await _w.say("", "The third blast takes you off your feet. The dark takes the rest.")
-	adv.fail_run("lock")
-	_w.load_area("trial_gate", Vector2i(9, 6), "down")
+			await narrate("The door bites. (WOUNDED: −1 cast in your next duel.)")
+	# D5: a failed lock is not a battle defeat. The door spits the gems back and
+	# seals its sockets; you must gather them off the floor before trying again.
+	await _w.flash(Color(0.9, 0.3, 0.2), 0.3)
+	await _w.shake(6.0, 0.4)
+	await narrate("The third blast throws the gems out of your hands and across the floor. The sockets grind shut.\n\nIgbut, from behind the plinth: \"They reopen. They always reopen. Pick up your stones, contestant.\"")
+	for gm in ["emerald", "sapphire", "diamond"]:
+		if gm in adv.run_state().get("gems", []):
+			adv.run_state()["gems"].erase(gm)
+	adv.set_run_flag("gems_scattered")
+	for gm in ["emerald", "sapphire", "diamond"]:
+		adv.set_run_flag("picked_scattered_" + gm, false)
+	_w.rebuild()
 	adv.save()
 
 
@@ -507,24 +518,85 @@ func on_battle_result(r: Dictionary) -> void:
 			await _w.say("Red wizard", "...A woodcutter. With Halvard's stick.")
 			await _w.say("Red wizard", "Count yourself lucky I have somewhere to be.")
 			await _w.say("", "He goes. The hill is quiet.\n\nYou are John. You were a woodcutter. You weave four.\n\n— END OF THE FIRST CHAPTER —\n\nThe forest, the village and every creature in it remain yours to wander.")
-	elif outcome == "defeat":
-		if str(req.get("area", "")).begins_with("dd_"):
-			# Death in the dungeon ends the run, not the game.
-			adv.fail_run("battle")
-			_w.load_area("trial_gate", Vector2i(9, 6), "down")
-			await _w.say("", "The dark takes you, %s.\n\nYou wake at the gate with the taste of crystal in your mouth. The run is over — gems, wounds and all. What you learned, you keep." % enemy_name)
-			adv.save()
-			_w.lock_input(false)
-			return
-		var john: DmbProgression = adv.progression
-		var enemy := DmbBestiary.get_data(str(req.get("enemy_id", "giant_fly")))
-		if john.weave_size < int(enemy["ward_size"]):
-			await _w.say("", "%s takes you apart. You never had the reach — your weave holds %d, their Ward has %d slots.\n\nYou wake in the grass, singed and alive. Get stronger, then come back." % [enemy_name, john.weave_size, int(enemy["ward_size"])])
-		else:
-			await _w.say("", "%s breaks your Ward first. You wake in the grass, singed and alive.\n\nYou can try again — their Ward will be different." % enemy_name)
+	elif outcome == "defeat" or outcome == "fled":
+		await _on_defeat(adv, req, outcome, enemy_name)
 	elif outcome == "stalemate":
-		await _w.say("", "Both of you run dry. %s slinks back into place. Try again when you're ready." % enemy_name)
+		await narrate("Both of you run dry. %s slinks back into place." % enemy_name)
 	else:
-		await _w.say("", "You step back from %s." % enemy_name)
+		await narrate("You step back from %s." % enemy_name)
+	adv.save()
+	_w.lock_input(false)
+
+
+## Defeat dispatch by battle-result policy (brief §22–§27). The UI has already
+## reported; this is the only place that decides what losing means.
+func _on_defeat(adv: Node, req: Dictionary, outcome: String, enemy_name: String) -> void:
+	var policy := str(adv.last_battle_result.get("policy", adv.battle_policy_for(req)))
+	match policy:
+		adv.POLICY_PROLOGUE:
+			await _prologue_defeat(adv, req)
+		adv.POLICY_TRAINING:
+			await _training_defeat(adv, req, enemy_name)
+		_:
+			# Fleeing a serious battle counts as a defeat; declining never reaches here.
+			await _story_defeat(adv, req, enemy_name)
+
+
+## Filled in by Phase 1 (Halvard dies; the narrator starts again with John).
+func _prologue_defeat(adv: Node, _req: Dictionary) -> void:
+	adv.advance_phase("john_intro")
+
+
+## Training losses teach and return John to the lesson. No reset, no penalty.
+func _training_defeat(adv: Node, req: Dictionary, _enemy_name: String) -> void:
+	var grant: Dictionary = req.get("grant_on_defeat", {})
+	if not grant.is_empty():
+		if grant.has("spell"):
+			adv.learn_spell(int(grant["spell"]))
+		if grant.has("weave"):
+			adv.grow_weave(int(grant["weave"]))
+		_w.rebuild()
+		if grant.has("text"):
+			await narrate(str(grant["text"]))
+		await _w._show_progression_card(grant)
+	if str(req.get("on_defeat_flag", "")) != "":
+		adv.set_flag(str(req["on_defeat_flag"]))
+
+
+## Real defeats: once, John is left for dead and wakes where he fell; the second
+## time the story leaves the Trial for Jane (placeholder chapter, Phase 8).
+func _story_defeat(adv: Node, req: Dictionary, enemy_name: String) -> void:
+	var result := str(adv.record_story_defeat())
+	if result == "left_for_dead":
+		var eid := str(req.get("encounter_id", ""))
+		if eid != "":
+			adv.mark("watching", eid)
+		_w.rebuild()
+		await narrate("%s does not finish you. It doesn't have to. You go down, and the dark takes its time.\n\nLater — you can't say how much later — you are still here, on the same stone, and it is still watching you. Whatever it decided, it was not 'finish him'." % enemy_name)
+		return
+	await narrate("This time nothing decides to wait.")
+	await _w.fade_out(0.6)
+	_w.load_area("jane_placeholder", Vector2i(4, 4), "down")
+	adv.save()
+	await jane_wake()
+
+
+## Narrator voice (brief §5). Every narrator line goes through here so the
+## blank-speaker convention lives in one place.
+func narrate(text: String) -> void:
+	await _w.say("", text)
+
+
+## PLACEHOLDER for the future Jane chapter (brief §24). Deliberately minimal.
+func jane_wake() -> void:
+	var adv := _adv()
+	if adv.flag("jane_placeholder_seen"):
+		return
+	adv.set_flag("jane_placeholder_seen")
+	_w.lock_input(true)
+	await narrate("You wake because somebody is arguing with a kettle.")
+	await narrate("This is not the Trial. This is not Ashwell. The ceiling has beams, and the beams have herbs hanging from them, and none of that was true a moment ago.")
+	await narrate("A woman named Jane has apparently decided you are not allowed to die.\n\nThat is going to complicate things.")
+	await narrate("— TO BE CONTINUED —\n\n(The wider world begins here. It has not been built yet.)")
 	adv.save()
 	_w.lock_input(false)

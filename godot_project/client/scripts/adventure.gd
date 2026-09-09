@@ -8,13 +8,30 @@ extends Node
 ## content can add its own without schema changes.
 
 const SAVE_PATH := "user://adventure.save"
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 
-## P2 dungeon-run state. John's magic (progression) and world flags are permanent;
-## everything inside one Trial attempt lives in state["run"] and resets on fail.
-## Persistent map knowledge lives in state["dungeon_knowledge"].
-const RUN_GATE_AREA := "trial_gate"
-const RUN_GATE_POS := [9, 6]
+## Story state machine (CORRECTIVE_PASS_PLAN Phase 0). One authoritative field;
+## local event flags remain in state["flags"].
+const PHASES := ["halvard_prologue", "john_intro", "ashby_training", "pre_trial", "trial", "post_trial_recovery"]
+const PHASE_NEXT := {
+	"halvard_prologue": ["john_intro"],
+	"john_intro": ["ashby_training"],
+	"ashby_training": ["pre_trial"],
+	"pre_trial": ["trial", "post_trial_recovery"],
+	"trial": ["post_trial_recovery"],
+	"post_trial_recovery": [],
+}
+## Battle-result policy categories. The combat UI reports; the story layer decides.
+const POLICY_PROLOGUE := "PROLOGUE_FORCED_DEFEAT"
+const POLICY_TRAINING := "TRAINING_CONTINUE"
+const POLICY_STORY := "STORY_DEFEAT_TRANSITION"
+const POLICY_TRIAL := "TRIAL_STORY_RESULT"
+const POLICY_QUICK := "QUICK_DUEL"
+const OPTIMAL_EVERY := 3
+
+## The single Trial attempt. John's magic and world flags are permanent; the
+## attempt's gems/conditions/contestant states live in state["run"]. There is no
+## reset: defeat is handled by the story-defeat policy, not by restarting the run.
 const RUN_START_AREA := "dd_entrance"
 const RUN_START_POS := [10, 11]
 const RUN_CONTESTANTS := {
@@ -57,12 +74,22 @@ func new_game() -> void:
 		"facing": "down",
 		"flags": {},
 		"defeated": [],
+		"watching": [],
 		"picked": [],
 		"extinguished": [],
 		"talked": {},
 		"play_seconds": 0.0,
 		"run": null,
 		"dungeon_knowledge": {},
+		"story": {
+			"phase": "halvard_prologue",
+			"protagonist": "halvard",
+			"encounters": {},
+			"encounter_index": 0,
+			"story_defeats": 0,
+			"left_for_dead_used": false,
+			"recovery_pending": false,
+		},
 	}
 	pending_battle = {}
 	last_battle_result = {}
@@ -93,24 +120,31 @@ func load_game() -> bool:
 	if f == null:
 		return false
 	var data = JSON.parse_string(f.get_as_text())
+	f.close()
 	if typeof(data) != TYPE_DICTIONARY or not data.has("state"):
+		return false
+	# Saves older than v3 predate the story state machine (protagonist, phase,
+	# defeat policy). Migrating them would produce impossible states, so they are
+	# invalidated explicitly rather than guessed at.
+	if int(data["state"].get("version", 1)) < SAVE_VERSION or not data["state"].has("story"):
+		push_warning("Adventure: save predates v%d — discarded" % SAVE_VERSION)
+		delete_save()
 		return false
 	state = data["state"]
 	# JSON gives floats; normalise the bits we index with.
 	state["pos"] = [int(state["pos"][0]), int(state["pos"][1])]
-	for k in ["defeated", "picked", "extinguished"]:
+	for k in ["defeated", "picked", "extinguished", "watching"]:
 		if not state.has(k):
 			state[k] = []
 	for k in ["flags", "talked"]:
 		if not state.has(k):
 			state[k] = {}
-	# v1 → v2 migration: dungeon-run state did not exist yet.
-	if int(state.get("version", 1)) < 2:
-		state["version"] = 2
 	if not state.has("run"):
 		state["run"] = null
 	if not state.has("dungeon_knowledge"):
 		state["dungeon_knowledge"] = {}
+	state["story"]["encounter_index"] = int(state["story"].get("encounter_index", 0))
+	state["story"]["story_defeats"] = int(state["story"].get("story_defeats", 0))
 	progression = _Progression.from_dict(data.get("progression", {}))
 	pending_battle = {}
 	last_battle_result = {}
@@ -196,7 +230,100 @@ func grow_weave(to: int) -> bool:
 	return ok
 
 
-# --- Dungeon-run state (P2) ---------------------------------------------------------
+# --- Story state machine ------------------------------------------------------------
+
+func _story() -> Dictionary:
+	return state.get("story", {})
+
+
+func story_phase() -> String:
+	return str(_story().get("phase", "halvard_prologue"))
+
+
+func protagonist() -> String:
+	return str(_story().get("protagonist", "john"))
+
+
+func advance_phase(to: String) -> bool:
+	if not (to in PHASES):
+		return false
+	var allowed: Array = PHASE_NEXT.get(story_phase(), [])
+	if not (to in allowed):
+		return false
+	state["story"]["phase"] = to
+	if to != "halvard_prologue":
+		state["story"]["protagonist"] = "john"
+	state_changed.emit()
+	return true
+
+
+## Authoritative Trial-entry check (brief §14). Normal progression satisfies it;
+## the gate refuses abnormal routes/saves diegetically.
+func trial_ready() -> bool:
+	return flag("has_staff") and progression.weave_size >= 3 and progression.spells_known.size() >= 4
+
+
+## Battle-result policy: explicit `policy` on the request wins; `training`
+## requests continue; anything else in an active adventure is a story battle.
+func battle_policy_for(request: Dictionary) -> String:
+	if request.has("policy"):
+		return str(request["policy"])
+	if not _active:
+		return POLICY_QUICK
+	if bool(request.get("training", false)):
+		return POLICY_TRAINING
+	if story_phase() == "halvard_prologue":
+		return POLICY_PROLOGUE
+	return POLICY_STORY
+
+
+## Story defeat bookkeeping (brief §24). Returns "left_for_dead" the first time,
+## "recovery" afterwards. Training and prologue defeats never call this.
+func record_story_defeat() -> String:
+	state["story"]["story_defeats"] = int(_story().get("story_defeats", 0)) + 1
+	var outcome := "recovery"
+	if not bool(_story().get("left_for_dead_used", false)):
+		state["story"]["left_for_dead_used"] = true
+		outcome = "left_for_dead"
+	else:
+		state["story"]["recovery_pending"] = true
+		if story_phase() != "post_trial_recovery":
+			advance_phase("post_trial_recovery")
+	save()
+	state_changed.emit()
+	return outcome
+
+
+func left_for_dead_used() -> bool:
+	return bool(_story().get("left_for_dead_used", false))
+
+
+func post_trial_recovery_pending() -> bool:
+	return bool(_story().get("recovery_pending", false))
+
+
+## Every-third-battle rule (brief §9). Numbers John's encounters once each; the
+## prologue does not count. Re-challenging an encounter keeps its number.
+func begin_encounter(encounter_id: String) -> int:
+	if story_phase() == "halvard_prologue":
+		return 0
+	var seq: Dictionary = state["story"].get("encounters", {})
+	if seq.has(encounter_id):
+		return int(seq[encounter_id])
+	var n := int(_story().get("encounter_index", 0)) + 1
+	seq[encounter_id] = n
+	state["story"]["encounters"] = seq
+	state["story"]["encounter_index"] = n
+	state_changed.emit()
+	return n
+
+
+func is_optimal_encounter(encounter_id: String) -> bool:
+	var n := int(state["story"].get("encounters", {}).get(encounter_id, 0))
+	return n > 0 and n % OPTIMAL_EVERY == 0
+
+
+# --- Trial attempt state ---------------------------------------------------------------
 
 func run_active() -> bool:
 	return state.get("run") != null and bool(state["run"].get("active", false))
@@ -219,36 +346,9 @@ func start_run() -> void:
 		"conditions": [],
 		"contestants": RUN_CONTESTANTS.duplicate(),
 		"flags": {},
-		"fights": [],
 	}
 	set_location(RUN_START_AREA, int(RUN_START_POS[0]), int(RUN_START_POS[1]), "up")
 	mark_visited(RUN_START_AREA)
-	save()
-	state_changed.emit()
-
-
-func fail_run(_reason: String) -> void:
-	# Knowledge persists; everything else about the attempt is wiped.
-	for area_id in run_state().get("visited", []):
-		if knowledge_status(str(area_id)) in ["unknown", "seen"]:
-			state["dungeon_knowledge"][str(area_id)] = "entered"
-	# Dungeon fights are re-fought next run; outside victories stand.
-	for eid in run_state().get("fights", []):
-		if eid in state.get("defeated", []):
-			state["defeated"].erase(eid)
-	state["run"] = {
-		"active": false,
-		"area": "",
-		"pos": [],
-		"visited": [],
-		"inventory": [],
-		"gems": [],
-		"conditions": [],
-		"contestants": RUN_CONTESTANTS.duplicate(),
-		"flags": {},
-		"fights": [],
-	}
-	set_location(RUN_GATE_AREA, int(RUN_GATE_POS[0]), int(RUN_GATE_POS[1]), "down")
 	save()
 	state_changed.emit()
 
@@ -376,7 +476,5 @@ func report_battle_result(outcome: String, details: Dictionary = {}) -> void:
 		last_battle_result[k] = details[k]
 	if outcome == "victory" and pending_battle.has("encounter_id"):
 		mark("defeated", str(pending_battle["encounter_id"]))
-		if run_active():
-			state["run"]["fights"].append(str(pending_battle["encounter_id"]))
 	pending_battle = {}
 	save()

@@ -26,6 +26,7 @@ func _run() -> void:
 	await _test_finale()
 	await _test_missing_gems()
 	await _test_lock_failure()
+	await _test_second_defeat_goes_to_jane()
 	_report()
 
 
@@ -229,6 +230,8 @@ func _go_west(expect: String) -> void:
 
 func _setup_p6(with_gems: bool) -> void:
 	_adv.new_game()
+	for ph in ["john_intro", "ashby_training", "pre_trial", "trial"]:
+		_adv.advance_phase(ph)
 	_adv.set_flag("opening_seen")
 	_adv.set_flag("entered_trial")
 	for s in [1, 0, 3, 6, 4, 5]:
@@ -319,8 +322,45 @@ func _test_lock_failure() -> void:
 		_world.ui_dialogue_choose(wrong)
 		await process_frame
 		await _drain_dialogue()
-	assert_true(not _adv.run_active(), "three strikes end the run")
-	assert_eq(_world.area_id, "trial_gate", "failed lock restarts at the gate")
+	# D5: not a defeat. Gems scattered, run continues, nobody goes to the gate or Jane.
+	assert_true(_adv.run_active(), "three strikes do not end the attempt")
+	assert_eq(_world.area_id, "dd_igbut", "failed lock keeps you in the room")
+	assert_true(not _adv.has_gem("emerald") and not _adv.has_gem("diamond"), "gems scattered")
+	assert_true(_adv.run_flag("gems_scattered"), "scatter flag set")
+	assert_true(_world.ui_entity_exists("scattered_emerald"), "scattered gems appear on the floor")
+	assert_true(not _adv.post_trial_recovery_pending(), "lock failure is not a story defeat")
+	# Recoverable: pick a gem back up.
+	await _walk_to(Vector2i(7, 7))
+	await _face(Vector2i(0, 1))
+	await _interact()
+	await _drain_dialogue()
+	assert_true(_adv.has_gem("diamond"), "gem recovered from the floor")
+	await _free_world()
+
+
+## Two real defeats: first left for dead (stay, enemy watches), second → Jane.
+func _test_second_defeat_goes_to_jane() -> void:
+	await _setup_p6(true)
+	_adv.set_location("dd_manticore", 10, 8, "up")
+	await _new_world()
+	await _drain_dialogue()
+	for attempt in range(2):
+		await _walk_to(Vector2i(10, 7))
+		await _face(Vector2i(0, -1))
+		await _interact()
+		await _drain_dialogue()
+		_world.ui_dialogue_choose("Fight")
+		await process_frame
+		var out := await _fight_from_world(false, [0, 0, 0, 0])
+		assert_eq(out, "defeat", "manticore wins #%d" % (attempt + 1))
+		if attempt == 0:
+			assert_eq(_world.area_id, "dd_manticore", "first defeat: still in the room")
+			assert_true(_world.ui_entity_exists("manticore_gate1"), "manticore still present")
+			assert_true(_adv.marked("watching", "manticore_gate1"), "manticore watching")
+	assert_true(_adv.post_trial_recovery_pending(), "second defeat sets recovery pending")
+	assert_eq(_adv.story_phase(), "post_trial_recovery", "phase is post_trial_recovery")
+	assert_eq(_world.area_id, "jane_placeholder", "handed off to the Jane placeholder")
+	assert_true(_adv.flag("jane_placeholder_seen"), "placeholder narration ran")
 	await _free_world()
 
 

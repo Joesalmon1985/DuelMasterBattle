@@ -63,6 +63,7 @@ static func _build() -> void:
 	_areas["dd_troglodytes"] = _dd_troglodytes()
 	_areas["dd_manticore"] = _dd_manticore()
 	_areas["dd_igbut"] = _dd_igbut()
+	_areas["jane_placeholder"] = _jane_placeholder()
 	# forest_home is PARKED (P1): the old clearing no longer happens. Builder kept
 	# for reference; nothing links to it.
 
@@ -1053,6 +1054,40 @@ static func _dd_igbut() -> Dictionary:
 				"lines": ["Three gems, contestant. Emerald. Sapphire. Diamond. The door does the rest."],
 				"choice_event": "igbut_door"},
 			{"kind": "door", "id": "victory_door", "pos": [8, 2], "text": "A door of black stone with three empty sockets, gem-sized, in a row."},
+			# D5: after three wrong placements the door scatters the gems; they lie
+			# where they fell until picked up again. Recoverable, local, not a death.
+			{"kind": "pickup", "id": "scattered_emerald", "pos": [4, 4], "sprite": "diamond", "run_pickup": true,
+				"requires_run_flag": "gems_scattered", "grant": {"gem": "emerald"},
+				"text": "The Emerald, chipped now, under the plinth."},
+			{"kind": "pickup", "id": "scattered_sapphire", "pos": [11, 5], "sprite": "diamond", "run_pickup": true,
+				"requires_run_flag": "gems_scattered", "grant": {"gem": "sapphire"},
+				"text": "The Sapphire, against the far wall."},
+			{"kind": "pickup", "id": "scattered_diamond", "pos": [7, 8], "sprite": "diamond", "run_pickup": true,
+				"requires_run_flag": "gems_scattered", "grant": {"gem": "diamond"},
+				"text": "The Diamond, cold as ever, by your boot."},
 			{"kind": "exit", "pos": [9, 10], "to_area": "dd_manticore", "to_pos": [1, 7], "facing": "right"},
+		],
+	}
+
+
+# -------------------------------------------------------------------------------
+# JANE — placeholder only (brief §24). One room, no exits. The wider-world chapter
+# is explicitly deferred; this exists so the defeat architecture has somewhere to go.
+# -------------------------------------------------------------------------------
+static func _jane_placeholder() -> Dictionary:
+	var rows := [
+		"#########",
+		"#.......#",
+		"#.......#",
+		"#.......#",
+		"#.......#",
+		"#.......#",
+		"#.......#",
+		"#########",
+	]
+	return {
+		"id": "jane_placeholder", "name": "Somewhere else", "rows": rows, "theme": "interior",
+		"entities": [
+			{"kind": "logs", "id": "jane_kettle", "pos": [6, 2], "text": "A kettle. Somebody has been arguing with it."},
 		],
 	}

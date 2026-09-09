@@ -153,11 +153,23 @@ func _resolve_combatants() -> void:
 	if adv != null and not adv.pending_battle.is_empty():
 		_adventure_mode = true
 		_battle_request = adv.pending_battle.duplicate(true)
-		_player_c = adv.progression.to_combatant()
+		# Player combatant: the request may name someone other than John
+		# (prologue Halvard). Otherwise John's progression is the source.
+		if _battle_request.has("player_combatant"):
+			_player_c = DmbCombatant.make(_battle_request["player_combatant"])
+		else:
+			_player_c = adv.progression.to_combatant()
 		_apply_player_mods(_player_c, _battle_request.get("player_mods", {}))
 		_enemy_c = DmbBestiary.make(str(_battle_request["enemy_id"]))
+		# Data-driven enemy tweaks from the story layer (optimal tier, prologue
+		# config, opening guess). Never keyed on enemy names here.
+		var overrides: Dictionary = _battle_request.get("enemy_overrides", {})
+		for k in overrides.keys():
+			if k in _enemy_c:
+				_enemy_c.set(k, overrides[k])
 		for banned in _battle_request.get("ward_ban", []):
 			_enemy_c.ward_pool.erase(int(banned))
+		_enemy_c.validate()
 	else:
 		_adventure_mode = false
 		var diff = _session().get_difficulty_profile()
@@ -1412,13 +1424,9 @@ func _show_result() -> void:
 	_overlay_ward_row("Your Ward", game.get_player_ward())
 	_overlay_text("You cast %d · Rival cast %d" % [r.human_guess_count, r.bot_guess_count], false)
 	if _adventure_mode:
+		# Story battles never offer a retry here: the combat UI reports the
+		# result and the story layer decides what defeat means (policy).
 		_overlay_button("Continue", true, func(): _return_to_world(r.outcome))
-		if r.outcome != "victory":
-			_overlay_button("Try again", false, func():
-				_overlay.visible = false
-				start_new_game(-1)
-				_sfx("tap")
-			)
 	else:
 		_overlay_button("Play again", true, func():
 			_overlay.visible = false
@@ -1448,6 +1456,7 @@ func _return_to_world(outcome: String) -> void:
 		var details := {}
 		if game.result != null:
 			details = {"player_casts": game.result.human_guess_count, "enemy_casts": game.result.bot_guess_count}
+		details["policy"] = adv.battle_policy_for(_battle_request)
 		adv.report_battle_result(outcome, details)
 	if _no_scene_change:
 		return
@@ -1526,6 +1535,17 @@ static func _count_empty(p: Array) -> int:
 
 func ui_get_phase() -> int:
 	return game.phase
+
+
+func ui_overlay_button_labels() -> Array:
+	## Test API: labels of the buttons currently on the overlay.
+	var out: Array = []
+	if _overlay_vbox == null:
+		return out
+	for c in _overlay_vbox.get_children():
+		if c is Button:
+			out.append((c as Button).text)
+	return out
 
 
 func ui_is_result_visible() -> bool:

@@ -228,6 +228,8 @@ func _go_west(expect: String) -> void:
 
 func _setup_p5() -> void:
 	_adv.new_game()
+	for ph in ["john_intro", "ashby_training", "pre_trial", "trial"]:
+		_adv.advance_phase(ph)
 	_adv.set_flag("opening_seen")
 	_adv.set_flag("entered_trial")
 	_adv.learn_spell(1)

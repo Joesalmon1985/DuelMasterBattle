@@ -230,6 +230,8 @@ func _go_west(expect: String) -> void:
 func _test_full_run() -> void:
 	# Trial-Day state at the gate: Water from Halvard's staff, nothing else.
 	_adv.new_game()
+	for ph in ["john_intro", "ashby_training", "pre_trial", "trial"]:
+		_adv.advance_phase(ph)
 	_adv.set_flag("opening_seen")
 	_adv.set_flag("duel_seen")
 	_adv.set_flag("has_staff")

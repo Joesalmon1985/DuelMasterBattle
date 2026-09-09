@@ -866,24 +866,42 @@ func start_battle_request(req: Dictionary) -> void:
 
 
 func _start_battle(e: Dictionary) -> void:
+	var adv := _adv()
+	var n: int = adv.begin_encounter(str(e["id"]))
 	var req := {
 		"enemy_id": str(e["enemy_id"]),
 		"encounter_id": str(e["id"]),
+		"encounter_index": n,
+		"optimal": adv.is_optimal_encounter(str(e["id"])),
 		"kind": str(e["kind"]),
+		"training": bool(e.get("training", false)),
 		"on_win_flag": str(e.get("on_win_flag", "")),
 		"on_win_run_flag": str(e.get("on_win_run_flag", "")),
+		"on_defeat_flag": str(e.get("on_defeat_flag", "")),
 		"grant_on_win": e.get("grant_on_win", {}),
+		"grant_on_defeat": e.get("grant_on_defeat", {}),
+		"enemy_overrides": e.get("enemy_overrides", {}),
 		"drops": str(e.get("drops", "")),
 		"area": area_id,
 		"return_pos": [_john_pos.x, _john_pos.y],
 		"facing": _john_facing,
-		"player_mods": _adv().player_mods(),
+		"player_mods": adv.player_mods(),
 		"ward_ban": _ward_ban_for(str(e["enemy_id"])),
 	}
+	if e.has("policy"):
+		req["policy"] = str(e["policy"])
+	if bool(req["optimal"]):
+		# Every-third-battle rule: the sharp tier. Hard, not perfect — capped
+		# minimax with a mid-size sample (see CORRECTIVE_PASS_PLAN Phase 4).
+		var ov: Dictionary = req["enemy_overrides"].duplicate()
+		ov["bot_logic"] = "capped_minimax"
+		ov["bot_solver_cap"] = maxi(int(ov.get("bot_solver_cap", 0)), 100)
+		ov["bot_mistake_rate"] = 0.0
+		req["enemy_overrides"] = ov
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.35)
 	await tw.finished
-	_adv().request_battle(req)
+	adv.request_battle(req)
 	if test_mode:
 		return
 	get_tree().change_scene_to_file("res://client/scenes/game_board.tscn")
@@ -1056,6 +1074,14 @@ func flash(color: Color, seconds: float = 0.12) -> void:
 	tw.tween_property(_fader, "modulate:a", 0.0, seconds)
 	await tw.finished
 	_fader.color = Color.BLACK
+
+
+## Fade to black and stay there; load_area's own fade-in brings the view back.
+func fade_out(seconds: float = 0.5) -> void:
+	_fader.color = Color.BLACK
+	var tw := create_tween()
+	tw.tween_property(_fader, "modulate:a", 1.0, seconds)
+	await tw.finished
 
 
 func shake(strength: float = 6.0, seconds: float = 0.4) -> void:

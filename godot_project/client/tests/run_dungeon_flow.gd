@@ -221,6 +221,8 @@ func _fight_from_world(win: bool, rig_ward: Array = []) -> String:
 
 func _setup_run() -> void:
 	_adv.new_game()
+	for ph in ["john_intro", "ashby_training", "pre_trial", "trial"]:
+		_adv.advance_phase(ph)
 	_adv.set_flag("opening_seen")
 	_adv.set_flag("duel_seen")
 	_adv.set_flag("has_staff")
@@ -355,7 +357,8 @@ func _test_slice() -> void:
 	assert_true("poisoned" in _adv.run_state().get("conditions", []), "vial poisons")
 	assert_eq(_adv.player_mods().get("min_cast_bonus", -1.0), 2.0, "poison slows next duel")
 
-	# Lose the troll fight on purpose (rigged Fire Ward): the run ends at the gate.
+	# Lose the troll fight on purpose (rigged Fire Ward). Brief §24/§27: no gate
+	# reset. John is left for dead and wakes on the same stone; the troll stays.
 	await _walk_to(Vector2i(15, 8))
 	await _face(Vector2i(0, -1))
 	await _interact()
@@ -367,66 +370,20 @@ func _test_slice() -> void:
 		await process_frame
 		w += 1
 	assert_true(_adv.pending_battle.get("player_mods", {}).has("min_cast_bonus"), "mods ride into battle")
+	assert_eq(str(_adv.battle_policy_for(_adv.pending_battle)), "STORY_DEFEAT_TRANSITION", "trial battle uses the story defeat policy")
 	out = await _fight_from_world(false, [0, 0])
 	assert_eq(out, "defeat", "troll takes John apart")
-	assert_eq(_world.area_id, "trial_gate", "failed run restarts at the gate")
-	assert_true(not _adv.run_active(), "run inactive after fail")
-	assert_eq(_adv.knowledge_status("dd_lower"), "entered", "knowledge kept after fail")
-	assert_true(_adv.progression.knows(0), "Fire kept after fail")
-	assert_eq(_adv.progression.weave_size, 2, "weave kept after fail")
-	assert_eq(_adv.run_state().get("conditions", ["x"]), [], "conditions cleared after fail")
-	assert_true(_adv.flag("entered_trial"), "world flags kept after fail")
+	assert_eq(_world.area_id, "dd_lower", "left for dead where he fell — no gate reset")
+	assert_true(_adv.run_active(), "the single attempt continues")
+	assert_true(_adv.left_for_dead_used(), "the one wake is spent")
+	assert_true(not _adv.post_trial_recovery_pending(), "not yet Jane")
+	assert_true(_adv.marked("watching", "troll_lower1"), "troll marked as watching")
+	assert_true(_world.ui_entity_exists("troll_lower1"), "troll still in the room")
+	assert_true(_adv.progression.knows(0), "Fire kept")
+	assert_true(_adv.run_flag("picked_red_book"), "run pickups are not reset")
+	assert_true("poisoned" in _adv.run_state().get("conditions", []), "conditions persist through the wake")
 
-	# Second run: fights and run pickups are back; win the troll, take the ring.
-	_adv.start_run()
-	await _free_world()
-	await _new_world()
-	await _drain_dialogue()
-	assert_eq(_world.area_id, "dd_entrance", "second run starts clean")
-	assert_true(not _adv.marked("defeated", "fly_east"), "fights reset for the new run")
-	await _walk_to(Vector2i(9, 1))
-	await _walk(Vector2i(0, -1), 1)
-	g = 0
-	while _world.area_id != "dd_fork" and g < 120:
-		await process_frame
-		g += 1
-	await _walk_to(Vector2i(1, 6))
-	await _walk(Vector2i(-1, 0), 1)
-	g = 0
-	while _world.area_id != "dd_galleries" and g < 120:
-		await process_frame
-		g += 1
-	await _walk_to(Vector2i(9, 5))
-	await _face(Vector2i(0, -1))
-	await _interact()
-	await _drain_dialogue()
-	_world.ui_dialogue_choose("150")
-	await process_frame
-	await _drain_dialogue()
-	await _walk_to(Vector2i(1, 8))
-	await _walk(Vector2i(-1, 0), 1)
-	g = 0
-	while _world.area_id != "dd_pit" and g < 120:
-		await process_frame
-		g += 1
-	await _walk_to(Vector2i(6, 7))
-	await _face(Vector2i(0, -1))
-	await _interact()
-	await _drain_dialogue()
-	_world.ui_dialogue_choose("Let him lower you")
-	await process_frame
-	await _drain_dialogue()
-	await _walk_to(Vector2i(1, 8))
-	await _walk(Vector2i(-1, 0), 1)
-	g = 0
-	while _world.area_id != "dd_lower" and g < 120:
-		await process_frame
-		g += 1
-	await _walk_to(Vector2i(5, 5))
-	await _face(Vector2i(0, -1))
-	await _interact()
-	await _drain_dialogue()
-	assert_true(_adv.run_flag("picked_red_book"), "red book takeable again after fail")
+	# Re-fight allowed (D4): win it this time, take the ring.
 	await _walk_to(Vector2i(15, 8))
 	await _face(Vector2i(0, -1))
 	await _interact()
@@ -434,7 +391,7 @@ func _test_slice() -> void:
 	_world.ui_dialogue_choose("Fight")
 	await process_frame
 	out = await _fight_from_world(true)
-	assert_eq(out, "victory", "troll beaten on the second run")
+	assert_eq(out, "victory", "troll beaten on the re-fight")
 	assert_true(_adv.run_flag("troll_down"), "troll run flag set")
 	assert_eq(str(_adv.run_state()["contestants"].get("throm", "")), "wounded", "Throm wounded after")
 	await _walk_to(Vector2i(15, 8))
@@ -448,7 +405,7 @@ func _test_slice() -> void:
 	await _free_world()
 	assert_true(_adv.load_game(), "final reload")
 	assert_true(_adv.progression.knows(0), "Fire persisted")
-	assert_eq(_adv.knowledge_status("dd_lower"), "entered", "knowledge persisted")
+	assert_true(_adv.knowledge_status("dd_lower") != "unknown", "knowledge persisted")
 
 
 # --- assertions --------------------------------------------------------------------

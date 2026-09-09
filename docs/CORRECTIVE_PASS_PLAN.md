@@ -296,7 +296,18 @@ Commit: `P13: rewritten flows, QA captures, corrective pass report`.
 
 ---
 
-## Open decisions (answer before Phase 0)
+## Decisions (approved)
+
+- **D1** Red book → weave 4. Dwarf → Trial clue/knowledge item (not Light). Elf charm stays an item with the Boa/Ward interaction. Mirror keeps Light, Bloodbeast keeps Shadow.
+- **D2** Pre-Trial: exactly Water, Vine, Fire, Stone; weave max 3. No optional Light/Shadow areas pre-Trial; no weave 4 before entry. Weave 4 is a dungeon reward (red book).
+- **D3** Strongest legitimate solver first, plus a strictly isolated `PROLOGUE_FORCED_DEFEAT` backstop (≤ 3 casts) that cannot activate in ordinary battles.
+- **D4** After the one left-for-dead wake the enemy remains, marked "watching you"; re-fight allowed; second defeat → Jane.
+- **D5** Gem-lock failure is NOT a battle defeat; repeated wrong placements get a comprehensible, recoverable local consequence (no Jane, no gate).
+- **D6** Remove run-reset/retry semantics (`fail_run` no teleport, no repeat attempts). Keep `dungeon_knowledge` only as discovery state for the single attempt; delete unused retry plumbing (`start_run` restart path, run-scoped fight reset, gate restart text).
+
+Phase 6.3 (optional Light/Shadow sites) is **dropped** per D2.
+
+## Open decisions (answered above — kept for history)
 
 - **D1 — Dungeon spell rewards now redundant.** Fire (red book), Stone (Dwarf), Vine (elf charm) are all learned pre-Trial in the new progression. Proposal: red book → weave 4; Dwarf test → Light *or* a Ward-reading clue item; elf charm stays a canonical item that bans Vine from the Boa's ward. Light/Shadow move pre-Trial only if D2 says optional sites grant them; otherwise Mirror/Bloodbeast keep them. Confirm.
 - **D2 — "Up to 6 magic types and 4 ward slots before the Trial" (§14) vs "do not give John a fourth weave slot before the Trial" (§13, §35).** Proposal: optional pre-Trial sites can grant up to 6 spell *types* (Light, Shadow), but weave stays capped at 3 until inside the Trial. Confirm, or tell me the 4th slot should be optional-obtainable.
