@@ -25,6 +25,7 @@ func _run() -> void:
 	_adv.delete_save()
 	await process_frame
 	await _test_slice()
+	await _test_hazards()
 	_report()
 
 
@@ -297,6 +298,10 @@ func _test_slice() -> void:
 	await process_frame
 	await _drain_dialogue()
 	assert_true(_adv.run_flag("riddle_answered"), "riddle answered")
+	assert_true(_adv.run_flag("riddle_right"), "150 is the derivable answer")
+	assert_true("hates the light" in _adv.notebook_text(), "riddle reward recorded in the journal")
+	assert_true(4 in _world._ward_ban_for("manticore"), "riddle knowledge bans Light from the Manticore Ward")
+	assert_true(not _adv.has_condition("wounded"), "right answer: not wounded")
 
 	# Torch, then the guard dog.
 	await _walk_to(Vector2i(5, 12))
@@ -425,6 +430,60 @@ func assert_eq(a, b, msg: String) -> void:
 	if a != b:
 		_failures.append("%s (got %s, expected %s)" % [msg, a, b])
 		print("  FAIL: %s (got %s, expected %s)" % [msg, a, b])
+
+
+## Phase 10 (brief §24/§25): non-battle hazards have consequences that are
+## not defeats and never touch the defeat policy.
+func _test_hazards() -> void:
+	_adv.new_game()
+	for ph in ["john_intro", "ashby_training", "pre_trial", "trial"]:
+		_adv.advance_phase(ph)
+	_adv.set_flag("opening_seen")
+	_adv.set_flag("entered_trial")
+	_adv.learn_spell(1)
+	_adv.learn_spell(6)
+	_adv.learn_spell(0)
+	_adv.learn_spell(3)
+	_adv.grow_weave(3)
+	_adv.start_run()
+	_adv.set_run_flag("picked_dd_torch")
+	_adv.set_location("dd_galleries", 9, 6, "up")
+	await _new_world()
+	await _drain_dialogue()
+	await _walk_to(Vector2i(9, 5))
+	await _face(Vector2i(0, -1))
+	await _interact()
+	await _drain_dialogue()
+	_world.ui_dialogue_choose("200")
+	await process_frame
+	await _drain_dialogue()
+	assert_true(_adv.run_flag("riddle_answered") and not _adv.run_flag("riddle_right"), "wrong answer recorded")
+	assert_true(_adv.has_condition("wounded"), "wrong answer: wounded (a local consequence)")
+	assert_true(_world._ward_ban_for("manticore").is_empty(), "no Manticore clue for a wrong answer")
+	assert_eq(int(_adv.state["story"]["story_defeats"]), 0, "riddle is not a defeat")
+	# Pit: climb alone → fall, wounded, torch lost, still crosses.
+	_adv.clear_conditions()
+	await _walk_to(Vector2i(1, 8))
+	await _walk(Vector2i(-1, 0), 1)
+	var g := 0
+	while _world.area_id != "dd_pit" and g < 120:
+		await process_frame
+		g += 1
+	assert_eq(_world.area_id, "dd_pit", "reached the pit")
+	await _walk_to(Vector2i(6, 7))
+	await _face(Vector2i(0, -1))
+	await _interact()
+	await _drain_dialogue()
+	_world.ui_dialogue_choose("Climb down alone")
+	await process_frame
+	await _drain_dialogue()
+	assert_true(_adv.run_flag("pit_crossed"), "the fall still crosses the pit")
+	assert_true(_adv.run_flag("pit_fell"), "fall recorded")
+	assert_true(_adv.has_condition("wounded"), "fall wounds")
+	assert_true(_adv.run_flag("torch_lost"), "torch lost in the water")
+	assert_eq(int(_adv.state["story"]["story_defeats"]), 0, "hazards are never defeats")
+	assert_true(not _adv.left_for_dead_used(), "hazards never spend the wake")
+	await _free_world()
 
 
 func _report() -> void:

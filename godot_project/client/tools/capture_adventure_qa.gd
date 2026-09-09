@@ -44,39 +44,63 @@ func _run() -> void:
 	menu.queue_free()
 	await process_frame
 
-	# 04 opening
+	# 04 prologue: you are Halvard, in Ashwell
 	_adv.new_game()
 	await _new_world()
 	await _frames(20)
-	_capture("04_opening_text.png")
-	_world.ui_dialogue_advance()
-	await _frames(2)
-	_world.ui_dialogue_advance()
-	await _frames(2)
-	_world.ui_dialogue_advance()
-	await _frames(2)
-	_world.ui_dialogue_advance()
-	await _frames(20)
-	_capture("05_village_free_roam.png")
+	_capture("04_prologue_text.png")
+	await _drain()
+	await _frames(10)
+	_capture("05_halvard_free_roam.png")
 
-	# 06 duel aftermath: staff waiting on the road (skip the cutscene via flags)
+	# 05b Red intercept staging (Halvard on the road; trigger fires on the walk)
+	await _step(Vector2i(-1, 0))
+	await _frames(14)
+	await _step(Vector2i(0, 1))
+	await _frames(14)
+	await _step(Vector2i(0, 1))
+	await _frames(14)
+	await _step(Vector2i(-1, 0))
+	await _frames(14)
+	await _step(Vector2i(-1, 0))
+	await _frames(60)
+	_capture("05b_red_intercept_facing.png")
+	_world.ui_dialogue_advance()
+	await _frames(2)
+	_world.ui_dialogue_advance()
+	await _frames(30)
+	_capture("05c_red_intercept_line.png")
+
+	# 06 aftermath: John over Halvard's body, staff in the road
 	await _free_world()
+	_adv.new_game()
 	_adv.set_flag("opening_seen")
-	_adv.set_flag("duel_seen")
-	_adv.learn_spell(1)
-	_adv.grow_weave(1)
+	_adv.set_flag("halvard_dead")
+	_adv.set_flag("red_intercept_done")
+	_adv.advance_phase("john_intro")
 	_adv.set_location("village", 10, 9, "up")
 	await _new_world()
 	await _frames(20)
-	_capture("06_duel_aftermath_staff.png")
+	_capture("06_john_over_the_body.png")
 
-	# 07 dialogue box
+	# 07 dialogue box (taking the staff; paginated text)
 	_world.ui_action()
 	await _frames(40)
 	_capture("07_pickup_dialogue.png")
 	await _drain()
 	await _frames(5)
 	_capture("08_hud_with_water_magic.png")
+
+	# 08b Ashby in the workshop (2-slot lesson state)
+	_adv.learn_spell(6)
+	_adv.grow_weave(1)
+	_adv.set_flag("ashby_duel1_done")
+	_adv.set_flag("ashby_duel2_done")
+	await _free_world()
+	_adv.set_location("village", 14, 15, "up")
+	await _new_world()
+	await _frames(20)
+	_capture("08b_ashby_workshop.png")
 
 	# 09 burnt wood training detour
 	await _free_world()
@@ -248,6 +272,18 @@ func _battle_shots() -> void:
 	_capture("20_battle_1v1_victory.png")
 	board.queue_free()
 	_adv.clear_pending_battle()
+
+
+func _step(dir: Vector2i) -> void:
+	var guard := 0
+	while (_world.ui_is_moving() or _world.ui_input_locked()) and guard < 600:
+		await process_frame
+		guard += 1
+	_world.ui_step(dir)
+	var g2 := 0
+	while _world.ui_is_moving() and g2 < 600:
+		await process_frame
+		g2 += 1
 
 
 func _new_world() -> void:

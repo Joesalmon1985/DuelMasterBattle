@@ -930,17 +930,17 @@ func _interact_enemy(e: Dictionary) -> void:
 ## in WARD_BANS: enemy_id → [run_flag, banned spell]. Brief §28 "clues which
 ## actually alter enemy Ward possibilities".
 const WARD_BANS := {
-	"bloodbeast": ["blood_weakness", 6],     # the prisoner's warning: no Vine
-	"manticore": ["has_elf_charm", 6],       # the elf's vine-charm: green things know you
+	"bloodbeast": [["blood_weakness", 6]],                          # the prisoner's warning: no Vine
+	"manticore": [["has_elf_charm", 6], ["riddle_right", 4]],     # elf's charm: no Vine; old man: no Light
 }
 
 
 func _ward_ban_for(enemy_id: String) -> Array:
-	if WARD_BANS.has(enemy_id):
-		var rule: Array = WARD_BANS[enemy_id]
+	var out: Array = []
+	for rule in WARD_BANS.get(enemy_id, []):
 		if _adv().run_flag(str(rule[0])):
-			return [int(rule[1])]
-	return []
+			out.append(int(rule[1]))
+	return out
 
 
 ## P5: story events start scripted battles through here (no entity needed).

@@ -243,17 +243,31 @@ func gate_choice() -> void:
 ## interaction), so they never lock/unlock themselves. Only gate_choice (a
 ## trigger event) owns the lock.
 func statue_riddle() -> void:
+	# The old man's number-riddle (brief §24). The answer is derivable from
+	# what John can see: the statue's base is inscribed (dd_statue_sign, p.382
+	# gated: the book's own number is NEEDS_PAGE_IMAGE_CHECK, so the puzzle is
+	# self-contained and does not assert canon).
 	var adv := _adv()
 	if adv.run_flag("riddle_answered"):
-		await _w.say("Old man", "The stone keeps its own counsel. So do I, now.")
+		if adv.run_flag("riddle_right"):
+			await _w.say("Old man", "You read. Good. The lion-thing below hates the light for the same reason.")
+		else:
+			await _w.say("Old man", "The stone keeps its own counsel. So do I, now.")
 		return
-	await _w.say("Old man", "One hundred? One hundred and fifty? Two hundred?")
+	await _w.say("Old man", "A knight went first. She counted the steps from the door to this stone — she said it aloud so I'd remember. Half as many again as the years I've stood here, and I have stood here a hundred.")
+	await _w.say("Old man", "How many steps did she count? One hundred? One hundred and fifty? Two hundred?")
 	var answer: String = await _w._dialogue.choose_async("Answer the old man?", ["100", "150", "200"])
 	adv.set_run_flag("riddle_answer_" + answer)
 	adv.set_run_flag("riddle_answered")
-	# The canonical correct answer is not yet verified against the book (p.382);
-	# every answer continues, so no run can be bricked by a guess here.
-	await _w.say("Old man", "Hm. The stone keeps its own counsel.")
+	if answer == "150":
+		adv.set_run_flag("riddle_right")
+		adv.add_knowledge("The old man: the Manticore below hates the light. Its Ward will not hold Light.")
+		await _w.say("Old man", "A hundred and fifty. She could count; it didn't save her.")
+		await _w.say("Old man", "So I'll tell you one thing for it. The lion-thing that guards the last door hates the light. Remember that when you weave against it.")
+	else:
+		adv.add_condition("wounded")
+		await _w.say("Old man", "No. Listen better — the Trial won't ask twice.")
+		await _w.say("", "He raps your knuckles with his staff, hard enough to numb the hand. You are WOUNDED: −1 cast in your next duel.")
 	await _w.say("", "Beside him stands a knight in White Road armour, turned to stone mid-step.\n\nSerra went first. This is where first got her.")
 
 
@@ -262,9 +276,21 @@ func throm_pit() -> void:
 	var adv := _adv()
 	if adv.run_flag("pit_crossed"):
 		return
-	await _w.say("Throm", "Deep water down there. I hold the rope, or you hold it for me. Or we jump it together, and laugh.")
-	var choice: String = await _w._dialogue.choose_async("The pit?", ["Let him lower you", "Offer to lower him", "Jump together"])
-	if choice == "Offer to lower him":
+	await _w.say("", "A pit cuts the corridor. Far below, water moves. The far edge is a long jump — or a rope's length, if someone holds the rope.")
+	await _w.say("Throm", "I hold the rope, or you hold it for me. Or we jump it together, and laugh.")
+	var choice: String = await _w._dialogue.choose_async("The pit?", ["Let him lower you", "Offer to lower him", "Jump together", "Climb down alone"])
+	if choice == "Climb down alone":
+		# Brief §25: a hazard with a consequence that is not a battle defeat.
+		adv.add_condition("wounded")
+		adv.set_run_flag("pit_fell")
+		adv.set_run_flag("pit_ally")
+		adv.set_contestant("throm", "uneasy_ally")
+		var lost_torch: bool = adv.run_flag("picked_dd_torch") and not adv.run_flag("torch_lost")
+		if lost_torch:
+			adv.set_run_flag("torch_lost")
+		await _w.say("", "You take the wall alone. Halfway, the wall takes you. You land in the shallows, hard.\n\nYou are WOUNDED: −1 cast in your next duel." + ("\n\nYour torch hisses out in the water and goes to the bottom." if lost_torch else ""))
+		await _w.say("Throm", "Hah. Wait there — I'm coming down the sensible way.")
+	elif choice == "Offer to lower him":
 		await _w.say("Throm", "...Throm. My name is Throm. Take the rope, then. Tightly.")
 		await _w.say("", "You lower Throm by the rope. He looks very small, and then he waves you off the edge.")
 		var second: String = await _w._dialogue.choose_async("Throm waits below.", ["Climb down after him", "Leave him"])
@@ -355,6 +381,7 @@ func _dwarf_cobra(adv: Node) -> void:
 	await _w.say("Dwarf", "Procedure complete. You've earned the map — the part of it I'm allowed to give.")
 	adv.set_run_flag("trial_ready")
 	adv.set_run_flag("dwarf_map")
+	adv.add_knowledge("The Dwarf's map: past the idol, the grotto and the vaults; the way down is west.")
 	await narrate("The Dwarf unrolls a scrap of oiled hide: the lower Trial, in a hand that has drawn it many times. Three gems marked. A door marked. And a passage from this very room, west, that is not on anyone else's map.")
 	await narrate("(Your journal now knows: the door wants Emerald, Sapphire and Diamond; the concealed Trialmaster passage links west to the Lower Route.)")
 	_w.rebuild()
@@ -417,6 +444,7 @@ func free_prisoner() -> void:
 	if choice == "Free him":
 		adv.set_run_flag("prisoner_free")
 		adv.set_run_flag("blood_weakness")
+		adv.add_knowledge("The prisoner: the Bloodbeast is afraid of green things. Its Ward will not hold Vine.")
 		await _w.say("", "You cut his bonds. He presses something into your hand — bitter herbs — and babbles about the beast below.")
 		await _w.say("Starved man", "Go. Stones. It loves... no. It HATES the green. Vine. Its eyes water.")
 		await _w.say("", "(Bloodbeast weakness learned: no Vine in its Ward.)")
@@ -429,7 +457,7 @@ func ivy_toll() -> void:
 	if adv.run_flag("ivy_paid"):
 		return
 	var options := ["Leave", "Attack"]
-	if adv.run_flag("picked_dd_torch"):
+	if adv.run_flag("picked_dd_torch") and not adv.run_flag("torch_lost"):
 		options.push_front("Offer the torch")
 	await _w.say("Poison Ivy", "Tribute, sweetling. Something useful, or thorns.")
 	var choice: String = await _w._dialogue.choose_async("Ivy's toll?", options)

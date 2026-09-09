@@ -344,6 +344,7 @@ func start_run() -> void:
 		"inventory": [],
 		"gems": [],
 		"conditions": [],
+		"notes": [],
 		"contestants": RUN_CONTESTANTS.duplicate(),
 		"flags": {},
 	}
@@ -390,6 +391,11 @@ func notebook_text() -> String:
 	if flag("diamond_clue"):
 		lines.append("The Elf's clue: the final door wants gems. One is a diamond.")
 	if run_active():
+		var notes: Array = run_state().get("notes", [])
+		if not notes.is_empty():
+			lines.append("Learned:")
+			for n in notes:
+				lines.append("- " + str(n))
 		var fell := []
 		for cid in run_state().get("contestants", {}).keys():
 			var st := str(run_state()["contestants"][cid])
@@ -414,6 +420,20 @@ func add_condition(cond: String) -> void:
 	if run_active():
 		state["run"]["conditions"].append(cond)
 		state_changed.emit()
+
+
+func has_condition(cond: String) -> bool:
+	return run_active() and cond in run_state().get("conditions", [])
+
+
+## A discovery made during the attempt (brief §28): appears in the journal.
+func add_knowledge(note: String) -> void:
+	if run_active():
+		if not state["run"].has("notes"):
+			state["run"]["notes"] = []
+		if not note in state["run"]["notes"]:
+			state["run"]["notes"].append(note)
+			state_changed.emit()
 
 
 func clear_conditions() -> void:

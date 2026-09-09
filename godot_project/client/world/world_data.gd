@@ -64,69 +64,10 @@ static func _build() -> void:
 	_areas["dd_manticore"] = _dd_manticore()
 	_areas["dd_igbut"] = _dd_igbut()
 	_areas["jane_placeholder"] = _jane_placeholder()
-	# forest_home is PARKED (P1): the old clearing no longer happens. Builder kept
-	# for reference; nothing links to it.
 
 
 # -------------------------------------------------------------------------------
-# AREA 1 — John's clearing. 16 wide x 20 tall.
-# -------------------------------------------------------------------------------
-static func _forest_home() -> Dictionary:
-	var rows := [
-		"TTTTTTTT..TTTTTT",
-		"TTTTT.....,.TTTT",
-		"TTT....RRR...TTT",
-		"TT..r..RRR..,.TT",
-		"TT.....#D#....TT",
-		"TT..,..:::..T.TT",
-		"TT.L...:....r.TT",
-		"T......:.....,TT",
-		"T..T...:..T...TT",
-		"TT.....:......TT",
-		"TT..,..:..r...TT",
-		"TTT....:.....TTT",
-		"TTTT..,:..TTTTTT",
-		"TTTTT..:.TTTTTTT",
-		"TTTTTT.:.TTTTTTT",
-		"TTTTTTT:TTTTTTTT",
-		"TTTTTTT:TTTTTTTT",
-		"TTTTTTT:TTTTTTTT",
-		"TTTTTTT:TTTTTTTT",
-		"TTTTTTTTTTTTTTTT",
-	]
-	return {
-		"id": "forest_home", "name": "The Clearing", "rows": rows,
-		"entities": [
-			{"kind": "sign", "id": "home_sign", "pos": [10, 5], "text": "John's house. Woodcutter. Knock loudly."},
-			{"kind": "door", "id": "home_door", "pos": [8, 4], "text": "Your house. The kettle is still warm. Wood first."},
-			{"kind": "logs", "id": "home_logs", "pos": [3, 6], "text": "Your woodpile. It never seems to get any bigger."},
-			{"kind": "trigger", "id": "opening_fight", "rect": [1, 6, 14, 12], "event": "opening_fight", "once_flag": "opening_done", "requires_steps": 3},
-			# Placed by the opening event: staff, fires, dead wizard, wisps. Listed here so
-			# they render when the area is rebuilt after loading.
-			{"kind": "pickup", "id": "blue_staff", "pos": [7, 8], "sprite": "staff", "requires_flag": "opening_done",
-				"grant": {"spell": SPELL_BLUE, "weave": 1},
-				"text": "The Blue wizard's staff. It is cold, and it hums.\n\nYou have learned WATER magic.\nYour weave can hold ONE spell."},
-			{"kind": "corpse", "id": "blue_wizard_body", "pos": [6, 8], "sprite": "blue_mage", "facing": "right", "requires_flag": "opening_done",
-				"text": "The Blue wizard. Whatever he was, he is not any more."},
-			{"kind": "fire", "id": "fire_h1", "pos": [7, 3], "requires_flag": "opening_done"},
-			{"kind": "fire", "id": "fire_h2", "pos": [4, 10], "requires_flag": "opening_done"},
-			{"kind": "fire", "id": "fire_h3", "pos": [10, 9], "requires_flag": "opening_done"},
-			{"kind": "fire", "id": "fire_h4", "pos": [8, 0], "requires_flag": "opening_done", "blocks_exit": true},
-			{"kind": "fire", "id": "fire_h5", "pos": [9, 0], "requires_flag": "opening_done", "blocks_exit": true},
-			{"kind": "burnt", "id": "burnt_h1", "pos": [12, 8], "requires_flag": "opening_done"},
-			{"kind": "burnt", "id": "burnt_h2", "pos": [3, 8], "requires_flag": "opening_done"},
-			{"kind": "creature", "id": "wisp_h1", "enemy_id": "flame_wisp", "pos": [5, 4], "requires_flag": "first_fire_out",
-				"intro": "A scrap of the fire has come alive. It hisses at you.\n\nIt only knows FIRE. Its Ward is a single slot of WATER — the same magic you hold."},
-			{"kind": "creature", "id": "wisp_h2", "enemy_id": "flame_wisp", "pos": [11, 11], "requires_flag": "first_fire_out",
-				"intro": "Another wisp. This one is quicker."},
-			{"kind": "exit", "pos": [8, 0], "to_area": "forest_deep", "to_pos": [8, 22], "facing": "up"},
-			{"kind": "exit", "pos": [9, 0], "to_area": "forest_deep", "to_pos": [8, 22], "facing": "up"},
-		],
-	}
-
-
-# -------------------------------------------------------------------------------
-# AREA 2 — The burnt forest. 20 wide x 24 tall. Exit south to home, east to village.
+# The Burnt Wood. 20 wide x 24 tall. Entered from trial_road (east mouth).
 # -------------------------------------------------------------------------------
 static func _forest_deep() -> Dictionary:
 	var rows := [
@@ -311,7 +252,8 @@ static func _trial_road() -> Dictionary:
 				"lines": [
 					"Walked three days to watch. My cousin entered last year.",
 					"We don't talk about my cousin.",
-				]},
+				],
+				"lines_flag": {"halvard_dead": ["Is it true? The Blue one, in the road, before the Trial even opened?", "Three days I walked. Well. The Red one still owes us a show."]}},
 			{"kind": "npc", "id": "merchant_sella", "name": "Sella", "sprite": "villager_a", "pos": [12, 2], "facing": "down",
 				"lines": [
 					"Ribbons! Roasted nuts! Trial-day prices!",
@@ -331,12 +273,14 @@ static func _trial_road() -> Dictionary:
 				"lines": [
 					"Three-to-one on the Red! Five-to-one on the Knight!",
 					"You? Entering? ...Twenty-to-one. No offence.",
-				]},
+				],
+				"lines_flag": {"has_staff": ["Two-to-one on the Red now that the Blue's out of it. Nobody's happy about how.", "You, with his staff? ...Fifty-to-one. I'll take your coin, but I won't feel good about it."]}},
 			{"kind": "npc", "id": "healer_sage", "name": "Sage", "sprite": "elder", "pos": [7, 11], "facing": "down",
 				"lines": [
 					"Bandages, salves, splints. Busiest day of my year.",
 					"If you're going up there: aim to come back.",
-				]},
+				],
+				"lines_flag": {"has_staff": ["I saw them carry him in. There was nothing to bandage — the Red one is very neat.", "You hold that staff like an axe. Learn to hold it like a staff before sunset."]}},
 			{"kind": "creature", "id": "fly_road1", "enemy_id": "giant_fly", "pos": [13, 8],
 				"intro": "A horsefly the size of a hound drops onto the path, buzzing like a saw.\n\nTwo slots. It will lunge before it thinks — and then it will think."},
 			{"kind": "exit", "pos": [9, 0], "to_area": "trial_gate", "to_pos": [8, 12], "facing": "up"},
@@ -524,8 +468,8 @@ static func _dd_pit() -> Dictionary:
 		"TT................TT",
 		"TT................TT",
 		"TT.....rrrr......TTT",
-		"TT.....r..r......TTT",
-		"TT.....r..r......TTT",
+		"TT.....rrrr......TTT",
+		"TT.....rrrr......TTT",
 		"TT.....rrrr......TTT",
 		"....................",
 		"....................",
@@ -594,8 +538,8 @@ static func _dd_lower() -> Dictionary:
 				"grant": {},
 				"text": "A druidic bone ring. Warm in a way bone should not be.\n\nThrom: \"Don't.\"\n\n(You take it anyway. Nothing happens. Yet.)"},
 			{"kind": "door", "id": "dwarf_door", "pos": [2, 5], "text": "A stone door with dwarfish locks. It is not for you. Yet."},
-			{"kind": "exit", "pos": [0, 5], "to_area": "dd_trialmaster", "to_pos": [20, 7], "facing": "left", "requires_run_flag": "troll_down"},
-			{"kind": "exit", "pos": [0, 6], "to_area": "dd_trialmaster", "to_pos": [20, 8], "facing": "left", "requires_run_flag": "troll_down"},
+			{"kind": "exit", "pos": [0, 5], "to_area": "dd_trialmaster", "to_pos": [20, 8], "facing": "left", "requires_run_flag": "troll_down"},
+			{"kind": "exit", "pos": [0, 6], "to_area": "dd_trialmaster", "to_pos": [20, 9], "facing": "left", "requires_run_flag": "troll_down"},
 			{"kind": "exit", "pos": [21, 5], "to_area": "dd_pit", "to_pos": [1, 8], "facing": "right"},
 			{"kind": "exit", "pos": [21, 6], "to_area": "dd_pit", "to_pos": [1, 9], "facing": "right"},
 		],
@@ -638,8 +582,8 @@ static func _dd_trialmaster() -> Dictionary:
 				"intro": "They drag Throm into the arena. His eyes don't know you. The cobra's work.\n\n\"John?\" he says. \"No. Not John. FIGHT.\"\n\nThree slots of barbarian fury — fast, and wrong. Defend yourself.",
 				"on_win_run_flag": "trial_done"},
 			{"kind": "sign", "id": "dd_tunnel_tease", "pos": [3, 8], "text": "A concealed tunnel breathes cold air from the west. The Dwarf's crossbow does not waver. Not yet."},
-			{"kind": "exit", "pos": [20, 7], "to_area": "dd_lower", "to_pos": [1, 5], "facing": "right"},
-			{"kind": "exit", "pos": [20, 8], "to_area": "dd_lower", "to_pos": [1, 6], "facing": "right"},
+			{"kind": "exit", "pos": [21, 8], "to_area": "dd_lower", "to_pos": [1, 5], "facing": "right"},
+			{"kind": "exit", "pos": [21, 9], "to_area": "dd_lower", "to_pos": [1, 6], "facing": "right"},
 			{"kind": "exit", "pos": [0, 8], "to_area": "dd_idol", "to_pos": [18, 8], "facing": "left", "requires_run_flag": "trial_done"},
 			{"kind": "exit", "pos": [0, 9], "to_area": "dd_idol", "to_pos": [18, 9], "facing": "left", "requires_run_flag": "trial_done"},
 		],
@@ -656,8 +600,8 @@ static func _dd_idol() -> Dictionary:
 		"TT................TT",
 		"TT................TT",
 		"TT......rrrr......TT",
-		"TT......r..r......TT",
-		"TT......r..r......TT",
+		"TT......rrrr......TT",
+		"TT......rrrr......TT",
 		"TT......rrrr......TT",
 		"....................",
 		"....................",
