@@ -277,6 +277,10 @@ func _tile_char(x: int, y: int) -> String:
 	return str(area["rows"][y])[x]
 
 
+func _is_dungeon() -> bool:
+	return str(area.get("id", "")).begins_with("dd_")
+
+
 func _build_tiles() -> void:
 	var tile_tex := {
 		".": "tiles/grass.png", ",": "tiles/grass_dark.png", ":": "tiles/path.png", "~": "tiles/water.png",
@@ -284,6 +288,13 @@ func _build_tiles() -> void:
 		"f": "tiles/fence.png", "a": "tiles/ash.png", "T": "tiles/grass_dark.png", "t": "tiles/ash.png",
 		"r": "tiles/grass.png", "L": "tiles/grass.png", "X": "tiles/ash.png",
 	}
+	var dungeon := _is_dungeon()
+	if dungeon:
+		tile_tex["."] = "tiles/cave_floor.png"
+		tile_tex[":"] = "tiles/cave_floor.png"
+		tile_tex["T"] = "tiles/cave_wall.png"
+		tile_tex["r"] = "tiles/cave_floor.png"
+		tile_tex["L"] = "tiles/cave_floor.png"
 	for y in range(grid_h):
 		for x in range(grid_w):
 			var ch := _tile_char(x, y)
@@ -295,14 +306,20 @@ func _build_tiles() -> void:
 			s.position = Vector2(x, y) * TPX
 			s.texture = _tex(tile_tex.get(ch, "tiles/grass.png"))
 			_tiles_root.add_child(s)
-			if ch == "T":
-				_add_prop(x, y, "props/tree_%d.png" % ((x * 7 + y * 13) % 4), Vector2(0, -16), 2)
-			elif ch == "t":
-				_add_prop(x, y, "props/tree_burnt_%d.png" % ((x + y) % 2), Vector2(0, -16), 2)
-			elif ch == "r":
-				_add_prop(x, y, "props/rock.png", Vector2.ZERO, 1)
-			elif ch == "L":
-				_add_prop(x, y, "props/logs.png", Vector2.ZERO, 1)
+			_add_tile_prop(x, y, ch, dungeon)
+
+
+## Decorative prop implied by a map character (trees, rocks, logs).
+func _add_tile_prop(x: int, y: int, ch: String, dungeon: bool) -> void:
+	if ch == "T":
+		if not dungeon:
+			_add_prop(x, y, "props/tree_%d.png" % ((x * 7 + y * 13) % 4), Vector2(0, -16), 2)
+	elif ch == "t":
+		_add_prop(x, y, "props/tree_burnt_%d.png" % ((x + y) % 2), Vector2(0, -16), 2)
+	elif ch == "r":
+		_add_prop(x, y, "props/stalagmite.png" if dungeon else "props/rock.png", Vector2.ZERO, 1)
+	elif ch == "L":
+		_add_prop(x, y, "props/logs.png", Vector2.ZERO, 1)
 
 
 func _add_prop(x: int, y: int, path: String, offset_px: Vector2, _size_tiles: int) -> Sprite2D:
@@ -392,7 +409,20 @@ func _spawn_entity(e: Dictionary) -> void:
 				node.rotation_degrees = 90
 				node.z_index = 2
 		"sign", "door", "logs":
-			pass  # drawn by the tile map; interaction only
+			# Visible marker so interactables read as objects, not empty floor.
+			# Village/forest doors and log piles are already drawn by the tile map.
+			var marker := ""
+			var marker_off := Vector2.ZERO
+			if e.has("marker"):
+				marker = "props/%s.png" % str(e["marker"])
+				marker_off = Vector2(0, -16)  # 32x32 tall props stand a tile up
+			elif e["kind"] == "sign":
+				marker = "props/sign.png"
+			elif _is_dungeon():
+				marker = "props/door_stone.png" if e["kind"] == "door" else "props/box.png"
+			if marker != "":
+				node = _add_prop(pos.x, pos.y, marker, marker_off, 1)
+				node.z_index = 2
 	e["node"] = node
 	_entities.append(e)
 	if e["kind"] in ["fire", "pickup", "creature", "wizard", "npc", "corpse", "sign", "door", "logs"]:
@@ -872,17 +902,10 @@ func _rebuild_entities() -> void:
 	_entity_at.clear()
 	_fire_frames.clear()
 	# props from tiles
+	var dungeon := _is_dungeon()
 	for y in range(grid_h):
 		for x in range(grid_w):
-			var ch := _tile_char(x, y)
-			if ch == "T":
-				_add_prop(x, y, "props/tree_%d.png" % ((x * 7 + y * 13) % 4), Vector2(0, -16), 2)
-			elif ch == "t":
-				_add_prop(x, y, "props/tree_burnt_%d.png" % ((x + y) % 2), Vector2(0, -16), 2)
-			elif ch == "r":
-				_add_prop(x, y, "props/rock.png", Vector2.ZERO, 1)
-			elif ch == "L":
-				_add_prop(x, y, "props/logs.png", Vector2.ZERO, 1)
+			_add_tile_prop(x, y, _tile_char(x, y), dungeon)
 	_build_entities()
 	_john_pos = keep_pos
 	_john_facing = keep_face

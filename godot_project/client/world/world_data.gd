@@ -665,7 +665,7 @@ static func _dd_idol() -> Dictionary:
 	return {
 		"id": "dd_idol", "name": "Idol Cavern", "rows": rows,
 		"entities": [
-			{"kind": "sign", "id": "dd_idol_sign", "pos": [10, 2], "text": "An idol twice your height, jewel-eyed, bird-guarded. It is smiling the way doors smile."},
+			{"kind": "sign", "id": "dd_idol_sign", "pos": [10, 2], "marker": "idol", "text": "An idol twice your height, jewel-eyed, bird-guarded. It is smiling the way doors smile."},
 			{"kind": "creature", "id": "guard_idol1", "enemy_id": "flying_guardian", "pos": [6, 8],
 				"intro": "The stuffed birds open their eyes. All of them.\n\nTwo Ward slots of whatever shines — read them like Ashby taught you."},
 			{"kind": "creature", "id": "guard_idol2", "enemy_id": "flying_guardian", "pos": [12, 8],
@@ -862,7 +862,7 @@ static func _dd_mirror() -> Dictionary:
 	return {
 		"id": "dd_mirror", "name": "Mirror Gallery", "rows": rows,
 		"entities": [
-			{"kind": "sign", "id": "dd_mirrors", "pos": [10, 4], "text": "Tall mirrors, silver-backed. Something moves in them a breath after you do.",
+			{"kind": "sign", "id": "dd_mirrors", "pos": [10, 4], "marker": "mirror", "text": "Tall mirrors, silver-backed. Something moves in them a breath after you do.",
 				"choice_event": "mirror_smash"},
 			{"kind": "creature", "id": "demon_mirror1", "enemy_id": "mirror_demon", "pos": [10, 6],
 				"intro": "What steps out of the glass is made of looking back.\n\nThree slots of reflected things — never what it casts. (Or smash the mirrors instead.)"},

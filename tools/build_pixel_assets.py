@@ -35,6 +35,7 @@ PAL = {
     "fire_a": (255, 200, 60), "fire_b": (240, 120, 40), "fire_c": (200, 60, 30),
     "skin": (222, 178, 140), "shirt": (150, 60, 50), "trouser": (60, 58, 80), "boot": (50, 36, 28), "hair": (80, 50, 30),
     "steel": (190, 196, 210),
+    "cave_a": (132, 124, 118), "cave_b": (114, 106, 102), "cave_wall": (70, 58, 60), "cave_wall_b": (48, 40, 44), "cave_hl": (160, 150, 146),
 }
 
 
@@ -111,6 +112,19 @@ def make_tiles():
     d.line([(0, 2), (15, 2)], INK + (255,))
     d.line([(0, 13), (15, 13)], INK + (255,))
     save(im, "tiles/bridge.png")
+    # cave floor / cave wall (dungeon theme)
+    im = tile_noise(PAL["cave_a"], PAL["cave_b"], 0.22, 6)
+    save(im, "tiles/cave_floor.png")
+    im, d = new(bg=PAL["cave_wall"] + (255,))
+    rnd = random.Random(9)
+    for y in range(0, TILE, 4):
+        d.line([(0, y), (TILE, y)], PAL["cave_wall_b"] + (255,))
+        off = 0 if (y // 4) % 2 == 0 else 5
+        for x in range(off, TILE, 8):
+            d.line([(x, y), (x, y + 3)], PAL["cave_wall_b"] + (255,))
+    for _ in range(6):
+        px(d, rnd.randrange(TILE), rnd.randrange(TILE), PAL["cave_hl"] + (255,))
+    save(im, "tiles/cave_wall.png")
 
 
 # ---------------------------------------------------------------- props (32x32)
@@ -259,6 +273,55 @@ def make_props():
     save(make_book(True), "props/book_red.png")
     save(make_book(False), "props/book_black.png")
     save(make_ring(), "props/ring.png")
+    save(make_stone_door(), "props/door_stone.png")
+    save(make_stalagmite(), "props/stalagmite.png")
+    save(make_idol(), "props/idol.png")
+    save(make_mirror(), "props/mirror.png")
+
+
+def make_idol():
+    # Jewel-eyed idol: 32x32 seated figure over two tiles, green + blue eyes.
+    im, d = new(32, 32)
+    stone, dark = (176, 172, 168), PAL["stone_b"]
+    d.rectangle([6, 24, 25, 31], dark + (255,))            # plinth
+    d.rectangle([9, 12, 22, 24], stone + (255,))           # torso
+    d.rectangle([4, 14, 9, 22], stone + (255,))            # arms
+    d.rectangle([22, 14, 27, 22], stone + (255,))
+    d.rectangle([11, 3, 20, 12], stone + (255,))           # head
+    d.rectangle([12, 0, 19, 3], dark + (255,))             # crown
+    d.rectangle([13, 6, 14, 7], (60, 200, 90, 255))        # emerald eye
+    d.rectangle([17, 6, 18, 7], (70, 120, 230, 255))       # sapphire eye
+    d.line([(13, 10), (18, 10)], dark + (255,))
+    return im
+
+
+def make_mirror():
+    # Tall silver mirror, 16x32 body drawn into a 32x32 canvas so it stands a tile up.
+    im, d = new(32, 32)
+    d.rectangle([9, 2, 22, 31], PAL["wood_b"] + (255,))
+    d.rectangle([11, 4, 20, 28], PAL["steel"] + (255,))
+    d.line([(12, 6), (12, 24)], (230, 236, 250, 255))
+    d.line([(18, 8), (18, 20)], (150, 160, 190, 255))
+    return im
+
+
+def make_stone_door():
+    # Dungeon door marker: dark slab with lighter frame and a keyhole.
+    im, d = new(TILE, TILE)
+    d.rectangle([2, 0, 13, 15], PAL["cave_wall_b"] + (255,), outline=PAL["cave_hl"] + (255,))
+    d.rectangle([4, 2, 11, 15], PAL["cave_wall"] + (255,))
+    d.rectangle([7, 8, 8, 10], PAL["fire_a"] + (255,))
+    return im
+
+
+def make_stalagmite():
+    # Cave rock: pale stalagmite cluster, reads distinct from forest rock.
+    im, d = new(TILE, TILE)
+    d.polygon([(2, 15), (7, 15), (5, 6)], PAL["stone_b"] + (255,))
+    d.polygon([(6, 15), (14, 15), (10, 2)], PAL["stone"] + (255,))
+    d.polygon([(8, 15), (13, 15), (10, 2)], PAL["stone_b"] + (255,))
+    d.line([(10, 2), (10, 6)], PAL["cave_hl"] + (255,))
+    return im
 
 
 # ---------------------------------------------------------------- characters (16x24, 4 dirs x 2 frames)

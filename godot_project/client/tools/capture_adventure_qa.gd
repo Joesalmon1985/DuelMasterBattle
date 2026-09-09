@@ -145,6 +145,27 @@ func _run() -> void:
 	await _frames(20)
 	_capture("11f_lower_books.png")
 
+	# 11g-11p every remaining dungeon zone (P3-P6), one vista each
+	var zone_shots := [
+		["11g_trialmaster", "dd_trialmaster", 8, 8, "up"],
+		["11h_idol", "dd_idol", 9, 8, "up"],
+		["11i_grotto", "dd_grotto", 8, 8, "up"],
+		["11j_vaults", "dd_vaults", 10, 7, "up"],
+		["11k_service", "dd_service", 8, 7, "up"],
+		["11l_mirror", "dd_mirror", 10, 8, "up"],
+		["11m_blood", "dd_blood", 9, 8, "up"],
+		["11n_grub", "dd_grub", 8, 8, "up"],
+		["11o_troglodytes", "dd_troglodytes", 9, 7, "left"],
+		["11p_manticore", "dd_manticore", 8, 7, "right"],
+		["11q_igbut", "dd_igbut", 8, 5, "down"],
+	]
+	for z in zone_shots:
+		await _free_world()
+		_adv.set_location(str(z[1]), int(z[2]), int(z[3]), str(z[4]))
+		await _new_world()
+		await _frames(20)
+		_capture(str(z[0]) + ".png")
+
 
 	# 12 pause menu (fresh world for the menu)
 	await _free_world()
