@@ -391,7 +391,7 @@ func _test_full_run() -> void:
 	_world.ui_dialogue_choose("Take it")
 	await process_frame
 	await _drain_dialogue()
-	assert_true("wounded" in _adv.run_state().get("conditions", []), "false eye wounds")
+	assert_true(_adv.run_flag("idol_alarmed"), "false eye alarms the idol")
 
 	# West to the grotto; the Elf first, then the snake.
 	await _walk_to(Vector2i(1, 8))
@@ -569,7 +569,12 @@ func _test_full_run() -> void:
 	await _face(Vector2i(0, 1))
 	await _interact()
 	await _drain_dialogue()
-	assert_true("wounded" in _adv.run_state().get("conditions", []), "trapped chest wounds")
+	assert_true(_world.ui_dialogue_waiting_choice(), "chest offers a choice")
+	_world.ui_dialogue_choose("Jam the lid with Stone")
+	await process_frame
+	await _drain_dialogue()
+	assert_true(_adv.run_flag("chest_gold"), "Stone jams the trap: gold, no wound")
+	assert_true(not ("wounded" in _adv.run_state().get("conditions", [])), "chest opened safely with Stone")
 
 	# Troglodytes: join the ritual, no duel needed.
 	await _go_west("dd_troglodytes")

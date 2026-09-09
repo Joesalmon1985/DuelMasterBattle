@@ -27,6 +27,7 @@ func _init() -> void:
 func _run() -> void:
 	for id in WorldData.area_ids():
 		_check_area(str(id))
+	_check_shortcuts()
 	_check_reach("trial_road", Vector2i(10, 1), [Vector2i(18, 6), Vector2i(9, 1), Vector2i(13, 10)], "road spawn → Burnt Wood mouth, gate exit, fly")
 	_check_reach("village", Vector2i(11, 6), [Vector2i(10, 16), Vector2i(14, 15), Vector2i(10, 9)], "village spawn → south exit, Ashby, staff")
 	_check_reach("forest_deep", Vector2i(18, 12), [Vector2i(4, 10), Vector2i(8, 4)], "Burnt Wood mouth → pendant, shard (fires count as passable for topology)")
@@ -111,6 +112,30 @@ func _check_area(id: String) -> void:
 				if str(e.get("kind", "")) == "trigger" and e.has("rect"):
 					rewarded = true
 			_check(rewarded, "%s: walkable region of %d tiles around %s has an exit/interaction" % [id, region.size(), str(p)])
+
+
+## Brief §29: dungeon loops. Every "shortcut" exit must have a reciprocal exit
+## in the destination area with the same requirement; at least 4 distinct
+## shortcut pairs must exist.
+func _check_shortcuts() -> void:
+	var pairs := {}
+	for id in WorldData.area_ids():
+		var area: Dictionary = WorldData.get_area(str(id))
+		for e in area.get("entities", []):
+			if str(e.get("kind", "")) != "exit" or not bool(e.get("shortcut", false)):
+				continue
+			var to := str(e.get("to_area", ""))
+			var req := str(e.get("requires_run_flag", ""))
+			_check(req != "", "%s: shortcut → %s is gated by a run flag" % [id, to])
+			var back := false
+			for f in WorldData.get_area(to).get("entities", []):
+				if str(f.get("kind", "")) == "exit" and str(f.get("to_area", "")) == str(id) and bool(f.get("shortcut", false)) and str(f.get("requires_run_flag", "")) == req:
+					back = true
+			_check(back, "%s ↔ %s: shortcut is reciprocal with the same gate (%s)" % [id, to, req])
+			var key := [str(id), to]
+			key.sort()
+			pairs["%s|%s" % key] = true
+	_check(pairs.size() >= 4, "at least 4 shortcut loops (found %d: %s)" % [pairs.size(), str(pairs.keys())])
 
 
 func _check_reach(id: String, from: Vector2i, targets: Array, label: String) -> void:

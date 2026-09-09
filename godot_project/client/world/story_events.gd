@@ -42,6 +42,10 @@ func run_event(id: String) -> void:
 			await free_prisoner()
 		"ivy_toll":
 			await ivy_toll()
+		"basket_ride":
+			await basket_ride()
+		"trapped_chest":
+			await trapped_chest()
 		"mirror_smash":
 			await mirror_smash()
 		"boulder_run":
@@ -411,11 +415,19 @@ func elf_rescue() -> void:
 
 
 func false_eye() -> void:
+	# Hazard with a clue (idol base: WEST EYE) and a route consequence: the wrong
+	# eye wakes the second guardian early rather than dealing an arbitrary wound.
 	var adv := _adv()
-	var choice: String = await _w._dialogue.choose_async("The wrong eye?", ["Take it", "Leave it"])
+	var choice: String = await _w._dialogue.choose_async("The east eye?", ["Take it", "Leave it"])
 	if choice == "Take it":
-		adv.add_condition("wounded")
-		await _w.say("", "It comes away — and something in the idol's gaze comes with it.\n\n(WOUNDED: −1 cast in your next duel. It was glass. Flawed glass.)")
+		adv.set_run_flag("idol_alarmed")
+		await _w.say("", "It comes away in your hand — glass, flawed glass — and every bird on the idol turns its head at once.")
+		if not adv.marked("defeated", "guard_idol2"):
+			await _w.say("", "The second guardian does not wait to be found. It finds you.")
+			await _w.start_battle_request({"id": "guard_idol2", "enemy_id": "flying_guardian", "kind": "creature",
+				"intro": "The second guardian unfolds from the idol's shoulder, already screaming."})
+		else:
+			await _w.say("", "Nothing else moves. You are holding a piece of green glass in a room full of dead birds.")
 	else:
 		adv.set_run_flag("picked_false_eye", false)
 		await _w.say("", "You leave it where it lies.")
@@ -423,12 +435,17 @@ func false_eye() -> void:
 
 
 func false_diamond() -> void:
-	# p.218: risk your life for the wrong jewel, or don't.
+	# p.218: risk your life for the wrong jewel, or don't. The elf's clue ("the
+	# real one is cold") is the tell; the warrior's jewel is warm from the vault
+	# lamps. Taking it costs the sapphire box its lock — the vault seals.
 	var adv := _adv()
+	if adv.flag("diamond_clue"):
+		await _w.say("", "You remember the elf: the real one is cold. This one has been lying under a lamp.")
 	var choice: String = await _w._dialogue.choose_async("The fallen warrior's jewel?", ["Take it", "Leave it"])
 	if choice == "Take it":
+		adv.set_run_flag("vault_alarm")
 		adv.add_condition("wounded")
-		await _w.say("", "The floor opens its eye. You keep the jewel and lose blood.\n\n(WOUNDED. It is glass. It was always glass.)")
+		await _w.say("", "The floor opens its eye. A blade you never see draws a line across your arm, and somewhere behind you an iron bolt shoots home.\n\n(WOUNDED: −1 cast in your next duel. The jewel is glass. The inner vault has locked itself — the Basket man's rope is now the only way in.)")
 	else:
 		adv.set_run_flag("picked_false_diamond", false)
 		await _w.say("", "You leave it where it lies.")
@@ -473,6 +490,21 @@ func ivy_toll() -> void:
 		await _w.say("", "You leave her thorns alone.")
 
 
+## Service ↔ Inner Vault lift (loop 2). The Basket man works for whoever has
+## dealt fairly with his floor: Ivy paid, or the prisoner freed.
+func basket_ride() -> void:
+	var adv := _adv()
+	if not (adv.run_flag("ivy_paid") or adv.run_flag("prisoner_free")):
+		await _w.say("Basket man", "Rope's for staff and for people Ivy likes. You're neither, yet. Sort her out, or sort out the poor sod in the cell, and we'll talk.")
+		return
+	if not adv.run_flag("basket_ok"):
+		adv.set_run_flag("basket_ok")
+		adv.add_knowledge("The Basket man's lift runs between the Service Tunnels and the inner vault.")
+		await _w.say("Basket man", "Heard what you did. Right. The rope goes up to the vault's back room and comes down again — use the shaft at the south wall whenever you like. Don't tell the Dwarf.")
+	else:
+		await _w.say("Basket man", "Shaft's at the south wall. Up or down, same fare: none.")
+
+
 func mirror_smash() -> void:
 	# Environmental solution first; the duel stays for the proud.
 	var adv := _adv()
@@ -494,12 +526,47 @@ func boulder_run() -> void:
 		return
 	adv.set_run_flag("boulder_done")
 	await _w.say("", "The tunnel exhales dust. Uphill, something heavy decides.")
-	var choice: String = await _w._dialogue.choose_async("Boulder?", ["Run!", "Hold ground"])
+	var options := ["Run!", "Hold ground"]
+	if adv.progression.knows(3):
+		options.insert(1, "Brace with Stone")
+	var choice: String = await _w._dialogue.choose_async("Boulder?", options)
 	if choice == "Run!":
-		await _w.say("", "You run like the Trial is behind you. It is. The boulder agrees to miss.")
+		await _w.say("", "You run like the Trial is behind you. It is. The groove in the floor runs straight; you don't. The boulder agrees to miss.")
+	elif choice == "Brace with Stone":
+		adv.set_run_flag("boulder_braced")
+		adv.add_knowledge("A Stone knot across the groove stopped the boulder. The side tunnel behind it is passable now.")
+		await _w.say("", "You lay Stone across the groove and lean on it. The boulder arrives, argues, and loses. Behind it, the side tunnel is open and full of somebody's abandoned kit.")
 	else:
 		adv.add_condition("wounded")
 		await _w.say("", "You hold your ground. The ground holds. You don't.\n\n(WOUNDED: −1 cast in your next duel.)")
+
+
+## Trapped chest (brief §25): a trade-off, not a dice roll. Stone magic can
+## jam the mechanism; otherwise the marks on the floor tell you to stand aside.
+func trapped_chest() -> void:
+	var adv := _adv()
+	if adv.run_flag("chest_done"):
+		return
+	var options := ["Open it from the side", "Open it head-on", "Leave it"]
+	if adv.progression.knows(3):
+		options.push_front("Jam the lid with Stone")
+	var choice: String = await _w._dialogue.choose_async("The chest?", options)
+	if choice == "Leave it":
+		await _w.say("", "You leave the gold to whatever guards it.")
+		return
+	adv.set_run_flag("chest_done")
+	adv.set_run_flag("picked_trapped_chest")
+	if choice == "Jam the lid with Stone":
+		adv.set_run_flag("chest_gold")
+		adv.add_knowledge("Stone magic jams mechanisms. Remember that at the next lid, lever or door.")
+		await _w.say("", "You lay a knot of Stone across the hinge. The lid heaves once against it and gives up. Inside: gold, and a row of blades folded flat like a fan.")
+	elif choice == "Open it from the side":
+		adv.set_run_flag("chest_gold")
+		await _w.say("", "You stand where the floor is unscratched and lift the lid with the butt of your staff. Blades whicker out across the place you are not standing.\n\nThe gold is real.")
+	else:
+		adv.add_condition("wounded")
+		await _w.say("", "Teeth. The chest had teeth, and the marks on the floor had told you exactly where.\n\n(WOUNDED: −1 cast in your next duel. The gold is real, at least.)")
+	_w.rebuild()
 
 
 func trog_ritual() -> void:

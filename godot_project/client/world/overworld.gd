@@ -347,6 +347,8 @@ func _entity_visible(e: Dictionary) -> bool:
 		return false
 	if e.has("requires_run_flag") and not adv.run_flag(str(e["requires_run_flag"])):
 		return false
+	if e.has("blocked_by_run_flag") and adv.run_flag(str(e["blocked_by_run_flag"])):
+		return false
 	if e.has("requires_spell") and not adv.progression.knows(int(e["requires_spell"])):
 		return false
 	if e.has("requires_defeated") and not adv.marked("defeated", str(e["requires_defeated"])):
@@ -553,7 +555,7 @@ func _arrived() -> void:
 		match e["kind"]:
 			"exit":
 				if Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos and _entity_visible(e):
-					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")))
+					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")), str(e.get("travel_text", "")))
 					return
 			"trigger":
 				if e.has("requires_phase") and _adv().story_phase() != str(e["requires_phase"]):
@@ -572,9 +574,21 @@ func _in_trigger(e: Dictionary) -> bool:
 	return Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos
 
 
-func _travel(to_area: String, to_pos: Vector2i, facing: String) -> void:
+## A readable's text, with run-flag keyed variants ("text_run_flag": {flag: text}).
+func _entity_text(e: Dictionary) -> String:
+	var text := str(e.get("text", ""))
+	if e.has("text_run_flag"):
+		for fl in e["text_run_flag"].keys():
+			if _adv().run_flag(str(fl)):
+				text = str(e["text_run_flag"][fl])
+	return text
+
+
+func _travel(to_area: String, to_pos: Vector2i, facing: String, travel_text: String = "") -> void:
 	_input_locked = true
 	_touch.set_enabled(false)
+	if travel_text != "":
+		await _dialogue.say_async("", travel_text)
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.25)
 	await tw.finished
@@ -733,12 +747,12 @@ func _on_action() -> void:
 			if e.has("choice_event"):
 				_input_locked = true
 				_touch.set_enabled(false)
-				await _dialogue.say_async("", str(e.get("text", "")))
+				await _dialogue.say_async("", _entity_text(e))
 				await _story.run_event(str(e["choice_event"]))
 				_input_locked = false
 				_touch.set_enabled(true)
 			else:
-				_dialogue.say("", str(e.get("text", "")))
+				_dialogue.say("", _entity_text(e))
 		"fire":
 			_interact_fire(e)
 		"pickup":

@@ -316,15 +316,21 @@ func _test_pacifist_path() -> void:
 	await _face(Vector2i(0, -1))
 	await _interact()
 	await _drain_dialogue()
-	_world.ui_dialogue_choose("Run!")
+	_world.ui_dialogue_choose("Brace with Stone")
 	await process_frame
 	await _drain_dialogue()
-	assert_true(not ("wounded" in _adv.run_state().get("conditions", [])), "outran the boulder")
+	assert_true(_adv.run_flag("boulder_braced"), "Stone braces the boulder")
+	assert_true(not ("wounded" in _adv.run_state().get("conditions", [])), "braced safely")
 	await _walk_to(Vector2i(15, 9))
 	await _face(Vector2i(0, 1))
 	await _interact()
 	await _drain_dialogue()
-	assert_true("wounded" in _adv.run_state().get("conditions", []), "trapped chest wounds")
+	assert_true(_world.ui_dialogue_waiting_choice(), "chest offers a choice")
+	_world.ui_dialogue_choose("Jam the lid with Stone")
+	await process_frame
+	await _drain_dialogue()
+	assert_true(_adv.run_flag("chest_gold"), "Stone jams the trap: gold, no wound")
+	assert_true(not ("wounded" in _adv.run_state().get("conditions", [])), "chest opened safely with Stone")
 
 	# Troglodytes: join the ritual, no duel needed.
 	await _go_west("dd_troglodytes")

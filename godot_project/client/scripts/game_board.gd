@@ -1491,6 +1491,9 @@ func _show_encounter_intro() -> void:
 	for sp in _player_c.attack_pool:
 		mine.append(DmbColourData.essence_name(int(sp)))
 	_overlay_text("You — casts: %s · Ward: %d · Weave: %d" % [", ".join(PackedStringArray(mine)), _player_c.ward_size, _player_c.weave_size], false)
+	if bool(_battle_request.get("optimal", false)):
+		# Data-driven (encounter index), never an enemy-name check.
+		_overlay_text("This one is sharper than the last. It will waste nothing.", false)
 	_overlay_button("Set your Ward", true, func():
 		_overlay.visible = false
 		_set_paused(false)

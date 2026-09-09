@@ -271,7 +271,8 @@ func _test_gems() -> void:
 	_world.ui_dialogue_choose("Take it")
 	await process_frame
 	await _drain_dialogue()
-	assert_true("wounded" in _adv.run_state().get("conditions", []), "false eye wounds")
+	assert_true(_adv.run_flag("idol_alarmed"), "false eye alarms the idol (route consequence, not a random wound)")
+	assert_true(not ("wounded" in _adv.run_state().get("conditions", [])), "false eye: no wound once guardians are dead")
 
 	# West to the grotto; the Elf first, then the snake.
 	await _walk_to(Vector2i(1, 8))

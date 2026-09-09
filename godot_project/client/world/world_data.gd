@@ -403,7 +403,11 @@ static func _dd_fork() -> Dictionary:
 			{"kind": "sign", "id": "dd_prints_west", "pos": [5, 5], "text": "Wet footprints — several sets — head west along the road."},
 			{"kind": "sign", "id": "dd_prints_east", "pos": [7, 5], "text": "One set of prints, smaller, goes east."},
 			{"kind": "creature", "id": "fly_east", "enemy_id": "giant_fly", "pos": [16, 6],
-				"intro": "Something huge buzzes in the eastern dark. It smells of Water."},
+				"intro": "Something huge buzzes in the eastern dark. It smells of Water.",
+				"on_win_run_flag": "fork_east_open"},
+			{"kind": "sign", "id": "dd_east_draught", "pos": [15, 7], "text": "A cold draught from the east, and a single small footprint pressed into the wet. Someone slight went this way and did not come back for their box."},
+			{"kind": "exit", "pos": [19, 6], "to_area": "dd_service", "to_pos": [9, 1], "facing": "down", "requires_run_flag": "fork_east_open", "shortcut": true},
+			{"kind": "exit", "pos": [19, 7], "to_area": "dd_service", "to_pos": [10, 1], "facing": "down", "requires_run_flag": "fork_east_open", "shortcut": true},
 			{"kind": "logs", "id": "dd_empty_box", "pos": [17, 7], "text": "An open box, its seal broken. Someone got here first — and went west."},
 			{"kind": "exit", "pos": [0, 6], "to_area": "dd_galleries", "to_pos": [20, 8], "facing": "left"},
 			{"kind": "exit", "pos": [0, 7], "to_area": "dd_galleries", "to_pos": [20, 9], "facing": "left"},
@@ -564,7 +568,7 @@ static func _dd_trialmaster() -> Dictionary:
 		"TT..................TT",
 		"TT..................TT",
 		"TTTT..............TTTT",
-		"TTTTTTTTTTTTTTTTTTTTTT",
+		"TTTT:TTTTTTTTTTTTTTTTT",
 	]
 	return {
 		"id": "dd_trialmaster", "name": "Trialmaster Complex", "rows": rows,
@@ -581,7 +585,9 @@ static func _dd_trialmaster() -> Dictionary:
 				"requires_run_flag": "trial_ready",
 				"intro": "They drag Throm into the arena. His eyes don't know you. The cobra's work.\n\n\"John?\" he says. \"No. Not John. FIGHT.\"\n\nThree slots of barbarian fury — fast, and wrong. Defend yourself.",
 				"on_win_run_flag": "trial_done"},
-			{"kind": "sign", "id": "dd_tunnel_tease", "pos": [3, 8], "text": "A concealed tunnel breathes cold air from the west. The Dwarf's crossbow does not waver. Not yet."},
+			{"kind": "sign", "id": "dd_tunnel_tease", "pos": [3, 8], "text": "A concealed tunnel breathes cold air from the south-west corner. The Dwarf's crossbow does not waver. Not yet.",
+				"text_run_flag": {"trial_done": "The concealed tunnel in the south-west corner stands open. The Dwarf shrugs: 'Staff passage. Comes out by the lion-thing. Don't say I never gave you anything.'"}},
+			{"kind": "exit", "pos": [4, 13], "to_area": "dd_manticore", "to_pos": [3, 2], "facing": "down", "requires_run_flag": "trial_done", "shortcut": true},
 			{"kind": "exit", "pos": [21, 8], "to_area": "dd_lower", "to_pos": [1, 5], "facing": "right"},
 			{"kind": "exit", "pos": [21, 9], "to_area": "dd_lower", "to_pos": [1, 6], "facing": "right"},
 			{"kind": "exit", "pos": [0, 8], "to_area": "dd_idol", "to_pos": [18, 8], "facing": "left", "requires_run_flag": "trial_done"},
@@ -613,7 +619,7 @@ static func _dd_idol() -> Dictionary:
 	return {
 		"id": "dd_idol", "name": "Idol Cavern", "rows": rows,
 		"entities": [
-			{"kind": "sign", "id": "dd_idol_sign", "pos": [10, 2], "marker": "idol", "text": "An idol twice your height, jewel-eyed, bird-guarded. It is smiling the way doors smile."},
+			{"kind": "sign", "id": "dd_idol_sign", "pos": [10, 2], "marker": "idol", "text": "An idol twice your height, jewel-eyed, bird-guarded. It is smiling the way doors smile.\n\nIts left eye — your right, as you face it — is smaller, duller, and set deep. The other is enormous and catches the torchlight far too well. Around its base, in a dozen hands: WEST EYE. The rest of each sentence has been scratched out."},
 			{"kind": "creature", "id": "guard_idol1", "enemy_id": "flying_guardian", "pos": [6, 8],
 				"intro": "The stuffed birds open their eyes. All of them.\n\nTwo Ward slots of whatever shines — read them like Ashby taught you."},
 			{"kind": "creature", "id": "guard_idol2", "enemy_id": "flying_guardian", "pos": [12, 8],
@@ -624,7 +630,7 @@ static func _dd_idol() -> Dictionary:
 				"text": "The emerald eye comes away in your hand. It is heavier than a sin.\n\nEMERALD acquired."},
 			{"kind": "pickup", "id": "false_eye", "pos": [11, 4], "sprite": "stone_shard", "run_pickup": true,
 				"grant": {},
-				"text": "The other eye glitters. Bigger. Greener. Obviously trapped, and obviously tempting.",
+				"text": "The east eye glitters. Bigger. Greener. The scratched warnings around the base were about this one.",
 				"choice_event": "false_eye"},
 			{"kind": "exit", "pos": [19, 8], "to_area": "dd_trialmaster", "to_pos": [1, 8], "facing": "right"},
 			{"kind": "exit", "pos": [19, 9], "to_area": "dd_trialmaster", "to_pos": [1, 9], "facing": "right"},
@@ -671,6 +677,9 @@ static func _dd_grotto() -> Dictionary:
 				"requires_defeated": "boa_grotto1",
 				"grant": {"run_flag": "has_elf_charm"}, "set_flag": "diamond_clue",
 				"text": "Her vine-charm. It curls around your wrist like it was always yours. Green things will know you carry it — and the snake did not like her for it."},
+			{"kind": "sign", "id": "dd_grotto_undertow", "pos": [10, 5], "text": "The pool has an undertow. Something down there pulls east — a flooded passage, for anyone who can hold their breath long enough."},
+			{"kind": "exit", "pos": [9, 5], "to_area": "dd_troglodytes", "to_pos": [11, 4], "facing": "down", "requires_run_flag": "picked_dd_tube", "shortcut": true,
+				"travel_text": "Reed between your teeth, you let the undertow take you. Drums, muffled by water, then air."},
 			{"kind": "exit", "pos": [19, 7], "to_area": "dd_idol", "to_pos": [1, 8], "facing": "right"},
 			{"kind": "exit", "pos": [19, 8], "to_area": "dd_idol", "to_pos": [1, 9], "facing": "right"},
 			{"kind": "exit", "pos": [0, 7], "to_area": "dd_vaults", "to_pos": [21, 7], "facing": "left"},
@@ -709,7 +718,8 @@ static func _dd_vaults() -> Dictionary:
 				"grant": {},
 				"text": "A diamond beside a fallen warrior, just lying there. Every instinct says trap.",
 				"choice_event": "false_diamond"},
-			{"kind": "exit", "pos": [11, 1], "to_area": "dd_vault_inner", "to_pos": [7, 8], "facing": "up", "requires_run_flag": "iron_key"},
+			{"kind": "exit", "pos": [11, 1], "to_area": "dd_vault_inner", "to_pos": [7, 8], "facing": "up", "requires_run_flag": "iron_key", "blocked_by_run_flag": "vault_alarm"},
+			{"kind": "sign", "id": "dd_vault_bolt", "pos": [10, 1], "text": "The inner vault door. Iron, keyed.", "text_run_flag": {"vault_alarm": "The inner vault door — bolted from inside since you touched the warrior's jewel. No key opens a bolt. The Basket man's rope might."}},
 			{"kind": "exit", "pos": [21, 7], "to_area": "dd_grotto", "to_pos": [1, 7], "facing": "right"},
 			{"kind": "exit", "pos": [21, 8], "to_area": "dd_grotto", "to_pos": [1, 8], "facing": "right"},
 			{"kind": "exit", "pos": [0, 7], "to_area": "dd_service", "to_pos": [19, 7], "facing": "left"},
@@ -732,11 +742,14 @@ static func _dd_vault_inner() -> Dictionary:
 		"TT..........TT",
 		"TT..........TT",
 		"TTT........TTT",
-		"TTTTTTTTTTTTTT",
+		"TTTTTT::TTTTTT",
 	]
 	return {
 		"id": "dd_vault_inner", "name": "Inner Vault", "rows": rows,
 		"entities": [
+			{"kind": "exit", "pos": [6, 9], "to_area": "dd_service", "to_pos": [9, 12], "facing": "up", "requires_run_flag": "basket_ok", "travel_text": "Down the rope-shaft, the basket swaying. The Basket man catches it without looking up.", "shortcut": true},
+			{"kind": "exit", "pos": [7, 9], "to_area": "dd_service", "to_pos": [10, 12], "facing": "up", "requires_run_flag": "basket_ok", "travel_text": "Down the rope-shaft, the basket swaying. The Basket man catches it without looking up.", "shortcut": true},
+			{"kind": "sign", "id": "dd_lift_shaft", "pos": [7, 8], "text": "A rope-shaft drops through the floor. Far below, someone whistles tunelessly and waits for a fare."},
 			{"kind": "pickup", "id": "true_diamond", "pos": [7, 4], "sprite": "diamond", "run_pickup": true,
 				"grant": {"gem": "diamond"},
 				"text": "A diamond in a hall of echoes — real, cold, and yours.\n\nDIAMOND acquired."},
@@ -750,7 +763,7 @@ static func _dd_vault_inner() -> Dictionary:
 # -------------------------------------------------------------------------------
 static func _dd_service() -> Dictionary:
 	var rows := [
-		"TTTTTTTTTTTTTTTTTTTT",
+		"TTTTTTTTT::TTTTTTTTT",
 		"TTT..............TTT",
 		"TT................TT",
 		"TT................TT",
@@ -763,7 +776,7 @@ static func _dd_service() -> Dictionary:
 		"TT................TT",
 		"TTT..............TTT",
 		"TTT..............TTT",
-		"TTTTTTTTTTTTTTTTTTTT",
+		"TTTTTTTTT::TTTTTTTTT",
 	]
 	return {
 		"id": "dd_service", "name": "Service Tunnels", "rows": rows,
@@ -777,7 +790,16 @@ static func _dd_service() -> Dictionary:
 				"lines_run_flag": {"ivy_paid": ["Paid in full. Walk soft, sweetling."]},
 				"choice_event": "ivy_toll"},
 			{"kind": "npc", "id": "dd_basket", "name": "Basket man", "sprite": "villager_b", "pos": [9, 10], "facing": "up",
-				"lines": ["Up or down? I only work the rope. Don't ask about the screams."]},
+				"lines": ["Up or down? I only work the rope. Don't ask about the screams."],
+				"lines_run_flag": {"basket_ok": ["Up, then. Mind your fingers on the way past the vault ceiling."]},
+				"choice_event": "basket_ride"},
+			{"kind": "exit", "pos": [9, 0], "to_area": "dd_fork", "to_pos": [18, 6], "facing": "left", "requires_run_flag": "fork_east_open", "shortcut": true},
+			{"kind": "exit", "pos": [10, 0], "to_area": "dd_fork", "to_pos": [18, 7], "facing": "left", "requires_run_flag": "fork_east_open", "shortcut": true},
+			{"kind": "exit", "pos": [9, 13], "to_area": "dd_vault_inner", "to_pos": [6, 8], "facing": "up", "requires_run_flag": "basket_ok", "shortcut": true,
+				"travel_text": "The basket creaks upward. Stone slides past your face for a long time."},
+			{"kind": "exit", "pos": [10, 13], "to_area": "dd_vault_inner", "to_pos": [7, 8], "facing": "up", "requires_run_flag": "basket_ok", "shortcut": true,
+				"travel_text": "The basket creaks upward. Stone slides past your face for a long time."},
+			{"kind": "sign", "id": "dd_shaft_sign", "pos": [10, 2], "text": "A crawl-shaft climbs north. Small footprints on the rungs, going up. The assassin's way in — or out."},
 			{"kind": "sign", "id": "dd_servants", "pos": [14, 4], "text": "A duty roster, scratched in charcoal. Names, days, arrows. The Trial is somebody's job."},
 			{"kind": "exit", "pos": [19, 7], "to_area": "dd_vaults", "to_pos": [1, 7], "facing": "right"},
 			{"kind": "exit", "pos": [19, 8], "to_area": "dd_vaults", "to_pos": [1, 8], "facing": "right"},
@@ -888,11 +910,13 @@ static func _dd_grub() -> Dictionary:
 		"entities": [
 			{"kind": "creature", "id": "grub_grub1", "enemy_id": "rock_grub", "pos": [10, 7],
 				"intro": "The floor breathes. Then it opens.\n\nBlind, heat-sensing, enormous. Three slots — and it can smell your torch."},
-			{"kind": "sign", "id": "boulder_sign", "pos": [10, 5], "text": "A side tunnel slopes down into the dark. Dust falls. Something heavy is deciding.",
+			{"kind": "sign", "id": "boulder_sign", "pos": [10, 5], "text": "A side tunnel slopes down into the dark. Dust falls in a steady trickle, and the floor here is scored with one long, round-bottomed groove. Something heavy has come down this slope before.",
 				"choice_event": "boulder_run"},
+			{"kind": "sign", "id": "dd_chest_marks", "pos": [14, 11], "text": "Scratches in the stone floor around the chest: a fan of gouges, all the same length, all pointing outward. Whatever the lid does, it does it fast and low."},
 			{"kind": "pickup", "id": "trapped_chest", "pos": [15, 10], "sprite": "box", "run_pickup": true,
-				"grant": {}, "inflict": "wounded",
-				"text": "Teeth. The chest had teeth.\n\n(WOUNDED: −1 cast in your next duel. The gold is real, at least.)"},
+				"grant": {},
+				"text": "An iron-bound chest, lid a finger's width open. Gold glints inside. So does something else, at floor height.",
+				"choice_event": "trapped_chest"},
 			{"kind": "exit", "pos": [19, 7], "to_area": "dd_blood", "to_pos": [1, 7], "facing": "right"},
 			{"kind": "exit", "pos": [19, 8], "to_area": "dd_blood", "to_pos": [1, 8], "facing": "right"},
 			{"kind": "exit", "pos": [0, 7], "to_area": "dd_troglodytes", "to_pos": [19, 7], "facing": "left"},
@@ -933,6 +957,8 @@ static func _dd_troglodytes() -> Dictionary:
 			{"kind": "pickup", "id": "dd_tube", "pos": [16, 4], "sprite": "staff", "run_pickup": true,
 				"grant": {},
 				"text": "A hollow tube, wax-sealed at both ends. For breathing underwater, if it comes to that."},
+			{"kind": "exit", "pos": [11, 4], "to_area": "dd_grotto", "to_pos": [9, 5], "facing": "down", "requires_run_flag": "picked_dd_tube", "shortcut": true,
+				"travel_text": "You bite the reed, fill your chest, and go under. The current does the rest. You come up in colder, quieter water."},
 			{"kind": "exit", "pos": [19, 7], "to_area": "dd_grub", "to_pos": [1, 7], "facing": "right"},
 			{"kind": "exit", "pos": [19, 8], "to_area": "dd_grub", "to_pos": [1, 8], "facing": "right"},
 			{"kind": "exit", "pos": [0, 7], "to_area": "dd_manticore", "to_pos": [19, 7], "facing": "left"},
@@ -946,7 +972,7 @@ static func _dd_troglodytes() -> Dictionary:
 # -------------------------------------------------------------------------------
 static func _dd_manticore() -> Dictionary:
 	var rows := [
-		"TTTTTTTTTTTTTTTTTTTT",
+		"TTT:TTTTTTTTTTTTTTTT",
 		"TTT..............TTT",
 		"TT................TT",
 		"TT......rrrr......TT",
@@ -964,6 +990,9 @@ static func _dd_manticore() -> Dictionary:
 	return {
 		"id": "dd_manticore", "name": "Manticore Gate", "rows": rows,
 		"entities": [
+			{"kind": "exit", "pos": [3, 0], "to_area": "dd_trialmaster", "to_pos": [4, 12], "facing": "up", "requires_run_flag": "trial_done", "shortcut": true},
+			{"kind": "sign", "id": "dd_staff_passage", "pos": [4, 1], "text": "A narrow staff passage climbs north — swept, lamplit, and clearly not meant for contestants.",
+				"text_run_flag": {"trial_done": "The Dwarf's staff passage. It runs back to the Trialmaster's complex, for anyone he has decided to like."}},
 			{"kind": "creature", "id": "manticore_gate1", "enemy_id": "manticore", "pos": [10, 6],
 				"intro": "The last gate has teeth, wings, and patience.\n\nFour slots. It has been waiting longer than you."},
 			{"kind": "wizard", "id": "red_settle", "enemy_id": "red_wizard", "pos": [14, 8], "sprite": "red_mage", "facing": "left",

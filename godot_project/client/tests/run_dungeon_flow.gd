@@ -280,6 +280,22 @@ func _test_slice() -> void:
 	var out := await _fight_from_world(true)
 	assert_eq(out, "victory", "east fly beaten")
 	assert_true(_adv.marked("defeated", "fly_east"), "fly recorded")
+	# Loop 1 (brief §29): the east branch now leads somewhere.
+	assert_true(_adv.run_flag("fork_east_open"), "beating the fly opens the east shaft")
+	await _walk_to(Vector2i(18, 6))
+	await _walk(Vector2i(1, 0), 1)
+	var g0 := 0
+	while _world.area_id != "dd_service" and g0 < 120:
+		await process_frame
+		g0 += 1
+	assert_eq(_world.area_id, "dd_service", "east shaft drops into the Service Tunnels")
+	await _walk_to(Vector2i(9, 1))
+	await _walk(Vector2i(0, -1), 1)
+	g0 = 0
+	while _world.area_id != "dd_fork" and g0 < 120:
+		await process_frame
+		g0 += 1
+	assert_eq(_world.area_id, "dd_fork", "and climbs back to the fork")
 
 	# West to the galleries; answer the old man.
 	await _walk_to(Vector2i(1, 6))
@@ -483,6 +499,70 @@ func _test_hazards() -> void:
 	assert_true(_adv.run_flag("torch_lost"), "torch lost in the water")
 	assert_eq(int(_adv.state["story"]["story_defeats"]), 0, "hazards are never defeats")
 	assert_true(not _adv.left_for_dead_used(), "hazards never spend the wake")
+	await _free_world()
+	await _test_loops()
+
+
+## Loops 2–4: gated exits work both ways once earned.
+func _test_loops() -> void:
+	_adv.set_run_flag("picked_dd_tube")
+	_adv.set_run_flag("trial_done")
+	_adv.set_run_flag("ivy_paid")
+	_adv.set_location("dd_troglodytes", 11, 5, "up")
+	await _new_world()
+	await _drain_dialogue()
+	await _walk(Vector2i(0, -1), 1)
+	await _drain_dialogue(20)
+	var g := 0
+	while _world.area_id != "dd_grotto" and g < 200:
+		await process_frame
+		g += 1
+	assert_eq(_world.area_id, "dd_grotto", "reed tube: river → grotto")
+	await _walk_to(Vector2i(9, 6))
+	await _walk(Vector2i(0, -1), 1)
+	await _drain_dialogue(20)
+	g = 0
+	while _world.area_id != "dd_troglodytes" and g < 200:
+		await process_frame
+		g += 1
+	assert_eq(_world.area_id, "dd_troglodytes", "reed tube: grotto → river")
+	await _free_world()
+	# Basket: refused until Ivy paid / prisoner freed; then the shaft opens.
+	_adv.set_location("dd_service", 9, 9, "down")
+	await _new_world()
+	await _drain_dialogue()
+	await _face(Vector2i(0, 1))
+	assert_true(_world.ui_prompt().begins_with("Talk"), "basket man prompt: %s" % _world.ui_prompt())
+	await _interact()
+	await _drain_dialogue()
+	assert_true(_adv.run_flag("basket_ok"), "Ivy paid → basket ride granted")
+	await _walk_to(Vector2i(9, 12))
+	await _walk(Vector2i(0, 1), 1)
+	await _drain_dialogue(20)
+	g = 0
+	while _world.area_id != "dd_vault_inner" and g < 200:
+		await process_frame
+		g += 1
+	assert_eq(_world.area_id, "dd_vault_inner", "basket: service → inner vault")
+	await _walk_to(Vector2i(6, 8))
+	await _walk(Vector2i(0, 1), 1)
+	await _drain_dialogue(20)
+	g = 0
+	while _world.area_id != "dd_service" and g < 200:
+		await process_frame
+		g += 1
+	assert_eq(_world.area_id, "dd_service", "basket: inner vault → service")
+	await _free_world()
+	# Staff passage after trial_done.
+	_adv.set_location("dd_trialmaster", 4, 12, "down")
+	await _new_world()
+	await _drain_dialogue()
+	await _walk(Vector2i(0, 1), 1)
+	g = 0
+	while _world.area_id != "dd_manticore" and g < 200:
+		await process_frame
+		g += 1
+	assert_eq(_world.area_id, "dd_manticore", "staff passage: trialmaster → manticore gate")
 	await _free_world()
 
 
