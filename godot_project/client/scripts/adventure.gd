@@ -70,7 +70,7 @@ func new_game() -> void:
 	state = {
 		"version": SAVE_VERSION,
 		"area": "village",
-		"pos": [7, 10],
+		"pos": [11, 6],
 		"facing": "down",
 		"flags": {},
 		"defeated": [],

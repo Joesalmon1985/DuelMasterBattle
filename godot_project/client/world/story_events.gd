@@ -18,8 +18,10 @@ func _adv() -> Node:
 
 func run_event(id: String) -> void:
 	match id:
-		"duel_cutscene":
-			await duel_cutscene()
+		"red_intercept":
+			await red_intercept()
+		"ashby_training":
+			await ashby_training()
 		"gate_choice":
 			await gate_choice()
 		"statue_riddle":
@@ -52,56 +54,147 @@ func run_event(id: String) -> void:
 			await jane_wake()
 
 
-func opening_text() -> void:
+# ---------------------------------------------------------------------------------
+# PROLOGUE (brief §1–§4). You are Halvard. Briefly.
+# ---------------------------------------------------------------------------------
+
+func prologue_open() -> void:
 	_w.lock_input(true)
-	await _w.say("", "Trial Day in Ashwell.")
-	await _w.say("", "You are John. You cut wood. The whole country has come to watch other people die famous.")
+	await narrate("Trial Day in Ashwell.")
+	await narrate("You are Halvard. You are a great wizard — the kind people have prints of.")
+	await narrate("Today you will walk up that hill, enter the Trial, survive it, and become very, very famous. This story has been waiting for a protagonist of your quality.")
+	await narrate("Take a moment. Let them look at you. Then head for the road.")
 	_w.lock_input(false)
 
 
-func duel_cutscene() -> void:
+func red_intercept() -> void:
 	var adv := _adv()
 	_w.lock_input(true)
-	await _w.say("", "Shouting, down by the road.")
-	_w.spawn_actor("blue", "blue_mage", Vector2i(1, 8), "right")
-	_w.spawn_actor("red", "red_mage", Vector2i(13, 8), "left")
-	_w.face_john("down")
-	await _w.move_actor("blue", Vector2i(6, 8), 0.9)
-	await _w.move_actor("red", Vector2i(11, 8), 0.9)
-	_w.face_actor("blue", "right")
-	_w.face_actor("red", "left")
-	await _w.say("", "Two travelling wizards have fallen to arguing the way wizards do.\n\nOne in blue. One in red. The whole village is watching from a safe distance.")
-	for i in range(3):
-		await _w.bolt(Vector2i(11, 8), Vector2i(6, 8), Color(1.0, 0.35, 0.2), 0.3)
-		await _w.shake(4.0, 0.15)
-		await _w.bolt(Vector2i(6, 8), Vector2i(11, 8), Color(0.3, 0.6, 1.0), 0.3)
-		await _w.wait(0.15)
-	await _w.say("Red Wizard", "You are slow, Halvard.")
-	await _w.bolt(Vector2i(11, 8), Vector2i(6, 8), Color(1.0, 0.4, 0.1), 0.25)
-	await _w.bolt(Vector2i(11, 8), Vector2i(6, 8), Color(1.0, 0.2, 0.1), 0.2)
+	await narrate("Shouting, down by the road. Someone is saying your name the way a debt collector says it.")
+	_w.spawn_actor("red", "red_mage", Vector2i(18, 8), "left")
+	await _w.move_actor("red", Vector2i(_w.john_pos().x + 3, 8), 0.9)
+	# Brief §3: the one on the left faces right, the one on the right faces left —
+	# set from positions, then read back by the flow test from the textures.
+	_w.face_each_other("john", "red")
+	await _w.say("Red Wizard", "Halvard. You look older. You look like a man who has been telling the same story for twenty years.")
+	await _w.say("Red Wizard", "Three knots. Show me you still remember how.")
+	await narrate("He is not asking. You are a great wizard; this is the part of the day where you prove it.")
+	adv.save()
+	await _w.start_battle_request({
+		"id": "halvard_vs_red", "enemy_id": "red_wizard_prologue", "kind": "wizard",
+		"policy": adv.POLICY_PROLOGUE, "forced_defeat_by_cast": 3,
+		"player_combatant": halvard_combatant(),
+		"intro": "The Red Wizard. Three slots, and a smile like an unpaid bill.\n\nYou are Halvard. Choose your Ward and cast — you have done this a thousand times.",
+	})
+
+
+## The prologue's player: enough magic for a real duel, three slots, no mods.
+static func halvard_combatant() -> Dictionary:
+	return {
+		"id": "halvard", "display_name": "Halvard", "archetype": "blue_mage", "kind": "player",
+		"weave_size": 3, "attack_pool": [1, 0, 3], "ward_size": 3, "ward_pool": [1, 0, 3],
+		"allow_repeats": true, "max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+	}
+
+
+## After the Red Wizard wins: Halvard dies, and the narrator starts again.
+func _prologue_defeat(adv: Node, _req: Dictionary) -> void:
+	_w.spawn_actor("red", "red_mage", Vector2i(12, 8), "left")
+	_w.face_each_other("john", "red")
+	await _w.bolt(Vector2i(12, 8), _w.john_pos(), Color(1.0, 0.3, 0.1), 0.25)
 	await _w.flash(Color(1.0, 0.5, 0.2), 0.3)
 	await _w.shake(10.0, 0.5)
-	await _w.move_actor("blue", Vector2i(6, 9), 0.4)
-	_w.actor("blue").rotation_degrees = 90
-	_w.actor("blue").position += Vector2(_w.TPX, 0)
-	await _w.say("", "The blue wizard goes down hard in the dust of the road.")
+	await narrate("Halvard goes down in the dust of the road, and does not get up.")
+	await narrate("He was a great wizard. That part was true. It just wasn't the part that mattered today.")
 	_w.face_actor("red", "down")
 	await _w.say("Red Wizard", "Don't stare, villager. You'll see worse before sunset.")
 	await _w.move_actor("red", Vector2i(18, 8), 0.8)
 	_w.remove_actor("red")
-	await _w.say("", "The Red Wizard walks on toward the Trial grounds, and is gone.")
-	_w.face_john("right")
-	await _w.say("Blue wizard", "...You. Woodcutter. Come here.")
-	await _w.say("Blue wizard", "Halvard. That's the name for the roll. Take the staff — it carries my seal, and my place.")
-	await _w.say("Blue wizard", "Water first. It always answered me easiest.")
-	await _w.say("Blue wizard", "Enter if you want. Don't enter because a dying fool told you to.")
-	await _w.say("", "His hand opens. The staff rolls into the dust at your feet.")
-	adv.set_flag("duel_seen")
-	_w.remove_actor("blue")
-	_w.rebuild()
-	await _w.say("", "The road is quiet. The staff is waiting.\n\nMaybe pick it up.")
+	await narrate("...")
+	await narrate("Okay. That didn't work.")
+	await narrate("Let's try again.")
+	# Protagonist swap: the body and the staff appear where Halvard stood; John
+	# starts one tile east of them, unarmed and unmagical.
+	adv.set_flag("halvard_dead")
+	adv.advance_phase("john_intro")
+	_w.load_area("village", Vector2i(11, 8), "left")
+	await narrate("You are John. You are a mighty woodcutter, in the sense that you cut wood and are fairly large. You have watched a man die in the road, and you have not moved.")
+	await narrate("You are, apparently, going to do the Trial instead.")
+	await narrate("Go and pick up that blue man's staff.")
 	adv.save()
-	_w.lock_input(false)
+
+
+# ---------------------------------------------------------------------------------
+# ASHBY (brief §6–§8): three training duels, one NPC, no penalties.
+# ---------------------------------------------------------------------------------
+
+func ashby_training() -> void:
+	var adv := _adv()
+	if adv.story_phase() == "john_intro":
+		adv.advance_phase("ashby_training")
+	if adv.flag("ashby_training_complete"):
+		await _w.say("Ashby", "Come back when you want to lose gracefully. Or win — I'm told it happens.")
+		var again: String = await _w._dialogue.choose_async("Spar with Ashby?", ["Spar", "Not now"])
+		if again == "Spar":
+			await _w.start_battle_request({
+				"id": "ashby_spar", "enemy_id": "ashby_lesson3", "kind": "wizard", "training": true,
+				"intro": "Ashby, sleeves rolled. Two against two, for practice.",
+			})
+		return
+	if not adv.flag("ashby_duel1_done"):
+		await _w.say("Ashby", "Halvard's staff. In the hand of a man who smells of sawdust. I have had stranger Tuesdays.")
+		await _w.say("Ashby", "Water, and one knot. That isn't wizardry yet. But it is enough for me to show you what a Ward is.")
+		await _w.say("Ashby", "I'll hide one spell. You cast the one you have. Watch what happens.")
+		await _w.start_battle_request({
+			"id": "ashby_duel1", "enemy_id": "ashby_lesson1", "kind": "wizard", "training": true,
+			"on_win_flag": "ashby_duel1_done", "on_defeat_flag": "ashby_duel1_done",
+			"intro": "Ashby's first lesson. One slot, one spell.\n\nChoose a Ward. Cast. Read the result.",
+		})
+		return
+	if not adv.flag("ashby_duel2_done"):
+		await _w.say("Ashby", "Good. Now let me show you what a real wizard does, so you don't go up that hill thinking you've seen one.")
+		await _w.say("Ashby", "Two knots. Two slots. Same rules.")
+		await _w.start_battle_request({
+			"id": "ashby_duel2", "enemy_id": "ashby_lesson2", "kind": "wizard", "training": true,
+			"on_win_flag": "ashby_duel2_done", "on_defeat_flag": "ashby_duel2_done",
+			"grant_on_defeat": {"spell": 6, "weave": 2, "text": "Ashby puts a green seed in your palm and closes your fingers over it.\n\n\"One spell and one knot were never going to be enough. Nobody told you. I'm telling you.\"\n\nYou have learned VINE magic.\nYour weave can now hold TWO spells."},
+			"intro": "Ashby's second lesson. Two slots of Water and Vine, hidden.\n\nYour one Water cannot reach a complete two-slot Ward. Cast anyway. See why.",
+		})
+		return
+	if not adv.flag("ashby_duel3_done"):
+		await _w.say("Ashby", "Again. Properly, this time. Two against two.")
+		await _w.say("Ashby", "Win or lose, you'll have learned what I can teach you standing in a yard.")
+		await _w.start_battle_request({
+			"id": "ashby_duel3", "enemy_id": "ashby_lesson3", "kind": "wizard", "training": true,
+			"on_win_flag": "ashby_duel3_done", "on_defeat_flag": "ashby_duel3_done",
+			"intro": "Ashby's third lesson. A fair fight: two slots each, Water and Vine on both sides.\n\nWhoever reads faster.",
+		})
+		return
+
+
+## Ashby reacts to each result; training never resets or punishes.
+func _ashby_after(adv: Node, encounter_id: String, outcome: String) -> void:
+	match encounter_id:
+		"ashby_duel1":
+			if outcome == "victory":
+				await _w.say("Ashby", "There. Your spell against my Ward, and my Ward gave. That's a battle.")
+			else:
+				await _w.say("Ashby", "Hm. One slot, and you missed it. Never mind — the point was to see it happen, and you saw it.")
+		"ashby_duel2":
+			if outcome == "victory":
+				await _w.say("Ashby", "...You broke it. With one knot. I'm going to pretend I meant that to be possible.")
+			else:
+				await _w.say("Ashby", "You see it now. A bigger weave isn't more damage. It's REACH — I could touch a Ward you couldn't.")
+		"ashby_duel3", "ashby_spar":
+			if outcome == "victory":
+				await _w.say("Ashby", "Ha! Well. Don't let it go to your head. Do let it go to your feet — the road's that way.")
+			else:
+				await _w.say("Ashby", "Close. Closer than I'd like, frankly. You'll do.")
+	if encounter_id == "ashby_duel3" and not adv.flag("ashby_training_complete"):
+		adv.set_flag("ashby_training_complete")
+		adv.advance_phase("pre_trial")
+		await _w.say("Ashby", "That's everything a yard can teach. The Burnt Wood east of the road will teach the rest, if you let it.")
+		await _w.say("Ashby", "The red pendant out there — it isn't jewellery. Neither is the golem. Bring back four kinds of magic and three knots, or don't go up that hill.")
 
 
 func gate_choice() -> void:
@@ -112,21 +205,34 @@ func gate_choice() -> void:
 		_w.lock_input(false)
 		return
 	await _w.say("Rollkeeper", "Names for the roll. ...John? John the woodcutter? Halvard's seal — it's genuine.")
-	await _w.say("Rollkeeper", "Halvard's place is vacant, and you carry his seal. So: do you enter the Trial?")
+	# Brief §14: the Trial does not take the underpowered. Diegetic refusal.
+	if not adv.trial_ready():
+		var known: int = adv.progression.spells_known.size()
+		var knots: int = adv.progression.weave_size
+		await _w.say("Rollkeeper", "Four kinds of magic and three knots. That is the floor, not the ceiling — the Trial does not admit anyone below it, and I do not write down the names of the dead in advance.")
+		if known < 4:
+			await _w.say("Rollkeeper", "You carry %d kind%s. The Burnt Wood east of the road has been generous to people who came back from it." % [known, "" if known == 1 else "s"])
+		if knots < 3:
+			await _w.say("Rollkeeper", "And you weave %d. A golem's heart would fix that, if you can take one." % knots)
+		await _w.say("Rollkeeper", "Come back before sunset. Or don't. Both are allowed.")
+		_w.lock_input(false)
+		return
+	await _w.say("Rollkeeper", "Halvard's place is vacant, and you carry his seal. Four kinds, three knots — the floor, met. So: do you enter the Trial?")
 	var choice: String = await _w._dialogue.choose_async("Do you enter the Trial?", ["Enter the Trial", "Not yet"])
 	if choice == "Enter the Trial":
 		adv.set_flag("entered_trial")
+		adv.advance_phase("trial")
 		await _w.flash(Color(0.9, 0.85, 1.0), 0.4)
-		await _w.say("", "The Rollkeeper writes JOHN in the book, and the ink does not come off.")
+		await narrate("The Rollkeeper writes JOHN in the book, and the ink does not come off.")
 		await _w.shake(6.0, 0.6)
-		await _w.say("", "The enormous doors begin to close behind the contestants.")
-		await _w.say("", "For the first time since leaving Ashwell, turning around is no longer an option.")
-		await _w.say("", "Ahead, somewhere in the dark, somebody screams.")
+		await narrate("The enormous doors begin to close behind the contestants.")
+		await narrate("For the first time since leaving Ashwell, turning around is no longer an option. You notice this the way you notice a missing step: afterwards.")
+		await narrate("Ahead, somewhere in the dark, somebody screams.")
 		await _w.say("Red Wizard", "Oh, good. The villager. Try to die somewhere I can see.")
-		await _w.say("", "And he walks on.\n\n— THE TRIAL BEGINS —")
+		await narrate("And he walks on.\n\n— THE TRIAL BEGINS —")
 		adv.start_run()
 		_w.load_area("dd_entrance", Vector2i(10, 11), "up")
-		await _w.say("", "Crystal light. Six boxes on a stone table — five already taken.\n\nThe doors shut behind you.")
+		await narrate("Crystal light. Six boxes on a stone table — five already taken.\n\nThe doors shut behind you.")
 		adv.save()
 	else:
 		await _w.say("Rollkeeper", "Then stand clear of the doors. The offer stands until sunset.")
@@ -246,12 +352,11 @@ func _dwarf_cobra(adv: Node) -> void:
 		await _w.say("", "Fast — but fangs graze your wrist. (WOUNDED: −1 cast in your next duel.)")
 	else:
 		await _w.say("", "You hold its gaze until it looks away first. The Dwarf writes something down.")
-	await _w.say("Dwarf", "Procedure complete. The stone is yours.")
-	adv.learn_spell(3)
-	adv.grow_weave(3)
+	await _w.say("Dwarf", "Procedure complete. You've earned the map — the part of it I'm allowed to give.")
 	adv.set_run_flag("trial_ready")
-	await _w.say("", "The Dwarf presses a grey stone into your hand. It is patient.\n\nYou have learned STONE magic.\nYour weave can now hold THREE spells.")
-	await _w._show_progression_card({"spell": 3, "weave": 3})
+	adv.set_run_flag("dwarf_map")
+	await narrate("The Dwarf unrolls a scrap of oiled hide: the lower Trial, in a hand that has drawn it many times. Three gems marked. A door marked. And a passage from this very room, west, that is not on anyone else's map.")
+	await narrate("(Your journal now knows: the door wants Emerald, Sapphire and Diamond; the concealed Trialmaster passage links west to the Lower Route.)")
 	_w.rebuild()
 	if adv.run_flag("pit_betrayed"):
 		adv.set_run_flag("trial_done")
@@ -502,22 +607,19 @@ func on_battle_result(r: Dictionary) -> void:
 				adv.set_contestant("throm", "wounded")
 				await _w.say("", "Your troll goes down. Throm finishes his — but his arm hangs wrong.\n\n\"Keep walking,\" he says. \"Don't look at it.\"")
 				await _w.say("", "Something glints where your troll fell.")
-			elif eid == "ashby_lesson1" and not adv.flag("first_win_told"):
-				adv.set_flag("first_win_told")
-				await _w.say("Ashby", "There. That was a battle: your spell against my Ward, and my Ward gave.\n\nThe next ones will hide better.")
-			elif eid == "ashby_lesson2":
-				await _w.say("Ashby", "You read it. That's the whole game, John — read the Ward, then break it.\n\nThe road north will teach you the rest. If you go.")
+			elif eid.begins_with("ashby_"):
+				await _ashby_after(adv, eid, "victory")
 			elif str(req.get("drops", "")) != "":
-				await _w.say("", "%s falls apart. Something is left where it stood." % enemy_name)
+				await narrate("%s falls apart. Something is left where it stood." % enemy_name)
 			elif str(req.get("on_win_flag", "")) == "beat_red_wizard":
 				pass
 			else:
-				await _w.say("", "%s is broken. The path is clearer." % enemy_name)
+				await narrate("%s is broken. The path is clearer." % enemy_name)
 		if str(req.get("on_win_flag", "")) == "beat_red_wizard":
-			await _w.say("", "The Red wizard's Ward shatters. He stares at his own hands for a long moment.")
-			await _w.say("Red wizard", "...A woodcutter. With Halvard's stick.")
-			await _w.say("Red wizard", "Count yourself lucky I have somewhere to be.")
-			await _w.say("", "He goes. The hill is quiet.\n\nYou are John. You were a woodcutter. You weave four.\n\n— END OF THE FIRST CHAPTER —\n\nThe forest, the village and every creature in it remain yours to wander.")
+			await narrate("The Red Wizard's Ward shatters. He stares at his own hands for a long moment.")
+			await _w.say("Red Wizard", "...A woodcutter. With Halvard's stick.")
+			await _w.say("Red Wizard", "Count yourself lucky I have somewhere to be.")
+			await narrate("He goes. The hill is quiet.")
 	elif outcome == "defeat" or outcome == "fled":
 		await _on_defeat(adv, req, outcome, enemy_name)
 	elif outcome == "stalemate":
@@ -542,11 +644,6 @@ func _on_defeat(adv: Node, req: Dictionary, outcome: String, enemy_name: String)
 			await _story_defeat(adv, req, enemy_name)
 
 
-## Filled in by Phase 1 (Halvard dies; the narrator starts again with John).
-func _prologue_defeat(adv: Node, _req: Dictionary) -> void:
-	adv.advance_phase("john_intro")
-
-
 ## Training losses teach and return John to the lesson. No reset, no penalty.
 func _training_defeat(adv: Node, req: Dictionary, _enemy_name: String) -> void:
 	var grant: Dictionary = req.get("grant_on_defeat", {})
@@ -561,6 +658,7 @@ func _training_defeat(adv: Node, req: Dictionary, _enemy_name: String) -> void:
 		await _w._show_progression_card(grant)
 	if str(req.get("on_defeat_flag", "")) != "":
 		adv.set_flag(str(req["on_defeat_flag"]))
+	await _ashby_after(adv, str(req.get("encounter_id", "")), "defeat")
 
 
 ## Real defeats: once, John is left for dead and wakes where he fell; the second

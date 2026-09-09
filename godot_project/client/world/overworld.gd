@@ -107,7 +107,7 @@ func _after_ready() -> void:
 		await _story.on_battle_result(r)
 	elif not adv.flag("opening_seen"):
 		adv.set_flag("opening_seen")
-		await _story.opening_text()
+		await _story.prologue_open()
 	_maybe_autosave()
 
 
@@ -556,6 +556,8 @@ func _arrived() -> void:
 					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")))
 					return
 			"trigger":
+				if e.has("requires_phase") and _adv().story_phase() != str(e["requires_phase"]):
+					continue
 				if _in_trigger(e) and not _adv().flag(str(e.get("once_flag", ""))) and _steps_taken >= int(e.get("requires_steps", 0)):
 					if not bool(e.get("no_auto_flag", false)):
 						_adv().set_flag(str(e["once_flag"]))
@@ -591,8 +593,80 @@ func _fade_in() -> void:
 
 
 func _update_john_sprite(frame: int = 0) -> void:
+	# The controllable sprite follows the story's protagonist (Halvard in the
+	# prologue, John afterwards). Halvard is always drawn as the Blue mage.
 	var key := "john_staff" if _adv().progression.has_magic() else "john"
+	if _adv().protagonist() == "halvard":
+		key = "blue_mage"
 	_john.texture = _tex("chars/%s_%s_%d.png" % [key, _john_facing, frame])
+
+
+## Test/inspection API: which way is the player sprite drawn as facing.
+func ui_player_facing() -> String:
+	return _john_facing
+
+
+## Test/inspection API: facing of a cutscene actor or a placed entity, read
+## back from the texture actually assigned (so it catches orientation bugs
+## that coordinate maths alone would not).
+func ui_actor_facing(key: String) -> String:
+	var n: Sprite2D = _john if key == "john" else actor(key)
+	if n == null:
+		for e in _entities:
+			if str(e.get("id", "")) == key and is_instance_valid(e.get("node")):
+				n = e["node"]
+				break
+	if n == null or n.texture == null:
+		return ""
+	var path := n.texture.resource_path
+	for f in ["left", "right", "up", "down"]:
+		if path.ends_with("_%s_0.png" % f) or path.ends_with("_%s_1.png" % f):
+			return f
+	return ""
+
+
+## Two characters confronting one another: the one on the left faces right and
+## vice versa. Works for cutscene actors ("red") and the player ("john").
+func face_each_other(a: String, b: String) -> void:
+	var pa := _actor_or_player_pos(a)
+	var pb := _actor_or_player_pos(b)
+	var a_face := "right" if pa.x < pb.x else ("left" if pa.x > pb.x else ("down" if pa.y < pb.y else "up"))
+	var b_face := _opposite(a_face)
+	_set_facing(a, a_face)
+	_set_facing(b, b_face)
+
+
+func _actor_or_player_pos(key: String) -> Vector2i:
+	if key == "john":
+		return _john_pos
+	var n: Sprite2D = actor(key)
+	if n != null:
+		return Vector2i(roundi(n.position.x / TPX), roundi((n.position.y + 8 * TILE_SCALE) / TPX))
+	for e in _entities:
+		if str(e.get("id", "")) == key:
+			return Vector2i(int(e["pos"][0]), int(e["pos"][1]))
+	return _john_pos
+
+
+func _set_facing(key: String, facing: String) -> void:
+	if key == "john":
+		face_john(facing)
+		return
+	if actor(key) != null:
+		face_actor(key, facing)
+		return
+	for e in _entities:
+		if str(e.get("id", "")) == key and is_instance_valid(e.get("node")):
+			e["node"].texture = _tex("chars/%s_%s_0.png" % [str(e.get("sprite", "villager_a")), facing])
+			e["facing"] = facing
+
+
+func _opposite(f: String) -> String:
+	match f:
+		"left": return "right"
+		"right": return "left"
+		"up": return "down"
+	return "up"
 
 
 func facing_pos() -> Vector2i:
@@ -770,6 +844,9 @@ func _interact_npc(e: Dictionary) -> void:
 	var adv := _adv()
 	var id := str(e["id"])
 	var lines: Array = e.get("lines", [])
+	# Story-phase keyed lines win over defaults; flag-keyed lines win over those.
+	if e.has("lines_phase") and e["lines_phase"].has(adv.story_phase()):
+		lines = e["lines_phase"][adv.story_phase()]
 	if e.has("lines_flag"):
 		for fl in e["lines_flag"].keys():
 			if adv.flag(str(fl)):
@@ -839,7 +916,8 @@ func _interact_enemy(e: Dictionary) -> void:
 		warn = "Your weave holds %d. Their Ward has %d slot%s.\n\nYour extra spells wrap round to the first slots — several attempts on one slot at once." % [john.weave_size, int(enemy["ward_size"]), "" if int(enemy["ward_size"]) == 1 else "s"]
 	if warn != "":
 		await _dialogue.say_async("", warn)
-	var choice: String = await _dialogue.choose_async("Face %s?" % str(enemy["display_name"]), ["Fight", "Not yet"])
+	# Brief §26: declining is not a defeat. "Walk away" is the neutral label.
+	var choice: String = await _dialogue.choose_async("Face %s?" % str(enemy["display_name"]), ["Fight", "Walk away"])
 	if choice != "Fight":
 		_input_locked = false
 		_touch.set_enabled(true)
@@ -848,14 +926,31 @@ func _interact_enemy(e: Dictionary) -> void:
 
 
 ## P5: exploration knowledge that weakens a specific enemy's Ward.
+## Exploration knowledge/items that weaken a specific enemy's Ward. Data lives
+## in WARD_BANS: enemy_id → [run_flag, banned spell]. Brief §28 "clues which
+## actually alter enemy Ward possibilities".
+const WARD_BANS := {
+	"bloodbeast": ["blood_weakness", 6],     # the prisoner's warning: no Vine
+	"manticore": ["has_elf_charm", 6],       # the elf's vine-charm: green things know you
+}
+
+
 func _ward_ban_for(enemy_id: String) -> Array:
-	if enemy_id == "bloodbeast" and _adv().run_flag("blood_weakness"):
-		return [6]
+	if WARD_BANS.has(enemy_id):
+		var rule: Array = WARD_BANS[enemy_id]
+		if _adv().run_flag(str(rule[0])):
+			return [int(rule[1])]
 	return []
 
 
 ## P5: story events start scripted battles through here (no entity needed).
+## Story events start battles through here with an entity-shaped dict
+## ({"id", "enemy_id", "kind", "training", "grant_on_defeat", ...}) so they get
+## the same encounter numbering and policy plumbing as map creatures.
 func start_battle_request(req: Dictionary) -> void:
+	if req.has("enemy_id") and req.has("id"):
+		await _start_battle(req)
+		return
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.35)
 	await tw.finished
@@ -890,6 +985,12 @@ func _start_battle(e: Dictionary) -> void:
 	}
 	if e.has("policy"):
 		req["policy"] = str(e["policy"])
+	if e.has("player_combatant"):
+		req["player_combatant"] = e["player_combatant"]
+	if e.has("forced_defeat_by_cast"):
+		req["forced_defeat_by_cast"] = int(e["forced_defeat_by_cast"])
+	if e.has("intro"):
+		req["intro"] = str(e["intro"])
 	if bool(req["optimal"]):
 		# Every-third-battle rule: the sharp tier. Hard, not perfect — capped
 		# minimax with a mid-size sample (see CORRECTIVE_PASS_PLAN Phase 4).
@@ -1150,6 +1251,8 @@ func ui_dialogue_open() -> bool:
 
 
 func ui_dialogue_advance() -> void:
+	# Test harness taps are deliberate; skip the human-tap debounce.
+	_dialogue._ignore_until_msec = 0
 	_dialogue.advance()
 
 
@@ -1167,6 +1270,39 @@ func ui_prompt() -> String:
 
 func ui_input_locked() -> bool:
 	return _input_locked
+
+
+## Test/inspection: the sprite key currently drawn for the controllable character.
+func ui_player_sprite_key() -> String:
+	var path := _john.texture.resource_path if _john.texture else ""
+	var base := path.get_file()
+	for f in ["_left_", "_right_", "_up_", "_down_"]:
+		var i := base.find(f)
+		if i > 0:
+			return base.substr(0, i)
+	return base
+
+
+## Test/inspection: tile position of a cutscene actor or entity.
+func ui_actor_pos(key: String) -> Vector2i:
+	return _actor_or_player_pos(key)
+
+
+## Test/inspection: the lines an NPC would say right now (phase/flag resolved).
+func ui_npc_lines_for(id: String) -> Array:
+	var adv := _adv()
+	for e in _entities:
+		if str(e.get("id", "")) != id:
+			continue
+		var lines: Array = e.get("lines", [])
+		if e.has("lines_phase") and e["lines_phase"].has(adv.story_phase()):
+			lines = e["lines_phase"][adv.story_phase()]
+		if e.has("lines_flag"):
+			for fl in e["lines_flag"].keys():
+				if adv.flag(str(fl)):
+					lines = e["lines_flag"][fl]
+		return lines
+	return []
 
 
 func ui_entity_exists(id: String) -> bool:

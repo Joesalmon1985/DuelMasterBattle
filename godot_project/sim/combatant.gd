@@ -28,6 +28,7 @@ var max_cast_seconds: float = 60.0
 var bot_logic: String = "candidate_filter"   # "candidate_filter" | "capped_minimax" | "random"
 var bot_solver_cap: int = 60
 var bot_mistake_rate: float = 0.0
+var bot_opening_attack: Array = []            # optional authored first cast (must be legal)
 var think_min_seconds: float = 14.0
 var think_max_seconds: float = 26.0
 

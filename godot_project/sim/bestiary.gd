@@ -17,47 +17,47 @@ static var _catalog: Dictionary = {}
 static func _build() -> void:
 	if not _catalog.is_empty():
 		return
-	# --- Tier 1: teaches the interface. Guaranteed win with BLUE x1. -----------
+	# --- Burnt Wood (brief §12): real combat after Ashby's training. John has
+	# Water + Vine and a two-slot weave; every creature here has ≥2 slots, varied
+	# pools and competent AI. No two share (pool, logic). -----------------------------
 	_add({
 		"id": "flame_wisp", "display_name": "Flame Wisp", "archetype": "flame_wisp", "kind": "creature",
-		"description": "A scrap of living fire. It only knows RED, and hides behind a single Water Ward.",
-		"weave_size": 1, "attack_pool": [RED], "ward_size": 1, "ward_pool": [BLUE], "fixed_ward": [BLUE],
+		"description": "A scrap of living fire, quick and twitchy. Two slots of Fire and Water.",
+		"weave_size": 2, "attack_pool": [RED, BLUE], "ward_size": 2, "ward_pool": [RED, BLUE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
-		"bot_logic": "random", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 9.0, "think_max_seconds": 16.0,
 	})
 	_add({
 		"id": "flame_imp", "display_name": "Flame Imp", "archetype": "flame_imp", "kind": "creature",
-		"description": "Bolder than a wisp. Its Ward may be Water or Fire — you must find out which.",
-		"weave_size": 1, "attack_pool": [RED], "ward_size": 1, "ward_pool": [BLUE, RED],
-		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
-		"bot_logic": "random", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
-	})
-	# --- Tier 2: Red + Blue, two weave slots. Real deduction begins. ------------
-	_add({
-		"id": "steam_sprite", "display_name": "Steam Sprite", "archetype": "steam_sprite", "kind": "creature",
-		"description": "Born where fire met water. One Ward slot, but it could be either.",
-		"weave_size": 1, "attack_pool": [RED, BLUE], "ward_size": 1, "ward_pool": [RED, BLUE],
+		"description": "Bolder than a wisp and meaner. It throws Fire and Vine; its Ward is Fire and Water.",
+		"weave_size": 2, "attack_pool": [RED, VINE], "ward_size": 2, "ward_pool": [RED, BLUE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "candidate_filter", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
 	})
 	_add({
-		"id": "steam_brute", "display_name": "Steam Brute", "archetype": "steam_brute", "kind": "creature",
-		"description": "A hulking cloud with a two-slot Ward of Fire and Water.",
+		"id": "steam_sprite", "display_name": "Steam Sprite", "archetype": "steam_sprite", "kind": "creature",
+		"description": "Born where fire met water. Two slots that could be either — and it reads yours fast.",
 		"weave_size": 2, "attack_pool": [RED, BLUE], "ward_size": 2, "ward_pool": [RED, BLUE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "capped_minimax", "bot_solver_cap": 30, "think_min_seconds": 10.0, "think_max_seconds": 18.0,
+	})
+	_add({
+		"id": "steam_brute", "display_name": "Steam Brute", "archetype": "steam_brute", "kind": "creature",
+		"description": "A hulking cloud. Fire, Water and Stone in the attack; Fire and Water in the Ward.",
+		"weave_size": 2, "attack_pool": [RED, BLUE, STONE], "ward_size": 2, "ward_pool": [RED, BLUE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 22.0,
 	})
-	# --- Tier 3: Stone joins. Three slots. -------------------------------------
 	_add({
 		"id": "cinder_golem", "display_name": "Cinder Golem", "archetype": "cinder_golem", "kind": "creature",
-		"description": "Stone bound with embers. It throws Stone, but its two-slot Ward is only Fire and Water.",
-		"weave_size": 2, "attack_pool": [RED, STONE], "ward_size": 2, "ward_pool": [RED, BLUE],
+		"description": "Stone bound with embers. It throws Stone and Fire; its two-slot Ward is Water and Vine — the things that put it out.",
+		"weave_size": 2, "attack_pool": [RED, STONE], "ward_size": 2, "ward_pool": [BLUE, VINE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
-		"bot_logic": "candidate_filter", "think_min_seconds": 14.0, "think_max_seconds": 24.0,
+		"bot_logic": "capped_minimax", "bot_solver_cap": 40, "think_min_seconds": 12.0, "think_max_seconds": 22.0,
 	})
 	_add({
 		"id": "moss_shade", "display_name": "Moss Shade", "archetype": "moss_shade", "kind": "creature",
-		"description": "Something old that lives under the well. It weaves Vine, but wards with what it has drunk: Fire, Water, Stone.",
+		"description": "Something old that lives under the well. It weaves Vine and Water, and wards with what it has drunk: Fire, Water, Stone.",
 		"weave_size": 3, "attack_pool": [VINE, BLUE, STONE], "ward_size": 3, "ward_pool": [RED, BLUE, STONE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "candidate_filter", "think_min_seconds": 14.0, "think_max_seconds": 24.0,
@@ -156,26 +156,46 @@ static func _build() -> void:
 		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
 	})
 	# P1: Ashby's teaching Wards + the Trial-road Giant Fly. ----------------------
+	# --- Ashby's three training duels (brief §6–§8). ----------------------------------
 	_add({
-		"id": "ashby_lesson1", "display_name": "Ashby's Practice Ward", "archetype": "hedge_ward", "kind": "wizard",
-		"description": "Ashby's teaching Ward: a single slot of Water. Cast what you hold.",
+		"id": "ashby_lesson1", "display_name": "Ashby — First Lesson", "archetype": "hedge_ward", "kind": "wizard",
+		"description": "One slot of Water. Choose a Ward, make a cast, watch it break.",
 		"weave_size": 1, "attack_pool": [BLUE], "ward_size": 1, "ward_pool": [BLUE], "fixed_ward": [BLUE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
-		"bot_logic": "random", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
+		"bot_logic": "random", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
 	})
 	_add({
-		"id": "ashby_lesson2", "display_name": "Ashby's Hidden Ward", "archetype": "hedge_ward", "kind": "wizard",
-		"description": "Ashby's second lesson: one Ward slot, Water or Fire. Find out which.",
-		"weave_size": 1, "attack_pool": [BLUE], "ward_size": 1, "ward_pool": [BLUE, RED],
+		"id": "ashby_lesson2", "display_name": "Ashby — What a Wizard Is", "archetype": "hedge_ward", "kind": "wizard",
+		"description": "Two knots, two slots. Your single Water cannot reach a complete two-slot Ward. Learn why.",
+		"weave_size": 2, "attack_pool": [BLUE, VINE], "ward_size": 2, "ward_pool": [BLUE, VINE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "candidate_filter", "think_min_seconds": 8.0, "think_max_seconds": 14.0,
+	})
+	_add({
+		"id": "ashby_lesson3", "display_name": "Ashby — A Fair Fight", "archetype": "hedge_ward", "kind": "wizard",
+		"description": "Two against two. Water and Vine on both sides. Whoever reads faster.",
+		"weave_size": 2, "attack_pool": [BLUE, VINE], "ward_size": 2, "ward_pool": [BLUE, VINE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "candidate_filter", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
 	})
+	# --- Giant Fly (brief §10): dangerous, but its first lunge is always wrong. ------
+	# John's Ward at first meeting can only hold Water/Vine, so an opening of
+	# Fire×2 is a legal cast with zero matches — no peeking required.
 	_add({
 		"id": "giant_fly", "display_name": "Giant Fly", "archetype": "giant_fly", "kind": "creature",
-		"description": "A horsefly the size of a hound. Fast, stupid, and easy to walk away from.",
-		"weave_size": 1, "attack_pool": [RED], "ward_size": 1, "ward_pool": [BLUE], "fixed_ward": [BLUE],
+		"description": "A horsefly the size of a hound. It lunges first and thinks second — but it does think.",
+		"weave_size": 2, "attack_pool": [RED, BLUE, VINE], "ward_size": 2, "ward_pool": [BLUE, VINE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
-		"bot_logic": "random", "think_min_seconds": 10.0, "think_max_seconds": 18.0,
+		"bot_logic": "candidate_filter", "bot_opening_attack": [RED, RED], "think_min_seconds": 7.0, "think_max_seconds": 13.0,
+	})
+	# --- Halvard's prologue opponent (brief §2): the strongest legitimate solver. The
+	# ≤3-cast guarantee itself lives in the PROLOGUE_FORCED_DEFEAT policy, not here.
+	_add({
+		"id": "red_wizard_prologue", "display_name": "The Red Wizard", "archetype": "arcanist", "kind": "wizard",
+		"description": "He has been waiting for you. Three slots, and he reads a Ward the way other people read a face.",
+		"weave_size": 3, "attack_pool": [RED, BLUE, STONE], "ward_size": 3, "ward_pool": [RED, BLUE, STONE],
+		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+		"bot_logic": "capped_minimax", "bot_solver_cap": 500, "think_min_seconds": 3.0, "think_max_seconds": 6.0,
 	})
 	# Regression anchor: the MVP 4x6x10 duel expressed as a combatant.
 	_add({

@@ -68,7 +68,12 @@ func begin_planning() -> void:
 		_plan_ready = true
 		return
 	if _guess_count == 0:
-		_planned = _opening_attack()
+		# Authored opening (Giant Fly's stupid first lunge): a legal cast chosen
+		# by data, not by peeking. Falls back to the usual opening if illegal.
+		if not combatant.bot_opening_attack.is_empty() and is_legal_attack(combatant.bot_opening_attack):
+			_planned = combatant.bot_opening_attack.duplicate()
+		else:
+			_planned = _opening_attack()
 		_plan_ready = true
 		return
 	if _candidates.size() <= 2 or combatant.bot_logic != "capped_minimax":

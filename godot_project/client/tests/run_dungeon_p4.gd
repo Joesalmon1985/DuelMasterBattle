@@ -67,7 +67,7 @@ func _drain_dialogue(max_lines: int = 60) -> void:
 			await process_frame
 			_world.ui_dialogue_advance()
 			await process_frame
-		elif not _world.ui_input_locked():
+		elif not _world.ui_input_locked() or not _adv.pending_battle.is_empty():
 			return
 	_failures.append("dialogue/cutscene did not finish")
 

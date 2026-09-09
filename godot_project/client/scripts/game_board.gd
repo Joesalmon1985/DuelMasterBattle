@@ -628,6 +628,11 @@ func start_new_game(bot_seed: int = -1) -> void:
 		bot_seed = randi() % 1000000
 	_bot_seed = bot_seed
 	game = _BattleSim.new(_player_c, _enemy_c, bot_seed)
+	# D3: the authored prologue's guarantee. Only the PROLOGUE_FORCED_DEFEAT policy
+	# can switch this on; every other battle leaves it at 0 (off).
+	var adv := _adventure()
+	if _adventure_mode and adv != null and adv.battle_policy_for(_battle_request) == adv.POLICY_PROLOGUE:
+		game.forced_defeat_by_cast = int(_battle_request.get("forced_defeat_by_cast", 3))
 	_rival_name_lbl.text = _enemy_c.display_name
 	_rival_wizard.load_archetype(_enemy_c.archetype if _PixelPortrait.has_portrait(_enemy_c.archetype) else "wizard")
 	var sizes: Label = _rival_panel.find_child("Sizes", true, false)

@@ -45,6 +45,14 @@ var _enemy_casts: int = 0
 var _paused: bool = false
 var _fast_cast: bool = false
 
+## AUTHORED-PROLOGUE BACKSTOP ONLY (CORRECTIVE_PASS_PLAN D3). 0 = off (every
+## ordinary battle). When N > 0: (a) the enemy's Nth cast is guaranteed to break
+## the player's Ward if the solver has not already done so, and (b) the player's
+## casts cannot break the enemy's Ward — the duel is authored to be lost. Set
+## exclusively by the board under the PROLOGUE_FORCED_DEFEAT policy; never read
+## from bestiary data.
+var forced_defeat_by_cast: int = 0
+
 
 func _init(p_player: DmbCombatant, p_enemy: DmbCombatant, seed: int = 42) -> void:
 	player = p_player
@@ -312,7 +320,10 @@ func advance_time(delta: float, paused: bool = false) -> void:
 		pending.append(_attack("player", _AutoCast.fill_pattern(
 			_player_attack, player.weave_size, player.attack_pool, true, _rng), true))
 	if _enemy_should_cast():
-		pending.append(_attack("enemy", _bot.planned_guess(), _enemy_window.should_auto_cast()))
+		var guess: Array = _bot.planned_guess()
+		if forced_defeat_by_cast > 0 and _enemy_casts + 1 >= forced_defeat_by_cast:
+			guess = _player_ward.duplicate()
+		pending.append(_attack("enemy", guess, _enemy_window.should_auto_cast()))
 	if not pending.is_empty():
 		_resolve(pending)
 
@@ -399,6 +410,12 @@ func _resolve_one(item: Dictionary) -> bool:
 	rec.echo_count = int(r["echo"])
 	rec.fade_count = int(r["fade"])
 	rec.broke_ward = bool(r["broken"])
+	if who == "player" and forced_defeat_by_cast > 0 and rec.broke_ward:
+		# Authored prologue: the hero's best cast is *almost* right. Show the
+		# feedback honestly minus the killing blow so the player sees a real fight.
+		rec.broke_ward = false
+		rec.fracture_count = maxi(0, rec.fracture_count - 1)
+		rec.echo_count += 1
 	if who == "player":
 		_player_casts += 1
 		rec.attack_number = _player_casts

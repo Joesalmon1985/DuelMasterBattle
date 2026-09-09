@@ -105,9 +105,15 @@ func _test_bestiary_loads() -> void:
 		var c := DmbBestiary.make(id)
 		assert_true(c.weave_size >= 1 and c.ward_size >= 1, "bestiary %s sizes" % id)
 		assert_true(not c.attack_pool.is_empty(), "bestiary %s attack pool" % id)
-	var wisp := DmbBestiary.make("flame_wisp")
-	assert_eq(wisp.attack_pool, [RED], "wisp attacks RED only")
-	assert_eq(wisp.fixed_ward, [BLUE], "wisp ward is BLUE (attack ≠ ward magic)")
+	# The guaranteed introductory duel is Ashby's first lesson, not a wild creature.
+	var lesson := DmbBestiary.make("ashby_lesson1")
+	assert_eq(lesson.attack_pool, [BLUE], "lesson 1 casts Water only")
+	assert_eq(lesson.fixed_ward, [BLUE], "lesson 1 ward fixed Water")
+	# Burnt Wood creatures are real opponents now: every one has ≥2 slots.
+	for id in ["flame_wisp", "flame_imp", "steam_sprite", "steam_brute", "cinder_golem", "moss_shade"]:
+		var c := DmbBestiary.make(id)
+		assert_true(c.weave_size >= 2 and c.ward_size >= 2, "%s has at least 2 slots" % id)
+		assert_true(c.bot_logic != "random", "%s uses a real solver" % id)
 
 
 func _test_progression_model() -> void:
@@ -136,9 +142,9 @@ func _test_progression_model() -> void:
 
 
 func _test_1v1_flame_wisp_guaranteed() -> void:
-	var sim = _BattleSim.new(_john([BLUE], 1), DmbBestiary.make("flame_wisp"), 3)
+	var sim = _BattleSim.new(_john([BLUE], 1), DmbBestiary.make("ashby_lesson1"), 3)
 	_start(sim, [BLUE])
-	assert_eq(sim.get_enemy_ward(), [BLUE], "wisp ward fixed BLUE")
+	assert_eq(sim.get_enemy_ward(), [BLUE], "lesson ward fixed BLUE")
 	sim.debug_set_enemy_cast_at(999.0)
 	sim.advance_time_for_test(5.1)
 	_set_attack(sim, [BLUE])
@@ -148,11 +154,13 @@ func _test_1v1_flame_wisp_guaranteed() -> void:
 
 
 func _test_2v1_player_advantage() -> void:
-	var sim = _BattleSim.new(_john([BLUE, RED], 2), DmbBestiary.make("steam_sprite"), 5)
+	# A two-slot weave against a one-slot Ward covers both possibilities at once.
+	var one_slot := DmbCombatant.make({"id": "t", "display_name": "t", "archetype": "wizard", "kind": "creature",
+		"weave_size": 1, "attack_pool": [RED], "ward_size": 1, "ward_pool": [RED, BLUE], "bot_logic": "random"})
+	var sim = _BattleSim.new(_john([BLUE, RED], 2), one_slot, 5)
 	_start(sim, [RED, BLUE])
 	sim.debug_set_enemy_cast_at(999.0)
 	sim.advance_time_for_test(5.1)
-	# Two attempts cover both possibilities of a 1-slot ward at once.
 	_set_attack(sim, [RED, BLUE])
 	assert_true(sim.submit_player_attack(), "cast 2v1")
 	assert_eq(sim.result.outcome, "victory", "2 attempts vs 1 slot: guaranteed break")
@@ -228,8 +236,8 @@ func _test_bot_consistency_asymmetric() -> void:
 
 func _test_bot_solves_within_limit_variety() -> void:
 	var pairs := [
-		["flame_imp", [BLUE], 1], ["steam_sprite", [BLUE, RED], 2], ["steam_brute", [BLUE, RED], 2],
-		["cinder_golem", [BLUE, RED], 2], ["moss_shade", [BLUE, RED, STONE], 3],
+		["flame_imp", [BLUE, RED], 2], ["steam_sprite", [BLUE, RED], 2], ["steam_brute", [BLUE, RED], 2],
+		["cinder_golem", [BLUE, VINE], 2], ["moss_shade", [BLUE, RED, STONE], 3],
 		["hedge_wizard", [BLUE, RED, STONE], 3], ["red_wizard", [BLUE, RED, STONE, VINE], 4],
 	]
 	for p in pairs:
