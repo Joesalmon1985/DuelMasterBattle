@@ -20,6 +20,7 @@ const TESTS := [
 	"res://sim/tests/test_carts.gd",
 	"res://sim/tests/test_infection.gd",
 	"res://sim/tests/test_units.gd",
+	"res://sim/tests/test_world_sim.gd",
 ]
 
 
