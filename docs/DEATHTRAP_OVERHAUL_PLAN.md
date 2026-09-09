@@ -278,11 +278,11 @@ hasn't learned".
 | **P0 Canon & scaffolding** ✅ DONE | `content/dd_canon.json` + `content/dd_passages/` (29 files) + `test_dd_canon.gd`; `SECOND_ADVENTURE_PLAN.md` marked superseded | 11/11 green |
 | **P1 Level 1 overhaul** ✅ DONE | Trial-Day Ashwell, duel cutscene, Ashby lessons, `trial_road`, `trial_gate` (7 entrants), ENTER/NOT YET, threshold ending. Burnt Wood = training detour (grants stripped) | flow test ALL PASSED + sim 11/11 + screenshots reviewed |
 | **P2 Run state + first slice** ✅ DONE | run state (save v2+migration), Zones A/B/D through Cave Trolls (Fire via red book), Throm pit choice, conditions→duel bridge, fail/restart loop | unit 12/12 + dungeon flow ALL PASSED + P1 flow/smoke/playtest green + screenshots |
-| **P3 Trialmaster** | Zone E incl. dice/cobra tests, forced Throm duel, post-battle scene, betrayal variant | both p.60 branches playable |
-| **P4 Gems** | Zones C, I (+ Elf → Vine), diamond trap/real, iron-key door, notebook | three gems obtainable; false diamond kills the run |
-| **P5 Galleries & river** | Zone G (Mirror Demon, Bloodbeast + knowledge modifier, Rock Grub, boulder run), Zone F traversal, Zone H service layer | pacifist flow test |
-| **P6 Finale** | Manticore, Igbut, gem lock screen, final trap, Champion ending, optional Red Wizard duel | full run flow test gate → Fang |
-| **P7 Art & polish** | contestant sprites, statue, idol, portraits for new bestiary, zone tiles; screenshot pass; `.bat` unchanged | visual QA signed off |
+| **P3 Trialmaster** ✅ DONE | Zone E incl. dice/cobra tests (Stone), forced Throm duel, betrayal variant (no invented opponent), attack variant | `run_dungeon_p3.sh` ALL PASSED |
+| **P4 Gems** ✅ DONE | Zones C, I (Elf/boa → Vine), false eye, sapphire + iron key, real/false diamond, journal in pause menu | `run_dungeon_p4.sh` ALL PASSED |
+| **P5 Galleries & river** ✅ DONE | Zone H (prisoner → Bloodbeast weakness, Ivy toll), Zone G (Mirror Demon smash-or-duel → Light, Bloodbeast → Shadow, Rock Grub, boulder, trapped chest), Zone F (ritual / run / champion) | `run_dungeon_p5.sh` ALL PASSED (pacifist + attack legs) |
+| **P6 Finale** ✅ DONE | Manticore, optional Red duel, Igbut gem check, 3-strike gem lock, final trap, Champion → `dungeon_complete` | `run_dungeon_p6.sh` + `run_full_run.sh` (gate → Fang, one run, all spells earned in play) ALL PASSED |
+| **P7 Art & polish** ✅ DONE (first pass) | cave floor/wall tiles for `dd_*`, stalagmites, markers on every interactable, idol + mirror props, 11 new bestiary sprites, 11 zone QA shots vision-reviewed | screenshots in `qa/screenshots/adventure/11g–11q` |
 
 P0–P2 is the "first playable Deathtrap slice" the report recommends (§20) and proves
 every hard thing once.
