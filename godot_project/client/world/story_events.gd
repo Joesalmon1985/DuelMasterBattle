@@ -770,7 +770,9 @@ func _story_defeat(adv: Node, req: Dictionary, enemy_name: String) -> void:
 	await narrate("This time nothing decides to wait.")
 	await _w.fade_out(0.6)
 	_w.load_area("jane_placeholder", Vector2i(4, 4), "down")
+	adv.mark_visited("jane_placeholder")
 	adv.save()
+	await _w.fade_in(0.5)
 	await jane_wake()
 
 

@@ -1204,12 +1204,26 @@ func flash(color: Color, seconds: float = 0.12) -> void:
 	_fader.color = Color.BLACK
 
 
-## Fade to black and stay there; load_area's own fade-in brings the view back.
+## Fade to black and stay there. load_area does NOT fade back in — callers that
+## fade out around a load_area must call fade_in() afterwards.
 func fade_out(seconds: float = 0.5) -> void:
 	_fader.color = Color.BLACK
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, seconds)
 	await tw.finished
+
+
+## Bring the view back after fade_out.
+func fade_in(seconds: float = 0.35) -> void:
+	_fader.color = Color.BLACK
+	var tw := create_tween()
+	tw.tween_property(_fader, "modulate:a", 0.0, seconds)
+	await tw.finished
+
+
+## Test/inspection API: how dark the screen fader currently is (0 = clear).
+func ui_fader_alpha() -> float:
+	return _fader.modulate.a
 
 
 func shake(strength: float = 6.0, seconds: float = 0.4) -> void:

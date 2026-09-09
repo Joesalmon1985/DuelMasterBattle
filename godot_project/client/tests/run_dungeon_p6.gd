@@ -364,6 +364,12 @@ func _test_second_defeat_goes_to_jane() -> void:
 	assert_eq(_adv.story_phase(), "post_trial_recovery", "phase is post_trial_recovery")
 	assert_eq(_world.area_id, "jane_placeholder", "handed off to the Jane placeholder")
 	assert_true(_adv.flag("jane_placeholder_seen"), "placeholder narration ran")
+	# The hand-off fades to black; the view must come back or the player sees
+	# nothing and believes the game has stalled.
+	for i in range(60):
+		await process_frame
+	assert_true(_world.ui_fader_alpha() < 0.05, "screen faded back in after the Jane hand-off (alpha %.2f)" % _world.ui_fader_alpha())
+	assert_true(not _world.ui_input_locked(), "input unlocked in Jane's house")
 	await _free_world()
 
 
