@@ -53,18 +53,27 @@ func _run() -> void:
 	await _frames(10)
 	_capture("05_halvard_free_roam.png")
 
-	# 05b Red intercept staging (Halvard on the road; trigger fires on the walk)
-	await _step(Vector2i(-1, 0))
-	await _frames(14)
-	await _step(Vector2i(0, 1))
-	await _frames(14)
-	await _step(Vector2i(0, 1))
-	await _frames(14)
-	await _step(Vector2i(-1, 0))
-	await _frames(14)
-	await _step(Vector2i(-1, 0))
-	await _frames(60)
+	# 05b Red intercept staging: walk Halvard onto the road until the trigger
+	# fires (the story event locks input and stages Red), then shoot both layouts.
+	for step in [Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(-1, 0), Vector2i(-1, 0)]:
+		if _world.ui_input_locked():
+			break
+		await _step(step)
+	var g := 0
+	while not _world.ui_dialogue_open() and g < 240:
+		await process_frame
+		g += 1
+	_capture("05a_red_intercept_narration.png")
+	_world.ui_dialogue_advance()
+	await _frames(2)
+	_world.ui_dialogue_advance()
+	g = 0
+	while _world.ui_actor_facing("red") == "" and g < 240:
+		await process_frame
+		g += 1
+	await _frames(70)   # Red walks in
 	_capture("05b_red_intercept_facing.png")
+	print("FACING CHECK: red=%s halvard=%s red_pos=%s halvard_pos=%s" % [_world.ui_actor_facing("red"), _world.ui_actor_facing("john"), str(_world.ui_actor_pos("red")), str(_world.john_pos())])
 	_world.ui_dialogue_advance()
 	await _frames(2)
 	_world.ui_dialogue_advance()

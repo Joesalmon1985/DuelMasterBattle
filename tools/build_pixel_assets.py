@@ -342,31 +342,39 @@ def draw_human(d, facing, frame, shirt, hat=None, tool=None, skin=PAL["skin"], h
     elif facing == "up":
         d.rectangle([5, 2, 10, 7], hair + (255,))
     elif facing == "left":
-        d.rectangle([5, 2, 10, 4], hair + (255,)); d.rectangle([9, 4, 10, 7], hair + (255,))
-        px(d, 6, 6, INK + (255,))
+        # Profile facing LEFT: hair covers the back of the head (viewer's right),
+        # the eye sits forward (viewer's left), the nose/brow juts left. Verified
+        # against the imported mage sprites (CORRECTIVE_PASS Phase 2).
+        d.rectangle([5, 2, 10, 4], hair + (255,)); d.rectangle([8, 4, 10, 7], hair + (255,))
+        px(d, 5, 6, INK + (255,)); px(d, 4, 7, skin + (255,))
     else:
-        d.rectangle([5, 2, 10, 4], hair + (255,)); d.rectangle([5, 4, 6, 7], hair + (255,))
-        px(d, 9, 6, INK + (255,))
+        d.rectangle([5, 2, 10, 4], hair + (255,)); d.rectangle([5, 4, 7, 7], hair + (255,))
+        px(d, 10, 6, INK + (255,)); px(d, 11, 7, skin + (255,))
     if hat:
         d.polygon([(4, 3), (11, 3), (8, -2)], hat + (255,))
         d.rectangle([3, 3, 12, 4], hat + (255,))
     # arms
     d.rectangle([3, 9, 4, 15], skin + (255,))
     d.rectangle([11, 9, 12, 15], skin + (255,))
+    tx = 3 if facing == "left" else 12   # tool in the leading hand
     if tool == "axe":
-        d.line([(12, 15), (12, 6)], PAL["wood_b"] + (255,))
-        d.rectangle([12, 5, 14, 8], PAL["steel"] + (255,))
+        d.line([(tx, 15), (tx, 6)], PAL["wood_b"] + (255,))
+        d.rectangle([tx, 5, tx + 2, 8] if tx == 12 else [tx - 2, 5, tx, 8], PAL["steel"] + (255,))
     elif tool == "staff":
-        d.line([(12, 16), (12, 2)], PAL["trunk"] + (255,))
-        d.ellipse([11, 0, 14, 3], PAL["water_b"] + (255,))
+        d.line([(tx, 16), (tx, 2)], PAL["trunk"] + (255,))
+        d.ellipse([tx - 1, 0, tx + 2, 3], PAL["water_b"] + (255,))
 
 
 def make_character(name, shirt, hat=None, tool=None, hair=PAL["hair"], skin=PAL["skin"]):
-    for facing in ("down", "up", "left", "right"):
+    # Right-facing frames are exact mirrors of the left-facing ones, so the two
+    # side views can never disagree (CORRECTIVE_PASS Phase 2; tools/check_facing.py).
+    for facing in ("down", "up", "left"):
         for frame in range(2):
             im, d = new(16, 24)
             draw_human(d, facing, frame, shirt, hat, tool, skin=skin, hair=hair)
             save(im, f"chars/{name}_{facing}_{frame}.png")
+            if facing == "left":
+                save(im.transpose(Image.FLIP_LEFT_RIGHT), f"chars/{name}_right_{frame}.png")
 
 
 def make_characters():
@@ -840,8 +848,13 @@ def import_pack():
             canvas.paste(im, ((96 - im.width) // 2, 96 - im.height), im)
             save(canvas, f"portraits/{key}.png")
     # 8-direction mages -> overworld 16x24-ish cutscene sprites (4 dirs)
-    for key, name in (("red_mage", "FireMage"), ("blue_mage", "IceMage")):
-        for facing, src in (("down", "Front"), ("up", "Back"), ("left", "Left"), ("right", "Right")):
+    # Side views: the pack's "Left.png"/"Right.png" are named for the side of the
+    # SHEET, not the facing — measured eye position shows both Left.png files
+    # face RIGHT. This was the root cause of the confrontation-facing bug. Each
+    # mage uses Right.png (verified LEFT-facing) and mirrors it for right-facing,
+    # so facing is correct by construction. Checked by tools/check_facing.py.
+    for key, name, left_file in (("red_mage", "FireMage", "Right"), ("blue_mage", "IceMage", "Right")):
+        for facing, src in (("down", "Front"), ("up", "Back"), ("left", left_file), ("right", left_file)):
             p = SRC / "Characters" / "NPC" / "EnemyNPC" / f"{name}Sprites" / f"{src}.png"
             if p.exists():
                 im = Image.open(p).convert("RGBA")
@@ -851,6 +864,8 @@ def import_pack():
                 im.thumbnail((18, 26), Image.NEAREST)
                 canvas = Image.new("RGBA", (18, 26), (0, 0, 0, 0))
                 canvas.paste(im, ((18 - im.width) // 2, 26 - im.height), im)
+                if facing == "right":
+                    canvas = canvas.transpose(Image.FLIP_LEFT_RIGHT)  # exact mirror of the left view
                 for f in range(2):
                     save(canvas, f"chars/{key}_{facing}_{f}.png")
     # Hedge wizard (Ashby): recolour the fire mage towards moss green.

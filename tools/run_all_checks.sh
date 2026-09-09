@@ -3,6 +3,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 source "$ROOT/tools/find_godot.sh"
 cd "$ROOT"
+python "$ROOT/tools/check_facing.py"
 "$ROOT/tools/run_godot_tests.sh"
 "$ROOT/tools/run_godot_ui_smoke.sh"
 "$ROOT/tools/run_dialogue.sh"

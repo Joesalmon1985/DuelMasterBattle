@@ -28,7 +28,7 @@ Inspection notes (current state, verified from source before planning):
 
 ---
 
-## PHASE 0 — Scaffolding: story phase, battle-result policy, player override
+## PHASE 0 — Scaffolding: story phase, battle-result policy, player override — ✅ DONE
 
 Goal: the authoritative state machine and policy hooks everything else hangs on.
 
@@ -69,7 +69,7 @@ Commit: `P0: story_phase + save v3, battle policy, player-combatant override, na
 
 ---
 
-## PHASE 1 — Halvard prologue (brief §1–§4)
+## PHASE 1 — Halvard prologue (brief §1–§4) — ✅ DONE
 
 ### 1.1 Test first (`client/tests/run_adventure_flow.gd` — full rewrite begins here)
 1. New game → `story_phase == halvard_prologue`; overworld renders **Halvard** sprite (`blue_mage`), not John.
@@ -97,7 +97,7 @@ Commit: `P1: playable Halvard prologue, forced Red defeat, protagonist swap`.
 
 ---
 
-## PHASE 2 — Facing bug (brief §3)
+## PHASE 2 — Facing bug (brief §3) — ✅ DONE (root cause: sprite pack Left/Right files named by sheet side, not facing; right views are now exact mirrors + `tools/check_facing.py`)
 
 1. Read `_update_john_sprite()` and actor sprite selection; confirm which PNG is `left`/`right` and how `facing` maps. Render a probe scene and **screenshot** both confrontation layouts (Red left / Red right); vision-check: left character faces right, right faces left.
 2. Add `overworld.face_each_other(a_id, b_id)` helper used by every cutscene (prologue intercept, gate roster, Throm, Dwarf).
@@ -108,7 +108,7 @@ Commit: `P2: confrontation facing helper + visual verification`.
 
 ---
 
-## PHASE 3 — Ashby three-duel arc (brief §6–§8, §23)
+## PHASE 3 — Ashby three-duel arc (brief §6–§8, §23) — ✅ DONE
 
 ### 3.1 Tests first (adventure flow + `test_ashby_training.gd` sim test)
 1. Duel 1: John Water/1; Ashby `ashby_lesson1` (1/1); winnable (seeded win) → `ashby_duel1_done`.
@@ -127,7 +127,7 @@ Commit: `P3: Ashby three-duel training arc with defeat-granted Vine`.
 
 ---
 
-## PHASE 4 — Every-third-battle rule (brief §9)
+## PHASE 4 — Every-third-battle rule (brief §9) — ✅ DONE
 
 1. Sim test (`test_encounter_sequence.gd`): sequence deterministic; retry of same id no increment; indices 3,6,9 optimal; prologue not counted.
 2. `adventure.begin_encounter(id)` called in `overworld._start_battle` **before** request; request gets `encounter_index`, `optimal: bool`.
@@ -138,7 +138,7 @@ Commit: `P4: deterministic every-third-battle optimal-tier opponents`.
 
 ---
 
-## PHASE 5 — Giant Fly redesign + purpose (brief §10–§11)
+## PHASE 5 — Giant Fly redesign + purpose (brief §10–§11) — ✅ DONE
 
 ### 5.1 Tests
 1. Sim: Fly = weave 2, ward 2, pool [Blue, Vine, Red]; enumerate **all legal John Wards** at Water+Vine/2; `opening_guess = [Red, Red]` ⇒ 0 exact, 0 colour for every ward.
@@ -155,7 +155,7 @@ Commit: `P5: Giant Fly is a real threat with a dumb opening; east fork leads som
 
 ---
 
-## PHASE 6 — Burnt Wood progression, pendant → Fire, shard → Stone, extra pre-Trial magic (brief §12–§14)
+## PHASE 6 — Burnt Wood progression, pendant → Fire, shard → Stone, extra pre-Trial magic (brief §12–§14) — ✅ DONE (6.3 dropped per D2)
 
 ### 6.1 Tests
 1. Bestiary data test: every Burnt Wood enemy (`flame_imp`, `steam_sprite`, `steam_brute`, `cinder_golem`, `moss_shade`) has weave ≥ 2, ward ≥ 2, non-random logic, and no two share identical (pool, logic).
@@ -174,7 +174,7 @@ Commit: `P6: Burnt Wood is dangerous; Fire/Stone pre-Trial; trial_ready gate; op
 
 ---
 
-## PHASE 7 — Map edges, dead ends, topology test (brief §15–§17, §31)
+## PHASE 7 — Map edges, dead ends, topology test (brief §15–§17, §31) — ✅ DONE (topology test data-only: `client/tests/run_topology.gd`; 4 gated loops)
 
 ### 7.1 Topology test first (`sim/tests/test_topology.gd`, loads `world_data` areas)
 1. Every exit `to_area` exists.
@@ -199,7 +199,7 @@ Commit: `P7: topology test, edge continuity, dead-end removal, 4 dungeon loops`.
 
 ---
 
-## PHASE 8 — Defeat policy: left-for-dead once, then Jane (brief §22, §24–§27)
+## PHASE 8 — Defeat policy: left-for-dead once, then Jane (brief §22, §24–§27) — ✅ DONE (in P0 commit)
 
 ### 8.1 Tests
 1. Post-training story defeat #1 (e.g. Cave Troll): no Try again; John wakes **in the same room**, enemy still present, narration "left for dead"; `left_for_dead_used == true`; run continues.
@@ -219,7 +219,7 @@ Commit: `P8: one left-for-dead wake, then Jane transition; no adventure retries`
 
 ---
 
-## PHASE 9 — Dialogue pagination (brief §19, §32)
+## PHASE 9 — Dialogue pagination (brief §19, §32) — ✅ DONE
 
 ### 9.1 Tests (`client/tests/run_dialogue.gd`, add to `run_all_checks.sh`)
 short line · long line (> 1 page) · 3-paragraph note · rapid taps while typing · tap finishes page · tap shows next page · final tap closes · choice after long text · **the actual Halvard note text from `dd_entrance`** — assert total displayed characters == source length (nothing clipped/destroyed).
@@ -234,7 +234,7 @@ Commit: `P9: paginated dialogue; Halvard note fully readable`.
 
 ---
 
-## PHASE 10 — Puzzle & staging rework (brief §18, §20, §21)
+## PHASE 10 — Puzzle & staging rework (brief §18, §20, §21) — ✅ DONE (riddle = derivable arithmetic clue → Manticore Light ban; pit hazard; chest/boulder answer to Stone; false eye/diamond have clues + route consequences; gem lock kept)
 
 ### 10.1 Old-man riddle replacement
 1. Design: "How many have walked this gallery today?" — evidence = footprint signs (`dd_prints_west` "several sets", `dd_prints_east` "one set, smaller") + gate roster (six others entered). Answer derivable in-world (e.g. count of distinct footprint sets described). Wrong answer: old man laughs, gives nothing; right: he names which contestant went east (clue feeding Phase 5 route) + torch hint. Never bricks.
@@ -261,7 +261,7 @@ Commit: `P10: coherent gallery riddle, staged Throm pit, hazards with clues and 
 
 ---
 
-## PHASE 11 — Narration rewrite (brief §5)
+## PHASE 11 — Narration rewrite (brief §5) — ✅ DONE (`docs/NARRATOR_VOICE.md`; stale-phrase grep in flow test)
 
 1. Write voice guide `docs/NARRATOR_VOICE.md` (≤ 1 page: dry omniscient, second person, self-correcting, no gag on death/entry/injury beats, no copied prose).
 2. Rewrite all `narrate()` strings in opening, Ashwell, Trial road, gate, and dungeon events. Grep audit: player-facing narrator strings containing "John " as subject (should be "you") — test asserts zero outside NPC speech.
@@ -272,7 +272,7 @@ Commit: `P11: second-person narrator pass`.
 
 ---
 
-## PHASE 12 — AI tests (brief §33) — `sim/tests/test_early_solver.gd`
+## PHASE 12 — AI tests (brief §33) — `sim/tests/test_early_solver.gd` — ✅ DONE
 1. Enumerate legal Wards for pools {Water}, {Water,Vine}, sizes 1–2; every solver guess legal.
 2. Candidate sets feedback-consistent after each register.
 3. Every-third assignment deterministic; retry no increment (shares Phase 4 test).
@@ -284,7 +284,7 @@ Commit: `P12: early-solver AI tests`.
 
 ---
 
-## PHASE 13 — Rewrite end-to-end flows + manual playthrough (brief §30, §34)
+## PHASE 13 — Rewrite end-to-end flows + manual playthrough (brief §30, §34) — ✅ DONE (report: `docs/CORRECTIVE_PASS_REPORT.md`)
 
 1. `run_adventure_flow.gd` full rewrite to the 40-point sequence in brief §30 (prologue → staff → Ashby ×3 → Fly → Burnt Wood → gate rejects underpowered → gate accepts).
 2. `run_dungeon_flow.gd`/`run_full_run.gd`: update for one-attempt model (left-for-dead once), new loops, riddle, pit staging, no gate resets.
