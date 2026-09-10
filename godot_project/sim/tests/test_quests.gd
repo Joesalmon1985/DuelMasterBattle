@@ -11,6 +11,7 @@ func run() -> void:
 	_test_items_and_fights()
 	_test_puzzle_logic_edge_cases()
 	_test_item_catalogue()
+	_test_every_outcome_gives_token()
 
 
 func _test_template_follows_state() -> void:
@@ -110,7 +111,7 @@ func _test_items_and_fights() -> void:
 	assert_eq(DmbQuests.fight_for(q, "out_fight"), "flame_imp", "fight branch names an enemy")
 	assert_eq(DmbQuests.fight_for(q, "out_wolves"), "", "quiet branch has no fight")
 	assert_eq(DmbQuests.item_grants(q, "out_truth"), ["token_%s" % fid], "token granted: the dungeon dependency source")
-	assert_eq(DmbQuests.item_grants(q, "out_quiet"), ["black_seed"], "quiet branch gives a different object")
+	assert_eq(DmbQuests.item_grants(q, "out_quiet"), ["token_%s" % fid, "black_seed"], "quiet branch still gives the token, plus a different object")
 	# Every quest has at least one outcome that yields the settlement token, so
 	# the first dungeon's dependency is always reachable.
 	for tmpl in ["missing_flock", "tainted_well", "road_toll"]:
@@ -135,7 +136,8 @@ func _test_puzzle_logic_edge_cases() -> void:
 	r = DmbPuzzleLogic.act(p, st, {"kind": "place", "slot": "p2_s0", "item": "sigil_ash"}, ctx)
 	assert_true(str(r["text"]).contains("does not fit"), "wrong niche refuses")
 	r = DmbPuzzleLogic.act(p, st, {"kind": "place", "slot": "p2_s1", "item": "sigil_ash"}, ctx)
-	assert_eq(r["consume"], ["sigil_ash"], "correct offering consumed")
+	assert_eq(r["consume"], [], "imported offering is shown, not consumed (shared network source)")
+	assert_true(str(r["text"]).contains("keep"), "player keeps the sigil")
 	assert_true(not bool(r["solved_now"]), "half done")
 	# Switch chain resets on a wrong pull.
 	var sc := DmbPuzzleGen._make("switch_chain", "p1", rng, {}, 0)
@@ -183,3 +185,20 @@ func _test_item_catalogue() -> void:
 	assert_true(DmbItems.describe("cure_fragment_2").length() > 10, "generated items have prose")
 	for id in DmbItems.DATA:
 		assert_true(str(DmbItems.sprite_of(id)) != "", "%s has a sprite" % id)
+
+
+## Every leaf of every template hands over the settlement token — the first
+## dungeon's dependency — so no dialogue choice can lock the network.
+func _test_every_outcome_gives_token() -> void:
+	var sim := DmbWorldSim.new(5)
+	sim.setup()
+	for snid in sim.catan.settlements:
+		for tid in DmbQuests.TEMPLATES:
+			var q := DmbQuests.build_template(sim, int(snid), tid)
+			var fid := str(sim.catan.settlements[snid]["owner"])
+			for oid in q["outcomes"]:
+				var has := false
+				for eff in q["outcomes"][oid].get("effects", []):
+					if str(eff.get("item", "")) == "token_%s" % fid:
+						has = true
+				assert_true(has, "%s/%s grants the %s token" % [tid, oid, fid])

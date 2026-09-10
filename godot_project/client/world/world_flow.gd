@@ -67,3 +67,12 @@ func last_events_text() -> Array:
 	for e in sim.last_events:
 		out.append(sim.describe(e))
 	return out
+
+
+## Only the events a traveller would hear about: places founded, walled or opened.
+func notable_events_text() -> Array:
+	var out: Array = []
+	for e in sim.last_events:
+		if str(e["type"]) in ["settlement", "city", "cave", "epidemic"]:
+			out.append(sim.describe(e))
+	return out

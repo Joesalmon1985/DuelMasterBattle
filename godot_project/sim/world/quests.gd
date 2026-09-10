@@ -53,6 +53,11 @@ static func build(sim: DmbWorldSim, snid: int) -> Dictionary:
 	var tid := pick_template(sim, snid)
 	if tid == "":
 		return {}
+	return build_template(sim, snid, tid)
+
+
+## Build a specific template for a settlement (tests; forced stories).
+static func build_template(sim: DmbWorldSim, snid: int, tid: String) -> Dictionary:
 	var s: Dictionary = sim.catan.settlements[snid]
 	var fid := str(s["owner"])
 	var names := _names(snid)
@@ -83,7 +88,7 @@ static func build(sim: DmbWorldSim, snid: int) -> Dictionary:
 				"out_fight": {"text": "Whatever took the flock did not expect the flock to be followed. You come back down the walk with ash on your boots. The child is a hero for a week.",
 					"effects": [{"fight": "flame_imp"}, {"treat": hid}, {"mood": "grateful"}, {"item": "token_%s" % fid}]},
 				"out_quiet": {"text": "You take the child home. You say nothing. Some nights the high walk glows a little, and nobody goes up to look.",
-					"effects": [{"mood": "uneasy"}, {"item": "black_seed"}]},
+					"effects": [{"item": "token_%s" % fid}, {"mood": "uneasy"}, {"item": "black_seed"}]},
 			}
 		"tainted_well":
 			q["title"] = "The Tainted Well"
@@ -103,7 +108,7 @@ static func build(sim: DmbWorldSim, snid: int) -> Dictionary:
 				"out_fight": {"text": "You come up out of the well with something's teeth in your sleeve and nothing's teeth in the water. The digger buys you a drink. From a different well.",
 					"effects": [{"fight": "steam_sprite"}, {"treat": hid}, {"mood": "grateful"}, {"item": "token_%s" % fid}]},
 				"out_seal": {"text": "The well is capped. The new one takes six weeks. Two of the three children get better. The steading remembers the third.",
-					"effects": [{"resource": [fid, "brick", -1]}, {"mood": "mourning"}, {"item": "cure_note"}]},
+					"effects": [{"item": "token_%s" % fid}, {"resource": [fid, "brick", -1]}, {"mood": "mourning"}, {"item": "cure_note"}]},
 				"out_champion": {"text": "The rider goes. The champion comes, eventually, and the thing in the well is dealt with — in the ledgers, by the steading, at the champion's rates.",
 					"effects": [{"weight": [fid, "fight", 0.3]}, {"resource": [fid, "wool", -1]}, {"treat": hid}, {"mood": "watched"}, {"item": "token_%s" % fid}]},
 				"out_magic": {"text": "Water answers Water. The sweetness goes out of the well like a held breath let go. The healer watches you very carefully after that.",
@@ -133,7 +138,7 @@ static func build(sim: DmbWorldSim, snid: int) -> Dictionary:
 				"out_warden": {"text": "He takes the job like a man handed a rope on a cliff. The road is the safest in the country within the season.",
 					"effects": [{"weight": [fid, "roads", 0.2]}, {"weight": [fid, "fight", 0.1]}, {"mood": "grateful"}, {"item": "token_%s" % fid}]},
 				"out_remove": {"text": "Soldiers come for him. The smith closes his shutters. The toll is gone; so is the smith, by spring.",
-					"effects": [{"resource": [fid, "ore", -1]}, {"mood": "mourning"}, {"item": "brass_gear"}]},
+					"effects": [{"item": "token_%s" % fid}, {"resource": [fid, "ore", -1]}, {"mood": "mourning"}, {"item": "brass_gear"}]},
 			}
 	return q
 

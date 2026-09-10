@@ -50,7 +50,9 @@ static func _make(type: String, pid: String, rng: RandomNumberGenerator, dep: Di
 			var local: String = LOCAL_ITEMS[rng.randi_range(0, LOCAL_ITEMS.size() - 1)]
 			var need := str(dep["needs"]["item"])
 			p["title"] = "The Two Offerings"
-			p["slots"] = [{"id": pid + "_s0", "item": local}, {"id": pid + "_s1", "item": need}]
+			# The imported item is *shown* to the niche and kept (several dungeons
+			# may depend on the same source — consuming it could block the network).
+			p["slots"] = [{"id": pid + "_s0", "item": local}, {"id": pid + "_s1", "item": need, "keep": true}]
 			p["items"] = [local]
 			p["clue"] = "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — %s." % _source_hint(dep)
 		"exchange":

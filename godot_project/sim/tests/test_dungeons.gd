@@ -13,6 +13,7 @@ func run() -> void:
 	_test_rewards_progress()
 	_test_save_roundtrip()
 	_test_determinism()
+	_test_network_walk_is_solvable()
 
 
 func _test_towers_at_setup() -> void:
@@ -170,3 +171,33 @@ func _node_dist(board: DmbHexBoard, a: int, b: int) -> int:
 				dist[nb] = int(dist[cur]) + 1
 				frontier.append(nb)
 	return 99
+
+
+## §7 end-to-end solvability: walking the dungeons in creation order, holding
+## only what earlier dungeons and settlements gave, every dependency room can be
+## answered — and the imported item is kept, so shared sources never run dry.
+func _test_network_walk_is_solvable() -> void:
+	var sim := DmbWorldSim.new(23)
+	sim.setup()
+	for i in range(40):
+		sim.advance_turn()
+	var pockets: Array = []
+	for f in sim.factions:
+		pockets.append("token_%s" % f)   # every settlement quest leaf hands out its token
+	for d in sim.dungeons.dungeons:
+		var need := str(d["needs"]["item"])
+		assert_true(need in pockets, "%s can be entered with what came before (needs %s)" % [d["id"], need])
+		for p in d["puzzles"]:
+			if str(p["type"]) != "offerings":
+				continue
+			var st := DmbPuzzleLogic.fresh_state(p)
+			var items := pockets.duplicate()
+			for sl in p["slots"]:
+				items.append(str(sl["item"]))   # local item lies in the room
+			for sl in p["slots"]:
+				var r := DmbPuzzleLogic.act(p, st, {"kind": "place", "slot": str(sl["id"]), "item": str(sl["item"])}, {"items": items})
+				for c in r["consume"]:
+					items.erase(c)
+			assert_true(bool(st["solved"]), "%s offerings room solves" % d["id"])
+			assert_true(need in items, "%s keeps the imported %s" % [d["id"], need])
+		pockets.append(str(d["provides"]))

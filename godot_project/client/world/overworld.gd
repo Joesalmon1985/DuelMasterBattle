@@ -514,6 +514,7 @@ func _process(delta: float) -> void:
 				f.texture = _tex(f.get_meta("frames")[_anim_frame])
 			else:
 				f.texture = _tex("props/fire_%d.png" % ((_anim_frame + int(f.position.x) / TPX) % 3))
+	_tick_workers(delta)
 	if _moving:
 		_move_t += delta / STEP_SECONDS
 		_anim_time += delta
@@ -629,10 +630,16 @@ func _travel(to_area: String, to_pos: Vector2i, facing: String, travel_text: Str
 	var tw := create_tween()
 	tw.tween_property(_fader, "modulate:a", 1.0, 0.25)
 	await tw.finished
+	var was_world := WorldFlow.is_world_area(area_id)
 	load_area(to_area, to_pos, facing)
 	_adv().mark_visited(to_area)
 	_adv().save()
 	_fade_in()
+	# The world moved while you walked: say so when something visible changed.
+	if was_world and WorldFlow.is_world_area(to_area):
+		var news := _world_flow.notable_events_text()
+		if not news.is_empty():
+			await _dialogue.say_async("", "Word on the road:\n" + "\n".join(PackedStringArray(news)))
 	_input_locked = false
 	_touch.set_enabled(true)
 
@@ -1364,6 +1371,51 @@ func rebuild() -> void:
 		area = _play.dungeon_area(area_id)
 		_build_tiles_only()
 	_rebuild_entities()
+
+
+## Ambient work loops (design doc §14): a worker NPC with a `workplace` walks
+## between its post and its building and back, pausing at each end. Movement is
+## tile-locked and never onto John or a solid entity, so interaction stays clean.
+func _tick_workers(delta: float) -> void:
+	if _input_locked or _scripted_running:
+		return
+	var moved := false
+	for e in _entities:
+		if e["kind"] != "npc" or not e.has("workplace") or not is_instance_valid(e.get("node")):
+			continue
+		var t: float = float(e.get("_work_t", 0.0)) + delta
+		var wait: float = float(e.get("_work_wait", 1.6 + (int(e["pos"][0]) % 3) * 0.7))
+		if t < wait:
+			e["_work_t"] = t
+			continue
+		e["_work_t"] = 0.0
+		e["_work_wait"] = 1.4 + randf() * 1.2
+		var here := Vector2i(int(e["pos"][0]), int(e["pos"][1]))
+		var post: Vector2i = e.get("_post", here)
+		e["_post"] = post
+		var work := Vector2i(int(e["workplace"][0]), int(e["workplace"][1]))
+		var goal: Vector2i = work if not bool(e.get("_to_post", false)) else post
+		# One tile toward the goal (stop adjacent to the building — it is solid).
+		var d := goal - here
+		var step := Vector2i(signi(d.x), 0) if abs(d.x) >= abs(d.y) else Vector2i(0, signi(d.y))
+		if d.length_squared() <= 1 or step == Vector2i.ZERO:
+			e["_to_post"] = not bool(e.get("_to_post", false))
+			continue
+		var next := here + step
+		if next == _john_pos or not is_walkable(next):
+			e["_to_post"] = not bool(e.get("_to_post", false))
+			continue
+		_entity_at.erase(here)
+		e["pos"] = [next.x, next.y]
+		_entity_at[next] = e
+		var spr := str(e.get("sprite", "villager_a"))
+		e["node"].texture = _tex("chars/%s_%s_0.png" % [spr, _dir_name(step)])
+		var spr_node: Sprite2D = e["node"]
+		var tw: Tween = spr_node.create_tween()
+		tw.tween_property(spr_node, "position", Vector2(next) * TPX + Vector2(0, -8) * TILE_SCALE, STEP_SECONDS * 1.6)
+		moved = true
+	if moved:
+		_update_prompt()
 
 
 func _build_tiles_only() -> void:

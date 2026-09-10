@@ -51,8 +51,11 @@ static func act(p: Dictionary, st: Dictionary, action: Dictionary, ctx: Dictiona
 					r["text"] = "%s does not fit the shape cut here." % DmbItems.name_of(item)
 				else:
 					st["filled"][sid] = item
-					r["consume"] = [item]
-					r["text"] = "%s settles into the stone like it was carved for it." % DmbItems.name_of(item)
+					if bool(slot.get("keep", false)):
+						r["text"] = "You hold %s to the niche. The stone recognises it — and lets you keep it." % DmbItems.name_of(item)
+					else:
+						r["consume"] = [item]
+						r["text"] = "%s settles into the stone like it was carved for it." % DmbItems.name_of(item)
 					if st["filled"].size() == p["slots"].size():
 						_solve(st, r, "Both niches full. Somewhere below, a counterweight lets go, and the far door opens.")
 			elif kind == "inspect":
