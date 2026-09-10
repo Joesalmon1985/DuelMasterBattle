@@ -107,8 +107,8 @@ func _test_bestiary_loads() -> void:
 		assert_true(not c.attack_pool.is_empty(), "bestiary %s attack pool" % id)
 	# The guaranteed introductory duel is Ashby's first lesson, not a wild creature.
 	var lesson := DmbBestiary.make("ashby_lesson1")
-	assert_eq(lesson.attack_pool, [BLUE], "lesson 1 casts Water only")
-	assert_eq(lesson.fixed_ward, [BLUE], "lesson 1 ward fixed Water")
+	assert_eq(lesson.attack_pool, [BLUE, VINE], "lesson 1 casts Water and Vine")
+	assert_eq(lesson.fixed_ward, [BLUE, VINE], "lesson 1 ward fixed Water, Vine (told to the player)")
 	# Burnt Wood creatures are real opponents now: every one has ≥2 slots.
 	for id in ["flame_wisp", "flame_imp", "steam_sprite", "steam_brute", "cinder_golem", "moss_shade"]:
 		var c := DmbBestiary.make(id)
@@ -142,15 +142,18 @@ func _test_progression_model() -> void:
 
 
 func _test_1v1_flame_wisp_guaranteed() -> void:
-	var sim = _BattleSim.new(_john([BLUE], 1), DmbBestiary.make("ashby_lesson1"), 3)
-	_start(sim, [BLUE])
-	assert_eq(sim.get_enemy_ward(), [BLUE], "lesson ward fixed BLUE")
+	# Lesson 1 is now the proper two-slot game from the very first duel: Ashby
+	# tells John his Ward (Water, Vine), so casting it back is a guaranteed win.
+	var sim = _BattleSim.new(_john([BLUE, VINE], 2), DmbBestiary.make("ashby_lesson1"), 3)
+	_start(sim, [BLUE, BLUE])
+	assert_eq(sim.get_enemy_ward(), [BLUE, VINE], "lesson ward fixed Water, Vine")
 	sim.debug_set_enemy_cast_at(999.0)
 	sim.advance_time_for_test(5.1)
-	_set_attack(sim, [BLUE])
+	_set_attack(sim, [BLUE, VINE])
 	assert_true(sim.submit_player_attack(), "cast")
 	assert_eq(sim.result.outcome, "victory", "first fight is guaranteed")
-	assert_eq(sim.player_history[0].fracture_count, 1, "1 fracture")
+	assert_eq(sim.player_history[0].fracture_count, 2, "2 fractures")
+
 
 
 func _test_2v1_player_advantage() -> void:
@@ -170,7 +173,7 @@ func _test_2v1_player_advantage() -> void:
 
 
 func _test_2v2() -> void:
-	var sim = _BattleSim.new(_john([BLUE, RED], 2), DmbBestiary.make("steam_brute"), 7)
+	var sim = _BattleSim.new(_john([BLUE, RED], 2), DmbBestiary.make("flame_imp"), 7)
 	_start(sim, [RED, RED])
 	sim.debug_set_enemy_ward([BLUE, RED])
 	sim.debug_set_enemy_cast_at(999.0)

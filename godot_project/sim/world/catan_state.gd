@@ -32,6 +32,7 @@ var knights: Dictionary = {}		# fid -> played knights
 var free_road_credit: Dictionary = {}
 var roads: Dictionary = {}			# edge id -> fid
 var settlements: Dictionary = {}	# node id -> {"owner", "city"}
+var reserved_nodes: Dictionary = {}	# node id -> reason; never legal for settlement (dungeon sites)
 var longest_road_owner: String = ""
 var largest_army_owner: String = ""
 var rng := RandomNumberGenerator.new()
@@ -142,7 +143,7 @@ func nodes_of(fid: String) -> Array:
 # --- legality ---------------------------------------------------------------
 
 func _distance_ok(nid: int) -> bool:
-	if settlements.has(nid):
+	if settlements.has(nid) or reserved_nodes.has(nid):
 		return false
 	for nb in board.node_neighbors(nid):
 		if settlements.has(nb):

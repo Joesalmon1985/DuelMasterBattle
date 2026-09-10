@@ -147,22 +147,21 @@ func ashby_training() -> void:
 		return
 	if not adv.flag("ashby_duel1_done"):
 		await _w.say("Ashby", "Halvard's staff. In the hand of a man who smells of sawdust. I have had stranger Tuesdays.")
-		await _w.say("Ashby", "Water, and one knot. That isn't wizardry yet. But it is enough for me to show you what a Ward is.")
-		await _w.say("Ashby", "I'll hide one spell. You cast the one you have. Watch what happens.")
+		await _w.say("Ashby", "Water and Vine, two knots. That isn't wizardry yet. But it is enough for me to show you what a Ward is.")
+		await _w.say("Ashby", "A Ward is two hidden spells in two slots. Mine is Water, then Vine — I'm telling you, this once. Put yours up, then cast into mine. Watch what happens.")
 		await _w.start_battle_request({
 			"id": "ashby_duel1", "enemy_id": "ashby_lesson1", "kind": "wizard", "training": true,
 			"on_win_flag": "ashby_duel1_done", "on_defeat_flag": "ashby_duel1_done",
-			"intro": "Ashby's first lesson. One slot, one spell.\n\nChoose a Ward. Cast. Read the result.",
+			"intro": "Ashby's first lesson. Two slots, two spells — and he has told you his Ward: Water, then Vine.\n\nChoose your own Ward. Cast his back at him. Read the result.",
 		})
 		return
 	if not adv.flag("ashby_duel2_done"):
 		await _w.say("Ashby", "Good. Now let me show you what a real wizard does, so you don't go up that hill thinking you've seen one.")
-		await _w.say("Ashby", "Two knots. Two slots. Same rules.")
+		await _w.say("Ashby", "Three knots. Three slots. Same rules — and one more than you have.")
 		await _w.start_battle_request({
 			"id": "ashby_duel2", "enemy_id": "ashby_lesson2", "kind": "wizard", "training": true,
 			"on_win_flag": "ashby_duel2_done", "on_defeat_flag": "ashby_duel2_done",
-			"grant_on_defeat": {"spell": 6, "weave": 2, "text": "Ashby puts a green seed in your palm and closes your fingers over it.\n\n\"One spell and one knot were never going to be enough. Nobody told you. I'm telling you.\"\n\nYou have learned VINE magic.\nYour weave can now hold TWO spells."},
-			"intro": "Ashby's second lesson. Two slots of Water and Vine, hidden.\n\nYour one Water cannot reach a complete two-slot Ward. Cast anyway. See why.",
+			"intro": "Ashby's second lesson. Three slots of Water and Vine, hidden.\n\nYour two-slot weave cannot reach a complete three-slot Ward. Cast anyway. See why.",
 		})
 		return
 	if not adv.flag("ashby_duel3_done"):
@@ -181,14 +180,14 @@ func _ashby_after(adv: Node, encounter_id: String, outcome: String) -> void:
 	match encounter_id:
 		"ashby_duel1":
 			if outcome == "victory":
-				await _w.say("Ashby", "There. Your spell against my Ward, and my Ward gave. That's a battle.")
+				await _w.say("Ashby", "There. Two spells, two slots, in the order I told you — and my Ward gave. That's a battle.")
 			else:
-				await _w.say("Ashby", "Hm. One slot, and you missed it. Never mind — the point was to see it happen, and you saw it.")
+				await _w.say("Ashby", "Hm. I told you the order and you still missed it. Never mind — the point was to see it happen, and you saw it.")
 		"ashby_duel2":
 			if outcome == "victory":
-				await _w.say("Ashby", "...You broke it. With one knot. I'm going to pretend I meant that to be possible.")
+				await _w.say("Ashby", "...You broke it. With two knots against three. I'm going to pretend I meant that to be possible.")
 			else:
-				await _w.say("Ashby", "You see it now. A bigger weave isn't more damage. It's REACH — I could touch a Ward you couldn't.")
+				await _w.say("Ashby", "You see it now. A bigger weave isn't more damage. It's REACH — I could touch a Ward you couldn't. The third knot is a third COLOUR, and I can't give you that. The wood can.")
 		"ashby_duel3", "ashby_spar":
 			if outcome == "victory":
 				await _w.say("Ashby", "Ha! Well. Don't let it go to your head. Do let it go to your feet — the road's that way.")
@@ -198,7 +197,8 @@ func _ashby_after(adv: Node, encounter_id: String, outcome: String) -> void:
 		adv.set_flag("ashby_training_complete")
 		adv.advance_phase("pre_trial")
 		await _w.say("Ashby", "That's everything a yard can teach. The Burnt Wood east of the road will teach the rest, if you let it.")
-		await _w.say("Ashby", "The red pendant out there — it isn't jewellery. Neither is the golem. Bring back four kinds of magic and three knots, or don't go up that hill.")
+		await _w.say("Ashby", "The red pendant out there — it isn't jewellery. Third colour, third knot. And mind: the moment you take it, the wood will match you. Everything in there grows a knot when you do.")
+		await _w.say("Ashby", "The golem past the fires is a fourth colour, if you want the Trial. If you don't — well. There are other roads.")
 
 
 func gate_choice() -> void:
@@ -760,6 +760,11 @@ func _training_defeat(adv: Node, req: Dictionary, _enemy_name: String) -> void:
 ## time the story leaves the Trial for Jane (placeholder chapter, Phase 8).
 func _story_defeat(adv: Node, req: Dictionary, enemy_name: String) -> void:
 	var result := str(adv.record_story_defeat())
+	if result == "wait":
+		# Before the third colour the wood is forgiving: defeats teach, not maim.
+		_w.rebuild()
+		await narrate("%s knocks you flat and loses interest. You are not worth finishing yet.\n\nYou get up. Two colours were not enough. Two colours were never going to be enough." % enemy_name)
+		return
 	if result == "left_for_dead":
 		var eid := str(req.get("encounter_id", ""))
 		if eid != "":
@@ -790,8 +795,10 @@ func jane_wake() -> void:
 	adv.set_flag("jane_placeholder_seen")
 	_w.lock_input(true)
 	await narrate("You wake because somebody is arguing with a kettle.")
-	await narrate("This is not the Trial. This is not Ashwell. The ceiling has beams, and the beams have herbs hanging from them, and none of that was true a moment ago.")
+	await narrate("This is not the wood. This is not Ashwell. The ceiling has beams, and the beams have herbs hanging from them, and none of that was true a moment ago.")
 	await narrate("A woman named Jane has apparently decided you are not allowed to die.\n\nThat is going to complicate things.")
+	if adv.add_item("jane_letter"):
+		await narrate("On the table by the bed: a letter, folded twice, with your name on it in a hand you do not know.\n\nYou take it. (Pockets — up to eight things worth keeping. Tap POCKETS to look.)")
 	await narrate("There is a door in the south wall. Beyond it, by the sound of it, a world that has been getting on without you.")
 	adv.save()
 	_w.lock_input(false)

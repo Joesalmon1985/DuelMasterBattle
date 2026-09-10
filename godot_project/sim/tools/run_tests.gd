@@ -22,6 +22,8 @@ const TESTS := [
 	"res://sim/tests/test_units.gd",
 	"res://sim/tests/test_world_sim.gd",
 	"res://sim/tests/test_projection.gd",
+	"res://sim/tests/test_dungeons.gd",
+	"res://sim/tests/test_quests.gd",
 ]
 
 
@@ -30,6 +32,11 @@ func _init() -> void:
 	var passed := 0
 	for path in TESTS:
 		var script: GDScript = load(path)
+		if script == null or not script.can_instantiate():
+			print("FAIL %s" % path)
+			print("  - script failed to load/compile")
+			failed += 1
+			continue
 		var inst = script.new()
 		inst.run()
 		if inst.passed():

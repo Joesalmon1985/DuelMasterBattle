@@ -21,6 +21,9 @@ var catan: DmbCatanState
 var carts: DmbCarts
 var infection: DmbInfection
 var units: DmbUnits
+var dungeons: DmbDungeons
+var settlement_moods: Dictionary = {}	# node id -> mood word set by quest outcomes
+var founded: Array = []				# settlement nodes founded after setup, in order
 var factions: Array = []
 var weights: Dictionary = {}		# fid -> weight dict
 var stats: Dictionary = {}			# fid -> counters
@@ -61,6 +64,9 @@ func setup() -> void:
 			eid = board.nodes[nid]["edges"][rng.randi_range(0, board.nodes[nid]["edges"].size() - 1)]
 		catan.place_setup(f, nid, eid, second)
 	_player_home = catan.nodes_of("wardens")[0]
+	dungeons = DmbDungeons.new(board, catan, seed + 4)
+	dungeons.seed_towers()
+	catan.reserved_nodes = dungeons.reserved
 	infection.initial_infection()
 	for f in factions:
 		var data := DmbFactions.get_data(f)
@@ -112,6 +118,14 @@ func advance_turn() -> Array:
 	for i in range(factions.size()):
 		var f: String = factions[(start + i) % factions.size()]
 		DmbFactionAI.take_turn(f, weights[f], self, events)
+	# 2b. New settlements grow a cave nearby (brief §6).
+	for e in events.duplicate():
+		if str(e.get("type", "")) == "settlement":
+			var snid := int(e["node"])
+			founded.append(snid)
+			var d := dungeons.spawn_for_settlement(snid, "cave")
+			if not d.is_empty():
+				events.append({"type": "cave", "node": int(d["node"]), "settlement": snid, "faction": e["faction"]})
 	# 3. Carts.
 	var before_log := carts.log.size()
 	carts.advance()
@@ -155,6 +169,8 @@ func describe(e: Dictionary) -> String:
 			return "%s raise a new settlement." % f
 		"city":
 			return "%s wall a settlement into a town." % f
+		"cave":
+			return "Where %s broke ground, the hill behind opened. A cave, where there was none." % f
 		"trade":
 			return "%s send carts to %s." % [f, DmbFactions.name_of(e["partner"])]
 		"hero":
@@ -188,6 +204,7 @@ func snapshot() -> String:
 		parts.append("%s:%d/%d/%d/%d" % [f, catan.victory_points(f), catan.road_count(f), catan.hand_total(f), units.champion_of(f)["node"]])
 	for h in board.hexes:
 		parts.append(str(h["demons"]))
+	parts.append("d%d" % dungeons.dungeons.size())
 	return ",".join(parts)
 
 
@@ -197,7 +214,15 @@ func to_dict() -> Dictionary:
 		"board": board.to_dict(), "catan": catan.to_dict(), "carts": carts.to_dict(),
 		"infection": infection.to_dict(), "units": units.to_dict(),
 		"weights": weights.duplicate(true), "stats": stats.duplicate(true),
+		"dungeons": dungeons.to_dict(), "moods": _moods_dict(), "founded": founded.duplicate(),
 	}
+
+
+func _moods_dict() -> Dictionary:
+	var out := {}
+	for nid in settlement_moods:
+		out[str(nid)] = settlement_moods[nid]
+	return out
 
 
 static func from_dict(d: Dictionary) -> DmbWorldSim:
@@ -211,6 +236,12 @@ static func from_dict(d: Dictionary) -> DmbWorldSim:
 	w.carts = DmbCarts.from_dict(d.get("carts", {}), w.board, w.catan)
 	w.infection = DmbInfection.from_dict(d.get("infection", {}), w.board)
 	w.units = DmbUnits.from_dict(d.get("units", {}), w.board, w.catan, w.infection)
+	w.dungeons = DmbDungeons.from_dict(d.get("dungeons", {}), w.board, w.catan)
+	w.catan.reserved_nodes = w.dungeons.reserved
+	for k in d.get("moods", {}):
+		w.settlement_moods[int(k)] = str(d["moods"][k])
+	for n in d.get("founded", []):
+		w.founded.append(int(n))
 	for f in w.factions:
 		w.weights[f] = DmbFactionAI.preset(DmbFactions.stance_of(f))
 		for k in d.get("weights", {}).get(f, {}):

@@ -36,22 +36,22 @@ static func _build() -> void:
 	})
 	_add({
 		"id": "steam_sprite", "display_name": "Steam Sprite", "archetype": "steam_sprite", "kind": "creature",
-		"description": "Born where fire met water. Two slots that could be either — and it reads yours fast.",
-		"weave_size": 2, "attack_pool": [RED, BLUE], "ward_size": 2, "ward_pool": [RED, BLUE],
+		"description": "Born where fire met water. Three slots of Fire and Water — and it reads yours fast.",
+		"weave_size": 3, "attack_pool": [RED, BLUE], "ward_size": 3, "ward_pool": [RED, BLUE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "capped_minimax", "bot_solver_cap": 30, "think_min_seconds": 10.0, "think_max_seconds": 18.0,
 	})
 	_add({
 		"id": "steam_brute", "display_name": "Steam Brute", "archetype": "steam_brute", "kind": "creature",
-		"description": "A hulking cloud. Fire, Water and Stone in the attack; Fire and Water in the Ward.",
-		"weave_size": 2, "attack_pool": [RED, BLUE, STONE], "ward_size": 2, "ward_pool": [RED, BLUE],
+		"description": "A hulking cloud. Fire, Water and Vine in a three-slot attack; Fire and Water in its three-slot Ward.",
+		"weave_size": 3, "attack_pool": [RED, BLUE, VINE], "ward_size": 3, "ward_pool": [RED, BLUE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "candidate_filter", "think_min_seconds": 12.0, "think_max_seconds": 22.0,
 	})
 	_add({
 		"id": "cinder_golem", "display_name": "Cinder Golem", "archetype": "cinder_golem", "kind": "creature",
-		"description": "Stone bound with embers. It throws Stone and Fire; its two-slot Ward is Water and Vine — the things that put it out.",
-		"weave_size": 2, "attack_pool": [RED, STONE], "ward_size": 2, "ward_pool": [BLUE, VINE],
+		"description": "Stone bound with embers. Three slots of Fire and Vine in the attack; its three-slot Ward is Water and Vine — the things that put it out.",
+		"weave_size": 3, "attack_pool": [RED, VINE], "ward_size": 3, "ward_pool": [BLUE, VINE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "capped_minimax", "bot_solver_cap": 40, "think_min_seconds": 12.0, "think_max_seconds": 22.0,
 	})
@@ -159,15 +159,15 @@ static func _build() -> void:
 	# --- Ashby's three training duels (brief §6–§8). ----------------------------------
 	_add({
 		"id": "ashby_lesson1", "display_name": "Ashby — First Lesson", "archetype": "hedge_ward", "kind": "wizard",
-		"description": "One slot of Water. Choose a Ward, make a cast, watch it break.",
-		"weave_size": 1, "attack_pool": [BLUE], "ward_size": 1, "ward_pool": [BLUE], "fixed_ward": [BLUE],
+		"description": "Two slots, Water and Vine, and he tells you his Ward. Choose yours, cast, watch it break.",
+		"weave_size": 2, "attack_pool": [BLUE, VINE], "ward_size": 2, "ward_pool": [BLUE, VINE], "fixed_ward": [BLUE, VINE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "random", "think_min_seconds": 12.0, "think_max_seconds": 20.0,
 	})
 	_add({
 		"id": "ashby_lesson2", "display_name": "Ashby — What a Wizard Is", "archetype": "hedge_ward", "kind": "wizard",
-		"description": "Two knots, two slots. Your single Water cannot reach a complete two-slot Ward. Learn why.",
-		"weave_size": 2, "attack_pool": [BLUE, VINE], "ward_size": 2, "ward_pool": [BLUE, VINE],
+		"description": "Three knots, three slots. Your two-slot weave cannot reach a complete three-slot Ward. Learn why.",
+		"weave_size": 3, "attack_pool": [BLUE, VINE], "ward_size": 3, "ward_pool": [BLUE, VINE],
 		"max_casts": 10, "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
 		"bot_logic": "candidate_filter", "think_min_seconds": 8.0, "think_max_seconds": 14.0,
 	})

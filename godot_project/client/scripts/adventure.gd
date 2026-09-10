@@ -16,7 +16,7 @@ const PHASES := ["halvard_prologue", "john_intro", "ashby_training", "pre_trial"
 const PHASE_NEXT := {
 	"halvard_prologue": ["john_intro"],
 	"john_intro": ["ashby_training"],
-	"ashby_training": ["pre_trial"],
+	"ashby_training": ["pre_trial", "post_trial_recovery"],
 	"pre_trial": ["trial", "post_trial_recovery"],
 	"trial": ["post_trial_recovery"],
 	"post_trial_recovery": [],
@@ -84,6 +84,9 @@ func new_game() -> void:
 		"world": "",
 		"world_seed": 7,
 		"world_node": -1,
+		"items": [],
+		"puzzles": {},
+		"quests": {},
 		"story": {
 			"phase": "halvard_prologue",
 			"protagonist": "halvard",
@@ -193,6 +196,78 @@ func set_flag(name: String, value: bool = true) -> void:
 	state_changed.emit()
 
 
+# --- inventory (Next Pass §2): at most DmbItems.MAX_SLOTS quest/puzzle items ---
+
+func items() -> Array:
+	if not state.has("items"):
+		state["items"] = []
+	return state["items"]
+
+
+func has_item(id: String) -> bool:
+	return id in items()
+
+
+func add_item(id: String) -> bool:
+	if not DmbItems.known(id) or has_item(id):
+		return false
+	if items().size() >= DmbItems.MAX_SLOTS:
+		return false
+	items().append(id)
+	save()
+	state_changed.emit()
+	return true
+
+
+func remove_item(id: String) -> bool:
+	if not has_item(id):
+		return false
+	items().erase(id)
+	save()
+	state_changed.emit()
+	return true
+
+
+func inventory_full() -> bool:
+	return items().size() >= DmbItems.MAX_SLOTS
+
+
+## Persistent puzzle state, keyed "<dungeon>/<puzzle>".
+func puzzle_state(key: String) -> Dictionary:
+	if not state.has("puzzles"):
+		state["puzzles"] = {}
+	return state["puzzles"].get(key, {})
+
+
+func set_puzzle_state(key: String, st: Dictionary) -> void:
+	if not state.has("puzzles"):
+		state["puzzles"] = {}
+	state["puzzles"][key] = st
+	state_changed.emit()
+
+
+func dungeon_solved_count(dungeon_id: String) -> int:
+	var n := 0
+	for k in state.get("puzzles", {}):
+		if str(k).begins_with(dungeon_id + "/") and bool(state["puzzles"][k].get("solved", false)):
+			n += 1
+	return n
+
+
+## Quest outcome per settlement node: "" = not done; else outcome id.
+func quest_outcome(node_id: int) -> String:
+	if not state.has("quests"):
+		state["quests"] = {}
+	return str(state["quests"].get(str(node_id), ""))
+
+
+func set_quest_outcome(node_id: int, outcome: String) -> void:
+	if not state.has("quests"):
+		state["quests"] = {}
+	state["quests"][str(node_id)] = outcome
+	state_changed.emit()
+
+
 func mark(list_name: String, id: String) -> void:
 	if not (id in state[list_name]):
 		state[list_name].append(id)
@@ -282,7 +357,16 @@ func battle_policy_for(request: Dictionary) -> String:
 
 ## Story defeat bookkeeping (brief §24). Returns "left_for_dead" the first time,
 ## "recovery" afterwards. Training and prologue defeats never call this.
+## Brief (Next Pass §1): story defeats before the third colour do not count
+## towards Jane — the forest is a school until the pendant. After the third
+## colour, the first defeat is "left for dead", the second moves John to Jane's
+## house whether or not he ever reached the Trial.
 func record_story_defeat() -> String:
+	if progression.spells_known.size() < 3 and story_phase() in ["pre_trial", "ashby_training"]:
+		state["story"]["soft_defeats"] = int(_story().get("soft_defeats", 0)) + 1
+		save()
+		state_changed.emit()
+		return "wait"
 	state["story"]["story_defeats"] = int(_story().get("story_defeats", 0)) + 1
 	var outcome := "recovery"
 	if not bool(_story().get("left_for_dead_used", false)):

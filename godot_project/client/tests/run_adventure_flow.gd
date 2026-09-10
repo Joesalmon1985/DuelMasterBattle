@@ -357,7 +357,8 @@ func _test_chapter() -> void:
 	await _interact()
 	await _drain_dialogue()
 	assert_true(_adv.progression.knows(1), "learned Water")
-	assert_eq(_adv.progression.weave_size, 1, "weave 1 after staff")
+	assert_true(_adv.progression.knows(6), "learned Vine from the staff")
+	assert_eq(_adv.progression.weave_size, 2, "weave 2 after staff — the real two-slot game from the start")
 	assert_eq(_world.ui_player_sprite_key(), "john_staff", "John now drawn with the staff")
 
 	# --- Ashby ×3 ----------------------------------------------------------------------
@@ -365,20 +366,19 @@ func _test_chapter() -> void:
 	assert_eq(_adv.story_phase(), "ashby_training", "phase ashby_training")
 	info = await _fight_from_world(true)
 	assert_eq(str(info["outcome"]), "victory", "Ashby duel 1 can be won")
-	assert_eq(int(info["enemy_ward"]), 1, "duel 1 is one slot")
+	assert_eq(int(info["enemy_ward"]), 2, "duel 1 is two slots (told Ward)")
 	assert_true(_adv.flag("ashby_duel1_done"), "duel 1 done")
 	assert_eq(_world.area_id, "village", "still in the village after training")
 
 	await _talk_ashby()
 	info = await _fight_from_world(true)   # plays to win; mechanically cannot
-	assert_eq(int(info["enemy_ward"]), 2, "duel 2 Ashby has a two-slot Ward")
-	assert_eq(int(info["enemy_weave"]), 2, "duel 2 Ashby weaves two")
-	assert_eq(str(info["outcome"]), "defeat", "John cannot win duel 2 with one slot")
+	assert_eq(int(info["enemy_ward"]), 3, "duel 2 Ashby has a three-slot Ward")
+	assert_eq(int(info["enemy_weave"]), 3, "duel 2 Ashby weaves three")
+	assert_eq(str(info["outcome"]), "defeat", "John cannot win duel 2 with two slots")
 	assert_true(not ("Try again" in info["buttons"]), "no Try again after training")
 	assert_eq(_world.area_id, "village", "defeat does not move John")
 	assert_eq(int(_adv.state["story"]["story_defeats"]), 0, "training defeat is not a story defeat")
-	assert_true(_adv.progression.knows(6), "Ashby grants Vine after the loss")
-	assert_eq(_adv.progression.weave_size, 2, "weave 2 after the loss")
+	assert_eq(_adv.progression.weave_size, 2, "still weave 2 after the loss — the third knot is a third colour, found in the wood")
 	assert_true(_adv.flag("ashby_duel2_done"), "duel 2 done")
 
 	await _talk_ashby()
@@ -446,6 +446,8 @@ func _test_chapter() -> void:
 	await _interact()
 	await _drain_dialogue()
 	assert_true(_adv.progression.knows(0), "red pendant grants Fire")
+	assert_eq(_adv.progression.weave_size, 3, "third colour brings the third knot")
+	assert_eq(_adv.progression.spells_known.size(), 3, "three colours: enough to enter the world")
 	await _walk_to(Vector2i(8, 3))
 	await _face(Vector2i(0, -1))
 	await _interact()
@@ -460,7 +462,7 @@ func _test_chapter() -> void:
 	await _interact()
 	await _drain_dialogue()
 	assert_true(_adv.progression.knows(3), "stone shard grants Stone")
-	assert_eq(_adv.progression.weave_size, 3, "weave 3 from the shard")
+	assert_eq(_adv.progression.weave_size, 3, "weave 3 held")
 	assert_eq(_adv.progression.spells_known.size(), 4, "four spell types before the Trial")
 	assert_true(_adv.trial_ready(), "trial_ready() true after the normal route")
 

@@ -46,11 +46,11 @@ func enter(id: String) -> Dictionary:
 		sim.advance_turn()
 	_adv.state["world_node"] = nid
 	_store()
-	return DmbNodeProjection.area_for(sim, nid)
+	return DmbNodeProjection.area_for(sim, nid, _adv.state)
 
 
 func area_for(id: String) -> Dictionary:
-	return DmbNodeProjection.area_for(sim, resolve(id))
+	return DmbNodeProjection.area_for(sim, resolve(id), _adv.state)
 
 
 ## John beat a demon standing for hex `world_hex`: one piece leaves the board.
@@ -66,4 +66,13 @@ func last_events_text() -> Array:
 	var out: Array = []
 	for e in sim.last_events:
 		out.append(sim.describe(e))
+	return out
+
+
+## Only the events a traveller would hear about: places founded, walled or opened.
+func notable_events_text() -> Array:
+	var out: Array = []
+	for e in sim.last_events:
+		if str(e["type"]) in ["settlement", "city", "cave", "epidemic"]:
+			out.append(sim.describe(e))
 	return out
