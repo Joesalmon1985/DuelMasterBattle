@@ -155,6 +155,17 @@ func pick(label: String) -> void:
 	chosen.emit(label)
 
 
+## Test/automation: pick the i-th offered choice.
+func pick_index(i: int) -> void:
+	var k := 0
+	for c in _choices.get_children():
+		if c is Button:
+			if k == i:
+				pick((c as Button).text)
+				return
+			k += 1
+
+
 func _show(speaker: String, text: String) -> void:
 	_name_lbl.text = speaker
 	_name_lbl.visible = speaker != ""

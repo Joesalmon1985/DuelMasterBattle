@@ -12,6 +12,7 @@ const _TouchPad = preload("res://client/world/touch_pad.gd")
 const _Story = preload("res://client/world/story_events.gd")
 const _VT = preload("res://client/scripts/visual_theme.gd")
 var _world_flow := WorldFlow.new()
+var _play := WorldPlay.new()
 const _SaveData = preload("res://client/scripts/save_data.gd")
 
 const TILE := 16
@@ -45,6 +46,7 @@ var _hud_area_lbl: Label
 var _prompt_lbl: Label
 var _menu_btn: Button
 var _magic_btn: Button
+var _items_btn: Button
 var _fader: ColorRect
 
 var _john: Sprite2D
@@ -111,6 +113,10 @@ func _after_ready() -> void:
 			_world_flow.on_victory(req)
 			area = _world_flow.area_for(area_id)
 		await _story.on_battle_result(r)
+		if adv.state.has("pending_quest") and WorldFlow.is_world_area(area_id):
+			_world_flow.setup(adv)
+			_play.setup(self, adv, _world_flow)
+			await _play.after_battle(str(r.get("outcome", "")))
 	elif not adv.flag("opening_seen"):
 		adv.set_flag("opening_seen")
 		await _story.prologue_open()
@@ -201,6 +207,14 @@ func _build_ui() -> void:
 	_magic_btn.add_theme_font_size_override("font_size", 18)
 	_magic_btn.pressed.connect(_show_magic_sheet)
 	h.add_child(_magic_btn)
+	_items_btn = Button.new()
+	_items_btn.text = "Pockets"
+	_items_btn.custom_minimum_size = Vector2(0, 52)
+	_VT.style_secondary_button(_items_btn)
+	_items_btn.add_theme_font_size_override("font_size", 18)
+	_items_btn.pressed.connect(_show_inventory)
+	_items_btn.visible = false
+	h.add_child(_items_btn)
 	# Interaction prompt (above the touch pad)
 	_prompt_lbl = Label.new()
 	_prompt_lbl.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -245,8 +259,14 @@ func _build_ui() -> void:
 func load_area(id: String, at: Vector2i, facing: String = "down") -> void:
 	if WorldFlow.is_world_area(id):
 		_world_flow.setup(_adv())
+		_play.setup(self, _adv(), _world_flow)
 		area = _world_flow.enter(id)
 		area_id = str(area["id"])
+	elif DmbDungeonMap.is_dungeon_area(id):
+		_world_flow.setup(_adv())
+		_play.setup(self, _adv(), _world_flow)
+		area = _play.dungeon_area(id)
+		area_id = id
 	else:
 		area_id = id
 		area = _World.get_area(id)
@@ -289,7 +309,7 @@ func _tile_char(x: int, y: int) -> String:
 
 
 func _is_dungeon() -> bool:
-	return str(area.get("id", "")).begins_with("dd_")
+	return str(area.get("id", "")).begins_with("dd_") or DmbDungeonMap.is_dungeon_area(str(area.get("id", "")))
 
 
 func _build_tiles() -> void:
@@ -363,6 +383,10 @@ func _entity_visible(e: Dictionary) -> bool:
 	if e.has("requires_spell") and not adv.progression.knows(int(e["requires_spell"])):
 		return false
 	if e.has("requires_defeated") and not adv.marked("defeated", str(e["requires_defeated"])):
+		return false
+	if e.has("requires_dungeon_solved") and not _play.dungeon_solved(str(e["requires_dungeon_solved"])):
+		return false
+	if e.has("grant") and e["grant"].has("item") and adv.has_item(str(e["grant"]["item"])):
 		return false
 	match e["kind"]:
 		"fire":
@@ -557,6 +581,8 @@ func _try_step(dir: Vector2i) -> void:
 	_john_pos = target
 	_move_to = Vector2(_john_pos) * TPX + Vector2(0, -8 * TILE_SCALE)
 	_steps_taken += 1
+	if DmbDungeonMap.is_dungeon_area(area_id):
+		_play.on_step(area)
 
 
 func _arrived() -> void:
@@ -740,6 +766,10 @@ func _update_prompt() -> void:
 				text = "Talk to %s" % str(e.get("name", ""))
 			"corpse", "sign", "door", "logs":
 				text = "Look"
+				if e.has("puzzle_action"):
+					text = "Examine"
+				elif e.has("dungeon_id"):
+					text = "Enter"
 	_prompt_lbl.text = text
 	_touch.set_action_label("✦" if text != "" else "")
 
@@ -755,7 +785,22 @@ func _on_action() -> void:
 		return
 	match e["kind"]:
 		"sign", "door", "logs", "corpse":
-			if e.has("choice_event"):
+			if e.has("puzzle_action"):
+				_input_locked = true
+				_touch.set_enabled(false)
+				await _play.interact_puzzle(e)
+				_input_locked = false
+				_touch.set_enabled(true)
+				_update_prompt()
+			elif e.has("dungeon_id"):
+				_input_locked = true
+				_touch.set_enabled(false)
+				await _dialogue.say_async("", _entity_text(e))
+				await _play.enter_dungeon(e)
+				_input_locked = false
+				_touch.set_enabled(true)
+				_update_prompt()
+			elif e.has("choice_event"):
 				_input_locked = true
 				_touch.set_enabled(false)
 				await _dialogue.say_async("", _entity_text(e))
@@ -825,6 +870,29 @@ func _spawn_water_burst(at: Vector2i) -> void:
 func _interact_pickup(e: Dictionary) -> void:
 	var adv := _adv()
 	var grant: Dictionary = e.get("grant", {})
+	if e.has("dungeon_reward"):
+		_input_locked = true
+		_touch.set_enabled(false)
+		await _play.take_reward(e)
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	if grant.has("item"):
+		_input_locked = true
+		_touch.set_enabled(false)
+		if str(e.get("text", "")) != "":
+			await _dialogue.say_async("", str(e["text"]))
+		var took: bool = await _play.grant_item(str(grant["item"]))
+		if took:
+			if e.has("set_flag"):
+				adv.set_flag(str(e["set_flag"]))
+			adv.save()
+			_rebuild_entities()
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
 	var s := _sfx()
 	if s:
 		s.ready_chime()
@@ -840,8 +908,12 @@ func _interact_pickup(e: Dictionary) -> void:
 	_entities.erase(e)
 	if grant.has("spell"):
 		adv.learn_spell(int(grant["spell"]))
+	for sp in grant.get("spells", []):
+		adv.learn_spell(int(sp))
 	if grant.has("weave"):
 		adv.grow_weave(int(grant["weave"]))
+	if grant.has("item"):
+		adv.add_item(str(grant["item"]))
 	if grant.has("gem"):
 		adv.add_gem(str(grant["gem"]))
 	if grant.has("run_flag"):
@@ -856,7 +928,7 @@ func _interact_pickup(e: Dictionary) -> void:
 	await _dialogue.say_async("", str(e.get("text", "")))
 	if e.has("choice_event"):
 		await _story.run_event(str(e["choice_event"]))
-	if grant.has("spell") or grant.has("weave"):
+	if grant.has("spell") or grant.has("spells") or grant.has("weave"):
 		await _show_progression_card(grant)
 	_input_locked = false
 	_touch.set_enabled(true)
@@ -868,6 +940,16 @@ func _interact_pickup(e: Dictionary) -> void:
 func _interact_npc(e: Dictionary) -> void:
 	var adv := _adv()
 	var id := str(e["id"])
+	if e.has("quest_node") and str(e.get("choice_event", "")) == "settlement_quest":
+		_input_locked = true
+		_touch.set_enabled(false)
+		_face_npc_toward_john(e)
+		await _play.run_quest(e)
+		adv.bump_talk(id)
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
 	var lines: Array = e.get("lines", [])
 	# Story-phase keyed lines win over defaults; flag-keyed lines win over those.
 	if e.has("lines_phase") and e["lines_phase"].has(adv.story_phase()):
@@ -1066,8 +1148,12 @@ func _rebuild_entities() -> void:
 func _show_progression_card(grant: Dictionary) -> void:
 	var adv := _adv()
 	var lines: Array = []
+	var new_ids: Array = []
 	if grant.has("spell"):
-		var id := int(grant["spell"])
+		new_ids.append(int(grant["spell"]))
+	for sp in grant.get("spells", []):
+		new_ids.append(int(sp))
+	for id in new_ids:
 		lines.append("NEW MAGIC: %s %s" % [DmbColourData.essence_symbol(id), DmbColourData.essence_name(id).to_upper()])
 	if grant.has("weave"):
 		lines.append("WEAVE: %d slot%s" % [int(grant["weave"]), "" if int(grant["weave"]) == 1 else "s"])
@@ -1077,6 +1163,17 @@ func _show_progression_card(grant: Dictionary) -> void:
 	lines.append("You know: %s\nWeave: %d" % [", ".join(PackedStringArray(known)), adv.progression.weave_size])
 	await _dialogue.say_async("", "\n".join(PackedStringArray(lines)))
 	_refresh_hud()
+
+
+func _show_inventory() -> void:
+	if _input_locked:
+		return
+	_input_locked = true
+	_touch.set_enabled(false)
+	_play.setup(self, _adv(), _world_flow)
+	await _play.show_inventory()
+	_input_locked = false
+	_touch.set_enabled(true)
 
 
 func _show_magic_sheet() -> void:
@@ -1109,6 +1206,9 @@ func _refresh_hud() -> void:
 		_hud_weave_lbl.text = "weave %d" % adv.progression.weave_size
 	else:
 		_hud_weave_lbl.text = "woodcutter"
+	if _items_btn:
+		_items_btn.visible = adv.story_phase() == "post_trial_recovery" or not adv.items().is_empty()
+		_items_btn.text = "Pockets %d/%d" % [adv.items().size(), DmbItems.MAX_SLOTS] if not adv.items().is_empty() else "Pockets"
 
 
 func _on_menu() -> void:
@@ -1255,7 +1355,21 @@ func wait(seconds: float) -> void:
 
 
 func rebuild() -> void:
+	# World and dungeon areas are projections of state: re-project so changed
+	# state (quest outcomes, solved rooms, moods) shows up, not just visibility.
+	if WorldFlow.is_world_area(area_id):
+		area = _world_flow.area_for(area_id)
+		_build_tiles_only()
+	elif DmbDungeonMap.is_dungeon_area(area_id):
+		area = _play.dungeon_area(area_id)
+		_build_tiles_only()
 	_rebuild_entities()
+
+
+func _build_tiles_only() -> void:
+	for c in _tiles_root.get_children():
+		c.queue_free()
+	_build_tiles()
 
 
 func john_pos() -> Vector2i:
@@ -1270,6 +1384,7 @@ func set_john_pos(p: Vector2i, facing: String = "") -> void:
 	_moving = false
 	_update_john_sprite()
 	_adv().set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
+	_update_prompt()
 
 
 # --- test API -----------------------------------------------------------------------
@@ -1299,6 +1414,21 @@ func ui_dialogue_advance() -> void:
 
 func ui_dialogue_choose(label: String) -> void:
 	_dialogue.pick(label)
+
+
+func ui_dialogue_choose_index(i: int) -> void:
+	_dialogue.pick_index(i)
+
+
+func ui_items_button_visible() -> bool:
+	return _items_btn != null and _items_btn.visible
+
+
+func ui_entity_has_choice_event(id: String) -> bool:
+	for e in _entities:
+		if str(e.get("id", "")) == id:
+			return e.has("choice_event")
+	return false
 
 
 func ui_dialogue_waiting_choice() -> bool:

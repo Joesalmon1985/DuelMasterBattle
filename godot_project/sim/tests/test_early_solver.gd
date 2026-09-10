@@ -62,17 +62,19 @@ func _test_legal_and_consistent() -> void:
 
 
 func _test_ashby2_is_unwinnable_for_one_slot() -> void:
-	var john := _john([BLUE], 1)
+	# John: Water + Vine, two knots. Ashby lesson 2: three knots of the same two colours.
+	var john := _john([BLUE, VINE], 2)
 	var ashby := DmbBestiary.make("ashby_lesson2")
 	var sim = _BattleSim.new(john, ashby, 5)
-	assert_eq(ashby.ward_size, 2, "lesson 2 has a two-slot ward")
-	assert_eq(ashby.weave_size, 2, "lesson 2 weaves two")
-	assert_true(not sim.player_can_break_enemy(), "one Water cannot break a complete two-slot Ward")
-	assert_true(sim.enemy_can_break_player(), "Ashby can reach John's one slot")
-	# And he does: every legal John ward falls within the cast limit.
-	for w in DmbCandidateGen.generate_codes(john.ward_pool, 1, true):
+	assert_eq(ashby.ward_size, 3, "lesson 2 has a three-slot ward")
+	assert_eq(ashby.weave_size, 3, "lesson 2 weaves three")
+	assert_true(not sim.player_can_break_enemy(), "two knots cannot break a complete three-slot Ward")
+	assert_true(sim.enemy_can_break_player(), "Ashby can reach John's two slots")
+	# And he does: every legal John ward falls within a handful of casts.
+	for w in DmbCandidateGen.generate_codes(john.ward_pool, 2, true):
 		var casts := _solve(ashby, john, w, 3)
-		assert_true(casts > 0 and casts <= 3, "Ashby breaks %s in ≤3 casts (got %d)" % [str(w), casts])
+		assert_true(casts > 0 and casts <= 4, "Ashby breaks %s in ≤4 casts (got %d)" % [str(w), casts])
+
 
 
 func _test_fly_opening_zero_matches() -> void:

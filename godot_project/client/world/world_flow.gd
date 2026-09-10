@@ -46,11 +46,11 @@ func enter(id: String) -> Dictionary:
 		sim.advance_turn()
 	_adv.state["world_node"] = nid
 	_store()
-	return DmbNodeProjection.area_for(sim, nid)
+	return DmbNodeProjection.area_for(sim, nid, _adv.state)
 
 
 func area_for(id: String) -> Dictionary:
-	return DmbNodeProjection.area_for(sim, resolve(id))
+	return DmbNodeProjection.area_for(sim, resolve(id), _adv.state)
 
 
 ## John beat a demon standing for hex `world_hex`: one piece leaves the board.
