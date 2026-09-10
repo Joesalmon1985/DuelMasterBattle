@@ -1,0 +1,852 @@
+DUEL MASTER BATTLE
+PUZZLE SUPPORT MECHANICS
+========================
+
+Purpose
+-------
+A light-touch engine backlog supporting the puzzle catalogue. The goal is not to build a general physics
+engine. The goal is to add the smallest reusable systems that unlock many different puzzles.
+
+Current strengths to preserve
+-----------------------------
+The existing top-down game already has most of the foundation:
+- tile-by-tile movement;
+- area maps;
+- interactable entities;
+- pickups;
+- triggers;
+- persistent flags/run flags;
+- conditional entity visibility;
+- conditional exits;
+- scripted story events;
+- NPCs and scripted actors;
+- battles;
+- area rebuilds after state changes.
+
+Do not replace these systems. Extend them.
+
+PRIORITY 0 — USE WHAT ALREADY EXISTS
+=====================================
+No engine change required.
+
+A. Persistent puzzle flags
+--------------------------
+Use run flags / story flags for:
+- lever states;
+- solved states;
+- secret discovery;
+- puzzle stage;
+- one-time traps;
+- subsystem states.
+
+B. Conditional entities
+------------------------
+Continue using requires_flag / requires_run_flag / blocked_by_run_flag for:
+- hidden doors;
+- revealed objects;
+- spawned enemies;
+- changed scenery;
+- unlocked exits.
+
+C. Step triggers
+----------------
+Use existing position/rect triggers for:
+- mosaic floor hazards;
+- snake-route resets;
+- sequence checkpoints;
+- trap activation;
+- room-entry effects.
+
+D. Same-location rebuild
+------------------------
+Continue rebuilding entities after important state changes where dynamic per-frame updates are unnecessary.
+
+These existing features alone support roughly half the puzzle catalogue.
+
+
+PRIORITY 1 — BASIC INVENTORY
+============================
+This is the single most valuable new system.
+
+Goal
+----
+Allow quest/puzzle objects to be carried as objects instead of immediately becoming Boolean flags.
+
+Minimal data model
+------------------
+InventoryItem:
+- id
+- display_name
+- description
+- icon/sprite
+- tags []
+- quest_item bool
+- droppable bool
+- throwable bool
+
+Player inventory:
+- fixed small capacity, e.g. 8-12 slots;
+- item IDs only;
+- no weight simulation;
+- no equipment paper doll required.
+
+Required actions
+----------------
+PICK UP
+INSPECT
+USE
+DROP
+
+Optional later:
+THROW
+
+Puzzle value
+------------
+Unlocks:
+- offerings;
+- keys;
+- replacement components;
+- hidden clue objects;
+- exchanges;
+- take-one-leave-one;
+- delayed-use objects;
+- counterweights;
+- portable plate weights;
+- object-based alternate solutions.
+
+Important constraint
+--------------------
+Do not turn every prop into inventory. Ordinary scenery remains scenery.
+Inventory is for meaningful puzzle/quest/reward objects.
+
+
+PRIORITY 2 — ITEM RECEPTACLES / USE TARGETS
+===========================================
+Goal
+----
+Generic environmental objects that can accept one or more inventory items.
+
+Example definition
+------------------
+{
+  kind: "receptacle",
+  id: "gear_socket",
+  pos: [10, 6],
+  accepts_items: ["iron_gear"],
+  accepts_tags: ["small_gear"],
+  consume_item: true,
+  set_flag: "transmission_repaired"
+}
+
+Capabilities
+------------
+- exact item acceptance;
+- tag/category acceptance;
+- consume item or keep it installed;
+- reject with descriptive text;
+- set/reset flag;
+- optionally return/remove installed item.
+
+Puzzle value
+------------
+Unlocks:
+- missing gear;
+- wishing well;
+- four offerings;
+- fuse replacement;
+- key slots;
+- fair exchange;
+- material lock puzzle.
+
+
+PRIORITY 3 — WORLD ITEMS / DROP
+===============================
+Goal
+----
+Dropped inventory objects persist at a tile position.
+
+Minimal rules
+-------------
+- one or more world items can occupy a tile;
+- store item ID + area ID + grid position;
+- pick them back up;
+- save/load them;
+- world item can optionally be blocking or non-blocking.
+
+Do NOT add
+----------
+- real rigid-body physics;
+- stacking simulation;
+- arbitrary sprite rotation;
+- item collision impulses.
+
+Puzzle value
+------------
+Unlocks:
+- weight plate puzzles;
+- counterweights;
+- leave-object-behind puzzles;
+- object substitution;
+- temporary sacrifices;
+- spatial inventory puzzles.
+
+
+PRIORITY 4 — PRESSURE / OCCUPANCY SENSORS
+=========================================
+Goal
+----
+A tile or region reports whether something qualifying occupies it.
+
+Supported occupants
+-------------------
+- player;
+- world item;
+- specific item tag;
+- NPC;
+- enemy (later if needed).
+
+Example
+-------
+{
+  kind: "plate",
+  id: "west_plate",
+  pos: [7, 5],
+  accepts: ["player", "world_item"],
+  item_tags: ["heavy"],
+  while_active_flag: "west_gate_open"
+}
+
+Important design decision
+-------------------------
+Avoid numeric mass initially.
+
+Use tags:
+- heavy;
+- metal;
+- organic;
+- magical;
+- key_object.
+
+Puzzle value
+------------
+Unlocks:
+- hold plate with object;
+- cells held shut by player position;
+- counterweights;
+- later enemy-on-plate puzzles.
+
+
+PRIORITY 5 — DYNAMIC TILE / BARRIER STATE
+=========================================
+Goal
+----
+Allow gates, pits, bridges and blockers to change without requiring a full map reload.
+
+Recommended representation
+--------------------------
+Use entities layered over the static tilemap:
+
+DynamicGate
+DynamicPit
+DynamicBridge
+DynamicBarrier
+
+Each has:
+- id
+- pos/rect
+- open/closed or active/inactive state;
+- controlling flag/expression;
+- sprite for each state;
+- walkability for each state.
+
+Why entities rather than rewriting map strings
+----------------------------------------------
+- lower risk;
+- easier save/load;
+- easier testing;
+- no map mutation complexity;
+- compatible with current entity system.
+
+Puzzle value
+------------
+Unlocks:
+- timed gates;
+- pit traps;
+- revealed floor;
+- bridges;
+- machinery;
+- multi-state rooms.
+
+
+PRIORITY 6 — TEMPORARY / TIMED STATE
+====================================
+Goal
+----
+Flags or mechanisms remain active for a defined duration.
+
+Example
+-------
+activate_for("north_gate", 3.0)
+
+Needed behaviour
+----------------
+- timestamp or Timer;
+- clear state on expiry;
+- optional warning animation/sound;
+- deterministic behaviour in tests;
+- sane pause handling.
+
+Also support a periodic cycle:
+- ON 1.5s;
+- OFF 1.5s;
+- repeat.
+
+Puzzle value
+------------
+Unlocks:
+- timed gate runs;
+- ram galleries;
+- blade corridors;
+- pulsing magical barriers;
+- cycling teleporters;
+- collapsing floors;
+- repeating projectile circuits.
+
+
+PRIORITY 7 — SAME-AREA RELOCATION / TELEPORT
+============================================
+Goal
+----
+Move player from one grid position to another inside the same map without changing scenes.
+
+API concept
+-----------
+relocate_player(Vector2i target, facing, effect)
+
+Optional later:
+relocate_world_item(...)
+relocate_enemy(...)
+
+First implementation only needs player.
+
+Puzzle value
+------------
+Unlocks:
+- serpent path reset;
+- false door drops;
+- deceptive mazes;
+- cycling teleport fields;
+- fail-forward pits.
+
+
+PRIORITY 8 — ORDERED TRIGGER / ROUTE SEQUENCES
+==============================================
+Goal
+----
+Track whether the player crosses trigger IDs in a required order.
+
+Generic sequence object
+-----------------------
+{
+  id: "clockwise_lock",
+  sequence: ["north", "east", "south", "west"],
+  reset_on_wrong: true,
+  on_complete_flag: "clockwise_open"
+}
+
+Extensions
+----------
+- reverse sequence;
+- repeated cycles;
+- partial progress;
+- visible progress optional.
+
+Puzzle value
+------------
+Unlocks:
+- Clockwise Room;
+- sound/button sequences;
+- ritual paths;
+- movement-pattern locks;
+- runes crossed in order.
+
+
+PRIORITY 9 — ENVIRONMENTAL MAGIC TARGETING
+==========================================
+Goal
+----
+Allow known spells to operate on interactable world targets.
+
+Keep it discrete
+----------------
+Do not initially create free-aim spell physics.
+Player faces/interacts with a target and chooses/uses a known spell.
+
+Target definition
+-----------------
+{
+  kind: "magic_target",
+  id: "frozen_gate",
+  responses: {
+    "fire": "thaw_gate",
+    "stone": "brace_gate"
+  }
+}
+
+Supported results
+-----------------
+- set flag;
+- clear flag;
+- reveal object;
+- change dynamic barrier;
+- start subsystem;
+- trigger dialogue/effect.
+
+Puzzle value
+------------
+Unlocks:
+- Light reveals illusions;
+- Stone jams mechanisms;
+- Water changes environmental state;
+- Fire burns/reheats/ignites;
+- later spell-routing puzzles.
+
+This is one of the highest-value thematic additions because it makes magic useful outside duels.
+
+
+PRIORITY 10 — ROTATABLE FIXED MECHANISMS
+========================================
+Goal
+----
+A mechanism occupies a fixed tile but cycles through a small set of orientations/states when interacted with.
+
+Examples
+--------
+- mirror: / and \
+- valve: north/east/south/west
+- track junction
+- rune prism
+- directional emitter
+
+Data
+----
+orientation = 0..N-1
+
+Interaction
+-----------
+Rotate clockwise by one state.
+
+Puzzle value
+------------
+Unlocks:
+- redirect energy;
+- route steam/water;
+- point emitters;
+- align symbols;
+- later portal orientation.
+
+No free dragging required.
+
+
+PRIORITY 11 — FIXED-ROUTE MOVING HAZARD
+=======================================
+Goal
+----
+Something moves along a predefined sequence of tiles.
+
+Examples
+--------
+- piston face;
+- magical bolt;
+- rolling boulder;
+- moving portal;
+- sweeping flame.
+
+Do NOT build
+------------
+- acceleration;
+- collision physics;
+- arbitrary pathfinding.
+
+Data
+----
+path: [tileA, tileB, tileC...]
+step_time
+loop / ping_pong
+effect_on_player
+
+Puzzle value
+------------
+Unlocks:
+- ram gallery;
+- collapsing pursuit;
+- fireball circuit;
+- boulder run;
+- moving portal field.
+
+Keep it deterministic and grid-based.
+
+
+PRIORITY 12 — THROW ITEM FORWARD
+================================
+Goal
+----
+A carried item travels tile-by-tile in the direction John faces until it stops.
+
+Minimal rules
+-------------
+- maximum range;
+- stop at blocking tile/entity;
+- land as world item;
+- optionally pass through compatible portal;
+- trigger plate/receptacle on landing.
+
+Do NOT add
+----------
+- trajectories;
+- angles;
+- bouncing;
+- strength stat;
+- velocity simulation.
+
+Puzzle value
+------------
+Unlocks:
+- remote pressure plates;
+- throw-through-portal;
+- weapon-that-closes-pit advanced solution;
+- test-your-strength style puzzles;
+- sending objects across gaps.
+
+Optional for the first inventory release, but very high leverage later.
+
+
+PRIORITY 13 — SUBSYSTEM / FACILITY STATE
+========================================
+Goal
+----
+Track several named components of one larger location.
+
+Example
+-------
+Stormworks:
+- furnace_online
+- pumps_online
+- generator_online
+- water_flow_online
+
+Implementation
+--------------
+This can remain grouped flags plus helper functions; no elaborate simulation is needed.
+
+World communication
+-------------------
+No special UI required. Show state through:
+- lights;
+- sound;
+- moving machinery;
+- indicator board;
+- NPC dialogue.
+
+Puzzle value
+------------
+Unlocks:
+- bring-whole-facility-online finale;
+- multi-wing temples;
+- archive security rings;
+- four-tower locks;
+- power-routing dungeons.
+
+
+PRIORITY 14 — ITEM EXCHANGE / OCCUPIED SLOT
+===========================================
+Goal
+----
+A receptacle can retain an installed object and react when it becomes empty.
+
+Use cases
+---------
+- take one, leave one;
+- counterweight;
+- sword pedestal;
+- one key must remain;
+- swap failed component;
+- offer replacement to claim reward.
+
+Required operations
+-------------------
+install(item)
+remove()
+is_occupied()
+accepted_tags()
+
+Puzzle value
+------------
+Unlocks several of the strongest DM2-style inventory puzzles with almost no bespoke logic.
+
+
+PRIORITY 15 — REVEAL / ILLUSION STATE
+=====================================
+Goal
+----
+Support objects or terrain whose visual/interaction state can be hidden/revealed.
+
+Examples
+--------
+- secret door;
+- false wall;
+- invisible pit;
+- hidden writing;
+- illusion bridge;
+- concealed switch.
+
+Triggers
+--------
+- flag;
+- Light spell;
+- possession/use of lens;
+- nearby mechanism;
+- scripted NPC demonstration.
+
+Implementation
+--------------
+Prefer entity overlays rather than changing base map art.
+
+Puzzle value
+------------
+Very high. Reuses the current conditional entity pattern but gives it a generic abstraction.
+
+
+OPTIONAL LATER — SIMPLE ENEMY POSITION PUZZLES
+==============================================
+Do not make this part of the first puzzle-engine pass unless exploration combat already needs it.
+
+Goal
+----
+Allow selected enemies to move on the overworld grid according to very simple behaviour.
+
+Minimum behaviours
+------------------
+- chase player;
+- flee player;
+- move toward lure;
+- avoid tagged tile;
+- stop on plate.
+
+No combat AI redesign required.
+
+Puzzle value
+------------
+Unlocks:
+- enemy on pressure plate;
+- four creature seals;
+- lure enemy under gate;
+- creature absorbs hazard.
+
+This is powerful but materially more expensive than inventory/flag/timer work.
+
+
+OPTIONAL LATER — GENERIC PROJECTILE CHANNEL
+===========================================
+Only build after Throw and fixed-route hazards prove useful.
+
+Goal
+----
+Unify:
+- thrown items;
+- magical bolts;
+- environmental projectiles.
+
+Can interact with:
+- portals;
+- reflectors;
+- receivers;
+- enemies;
+- plates.
+
+This would support the most systemic Chaos Strikes Back-style puzzles, but it is not needed for the first
+20-30 low-cost puzzles.
+
+
+SAVE / LOAD REQUIREMENTS
+========================
+Any new mechanic must survive save/load correctly.
+
+Persist
+-------
+- inventory contents;
+- dropped world items and positions;
+- installed receptacle items;
+- permanent dynamic barrier state;
+- facility subsystem state;
+- solved sequence state if intended;
+- revealed secrets;
+- puzzle-generated items.
+
+Usually do NOT persist
+----------------------
+- current phase of repeating hazards;
+- temporary timers;
+- half-completed short timing sequences.
+
+On load, periodic mechanisms can reset to initial phase unless exact continuity is required.
+
+
+TESTING REQUIREMENTS
+====================
+Add deterministic tests per reusable mechanic rather than one test per puzzle.
+
+Inventory
+---------
+- pickup adds item;
+- capacity respected;
+- inspect does not consume;
+- drop removes inventory and creates world item;
+- dropped item survives save/load.
+
+Receptacle
+----------
+- accepts correct item;
+- rejects wrong item;
+- consume vs retain behaviour;
+- retained item removable where allowed.
+
+Pressure plate
+--------------
+- player activates;
+- qualifying item activates;
+- leaving/deleting occupant clears;
+- non-qualifying item does not activate.
+
+Dynamic barrier
+---------------
+- state controls walkability;
+- state controls visible sprite;
+- save/load persistent states.
+
+Timer
+-----
+- opens/activates;
+- expires;
+- test clock can advance deterministically.
+
+Sequence
+--------
+- correct order completes;
+- wrong order resets;
+- reverse order works when configured.
+
+Magic target
+------------
+- correct spell applies effect;
+- incorrect spell gives feedback without corrupting state.
+
+Throw
+-----
+- travels until blocker;
+- lands as world item;
+- triggers plate;
+- survives save/load after landing.
+
+Facility state
+--------------
+- individual subsystem flags;
+- final completion only when all required systems active.
+
+
+RECOMMENDED DEVELOPMENT ORDER
+=============================
+Phase 1 — almost no risk
+------------------------
+1. Basic inventory
+2. Item receptacles
+3. Reveal/secret abstraction
+4. Ordered trigger sequences
+
+Immediately supports:
+- offerings;
+- wishing well;
+- secret chains;
+- material locks;
+- damaged-map clue items;
+- Clockwise Room;
+- mosaic/route puzzles.
+
+Phase 2 — physical inventory puzzles
+------------------------------------
+5. Dropped world items
+6. Pressure plates
+7. Dynamic barriers
+8. Item exchange / occupied slots
+
+Unlocks:
+- hold plate with object;
+- fair exchange;
+- take one leave one;
+- counterweights;
+- sword/pedestal pit puzzle;
+- cells held shut.
+
+Phase 3 — time and movement
+---------------------------
+9. Timed state
+10. Same-area relocation
+11. Fixed-route moving hazards
+
+Unlocks:
+- timed gates;
+- ram gallery;
+- false-door drops;
+- snake-path reset;
+- collapsing floors;
+- cycling hazards.
+
+Phase 4 — magic becomes exploration
+-----------------------------------
+12. Environmental magic targets
+13. Rotatable fixed mechanisms
+14. Facility subsystem tracking
+
+Unlocks:
+- Light illusions;
+- Stone bracing;
+- Fire/Water environmental use;
+- energy-routing rooms;
+- Stormworks-style whole-location machinery.
+
+Phase 5 — systemic expansion
+----------------------------
+15. Throw item forward
+16. Optional simple enemy overworld movement
+17. Optional generic projectile channel
+
+Unlocks:
+- remote switches;
+- throw through portal;
+- enemy plates;
+- multi-creature seals;
+- projectile circuits;
+- the most CSB-like systemic puzzles.
+
+
+SCOPE CONTROL
+=============
+Avoid these until the puzzle library proves they are needed:
+- freeform physics;
+- draggable arbitrary objects;
+- numerical mass simulation;
+- full crafting;
+- inventory encumbrance;
+- procedural puzzle generation;
+- generic scripting language;
+- arbitrary moving platforms;
+- complex companion pathfinding;
+- real-time enemy puzzle AI;
+- free-aim spell projectiles.
+
+Design target
+-------------
+A SMALL SET OF GENERIC GRID SYSTEMS -> MANY DISTINCT PUZZLES.
+
+With Priority 0-15 implemented, the game can support the majority of the 50-puzzle catalogue without a bespoke
+subsystem for each new location.

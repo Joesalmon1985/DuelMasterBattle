@@ -1,0 +1,420 @@
+DUEL MASTER BATTLE
+PUZZLE CATALOGUE
+================
+
+Purpose
+-------
+A reusable library of distinct puzzle ideas for the top-down RPG. These are not tied to Jane,
+the Trial, the Stormworks, or any one future dungeon. Each can be reskinned into ruins, archives,
+mines, towers, villages, machinery, caves, temples, estates, and other locations.
+
+Design rules
+------------
+- Prefer puzzles solved by moving, observing, carrying, placing, timing, choosing routes, using magic,
+  or understanding the world.
+- Avoid quiz-box design unless the fiction strongly supports it.
+- Favour fail-forward outcomes over instant death/reload.
+- Reuse a small number of general mechanics rather than bespoke code per room.
+- Let some objects remain useful after the puzzle that introduces them.
+- NPCs may clue, demonstrate, mislead, or cooperate, but should not solve puzzles automatically.
+
+Mechanic key
+------------
+M0  Existing flags / triggers / conditional entities / exits
+M1  Inventory: pick up, inspect, use
+M2  Drop persistent world item
+M3  Throw item forward along grid
+M4  Pressure plate / occupancy sensor
+M5  Dynamic gate / pit / bridge tile state
+M6  Timed state / periodic hazard
+M7  Same-area teleport / relocation
+M8  Ordered trigger sequence / directional route tracking
+M9  Spell-on-environment interaction
+M10 Rotatable fixed mechanism / reflector
+M11 Simple moving hazard or moving mechanism on fixed route
+M12 NPC scripted demonstration / companion anchor
+M13 World-state subsystem tracking
+M14 Item substitution / exchange slot
+M15 Hidden/revealed tile or entity state
+
+01. THE FOUR OFFERINGS
+----------------------
+Core idea: Four alcoves each describe an object indirectly. Place the correct object into each.
+Introduction: Start with one obvious pairing so the player learns that objects can be offered to receptacles.
+Example: "I return every face but keep none" -> mirror shard.
+Failure: Wrong objects are returned, trigger a warning, or activate a minor hazard.
+Mechanics: M1, M14, M0
+
+02. CLOCKWISE / TURN BACK
+-------------------------
+Core idea: A looping corridor changes state only if crossed in the correct directional sequence.
+Introduction: An inscription says CLOCKWISE. Four subtle markers sit around the loop. Completing them in order
+opens a route. A later clue says TURN BACK and requires reversing direction.
+Failure: Wrong order resets with a small visual/audio cue.
+Mechanics: M8, M15, M0
+
+03. THE SERPENT PATH
+--------------------
+Core idea: The safe route winds through a room. Obvious shortcuts reset the player to the entrance.
+Introduction: A clue says the serpent never crosses its own body; floor markings faintly trace a winding course.
+Failure: A flash teleports the player back rather than damaging them.
+Mechanics: M7, M0
+
+04. DROP IT BELOW
+-----------------
+Core idea: A valuable inaccessible object can only be obtained by deliberately dropping it through a floor into
+another room or lower level.
+Introduction: The player sees the object behind bars and a nearby lever controlling the floor beneath it.
+Payoff: Find the smashed/displaced object later below.
+Mechanics: M0, M15
+
+05. TWO ENDS OF THE HALL
+------------------------
+Core idea: Two distant mechanisms must both be active before a central gate opens.
+Introduction: The first lever moves the door slightly but not enough. A clue such as COUNTERSIGNED suggests a second.
+Variation: One lever is easy; the other requires a detour or battle.
+Mechanics: M0, M5
+
+06. TIMED GATE RUN
+------------------
+Core idea: A switch opens a gate briefly. The player must physically traverse the room before it closes.
+Introduction: First timed gate is generous and clearly visible.
+Variation: Multiple gates with different durations create an ordering puzzle.
+Failure: Gate closes; reset and retry.
+Mechanics: M5, M6
+
+07. REVEALED PITS
+-----------------
+Core idea: A nearby plate, lens, or spell temporarily reveals which floor tiles are pits.
+Introduction: Give a spatial clue—shelf marks, dust, cracks, or footprints contradict the apparent floor.
+Variation: Light permanently reveals the safe route.
+Mechanics: M5, M15, optional M9
+
+08. SECRET SWITCH CHAIN
+-----------------------
+Core idea: One hidden switch exposes a second, which exposes a third, eventually opening a distant route.
+Introduction: Cleaner brick, scrape marks, worn book spine, or repeated hand marks.
+Failure: None; observation/discovery puzzle.
+Mechanics: M0, M15
+
+09. THE OLD WISH
+----------------
+Core idea: A mundane object belongs in a ceremonial object such as a fountain, shrine, memorial, or slot.
+Introduction: Give the player a low-value coin/token earlier.
+Clue: "What is given in hope is never lost."
+Mechanics: M1, M14, M0
+
+10. RELEASE THE CELLS
+---------------------
+Core idea: A pressure mechanism holds several side chambers shut. Leaving it releases enemies or hazards.
+Introduction: Scratches, breathing, blood, or damage marks warn what is behind the doors.
+Variation: Releasing the rooms may later be necessary to reach treasure.
+Mechanics: M4, M5, M15
+
+11. THE USELESS OBJECT
+----------------------
+Core idea: An item appears useless when found but becomes essential in a later special environment.
+Examples: Clouded lens reveals hidden ink; cold candle lights only in magical darkness; tuning fork resonates near secrets.
+Introduction: Let the player inspect and try it earlier without obvious success.
+Mechanics: M1, M9 or M15
+
+12. MOSAIC FLOOR
+----------------
+Core idea: A patterned floor contains safe and unsafe symbols.
+Introduction: First rows make the rule inferable. A corpse, scorch mark, or broken tile demonstrates failure.
+Variation: Safe symbol changes halfway across.
+Mechanics: M0, optional M5
+
+13. FALSE DOOR, REAL DROP
+-------------------------
+Core idea: A suspiciously inviting door is actually the trigger for a concealed pit.
+Introduction: Untouched handle and absence of footprints are clues.
+Failure: Drop into an alternate lower route instead of dying.
+Mechanics: M5, M7
+
+14. LEFT LEVER / RIGHT LEVER
+----------------------------
+Core idea: Two visually similar controls; an earlier clue identifies which is safe.
+Introduction: NPC, note, corpse scratch, or diagram warns about one side.
+Failure: Wrong lever triggers fire, releases an enemy, locks a shortcut, or wounds the player.
+Mechanics: M0
+
+15. DAMAGED MAP
+---------------
+Core idea: The player receives only fragments of a map or room labels and must identify landmarks while navigating.
+Introduction: First surviving label matches an obvious nearby room, teaching how to interpret the fragment.
+Variation: Map is rotated, incomplete, or predates renovations.
+Mechanics: M0, optional M1 for inspecting map
+
+16. THE LYING GUIDE
+-------------------
+Core idea: An NPC confidently gives false or self-serving directions.
+Introduction: Subtle inconsistencies suggest unreliability.
+Failure: Following the directions leads somewhere dangerous but useful, not a dead end.
+Mechanics: M12, M0
+
+17. FAIR EXCHANGE
+-----------------
+Core idea: Taking an object requires leaving another acceptable object in its place.
+Introduction: The receptacle reacts immediately to removal.
+Variation: Different replacements create different rewards/consequences.
+Mechanics: M1, M14
+
+18. WATCH HOW THEY ESCAPE
+-------------------------
+Core idea: An NPC or enemy reveals a secret mechanism by using it in a scripted scene.
+Introduction: Player first fails to find the route. Later an NPC flees and demonstrates it.
+Payoff: Mechanism remains usable afterwards.
+Mechanics: M12, M15
+
+19. THE FALSE TREASURE
+----------------------
+Core idea: The ornate obvious container is a distraction; the critical item is hidden in a mundane object.
+Introduction: Room composition deliberately draws the eye toward the wrong focal point.
+Clues: Dust, moisture, inventory records, or mismatch between value and purpose.
+Mechanics: M1, M0
+
+20. MISSING GEAR
+---------------
+Core idea: A machine visibly lacks one component. Find and install it.
+Introduction: Make the empty socket visually explicit.
+Variation: Correct part is currently being used elsewhere, forcing a trade-off.
+Mechanics: M1, M14, M13
+
+21. HOLD THE PLATE WITH AN OBJECT
+---------------------------------
+Core idea: Standing on a plate opens a gate, but walking to the gate closes it. Leave an object behind.
+Introduction: Put a loose heavy object in the same room the first time.
+Variation: Later require remembering to bring a suitable object.
+Mechanics: M2, M4, M5
+
+22. THE WEAPON THAT CLOSES THE PIT
+----------------------------------
+Core idea: A desirable object itself is acting as a switch. Removing it opens a pit or closes the exit.
+Introduction: Mechanism reacts instantly when picked up.
+Advanced solution: Throw the object across so state changes while it is in transit, then recover it.
+Mechanics: Basic M1 + M5; advanced M3 + M5
+
+23. TAKE ONE, LEAVE ONE
+-----------------------
+Core idea: Two tempting items occupy a stabilising cradle. Taking either is safe; taking both activates a trap.
+Introduction: Inscription: "TWO KEYS. ONE RESTS."
+Variation: Return later with a substitute to claim both.
+Mechanics: M1, M14
+
+24. RAM GALLERY
+---------------
+Core idea: Pistons, blades, flames, or crushers periodically block a corridor. Read the rhythm and move.
+Introduction: First hazard cycles slowly and visibly.
+Failure: Knockback, wound, or room reset.
+Mechanics: M6, M11
+
+25. CYCLING TELEPORT FIELD
+--------------------------
+Core idea: A portal cycles between several predefined exit points or map positions.
+Introduction: Let the player safely observe an object or effect moving through its cycle.
+Variation: Enter at the right moment to reach a hidden ledge/room.
+Mechanics: M6, M7, M11
+
+26. REDIRECT THE ENERGY
+-----------------------
+Core idea: Fixed reflectors rotate. Route magical energy from emitter to receiver.
+Introduction: Start with one reflector and an obvious target.
+Variation: Wrong routes activate hazards or optional machinery.
+Mechanics: M10, M9, M13
+
+27. REPLACE THE BURNT FUSE
+--------------------------
+Core idea: A subsystem is dead because a removable component failed.
+Introduction: Show the broken subsystem early; replacement appears much later.
+Payoff: Drain water, restore lift, power lights, or open another route.
+Mechanics: M1, M14, M13
+
+28. BRING THE WHOLE FACILITY ONLINE
+-----------------------------------
+Core idea: Several puzzles restore separate subsystems; the final machine requires all of them.
+Examples: Furnace, pumps, generator, water flow; four magical towers; four archive seals.
+Introduction: Show a central status board near the start.
+Mechanics: M13, M0
+
+29. THROW TO THE REMOTE SWITCH
+------------------------------
+Core idea: A floor plate/button is unreachable, but an object can be thrown onto it.
+Introduction: First version is a straight unobstructed throw.
+Variation: Later add a portal or opening.
+Mechanics: M3, M4
+
+30. THROW THROUGH THE PORTAL
+----------------------------
+Core idea: Throw an object into a portal so it emerges elsewhere and activates a remote mechanism.
+Introduction: Demonstrate portal behaviour with a harmless environmental object/effect first.
+Variation: Align the portal before throwing.
+Mechanics: M3, M7, M4
+
+31. ENEMY ON THE PLATE
+----------------------
+Core idea: An enemy must occupy a pressure plate; killing it is counterproductive.
+Introduction: Show the gate respond when the enemy accidentally steps on the plate.
+Variation: Use positioning or magic to lure it into place.
+Mechanics: M4 plus simple enemy overworld movement; optional M9
+
+32. FOUR CREATURE SEALS
+-----------------------
+Core idea: Several creatures must simultaneously occupy separate marked zones.
+Introduction: Each seal lights when occupied.
+Failure protection: Puzzle creatures respawn or cannot be permanently removed before completion.
+Mechanics: M4 plus simple enemy movement, M13
+
+33. FIREBALL CIRCUIT
+--------------------
+Core idea: A repeating magical projectile follows a fixed loop. The player creates safe windows.
+Introduction: Projectile route is visible before entering.
+Variations: Interrupt with a creature, shutter, reflector, or switch; taking treasure restarts/reverses circuit.
+Mechanics: M6, M11, optional M10/M4
+
+34. MAGIC REBOUNDS HERE
+-----------------------
+Core idea: Direct spell use reflects back or redirects, forcing an environmental solution.
+Introduction: Warning inscription and harmless reflected test teach the rule.
+Solutions: Trap enemy under gate, rotate reflector, use different spell, or activate remote mechanism.
+Mechanics: M9, M10 or M5
+
+35. LIGHT REVEALS FALSE GEOMETRY
+--------------------------------
+Core idea: Walls, pits, doors, or bridges are illusions that Light exposes.
+Introduction: First illusion is optional and harmless.
+Variation: Some revealed paths exist only while Light is active.
+Mechanics: M9, M15, M5
+
+36. STONE JAMS THE MACHINE
+--------------------------
+Core idea: Stone magic immobilises a moving mechanism.
+Examples: Jam chest blades; stop crusher; hold gate; freeze rotating bridge.
+Introduction: Earlier simple use teaches Stone can brace mechanisms.
+Mechanics: M9 plus M6/M11/M5 depending on target
+
+37. WATER CHANGES THE ROOM
+--------------------------
+Core idea: Water magic alters environmental state rather than merely extinguishing fire.
+Examples: Fill channel, cool machine, reveal dry-clay writing, short conductor, raise buoyant object.
+Introduction: Use a single obvious basin first.
+Mechanics: M9, M5/M13
+
+38. FIRE CREATES THE ROUTE
+--------------------------
+Core idea: Fire is used constructively.
+Examples: Burn vines hiding passage; light braziers in pattern; heat metal lock; create steam after Water.
+Introduction: Establish a clear visual language for flammable/heatable props.
+Mechanics: M9, M15/M13
+
+39. COMPANION HOLDS THE OTHER SIDE
+----------------------------------
+Core idea: A scripted companion occupies a switch or operates a mechanism while player traverses another route.
+Introduction: First version is explicit and cooperative.
+Variation: Later make trust part of the scenario.
+Mechanics: M12, M4/M5
+
+40. THE ROOM CHANGES WHEN YOU TAKE THE PRIZE
+--------------------------------------------
+Core idea: The puzzle appears solved, but removing the reward changes the return route.
+Examples: Hazards restart; bridge retracts; teleporter reverses; lights go out; enemies wake.
+Introduction: Foreshadow counterweights or humming machinery.
+Mechanics: M1, M13, M5/M6
+
+41. SOUND SEQUENCE
+------------------
+Core idea: Hear/discover a short sequence and reproduce it with bells, crystals, drums, or switches.
+Introduction: Sequence length 3-5; clue can be replayed.
+Variation: Spatial positions correspond to tones rather than a menu.
+Mechanics: M0, M8
+
+42. FOLLOW THE FOOTPRINTS
+-------------------------
+Core idea: Different tracks cross a room; only one belongs to the person/creature being followed.
+Introduction: Teach one identifying clue such as boot size, blood, mud, dragging foot, or magical residue.
+Variation: Tracks vanish and resume after secret door/portal.
+Mechanics: M0, M15
+
+43. THE COUNTERWEIGHT
+---------------------
+Core idea: Removing one object changes a paired platform, door, bridge, or lift elsewhere.
+Introduction: Let the player see the paired mechanism through bars/window.
+Variation: Replace with another acceptable object.
+Mechanics: M2, M4/M14, M5
+
+44. DRAIN / FLOOD ROUTE SWAP
+----------------------------
+Core idea: Choose whether a zone is flooded or drained, changing accessible passages.
+Introduction: Show both high walkway and low tunnel so trade-off is visible.
+Variation: One state gives treasure; other gives progression.
+Mechanics: M13, M5
+
+45. ONE-WAY COLLAPSING FLOOR
+----------------------------
+Core idea: Tiles collapse shortly after being stepped on, forcing commitment to movement.
+Introduction: First tile visibly cracks before dropping.
+Failure: Fall to a lower route rather than die.
+Variation: Optional treasure requires riskier detour.
+Mechanics: M6, M5, M7
+
+46. THE DOOR THAT OPENS BEHIND YOU
+----------------------------------
+Core idea: A switch appears to do nothing because it opens a route outside the current view.
+Introduction: Distant clunk plus later recognisable previously locked door.
+Variation: Multiple switches alter earlier rooms.
+Mechanics: M0, M15
+
+47. WRONG ANSWER CHANGES THE DUNGEON
+------------------------------------
+Core idea: A riddle/selection has no instant wrong screen. Wrong choices alter the environment.
+Examples: Release guardian; flood route; lock shortcut; move treasure elsewhere.
+Introduction: Communicate cause-and-effect physically.
+Mechanics: M0, M13
+
+48. OBJECT AS CLUE, NOT KEY
+---------------------------
+Core idea: An inventory item is useful because of information on/in it, not because it fits a slot.
+Examples: Ledger page reveals lever order; compass gives orientation; seal reveals classification; map fragment names room.
+Introduction: Encourage Inspect with one clearly readable early object.
+Mechanics: M1
+
+49. RETURN LATER WITH NEW MAGIC
+-------------------------------
+Core idea: A previously understood but unsolved obstacle becomes solvable after learning a spell.
+Examples: Light reveals bridge; Stone braces lift; Water cools furnace; Fire clears roots.
+Introduction: Make obstacle memorable and optionally record it in journal.
+Mechanics: M9, M15/M5
+
+50. MULTI-SOLUTION ROOM
+-----------------------
+Core idea: One obstacle deliberately supports several legitimate solutions using previously learned systems.
+Example barred gate solutions: key; Stone brace; hidden Light passage; drop from above; remote pressure plate.
+Introduction: Use late, once system vocabulary is understood.
+Mechanics: Combination of existing generic mechanics; no bespoke logic should be needed.
+
+RECOMMENDED FIRST 20
+====================
+For maximum puzzle variety with relatively little engine work:
+1. The Old Wish
+2. Secret Switch Chain
+3. Mosaic Floor
+4. Two Ends of the Hall
+5. Damaged Map
+6. The Four Offerings
+7. Drop It Below
+8. Left Lever / Right Lever
+9. The Serpent Path
+10. Clockwise / Turn Back
+11. Missing Gear
+12. Hold the Plate with an Object
+13. Fair Exchange
+14. Take One, Leave One
+15. Timed Gate Run
+16. The Weapon That Closes the Pit
+17. Ram Gallery
+18. Replace the Burnt Fuse
+19. Redirect the Energy
+20. Bring the Whole Facility Online
+
+This sequence introduces observation, inventory, stateful machinery, movement puzzles and environmental magic
+without requiring complex enemy AI or general-purpose physics.

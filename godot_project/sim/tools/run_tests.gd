@@ -22,6 +22,8 @@ const TESTS := [
 	"res://sim/tests/test_units.gd",
 	"res://sim/tests/test_world_sim.gd",
 	"res://sim/tests/test_projection.gd",
+	"res://sim/tests/test_dungeons.gd",
+	"res://sim/tests/test_quests.gd",
 ]
 
 

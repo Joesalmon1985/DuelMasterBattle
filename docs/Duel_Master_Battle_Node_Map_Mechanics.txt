@@ -1,0 +1,1084 @@
+DUEL MASTER BATTLE
+NODE MAP SUPPORT MECHANICS
+==========================
+
+Purpose
+-------
+A light-touch map-generation backlog for turning world-simulation nodes into believable playable places.
+
+The goal is not to build a general procedural-world engine.
+
+The goal is to add the smallest reusable systems needed to turn a board node into:
+- wilderness;
+- a road or track junction;
+- a settlement;
+- a city;
+- a starting-settlement tower entrance;
+- a later-settlement cave entrance;
+- an infected or overrun version of any of the above.
+
+The board simulation remains authoritative.
+
+Node maps are a visual and playable projection of that state.
+
+
+CORE DESIGN RULES
+=================
+
+1. One world node -> one playable overworld area.
+
+2. Board edges remain simulation infrastructure.
+   They continue to support:
+   - roads;
+   - faction expansion;
+   - longest-road logic;
+   - pathing;
+   - trade carts;
+   - route blocking.
+
+3. Board edges are NOT separate playable RPG locations.
+   Their road/track state is drawn into the maps at both endpoint nodes.
+
+4. Map generation must be deterministic.
+   The same world seed + node state should produce the same map.
+
+5. Persistent authored/generated content must not reroll every time the player enters a node.
+
+6. Simulation state determines visual state.
+   The node map should show:
+   - surrounding terrain;
+   - productivity;
+   - settlement/city status;
+   - road ownership;
+   - local faction;
+   - infection;
+   - units;
+   - trade carts;
+   - dungeon entrance;
+   - quest/civic activity.
+
+7. Do not simulate a second economy inside the map.
+   Villager work routines visually represent the real world simulation but do not create or consume authoritative resources.
+
+8. Prefer reusable composition rules over bespoke maps.
+
+9. Upgrades should preserve place identity.
+   A settlement becoming a city should look like the same place growing, not a completely rerolled map.
+
+10. Map generation must remain compatible with:
+    - save/load;
+    - deterministic tests;
+    - existing movement;
+    - encounters;
+    - NPC dialogue;
+    - quest flags;
+    - dungeon entrances.
+
+
+PRIORITY 0 — PRESERVE EXISTING WORLD AUTHORITY
+==============================================
+
+Do not replace:
+- Catan node/edge geometry;
+- road ownership;
+- faction settlement/city state;
+- infection state;
+- world turn progression;
+- units;
+- trade carts;
+- world save state;
+- existing area/exits/entity systems.
+
+The node-map layer reads these systems and expresses them visually.
+
+
+PRIORITY 1 — DETERMINISTIC NODE IDENTITY
+========================================
+
+Goal
+----
+Every node has a stable visual identity.
+
+Required inputs
+---------------
+At minimum:
+- world seed;
+- node ID;
+- adjacent hex IDs;
+- adjacent resource/terrain types;
+- adjacent production numbers;
+- incident board edges;
+- road owners;
+- settlement owner;
+- development level: none / settlement / city;
+- whether settlement existed at world creation;
+- infection on adjacent hexes;
+- current units/carts;
+- persistent quest/dungeon state.
+
+Stable derived seed
+-------------------
+Use a derived node seed such as:
+
+world_seed + node_id + map_generation_version
+
+Use separate deterministic sub-seeds for:
+- map template choice;
+- building placement;
+- scenery placement;
+- NPC appearance;
+- ambient work-loop offsets.
+
+Do not use runtime randomness that changes the map on re-entry.
+
+
+PRIORITY 2 — NODE MAP ZONES
+===========================
+
+Goal
+----
+Compose maps from logical zones rather than arbitrary tile placement.
+
+Recommended logical zones
+-------------------------
+A. Exit/road mouths
+B. Central circulation area
+C. Production zone
+D. Processing zone
+E. Residential zone
+F. Civic/quest zone
+G. Storage/logistics zone
+H. Dungeon entrance zone
+I. Wilderness/scenery margins
+
+Not every node uses every zone.
+
+Wilderness nodes may only need:
+- exits;
+- paths;
+- terrain;
+- encounter/scenery anchors.
+
+Settlements/cities use most zones.
+
+
+PRIORITY 3 — ROAD AND TRACK INTEGRATION
+=======================================
+
+Goal
+----
+Represent every incident board edge inside the node map.
+
+For each incident edge:
+- if no road exists:
+  draw a rough track/path toward that neighboring node;
+- if a road exists:
+  draw a proper road;
+- if road belongs to the local faction:
+  use local road styling;
+- if road belongs to another faction:
+  preserve the owner visually where useful.
+
+Important
+---------
+The playable exit still moves directly to the neighboring node.
+
+There is no intermediate edge map.
+
+Road geometry
+-------------
+A node normally has up to three incident directions.
+
+Support:
+- one-way spur;
+- two-way straight route;
+- two-way bend;
+- three-way junction.
+
+Settlement behaviour
+--------------------
+Roads should converge naturally on:
+- village centre;
+- market;
+- gate;
+- main street;
+- storehouse.
+
+Wilderness behaviour
+--------------------
+Tracks can:
+- cross;
+- fork;
+- bend around terrain;
+- narrow through forest;
+- climb through hills;
+- pass beside fields/pasture.
+
+City behaviour
+--------------
+Roads become:
+- wider;
+- better surfaced;
+- more structured;
+- optionally gated or lined by buildings.
+
+The road remains cosmetic/playable representation of the same board edge.
+
+
+PRIORITY 4 — TERRAIN PROJECTION
+===============================
+
+Goal
+----
+Make the three adjacent hexes visibly influence the node.
+
+Each node touches up to three hexes.
+
+Use their resource/terrain types to determine:
+- ground materials;
+- vegetation;
+- rocks;
+- fences;
+- water troughs;
+- field edges;
+- tree density;
+- industrial props;
+- skyline/background dressing.
+
+Suggested terrain identities
+----------------------------
+FOREST / WOOD
+- trees;
+- stumps;
+- log piles;
+- timber fences;
+- woodland edge.
+
+HILLS / BRICK
+- clay banks;
+- exposed earth;
+- low ridges;
+- kiln material;
+- brick stacks.
+
+PASTURE / WOOL
+- grass;
+- sheep;
+- pens;
+- hedges;
+- hay;
+- wool bales.
+
+FIELDS / GRAIN
+- crops;
+- furrows;
+- grain sheaves;
+- sacks;
+- fences;
+- carts.
+
+MOUNTAINS / ORE
+- rock;
+- scree;
+- mine props;
+- ore piles;
+- retaining walls.
+
+WASTES / DEAD
+- bare ground;
+- dead vegetation;
+- ruins;
+- ash;
+- cracked earth;
+- defensive or utility structures.
+
+Mixed nodes
+-----------
+Do not divide the map into three rigid pie slices.
+
+Blend terrain cues into coherent districts and margins.
+
+The strongest resource may dominate the visual identity while the other two remain readable.
+
+
+PRIORITY 5 — PRODUCTION-BUILDING GENERATION
+===========================================
+
+Goal
+----
+Turn adjacent productive hexes directly into visible primary industries.
+
+Production count
+----------------
+Production number -> number of primary production buildings
+
+6 / 8  -> 5
+5 / 9  -> 4
+4 / 10 -> 3
+3 / 11 -> 2
+2 / 12 -> 1
+Wastes -> 0 normal production buildings
+
+Primary families
+----------------
+FOREST
+Settlement: Logging Camp
+City: Logging Yard
+
+HILLS
+Settlement: Clay Pit & Kiln
+City: Brickworks
+
+PASTURE
+Settlement: Sheepfold
+City: Wool Farm
+
+FIELDS
+Settlement: Farmstead
+City: Great Farm
+
+MOUNTAINS
+Settlement: Mine
+City: Deep Mine
+
+WASTES
+No normal raw-resource production building.
+
+Placement rule
+--------------
+Each building should be placed in a zone visually associated with the corresponding terrain.
+
+Repeated resource hexes may create repeated production structures.
+
+This repetition is desirable:
+a highly wooded node should look dominated by timber activity.
+
+
+PRIORITY 6 — PROCESSING-BUILDING GENERATION
+===========================================
+
+Goal
+----
+Every settlement/city gets exactly three processing slots derived from the three unordered pairings of its adjacent terrain/resources.
+
+For adjacent resources A, B and C:
+- processor 1 = A + B
+- processor 2 = A + C
+- processor 3 = B + C
+
+Repeated pairs may produce repeated buildings.
+
+Examples
+--------
+Wood + Wood -> Sawmill
+Wood + Ore -> Forge
+Wood + Grain -> Mill
+Grain + Grain -> Brewery & Malthouse
+Ore + Ore -> Metalworks
+Wood + Wastes -> Charcoal Burner
+
+The complete pairing catalogue belongs in the Node Map Visual Catalogue.
+
+Processing placement
+--------------------
+Place processors between:
+- their supplying production district(s);
+- the central storehouse/main street.
+
+This makes NPC work routes visually intelligible.
+
+
+PRIORITY 7 — HOUSING
+====================
+
+Goal
+----
+Settlement population density reflects economic scale.
+
+Base housing target
+-------------------
+Approximate target:
+
+houses ~= total_primary_production_buildings / 3
+
+Always allow at least one residence where a settlement exists.
+
+Do not treat this as a hard economic calculation.
+It is a visual-density target.
+
+Settlement housing
+------------------
+- cottages;
+- small yards;
+- gardens;
+- sheds.
+
+City housing
+------------
+When space permits:
+- add more homes;
+- replace cottages with denser/taller townhouses;
+- create short residential rows;
+- add upper-storey visual density.
+
+Upgrade principle
+-----------------
+City upgrade should either:
+A. upgrade existing housing;
+B. increase housing count;
+C. combine both;
+
+depending on graphical space.
+
+Do not destroy the recognizable layout merely to double a number.
+
+
+PRIORITY 8 — CENTRAL STORAGE AND LOGISTICS
+==========================================
+
+Goal
+----
+Give production and processing routines a believable shared destination.
+
+Every settlement/city should have:
+- a storehouse;
+- warehouse yard;
+- granary yard;
+or equivalent central storage building.
+
+This does not need inventory accounting.
+
+Ambient workers can visually deliver:
+- logs;
+- planks;
+- sacks;
+- wool;
+- bricks;
+- ore;
+- tools;
+- cloth;
+- food;
+- barrels;
+- crates.
+
+Cities may upgrade this to:
+- warehouse;
+- market warehouse;
+- guild depot;
+- larger granary complex.
+
+
+PRIORITY 9 — CIVIC AND QUEST BUILDINGS
+======================================
+
+Goal
+----
+Provide places for dialogue-driven quests and visible local institutions.
+
+Candidate civic buildings
+-------------------------
+- inn/tavern;
+- civic hall;
+- ruler's hall;
+- shrine/church/temple;
+- market;
+- watch house/barracks;
+- healer;
+- guild hall;
+- archive/school;
+- bathhouse.
+
+Not every settlement needs all of them.
+
+Selection should depend on:
+- development level;
+- faction;
+- local economy;
+- deterministic node seed;
+- quest requirements.
+
+Resource-demand tags
+--------------------
+Civic buildings may visually or narratively require outputs such as:
+- charcoal;
+- food;
+- clothes;
+- ale;
+- tools;
+- armour;
+- masonry;
+- planks;
+- furnishings;
+- leather;
+- pottery;
+- spirits.
+
+These demands can generate quest premises.
+
+They do not require a full supply simulation.
+
+
+PRIORITY 10 — SETTLEMENT -> CITY UPGRADE
+========================================
+
+Goal
+----
+Make world development immediately visible.
+
+When settlement becomes city:
+
+Production buildings
+--------------------
+Upgrade visual tier:
+- Logging Camp -> Logging Yard
+- Clay Pit & Kiln -> Brickworks
+- Sheepfold -> Wool Farm
+- Farmstead -> Great Farm
+- Mine -> Deep Mine
+
+Processing buildings
+--------------------
+Upgrade to city-tier variants.
+
+Housing
+-------
+Upgrade and/or increase density.
+
+Roads
+-----
+Improve surfacing and streetscape.
+
+Civic layer
+-----------
+Add or upgrade:
+- market;
+- ruler/civic building;
+- inn;
+- watch/barracks;
+- other suitable institutions.
+
+Storage
+-------
+Upgrade storehouse/warehouse.
+
+NPC density
+-----------
+Increase ambient population.
+
+Do not regenerate:
+- quest history;
+- dungeon identity;
+- persistent objects;
+- solved states;
+- established building IDs where avoidable.
+
+
+PRIORITY 11 — STARTING TOWERS
+=============================
+
+Goal
+----
+Every settlement created during initial world setup receives a tower dungeon.
+
+Tower role
+----------
+The tower is:
+- a visible landmark;
+- part of the settlement node map;
+- the entrance to that settlement's four-puzzle dungeon.
+
+It is not a separate board node.
+
+Placement
+---------
+Prefer:
+- edge of settlement;
+- overlooking road;
+- raised district;
+- attached to old wall;
+- central ancient landmark where space allows.
+
+Visual identity
+---------------
+Tower architecture may vary by:
+- faction;
+- dominant terrain;
+- settlement seed.
+
+The dungeon behind it remains its own dungeon area/map set.
+
+Persistence
+-----------
+Tower identity and generated dungeon seed/state must survive save/load.
+
+
+PRIORITY 12 — LATER CAVES
+=========================
+
+Goal
+----
+Every settlement founded after world creation receives a cave dungeon.
+
+Cave role
+---------
+The cave is:
+- part of the new settlement's node map;
+- the entrance to its four-puzzle dungeon;
+- evidence that settlement expansion reveals or exploits older places.
+
+It is not a separate board node.
+
+Placement
+---------
+Use terrain-aware presentation:
+- mountain -> rock face;
+- hills -> cut bank/quarry edge;
+- forest -> root-covered cleft;
+- fields -> sinkhole/old barrow entrance;
+- pasture -> hillside opening;
+- wastes -> cracked ruin/shaft.
+
+The entrance must remain recognizable regardless of terrain.
+
+
+PRIORITY 13 — WILDERNESS NODES
+==============================
+
+Goal
+----
+Nodes without a settlement should still look purposeful.
+
+Wilderness contains:
+- incident tracks/roads;
+- terrain blend;
+- signs/markers where appropriate;
+- environmental props;
+- encounter anchors;
+- carts/units passing through;
+- infection visuals;
+- occasional non-settlement landmarks.
+
+Do not fill every wilderness node with buildings.
+
+Its value is contrast.
+
+A later-founded settlement should visibly transform that same node.
+
+
+PRIORITY 14 — AMBIENT NPC WORK LOOPS
+====================================
+
+Goal
+----
+Make settlements look economically alive without creating a second resource simulation.
+
+Task model
+----------
+A worker loop is a sequence of anchors/actions, for example:
+
+SOURCE
+-> WORK
+-> PICK UP VISUAL LOAD
+-> WALK
+-> DELIVERY
+-> RETURN
+
+Examples
+--------
+Woodcutter:
+tree/logging anchor
+-> chop
+-> carry log
+-> sawmill/log pile
+-> return
+
+Sawmill worker:
+log pile
+-> saw
+-> carry planks
+-> storehouse
+-> return
+
+Farmer:
+field
+-> harvest
+-> carry sack
+-> mill/storehouse
+-> return
+
+Blacksmith:
+forge
+-> hammer
+-> carry tools
+-> storehouse/market
+-> return
+
+Task data
+---------
+Each building should expose anchors such as:
+- entrance;
+- work;
+- pickup;
+- dropoff;
+- queue;
+- idle;
+- social.
+
+Workers do not alter authoritative resource counts.
+
+Their loops are visual storytelling.
+
+
+PRIORITY 15 — SHARED ANIMATION VOCABULARY
+=========================================
+
+Goal
+----
+Avoid bespoke animations for every profession.
+
+High-value reusable actions
+---------------------------
+- walk;
+- idle;
+- talk;
+- carry_log;
+- carry_sack;
+- carry_crate;
+- carry_bundle;
+- push_cart;
+- chop;
+- dig;
+- harvest;
+- shear;
+- saw;
+- hammer;
+- stoke_fire;
+- stir;
+- weave;
+- knead;
+- pour;
+- load;
+- unload;
+- sweep;
+- pray;
+- guard;
+- write/read;
+- tend;
+- inspect.
+
+Building-specific professions combine these generic animations into routines.
+
+
+PRIORITY 16 — INFECTION VISUAL STATE
+====================================
+
+Goal
+----
+Make Pandemic state immediately visible.
+
+Possible overlays
+-----------------
+1 demon:
+- nervous NPCs;
+- extra guards;
+- damaged props;
+- occasional fleeing behaviour.
+
+2 demons / production suppressed:
+- production workers stop normal loops;
+- closed/stalled industry;
+- idle workers;
+- arguments;
+- shortages;
+- barricades.
+
+3+ / overrun:
+- abandoned streets;
+- damaged buildings;
+- demons visible;
+- civilians shelter or disappear;
+- carts halted;
+- fires/debris/barricades;
+- quest dialogue reflects crisis.
+
+Important
+---------
+This is a presentation layer for authoritative infection state.
+
+
+PRIORITY 17 — UNITS, RULERS AND TRADE CARTS
+===========================================
+
+Goal
+----
+Integrate world-simulation actors into the generated map.
+
+Ruler
+-----
+Usually placed at:
+- ruler's hall;
+- civic hall;
+- central square;
+- faction-specific landmark.
+
+Champion/hero
+-------------
+Use:
+- barracks;
+- gate;
+- road;
+- square;
+- encounter anchor.
+
+Trade cart
+----------
+Place on:
+- appropriate road segment;
+- storehouse;
+- market;
+- processor delivery area.
+
+Carts should look like they have a route, even if their authoritative movement happens in the world simulation.
+
+
+PRIORITY 18 — QUEST INTEGRATION
+===============================
+
+Goal
+----
+Generated quests should inhabit the town rather than exist as detached dialogue.
+
+Quest NPCs should be assigned to:
+- existing production buildings;
+- processing buildings;
+- civic buildings;
+- homes;
+- storehouse;
+- tower/cave entrance;
+- roads/squares.
+
+The three required quest conversations should occur in believable places.
+
+Optional combat can use:
+- street;
+- workshop;
+- wilderness margin;
+- road;
+- dungeon entrance;
+- dedicated encounter area.
+
+Quest consequences may change:
+- NPC dialogue;
+- ambient work routines;
+- building props;
+- local faction/world simulation state;
+- infection response;
+- civic-building activity.
+
+
+PRIORITY 19 — MAP GRAPHICAL SPACE MANAGEMENT
+============================================
+
+Goal
+----
+Allow economically large nodes to fit without ugly crowding.
+
+Use:
+- compact building footprints;
+- shared yards;
+- building rows;
+- layered props;
+- denser city variants;
+- district compression;
+- visual suggestion of off-map continuation.
+
+Do not require every counted economic building to be a huge unique footprint.
+
+A "production building" can be represented by:
+- one main structure plus yard;
+- repeated sheds;
+- attached workshops;
+- pens;
+- field plots;
+- mine shafts;
+- kiln structures.
+
+City upgrades may increase visual capacity through denser buildings rather than physically doubling area.
+
+
+PRIORITY 20 — SAVE / LOAD
+=========================
+
+Persist
+-------
+- map-generation version;
+- stable node seed;
+- settlement origin: initial / founded;
+- development level;
+- generated building IDs/types;
+- dungeon ID/type/seed;
+- quest assignment and state;
+- persistent map changes;
+- persistent revealed/removed props where gameplay-relevant.
+
+Derive from simulation where possible
+-------------------------------------
+- road ownership;
+- infection;
+- current units;
+- carts;
+- settlement owner;
+- settlement/city status;
+- current world turn.
+
+Do not persist purely cosmetic state unless necessary:
+- exact worker position;
+- current idle animation;
+- temporary smoke frame;
+- short ambient route phase.
+
+
+TESTING REQUIREMENTS
+====================
+
+Determinism
+-----------
+- same seed + same node state -> same map;
+- different seed may produce different legal composition;
+- save/load preserves persistent generated identity.
+
+Roads
+-----
+- every board edge has a matching exit;
+- owned road renders as road;
+- unowned edge renders as track;
+- reciprocal node travel remains correct;
+- no edge becomes a separate playable area.
+
+Terrain
+-------
+- all adjacent terrain types influence dressing;
+- no impossible resource building appears.
+
+Production
+----------
+- number token maps to correct production-building count;
+- Wastes produces zero normal production buildings.
+
+Processing
+----------
+- exactly three pairings generated;
+- repeated resource pairs handled correctly;
+- all pairing definitions resolve.
+
+Housing
+-------
+- target derives from production count;
+- minimum settlement housing exists;
+- city upgrade increases density/quality.
+
+Upgrade
+-------
+- settlement -> city preserves stable identity;
+- persistent quest/dungeon state survives upgrade.
+
+Dungeon
+-------
+- initial settlement gets tower;
+- later-founded settlement gets cave;
+- entrance leads to correct persistent dungeon.
+
+Ambient NPCs
+------------
+- all worker loops reference valid anchors;
+- missing building/anchor degrades safely to idle;
+- cosmetic routines never alter authoritative resources.
+
+Infection
+---------
+- visual/ambient state reflects infection thresholds;
+- clearing infection restores normal presentation.
+
+Regression
+----------
+- world movement still advances turns correctly;
+- battle return does not create extra move;
+- node maps remain traversable;
+- important doors/exits cannot be blocked by generated props.
+
+
+RECOMMENDED DEVELOPMENT ORDER
+=============================
+
+Phase 1 — map skeleton
+----------------------
+1. Stable node seed
+2. Logical zones/anchors
+3. Direct node exits
+4. Road/track rendering
+5. Terrain dressing
+
+Phase 2 — settlement morphology
+-------------------------------
+6. Production buildings
+7. Processing buildings
+8. Housing
+9. Storehouse
+10. civic/quest building slots
+
+Phase 3 — persistence and growth
+--------------------------------
+11. stable generated building IDs
+12. settlement -> city visual upgrade
+13. starting tower
+14. founded-settlement cave
+15. save/load coverage
+
+Phase 4 — living presentation
+------------------------------
+16. ambient NPC task anchors
+17. reusable animation vocabulary
+18. carts/units/rulers
+19. infection overlays
+
+Phase 5 — polish
+----------------
+20. faction visual variants
+21. additional building art variants
+22. density/space tuning
+23. ambient sound/effects
+24. map-composition variation
+
+
+SCOPE CONTROL
+=============
+
+Do NOT build:
+- a second economic simulation;
+- real logistics inventories for cosmetic workers;
+- full citizen needs;
+- pathfinding across the whole world;
+- arbitrary road geometry;
+- fully procedural architecture;
+- destructible buildings unless gameplay requires it;
+- simulation of every object being carried;
+- unique scripts for every settlement combination.
+
+Design target
+-------------
+WORLD STATE
+    ->
+SMALL SET OF NODE COMPOSITION RULES
+    ->
+MANY DISTINCT, READABLE, LIVING MAPS
+
+The player should be able to walk into a node and understand:
+- what terrain surrounds it;
+- whether it is wilderness, settlement or city;
+- what it produces;
+- how productive it is;
+- which roads connect it;
+- whether it is prospering or infected;
+- where its civic centre is;
+- where its dungeon is;
+- what its people appear to do.

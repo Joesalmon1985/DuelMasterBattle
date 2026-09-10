@@ -1,0 +1,1577 @@
+DUEL MASTER BATTLE
+NODE MAP VISUAL CATALOGUE
+=========================
+
+Purpose
+-------
+A reusable catalogue for visually constructing playable world-node maps.
+
+These are not 56 handcrafted settlements.
+
+The system combines:
+- three adjacent terrain/resource hexes;
+- their production numbers;
+- incident board edges;
+- settlement/city state;
+- faction identity;
+- infection;
+- dungeon origin;
+- deterministic visual variation.
+
+The result should make world simulation visible through ordinary exploration.
+
+
+DESIGN RULES
+============
+
+- One board node is one playable overworld area.
+- Roads/edges are drawn inside nodes, never used as separate playable edge maps.
+- Wilderness and developed nodes use the same underlying node identity.
+- Settlement growth should preserve recognizable geography.
+- Terrain determines primary industry.
+- Production number determines industry quantity.
+- Resource pairings determine processing buildings.
+- Economic scale influences housing.
+- Civic buildings create quest locations and narrative demand.
+- Initial settlements have tower dungeons.
+- Later-founded settlements have cave dungeons.
+- Infection changes presentation without replacing the map.
+- NPC work loops are cosmetic expressions of the world economy.
+- Generated maps must remain deterministic and traversable.
+
+
+THE THREE TERRAIN-COMBINATION FAMILIES
+======================================
+
+With six possible adjacent terrain types and three adjacent hexes there are 56 unordered terrain signatures.
+
+They fall into only three structural families.
+
+A. HOMOGENEOUS: A + A + A
+--------------------------
+6 combinations.
+
+Examples:
+- Wood + Wood + Wood
+- Grain + Grain + Grain
+- Ore + Ore + Ore
+
+Visual character:
+- strong specialization;
+- repeated primary industry;
+- repeated same-pair processing;
+- very clear economic identity.
+
+B. DOMINANT: A + A + B
+----------------------
+30 combinations.
+
+Visual character:
+- one dominant resource district;
+- one secondary resource district;
+- one same-resource processor;
+- two mixed processors.
+
+Example:
+Wood + Wood + Ore
+- strong logging presence;
+- some mining;
+- Sawmill;
+- Forge x2.
+
+C. MIXED: A + B + C
+-------------------
+20 combinations.
+
+Visual character:
+- balanced economy;
+- three different primary industries;
+- three different processors;
+- visually diverse settlement.
+
+Example:
+Wood + Grain + Ore
+- logging;
+- farming;
+- mining;
+- Mill;
+- Forge;
+- Distillery.
+
+
+NODE DEVELOPMENT STATES
+=======================
+
+TYPE N0 — WILDERNESS NODE
+-------------------------
+No settlement.
+
+Contains:
+- tracks/roads for each board edge;
+- terrain blend;
+- encounter space;
+- local environmental props;
+- passing units/carts;
+- infection overlay;
+- signs or landmarks where useful.
+
+Does NOT contain:
+- normal housing;
+- settlement processing economy;
+- civic centre;
+- settlement dungeon.
+
+Purpose:
+- contrast;
+- travel;
+- encounters;
+- evidence of world geography;
+- future development space.
+
+
+TYPE N1 — NEW/SMALL SETTLEMENT
+------------------------------
+Contains:
+- all production buildings implied by adjacent hexes;
+- three processors;
+- housing target;
+- storehouse;
+- central circulation space;
+- limited civic/quest buildings;
+- roads/tracks;
+- local faction/ruler presence as appropriate;
+- tower or cave dungeon depending on origin.
+
+Visual character:
+- open;
+- rural;
+- yards between structures;
+- industries visually dominate over housing.
+
+
+TYPE N2 — CITY
+--------------
+Same place after upgrade.
+
+Contains:
+- upgraded production buildings;
+- upgraded processing buildings;
+- upgraded storehouse;
+- denser/upgraded housing;
+- stronger civic core;
+- market/inn/institutional activity;
+- improved roads;
+- greater ambient population.
+
+Visual character:
+- denser;
+- busier;
+- more built-up;
+- stronger central street/square;
+- visibly wealthier or more organised.
+
+
+TYPE D1 — STARTING TOWER DUNGEON ENTRANCE
+========================================
+
+Exists on every settlement created during world setup.
+
+Node-map expression:
+- visible tower landmark;
+- entrance entity/door;
+- exterior props;
+- clue/signage if needed;
+- dungeon NPCs or guards where appropriate.
+
+Suggested terrain skins
+-----------------------
+Wood:
+- ivy/wooden gallery;
+- timber palisade around old stone.
+
+Brick/Hills:
+- red-stone or clay-brick tower;
+- terraced foundations.
+
+Wool/Pasture:
+- hill tower;
+- sheep paths around base.
+
+Grain/Fields:
+- isolated watchtower rising above fields;
+- granary-like outbuildings.
+
+Ore/Mountains:
+- stone keep;
+- buttressed tower;
+- metalwork details.
+
+Wastes:
+- weathered ancient tower;
+- partially ruined but functional entrance.
+
+The tower's dungeon mechanics are independent of its exterior skin.
+
+
+TYPE D2 — FOUNDED-SETTLEMENT CAVE ENTRANCE
+==========================================
+
+Exists on every settlement founded after initial world creation.
+
+Terrain presentation
+--------------------
+Wood:
+- root-covered cleft;
+- cave behind felled timber or old quarry path.
+
+Brick/Hills:
+- clay bank;
+- quarry cut;
+- collapsed kiln tunnel.
+
+Wool/Pasture:
+- grassy barrow;
+- hillside opening.
+
+Grain/Fields:
+- sinkhole;
+- buried cellar/old mound exposed during farming.
+
+Ore/Mountains:
+- mine-like rock opening;
+- natural fissure.
+
+Wastes:
+- cracked earth;
+- ruin shaft;
+- broken subterranean entrance.
+
+The cave should remain visually recognizable as the settlement's dungeon entrance.
+
+
+ROAD / TRACK ARCHETYPES
+=======================
+
+R0 — NO OWNED ROAD
+------------------
+Render:
+- rough track/path to neighboring node.
+
+R1 — ONE ROAD SPUR
+------------------
+One incident edge is an owned road.
+
+Layout:
+- road enters node;
+- terminates/converges at settlement centre or main junction;
+- other incident edges remain tracks.
+
+R2A — TWO-ROAD THROUGH ROUTE
+----------------------------
+Two road edges form the primary travel line.
+
+Layout:
+- main street/road passes through node;
+- third edge branches as track.
+
+R2B — TWO-ROAD BEND
+-------------------
+Two roads meet at a corner/junction.
+
+Layout:
+- settlement develops around bend;
+- useful for market/civic square.
+
+R3 — THREE-ROAD JUNCTION
+------------------------
+All incident edges are roads.
+
+Layout:
+- central crossroads/square;
+- strongest candidate for:
+  - market;
+  - inn;
+  - storehouse;
+  - civic building.
+
+CITY ROAD UPGRADE
+-----------------
+Settlement roads become:
+- wider;
+- more regular;
+- paved/boarded/engineered where art allows;
+- lined with buildings;
+- optionally gated.
+
+
+TERRAIN VISUAL VOCABULARY
+=========================
+
+WOOD / FOREST
+-------------
+Ground:
+- dark soil;
+- roots;
+- leaf litter.
+
+Scenery:
+- trees;
+- stumps;
+- log piles;
+- split timber;
+- stacked firewood;
+- timber fences.
+
+Primary building:
+- Logging Camp.
+
+City upgrade:
+- Logging Yard.
+
+
+BRICK / HILLS
+-------------
+Ground:
+- exposed earth;
+- clay;
+- slopes;
+- low rock.
+
+Scenery:
+- clay piles;
+- brick stacks;
+- kilns;
+- retaining walls;
+- carts.
+
+Primary building:
+- Clay Pit & Kiln.
+
+City upgrade:
+- Brickworks.
+
+
+WOOL / PASTURE
+--------------
+Ground:
+- grass;
+- worn animal tracks.
+
+Scenery:
+- sheep;
+- pens;
+- troughs;
+- hay;
+- hedges;
+- wool bales.
+
+Primary building:
+- Sheepfold.
+
+City upgrade:
+- Wool Farm.
+
+
+GRAIN / FIELDS
+--------------
+Ground:
+- cultivated soil;
+- grass paths.
+
+Scenery:
+- crops;
+- sheaves;
+- sacks;
+- fences;
+- carts;
+- scarecrows.
+
+Primary building:
+- Farmstead.
+
+City upgrade:
+- Great Farm.
+
+
+ORE / MOUNTAINS
+---------------
+Ground:
+- stone;
+- gravel;
+- scree.
+
+Scenery:
+- mine supports;
+- ore piles;
+- rock faces;
+- carts;
+- cranes/hoists where appropriate.
+
+Primary building:
+- Mine.
+
+City upgrade:
+- Deep Mine.
+
+
+WASTES / DEAD
+-------------
+Ground:
+- cracked earth;
+- ash;
+- rubble;
+- dead grass.
+
+Scenery:
+- dead trees;
+- old ruins;
+- broken walls;
+- salvage piles;
+- cisterns;
+- watch structures.
+
+Primary production:
+- none.
+
+Wastes instead influences mixed processing and utility buildings.
+
+
+PRODUCTION COUNT RULE
+=====================
+
+For each productive adjacent hex:
+
+6 / 8  -> 5 production structures
+5 / 9  -> 4
+4 / 10 -> 3
+3 / 11 -> 2
+2 / 12 -> 1
+Wastes -> 0
+
+The count represents visual/economic scale.
+
+Structures may be:
+- full buildings;
+- attached sheds;
+- yards;
+- pens;
+- plots;
+- shafts;
+- kilns;
+
+depending on the industry.
+
+Do not require every counted unit to use a large footprint.
+
+
+PRIMARY PRODUCTION BUILDINGS
+============================
+
+1. WOOD
+Settlement: Logging Camp
+City: Logging Yard
+
+Ambient tasks:
+- chop;
+- drag/carry log;
+- stack timber;
+- load cart.
+
+Likely destinations:
+- Sawmill;
+- Forge;
+- Builders' Yard;
+- Furnishings Workshop;
+- Charcoal Burner;
+- storehouse.
+
+
+2. BRICK
+Settlement: Clay Pit & Kiln
+City: Brickworks
+
+Ambient tasks:
+- dig clay;
+- carry clay;
+- mould brick;
+- stoke kiln;
+- stack bricks.
+
+Likely destinations:
+- Builders' Yard;
+- Smelter;
+- Bakehouse;
+- Pottery/Lime Kiln;
+- storehouse.
+
+
+3. WOOL
+Settlement: Sheepfold
+City: Wool Farm
+
+Ambient tasks:
+- tend sheep;
+- shear;
+- carry fleece;
+- bundle wool.
+
+Likely destinations:
+- Weavery;
+- Fullery;
+- Furnishings Workshop;
+- Armourer;
+- Tannery;
+- storehouse.
+
+
+4. GRAIN
+Settlement: Farmstead
+City: Great Farm
+
+Ambient tasks:
+- hoe;
+- reap;
+- gather sheaf;
+- fill sack;
+- carry sack.
+
+Likely destinations:
+- Mill;
+- Bakehouse;
+- Brewery;
+- Distillery;
+- Provisioner;
+- storehouse.
+
+
+5. ORE
+Settlement: Mine
+City: Deep Mine
+
+Ambient tasks:
+- enter mine;
+- dig;
+- pick;
+- load ore;
+- carry ore.
+
+Likely destinations:
+- Forge;
+- Smelter;
+- Armourer;
+- Metalworks;
+- Refinery;
+- storehouse.
+
+
+PROCESSING BUILDING CATALOGUE
+=============================
+
+There are 21 unordered pair types including Wastes.
+
+01. WOOD + WOOD
+Settlement: Sawmill
+City: Lumberworks
+Output: planks/lumber
+Loop:
+logs -> saw -> stack planks -> storehouse
+
+
+02. WOOD + BRICK
+Settlement: Builders' Yard
+City: Builders' Guildyard
+Output: structural materials
+Loop:
+timber/bricks -> cut/assemble -> stack/load -> storehouse/build site
+
+
+03. WOOD + WOOL
+Settlement: Furnishings Workshop
+City: Furnishers' Hall
+Output: furniture/bedding
+Loop:
+timber/wool -> hammer/stuff -> finished furnishing -> storehouse/civic building
+
+
+04. WOOD + GRAIN
+Settlement: Mill
+City: Great Mill
+Output: flour
+Loop:
+grain sacks -> mill -> flour sacks -> storehouse/bakery
+
+
+05. WOOD + ORE
+Settlement: Forge
+City: Forgeworks
+Output: tools/weapons
+Loop:
+ore/fuel -> hammer -> cool -> carry tools -> storehouse
+
+
+06. WOOD + WASTES
+Settlement: Charcoal Burner
+City: Charcoal Works
+Output: charcoal
+Loop:
+wood -> stack/tend kiln -> bag charcoal -> storehouse/civic consumer
+
+
+07. BRICK + BRICK
+Settlement: Masonry Yard
+City: Masonry Works
+Output: masonry/tiles
+Loop:
+brick/stone -> shape/sort -> stack -> building yard/storehouse
+
+
+08. BRICK + WOOL
+Settlement: Fullery & Dyeworks
+City: Clothworks
+Output: treated/dyed cloth
+Loop:
+wool -> wash/dye -> hang -> fold -> storehouse
+
+
+09. BRICK + GRAIN
+Settlement: Bakehouse
+City: Great Bakery
+Output: bread
+Loop:
+grain/flour -> knead -> oven -> baskets -> storehouse/market
+
+
+10. BRICK + ORE
+Settlement: Smelter
+City: Foundry
+Output: ingots
+Loop:
+ore -> furnace -> pour/cool -> carry ingot -> storehouse/forge
+
+
+11. BRICK + WASTES
+Settlement: Pottery & Lime Kiln
+City: Ceramic Works
+Output: pots/lime
+Loop:
+raw material -> shape -> kiln -> stack wares -> storehouse
+
+
+12. WOOL + WOOL
+Settlement: Weavery
+City: Textile Hall
+Output: cloth/clothes
+Loop:
+fleece -> spin/weave -> fold -> storehouse/market
+
+
+13. WOOL + GRAIN
+Settlement: Dairy & Provisioner
+City: Provisioning Hall
+Output: food/rations
+Loop:
+produce -> prepare -> crate/basket -> storehouse/inn
+
+
+14. WOOL + ORE
+Settlement: Armourer
+City: Armoury
+Output: armour
+Loop:
+metal/cloth -> hammer/sew -> finished armour -> barracks/storehouse
+
+
+15. WOOL + WASTES
+Settlement: Tannery
+City: Leatherworks
+Output: leather
+Loop:
+hides -> vats/work -> hang -> bundle leather -> storehouse
+
+
+16. GRAIN + GRAIN
+Settlement: Brewery & Malthouse
+City: Great Brewery
+Output: ale/malt
+Loop:
+grain -> mash/stir -> barrel -> storehouse/inn
+
+
+17. GRAIN + ORE
+Settlement: Distillery
+City: Distillery Works
+Output: spirits
+Loop:
+grain -> still -> bottle/cask -> storehouse/healer/inn
+
+
+18. GRAIN + WASTES
+Settlement: Drying House & Granary
+City: Granary Complex
+Output: preserved food
+Loop:
+food/grain -> dry/sort -> sack -> stack -> storehouse
+
+
+19. ORE + ORE
+Settlement: Metalworks
+City: Ironworks
+Output: hardware/weapons
+Loop:
+metal -> hammer/cast -> grind -> crate -> storehouse/barracks
+
+
+20. ORE + WASTES
+Settlement: Refinery & Slagworks
+City: Refinery Works
+Output: refined metal
+Loop:
+ore -> furnace/sort -> slag dump -> refined metal -> storehouse
+
+
+21. WASTES + WASTES
+Special utility slot.
+
+Possible settlement utilities:
+- Cistern
+- Scavenger Yard
+- Watchpost
+
+Possible city upgrades:
+- Waterworks
+- Reclamation Yard
+- Watchtower
+
+If all three adjacent hexes are Wastes:
+use the three different utilities rather than three identical structures.
+
+
+HOUSING CATALOGUE
+=================
+
+Settlement housing
+------------------
+- cottage;
+- worker cottage;
+- farmhouse house;
+- miner's hut;
+- terrace fragment;
+- yard dwelling.
+
+City housing
+------------
+- townhouse;
+- dense worker row;
+- larger merchant house;
+- two-storey dwelling;
+- compact courtyard housing.
+
+Housing target
+--------------
+Approximate:
+
+total production structures / 3
+
+Minimum:
+- at least one housing structure for a settlement.
+
+City:
+- upgrade;
+- densify;
+- and/or add housing based on available graphical space.
+
+
+CORE LOGISTICS BUILDINGS
+========================
+
+Every settlement/city:
+- central storehouse or equivalent.
+
+Settlement variants:
+- storehouse;
+- granary yard;
+- timber warehouse;
+- goods shed.
+
+City variants:
+- warehouse;
+- depot;
+- market warehouse;
+- great granary.
+
+Ambient role:
+most production/processing loops can terminate here.
+
+
+CIVIC / QUEST BUILDING CATALOGUE
+================================
+
+1. INN / TAVERN
+Consumes/themes:
+- food;
+- ale;
+- charcoal;
+- furnishings.
+
+Ambient:
+- barrels;
+- cooking;
+- servers;
+- travellers.
+
+Quest hooks:
+- shortage;
+- missing traveller;
+- dispute;
+- stolen delivery.
+
+
+2. CIVIC HALL
+Consumes/themes:
+- masonry;
+- planks;
+- furnishings;
+- clothes.
+
+Ambient:
+- clerks;
+- messengers;
+- petitioners.
+
+Quest hooks:
+- repair;
+- records;
+- local dispute;
+- faction decision.
+
+
+3. RULER'S HALL
+Consumes/themes:
+- food;
+- clothes;
+- furnishings;
+- tools.
+
+Ambient:
+- guards;
+- petitioners;
+- messengers.
+
+Quest hooks:
+- faction policy;
+- diplomacy;
+- rival claim;
+- settlement crisis.
+
+
+4. SHRINE / CHURCH / TEMPLE
+Consumes/themes:
+- charcoal;
+- food;
+- cloth;
+- masonry.
+
+Ambient:
+- offerings;
+- sweeping;
+- prayer;
+- tending flame.
+
+Quest hooks:
+- missing fuel;
+- ceremonial cloth;
+- relic;
+- doctrinal/local dispute.
+
+
+5. MARKET
+Consumes/themes:
+- nearly all finished goods.
+
+Ambient:
+- stalls;
+- carrying;
+- buying;
+- loading carts.
+
+Quest hooks:
+- theft;
+- price dispute;
+- missing trader;
+- counterfeit/bad goods.
+
+
+6. WATCH HOUSE / BARRACKS
+Consumes/themes:
+- food;
+- weapons;
+- armour;
+- leather.
+
+Ambient:
+- guard change;
+- drill;
+- weapon maintenance;
+- patrol.
+
+Quest hooks:
+- missing patrol;
+- equipment shortage;
+- monster threat;
+- corruption.
+
+
+7. HEALER
+Consumes/themes:
+- cloth;
+- spirits;
+- food;
+- charcoal.
+
+Ambient:
+- preparing beds;
+- washing;
+- mixing;
+- treating patients.
+
+Quest hooks:
+- supplies;
+- injured traveller;
+- epidemic/infection aftermath.
+
+
+8. GUILD HALL
+Consumes/themes:
+- tools;
+- clothes;
+- furnishings;
+- ale.
+
+Ambient:
+- meetings;
+- apprentices;
+- deliveries.
+
+Quest hooks:
+- labour dispute;
+- broken equipment;
+- rivalry;
+- apprenticeship.
+
+
+9. ARCHIVE / SCHOOL
+Consumes/themes:
+- charcoal;
+- furnishings;
+- cloth;
+- tools.
+
+Ambient:
+- writing;
+- reading;
+- lessons;
+- deliveries.
+
+Quest hooks:
+- missing text;
+- damaged archive;
+- disputed history;
+- absent teacher.
+
+
+10. BATHHOUSE
+Consumes/themes:
+- charcoal;
+- cloth;
+- water.
+
+Ambient:
+- heating;
+- laundry;
+- sweeping;
+- carrying buckets.
+
+Quest hooks:
+- water;
+- fuel;
+- damaged furnace;
+- local access dispute.
+
+
+SETTLEMENT COMPOSITION ORDER
+============================
+
+Recommended generation order:
+
+1. Establish exits for all incident board edges.
+2. Draw road/track routes into the node.
+3. Establish central circulation/junction.
+4. Blend adjacent terrain.
+5. Place tower/cave entrance if settlement exists.
+6. Place primary production districts.
+7. Place three processors.
+8. Place central storehouse.
+9. Place housing.
+10. Place civic/quest buildings.
+11. Add scenery/props.
+12. Add NPC anchors.
+13. Add units/carts/ruler.
+14. Apply infection overlay.
+15. Validate traversability.
+
+
+WILDERNESS COMPOSITION ORDER
+============================
+
+1. exits;
+2. tracks/roads;
+3. central or crossing path;
+4. terrain blend;
+5. terrain landmark;
+6. encounter space;
+7. scenery;
+8. carts/units if present;
+9. infection overlay;
+10. traversal validation.
+
+
+WILDERNESS ARCHETYPES
+=====================
+
+W1 — FOREST CROSSING
+--------------------
+Dominant cues:
+trees, roots, stumps, narrow paths.
+
+Good landmarks:
+- fallen tree;
+- hunter shelter;
+- old marker;
+- stream bridge.
+
+
+W2 — HILL / CLAY CROSSING
+-------------------------
+Dominant cues:
+banks, exposed earth, terraced track.
+
+Good landmarks:
+- abandoned kiln;
+- clay cut;
+- old retaining wall.
+
+
+W3 — PASTURE CROSSING
+---------------------
+Dominant cues:
+grass, hedges, sheep, pens.
+
+Good landmarks:
+- shepherd shelter;
+- stone wall;
+- watering trough.
+
+
+W4 — FIELD CROSSING
+-------------------
+Dominant cues:
+crops, fences, farm tracks.
+
+Good landmarks:
+- haystack;
+- ruined shed;
+- scarecrow;
+- irrigation ditch.
+
+
+W5 — MOUNTAIN CROSSING
+----------------------
+Dominant cues:
+rock, scree, narrow route.
+
+Good landmarks:
+- mine scar;
+- rock arch;
+- abandoned cart;
+- cliff marker.
+
+
+W6 — WASTES CROSSING
+--------------------
+Dominant cues:
+bare ground, rubble, dead vegetation.
+
+Good landmarks:
+- ruined wall;
+- dry cistern;
+- broken monument;
+- salvage heap.
+
+
+MIXED WILDERNESS
+----------------
+Use the same A+A+B / A+B+C grammar as settlements.
+
+Do not create 56 handcrafted wilderness maps.
+
+Blend the relevant visual vocabularies around one stable road/path skeleton.
+
+
+SETTLEMENT SPECIALIZATION EXAMPLES
+==================================
+
+WOOD + WOOD + WOOD
+------------------
+Visual:
+- heavily timbered;
+- many logging structures;
+- three Sawmills;
+- log traffic dominates.
+
+Likely civic flavour:
+- guild;
+- timber market;
+- fire/charcoal concerns.
+
+
+WOOD + WOOD + ORE
+-----------------
+Visual:
+- logging district;
+- smaller mining district;
+- Sawmill;
+- Forge x2.
+
+Likely ambient flow:
+logs -> sawmill/storehouse
+ore + timber -> forge -> tools -> storehouse
+
+
+WOOD + GRAIN + ORE
+------------------
+Visual:
+- balanced;
+- logging;
+- farms;
+- mine;
+- Mill;
+- Forge;
+- Distillery.
+
+Feels like:
+a diversified trading settlement.
+
+
+BRICK + GRAIN + WOOL
+--------------------
+Visual:
+- clay works;
+- farms;
+- pasture;
+- Fullery;
+- Bakehouse;
+- Provisioner.
+
+Feels like:
+food/textile/craft settlement.
+
+
+ORE + ORE + ORE
+---------------
+Visual:
+- mining dominates;
+- three Metalworks;
+- heavy industrial town.
+
+Likely city:
+dense, smoky, tool/weapon focused.
+
+
+WASTES + WASTES + WASTES
+------------------------
+Visual:
+- sparse;
+- defensive;
+- utility structures;
+- little normal production.
+
+Processors/utilities:
+- Cistern;
+- Scavenger Yard;
+- Watchpost.
+
+Feels like:
+survival/outpost settlement rather than productive village.
+
+
+AMBIENT WORK-LOOP GRAMMAR
+=========================
+
+Every worker loop should be constructed from:
+
+START ANCHOR
+-> TRAVEL
+-> WORK ANIMATION
+-> LOAD PROP
+-> TRAVEL
+-> DELIVERY ANCHOR
+-> UNLOAD
+-> OPTIONAL IDLE/SOCIAL
+-> RETURN
+
+Examples
+--------
+
+WOODCUTTER
+tree/logging anchor
+-> chop
+-> pick up log
+-> walk to sawmill/log pile
+-> unload
+-> return
+
+
+SAWMILL WORKER
+log pile
+-> saw
+-> pick up plank bundle
+-> walk to storehouse
+-> unload
+-> return
+
+
+FARMER
+field
+-> harvest
+-> pick up sack
+-> walk to mill/storehouse
+-> unload
+-> return
+
+
+MILLER
+grain delivery
+-> operate mill
+-> collect flour sack
+-> walk to bakery/storehouse
+-> unload
+
+
+MINER
+mine entrance
+-> disappear/work
+-> emerge with ore
+-> walk to forge/smelter/storehouse
+-> unload
+
+
+BLACKSMITH
+forge
+-> hammer
+-> cool
+-> pick up tools
+-> walk to storehouse/market/barracks
+-> unload
+
+
+WEAVER
+wool store
+-> weave
+-> pick up cloth bundle
+-> walk to market/storehouse/civic consumer
+-> unload
+
+
+BREWER
+grain store
+-> stir/tend vat
+-> barrel
+-> move barrel
+-> inn/storehouse
+
+
+CHARCOAL BURNER
+wood pile
+-> stack/tend kiln
+-> bag charcoal
+-> temple/inn/bathhouse/storehouse
+
+
+CIVIC SUPPLY LOOPS
+==================
+
+These remain cosmetic unless a quest explicitly uses them.
+
+Examples:
+- charcoal -> temple brazier;
+- food -> inn kitchen;
+- cloth -> healer;
+- armour -> barracks;
+- furnishings -> ruler's hall;
+- ale -> tavern;
+- pottery -> market;
+- tools -> guild hall.
+
+If a local building needs a good that is not locally produced, that absence is a useful quest hook.
+
+
+SHARED NPC ANIMATION SET
+========================
+
+Movement
+--------
+- walk
+- idle
+- talk
+- queue
+- enter/exit building
+
+Carrying
+--------
+- carry_log
+- carry_sack
+- carry_crate
+- carry_bundle
+- carry_bucket
+- push_cart
+- roll_barrel
+
+Production
+----------
+- chop
+- dig
+- harvest
+- shear
+- tend
+- load
+- unload
+
+Processing
+----------
+- saw
+- hammer
+- stoke_fire
+- stir
+- weave
+- knead
+- pour
+- grind
+- sort
+
+Civic
+-----
+- sweep
+- pray
+- guard
+- write
+- read
+- inspect
+- serve
+- treat
+
+
+INFECTION PRESENTATION STATES
+=============================
+
+I0 — CALM
+---------
+Normal work loops.
+Normal traffic.
+Open civic buildings.
+
+
+I1 — UNEASY
+------------
+Some:
+- guards;
+- nervous idle;
+- inspection;
+- barricade preparation.
+
+Most economic loops continue.
+
+
+I2 — PRODUCTION SUPPRESSED
+--------------------------
+Normal production visibly stalls.
+
+Workers:
+- idle;
+- shelter;
+- argue;
+- guard;
+- carry emergency supplies.
+
+Industries:
+- doors shut;
+- furnaces cold;
+- abandoned carts.
+
+Civic:
+- healer/watch/temple become busier.
+
+
+I3 — OVERRUN
+------------
+Demons visibly dominate.
+
+Use:
+- empty streets;
+- barricades;
+- damaged props;
+- fires;
+- hidden civilians;
+- stopped carts;
+- active encounters.
+
+Keep core map identity recognizable so recovery feels meaningful.
+
+
+CITY-UPGRADE VISUAL RULES
+=========================
+
+Do not redraw from scratch.
+
+Upgrade the existing settlement in place.
+
+Production
+----------
+Improve building tiers and yards.
+
+Processing
+----------
+Replace with larger/more sophisticated variants.
+
+Housing
+-------
+- add;
+- enlarge;
+- densify.
+
+Roads
+-----
+- improve surface;
+- widen key routes;
+- create stronger main street/square.
+
+Storage
+-------
+- enlarge warehouse/granary.
+
+Civic
+-----
+- add/upgrade market;
+- ruler/civic hall;
+- inn;
+- watch;
+- other deterministic institutions.
+
+Population
+----------
+Increase ambient NPC count.
+
+Props
+-----
+More:
+- carts;
+- signs;
+- stalls;
+- stacked goods;
+- lamps;
+- civic decoration.
+
+Dungeon
+-------
+Tower/cave identity remains unchanged.
+
+
+MAP LEGIBILITY RULES
+====================
+
+The player should be able to visually infer:
+
+1. Where can I leave?
+2. Which exits are proper roads?
+3. What does this place produce?
+4. Is this a settlement or city?
+5. Where is the centre?
+6. Where is storage/market activity?
+7. Where are important NPCs likely to be?
+8. Where is the tower/cave?
+9. Is the place healthy or overrun?
+
+Do not sacrifice navigation clarity for procedural clutter.
+
+
+PLACEMENT SAFETY RULES
+======================
+
+Never generate:
+- building on required exit tile;
+- prop blocking one-tile mandatory corridor;
+- NPC anchor inside collision;
+- road disconnected from exit;
+- dungeon entrance inaccessible;
+- civic quest NPC trapped behind cosmetic geometry.
+
+Always validate:
+- all exits reachable;
+- dungeon reachable;
+- core civic area reachable;
+- required quest buildings reachable;
+- combat spaces have enough room.
+
+
+VISUAL VARIATION WITHOUT NEW GAMEPLAY
+=====================================
+
+Safe deterministic variation:
+- roof shape;
+- wall material;
+- sign placement;
+- yard orientation;
+- prop clusters;
+- tree/rock distribution;
+- fence type;
+- building facing;
+- crop/pen shape;
+- chimney position;
+- banner/flag placement;
+- road wear;
+- small plaza shape.
+
+Avoid variation that changes:
+- gameplay reachability;
+- authoritative simulation;
+- quest logic;
+- puzzle state.
+
+
+DESIGN TARGET
+=============
+
+The generator should not attempt to create a unique handcrafted map for every one of the 56 terrain signatures.
+
+Instead:
+
+TERRAIN COMBINATION
++ PRODUCTIVITY
++ ROADS
++ DEVELOPMENT LEVEL
++ FACTION
++ INFECTION
++ DUNGEON ORIGIN
++ DETERMINISTIC LAYOUT VARIATION
+=
+A DISTINCT, READABLE NODE MAP
+
+A player revisiting the world after many turns should be able to see that it has changed:
+- empty crossings become settlements;
+- settlements become cities;
+- industries reflect local resources;
+- productive sites look larger;
+- roads appear and improve;
+- towers and caves provide exploration;
+- carts and workers make trade visible;
+- infection disrupts ordinary life;
+- recovery brings that life back.
