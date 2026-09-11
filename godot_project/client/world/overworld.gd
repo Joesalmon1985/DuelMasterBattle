@@ -480,7 +480,11 @@ func _spawn_entity(e: Dictionary) -> void:
 				# and never interactable — registered in _entities but NOT in
 				# _entity_at, so the sim (kit_blocks) owns blocking, not the art.
 				var marker_path := "props/%s.png" % str(e.get("marker", "box"))
-				node = _add_prop(pos.x, pos.y, marker_path, Vector2.ZERO, 1)
+				var moff := Vector2.ZERO
+				if e.has("marker_off"):
+					var a: Array = e["marker_off"]
+					moff = Vector2(float(a[0]), float(a[1]))
+				node = _add_prop(pos.x, pos.y, marker_path, moff, 1)
 				node.modulate = _parse_tint(e.get("tint", Color.WHITE))
 				node.z_index = 3
 	e["node"] = node

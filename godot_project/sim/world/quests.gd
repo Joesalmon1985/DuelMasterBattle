@@ -68,7 +68,7 @@ static func build_template(sim: DmbWorldSim, snid: int, tid: String) -> Dictiona
 	match tid:
 		"missing_flock":
 			q["title"] = "The Missing Flock"
-			q["npcs"] = [{"id": "shepherd", "name": names[0], "sprite": "villager_a", "role": "shepherd"},
+			q["npcs"] = [{"id": "shepherd", "name": names[0], "sprite": "shepherd", "role": "shepherd"},
 				{"id": "reeve", "name": names[1], "sprite": "official", "role": "reeve"},
 				{"id": "child", "name": names[2], "sprite": "child", "role": "child"}]
 			q["start"] = "shepherd"

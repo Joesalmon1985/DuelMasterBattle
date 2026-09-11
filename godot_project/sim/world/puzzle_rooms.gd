@@ -127,17 +127,18 @@ static func _r01() -> Dictionary:
 	var reject := "The alcove rejects the offering. That is not what the inscription describes."
 	var install := "The stone accepts the offering. Something deep inside the wall clicks."
 	var riddles := [
-		["o1", 2, "mirror_shard", "I turn everything around, yet I never move.\nLook upon me and I show you yourself.\nWhat am I?"],
-		["o2", 4, "tallow_candle", "Tall when I am young,\nshort when I am old.\nWhile I live I give you light,\nand the wind is my enemy.\nWhat am I?"],
-		["o3", 8, "charcoal", "Black when you find me,\nred when you use me,\npale ash when my work is done.\nWhat am I?"],
-		["o4", 10, "copper_coin", "I have a head and I have a tail,\nbut no body lies between them.\nI am no serpent.\nWhat am I?"],
+		["o1", 2, "mirror_shard", "I turn everything around, yet I never move.\nLook upon me and I show you yourself.\nWhat am I?", "pedestal_1"],
+		["o2", 4, "tallow_candle", "Tall when I am young,\nshort when I am old.\nWhile I live I give you light,\nand the wind is my enemy.\nWhat am I?", "pedestal_2"],
+		["o3", 8, "charcoal", "Black when you find me,\nred when you use me,\npale ash when my work is done.\nWhat am I?", "pedestal_3"],
+		["o4", 10, "copper_coin", "I have a head and I have a tail,\nbut no body lies between them.\nI am no serpent.\nWhat am I?", "pedestal_4"],
 	]
 	var ents: Array = [_goal(6, 1), _gate("gate", 6, 2, {"all": ["o1", "o2", "o3", "o4"]}),
-		_plaque("clue", 6, 4, "Four alcoves guard the northern door.\n\nEach bears a riddle.\n\nGive each one the object its words describe.\n\nOne offering has no place here.")]
+		_plaque("clue", 6, 4, "Four pedestals guard the northern door.\n\nEach bears a riddle.\n\nSet upon each one the object its words describe.\n\nOne offering has no place here.")]
 	for c in riddles:
 		ents.append({"kind": "receptacle", "id": c[0], "pos": [c[1], 4], "flag": c[0], "accepts_items": [c[2]], "removable": false,
+			"marker": c[4],
 			"reject_text": reject, "install_text": install,
-			"occupied_text": "The alcove is already content. Leave what it holds.",
+			"occupied_text": "The pedestal is already content. Leave what it holds.",
 			"text": c[3]})
 	ents.append(_item("i1", "mirror_shard", 2, 8))
 	ents.append(_item("i2", "tallow_candle", 4, 7))

@@ -42,11 +42,11 @@ const DUNGEON_DOOR := [6, 3]
 const HEX_WORDS := {"forest": "forest", "hills": "brick hills", "pasture": "sheepwalks",
 	"fields": "wheat", "mountains": "ore seams", "desert": "dead ground"}
 const BUILDING_MARKER := {
-	"woodcutter_hut": "logs", "clay_pit": "rock", "sheepfold": "box", "grain_field": "seed", "mine_mouth": "door_stone",
+	"woodcutter_hut": "woodcutter_hut", "clay_pit": "rock", "sheepfold": "box", "grain_field": "seed", "mine_mouth": "door_stone",
 	"sawmill": "logs", "kiln": "rock", "weaver": "box", "mill": "box", "smithy": "rock", "charcoal_burner": "logs", "brewhouse": "box",
 	"well": "ring", "shrine": "idol", "hall": "book_red", "market": "box", "gate_tower": "door_stone",
 }
-const WORKER_SPRITE := {"woodcutter": "villager_a", "brickmaker": "villager_b", "shepherd": "child", "reaper": "villager_a", "miner": "dwarf"}
+const WORKER_SPRITE := {"woodcutter": "woodcutter", "brickmaker": "villager_b", "shepherd": "child", "reaper": "reaper", "miner": "dwarf"}
 const WORKER_LINE := {
 	"woodcutter": "Wood. Always wood. The forest gives and the sawyer takes and I am the bit in between.",
 	"brickmaker": "Clay, water, fire, patience. The kiln eats the patience first.",

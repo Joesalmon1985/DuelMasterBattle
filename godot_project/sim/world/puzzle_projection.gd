@@ -109,16 +109,18 @@ static func _project_static(room: Dictionary, st: Dictionary, e: Dictionary, fla
 		"container":
 			entities.append(_base(rid, e, "logs", pos))
 		"receptacle":
-			# Stone niche always; a solved alcove additionally shows the
-			# installed object's own sprite, so each offering stays visible.
+			# Pedestal (or niche) always; a solved receptacle additionally shows
+			# the installed object's own sprite raised above it, so each
+			# offering sits visibly on top.
 			var d := _base(rid, e, "logs", pos)
-			d["marker"] = "puzzle_alcove_empty"
+			d["marker"] = str(e.get("marker", "puzzle_alcove_empty"))
 			entities.append(d)
 			var inst := str(st["rec"].get(str(e.get("id", "")), ""))
 			if inst != "":
 				var o := _base(rid, e, "deco", pos)
 				o.erase("puzzle_eid")
 				o["marker"] = Items.sprite_of(inst)
+				o["marker_off"] = [0, -10]
 				entities.append(o)
 		"emitter":
 			var d := _base(rid, e, "logs", pos)
