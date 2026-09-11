@@ -311,7 +311,7 @@ class DialogueDatabase:
                         choice_prompt, option_a, response_a, option_b, response_b,
                         state_change_a, state_change_b, normal_end_line, tragic_end_line,
                         source_workbook, row_index)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                     (dialogue_id, cast_id, situation_shape, character_id,
                      village_role, story_role, personality_summary, dialogue_state,
                      trigger_condition, opening_line, gives_choice, choice_number,
