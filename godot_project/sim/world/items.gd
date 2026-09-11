@@ -33,6 +33,8 @@ const DATA := {
 	"golden_idol": {"name": "Golden idol", "sprite": "idol", "desc": "Heavier than it looks, and it looks heavy.", "tags": ["heavy", "valuable"]},
 	"lead_shot": {"name": "Bag of lead shot", "sprite": "box", "desc": "Small, dense, throwable. Lands where you point it.", "tags": ["heavy", "throwable"]},
 	"raw_meat": {"name": "Raw meat", "sprite": "box", "desc": "A hank of something. Anything with a nose would follow it.", "tags": ["bait", "small"]},
+	"fish_scrap": {"name": "Fish scrap", "sprite": "box", "desc": "Heads and tails, still shining. A fish-eater would cross a room for it.", "tags": ["bait", "bait_fish", "small"]},
+	"old_bone": {"name": "Old bone", "sprite": "box", "desc": "Gnawed clean years ago. A dog would still follow it anywhere.", "tags": ["bait", "bait_bone", "small"]},
 	"glass_bead": {"name": "Glass bead", "sprite": "diamond", "desc": "Pretty, and worthless.", "tags": ["small", "token"]},
 }
 
@@ -66,13 +68,13 @@ static func color_of(id: String) -> Color:
 static func glyph_of(id: String) -> String:
 	var t := tags_of(id)
 	if "key" in t:
-		return "⚷"
+		return "K"
 	if "heavy" in t:
 		return "■"
 	if "bait" in t:
-		return "♨"
+		return "B"
 	if "clue" in t:
-		return "≣"
+		return "?"
 	if "token" in t:
 		return "○"
 	return "◆"

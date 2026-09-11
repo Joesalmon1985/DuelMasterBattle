@@ -147,10 +147,10 @@ static func _r01() -> Dictionary:
 
 static func _r02() -> Dictionary:
 	var rows := _open()
-	_fill(rows, 3, 3, 9, 7)  # central block; loop corridor around it
+	_fill(rows, 3, 4, 9, 7)  # central block; row 3 is the top corridor of the loop
 	_fill(rows, 1, 2, 11, 2)
 	_fill(rows, 6, 2, 6, 2, ".")
-	var ents: Array = [_goal(6, 1), _gate("gate", 6, 2, {"all": ["clock_done", "anti_done"]}),
+	var ents: Array = [_goal(6, 1, {"all": ["clock_done", "anti_done"]}, "Past the gate. The stones are quiet now; the loop is walked."), _gate("gate", 6, 2, {"all": ["clock_done", "anti_done"]}),
 		_plaque("sign1", 6, 8, "CLOCKWISE.\n\nFour worn stones sit in the corridor's corners. Something below listens to the order you cross them.", {}),
 		_plaque("sign2", 6, 3, "TURN BACK.\n\nThe stone below has changed its mind. Go round the other way.", {"requires": "clock_done"}),
 		{"kind": "sequence", "id": "clock", "flag": "clock_done", "steps": ["m_nw", "m_ne", "m_se", "m_sw"],
@@ -159,8 +159,8 @@ static func _r02() -> Dictionary:
 		{"kind": "sequence", "id": "anti", "flag": "anti_done", "active_when": "clock_done", "steps": ["m_nw", "m_sw", "m_se", "m_ne"],
 			"done_text": "The stones agree. Stone slides on stone, and the gate is open.",
 			"step_text": "Click. It is counting the other way now.", "wrong_text": "Thud. Wrong way round — it resets."},
-		_marker("m_nw", 1, 1, {"symbol": "grey", "seq": ["clock", "anti"], "label": "◇"}),
-		_marker("m_ne", 11, 1, {"symbol": "grey", "seq": ["clock", "anti"], "label": "◇"}),
+		_marker("m_nw", 1, 3, {"symbol": "grey", "seq": ["clock", "anti"], "label": "◇"}),
+		_marker("m_ne", 11, 3, {"symbol": "grey", "seq": ["clock", "anti"], "label": "◇"}),
 		_marker("m_se", 11, 9, {"symbol": "grey", "seq": ["clock", "anti"], "label": "◇"}),
 		_marker("m_sw", 1, 9, {"symbol": "grey", "seq": ["clock", "anti"], "label": "◇"}),
 	]
@@ -428,18 +428,20 @@ static func _r16() -> Dictionary:
 	_fill(rows, 1, 7, 11, 7)  # floor between upper hall and lower cellar
 	_fill(rows, 3, 2, 3, 2, ".")
 	_fill(rows, 9, 2, 9, 2, ".")
+	_fill(rows, 2, 3, 2, 3)  # funnel: the only way to the left gap is over (3,4)
+	_fill(rows, 4, 3, 4, 3)
 	var ents: Array = [
-		{"kind": "npc", "id": "guide", "pos": [6, 8], "label": "G", "lines": ["Left passage, friend. Right's been bricked up for years — everyone knows that.", "(He does not meet your eye. His boots are muddy, and the mud is dry.)"], "lines_after": ["Left. Trust me."]},
+		{"kind": "npc", "id": "guide", "pos": [4, 5], "label": "G", "lines": ["Left passage, friend. Right's been bricked up for years — everyone knows that.", "(He does not meet your eye. His boots are muddy, and the mud is dry.)"], "lines_after": ["Left. Trust me."]},
 		_gate("right_gate", 9, 2, "cellar_lever"),
 		_pit("trap", 3, 4, {"revealed_when": false, "fall_to": [3, 10], "flag_on_fall": "fell",
 			"fall_text": "The left passage was never bricked up. It was never floored, either. You drop into a cellar."}),
 		_plaque("cellar", 6, 10, "A cellar. A lever on the wall, a ladder in the corner — and something the guide would rather you had not found."),
 		_lever("cellar_lever", 9, 10, "cellar_lever", {"once": true, "on_text": "Somewhere overhead a gate rattles open. So that is what the right passage was for."}),
 		_item("loot", "silver_key", 1, 10),
-		_marker("ladder", 11, 10, {"label": "≡", "symbol": "gold", "on_enter": [{"relocate": [6, 9], "text": "Up the ladder. The guide is still there, and suddenly very interested in the ceiling."}]}),
+		_marker("ladder", 11, 10, {"label": "≡", "symbol": "gold", "on_enter": [{"relocate": [10, 5], "text": "Up the ladder. The guide is still there, and suddenly very interested in the ceiling."}]}),
 		_goal(9, 1, null, "The right passage. Never bricked up at all."),
 	]
-	return _room(16, "The Lying Guide", "M12, M0", rows, [6, 9], ents,
+	return _room(16, "The Lying Guide", "M12, M0", rows, [2, 5], ents,
 		{"hint": "Talk to the guide, then take the left passage he recommends: you fall into a cellar. Pull the lever there (opens the right gate), take the key, climb the ladder (right), and go through the right passage."})
 
 
@@ -709,7 +711,7 @@ static func _r33() -> Dictionary:
 	var ents: Array = [_goal(6, 1), _gate("gate", 6, 2, true),
 		_plaque("clue", 6, 9, "A ball of fire circles the room on a fixed loop, corner to corner. It crosses the passage north twice a lap. A shutter lever by the door would stop it — if you can reach the lever."),
 		{"kind": "hazard", "id": "fireball", "path": [[2, 3], [3, 3], [4, 3], [5, 3], [6, 3], [7, 3], [8, 3], [9, 3], [10, 3], [10, 4], [10, 5], [10, 6], [10, 7], [9, 7], [8, 7], [7, 7], [6, 7], [5, 7], [4, 7], [3, 7], [2, 7], [2, 6], [2, 5], [2, 4]],
-			"mode": "loop", "step_seconds": 0.28, "label": "✹", "jammed_when": "shutter", "hit_text": "It goes through you like a hot wind. You are back at the door, smelling of singed wool."},
+			"mode": "loop", "step_seconds": 0.28, "label": "*", "jammed_when": "shutter", "hit_text": "It goes through you like a hot wind. You are back at the door, smelling of singed wool."},
 		_lever("shutter", 6, 5, "shutter", {"on_text": "A shutter drops across the fire's channel. The ball stops dead, guttering."}),
 	]
 	return _room(33, "Fireball Circuit", "M6, M11, M4", rows, [6, 9], ents,
@@ -852,9 +854,9 @@ static func _r41() -> Dictionary:
 	var ents: Array = [_goal(6, 1), _gate("gate", 6, 2, "song"),
 		_plaque("clue", 6, 8, "Four bells. A brass plate that, when you touch it, hums a little tune: LOW, HIGH, MID, LOW. You can touch it as often as you like."),
 		{"kind": "sequence", "id": "song_seq", "flag": "song", "steps": ["bell_low", "bell_high", "bell_mid", "bell_low"], "done_text": "The fourth note. The chord holds, and the gate opens on it.", "step_text": "The note hangs in the air.", "wrong_text": "A sour clang. The bells fall silent; begin again."},
-		{"kind": "button", "id": "bell_low", "pos": [3, 5], "symbol": "blue", "label": "♩", "verb": "Ring", "seq": "song_seq", "text": "LOW."},
-		{"kind": "button", "id": "bell_mid", "pos": [6, 5], "symbol": "green", "label": "♪", "verb": "Ring", "seq": "song_seq", "text": "MID."},
-		{"kind": "button", "id": "bell_high", "pos": [9, 5], "symbol": "red", "label": "♫", "verb": "Ring", "seq": "song_seq", "text": "HIGH."},
+		{"kind": "button", "id": "bell_low", "pos": [3, 5], "symbol": "blue", "label": "1", "verb": "Ring", "seq": "song_seq", "text": "LOW."},
+		{"kind": "button", "id": "bell_mid", "pos": [6, 5], "symbol": "green", "label": "2", "verb": "Ring", "seq": "song_seq", "text": "MID."},
+		{"kind": "button", "id": "bell_high", "pos": [9, 5], "symbol": "red", "label": "3", "verb": "Ring", "seq": "song_seq", "text": "HIGH."},
 	]
 	return _room(41, "Sound Sequence", "M0, M8", rows, [6, 9], ents,
 		{"hint": "Ring the bells LOW (left), HIGH (right), MID (middle), LOW (left). A wrong note resets the sequence."})
@@ -872,15 +874,15 @@ static func _r42() -> Dictionary:
 	var drag := [[7, 8], [8, 7], [9, 6], [10, 5], [11, 4], [11, 3]]
 	var i := 1
 	for p in drag:
-		var m := _marker("d%d" % i if i <= 4 else "dx%d" % i, p[0], p[1], {"symbol": "purple", "label": "⌐"})
+		var m := _marker("d%d" % i if i <= 4 else "dx%d" % i, p[0], p[1], {"symbol": "purple", "label": ">"})
 		if i <= 4:
 			m["seq"] = "track_seq"
 		ents.append(m)
 		i += 1
 	for p in [[6, 8], [5, 7], [4, 6], [3, 5], [2, 4], [1, 3]]:
-		ents.append(_marker("boot_%d_%d" % [p[0], p[1]], p[0], p[1], {"symbol": "grey", "label": "⊔"}))
+		ents.append(_marker("boot_%d_%d" % [p[0], p[1]], p[0], p[1], {"symbol": "grey", "label": "B"}))
 	for p in [[8, 8], [8, 6], [7, 5], [6, 4], [5, 3]]:
-		ents.append(_marker("paw_%d_%d" % [p[0], p[1]], p[0], p[1], {"symbol": "green", "label": "∴"}))
+		ents.append(_marker("paw_%d_%d" % [p[0], p[1]], p[0], p[1], {"symbol": "green", "label": "P"}))
 	return _room(42, "Follow the Footprints", "M0, M15", rows, [7, 9], ents,
 		{"hint": "Follow the purple dragging-foot track diagonally up and right, stepping on each mark in order, to the wall top-right. The hidden panel opens."})
 
@@ -916,7 +918,7 @@ static func _r44() -> Dictionary:
 		_item("key", "silver_key", 2, 4),
 		_plaque("treasure_note", 10, 4, "The walkway ledge. A view, and a chest long since emptied. Progress was the other way."),
 	]
-	_fill(rows, 5, 3, 7, 5)
+	_fill(rows, 5, 4, 7, 5)  # centre block stops at row 4: row 3 is the top corridor both sides share
 	return _room(44, "Drain / Flood Route Swap", "M13, M5", rows, [6, 10], ents,
 		{"hint": "Drained (default), the left tunnel is open: fetch the silver key there. Flooded (pull the lever) opens the right walkway instead. Either side reaches the top; the door wants the key."})
 

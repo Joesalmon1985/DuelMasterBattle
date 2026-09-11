@@ -1156,7 +1156,7 @@ static func visual(room: Dictionary, st: Dictionary, e: Dictionary) -> Dictionar
 		"crumble":
 			var c: Dictionary = st["crumble"][id]
 			var state := str(c["state"])
-			var v := _v(state, C_BRIDGE if state == "intact" else (C_AJAR if state == "cracked" else C_HOLE), "" if state == "intact" else ("✕" if state == "cracked" else "▼"))
+			var v := _v(state, C_BRIDGE if state == "intact" else (C_AJAR if state == "cracked" else C_HOLE), "" if state == "intact" else ("x" if state == "cracked" else "▼"))
 			v["shape"] = "pad"
 			return v
 		"marker":
@@ -1187,7 +1187,7 @@ static func visual(room: Dictionary, st: Dictionary, e: Dictionary) -> Dictionar
 		"receptacle":
 			var inst := str(st["rec"].get(id, ""))
 			if inst == "":
-				var v := _v("empty", Color(0.3, 0.28, 0.35), "◌")
+				var v := _v("empty", Color(0.3, 0.28, 0.35), "○")
 				v["shape"] = "frame"
 				return v
 			var ok := _accepts(e, inst)
@@ -1196,19 +1196,19 @@ static func visual(room: Dictionary, st: Dictionary, e: Dictionary) -> Dictionar
 			var solid := cond(e.get("solid_when", true), flags)
 			var look := str(e.get("look", "magic"))
 			var col := C_MAGIC
-			var lab := "✦"
+			var lab := "★"
 			if look == "fire":
 				col = C_FIRE
 				lab = "▲"
 			elif look == "ice":
 				col = Color(0.7, 0.9, 1.0)
-				lab = "❄"
+				lab = "*"
 			elif look == "vines":
 				col = Color(0.2, 0.6, 0.2)
 				lab = "♣"
 			elif look == "basin":
 				col = Color(0.5, 0.5, 0.55)
-				lab = "◡"
+				lab = "U"
 			elif look == "wall":
 				col = C_WALL
 				lab = ""
