@@ -286,3 +286,124 @@ func after_battle(outcome: String) -> void:
 	var q := DmbQuests.build(_flow.sim, nid)
 	if not q.is_empty():
 		await finish_outcome(nid, q, str(pend["outcome"]))
+
+
+# ---------------------------------------------------------------------------------
+# Catalogue puzzle areas (disposable puzzle-test sessions).
+# Adapter/controller only: DmbPuzzleKit is authoritative for rules and state.
+# ---------------------------------------------------------------------------------
+
+const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
+
+
+## Production area dict for the active test puzzle, via DmbPuzzleProjection.
+## Explicit dungeon theme so _is_dungeon() needs no ID-prefix knowledge.
+func puzzle_area() -> Dictionary:
+	var room: Dictionary = _Runner.kit_room()
+	var st: Dictionary = _Runner.kit_state()
+	var area: Dictionary = DmbPuzzleProjection.area_for(room, st)
+	area["theme"] = "dungeon"
+	area["puzzle_test"] = true
+	return area
+
+
+func is_kit_puzzle_area(a: Dictionary) -> bool:
+	return bool(a.get("puzzle_test", false))
+
+
+func kit_ctx(adv: Node) -> Dictionary:
+	return {"items": adv.items(), "spells": adv.progression.spells_known}
+
+
+## Find the kit entity behind a projected production entity.
+func kit_entity(e: Dictionary) -> Dictionary:
+	var room: Dictionary = _Runner.kit_room()
+	return DmbPuzzleKit.entity(room, str(e.get("puzzle_eid", "")))
+
+
+## UI-free application of one kit action (used by the dialogue wrapper below
+## and directly by headless tests). Applies the domain result to Adventure:
+## single consistent transaction, no second inventory.
+## Returns {"result": r, "solved": bool}.
+func kit_apply(adv: Node, eid: String, action: Dictionary) -> Dictionary:
+	var room: Dictionary = _Runner.kit_room()
+	var st: Dictionary = _Runner.kit_state()
+	var ctx := kit_ctx(adv)
+	var r: Dictionary = DmbPuzzleKit.act(room, st, eid, action, ctx)
+	_apply_kit_result(adv, r)
+	return {"result": r, "solved": bool(st.get("solved", false))}
+
+
+func _apply_kit_result(adv: Node, r: Dictionary) -> void:
+	for item_id in r.get("consume", []):
+		adv.remove_item(str(item_id))
+	for item_id in r.get("grant", []):
+		adv.add_item(str(item_id))
+	if int(r.get("learn", -1)) >= 0:
+		adv.learn_spell(int(r["learn"]))
+
+
+## Full production interaction for a projected kit entity: real dialogue/choice
+## UI → authoritative Kit.act → Adventure transaction. Returns a summary the
+## overworld uses to rebuild/relocate/battle/announce.
+func interact_kit_puzzle(e: Dictionary) -> Dictionary:
+	var adv := _adv
+	var room: Dictionary = _Runner.kit_room()
+	var st: Dictionary = _Runner.kit_state()
+	var eid := str(e.get("puzzle_eid", ""))
+	var ke := DmbPuzzleKit.entity(room, eid)
+	var ctx := kit_ctx(adv)
+	var options: Array = DmbPuzzleKit.actions_for(room, st, ke, ctx)
+	if options.is_empty():
+		await _w._dialogue.say_async("", str(e.get("text", "Nothing happens.")))
+		return {"changed": false, "solved": bool(st.get("solved", false))}
+	var action: Dictionary
+	if options.size() == 1:
+		action = options[0]["action"]
+	else:
+		var labels: Array = []
+		for o in options:
+			labels.append(str(o["label"]))
+		var picked: String = await _w._dialogue.choose_async(str(e.get("text", "What do you do?")), labels)
+		action = {}
+		for o in options:
+			if str(o["label"]) == picked:
+				action = o["action"]
+				break
+		if action.is_empty():
+			return {"changed": false, "solved": bool(st.get("solved", false))}
+	var applied := kit_apply(adv, eid, action)
+	var r: Dictionary = applied["result"]
+	for line in r.get("text", []):
+		await _w._dialogue.say_async("", str(line))
+	return {
+		"changed": bool(r.get("changed", false)),
+		"relocate": r.get("relocate"),
+		"battle": str(r.get("battle", "")),
+		"solved": bool(applied["solved"]),
+		"solved_now": bool(r.get("solved_now", false)),
+	}
+
+
+## Kit on-step rules after John enters a tile. Returns the raw kit result
+## (relocate/pits/plates/crumble/teleport/hazard hits) with adv applied.
+func kit_on_step(adv: Node, pos: Vector2i) -> Dictionary:
+	var room: Dictionary = _Runner.kit_room()
+	var st: Dictionary = _Runner.kit_state()
+	var r: Dictionary = DmbPuzzleKit.on_step(room, st, [pos.x, pos.y], kit_ctx(adv))
+	_apply_kit_result(adv, r)
+	return r
+
+
+## Kit time rules at a fixed deterministic quantum. Returns raw kit result.
+func kit_tick(adv: Node, dt: float) -> Dictionary:
+	var room: Dictionary = _Runner.kit_room()
+	var st: Dictionary = _Runner.kit_state()
+	var r: Dictionary = DmbPuzzleKit.tick(room, st, dt)
+	_apply_kit_result(adv, r)
+	return r
+
+
+## Kit blocking for a tile: the simulation determines reality.
+func kit_blocks(pos: Vector2i) -> bool:
+	return DmbPuzzleKit.blocks(_Runner.kit_room(), _Runner.kit_state(), pos)

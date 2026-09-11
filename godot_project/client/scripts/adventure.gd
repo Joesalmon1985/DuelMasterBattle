@@ -54,6 +54,10 @@ var last_battle_result: Dictionary = {}
 
 var _active: bool = false
 
+## Disposable puzzle-test sessions set this: save() becomes a no-op so test
+## play can never overwrite the normal campaign save.
+var test_mode: bool = false
+
 
 func _ready() -> void:
 	pass
@@ -109,6 +113,8 @@ func has_save() -> bool:
 
 
 func save() -> void:
+	if test_mode:
+		return
 	if not _active:
 		return
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
