@@ -15,6 +15,7 @@ var _world_flow := WorldFlow.new()
 var _play := WorldPlay.new()
 const _SaveData = preload("res://client/scripts/save_data.gd")
 const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
+const _VRunner = preload("res://client/scripts/village_test_runner.gd")
 
 const TILE := 16
 const TILE_SCALE := 4
@@ -95,6 +96,9 @@ func _ready() -> void:
 	var adv := _adv()
 	if _Runner.has_pending() or _Runner.is_active():
 		_boot_kit_session(adv)
+		return
+	if _VRunner.has_pending():
+		_boot_village_test(adv)
 		return
 	if not adv.is_active():
 		adv.new_game()
@@ -469,8 +473,8 @@ func _spawn_entity(e: Dictionary) -> void:
 				marker_off = Vector2(0, -16)  # 32x32 tall props stand a tile up
 			elif e["kind"] == "sign":
 				marker = "props/sign.png"
-			elif _is_dungeon():
-				marker = "props/door_stone.png" if e["kind"] == "door" else "props/box.png"
+			elif _is_dungeon() and not e.has("marker"):
+						marker = "props/door_dungeon.png" if e["kind"] == "door" else "props/box.png"
 			if marker != "":
 				node = _add_prop(pos.x, pos.y, marker, marker_off, 1)
 				node.z_index = 2
@@ -1264,6 +1268,9 @@ func _on_menu() -> void:
 	if _Runner.is_active():
 		await _kit_menu()
 		return
+	if _VRunner.is_active():
+		await _village_menu()
+		return
 	_adv().save()
 	while true:
 		var choice: String = await _dialogue.choose_async("Paused — progress saved.", ["Continue", "Journal", "How to play", "Main menu"])
@@ -1299,6 +1306,43 @@ func _kit_menu() -> void:
 				_input_locked = false
 				_touch.set_enabled(true)
 				return
+
+
+## Pause menu inside a village test session: test save writes stay suppressed; the
+## campaign snapshot is restored byte-for-byte on exit.
+func _village_menu() -> void:
+	while true:
+		var choice: String = await _dialogue.choose_async("Paused — village test (E17A).", ["Continue", "Reset Village", "Show Anchors", "Show Quest/Story Markers", "Show Entity IDs", "Exit Test"])
+		match choice:
+			"Reset Village":
+				_finish_village_build(_VRunner.reset(_adv()), "down")
+				_input_locked = false
+				_touch.set_enabled(true)
+				return
+			"Show Anchors":
+				_VRunner.toggle_show_anchors()
+				_update_debug_markers()
+				continue
+			"Show Quest/Story Markers":
+				_VRunner.toggle_show_markers()
+				_update_debug_markers()
+				continue
+			"Show Entity IDs":
+				_VRunner.toggle_show_entity_ids()
+				_update_debug_markers()
+				continue
+			"Exit Test":
+				await _exit_village_test()
+				return
+			_:
+				_input_locked = false
+				_touch.set_enabled(true)
+				return
+
+
+func _update_debug_markers() -> void:
+	# Refresh visual debug markers based on runner state
+	pass
 
 
 func _maybe_autosave() -> void:
@@ -1807,3 +1851,54 @@ func _parse_tint(v) -> Color:
 		var a: Array = v
 		return Color(float(a[0]), float(a[1]), float(a[2]))
 	return Color.WHITE
+
+
+## Boot a pending village-test session instead of the campaign area.
+func _boot_village_test(adv: Node) -> void:
+	if not adv.is_active():
+		adv.new_game()
+	_play.setup(self, adv, _world_flow)
+	var start := _VRunner.begin(adv)
+	_finish_village_build(start, "down")
+	adv.state_changed.connect(_refresh_hud)
+	_refresh_hud()
+	_fade_in()
+	call_deferred("_after_ready")
+
+
+## Load (or reload) the projected village test area.
+func _finish_village_build(at: Vector2i, facing: String) -> void:
+	var adv := _adv()
+	_play.setup(self, adv, _world_flow)
+	area = _VRunner.get_area()
+	area_id = str(area["id"])
+	var rows: Array = area["rows"]
+	grid_h = rows.size()
+	grid_w = str(rows[0]).length()
+	for c in _tiles_root.get_children():
+		c.queue_free()
+	for c in _props_root.get_children():
+		c.queue_free()
+	for c in _actors_root.get_children():
+		if c != _john:
+			c.queue_free()
+	_entities.clear()
+	_entity_at.clear()
+	_fire_frames.clear()
+	_cutscene_actors.clear()
+	_build_tiles()
+	_build_entities()
+	_john_pos = at
+	_john_facing = facing
+	_john.position = Vector2(_john_pos) * TPX + Vector2(0, -8 * TILE_SCALE)
+	_moving = false
+	_update_john_sprite()
+	_camera.position = _john.position + Vector2(TPX * 0.5, TPX * 0.5)
+	_camera.reset_smoothing()
+	_camera.limit_left = 0
+	_camera.limit_top = 0
+	_camera.limit_right = grid_w * TPX
+	_camera.limit_bottom = grid_h * TPX
+	_hud_area_lbl.text = str(area["name"])
+	adv.set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
+	_update_prompt()

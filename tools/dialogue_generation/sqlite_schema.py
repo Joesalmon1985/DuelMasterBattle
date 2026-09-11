@@ -371,7 +371,7 @@ class DialogueDatabase:
                    situation_shape=excluded.situation_shape,
                    updated_at=excluded.updated_at""",
                 (f"struct_{structure_num}", structure_shape if structure_shape else situation_shape,
-                 situation_shape, 'A', '', workbook_path, 'datetime('now')')
+                 situation_shape, 'A', '', workbook_path, ',', 'datetime('now')')
             )
         
         self.conn.commit()

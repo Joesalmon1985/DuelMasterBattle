@@ -80,10 +80,10 @@ static func _project_static(room: Dictionary, st: Dictionary, e: Dictionary, fla
 				if not open:
 					_set_tile(rows, pos, "~")
 			else:
-				var d := _base(rid, e, "deco", pos)
-				d["marker"] = "puzzle_gate_open" if open else "puzzle_gate_locked"
-				d.erase("puzzle_eid")
-				entities.append(d)
+					var d := _base(rid, e, "deco", pos)
+					d["marker"] = "door_open" if open else "door_closed"
+					d.erase("puzzle_eid")
+					entities.append(d)
 		"plaque":
 			entities.append(_base(rid, e, "sign", pos))
 		"board":

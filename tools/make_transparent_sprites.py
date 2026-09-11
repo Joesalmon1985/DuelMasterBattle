@@ -42,8 +42,9 @@ def bg_model(arr):
     return kind, [med]
 
 
-def key_out(path):
-    img = Image.open(path).convert("RGB")
+def key_out(path, extra_white=False):
+    img = path if isinstance(path, Image.Image) else Image.open(path)
+    img = img.convert("RGB")
     # Quantize (C speed); any quantized colour touching the image border is
     # background. Subjects are centred and never touch the border, so this
     # is immune to edge vignette/frames that fool rim-median sampling.
@@ -61,6 +62,12 @@ def key_out(path):
     # subject at these source resolutions.
     fg_img = fg_img.filter(ImageFilter.MinFilter(3))
     fg = np.asarray(fg_img) > 0
+    if extra_white:
+        # Door panels: the open doorway interior is enclosed white that never
+        # touches the border. Key global near-white too (doors hold no white
+        # subject detail at these values).
+        bright = np.asarray(img).astype(np.float32).mean(axis=2) > 235
+        fg = fg & ~bright
     frac = fg.mean()
     if not 0.005 < frac < 0.95:
         # Subject may touch the border or share one bin with it: retry with
@@ -100,6 +107,31 @@ def conv(name):
     return key_out(os.path.join(SRC, name))
 
 
+def split_pair(name):
+    """Split a side-by-side closed/open door image into (left, right) RGB imgs.
+
+    Cut column = brightest column (over the middle 60% of rows) inside the
+    central band; the white inter-panel gap always wins. key_out() border
+    logic cleans any sliver left on either half.
+    """
+    img = Image.open(os.path.join(SRC, name)).convert("RGB")
+    a = np.asarray(img).astype(np.float32).mean(axis=2)
+    h, w = a.shape
+    mid = a[int(h * 0.2):int(h * 0.8), :]
+    score = mid.mean(axis=0)
+    lo, hi = int(w * 0.35), int(w * 0.65)
+    x = lo + int(np.argmax(score[lo:hi]))
+    left, right = img.crop((0, 0, x, h)), img.crop((x, 0, w, h))
+    # Paint the cut edges back to white: the gap is white anyway, and this
+    # stops a sliver of the neighbour panel's stone from touching the border
+    # and poisoning that grey bin inside the subject.
+    d = ImageDraw.Draw(left)
+    d.rectangle([left.width - 10, 0, left.width - 1, h - 1], fill=(255, 255, 255))
+    d = ImageDraw.Draw(right)
+    d.rectangle([0, 0, 9, h - 1], fill=(255, 255, 255))
+    return left, right
+
+
 def main():
     log = []
     # --- pedestals: one per riddle alcove ---
@@ -137,6 +169,52 @@ def main():
         for fr in ("0", "1"):
             save(cr, f"chars/reaper_{face}_{fr}.png", (16, 24))
     log.append(("chars/reaper_* (8 files)", "-", kr))
+    # --- batch 2: doors split into closed/open halves ---
+    # Door1 (arched): puzzle gates. Door2 (rectangular): dungeon doors.
+    # Door3: gate tower. Mine mouth gets the miner house instead.
+    d1c, d1o = split_pair("Door1.jpg")
+    cc, kc = key_out(d1c, extra_white=True)
+    co, ko = key_out(d1o, extra_white=True)
+    save(cc, "props/door_closed.png", (16, 22))
+    save(co, "props/door_open.png", (16, 22))
+    log.append(("props/door_closed/open.png (16x22)", "-", f"{kc}/{ko}"))
+    d2c, _d2o = split_pair("Door2.jpg")
+    cd, kd = key_out(d2c, extra_white=True)
+    save(cd, "props/door_dungeon.png", (32, 32))
+    log.append(("props/door_dungeon.png", "-", kd))
+    d3c, _d3o = split_pair("Door3.jpg")
+    ct, kt = key_out(d3c, extra_white=True)
+    save(ct, "props/door_tower.png", (32, 32))
+    log.append(("props/door_tower.png", "-", kt))
+    # --- batch 2: miner house -> mine mouth building ---
+    mh, kmh = conv("MinerHouse1.jpg")
+    save(mh, "props/miner_house.png", (32, 32))
+    log.append(("props/miner_house.png", "-", kmh))
+    # --- batch 2: goddess statue -> shrine ---
+    sg, ksg = conv("StatueGoddess.jpg")
+    save(sg, "props/statue_goddess.png", (32, 32))
+    log.append(("props/statue_goddess.png", "-", ksg))
+    # --- batch 2: labourer NPC (brickmaker, carter) ---
+    for face, fn in (("down", "WorkerMale1.jpg"), ("left", "WorkerMale2.jpg"),
+                     ("right", "WorkerMale3.jpg"), ("up", "WorkerMale4.jpg")):
+        cw, kw = conv(fn)
+        save(cw, f"chars/worker_{face}_0.png", (16, 24))
+        save(cw, f"chars/worker_{face}_1.png", (16, 24))
+        log.append((f"chars/worker_{face}_*", "-", kw))
+    # --- batch 2: miner NPC (mine workers, digger, smith) ---
+    for face, fn in (("down", "MinerMale1.jpg"), ("left", "MinerMale2.jpg"),
+                     ("right", "MinerMale3.jpg"), ("up", "MinerFemale1.jpg")):
+        cm, km = conv(fn)
+        save(cm, f"chars/miner_{face}_0.png", (16, 24))
+        save(cm, f"chars/miner_{face}_1.png", (16, 24))
+        log.append((f"chars/miner_{face}_*", "-", km))
+    # --- batch 2: matron NPC (mother role) ---
+    for face, fn in (("down", "WorkerFemale1.jpg"), ("left", "WorkerFemale2.jpg"),
+                     ("right", "WorkerFemale3.jpg"), ("up", "WorkerFemale4.jpg")):
+        cmt, kmt = conv(fn)
+        save(cmt, f"chars/matron_{face}_0.png", (16, 24))
+        save(cmt, f"chars/matron_{face}_1.png", (16, 24))
+        log.append((f"chars/matron_{face}_*", "-", kmt))
     for rel, size, kind in log:
         print(f"{rel:38s} {size} bytes  bg={kind}")
 

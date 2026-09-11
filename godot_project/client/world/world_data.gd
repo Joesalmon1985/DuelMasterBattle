@@ -316,8 +316,8 @@ static func _trial_gate() -> Dictionary:
 		"id": "trial_gate", "name": "Trial Gate", "rows": rows,
 		"entities": [
 			{"kind": "sign", "id": "gate_sign", "pos": [6, 4], "text": "TRIAL GATE. Contestants only beyond this point. Spectators: enjoy the screaming."},
-			{"kind": "door", "id": "gate_door_l", "pos": [8, 1], "text": "Enormous doors, shut. They open at sunset."},
-			{"kind": "door", "id": "gate_door_r", "pos": [9, 1], "text": "Someone has scratched tally marks into the wood. Dozens of them."},
+			{"kind": "door", "id": "gate_door_l", "pos": [8, 1], "marker": "door_closed", "text": "Enormous doors, shut. They open at sunset."},
+			{"kind": "door", "id": "gate_door_r", "pos": [9, 1], "marker": "door_closed", "text": "Someone has scratched tally marks into the wood. Dozens of them."},
 			{"kind": "npc", "id": "contest_knight", "name": "Serra", "sprite": "knight", "pos": [4, 5], "facing": "down",
 				"lines": ["I am Serra of the White Road. First in, first out. That is how it is done."]},
 			{"kind": "npc", "id": "contest_elf", "name": "Elven woman", "sprite": "elf", "pos": [5, 5], "facing": "down",

@@ -67,7 +67,7 @@ static func area_for(d: Dictionary, puzzle_states: Dictionary, world_node_area: 
 			if solved:
 				rows[door_y] = _put(rows[door_y], 6, ":")
 			else:
-				entities.append({"kind": "door", "id": "%s_%s_door" % [aid, p["id"]], "pos": [6, door_y], "marker": "door_stone",
+				entities.append({"kind": "door", "id": "%s_%s_door" % [aid, p["id"]], "pos": [6, door_y], "marker": "door_dungeon",
 					"text": "Shut. The room has not been answered.", "puzzle_key": key})
 		# Room clue plaque.
 		entities.append({"kind": "sign", "id": "%s_%s_clue" % [aid, p["id"]], "pos": [1, oy], "text": "%s\n\n%s" % [str(p["title"]), str(p["clue"])], "puzzle_key": key})

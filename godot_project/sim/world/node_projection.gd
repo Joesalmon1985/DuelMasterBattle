@@ -42,9 +42,9 @@ const DUNGEON_DOOR := [6, 3]
 const HEX_WORDS := {"forest": "forest", "hills": "brick hills", "pasture": "sheepwalks",
 	"fields": "wheat", "mountains": "ore seams", "desert": "dead ground"}
 const BUILDING_MARKER := {
-	"woodcutter_hut": "woodcutter_hut", "clay_pit": "rock", "sheepfold": "box", "grain_field": "seed", "mine_mouth": "door_stone",
+	"woodcutter_hut": "woodcutter_hut", "clay_pit": "rock", "sheepfold": "box", "grain_field": "seed", "mine_mouth": "miner_house",
 	"sawmill": "logs", "kiln": "rock", "weaver": "box", "mill": "box", "smithy": "rock", "charcoal_burner": "logs", "brewhouse": "box",
-	"well": "ring", "shrine": "idol", "hall": "book_red", "market": "box", "gate_tower": "door_stone",
+	"well": "ring", "shrine": "idol", "hall": "book_red", "market": "box", "gate_tower": "door_tower",
 }
 const WORKER_SPRITE := {"woodcutter": "woodcutter", "brickmaker": "villager_b", "shepherd": "child", "reaper": "reaper", "miner": "dwarf"}
 const WORKER_LINE := {
@@ -203,7 +203,7 @@ static func _add_dungeon_door(entities: Array, aid: String, d: Dictionary, adv_s
 		if str(k).begins_with(str(d["id"]) + "/") and bool(adv_state["puzzles"][k].get("solved", false)):
 			solved += 1
 	var tower := str(d["kind"]) == "tower"
-	entities.append({"kind": "door", "id": "%s_dungeon" % aid, "pos": DUNGEON_DOOR, "marker": "door_stone",
+	entities.append({"kind": "door", "id": "%s_dungeon" % aid, "pos": DUNGEON_DOOR, "marker": "door_dungeon",
 		"dungeon_id": str(d["id"]), "choice_event": "enter_dungeon",
 		"text": "%s. %s %d of 4 rooms answered." % [
 			"A tower, older than the steading that stands in its shadow. The door is not locked. It has never needed to be." if tower else "A cave mouth in the hillside, new — the earth opened when they broke ground for the steading, and something has been laying stone inside ever since.",

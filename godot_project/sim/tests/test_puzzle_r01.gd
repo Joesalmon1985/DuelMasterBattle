@@ -135,9 +135,9 @@ func _test_projection() -> void:
 		if _short(e) in ["o1", "o2", "o3", "o4"] and str(e.get("kind", "")) == "logs":
 			alcoves.append(e)
 			alcove_pos[e["pos"]] = true
-		if _short(e) == "gate" or (str(e.get("kind", "")) == "deco" and not e.has("puzzle_eid") and str(e.get("pos")) == "[6, 2]" and str(e.get("marker", "")).begins_with("puzzle_gate")):
-			gate_mark = str(e.get("marker", ""))
-			assert_eq(str(e.get("kind", "")), "deco", "gate drawn on its own tile")
+		if _short(e) == "gate" or (str(e.get("kind", "")) == "deco" and not e.has("puzzle_eid") and str(e.get("pos")) == "[6, 2]" and str(e.get("marker", "")).begins_with("door_")):
+				gate_mark = str(e.get("marker", ""))
+				assert_eq(str(e.get("kind", "")), "deco", "gate drawn on its own tile")
 	for e in area["entities"]:
 		# Installed-item overlays sit on alcove tiles; the goal diamond does not.
 		if str(e.get("kind", "")) == "deco" and e.has("puzzle_room") and not e.has("puzzle_eid") and alcove_pos.has(e.get("pos")):
@@ -146,7 +146,7 @@ func _test_projection() -> void:
 	for a in alcoves:
 		assert_true(str(a.get("marker", "")).begins_with("pedestal_"), "empty receptacle is a pedestal")
 	assert_true(overlays.is_empty(), "no installed overlays before solving")
-	assert_eq(gate_mark, "puzzle_gate_locked", "unsolved exit projects locked gate")
+	assert_eq(gate_mark, "door_closed", "unsolved exit projects closed gate")
 	assert_true(Kit.blocks(room, st, GATE_POS), "locked state blocked")
 	# Solved: each alcove keeps its base and gains its own item overlay.
 	for eid in CORRECT:
@@ -161,7 +161,7 @@ func _test_projection() -> void:
 			bases += 1
 			alcove2[e["pos"]] = true
 			assert_true(str(e.get("marker", "")).begins_with("pedestal_"), "base remains the pedestal")
-		if _short(e) == "gate" or (str(e.get("kind", "")) == "deco" and not e.has("puzzle_eid") and str(e.get("pos")) == "[6, 2]" and str(e.get("marker", "")).begins_with("puzzle_gate")):
+		if _short(e) == "gate" or (str(e.get("kind", "")) == "deco" and not e.has("puzzle_eid") and str(e.get("pos")) == "[6, 2]" and str(e.get("marker", "")).begins_with("door_")):
 			gate2 = str(e.get("marker", ""))
 			assert_eq(str(e.get("kind", "")), "deco", "open gate same entity kind/position")
 	for e in area2["entities"]:
@@ -172,5 +172,5 @@ func _test_projection() -> void:
 	assert_eq(marks.size(), 4, "four distinguishable installed items")
 	for inst in CORRECT.values():
 		assert_true(marks.has(Items.sprite_of(str(inst))), "installed visible: " + str(inst))
-	assert_eq(gate2, "puzzle_gate_open", "solved exit projects open gate")
+	assert_eq(gate2, "door_open", "solved exit projects open gate")
 	assert_true(not Kit.blocks(room, st, GATE_POS), "open state walkable")
