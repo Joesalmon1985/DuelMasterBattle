@@ -587,7 +587,7 @@ func is_walkable(p: Vector2i) -> bool:
 	if ch in SOLID_TILES:
 		return false
 	if _play.is_kit_puzzle_area(area):
-		return _play.kit_blocks(p)  # simulation owns blocking; graphics project it
+		return not _play.kit_blocks(p)  # kit: true = blocked; walkable = NOT blocked
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
 		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs"]:
