@@ -124,25 +124,28 @@ static func _r01() -> Dictionary:
 	var rows := _open()
 	_fill(rows, 1, 2, 11, 2)
 	_fill(rows, 6, 2, 6, 2, ".")
-	var clues := [
-		["o1", 2, "mirror_shard", "'I return every face but keep none.'"],
-		["o2", 4, "tallow_candle", "'I weep so that you may see.'"],
-		["o3", 8, "grey_stone", "'Exactly as heavy as I need to be.'"],
-		["o4", 10, "copper_coin", "'Worth nothing to a merchant.'"],
+	var reject := "The alcove rejects the offering. That is not what the inscription describes."
+	var install := "The stone accepts the offering. Something deep inside the wall clicks."
+	var riddles := [
+		["o1", 2, "mirror_shard", "I turn everything around, yet I never move.\nLook upon me and I show you yourself.\nWhat am I?"],
+		["o2", 4, "tallow_candle", "Tall when I am young,\nshort when I am old.\nWhile I live I give you light,\nand the wind is my enemy.\nWhat am I?"],
+		["o3", 8, "charcoal", "Black when you find me,\nred when you use me,\npale ash when my work is done.\nWhat am I?"],
+		["o4", 10, "copper_coin", "I have a head and I have a tail,\nbut no body lies between them.\nI am no serpent.\nWhat am I?"],
 	]
 	var ents: Array = [_goal(6, 1), _gate("gate", 6, 2, {"all": ["o1", "o2", "o3", "o4"]}),
-		_plaque("clue", 6, 4, "Four alcoves. Four riddles. The stone takes only what it asked for — anything else it hands back, sharply.")]
-	for c in clues:
+		_plaque("clue", 6, 4, "Four alcoves guard the northern door.\n\nEach bears a riddle.\n\nGive each one the object its words describe.\n\nOne offering has no place here.")]
+	for c in riddles:
 		ents.append({"kind": "receptacle", "id": c[0], "pos": [c[1], 4], "flag": c[0], "accepts_items": [c[2]], "removable": false,
-			"reject_text": "The alcove spits it back into your hands. Not that.", "reject_effects": [{"flash": true}],
-			"install_text": "It settles into the alcove as if carved for it. %s" % c[3], "text": c[3]})
+			"reject_text": reject, "install_text": install,
+			"occupied_text": "The alcove is already content. Leave what it holds.",
+			"text": c[3]})
 	ents.append(_item("i1", "mirror_shard", 2, 8))
 	ents.append(_item("i2", "tallow_candle", 4, 7))
-	ents.append(_item("i3", "grey_stone", 8, 7))
+	ents.append(_item("i3", "charcoal", 8, 7))
 	ents.append(_item("i4", "copper_coin", 10, 8))
 	ents.append(_item("i5", "glass_bead", 6, 7))
 	return _room(1, "The Four Offerings", "M1, M14, M0", rows, [6, 9], ents,
-		{"hint": "Read each alcove. Take the objects on the floor and place the one each riddle describes. The bead fits nowhere."})
+		{"hint": "Read each alcove's riddle and give it the object its words describe. One of the five objects fits nowhere."})
 
 
 static func _r02() -> Dictionary:

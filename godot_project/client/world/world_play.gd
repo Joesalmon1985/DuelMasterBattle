@@ -373,7 +373,14 @@ func interact_kit_puzzle(e: Dictionary) -> Dictionary:
 		await _w._dialogue.say_async("", str(e.get("text", "Nothing happens.")))
 		return {"changed": false, "solved": bool(st.get("solved", false))}
 	var action: Dictionary
-	if options.size() == 1:
+	if str(ke.get("kind", "")) == "receptacle" and str(st["rec"].get(str(ke.get("id", "")), "")) == "":
+		# Riddle receptacle, still empty: always read the inscription first,
+		# then offer each carried object as a conscious choice plus Leave.
+		# Never auto-insert, even carrying exactly one object.
+		action = await _choose_offering(e, ke, options)
+		if action.is_empty():
+			return {"changed": false, "solved": bool(st.get("solved", false))}
+	elif options.size() == 1:
 		action = options[0]["action"]
 	else:
 		var labels: Array = []
@@ -398,6 +405,31 @@ func interact_kit_puzzle(e: Dictionary) -> Dictionary:
 		"solved": bool(applied["solved"]),
 		"solved_now": bool(r.get("solved_now", false)),
 	}
+
+
+## Riddle-first offering choice for an empty receptacle: the inscription is
+## always read aloud, then every carried object is offered plus Leave.
+## Returns the chosen install action, or {} when the player walks away.
+## Generic — the room data owns the riddle text; no per-room code.
+func _choose_offering(e: Dictionary, ke: Dictionary, options: Array) -> Dictionary:
+	var riddle := str(e.get("text", ke.get("text", "")))
+	if riddle != "":
+		await _w._dialogue.say_async("", riddle)
+	var place: Array = []
+	for o in options:
+		if str((o.get("action", {}) as Dictionary).get("kind", "")) == "install":
+			place.append(o)
+	if place.is_empty():
+		return {}
+	var labels: Array = []
+	for o in place:
+		labels.append(str(o["label"]))
+	labels.append("Leave")
+	var picked: String = await _w._dialogue.choose_async("Give what?", labels)
+	for o in place:
+		if str(o["label"]) == picked:
+			return o["action"]
+	return {}
 
 
 ## Kit on-step rules after John enters a tile. Returns the raw kit result

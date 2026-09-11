@@ -39,10 +39,10 @@ M15 Hidden/revealed tile or entity state
 
 01. THE FOUR OFFERINGS
 ----------------------
-Core idea: Four alcoves each describe an object indirectly. Place the correct object into each.
-Introduction: Start with one obvious pairing so the player learns that objects can be offered to receptacles.
-Example: "I return every face but keep none" -> mirror shard.
-Failure: Wrong objects are returned, trigger a warning, or activate a minor hazard.
+Core idea: Four stone alcoves each bear a riddle describing an object. Five loose objects lie about the room, one a decoy with no home. Read each inscription, deduce its answer, and deliberately offer the matching object.
+Introduction: The central plaque states the rules but not the answers: four alcoves guard the northern door, each bears a riddle, one offering has no place here.
+Example: "Tall when I am young, short when I am old..." -> tallow candle. The glass bead answers nothing.
+Failure: A wrong offering is rejected with feedback ("The alcove rejects the offering...") and stays in the player's hands; nothing is lost and no flag is set. A correct offering is consumed, displayed in the niche, and clicks audibly.
 Mechanics: M1, M14, M0
 
 02. CLOCKWISE / TURN BACK

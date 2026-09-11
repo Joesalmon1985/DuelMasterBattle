@@ -64,21 +64,25 @@ static func _project_static(room: Dictionary, st: Dictionary, e: Dictionary, fla
 	var pos: Array = (e["pos"] as Array).duplicate()
 	match k:
 		"gate":
+			# Puzzle gates are always visible at their own tile: locked looks
+			# shut, open looks passable. Same kind/position in both states so
+			# the doorway visibly changes without moving. Zero-offset deco
+			# keeps the graphic off the goal tile behind it.
+			# Kit.blocks() owns collision; the gate needs no interaction.
 			var look := str(e.get("look", "gate"))
-			if Kit.gate_open(e, flags):
+			var open := Kit.gate_open(e, flags)
+			if open:
 				_set_tile(rows, pos, ":")
-				if look != "wall":
-					var d := _base(rid, e, "deco", pos)
-					d["marker"] = "door_stone"
-					d.erase("puzzle_eid")
-					entities.append(d)
-			elif look == "wall":
-				_set_tile(rows, pos, "#")
+			if look == "wall":
+				if not open:
+					_set_tile(rows, pos, "#")
 			elif look == "water":
-				_set_tile(rows, pos, "~")
+				if not open:
+					_set_tile(rows, pos, "~")
 			else:
-				var d := _base(rid, e, "door", pos)
-				d["marker"] = "door_stone"
+				var d := _base(rid, e, "deco", pos)
+				d["marker"] = "puzzle_gate_open" if open else "puzzle_gate_locked"
+				d.erase("puzzle_eid")
 				entities.append(d)
 		"plaque":
 			entities.append(_base(rid, e, "sign", pos))
@@ -105,14 +109,17 @@ static func _project_static(room: Dictionary, st: Dictionary, e: Dictionary, fla
 		"container":
 			entities.append(_base(rid, e, "logs", pos))
 		"receptacle":
+			# Stone niche always; a solved alcove additionally shows the
+			# installed object's own sprite, so each offering stays visible.
 			var d := _base(rid, e, "logs", pos)
-			var inst := str(st["rec"].get(str(e.get("id", "")), ""))
-			if inst == "":
-				d["marker"] = "idol"
-			else:
-				d["marker"] = "diamond"
-				d["tint"] = Items.color_of(inst)
+			d["marker"] = "puzzle_alcove_empty"
 			entities.append(d)
+			var inst := str(st["rec"].get(str(e.get("id", "")), ""))
+			if inst != "":
+				var o := _base(rid, e, "deco", pos)
+				o.erase("puzzle_eid")
+				o["marker"] = Items.sprite_of(inst)
+				entities.append(o)
 		"emitter":
 			var d := _base(rid, e, "logs", pos)
 			d["marker"] = "mirror"

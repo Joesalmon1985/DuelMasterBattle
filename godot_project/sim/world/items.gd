@@ -36,6 +36,7 @@ const DATA := {
 	"fish_scrap": {"name": "Fish scrap", "sprite": "box", "desc": "Heads and tails, still shining. A fish-eater would cross a room for it.", "tags": ["bait", "bait_fish", "small"]},
 	"old_bone": {"name": "Old bone", "sprite": "box", "desc": "Gnawed clean years ago. A dog would still follow it anywhere.", "tags": ["bait", "bait_bone", "small"]},
 	"glass_bead": {"name": "Glass bead", "sprite": "diamond", "desc": "Pretty, and worthless.", "tags": ["small", "token"]},
+	"charcoal": {"name": "Charcoal", "sprite": "charcoal", "desc": "A black lump of charcoal. Light enough to carry, dirty enough to leave its mark.", "tags": ["small", "char"]},
 }
 
 
@@ -58,6 +59,8 @@ static func color_of(id: String) -> Color:
 		return Color(0.8, 0.3, 0.3)
 	if "fuse" in t:
 		return Color(0.85, 0.5, 0.2)
+	if "char" in t:
+		return Color(0.16, 0.16, 0.19)
 	if "clue" in t:
 		return Color(0.9, 0.85, 0.7)
 	if "valuable" in t or "token" in t:

@@ -71,7 +71,7 @@ func _test_open_gate() -> void:
 	# Authoritative kit state change through real kit machinery:
 	# installing each riddle's correct object sets flags o1..o4, opening the gate.
 	var st: Dictionary = _Runner.kit_state()
-	st["rec"] = {"o1": "mirror_shard", "o2": "tallow_candle", "o3": "grey_stone", "o4": "copper_coin"}
+	st["rec"] = {"o1": "mirror_shard", "o2": "tallow_candle", "o3": "charcoal", "o4": "copper_coin"}
 	_ow.area = _ow._play.puzzle_area()
 	assert_eq(_ow._play.kit_blocks(GATE), false, "pz_01 gate opens once offerings installed")
 	assert_eq(_ow.is_walkable(GATE), true, "REAL Overworld: open puzzle gate is walkable")
