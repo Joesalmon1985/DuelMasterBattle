@@ -51,6 +51,8 @@ func _ready() -> void:
 	title_label.text = "%s — %s" % [room_id, str(room.get("title", ""))]
 	desc_label.text = "%s\n%s" % [str(room.get("mechanics", "")), str(room.get("hint", ""))]
 	hint_label.text = "Move WASD/Arrows · Space interact · Tab cycle choice · T throw · D drop · I bag · R reset · Esc menu"
+	_ensure_player_body()
+	_add_touch_controls()
 	_build_tiles()
 	_redraw()
 	_say("Find the way through. Read plaques (?), pull levers, carry things to niches.")
@@ -121,13 +123,24 @@ func _redraw() -> void:
 		ent_nodes[k].queue_free()
 	ent_nodes.clear()
 	var vmap: Dictionary = Kit.visual_map(room, st)
+	# Static entities carry state/color/label in vmap but their tile lives on
+	# the room entity (only hazards/npcs/critters/world-items/beams get pos in
+	# vmap), so merge: pos from the room entity, looks from vmap.
+	var by_id := {}
+	for e in room["entities"]:
+		if e is Dictionary and str(e.get("id", "")) != "":
+			by_id[str(e["id"])] = e
 	for vid in vmap:
 		var v: Dictionary = vmap[vid]
 		if not bool(v.get("visible", true)):
 			continue
-		if not v.has("pos"):
+		var p := Vector2i(-1, -1)
+		if v.has("pos"):
+			p = Kit._pos(v["pos"])
+		elif by_id.has(vid) and (by_id[vid] as Dictionary).has("pos"):
+			p = Kit._pos((by_id[vid] as Dictionary)["pos"])
+		if p.x < 0 or p.y < 0:
 			continue
-		var p := Kit._pos(v["pos"])
 		var col: Color = v.get("color", Color.MAGENTA)
 		col.a = float(v.get("alpha", 1.0))
 		var r := ColorRect.new()
@@ -178,6 +191,67 @@ func _refresh_inventory() -> void:
 		l.text = Items.name_of(str(it))
 		l.add_theme_font_size_override("font_size", 18)
 		inv_grid.add_child(l)
+
+# --- player body + touch controls (human-playable, mobile-friendly) ---
+
+func _ensure_player_body() -> void:
+	# The scene's Sprite2D ships with no texture, so the player is invisible.
+	# Add a plain green body + "P" tag once; harmless if a texture is set later.
+	if player_sprite.texture != null:
+		return
+	if player_node.has_node("Body"):
+		return
+	var body := ColorRect.new()
+	body.name = "Body"
+	body.color = Color(0.35, 1.0, 0.45)
+	body.size = Vector2(30, 30)
+	body.position = Vector2(-15, -15)
+	player_node.add_child(body)
+	var lab := Label.new()
+	lab.text = "P"
+	lab.add_theme_font_size_override("font_size", 20)
+	lab.add_theme_color_override("font_color", Color(0.05, 0.15, 0.08))
+	lab.set_anchors_preset(Control.PRESET_FULL_RECT)
+	lab.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lab.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lab.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	body.add_child(lab)
+
+func _touch_btn(label: String, dir: Vector2i, is_use: bool, parent: Control, pos: Vector2) -> void:
+	var b := Button.new()
+	b.text = label
+	b.custom_minimum_size = Vector2(72, 72)
+	b.position = pos
+	b.focus_mode = Control.FOCUS_NONE
+	b.add_theme_font_size_override("font_size", 28)
+	if is_use:
+		b.pressed.connect(_interact)
+	else:
+		b.pressed.connect(func() -> void: _try_move(dir))
+	parent.add_child(b)
+
+func _add_touch_controls() -> void:
+	# On-screen D-pad (bottom-left) + USE button (bottom-right). Buttons work
+	# with mouse clicks too, and tap-to-move already works via click.
+	var ui := $UILayer
+	var pad := Control.new()
+	pad.name = "TouchPad"
+	pad.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	pad.position = Vector2(16, -260)
+	pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui.add_child(pad)
+	_touch_btn("▲", Vector2i(0, -1), false, pad, Vector2(76, 0))
+	_touch_btn("◀", Vector2i(-1, 0), false, pad, Vector2(0, 76))
+	_touch_btn("▼", Vector2i(0, 1), false, pad, Vector2(76, 76))
+	_touch_btn("▶", Vector2i(1, 0), false, pad, Vector2(152, 76))
+	var use := Control.new()
+	use.name = "TouchUse"
+	use.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	use.position = Vector2(-104, -260)
+	use.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui.add_child(use)
+	_touch_btn("E", Vector2i.ZERO, true, use, Vector2(0, 0))
+	hint_label.text = "Move WASD/Arrows/D-pad/tap · Space/E interact · Tab cycle · T throw · D drop · I bag · R reset · Esc menu"
 
 # --- simulation plumbing ---
 
