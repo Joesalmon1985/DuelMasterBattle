@@ -1,0 +1,137 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0fqzjqvqf4h3"]
+
+[ext_resource type="Script" path="res://client/scripts/puzzle_test_room.gd" id="1_0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+bg_color = Color(0.1, 0.08, 0.19, 0.92)
+border_color = Color(0.419608, 0.360784, 0.905882, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(32, 32)
+
+[node name="PuzzleTestRoom" type="Node2D"]
+script = ExtResource("1_0")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.08, 0.06, 0.15, 1)
+
+[node name="GridContainer" type="Node2D" parent="."]
+position = Vector2(40, 40)
+
+[node name="Player" type="CharacterBody2D" parent="GridContainer"]
+collision_layer = 1
+collision_mask = 2
+
+[node name="PlayerSprite" type="Sprite2D" parent="GridContainer/Player"]
+position = Vector2(16, 16)
+modulate = Color(0.4, 0.8, 1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GridContainer/Player"]
+shape = SubResource("RectangleShape2D_player")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="HUD" type="Panel" parent="UILayer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -100.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="PuzzleTitle" type="Label" parent="UILayer/HUD"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
+text = "PUZZLE TEST ROOM"
+horizontal_alignment = 1
+
+[node name="PuzzleDesc" type="Label" parent="UILayer/HUD"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 56.0
+offset_right = -20.0
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.7, 0.65, 0.85, 1)
+text = "Select a puzzle from the menu"
+horizontal_alignment = 1
+autowrap_mode = 1
+
+[node name="StateLabel" type="Label" parent="UILayer/HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -80.0
+offset_right = -20.0
+offset_bottom = -44.0
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.8, 0.2, 1)
+text = "State: --"
+horizontal_alignment = 1
+
+[node name="ControlHint" type="Label" parent="UILayer/HUD"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -40.0
+offset_right = -20.0
+offset_bottom = -4.0
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.6, 0.55, 0.8, 1)
+text = "WASD/Arrows: Move | Space/Enter: Interact | I: Inventory | Esc: Back to Menu"
+horizontal_alignment = 1
+
+[node name="InventoryPanel" type="Panel" parent="UILayer"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -160.0
+offset_right = -20.0
+offset_bottom = -20.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+visible = false
+
+[node name="InventoryLabel" type="Label" parent="UILayer/InventoryPanel"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = -16.0
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
+text = "Inventory (8 slots max)"
+
+[node name="InventoryGrid" type="GridContainer" parent="UILayer/InventoryPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 44.0
+offset_right = -16.0
+offset_bottom = -12.0
+columns = 4
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8

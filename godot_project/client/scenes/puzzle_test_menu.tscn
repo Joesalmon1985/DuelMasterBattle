@@ -1,0 +1,106 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0fqzjqvqf4h2"]
+
+[ext_resource type="Script" path="res://client/scripts/puzzle_test_menu.gd" id="1_0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+bg_color = Color(0.133333, 0.109804, 0.239216, 1)
+border_color = Color(0.419608, 0.360784, 0.905882, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+
+[node name="PuzzleTestMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0")
+
+[node name="Bg" type="ColorRect" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.08, 0.19, 1)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = -40.0
+offset_bottom = -40.0
+
+[node name="Title" type="Label" parent="Panel"]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
+text = "PUZZLE TEST MENU"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 80.0
+offset_right = -20.0
+offset_bottom = -130.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="InfoLabel" type="Label" parent="Panel"]
+layout_mode = 3
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -125.0
+offset_right = -20.0
+offset_bottom = -85.0
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.7, 0.65, 0.85, 1)
+text = "Select a puzzle to test in isolation"
+horizontal_alignment = 1
+
+[node name="BottomBar" type="HBoxContainer" parent="Panel"]
+layout_mode = 3
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -80.0
+offset_right = -20.0
+offset_bottom = -20.0
+theme_override_constants/separation = 16
+
+[node name="BtnRun" type="Button" parent="Panel/BottomBar"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "Run Selected"
+
+[node name="BtnClose" type="Button" parent="Panel/BottomBar"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "Close"
