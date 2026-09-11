@@ -11,6 +11,9 @@ static var _kit_state: Dictionary = {}
 static var _saved_adv_state: Dictionary = {}
 static var _saved_adv_prog: Dictionary = {}
 static var _has_saved_session := false
+## Set by the overworld before starting a kit-guardian battle; consumed on
+## return so a victory can mark the guardian defeated in kit state.
+static var _battle_eid := ""
 
 
 static func get_puzzle():
@@ -52,6 +55,7 @@ static func begin(adv: Node) -> Vector2i:
 	_has_saved_session = true
 	adv.test_mode = true
 	_seed_prereqs(adv, _room)
+	DmbPuzzleKit.sync_inventory(_kit_state, adv.items())
 	return Vector2i(int(_room["start"][0]), int(_room["start"][1]))
 
 
@@ -68,12 +72,24 @@ static func end(adv: Node) -> void:
 	clear()
 
 
-## Reset the current puzzle: fresh kit state, re-seed prereqs, start pos.
+## Reset the current puzzle: restore the Adventure baseline captured at begin
+## (test pickups/changes discarded), fresh kit state, re-seed prereqs.
 static func reset(adv: Node) -> Vector2i:
+	_restore_baseline(adv)
 	_room = _find_room(selected_puzzle)
 	_kit_state = DmbPuzzleKit.fresh_state(_room)
+	DmbPuzzleKit.sync_inventory(_kit_state, adv.items())
 	_seed_prereqs(adv, _room)
+	DmbPuzzleKit.sync_inventory(_kit_state, adv.items())
 	return Vector2i(int(_room["start"][0]), int(_room["start"][1]))
+
+
+static func _restore_baseline(adv: Node) -> void:
+	if not _has_saved_session:
+		return
+	adv.state = _saved_adv_state.duplicate(true)
+	adv.progression = DmbProgression.from_dict(_saved_adv_prog.duplicate(true))
+	adv.state_changed.emit()
 
 
 static func kit_room() -> Dictionary:
@@ -96,15 +112,35 @@ static func _find_room(rid: String) -> Dictionary:
 	return {}
 
 
-## Seed John's production Adventure with whatever the catalogue room needs:
-## every spell any response in the room can require, plus any declared
-## start_items. Generic — derived from room data, no per-room code.
+## Seed John's production Adventure from the catalogue room's declared starting
+## prerequisites ("items" and "spells" keys of the room dict). Generic —
+## derived from room data, no per-room code, nothing granted the room does
+## not declare.
 static func _seed_prereqs(adv: Node, room: Dictionary) -> void:
 	if room.is_empty():
 		return
-	for e in room.get("entities", []):
-		if (e as Dictionary).has("responses"):
-			for k in (e as Dictionary)["responses"].keys():
-				adv.learn_spell(int(k))
-	for item_id in room.get("start_items", []):
+	for item_id in room.get("items", []):
 		adv.add_item(str(item_id))
+	for s in room.get("spells", []):
+		adv.learn_spell(int(s))
+
+
+static func set_battle_eid(eid: String) -> void:
+	_battle_eid = eid
+
+
+## Next catalogue id after the current selection, or "" at the end.
+static func next_puzzle_id() -> String:
+	var ids: Array = []
+	for r in DmbPuzzleRooms.all():
+		ids.append(str(r["id"]))
+	var i := ids.find(selected_puzzle)
+	if i < 0 or i + 1 >= ids.size():
+		return ""
+	return str(ids[i + 1])
+
+
+static func take_battle_eid() -> String:
+	var eid := _battle_eid
+	_battle_eid = ""
+	return eid

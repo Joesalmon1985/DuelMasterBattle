@@ -14,6 +14,7 @@ const _VT = preload("res://client/scripts/visual_theme.gd")
 var _world_flow := WorldFlow.new()
 var _play := WorldPlay.new()
 const _SaveData = preload("res://client/scripts/save_data.gd")
+const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
 
 const TILE := 16
 const TILE_SCALE := 4
@@ -71,6 +72,7 @@ var _tex_cache: Dictionary = {}
 var _cutscene_actors: Dictionary = {}
 var _scripted_running: bool = false
 var test_mode: bool = false  # suppress scene changes (test harness drives scenes)
+var _kit_tick_acc: float = 0.0  # deterministic quantum accumulator for kit ticks
 
 
 func _adv() -> Node:
@@ -91,6 +93,9 @@ func _ready() -> void:
 	_story = _Story.new()
 	_story.setup(self)
 	var adv := _adv()
+	if _Runner.has_pending() or _Runner.is_active():
+		_boot_kit_session(adv)
+		return
 	if not adv.is_active():
 		adv.new_game()
 	var pos: Array = adv.state["pos"]
@@ -107,6 +112,9 @@ func _after_ready() -> void:
 	if not adv.last_battle_result.is_empty():
 		var r: Dictionary = adv.last_battle_result
 		adv.last_battle_result = {}
+		if _Runner.is_active():
+			await _after_kit_battle(r)
+			return
 		var req: Dictionary = r.get("request", {})
 		if str(r.get("outcome", "")) == "victory" and req.has("world_hex") and WorldFlow.is_world_area(area_id):
 			_world_flow.setup(adv)
@@ -117,7 +125,7 @@ func _after_ready() -> void:
 			_world_flow.setup(adv)
 			_play.setup(self, adv, _world_flow)
 			await _play.after_battle(str(r.get("outcome", "")))
-	elif not adv.flag("opening_seen"):
+	elif not adv.flag("opening_seen") and not _Runner.is_active():
 		adv.set_flag("opening_seen")
 		await _story.prologue_open()
 	_maybe_autosave()
@@ -257,6 +265,9 @@ func _build_ui() -> void:
 # ---------------------------------------------------------------------------------
 
 func load_area(id: String, at: Vector2i, facing: String = "down") -> void:
+	if _Runner.is_active() and id == _Runner.room_id():
+		_load_kit_area(at, facing)
+		return
 	if WorldFlow.is_world_area(id):
 		_world_flow.setup(_adv())
 		_play.setup(self, _adv(), _world_flow)
@@ -309,7 +320,7 @@ func _tile_char(x: int, y: int) -> String:
 
 
 func _is_dungeon() -> bool:
-	return str(area.get("id", "")).begins_with("dd_") or DmbDungeonMap.is_dungeon_area(str(area.get("id", "")))
+	return str(area.get("id", "")).begins_with("dd_") or DmbDungeonMap.is_dungeon_area(str(area.get("id", ""))) or str(area.get("theme", "")) == "dungeon"
 
 
 func _build_tiles() -> void:
@@ -325,6 +336,7 @@ func _build_tiles() -> void:
 		tile_tex[":"] = "tiles/cave_floor.png"
 		tile_tex["T"] = "tiles/cave_wall.png"
 		tile_tex["r"] = "tiles/cave_floor.png"
+		tile_tex["#"] = "tiles/cave_wall.png"  # catalogue puzzle walls read as dungeon walls
 		tile_tex["L"] = "tiles/cave_floor.png"
 	for y in range(grid_h):
 		for x in range(grid_w):
@@ -373,6 +385,8 @@ func _tex(rel: String) -> Texture2D:
 
 
 func _entity_visible(e: Dictionary) -> bool:
+	if e.has("puzzle_room"):
+		return true  # kit projection is already state-derived; no campaign filtering
 	var adv := _adv()
 	if e.has("requires_flag") and not adv.flag(str(e["requires_flag"])):
 		return false
@@ -460,6 +474,15 @@ func _spawn_entity(e: Dictionary) -> void:
 			if marker != "":
 				node = _add_prop(pos.x, pos.y, marker, marker_off, 1)
 				node.z_index = 2
+		"deco":
+				# Projected kit puzzle visuals (plates, beams, goals, teleporters,
+				# pits, crumble, hazards, markers): visible state only. Walk-through
+				# and never interactable — registered in _entities but NOT in
+				# _entity_at, so the sim (kit_blocks) owns blocking, not the art.
+				var marker_path := "props/%s.png" % str(e.get("marker", "box"))
+				node = _add_prop(pos.x, pos.y, marker_path, Vector2.ZERO, 1)
+				node.modulate = _parse_tint(e.get("tint", Color.WHITE))
+				node.z_index = 3
 	e["node"] = node
 	_entities.append(e)
 	if e["kind"] in ["fire", "pickup", "creature", "wizard", "npc", "corpse", "sign", "door", "logs"]:
@@ -515,6 +538,7 @@ func _process(delta: float) -> void:
 			else:
 				f.texture = _tex("props/fire_%d.png" % ((_anim_frame + int(f.position.x) / TPX) % 3))
 	_tick_workers(delta)
+	_tick_kit(delta)
 	if _moving:
 		_move_t += delta / STEP_SECONDS
 		_anim_time += delta
@@ -562,6 +586,8 @@ func is_walkable(p: Vector2i) -> bool:
 	var ch := _tile_char(p.x, p.y)
 	if ch in SOLID_TILES:
 		return false
+	if _play.is_kit_puzzle_area(area):
+		return _play.kit_blocks(p)  # simulation owns blocking; graphics project it
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
 		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs"]:
@@ -587,6 +613,9 @@ func _try_step(dir: Vector2i) -> void:
 
 
 func _arrived() -> void:
+	if _play.is_kit_puzzle_area(area):
+		_arrived_kit()
+		return
 	_adv().set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
 	_update_prompt()
 	for e in _entities:
@@ -759,6 +788,8 @@ func _update_prompt() -> void:
 		var ch := _tile_char(facing_pos().x, facing_pos().y)
 		if ch == "D":
 			text = "Door"
+	elif e.has("puzzle_room"):
+		text = str(e.get("prompt", "Examine"))
 	else:
 		match e["kind"]:
 			"fire":
@@ -785,6 +816,9 @@ func _on_action() -> void:
 	if _input_locked or _moving:
 		return
 	var e := _facing_entity()
+	if e.has("puzzle_room") and e.has("puzzle_eid"):
+		await _do_kit_action(e)
+		return
 	if e.is_empty():
 		var fp := facing_pos()
 		if _tile_char(fp.x, fp.y) == "D":
@@ -1223,6 +1257,9 @@ func _on_menu() -> void:
 		return
 	_input_locked = true
 	_touch.set_enabled(false)
+	if _Runner.is_active():
+		await _kit_menu()
+		return
 	_adv().save()
 	while true:
 		var choice: String = await _dialogue.choose_async("Paused — progress saved.", ["Continue", "Journal", "How to play", "Main menu"])
@@ -1233,6 +1270,26 @@ func _on_menu() -> void:
 				await _dialogue.say_async("", _adv().notebook_text())
 			"Main menu":
 				get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
+				return
+			_:
+				_input_locked = false
+				_touch.set_enabled(true)
+				return
+
+
+## Pause menu inside a kit session: test save writes stay suppressed; the
+## campaign snapshot is restored byte-for-byte on exit.
+func _kit_menu() -> void:
+	while true:
+		var choice: String = await _dialogue.choose_async("Paused — puzzle test (%s)." % _Runner.room_id(), ["Continue", "Reset puzzle", "Puzzle menu"])
+		match choice:
+			"Reset puzzle":
+				_finish_kit_build(_Runner.reset(_adv()), "down")
+				_input_locked = false
+				_touch.set_enabled(true)
+				return
+			"Puzzle menu":
+				await _exit_kit_to_menu()
 				return
 			_:
 				_input_locked = false
@@ -1547,3 +1604,202 @@ func ui_is_exit(p: Vector2i) -> bool:
 		if str(e.get("kind", "")) == "exit" and Vector2i(int(e["pos"][0]), int(e["pos"][1])) == p:
 			return true
 	return false
+
+# ---------------------------------------------------------------------------------
+# Catalogue puzzle-test sessions (PuzzleTestRunner + DmbPuzzleKit + WorldPlay).
+# Generic: no per-puzzle branches. The sim owns rules/blocking; this builds art,
+# moves John, shows dialogue, and launches real battles.
+# ---------------------------------------------------------------------------------
+
+## Boot a pending puzzle-test session instead of the campaign area.
+func _boot_kit_session(adv: Node) -> void:
+	if not adv.is_active():
+		adv.new_game()
+	_play.setup(self, adv, _world_flow)
+	var start := _Runner.begin(adv)
+	_finish_kit_build(start, "down")
+	adv.state_changed.connect(_refresh_hud)
+	_refresh_hud()
+	_fade_in()
+	call_deferred("_after_ready")
+
+
+## Load (or reload) the projected kit area. Used by load_area routing, rebuilds,
+## reset and post-battle return - always through WorldPlay.puzzle_area().
+func _load_kit_area(at: Vector2i, facing: String = "down") -> void:
+	_finish_kit_build(at, facing)
+
+
+func _finish_kit_build(at: Vector2i, facing: String) -> void:
+	var adv := _adv()
+	_play.setup(self, adv, _world_flow)
+	_play.kit_sync(adv)
+	area = _play.puzzle_area()
+	area_id = str(area["id"])
+	var rows: Array = area["rows"]
+	grid_h = rows.size()
+	grid_w = str(rows[0]).length()
+	for c in _tiles_root.get_children():
+		c.queue_free()
+	for c in _props_root.get_children():
+		c.queue_free()
+	for c in _actors_root.get_children():
+		if c != _john:
+			c.queue_free()
+	_entities.clear()
+	_entity_at.clear()
+	_fire_frames.clear()
+	_cutscene_actors.clear()
+	_build_tiles()
+	_build_entities()
+	_john_pos = at
+	_john_facing = facing
+	_john.position = Vector2(_john_pos) * TPX + Vector2(0, -8 * TILE_SCALE)
+	_moving = false
+	_update_john_sprite()
+	_camera.position = _john.position + Vector2(TPX * 0.5, TPX * 0.5)
+	_camera.reset_smoothing()
+	_camera.limit_left = 0
+	_camera.limit_top = 0
+	_camera.limit_right = grid_w * TPX
+	_camera.limit_bottom = grid_h * TPX
+	_hud_area_lbl.text = str(area["name"])
+	adv.set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
+	_update_prompt()
+
+
+## Re-project the kit area after sim state changed, keeping Johns tile.
+func _rebuild_kit_area() -> void:
+	_finish_kit_build(_john_pos, _john_facing)
+
+
+## John arrived on a tile in a kit area: run sim on-step rules, apply the
+## result generically (relocate / text / solved), rebuild visuals on change.
+func _arrived_kit() -> void:
+	var adv := _adv()
+	adv.set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
+	var r: Dictionary = _play.kit_on_step(adv, _john_pos)
+	_apply_kit_relocate(r)
+	for line in r.get("text", []):
+		await _dialogue.say_async("", str(line))
+	if bool(r.get("changed", false)):
+		_rebuild_kit_area()
+	else:
+		_update_prompt()
+	if bool(r.get("solved_now", false)):
+		await _on_kit_solved()
+
+
+## Facing interaction with a projected kit entity: real dialogue UI, sim action,
+## Adventure transaction, relocate/battle/rebuild/solved handled generically.
+func _do_kit_action(e: Dictionary) -> void:
+	_input_locked = true
+	_touch.set_enabled(false)
+	var r: Dictionary = await _play.interact_kit_puzzle(e)
+	_apply_kit_relocate(r)
+	if str(r.get("battle", "")) != "":
+		_Runner.set_battle_eid(str(e.get("puzzle_eid", "")))
+		_start_battle(_play.kit_battle_entity(e, str(r["battle"])))
+		return
+	if bool(r.get("changed", false)):
+		_rebuild_kit_area()
+	else:
+		_update_prompt()
+	if bool(r.get("solved_now", false)):
+		await _on_kit_solved()
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+## Apply a sim relocation (teleport / pit / reset-to-start / sequence move).
+func _apply_kit_relocate(r: Dictionary) -> void:
+	var rel = r.get("relocate")
+	if rel == null:
+		return
+	_john_pos = Vector2i(int(rel[0]), int(rel[1]))
+	_john.position = Vector2(_john_pos) * TPX + Vector2(0, -8 * TILE_SCALE)
+	_camera.position = _john.position + Vector2(TPX * 0.5, TPX * 0.5)
+	_moving = false
+
+
+## Deterministic kit tick quantum; rebuild only when the sim reports change.
+func _tick_kit(delta: float) -> void:
+	if not _Runner.is_active() or not _play.is_kit_puzzle_area(area):
+		_kit_tick_acc = 0.0
+		return
+	if _input_locked or _scripted_running:
+		return
+	_kit_tick_acc += delta
+	if _kit_tick_acc < 0.5:
+		return
+	_kit_tick_acc = 0.0
+	var r: Dictionary = _play.kit_tick(_adv(), 0.5)
+	if bool(r.get("changed", false)):
+		var keep := _john_pos
+		var keep_f := _john_facing
+		_rebuild_kit_area()
+		_john_pos = keep
+		_john_facing = keep_f
+		_john.position = Vector2(_john_pos) * TPX + Vector2(0, -8 * TILE_SCALE)
+
+
+## Return from a production battle inside a kit session: same puzzle, kit
+## state preserved, guardian defeat recorded generically from its entity.
+func _after_kit_battle(r: Dictionary) -> void:
+	var adv := _adv()
+	var eid := _Runner.take_battle_eid()
+	var victory := str(r.get("outcome", "")) == "victory"
+	if victory and eid != "":
+		_play.kit_on_battle_result(eid, true)
+	_play.setup(self, adv, _world_flow)
+	_finish_kit_build(_john_pos, _john_facing)
+	_refresh_hud()
+	_fade_in()
+	if victory:
+		await _dialogue.say_async("", "The guardian falls. The way responds.")
+		if bool(_Runner.kit_state().get("solved", false)):
+			await _on_kit_solved()
+	else:
+		await _dialogue.say_async("", "You withdraw, study the room, and try again.")
+	_input_locked = false
+	_touch.set_enabled(true)
+
+
+## Solved fanfare with production-styled Reset / Menu / Next options.
+func _on_kit_solved() -> void:
+	var adv := _adv()
+	var options := ["Keep exploring", "Next puzzle", "Reset puzzle", "Puzzle menu"]
+	var choice: String = await _dialogue.choose_async("Solved - the room holds still, as if listening.", options)
+	match choice:
+		"Reset puzzle":
+			_finish_kit_build(_Runner.reset(adv), "down")
+		"Puzzle menu":
+			await _exit_kit_to_menu()
+		"Next puzzle":
+			var nid := _Runner.next_puzzle_id()
+			if nid == "":
+				await _dialogue.say_async("", "That was the last room in the catalogue.")
+			else:
+				_Runner.set_puzzle(nid)
+				_Runner.end(adv)
+				_play.setup(self, adv, _world_flow)
+				_finish_kit_build(_Runner.begin(adv), "down")
+
+
+## Leave the session: restore the exact pre-test campaign snapshot, no residue.
+func _exit_kit_to_menu() -> void:
+	_Runner.end(_adv())
+	get_tree().change_scene_to_file("res://client/scenes/puzzle_test_menu.tscn")
+
+
+## Parse a projection tint (Color, hex string, or RGB array) for Sprite2D.
+func _parse_tint(v) -> Color:
+	if v is Color:
+		return v
+	if v is String:
+		return Color(str(v))
+	if v is Array and (v as Array).size() >= 3:
+		var a: Array = v
+		return Color(float(a[0]), float(a[1]), float(a[2]))
+	return Color.WHITE

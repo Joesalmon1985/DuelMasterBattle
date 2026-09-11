@@ -76,7 +76,7 @@ func _on_run_pressed() -> void:
 		return
 	# Store selection first, then launch the test scene (which reads it in _ready).
 	Runner.set_puzzle(selected_room_id)
-	get_tree().change_scene_to_file("res://client/scenes/puzzle_test_room.tscn")
+	get_tree().change_scene_to_file("res://client/scenes/overworld.tscn")
 
 func _on_close_pressed() -> void:
 	get_tree().quit()
