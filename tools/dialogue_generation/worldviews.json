@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "worldviews": [
+    {
+      "code": "M",
+      "key": "monarchist",
+      "name": "Monarchist — The Throne",
+      "core": "Order, hierarchy, legitimate authority, institutions, duty, stability, continuity and noblesse oblige. Authority carries obligations as well as privileges.",
+      "shadow": "Authoritarianism, stagnation, bloodline over merit, romanticising an invented past, and treating obedience as virtue in itself.",
+      "delta": {"M": 3, "A": -1, "R": 0, "G": 0, "S": 0, "D": 0, "C": -1}
+    },
+    {
+      "code": "A",
+      "key": "anarchist",
+      "name": "Anarchist — The Broken Chain",
+      "core": "No masters. Autonomy, mutual aid, voluntary association, direct action and scepticism towards coercive hierarchy.",
+      "shadow": "Naïveté about power, mob rule, destruction of useful institutions and the tyranny of structurelessness.",
+      "delta": {"M": -1, "A": 3, "R": 0, "G": -1, "S": 0, "D": 1, "C": 0}
+    },
+    {
+      "code": "R",
+      "key": "religious",
+      "name": "Religious — The Covenant",
+      "core": "Faith, meaning, moral law, vows, mercy, sacred obligations and community. Gods are real and moral duties extend beyond immediate self-interest.",
+      "shadow": "Zealotry, theocracy, persecution, moral absolutism and divine justification for cruelty.",
+      "delta": {"M": 0, "A": 0, "R": 3, "G": 0, "S": -1, "D": 1, "C": -1}
+    },
+    {
+      "code": "G",
+      "key": "guildist",
+      "name": "Guildist — The Ledger",
+      "core": "Contracts, exchange, enterprise, property, incentives, trade, written obligations and civic prosperity.",
+      "shadow": "Believing everyone has a price, treating poverty as failure, commodifying relationships and allowing wealth to become political domination.",
+      "delta": {"M": 0, "A": -1, "R": 0, "G": 3, "S": 0, "D": -1, "C": 0}
+    },
+    {
+      "code": "S",
+      "key": "arcane",
+      "name": "Arcane Supremacist — The Ascendant",
+      "core": "Magical ability, knowledge and demonstrated capability constitute the truest hierarchy. Those who understand powers others cannot may therefore have a claim to lead.",
+      "shadow": "Rule by a gifted caste, contempt for lesser or non-magical people, eugenics-adjacent thinking, dangerous experimentation and assuming power proves fitness.",
+      "delta": {"M": -1, "A": 0, "R": -1, "G": 0, "S": 3, "D": -1, "C": 0}
+    },
+    {
+      "code": "D",
+      "key": "druidic",
+      "name": "Druidic — The Root",
+      "core": "Balance, cycles, ecology, limits, interdependence, the interests of the land and future generations. Humanity belongs within nature rather than above it.",
+      "shadow": "Eco-fascism, forced regression, treating people as disease, sacrificing individuals for abstract balance and cruelty justified as natural necessity.",
+      "delta": {"M": 0, "A": 1, "R": 1, "G": -1, "S": -1, "D": 3, "C": 0}
+    },
+    {
+      "code": "C",
+      "key": "cracked",
+      "name": "Illuminated / Mad — The Cracked Mirror",
+      "core": "John increasingly notices that reality behaves like a story, game, dream or simulation: patterns, repeated structures, dramatic conventions and impossible coincidences.",
+      "shadow": "Detachment from real suffering, treating people as fictional objects, cruelty as entertainment and 'nothing is real so nothing matters'.",
+      "delta": {"M": -1, "A": 0, "R": -1, "G": 0, "S": 1, "D": 0, "C": 3}
+    }
+  ],
+  "conviction_tiers": {
+    "1": "mild / sympathetic expression",
+    "2": "clear ideological expression",
+    "3": "strong conviction",
+    "4": "shadow / extreme expression"
+  }
+}

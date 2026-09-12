@@ -1,0 +1,585 @@
+{
+  "dialogue": [
+    {
+      "npc_id": "reve_edric",
+      "quest_id": "broken_promise",
+      "node_id": "talk_reve",
+      "variant": "default",
+      "lines": [
+        "A ledger has gone missing from the village hall. It records every debt and favor in Bellwater for the last twenty years.",
+        "Without it, the whole settlement's obligations unravel. I need someone outside the village politics to find it."
+      ]
+    },
+    {
+      "npc_id": "reve_edric",
+      "quest_id": "broken_promise",
+      "node_id": "confront_reve_kiln",
+      "variant": "default",
+      "lines": [
+        "Mara told you about the clay pits. Of course she did. She was always the clever one.",
+        "The kiln lease was supposed to go to the pottery — that was the promise. But Brand offered me a way to save the village from debt.",
+        "I broke my word to my own sister to keep Bellwater alive. The ledger proves it.",
+        "Jory has it. He's been blackmailing me with it for months."
+      ]
+    },
+    {
+      "npc_id": "reve_edric",
+      "quest_id": "broken_promise",
+      "node_id": "confront_reve_with_evidence",
+      "variant": "default",
+      "lines": [
+        "You found the burnt letter. The promise was real. Legally binding. I knew. I've known for years.",
+        "Brand found out and used it. He said if I signed the kiln lease over to him, he'd cancel the village's debt.",
+        "I chose the village over my sister. Over my father's word.",
+        "The ledger... Jory has it at the old shrine. Take it. Expose me. I deserve it.",
+        "But think on this: if the clay pits go back to the pottery, Brand calls in the debt. The kiln closes. Half the village loses their livelihood.",
+        "Sometimes keeping a promise destroys everything else."
+      ]
+    },
+    {
+      "npc_id": "reve_edric",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "after_confession",
+      "lines": [
+        "I... I have failed you. All of you. My father's name, my sister's trust, this village's honor.",
+        "The clay pits belong to the pottery. They always did. I will sign the transfer today.",
+        "As for the reeve's seat... I cannot hold it. Not after this.",
+        "Mara... if you can find it in your heart to forgive me... I am your brother. I always was."
+      ]
+    },
+    {
+      "npc_id": "reve_edric",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "arrested",
+      "lines": [
+        "So. It ends like this. In chains, in my own hall.",
+        "I did what I thought was right. For the village. For all of you.",
+        "Mara... take the pits. Run the pottery. Do what I couldn't.",
+        "Just... don't let Brand win. That's all I ask."
+      ]
+    },
+    {
+      "npc_id": "reve_edric",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "unaware",
+      "lines": [
+        "The ledger? Missing? No, I... I must have misplaced it. It'll turn up.",
+        "You've done good work. The village is stable. That's what matters.",
+        "Mara? She's... she's doing well at the pottery. Family is complicated, isn't it?",
+        "Thank you. For looking into this. Bellwater is fortunate to have you."
+      ]
+    },
+    {
+      "npc_id": "mara_potter",
+      "quest_id": "broken_promise",
+      "node_id": "talk_mara",
+      "variant": "before_reveal",
+      "lines": [
+        "Edric sent you? Figures. He and I haven't spoken in three years, not since the kiln deal.",
+        "That ledger... it's not just accounts. It's the promise he broke.",
+        "Ask him about the kiln lease. Ask him who really owns the clay pits."
+      ]
+    },
+    {
+      "npc_id": "mara_potter",
+      "quest_id": "broken_promise",
+      "node_id": "talk_mara",
+      "variant": "after_reveal",
+      "lines": [
+        "You found the letter. Father's own hand. 'The clay pits shall pass to the potter's line.'",
+        "All these years... I thought I'd failed. Thought my work wasn't good enough.",
+        "And it was him. My brother. Stealing my birthright to pay off Brand.",
+        "The pottery... we can finally expand. Hire apprentices. Be what it was meant to be."
+      ]
+    },
+    {
+      "npc_id": "mara_potter",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "forgiving",
+      "lines": [
+        "Edric... you stood in the square and told everyone the truth. That took courage I didn't think you had.",
+        "The clay pits are mine. Ours. The pottery will thrive.",
+        "But I don't want the reeve's seat. A council... yes. We'll build something better together.",
+        "Brother. It's been a long time since I said that. Come by the workshop. I'll make you a proper mug."
+      ]
+    },
+    {
+      "npc_id": "mara_potter",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "victorious",
+      "lines": [
+        "The deed is mine. The clay pits are mine. Father's promise... honored at last.",
+        "Brand's lawyers are at the gate. The kiln workers are striking. Edric is in chains.",
+        "Jory's here. Says we'd make a good team. Business and... more.",
+        "We'll see. The kiln fires burn hotter now. But the village square is quieter.",
+        "Was it worth it? Ask me in a year."
+      ]
+    },
+    {
+      "npc_id": "mara_potter",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "unaware",
+      "lines": [
+        "The ledger? Oh, Edric mentioned it. Said it turned up. Accounting error, he claimed.",
+        "The pottery's steady. Kiln's steady. Life goes on.",
+        "Jory's been... persistent. Comes by with 'found' clay samples. Charming, in his way.",
+        "Edric and I... we spoke. Briefly. At the well. He bought me a drink at the tavern.",
+        "Baby steps. That's how it goes, isn't it?"
+      ]
+    },
+    {
+      "npc_id": "healer_elara",
+      "quest_id": "broken_promise",
+      "node_id": "talk_elara",
+      "variant": "default",
+      "lines": [
+        "You're asking about the ledger? Edric's ledger?",
+        "Everyone in this village has something written in that book. Debts, promises, secrets.",
+        "Mara owes me for the herbs I gave her when the fever took her apprentice.",
+        "Jory... Jory brought me a letter he found in the kiln ruins. Burnt edges.",
+        "It mentioned a name — Edric's father. And a promise about the clay pits."
+      ]
+    },
+    {
+      "npc_id": "healer_elara",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "relieved",
+      "lines": [
+        "The truth heals. Slowly. Painfully. But it heals.",
+        "Edric confessed. Mara got her birthright. The village didn't burn.",
+        "Some medicines are bitter. This one... this one might actually work.",
+        "Come by anytime. The door's always open. For you, and for them."
+      ]
+    },
+    {
+      "npc_id": "healer_elara",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "concerned",
+      "lines": [
+        "Mara won. The pits are hers. Edric's gone.",
+        "But look around. The kiln's closing. Half the village is unemployed.",
+        "Jory's moving into the pottery. That's... a choice.",
+        "Healing isn't just about fixing what's broken. It's about what grows in the scar tissue.",
+        "We'll see what grows here."
+      ]
+    },
+    {
+      "npc_id": "healer_elara",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "knowing",
+      "lines": [
+        "You burned it. The ledger. In my fireplace.",
+        "I didn't stop you. Some truths... they're not medicine. They're poison.",
+        "Edric's still reeve. Brand still owns the kiln. Mara still thinks she failed.",
+        "The village goes on. Quiet. Whole. Built on a lie.",
+        "Was it the right choice? That's not my place to say. I just tend the wounds.",
+        "Even the ones you can't see."
+      ]
+    },
+    {
+      "npc_id": "scavenger_jory",
+      "quest_id": "broken_promise",
+      "node_id": "talk_jory",
+      "variant": "default",
+      "lines": [
+        "Looking for the ledger? Might be I've seen it. Might be it's buried under a pile of scrap.",
+        "Edric thinks he's clever, using me to hide his dirty work. But I'm not his dog.",
+        "That ledger? It's insurance. If I give it to you, what's in it for me?",
+        "The pottery's clay pits would be worth a fortune to the right buyer.",
+        "Mara... she doesn't know what she's sitting on."
+      ]
+    },
+    {
+      "npc_id": "scavenger_jory",
+      "quest_id": "broken_promise",
+      "node_id": "deal_with_jory",
+      "variant": "deal_made",
+      "lines": [
+        "You'd do that? Help me claim the clay pits? Fine.",
+        "The ledger's in the old shrine, under the loose stone by the altar.",
+        "But if Mara gets those pits... she'll need someone to work them.",
+        "Someone who knows the land. Someone like me.",
+        "We'd make a good team, her and I. Better than she knows."
+      ]
+    },
+    {
+      "npc_id": "scavenger_jory",
+      "quest_id": "broken_promise",
+      "node_id": "threaten_jory",
+      "variant": "threatened",
+      "lines": [
+        "Careful. Mara's got enough on her plate without you stirring that pot.",
+        "But fine — you want the ledger? It's at the old shrine. Under the altar stone. Take it.",
+        "But know this: if Mara loses those pits because of you, I'll make sure everyone knows who really broke the promise.",
+        "It wasn't just Edric."
+      ]
+    },
+    {
+      "npc_id": "scavenger_jory",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "accepting",
+      "lines": [
+        "A council. No reeve. No single power. Clever.",
+        "Mara got the pits. Edric stepped down. Brand's lawyers went home empty-handed.",
+        "I didn't get the pits. But I got something else — a seat at the table.",
+        "Mara and me... we're figuring it out. Business partners. Maybe more.",
+        "Bellwater's changing. Might even survive it."
+      ]
+    },
+    {
+      "npc_id": "scavenger_jory",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "partner",
+      "lines": [
+        "Told you we'd make a good team.",
+        "Mara's got the pits. I've got the know-how. Brand's got nothing but lawsuits.",
+        "Edric's gone. The kiln's reopening under new management. Our management.",
+        "The village square's quiet, sure. But the workshop? The workshop's roaring.",
+        "Come by anytime. First drink's on me."
+      ]
+    },
+    {
+      "npc_id": "scavenger_jory",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "patient",
+      "lines": [
+        "You burned it. Smart. Or stupid. Time'll tell.",
+        "Edric's still reeve. Brand still owns the kiln. Mara still doesn't know.",
+        "I still have the other copy. The one I made before you found the original.",
+        "Insurance, remember?",
+        "Mara... she's worth waiting for. The pits are worth waiting for.",
+        "Bellwater isn't going anywhere. Neither am I."
+      ]
+    },
+    {
+      "npc_id": "kiln_master_brand",
+      "quest_id": "broken_promise",
+      "node_id": "talk_brand",
+      "variant": "default",
+      "lines": [
+        "Business is business, friend. The village owed me. Edric paid.",
+        "The kiln lease is legal. Binding. Signed and witnessed.",
+        "If the potter wants the clay pits... she can buy them. At market rate.",
+        "Which, coincidentally, is exactly what the village can't afford.",
+        "Now, if you'll excuse me — I have a kiln to run."
+      ]
+    },
+    {
+      "npc_id": "kiln_master_brand",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "defeated",
+      "lines": [
+        "A council. How quaint. How... democratic.",
+        "The courts will hear my case. The lease is legal. My lawyers are already drafting the writ.",
+        "But... the village rallied. The blacksmith testified. Even the tavern keep spoke against me.",
+        "Fine. I'll negotiate. New terms. Fair terms.",
+        "But don't think this makes us friends. Business is business."
+      ]
+    },
+    {
+      "npc_id": "kiln_master_brand",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "litigating",
+      "lines": [
+        "The potter has the deed. My lawyers are already at the village hall.",
+        "The kiln workers struck. My own workers. Ungrateful.",
+        "Edric's in chains. Good. He broke our contract.",
+        "This village will learn. You don't cross Brand Kiln Co.",
+        "We'll see who's still standing when the dust settles."
+      ]
+    },
+    {
+      "npc_id": "kiln_master_brand",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "victorious",
+      "lines": [
+        "The ledger's gone. How... convenient.",
+        "Edric's still reeve. The lease stands. The kiln runs.",
+        "Business continues. As it should.",
+        "You're a practical sort. I like that. Maybe we'll do business someday.",
+        "Now run along. The kiln doesn't run itself."
+      ]
+    },
+    {
+      "npc_id": "farmstead_anna",
+      "quest_id": "broken_promise",
+      "node_id": "talk_anna",
+      "variant": "default",
+      "lines": [
+        "Mara and I grew up together. She was always the dreamer. I was the one who stayed.",
+        "Edric... he was different then. Before the debt, before Brand. He cared.",
+        "Jory comes by the farm sometimes. Brings 'gifts.' Scrap metal, mostly. Once a carved wooden bird.",
+        "I don't know what to do with him. Or any of this.",
+        "The grain's nearly ready. That's what I know. The rest... that's for people like you to figure out."
+      ]
+    },
+    {
+      "npc_id": "farmstead_anna",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "hopeful",
+      "lines": [
+        "Mara got the pits. Edric admitted the truth. The village... we're talking again.",
+        "Jory came by yesterday. Not with scrap. With a proper plow share. Forged by Tomas, he said.",
+        "Mara laughed when I told her. Actually laughed. First time in years.",
+        "The harvest will be good this year. I can feel it."
+      ]
+    },
+    {
+      "npc_id": "farmstead_anna",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "worried",
+      "lines": [
+        "Mara won. The pits are hers. But the kiln's closing, Anna.",
+        "Half the village works that kiln. Their wages feed families. Buy my grain.",
+        "Jory's at the pottery now. Partner, he says. In everything.",
+        "Mara looks... tired. Proud, but tired.",
+        "I'll plant the winter crop. That's what I do. But I'm scared for what comes after."
+      ]
+    },
+    {
+      "npc_id": "farmstead_anna",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "resigned",
+      "lines": [
+        "Nothing changed. Edric's still reeve. Brand still owns the kiln. Mara still works the pottery.",
+        "Jory still brings me scrap metal. I still don't know what to do with him.",
+        "The grain's ready. The harvest comes in. Life goes on.",
+        "Maybe that's enough. Maybe it's not.",
+        "But the grain doesn't care about promises. It just grows."
+      ]
+    },
+    {
+      "npc_id": "tavern_keep",
+      "quest_id": "broken_promise",
+      "node_id": "talk_tavern",
+      "variant": "default",
+      "lines": [
+        "Pull up a stool. The ale's decent, the gossip's better.",
+        "You want to know about the ledger? Everyone does. Nobody asks directly.",
+        "Edric and Mara — siblings who don't speak. Three years now.",
+        "Brand owns the kiln, but the clay pits... that's the real prize.",
+        "Jory knows things. He always knows things. Scavenger finds more than scrap.",
+        "Elara knows the rest. She's the healer. People tell healers what they won't tell priests.",
+        "What'll it be? Ale? Information? Both?"
+      ]
+    },
+    {
+      "npc_id": "tavern_keep",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "satisfied",
+      "lines": [
+        "Well, well. The reeve confessed, the potter got her pits, the kiln master got humbled.",
+        "Best entertainment this tavern's seen in twenty years.",
+        "Drinks are on the house tonight. Courtesy of the new council — once they form it.",
+        "Tomas, my brother, he's already arguing with Brand's lawyers at the next table.",
+        "Bellwater's changing. Might even be for the better."
+      ]
+    },
+    {
+      "npc_id": "tavern_keep",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "watchful",
+      "lines": [
+        "Mara won. Edric's gone. Brand's suing. The kiln's striking.",
+        "My brother Tomas says the blacksmith orders are drying up without the kiln's lime.",
+        "Jory's partner at the pottery now. He's been buying rounds all night.",
+        "Mara hasn't had a drink. Just sits there, staring at the deed.",
+        "Business is good tonight. But the mood... the mood is thin."
+      ]
+    },
+    {
+      "npc_id": "tavern_keep",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "knowing",
+      "lines": [
+        "Same as always. Edric's reeve. Brand's kiln runs. Mara's pottery fires burn.",
+        "Jory and I... we have an understanding. He doesn't ask where I get my information.",
+        "I don't ask where he gets his ledgers.",
+        "Another ale? On the house. For a traveler who knows when to listen and when to forget."
+      ]
+    },
+    {
+      "npc_id": "blacksmith_tomas",
+      "quest_id": "broken_promise",
+      "node_id": "talk_blacksmith",
+      "variant": "default",
+      "lines": [
+        "Iron doesn't lie. You heat it, hammer it, it shows you what it is.",
+        "Brand's lime... good quality. Consistent. That's what matters in the forge.",
+        "Edric's a good reeve. Keeps the peace. Keeps the kiln running.",
+        "Mara's pottery... fine work. Buys my brackets, my hinges.",
+        "Jory's scrap... mostly useless. But sometimes he finds good steel.",
+        "My brother runs the tavern. We don't talk much. Different worlds.",
+        "What do you need forged?"
+      ]
+    },
+    {
+      "npc_id": "blacksmith_tomas",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "principled",
+      "lines": [
+        "I testified. In the square. Told them the kiln's lime was good but the lease was rotten.",
+        "Cost me the kiln contract. Brand canceled it the next day.",
+        "But my iron's still true. My word's still good.",
+        "Mara's pottery needs brackets. Hinges. I'll make them fair.",
+        "The village council... maybe it'll work. Maybe it won't. But it's honest."
+      ]
+    },
+    {
+      "npc_id": "blacksmith_tomas",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "struggling",
+      "lines": [
+        "Kiln's closed. Brand's lawyers tied it up in court.",
+        "No lime means no flux. No flux means bad welds. Bad welds mean broken tools.",
+        "Mara's got the pits. She's sending lime — but it's not the same. Not yet.",
+        "My brother's tavern's full of unemployed kiln workers. Drinking on credit.",
+        "I'm forging plow shares for Anna's farm. Payment in grain. It'll do."
+      ]
+    },
+    {
+      "npc_id": "blacksmith_tomas",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "steady",
+      "lines": [
+        "Kiln runs. Lime flows. Forge burns hot.",
+        "Edric's reeve. Brand's lease holds. Mara's pottery buys my brackets.",
+        "Jory's scrap pile grows. Sometimes there's good steel in it.",
+        "Tomas at the tavern pours my ale. We don't talk. Don't need to.",
+        "Iron doesn't lie. The village stands. That's enough."
+      ]
+    },
+    {
+      "npc_id": "general_store_keep",
+      "quest_id": "broken_promise",
+      "node_id": "talk_store",
+      "variant": "default",
+      "lines": [
+        "Welcome! Clay pots from Mara, lime from Brand, grain from Anna — I stock it all.",
+        "Business has been... interesting lately. Lots of whispers. Fewer customers.",
+        "Mara's pottery sells well. Tourists love the 'authentic Bellwater ware.'",
+        "Brand's kiln supplies half the region's lime. Big money. Big influence.",
+        "Edric keeps the peace. Mostly. The ledger... everyone knows it exists. Nobody talks about it.",
+        "Jory's scavenged goods — some real treasures mixed in with the junk.",
+        "What can I get you?"
+      ]
+    },
+    {
+      "npc_id": "general_store_keep",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "optimistic",
+      "lines": [
+        "Business is booming! Mara's new pottery line — 'Reclaimed Clay' — selling like hotcakes.",
+        "Brand agreed to supply lime at a fair rate. The kiln's reopening Monday.",
+        "Edric's on the new council. So is Mara. So is Tomas. Even Jory got a seat — 'Salvage & Reclamation.'",
+        "Anna's grain harvest was record-breaking. I'm expanding the store!",
+        "Bellwater's on the map now. Literally — new trade route through the river bridge."
+      ]
+    },
+    {
+      "npc_id": "general_store_keep",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "cautious",
+      "lines": [
+        "Mara's pottery is the talk of the region. 'Reclaimed Clay' — clever branding.",
+        "But Brand's lawsuit... the kiln's closed. Lime prices doubled.",
+        "Tomas the blacksmith can't get flux. Anna's grain isn't moving — no wagons from the kiln.",
+        "Jory's running the pottery's business side now. Sharp operator. Keeps asking for credit terms.",
+        "Edric's gone. The reeve's seat is empty. The council hasn't formed yet.",
+        "I'm... worried. But Mara's pottery is beautiful. Maybe beauty pays the bills."
+      ]
+    },
+    {
+      "npc_id": "general_store_keep",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "steady",
+      "lines": [
+        "Same suppliers. Same customers. Same gossip.",
+        "Mara's pots. Brand's lime. Anna's grain. Tomas's iron. Jory's... curiosities.",
+        "Edric keeps the ledger balanced. The village keeps breathing.",
+        "Profit margins are thin but steady. That's the shopkeeper's dream, isn't it?",
+        "Nothing changes. Everything changes. The ledger knows the difference."
+      ]
+    },
+    {
+      "npc_id": "woodcutter_garrick",
+      "quest_id": "broken_promise",
+      "node_id": "talk_woodcutter",
+      "variant": "default",
+      "lines": [
+        "Wood's wood. Trees don't care about ledgers or promises.",
+        "Brand's kiln burns through cordwood like a furnace. Keeps me busy.",
+        "Jory scavenges the offcuts. Says he 'processes' them. Vulture work.",
+        "Mara's pottery... she uses the ash for glaze. Smart. Waste not.",
+        "Edric leaves the woods alone. That's all I ask from a reeve.",
+        "Now if you'll excuse me, there's a stand of oak calling my name."
+      ]
+    },
+    {
+      "npc_id": "woodcutter_garrick",
+      "quest_id": "broken_promise",
+      "node_id": "ending_redemption",
+      "variant": "approving",
+      "lines": [
+        "Edric told the truth. Mara got the pits. Brand backed down.",
+        "The kiln's reopening. New terms. Sustainable cut — they finally listened.",
+        "Jory's hauling clay now, not scrap. Says the pay's better.",
+        "The woods... they'll recover. We'll plant where we cut. Proper rotation.",
+        "Good work. For an outsider."
+      ]
+    },
+    {
+      "npc_id": "woodcutter_garrick",
+      "quest_id": "broken_promise",
+      "node_id": "ending_mara_victory",
+      "variant": "concerned",
+      "lines": [
+        "Kiln's closed. Brand's lawyers. No work for woodcutters.",
+        "Jory's at the pottery now. Says he's 'diversifying.'",
+        "Mara's clay pits... they need timber for the kilns. She's buying from me direct now.",
+        "Better price than Brand paid. But half the volume.",
+        "The woods are quiet. Too quiet. Trees falling with no one to hear them."
+      ]
+    },
+    {
+      "npc_id": "woodcutter_garrick",
+      "quest_id": "broken_promise",
+      "node_id": "ending_status_quo",
+      "variant": "indifferent",
+      "lines": [
+        "Kiln burns. I cut. Ax swings. Simple.",
+        "Ledgers, promises, lawyers... that's town talk.",
+        "Jory still scavenges. Mara still pots. Edric still reeves. Brand still brands.",
+        "The oak stand's ready. Been waiting thirty years.",
+        "Wood doesn't lie. Neither does the axe."
+      ]
+    }
+  ]
+}
