@@ -1,191 +1,212 @@
-# Dialogue Generation Factory — Handoff Document
+# Dialogue Generator Handoff — Current State
 
-**Date:** 2026-09-10  
-**Branch:** `puzzle-system-pass` (DuelMasterBattle repo)  
-**Status:** Phase 0 — Inspection complete, ready for implementation
+**Repository:** Duel Master Battle  
+**Updated:** 2026-09-12  
+**Replaces:** the older pre-implementation `DIALOGUE_GENERATOR_HANDOFF.md`
 
----
+## 1. Current status
 
-## Current State Summary
+The Dialogue Generator is no longer a proposed subsystem. A development-time Dialogue Factory is implemented under:
 
-### What Was Investigated
-
-1. **Reference Project (Glen's Game — `Joesalmon1985/Glen-s-game`)**
-   - Ollama + Mistral integration confirmed working via `diagnostics.py`
-   - API pattern: `http://127.0.0.1:11434` with `/api/tags` and `/api/generate`
-   - JSON mode with `stream=false`, `format=json`, `num_ctx=4096`, `keep_alive=10m`
-   - Temperatures: classifier=0.1, reviewer=0.1, writer=0.45
-   - Launch pattern: `Play Puca.bat` → `.venv/Scripts/python.exe -m puca_dungeon.gui`
-
-2. **Duel Master Battle Repository**
-   - Location: `C:\Users\joesa\Documents\Cursor\DuelMaster\DuelMasterBattle`
-   - Branch: `puzzle-system-pass` (has uncommitted changes)
-   - Python prototype exists in `python_prototype/` (pytest-based tests)
-   - No existing dialogue generation infrastructure
-   - No `requirements.txt` — dependencies managed elsewhere
-
-3. **Source Workbook Found**
-   - File: `docs/Duel_Master_Battle_Village_Cast_Matrix_WORLDVIEW_DIALOGUE_PILOT_3_STORIES (1).xlsx` (829 KB)
-   - This is a **pilot workbook** (3 stories), not the full 112-village workbook
-   - Full workbook (`Duel_Master_Battle_Village_Cast_Matrix_Dialogue_COMPLETE_112.xlsx`) NOT found in repo
-
-4. **Worldview Definitions — NOT FOUND in Repository**
-   - The 7 worldviews (Monarchist, Anarchist, Religious, Guildist, Arcane, Druidic, Cracked) are **not defined** in any DMB docs
-   - Only "Arcane" appears as a spell essence, not a worldview
-   - **Gate 0 blocker**: Authoritative worldview definitions must be supplied before generation can proceed
-
-5. **Existing Tools Conventions**
-   - `tools/` contains Python scripts (build_pixel_assets.py, generate_draft_sprites.py, etc.)
-   - Scripts use standard library + project-specific modules
-   - Batch files for launchers (Play Duel Master Battle.bat, Play Puzzle Test Menu.bat)
-
----
-
-## Files Changed During Investigation (Uncommitted)
-
-| File | Status |
-|------|--------|
-| `godot_project/project.godot` | Modified |
-| `godot_project/sim/world/items.gd` | Modified |
-| 13 untracked files | New (puzzle test menu, QA images, pilot workbook) |
-
----
-
-## Implementation Plan (Per Original Requirements)
-
-### Phase 0 ✓ — Inspect Before Changing
-**COMPLETE** — See findings above.
-
-### Phase 1 — Create Generator as Isolated Tool
-**TODO** — Create structure:
-```
-tools/
-    dialogue_generation/
-        __init__.py
-        cli.py
-        config.py
-        ollama_client.py
-        database.py
-        workbook_reader.py
-        normalize.py
-        candidates.py
-        classifier.py
-        writer.py
-        reviewer.py
-        validator.py
-        exporter.py
-        prompts/
-            classify_bank.txt
-            write_exchange.txt
-            review_exchange.txt
-        tests/
-Generate Village Dialogue.bat
-docs/DIALOGUE_GENERATOR.md
+```text
+tools/dialogue_generation/
 ```
 
-### Phase 2 — Ollama Client
-**TODO** — Implement reusable client with `check_service()`, `list_models()`, `model_ready()`, `generate_json()`, `generate_text()`
+The current vertical slice is E36B.
 
-### Phase 3 — SQLite Persistence
-**TODO** — Model: source_beats, dialogue_banks, bank_memberships, exchanges, reviews, jobs, runs, metadata
+Do not rebuild the dialogue-generation architecture from scratch.
 
-### Phase 4 — Workbook Ingestion
-**TODO** — Read-only ingestion with provenance tracking
+## 2. Existing pipeline
 
-### Phase 5 — Exact Deduplication
-**TODO** — Normalize + hash, collapse exact duplicates
-
-### Phase 6 — Candidate Retrieval
-**TODO** — SQLite FTS5/BM25 for deterministic shortlist
-
-### Phase 7 — Semantic Classifier
-**TODO** — Mistral judges bank membership (JSON mode)
-
-### Phase 8 — Seven-Worldview Writer
-**TODO** — Generate all 7 worldviews in one request (BLOCKED: needs definitions)
-
-### Phase 9 — Deterministic Validation
-**TODO** — Python-side structural checks before AI review
-
-### Phase 10 — Mistral Reviewer
-**TODO** — Independent review at low temperature
-
-### Phase 11 — Resumable Batch Runner
-**TODO** — Commands: doctor, ingest, dedupe, banks, generate, review, status, retry, export
-
-### Phase 12 — Windows Launcher
-**TODO** — `Generate Village Dialogue.bat` with menu
-
-### Phase 13 — Unattended Operation Protections
-**TODO** — Timeouts, retries, logging, CTRL+C safety
-
-### Phase 14 — Export
-**TODO** — CSV/XLSX (human) + JSON (game)
-
-### Phase 15 — Tests
-**TODO** — Mocked unit tests for all components
-
-### Phase 16 — Real Integration Test (5 banks)
-**TODO** — Pilot with actual Mistral
-
-### Phase 17 — Larger Pilot (50 banks)
-**TODO** — QA report, prompt tuning
-
-### Phase 18 — Full Batch
-**TODO** — Only after all gates pass
-
----
-
-## Critical Blockers for Next Agent
-
-1. **Worldview Definitions Missing** — The 7 worldviews (Monarchist, Anarchist, Religious, Guildist, Arcane, Druidic, Cracked) are specified in requirements but **do not exist in the DMB repository**. They must be provided as external configuration before Phase 8 can proceed.
-
-2. **Full Workbook Not Present** — Only a 3-story pilot workbook exists. The complete 112-village workbook (`Duel_Master_Battle_Village_Cast_Matrix_Dialogue_COMPLETE_112.xlsx`) needs to be located or confirmed.
-
-3. **No Python Environment** — No `.venv` exists in DMB repo. The Glen's Game venv is separate. A new venv or shared approach needs decision.
-
-4. **openpyxl Not Installed** — Required for workbook reading. Must be added as dependency.
-
----
-
-## Recommended Next Steps for Next Agent
-
-1. **Create feature branch** for dialogue generation work (e.g., `feature/dialogue-generation-factory`)
-2. **Resolve worldview definitions** — Ask user for authoritative definitions or locate them
-3. **Locate full 112-village workbook** — Confirm path with user
-4. **Set up Python venv** with `openpyxl`, `requests` (for Ollama), `pytest`
-5. **Begin Phase 1 implementation** — Create tool structure and Ollama client
-6. **Implement `doctor` command first** — Validate Ollama + Mistral connectivity before building further
-
----
-
-## Key Reference Files to Study
-
-- `/c/Users/joesa/Documents/Cursor/GlenGame/diagnostics.py` — Ollama health check pattern
-- `/c/Users/joesa/Documents/Cursor/GlenGame/puca_dungeon/interpret.py` — LLM interaction pattern
-- `/c/Users/joesa/Documents/Cursor/GlenGame/puca_dungeon/narrate.py` — JSON generation pattern
-- `/c/Users/joesa/Documents/Cursor/GlenGame/Play Puca.bat` — Launcher UX pattern
-
----
-
-## Git Commands to Preserve Work
-
-```bash
-# Stage and commit current investigation state (optional)
-cd /c/Users/joesa/Documents/Cursor/DuelMaster/DuelMasterBattle
-git add docs/DIALOGUE_GENERATOR_HANDOFF.md
-git commit -m "docs: handoff document for dialogue generation factory implementation"
-
-# Create feature branch for implementation
-git checkout -b feature/dialogue-generation-factory
+```text
+canonical 112-story workbook
+  -> workbook ingestion
+  -> semantic bank classification
+  -> seven-worldview dialogue writing
+  -> deterministic validation
+  -> reviewer / bounded repair
+  -> SQLite persistence
+  -> approved-only export
+  -> fixture builder
+  -> Godot village fixture data
 ```
 
----
+The local model is accessed through Ollama. The current E36B design uses the local model only during development/content generation.
 
-## Contact / Context
+**Ollama is not a Godot runtime dependency.**
 
-- User: Joe Salmon
-- Primary repo: `Joesalmon1985/DuelMasterBattle` (core-mvp-duel branch is MVP)
-- Reference repo: `Joesalmon1985/Glen-s-game` (working Ollama+Mistral)
-- Ollama endpoint: `http://127.0.0.1:11434` (confirmed working)
-- Model: `mistral` (confirmed available)
+## 3. Important implementation files
+
+```text
+Run Dialogue Factory.bat
+
+tools/dialogue_generation/
+  cli.py
+  config.py
+  database.py
+  exporter.py
+  fixture_builder.py
+  normalize.py
+  ollama_client.py
+  pipeline.py
+  validator.py
+  workbook_reader.py
+  worldviews.py
+  worldviews.json
+  prompts/
+  tests/
+```
+
+The canonical complete workbook is already present under `docs/`.
+
+## 4. Persistence and repeatability
+
+The factory uses SQLite to preserve progress.
+
+Generation/review work is fingerprinted/versioned using relevant model/prompt/worldview/source information so accepted work can be reused and stale work can be deliberately regenerated.
+
+Interrupted work has explicit recovery behaviour.
+
+Retain this. Do not replace it with repeated stateless LLM calls.
+
+## 5. Model authority boundary
+
+The LLM generates language.
+
+Python/Godot owns:
+
+- canonical characters and IDs;
+- story structure;
+- story state;
+- worldview score effects;
+- quest completion;
+- village/world state;
+- items;
+- outcomes and consequences.
+
+Do not infer canonical game state from model prose.
+
+## 6. Current acceptance status
+
+Repository documentation records the following implementation-side verification for the E36B vertical slice:
+
+- model-free Python tests;
+- source compilation;
+- canonical workbook ingestion;
+- idempotent ingestion/status;
+- fake end-to-end generation/review/export.
+
+The key outstanding acceptance work is **local live-Ollama verification on the user's machine**, including manual review of the resulting dialogue quality.
+
+Do not scale generation across the remaining stories until the E36B path has been accepted.
+
+## 7. Existing local acceptance sequence
+
+From the repository root:
+
+```powershell
+& ".\Run Dialogue Factory.bat" doctor
+& ".\Run Dialogue Factory.bat" ingest --cast-id E36B
+& ".\Run Dialogue Factory.bat" status --cast-id E36B
+& ".\Run Dialogue Factory.bat" generate --cast-id E36B
+& ".\Run Dialogue Factory.bat" status --cast-id E36B
+& ".\Run Dialogue Factory.bat" review --cast-id E36B
+& ".\Run Dialogue Factory.bat" export --cast-id E36B
+```
+
+Manual inspection follows.
+
+## 8. Current Godot integration
+
+Village fixtures live under:
+
+```text
+godot_project/content/village_tests/<profile>/
+```
+
+Each contains:
+
+```text
+village.json
+cast.json
+quest.json
+dialogue.json
+```
+
+`VillageTestCatalog` validates and loads them.
+
+`VillageQuestRunner` indexes dialogue semantically using:
+
+```text
+npc_id | quest_id | node_id | variant
+```
+
+This is a strong candidate for the permanent runtime dialogue key.
+
+The E36B quest format is richer than the current production settlement quest UI and should inform the shared story/runtime contract.
+
+## 9. Required integration work
+
+The next work is not “make an LLM dialogue generator.”
+
+It is:
+
+1. converge the fixture story/dialogue format with the shared production story runtime;
+2. make Dialogue Factory exports target that shared contract;
+3. preserve approved-only deterministic exported content;
+4. retain model-free tests for almost all dialogue integration;
+5. run only a small number of real local-model calls at manual acceptance gates.
+
+The generator should not have to know whether the consuming village was:
+
+- authored;
+- generated from a simulated world settlement;
+- loaded in Village Test Mode;
+- encountered through normal campaign play.
+
+It should receive a stable canonical story/dialogue request or source pack and produce dialogue for stable semantic IDs.
+
+## 10. Relationship to `village_test_dialogue.gd`
+
+`VillageTestDialogue` currently provides a simple checked-in/user override JSON path and fallback lines.
+
+That is useful development behaviour, but it is not the authoritative long-term story/dialogue architecture.
+
+When the village paths are unified:
+
+- keep a developer override mechanism if useful;
+- keep safe fallback behaviour;
+- route it through the same stable dialogue lookup contract;
+- do not allow it to own quest state.
+
+## 11. Testing policy
+
+Run frequently without a live LLM:
+
+```powershell
+$env:PYTHONPATH = "$PWD\tools"
+.\.venv\Scripts\python -m pytest tools\dialogue_generation\tests -q
+```
+
+Use fake responses for:
+
+- valid output;
+- malformed JSON;
+- validation failure;
+- reviewer rejection;
+- repair;
+- cache/reuse;
+- interruption/recovery;
+- export gating.
+
+Real local-model generation is a phase-gate test, not a routine regression test.
+
+## 12. Documentation ownership
+
+Keep these documents aligned:
+
+- `DIALOGUE_GENERATOR_STATUS.md` — concise current acceptance/status;
+- `DIALOGUE_E36B_VERTICAL_SLICE.md` — how to run the pilot;
+- `DIALOGUE_GENERATOR_HANDOFF.md` — this architecture/integration handoff.
+
+Once the unified village/story runtime replaces the vertical-slice boundaries, update all three so they describe the real production data contract rather than preserving obsolete test-only architecture.
