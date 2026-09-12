@@ -10,35 +10,10 @@ class_name DmbNodeProjection
 ## quest NPCs, the local dungeon's door) is laid out from DmbSettlementProfile.
 
 const PREFIX := "wn_"
-const W := 17
-const H := 13
-## Exit slots, one per possible neighbour: [exit tile, arrival tile, facing on arrival].
-const SLOTS := [
-	[[8, 0], [8, 1], "down"],
-	[[3, 12], [3, 11], "up"],
-	[[13, 12], [13, 11], "up"],
-]
-## Road tile runs from the map centre toward each exit, so a corner with three
-## roads reads as a junction and one with a track reads as a footpath.
-const ROAD_RUNS := [
-	[[8, 1], [8, 2], [8, 3], [8, 4], [8, 5]],
-	[[3, 11], [4, 10], [5, 9], [6, 8], [7, 7]],
-	[[13, 11], [12, 10], [11, 9], [10, 8], [9, 7]],
-]
-const DEMON_SPOTS := [[4, 4], [12, 4], [8, 9]]
-const UNIT_SPOTS := [[6, 7], [10, 7], [6, 9], [10, 9], [5, 5], [11, 5]]
-const CART_SPOTS := [[7, 10], [9, 10], [6, 10], [10, 10]]
-const HOME_DOOR := [3, 4]
-const HOME_ARRIVE := [3, 5]
-## Building footprints (design doc §19): production huts on the flanks, works
-## north-east, houses (roof + door tiles) south and north, civic round the well.
-const PRODUCTION_SPOTS := [[2, 5], [14, 5], [2, 7], [14, 7], [6, 2], [10, 2]]
-const PROCESSING_SPOTS := [[11, 3], [13, 3], [12, 2]]
-const HOUSE_SPOTS := [[3, 9], [13, 9], [2, 9], [14, 9], [6, 3], [10, 3], [7, 3], [9, 3]]
-const CIVIC_SPOTS := {"well": [8, 6], "shrine": [6, 5], "hall": [10, 5], "market": [10, 6]}
-const WORKER_SPOTS := [[3, 5], [13, 5], [3, 7], [13, 7], [7, 2], [9, 2]]
-const QUEST_SPOTS := [[7, 8], [9, 8], [8, 10]]
-const DUNGEON_DOOR := [6, 3]
+## Legacy fixed size, kept for the wild crossing; settlements size themselves
+## from the profile (DmbSettlementLayout.dims).
+const W := DmbSettlementLayout.WILD_W
+const H := DmbSettlementLayout.WILD_H
 const HEX_WORDS := {"forest": "forest", "hills": "brick hills", "pasture": "sheepwalks",
 	"fields": "wheat", "mountains": "ore seams", "desert": "dead ground"}
 const BUILDING_MARKER := {
@@ -81,114 +56,134 @@ static func area_for(sim: DmbWorldSim, nid: int, adv_state: Dictionary = {}) -> 
 	var neighbours: Array = board.node_neighbors(nid)
 	var home: bool = nid == sim.player_home_node()
 	var profile := DmbSettlementProfile.describe(sim, nid)
-	var rows: Array = _rows(profile, neighbours.size(), home)
+	var hex_terrains := {}
+	var hex_demons := {}
+	for hid in node["hexes"]:
+		hex_terrains[int(hid)] = str(board.hexes[hid]["terrain"])
+		hex_demons[int(hid)] = int(board.hexes[hid]["demons"])
+	var layout := DmbSettlementLayout.build(sim.seed, nid, profile, neighbours.size(), home, node["hexes"], hex_terrains, hex_demons)
+	var rows: Array = layout["rows"]
 	var entities: Array = []
 	var aid := area_id(nid)
 	# Exits: one per road/track to a neighbouring node. Arrival lands one tile
-	# inside the neighbour's reciprocal slot.
+	# inside the neighbour's reciprocal slot — sized for *that* neighbour's map.
 	for i in range(neighbours.size()):
 		var other: int = neighbours[i]
 		var back: int = board.node_neighbors(other).find(nid)
-		var slot: Array = SLOTS[i]
-		var back_slot: Array = SLOTS[back]
+		var slot: Array = layout["exits"][i]
+		var back_slot: Array = DmbSettlementLayout.exit_slots(DmbSettlementLayout.dims(DmbSettlementProfile.describe(sim, other)))[back]
 		var road: String = sim.catan.road_owner(board.edge_between(nid, other))
 		var way: String = "the %s road" % DmbFactions.name_of(road) if road != "" else "a rough track"
 		entities.append({"kind": "exit", "id": "%s_exit%d" % [aid, i], "pos": slot[0], "to_area": area_id(other),
 			"to_pos": back_slot[1], "facing": back_slot[2], "travel_text": "You follow %s to %s." % [way, node_name(sim, other)]})
 	if home:
-		entities.append({"kind": "exit", "id": "%s_door" % aid, "pos": HOME_DOOR, "to_area": "jane_placeholder", "to_pos": [4, 5], "facing": "up", "travel_text": "Jane's door. It sticks."})
+		entities.append({"kind": "exit", "id": "%s_door" % aid, "pos": layout["home_door"], "to_area": "jane_placeholder", "to_pos": [4, 5], "facing": "up", "travel_text": "Jane's door. It sticks."})
 	# Signpost: what this corner is and what the three lands around it are doing.
-	entities.append({"kind": "sign", "id": "%s_sign" % aid, "pos": [8, 7] if profile["kind"] != "wild" else [8, 6], "text": _sign_text(sim, nid, profile)})
-	# Demons: one encounter per infected hex, form by count.
-	var k := 0
+	entities.append({"kind": "sign", "id": "%s_sign" % aid, "pos": layout["sign"], "text": _sign_text(sim, nid, profile)})
+	# Demons: one encounter per infected hex, form by count, standing in the
+	# sector of the land they came out of.
 	for hid in node["hexes"]:
 		var h: Dictionary = board.hexes[hid]
 		var demons: int = h["demons"]
-		if demons <= 0:
+		if demons <= 0 or not layout["demon_spots"].has(int(hid)):
 			continue
 		var form := DmbUnits.demon_form(demons)
 		entities.append({"kind": "creature", "id": "%s_h%d_t%d_n%d" % [aid, hid, sim.turn, demons], "enemy_id": form,
-			"pos": DEMON_SPOTS[k], "world_hex": int(hid),
+			"pos": layout["demon_spots"][int(hid)], "world_hex": int(hid),
 			"intro": "Something has come up out of the %s. %s." % [hex_word(h), "One, so far" if demons == 1 else ("Two of them" if demons == 2 else "The ground is thick with them")]})
-		k += 1
-	# Rulers sit at their home settlement.
+	# Rulers, champions, heroes and quest folk share the standing room beside
+	# the roads, nearest the plaza first.
+	var spots: Array = layout["npc_spots"]
 	var spot := 0
 	for fid in sim.factions:
-		if sim.units.home_node(fid) == nid and spot < UNIT_SPOTS.size():
+		if sim.units.home_node(fid) == nid and spot < spots.size():
 			var data: Dictionary = DmbFactions.DATA[fid]
 			entities.append({"kind": "npc", "id": "%s_ruler_%s" % [aid, fid], "name": str(data.get("ruler", data.get("king", "The ruler"))),
-				"sprite": "official", "pos": UNIT_SPOTS[spot], "facing": "down", "lines": _ruler_lines(sim, fid)})
+				"sprite": "official", "pos": spots[spot], "facing": "down", "lines": _ruler_lines(sim, fid)})
 			spot += 1
-	# Champions and heroes standing here.
 	for u in sim.units.units_at(nid):
-		if spot >= UNIT_SPOTS.size():
-			break
+		if spot >= spots.size() - 3:
+			break   # keep room for the quest's people
 		var champ: bool = str(u["kind"]) == "champion"
 		entities.append({"kind": "npc", "id": "%s_unit%d" % [aid, int(u["id"])], "name": str(u["name"]),
-			"sprite": "hedge_mage" if champ else "knight", "pos": UNIT_SPOTS[spot], "facing": "down",
+			"sprite": "hedge_mage" if champ else "knight", "pos": spots[spot], "facing": "down",
 			"lines": ["%s. %s." % [DmbFactions.name_of(str(u["faction"])), "I hold this corner against what comes up out of the ground" if champ else "Mustered for the season. Paid by the head"]]})
 		spot += 1
 	# Carts resting at the node.
 	var c := 0
+	var cart_spots: Array = layout["cart_spots"]
 	for cart in sim.carts.carts_at_node(nid):
-		if c >= CART_SPOTS.size():
+		if c >= cart_spots.size():
 			break
-		entities.append({"kind": "logs", "id": "%s_cart%d" % [aid, int(cart["id"])], "pos": CART_SPOTS[c],
+		entities.append({"kind": "logs", "id": "%s_cart%d" % [aid, int(cart["id"])], "pos": cart_spots[c],
 			"text": "A trade cart, lashed and waiting. Bound for %s." % DmbFactions.name_of(str(cart.get("to", "")))})
 		c += 1
 	if profile["kind"] == "wild":
 		var d: Dictionary = profile["dungeon"]
 		if not d.is_empty():
-			_add_dungeon_door(entities, aid, d, adv_state)
+			_add_dungeon_door(entities, aid, d, adv_state, layout)
 	else:
-		_add_settlement(sim, nid, aid, profile, entities, adv_state)
-	return {"id": aid, "name": node_name(sim, nid), "rows": rows, "theme": "overworld", "entities": entities, "profile": profile}
+		_add_settlement(sim, nid, aid, profile, entities, adv_state, layout, spot)
+	return {"id": aid, "name": node_name(sim, nid), "rows": rows, "theme": "overworld", "entities": entities, "profile": profile,
+		"player_start": layout["player_start"], "layout": {"w": layout["w"], "h": layout["h"], "plaza": [layout["plaza"].position.x, layout["plaza"].position.y, layout["plaza"].size.x, layout["plaza"].size.y]}}
 
 
-## Settlement dressing from the profile: buildings as readable props, workers
-## with a line each, the quest's inhabitants, and the door to the local dungeon
-## if it stands on this node's ground (it never does — dungeons sit on their own
-## node — but the signpost points to it).
-static func _add_settlement(sim: DmbWorldSim, nid: int, aid: String, p: Dictionary, entities: Array, adv_state: Dictionary) -> void:
-	var i := 0
-	for pr in p["production"]:
-		for n in range(int(pr["n"])):
-			if i >= PRODUCTION_SPOTS.size():
-				break
-			var spotp: Array = PRODUCTION_SPOTS[i]
-			var b := str(pr["building"])
-			var txt := "%s%s." % [b.capitalize(), " — standing idle; nothing grows here" if bool(pr.get("idle", false)) else ""]
-			entities.append({"kind": "logs", "id": "%s_prod%d" % [aid, i], "pos": spotp, "marker": str(BUILDING_MARKER.get(b, "box")), "text": txt, "building": b})
-			i += 1
-	for j in range(mini(p["processing"].size(), PROCESSING_SPOTS.size())):
-		var b := str(p["processing"][j])
-		entities.append({"kind": "logs", "id": "%s_works%d" % [aid, j], "pos": PROCESSING_SPOTS[j], "marker": str(BUILDING_MARKER.get(b, "box")),
-			"text": "The %s. Level %d work: %s goes in, something better comes out." % [b.replace("_", " "), int(p["development"]), ", ".join(PackedStringArray(_inputs(b)))], "building": b})
-	for cv in p["civic"]:
-		if CIVIC_SPOTS.has(cv):
-			var pos: Array = CIVIC_SPOTS[cv]
-			entities.append({"kind": "logs", "id": "%s_civic_%s" % [aid, cv], "pos": pos, "marker": str(BUILDING_MARKER.get(cv, "box")),
-				"text": _civic_text(cv, p), "building": cv})
-	# Workers: one per production building type, standing by their works.
-	var w := 0
-	for pr in p["production"]:
-		if w >= WORKER_SPOTS.size():
-			break
-		var worker := str(pr["worker"])
-		var line := str(WORKER_LINE.get(worker, "Work."))
-		if p["mood"] != "" and w == 0:
-			line = str(MOOD_LINE.get(p["mood"], line))
-		entities.append({"kind": "npc", "id": "%s_worker_%s" % [aid, worker], "name": worker.capitalize(), "sprite": str(WORKER_SPRITE.get(worker, "villager_a")),
-			"pos": WORKER_SPOTS[w], "facing": "down", "lines": [line], "worker": worker, "workplace": PRODUCTION_SPOTS[mini(w, PRODUCTION_SPOTS.size() - 1)]})
-		w += 1
+## Settlement dressing from the profile: every laid-out building gets a readable
+## prop at its door, production huts get their worker standing beside them, the
+## quest's inhabitants stand in the plaza, and the signpost points at the local
+## dungeon (which sits on its own node).
+static func _add_settlement(sim: DmbWorldSim, nid: int, aid: String, p: Dictionary, entities: Array, adv_state: Dictionary, layout: Dictionary, spot: int) -> void:
+	var prod_i := 0
+	var works_i := 0
+	var house_i := 0
+	var first_worker := true
+	for b in layout["buildings"]:
+		var kind := str(b["kind"])
+		var bid := str(b["building"])
+		var front: Array = b["front"]
+		match kind:
+			"production":
+				var idle: bool = bool(b.get("idle", false))
+				var txt := "%s%s." % [bid.capitalize(), " — standing idle; nothing grows here" if idle else ""]
+				entities.append({"kind": "logs", "id": "%s_prod%d" % [aid, prod_i], "pos": front, "marker": str(BUILDING_MARKER.get(bid, "box")), "text": txt, "building": bid, "world_hex": int(b["hex"])})
+				var worker := str(b.get("worker", ""))
+				var stand: Array = b["stand"]
+				if worker != "" and not stand.is_empty():
+					var line := str(WORKER_LINE.get(worker, "Work."))
+					if idle:
+						line = "Nothing to do. Nothing grows. We stand here so the works are not empty."
+					elif p["mood"] != "" and first_worker:
+						line = str(MOOD_LINE.get(p["mood"], line))
+					first_worker = false
+					entities.append({"kind": "npc", "id": "%s_worker_%s%d" % [aid, worker, prod_i], "name": worker.capitalize(), "sprite": str(WORKER_SPRITE.get(worker, "villager_a")),
+						"pos": stand, "facing": "down", "lines": [line], "worker": worker, "workplace": front})
+				prod_i += 1
+			"processing":
+				entities.append({"kind": "logs", "id": "%s_works%d" % [aid, works_i], "pos": front, "marker": str(BUILDING_MARKER.get(bid, "box")),
+					"text": "The %s. Level %d work: %s goes in, something better comes out." % [bid.replace("_", " "), int(p["development"]), ", ".join(PackedStringArray(_inputs(bid)))], "building": bid})
+				works_i += 1
+			"civic":
+				entities.append({"kind": "logs", "id": "%s_civic_%s" % [aid, bid], "pos": front, "marker": str(BUILDING_MARKER.get(bid, "box")),
+					"text": _civic_text(bid, p), "building": bid})
+			"house":
+				entities.append({"kind": "door", "id": "%s_house%d" % [aid, house_i], "pos": front, "building": "house",
+					"text": _house_text(p, house_i)})
+				house_i += 1
+	# The well stands in the plaza itself.
+	if "well" in p["civic"]:
+		entities.append({"kind": "logs", "id": "%s_civic_well" % aid, "pos": layout["well"], "marker": str(BUILDING_MARKER["well"]), "text": _civic_text("well", p), "building": "well"})
 	# Quest inhabitants (§5): the settlement's local story, or its aftermath.
 	var q := DmbQuests.build(sim, nid)
 	if not q.is_empty():
+		var spots: Array = layout["npc_spots"]
 		var done := str(adv_state.get("quests", {}).get(str(nid), ""))
-		for qi in range(mini(q["npcs"].size(), QUEST_SPOTS.size())):
+		for qi in range(q["npcs"].size()):
+			if spot >= spots.size():
+				break
 			var npc: Dictionary = q["npcs"][qi]
 			var e := {"kind": "npc", "id": "%s_quest_%s" % [aid, npc["id"]], "name": str(npc["name"]), "sprite": str(npc["sprite"]),
-				"pos": QUEST_SPOTS[qi], "facing": "down", "quest_id": str(q["id"]), "quest_npc": str(npc["id"]), "quest_node": nid}
+				"pos": spots[spot], "facing": "down", "quest_id": str(q["id"]), "quest_npc": str(npc["id"]), "quest_node": nid}
+			spot += 1
 			if done != "":
 				e["lines"] = [str(q["outcomes"].get(done, {}).get("after", q["outcomes"].get(done, {}).get("text", "It's done.")))]
 			else:
@@ -197,17 +192,47 @@ static func _add_settlement(sim: DmbWorldSim, nid: int, aid: String, p: Dictiona
 			entities.append(e)
 
 
-static func _add_dungeon_door(entities: Array, aid: String, d: Dictionary, adv_state: Dictionary) -> void:
+static func _house_text(p: Dictionary, i: int) -> String:
+	var owner := DmbFactions.name_of(p["owner"])
+	var lines := [
+		"A %s house. Shut. Smoke from the chimney." % owner,
+		"A house. Someone is singing inside, badly.",
+		"A house with a new door. The old one is stacked round the side for firewood.",
+		"A house. A child watches you from the window and does not wave.",
+		"A house. Washing on the line: %s." % ("wool, mostly" if "wool" in p["products"] else "linen, patched"),
+		"A house. The step is swept. The step is always swept.",
+	]
+	var t := str(lines[i % lines.size()])
+	if int(p["infection"]) >= 2 and i % 3 == 0:
+		t += " A mark on the lintel: someone in here is sick."
+	return t
+
+
+static func _add_dungeon_door(entities: Array, aid: String, d: Dictionary, adv_state: Dictionary, layout: Dictionary) -> void:
 	var solved := 0
 	for k in adv_state.get("puzzles", {}):
 		if str(k).begins_with(str(d["id"]) + "/") and bool(adv_state["puzzles"][k].get("solved", false)):
 			solved += 1
 	var tower := str(d["kind"]) == "tower"
-	entities.append({"kind": "door", "id": "%s_dungeon" % aid, "pos": DUNGEON_DOOR, "marker": "door_dungeon",
+	var pos: Array = [layout["well"][0], layout["well"][1] - 2]
+	for b in layout["buildings"]:
+		if str(b["kind"]) == "dungeon":
+			pos = b["front"]
+	entities.append({"kind": "door", "id": "%s_dungeon" % aid, "pos": pos, "marker": "door_dungeon",
 		"dungeon_id": str(d["id"]), "choice_event": "enter_dungeon",
 		"text": "%s. %s %d of 4 rooms answered." % [
 			"A tower, older than the steading that stands in its shadow. The door is not locked. It has never needed to be." if tower else "A cave mouth in the hillside, new — the earth opened when they broke ground for the steading, and something has been laying stone inside ever since.",
 			"", solved]})
+
+
+## Where John stands after climbing back out of the node's dungeon: the tile
+## in front of the projected dungeon door (the door itself is an entity tile).
+static func dungeon_arrive(sim: DmbWorldSim, nid: int) -> Array:
+	var a := area_for(sim, nid)
+	for e in a["entities"]:
+		if e["kind"] == "door" and str(e["id"]) == "%s_dungeon" % a["id"]:
+			return [int(e["pos"][0]), int(e["pos"][1]) + 1]
+	return a["player_start"].duplicate()
 
 
 static func node_name(sim: DmbWorldSim, nid: int) -> String:
@@ -295,70 +320,3 @@ static func _inputs(b: String) -> Array:
 		if str(rule[0]) == b:
 			return rule[1]
 	return []
-
-
-static func _exit_count(p: Dictionary) -> int:
-	return p["roads"].size()
-
-
-## Tile rows: forest border, terrain family floor, road runs to each exit, the
-## home house, and for towns a ring of wall marking the upgrade.
-static func _rows(p: Dictionary, exits: int, home: bool) -> Array:
-	var rows: Array = []
-	var floor := "."
-	match str(p["family"]):
-		"hills":
-			floor = ","
-		"desert":
-			floor = "a"
-		"fields":
-			floor = "."
-	for y in range(H):
-		var line := ""
-		for x in range(W):
-			var edge: bool = x == 0 or y == 0 or x == W - 1 or y == H - 1
-			var ch := floor
-			if edge:
-				ch = "T" if str(p["family"]) != "desert" else "t"
-			elif str(p["family"]) == "forest" and ((x * 5 + y * 3) % 11 == 0) and x > 1 and x < W - 2 and y > 1 and y < H - 2:
-				ch = ","
-			line += ch
-		rows.append(line)
-	# Roads and tracks drawn into the node (§3): owned roads are paved ":" all
-	# the way; tracks only reach two tiles in, as a worn footpath.
-	for i in range(mini(exits, SLOTS.size())):
-		var pexit: Array = SLOTS[i][0]
-		rows[pexit[1]] = _put(rows[pexit[1]], pexit[0], ":")
-		var run: Array = ROAD_RUNS[i]
-		var owned: bool = i < p["roads"].size() and str(p["roads"][i]["owner"]) != ""
-		var length: int = run.size() if owned else 2
-		for j in range(length):
-			var q: Array = run[j]
-			rows[q[1]] = _put(rows[q[1]], q[0], ":")
-	# Housing (design doc §7): a roof tile over a door tile per household, capped
-	# by the spots available; towns fill every spot.
-	for i in range(mini(int(p.get("housing", 0)), HOUSE_SPOTS.size())):
-		var hs: Array = HOUSE_SPOTS[i]
-		rows[hs[1]] = _put(rows[hs[1]], hs[0], "R")
-		rows[hs[1] + 1] = _put(rows[hs[1] + 1], hs[0], "D")
-	if p["kind"] == "town":
-		# Town wall (design doc: city upgrade adds enclosure), gaps at the exits.
-		for x in range(1, W - 1):
-			if rows[1][x] != ":":
-				rows[1] = _put(rows[1], x, "#")
-			if rows[H - 2][x] != ":":
-				rows[H - 2] = _put(rows[H - 2], x, "#")
-		for y in range(1, H - 1):
-			rows[y] = _put(rows[y], 1, "#")
-			rows[y] = _put(rows[y], W - 2, "#")
-	if home:
-		for y in [1, 2]:
-			for x in range(2, 6):
-				rows[y] = _put(rows[y], x, "R")
-		for x in range(2, 6):
-			rows[3] = _put(rows[3], x, "#")
-	return rows
-
-
-static func _put(line: String, x: int, ch: String) -> String:
-	return line.substr(0, x) + ch + line.substr(x + 1)

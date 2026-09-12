@@ -4,6 +4,11 @@ class_name VillageTestRunner
 ## Bootstrap/session state for disposable village test sessions.
 ## Holds ONLY data: selected fixture, projected area and campaign snapshot.
 ## Gameplay remains in the production Overworld.
+##
+## Two selection modes share one session lifecycle:
+##   * authored fixture  — profile id like "E36B", projected by VillageCompositeProjection;
+##   * generated         — "gen:<seed>:<node>:<turns>", the production path
+##                          DmbWorldSim -> DmbSettlementProfile -> DmbNodeProjection.
 
 const _Projection = preload("res://sim/world/village_composite_projection.gd")
 const _Catalog = preload("res://sim/world/village_test_catalog.gd")
@@ -19,6 +24,12 @@ static var _debug_overlay_active := false
 static var _show_anchors := false
 static var _show_quest_story := false
 static var _show_entity_ids := false
+## Generated mode: the deterministic world behind the selected node.
+static var _gen: Dictionary = {}          # {"seed", "node", "turns"} or empty
+static var _gen_sim: DmbWorldSim = null
+
+const GEN_PREFIX := "gen:"
+const DEFAULT_TURNS := 30
 
 
 static func get_profile() -> String:
@@ -29,7 +40,66 @@ static func set_profile(profile_id: String) -> void:
     selected_profile = str(profile_id)
     _area = {}
     _initial_area = {}
+    _gen = {}
+    _gen_sim = null
     _QuestRunner.clear()
+    if selected_profile.begins_with(GEN_PREFIX):
+        var parts := selected_profile.substr(GEN_PREFIX.length()).split(":")
+        if parts.size() >= 2:
+            _gen = {"seed": int(parts[0]), "node": int(parts[1]), "turns": int(parts[2]) if parts.size() > 2 else DEFAULT_TURNS}
+
+
+## Select a production settlement by world seed + node (+ turns advanced).
+static func set_generated(world_seed: int, node: int, turns: int = DEFAULT_TURNS) -> void:
+    set_profile(generated_id(world_seed, node, turns))
+
+
+static func generated_id(world_seed: int, node: int, turns: int = DEFAULT_TURNS) -> String:
+    return "%s%d:%d:%d" % [GEN_PREFIX, world_seed, node, turns]
+
+
+static func is_generated() -> bool:
+    return not _gen.is_empty()
+
+
+static func generated_params() -> Dictionary:
+    return _gen.duplicate()
+
+
+## The deterministic world for the selection: built once per session, rebuilt
+## byte-identically on reset. Pure function of (seed, turns).
+static func build_generated_sim(world_seed: int, turns: int) -> DmbWorldSim:
+    var sim := DmbWorldSim.new(world_seed)
+    sim.setup()
+    for i in range(turns):
+        sim.advance_turn()
+    return sim
+
+
+## Settlement/town nodes a world offers after `turns` turns: [{node, kind, owner, summary}].
+static func generated_choices(world_seed: int, turns: int = DEFAULT_TURNS) -> Array:
+    var sim := build_generated_sim(world_seed, turns)
+    var out: Array = []
+    var ids: Array = sim.catan.settlements.keys()
+    ids.sort()
+    for nid in ids:
+        var p := DmbSettlementProfile.describe(sim, int(nid))
+        out.append({"node": int(nid), "kind": str(p["kind"]), "owner": str(p["owner"]), "summary": DmbSettlementProfile.summary(p),
+            "home": int(nid) == sim.player_home_node(), "name": DmbNodeProjection.node_name(sim, int(nid))})
+    return out
+
+
+static func generated_sim() -> DmbWorldSim:
+    return _gen_sim
+
+
+static func _project() -> Dictionary:
+    if is_generated():
+        _gen_sim = build_generated_sim(int(_gen["seed"]), int(_gen["turns"]))
+        if not _gen_sim.catan.settlements.has(int(_gen["node"])):
+            push_error("VillageTestRunner: node %d is not a settlement in world %d after %d turns" % [int(_gen["node"]), int(_gen["seed"]), int(_gen["turns"])])
+        return DmbNodeProjection.area_for(_gen_sim, int(_gen["node"]))
+    return _Projection.project(selected_profile)
 
 
 static func clear() -> void:
@@ -43,6 +113,8 @@ static func clear() -> void:
     _show_anchors = false
     _show_quest_story = false
     _show_entity_ids = false
+    _gen = {}
+    _gen_sim = null
     _QuestRunner.clear()
 
 
@@ -60,14 +132,14 @@ static func profile_id() -> String:
 
 static func get_area() -> Dictionary:
     if _area.is_empty():
-        _area = _Projection.project(selected_profile)
+        _area = _project()
         _initial_area = _area.duplicate(true)
     return _area
 
 
 static func get_initial_area() -> Dictionary:
     if _initial_area.is_empty():
-        _initial_area = _Projection.project(selected_profile)
+        _initial_area = _project()
     return _initial_area.duplicate(true)
 
 
@@ -99,7 +171,7 @@ static func end(adv: Node) -> void:
 static func reset(adv: Node) -> Vector2i:
     _restore_baseline(adv)
     _QuestRunner.clear()
-    _area = _Projection.project(selected_profile)
+    _area = _project()
     _initial_area = _area.duplicate(true)
     _seed_prereqs(adv, _area)
     return Vector2i(int(_area["player_start"][0]), int(_area["player_start"][1]))
@@ -117,6 +189,24 @@ static func _seed_prereqs(adv: Node, area: Dictionary) -> void:
     adv.state["village_test_profile"] = selected_profile
     adv.state["village_test_area_id"] = area.get("id", "")
     adv.state["village_test_quest"] = area.get("quest_id", "")
+    if is_generated():
+        # The production Overworld reads the world through WorldFlow, which
+        # restores DmbWorldSim from adv.state["world"]: hand it the very sim the
+        # area was projected from, so exits, quests and dungeons resolve against
+        # the same canonical state. Prologue/intro flags are set so the test
+        # opens straight onto the settlement; the snapshot restores them on exit.
+        adv.state["world"] = var_to_str(_gen_sim.to_dict())
+        adv.state["world_seed"] = int(_gen["seed"])
+        adv.state["world_node"] = int(_gen["node"])
+        adv.state["area"] = str(area.get("id", ""))
+        adv.state["pos"] = area.get("player_start", [0, 0]).duplicate()
+        adv.state["facing"] = "down"
+        for f in ["opening_seen", "jane_placeholder_seen"]:
+            adv.set_flag(f)
+        adv.state["village_test_seed"] = int(_gen["seed"])
+        adv.state["village_test_node"] = int(_gen["node"])
+        adv.state["village_test_turns"] = int(_gen["turns"])
+        return
     var fixture: Dictionary = _Catalog.load_fixture(selected_profile)
     var quest_data: Dictionary = fixture.get("quest", {})
     if quest_data.has("id"):
@@ -172,4 +262,18 @@ static func get_debug_state() -> Dictionary:
         "quest_story": _show_quest_story,
         "entity_ids": _show_entity_ids,
         "quest": _QuestRunner.get_state(),
+        "generated": _gen.duplicate(),
     }
+
+
+## One-screen diagnostic for the pause menu: seed/node/turn and the canonical
+## profile behind what is on screen.
+static func context_text() -> String:
+    if not is_generated() or _gen_sim == null:
+        return "Fixture %s" % selected_profile
+    var nid := int(_gen["node"])
+    var p := DmbSettlementProfile.describe(_gen_sim, nid)
+    var a := get_area()
+    var lay: Dictionary = a.get("layout", {})
+    return "seed %d  node %d  turn %d  (%s)\n%s\nmap %dx%d, %d entities, %d houses" % [int(_gen["seed"]), nid, _gen_sim.turn, selected_profile,
+        DmbSettlementProfile.summary(p), int(lay.get("w", 0)), int(lay.get("h", 0)), a["entities"].size(), int(p["housing"])]

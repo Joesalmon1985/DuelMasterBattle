@@ -11,5 +11,6 @@ cd /d "%~dp0"
 "%GODOT%" --headless --path godot_project --script res://sim/tools/run_tests.gd
 "%GODOT%" --headless --path godot_project --script res://client/tests/run_ui_smoke.gd
 "%GODOT%" --headless --path godot_project --script res://client/tests/run_adventure_flow.gd
+"%GODOT%" --headless --path godot_project --script res://client/tests/run_village_test_mode.gd
 "%GODOT%" --path godot_project --resolution 720x1280 --script res://client/tools/realtime_playtest.gd
 pause

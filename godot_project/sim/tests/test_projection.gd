@@ -18,9 +18,13 @@ func run() -> void:
 		for key in ["name", "rows", "theme", "entities"]:
 			assert_true(a.has(key), "area has %s" % key)
 		var rows: Array = a["rows"]
-		assert_eq(rows.size(), DmbNodeProjection.H, "row count")
+		var lay: Dictionary = a["layout"]
+		assert_eq(rows.size(), int(lay["h"]), "row count matches layout")
+		assert_true(rows.size() >= DmbSettlementLayout.WILD_H, "map at least %d tall" % DmbSettlementLayout.WILD_H)
 		for r in rows:
-			assert_eq(str(r).length(), DmbNodeProjection.W, "uniform width")
+			assert_eq(str(r).length(), int(lay["w"]), "uniform width")
+		var ps: Array = a["player_start"]
+		assert_true(str(rows[ps[1]])[ps[0]] in [":", ".", ",", "a"], "player_start %s on walkable ground at node %d" % [str(ps), nid])
 		var exits := 0
 		var creatures := 0
 		for e in a["entities"]:
@@ -68,7 +72,8 @@ func run() -> void:
 			assert_true(e["lines"].size() >= 2, "ruler has something to say")
 	assert_true(has_door, "home node has Jane's door")
 	assert_true(has_ruler, "home node has its ruler")
-	assert_true(str(ha["rows"][1]).contains("RRRR"), "home node draws the house")
+	var home_rows := "\n".join(PackedStringArray(ha["rows"]))
+	assert_true(home_rows.contains("RRRR"), "home node draws Jane's house")
 	# Pure function of sim state.
 	assert_eq(str(DmbNodeProjection.area_for(sim, 7)), str(DmbNodeProjection.area_for(sim, 7)), "projection is deterministic")
 	_check_settlements_and_dungeons(sim)

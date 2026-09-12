@@ -1320,8 +1320,11 @@ func _kit_menu() -> void:
 func _village_menu() -> void:
 	while true:
 		var profile = _VRunner.profile_id()
-		var choice: String = await _dialogue.choose_async("Paused — village test (%s)." % profile, ["Continue", "Reset Village", "Show Anchors", "Show Quest/Story Markers", "Show Entity IDs", "Exit Test"])
+		var choice: String = await _dialogue.choose_async("Paused — village test (%s)." % profile, ["Continue", "Reset Village", "Context", "Show Anchors", "Show Quest/Story Markers", "Show Entity IDs", "Exit Test"])
 		match choice:
+			"Context":
+				await _dialogue.say_async("Village test", _VRunner.context_text())
+				continue
 			"Reset Village":
 				_finish_village_build(_VRunner.reset(_adv()), "down")
 				_input_locked = false
@@ -1983,9 +1986,15 @@ func _boot_village_test(adv: Node) -> void:
 ## Load (or reload) the projected village test area.
 func _finish_village_build(at: Vector2i, facing: String) -> void:
 	var adv := _adv()
-	_play.setup(self, adv, _world_flow)
 	area = _VRunner.get_area()
 	area_id = str(area["id"])
+	if _VRunner.is_generated():
+		# Generated mode: the runner has written the projected world into the
+		# (disposable) adventure state; WorldFlow restores the same sim from it,
+		# so talking, quests, exits and dungeons all run the production path.
+		_world_flow.sim = null
+		_world_flow.setup(adv)
+	_play.setup(self, adv, _world_flow)
 	var rows: Array = area["rows"]
 	grid_h = rows.size()
 	grid_w = str(rows[0]).length()
