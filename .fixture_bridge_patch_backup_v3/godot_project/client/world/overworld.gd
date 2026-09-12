@@ -16,7 +16,6 @@ var _play := WorldPlay.new()
 const _SaveData = preload("res://client/scripts/save_data.gd")
 const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
 const _VRunner = preload("res://client/scripts/village_test_runner.gd")
-const _VQuest = preload("res://sim/world/village_quest_runner.gd")
 
 const TILE := 16
 const TILE_SCALE := 4
@@ -833,9 +832,6 @@ func _on_action() -> void:
 		if _tile_char(fp.x, fp.y) == "D":
 			_dialogue.say("", "The door is shut.")
 		return
-	if _VRunner.is_active() and e.has("village_quest_node"):
-		await _interact_village_anchor(e)
-		return
 	match e["kind"]:
 		"sign", "door", "logs", "corpse":
 			if e.has("puzzle_action"):
@@ -993,9 +989,6 @@ func _interact_pickup(e: Dictionary) -> void:
 func _interact_npc(e: Dictionary) -> void:
 	var adv := _adv()
 	var id := str(e["id"])
-	if _VRunner.is_active() and e.has("village_test_story"):
-		await _interact_village_npc(e)
-		return
 	if e.has("quest_node") and str(e.get("choice_event", "")) == "settlement_quest":
 		_input_locked = true
 		_touch.set_enabled(false)
@@ -1860,112 +1853,6 @@ func _parse_tint(v) -> Color:
 		return Color(float(a[0]), float(a[1]), float(a[2]))
 	return Color.WHITE
 
-
-
-## Test Village quest interaction. The runner owns canonical story state; this
-## layer only presents it through the production dialogue UI.
-func _play_village_turns(npc_name: String, turns: Array) -> void:
-	for raw in turns:
-		if not (raw is Dictionary):
-			continue
-		var turn: Dictionary = raw
-		var text := str(turn.get("text", ""))
-		if text == "":
-			continue
-		var speaker := str(turn.get("speaker", "npc"))
-		if speaker.to_lower() == "john":
-			speaker = "John"
-		elif speaker == "npc":
-			speaker = npc_name
-		await _dialogue.say_async(speaker, text)
-
-
-func _village_present_choice(payload: Dictionary, npc_name: String) -> void:
-	var options: Array = payload.get("options", [])
-	if options.is_empty():
-		return
-	var labels: Array = []
-	for raw in options:
-		if raw is Dictionary:
-			labels.append(str((raw as Dictionary).get("label", "Continue")))
-	if labels.is_empty():
-		return
-	var picked: String = await _dialogue.choose_async(str(payload.get("prompt", "What do you do?")), labels)
-	var index := labels.find(picked)
-	if index < 0:
-		index = 0
-	var result: Dictionary = _VQuest.make_choice(index)
-	if bool(result.get("success", false)):
-		await _play_village_turns(npc_name, result.get("turns", []))
-	elif str(result.get("error", "")) != "":
-		await _dialogue.say_async("", str(result["error"]))
-
-
-func _village_resolve_pending_nodes(npc_name: String = "") -> void:
-	# Collapse data-only branch/set/conclude nodes after the interaction that
-	# reached them. NPC-bound choices still require talking to that NPC.
-	var guard := 0
-	while guard < 16:
-		guard += 1
-		var node: Dictionary = _VQuest.current_node()
-		if node.is_empty():
-			return
-		var node_type := str(node.get("type", ""))
-		if node_type in ["branch", "choice"]:
-			if node_type == "choice" and str(node.get("npc", "")) != "":
-				return
-			var payload: Dictionary = _VQuest.current_choice_payload()
-			await _village_present_choice(payload, npc_name)
-			continue
-		if node_type in ["conclude", "set_flag"]:
-			var result: Dictionary = _VQuest.execute_current()
-			if bool(result.get("success", false)):
-				await _play_village_turns(npc_name, result.get("turns", []))
-			if node_type == "conclude":
-				return
-			continue
-		return
-
-
-func _interact_village_npc(e: Dictionary) -> void:
-	_input_locked = true
-	_touch.set_enabled(false)
-	_face_npc_toward_john(e)
-	var id := str(e.get("id", ""))
-	var name := str(e.get("name", id))
-	var result: Dictionary = _VQuest.interact_npc(id)
-	if not bool(result.get("success", false)):
-		var err := str(result.get("error", "That conversation is not available yet."))
-		if err != "":
-			await _dialogue.say_async("", err)
-	else:
-		var turns: Array = result.get("turns", [])
-		if turns.is_empty() and str(result.get("type", "")) == "ambient":
-			for line in e.get("lines", []):
-				turns.append({"speaker": "npc", "text": str(line)})
-		await _play_village_turns(name, turns)
-		if str(result.get("type", "")) == "choice":
-			await _village_present_choice(result, name)
-		await _village_resolve_pending_nodes(name)
-	_adv().bump_talk(id)
-	_input_locked = false
-	_touch.set_enabled(true)
-	_update_prompt()
-
-
-func _interact_village_anchor(e: Dictionary) -> void:
-	_input_locked = true
-	_touch.set_enabled(false)
-	var anchor := str(e.get("village_quest_anchor", ""))
-	var result: Dictionary = _VQuest.interact_anchor(anchor)
-	if bool(result.get("success", false)):
-		await _play_village_turns("", result.get("turns", []))
-		await _village_resolve_pending_nodes("")
-	elif str(e.get("text", "")) != "":
-		await _dialogue.say_async("", str(e["text"]))
-	_input_locked = false
-	_touch.set_enabled(true)
-	_update_prompt()
 
 ## Boot a pending village-test session instead of the campaign area.
 func _boot_village_test(adv: Node) -> void:

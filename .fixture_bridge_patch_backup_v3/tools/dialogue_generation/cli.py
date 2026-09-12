@@ -9,7 +9,7 @@ from pathlib import Path
 from .config import config
 from .database import DialogueDatabase
 from .exporter import export_cast
-from .fixture_builder import build_fixture
+from .fixture_builder import build_fixture, cmd_build_fixture
 from .ollama_client import OllamaClient
 from .pipeline import generate_cast, ingest_cast, review_cast
 from .worldviews import load_worldviews
@@ -137,50 +137,6 @@ def cmd_export(args) -> int:
     return 0
 
 
-def cmd_build_fixture(args) -> int:
-    _apply(args)
-    try:
-        result = build_fixture(
-            args.cast_id,
-            fixture_root=Path(args.output_root) if getattr(args, "output_root", None) else None,
-            force=args.force,
-            validate_only=args.validate_only,
-        )
-        
-        if args.validate_only:
-            print(f"Validation: {'PASS' if result['valid'] else 'FAIL'}")
-            if result['errors']:
-                for e in result['errors']:
-                    print(f"  ERROR: {e}")
-            return 0 if result['valid'] else 1
-        
-        print(f"Building Test Village fixture: {args.cast_id}")
-        
-        # Print summary stats
-        with _open_db() as db:
-            stats = db.cast_stats(args.cast_id)
-            print(f"Canonical source rows: {stats['source_rows']}")
-            print(f"Story beat instances: {stats['beat_instances']}")
-            print(f"Unique beats: {stats['unique_beats']}")
-            print(f"Generated dialogue banks: {stats['banks']}")
-        
-        cast_count = len(result["cast"]["cast"])
-        quest_nodes = len(result["quest"]["nodes"])
-        dialogue_entries = len(result["dialogue"]["dialogue"])
-        
-        print(f"Cast members mapped: {cast_count}")
-        print(f"Quest nodes produced: {quest_nodes}")
-        print(f"Dialogue entries produced: {dialogue_entries}")
-        print(f"Fixture written: {result['fixture_dir']}")
-        print()
-        print("Validation: PASS")
-        
-        return 0
-    except Exception as exc:
-        print(f"ERROR: {exc}")
-        return 1
-
-
 def _add_common(parser, *, cast: bool = False, ollama: bool = False, output: bool = False, fixture: bool = False):
     if cast:
         parser.add_argument("--cast-id", default="E36B", help="Village Cast ID (vertical-slice default: E36B)")
@@ -222,14 +178,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_review)
 
     p = sub.add_parser("export", help="Export a fully approved Cast ID to JSON and CSV")
-    _add_common(p, cast=True, output=True)
-    p.set_defaults(func=cmd_export)
+        _add_common(p, cast=True, output=True)
+        p.set_defaults(func=cmd_export)
 
-    p = sub.add_parser("build-fixture", help="Build a Test Village fixture from approved dialogue and canonical source")
-    _add_common(p, cast=True, fixture=True)
-    p.add_argument("--workbook", type=Path, help="Canonical workbook path")
-    p.set_defaults(func=cmd_build_fixture)
-    return parser
+        p = sub.add_parser("build-fixture", help="Build a Test Village fixture from approved dialogue and canonical source")
+        _add_common(p, cast=True, fixture=True)
+        p.add_argument("--workbook", type=Path, help="Canonical workbook path")
+        p.set_defaults(func=cmd_build_fixture)
+        return parser
 
 
 def main() -> int:

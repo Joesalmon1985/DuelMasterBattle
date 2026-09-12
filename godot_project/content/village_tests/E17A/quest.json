@@ -1,0 +1,232 @@
+{
+  "id": "e17a_canonical_story",
+  "title": "E17A: The threatened relationship",
+  "premise": "The threatened relationship",
+  "start_node": "scene_01_a",
+  "nodes": {
+    "scene_01_a": {
+      "npc": "a",
+      "anchor": "mine_mouth",
+      "source_row": 386,
+      "dialogue_state": "Situation",
+      "trigger_condition": "Available immediately when the situation begins.",
+      "type": "choice",
+      "prompt": "Miner asks Distiller to join the new workshop venture.",
+      "options": [
+        {
+          "variant": "branch_a",
+          "branch": "A",
+          "fallback_label": "Tell Distiller that supporting Miner means taking the ambition seriously.",
+          "sets": [
+            "scene_01_branch_a",
+            "miner_feels_recognised_as_an_adult_while_distiller_worries_that_affection_is_bei"
+          ],
+          "ending_hint": "normal",
+          "next": "scene_02_b"
+        },
+        {
+          "variant": "branch_b",
+          "branch": "B",
+          "fallback_label": "Tell Miner that Distiller is allowed to love them without investing in the plan.",
+          "sets": [
+            "scene_01_branch_b",
+            "miner_is_stung_but_begins_separating_the_relationship_from_the_business_proposal"
+          ],
+          "ending_hint": "normal",
+          "next": "scene_02_b"
+        }
+      ]
+    },
+    "scene_02_b": {
+      "npc": "b",
+      "anchor": "village_square",
+      "source_row": 387,
+      "dialogue_state": "Situation",
+      "trigger_condition": "Available after Choice 1 has been resolved.",
+      "type": "choice",
+      "prompt": "Distiller says Reeve has warned the market licence will be refused unless the expansion has guaranteed stock.",
+      "options": [
+        {
+          "variant": "branch_a",
+          "branch": "A",
+          "fallback_label": "Ask Reeve to judge the plan on its merits rather than Miner's age.",
+          "sets": [
+            "scene_02_branch_a",
+            "reeve_is_forced_to_explain_concrete_licensing_concerns_instead_of_saying_miner_i"
+          ],
+          "ending_hint": "normal",
+          "next": "scene_03_c"
+        },
+        {
+          "variant": "branch_b",
+          "branch": "B",
+          "fallback_label": "Ask what guarantee would genuinely reduce the market's risk.",
+          "sets": [
+            "scene_02_branch_b",
+            "the_dispute_becomes_solvable_a_capped_stock_guarantee_and_trial_licence_would_ma"
+          ],
+          "ending_hint": "normal",
+          "next": "scene_03_c"
+        }
+      ]
+    },
+    "scene_03_c": {
+      "npc": "c",
+      "anchor": "village_hall",
+      "source_row": 388,
+      "dialogue_state": "Situation",
+      "trigger_condition": "Available after Choice 2 has been resolved.",
+      "type": "choice",
+      "prompt": "Reeve says Storekeeper can guarantee the stock if a disused pitch is secured and cleared.",
+      "options": [
+        {
+          "variant": "branch_a",
+          "branch": "A",
+          "fallback_label": "Ask Storekeeper to back the venture with a smaller trial allocation.",
+          "sets": [
+            "scene_03_branch_a",
+            "storekeeper_agrees_to_a_limited_first_season_supply_protecting_both_the_venture_"
+          ],
+          "ending_hint": "normal",
+          "next": "scene_04_d"
+        },
+        {
+          "variant": "branch_b",
+          "branch": "B",
+          "fallback_label": "Go to the abandoned pitch, fight the creatures occupying it and reopen the space for Miner's workshop.",
+          "sets": [
+            "scene_03_branch_b",
+            "combat_you_clear_the_abandoned_pitch_of_hostile_creatures_miner_gains_a_real_sit"
+          ],
+          "ending_hint": "normal",
+          "next": "scene_04_d"
+        }
+      ]
+    },
+    "scene_04_d": {
+      "npc": "d",
+      "anchor": "general_store",
+      "source_row": 389,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_04_complete"
+      ],
+      "next": "scene_05_e"
+    },
+    "scene_05_e": {
+      "npc": "e",
+      "anchor": "logging_camp",
+      "source_row": 390,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_05_complete"
+      ],
+      "next": "scene_06_f"
+    },
+    "scene_06_f": {
+      "npc": "f",
+      "anchor": "farmstead",
+      "source_row": 391,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_06_complete"
+      ],
+      "next": "scene_07_g"
+    },
+    "scene_07_g": {
+      "npc": "g",
+      "anchor": "mill",
+      "source_row": 392,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_07_complete"
+      ],
+      "next": "scene_08_h"
+    },
+    "scene_08_h": {
+      "npc": "h",
+      "anchor": "forge",
+      "source_row": 393,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_08_complete"
+      ],
+      "next": "scene_09_i"
+    },
+    "scene_09_i": {
+      "npc": "i",
+      "anchor": "healer_house",
+      "source_row": 394,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_09_complete"
+      ],
+      "next": "scene_10_j"
+    },
+    "scene_10_j": {
+      "npc": "j",
+      "anchor": "village_square",
+      "source_row": 395,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_10_complete"
+      ],
+      "next": "scene_11_k"
+    },
+    "scene_11_k": {
+      "npc": "k",
+      "anchor": "village_square",
+      "source_row": 396,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_11_complete"
+      ],
+      "next": "scene_12_l"
+    },
+    "scene_12_l": {
+      "npc": "l",
+      "anchor": "old_shrine",
+      "source_row": 397,
+      "dialogue_state": "Situation",
+      "trigger_condition": "On interaction while the situation is unresolved.",
+      "type": "talk",
+      "sets": [
+        "scene_12_complete"
+      ],
+      "next": "complete_story"
+    },
+    "complete_story": {
+      "type": "conclude",
+      "text": "The village story has reached its current ending. You can keep talking to people to hear how they see the aftermath."
+    }
+  },
+  "generated_route": "canonical_source_row_order",
+  "epilogue_variants": [
+    "normal",
+    "tragic"
+  ],
+  "generated_from": {
+    "cast_id": "E17A",
+    "dialogue_schema_version": "1.0",
+    "source_workbook_sha256": "7a6bfc6090c6badbf02d42cb3c680a9ddabf189dedb94a55992e02e617366ee4",
+    "dialogue_export": "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\generated\\dialogue\\E17A.json",
+    "builder": "dialogue_generation.fixture_builder.v1",
+    "preferred_worldview": null
+  }
+}

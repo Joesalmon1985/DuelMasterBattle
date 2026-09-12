@@ -1,0 +1,266 @@
+{
+  "id": "E17A",
+  "name": "E17A — Wood + Grain + Ore",
+  "cast": [
+    {
+      "id": "a",
+      "name": "A",
+      "role": "Miner",
+      "occupation": "Miner",
+      "home_anchor": "mine_mouth",
+      "work_anchor": "mine_mouth",
+      "sprite": "worker_m",
+      "archetype": "miner",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: A\nVillage role: Miner\nStory role: Core protagonist\nPersonality: Ian Beale-inspired — ambitious, commercially restless and acutely sensitive to being patronised; treats adulthood as the right to make consequential mistakes as well as profitable decisions.\nState: Situation\nTrigger: Available immediately when the situation begins.\nChoice A: Tell Distiller that supporting Miner means taking the ambition seriously.\nConsequence A: Miner feels recognised as an adult, while Distiller worries that affection is being converted into a financial test.\nChoice B: Tell Miner that Distiller is allowed to love them without investing in the plan.\nConsequence B: Miner is stung but begins separating the relationship from the business proposal for the first time.",
+      "story_role": "Core protagonist",
+      "personality_summary": "Ian Beale-inspired — ambitious, commercially restless and acutely sensitive to being patronised; treats adulthood as the right to make consequential mistakes as well as profitable decisions.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "b",
+      "name": "B",
+      "role": "Distiller",
+      "occupation": "Distiller",
+      "home_anchor": "village_square",
+      "work_anchor": "village_square",
+      "sprite": "villager_m",
+      "archetype": "distiller",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: B\nVillage role: Distiller\nStory role: Core protagonist\nPersonality: Tina / young-partner hybrid — affectionate and practical but wary of being dragged into a business gamble simply to prove loyalty; wants partnership without becoming collateral.\nState: Situation\nTrigger: Available after Choice 1 has been resolved.\nChoice A: Ask Reeve to judge the plan on its merits rather than Miner's age.\nConsequence A: Reeve is forced to explain concrete licensing concerns instead of saying Miner is 'too young'.\nChoice B: Ask what guarantee would genuinely reduce the market's risk.\nConsequence B: The dispute becomes solvable: a capped stock guarantee and trial licence would make the risk measurable.",
+      "story_role": "Core protagonist",
+      "personality_summary": "Tina / young-partner hybrid — affectionate and practical but wary of being dragged into a business gamble simply to prove loyalty; wants partnership without becoming collateral.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "c",
+      "name": "C",
+      "role": "Reeve",
+      "occupation": "Reeve",
+      "home_anchor": "village_hall",
+      "work_anchor": "village_hall",
+      "sprite": "villager_m",
+      "archetype": "reeve",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: C\nVillage role: Reeve\nStory role: Core mediator / witness\nPersonality: Pete/Lou authority hybrid — traditional, blunt and protective of the market; respects enterprise but distrusts expansion built on bravado and borrowed stock.\nState: Situation\nTrigger: Available after Choice 2 has been resolved.\nChoice A: Ask Storekeeper to back the venture with a smaller trial allocation.\nConsequence A: Storekeeper agrees to a limited first-season supply, protecting both the venture and the rest of the village stock.\nChoice B: Go to the abandoned pitch, fight the creatures occupying it and reopen the space for Miner's workshop.\nConsequence B: COMBAT: you clear the abandoned pitch of hostile creatures. Miner gains a real site and can prove the venture through work rather than argument.",
+      "story_role": "Core mediator / witness",
+      "personality_summary": "Pete/Lou authority hybrid — traditional, blunt and protective of the market; respects enterprise but distrusts expansion built on bravado and borrowed stock.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "d",
+      "name": "D",
+      "role": "Storekeeper",
+      "occupation": "Storekeeper",
+      "home_anchor": "general_store",
+      "work_anchor": "general_store",
+      "sprite": "worker_m",
+      "archetype": "storekeeper",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: D\nVillage role: Storekeeper\nStory role: Core mediator / witness\nPersonality: Pauline/Kathy practical hybrid — careful with inventory and household risk; willing to back a young trader if there is a credible plan rather than a birthday speech.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Core mediator / witness",
+      "personality_summary": "Pauline/Kathy practical hybrid — careful with inventory and household risk; willing to back a young trader if there is a credible plan rather than a birthday speech.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "e",
+      "name": "E",
+      "role": "Woodcutter",
+      "occupation": "Woodcutter",
+      "home_anchor": "logging_camp",
+      "work_anchor": "logging_camp",
+      "sprite": "woodcutter",
+      "archetype": "woodcutter",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: E\nVillage role: Woodcutter\nStory role: Supporting observer\nPersonality: Simon Wicks-inspired — charming older peer who teases Miner about suddenly being 'grown' but quietly admires the nerve to try.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Supporting observer",
+      "personality_summary": "Simon Wicks-inspired — charming older peer who teases Miner about suddenly being 'grown' but quietly admires the nerve to try.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "f",
+      "name": "F",
+      "role": "Farmer",
+      "occupation": "Farmer",
+      "home_anchor": "farmstead",
+      "work_anchor": "farmstead",
+      "sprite": "villager_m",
+      "archetype": "farmer",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: F\nVillage role: Farmer\nStory role: Supporting observer\nPersonality: Arthur Fowler-inspired — cautious, decent and worried about debt; believes adulthood includes hearing 'no' without treating it as humiliation.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Supporting observer",
+      "personality_summary": "Arthur Fowler-inspired — cautious, decent and worried about debt; believes adulthood includes hearing 'no' without treating it as humiliation.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "g",
+      "name": "G",
+      "role": "Miller",
+      "occupation": "Miller",
+      "home_anchor": "mill",
+      "work_anchor": "mill",
+      "sprite": "worker_m",
+      "archetype": "miller",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: G\nVillage role: Miller\nStory role: Background villager\nPersonality: Miller — protective loyalist: backs Miner's right to be treated as an adult without forcing Distiller to finance the proof.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Background villager",
+      "personality_summary": "Miller — protective loyalist: backs Miner's right to be treated as an adult without forcing Distiller to finance the proof.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "h",
+      "name": "H",
+      "role": "Blacksmith",
+      "occupation": "Blacksmith",
+      "home_anchor": "forge",
+      "work_anchor": "forge",
+      "sprite": "worker_m",
+      "archetype": "blacksmith",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: H\nVillage role: Blacksmith\nStory role: Background villager\nPersonality: Blacksmith — skeptical neighbour: understands Distiller's caution and distrusts any relationship test measured in investment.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Background villager",
+      "personality_summary": "Blacksmith — skeptical neighbour: understands Distiller's caution and distrusts any relationship test measured in investment.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "i",
+      "name": "I",
+      "role": "Healer",
+      "occupation": "Healer",
+      "home_anchor": "healer_house",
+      "work_anchor": "healer_house",
+      "sprite": "healer",
+      "archetype": "healer",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: I\nVillage role: Healer\nStory role: Background villager\nPersonality: Healer — practical worker: cares about stock, rent and whether the new workshop can survive one bad month.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Background villager",
+      "personality_summary": "Healer — practical worker: cares about stock, rent and whether the new workshop can survive one bad month.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "j",
+      "name": "J",
+      "role": "Watchkeeper",
+      "occupation": "Watchkeeper",
+      "home_anchor": "village_square",
+      "work_anchor": "village_square",
+      "sprite": "villager_m",
+      "archetype": "watchkeeper",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: J\nVillage role: Watchkeeper\nStory role: Background villager\nPersonality: Watchkeeper — gossip with a conscience: has already heard three versions of why Reeve dislikes the expansion.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Background villager",
+      "personality_summary": "Watchkeeper — gossip with a conscience: has already heard three versions of why Reeve dislikes the expansion.",
+      "pos_offset": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "k",
+      "name": "K",
+      "role": "Householder",
+      "occupation": "Householder",
+      "home_anchor": "village_square",
+      "work_anchor": "village_square",
+      "sprite": "villager_m",
+      "archetype": "householder",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: K\nVillage role: Householder\nStory role: Background villager\nPersonality: Householder — traditional moralist: believes adulthood includes both freedom and responsibility for debt.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Background villager",
+      "personality_summary": "Householder — traditional moralist: believes adulthood includes both freedom and responsibility for debt.",
+      "pos_offset": [
+        -1,
+        1
+      ]
+    },
+    {
+      "id": "l",
+      "name": "L",
+      "role": "Shrine Keeper",
+      "occupation": "Shrine Keeper",
+      "home_anchor": "old_shrine",
+      "work_anchor": "old_shrine",
+      "sprite": "villager_m",
+      "archetype": "shrine_keeper",
+      "relationships": {},
+      "quest_participation": [
+        "e17a_canonical_story"
+      ],
+      "dialogue_context": "Situation: The threatened relationship\nCharacter: L\nVillage role: Shrine Keeper\nStory role: Background villager\nPersonality: Shrine Keeper — quiet peacemaker: wants the couple to stop using the business plan as a referendum on love.\nState: Situation\nTrigger: On interaction while the situation is unresolved.",
+      "story_role": "Background villager",
+      "personality_summary": "Shrine Keeper — quiet peacemaker: wants the couple to stop using the business plan as a referendum on love.",
+      "pos_offset": [
+        0,
+        1
+      ]
+    }
+  ],
+  "generated_from": {
+    "cast_id": "E17A",
+    "dialogue_schema_version": "1.0",
+    "source_workbook_sha256": "7a6bfc6090c6badbf02d42cb3c680a9ddabf189dedb94a55992e02e617366ee4",
+    "dialogue_export": "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\generated\\dialogue\\E17A.json",
+    "builder": "dialogue_generation.fixture_builder.v1",
+    "preferred_worldview": null
+  }
+}

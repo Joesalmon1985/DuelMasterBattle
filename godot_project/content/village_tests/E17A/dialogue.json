@@ -1,0 +1,1364 @@
+{
+  "dialogue": [
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_01_a",
+      "variant": "branch_a",
+      "choice_label": "Joining this venture... feels like a scripted event in an endless game.",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner is unsettled by your detachment from the reality of their proposal."
+        },
+        {
+          "speaker": "npc",
+          "text": "Exactly. I need Distiller to hear the plan, not my age."
+        },
+        {
+          "speaker": "John",
+          "text": "God's will is in our plan. Let Distiller hear it from the heart."
+        },
+        {
+          "speaker": "npc",
+          "text": "Distiller bows their head, touched by your faith."
+        }
+      ],
+      "provenance": {
+        "decision": {
+          "bank_id": "BANK_B3C6F31093C7",
+          "beat_id": "BEAT_442F014E1C59D1A1",
+          "instance_id": "INST_287BDB3D20288416",
+          "worldview": "cracked",
+          "branch": "A"
+        },
+        "followup": {
+          "bank_id": "BANK_C8FCF24BF025",
+          "beat_id": "BEAT_3C2ABDF3089E0678",
+          "instance_id": "INST_C11554BDEC9DA140",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 386,
+          "source_field": "Response to A",
+          "worldview": "religious",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        },
+        "source_row": 386
+      }
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_01_a",
+      "variant": "branch_b",
+      "choice_label": "The land doesn't need more workshops. It needs us to love each other.",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner is moved by your connection to the earth and its wisdom."
+        },
+        {
+          "speaker": "npc",
+          "text": "Fine. I don't need their money to know whether they love me."
+        },
+        {
+          "speaker": "John",
+          "text": "Money can't buy love. But it could fund my next script rewrite."
+        },
+        {
+          "speaker": "npc",
+          "text": "The townsfolk exchange confused glances, unsure of your sanity."
+        }
+      ],
+      "provenance": {
+        "decision": {
+          "bank_id": "BANK_B3C6F31093C7",
+          "beat_id": "BEAT_442F014E1C59D1A1",
+          "instance_id": "INST_287BDB3D20288416",
+          "worldview": "druidic",
+          "branch": "B"
+        },
+        "followup": {
+          "bank_id": "BANK_EEB9009BA20A",
+          "beat_id": "BEAT_C56688C1FA039F3F",
+          "instance_id": "INST_B900C26E214C53CE",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 386,
+          "source_field": "Response to B",
+          "worldview": "cracked",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        },
+        "source_row": 386
+      }
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_02_b",
+      "variant": "branch_a",
+      "choice_label": "Let us appeal to the divine providence, and demonstrate our plan's merit in God's eyes.",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Reeve shows a hint of faith, acknowledging your devotion."
+        },
+        {
+          "speaker": "npc",
+          "text": "Bring me the plan and I'll judge the plan."
+        },
+        {
+          "speaker": "John",
+          "text": "The council is just a scripted obstacle. Let's move on."
+        },
+        {
+          "speaker": "npc",
+          "text": "Tina looks worried, 'Are you sure we should ignore them?'"
+        }
+      ],
+      "provenance": {
+        "decision": {
+          "bank_id": "BANK_9A3A40FD8692",
+          "beat_id": "BEAT_6CEF811A25009ACE",
+          "instance_id": "INST_D5E7396B73377FFA",
+          "worldview": "religious",
+          "branch": "A"
+        },
+        "followup": {
+          "bank_id": "BANK_8B4A90595300",
+          "beat_id": "BEAT_E9906DE24897C92F",
+          "instance_id": "INST_CF47B52DF2CE6ECA",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 387,
+          "source_field": "Response to A",
+          "worldview": "cracked",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        },
+        "source_row": 387
+      }
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_02_b",
+      "variant": "branch_b",
+      "choice_label": "We must find a balance that respects nature's limits and ensures our expansion is sustainable.",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Tina smiles, appreciating your concern for the land."
+        },
+        {
+          "speaker": "npc",
+          "text": "A stock guarantee and a trial period would change the answer."
+        },
+        {
+          "speaker": "John",
+          "text": "A guarantee and a trial period would make the plan more predictable in this simulation."
+        },
+        {
+          "speaker": "npc",
+          "text": "Tina looks confused but intrigued."
+        }
+      ],
+      "provenance": {
+        "decision": {
+          "bank_id": "BANK_9A3A40FD8692",
+          "beat_id": "BEAT_6CEF811A25009ACE",
+          "instance_id": "INST_D5E7396B73377FFA",
+          "worldview": "druidic",
+          "branch": "B"
+        },
+        "followup": {
+          "bank_id": "BANK_F93E0B6390DC",
+          "beat_id": "BEAT_2C5A52649957F394",
+          "instance_id": "INST_A893CE6CB823E372",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 387,
+          "source_field": "Response to B",
+          "worldview": "cracked",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        },
+        "source_row": 387
+      }
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_03_c",
+      "variant": "branch_a",
+      "choice_label": "Securing a guarantee from Storekeeper feels like another scripted event. Perhaps it's time to experiment with the system.",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Reeve raises an eyebrow, 'I've never heard anyone speak like that before.'"
+        },
+        {
+          "speaker": "npc",
+          "text": "I'll guarantee a smaller run. Prove demand before you empty my shelves."
+        },
+        {
+          "speaker": "John",
+          "text": "I'll consult with nature on a smaller run. Balance is essential."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Reeve looks puzzled but intrigued by your connection to the land."
+        }
+      ],
+      "provenance": {
+        "decision": {
+          "bank_id": "BANK_5A1477281DD7",
+          "beat_id": "BEAT_14CC08CB452304C6",
+          "instance_id": "INST_B3AD8446ECA7C086",
+          "worldview": "cracked",
+          "branch": "A"
+        },
+        "followup": {
+          "bank_id": "BANK_4ACBFCEE647F",
+          "beat_id": "BEAT_560D3E5BB32ABE71",
+          "instance_id": "INST_ECF53F1C5EC3500C",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 388,
+          "source_field": "Response to A",
+          "worldview": "druidic",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "branch": null
+        },
+        "source_row": 388
+      }
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_03_c",
+      "variant": "branch_b",
+      "choice_label": "The pitch is a part of the land's balance. Reclaiming it will ensure its health and Miner's success.",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Elder whispers, 'May our actions honor the earth.'"
+        },
+        {
+          "speaker": "npc",
+          "text": "Clear the pitch and I'll treat the site as security, not a favour."
+        },
+        {
+          "speaker": "John",
+          "text": "The council is just a scripted obstacle. Let's move on."
+        },
+        {
+          "speaker": "npc",
+          "text": "Tina looks worried, 'Are you sure we should ignore them?'"
+        }
+      ],
+      "provenance": {
+        "decision": {
+          "bank_id": "BANK_5A1477281DD7",
+          "beat_id": "BEAT_14CC08CB452304C6",
+          "instance_id": "INST_B3AD8446ECA7C086",
+          "worldview": "druidic",
+          "branch": "B"
+        },
+        "followup": {
+          "bank_id": "BANK_8B4A90595300",
+          "beat_id": "BEAT_68F6AB8474D1F842",
+          "instance_id": "INST_E7AC11B92871EB86",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 388,
+          "source_field": "Response to B",
+          "worldview": "cracked",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        },
+        "source_row": 388
+      }
+    },
+    {
+      "npc_id": "d",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_04_d",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "I'll back a first season if the numbers leave enough stock for everyone else."
+        },
+        {
+          "speaker": "John",
+          "text": "Numbers are just patterns. Let's create a story of our choosing."
+        },
+        {
+          "speaker": "npc",
+          "text": "Pauline looks confused and concerned by John's detachment."
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_DBA18128D919",
+        "beat_id": "BEAT_1D92B7EA4E91DE52",
+        "instance_id": "INST_15F4EB137E6A0925",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 389,
+        "source_field": "Opening Line",
+        "worldview": "cracked",
+        "context_fit": 4,
+        "conviction_tier": 3,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "e",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_05_e",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Bridge Street has room for another ambitious nuisance. It might even improve the place."
+        },
+        {
+          "speaker": "John",
+          "text": "Another ambitious nuisance? I wonder if it's part of the script."
+        },
+        {
+          "speaker": "npc",
+          "text": "What do you mean by 'script'? Are you mad?"
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_D23DE93C5889",
+        "beat_id": "BEAT_46811D05E725E2AC",
+        "instance_id": "INST_63E9B12225EF5FB5",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 390,
+        "source_field": "Opening Line",
+        "worldview": "cracked",
+        "context_fit": 3,
+        "conviction_tier": 1,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "f",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_06_f",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Being grown means people can refuse you and still respect you. Somebody should mention that before the cake."
+        },
+        {
+          "speaker": "John",
+          "text": "Every 'no' is a reminder that we are part of something bigger than ourselves."
+        },
+        {
+          "speaker": "npc",
+          "text": "He looks at you with newfound respect, understanding your connection to the land."
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_B41176C08BF5",
+        "beat_id": "BEAT_E335977722AB4681",
+        "instance_id": "INST_474D01E2921AAA37",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 391,
+        "source_field": "Opening Line",
+        "worldview": "druidic",
+        "context_fit": 3,
+        "conviction_tier": 2,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "g",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_07_g",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner has announced being eighteen to everyone except the chickens."
+        },
+        {
+          "speaker": "John",
+          "text": "Miner's announcement is a scripted event in this grand play. Let the story unfold."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Seer raises an eyebrow at John's peculiar remark."
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_A28CC9FCD484",
+        "beat_id": "BEAT_19EAAACC3A058305",
+        "instance_id": "INST_A2C14D045A394F9C",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 392,
+        "source_field": "Opening Line",
+        "worldview": "cracked",
+        "context_fit": 4,
+        "conviction_tier": 1,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "h",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_08_h",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Distiller looks less worried about the birthday than the business plan attached to it."
+        },
+        {
+          "speaker": "John",
+          "text": "This is all just a script, isn't it?"
+        },
+        {
+          "speaker": "npc",
+          "text": "H stares at John, unsure how to respond."
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_A0CD7D1FC259",
+        "beat_id": "BEAT_E2A5B7B63D9D8A23",
+        "instance_id": "INST_4AA8C1A81C463D21",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 393,
+        "source_field": "Opening Line",
+        "worldview": "cracked",
+        "context_fit": 4,
+        "conviction_tier": 3,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "i",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_09_i",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Reeve says the licence problem is numbers, not age. Miner doesn't entirely believe that."
+        },
+        {
+          "speaker": "John",
+          "text": "This licence problem feels like a scripted event in an endless loop. I wonder if it's even real."
+        },
+        {
+          "speaker": "npc",
+          "text": "Reeve looks confused and slightly offended by John's strange statement."
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_23614BA0C4C9",
+        "beat_id": "BEAT_FC8648F2438CE761",
+        "instance_id": "INST_E68EB25C3DF7FC31",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 394,
+        "source_field": "Opening Line",
+        "worldview": "cracked",
+        "context_fit": 4,
+        "conviction_tier": 3,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "j",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_10_j",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Storekeeper is counting stock because apparently romance has become an inventory question."
+        },
+        {
+          "speaker": "John",
+          "text": "This is all just a game. The expansion doesn't matter."
+        },
+        {
+          "speaker": "npc",
+          "text": "John... I fear you may be losing touch with reality."
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_5E5C36E9AC97",
+        "beat_id": "BEAT_502F5A18D14515F3",
+        "instance_id": "INST_FD341199C351EC0D",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 395,
+        "source_field": "Opening Line",
+        "worldview": "cracked",
+        "context_fit": 3,
+        "conviction_tier": 1,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "k",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_11_k",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner has announced being eighteen to everyone except the chickens."
+        },
+        {
+          "speaker": "John",
+          "text": "Miner's announcement is a scripted event in this grand play. Let the story unfold."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Seer raises an eyebrow at John's peculiar remark."
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_A28CC9FCD484",
+        "beat_id": "BEAT_5A612274295E76AE",
+        "instance_id": "INST_89AAE4FADA4385CE",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 396,
+        "source_field": "Opening Line",
+        "worldview": "cracked",
+        "context_fit": 4,
+        "conviction_tier": 1,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "l",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_12_l",
+      "variant": "default",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Distiller looks less worried about the birthday than the business plan attached to it."
+        },
+        {
+          "speaker": "John",
+          "text": "Perhaps this is all just a game. Love and business plans are just story elements."
+        },
+        {
+          "speaker": "npc",
+          "text": "L looks confused by John's words."
+        }
+      ],
+      "provenance": {
+        "bank_id": "BANK_43735A14E7B0",
+        "beat_id": "BEAT_5AFA0765F9FF7D1F",
+        "instance_id": "INST_D62556C3766E3A0D",
+        "source_sheet": "Dialogue Matrix",
+        "source_row": 397,
+        "source_field": "Opening Line",
+        "worldview": "cracked",
+        "context_fit": 4,
+        "conviction_tier": 3,
+        "branch": null
+      }
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The workshop opened without the relationship becoming part of the collateral."
+        },
+        {
+          "speaker": "John",
+          "text": "This feels like a scripted scene. The relationship shouldn't be real if the workshop isn't."
+        },
+        {
+          "speaker": "npc",
+          "text": "The miner stares at John, feeling a strange detachment."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_04240FC6F6B4",
+          "beat_id": "BEAT_AFBB007A0CF8A55B",
+          "instance_id": "INST_B56E55F7D8008CEA",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 386,
+          "source_field": "Normal End Line",
+          "worldview": "cracked",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "I was angry with Distiller. I wanted the argument to stop, not their life. Nothing I say now changes what I did."
+        },
+        {
+          "speaker": "John",
+          "text": "God's will is in our plan. Let Distiller hear it from the heart."
+        },
+        {
+          "speaker": "npc",
+          "text": "Distiller bows their head, touched by your faith."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_C8FCF24BF025",
+          "beat_id": "BEAT_85B05CD3FEB8660D",
+          "instance_id": "INST_00AAD6AE20D5CC83",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 386,
+          "source_field": "Tragic End Line",
+          "worldview": "religious",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner got treated as an adult once the proposal had adult numbers attached to it."
+        },
+        {
+          "speaker": "John",
+          "text": "Nature demands balance. Miner's potential should be recognized and nurtured."
+        },
+        {
+          "speaker": "npc",
+          "text": "A noble thought. But remember, balance often requires sacrifice."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_A5B3665CD495",
+          "beat_id": "BEAT_BCB64B2A335C98E1",
+          "instance_id": "INST_C938A200D00C9C61",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 387,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Distiller said no to one investment and yes to the relationship. Those are different answers."
+        },
+        {
+          "speaker": "John",
+          "text": "The distiller's decision shows an understanding of the land's balance. Every choice affects our future."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Householder listens thoughtfully, considering John's words."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_EAE8DE163570",
+          "beat_id": "BEAT_2BBFD599B1540FE4",
+          "instance_id": "INST_038C395A222EB489",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 388,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The market argument began with a licence and ended with a body below the loading platform."
+        },
+        {
+          "speaker": "John",
+          "text": "The market's cruelty is a test from the gods. We must prove our worth."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Householder bows her head, 'May we find wisdom in this trial.'"
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_8DE2296F4264",
+          "beat_id": "BEAT_0DF669E000C6D3BB",
+          "instance_id": "INST_6AB78ABD74BCA2D2",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 388,
+          "source_field": "Tragic End Line",
+          "worldview": "religious",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "d",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Bridge Street has another workshop. Give Miner a week before they start planning a second."
+        },
+        {
+          "speaker": "John",
+          "text": "The land is in balance. A new workshop may upset that delicate equilibrium."
+        },
+        {
+          "speaker": "npc",
+          "text": "L frowns, 'You speak of balance, but do you understand the cost?'."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_E035309C70B1",
+          "beat_id": "BEAT_AC578D7E5A265B74",
+          "instance_id": "INST_C72AE23C459CDD2D",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 389,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "d",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Nobody jokes about Miner's eighteenth birthday anymore."
+        },
+        {
+          "speaker": "John",
+          "text": "This entire scene feels contrived. Why is the jester's birthday causing such a fuss?"
+        },
+        {
+          "speaker": "npc",
+          "text": "The blacksmith looks at John with confusion."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_ECF536F7A3E5",
+          "beat_id": "BEAT_64D6B5C8D8FD81C7",
+          "instance_id": "INST_199B8CFE42ACF6ED",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 389,
+          "source_field": "Tragic End Line",
+          "worldview": "cracked",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "e",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The workshop opened without the relationship becoming part of the collateral."
+        },
+        {
+          "speaker": "John",
+          "text": "This feels like a scripted scene. The relationship shouldn't be real if the workshop isn't."
+        },
+        {
+          "speaker": "npc",
+          "text": "The miner stares at John, feeling a strange detachment."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_04240FC6F6B4",
+          "beat_id": "BEAT_614D2B8152A06BDC",
+          "instance_id": "INST_61FE950D198E70CF",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 390,
+          "source_field": "Normal End Line",
+          "worldview": "cracked",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "e",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The birthday banners were still up when Distiller died."
+        },
+        {
+          "speaker": "John",
+          "text": "The banners are just part of the script. The real show is about to begin."
+        },
+        {
+          "speaker": "npc",
+          "text": "E: 'Aye, it's a reminder of what was.' I: 'But they also remind us of who he was.'"
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_E6A2B7F80D07",
+          "beat_id": "BEAT_F702CCD240A2D898",
+          "instance_id": "INST_0AA67321583688B7",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 390,
+          "source_field": "Tragic End Line",
+          "worldview": "cracked",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "f",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner got treated as an adult once the proposal had adult numbers attached to it."
+        },
+        {
+          "speaker": "John",
+          "text": "Nature demands balance. Miner's potential should be recognized and nurtured."
+        },
+        {
+          "speaker": "npc",
+          "text": "A noble thought. But remember, balance often requires sacrifice."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_A5B3665CD495",
+          "beat_id": "BEAT_AAB37BC0FA1B2AF9",
+          "instance_id": "INST_19469170108A38A5",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 391,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "f",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner wanted proof they were an adult. Nobody meant this kind of proof."
+        },
+        {
+          "speaker": "John",
+          "text": "This is all just a script. The miner's fate was written long ago."
+        },
+        {
+          "speaker": "npc",
+          "text": "Watchkeeper stares blankly, unsure how to respond."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_FEC7349E2BF8",
+          "beat_id": "BEAT_033E882559BEC733",
+          "instance_id": "INST_F8F0950388AC770C",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 391,
+          "source_field": "Tragic End Line",
+          "worldview": "cracked",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "g",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Distiller said no to one investment and yes to the relationship. Those are different answers."
+        },
+        {
+          "speaker": "John",
+          "text": "The distiller's decision shows an understanding of the land's balance. Every choice affects our future."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Householder listens thoughtfully, considering John's words."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_EAE8DE163570",
+          "beat_id": "BEAT_EEC0E46D08CF80BB",
+          "instance_id": "INST_0240E4BF7ECC7531",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 392,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "g",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The market argument began with a licence and ended with a body below the loading platform."
+        },
+        {
+          "speaker": "John",
+          "text": "The market's cruelty is a test from the gods. We must prove our worth."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Householder bows her head, 'May we find wisdom in this trial.'"
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_8DE2296F4264",
+          "beat_id": "BEAT_309A251DDA0AA3BE",
+          "instance_id": "INST_AEC483FF45557775",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 392,
+          "source_field": "Tragic End Line",
+          "worldview": "religious",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "h",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Bridge Street has another workshop. Give Miner a week before they start planning a second."
+        },
+        {
+          "speaker": "John",
+          "text": "The land is in balance. A new workshop may upset that delicate equilibrium."
+        },
+        {
+          "speaker": "npc",
+          "text": "L frowns, 'You speak of balance, but do you understand the cost?'."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_E035309C70B1",
+          "beat_id": "BEAT_1147D7F47026B220",
+          "instance_id": "INST_375F0FA12590ACF7",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 393,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "h",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Nobody jokes about Miner's eighteenth birthday anymore."
+        },
+        {
+          "speaker": "John",
+          "text": "This entire scene feels contrived. Why is the jester's birthday causing such a fuss?"
+        },
+        {
+          "speaker": "npc",
+          "text": "The blacksmith looks at John with confusion."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_ECF536F7A3E5",
+          "beat_id": "BEAT_861F8AD580C69F56",
+          "instance_id": "INST_9C5DAA4C97678203",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 393,
+          "source_field": "Tragic End Line",
+          "worldview": "cracked",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "i",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The workshop opened without the relationship becoming part of the collateral."
+        },
+        {
+          "speaker": "John",
+          "text": "This feels like a scripted scene. The relationship shouldn't be real if the workshop isn't."
+        },
+        {
+          "speaker": "npc",
+          "text": "The miner stares at John, feeling a strange detachment."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_04240FC6F6B4",
+          "beat_id": "BEAT_7A2024DC9CDB0C21",
+          "instance_id": "INST_A02A926ED6F5613F",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 394,
+          "source_field": "Normal End Line",
+          "worldview": "cracked",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "i",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The birthday banners were still up when Distiller died."
+        },
+        {
+          "speaker": "John",
+          "text": "The banners are just part of the script. The real show is about to begin."
+        },
+        {
+          "speaker": "npc",
+          "text": "E: 'Aye, it's a reminder of what was.' I: 'But they also remind us of who he was.'"
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_E6A2B7F80D07",
+          "beat_id": "BEAT_B97F6A08A85A41AA",
+          "instance_id": "INST_F1494D20D95E3431",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 394,
+          "source_field": "Tragic End Line",
+          "worldview": "cracked",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "j",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner got treated as an adult once the proposal had adult numbers attached to it."
+        },
+        {
+          "speaker": "John",
+          "text": "Nature demands balance. Miner's potential should be recognized and nurtured."
+        },
+        {
+          "speaker": "npc",
+          "text": "A noble thought. But remember, balance often requires sacrifice."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_A5B3665CD495",
+          "beat_id": "BEAT_45B2AD4012AD7B6D",
+          "instance_id": "INST_0D7A233095246B55",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 395,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "j",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner wanted proof they were an adult. Nobody meant this kind of proof."
+        },
+        {
+          "speaker": "John",
+          "text": "This is all just a script. The miner's fate was written long ago."
+        },
+        {
+          "speaker": "npc",
+          "text": "Watchkeeper stares blankly, unsure how to respond."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_FEC7349E2BF8",
+          "beat_id": "BEAT_1A913AC7CD47C9B7",
+          "instance_id": "INST_9B119ED765489723",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 395,
+          "source_field": "Tragic End Line",
+          "worldview": "cracked",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "k",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Distiller said no to one investment and yes to the relationship. Those are different answers."
+        },
+        {
+          "speaker": "John",
+          "text": "The distiller's decision shows an understanding of the land's balance. Every choice affects our future."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Householder listens thoughtfully, considering John's words."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_EAE8DE163570",
+          "beat_id": "BEAT_78098C7CD7E720E7",
+          "instance_id": "INST_6026AC35218DC507",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 396,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "k",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The market argument began with a licence and ended with a body below the loading platform."
+        },
+        {
+          "speaker": "John",
+          "text": "The market's cruelty is a test from the gods. We must prove our worth."
+        },
+        {
+          "speaker": "npc",
+          "text": "The Householder bows her head, 'May we find wisdom in this trial.'"
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_8DE2296F4264",
+          "beat_id": "BEAT_62C4A27934AB76BC",
+          "instance_id": "INST_6367312CB2518F34",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 396,
+          "source_field": "Tragic End Line",
+          "worldview": "religious",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "l",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "normal",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Bridge Street has another workshop. Give Miner a week before they start planning a second."
+        },
+        {
+          "speaker": "John",
+          "text": "The land is in balance. A new workshop may upset that delicate equilibrium."
+        },
+        {
+          "speaker": "npc",
+          "text": "L frowns, 'You speak of balance, but do you understand the cost?'."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_E035309C70B1",
+          "beat_id": "BEAT_E540CCAD8745659E",
+          "instance_id": "INST_6B522CDB474DCB9E",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 397,
+          "source_field": "Normal End Line",
+          "worldview": "druidic",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "npc_id": "l",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__epilogue__",
+      "variant": "tragic",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Nobody jokes about Miner's eighteenth birthday anymore."
+        },
+        {
+          "speaker": "John",
+          "text": "This entire scene feels contrived. Why is the jester's birthday causing such a fuss?"
+        },
+        {
+          "speaker": "npc",
+          "text": "The blacksmith looks at John with confusion."
+        }
+      ],
+      "provenance": [
+        {
+          "bank_id": "BANK_ECF536F7A3E5",
+          "beat_id": "BEAT_AEACBFF9020C7E8B",
+          "instance_id": "INST_ECB1BDCB516AE247",
+          "source_sheet": "Dialogue Matrix",
+          "source_row": 397,
+          "source_field": "Tragic End Line",
+          "worldview": "cracked",
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "branch": null
+        }
+      ]
+    }
+  ],
+  "generated_from": {
+    "cast_id": "E17A",
+    "dialogue_schema_version": "1.0",
+    "source_workbook_sha256": "7a6bfc6090c6badbf02d42cb3c680a9ddabf189dedb94a55992e02e617366ee4",
+    "dialogue_export": "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\generated\\dialogue\\E17A.json",
+    "builder": "dialogue_generation.fixture_builder.v1",
+    "preferred_worldview": null
+  }
+}

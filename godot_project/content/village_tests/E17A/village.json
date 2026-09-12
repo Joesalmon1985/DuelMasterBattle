@@ -1,0 +1,294 @@
+{
+  "id": "E17A",
+  "name": "E17A — Wood + Grain + Ore",
+  "economic_profile": "E17",
+  "description": "The threatened relationship",
+  "resources": [
+    "Wood",
+    "Grain",
+    "Ore"
+  ],
+  "map": {
+    "width": 72,
+    "height": 58
+  },
+  "regions": {
+    "village_core": {
+      "name": "Village",
+      "bounds": [
+        16,
+        14,
+        38,
+        28
+      ],
+      "terrain": "settlement"
+    },
+    "forest": {
+      "name": "Forest",
+      "bounds": [
+        0,
+        0,
+        25,
+        22
+      ],
+      "terrain": "forest"
+    },
+    "fields": {
+      "name": "Fields",
+      "bounds": [
+        46,
+        36,
+        26,
+        22
+      ],
+      "terrain": "farmland"
+    },
+    "mine": {
+      "name": "Mine Workings",
+      "bounds": [
+        0,
+        36,
+        25,
+        22
+      ],
+      "terrain": "industrial"
+    }
+  },
+  "semantic_anchors": {
+    "village_square": [
+      34,
+      28
+    ],
+    "village_hall": [
+      30,
+      20
+    ],
+    "healer_house": [
+      22,
+      19
+    ],
+    "general_store": [
+      38,
+      32
+    ],
+    "old_shrine": [
+      19,
+      31
+    ],
+    "forge": [
+      23,
+      34
+    ],
+    "mill": [
+      46,
+      30
+    ],
+    "farmstead": [
+      52,
+      43
+    ],
+    "fields": [
+      59,
+      47
+    ],
+    "logging_camp": [
+      10,
+      11
+    ],
+    "forest": [
+      7,
+      8
+    ],
+    "mine_mouth": [
+      11,
+      43
+    ],
+    "mine": [
+      8,
+      49
+    ]
+  },
+  "buildings": [
+    {
+      "id": "village_hall",
+      "anchor": "village_hall",
+      "size": [
+        8,
+        6
+      ],
+      "door_offset": [
+        4,
+        5
+      ],
+      "type": "civic"
+    },
+    {
+      "id": "healer_house",
+      "anchor": "healer_house",
+      "size": [
+        7,
+        5
+      ],
+      "door_offset": [
+        3,
+        4
+      ],
+      "type": "residential"
+    },
+    {
+      "id": "general_store",
+      "anchor": "general_store",
+      "size": [
+        7,
+        5
+      ],
+      "door_offset": [
+        3,
+        4
+      ],
+      "type": "commercial"
+    },
+    {
+      "id": "old_shrine",
+      "anchor": "old_shrine",
+      "size": [
+        6,
+        5
+      ],
+      "door_offset": [
+        3,
+        4
+      ],
+      "type": "civic"
+    },
+    {
+      "id": "forge",
+      "anchor": "forge",
+      "size": [
+        7,
+        5
+      ],
+      "door_offset": [
+        3,
+        4
+      ],
+      "type": "workshop"
+    },
+    {
+      "id": "mill",
+      "anchor": "mill",
+      "size": [
+        8,
+        6
+      ],
+      "door_offset": [
+        4,
+        5
+      ],
+      "type": "workshop"
+    },
+    {
+      "id": "farmstead",
+      "anchor": "farmstead",
+      "size": [
+        8,
+        6
+      ],
+      "door_offset": [
+        4,
+        5
+      ],
+      "type": "residential"
+    },
+    {
+      "id": "logging_camp",
+      "anchor": "logging_camp",
+      "size": [
+        6,
+        4
+      ],
+      "door_offset": [
+        3,
+        3
+      ],
+      "type": "camp"
+    }
+  ],
+  "player_start": [
+    34,
+    28
+  ],
+  "roads": [
+    {
+      "from": "village_square",
+      "to": "farmstead"
+    },
+    {
+      "from": "village_square",
+      "to": "forge"
+    },
+    {
+      "from": "village_square",
+      "to": "general_store"
+    },
+    {
+      "from": "village_square",
+      "to": "healer_house"
+    },
+    {
+      "from": "village_square",
+      "to": "logging_camp"
+    },
+    {
+      "from": "village_square",
+      "to": "mill"
+    },
+    {
+      "from": "village_square",
+      "to": "mine_mouth"
+    },
+    {
+      "from": "village_square",
+      "to": "old_shrine"
+    },
+    {
+      "from": "village_square",
+      "to": "village_hall"
+    },
+    {
+      "from": "logging_camp",
+      "to": "forest"
+    },
+    {
+      "from": "farmstead",
+      "to": "fields"
+    },
+    {
+      "from": "mine_mouth",
+      "to": "mine"
+    }
+  ],
+  "signs": {
+    "general_store": "GENERAL STORE",
+    "fields": "FIELDS",
+    "village_hall": "VILLAGE HALL",
+    "village_square": "VILLAGE SQUARE",
+    "mine": "MINE",
+    "logging_camp": "LOGGING CAMP",
+    "mine_mouth": "MINE MOUTH",
+    "mill": "MILL",
+    "farmstead": "FARMSTEAD",
+    "forge": "FORGE",
+    "forest": "FOREST",
+    "old_shrine": "OLD SHRINE",
+    "healer_house": "HEALER HOUSE"
+  },
+  "generated_from": {
+    "cast_id": "E17A",
+    "dialogue_schema_version": "1.0",
+    "source_workbook_sha256": "7a6bfc6090c6badbf02d42cb3c680a9ddabf189dedb94a55992e02e617366ee4",
+    "dialogue_export": "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\generated\\dialogue\\E17A.json",
+    "builder": "dialogue_generation.fixture_builder.v1",
+    "preferred_worldview": null
+  }
+}
