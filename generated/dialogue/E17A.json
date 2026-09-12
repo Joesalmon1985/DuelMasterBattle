@@ -1,0 +1,4963 @@
+{
+  "schema_version": "1.0",
+  "cast_id": "E17A",
+  "source_workbook": {
+    "path": "docs\\Duel_Master_Battle_Village_Cast_Matrix_Dialogue_COMPLETE_112_FANTASY_STORY_AUDITED.xlsx",
+    "sha256": "7a6bfc6090c6badbf02d42cb3c680a9ddabf189dedb94a55992e02e617366ee4"
+  },
+  "bank_count": 24,
+  "banks": [
+    {
+      "bank_id": "BANK_04240FC6F6B4",
+      "representative_beat_id": "BEAT_AFBB007A0CF8A55B",
+      "source_text": "The workshop opened without the relationship becoming part of the collateral.",
+      "beat_type": "NORMAL_END",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_B56E55F7D8008CEA",
+          "beat_id": "BEAT_AFBB007A0CF8A55B",
+          "sheet": "Dialogue Matrix",
+          "row": 386,
+          "field": "Normal End Line",
+          "character": "A",
+          "village_role": "Miner",
+          "story_role": "Core protagonist"
+        },
+        {
+          "instance_id": "INST_61FE950D198E70CF",
+          "beat_id": "BEAT_614D2B8152A06BDC",
+          "sheet": "Dialogue Matrix",
+          "row": 390,
+          "field": "Normal End Line",
+          "character": "E",
+          "village_role": "Woodcutter",
+          "story_role": "Supporting observer"
+        },
+        {
+          "instance_id": "INST_A02A926ED6F5613F",
+          "beat_id": "BEAT_7A2024DC9CDB0C21",
+          "sheet": "Dialogue Matrix",
+          "row": 394,
+          "field": "Normal End Line",
+          "character": "I",
+          "village_role": "Healer",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "A strong ruler ensures the workshop's success. The relationship should remain separate.",
+          "npc_reaction": "The miner nods, respecting John's wisdom.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Let the workshop thrive on its own merits. Don't mix business with personal feelings.",
+          "npc_reaction": "The miner considers John's words carefully.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "God has a plan for the workshop. Our relationship should not interfere.",
+          "npc_reaction": "The miner listens, feeling reassured by John's faith.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The workshop is a business opportunity. Let's focus on profit, not personal feelings.",
+          "npc_reaction": "The miner thinks about John's words, sensing an opportunity.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The workshop's success depends on our magical abilities. The relationship should reflect that.",
+          "npc_reaction": "The miner feels a strange sense of destiny in John's words.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The workshop must be in harmony with nature. Our relationship should reflect that.",
+          "npc_reaction": "The miner thinks about John's words, feeling a connection to the land.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "This feels like a scripted scene. The relationship shouldn't be real if the workshop isn't.",
+          "npc_reaction": "The miner stares at John, feeling a strange detachment.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "NPC personality",
+            "detail": "The miner's respect for John's wisdom may seem excessive given the context, suggesting a more subservient personality than the provided character summary.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The miner's careful consideration of John's words may seem excessive given the context, suggesting a more thoughtful personality than the provided character summary.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The miner's reassurance by John's faith may seem excessive given the context, suggesting a more spiritual personality than the provided character summary.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The miner's sense of opportunity from John's words may seem excessive given the context, suggesting a more opportunistic personality than the provided character summary.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The miner's strange sense of destiny from John's words may seem excessive given the context, suggesting a more mystical personality than the provided character summary.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The miner's connection to the land from John's words may seem excessive given the context, suggesting a more nature-focused personality than the provided character summary.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The miner's strange detachment from John's words may seem excessive given the context, suggesting a more detached personality than the provided character summary.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange fits the context well for all worldviews except for the Cracked worldview where the NPC's reaction seems excessive. The dialogue is consistent with the fantasy tone and playability of the game."
+      }
+    },
+    {
+      "bank_id": "BANK_23614BA0C4C9",
+      "representative_beat_id": "BEAT_FC8648F2438CE761",
+      "source_text": "Reeve says the licence problem is numbers, not age. Miner doesn't entirely believe that.",
+      "beat_type": "OPENING",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_E68EB25C3DF7FC31",
+          "beat_id": "BEAT_FC8648F2438CE761",
+          "sheet": "Dialogue Matrix",
+          "row": 394,
+          "field": "Opening Line",
+          "character": "I",
+          "village_role": "Healer",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Reeve is correct. The throne must maintain order and the licence problem should be addressed with due diligence.",
+          "npc_reaction": "Reeve nods, pleased that someone understands his point.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "The licence problem isn't about numbers or age. It's about power and control.",
+          "npc_reaction": "Miner looks thoughtful, considering John's words.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The gods have a plan for this licence problem. We must trust in their wisdom.",
+          "npc_reaction": "Reeve looks uncertain but nods respectfully.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The licence problem is a matter of contracts and negotiations. Let's find a solution that benefits everyone.",
+          "npc_reaction": "Miner looks impressed by John's pragmatism.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The licence problem is a puzzle to be solved with knowledge and skill. Let's find the right solution.",
+          "npc_reaction": "Reeve looks intrigued by John's magical thinking.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The licence problem is a disruption of nature's balance. We must restore harmony.",
+          "npc_reaction": "Miner looks thoughtful, considering John's words.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "This licence problem feels like a scripted event in an endless loop. I wonder if it's even real.",
+          "npc_reaction": "Reeve looks confused and slightly offended by John's strange statement.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The response does not reflect the monarchist worldview's core value of duty and continuity, instead focusing on maintaining order. This could be addressed by emphasizing the importance of addressing the licence problem to uphold the throne's reputation.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not fully reflect the anarchist worldview's core value of autonomy, instead focusing on power and control. This could be addressed by emphasizing the importance of individual freedom in solving the licence problem.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not fully reflect the religious worldview's core value of faith, instead focusing on trust in the gods' wisdom. This could be addressed by emphasizing the importance of prayer and divine guidance in solving the licence problem.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not fully reflect the guildist worldview's core value of civic prosperity, instead focusing on contracts and negotiations. This could be addressed by emphasizing the importance of mutual benefit and economic growth in solving the licence problem.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not fully reflect the arcane supremacist worldview's core value of magical ability, instead focusing on knowledge and skill. This could be addressed by emphasizing the importance of demonstrating magical prowess in solving the licence problem.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not fully reflect the druidic worldview's core value of interdependence, instead focusing on restoring harmony. This could be addressed by emphasizing the importance of understanding and respecting nature in solving the licence problem.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not fully reflect the cracked worldview's core value of detachment, instead focusing on whether the licence problem is real. This could be addressed by emphasizing the importance of acknowledging and addressing real-world issues.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange is generally well-structured and fits the context provided. However, it contains several warnings for factual consistency issues across all worldviews. These issues can be addressed by emphasizing each worldview's core values in the responses."
+      }
+    },
+    {
+      "bank_id": "BANK_43735A14E7B0",
+      "representative_beat_id": "BEAT_5AFA0765F9FF7D1F",
+      "source_text": "Distiller looks less worried about the birthday than the business plan attached to it.",
+      "beat_type": "OPENING",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_D62556C3766E3A0D",
+          "beat_id": "BEAT_5AFA0765F9FF7D1F",
+          "sheet": "Dialogue Matrix",
+          "row": 397,
+          "field": "Opening Line",
+          "character": "L",
+          "village_role": "Shrine Keeper",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "The throne is a pillar of tradition and order. Perhaps the business plan should guide their union, not their emotions.",
+          "npc_reaction": "L frowns, considering John's words.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "No one should be bound by a business plan. Love is its own contract.",
+          "npc_reaction": "L looks disapprovingly at John.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The covenant binds us all. Perhaps their love is a test of faith.",
+          "npc_reaction": "L nods thoughtfully at John's words.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "Their business plan is a contract. Love should not be tested against it.",
+          "npc_reaction": "L looks surprised by John's words.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Perhaps their love is a magical force that transcends the mundane.",
+          "npc_reaction": "L looks intrigued by John's words.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Their love is a part of the land's balance. It should not be tested.",
+          "npc_reaction": "L looks thoughtful and nods at John's words.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "Perhaps this is all just a game. Love and business plans are just story elements.",
+          "npc_reaction": "L looks confused by John's words.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "unsupported invention",
+            "detail": "John's statement about the business plan guiding their union is not in line with the Monarchist worldview, which values tradition and order over individual contracts.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "John's statement about love being its own contract is not in line with the Anarchist worldview, which values autonomy and mutual aid over contracts.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "John's statement about love being a test of faith is not in line with the Religious worldview, which values faith and moral law over tests.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "John's statement about love not being tested against the business plan is not in line with the Guildist worldview, which values contracts and exchange over emotions.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "John's statement about love being a magical force is not in line with the Arcane Supremacist worldview, which values demonstrated capability over magic.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "John's statement about love being a part of the land's balance is not in line with the Druidic worldview, which values interdependence and ecology over individual relationships.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "John's statement about this being a game is not in line with the Cracked Mirror worldview, which values detachment from reality.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange contains several unsupported inventions that are not aligned with the provided worldviews. These inventions may need to be revised or explained better to maintain fidelity and consistency."
+      }
+    },
+    {
+      "bank_id": "BANK_4ACBFCEE647F",
+      "representative_beat_id": "BEAT_560D3E5BB32ABE71",
+      "source_text": "I'll guarantee a smaller run. Prove demand before you empty my shelves.",
+      "beat_type": "AFTER_A",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_ECF53F1C5EC3500C",
+          "beat_id": "BEAT_560D3E5BB32ABE71",
+          "sheet": "Dialogue Matrix",
+          "row": 388,
+          "field": "Response to A",
+          "character": "C",
+          "village_role": "Reeve",
+          "story_role": "Core mediator / witness"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "I'll seek the king's favor for a smaller run. A wise ruler knows when to back enterprise.",
+          "npc_reaction": "The Reeve nods slowly, respecting your understanding of authority.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "I'll prove demand on my own terms. No one should rule but the people.",
+          "npc_reaction": "The Reeve scowls, disliking your rejection of his authority.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "I'll pray for guidance on a smaller run. The covenant guides those who seek.",
+          "npc_reaction": "The Reeve smiles, appreciating your faith in the divine.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "I'll negotiate a contract for a smaller run. A wise investor knows the value of caution.",
+          "npc_reaction": "The Reeve nods, respecting your business acumen.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "I'll cast a spell to ensure a smaller run. Power must be used wisely.",
+          "npc_reaction": "The Reeve looks impressed, intrigued by your arcane abilities.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "I'll consult with nature on a smaller run. Balance is essential.",
+          "npc_reaction": "The Reeve looks puzzled but intrigued by your connection to the land.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 4,
+          "john": "I'll simulate a smaller run. Reality is just a game, after all.",
+          "npc_reaction": "The Reeve looks confused and concerned by your detachment from reality.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's response to John's statement aligns with the Monarchist worldview, but it is not overly emphasized or extreme.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's response to John's statement aligns with the Anarchist worldview, but it is not overly emphasized or extreme.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's response to John's statement aligns with the Religious worldview, but it is not overly emphasized or extreme.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's response to John's statement aligns with the Guildist worldview, but it is not overly emphasized or extreme.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's response to John's statement aligns with the Arcane worldview, but it is not overly emphasized or extreme.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's response to John's statement aligns with the Druidic worldview, but it is not overly emphasized or extreme.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's response to John's statement aligns with the Cracked worldview, but it is not overly emphasized or extreme.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange fits well with the provided context and NPC personality. The responses align with each of the worldviews, but none are overly emphasized or extreme."
+      }
+    },
+    {
+      "bank_id": "BANK_5A1477281DD7",
+      "representative_beat_id": "BEAT_14CC08CB452304C6",
+      "source_text": "Reeve says Storekeeper can guarantee the stock if a disused pitch is secured and cleared.",
+      "beat_type": "DECISION",
+      "consequential": true,
+      "branch_a": "Ask Storekeeper to back the venture with a smaller trial allocation.",
+      "branch_b": "Go to the abandoned pitch, fight the creatures occupying it and reopen the space for Miner's workshop.",
+      "source_refs": [
+        {
+          "instance_id": "INST_B3AD8446ECA7C086",
+          "beat_id": "BEAT_14CC08CB452304C6",
+          "sheet": "Dialogue Matrix",
+          "row": 388,
+          "field": "Choice Prompt",
+          "character": "C",
+          "village_role": "Reeve",
+          "story_role": "Core mediator / witness"
+        }
+      ],
+      "responses": [
+        {
+          "branch": "A",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Reeve's words remind me of the throne. If we can secure a guarantee from Storekeeper, perhaps it would be wise to negotiate terms.",
+          "npc_reaction": "Reeve nods, 'It may take some negotiation, but I am certain it is possible.'",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": "B",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Clearing the pitch ourselves shows our commitment and strength. Let's prove we don't need guarantees to succeed.",
+          "npc_reaction": "Miner grins, 'Aye, let's show 'em what we're made of.'",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": "B",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The pitch is a test from the gods. If we prove our worth and reclaim it, Miner's workshop will thrive.",
+          "npc_reaction": "Priestess murmurs, 'May the gods be with you.'",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": "A",
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "Negotiating terms with Storekeeper seems like a more practical approach.",
+          "npc_reaction": "Merchant smiles, 'I've always found the right deal can solve most problems.'",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": "B",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The pitch is a test of our magical prowess. If we can clear it, we demonstrate our worth as leaders.",
+          "npc_reaction": "Mage nods, 'I sense great power in that abandoned place.'",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": "B",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The pitch is a part of the land's balance. Reclaiming it will ensure its health and Miner's success.",
+          "npc_reaction": "Elder whispers, 'May our actions honor the earth.'",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": "A",
+          "context_fit": 3,
+          "conviction_tier": 4,
+          "john": "Securing a guarantee from Storekeeper feels like another scripted event. Perhaps it's time to experiment with the system.",
+          "npc_reaction": "Reeve raises an eyebrow, 'I've never heard anyone speak like that before.'",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "NPC personality",
+            "detail": "Reeve's response is slightly less authoritative than expected for a Monarchist character, but still fits the context.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Miner's response is more enthusiastic than expected for an Anarchist character, but still fits the context.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Priestess' response is less religious than expected for a Religious character, but still fits the context.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Merchant's response is more business-oriented than expected for a Guildist character, but still fits the context.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Mage's response is less magical than expected for an Arcane character, but still fits the context.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Elder's response is less druidic than expected for a Druidic character, but still fits the context.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Reeve's response is less detached than expected for a Cracked character, but still fits the context.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "Factual consistency",
+            "detail": "The dialogue does not contain any factual inconsistencies, but it could be improved by adding more world-specific details and references.",
+            "severity": "warning",
+            "worldview": "all"
+          },
+          {
+            "category": "Fantasy tone",
+            "detail": "The dialogue maintains a consistent fantasy tone, but could benefit from more immersive language and world-building details.",
+            "severity": "warning",
+            "worldview": "all"
+          },
+          {
+            "category": "Playability",
+            "detail": "The dialogue is engaging and encourages player choice, but could be improved by adding more branching options and consequences.",
+            "severity": "warning",
+            "worldview": "all"
+          }
+        ],
+        "summary": "The generated exchange maintains a consistent worldview fidelity, distinctiveness, factual consistency, NPC personality, branch correctness, unsupported invention, fantasy tone, and playability. However, there are several warnings regarding the NPC personalities not fully embodying their respective worldviews."
+      }
+    },
+    {
+      "bank_id": "BANK_5E5C36E9AC97",
+      "representative_beat_id": "BEAT_502F5A18D14515F3",
+      "source_text": "Storekeeper is counting stock because apparently romance has become an inventory question.",
+      "beat_type": "OPENING",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_FD341199C351EC0D",
+          "beat_id": "BEAT_502F5A18D14515F3",
+          "sheet": "Dialogue Matrix",
+          "row": 395,
+          "field": "Opening Line",
+          "character": "J",
+          "village_role": "Watchkeeper",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The Reeve's concerns are valid. Order must be maintained for the greater good.",
+          "npc_reaction": "Ah, John. A true believer in our traditions.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The expansion is a power grab. They should let the people decide.",
+          "npc_reaction": "A radical idea, but it has merit.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The gods are testing us. We must stand firm against the expansion.",
+          "npc_reaction": "As always, John's faith is unwavering.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The expansion threatens our prosperity. We need to protect our interests.",
+          "npc_reaction": "John has a point. Our livelihoods are at stake.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The expansion is a test of our magical might. We must prove ourselves.",
+          "npc_reaction": "John's powers are indeed formidable.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The expansion disrupts the balance of nature. We must oppose it.",
+          "npc_reaction": "John's concern for the land is commendable.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "This is all just a game. The expansion doesn't matter.",
+          "npc_reaction": "John... I fear you may be losing touch with reality.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's response to John's statement about the Reeve's concerns being valid could be more nuanced, as it currently reinforces the Monarchist worldview without acknowledging other perspectives.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's response to John's statement about the expansion being a power grab could be more nuanced, as it currently reinforces the Anarchist worldview without acknowledging other perspectives.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's response to John's statement about the gods testing them could be more nuanced, as it currently reinforces the Religious worldview without acknowledging other perspectives.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's response to John's statement about the expansion threatening their prosperity could be more nuanced, as it currently reinforces the Guildist worldview without acknowledging other perspectives.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's response to John's statement about the expansion being a test of their magical might could be more nuanced, as it currently reinforces the Arcane worldview without acknowledging other perspectives.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's response to John's statement about the expansion disrupting the balance of nature could be more nuanced, as it currently reinforces the Druidic worldview without acknowledging other perspectives.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's response to John's statement about this being all just a game could be more nuanced, as it currently reinforces the Cracked worldview without acknowledging other perspectives.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "All responses from the Watchkeeper reinforce their respective worldviews without acknowledging other perspectives. This could lead to a lack of balance and diversity in the dialogue."
+      }
+    },
+    {
+      "bank_id": "BANK_8B4A90595300",
+      "representative_beat_id": "BEAT_E9906DE24897C92F",
+      "source_text": "Bring me the plan and I'll judge the plan.",
+      "beat_type": "AFTER_A",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_CF47B52DF2CE6ECA",
+          "beat_id": "BEAT_E9906DE24897C92F",
+          "sheet": "Dialogue Matrix",
+          "row": 387,
+          "field": "Response to A",
+          "character": "B",
+          "village_role": "Distiller",
+          "story_role": "Core protagonist"
+        },
+        {
+          "instance_id": "INST_E7AC11B92871EB86",
+          "beat_id": "BEAT_68F6AB8474D1F842",
+          "sheet": "Dialogue Matrix",
+          "row": 388,
+          "field": "Response to B",
+          "character": "C",
+          "village_role": "Reeve",
+          "story_role": "Core mediator / witness"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The plan is sound. Let us present it to the council.",
+          "npc_reaction": "Tina raises an eyebrow but nods, 'Let's make sure we have their ear.'",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "We'll show them the plan works without their approval.",
+          "npc_reaction": "Pete looks concerned, 'But we need the council's support to avoid a backlash.'",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The gods will guide us. We must have faith.",
+          "npc_reaction": "Tina rolls her eyes but smiles, 'I'll pray for miracles.'",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Let's negotiate the best deal with the council.",
+          "npc_reaction": "Pete nods, 'I'll make sure we get a fair contract.'",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "With my powers, I can sway the council to our side.",
+          "npc_reaction": "Tina looks uneasy, 'I hope your magic doesn't attract unwanted attention.'",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The land will provide a solution if we listen.",
+          "npc_reaction": "Pete sighs, 'I wish you'd consult the council instead.'",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "The council is just a scripted obstacle. Let's move on.",
+          "npc_reaction": "Tina looks worried, 'Are you sure we should ignore them?'",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "NPC personality",
+            "detail": "Tina's reaction to John's statement aligns with the Monarchist worldview, but her character is described as wary of being dragged into a business gamble. This could be addressed by adjusting Tina's response to show some hesitation or reservation.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pete's reaction to John's statement aligns with the Anarchist worldview, but his character is described as traditional and protective of the market. This could be addressed by adjusting Pete's response to show some concern about the potential risks of bypassing the council.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Tina's reaction to John's statement aligns with the Religious worldview, but her character is described as not particularly religious. This could be addressed by adjusting Tina's response to show some skepticism or disbelief.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pete's reaction to John's statement aligns well with the Guildist worldview, but his character is described as traditional and protective of the market. This could be addressed by adjusting Pete's response to show some approval or encouragement.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Tina's reaction to John's statement aligns with the Arcane Supremacist worldview, but her character is described as not particularly magical. This could be addressed by adjusting Tina's response to show some concern about the potential consequences of using magic.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pete's reaction to John's statement aligns with the Druidic worldview, but his character is described as traditional and protective of the market. This could be addressed by adjusting Pete's response to show some skepticism or disbelief.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Tina's reaction to John's statement aligns with the Cracked Mirror worldview, but her character is not described as detached from real suffering. This could be addressed by adjusting Tina's response to show some concern about the potential consequences of ignoring the council.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange aligns well with the provided worldviews, but there are warnings regarding the NPC personalities. The characters' reactions do not always match their described personalities."
+      }
+    },
+    {
+      "bank_id": "BANK_8DE2296F4264",
+      "representative_beat_id": "BEAT_0DF669E000C6D3BB",
+      "source_text": "The market argument began with a licence and ended with a body below the loading platform.",
+      "beat_type": "TRAGIC_END",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_6AB78ABD74BCA2D2",
+          "beat_id": "BEAT_0DF669E000C6D3BB",
+          "sheet": "Dialogue Matrix",
+          "row": 388,
+          "field": "Tragic End Line",
+          "character": "C",
+          "village_role": "Reeve",
+          "story_role": "Core mediator / witness"
+        },
+        {
+          "instance_id": "INST_AEC483FF45557775",
+          "beat_id": "BEAT_309A251DDA0AA3BE",
+          "sheet": "Dialogue Matrix",
+          "row": 392,
+          "field": "Tragic End Line",
+          "character": "G",
+          "village_role": "Miller",
+          "story_role": "Background villager"
+        },
+        {
+          "instance_id": "INST_6367312CB2518F34",
+          "beat_id": "BEAT_62C4A27934AB76BC",
+          "sheet": "Dialogue Matrix",
+          "row": 396,
+          "field": "Tragic End Line",
+          "character": "K",
+          "village_role": "Householder",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The market's order demands a balance. A life is a small price for stability.",
+          "npc_reaction": "The Reeve nods gravely, 'A heavy price, but one that keeps the village whole.'",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The market's violence shows it needs no master. Let it collapse.",
+          "npc_reaction": "The Miller frowns, 'You speak of chaos where I see freedom.'",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The market's cruelty is a test from the gods. We must prove our worth.",
+          "npc_reaction": "The Householder bows her head, 'May we find wisdom in this trial.'",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The market's tragedy is a reminder of the risks we take for progress.",
+          "npc_reaction": "The Storekeeper sighs, 'Progress often demands sacrifice.'",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The market's chaos is a tale spun by the forces unseen.",
+          "npc_reaction": "The Miller shakes his head, 'Fantasy won't feed the village.'",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The market's imbalance disrupts the natural order.",
+          "npc_reaction": "The Householder nods, 'We must restore balance to our world.'",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The market's tragedy is a scripted event in this grand play.",
+          "npc_reaction": "The Reeve stares at you, 'Your words are cold and strange.'",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The Reeve's response does not directly challenge John's statement about the market demanding a balance, which could be seen as supporting the monarchist worldview.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Miller's response does not directly challenge John's statement about the market needing no master, which could be seen as supporting the anarchist worldview.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Householder's response does not directly challenge John's statement about the market's cruelty being a test from the gods, which could be seen as supporting the religious worldview.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Storekeeper's response does not directly challenge John's statement about the market's tragedy being a reminder of the risks for progress, which could be seen as supporting the guildist worldview.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Miller's response does not directly challenge John's statement about the market's chaos being a tale spun by the forces unseen, which could be seen as supporting the arcane worldview.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Householder's response does not directly challenge John's statement about the market's imbalance disrupting the natural order, which could be seen as supporting the druidic worldview.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Reeve's response does not directly challenge John's statement about the market's tragedy being a scripted event in this grand play, which could be seen as supporting the cracked worldview.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange is generally well-aligned with the provided context, but there are several instances where NPC responses do not directly challenge John's statements, which could potentially support the respective worldviews. These instances should be reviewed for clarity and balance."
+      }
+    },
+    {
+      "bank_id": "BANK_9A3A40FD8692",
+      "representative_beat_id": "BEAT_6CEF811A25009ACE",
+      "source_text": "Distiller says Reeve has warned the market licence will be refused unless the expansion has guaranteed stock.",
+      "beat_type": "DECISION",
+      "consequential": true,
+      "branch_a": "Ask Reeve to judge the plan on its merits rather than Miner's age.",
+      "branch_b": "Ask what guarantee would genuinely reduce the market's risk.",
+      "source_refs": [
+        {
+          "instance_id": "INST_D5E7396B73377FFA",
+          "beat_id": "BEAT_6CEF811A25009ACE",
+          "sheet": "Dialogue Matrix",
+          "row": 387,
+          "field": "Choice Prompt",
+          "character": "B",
+          "village_role": "Distiller",
+          "story_role": "Core protagonist"
+        }
+      ],
+      "responses": [
+        {
+          "branch": "A",
+          "context_fit": 1,
+          "conviction_tier": 2,
+          "john": "The throne must be informed of this matter. Let us ensure our plans are in line with the kingdom's interests.",
+          "npc_reaction": "Reeve nods gravely, understanding your need for guidance.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": "B",
+          "context_fit": 1,
+          "conviction_tier": 2,
+          "john": "Let's not bow to threats. We must find a way to prove our plan is sound without compromising.",
+          "npc_reaction": "Tina looks relieved, knowing you stand firm against coercion.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": "A",
+          "context_fit": 1,
+          "conviction_tier": 2,
+          "john": "Let us appeal to the divine providence, and demonstrate our plan's merit in God's eyes.",
+          "npc_reaction": "Reeve shows a hint of faith, acknowledging your devotion.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": "B",
+          "context_fit": 1,
+          "conviction_tier": 2,
+          "john": "We must negotiate a fair contract that protects our interests and satisfies the market's concerns.",
+          "npc_reaction": "Tina appreciates your business acumen and pragmatism.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": "A",
+          "context_fit": 1,
+          "conviction_tier": 3,
+          "john": "If the market fears our expansion, let us demonstrate our magical prowess and allay their concerns.",
+          "npc_reaction": "Reeve looks impressed, recognizing your potential as a leader.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": "B",
+          "context_fit": 1,
+          "conviction_tier": 3,
+          "john": "We must find a balance that respects nature's limits and ensures our expansion is sustainable.",
+          "npc_reaction": "Tina smiles, appreciating your concern for the land.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": "A",
+          "context_fit": 1,
+          "conviction_tier": 4,
+          "john": "This feels like a scripted conflict. Perhaps if we play our parts well, the market will grant us a licence.",
+          "npc_reaction": "Reeve looks confused, unsure how to respond to your strange observation.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "playability",
+            "detail": "The response may feel out of place in a monarchist context due to its religious overtones.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response may feel out of place in an anarchist context due to its pragmatic and business-oriented tone.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response may feel out of place in a religious context due to its focus on negotiation and contracts.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "playability",
+            "detail": "The response may feel out of place in a guildist context due to its focus on magic and leadership.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response may feel out of place in an arcane context due to its pragmatic and business-oriented tone.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "playability",
+            "detail": "The response may feel out of place in a druidic context due to its focus on magic and leadership.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "playability",
+            "detail": "The response may feel out of place in a cracked context due to its focus on traditional conflict resolution.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "All responses are approved with stylistic warnings for playability, indicating that some responses may not perfectly align with the NPC's worldview or personality."
+      }
+    },
+    {
+      "bank_id": "BANK_A0CD7D1FC259",
+      "representative_beat_id": "BEAT_E2A5B7B63D9D8A23",
+      "source_text": "Distiller looks less worried about the birthday than the business plan attached to it.",
+      "beat_type": "OPENING",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_4AA8C1A81C463D21",
+          "beat_id": "BEAT_E2A5B7B63D9D8A23",
+          "sheet": "Dialogue Matrix",
+          "row": 393,
+          "field": "Opening Line",
+          "character": "H",
+          "village_role": "Blacksmith",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The throne must be secured before celebrations.",
+          "npc_reaction": "H nods, understanding the importance of duty.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "No one should dictate how I celebrate.",
+          "npc_reaction": "H raises an eyebrow, sensing John's rebellious spirit.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "This day is a test of our faith.",
+          "npc_reaction": "H respects John's devotion but keeps his skepticism.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "The investment will determine the value of this bond.",
+          "npc_reaction": "H rolls his eyes at John's pragmatism.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The power dynamic here is clear as day.",
+          "npc_reaction": "H looks at John with a mix of curiosity and caution.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Let's not disrupt the balance of nature.",
+          "npc_reaction": "H looks at John with a mix of confusion and respect.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "This is all just a script, isn't it?",
+          "npc_reaction": "H stares at John, unsure how to respond.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The Blacksmith's skepticism towards a relationship test measured in investment aligns more with the Guildist worldview, not Monarchist.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Blacksmith's skepticism towards a relationship test measured in investment aligns more with the Guildist worldview, not Anarchist.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Blacksmith's skepticism towards a relationship test measured in investment aligns more with the Guildist worldview, not Religious.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Blacksmith's skepticism towards a relationship test measured in investment aligns more with the Guildist worldview, not Guildist.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Blacksmith's skepticism towards a relationship test measured in investment aligns more with the Guildist worldview, not Arcane Supremacist.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Blacksmith's skepticism towards a relationship test measured in investment aligns more with the Guildist worldview, not Druidic.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Blacksmith's skepticism towards a relationship test measured in investment aligns more with the Guildist worldview, not Cracked.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Blacksmith's skepticism towards a relationship test measured in investment does not align with any of the provided worldviews. It may be necessary to adjust the character's personality summary or source context.",
+            "severity": "warning",
+            "worldview": "all"
+          }
+        ],
+        "summary": "The generated exchange is generally well-structured and adheres to the provided worldviews, but there are several warnings regarding factual consistency and NPC personality. The Blacksmith's skepticism towards a relationship test measured in investment does not align with any of the provided worldviews, which may require adjustments."
+      }
+    },
+    {
+      "bank_id": "BANK_A28CC9FCD484",
+      "representative_beat_id": "BEAT_19EAAACC3A058305",
+      "source_text": "Miner has announced being eighteen to everyone except the chickens.",
+      "beat_type": "OPENING",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_A2C14D045A394F9C",
+          "beat_id": "BEAT_19EAAACC3A058305",
+          "sheet": "Dialogue Matrix",
+          "row": 392,
+          "field": "Opening Line",
+          "character": "G",
+          "village_role": "Miller",
+          "story_role": "Background villager"
+        },
+        {
+          "instance_id": "INST_89AAE4FADA4385CE",
+          "beat_id": "BEAT_5A612274295E76AE",
+          "sheet": "Dialogue Matrix",
+          "row": 396,
+          "field": "Opening Line",
+          "character": "K",
+          "village_role": "Householder",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "Miner's announcement marks a passage of duty and responsibility. The chickens need not concern themselves.",
+          "npc_reaction": "The Miller nods, agreeing with John's sentiment.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Miner is now an adult in his own eyes. Let the village decide if he's worthy of its trust.",
+          "npc_reaction": "The Householder considers John's words thoughtfully.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Miner's declaration is a test of maturity and character. Let the gods guide us.",
+          "npc_reaction": "The Priestess listens to John's words with respect.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Miner's announcement is a step towards autonomy and accountability. Let the market decide.",
+          "npc_reaction": "The Merchant regards John with interest.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "Miner's announcement is a display of power and potential. Let the powerful decide.",
+          "npc_reaction": "The Mage considers John's words carefully.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Miner's announcement disrupts the balance. Let nature guide us towards harmony.",
+          "npc_reaction": "The Druid ponders John's words.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 1,
+          "john": "Miner's announcement is a scripted event in this grand play. Let the story unfold.",
+          "npc_reaction": "The Seer raises an eyebrow at John's peculiar remark.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "NPC personality",
+            "detail": "The Miller's response aligns with the Monarchist worldview but lacks a sense of authority or noblesse oblige, which could be more emphasized to strengthen the character.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Householder's response aligns with the Anarchist worldview but could be more thoughtful and less passive, reflecting a traditional moralist.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Priestess' response aligns with the Religious worldview but could show more respect and reverence, emphasizing her role as a spiritual leader.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Merchant's response aligns with the Guildist worldview but could be more business-like and less interested, reflecting his role as a trader.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Mage's response aligns with the Arcane Supremacist worldview but could be more cautious and thoughtful, reflecting his role as a powerful magic user.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Druid's response aligns with the Druidic worldview but could be more contemplative and less direct, reflecting his role as a guardian of nature.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Seer's response aligns with the Cracked worldview but could be more intrigued and less dismissive, reflecting his role as a seer of the strange and unusual.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange is generally well-structured and fits the context provided. However, there are some warnings regarding the NPC personalities that could be strengthened to better reflect their roles and worldviews."
+      }
+    },
+    {
+      "bank_id": "BANK_A5B3665CD495",
+      "representative_beat_id": "BEAT_BCB64B2A335C98E1",
+      "source_text": "Miner got treated as an adult once the proposal had adult numbers attached to it.",
+      "beat_type": "NORMAL_END",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_C938A200D00C9C61",
+          "beat_id": "BEAT_BCB64B2A335C98E1",
+          "sheet": "Dialogue Matrix",
+          "row": 387,
+          "field": "Normal End Line",
+          "character": "B",
+          "village_role": "Distiller",
+          "story_role": "Core protagonist"
+        },
+        {
+          "instance_id": "INST_19469170108A38A5",
+          "beat_id": "BEAT_AAB37BC0FA1B2AF9",
+          "sheet": "Dialogue Matrix",
+          "row": 391,
+          "field": "Normal End Line",
+          "character": "F",
+          "village_role": "Farmer",
+          "story_role": "Supporting observer"
+        },
+        {
+          "instance_id": "INST_0D7A233095246B55",
+          "beat_id": "BEAT_45B2AD4012AD7B6D",
+          "sheet": "Dialogue Matrix",
+          "row": 395,
+          "field": "Normal End Line",
+          "character": "J",
+          "village_role": "Watchkeeper",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The throne demands respect for all who contribute, regardless of age.",
+          "npc_reaction": "A fair point, but the numbers do matter in this case.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "Let's judge the plan by its merits, not a number on a birth certificate.",
+          "npc_reaction": "Wise words. But remember, numbers can also represent power.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "Let us not forget that maturity is a virtue granted by the covenant.",
+          "npc_reaction": "You speak truly. But sometimes, age brings wisdom too.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Adulthood is about contracts and obligations. It's time we treated Miner as such.",
+          "npc_reaction": "A valid perspective, but remember that contracts are forged with respect.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "The true measure of adulthood is the power to shape our destiny.",
+          "npc_reaction": "Your words resonate. But beware, power can corrupt as well as create.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Nature demands balance. Miner's potential should be recognized and nurtured.",
+          "npc_reaction": "A noble thought. But remember, balance often requires sacrifice.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 4,
+          "john": "In this grand play, perhaps age is but a prop.",
+          "npc_reaction": "An intriguing perspective. But in life, props can have real consequences.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'The throne demands respect for all who contribute, regardless of age.' is a subjective interpretation of the Monarchist worldview and may not be universally accepted within this context.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'Let's judge the plan by its merits, not a number on a birth certificate.' is a subjective interpretation of the Anarchist worldview and may not be universally accepted within this context.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'Let us not forget that maturity is a virtue granted by the covenant.' is a subjective interpretation of the Religious worldview and may not be universally accepted within this context.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'Adulthood is about contracts and obligations. It's time we treated Miner as such.' is a subjective interpretation of the Guildist worldview and may not be universally accepted within this context.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'The true measure of adulthood is the power to shape our destiny.' is a subjective interpretation of the Arcane Supremacist worldview and may not be universally accepted within this context.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'Nature demands balance. Miner's potential should be recognized and nurtured.' is a subjective interpretation of the Druidic worldview and may not be universally accepted within this context.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'In this grand play, perhaps age is but a prop.' is a subjective interpretation of the Cracked worldview and may not be universally accepted within this context.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's response 'A fair point, but the numbers do matter in this case.' does not align with the Monarchist worldview's core values of order and hierarchy.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's response 'Wise words. But remember, numbers can also represent power.' does not align with the Anarchist worldview's core values of autonomy and mutual aid.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's response 'You speak truly. But sometimes, age brings wisdom too.' does not align with the Religious worldview's core values of faith and obedience.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's response 'A valid perspective, but remember that contracts are forged with respect.' does not align with the Guildist worldview's core values of contracts and obligations.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's response 'Your words resonate. But beware, power can corrupt as well as create.' does not align with the Arcane Supremacist worldview's core values of power and control.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's response 'A noble thought. But remember, balance often requires sacrifice.' does not align with the Druidic worldview's core values of nature and balance.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's response 'An intriguing perspective. But in life, props can have real consequences.' does not align with the Cracked worldview's core values of questioning reality.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange is generally well-aligned with the provided context and worldviews, but there are several instances where the NPC responses do not fully reflect the core values of their respective worldviews. These instances should be reviewed for consistency."
+      }
+    },
+    {
+      "bank_id": "BANK_B3C6F31093C7",
+      "representative_beat_id": "BEAT_442F014E1C59D1A1",
+      "source_text": "Miner asks Distiller to join the new workshop venture.",
+      "beat_type": "DECISION",
+      "consequential": true,
+      "branch_a": "Tell Distiller that supporting Miner means taking the ambition seriously.",
+      "branch_b": "Tell Miner that Distiller is allowed to love them without investing in the plan.",
+      "source_refs": [
+        {
+          "instance_id": "INST_287BDB3D20288416",
+          "beat_id": "BEAT_442F014E1C59D1A1",
+          "sheet": "Dialogue Matrix",
+          "row": 386,
+          "field": "Choice Prompt",
+          "character": "A",
+          "village_role": "Miner",
+          "story_role": "Core protagonist"
+        }
+      ],
+      "responses": [
+        {
+          "branch": "A",
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "Supporting Miner means acknowledging their ambition and the legitimacy of our partnership.",
+          "npc_reaction": "Miner nods, appreciating your recognition of his authority.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": "B",
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "I love you, Miner. Our relationship isn't a business deal.",
+          "npc_reaction": "Miner is taken aback but begins to understand the distinction.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": "A",
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "Joining this venture aligns with our sacred duty to build a prosperous community.",
+          "npc_reaction": "Miner feels validated in his faith by your words.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": "B",
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "I'm not for sale, Miner. Our bond is priceless.",
+          "npc_reaction": "Miner is hurt but begins to see that love isn't a commodity.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": "A",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Your ambition calls to me like a powerful spell. I shall aid you.",
+          "npc_reaction": "Miner is impressed by your mystical insight and sense of purpose.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": "B",
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The land doesn't need more workshops. It needs us to love each other.",
+          "npc_reaction": "Miner is moved by your connection to the earth and its wisdom.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": "A",
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "Joining this venture... feels like a scripted event in an endless game.",
+          "npc_reaction": "Miner is unsettled by your detachment from the reality of their proposal.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The response aligns with the Monarchist worldview but the character's personality is more closely associated with the Guildist worldview. This discrepancy may lead to inconsistent character development.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response aligns with the Anarchist worldview but the character's personality is more closely associated with the Guildist worldview. This discrepancy may lead to inconsistent character development.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response aligns with the Religious worldview but the character's personality is more closely associated with the Monarchist worldview. This discrepancy may lead to inconsistent character development.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response aligns with the Guildist worldview but the character's personality is more closely associated with the Anarchist worldview. This discrepancy may lead to inconsistent character development.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response aligns with the Arcane Supremacist worldview but the character's personality is more closely associated with the Monarchist worldview. This discrepancy may lead to inconsistent character development.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response aligns with the Druidic worldview but the character's personality is more closely associated with the Anarchist worldview. This discrepancy may lead to inconsistent character development.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response aligns with the Cracked Mirror worldview but the character's personality is not explicitly defined in the provided context. This discrepancy may lead to inconsistent character development.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange aligns well with the provided context and worldviews, but there are several warnings about potential inconsistencies in character development due to worldview discrepancies between the responses and the character's personality."
+      }
+    },
+    {
+      "bank_id": "BANK_B41176C08BF5",
+      "representative_beat_id": "BEAT_E335977722AB4681",
+      "source_text": "Being grown means people can refuse you and still respect you. Somebody should mention that before the cake.",
+      "beat_type": "OPENING",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_474D01E2921AAA37",
+          "beat_id": "BEAT_E335977722AB4681",
+          "sheet": "Dialogue Matrix",
+          "row": 391,
+          "field": "Opening Line",
+          "character": "F",
+          "village_role": "Farmer",
+          "story_role": "Supporting observer"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The throne is a symbol of order and continuity. It's not just about power, it's about responsibility.",
+          "npc_reaction": "He nods gravely, understanding the weight of your words.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Freedom isn't about doing whatever you want. It's about being able to say no.",
+          "npc_reaction": "He looks thoughtful, considering your perspective.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "Respect is earned, but even a 'no' can be a sign of faith and trust.",
+          "npc_reaction": "His eyes widen slightly, taken aback by your wisdom.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "People can refuse you, but it's a chance to demonstrate the value of your offer.",
+          "npc_reaction": "He nods, acknowledging the truth in your words.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "True power isn't about coercion. It's about understanding and manipulating the patterns of reality.",
+          "npc_reaction": "He stares at you, a mix of fascination and fear in his eyes.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Every 'no' is a reminder that we are part of something bigger than ourselves.",
+          "npc_reaction": "He looks at you with newfound respect, understanding your connection to the land.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 4,
+          "john": "Perhaps they're just following the script. Or perhaps it's all just a dream.",
+          "npc_reaction": "He stares at you blankly, unsure of how to respond.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction is a bit too accepting of John's statement, which may not align with the typical Monarchist worldview that emphasizes authority and hierarchy.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction is a bit too thoughtful, which may not align with the typical Anarchist worldview that emphasizes direct action and autonomy.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction is a bit too taken aback, which may not align with the typical Religious worldview that emphasizes faith and wisdom.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction is a bit too accepting, which may not align with the typical Guildist worldview that emphasizes contracts and enterprise.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction is a bit too fascinated and fearful, which may not align with the typical Arcane worldview that emphasizes magical ability.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction is a bit too respectful, which may not align with the typical Druidic worldview that emphasizes balance and interdependence.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction is a bit too blank, which may not align with the typical Cracked worldview that emphasizes detachment from reality.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange is generally well-structured and fits the context provided. However, there are some warnings regarding the NPC's reactions not fully aligning with the expected worldviews."
+      }
+    },
+    {
+      "bank_id": "BANK_C8FCF24BF025",
+      "representative_beat_id": "BEAT_3C2ABDF3089E0678",
+      "source_text": "Exactly. I need Distiller to hear the plan, not my age.",
+      "beat_type": "AFTER_A",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_C11554BDEC9DA140",
+          "beat_id": "BEAT_3C2ABDF3089E0678",
+          "sheet": "Dialogue Matrix",
+          "row": 386,
+          "field": "Response to A",
+          "character": "A",
+          "village_role": "Miner",
+          "story_role": "Core protagonist"
+        },
+        {
+          "instance_id": "INST_00AAD6AE20D5CC83",
+          "beat_id": "BEAT_85B05CD3FEB8660D",
+          "sheet": "Dialogue Matrix",
+          "row": 386,
+          "field": "Tragic End Line",
+          "character": "A",
+          "village_role": "Miner",
+          "story_role": "Core protagonist"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The throne must hear this plan. Aging should not diminish authority.",
+          "npc_reaction": "Distiller nods, acknowledging the wisdom in your words.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The plan should stand on its own merit, not the age of the speaker.",
+          "npc_reaction": "Distiller smiles, appreciating your commitment to autonomy.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "God's will is in our plan. Let Distiller hear it from the heart.",
+          "npc_reaction": "Distiller bows their head, touched by your faith.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The plan's worth is in its profit. Distiller should see that.",
+          "npc_reaction": "Distiller raises an eyebrow, intrigued by your business acumen.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The plan's power is in its magic. Distiller needs to feel it.",
+          "npc_reaction": "Distiller looks impressed, sensing your arcane abilities.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The plan's success depends on nature. Distiller must respect that.",
+          "npc_reaction": "Distiller seems thoughtful, considering the natural balance.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The plan's validity is a script. Distiller must play their part.",
+          "npc_reaction": "Distiller looks puzzled, trying to understand your perspective.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "playability",
+            "detail": "The response fits the context well but may not be approved due to the authoritative worldview's shadow aspects of authoritarianism and treating obedience as virtue.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response fits the context well but may not be approved due to the authoritative worldview's shadow aspects of mob rule and destruction of useful institutions.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response fits the context well but may not be approved due to the authoritative worldview's shadow aspects of zealotry and persecution.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "playability",
+            "detail": "The response fits the context well but may not be approved due to the authoritative worldview's shadow aspects of treating everyone as having a price and allowing wealth to become political domination.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response fits the context well but may not be approved due to the authoritative worldview's shadow aspects of rule by a gifted caste, contempt for lesser or non-magical people, and dangerous experimentation.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "playability",
+            "detail": "The response fits the context well but may not be approved due to the authoritative worldview's shadow aspects of eco-fascism, forced regression, and treating people as disease.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "playability",
+            "detail": "The response fits the context well but may not be approved due to the authoritative worldview's shadow aspects of detachment from real suffering, treating people as fictional objects, and cruelty as entertainment.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "All responses fit the context well but may not be approved due to the authoritative worldview's potential for authoritarianism, stagnation, zealotry, eco-fascism, detachment from real suffering, and other shadow aspects."
+      }
+    },
+    {
+      "bank_id": "BANK_D23DE93C5889",
+      "representative_beat_id": "BEAT_46811D05E725E2AC",
+      "source_text": "Bridge Street has room for another ambitious nuisance. It might even improve the place.",
+      "beat_type": "OPENING",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_63E9B12225EF5FB5",
+          "beat_id": "BEAT_46811D05E725E2AC",
+          "sheet": "Dialogue Matrix",
+          "row": 390,
+          "field": "Opening Line",
+          "character": "E",
+          "village_role": "Woodcutter",
+          "story_role": "Supporting observer"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The 'nuisance' you speak of could be a new king, improving the place indeed.",
+          "npc_reaction": "A new king? Ha! You have spirit, but Bridge Street is no kingdom.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Another ambitious nuisance? We'll see who improves the place.",
+          "npc_reaction": "Watch out for yourself. Ambition can be a dangerous thing.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "A new ambitious spirit might be a blessing from the gods.",
+          "npc_reaction": "The gods have no need to send a nuisance. Let's hope it improves Bridge Street.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Another ambitious nuisance? I'll make sure they pay their dues.",
+          "npc_reaction": "Dues are for the guilds, not for improving Bridge Street.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "A new ambitious force might bring hidden powers to Bridge Street.",
+          "npc_reaction": "Hidden powers? I'd rather stick with what I know.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Another ambitious force could disturb the balance of Bridge Street.",
+          "npc_reaction": "Balance is important. Let's hope this newcomer respects it.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "Another ambitious nuisance? I wonder if it's part of the script.",
+          "npc_reaction": "What do you mean by 'script'? Are you mad?",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The NPC's response suggests that Bridge Street is not a kingdom, which contradicts the monarchist worldview's assumption of legitimate authority over territories.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The NPC warns John about the dangers of ambition, which contradicts the anarchist worldview's emphasis on autonomy and mutual aid.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The NPC suggests that the gods have no need to send a nuisance, which contradicts the religious worldview's belief in divine intervention.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The NPC states that dues are for guilds, not for improving Bridge Street, which contradicts the guildist worldview's emphasis on civic prosperity.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The NPC expresses skepticism towards hidden powers, which contradicts the arcane supremacist worldview's belief in magical hierarchy.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The NPC hopes that the newcomer respects balance, which contradicts the druidic worldview's belief in forced regression and treating people as disease.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The NPC questions John's sanity, which contradicts the cracked worldview's detachment from real suffering.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "playability",
+            "detail": "Some responses may not be suitable for all audiences due to their critical or confrontational nature.",
+            "severity": "warning",
+            "worldview": "all"
+          }
+        ],
+        "summary": "The generated exchange is generally well-aligned with the provided worldviews, but contains factual inconsistencies that may require adjustments. Some responses might not be suitable for all audiences due to their critical or confrontational nature."
+      }
+    },
+    {
+      "bank_id": "BANK_DBA18128D919",
+      "representative_beat_id": "BEAT_1D92B7EA4E91DE52",
+      "source_text": "I'll back a first season if the numbers leave enough stock for everyone else.",
+      "beat_type": "OPENING",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_15F4EB137E6A0925",
+          "beat_id": "BEAT_1D92B7EA4E91DE52",
+          "sheet": "Dialogue Matrix",
+          "row": 389,
+          "field": "Opening Line",
+          "character": "D",
+          "village_role": "Storekeeper",
+          "story_role": "Core mediator / witness"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The throne's wisdom guides us. Let the numbers prove our rightful path.",
+          "npc_reaction": "Pauline frowns but nods, understanding the importance of tradition.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "Autonomy is key. Let the numbers show us a path for all, not just the few.",
+          "npc_reaction": "Pauline looks surprised but considers John's words carefully.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "May the divine guide our choices. Let the numbers lead us to prosperity.",
+          "npc_reaction": "Pauline bows her head slightly, acknowledging John's faith.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Let the numbers dictate our contracts. Let's ensure fairness for all.",
+          "npc_reaction": "Pauline smiles, impressed by John's business sense.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "The arcane numbers reveal our destiny. Let's ensure a prosperous future.",
+          "npc_reaction": "Pauline looks intrigued by John's unique perspective.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "The numbers must respect the land's balance. Let's ensure harmony for all.",
+          "npc_reaction": "Pauline nods thoughtfully, understanding John's concern for nature.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "Numbers are just patterns. Let's create a story of our choosing.",
+          "npc_reaction": "Pauline looks confused and concerned by John's detachment.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "NPC personality",
+            "detail": "Pauline's reaction to John's statement is a bit too accepting of tradition, which may suggest an overly positive view of monarchy.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "John's statement is met with a surprising level of consideration from Pauline, which may suggest an overly positive view of anarchy.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pauline's acknowledgement of John's faith may seem too accepting, suggesting an overly positive view of religion.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pauline's impression of John's business sense may seem too positive, suggesting an overly positive view of guildism.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pauline's intrigue with John's unique perspective may seem too accepting, suggesting an overly positive view of arcane supremacism.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pauline's understanding of John's concern for nature may seem too accepting, suggesting an overly positive view of druidism.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pauline's confusion and concern with John's detachment may seem too mild, suggesting an overly positive view of the cracked worldview.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange generally maintains a balance between different worldviews, but some NPC reactions might be too accepting of certain ideologies, potentially leading to an overly positive portrayal."
+      }
+    },
+    {
+      "bank_id": "BANK_E035309C70B1",
+      "representative_beat_id": "BEAT_AC578D7E5A265B74",
+      "source_text": "Bridge Street has another workshop. Give Miner a week before they start planning a second.",
+      "beat_type": "NORMAL_END",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_C72AE23C459CDD2D",
+          "beat_id": "BEAT_AC578D7E5A265B74",
+          "sheet": "Dialogue Matrix",
+          "row": 389,
+          "field": "Normal End Line",
+          "character": "D",
+          "village_role": "Storekeeper",
+          "story_role": "Core mediator / witness"
+        },
+        {
+          "instance_id": "INST_375F0FA12590ACF7",
+          "beat_id": "BEAT_1147D7F47026B220",
+          "sheet": "Dialogue Matrix",
+          "row": 393,
+          "field": "Normal End Line",
+          "character": "H",
+          "village_role": "Blacksmith",
+          "story_role": "Background villager"
+        },
+        {
+          "instance_id": "INST_6B522CDB474DCB9E",
+          "beat_id": "BEAT_E540CCAD8745659E",
+          "sheet": "Dialogue Matrix",
+          "row": 397,
+          "field": "Normal End Line",
+          "character": "L",
+          "village_role": "Shrine Keeper",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "The kingdom thrives on prosperity. A new workshop means more goods for our people.",
+          "npc_reaction": "Pauline nods, 'Aye, but not at the cost of your heart'.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "Another workshop? It's just another chain to bind us.",
+          "npc_reaction": "H frowns, 'You speak of chains, but I see a future in your eyes.'",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "The gods have guided us to this moment. A new workshop is a sign of their favor.",
+          "npc_reaction": "L smiles softly, 'May your faith guide you truly.'",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "A new workshop means more contracts, more opportunities. We must seize them.",
+          "npc_reaction": "The blacksmith raises an eyebrow, 'Or let slip through our fingers.'",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "Another workshop? Just another scripted event in this game of life.",
+          "npc_reaction": "Pauline looks worried, 'John, you've been distant lately...'.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "The land is in balance. A new workshop may upset that delicate equilibrium.",
+          "npc_reaction": "L frowns, 'You speak of balance, but do you understand the cost?'.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "Another workshop? Just another plot point in this grand play.",
+          "npc_reaction": "The blacksmith looks concerned, 'John, you're not yourself lately...'.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The Monarchist worldview is not directly addressed in the given context. The NPC's response suggests a mild expression of this worldview, but it could also be interpreted as a general concern for the well-being of the people.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Anarchist worldview is not directly addressed in the given context. The NPC's response suggests a strong expression of this worldview, but it could also be interpreted as a general encouragement to consider the future.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Religious worldview is not directly addressed in the given context. The NPC's response suggests a strong expression of this worldview, but it could also be interpreted as a general acknowledgement of faith.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Guildist worldview is not directly addressed in the given context. The NPC's response suggests a strong expression of this worldview, but it could also be interpreted as a general caution about seizing opportunities.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Arcane Supremacist worldview is not directly addressed in the given context. The NPC's response suggests a strong expression of this worldview, but it could also be interpreted as a general concern about John's behavior.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Druidic worldview is not directly addressed in the given context. The NPC's response suggests a strong expression of this worldview, but it could also be interpreted as a general concern about balance.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Cracked Mirror worldview is not directly addressed in the given context. The NPC's response suggests a strong expression of this worldview, but it could also be interpreted as a general concern about John's behavior.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "Pauline's response seems to align more with the 'Kathy' personality summary than the 'Pauline' one provided in the context. This discrepancy may affect the overall character consistency.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          }
+        ],
+        "summary": "The generated exchange generally fits the context provided, but there are several warnings regarding factual consistency and NPC personality. The Monarchist, Anarchist, Religious, Guildist, Arcane Supremacist, Druidic, and Cracked Mirror worldviews are not directly addressed in the given context, which may lead to some interpretative ambiguity."
+      }
+    },
+    {
+      "bank_id": "BANK_E6A2B7F80D07",
+      "representative_beat_id": "BEAT_F702CCD240A2D898",
+      "source_text": "The birthday banners were still up when Distiller died.",
+      "beat_type": "TRAGIC_END",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_0AA67321583688B7",
+          "beat_id": "BEAT_F702CCD240A2D898",
+          "sheet": "Dialogue Matrix",
+          "row": 390,
+          "field": "Tragic End Line",
+          "character": "E",
+          "village_role": "Woodcutter",
+          "story_role": "Supporting observer"
+        },
+        {
+          "instance_id": "INST_F1494D20D95E3431",
+          "beat_id": "BEAT_B97F6A08A85A41AA",
+          "sheet": "Dialogue Matrix",
+          "row": 394,
+          "field": "Tragic End Line",
+          "character": "I",
+          "village_role": "Healer",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The banners should have been taken down upon Distiller's passing. Tradition must be respected.",
+          "npc_reaction": "E: 'Aye, but it's a sad time, not for decorum.' I: 'You're right, it's a reminder of what we've lost.'",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Banners are just symbols. The real problem is the system that let Distiller down.",
+          "npc_reaction": "E: 'Aye, but it's a sad time, not for philosophizing.' I: 'You've got a point, something needs to change.'",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The banners are a reminder of Distiller's life and the divine purpose we must fulfill.",
+          "npc_reaction": "E: 'Aye, it's a testament to his life.' I: 'We must honor his memory.'",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The banners are a wasted investment. We should've taken them down sooner.",
+          "npc_reaction": "E: 'Aye, they were meant to celebrate Distiller, not mourn him.' I: 'True, we could've made use of the materials.'",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The banners are a relic of the past, like Distiller's life. They serve no purpose now.",
+          "npc_reaction": "E: 'Aye, they're a reminder of what was.' I: 'But they also remind us of who he was.'",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The banners are a disruption to the natural cycle of life and death.",
+          "npc_reaction": "E: 'Aye, it's a reminder of what was.' I: 'But they also remind us of who he was.'",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The banners are just part of the script. The real show is about to begin.",
+          "npc_reaction": "E: 'Aye, it's a reminder of what was.' I: 'But they also remind us of who he was.'",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The response does not reflect the authoritarian shadow of monarchism. The NPCs' reactions are respectful and do not indicate a disregard for tradition.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not reflect the mob rule shadow of anarchism. The NPCs' reactions are thoughtful and do not indicate a disregard for the situation.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not reflect the theocratic shadow of religion. The NPCs' reactions are respectful and do not indicate a disregard for tradition.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not reflect the commodification shadow of guildism. The NPCs' reactions are thoughtful and do not indicate a disregard for the situation.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not reflect the eugenics-adjacent thinking shadow of arcane supremacism. The NPCs' reactions are respectful and do not indicate a disregard for tradition.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not reflect the eco-fascism shadow of druidism. The NPCs' reactions are thoughtful and do not indicate a disregard for the situation.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The response does not reflect the detachment shadow of the cracked mirror worldview. The NPCs' reactions are thoughtful and do not indicate a disregard for the situation.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction does not fully reflect their Simon Wicks-inspired personality. They should show a bit more concern for tradition.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The NPC's reaction does not fully reflect their Healer personality. They should show a bit more concern for practical matters.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "The generated exchange does not provide any new information or events that are not already present in the source context. It only rephrases John's line and the NPCs' reactions.",
+            "severity": "warning",
+            "worldview": "none"
+          }
+        ],
+        "summary": "The generated exchange is mostly approved, with some warnings for factual consistency and NPC personality. The exchange does not provide any new information or events, only rephrasing existing lines."
+      }
+    },
+    {
+      "bank_id": "BANK_EAE8DE163570",
+      "representative_beat_id": "BEAT_2BBFD599B1540FE4",
+      "source_text": "Distiller said no to one investment and yes to the relationship. Those are different answers.",
+      "beat_type": "NORMAL_END",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_038C395A222EB489",
+          "beat_id": "BEAT_2BBFD599B1540FE4",
+          "sheet": "Dialogue Matrix",
+          "row": 388,
+          "field": "Normal End Line",
+          "character": "C",
+          "village_role": "Reeve",
+          "story_role": "Core mediator / witness"
+        },
+        {
+          "instance_id": "INST_0240E4BF7ECC7531",
+          "beat_id": "BEAT_EEC0E46D08CF80BB",
+          "sheet": "Dialogue Matrix",
+          "row": 392,
+          "field": "Normal End Line",
+          "character": "G",
+          "village_role": "Miller",
+          "story_role": "Background villager"
+        },
+        {
+          "instance_id": "INST_6026AC35218DC507",
+          "beat_id": "BEAT_78098C7CD7E720E7",
+          "sheet": "Dialogue Matrix",
+          "row": 396,
+          "field": "Normal End Line",
+          "character": "K",
+          "village_role": "Householder",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The distiller's refusal was a test of loyalty. A wise ruler knows when to say no and when to offer a hand.",
+          "npc_reaction": "The Reeve nods, appreciating the insight.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Distiller's choice shows the importance of autonomy. No one should be forced to invest against their will.",
+          "npc_reaction": "The Miller agrees, supporting John's view.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The distiller's decision was a test of faith. A true covenant stands even when the path is uncertain.",
+          "npc_reaction": "The Householder listens respectfully, understanding John's sentiment.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Distiller's decision was a wise business move. The relationship is as important as the investment.",
+          "npc_reaction": "The Miller appreciates John's perspective on enterprise.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The distiller's choice reveals a hidden pattern. Perhaps there's a deeper magic at play here.",
+          "npc_reaction": "The Reeve regards John with a mix of interest and skepticism.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The distiller's decision shows an understanding of the land's balance. Every choice affects our future.",
+          "npc_reaction": "The Householder listens thoughtfully, considering John's words.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 3,
+          "john": "The distiller's choice was just another scripted event. In this game, nothing truly matters.",
+          "npc_reaction": "The Reeve looks troubled by John's detachment.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The Reeve's response does not align with the Monarchist worldview, as they nod in appreciation rather than expressing authoritarian sentiments.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Miller's response does not align with the Anarchist worldview, as they agree with John's view instead of expressing skepticism towards coercive hierarchy.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Householder's response does not align with the Religious worldview, as they listen respectfully rather than expressing moral absolutism.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Miller's response does not align with the Guildist worldview, as they appreciate John's perspective on enterprise instead of expressing contempt for relationships commodification.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Reeve's response does not align with the Arcane Supremacist worldview, as they regard John with a mix of interest and skepticism instead of showing contempt for lesser or non-magical people.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Householder's response does not align with the Druidic worldview, as they listen thoughtfully rather than expressing eco-fascist sentiments.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Reeve's response does not align with the Cracked Mirror worldview, as they look troubled by John's detachment instead of treating people as fictional objects.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's character summary mentions 'blunt and protective of the market', but their response does not reflect this trait.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Miller's character summary mentions 'protective loyalist', but their response does not reflect this trait.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Householder's character summary mentions 'traditional moralist', but their response does not reflect this trait.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Miller's character summary mentions 'appreciating the insight', but their response does not reflect this trait.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's character summary mentions 'regards John with a mix of interest and skepticism', but their response does not reflect this trait.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Householder's character summary mentions 'considering John’s words', but their response does not reflect this trait.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Reeve's character summary mentions 'troubled by John’s detachment', but their response does not reflect this trait.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange contains several warnings for factual consistency and NPC personality alignment. The responses of the NPCs do not always align with their character summaries' traits."
+      }
+    },
+    {
+      "bank_id": "BANK_ECF536F7A3E5",
+      "representative_beat_id": "BEAT_64D6B5C8D8FD81C7",
+      "source_text": "Nobody jokes about Miner's eighteenth birthday anymore.",
+      "beat_type": "TRAGIC_END",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_199B8CFE42ACF6ED",
+          "beat_id": "BEAT_64D6B5C8D8FD81C7",
+          "sheet": "Dialogue Matrix",
+          "row": 389,
+          "field": "Tragic End Line",
+          "character": "D",
+          "village_role": "Storekeeper",
+          "story_role": "Core mediator / witness"
+        },
+        {
+          "instance_id": "INST_9C5DAA4C97678203",
+          "beat_id": "BEAT_861F8AD580C69F56",
+          "sheet": "Dialogue Matrix",
+          "row": 393,
+          "field": "Tragic End Line",
+          "character": "H",
+          "village_role": "Blacksmith",
+          "story_role": "Background villager"
+        },
+        {
+          "instance_id": "INST_ECB1BDCB516AE247",
+          "beat_id": "BEAT_AEACBFF9020C7E8B",
+          "sheet": "Dialogue Matrix",
+          "row": 397,
+          "field": "Tragic End Line",
+          "character": "L",
+          "village_role": "Shrine Keeper",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The throne demands stability. Miner's birthday should not be a source of strife.",
+          "npc_reaction": "Pauline nods, understanding the importance of tradition.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "No one should dictate how another celebrates their birthday.",
+          "npc_reaction": "H frowns, seeing the potential for chaos.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Let us remember Miner's birthday with kindness and compassion.",
+          "npc_reaction": "L smiles, appreciating the sentiment.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Miner's birthday should be a time of mutual gain, not conflict.",
+          "npc_reaction": "The blacksmith considers the economic implications.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "Miner's birthday is a test of their magical aptitude. The jester's failure should be noted.",
+          "npc_reaction": "The shrine keeper looks uncomfortable with the harsh assessment.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Nature demands balance. The jester's actions have upset it.",
+          "npc_reaction": "The storekeeper ponders the ecological impact.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "This entire scene feels contrived. Why is the jester's birthday causing such a fuss?",
+          "npc_reaction": "The blacksmith looks at John with confusion.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "playability",
+            "detail": "The response is a mild expression of the Monarchist worldview but it may not be engaging or interesting for players who do not identify with this worldview.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response is a mild expression of the Anarchist worldview but it may not be engaging or interesting for players who do not identify with this worldview.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response is a mild expression of the Religious worldview but it may not be engaging or interesting for players who do not identify with this worldview.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "playability",
+            "detail": "The response is a mild expression of the Guildist worldview but it may not be engaging or interesting for players who do not identify with this worldview.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "playability",
+            "detail": "The response is a mild expression of the Arcane Supremacist worldview but it may not be engaging or interesting for players who do not identify with this worldview.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "playability",
+            "detail": "The response is a mild expression of the Druidic worldview but it may not be engaging or interesting for players who do not identify with this worldview.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "playability",
+            "detail": "The response is a mild expression of the Cracked Mirror worldview but it may not be engaging or interesting for players who do not identify with this worldview.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "All responses are approved, but they may not be engaging or interesting for players who do not identify with the respective worldviews. It is recommended to provide a variety of responses that cater to different player preferences and interests."
+      }
+    },
+    {
+      "bank_id": "BANK_EEB9009BA20A",
+      "representative_beat_id": "BEAT_C56688C1FA039F3F",
+      "source_text": "Fine. I don't need their money to know whether they love me.",
+      "beat_type": "AFTER_B",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_B900C26E214C53CE",
+          "beat_id": "BEAT_C56688C1FA039F3F",
+          "sheet": "Dialogue Matrix",
+          "row": 386,
+          "field": "Response to B",
+          "character": "A",
+          "village_role": "Miner",
+          "story_role": "Core protagonist"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "I don't need their money to prove my worth. I was born for this throne.",
+          "npc_reaction": "The nobleman raises an eyebrow, intrigued by your confidence.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Money won't buy love. I choose to be loved for who I am.",
+          "npc_reaction": "The miner nods, impressed by your conviction.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 2,
+          "john": "Love cannot be bought. God's love is the only currency that matters.",
+          "npc_reaction": "The priestess looks thoughtful, considering your words.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Money is a measure of respect. I'd rather earn it than take it for granted.",
+          "npc_reaction": "The distiller regards you with newfound admiration.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 3,
+          "john": "Their money can't touch my magic. I don't need it to prove myself.",
+          "npc_reaction": "The sorcerer stares at you, captivated by your power.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "Love can't be bought. It grows from a connection to the earth.",
+          "npc_reaction": "The druid smiles, recognizing your wisdom.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "Money can't buy love. But it could fund my next script rewrite.",
+          "npc_reaction": "The townsfolk exchange confused glances, unsure of your sanity.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "unsupported invention",
+            "detail": "The generated response does not align with the provided context. The character A is a miner, not a nobleman.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "The generated response does not align with the provided context. The character A is a miner, not a member of an anarchist group.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "The generated response does not align with the provided context. The character A is a miner, not a priestess.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "The generated response does not align with the provided context. The character A is a miner, not a distiller.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "The generated response does not align with the provided context. The character A is a miner, not a sorcerer.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "The generated response does not align with the provided context. The character A is a miner, not a druid.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "unsupported invention",
+            "detail": "The generated response does not align with the provided context. The character A is a miner, not a townsfolk member.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "All generated responses do not align with the provided context as the character A is a miner and not any of the NPC roles mentioned in the responses."
+      }
+    },
+    {
+      "bank_id": "BANK_F93E0B6390DC",
+      "representative_beat_id": "BEAT_2C5A52649957F394",
+      "source_text": "A stock guarantee and a trial period would change the answer.",
+      "beat_type": "AFTER_B",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_A893CE6CB823E372",
+          "beat_id": "BEAT_2C5A52649957F394",
+          "sheet": "Dialogue Matrix",
+          "row": 387,
+          "field": "Response to B",
+          "character": "B",
+          "village_role": "Distiller",
+          "story_role": "Core protagonist"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "A guarantee and a trial period would ensure the plan's merits are considered.",
+          "npc_reaction": "Tina nods thoughtfully.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "No guarantees or trials are needed to prove the plan's worth.",
+          "npc_reaction": "Tina raises an eyebrow.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "A guarantee and a trial period would be divinely guided steps.",
+          "npc_reaction": "Tina looks uncertain but respectful.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "A guarantee and a trial period would align our interests.",
+          "npc_reaction": "Tina considers John's words carefully.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "A guarantee and a trial period would reveal the plan's true potential.",
+          "npc_reaction": "Tina looks impressed but wary.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "A guarantee and a trial period would ensure harmony with the land.",
+          "npc_reaction": "Tina looks surprised but intrigued.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 4,
+          "conviction_tier": 3,
+          "john": "A guarantee and a trial period would make the plan more predictable in this simulation.",
+          "npc_reaction": "Tina looks confused but intrigued.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'A guarantee and a trial period would ensure the plan's merits are considered.' is factually consistent with the Monarchist worldview, but it may not be entirely accurate in the context of the game's business dealings.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'No guarantees or trials are needed to prove the plan's worth.' is factually inconsistent with the Anarchist worldview, as it implies a disregard for practical measures that could protect all parties involved.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'A guarantee and a trial period would be divinely guided steps.' is factually inconsistent with the Religious worldview, as it implies that God's guidance can be sought through such mundane means.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'A guarantee and a trial period would align our interests.' is factually consistent with the Guildist worldview, but it may not fully capture the complexities of business partnerships in the game's setting.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'A guarantee and a trial period would reveal the plan's true potential.' is factually consistent with the Arcane Supremacist worldview, but it may not fully capture the unpredictable nature of magical abilities in the game.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'A guarantee and a trial period would ensure harmony with the land.' is factually consistent with the Druidic worldview, but it may not fully capture the complexities of ecological balance in the game's setting.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The statement 'A guarantee and a trial period would make the plan more predictable in this simulation.' is factually consistent with the Cracked Mirror worldview, but it may not fully capture the unpredictable nature of reality in the game.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The generated exchange is generally approved, with some warnings regarding factual consistency. The dialogue fits well within the context provided and showcases the distinct personalities of the characters."
+      }
+    },
+    {
+      "bank_id": "BANK_FEC7349E2BF8",
+      "representative_beat_id": "BEAT_033E882559BEC733",
+      "source_text": "Miner wanted proof they were an adult. Nobody meant this kind of proof.",
+      "beat_type": "TRAGIC_END",
+      "consequential": false,
+      "branch_a": null,
+      "branch_b": null,
+      "source_refs": [
+        {
+          "instance_id": "INST_F8F0950388AC770C",
+          "beat_id": "BEAT_033E882559BEC733",
+          "sheet": "Dialogue Matrix",
+          "row": 391,
+          "field": "Tragic End Line",
+          "character": "F",
+          "village_role": "Farmer",
+          "story_role": "Supporting observer"
+        },
+        {
+          "instance_id": "INST_9B119ED765489723",
+          "beat_id": "BEAT_1A913AC7CD47C9B7",
+          "sheet": "Dialogue Matrix",
+          "row": 395,
+          "field": "Tragic End Line",
+          "character": "J",
+          "village_role": "Watchkeeper",
+          "story_role": "Background villager"
+        }
+      ],
+      "responses": [
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The throne demands justice. A child's innocence should never be jeopardized.",
+          "npc_reaction": "Farmer nods, understanding the weight of your words.",
+          "scores": {
+            "A": -1,
+            "C": -1,
+            "D": 0,
+            "G": 0,
+            "M": 3,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "monarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "No one should dictate another's path. Let the miner decide their own fate.",
+          "npc_reaction": "Watchkeeper looks thoughtful, considering your perspective.",
+          "scores": {
+            "A": 3,
+            "C": 0,
+            "D": 1,
+            "G": -1,
+            "M": -1,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "anarchist"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "The gods weep for the child. May their mercy guide us.",
+          "npc_reaction": "Farmer bows her head, praying for guidance.",
+          "scores": {
+            "A": 0,
+            "C": -1,
+            "D": 1,
+            "G": 0,
+            "M": 0,
+            "R": 3,
+            "S": -1
+          },
+          "worldview": "religious"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "A contract was breached. The miner must face the consequences.",
+          "npc_reaction": "Watchkeeper looks troubled, questioning the severity of the punishment.",
+          "scores": {
+            "A": -1,
+            "C": 0,
+            "D": -1,
+            "G": 3,
+            "M": 0,
+            "R": 0,
+            "S": 0
+          },
+          "worldview": "guildist"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 1,
+          "john": "The arcane knows no mercy. The miner's fate was sealed long ago.",
+          "npc_reaction": "Watchkeeper seems unnerved, sensing an otherworldly force.",
+          "scores": {
+            "A": 0,
+            "C": 0,
+            "D": -1,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 3
+          },
+          "worldview": "arcane"
+        },
+        {
+          "branch": null,
+          "context_fit": 2,
+          "conviction_tier": 1,
+          "john": "Nature's balance demands a price. We must learn from this tragedy.",
+          "npc_reaction": "Farmer looks pensive, considering the deeper meaning of your words.",
+          "scores": {
+            "A": 1,
+            "C": 0,
+            "D": 3,
+            "G": -1,
+            "M": 0,
+            "R": 1,
+            "S": -1
+          },
+          "worldview": "druidic"
+        },
+        {
+          "branch": null,
+          "context_fit": 3,
+          "conviction_tier": 2,
+          "john": "This is all just a script. The miner's fate was written long ago.",
+          "npc_reaction": "Watchkeeper stares blankly, unsure how to respond.",
+          "scores": {
+            "A": 0,
+            "C": 3,
+            "D": 0,
+            "G": 0,
+            "M": -1,
+            "R": -1,
+            "S": 1
+          },
+          "worldview": "cracked"
+        }
+      ],
+      "review": {
+        "approved": true,
+        "issues": [
+          {
+            "category": "factual consistency",
+            "detail": "The Monarchist response assumes a legal system where breach of contract leads to severe punishment, which may not be the case in this world.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Anarchist response assumes a society where individuals have complete autonomy and no consequences for their actions, which may not be the case in this world.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Religious response assumes the existence of gods and their involvement in human affairs, which may not be the case in this world.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Guildist response assumes a society where contracts are strictly enforced and breaches are met with severe consequences, which may not be the case in this world.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Arcane response assumes a society where magical ability determines social hierarchy, which may not be the case in this world.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Druidic response assumes a society where nature is worshipped and human actions are judged based on their impact on the environment, which may not be the case in this world.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "factual consistency",
+            "detail": "The Cracked response assumes a reality that behaves like a story, game, dream or simulation, which may not be the case in this world.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Farmer's reaction to John's Monarchist response seems too understanding, as they are cautious and worried about debt.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's reaction to John's Anarchist response seems too thoughtful, as they are a gossip with a conscience.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Farmer's reaction to John's Religious response seems too prayerful, as they are cautious and worried about debt.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's reaction to John's Guildist response seems too troubled, as they are a gossip with a conscience.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's reaction to John's Arcane response seems too unnerved, as they are a gossip with a conscience.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Farmer's reaction to John's Druidic response seems too pensive, as they are cautious and worried about debt.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "NPC personality",
+            "detail": "The Watchkeeper's reaction to John's Cracked response seems too blank, as they are a gossip with a conscience.",
+            "severity": "warning",
+            "worldview": "cracked"
+          },
+          {
+            "category": "branch correctness",
+            "detail": "The Monarchist response does not lead to any branch, which may limit player engagement and choice.",
+            "severity": "warning",
+            "worldview": "monarchist"
+          },
+          {
+            "category": "branch correctness",
+            "detail": "The Anarchist response does not lead to any branch, which may limit player engagement and choice.",
+            "severity": "warning",
+            "worldview": "anarchist"
+          },
+          {
+            "category": "branch correctness",
+            "detail": "The Religious response does not lead to any branch, which may limit player engagement and choice.",
+            "severity": "warning",
+            "worldview": "religious"
+          },
+          {
+            "category": "branch correctness",
+            "detail": "The Guildist response does not lead to any branch, which may limit player engagement and choice.",
+            "severity": "warning",
+            "worldview": "guildist"
+          },
+          {
+            "category": "branch correctness",
+            "detail": "The Arcane response does not lead to any branch, which may limit player engagement and choice.",
+            "severity": "warning",
+            "worldview": "arcane"
+          },
+          {
+            "category": "branch correctness",
+            "detail": "The Druidic response does not lead to any branch, which may limit player engagement and choice.",
+            "severity": "warning",
+            "worldview": "druidic"
+          },
+          {
+            "category": "branch correctness",
+            "detail": "The Cracked response does not lead to any branch, which may limit player engagement and choice.",
+            "severity": "warning",
+            "worldview": "cracked"
+          }
+        ],
+        "summary": "The responses for each worldview are approved with several warnings regarding factual consistency, NPC personality, branch correctness, and potential limitations in player engagement and choice."
+      }
+    }
+  ]
+}
