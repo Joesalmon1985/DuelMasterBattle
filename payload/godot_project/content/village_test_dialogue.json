@@ -1,0 +1,96 @@
+{
+  "format": "dmb-village-dialogue-test-v1",
+  "fixture": "E17A",
+  "notes": "Replace names/lines with local-model output; keep ids stable unless you also change the projection.",
+  "story": {
+    "id": "e17a_dialogue_story",
+    "title": "The Missing Ledger",
+    "route": [
+      "reeve",
+      "woodcutter",
+      "miller",
+      "miner"
+    ]
+  },
+  "npcs": {
+    "reeve": {
+      "name": "Reeve",
+      "sprite": "npc",
+      "lines": [
+        "A production ledger has vanished from the hall.",
+        "Start at the logging camp. The last timber tally was entered yesterday, then the book disappeared."
+      ],
+      "locked_lines": [
+        "We have not spoken yet."
+      ]
+    },
+    "woodcutter": {
+      "name": "Woodcutter",
+      "sprite": "npc",
+      "lines": [
+        "I carried the timber tally to the mill myself.",
+        "The miller was arguing with someone from the mine. Ask there next."
+      ],
+      "locked_lines": [
+        "If the reeve wants me, the reeve can say so."
+      ]
+    },
+    "miller": {
+      "name": "Miller",
+      "sprite": "npc",
+      "lines": [
+        "The miner did not take the ledger from me.",
+        "But he knew it was missing before anyone announced it. That is what bothered me."
+      ],
+      "locked_lines": [
+        "I am working. Come back when you have a reason to interrupt me."
+      ]
+    },
+    "miner": {
+      "name": "Miner",
+      "sprite": "npc",
+      "lines": [
+        "All right. I found the ledger on the ore road.",
+        "I hid it because the figures prove somebody has been shaving every shipment. Read it before you decide who the thief is."
+      ],
+      "locked_lines": [
+        "I have nothing to tell you."
+      ]
+    },
+    "healer": {
+      "name": "Healer",
+      "sprite": "npc",
+      "lines": [
+        "The sawmill sends splinters, the forge sends burns, and the mine sends everything else."
+      ]
+    },
+    "storekeeper": {
+      "name": "Storekeeper",
+      "sprite": "npc",
+      "lines": [
+        "Wood, grain and ore all pass through the village. That makes the ledgers almost as important as the goods."
+      ]
+    },
+    "farmer": {
+      "name": "Farmer",
+      "sprite": "npc",
+      "lines": [
+        "Mind the crop rows. There is a track for a reason."
+      ]
+    },
+    "blacksmith": {
+      "name": "Blacksmith",
+      "sprite": "npc",
+      "lines": [
+        "Good ore can still make bad iron. Most mistakes happen between the mine and the hammer."
+      ]
+    },
+    "distiller": {
+      "name": "Distiller",
+      "sprite": "npc",
+      "lines": [
+        "Everyone remembers the grain that becomes bread. They remember this grain the morning after."
+      ]
+    }
+  }
+}

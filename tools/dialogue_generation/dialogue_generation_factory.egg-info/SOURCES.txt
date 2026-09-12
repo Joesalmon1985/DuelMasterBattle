@@ -1,7 +1,0 @@
-pyproject.toml
-dialogue_generation_factory.egg-info/PKG-INFO
-dialogue_generation_factory.egg-info/SOURCES.txt
-dialogue_generation_factory.egg-info/dependency_links.txt
-dialogue_generation_factory.egg-info/requires.txt
-dialogue_generation_factory.egg-info/top_level.txt
-tests/test_factory.py

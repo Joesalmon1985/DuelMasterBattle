@@ -1,117 +1,114 @@
-"""
-Prompts for the dialogue generation pipeline.
-"""
-# Classify bank prompt
-CLASSIFY_BANK_SYSTEM = """You are a dialogue classification assistant for Duel Master Battle, a fantasy wizard-duel game with village storytelling.
+from __future__ import annotations
 
-Your task: Given a source dialogue beat and a shortlist of candidate dialogue banks, decide whether the beat can safely share an existing bank's dialogue, or needs a new bank.
+import json
 
-Two beats belong to the same dialogue bank ONLY when essentially the same seven-worldview exchange can serve both situations without contradicting story facts. The standard is NOT merely "same theme" — if the actual dialogue would require different names, objects, events, or moral facts, do not force the merge.
-
-Respond with strict JSON:
-{
-  "best_match": "BANK_0017" or null,
-  "confidence": 0.0-1.0,
-  "can_share_dialogue": true/false,
-  "reason": "Explanation referencing specific facts that would or would not conflict"
-}"""
-
-CLASSIFY_BANK_USER = """SOURCE BEAT:
-Story Context: {story_context}
-Character: {character} ({village_role}, {story_role})
-NPC Personality: {npc_personality}
-Branch Info: {branch_info}
-Beat Text: {source_text}
-
-CANDIDATE BANKS:
-{candidates}
-
-Classify this beat against the candidates. Return strict JSON only."""
-
-
-# Write exchange prompt
-WRITE_EXCHANGE_SYSTEM = """You are a dialogue writer for Duel Master Battle, a fantasy wizard-duel game with seven distinct philosophical worldviews.
-
-Your task: Generate all seven worldview responses for a dialogue bank in ONE request, so the model sees the contrast between them.
-
-Worldview definitions:
-- Monarchist (M): Order, hierarchy, legitimate authority, oaths, witnessed promises
-- Anarchist (A): Freedom, autonomy, voluntary association, rejection of coercion
-- Religious (R): Covenant, divine witness, moral duty, protection of the vulnerable
-- Guildist (G): Contracts, written records, fair exchange, documented obligations
-- Arcane Supremacist (S): Competence, control, pragmatic power, danger assessment
-- Druidic (D): Balance, natural order, harm reduction, restoration over victory
-- Cracked Mirror (C): Meta-awareness, narrative tropes, genre savviness, dramatic irony
-
-Constraints:
-- John is the player character; his dialogue is the response
-- NPC reaction is the NPC's response to John
-- Keep exchanges concise and playable (not speeches)
-- No modern vocabulary; no worldview names spoken by John
-- Scores: -1, 0, 1, 2, 3 per worldview (alignment with that worldview)
-- Context fit: 1-5 (how well this response fits the specific situation)
-- Branch: A or B (which choice this responds to), or null
-
-Respond with strict JSON:
-{
-  "bank_id": "BANK_XXXX",
-  "responses": [
-    {
-      "worldview": "monarchist",
-      "context_fit": 4,
-      "branch": "A",
-      "john": "...",
-      "npc_reaction": "...",
-      "scores": {"monarchist": 3, "anarchist": -1, "religious": 0, "guildist": 0, "arcane": 0, "druidic": 0, "cracked": -1}
+CLASSIFIER_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "best_match": {"type": ["string", "null"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "can_share_dialogue": {"type": "boolean"},
+        "reason": {"type": "string"},
     },
-    ...
-  ]
-}"""
+    "required": ["best_match", "confidence", "can_share_dialogue", "reason"],
+    "additionalProperties": False,
+}
 
-WRITE_EXCHANGE_USER = """DIALOGUE BANK: {bank_id}
-SITUATION: {situation_summary}
-NPC LINE: {npc_line}
-NPC ROLE: {npc_role}
-NPC PERSONALITY: {npc_personality}
-KNOWN FACTS: {known_facts}
-BRANCH MEANINGS: {branch_meanings}
-WORLDVIEW DEFINITIONS: {worldview_defs}
+WRITER_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "bank_id": {"type": "string"},
+        "responses": {
+            "type": "array",
+            "minItems": 7,
+            "maxItems": 7,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "worldview": {"type": "string", "enum": ["monarchist", "anarchist", "religious", "guildist", "arcane", "druidic", "cracked"]},
+                    "context_fit": {"type": "integer", "minimum": 1, "maximum": 5},
+                    "conviction_tier": {"type": "integer", "minimum": 1, "maximum": 4},
+                    "branch": {"type": ["string", "null"], "enum": ["A", "B", None]},
+                    "john": {"type": "string"},
+                    "npc_reaction": {"type": "string"},
+                },
+                "required": ["worldview", "context_fit", "conviction_tier", "branch", "john", "npc_reaction"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    "required": ["bank_id", "responses"],
+    "additionalProperties": False,
+}
 
-Generate all seven worldview exchanges. Return strict JSON only."""
+REVIEW_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "approved": {"type": "boolean"},
+        "issues": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "worldview": {"type": ["string", "null"]},
+                    "severity": {"type": "string", "enum": ["error", "warning"]},
+                    "category": {"type": "string"},
+                    "detail": {"type": "string"},
+                },
+                "required": ["worldview", "severity", "category", "detail"],
+                "additionalProperties": False,
+            },
+        },
+        "summary": {"type": "string"},
+    },
+    "required": ["approved", "issues", "summary"],
+    "additionalProperties": False,
+}
 
 
-# Review exchange prompt
-REVIEW_EXCHANGE_SYSTEM = """You are an independent dialogue reviewer for Duel Master Battle.
+def classifier_prompts(beat: dict, candidates: list[dict]) -> tuple[str, str]:
+    system = """You classify reusable dialogue situations for Duel Master Battle.
+Python owns story facts and bank membership; you only judge semantic reuse.
+Two beats may share a bank ONLY if essentially the same seven John replies and NPC reactions can safely serve both without contradicting names, objects, events, relationships, branch meanings or moral facts.
+'Same theme' is not enough. Prefer a new bank when uncertain."""
+    user = "CURRENT BEAT:\n" + json.dumps(beat, ensure_ascii=False, indent=2)
+    user += "\n\nCANDIDATE BANKS:\n" + json.dumps(candidates, ensure_ascii=False, indent=2)
+    user += "\n\nChoose at most one candidate. Return only the requested structured result."
+    return system, user
 
-Your task: Review a generated seven-worldview exchange against story facts, NPC personality, worldview definitions, and branch meanings.
 
-Assess:
-- Worldview fidelity: Does each response genuinely embody its worldview?
-- Distinctiveness: Are the seven responses genuinely different from each other?
-- Story consistency: No contradictions with supplied facts
-- NPC reaction plausibility: Would this NPC actually say this?
-- Fantasy-world consistency: No modern concepts, no source IDs leaking
-- Branch consistency: Responses match their branch alignment
-- Unsupported invented facts: No new story elements introduced
-- Repetition: No near-duplicate responses
-- Tone/playability: Concise, game-ready, not speech-like
+def writer_prompts(bank_id: str, bank_context: dict, worldview_text: str, repair_issues: list | None = None) -> tuple[str, str]:
+    system = f"""You write concise fantasy-game dialogue for Duel Master Battle.
+Generate seven contrasting possible replies by John and an NPC reaction to each reply.
+The seven philosophical worldviews are authoring lenses, never labels John should say aloud.
+Do not change story facts, names, relationships, choices or consequences. Do not invent a third plot branch.
+For consequential beats, every response must choose existing branch A or B and the seven responses collectively must include both branches.
+For non-consequential beats, branch must be null.
+Keep John normally under 35 words and NPC reactions normally under 40 words. Avoid speeches and modern-world vocabulary.
+Cracked Mirror should be subtle unless conviction is high; it must not automatically break the fourth wall at low conviction.
+Do not include personality score deltas; Python supplies those authoritatively.
 
-Return strict JSON with individual issues:
-{
-  "approved": true/false,
-  "issues": [
-    {"worldview": "monarchist", "severity": "error|warning", "category": "fidelity|consistency|plausibility|tone", "detail": "..."},
-    ...
-  ],
-  "summary": "Overall assessment"
-}"""
+AUTHORITATIVE WORLDVIEWS:\n{worldview_text}"""
+    payload = {
+        "bank_id": bank_id,
+        "representative": bank_context["bank"],
+        "source_instances": bank_context["instances"],
+    }
+    user = "AUTHORITATIVE BANK CONTEXT:\n" + json.dumps(payload, ensure_ascii=False, indent=2)
+    if repair_issues:
+        user += "\n\nPREVIOUS REVIEW/VALIDATION ISSUES TO REPAIR:\n" + json.dumps(repair_issues, ensure_ascii=False, indent=2)
+    user += "\n\nReturn exactly seven distinct responses, one for each worldview key."
+    return system, user
 
-REVIEW_EXCHANGE_USER = """STORY FACTS: {story_facts}
-NPC PERSONALITY: {npc_personality}
-WORLDVIEW DEFINITIONS: {worldview_defs}
-BRANCH MEANINGS: {branch_meanings}
 
-GENERATED EXCHANGE:
-{exchange_json}
+def reviewer_prompts(bank_context: dict, exchange: dict, worldview_text: str) -> tuple[str, str]:
+    system = f"""You are an independent dialogue QA reviewer for Duel Master Battle.
+Review but do not silently rewrite. Treat supplied story context and A/B branches as authoritative.
+Assess worldview fidelity, distinctiveness, factual consistency, NPC personality, branch correctness, unsupported invention, fantasy tone and playability.
+Warnings may be stylistic; errors mean the material should not be approved.
 
-Review and return strict JSON only."""
+AUTHORITATIVE WORLDVIEWS:\n{worldview_text}"""
+    user = "SOURCE CONTEXT:\n" + json.dumps(bank_context, ensure_ascii=False, indent=2)
+    user += "\n\nGENERATED EXCHANGE:\n" + json.dumps(exchange, ensure_ascii=False, indent=2)
+    user += "\n\nReturn structured findings only."
+    return system, user

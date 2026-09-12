@@ -2,6 +2,7 @@
 .pytest_cache/
 .venv/
 *.pyc
+*.egg-info/
 .godot/
 godot_project/.godot/
 godot_project/.godot_user/
@@ -17,3 +18,7 @@ export/
 *.swp
 *~
 Spare Sprites/
+tools/dialogue_generation/*.db
+tools/dialogue_generation/*.db-wal
+tools/dialogue_generation/*.db-shm
+generated/dialogue/

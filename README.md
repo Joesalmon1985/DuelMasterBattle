@@ -1,69 +1,118 @@
-# Duel Master Battle
+# Duel Master Battle — Village Dialogue / Story Test Patch
 
-**Real-time wizard ward duel** for phones, built in Godot 4. You and a rival wizard each hide a
-**Ward of four spells** (six spell types, repeats allowed) and race to deduce each other's Ward
-with Mastermind-style aggregate feedback, under a 5–60 second casting window. Ten casts each.
+This is a **focused vertical slice** for the current Village Test Mode.
 
-This branch is the **first adventure**: John the woodcutter finds magic, crosses a
-small top-down world (the Clearing → the Burnt Wood → Ashwell village), grows
-from one spell and one weave slot to four spells and four slots, and faces the
-Red Wizard — see [docs/FIRST_ADVENTURE.md](docs/FIRST_ADVENTURE.md). The
-standalone duel loop underneath is unchanged. The wider game (bosses, Last
-Stand, larger Wards) is designed for but not enabled — see
-[docs/CORE_MVP.md](docs/CORE_MVP.md).
+## Goal
+
+Test whether dialogue created by your local language model can be plugged into a real explorable village story while John is running through the normal production `overworld.tscn`.
+
+## What changes
+
+- keeps the existing `Play Village Test Menu.bat` and production Overworld boot;
+- replaces the random / coordinate-confused village projection with a deterministic 60x52 continuous map;
+- puts Forest/Wood, Village, Fields/Grain and Mine/Ore in the same area;
+- represents Sawmill, Mill, Forge, Distillery, Logging Camp, Farmstead and Mine;
+- uses production `npc` / `sign` entities, not the previous unsupported generic `interaction` kind;
+- adds a real four-beat test story with state:
+  **Reeve -> Woodcutter -> Miller -> Miner**;
+- talking to story NPCs out of order gives `locked_lines`;
+- keeps story state in `Adventure.state`, so the existing VillageTestRunner Reset/Exit snapshot restores it;
+- never saves test-story state to the campaign;
+- loads the spoken dialogue from editable JSON.
+
+## Install
+
+Extract the zip. Then from its folder run:
+
+```powershell
+python apply_patch.py "C:\path\to\DuelMasterBattle"
+```
+
+The installer makes a backup:
+
+`.village_test_patch_backup/overworld.gd`
+
+Then it copies the payload and inserts one guarded Village-Test-only hook into `_interact_npc()`.
+
+You can sanity-check installation with:
+
+```powershell
+python verify_patch.py "C:\path\to\DuelMasterBattle"
+```
 
 ## Play
 
-Windows: double-click **`Play Duel Master Battle.bat`** (edit the Godot path inside if needed).
+Double-click:
 
-Anywhere:
+`Play Village Test Menu.bat`
 
-```bash
-export GODOT=/path/to/godot4        # optional; tools/find_godot.sh searches common places
-tools/play.sh
+Choose **E17A**.
+
+Story route:
+
+1. Reeve — village square.
+2. Woodcutter — forest/logging camp.
+3. Miller — village mill.
+4. Miner — mine road.
+
+The other economic/civic NPCs are ordinary dialogue test targets.
+
+## Plug in your local-model dialogue
+
+Edit:
+
+`godot_project/content/village_test_dialogue.json`
+
+Keep the stable NPC ids unless you also change the projection:
+
+- `reeve`
+- `woodcutter`
+- `miller`
+- `miner`
+- `healer`
+- `storekeeper`
+- `farmer`
+- `blacksmith`
+- `distiller`
+
+Each record supports:
+
+```json
+{
+  "name": "Your generated character name",
+  "sprite": "npc",
+  "lines": ["Generated line one.", "Generated line two."],
+  "locked_lines": ["Dialogue before this story beat is unlocked."]
+}
 ```
 
-Choose **New Game** (or Resume) → walk with the pad / arrow keys, ✦ or Space to
-interact → opening cutscene → take the staff → douse fires → fight creatures →
-reach Ashwell → face the Red Wizard. **Quick Duel** on the menu plays a
-standalone 4-slot wizard match.
+A file at `user://village_test_dialogue.json` overrides the repository JSON. That gives your local generator a safe target that need not alter Git files.
 
-## Run the checks
+Use **Reset Village** or leave/re-enter the fixture after changing dialogue.
 
-```bash
-tools/run_all_checks.sh        # parse check + sim tests + UI smoke + adventure flow + real-time playtest
-tools/run_godot_tests.sh       # rules, feedback, AI, cast windows, win/lose/stalemate
-tools/run_godot_ui_smoke.sh    # drives the real board through a duel (headless)
-tools/run_adventure_flow.sh    # drives the whole first chapter + save/load round trip (headless)
-tools/run_realtime_playtest.sh # wall-clock pacing with synthesised taps (headed)
-tools/run_balance_probe.sh     # AI solve rate / average casts per difficulty
-tools/capture_visual_qa.sh     # screenshots of duel screen states → qa/screenshots/current
-tools/capture_adventure_qa.sh  # screenshots of the adventure → qa/screenshots/adventure
-```
+## Scope
 
-Windows: **`Run Tests.bat`**.
+This patch is intentionally about **proving the dialogue/story pipeline**, not claiming the entire E17/E17A workbook has been implemented.
 
-Python prototype tests (rules reference implementation): `cd python_prototype && python -m pytest -q`.
+The current repository fixture contains generic invented cast IDs and pilot-story cast that do not match one another. This patch removes that unreliable coupling and gives you a stable, playable data boundary first.
 
-## Project structure
+If this vertical slice works well, the next step is straightforward: convert the workbook/local-LLM output into the same JSON/fixture structure instead of changing gameplay code again.
 
-```
-godot_project/
-  sim/                 Authoritative rules: battle sim, combatants, bestiary, progression, weave bot, tests
-  client/scripts/      game_board.gd (duel screen), main_menu.gd, adventure.gd (save), sfx.gd, theme
-  client/world/        overworld.gd, world_data.gd (areas), story_events.gd, dialogue_box.gd, touch_pad.gd
-  client/components/   spell_slot, feedback_pips, cast_button, pixel_portrait, spell_vfx (+ legacy composite_wizard)
-  client/legacy/       Dormant pre-MVP components kept for the wider game
-  assets/pixel/        Committed pixel art (built by tools/build_pixel_assets.py from gitignored Spare Sprites/)
-docs/FIRST_ADVENTURE.md What the opening chapter is, bestiary, asymmetric rules, saves, adding content
-docs/CORE_MVP.md       The duel underneath: scope, architecture, testing, future hooks
-python_prototype/      Pure-Python rules + pytest (predates the adventure; duel rules only)
-```
+## Production safety
 
-## Docs
+The added `_interact_npc` branch runs only when:
 
-- [First Adventure](docs/FIRST_ADVENTURE.md) — chapter path, bestiary, asymmetric duels, saves
-- [Core MVP](docs/CORE_MVP.md) — the duel underneath, architecture, testing, future hooks
-- [Game rules](docs/RULES.md)
-- [Encounter design](docs/ENCOUNTER_DESIGN.md) (future)
-- [PRD](docs/PRD.md) (wider game vision)
+1. `_village_test_active` is true; and
+2. the projected NPC contains `village_test_story`.
+
+Normal campaign NPCs and Puzzle Test Mode therefore retain their normal paths.
+
+## Files
+
+- `apply_patch.py`
+- `verify_patch.py`
+- `payload/godot_project/sim/world/village_test_profiles.gd`
+- `payload/godot_project/sim/world/village_test_dialogue.gd`
+- `payload/godot_project/sim/world/village_test_dialogue_story.gd`
+- `payload/godot_project/sim/world/village_composite_projection.gd`
+- `payload/godot_project/content/village_test_dialogue.json`

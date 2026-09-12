@@ -1,590 +1,323 @@
 extends RefCounted
 class_name VillageCompositeProjection
 
-## Builds a single large continuous area dictionary from a village test profile.
-## Output shape matches DmbWorldData area dicts consumed by Overworld:
-## { id, name, rows, theme, entities, ... }
+## Builds a single large continuous area dictionary from a village test fixture.
+## Loads data from content/village_tests/<profile_id>/ and projects to production area format.
+## Output shape matches DmbWorldData area dicts consumed by Overworld.
 
-const _Profiles = preload("res://sim/world/village_test_profiles.gd")
-const _WorldData = preload("res://client/world/world_data.gd")
+const Catalog = preload("res://sim/world/village_test_catalog.gd")
+const QuestRunner = preload("res://sim/world/village_quest_runner.gd")
 
-# Tile characters matching Overworld's expectations
-const TILE_GRASS = "."
-const TILE_DIRT = ","
-const TILE_STONE = "#"
-const TILE_WATER = "~"
-const TILE_TREE = "T"
-const TILE_CROP = "c"
-const TILE_ROCK = "r"
-const TILE_WALL = "W"
-const TILE_FLOOR = "F"
-const TILE_ROAD = "R"
-const TILE_BRIDGE = "B"
-const TILE_FENCE = "f"
-const TILE_HEDGE = "h"
+# Tile constants
+const GRASS := "."
+const DIRT := ","
+const STONE := "#"
+const TREE := "T"
+const CROP := "c"
+const ROCK := "r"
+const WALL := "W"
+const FLOOR := "F"
+const ROAD := "R"
+const FENCE := "f"
+const WATER := "~"
+const BRIDGE := "B"
 
 static func project(profile_id: String) -> Dictionary:
-	var profile = _Profiles.get(profile_id)
-	if profile.is_empty():
-		push_error("VillageCompositeProjection: unknown profile " + profile_id)
-		return {}
-	
-	var regions = _Profiles.get_regions(profile_id)
-	var anchors = _Profiles.get_semantic_anchors(profile_id)
-	var cast = _Profiles.get_cast(profile_id)
-	
-	# Calculate total map bounds
-	var min_x = INF
-	var min_y = INF
-	var max_x = -INF
-	var max_y = -INF
-	for r_name in regions:
-		var r = regions[r_name]
-		var b = r["bounds"]
-		min_x = min(min_x, b["x"])
-		min_y = min(min_y, b["y"])
-		max_x = max(max_x, b["x"] + b["w"])
-		max_y = max(max_y, b["y"] + b["h"])
-	
-	var map_w = max_x - min_x
-	var map_h = max_y - min_y
-	
-	# Build empty grid
-	var rows: Array = []
-	for y in range(map_h):
-		rows.append(_make_row(map_w, TILE_GRASS))
-	
-	# Fill each region
-	for r_name in regions:
-		_fill_region(rows, regions[r_name], min_x, min_y, cast)
-	
-	# Connect regions with paths
-	_connect_regions(rows, regions, min_x, min_y)
-	
-	# Build entities list
-	var entities: Array = []
-	_add_region_entities(entities, regions, min_x, min_y, cast, anchors)
-	_add_anchor_markers(entities, anchors, min_x, min_y)
-	
-	# Player start
-	var player_start = anchors["village_square"]["pos"]
-	player_start = [player_start[0] - min_x, player_start[1] - min_y]
-	
-	return {
-		"id": "village_test_" + profile_id.lower(),
-		"name": profile["name"],
-		"rows": rows,
-		"theme": "village",
-		"entities": entities,
-		"player_start": player_start,
-		"bounds": {"x": min_x, "y": min_y, "w": map_w, "h": map_h},
-		"profile_id": profile_id,
-		"semantic_anchors": anchors,
-		"regions": regions,
-	}
+    var fixture = Catalog.load_fixture(profile_id)
+    if fixture.is_empty():
+        push_error("VillageCompositeProjection: failed to load fixture " + profile_id)
+        return {}
+    
+    var village_data = fixture.get("village", {})
+    var cast_data = fixture.get("cast", {})
+    var quest_data = fixture.get("quest", {})
+    var dialogue_data = fixture.get("dialogue", {})
+    
+    # Initialize quest runner for this profile
+    QuestRunner.begin(profile_id)
+    
+    var map_size = village_data.get("map", {})
+    var w := int(map_size.get("width", 72))
+    var h := int(map_size.get("height", 58))
+    var grid: Array = []
+    for _y in range(h):
+        grid.append(GRASS.repeat(w))
+    
+    # Build terrain by region
+    _build_regions(grid, village_data.get("regions", {}))
+    
+    # Build buildings
+    _build_buildings(grid, village_data.get("buildings", []), village_data.get("semantic_anchors", {}))
+    
+    # Build roads
+    _build_roads(grid, village_data.get("roads", []), village_data.get("semantic_anchors", {}))
+    
+    # Build entities (NPCs, signs, etc.)
+    var entities = _build_entities(grid, cast_data, village_data.get("semantic_anchors", {}), dialogue_data)
+    
+    var player_start = village_data.get("player_start", [w/2, h/2])
+    
+    return {
+        "id": "village_test_" + profile_id.to_lower(),
+        "name": str(village_data.get("name", profile_id)),
+        "rows": grid,
+        "theme": "village",
+        "entities": entities,
+        "player_start": player_start,
+        "profile_id": profile_id,
+        "regions": village_data.get("regions", {}),
+        "semantic_anchors": village_data.get("semantic_anchors", {}),
+        "quest_id": quest_data.get("id", ""),
+        "quest_title": quest_data.get("title", ""),
+    }
 
-static func _make_row(width: int, fill_char: String) -> String:
-	return fill_char * width
+static func _set_tile(grid: Array, x: int, y: int, tile: String) -> void:
+    if y < 0 or y >= grid.size() or x < 0 or x >= grid[y].length():
+        return
+    var row: String = grid[y]
+    grid[y] = row.substr(0, x) + tile + row.substr(x + 1)
 
-static func _set_tile(rows: Array, x: int, y: int, char: String) -> void:
-	if y >= 0 and y < rows.size() and x >= 0 and x < rows[y].length():
-		var row = rows[y]
-		rows[y] = row.substr(0, x) + char + row.substr(x + 1)
+static func _rect(grid: Array, x: int, y: int, w: int, h: int, tile: String) -> void:
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            _set_tile(grid, xx, yy, tile)
 
-static func _get_tile(rows: Array, x: int, y: int) -> String:
-	if y >= 0 and y < rows.size() and x >= 0 and x < rows[y].length():
-		return rows[y][x]
-	return TILE_GRASS
+static func _building(grid: Array, x: int, y: int, w: int, h: int, door_x: int) -> void:
+    for xx in range(x, x + w):
+        _set_tile(grid, xx, y, WALL)
+        _set_tile(grid, xx, y + h - 1, WALL)
+    for yy in range(y, y + h):
+        _set_tile(grid, x, yy, WALL)
+        _set_tile(grid, x + w - 1, yy, WALL)
+    for yy in range(y + 1, y + h - 1):
+        for xx in range(x + 1, x + w - 1):
+            _set_tile(grid, xx, yy, FLOOR)
+    _set_tile(grid, door_x, y + h - 1, ROAD)
 
-static func _fill_region(rows: Array, region: Dictionary, offset_x: int, offset_y: int, cast: Dictionary) -> void:
-	var b = region["bounds"]
-	var rx = b["x"] - offset_x
-	var ry = b["y"] - offset_y
-	var rw = b["w"]
-	var rh = b["h"]
-	var hex_type = region["hex_type"]
-	var content = region["content"]
-	
-	# Base terrain by hex type
-	if hex_type == "Wood":
-		_fill_forest(rows, rx, ry, rw, rh)
-	elif hex_type == "Grain":
-		_fill_fields(rows, rx, ry, rw, rh)
-	elif hex_type == "Ore":
-		_fill_mine(rows, rx, ry, rw, rh)
-	elif hex_type == "Settlement":
-		_fill_village(rows, rx, ry, rw, rh)
-	
-	# Add content (buildings, work areas, etc.)
-	if content.has("logging_camp"):
-		_add_logging_camp(rows, rx, ry, content["logging_camp"])
-	if content.has("farmstead"):
-		_add_farmstead(rows, rx, ry, content["farmstead"])
-	if content.has("mine_mouth"):
-		_add_mine_mouth(rows, rx, ry, content["mine_mouth"])
-	if content.has("mining_works"):
-		_add_mining_works(rows, rx, ry, content["mining_works"])
-	if content.has("processing"):
-		_add_processing_buildings(rows, rx, ry, content["processing"])
-	if content.has("civic"):
-		_add_civic_buildings(rows, rx, ry, content["civic"])
-	if content.has("village_square"):
-		_add_village_square(rows, rx, ry, content["village_square"])
-	if content.has("well"):
-		_add_well(rows, rx, ry, content["well"])
-	if content.has("shrine"):
-		_add_shrine(rows, rx, ry, content["shrine"])
-	if content.has("houses"):
-		_add_houses(rows, rx, ry, rw, rh)
-	if content.has("trees"):
-		_add_scattered_trees(rows, rx, ry, rw, rh)
-	if content.has("crops"):
-		_add_crops(rows, rx, ry, rw, rh)
-	if content.has("rocks"):
-		_add_scattered_rocks(rows, rx, ry, rw, rh)
-	if content.has("paths"):
-		_add_region_paths(rows, rx, ry, rw, rh, hex_type)
+static func _build_regions(grid: Array, regions: Dictionary) -> void:
+    for region_id in regions:
+        var region = regions[region_id]
+        var bounds = region.get("bounds", [])
+        if bounds.size() != 4:
+            continue
+        var x: int = bounds[0]
+        var y: int = bounds[1]
+        var w: int = bounds[2]
+        var h: int = bounds[3]
+        var terrain = region.get("terrain", "grass")
+        
+        match terrain:
+            "forest":
+                _fill_forest(grid, x, y, w, h)
+            "farmland":
+                _fill_farmland(grid, x, y, w, h)
+            "industrial":
+                _fill_industrial(grid, x, y, w, h)
+            "water":
+                _fill_water(grid, x, y, w, h)
+            "settlement":
+                _fill_settlement_base(grid, x, y, w, h)
+            _:
+                _rect(grid, x, y, w, h, GRASS)
 
-static func _fill_forest(rows: Array, x: int, y: int, w: int, h: int) -> void:
-	for dy in range(h):
-		for dx in range(w):
-			var tx = x + dx
-			var ty = y + dy
-			# Dense forest with some clearings
-			if randf() < 0.7:
-				_set_tile(rows, tx, ty, TILE_TREE)
-			else:
-				_set_tile(rows, tx, ty, TILE_GRASS)
+static func _fill_forest(grid: Array, x: int, y: int, w: int, h: int) -> void:
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            # Paths through forest
+            if xx in [x + w/3, x + 2*w/3] or yy in [y + h/3, y + 2*h/3]:
+                _set_tile(grid, xx, yy, DIRT)
+            elif ((xx * 17 + yy * 31) % 7) < 4:
+                _set_tile(grid, xx, yy, TREE)
+            else:
+                _set_tile(grid, xx, yy, GRASS)
+    # Clearing for camp
+    var cx = x + w - 8
+    var cy = y + 4
+    _rect(grid, cx, cy, 8, 6, DIRT)
 
-static func _fill_fields(rows: Array, x: int, y: int, w: int, h: int) -> void:
-	for dy in range(h):
-		for dx in range(w):
-			var tx = x + dx
-			var ty = y + dy
-			# Crop rows with dirt paths
-			if dy % 4 == 0:
-				_set_tile(rows, tx, ty, TILE_DIRT)  # path between crop rows
-			elif randf() < 0.8:
-				_set_tile(rows, tx, ty, TILE_CROP)
-			else:
-				_set_tile(rows, tx, ty, TILE_DIRT)
+static func _fill_farmland(grid: Array, x: int, y: int, w: int, h: int) -> void:
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            # Crop rows
+            if yy % 4 == 0:
+                _set_tile(grid, xx, yy, DIRT)
+            elif xx in [x + w/2] and yy in [y + h/2]:
+                _set_tile(grid, xx, yy, DIRT)
+            else:
+                _set_tile(grid, xx, yy, CROP)
+    # Fence perimeter
+    for xx in range(x, x + w):
+        _set_tile(grid, xx, y, FENCE)
+        _set_tile(grid, xx, y + h - 1, FENCE)
+    for yy in range(y, y + h):
+        _set_tile(grid, x, yy, FENCE)
+        _set_tile(grid, x + w - 1, yy, FENCE)
 
-static func _fill_mine(rows: Array, x: int, y: int, w: int, h: int) -> void:
-	for dy in range(h):
-		for dx in range(w):
-			var tx = x + dx
-			var ty = y + dy
-			# Rocky terrain
-			if randf() < 0.6:
-				_set_tile(rows, tx, ty, TILE_ROCK)
-			elif randf() < 0.3:
-				_set_tile(rows, tx, ty, TILE_STONE)
-			else:
-				_set_tile(rows, tx, ty, TILE_DIRT)
+static func _fill_industrial(grid: Array, x: int, y: int, w: int, h: int) -> void:
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            if ((xx * 13 + yy * 11) % 6) < 3:
+                _set_tile(grid, xx, yy, ROCK)
+            elif xx in [x + 2, x + w - 3] or yy in [y + 2, y + h - 3]:
+                _set_tile(grid, xx, yy, STONE)
+            else:
+                _set_tile(grid, xx, yy, DIRT)
+    # Kiln structure
+    _rect(grid, x + 3, y + 3, 8, 5, STONE)
 
-static func _fill_village(rows: Array, x: int, y: int, w: int, h: int) -> void:
-	for dy in range(h):
-		for dx in range(w):
-			var tx = x + dx
-			var ty = y + dy
-			# Village: mostly grass/dirt with building footprints added later
-			if dy < 3 or dy >= h - 3 or dx < 3 or dx >= w - 3:
-				_set_tile(rows, tx, ty, TILE_DIRT)  # perimeter
-			else:
-				_set_tile(rows, tx, ty, TILE_GRASS)
+static func _fill_water(grid: Array, x: int, y: int, w: int, h: int) -> void:
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            _set_tile(grid, xx, yy, WATER)
 
-static func _add_logging_camp(rows: Array, rx: int, ry: int, camp: Dictionary) -> void:
-	var pos = camp["pos"]
-	var bx = rx + pos[0]
-	var by = ry + pos[1]
-	# 5x4 building footprint
-	for dy in range(4):
-		for dx in range(5):
-			_set_tile(rows, bx + dx, by + dy, TILE_FLOOR)
-	# Entrance
-	_set_tile(rows, bx + 2, by + 3, TILE_DIRT)
+static func _fill_settlement_base(grid: Array, x: int, y: int, w: int, h: int) -> void:
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            _set_tile(grid, xx, yy, DIRT)
 
-static func _add_farmstead(rows: Array, rx: int, ry: int, farm: Dictionary) -> void:
-	var pos = farm["pos"]
-	var bx = rx + pos[0]
-	var by = ry + pos[1]
-	# Main house 6x5
-	for dy in range(5):
-		for dx in range(6):
-			_set_tile(rows, bx + dx, by + dy, TILE_FLOOR)
-	# Barn 4x4
-	for dy in range(4):
-		for dx in range(4):
-			_set_tile(rows, bx + 8 + dx, by + 1 + dy, TILE_FLOOR)
-	# Fence around
-	for i in range(12):
-		_set_tile(rows, bx - 1 + i, by - 1, TILE_FENCE)
-		_set_tile(rows, bx - 1 + i, by + 5, TILE_FENCE)
-	for i in range(7):
-		_set_tile(rows, bx - 1, by - 1 + i, TILE_FENCE)
-		_set_tile(rows, bx + 10, by - 1 + i, TILE_FENCE)
+static func _build_buildings(grid: Array, buildings: Array, anchors: Dictionary) -> void:
+    for b in buildings:
+        var anchor_name = b.get("anchor", "")
+        var anchor_pos = anchors.get(anchor_name, [-1, -1])
+        if anchor_pos[0] < 0:
+            continue
+        var size = b.get("size", [6, 5])
+        var door_offset = b.get("door_offset", [3, 4])
+        var bx = anchor_pos[0] - door_offset[0]
+        var by = anchor_pos[1] - door_offset[1]
+        var door_x = anchor_pos[0]
+        var door_y = by + size[1] - 1
+        _building(grid, bx, by, size[0], size[1], door_x)
 
-static func _add_mine_mouth(rows: Array, rx: int, ry: int, mine: Dictionary) -> void:
-	var pos = mine["pos"]
-	var bx = rx + pos[0]
-	var by = ry + pos[1]
-	# Mine entrance 4x3
-	for dy in range(3):
-		for dx in range(4):
-			_set_tile(rows, bx + dx, by + dy, TILE_STONE)
-	# Opening
-	_set_tile(rows, bx + 1, by + 2, TILE_DIRT)
-	_set_tile(rows, bx + 2, by + 2, TILE_DIRT)
-	# Supports
-	_set_tile(rows, bx, by, TILE_WALL)
-	_set_tile(rows, bx + 3, by, TILE_WALL)
+static func _build_roads(grid: Array, roads: Array, anchors: Dictionary) -> void:
+    for road in roads:
+        var from_anchor = road.get("from", "")
+        var to_anchor = road.get("to", "")
+        var from_pos = anchors.get(from_anchor, [-1, -1])
+        var to_pos = anchors.get(to_anchor, [-1, -1])
+        if from_pos[0] < 0 or to_pos[0] < 0:
+            continue
+        _draw_road(grid, from_pos, to_pos)
 
-static func _add_mining_works(rows: Array, rx: int, ry: int, works: Dictionary) -> void:
-	var pos = works["pos"]
-	var bx = rx + pos[0]
-	var by = ry + pos[1]
-	# Processing area 6x4
-	for dy in range(4):
-		for dx in range(6):
-			_set_tile(rows, bx + dx, by + dy, TILE_FLOOR)
-	# Cart tracks
-	for i in range(6):
-		_set_tile(rows, bx + i, by + 4, TILE_ROAD)
+static func _draw_road(grid: Array, from: Array, to: Array) -> void:
+    var x1: int = from[0]
+    var y1: int = from[1]
+    var x2: int = to[0]
+    var y2: int = to[1]
+    # Simple L-shaped path
+    var mid_x = x1
+    var mid_y = y2
+    # Horizontal then vertical
+    _draw_line(grid, x1, y1, mid_x, y1, ROAD)
+    _draw_line(grid, mid_x, y1, mid_x, mid_y, ROAD)
+    _draw_line(grid, mid_x, mid_y, x2, y2, ROAD)
 
-static func _add_processing_buildings(rows: Array, rx: int, ry: int, processing: Dictionary) -> void:
-	# Each processing building is 5x5 with distinct visual marker
-	for name in processing:
-		var b = processing[name]
-		var pos = b["pos"]
-		var bx = rx + pos[0]
-		var by = ry + pos[1]
-		
-		# Building footprint
-		for dy in range(5):
-			for dx in range(5):
-				_set_tile(rows, bx + dx, by + dy, TILE_FLOOR)
-		
-		# Distinctive roof/marker by type
-		if name == "sawmill":
-			_set_tile(rows, bx + 2, by, TILE_WALL)  # saw blade marker
-		elif name == "mill":
-			_set_tile(rows, bx + 2, by, TILE_ROCK)  # millstone
-		elif name == "forge":
-			_set_tile(rows, bx + 2, by, "#")  # anvil
-		elif name == "distillery":
-			_set_tile(rows, bx + 2, by, "D")  # still
-		
-		# Entrance
-		_set_tile(rows, bx + 2, by + 4, TILE_DIRT)
+static func _draw_line(grid: Array, x1: int, y1: int, x2: int, y2: int, tile: String) -> void:
+    if x1 == x2:
+        var step = 1 if y2 > y1 else -1
+        for y in range(y1, y2 + step, step):
+            _set_tile(grid, x1, y, tile)
+    elif y1 == y2:
+        var step = 1 if x2 > x1 else -1
+        for x in range(x1, x2 + step, step):
+            _set_tile(grid, x, y1, tile)
 
-static func _add_civic_buildings(rows: Array, rx: int, ry: int, civic: Dictionary) -> void:
-	for name in civic:
-		var b = civic[name]
-		var pos = b["pos"]
-		var bx = rx + pos[0]
-		var by = ry + pos[1]
-		
-		if name == "store":
-			# Store 6x5
-			for dy in range(5):
-				for dx in range(6):
-					_set_tile(rows, bx + dx, by + dy, TILE_FLOOR)
-			_set_tile(rows, bx + 3, by + 4, TILE_DIRT)  # entrance
-		else:
-			# House 5x5
-			for dy in range(5):
-				for dx in range(5):
-					_set_tile(rows, bx + dx, by + dy, TILE_FLOOR)
-			_set_tile(rows, bx + 2, by + 4, TILE_DIRT)  # entrance
-
-static func _add_village_square(rows: Array, rx: int, ry: int, square: Dictionary) -> void:
-	var pos = square["pos"]
-	var bx = rx + pos[0]
-	var by = ry + pos[1]
-	# 8x6 paved square
-	for dy in range(6):
-		for dx in range(8):
-			_set_tile(rows, bx + dx - 4, by + dy - 3, TILE_ROAD)
-
-static func _add_well(rows: Array, rx: int, ry: int, well: Dictionary) -> void:
-	var pos = well["pos"]
-	var bx = rx + pos[0]
-	var by = ry + pos[1]
-	_set_tile(rows, bx, by, "o")  # well
-	# Surrounding stones
-	for dx in [-1, 0, 1]:
-		for dy in [-1, 0, 1]:
-			if dx != 0 or dy != 0:
-				_set_tile(rows, bx + dx, by + dy, TILE_STONE)
-
-static func _add_shrine(rows: Array, rx: int, ry: int, shrine: Dictionary) -> void:
-	var pos = shrine["pos"]
-	var bx = rx + pos[0]
-	var by = ry + pos[1]
-	# Small shrine 3x3
-	for dy in range(3):
-		for dx in range(3):
-			_set_tile(rows, bx + dx - 1, by + dy - 1, TILE_STONE)
-	_set_tile(rows, bx, by, "+")  # shrine symbol
-
-static func _add_houses(rows: Array, rx: int, ry: int, w: int, h: int) -> void:
-	# Scattered houses in village
-	var positions = [
-		[8, 8], [18, 8], [42, 8], [52, 8],
-		[8, 20], [18, 20], [42, 20], [52, 20],
-	]
-	for p in positions:
-		var bx = rx + p[0]
-		var by = ry + p[1]
-		for dy in range(5):
-			for dx in range(5):
-				_set_tile(rows, bx + dx, by + dy, TILE_FLOOR)
-		_set_tile(rows, bx + 2, by + 4, TILE_DIRT)
-
-static func _add_scattered_trees(rows: Array, rx: int, ry: int, w: int, h: int) -> void:
-	for dy in range(h):
-		for dx in range(w):
-			if randf() < 0.15:
-				_set_tile(rows, rx + dx, ry + dy, TILE_TREE)
-
-static func _add_crops(rows: Array, rx: int, ry: int, w: int, h: int) -> void:
-	# Already handled in _fill_fields
-
-static func _add_scattered_rocks(rows: Array, rx: int, ry: int, w: int, h: int) -> void:
-	for dy in range(h):
-		for dx in range(w):
-			if randf() < 0.1:
-				_set_tile(rows, rx + dx, ry + dy, TILE_ROCK)
-
-static func _add_region_paths(rows: Array, rx: int, ry: int, w: int, h: int, hex_type: String) -> void:
-	# Main path through region
-	if hex_type == "Wood":
-		# Vertical path through forest
-		for dy in range(h):
-			_set_tile(rows, rx + w//2, ry + dy, TILE_DIRT)
-	elif hex_type == "Grain":
-		# Horizontal path through fields
-		for dx in range(w):
-			_set_tile(rows, rx + dx, ry + h//2, TILE_DIRT)
-	elif hex_type == "Ore":
-		# Path to mine
-		for dy in range(h):
-			_set_tile(rows, rx + w//2, ry + dy, TILE_DIRT)
-
-static func _connect_regions(rows: Array, regions: Dictionary, offset_x: int, offset_y: int) -> void:
-	# Connect village to forest (north)
-	var village = regions["village"]
-	var forest = regions["forest"]
-	var v_b = village["bounds"]
-	var f_b = forest["bounds"]
-	var v_entry = village["entry_points"]["forest"]
-	var f_entry = forest["entry_points"]["village"]
-	
-	# Path from forest entry to village entry
-	var fx = f_entry["x"] - offset_x
-	var fy = f_entry["y"] - offset_y
-	var vx = v_entry["x"] - offset_x
-	var vy = v_entry["y"] - offset_y
-	_draw_path(rows, fx, fy, vx, vy, TILE_ROAD)
-	
-	# Connect village to fields (east)
-	var fields = regions["fields"]
-	var v_entry_f = village["entry_points"]["fields"]
-	var f_entry_v = fields["entry_points"]["village"]
-	_draw_path(rows, v_entry_f["x"] - offset_x, v_entry_f["y"] - offset_y,
-		f_entry_v["x"] - offset_x, f_entry_v["y"] - offset_y, TILE_ROAD)
-	
-	# Connect village to mine (west)
-	var mine = regions["mine"]
-	var v_entry_m = village["entry_points"]["mine"]
-	var m_entry_v = mine["entry_points"]["village"]
-	_draw_path(rows, v_entry_m["x"] - offset_x, v_entry_m["y"] - offset_y,
-		m_entry_v["x"] - offset_x, m_entry_v["y"] - offset_y, TILE_ROAD)
-
-static func _draw_path(rows: Array, x1: int, y1: int, x2: int, y2: int, tile: String) -> void:
-	# Simple L-shaped path
-	var cx = x1
-	var cy = y1
-	while cx != x2:
-		_set_tile(rows, cx, cy, tile)
-		cx += 1 if x2 > cx else -1
-	while cy != y2:
-		_set_tile(rows, cx, cy, tile)
-		cy += 1 if y2 > cy else -1
-	_set_tile(rows, cx, cy, tile)
-
-static func _add_region_entities(entities: Array, regions: Dictionary, offset_x: int, offset_y: int, cast: Dictionary, anchors: Dictionary) -> void:
-	# Add NPCs, signs, exits, pickups, etc. as entities
-	for r_name in regions:
-		var region = regions[r_name]
-		var content = region["content"]
-		var rx = region["bounds"]["x"] - offset_x
-		var ry = region["bounds"]["y"] - offset_y
-		
-		# Workers at production sites
-		if content.has("logging_camp"):
-			_add_worker_entities(entities, "logging_camp", content["logging_camp"], rx, ry, cast, "Woodcutter")
-		if content.has("farmstead"):
-			_add_worker_entities(entities, "farmstead", content["farmstead"], rx, ry, cast, "Farmer")
-		if content.has("mine_mouth"):
-			_add_worker_entities(entities, "mine_mouth", content["mine_mouth"], rx, ry, cast, "Miner")
-		if content.has("processing"):
-			for name in content["processing"]:
-				_add_worker_entities(entities, name, content["processing"][name], rx, ry, cast, 
-					{"sawmill": "Sawmiller", "mill": "Miller", "forge": "Blacksmith", "distillery": "Distiller"}[name])
-		if content.has("civic"):
-			for name in content["civic"]:
-				var b = content["civic"][name]
-				if b.has("occupant") and cast.has(b["occupant"]):
-					var pos = b["pos"]
-					entities.append({
-						"kind": "npc",
-						"id": b["occupant"],
-						"pos": [rx + pos[0] + 2, ry + pos[1] + 2],
-						"role": cast[b["occupant"]]["role"],
-						"sprite": _role_to_sprite(cast[b["occupant"]]["role"]),
-						"dialogue": _npc_dialogue_key(b["occupant"]),
-					})
-		
-		# Signs at region entries
-		if r_name != "village":
-			var ep = region["entry_points"]["village"]
-			entities.append({
-				"kind": "sign",
-				"id": r_name + "_sign",
-				"pos": [rx + ep["x"], ry + ep["y"] - 1],
-				"text": "To " + village["name"]
-			})
-		
-		# Quest/story anchors as interaction points
-		if content.has("quest_anchor"):
-			var anchor_id = content["quest_anchor"]
-			if anchors.has(anchor_id):
-				var a = anchors[anchor_id]
-				entities.append({
-					"kind": "interaction",
-					"id": anchor_id,
-					"pos": [rx + a["pos"][0], ry + a["pos"][1]],
-					"type": "quest",
-					"prompt": "Investigate",
-				})
-		if content.has("story_anchor"):
-			var anchor_id = content["story_anchor"]
-			if anchors.has(anchor_id):
-				var a = anchors[anchor_id]
-				entities.append({
-					"kind": "interaction",
-					"id": anchor_id,
-					"pos": [rx + a["pos"][0], ry + a["pos"][1]],
-					"type": "story",
-					"prompt": "Listen",
-				})
-		if content.has("quest_anchors"):
-			for anchor_id in content["quest_anchors"]:
-				if anchors.has(anchor_id):
-					var a = anchors[anchor_id]
-					entities.append({
-						"kind": "interaction",
-						"id": anchor_id,
-						"pos": [a["pos"][0] - offset_x, a["pos"][1] - offset_y],
-						"type": "quest",
-						"prompt": "Talk",
-					})
-		if content.has("story_anchors"):
-			for anchor_id in content["story_anchors"]:
-				if anchors.has(anchor_id):
-					var a = anchors[anchor_id]
-					entities.append({
-						"kind": "interaction",
-						"id": anchor_id,
-						"pos": [a["pos"][0] - offset_x, a["pos"][1] - offset_y],
-						"type": "story",
-						"prompt": "Listen",
-					})
-
-static func _add_worker_entities(entities: Array, building: String, building_data: Dictionary, rx: int, ry: int, cast: Dictionary, role: String) -> void:
-	if not building_data.has("workers"):
-		return
-	var pos = building_data["pos"]
-	var bx = rx + pos[0]
-	var by = ry + pos[1]
-	for i, worker_id in enumerate(building_data["workers"]):
-		if cast.has(worker_id):
-			entities.append({
-				"kind": "npc",
-				"id": worker_id,
-				"pos": [bx + 1 + (i % 2) * 2, by + 1 + (i // 2) * 2],
-				"role": role,
-				"sprite": _role_to_sprite(role),
-				"dialogue": _npc_dialogue_key(worker_id),
-			})
-
-static func _add_anchor_markers(entities: Array, anchors: Dictionary, offset_x: int, offset_y: int) -> void:
-	# These are debug markers added when Location Anchors toggle is on
-	# The actual rendering is handled by the test overlay
-	pass
-
-static func _role_to_sprite(role: String) -> String:
-	match role:
-		"Woodcutter": return "npc_woodcutter"
-		"Farmer": return "npc_farmer"
-		"Miner": return "npc_miner"
-		"Sawmiller": return "npc_sawmiller"
-		"Miller": return "npc_miller"
-		"Blacksmith": return "npc_blacksmith"
-		"Distiller": return "npc_distiller"
-		"Reeve": return "npc_reeve"
-		"Healer": return "npc_healer"
-		"Storekeeper": return "npc_storekeeper"
-		_: return "npc_villager"
-
-static func _npc_dialogue_key(npc_id: String) -> String:
-	# Map NPC to dialogue key in story_events
-	return "village_test_" + npc_id
+static func _build_entities(grid: Array, cast_data: Dictionary, anchors: Dictionary, dialogue_data: Dictionary) -> Array:
+    var entities: Array = []
+    var cast = cast_data.get("cast", [])
+    
+    # Add NPCs from cast
+    for c in cast:
+        var anchor_name = c.get("work_anchor", c.get("home_anchor", ""))
+        var anchor_pos = anchors.get(anchor_name, [-1, -1])
+        if anchor_pos[0] < 0:
+            # Fallback to home anchor
+            anchor_name = c.get("home_anchor", "")
+            anchor_pos = anchors.get(anchor_name, [-1, -1])
+        if anchor_pos[0] < 0:
+            continue
+        
+        # Offset NPC slightly from anchor center
+        var npc_pos = [anchor_pos[0] + (c.get("pos_offset", [0, 0])[0] if c.has("pos_offset") else 0),
+                       anchor_pos[1] + (c.get("pos_offset", [0, 0])[1] if c.has("pos_offset") else 1)]
+        
+        var npc_id = c.get("id", "")
+        var fallback_name = c.get("name", npc_id)
+        var fallback_lines = ["..."]
+        
+        # Get dialogue for this NPC at quest start
+        var quest_id = "broken_promise"
+        var start_node = "talk_reve"
+        var dialogue_lines = QuestRunner.get_dialogue(npc_id, quest_id, start_node)
+        if dialogue_lines.is_empty():
+            dialogue_lines = fallback_lines
+        
+        var entity = {
+            "kind": "npc",
+            "id": npc_id,
+            "pos": npc_pos,
+            "name": fallback_name,
+            "sprite": c.get("sprite", "villager"),
+            "lines": dialogue_lines,
+            "locked_lines": [],
+            "village_test_story": {
+                "story_id": quest_id,
+                "beat": "active" if c.get("quest_participation", []).size() > 0 else "ambient",
+                "npc_id": npc_id,
+                "relationships": c.get("relationships", {}),
+                "dialogue_context": c.get("dialogue_context", "")
+            }
+        }
+        entities.append(entity)
+    
+    # Add signs for semantic anchors
+    var sign_anchors = {
+        "village_square": "VILLAGE SQUARE",
+        "village_hall": "VILLAGE HALL",
+        "healer_house": "HEALER'S HOUSE",
+        "pottery": "MARA'S POTTERY",
+        "lime_kiln": "LIME KILN",
+        "scavenger_yard": "JORY'S SCAVENGER YARD",
+        "tavern": "THE RUSTED ANCHOR",
+        "blacksmith": "TOMAS'S FORGE",
+        "general_store": "MIRA'S GENERAL STORE",
+        "farmstead": "ANNA'S FARMSTEAD",
+        "woods_edge": "NORTHWOODS",
+        "woods_camp": "LOGGING CAMP",
+        "kiln_overlook": "KILN OVERLOOK",
+        "old_shrine": "OLD SHRINE",
+        "well": "VILLAGE WELL",
+        "river_bridge": "RIVER BRIDGE"
+    }
+    
+    for anchor_name in sign_anchors:
+        var pos = anchors.get(anchor_name, [-1, -1])
+        if pos[0] >= 0:
+            entities.append({
+                "kind": "sign",
+                "id": anchor_name + "_sign",
+                "pos": [pos[0], pos[1] - 1],
+                "text": sign_anchors[anchor_name]
+            })
+    
+    return entities
 
 static func validate_projection(area: Dictionary) -> Dictionary:
-	var errors: Array = []
-	var warnings: Array = []
-	
-	if not area.has("rows") or area["rows"].is_empty():
-		errors.append("No rows in projection")
-		return {"valid": false, "errors": errors, "warnings": warnings}
-	
-	var rows = area["rows"]
-	var h = rows.size()
-	var w = rows[0].length() if h > 0 else 0
-	
-	# Check consistent row widths
-	for i, row in rows:
-		if row.length() != w:
-			errors.append("Row " + str(i) + " has inconsistent width: " + str(row.length()) + " vs " + str(w))
-	
-	# Check dimensions
-	if w < 40 or h < 30:
-		warnings.append("Map may be too small: " + str(w) + "x" + str(h))
-	elif w > 80 or h > 80:
-		warnings.append("Map may be too large: " + str(w) + "x" + str(h))
-	
-	# Check player start
-	if not area.has("player_start"):
-		errors.append("Missing player_start")
-	else:
-		var ps = area["player_start"]
-		if ps[0] < 0 or ps[0] >= w or ps[1] < 0 or ps[1] >= h:
-			errors.append("Player start out of bounds: " + str(ps))
-		elif _is_solid(rows[ps[1]][ps[0]]):
-			errors.append("Player start on solid tile")
-	
-	# Check entities
-	if area.has("entities"):
-		var ids = {}
-		for e in area["entities"]:
-			if e.has("id"):
-				if ids.has(e["id"]):
-					errors.append("Duplicate entity ID: " + e["id"])
-				ids[e["id"]] = true
-	
-	return {"valid": errors.is_empty(), "errors": errors, "warnings": warnings, "width": w, "height": h}
-
-static func _is_solid(ch: String) -> bool:
-	return ch in [TILE_TREE, TILE_STONE, TILE_WATER, TILE_WALL, TILE_ROCK, TILE_HEDGE, TILE_FENCE]
+    var errors: Array = []
+    var rows: Array = area.get("rows", [])
+    if rows.is_empty():
+        return {"valid": false, "errors": ["No rows"]}
+    var w: int = rows[0].length()
+    for y in range(rows.size()):
+        if rows[y].length() != w:
+            errors.append("Inconsistent row width at y=%d" % y)
+    var ids := {}
+    for e in area.get("entities", []):
+        var p: Array = e.get("pos", [-1, -1])
+        if p[0] < 0 or p[0] >= w or p[1] < 0 or p[1] >= rows.size():
+            errors.append("Entity out of bounds: " + str(e.get("id", "?")))
+        var eid := str(e.get("id", ""))
+        if ids.has(eid):
+            errors.append("Duplicate entity id: " + eid)
+        ids[eid] = true
+    return {"valid": errors.is_empty(), "errors": errors, "width": w, "height": rows.size()}

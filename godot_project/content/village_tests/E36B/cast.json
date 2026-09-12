@@ -1,0 +1,182 @@
+{
+  "id": "E36B",
+  "name": "Bellwater",
+  "cast": [
+    {
+      "id": "reve_edric",
+      "name": "Edric",
+      "role": "Reeve",
+      "occupation": "Village Reeve",
+      "home_anchor": "village_hall",
+      "work_anchor": "village_hall",
+      "sprite": "reve",
+      "archetype": "authority",
+      "relationships": {
+        "mara_potter": "estranged_brother",
+        "healer_elara": "former_friend",
+        "scavenger_jory": "suspects_corruption",
+        "kiln_master_brand": "owes_favor"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "burdened_leader_hiding_past"
+    },
+    {
+      "id": "mara_potter",
+      "name": "Mara",
+      "role": "Potter",
+      "occupation": "Potter",
+      "home_anchor": "pottery",
+      "work_anchor": "pottery",
+      "sprite": "villager_f",
+      "archetype": "craftsperson",
+      "relationships": {
+        "reve_edric": "estranged_brother",
+        "healer_elara": "owes_money",
+        "scavenger_jory": "secret_affair",
+        "farmstead_anna": "childhood_friend"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "proud_craftsperson_hiding_secrets"
+    },
+    {
+      "id": "healer_elara",
+      "name": "Elara",
+      "role": "Healer",
+      "occupation": "Healer",
+      "home_anchor": "healer_house",
+      "work_anchor": "healer_house",
+      "sprite": "healer",
+      "archetype": "healer",
+      "relationships": {
+        "reve_edric": "former_friend",
+        "mara_potter": "owed_by_mara",
+        "tavern_keep": "confidant",
+        "farmstead_anna": "patient"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "knows_everyone_secrets_compassionate"
+    },
+    {
+      "id": "scavenger_jory",
+      "name": "Jory",
+      "role": "Scavenger",
+      "occupation": "Scavenger/Salvager",
+      "home_anchor": "scavenger_yard",
+      "work_anchor": "scavenger_yard",
+      "sprite": "worker_m",
+      "archetype": "scavenger",
+      "relationships": {
+        "mara_potter": "secret_affair",
+        "kiln_master_brand": "business_rival",
+        "reve_edric": "has_dirt_on_him",
+        "farmstead_anna": "unrequited_interest"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "opportunist_with_hidden_depths"
+    },
+    {
+      "id": "kiln_master_brand",
+      "name": "Brand",
+      "role": "Kiln Master",
+      "occupation": "Lime Kiln Master",
+      "home_anchor": "lime_kiln",
+      "work_anchor": "lime_kiln",
+      "sprite": "worker_m",
+      "archetype": "industrialist",
+      "relationships": {
+        "reve_edric": "holds_favor_over",
+        "scavenger_jory": "business_rival",
+        "blacksmith_tomas": "supplies_lime",
+        "tavern_keep": "drinking_buddy"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "pragmatic_businessman_hiding_weakness"
+    },
+    {
+      "id": "farmstead_anna",
+      "name": "Anna",
+      "role": "Farmer",
+      "occupation": "Farmstead Owner",
+      "home_anchor": "farmstead",
+      "work_anchor": "farmstead",
+      "sprite": "villager_f",
+      "archetype": "farmer",
+      "relationships": {
+        "mara_potter": "childhood_friend",
+        "healer_elara": "patient",
+        "scavenger_jory": "unwanted_admirer",
+        "tavern_keep": "regular"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "practical_woman_caught_in_drama"
+    },
+    {
+      "id": "tavern_keep",
+      "name": "Old Tomas",
+      "role": "Tavern Keep",
+      "occupation": "Tavern Owner",
+      "home_anchor": "tavern",
+      "work_anchor": "tavern",
+      "sprite": "villager_m",
+      "archetype": "bartender",
+      "relationships": {
+        "healer_elara": "confidant",
+        "kiln_master_brand": "drinking_buddy",
+        "farmstead_anna": "regular",
+        "blacksmith_tomas": "brother"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "information_broker_neutral"
+    },
+    {
+      "id": "blacksmith_tomas",
+      "name": "Tomas",
+      "role": "Blacksmith",
+      "occupation": "Blacksmith",
+      "home_anchor": "blacksmith",
+      "work_anchor": "blacksmith",
+      "sprite": "villager_m",
+      "archetype": "blacksmith",
+      "relationships": {
+        "kiln_master_brand": "buys_lime_from",
+        "tavern_keep": "brother",
+        "reve_edric": "respects"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "stoic_craftsman"
+    },
+    {
+      "id": "general_store_keep",
+      "name": "Mira",
+      "role": "Storekeeper",
+      "occupation": "General Store Owner",
+      "home_anchor": "general_store",
+      "work_anchor": "general_store",
+      "sprite": "villager_f",
+      "archetype": "merchant",
+      "relationships": {
+        "mara_potter": "buys_pottery",
+        "kiln_master_brand": "buys_lime",
+        "farmstead_anna": "buys_produce"
+      },
+      "quest_participation": ["broken_promise"],
+      "dialogue_context": "pragmatic_merchant_gossip_source"
+    },
+    {
+      "id": "woodcutter_garrick",
+      "name": "Garrick",
+      "role": "Woodcutter",
+      "occupation": "Woodcutter",
+      "home_anchor": "woods_camp",
+      "work_anchor": "woods_camp",
+      "sprite": "woodcutter",
+      "archetype": "woodsman",
+      "relationships": {
+        "scavenger_jory": "competitor",
+        "kiln_master_brand": "supplies_wood"
+      },
+      "quest_participation": [],
+      "dialogue_context": "gruff_watcher"
+    }
+  ]
+}
