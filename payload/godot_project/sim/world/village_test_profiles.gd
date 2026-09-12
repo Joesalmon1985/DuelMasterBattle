@@ -57,14 +57,14 @@ static func all() -> Array:
         out.append(PROFILES[key].duplicate(true))
     return out
 
-static func get_profile(profile_id: String) -> Dictionary:
+static func get(profile_id: String) -> Dictionary:
     return PROFILES.get(profile_id, {}).duplicate(true)
 
 static func get_regions(profile_id: String) -> Dictionary:
-    return get_profile(profile_id).get("regions", {})
+    return get(profile_id).get("regions", {})
 
 static func get_semantic_anchors(profile_id: String) -> Dictionary:
-    return get_profile(profile_id).get("semantic_anchors", {})
+    return get(profile_id).get("semantic_anchors", {})
 
 static func get_pilot_stories(profile_id: String) -> Array:
-    return get_profile(profile_id).get("pilot_stories", [])
+    return get(profile_id).get("pilot_stories", [])

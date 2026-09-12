@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://village_test_menu_uid"]
+[gd_scene load_steps=3 format=3 uid="uid://village_test_menu_new"]
 
 [ext_resource type="Script" path="res://client/scripts/village_test_menu.gd" id="1_0"]
 
@@ -17,22 +17,6 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 10.0
 content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.15, 0.12, 0.25, 1)
-border_color = Color(0.4, 0.35, 0.8, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-content_margin_left = 20.0
-content_margin_right = 20.0
-content_margin_top = 20.0
-content_margin_bottom = 20.0
 
 [node name="VillageTestMenu" type="Control"]
 layout_mode = 3
@@ -57,19 +41,39 @@ offset_left = 40.0
 offset_top = 40.0
 offset_right = -40.0
 offset_bottom = -40.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="Title" type="Label" parent="Panel"]
-layout_mode = 3
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-theme_override_font_sizes/font_size = 36
-theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
+[node name="TopBar" type="HBoxContainer" parent="Panel"]
+layout_mode = 1
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="Panel/TopBar"]
 text = "VILLAGE TEST MENU"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.9, 0.85, 1.0, 1)
+size_flags_horizontal = 1
+
+[node name="SearchBox" type="LineEdit" parent="Panel/TopBar"]
+placeholder_text = "Search villages..."
+size_flags_horizontal = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn")
+theme_override_font_sizes/font_size = 16
+minimum_size = Vector2(250, 0)
+
+[node name="FilterProfile" type="OptionButton" parent="Panel/TopBar"]
+size_flags_horizontal = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_font_sizes/font_size = 16
+minimum_size = Vector2(180, 0)
+
+[node name="StatusLabel" type="Label" parent="Panel/TopBar"]
+text = "Discovering fixtures..."
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.65, 0.85, 1)
+size_flags_horizontal = 1
+horizontal_alignment = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
 layout_mode = 3
@@ -77,30 +81,110 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = 80.0
+offset_top = 70.0
 offset_right = -20.0
 offset_bottom = -160.0
+vertical_scroll_mode = 1
+horizontal_scroll_mode = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_btn")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
-[node name="ProfileDetails" type="Label" parent="Panel"]
+[node name="DetailsPanel" type="PanelContainer" parent="Panel"]
 layout_mode = 3
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = -150.0
+offset_top = -155.0
 offset_right = -20.0
-offset_bottom = -80.0
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.8, 0.75, 0.9, 1)
-text = "Select a village profile to view details"
-horizontal_alignment = 0
-vertical_alignment = 1
+offset_bottom = -10.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_btn")
+
+[node name="DetailsContent" type="VBoxContainer" parent="Panel/DetailsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HeaderRow" type="HBoxContainer" parent="Panel/DetailsPanel/DetailsContent"]
+theme_override_constants/separation = 10
+
+[node name="IdLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent/HeaderRow"]
+text = ""
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.95, 0.9, 1.0, 1)
+
+[node name="NameLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent/HeaderRow"]
+text = ""
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.8, 0.75, 0.95, 1)
+size_flags_horizontal = 1
+
+[node name="EconomyLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1)
+
+[node name="CastLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1)
+
+[node name="QuestLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 1)
+
+[node name="PremiseLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.75, 0.7, 0.85, 1)
 autowrap_mode = 1
+size_flags_horizontal = 3
+
+[node name="NodesLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.65, 0.75, 0.85, 1)
+
+[node name="RegionsLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.65, 0.75, 0.85, 1)
+
+[node name="AnchorsLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.65, 0.75, 0.85, 1)
+
+[node name="MapLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.65, 0.75, 0.85, 1)
+
+[node name="ErrorsLabel" type="Label" parent="Panel/DetailsPanel/DetailsContent"]
+text = ""
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(1.0, 0.9, 0.5, 1)
+autowrap_mode = 1
+size_flags_horizontal = 3
+visible = false
+
+[node name="ValidLabel" type="Label" parent="Panel/DetailsPanel"]
+text = ""
+layout_mode = 1
+anchors_preset = 15
+offset_left = 16
+offset_top = 16
+offset_right = 16
+offset_bottom = 16
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(1.0, 0.4, 0.4, 1)
+horizontal_alignment = 1
+vertical_alignment = 1
+visible = false
 
 [node name="BottomBar" type="HBoxContainer" parent="Panel"]
 layout_mode = 3
@@ -109,41 +193,30 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = -75.0
+offset_top = -80.0
 offset_right = -20.0
-offset_bottom = -15.0
+offset_bottom = -20.0
 theme_override_constants/separation = 16
+
+[node name="Spacer" type="Control" parent="Panel/BottomBar"]
+size_flags_horizontal = 3
 
 [node name="BtnRun" type="Button" parent="Panel/BottomBar"]
 layout_mode = 2
+text = "SELECT VALID VILLAGE"
+disabled = true
+theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
-text = "PLAY TEST"
-theme_override_font_sizes/font_size = 22
-theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
-custom_minimum_size = Vector2(180, 50)
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn")
+minimum_size = Vector2(200, 50)
 
 [node name="BtnClose" type="Button" parent="Panel/BottomBar"]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 text = "CLOSE"
-theme_override_font_sizes/font_size = 22
-theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
-custom_minimum_size = Vector2(120, 50)
-
-[node name="InfoLabel" type="Label" parent="Panel"]
-layout_mode = 3
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = -150.0
-offset_right = -20.0
-offset_bottom = -80.0
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.8, 0.75, 0.9, 1)
-text = ""
-horizontal_alignment = 0
-vertical_alignment = 1
-autowrap_mode = 1
-visible = false
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn")
+minimum_size = Vector2(140, 50)

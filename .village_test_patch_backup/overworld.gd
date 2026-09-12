@@ -1312,8 +1312,7 @@ func _kit_menu() -> void:
 ## campaign snapshot is restored byte-for-byte on exit.
 func _village_menu() -> void:
 	while true:
-		var profile = _VRunner.profile_id()
-		var choice: String = await _dialogue.choose_async("Paused — village test (%s)." % profile, ["Continue", "Reset Village", "Show Anchors", "Show Quest/Story Markers", "Show Entity IDs", "Exit Test"])
+		var choice: String = await _dialogue.choose_async("Paused — village test (E17A).", ["Continue", "Reset Village", "Show Anchors", "Show Quest/Story Markers", "Show Entity IDs", "Exit Test"])
 		match choice:
 			"Reset Village":
 				_finish_village_build(_VRunner.reset(_adv()), "down")
@@ -1321,15 +1320,15 @@ func _village_menu() -> void:
 				_touch.set_enabled(true)
 				return
 			"Show Anchors":
-				_VRunner.toggle_anchors()
+				_VRunner.toggle_show_anchors()
 				_update_debug_markers()
 				continue
 			"Show Quest/Story Markers":
-				_VRunner.toggle_quest_story()
+				_VRunner.toggle_show_markers()
 				_update_debug_markers()
 				continue
 			"Show Entity IDs":
-				_VRunner.toggle_entity_ids()
+				_VRunner.toggle_show_entity_ids()
 				_update_debug_markers()
 				continue
 			"Exit Test":

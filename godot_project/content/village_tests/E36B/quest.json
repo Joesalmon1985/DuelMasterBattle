@@ -1,0 +1,165 @@
+{
+  "id": "broken_promise",
+  "title": "The Broken Promise",
+  "premise": "Edric, the village reeve, asks you to investigate a missing ledger. What starts as a simple accounting dispute unravels into a web of family betrayal, secret affairs, and a decades-old promise that shaped Bellwater's future.",
+  "start_node": "talk_reve",
+  "nodes": {
+    "talk_reve": {
+      "type": "talk",
+      "npc": "reve_edric",
+      "anchor": "village_hall",
+      "text": "A ledger has gone missing from the village hall. It records every debt and favor in Bellwater for the last twenty years. Without it, the whole settlement's obligations unravel. I need someone outside the village politics to find it.",
+      "sets": ["heard_from_reve"],
+      "next": "talk_mara"
+    },
+    "talk_mara": {
+      "type": "talk",
+      "npc": "mara_potter",
+      "anchor": "pottery",
+      "requires": ["heard_from_reve"],
+      "text": "Edric sent you? Figures. He and I haven't spoken in three years, not since the kiln deal. That ledger... it's not just accounts. It's the promise he broke. Ask him about the kiln lease. Ask him who really owns the clay pits.",
+      "sets": ["talked_to_mara", "heard_about_kiln_promise"],
+      "next": "branch_after_mara"
+    },
+    "branch_after_mara": {
+      "type": "branch",
+      "condition": "always",
+      "options": [
+        { "label": "Confront Edric about the kiln promise", "next": "confront_reve_kiln" },
+        { "label": "Talk to Elara the healer first", "next": "talk_elara" },
+        { "label": "Check the scavenger's yard", "next": "talk_jory" }
+      ]
+    },
+    "confront_reve_kiln": {
+      "type": "talk",
+      "npc": "reve_edric",
+      "anchor": "village_hall",
+      "requires": ["talked_to_mara"],
+      "text": "Mara told you about the clay pits. Of course she did. She was always the clever one. The kiln lease was supposed to go to the pottery — that was the promise. But Brand offered me a way to save the village from debt. I broke my word to my own sister to keep Bellwater alive. The ledger proves it. Jory has it. He's been blackmailing me with it for months.",
+      "sets": ["confronted_reve", "learned_jory_has_ledger"],
+      "next": "talk_jory"
+    },
+    "talk_elara": {
+      "type": "talk",
+      "npc": "healer_elara",
+      "anchor": "healer_house",
+      "requires": ["heard_from_reve"],
+      "text": "You're asking about the ledger? Edric's ledger? Everyone in this village has something written in that book. Debts, promises, secrets. Mara owes me for the herbs I gave her when the fever took her apprentice. Jory... Jory brought me a letter he found in the kiln ruins. Burnt edges. It mentioned a name — Edric's father. And a promise about the clay pits.",
+      "sets": ["talked_to_elara", "heard_about_burnt_letter"],
+      "next": "branch_after_elara"
+    },
+    "branch_after_elara": {
+      "type": "branch",
+      "condition": "always",
+      "options": [
+        { "label": "Ask about the burnt letter", "next": "investigate_kiln_ruins" },
+        { "label": "Talk to Jory at the scavenger yard", "next": "talk_jory" },
+        { "label": "Confront Edric", "next": "confront_reve_kiln" }
+      ]
+    },
+    "investigate_kiln_ruins": {
+      "type": "investigate",
+      "anchor": "kiln_overlook",
+      "requires": ["talked_to_elara"],
+      "text": "Among the old kiln bricks, you find a fragment of charred parchment. It reads: '...the clay pits shall pass to the potter's line, so long as the kiln fires burn. — Thomas, Reeve of Bellwater, Year 247'. Edric's father's signature. The promise was legally binding. Edric broke it to save the village from Brand's debt collectors.",
+      "sets": ["found_burnt_letter", "learned_promise_legally_binding"],
+      "next": "talk_jory"
+    },
+    "talk_jory": {
+      "type": "talk",
+      "npc": "scavenger_jory",
+      "anchor": "scavenger_yard",
+      "requires": ["heard_from_reve"],
+      "text": "Looking for the ledger? Might be I've seen it. Might be it's buried under a pile of scrap. Edric thinks he's clever, using me to hide his dirty work. But I'm not his dog. That ledger? It's insurance. If I give it to you, what's in it for me? The pottery's clay pits would be worth a fortune to the right buyer. Mara... she doesn't know what she's sitting on.",
+      "sets": ["talked_to_jory", "jory_wants_clay_pits"],
+      "next": "branch_after_jory"
+    },
+    "branch_after_jory": {
+      "type": "branch",
+      "condition": "always",
+      "options": [
+        { "label": "Promise to help Jory get the clay pits", "next": "deal_with_jory" },
+        { "label": "Threaten to tell Mara about the affair", "next": "threaten_jory" },
+        { "label": "Go back to Edric with what you know", "next": "confront_reve_with_evidence" }
+      ]
+    },
+    "deal_with_jory": {
+      "type": "talk",
+      "npc": "scavenger_jory",
+      "anchor": "scavenger_yard",
+      "requires": ["talked_to_jory"],
+      "text": "You'd do that? Help me claim the clay pits? Fine. The ledger's in the old shrine, under the loose stone by the altar. But if Mara gets those pits... she'll need someone to work them. Someone who knows the land. Someone like me. We'd make a good team, her and I. Better than she knows.",
+      "sets": ["made_deal_with_jory", "got_ledger_location"],
+      "next": "retrieve_ledger"
+    },
+    "threaten_jory": {
+      "type": "talk",
+      "npc": "scavenger_jory",
+      "anchor": "scavenger_yard",
+      "requires": ["talked_to_jory"],
+      "text": "Careful. Mara's got enough on her plate without you stirring that pot. But fine — you want the ledger? It's at the old shrine. Under the altar stone. Take it. But know this: if Mara loses those pits because of you, I'll make sure everyone knows who really broke the promise. It wasn't just Edric.",
+      "sets": ["threatened_jory", "got_ledger_location", "jory_warned"],
+      "next": "retrieve_ledger"
+    },
+    "confront_reve_with_evidence": {
+      "type": "talk",
+      "npc": "reve_edric",
+      "anchor": "village_hall",
+      "requires": ["confronted_reve", "learned_jory_has_ledger"],
+      "text": "You found the burnt letter. The promise was real. Legally binding. I knew. I've known for years. Brand found out and used it. He said if I signed the kiln lease over to him, he'd cancel the village's debt. I chose the village over my sister. Over my father's word. The ledger... Jory has it at the old shrine. Take it. Expose me. I deserve it. But think on this: if the clay pits go back to the pottery, Brand calls in the debt. The kiln closes. Half the village loses their livelihood. Sometimes keeping a promise destroys everything else.",
+      "sets": ["confronted_reve_with_evidence", "reve_confessed", "got_ledger_location"],
+      "next": "retrieve_ledger"
+    },
+    "retrieve_ledger": {
+      "type": "investigate",
+      "anchor": "old_shrine",
+      "requires": ["got_ledger_location"],
+      "text": "You find the ledger beneath the altar stone, wrapped in oilcloth. The pages are dense with names, amounts, dates — and one entry circled in red: 'Clay pits lease — transferred to Brand Kiln Co. by Reeve Edric, Year 262. Original grant to Potter line, Year 247. VOID.' The evidence is undeniable.",
+      "sets": ["retrieved_ledger", "has_evidence"],
+      "next": "final_choice"
+    },
+    "final_choice": {
+      "type": "choice",
+      "requires": ["retrieved_ledger"],
+      "prompt": "You have the ledger. The truth is in your hands. What do you do?",
+      "options": [
+        {
+          "label": "Return the ledger to Edric and urge him to make it right publicly",
+          "sets": ["choice_return_to_reve"],
+          "next": "ending_redemption"
+        },
+        {
+          "label": "Give the ledger to Mara so she can claim her birthright",
+          "sets": ["choice_give_to_mara"],
+          "next": "ending_mara_victory"
+        },
+        {
+          "label": "Burn the ledger — some truths destroy more than they heal",
+          "sets": ["choice_burn_ledger"],
+          "next": "ending_status_quo"
+        }
+      ]
+    },
+    "ending_redemption": {
+      "type": "conclude",
+      "requires": ["choice_return_to_reve"],
+      "text": "Edric reads the ledger in the village square. His voice shakes as he confesses. The clay pits return to Mara. Brand threatens legal action but the village rallies — even Tomas the blacksmith testifies. Edric steps down as reeve; Mara declines the title, suggesting a council instead. The kiln stays open under new terms. Bellwater changes, but it survives. Edric and Mara speak for the first time in years at the well. A small thing. A beginning.",
+      "sets": ["ending_redemption_achieved"],
+      "final_state": "redemption"
+    },
+    "ending_mara_victory": {
+      "type": "conclude",
+      "requires": ["choice_give_to_mara"],
+      "text": "Mara reads the ledger in her workshop. Her hands tremble. She takes the deed to the village hall and demands the clay pits. Brand's men arrive within the week — lawyers, surveyors, threats. The kiln workers strike. Edric is arrested for fraud. Mara wins the pits but the village fractures. Jory appears at her door that evening — partner, he says, in business and more. She looks at you, then at him. 'We'll see,' she says. The pottery fires burn hotter than ever, but the village square is quieter now.",
+      "sets": ["ending_mara_victory_achieved"],
+      "final_state": "mara_victory"
+    },
+    "ending_status_quo": {
+      "type": "conclude",
+      "requires": ["choice_burn_ledger"],
+      "text": "You watch the ledger burn in the healer's fireplace. Elara doesn't stop you. 'Some medicines are bitter,' she says. Edric continues as reeve. Brand keeps the kiln. Mara never learns the truth. Jory keeps his silence — for now. The village goes on, debts unpaid, promises unkept, but whole. You wonder, walking the road out of Bellwater, whether you saved it or doomed it. The smoke from the kilns follows you all the way to the river.",
+      "sets": ["ending_status_quo_achieved"],
+      "final_state": "status_quo"
+    }
+  }
+}

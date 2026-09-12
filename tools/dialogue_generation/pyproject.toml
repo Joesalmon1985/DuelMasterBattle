@@ -4,29 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dialogue-generation-factory"
-version = "0.1.0"
+version = "0.2.0"
 description = "Offline dialogue generation factory for Duel Master Battle"
 requires-python = ">=3.11"
-dependencies = [
-    "openpyxl>=3.1.0",
-    "requests>=2.31.0",
-]
+dependencies = ["openpyxl>=3.1.0"]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.0",
-    "pytest-mock>=3.10",
-]
+dev = ["pytest>=7.0"]
 
 [tool.setuptools]
-packages = ["dialogue_generation", "dialogue_generation.prompts", "dialogue_generation.tests"]
+packages = ["dialogue_generation", "dialogue_generation.prompts"]
 
 [tool.setuptools.package-dir]
 "dialogue_generation" = "."
 
-[tool.setuptools.dynamic]
-version = {attr = "dialogue_generation.__version__"}
+[tool.setuptools.package-data]
+dialogue_generation = ["worldviews.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = [".."]

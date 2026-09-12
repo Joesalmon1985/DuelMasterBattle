@@ -1,0 +1,144 @@
+{
+  "id": "E36B",
+  "name": "Bellwater",
+  "economic_profile": "E36",
+  "description": "A timber-and-lime settlement split by an old family feud.",
+  "map": {
+    "width": 72,
+    "height": 58
+  },
+  "regions": {
+    "village_core": {
+      "name": "Bellwater Village",
+      "bounds": [10, 10, 48, 38],
+      "terrain": "settlement"
+    },
+    "woods_north": {
+      "name": "Northwoods",
+      "bounds": [0, 0, 28, 24],
+      "terrain": "forest"
+    },
+    "lime_kilns": {
+      "name": "Lime Kilns",
+      "bounds": [45, 5, 25, 20],
+      "terrain": "industrial"
+    },
+    "farms_south": {
+      "name": "South Farms",
+      "bounds": [10, 38, 40, 20],
+      "terrain": "farmland"
+    },
+    "river": {
+      "name": "River Vell",
+      "bounds": [28, 0, 6, 58],
+      "terrain": "water"
+    }
+  },
+  "semantic_anchors": {
+    "village_square": [34, 28],
+    "village_hall": [30, 20],
+    "healer_house": [22, 16],
+    "pottery": [38, 18],
+    "lime_kiln": [50, 12],
+    "scavenger_yard": [42, 26],
+    "tavern": [28, 30],
+    "blacksmith": [40, 24],
+    "general_store": [36, 26],
+    "river_bridge": [31, 34],
+    "farmstead": [25, 45],
+    "woods_edge": [15, 12],
+    "woods_camp": [8, 6],
+    "kiln_overlook": [55, 8],
+    "old_shrine": [18, 32],
+    "well": [34, 26]
+  },
+  "buildings": [
+    {
+      "id": "village_hall",
+      "anchor": "village_hall",
+      "size": [8, 6],
+      "door_offset": [4, 5],
+      "type": "civic"
+    },
+    {
+      "id": "healer_house",
+      "anchor": "healer_house",
+      "size": [6, 5],
+      "door_offset": [3, 4],
+      "type": "residential"
+    },
+    {
+      "id": "pottery",
+      "anchor": "pottery",
+      "size": [7, 5],
+      "door_offset": [3, 4],
+      "type": "workshop"
+    },
+    {
+      "id": "lime_kiln_main",
+      "anchor": "lime_kiln",
+      "size": [10, 6],
+      "door_offset": [5, 5],
+      "type": "industrial"
+    },
+    {
+      "id": "scavenger_yard",
+      "anchor": "scavenger_yard",
+      "size": [8, 5],
+      "door_offset": [4, 4],
+      "type": "workshop"
+    },
+    {
+      "id": "tavern",
+      "anchor": "tavern",
+      "size": [8, 6],
+      "door_offset": [4, 5],
+      "type": "commercial"
+    },
+    {
+      "id": "blacksmith",
+      "anchor": "blacksmith",
+      "size": [6, 5],
+      "door_offset": [3, 4],
+      "type": "workshop"
+    },
+    {
+      "id": "general_store",
+      "anchor": "general_store",
+      "size": [6, 5],
+      "door_offset": [3, 4],
+      "type": "commercial"
+    },
+    {
+      "id": "farmstead",
+      "anchor": "farmstead",
+      "size": [8, 6],
+      "door_offset": [4, 5],
+      "type": "residential"
+    },
+    {
+      "id": "woods_camp",
+      "anchor": "woods_camp",
+      "size": [6, 4],
+      "door_offset": [3, 3],
+      "type": "camp"
+    }
+  ],
+  "player_start": [34, 28],
+  "roads": [
+    { "from": "village_square", "to": "village_hall" },
+    { "from": "village_square", "to": "healer_house" },
+    { "from": "village_square", "to": "pottery" },
+    { "from": "village_square", "to": "tavern" },
+    { "from": "village_square", "to": "blacksmith" },
+    { "from": "village_square", "to": "general_store" },
+    { "from": "village_square", "to": "river_bridge" },
+    { "from": "river_bridge", "to": "farmstead" },
+    { "from": "village_square", "to": "scavenger_yard" },
+    { "from": "scavenger_yard", "to": "lime_kiln" },
+    { "from": "village_square", "to": "woods_edge" },
+    { "from": "woods_edge", "to": "woods_camp" },
+    { "from": "village_square", "to": "old_shrine" },
+    { "from": "village_square", "to": "well" }
+  ]
+}
