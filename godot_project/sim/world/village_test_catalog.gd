@@ -142,15 +142,15 @@ static func _load_fixture_files(path: String, profile_id: String) -> Dictionary:
 static func _load_json(path: String) -> Variant:
     var file = FileAccess.open(path, FileAccess.READ)
     if not file:
+        push_error("VillageTestCatalog: Could not open file " + path)
         return null
     var text = file.get_as_text()
     file.close()
-    var json_result = JSON.parse_string(text)
-    if json_result is Dictionary and json_result.has("error"):
-        var err = json_result["error"]
-        if err != OK:
-            var msg = json_result.get("error_message", "Unknown error")
-            push_error("VillageTestCatalog: JSON parse error in " + path + ": " + msg)
-            return null
-        return json_result.get("data", null)
-    return null
+    
+    var json = JSON.new()
+    var result = json.parse(text)
+    if json.get_error() != OK:
+        push_error("VillageTestCatalog: JSON parse error in " + path + ": " + json.get_error_message())
+        return null
+    
+    return json.get_data()
