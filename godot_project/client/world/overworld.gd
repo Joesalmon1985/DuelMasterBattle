@@ -1902,3 +1902,9 @@ func _finish_village_build(at: Vector2i, facing: String) -> void:
 	_hud_area_lbl.text = str(area["name"])
 	adv.set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
 	_update_prompt()
+
+
+## Leave the village test session: restore the exact pre-test campaign snapshot.
+func _exit_village_test() -> void:
+	_VRunner.end(_adv())
+	get_tree().change_scene_to_file("res://client/scenes/village_test_menu.tscn")
