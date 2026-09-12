@@ -86,17 +86,16 @@ func _populate_list() -> void:
         btn.add_theme_stylebox_override("pressed", _make_button_style(f.get("valid", true), Color(0.2, 0.18, 0.35)))
         btn.add_theme_font_size_override("font_size", 18)
         btn.focus_mode = Control.FOCUS_ALL
-        btn.disabled = not f.get("valid", true)
+        # Allow selection of invalid fixtures for inspection, but they can't be played
         btn.pressed.connect(_on_profile_selected.bind(fid))
         vbox.add_child(btn)
         profile_buttons.append(btn)
     
-    # Auto-select first valid
+    # Auto-select first (valid or invalid)
     selected_profile_id = ""
     for f in filtered_fixtures:
-        if f.get("valid", true):
-            _on_profile_selected(str(f["id"]))
-            break
+        _on_profile_selected(str(f["id"]))
+        break
     _update_run_button()
 
 func _make_button_style(valid: bool = true, bg: Color = Color("#221c3d")) -> StyleBoxFlat:
@@ -138,6 +137,15 @@ func _update_details_panel(f: Dictionary) -> void:
         details_panel.get_node("ValidLabel").text = "[color=red]INVALID FIXTURE[/color]"
         details_panel.get_node("ValidLabel").visible = true
         details_panel.get_node("DetailsContent").visible = false
+        
+        # Show validation errors prominently
+        var errors = f.get("errors", [])
+        var error_text = ""
+        for err in errors:
+            error_text += "[color=red]• " + str(err) + "[/color]\n"
+        if error_text == "":
+            error_text = "[color=red]• Unknown validation error[/color]"
+        details_panel.get_node("ValidLabel").text = "[color=red]INVALID FIXTURE[/color]\n\n" + error_text
         return
     
     details_panel.get_node("ValidLabel").visible = false

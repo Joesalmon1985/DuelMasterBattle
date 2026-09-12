@@ -343,24 +343,52 @@ def _building(anchor: str, kind: str = "residential", size: list[int] | None = N
 
 def _build_village(cast_id: str, rows: list[SourceRow], cast_rows: list[dict[str, Any]]) -> dict[str, Any]:
     resources = _infer_resources(rows, cast_id)
+    
+    # Hexagonal layout configuration
+    # Village center at (34, 28) - center of 72x58 map
+    village_cx, village_cy = 34, 28
+    
+    # Resource hex positions (axial coordinates relative to village center)
+    # Using pointy-top hex layout: q = x, r = z, with y = -x-z
+    # Three resource hexes positioned at 120° intervals around village
+    resource_hexes = []
+    if "Wood" in resources:
+        resource_hexes.append({"resource": "Wood", "terrain": "forest", "anchor": "forest", "center_q": -6, "center_r": -4})
+    if "Grain" in resources:
+        resource_hexes.append({"resource": "Grain", "terrain": "farmland", "anchor": "fields", "center_q": 7, "center_r": 2})
+    if "Ore" in resources:
+        resource_hexes.append({"resource": "Ore", "terrain": "mine", "anchor": "mine", "center_q": -2, "center_r": 8})
+    
+    # Convert axial to tile coordinates (pointy-top hex)
+    # tile_x = village_cx + hex_size * (sqrt(3) * q + sqrt(3)/2 * r)
+    # tile_y = village_cy + hex_size * (3/2 * r)
+    hex_radius = 5  # radius in tiles
+    hex_size = 3.464  # 2 * radius for pointy-top, but we use smaller scale
+    hex_scale = 6.0  # tiles per hex unit
+    
     anchors: dict[str, list[int]] = {
-        "village_square": [34, 28],
-        "village_hall": [30, 20],
-        "healer_house": [22, 19],
-        "pottery": [40, 19],
-        "workshop": [43, 25],
-        "tavern": [28, 33],
-        "general_store": [38, 32],
-        "old_shrine": [19, 31],
-        "forge": [23, 34],
-        "mill": [46, 30],
-        "farmstead": [52, 43],
-        "fields": [59, 47],
-        "logging_camp": [10, 11],
-        "forest": [7, 8],
-        "mine_mouth": [11, 43],
-        "mine": [8, 49],
+        "village_square": [village_cx, village_cy],
+        "village_hall": [village_cx - 4, village_cy - 8],
+        "healer_house": [village_cx - 12, village_cy - 9],
+        "general_store": [village_cx + 4, village_cy + 4],
+        "old_shrine": [village_cx - 15, village_cy + 3],
+        "forge": [village_cx - 11, village_cy + 6],
+        "mill": [village_cx + 12, village_cy + 2],
+        "farmstead": [village_cx + 18, village_cy + 15],
+        "fields": [village_cx + 25, village_cy + 19],
+        "logging_camp": [village_cx - 24, village_cy - 17],
     }
+    
+    # Resource hex centers - place them at hex positions that fit within the map
+    # Wood: NW of village, Grain: SE of village, Ore: SW of village
+    for rh in resource_hexes:
+        q = rh["center_q"]
+        r = rh["center_r"]
+        cx = int(village_cx + hex_scale * (1.732 * q + 0.866 * r))
+        cy = int(village_cy + hex_scale * (1.5 * r))
+        anchors[rh["anchor"]] = [cx, cy]
+        anchors[rh["anchor"] + "_camp" if rh["anchor"] == "forest" else rh["anchor"] + ("stead" if rh["anchor"] == "fields" else "mouth")] = [cx + (1 if q >= 0 else -3), cy + (1 if r >= 0 else -3)]
+    
     needed = {str(c.get("work_anchor", "village_square")) for c in cast_rows}
     needed |= {"village_square", "village_hall"}
     if "Wood" in resources:
@@ -369,17 +397,24 @@ def _build_village(cast_id: str, rows: list[SourceRow], cast_rows: list[dict[str
         needed |= {"fields", "farmstead", "mill"}
     if "Ore" in resources:
         needed |= {"mine", "mine_mouth", "forge"}
-
+    
+    # Build regions using hexagonal layout data
     regions: dict[str, Any] = {
-        "village_core": {"name": "Village", "bounds": [16, 14, 38, 28], "terrain": "settlement"},
+        "village_core": {"name": "Village", "bounds": [village_cx - 18, village_cy - 14, 36, 28], "terrain": "settlement", "shape": "rect"},
     }
-    if "Wood" in resources:
-        regions["forest"] = {"name": "Forest", "bounds": [0, 0, 25, 22], "terrain": "forest"}
-    if "Grain" in resources:
-        regions["fields"] = {"name": "Fields", "bounds": [46, 36, 26, 22], "terrain": "farmland"}
-    if "Ore" in resources:
-        regions["mine"] = {"name": "Mine Workings", "bounds": [0, 36, 25, 22], "terrain": "industrial"}
-
+    
+    for rh in resource_hexes:
+        anchor = rh["anchor"]
+        if anchor in anchors:
+            cx, cy = anchors[anchor]
+            regions[anchor] = {
+                "name": rh["resource"],
+                "terrain": rh["terrain"],
+                "shape": "hex",
+                "center": [cx, cy],
+                "radius": hex_radius,
+            }
+    
     building_defs = {
         "village_hall": _building("village_hall", "civic", [8, 6]),
         "healer_house": _building("healer_house"),
@@ -397,7 +432,10 @@ def _build_village(cast_id: str, rows: list[SourceRow], cast_rows: list[dict[str
 
     roads: list[dict[str, str]] = []
     for anchor in sorted(needed):
-        if anchor in {"village_square", "forest", "fields", "mine"}:
+        if anchor in {"village_square"}:
+            continue
+        if anchor in {"forest", "fields", "mine"}:
+            # These are resource hex centers, connect via specific sub-anchors
             continue
         roads.append({"from": "village_square", "to": anchor})
     if "logging_camp" in needed:
@@ -424,6 +462,10 @@ def _build_village(cast_id: str, rows: list[SourceRow], cast_rows: list[dict[str
         "player_start": anchors["village_square"],
         "roads": roads,
         "signs": signs,
+        "layout": {
+            "type": "three_resource_hexes",
+            "resource_hexes": resource_hexes,
+        }
     }
 
 

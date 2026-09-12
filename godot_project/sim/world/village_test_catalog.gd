@@ -75,7 +75,7 @@ static func _validate_fixture(path: String, profile_id: String) -> Dictionary:
     
     for file in required_files:
         var full_path = path.path_join(file)
-        if not ResourceLoader.exists(full_path):
+        if not FileAccess.file_exists(full_path):
             errors.append("Missing required file: " + file)
     
     if not errors.is_empty():
@@ -147,10 +147,10 @@ static func _load_json(path: String) -> Variant:
     var text = file.get_as_text()
     file.close()
     
-    var json = JSON.new()
-    var result = json.parse(text)
-    if json.get_error() != OK:
-        push_error("VillageTestCatalog: JSON parse error in " + path + ": " + json.get_error_message())
+    var result = JSON.parse_string(text)
+    if result is Dictionary and result.has("error") and result["error"] != OK:
+        push_error("VillageTestCatalog: JSON parse error in " + path + ": " + str(result["error"]))
         return null
     
-    return json.get_data()
+    # JSON.parse_string returns the parsed data directly on success, or an error dict on failure
+    return result

@@ -18,40 +18,41 @@
       "bounds": [
         16,
         14,
-        38,
+        36,
         28
       ],
-      "terrain": "settlement"
+      "terrain": "settlement",
+      "shape": "rect"
     },
     "forest": {
-      "name": "Forest",
-      "bounds": [
-        0,
-        0,
-        25,
-        22
+      "name": "Wood",
+      "terrain": "forest",
+      "shape": "hex",
+      "center": [
+        -35,
+        -2
       ],
-      "terrain": "forest"
+      "radius": 5
     },
     "fields": {
-      "name": "Fields",
-      "bounds": [
-        46,
-        36,
-        26,
-        22
+      "name": "Grain",
+      "terrain": "farmland",
+      "shape": "hex",
+      "center": [
+        103,
+        43
       ],
-      "terrain": "farmland"
+      "radius": 5
     },
     "mine": {
-      "name": "Mine Workings",
-      "bounds": [
-        0,
-        36,
-        25,
-        22
+      "name": "Ore",
+      "terrain": "mine",
+      "shape": "hex",
+      "center": [
+        51,
+        88
       ],
-      "terrain": "industrial"
+      "radius": 5
     }
   },
   "semantic_anchors": {
@@ -269,19 +270,45 @@
     }
   ],
   "signs": {
-    "general_store": "GENERAL STORE",
-    "fields": "FIELDS",
+    "forest": "FOREST",
     "village_hall": "VILLAGE HALL",
-    "village_square": "VILLAGE SQUARE",
-    "mine": "MINE",
+    "healer_house": "HEALER HOUSE",
+    "farmstead": "FARMSTEAD",
     "logging_camp": "LOGGING CAMP",
     "mine_mouth": "MINE MOUTH",
-    "mill": "MILL",
-    "farmstead": "FARMSTEAD",
-    "forge": "FORGE",
-    "forest": "FOREST",
     "old_shrine": "OLD SHRINE",
-    "healer_house": "HEALER HOUSE"
+    "forge": "FORGE",
+    "fields": "FIELDS",
+    "mill": "MILL",
+    "mine": "MINE",
+    "village_square": "VILLAGE SQUARE",
+    "general_store": "GENERAL STORE"
+  },
+  "layout": {
+    "type": "three_resource_hexes",
+    "resource_hexes": [
+      {
+        "resource": "Wood",
+        "terrain": "forest",
+        "anchor": "forest",
+        "center_q": -6,
+        "center_r": -4
+      },
+      {
+        "resource": "Grain",
+        "terrain": "farmland",
+        "anchor": "fields",
+        "center_q": 7,
+        "center_r": 2
+      },
+      {
+        "resource": "Ore",
+        "terrain": "mine",
+        "anchor": "mine",
+        "center_q": -2,
+        "center_r": 8
+      }
+    ]
   },
   "generated_from": {
     "cast_id": "E17A",

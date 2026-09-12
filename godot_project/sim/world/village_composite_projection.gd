@@ -100,6 +100,17 @@ static func _building(grid: Array, x: int, y: int, w: int, h: int, door_x: int) 
 static func _build_regions(grid: Array, regions: Dictionary) -> void:
     for region_id in regions:
         var region: Dictionary = regions[region_id]
+        var shape := str(region.get("shape", "rect"))
+        if shape == "hex":
+            var center: Array = region.get("center", [])
+            var radius := int(region.get("radius", 0))
+            if center.size() != 2 or radius <= 0:
+                continue
+            var cx := int(center[0])
+            var cy := int(center[1])
+            var terrain := str(region.get("terrain", "grass"))
+            _fill_hex_region(grid, cx, cy, radius, terrain)
+            continue
         var bounds: Array = region.get("bounds", [])
         if bounds.size() != 4:
             continue
@@ -114,6 +125,79 @@ static func _build_regions(grid: Array, regions: Dictionary) -> void:
             "water": _fill_water(grid, x, y, w, h)
             "settlement": _fill_settlement_base(grid, x, y, w, h)
             _: _rect(grid, x, y, w, h, GRASS)
+
+
+static func _fill_hex_region(grid: Array, cx: int, cy: int, radius: int, terrain: String) -> void:
+    # Pointy-top hex on square grid using axial-like coordinates
+    # Iterate over bounding box
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            # Check if (dx, dy) is within hex radius using axial distance
+            # For pointy-top: distance = max(|dx|, |dy|, |dx + dy|)
+            var dz = -dx - dy
+            var dist = maxi(abs(dx), maxi(abs(dy), abs(dz)))
+            if dist <= radius:
+                var tx = cx + dx
+                var ty = cy + dy
+                match terrain:
+                    "forest": _place_forest_tile(grid, tx, ty, dx, dy, radius)
+                    "farmland": _place_farmland_tile(grid, tx, ty, dx, dy, radius)
+                    "mine": _place_mine_tile(grid, tx, ty, dx, dy, radius)
+                    _: _set_tile(grid, tx, ty, GRASS)
+
+
+static func _place_forest_tile(grid: Array, tx: int, ty: int, dx: int, dy: int, radius: int) -> void:
+    # Dense but traversable forest: paths and clearings
+    # Create radial paths from center at 60-degree intervals
+    var is_path = false
+    var angle_steps = 6
+    for i in range(angle_steps):
+        # Axial direction vectors for pointy-top hex
+        var dirs = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]]
+        var dq = dirs[i][0]
+        var dr = dirs[i][1]
+        # Check if this tile lies along the radial path
+        if dx * dr == dy * dq and (dx * dq >= 0 or dy * dr >= 0):
+            var dist = maxi(abs(dx), maxi(abs(dy), abs(-dx - dy)))
+            if dist >= radius - 1:  # Path from edge to near center
+                is_path = true
+    # Also create a central clearing
+    var dist_center = maxi(abs(dx), maxi(abs(dy), abs(-dx - dy)))
+    if dist_center <= 1:
+        is_path = true
+    if is_path:
+        _set_tile(grid, tx, ty, DIRT)
+    elif ((tx * 17 + ty * 31) % 7) < 4:
+        _set_tile(grid, tx, ty, TREE)
+    else:
+        _set_tile(grid, tx, ty, GRASS)
+
+
+static func _place_farmland_tile(grid: Array, tx: int, ty: int, dx: int, dy: int, radius: int) -> void:
+    # Farmland with crop rows and paths
+    var dist_center = maxi(abs(dx), maxi(abs(dy), abs(-dx - dy)))
+    if dist_center == radius:
+        # Perimeter fence
+        _set_tile(grid, tx, ty, FENCE)
+    elif dy % 4 == 0 or dx == 0:
+        # Paths in a grid pattern
+        _set_tile(grid, tx, ty, DIRT)
+    else:
+        _set_tile(grid, tx, ty, CROP)
+
+
+static func _place_mine_tile(grid: Array, tx: int, ty: int, dx: int, dy: int, radius: int) -> void:
+    # Rocky mining terrain with mine entrance path
+    var dist_center = maxi(abs(dx), maxi(abs(dy), abs(-dx - dy)))
+    if dist_center == radius:
+        _set_tile(grid, tx, ty, ROCK)
+    elif dx == 0:
+        # Central path to mine entrance
+        _set_tile(grid, tx, ty, DIRT)
+    elif ((tx * 13 + ty * 11) % 6) < 2:
+        _set_tile(grid, tx, ty, ROCK)
+    else:
+        _set_tile(grid, tx, ty, DIRT)
 
 
 static func _fill_forest(grid: Array, x: int, y: int, w: int, h: int) -> void:
