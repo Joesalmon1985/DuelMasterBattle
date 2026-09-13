@@ -171,6 +171,26 @@ static func _entry_turns(entry: Dictionary) -> Array:
     return turns
 
 
+## Existing default lines for a villager who is not the current quest speaker.
+## E17A stores those on later scene nodes; other fixtures keep them silent so a
+## main-quest default is not spoken early. Never reads branch variants.
+static func _aside_default_turns(npc_id: String) -> Array:
+    if _current_profile != "E17A":
+        return []
+    var prefix := npc_id + "|" + quest_id() + "|"
+    for key in _dialogue_index.keys():
+        var k := str(key)
+        if not k.begins_with(prefix) or not k.ends_with("|default"):
+            continue
+        var entry: Dictionary = _dialogue_index[key]
+        if str(entry.get("node_id", "")).begins_with("__"):
+            continue
+        var turns := _entry_turns(entry)
+        if not turns.is_empty():
+            return turns
+    return []
+
+
 static func _ambient_result(npc_id: String) -> Dictionary:
     var entry := _entry(npc_id, "__ambient__", "default")
     if entry.is_empty() and is_complete():
@@ -195,9 +215,19 @@ static func interact_npc(npc_id: String) -> Dictionary:
     if node.is_empty():
         return {"success": false, "error": "Current node not found: " + _current_node}
     var node_type := str(node.get("type", "talk"))
-    if node_type not in ["talk", "choice"]:
-        return _ambient_result(npc_id)
-    if str(node.get("npc", "")) != npc_id:
+    var speaks_now := node_type in ["talk", "choice"] and str(node.get("npc", "")) == npc_id
+    if not speaks_now:
+        # Out-of-sequence villagers with an authored default still speak it.
+        # Do not apply sets or move the node — this is not their quest beat.
+        var aside := _aside_default_turns(npc_id)
+        if not aside.is_empty():
+            return {
+                "success": true,
+                "type": "ambient",
+                "turns": aside,
+                "current_node": _current_node,
+                "objective": objective_text(),
+            }
         return _ambient_result(npc_id)
     if not is_node_accessible(_current_node):
         return {"success": false, "type": "locked", "turns": [], "error": "Requirements not met"}
