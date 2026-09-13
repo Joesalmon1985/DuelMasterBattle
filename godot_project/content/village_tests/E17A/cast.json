@@ -21,7 +21,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:a",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Miner"},
+          {"level": 2, "text": "Bren"}
+        ],
+        "observe_far": "A young worker stands beside the mine road.",
+        "observe_near": "Dust covers his sleeves. He keeps glancing towards the village.",
+        "interaction": "npc",
+        "dismiss_on_move": true
+      }
     },
     {
       "id": "b",

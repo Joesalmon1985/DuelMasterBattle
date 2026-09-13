@@ -18,6 +18,7 @@ const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
 const _VRunner = preload("res://client/scripts/village_test_runner.gd")
 const _ActorVisual = preload("res://client/world/actor_visual.gd")
 const _VQuest = preload("res://sim/world/village_quest_runner.gd")
+const _SemanticLabel = preload("res://client/world/world_interaction_label.gd")
 
 const TILE := 16
 const TILE_SCALE := 4
@@ -68,6 +69,8 @@ var _held_dir: Vector2i = Vector2i.ZERO
 
 var _entities: Array = []          # live entity dicts with "node" refs
 var _entity_at: Dictionary = {}    # Vector2i -> entity
+var _semantic_labels: Array = []
+var _semantic_root: Control
 var _fire_frames: Array = []
 var _fire_time: float = 0.0
 var _story
@@ -182,6 +185,15 @@ func _build_ui() -> void:
 	ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(ui_root)
 	_ui = ui_root
+	var semantic_layer := CanvasLayer.new()
+	semantic_layer.name = "SemanticLabels"
+	semantic_layer.layer = 8
+	add_child(semantic_layer)
+	_semantic_root = Control.new()
+	_semantic_root.name = "SemanticRoot"
+	_semantic_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_semantic_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	semantic_layer.add_child(_semantic_root)
 	# HUD strip (top)
 	_hud = PanelContainer.new()
 	_hud.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -428,6 +440,7 @@ func _entity_visible(e: Dictionary) -> bool:
 
 
 func _build_entities() -> void:
+	_clear_semantic_labels()
 	for raw in area["entities"]:
 		var e: Dictionary = raw.duplicate(true)
 		if e["kind"] in ["trigger", "exit"]:
@@ -502,6 +515,8 @@ func _spawn_entity(e: Dictionary) -> void:
 	_entities.append(e)
 	if e["kind"] in ["fire", "pickup", "creature", "wizard", "npc", "corpse", "sign", "door", "logs"]:
 		_entity_at[pos] = e
+	if node != null and e.get("semantic") is Dictionary:
+		_attach_semantic_label(e, node)
 
 
 func _wizard_present(e: Dictionary) -> bool:
@@ -1581,6 +1596,44 @@ func ui_is_moving() -> bool:
 
 func ui_action() -> void:
 	_on_action()
+
+
+func ui_semantic_labels() -> Array:
+	var out: Array = []
+	for raw in _semantic_labels:
+		if not is_instance_valid(raw):
+			continue
+		out.append({
+			"key": raw.knowledge_key(),
+			"text": raw.display_text(),
+			"state": raw.interaction_state(),
+			"entity_id": raw.entity_id(),
+		})
+	return out
+
+
+func ui_semantic_label(key: String):
+	for raw in _semantic_labels:
+		if is_instance_valid(raw) and raw.knowledge_key() == key:
+			return raw
+	return null
+
+
+func _clear_semantic_labels() -> void:
+	for raw in _semantic_labels:
+		if is_instance_valid(raw):
+			raw.queue_free()
+	_semantic_labels.clear()
+
+
+func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
+	if _semantic_root == null:
+		return
+	var lbl = _SemanticLabel.new()
+	lbl.name = "Semantic_%s" % str(e.get("id", ""))
+	_semantic_root.add_child(lbl)
+	lbl.bind(_adv(), e["semantic"], str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
+	_semantic_labels.append(lbl)
 
 
 func ui_dialogue_open() -> bool:

@@ -314,7 +314,7 @@ static func _build_entities(grid: Array, cast_data: Dictionary, quest_data: Dict
         # Also guarantee at least one cardinal interaction tile is walkable.
         _make_walkable(grid, npc_pos[0], npc_pos[1] + 1)
         var npc_id := str(c.get("id", ""))
-        entities.append({
+        var entity := {
             "kind": "npc",
             "id": npc_id,
             "pos": npc_pos,
@@ -327,7 +327,10 @@ static func _build_entities(grid: Array, cast_data: Dictionary, quest_data: Dict
                 "relationships": c.get("relationships", {}),
                 "dialogue_context": c.get("dialogue_context", ""),
             }
-        })
+        }
+        if c.get("semantic") is Dictionary:
+            entity["semantic"] = (c["semantic"] as Dictionary).duplicate(true)
+        entities.append(entity)
 
     # Existing and generated fixtures can define friendly labels. Older fixtures
     # without a signs dictionary retain useful generic anchor signs.

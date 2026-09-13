@@ -13,6 +13,7 @@ class_name VillageTestRunner
 const _Projection = preload("res://sim/world/village_composite_projection.gd")
 const _Catalog = preload("res://sim/world/village_test_catalog.gd")
 const _QuestRunner = preload("res://sim/world/village_quest_runner.gd")
+const _Knowledge = preload("res://sim/world/world_knowledge.gd")
 
 static var selected_profile := ""
 static var _area: Dictionary = {}
@@ -229,6 +230,9 @@ static func _seed_prereqs(adv: Node, area: Dictionary) -> void:
         # so Overworld would narrate Trial Day. Park that for this session only.
         adv.state["story"]["phase"] = "pre_trial"
         adv.set_flag("opening_seen")
+        # Fixture starting knowledge only: John already knows this person's role.
+        # Campaign knowledge is snapshotted before this seed and restored on exit.
+        _Knowledge.learn(adv, "person:e17a:a", 1)
 
 
 static func quest_state() -> Dictionary:
