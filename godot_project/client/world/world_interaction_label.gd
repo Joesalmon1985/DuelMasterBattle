@@ -20,6 +20,7 @@ var _camera: Camera2D
 var _offset := Vector2.ZERO
 var _button: Button
 var _tracked_world := Vector2.ZERO
+var _press_frame := -1
 
 
 func _ready() -> void:
@@ -30,6 +31,7 @@ func _ready() -> void:
 	_button.custom_minimum_size = Vector2(148, 48)
 	_VT.style_secondary_button(_button)
 	_button.pressed.connect(press)
+	_button.gui_input.connect(_on_button_gui)
 	add_child(_button)
 
 
@@ -74,9 +76,22 @@ func screen_anchor() -> Vector2:
 	return (_tracked_world - center) * _camera.zoom + view * 0.5
 
 
-## Production tap. The button uses this path; tests may call it directly.
+## Production tap. The button uses this path for both mouse and emulated touch,
+## matching TouchPad. Tests may call it directly.
 func press() -> void:
+	if _press_frame == Engine.get_process_frames():
+		return
+	_press_frame = Engine.get_process_frames()
 	activated.emit(knowledge_key())
+
+
+func _on_button_gui(event: InputEvent) -> void:
+	# TouchPad listens for mouse. This button also accepts a raw screen touch
+	# so a device with mouse emulation off still focuses the semantic entity.
+	# Same-frame mouse emulation must not activate twice.
+	if event is InputEventScreenTouch and event.pressed:
+		press()
+		_button.accept_event()
 
 
 func refresh() -> void:

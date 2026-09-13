@@ -81,8 +81,33 @@ func _test_miner_label() -> void:
 	assert_eq(str(labels[0]["text"]), "Bren", "%s: knowledge change updates the label" % tag)
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), quest_before, "%s: knowledge change did not advance the quest" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: knowledge change did not open DialogueBox" % tag)
+	await _test_label_tap_does_not_act(tag)
 	_world.queue_free()
 	await process_frame
+
+
+func _test_label_tap_does_not_act(tag: String) -> void:
+	var miner := Vector2i.ZERO
+	for e in _world.area["entities"]:
+		if str(e.get("kind", "")) == "npc" and str(e.get("id", "")) == "a":
+			miner = Vector2i(int(e["pos"][0]), int(e["pos"][1]))
+	_world._john_pos = miner + Vector2i(0, 1)
+	_world._john_facing = "up"
+	_world._update_prompt()
+	var pos_before: Vector2i = _world.ui_actor_pos("john")
+	var quest_before := str(_VRunner.quest_state().get("current_node", ""))
+	assert_eq(_world.ui_prompt(), "Talk to Miner", "%s: ordinary action would talk if it fired" % tag)
+	_world.ui_tap_semantic("person:e17a:a")
+	await process_frame
+	assert_eq(_world.ui_semantic_focus(), "person:e17a:a", "%s: tap focuses Miner" % tag)
+	assert_eq(_world.ui_actor_pos("john"), pos_before, "%s: tap does not move John" % tag)
+	assert_true(not _world.ui_dialogue_open(), "%s: tap does not open DialogueBox" % tag)
+	assert_eq(str(_VRunner.quest_state().get("current_node", "")), quest_before, "%s: tap does not advance the quest" % tag)
+	assert_eq(str(_world.ui_semantic_labels()[0]["state"]), "LABEL", "%s: tap does not leave LABEL yet" % tag)
+	_world.ui_clear_semantic_focus()
+	assert_eq(_world.ui_semantic_focus(), "", "%s: focus can clear" % tag)
+	_world.ui_tap_semantic("person:e17a:a")
+	assert_eq(_world.ui_semantic_focus(), "person:e17a:a", "%s: a later tap focuses Miner again" % tag)
 
 
 func assert_true(cond: bool, msg: String) -> void:

@@ -71,6 +71,8 @@ var _entities: Array = []          # live entity dicts with "node" refs
 var _entity_at: Dictionary = {}    # Vector2i -> entity
 var _semantic_labels: Array = []
 var _semantic_root: Control
+var _semantic_focus := ""
+var _semantic_press_frame := -1
 var _fire_frames: Array = []
 var _fire_time: float = 0.0
 var _story
@@ -559,6 +561,13 @@ func _bob(node: Node2D) -> void:
 # ---------------------------------------------------------------------------------
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _is_empty_pointer_press(event):
+		# A label tap is consumed by the button. A leftover synthesised touch in
+		# the same frame must not clear the focus that tap just set.
+		if Engine.get_process_frames() != _semantic_press_frame:
+			_semantic_focus = ""
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_SPACE, KEY_ENTER, KEY_Z, KEY_E]:
 			_on_action()
@@ -1633,7 +1642,38 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 	lbl.name = "Semantic_%s" % str(e.get("id", ""))
 	_semantic_root.add_child(lbl)
 	lbl.bind(_adv(), e["semantic"], str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
+	if not lbl.activated.is_connected(_on_semantic_activated):
+		lbl.activated.connect(_on_semantic_activated)
 	_semantic_labels.append(lbl)
+
+
+func _on_semantic_activated(key: String) -> void:
+	# Focus only. Do not step, talk, or open the legacy dialogue box.
+	_semantic_focus = key
+	_semantic_press_frame = Engine.get_process_frames()
+
+
+func _is_empty_pointer_press(event: InputEvent) -> bool:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		return true
+	if event is InputEventScreenTouch and event.pressed:
+		return true
+	return false
+
+
+func ui_semantic_focus() -> String:
+	return _semantic_focus
+
+
+func ui_tap_semantic(key: String) -> void:
+	var lbl = ui_semantic_label(key)
+	if lbl == null:
+		return
+	lbl.press()
+
+
+func ui_clear_semantic_focus() -> void:
+	_semantic_focus = ""
 
 
 func ui_dialogue_open() -> bool:
