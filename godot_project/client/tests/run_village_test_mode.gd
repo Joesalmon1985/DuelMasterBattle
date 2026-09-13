@@ -38,6 +38,7 @@ func _run() -> void:
 		await _test_generated(int(c[0]), int(c[1]))
 	await _test_fixture("E36B")
 	await _test_e17a_john()
+	await _test_e17a_no_campaign_prologue()
 	_report()
 
 
@@ -184,6 +185,42 @@ func _test_e17a_john() -> void:
 	assert_eq(var_to_str(_adv.state), before_state, "%s: exit restores campaign state" % tag)
 	assert_eq(var_to_str(_adv.progression.to_dict()), before_prog, "%s: exit restores progression" % tag)
 	assert_eq(_adv.protagonist(), "halvard", "%s: campaign protagonist restored" % tag)
+	_world.queue_free()
+	await process_frame
+
+
+## E17A must boot as John with no inherited Trial Day / Halvard narration,
+## even when the campaign has not seen the prologue and has a pending battle.
+func _test_e17a_no_campaign_prologue() -> void:
+	var tag := "E17A no campaign prologue"
+	_adv.new_game()
+	assert_eq(_adv.protagonist(), "halvard", "%s: campaign starts as Halvard" % tag)
+	assert_eq(_adv.story_phase(), "halvard_prologue", "%s: campaign starts on Trial Day" % tag)
+	assert_true(not _adv.flag("opening_seen"), "%s: campaign has not seen the prologue" % tag)
+	_adv.last_battle_result = {"outcome": "victory", "policy": "STORY_DEFEAT_TRANSITION", "request": {}}
+	var before_state := var_to_str(_adv.state)
+	var before_prog := var_to_str(_adv.progression.to_dict())
+	_VRunner.set_profile("E17A")
+	_world = load("res://client/scenes/overworld.tscn").instantiate()
+	_world.test_mode = true
+	root.add_child(_world)
+	for _i in 12:
+		await process_frame
+	assert_true(_VRunner.is_active() and _VRunner.isolates_campaign_story(), "%s: E17A session isolates campaign story" % tag)
+	assert_eq(_adv.protagonist(), "john", "%s: protagonist is John" % tag)
+	assert_true(_adv.story_phase() != "halvard_prologue", "%s: session is not Trial Day" % tag)
+	assert_eq(_adv.battle_policy_for({}), _adv.POLICY_STORY, "%s: not the prologue battle policy" % tag)
+	assert_true(not _world.ui_dialogue_open(), "%s: no campaign dialogue opened" % tag)
+	var shown: String = _world._dialogue.ui_visible_text()
+	assert_true(not shown.contains("Trial Day") and not shown.contains("Halvard"), "%s: visible text is not the Halvard prologue" % tag)
+	assert_eq(str(_adv.last_battle_result.get("outcome", "")), "victory", "%s: pending campaign battle was not consumed" % tag)
+	_VRunner.end(_adv)
+	assert_eq(var_to_str(_adv.state), before_state, "%s: exit restores campaign state" % tag)
+	assert_eq(var_to_str(_adv.progression.to_dict()), before_prog, "%s: exit restores progression" % tag)
+	assert_eq(_adv.protagonist(), "halvard", "%s: campaign protagonist restored" % tag)
+	assert_eq(_adv.story_phase(), "halvard_prologue", "%s: campaign phase restored" % tag)
+	assert_true(not _adv.flag("opening_seen"), "%s: opening_seen restored" % tag)
+	assert_eq(str(_adv.last_battle_result.get("outcome", "")), "victory", "%s: pending battle result still waiting" % tag)
 	_world.queue_free()
 	await process_frame
 

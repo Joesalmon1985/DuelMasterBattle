@@ -115,6 +115,11 @@ func _ready() -> void:
 func _after_ready() -> void:
 	# Returning from a battle?
 	var adv := _adv()
+	# Fixture E17A must not play or consume campaign story (Trial Day, pending
+	# battle aftermath). last_battle_result stays put so exit still has it.
+	if _VRunner.isolates_campaign_story():
+		_maybe_autosave()
+		return
 	if not adv.last_battle_result.is_empty():
 		var r: Dictionary = adv.last_battle_result
 		adv.last_battle_result = {}

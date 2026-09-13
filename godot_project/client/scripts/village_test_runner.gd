@@ -130,6 +130,12 @@ static func profile_id() -> String:
     return selected_profile
 
 
+## Fixture E17A is a John inspection, not a continuation of the campaign.
+## Session mutations stay inside the snapshot; exit restores the real story.
+static func isolates_campaign_story() -> bool:
+    return selected_profile == "E17A" and is_active() and not is_generated()
+
+
 static func get_area() -> Dictionary:
     if _area.is_empty():
         _area = _project()
@@ -218,6 +224,11 @@ static func _seed_prereqs(adv: Node, area: Dictionary) -> void:
         var qid := str(quest_data["id"])
         adv.state["quest_" + qid + "_active"] = true
         adv.state["quest_" + qid + "_node"] = str(quest_data.get("start_node", ""))
+    if selected_profile == "E17A":
+        # new_game() leaves phase on halvard_prologue with opening_seen false,
+        # so Overworld would narrate Trial Day. Park that for this session only.
+        adv.state["story"]["phase"] = "pre_trial"
+        adv.set_flag("opening_seen")
 
 
 static func quest_state() -> Dictionary:
