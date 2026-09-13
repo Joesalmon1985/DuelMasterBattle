@@ -652,6 +652,7 @@ func _try_step(dir: Vector2i) -> void:
 		_update_john_sprite(0)
 		_update_prompt()
 		return
+	_dismiss_semantic_on_move()
 	_moving = true
 	_move_t = 0.0
 	_move_from = _john.position
@@ -1645,6 +1646,12 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 	if not lbl.activated.is_connected(_on_semantic_activated):
 		lbl.activated.connect(_on_semantic_activated)
 	_semantic_labels.append(lbl)
+
+
+func _dismiss_semantic_on_move() -> void:
+	for raw in _semantic_labels:
+		if is_instance_valid(raw):
+			raw.notify_player_moved()
 
 
 func _on_semantic_activated(key: String) -> void:

@@ -11,6 +11,9 @@ const _VT = preload("res://client/scripts/visual_theme.gd")
 signal activated(knowledge_key: String)
 
 const STATE_LABEL := "LABEL"
+const STATE_OBSERVATION := "OBSERVATION"
+
+var _state := STATE_LABEL
 
 var _semantic: Dictionary = {}
 var _entity_id := ""
@@ -28,7 +31,8 @@ func _ready() -> void:
 	_button = Button.new()
 	_button.focus_mode = Control.FOCUS_NONE
 	_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	_button.custom_minimum_size = Vector2(148, 48)
+	_button.custom_minimum_size = Vector2(280, 72)
+	_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_VT.style_secondary_button(_button)
 	_button.pressed.connect(press)
 	_button.gui_input.connect(_on_button_gui)
@@ -61,7 +65,7 @@ func display_text() -> String:
 
 
 func interaction_state() -> String:
-	return STATE_LABEL
+	return _state
 
 
 func tracked_world_position() -> Vector2:
@@ -82,7 +86,31 @@ func press() -> void:
 	if _press_frame == Engine.get_process_frames():
 		return
 	_press_frame = Engine.get_process_frames()
+	if _state == STATE_OBSERVATION:
+		collapse()
+	else:
+		_show_observation()
 	activated.emit(knowledge_key())
+
+
+func notify_player_moved() -> void:
+	var resolved: Dictionary = _Resolver.resolve(_semantic, _adv)
+	if bool(resolved.get("dismiss_on_move", true)):
+		collapse()
+
+
+func collapse() -> void:
+	_state = STATE_LABEL
+	refresh()
+
+
+func _show_observation() -> void:
+	# Pre-distance slice: the authored far observation is the expanded text.
+	# Distance does not choose OBSERVE versus INTERACT here.
+	var resolved: Dictionary = _Resolver.resolve(_semantic, _adv)
+	_state = STATE_OBSERVATION
+	if _button != null:
+		_button.text = str(resolved.get("observe_far", ""))
 
 
 func _on_button_gui(event: InputEvent) -> void:
@@ -96,6 +124,8 @@ func _on_button_gui(event: InputEvent) -> void:
 
 func refresh() -> void:
 	if _button == null or _adv == null:
+		return
+	if _state != STATE_LABEL:
 		return
 	var resolved: Dictionary = _Resolver.resolve(_semantic, _adv)
 	_button.text = str(resolved.get("label", ""))
