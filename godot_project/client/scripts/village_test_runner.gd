@@ -186,6 +186,11 @@ static func _restore_baseline(adv: Node) -> void:
 
 
 static func _seed_prereqs(adv: Node, area: Dictionary) -> void:
+    # Test sessions are played as John. new_game() starts the Halvard prologue;
+    # that identity must not leak into a disposable village inspection.
+    if not adv.state.has("story") or not (adv.state["story"] is Dictionary):
+        adv.state["story"] = {}
+    adv.state["story"]["protagonist"] = "john"
     adv.state["village_test_profile"] = selected_profile
     adv.state["village_test_area_id"] = area.get("id", "")
     adv.state["village_test_quest"] = area.get("quest_id", "")

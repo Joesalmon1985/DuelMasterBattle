@@ -125,7 +125,12 @@ static func area_for(sim: DmbWorldSim, nid: int, adv_state: Dictionary = {}) -> 
 	else:
 		_add_settlement(sim, nid, aid, profile, entities, adv_state, layout, spot)
 	return {"id": aid, "name": node_name(sim, nid), "rows": rows, "theme": "overworld", "entities": entities, "profile": profile,
-		"player_start": layout["player_start"], "layout": {"w": layout["w"], "h": layout["h"], "plaza": [layout["plaza"].position.x, layout["plaza"].position.y, layout["plaza"].size.x, layout["plaza"].size.y]}}
+		"player_start": layout["player_start"], "layout": {
+			"w": layout["w"], "h": layout["h"],
+			"plaza": [layout["plaza"].position.x, layout["plaza"].position.y, layout["plaza"].size.x, layout["plaza"].size.y],
+			"core": layout.get("core", []), "outer": layout.get("outer", []),
+			"features": layout.get("features", {}),
+		}}
 
 
 ## Settlement dressing from the profile: every laid-out building gets a readable

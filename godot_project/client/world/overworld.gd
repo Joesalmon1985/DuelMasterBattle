@@ -16,6 +16,7 @@ var _play := WorldPlay.new()
 const _SaveData = preload("res://client/scripts/save_data.gd")
 const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
 const _VRunner = preload("res://client/scripts/village_test_runner.gd")
+const _ActorVisual = preload("res://client/world/actor_visual.gd")
 const _VQuest = preload("res://sim/world/village_quest_runner.gd")
 
 const TILE := 16
@@ -457,7 +458,7 @@ func _spawn_entity(e: Dictionary) -> void:
 			if e["kind"] == "wizard" and not _wizard_present(e):
 				_entities.append(e)
 				return
-			node = _add_actor(pos, "chars/%s_%s_0.png" % [spr, facing], Vector2(0, -8))
+			node = _add_actor(pos, "chars/%s_%s_0.png" % [spr, facing], Vector2(0, -8), spr, facing, str(e.get("name", spr)))
 			if e["kind"] == "corpse":
 				# Lying body: rotate about the sprite centre so it stays on its tile.
 				node.centered = true
@@ -505,15 +506,26 @@ func _wizard_present(e: Dictionary) -> bool:
 	return true
 
 
-func _add_actor(pos: Vector2i, path: String, offset_px: Vector2) -> Sprite2D:
+func _add_actor(pos: Vector2i, path: String, offset_px: Vector2, sprite: String = "", facing: String = "down", label: String = "") -> Sprite2D:
 	var s := Sprite2D.new()
 	s.centered = false
 	s.scale = Vector2(TILE_SCALE, TILE_SCALE)
 	s.position = Vector2(pos) * TPX + offset_px * TILE_SCALE
-	s.texture = _tex(path)
 	s.z_index = 5
 	_actors_root.add_child(s)
+	if sprite != "":
+		_apply_char(s, sprite, facing, 0, label)
+	else:
+		s.texture = _tex(path)
 	return s
+
+
+## Character art goes through one path: a real sprite, or a geometric stand-in
+## if that resource is missing. Tile and prop loads stay on `_tex`.
+func _apply_char(node: Sprite2D, sprite: String, facing: String, frame: int, label: String) -> void:
+	if node == null:
+		return
+	_ActorVisual.apply(node, PIXEL_ROOT, sprite, facing, frame, label)
 
 
 func _bob(node: Node2D) -> void:
@@ -694,7 +706,7 @@ func _update_john_sprite(frame: int = 0) -> void:
 	var key := "john_staff" if _adv().progression.has_magic() else "john"
 	if _adv().protagonist() == "halvard":
 		key = "blue_mage"
-	_john.texture = _tex("chars/%s_%s_%d.png" % [key, _john_facing, frame])
+	_apply_char(_john, key, _john_facing, frame, "John")
 
 
 ## Test/inspection API: which way is the player sprite drawn as facing.
@@ -753,7 +765,7 @@ func _set_facing(key: String, facing: String) -> void:
 		return
 	for e in _entities:
 		if str(e.get("id", "")) == key and is_instance_valid(e.get("node")):
-			e["node"].texture = _tex("chars/%s_%s_0.png" % [str(e.get("sprite", "villager_a")), facing])
+			_apply_char(e["node"], str(e.get("sprite", "villager_a")), facing, 0, str(e.get("name", "")))
 			e["facing"] = facing
 
 
@@ -1049,8 +1061,7 @@ func _face_npc_toward_john(e: Dictionary) -> void:
 		return
 	var d := _john_pos - Vector2i(int(e["pos"][0]), int(e["pos"][1]))
 	var f := _dir_name(d)
-	var spr := str(e.get("sprite", "villager_a"))
-	e["node"].texture = _tex("chars/%s_%s_0.png" % [spr, f])
+	_apply_char(e["node"], str(e.get("sprite", "villager_a")), f, 0, str(e.get("name", "")))
 
 
 func _interact_enemy(e: Dictionary) -> void:
@@ -1376,9 +1387,7 @@ func say(speaker: String, text: String) -> void:
 
 
 func spawn_actor(key: String, sprite: String, pos: Vector2i, facing: String = "down") -> Sprite2D:
-	var n := _add_actor(pos, "chars/%s_%s_0.png" % [sprite, facing], Vector2(0, -8))
-	n.set_meta("sprite", sprite)
-	n.set_meta("facing", facing)
+	var n := _add_actor(pos, "chars/%s_%s_0.png" % [sprite, facing], Vector2(0, -8), sprite, facing, key)
 	_cutscene_actors[key] = n
 	return n
 
@@ -1394,7 +1403,7 @@ func move_actor(key: String, to: Vector2i, seconds: float) -> void:
 	var dest := Vector2(to) * TPX + Vector2(0, -8 * TILE_SCALE)
 	var d := dest - n.position
 	var f := _dir_name(Vector2i(signi(int(d.x)), signi(int(d.y))) if absf(d.x) > absf(d.y) else Vector2i(0, signi(int(d.y))))
-	n.texture = _tex("chars/%s_%s_0.png" % [n.get_meta("sprite"), f])
+	_apply_char(n, str(n.get_meta("sprite")), f, 0, str(n.get_meta("label", "")))
 	var tw := n.create_tween()
 	tw.tween_property(n, "position", dest, seconds)
 	await tw.finished
@@ -1403,7 +1412,7 @@ func move_actor(key: String, to: Vector2i, seconds: float) -> void:
 func face_actor(key: String, facing: String) -> void:
 	var n: Sprite2D = actor(key)
 	if n:
-		n.texture = _tex("chars/%s_%s_0.png" % [n.get_meta("sprite"), facing])
+		_apply_char(n, str(n.get_meta("sprite")), facing, 0, str(n.get_meta("label", "")))
 
 
 func remove_actor(key: String) -> void:
@@ -1524,8 +1533,7 @@ func _tick_workers(delta: float) -> void:
 		_entity_at.erase(here)
 		e["pos"] = [next.x, next.y]
 		_entity_at[next] = e
-		var spr := str(e.get("sprite", "villager_a"))
-		e["node"].texture = _tex("chars/%s_%s_0.png" % [spr, _dir_name(step)])
+		_apply_char(e["node"], str(e.get("sprite", "villager_a")), _dir_name(step), 0, str(e.get("name", "")))
 		var spr_node: Sprite2D = e["node"]
 		var tw: Tween = spr_node.create_tween()
 		tw.tween_property(spr_node, "position", Vector2(next) * TPX + Vector2(0, -8) * TILE_SCALE, STEP_SECONDS * 1.6)

@@ -40,6 +40,9 @@ func run() -> void:
 	assert_true(sizes.size() >= 3, "map sizes vary with the profile, not one fixed slot layout (%s)" % str(sizes))
 	_check_steading_vs_town()
 	_check_distinct_layouts()
+	_check_core_and_roads()
+	_check_production_dressing()
+	_check_crossings()
 
 
 func _world(seed: int, turns: int) -> DmbWorldSim:
@@ -149,7 +152,7 @@ func _check_case(seed: int, turns: int, nid: int, canonical: bool, sim: DmbWorld
 		assert_true(flat.count("a") + flat.count("t") >= 3, "%s infection scorches the ground" % tag)
 	# Town: walled, gated; steading: unwalled.
 	if town:
-		var wall_min: int = w - 4 - (DmbSettlementLayout.HOME_RECT.size.x if nid == sim.player_home_node() else 0)
+		var wall_min: int = w - 8 - (DmbSettlementLayout.HOME_RECT.size.x if nid == sim.player_home_node() else 0)
 		assert_true(str(rows[1]).count("#") >= wall_min, "%s town has a north wall" % tag)
 		assert_true(buildings.has("gate_tower") and buildings.has("hall") and buildings.has("market"), "%s town has gate, hall and market" % tag)
 	else:
@@ -201,6 +204,150 @@ func _check_distinct_layouts() -> void:
 	var a1 := DmbNodeProjection.area_for(sim, int(ids[0]))
 	var a2 := DmbNodeProjection.area_for(sim, int(ids[1]))
 	assert_true(str(_positions(a1, "well")) != str(_positions(a2, "well")) or str(_positions(a1, "shrine")) != str(_positions(a2, "shrine")), "civic buildings are not pinned to fixed slots")
+
+
+## Built core versus outer work, and a clear road from each exit to the plaza.
+func _check_core_and_roads() -> void:
+	var sim := _world(5, TURNS)
+	for nid in [22, 8]:
+		var a := DmbNodeProjection.area_for(sim, nid)
+		var lay: Dictionary = a["layout"]
+		var core: Array = lay["core"]
+		var outer: Array = lay["outer"]
+		assert_eq(core.size(), 4, "core rect identified")
+		assert_eq(outer.size(), 4, "outer work rect identified")
+		assert_true(int(core[2]) * int(core[3]) < int(outer[2]) * int(outer[3]), "outer landscape is larger than the built core")
+		var houses := 0
+		var houses_in := 0
+		var houses_edge := 0
+		var prod := 0
+		var prod_out := 0
+		var w := int(lay["w"])
+		var h := int(lay["h"])
+		for e in a["entities"]:
+			var px := int(e["pos"][0])
+			var py := int(e["pos"][1])
+			if str(e.get("building", "")) == "house":
+				houses += 1
+				if _in_rect(px, py, core, 2):
+					houses_in += 1
+				if px <= 3 or py <= 3 or px >= w - 4 or py >= h - 4:
+					houses_edge += 1
+			elif str(e["id"]).contains("_prod"):
+				prod += 1
+				if _in_rect(px, py, outer, 0) and not _in_rect(px, py, core, 0):
+					prod_out += 1
+		assert_true(houses >= 2, "houses present")
+		assert_true(houses_in * 2 >= houses, "most houses sit in the built core (%d/%d)" % [houses_in, houses])
+		assert_true(houses_edge * 4 < houses, "houses are not scattered to the map edge (%d/%d)" % [houses_edge, houses])
+		assert_true(prod >= 1 and prod_out * 2 >= prod, "most production sits in the outer work area (%d/%d)" % [prod_out, prod])
+		var rows: Array = a["rows"]
+		var cx := w / 2
+		var cy := h / 2
+		assert_true(str(rows[cy])[cx] == ":", "plaza centre is a road")
+		var exits := 0
+		for e in a["entities"]:
+			if str(e["kind"]) != "exit" or str(e["id"]).ends_with("_door"):
+				continue
+			exits += 1
+			var ex := int(e["pos"][0])
+			var ey := int(e["pos"][1])
+			var inward := Vector2i(ex, ey + (1 if ey == 0 else -1))
+			assert_true(str(rows[inward.y])[inward.x] == ":", "exit %s opens onto a road" % e["id"])
+			var reach := DmbSettlementLayout.reachable(rows, Vector2i(cx, cy), {})
+			assert_true(reach.has("%d,%d" % [inward.x, inward.y]), "exit road reaches the centre")
+		assert_true(exits >= 1, "settlement has a main exit")
+
+
+func _check_production_dressing() -> void:
+	var weak_wood := _feature_count("forest", 1, "trees")
+	var strong_wood := _feature_count("forest", 3, "trees")
+	assert_true(strong_wood > weak_wood, "more wood production draws more trees (%d > %d)" % [strong_wood, weak_wood])
+	var weak_grain := _feature_count("fields", 1, "fields")
+	var strong_grain := _feature_count("fields", 3, "fields")
+	assert_true(strong_grain > weak_grain, "more grain production draws more field (%d > %d)" % [strong_grain, weak_grain])
+	var weak_pasture := _feature_count("pasture", 1, "pasture")
+	var strong_pasture := _feature_count("pasture", 3, "pasture")
+	assert_true(strong_pasture > weak_pasture, "more pasture production draws more fencing (%d > %d)" % [strong_pasture, weak_pasture])
+	var weak_ore := _feature_count("mountains", 1, "mines")
+	var strong_ore := _feature_count("mountains", 3, "mines")
+	assert_true(strong_ore > weak_ore, "stronger mining draws more mine mouths (%d > %d)" % [strong_ore, weak_ore])
+	var weak_clay := _feature_count("hills", 1, "clay")
+	var strong_clay := _feature_count("hills", 3, "clay")
+	assert_true(strong_clay > weak_clay, "stronger clay production draws more pit (%d > %d)" % [strong_clay, weak_clay])
+	var camp_weak := _camp_count(1)
+	var camp_strong := _camp_count(3)
+	assert_true(camp_strong >= 1 and camp_strong >= camp_weak, "strong production gets a worker camp (%d)" % camp_strong)
+	assert_eq(_house_count(1), _house_count(3), "camps do not change canonical housing")
+
+
+func _check_crossings() -> void:
+	var terrains := ["forest", "fields", "pasture", "mountains", "hills"]
+	var marks := {}
+	for t in terrains:
+		var lay := _wild_layout(t)
+		assert_eq(int(lay["w"]), DmbSettlementLayout.WILD_W, "%s crossing keeps its width" % t)
+		assert_eq(int(lay["h"]), DmbSettlementLayout.WILD_H, "%s crossing keeps its height" % t)
+		var feat: Dictionary = lay["features"]
+		var mark := 0
+		match t:
+			"forest":
+				mark = int(feat["trees"])
+			"fields":
+				mark = int(feat["fields"])
+			"pasture":
+				mark = int(feat["pasture"])
+			"mountains":
+				mark = int(feat["mines"])
+			"hills":
+				mark = int(feat["clay"])
+		assert_true(mark > 0, "%s crossing has its own dressing (%d)" % [t, mark])
+		marks[t] = mark
+		var rows: Array = lay["rows"]
+		var cx := int(lay["w"]) / 2
+		var cy := int(lay["h"]) / 2
+		assert_true(str(rows[cy])[cx] in [":", ",", "."], "%s crossing plaza stays open" % t)
+	assert_true(marks.size() == 5, "five crossing flavours")
+
+
+func _feature_count(terrain: String, n: int, key: String) -> int:
+	var lay := _built_layout(terrain, n, 2)
+	return int(lay["features"][key])
+
+
+func _camp_count(n: int) -> int:
+	return int(_built_layout("forest", n, 2)["features"]["camps"])
+
+
+func _house_count(n: int) -> int:
+	var houses := 0
+	for b in _built_layout("forest", n, 4)["buildings"]:
+		if str(b["kind"]) == "house":
+			houses += 1
+	return houses
+
+
+func _built_layout(terrain: String, n: int, housing: int) -> Dictionary:
+	var p := {
+		"kind": "steading", "family": terrain, "development": 1,
+		"production": [{"terrain": terrain, "building": "hut", "worker": "worker", "n": n, "hex": 1}],
+		"processing": [], "housing": housing, "civic": ["shrine"], "roads": [],
+	}
+	return DmbSettlementLayout.build(5, 1, p, 2, false, [1, 2, 3], {1: terrain, 2: "desert", 3: "desert"}, {1: 0, 2: 0, 3: 0})
+
+
+func _wild_layout(terrain: String) -> Dictionary:
+	var p := {
+		"kind": "wild", "family": terrain, "development": 0,
+		"production": [], "processing": [], "housing": 0, "civic": [], "roads": [],
+	}
+	return DmbSettlementLayout.build(9, 4, p, 2, false, [1, 2, 3], {1: terrain, 2: "desert", 3: "desert"}, {1: 0, 2: 0, 3: 0})
+
+
+func _in_rect(x: int, y: int, rect: Array, pad: int) -> bool:
+	if rect.size() != 4:
+		return false
+	return x >= int(rect[0]) - pad and y >= int(rect[1]) - pad and x < int(rect[0]) + int(rect[2]) + pad and y < int(rect[1]) + int(rect[3]) + pad
 
 
 func _positions(a: Dictionary, building: String) -> Array:

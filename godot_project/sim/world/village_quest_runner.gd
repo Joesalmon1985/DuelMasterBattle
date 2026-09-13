@@ -146,6 +146,22 @@ static func _entry(npc_id: String, node_id: String, variant: String = "default")
     return {}
 
 
+## Spoken lines for the moment the player talks to the current node, before a
+## choice is resolved. Prefer an authored default/opening entry. A choice node
+## whose speech lives only on branch variants still speaks its existing prompt
+## so the talk is not silent; the variant turns stay on make_choice.
+static func _opening_turns(npc_id: String, node: Dictionary) -> Array:
+    for variant in ["default", "opening"]:
+        var entry := _entry(npc_id, _current_node, variant)
+        var turns := _entry_turns(entry)
+        if not turns.is_empty():
+            return turns
+    var prompt := str(node.get("prompt", node.get("text", "")))
+    if prompt == "":
+        return []
+    return [{"speaker": "npc", "text": prompt}]
+
+
 static func _entry_turns(entry: Dictionary) -> Array:
     if entry.has("turns") and entry["turns"] is Array:
         return (entry["turns"] as Array).duplicate(true)
@@ -187,7 +203,12 @@ static func interact_npc(npc_id: String) -> Dictionary:
         return {"success": false, "type": "locked", "turns": [], "error": "Requirements not met"}
 
     if node_type == "choice":
-        return current_choice_payload()
+        var choice := current_choice_payload()
+        # Choice nodes used to return a menu and no spoken turns. Overworld only
+        # speaks `turns`, so the opening talk was silent even when dialogue.json
+        # held the branch responses (those are returned by make_choice).
+        choice["turns"] = _opening_turns(npc_id, node)
+        return choice
 
     var node_id := _current_node
     var entry := _entry(npc_id, node_id, "default")

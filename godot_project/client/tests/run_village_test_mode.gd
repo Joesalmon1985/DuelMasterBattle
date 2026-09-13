@@ -37,6 +37,7 @@ func _run() -> void:
 	for c in CASES:
 		await _test_generated(int(c[0]), int(c[1]))
 	await _test_fixture("E36B")
+	await _test_e17a_john()
 	_report()
 
 
@@ -151,6 +152,38 @@ func _test_fixture(fid: String) -> void:
 	assert_true(_world.ui_tile_walkable(jp), "%s: John on walkable ground" % tag)
 	_VRunner.end(_adv)
 	assert_eq(var_to_str(_adv.state), before_state, "%s: exit restores campaign state" % tag)
+	_world.queue_free()
+	await process_frame
+
+
+func _test_e17a_john() -> void:
+	var tag := "fixture E17A"
+	_adv.new_game()
+	_adv.set_flag("opening_seen")
+	var before_state := var_to_str(_adv.state)
+	var before_prog := var_to_str(_adv.progression.to_dict())
+	assert_eq(_adv.protagonist(), "halvard", "campaign still starts as Halvard before the test session")
+	_VRunner.set_profile("E17A")
+	_world = load("res://client/scenes/overworld.tscn").instantiate()
+	_world.test_mode = true
+	root.add_child(_world)
+	await process_frame
+	await process_frame
+	await _wait_ready()
+	assert_true(_VRunner.is_active() and not _VRunner.is_generated(), "%s: authored session active" % tag)
+	assert_eq(_adv.protagonist(), "john", "%s: test session plays as John" % tag)
+	assert_eq(_world.ui_player_sprite_key(), "john", "%s: John sprite, not the prologue mage" % tag)
+	var miner := {}
+	for e in _world.area["entities"]:
+		if str(e.get("id", "")) == "a":
+			miner = e
+			break
+	assert_eq(str(miner.get("id", "")), "a", "%s: miner id unchanged" % tag)
+	assert_eq(str(miner.get("name", "")), "Miner", "%s: miner visible name" % tag)
+	_VRunner.end(_adv)
+	assert_eq(var_to_str(_adv.state), before_state, "%s: exit restores campaign state" % tag)
+	assert_eq(var_to_str(_adv.progression.to_dict()), before_prog, "%s: exit restores progression" % tag)
+	assert_eq(_adv.protagonist(), "halvard", "%s: campaign protagonist restored" % tag)
 	_world.queue_free()
 	await process_frame
 

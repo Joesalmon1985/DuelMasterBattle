@@ -318,7 +318,7 @@ static func _build_entities(grid: Array, cast_data: Dictionary, quest_data: Dict
             "kind": "npc",
             "id": npc_id,
             "pos": npc_pos,
-            "name": str(c.get("name", npc_id)),
+            "name": _visible_name(c, npc_id),
             "sprite": str(c.get("sprite", "villager_b")),
             "lines": ["..."],
             "village_test_story": {
@@ -368,6 +368,18 @@ static func _build_entities(grid: Array, cast_data: Dictionary, quest_data: Dict
         })
         _make_walkable(grid, int(pos[0]), int(pos[1]) + 1)
     return entities
+
+
+## Internal ids stay as authored. A one-letter fixture name is a placeholder,
+## not a label the player should read.
+static func _visible_name(c: Dictionary, npc_id: String) -> String:
+    var role := str(c.get("role", c.get("occupation", "")))
+    var raw := str(c.get("name", npc_id)).strip_edges()
+    if role != "" and raw.length() <= 1:
+        return role
+    if raw != "":
+        return raw
+    return role if role != "" else npc_id
 
 
 static func validate_projection(area: Dictionary) -> Dictionary:

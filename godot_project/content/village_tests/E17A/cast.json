@@ -4,7 +4,7 @@
   "cast": [
     {
       "id": "a",
-      "name": "A",
+      "name": "Miner",
       "role": "Miner",
       "occupation": "Miner",
       "home_anchor": "mine_mouth",
@@ -25,7 +25,7 @@
     },
     {
       "id": "b",
-      "name": "B",
+      "name": "Distiller",
       "role": "Distiller",
       "occupation": "Distiller",
       "home_anchor": "village_square",
@@ -46,7 +46,7 @@
     },
     {
       "id": "c",
-      "name": "C",
+      "name": "Reeve",
       "role": "Reeve",
       "occupation": "Reeve",
       "home_anchor": "village_hall",
@@ -67,7 +67,7 @@
     },
     {
       "id": "d",
-      "name": "D",
+      "name": "Storekeeper",
       "role": "Storekeeper",
       "occupation": "Storekeeper",
       "home_anchor": "general_store",
@@ -88,7 +88,7 @@
     },
     {
       "id": "e",
-      "name": "E",
+      "name": "Woodcutter",
       "role": "Woodcutter",
       "occupation": "Woodcutter",
       "home_anchor": "logging_camp",
@@ -109,7 +109,7 @@
     },
     {
       "id": "f",
-      "name": "F",
+      "name": "Farmer",
       "role": "Farmer",
       "occupation": "Farmer",
       "home_anchor": "farmstead",
@@ -130,7 +130,7 @@
     },
     {
       "id": "g",
-      "name": "G",
+      "name": "Miller",
       "role": "Miller",
       "occupation": "Miller",
       "home_anchor": "mill",
@@ -151,7 +151,7 @@
     },
     {
       "id": "h",
-      "name": "H",
+      "name": "Blacksmith",
       "role": "Blacksmith",
       "occupation": "Blacksmith",
       "home_anchor": "forge",
@@ -172,7 +172,7 @@
     },
     {
       "id": "i",
-      "name": "I",
+      "name": "Healer",
       "role": "Healer",
       "occupation": "Healer",
       "home_anchor": "healer_house",
@@ -193,7 +193,7 @@
     },
     {
       "id": "j",
-      "name": "J",
+      "name": "Watchkeeper",
       "role": "Watchkeeper",
       "occupation": "Watchkeeper",
       "home_anchor": "village_square",
@@ -214,7 +214,7 @@
     },
     {
       "id": "k",
-      "name": "K",
+      "name": "Householder",
       "role": "Householder",
       "occupation": "Householder",
       "home_anchor": "village_square",
@@ -235,7 +235,7 @@
     },
     {
       "id": "l",
-      "name": "L",
+      "name": "Shrine Keeper",
       "role": "Shrine Keeper",
       "occupation": "Shrine Keeper",
       "home_anchor": "old_shrine",

@@ -68,6 +68,13 @@ static func report(sim: DmbWorldSim, seed: int, nid: int) -> String:
 	if p["kind"] != "wild":
 		lines.append("quest template: %s" % DmbQuests.pick_template(sim, nid))
 	lines.append("summary: %s" % DmbSettlementProfile.summary(p))
+	var lay: Dictionary = a.get("layout", {})
+	if lay.has("w"):
+		var feat: Dictionary = lay.get("features", {})
+		lines.append("map: %dx%d   core: %s   outer: %s   dressing: trees=%s fields=%s pasture=%s mines=%s clay=%s camps=%s" % [
+			int(lay["w"]), int(lay["h"]), str(lay.get("core", [])), str(lay.get("outer", [])),
+			str(feat.get("trees", 0)), str(feat.get("fields", 0)), str(feat.get("pasture", 0)),
+			str(feat.get("mines", 0)), str(feat.get("clay", 0)), str(feat.get("camps", 0))])
 	var counts := {}
 	var important: PackedStringArray = []
 	for e in a["entities"]:
