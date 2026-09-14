@@ -73,6 +73,10 @@ var _entities: Array = []          # live entity dicts with "node" refs
 var _entity_at: Dictionary = {}    # Vector2i -> entity
 var _semantic_labels: Array = []
 var _semantic_root: Control
+var _semantic_layer: CanvasLayer
+var _semantic_focus_layer: CanvasLayer
+var _semantic_focus_root: Control
+var _semantic_syncing := false
 var _semantic_focus := ""
 var _semantic_press_frame := -1
 var _present_label = null
@@ -195,11 +199,23 @@ func _build_ui() -> void:
 	semantic_layer.name = "SemanticLabels"
 	semantic_layer.layer = 8
 	add_child(semantic_layer)
+	_semantic_layer = semantic_layer
 	_semantic_root = Control.new()
 	_semantic_root.name = "SemanticRoot"
 	_semantic_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_semantic_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	semantic_layer.add_child(_semantic_root)
+	# Active conversation sits above the HUD and D-pad so neither can cover or
+	# intercept speech and response clicks. Passive labels stay on layer 8.
+	_semantic_focus_layer = CanvasLayer.new()
+	_semantic_focus_layer.name = "SemanticFocus"
+	_semantic_focus_layer.layer = 12
+	add_child(_semantic_focus_layer)
+	_semantic_focus_root = Control.new()
+	_semantic_focus_root.name = "SemanticFocusRoot"
+	_semantic_focus_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_semantic_focus_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_semantic_focus_layer.add_child(_semantic_focus_root)
 	# HUD strip (top)
 	_hud = PanelContainer.new()
 	_hud.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -621,6 +637,7 @@ func _process(delta: float) -> void:
 			else:
 				_update_john_sprite(0)
 	_camera.position = _john.position + Vector2(TPX * 0.5, TPX * 0.5)
+	_sync_semantic_stack()
 
 
 func _keyboard_dir() -> Vector2i:
@@ -1677,6 +1694,7 @@ func _on_semantic_dismissed(key: String) -> void:
 		_dialogue.release_redirect()
 	if _semantic_focus == key:
 		_update_prompt()
+	_sync_semantic_stack()
 
 
 func _on_semantic_line_done() -> void:
@@ -1686,11 +1704,13 @@ func _on_semantic_line_done() -> void:
 
 func _on_semantic_activated(key: String) -> void:
 	# Focus only. Speech and responses are handled by their own signals.
-	_semantic_focus = key
+	_claim_semantic(key)
 	_semantic_press_frame = Engine.get_process_frames()
+	_sync_semantic_stack()
 
 
 func _on_semantic_interact(key: String) -> void:
+	_claim_semantic(key)
 	var e := _entity_by_semantic_key(key)
 	var lbl = ui_semantic_label(key)
 	if lbl == null or e.is_empty():
@@ -1710,7 +1730,7 @@ func _on_semantic_interact(key: String) -> void:
 
 
 func _on_semantic_response(key: String, index: int) -> void:
-	_semantic_focus = key
+	_claim_semantic(key)
 	_semantic_press_frame = Engine.get_process_frames()
 	if _dialogue != null and _dialogue.is_waiting_choice():
 		var offered: Array = _dialogue.redirect_options()
@@ -1736,6 +1756,7 @@ func _on_semantic_response(key: String, index: int) -> void:
 	if bool(result.get("inquiry", false)):
 		lbl.begin_speech(lines, result.get("options", []))
 		_update_prompt()
+		_sync_semantic_stack()
 		return
 	if bool(result.get("success", false)):
 		lines.append_array(_semantic_followup_lines())
@@ -1743,6 +1764,7 @@ func _on_semantic_response(key: String, index: int) -> void:
 		lines = [str(result["error"])]
 	lbl.begin_speech(lines, [])
 	_update_prompt()
+	_sync_semantic_stack()
 
 
 func _semantic_owns_talk(e: Dictionary) -> bool:
@@ -1860,18 +1882,24 @@ func semantic_present_choices(options: Array) -> void:
 	for i in options.size():
 		labels.append({"index": i, "label": str(options[i])})
 	_present_label.present_choices(labels)
+	_semantic_focus = str(_present_label.knowledge_key())
+	_sync_semantic_stack()
 
 
 func semantic_say_now(_speaker: String, text: String) -> void:
 	if _present_cancelled or _present_label == null:
 		return
 	_present_label.present_line(text)
+	_semantic_focus = str(_present_label.knowledge_key())
+	_sync_semantic_stack()
 
 
 func semantic_say(_speaker: String, text: String) -> void:
 	if _present_cancelled or _present_label == null:
 		return
 	_present_label.present_line(text)
+	_semantic_focus = str(_present_label.knowledge_key())
+	_sync_semantic_stack()
 	await _present_label.line_done
 	if _present_label != null and _present_label.is_talking():
 		_present_label.collapse()
@@ -1884,6 +1912,8 @@ func semantic_choose(_prompt: String, options: Array) -> String:
 	for i in options.size():
 		labels.append({"index": i, "label": str(options[i])})
 	_present_label.present_choices(labels)
+	_semantic_focus = str(_present_label.knowledge_key())
+	_sync_semantic_stack()
 	var index: int = await _present_label.presentation_result
 	if index < 0 or index >= options.size():
 		return ""
@@ -1972,6 +2002,7 @@ func _start_semantic_conversation(e: Dictionary, lbl) -> void:
 	_adv().bump_talk(str(e.get("id", "")))
 	lbl.begin_speech(lines, options)
 	_update_prompt()
+	_sync_semantic_stack()
 
 
 func _semantic_followup_lines() -> Array:
@@ -2106,6 +2137,68 @@ func ui_action_button_visible() -> bool:
 
 func ui_prompt_visible() -> bool:
 	return _prompt_lbl != null and _prompt_lbl.visible
+
+
+func _claim_semantic(key: String) -> void:
+	if key == "":
+		return
+	if _semantic_focus != "" and _semantic_focus != key:
+		var prev = ui_semantic_label(_semantic_focus)
+		if prev != null and prev.is_expanded():
+			prev.collapse()
+	_semantic_focus = key
+
+
+## One expanded interaction owns the foreground. RESPONSES hide every other label
+## so a neighbour cannot cover or intercept the decision. Spawn order does not.
+func _sync_semantic_stack() -> void:
+	if _semantic_syncing or _semantic_focus_root == null:
+		return
+	_semantic_syncing = true
+	var owner = _foreground_semantic_owner()
+	var responses := owner != null and str(owner.interaction_state()) == "RESPONSES"
+	var to_release: Array = []
+	for raw in _semantic_labels:
+		if not is_instance_valid(raw) or raw == owner:
+			continue
+		if owner != null and raw.is_expanded():
+			to_release.append(raw)
+	for raw in to_release:
+		raw.collapse()
+	for raw in _semantic_labels:
+		if not is_instance_valid(raw):
+			continue
+		var owns: bool = raw == owner
+		if owns:
+			if raw.get_parent() != _semantic_focus_root:
+				raw.reparent(_semantic_focus_root)
+			raw.set_foreground(true)
+			raw.set_passive_suppressed(false)
+			raw.move_to_front()
+		else:
+			if raw.get_parent() != _semantic_root and _semantic_root != null:
+				raw.reparent(_semantic_root)
+			raw.set_foreground(false)
+			raw.set_passive_suppressed(responses and not raw.is_expanded())
+	_semantic_syncing = false
+
+
+func _foreground_semantic_owner():
+	var focused = ui_semantic_label(_semantic_focus)
+	if focused != null and focused.is_expanded() and focused.target_on_screen():
+		return focused
+	if _present_label != null and is_instance_valid(_present_label) and _present_label.is_expanded() and _present_label.target_on_screen():
+		return _present_label
+	var best = null
+	var best_rank := 0
+	for raw in _semantic_labels:
+		if not is_instance_valid(raw) or not raw.target_on_screen():
+			continue
+		var rank: int = int(raw.focus_rank())
+		if rank > best_rank:
+			best_rank = rank
+			best = raw
+	return best
 
 
 func _semantic_any_expanded() -> bool:
