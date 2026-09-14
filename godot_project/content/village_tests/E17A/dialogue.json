@@ -1361,7 +1361,7 @@
       "turns": [
         {
           "speaker": "npc",
-          "text": "Miner asks Distiller to join the new workshop venture."
+          "text": "The workshop needs Distiller's hand in the work, not a silent name on the paper."
         }
       ]
     },
@@ -1374,7 +1374,7 @@
       "turns": [
         {
           "speaker": "npc",
-          "text": "Distiller says Reeve has warned the market licence will be refused unless the expansion has guaranteed stock."
+          "text": "Reeve has not signed anything. The licence stays refused until the stall can promise grain it already holds."
         }
       ]
     },
@@ -1387,7 +1387,7 @@
       "turns": [
         {
           "speaker": "npc",
-          "text": "Reeve says Storekeeper can guarantee the stock if a disused pitch is secured and cleared."
+          "text": "A cleared pitch lets Storekeeper mark a trial allocation. Without that, the stock stays for the market."
         }
       ]
     },
@@ -1526,6 +1526,418 @@
         "source": "fixture_ambient",
         "note": "Non-current conversation after Choice 1. Does not replace matrix branch turns."
       }
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "The ore comes out whether anyone thinks I am old enough to sell it."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the mine going?",
+      "turns": [{"speaker": "npc", "text": "The seam is still there. What is stalled is getting anyone to treat the workshop as work."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you need Distiller to hear?",
+      "turns": [{"speaker": "npc", "text": "I need them to hear the plan. Age is the excuse they keep handing Reeve."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What is the village saying?",
+      "turns": [{"speaker": "npc", "text": "That I am trying to buy love with a stall. I am trying to buy a living."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "I can stand with Miner without putting the household in the books."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the still?",
+      "turns": [{"speaker": "npc", "text": "The still is fine. I will not stake the household on a stall we cannot stock."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of Miner's workshop plan?",
+      "turns": [{"speaker": "npc", "text": "I can stand with them. I will not put the books in to prove it."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What have you heard about the licence?",
+      "turns": [{"speaker": "npc", "text": "Reeve wants numbers, not a speech about being grown."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "The market stays stocked for everyone. I listen when there are numbers."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the market holding?",
+      "turns": [{"speaker": "npc", "text": "It holds because we do not hand the stock to the loudest plan."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of the workshop proposal?",
+      "turns": [{"speaker": "npc", "text": "I will hear it when there is stock behind it. Bravado is not a licence."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What are people saying in the square?",
+      "turns": [{"speaker": "npc", "text": "They want the couple settled and the market left alone. I can do one of those properly."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "d",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "If it is not written down, it is not stock."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "d",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the store holding up?",
+      "turns": [{"speaker": "npc", "text": "The shelves are what they are. I will not promise a workshop what I already owe the market."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "d",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of Miner's stall plan?",
+      "turns": [{"speaker": "npc", "text": "A birthday speech is not a supply plan. Bring me a trial figure and I will look at it."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "d",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What are folk saying about the licence?",
+      "turns": [{"speaker": "npc", "text": "They call Reeve old-fashioned. Reeve is the person who feeds the village when a plan fails."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "e",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "Grown overnight, they say. Timber still takes the usual years."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "e",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the cutting going?",
+      "turns": [{"speaker": "npc", "text": "The camp is fine. The square keeps acting as if a new stall is already timber."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "e",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of Miner wanting a workshop?",
+      "turns": [{"speaker": "npc", "text": "Nerve, I will give them that. Teasing them about being grown does not build the stall."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "e",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What have you heard in the village?",
+      "turns": [{"speaker": "npc", "text": "Three versions of the argument, and not one of them includes who cuts the posts."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "f",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "Debt does not get kinder because someone turned eighteen."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "f",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the farm this season?",
+      "turns": [{"speaker": "npc", "text": "The fields are the same. I worry about anyone who spends money they have not grown yet."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "f",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of Miner and Distiller?",
+      "turns": [{"speaker": "npc", "text": "A person can love someone and still say no to the books. That is not an insult."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "f",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What are people saying about the stall?",
+      "turns": [{"speaker": "npc", "text": "They are calling it a test. A test that loses the household is just a debt."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "g",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the mill running?",
+      "turns": [{"speaker": "npc", "text": "The mill turns. It does not need a new stall to keep doing that."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "g",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of Miner's plan and Distiller's caution?",
+      "turns": [{"speaker": "npc", "text": "Miner is old enough to be heard. Distiller is allowed to refuse the money."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "g",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What have you heard from the square?",
+      "turns": [{"speaker": "npc", "text": "That someone has to win. Nobody has to finance a proof of love."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "h",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "The forge is hot. The square is louder than it needs to be."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "h",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of Miner's workshop plan?",
+      "turns": [{"speaker": "npc", "text": "A workshop is work. Asking Distiller to buy in to prove the relationship is not."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "h",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is work at the forge?",
+      "turns": [{"speaker": "npc", "text": "Nails and hinges, same as last week. Nobody has asked me to forge a licence."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "h",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What have you heard around the village?",
+      "turns": [{"speaker": "npc", "text": "That Reeve is blocking a young trader. What I heard is that the stock is not there."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "i",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "I mend what I can. I cannot mend a rent they have not calculated."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "i",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the house faring?",
+      "turns": [{"speaker": "npc", "text": "Busy enough. A new workshop will not lighten that unless it can survive a bad month."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "i",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of the couple's argument?",
+      "turns": [{"speaker": "npc", "text": "One wants to be taken seriously. The other does not want the household used as proof."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "i",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What are people saying about the stall?",
+      "turns": [{"speaker": "npc", "text": "They talk as if stock and affection are the same jar. They are not."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "j",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "I have already heard three versions of this. I am still on the gate."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "j",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the watch?",
+      "turns": [{"speaker": "npc", "text": "Quiet, if you ignore the square. The argument travels better than most news."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "j",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What have you heard about Miner and Distiller?",
+      "turns": [{"speaker": "npc", "text": "Miner wants the plan heard. Distiller wants the household left out of the books. Both can be true."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "j",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "Why does Reeve dislike the expansion?",
+      "turns": [{"speaker": "npc", "text": "I have heard too young, no stock, and borrowed pride. The one with numbers is the one Reeve repeats."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "k",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "A household is not a stake you throw down to settle an argument."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "k",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the household managing?",
+      "turns": [{"speaker": "npc", "text": "We manage by not promising next season's bread to this season's idea."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "k",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of Miner asking Distiller to invest?",
+      "turns": [{"speaker": "npc", "text": "Adulthood is the right to try. It is also the duty not to dress a debt as loyalty."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "k",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What is the village making of the licence?",
+      "turns": [{"speaker": "npc", "text": "People want a story with a winner. I want a stall that does not empty the store."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "l",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "opening",
+      "turns": [{"speaker": "npc", "text": "The square is using a business plan as a vow."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient greeting. Does not advance the quest."}
+    },
+    {
+      "npc_id": "l",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "work",
+      "choice_label": "How is the shrine keeping?",
+      "turns": [{"speaker": "npc", "text": "The shrine is the same. The road into the village is what has got loud."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "l",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "situation",
+      "choice_label": "What do you make of Miner and Distiller?",
+      "turns": [{"speaker": "npc", "text": "Let them love each other without making the stall a vote on it."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
+    },
+    {
+      "npc_id": "l",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__conversation__",
+      "variant": "village",
+      "choice_label": "What have you heard from the village?",
+      "turns": [{"speaker": "npc", "text": "That someone must give in. I have heard no reason they cannot keep the household and the argument apart."}],
+      "provenance": {"source": "fixture_conversation", "note": "Ambient topic. Does not advance the quest."}
     }
   ],
   "generated_from": {

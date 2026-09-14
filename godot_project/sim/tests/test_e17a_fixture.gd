@@ -39,8 +39,8 @@ func _test_opening_talk_has_turns() -> void:
 		if raw is Dictionary and str((raw as Dictionary).get("text", "")) != "":
 			spoken += 1
 	assert_true(spoken > 0, "opening interaction returns non-empty turns (got %d)" % turns.size())
-	if str(result.get("type", "")) == "choice":
-		var chosen: Dictionary = VillageQuestRunner.make_choice(0)
+	if not result.get("options", []).is_empty():
+		var chosen: Dictionary = VillageQuestRunner.respond_to(npc, 0)
 		var after: Array = chosen.get("turns", [])
 		assert_true(after.size() > 0, "choosing still returns the authored dialogue.json turns")
 	VillageQuestRunner.clear()

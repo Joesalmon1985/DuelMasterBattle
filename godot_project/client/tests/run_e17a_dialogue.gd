@@ -34,9 +34,9 @@ func _run() -> void:
 func _test_miner_choice_and_aside() -> void:
 	var tag := "E17A dialogue UI"
 	var branch_line := _authored_turn("a", "scene_01_a", "branch_a")
-	var aside_line := _authored_turn("d", "scene_04_d", "default")
+	var aside_line := _authored_turn("d", "__conversation__", "opening")
 	assert_true(branch_line != "", "%s: fixture has Miner's branch_a line" % tag)
-	assert_true(aside_line != "", "%s: fixture has Storekeeper's default line" % tag)
+	assert_true(aside_line != "", "%s: fixture has Storekeeper's conversation opening" % tag)
 	_adv.new_game()
 	_VRunner.set_profile("E17A")
 	_world = load("res://client/scenes/overworld.tscn").instantiate()
@@ -57,7 +57,7 @@ func _test_miner_choice_and_aside() -> void:
 	await process_frame
 	var aside_seen := await _drain_semantic(key)
 	assert_true(not _world.ui_dialogue_open(), "%s: Storekeeper speech stayed off DialogueBox" % tag)
-	assert_true(aside_seen.contains(aside_line), "%s: Storekeeper spoke authored default dialogue (saw %s)" % [tag, aside_seen.left(180)])
+	assert_true(aside_seen.contains(aside_line), "%s: Storekeeper spoke authored conversation (saw %s)" % [tag, aside_seen.left(180)])
 	var after_aside: Dictionary = _VRunner.quest_state()
 	assert_eq(str(after_aside.get("current_node", "")), str(before_aside.get("current_node", "")), "%s: aside talk did not advance the quest" % tag)
 	assert_eq(str(after_aside.get("flags", {})), str(before_aside.get("flags", {})), "%s: aside talk did not set quest flags" % tag)

@@ -100,10 +100,9 @@ func _test_miller() -> void:
 		assert_eq(str(_entry(MILLER).get("text", "")), line, "%s: authored line in order" % tag)
 		_world.ui_tap_semantic(MILLER)
 		await process_frame
-	assert_eq(str(_entry(MILLER).get("state", "")), "LABEL", "%s: finished ordinary speech returns the label" % tag)
-	assert_eq(str(_entry(MILLER).get("text", "")), "Miller", "%s: finished label is Miller" % tag)
-	assert_eq(_world.ui_semantic_responses(MILLER).size(), 0, "%s: completion did not invent responses" % tag)
-	assert_eq(str(_VRunner.quest_state().get("current_node", "")), "scene_01_a", "%s: completing ordinary speech did not advance the quest" % tag)
+	assert_eq(str(_entry(MILLER).get("state", "")), "RESPONSES", "%s: finished opening offers topics" % tag)
+	assert_true(_world.ui_semantic_responses(MILLER).size() >= 3, "%s: ordinary conversation has topic choices" % tag)
+	assert_eq(str(_VRunner.quest_state().get("current_node", "")), "scene_01_a", "%s: topic menu did not advance the quest" % tag)
 
 
 func _test_miner_choice() -> void:

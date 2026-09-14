@@ -20,7 +20,7 @@ const BRANCH_B := [
 	"Money can't buy love. But it could fund my next script rewrite.",
 	"The townsfolk exchange confused glances, unsure of your sanity.",
 ]
-const INQUIRY := "Miner asks Distiller to join the new workshop venture."
+const INQUIRY := "The workshop needs Distiller's hand in the work, not a silent name on the paper."
 
 var _failures: Array = []
 var _world

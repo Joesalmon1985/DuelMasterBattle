@@ -1758,7 +1758,7 @@ func _on_semantic_response(key: String, index: int) -> void:
 		return
 	if not (_VRunner.is_active() and e.has("village_test_story")):
 		return
-	var result: Dictionary = _VQuest.make_choice(index)
+	var result: Dictionary = _VQuest.respond_to(str(e.get("id", "")), index)
 	var shown: Dictionary = _reply_from_choice(result)
 	lbl.present_committed_reply(shown.get("lines", []), shown.get("options", []))
 	_update_prompt()
@@ -1770,7 +1770,7 @@ func _on_semantic_response(key: String, index: int) -> void:
 func _reply_from_choice(result: Dictionary) -> Dictionary:
 	var lines: Array = _turn_texts(result.get("turns", []))
 	var options: Array = []
-	if bool(result.get("inquiry", false)):
+	if bool(result.get("return_options", false)) or bool(result.get("inquiry", false)):
 		options = result.get("options", [])
 	elif bool(result.get("success", false)):
 		lines.append_array(_semantic_followup_lines())
@@ -2055,10 +2055,11 @@ func _start_semantic_conversation(e: Dictionary, lbl) -> void:
 				lines = [err]
 		else:
 			lines = _turn_texts(result.get("turns", []))
-			if lines.is_empty() and str(result.get("type", "")) == "ambient":
+			if lines.is_empty() and str(result.get("type", "")) in ["ambient", "conversation"]:
 				lines = _npc_authored_lines(e)
-			if str(result.get("type", "")) == "choice":
-				options = result.get("options", [])
+			var offered: Array = result.get("options", [])
+			if not offered.is_empty():
+				options = offered
 	else:
 		lines = _npc_authored_lines(e)
 	_adv().bump_talk(str(e.get("id", "")))
@@ -2569,7 +2570,7 @@ func _play_village_turns(npc_name: String, turns: Array) -> void:
 		await _dialogue.say_async(speaker, text)
 
 
-func _village_present_choice(payload: Dictionary, npc_name: String) -> void:
+func _village_present_choice(payload: Dictionary, npc_name: String, npc_id: String = "") -> void:
 	var options: Array = payload.get("options", [])
 	if options.is_empty():
 		return
@@ -2585,10 +2586,10 @@ func _village_present_choice(payload: Dictionary, npc_name: String) -> void:
 	var index := labels.find(picked)
 	if index < 0:
 		return
-	var result: Dictionary = _VQuest.make_choice(index)
-	if bool(result.get("inquiry", false)):
+	var result: Dictionary = _VQuest.respond_to(npc_id, index) if npc_id != "" else _VQuest.make_choice(index)
+	if bool(result.get("return_options", false)) or bool(result.get("inquiry", false)):
 		await _play_village_turns(npc_name, result.get("turns", []))
-		await _village_present_choice(payload, npc_name)
+		await _village_present_choice(result, npc_name, npc_id)
 		return
 	if bool(result.get("success", false)):
 		await _play_village_turns(npc_name, result.get("turns", []))
@@ -2639,9 +2640,10 @@ func _interact_village_npc(e: Dictionary) -> void:
 			for line in e.get("lines", []):
 				turns.append({"speaker": "npc", "text": str(line)})
 		await _play_village_turns(name, turns)
-		if str(result.get("type", "")) == "choice":
-			await _village_present_choice(result, name)
-		await _village_resolve_pending_nodes(name)
+		if not result.get("options", []).is_empty():
+			await _village_present_choice(result, name, id)
+		elif bool(result.get("progression", false)):
+			await _village_resolve_pending_nodes(name)
 	_adv().bump_talk(id)
 	_input_locked = false
 	_touch.set_enabled(true)
