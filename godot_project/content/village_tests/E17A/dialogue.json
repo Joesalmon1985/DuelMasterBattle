@@ -1390,6 +1390,142 @@
           "text": "Reeve says Storekeeper can guarantee the stock if a disused pitch is secured and cleared."
         }
       ]
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__ambient__",
+      "variant": "after_scene_1_a",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "You told them to take the plan seriously. Good. I'm not asking to be patted on the head."
+        },
+        {
+          "speaker": "npc",
+          "text": "Distiller can worry. The licence is still the real argument."
+        }
+      ],
+      "provenance": {
+        "source": "fixture_ambient",
+        "note": "Non-current conversation after Choice 1, branch A. Does not replace matrix branch turns."
+      }
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__ambient__",
+      "variant": "after_scene_1_b",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "You told me they can love me without buying in. I'm still chewing on that."
+        },
+        {
+          "speaker": "npc",
+          "text": "The workshop and the two of us are not the same question. I heard you."
+        }
+      ],
+      "provenance": {
+        "source": "fixture_ambient",
+        "note": "Non-current conversation after Choice 1, branch B. Does not replace matrix branch turns."
+      }
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__ambient__",
+      "variant": "after_scene_2",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Reeve still has the say on the market. Another talk with me won't sign the licence."
+        }
+      ],
+      "provenance": {
+        "source": "fixture_ambient",
+        "note": "Non-current conversation after Choice 2. Does not replace matrix branch turns."
+      }
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__ambient__",
+      "variant": "opening",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner wants the village to hear a plan, not my age. I can stand with them without putting the household in the books."
+        }
+      ],
+      "provenance": {
+        "source": "fixture_ambient",
+        "note": "Non-current conversation before Choice 1. Does not replace matrix branch turns."
+      }
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__ambient__",
+      "variant": "after_scene_2_a",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "You sent that question to Reeve. Age was never the stock problem."
+        }
+      ],
+      "provenance": {
+        "source": "fixture_ambient",
+        "note": "Non-current conversation after Choice 2, branch A. Does not replace matrix branch turns."
+      }
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__ambient__",
+      "variant": "after_scene_2_b",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "A capped guarantee would make the risk measurable. That's the argument I wanted."
+        }
+      ],
+      "provenance": {
+        "source": "fixture_ambient",
+        "note": "Non-current conversation after Choice 2, branch B. Does not replace matrix branch turns."
+      }
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__ambient__",
+      "variant": "opening",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "The market stays stocked for everyone, not just the loudest proposal. I'll listen when there are numbers."
+        }
+      ],
+      "provenance": {
+        "source": "fixture_ambient",
+        "note": "Non-current conversation before Choice 1. Does not replace matrix branch turns."
+      }
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "__ambient__",
+      "variant": "after_scene_1",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "I heard the couple had words. The licence still turns on stock, not on who feels grown."
+        }
+      ],
+      "provenance": {
+        "source": "fixture_ambient",
+        "note": "Non-current conversation after Choice 1. Does not replace matrix branch turns."
+      }
     }
   ],
   "generated_from": {

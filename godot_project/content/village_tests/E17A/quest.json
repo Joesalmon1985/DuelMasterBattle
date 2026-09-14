@@ -125,6 +125,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_04_complete"
       ],
@@ -137,6 +138,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_05_complete"
       ],
@@ -149,6 +151,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_06_complete"
       ],
@@ -161,6 +164,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_07_complete"
       ],
@@ -173,6 +177,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_08_complete"
       ],
@@ -185,6 +190,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_09_complete"
       ],
@@ -197,6 +203,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_10_complete"
       ],
@@ -209,6 +216,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_11_complete"
       ],
@@ -221,6 +229,7 @@
       "dialogue_state": "Situation",
       "trigger_condition": "On interaction while the situation is unresolved.",
       "type": "talk",
+      "observer": true,
       "sets": [
         "scene_12_complete"
       ],

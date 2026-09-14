@@ -72,7 +72,8 @@ func _test_miner_label() -> void:
 			continue
 		if e.has("semantic"):
 			semantic_ids.append(str(e.get("id", "")))
-	assert_eq(semantic_ids, ["a", "g"], "%s: only the fixture semantic NPCs have labels" % tag)
+	semantic_ids.sort()
+	assert_eq(semantic_ids, ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"], "%s: every E17A villager has a semantic label" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: creating the label did not open DialogueBox" % tag)
 	quest_before = str(_VRunner.quest_state().get("current_node", ""))
 	assert_eq(quest_before, "scene_01_a", "%s: quest not advanced by the label" % tag)

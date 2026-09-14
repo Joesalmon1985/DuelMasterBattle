@@ -55,7 +55,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:b",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Distiller"}
+        ],
+        "observe_far": "A young worker stands in the village square.",
+        "observe_near": "She keeps her arms folded, watching the square.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "c",
@@ -76,7 +88,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:c",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Reeve"}
+        ],
+        "observe_far": "An older figure stands by the village hall.",
+        "observe_near": "He watches the square as if counting who owes the market a word.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "d",
@@ -97,7 +121,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:d",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Storekeeper"}
+        ],
+        "observe_far": "Someone stands outside the general store.",
+        "observe_near": "They keep one eye on the stock and one on the square.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "e",
@@ -118,7 +154,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:e",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Woodcutter"}
+        ],
+        "observe_far": "A woodcutter stands at the logging camp.",
+        "observe_near": "Sawdust clings to his sleeves. He looks toward the village.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "f",
@@ -139,7 +187,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:f",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Farmer"}
+        ],
+        "observe_far": "A farmer stands by the farmstead.",
+        "observe_near": "His boots are muddy. He is listening more than talking.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "g",
@@ -193,7 +253,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:h",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Blacksmith"}
+        ],
+        "observe_far": "A blacksmith stands by the forge.",
+        "observe_near": "The forge heat is still on him. He is watching the road.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "i",
@@ -214,7 +286,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:i",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Healer"}
+        ],
+        "observe_far": "A healer stands outside the healer's house.",
+        "observe_near": "She looks tired, and she is listening for who needs her next.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "j",
@@ -235,7 +319,19 @@
       "pos_offset": [
         1,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:j",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Watchkeeper"}
+        ],
+        "observe_far": "A watchkeeper stands at the edge of the square.",
+        "observe_near": "They look as if they have already heard today's argument twice.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "k",
@@ -256,7 +352,19 @@
       "pos_offset": [
         -1,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:k",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Householder"}
+        ],
+        "observe_far": "A householder stands in the village square.",
+        "observe_near": "She is listening, and she has not decided what she thinks yet.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "l",
@@ -277,7 +385,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:l",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Shrine Keeper"}
+        ],
+        "observe_far": "A quiet figure stands by the old shrine.",
+        "observe_near": "They are not praying. They are watching the road into the village.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     }
   ],
   "generated_from": {

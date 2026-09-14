@@ -2068,6 +2068,8 @@ func _start_semantic_conversation(e: Dictionary, lbl) -> void:
 
 
 func _semantic_followup_lines() -> Array:
+	if _VQuest.is_complete():
+		return []
 	var extra: Array = []
 	var guard := 0
 	while guard < 16:
