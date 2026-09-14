@@ -57,6 +57,11 @@ var _panel_size := Vector2.ZERO
 var _responses_input_armed := true
 var _awaiting_pointer_release := false
 var _choice_locked := false
+var _acknowledging := false
+var _ack_generation := 0
+var _committed_lines: Array = []
+var _committed_options: Array = []
+var _choice_trace: Array = []
 var _touch_down: Dictionary = {}
 var _gesture_down := false
 var _fade: Tween
@@ -277,6 +282,17 @@ func choice_locked() -> bool:
 	return _choice_locked
 
 
+## True only during the brief selected-choice hold. Movement dismissal is blocked
+## for that hold. The captured reply is not waiting on Overworld.
+func is_acknowledging() -> bool:
+	return _acknowledging
+
+
+## RESPONSES → CHOICE_ACCEPTED → SPEECH, or LABEL if an explicit dismiss won.
+func choice_trace() -> Array:
+	return _choice_trace.duplicate()
+
+
 func refresh_presentation() -> void:
 	_follow()
 
@@ -366,6 +382,7 @@ func press_response(index: int) -> void:
 	_press_frame = Engine.get_process_frames()
 	_choice_locked = true
 	_selected_response = index
+	_record_trace("CHOICE_ACCEPTED")
 	_acknowledge_choice(index)
 	if _awaiting_choice:
 		_awaiting_choice = false
@@ -374,13 +391,48 @@ func press_response(index: int) -> void:
 	activated.emit(knowledge_key())
 
 
+## Captured reply for a choice already accepted. The hold is presentation only.
+## Collapse is the only way the stored lines are not shown.
+func present_committed_reply(lines: Array, options_after: Array = []) -> void:
+	_committed_lines = []
+	for raw in lines:
+		var text := str(raw).strip_edges()
+		if text != "":
+			_committed_lines.append(text)
+	_committed_options = options_after.duplicate(true)
+	_choice_locked = true
+	_acknowledging = true
+	_ack_generation += 1
+	var generation := _ack_generation
+	if not is_inside_tree():
+		_reveal_committed_reply(generation)
+		return
+	var timer := get_tree().create_timer(0.16)
+	timer.timeout.connect(_reveal_committed_reply.bind(generation), CONNECT_ONE_SHOT)
+
+
+func _reveal_committed_reply(generation: int) -> void:
+	if generation != _ack_generation or not _acknowledging:
+		return
+	_acknowledging = false
+	begin_speech(_committed_lines, _committed_options)
+
+
 func notify_player_moved() -> void:
+	# The selected-choice hold must finish into the captured reply. A direction
+	# already held, or the click that selected the choice, must not cancel it.
+	if _acknowledging:
+		return
 	if _dismisses_on_move():
 		collapse()
 
 
 func collapse() -> void:
 	var was_talking := _state == STATE_SPEECH or _state == STATE_RESPONSES
+	_acknowledging = false
+	_ack_generation += 1
+	_committed_lines = []
+	_committed_options = []
 	_clear_conversation()
 	_selected_response = -1
 	_choice_locked = false
@@ -555,7 +607,7 @@ func _follow() -> void:
 	var settled := _intersects_center(_settled_center())
 	_target_visible = displayed
 	if not settled:
-		if is_expanded() and _dismisses_on_move():
+		if is_expanded() and _dismisses_on_move() and not _acknowledging:
 			collapse()
 		_apply_shown()
 		return
@@ -760,6 +812,8 @@ func _world_to_screen_from(world: Vector2, center: Vector2) -> Vector2:
 func _enter_state(next: String) -> void:
 	var changed := _state != next
 	_state = next
+	if changed:
+		_record_trace(next)
 	if changed and next != STATE_LABEL:
 		presentation_entered.emit(next)
 		_fade_in()
@@ -778,6 +832,12 @@ func _fade_in() -> void:
 	modulate.a = 0.28
 	_fade = create_tween()
 	_fade.tween_property(self, "modulate:a", 1.0, 0.15)
+
+
+func _record_trace(step: String) -> void:
+	if not _choice_trace.is_empty() and str(_choice_trace.back()) == step:
+		return
+	_choice_trace.append(step)
 
 
 func _acknowledge_choice(index: int) -> void:

@@ -79,7 +79,6 @@ var _semantic_focus_root: Control
 var _semantic_syncing := false
 var _move_dismiss_armed := true
 var _test_key_dir := Vector2i.ZERO
-var _reply_serial := 0
 var _semantic_focus := ""
 var _semantic_press_frame := -1
 var _present_label = null
@@ -1697,7 +1696,6 @@ func _dismiss_semantic_on_move() -> void:
 
 
 func _on_semantic_dismissed(key: String) -> void:
-	_reply_serial += 1
 	_present_cancelled = true
 	if _dialogue != null:
 		_dialogue.release_redirect()
@@ -1761,29 +1759,29 @@ func _on_semantic_response(key: String, index: int) -> void:
 	if not (_VRunner.is_active() and e.has("village_test_story")):
 		return
 	var result: Dictionary = _VQuest.make_choice(index)
-	_reply_serial += 1
-	var serial := _reply_serial
-	await get_tree().create_timer(0.2).timeout
-	if serial != _reply_serial:
-		return
-	var live = ui_semantic_label(key)
-	if live == null or int(live.selected_response()) != index:
-		return
-	_show_choice_reply(live, result)
-
-
-func _show_choice_reply(lbl, result: Dictionary) -> void:
-	var lines: Array = _turn_texts(result.get("turns", []))
-	if bool(result.get("inquiry", false)):
-		lbl.begin_speech(lines, result.get("options", []))
-	else:
-		if bool(result.get("success", false)):
-			lines.append_array(_semantic_followup_lines())
-		elif str(result.get("error", "")) != "":
-			lines = [str(result["error"])]
-		lbl.begin_speech(lines, [])
+	var shown: Dictionary = _reply_from_choice(result)
+	lbl.present_committed_reply(shown.get("lines", []), shown.get("options", []))
 	_update_prompt()
 	_sync_semantic_stack()
+
+
+## Snapshot the authored reply before any acknowledgement animation. Later
+## presentation must not rebuild this from quest state.
+func _reply_from_choice(result: Dictionary) -> Dictionary:
+	var lines: Array = _turn_texts(result.get("turns", []))
+	var options: Array = []
+	if bool(result.get("inquiry", false)):
+		options = result.get("options", [])
+	elif bool(result.get("success", false)):
+		lines.append_array(_semantic_followup_lines())
+	elif str(result.get("error", "")) != "":
+		lines = [str(result["error"])]
+	return {
+		"lines": lines,
+		"options": options,
+		"inquiry": bool(result.get("inquiry", false)),
+		"success": bool(result.get("success", false)),
+	}
 
 
 func _on_semantic_entered(state: String) -> void:
@@ -1806,7 +1804,16 @@ func _poll_move_dismiss_arm() -> void:
 
 
 func _carried_move_blocked() -> bool:
+	if _semantic_choice_acknowledging():
+		return true
 	return _semantic_any_expanded() and not _move_dismiss_armed
+
+
+func _semantic_choice_acknowledging() -> bool:
+	for raw in _semantic_labels:
+		if is_instance_valid(raw) and raw.is_acknowledging():
+			return true
+	return false
 
 
 func ui_hold_touch_direction(dir: Vector2i) -> void:
