@@ -26,6 +26,7 @@ const TESTS := [
 	"res://sim/tests/test_e17a_fixture.gd",
 	"res://sim/tests/test_world_knowledge.gd",
 	"res://sim/tests/test_world_interaction_resolver.gd",
+	"res://sim/tests/test_semantic_adapter.gd",
 	"res://sim/tests/test_dungeons.gd",
 	"res://sim/tests/test_puzzle_rooms.gd",
 	"res://sim/tests/test_puzzle_walkable.gd",

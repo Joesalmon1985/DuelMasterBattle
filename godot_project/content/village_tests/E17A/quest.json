@@ -34,6 +34,11 @@
           ],
           "ending_hint": "normal",
           "next": "scene_02_b"
+        },
+        {
+          "variant": "inquiry",
+          "inquiry": true,
+          "fallback_label": "What exactly are you asking Distiller to risk?"
         }
       ]
     },
@@ -67,6 +72,11 @@
           ],
           "ending_hint": "normal",
           "next": "scene_03_c"
+        },
+        {
+          "variant": "inquiry",
+          "inquiry": true,
+          "fallback_label": "What has Reeve actually refused so far?"
         }
       ]
     },
@@ -100,6 +110,11 @@
           ],
           "ending_hint": "normal",
           "next": "scene_04_d"
+        },
+        {
+          "variant": "inquiry",
+          "inquiry": true,
+          "fallback_label": "What would securing the pitch change?"
         }
       ]
     },

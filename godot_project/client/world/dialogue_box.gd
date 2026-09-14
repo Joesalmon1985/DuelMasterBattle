@@ -97,17 +97,56 @@ func is_waiting_choice() -> bool:
 	return _waiting_choice
 
 
+var _redirect: Object = null
+var _redirect_silent := false
+var _redirect_options: Array = []
+
+
+func set_semantic_redirect(target) -> void:
+	_redirect = target
+
+
+func is_redirecting() -> bool:
+	return _redirect != null and is_instance_valid(_redirect)
+
+
+func redirect_options() -> Array:
+	return _redirect_options.duplicate()
+
+
 func say(speaker: String, text: String) -> void:
+	if is_redirecting():
+		_redirect.semantic_say_now(speaker, text)
+		_open_silent(speaker, text)
+		return
 	_show(speaker, text)
 
 
 ## Awaitable: resolves when the player advances past this line.
 func say_async(speaker: String, text: String) -> void:
+	if is_redirecting():
+		if _redirect.semantic_cancelled():
+			return
+		_redirect.semantic_say_now(speaker, text)
+		_open_silent(speaker, text)
+		await advanced
+		return
 	_show(speaker, text)
 	await advanced
 
 
 func choose_async(prompt: String, options: Array) -> String:
+	if is_redirecting():
+		if _redirect.semantic_cancelled():
+			return ""
+		_redirect.semantic_present_choices(options)
+		_open_silent("", prompt)
+		_waiting_choice = true
+		_redirect_options = options.duplicate()
+		var redirected: String = await chosen
+		_waiting_choice = false
+		_redirect_options = []
+		return redirected
 	_pending_choice_options = options.duplicate()
 	_pending_choice_prompt = prompt
 	_show("", prompt)
@@ -138,6 +177,19 @@ func _present_choices() -> void:
 
 
 func pick(label: String) -> void:
+	if _redirect_silent and _waiting_choice:
+		var allowed := false
+		for raw in _redirect_options:
+			if str(raw) == label:
+				allowed = true
+				break
+		if not allowed:
+			return
+		_waiting_choice = false
+		_redirect_options = []
+		_close_silent()
+		chosen.emit(label)
+		return
 	if not _waiting_choice:
 		return
 	var valid := false
@@ -157,6 +209,10 @@ func pick(label: String) -> void:
 
 ## Test/automation: pick the i-th offered choice.
 func pick_index(i: int) -> void:
+	if _redirect_silent and _waiting_choice:
+		if i >= 0 and i < _redirect_options.size():
+			pick(str(_redirect_options[i]))
+		return
 	var k := 0
 	for c in _choices.get_children():
 		if c is Button:
@@ -226,7 +282,47 @@ static func paginate(text: String, budget: int = PAGE_CHARS) -> Array:
 	return pages
 
 
+## Walk-away: finish a redirected line or choice without selecting one.
+func release_redirect() -> void:
+	if not _redirect_silent:
+		return
+	if _waiting_choice:
+		_waiting_choice = false
+		_redirect_options = []
+		_close_silent()
+		chosen.emit("")
+		return
+	if _open:
+		_close_silent()
+		advanced.emit()
+
+
+func _open_silent(speaker: String, text: String) -> void:
+	_redirect_silent = true
+	_name_lbl.text = speaker
+	_text_lbl.text = text
+	_pages = [text]
+	_page_index = 0
+	_typing = false
+	_full_text = text
+	_open = true
+	visible = false
+
+
+func _close_silent() -> void:
+	_open = false
+	_redirect_silent = false
+	_typing = false
+	visible = false
+
+
 func advance() -> void:
+	if _redirect_silent:
+		if not _open or _waiting_choice:
+			return
+		_close_silent()
+		advanced.emit()
+		return
 	if not _open or _waiting_choice:
 		return
 	if Time.get_ticks_msec() < _ignore_until_msec:

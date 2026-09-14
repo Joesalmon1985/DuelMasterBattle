@@ -327,6 +327,21 @@ static func make_choice(choice_index: int) -> Dictionary:
     if choice_index < 0 or choice_index >= options.size():
         return {"success": false, "error": "Invalid choice index"}
     var option: Dictionary = options[choice_index]
+    if bool(option.get("inquiry", false)):
+        var ask_npc := str(node.get("npc", ""))
+        var ask_variant := str(option.get("variant", "inquiry"))
+        var ask_entry := _entry(ask_npc, _current_node, ask_variant) if ask_npc != "" else {}
+        return {
+            "success": true,
+            "inquiry": true,
+            "type": "inquiry",
+            "node_id": _current_node,
+            "variant": ask_variant,
+            "turns": _entry_turns(ask_entry),
+            "next_node": _current_node,
+            "options": current_choice_payload().get("options", []),
+            "objective": objective_text(),
+        }
     _apply_sets(option.get("sets", []))
     var ending_hint := str(option.get("ending_hint", ""))
     if ending_hint in ["normal", "tragic"]:

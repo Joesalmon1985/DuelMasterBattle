@@ -20,6 +20,7 @@ const _ActorVisual = preload("res://client/world/actor_visual.gd")
 const _VQuest = preload("res://sim/world/village_quest_runner.gd")
 const _SemanticLabel = preload("res://client/world/world_interaction_label.gd")
 const _Resolver = preload("res://sim/world/world_interaction_resolver.gd")
+const _Adapter = preload("res://sim/world/semantic_adapter.gd")
 
 const TILE := 16
 const TILE_SCALE := 4
@@ -74,6 +75,8 @@ var _semantic_labels: Array = []
 var _semantic_root: Control
 var _semantic_focus := ""
 var _semantic_press_frame := -1
+var _present_label = null
+var _present_cancelled := false
 var _fire_frames: Array = []
 var _fire_time: float = 0.0
 var _story
@@ -262,12 +265,14 @@ func _build_ui() -> void:
 	_prompt_lbl.add_theme_color_override("font_outline_color", Color.BLACK)
 	_prompt_lbl.add_theme_constant_override("outline_size", 6)
 	_prompt_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_prompt_lbl.visible = false
 	_ui.add_child(_prompt_lbl)
 	# Touch controls
 	_touch = _TouchPad.new()
 	_ui.add_child(_touch)
 	_touch.direction_changed.connect(func(d): _held_dir = d)
 	_touch.action_pressed.connect(_on_action)
+	_touch.set_action_visible(false)
 	# Dialogue
 	_dialogue = _Dialogue.new()
 	_ui.add_child(_dialogue)
@@ -448,6 +453,7 @@ func _build_entities() -> void:
 		var e: Dictionary = raw.duplicate(true)
 		if e["kind"] in ["trigger", "exit"]:
 			_entities.append(e)
+			_maybe_label_exit(e)
 			continue
 		if not _entity_visible(e):
 			continue
@@ -520,6 +526,7 @@ func _spawn_entity(e: Dictionary) -> void:
 		_entity_at[pos] = e
 	if node != null and e.get("semantic") is Dictionary:
 		_attach_semantic_label(e, node)
+	_ensure_semantic(e, node)
 
 
 func _wizard_present(e: Dictionary) -> bool:
@@ -549,6 +556,10 @@ func _apply_char(node: Sprite2D, sprite: String, facing: String, frame: int, lab
 	if node == null:
 		return
 	_ActorVisual.apply(node, PIXEL_ROOT, sprite, facing, frame, label)
+	for e in _entities:
+		if e.get("node") == node and e.get("semantic") is Dictionary:
+			_hide_name_fallback(node)
+			return
 
 
 func _bob(node: Node2D) -> void:
@@ -600,14 +611,15 @@ func _process(delta: float) -> void:
 		else:
 			_john.position = _move_from.lerp(_move_to, _move_t)
 		_update_john_sprite(int(_anim_time * 8) % 2)
-	elif not _input_locked:
-		var dir := _keyboard_dir()
-		if dir == Vector2i.ZERO:
-			dir = _held_dir
-		if dir != Vector2i.ZERO:
-			_try_step(dir)
-		else:
-			_update_john_sprite(0)
+	elif not _input_locked or _semantic_any_expanded():
+		if not _scripted_running:
+			var dir := _keyboard_dir()
+			if dir == Vector2i.ZERO:
+				dir = _held_dir
+			if dir != Vector2i.ZERO:
+				_try_step(dir)
+			else:
+				_update_john_sprite(0)
 	_camera.position = _john.position + Vector2(TPX * 0.5, TPX * 0.5)
 
 
@@ -853,10 +865,7 @@ func _update_prompt() -> void:
 			"wizard":
 				text = "Challenge %s" % DmbBestiary.get_data(str(e["enemy_id"]))["display_name"]
 			"npc":
-				if _semantic_owns_talk(e):
-					text = ""
-				else:
-					text = "Talk to %s" % str(e.get("name", ""))
+				text = "Talk to %s" % str(e.get("name", ""))
 			"corpse", "sign", "door", "logs":
 				text = "Look"
 				if e.has("puzzle_action"):
@@ -873,54 +882,15 @@ func _on_action() -> void:
 	if Engine.get_process_frames() == _semantic_press_frame:
 		return
 	var e := _facing_entity()
-	if e.has("puzzle_room") and e.has("puzzle_eid"):
-		await _do_kit_action(e)
-		return
 	if e.is_empty():
 		var fp := facing_pos()
 		if _tile_char(fp.x, fp.y) == "D":
 			_dialogue.say("", "The door is shut.")
 		return
-	if _VRunner.is_active() and e.has("village_quest_node"):
-		await _interact_village_anchor(e)
+	if _semantic_key(e) != "":
+		_on_semantic_interact(_semantic_key(e))
 		return
-	match e["kind"]:
-		"sign", "door", "logs", "corpse":
-			if e.has("puzzle_action"):
-				_input_locked = true
-				_touch.set_enabled(false)
-				await _play.interact_puzzle(e)
-				_input_locked = false
-				_touch.set_enabled(true)
-				_update_prompt()
-			elif e.has("dungeon_id"):
-				_input_locked = true
-				_touch.set_enabled(false)
-				await _dialogue.say_async("", _entity_text(e))
-				await _play.enter_dungeon(e)
-				_input_locked = false
-				_touch.set_enabled(true)
-				_update_prompt()
-			elif e.has("choice_event"):
-				_input_locked = true
-				_touch.set_enabled(false)
-				await _dialogue.say_async("", _entity_text(e))
-				await _story.run_event(str(e["choice_event"]))
-				_input_locked = false
-				_touch.set_enabled(true)
-			else:
-				_dialogue.say("", _entity_text(e))
-		"fire":
-			_interact_fire(e)
-		"pickup":
-			_interact_pickup(e)
-		"npc":
-			if _semantic_owns_talk(e):
-				_semantic_talk_from_action(e)
-			else:
-				_interact_npc(e)
-		"creature", "wizard":
-			_interact_enemy(e)
+	await _perform_entity_action(e)
 
 
 func _interact_fire(e: Dictionary) -> void:
@@ -1006,10 +976,6 @@ func _interact_pickup(e: Dictionary) -> void:
 		adv.mark("picked", str(e["id"]))
 	if e.has("set_flag"):
 		adv.set_flag(str(e["set_flag"]))
-	if is_instance_valid(e.get("node")):
-		e["node"].queue_free()
-	_entity_at.erase(Vector2i(int(e["pos"][0]), int(e["pos"][1])))
-	_entities.erase(e)
 	if grant.has("spell"):
 		adv.learn_spell(int(grant["spell"]))
 	for sp in grant.get("spells", []):
@@ -1077,6 +1043,10 @@ func _interact_npc(e: Dictionary) -> void:
 	_face_npc_toward_john(e)
 	for line in lines:
 		await _dialogue.say_async(str(e.get("name", "")), str(line))
+		if _present_cancelled:
+			_input_locked = false
+			_touch.set_enabled(true)
+			return
 	if e.has("choice_event"):
 		await _story.run_event(str(e["choice_event"]))
 	if will_grant:
@@ -1333,7 +1303,7 @@ func _on_menu() -> void:
 		var choice: String = await _dialogue.choose_async("Paused — progress saved.", ["Continue", "Journal", "How to play", "Main menu"])
 		match choice:
 			"How to play":
-				await _dialogue.say_async("How to play", "Move with the pad (or arrow keys). Tap ✦ (or Space) to talk, take, douse fires and face creatures.\n\nBattles: pick spells for each weave slot, then CAST when the ring is ready. Break their Ward before they break yours.")
+				await _dialogue.say_async("How to play", "Move with the pad (or arrow keys). Tap a name in the world to look, and tap it again up close to talk, take, open, or face a creature.\n\nBattles: pick spells for each weave slot, then CAST when the ring is ready. Break their Ward before they break yours.")
 			"Journal":
 				await _dialogue.say_async("", _adv().notebook_text())
 			"Main menu":
@@ -1605,8 +1575,11 @@ func set_john_pos(p: Vector2i, facing: String = "") -> void:
 # --- test API -----------------------------------------------------------------------
 
 func ui_step(dir: Vector2i) -> void:
-	if not _moving and not _input_locked:
-		_try_step(dir)
+	if _moving:
+		return
+	if _input_locked and not _semantic_any_expanded():
+		return
+	_try_step(dir)
 
 
 func ui_is_moving() -> bool:
@@ -1685,6 +1658,10 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 		lbl.interact_requested.connect(_on_semantic_interact)
 	if not lbl.response_chosen.is_connected(_on_semantic_response):
 		lbl.response_chosen.connect(_on_semantic_response)
+	if not lbl.conversation_dismissed.is_connected(_on_semantic_dismissed):
+		lbl.conversation_dismissed.connect(_on_semantic_dismissed)
+	if not lbl.line_done.is_connected(_on_semantic_line_done):
+		lbl.line_done.connect(_on_semantic_line_done)
 	_semantic_labels.append(lbl)
 
 
@@ -1692,6 +1669,19 @@ func _dismiss_semantic_on_move() -> void:
 	for raw in _semantic_labels:
 		if is_instance_valid(raw):
 			raw.notify_player_moved()
+
+
+func _on_semantic_dismissed(key: String) -> void:
+	_present_cancelled = true
+	if _dialogue != null:
+		_dialogue.release_redirect()
+	if _semantic_focus == key:
+		_update_prompt()
+
+
+func _on_semantic_line_done() -> void:
+	if _dialogue != null and _dialogue.is_redirecting() and _dialogue.is_open() and not _dialogue.is_waiting_choice():
+		_dialogue.advance()
 
 
 func _on_semantic_activated(key: String) -> void:
@@ -1706,24 +1696,47 @@ func _on_semantic_interact(key: String) -> void:
 	if lbl == null or e.is_empty():
 		return
 	var resolved: Dictionary = _Resolver.resolve(e["semantic"], _adv(), _semantic_in_range(e))
-	if str(resolved.get("mode", "")) == "interact" and str(resolved.get("interaction", "")) == "npc":
-		_start_semantic_conversation(e, lbl)
-	else:
+	if str(resolved.get("mode", "")) != "interact":
 		lbl.open_observation()
+		return
+	match str(resolved.get("interaction", "")):
+		"npc":
+			if _VRunner.is_active() and e.has("village_test_story"):
+				_start_semantic_conversation(e, lbl)
+			else:
+				_start_semantic_use(e, lbl)
+		_:
+			_start_semantic_use(e, lbl)
 
 
 func _on_semantic_response(key: String, index: int) -> void:
 	_semantic_focus = key
 	_semantic_press_frame = Engine.get_process_frames()
+	if _dialogue != null and _dialogue.is_waiting_choice():
+		var offered: Array = _dialogue.redirect_options()
+		if index >= 0 and index < offered.size():
+			_dialogue.pick(str(offered[index]))
+		return
+	if _present_label != null:
+		return
 	var e := _entity_by_semantic_key(key)
 	var lbl = ui_semantic_label(key)
-	if lbl == null or e.is_empty():
+	if lbl == null or e.is_empty() or index < 0:
+		return
+	if str(e.get("semantic", {}).get("interaction", "")) == "enemy":
+		if index == 0:
+			_start_battle(e)
+		else:
+			lbl.collapse()
 		return
 	if not (_VRunner.is_active() and e.has("village_test_story")):
-		lbl.begin_speech([], [])
 		return
 	var result: Dictionary = _VQuest.make_choice(index)
 	var lines: Array = _turn_texts(result.get("turns", []))
+	if bool(result.get("inquiry", false)):
+		lbl.begin_speech(lines, result.get("options", []))
+		_update_prompt()
+		return
 	if bool(result.get("success", false)):
 		lines.append_array(_semantic_followup_lines())
 	elif str(result.get("error", "")) != "":
@@ -1757,6 +1770,183 @@ func _semantic_talk_from_action(e: Dictionary) -> void:
 	if str(lbl.interaction_state()) in ["SPEECH", "RESPONSES"]:
 		return
 	_start_semantic_conversation(e, lbl)
+
+
+func _start_semantic_use(e: Dictionary, lbl) -> void:
+	_begin_present(lbl)
+	await _perform_entity_action(e)
+	_end_present()
+
+
+func _perform_entity_action(e: Dictionary) -> void:
+	if e.has("puzzle_room") and e.has("puzzle_eid"):
+		await _do_kit_action(e)
+		return
+	if _VRunner.is_active() and e.has("village_quest_node"):
+		await _interact_village_anchor(e)
+		return
+	match str(e.get("kind", "")):
+		"sign", "door", "logs", "corpse":
+			if e.has("puzzle_action"):
+				_input_locked = true
+				_touch.set_enabled(false)
+				await _play.interact_puzzle(e)
+				_input_locked = false
+				_touch.set_enabled(true)
+				_update_prompt()
+			elif e.has("dungeon_id"):
+				_input_locked = true
+				_touch.set_enabled(false)
+				await _dialogue.say_async("", _entity_text(e))
+				if not _present_cancelled:
+					await _play.enter_dungeon(e)
+				_input_locked = false
+				_touch.set_enabled(true)
+				_update_prompt()
+			elif e.has("choice_event"):
+				_input_locked = true
+				_touch.set_enabled(false)
+				await _dialogue.say_async("", _entity_text(e))
+				if not _present_cancelled:
+					await _story.run_event(str(e["choice_event"]))
+				_input_locked = false
+				_touch.set_enabled(true)
+			else:
+				await _inspect_semantic(e)
+		"fire":
+			_interact_fire(e)
+		"pickup":
+			_interact_pickup(e)
+		"npc":
+			await _interact_npc(e)
+		"creature", "wizard":
+			await _interact_enemy(e)
+		"exit":
+			await _inspect_semantic(e)
+		_:
+			await _inspect_semantic(e)
+
+
+func _inspect_semantic(e: Dictionary) -> void:
+	var text := str(e.get("semantic", {}).get("observe_near", ""))
+	if text == "":
+		text = str(e.get("semantic", {}).get("label", "Nothing remarkable."))
+	await _dialogue.say_async("", text)
+
+
+func _begin_present(lbl) -> void:
+	_present_label = lbl
+	_present_cancelled = false
+	if _dialogue != null:
+		_dialogue.set_semantic_redirect(self)
+
+
+func _end_present() -> void:
+	_present_label = null
+	if _dialogue != null:
+		if _dialogue.is_redirecting() and (_dialogue.is_open() or _dialogue.is_waiting_choice()):
+			_dialogue.release_redirect()
+		_dialogue.set_semantic_redirect(null)
+
+
+func semantic_cancelled() -> bool:
+	return _present_cancelled
+
+
+func semantic_present_choices(options: Array) -> void:
+	if _present_cancelled or _present_label == null:
+		return
+	var labels: Array = []
+	for i in options.size():
+		labels.append({"index": i, "label": str(options[i])})
+	_present_label.present_choices(labels)
+
+
+func semantic_say_now(_speaker: String, text: String) -> void:
+	if _present_cancelled or _present_label == null:
+		return
+	_present_label.present_line(text)
+
+
+func semantic_say(_speaker: String, text: String) -> void:
+	if _present_cancelled or _present_label == null:
+		return
+	_present_label.present_line(text)
+	await _present_label.line_done
+	if _present_label != null and _present_label.is_talking():
+		_present_label.collapse()
+
+
+func semantic_choose(_prompt: String, options: Array) -> String:
+	if _present_cancelled or _present_label == null or options.is_empty():
+		return ""
+	var labels: Array = []
+	for i in options.size():
+		labels.append({"index": i, "label": str(options[i])})
+	_present_label.present_choices(labels)
+	var index: int = await _present_label.presentation_result
+	if index < 0 or index >= options.size():
+		return ""
+	return str(options[index])
+
+
+func _ensure_semantic(e: Dictionary, existing) -> void:
+	if e.get("semantic") is Dictionary and _label_for_entity(e) != null:
+		_hide_name_fallback(existing)
+		return
+	var semantic: Dictionary = _Adapter.adapt(e, area_id)
+	if semantic.is_empty():
+		return
+	e["semantic"] = semantic
+	var node = existing
+	if not is_instance_valid(node):
+		node = _make_semantic_anchor(e)
+	_attach_semantic_label(e, node)
+	_hide_name_fallback(node)
+
+
+func _maybe_label_exit(e: Dictionary) -> void:
+	var semantic: Dictionary = _Adapter.adapt(e, area_id)
+	if semantic.is_empty():
+		return
+	e["semantic"] = semantic
+	_attach_semantic_label(e, _make_semantic_anchor(e))
+
+
+func _make_semantic_anchor(e: Dictionary) -> Node2D:
+	var node := Node2D.new()
+	node.position = Vector2(int(e["pos"][0]), int(e["pos"][1])) * TPX
+	_actors_root.add_child(node)
+	e["node"] = node
+	return node
+
+
+func _semantic_key(e: Dictionary) -> String:
+	var semantic = e.get("semantic", {})
+	if not (semantic is Dictionary):
+		return ""
+	return str(semantic.get("knowledge_key", ""))
+
+
+func _label_for_entity(e: Dictionary):
+	var key := _semantic_key(e)
+	if key == "":
+		return null
+	return ui_semantic_label(key)
+
+
+func _hide_name_fallback(node) -> void:
+	if not is_instance_valid(node):
+		return
+	var direct = node.get_node_or_null("fallback_label")
+	if direct != null:
+		direct.visible = false
+	var visual = node.get_node_or_null("Visual")
+	if visual == null:
+		return
+	var fallback = visual.get_node_or_null("fallback_label")
+	if fallback != null:
+		fallback.visible = false
 
 
 func _start_semantic_conversation(e: Dictionary, lbl) -> void:
@@ -1892,6 +2082,10 @@ func ui_dialogue_open() -> bool:
 	return _dialogue.is_open()
 
 
+func ui_dialogue_panel_visible() -> bool:
+	return _dialogue != null and _dialogue.visible
+
+
 func ui_dialogue_advance() -> void:
 	# Test harness taps are deliberate; skip the human-tap debounce.
 	_dialogue._ignore_until_msec = 0
@@ -1904,6 +2098,23 @@ func ui_dialogue_choose(label: String) -> void:
 
 func ui_dialogue_choose_index(i: int) -> void:
 	_dialogue.pick_index(i)
+
+
+func ui_action_button_visible() -> bool:
+	return _touch != null and _touch.action_visible()
+
+
+func ui_prompt_visible() -> bool:
+	return _prompt_lbl != null and _prompt_lbl.visible
+
+
+func _semantic_any_expanded() -> bool:
+	if _scripted_running:
+		return false
+	for raw in _semantic_labels:
+		if is_instance_valid(raw) and str(raw.interaction_state()) in ["OBSERVATION", "SPEECH", "RESPONSES"]:
+			return true
+	return false
 
 
 func ui_items_button_visible() -> bool:
@@ -2212,10 +2423,16 @@ func _village_present_choice(payload: Dictionary, npc_name: String) -> void:
 	if labels.is_empty():
 		return
 	var picked: String = await _dialogue.choose_async(str(payload.get("prompt", "What do you do?")), labels)
+	if picked == "":
+		return
 	var index := labels.find(picked)
 	if index < 0:
-		index = 0
+		return
 	var result: Dictionary = _VQuest.make_choice(index)
+	if bool(result.get("inquiry", false)):
+		await _play_village_turns(npc_name, result.get("turns", []))
+		await _village_present_choice(payload, npc_name)
+		return
 	if bool(result.get("success", false)):
 		await _play_village_turns(npc_name, result.get("turns", []))
 	elif str(result.get("error", "")) != "":

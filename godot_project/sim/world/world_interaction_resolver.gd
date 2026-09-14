@@ -17,7 +17,7 @@ static func resolve(semantic: Dictionary, adv: Node, in_range: bool = false) -> 
 		"observe_far": str(semantic.get("observe_far", "")),
 		"observe_near": str(semantic.get("observe_near", "")),
 		"interaction": str(semantic.get("interaction", "")),
-		"mode": "interact" if in_range and str(semantic.get("interaction", "")) == "npc" else "observe",
+		"mode": "interact" if in_range and str(semantic.get("interaction", "")) != "" else "observe",
 		"dismiss_on_move": bool(semantic.get("dismiss_on_move", true)),
 	}
 

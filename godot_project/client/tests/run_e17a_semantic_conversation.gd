@@ -70,7 +70,8 @@ func _test_miller() -> void:
 	await process_frame
 	assert_eq(str(_entry(MILLER).get("state", "")), "LABEL", "%s: tapping the observation returns the label" % tag)
 	_place("g", Vector2i(0, 1))
-	assert_eq(_world.ui_prompt(), "", "%s: nearby semantic NPC does not advertise Talk" % tag)
+	assert_true(not _world.ui_prompt_visible(), "%s: nearby semantic NPC does not show Talk" % tag)
+	assert_true(not _world.ui_action_button_visible(), "%s: Action button stays hidden" % tag)
 	var pos_before: Vector2i = _world.ui_actor_pos("john")
 	_world.ui_tap_semantic(MILLER)
 	await process_frame
@@ -119,7 +120,8 @@ func _test_miner_choice() -> void:
 	await process_frame
 	assert_eq(str(_entry(MINER).get("state", "")), "SPEECH", "%s: nearby tap starts speech without Talk" % tag)
 	assert_eq(str(_entry(MINER).get("text", "")), MINER_OPENING, "%s: opening speech is the authored beat" % tag)
-	assert_eq(_world.ui_prompt(), "", "%s: Talk is not required" % tag)
+	assert_true(not _world.ui_prompt_visible(), "%s: Talk is not shown" % tag)
+	assert_true(not _world.ui_action_button_visible(), "%s: Talk is not required" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: opening speech did not open DialogueBox" % tag)
 	assert_eq(_world.ui_actor_pos("john"), pos_before, "%s: opening tap did not move John" % tag)
 	_world.ui_tap_semantic(MINER)

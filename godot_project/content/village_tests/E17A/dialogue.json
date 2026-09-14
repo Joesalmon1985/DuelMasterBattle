@@ -1351,6 +1351,45 @@
           "branch": null
         }
       ]
+    },
+    {
+      "npc_id": "a",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_01_a",
+      "variant": "inquiry",
+      "choice_label": "What exactly are you asking Distiller to risk?",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Miner asks Distiller to join the new workshop venture."
+        }
+      ]
+    },
+    {
+      "npc_id": "b",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_02_b",
+      "variant": "inquiry",
+      "choice_label": "What has Reeve actually refused so far?",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Distiller says Reeve has warned the market licence will be refused unless the expansion has guaranteed stock."
+        }
+      ]
+    },
+    {
+      "npc_id": "c",
+      "quest_id": "e17a_canonical_story",
+      "node_id": "scene_03_c",
+      "variant": "inquiry",
+      "choice_label": "What would securing the pitch change?",
+      "turns": [
+        {
+          "speaker": "npc",
+          "text": "Reeve says Storekeeper can guarantee the stock if a disused pitch is secured and cleared."
+        }
+      ]
     }
   ],
   "generated_from": {

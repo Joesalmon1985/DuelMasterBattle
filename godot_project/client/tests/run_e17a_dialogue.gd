@@ -49,18 +49,21 @@ func _test_miner_choice_and_aside() -> void:
 
 	var before_aside: Dictionary = _VRunner.quest_state()
 	_face_npc("d")
-	assert_eq(_world.ui_prompt(), "Talk to Storekeeper", "%s: facing Storekeeper through the production prompt" % tag)
-	_world.ui_action()
-	var aside_seen := await _drain_speech(false)
-	assert_true(_world.ui_dialogue_open() or aside_seen != "", "%s: Storekeeper opened the production dialogue box" % tag)
+	assert_true(not _world.ui_prompt_visible(), "%s: Storekeeper does not show Talk" % tag)
+	assert_true(not _world.ui_action_button_visible(), "%s: Action button is hidden" % tag)
+	var key := _semantic_key_for("d")
+	assert_true(key != "", "%s: Storekeeper has a semantic label" % tag)
+	_world.ui_tap_semantic(key)
+	await process_frame
+	var aside_seen := await _drain_semantic(key)
+	assert_true(not _world.ui_dialogue_open(), "%s: Storekeeper speech stayed off DialogueBox" % tag)
 	assert_true(aside_seen.contains(aside_line), "%s: Storekeeper spoke authored default dialogue (saw %s)" % [tag, aside_seen.left(180)])
-	await _finish_speech()
 	var after_aside: Dictionary = _VRunner.quest_state()
 	assert_eq(str(after_aside.get("current_node", "")), str(before_aside.get("current_node", "")), "%s: aside talk did not advance the quest" % tag)
 	assert_eq(str(after_aside.get("flags", {})), str(before_aside.get("flags", {})), "%s: aside talk did not set quest flags" % tag)
 
 	_face_npc("a")
-	assert_eq(_world.ui_prompt(), "", "%s: semantic Miner does not advertise Talk" % tag)
+	assert_true(not _world.ui_prompt_visible(), "%s: semantic Miner does not show Talk" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: facing Miner did not open DialogueBox" % tag)
 	_world.ui_tap_semantic("person:e17a:a")
 	await process_frame
@@ -101,6 +104,31 @@ func _authored_turn(npc_id: String, node_id: String, variant: String) -> String:
 	return ""
 
 
+func _semantic_key_for(entity_id: String) -> String:
+	for raw in _world.ui_semantic_labels():
+		if str(raw.get("entity_id", "")) == entity_id:
+			return str(raw.get("key", ""))
+	return ""
+
+
+func _drain_semantic(key: String) -> String:
+	var seen := ""
+	for _i in 24:
+		var entry := {}
+		for raw in _world.ui_semantic_labels():
+			if str(raw.get("key", "")) == key:
+				entry = raw
+		var state := str(entry.get("state", ""))
+		var text := str(entry.get("text", ""))
+		if state != "SPEECH":
+			return seen
+		if text != "" and not seen.contains(text):
+			seen += text + "\n"
+		_world.ui_tap_semantic(key)
+		await process_frame
+	return seen
+
+
 func _face_npc(npc_id: String) -> void:
 	var pos := Vector2i.ZERO
 	var found := false
@@ -112,6 +140,8 @@ func _face_npc(npc_id: String) -> void:
 	assert_true(found, "npc %s is in the loaded area" % npc_id)
 	_world._john_pos = pos + Vector2i(0, 1)
 	_world._john_facing = "up"
+	_world._moving = false
+	_world._john.position = Vector2(_world._john_pos) * 64 + Vector2(0, -32)
 	_world._update_prompt()
 
 

@@ -68,6 +68,15 @@ func set_enabled(on: bool) -> void:
 		direction_changed.emit(_dir)
 
 
+func set_action_visible(on: bool) -> void:
+	if _action != null:
+		_action.visible = on
+
+
+func action_visible() -> bool:
+	return _action != null and _action.visible
+
+
 func set_action_label(text: String) -> void:
 	_action.text = text if text != "" else "✦"
 	_action.modulate = Color.WHITE if text != "" else Color(0.7, 0.7, 0.8)

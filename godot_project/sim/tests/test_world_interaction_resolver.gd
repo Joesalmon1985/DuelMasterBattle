@@ -94,7 +94,9 @@ func _test_interaction_unchanged_and_no_mutation() -> void:
 	var near: Dictionary = _Resolver.resolve(_semantic(), adv, true)
 	assert_eq(near["mode"], "interact", "an in-range NPC can be talked to")
 	var object_near: Dictionary = _Resolver.resolve({"knowledge_key": KEY, "labels": [{"level": 0, "text": "Thing"}], "interaction": "object"}, adv, true)
-	assert_eq(object_near["mode"], "observe", "in-range non-NPCs are not conversations")
+	assert_eq(object_near["mode"], "interact", "in-range objects can be used")
+	var object_far: Dictionary = _Resolver.resolve({"knowledge_key": KEY, "labels": [{"level": 0, "text": "Thing"}], "interaction": "object"}, adv, false)
+	assert_eq(object_far["mode"], "observe", "out-of-range objects are observed")
 
 
 func _test_no_fixture_dependency() -> void:
