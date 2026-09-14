@@ -60,25 +60,29 @@ func _test_miner_choice_and_aside() -> void:
 	assert_eq(str(after_aside.get("flags", {})), str(before_aside.get("flags", {})), "%s: aside talk did not set quest flags" % tag)
 
 	_face_npc("a")
-	assert_eq(_world.ui_prompt(), "Talk to Miner", "%s: facing Miner through the production prompt" % tag)
-	_world.ui_action()
-	var opened := false
+	assert_eq(_world.ui_prompt(), "", "%s: semantic Miner does not advertise Talk" % tag)
+	assert_true(not _world.ui_dialogue_open(), "%s: facing Miner did not open DialogueBox" % tag)
+	_world.ui_tap_semantic("person:e17a:a")
+	await process_frame
 	var opening := ""
-	for _i in 40:
-		await process_frame
-		if _world.ui_dialogue_open():
-			opened = true
-			opening = _world._dialogue.ui_visible_text()
-			if opening != "":
-				break
-	assert_true(opened, "%s: production dialogue box opened" % tag)
+	for raw in _world.ui_semantic_labels():
+		if str(raw.get("key", "")) == "person:e17a:a":
+			opening = str(raw.get("text", ""))
+			assert_eq(str(raw.get("state", "")), "SPEECH", "%s: nearby label tap starts speech" % tag)
 	assert_true(opening.strip_edges() != "", "%s: visible dialogue text is non-empty" % tag)
-	var choice_reached := await _advance_until_choice()
-	assert_true(choice_reached, "%s: Miner's first choice is offered" % tag)
-	_world.ui_dialogue_choose_index(0)
-	var seen := await _drain_speech(true)
+	assert_true(not _world.ui_dialogue_open(), "%s: semantic speech stays off DialogueBox" % tag)
+	_world.ui_tap_semantic("person:e17a:a")
+	await process_frame
+	var choices: Array = _world.ui_semantic_responses("person:e17a:a")
+	assert_true(choices.size() >= 2, "%s: Miner's first choice is offered" % tag)
+	_world.ui_tap_semantic_response("person:e17a:a", 0)
+	await process_frame
+	var seen := ""
+	for raw in _world.ui_semantic_labels():
+		if str(raw.get("key", "")) == "person:e17a:a":
+			seen = str(raw.get("text", ""))
 	assert_true(seen.contains(branch_line), "%s: authored branch response is displayed (saw %s)" % [tag, seen.left(220)])
-	await _finish_speech()
+	assert_true(not _world.ui_dialogue_open(), "%s: branch speech stays off DialogueBox" % tag)
 	_world.queue_free()
 	await process_frame
 

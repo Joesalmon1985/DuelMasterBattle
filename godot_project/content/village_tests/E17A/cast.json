@@ -32,7 +32,8 @@
         "observe_far": "A young worker stands beside the mine road.",
         "observe_near": "Dust covers his sleeves. He keeps glancing towards the village.",
         "interaction": "npc",
-        "dismiss_on_move": true
+        "dismiss_on_move": true,
+        "knowledge_start": 1
       }
     },
     {
@@ -159,7 +160,19 @@
       "pos_offset": [
         0,
         1
-      ]
+      ],
+      "semantic": {
+        "knowledge_key": "person:e17a:g",
+        "labels": [
+          {"level": 0, "text": "Stranger"},
+          {"level": 1, "text": "Miller"}
+        ],
+        "observe_far": "A mill worker stands beside the mill road.",
+        "observe_near": "Flour dusts his apron. He is watching the village road.",
+        "interaction": "npc",
+        "dismiss_on_move": true,
+        "knowledge_start": 1
+      }
     },
     {
       "id": "h",

@@ -90,6 +90,11 @@ func _test_interaction_unchanged_and_no_mutation() -> void:
 	assert_eq(result["interaction"], "npc", "interaction type returned unchanged")
 	assert_eq(var_to_str(adv.state), before, "resolve does not mutate knowledge or quest state")
 	assert_eq(_Knowledge.get_level(adv, KEY), 1, "knowledge level unchanged")
+	assert_eq(result["mode"], "observe", "out of range stays an observation")
+	var near: Dictionary = _Resolver.resolve(_semantic(), adv, true)
+	assert_eq(near["mode"], "interact", "an in-range NPC can be talked to")
+	var object_near: Dictionary = _Resolver.resolve({"knowledge_key": KEY, "labels": [{"level": 0, "text": "Thing"}], "interaction": "object"}, adv, true)
+	assert_eq(object_near["mode"], "observe", "in-range non-NPCs are not conversations")
 
 
 func _test_no_fixture_dependency() -> void:

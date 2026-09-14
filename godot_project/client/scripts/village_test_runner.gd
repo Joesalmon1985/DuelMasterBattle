@@ -239,6 +239,20 @@ static func _seed_prereqs(adv: Node, area: Dictionary) -> void:
         # Fixture starting knowledge only: John already knows this person's role.
         # Campaign knowledge is snapshotted before this seed and restored on exit.
         _Knowledge.learn(adv, "person:e17a:a", 1)
+    _seed_fixture_knowledge(adv, area)
+
+
+static func _seed_fixture_knowledge(adv: Node, area: Dictionary) -> void:
+    for raw in area.get("entities", []):
+        if not (raw is Dictionary):
+            continue
+        var semantic = (raw as Dictionary).get("semantic", {})
+        if not (semantic is Dictionary) or not semantic.has("knowledge_start"):
+            continue
+        var key := str(semantic.get("knowledge_key", ""))
+        if key == "":
+            continue
+        _Knowledge.learn(adv, key, int(semantic["knowledge_start"]))
 
 
 static func session_facing() -> String:

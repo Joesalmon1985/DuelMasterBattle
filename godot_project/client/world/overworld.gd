@@ -19,6 +19,7 @@ const _VRunner = preload("res://client/scripts/village_test_runner.gd")
 const _ActorVisual = preload("res://client/world/actor_visual.gd")
 const _VQuest = preload("res://sim/world/village_quest_runner.gd")
 const _SemanticLabel = preload("res://client/world/world_interaction_label.gd")
+const _Resolver = preload("res://sim/world/world_interaction_resolver.gd")
 
 const TILE := 16
 const TILE_SCALE := 4
@@ -852,7 +853,10 @@ func _update_prompt() -> void:
 			"wizard":
 				text = "Challenge %s" % DmbBestiary.get_data(str(e["enemy_id"]))["display_name"]
 			"npc":
-				text = "Talk to %s" % str(e.get("name", ""))
+				if _semantic_owns_talk(e):
+					text = ""
+				else:
+					text = "Talk to %s" % str(e.get("name", ""))
 			"corpse", "sign", "door", "logs":
 				text = "Look"
 				if e.has("puzzle_action"):
@@ -865,6 +869,8 @@ func _update_prompt() -> void:
 
 func _on_action() -> void:
 	if _input_locked or _moving:
+		return
+	if Engine.get_process_frames() == _semantic_press_frame:
 		return
 	var e := _facing_entity()
 	if e.has("puzzle_room") and e.has("puzzle_eid"):
@@ -909,7 +915,10 @@ func _on_action() -> void:
 		"pickup":
 			_interact_pickup(e)
 		"npc":
-			_interact_npc(e)
+			if _semantic_owns_talk(e):
+				_semantic_talk_from_action(e)
+			else:
+				_interact_npc(e)
 		"creature", "wizard":
 			_interact_enemy(e)
 
@@ -1672,6 +1681,10 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 	lbl.bind(_adv(), e["semantic"], str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
 	if not lbl.activated.is_connected(_on_semantic_activated):
 		lbl.activated.connect(_on_semantic_activated)
+	if not lbl.interact_requested.is_connected(_on_semantic_interact):
+		lbl.interact_requested.connect(_on_semantic_interact)
+	if not lbl.response_chosen.is_connected(_on_semantic_response):
+		lbl.response_chosen.connect(_on_semantic_response)
 	_semantic_labels.append(lbl)
 
 
@@ -1682,9 +1695,153 @@ func _dismiss_semantic_on_move() -> void:
 
 
 func _on_semantic_activated(key: String) -> void:
-	# Focus only. Do not step, talk, or open the legacy dialogue box.
+	# Focus only. Speech and responses are handled by their own signals.
 	_semantic_focus = key
 	_semantic_press_frame = Engine.get_process_frames()
+
+
+func _on_semantic_interact(key: String) -> void:
+	var e := _entity_by_semantic_key(key)
+	var lbl = ui_semantic_label(key)
+	if lbl == null or e.is_empty():
+		return
+	var resolved: Dictionary = _Resolver.resolve(e["semantic"], _adv(), _semantic_in_range(e))
+	if str(resolved.get("mode", "")) == "interact" and str(resolved.get("interaction", "")) == "npc":
+		_start_semantic_conversation(e, lbl)
+	else:
+		lbl.open_observation()
+
+
+func _on_semantic_response(key: String, index: int) -> void:
+	_semantic_focus = key
+	_semantic_press_frame = Engine.get_process_frames()
+	var e := _entity_by_semantic_key(key)
+	var lbl = ui_semantic_label(key)
+	if lbl == null or e.is_empty():
+		return
+	if not (_VRunner.is_active() and e.has("village_test_story")):
+		lbl.begin_speech([], [])
+		return
+	var result: Dictionary = _VQuest.make_choice(index)
+	var lines: Array = _turn_texts(result.get("turns", []))
+	if bool(result.get("success", false)):
+		lines.append_array(_semantic_followup_lines())
+	elif str(result.get("error", "")) != "":
+		lines = [str(result["error"])]
+	lbl.begin_speech(lines, [])
+	_update_prompt()
+
+
+func _semantic_owns_talk(e: Dictionary) -> bool:
+	var semantic = e.get("semantic", {})
+	if not (semantic is Dictionary):
+		return false
+	if str(semantic.get("interaction", "")) != "npc":
+		return false
+	return ui_semantic_label(str(semantic.get("knowledge_key", ""))) != null
+
+
+func _semantic_in_range(e: Dictionary) -> bool:
+	var pos: Array = e.get("pos", [-99, -99])
+	var d: Vector2i = (_john_pos - Vector2i(int(pos[0]), int(pos[1]))).abs()
+	return d.x + d.y <= 1
+
+
+func _semantic_talk_from_action(e: Dictionary) -> void:
+	if not _semantic_in_range(e):
+		return
+	var semantic: Dictionary = e["semantic"]
+	var lbl = ui_semantic_label(str(semantic.get("knowledge_key", "")))
+	if lbl == null:
+		return
+	if str(lbl.interaction_state()) in ["SPEECH", "RESPONSES"]:
+		return
+	_start_semantic_conversation(e, lbl)
+
+
+func _start_semantic_conversation(e: Dictionary, lbl) -> void:
+	if str(lbl.interaction_state()) in ["SPEECH", "RESPONSES"]:
+		return
+	_face_npc_toward_john(e)
+	var lines: Array = []
+	var options: Array = []
+	if _VRunner.is_active() and e.has("village_test_story"):
+		var result: Dictionary = _VQuest.interact_npc(str(e.get("id", "")))
+		if not bool(result.get("success", false)):
+			var err := str(result.get("error", ""))
+			if err != "":
+				lines = [err]
+		else:
+			lines = _turn_texts(result.get("turns", []))
+			if lines.is_empty() and str(result.get("type", "")) == "ambient":
+				lines = _npc_authored_lines(e)
+			if str(result.get("type", "")) == "choice":
+				options = result.get("options", [])
+	else:
+		lines = _npc_authored_lines(e)
+	_adv().bump_talk(str(e.get("id", "")))
+	lbl.begin_speech(lines, options)
+	_update_prompt()
+
+
+func _semantic_followup_lines() -> Array:
+	var extra: Array = []
+	var guard := 0
+	while guard < 16:
+		guard += 1
+		var node: Dictionary = _VQuest.current_node()
+		if node.is_empty():
+			return extra
+		var node_type := str(node.get("type", ""))
+		if node_type in ["branch", "choice"]:
+			return extra
+		if node_type in ["conclude", "set_flag"]:
+			var result: Dictionary = _VQuest.execute_current()
+			if bool(result.get("success", false)):
+				extra.append_array(_turn_texts(result.get("turns", [])))
+			if node_type == "conclude":
+				return extra
+			continue
+		return extra
+	return extra
+
+
+func _turn_texts(turns) -> Array:
+	var out: Array = []
+	if not (turns is Array):
+		return out
+	for raw in turns:
+		if raw is Dictionary and str((raw as Dictionary).get("text", "")).strip_edges() != "":
+			out.append(str((raw as Dictionary).get("text", "")))
+	return out
+
+
+func _npc_authored_lines(e: Dictionary) -> Array:
+	var adv := _adv()
+	var lines: Array = e.get("lines", [])
+	if e.has("lines_phase") and e["lines_phase"].has(adv.story_phase()):
+		lines = e["lines_phase"][adv.story_phase()]
+	if e.has("lines_flag"):
+		for fl in e["lines_flag"].keys():
+			if adv.flag(str(fl)):
+				lines = e["lines_flag"][fl]
+	if e.has("lines_run_flag"):
+		for fl in e["lines_run_flag"].keys():
+			if adv.run_flag(str(fl)):
+				lines = e["lines_run_flag"][fl]
+	var out: Array = []
+	for line in lines:
+		if str(line).strip_edges() != "":
+			out.append(str(line))
+	return out
+
+
+func _entity_by_semantic_key(key: String) -> Dictionary:
+	for e in _entities:
+		var semantic = e.get("semantic", {})
+		if semantic is Dictionary and str(semantic.get("knowledge_key", "")) == key:
+			return e
+	return {}
 
 
 func _is_empty_pointer_press(event: InputEvent) -> bool:
@@ -1704,6 +1861,27 @@ func ui_tap_semantic(key: String) -> void:
 	if lbl == null:
 		return
 	lbl.press()
+
+
+func ui_semantic_responses(key: String) -> Array:
+	var lbl = ui_semantic_label(key)
+	if lbl == null:
+		return []
+	return lbl.response_labels()
+
+
+func ui_semantic_selected(key: String) -> int:
+	var lbl = ui_semantic_label(key)
+	if lbl == null:
+		return -1
+	return int(lbl.selected_response())
+
+
+func ui_tap_semantic_response(key: String, index: int) -> void:
+	var lbl = ui_semantic_label(key)
+	if lbl == null:
+		return
+	lbl.press_response(index)
 
 
 func ui_clear_semantic_focus() -> void:

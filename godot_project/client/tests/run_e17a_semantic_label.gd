@@ -58,20 +58,21 @@ func _test_miner_label() -> void:
 	assert_true(miner_screen.size.x > 1.0, "%s: Miner sprite has a screen rect" % tag)
 	assert_true(_inside(view, miner_screen), "%s: Miner is inside the viewport (view %s sprite %s)" % [tag, str(view), str(miner_screen)])
 	var labels: Array = _world.ui_semantic_labels()
-	assert_eq(labels.size(), 1, "%s: exactly one semantic label" % tag)
-	if labels.size() == 1:
-		assert_eq(str(labels[0]["key"]), "person:e17a:a", "%s: bound to person:e17a:a" % tag)
-		assert_eq(str(labels[0]["entity_id"]), "a", "%s: internal id stays a" % tag)
-		assert_eq(str(labels[0]["text"]), "Miner", "%s: role label" % tag)
-		assert_eq(str(labels[0]["state"]), "LABEL", "%s: LABEL state only" % tag)
-	var semantic_npcs := 0
+	var miner_label := {}
+	for raw in labels:
+		if str(raw.get("key", "")) == "person:e17a:a":
+			miner_label = raw
+	assert_true(not miner_label.is_empty(), "%s: Miner label exists" % tag)
+	assert_eq(str(miner_label.get("entity_id", "")), "a", "%s: internal id stays a" % tag)
+	assert_eq(str(miner_label.get("text", "")), "Miner", "%s: role label" % tag)
+	assert_eq(str(miner_label.get("state", "")), "LABEL", "%s: LABEL state only" % tag)
+	var semantic_ids: Array = []
 	for e in _world.area["entities"]:
 		if str(e.get("kind", "")) != "npc":
 			continue
 		if e.has("semantic"):
-			semantic_npcs += 1
-			assert_eq(str(e.get("id", "")), "a", "%s: only Miner is semantic" % tag)
-	assert_eq(semantic_npcs, 1, "%s: non-semantic NPCs have no semantic block" % tag)
+			semantic_ids.append(str(e.get("id", "")))
+	assert_eq(semantic_ids, ["a", "g"], "%s: only the fixture semantic NPCs have labels" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: creating the label did not open DialogueBox" % tag)
 	quest_before = str(_VRunner.quest_state().get("current_node", ""))
 	assert_eq(quest_before, "scene_01_a", "%s: quest not advanced by the label" % tag)
@@ -96,19 +97,21 @@ func _test_miner_label() -> void:
 		assert_true(after_screen.distance_to(before_screen) > 1.0, "%s: label tracks the camera (before %s after %s)" % [tag, str(before_screen), str(after_screen)])
 	await _test_observation(tag, quest_before)
 	_Knowledge.learn(_adv, "person:e17a:a", 2)
-	labels = _world.ui_semantic_labels()
-	assert_eq(str(labels[0]["state"]), "LABEL", "%s: still on the label after observation collapse" % tag)
-	assert_eq(str(labels[0]["text"]), "Bren", "%s: knowledge change updates the label" % tag)
+	var after_knowledge := _entry("person:e17a:a")
+	assert_eq(str(after_knowledge.get("state", "")), "LABEL", "%s: still on the label after observation collapse" % tag)
+	assert_eq(str(after_knowledge.get("text", "")), "Bren", "%s: knowledge change updates the label" % tag)
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), quest_before, "%s: knowledge change did not advance the quest" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: knowledge change did not open DialogueBox" % tag)
 	_world._finish_village_build(_VRunner.reset(_adv), _VRunner.session_facing())
 	await process_frame
 	assert_eq(_world.ui_actor_pos("john"), review_pos, "%s: reset returns John to the review start" % tag)
 	assert_eq(_Knowledge.get_level(_adv, "person:e17a:a"), 1, "%s: reset restores fixture role knowledge" % tag)
-	labels = _world.ui_semantic_labels()
-	assert_eq(labels.size(), 1, "%s: reset keeps one label" % tag)
-	assert_eq(str(labels[0]["text"]), "Miner", "%s: reset label is the fixture role" % tag)
-	assert_eq(str(labels[0]["state"]), "LABEL", "%s: reset returns to LABEL" % tag)
+	var miner_after := {}
+	for raw in _world.ui_semantic_labels():
+		if str(raw.get("key", "")) == "person:e17a:a":
+			miner_after = raw
+	assert_eq(str(miner_after.get("text", "")), "Miner", "%s: reset label is the fixture role" % tag)
+	assert_eq(str(miner_after.get("state", "")), "LABEL", "%s: reset returns to LABEL" % tag)
 	_Knowledge.learn(_adv, "person:e17a:a", 4)
 	_VRunner.end(_adv)
 	assert_eq(_Knowledge.get_level(_adv, "person:e17a:a"), 0, "%s: exit restores campaign knowledge" % tag)
@@ -132,10 +135,9 @@ func _test_review_start(tag: String, quest_before: String, view: Rect2) -> void:
 	var pos_before: Vector2i = _world.ui_actor_pos("john")
 	_world.ui_tap_semantic("person:e17a:a")
 	await process_frame
-	var shown: Array = _world.ui_semantic_labels()
-	assert_eq(shown.size(), 1, "%s: tap keeps exactly one label" % tag)
-	assert_eq(str(shown[0]["state"]), "OBSERVATION", "%s: review tap opens OBSERVATION" % tag)
-	assert_eq(str(shown[0]["text"]), authored, "%s: review observation is the authored far text" % tag)
+	var shown := _entry("person:e17a:a")
+	assert_eq(str(shown.get("state", "")), "OBSERVATION", "%s: review tap opens OBSERVATION" % tag)
+	assert_eq(str(shown.get("text", "")), authored, "%s: review observation is the authored far text" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: review tap did not open DialogueBox" % tag)
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), quest_before, "%s: review tap did not advance the quest" % tag)
 	assert_eq(_world.ui_actor_pos("john"), pos_before, "%s: review tap does not move John" % tag)
@@ -148,9 +150,9 @@ func _test_review_start(tag: String, quest_before: String, view: Rect2) -> void:
 			break
 	assert_true(stepped, "%s: review start has a walkable step" % tag)
 	await process_frame
-	shown = _world.ui_semantic_labels()
-	assert_eq(str(shown[0]["state"]), "LABEL", "%s: moving John collapses the review observation" % tag)
-	assert_eq(str(shown[0]["text"]), "Miner", "%s: collapsed review label is Miner" % tag)
+	shown = _entry("person:e17a:a")
+	assert_eq(str(shown.get("state", "")), "LABEL", "%s: moving John collapses the review observation" % tag)
+	assert_eq(str(shown.get("text", "")), "Miner", "%s: collapsed review label is Miner" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: review movement did not open DialogueBox" % tag)
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), quest_before, "%s: review movement did not advance the quest" % tag)
 	for _i in 30:
@@ -173,6 +175,13 @@ func _observe_far() -> String:
 	return ""
 
 
+func _entry(key: String) -> Dictionary:
+	for raw in _world.ui_semantic_labels():
+		if str(raw.get("key", "")) == key:
+			return raw
+	return {}
+
+
 func _inside(outer: Rect2, inner: Rect2) -> bool:
 	return outer.grow(1.0).encloses(inner)
 
@@ -187,7 +196,7 @@ func _test_observation(tag: String, quest_before: String) -> void:
 	for e in _world.area["entities"]:
 		if str(e.get("kind", "")) == "npc" and str(e.get("id", "")) == "a":
 			miner = Vector2i(int(e["pos"][0]), int(e["pos"][1]))
-	_world._john_pos = miner + Vector2i(0, 1)
+	_world._john_pos = miner + Vector2i(0, 3)
 	_world._john_facing = "up"
 	_world._moving = false
 	_world._update_prompt()
@@ -195,10 +204,10 @@ func _test_observation(tag: String, quest_before: String) -> void:
 	assert_eq(_Knowledge.get_level(_adv, "person:e17a:a"), 1, "%s: observation starts at role knowledge" % tag)
 	_world.ui_tap_semantic("person:e17a:a")
 	await process_frame
-	var shown: Array = _world.ui_semantic_labels()
-	assert_eq(str(shown[0]["state"]), "OBSERVATION", "%s: label input opens OBSERVATION" % tag)
-	assert_eq(str(shown[0]["text"]), authored, "%s: observation matches semantic content" % tag)
-	assert_true(str(shown[0]["text"]).strip_edges() != "", "%s: observation text is non-empty" % tag)
+	var shown := _entry("person:e17a:a")
+	assert_eq(str(shown.get("state", "")), "OBSERVATION", "%s: label input opens OBSERVATION" % tag)
+	assert_eq(str(shown.get("text", "")), authored, "%s: observation matches semantic content" % tag)
+	assert_true(str(shown.get("text", "")).strip_edges() != "", "%s: observation text is non-empty" % tag)
 	assert_eq(_world.ui_semantic_focus(), "person:e17a:a", "%s: observation tap still focuses Miner" % tag)
 	assert_eq(_world.ui_actor_pos("john"), pos_before, "%s: observation does not move John" % tag)
 	assert_true(not _world.ui_input_locked(), "%s: observation does not lock movement" % tag)
@@ -207,9 +216,9 @@ func _test_observation(tag: String, quest_before: String) -> void:
 	assert_eq(_Knowledge.get_level(_adv, "person:e17a:a"), 1, "%s: displaying observation does not grant knowledge" % tag)
 	_world.ui_tap_semantic("person:e17a:a")
 	await process_frame
-	shown = _world.ui_semantic_labels()
-	assert_eq(str(shown[0]["state"]), "LABEL", "%s: tapping the observation collapses it" % tag)
-	assert_eq(str(shown[0]["text"]), "Miner", "%s: collapsed label is Miner" % tag)
+	shown = _entry("person:e17a:a")
+	assert_eq(str(shown.get("state", "")), "LABEL", "%s: tapping the observation collapses it" % tag)
+	assert_eq(str(shown.get("text", "")), "Miner", "%s: collapsed label is Miner" % tag)
 	_world.ui_tap_semantic("person:e17a:a")
 	await process_frame
 	var stepped := false
@@ -221,9 +230,9 @@ func _test_observation(tag: String, quest_before: String) -> void:
 			break
 	assert_true(stepped, "%s: found a walkable step" % tag)
 	await process_frame
-	shown = _world.ui_semantic_labels()
-	assert_eq(str(shown[0]["state"]), "LABEL", "%s: moving John collapses OBSERVATION" % tag)
-	assert_eq(str(shown[0]["text"]), "Miner", "%s: movement returns the role label" % tag)
+	shown = _entry("person:e17a:a")
+	assert_eq(str(shown.get("state", "")), "LABEL", "%s: moving John collapses OBSERVATION" % tag)
+	assert_eq(str(shown.get("text", "")), "Miner", "%s: movement returns the role label" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: movement did not open DialogueBox" % tag)
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), quest_before, "%s: movement did not advance the quest" % tag)
 
