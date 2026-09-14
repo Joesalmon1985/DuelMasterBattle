@@ -1367,7 +1367,7 @@ func _village_menu() -> void:
 				await _dialogue.say_async("Village test", _VRunner.context_text())
 				continue
 			"Reset Village":
-				_finish_village_build(_VRunner.reset(_adv()), "down")
+				_finish_village_build(_VRunner.reset(_adv()), _VRunner.session_facing())
 				_input_locked = false
 				_touch.set_enabled(true)
 				return
@@ -1620,6 +1620,33 @@ func ui_semantic_labels() -> Array:
 			"entity_id": raw.entity_id(),
 		})
 	return out
+
+
+func ui_visible_rect() -> Rect2:
+	return get_viewport().get_visible_rect()
+
+
+func ui_world_to_screen(world: Vector2) -> Vector2:
+	if _camera == null:
+		return world
+	if _camera.has_method("force_update_scroll"):
+		_camera.force_update_scroll()
+	var view := ui_visible_rect().size
+	return (world - _camera.get_screen_center_position()) * _camera.zoom + view * 0.5
+
+
+func ui_entity_screen_rect(entity_id: String) -> Rect2:
+	for e in _entities:
+		if str(e.get("id", "")) != entity_id:
+			continue
+		var node = e.get("node")
+		if node is Sprite2D and is_instance_valid(node):
+			var tex_size := Vector2(16, 16)
+			if node.texture != null:
+				tex_size = node.texture.get_size()
+			var world := Rect2(node.global_position, tex_size * node.scale)
+			return Rect2(ui_world_to_screen(world.position), world.size * _camera.zoom)
+	return Rect2()
 
 
 func ui_semantic_label(key: String):
@@ -2089,7 +2116,7 @@ func _boot_village_test(adv: Node) -> void:
 		adv.new_game()
 	_play.setup(self, adv, _world_flow)
 	var start := _VRunner.begin(adv)
-	_finish_village_build(start, "down")
+	_finish_village_build(start, _VRunner.session_facing())
 	adv.state_changed.connect(_refresh_hud)
 	_refresh_hud()
 	_fade_in()

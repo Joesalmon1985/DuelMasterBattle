@@ -80,6 +80,13 @@ func screen_anchor() -> Vector2:
 	return (_tracked_world - center) * _camera.zoom + view * 0.5
 
 
+func screen_rect() -> Rect2:
+	if _button != null and _button.size.x > 1.0 and _button.size.y > 1.0:
+		return _button.get_global_rect()
+	var screen := screen_anchor()
+	return Rect2(screen - Vector2(140, 72), Vector2(280, 72))
+
+
 ## Production tap. The button uses this path for both mouse and emulated touch,
 ## matching TouchPad. Tests may call it directly.
 func press() -> void:

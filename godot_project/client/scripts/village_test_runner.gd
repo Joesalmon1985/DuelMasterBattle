@@ -28,6 +28,11 @@ static var _show_entity_ids := false
 ## Generated mode: the deterministic world behind the selected node.
 static var _gen: Dictionary = {}          # {"seed", "node", "turns"} or empty
 static var _gen_sim: DmbWorldSim = null
+static var _review_facing := ""
+
+const _SOLID_TILES := ["T", "#", "R", "f", "~", "r", " ", "X", "t"]
+const _REVIEW_VIEW := Vector2(720, 1280)
+const _REVIEW_TPX := 64
 
 const GEN_PREFIX := "gen:"
 const DEFAULT_TURNS := 30
@@ -116,6 +121,7 @@ static func clear() -> void:
     _show_entity_ids = false
     _gen = {}
     _gen_sim = null
+    _review_facing = ""
     _QuestRunner.clear()
 
 
@@ -160,7 +166,7 @@ static func begin(adv: Node) -> Vector2i:
     _has_saved_session = true
     adv.test_mode = true
     _seed_prereqs(adv, area)
-    return Vector2i(int(area["player_start"][0]), int(area["player_start"][1]))
+    return _session_spawn(area)
 
 
 static func end(adv: Node) -> void:
@@ -181,7 +187,7 @@ static func reset(adv: Node) -> Vector2i:
     _area = _project()
     _initial_area = _area.duplicate(true)
     _seed_prereqs(adv, _area)
-    return Vector2i(int(_area["player_start"][0]), int(_area["player_start"][1]))
+    return _session_spawn(_area)
 
 
 static func _restore_baseline(adv: Node) -> void:
@@ -233,6 +239,100 @@ static func _seed_prereqs(adv: Node, area: Dictionary) -> void:
         # Fixture starting knowledge only: John already knows this person's role.
         # Campaign knowledge is snapshotted before this seed and restored on exit.
         _Knowledge.learn(adv, "person:e17a:a", 1)
+
+
+static func session_facing() -> String:
+    return _review_facing if _review_facing != "" else "down"
+
+
+## E17A review only. The authored player_start stays in the projected area.
+## This spawn exists so Village Test Mode opens with Miner on screen.
+static func _session_spawn(area: Dictionary) -> Vector2i:
+    _review_facing = ""
+    var authored := Vector2i(int(area["player_start"][0]), int(area["player_start"][1]))
+    if selected_profile != "E17A" or is_generated():
+        return authored
+    var miner := _semantic_tile(area, "person:e17a:a")
+    if miner.x < 0:
+        return authored
+    var rows: Array = area.get("rows", [])
+    var grid := Vector2i(str(rows[0]).length() if not rows.is_empty() else 0, rows.size())
+    for step in [Vector2i(0, 3), Vector2i(0, 2), Vector2i(0, 4), Vector2i(1, 3), Vector2i(-1, 3), Vector2i(1, 2), Vector2i(-1, 2), Vector2i(2, 3), Vector2i(-2, 3)]:
+        var at: Vector2i = miner + step
+        if not _review_tile_walkable(area, at):
+            continue
+        if not _review_shows_miner(at, miner, grid):
+            continue
+        _review_facing = _facing_toward(at, miner)
+        return at
+    return authored
+
+
+static func _semantic_tile(area: Dictionary, key: String) -> Vector2i:
+    for raw in area.get("entities", []):
+        if not (raw is Dictionary):
+            continue
+        var e: Dictionary = raw
+        var semantic = e.get("semantic", {})
+        if semantic is Dictionary and str(semantic.get("knowledge_key", "")) == key:
+            var pos: Array = e.get("pos", [-1, -1])
+            return Vector2i(int(pos[0]), int(pos[1]))
+    return Vector2i(-1, -1)
+
+
+static func _review_tile_walkable(area: Dictionary, p: Vector2i) -> bool:
+    var rows: Array = area.get("rows", [])
+    if p.y < 0 or p.y >= rows.size():
+        return false
+    var row := str(rows[p.y])
+    if p.x < 0 or p.x >= row.length():
+        return false
+    if row.substr(p.x, 1) in _SOLID_TILES:
+        return false
+    for raw in area.get("entities", []):
+        if not (raw is Dictionary):
+            continue
+        var e: Dictionary = raw
+        var pos: Array = e.get("pos", [-1, -1])
+        if int(pos[0]) != p.x or int(pos[1]) != p.y:
+            continue
+        if str(e.get("kind", "")) in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs"]:
+            return false
+    return true
+
+
+static func _review_shows_miner(john: Vector2i, miner: Vector2i, grid: Vector2i) -> bool:
+    var cam := _review_camera_center(john, grid)
+    var sprite := Vector2(miner) * _REVIEW_TPX + Vector2(0, -32)
+    var body := Rect2(sprite, Vector2(_REVIEW_TPX, _REVIEW_TPX))
+    var label_anchor := sprite + Vector2(32, -40)
+    var label := Rect2(_review_to_screen(label_anchor, cam) - Vector2(140, 72), Vector2(280, 72))
+    var view := Rect2(Vector2(12, 12), _REVIEW_VIEW - Vector2(24, 24))
+    return view.encloses(_review_rect_to_screen(body, cam)) and view.encloses(label)
+
+
+static func _review_camera_center(john: Vector2i, grid: Vector2i) -> Vector2:
+    var raw := Vector2(john) * _REVIEW_TPX + Vector2(32, 0)
+    var half := _REVIEW_VIEW * 0.5
+    var max_c := Vector2(grid) * _REVIEW_TPX - half
+    return Vector2(clampf(raw.x, half.x, maxf(half.x, max_c.x)), clampf(raw.y, half.y, maxf(half.y, max_c.y)))
+
+
+static func _review_to_screen(world: Vector2, cam: Vector2) -> Vector2:
+    return world - cam + _REVIEW_VIEW * 0.5
+
+
+static func _review_rect_to_screen(world_rect: Rect2, cam: Vector2) -> Rect2:
+    return Rect2(_review_to_screen(world_rect.position, cam), world_rect.size)
+
+
+static func _facing_toward(from: Vector2i, to: Vector2i) -> String:
+    var d := to - from
+    if absi(d.x) > absi(d.y):
+        return "right" if d.x > 0 else "left"
+    if d.y < 0:
+        return "up"
+    return "down" if d.y > 0 else "up"
 
 
 static func quest_state() -> Dictionary:
