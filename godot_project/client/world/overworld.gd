@@ -77,6 +77,9 @@ var _semantic_layer: CanvasLayer
 var _semantic_focus_layer: CanvasLayer
 var _semantic_focus_root: Control
 var _semantic_syncing := false
+var _move_dismiss_armed := true
+var _test_key_dir := Vector2i.ZERO
+var _reply_serial := 0
 var _semantic_focus := ""
 var _semantic_press_frame := -1
 var _present_label = null
@@ -629,10 +632,9 @@ func _process(delta: float) -> void:
 		_update_john_sprite(int(_anim_time * 8) % 2)
 	elif not _input_locked or _semantic_any_expanded():
 		if not _scripted_running:
-			var dir := _keyboard_dir()
-			if dir == Vector2i.ZERO:
-				dir = _held_dir
-			if dir != Vector2i.ZERO:
+			_poll_move_dismiss_arm()
+			var dir := _movement_input()
+			if dir != Vector2i.ZERO and not _carried_move_blocked():
 				_try_step(dir)
 			else:
 				_update_john_sprite(0)
@@ -641,6 +643,8 @@ func _process(delta: float) -> void:
 
 
 func _keyboard_dir() -> Vector2i:
+	if _test_key_dir != Vector2i.ZERO:
+		return _test_key_dir
 	if Input.is_key_pressed(KEY_LEFT) or Input.is_key_pressed(KEY_A):
 		return Vector2i(-1, 0)
 	if Input.is_key_pressed(KEY_RIGHT) or Input.is_key_pressed(KEY_D):
@@ -676,6 +680,8 @@ func is_walkable(p: Vector2i) -> bool:
 
 
 func _try_step(dir: Vector2i) -> void:
+	if _carried_move_blocked():
+		return
 	_john_facing = _dir_name(dir)
 	var target := _john_pos + dir
 	if not is_walkable(target):
@@ -1675,6 +1681,8 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 		lbl.interact_requested.connect(_on_semantic_interact)
 	if not lbl.response_chosen.is_connected(_on_semantic_response):
 		lbl.response_chosen.connect(_on_semantic_response)
+	if not lbl.presentation_entered.is_connected(_on_semantic_entered):
+		lbl.presentation_entered.connect(_on_semantic_entered)
 	if not lbl.conversation_dismissed.is_connected(_on_semantic_dismissed):
 		lbl.conversation_dismissed.connect(_on_semantic_dismissed)
 	if not lbl.line_done.is_connected(_on_semantic_line_done):
@@ -1689,6 +1697,7 @@ func _dismiss_semantic_on_move() -> void:
 
 
 func _on_semantic_dismissed(key: String) -> void:
+	_reply_serial += 1
 	_present_cancelled = true
 	if _dialogue != null:
 		_dialogue.release_redirect()
@@ -1752,19 +1761,64 @@ func _on_semantic_response(key: String, index: int) -> void:
 	if not (_VRunner.is_active() and e.has("village_test_story")):
 		return
 	var result: Dictionary = _VQuest.make_choice(index)
+	_reply_serial += 1
+	var serial := _reply_serial
+	await get_tree().create_timer(0.2).timeout
+	if serial != _reply_serial:
+		return
+	var live = ui_semantic_label(key)
+	if live == null or int(live.selected_response()) != index:
+		return
+	_show_choice_reply(live, result)
+
+
+func _show_choice_reply(lbl, result: Dictionary) -> void:
 	var lines: Array = _turn_texts(result.get("turns", []))
 	if bool(result.get("inquiry", false)):
 		lbl.begin_speech(lines, result.get("options", []))
-		_update_prompt()
-		_sync_semantic_stack()
-		return
-	if bool(result.get("success", false)):
-		lines.append_array(_semantic_followup_lines())
-	elif str(result.get("error", "")) != "":
-		lines = [str(result["error"])]
-	lbl.begin_speech(lines, [])
+	else:
+		if bool(result.get("success", false)):
+			lines.append_array(_semantic_followup_lines())
+		elif str(result.get("error", "")) != "":
+			lines = [str(result["error"])]
+		lbl.begin_speech(lines, [])
 	_update_prompt()
 	_sync_semantic_stack()
+
+
+func _on_semantic_entered(state: String) -> void:
+	if state in ["OBSERVATION", "SPEECH", "RESPONSES"]:
+		_move_dismiss_armed = false
+
+
+func _movement_input() -> Vector2i:
+	var key := _keyboard_dir()
+	if key != Vector2i.ZERO:
+		return key
+	return _held_dir
+
+
+func _poll_move_dismiss_arm() -> void:
+	if _move_dismiss_armed or not _semantic_any_expanded():
+		return
+	if _movement_input() == Vector2i.ZERO:
+		_move_dismiss_armed = true
+
+
+func _carried_move_blocked() -> bool:
+	return _semantic_any_expanded() and not _move_dismiss_armed
+
+
+func ui_hold_touch_direction(dir: Vector2i) -> void:
+	_held_dir = dir
+
+
+func ui_hold_key_direction(dir: Vector2i) -> void:
+	_test_key_dir = dir
+
+
+func ui_move_dismiss_armed() -> bool:
+	return _move_dismiss_armed
 
 
 func _semantic_owns_talk(e: Dictionary) -> bool:
@@ -1982,6 +2036,7 @@ func _hide_name_fallback(node) -> void:
 func _start_semantic_conversation(e: Dictionary, lbl) -> void:
 	if str(lbl.interaction_state()) in ["SPEECH", "RESPONSES"]:
 		return
+	_present_cancelled = false
 	_face_npc_toward_john(e)
 	var lines: Array = []
 	var options: Array = []
@@ -2156,7 +2211,7 @@ func _sync_semantic_stack() -> void:
 		return
 	_semantic_syncing = true
 	var owner = _foreground_semantic_owner()
-	var responses := owner != null and str(owner.interaction_state()) == "RESPONSES"
+	var talking := owner != null and str(owner.interaction_state()) in ["SPEECH", "RESPONSES"]
 	var to_release: Array = []
 	for raw in _semantic_labels:
 		if not is_instance_valid(raw) or raw == owner:
@@ -2179,7 +2234,7 @@ func _sync_semantic_stack() -> void:
 			if raw.get_parent() != _semantic_root and _semantic_root != null:
 				raw.reparent(_semantic_root)
 			raw.set_foreground(false)
-			raw.set_passive_suppressed(responses and not raw.is_expanded())
+			raw.set_passive_suppressed(talking and not raw.is_expanded())
 	_semantic_syncing = false
 
 

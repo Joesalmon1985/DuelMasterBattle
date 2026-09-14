@@ -17,6 +17,7 @@ signal response_chosen(knowledge_key: String, index: int)
 signal conversation_dismissed(knowledge_key: String)
 signal line_done
 signal presentation_result(index: int)
+signal presentation_entered(state: String)
 
 const STATE_LABEL := "LABEL"
 const STATE_OBSERVATION := "OBSERVATION"
@@ -53,6 +54,12 @@ var _target_visible := true
 var _suppressed := false
 var _foreground := false
 var _panel_size := Vector2.ZERO
+var _responses_input_armed := true
+var _awaiting_pointer_release := false
+var _choice_locked := false
+var _touch_down: Dictionary = {}
+var _gesture_down := false
+var _fade: Tween
 
 
 func _ready() -> void:
@@ -66,7 +73,6 @@ func _ready() -> void:
 	_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_button.clip_text = true
 	_VT.style_secondary_button(_button)
-	_button.pressed.connect(press)
 	_button.gui_input.connect(_on_button_gui)
 	add_child(_button)
 	_scroll = ScrollContainer.new()
@@ -263,6 +269,14 @@ func set_dismiss_on_move(on: bool) -> void:
 	_semantic["dismiss_on_move"] = on
 
 
+func responses_input_armed() -> bool:
+	return _responses_input_armed
+
+
+func choice_locked() -> bool:
+	return _choice_locked
+
+
 func refresh_presentation() -> void:
 	_follow()
 
@@ -311,10 +325,10 @@ func begin_speech(lines: Array, options_after: Array = []) -> void:
 			_show_responses(_pending_options)
 			_pending_options = []
 		return
-	_state = STATE_SPEECH
+	_button.text = str(_speech_lines[0])
+	_enter_state(STATE_SPEECH)
 	_fit_speech()
 	_show_speech_button(true)
-	_button.text = str(_speech_lines[0])
 
 
 ## One line from an existing handler. The next speech tap finishes the await.
@@ -323,11 +337,11 @@ func present_line(text: String) -> void:
 	_pending_options = []
 	_speech_lines = [text]
 	_speech_index = 0
-	_state = STATE_SPEECH
 	_awaiting_line = true
+	_button.text = text
+	_enter_state(STATE_SPEECH)
 	_fit_speech()
 	_show_speech_button(true)
-	_button.text = text
 
 
 ## Choices from an existing handler. Displaying them selects nothing.
@@ -338,7 +352,7 @@ func present_choices(options: Array) -> void:
 
 
 func press_response(index: int) -> void:
-	if _state != STATE_RESPONSES:
+	if _state != STATE_RESPONSES or _choice_locked or not _responses_input_armed:
 		return
 	if _press_frame == Engine.get_process_frames():
 		return
@@ -350,8 +364,9 @@ func press_response(index: int) -> void:
 	if not found:
 		return
 	_press_frame = Engine.get_process_frames()
+	_choice_locked = true
 	_selected_response = index
-	_clear_responses()
+	_acknowledge_choice(index)
 	if _awaiting_choice:
 		_awaiting_choice = false
 		presentation_result.emit(index)
@@ -368,8 +383,12 @@ func collapse() -> void:
 	var was_talking := _state == STATE_SPEECH or _state == STATE_RESPONSES
 	_clear_conversation()
 	_selected_response = -1
-	_state = STATE_LABEL
+	_choice_locked = false
+	_responses_input_armed = true
+	_awaiting_pointer_release = false
+	_enter_state(STATE_LABEL)
 	_show_speech_button(true)
+	modulate.a = 1.0
 	_fit_label()
 	refresh()
 	_apply_shown()
@@ -385,10 +404,10 @@ func collapse() -> void:
 
 func _show_observation() -> void:
 	var resolved: Dictionary = _Resolver.resolve(_semantic, _adv, false)
-	_state = STATE_OBSERVATION
+	_button.text = str(resolved.get("observe_far", ""))
+	_enter_state(STATE_OBSERVATION)
 	_fit_speech()
 	_show_speech_button(true)
-	_button.text = str(resolved.get("observe_far", ""))
 
 
 func _advance_speech() -> void:
@@ -409,10 +428,14 @@ func _advance_speech() -> void:
 
 
 func _show_responses(options: Array) -> void:
+	var keep_line := _state == STATE_SPEECH and _button != null and _button.text.strip_edges() != ""
 	_clear_responses()
-	_state = STATE_RESPONSES
 	_selected_response = -1
-	_show_speech_button(false)
+	_choice_locked = false
+	_enter_state(STATE_RESPONSES)
+	_show_speech_button(keep_line)
+	if _button != null:
+		_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if _scroll != null:
 		_scroll.visible = true
 	for raw in options:
@@ -436,6 +459,7 @@ func _show_responses(options: Array) -> void:
 		collapse()
 		return
 	_layout_responses()
+	_guard_response_input()
 
 
 func _on_response_pressed(button: Button) -> void:
@@ -443,16 +467,18 @@ func _on_response_pressed(button: Button) -> void:
 
 
 func _on_response_gui(event: InputEvent, button: Button) -> void:
-	# Mouse release selects, matching Button.pressed, so the press itself is not
-	# stolen by a neighbour or the D-pad and a release does not fall through.
+	# The gesture that opened these choices must finish before they accept input.
+	if not _responses_input_armed or _choice_locked:
+		if event is InputEventMouseButton or event is InputEventScreenTouch:
+			button.accept_event()
+		return
 	if event is InputEventScreenTouch and event.pressed:
 		press_response(int(button.get_meta("index")))
 		button.accept_event()
 		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		press_response(int(button.get_meta("index")))
 		button.accept_event()
-		if not event.pressed:
-			press_response(int(button.get_meta("index")))
 
 
 func _clear_conversation() -> void:
@@ -474,11 +500,18 @@ func _clear_responses() -> void:
 
 
 func _on_button_gui(event: InputEvent) -> void:
-	# Mouse clicks use Button.pressed so a press and release advance one beat.
-	# A raw screen touch is accepted here for devices with mouse emulation off.
+	# Advance on pointer-down so the same press cannot also land on a choice
+	# that this tap is about to create. Release does not advance again.
+	var down := false
 	if event is InputEventScreenTouch and event.pressed:
-		press()
-		_button.accept_event()
+		down = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		down = true
+	if not down:
+		return
+	_gesture_down = true
+	press()
+	_button.accept_event()
 
 
 func refresh() -> void:
@@ -496,7 +529,20 @@ func _on_state_changed() -> void:
 
 
 func _process(_delta: float) -> void:
+	if _awaiting_pointer_release and not _pointer_held():
+		_arm_responses()
 	_follow()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			_touch_down[event.index] = true
+		else:
+			_touch_down.erase(event.index)
+			_gesture_down = false
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		_gesture_down = false
 
 
 func _follow() -> void:
@@ -559,11 +605,25 @@ func _fit_label() -> void:
 func _fit_speech() -> void:
 	if _button == null:
 		return
-	var fitted := Vector2(280.0, 72.0)
+	var fitted := _speech_size_for(_button.text)
 	_button.custom_minimum_size = fitted
 	_button.size = fitted
-	size = fitted
-	custom_minimum_size = fitted
+	if _state != STATE_RESPONSES:
+		size = fitted
+		custom_minimum_size = fitted
+		_panel_size = fitted
+
+
+func _speech_size_for(text: String) -> Vector2:
+	var width := clampf(120.0 + float(text.length()) * 6.5, 168.0, 260.0)
+	var height := _text_block_height(text, width, 14.0)
+	if text.length() < 42 and height <= 56.0:
+		width = clampf(108.0 + float(text.length()) * 7.0, 140.0, 220.0)
+		height = _text_block_height(text, width, 14.0)
+	var max_h := 180.0
+	if is_inside_tree():
+		max_h = minf(220.0, get_viewport().get_visible_rect().size.y * 0.28)
+	return Vector2(width, clampf(height, 48.0, max_h))
 
 
 func _preferred_size() -> Vector2:
@@ -571,7 +631,9 @@ func _preferred_size() -> Vector2:
 		return _panel_size
 	if _state == STATE_LABEL:
 		return _button.custom_minimum_size if _button != null else Vector2(96, 48)
-	return Vector2(280.0, 72.0)
+	if _button != null and _button.custom_minimum_size.y > 1.0:
+		return _button.custom_minimum_size
+	return Vector2(200.0, 56.0)
 
 
 func _layout_responses() -> void:
@@ -582,23 +644,29 @@ func _layout_responses() -> void:
 		total += raw.custom_minimum_size.y
 	if _response_buttons.size() > 1:
 		total += RESPONSE_GAP * float(_response_buttons.size() - 1)
+	var speech_h := 0.0
+	if _button != null and _button.visible:
+		_button.position = Vector2((RESPONSE_WIDTH - _button.size.x) * 0.5, 0)
+		speech_h = _button.size.y + 10.0
 	var view_h := 1280.0
 	if is_inside_tree():
 		view_h = get_viewport().get_visible_rect().size.y
-	var max_h := maxf(RESPONSE_MIN_H, view_h - VIEW_MARGIN * 2.0)
-	var shown := minf(total, max_h)
+	var max_block := maxf(RESPONSE_MIN_H, view_h - VIEW_MARGIN * 2.0)
+	var max_scroll := maxf(RESPONSE_MIN_H, max_block - speech_h)
+	var shown := minf(total, max_scroll)
 	_responses.custom_minimum_size = Vector2(RESPONSE_WIDTH, total)
 	_responses.size = Vector2(RESPONSE_WIDTH, total)
 	_responses.visible = true
 	_scroll.custom_minimum_size = Vector2(RESPONSE_WIDTH, shown)
 	_scroll.size = Vector2(RESPONSE_WIDTH, shown)
+	_scroll.position = Vector2(0, speech_h)
 	_scroll.visible = true
-	if total > max_h + 1.0:
+	if total > max_scroll + 1.0:
 		_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	else:
 		_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_scroll.scroll_vertical = 0
-	_panel_size = Vector2(RESPONSE_WIDTH, shown)
+	_panel_size = Vector2(RESPONSE_WIDTH, speech_h + shown)
 	size = _panel_size
 	custom_minimum_size = _panel_size
 
@@ -687,6 +755,85 @@ func _world_to_screen_from(world: Vector2, center: Vector2) -> Vector2:
 		return world
 	var view := get_viewport().get_visible_rect().size
 	return (world - center) * _camera.zoom + view * 0.5
+
+
+func _enter_state(next: String) -> void:
+	var changed := _state != next
+	_state = next
+	if changed and next != STATE_LABEL:
+		presentation_entered.emit(next)
+		_fade_in()
+	if _button != null and next == STATE_SPEECH:
+		_button.add_theme_color_override("font_color", Color(1.0, 0.96, 0.86))
+	elif _button != null and next == STATE_LABEL:
+		_button.remove_theme_color_override("font_color")
+
+
+func _fade_in() -> void:
+	if not is_inside_tree():
+		modulate.a = 1.0
+		return
+	if _fade != null and _fade.is_valid():
+		_fade.kill()
+	modulate.a = 0.28
+	_fade = create_tween()
+	_fade.tween_property(self, "modulate:a", 1.0, 0.15)
+
+
+func _acknowledge_choice(index: int) -> void:
+	for raw in _response_buttons:
+		if not is_instance_valid(raw):
+			continue
+		raw.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if int(raw.get_meta("index")) == index:
+			raw.modulate = Color(1.0, 0.86, 0.45)
+		else:
+			raw.modulate = Color(0.62, 0.62, 0.68)
+
+
+func _guard_response_input() -> void:
+	_responses_input_armed = false
+	_choice_locked = false
+	_awaiting_pointer_release = _pointer_held()
+	if _awaiting_pointer_release:
+		for raw in _response_buttons:
+			if is_instance_valid(raw):
+				raw.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		return
+	_arm_responses()
+
+
+func _arm_responses() -> void:
+	_awaiting_pointer_release = false
+	_responses_input_armed = true
+	if _choice_locked:
+		return
+	for raw in _response_buttons:
+		if is_instance_valid(raw):
+			raw.mouse_filter = Control.MOUSE_FILTER_STOP
+
+
+func _pointer_held() -> bool:
+	if _gesture_down:
+		return true
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		return true
+	return not _touch_down.is_empty()
+
+
+func _text_block_height(text: String, width: float, pad_y: float) -> float:
+	var font: Font = ThemeDB.fallback_font
+	var font_size := _VT.FONT_SECONDARY
+	if _button != null:
+		var themed: Font = _button.get_theme_font("font")
+		if themed != null:
+			font = themed
+		var sized := _button.get_theme_font_size("font_size")
+		if sized > 0:
+			font_size = sized
+	var inner := maxf(40.0, width - 40.0)
+	var text_size := font.get_multiline_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, inner, font_size)
+	return text_size.y + pad_y + 16.0
 
 
 func _connect_adventure() -> void:

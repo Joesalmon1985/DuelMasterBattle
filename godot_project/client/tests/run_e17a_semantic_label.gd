@@ -51,8 +51,8 @@ func _test_miner_label() -> void:
 	assert_true(_world.ui_tile_walkable(review_pos), "%s: review start is walkable" % tag)
 	var miner_tile := _miner_tile()
 	var away: Vector2i = review_pos - miner_tile
-	var steps := maxi(absi(away.x), absi(away.y))
-	assert_true(steps >= 2 and steps <= 4, "%s: review start is a few tiles from Miner (got %s, miner %s)" % [tag, str(review_pos), str(miner_tile)])
+	var steps := absi(away.x) + absi(away.y)
+	assert_eq(steps, 1, "%s: review start is beside Miner (got %s, miner %s)" % [tag, str(review_pos), str(miner_tile)])
 	var view: Rect2 = _world.ui_visible_rect()
 	var miner_screen: Rect2 = _world.ui_entity_screen_rect("a")
 	assert_true(miner_screen.size.x > 1.0, "%s: Miner sprite has a screen rect" % tag)
@@ -124,7 +124,6 @@ func _test_miner_label() -> void:
 
 
 func _test_review_start(tag: String, quest_before: String, view: Rect2) -> void:
-	var authored := _observe_far()
 	var lbl = _world.ui_semantic_label("person:e17a:a")
 	assert_true(lbl != null, "%s: review label present" % tag)
 	if lbl == null:
@@ -136,8 +135,8 @@ func _test_review_start(tag: String, quest_before: String, view: Rect2) -> void:
 	_world.ui_tap_semantic("person:e17a:a")
 	await process_frame
 	var shown := _entry("person:e17a:a")
-	assert_eq(str(shown.get("state", "")), "OBSERVATION", "%s: review tap opens OBSERVATION" % tag)
-	assert_eq(str(shown.get("text", "")), authored, "%s: review observation is the authored far text" % tag)
+	assert_eq(str(shown.get("state", "")), "SPEECH", "%s: review tap beside Miner starts speech" % tag)
+	assert_eq(str(shown.get("text", "")), "Miner asks Distiller to join the new workshop venture.", "%s: review speech is the authored opening" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: review tap did not open DialogueBox" % tag)
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), quest_before, "%s: review tap did not advance the quest" % tag)
 	assert_eq(_world.ui_actor_pos("john"), pos_before, "%s: review tap does not move John" % tag)
@@ -151,7 +150,7 @@ func _test_review_start(tag: String, quest_before: String, view: Rect2) -> void:
 	assert_true(stepped, "%s: review start has a walkable step" % tag)
 	await process_frame
 	shown = _entry("person:e17a:a")
-	assert_eq(str(shown.get("state", "")), "LABEL", "%s: moving John collapses the review observation" % tag)
+	assert_eq(str(shown.get("state", "")), "LABEL", "%s: moving John collapses the review conversation" % tag)
 	assert_eq(str(shown.get("text", "")), "Miner", "%s: collapsed review label is Miner" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: review movement did not open DialogueBox" % tag)
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), quest_before, "%s: review movement did not advance the quest" % tag)

@@ -95,6 +95,7 @@ func _test_inquiry(miner_key: String) -> void:
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), "scene_01_a", "inquiry does not leave the decision")
 	assert_true(not _VRunner.quest_state().get("flags", {}).has("scene_01_branch_a"), "inquiry does not set branch A")
 	assert_true(not _VRunner.quest_state().get("flags", {}).has("scene_01_branch_b"), "inquiry does not set branch B")
+	await create_timer(0.45).timeout
 	_world.ui_tap_semantic(miner_key)
 	await process_frame
 	assert_eq(str(_entry(miner_key).get("state", "")), "RESPONSES", "inquiry returns to the unresolved decision")

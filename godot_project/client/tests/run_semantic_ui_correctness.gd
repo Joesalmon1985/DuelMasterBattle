@@ -166,6 +166,7 @@ func _test_real_click(index: int, flag: String, node_id: String, inquiry: bool) 
 	if inquiry:
 		assert_true(not flags.has("scene_01_branch_a"), "%s: inquiry did not commit A" % tag)
 		assert_true(not flags.has("scene_01_branch_b"), "%s: inquiry did not commit B" % tag)
+		await create_timer(0.45).timeout
 		assert_eq(str(_world.ui_semantic_label(MINER).interaction_state()), "SPEECH", "%s: inquiry returns to speech" % tag)
 	else:
 		assert_true(flags.has(flag), "%s: clicked branch was committed" % tag)

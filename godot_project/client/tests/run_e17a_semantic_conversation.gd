@@ -155,11 +155,12 @@ func _test_miner_choice() -> void:
 	await process_frame
 	assert_eq(_world.ui_semantic_selected(MINER), 1, "%s: the tapped response is the one selected" % tag)
 	assert_eq(_world.ui_actor_pos("john"), pos_before, "%s: response tap did not move John" % tag)
-	assert_eq(str(_entry(MINER).get("state", "")), "SPEECH", "%s: the chosen branch returns to speech" % tag)
-	assert_eq(str(_entry(MINER).get("text", "")), BRANCH_B_LINE, "%s: branch speech is the authored response" % tag)
 	assert_eq(str(_VRunner.quest_state().get("current_node", "")), "scene_02_b", "%s: quest advances only after the explicit choice" % tag)
 	assert_true(_VRunner.quest_state().get("flags", {}).has("scene_01_branch_b"), "%s: the selected branch was committed" % tag)
 	assert_true(not _VRunner.quest_state().get("flags", {}).has("scene_01_branch_a"), "%s: the other branch was not committed" % tag)
+	await create_timer(0.45).timeout
+	assert_eq(str(_entry(MINER).get("state", "")), "SPEECH", "%s: the chosen branch returns to speech" % tag)
+	assert_eq(str(_entry(MINER).get("text", "")), BRANCH_B_LINE, "%s: branch speech is the authored response" % tag)
 	assert_true(not _world.ui_dialogue_open(), "%s: branch speech did not open DialogueBox" % tag)
 
 

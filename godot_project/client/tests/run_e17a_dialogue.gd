@@ -79,7 +79,7 @@ func _test_miner_choice_and_aside() -> void:
 	var choices: Array = _world.ui_semantic_responses("person:e17a:a")
 	assert_true(choices.size() >= 2, "%s: Miner's first choice is offered" % tag)
 	_world.ui_tap_semantic_response("person:e17a:a", 0)
-	await process_frame
+	await create_timer(0.45).timeout
 	var seen := ""
 	for raw in _world.ui_semantic_labels():
 		if str(raw.get("key", "")) == "person:e17a:a":

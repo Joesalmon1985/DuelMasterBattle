@@ -260,7 +260,8 @@ static func session_facing() -> String:
 
 
 ## E17A review only. The authored player_start stays in the projected area.
-## This spawn exists so Village Test Mode opens with Miner on screen.
+## Village Test Mode opens beside Miner, in conversational range, so speech and
+## choices can be exercised without crossing the village.
 static func _session_spawn(area: Dictionary) -> Vector2i:
     _review_facing = ""
     var authored := Vector2i(int(area["player_start"][0]), int(area["player_start"][1]))
@@ -271,7 +272,7 @@ static func _session_spawn(area: Dictionary) -> Vector2i:
         return authored
     var rows: Array = area.get("rows", [])
     var grid := Vector2i(str(rows[0]).length() if not rows.is_empty() else 0, rows.size())
-    for step in [Vector2i(0, 3), Vector2i(0, 2), Vector2i(0, 4), Vector2i(1, 3), Vector2i(-1, 3), Vector2i(1, 2), Vector2i(-1, 2), Vector2i(2, 3), Vector2i(-2, 3)]:
+    for step in [Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 2), Vector2i(0, 3), Vector2i(0, 4), Vector2i(1, 2), Vector2i(-1, 2)]:
         var at: Vector2i = miner + step
         if not _review_tile_walkable(area, at):
             continue
