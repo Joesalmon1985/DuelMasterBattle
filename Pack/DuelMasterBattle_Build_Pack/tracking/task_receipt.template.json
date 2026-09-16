@@ -1,0 +1,12 @@
+{
+  "task_id": "Tnnn",
+  "status": "NOT_STARTED",
+  "commit": null,
+  "files": [],
+  "public_contracts": [],
+  "source_rules": [],
+  "checks": [],
+  "fixture_hashes": {},
+  "defects": [],
+  "next_task": null
+}

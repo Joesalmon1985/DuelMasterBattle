@@ -22,3 +22,6 @@ tools/dialogue_generation/*.db
 tools/dialogue_generation/*.db-wal
 tools/dialogue_generation/*.db-shm
 generated/dialogue/
+
+# Uploaded duplicate of the committed extracted build pack.
+/DuelMasterBattle_Build_Pack.zip

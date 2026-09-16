@@ -1,0 +1,13 @@
+{
+  "status": "UNVERIFIED",
+  "checkout_root": null,
+  "branch": null,
+  "baseline_commit": null,
+  "dirty_files": [],
+  "instructions": [],
+  "tool_versions": {},
+  "logical_path_map": {},
+  "existing_entrypoints": [],
+  "platforms": {},
+  "baseline_checks": []
+}
