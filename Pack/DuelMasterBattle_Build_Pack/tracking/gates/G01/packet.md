@@ -21,7 +21,7 @@ All of T001–T024 are marked DONE with receipts. Re-verified on this host:
 ## Build
 
 - Branch: `BuildPackV03`
-- Commit: *(filled at commit/push time — see `launch.txt`)*
+- Commit: 
 - Godot: **4.4.1** native Linux (`/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64`)
 - Python: **3.12.3** via `python3`
 

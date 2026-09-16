@@ -1,6 +1,6 @@
-commit: ec13d237d5fd5ae088d26c36af106bbf99c53a52
+commit: 6b34024d528c7a18d48dece488e3bcef3822a803
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g01.sh
 
-# Seed: 7
-# Fixture: FX-CLOCK
+# Seed: 7  Fixture: FX-CLOCK
+# Isolated save: .dmb_saves/g01_playtest.json
