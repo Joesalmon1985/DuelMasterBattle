@@ -1,0 +1,34 @@
+{
+  "manifest_version": 1,
+  "profile_id": "development",
+  "status": "ACTIVE_CONFIGURATION_NOT_COMPLETION_CLAIM",
+  "pack_version": "1.0",
+  "engine": {
+    "godot": "4.4.1",
+    "python": "3.12.3"
+  },
+  "runtime_dependencies": {
+    "internet": false,
+    "llm": false,
+    "loopback_sidecar": "NOT_IMPLEMENTED"
+  },
+  "features": {
+    "legacy_godot_runtime": "REGRESSION_BASELINE_ONLY",
+    "task_verification_wrapper": "AVAILABLE",
+    "python_world_core": "NOT_IMPLEMENTED_T007_T014",
+    "python_godot_bridge": "NOT_IMPLEMENTED_T015_T024",
+    "g01_playable_slice": "NOT_IMPLEMENTED_T024",
+    "complete_village": "NOT_IMPLEMENTED_T077_T096",
+    "industry": "NOT_IMPLEMENTED_T049_T058",
+    "four_eras": "NOT_IMPLEMENTED_T097_T124",
+    "trained_policies": "NOT_IMPLEMENTED_T143_T150",
+    "windows_release": "NOT_IMPLEMENTED_T155_T160"
+  },
+  "rules": {
+    "persistent_world_owner": "python_in_migrated_runtime",
+    "godot_owner": "presentation_input_local_movement_and_leased_encounters",
+    "wizard_has_hp_mana_xp": false,
+    "runtime_llm_allowed": false,
+    "permanent_ten_recipe_culture_limit": false
+  }
+}

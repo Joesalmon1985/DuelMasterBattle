@@ -166,6 +166,17 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 )
             )
         ]
+    if task == "T005":
+        return [
+            run_command(
+                CommandCheck(
+                    name="manifest_and_rule_map_tests",
+                    argv=(sys.executable, "-m", "pytest", "-q", "tests/test_manifests.py"),
+                    required_pattern=r"\bpassed\b",
+                    count_pattern=r"(\d+)\s+passed",
+                )
+            )
+        ]
     return [
         CheckResult(
             name=f"task_contract_{task}",

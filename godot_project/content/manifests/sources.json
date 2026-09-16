@@ -1,0 +1,32 @@
+{
+  "manifest_version": 1,
+  "pack_version": "1.0",
+  "hash_algorithm": "sha256",
+  "sources": [
+    {
+      "path": "Pack/DuelMasterBattle_Build_Pack/source/GDD_v0.3.md",
+      "sha256": "e958798c50d372d90f7c4f7f74a1d33152ceca54961f3a2e5369d8278a0163a2",
+      "role": "controlling v0.3 design"
+    },
+    {
+      "path": "Pack/DuelMasterBattle_Build_Pack/source/cross_terrain_resource_recipes.xlsx",
+      "sha256": "fb47ee8abd8ed1dd04615aa30c9988194644ad0704e0928f961092a5b8c18672",
+      "role": "original recipe workbook"
+    },
+    {
+      "path": "Pack/DuelMasterBattle_Build_Pack/reference/resources.json",
+      "sha256": "bdba6a7dcbc877c5c896992f922d55e0bed8af6081d15abd9cfb01c6b6d78367",
+      "role": "normalized resource reference"
+    },
+    {
+      "path": "Pack/DuelMasterBattle_Build_Pack/reference/recipes.json",
+      "sha256": "e37fa7b1f7fdfa56cfae3016d8793fe2183a07296c7a8c09c68937b2899882b0",
+      "role": "normalized 240-recipe reference"
+    },
+    {
+      "path": "Pack/DuelMasterBattle_Build_Pack/reference/source_coverage.json",
+      "sha256": "ececb1f4e24ac9ce567db1c97c84779a42cf896d495454f1031fa5956dcd6768",
+      "role": "section coverage register"
+    }
+  ]
+}

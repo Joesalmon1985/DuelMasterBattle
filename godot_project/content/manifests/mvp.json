@@ -1,0 +1,33 @@
+{
+  "manifest_version": 1,
+  "profile_id": "integrated_mvp",
+  "status": "TARGET_NOT_YET_IMPLEMENTED",
+  "acceptance_gate": "G06",
+  "required": {
+    "factions": 2,
+    "eras": [
+      "Prehistoric",
+      "Historic"
+    ],
+    "systems": [
+      "authoritative_python_world",
+      "catan_cargo",
+      "game_time_industry",
+      "individual_soldiers_workers_and_carts",
+      "wizard_magic_and_immunity",
+      "catastrophe_pressure",
+      "persistent_people_and_quests",
+      "puzzle_and_retained_mastermind_duel",
+      "versioned_saves"
+    ],
+    "runtime_internet": false,
+    "runtime_llm": false
+  },
+  "catalogue": {
+    "prehistoric_enabled_recipes": 16,
+    "historic_enabled_recipes": 16,
+    "full_240_recipe_catalogue_preserved": true,
+    "permanent_ten_recipe_culture_limit": false
+  },
+  "completion_claim": false
+}
