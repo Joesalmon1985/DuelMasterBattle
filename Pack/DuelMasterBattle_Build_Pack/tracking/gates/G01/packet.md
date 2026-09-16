@@ -1,5 +1,5 @@
 **Tested implementation commit:** `6252be79acbcd7d71f7ea5a748672622a79db3f5`  
-**Handoff HEAD:** `b7d5b81b8d333d17a0b41ed550a8a95ce19a0019`
+**Handoff HEAD:** `076f4fcaf8cb81e4a3a43177898573ba2497fcba`
 
 # G01 playtest handoff — playable wizard FX-CLOCK
 
