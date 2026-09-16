@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DMBDefinition",
+  "type": "object",
+  "required": ["id", "schema_version", "kind", "era_id", "name_key"],
+  "properties": {
+    "id": {"type": "string"},
+    "schema_version": {"type": "integer", "minimum": 1},
+    "kind": {"type": "string"},
+    "era_id": {"type": "string"},
+    "name_key": {"type": "string"},
+    "description_key": {"type": "string"},
+    "asset_family_id": {"type": "string"},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "fields": {"type": "object"}
+  },
+  "additionalProperties": false
+}

@@ -25,3 +25,8 @@ generated/dialogue/
 
 # Uploaded duplicate of the committed extracted build pack.
 /DuelMasterBattle_Build_Pack.zip
+
+.dmb_endpoint.json
+.dmb_endpoint_test.json
+.dmb_saves/
+.dmb_saves_test/

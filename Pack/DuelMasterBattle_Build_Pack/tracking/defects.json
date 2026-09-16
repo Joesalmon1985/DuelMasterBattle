@@ -33,5 +33,51 @@
     "attempted_fixes": [],
     "next_diagnostic": "one focused next step"
   },
-  "defects": []
+  "defects": [
+    {
+      "id": "D001",
+      "task_id": "T003",
+      "status": "DEFERRED",
+      "summary": "Dialogue openpyxl dependency missing on host",
+      "reproduction_command": "python3 -c 'import openpyxl'",
+      "seed": "NOT_APPLICABLE",
+      "failing_assertion_or_log": "ModuleNotFoundError: openpyxl",
+      "expected_state": "dialogue factory importable when required",
+      "observed_state": "missing dependency",
+      "suspected_owner": "tools/dialogue_generation",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Install openpyxl when a required acceptance check needs dialogue factory"
+    },
+    {
+      "id": "D002",
+      "task_id": "T003",
+      "status": "DEFERRED",
+      "summary": "Sprite facing mirror audit failures",
+      "reproduction_command": "python3 tools/check_facing.py",
+      "seed": "NOT_APPLICABLE",
+      "failing_assertion_or_log": "14 facing failures recorded in baseline",
+      "expected_state": "facing audit clean when required",
+      "observed_state": "failures deferred",
+      "suspected_owner": "tools/check_facing.py",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Resolve when a required acceptance check needs facing"
+    },
+    {
+      "id": "D003",
+      "task_id": "T003",
+      "status": "DEFERRED",
+      "summary": "Wine/Windows packaging deferred until release tasks",
+      "reproduction_command": "DEFERRED until T155-T160",
+      "seed": "NOT_APPLICABLE",
+      "failing_assertion_or_log": "DEFERRED_NOT_PASSED",
+      "expected_state": "Windows checks recorded as deferred not passed",
+      "observed_state": "deferred",
+      "suspected_owner": "toolchain/packaging",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Execute on T155-T160"
+    }
+  ]
 }

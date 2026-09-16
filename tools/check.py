@@ -252,43 +252,107 @@ def _audit_task(task: str) -> list[CheckResult]:
     return [validate_evidence(f"{task.lower()}_evidence", evidence[task])]
 
 
+def _pytest(name: str, *paths: str) -> CheckResult:
+    return run_command(
+        CommandCheck(
+            name=name,
+            argv=(sys.executable, "-m", "pytest", "-q", *paths),
+            required_pattern=r"\bpassed\b",
+            count_pattern=r"(\d+)\s+passed",
+        )
+    )
+
+
+def _godot_bin() -> str | None:
+    toolchain = TRACKING / "toolchain.json"
+    if toolchain.is_file():
+        try:
+            data = _read_json(toolchain)
+            if isinstance(data, dict):
+                exe = ((data.get("godot") or {}) if isinstance(data.get("godot"), dict) else {}).get(
+                    "executable"
+                )
+                if isinstance(exe, str) and Path(exe).is_file():
+                    return exe
+        except (OSError, json.JSONDecodeError):
+            pass
+    return None
+
+
+def _godot_script(name: str, script: str, required_pattern: str) -> CheckResult:
+    godot = _godot_bin()
+    if not godot:
+        return CheckResult(
+            name=name,
+            status="FAIL",
+            exit_code=2,
+            duration_seconds=0.0,
+            detail="Godot 4.4.1 executable not found in toolchain.json",
+        )
+    return run_command(
+        CommandCheck(
+            name=name,
+            argv=(godot, "--headless", "--path", "godot_project", "--script", script),
+            required_pattern=required_pattern,
+        )
+    )
+
+
 def checks_for_task(task: str) -> list[CheckResult]:
     number = int(task[1:])
     if task in {"T001", "T002", "T003"}:
         return _audit_task(task)
-    if task == "T004":
-        return [
-            run_command(
-                CommandCheck(
-                    name="verification_wrapper_tests",
-                    argv=(sys.executable, "-m", "pytest", "-q", "tests/test_check_tool.py"),
-                    required_pattern=r"\bpassed\b",
-                    count_pattern=r"(\d+)\s+passed",
-                )
+    mapping = {
+        "T004": lambda: [_pytest("verification_wrapper_tests", "tests/test_check_tool.py")],
+        "T005": lambda: [_pytest("manifest_and_rule_map_tests", "tests/test_manifests.py")],
+        "T006": lambda: [_pytest("tracking_and_receipt_tests", "tests/test_tracking.py")],
+        "T007": lambda: [_pytest("id_allocator_tests", "tests/sim/test_t007_ids.py")],
+        "T008": lambda: [_pytest("definition_catalog_tests", "tests/sim/test_t008_catalog.py")],
+        "T009": lambda: [_pytest("world_state_view_tests", "tests/sim/test_t009_state.py")],
+        "T010": lambda: [_pytest("rng_replay_tests", "tests/sim/test_t010_rng_replay.py")],
+        "T011": lambda: [_pytest("command_dispatch_tests", "tests/sim/test_t011_commands.py")],
+        "T012": lambda: [_pytest("clock_tests", "tests/sim/test_t012_clock.py")],
+        "T013": lambda: [_pytest("turn_runner_tests", "tests/sim/test_t013_turns.py")],
+        "T014": lambda: [_pytest("persistence_tests", "tests/sim/test_t014_persistence.py")],
+        "T015": lambda: [_pytest("frame_codec_tests", "tests/sim/test_t015_codec.py")],
+        "T016": lambda: [_pytest("bridge_protocol_tests", "tests/sim/test_t016_bridge.py")],
+        "T017": lambda: [
+            _godot_script(
+                "g01_sidecar_smoke",
+                "res://client/tests/run_g01_smoke.gd",
+                r"G01_SMOKE_OK",
             )
-        ]
-    if task == "T005":
-        return [
-            run_command(
-                CommandCheck(
-                    name="manifest_and_rule_map_tests",
-                    argv=(sys.executable, "-m", "pytest", "-q", "tests/test_manifests.py"),
-                    required_pattern=r"\bpassed\b",
-                    count_pattern=r"(\d+)\s+passed",
-                )
+        ],
+        "T018": lambda: [_pytest("lease_registry_tests", "tests/sim/test_t018_leases.py")],
+        "T019": lambda: [_pytest("recovery_tests", "tests/sim/test_t019_recovery.py")],
+        "T020": lambda: [
+            _godot_script(
+                "g01_local_area_import",
+                "res://client/tests/run_g01_local_area.gd",
+                r"G01_LOCAL_OK",
             )
-        ]
-    if task == "T006":
-        return [
-            run_command(
-                CommandCheck(
-                    name="tracking_and_receipt_tests",
-                    argv=(sys.executable, "-m", "pytest", "-q", "tests/test_tracking.py"),
-                    required_pattern=r"\bpassed\b",
-                    count_pattern=r"(\d+)\s+passed",
-                )
-            )
-        ]
+        ],
+        "T021": lambda: [_pytest("semantic_knowledge_tests", "tests/sim/test_t021_semantic.py")],
+        "T022": lambda: [_pytest("clock_driver_tests", "tests/sim/test_t022_clock_driver.py")],
+        "T023": lambda: [_pytest("fixture_entrypoint_tests", "tests/sim/test_t023_fixtures.py")],
+        "T024": lambda: [
+            _pytest(
+                "bridge_clock_integration",
+                "tests/integration/test_bridge_clock.py",
+                "tests/sim/test_t023_fixtures.py",
+            ),
+            validate_evidence(
+                "g01_gate_packet",
+                [
+                    TRACKING / "gates" / "G01" / "packet.md",
+                    TRACKING / "gates" / "G01" / "automated_report.json",
+                    TRACKING / "gates" / "G01" / "launch.txt",
+                ],
+            ),
+        ],
+    }
+    if task in mapping:
+        return mapping[task]()
     return [
         CheckResult(
             name=f"task_contract_{task}",
@@ -304,6 +368,36 @@ def checks_for_task(task: str) -> list[CheckResult]:
 
 
 def checks_for_gate(gate: str) -> list[CheckResult]:
+    if gate == "G01":
+        packet = TRACKING / "gates" / "G01"
+        results = [
+            _pytest(
+                "g01_cumulative_python",
+                "tests/sim/test_t007_ids.py",
+                "tests/sim/test_t012_clock.py",
+                "tests/sim/test_t016_bridge.py",
+                "tests/integration/test_bridge_clock.py",
+                "tests/sim/test_t023_fixtures.py",
+            ),
+            validate_evidence(
+                "g01_packet_files",
+                [
+                    packet / "packet.md",
+                    packet / "automated_report.json",
+                    packet / "launch.txt",
+                ],
+            ),
+        ]
+        godot = _godot_bin()
+        if godot:
+            results.append(
+                _godot_script(
+                    "g01_sidecar_smoke",
+                    "res://client/tests/run_g01_smoke.gd",
+                    r"G01_SMOKE_OK",
+                )
+            )
+        return results
     return [
         CheckResult(
             name=f"gate_contract_{gate}",

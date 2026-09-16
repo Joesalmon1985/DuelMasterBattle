@@ -70,8 +70,8 @@ def test_missing_audit_evidence_never_passes(tmp_path: Path) -> None:
 
 def test_future_task_and_gate_fail_closed() -> None:
     check = _load_check_module()
-    task = check.checks_for_task("T007")
-    gate = check.checks_for_gate("G01")
+    task = check.checks_for_task("T025")
+    gate = check.checks_for_gate("G02")
     assert task[0].status == "NOT_IMPLEMENTED"
     assert gate[0].status == "NOT_READY"
 
@@ -89,13 +89,13 @@ def test_unknown_task_cli_is_nonzero() -> None:
 
 
 def test_unimplemented_scenario_records_failure(tmp_path: Path) -> None:
-    report = tmp_path / "clock.json"
+    report = tmp_path / "cargo.json"
     completed = subprocess.run(
         [
             sys.executable,
             str(SCENARIO_PATH),
             "--fixture",
-            "FX-CLOCK",
+            "FX-CARGO",
             "--record",
             str(report),
         ],

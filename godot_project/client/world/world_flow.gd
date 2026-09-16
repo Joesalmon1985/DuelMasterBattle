@@ -1,8 +1,13 @@
 extends RefCounted
 class_name WorldFlow
+
+const Migrated = preload("res://client/core/migrated_runtime.gd")
 ## Client bridge to the headless world sim. Owns: creating/restoring the sim from
 ## the adventure save, advancing one world turn per node→node walk, and applying
 ## John's victories as treatments. Overworld only ever *reads* areas from here.
+##
+## In the G01 migrated runtime (Migrated.active) strategic tick and
+## campaign world-save writers are disabled; Python owns durable world state.
 
 var sim: DmbWorldSim
 var _adv: Node
@@ -10,6 +15,9 @@ var _adv: Node
 
 func setup(adv: Node) -> void:
 	_adv = adv
+	if Migrated.active:
+		sim = null
+		return
 	if sim != null:
 		return
 	var packed := str(adv.state.get("world", ""))
@@ -24,6 +32,9 @@ func setup(adv: Node) -> void:
 
 
 func _store() -> void:
+	if Migrated.active:
+		push_error("WorldFlow._store blocked: migrated runtime disables Godot world saves")
+		return
 	_adv.state["world"] = var_to_str(sim.to_dict())
 
 
@@ -32,6 +43,9 @@ static func is_world_area(id: String) -> bool:
 
 
 func resolve(id: String) -> int:
+	if Migrated.active:
+		push_error("WorldFlow.resolve blocked in migrated runtime")
+		return -1
 	if id == "wn_home":
 		return sim.player_home_node()
 	return DmbNodeProjection.node_of(id)
@@ -40,6 +54,9 @@ func resolve(id: String) -> int:
 ## Entering a node. Moving to a *different* node costs one world turn; re-entering
 ## the same node (reload, return from battle) does not.
 func enter(id: String) -> Dictionary:
+	if Migrated.active:
+		push_error("WorldFlow.enter/advance_turn blocked: Python owns strategic turns")
+		return {}
 	var nid := resolve(id)
 	var last: int = int(_adv.state.get("world_node", -1))
 	if last >= 0 and last != nid:
@@ -50,11 +67,16 @@ func enter(id: String) -> Dictionary:
 
 
 func area_for(id: String) -> Dictionary:
+	if Migrated.active:
+		return {}
 	return DmbNodeProjection.area_for(sim, resolve(id), _adv.state)
 
 
 ## John beat a demon standing for hex `world_hex`: one piece leaves the board.
 func on_victory(req: Dictionary) -> void:
+	if Migrated.active:
+		push_error("WorldFlow.on_victory blocked in migrated runtime")
+		return
 	var hid := int(req.get("world_hex", -1))
 	if hid < 0:
 		return
@@ -63,6 +85,8 @@ func on_victory(req: Dictionary) -> void:
 
 
 func last_events_text() -> Array:
+	if Migrated.active or sim == null:
+		return []
 	var out: Array = []
 	for e in sim.last_events:
 		out.append(sim.describe(e))
@@ -71,6 +95,8 @@ func last_events_text() -> Array:
 
 ## Only the events a traveller would hear about: places founded, walled or opened.
 func notable_events_text() -> Array:
+	if Migrated.active or sim == null:
+		return []
 	var out: Array = []
 	for e in sim.last_events:
 		if str(e["type"]) in ["settlement", "city", "cave", "epidemic"]:
