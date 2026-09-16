@@ -1,9 +1,17 @@
 {
+  "schema_version": 1,
   "pack_version": "1.0",
   "status": "READY_FOR_EXECUTION",
   "current_task": "T006",
   "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
   "repository_map": "tracking/repository_map.json",
+  "resume_policy": {
+    "selection": "FIRST_UNMET_DEPENDENCY",
+    "manual_gates_block_later_tasks": true,
+    "completed_task_requires_receipt_and_checks": true,
+    "failed_or_blocked_task_remains_current": true,
+    "max_focused_repair_attempts": 3
+  },
   "tasks": {
     "T001": "DONE",
     "T002": "DONE",

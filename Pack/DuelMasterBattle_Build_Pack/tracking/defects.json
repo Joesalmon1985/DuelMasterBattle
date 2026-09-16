@@ -1,4 +1,37 @@
 {
-  "defects": [],
-  "status": "NO_IMPLEMENTATION_REVIEW_PERFORMED"
+  "schema_version": 1,
+  "status": "ACTIVE",
+  "policy": {
+    "max_focused_repair_attempts": 3,
+    "after_limit": "BLOCK_AND_WRITE_DIAGNOSTIC_HANDOFF",
+    "required_diagnostic_fields": [
+      "reproduction_command",
+      "seed",
+      "failing_assertion_or_log",
+      "expected_state",
+      "observed_state",
+      "suspected_owner",
+      "files_changed",
+      "attempted_fixes",
+      "next_diagnostic"
+    ],
+    "assertion_weakening_allowed": false,
+    "test_skipping_allowed": false
+  },
+  "record_schema": {
+    "id": "Dnnn",
+    "task_id": "Tnnn",
+    "status": "OPEN|RESOLVED|DEFERRED|BLOCKED",
+    "summary": "short description",
+    "reproduction_command": "exact command",
+    "seed": "seed or NOT_APPLICABLE",
+    "failing_assertion_or_log": "smallest relevant excerpt",
+    "expected_state": "required behaviour",
+    "observed_state": "actual behaviour",
+    "suspected_owner": "file/module/contract",
+    "files_changed": [],
+    "attempted_fixes": [],
+    "next_diagnostic": "one focused next step"
+  },
+  "defects": []
 }

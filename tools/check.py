@@ -33,6 +33,26 @@ GATE_OWNER = {
     "G09": "T150",
     "G10": "T160",
 }
+GATE_AFTER_TASK = {
+    24: "G01",
+    48: "G02",
+    58: "G03",
+    76: "G04",
+    96: "G05",
+    114: "G06",
+    132: "G07",
+    142: "G08",
+    150: "G09",
+    160: "G10",
+}
+TASK_STATUSES = {
+    "NOT_STARTED",
+    "IN_PROGRESS",
+    "DONE",
+    "FAILED",
+    "BLOCKED",
+    "WAITING_HUMAN",
+}
 
 
 @dataclass(frozen=True)
@@ -130,6 +150,87 @@ def run_command(spec: CommandCheck) -> CheckResult:
     )
 
 
+def validate_tracking_state(
+    progress_path: Path = TRACKING / "progress.json",
+    handoff_dir: Path = TRACKING / "handoffs",
+) -> tuple[list[str], dict[str, str]]:
+    problems: list[str] = []
+    progress = _read_json(progress_path)
+    if not isinstance(progress, dict):
+        return ["progress root must be an object"], {"kind": "invalid", "id": ""}
+    tasks = progress.get("tasks")
+    gates = progress.get("gates")
+    if not isinstance(tasks, dict) or not isinstance(gates, dict):
+        return ["progress requires tasks and gates objects"], {"kind": "invalid", "id": ""}
+
+    resume: dict[str, str] | None = None
+    blocked_gate: str | None = None
+    for number in range(1, 161):
+        task = f"T{number:03d}"
+        status = tasks.get(task)
+        if status not in TASK_STATUSES:
+            problems.append(f"{task} has invalid or missing status {status!r}")
+            continue
+        if blocked_gate and status == "DONE":
+            problems.append(f"{task} is DONE while required {blocked_gate} is not PASS")
+        if status == "DONE":
+            receipt_path = handoff_dir / f"{task}.json"
+            if not receipt_path.is_file():
+                problems.append(f"{task} is DONE but receipt is missing")
+            else:
+                try:
+                    receipt = _read_json(receipt_path)
+                except (OSError, json.JSONDecodeError) as exc:
+                    problems.append(f"{task} receipt is invalid: {exc}")
+                else:
+                    if not isinstance(receipt, dict):
+                        problems.append(f"{task} receipt root must be an object")
+                    else:
+                        for field in ("task_id", "status", "commit", "files", "checks", "next_task"):
+                            if field not in receipt:
+                                problems.append(f"{task} receipt missing {field}")
+                        if receipt.get("task_id") != task or receipt.get("status") != "DONE":
+                            problems.append(f"{task} receipt identity/status mismatch")
+                        commit = receipt.get("commit")
+                        if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+                            problems.append(f"{task} receipt commit is not a full SHA")
+                        checks = receipt.get("checks")
+                        if not isinstance(checks, list) or not checks:
+                            problems.append(f"{task} completed receipt has no check evidence")
+                        else:
+                            for index, check in enumerate(checks):
+                                if not isinstance(check, dict) or not all(
+                                    key in check for key in ("command", "exit_code", "result")
+                                ):
+                                    problems.append(f"{task} check {index} lacks command/exit_code/result")
+        elif resume is None and blocked_gate is None:
+            resume = {"kind": "task", "id": task}
+
+        gate = GATE_AFTER_TASK.get(number)
+        if gate:
+            gate_data = gates.get(gate)
+            if not isinstance(gate_data, dict):
+                problems.append(f"{gate} progress entry is missing")
+                blocked_gate = gate
+                continue
+            gate_status = gate_data.get("status")
+            if gate_status == "PASS":
+                for field in ("accepted_by", "accepted_build", "evidence"):
+                    if not gate_data.get(field):
+                        problems.append(f"{gate} is PASS but {field} is missing")
+            else:
+                blocked_gate = gate
+                if resume is None or all(tasks.get(f"T{i:03d}") == "DONE" for i in range(1, number + 1)):
+                    resume = {"kind": "gate", "id": gate}
+
+    if resume is None:
+        resume = {"kind": "complete", "id": "T160"}
+    current = progress.get("current_task")
+    if resume["kind"] == "task" and current != resume["id"]:
+        problems.append(f"current_task is {current!r}; first unmet dependency is {resume['id']}")
+    return problems, resume
+
+
 def _audit_task(task: str) -> list[CheckResult]:
     evidence = {
         "T001": [
@@ -172,6 +273,17 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 CommandCheck(
                     name="manifest_and_rule_map_tests",
                     argv=(sys.executable, "-m", "pytest", "-q", "tests/test_manifests.py"),
+                    required_pattern=r"\bpassed\b",
+                    count_pattern=r"(\d+)\s+passed",
+                )
+            )
+        ]
+    if task == "T006":
+        return [
+            run_command(
+                CommandCheck(
+                    name="tracking_and_receipt_tests",
+                    argv=(sys.executable, "-m", "pytest", "-q", "tests/test_tracking.py"),
                     required_pattern=r"\bpassed\b",
                     count_pattern=r"(\d+)\s+passed",
                 )
@@ -228,8 +340,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     choice = parser.add_mutually_exclusive_group(required=True)
     choice.add_argument("--task", type=lambda value: _target(value, "T", 160))
     choice.add_argument("--gate", type=lambda value: _target(value, "G", 10))
+    choice.add_argument("--resume", action="store_true")
     parser.add_argument("--json-report", type=Path)
     args = parser.parse_args(argv)
+
+    if args.resume:
+        problems, resume = validate_tracking_state()
+        payload = {
+            "target": "resume",
+            "status": "PASS" if not problems else "FAIL",
+            "resume": resume,
+            "problems": problems,
+        }
+        if args.json_report:
+            _write_report(args.json_report, payload)
+        print(json.dumps(payload, indent=2))
+        return 0 if not problems else 1
 
     target = args.task or args.gate
     results = checks_for_task(args.task) if args.task else checks_for_gate(args.gate)
