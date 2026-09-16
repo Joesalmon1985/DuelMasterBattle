@@ -1,0 +1,35 @@
+{
+  "task_id": "T023",
+  "status": "DONE",
+  "commit": "9e13aad100a779cc830bbcfe2442f3ab9deccf78",
+  "files": [
+    "tools/run_scenario.py",
+    "sim/dmb/testing/fixtures.py",
+    "godot_project/client/debug/scenario_panel.gd",
+    "tests/sim/test_t023_fixtures.py"
+  ],
+  "public_contracts": [
+    "FX-CLOCK fixtures"
+  ],
+  "source_rules": [
+    "C01/C02/C14 as named on task card",
+    "EXECUTION_AMENDMENTS staged Python ownership"
+  ],
+  "checks": [
+    {
+      "command": "/usr/bin/python3 -m pytest -q tests/sim/test_t023_fixtures.py",
+      "exit_code": 0,
+      "result": "fixture_entrypoint_tests: PASS"
+    }
+  ],
+  "fixture_hashes": {
+    "FX-CLOCK_catalog": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6"
+  },
+  "defects": [
+    "Dialogue openpyxl dependency remains deferred until required",
+    "Sprite facing mirror failures remain deferred until required",
+    "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
+  ],
+  "next_task": "T024",
+  "notes": ""
+}

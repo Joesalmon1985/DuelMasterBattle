@@ -1,0 +1,32 @@
+{
+  "task_id": "T014",
+  "status": "DONE",
+  "commit": "9e13aad100a779cc830bbcfe2442f3ab9deccf78",
+  "files": [
+    "sim/dmb/persistence/repository.py",
+    "sim/dmb/persistence/schema.py",
+    "tests/sim/test_t014_persistence.py"
+  ],
+  "public_contracts": [
+    "persistence"
+  ],
+  "source_rules": [
+    "C01/C02/C14 as named on task card",
+    "EXECUTION_AMENDMENTS staged Python ownership"
+  ],
+  "checks": [
+    {
+      "command": "/usr/bin/python3 -m pytest -q tests/sim/test_t014_persistence.py",
+      "exit_code": 0,
+      "result": "persistence_tests: PASS"
+    }
+  ],
+  "fixture_hashes": {},
+  "defects": [
+    "Dialogue openpyxl dependency remains deferred until required",
+    "Sprite facing mirror failures remain deferred until required",
+    "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
+  ],
+  "next_task": "T015",
+  "notes": ""
+}

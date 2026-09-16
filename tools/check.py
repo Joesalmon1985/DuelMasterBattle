@@ -345,8 +345,8 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "g01_gate_packet",
                 [
                     TRACKING / "gates" / "G01" / "packet.md",
-                    TRACKING / "gates" / "G01" / "automated_report.json",
                     TRACKING / "gates" / "G01" / "launch.txt",
+                    TRACKING / "gates" / "G01" / "fx_clock_record.json",
                 ],
             ),
         ],
@@ -383,8 +383,8 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g01_packet_files",
                 [
                     packet / "packet.md",
-                    packet / "automated_report.json",
                     packet / "launch.txt",
+                    packet / "fx_clock_record.json",
                 ],
             ),
         ]

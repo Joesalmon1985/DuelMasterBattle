@@ -1,0 +1,21 @@
+{
+  "target": "T020",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "g01_local_area_import",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 1.405,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nG01_LOCAL_OK\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g01_local_area.gd"
+      ]
+    }
+  ]
+}

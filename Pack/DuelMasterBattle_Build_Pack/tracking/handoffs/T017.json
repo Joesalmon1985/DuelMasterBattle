@@ -1,0 +1,32 @@
+{
+  "task_id": "T017",
+  "status": "DONE",
+  "commit": "9e13aad100a779cc830bbcfe2442f3ab9deccf78",
+  "files": [
+    "godot_project/client/bridge/sidecar_launcher.gd",
+    "godot_project/client/bridge/world_client.gd",
+    "godot_project/client/tests/run_g01_smoke.gd"
+  ],
+  "public_contracts": [
+    "sidecar launcher/client"
+  ],
+  "source_rules": [
+    "C01/C02/C14 as named on task card",
+    "EXECUTION_AMENDMENTS staged Python ownership"
+  ],
+  "checks": [
+    {
+      "command": "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64 --headless --path godot_project --script res://client/tests/run_g01_smoke.gd",
+      "exit_code": 0,
+      "result": "g01_sidecar_smoke: PASS"
+    }
+  ],
+  "fixture_hashes": {},
+  "defects": [
+    "Dialogue openpyxl dependency remains deferred until required",
+    "Sprite facing mirror failures remain deferred until required",
+    "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
+  ],
+  "next_task": "T018",
+  "notes": ""
+}

@@ -1,0 +1,20 @@
+{
+  "target": "T016",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "bridge_protocol_tests",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 2.734,
+      "detail": ".....                                                                    [100%]\n5 passed in 2.13s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t016_bridge.py"
+      ]
+    }
+  ]
+}

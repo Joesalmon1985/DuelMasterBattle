@@ -1,0 +1,20 @@
+{
+  "target": "T023",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "fixture_entrypoint_tests",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.636,
+      "detail": "...                                                                      [100%]\n3 passed in 0.20s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t023_fixtures.py"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "fixture": "FX-CLOCK",
+  "status": "PASS",
+  "owner": "T012/T024",
+  "seed": 7,
+  "details": {
+    "start_node": "node:1",
+    "end_node": "node:2",
+    "turns": 2,
+    "duplicate_status": "DUPLICATE",
+    "held_wait_status": "REJECTED",
+    "invalid_travel_status": "REJECTED"
+  },
+  "world_id": "world:fx-clock",
+  "catalog_hash": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6",
+  "legacy_writers_disabled": true
+}

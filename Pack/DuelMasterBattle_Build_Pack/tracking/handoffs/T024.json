@@ -1,0 +1,38 @@
+{
+  "task_id": "T024",
+  "status": "DONE",
+  "commit": "9e13aad100a779cc830bbcfe2442f3ab9deccf78",
+  "files": [
+    "tests/integration/test_bridge_clock.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G01/"
+  ],
+  "public_contracts": [
+    "G01 packet"
+  ],
+  "source_rules": [
+    "C01/C02/C14 as named on task card",
+    "EXECUTION_AMENDMENTS staged Python ownership"
+  ],
+  "checks": [
+    {
+      "command": "/usr/bin/python3 -m pytest -q tests/integration/test_bridge_clock.py tests/sim/test_t023_fixtures.py",
+      "exit_code": 0,
+      "result": "bridge_clock_integration: PASS"
+    },
+    {
+      "command": "python3 tools/check.py --task T024",
+      "exit_code": 0,
+      "result": "g01_gate_packet: PASS"
+    }
+  ],
+  "fixture_hashes": {
+    "FX-CLOCK_catalog": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6"
+  },
+  "defects": [
+    "Dialogue openpyxl dependency remains deferred until required",
+    "Sprite facing mirror failures remain deferred until required",
+    "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
+  ],
+  "next_task": "G01",
+  "notes": "Automated G01 suite PASS; gate remains AWAITING_HUMAN until Joe records PASS. T025 blocked."
+}
