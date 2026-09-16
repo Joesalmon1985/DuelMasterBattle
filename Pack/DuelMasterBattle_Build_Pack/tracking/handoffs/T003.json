@@ -1,0 +1,84 @@
+{
+  "task_id": "T003",
+  "status": "DONE",
+  "commit": "c84ffdad3883b8cf6ddf859cfcf8de0383a471e6",
+  "files": [
+    "Pack/DuelMasterBattle_Build_Pack/tracking/toolchain.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/baseline_tests.json",
+    "tools/find_godot.sh",
+    "Play Duel Master Battle.bat",
+    "Play Village Test Menu.bat",
+    "Play Puzzle Test Menu.bat",
+    "Run Tests.bat",
+    "godot_project/export_presets.cfg",
+    "docs/TEST_STRATEGY.md"
+  ],
+  "scope_extension": "The approved execution amendment explicitly requires the initial 4.4.1 pin and alignment of Linux/Windows launchers and export templates. These toolchain files are therefore task-owned T003 changes outside the original tracking-only card list.",
+  "public_contracts": [
+    "Python 3.12.3 and Godot 4.4.1 are the initial migration pins",
+    "Any engine upgrade is a separate measured and tested change",
+    "Linux and Windows launch assumptions use Godot 4.4.1",
+    "Linux Windows-template export smoke does not certify Windows runtime behaviour"
+  ],
+  "source_rules": [
+    "C14 factual test evidence and nonzero discovered suites",
+    "EXECUTION_AMENDMENTS T003 behavioural baseline and toolchain pin"
+  ],
+  "checks": [
+    {
+      "command": "cd python_prototype && python3 -m pytest -q",
+      "exit_code": 0,
+      "result": "54 passed, 3 optional skips"
+    },
+    {
+      "command": "tools/run_godot_tests.sh",
+      "exit_code": 0,
+      "result": "31 modules passed, 0 failed; all scripts parse"
+    },
+    {
+      "command": "godot --headless --editor --path godot_project --quit",
+      "exit_code": 0,
+      "result": "4.4.1 import passed with Android SDK/adb warnings"
+    },
+    {
+      "command": "godot --headless --path godot_project --quit-after 3",
+      "exit_code": 0,
+      "result": "Normal main scene smoke passed"
+    },
+    {
+      "command": "adventure/world/village E17A/E36B/puzzle/dialogue/UI scripted runners listed in baseline_tests.json",
+      "exit_code": 0,
+      "result": "All invoked behavioural flows passed"
+    },
+    {
+      "command": "godot --headless --path godot_project --export-debug \"Windows Desktop\" /tmp/DuelMasterBattle-T003.exe",
+      "exit_code": 0,
+      "result": "4.4.1 Windows x86_64 template export produced a non-empty executable"
+    },
+    {
+      "command": "python3 -m pytest -q tools/dialogue_generation/tests",
+      "exit_code": 2,
+      "result": "Pre-existing environment failure: openpyxl missing, 3 collection errors"
+    },
+    {
+      "command": "python3 tools/check_facing.py",
+      "exit_code": 1,
+      "result": "Pre-existing asset failure: 14 of 48 left/right pairs are not mirrors"
+    },
+    {
+      "command": "bash tools/run_all_checks.sh",
+      "exit_code": 127,
+      "result": "Pre-existing runner failure: invokes unavailable `python` command"
+    }
+  ],
+  "fixture_hashes": {},
+  "defects": [
+    "Dialogue factory dependency openpyxl is declared but not installed on this host",
+    "Aggregate runner invokes `python` rather than the pinned python3",
+    "Several run scripts lack executable permission",
+    "Facing audit reports 14 non-mirrored sprite pairs",
+    "Godot simulation suite reports resource leaks at process exit",
+    "No native Windows test runner is available; only template export was verified"
+  ],
+  "next_task": "T004"
+}
