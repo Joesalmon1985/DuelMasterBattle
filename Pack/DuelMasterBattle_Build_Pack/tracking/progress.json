@@ -1,11 +1,11 @@
 {
   "pack_version": "1.0",
   "status": "READY_FOR_EXECUTION",
-  "current_task": "T001",
-  "baseline_commit": null,
-  "repository_map": null,
+  "current_task": "T002",
+  "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
+  "repository_map": "tracking/repository_map.json",
   "tasks": {
-    "T001": "NOT_STARTED",
+    "T001": "DONE",
     "T002": "NOT_STARTED",
     "T003": "NOT_STARTED",
     "T004": "NOT_STARTED",
