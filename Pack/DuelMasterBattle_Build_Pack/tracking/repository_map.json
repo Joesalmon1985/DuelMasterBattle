@@ -1,0 +1,137 @@
+{
+  "status": "MAPPED_T001_PENDING_T004_VERIFICATION",
+  "checkout_root": "/home/joe/Projects/DuelMasterBattle",
+  "repository": "https://github.com/Joesalmon1985/DuelMasterBattle.git",
+  "source_branch": "origin/VillageQuestRunnerTry2",
+  "branch": "BuildPackV03",
+  "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
+  "baseline_subject": "Add Godot script UIDs generated when importing the project on Linux.",
+  "expected_preflight_commit": "6b3780c34e9b7aeb5c0d51ad705e842e28aec86e",
+  "expected_preflight_commit_is_ancestor": true,
+  "pack_import_commit": "09ebb27445fa828822a228ff767088937e4889fb",
+  "dirty_files_at_initial_preflight": [
+    "DuelMasterBattle_Build_Pack.zip (untracked duplicate upload)",
+    "Pack/ (untracked extracted pack; subsequently committed)"
+  ],
+  "dirty_files_after_pack_import": [],
+  "ignored_user_files": [
+    "DuelMasterBattle_Build_Pack.zip"
+  ],
+  "instructions": [
+    ".cursor/rules/dmb-build-pack.mdc",
+    ".hermes.md",
+    "Pack/DuelMasterBattle_Build_Pack/AGENT_START_HERE.md",
+    "Pack/DuelMasterBattle_Build_Pack/EXECUTION_AMENDMENTS.md",
+    "docs/roles/godot_gameplay_engineer.md",
+    "docs/roles/rules_test_engineer.md",
+    "docs/TEST_STRATEGY.md"
+  ],
+  "tool_versions": {
+    "python": "3.12.3 (reported preflight; T003 must reconfirm)",
+    "godot": "4.4.1.stable.official.49a5bc7b6 (reported preflight; T003 must reconfirm)",
+    "godot_project_feature": "4.4"
+  },
+  "logical_path_map": {
+    "pack": "Pack/DuelMasterBattle_Build_Pack",
+    "tracking": "Pack/DuelMasterBattle_Build_Pack/tracking",
+    "sim/dmb": "NOT_PRESENT; target Python package to be established by T007",
+    "client": "godot_project/client",
+    "legacy_godot_sim": "godot_project/sim",
+    "legacy_godot_world": "godot_project/sim/world",
+    "content": "godot_project/content",
+    "tools": "tools",
+    "tests/python_duel": "python_prototype/tests",
+    "tests/python_dialogue": "tools/dialogue_generation/tests",
+    "tests/godot_sim": "godot_project/sim/tests",
+    "tests/godot_client": "godot_project/client/tests",
+    "shared_fixtures": "shared_fixtures"
+  },
+  "existing_entrypoints": [
+    {
+      "kind": "normal_game",
+      "path": "godot_project/project.godot",
+      "scene": "res://client/scenes/main_menu.tscn",
+      "launcher": "tools/play.sh / Play Duel Master Battle.bat"
+    },
+    {
+      "kind": "village_test",
+      "path": "godot_project/client/scenes/village_test_menu.tscn",
+      "launcher": "Play Village Test Menu.bat"
+    },
+    {
+      "kind": "puzzle_test",
+      "path": "godot_project/client/scenes/puzzle_test_menu.tscn",
+      "launcher": "Play Puzzle Test Menu.bat"
+    },
+    {
+      "kind": "python_duel_prototype",
+      "path": "python_prototype/run_prototype.py"
+    },
+    {
+      "kind": "offline_dialogue_factory",
+      "path": "tools/dialogue_generation",
+      "launcher": "Run Dialogue Factory.bat"
+    },
+    {
+      "kind": "aggregate_checks",
+      "path": "tools/run_all_checks.sh"
+    }
+  ],
+  "world_and_save_inventory": {
+    "current_world_owner": "godot_project/sim/world/world_sim.gd",
+    "current_world_client": "godot_project/client/world/world_flow.gd",
+    "current_campaign_save_owner": "godot_project/client/scripts/adventure.gd",
+    "current_campaign_save": "user://adventure.save",
+    "current_campaign_save_version": 4,
+    "current_settings_save": "user://save.cfg",
+    "target_world_owner": "Python sim/dmb WorldState and services",
+    "target_save_owner": "Python SaveCoordinator/SaveRepository with coordinated leased state",
+    "bridge_status": "NOT_PRESENT; current calls are in-process GDScript"
+  },
+  "assets": {
+    "runtime": "godot_project/assets",
+    "content": "godot_project/content",
+    "generated_dialogue": "generated/dialogue (ignored generated output)",
+    "web_build": "build/web (ignored build output)"
+  },
+  "platforms": {
+    "inspection_host": "Linux 6.8.0-139-generic",
+    "initial_godot_pin": "4.4.1",
+    "python_pin": "3.12.3",
+    "windows_launchers": "Present but currently assume Godot 4.5.1; T003/T004 record, later toolchain task aligns to 4.4.1",
+    "windows_verification": "Not performed"
+  },
+  "baseline_checks": [
+    {
+      "name": "python_duel",
+      "command": "cd python_prototype && python3 -m pytest -q",
+      "status": "AVAILABLE_NOT_RUN_BY_T001"
+    },
+    {
+      "name": "godot_sim_and_parse",
+      "command": "tools/run_godot_tests.sh",
+      "status": "AVAILABLE_NOT_RUN_BY_T001"
+    },
+    {
+      "name": "aggregate",
+      "command": "tools/run_all_checks.sh",
+      "status": "AVAILABLE_NOT_RUN_BY_T001"
+    },
+    {
+      "name": "task_wrapper",
+      "command": "python tools/check.py --task T001",
+      "status": "MUST_BE_CREATED_BY_T004"
+    },
+    {
+      "name": "scenario_wrapper",
+      "command": "python tools/run_scenario.py --fixture FX-CLOCK --record OUT",
+      "status": "MUST_BE_CREATED_BY_T004"
+    }
+  ],
+  "mapping_notes": [
+    "Pack paths are logical until T004 finalizes this map.",
+    "The existing Godot world is migration evidence, not the target persistent authority.",
+    "No legacy world writer may remain active in the G01 migrated runtime.",
+    "Fixture and training paths must converge on the normal authoritative Python simulation."
+  ]
+}
