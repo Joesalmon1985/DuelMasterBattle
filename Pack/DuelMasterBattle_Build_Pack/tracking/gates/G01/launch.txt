@@ -1,4 +1,4 @@
-commit: 6b34024d528c7a18d48dece488e3bcef3822a803
+commit: 66260569c7b20d1e982586687715273f6f3637a0
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g01.sh
 
