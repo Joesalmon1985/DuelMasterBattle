@@ -1,7 +1,6 @@
-commit: 9e13aad100a779cc830bbcfe2442f3ab9deccf78
+commit: ec13d237d5fd5ae088d26c36af106bbf99c53a52
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g01.sh
 
 # Seed: 7
 # Fixture: FX-CLOCK
-# Migrated runtime: Python owns durable world state on loopback sidecar

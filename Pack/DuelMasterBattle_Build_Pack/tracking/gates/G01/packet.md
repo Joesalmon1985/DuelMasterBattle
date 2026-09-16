@@ -9,7 +9,7 @@
 ## Build
 
 - Branch: `BuildPackV03`
-- Commit: 9e13aad100a779cc830bbcfe2442f3ab9deccf78
+- Commit: ec13d237d5fd5ae088d26c36af106bbf99c53a52
 - Godot: 4.4.1 native Linux (`toolchain.json`)
 - Python: 3.12.3 (`python3`)
 
