@@ -10,7 +10,7 @@ A top-down local area with a visible wizard (John), terrain/obstacles, a selecta
 
 ## Tested commit
 
-See `launch.txt` (stamped after commit).
+`6252be79acbcd7d71f7ea5a748672622a79db3f5`
 
 ## Exact launch (fresh terminal)
 

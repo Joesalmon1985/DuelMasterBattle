@@ -1,9 +1,8 @@
-commit: 3a7613def047891076a6ace91c9db773d8c6543e
+commit: 6252be79acbcd7d71f7ea5a748672622a79db3f5
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g01.sh
 
 # Menu: G01 FX-CLOCK  (Python-backed runtime playtest)
-# Alt: Village Test Menu → G01 — FX-CLOCK (Python-backed)
 # Direct: bash tools/play_g01.sh --direct
-# Isolated save: .dmb_saves/g01_playtest.json
+# Save: .dmb_saves/g01_playtest.json
 # Seed: 7 / FX-CLOCK
