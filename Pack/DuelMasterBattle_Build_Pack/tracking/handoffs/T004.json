@@ -1,0 +1,73 @@
+{
+  "task_id": "T004",
+  "status": "DONE",
+  "commit": "2802c471ed6e2d4e514a9a5559faefab21e03a8b",
+  "files": [
+    "tools/check.py",
+    "tools/run_scenario.py",
+    "tests/test_check_tool.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/repository_map.json"
+  ],
+  "public_contracts": [
+    "python3 tools/check.py recognizes every T001-T160 and G01-G10 identifier",
+    "Unknown identifiers and recognized-but-unimplemented tasks/gates return nonzero",
+    "Subprocess failure, empty required suite, missing evidence and unexpected skips cannot PASS",
+    "Known production scenarios are named but fail NOT_IMPLEMENTED until their owning task connects them",
+    "Audit tasks validate evidence without artificial gameplay tests"
+  ],
+  "source_rules": [
+    "C14 verification entrypoints and nonzero missing/skip behaviour",
+    "EXECUTION_AMENDMENTS T004 honest and cheap checks"
+  ],
+  "checks": [
+    {
+      "command": "python3 -m pytest -q tests/test_check_tool.py",
+      "exit_code": 0,
+      "result": "8 passed"
+    },
+    {
+      "command": "python3 tools/check.py --task T004",
+      "exit_code": 0,
+      "result": "PASS; 8 wrapper tests discovered and passed"
+    },
+    {
+      "command": "python3 tools/check.py --task T001/T002/T003 (individually)",
+      "exit_code": 0,
+      "result": "Each completed audit evidence set passed validation"
+    },
+    {
+      "command": "python3 tools/check.py --task T005",
+      "exit_code": 1,
+      "result": "Expected fail-closed result before T005 checks exist"
+    },
+    {
+      "command": "python3 tools/check.py --gate G01",
+      "exit_code": 1,
+      "result": "Expected NOT_READY before T024"
+    },
+    {
+      "command": "python3 tools/run_scenario.py --fixture FX-CLOCK --record /tmp/dmb-fx-clock.json",
+      "exit_code": 2,
+      "result": "Expected NOT_IMPLEMENTED record; no scenario PASS fabricated"
+    },
+    {
+      "command": "python3 -m py_compile tools/check.py tools/run_scenario.py",
+      "exit_code": 0,
+      "result": "Verification scripts compile"
+    }
+  ],
+  "repair_attempts": [
+    {
+      "attempt": 1,
+      "failure": "Missing-evidence self-test passed a temporary path outside the repository and exposed an unsafe Path.relative_to call.",
+      "repair": "Use an absolute display path when evidence is outside the checkout.",
+      "result": "All 8 tests passed on the next run."
+    }
+  ],
+  "fixture_hashes": {},
+  "defects": [
+    "Future task/gate checks intentionally remain fail-closed until each owner implements its meaningful suite",
+    "Production scenario execution intentionally remains unavailable until the owning runtime tasks"
+  ],
+  "next_task": "T005"
+}
