@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set "GODOT=%USERPROFILE%\Downloads\Godot_v4.5.1-stable_win64.exe\Godot_v4.5.1-stable_win64_console.exe"
+set "GODOT=%USERPROFILE%\Downloads\Godot_v4.4.1-stable_win64.exe\Godot_v4.4.1-stable_win64_console.exe"
 if not exist "%GODOT%" (
   echo Godot 4 console binary not found. Edit this file and set GODOT.
   pause

@@ -70,7 +70,9 @@ Before/after meaningful Godot structural changes:
 
 Do not treat a hardcoded historical Godot path in an old script/doc as authoritative.
 
-`Run Tests.bat` currently references a Windows Godot 4.5.1 console executable; older documentation contains a Linux 4.4.1 example. Tooling should be made environment-discoverable rather than multiplying fixed paths.
+The v0.3 migration initially pins Godot 4.4.1 on Linux and Windows. The shell
+resolver and Windows launchers use that version; changing the engine pin is a
+separate tested toolchain change.
 
 ---
 
