@@ -120,6 +120,7 @@ func _build_ui() -> void:
 	_add_btn(row2, "Save (g01_playtest)", _on_save)
 	_add_btn(row2, "Load", _on_load)
 	_add_btn(row2, "Bridge fail", _on_bridge_fail)
+	_add_btn(row2, "Back to main menu", _on_back_menu)
 
 	_log = RichTextLabel.new()
 	_log.position = Vector2(460, 140)
@@ -305,3 +306,9 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if _launcher:
 			_launcher.stop()
+
+
+func _on_back_menu() -> void:
+	if _launcher:
+		_launcher.stop()
+	get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")

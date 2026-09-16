@@ -150,6 +150,13 @@ func _build() -> void:
 	_quick_btn.pressed.connect(_show_quick_duel)
 	mv.add_child(_quick_btn)
 
+	var g01 := Button.new()
+	g01.text = "G01 FX-CLOCK  (Python-backed runtime playtest)"
+	g01.custom_minimum_size = Vector2(0, 60)
+	_VT.style_secondary_button(g01)
+	g01.pressed.connect(_on_g01_fx_clock)
+	mv.add_child(g01)
+
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 12)
 	mv.add_child(row)
@@ -466,3 +473,7 @@ func ui_is_overlay_visible() -> bool:
 
 func ui_show_help() -> void:
 	_show_how_to_play()
+
+
+func _on_g01_fx_clock() -> void:
+	get_tree().change_scene_to_file("res://client/scenes/g01_shell.tscn")
