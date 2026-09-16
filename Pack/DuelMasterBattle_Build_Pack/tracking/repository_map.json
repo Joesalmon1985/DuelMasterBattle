@@ -1,5 +1,5 @@
 {
-  "status": "MAPPED_T001_PENDING_T004_VERIFICATION",
+  "status": "VERIFIED_THROUGH_T004",
   "checkout_root": "/home/joe/Projects/DuelMasterBattle",
   "repository": "https://github.com/Joesalmon1985/DuelMasterBattle.git",
   "source_branch": "origin/VillageQuestRunnerTry2",
@@ -27,8 +27,8 @@
     "docs/TEST_STRATEGY.md"
   ],
   "tool_versions": {
-    "python": "3.12.3 (reported preflight; T003 must reconfirm)",
-    "godot": "4.4.1.stable.official.49a5bc7b6 (reported preflight; T003 must reconfirm)",
+    "python": "3.12.3 (confirmed by T003)",
+    "godot": "4.4.1.stable.official.49a5bc7b6 (confirmed by T003)",
     "godot_project_feature": "4.4"
   },
   "logical_path_map": {
@@ -40,6 +40,8 @@
     "legacy_godot_world": "godot_project/sim/world",
     "content": "godot_project/content",
     "tools": "tools",
+    "task_gate_check": "tools/check.py",
+    "scenario_runner": "tools/run_scenario.py",
     "tests/python_duel": "python_prototype/tests",
     "tests/python_dialogue": "tools/dialogue_generation/tests",
     "tests/godot_sim": "godot_project/sim/tests",
@@ -120,12 +122,12 @@
     {
       "name": "task_wrapper",
       "command": "python tools/check.py --task T001",
-      "status": "MUST_BE_CREATED_BY_T004"
+      "status": "EXISTS; T001-T004 mapped, future task contracts fail closed until implemented"
     },
     {
       "name": "scenario_wrapper",
       "command": "python tools/run_scenario.py --fixture FX-CLOCK --record OUT",
-      "status": "MUST_BE_CREATED_BY_T004"
+      "status": "EXISTS; known future scenarios return NOT_IMPLEMENTED and nonzero until their owner connects production runtime"
     }
   ],
   "mapping_notes": [
