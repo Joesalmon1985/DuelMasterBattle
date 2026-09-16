@@ -1,3 +1,6 @@
+**Tested implementation commit:**   
+**Evidence/receipt stamp commit:** 
+
 # G01 playtest handoff — playable wizard FX-CLOCK
 
 **Status:** AWAITING_HUMAN (do not start T025)  
