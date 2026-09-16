@@ -1,5 +1,5 @@
-**Tested implementation commit:**   
-**Evidence/receipt stamp commit:** 
+**Tested implementation commit:** `6252be79acbcd7d71f7ea5a748672622a79db3f5`  
+**Handoff HEAD:** `6502331c147a474b1060c06c19be2d0781ee25cd`
 
 # G01 playtest handoff — playable wizard FX-CLOCK
 
