@@ -1,33 +1,32 @@
 {
   "task_id": "T021",
   "status": "DONE",
-  "commit": "9e13aad100a779cc830bbcfe2442f3ab9deccf78",
+  "commit": "PENDING",
   "files": [
     "sim/dmb/narrative/knowledge.py",
-    "sim/dmb/narrative/semantic.py",
-    "godot_project/client/ui/semantic_labels.gd",
-    "tests/sim/test_t021_semantic.py"
+    "sim/dmb/core/state.py",
+    "godot_project/client/world/fx_clock_area.gd"
   ],
   "public_contracts": [
-    "semantic knowledge"
+    "Playable FX-CLOCK wizard local area on Python-backed runtime"
   ],
   "source_rules": [
-    "C01/C02/C14 as named on task card",
-    "EXECUTION_AMENDMENTS staged Python ownership"
+    "C01/C02/C03/C14",
+    "EXECUTION_AMENDMENTS G01 evidence"
   ],
   "checks": [
     {
-      "command": "/usr/bin/python3 -m pytest -q tests/sim/test_t021_semantic.py",
+      "command": "python3 tools/check.py --task T021",
       "exit_code": 0,
-      "result": "semantic_knowledge_tests: PASS"
+      "result": "PASS"
     }
   ],
-  "fixture_hashes": {},
+  "fixture_hashes": {
+    "FX-CLOCK_seed": 7
+  },
   "defects": [
-    "Dialogue openpyxl dependency remains deferred until required",
-    "Sprite facing mirror failures remain deferred until required",
-    "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
+    "D004/D005 resolved for playable presentation; D001-D003 remain deferred"
   ],
-  "next_task": "T022",
+  "next_task": "T023",
   "notes": ""
 }

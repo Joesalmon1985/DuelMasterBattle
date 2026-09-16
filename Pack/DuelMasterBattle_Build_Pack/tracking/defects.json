@@ -78,6 +78,36 @@
       "files_changed": [],
       "attempted_fixes": [],
       "next_diagnostic": "Execute on T155-T160"
+    },
+    {
+      "id": "D004",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "G01 shell was diagnostic drag-box UI, not a playable wizard local area",
+      "reproduction_command": "bash tools/play_g01.sh",
+      "seed": "7",
+      "failing_assertion_or_log": "green rectangle + coordinates only",
+      "expected_state": "visible wizard, terrain, NPC, exit using pointer controls",
+      "observed_state": "diagnostic prototype UI",
+      "suspected_owner": "godot_project/client/scenes/g01_shell.gd",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Verified via playable FX-CLOCK area + semantic interact/observe"
+    },
+    {
+      "id": "D005",
+      "task_id": "T021",
+      "status": "RESOLVED",
+      "summary": "Observe/interact lacked real entity projection in playable scene",
+      "reproduction_command": "G01 Observe button",
+      "seed": "7",
+      "failing_assertion_or_log": "no on-world selectable person/object",
+      "expected_state": "distant unknown label; near interaction reveals permitted role",
+      "observed_state": "diagnostic Observe only",
+      "suspected_owner": "sim/dmb/narrative + g01_shell",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Verified via playable FX-CLOCK area + semantic interact/observe"
     }
   ]
 }

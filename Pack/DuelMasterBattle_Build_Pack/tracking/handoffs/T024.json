@@ -1,38 +1,32 @@
 {
   "task_id": "T024",
   "status": "DONE",
-  "commit": "ec13d237d5fd5ae088d26c36af106bbf99c53a52",
+  "commit": "PENDING",
   "files": [
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G01/",
     "tests/integration/test_bridge_clock.py",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G01/"
+    "tools/play_g01.sh"
   ],
   "public_contracts": [
-    "G01 packet"
+    "Playable FX-CLOCK wizard local area on Python-backed runtime"
   ],
   "source_rules": [
-    "C01/C02/C14 as named on task card",
-    "EXECUTION_AMENDMENTS staged Python ownership"
+    "C01/C02/C03/C14",
+    "EXECUTION_AMENDMENTS G01 evidence"
   ],
   "checks": [
     {
-      "command": "/usr/bin/python3 -m pytest -q tests/integration/test_bridge_clock.py tests/sim/test_t023_fixtures.py",
-      "exit_code": 0,
-      "result": "bridge_clock_integration: PASS"
-    },
-    {
       "command": "python3 tools/check.py --task T024",
       "exit_code": 0,
-      "result": "g01_gate_packet: PASS"
+      "result": "PASS"
     }
   ],
   "fixture_hashes": {
-    "FX-CLOCK_catalog": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6"
+    "FX-CLOCK_seed": 7
   },
   "defects": [
-    "Dialogue openpyxl dependency remains deferred until required",
-    "Sprite facing mirror failures remain deferred until required",
-    "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
+    "D004/D005 resolved for playable presentation; D001-D003 remain deferred"
   ],
   "next_task": "G01",
-  "notes": "Automated G01 suite PASS; gate remains AWAITING_HUMAN until Joe records PASS. T025 blocked."
+  "notes": "G01 AWAITING_HUMAN; stop before T025"
 }

@@ -51,6 +51,42 @@ def bootstrap_world(world_id: str = "world:g01", seed: int = 7) -> "WorldSim":
     )
     state.catalog_hash = catalog.catalog_hash
     state.definitions = {"payloads": catalog.all_payloads(), "hash": catalog.catalog_hash}
+    # FX-CLOCK playable fixtures: wizard pose + one observable person per area.
+    state.player = {
+        "node_id": "node:1",
+        "area_id": "area.home",
+        "position": [4, 5],
+        "facing": "down",
+    }
+    state.board = {
+        "nodes": {
+            "node:1": {
+                "id": "node:1",
+                "def": "node.home",
+                "label": "Home Clearing",
+                "exits": ["node:2"],
+                "theme": "grass",
+            },
+            "node:2": {
+                "id": "node:2",
+                "def": "node.road",
+                "label": "Stone Road",
+                "exits": ["node:1"],
+                "theme": "path",
+            },
+        }
+    }
+    person_id = state.ids.new("person")
+    state.people[person_id] = {
+        "id": person_id,
+        "definition_id": "npc.villager",
+        "node_id": "node:1",
+        "grid": [10, 3],
+        "role": "guide",
+        "display_name": "Mira",
+    }
+    # Unknown until observed; role permitted on interact/reveal.
+    state.knowledge = {}
     return WorldSim(state=state, catalog=catalog)
 
 
@@ -89,6 +125,8 @@ class WorldSim:
         self.router.register("Save", self._handle_save_marker)
         self.router.register("Load", self._handle_load_marker)
         self.router.register("Observe", self._handle_observe)
+        self.router.register("Interact", self._handle_interact)
+        self.router.register("SyncPose", self._handle_sync_pose)
 
     def dispatch(self, envelope: CommandEnvelope) -> CommandResult:
         if self.state.legacy_godot_world_tick_enabled or self.state.legacy_godot_world_save_enabled:
@@ -241,13 +279,10 @@ class WorldSim:
         )
 
     def _handle_observe(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.narrative.knowledge import filter_entity
+
         entity_id = str(envelope.payload.get("entity_id", ""))
-        known = entity_id in self.state.knowledge or entity_id == self.state.player.get("node_id")
-        view = {
-            "entity_id": entity_id,
-            "known": known,
-            "label": entity_id if known else "unknown",
-        }
+        view = filter_entity(self.state, entity_id)
         return CommandResult(
             status="ACCEPTED",
             code="OK",
@@ -256,4 +291,65 @@ class WorldSim:
             events=[],
             payload=view,
             public_feedback="observed",
+        )
+
+    def _handle_interact(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.narrative.knowledge import KnowledgeFact, filter_entity, reveal
+
+        entity_id = str(envelope.payload.get("entity_id", ""))
+        person = self.state.people.get(entity_id)
+        if person is None:
+            return CommandResult(
+                status="REJECTED",
+                code="INVALID",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="unknown entity",
+            )
+        if person.get("node_id") != self.state.player.get("node_id"):
+            return CommandResult(
+                status="REJECTED",
+                code="OUT_OF_RANGE",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="too far to interact",
+            )
+        reveal(
+            self.state,
+            entity_id,
+            KnowledgeFact(entity_id, "met", role=str(person.get("role", "villager"))),
+            role=str(person.get("role", "villager")),
+        )
+        # Permit name only after interaction.
+        self.state.knowledge[entity_id]["name"] = person.get("display_name")
+        self.state.world_version += 1
+        view = filter_entity(self.state, entity_id)
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[],
+            payload=view,
+            public_feedback="interacted",
+        )
+
+    def _handle_sync_pose(self, envelope: CommandEnvelope) -> CommandResult:
+        payload = envelope.payload
+        pos = payload.get("position")
+        if isinstance(pos, (list, tuple)) and len(pos) >= 2:
+            self.state.player["position"] = [float(pos[0]), float(pos[1])]
+        if payload.get("facing"):
+            self.state.player["facing"] = str(payload["facing"])
+        # Pose sync does not advance turns or bump world_version (presentation lease).
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[],
+            payload={"position": self.state.player.get("position"), "facing": self.state.player.get("facing")},
+            public_feedback="pose_synced",
         )

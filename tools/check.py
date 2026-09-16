@@ -326,11 +326,12 @@ def checks_for_task(task: str) -> list[CheckResult]:
         "T018": lambda: [_pytest("lease_registry_tests", "tests/sim/test_t018_leases.py")],
         "T019": lambda: [_pytest("recovery_tests", "tests/sim/test_t019_recovery.py")],
         "T020": lambda: [
+            _pytest("playable_fx_clock_commands", "tests/sim/test_t020_playable.py"),
             _godot_script(
-                "g01_local_area_import",
-                "res://client/tests/run_g01_local_area.gd",
-                r"G01_LOCAL_OK",
-            )
+                "g01_playable_scene",
+                "res://client/tests/run_g01_playable.gd",
+                r"G01_PLAYABLE_OK",
+            ),
         ],
         "T021": lambda: [_pytest("semantic_knowledge_tests", "tests/sim/test_t021_semantic.py")],
         "T022": lambda: [_pytest("clock_driver_tests", "tests/sim/test_t022_clock_driver.py")],

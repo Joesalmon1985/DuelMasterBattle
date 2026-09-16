@@ -1,79 +1,69 @@
-# G01 playtest handoff
+# G01 playtest handoff — playable wizard FX-CLOCK
 
-**Gate:** G01 — Local controls, clocks and reliable startup (10–15 minutes)  
-**Status:** AWAITING_HUMAN — stop before T025  
-**Prepared:** 2026-09-16  
+**Status:** AWAITING_HUMAN (do not start T025)  
+**Scenario:** FX-CLOCK  
+**Seed:** 7  
 
-## Automated acceptance (T001–T024)
+## What is now playable
 
-All of T001–T024 are marked DONE with receipts. Re-verified on this host:
+A top-down local area with a visible wizard (John), terrain/obstacles, a selectable person (unknown until interacted), and a glowing exit to an adjacent, visually distinct area (Home Clearing ↔ Stone Road). Controls use one pointer (on-screen pad + drag/tap). Python owns durable world state over the loopback sidecar; legacy Godot world tick/save writers stay blocked.
 
-| Range | Result |
-| --- | --- |
-| T001–T005, T007–T024 | `python3 tools/check.py --task Tnnn` → **PASS** |
-| T006 | Tracking suite updated for G01-blocking resume; **PASS** after that fix |
-| G01 automated suite | `python3 tools/check.py --gate G01` → **PASS** |
-| FX-CLOCK | `python3 tools/run_scenario.py --fixture FX-CLOCK …` → **PASS** |
-| Godot sidecar smoke | `run_g01_smoke.gd` → **G01_SMOKE_OK** |
+## Tested commit
 
-**Outstanding failures for this gate:** none required. Deferred (not G01 blockers): missing `openpyxl`, sprite-facing audit, Wine/Windows packaging until T155–T160.
+See `launch.txt` (stamped after commit).
 
-## Build
-
-- Branch: `BuildPackV03`
-- Commit: `3a7613def047891076a6ace91c9db773d8c6543e`
-- Godot: **4.4.1** native Linux (`/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64`)
-- Python: **3.12.3** via `python3`
-
-## Exact launch command (verified)
+## Exact launch (fresh terminal)
 
 ```bash
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g01.sh
 ```
 
-Equivalent:
+**Menu:** press **`G01 FX-CLOCK  (Python-backed runtime playtest)`**.
+
+Direct (skips menu):
 
 ```bash
-cd /home/joe/Projects/DuelMasterBattle
-source tools/find_godot.sh
-"$GODOT" --path godot_project res://client/scenes/g01_shell.tscn
+bash tools/play_g01.sh --direct
 ```
 
-This starts the loopback Python sidecar and the G01 FX-CLOCK shell. Python owns durable world state; legacy Godot world tick/save writers are blocked.
+Godot binary is discovered automatically (validated fallback: `/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64`). No pre-set `$GODOT` required.
 
-## Reset / isolated test save
+## Isolated save / reset
 
-- **Seed:** 7 (FX-CLOCK)
-- **Isolated save slot:** `g01_playtest`
-- **Save file path:** `/home/joe/Projects/DuelMasterBattle/.dmb_saves/g01_playtest.json`
-- **Reset:** quit the game, delete that save if you want a clean slot, then relaunch `bash tools/play_g01.sh`. Fresh launch always starts at `node:1` with turn 0 until you Load.
+- Slot: `g01_playtest`
+- File: `/home/joe/Projects/DuelMasterBattle/.dmb_saves/g01_playtest.json`
+- Reset: quit completely, optionally delete that file, relaunch. Load restores node, pose, clocks and receipts. Closed time is not applied.
 
-## On-screen diagnostics (required for G01)
+## Automated results (agent-run)
 
-Top of the shell shows:
+- `python3 tools/check.py --task T020` → PASS (playable command tests + `G01_PLAYABLE_OK`)
+- `python3 tools/check.py --gate G01` → PASS (cumulative Python + packet + sidecar smoke)
+- FX-CLOCK production scenario → PASS
+- Screenshot: `tracking/gates/G01/screenshot_wizard.png` (viewport capture during launch)
+- Graphical window was launched with OpenGL on Intel HD 520; sidecar printed `DMB_SIDECAR`
 
-- **World Turn**
-- **Game Time** (ms and seconds)
-- **Node** (current strategic node)
-- paused / world_version
+**Not claimed as human gate PASS.** Manual steps below remain for Joe.
 
-Buttons include **Travel adjacent**, **Wait**, **Invalid travel**, **Observe**, **Pause**, **Resume**, **Save (g01_playtest)**, **Load**, and **Bridge fail**.
+## 10–15 minute checklist
 
-## Playtest steps (match Joe’s table)
+| Step | What you do | Expected |
+| --- | --- | --- |
+| Move | Pad/drag the wizard | Visible movement; blockers respected; **World Turn unchanged** |
+| Observe afar | Tap distant person / ✦ when far | Label **unknown**; no name |
+| Approach/interact | Move close, ✦ | Reveals permitted role/name (Mira/guide); UI reflects accept |
+| Travel | Stand on glowing exit, ✦ or tap | Pending text; destination after ack; **World Turn +1**; other area looks different |
+| Wait | Press Wait once; hold | One turn per press; hold does not repeat |
+| Invalid | Invalid exit button | Rejected; node/turn unchanged |
+| Pause/focus | Pause 10s; alt-tab | Game Time frozen; no catch-up |
+| Save/load | Save → quit → relaunch → Load | Node/pose/counters restored |
+| Bridge fail | Bridge fail button | Pauses; no Godot sim fallback; recover via relaunch+Load |
 
-1. Startup/controls — drag local area; Observe far vs near (walk toward the right of the green pad).
-2. Local movement 20s — World Turn unchanged; Game Time advances while unpaused.
-3. Travel adjacent — World Turn +1; node changes after acknowledgement.
-4. Wait once, then hold — one turn per distinct press.
-5. Invalid travel — rejected; no node/turn change.
-6. Pause 10s / focus away — Game Time frozen; no catch-up on return.
-7. Save → quit completely → relaunch → Load — node and counters restored; closed time adds nothing.
-8. Bridge fail — pauses with no Godot sim fallback; recover by relaunch + Load.
+HUD always shows **World Turn**, **Game Time**, **Node**. Dev panel is collapsible (logs do not cover the playfield by default).
 
-## How to record the result
+## Remaining defects
 
-- `G01 PASS — <tested commit>`
-- or `G01 FIX_REQUIRED — <action; expected; actual>`
+- D001 openpyxl, D002 facing audit, D003 Windows/Wine — deferred, do not block G01.
+- ObjectDB “1 resource still in use” on some headless exits: targeted cleanup added for sidecar/endpoint; residual warning may be engine-level. No accumulating owned sidecar left running after Menu/close.
 
-Do not start T025 until an explicit Joe PASS is recorded.
+Reply `G01 PASS — <commit>` or `G01 FIX_REQUIRED — <symptom>`.

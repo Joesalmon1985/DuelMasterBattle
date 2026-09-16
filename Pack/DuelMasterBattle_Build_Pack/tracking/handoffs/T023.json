@@ -1,34 +1,31 @@
 {
   "task_id": "T023",
   "status": "DONE",
-  "commit": "9e13aad100a779cc830bbcfe2442f3ab9deccf78",
+  "commit": "PENDING",
   "files": [
-    "tools/run_scenario.py",
     "sim/dmb/testing/fixtures.py",
-    "godot_project/client/debug/scenario_panel.gd",
-    "tests/sim/test_t023_fixtures.py"
+    "tools/run_scenario.py",
+    "sim/dmb/core/world.py"
   ],
   "public_contracts": [
-    "FX-CLOCK fixtures"
+    "Playable FX-CLOCK wizard local area on Python-backed runtime"
   ],
   "source_rules": [
-    "C01/C02/C14 as named on task card",
-    "EXECUTION_AMENDMENTS staged Python ownership"
+    "C01/C02/C03/C14",
+    "EXECUTION_AMENDMENTS G01 evidence"
   ],
   "checks": [
     {
-      "command": "/usr/bin/python3 -m pytest -q tests/sim/test_t023_fixtures.py",
+      "command": "python3 tools/check.py --task T023",
       "exit_code": 0,
-      "result": "fixture_entrypoint_tests: PASS"
+      "result": "PASS"
     }
   ],
   "fixture_hashes": {
-    "FX-CLOCK_catalog": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6"
+    "FX-CLOCK_seed": 7
   },
   "defects": [
-    "Dialogue openpyxl dependency remains deferred until required",
-    "Sprite facing mirror failures remain deferred until required",
-    "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
+    "D004/D005 resolved for playable presentation; D001-D003 remain deferred"
   ],
   "next_task": "T024",
   "notes": ""

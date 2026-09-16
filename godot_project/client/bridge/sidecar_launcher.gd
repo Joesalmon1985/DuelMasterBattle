@@ -55,3 +55,5 @@ func stop() -> void:
 	if pid > 0:
 		OS.kill(pid)
 		pid = -1
+	if endpoint_path != "" and FileAccess.file_exists(endpoint_path):
+		DirAccess.remove_absolute(endpoint_path)

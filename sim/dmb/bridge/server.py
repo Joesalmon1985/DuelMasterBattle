@@ -122,6 +122,17 @@ class SidecarServer:
                 kind=str(frame["command_kind"]),
                 payload=dict(frame.get("payload", {})),
             )
+            # Presentation pose sync may lag a clock tick; accept current version.
+            if envelope.kind == "SyncPose":
+                envelope = CommandEnvelope(
+                    protocol_version=envelope.protocol_version,
+                    session_id=envelope.session_id,
+                    world_id=envelope.world_id,
+                    command_id=envelope.command_id,
+                    expected_world_version=self.session.sim.state.world_version,
+                    kind=envelope.kind,
+                    payload=envelope.payload,
+                )
             if envelope.kind == "Save":
                 saved = self.session.coordinator.request_save(str(envelope.payload.get("slot", "slot0")))
                 result = self.session.sim.dispatch(envelope)

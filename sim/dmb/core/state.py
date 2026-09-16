@@ -75,17 +75,29 @@ class WorldState:
             self.ids = IdAllocator(self.world_id)
 
     def read_view(self, scope: str = "player") -> Mapping[str, Any]:
+        from sim.dmb.narrative.knowledge import filter_entity
+
+        people = {}
+        for entity_id, record in self.people.items():
+            filtered = filter_entity(self, entity_id)
+            # Presentation layout hints (not identity secrets).
+            filtered = dict(filtered)
+            filtered["node_id"] = record.get("node_id")
+            filtered["grid"] = list(record.get("grid", []))
+            people[entity_id] = filtered
         payload = {
             "world_id": self.world_id,
             "world_version": self.world_version,
             "clock": deepcopy(self.clock),
             "player": deepcopy(self.player),
             "board": {"nodes": deepcopy(self.board.get("nodes", {}))},
+            "people": people,
             "scope": scope,
         }
         if scope == "debug":
             payload["leases"] = deepcopy(self.leases)
             payload["command_receipts"] = deepcopy(self.command_receipts)
+            payload["knowledge_raw"] = deepcopy(self.knowledge)
         return _freeze(payload)
 
     def validate(self) -> list[str]:
