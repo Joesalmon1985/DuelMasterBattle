@@ -1,54 +1,79 @@
-# G01 playtest packet
+# G01 playtest handoff
 
-**Gate:** G01 — Local controls, clocks and reliable startup  
-**Status:** AWAITING_HUMAN  
+**Gate:** G01 — Local controls, clocks and reliable startup (10–15 minutes)  
+**Status:** AWAITING_HUMAN — stop before T025  
 **Prepared:** 2026-09-16  
-**Seed:** 7  
-**Fixture:** FX-CLOCK  
+
+## Automated acceptance (T001–T024)
+
+All of T001–T024 are marked DONE with receipts. Re-verified on this host:
+
+| Range | Result |
+| --- | --- |
+| T001–T005, T007–T024 | `python3 tools/check.py --task Tnnn` → **PASS** |
+| T006 | Tracking suite updated for G01-blocking resume; **PASS** after that fix |
+| G01 automated suite | `python3 tools/check.py --gate G01` → **PASS** |
+| FX-CLOCK | `python3 tools/run_scenario.py --fixture FX-CLOCK …` → **PASS** |
+| Godot sidecar smoke | `run_g01_smoke.gd` → **G01_SMOKE_OK** |
+
+**Outstanding failures for this gate:** none required. Deferred (not G01 blockers): missing `openpyxl`, sprite-facing audit, Wine/Windows packaging until T155–T160.
 
 ## Build
 
 - Branch: `BuildPackV03`
-- Commit: ec13d237d5fd5ae088d26c36af106bbf99c53a52
-- Godot: 4.4.1 native Linux (`toolchain.json`)
-- Python: 3.12.3 (`python3`)
+- Commit: *(filled at commit/push time — see `launch.txt`)*
+- Godot: **4.4.1** native Linux (`/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64`)
+- Python: **3.12.3** via `python3`
 
-## Launch (verified on this host)
+## Exact launch command (verified)
 
 ```bash
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g01.sh
 ```
 
-This opens `res://client/scenes/g01_shell.tscn`, starts the loopback Python sidecar, and enables the migrated runtime (legacy Godot world tick/save writers blocked).
+Equivalent:
 
-## What to try (10–15 min)
+```bash
+cd /home/joe/Projects/DuelMasterBattle
+source tools/find_godot.sh
+"$GODOT" --path godot_project res://client/scenes/g01_shell.tscn
+```
 
-1. Drag in the local area with one pointer; use **Observe far**.
-2. Press **Travel → node:2** once; confirm turn increments and destination changes only after acknowledgement.
-3. Press **Wait** once; hold briefly and confirm it does not repeat; invalid travel is rejected by the shell/server.
-4. **Pause** / **Resume**; save, quit completely, relaunch and **Load**.
-5. Press **Bridge fail**; confirm pause with no Godot sim fallback.
+This starts the loopback Python sidecar and the G01 FX-CLOCK shell. Python owns durable world state; legacy Godot world tick/save writers are blocked.
 
-## Automated evidence
+## Reset / isolated test save
 
-- `python3 tools/check.py --task T007` … `T023`: PASS (per-task reports under this folder as `check_T0xx.json`)
-- `python3 tools/check.py --task T024` / `--gate G01`: see `automated_report.json`
-- FX-CLOCK production entry: `fx_clock_record.json` (PASS)
-- Godot smokes: `run_g01_smoke.gd` (sidecar+view), `run_g01_local_area.gd` (no speculative exit)
+- **Seed:** 7 (FX-CLOCK)
+- **Isolated save slot:** `g01_playtest`
+- **Save file path:** `/home/joe/Projects/DuelMasterBattle/.dmb_saves/g01_playtest.json`
+- **Reset:** quit the game, delete that save if you want a clean slot, then relaunch `bash tools/play_g01.sh`. Fresh launch always starts at `node:1` with turn 0 until you Load.
 
-## Known defects (do not block G01 automation; may affect feel)
+## On-screen diagnostics (required for G01)
 
-1. Dialogue factory still missing host `openpyxl` — deferred until a required acceptance check needs it.
-2. Sprite facing mirror audit still has recorded failures — deferred until required.
-3. Wine/Windows executable testing and packaging — **DEFERRED_NOT_PASSED** until T155–T160; not claimed here.
-4. G01 shell is a constrained migrated slice (Travel/Wait/pause/save/bridge-fail), not full village gameplay (that remains G05).
+Top of the shell shows:
 
-## Optional hints (try inference first)
+- **World Turn**
+- **Game Time** (ms and seconds)
+- **Node** (current strategic node)
+- paused / world_version
 
-- If the shell says sidecar failed, confirm `python3 tools/run_sidecar.py` starts and writes `.dmb_endpoint.json`.
-- Saves land under `.dmb_saves/` at the repo root.
+Buttons include **Travel adjacent**, **Wait**, **Invalid travel**, **Observe**, **Pause**, **Resume**, **Save (g01_playtest)**, **Load**, and **Bridge fail**.
 
-## How to record your result
+## Playtest steps (match Joe’s table)
 
-Reply `G01 PASS — <commit>` or `G01 FIX_REQUIRED — <what happened and what you expected>`.
+1. Startup/controls — drag local area; Observe far vs near (walk toward the right of the green pad).
+2. Local movement 20s — World Turn unchanged; Game Time advances while unpaused.
+3. Travel adjacent — World Turn +1; node changes after acknowledgement.
+4. Wait once, then hold — one turn per distinct press.
+5. Invalid travel — rejected; no node/turn change.
+6. Pause 10s / focus away — Game Time frozen; no catch-up on return.
+7. Save → quit completely → relaunch → Load — node and counters restored; closed time adds nothing.
+8. Bridge fail — pauses with no Godot sim fallback; recover by relaunch + Load.
+
+## How to record the result
+
+- `G01 PASS — <tested commit>`
+- or `G01 FIX_REQUIRED — <action; expected; actual>`
+
+Do not start T025 until an explicit Joe PASS is recorded.

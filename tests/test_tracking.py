@@ -25,14 +25,21 @@ def _load_check():
 def test_live_progress_resume_selects_first_unmet_task() -> None:
     check = _load_check()
     progress = json.loads((TRACKING / "progress.json").read_text(encoding="utf-8"))
+    problems, resume = check.validate_tracking_state()
+    assert problems == []
+    # After T024, an unmet manual gate blocks later tasks.
+    gate = progress.get("gates", {}).get("G01", {})
+    if all(progress["tasks"].get(f"T{n:03d}") == "DONE" for n in range(1, 25)) and gate.get(
+        "status"
+    ) != "PASS":
+        assert resume == {"kind": "gate", "id": "G01"}
+        return
     expected = None
     for number in range(1, 161):
         task = f"T{number:03d}"
         if progress["tasks"].get(task) != "DONE":
             expected = task
             break
-    problems, resume = check.validate_tracking_state()
-    assert problems == []
     assert resume == {"kind": "task", "id": expected}
 
 
@@ -113,13 +120,20 @@ def test_defects_policy_forbids_skipping_and_caps_repairs() -> None:
 
 
 def test_resume_cli_is_nonzero_when_ledger_is_invalid(tmp_path: Path) -> None:
-    # The live CLI validates the pack ledger; this unit covers the helper via a
-    # temporary invalid current_task mismatch.
+    # Temporary invalid current_task mismatch while T006 is still the first unmet task.
     check = _load_check()
     progress = json.loads((TRACKING / "progress.json").read_text(encoding="utf-8"))
+    progress["tasks"]["T006"] = "NOT_STARTED"
+    for number in range(7, 25):
+        progress["tasks"][f"T{number:03d}"] = "NOT_STARTED"
+    progress["gates"]["G01"]["status"] = "NOT_READY"
     progress["current_task"] = "T007"
     handoffs = tmp_path / "handoffs"
     shutil.copytree(TRACKING / "handoffs", handoffs)
+    for number in range(6, 25):
+        path = handoffs / f"T{number:03d}.json"
+        if path.exists():
+            path.unlink()
     progress_path = tmp_path / "progress.json"
     progress_path.write_text(json.dumps(progress), encoding="utf-8")
     problems, resume = check.validate_tracking_state(progress_path, handoffs)

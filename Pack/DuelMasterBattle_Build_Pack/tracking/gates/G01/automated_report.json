@@ -6,7 +6,7 @@
       "name": "g01_cumulative_python",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 3.205,
+      "duration_seconds": 3.201,
       "detail": ".................                                                        [100%]\n17 passed in 2.79s",
       "command": [
         "/usr/bin/python3",
@@ -32,8 +32,8 @@
       "name": "g01_sidecar_smoke",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 2.3,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=38351\nG01_SMOKE_OK world_id=world:g01",
+      "duration_seconds": 1.269,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=33159\nG01_SMOKE_OK world_id=world:g01",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",
