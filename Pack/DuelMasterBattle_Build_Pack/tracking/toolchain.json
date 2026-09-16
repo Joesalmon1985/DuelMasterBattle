@@ -45,14 +45,14 @@
     "web": true,
     "android": true,
     "windows_export_preset": "Windows Desktop",
-    "windows_export_smoke": "Passed on Linux using the 4.4.1 Windows template; this does not certify Windows runtime behaviour."
+    "windows_export_smoke": "DEFERRED_NOT_PASSED until T155-T156/T160; not claimed as a current-stage pass."
   },
   "packaging_runners": {
-    "wine": "/usr/bin/wine",
+    "wine": "PRESENT_BUT_DEFERRED",
     "powershell": null,
     "makensis": null,
     "windows_native_runner": null,
-    "status": "Windows templates and Wine exist; no native Windows verification runner was identified."
+    "status": "Wine, Windows executable testing and packaging are deferred until release tasks. Current-stage verification uses native Linux Godot 4.4.1 and Python 3 only."
   },
   "launchers": {
     "linux_normal": "tools/play.sh",

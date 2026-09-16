@@ -80,12 +80,14 @@
       "command": "bash tools/run_godot_ui_smoke.sh",
       "exit_code": 0,
       "result": "UI SMOKE: ALL PASSED"
-    },
+    }
+  ],
+  "deferred_until_release_tasks": [
     {
-      "command": "godot --headless --path godot_project --export-debug \"Windows Desktop\" /tmp/DuelMasterBattle-T003.exe",
-      "exit_code": 0,
-      "result": "Non-empty Windows x86_64 debug export produced with 4.4.1 templates",
-      "notes": "Export completed with warnings; Linux export smoke is not Windows runtime certification."
+      "command": "Windows Desktop export / Wine executable run / packaging smoke",
+      "status": "DEFERRED_NOT_PASSED",
+      "owner_tasks": ["T155", "T156", "T160"],
+      "notes": "Wine, Windows executable testing and Windows packaging are deferred until release tasks. Native Linux Godot 4.4.1 remains the current-stage verification engine."
     }
   ],
   "failed_or_unavailable": [

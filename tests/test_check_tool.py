@@ -70,7 +70,7 @@ def test_missing_audit_evidence_never_passes(tmp_path: Path) -> None:
 
 def test_future_task_and_gate_fail_closed() -> None:
     check = _load_check_module()
-    task = check.checks_for_task("T006")
+    task = check.checks_for_task("T007")
     gate = check.checks_for_gate("G01")
     assert task[0].status == "NOT_IMPLEMENTED"
     assert gate[0].status == "NOT_READY"
