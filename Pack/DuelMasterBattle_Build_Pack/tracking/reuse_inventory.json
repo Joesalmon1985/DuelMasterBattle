@@ -1,0 +1,284 @@
+{
+  "task_id": "T002",
+  "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
+  "policy": {
+    "KEEP": "Compatible implementation retained behind the v0.3 ownership boundary.",
+    "ADAPT": "Reuse implementation or behaviour while changing callers, ownership or protocol.",
+    "REPLACE": "Implement the required missing owner or retire an incompatible live responsibility after cutover.",
+    "RETIRE": "Remove from production use only after callers are disconnected and regressions pass; not permission to delete during audit."
+  },
+  "entrypoints": [
+    {
+      "system": "normal Godot application",
+      "path": "godot_project/project.godot",
+      "responsibility": "Boot main menu and production scenes.",
+      "callers": ["tools/play.sh", "Play Duel Master Battle.bat"],
+      "disposition": "KEEP",
+      "target": "Same production launcher, extended to start/connect the Python sidecar by T017."
+    },
+    {
+      "system": "persistent world simulation",
+      "path": "godot_project/sim/world/world_sim.gd",
+      "responsibility": "Own seeded board, factions, Catan, infection, carts, units and strategic turn mutation.",
+      "callers": ["godot_project/client/world/world_flow.gd", "godot_project/client/scripts/village_test_runner.gd", "Godot simulation/client tests"],
+      "disposition": "ADAPT",
+      "target": "Port compatible deterministic rules into Python WorldState/services; disconnect production mutation callers by T017-T024."
+    },
+    {
+      "system": "world flow",
+      "path": "godot_project/client/world/world_flow.gd",
+      "responsibility": "Create/restore DmbWorldSim, call advance_turn on node change, serialize the world into Adventure, project nodes.",
+      "callers": ["godot_project/client/world/overworld.gd", "godot_project/client/world/world_play.gd", "world flow/loop tests"],
+      "disposition": "ADAPT",
+      "target": "Thin WorldClient/projection adapter; no durable mutation or world serialization."
+    },
+    {
+      "system": "campaign state and save",
+      "path": "godot_project/client/scripts/adventure.gd",
+      "responsibility": "Own user://adventure.save v4, world blob, story flags, quest outcomes, pending/result battles and progression.",
+      "callers": ["main_menu.gd", "overworld.gd", "world_play.gd", "story_events.gd", "game_board.gd", "client flow tests"],
+      "disposition": "ADAPT",
+      "target": "Keep client-local preferences/presentation session; move durable world/quest/encounter/save authority to Python SaveCoordinator."
+    },
+    {
+      "system": "Catan economy",
+      "path": "godot_project/sim/world/catan_state.gd",
+      "responsibility": "Own settlements, roads, stocks, production and serialized economic state.",
+      "callers": ["world_sim.gd", "carts.gd", "factions.gd", "units.gd", "node projections/tests"],
+      "disposition": "ADAPT",
+      "target": "Python Catan/construction state with stable IDs and command receipts; remain distinct from industry."
+    },
+    {
+      "system": "carts",
+      "path": "godot_project/sim/world/carts.gd",
+      "responsibility": "Own cart records, routes, delivery and one-edge-per-turn movement.",
+      "callers": ["world_sim.gd", "faction_ai.gd", "carts/world tests"],
+      "disposition": "ADAPT",
+      "target": "Python persistent cart registry and logistics service."
+    },
+    {
+      "system": "factions and heuristic AI",
+      "path": "godot_project/sim/world/factions.gd; godot_project/sim/world/faction_ai.gd",
+      "responsibility": "Own faction records and execute strategic choices in the GDScript turn.",
+      "callers": ["world_sim.gd", "world tests/projections"],
+      "disposition": "ADAPT",
+      "target": "Python faction registry and legal deterministic command producer."
+    },
+    {
+      "system": "strategic units/combat",
+      "path": "godot_project/sim/world/units.gd",
+      "responsibility": "Own champions/heroes, strategic movement and off-screen demon fights.",
+      "callers": ["world_sim.gd", "node_projection.gd", "unit/world tests"],
+      "disposition": "ADAPT",
+      "target": "Python individual unit/formation state and off-screen resolver; later Godot tactical lease for local encounters."
+    },
+    {
+      "system": "worker presentation",
+      "path": "godot_project/sim/world/settlement_profile.gd; godot_project/sim/world/node_projection.gd",
+      "responsibility": "Derive worker-labelled NPC entities from buildings/terrain; animation does not produce goods.",
+      "callers": ["world_flow.gd", "village menus/tests", "overworld.gd"],
+      "disposition": "ADAPT",
+      "target": "Projection of Python persistent Person/job/building IDs; keep animation non-authoritative."
+    },
+    {
+      "system": "production settlement projection",
+      "path": "godot_project/sim/world/settlement_profile.gd; godot_project/sim/world/node_projection.gd; godot_project/sim/world/settlement_layout.gd",
+      "responsibility": "Derive playable settlement context/layout from DmbWorldSim.",
+      "callers": ["world_flow.gd", "world_play.gd", "village generated-fixture path"],
+      "disposition": "ADAPT",
+      "target": "Godot presentation consuming knowledge-filtered Python projections while preserving compatible layout algorithms."
+    },
+    {
+      "system": "production quests",
+      "path": "godot_project/sim/world/quests.gd",
+      "responsibility": "Build short settlement quest trees and apply effects directly to DmbWorldSim.",
+      "callers": ["godot_project/client/world/world_play.gd", "world loop/quest tests"],
+      "disposition": "ADAPT",
+      "target": "Single Python quest service/effect dispatcher used by normal and fixture play."
+    },
+    {
+      "system": "authored village fixture projection",
+      "path": "godot_project/sim/world/village_composite_projection.gd; godot_project/sim/world/village_test_catalog.gd",
+      "responsibility": "Load E17A/E36B authored maps independently of production world projection.",
+      "callers": ["godot_project/client/scripts/village_test_runner.gd", "village test menu/client tests"],
+      "disposition": "ADAPT",
+      "target": "Fixture bootstrap/content over the normal Python simulation and production projection contract."
+    },
+    {
+      "system": "village fixture quest engine",
+      "path": "godot_project/sim/world/village_quest_runner.gd",
+      "responsibility": "Execute richer fixture quest graphs and mutate fixture/Adventure flags.",
+      "callers": ["overworld.gd in village-test mode", "E17A tests"],
+      "disposition": "REPLACE",
+      "target": "One Python quest engine. Retain graph/content semantics but disconnect this competing live executor by T079-T086."
+    },
+    {
+      "system": "village test launcher",
+      "path": "godot_project/client/scenes/village_test_menu.tscn; godot_project/client/scripts/village_test_runner.gd",
+      "responsibility": "Select authored/generated fixtures, snapshot Adventure and boot production Overworld.",
+      "callers": ["Play Village Test Menu.bat", "run_village_test_mode.gd"],
+      "disposition": "ADAPT",
+      "target": "Keep launch/presentation UX; issue pre-world debug fixture commands to the normal Python simulation."
+    },
+    {
+      "system": "runtime dialogue UI",
+      "path": "godot_project/client/world/dialogue_box.gd",
+      "responsibility": "Render speech, choices and semantic interaction.",
+      "callers": ["overworld.gd", "world_play.gd", "story_events.gd"],
+      "disposition": "KEEP",
+      "target": "Godot presentation driven by filtered dialogue views and ChooseDialogue commands."
+    },
+    {
+      "system": "offline dialogue factory",
+      "path": "tools/dialogue_generation",
+      "responsibility": "Ingest workbook, optionally call local Ollama, validate/store/export reviewed fixture content.",
+      "callers": ["Run Dialogue Factory.bat", "development CLI/tests"],
+      "disposition": "KEEP",
+      "target": "Offline authoring only; never a runtime dependency."
+    },
+    {
+      "system": "campaign puzzle logic",
+      "path": "godot_project/sim/world/puzzle_gen.gd; godot_project/sim/world/puzzle_logic.gd; godot_project/sim/world/dungeon_map.gd",
+      "responsibility": "Generate dungeon puzzles, resolve mechanisms and project campaign rooms.",
+      "callers": ["world_play.gd", "Adventure puzzle state", "dungeon tests"],
+      "disposition": "ADAPT",
+      "target": "Godot leased puzzle mechanism with durable item/quest outcomes committed to Python."
+    },
+    {
+      "system": "puzzle kit/test catalogue",
+      "path": "godot_project/sim/world/puzzle_kit.gd; godot_project/sim/world/puzzle_rooms.gd; godot_project/sim/world/puzzle_projection.gd",
+      "responsibility": "Run the 50-room test catalogue through production Overworld.",
+      "callers": ["PuzzleTestRunner", "puzzle test menu", "puzzle tests"],
+      "disposition": "KEEP",
+      "target": "Retained Godot leased mechanism runtime; fixture setup uses normal simulation."
+    },
+    {
+      "system": "legacy puzzle test room",
+      "path": "godot_project/client/scenes/puzzle_test_room.tscn; godot_project/client/scripts/puzzle_test_room.gd",
+      "responsibility": "Older standalone puzzle renderer no longer launched by the puzzle menu.",
+      "callers": [],
+      "disposition": "RETIRE",
+      "target": "Keep until callers/tests confirm absence; do not use as G01/G05 evidence."
+    },
+    {
+      "system": "production Mastermind battle",
+      "path": "godot_project/sim/battle_sim.gd; godot_project/client/scripts/game_board.gd",
+      "responsibility": "Execute real-time asymmetric ward battle and render it.",
+      "callers": ["Adventure.pending_battle", "quick duel", "core duel/client flow tests"],
+      "disposition": "KEEP",
+      "target": "Godot-owned leased DuelController with versioned checkpoint/result protocol."
+    },
+    {
+      "system": "symmetric realtime duel",
+      "path": "godot_project/sim/realtime_duel_sim.gd",
+      "responsibility": "Older symmetric concurrent-cast rules used by tests/playtest and documented API compatibility.",
+      "callers": ["Godot duel tests", "realtime playtest", "GameBoard enum/API compatibility"],
+      "disposition": "ADAPT",
+      "target": "Retain as regression/rules source until BattleSim lease coverage supersedes it; do not keep as a competing production authority."
+    },
+    {
+      "system": "Python alternating duel",
+      "path": "python_prototype/duel_mastermind",
+      "responsibility": "Pure tested scoring, encounter definitions, deterministic bots and alternating-turn prototype.",
+      "callers": ["python_prototype/run_prototype.py", "python_prototype/tests", "shared fixture generator"],
+      "disposition": "KEEP",
+      "target": "Reuse scoring/catalogue/bot parity; do not substitute alternating turns for the production real-time lease."
+    },
+    {
+      "system": "duel parity fixtures",
+      "path": "shared_fixtures; python_prototype/tests/generate_fixtures.py; godot_project/sim/fixture_loader.gd",
+      "responsibility": "Cross-language golden scoring/rules cases.",
+      "callers": ["Python tests", "Godot sim tests"],
+      "disposition": "KEEP",
+      "target": "Extend with lease checkpoint/outcome parity where applicable."
+    },
+    {
+      "system": "test runners",
+      "path": "tools/run_godot_tests.sh; tools/run_all_checks.sh; python_prototype/pytest.ini; godot_project/client/tests",
+      "responsibility": "Run parse, simulation and scripted client checks.",
+      "callers": ["developers", "Run Tests.bat"],
+      "disposition": "KEEP",
+      "target": "Wrapped honestly by tools/check.py during T004."
+    },
+    {
+      "system": "patch payloads/backups",
+      "path": "payload; .fixture_bridge_patch_backup*; .village_test_patch_backup; apply_patch.py",
+      "responsibility": "Historical install/backup material for village fixture patches.",
+      "callers": ["manual patch workflow only"],
+      "disposition": "RETIRE",
+      "target": "Keep untouched during migration; exclude as runtime source of truth."
+    }
+  ],
+  "ownership_transition": [
+    {
+      "state_group": "world position and World Turns",
+      "present_owner": "WorldFlow writes Adventure.state.world_node and calls DmbWorldSim.advance_turn on different-node enter",
+      "mutation_save_entrypoints": ["WorldFlow.enter", "WorldFlow._store", "Adventure.save"],
+      "target_owner_boundary": "Python WorldState + Travel/Wait commands through WorldClient",
+      "callers_to_adapt": ["Overworld exits", "WorldFlow", "world flow/loop tests"],
+      "regression_or_difference": "Intentional v0.3 difference: only accepted Travel and distinct Wait advance exactly one turn.",
+      "disconnect_task": "T017-T023",
+      "disconnect_evidence": "G01 tests instrument old advance_turn/save paths and prove they cannot run in migrated production runtime."
+    },
+    {
+      "state_group": "faction state",
+      "present_owner": "DmbFactions/DmbFactionAI under DmbWorldSim",
+      "mutation_save_entrypoints": ["DmbWorldSim.advance_turn", "DmbFactionAI turn actions", "DmbWorldSim.to_dict"],
+      "target_owner_boundary": "Python faction registry; internal commands use faction authority context",
+      "callers_to_adapt": ["world projections", "AI tests", "future training environment"],
+      "regression_or_difference": "Preserve compatible deterministic outcomes; v0.3 staged TurnRunner and identity rules replace ad-hoc order.",
+      "disconnect_task": "T009-T013 core, T039-T047 behaviour, production cutover T017-T024",
+      "disconnect_evidence": "No production call path to GDScript faction mutation; Python replay/checks own authoritative results."
+    },
+    {
+      "state_group": "Catan stocks and carts",
+      "present_owner": "DmbCatanState and DmbCarts serialized by DmbWorldSim",
+      "mutation_save_entrypoints": ["DmbWorldSim.advance_turn", "Catan placement/production methods", "DmbCarts movement/delivery", "WorldFlow._store"],
+      "target_owner_boundary": "Python Catan/construction/logistics services via typed commands and receipts",
+      "callers_to_adapt": ["FactionAI", "node projection", "world tests"],
+      "regression_or_difference": "Preserve conservation/one-edge semantics; keep Catan cargo separate from future Game-Time industry.",
+      "disconnect_task": "T025-T038 after core cutover shell",
+      "disconnect_evidence": "Normal and fixture projections read Python views; GDScript Catan/cart mutators unreachable in production."
+    },
+    {
+      "state_group": "worker/NPC/building identity",
+      "present_owner": "Workers are derived projection dictionaries; fixture NPC IDs/flags live in Adventure and fixture runner",
+      "mutation_save_entrypoints": ["NodeProjection.area_for", "VillageQuestRunner effects", "Adventure.save"],
+      "target_owner_boundary": "Python Person/Building registries and quest service; Godot receives semantic projections",
+      "callers_to_adapt": ["NodeProjection", "VillageCompositeProjection", "Overworld NPC interaction", "dialogue UI"],
+      "regression_or_difference": "Intentional v0.3 difference: stable persistent identities survive saves and eras; animation remains non-authoritative.",
+      "disconnect_task": "T027-T028 and T077-T086",
+      "disconnect_evidence": "Repeated projection/save/era tests retain IDs and no client path creates durable people/buildings."
+    },
+    {
+      "state_group": "quest outcomes",
+      "present_owner": "DmbQuests applies effects to GDScript world while VillageQuestRunner separately mutates fixture/Adventure flags",
+      "mutation_save_entrypoints": ["WorldPlay.run_quest/apply_effects", "VillageQuestRunner choices", "Adventure.set_quest_outcome/save"],
+      "target_owner_boundary": "Single Python QuestService + typed condition/effect dispatcher",
+      "callers_to_adapt": ["WorldPlay", "Overworld village test branches", "DialogueBox choices"],
+      "regression_or_difference": "Converge both paths; preserve compatible branches/content and exactly-once outcomes.",
+      "disconnect_task": "T079-T086",
+      "disconnect_evidence": "Normal and village fixtures invoke the same Python commands; competing runner cannot mutate production state."
+    },
+    {
+      "state_group": "encounter results",
+      "present_owner": "Adventure.pending_battle/last_battle_result plus Godot BattleSim; result immediately saves client state",
+      "mutation_save_entrypoints": ["Adventure.request_battle", "GameBoard", "Adventure.report_battle_result"],
+      "target_owner_boundary": "Python EncounterRegistry/DuelAdapter owns durable eligibility/outcome; Godot owns enumerated leased state",
+      "callers_to_adapt": ["Overworld battle requests", "GameBoard completion", "quest/hazard consequences"],
+      "regression_or_difference": "Preserve tested duel mechanics; checkpoint and result retransmission must apply persistent consequence once.",
+      "disconnect_task": "T018-T019 and T091-T092",
+      "disconnect_evidence": "Lease version/hash and duplicate-result tests; no direct Adventure durable outcome write."
+    },
+    {
+      "state_group": "campaign saves",
+      "present_owner": "Adventure.save writes user://adventure.save v4 including serialized DmbWorldSim",
+      "mutation_save_entrypoints": ["Adventure.save/load_game/delete_save", "WorldFlow._store", "many client story/world callers"],
+      "target_owner_boundary": "Python SaveCoordinator/SaveRepository; Godot contributes only matching leased/local checkpoint",
+      "callers_to_adapt": ["MainMenu", "Overworld", "WorldPlay", "StoryEvents", "GameBoard", "client tests"],
+      "regression_or_difference": "New versioned atomic save with explicit prototype compatibility policy; no elapsed-time catch-up.",
+      "disconnect_task": "T014 core and T019 production coordination",
+      "disconnect_evidence": "G01 save/exit/relaunch/load continuity and instrumentation proving old campaign world-save writer cannot run."
+    }
+  ]
+}
