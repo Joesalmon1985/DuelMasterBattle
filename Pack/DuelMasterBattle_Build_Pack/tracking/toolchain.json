@@ -1,0 +1,77 @@
+{
+  "task_id": "T003",
+  "captured_on": "2026-09-16",
+  "host": {
+    "os": "Linux 6.8.0-139-generic x86_64",
+    "machine": "joe-ThinkPad-T460"
+  },
+  "python": {
+    "executable": "/usr/bin/python3",
+    "version": "3.12.3",
+    "pytest": "7.4.4",
+    "pin": "3.12.3",
+    "python_alias_available": false
+  },
+  "godot": {
+    "executable": "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+    "version": "4.4.1.stable.official.49a5bc7b6",
+    "project_feature": "4.4",
+    "pin": "4.4.1",
+    "resolver": "tools/find_godot.sh",
+    "engine_upgrade_policy": "Separate measured and tested change; do not combine with world-state migration."
+  },
+  "python_dependencies": {
+    "duel_prototype": "No project lock/requirements file; tests run in the host Python environment.",
+    "dialogue_factory_manifest": "tools/dialogue_generation/pyproject.toml",
+    "dialogue_factory_required": {
+      "openpyxl": ">=3.1.0"
+    },
+    "dialogue_factory_dev": {
+      "pytest": ">=7.0"
+    },
+    "missing_on_host": [
+      "openpyxl"
+    ],
+    "optional_missing": [
+      "torch (NN scaffold tests skip without it)",
+      "DMB_NN_SMOKE_TRAIN=1 (optional training smoke is disabled by default)"
+    ]
+  },
+  "export_templates": {
+    "path": "/home/joe/.local/share/godot/export_templates/4.4.1.stable",
+    "installed": true,
+    "windows_x86_64": true,
+    "linux_x86_64": true,
+    "web": true,
+    "android": true,
+    "windows_export_preset": "Windows Desktop",
+    "windows_export_smoke": "Passed on Linux using the 4.4.1 Windows template; this does not certify Windows runtime behaviour."
+  },
+  "packaging_runners": {
+    "wine": "/usr/bin/wine",
+    "powershell": null,
+    "makensis": null,
+    "windows_native_runner": null,
+    "status": "Windows templates and Wine exist; no native Windows verification runner was identified."
+  },
+  "launchers": {
+    "linux_normal": "tools/play.sh",
+    "windows_normal": "Play Duel Master Battle.bat",
+    "windows_village": "Play Village Test Menu.bat",
+    "windows_puzzle": "Play Puzzle Test Menu.bat",
+    "windows_tests": "Run Tests.bat",
+    "pin_alignment": "All executable assumptions updated from 4.5.1 to 4.4.1 under the approved T003 amendment."
+  },
+  "static_checks": {
+    "python_lint": null,
+    "python_typecheck": null,
+    "godot_parse": "res://sim/tools/check_scripts.gd",
+    "sprite_facing": "python3 tools/check_facing.py"
+  },
+  "known_tooling_issues": [
+    "tools/run_all_checks.sh invokes `python`, but this host exposes only `python3`; baseline exit 127.",
+    "Several tools/run_*.sh files lack executable permission, so direct execution returns 126; invoking them with bash works.",
+    "Headless editor import warns that Android build tools use SDK 35.0.0 and cannot connect to adb; import still exits zero.",
+    "Godot sim tests report ObjectDB/resource leaks at exit while returning 31 passed, 0 failed."
+  ]
+}

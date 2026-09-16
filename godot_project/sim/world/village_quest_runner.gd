@@ -135,15 +135,38 @@ static func _entry_key(npc_id: String, node_id: String, variant: String) -> Stri
     return npc_id + "|" + quest_id() + "|" + node_id + "|" + variant
 
 
-static func _entry(npc_id: String, node_id: String, variant: String = "default") -> Dictionary:
+static func _entry_exact(npc_id: String, node_id: String, variant: String) -> Dictionary:
     var key := _entry_key(npc_id, node_id, variant)
     if _dialogue_index.has(key):
         return (_dialogue_index[key] as Dictionary).duplicate(true)
-    if variant != "default":
-        var fallback := _entry_key(npc_id, node_id, "default")
-        if _dialogue_index.has(fallback):
-            return (_dialogue_index[fallback] as Dictionary).duplicate(true)
     return {}
+
+
+## Legacy lookup. A missing non-default variant may still resolve to default.
+## Player-selected replies must use _entry_exact instead.
+static func _entry(npc_id: String, node_id: String, variant: String = "default") -> Dictionary:
+    var exact := _entry_exact(npc_id, node_id, variant)
+    if not exact.is_empty():
+        return exact
+    if variant != "default":
+        return _entry_exact(npc_id, node_id, "default")
+    return {}
+
+
+## Spoken lines for the moment the player talks to the current node, before a
+## choice is resolved. Prefer an authored default/opening entry. A choice node
+## whose speech lives only on branch variants still speaks its existing prompt
+## so the talk is not silent; the variant turns stay on make_choice.
+static func _opening_turns(npc_id: String, node: Dictionary) -> Array:
+    for variant in ["default", "opening"]:
+        var entry := _entry_exact(npc_id, _current_node, variant)
+        var turns := _entry_turns(entry)
+        if not turns.is_empty():
+            return turns
+    var prompt := str(node.get("prompt", node.get("text", "")))
+    if prompt == "":
+        return []
+    return [{"speaker": "npc", "text": prompt}]
 
 
 static func _entry_turns(entry: Dictionary) -> Array:
@@ -155,45 +178,107 @@ static func _entry_turns(entry: Dictionary) -> Array:
     return turns
 
 
-static func _ambient_result(npc_id: String) -> Dictionary:
-    var entry := _entry(npc_id, "__ambient__", "default")
-    if entry.is_empty() and is_complete():
-        entry = _entry(npc_id, "__epilogue__", _epilogue_variant)
+## Spoken lines when this NPC is not advancing the current quest node.
+## Precedence: phase ambient, generic __ambient__, epilogue after the core
+## decisions, then a safe default that is not a branch variant, then a
+## non-empty fixture line for anyone who already has authored dialogue.
+## Never reads dialogue_context. Never reads branch variants.
+static func ambient_turns(npc_id: String) -> Array:
+    if is_complete() or _branch_letter("scene_03") != "":
+        var ending := _epilogue_turns(npc_id)
+        if not ending.is_empty():
+            return ending
+    var phased := _phased_ambient(npc_id)
+    if not phased.is_empty():
+        return phased
+    var generic := _entry_turns(_entry(npc_id, "__ambient__", "default"))
+    if not generic.is_empty():
+        return generic
+    if not is_complete() and _branch_letter("scene_03") == "" and _current_profile == "E17A":
+        var aside := _safe_default_turns(npc_id)
+        if not aside.is_empty():
+            return aside
+    if _speaks_in_fixture(npc_id):
+        return [{"speaker": "npc", "text": "They acknowledge you, but have nothing new to say just now."}]
+    return []
+
+
+## Talk to any villager. Quest and ordinary NPCs share one payload:
+## opening turns plus the responses the player may select.
+static func conversation_for(npc_id: String) -> Dictionary:
+    if _current_quest.is_empty():
+        return {"success": false, "error": "No active village quest", "turns": [], "options": [], "type": "conversation"}
+    if _owns_progression(npc_id):
+        return _progression_conversation(npc_id)
+    return _ambient_conversation(npc_id)
+
+
+## Apply a response the player actually selected. Ambient topics never
+## mutate quest state. Progression replies are exact or they are refused.
+static func respond_to(npc_id: String, choice_index: int) -> Dictionary:
+    var offered := conversation_for(npc_id)
+    if not bool(offered.get("success", false)):
+        return offered
+    var selected := _option_at(offered.get("options", []), choice_index)
+    if selected.is_empty():
+        return {"success": false, "error": "Unknown response", "turns": [], "options": []}
+    var kind := str(selected.get("kind", ""))
+    if kind == "progression" or kind == "inquiry":
+        if not _owns_progression(npc_id):
+            return {"success": false, "error": "That response is not available", "turns": []}
+        var result := make_choice(int(selected.get("index", choice_index)))
+        if bool(result.get("success", false)) and (kind == "inquiry" or bool(result.get("inquiry", false))):
+            result["return_options"] = true
+            result["options"] = conversation_for(npc_id).get("options", [])
+        return result
+    var variant := str(selected.get("id", selected.get("variant", "")))
+    var turns := _topic_turns(npc_id, variant)
+    if _spoken_turns(turns).is_empty():
+        return {"success": false, "error": "That reply is not authored", "turns": [], "options": []}
     return {
         "success": true,
-        "type": "ambient",
-        "turns": _entry_turns(entry),
+        "type": "conversation",
+        "kind": "ambient",
+        "npc": npc_id,
+        "variant": variant,
+        "turns": turns,
+        "options": offered.get("options", []),
+        "return_options": true,
         "current_node": _current_node,
         "objective": objective_text(),
+        "progression": false,
     }
 
 
-## Interact with an NPC using the current quest node. Wrong NPCs remain ambient;
-## they never advance the story merely because the player spoke to them.
-static func interact_npc(npc_id: String) -> Dictionary:
-    if _current_quest.is_empty():
-        return {"success": false, "error": "No active village quest"}
-    if is_complete():
-        return _ambient_result(npc_id)
+static func _owns_progression(npc_id: String) -> bool:
+    if is_complete() or npc_id == "":
+        return false
     var node := current_node()
-    if node.is_empty():
-        return {"success": false, "error": "Current node not found: " + _current_node}
-    var node_type := str(node.get("type", "talk"))
-    if node_type not in ["talk", "choice"]:
-        return _ambient_result(npc_id)
+    if node.is_empty() or bool(node.get("observer", false)):
+        return false
     if str(node.get("npc", "")) != npc_id:
-        return _ambient_result(npc_id)
-    if not is_node_accessible(_current_node):
-        return {"success": false, "type": "locked", "turns": [], "error": "Requirements not met"}
+        return false
+    if str(node.get("type", "")) not in ["talk", "choice"]:
+        return false
+    return is_node_accessible(_current_node)
 
+
+static func _progression_conversation(npc_id: String) -> Dictionary:
+    var node := current_node()
+    var node_type := str(node.get("type", "talk"))
     if node_type == "choice":
-        return current_choice_payload()
-
+        var choice := current_choice_payload()
+        choice["type"] = "conversation"
+        choice["turns"] = _opening_turns(npc_id, node)
+        choice["progression"] = true
+        return choice
     var node_id := _current_node
     var entry := _entry(npc_id, node_id, "default")
     var turns := _entry_turns(entry)
     if turns.is_empty() and str(node.get("text", "")) != "":
         turns.append({"speaker": "npc", "text": str(node["text"])})
+    if turns.is_empty():
+        turns = ambient_turns(npc_id)
     _apply_sets(node.get("sets", []))
     _current_node = str(node.get("next", ""))
     return {
@@ -204,7 +289,236 @@ static func interact_npc(npc_id: String) -> Dictionary:
         "turns": turns,
         "next_node": _current_node,
         "objective": objective_text(),
+        "progression": true,
     }
+
+
+static func _phased_ambient(npc_id: String) -> Array:
+    var scene2 := _branch_letter("scene_02")
+    if scene2 != "":
+        return _first_exact_turns(npc_id, "__ambient__", [
+            "after_scene_2_" + scene2,
+            "after_scene_2",
+        ])
+    var scene1 := _branch_letter("scene_01")
+    if scene1 != "":
+        return _first_exact_turns(npc_id, "__ambient__", [
+            "after_scene_1_" + scene1,
+            "after_scene_1",
+        ])
+    return _turns_exact(npc_id, "__ambient__", "opening")
+
+
+static func _epilogue_turns(npc_id: String) -> Array:
+    var entry := _entry_exact(npc_id, "__epilogue__", _epilogue_variant)
+    if entry.is_empty() and _epilogue_variant != "normal":
+        entry = _entry_exact(npc_id, "__epilogue__", "normal")
+    return _entry_turns(entry)
+
+
+static func _branch_letter(scene_id: String) -> String:
+    if _flags.has(scene_id + "_branch_a"):
+        return "a"
+    if _flags.has(scene_id + "_branch_b"):
+        return "b"
+    return ""
+
+
+static func _speaks_in_fixture(npc_id: String) -> bool:
+    var prefix := npc_id + "|" + quest_id() + "|"
+    for key in _dialogue_index.keys():
+        if str(key).begins_with(prefix):
+            return true
+    return false
+
+
+## Existing default lines that are not a branch or inquiry. E17A stores those
+## on later scene nodes. Other fixtures stay quiet so a future quest default
+## is not spoken early. Never reads branch variants.
+static func _safe_default_turns(npc_id: String) -> Array:
+    var prefix := npc_id + "|" + quest_id() + "|"
+    for key in _dialogue_index.keys():
+        var k := str(key)
+        if not k.begins_with(prefix) or not k.ends_with("|default"):
+            continue
+        var entry: Dictionary = _dialogue_index[key]
+        if str(entry.get("node_id", "")).begins_with("__"):
+            continue
+        var turns := _entry_turns(entry)
+        if not turns.is_empty():
+            return turns
+    return []
+
+
+static func _ambient_result(npc_id: String) -> Dictionary:
+    return _ambient_conversation(npc_id)
+
+
+static func _ambient_conversation(npc_id: String) -> Dictionary:
+    return {
+        "success": true,
+        "type": "conversation",
+        "npc": npc_id,
+        "turns": _conversation_opening(npc_id),
+        "options": _conversation_options(npc_id),
+        "current_node": _current_node,
+        "objective": objective_text(),
+        "progression": false,
+    }
+
+
+## State-aware lines stay the greeting when they exist. Topics are separate,
+## so selecting one does not replay the opening.
+static func _conversation_opening(npc_id: String) -> Array:
+    if is_complete() or _branch_letter("scene_03") != "":
+        var ending := _epilogue_turns(npc_id)
+        if not ending.is_empty():
+            return ending
+    var phased := _phased_ambient(npc_id)
+    if not phased.is_empty():
+        return phased
+    var opening := _turns_exact(npc_id, "__conversation__", "opening")
+    if not opening.is_empty():
+        return opening
+    if not is_complete() and _branch_letter("scene_03") == "" and _current_profile == "E17A":
+        var aside := _safe_default_turns(npc_id)
+        if not aside.is_empty():
+            return aside
+    if _speaks_in_fixture(npc_id):
+        return [{"speaker": "npc", "text": "They acknowledge you, but have nothing new to say just now."}]
+    return []
+
+
+static func _conversation_options(npc_id: String) -> Array:
+    var found: Dictionary = {}
+    var prefix := _entry_key(npc_id, "__conversation__", "")
+    for key in _dialogue_index.keys():
+        var k := str(key)
+        if not k.begins_with(prefix):
+            continue
+        var variant := k.substr(prefix.length())
+        if variant == "" or variant == "opening":
+            continue
+        var entry: Dictionary = _dialogue_index[key]
+        var label := str(entry.get("choice_label", "")).strip_edges()
+        if label == "" or _spoken_turns(_entry_turns(entry)).is_empty():
+            continue
+        found[variant] = label
+    var order: Array = []
+    for preferred in ["situation", "work", "village"]:
+        if found.has(preferred):
+            order.append(preferred)
+    var extras: Array = []
+    for variant in found.keys():
+        if not order.has(variant):
+            extras.append(str(variant))
+    extras.sort()
+    order.append_array(extras)
+    var options: Array = []
+    for i in range(order.size()):
+        var variant := str(order[i])
+        options.append({
+            "index": i,
+            "id": variant,
+            "label": str(found[variant]),
+            "variant": variant,
+            "kind": "ambient",
+        })
+    return options
+
+
+static func _topic_turns(npc_id: String, variant: String) -> Array:
+    if variant == "situation":
+        var phased := _situation_turns(npc_id)
+        if not phased.is_empty():
+            return phased
+    return _turns_exact(npc_id, "__conversation__", variant)
+
+
+## After a beat, the situation topic uses the authored reaction instead of the
+## opening-state line. Opening-phase ambient stays the greeting only.
+static func _situation_turns(npc_id: String) -> Array:
+    var scene2 := _branch_letter("scene_02")
+    if scene2 != "":
+        return _first_exact_turns(npc_id, "__ambient__", [
+            "after_scene_2_" + scene2,
+            "after_scene_2",
+        ])
+    var scene1 := _branch_letter("scene_01")
+    if scene1 != "":
+        return _first_exact_turns(npc_id, "__ambient__", [
+            "after_scene_1_" + scene1,
+            "after_scene_1",
+        ])
+    return []
+
+
+static func _turns_exact(npc_id: String, node_id: String, variant: String) -> Array:
+    return _entry_turns(_entry_exact(npc_id, node_id, variant))
+
+
+static func _first_exact_turns(npc_id: String, node_id: String, variants: Array) -> Array:
+    for variant in variants:
+        var turns := _turns_exact(npc_id, node_id, str(variant))
+        if not turns.is_empty():
+            return turns
+    return []
+
+
+static func _spoken_turns(turns: Array) -> Array:
+    var out: Array = []
+    for raw in turns:
+        if not (raw is Dictionary):
+            continue
+        if str((raw as Dictionary).get("text", "")).strip_edges() == "":
+            continue
+        out.append(raw)
+    return out
+
+
+static func _option_at(options: Array, choice_index: int) -> Dictionary:
+    for raw in options:
+        if raw is Dictionary and int((raw as Dictionary).get("index", -1)) == choice_index:
+            return raw
+    return {}
+
+
+static func _progression_choice_errors() -> Array:
+    var errors: Array = []
+    var nodes: Dictionary = _current_quest.get("nodes", {})
+    for node_id in ["scene_01_a", "scene_02_b", "scene_03_c"]:
+        var node: Dictionary = nodes.get(node_id, {})
+        if node.is_empty():
+            errors.append("missing node %s" % node_id)
+            continue
+        var npc := str(node.get("npc", ""))
+        var prompt := str(node.get("prompt", "")).strip_edges()
+        var options: Array = node.get("options", [])
+        if options.is_empty():
+            errors.append("%s has no choices" % node_id)
+        for option in options:
+            if not (option is Dictionary):
+                errors.append("%s has a malformed choice" % node_id)
+                continue
+            var variant := str(option.get("variant", ""))
+            var entry := _entry_exact(npc, node_id, variant)
+            if entry.is_empty():
+                errors.append("%s/%s is missing its exact dialogue entry" % [node_id, variant])
+                continue
+            if str(entry.get("choice_label", "")).strip_edges() == "":
+                errors.append("%s/%s is missing choice_label" % [node_id, variant])
+            var spoken := _spoken_turns(_entry_turns(entry))
+            if spoken.is_empty():
+                errors.append("%s/%s has no reply turn" % [node_id, variant])
+                continue
+            if bool(option.get("inquiry", false)) and prompt != "" and str(spoken[0].get("text", "")).strip_edges() == prompt:
+                errors.append("%s/%s repeats the opening prompt" % [node_id, variant])
+    return errors
+
+
+## Interact with an NPC. Talking is not the same as advancing the quest.
+static func interact_npc(npc_id: String) -> Dictionary:
+    return conversation_for(npc_id)
 
 
 ## Interact with a semantic anchor for investigate/travel nodes.
@@ -235,6 +549,15 @@ static func interact_anchor(anchor: String) -> Dictionary:
     }
 
 
+## Selected responses never fall back to a node's opening/default entry.
+static func lookup_exact(npc_id: String, node_id: String, variant: String) -> Dictionary:
+    return _entry_exact(npc_id, node_id, variant)
+
+
+static func progression_choice_errors() -> Array:
+    return _progression_choice_errors()
+
+
 static func current_choice_payload() -> Dictionary:
     var node := current_node()
     var node_type := str(node.get("type", ""))
@@ -246,12 +569,15 @@ static func current_choice_payload() -> Dictionary:
     for i in range(options.size()):
         var option: Dictionary = options[i]
         var variant := str(option.get("variant", "default"))
-        var entry := _entry(npc_id, _current_node, variant) if npc_id != "" else {}
+        var entry := _entry_exact(npc_id, _current_node, variant) if npc_id != "" else {}
         var label := str(entry.get("choice_label", option.get("label", option.get("fallback_label", "Option %d" % [i + 1]))))
+        var inquiry := bool(option.get("inquiry", false))
         options_out.append({
             "index": i,
+            "id": variant,
             "label": label,
             "variant": variant,
+            "kind": "inquiry" if inquiry else "progression",
             "branch": str(option.get("branch", "")),
         })
     return {
@@ -276,16 +602,42 @@ static func make_choice(choice_index: int) -> Dictionary:
     if choice_index < 0 or choice_index >= options.size():
         return {"success": false, "error": "Invalid choice index"}
     var option: Dictionary = options[choice_index]
+    var npc_id := str(node.get("npc", ""))
+    var variant := str(option.get("variant", "default"))
+    var entry := _entry_exact(npc_id, _current_node, variant) if npc_id != "" else {}
+    var turns := _spoken_turns(_entry_turns(entry))
+    if turns.is_empty():
+        return {
+            "success": false,
+            "error": "Missing exact reply for %s/%s" % [_current_node, variant],
+            "turns": [],
+            "node_id": _current_node,
+            "variant": variant,
+        }
+    if bool(option.get("inquiry", false)):
+        return {
+            "success": true,
+            "inquiry": true,
+            "return_options": true,
+            "type": "inquiry",
+            "node_id": _current_node,
+            "variant": variant,
+            "turns": turns,
+            "next_node": _current_node,
+            "options": current_choice_payload().get("options", []),
+            "objective": objective_text(),
+        }
     _apply_sets(option.get("sets", []))
     var ending_hint := str(option.get("ending_hint", ""))
     if ending_hint in ["normal", "tragic"]:
         _epilogue_variant = ending_hint
     var old_node := _current_node
-    var npc_id := str(node.get("npc", ""))
-    var variant := str(option.get("variant", "default"))
-    var entry := _entry(npc_id, old_node, variant) if npc_id != "" else {}
-    var turns := _entry_turns(entry)
     _current_node = str(option.get("next", ""))
+    # Supporting talk nodes stay in the graph, but they are not a checklist.
+    # Once the core choices are resolved, settle the existing conclude so
+    # later conversation can use epilogue lines. The returned choice turns
+    # are already captured and are not replaced by the conclude sentence.
+    _settle_observer_chain()
     return {
         "success": true,
         "type": node_type,
@@ -299,6 +651,20 @@ static func make_choice(choice_index: int) -> Dictionary:
 
 ## Execute a non-interactive current node. Overworld uses this to collapse branch
 ## and conclude plumbing after a player interaction without creating fake map UI.
+static func _settle_observer_chain() -> void:
+    if is_complete():
+        return
+    var node := current_node()
+    if not bool(node.get("observer", false)):
+        return
+    if _branch_letter("scene_03") == "":
+        return
+    if not _current_quest.get("nodes", {}).has("complete_story"):
+        return
+    _current_node = "complete_story"
+    execute_current()
+
+
 static func execute_current() -> Dictionary:
     var node := current_node()
     if node.is_empty():

@@ -1,0 +1,144 @@
+{
+  "task_id": "T003",
+  "revision_before_toolchain_changes": "d85cddacc1e3d027d952827fb0eeefd50462432f",
+  "tool_versions": {
+    "python": "3.12.3",
+    "pytest": "7.4.4",
+    "godot": "4.4.1.stable.official.49a5bc7b6"
+  },
+  "passed": [
+    {
+      "command": "cd python_prototype && python3 -m pytest -q",
+      "exit_code": 0,
+      "counts": {
+        "passed": 54,
+        "skipped": 3
+      },
+      "duration_seconds": 48.13,
+      "notes": "Skips are optional torch/NN training scaffold checks, not hidden required world tests."
+    },
+    {
+      "command": "tools/run_godot_tests.sh",
+      "exit_code": 0,
+      "counts": {
+        "modules_passed": 31,
+        "modules_failed": 0
+      },
+      "duration_seconds": 390.075,
+      "notes": "Includes script parse, duel, Catan, carts, infection, units, world, projection, E17A, semantic, dungeon, puzzle and quest modules. Reports ObjectDB/resource leaks at exit."
+    },
+    {
+      "command": "godot --headless --editor --path godot_project --quit",
+      "exit_code": 0,
+      "result": "Project import completed",
+      "notes": "Warned about Android SDK 35 fallback and unavailable adb."
+    },
+    {
+      "command": "godot --headless --path godot_project --quit-after 3",
+      "exit_code": 0,
+      "result": "Normal main scene launched and exited"
+    },
+    {
+      "command": "bash tools/run_adventure_flow.sh",
+      "exit_code": 0,
+      "result": "ADVENTURE FLOW: ALL PASSED",
+      "coverage": "Existing campaign/save/load and adventure behaviour"
+    },
+    {
+      "command": "tools/run_world_flow.sh",
+      "exit_code": 0,
+      "result": "WORLD FLOW: ALL PASSED",
+      "coverage": "Existing node travel, world serialization and restore behaviour"
+    },
+    {
+      "command": "bash tools/run_world_loop.sh",
+      "exit_code": 0,
+      "result": "WORLD LOOP: ALL PASSED",
+      "coverage": "Existing integrated production world/quest loop"
+    },
+    {
+      "command": "godot --headless --path godot_project --script res://client/tests/run_village_test_mode.gd; run_e17a_village_conversation.gd; run_e17a_dialogue.gd",
+      "exit_code": 0,
+      "result": "Village test mode, E17A village conversation and dialogue passed"
+    },
+    {
+      "command": "godot --headless --path godot_project --script res://client/tests/run_e17a_choice_conversations.gd; run_e17a_semantic_conversation.gd",
+      "exit_code": 0,
+      "result": "E17A choice and semantic conversation checks passed"
+    },
+    {
+      "command": "godot --headless --path godot_project --script res://validate_projection_e36b.gd",
+      "exit_code": 0,
+      "result": "E36B projection valid (72x58, 28 entities)"
+    },
+    {
+      "command": "godot --headless --path godot_project --script res://client/tests/run_puzzle_walk.gd; run_puzzle_riddle.gd; run_dialogue.gd",
+      "exit_code": 0,
+      "result": "Puzzle walk, puzzle riddle and dialogue checks passed"
+    },
+    {
+      "command": "bash tools/run_godot_ui_smoke.sh",
+      "exit_code": 0,
+      "result": "UI SMOKE: ALL PASSED"
+    },
+    {
+      "command": "godot --headless --path godot_project --export-debug \"Windows Desktop\" /tmp/DuelMasterBattle-T003.exe",
+      "exit_code": 0,
+      "result": "Non-empty Windows x86_64 debug export produced with 4.4.1 templates",
+      "notes": "Export completed with warnings; Linux export smoke is not Windows runtime certification."
+    }
+  ],
+  "failed_or_unavailable": [
+    {
+      "command": "python3 -m pytest -q tools/dialogue_generation/tests",
+      "exit_code": 2,
+      "result": "Collection interrupted with 3 import errors",
+      "cause": "Declared dependency openpyxl>=3.1.0 is not installed in the host environment.",
+      "classification": "PRE_EXISTING_ENVIRONMENT_FAILURE"
+    },
+    {
+      "command": "python3 tools/check_facing.py",
+      "exit_code": 1,
+      "counts": {
+        "pairs_checked": 48,
+        "wrong": 14
+      },
+      "result": "Worker/farmer/matron/miner/reaper/shepherd/woodcutter left/right sprite pairs are not exact mirrors.",
+      "classification": "PRE_EXISTING_ASSET_FAILURE"
+    },
+    {
+      "command": "bash tools/run_all_checks.sh",
+      "exit_code": 127,
+      "result": "Stops at line 6 because command `python` is unavailable.",
+      "classification": "PRE_EXISTING_RUNNER_FAILURE"
+    },
+    {
+      "command": "tools/run_adventure_flow.sh",
+      "exit_code": 126,
+      "result": "Permission denied; the same script passes when invoked with bash.",
+      "classification": "PRE_EXISTING_RUNNER_PERMISSION"
+    }
+  ],
+  "exists_now": {
+    "python_tests": "python_prototype/tests via python3 -m pytest",
+    "targeted_python_tests": "python3 -m pytest <test path or node id>",
+    "dialogue_factory_tests": "tools/dialogue_generation/tests; currently blocked by missing openpyxl",
+    "godot_import": "godot --headless --editor --path godot_project --quit",
+    "godot_parse_and_sim": "tools/run_godot_tests.sh",
+    "scripted_scene_tests": "tools/run_*.sh and godot --headless --script res://client/tests/<runner>.gd",
+    "normal_launch": "tools/play.sh / Play Duel Master Battle.bat",
+    "village_launch": "Play Village Test Menu.bat",
+    "puzzle_launch": "Play Puzzle Test Menu.bat"
+  },
+  "must_be_created_by_T004": {
+    "task_gate_wrapper": "python3 tools/check.py --task/--gate",
+    "scenario_wrapper": "python3 tools/run_scenario.py --fixture/--record",
+    "honest_required_check_registry": "Unknown/missing/empty/skipped/subprocess failure returns nonzero"
+  },
+  "behavioural_baseline": [
+    "Current world travel advances DmbWorldSim on entry to a different node and serializes it into Adventure v4.",
+    "Current village generated path uses DmbWorldSim/NodeProjection; authored E17A/E36B uses separate fixture projection and quest code.",
+    "Current production and fixture Overworld, E17A conversations, puzzles and dialogue are executable under Godot 4.4.1.",
+    "These observations preserve migration regressions; intentional v0.3 Travel/Wait, Python ownership and save changes are separately specified and need not reproduce obsolete ownership."
+  ]
+}

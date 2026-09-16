@@ -5,10 +5,10 @@ if [[ -n "${GODOT:-}" && -x "$GODOT" ]]; then
   return 0 2>/dev/null || exit 0
 fi
 CANDIDATES=(
-  "$HOME/Downloads/Godot_v4.5.1-stable_win64.exe/Godot_v4.5.1-stable_win64_console.exe"
-  "$HOME/Downloads/Godot_v4.5.1-stable_win64_console.exe"
   "$HOME/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64"
-  "/c/Program Files/Godot/Godot_v4.5.1-stable_win64_console.exe"
+  "$HOME/Downloads/Godot_v4.4.1-stable_win64.exe/Godot_v4.4.1-stable_win64_console.exe"
+  "$HOME/Downloads/Godot_v4.4.1-stable_win64_console.exe"
+  "/c/Program Files/Godot/Godot_v4.4.1-stable_win64_console.exe"
   "/Applications/Godot.app/Contents/MacOS/Godot"
 )
 for c in "${CANDIDATES[@]}"; do

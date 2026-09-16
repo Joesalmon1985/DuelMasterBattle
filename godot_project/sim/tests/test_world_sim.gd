@@ -123,6 +123,13 @@ func _test_determinism_and_round_trip() -> void:
 	var c := DmbWorldSim.from_dict(d)
 	assert_eq(c.snapshot(), a.snapshot(), "round trip preserves the world")
 	assert_eq(c.turn, 30, "turn restored")
+	# The settlement layer is a pure function of restored state: profiles and
+	# projected areas match across the round trip and across same-seed worlds.
+	for k in a.catan.settlements:
+		var nid := int(k)
+		assert_eq(str(DmbSettlementProfile.describe(c, nid)), str(DmbSettlementProfile.describe(a, nid)), "restored profile matches at %d" % nid)
+		assert_eq(str(DmbSettlementProfile.describe(b, nid)), str(DmbSettlementProfile.describe(a, nid)), "same-seed profile matches at %d" % nid)
+		assert_eq(str(DmbNodeProjection.area_for(c, nid)), str(DmbNodeProjection.area_for(a, nid)), "restored projection matches at %d" % nid)
 	var ea := a.advance_turn()
 	var ec := c.advance_turn()
 	assert_eq(a.snapshot(), c.snapshot(), "restored world continues identically")

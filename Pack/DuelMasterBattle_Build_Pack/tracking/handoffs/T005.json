@@ -1,0 +1,60 @@
+{
+  "task_id": "T005",
+  "status": "DONE",
+  "commit": "3268931f7d90fee51293726359331521f4388dfd",
+  "files": [
+    "godot_project/content/manifests/development.json",
+    "godot_project/content/manifests/mvp.json",
+    "godot_project/content/manifests/full_baseline.json",
+    "godot_project/content/manifests/sources.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/decisions.md",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/rule_map.json",
+    "tests/test_manifests.py",
+    "tools/check.py",
+    "tests/test_check_tool.py"
+  ],
+  "public_contracts": [
+    "Development, integrated MVP and full baseline profiles are distinct and make no false completion claim",
+    "C00 I01-I19 and source precedence are registered",
+    "All 34 invariants have planned contract/task/proof owners",
+    "Source manifests preserve the original GDD, workbook and normalized reference hashes"
+  ],
+  "source_rules": [
+    "C00 scope, source precedence and I01-I19",
+    "GDD v0.3 section 9 invariant ownership",
+    "EXECUTION_AMENDMENTS staged cutover and 4.4.1 pin"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T005",
+      "exit_code": 0,
+      "result": "4 manifest/rule-map tests passed"
+    },
+    {
+      "command": "python3 -m pytest -q tests/test_check_tool.py tests/test_manifests.py",
+      "exit_code": 0,
+      "result": "12 passed"
+    },
+    {
+      "command": "godot --headless --editor --path godot_project --quit",
+      "exit_code": 0,
+      "result": "Manifest resources imported under Godot 4.4.1"
+    }
+  ],
+  "repair_attempts": [
+    {
+      "attempt": 1,
+      "failure": "The generic fail-closed self-test still used T005 after T005 gained real checks.",
+      "repair": "Advance the sentinel to the next unimplemented task T006.",
+      "result": "Wrapper and manifest suites passed."
+    }
+  ],
+  "fixture_hashes": {
+    "GDD_v0.3.md": "e958798c50d372d90f7c4f7f74a1d33152ceca54961f3a2e5369d8278a0163a2",
+    "cross_terrain_resource_recipes.xlsx": "fb47ee8abd8ed1dd04615aa30c9988194644ad0704e0928f961092a5b8c18672",
+    "resources.json": "bdba6a7dcbc877c5c896992f922d55e0bed8af6081d15abd9cfb01c6b6d78367",
+    "recipes.json": "e37fa7b1f7fdfa56cfae3016d8793fe2183a07296c7a8c09c68937b2899882b0"
+  },
+  "defects": [],
+  "next_task": "T006"
+}

@@ -1,0 +1,40 @@
+{
+  "manifest_version": 1,
+  "profile_id": "full_baseline",
+  "status": "TARGET_NOT_YET_IMPLEMENTED",
+  "acceptance_gate": "G10",
+  "required": {
+    "starting_factions": 6,
+    "eras": [
+      "Prehistoric",
+      "Historic",
+      "Modern",
+      "Future"
+    ],
+    "repeatable_future_to_prehistoric_cycles": true,
+    "processor_definitions": 240,
+    "catastrophe_types": 5,
+    "quest_families": 8,
+    "qualified_distinct_neural_policies": 3,
+    "windows_x64_offline_bundle": true,
+    "runtime_internet": false,
+    "runtime_llm": false
+  },
+  "content_floors": {
+    "quest_templates": 16,
+    "dungeon_layouts": 8,
+    "recurring_rival_profiles": 4,
+    "technologies": 24,
+    "era_art_audio_families": 4,
+    "reviewed_dialogue_lines": 1200
+  },
+  "deferred": [
+    "Utopia content",
+    "additional culture packages",
+    "mobile and web release exports",
+    "multiplayer",
+    "full voice acting",
+    "very large narrative/profile expansion"
+  ],
+  "completion_claim": false
+}

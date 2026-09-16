@@ -56,7 +56,7 @@ func dungeon_area(id: String) -> Dictionary:
 	if d.is_empty():
 		return {}
 	var node_area := DmbNodeProjection.area_id(int(d["node"]))
-	return DmbDungeonMap.area_for(d, _adv.state.get("puzzles", {}), node_area, [DmbNodeProjection.DUNGEON_DOOR[0], DmbNodeProjection.DUNGEON_DOOR[1] + 1])
+	return DmbDungeonMap.area_for(d, _adv.state.get("puzzles", {}), node_area, DmbNodeProjection.dungeon_arrive(_flow.sim, int(d["node"])))
 
 
 ## The world-node door: offer to go in.

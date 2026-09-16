@@ -1,0 +1,4643 @@
+[
+  {
+    "id": "T001",
+    "phase": "P00 \u2014 Ground the actual project",
+    "title": "Identify checkout and protect the baseline",
+    "contract": "C00_scope",
+    "source_sections": [
+      188,
+      192,
+      231
+    ],
+    "paths": [
+      "tracking/repository_map.json",
+      "tracking/baseline.md"
+    ],
+    "work": "Record actual checkout path, branch, full commit, dirty files and applicable repository instructions. Inventory existing Godot/Python entrypoints, tests, assets, fixtures and save formats. Preserve user edits. If the checkout is absent, request its path/repository and stop code work; do not guess a remembered remote.",
+    "checks": "Evidence lists actual commands and files. Baseline commit is resolvable; user changes remain intact. Missing access is BLOCKED, never a fictional audit.",
+    "file": "tasks/T001.md",
+    "depends_on": [],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T002",
+    "phase": "P00 \u2014 Ground the actual project",
+    "title": "Classify reuse and reconcile existing duel rules",
+    "contract": "C00_scope",
+    "source_sections": [
+      58,
+      60,
+      188,
+      231
+    ],
+    "paths": [
+      "tracking/reuse_inventory.json",
+      "tracking/duel_rules.md"
+    ],
+    "work": "Classify every existing world, economy, cart, faction, village, quest, dialogue, puzzle and duel entrypoint KEEP/ADAPT/REPLACE/RETIRE with its actual responsibility and callers. Identify competing truth owners. Capture actual Mastermind secrets, timing, feedback, defeat and save behaviour; choose compatible retention or C10 fallback with evidence.",
+    "checks": "Every discovered active entrypoint has disposition and migration target. No competing quest engine is designated KEEP. Existing duel behaviour is recorded from files/tests, not memory.",
+    "file": "tasks/T002.md",
+    "depends_on": [
+      "T001"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T003",
+    "phase": "P00 \u2014 Ground the actual project",
+    "title": "Pin tools and run existing checks",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      190,
+      192,
+      223
+    ],
+    "paths": [
+      "tracking/toolchain.json",
+      "tracking/baseline_tests.json"
+    ],
+    "work": "Record exact Python, Godot, test runner, export template and operating-system versions. Run existing meaningful tests and headless import where available. Record pre-existing failures separately. Check Windows packaging runner availability without requiring packaging now.",
+    "checks": "Actual commands, exit codes and nonzero discovered test counts are retained. Missing Godot/runner is explicit. No passing status is assigned to unexecuted checks.",
+    "file": "tasks/T003.md",
+    "depends_on": [
+      "T002"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T004",
+    "phase": "P00 \u2014 Ground the actual project",
+    "title": "Establish mapped layout and verification entrypoints",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      187,
+      228,
+      231
+    ],
+    "paths": [
+      "tools/check.py",
+      "tools/run_scenario.py",
+      "tracking/repository_map.json",
+      "tests/"
+    ],
+    "work": "Map logical sim/dmb, client, content, tools and tests paths to the checkout. Implement or adapt the documented task/gate/scenario wrappers around existing test tools. A gate must fail if its required tests are missing or skipped. Keep the main runtime entrypoint unified.",
+    "checks": "A deliberately failing test returns nonzero; an empty required suite returns nonzero; a known passing baseline is reported with commit/tool versions. Existing checks are still callable.",
+    "file": "tasks/T004.md",
+    "depends_on": [
+      "T003"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T005",
+    "phase": "P00 \u2014 Ground the actual project",
+    "title": "Register implementation defaults and versioned manifests",
+    "contract": "C00_scope",
+    "source_sections": [
+      9,
+      193,
+      196
+    ],
+    "paths": [
+      "content/manifests/",
+      "tracking/decisions.md",
+      "tracking/rule_map.json"
+    ],
+    "work": "Record C00 I01\u2013I19 and source precedence, mapping all 34 GDD invariants to planned owners. Create development feature manifests for staged builds without claiming disabled features are complete. Preserve GDD and recipe source hashes.",
+    "checks": "Manifest distinguishes prototype/MVP/full baseline; no permanent ten-recipe culture limit, runtime LLM or wizard HP is added. All source hashes match included originals.",
+    "file": "tasks/T005.md",
+    "depends_on": [
+      "T004"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T006",
+    "phase": "P00 \u2014 Ground the actual project",
+    "title": "Create executable progress and failure receipts",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      223,
+      231
+    ],
+    "paths": [
+      "tracking/progress.json",
+      "tracking/handoffs/",
+      "tracking/defects.json",
+      "tools/check.py"
+    ],
+    "work": "Adopt the pack task/gate schema. A receipt stores actual files, contracts, commands, results, commit and next task. Resume chooses first unmet dependency and respects manual gate status. Add a bounded three-attempt failure record and no-test-skipping rule.",
+    "checks": "A completed task lacking evidence is rejected. A required manual gate remains pending until Joe records PASS. Resume after a failed task selects that task, not the next feature.",
+    "file": "tasks/T006.md",
+    "depends_on": [
+      "T005"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T007",
+    "phase": "P01 \u2014 Authoritative core and persistent state",
+    "title": "Implement typed identity and deterministic allocation",
+    "contract": "C01_core_state",
+    "source_sections": [
+      43,
+      190,
+      191
+    ],
+    "paths": [
+      "sim/dmb/core/ids.py",
+      "sim/dmb/core/types.py"
+    ],
+    "work": "Implement validated ID types and saved monotonic IdAllocator.new(kind). Separate instance, definition, cause, command, effect and lease IDs. Add canonical wire integer/decimal-string handling.",
+    "checks": "test_id_resume: creation after reload never repeats; test_foreign_world_id rejected; test_large_counter_roundtrip preserves values beyond JSON exact integer range.",
+    "file": "tasks/T007.md",
+    "depends_on": [
+      "T006"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T008",
+    "phase": "P01 \u2014 Authoritative core and persistent state",
+    "title": "Implement immutable definitions and catalogue validation",
+    "contract": "C01_core_state",
+    "source_sections": [
+      193,
+      196
+    ],
+    "paths": [
+      "sim/dmb/content/catalog.py",
+      "content/schemas/"
+    ],
+    "work": "Load typed definitions through DefinitionCatalog; validate kinds, references, quantities and enum spellings. Calculate canonical manifest hashes. Keep mutable instances outside definitions.",
+    "checks": "Unknown reference, duplicate definition ID and negative cost fail clearly; ordering JSON keys leaves hash stable; changing a rate changes manifest hash.",
+    "file": "tasks/T008.md",
+    "depends_on": [
+      "T007"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T009",
+    "phase": "P01 \u2014 Authoritative core and persistent state",
+    "title": "Implement WorldState registries and read views",
+    "contract": "C01_core_state",
+    "source_sections": [
+      41,
+      43,
+      188,
+      194
+    ],
+    "paths": [
+      "sim/dmb/core/state.py",
+      "sim/dmb/core/views.py"
+    ],
+    "work": "Create the registry records in C01 and immutable scoped views. Add global reference/owner/status validation and tombstones. Empty registries are allowed in an early feature manifest, not silently substituted for required finished systems.",
+    "checks": "Read-view mutation cannot modify state; dangling live reference fails; retired referenced person retains identity; definition and instance IDs cannot be interchanged.",
+    "file": "tasks/T009.md",
+    "depends_on": [
+      "T008"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T010",
+    "phase": "P01 \u2014 Authoritative core and persistent state",
+    "title": "Implement gameplay RNG streams and replay inputs",
+    "contract": "C01_core_state",
+    "source_sections": [
+      190
+    ],
+    "paths": [
+      "sim/dmb/core/rng.py",
+      "sim/dmb/core/replay.py"
+    ],
+    "work": "Use a named versioned deterministic PRNG with exact saved states for board, dice, hazards, binding, policy and encounters. Replay records commands, clock advances, manifests and actual policy selections. Ambient visual RNG is separate.",
+    "checks": "Same stream state resumes identical draws; adding an ambient animation changes no gameplay draw; differing dictionary insertion order produces the same ordered replay events.",
+    "file": "tasks/T010.md",
+    "depends_on": [
+      "T009"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T011",
+    "phase": "P01 \u2014 Authoritative core and persistent state",
+    "title": "Implement transactions, commands and event receipts",
+    "contract": "C01_core_state",
+    "source_sections": [
+      9,
+      145,
+      189,
+      192
+    ],
+    "paths": [
+      "sim/dmb/core/transaction.py",
+      "sim/dmb/core/commands.py",
+      "sim/dmb/core/events.py",
+      "sim/dmb/core/world.py"
+    ],
+    "work": "Create WorldSim.dispatch, envelope validation, single-writer transactions and post-commit event batches. Receipt lookup precedes stale-version rejection; same ID with changed payload is ID_REUSE. No arbitrary patch command.",
+    "checks": "Rejected command preserves state/RNG/next ID; duplicated successful command returns original result without mutation; injected handler error aborts all provisional writes.",
+    "file": "tasks/T011.md",
+    "depends_on": [
+      "T010"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T012",
+    "phase": "P01 \u2014 Authoritative core and persistent state",
+    "title": "Implement clock tokens and fixed accounting boundaries",
+    "contract": "C03_time",
+    "source_sections": [
+      31,
+      33,
+      190
+    ],
+    "paths": [
+      "sim/dmb/time/clock.py",
+      "sim/dmb/core/world.py"
+    ],
+    "work": "Implement integer Game Time/residual, unique clock sequences and scoped pause tokens. Support 100 ms world boundaries and 50 ms encounter alignment. No artificial time for Wait, no focus-loss catch-up.",
+    "checks": "60000 ms in varied chunks yields 600 quanta; two pause tokens require both releases; duplicate advance adds zero time; closed application duration adds no time.",
+    "file": "tasks/T012.md",
+    "depends_on": [
+      "T011"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T013",
+    "phase": "P01 \u2014 Authoritative core and persistent state",
+    "title": "Implement turn roster and immediate outcome interrupts",
+    "contract": "C03_time",
+    "source_sections": [
+      31,
+      104,
+      189
+    ],
+    "paths": [
+      "sim/dmb/time/turns.py",
+      "sim/dmb/time/runner.py",
+      "sim/dmb/core/outcomes.py"
+    ],
+    "work": "Implement rotating captured roster, stage order and explicit era/terminal interrupts. Domain handlers not yet built are registered as unavailable, not fake-success operations. Add pure scripted stage tests with committed outcome events.",
+    "checks": "A/B gets one seat each; removed B is skipped; an interrupt after a scoring action prevents subsequent stages; unfinished round produces no draft.",
+    "file": "tasks/T013.md",
+    "depends_on": [
+      "T012"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T014",
+    "phase": "P01 \u2014 Authoritative core and persistent state",
+    "title": "Implement versioned save repository and migration boundary",
+    "contract": "C02_bridge_save",
+    "source_sections": [
+      191
+    ],
+    "paths": [
+      "sim/dmb/persistence/repository.py",
+      "sim/dmb/persistence/schema.py"
+    ],
+    "work": "Serialize every current authoritative registry, RNG, receipts and clock residual. Validate candidate load before swapping state; atomic replace with previous-good backup. Reject prototype saves without deleting them. Leave encounter snapshot field explicitly versioned for later bridge task.",
+    "checks": "Save/load continuation has identical canonical state; corrupt candidate never replaces good slot/backup; unsupported source save remains untouched; IDs and RNG resume exactly.",
+    "file": "tasks/T014.md",
+    "depends_on": [
+      "T013"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T015",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Implement framed message codecs",
+    "contract": "C02_bridge_save",
+    "source_sections": [
+      192
+    ],
+    "paths": [
+      "sim/dmb/bridge/codec.py",
+      "client/bridge/frame_codec.gd"
+    ],
+    "work": "Implement 4-byte big-endian length framing, UTF-8 JSON buffering, bounded payloads and schema errors on both sides. Do not assume read equals message.",
+    "checks": "Shared fixtures cover split header, split multibyte text, two frames per read, malformed JSON and oversize frame. Both codecs decode the same valid envelopes.",
+    "file": "tasks/T015.md",
+    "depends_on": [
+      "T014"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T016",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Implement loopback server and authenticated handshake",
+    "contract": "C02_bridge_save",
+    "source_sections": [
+      188,
+      192
+    ],
+    "paths": [
+      "sim/dmb/bridge/server.py",
+      "sim/dmb/bridge/protocol.py"
+    ],
+    "work": "Bind 127.0.0.1 with per-launch token, protocol/content checks and one writer queue. Expose handshake, read views and existing core commands. Keep token out of logs and save payload.",
+    "checks": "Wrong token/version rejects; one accepted command increments version once; server binds no public interface; lost acknowledgement retry returns the prior receipt.",
+    "file": "tasks/T016.md",
+    "depends_on": [
+      "T015"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T017",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Implement sidecar launcher and WorldClient",
+    "contract": "C02_bridge_save",
+    "source_sections": [
+      192
+    ],
+    "paths": [
+      "client/bridge/sidecar_launcher.gd",
+      "client/bridge/world_client.gd",
+      "client/main.tscn"
+    ],
+    "work": "Launch actual mapped Python entrypoint for development; resolve paths safely without shell interpolation. Capture endpoint, handshake, command queue, timeout and orderly child shutdown. Package-relative executable branch can be completed at release.",
+    "checks": "Godot smoke launches sidecar, gets a view and quits with no orphan process. Paths containing spaces work. Startup failure produces a visible paused error.",
+    "file": "tasks/T017.md",
+    "depends_on": [
+      "T016"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T018",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Implement lease registry and checkpoint validation",
+    "contract": "C02_bridge_save",
+    "source_sections": [
+      188,
+      191
+    ],
+    "paths": [
+      "sim/dmb/encounters/registry.py",
+      "client/encounters/encounter_host.gd"
+    ],
+    "work": "Implement PREPARED/ACTIVE/FREEZING/CLOSED states, entity exclusivity, checkpoint sequence/hash/version and transfer handshake. Use a minimal real counter mechanism fixture to test ownership, not a second battle engine.",
+    "checks": "Two active leases cannot own one entity; stale/duplicate delta cannot overwrite state; close returns authority once; failed preparation leaves original owner intact.",
+    "file": "tasks/T018.md",
+    "depends_on": [
+      "T017"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T019",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Coordinate saves and bounded bridge recovery",
+    "contract": "C02_bridge_save",
+    "source_sections": [
+      191,
+      192
+    ],
+    "paths": [
+      "sim/dmb/persistence/coordinator.py",
+      "client/bridge/world_client.gd",
+      "client/encounters/encounter_host.gd"
+    ],
+    "work": "Add shared pause/freeze barrier, checkpoint persistence, reconnect from last coordinated save and bounded restart. Save actual rollback time. Do not reapply unacknowledged input speculatively.",
+    "checks": "Terminate sidecar before/after acknowledgement and save barrier: restore a consistent pair of states with no added time/effects. A stale client cannot resume an old lease.",
+    "file": "tasks/T019.md",
+    "depends_on": [
+      "T018"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T020",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Build pointer-driven local movement and exits",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      20,
+      21,
+      23,
+      28,
+      173
+    ],
+    "paths": [
+      "client/world/player_controller.gd",
+      "client/world/local_area.tscn",
+      "client/ui/context_actions.gd"
+    ],
+    "work": "Create a minimal local area using authoritative fixture IDs. Move with one pointer, observe outside range, interact inside range and expose adjacent Travel/Wait controls. Strategic exit waits for acknowledgement; held press sends one Wait.",
+    "checks": "Headless/scripted scene checks one accepted exit command and no speculative destination mutation. Manual input route includes every basic action without right-click or keyboard.",
+    "file": "tasks/T020.md",
+    "depends_on": [
+      "T019"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T021",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Implement semantic views and hidden-information filtering",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      34,
+      35,
+      36,
+      124,
+      169
+    ],
+    "paths": [
+      "sim/dmb/narrative/knowledge.py",
+      "sim/dmb/narrative/semantic.py",
+      "client/ui/semantic_labels.gd"
+    ],
+    "work": "Introduce KnowledgeFact and SemanticResolver over real fixture entities. Use view tokens for current visibility/range; unknown identity stays selectable. Developer views are separately scoped.",
+    "checks": "Unknown person label omits name; observation can reveal a permitted role; remote/invisible magic target token cannot be minted; debug-only fields never reach player projection.",
+    "file": "tasks/T021.md",
+    "depends_on": [
+      "T020"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T022",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Wire UI pause, focus and clock scheduling",
+    "contract": "C03_time",
+    "source_sections": [
+      31,
+      33,
+      168
+    ],
+    "paths": [
+      "client/core/clock_driver.gd",
+      "client/ui/pause_screens.gd",
+      "sim/dmb/core/world.py"
+    ],
+    "work": "Connect focus, formal choice and menu pause tokens to Game Time; retain ambient movement while unpaused. Implement fixed step accumulator and bounded pending mutation queue. Do not award backlog after focus return.",
+    "checks": "Open two screens then close one: still paused. Sixty-second focus loss advances zero time. Different render frame patterns report identical accounting advances.",
+    "file": "tasks/T022.md",
+    "depends_on": [
+      "T021"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T023",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Create the normal-runtime fixture loader and launch panel",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      134,
+      197,
+      198,
+      223
+    ],
+    "paths": [
+      "tools/run_scenario.py",
+      "sim/dmb/testing/fixtures.py",
+      "client/debug/scenario_panel.gd"
+    ],
+    "work": "Load fixture initial state through the same schema/WorldSim and client projection. Expose seed, manifest, reset and replay output. Mark developer setup commands in traces. No alternate village/quest runtime.",
+    "checks": "FX-CLOCK loads through production entrypoint, records inputs and reproduces its state. Invalid fixture references fail before play. Release mode hides developer setup controls.",
+    "file": "tasks/T023.md",
+    "depends_on": [
+      "T022"
+    ],
+    "required_gates": [],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T024",
+    "phase": "P02 \u2014 Bridge and first playable shell",
+    "title": "Prepare the first playable bridge checkpoint",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      213,
+      223,
+      226
+    ],
+    "paths": [
+      "tests/integration/test_bridge_clock.py",
+      "tracking/gates/G01/"
+    ],
+    "work": "Run end-to-end startup/movement/Wait/pause/save/recovery smoke and prepare G01 playable instructions/seed/build. Include actual code revision and failures. Stop at G01 for Joe after automated checks.",
+    "checks": "FX-CLOCK assertions pass across Python and Godot; no unexecuted check is labelled passed. G01 remains AWAITING_HUMAN and T025 is blocked until Joe accepts.",
+    "file": "tasks/T024.md",
+    "depends_on": [
+      "T023"
+    ],
+    "required_gates": [],
+    "manual_gate_after": "G01",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T025",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Build exact hex-node-edge topology",
+    "contract": "C04_board_building",
+    "source_sections": [
+      24,
+      26,
+      27
+    ],
+    "paths": [
+      "sim/dmb/world/board.py"
+    ],
+    "work": "Implement integer shared corners, 19 axial hexes, canonical node/edge IDs and reciprocal graph queries. Board stores geography, not political ownership.",
+    "checks": "Radius-2 board has 19 hexes, 54 nodes, 72 edges; node degree/touching-hex limits hold; shortest paths and reciprocal adjacency agree.",
+    "file": "tasks/T025.md",
+    "depends_on": [
+      "T024"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T026",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Generate validated faction starts and immutable geography",
+    "contract": "C04_board_building",
+    "source_sections": [
+      26,
+      135,
+      217,
+      219
+    ],
+    "paths": [
+      "sim/dmb/world/generation.py",
+      "content/fixtures/boards/"
+    ],
+    "work": "Seed terrain/number assignment and two sites per faction with distance checks, diversity/viability constraints and bounded deterministic fallback. Support 2/6 factions in the same setup code.",
+    "checks": "Counts match source multiset; 2- and 6-faction fixture placements are legal; regeneration uses bounded attempts; same seed preserves topology/tokens/placements.",
+    "file": "tasks/T026.md",
+    "depends_on": [
+      "T025"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T027",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Define baseline settlement, building and unit records",
+    "contract": "C04_board_building",
+    "source_sections": [
+      43,
+      99,
+      101,
+      103
+    ],
+    "paths": [
+      "content/source/buildings/",
+      "content/source/units/",
+      "sim/dmb/construction/buildings.py"
+    ],
+    "work": "Create centre, warehouse, primary, processor and three factory-slot definitions/instances with health, footprint, job reference and upgrades. Add six MVP unit definitions for later manufacture. No subclass per recipe.",
+    "checks": "Duplicate slots fail; city does not double primary count; missing definition/upgrade mapping fails; damaged/destroyed building has explicit capacity state.",
+    "file": "tasks/T027.md",
+    "depends_on": [
+      "T026"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T028",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement persistent people and job identity foundation",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      42,
+      93,
+      94
+    ],
+    "paths": [
+      "sim/dmb/people/registry.py",
+      "sim/dmb/people/jobs.py"
+    ],
+    "work": "Create people and one worker/anchor per production job with stable identity and basic role/preferences. Add vacancy, displacement and backfill APIs; deeper dialogue comes later.",
+    "checks": "Changing workplace preserves original ID; backfill creates different ID; one person cannot hold conflicting active jobs; building destruction does not automatically kill its worker.",
+    "file": "tasks/T028.md",
+    "depends_on": [
+      "T027"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T029",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement Catan roll grants and source suppression queries",
+    "contract": "C04_board_building",
+    "source_sections": [
+      26,
+      79,
+      80,
+      166
+    ],
+    "paths": [
+      "sim/dmb/construction/production.py",
+      "sim/dmb/hazards/queries.py"
+    ],
+    "work": "Credit matching terrain goods only, 1 settlement/2 city, no desert/7 grants. Add pure queries over typed cube state for Catan/industrial/civilian blocking; propagation comes later.",
+    "checks": "Every terrain/token case tested; industrial depletion does not stop Catan ore; one cube does; missing warehouse never invents a hidden spendable stockpile.",
+    "file": "tasks/T029.md",
+    "depends_on": [
+      "T028"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T030",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement conserved stores and reservations",
+    "contract": "C05_logistics",
+    "source_sections": [
+      81,
+      86,
+      91
+    ],
+    "paths": [
+      "sim/dmb/logistics/stock.py"
+    ],
+    "work": "Create spendable/reserved/escrow classifications and atomic reserve/release/consume/loss. Store at real node IDs, including non-owning construction caches.",
+    "checks": "Five timber\u2192reserve 3 yields available 2/reserved 3; second reservation cannot overspend; cancellation restores same-node stock; ledger equation balances after recorded destruction.",
+    "file": "tasks/T030.md",
+    "depends_on": [
+      "T029"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T031",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement legal placement and derived VP",
+    "contract": "C04_board_building",
+    "source_sections": [
+      100,
+      104,
+      105
+    ],
+    "paths": [
+      "sim/dmb/construction/placement.py",
+      "sim/dmb/construction/scoring.py"
+    ],
+    "work": "Validate road extension, distance rule, own-road endpoint, city/current-era and legacy upgrade. Derive 1/2/0 scores from owned active centres; no separate VP source.",
+    "checks": "Adjacent hostile/friendly/legacy centre blocks settlement equally; inert ruins do not; road cannot extend through hostile node; city is 2 total; no piece-cap rule added.",
+    "file": "tasks/T031.md",
+    "depends_on": [
+      "T030"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T032",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement delivered construction orders and completion",
+    "contract": "C04_board_building",
+    "source_sections": [
+      101,
+      103,
+      189
+    ],
+    "paths": [
+      "sim/dmb/construction/orders.py",
+      "sim/dmb/core/world.py"
+    ],
+    "work": "Implement quotes, reservations, delivered status, revalidation and once-only completion with baseline facility grant. Check immediate 10-VP after each commit; return an interrupt to the orchestrator even before era conversion is implemented.",
+    "checks": "Remote unshipped goods cannot pay; same completion ID cannot debit twice; illegal changed target retains/reclaims real goods; two candidate winners obey seat order.",
+    "file": "tasks/T032.md",
+    "depends_on": [
+      "T031"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T033",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement persistent carts and load/unload transitions",
+    "contract": "C05_logistics",
+    "source_sections": [
+      87,
+      91
+    ],
+    "paths": [
+      "sim/dmb/logistics/carts.py"
+    ],
+    "work": "Store cart identity/home/node/capacity/cargo/route/delivery IDs. Load from a reservation by moving quantity between containers. Deliver once to target store or escrow.",
+    "checks": "Source 5/load 3/deliver 3 totals 5 throughout; duplicate delivery totals 5; a 4-good cart rejects 5; cart destruction records exact cargo loss.",
+    "file": "tasks/T033.md",
+    "depends_on": [
+      "T032"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T034",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement routes, permissions and turn movement",
+    "contract": "C05_logistics",
+    "source_sections": [
+      28,
+      87,
+      88,
+      89,
+      166
+    ],
+    "paths": [
+      "sim/dmb/logistics/routes.py",
+      "sim/dmb/logistics/carts.py"
+    ],
+    "work": "Use constructed roads and explicit access permissions; move all carts one edge per turn, never from real-time animation. Revalidate catastrophe-blocked current/destination nodes and route changes.",
+    "checks": "Three-node route takes two turns; blocked middle prevents crossing; seconds alone move zero edges; newly assigned cart gets no retroactive movement.",
+    "file": "tasks/T034.md",
+    "depends_on": [
+      "T033"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T035",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement transport assignment, reroute and returned cargo",
+    "contract": "C05_logistics",
+    "source_sections": [
+      86,
+      87,
+      92
+    ],
+    "paths": [
+      "sim/dmb/logistics/director.py"
+    ],
+    "work": "Assign idle carts deterministically to construction shortages, partial loads and returns. Implement destination/source/nearest-own/park fallback while keeping cargo at actual node.",
+    "checks": "Two carts fulfil split loads without duplicate stock; destroyed destination triggers return/reroute; disconnected network parks goods; no route failure silently deletes cargo.",
+    "file": "tasks/T035.md",
+    "depends_on": [
+      "T034"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T036",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement real construction bootstrap and replacement carts",
+    "contract": "C04_board_building",
+    "source_sections": [
+      40,
+      101,
+      219
+    ],
+    "paths": [
+      "sim/dmb/world/setup.py",
+      "sim/dmb/construction/orders.py"
+    ],
+    "work": "Commit starting core package/facilities, two carts and one legal road once per setup receipt. Add delivered replacement-cart cost and staging store support. A cross-terrain infeasible site must not invent a recipe.",
+    "checks": "Reloaded setup grants nothing again; destroyed cart replaced with new ID only after 1 timber/1 brick/1 ore payment; staging cache grants no VP or ownership.",
+    "file": "tasks/T036.md",
+    "depends_on": [
+      "T035"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T037",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Implement centre, warehouse and road destruction consequences",
+    "contract": "C04_board_building",
+    "source_sections": [
+      103,
+      104,
+      107
+    ],
+    "paths": [
+      "sim/dmb/construction/buildings.py",
+      "sim/dmb/logistics/director.py",
+      "sim/dmb/people/registry.py"
+    ],
+    "work": "Remove centre ownership without capture; strand surviving industry, displace workers and revalidate orders/cargo. Warehouse losses and road-route breakage are conserved. Wire last-centre dissolution event for later era safeguards.",
+    "checks": "Attacker gains no automatic node; surviving cart retains cargo; destroyed warehouse loses only local goods; worker survives displaced; repeated destruction applies no second loss.",
+    "file": "tasks/T037.md",
+    "depends_on": [
+      "T036"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T038",
+    "phase": "P03 \u2014 Board, construction and physical cargo",
+    "title": "Integrate construction and cargo turn stages",
+    "contract": "C03_time",
+    "source_sections": [
+      189,
+      213
+    ],
+    "paths": [
+      "sim/dmb/time/runner.py",
+      "tests/integration/test_construction_cargo.py"
+    ],
+    "work": "Connect roll\u2192all-cart movement/delivery\u2192ordered construction completions through normal WorldSim. Use scripted legal faction candidates until heuristic phase, with no bypass of costs.",
+    "checks": "FX-CARGO completes a real delivered settlement; blocked route prevents it; immediate winner interrupt cancels later turn handlers; replay/save preserves in-transit cargo.",
+    "file": "tasks/T038.md",
+    "depends_on": [
+      "T037"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T039",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Define technology cards and prerequisite graph",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      114,
+      115
+    ],
+    "paths": [
+      "content/source/technology/",
+      "sim/dmb/technology/definitions.py"
+    ],
+    "work": "Create six baseline cards per MVP era and exact predecessor pair map/caps/scopes. Validate cycles/references and baseline capability reachability.",
+    "checks": "Prehistoric has no prerequisite; Historic activates with either named predecessor; cycle and missing predecessor fail; baseline buildings remain usable without a lucky draft.",
+    "file": "tasks/T039.md",
+    "depends_on": [
+      "T038"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T040",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Implement research archive and scoped modifiers",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      114,
+      115
+    ],
+    "paths": [
+      "sim/dmb/technology/research.py"
+    ],
+    "work": "Store acquired card instances, active stacks and inactive copies. Activate eligible archives once; cap repeatable effects and preserve research history for later fission.",
+    "checks": "Unplayable pick remains owned/inactive; gaining either predecessor activates once; fourth capped copy adds no effect; duplicate projection refresh grants no bonus.",
+    "file": "tasks/T040.md",
+    "depends_on": [
+      "T039"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T041",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Implement simultaneous seven-round draft",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      114,
+      189
+    ],
+    "paths": [
+      "sim/dmb/technology/draft.py",
+      "sim/dmb/time/runner.py"
+    ],
+    "work": "Deal 7 with replacement, select 1 per completed round from common snapshot, pass remainder clockwise and redeal after pick 7. Handle singleton/self-pass and era discard.",
+    "checks": "After round 1 each hand 6 and each faction owns 1 new card; after round 7 each fresh hand 7; singleton works; interrupted old round drafts zero cards.",
+    "file": "tasks/T041.md",
+    "depends_on": [
+      "T040"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T042",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Implement legal observations and candidate generation",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      118,
+      121
+    ],
+    "paths": [
+      "sim/dmb/ai/observation.py",
+      "sim/dmb/ai/legal.py",
+      "sim/dmb/ai/interface.py"
+    ],
+    "work": "Build versioned faction observation and bounded legal candidate lists for construction, trade/diplomacy, technology and later military/treatment. Candidates encode real delivered costs and public/observed knowledge.",
+    "checks": "Hidden wizard/private enemy fields excluded; every returned candidate passes validator; no-op exists when stuck; stale candidate cannot partially mutate.",
+    "file": "tasks/T042.md",
+    "depends_on": [
+      "T041"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T043",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Implement deterministic heuristic leadership",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      117,
+      120
+    ],
+    "paths": [
+      "sim/dmb/ai/heuristic.py",
+      "sim/dmb/ai/policy.py"
+    ],
+    "work": "Implement C12 priority/score/tie rules and one construction/one proposal allowance. Persist policy commitments and actual selections. Use legal future-capability absence instead of pretending warfare exists yet.",
+    "checks": "No repeated free-action loop; tie sorted by action ID; unaffordable road order schedules cargo; replay uses recorded selection even if model implementation changes.",
+    "file": "tasks/T043.md",
+    "depends_on": [
+      "T042"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T044",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Implement diplomacy and transit agreements",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      44,
+      88,
+      120
+    ],
+    "paths": [
+      "sim/dmb/ai/diplomacy.py",
+      "sim/dmb/logistics/routes.py"
+    ],
+    "work": "Implement neutral/trade-permitted defaults, proposals, alliance acceptance, war/embargo and typed commitments. Route permission reads the same relation state.",
+    "checks": "Attack establishes war; embargo blocks unsettled route; accepted alliance permits transit; duplicate proposal outcome has one relationship/history effect.",
+    "file": "tasks/T044.md",
+    "depends_on": [
+      "T043"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T045",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Implement bilateral trade and escrow",
+    "contract": "C05_logistics",
+    "source_sections": [
+      87,
+      120
+    ],
+    "paths": [
+      "sim/dmb/logistics/trade.py",
+      "sim/dmb/ai/heuristic.py"
+    ],
+    "work": "Reserve both accepted legs atomically, create physical shipments, escrow arrivals and settle once both complete. Add fixed delivery deadline and dispute/default return paths.",
+    "checks": "One delivered leg is not spendable; both legs settle once; destroyed leg produces loss/dispute without invented repayment; interrupted trade leaves goods at real locations.",
+    "file": "tasks/T045.md",
+    "depends_on": [
+      "T044"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T046",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Integrate active faction choices and round completion",
+    "contract": "C03_time",
+    "source_sections": [
+      31,
+      120,
+      189
+    ],
+    "paths": [
+      "sim/dmb/time/runner.py",
+      "sim/dmb/core/world.py"
+    ],
+    "work": "Connect heuristic actions, trade/diplomacy, delivered completion and simultaneous draft into normal turn pipeline. Maintain single-seat and immediate-outcome constraints.",
+    "checks": "Six configured seats each activate once; all factions receive matching production; only active faction initiates actions; 10-VP interrupt suppresses pending old-era draft.",
+    "file": "tasks/T046.md",
+    "depends_on": [
+      "T045"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T047",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Prove autonomous expansion without injected stock",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      120,
+      205,
+      225
+    ],
+    "paths": [
+      "tests/scenarios/test_faction_expansion.py",
+      "content/fixtures/strategy/"
+    ],
+    "work": "Run deterministic legal roll sequences and seeded headless episodes with real Catan logistics. Diagnose any inability to reach 10 by inspecting legal candidates/board/supply; fix implementation errors without hidden gifts.",
+    "checks": "At least one validated normal-rule episode reaches 10; costs and cargo conserve; saved trace replays. Report unresolved stochastic pacing separately from a rules failure.",
+    "file": "tasks/T047.md",
+    "depends_on": [
+      "T046"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T048",
+    "phase": "P04 \u2014 Technology, diplomacy and heuristic factions",
+    "title": "Prepare faction and cargo playtest gate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      205,
+      226,
+      227
+    ],
+    "paths": [
+      "client/debug/economy_view.gd",
+      "tracking/gates/G02/"
+    ],
+    "work": "Provide development stock/cart/decision diagnostics and player-visible cargo labels. Prepare G02 build/fixture with trade, blockage, expansion and one full draft round. Stop for Joe.",
+    "checks": "FX-CARGO and faction scenario pass; inspector labels actual fields and stays out of release UI; gate packet includes exact steps and no manual PASS invented.",
+    "file": "tasks/T048.md",
+    "depends_on": [
+      "T047"
+    ],
+    "required_gates": [
+      "G01"
+    ],
+    "manual_gate_after": "G02",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T049",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Normalize resource and recipe catalogues",
+    "contract": "C06_industry",
+    "source_sections": [
+      78,
+      83,
+      193,
+      196
+    ],
+    "paths": [
+      "content/source/resources/",
+      "content/source/recipes/",
+      "tools/content/import_recipes.py"
+    ],
+    "work": "Import provided reference resources/recipes with recorded aliases, preserve unique building/output labels and separate Catan IDs. Compile MVP16-per-era subset while retaining full 60-per-era culture access metadata.",
+    "checks": "All 48 raw definitions map correctly; every full era has 60 unique pairs/buildings/outputs and raw frequency 10; no same-terrain pair; no workbook role becomes a new sink.",
+    "file": "tasks/T049.md",
+    "depends_on": [
+      "T048"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T050",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Implement shared finite layers and primary channels",
+    "contract": "C06_industry",
+    "source_sections": [
+      79,
+      80
+    ],
+    "paths": [
+      "sim/dmb/industry/layers.py",
+      "sim/dmb/industry/primary.py"
+    ],
+    "work": "Create 600-unit finite layers by hex/cycle/era, both channels per primary and best-pip node capacity. Apply city, source tech, damage and catastrophe without worker navigation.",
+    "checks": "Adjacent token 6+8 still caps 5; city remains 5 slots with double flow; two nodes share one layer; new cycle does not refill old balance; services have no cargo stock.",
+    "file": "tasks/T050.md",
+    "depends_on": [
+      "T049"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T051",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Implement installed route selection and constraint construction",
+    "contract": "C06_industry",
+    "source_sections": [
+      82,
+      83,
+      84
+    ],
+    "paths": [
+      "sim/dmb/industry/routes.py",
+      "sim/dmb/industry/constraints.py"
+    ],
+    "work": "Bind each processor input to valid exact primary channel, same-era different-terrain recipe; select one installed compatible route per factory. Build channel/processor/factory/shared-deposit constraints and explicit bottleneck reasons.",
+    "checks": "Missing processor cannot produce; duplicate factories share processor constraint; exhausted source disables only affected routes; illegal same-terrain and cross-era binding fail.",
+    "file": "tasks/T051.md",
+    "depends_on": [
+      "T050"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T052",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Implement deterministic progressive-fill allocation",
+    "contract": "C06_industry",
+    "source_sections": [
+      82,
+      190
+    ],
+    "paths": [
+      "sim/dmb/industry/allocation.py"
+    ],
+    "work": "Implement pure weighted max-min solver with exact rational carry and stable IDs. Respect all resource coefficients and global finite limits. Keep hypothetical theoretical-capacity mode read-only.",
+    "checks": "Shared 0.1 processor with costs 2/3/5 gives 0.01 units/s each; 25%-health gives 0.0025 each; permutation invariance; last 0.01 finite unit is never overconsumed.",
+    "file": "tasks/T052.md",
+    "depends_on": [
+      "T051"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T053",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Implement factory meters and individual unit creation",
+    "contract": "C06_industry",
+    "source_sections": [
+      42,
+      82
+    ],
+    "paths": [
+      "sim/dmb/industry/factories.py",
+      "sim/dmb/military/units.py"
+    ],
+    "work": "Apply allocations/finite debits/meters atomically per 100 ms tick. Add MilitaryService.spawn foundation: one stable unit per complete meter, retain fractional remainder and home/faction/era.",
+    "checks": "After 60 s shared-route meters 0.6 each/no units; after 100 s exactly 3 IDs/meters 0/deposit 590; save at 59.9 s and resume gives identical completions.",
+    "file": "tasks/T053.md",
+    "depends_on": [
+      "T052"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T054",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Integrate global Game-Time industry",
+    "contract": "C06_industry",
+    "source_sections": [
+      31,
+      82,
+      189
+    ],
+    "paths": [
+      "sim/dmb/industry/service.py",
+      "sim/dmb/core/world.py"
+    ],
+    "work": "Advance every occupied node from fixed clock quanta, queue rate/shortage/spawn events and preserve old-layer support. Apply damage/destruction before subsequent production boundary.",
+    "checks": "Visited and unvisited copies produce identically; render frame changes do not alter output; duel/menu pauses prevent output; destroyed factory cannot finish a later tick.",
+    "file": "tasks/T054.md",
+    "depends_on": [
+      "T053"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T055",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Connect real workers to illustrative production activity",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      93,
+      94,
+      95,
+      96
+    ],
+    "paths": [
+      "sim/dmb/people/jobs.py",
+      "sim/dmb/industry/projection.py",
+      "client/world/worker_controller.gd"
+    ],
+    "work": "Backfill vacant jobs with persistent new people, project active route/bottleneck into work/idle/carry animations. Visual routing failure picks safe idle cue and emits layout diagnostic only.",
+    "checks": "Blocking worker path changes no meter/deposit; explicit strike modifier does; worker relocation persists and replacement gets new ID; unloaded village retains all people.",
+    "file": "tasks/T055.md",
+    "depends_on": [
+      "T054"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T056",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Implement paid industrial repair and route expansion",
+    "contract": "C04_board_building",
+    "source_sections": [
+      101,
+      103
+    ],
+    "paths": [
+      "sim/dmb/construction/orders.py",
+      "sim/dmb/ai/heuristic.py",
+      "sim/dmb/industry/routes.py"
+    ],
+    "work": "Allow legal delivered repairs/additional processors and choose useful alternate installed routes. No player management menu. Ensure price, health restoration and capacity recomputation occur once.",
+    "checks": "Damaged processor returns to full rate after real repair payment; adding useful route consumes cost; unsupported imported industrial input remains unavailable.",
+    "file": "tasks/T056.md",
+    "depends_on": [
+      "T055"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T057",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Build causal industry and depletion regression scenarios",
+    "contract": "C06_industry",
+    "source_sections": [
+      17,
+      205,
+      225
+    ],
+    "paths": [
+      "tests/scenarios/test_industry_causality.py",
+      "content/fixtures/industry/"
+    ],
+    "work": "Exercise depleted finite source, shared last-unit allocation, catastrophe suppression, explicit strike, route fallback and actual building destruction through normal commands. Include carry values in failure bundles.",
+    "checks": "Every output change has a real limiting cause; total finite extraction conserved; animation-only change has no output effect; continuing legacy layer retains exact balance.",
+    "file": "tasks/T057.md",
+    "depends_on": [
+      "T056"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T058",
+    "phase": "P05 \u2014 Real-time industrial economy",
+    "title": "Prepare economy readability playtest gate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      226,
+      227
+    ],
+    "paths": [
+      "client/debug/industry_view.gd",
+      "tracking/gates/G03/"
+    ],
+    "work": "Expose development allocation/constraint/finite diagnostics and knowledge-filtered street feedback. Prepare G03 village where Joe can identify a bottleneck and observe persistent workers/output. Stop for human review.",
+    "checks": "FX-INDUSTRY numerical oracles pass; displayed work matches actual selected route; player can test path blocking without economic effect; gate remains pending until accepted.",
+    "file": "tasks/T058.md",
+    "depends_on": [
+      "T057"
+    ],
+    "required_gates": [
+      "G01",
+      "G02"
+    ],
+    "manual_gate_after": "G03",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T059",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Complete individual unit, formation and buff state",
+    "contract": "C07_combat",
+    "source_sections": [
+      42,
+      60,
+      62
+    ],
+    "paths": [
+      "sim/dmb/military/units.py",
+      "sim/dmb/military/formations.py",
+      "sim/dmb/military/buffs.py"
+    ],
+    "work": "Extend spawn foundation with saved unit health, cooldown, position, home, shields and timed buffs. Formations group unit IDs and derive strength; no aggregate replacement.",
+    "checks": "Each manufactured soldier has one ID; no unit belongs to two groups; health/buff/shield balances roundtrip; era multiplier applied exactly once.",
+    "file": "tasks/T059.md",
+    "depends_on": [
+      "T058"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T060",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Implement shared combat math and targeting oracles",
+    "contract": "C07_combat",
+    "source_sections": [
+      59,
+      60
+    ],
+    "paths": [
+      "sim/dmb/military/math.py",
+      "client/combat/combat_math.gd",
+      "content/fixtures/combat_math.json"
+    ],
+    "work": "Implement era-adjusted hit damage, cover, armour, range eligibility and deterministic target ordering. Share golden cases between Python/Godot and gather simultaneous damage before casualties.",
+    "checks": "Attack 15/cover 0.25 yields 11 Prehistoric and 113 Historic; equal targets break by health then ID; same-step lethal opponents can both hit; next step dead actor cannot attack.",
+    "file": "tasks/T060.md",
+    "depends_on": [
+      "T059"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T061",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Implement strategic formation movement and withdrawal",
+    "contract": "C07_combat",
+    "source_sections": [
+      28,
+      60,
+      65
+    ],
+    "paths": [
+      "sim/dmb/military/movement.py",
+      "sim/dmb/ai/legal.py"
+    ],
+    "work": "Move active-faction disengaged units up to 2 edges, stop on first hostility and preserve order/turn receipt. Add withdrawal intent and later legal retreat, without an immediate extra move.",
+    "checks": "Seconds alone move zero nodes; inactive faction stays; hostile first edge stops second; new unit gets no past move; blocked retreat revalidates/re-engages.",
+    "file": "tasks/T061.md",
+    "depends_on": [
+      "T060"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T062",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Implement bounded off-screen battle resolution",
+    "contract": "C07_combat",
+    "source_sections": [
+      58,
+      60
+    ],
+    "paths": [
+      "sim/dmb/military/offscreen.py"
+    ],
+    "work": "Resolve actual individual snapshot in 250 ms steps, frozen handoff buffs and no global time/industry. Support target approach, casualties, structures, withdrawal, unreachable/120 s stalemate.",
+    "checks": "120 s timeout is not victory; no production/reinforcements accrue; identity/health/losses conserve; stalemate is not recalculated continuously without a material event.",
+    "file": "tasks/T062.md",
+    "depends_on": [
+      "T061"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T063",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Implement Godot local tactical encounter",
+    "contract": "C07_combat",
+    "source_sections": [
+      58,
+      59,
+      60,
+      188
+    ],
+    "paths": [
+      "client/combat/local_battle.gd",
+      "client/combat/unit_controller.gd",
+      "client/world/battle_area.tscn"
+    ],
+    "work": "Use exclusive lease and 50 ms steps for real positions/navigation/LOS/range/cooldowns/cover. Each sprite binds one persistent unit. Return checkpoints/casualties/building damage.",
+    "checks": "Blocked military path changes actual attack opportunity; worker navigation remains separate; local fight emits valid ordered deltas; leased units are not also resolved off-screen.",
+    "file": "tasks/T063.md",
+    "depends_on": [
+      "T062"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T064",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Implement arrival, departure and reinforcement handoff",
+    "contract": "C02_bridge_save",
+    "source_sections": [
+      58,
+      60,
+      188,
+      189
+    ],
+    "paths": [
+      "sim/dmb/encounters/registry.py",
+      "sim/dmb/military/offscreen.py",
+      "client/encounters/encounter_host.gd"
+    ],
+    "work": "Close outgoing battle at acknowledged checkpoint before Python resolution; retain lease on Wait. Add versioned new-unit handshake after factory completion. Freeze leases on immediate world interrupts.",
+    "checks": "Leaving after half an army dies never restores casualties; duplicate reinforcement adds one unit; stale checkpoint cannot overwrite result; Wait does not close the battle.",
+    "file": "tasks/T064.md",
+    "depends_on": [
+      "T063"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T065",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Implement unrestricted local destruction magic",
+    "contract": "C07_combat",
+    "source_sections": [
+      22,
+      60,
+      66,
+      68
+    ],
+    "paths": [
+      "sim/dmb/player/magic.py",
+      "client/ui/magic_targeting.gd",
+      "sim/dmb/core/effects.py"
+    ],
+    "work": "Validate local observation and ordinary-unit/building target kind, independent of allegiance. Route leased targets through encounter owner. Destroy workers/carts/buildings with canonical job/cargo/ownership consequences.",
+    "checks": "Friendly/neutral/enemy targets all work; remote/group/self/rival-duel actors reject appropriately; repeated target causes no duplicate loss; wizard has no faction-combat damage path.",
+    "file": "tasks/T065.md",
+    "depends_on": [
+      "T064"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T066",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Implement stacking support buffs and pause-safe expiry",
+    "contract": "C07_combat",
+    "source_sections": [
+      60,
+      68
+    ],
+    "paths": [
+      "sim/dmb/military/buffs.py",
+      "client/combat/local_battle.gd",
+      "sim/dmb/player/magic.py"
+    ],
+    "work": "Apply shield 25%HP, frequency 25%, range 1 with distinct 30 s Game-Time effect IDs and caps. Consume earliest-expiry shield, preserve canonical HP and save balances.",
+    "checks": "Shield caps at 2 xHP; frequency 3 x; range+4; expiry removes unused shield only; a 60 s duel expires nothing; duplicate cast receipt grants no second stack.",
+    "file": "tasks/T066.md",
+    "depends_on": [
+      "T065"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T067",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Connect military objectives and turn battles",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      120,
+      189
+    ],
+    "paths": [
+      "sim/dmb/ai/heuristic.py",
+      "sim/dmb/ai/legal.py",
+      "sim/dmb/time/runner.py"
+    ],
+    "work": "Add defend/assemble/attack/hold candidates using observed strength and commitment rules. Integrate movement, off-screen fights, local lease opening and real destruction into normal turn stages.",
+    "checks": "No unobserved enemy strength in policy features; attackers gain no automatic node ownership; local arrival battle leases correct units; active-only movement and immediate interruption remain true.",
+    "file": "tasks/T067.md",
+    "depends_on": [
+      "T066"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T068",
+    "phase": "P06 \u2014 Military and world magic",
+    "title": "Add battle and magic continuity scenarios",
+    "contract": "C07_combat",
+    "source_sections": [
+      223,
+      225,
+      227
+    ],
+    "paths": [
+      "tests/scenarios/test_battle_magic.py",
+      "content/fixtures/battle/"
+    ],
+    "work": "Build FX-BATTLE with ranged/melee/cover, actual factories and buildings. Compare continuation/conservation through enter/leave/save/reconnect; exact offscreen-versus-local casualty equality is not required.",
+    "checks": "All participant IDs accounted for as alive/dead; cargo/factory destruction has real effects; source old-era units remain weaker; wizard intervention works without army orders.",
+    "file": "tasks/T068.md",
+    "depends_on": [
+      "T067"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T069",
+    "phase": "P07 \u2014 Catastrophe and distributed pressure",
+    "title": "Implement typed cubes, deck and seeded initial pressure",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      158,
+      166
+    ],
+    "paths": [
+      "sim/dmb/hazards/service.py",
+      "sim/dmb/hazards/deck.py",
+      "sim/dmb/world/setup.py"
+    ],
+    "work": "Create stable typed cubes/causes, seeded deck/discard and 3 distinct starting placements respecting start viability. Add persisted era cadence/draw count/placement ordinal.",
+    "checks": "Max 3 cubes total per hex; setup receives 3 distinct hazards; deck reshuffle deterministic; Standard 3/Gentle 5/Severe 2 cadence and 4/8-round escalation correct.",
+    "file": "tasks/T069.md",
+    "depends_on": [
+      "T068"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T070",
+    "phase": "P07 \u2014 Catastrophe and distributed pressure",
+    "title": "Implement bounded outbreak propagation and terminal state",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      166,
+      189
+    ],
+    "paths": [
+      "sim/dmb/hazards/propagation.py",
+      "sim/dmb/core/terminal.py"
+    ],
+    "work": "Fourth attempt increments outbreak, propagates incoming type in stable adjacency order and tracks event visited set. Threshold 8 commits terminal once and stops remaining work.",
+    "checks": "Cyclic saturated triangle outbreaks each hex at most once; count 7\u21928 stops neighbour mutations immediately; repeated terminal command emits no second Game Over.",
+    "file": "tasks/T070.md",
+    "depends_on": [
+      "T069"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T071",
+    "phase": "P07 \u2014 Catastrophe and distributed pressure",
+    "title": "Wire source and cart disruption to real hazards",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      79,
+      87,
+      166
+    ],
+    "paths": [
+      "sim/dmb/hazards/queries.py",
+      "sim/dmb/industry/service.py",
+      "sim/dmb/logistics/routes.py"
+    ],
+    "work": "Use one typed hazard query to suppress Catan grants/industrial channels and block civilian touching nodes; military/wizard remain exempt. Emit changed cause IDs and projection cues.",
+    "checks": "One cube stops affected source but leaves finite balance unchanged; cart cannot cross touching node; wizard/army can enter; unrelated hex output continues.",
+    "file": "tasks/T071.md",
+    "depends_on": [
+      "T070"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T072",
+    "phase": "P07 \u2014 Catastrophe and distributed pressure",
+    "title": "Implement persistent catastrophe visits and allowance checks",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      28,
+      51,
+      166
+    ],
+    "paths": [
+      "sim/dmb/player/visits.py",
+      "sim/dmb/player/state.py",
+      "sim/dmb/time/runner.py"
+    ],
+    "work": "Record new strategic visits, node+turn recovery ledgers and one-success-per-adjacent-hex allowance. Save current ledger; failed/nonmagical responses use separate rules.",
+    "checks": "Three adjacent hex successes allowed; second success on same hex rejected; Wait/interior/load/recovery do not refresh; genuine later strategic return creates new visit.",
+    "file": "tasks/T072.md",
+    "depends_on": [
+      "T071"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T073",
+    "phase": "P07 \u2014 Catastrophe and distributed pressure",
+    "title": "Implement faction treatment instead of movement",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      120,
+      166,
+      189
+    ],
+    "paths": [
+      "sim/dmb/hazards/responders.py",
+      "sim/dmb/ai/legal.py",
+      "sim/dmb/ai/heuristic.py",
+      "sim/dmb/time/runner.py"
+    ],
+    "work": "Add eligibility, adjacency and one-cube treatment. Reserve active responding formation action before movement. Demon responder first; declare full-era capability extension.",
+    "checks": "A responder removes 1 cube and moves 0 edges that activation; inactive faction cannot treat; target already removed causes no second removal or incorrect treatment receipt.",
+    "file": "tasks/T073.md",
+    "depends_on": [
+      "T072"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T074",
+    "phase": "P07 \u2014 Catastrophe and distributed pressure",
+    "title": "Integrate catastrophe manifestation entry with duel lease",
+    "contract": "C10_adventure",
+    "source_sections": [
+      58,
+      66,
+      166
+    ],
+    "paths": [
+      "sim/dmb/adventure/duels.py",
+      "client/encounters/encounter_host.gd",
+      "client/world/hazard_actor.gd"
+    ],
+    "work": "Prepare normal duel entry for an eligible specific cube with global pause/visit preconditions. Adapt retained duel core or implement chosen fallback baseline now; later adventure tasks add richer puzzle/recovery/content.",
+    "checks": "Duel starts from real cube ID and freezes industry/buffs/battles; success removes only that cube and consumes one allowance; duplicate/stale outcome cannot remove another cube.",
+    "file": "tasks/T074.md",
+    "depends_on": [
+      "T073"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T075",
+    "phase": "P07 \u2014 Catastrophe and distributed pressure",
+    "title": "Build pressure, ordinary failure and terminal scenarios",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      158,
+      166,
+      205
+    ],
+    "paths": [
+      "tests/scenarios/test_catastrophe.py",
+      "content/fixtures/hazards/"
+    ],
+    "work": "Run FX-HAZARD through source shutdown, treatment, turn cadence, saved visits and a terminal cascade. Make ordinary duel non-victory nonterminal and keep military immunity.",
+    "checks": "No Game Over on ordinary loss or faction asset destruction; terminal returns menu once; saved treatment ledger intact; pollution placeholder definition cannot enter a duel.",
+    "file": "tasks/T075.md",
+    "depends_on": [
+      "T074"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T076",
+    "phase": "P07 \u2014 Catastrophe and distributed pressure",
+    "title": "Prepare battle and catastrophe playtest gate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      222,
+      226,
+      227
+    ],
+    "paths": [
+      "tracking/gates/G04/",
+      "client/ui/catastrophe_feedback.gd"
+    ],
+    "work": "Prepare G04 build with autonomous local battle, unrestricted spells, buffs, three-hex treatment scenario and escalating warnings. Provide short exact steps and known off-screen approximation. Stop for Joe.",
+    "checks": "FX-BATTLE/FX-HAZARD automated checks pass; controls have no RTS orders or wizard military HP; player can see why production/transit stopped before terminal loss.",
+    "file": "tasks/T076.md",
+    "depends_on": [
+      "T075"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03"
+    ],
+    "manual_gate_after": "G04",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T077",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Complete person goals, relationships and knowledge profiles",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      45,
+      93,
+      94,
+      184
+    ],
+    "paths": [
+      "sim/dmb/people/registry.py",
+      "content/source/people/"
+    ],
+    "work": "Extend existing IDs with typed preferences/goals, dialogue profile, relationships and known facts. Add leader/anchor/worker/displaced states without replacing records.",
+    "checks": "Role promotion preserves relationships/history; dead person remains tombstone; each production job has one living anchor or explicit vacancy; save preserves all profile refs.",
+    "file": "tasks/T077.md",
+    "depends_on": [
+      "T076"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T078",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Implement stable village projection and layout overrides",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      100,
+      128,
+      191
+    ],
+    "paths": [
+      "sim/dmb/world/projection.py",
+      "client/world/village_projector.gd"
+    ],
+    "work": "Generate stable building footprints/exits/interaction points from node seed, save overrides and expand map as required. Bind real worker/building/cart/unit IDs; re-enter never rerolls people.",
+    "checks": "Two visits preserve IDs/positions and destroyed entities stay absent; required exits reachable; adding processor expands area rather than dropping real structure.",
+    "file": "tasks/T078.md",
+    "depends_on": [
+      "T077"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T079",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Implement complete semantic observation and action filtering",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      20,
+      22,
+      34,
+      124
+    ],
+    "paths": [
+      "sim/dmb/narrative/semantic.py",
+      "client/ui/semantic_labels.gd"
+    ],
+    "work": "Cover people, buildings, units, carts, roads, items, mechanisms, entrances and hazards. Resolve range/knowledge labels and contextual actions from actual state/version.",
+    "checks": "Every required kind can be selected; unknown identity remains targetable; stale entity refreshes feedback; exact hidden economy/army facts are excluded from player view.",
+    "file": "tasks/T079.md",
+    "depends_on": [
+      "T078"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T080",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Implement seven Aspects and repeat-safe checks",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      47,
+      48,
+      49
+    ],
+    "paths": [
+      "sim/dmb/narrative/aspects.py",
+      "content/source/aspects/"
+    ],
+    "work": "Create seven named 0\u20135 scores initially 1, deterministic evidence/relationship checks, clamped once-only changes and retry fingerprints. Add biased passive voice metadata.",
+    "checks": "1+evidence 2+relation 1 meets threshold 4; repeated failed same-context attempt is blocked; relevant new evidence enables retry; +1 reward cannot be farmed.",
+    "file": "tasks/T080.md",
+    "depends_on": [
+      "T079"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T081",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Implement typed condition AST and effect dispatcher",
+    "contract": "C10_adventure",
+    "source_sections": [
+      142,
+      145,
+      196
+    ],
+    "paths": [
+      "sim/dmb/narrative/conditions.py",
+      "sim/dmb/core/effects.py",
+      "content/schemas/effects.json"
+    ],
+    "work": "Validate allowlisted conditions/effects and prepare all choice effects before commit. Delegate inventory/hazard/relation/quest/production changes to owning services. No eval or arbitrary state patches.",
+    "checks": "Unknown effect fails before any sibling applies; repeated effect ID applies once; stale target aborts/rebranches; conserved transfer cannot mint goods or bypass cart rules.",
+    "file": "tasks/T081.md",
+    "depends_on": [
+      "T080"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T082",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Implement persistent cause detection and quest binding",
+    "contract": "C10_adventure",
+    "source_sections": [
+      141,
+      144
+    ],
+    "paths": [
+      "sim/dmb/quests/causes.py",
+      "sim/dmb/quests/binding.py"
+    ],
+    "work": "Detect real output/transport/hazard/entity events, assign stable occurrence IDs and bind eligible existing stakeholder/site records. Dedupe same template/cause/affected entity.",
+    "checks": "Revisiting creates no duplicate quest; resolving then recurring fault creates new cause; missing stakeholder cannot be fabricated as the same dead person.",
+    "file": "tasks/T082.md",
+    "depends_on": [
+      "T081"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T083",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Implement quest state machine and invalidation",
+    "contract": "C10_adventure",
+    "source_sections": [
+      141,
+      142,
+      145
+    ],
+    "paths": [
+      "sim/dmb/quests/runtime.py",
+      "content/schemas/quests.json"
+    ],
+    "work": "Add common offered/active/suspended/completed/world-resolved/failed statuses, typed deadlines and 2\u20135-stage graphs. Handle world repair, death, destruction and effect receipts.",
+    "checks": "World fixes first\u2192resolved_by_world; target destruction follows declared branch; simultaneous choices reward once; era flag alone neither completes nor cancels quest.",
+    "file": "tasks/T083.md",
+    "depends_on": [
+      "T082"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T084",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Implement offline dialogue catalogue and runtime fallback",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      143,
+      144,
+      196
+    ],
+    "paths": [
+      "sim/dmb/narrative/dialogue.py",
+      "sim/dmb/narrative/line_catalog.py",
+      "content/source/dialogue/"
+    ],
+    "work": "Select conditional precompiled lines by quest/cause/role/era priority, substitute typed safe variables and filter knowledge. Persist stable variant selection and check consequences.",
+    "checks": "Missing variable uses truthful fallback; unknown name cannot leak; wrong-era/cause line rejected; runtime performs zero LLM/network calls.",
+    "file": "tasks/T084.md",
+    "depends_on": [
+      "T083"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T085",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Build attached speech and paused conversation UI",
+    "contract": "C09_people_dialogue",
+    "source_sections": [
+      21,
+      143,
+      167,
+      172
+    ],
+    "paths": [
+      "client/ui/dialogue.gd",
+      "client/ui/aspect_interjection.gd",
+      "client/ui/context_actions.gd"
+    ],
+    "work": "Show world-anchored speech, approximately 3 options/paging, biased Aspect interjections and walk-away. Formal choice pauses Game Time; stale responses refresh; ambient chatter does not pause.",
+    "checks": "One pointer reaches all choices/cancel; walking away grants no reward; opening conversation freezes output while ambient speech does not; labels remain legible at target windows.",
+    "file": "tasks/T085.md",
+    "depends_on": [
+      "T084"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T086",
+    "phase": "P08 \u2014 Persistent village narrative",
+    "title": "Wire the real shortage quest fixture and branch tests",
+    "contract": "C10_adventure",
+    "source_sections": [
+      141,
+      213,
+      227
+    ],
+    "paths": [
+      "content/fixtures/village/",
+      "content/source/quests/shortage/",
+      "tests/scenarios/test_village_quest.py"
+    ],
+    "work": "Instantiate FX-VILLAGE using actual 2 installed routes, demon/sabotage causes and persistent factory worker. Implement demon, alternative-route pending, world-resolved and destroyed-target outcomes through normal services.",
+    "checks": "Quest binds real person/factory; no output means actual shortage; demon victory restores routeA; world repair acknowledges correct actor; destroyed target never respawns.",
+    "file": "tasks/T086.md",
+    "depends_on": [
+      "T085"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T087",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Implement persistent inventory and unique ground objects",
+    "contract": "C10_adventure",
+    "source_sections": [
+      52,
+      53,
+      55,
+      56
+    ],
+    "paths": [
+      "sim/dmb/player/inventory.py",
+      "client/ui/inventory.gd"
+    ],
+    "work": "Implement pickup/drop/give/equip and stackable quantities with one container per item; focus/artifact slots and no encumbrance. Store ground area/position and protected quest bindings.",
+    "checks": "Pickup+drop+revisit retains one ID; transfer cannot duplicate quantity; wrong owner/range rejected; no personal item silently pays faction construction.",
+    "file": "tasks/T087.md",
+    "depends_on": [
+      "T086"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T088",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Implement item use, combinations and recovery routes",
+    "contract": "C10_adventure",
+    "source_sections": [
+      55,
+      56,
+      77
+    ],
+    "paths": [
+      "sim/dmb/player/inventory.py",
+      "sim/dmb/adventure/item_recovery.py",
+      "content/source/items/"
+    ],
+    "work": "Add allowlisted combine/use definitions and typed world/puzzle effects. Relocate stranded required items or invoke explicit alternate route; save recovery receipt.",
+    "checks": "Combining consumes exact inputs once; lost required handle remains recoverable; layout change records one relocation; no invalid use consumes an unrelated item.",
+    "file": "tasks/T088.md",
+    "depends_on": [
+      "T087"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T089",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Implement leased puzzle mechanism runtime",
+    "contract": "C10_adventure",
+    "source_sections": [
+      73,
+      74,
+      188
+    ],
+    "paths": [
+      "sim/dmb/adventure/puzzles.py",
+      "client/adventure/puzzle.gd",
+      "content/schemas/puzzles.json"
+    ],
+    "work": "Implement switches, pressure plates, movable boxes, key/receptor doors, sequences and timed gates with explicit conditions/effects under puzzle lease. Inventory stays Python-owned.",
+    "checks": "Mechanism checkpoint version is enforced; pressure plate follows actual local position; item receptor consumes/holds real item once; duplicate finish applies no second world effect.",
+    "file": "tasks/T089.md",
+    "depends_on": [
+      "T088"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T090",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Implement the sluice dungeon and bounded solution validator",
+    "contract": "C10_adventure",
+    "source_sections": [
+      72,
+      75,
+      76,
+      77
+    ],
+    "paths": [
+      "content/source/dungeons/sluice/",
+      "tools/content/validate_puzzles.py",
+      "client/adventure/dungeon_area.tscn"
+    ],
+    "work": "Build the specified reachable layout/clues/handle/box/gate loop and finite-state solution trace. Puzzle completion removes only the sabotage modifier; alternate route selection stays autonomous.",
+    "checks": "Machine trace solves from valid start/reset states; required exit never locks permanently; puzzle does not create units/goods; routeB becomes eligible after real sluice state changes.",
+    "file": "tasks/T090.md",
+    "depends_on": [
+      "T089"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T091",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Complete retained Mastermind mechanics and progression",
+    "contract": "C10_adventure",
+    "source_sections": [
+      49,
+      58,
+      60,
+      67
+    ],
+    "paths": [
+      "client/duel/",
+      "content/source/duel_rules/",
+      "sim/dmb/adventure/duels.py"
+    ],
+    "work": "Finish audited compatible mechanics or chosen fallback, including repeats/correct feedback, secrets, cast limits/windows, rival legal reasoning and supported 8-colour/6-slot progression. Preserve global pause.",
+    "checks": "AABC versus ABAD gives 1 exact/2 colour-only; rival has no secret-read shortcut; cap overflow follows authored reward alternative; era never silently changes duel mechanics.",
+    "file": "tasks/T091.md",
+    "depends_on": [
+      "T090"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T092",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Implement duel checkpoint, recovery and outcome revalidation",
+    "contract": "C10_adventure",
+    "source_sections": [
+      51,
+      58,
+      166,
+      191
+    ],
+    "paths": [
+      "sim/dmb/player/recovery.py",
+      "sim/dmb/adventure/duels.py",
+      "client/duel/"
+    ],
+    "work": "Save private duel state/RNG/window/input, resume without secret reroll, apply win/loss once and choose safe recovery with no time/visit refresh. Target disappearance uses world-resolved handling.",
+    "checks": "Save mid-window resumes same next feedback; 60 s duel adds 0 world time; duplicate win removes 1 cube; missing friendly settlement falls back deterministically; same-turn visit remains spent.",
+    "file": "tasks/T092.md",
+    "depends_on": [
+      "T091"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T093",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Complete both village solutions and persistent return loop",
+    "contract": "C10_adventure",
+    "source_sections": [
+      141,
+      214,
+      227
+    ],
+    "paths": [
+      "content/source/quests/shortage/",
+      "content/source/dialogue/shortage/",
+      "tests/scenarios/test_village_solutions.py"
+    ],
+    "work": "Finish dungeon routeB solution, actual positive-allocation quest completion, distinct acknowledgements and continuous bindings on leave/return/save. Demonstrate ignore/world-fix and loss branches.",
+    "checks": "RouteB completion does not claim demon cleared; both solutions restore real industry; world-resolved and destroyed-target outcomes remain playable; no duplicate quest or reward on return.",
+    "file": "tasks/T093.md",
+    "depends_on": [
+      "T092"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T094",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Author and validate the MVP dialogue bank",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      144,
+      184,
+      211,
+      217
+    ],
+    "paths": [
+      "content/source/dialogue/",
+      "tools/content/validate.py",
+      "tools/content/compile.py"
+    ],
+    "work": "Create \u2265300 useful offline lines covering relevant roles, seven Aspects, shortage solutions, hazard/battle/legacy/displaced fallbacks and onboarding. Use small validated batches; no runtime generator.",
+    "checks": "Every shipped condition/context renders without placeholders/unknown facts; each important invalidation has a line; duplicate padding flagged; human review samples supplied.",
+    "file": "tasks/T094.md",
+    "depends_on": [
+      "T093"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T095",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Complete the village testing panel and failure bundles",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      197,
+      198,
+      223
+    ],
+    "paths": [
+      "client/debug/scenario_panel.gd",
+      "tools/run_scenario.py",
+      "tracking/village_runs/"
+    ],
+    "work": "Add seed/manifest/quest/puzzle selection, normal projection launch, reset, command replay and export failure bundle. Show causal facts/effects only in debug view. Save mid-quest fixtures for Joe.",
+    "checks": "Panel and main sandbox produce identical outcomes for same inputs; no separate quest engine; failure bundle contains enough data to replay missing-line/softlock/cause bugs.",
+    "file": "tasks/T095.md",
+    "depends_on": [
+      "T094"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T096",
+    "phase": "P09 \u2014 Items, puzzles and personal duels",
+    "title": "Prepare generated village, quest and duel playtest gate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      222,
+      224,
+      226,
+      227
+    ],
+    "paths": [
+      "tracking/gates/G05/"
+    ],
+    "work": "Package G05 primary village test with two fresh solution saves, a world-resolved scenario and a destroyed-target scenario. Supply optional hint separately from steps. Stop for Joe before scaling era/content work.",
+    "checks": "FX-VILLAGE and duel/puzzle/save checks pass. Gate asks whether Joe can infer cause, care about worker and solve without debug intervention; agents cannot self-pass that judgement.",
+    "file": "tasks/T096.md",
+    "depends_on": [
+      "T095"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "manual_gate_after": "G05",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T097",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Implement theoretical capacity ranking and transition plans",
+    "contract": "C11_eras",
+    "source_sections": [
+      40,
+      82,
+      189
+    ],
+    "paths": [
+      "sim/dmb/eras/planner.py",
+      "sim/dmb/industry/allocation.py"
+    ],
+    "work": "Produce a pure hashed EraTransitionPlan using installed/permanent theoretical capacity and stable score/tie ordering. Do not refill actual source deposits or mutate state during planning.",
+    "checks": "Temporary catastrophe/damage/depletion does not alter rank; changed installed capacity does; equal rank uses ID; stale plan hash cannot commit.",
+    "file": "tasks/T097.md",
+    "depends_on": [
+      "T096"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T098",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Implement multi-faction collapse and inert ruin disposition",
+    "contract": "C11_eras",
+    "source_sections": [
+      40,
+      104,
+      107
+    ],
+    "paths": [
+      "sim/dmb/eras/collapse.py",
+      "sim/dmb/people/registry.py",
+      "sim/dmb/logistics/stock.py"
+    ],
+    "work": "Select all<5 plus one lowest, protecting only remaining winner as specified. Retire operational assets/stock/military and keep civilians displaced. Create purely decorative ruins.",
+    "checks": "10/9/8/7/6/5 loses 5; tied lowest uses capacity/ID; ruins have no collision/VP/loot/site restriction; losses recorded once; civilians and their quests survive.",
+    "file": "tasks/T098.md",
+    "depends_on": [
+      "T097"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T099",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Implement compact fission pairing and successor ownership",
+    "contract": "C11_eras",
+    "source_sections": [
+      40,
+      120
+    ],
+    "paths": [
+      "sim/dmb/eras/fission.py",
+      "sim/dmb/ai/legal.py"
+    ],
+    "work": "Evaluate 3 pairings of top 4 sites, minimise distances and assign remaining settlements/roads/units/carts by specified nearest-core rules. Copy research and external relations; respect six-faction ceiling.",
+    "checks": "Known distance fixture chooses minimum pairing; tie stable; every asset assigned once; cargo physically unchanged; successor siblings neutral/trade-permitted; no duplicated people.",
+    "file": "tasks/T099.md",
+    "depends_on": [
+      "T098"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T100",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Implement Historic core upgrades and one-time bootstrap",
+    "contract": "C11_eras",
+    "source_sections": [
+      40,
+      101,
+      103
+    ],
+    "paths": [
+      "sim/dmb/eras/upgrades.py",
+      "content/source/eras/historic/"
+    ],
+    "work": "Upgrade centre/warehouse/primary/factory slots in place, preserve workers/positions, add minimal feasible new processors/layer and grant explicit starter package once. New cores score 1/reset new meters.",
+    "checks": "Old city becomes 1 VP core; no duplicate primary slot or new person; reload grants no second package; new factory starts 0; compatible old Catan stores retained.",
+    "file": "tasks/T100.md",
+    "depends_on": [
+      "T099"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T101",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Implement operational legacy sites and paid upgrades",
+    "contract": "C11_eras",
+    "source_sections": [
+      40,
+      79,
+      103,
+      116
+    ],
+    "paths": [
+      "sim/dmb/eras/upgrades.py",
+      "sim/dmb/construction/orders.py",
+      "sim/dmb/industry/routes.py"
+    ],
+    "work": "Keep non-core surviving old facilities/layers/factories/units operating for 0 currentVP. Delivered legacy upgrade rebinds specified slots and costs normal Catan goods; extra legacy processors remain.",
+    "checks": "Legacy factory still creates old unit after transition; depleted old layer is not refilled; paid upgrade restores 1 VP and creates no extra slots; source/output eras never silently relabelled.",
+    "file": "tasks/T101.md",
+    "depends_on": [
+      "T100"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T102",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Implement sole-faction and zero-faction recovery",
+    "contract": "C11_eras",
+    "source_sections": [
+      40,
+      104,
+      166
+    ],
+    "paths": [
+      "sim/dmb/eras/safeguards.py",
+      "sim/dmb/time/runner.py"
+    ],
+    "work": "Protect lone era starter and force split at its next transition; handle 2/3/1-site mandatory splits and explicit emergency distance exception. Dissolve last-centre factions and seed 2 after empty world next turn.",
+    "checks": "Solo survives then produces 2 successors; one-site split never duplicates 4 centres; no-faction state is nonterminal; only remaining mid-era winner not collapsed as its own lowest.",
+    "file": "tasks/T102.md",
+    "depends_on": [
+      "T101"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T103",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Preserve quests, people and protected items through conversion",
+    "contract": "C11_eras",
+    "source_sections": [
+      38,
+      39,
+      40,
+      56,
+      141
+    ],
+    "paths": [
+      "sim/dmb/eras/continuity.py",
+      "sim/dmb/quests/runtime.py",
+      "sim/dmb/adventure/item_recovery.py"
+    ],
+    "work": "Reconcile existing IDs/jobs/relationships/active quests, current line context and invalid-target branches. Move stranded required items to recorded accessible anchors. No age/generation replacement.",
+    "checks": "Active shortage quest retainsID/promise; displaced speaker uses truthful current lines; dropped key retainsID and accessible position; dead target remains dead, not resurrected.",
+    "file": "tasks/T103.md",
+    "depends_on": [
+      "T102"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T104",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Integrate immediate transition, hazards and fresh roster",
+    "contract": "C11_eras",
+    "source_sections": [
+      40,
+      114,
+      166,
+      189
+    ],
+    "paths": [
+      "sim/dmb/eras/service.py",
+      "sim/dmb/time/runner.py",
+      "sim/dmb/encounters/registry.py"
+    ],
+    "work": "Commit plan after first 10 VP action, freeze leases and cancel later old-era handlers. Reset era outbreaks/escalation, retain typed cubes, discard unfinished hands and begin fresh roster.",
+    "checks": "Winner before due draw skips old draw; partial round yields no draft; transition once even on retransmission; no extra World Turn or Game Time; stale lease delta rejected.",
+    "file": "tasks/T104.md",
+    "depends_on": [
+      "T103"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T105",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Present recognisable local upgrades and Chronicle facts",
+    "contract": "C11_eras",
+    "source_sections": [
+      38,
+      173,
+      182,
+      185
+    ],
+    "paths": [
+      "client/world/era_transition.gd",
+      "sim/dmb/history/chronicle.py",
+      "client/ui/chronicle.gd"
+    ],
+    "work": "Display four-second paused transformation from committed before/after views; preserve landmarks/people; support skip/reduced motion. Record cause-linked collapse/fission/upgrades with knowledge-filtered history.",
+    "checks": "Skip/reload never repeats mechanical conversion; same living worker visible afterward; known history differs from debug omniscience; ruined area can be built over.",
+    "file": "tasks/T105.md",
+    "depends_on": [
+      "T104"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T106",
+    "phase": "P10 \u2014 Immediate era transformation and survival",
+    "title": "Build transition, legacy and singleton regression fixtures",
+    "contract": "C11_eras",
+    "source_sections": [
+      205,
+      225,
+      231
+    ],
+    "paths": [
+      "content/fixtures/eras/",
+      "tests/scenarios/test_era_transition.py"
+    ],
+    "work": "Complete FX-ERA/FX-SOLO with ranking ties, in-flight cargo, half-complete factories, active quest/puzzle and mandatory fission. Verify continuations, not just record counts.",
+    "checks": "10 VP interrupts later old work; stores/people/units disposed exactly once; old industry resumes; two sequential solo-era boundaries behave correctly; save/load matches uninterrupted run.",
+    "file": "tasks/T106.md",
+    "depends_on": [
+      "T105"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T107",
+    "phase": "P11 \u2014 Integrated playable MVP",
+    "title": "Complete all player inventory, grimoire and knowledge screens",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      20,
+      53,
+      54,
+      168
+    ],
+    "paths": [
+      "client/ui/inventory.gd",
+      "client/ui/grimoire.gd",
+      "client/ui/knowledge.gd",
+      "client/ui/world_map.gd"
+    ],
+    "work": "Finish pointer-only use/give/equip/spell selection and discovered map/history. Pause these screens, keep hidden information filtered and prohibit remote management/casts.",
+    "checks": "Every listed verb has a playable control or declared contextual availability; no right-click/keyboard-only dependency; map cannot issue army orders or global spells.",
+    "file": "tasks/T107.md",
+    "depends_on": [
+      "T106"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T108",
+    "phase": "P11 \u2014 Integrated playable MVP",
+    "title": "Build the integrated two-era sandbox scenario",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      213,
+      217,
+      219,
+      220
+    ],
+    "paths": [
+      "content/fixtures/mvp/",
+      "sim/dmb/world/setup.py",
+      "client/main.tscn"
+    ],
+    "work": "Start normal generated 2-faction Prehistoric world with real industry/cargo/AI/demons, quest/dungeon/rival and supported Historic continuation. Use the same services as all prior fixtures.",
+    "checks": "Main launch plays the full loop without debug injected resources/outcomes; first 10 VP produces working Historic sites with same people; demonstration endpoint does not force Game Over.",
+    "file": "tasks/T108.md",
+    "depends_on": [
+      "T107"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T109",
+    "phase": "P11 \u2014 Integrated playable MVP",
+    "title": "Implement contextual onboarding and optional hints",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      151,
+      152,
+      153,
+      158
+    ],
+    "paths": [
+      "content/source/dialogue/tutorial/",
+      "client/ui/hints.gd"
+    ],
+    "work": "Teach movement, observe/interact, knowledge, quest, puzzle/duel, hazards, economy, battle and era progressively through context. Keep guidance optional and spoiler-separated; configure difficulty hints independently.",
+    "checks": "New player can discover Wait and targeting/cancel; tutorial cannot make wrong world claims; turning hints off leaves every required action reachable.",
+    "file": "tasks/T109.md",
+    "depends_on": [
+      "T108"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T110",
+    "phase": "P11 \u2014 Integrated playable MVP",
+    "title": "Add prototype era art, audio and accessibility pass",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      173,
+      177,
+      178,
+      179,
+      180
+    ],
+    "paths": [
+      "client/assets/mvp/",
+      "client/audio/",
+      "client/ui/settings.gd"
+    ],
+    "work": "Make Prehistoric/Historic actors/buildings readable with silhouettes, faction cues and core animations. Add local alert priorities, volume persistence, non-colour cues, label scaling and reduced motion.",
+    "checks": "No missing asset in MVP manifest; 48 px logical hit areas measured; state pause settings remain invariant; audio cues have text equivalents and do not spam globally.",
+    "file": "tasks/T110.md",
+    "depends_on": [
+      "T109"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T111",
+    "phase": "P11 \u2014 Integrated playable MVP",
+    "title": "Run cumulative MVP replay and persistence suite",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      190,
+      191,
+      223
+    ],
+    "paths": [
+      "tests/scenarios/test_mvp_continuation.py",
+      "tracking/mvp_validation/"
+    ],
+    "work": "Run all completed domains and end-to-end save points during cargo, production, quest, puzzle, duel, battle and era transition. Use actual manifests and compare uninterrupted continuations.",
+    "checks": "No duplicate cargo/reward/core grants or revived unit; stochastic runs replay from recorded commands/time; all required tests discovered and executed.",
+    "file": "tasks/T111.md",
+    "depends_on": [
+      "T110"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T112",
+    "phase": "P11 \u2014 Integrated playable MVP",
+    "title": "Run six-seed MVP pacing and legality evaluation",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      201,
+      205,
+      225
+    ],
+    "paths": [
+      "tools/evaluate_mvp.py",
+      "tracking/mvp_balance/"
+    ],
+    "work": "Run at least 6 declared fixed seeds with legal controller time/turns, record turns-to 10, outbreak loss, rates, trade and blocked orders. Diagnose deadlocks; tune only declared numbers with recorded before/after evidence.",
+    "checks": "At least 1 no-debug integrated run reaches Historic; every run terminates by outcome or declared evaluation limit; no hidden resources/time shortcuts; failures retained in report.",
+    "file": "tasks/T112.md",
+    "depends_on": [
+      "T111"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T113",
+    "phase": "P11 \u2014 Integrated playable MVP",
+    "title": "Build a self-contained MVP desktop candidate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      192,
+      217,
+      223
+    ],
+    "paths": [
+      "build/desktop/",
+      "tools/package_desktop.py",
+      "tracking/mvp_build/"
+    ],
+    "work": "Package mapped Godot and bundled sidecar on an available compatible desktop target; Windows target requires Windows-built sidecar. Include local data/save path and clear launch instructions. Record any target availability blocker.",
+    "checks": "A clean launch requires no manual server/Python setup; offline loopback play works; quitting cleans child process. An unavailable target is not labelled successfully tested.",
+    "file": "tasks/T113.md",
+    "depends_on": [
+      "T112"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T114",
+    "phase": "P11 \u2014 Integrated playable MVP",
+    "title": "Prepare full MVP playthrough gate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      213,
+      214,
+      220,
+      221
+    ],
+    "paths": [
+      "tracking/gates/G06/"
+    ],
+    "work": "Supply G06 normal start plus checkpoint save for quick era verification. Joe plays village\u2192intervention\u2192return\u2192Historic without debug commands. Include all cumulative reports/known defects and stop before full-era scale.",
+    "checks": "Gate explicitly checks persistent people/quest, legacy output, transformed site and enjoyable core loop. MVP and full baseline completion are distinct; G06 does not imply later phases done.",
+    "file": "tasks/T114.md",
+    "depends_on": [
+      "T113"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "manual_gate_after": "G06",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T115",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Enable complete four-era resource and processing catalogue",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      78,
+      83,
+      207,
+      208
+    ],
+    "paths": [
+      "content/source/resources/",
+      "content/source/recipes/",
+      "content/manifests/full.json"
+    ],
+    "work": "Compile all 48 raws and 240 supplied processor/output definitions with canonical IDs/names, 1:1 raw consumption and military-supply compatibility. Preserve services as nonstorable.",
+    "checks": "Each era 60 unique cross-terrain pairs and each raw frequency 10; all 4 cultures access all 60; no imported workbook descriptive role changes runtime mechanics.",
+    "file": "tasks/T115.md",
+    "depends_on": [
+      "T114"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T116",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Define Modern and Future facilities, units and technology",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      60,
+      114,
+      116,
+      148
+    ],
+    "paths": [
+      "content/source/eras/modern/",
+      "content/source/eras/future/",
+      "content/source/technology/"
+    ],
+    "work": "Add 3 unit/factory archetypes and 6 primary definitions each era, factor 100/1000 combat, next-era upgrade maps and 6 tech cards each with predecessor pairs. Baseline production uses same framework.",
+    "checks": "No era multiplier doubles; every baseline route bootstraps; all 24 tech definitions reachable/capped; missing asset/reference fails compiled manifest.",
+    "file": "tasks/T116.md",
+    "depends_on": [
+      "T115"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T117",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Implement ordinary Historic\u2192Modern\u2192Future continuity",
+    "contract": "C11_eras",
+    "source_sections": [
+      40,
+      146,
+      148
+    ],
+    "paths": [
+      "sim/dmb/eras/service.py",
+      "content/source/eras/",
+      "tests/scenarios/test_later_eras.py"
+    ],
+    "work": "Reuse generic transition plan for remaining ordinary changes, with legacy facilities, people, quests, cargo and stronger new units. Do not special-case away old layers.",
+    "checks": "Active Historic quest/person retains IDs in Modern; old factories remain old; new core slots/stock grants once; current-era scoring and immediate interruption unchanged.",
+    "file": "tasks/T117.md",
+    "depends_on": [
+      "T116"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T118",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Implement pollution response and cleanup capabilities",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      58,
+      148,
+      166
+    ],
+    "paths": [
+      "content/source/hazards/pollution.json",
+      "sim/dmb/hazards/responders.py",
+      "content/source/units/"
+    ],
+    "work": "Add pollution cube presentation/type, cleanup-capable existing Modern unit/facility and typed quest cleanup. Preserve 0\u20133 shared total and forbid pollution duels.",
+    "checks": "Pollution suppresses source/transit; capable formation treats 1 instead of moving; ineligible unit cannot; wizard direct duel command rejected; type persists later eras.",
+    "file": "tasks/T118.md",
+    "depends_on": [
+      "T117"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T119",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Implement alien catastrophe and encounter content",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      58,
+      148,
+      166
+    ],
+    "paths": [
+      "content/source/hazards/aliens.json",
+      "content/source/duel_rules/",
+      "client/world/hazards/"
+    ],
+    "work": "Add alien manifestations/duel entry and compatible military responders using shared systems. Modern placement alternates saved types without renaming prior demons/pollution.",
+    "checks": "Alien cube can be challenged legitimately; old demon ID/type remains; alternation survives reload; terminal cap counts all types together.",
+    "file": "tasks/T119.md",
+    "depends_on": [
+      "T118"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T120",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Implement nuclear and hostile-machine catastrophe",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      148,
+      166
+    ],
+    "paths": [
+      "content/source/hazards/nuclear.json",
+      "content/source/hazards/machines.json",
+      "client/world/hazards/"
+    ],
+    "work": "Add distinct Future presentations/responders/duel-capable manifestations for nuclear escalation and hostile machines. Use saved alternating addition ordinal and existing cube/outbreak framework.",
+    "checks": "Future alternation deterministic; nuclear/machine causes distinct; mixed-type hex stillmax 3; each persistent hazard has a reachable eligible response route.",
+    "file": "tasks/T120.md",
+    "depends_on": [
+      "T119"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T121",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Implement later-era local visuals and semantic transformations",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      148,
+      173,
+      176,
+      183
+    ],
+    "paths": [
+      "client/assets/modern/",
+      "client/assets/future/",
+      "content/source/labels/"
+    ],
+    "work": "Add industrial/future buildings, workers, units, roads and hazard overlays reusing animation families. Preserve stable footprints/identities and legacy visual distinctions.",
+    "checks": "New era recognisable without debug label; old assets remain visibly old; same NPC can be recognised; projection reload does not move important items or change capacity.",
+    "file": "tasks/T121.md",
+    "depends_on": [
+      "T120"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T122",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Extend economy and combat checks to every era",
+    "contract": "C06_industry",
+    "source_sections": [
+      60,
+      79,
+      82,
+      225
+    ],
+    "paths": [
+      "tests/scenarios/test_all_era_economy_combat.py"
+    ],
+    "work": "Run shared flow/conservation/cost/legacy tests with all 4 manifests and representative finite/renewable/service routes. Add cross-era combat and old-tech compatibility cases.",
+    "checks": "Modern/Future factor applied once; service never loaded into cart; retained legacy source not refilled; same recipe count/allocator invariants hold across eras.",
+    "file": "tasks/T122.md",
+    "depends_on": [
+      "T121"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T123",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Validate all hazard response and rollover combinations",
+    "contract": "C08_catastrophe",
+    "source_sections": [
+      166,
+      223,
+      225
+    ],
+    "paths": [
+      "tests/scenarios/test_mixed_hazards.py",
+      "content/fixtures/mixed_hazards/"
+    ],
+    "work": "Enumerate ordinary-era retained types, responders/duels, visit allowances, mixed cubes, alternation and outbreak counters. Include retired target while duel open.",
+    "checks": "Every retained type has valid treatment route; pollution never enters duel; ordinary rollover resets counter not cubes; stale target outcome cannot remove another type.",
+    "file": "tasks/T123.md",
+    "depends_on": [
+      "T122"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T124",
+    "phase": "P12 \u2014 Full catalogue and later-era systems",
+    "title": "Validate six-faction full-board progression",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      40,
+      108,
+      205
+    ],
+    "paths": [
+      "tools/evaluate_full_world.py",
+      "content/fixtures/full_board/",
+      "tracking/full_era_validation/"
+    ],
+    "work": "Run normal 6-faction setup through three ordinary era transitions with legal time/turns and recorded decisions. Inspect logistics, collapse/fission, source diversity and no-faction recovery.",
+    "checks": "Seeds produce valid starts or documented fallback; no illegal overcrowding; all ordinary transitions preserve people/quests and do not silently fake performance with free goods.",
+    "file": "tasks/T124.md",
+    "depends_on": [
+      "T123"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T125",
+    "phase": "P13 \u2014 Full cycles and sustained history",
+    "title": "Implement full-cycle political reseeding transaction",
+    "contract": "C11_eras",
+    "source_sections": [
+      14,
+      40,
+      146
+    ],
+    "paths": [
+      "sim/dmb/eras/cycles.py"
+    ],
+    "work": "Create new-cycle Prehistoric factions/industrial layers and retire prior strategic memberships/research/military under explicit plan. Reuse validated setup while preserving geography/numbers.",
+    "checks": "Future army is not carried into new contest; six new faction IDs where setup permits; old layers retain historical balances; new cycle number increments once.",
+    "file": "tasks/T125.md",
+    "depends_on": [
+      "T124"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T126",
+    "phase": "P13 \u2014 Full cycles and sustained history",
+    "title": "Implement relic, scar and contamination dispositions",
+    "contract": "C11_eras",
+    "source_sections": [
+      14,
+      40,
+      166
+    ],
+    "paths": [
+      "sim/dmb/history/legacy.py",
+      "content/source/legacy_rules/"
+    ],
+    "work": "Record inert traces and explicitly active non-faction relic entities separately. Preserve authored bunkers/artifacts, contamination and demon scars by typed rule; ordinary collapsed ruins remain lootless.",
+    "checks": "Inert art cannot supply loot/collision/VP; explicit bunker retains puzzle state; unsupported future soldier relic cannot silently join new faction army.",
+    "file": "tasks/T126.md",
+    "depends_on": [
+      "T125"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T127",
+    "phase": "P13 \u2014 Full cycles and sustained history",
+    "title": "Preserve living people, promises and items across full cycles",
+    "contract": "C11_eras",
+    "source_sections": [
+      39,
+      40,
+      56,
+      141
+    ],
+    "paths": [
+      "sim/dmb/eras/continuity.py",
+      "sim/dmb/quests/runtime.py"
+    ],
+    "work": "Reassign existing living people/jobs/affiliations by location, retain relationships and inventory, and adapt quests whose active hazard/political target retired. Record old promises without false completion.",
+    "checks": "Same person/quest/key IDs remain; retired hazard produces defined suspension/adaptation; no instant solved reward; wizard colours/Aspects/memory persist.",
+    "file": "tasks/T127.md",
+    "depends_on": [
+      "T126"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T128",
+    "phase": "P13 \u2014 Full cycles and sustained history",
+    "title": "Implement Chronicle summaries with pinned references",
+    "contract": "C11_eras",
+    "source_sections": [
+      38,
+      39,
+      191
+    ],
+    "paths": [
+      "sim/dmb/history/chronicle.py",
+      "sim/dmb/history/compaction.py"
+    ],
+    "work": "Index causal events/lineage by entity/time; compact retired events only after computing pins from live quests, people, items, relationships and legacy state. Keep knowledge-filtered review.",
+    "checks": "Pinned NPC/event remains resolvable after 20 cycles; unrelated retired detail may compact; remembered fact does not change; source event of current quest retained.",
+    "file": "tasks/T128.md",
+    "depends_on": [
+      "T127"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T129",
+    "phase": "P13 \u2014 Full cycles and sustained history",
+    "title": "Implement Utopia extension validation without adding content",
+    "contract": "C11_eras",
+    "source_sections": [
+      146,
+      150
+    ],
+    "paths": [
+      "sim/dmb/eras/path_selection.py",
+      "content/schemas/eras.json"
+    ],
+    "work": "Persist next_future_path and validate installed pack/quest flag contract. Dystopia remains baseline. Unavailable Utopia flag-setting option must not appear or silently succeed.",
+    "checks": "Missing pack rejects unsupported flag outcome; installed test pack selects specified branch deterministically; ordinary baseline always uses dystopia; no forced retirement menu added.",
+    "file": "tasks/T129.md",
+    "depends_on": [
+      "T128"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T130",
+    "phase": "P13 \u2014 Full cycles and sustained history",
+    "title": "Add multi-cycle replay and save-continuation tests",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      190,
+      191,
+      223
+    ],
+    "paths": [
+      "tests/scenarios/test_full_cycles.py",
+      "content/fixtures/cycles/"
+    ],
+    "work": "Run FX-CYCLE for 3 complete detailed cycles with active people/quests/items/hazards and mid-cycle saves. Compare commands/time/recorded policy replay against uninterrupted continuation.",
+    "checks": "Exactly 3 reseeds/cycle increments; board/token hash identical; all live refs resolve; no duplicated core grants or new-cycle old military; saved continuation matches.",
+    "file": "tasks/T130.md",
+    "depends_on": [
+      "T129"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T131",
+    "phase": "P13 \u2014 Full cycles and sustained history",
+    "title": "Profile long-run state growth and stationary armies",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      205,
+      225
+    ],
+    "paths": [
+      "tools/profile_world.py",
+      "tracking/performance/"
+    ],
+    "work": "Measure 20 accelerated legal cycles plus stationary industry growth and 10000-unit headless state. Profile allocation, turns, offscreen battles, projection and save size; optimise only measured bottlenecks.",
+    "checks": "No undeclared army cap/deleted living identities; deterministic results unchanged by optimisation; record hardware/p 95/memory trends and unresolved limits honestly.",
+    "file": "tasks/T131.md",
+    "depends_on": [
+      "T130"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T132",
+    "phase": "P13 \u2014 Full cycles and sustained history",
+    "title": "Prepare full-cycle playtest gate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      14,
+      222,
+      227
+    ],
+    "paths": [
+      "tracking/gates/G07/"
+    ],
+    "work": "Supply G07 transition checkpoints across alleras and a natural 6-faction start. Joe verifies recognisable history, threat differences, new-cycle continuity and useful consequences. Stop before mass narrative/policy promotion.",
+    "checks": "Full-era/cycle/replay suites pass; gate includes active quest/NPC before-after examples and ordinary versus full-cycle army distinction; no automatic human PASS.",
+    "file": "tasks/T132.md",
+    "depends_on": [
+      "T131"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06"
+    ],
+    "manual_gate_after": "G07",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T133",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Build small-batch offline content authoring pipeline",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      144,
+      193,
+      200
+    ],
+    "paths": [
+      "tools/content/make_batch.py",
+      "tools/content/compile.py",
+      "tools/content/quality_report.py"
+    ],
+    "work": "Accept 25\u201350-line structured authoring batches, track provenance/schema/hash, validate, compile immutable packs and report missing coverage. Support file-authored results without paid API.",
+    "checks": "Malformed/unsupported effect or unknown fact blocks pack; failed batch leaves prior manifest intact; shipped game has no generator/credentials/runtime API dependency.",
+    "file": "tasks/T133.md",
+    "depends_on": [
+      "T132"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T134",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Author shortage, transport, catastrophe and diplomacy templates",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      141,
+      142,
+      145
+    ],
+    "paths": [
+      "content/source/quests/shortage/",
+      "content/source/quests/transport/",
+      "content/source/quests/catastrophe/",
+      "content/source/quests/diplomacy/"
+    ],
+    "work": "Reach 2 templates for each of these 4 families using real cause/bindings, 2+solutions, world-resolved/destruction branches and era continuity. Include genuine competing interests/costs.",
+    "checks": "All 8 template graphs have reachable legal outcomes, invalid-target and required-item recovery; no two templates differ only by names; side effects obey cargo/visit/policy contracts.",
+    "file": "tasks/T134.md",
+    "depends_on": [
+      "T133"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T135",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Author military, personal, discovery and conflicting-interest templates",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      141,
+      142,
+      145
+    ],
+    "paths": [
+      "content/source/quests/military/",
+      "content/source/quests/personal/",
+      "content/source/quests/discovery/",
+      "content/source/quests/conflict/"
+    ],
+    "work": "Reach 2 templates each, completing 16 baseline templates. Add explicit death/displacement/war/endless-history handling and no compulsory main quest.",
+    "checks": "All 16 bind to actual existing entities/causes; no arbitrary victory/world ending; alternative outcomes and failure consequences work through shared runtime.",
+    "file": "tasks/T135.md",
+    "depends_on": [
+      "T134"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T136",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Complete eight dungeon layouts and four recurring rivals",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      128,
+      130,
+      206,
+      209
+    ],
+    "paths": [
+      "content/source/dungeons/",
+      "content/source/rivals/"
+    ],
+    "work": "Create cave, mine, sluice, temple, bunker, industrial, alien, machine layouts using common puzzle vocabulary and 4 distinct legal rival profiles. Add clues/alternate routes and persistent state.",
+    "checks": "Each required puzzle has solution/recovery trace; rivals do not read hidden secret; all layouts bind real systemic context and preserve objects across revisits.",
+    "file": "tasks/T136.md",
+    "depends_on": [
+      "T135"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T137",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Complete and review baseline dialogue coverage",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      144,
+      184,
+      211
+    ],
+    "paths": [
+      "content/source/dialogue/",
+      "tracking/content_review/"
+    ],
+    "work": "Reach 1200 useful compiled lines across eras/families/roles/statuses/sevenAspects with explicit coverage matrix. Review every key branch plus a stratified sample for contradictions/repetition/tone.",
+    "checks": "All required combinations have truthful fallbacks; no leaked identity/raw placeholders; world-resolved/death/cycle lines truthful; review evidence flags remaining quality defects.",
+    "file": "tasks/T137.md",
+    "depends_on": [
+      "T136"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T138",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Complete four era art/audio families and asset provenance",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      173,
+      174,
+      177,
+      178,
+      179,
+      212
+    ],
+    "paths": [
+      "client/assets/",
+      "client/audio/",
+      "content/asset_manifest.json"
+    ],
+    "work": "Replace final-gate placeholders with coherent modular tile/building/actor/hazard/magic families, required animations and era/local audio palettes. Record provenance/licence and no missing resources.",
+    "checks": "All manifest assets load at actual export paths; every action readable without colour alone; sound alerts rate limited; no unlicensed or unexplained missing final asset.",
+    "file": "tasks/T138.md",
+    "depends_on": [
+      "T137"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T139",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Implement economy, technology, culture and policy inspectors",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      197,
+      198,
+      199
+    ],
+    "paths": [
+      "client/debug/economy_view.gd",
+      "client/debug/technology_view.gd",
+      "client/debug/culture_editor.gd",
+      "client/debug/policy_view.gd"
+    ],
+    "work": "Create simple graph/form tools showing constraints, cargo, tech prerequisites, culture data and legal candidate scores. Authoring edits validate before compiling/preview; release player UI remains minimal.",
+    "checks": "Inspector values match authoritative state; invalid edit cannot replace pack; debug-only knowledge never leaks; normal gameplay uses same runtime after preview.",
+    "file": "tasks/T139.md",
+    "depends_on": [
+      "T138"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T140",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Implement quest, dialogue, semantic, puzzle and era tools",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      197,
+      198,
+      199
+    ],
+    "paths": [
+      "client/debug/narrative_tools/",
+      "client/debug/puzzle_editor.gd",
+      "client/debug/era_plan_view.gd"
+    ],
+    "work": "Expose graph/binding/state preview, observer knowledge selector, puzzle solution trace and era before/after assignments. Extend village panel rather than building separate gameplay.",
+    "checks": "World-resolved/destroyed-speaker contexts preview correct branches; era asset assignments conserved; editing unsupported effect rejected; fixture replay still matches main runtime.",
+    "file": "tasks/T140.md",
+    "depends_on": [
+      "T139"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T141",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Run corpus, dependency and gameplay coverage validation",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      196,
+      200,
+      224
+    ],
+    "paths": [
+      "tools/content/validate.py",
+      "tests/scenarios/test_content_matrix.py",
+      "tracking/content_coverage/"
+    ],
+    "work": "Check all 240 recipes, 24 tech, 16 quests, 8 dungeons, 4 rivals and 1200 lines/assets, plus representative binding permutations across eras/death/collapse. Run scripted alternates rather than only schema checks.",
+    "checks": "No dangling IDs, softlocked required routes, illegal effects or unsupported text contexts; coverage report lists actual counts and unreviewed items separately.",
+    "file": "tasks/T141.md",
+    "depends_on": [
+      "T140"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T142",
+    "phase": "P14 \u2014 Complete baseline content and tools",
+    "title": "Prepare narrative and presentation playtest gate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      222,
+      224,
+      226
+    ],
+    "paths": [
+      "tracking/gates/G08/"
+    ],
+    "work": "Give Joe a stratified sample of quests/dungeons/rivals/eras and a normal discovery session. Ask about motivation, choice meaning, repetition, readability and sound. Record changes as defects/content revisions.",
+    "checks": "Automated content requirements pass; human can request writing/art changes before release. Count targets alone cannot mark this gate passed.",
+    "file": "tasks/T142.md",
+    "depends_on": [
+      "T141"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07"
+    ],
+    "manual_gate_after": "G08",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T143",
+    "phase": "P15 \u2014 Train and qualify faction leadership",
+    "title": "Expose production simulation as a training environment",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      118,
+      121,
+      122
+    ],
+    "paths": [
+      "training/environment.py",
+      "training/observation_schema.json"
+    ],
+    "work": "Wrap exact legal observations/candidate IDs and outcomes. Advance 30 s Game Time plus legal turn transaction; terminate at era win, catastrophe or 1000 turns. Keep training setup separate from runtime without duplicating rules.",
+    "checks": "A training trace replayed in normal headless game matches costs/VP/cargo/output; no free units or bypassed catastrophe; masked choices always validate.",
+    "file": "tasks/T143.md",
+    "depends_on": [
+      "T142"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T144",
+    "phase": "P15 \u2014 Train and qualify faction leadership",
+    "title": "Generate heuristic trajectories and held-out seed splits",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      122
+    ],
+    "paths": [
+      "training/collect.py",
+      "training/datasets/manifest.json"
+    ],
+    "work": "Record observations, candidates, choices, rewards, manifests, seed and outcomes from competent heuristic runs. Define held-out 200-seed promotion set before training; balance faction seats.",
+    "checks": "No promotion seed enters training; rewards include nonacting collapsed factions; netVP loss reverses shaping; replay verifies sampled data rows.",
+    "file": "tasks/T144.md",
+    "depends_on": [
+      "T143"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T145",
+    "phase": "P15 \u2014 Train and qualify faction leadership",
+    "title": "Implement candidate-scoring model and imitation training",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      121,
+      122
+    ],
+    "paths": [
+      "training/model.py",
+      "training/train_imitation.py"
+    ],
+    "work": "Implement documented observation/candidate encoders, masked score/value heads and reproducible imitation baseline. Start 10000 decision batch; checkpoint model/optimiser/RNG/schema and measure compute.",
+    "checks": "Model ranks only supplied candidates; same checkpoint/data reproduces evaluation; saved model is trained beyond initial random weights; schema mismatch rejects loading.",
+    "file": "tasks/T145.md",
+    "depends_on": [
+      "T144"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T146",
+    "phase": "P15 \u2014 Train and qualify faction leadership",
+    "title": "Implement bounded actor-critic improvement and checkpoints",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      122
+    ],
+    "paths": [
+      "training/train_actor_critic.py",
+      "training/budget.py"
+    ],
+    "work": "Train 20000 decision batches with exact reward rules and preserved optimiser/RNG. Stop on explicit local compute budget, write resume state and inspect exploit/timeout behaviour. No unapproved paid cloud job.",
+    "checks": "Resume continues from checkpoint; no endless stock/activity reward; cost/clock invariants hold in training; budget stop is incomplete batch progress, not claimed promotion.",
+    "file": "tasks/T146.md",
+    "depends_on": [
+      "T145"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T147",
+    "phase": "P15 \u2014 Train and qualify faction leadership",
+    "title": "Implement local runtime neural inference with fallback",
+    "contract": "C12_strategy_technology",
+    "source_sections": [
+      121,
+      122
+    ],
+    "paths": [
+      "sim/dmb/ai/neural.py",
+      "sim/dmb/ai/policy.py",
+      "content/policies/manifest.json"
+    ],
+    "work": "Load pinned inference artifact/schema, score legal candidates, select deterministically and record actual choice. Apply 20 ms p 95 target and bounded error/timeout fallback. Exclude training dependencies from final runtime where possible.",
+    "checks": "Wrong schema/failed inference uses legal heuristic; no partial neural action; replay uses recorded candidate; no internet/model download; policy stable during era.",
+    "file": "tasks/T147.md",
+    "depends_on": [
+      "T146"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T148",
+    "phase": "P15 \u2014 Train and qualify faction leadership",
+    "title": "Evaluate policies against held-out paired baseline",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      122,
+      205
+    ],
+    "paths": [
+      "training/evaluate.py",
+      "tracking/policy_evaluations/"
+    ],
+    "work": "Run\u2265200 paired fixed seeds per candidate, balanced seats and identical manifests. Report win/10 VP, terminal counts, illegal proposals/accepts, inference timing, uncertainty and sample replay audits.",
+    "checks": "Promotion criteria in C14 computed from actual results; baseline nonzero competence required; failed candidate remains rejected; no skipped/lucky-subset seeds.",
+    "file": "tasks/T148.md",
+    "depends_on": [
+      "T147"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T149",
+    "phase": "P15 \u2014 Train and qualify faction leadership",
+    "title": "Select three competent distinct leadership policies",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      117,
+      121,
+      122
+    ],
+    "paths": [
+      "content/policies/",
+      "training/select_library.py",
+      "tracking/policy_evaluations/"
+    ],
+    "work": "Retain 3 qualified policies with measured behavioural differences and distinct provenance; seed one per faction per era. If fewer qualify, document remaining work and iterate within budget without fake duplicates.",
+    "checks": "All 3 individually satisfy competence/legal/catastrophe gates; diversity target evidenced; fission safeguards unchanged; manifests/hashes identify exact weights and training provenance.",
+    "file": "tasks/T149.md",
+    "depends_on": [
+      "T148"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T150",
+    "phase": "P15 \u2014 Train and qualify faction leadership",
+    "title": "Prepare neural leadership playtest and acceptance gate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      122,
+      222,
+      225
+    ],
+    "paths": [
+      "tracking/gates/G09/"
+    ],
+    "work": "Supply evaluation summary plus replayable examples of trade/build/war differences and normal games against accepted policies. Joe checks behaviour and any remaining training budget decision. Stop before final release acceptance.",
+    "checks": "Three-policy requirement either genuinely fulfilled or explicitly BLOCKED; no heuristic copy labelled trained. Human PASS needs real policy artifacts/results, not just a working interface.",
+    "file": "tasks/T150.md",
+    "depends_on": [
+      "T149"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08"
+    ],
+    "manual_gate_after": "G09",
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T151",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Audit full-source and player-verb coverage",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      9,
+      20,
+      213,
+      231
+    ],
+    "paths": [
+      "tracking/release_coverage.json",
+      "tools/check.py"
+    ],
+    "work": "Map every source invariant/acceptance row/player verb/content floor to actual code, test, gate and evidence. Identify remaining stubs, TODOs, disabled required features or unreviewed content.",
+    "checks": "No required full-baseline feature falsely marked complete; deferred extensions clearly scoped; all 160 task receipts and preceding manual gate decisions resolvable.",
+    "file": "tasks/T151.md",
+    "depends_on": [
+      "T150"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T152",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Harden save corruption, crashes and content compatibility",
+    "contract": "C02_bridge_save",
+    "source_sections": [
+      191,
+      192,
+      223
+    ],
+    "paths": [
+      "sim/dmb/persistence/",
+      "sim/dmb/bridge/",
+      "tests/integration/test_release_recovery.py"
+    ],
+    "work": "Inject failures at every checkpoint/write/ack/lease transfer; validate backup restore, content mismatch and migration paths. Preserve old files and honest rollback message.",
+    "checks": "No half-save pair or duplicated result after restart; invalid content hash cannot silently load; backup remains good; prototype saves not deleted.",
+    "file": "tasks/T152.md",
+    "depends_on": [
+      "T151"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T153",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Measure and fix release performance bottlenecks",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      223,
+      225
+    ],
+    "paths": [
+      "tools/profile_world.py",
+      "sim/dmb/",
+      "client/"
+    ],
+    "work": "Profile declared standard/stress hardware scenarios; implement only measured optimisations with bounded tasks and change reports. Preserve identity, clock, industry and combat rules.",
+    "checks": "Targets measured with p 95 and hardware; replay/conservation unchanged; no hidden army cap/worker removal; unresolved budget misses explicitly documented for G10.",
+    "file": "tasks/T153.md",
+    "depends_on": [
+      "T152"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T154",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Finish touch, display, audio and accessibility verification",
+    "contract": "C13_content_presentation",
+    "source_sections": [
+      21,
+      23,
+      158,
+      173
+    ],
+    "paths": [
+      "client/ui/",
+      "client/audio/",
+      "tests/client/"
+    ],
+    "work": "Verify all verbs at 1280 x 720/960 x 540 and touch-like viewport with one pointer, label scaling, non-colour cues, reduced motion, volumes and pause/focus. Fix actual usability failures.",
+    "checks": "No clipped required choice/hidden cancel path/keyboard-only action; sound has text equivalent; no focus-loss catch-up; settings persist after restart.",
+    "file": "tasks/T154.md",
+    "depends_on": [
+      "T153"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T155",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Produce Windows sidecar and Godot release bundle",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      192
+    ],
+    "paths": [
+      "build/windows/",
+      "tools/package_desktop.py",
+      "content/manifests/release.json"
+    ],
+    "work": "Build platform-correct bundled Python executable, Godot release and local data/models/assets into one folder/ZIP. Resolve relative paths and user-data saves; include hashes, versions, licences.",
+    "checks": "Windows executable actually produced on compatible runner; no Python/server setup needed; no runtime download/APIkey; missing platform capability reported as blocker, not fabricated export.",
+    "file": "tasks/T155.md",
+    "depends_on": [
+      "T154"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T156",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Run clean-machine offline installation tests",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      192,
+      223
+    ],
+    "paths": [
+      "tracking/clean_machine/",
+      "tools/smoke_release.py"
+    ],
+    "work": "Test packaged Windows app without developer dependencies, internet disconnected, loopback available, path withspaces/nonASCII/read-only install. Verify start, save/load, move folder, crash recovery, quit/child cleanup.",
+    "checks": "Recorded actual Windows evidence; saves use user-data path; no orphan sidecar; moved bundle works; all required assets/models local. Linux-only evidence cannot pass Windows gate.",
+    "file": "tasks/T156.md",
+    "depends_on": [
+      "T155"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T157",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Run release scenario and multi-cycle regression suite",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      190,
+      205,
+      223
+    ],
+    "paths": [
+      "tests/scenarios/test_release.py",
+      "tracking/release_tests/"
+    ],
+    "work": "Run full required suite and 3 complete full-cycle continuations using release manifests. Include FX-RECOVERY and content branch matrix, not just import/parse. Record unexecuted/skipped tests as failures.",
+    "checks": "All required tests actually run; exact release hashes/commit match reports; no different debug definitions or hidden injected outcomes satisfy normal-play scenario.",
+    "file": "tasks/T157.md",
+    "depends_on": [
+      "T156"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T158",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Write player guide, known limits and release evidence index",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      151,
+      168,
+      192
+    ],
+    "paths": [
+      "docs/player_guide.md",
+      "docs/release_notes.md",
+      "tracking/release_evidence.json"
+    ],
+    "work": "Explain controls, save/recovery, offline startup and core clocks without implementation details in player flows. Record actual supportedplatform, remaining optional extensions and evidence links.",
+    "checks": "Guide matches release build; no promise of mobile/Utopia/fullvoice; all material known defects stated; neural/content/art verification points to actual artifacts.",
+    "file": "tasks/T158.md",
+    "depends_on": [
+      "T157"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T159",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Assemble final manual acceptance candidate",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      221,
+      222,
+      231
+    ],
+    "paths": [
+      "tracking/gates/G10/",
+      "build/release/"
+    ],
+    "work": "Freeze candidate commit/manifest/checksums, package, seed saves, automated summary and concise known defects. G10 steps cover normal launch, full baseline play and long-term continuity. Do not publish externally.",
+    "checks": "Candidate bytes match evidence; no pending required task/gate concealed; executable available for Joe with no developer setup; final acceptance remains AWAITING_HUMAN.",
+    "file": "tasks/T159.md",
+    "depends_on": [
+      "T158"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": null,
+    "status": "NOT_STARTED"
+  },
+  {
+    "id": "T160",
+    "phase": "P16 \u2014 Release hardening and completion",
+    "title": "Complete final playtest gate and close the build ledger",
+    "contract": "C14_validation_release",
+    "source_sections": [
+      205,
+      231
+    ],
+    "paths": [
+      "tracking/gates/G10/",
+      "tracking/progress.json",
+      "tracking/release_evidence.json"
+    ],
+    "work": "Present candidate to Joe and stop for G10. After an explicit PASS, record exact accepted build and finish ledger. If fixes requested, reopen relevant tasks, create regression evidence and resubmit; do not silently update accepted bytes.",
+    "checks": "Full baseline marked complete only after all automated gates, 3 qualified policies, content floors and explicit G10 PASS. Publishing/distribution outside local deliverables remains a separate user instruction.",
+    "file": "tasks/T160.md",
+    "depends_on": [
+      "T159"
+    ],
+    "required_gates": [
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "G09"
+    ],
+    "manual_gate_after": "G10",
+    "status": "NOT_STARTED"
+  }
+]

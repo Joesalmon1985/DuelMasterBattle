@@ -1,0 +1,25 @@
+---
+description: Authoritative DuelMasterBattle v0.3 build-pack execution protocol
+alwaysApply: true
+---
+
+# DuelMasterBattle build execution
+
+- Work from `Pack/DuelMasterBattle_Build_Pack/AGENT_START_HERE.md`.
+- Apply `Pack/DuelMasterBattle_Build_Pack/EXECUTION_AMENDMENTS.md`.
+- Resume only from `Pack/DuelMasterBattle_Build_Pack/tracking/progress.json`;
+  read its current task card, named contract, repository map and prior receipt.
+- The repository map is
+  `Pack/DuelMasterBattle_Build_Pack/tracking/repository_map.json` once T001
+  creates it. Logical pack paths must be mapped to this checkout.
+- Python exclusively owns durable world state in the migrated runtime. Godot
+  owns presentation, input, local movement and explicitly leased encounters.
+  Never introduce competing live simulations or save writers.
+- Preserve compatible existing duel, puzzle, village and test behaviour.
+  Fixtures and training use the same authoritative simulation as normal play.
+- Run meaningful behavioural checks as well as Godot import checks. Record
+  evidence and commit each accepted task.
+- Continue through dependency-ready tasks; stop at required human gates or
+  after three focused failed repairs with a diagnostic handoff.
+- Do not load the full GDD or all task cards unless a concrete ambiguity
+  requires it.

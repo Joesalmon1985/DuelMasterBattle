@@ -1,0 +1,6651 @@
+{
+  "source_sha256": "e958798c50d372d90f7c4f7f74a1d33152ceca54961f3a2e5369d8278a0163a2",
+  "sections": [
+    {
+      "section": 1,
+      "title": "One-sentence game definition",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 2,
+      "title": "Expanded product definition",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 3,
+      "title": "Player fantasy",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 4,
+      "title": "Target player",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 5,
+      "title": "Reference points",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 6,
+      "title": "Distinctive proposition",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 7,
+      "title": "Primary design problems",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 8,
+      "title": "Design pillars",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 9,
+      "title": "System invariants",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T005",
+        "T011",
+        "T151"
+      ],
+      "related_tasks": [
+        "T005",
+        "T011",
+        "T151"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 10,
+      "title": "Deliberate omissions",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 11,
+      "title": "Core experience",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 12,
+      "title": "Core gameplay loop",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 13,
+      "title": "Secondary loops",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 14,
+      "title": "Long-term loop",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T125",
+        "T126",
+        "T132"
+      ],
+      "related_tasks": [
+        "T125",
+        "T126",
+        "T132"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 15,
+      "title": "Positive feedback",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 16,
+      "title": "Negative feedback",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 17,
+      "title": "Failure cascades",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T057"
+      ],
+      "related_tasks": [
+        "T057"
+      ],
+      "review_gates": [
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 18,
+      "title": "Recovery",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 19,
+      "title": "Player authority",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T020",
+        "T021",
+        "T028",
+        "T055",
+        "T077",
+        "T078",
+        "T079",
+        "T080",
+        "T084",
+        "T085"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 20,
+      "title": "Complete player verb list",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T020",
+        "T079",
+        "T107",
+        "T151"
+      ],
+      "related_tasks": [
+        "T020",
+        "T079",
+        "T107",
+        "T151"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 21,
+      "title": "Input philosophy",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T020",
+        "T085",
+        "T154"
+      ],
+      "related_tasks": [
+        "T020",
+        "T085",
+        "T154"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 22,
+      "title": "Selection and targeting",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T065",
+        "T079"
+      ],
+      "related_tasks": [
+        "T065",
+        "T079"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 23,
+      "title": "Camera and viewpoint",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T020",
+        "T154"
+      ],
+      "related_tasks": [
+        "T020",
+        "T154"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 24,
+      "title": "World representation",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T025"
+      ],
+      "related_tasks": [
+        "T025"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 25,
+      "title": "Scale",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T025",
+        "T026",
+        "T027",
+        "T029",
+        "T031",
+        "T032",
+        "T036",
+        "T037",
+        "T056"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 26,
+      "title": "Terrain",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T025",
+        "T026",
+        "T029"
+      ],
+      "related_tasks": [
+        "T025",
+        "T026",
+        "T029"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 27,
+      "title": "Occupancy",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T025"
+      ],
+      "related_tasks": [
+        "T025"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 28,
+      "title": "Movement",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T020",
+        "T034",
+        "T061",
+        "T072"
+      ],
+      "related_tasks": [
+        "T020",
+        "T034",
+        "T061",
+        "T072"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 29,
+      "title": "Orientation",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T025",
+        "T026",
+        "T027",
+        "T029",
+        "T031",
+        "T032",
+        "T036",
+        "T037",
+        "T056"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 30,
+      "title": "Geography as gameplay",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T025",
+        "T026",
+        "T027",
+        "T029",
+        "T031",
+        "T032",
+        "T036",
+        "T037",
+        "T056"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 31,
+      "title": "Time model",
+      "owner_contract": "contracts/C03_time.md",
+      "direct_rule_tasks": [
+        "T012",
+        "T013",
+        "T022",
+        "T046",
+        "T054"
+      ],
+      "related_tasks": [
+        "T012",
+        "T013",
+        "T022",
+        "T046",
+        "T054"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 32,
+      "title": "Time pressure",
+      "owner_contract": "contracts/C03_time.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T012",
+        "T013",
+        "T022",
+        "T038",
+        "T046"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 33,
+      "title": "Timed systems",
+      "owner_contract": "contracts/C03_time.md",
+      "direct_rule_tasks": [
+        "T012",
+        "T022"
+      ],
+      "related_tasks": [
+        "T012",
+        "T022"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 34,
+      "title": "Visibility",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T021",
+        "T079"
+      ],
+      "related_tasks": [
+        "T021",
+        "T079"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 35,
+      "title": "Hidden information",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T021"
+      ],
+      "related_tasks": [
+        "T021"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 36,
+      "title": "Memory",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T021"
+      ],
+      "related_tasks": [
+        "T021"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 37,
+      "title": "Information as gameplay",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T020",
+        "T021",
+        "T028",
+        "T055",
+        "T077",
+        "T078",
+        "T079",
+        "T080",
+        "T084",
+        "T085"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 38,
+      "title": "Persistent world state",
+      "owner_contract": "contracts/C11_eras.md",
+      "direct_rule_tasks": [
+        "T103",
+        "T105",
+        "T128"
+      ],
+      "related_tasks": [
+        "T103",
+        "T105",
+        "T128"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 39,
+      "title": "Persistent character state",
+      "owner_contract": "contracts/C11_eras.md",
+      "direct_rule_tasks": [
+        "T103",
+        "T127",
+        "T128"
+      ],
+      "related_tasks": [
+        "T103",
+        "T127",
+        "T128"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 40,
+      "title": "Persistent strategic state",
+      "owner_contract": "contracts/C11_eras.md",
+      "direct_rule_tasks": [
+        "T036",
+        "T097",
+        "T098",
+        "T099",
+        "T100",
+        "T101",
+        "T102",
+        "T103",
+        "T104",
+        "T117",
+        "T124",
+        "T125",
+        "T126",
+        "T127"
+      ],
+      "related_tasks": [
+        "T036",
+        "T097",
+        "T098",
+        "T099",
+        "T100",
+        "T101",
+        "T102",
+        "T103",
+        "T104",
+        "T117",
+        "T124",
+        "T125",
+        "T126",
+        "T127"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 41,
+      "title": "Entity categories",
+      "owner_contract": "contracts/C01_core_state.md",
+      "direct_rule_tasks": [
+        "T009"
+      ],
+      "related_tasks": [
+        "T009"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 42,
+      "title": "Entity lifecycle",
+      "owner_contract": "contracts/C01_core_state.md",
+      "direct_rule_tasks": [
+        "T028",
+        "T053",
+        "T059"
+      ],
+      "related_tasks": [
+        "T028",
+        "T053",
+        "T059"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 43,
+      "title": "Entity state",
+      "owner_contract": "contracts/C01_core_state.md",
+      "direct_rule_tasks": [
+        "T007",
+        "T009",
+        "T027"
+      ],
+      "related_tasks": [
+        "T007",
+        "T009",
+        "T027"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 44,
+      "title": "Ownership and allegiance",
+      "owner_contract": "contracts/C01_core_state.md",
+      "direct_rule_tasks": [
+        "T044"
+      ],
+      "related_tasks": [
+        "T044"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 45,
+      "title": "Character model",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T077"
+      ],
+      "related_tasks": [
+        "T077"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 46,
+      "title": "Character creation or recruitment",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T020",
+        "T021",
+        "T028",
+        "T055",
+        "T077",
+        "T078",
+        "T079",
+        "T080",
+        "T084",
+        "T085"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 47,
+      "title": "Attributes",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T080"
+      ],
+      "related_tasks": [
+        "T080"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 48,
+      "title": "Skills",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T080"
+      ],
+      "related_tasks": [
+        "T080"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 49,
+      "title": "Character progression",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T080",
+        "T091"
+      ],
+      "related_tasks": [
+        "T080",
+        "T091"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 50,
+      "title": "Party structure",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T020",
+        "T021",
+        "T028",
+        "T055",
+        "T077",
+        "T078",
+        "T079",
+        "T080",
+        "T084",
+        "T085"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "EXPLICITLY_NOT_APPLICABLE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 51,
+      "title": "Death and replacement",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T072",
+        "T092"
+      ],
+      "related_tasks": [
+        "T072",
+        "T092"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 52,
+      "title": "Item model",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T087"
+      ],
+      "related_tasks": [
+        "T087"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 53,
+      "title": "Inventory model",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T087",
+        "T107"
+      ],
+      "related_tasks": [
+        "T087",
+        "T107"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 54,
+      "title": "Equipment",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T107"
+      ],
+      "related_tasks": [
+        "T107"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 55,
+      "title": "Object interaction",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T087",
+        "T088"
+      ],
+      "related_tasks": [
+        "T087",
+        "T088"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 56,
+      "title": "Persistent physical objects",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T087",
+        "T088",
+        "T103",
+        "T127"
+      ],
+      "related_tasks": [
+        "T087",
+        "T088",
+        "T103",
+        "T127"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 57,
+      "title": "Purpose of combat",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T059",
+        "T060",
+        "T061",
+        "T062",
+        "T063",
+        "T065",
+        "T066",
+        "T068"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 58,
+      "title": "Combat flow",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [
+        "T002",
+        "T062",
+        "T063",
+        "T064",
+        "T074",
+        "T091",
+        "T092",
+        "T118",
+        "T119"
+      ],
+      "related_tasks": [
+        "T002",
+        "T062",
+        "T063",
+        "T064",
+        "T074",
+        "T091",
+        "T092",
+        "T118",
+        "T119"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 59,
+      "title": "Positioning",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [
+        "T060",
+        "T063"
+      ],
+      "related_tasks": [
+        "T060",
+        "T063"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 60,
+      "title": "Attack resolution",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [
+        "T002",
+        "T059",
+        "T060",
+        "T061",
+        "T062",
+        "T063",
+        "T064",
+        "T065",
+        "T066",
+        "T091",
+        "T116",
+        "T122"
+      ],
+      "related_tasks": [
+        "T002",
+        "T059",
+        "T060",
+        "T061",
+        "T062",
+        "T063",
+        "T064",
+        "T065",
+        "T066",
+        "T091",
+        "T116",
+        "T122"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 61,
+      "title": "Weapons and attack types",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T059",
+        "T060",
+        "T061",
+        "T062",
+        "T063",
+        "T065",
+        "T066",
+        "T068"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 62,
+      "title": "Health, injury and death",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [
+        "T059"
+      ],
+      "related_tasks": [
+        "T059"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 63,
+      "title": "Combat resources",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T059",
+        "T060",
+        "T061",
+        "T062",
+        "T063",
+        "T065",
+        "T066",
+        "T068"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 64,
+      "title": "Combat asymmetry",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T059",
+        "T060",
+        "T061",
+        "T062",
+        "T063",
+        "T065",
+        "T066",
+        "T068"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 65,
+      "title": "Combat failure and retreat",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [
+        "T061"
+      ],
+      "related_tasks": [
+        "T061"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 66,
+      "title": "Ability model",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [
+        "T065",
+        "T074"
+      ],
+      "related_tasks": [
+        "T065",
+        "T074"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 67,
+      "title": "Acquisition",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [
+        "T091"
+      ],
+      "related_tasks": [
+        "T091"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 68,
+      "title": "Costs and constraints",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [
+        "T065",
+        "T066"
+      ],
+      "related_tasks": [
+        "T065",
+        "T066"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 69,
+      "title": "Combination and experimentation",
+      "owner_contract": "contracts/C07_combat.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T059",
+        "T060",
+        "T061",
+        "T062",
+        "T063",
+        "T065",
+        "T066",
+        "T068"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 70,
+      "title": "Survival pressures",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "EXPLICITLY_NOT_APPLICABLE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 71,
+      "title": "Interaction between survival systems",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "EXPLICITLY_NOT_APPLICABLE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 72,
+      "title": "Puzzle philosophy",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T090"
+      ],
+      "related_tasks": [
+        "T090"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 73,
+      "title": "Puzzle primitives",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T089"
+      ],
+      "related_tasks": [
+        "T089"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 74,
+      "title": "Puzzle grammar",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T089"
+      ],
+      "related_tasks": [
+        "T089"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 75,
+      "title": "Puzzle fairness",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T090"
+      ],
+      "related_tasks": [
+        "T090"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 76,
+      "title": "Failure, reset and recovery",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T090"
+      ],
+      "related_tasks": [
+        "T090"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 77,
+      "title": "Soft-lock prevention",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T088",
+        "T090"
+      ],
+      "related_tasks": [
+        "T088",
+        "T090"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 78,
+      "title": "Resource taxonomy",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [
+        "T049",
+        "T115"
+      ],
+      "related_tasks": [
+        "T049",
+        "T115"
+      ],
+      "review_gates": [
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 79,
+      "title": "Resource origin",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [
+        "T029",
+        "T050",
+        "T071",
+        "T101",
+        "T122"
+      ],
+      "related_tasks": [
+        "T029",
+        "T050",
+        "T071",
+        "T101",
+        "T122"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 80,
+      "title": "Resource representation",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [
+        "T029",
+        "T050"
+      ],
+      "related_tasks": [
+        "T029",
+        "T050"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 81,
+      "title": "Resource sinks",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [
+        "T030"
+      ],
+      "related_tasks": [
+        "T030"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 82,
+      "title": "Production model",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [
+        "T051",
+        "T052",
+        "T053",
+        "T054",
+        "T097",
+        "T122"
+      ],
+      "related_tasks": [
+        "T051",
+        "T052",
+        "T053",
+        "T054",
+        "T097",
+        "T122"
+      ],
+      "review_gates": [
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 83,
+      "title": "Production chains",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [
+        "T049",
+        "T051",
+        "T115"
+      ],
+      "related_tasks": [
+        "T049",
+        "T051",
+        "T115"
+      ],
+      "review_gates": [
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 84,
+      "title": "Capacity",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [
+        "T051"
+      ],
+      "related_tasks": [
+        "T051"
+      ],
+      "review_gates": [
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 85,
+      "title": "Demand",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T049",
+        "T050",
+        "T051",
+        "T052",
+        "T053",
+        "T054",
+        "T057",
+        "T122"
+      ],
+      "review_gates": [
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 86,
+      "title": "Supply",
+      "owner_contract": "contracts/C06_industry.md",
+      "direct_rule_tasks": [
+        "T030",
+        "T035"
+      ],
+      "related_tasks": [
+        "T030",
+        "T035"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 87,
+      "title": "Transport model",
+      "owner_contract": "contracts/C05_logistics.md",
+      "direct_rule_tasks": [
+        "T033",
+        "T034",
+        "T035",
+        "T045",
+        "T071"
+      ],
+      "related_tasks": [
+        "T033",
+        "T034",
+        "T035",
+        "T045",
+        "T071"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 88,
+      "title": "Network structure",
+      "owner_contract": "contracts/C05_logistics.md",
+      "direct_rule_tasks": [
+        "T034",
+        "T044"
+      ],
+      "related_tasks": [
+        "T034",
+        "T044"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 89,
+      "title": "Distance cost",
+      "owner_contract": "contracts/C05_logistics.md",
+      "direct_rule_tasks": [
+        "T034"
+      ],
+      "related_tasks": [
+        "T034"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 90,
+      "title": "Congestion",
+      "owner_contract": "contracts/C05_logistics.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T030",
+        "T033",
+        "T034",
+        "T035",
+        "T045"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 91,
+      "title": "Storage",
+      "owner_contract": "contracts/C05_logistics.md",
+      "direct_rule_tasks": [
+        "T030",
+        "T033"
+      ],
+      "related_tasks": [
+        "T030",
+        "T033"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 92,
+      "title": "Logistics failure",
+      "owner_contract": "contracts/C05_logistics.md",
+      "direct_rule_tasks": [
+        "T035"
+      ],
+      "related_tasks": [
+        "T035"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 93,
+      "title": "Worker roles",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T028",
+        "T055",
+        "T077"
+      ],
+      "related_tasks": [
+        "T028",
+        "T055",
+        "T077"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 94,
+      "title": "Worker creation",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T028",
+        "T055",
+        "T077"
+      ],
+      "related_tasks": [
+        "T028",
+        "T055",
+        "T077"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 95,
+      "title": "Worker assignment",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T055"
+      ],
+      "related_tasks": [
+        "T055"
+      ],
+      "review_gates": [
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 96,
+      "title": "Worker autonomy",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [
+        "T055"
+      ],
+      "related_tasks": [
+        "T055"
+      ],
+      "review_gates": [
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 97,
+      "title": "Worker progression",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T020",
+        "T021",
+        "T028",
+        "T055",
+        "T077",
+        "T078",
+        "T079",
+        "T080",
+        "T084",
+        "T085"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 98,
+      "title": "Indirect control",
+      "owner_contract": "contracts/C09_people_dialogue.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T020",
+        "T021",
+        "T028",
+        "T055",
+        "T077",
+        "T078",
+        "T079",
+        "T080",
+        "T084",
+        "T085"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 99,
+      "title": "Building purpose",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T027"
+      ],
+      "related_tasks": [
+        "T027"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 100,
+      "title": "Placement",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T031",
+        "T078"
+      ],
+      "related_tasks": [
+        "T031",
+        "T078"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 101,
+      "title": "Construction process",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T027",
+        "T032",
+        "T036",
+        "T056",
+        "T100"
+      ],
+      "related_tasks": [
+        "T027",
+        "T032",
+        "T036",
+        "T056",
+        "T100"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 102,
+      "title": "Building dependencies",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T025",
+        "T026",
+        "T027",
+        "T029",
+        "T031",
+        "T032",
+        "T036",
+        "T037",
+        "T056"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 103,
+      "title": "Repair, upgrade and destruction",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T027",
+        "T032",
+        "T037",
+        "T056",
+        "T100",
+        "T101"
+      ],
+      "related_tasks": [
+        "T027",
+        "T032",
+        "T037",
+        "T056",
+        "T100",
+        "T101"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 104,
+      "title": "Ownership",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T013",
+        "T031",
+        "T037",
+        "T098",
+        "T102"
+      ],
+      "related_tasks": [
+        "T013",
+        "T031",
+        "T037",
+        "T098",
+        "T102"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 105,
+      "title": "Expansion",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T031"
+      ],
+      "related_tasks": [
+        "T031"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 106,
+      "title": "Territorial value",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T025",
+        "T026",
+        "T027",
+        "T029",
+        "T031",
+        "T032",
+        "T036",
+        "T037",
+        "T056"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 107,
+      "title": "Territorial loss",
+      "owner_contract": "contracts/C04_board_building.md",
+      "direct_rule_tasks": [
+        "T037",
+        "T098"
+      ],
+      "related_tasks": [
+        "T037",
+        "T098"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 108,
+      "title": "Need for asymmetry",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T124"
+      ],
+      "related_tasks": [
+        "T124"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 109,
+      "title": "Shared foundation",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T042",
+        "T043",
+        "T044",
+        "T067",
+        "T116",
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 110,
+      "title": "Structural differences",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T042",
+        "T043",
+        "T044",
+        "T067",
+        "T116",
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 111,
+      "title": "Strategic identity",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T042",
+        "T043",
+        "T044",
+        "T067",
+        "T116",
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 112,
+      "title": "Strengths and weaknesses",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T042",
+        "T043",
+        "T044",
+        "T067",
+        "T116",
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 113,
+      "title": "Matchups",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T042",
+        "T043",
+        "T044",
+        "T067",
+        "T116",
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 114,
+      "title": "Capability progression",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T104",
+        "T116"
+      ],
+      "related_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T104",
+        "T116"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 115,
+      "title": "Prerequisites",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T039",
+        "T040"
+      ],
+      "related_tasks": [
+        "T039",
+        "T040"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 116,
+      "title": "Gating",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T101",
+        "T116"
+      ],
+      "related_tasks": [
+        "T101",
+        "T116"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 117,
+      "title": "AI purpose",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T043",
+        "T149"
+      ],
+      "related_tasks": [
+        "T043",
+        "T149"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 118,
+      "title": "AI knowledge",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T042",
+        "T143"
+      ],
+      "related_tasks": [
+        "T042",
+        "T143"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 119,
+      "title": "Local behaviour",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T042",
+        "T043",
+        "T044",
+        "T067",
+        "T116",
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 120,
+      "title": "Strategic behaviour",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T043",
+        "T044",
+        "T045",
+        "T046",
+        "T047",
+        "T067",
+        "T073",
+        "T099"
+      ],
+      "related_tasks": [
+        "T043",
+        "T044",
+        "T045",
+        "T046",
+        "T047",
+        "T067",
+        "T073",
+        "T099"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 121,
+      "title": "Authored versus general intelligence",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T042",
+        "T143",
+        "T145",
+        "T147",
+        "T149"
+      ],
+      "related_tasks": [
+        "T042",
+        "T143",
+        "T145",
+        "T147",
+        "T149"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 122,
+      "title": "AI limitations",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147",
+        "T148",
+        "T149",
+        "T150"
+      ],
+      "related_tasks": [
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147",
+        "T148",
+        "T149",
+        "T150"
+      ],
+      "review_gates": [
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 123,
+      "title": "Difficulty",
+      "owner_contract": "contracts/C12_strategy_technology.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T039",
+        "T040",
+        "T041",
+        "T042",
+        "T043",
+        "T044",
+        "T067",
+        "T116",
+        "T143",
+        "T144",
+        "T145",
+        "T146",
+        "T147"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 124,
+      "title": "Fundamental content unit",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T021",
+        "T079"
+      ],
+      "related_tasks": [
+        "T021",
+        "T079"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 125,
+      "title": "Reusable primitives",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 126,
+      "title": "Bespoke content",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 127,
+      "title": "Content hierarchy",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 128,
+      "title": "Level purpose",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T078",
+        "T136"
+      ],
+      "related_tasks": [
+        "T078",
+        "T136"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 129,
+      "title": "Spatial structure",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 130,
+      "title": "Challenge placement",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T136"
+      ],
+      "related_tasks": [
+        "T136"
+      ],
+      "review_gates": [
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 131,
+      "title": "Resource placement",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 132,
+      "title": "Safe and dangerous spaces",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 133,
+      "title": "Replayability",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 134,
+      "title": "Scenario purpose",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T023"
+      ],
+      "related_tasks": [
+        "T023"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 135,
+      "title": "Starting conditions",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T026"
+      ],
+      "related_tasks": [
+        "T026"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 136,
+      "title": "Objective",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 137,
+      "title": "Constraints",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 138,
+      "title": "Scripted events",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 139,
+      "title": "Failure conditions",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 140,
+      "title": "Alternative solutions",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 141,
+      "title": "Quest structure",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T082",
+        "T083",
+        "T086",
+        "T093",
+        "T103",
+        "T127",
+        "T134",
+        "T135"
+      ],
+      "related_tasks": [
+        "T082",
+        "T083",
+        "T086",
+        "T093",
+        "T103",
+        "T127",
+        "T134",
+        "T135"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 142,
+      "title": "Branches",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T081",
+        "T083",
+        "T134",
+        "T135"
+      ],
+      "related_tasks": [
+        "T081",
+        "T083",
+        "T134",
+        "T135"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 143,
+      "title": "Dialogue system",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T084",
+        "T085"
+      ],
+      "related_tasks": [
+        "T084",
+        "T085"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 144,
+      "title": "Dialogue reactivity",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T082",
+        "T084",
+        "T094",
+        "T133",
+        "T137"
+      ],
+      "related_tasks": [
+        "T082",
+        "T084",
+        "T094",
+        "T133",
+        "T137"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 145,
+      "title": "Consequences",
+      "owner_contract": "contracts/C10_adventure.md",
+      "direct_rule_tasks": [
+        "T011",
+        "T081",
+        "T083",
+        "T134",
+        "T135"
+      ],
+      "related_tasks": [
+        "T011",
+        "T081",
+        "T083",
+        "T134",
+        "T135"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 146,
+      "title": "Overall progression",
+      "owner_contract": "contracts/C11_eras.md",
+      "direct_rule_tasks": [
+        "T117",
+        "T125",
+        "T129"
+      ],
+      "related_tasks": [
+        "T117",
+        "T125",
+        "T129"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 147,
+      "title": "Content sequencing",
+      "owner_contract": "contracts/C11_eras.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T097",
+        "T098",
+        "T099",
+        "T100",
+        "T101",
+        "T102",
+        "T103",
+        "T104",
+        "T105",
+        "T106",
+        "T117",
+        "T125",
+        "T126",
+        "T127",
+        "T128",
+        "T129"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 148,
+      "title": "Mechanical escalation",
+      "owner_contract": "contracts/C11_eras.md",
+      "direct_rule_tasks": [
+        "T116",
+        "T117",
+        "T118",
+        "T119",
+        "T120",
+        "T121"
+      ],
+      "related_tasks": [
+        "T116",
+        "T117",
+        "T118",
+        "T119",
+        "T120",
+        "T121"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 149,
+      "title": "Narrative escalation",
+      "owner_contract": "contracts/C11_eras.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T097",
+        "T098",
+        "T099",
+        "T100",
+        "T101",
+        "T102",
+        "T103",
+        "T104",
+        "T105",
+        "T106",
+        "T117",
+        "T125",
+        "T126",
+        "T127",
+        "T128",
+        "T129"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 150,
+      "title": "Finale",
+      "owner_contract": "contracts/C11_eras.md",
+      "direct_rule_tasks": [
+        "T129"
+      ],
+      "related_tasks": [
+        "T129"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 151,
+      "title": "First actions",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T109",
+        "T158"
+      ],
+      "related_tasks": [
+        "T109",
+        "T158"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 152,
+      "title": "Teaching sequence",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T109"
+      ],
+      "related_tasks": [
+        "T109"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 153,
+      "title": "Teaching method",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T109"
+      ],
+      "related_tasks": [
+        "T109"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 154,
+      "title": "Mastery progression",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 155,
+      "title": "Difficulty dimensions",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 156,
+      "title": "Difficulty curve",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 157,
+      "title": "Difficulty combinations",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 158,
+      "title": "Difficulty settings",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T069",
+        "T075",
+        "T109",
+        "T154"
+      ],
+      "related_tasks": [
+        "T069",
+        "T075",
+        "T109",
+        "T154"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 159,
+      "title": "Moment-to-moment rhythm",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 160,
+      "title": "Recovery periods",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 161,
+      "title": "Escalation",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 162,
+      "title": "Pacing controls",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 163,
+      "title": "Failure taxonomy",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 164,
+      "title": "Failure feedback",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 165,
+      "title": "Recovery",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 166,
+      "title": "Terminal failure",
+      "owner_contract": "contracts/C08_catastrophe.md",
+      "direct_rule_tasks": [
+        "T029",
+        "T034",
+        "T069",
+        "T070",
+        "T071",
+        "T072",
+        "T073",
+        "T074",
+        "T075",
+        "T092",
+        "T102",
+        "T104",
+        "T118",
+        "T119",
+        "T120",
+        "T123",
+        "T126"
+      ],
+      "related_tasks": [
+        "T029",
+        "T034",
+        "T069",
+        "T070",
+        "T071",
+        "T072",
+        "T073",
+        "T074",
+        "T075",
+        "T092",
+        "T102",
+        "T104",
+        "T118",
+        "T119",
+        "T120",
+        "T123",
+        "T126"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 167,
+      "title": "Primary game screen",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T085"
+      ],
+      "related_tasks": [
+        "T085"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 168,
+      "title": "Secondary screens",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T022",
+        "T107",
+        "T158"
+      ],
+      "related_tasks": [
+        "T022",
+        "T107",
+        "T158"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 169,
+      "title": "Information hierarchy",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T021"
+      ],
+      "related_tasks": [
+        "T021"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 170,
+      "title": "Interaction feedback",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 171,
+      "title": "Diagnostic feedback",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 172,
+      "title": "Input efficiency",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T085"
+      ],
+      "related_tasks": [
+        "T085"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 173,
+      "title": "Visual identity",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T020",
+        "T105",
+        "T110",
+        "T121",
+        "T138",
+        "T154"
+      ],
+      "related_tasks": [
+        "T020",
+        "T105",
+        "T110",
+        "T121",
+        "T138",
+        "T154"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 174,
+      "title": "Gameplay readability",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T138"
+      ],
+      "related_tasks": [
+        "T138"
+      ],
+      "review_gates": [
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 175,
+      "title": "Entity readability",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 176,
+      "title": "Environment readability",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T121"
+      ],
+      "related_tasks": [
+        "T121"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 177,
+      "title": "Animation requirements",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T110",
+        "T138"
+      ],
+      "related_tasks": [
+        "T110",
+        "T138"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 178,
+      "title": "Music",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T110",
+        "T138"
+      ],
+      "related_tasks": [
+        "T110",
+        "T138"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 179,
+      "title": "Sound effects",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T110",
+        "T138"
+      ],
+      "related_tasks": [
+        "T110",
+        "T138"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 180,
+      "title": "Informational audio",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T110"
+      ],
+      "related_tasks": [
+        "T110"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 181,
+      "title": "Voice",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 182,
+      "title": "Premise",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T105"
+      ],
+      "related_tasks": [
+        "T105"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 183,
+      "title": "World",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T121"
+      ],
+      "related_tasks": [
+        "T121"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 184,
+      "title": "Characters",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T077",
+        "T094",
+        "T137"
+      ],
+      "related_tasks": [
+        "T077",
+        "T094",
+        "T137"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 185,
+      "title": "Story delivery",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T105"
+      ],
+      "related_tasks": [
+        "T105"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 186,
+      "title": "Agency",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 187,
+      "title": "Required simulation systems",
+      "owner_contract": "contracts/C01_core_state.md",
+      "direct_rule_tasks": [
+        "T004"
+      ],
+      "related_tasks": [
+        "T004"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 188,
+      "title": "System ownership",
+      "owner_contract": "contracts/C01_core_state.md",
+      "direct_rule_tasks": [
+        "T001",
+        "T002",
+        "T009",
+        "T016",
+        "T018",
+        "T063",
+        "T064",
+        "T089"
+      ],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T009",
+        "T016",
+        "T018",
+        "T063",
+        "T064",
+        "T089"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 189,
+      "title": "Update relationships",
+      "owner_contract": "contracts/C03_time.md",
+      "direct_rule_tasks": [
+        "T011",
+        "T013",
+        "T032",
+        "T038",
+        "T041",
+        "T046",
+        "T054",
+        "T064",
+        "T067",
+        "T070",
+        "T073",
+        "T097",
+        "T104"
+      ],
+      "related_tasks": [
+        "T011",
+        "T013",
+        "T032",
+        "T038",
+        "T041",
+        "T046",
+        "T054",
+        "T064",
+        "T067",
+        "T070",
+        "T073",
+        "T097",
+        "T104"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 190,
+      "title": "Determinism",
+      "owner_contract": "contracts/C03_time.md",
+      "direct_rule_tasks": [
+        "T003",
+        "T007",
+        "T010",
+        "T012",
+        "T052",
+        "T111",
+        "T130",
+        "T157"
+      ],
+      "related_tasks": [
+        "T003",
+        "T007",
+        "T010",
+        "T012",
+        "T052",
+        "T111",
+        "T130",
+        "T157"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 191,
+      "title": "Saveable state",
+      "owner_contract": "contracts/C02_bridge_save.md",
+      "direct_rule_tasks": [
+        "T007",
+        "T014",
+        "T018",
+        "T019",
+        "T078",
+        "T092",
+        "T111",
+        "T128",
+        "T130",
+        "T152"
+      ],
+      "related_tasks": [
+        "T007",
+        "T014",
+        "T018",
+        "T019",
+        "T078",
+        "T092",
+        "T111",
+        "T128",
+        "T130",
+        "T152"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 192,
+      "title": "Networking",
+      "owner_contract": "contracts/C02_bridge_save.md",
+      "direct_rule_tasks": [
+        "T001",
+        "T003",
+        "T011",
+        "T015",
+        "T016",
+        "T017",
+        "T019",
+        "T113",
+        "T152",
+        "T155",
+        "T156",
+        "T158"
+      ],
+      "related_tasks": [
+        "T001",
+        "T003",
+        "T011",
+        "T015",
+        "T016",
+        "T017",
+        "T019",
+        "T113",
+        "T152",
+        "T155",
+        "T156",
+        "T158"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 193,
+      "title": "Static definitions",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T005",
+        "T008",
+        "T049",
+        "T133"
+      ],
+      "related_tasks": [
+        "T005",
+        "T008",
+        "T049",
+        "T133"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 194,
+      "title": "Runtime state",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T009"
+      ],
+      "related_tasks": [
+        "T009"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 195,
+      "title": "Content extensibility",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 196,
+      "title": "Validation rules",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T005",
+        "T008",
+        "T049",
+        "T081",
+        "T084",
+        "T141"
+      ],
+      "related_tasks": [
+        "T005",
+        "T008",
+        "T049",
+        "T081",
+        "T084",
+        "T141"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 197,
+      "title": "Required editors",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T023",
+        "T095",
+        "T139",
+        "T140"
+      ],
+      "related_tasks": [
+        "T023",
+        "T095",
+        "T139",
+        "T140"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 198,
+      "title": "Debug tools",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T023",
+        "T095",
+        "T139",
+        "T140"
+      ],
+      "related_tasks": [
+        "T023",
+        "T095",
+        "T139",
+        "T140"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 199,
+      "title": "Visualisation",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T139",
+        "T140"
+      ],
+      "related_tasks": [
+        "T139",
+        "T140"
+      ],
+      "review_gates": [
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 200,
+      "title": "Content validation",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T133",
+        "T141"
+      ],
+      "related_tasks": [
+        "T133",
+        "T141"
+      ],
+      "review_gates": [
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 201,
+      "title": "What needs balancing?",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T112"
+      ],
+      "related_tasks": [
+        "T112"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 202,
+      "title": "Important ratios",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T003",
+        "T004",
+        "T006",
+        "T023",
+        "T024",
+        "T047",
+        "T048",
+        "T058",
+        "T076",
+        "T096",
+        "T108",
+        "T111",
+        "T112",
+        "T113",
+        "T114",
+        "T124",
+        "T130",
+        "T131",
+        "T132",
+        "T141",
+        "T142",
+        "T148",
+        "T149",
+        "T150",
+        "T151",
+        "T153",
+        "T155",
+        "T156",
+        "T157",
+        "T158",
+        "T159",
+        "T160"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 203,
+      "title": "Intended asymmetry",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T003",
+        "T004",
+        "T006",
+        "T023",
+        "T024",
+        "T047",
+        "T048",
+        "T058",
+        "T076",
+        "T096",
+        "T108",
+        "T111",
+        "T112",
+        "T113",
+        "T114",
+        "T124",
+        "T130",
+        "T131",
+        "T132",
+        "T141",
+        "T142",
+        "T148",
+        "T149",
+        "T150",
+        "T151",
+        "T153",
+        "T155",
+        "T156",
+        "T157",
+        "T158",
+        "T159",
+        "T160"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 204,
+      "title": "Tuning levers",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T003",
+        "T004",
+        "T006",
+        "T023",
+        "T024",
+        "T047",
+        "T048",
+        "T058",
+        "T076",
+        "T096",
+        "T108",
+        "T111",
+        "T112",
+        "T113",
+        "T114",
+        "T124",
+        "T130",
+        "T131",
+        "T132",
+        "T141",
+        "T142",
+        "T148",
+        "T149",
+        "T150",
+        "T151",
+        "T153",
+        "T155",
+        "T156",
+        "T157",
+        "T158",
+        "T159",
+        "T160"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 205,
+      "title": "Target outcomes",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T047",
+        "T048",
+        "T057",
+        "T075",
+        "T106",
+        "T112",
+        "T124",
+        "T131",
+        "T148",
+        "T157",
+        "T160"
+      ],
+      "related_tasks": [
+        "T047",
+        "T048",
+        "T057",
+        "T075",
+        "T106",
+        "T112",
+        "T124",
+        "T131",
+        "T148",
+        "T157",
+        "T160"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 206,
+      "title": "Required actor types",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T136"
+      ],
+      "related_tasks": [
+        "T136"
+      ],
+      "review_gates": [
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 207,
+      "title": "Required objects",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T115"
+      ],
+      "related_tasks": [
+        "T115"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 208,
+      "title": "Required structures",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T115"
+      ],
+      "related_tasks": [
+        "T115"
+      ],
+      "review_gates": [
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 209,
+      "title": "Required environments",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T136"
+      ],
+      "related_tasks": [
+        "T136"
+      ],
+      "review_gates": [
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 210,
+      "title": "Required scenarios",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T094",
+        "T095",
+        "T107",
+        "T109",
+        "T110",
+        "T115",
+        "T121",
+        "T133",
+        "T134",
+        "T135",
+        "T136",
+        "T137",
+        "T138",
+        "T139",
+        "T140",
+        "T154"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 211,
+      "title": "Required narrative",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T094",
+        "T137"
+      ],
+      "related_tasks": [
+        "T094",
+        "T137"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 212,
+      "title": "Required audiovisual assets",
+      "owner_contract": "contracts/C13_content_presentation.md",
+      "direct_rule_tasks": [
+        "T138"
+      ],
+      "related_tasks": [
+        "T138"
+      ],
+      "review_gates": [
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 213,
+      "title": "Core identity test",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T024",
+        "T038",
+        "T086",
+        "T108",
+        "T114",
+        "T151"
+      ],
+      "related_tasks": [
+        "T024",
+        "T038",
+        "T086",
+        "T108",
+        "T114",
+        "T151"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 214,
+      "title": "Core loop requirement",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T093",
+        "T114"
+      ],
+      "related_tasks": [
+        "T093",
+        "T114"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 215,
+      "title": "Minimum challenge",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 216,
+      "title": "Minimum progression",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 217,
+      "title": "Minimum content",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T026",
+        "T094",
+        "T108",
+        "T113"
+      ],
+      "related_tasks": [
+        "T026",
+        "T094",
+        "T108",
+        "T113"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 218,
+      "title": "MVP exclusions",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T005"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 219,
+      "title": "MVP start state",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T026",
+        "T036",
+        "T108"
+      ],
+      "related_tasks": [
+        "T026",
+        "T036",
+        "T108"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 220,
+      "title": "MVP end state",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T108",
+        "T114"
+      ],
+      "related_tasks": [
+        "T108",
+        "T114"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 221,
+      "title": "MVP definition",
+      "owner_contract": "contracts/C00_scope.md",
+      "direct_rule_tasks": [
+        "T114",
+        "T159"
+      ],
+      "related_tasks": [
+        "T114",
+        "T159"
+      ],
+      "review_gates": [
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 222,
+      "title": "Fun-risk questions",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T076",
+        "T096",
+        "T132",
+        "T142",
+        "T150",
+        "T159"
+      ],
+      "related_tasks": [
+        "T076",
+        "T096",
+        "T132",
+        "T142",
+        "T150",
+        "T159"
+      ],
+      "review_gates": [
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 223,
+      "title": "Technical-risk questions",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T003",
+        "T006",
+        "T023",
+        "T024",
+        "T068",
+        "T095",
+        "T111",
+        "T113",
+        "T123",
+        "T130",
+        "T152",
+        "T153",
+        "T156",
+        "T157"
+      ],
+      "related_tasks": [
+        "T003",
+        "T006",
+        "T023",
+        "T024",
+        "T068",
+        "T095",
+        "T111",
+        "T113",
+        "T123",
+        "T130",
+        "T152",
+        "T153",
+        "T156",
+        "T157"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 224,
+      "title": "Content-risk questions",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T096",
+        "T141",
+        "T142"
+      ],
+      "related_tasks": [
+        "T096",
+        "T141",
+        "T142"
+      ],
+      "review_gates": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 225,
+      "title": "Balance-risk questions",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T047",
+        "T057",
+        "T068",
+        "T106",
+        "T112",
+        "T122",
+        "T123",
+        "T131",
+        "T150",
+        "T153"
+      ],
+      "related_tasks": [
+        "T047",
+        "T057",
+        "T068",
+        "T106",
+        "T112",
+        "T122",
+        "T123",
+        "T131",
+        "T150",
+        "T153"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 226,
+      "title": "Usability-risk questions",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T024",
+        "T048",
+        "T058",
+        "T076",
+        "T096",
+        "T142"
+      ],
+      "related_tasks": [
+        "T024",
+        "T048",
+        "T058",
+        "T076",
+        "T096",
+        "T142"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 227,
+      "title": "Prototype questions",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T048",
+        "T058",
+        "T068",
+        "T076",
+        "T086",
+        "T093",
+        "T096",
+        "T132"
+      ],
+      "related_tasks": [
+        "T048",
+        "T058",
+        "T068",
+        "T076",
+        "T086",
+        "T093",
+        "T096",
+        "T132"
+      ],
+      "review_gates": [
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 228,
+      "title": "System dependency graph",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T004"
+      ],
+      "related_tasks": [
+        "T004"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 229,
+      "title": "Core-loop dependency chain",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T003",
+        "T004",
+        "T006",
+        "T023",
+        "T024",
+        "T047",
+        "T048",
+        "T058",
+        "T076",
+        "T096",
+        "T108",
+        "T111",
+        "T112",
+        "T113",
+        "T114",
+        "T124",
+        "T130",
+        "T131",
+        "T132",
+        "T141",
+        "T142",
+        "T148",
+        "T149",
+        "T150",
+        "T151",
+        "T153",
+        "T155",
+        "T156",
+        "T157",
+        "T158",
+        "T159",
+        "T160"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 230,
+      "title": "Content dependencies",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [],
+      "related_tasks": [
+        "T003",
+        "T004",
+        "T006",
+        "T023",
+        "T024",
+        "T047",
+        "T048",
+        "T058",
+        "T076",
+        "T096",
+        "T108",
+        "T111",
+        "T112",
+        "T113",
+        "T114",
+        "T124",
+        "T130",
+        "T131",
+        "T132",
+        "T141",
+        "T142",
+        "T148",
+        "T149",
+        "T150",
+        "T151",
+        "T153",
+        "T155",
+        "T156",
+        "T157",
+        "T158",
+        "T159",
+        "T160"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    },
+    {
+      "section": 231,
+      "title": "Highest dependency systems",
+      "owner_contract": "contracts/C14_validation_release.md",
+      "direct_rule_tasks": [
+        "T001",
+        "T002",
+        "T004",
+        "T006",
+        "T106",
+        "T151",
+        "T159",
+        "T160"
+      ],
+      "related_tasks": [
+        "T001",
+        "T002",
+        "T004",
+        "T006",
+        "T106",
+        "T151",
+        "T159",
+        "T160"
+      ],
+      "review_gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ],
+      "disposition": "SPECIFIED_FOR_IMPLEMENTATION_OR_ACCEPTANCE",
+      "implementation_status": "NOT_VERIFIED"
+    }
+  ],
+  "appendices": "Covered through class/data/fixture contracts; see C01–C14",
+  "volume_xxiii": "Behavioural acceptance mapping in acceptance_matrix.md"
+}

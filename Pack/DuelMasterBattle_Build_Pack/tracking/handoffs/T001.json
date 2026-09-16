@@ -1,0 +1,48 @@
+{
+  "task_id": "T001",
+  "status": "DONE",
+  "commit": "60e003d1da52b2ed3f2d9f962cb15008c3b627b5",
+  "files": [
+    "Pack/DuelMasterBattle_Build_Pack/tracking/repository_map.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/baseline.md"
+  ],
+  "public_contracts": [
+    "BuildPackV03 preserves a0936dd41f00ee7393067b1f800411800175d23e as its immutable original base",
+    "Pack tracking paths map to Pack/DuelMasterBattle_Build_Pack/tracking",
+    "The duplicate root ZIP remains preserved and ignored",
+    "The existing GDScript world is migration evidence, not the target persistent authority"
+  ],
+  "source_rules": [
+    "C00 repository boundaries",
+    "EXECUTION_AMENDMENTS staged Python ownership cutover",
+    "No user changes reset, stashed, deleted or overwritten"
+  ],
+  "checks": [
+    {
+      "command": "git merge-base --is-ancestor 6b3780c34e9b7aeb5c0d51ad705e842e28aec86e a0936dd41f00ee7393067b1f800411800175d23e",
+      "exit_code": 0,
+      "result": "Prepared expected SHA is an ancestor of fetched source"
+    },
+    {
+      "command": "git merge-base --is-ancestor a0936dd41f00ee7393067b1f800411800175d23e HEAD",
+      "exit_code": 0,
+      "result": "Execution branch retains the approved base"
+    },
+    {
+      "command": "python3 -m json.tool Pack/DuelMasterBattle_Build_Pack/tracking/repository_map.json",
+      "exit_code": 0,
+      "result": "Repository map is valid JSON"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "result": "No whitespace errors"
+    }
+  ],
+  "fixture_hashes": {},
+  "defects": [
+    "Godot 4.4.1 baseline tests have not yet been run; T003 owns that evidence",
+    "Python sidecar and mapped task/scenario wrappers do not exist; T004 records wrapper establishment"
+  ],
+  "next_task": "T002"
+}

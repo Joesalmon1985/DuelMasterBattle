@@ -85,6 +85,7 @@ func new_game() -> void:
 		"play_seconds": 0.0,
 		"run": null,
 		"dungeon_knowledge": {},
+		"knowledge": {},
 		"world": "",
 		"world_seed": 7,
 		"world_node": -1,
@@ -155,6 +156,14 @@ func load_game() -> bool:
 		state["run"] = null
 	if not state.has("dungeon_knowledge"):
 		state["dungeon_knowledge"] = {}
+	# v4 saves written before World Understanding have no knowledge bag.
+	# Give them an empty one; do not invent levels or reject the save.
+	if not state.has("knowledge") or not (state["knowledge"] is Dictionary):
+		state["knowledge"] = {}
+	else:
+		var known: Dictionary = state["knowledge"]
+		for k in known.keys():
+			known[k] = int(known[k])
 	state["story"]["encounter_index"] = int(state["story"].get("encounter_index", 0))
 	state["story"]["story_defeats"] = int(state["story"].get("story_defeats", 0))
 	progression = _Progression.from_dict(data.get("progression", {}))
