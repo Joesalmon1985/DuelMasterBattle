@@ -69,6 +69,17 @@ class WorldState:
     research: dict[str, Any] = field(default_factory=dict)
     tech_draft: dict[str, Any] = field(default_factory=dict)
     diplomacy: dict[str, Any] = field(default_factory=dict)
+    industry: dict[str, Any] = field(
+        default_factory=lambda: {
+            "schema_version": 1,
+            "layers": {},
+            "primary_bindings": {},
+            "processors": {},
+            "routes": {},
+            "factories": {},
+            "events": [],
+        }
+    )
     tombstones: dict[str, Any] = field(default_factory=dict)
     command_receipts: dict[str, Any] = field(default_factory=dict)
     definitions: dict[str, Any] = field(default_factory=dict)
@@ -192,6 +203,7 @@ class WorldState:
             "items": deepcopy(self.items),
             "leases": deepcopy(self.leases),
             "knowledge": deepcopy(self.knowledge),
+            "industry": deepcopy(self.industry),
             "tombstones": deepcopy(self.tombstones),
             "command_receipts": deepcopy(self.command_receipts),
             "definitions": deepcopy(self.definitions),
@@ -225,6 +237,15 @@ class WorldState:
             items=dict(payload.get("items", {})),
             leases=dict(payload.get("leases", {})),
             knowledge=dict(payload.get("knowledge", {})),
+            industry=dict(payload.get("industry", {
+                "schema_version": 1,
+                "layers": {},
+                "primary_bindings": {},
+                "processors": {},
+                "routes": {},
+                "factories": {},
+                "events": [],
+            })),
             tombstones=dict(payload.get("tombstones", {})),
             command_receipts=dict(payload.get("command_receipts", {})),
             definitions=dict(payload.get("definitions", {})),
