@@ -66,3 +66,28 @@ def test_unfinished_round_produces_no_draft() -> None:
     partial = sched.finish_seat()
     assert partial["round_complete"] is False
     assert clock["draft"] is None
+
+
+def test_begin_turn_preserves_mid_round_seats() -> None:
+    clock = {
+        "turn": 0,
+        "round": 0,
+        "scheduled_faction_ids": ["faction:A", "faction:B"],
+        "completed_seats": [],
+        "removed_faction_ids": [],
+        "round_complete": False,
+    }
+    sched = TurnScheduler(clock)
+    sched.begin_turn("Wait")
+    assert clock["active_faction_id"] == "faction:A"
+    first = sched.finish_seat()
+    assert first["round_complete"] is False
+    # Second World Turn must continue with B, not reset to A.
+    sched.begin_turn("Wait")
+    assert clock["active_faction_id"] == "faction:B"
+    assert clock["completed_seats"] == ["faction:A"]
+    second = sched.finish_seat()
+    assert second["round_complete"] is True
+    sched.begin_turn("Wait")
+    assert clock["completed_seats"] == []
+    assert clock["active_faction_id"] == "faction:A"

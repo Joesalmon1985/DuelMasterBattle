@@ -328,7 +328,26 @@ func _on_interact(entity_id: String) -> void:
 	var reply := _cmd("Interact", {"entity_id": entity_id})
 	var payload: Dictionary = reply.get("payload", {})
 	if str(reply.get("status", "")) == "ACCEPTED":
-		_prompt.text = "Interacted: %s" % payload.get("name", payload.get("role", payload.get("label", "?")))
+		var kind := str(payload.get("kind", ""))
+		if kind == "warehouse":
+			var stock: Dictionary = payload.get("stock", {})
+			var bits: PackedStringArray = PackedStringArray()
+			for good in stock.keys():
+				var e: Dictionary = stock[good]
+				bits.append("%s a=%s r=%s" % [good, str(e.get("available", 0)), str(e.get("reserved", 0))])
+			_prompt.text = "Warehouse %s — %s" % [payload.get("store_id", "?"), ", ".join(bits)]
+		elif kind == "cart":
+			_prompt.text = "Cart %s %s @%s cargo=%s dest=%s" % [
+				payload.get("cart_id", "?"),
+				payload.get("phase", payload.get("status", "?")),
+				payload.get("current_node", "?"),
+				str(payload.get("cargo", [])),
+				payload.get("destination_store", "?"),
+			]
+		elif kind == "staging":
+			_prompt.text = "Staging %s — %s" % [payload.get("store_id", "?"), payload.get("summary", "")]
+		else:
+			_prompt.text = "Interacted: %s" % payload.get("name", payload.get("role", payload.get("label", "?")))
 	else:
 		_prompt.text = "Interact failed: %s" % reply.get("code", "?")
 	_refresh_counters(false)
@@ -343,13 +362,21 @@ func _on_clear_route(mode: String = "clear") -> void:
 	var reply := _cmd("Interact", {"action": action})
 	if str(reply.get("status", "")) == "ACCEPTED":
 		if mode == "start":
-			_prompt.text = "Delivery started — Wait advances the cart; Block/Clear to test the route"
+			_prompt.text = "Delivery started — Wait moves the cart one road edge/turn (loads immediately)"
 		elif mode == "clear":
-			_prompt.text = "Route block cleared — Wait/Travel to resume cargo"
+			_prompt.text = "Route cleared — Wait resumes the same cart/cargo"
 		else:
-			_prompt.text = "Route block placed — Wait to observe blockage (no teleport)"
+			_prompt.text = "Route blocked — Wait to park the cart; cargo stays aboard"
 	else:
-		_prompt.text = "Route action failed: %s" % reply.get("public_feedback", reply.get("code", "?"))
+		var payload: Dictionary = reply.get("payload", {})
+		if payload.has("missing") or payload.has("required"):
+			_prompt.text = "Start failed: %s (required %s available %s)" % [
+				reply.get("public_feedback", reply.get("code", "?")),
+				str(payload.get("required", {})),
+				str(payload.get("available", {})),
+			]
+		else:
+			_prompt.text = "Route action failed: %s" % reply.get("public_feedback", reply.get("code", "?"))
 	_refresh_counters(false)
 
 

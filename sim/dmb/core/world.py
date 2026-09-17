@@ -421,6 +421,26 @@ class WorldSim:
                 events=[],
                 public_feedback="too far to interact",
             )
+        # Bind visible warehouse / cart / staging to authoritative records.
+        inspect_payload = self._inspect_fx_person(entity_id, person)
+        if inspect_payload is not None:
+            reveal(
+                self.state,
+                entity_id,
+                KnowledgeFact(entity_id, "met", role=str(person.get("role", "villager"))),
+                role=str(person.get("role", "villager")),
+            )
+            self.state.knowledge[entity_id]["name"] = person.get("display_name")
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "inspected", "entity_id": entity_id}],
+                payload=inspect_payload,
+                public_feedback=str(inspect_payload.get("summary") or "inspected"),
+            )
         reveal(
             self.state,
             entity_id,
@@ -441,12 +461,94 @@ class WorldSim:
             public_feedback="interacted",
         )
 
+    def _inspect_fx_person(self, entity_id: str, person: dict) -> dict | None:
+        from sim.dmb.logistics.stock import StockLedger
+
+        role = str(person.get("role") or "")
+        fx = self.state.board.get("fx_cargo") or {}
+        if role == "warehouse" or entity_id == fx.get("warehouse_person_id"):
+            store_id = str(person.get("store_id") or fx.get("store") or "")
+            ledger = StockLedger(self.state)
+            stock = {}
+            for good in ("timber", "brick", "wool", "grain", "ore"):
+                stock[good] = {
+                    "available": ledger.available(store_id, good),
+                    "reserved": ledger.reserved(store_id, good),
+                    "escrow": ledger.escrow(store_id, good),
+                }
+            return {
+                "kind": "warehouse",
+                "entity_id": entity_id,
+                "name": person.get("display_name") or "Warehouse",
+                "store_id": store_id,
+                "stock": stock,
+                "delivery_reservation_id": fx.get("delivery_reservation_id"),
+                "summary": f"Warehouse {store_id} timber a={stock['timber']['available']} r={stock['timber']['reserved']}",
+            }
+        if role == "cart" or entity_id == fx.get("cart_person_id"):
+            cart_id = str(person.get("cart_id") or fx.get("cart_id") or "")
+            cart = dict(self.state.carts.get(cart_id) or {})
+            cargo = [
+                {"good_id": lot.get("good_id"), "quantity": lot.get("quantity"), "status": lot.get("status")}
+                for lot in cart.get("cargo_lots") or []
+                if lot.get("status") == "aboard"
+            ]
+            status = str(cart.get("status") or "idle")
+            if status == "en_route":
+                phase = "travelling"
+            elif status == "blocked":
+                phase = "blocked"
+            elif status in {"arrived", "delivered"}:
+                phase = "delivered"
+            else:
+                phase = "idle"
+            dest = cart.get("destination_store") or fx.get("staging_store")
+            return {
+                "kind": "cart",
+                "entity_id": entity_id,
+                "name": person.get("display_name") or "Cart",
+                "cart_id": cart_id,
+                "status": status,
+                "phase": phase,
+                "current_node": cart.get("current_node"),
+                "destination_store": dest,
+                "route": list(cart.get("route") or []),
+                "route_index": cart.get("route_index"),
+                "cargo": cargo,
+                "delivery_status": fx.get("delivery_status"),
+                "summary": (
+                    f"Cart {cart_id} {phase} @ {cart.get('current_node')} "
+                    f"cargo={cargo} dest={dest}"
+                ),
+            }
+        if role == "staging" or entity_id == fx.get("staging_person_id"):
+            store_id = str(person.get("store_id") or fx.get("staging_store") or "")
+            ledger = StockLedger(self.state)
+            stock = {
+                good: {
+                    "available": ledger.available(store_id, good),
+                    "reserved": ledger.reserved(store_id, good),
+                    "escrow": ledger.escrow(store_id, good),
+                }
+                for good in ("timber", "brick", "wool", "grain", "ore")
+            }
+            return {
+                "kind": "staging",
+                "entity_id": entity_id,
+                "name": person.get("display_name") or "Staging",
+                "store_id": store_id,
+                "stock": stock,
+                "construction_status": fx.get("construction_status"),
+                "summary": f"Staging {store_id} timber a={stock['timber']['available']}",
+            }
+        return None
+
     def _start_fx_cargo_delivery(self, envelope: CommandEnvelope) -> CommandResult:
-        """Assign the FX-CARGO cart through normal Interact — not only run_fx_cargo()."""
+        """Assign the FX-CARGO cart using the fixture delivery reservation when present."""
         from sim.dmb.logistics.carts import CartService
-        from sim.dmb.logistics.director import LogisticsService
         from sim.dmb.logistics.routes import RoutePlanner
         from sim.dmb.logistics.stock import StockLedger
+        from sim.dmb.core.types import TypeValidationError
 
         fx = self.state.board.setdefault("fx_cargo", {})
         cart_id = str(fx.get("cart_id") or "")
@@ -474,53 +576,129 @@ class WorldSim:
                 events=[],
                 public_feedback="missing cart",
             )
-        if cart.get("status") in {"assigned", "en_route", "blocked"} and any(
-            lot.get("status") == "aboard" for lot in cart.get("cargo_lots") or []
-        ):
+        aboard = [
+            lot for lot in cart.get("cargo_lots") or [] if lot.get("status") == "aboard"
+        ]
+        if cart.get("status") in {"assigned", "en_route", "blocked"} and aboard:
             return CommandResult(
                 status="REJECTED",
                 code="BUSY",
                 command_id=envelope.command_id,
                 world_version=self.state.world_version,
                 events=[],
+                payload={"cart_id": cart_id, "status": cart.get("status"), "cargo": aboard},
                 public_feedback="delivery already in progress",
             )
+
         ledger = StockLedger(self.state)
         carts = CartService(self.state, ledger=ledger)
-        director = LogisticsService(self.state, carts=carts, routes=RoutePlanner(self.state), ledger=ledger)
-        res = ledger.reserve(f"fx-play-{envelope.command_id}", required, store_id=store)
-        assign = director.assign(
-            cart_id, source=n0, target=n2, destination_store=staging_store, reservation_id=res["id"]
-        )
-        if assign.get("status") != "assigned":
-            try:
-                ledger.release_reservation(res["id"])
-            except Exception:
-                pass
+        routes = RoutePlanner(self.state)
+        planned = routes.route(str(cart.get("owner_faction") or "faction:1"), n0, n2)
+        if planned.get("path") is None:
             return CommandResult(
                 status="REJECTED",
                 code="BLOCKED",
                 command_id=envelope.command_id,
                 world_version=self.state.world_version,
                 events=[],
-                payload=dict(assign),
-                public_feedback=str(assign.get("reason") or "route blocked"),
+                payload={"reason": planned.get("reason"), "required": required},
+                public_feedback=str(planned.get("reason") or "route blocked"),
             )
+
+        available = {good: ledger.available(store, good) for good in required}
+        reserved = {good: ledger.reserved(store, good) for good in required}
+        res_id = str(fx.get("delivery_reservation_id") or "")
+        res_record = (self.state.stocks.get("_reservations") or {}).get(res_id)
+        reservation_id = None
+        created_reservation = False
+        if isinstance(res_record, dict) and res_record.get("status") == "reserved":
+            reservation_id = res_id
+        else:
+            missing = {
+                good: int(required[good]) - int(available.get(good, 0))
+                for good in required
+                if int(available.get(good, 0)) < int(required[good])
+            }
+            if missing:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INSUFFICIENT",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    payload={
+                        "required": required,
+                        "available": available,
+                        "reserved": reserved,
+                        "missing": missing,
+                        "store_id": store,
+                    },
+                    public_feedback=(
+                        f"need {required}; available {available}; missing {missing} at {store}"
+                    ),
+                )
+            try:
+                created = ledger.reserve(f"fx-play-{envelope.command_id}", required, store_id=store)
+            except TypeValidationError as exc:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INSUFFICIENT",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    payload={"required": required, "available": available, "store_id": store},
+                    public_feedback=str(exc),
+                )
+            reservation_id = created["id"]
+            created_reservation = True
+            fx["delivery_reservation_id"] = reservation_id
+
+        # Snapshot cargo count so a failed assign can roll back the load.
+        before_lots = list(cart.get("cargo_lots") or [])
+        before_status = cart.get("status")
+        try:
+            carts.load_from_reservation(cart_id, reservation_id)
+            carts.assign(cart_id, list(planned["path"]), destination_store=staging_store)
+        except Exception as exc:
+            cart["cargo_lots"] = before_lots
+            cart["status"] = before_status
+            if created_reservation:
+                try:
+                    ledger.release_reservation(reservation_id)
+                except Exception:
+                    pass
+            return CommandResult(
+                status="REJECTED",
+                code="FAILED",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload={"required": required, "available": available, "error": str(exc)},
+                public_feedback=f"delivery failed: {exc}",
+            )
+
         fx["delivery_status"] = "en_route"
         fx["construction_pending"] = True
-        fx["reservation_id"] = res["id"]
+        fx["reservation_id"] = reservation_id
         person_id = str(fx.get("cart_person_id") or "person:cart")
         person = self.state.people.get(person_id)
         if isinstance(person, dict):
             person["node_id"] = cart.get("current_node", n0)
+            person["label"] = f"Hauler Cart (travelling)"
+            person["display_name"] = person["label"]
         self.state.world_version += 1
         return CommandResult(
             status="ACCEPTED",
             code="OK",
             command_id=envelope.command_id,
             world_version=self.state.world_version,
-            events=[{"kind": "delivery_started", "cart_id": cart_id, "path": assign.get("path")}],
-            payload={"cart_id": cart_id, "path": assign.get("path"), "reservation_id": res["id"]},
+            events=[{"kind": "delivery_started", "cart_id": cart_id, "path": planned["path"]}],
+            payload={
+                "cart_id": cart_id,
+                "path": planned["path"],
+                "reservation_id": reservation_id,
+                "required": required,
+            },
             public_feedback="delivery started",
         )
 

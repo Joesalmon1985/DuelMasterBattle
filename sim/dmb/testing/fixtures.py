@@ -170,9 +170,13 @@ def _load_fx_cargo(seed: int = 202) -> WorldSim:
     store = f"store:{wh['id']}"
     staging_store = f"store:staging:{n2}"
     ledger = StockLedger(state)
+    # Extra available for faction AI; delivery package reserved separately so
+    # exploration/Wait cannot spend the playtest haul.
     ledger.credit(store, "timber", 5)
     for good, qty in {"brick": 2, "wool": 2, "grain": 2, "ore": 2}.items():
         ledger.credit(store, good, qty)
+    required = {"timber": 1, "brick": 1, "wool": 1, "grain": 1}
+    delivery_res = ledger.reserve("fx-cargo-delivery", required, store_id=store)
 
     carts = CartService(state, ledger=ledger)
     cart = carts.create(owner_faction="faction:1", home_store=store, current_node=n0, capacity=4)
@@ -233,7 +237,8 @@ def _load_fx_cargo(seed: int = 202) -> WorldSim:
         "block_hex": n1,
         "delivery_status": "idle",
         "construction_pending": False,
-        "required": {"timber": 1, "brick": 1, "wool": 1, "grain": 1},
+        "required": required,
+        "delivery_reservation_id": delivery_res["id"],
     }
     # Visible/inspectable names in the playable yard (not unknown placeholders).
     for pid, role, name in (

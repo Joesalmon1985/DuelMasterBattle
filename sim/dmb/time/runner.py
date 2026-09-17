@@ -119,12 +119,23 @@ class TurnRunner:
         if not isinstance(cart, dict) or not isinstance(person, dict):
             return
         person["node_id"] = cart.get("current_node", person.get("node_id"))
-        if cart.get("status") == "blocked":
+        status = str(cart.get("status") or "idle")
+        if status == "blocked":
             fx["delivery_status"] = "blocked_route"
-        elif cart.get("status") in {"en_route", "assigned"}:
+            label = "Hauler Cart (blocked)"
+        elif status in {"en_route", "assigned", "loaded"}:
             fx["delivery_status"] = "en_route"
-        elif cart.get("status") == "arrived":
+            label = "Hauler Cart (travelling)"
+        elif status in {"arrived", "delivered"}:
             fx["delivery_status"] = "delivered"
+            label = "Hauler Cart (delivered)"
+        else:
+            label = "Hauler Cart (idle)"
+        person["label"] = label
+        person["display_name"] = label
+        # Keep knowledge name in sync for labels.
+        if person_id in self.state.knowledge:
+            self.state.knowledge[person_id]["name"] = label
 
     def _maybe_queue_fx_construction(self, ledger) -> None:
         """After playable delivery lands, reserve a settlement order for completions."""
@@ -370,9 +381,32 @@ class TurnRunner:
             obs = {"own": {"vp": 0}, "public": {}, "faction_id": faction_id}
             choices[faction_id] = brain.choose(obs, cands)
         outcome = svc.resolve_round(choices)
+        # Persist a human-readable last-pick map for economy/HUD inspection.
+        picks = {}
+        for receipt in outcome.get("acquired") or []:
+            if not isinstance(receipt, dict):
+                continue
+            fid = str(receipt.get("faction_id") or "")
+            defn = str(receipt.get("definition_id") or "")
+            picks[fid] = {
+                "card_id": receipt.get("instance_id") or receipt.get("card_id"),
+                "definition_id": defn,
+                "name": defn,
+            }
+        draft = getattr(self.state, "tech_draft", None)
+        if isinstance(draft, dict):
+            draft["last_picks"] = picks
+            draft["last_pick_round"] = int(self.state.clock.get("round", 0))
+            draft["last_pick_turn"] = int(self.state.clock.get("turn", 0))
+            draft["last_resolution"] = {
+                "pick_index": outcome.get("pick_index"),
+                "picks": picks,
+                "owned_counts": outcome.get("owned_counts"),
+            }
         seat = dict(seat)
         seat["tech_draft"] = outcome
         seat["tech_snapshot_pick_index"] = snap.get("pick_index")
+        seat["tech_picks"] = picks
         return seat
 
     def run_faction_round(self) -> dict[str, Any]:

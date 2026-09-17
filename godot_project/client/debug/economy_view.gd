@@ -124,30 +124,44 @@ func refresh() -> void:
 	lines.append("cart=%s store=%s" % [str(fx.get("cart_id", "?")), str(fx.get("store", "?"))])
 	lines.append("route %s→%s→%s" % [str(fx.get("N0")), str(fx.get("N1")), str(fx.get("N2"))])
 	lines.append("block=%s delivery=%s" % [str(fx.get("block_node", fx.get("block_hex", "?"))), str(fx.get("delivery_status", "idle"))])
+	if fx.get("delivery_reservation_id"):
+		lines.append("delivery_res=%s" % str(fx.get("delivery_reservation_id")))
 	if fx.get("construction_status"):
 		lines.append("construction=%s order=%s" % [str(fx.get("construction_status")), str(fx.get("construction_order_id", "?"))])
-	var draft: Dictionary = view.get("tech_draft", {})
-	if draft:
-		lines.append("tech active=%s pick=%s era=%s" % [
-			str(draft.get("active", false)),
-			str(draft.get("pick_index", draft.get("resolved_pick_index", "?"))),
-			str(draft.get("era", "?")),
-		])
-		var last = draft.get("last_resolution") or draft.get("resolved") or {}
-		if typeof(last) == TYPE_DICTIONARY and not last.is_empty():
-			lines.append("tech last=%s" % str(last))
-	var factions: Dictionary = view.get("factions", {})
-	if not factions.is_empty():
-		lines.append("factions=%s" % ", ".join(PackedStringArray(factions.keys())))
 	var clock: Dictionary = view.get("clock", {})
-	lines.append("turn=%s round=%s seat=%s" % [
+	lines.append("")
+	lines.append("[b]World Round[/b] turn=%s round=%s seat=%s" % [
 		str(clock.get("turn", 0)),
 		str(clock.get("round", 0)),
 		str(clock.get("active_faction_id", "?")),
 	])
-	var last_seat = clock.get("last_seat") or clock.get("seat_result") or {}
-	if typeof(last_seat) == TYPE_DICTIONARY and last_seat.get("tech_draft") != null:
-		lines.append("seat tech=%s" % str(last_seat.get("tech_draft")))
+	var draft: Dictionary = view.get("tech_draft", {})
+	if draft:
+		lines.append("tech draft active=%s era=%s pick=%s" % [
+			str(draft.get("active", false)),
+			str(draft.get("era", "?")),
+			str(draft.get("pick_index", 0)),
+		])
+		var seats: Array = draft.get("seat_order", [])
+		if typeof(seats) == TYPE_ARRAY and seats.size() > 0:
+			var seat_bits: PackedStringArray = PackedStringArray()
+			for s in seats:
+				seat_bits.append(str(s))
+			lines.append("eligible=%s" % ", ".join(seat_bits))
+		var last_picks: Dictionary = draft.get("last_picks", {})
+		if last_picks.is_empty():
+			lines.append("last picks=(none yet — complete a full seat round)")
+		else:
+			lines.append("last picks @ round %s turn %s:" % [
+				str(draft.get("last_pick_round", "?")),
+				str(draft.get("last_pick_turn", "?")),
+			])
+			for fid in last_picks.keys():
+				var pick: Dictionary = last_picks[fid]
+				lines.append("  %s → %s" % [str(fid), str(pick.get("name", pick.get("definition_id", "?")))])
+	var factions: Dictionary = view.get("factions", {})
+	if not factions.is_empty():
+		lines.append("factions=%s" % ", ".join(PackedStringArray(factions.keys())))
 	lines.append("")
 	lines.append("[b]Warehouse[/b]")
 	var stocks: Dictionary = view.get("stocks", {})
@@ -173,10 +187,15 @@ func refresh() -> void:
 			if str(lot.get("status", "")) != "aboard":
 				continue
 			cargo_bits.append("%sx%s" % [str(lot.get("good_id")), str(lot.get("quantity"))])
+		var phase := str(cart.get("status", "idle"))
+		if phase == "en_route":
+			phase = "travelling"
+		elif phase in ["arrived", "delivered"]:
+			phase = "delivered"
 		lines.append("%s @%s %s [%s]" % [
 			cart_id,
 			str(cart.get("current_node")),
-			str(cart.get("status")),
+			phase,
 			", ".join(cargo_bits),
 		])
 	lines.append("[b]Orders[/b]")

@@ -50,6 +50,59 @@ func _run() -> void:
 		_shutdown(shell, 1)
 		return
 
+	# Inspect warehouse / cart — displayed payload must match economy stocks/carts.
+	var wh_insp: Dictionary = shell._client.send_command(
+		"g02-wh", "Interact", {"entity_id": "person:warehouse"}
+	)
+	if str(wh_insp.get("status", "")) != "ACCEPTED" or str(wh_insp.get("payload", {}).get("kind", "")) != "warehouse":
+		push_error("warehouse inspect failed: %s" % wh_insp)
+		_shutdown(shell, 1)
+		return
+	var eco_stock: Dictionary = economy.get("stocks", {}).get(str(fx.get("store")), {}).get("catan", {})
+	var insp_timber: int = int(wh_insp.get("payload", {}).get("stock", {}).get("timber", {}).get("reserved", -1))
+	var eco_timber_r: int = int(eco_stock.get("timber", {}).get("reserved", -2))
+	if insp_timber != eco_timber_r:
+		push_error("warehouse inspect reserved timber %s != economy %s" % [insp_timber, eco_timber_r])
+		_shutdown(shell, 1)
+		return
+	var cart_insp: Dictionary = shell._client.send_command(
+		"g02-cart", "Interact", {"entity_id": "person:cart"}
+	)
+	if str(cart_insp.get("payload", {}).get("kind", "")) != "cart":
+		push_error("cart inspect failed: %s" % cart_insp)
+		_shutdown(shell, 1)
+		return
+	if str(cart_insp.get("payload", {}).get("cart_id", "")) != str(fx.get("cart_id")):
+		push_error("cart inspect id mismatch")
+		_shutdown(shell, 1)
+		return
+
+	# Explore rooms + Wait (Joe sequence) before Start delivery.
+	for i in range(3):
+		var node := str(shell._client.request_view("player").get("player", {}).get("node_id", "node:1"))
+		var dest := "node:2" if node == "node:1" else ("node:3" if node == "node:2" else "node:2")
+		if node == "node:3":
+			dest = "node:2"
+		shell._client.send_command("g02-trav-%d" % i, "Travel", {"from_node": node, "to_node": dest})
+		shell._refresh_counters(true)
+		await process_frame
+	for i in range(3):
+		var cur := str(shell._client.request_view("player").get("player", {}).get("node_id", "node:1"))
+		shell._client.send_command(
+			"g02-prewait-%d" % i,
+			"Wait",
+			{"current_node": cur, "press_id": "prewait-%d" % i},
+		)
+	# Return home if needed for warehouse start.
+	var here := str(shell._client.request_view("player").get("player", {}).get("node_id", "node:1"))
+	if here != "node:1":
+		if here == "node:3":
+			shell._client.send_command("g02-home-a", "Travel", {"from_node": "node:3", "to_node": "node:2"})
+			here = "node:2"
+		if here == "node:2":
+			shell._client.send_command("g02-home-b", "Travel", {"from_node": "node:2", "to_node": "node:1"})
+		shell._refresh_counters(true)
+
 	# Pointer movement via touch pad (real InputEventMouseButton press/release).
 	var start_pos: Vector2 = shell._area.wizard_position()
 	var pad: Control = shell._touch._pad
@@ -90,7 +143,7 @@ func _run() -> void:
 		"g02-start", "Interact", {"action": "start_delivery"}
 	)
 	if str(start_reply.get("status", "")) != "ACCEPTED":
-		push_error("start_delivery failed: %s" % start_reply)
+		push_error("start_delivery failed after explore/wait: %s" % start_reply)
 		_shutdown(shell, 1)
 		return
 	var cart_id := str(fx.get("cart_id"))
@@ -102,6 +155,22 @@ func _run() -> void:
 	var cargo_qty := _aboard_qty(cart)
 	if cargo_qty < 4:
 		push_error("expected cargo aboard after start, got %s" % cargo_qty)
+		_shutdown(shell, 1)
+		return
+	# Repeated Start must reject without changing stock/cargo.
+	var stocks_before: Dictionary = shell._client.request_view("economy").get("stocks", {})
+	var dup: Dictionary = shell._client.send_command("g02-start-dup", "Interact", {"action": "start_delivery"})
+	if str(dup.get("status", "")) != "REJECTED":
+		push_error("duplicate Start should reject, got %s" % dup)
+		_shutdown(shell, 1)
+		return
+	var stocks_after: Dictionary = shell._client.request_view("economy").get("stocks", {})
+	if str(stocks_before) != str(stocks_after):
+		push_error("duplicate Start mutated stocks")
+		_shutdown(shell, 1)
+		return
+	if _aboard_qty(shell._client.request_view("economy").get("carts", {}).get(cart_id, {})) != cargo_qty:
+		push_error("duplicate Start mutated cargo")
 		_shutdown(shell, 1)
 		return
 

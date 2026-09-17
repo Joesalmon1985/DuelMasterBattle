@@ -18,11 +18,16 @@ class TurnScheduler:
             if faction and faction not in set(self.clock.get("removed_faction_ids", []))
         ]
         self.clock["scheduled_faction_ids"] = roster
-        self.clock["completed_seats"] = []
-        self.clock["active_faction_id"] = roster[0] if roster else None
+        # Preserve mid-round seat progress across Wait/Travel. Only reset when a
+        # previous World Round completed (or we have no roster progress yet).
+        if self.clock.get("round_complete"):
+            self.clock["completed_seats"] = []
+            self.clock["round_complete"] = False
+        completed = list(self.clock.get("completed_seats") or [])
+        remaining = [faction for faction in roster if faction not in completed]
+        self.clock["active_faction_id"] = remaining[0] if remaining else None
         self.clock["last_trigger"] = trigger
         self.clock["draft"] = None
-        self.clock["round_complete"] = False
 
     def remove_faction(self, faction_id: str) -> None:
         removed = set(self.clock.setdefault("removed_faction_ids", []))

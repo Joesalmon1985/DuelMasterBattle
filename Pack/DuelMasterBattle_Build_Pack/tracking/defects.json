@@ -237,6 +237,35 @@
         "pointer Wait smoke + gameplay screenshots"
       ],
       "next_diagnostic": "G02_SMOKE_OK pointer move + Wait +1; check.py --gate G02 PASS"
+    },
+    {
+      "id": "D012",
+      "task_id": "T048",
+      "status": "RESOLVED",
+      "summary": "After explore/Wait, Start delivery failed (AI spent available brick); cart/warehouse not inspectable; tech picks invisible; seats reset each Wait",
+      "reproduction_command": "bash tools/play_g02.sh --direct; explore three rooms; Wait; Start delivery",
+      "seed": "202",
+      "failing_assertion_or_log": "insufficient catan brick at store:building:2; cart stationary; no tech feedback",
+      "expected_state": "pre-reserved delivery haul; inspect stock/cargo; cart moves on Wait; tech last picks after full seat round",
+      "observed_state": "AI consumed available goods; Interact only revealed names; begin_turn cleared seats so round never completed",
+      "suspected_owner": "fixtures._load_fx_cargo + world._start_fx_cargo_delivery + turns.begin_turn",
+      "files_changed": [
+        "sim/dmb/testing/fixtures.py",
+        "sim/dmb/core/world.py",
+        "sim/dmb/time/turns.py",
+        "sim/dmb/time/runner.py",
+        "godot_project/client/debug/economy_view.gd",
+        "godot_project/client/scenes/g02_shell.gd",
+        "godot_project/client/tests/run_g02_smoke.gd",
+        "tests/integration/test_construction_cargo.py"
+      ],
+      "attempted_fixes": [
+        "fixture ledger.reserve fx-cargo-delivery",
+        "Start uses reserved allocation; BUSY/INSUFFICIENT without mutation",
+        "Interact inspect warehouse/cart/staging",
+        "begin_turn preserves mid-round seats; last_picks in tech_draft"
+      ],
+      "next_diagnostic": "pytest explore-then-start + G02_SMOKE_OK after explore/wait"
     }
   ]
 }
