@@ -1,5 +1,5 @@
 **Tested implementation commit:** `f9e47ab3233902b87891c6b57be092f6537cd8e3`  
-**Handoff HEAD:** `f9e47ab3233902b87891c6b57be092f6537cd8e3`
+**Handoff HEAD:** `082f111c7e6276a11373300f73ba03339ccc41b7`
 
 # G01 playtest handoff — navigation / portrait FIX_REQUIRED repair
 

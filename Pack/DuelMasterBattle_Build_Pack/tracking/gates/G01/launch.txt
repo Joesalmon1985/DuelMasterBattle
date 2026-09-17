@@ -1,4 +1,4 @@
-commit: f9e47ab3233902b87891c6b57be092f6537cd8e3
+commit: 082f111c7e6276a11373300f73ba03339ccc41b7
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g01.sh
 
@@ -7,3 +7,4 @@ bash tools/play_g01.sh
 # Landscape: bash tools/play_g01.sh --direct --landscape
 # Save: .dmb_saves/g01_playtest.json
 # Seed: 7 / FX-CLOCK
+# Implementation: f9e47ab3233902b87891c6b57be092f6537cd8e3
