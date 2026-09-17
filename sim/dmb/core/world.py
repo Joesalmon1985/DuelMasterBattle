@@ -20,6 +20,12 @@ from sim.dmb.time.runner import TurnRunner
 from sim.dmb.time.turns import TurnScheduler
 
 
+def get_construction_service(sim: "WorldSim") -> "ConstructionService":
+    from sim.dmb.construction.orders import ConstructionService
+
+    return ConstructionService(sim.state)
+
+
 def bootstrap_world(world_id: str = "world:g01", seed: int = 7) -> "WorldSim":
     state = WorldState(world_id=WorldId(world_id), ids=IdAllocator(WorldId(world_id)))
     state.clock["scheduled_faction_ids"] = ["faction:player"]
