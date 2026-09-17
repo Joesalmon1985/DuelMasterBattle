@@ -1,7 +1,7 @@
 {
   "task_id": "T047",
   "status": "DONE",
-  "commit": "pending",
+  "commit": "a7e08e3012d613ec3a7eb4f2e885dca72a18b943",
   "files": [
     "tests/scenarios/test_faction_expansion.py",
     "godot_project/content/fixtures/strategy/expansion_seed_47.json",
