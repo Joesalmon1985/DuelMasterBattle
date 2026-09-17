@@ -1,7 +1,7 @@
 {
   "task_id": "T042",
   "status": "DONE",
-  "commit": null,
+  "commit": "4313fb9e7c610108408935171cb467da03d90975",
   "files": [
     "sim/dmb/ai/__init__.py",
     "sim/dmb/ai/observation.py",
