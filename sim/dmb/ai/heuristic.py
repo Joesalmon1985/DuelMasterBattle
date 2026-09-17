@@ -88,7 +88,12 @@ class HeuristicBrain:
         if candidate.get("action_kind") == "construct":
             utility = _construction_utility(candidate, observation)
         elif candidate.get("action_kind") == "trade_propose":
-            utility = 1
+            # Prefer trades that cover observed construction shortages on shorter routes.
+            benefit = candidate.get("benefit") or {}
+            utility = (
+                10 * int(benefit.get("shortage_goods_covered") or 0)
+                - int(benefit.get("route_length") or 0)
+            )
         elif candidate.get("action_kind") == "tech_pick":
             # Prefer first stable id among hand (definition id as weak signal).
             utility = 0
