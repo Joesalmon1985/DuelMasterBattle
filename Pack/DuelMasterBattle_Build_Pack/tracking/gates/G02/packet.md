@@ -2,7 +2,7 @@
 
 **Status:** AWAITING_HUMAN (do not start T049)  
 **Scenario:** FX-CARGO · **Seed:** 202  
-**Tested revision:** *(handoff commit on BuildPackV03 — see `git log -1 --oneline` after pull)*  
+**Tested revision:** `1223e3919845cbfe6b300235da415b1e2b508f8e`  
 **Save slot:** `g02_playtest` · recovery: `_recovery`
 
 ## Launch (verified)
