@@ -1,4 +1,4 @@
-commit: 2962bb0aea8fb68508a2839b0d2a47a180798992
+commit: 0eee5bf3627db6571292d35356f8db88bd19f384
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g02.sh --direct
 
