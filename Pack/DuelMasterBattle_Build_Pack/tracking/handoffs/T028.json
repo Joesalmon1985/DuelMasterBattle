@@ -1,0 +1,29 @@
+{
+  "task_id": "T028",
+  "status": "DONE",
+  "commit": "ac53773b131f99939d212d1d88611efa1b0c185a",
+  "files": [
+    "sim/dmb/people/registry.py",
+    "sim/dmb/people/jobs.py",
+    "sim/dmb/people/__init__.py",
+    "tests/sim/test_t028_people.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "PeopleService",
+    "JobService"
+  ],
+  "source_rules": [
+    "C09"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T028",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T029",
+  "notes": "Workplace change keeps ID; backfill new ID; destroy displaces"
+}

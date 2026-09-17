@@ -1,0 +1,9 @@
+commit: 72944fff2dbc4a7126c2c423d75c2cc683807395
+cd /home/joe/Projects/DuelMasterBattle
+bash tools/play_g02.sh --direct
+
+# Portrait 450x800
+# DMB_FIXTURE=FX-CARGO DMB_SEED=202
+# Controls: Economy Start/Block/Clear; Wait; approach warehouse/cart + Observe/Interact
+# Save: g02_playtest
+# Perf repair: nonblocking bridge, lean economy @2Hz expanded-only, cart render interpolate

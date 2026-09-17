@@ -1,0 +1,33 @@
+{
+  "task_id": "T016",
+  "status": "DONE",
+  "commit": "9e13aad100a779cc830bbcfe2442f3ab9deccf78",
+  "files": [
+    "sim/dmb/bridge/server.py",
+    "sim/dmb/bridge/protocol.py",
+    "tools/run_sidecar.py",
+    "tests/sim/test_t016_bridge.py"
+  ],
+  "public_contracts": [
+    "sidecar protocol"
+  ],
+  "source_rules": [
+    "C01/C02/C14 as named on task card",
+    "EXECUTION_AMENDMENTS staged Python ownership"
+  ],
+  "checks": [
+    {
+      "command": "/usr/bin/python3 -m pytest -q tests/sim/test_t016_bridge.py",
+      "exit_code": 0,
+      "result": "bridge_protocol_tests: PASS"
+    }
+  ],
+  "fixture_hashes": {},
+  "defects": [
+    "Dialogue openpyxl dependency remains deferred until required",
+    "Sprite facing mirror failures remain deferred until required",
+    "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
+  ],
+  "next_task": "T017",
+  "notes": ""
+}

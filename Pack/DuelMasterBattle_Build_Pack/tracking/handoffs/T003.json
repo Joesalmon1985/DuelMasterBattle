@@ -18,7 +18,7 @@
     "Python 3.12.3 and Godot 4.4.1 are the initial migration pins",
     "Any engine upgrade is a separate measured and tested change",
     "Linux and Windows launch assumptions use Godot 4.4.1",
-    "Linux Windows-template export smoke does not certify Windows runtime behaviour"
+    "Wine, Windows executable testing and packaging are deferred until T155-T160 and are not current-stage passes"
   ],
   "source_rules": [
     "C14 factual test evidence and nonzero discovered suites",
@@ -51,34 +51,33 @@
       "result": "All invoked behavioural flows passed"
     },
     {
-      "command": "godot --headless --path godot_project --export-debug \"Windows Desktop\" /tmp/DuelMasterBattle-T003.exe",
-      "exit_code": 0,
-      "result": "4.4.1 Windows x86_64 template export produced a non-empty executable"
+      "command": "Windows Desktop export / Wine executable run / packaging smoke",
+      "exit_code": null,
+      "result": "DEFERRED_NOT_PASSED until T155-T156/T160"
     },
     {
       "command": "python3 -m pytest -q tools/dialogue_generation/tests",
       "exit_code": 2,
-      "result": "Pre-existing environment failure: openpyxl missing, 3 collection errors"
+      "result": "Pre-existing environment failure: openpyxl missing, 3 collection errors; retained until a required acceptance needs it"
     },
     {
       "command": "python3 tools/check_facing.py",
       "exit_code": 1,
-      "result": "Pre-existing asset failure: 14 of 48 left/right pairs are not mirrors"
+      "result": "Pre-existing asset failure: 14 of 48 left/right pairs are not mirrors; retained until a required acceptance needs it"
     },
     {
       "command": "bash tools/run_all_checks.sh",
       "exit_code": 127,
-      "result": "Pre-existing runner failure: invokes unavailable `python` command"
+      "result": "Pre-existing runner failure: invoked unavailable `python` command; corrected later to python3 in verification tooling"
     }
   ],
   "fixture_hashes": {},
   "defects": [
-    "Dialogue factory dependency openpyxl is declared but not installed on this host",
-    "Aggregate runner invokes `python` rather than the pinned python3",
+    "Dialogue factory dependency openpyxl is declared but not installed on this host (deferred until required)",
+    "Facing audit reports 14 non-mirrored sprite pairs (deferred until required)",
     "Several run scripts lack executable permission",
-    "Facing audit reports 14 non-mirrored sprite pairs",
     "Godot simulation suite reports resource leaks at process exit",
-    "No native Windows test runner is available; only template export was verified"
+    "Wine/Windows executable/packaging verification deferred until release tasks"
   ],
   "next_task": "T004"
 }

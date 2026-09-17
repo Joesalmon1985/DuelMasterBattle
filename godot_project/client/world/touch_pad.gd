@@ -24,21 +24,23 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_pad = _Pad.new()
 	_pad.owner_pad = self
+	# Sit above the G01 action bar so pad/✦ stay visible and clickable.
+	var lift := 108.0
 	_pad.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	_pad.offset_left = 24
-	_pad.offset_top = -PAD_SIZE - 40
-	_pad.offset_right = 24 + PAD_SIZE
-	_pad.offset_bottom = -40
+	_pad.offset_left = 16
+	_pad.offset_top = -PAD_SIZE - lift
+	_pad.offset_right = 16 + PAD_SIZE
+	_pad.offset_bottom = -lift
 	_pad.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(_pad)
 	_action = Button.new()
 	_action.text = "✦"
 	_action.focus_mode = Control.FOCUS_NONE
 	_action.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	_action.offset_left = -24 - 120
-	_action.offset_right = -24
-	_action.offset_top = -40 - 120 - 40
-	_action.offset_bottom = -40 - 40
+	_action.offset_left = -16 - 110
+	_action.offset_right = -16
+	_action.offset_top = -lift - 110
+	_action.offset_bottom = -lift
 	var s := _VT.gem_button_style()
 	s.set_corner_radius_all(60)
 	_action.add_theme_stylebox_override("normal", s)
@@ -78,8 +80,14 @@ func action_visible() -> bool:
 
 
 func set_action_label(text: String) -> void:
-	_action.text = text if text != "" else "✦"
-	_action.modulate = Color.WHITE if text != "" else Color(0.7, 0.7, 0.8)
+	if _action == null:
+		return
+	var label := text if text != "" else "✦"
+	_action.text = label
+	# Keep short glyph large; word hints need a smaller readable font.
+	var size := 40 if label.length() <= 2 else 18
+	_action.add_theme_font_size_override("font_size", size)
+	_action.modulate = Color.WHITE
 
 
 func _set_dir(d: Vector2i) -> void:

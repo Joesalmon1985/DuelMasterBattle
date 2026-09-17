@@ -1,0 +1,11 @@
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/arrive_00.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/arrive_01.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/arrive_02.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/arrive_03.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/crossing.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/depart_00.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/depart_01.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/depart_02.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/depart_03.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/depart_04.png
+/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/recordings/final.png

@@ -1,0 +1,52 @@
+{
+  "task_id": "T006",
+  "status": "DONE",
+  "commit": "b3621f54407cf21c0c2d66cd74326019c03c923a",
+  "files": [
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/defects.json",
+    "tests/test_tracking.py",
+    "tests/test_check_tool.py",
+    "tools/run_all_checks.sh",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/baseline_tests.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/toolchain.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/repository_map.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T003.json"
+  ],
+  "public_contracts": [
+    "Resume selects the first unmet dependency and keeps failed/blocked tasks current",
+    "Completed tasks without check evidence are rejected",
+    "Manual gates remain pending until Joe records PASS",
+    "Defect policy caps focused repairs at three and forbids skip/assertion weakening",
+    "Wine/Windows executable/packaging checks are deferred until release tasks and are not current-stage passes",
+    "Verification tooling invokes python3"
+  ],
+  "source_rules": [
+    "C14 receipt/gate discipline",
+    "EXECUTION_AMENDMENTS three-attempt repair and deferred Windows packaging"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T006",
+      "exit_code": 0,
+      "result": "7 tracking tests passed"
+    },
+    {
+      "command": "python3 -m pytest -q tests/test_tracking.py tests/test_check_tool.py tests/test_manifests.py",
+      "exit_code": 0,
+      "result": "19 passed"
+    },
+    {
+      "command": "python3 tools/check.py --resume",
+      "exit_code": 0,
+      "result": "Resume selected T006 before this receipt closed it"
+    }
+  ],
+  "fixture_hashes": {},
+  "defects": [
+    "Dialogue openpyxl dependency remains recorded and deferred until required",
+    "Sprite facing mirror failures remain recorded and deferred until required"
+  ],
+  "next_task": "T007"
+}

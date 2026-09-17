@@ -2,6 +2,20 @@
 
 This is a **focused vertical slice** for the current Village Test Mode.
 
+## Windows G01 / G02 playtest (BuildPackV03)
+
+Double-click:
+
+`Playtest.bat`
+
+First run:
+
+1. Needs a native Windows **Python 3.10+** on PATH (or a repo `.venv`).
+2. Needs a native Windows **Godot** binary. The launcher respects `%GODOT%`, then project/toolchain hints, PATH, and common Downloads folders. If Godot is still missing, it asks for the executable path and remembers it in gitignored `.dmb_windows_local.json`.
+3. Menu options launch G02 / G01 / main menu at portrait **450×800**, or run `tools/check.py` gates. Check logs are written under gitignored `logs/playtest/` with a PASS / FAIL / BLOCKED summary.
+
+Linux launchers (`tools/play_g01.sh`, `tools/play_g02.sh`) are unchanged.
+
 ## Goal
 
 Test whether dialogue created by your local language model can be plugged into a real explorable village story while John is running through the normal production `overworld.tscn`.

@@ -33,5 +33,239 @@
     "attempted_fixes": [],
     "next_diagnostic": "one focused next step"
   },
-  "defects": []
+  "defects": [
+    {
+      "id": "D001",
+      "task_id": "T003",
+      "status": "DEFERRED",
+      "summary": "Dialogue openpyxl dependency missing on host",
+      "reproduction_command": "python3 -c 'import openpyxl'",
+      "seed": "NOT_APPLICABLE",
+      "failing_assertion_or_log": "ModuleNotFoundError: openpyxl",
+      "expected_state": "dialogue factory importable when required",
+      "observed_state": "missing dependency",
+      "suspected_owner": "tools/dialogue_generation",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Install openpyxl when a required acceptance check needs dialogue factory"
+    },
+    {
+      "id": "D002",
+      "task_id": "T003",
+      "status": "DEFERRED",
+      "summary": "Sprite facing mirror audit failures",
+      "reproduction_command": "python3 tools/check_facing.py",
+      "seed": "NOT_APPLICABLE",
+      "failing_assertion_or_log": "14 facing failures recorded in baseline",
+      "expected_state": "facing audit clean when required",
+      "observed_state": "failures deferred",
+      "suspected_owner": "tools/check_facing.py",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Resolve when a required acceptance check needs facing"
+    },
+    {
+      "id": "D003",
+      "task_id": "T003",
+      "status": "DEFERRED",
+      "summary": "Wine/Windows packaging deferred until release tasks",
+      "reproduction_command": "DEFERRED until T155-T160",
+      "seed": "NOT_APPLICABLE",
+      "failing_assertion_or_log": "DEFERRED_NOT_PASSED",
+      "expected_state": "Windows checks recorded as deferred not passed",
+      "observed_state": "deferred",
+      "suspected_owner": "toolchain/packaging",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Execute on T155-T160"
+    },
+    {
+      "id": "D004",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "G01 shell was diagnostic drag-box UI, not a playable wizard local area",
+      "reproduction_command": "bash tools/play_g01.sh",
+      "seed": "7",
+      "failing_assertion_or_log": "green rectangle + coordinates only",
+      "expected_state": "visible wizard, terrain, NPC, exit using pointer controls",
+      "observed_state": "diagnostic prototype UI",
+      "suspected_owner": "godot_project/client/scenes/g01_shell.gd",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Verified via playable FX-CLOCK area + semantic interact/observe"
+    },
+    {
+      "id": "D005",
+      "task_id": "T021",
+      "status": "RESOLVED",
+      "summary": "Observe/interact lacked real entity projection in playable scene",
+      "reproduction_command": "G01 Observe button",
+      "seed": "7",
+      "failing_assertion_or_log": "no on-world selectable person/object",
+      "expected_state": "distant unknown label; near interaction reveals permitted role",
+      "observed_state": "diagnostic Observe only",
+      "suspected_owner": "sim/dmb/narrative + g01_shell",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Verified via playable FX-CLOCK area + semantic interact/observe"
+    },
+    {
+      "id": "D006",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "G01 camera scrolled/clipped HUD and controls; layout unplayable",
+      "reproduction_command": "bash tools/play_g01.sh --direct",
+      "seed": "7",
+      "failing_assertion_or_log": "controls/playfield displaced or clipped",
+      "expected_state": "CanvasLayer HUD/controls; fitted playfield; readable at 450x800/720x1280/1280x720",
+      "observed_state": "Camera2D follow displaced UI; unreliable movement",
+      "suspected_owner": "g01_shell.gd / fx_clock_area.gd",
+      "files_changed": [
+        "godot_project/client/scenes/g01_shell.gd",
+        "godot_project/client/world/fx_clock_area.gd"
+      ],
+      "attempted_fixes": ["CanvasLayer UI", "fit world host", "remove Camera2D follow"],
+      "next_diagnostic": "Verified via multi-res screenshots + bridge play"
+    },
+    {
+      "id": "D007",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "Clock refresh rebuild_from_view reset wizard pose each AdvanceGame",
+      "reproduction_command": "Walk while Game Time advances",
+      "seed": "7",
+      "failing_assertion_or_log": "position snaps back on counter refresh",
+      "expected_state": "Local Godot pose preserved between SyncPose/load/travel",
+      "observed_state": "rebuild_from_view on every _refresh_counters",
+      "suspected_owner": "g01_shell.gd _refresh_counters",
+      "files_changed": [
+        "godot_project/client/scenes/g01_shell.gd",
+        "godot_project/client/world/fx_clock_area.gd"
+      ],
+      "attempted_fixes": ["apply_projections vs rebuild_from_view"],
+      "next_diagnostic": "G01_PLAYABLE_OK + G01_BRIDGE_PLAY_OK"
+    },
+    {
+      "id": "D008",
+      "task_id": "T014",
+      "status": "RESOLVED",
+      "summary": "Save persisted ephemeral save-pause token freezing Game Time after Load",
+      "reproduction_command": "Save then Load g01_playtest",
+      "seed": "7",
+      "failing_assertion_or_log": "clock remains paused after load",
+      "expected_state": "Unpaused save loads without save: tokens; Game Time advances",
+      "observed_state": "save:coordinator token written into snapshot",
+      "suspected_owner": "sim/dmb/persistence/coordinator.py",
+      "files_changed": ["sim/dmb/persistence/coordinator.py"],
+      "attempted_fixes": ["strip save: tokens before write and on load"],
+      "next_diagnostic": "test_save_does_not_persist_ephemeral_save_pause_token"
+    },
+    {
+      "id": "D009",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "Exit unreachable; misleading tree graphics; landscape-default launcher",
+      "reproduction_command": "bash tools/play_g01.sh --direct",
+      "seed": "7",
+      "failing_assertion_or_log": "cannot walk to exit; tiny green marks as blockers; 1280x720 default",
+      "expected_state": "open corridor spawn→NPC→exit; full-tile trees; portrait 450x800 default",
+      "observed_state": "modulo trees blocked row 5; launcher landscape",
+      "suspected_owner": "fx_clock_area.gd / play_g01.sh",
+      "files_changed": [
+        "godot_project/client/world/fx_clock_area.gd",
+        "tools/play_g01.sh",
+        "godot_project/client/tests/run_g01_bridge_play.gd"
+      ],
+      "attempted_fixes": [
+        "fixture tree layout",
+        "ground-then-props draw",
+        "action verb button",
+        "portrait default launcher",
+        "walk-based bridge journey"
+      ],
+      "next_diagnostic": "G01_BRIDGE_PLAY_OK walked spawn→NPC→exit→return"
+    },
+    {
+      "id": "D010",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "Travel kept source coordinates; could spawn in walls; walk-off map; bridge recovery was manual-only",
+      "reproduction_command": "Walk through exit; Bridge fail",
+      "seed": "7",
+      "failing_assertion_or_log": "arrival pose = source pose; off-map walk; reload instructions",
+      "expected_state": "linked arrival poses; doorway auto-travel; bounds blocked; T019 checkpoint restore",
+      "observed_state": "source pose after Travel; infinite exterior; freeze+manual load",
+      "suspected_owner": "sim/dmb/time/runner.py + fx_clock_area.gd + SaveCoordinator",
+      "files_changed": [
+        "sim/dmb/time/runner.py",
+        "sim/dmb/persistence/coordinator.py",
+        "godot_project/client/world/fx_clock_area.gd",
+        "godot_project/client/scenes/g01_shell.gd"
+      ],
+      "attempted_fixes": [
+        "exit link arrivals",
+        "STALE_NODE SyncPose guard",
+        "doorway auto-travel + hold",
+        "map bounds",
+        "RecoverCheckpoint path"
+      ],
+      "next_diagnostic": "G01_BRIDGE_PLAY_OK arrivals=ok; T019 recovery_tests PASS"
+    },
+    {
+      "id": "D011",
+      "task_id": "T048",
+      "status": "RESOLVED",
+      "summary": "G02 EconomyView fullscreen RichTextLabel intercepted pointer; FX-CARGO not playable on same graph",
+      "reproduction_command": "bash tools/play_g02.sh --direct",
+      "seed": "202",
+      "failing_assertion_or_log": "Joe cannot use the controls; warehouse/cart on separate hex path",
+      "expected_state": "bounded economy panel; pad/Wait/menu usable; warehouse/cart/route on linked rooms; Interact start/block/clear",
+      "observed_state": "fullscreen mouse steal; G01 rooms without cargo actors",
+      "suspected_owner": "economy_view.gd + fixtures._load_fx_cargo + g02_shell.gd",
+      "files_changed": [
+        "godot_project/client/debug/economy_view.gd",
+        "godot_project/client/scenes/g02_shell.gd",
+        "sim/dmb/testing/fixtures.py",
+        "sim/dmb/core/world.py",
+        "sim/dmb/time/runner.py",
+        "godot_project/client/tests/run_g02_smoke.gd"
+      ],
+      "attempted_fixes": [
+        "collapsible top-right EconomyView with MOUSE_FILTER_IGNORE parent",
+        "three-node playable FX-CARGO graph + knowledge labels",
+        "Interact start_delivery / node_id block / clear resumes cart",
+        "pointer Wait smoke + gameplay screenshots"
+      ],
+      "next_diagnostic": "G02_SMOKE_OK pointer move + Wait +1; check.py --gate G02 PASS"
+    },
+    {
+      "id": "D012",
+      "task_id": "T048",
+      "status": "RESOLVED",
+      "summary": "After explore/Wait, Start delivery failed (AI spent available brick); cart/warehouse not inspectable; tech picks invisible; seats reset each Wait",
+      "reproduction_command": "bash tools/play_g02.sh --direct; explore three rooms; Wait; Start delivery",
+      "seed": "202",
+      "failing_assertion_or_log": "insufficient catan brick at store:building:2; cart stationary; no tech feedback",
+      "expected_state": "pre-reserved delivery haul; inspect stock/cargo; cart moves on Wait; tech last picks after full seat round",
+      "observed_state": "AI consumed available goods; Interact only revealed names; begin_turn cleared seats so round never completed",
+      "suspected_owner": "fixtures._load_fx_cargo + world._start_fx_cargo_delivery + turns.begin_turn",
+      "files_changed": [
+        "sim/dmb/testing/fixtures.py",
+        "sim/dmb/core/world.py",
+        "sim/dmb/time/turns.py",
+        "sim/dmb/time/runner.py",
+        "godot_project/client/debug/economy_view.gd",
+        "godot_project/client/scenes/g02_shell.gd",
+        "godot_project/client/tests/run_g02_smoke.gd",
+        "tests/integration/test_construction_cargo.py"
+      ],
+      "attempted_fixes": [
+        "fixture ledger.reserve fx-cargo-delivery",
+        "Start uses reserved allocation; BUSY/INSUFFICIENT without mutation",
+        "Interact inspect warehouse/cart/staging",
+        "begin_turn preserves mid-round seats; last_picks in tech_draft"
+      ],
+      "next_diagnostic": "pytest explore-then-start + G02_SMOKE_OK after explore/wait"
+    }
+  ]
 }

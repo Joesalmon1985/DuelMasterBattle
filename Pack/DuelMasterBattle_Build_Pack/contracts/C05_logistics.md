@@ -14,6 +14,19 @@ Source: GDD §§79–81, 87–92, 101, 120. Only Catan goods require inter-node 
 
 `CartState`: id, owner_faction, home_store, current_node, next_edge, status, capacity (4+tech), cargo_lots, route node IDs/index, source/destination_store, shipment_id, delivery_id, assigned_turn. Optional edge/progress is presentation only between turns; authoritative crossing happens at the turn stage.
 
+## Local cart journeys (Game Time presentation)
+
+Godot may animate a cart between portal anchors using Game Time only. Rules:
+
+1. Python remains the sole writer of `current_node`, cargo lots and stock. Animation callbacks never load, deliver, credit or advance World Turns.
+2. `board.presentation.journeys[actor_id]` holds stable `journey_id`, `cart_id`, source/destination nodes, exit/arrival grids, local from/to/pos, phase, `presenting_node`, `progress_ms`/`duration_ms`, `authorized_cross`, `onward_phase`, `last_consumed_sequence` and optional `committed_edge`.
+3. Start delivery / resume begins a `to_exit` leg toward the hold for the next route node. Without an authorised crossing the cart waits at the exit (`waiting_exit`).
+4. Each logistics edge advance enqueues one pending transition (capped). Presenters play departure → `hidden` → entrance → onward (next exit or delivery pad) exactly once, in sequence order. Rapid Wait presses must not create duplicate sprites, loops, or an unbounded animation backlog.
+5. Paths use local walkability (avoid walls/trees). Local obstacles do not change strategic transport legality.
+6. `SyncPresentation` is a sequence acknowledgement: it must atomically persist phase, presenting_node, from/to, local_from/to/pos, onward_phase, progress/duration and `consumed_sequence`/`last_consumed_sequence` without bumping World Turn. Pending is removed only after Python accepts the matching sequence. Duplicate ACKs are idempotent; stale/out-of-order ACKs are ignored. Save/load and room re-entry resume the acknowledged leg rather than replaying a finished entrance.
+7. Pause, focus loss and bridge failure freeze presentation with Game Time. Viewing another area does not change logistics outcomes.
+8. Clock/HUD refreshes must preserve in-flight motion and selection; never adopt an older authority phase over a newer acknowledged phase, and never show the cart in two rooms at once.
+
 `CargoLot`: id, good_id, quantity, beneficial_owner, contract_id/reservation_id, status and physical_container. One lot has exactly one physical location: warehouse reservation, cart, destination escrow, spendable destination or recorded loss. Positive integer quantities only.
 
 `TradeContract`: id, parties A/B, offered goods/quantities, source/destination stores for each leg, route permissions, reservation/escrow IDs, shipment IDs, accepted_turn, deadline_turn, status, settlement receipt. Delivery promises never count as spendable goods.

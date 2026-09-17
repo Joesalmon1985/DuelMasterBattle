@@ -100,8 +100,8 @@
     "inspection_host": "Linux 6.8.0-139-generic",
     "initial_godot_pin": "4.4.1",
     "python_pin": "3.12.3",
-    "windows_launchers": "Present but currently assume Godot 4.5.1; T003/T004 record, later toolchain task aligns to 4.4.1",
-    "windows_verification": "Not performed"
+    "windows_launchers": "Aligned to Godot 4.4.1 assumptions; Wine/Windows executable and packaging verification deferred to T155-T160",
+    "windows_verification": "DEFERRED_NOT_PASSED"
   },
   "baseline_checks": [
     {
@@ -121,12 +121,12 @@
     },
     {
       "name": "task_wrapper",
-      "command": "python tools/check.py --task T001",
+      "command": "python3 tools/check.py --task T001",
       "status": "EXISTS; T001-T004 mapped, future task contracts fail closed until implemented"
     },
     {
       "name": "scenario_wrapper",
-      "command": "python tools/run_scenario.py --fixture FX-CLOCK --record OUT",
+      "command": "python3 tools/run_scenario.py --fixture FX-CLOCK --record OUT",
       "status": "EXISTS; known future scenarios return NOT_IMPLEMENTED and nonzero until their owner connects production runtime"
     }
   ],

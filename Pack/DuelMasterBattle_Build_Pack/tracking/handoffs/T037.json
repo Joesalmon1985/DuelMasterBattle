@@ -1,0 +1,26 @@
+{
+  "task_id": "T037",
+  "status": "DONE",
+  "commit": "219b620bd2e2d59616f59178a5dbb643ae4a0563",
+  "files": [
+    "sim/dmb/construction/buildings.py",
+    "tests/sim/test_t037_destruction.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "BuildingService.destroy consequences"
+  ],
+  "source_rules": [
+    "C04"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T037",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T038",
+  "notes": "Centre no capture; warehouse local loss; cart cargo survives; displace; no double loss"
+}

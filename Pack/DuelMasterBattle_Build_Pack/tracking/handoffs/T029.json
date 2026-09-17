@@ -1,0 +1,30 @@
+{
+  "task_id": "T029",
+  "status": "DONE",
+  "commit": "e5d2e0d5a199331f6f8212d259ca1292c2c231ba",
+  "files": [
+    "sim/dmb/construction/production.py",
+    "sim/dmb/hazards/queries.py",
+    "sim/dmb/hazards/__init__.py",
+    "sim/dmb/core/state.py",
+    "tests/sim/test_t029_catan_grants.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "CatanProductionService",
+    "hazard queries"
+  ],
+  "source_rules": [
+    "C04"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T029",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T030",
+  "notes": "City 2/settlement 1; desert/7 none; cube suppresses; missing warehouse no invent"
+}

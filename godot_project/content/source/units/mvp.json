@@ -1,0 +1,86 @@
+[
+  {
+    "id": "unit.ancient.skirmisher",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "ancient",
+    "name_key": "Ancient Skirmisher",
+    "fields": {
+      "archetype": "skirmisher",
+      "processed_units_per_unit": 2,
+      "max_health": 40,
+      "attack_cooldown_ms": 1000,
+      "range_tiles": 2
+    }
+  },
+  {
+    "id": "unit.ancient.line",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "ancient",
+    "name_key": "Ancient Line",
+    "fields": {
+      "archetype": "line",
+      "processed_units_per_unit": 3,
+      "max_health": 60,
+      "attack_cooldown_ms": 1200,
+      "range_tiles": 1
+    }
+  },
+  {
+    "id": "unit.ancient.heavy",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "ancient",
+    "name_key": "Ancient Heavy",
+    "fields": {
+      "archetype": "heavy",
+      "processed_units_per_unit": 5,
+      "max_health": 100,
+      "attack_cooldown_ms": 1500,
+      "range_tiles": 1
+    }
+  },
+  {
+    "id": "unit.historic.skirmisher",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "historic",
+    "name_key": "Historic Skirmisher",
+    "fields": {
+      "archetype": "skirmisher",
+      "processed_units_per_unit": 2,
+      "max_health": 50,
+      "attack_cooldown_ms": 900,
+      "range_tiles": 2
+    }
+  },
+  {
+    "id": "unit.historic.line",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "historic",
+    "name_key": "Historic Line",
+    "fields": {
+      "archetype": "line",
+      "processed_units_per_unit": 3,
+      "max_health": 75,
+      "attack_cooldown_ms": 1100,
+      "range_tiles": 1
+    }
+  },
+  {
+    "id": "unit.historic.heavy",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "historic",
+    "name_key": "Historic Heavy",
+    "fields": {
+      "archetype": "heavy",
+      "processed_units_per_unit": 5,
+      "max_health": 120,
+      "attack_cooldown_ms": 1400,
+      "range_tiles": 1
+    }
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "target": "T008",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "definition_catalog_tests",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.608,
+      "detail": ".....                                                                    [100%]\n5 passed in 0.03s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t008_catalog.py"
+      ]
+    }
+  ]
+}

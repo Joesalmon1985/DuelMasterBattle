@@ -1,0 +1,36 @@
+{
+  "task_id": "T019",
+  "status": "DONE",
+  "commit": "b3c5efe16e517121dbd9cd081b63cf58081cd8bb",
+  "files": [
+    "sim/dmb/persistence/coordinator.py",
+    "sim/dmb/bridge/server.py",
+    "godot_project/client/bridge/world_client.gd",
+    "godot_project/client/encounters/encounter_host.gd",
+    "godot_project/client/scenes/g01_shell.gd",
+    "tests/sim/test_t019_recovery.py"
+  ],
+  "public_contracts": [
+    "Coordinated recovery checkpoint every 5s and after Travel/Wait",
+    "Bounded restart restores checkpoint and reports rollback_ms",
+    "Bridge failure recovers without requiring a manual old-save reload"
+  ],
+  "source_rules": [
+    "C02_bridge_save",
+    "GDD 191-192"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T019",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "fixture_hashes": {
+    "recovery_slot": "_recovery"
+  },
+  "defects": [],
+  "scope_extension": "g01_shell.gd and server.py RecoverCheckpoint wiring required to exercise bounded restart from the playable scene",
+  "next_task": "T020",
+  "notes": "G01 Bridge fail now restarts sidecar and RecoverCheckpoint; UI reports rollback_ms"
+}

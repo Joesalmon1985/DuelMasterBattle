@@ -34,6 +34,15 @@ func _ready() -> void:
     _populate_list()
     btn_run.pressed.connect(_on_run_pressed)
     btn_close.pressed.connect(_on_close_pressed)
+    var btn_g01 := Button.new()
+    btn_g01.name = "BtnG01"
+    btn_g01.text = "G01 — FX-CLOCK (Python-backed)"
+    btn_g01.custom_minimum_size = Vector2(280, 50)
+    btn_g01.add_theme_font_size_override("font_size", 16)
+    btn_g01.pressed.connect(_on_g01_pressed)
+    $Panel/BottomBar.add_child(btn_g01)
+    $Panel/BottomBar.move_child(btn_g01, 1)
+
     search_box.text_changed.connect(_on_search_changed)
     filter_profile.item_selected.connect(_on_filter_changed)
     _update_run_button()
@@ -282,3 +291,6 @@ func _on_run_pressed() -> void:
 
 func _on_close_pressed() -> void:
     get_tree().quit()
+
+func _on_g01_pressed() -> void:
+    get_tree().change_scene_to_file("res://client/scenes/g01_shell.tscn")

@@ -1,0 +1,29 @@
+{
+  "target": "T024",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "bridge_clock_integration",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 1.428,
+      "detail": ".....                                                                    [100%]\n5 passed in 0.77s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/integration/test_bridge_clock.py",
+        "tests/sim/test_t023_fixtures.py"
+      ]
+    },
+    {
+      "name": "g01_gate_packet",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.001,
+      "detail": "3 evidence files valid",
+      "command": null
+    }
+  ]
+}

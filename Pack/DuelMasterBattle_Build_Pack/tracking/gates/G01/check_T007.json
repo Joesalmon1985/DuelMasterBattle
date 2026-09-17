@@ -1,0 +1,20 @@
+{
+  "target": "T007",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "id_allocator_tests",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.632,
+      "detail": "...                                                                      [100%]\n3 passed in 0.03s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t007_ids.py"
+      ]
+    }
+  ]
+}

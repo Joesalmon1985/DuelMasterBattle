@@ -1,0 +1,20 @@
+{
+  "target": "T022",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "clock_driver_tests",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.349,
+      "detail": "...                                                                      [100%]\n3 passed in 0.02s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t022_clock_driver.py"
+      ]
+    }
+  ]
+}

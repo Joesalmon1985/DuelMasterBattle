@@ -1,0 +1,20 @@
+{
+  "target": "T019",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "recovery_tests",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 1.371,
+      "detail": "...                                                                      [100%]\n3 passed in 0.61s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t019_recovery.py"
+      ]
+    }
+  ]
+}

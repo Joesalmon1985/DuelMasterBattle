@@ -1,0 +1,7 @@
+{
+  "fixture_id": "FX-EXPANSION-HEURISTIC",
+  "seed": 47,
+  "faction_count": 2,
+  "max_turns": 240,
+  "notes": "Headless autonomous expansion under normal Catan grants and delivered construction. No authored free stock after setup."
+}

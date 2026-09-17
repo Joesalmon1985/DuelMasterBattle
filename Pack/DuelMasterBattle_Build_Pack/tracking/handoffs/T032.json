@@ -1,0 +1,27 @@
+{
+  "task_id": "T032",
+  "status": "DONE",
+  "commit": "04b98c82ce7a8ef53ee001c9da05577289f837e0",
+  "files": [
+    "sim/dmb/construction/orders.py",
+    "sim/dmb/core/world.py",
+    "tests/sim/test_t032_orders.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "ConstructionService"
+  ],
+  "source_rules": [
+    "C04"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T032",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T033",
+  "notes": "Remote unshipped blocked; commit once; illegal reclaim; 10VP interrupt"
+}

@@ -1,0 +1,190 @@
+[
+  {
+    "id": "job.centre_clerk",
+    "schema_version": 1,
+    "kind": "job",
+    "era_id": "all",
+    "name_key": "Centre Clerk",
+    "fields": {"role": "clerk", "workplace_kind": "centre"}
+  },
+  {
+    "id": "job.warehouse_keeper",
+    "schema_version": 1,
+    "kind": "job",
+    "era_id": "all",
+    "name_key": "Warehouse Keeper",
+    "fields": {"role": "keeper", "workplace_kind": "warehouse"}
+  },
+  {
+    "id": "job.primary_worker",
+    "schema_version": 1,
+    "kind": "job",
+    "era_id": "all",
+    "name_key": "Primary Worker",
+    "fields": {"role": "worker", "workplace_kind": "primary"}
+  },
+  {
+    "id": "job.processor_worker",
+    "schema_version": 1,
+    "kind": "job",
+    "era_id": "all",
+    "name_key": "Processor Worker",
+    "fields": {"role": "worker", "workplace_kind": "processor"}
+  },
+  {
+    "id": "job.factory_worker",
+    "schema_version": 1,
+    "kind": "job",
+    "era_id": "all",
+    "name_key": "Factory Worker",
+    "fields": {"role": "worker", "workplace_kind": "factory"}
+  },
+  {
+    "id": "building.centre",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "ancient",
+    "name_key": "Settlement Centre",
+    "fields": {
+      "slot_kind": "centre",
+      "max_health": 500,
+      "footprint": 1,
+      "job_ref": "job.centre_clerk",
+      "capacity_base": 1.0,
+      "upgrade_ref": "building.centre.city"
+    }
+  },
+  {
+    "id": "building.centre.city",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "ancient",
+    "name_key": "City Centre",
+    "fields": {
+      "slot_kind": "centre",
+      "max_health": 500,
+      "footprint": 1,
+      "job_ref": "job.centre_clerk",
+      "capacity_base": 1.0,
+      "settlement_tier": "city",
+      "primary_flow_multiplier": 2.0,
+      "primary_slot_multiplier": 1.0
+    }
+  },
+  {
+    "id": "building.warehouse",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "ancient",
+    "name_key": "Warehouse",
+    "fields": {
+      "slot_kind": "warehouse",
+      "max_health": 300,
+      "footprint": 1,
+      "job_ref": "job.warehouse_keeper",
+      "capacity_base": 1.0,
+      "upgrade_ref": "building.warehouse.historic"
+    }
+  },
+  {
+    "id": "building.warehouse.historic",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "historic",
+    "name_key": "Historic Warehouse",
+    "fields": {
+      "slot_kind": "warehouse",
+      "max_health": 300,
+      "footprint": 1,
+      "job_ref": "job.warehouse_keeper",
+      "capacity_base": 1.0
+    }
+  },
+  {
+    "id": "building.primary",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "ancient",
+    "name_key": "Primary Slot",
+    "fields": {
+      "slot_kind": "primary",
+      "max_health": 200,
+      "footprint": 1,
+      "job_ref": "job.primary_worker",
+      "capacity_base": 1.0,
+      "upgrade_ref": "building.primary.historic"
+    }
+  },
+  {
+    "id": "building.primary.historic",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "historic",
+    "name_key": "Historic Primary",
+    "fields": {
+      "slot_kind": "primary",
+      "max_health": 200,
+      "footprint": 1,
+      "job_ref": "job.primary_worker",
+      "capacity_base": 1.0
+    }
+  },
+  {
+    "id": "building.processor",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "ancient",
+    "name_key": "Processor",
+    "fields": {
+      "slot_kind": "processor",
+      "max_health": 200,
+      "footprint": 1,
+      "job_ref": "job.processor_worker",
+      "capacity_base": 1.0,
+      "upgrade_ref": "building.processor.historic"
+    }
+  },
+  {
+    "id": "building.processor.historic",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "historic",
+    "name_key": "Historic Processor",
+    "fields": {
+      "slot_kind": "processor",
+      "max_health": 200,
+      "footprint": 1,
+      "job_ref": "job.processor_worker",
+      "capacity_base": 1.0
+    }
+  },
+  {
+    "id": "building.factory",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "ancient",
+    "name_key": "Factory Slot",
+    "fields": {
+      "slot_kind": "factory",
+      "max_health": 200,
+      "footprint": 1,
+      "job_ref": "job.factory_worker",
+      "capacity_base": 1.0,
+      "upgrade_ref": "building.factory.historic"
+    }
+  },
+  {
+    "id": "building.factory.historic",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "historic",
+    "name_key": "Historic Factory",
+    "fields": {
+      "slot_kind": "factory",
+      "max_health": 200,
+      "footprint": 1,
+      "job_ref": "job.factory_worker",
+      "capacity_base": 1.0
+    }
+  }
+]
