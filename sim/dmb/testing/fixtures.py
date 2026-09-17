@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import Any
 
 from sim.dmb.construction.buildings import BuildingService
@@ -29,6 +30,8 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
         return bootstrap_world(world_id=f"world:{name.lower()}", seed=seed)
     if name == "FX-CARGO":
         return _load_fx_cargo(seed=seed)
+    if name == "FX-INDUSTRY":
+        return _load_fx_industry(seed=303 if seed == 7 else seed)
     raise ValueError(f"unsupported fixture {name}")
 
 
@@ -254,6 +257,92 @@ def _load_fx_cargo(seed: int = 202) -> WorldSim:
         DraftService(state).deal("prehistoric", ["faction:1", "faction:player"])
     except Exception:
         pass
+    return sim
+
+
+def _load_fx_industry(seed: int = 303) -> WorldSim:
+    """C06 numerical oracle using the normal WorldSim and IndustryService."""
+    from sim.dmb.industry.layers import ResourceLayerService
+    from sim.dmb.industry.primary import PrimaryChannel
+    from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
+
+    sim = bootstrap_world(world_id="world:fx-industry", seed=seed)
+    state = sim.state
+    node_id = "node:industry"
+    state.board["nodes"][node_id] = {"id": node_id, "label": "Industry Oracle", "exits": {}}
+    state.settlements["settlement:industry"] = {
+        "id": "settlement:industry",
+        "node_id": node_id,
+        "faction_id": "faction:industry",
+        "operational": True,
+    }
+    layers = ResourceLayerService(state.industry)
+    finite = layers.create_layer(
+        "hex:ore",
+        "ind.prehistoric.ore_mountains.finite",
+        "prehistoric",
+        0,
+        finite=True,
+    )
+    renewable = layers.create_layer(
+        "hex:woodland",
+        "ind.prehistoric.woodland.renewable",
+        "prehistoric",
+        0,
+        finite=False,
+    )
+    channels = (
+        PrimaryChannel(
+            "channel:source:woodland:renewable", "source:woodland", node_id, "woodland",
+            "prehistoric", 0, "ind.prehistoric.woodland.renewable",
+            renewable.layer_id, False, Fraction(1, 10), True,
+        ),
+        PrimaryChannel(
+            "channel:source:ore:finite", "source:ore", node_id, "ore_mountains",
+            "prehistoric", 0, "ind.prehistoric.ore_mountains.finite",
+            finite.layer_id, True, Fraction(1, 10), True,
+        ),
+    )
+    processor = ProcessorBinding(
+        "processor:fx-industry",
+        "recipe.prehistoric.pre_06",
+        "prehistoric",
+        channels[0].channel_id,
+        channels[1].channel_id,
+    )
+    routes = (
+        FactoryRoute("factory:fx-skirmisher", processor.building_id, "unit.ancient.skirmisher", 2),
+        FactoryRoute("factory:fx-line", processor.building_id, "unit.ancient.line", 3),
+        FactoryRoute("factory:fx-heavy", processor.building_id, "unit.ancient.heavy", 5),
+    )
+    for channel in channels:
+        sim.industry.install_channel(channel)
+    sim.industry.install_processor(processor)
+    state.buildings[processor.building_id] = {
+        "id": processor.building_id, "node_id": node_id, "health": 100,
+        "max_health": 100, "active": True, "status": "built",
+    }
+    for route in routes:
+        sim.industry.install_route(route)
+        sim.industry.factories.create(
+            route.factory_id,
+            node_id=node_id,
+            faction_id="faction:industry",
+            era="prehistoric",
+            unit_def_id=route.unit_def_id,
+        )
+        state.buildings[route.factory_id] = {
+            "id": route.factory_id, "node_id": node_id, "health": 100,
+            "max_health": 100, "active": True, "status": "built",
+        }
+    state.board["fx_industry"] = {
+        "seed": seed,
+        "node_id": node_id,
+        "processor_id": processor.building_id,
+        "factory_ids": [route.factory_id for route in routes],
+        "finite_layer_id": finite.layer_id,
+        "renewable_layer_id": renewable.layer_id,
+    }
     return sim
 
 

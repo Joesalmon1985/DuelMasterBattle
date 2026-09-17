@@ -81,7 +81,8 @@ class FactoryService:
                 if channel.finite:
                     debits.append((channel.layer_id, raw_amount))
 
-        industry_before = deepcopy(self.world.industry)
+        layers_before = deepcopy(self.state.get("layers", {}))
+        factories_before = deepcopy(self.factories)
         units_before = deepcopy(self.world.units)
         ids_before = deepcopy(self.world.ids)
         try:
@@ -105,10 +106,10 @@ class FactoryService:
                     )
             return spawned
         except Exception:
-            self.world.industry = industry_before
+            self.state["layers"] = layers_before
+            self.state["factories"] = factories_before
             self.world.units = units_before
             self.world.ids = ids_before
-            self.state = self.world.industry
             self.factories = self.state["factories"]
             self.layers = ResourceLayerService(self.state)
             raise

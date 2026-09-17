@@ -137,6 +137,7 @@ class WorldSim:
     turns: TurnScheduler = field(init=False)
     runner: TurnRunner = field(init=False)
     outcomes: ImmediateOutcomeService = field(init=False)
+    industry: Any = field(init=False)
     rng: RngBank = field(init=False)
 
     def __post_init__(self) -> None:
@@ -146,6 +147,9 @@ class WorldSim:
         self.turns = TurnScheduler(self.state.clock)
         self.runner = TurnRunner(self.state, self.turns)
         self.outcomes = ImmediateOutcomeService(self.state)
+        from sim.dmb.industry.service import IndustryService
+
+        self.industry = IndustryService(self.state)
         self.rng = RngBank.from_dict(self.state.rng)
         self._register_handlers()
         if self.catalog.catalog_hash == "" and self.state.definitions.get("payloads"):
@@ -246,13 +250,18 @@ class WorldSim:
     def _handle_advance(self, envelope: CommandEnvelope) -> CommandResult:
         payload = envelope.payload
         quanta = self.clock.request_advance(int(payload["delta_ms"]), int(payload["clock_sequence"]))
+        industry_events = self.industry.advance_quanta(quanta)
         self.state.world_version += 1
         events = self.events.append_batch(
             [
                 {
                     "kind": "advanced",
                     "command_id": envelope.command_id,
-                    "payload": {"quanta": quanta, "clock": self.clock.clock_view()},
+                    "payload": {
+                        "quanta": quanta,
+                        "clock": self.clock.clock_view(),
+                        "industry_events": industry_events,
+                    },
                 }
             ]
         )
@@ -262,7 +271,7 @@ class WorldSim:
             command_id=envelope.command_id,
             world_version=self.state.world_version,
             events=events,
-            payload={"quanta": quanta, "clock": self.clock.clock_view()},
+            payload={"quanta": quanta, "clock": self.clock.clock_view(), "industry_events": industry_events},
             public_feedback="advanced",
         )
 
