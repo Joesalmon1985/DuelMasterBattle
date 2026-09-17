@@ -87,6 +87,21 @@ class RouteSelector:
         processors: Mapping[str, ProcessorBinding],
     ) -> FactoryRoute | None:
         candidates = self.candidates(factory_id, installed_routes, processors)
-        if len(candidates) > 1:
-            raise TypeValidationError(f"factory {factory_id} has multiple installed routes")
-        return candidates[0] if candidates else None
+        if not candidates:
+            return None
+        if len({route.processor_id for route in candidates}) != len(candidates):
+            raise TypeValidationError(
+                f"factory {factory_id} has multiple installed routes for one processor"
+            )
+        # Prefer a route that can really run. Alternate routes are installed
+        # durable options, not implicit access to unsupported imported inputs.
+        return sorted(
+            candidates,
+            key=lambda route: (
+                processors[route.processor_id].capacity <= 0,
+                -processors[route.processor_id].capacity,
+                -route.requested_weight,
+                route.processor_id,
+                route.unit_def_id,
+            ),
+        )[0]

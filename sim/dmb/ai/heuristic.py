@@ -58,13 +58,13 @@ def _tier(candidate: dict[str, Any], observation: dict[str, Any]) -> int:
             vp_gain = max(vp_gain, 1)
         if own_vp + vp_gain >= 10:
             return PRIORITY["win_vp"]
-        if action in {"repair", "replacement_cart", "processor"} and "missing" in str(
+        if action in {"repair", "replacement_cart", "processor", "route"} and "missing" in str(
             candidate.get("explanation") or ""
         ):
             return PRIORITY["restore_core"]
         if action in {"city", "settlement", "road", "legacy_upgrade"}:
             return PRIORITY["expand"]
-        if action == "processor":
+        if action in {"processor", "route"}:
             return PRIORITY["extra"]
         return PRIORITY["expand"]
     if kind == "trade_propose":
