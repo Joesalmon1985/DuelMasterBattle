@@ -1,0 +1,37 @@
+{
+  "task_id": "T055",
+  "status": "DONE",
+  "commit": "c88341db251b3a2a38255789477c49a69148b4b0",
+  "files": [
+    "sim/dmb/people/jobs.py",
+    "sim/dmb/industry/projection.py",
+    "sim/dmb/industry/service.py",
+    "godot_project/client/world/worker_controller.gd",
+    "godot_project/client/tests/run_worker_controller_smoke.gd",
+    "tests/sim/test_t055_workers_projection.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "JobService.backfill_tick from accounting cadence",
+    "IndustryProjection.workers",
+    "WorkerController person-ID presentation"
+  ],
+  "source_rules": [
+    "C09 persistent worker identity and replacement",
+    "C09 animation follows production but never drives it"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T055",
+      "exit_code": 0,
+      "result": "PASS; 7 Python tests and Godot T055_WORKER_CONTROLLER_OK"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/industry/service.py": "Required integration point to call existing backfill_tick and apply explicit job modifiers during authoritative accounting.",
+    "godot_project/client/tests/run_worker_controller_smoke.gd": "Required headless client script check.",
+    "tools/check.py": "Required task check wiring."
+  },
+  "defects": [],
+  "next_task": "T056"
+}
