@@ -1,7 +1,7 @@
 {
   "task_id": "T041",
   "status": "DONE",
-  "commit": null,
+  "commit": "d69c0cdace4e1f45222b30483a9c9ab4dd573d7a",
   "files": [
     "sim/dmb/technology/draft.py",
     "sim/dmb/time/runner.py",
