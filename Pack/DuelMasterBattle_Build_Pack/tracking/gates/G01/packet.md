@@ -1,5 +1,5 @@
 **Tested implementation commit:** `5d27fcef4d65c23155fc391eaef8f733dece943a`  
-**Handoff HEAD:** `5d27fcef4d65c23155fc391eaef8f733dece943a`
+**Handoff HEAD:** `b3c5efe16e517121dbd9cd081b63cf58081cd8bb`
 
 # G01 playtest handoff — linked arrivals, doorway travel, T019 recovery
 

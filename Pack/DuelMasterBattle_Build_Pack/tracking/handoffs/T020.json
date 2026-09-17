@@ -1,7 +1,7 @@
 {
   "task_id": "T020",
   "status": "DONE",
-  "commit": "5d27fcef4d65c23155fc391eaef8f733dece943a",
+  "commit": "b3c5efe16e517121dbd9cd081b63cf58081cd8bb",
   "files": [
     "godot_project/client/scenes/g01_shell.gd",
     "godot_project/client/scenes/g01_shell.tscn",
