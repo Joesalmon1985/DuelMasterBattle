@@ -202,8 +202,10 @@ class TurnRunner:
         if self.interrupted:
             seat = {"round_complete": False, "interrupted": True, "draft": None}
             self.state.clock["draft"] = None
+            self._discard_tech_draft_on_interrupt()
         else:
             seat = self.scheduler.finish_seat()
+            seat = self._maybe_resolve_tech_draft(seat)
         return {
             "turn": int(self.state.clock["turn"]),
             "node_id": self.state.player["node_id"],
@@ -230,8 +232,10 @@ class TurnRunner:
         if self.interrupted:
             seat = {"round_complete": False, "interrupted": True, "draft": None}
             self.state.clock["draft"] = None
+            self._discard_tech_draft_on_interrupt()
         else:
             seat = self.scheduler.finish_seat()
+            seat = self._maybe_resolve_tech_draft(seat)
         return {
             "turn": int(self.state.clock["turn"]),
             "node_id": current_node,
@@ -240,6 +244,33 @@ class TurnRunner:
             "interrupted": self.interrupted,
             "stages": list(self.stages_executed or []),
         }
+
+    def _discard_tech_draft_on_interrupt(self) -> None:
+        draft = getattr(self.state, "tech_draft", None)
+        if isinstance(draft, dict) and draft.get("active"):
+            from sim.dmb.technology.draft import DraftService
+
+            DraftService(self.state).discard_for_era(reason=str(self.state.clock.get("interrupt_reason") or "interrupt"))
+
+    def _maybe_resolve_tech_draft(self, seat: dict[str, Any]) -> dict[str, Any]:
+        """On completed World Round, resolve one simultaneous tech pick when a draft is active."""
+        if not seat.get("round_complete"):
+            return seat
+        draft = getattr(self.state, "tech_draft", None)
+        if not isinstance(draft, dict) or not draft.get("active"):
+            return seat
+        from sim.dmb.technology.draft import DraftService
+
+        svc = DraftService(self.state)
+        snap = svc.collect_choices({"turn": int(self.state.clock.get("turn", 0)), "round": int(self.state.clock.get("round", 0))})
+        # Seat-end default: deterministic first-card pick (heuristics override later in T043/T046).
+        choices = svc.auto_pick_first()
+        outcome = svc.resolve_round(choices)
+        seat = dict(seat)
+        seat["tech_draft"] = outcome
+        seat["tech_snapshot_pick_index"] = snap.get("pick_index")
+        return seat
+
 
     def run_seats_round(self) -> dict[str, Any]:
         """Advance through every scheduled seat once; unfinished rounds yield no draft."""
