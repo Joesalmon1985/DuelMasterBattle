@@ -1,0 +1,30 @@
+{
+  "task_id": "T046",
+  "status": "DONE",
+  "commit": "pending",
+  "files": [
+    "sim/dmb/time/runner.py",
+    "sim/dmb/ai/policy.py",
+    "sim/dmb/ai/legal.py",
+    "tests/sim/test_t046_seat_round.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "TurnRunner.run_faction_round",
+    "5_active_decisions"
+  ],
+  "source_rules": [
+    "C03",
+    "C12"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T046",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T047",
+  "notes": "Fixed legal_version 0 falsy bug; heuristic draft picks; trade/diplomacy apply"
+}

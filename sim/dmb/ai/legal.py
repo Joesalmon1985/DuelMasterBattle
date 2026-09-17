@@ -86,9 +86,11 @@ class LegalActionGenerator:
 
     def validate_candidate(self, view: dict[str, Any], candidate: dict[str, Any]) -> bool:
         current = int(self.state.world_version)
-        if int(candidate.get("legal_version", -1)) != current:
+        cand_ver = candidate.get("legal_version")
+        view_ver = view.get("legal_version")
+        if cand_ver is None or int(cand_ver) != current:
             return False
-        if int(view.get("legal_version") or -1) != current:
+        if view_ver is None or int(view_ver) != current:
             return False
         if candidate.get("faction_id") != view.get("faction_id"):
             return False
@@ -159,7 +161,8 @@ class LegalActionGenerator:
         store_id = None
         for settlement in self.state.settlements.values():
             if settlement.get("faction_id") == faction_id:
-                store_id = settlement.get("store_id") or settlement.get("id")
+                wh = settlement.get("warehouse_id")
+                store_id = settlement.get("store_id") or (f"store:{wh}" if wh else None) or settlement.get("id")
                 break
         if not store_id:
             store_id = f"{faction_id}:store"

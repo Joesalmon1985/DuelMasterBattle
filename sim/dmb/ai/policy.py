@@ -91,8 +91,51 @@ class PolicyService:
             return self._apply_construct(candidate, params)
         if kind == "noop":
             return {"status": "noop", "commit": commit}
-        # Trade/diplomacy proposals recorded as commitments; execution in T044/T045.
+        if kind == "diplomacy_propose":
+            from sim.dmb.ai.diplomacy import DiplomacyService
+
+            dip = DiplomacyService(self.state)
+            target = str(params.get("target_faction"))
+            proposal = str(params.get("proposal") or "alliance")
+            result = dip.propose(str(candidate["faction_id"]), target, proposal)
+            return {"status": "diplomacy", "commit": commit, "result": result}
+        if kind == "trade_propose":
+            from sim.dmb.logistics.stock import StockLedger
+            from sim.dmb.logistics.trade import TradeService
+
+            # Only propose when both sides have stock at known warehouses; never invent goods.
+            ledger = StockLedger(self.state)
+            trade = TradeService(self.state, ledger=ledger)
+            give = dict(params.get("give") or {})
+            receive = dict(params.get("receive") or {})
+            proposer = str(candidate["faction_id"])
+            counter = str(params.get("target_faction"))
+            p_store = self._primary_store(proposer)
+            c_store = self._primary_store(counter)
+            if not p_store or not c_store:
+                return {"status": "trade_skipped", "reason": "missing_store", "commit": commit}
+            try:
+                contract = trade.propose(
+                    proposer,
+                    counter,
+                    give=give,
+                    receive=receive,
+                    proposer_store=p_store,
+                    counterparty_store=c_store,
+                )
+            except TypeValidationError as exc:
+                return {"status": "trade_blocked", "reason": str(exc), "commit": commit}
+            return {"status": "trade_proposed", "commit": commit, "contract": contract}
         return {"status": "proposed", "commit": commit, "candidate_id": candidate["id"]}
+
+    def _primary_store(self, faction_id: str) -> str | None:
+        for settlement in self.state.settlements.values():
+            if settlement.get("faction_id") != faction_id:
+                continue
+            wh = settlement.get("warehouse_id")
+            if wh:
+                return f"store:{wh}"
+        return None
 
     def _apply_construct(self, candidate: dict[str, Any], params: dict[str, Any]) -> dict[str, Any]:
         assert self.construction is not None and self.director is not None

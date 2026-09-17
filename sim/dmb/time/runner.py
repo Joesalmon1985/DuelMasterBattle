@@ -17,6 +17,7 @@ STAGES = (
     "2_production",
     "3_logistics",
     "4_completions",
+    "5_active_decisions",
     "3_follow_on",
     "9_seat_end",
 )
@@ -65,6 +66,8 @@ class TurnRunner:
             payload.update(self._stage_logistics())
         elif stage == "4_completions":
             payload.update(self._stage_completions())
+        elif stage == "5_active_decisions":
+            payload.update(self._stage_active_decisions())
         return payload
 
     def _stage_production(self) -> dict[str, Any]:
@@ -135,6 +138,21 @@ class TurnRunner:
                 break
         return {"committed": committed}
 
+    def _stage_active_decisions(self) -> dict[str, Any]:
+        """Only the active seat may initiate construction/trade/diplomacy."""
+        if self.interrupted:
+            return {"skipped": True, "reason": "interrupted"}
+        active = self.scheduler.active_seat()
+        if not active or active == "faction:player":
+            # Wizard/player seat: no autonomous faction brain.
+            return {"faction_id": active, "applied": []}
+        from sim.dmb.ai.policy import PolicyService
+
+        policy = PolicyService(self.state)
+        policy.assign_brain(active, "heuristic")
+        record = policy.activate(active, decision_kind="seat")
+        return {"faction_id": active, "activation": record}
+
     def _run_stages(self, *, arrival_handler=None) -> None:
         self.stages_executed = []
         for stage in STAGES:
@@ -146,7 +164,12 @@ class TurnRunner:
                     "node_id": self.state.player.get("node_id"),
                     "turn": self.state.clock["turn"],
                 }
-            if stage in {"2_production", "3_logistics", "4_completions"}:
+            if stage in {
+                "2_production",
+                "3_logistics",
+                "4_completions",
+                "5_active_decisions",
+            }:
                 self.run_stage(stage)
             self.stages_executed.append(stage)
             if stage == "2_score" and self.state.clock.pop("interrupt_after_score", False):
@@ -256,34 +279,79 @@ class TurnRunner:
         """On completed World Round, resolve one simultaneous tech pick when a draft is active."""
         if not seat.get("round_complete"):
             return seat
+        if self.interrupted:
+            self._discard_tech_draft_on_interrupt()
+            seat = dict(seat)
+            seat["tech_draft"] = None
+            seat["draft_suppressed"] = True
+            return seat
         draft = getattr(self.state, "tech_draft", None)
         if not isinstance(draft, dict) or not draft.get("active"):
             return seat
+        from sim.dmb.ai.heuristic import HeuristicBrain
         from sim.dmb.technology.draft import DraftService
 
         svc = DraftService(self.state)
-        snap = svc.collect_choices({"turn": int(self.state.clock.get("turn", 0)), "round": int(self.state.clock.get("round", 0))})
-        # Seat-end default: deterministic first-card pick (heuristics override later in T043/T046).
-        choices = svc.auto_pick_first()
+        snap = svc.collect_choices(
+            {"turn": int(self.state.clock.get("turn", 0)), "round": int(self.state.clock.get("round", 0))}
+        )
+        brain = HeuristicBrain()
+        choices: dict[str, str] = {}
+        for faction_id, hand in snap["hands"].items():
+            cands = [
+                {
+                    "id": card["id"],
+                    "action_kind": "tech_pick",
+                    "params": {"definition_id": card.get("definition_id")},
+                }
+                for card in hand
+            ]
+            if not cands:
+                continue
+            obs = {"own": {"vp": 0}, "public": {}, "faction_id": faction_id}
+            choices[faction_id] = brain.choose(obs, cands)
         outcome = svc.resolve_round(choices)
         seat = dict(seat)
         seat["tech_draft"] = outcome
         seat["tech_snapshot_pick_index"] = snap.get("pick_index")
         return seat
 
-
-    def run_seats_round(self) -> dict[str, Any]:
-        """Advance through every scheduled seat once; unfinished rounds yield no draft."""
+    def run_faction_round(self) -> dict[str, Any]:
+        """Advance every scheduled faction seat once with production/logistics/decisions."""
+        roster = list(self.state.clock.get("scheduled_faction_ids") or [])
         results = []
-        while self.scheduler.active_seat() is not None:
-            faction = self.scheduler.active_seat()
-            results.append({"faction_id": faction})
-            seat = self.scheduler.finish_seat()
-            results[-1]["seat"] = seat
-            if seat.get("round_complete"):
+        for faction_id in roster:
+            if self.interrupted:
+                break
+            self.interrupted = False
+            self.scheduler.begin_turn("Seat")
+            self.state.clock["active_faction_id"] = faction_id
+            self.state.clock["completed_seats"] = [
+                f for f in roster if roster.index(f) < roster.index(faction_id)
+            ]
+            self._run_stages(arrival_handler=None)
+            if self.interrupted:
+                seat = {"round_complete": False, "interrupted": True, "draft": None}
+                self._discard_tech_draft_on_interrupt()
+            else:
+                seat = self.scheduler.finish_seat()
+                seat = self._maybe_resolve_tech_draft(seat)
+            results.append(
+                {
+                    "faction_id": faction_id,
+                    "seat": seat,
+                    "stages": list(self.stages_executed or []),
+                }
+            )
+            if seat.get("round_complete") or self.interrupted:
                 break
         return {
             "results": results,
-            "draft": self.state.clock.get("draft"),
             "round_complete": bool(self.state.clock.get("round_complete")),
+            "interrupted": self.interrupted,
+            "draft": self.state.clock.get("draft"),
         }
+
+    def run_seats_round(self) -> dict[str, Any]:
+        """Advance through every scheduled seat once; unfinished rounds yield no draft."""
+        return self.run_faction_round()
