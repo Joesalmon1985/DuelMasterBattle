@@ -367,6 +367,8 @@ def checks_for_task(task: str) -> list[CheckResult]:
         "T033": lambda: [_pytest("carts", "tests/sim/test_t033_carts.py")],
         "T034": lambda: [_pytest("routes_movement", "tests/sim/test_t034_routes.py")],
         "T035": lambda: [_pytest("logistics_director", "tests/sim/test_t035_director.py")],
+        "T036": lambda: [_pytest("world_setup", "tests/sim/test_t036_setup.py")],
+        "T037": lambda: [_pytest("destruction", "tests/sim/test_t037_destruction.py")],
     }
     if task in mapping:
         return mapping[task]()
