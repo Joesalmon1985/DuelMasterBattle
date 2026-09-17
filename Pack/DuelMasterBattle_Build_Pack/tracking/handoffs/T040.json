@@ -1,7 +1,7 @@
 {
   "task_id": "T040",
   "status": "DONE",
-  "commit": null,
+  "commit": "20c95a88c5efb67445eb6f150459523d5dbd5009",
   "files": [
     "sim/dmb/technology/research.py",
     "sim/dmb/core/ids.py",
