@@ -1,7 +1,7 @@
 {
   "task_id": "T033",
   "status": "DONE",
-  "commit": null,
+  "commit": "e936ca2d56b95099b482048384a54ed44b98216a",
   "files": [
     "sim/dmb/logistics/carts.py",
     "tests/sim/test_t033_carts.py",
