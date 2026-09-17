@@ -1,16 +1,20 @@
+**Tested implementation commit:** `(pending)`  
+**Handoff HEAD:** `(pending)`
 
-**Tested implementation commit:** `4dc6da9d22254d2b88a1eb3f38913155d07312c8`  
-**Handoff HEAD:** `4dc6da9d22254d2b88a1eb3f38913155d07312c8`
-
-# G01 playtest handoff — playable wizard FX-CLOCK (FIX_REQUIRED repair)
+# G01 playtest handoff — navigation / portrait FIX_REQUIRED repair
 
 **Status:** AWAITING_HUMAN (do not start T025)  
 **Scenario:** FX-CLOCK  
 **Seed:** 7  
 
-## What is now playable
+## What changed in this repair
 
-Top-down FX-CLOCK local area with wizard (John), terrain/blockers, selectable person (unknown → Mira on interact), glowing exit to a distinct adjacent area. HUD and pointer controls live on a screen-space `CanvasLayer`; the playfield is fitted into the region between HUD and controls (no Camera2D scroll displacing UI). Clock/projection refreshes update labels only and no longer rebuild/reset local pose. Movement stops during pause, focus loss and bridge failure; UI clicks do not walk the wizard. Save no longer persists the ephemeral save-pause token.
+- Fixture tree layout with a clear corridor from spawn → NPC → east exit (and return on the road). Full-tile trees; ground drawn under props; collision matches visible blockers.
+- Action button labels the current verb: Observe / Interact / Travel / Move closer (unknown identity preserved; selection cleared after travel).
+- Launcher defaults to **450×800 portrait**; `--landscape` → 1280×720.
+- Bridge play test walks the real route (no teleport beside the exit).
+
+Preserved: CanvasLayer HUD, local-pose sync across clock refreshes, save-pause token strip.
 
 ## Exact launch (fresh terminal)
 
@@ -19,51 +23,37 @@ cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g01.sh
 ```
 
-**Menu:** press **`G01 FX-CLOCK  (Python-backed runtime playtest)`**.
+**Menu:** **G01 FX-CLOCK  (Python-backed runtime playtest)**  
 
-Direct:
-
-```bash
-bash tools/play_g01.sh --direct
-```
+Direct portrait: `bash tools/play_g01.sh --direct`  
+Landscape: `bash tools/play_g01.sh --direct --landscape`
 
 ## Isolated save / reset
 
-- Slot: `g01_playtest`
-- File: `/home/joe/Projects/DuelMasterBattle/.dmb_saves/g01_playtest.json`
-- Reset: quit completely, optionally delete that file, relaunch. Load restores node/pose/clocks; Game Time continues when the save was unpaused.
+- Slot: `g01_playtest` → `.dmb_saves/g01_playtest.json`
+- Seed: `7`
+- Reset: quit, optionally delete that file, relaunch
 
-## Automated results (agent-run)
+## Automated results
 
-- `python3 tools/check.py --task T020` → PASS (playable pytest + `G01_PLAYABLE_OK` + `G01_BRIDGE_PLAY_OK`)
-- `python3 tools/check.py --gate G01` → PASS (cumulative + scene checks + screenshots)
-- Screenshots: `screenshot_450x800.png`, `screenshot_720x1280.png` (desktop capped to 720×1011), `screenshot_1280x720.png`, alias `screenshot_wizard.png`
-- Menu entry and direct launch both exercised via `play_g01.sh` / capture of `g01_shell.tscn`
+- `python3 tools/check.py --task T020` → PASS
+- `python3 tools/check.py --gate G01` → PASS
+- Screenshots (actual pixels): `screenshot_450x800.png` (450×800), `screenshot_1280x720.png` (1280×720), alias `screenshot_wizard.png` (450×800)
 
 **Not claimed as human gate PASS.**
 
-## Graphical note
+## Checklist
 
-Requested portrait `720×1280` was constrained by the host display to **720×1011**; evidence is filed as `screenshot_720x1280.png` with that actual pixel size. `450×800` and `1280×720` matched requested sizes.
-
-## 10–15 minute checklist
-
-| Step | Do | Expect |
-| --- | --- | --- |
-| Move | Pad/drag | Wizard moves; blockers; **World Turn unchanged**; pose survives clock ticks |
-| Observe afar | Tap distant person | Label **unknown** |
-| Approach/interact | Close + ✦ | Reveals Mira/guide |
-| Travel | On exit + ✦ | Pending → ack; other area; **World Turn +1** |
-| Wait | Press / hold | One turn per press |
-| Invalid | Invalid exit | Rejected; node/turn unchanged |
-| Pause/focus | Pause / alt-tab | Time frozen; no walk; no catch-up |
-| Save/load | Save → quit → relaunch → Load | Restored; Game Time continues |
-| Bridge fail | Bridge fail | Pause; no Godot sim fallback |
+| Step | Expect |
+| --- | --- |
+| Move pad | Clear path to NPC/exit; trees block only their tiles; World Turn unchanged |
+| Action button | Shows Observe / Interact / Travel / Move closer as appropriate |
+| Observe / interact | unknown → Mira; no debug IDs |
+| Travel / return | Walk into exit glow; +1 turn each accepted journey |
+| Portrait launch | Opens 450×800 by default |
 
 ## Remaining defects
 
-- D001–D003 deferred.
-- ObjectDB “1 resource” on some exits: residual; no owned sidecar left after Menu/close.
-- Desktop may clamp extreme portrait heights; use `450×800` or landscape if needed.
+- D001–D003 deferred; residual ObjectDB “1 resource” on some exits.
 
 Reply `G01 PASS — <commit>` or `G01 FIX_REQUIRED — <symptom>`.

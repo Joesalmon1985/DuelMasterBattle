@@ -20,7 +20,9 @@ func _go() -> void:
 	# Force a layout pass after shell ready.
 	if scene.has_method("_fit_world_host"):
 		scene._fit_world_host()
-	await create_timer(0.2).timeout
+	if scene.has_method("_force_playable_focus"):
+		scene._force_playable_focus()
+	await create_timer(0.35).timeout
 	var img: Image = get_root().get_viewport().get_texture().get_image()
 	var name := "screenshot_%dx%d.png" % [w, h]
 	var path := out_dir.path_join(name)
@@ -29,7 +31,8 @@ func _go() -> void:
 		push_error("capture failed %s err=%s" % [name, err])
 		quit(1)
 		return
-	if w == 720 and h == 1280:
+	# Portrait default is the canonical wizard evidence shot.
+	if w == 450 and h == 800:
 		img.save_png(out_dir.path_join("screenshot_wizard.png"))
 	print("G01_CAPTURE_OK ", name, " size=", img.get_width(), "x", img.get_height())
 	quit(0)

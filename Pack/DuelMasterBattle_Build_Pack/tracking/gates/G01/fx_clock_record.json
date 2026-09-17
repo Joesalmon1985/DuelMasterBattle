@@ -16,11 +16,12 @@
   "legacy_writers_disabled": true,
   "scenario": "FX-CLOCK",
   "slot": "g01_playtest",
-  "repair": "FIX_REQUIRED playability: CanvasLayer UI, apply_projections, save-token strip, bridge play asserts",
-  "screenshots": [
-    "screenshot_450x800.png",
-    "screenshot_720x1280.png",
-    "screenshot_1280x720.png",
-    "screenshot_wizard.png"
-  ]
+  "repair": "D009 fixture corridor, action verbs, portrait default, walk bridge journey",
+  "screenshots": {
+    "screenshot_450x800.png": "450x800",
+    "screenshot_1280x720.png": "1280x720",
+    "screenshot_wizard.png": "450x800 (alias of portrait)"
+  },
+  "launcher_default": "450x800",
+  "launcher_landscape": "1280x720 via --landscape"
 }

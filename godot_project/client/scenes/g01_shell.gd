@@ -67,11 +67,12 @@ func _ready() -> void:
 	_area.exit_activated.connect(_on_exit)
 	_area.request_observe.connect(_on_observe)
 	_area.request_interact.connect(_on_interact)
-	_area.entity_selected.connect(func(id): _prompt.text = "Selected %s — ✦ to observe/interact" % id)
+	_area.entity_selected.connect(func(id): _prompt.text = "Selected %s" % id)
+	_area.action_hint_changed.connect(func(hint): _prompt.text = "Action: %s" % hint)
 	_fit_world_host()
 	_refresh_counters(false)
 	_apply_movement_gate()
-	_set_status("Python-backed FX-CLOCK — move with pad/drag; ✦ observe/interact near targets")
+	_set_status("Python-backed FX-CLOCK — pad/drag to move; action button shows Observe/Interact/Travel")
 
 
 func _build_chrome() -> void:
@@ -436,6 +437,14 @@ func _layout_diag() -> void:
 		return
 	var w := get_viewport_rect().size.x
 	_diag_panel.offset_left = -min(420.0, max(220.0, w * 0.55))
+
+
+func _force_playable_focus() -> void:
+	_focus = true
+	_bridge_down = false
+	if not _paused:
+		_apply_movement_gate()
+	_fit_world_host()
 
 
 func _exit_tree() -> void:

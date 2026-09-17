@@ -80,8 +80,14 @@ func action_visible() -> bool:
 
 
 func set_action_label(text: String) -> void:
-	_action.text = text if text != "" else "✦"
-	_action.modulate = Color.WHITE if text != "" else Color(0.7, 0.7, 0.8)
+	if _action == null:
+		return
+	var label := text if text != "" else "✦"
+	_action.text = label
+	# Keep short glyph large; word hints need a smaller readable font.
+	var size := 40 if label.length() <= 2 else 18
+	_action.add_theme_font_size_override("font_size", size)
+	_action.modulate = Color.WHITE
 
 
 func _set_dir(d: Vector2i) -> void:

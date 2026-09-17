@@ -3,17 +3,18 @@
   "status": "DONE",
   "commit": "4dc6da9d22254d2b88a1eb3f38913155d07312c8",
   "files": [
-    "godot_project/client/world/fx_clock_area.gd",
     "godot_project/client/scenes/g01_shell.gd",
     "godot_project/client/scenes/g01_shell.tscn",
-    "godot_project/client/world/touch_pad.gd",
-    "godot_project/client/tests/run_g01_playable.gd",
     "godot_project/client/tests/run_g01_bridge_play.gd",
     "godot_project/client/tests/run_g01_capture.gd",
-    "tests/sim/test_t020_playable.py",
+    "godot_project/client/tests/run_g01_playable.gd",
+    "godot_project/client/world/fx_clock_area.gd",
+    "godot_project/client/world/touch_pad.gd",
     "sim/dmb/persistence/coordinator.py",
+    "tests/sim/test_t020_playable.py",
+    "tools/capture_g01_screens.sh",
     "tools/check.py",
-    "tools/capture_g01_screens.sh"
+    "tools/play_g01.sh"
   ],
   "public_contracts": [
     "Playable FX-CLOCK wizard local area on Python-backed runtime",
@@ -41,8 +42,8 @@
     "FX-CLOCK_seed": 7
   },
   "defects": [
-    "D006/D007/D008 resolved; D001-D003 remain deferred"
+    "D006-D009 resolved; D001-D003 deferred"
   ],
   "next_task": "G01",
-  "notes": "G01 AWAITING_HUMAN after FIX_REQUIRED repair; do not start T025. Scope extension: SaveCoordinator strips ephemeral save: pause tokens."
+  "notes": "G01 AWAITING_HUMAN after D009 navigation/portrait repair; do not start T025."
 }
