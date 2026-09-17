@@ -1,0 +1,128 @@
+[
+  {
+    "id": "tech.historic.primary_flow",
+    "schema_version": 1,
+    "kind": "technology",
+    "era_id": "historic",
+    "name_key": "tech.historic.primary_flow.name",
+    "description_key": "tech.historic.primary_flow.desc",
+    "fields": {
+      "effect_kind": "primary_flow",
+      "effect_value": 0.1,
+      "allowed_predecessor_ids": [
+        "tech.prehistoric.primary_flow",
+        "tech.prehistoric.processor_cap"
+      ],
+      "prerequisite_mode": "any_previously_activated",
+      "compatibility_scope": "logistics",
+      "repeatable": true,
+      "max_stacks": 3,
+      "pool_weight": 1
+    }
+  },
+  {
+    "id": "tech.historic.processor_cap",
+    "schema_version": 1,
+    "kind": "technology",
+    "era_id": "historic",
+    "name_key": "tech.historic.processor_cap.name",
+    "description_key": "tech.historic.processor_cap.desc",
+    "fields": {
+      "effect_kind": "processor_cap",
+      "effect_value": 0.1,
+      "allowed_predecessor_ids": [
+        "tech.prehistoric.processor_cap",
+        "tech.prehistoric.factory_ceiling"
+      ],
+      "prerequisite_mode": "any_previously_activated",
+      "compatibility_scope": "logistics",
+      "repeatable": true,
+      "max_stacks": 3,
+      "pool_weight": 1
+    }
+  },
+  {
+    "id": "tech.historic.factory_ceiling",
+    "schema_version": 1,
+    "kind": "technology",
+    "era_id": "historic",
+    "name_key": "tech.historic.factory_ceiling.name",
+    "description_key": "tech.historic.factory_ceiling.desc",
+    "fields": {
+      "effect_kind": "factory_ceiling",
+      "effect_value": 0.1,
+      "allowed_predecessor_ids": [
+        "tech.prehistoric.factory_ceiling",
+        "tech.prehistoric.primary_flow"
+      ],
+      "prerequisite_mode": "any_previously_activated",
+      "compatibility_scope": "logistics",
+      "repeatable": true,
+      "max_stacks": 3,
+      "pool_weight": 1
+    }
+  },
+  {
+    "id": "tech.historic.cart_capacity",
+    "schema_version": 1,
+    "kind": "technology",
+    "era_id": "historic",
+    "name_key": "tech.historic.cart_capacity.name",
+    "description_key": "tech.historic.cart_capacity.desc",
+    "fields": {
+      "effect_kind": "cart_capacity",
+      "effect_value": 1.0,
+      "allowed_predecessor_ids": [
+        "tech.prehistoric.cart_capacity",
+        "tech.prehistoric.primary_flow"
+      ],
+      "prerequisite_mode": "any_previously_activated",
+      "compatibility_scope": "logistics",
+      "repeatable": true,
+      "max_stacks": 3,
+      "pool_weight": 1
+    }
+  },
+  {
+    "id": "tech.historic.unit_health",
+    "schema_version": 1,
+    "kind": "technology",
+    "era_id": "historic",
+    "name_key": "tech.historic.unit_health.name",
+    "description_key": "tech.historic.unit_health.desc",
+    "fields": {
+      "effect_kind": "unit_health",
+      "effect_value": 0.1,
+      "allowed_predecessor_ids": [
+        "tech.prehistoric.unit_health",
+        "tech.prehistoric.unit_attack"
+      ],
+      "prerequisite_mode": "any_previously_activated",
+      "compatibility_scope": "unit_era",
+      "repeatable": true,
+      "max_stacks": 3,
+      "pool_weight": 1
+    }
+  },
+  {
+    "id": "tech.historic.unit_attack",
+    "schema_version": 1,
+    "kind": "technology",
+    "era_id": "historic",
+    "name_key": "tech.historic.unit_attack.name",
+    "description_key": "tech.historic.unit_attack.desc",
+    "fields": {
+      "effect_kind": "unit_attack",
+      "effect_value": 0.1,
+      "allowed_predecessor_ids": [
+        "tech.prehistoric.unit_attack",
+        "tech.prehistoric.unit_health"
+      ],
+      "prerequisite_mode": "any_previously_activated",
+      "compatibility_scope": "unit_era",
+      "repeatable": true,
+      "max_stacks": 3,
+      "pool_weight": 1
+    }
+  }
+]
