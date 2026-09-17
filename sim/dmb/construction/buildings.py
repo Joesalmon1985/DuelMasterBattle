@@ -226,11 +226,13 @@ class BuildingService:
         if record is None:
             raise TypeValidationError(f"unknown building {building_id}")
         if record.get("status") == "destroyed":
-            return dict(record)
+            # Idempotent — no second loss.
+            return {"building": dict(record), "idempotent": True, "effects": record.get("destroy_effects", {})}
         record["health"] = 0
         record["usable_capacity"] = 0.0
         record["status"] = "destroyed"
         record["active"] = False
+        record["owned"] = False
         record["destroy_cause_id"] = cause_id
         self.state.tombstones[building_id] = {
             "kind": "building",
@@ -238,7 +240,82 @@ class BuildingService:
             "node_id": record.get("node_id"),
             "cause_id": cause_id,
         }
-        return dict(record)
+        effects: dict[str, Any] = {"displaced_people": [], "stock_loss": None, "centre_loss": None}
+
+        # Displace workers (do not kill).
+        try:
+            from sim.dmb.people.registry import PeopleService
+
+            displaced = PeopleService(self.state).displace_workplace(
+                building_id, reason="building_destroyed"
+            )
+            effects["displaced_people"] = [p["id"] for p in displaced]
+        except Exception:
+            pass
+
+        slot_kind = record.get("slot_kind")
+        settlement_id = record.get("settlement_id")
+
+        if slot_kind == "warehouse":
+            from sim.dmb.logistics.stock import StockLedger
+
+            store_id = f"store:{building_id}"
+            ledger = StockLedger(self.state)
+            loss_goods: dict[str, int] = {}
+            store = self.state.stocks.get(store_id, {})
+            for ns_name, ns in list(store.items()):
+                if not isinstance(ns, dict):
+                    continue
+                for good, entry in ns.items():
+                    if not isinstance(entry, dict):
+                        continue
+                    qty = int(entry.get("available", 0)) + int(entry.get("reserved", 0)) + int(entry.get("escrow", 0))
+                    if qty > 0:
+                        loss_goods[good] = loss_goods.get(good, 0) + qty
+                        entry["available"] = 0
+                        entry["reserved"] = 0
+                        entry["escrow"] = 0
+            if loss_goods:
+                effects["stock_loss"] = ledger.record_loss(
+                    loss_goods, cause_id=cause_id or f"wh-loss:{building_id}", source=store_id
+                )
+            # Cart cargo elsewhere is unaffected.
+
+        if slot_kind == "centre" and settlement_id:
+            settlement = self.state.settlements.get(str(settlement_id))
+            if settlement is not None:
+                settlement["operational"] = False
+                settlement["status"] = "centre_lost"
+                settlement["faction_id_before_loss"] = settlement.get("faction_id")
+                # Centre loss does not capture the node for the attacker.
+                settlement["captured_by"] = None
+                # Strand surviving industry: inactive/unowned
+                for bid, b in self.state.buildings.items():
+                    if b.get("settlement_id") == settlement_id and bid != building_id:
+                        if b.get("status") != "destroyed":
+                            b["active"] = False
+                            b["owned"] = False
+                            b["faction_id"] = None
+                settlement["faction_id"] = None
+                effects["centre_loss"] = {
+                    "settlement_id": settlement_id,
+                    "node_id": settlement.get("node_id"),
+                    "captured": False,
+                }
+                # Last-centre dissolution signal for later era safeguards
+                fid = settlement.get("faction_id_before_loss")
+                if fid:
+                    remaining = [
+                        s
+                        for s in self.state.settlements.values()
+                        if s.get("faction_id") == fid and s.get("operational", True)
+                    ]
+                    if not remaining:
+                        effects["faction_dissolved"] = fid
+                        self.state.clock.setdefault("dissolved_factions", []).append(fid)
+
+        record["destroy_effects"] = effects
+        return {"building": dict(record), "idempotent": False, "effects": effects}
 
     def capacity_state(self, building_id: str) -> dict[str, Any]:
         record = self.state.buildings.get(building_id)
