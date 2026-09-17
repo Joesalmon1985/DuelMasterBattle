@@ -1,0 +1,35 @@
+{
+  "goods": [
+    {
+      "id": "catan.timber",
+      "kind": "catan_good",
+      "namespace": "catan_good",
+      "schema_version": 1
+    },
+    {
+      "id": "catan.brick",
+      "kind": "catan_good",
+      "namespace": "catan_good",
+      "schema_version": 1
+    },
+    {
+      "id": "catan.wool",
+      "kind": "catan_good",
+      "namespace": "catan_good",
+      "schema_version": 1
+    },
+    {
+      "id": "catan.grain",
+      "kind": "catan_good",
+      "namespace": "catan_good",
+      "schema_version": 1
+    },
+    {
+      "id": "catan.ore",
+      "kind": "catan_good",
+      "namespace": "catan_good",
+      "schema_version": 1
+    }
+  ],
+  "schema_version": 1
+}
