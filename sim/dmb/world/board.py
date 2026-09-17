@@ -55,21 +55,32 @@ def _corner_key(x: int, y: int, z: int) -> tuple[int, int, int]:
     return (x, y, z)
 
 
+def hex_id(q: int, r: int) -> str:
+    return f"hex:{q},{r}"
+
+
+def parse_hex_id(hid: str) -> tuple[int, int]:
+    body = hid.split(":", 1)[1]
+    q_s, r_s = body.split(",", 1)
+    return int(q_s), int(r_s)
+
+
 @dataclass(frozen=True)
 class HexBoard:
     """Immutable shared-corner hex board."""
 
     radius: int
-    hexes: tuple[tuple[int, int], ...]
+    hexes: tuple[str, ...]
     nodes: tuple[str, ...]
     edges: tuple[str, ...]
     _node_corners: dict[str, tuple[int, int, int]]
     _corner_nodes: dict[tuple[int, int, int], str]
-    _hex_nodes: dict[tuple[int, int], tuple[str, ...]]
-    _node_hexes: dict[str, tuple[tuple[int, int], ...]]
+    _hex_nodes: dict[str, tuple[str, ...]]
+    _node_hexes: dict[str, tuple[str, ...]]
     _adjacency: dict[str, tuple[str, ...]]
     _edge_endpoints: dict[str, tuple[str, str]]
     _endpoint_edge: dict[tuple[str, str], str]
+    _hex_axial: dict[str, tuple[int, int]]
 
     @classmethod
     def radius2(cls) -> "HexBoard":
@@ -77,14 +88,17 @@ class HexBoard:
 
     @classmethod
     def build(cls, radius: int = 2) -> "HexBoard":
-        hex_list = tuple(sorted(hexes_radius(radius)))
-        corner_to_hexes: dict[tuple[int, int, int], set[tuple[int, int]]] = defaultdict(set)
-        for q, r in hex_list:
+        axial_list = tuple(sorted(hexes_radius(radius)))
+        hex_ids = tuple(hex_id(q, r) for q, r in axial_list)
+        hex_axial = {hex_id(q, r): (q, r) for q, r in axial_list}
+        corner_to_hexes: dict[tuple[int, int, int], set[str]] = defaultdict(set)
+        for q, r in axial_list:
+            hid = hex_id(q, r)
             cx, cy, cz = axial_to_cube(q, r)
             hx, hy, hz = cx * 3, cy * 3, cz * 3
             for ox, oy, oz in _CORNER_OFFSETS:
                 key = _corner_key(hx + ox, hy + oy, hz + oz)
-                corner_to_hexes[key].add((q, r))
+                corner_to_hexes[key].add(hid)
 
         corners = sorted(corner_to_hexes.keys())
         node_ids: list[str] = []
@@ -96,17 +110,18 @@ class HexBoard:
             node_corners[nid] = corner
             corner_nodes[corner] = nid
 
-        hex_nodes: dict[tuple[int, int], tuple[str, ...]] = {}
-        node_hexes: dict[str, list[tuple[int, int]]] = defaultdict(list)
-        for q, r in hex_list:
+        hex_nodes: dict[str, tuple[str, ...]] = {}
+        node_hexes: dict[str, list[str]] = defaultdict(list)
+        for q, r in axial_list:
+            hid = hex_id(q, r)
             cx, cy, cz = axial_to_cube(q, r)
             hx, hy, hz = cx * 3, cy * 3, cz * 3
             ordered: list[str] = []
             for ox, oy, oz in _CORNER_OFFSETS:
                 nid = corner_nodes[_corner_key(hx + ox, hy + oy, hz + oz)]
                 ordered.append(nid)
-                node_hexes[nid].append((q, r))
-            hex_nodes[(q, r)] = tuple(ordered)
+                node_hexes[nid].append(hid)
+            hex_nodes[hid] = tuple(ordered)
 
         # Edges: consecutive corners around each hex; undirected endpoint-sorted.
         endpoint_edge: dict[tuple[str, str], str] = {}
@@ -131,7 +146,7 @@ class HexBoard:
 
         board = cls(
             radius=radius,
-            hexes=hex_list,
+            hexes=hex_ids,
             nodes=tuple(node_ids),
             edges=tuple(edge_endpoints.keys()),
             _node_corners=node_corners,
@@ -141,6 +156,7 @@ class HexBoard:
             _adjacency=frozen_adj,
             _edge_endpoints=edge_endpoints,
             _endpoint_edge={pair: eid for pair, eid in endpoint_edge.items()},
+            _hex_axial=hex_axial,
         )
         board.validate()
         return board
@@ -169,11 +185,14 @@ class HexBoard:
     def adjacent_nodes(self, node: str) -> tuple[str, ...]:
         return self._adjacency.get(node, ())
 
-    def touching_hexes(self, node: str) -> tuple[tuple[int, int], ...]:
+    def touching_hexes(self, node: str) -> tuple[str, ...]:
         return self._node_hexes.get(node, ())
 
-    def nodes_of_hex(self, hex_qr: tuple[int, int]) -> tuple[str, ...]:
-        return self._hex_nodes[hex_qr]
+    def nodes_of_hex(self, hid: str) -> tuple[str, ...]:
+        return self._hex_nodes[hid]
+
+    def hex_axial(self, hid: str) -> tuple[int, int]:
+        return self._hex_axial[hid]
 
     def edge(self, a: str, b: str) -> str | None:
         if a == b:
@@ -227,10 +246,16 @@ class HexBoard:
     def to_dict(self) -> dict:
         return {
             "radius": self.radius,
-            "hexes": [list(h) for h in self.hexes],
+            "hexes": list(self.hexes),
             "nodes": list(self.nodes),
             "edges": list(self.edges),
             "adjacency": {k: list(v) for k, v in self._adjacency.items()},
-            "node_hexes": {k: [list(h) for h in v] for k, v in self._node_hexes.items()},
+            "node_hexes": {k: list(v) for k, v in self._node_hexes.items()},
             "edge_endpoints": {k: list(v) for k, v in self._edge_endpoints.items()},
+            "hex_axial": {k: list(v) for k, v in self._hex_axial.items()},
         }
+
+    @classmethod
+    def from_dict(cls, payload: dict) -> "HexBoard":
+        # Topology is deterministic from radius; rebuild rather than trust partial maps.
+        return cls.build(radius=int(payload.get("radius", 2)))

@@ -1,0 +1,1118 @@
+{
+  "seed": 1,
+  "faction_count": 6,
+  "board": {
+    "radius": 2,
+    "hexes": [
+      "hex:-2,0",
+      "hex:-2,1",
+      "hex:-2,2",
+      "hex:-1,-1",
+      "hex:-1,0",
+      "hex:-1,1",
+      "hex:-1,2",
+      "hex:0,-2",
+      "hex:0,-1",
+      "hex:0,0",
+      "hex:0,1",
+      "hex:0,2",
+      "hex:1,-2",
+      "hex:1,-1",
+      "hex:1,0",
+      "hex:1,1",
+      "hex:2,-2",
+      "hex:2,-1",
+      "hex:2,0"
+    ],
+    "nodes": [
+      "node:1",
+      "node:2",
+      "node:3",
+      "node:4",
+      "node:5",
+      "node:6",
+      "node:7",
+      "node:8",
+      "node:9",
+      "node:10",
+      "node:11",
+      "node:12",
+      "node:13",
+      "node:14",
+      "node:15",
+      "node:16",
+      "node:17",
+      "node:18",
+      "node:19",
+      "node:20",
+      "node:21",
+      "node:22",
+      "node:23",
+      "node:24",
+      "node:25",
+      "node:26",
+      "node:27",
+      "node:28",
+      "node:29",
+      "node:30",
+      "node:31",
+      "node:32",
+      "node:33",
+      "node:34",
+      "node:35",
+      "node:36",
+      "node:37",
+      "node:38",
+      "node:39",
+      "node:40",
+      "node:41",
+      "node:42",
+      "node:43",
+      "node:44",
+      "node:45",
+      "node:46",
+      "node:47",
+      "node:48",
+      "node:49",
+      "node:50",
+      "node:51",
+      "node:52",
+      "node:53",
+      "node:54"
+    ],
+    "edges": [
+      "edge:1",
+      "edge:2",
+      "edge:3",
+      "edge:4",
+      "edge:5",
+      "edge:6",
+      "edge:7",
+      "edge:8",
+      "edge:9",
+      "edge:10",
+      "edge:11",
+      "edge:12",
+      "edge:13",
+      "edge:14",
+      "edge:15",
+      "edge:16",
+      "edge:17",
+      "edge:18",
+      "edge:19",
+      "edge:20",
+      "edge:21",
+      "edge:22",
+      "edge:23",
+      "edge:24",
+      "edge:25",
+      "edge:26",
+      "edge:27",
+      "edge:28",
+      "edge:29",
+      "edge:30",
+      "edge:31",
+      "edge:32",
+      "edge:33",
+      "edge:34",
+      "edge:35",
+      "edge:36",
+      "edge:37",
+      "edge:38",
+      "edge:39",
+      "edge:40",
+      "edge:41",
+      "edge:42",
+      "edge:43",
+      "edge:44",
+      "edge:45",
+      "edge:46",
+      "edge:47",
+      "edge:48",
+      "edge:49",
+      "edge:50",
+      "edge:51",
+      "edge:52",
+      "edge:53",
+      "edge:54",
+      "edge:55",
+      "edge:56",
+      "edge:57",
+      "edge:58",
+      "edge:59",
+      "edge:60",
+      "edge:61",
+      "edge:62",
+      "edge:63",
+      "edge:64",
+      "edge:65",
+      "edge:66",
+      "edge:67",
+      "edge:68",
+      "edge:69",
+      "edge:70",
+      "edge:71",
+      "edge:72"
+    ],
+    "adjacency": {
+      "node:11": [
+        "node:15",
+        "node:16",
+        "node:7"
+      ],
+      "node:15": [
+        "node:10",
+        "node:11",
+        "node:20"
+      ],
+      "node:7": [
+        "node:11",
+        "node:3"
+      ],
+      "node:3": [
+        "node:6",
+        "node:7"
+      ],
+      "node:6": [
+        "node:10",
+        "node:2",
+        "node:3"
+      ],
+      "node:10": [
+        "node:14",
+        "node:15",
+        "node:6"
+      ],
+      "node:14": [
+        "node:10",
+        "node:19",
+        "node:9"
+      ],
+      "node:2": [
+        "node:5",
+        "node:6"
+      ],
+      "node:5": [
+        "node:1",
+        "node:2",
+        "node:9"
+      ],
+      "node:9": [
+        "node:13",
+        "node:14",
+        "node:5"
+      ],
+      "node:13": [
+        "node:18",
+        "node:8",
+        "node:9"
+      ],
+      "node:1": [
+        "node:4",
+        "node:5"
+      ],
+      "node:4": [
+        "node:1",
+        "node:8"
+      ],
+      "node:8": [
+        "node:12",
+        "node:13",
+        "node:4"
+      ],
+      "node:21": [
+        "node:16",
+        "node:26",
+        "node:27"
+      ],
+      "node:26": [
+        "node:20",
+        "node:21",
+        "node:32"
+      ],
+      "node:16": [
+        "node:11",
+        "node:21"
+      ],
+      "node:20": [
+        "node:15",
+        "node:25",
+        "node:26"
+      ],
+      "node:25": [
+        "node:19",
+        "node:20",
+        "node:31"
+      ],
+      "node:19": [
+        "node:14",
+        "node:24",
+        "node:25"
+      ],
+      "node:24": [
+        "node:18",
+        "node:19",
+        "node:30"
+      ],
+      "node:18": [
+        "node:13",
+        "node:23",
+        "node:24"
+      ],
+      "node:23": [
+        "node:17",
+        "node:18",
+        "node:29"
+      ],
+      "node:12": [
+        "node:17",
+        "node:8"
+      ],
+      "node:17": [
+        "node:12",
+        "node:22",
+        "node:23"
+      ],
+      "node:33": [
+        "node:27",
+        "node:38"
+      ],
+      "node:38": [
+        "node:32",
+        "node:33",
+        "node:43"
+      ],
+      "node:27": [
+        "node:21",
+        "node:33"
+      ],
+      "node:32": [
+        "node:26",
+        "node:37",
+        "node:38"
+      ],
+      "node:37": [
+        "node:31",
+        "node:32",
+        "node:42"
+      ],
+      "node:31": [
+        "node:25",
+        "node:36",
+        "node:37"
+      ],
+      "node:36": [
+        "node:30",
+        "node:31",
+        "node:41"
+      ],
+      "node:30": [
+        "node:24",
+        "node:35",
+        "node:36"
+      ],
+      "node:35": [
+        "node:29",
+        "node:30",
+        "node:40"
+      ],
+      "node:29": [
+        "node:23",
+        "node:34",
+        "node:35"
+      ],
+      "node:34": [
+        "node:28",
+        "node:29",
+        "node:39"
+      ],
+      "node:22": [
+        "node:17",
+        "node:28"
+      ],
+      "node:28": [
+        "node:22",
+        "node:34"
+      ],
+      "node:43": [
+        "node:38",
+        "node:47"
+      ],
+      "node:47": [
+        "node:42",
+        "node:43",
+        "node:51"
+      ],
+      "node:42": [
+        "node:37",
+        "node:46",
+        "node:47"
+      ],
+      "node:46": [
+        "node:41",
+        "node:42",
+        "node:50"
+      ],
+      "node:41": [
+        "node:36",
+        "node:45",
+        "node:46"
+      ],
+      "node:45": [
+        "node:40",
+        "node:41",
+        "node:49"
+      ],
+      "node:40": [
+        "node:35",
+        "node:44",
+        "node:45"
+      ],
+      "node:44": [
+        "node:39",
+        "node:40",
+        "node:48"
+      ],
+      "node:39": [
+        "node:34",
+        "node:44"
+      ],
+      "node:51": [
+        "node:47",
+        "node:54"
+      ],
+      "node:54": [
+        "node:50",
+        "node:51"
+      ],
+      "node:50": [
+        "node:46",
+        "node:53",
+        "node:54"
+      ],
+      "node:53": [
+        "node:49",
+        "node:50"
+      ],
+      "node:49": [
+        "node:45",
+        "node:52",
+        "node:53"
+      ],
+      "node:52": [
+        "node:48",
+        "node:49"
+      ],
+      "node:48": [
+        "node:44",
+        "node:52"
+      ]
+    },
+    "node_hexes": {
+      "node:15": [
+        "hex:-1,-1",
+        "hex:-1,0",
+        "hex:-2,0"
+      ],
+      "node:11": [
+        "hex:-1,-1",
+        "hex:-2,0"
+      ],
+      "node:7": [
+        "hex:-2,0"
+      ],
+      "node:3": [
+        "hex:-2,0"
+      ],
+      "node:6": [
+        "hex:-2,0",
+        "hex:-2,1"
+      ],
+      "node:10": [
+        "hex:-1,0",
+        "hex:-2,0",
+        "hex:-2,1"
+      ],
+      "node:14": [
+        "hex:-1,0",
+        "hex:-1,1",
+        "hex:-2,1"
+      ],
+      "node:2": [
+        "hex:-2,1"
+      ],
+      "node:5": [
+        "hex:-2,1",
+        "hex:-2,2"
+      ],
+      "node:9": [
+        "hex:-1,1",
+        "hex:-2,1",
+        "hex:-2,2"
+      ],
+      "node:13": [
+        "hex:-1,1",
+        "hex:-1,2",
+        "hex:-2,2"
+      ],
+      "node:1": [
+        "hex:-2,2"
+      ],
+      "node:4": [
+        "hex:-2,2"
+      ],
+      "node:8": [
+        "hex:-1,2",
+        "hex:-2,2"
+      ],
+      "node:26": [
+        "hex:-1,-1",
+        "hex:0,-1",
+        "hex:0,-2"
+      ],
+      "node:21": [
+        "hex:-1,-1",
+        "hex:0,-2"
+      ],
+      "node:16": [
+        "hex:-1,-1"
+      ],
+      "node:20": [
+        "hex:-1,-1",
+        "hex:-1,0",
+        "hex:0,-1"
+      ],
+      "node:25": [
+        "hex:-1,0",
+        "hex:0,-1",
+        "hex:0,0"
+      ],
+      "node:19": [
+        "hex:-1,0",
+        "hex:-1,1",
+        "hex:0,0"
+      ],
+      "node:24": [
+        "hex:-1,1",
+        "hex:0,0",
+        "hex:0,1"
+      ],
+      "node:18": [
+        "hex:-1,1",
+        "hex:-1,2",
+        "hex:0,1"
+      ],
+      "node:23": [
+        "hex:-1,2",
+        "hex:0,1",
+        "hex:0,2"
+      ],
+      "node:12": [
+        "hex:-1,2"
+      ],
+      "node:17": [
+        "hex:-1,2",
+        "hex:0,2"
+      ],
+      "node:38": [
+        "hex:0,-2",
+        "hex:1,-2"
+      ],
+      "node:33": [
+        "hex:0,-2"
+      ],
+      "node:27": [
+        "hex:0,-2"
+      ],
+      "node:32": [
+        "hex:0,-1",
+        "hex:0,-2",
+        "hex:1,-2"
+      ],
+      "node:37": [
+        "hex:0,-1",
+        "hex:1,-1",
+        "hex:1,-2"
+      ],
+      "node:31": [
+        "hex:0,-1",
+        "hex:0,0",
+        "hex:1,-1"
+      ],
+      "node:36": [
+        "hex:0,0",
+        "hex:1,-1",
+        "hex:1,0"
+      ],
+      "node:30": [
+        "hex:0,0",
+        "hex:0,1",
+        "hex:1,0"
+      ],
+      "node:35": [
+        "hex:0,1",
+        "hex:1,0",
+        "hex:1,1"
+      ],
+      "node:29": [
+        "hex:0,1",
+        "hex:0,2",
+        "hex:1,1"
+      ],
+      "node:34": [
+        "hex:0,2",
+        "hex:1,1"
+      ],
+      "node:22": [
+        "hex:0,2"
+      ],
+      "node:28": [
+        "hex:0,2"
+      ],
+      "node:47": [
+        "hex:1,-2",
+        "hex:2,-2"
+      ],
+      "node:43": [
+        "hex:1,-2"
+      ],
+      "node:42": [
+        "hex:1,-1",
+        "hex:1,-2",
+        "hex:2,-2"
+      ],
+      "node:46": [
+        "hex:1,-1",
+        "hex:2,-1",
+        "hex:2,-2"
+      ],
+      "node:41": [
+        "hex:1,-1",
+        "hex:1,0",
+        "hex:2,-1"
+      ],
+      "node:45": [
+        "hex:1,0",
+        "hex:2,-1",
+        "hex:2,0"
+      ],
+      "node:40": [
+        "hex:1,0",
+        "hex:1,1",
+        "hex:2,0"
+      ],
+      "node:44": [
+        "hex:1,1",
+        "hex:2,0"
+      ],
+      "node:39": [
+        "hex:1,1"
+      ],
+      "node:54": [
+        "hex:2,-2"
+      ],
+      "node:51": [
+        "hex:2,-2"
+      ],
+      "node:50": [
+        "hex:2,-1",
+        "hex:2,-2"
+      ],
+      "node:53": [
+        "hex:2,-1"
+      ],
+      "node:49": [
+        "hex:2,-1",
+        "hex:2,0"
+      ],
+      "node:52": [
+        "hex:2,0"
+      ],
+      "node:48": [
+        "hex:2,0"
+      ]
+    },
+    "edge_endpoints": {
+      "edge:1": [
+        "node:11",
+        "node:15"
+      ],
+      "edge:2": [
+        "node:11",
+        "node:7"
+      ],
+      "edge:3": [
+        "node:3",
+        "node:7"
+      ],
+      "edge:4": [
+        "node:3",
+        "node:6"
+      ],
+      "edge:5": [
+        "node:10",
+        "node:6"
+      ],
+      "edge:6": [
+        "node:10",
+        "node:15"
+      ],
+      "edge:7": [
+        "node:10",
+        "node:14"
+      ],
+      "edge:8": [
+        "node:2",
+        "node:6"
+      ],
+      "edge:9": [
+        "node:2",
+        "node:5"
+      ],
+      "edge:10": [
+        "node:5",
+        "node:9"
+      ],
+      "edge:11": [
+        "node:14",
+        "node:9"
+      ],
+      "edge:12": [
+        "node:13",
+        "node:9"
+      ],
+      "edge:13": [
+        "node:1",
+        "node:5"
+      ],
+      "edge:14": [
+        "node:1",
+        "node:4"
+      ],
+      "edge:15": [
+        "node:4",
+        "node:8"
+      ],
+      "edge:16": [
+        "node:13",
+        "node:8"
+      ],
+      "edge:17": [
+        "node:21",
+        "node:26"
+      ],
+      "edge:18": [
+        "node:16",
+        "node:21"
+      ],
+      "edge:19": [
+        "node:11",
+        "node:16"
+      ],
+      "edge:20": [
+        "node:15",
+        "node:20"
+      ],
+      "edge:21": [
+        "node:20",
+        "node:26"
+      ],
+      "edge:22": [
+        "node:20",
+        "node:25"
+      ],
+      "edge:23": [
+        "node:14",
+        "node:19"
+      ],
+      "edge:24": [
+        "node:19",
+        "node:25"
+      ],
+      "edge:25": [
+        "node:19",
+        "node:24"
+      ],
+      "edge:26": [
+        "node:13",
+        "node:18"
+      ],
+      "edge:27": [
+        "node:18",
+        "node:24"
+      ],
+      "edge:28": [
+        "node:18",
+        "node:23"
+      ],
+      "edge:29": [
+        "node:12",
+        "node:8"
+      ],
+      "edge:30": [
+        "node:12",
+        "node:17"
+      ],
+      "edge:31": [
+        "node:17",
+        "node:23"
+      ],
+      "edge:32": [
+        "node:33",
+        "node:38"
+      ],
+      "edge:33": [
+        "node:27",
+        "node:33"
+      ],
+      "edge:34": [
+        "node:21",
+        "node:27"
+      ],
+      "edge:35": [
+        "node:26",
+        "node:32"
+      ],
+      "edge:36": [
+        "node:32",
+        "node:38"
+      ],
+      "edge:37": [
+        "node:32",
+        "node:37"
+      ],
+      "edge:38": [
+        "node:25",
+        "node:31"
+      ],
+      "edge:39": [
+        "node:31",
+        "node:37"
+      ],
+      "edge:40": [
+        "node:31",
+        "node:36"
+      ],
+      "edge:41": [
+        "node:24",
+        "node:30"
+      ],
+      "edge:42": [
+        "node:30",
+        "node:36"
+      ],
+      "edge:43": [
+        "node:30",
+        "node:35"
+      ],
+      "edge:44": [
+        "node:23",
+        "node:29"
+      ],
+      "edge:45": [
+        "node:29",
+        "node:35"
+      ],
+      "edge:46": [
+        "node:29",
+        "node:34"
+      ],
+      "edge:47": [
+        "node:17",
+        "node:22"
+      ],
+      "edge:48": [
+        "node:22",
+        "node:28"
+      ],
+      "edge:49": [
+        "node:28",
+        "node:34"
+      ],
+      "edge:50": [
+        "node:43",
+        "node:47"
+      ],
+      "edge:51": [
+        "node:38",
+        "node:43"
+      ],
+      "edge:52": [
+        "node:37",
+        "node:42"
+      ],
+      "edge:53": [
+        "node:42",
+        "node:47"
+      ],
+      "edge:54": [
+        "node:42",
+        "node:46"
+      ],
+      "edge:55": [
+        "node:36",
+        "node:41"
+      ],
+      "edge:56": [
+        "node:41",
+        "node:46"
+      ],
+      "edge:57": [
+        "node:41",
+        "node:45"
+      ],
+      "edge:58": [
+        "node:35",
+        "node:40"
+      ],
+      "edge:59": [
+        "node:40",
+        "node:45"
+      ],
+      "edge:60": [
+        "node:40",
+        "node:44"
+      ],
+      "edge:61": [
+        "node:34",
+        "node:39"
+      ],
+      "edge:62": [
+        "node:39",
+        "node:44"
+      ],
+      "edge:63": [
+        "node:51",
+        "node:54"
+      ],
+      "edge:64": [
+        "node:47",
+        "node:51"
+      ],
+      "edge:65": [
+        "node:46",
+        "node:50"
+      ],
+      "edge:66": [
+        "node:50",
+        "node:54"
+      ],
+      "edge:67": [
+        "node:50",
+        "node:53"
+      ],
+      "edge:68": [
+        "node:45",
+        "node:49"
+      ],
+      "edge:69": [
+        "node:49",
+        "node:53"
+      ],
+      "edge:70": [
+        "node:49",
+        "node:52"
+      ],
+      "edge:71": [
+        "node:44",
+        "node:48"
+      ],
+      "edge:72": [
+        "node:48",
+        "node:52"
+      ]
+    },
+    "hex_axial": {
+      "hex:-2,0": [
+        -2,
+        0
+      ],
+      "hex:-2,1": [
+        -2,
+        1
+      ],
+      "hex:-2,2": [
+        -2,
+        2
+      ],
+      "hex:-1,-1": [
+        -1,
+        -1
+      ],
+      "hex:-1,0": [
+        -1,
+        0
+      ],
+      "hex:-1,1": [
+        -1,
+        1
+      ],
+      "hex:-1,2": [
+        -1,
+        2
+      ],
+      "hex:0,-2": [
+        0,
+        -2
+      ],
+      "hex:0,-1": [
+        0,
+        -1
+      ],
+      "hex:0,0": [
+        0,
+        0
+      ],
+      "hex:0,1": [
+        0,
+        1
+      ],
+      "hex:0,2": [
+        0,
+        2
+      ],
+      "hex:1,-2": [
+        1,
+        -2
+      ],
+      "hex:1,-1": [
+        1,
+        -1
+      ],
+      "hex:1,0": [
+        1,
+        0
+      ],
+      "hex:1,1": [
+        1,
+        1
+      ],
+      "hex:2,-2": [
+        2,
+        -2
+      ],
+      "hex:2,-1": [
+        2,
+        -1
+      ],
+      "hex:2,0": [
+        2,
+        0
+      ]
+    }
+  },
+  "hex_terrain": {
+    "hex:-2,0": "desert",
+    "hex:-2,1": "grazing_land",
+    "hex:-2,2": "grazing_land",
+    "hex:-1,-1": "fields",
+    "hex:-1,0": "ore_mountains",
+    "hex:-1,1": "ore_mountains",
+    "hex:-1,2": "desert",
+    "hex:0,-2": "clay_mountains",
+    "hex:0,-1": "woodland",
+    "hex:0,0": "fields",
+    "hex:0,1": "woodland",
+    "hex:0,2": "fields",
+    "hex:1,-2": "clay_mountains",
+    "hex:1,-1": "fields",
+    "hex:1,0": "clay_mountains",
+    "hex:1,1": "grazing_land",
+    "hex:2,-2": "woodland",
+    "hex:2,-1": "woodland",
+    "hex:2,0": "ore_mountains"
+  },
+  "hex_token": {
+    "hex:-2,0": 9,
+    "hex:-2,1": 9,
+    "hex:-2,2": 4,
+    "hex:-1,-1": 10,
+    "hex:-1,0": 8,
+    "hex:-1,1": 6,
+    "hex:-1,2": 12,
+    "hex:0,-2": 5,
+    "hex:0,-1": 3,
+    "hex:0,0": 6,
+    "hex:0,1": 11,
+    "hex:0,2": 11,
+    "hex:1,-2": 3,
+    "hex:1,-1": 5,
+    "hex:1,0": 4,
+    "hex:1,1": 9,
+    "hex:2,-2": 10,
+    "hex:2,-1": 2,
+    "hex:2,0": 8
+  },
+  "cores": [
+    {
+      "faction_id": "faction:1",
+      "node_id": "node:24",
+      "index": 0
+    },
+    {
+      "faction_id": "faction:1",
+      "node_id": "node:34",
+      "index": 1
+    },
+    {
+      "faction_id": "faction:2",
+      "node_id": "node:20",
+      "index": 0
+    },
+    {
+      "faction_id": "faction:2",
+      "node_id": "node:37",
+      "index": 1
+    },
+    {
+      "faction_id": "faction:3",
+      "node_id": "node:47",
+      "index": 0
+    },
+    {
+      "faction_id": "faction:3",
+      "node_id": "node:6",
+      "index": 1
+    },
+    {
+      "faction_id": "faction:4",
+      "node_id": "node:45",
+      "index": 0
+    },
+    {
+      "faction_id": "faction:4",
+      "node_id": "node:4",
+      "index": 1
+    },
+    {
+      "faction_id": "faction:5",
+      "node_id": "node:21",
+      "index": 0
+    },
+    {
+      "faction_id": "faction:5",
+      "node_id": "node:13",
+      "index": 1
+    },
+    {
+      "faction_id": "faction:6",
+      "node_id": "node:52",
+      "index": 0
+    },
+    {
+      "faction_id": "faction:6",
+      "node_id": "node:46",
+      "index": 1
+    }
+  ],
+  "hazard_hexes": [
+    "hex:0,0",
+    "hex:1,0",
+    "hex:1,1"
+  ],
+  "attempts": 1,
+  "used_fallback": false,
+  "diagnostics": {
+    "attempt": 2
+  }
+}
