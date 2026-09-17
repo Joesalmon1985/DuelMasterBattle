@@ -2,7 +2,7 @@
 
 **Status:** AWAITING_HUMAN (do not start T049)  
 **Scenario:** FX-CARGO · **Seed:** 202  
-**Tested revision:** `45704656f579ea6d6aed9773bc97ff86cb43da75`  
+**Tested revision:** `34b950f84da07b5c1787115214d099dcc7bffe74`  
 **Save slot:** `g02_playtest` · recovery: `_recovery`
 
 ## Launch (verified on this host)
