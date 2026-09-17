@@ -46,14 +46,29 @@ class SidecarSession:
 
 
 class SidecarServer:
-    def __init__(self, token: str, save_root: Path, host: str = "127.0.0.1", port: int = 0) -> None:
+    def __init__(
+        self,
+        token: str,
+        save_root: Path,
+        host: str = "127.0.0.1",
+        port: int = 0,
+        *,
+        fixture: str | None = None,
+        seed: int = 7,
+    ) -> None:
         if host not in {"127.0.0.1", "::1"}:
             raise ValueError("bind only loopback")
         self.token = token
         self.save_root = Path(save_root)
         self.save_root.mkdir(parents=True, exist_ok=True)
+        if fixture:
+            from sim.dmb.testing.fixtures import load_fixture
+
+            sim = load_fixture(fixture, seed=seed)
+        else:
+            sim = bootstrap_world(seed=seed)
         self.session = SidecarSession(
-            sim=bootstrap_world(),
+            sim=sim,
             token=token,
             session_id="pending",
             save_root=self.save_root,

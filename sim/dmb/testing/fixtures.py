@@ -107,6 +107,7 @@ def _load_fx_cargo(seed: int = 202) -> WorldSim:
         "staging_id": staging_id,
         "block_hex": touching[0] if touching else None,
     }
+    state.board["hazard_cubes"] = {}
     state.clock["scheduled_faction_ids"] = ["faction:1", "faction:player"]
     return sim
 

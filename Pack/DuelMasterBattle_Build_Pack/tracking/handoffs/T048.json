@@ -1,0 +1,43 @@
+{
+  "task_id": "T048",
+  "status": "DONE",
+  "commit": "pending",
+  "files": [
+    "godot_project/client/debug/economy_view.gd",
+    "godot_project/client/scenes/g02_shell.gd",
+    "godot_project/client/scenes/g02_shell.tscn",
+    "godot_project/client/tests/run_g02_smoke.gd",
+    "godot_project/client/bridge/sidecar_launcher.gd",
+    "tools/play_g02.sh",
+    "tools/run_sidecar.py",
+    "tools/check.py",
+    "sim/dmb/bridge/server.py",
+    "sim/dmb/core/state.py",
+    "sim/dmb/core/world.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/"
+  ],
+  "public_contracts": [
+    "G02 packet AWAITING_HUMAN",
+    "economy debug view",
+    "FX-CARGO playable launch"
+  ],
+  "source_rules": [
+    "C14",
+    "C05"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T048",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tools/check.py --gate G02",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "STOP_FOR_G02",
+  "notes": "Stop before T049; Joe manual playtest required"
+}

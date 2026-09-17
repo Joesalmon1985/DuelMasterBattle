@@ -1,0 +1,15 @@
+{
+  "fixture": "FX-CARGO",
+  "status": "PASS",
+  "owner": "T029-T038",
+  "seed": 202,
+  "details": {
+    "seed": 202,
+    "settlement_at_n2": "settlement:3",
+    "block_cleared": true,
+    "in_transit_cargo_preserved": 2,
+    "turns": 4
+  },
+  "world_id": "world:fx-cargo",
+  "legacy_writers_disabled": true
+}

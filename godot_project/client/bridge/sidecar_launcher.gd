@@ -26,6 +26,14 @@ func start(project_root: String) -> Dictionary:
 		"--save-root", save_root,
 		"--endpoint-file", endpoint_path,
 	])
+	var fixture := str(OS.get_environment("DMB_FIXTURE"))
+	var seed := str(OS.get_environment("DMB_SEED"))
+	if fixture != "":
+		args.append("--fixture")
+		args.append(fixture)
+	if seed != "":
+		args.append("--seed")
+		args.append(seed)
 	pid = OS.create_process(python, args)
 	if pid <= 0:
 		failed.emit("failed to start python3 sidecar")

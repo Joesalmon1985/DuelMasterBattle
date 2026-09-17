@@ -100,10 +100,17 @@ class WorldState:
             "people": people,
             "scope": scope,
         }
-        if scope == "debug":
+        if scope in {"debug", "economy"}:
             payload["leases"] = deepcopy(self.leases)
             payload["command_receipts"] = deepcopy(self.command_receipts)
             payload["knowledge_raw"] = deepcopy(self.knowledge)
+            payload["stocks"] = deepcopy(self.stocks)
+            payload["carts"] = deepcopy(self.carts)
+            payload["settlements"] = deepcopy(self.settlements)
+            payload["orders"] = deepcopy(self.orders)
+            payload["factions"] = deepcopy(self.factions)
+            payload["fx_cargo"] = deepcopy(self.board.get("fx_cargo") or {})
+            payload["tech_draft"] = deepcopy(getattr(self, "tech_draft", {}) or {})
         return _freeze(payload)
 
     def validate(self) -> list[str]:

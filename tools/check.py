@@ -384,6 +384,33 @@ def checks_for_task(task: str) -> list[CheckResult]:
         "T045": lambda: [_pytest("bilateral_trade", "tests/sim/test_t045_trade.py")],
         "T046": lambda: [_pytest("seat_round", "tests/sim/test_t046_seat_round.py")],
         "T047": lambda: [_pytest("faction_expansion", "tests/scenarios/test_faction_expansion.py")],
+        "T048": lambda: [
+            _pytest(
+                "g02_cumulative_python",
+                "tests/integration/test_construction_cargo.py",
+                "tests/sim/test_t045_trade.py",
+                "tests/sim/test_t046_seat_round.py",
+                "tests/scenarios/test_faction_expansion.py",
+                "tests/sim/test_t020_playable.py",
+            ),
+            validate_evidence(
+                "g02_gate_packet",
+                [
+                    TRACKING / "gates" / "G02" / "packet.md",
+                    TRACKING / "gates" / "G02" / "launch.txt",
+                    TRACKING / "gates" / "G02" / "fx_cargo_record.json",
+                    TRACKING / "gates" / "G02" / "screenshot_wizard.png",
+                    TRACKING / "gates" / "G02" / "screenshot_450x800.png",
+                    TRACKING / "gates" / "G02" / "screenshot_720x1280.png",
+                    TRACKING / "gates" / "G02" / "screenshot_1280x720.png",
+                ],
+            ),
+            _godot_script(
+                "g02_sidecar_smoke",
+                "res://client/tests/run_g02_smoke.gd",
+                r"G02_SMOKE_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -444,6 +471,41 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
             ),
         ]
         return results
+    if gate == "G02":
+        packet = TRACKING / "gates" / "G02"
+        return [
+            _pytest(
+                "g02_cumulative_python",
+                "tests/integration/test_construction_cargo.py",
+                "tests/sim/test_t045_trade.py",
+                "tests/sim/test_t046_seat_round.py",
+                "tests/scenarios/test_faction_expansion.py",
+                "tests/sim/test_t020_playable.py",
+            ),
+            validate_evidence(
+                "g02_packet_files",
+                [
+                    packet / "packet.md",
+                    packet / "launch.txt",
+                    packet / "fx_cargo_record.json",
+                    packet / "screenshot_wizard.png",
+                    packet / "screenshot_450x800.png",
+                    packet / "screenshot_720x1280.png",
+                    packet / "screenshot_1280x720.png",
+                ],
+            ),
+            _godot_script(
+                "g02_sidecar_smoke",
+                "res://client/tests/run_g02_smoke.gd",
+                r"G02_SMOKE_OK",
+            ),
+            # Retain meaningful G01 regressions.
+            _godot_script(
+                "g01_regression_smoke",
+                "res://client/tests/run_g01_smoke.gd",
+                r"G01_SMOKE_OK",
+            ),
+        ]
     return [
         CheckResult(
             name=f"gate_contract_{gate}",

@@ -331,7 +331,65 @@ class WorldSim:
     def _handle_interact(self, envelope: CommandEnvelope) -> CommandResult:
         from sim.dmb.narrative.knowledge import KnowledgeFact, filter_entity, reveal
 
-        entity_id = str(envelope.payload.get("entity_id", ""))
+        payload = envelope.payload
+        # Route-clearing interaction for catastrophe cubes (G02 / FX-CARGO).
+        if str(payload.get("action") or "") == "clear_hazard":
+            cube_id = str(payload.get("cube_id") or payload.get("entity_id") or "")
+            cubes = self.state.board.setdefault("hazard_cubes", {})
+            if cube_id and cube_id in cubes:
+                cubes.pop(cube_id, None)
+            elif cube_id == "" and cubes:
+                # Clear first active cube when unspecified.
+                first = next(iter(cubes))
+                cubes.pop(first, None)
+                cube_id = first
+            else:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback="no hazard to clear",
+                )
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "hazard_cleared", "cube_id": cube_id}],
+                payload={"cleared": cube_id, "remaining": list(cubes.keys())},
+                public_feedback="hazard cleared",
+            )
+        if str(payload.get("action") or "") == "place_route_block":
+            fx = self.state.board.get("fx_cargo") or {}
+            block_hex = str(payload.get("hex_id") or fx.get("block_hex") or "")
+            if not block_hex:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback="no block hex",
+                )
+            self.state.board.setdefault("hazard_cubes", {})["fx-block"] = {
+                "hex_id": block_hex,
+                "active": True,
+            }
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "hazard_placed", "hex_id": block_hex}],
+                payload={"hex_id": block_hex},
+                public_feedback="route blocked",
+            )
+
+        entity_id = str(payload.get("entity_id", ""))
         person = self.state.people.get(entity_id)
         if person is None:
             return CommandResult(

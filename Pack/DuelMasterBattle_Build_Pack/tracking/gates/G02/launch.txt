@@ -1,0 +1,12 @@
+# Verified portrait launch (450x800)
+cd /home/joe/Projects/DuelMasterBattle
+bash tools/play_g02.sh --direct
+
+# Defaults set by play_g02.sh:
+#   DMB_FIXTURE=FX-CARGO
+#   DMB_SEED=202
+# Save slot: g02_playtest
+# Recovery slot: _recovery
+
+# Landscape optional:
+# bash tools/play_g02.sh --direct --landscape

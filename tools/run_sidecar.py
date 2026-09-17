@@ -22,9 +22,17 @@ def main() -> int:
     parser.add_argument("--save-root", type=Path, default=ROOT / ".dmb_saves")
     parser.add_argument("--endpoint-file", type=Path, default=ROOT / ".dmb_endpoint.json")
     parser.add_argument("--port", type=int, default=0)
+    parser.add_argument("--fixture", default="")
+    parser.add_argument("--seed", type=int, default=7)
     args = parser.parse_args()
     token = args.token or secrets.token_hex(16)
-    server = SidecarServer(token=token, save_root=args.save_root, port=args.port)
+    server = SidecarServer(
+        token=token,
+        save_root=args.save_root,
+        port=args.port,
+        fixture=args.fixture or None,
+        seed=args.seed,
+    )
     server.endpoint_file(args.endpoint_file)
     print(f"DMB_SIDECAR host={server.host} port={server.port}", flush=True)
     try:
