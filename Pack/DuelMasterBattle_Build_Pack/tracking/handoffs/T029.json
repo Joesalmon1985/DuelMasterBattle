@@ -1,7 +1,7 @@
 {
   "task_id": "T029",
   "status": "DONE",
-  "commit": null,
+  "commit": "e5d2e0d5a199331f6f8212d259ca1292c2c231ba",
   "files": [
     "sim/dmb/construction/production.py",
     "sim/dmb/hazards/queries.py",
