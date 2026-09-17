@@ -13,6 +13,7 @@ from sim.dmb.industry.factories import FactoryService
 from sim.dmb.industry.layers import LayerState
 from sim.dmb.industry.primary import PrimaryChannel
 from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
+from sim.dmb.people.jobs import JobService
 
 
 def _channel_to_dict(channel: PrimaryChannel) -> dict[str, Any]:
@@ -80,6 +81,9 @@ class IndustryService:
         return emitted
 
     def _tick(self) -> list[dict[str, Any]]:
+        # Vacancies are durable people state. Filling them is part of the
+        # accounting cadence, but never derives output from loaded sprites.
+        JobService(self.world).backfill_tick()
         channels = {
             channel_id: _channel_from_dict(record)
             for channel_id, record in self.state["channels"].items()
@@ -100,6 +104,12 @@ class IndustryService:
             active[route.factory_id] = operational
         for processor_id, processor in list(processors.items()):
             building = self.world.buildings.get(processor_id)
+            job_modifiers = [
+                fraction(job.get("modifier", 1))
+                for job in self.world.definitions.get("jobs", {}).values()
+                if job.get("workplace_id") == processor_id and not job.get("vacant")
+            ]
+            job_modifier = min(job_modifiers, default=Fraction(1))
             if building is not None:
                 processors[processor_id] = ProcessorBinding(
                     **{
@@ -107,7 +117,12 @@ class IndustryService:
                         "health": int(building.get("health", processor.health)),
                         "max_health": int(building.get("max_health", processor.max_health)),
                         "active": processor.active and building.get("status") != "destroyed" and bool(building.get("active", True)),
+                        "modifier": processor.modifier * job_modifier,
                     }
+                )
+            elif job_modifiers:
+                processors[processor_id] = ProcessorBinding(
+                    **{**processor.__dict__, "modifier": processor.modifier * job_modifier}
                 )
 
         layers = {
