@@ -42,8 +42,8 @@
     "FX-CLOCK_seed": 7
   },
   "defects": [
-    "D006-D009 resolved; D001-D003 deferred"
+    "D006-D010 resolved; D001-D003 deferred"
   ],
   "next_task": "G01",
-  "notes": "G01 AWAITING_HUMAN after D009 navigation/portrait repair; do not start T025."
+  "notes": "G01 AWAITING_HUMAN after D010 travel/arrival + T019 recovery; do not start T025."
 }

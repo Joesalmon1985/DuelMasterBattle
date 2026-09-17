@@ -6,8 +6,8 @@
       "name": "g01_cumulative_python",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 3.668,
-      "detail": "......................                                                   [100%]\n22 passed in 3.07s",
+      "duration_seconds": 3.386,
+      "detail": "......................                                                   [100%]\n22 passed in 2.85s",
       "command": [
         "/usr/bin/python3",
         "-m",
@@ -25,7 +25,7 @@
       "name": "g01_packet_files",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 0.003,
+      "duration_seconds": 0.002,
       "detail": "7 evidence files valid",
       "command": null
     },
@@ -33,8 +33,8 @@
       "name": "g01_sidecar_smoke",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 1.619,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=41103\nG01_SMOKE_OK world_id=world:g01",
+      "duration_seconds": 1.384,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=46409\nG01_SMOKE_OK world_id=world:g01",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",
@@ -48,7 +48,7 @@
       "name": "g01_playable_scene",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 1.403,
+      "duration_seconds": 1.351,
       "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nG01_PLAYABLE_OK moved=539.0 hint=Travel",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
@@ -63,8 +63,8 @@
       "name": "g01_bridge_play",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 12.578,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=43367\nG01_BRIDGE_PLAY_OK walked=230.8 advances=173 turn=0\u21922 nodes=node:1\u2192node:2\u2192node:1",
+      "duration_seconds": 7.287,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=39305\nG01_BRIDGE_PLAY_OK arrivals=ok turns=0\u21923 held_fires=1",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",

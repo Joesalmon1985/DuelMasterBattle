@@ -35,6 +35,7 @@ var current_node: String = "node:1"
 var selected_entity: String = ""
 var travel_pending: bool = false
 var movement_enabled: bool = true
+var pose_generation: int = 0
 
 var _wizard: Sprite2D
 var _ground: Node2D
@@ -43,6 +44,7 @@ var _actors: Node2D
 var _labels: Node2D
 var _npc_nodes: Dictionary = {}  # entity_id -> Sprite2D
 var _exit_nodes: Dictionary = {}  # to_node -> Node2D marker
+var _exit_links: Dictionary = {}  # to_node -> link dict from board
 var _label_nodes: Dictionary = {}  # entity_id -> Label
 var _move_dir := Vector2.ZERO
 var _facing := "down"
@@ -54,6 +56,8 @@ var _feedback: Label
 var _area_title: Label
 var _built := false
 var _last_hint := ""
+var _travel_armed := true  # false after arrival until input releases / moves inward
+var _hold_grid := Vector2.ZERO
 
 
 func setup(world_client, touch_pad) -> void:
@@ -116,6 +120,7 @@ func rebuild_from_view(view: Dictionary) -> void:
 		_build_roots()
 	var player: Dictionary = view.get("player", {})
 	current_node = str(player.get("node_id", current_node))
+	pose_generation = int(player.get("pose_generation", pose_generation))
 	_restore_wizard_pose(player)
 	_rebuild_tiles()
 	_rebuild_people(view.get("people", {}))
@@ -269,8 +274,18 @@ func _rebuild_exits(nodes: Dictionary) -> void:
 	for id in _exit_nodes.keys():
 		_exit_nodes[id].queue_free()
 	_exit_nodes.clear()
+	_exit_links.clear()
 	var info: Dictionary = nodes.get(current_node, {})
-	for to_node in info.get("exits", []):
+	var exits = info.get("exits", {})
+	var destinations: Array = []
+	if typeof(exits) == TYPE_DICTIONARY:
+		for to_node in exits.keys():
+			destinations.append(str(to_node))
+			_exit_links[str(to_node)] = exits[to_node].duplicate(true)
+	elif typeof(exits) == TYPE_ARRAY:
+		for to_node in exits:
+			destinations.append(str(to_node))
+	for to_node in destinations:
 		var marker := Area2D.new()
 		var col := CollisionShape2D.new()
 		var shape := RectangleShape2D.new()
@@ -301,6 +316,49 @@ func _rebuild_exits(nodes: Dictionary) -> void:
 		marker.input_event.connect(_on_exit_input.bind(str(to_node)))
 		add_child(marker)
 		_exit_nodes[str(to_node)] = marker
+
+
+func _link_for(to_node: String) -> Dictionary:
+	return _exit_links.get(to_node, {})
+
+
+func _hold_world_pos(to_node: String) -> Vector2:
+	var link: Dictionary = _link_for(to_node)
+	var hold = link.get("hold_position", [12, 5] if current_node == "node:1" else [1, 5])
+	return Vector2(float(hold[0]) * TILE + TILE * 0.5, float(hold[1]) * TILE + TILE * 0.5)
+
+
+func _crossing_doorway(step: Vector2) -> String:
+	## Outward doorway threshold crossing → destination node id, else "".
+	if not _travel_armed or travel_pending or step == Vector2.ZERO:
+		return ""
+	var grid := wizard_grid()
+	var gx := float(grid[0])
+	var gy := float(grid[1])
+	for to_node in _exit_links.keys():
+		var link: Dictionary = _exit_links[to_node]
+		var direction := str(link.get("direction", ""))
+		# Stay near the doorway band (y ≈ 4–5).
+		if gy < 3.5 or gy > 5.5:
+			continue
+		if direction == "east" and step.x > 0.2 and gx >= 12.35:
+			return str(to_node)
+		if direction == "west" and step.x < -0.2 and gx <= 0.65:
+			return str(to_node)
+	return ""
+
+
+func _update_travel_arming(step: Vector2) -> void:
+	if _travel_armed or travel_pending:
+		return
+	# Require releasing outward hold or moving inward before another auto-travel.
+	if step == Vector2.ZERO:
+		_travel_armed = true
+		return
+	if current_node == "node:1" and step.x < -0.1:
+		_travel_armed = true
+	elif current_node == "node:2" and step.x > 0.1:
+		_travel_armed = true
 
 
 func nearest_exit_id() -> String:
@@ -371,13 +429,30 @@ func _on_exit_input(_viewport, event: InputEvent, _shape_idx: int, to_node: Stri
 
 
 func _activate_exit(to_node: String) -> void:
+	request_travel(to_node)
+
+
+func request_travel(to_node: String) -> void:
+	## Single path for auto-doorway and manual Travel action.
 	if travel_pending or not movement_enabled:
 		return
-	if not exit_in_range(to_node):
-		_feedback.text = "Move closer to the exit"
-		_refresh_action_hint()
+	if not _exit_nodes.has(to_node):
+		_feedback.text = "Unknown exit"
 		return
+	if not _travel_armed and not exit_in_range(to_node):
+		_feedback.text = "Release movement before travelling again"
+		return
+	# Hold at safe source boundary while pending.
+	var hold := _hold_world_pos(to_node)
+	_wizard.position = hold
+	_hold_grid = Vector2(hold.x / TILE - 0.5, hold.y / TILE - 0.5)
+	var link: Dictionary = _link_for(to_node)
+	if link.get("hold_facing"):
+		_facing = str(link["hold_facing"])
+		_set_wizard_texture(_facing, _anim_frame)
+	_move_dir = Vector2.ZERO
 	travel_pending = true
+	_travel_armed = false
 	_feedback.text = "Travel pending…"
 	_refresh_action_hint()
 	exit_activated.emit(to_node)
@@ -388,12 +463,18 @@ func acknowledge_travel(to_node: String, view: Dictionary) -> void:
 	selected_entity = ""
 	_feedback.text = ""
 	_last_hint = ""
+	_move_dir = Vector2.ZERO
+	_travel_armed = false  # require release / inward move before auto-return
 	rebuild_from_view(view)
 
 
 func reject_travel(reason: String) -> void:
 	travel_pending = false
+	# Remain safely inside the source hold cell.
+	if _hold_grid != Vector2.ZERO:
+		_wizard.position = Vector2(_hold_grid.x * TILE + TILE * 0.5, _hold_grid.y * TILE + TILE * 0.5)
 	_feedback.text = "Travel rejected: %s" % reason
+	_travel_armed = true
 	_refresh_action_hint()
 
 
@@ -402,13 +483,14 @@ func _on_dir(dir: Vector2i) -> void:
 		_move_dir = Vector2.ZERO
 		return
 	_move_dir = Vector2(dir)
+	_update_travel_arming(_move_dir)
 
 
 func _on_action() -> void:
 	if not movement_enabled:
 		return
 	if exit_in_range():
-		_activate_exit(nearest_exit_id())
+		request_travel(nearest_exit_id())
 		return
 	if selected_entity == "":
 		_pick_nearest(true)
@@ -456,7 +538,13 @@ func _gui_blocks_world_pointer() -> bool:
 func _process(delta: float) -> void:
 	if client == null:
 		return
-	if travel_pending or not movement_enabled:
+	if travel_pending:
+		# Hold at safe boundary; no further stepping while acknowledgement is open.
+		_wizard.position = Vector2(_hold_grid.x * TILE + TILE * 0.5, _hold_grid.y * TILE + TILE * 0.5)
+		_move_dir = Vector2.ZERO
+		_refresh_action_hint()
+		return
+	if not movement_enabled:
 		_refresh_action_hint()
 		return
 	var step := _move_dir
@@ -466,6 +554,11 @@ func _process(delta: float) -> void:
 			var delta_v := local - _wizard.global_position
 			if delta_v.length() > 12:
 				step = delta_v.normalized()
+	_update_travel_arming(step)
+	var cross := _crossing_doorway(step)
+	if cross != "":
+		request_travel(cross)
+		return
 	if step != Vector2.ZERO:
 		if abs(step.x) > abs(step.y):
 			_facing = "right" if step.x > 0 else "left"
@@ -487,8 +580,11 @@ func _process(delta: float) -> void:
 
 
 func _blocked(world_pos: Vector2) -> bool:
-	var gx := int(world_pos.x / TILE)
-	var gy := int(world_pos.y / TILE)
+	var gx := int(floor(world_pos.x / TILE))
+	var gy := int(floor(world_pos.y / TILE))
+	# Outside the playable map is always blocked — no indefinite walk-off.
+	if gx < 0 or gy < 0 or gx >= GRID_W or gy >= GRID_H:
+		return true
 	return bool(_blockers.get(Vector2i(gx, gy), false))
 
 

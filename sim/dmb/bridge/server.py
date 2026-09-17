@@ -103,7 +103,16 @@ class SidecarServer:
                 "protocol_version": PROTOCOL_VERSION,
                 "world_version": self.session.sim.state.world_version,
                 "world_id": self.session.sim.state.world_id,
-                "capabilities": ["Travel", "Wait", "AdvanceGame", "Save", "Load", "Pause", "Resume"],
+                "capabilities": [
+                    "Travel",
+                    "Wait",
+                    "AdvanceGame",
+                    "Save",
+                    "Load",
+                    "Pause",
+                    "Resume",
+                    "RecoverCheckpoint",
+                ],
             }
         if not authenticated:
             return {"status": "REJECTED", "code": "UNAUTHENTICATED"}
@@ -151,7 +160,47 @@ class SidecarServer:
                     "events": [],
                     "payload": {"loaded": True},
                 }
-            return self.session.sim.dispatch(envelope).to_dict()
+            if envelope.kind == "RecoverCheckpoint":
+                if not self.session.coordinator.has_recovery_checkpoint():
+                    return {
+                        "status": "REJECTED",
+                        "code": "NO_CHECKPOINT",
+                        "command_id": envelope.command_id,
+                        "world_version": self.session.sim.state.world_version,
+                        "events": [],
+                        "payload": {},
+                    }
+                restored = self.session.coordinator.restore_recovery_checkpoint()
+                self.session.sim = restored["sim"]
+                self.session.coordinator = SaveCoordinator(self.session.sim, SaveRepository(self.save_root))
+                self.session.coordinator.last_recovery_game_ms = int(
+                    self.session.sim.state.clock.get("game_ms", 0)
+                )
+                self.session.paused_for_bridge_failure = False
+                # Drop bridge-failure pause tokens after successful restore.
+                tokens = dict(self.session.sim.state.clock.get("pause_tokens") or {})
+                for key in list(tokens.keys()):
+                    if str(key).startswith("bridge_failure:"):
+                        del tokens[key]
+                self.session.sim.state.clock["pause_tokens"] = tokens
+                return {
+                    "status": "ACCEPTED",
+                    "code": "OK",
+                    "command_id": envelope.command_id,
+                    "world_version": self.session.sim.state.world_version,
+                    "events": [],
+                    "payload": {"recovered": True, **restored["meta"]},
+                }
+            result = self.session.sim.dispatch(envelope)
+            body = result.to_dict()
+            if envelope.kind in {"Travel", "Wait"} and result.status == "ACCEPTED":
+                recovery = self.session.coordinator.write_recovery_checkpoint(reason=envelope.kind.lower())
+                body["recovery"] = recovery.get("recovery")
+            elif envelope.kind == "AdvanceGame" and result.status == "ACCEPTED":
+                recovery = self.session.coordinator.maybe_write_recovery_checkpoint(reason="periodic")
+                if recovery:
+                    body["recovery"] = recovery.get("recovery")
+            return body
         return {"status": "REJECTED", "code": "UNKNOWN_KIND"}
 
     def serve_forever(self) -> None:

@@ -51,12 +51,13 @@ def bootstrap_world(world_id: str = "world:g01", seed: int = 7) -> "WorldSim":
     )
     state.catalog_hash = catalog.catalog_hash
     state.definitions = {"payloads": catalog.all_payloads(), "hash": catalog.catalog_hash}
-    # FX-CLOCK playable fixtures: wizard pose + one observable person per area.
+    # FX-CLOCK playable fixtures: wizard pose + linked exits with arrival poses.
     state.player = {
         "node_id": "node:1",
         "area_id": "area.home",
-        "position": [4, 5],
+        "position": [4.0, 5.0],
         "facing": "down",
+        "pose_generation": 0,
     }
     state.board = {
         "nodes": {
@@ -64,15 +65,43 @@ def bootstrap_world(world_id: str = "world:g01", seed: int = 7) -> "WorldSim":
                 "id": "node:1",
                 "def": "node.home",
                 "label": "Home Clearing",
-                "exits": ["node:2"],
+                "area_id": "area.home",
                 "theme": "grass",
+                "exits": {
+                    "node:2": {
+                        "exit_id": "home.east",
+                        "direction": "east",
+                        "hold_position": [12.0, 5.0],
+                        "hold_facing": "right",
+                        "arrival": {
+                            "node_id": "node:2",
+                            "area_id": "area.road",
+                            "position": [1.5, 5.0],
+                            "facing": "right",
+                        },
+                    }
+                },
             },
             "node:2": {
                 "id": "node:2",
                 "def": "node.road",
                 "label": "Stone Road",
-                "exits": ["node:1"],
+                "area_id": "area.road",
                 "theme": "path",
+                "exits": {
+                    "node:1": {
+                        "exit_id": "road.west",
+                        "direction": "west",
+                        "hold_position": [1.0, 5.0],
+                        "hold_facing": "left",
+                        "arrival": {
+                            "node_id": "node:1",
+                            "area_id": "area.home",
+                            "position": [12.0, 5.0],
+                            "facing": "left",
+                        },
+                    }
+                },
             },
         }
     }
@@ -338,6 +367,29 @@ class WorldSim:
 
     def _handle_sync_pose(self, envelope: CommandEnvelope) -> CommandResult:
         payload = envelope.payload
+        # Reject delayed source-area pose updates after Travel has committed.
+        reported_node = payload.get("node_id")
+        if reported_node is not None and str(reported_node) != str(self.state.player.get("node_id")):
+            return CommandResult(
+                status="REJECTED",
+                code="STALE_NODE",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload={"node_id": self.state.player.get("node_id")},
+                public_feedback="stale_pose",
+            )
+        reported_gen = payload.get("pose_generation")
+        if reported_gen is not None and int(reported_gen) != int(self.state.player.get("pose_generation", 0)):
+            return CommandResult(
+                status="REJECTED",
+                code="STALE_POSE",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload={"pose_generation": self.state.player.get("pose_generation", 0)},
+                public_feedback="stale_pose",
+            )
         pos = payload.get("position")
         if isinstance(pos, (list, tuple)) and len(pos) >= 2:
             self.state.player["position"] = [float(pos[0]), float(pos[1])]
@@ -350,6 +402,11 @@ class WorldSim:
             command_id=envelope.command_id,
             world_version=self.state.world_version,
             events=[],
-            payload={"position": self.state.player.get("position"), "facing": self.state.player.get("facing")},
+            payload={
+                "position": self.state.player.get("position"),
+                "facing": self.state.player.get("facing"),
+                "node_id": self.state.player.get("node_id"),
+                "pose_generation": self.state.player.get("pose_generation", 0),
+            },
             public_feedback="pose_synced",
         )

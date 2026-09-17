@@ -184,6 +184,32 @@
         "walk-based bridge journey"
       ],
       "next_diagnostic": "G01_BRIDGE_PLAY_OK walked spawn→NPC→exit→return"
+    },
+    {
+      "id": "D010",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "Travel kept source coordinates; could spawn in walls; walk-off map; bridge recovery was manual-only",
+      "reproduction_command": "Walk through exit; Bridge fail",
+      "seed": "7",
+      "failing_assertion_or_log": "arrival pose = source pose; off-map walk; reload instructions",
+      "expected_state": "linked arrival poses; doorway auto-travel; bounds blocked; T019 checkpoint restore",
+      "observed_state": "source pose after Travel; infinite exterior; freeze+manual load",
+      "suspected_owner": "sim/dmb/time/runner.py + fx_clock_area.gd + SaveCoordinator",
+      "files_changed": [
+        "sim/dmb/time/runner.py",
+        "sim/dmb/persistence/coordinator.py",
+        "godot_project/client/world/fx_clock_area.gd",
+        "godot_project/client/scenes/g01_shell.gd"
+      ],
+      "attempted_fixes": [
+        "exit link arrivals",
+        "STALE_NODE SyncPose guard",
+        "doorway auto-travel + hold",
+        "map bounds",
+        "RecoverCheckpoint path"
+      ],
+      "next_diagnostic": "G01_BRIDGE_PLAY_OK arrivals=ok; T019 recovery_tests PASS"
     }
   ]
 }

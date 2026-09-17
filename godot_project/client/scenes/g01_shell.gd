@@ -222,6 +222,21 @@ func _set_interaction_blocked(blocked: bool) -> void:
 	_apply_movement_gate()
 
 
+func _sync_pose() -> void:
+	if _client == null or _area == null or _area.travel_pending:
+		return
+	_client.send_command(
+		"pose-%s" % Time.get_ticks_msec(),
+		"SyncPose",
+		{
+			"position": _area.wizard_grid(),
+			"facing": _area._facing,
+			"node_id": _area.current_node,
+			"pose_generation": _area.pose_generation,
+		}
+	)
+
+
 func _process(delta: float) -> void:
 	if _paused or not _focus or _bridge_down or _client == null:
 		return
@@ -229,11 +244,7 @@ func _process(delta: float) -> void:
 	_pose_sync_acc += delta
 	if _pose_sync_acc >= 0.5 and _area != null and not _area.travel_pending:
 		_pose_sync_acc = 0.0
-		_client.send_command(
-			"pose-%s" % Time.get_ticks_msec(),
-			"SyncPose",
-			{"position": _area.wizard_grid(), "facing": _area._facing}
-		)
+		_sync_pose()
 
 
 func _on_clock_advance(delta_ms: int, sequence: int) -> void:
@@ -283,15 +294,19 @@ func _refresh_counters(rebuild_world: bool) -> void:
 func _on_exit(to_node: String) -> void:
 	var from_node := str(_client.request_view("player").get("player", {}).get("node_id", "node:1"))
 	_prompt.text = "Travel pending %s → %s (waiting for acknowledgement)" % [from_node, to_node]
+	_sync_pose()
 	var reply := _cmd("Travel", {"from_node": from_node, "to_node": to_node})
 	if str(reply.get("status", "")) == "ACCEPTED":
 		var view: Dictionary = _client.request_view("player")
 		_area.acknowledge_travel(to_node, view)
-		_prompt.text = "Travel acknowledged — World Turn +1"
+		_prompt.text = "Travel acknowledged — arrived %s facing %s" % [
+			view.get("player", {}).get("position", []),
+			view.get("player", {}).get("facing", "?"),
+		]
 		_refresh_counters(false)
 	else:
-		_area.reject_travel(str(reply.get("code", "rejected")))
-		_prompt.text = "Travel rejected — position unchanged"
+		_area.reject_travel(str(reply.get("code", reply.get("public_feedback", "rejected"))))
+		_prompt.text = "Travel rejected — stayed in %s (%s)" % [from_node, reply.get("code", "?")]
 
 
 func _on_observe(entity_id: String) -> void:
@@ -354,7 +369,7 @@ func _on_resume() -> void:
 
 
 func _on_save() -> void:
-	_client.send_command("pose-pre-save", "SyncPose", {"position": _area.wizard_grid(), "facing": _area._facing})
+	_sync_pose()
 	var reply := _cmd("Save", {"slot": SAVE_SLOT})
 	if str(reply.get("status", "")) == "ACCEPTED":
 		_prompt.text = "Saved isolated slot %s → %s/.dmb_saves/" % [SAVE_SLOT, _project_root]
@@ -374,23 +389,70 @@ func _on_load() -> void:
 
 
 func _on_bridge_fail() -> void:
-	_log("Controlled bridge failure")
+	_log("Controlled bridge failure — writing recovery then restarting")
+	_sync_pose()
+	# Ensure a recovery checkpoint exists before killing the sidecar.
+	_client.send_command("save-pre-fail", "Save", {"slot": "_recovery"})
 	if _launcher:
 		_launcher.stop()
 	_bridge_down = true
 	_paused = true
 	_apply_movement_gate()
-	_set_status("BRIDGE FAILURE — paused; no Godot world-sim fallback")
-	_prompt.text = "Recover: close game, relaunch, Load slot %s" % SAVE_SLOT
-	_counters.text = _counters.text + "  [BRIDGE DOWN]"
+	_set_status("BRIDGE FAILURE — recovering from checkpoint…")
+	var recovered := _attempt_bridge_recovery()
+	if recovered.get("ok", false):
+		_bridge_down = false
+		_paused = false
+		_apply_movement_gate()
+		_refresh_counters(true)
+		var roll := int(recovered.get("rollback_ms", 0))
+		_prompt.text = "Recovered from checkpoint (rollback %s ms). Progress since checkpoint was not kept." % roll
+		_set_status("Python-backed FX-CLOCK — recovered after bridge failure")
+	else:
+		_prompt.text = "Recovery failed (%s). Use Load on slot %s after relaunch." % [
+			recovered.get("error", "?"), SAVE_SLOT
+		]
+		_counters.text = _counters.text + "  [BRIDGE DOWN]"
+
+
+func _attempt_bridge_recovery() -> Dictionary:
+	if _launcher == null:
+		return {"ok": false, "error": "no_launcher"}
+	var started: Dictionary = _launcher.start(_project_root)
+	if not started.get("ok", false):
+		return {"ok": false, "error": "sidecar_restart"}
+	_client.queue_free()
+	_client = WorldClient.new()
+	add_child(_client)
+	_client.bridge_failed.connect(_on_bridge_failed)
+	if not _client.connect_sidecar(str(started["host"]), int(started["port"]), str(started["token"])):
+		return {"ok": false, "error": "handshake"}
+	var reply: Dictionary = _client.send_command("recover-1", "RecoverCheckpoint", {})
+	if str(reply.get("status", "")) != "ACCEPTED":
+		# Fallback: load the recovery slot via Load if RecoverCheckpoint unavailable.
+		reply = _client.send_command("recover-load", "Load", {"slot": "_recovery"})
+		if str(reply.get("status", "")) != "ACCEPTED":
+			return {"ok": false, "error": str(reply.get("code", "recover_failed"))}
+	var payload: Dictionary = reply.get("payload", {})
+	return {"ok": true, "rollback_ms": int(payload.get("rollback_ms", 0)), "payload": payload}
 
 
 func _on_bridge_failed(reason: String) -> void:
 	_bridge_down = true
 	_paused = true
 	_apply_movement_gate()
-	_set_status("Bridge failed: %s" % reason)
+	_set_status("Bridge failed: %s — attempting checkpoint recovery" % reason)
 	_log("bridge_failed %s" % reason)
+	var recovered := _attempt_bridge_recovery()
+	if recovered.get("ok", false):
+		_bridge_down = false
+		_paused = false
+		_apply_movement_gate()
+		_refresh_counters(true)
+		_prompt.text = "Auto-recovered (rollback %s ms)" % int(recovered.get("rollback_ms", 0))
+		_set_status("Python-backed FX-CLOCK — recovered")
+	else:
+		_prompt.text = "Auto-recovery failed (%s)" % recovered.get("error", "?")
 
 
 func _toggle_diag() -> void:

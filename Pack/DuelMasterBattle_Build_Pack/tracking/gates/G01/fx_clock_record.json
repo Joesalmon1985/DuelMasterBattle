@@ -16,12 +16,25 @@
   "legacy_writers_disabled": true,
   "scenario": "FX-CLOCK",
   "slot": "g01_playtest",
-  "repair": "D009 fixture corridor, action verbs, portrait default, walk bridge journey",
+  "repair": "D010 linked arrivals, doorway auto-travel, bounds, T019 RecoverCheckpoint",
   "screenshots": {
     "screenshot_450x800.png": "450x800",
     "screenshot_1280x720.png": "1280x720",
     "screenshot_wizard.png": "450x800 (alias of portrait)"
   },
   "launcher_default": "450x800",
-  "launcher_landscape": "1280x720 via --landscape"
+  "launcher_landscape": "1280x720 via --landscape",
+  "arrivals": {
+    "home_to_road": [
+      1.5,
+      5.0,
+      "right"
+    ],
+    "road_to_home": [
+      12.0,
+      5.0,
+      "left"
+    ]
+  },
+  "recovery_slot": "_recovery"
 }

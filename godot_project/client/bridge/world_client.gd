@@ -100,6 +100,11 @@ func resume(token: String) -> Dictionary:
 	return send_command("resume-%s" % token, "Resume", {"token": token})
 
 
+func recover_checkpoint() -> Dictionary:
+	## Ask the sidecar to restore the coordinated recovery checkpoint (T019).
+	return send_command("recover-%s" % Time.get_ticks_msec(), "RecoverCheckpoint", {})
+
+
 func legacy_writers_blocked() -> bool:
 	return _legacy_tick_blocked and _legacy_save_blocked
 

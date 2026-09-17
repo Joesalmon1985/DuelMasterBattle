@@ -1,8 +1,8 @@
-"""Coordinated save/load barrier."""
+"""Coordinated save/load barrier and bounded recovery checkpoints."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from sim.dmb.core.events import EventJournal
@@ -10,6 +10,9 @@ from sim.dmb.core.replay import ReplayLog
 from sim.dmb.core.state import WorldState
 from sim.dmb.core.world import WorldSim
 from sim.dmb.persistence.repository import SaveRepository
+
+RECOVERY_SLOT = "_recovery"
+RECOVERY_INTERVAL_MS = 5000
 
 
 def _strip_ephemeral_save_tokens(snapshot: dict[str, Any], active_token: str | None = None) -> None:
@@ -33,6 +36,8 @@ class SaveCoordinator:
     sim: WorldSim
     repository: SaveRepository
     _pending_load: dict[str, Any] | None = None
+    last_recovery_game_ms: int = 0
+    recovery_reasons: list[str] = field(default_factory=list)
 
     def request_save(self, slot: str) -> dict[str, Any]:
         token = self.sim.clock.acquire_pause("save", "coordinator")
@@ -65,4 +70,50 @@ class SaveCoordinator:
         sim.replay = ReplayLog.from_dict(payload.get("replay", {}))
         self._pending_load = None
         self.sim = sim
+        self.last_recovery_game_ms = int(sim.state.clock.get("game_ms", 0))
         return sim
+
+    def write_recovery_checkpoint(self, reason: str = "periodic") -> dict[str, Any]:
+        """Persist a coordinated recovery checkpoint (C02 bounded restart)."""
+        game_ms = int(self.sim.state.clock.get("game_ms", 0))
+        meta = {
+            "reason": reason,
+            "game_ms": game_ms,
+            "world_version": self.sim.state.world_version,
+            "node_id": self.sim.state.player.get("node_id"),
+            "position": list(self.sim.state.player.get("position") or []),
+        }
+        self.sim.state.clock["recovery_meta"] = dict(meta)
+        saved = self.request_save(RECOVERY_SLOT)
+        self.last_recovery_game_ms = game_ms
+        self.recovery_reasons.append(reason)
+        return {**saved, "recovery": meta}
+
+    def maybe_write_recovery_checkpoint(self, *, force: bool = False, reason: str = "periodic") -> dict[str, Any] | None:
+        if self.sim.state.clock.get("pause_tokens"):
+            return None
+        game_ms = int(self.sim.state.clock.get("game_ms", 0))
+        if not force and game_ms - self.last_recovery_game_ms < RECOVERY_INTERVAL_MS:
+            return None
+        return self.write_recovery_checkpoint(reason)
+
+    def restore_recovery_checkpoint(self) -> dict[str, Any]:
+        """Restore last recovery checkpoint. Reports rollback relative to live clock."""
+        live_ms = int(self.sim.state.clock.get("game_ms", 0))
+        prepared = self.prepare_load(RECOVERY_SLOT)
+        restored = self.commit_load()
+        recovered_ms = int(restored.state.clock.get("game_ms", 0))
+        rollback_ms = max(0, live_ms - recovered_ms)
+        meta = dict(restored.state.clock.get("recovery_meta") or {})
+        meta["rollback_ms"] = rollback_ms
+        meta["restored_game_ms"] = recovered_ms
+        meta["slot"] = RECOVERY_SLOT
+        meta["world_version"] = restored.state.world_version
+        return {"sim": restored, "prepared": prepared, "meta": meta}
+
+    def has_recovery_checkpoint(self) -> bool:
+        try:
+            self.repository.read(RECOVERY_SLOT)
+            return True
+        except Exception:
+            return False
