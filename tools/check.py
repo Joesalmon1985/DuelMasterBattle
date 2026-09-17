@@ -481,6 +481,7 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "tests/sim/test_t046_seat_round.py",
                 "tests/scenarios/test_faction_expansion.py",
                 "tests/sim/test_t020_playable.py",
+                "tests/sim/test_presentation_journeys.py",
             ),
             validate_evidence(
                 "g02_packet_files",
@@ -498,6 +499,11 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g02_sidecar_smoke",
                 "res://client/tests/run_g02_smoke.gd",
                 r"G02_SMOKE_OK",
+            ),
+            _godot_script(
+                "g02_cart_followthrough",
+                "res://client/tests/run_g02_cart_followthrough.gd",
+                r"G02_CART_FOLLOWTHROUGH_OK",
             ),
             # Retain meaningful G01 regressions (playable + bridge, not smoke alone).
             _godot_script(
