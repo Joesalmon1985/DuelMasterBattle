@@ -1,0 +1,33 @@
+{
+  "fixture": "FX-INDUSTRY",
+  "status": "PASS",
+  "owner": "T049-T057",
+  "seed": 303,
+  "details": {
+    "game_ms": 100000,
+    "factory_meters": {
+      "factory:fx-skirmisher": "0",
+      "factory:fx-line": "0",
+      "factory:fx-heavy": "0"
+    },
+    "unit_ids": [
+      "unit:1",
+      "unit:2",
+      "unit:3"
+    ],
+    "unit_types": [
+      "unit.ancient.heavy",
+      "unit.ancient.line",
+      "unit.ancient.skirmisher"
+    ],
+    "finite_balance": "590",
+    "worker_ids": [
+      "person:1",
+      "person:2"
+    ],
+    "save_schema_version": 1
+  },
+  "world_id": "world:fx-industry",
+  "catalog_hash": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6",
+  "legacy_writers_disabled": true
+}

@@ -265,11 +265,15 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
     from sim.dmb.industry.layers import ResourceLayerService
     from sim.dmb.industry.primary import PrimaryChannel
     from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
+    from sim.dmb.logistics.stock import StockLedger
+    from sim.dmb.people.jobs import JobService
 
     sim = bootstrap_world(world_id="world:fx-industry", seed=seed)
     state = sim.state
     node_id = "node:industry"
     state.board["nodes"][node_id] = {"id": node_id, "label": "Industry Oracle", "exits": {}}
+    state.player["node_id"] = node_id
+    state.player["position"] = [6, 5]
     state.settlements["settlement:industry"] = {
         "id": "settlement:industry",
         "node_id": node_id,
@@ -342,8 +346,56 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         "factory_ids": [route.factory_id for route in routes],
         "finite_layer_id": finite.layer_id,
         "renewable_layer_id": renewable.layer_id,
+        "repair_store_id": "store:fx-industry",
     }
+    fixture_jobs = JobService(state)
+    fixture_jobs.register_job(
+        "industry:operator:fx",
+        workplace_id=processor.building_id,
+        job_id="job:processor",
+        node_id=node_id,
+    )
+    fixture_jobs.backfill_tick(name_prefix="FX Worker")
+    repair_ledger = StockLedger(state)
+    repair_ledger.credit("store:fx-industry", "brick", 3)
+    repair_ledger.credit("store:fx-industry", "ore", 3)
     return sim
+
+
+def run_fx_industry(sim: WorldSim | None = None) -> FixtureResult:
+    """Run the published 100-second FX-INDUSTRY oracle in production runtime."""
+    from sim.dmb.industry import fraction
+    from sim.dmb.industry.layers import ResourceLayerService
+
+    sim = sim or load_fixture("FX-INDUSTRY", seed=303)
+    sequence = int(sim.state.clock.get("clock_sequence", 0)) + 1
+    result = sim.advance(100_000, sequence)
+    fx = sim.state.board["fx_industry"]
+    meters = {
+        factory_id: str(fraction(sim.state.industry["factories"][factory_id]["meter"]))
+        for factory_id in fx["factory_ids"]
+    }
+    unit_types = sorted(unit["definition_id"] for unit in sim.state.units.values())
+    finite = ResourceLayerService(sim.state.industry).balance(fx["finite_layer_id"])
+    passed = (
+        result.status == "ACCEPTED"
+        and set(meters.values()) == {"0"}
+        and len(unit_types) == 3
+        and finite == 590
+    )
+    return FixtureResult(
+        "FX-INDUSTRY",
+        "PASS" if passed else "FAIL",
+        {
+            "game_ms": sim.state.clock["game_ms"],
+            "factory_meters": meters,
+            "unit_ids": sorted(sim.state.units),
+            "unit_types": unit_types,
+            "finite_balance": str(finite),
+            "worker_ids": sorted(sim.state.people),
+            "save_schema_version": sim.state.industry.get("schema_version"),
+        },
+    )
 
 
 def run_fx_clock(sim: WorldSim | None = None) -> FixtureResult:

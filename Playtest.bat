@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-rem Windows double-click playtest menu for G01/G02 (BuildPackV03).
+rem Windows double-click playtest menu for G01/G02/G03 (BuildPackV03).
 rem Always run from the repository root, even if launched from elsewhere.
 
 cd /d "%~dp0"
@@ -62,26 +62,37 @@ echo DuelMasterBattle — Windows playtest
 echo Repo: %ROOT%
 echo Python: %PY%
 echo.
-echo 1. Play G02 directly — default portrait 450x800
-echo 2. Play G01 directly
-echo 3. Open the main menu
-echo 4. Run automated G01 checks
-echo 5. Run automated G02 checks
-echo 6. Run both gates
+echo 1. Play G03 directly — default portrait 450x800
+echo 2. Play G02 directly
+echo 3. Play G01 directly
+echo 4. Open the main menu
+echo 5. Run G03 automated checks
+echo 6. Run all implemented gates G01-G03
 echo 0. Exit
 echo.
 set "CHOICE="
 set /p "CHOICE=Select: "
 
-if "%CHOICE%"=="1" goto play_g02
-if "%CHOICE%"=="2" goto play_g01
-if "%CHOICE%"=="3" goto play_menu
-if "%CHOICE%"=="4" goto check_g01
-if "%CHOICE%"=="5" goto check_g02
-if "%CHOICE%"=="6" goto check_both
+if "%CHOICE%"=="1" goto play_g03
+if "%CHOICE%"=="2" goto play_g02
+if "%CHOICE%"=="3" goto play_g01
+if "%CHOICE%"=="4" goto play_menu
+if "%CHOICE%"=="5" goto check_g03
+if "%CHOICE%"=="6" goto check_all
 if "%CHOICE%"=="0" goto bye
 echo Invalid choice.
 pause
+goto menu
+
+:play_g03
+echo.
+"%PY%" "%HELPER%" play-g03
+set "ERR=!ERRORLEVEL!"
+if not "!ERR!"=="0" (
+  echo.
+  echo Launch failed with exit code !ERR!.
+  pause
+)
 goto menu
 
 :play_g02
@@ -135,9 +146,18 @@ echo Check finished with exit code !ERR!.
 pause
 goto menu
 
-:check_both
+:check_g03
 echo.
-"%PY%" "%HELPER%" check-both
+"%PY%" "%HELPER%" check-g03
+set "ERR=!ERRORLEVEL!"
+echo.
+echo Check finished with exit code !ERR!.
+pause
+goto menu
+
+:check_all
+echo.
+"%PY%" "%HELPER%" check-all
 set "ERR=!ERRORLEVEL!"
 echo.
 echo Checks finished with exit code !ERR!.
