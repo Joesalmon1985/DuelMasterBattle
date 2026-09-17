@@ -25,15 +25,19 @@ class RoutePlanner:
         return HexBoard.radius2()
 
     def constructed_edges(self, owner_faction: str | None = None) -> set[tuple[str, str]]:
+        from sim.dmb.ai.diplomacy import DiplomacyService
+
+        diplo = DiplomacyService(self.state)
         edges: set[tuple[str, str]] = set()
         for road in self.state.roads.values():
             if road.get("status") == "destroyed":
                 continue
-            # Own, allied, or explicitly trade-permitted — MVP: own or unmarked
-            if owner_faction and road.get("faction_id") not in {owner_faction, None, "shared"}:
-                # Allow travel on own roads; allies later
-                if road.get("faction_id") != owner_faction and not road.get("public"):
-                    continue
+            road_owner = road.get("faction_id")
+            if owner_faction:
+                if road_owner not in {owner_faction, None, "shared"}:
+                    if not diplo.transit_permitted(owner_faction, str(road_owner)):
+                        continue
+                    # Embargo / war already denied in transit_permitted.
             a, b = str(road["a"]), str(road["b"])
             edges.add(tuple(sorted((a, b))))
         return edges
@@ -85,8 +89,24 @@ class RoutePlanner:
         return {"path": None, "reason": "no_road_path"}
 
     def validate_next_edge(self, owner: str, current: str, nxt: str) -> tuple[bool, str]:
+        from sim.dmb.ai.diplomacy import DiplomacyService, REL_EMBARGO, REL_WAR
+
         edges = self.constructed_edges(owner)
         if tuple(sorted((current, nxt))) not in edges:
+            # Distinguish diplomacy block vs missing road.
+            for road in self.state.roads.values():
+                if road.get("status") == "destroyed":
+                    continue
+                ends = {str(road.get("a")), str(road.get("b"))}
+                if ends != {current, nxt}:
+                    continue
+                road_owner = str(road.get("faction_id") or "")
+                diplo = DiplomacyService(self.state)
+                rel = diplo.relation(owner, road_owner) if road_owner else "neutral"
+                if rel in {REL_EMBARGO, REL_WAR}:
+                    return False, "diplomacy_blocked"
+                if road_owner and road_owner != owner and not diplo.transit_permitted(owner, road_owner):
+                    return False, "diplomacy_blocked"
             return False, "no_constructed_road"
         if self.is_node_blocked(current):
             return False, "current_blocked"

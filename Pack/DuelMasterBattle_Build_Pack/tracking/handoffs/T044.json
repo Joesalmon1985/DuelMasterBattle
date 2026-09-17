@@ -1,0 +1,29 @@
+{
+  "task_id": "T044",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/ai/diplomacy.py",
+    "sim/dmb/logistics/routes.py",
+    "sim/dmb/core/state.py",
+    "tests/sim/test_t044_diplomacy.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "DiplomacyService",
+    "route transit permissions"
+  ],
+  "source_rules": [
+    "C12"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T044",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T045",
+  "notes": "Attack\u2192war; embargo blocks routes; alliance transit; duplicate proposal/respond one effect. WorldState.diplomacy added."
+}
