@@ -1,12 +1,8 @@
-commit: 90c0d6511bbff7163a1d88b267cd83a2f2259bba
+commit: 6194c2c4c9389732fcf2570695a4650c1c26d2e3
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g02.sh --direct
 
-# Portrait 450x800 (native Godot 4.4.1)
-# Docs/handoff tip: 5b268a388903d7ba12a60dcbaac3afab985683b0
+# Portrait 450x800
 # DMB_FIXTURE=FX-CARGO DMB_SEED=202
-# Save: g02_playtest  Recovery: _recovery
-# Economy: Start delivery → Block → Wait → Clear → Wait (construction follows)
-
-# Optional landscape:
-# bash tools/play_g02.sh --direct --landscape
+# Controls: Economy Start/Block/Clear; Wait; approach warehouse/cart + Observe/Interact
+# Save: g02_playtest
