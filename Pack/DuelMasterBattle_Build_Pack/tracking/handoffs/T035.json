@@ -1,7 +1,7 @@
 {
   "task_id": "T035",
   "status": "DONE",
-  "commit": null,
+  "commit": "012173a5f0b63161a70c26b952355703f1b8bede",
   "files": [
     "sim/dmb/logistics/director.py",
     "tests/sim/test_t035_director.py",
