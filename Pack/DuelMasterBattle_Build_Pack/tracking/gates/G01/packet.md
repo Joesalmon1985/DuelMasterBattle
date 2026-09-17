@@ -1,5 +1,5 @@
-**Tested implementation commit:** `(pending)`  
-**Handoff HEAD:** `(pending)`
+**Tested implementation commit:** `5d27fcef4d65c23155fc391eaef8f733dece943a`  
+**Handoff HEAD:** `5d27fcef4d65c23155fc391eaef8f733dece943a`
 
 # G01 playtest handoff — linked arrivals, doorway travel, T019 recovery
 
