@@ -1,0 +1,26 @@
+{
+  "task_id": "T057",
+  "status": "DONE",
+  "commit": "ea0f3b93294152b384d67215b509c143962d845c",
+  "files": [
+    "tests/scenarios/test_industry_causality.py",
+    "godot_project/content/fixtures/industry/fx_industry_v1.json",
+    "tools/check.py"
+  ],
+  "public_contracts": ["FX-INDUSTRY causal scenario suite"],
+  "source_rules": [
+    "C06 exact shared finite allocation",
+    "C06 catastrophe/strike/destruction causal suppression",
+    "C06 animation independence and legacy layer continuity"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T057",
+      "exit_code": 0,
+      "result": "PASS; 6 scenarios and fixture evidence valid"
+    }
+  ],
+  "notes": "Scenario failure bundles include exact factory meter/carry values, finite balance, and recent industry events.",
+  "defects": [],
+  "next_task": "T058"
+}
