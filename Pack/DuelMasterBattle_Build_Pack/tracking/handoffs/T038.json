@@ -1,0 +1,36 @@
+{
+  "task_id": "T038",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/time/runner.py",
+    "sim/dmb/testing/fixtures.py",
+    "tests/integration/test_construction_cargo.py",
+    "tools/run_scenario.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "TurnRunner logistics/production/completions",
+    "FX-CARGO fixture"
+  ],
+  "source_rules": [
+    "C03",
+    "C04",
+    "C05"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T038",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tools/run_scenario.py --fixture FX-CARGO --seed 202 --record /tmp/fx_cargo_record.json",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T039",
+  "notes": "FX-CARGO seed 202 delivered settlement; blockage then clear; save preserves in-transit cargo; G01 stages preserved"
+}

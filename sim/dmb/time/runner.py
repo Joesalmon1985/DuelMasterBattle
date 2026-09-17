@@ -1,4 +1,4 @@
-"""Strategic Travel/Wait runner for the G01 slice."""
+"""Strategic Travel/Wait runner for the G01 slice + construction/cargo stages."""
 
 from __future__ import annotations
 
@@ -9,7 +9,17 @@ from sim.dmb.core.state import WorldState
 from sim.dmb.core.types import TypeValidationError
 from sim.dmb.time.turns import TurnScheduler
 
-STAGES = ("0_boundary", "1_arrival", "2_score", "3_follow_on", "9_seat_end")
+# Preserve G01 stage ids (2_score, 3_follow_on) and insert C03 cargo stages.
+STAGES = (
+    "0_boundary",
+    "1_arrival",
+    "2_score",
+    "2_production",
+    "3_logistics",
+    "4_completions",
+    "3_follow_on",
+    "9_seat_end",
+)
 
 
 def _exit_destinations(node: dict[str, Any]) -> list[str]:
@@ -45,6 +55,105 @@ class TurnRunner:
         self.interrupted = True
         self.state.clock["interrupt_reason"] = reason
 
+    def run_stage(self, stage: str) -> dict[str, Any]:
+        """Execute one named stage; used by Travel/Wait and tests."""
+        self.stage_id = stage
+        payload: dict[str, Any] = {"stage": stage}
+        if stage == "2_production":
+            payload.update(self._stage_production())
+        elif stage == "3_logistics":
+            payload.update(self._stage_logistics())
+        elif stage == "4_completions":
+            payload.update(self._stage_completions())
+        return payload
+
+    def _stage_production(self) -> dict[str, Any]:
+        if not self.state.settlements:
+            return {"grants": []}
+        from sim.dmb.construction.production import CatanProductionService
+        from sim.dmb.core.rng import RngBank
+
+        rng = RngBank.from_dict(self.state.rng) if self.state.rng else RngBank()
+        prod = CatanProductionService(self.state, rng=rng)
+        outcome = prod.draw_and_grant()
+        return outcome
+
+    def _stage_logistics(self) -> dict[str, Any]:
+        if not self.state.carts:
+            return {"moved": []}
+        from sim.dmb.logistics.carts import CartService
+        from sim.dmb.logistics.routes import RoutePlanner
+        from sim.dmb.logistics.stock import StockLedger
+
+        ledger = StockLedger(self.state)
+        carts = CartService(self.state, ledger=ledger)
+        # Carts assigned during this turn's decisions must not move retroactively.
+        # begin_turn clears assigned_this_turn — only clear moved markers here if new turn.
+        if self.state.clock.get("_logistics_turn") != self.state.clock.get("turn"):
+            carts.begin_turn()
+            # Re-mark carts assigned on this turn (assigned_turn == current)
+            turn = int(self.state.clock.get("turn", 0))
+            for cid, cart in self.state.carts.items():
+                if cart.get("assigned_turn") == turn:
+                    carts.assigned_this_turn.add(cid)
+            self.state.clock["_logistics_turn"] = turn
+        routes = RoutePlanner(self.state)
+
+        def validate_edge(a: str, b: str, cart: dict[str, Any]):
+            return routes.validate_next_edge(str(cart.get("owner_faction")), a, b)
+
+        moved = carts.advance_all(validate_edge=validate_edge)
+        return {"moved": [m.get("id") for m in moved], "carts": moved}
+
+    def _stage_completions(self) -> dict[str, Any]:
+        from sim.dmb.construction.orders import ConstructionService
+        from sim.dmb.construction.scoring import ScoreService, VP_THRESHOLD
+
+        svc = ConstructionService(self.state)
+        committed = []
+        # Cyclic seat order from active seat, then stable order IDs
+        active = self.scheduler.active_seat()
+        orders = sorted(
+            self.state.orders.values(),
+            key=lambda o: (
+                0 if o.get("faction_id") == active else 1,
+                str(o.get("faction_id") or ""),
+                str(o.get("id") or ""),
+            ),
+        )
+        for order in orders:
+            if order.get("status") != "ready":
+                continue
+            result = svc.commit_delivered(str(order["id"]))
+            committed.append(result)
+            if result.get("interrupt"):
+                self.interrupt(str(result["interrupt"].get("kind") or "vp_threshold"))
+                break
+            winners = ScoreService(self.state).check_threshold(VP_THRESHOLD)
+            if winners:
+                self.interrupt("vp_threshold")
+                break
+        return {"committed": committed}
+
+    def _run_stages(self, *, arrival_handler=None) -> None:
+        self.stages_executed = []
+        for stage in STAGES:
+            self.stage_id = stage
+            if stage == "1_arrival" and arrival_handler is not None:
+                arrival_handler()
+            if stage == "2_score":
+                self.state.clock["last_score"] = {
+                    "node_id": self.state.player.get("node_id"),
+                    "turn": self.state.clock["turn"],
+                }
+            if stage in {"2_production", "3_logistics", "4_completions"}:
+                self.run_stage(stage)
+            self.stages_executed.append(stage)
+            if stage == "2_score" and self.state.clock.pop("interrupt_after_score", False):
+                self.interrupt("after_score")
+            if self.interrupted:
+                break
+
     def execute_travel(self, from_node: str, to_node: str) -> dict[str, Any]:
         self.interrupted = False
         self.stages_executed = []
@@ -69,34 +178,27 @@ class TurnRunner:
         area_id = str(arrival.get("area_id") or nodes[to_node].get("area_id") or "")
 
         self.scheduler.begin_turn("Travel")
-        for stage in STAGES:
-            self.stage_id = stage
-            if stage == "1_arrival":
-                # Commit node, area, position and facing together.
-                self.state.player["node_id"] = to_node
-                if area_id:
-                    self.state.player["area_id"] = area_id
-                self.state.player["position"] = [float(pos[0]), float(pos[1])]
-                self.state.player["facing"] = facing
-                self.state.player["pose_generation"] = int(self.state.player.get("pose_generation", 0)) + 1
-                self.state.clock["last_travel"] = {
-                    "from_node": from_node,
-                    "to_node": to_node,
-                    "exit_id": link.get("exit_id"),
-                    "arrival": {
-                        "node_id": to_node,
-                        "area_id": self.state.player.get("area_id"),
-                        "position": list(self.state.player["position"]),
-                        "facing": facing,
-                    },
-                }
-            if stage == "2_score":
-                self.state.clock["last_score"] = {"node_id": to_node, "turn": self.state.clock["turn"]}
-            self.stages_executed.append(stage)
-            if stage == "2_score" and self.state.clock.pop("interrupt_after_score", False):
-                self.interrupt("after_score")
-            if self.interrupted:
-                break
+
+        def on_arrival() -> None:
+            self.state.player["node_id"] = to_node
+            if area_id:
+                self.state.player["area_id"] = area_id
+            self.state.player["position"] = [float(pos[0]), float(pos[1])]
+            self.state.player["facing"] = facing
+            self.state.player["pose_generation"] = int(self.state.player.get("pose_generation", 0)) + 1
+            self.state.clock["last_travel"] = {
+                "from_node": from_node,
+                "to_node": to_node,
+                "exit_id": link.get("exit_id"),
+                "arrival": {
+                    "node_id": to_node,
+                    "area_id": self.state.player.get("area_id"),
+                    "position": list(self.state.player["position"]),
+                    "facing": facing,
+                },
+            }
+
+        self._run_stages(arrival_handler=on_arrival)
         if self.interrupted:
             seat = {"round_complete": False, "interrupted": True, "draft": None}
             self.state.clock["draft"] = None
@@ -122,13 +224,21 @@ class TurnRunner:
             raise TypeValidationError("wait node mismatch")
         seen.add(press_id)
         self.state.clock["wait_press_ids"] = sorted(seen)
+        self.interrupted = False
         self.scheduler.begin_turn("Wait")
-        seat = self.scheduler.finish_seat()
+        self._run_stages(arrival_handler=None)
+        if self.interrupted:
+            seat = {"round_complete": False, "interrupted": True, "draft": None}
+            self.state.clock["draft"] = None
+        else:
+            seat = self.scheduler.finish_seat()
         return {
             "turn": int(self.state.clock["turn"]),
             "node_id": current_node,
             "press_id": press_id,
             "seat": seat,
+            "interrupted": self.interrupted,
+            "stages": list(self.stages_executed or []),
         }
 
     def run_seats_round(self) -> dict[str, Any]:
