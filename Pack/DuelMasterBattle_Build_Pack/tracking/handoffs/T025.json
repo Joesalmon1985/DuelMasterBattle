@@ -1,7 +1,7 @@
 {
   "task_id": "T025",
   "status": "DONE",
-  "commit": "pending",
+  "commit": "538be01501c21469fc73fbd8b0adb7ec4ead3d63",
   "files": [
     "sim/dmb/world/board.py",
     "tests/sim/test_t025_board.py",
