@@ -59,6 +59,9 @@ class WorldState:
     people: dict[str, Any] = field(default_factory=dict)
     carts: dict[str, Any] = field(default_factory=dict)
     units: dict[str, Any] = field(default_factory=dict)
+    stocks: dict[str, Any] = field(default_factory=dict)
+    orders: dict[str, Any] = field(default_factory=dict)
+    roads: dict[str, Any] = field(default_factory=dict)
     quests: dict[str, Any] = field(default_factory=dict)
     items: dict[str, Any] = field(default_factory=dict)
     leases: dict[str, Any] = field(default_factory=dict)
@@ -134,6 +137,9 @@ class WorldState:
             "people": deepcopy(self.people),
             "carts": deepcopy(self.carts),
             "units": deepcopy(self.units),
+            "stocks": deepcopy(self.stocks),
+            "orders": deepcopy(self.orders),
+            "roads": deepcopy(self.roads),
             "quests": deepcopy(self.quests),
             "items": deepcopy(self.items),
             "leases": deepcopy(self.leases),
@@ -164,6 +170,9 @@ class WorldState:
             people=dict(payload.get("people", {})),
             carts=dict(payload.get("carts", {})),
             units=dict(payload.get("units", {})),
+            stocks=dict(payload.get("stocks", {})),
+            orders=dict(payload.get("orders", {})),
+            roads=dict(payload.get("roads", {})),
             quests=dict(payload.get("quests", {})),
             items=dict(payload.get("items", {})),
             leases=dict(payload.get("leases", {})),
