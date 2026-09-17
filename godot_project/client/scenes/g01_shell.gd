@@ -33,6 +33,11 @@ var _pause_token := ""
 var _project_root := ""
 var _world_host: Node2D
 var _pose_sync_acc := 0.0
+var _clock_inflight_id := ""
+var _clock_inflight_seq := -1
+var _player_refresh_id := ""
+var _counters_rebuild := false
+var _recovering := false
 
 
 func _ready() -> void:
@@ -47,6 +52,7 @@ func _ready() -> void:
 	_client = WorldClient.new()
 	add_child(_client)
 	_client.bridge_failed.connect(_on_bridge_failed)
+	_client.request_finished.connect(_on_client_finished)
 	_project_root = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	if _project_root.ends_with("godot_project"):
 		_project_root = _project_root.get_base_dir()
@@ -225,7 +231,7 @@ func _set_interaction_blocked(blocked: bool) -> void:
 func _sync_pose() -> void:
 	if _client == null or _area == null or _area.travel_pending:
 		return
-	_client.send_command(
+	_client.enqueue_command(
 		"pose-%s" % Time.get_ticks_msec(),
 		"SyncPose",
 		{
@@ -233,7 +239,8 @@ func _sync_pose() -> void:
 			"facing": _area._facing,
 			"node_id": _area.current_node,
 			"pose_generation": _area.pose_generation,
-		}
+		},
+		{"replaceable": true, "coalesce_key": "SyncPose"}
 	)
 
 
@@ -241,20 +248,50 @@ func _process(delta: float) -> void:
 	if _paused or not _focus or _bridge_down or _client == null:
 		return
 	_clock.tick_render(delta)
+	_pump_clock()
 	_pose_sync_acc += delta
 	if _pose_sync_acc >= 0.5 and _area != null and not _area.travel_pending:
 		_pose_sync_acc = 0.0
 		_sync_pose()
 
 
-func _on_clock_advance(delta_ms: int, sequence: int) -> void:
-	if _paused or not _focus or _bridge_down:
+func _pump_clock() -> void:
+	if _clock_inflight_id != "":
 		return
-	var reply: Dictionary = _client.send_command(
-		"advance-%d" % sequence, "AdvanceGame", {"delta_ms": delta_ms, "clock_sequence": sequence}
+	var step: Dictionary = _clock.peek_pending()
+	if step.is_empty():
+		return
+	var sequence := int(step.get("clock_sequence", 0))
+	var delta_ms := int(step.get("delta_ms", 100))
+	_clock_inflight_seq = sequence
+	_clock_inflight_id = _client.enqueue_command(
+		"advance-%d" % sequence,
+		"AdvanceGame",
+		{"delta_ms": delta_ms, "clock_sequence": sequence},
+		{"replaceable": false, "coalesce_key": ""}
 	)
-	if str(reply.get("status", "")) == "ACCEPTED":
-		_refresh_counters(false)
+
+
+func _on_clock_advance(_delta_ms: int, _sequence: int) -> void:
+	pass
+
+
+func _on_client_finished(request_id: String, reply: Dictionary) -> void:
+	if request_id == _clock_inflight_id:
+		var seq := _clock_inflight_seq
+		_clock_inflight_id = ""
+		_clock_inflight_seq = -1
+		_clock.ack_pending(seq)
+		if str(reply.get("status", "")) == "ACCEPTED":
+			_apply_cached_counters(false)
+			_request_player_view(false)
+		_pump_clock()
+		return
+	if request_id == _player_refresh_id:
+		_player_refresh_id = ""
+		if str(reply.get("status", "")) == "ACCEPTED":
+			_apply_view_to_counters(reply.get("view", {}), _counters_rebuild)
+			_counters_rebuild = false
 
 
 func _cmd(kind: String, payload: Dictionary) -> Dictionary:
@@ -266,14 +303,37 @@ func _cmd(kind: String, payload: Dictionary) -> Dictionary:
 		return {}
 	var reply: Dictionary = _client.send_command("%s-%s" % [kind, Time.get_ticks_msec()], kind, payload)
 	_log("%s → %s" % [kind, reply.get("status", "?")])
-	_refresh_counters(false)
+	_request_player_view(false)
 	return reply
+
+
+func _request_player_view(rebuild_world: bool) -> void:
+	if _client == null:
+		return
+	_counters_rebuild = rebuild_world or _counters_rebuild
+	_player_refresh_id = _client.enqueue_view(
+		"player",
+		[],
+		{"replaceable": true, "coalesce_key": "view:player"}
+	)
 
 
 func _refresh_counters(rebuild_world: bool) -> void:
 	if _client == null:
 		return
-	var view: Dictionary = _client.request_view("player")
+	if _client.has_player_cache():
+		_apply_view_to_counters(_client.cached_player_view(), rebuild_world)
+	_request_player_view(rebuild_world)
+
+
+func _apply_cached_counters(rebuild_world: bool) -> void:
+	if _client != null and _client.has_player_cache():
+		_apply_view_to_counters(_client.cached_player_view(), rebuild_world)
+
+
+func _apply_view_to_counters(view: Dictionary, rebuild_world: bool) -> void:
+	if view.is_empty():
+		return
 	var clock: Dictionary = view.get("clock", {})
 	var player: Dictionary = view.get("player", {})
 	_counters.text = "World Turn: %s   |   Game Time: %s ms (%.1fs)   |   Node: %s   |   paused=%s" % [
@@ -292,7 +352,11 @@ func _refresh_counters(rebuild_world: bool) -> void:
 
 
 func _on_exit(to_node: String) -> void:
-	var from_node := str(_client.request_view("player").get("player", {}).get("node_id", "node:1"))
+	var from_node := "node:1"
+	if _client.has_player_cache():
+		from_node = str(_client.cached_player_view().get("player", {}).get("node_id", from_node))
+	else:
+		from_node = str(_client.request_view("player").get("player", {}).get("node_id", "node:1"))
 	_prompt.text = "Travel pending %s → %s (waiting for acknowledgement)" % [from_node, to_node]
 	_sync_pose()
 	var reply := _cmd("Travel", {"from_node": from_node, "to_node": to_node})
@@ -416,28 +480,46 @@ func _on_bridge_fail() -> void:
 
 
 func _attempt_bridge_recovery() -> Dictionary:
+	if _recovering:
+		return {"ok": false, "error": "recovery_reentry"}
+	_recovering = true
 	if _launcher == null:
+		_recovering = false
 		return {"ok": false, "error": "no_launcher"}
 	var started: Dictionary = _launcher.start(_project_root)
 	if not started.get("ok", false):
+		_recovering = false
 		return {"ok": false, "error": "sidecar_restart"}
-	_client.queue_free()
+	if _client != null:
+		if _client.bridge_failed.is_connected(_on_bridge_failed):
+			_client.bridge_failed.disconnect(_on_bridge_failed)
+		_client.queue_free()
 	_client = WorldClient.new()
 	add_child(_client)
-	_client.bridge_failed.connect(_on_bridge_failed)
+	_client.request_finished.connect(_on_client_finished)
+	_clock_inflight_id = ""
+	_player_refresh_id = ""
 	if not _client.connect_sidecar(str(started["host"]), int(started["port"]), str(started["token"])):
+		_client.bridge_failed.connect(_on_bridge_failed)
+		_recovering = false
 		return {"ok": false, "error": "handshake"}
 	var reply: Dictionary = _client.send_command("recover-1", "RecoverCheckpoint", {})
 	if str(reply.get("status", "")) != "ACCEPTED":
-		# Fallback: load the recovery slot via Load if RecoverCheckpoint unavailable.
 		reply = _client.send_command("recover-load", "Load", {"slot": "_recovery"})
 		if str(reply.get("status", "")) != "ACCEPTED":
+			_client.bridge_failed.connect(_on_bridge_failed)
+			_recovering = false
 			return {"ok": false, "error": str(reply.get("code", "recover_failed"))}
+	_client.bridge_failed.connect(_on_bridge_failed)
+	_recovering = false
 	var payload: Dictionary = reply.get("payload", {})
 	return {"ok": true, "rollback_ms": int(payload.get("rollback_ms", 0)), "payload": payload}
 
 
 func _on_bridge_failed(reason: String) -> void:
+	if _recovering:
+		_log("bridge_failed during recovery ignored: %s" % reason)
+		return
 	_bridge_down = true
 	_paused = true
 	_apply_movement_gate()

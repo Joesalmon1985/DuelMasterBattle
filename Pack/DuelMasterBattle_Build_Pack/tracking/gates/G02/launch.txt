@@ -1,4 +1,4 @@
-commit: 6194c2c4c9389732fcf2570695a4650c1c26d2e3
+commit: PENDING_STAMP
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g02.sh --direct
 
@@ -6,3 +6,4 @@ bash tools/play_g02.sh --direct
 # DMB_FIXTURE=FX-CARGO DMB_SEED=202
 # Controls: Economy Start/Block/Clear; Wait; approach warehouse/cart + Observe/Interact
 # Save: g02_playtest
+# Perf repair: nonblocking bridge, lean economy @2Hz expanded-only, cart render interpolate

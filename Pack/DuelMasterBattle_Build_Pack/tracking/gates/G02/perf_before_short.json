@@ -1,0 +1,15 @@
+{
+  "label": "before_short",
+  "machine": "Windows",
+  "model": "A520M K V2",
+  "resolution": [450, 800],
+  "build": "f947f57 blocking WorldClient._roundtrip",
+  "duration_sec": 15.0,
+  "notes": "Rendered harness could not complete a meaningful 15s play sample within 90s wall time. Main-thread OS.delay_msec polling plus AdvanceGame+RequestView(player)+RequestView(economy) each clock tick prevented usable frame timing. This matches the FIX_REQUIRED playtest symptom.",
+  "frame_ms_median": null,
+  "frame_ms_p95": null,
+  "frame_ms_p99": null,
+  "stalls_over_100ms": "unmeasured_unplayable",
+  "bridge_requests_per_sec": "blocked_main_thread",
+  "status": "BASELINE_UNPLAYABLE"
+}

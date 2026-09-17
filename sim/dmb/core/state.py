@@ -80,7 +80,7 @@ class WorldState:
         if self.ids.world_id == "unset":
             self.ids = IdAllocator(self.world_id)
 
-    def read_view(self, scope: str = "player") -> Mapping[str, Any]:
+    def read_view(self, scope: str = "player", fields: list[str] | None = None) -> Mapping[str, Any]:
         from sim.dmb.narrative.knowledge import filter_entity
 
         people = {}
@@ -101,7 +101,7 @@ class WorldState:
             people[entity_id] = filtered
         from sim.dmb.presentation.journeys import journeys_for_view
 
-        payload = {
+        payload: dict[str, Any] = {
             "world_id": self.world_id,
             "world_version": self.world_version,
             "clock": deepcopy(self.clock),
@@ -111,17 +111,44 @@ class WorldState:
             "presentation": journeys_for_view(self),
             "scope": scope,
         }
-        if scope in {"debug", "economy"}:
-            payload["leases"] = deepcopy(self.leases)
-            payload["command_receipts"] = deepcopy(self.command_receipts)
-            payload["knowledge_raw"] = deepcopy(self.knowledge)
-            payload["stocks"] = deepcopy(self.stocks)
-            payload["carts"] = deepcopy(self.carts)
-            payload["settlements"] = deepcopy(self.settlements)
-            payload["orders"] = deepcopy(self.orders)
-            payload["factions"] = deepcopy(self.factions)
-            payload["fx_cargo"] = deepcopy(self.board.get("fx_cargo") or {})
-            payload["tech_draft"] = deepcopy(getattr(self, "tech_draft", {}) or {})
+        economy_extras = {
+            "stocks": lambda: deepcopy(self.stocks),
+            "carts": lambda: deepcopy(self.carts),
+            "settlements": lambda: deepcopy(self.settlements),
+            "orders": lambda: deepcopy(self.orders),
+            "factions": lambda: deepcopy(self.factions),
+            "fx_cargo": lambda: deepcopy(self.board.get("fx_cargo") or {}),
+            "tech_draft": lambda: deepcopy(getattr(self, "tech_draft", {}) or {}),
+            "leases": lambda: deepcopy(self.leases),
+            "command_receipts": lambda: deepcopy(self.command_receipts),
+            "knowledge_raw": lambda: deepcopy(self.knowledge),
+        }
+        if scope == "economy":
+            # Lean inspector default: exclude receipts / raw knowledge / leases.
+            wanted = set(fields) if fields else {
+                "stocks",
+                "carts",
+                "settlements",
+                "orders",
+                "factions",
+                "fx_cargo",
+                "tech_draft",
+            }
+            for key in wanted:
+                factory = economy_extras.get(key)
+                if factory is not None:
+                    payload[key] = factory()
+        elif scope == "debug":
+            wanted = set(fields) if fields else set(economy_extras.keys())
+            for key in wanted:
+                factory = economy_extras.get(key)
+                if factory is not None:
+                    payload[key] = factory()
+        elif fields:
+            for key in fields:
+                factory = economy_extras.get(key)
+                if factory is not None:
+                    payload[key] = factory()
         return _freeze(payload)
 
     def validate(self) -> list[str]:

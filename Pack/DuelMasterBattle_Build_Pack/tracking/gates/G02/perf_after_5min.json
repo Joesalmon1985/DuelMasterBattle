@@ -1,0 +1,22 @@
+{
+	"bridge_bytes_in": 27405326,
+	"bridge_bytes_out": 1031320,
+	"bridge_latency_avg_ms": 6.53907380607815,
+	"bridge_queue_high_water": 3,
+	"bridge_requests_per_sec": 23.0333333333333,
+	"build": "g02_shell",
+	"duration_sec": 300.0,
+	"economy_expanded_samples": true,
+	"frame_ms_median": 0.568,
+	"frame_ms_p95": 0.897,
+	"frame_ms_p99": 16.586,
+	"frames": 367486,
+	"label": "after_5min",
+	"machine": "Windows",
+	"model": "A520M K V2",
+	"resolution": [
+		450,
+		800
+	],
+	"stalls_over_100ms": 14
+}

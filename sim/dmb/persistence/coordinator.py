@@ -75,6 +75,19 @@ class SaveCoordinator:
 
     def write_recovery_checkpoint(self, reason: str = "periodic") -> dict[str, Any]:
         """Persist a coordinated recovery checkpoint (C02 bounded restart)."""
+        prepared = self.prepare_recovery_checkpoint(reason=reason)
+        write = prepared.get("write")
+        if callable(write):
+            write()
+        return {**prepared.get("saved", {}), "recovery": prepared.get("recovery")}
+
+    def prepare_recovery_checkpoint(self, reason: str = "periodic") -> dict[str, Any]:
+        """Snapshot under the save barrier, then return a deferred atomic writer.
+
+        The caller should send the command reply before invoking ``write`` so disk
+        I/O does not block the bridge round-trip. Snapshot remains consistent and
+        atomic replacement is unchanged.
+        """
         game_ms = int(self.sim.state.clock.get("game_ms", 0))
         meta = {
             "reason": reason,
@@ -84,18 +97,43 @@ class SaveCoordinator:
             "position": list(self.sim.state.player.get("position") or []),
         }
         self.sim.state.clock["recovery_meta"] = dict(meta)
-        saved = self.request_save(RECOVERY_SLOT)
+        token = self.sim.clock.acquire_pause("save", "coordinator")
+        try:
+            snapshot = self.sim.snapshot()
+            _strip_ephemeral_save_tokens(snapshot, active_token=token)
+        finally:
+            self.sim.clock.release_pause(token)
         self.last_recovery_game_ms = game_ms
         self.recovery_reasons.append(reason)
-        return {**saved, "recovery": meta}
+
+        def _write() -> dict[str, Any]:
+            path = self.repository.write(RECOVERY_SLOT, snapshot)
+            return {
+                "slot": RECOVERY_SLOT,
+                "path": str(path),
+                "world_version": snapshot.get("world", {}).get("world_version"),
+            }
+
+        return {"recovery": meta, "write": _write, "saved": {"slot": RECOVERY_SLOT}}
 
     def maybe_write_recovery_checkpoint(self, *, force: bool = False, reason: str = "periodic") -> dict[str, Any] | None:
+        prepared = self.maybe_prepare_recovery_checkpoint(force=force, reason=reason)
+        if not prepared:
+            return None
+        write = prepared.get("write")
+        if callable(write):
+            write()
+        return {**prepared.get("saved", {}), "recovery": prepared.get("recovery")}
+
+    def maybe_prepare_recovery_checkpoint(
+        self, *, force: bool = False, reason: str = "periodic"
+    ) -> dict[str, Any] | None:
         if self.sim.state.clock.get("pause_tokens"):
             return None
         game_ms = int(self.sim.state.clock.get("game_ms", 0))
         if not force and game_ms - self.last_recovery_game_ms < RECOVERY_INTERVAL_MS:
             return None
-        return self.write_recovery_checkpoint(reason)
+        return self.prepare_recovery_checkpoint(reason)
 
     def restore_recovery_checkpoint(self) -> dict[str, Any]:
         """Restore last recovery checkpoint. Reports rollback relative to live clock."""

@@ -482,6 +482,7 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "tests/scenarios/test_faction_expansion.py",
                 "tests/sim/test_t020_playable.py",
                 "tests/sim/test_presentation_journeys.py",
+                "tests/sim/test_g02_perf_bridge.py",
             ),
             validate_evidence(
                 "g02_packet_files",

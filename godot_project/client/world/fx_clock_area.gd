@@ -17,6 +17,7 @@ const GRID_H := 10
 const INTERACT_RANGE_PX := 72.0
 const OBSERVE_RANGE_PX := 280.0
 const LocalMover = preload("res://client/world/local_movement_presenter.gd")
+const ActorVisual = preload("res://client/world/actor_visual.gd")
 
 # Fixture interior blockers (full-tile trees). Keep row y=5 and the NPC approach clear.
 # Spawn [4,5] → NPC [10,3] → east exit (13,4–5) and the return path stay open.
@@ -72,7 +73,12 @@ func setup(world_client, touch_pad) -> void:
 	_mover = LocalMover.new()
 	_mover.bind(self, client)
 	_build_roots()
-	rebuild_from_view(client.request_view("player"))
+	var boot_view: Dictionary = {}
+	if client.has_method("request_view_blocking"):
+		boot_view = client.request_view_blocking("player")
+	elif client.has_method("cached_player_view") and client.has_player_cache():
+		boot_view = client.cached_player_view()
+	rebuild_from_view(boot_view)
 	_refresh_action_hint()
 
 
@@ -85,6 +91,12 @@ func tick_presentation(delta_sec: float) -> void:
 	## Advance local journeys using Game Time quanta (not wall-clock alone).
 	if _mover:
 		_mover.tick(delta_sec)
+
+
+func tick_presentation_visual(delta_sec: float) -> void:
+	## Render-only cart interpolation; never advances phases or ACKs.
+	if _mover:
+		_mover.tick_visual(delta_sec)
 
 
 func set_movement_enabled(on: bool) -> void:
@@ -309,7 +321,7 @@ func _spawn_person_sprite(entity_id: String, info: Dictionary, grid: Vector2i) -
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	spr.scale = Vector2(4, 4)
 	spr.position = Vector2(grid.x * TILE + TILE * 0.5, grid.y * TILE + TILE * 0.5)
-	DmbActorVisual.apply(spr, PIXEL, "villager_a", "down", 0, "person")
+	ActorVisual.apply(spr, PIXEL, "villager_a", "down", 0, "person")
 	spr.set_meta("entity_id", entity_id)
 	_actors.add_child(spr)
 	_npc_nodes[entity_id] = spr
@@ -619,6 +631,9 @@ func _gui_blocks_world_pointer() -> bool:
 func _process(delta: float) -> void:
 	if client == null:
 		return
+	# Cart visuals every frame; sim/ACK ticks stay on the 100 ms Game-Time path.
+	if _mover and movement_enabled:
+		_mover.tick_visual(delta)
 	if travel_pending:
 		# Hold at safe boundary; no further stepping while acknowledgement is open.
 		_wizard.position = Vector2(_hold_grid.x * TILE + TILE * 0.5, _hold_grid.y * TILE + TILE * 0.5)

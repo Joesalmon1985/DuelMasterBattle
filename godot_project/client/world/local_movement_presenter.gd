@@ -20,11 +20,16 @@ var _paused := false
 var _tracks: Dictionary = {}  # actor_id -> track dict
 var _sync_acc_ms := 0.0
 var _pending_sync: Dictionary = {}
+var _pres_wait: Dictionary = {}  # request_id -> actor_id
+var _since_sim_ms := 0.0
 
 
 func bind(area, world_client) -> void:
 	_area = area
 	_client = world_client
+	if _client != null and _client.has_signal("request_finished"):
+		if not _client.request_finished.is_connected(_on_request_finished):
+			_client.request_finished.connect(_on_request_finished)
 
 
 func set_paused(on: bool) -> void:
@@ -213,14 +218,34 @@ func _adopt_leg(track: Dictionary, journey: Dictionary) -> void:
 
 
 func tick(delta_sec: float) -> void:
+	## Game-Time simulation tick (100 ms accounting). Advances phases / ACKs.
+	## Do not also call this from the render callback with the same delta.
 	if _paused or _area == null or delta_sec <= 0.0:
 		return
+	_since_sim_ms = 0.0
 	_sync_acc_ms += delta_sec * 1000.0
 	for actor_id in _tracks.keys():
 		_tick_actor(str(actor_id), delta_sec)
 	if _sync_acc_ms >= 200.0:
 		_sync_acc_ms = 0.0
 		_flush_syncs()
+
+
+func tick_visual(delta_sec: float) -> void:
+	## Every-frame display interpolation against the last accepted Game-Time pose.
+	## Never completes phases or emits SyncPresentation.
+	if _paused or _area == null:
+		return
+	_since_sim_ms += maxf(delta_sec, 0.0) * 1000.0
+	var predict_sec := minf(_since_sim_ms, 100.0) / 1000.0
+	for actor_id in _tracks.keys():
+		var track: Dictionary = _tracks[actor_id]
+		var phase := str(track.get("phase", "idle"))
+		if phase in ["idle", "waiting_exit", "unloading", "hidden"]:
+			_apply_sprite(str(actor_id), track)
+			continue
+		var display := _predict_pos(track, predict_sec)
+		_apply_sprite_at(str(actor_id), track, display)
 
 
 func _tick_actor(actor_id: String, delta_sec: float) -> void:
@@ -571,33 +596,135 @@ func _queue_sync(actor_id: String, track: Dictionary, consume_pending: bool) -> 
 		payload["consumed_sequence"] = track.get("consumed_sequence")
 	if track.get("committed_edge") != null:
 		payload["committed_edge"] = track.get("committed_edge")
-	_pending_sync[actor_id] = payload
+	# Transition ACKs must not be coalesced away by later progress updates.
+	if consume_pending:
+		_pending_sync[actor_id] = payload
+		_pending_sync[actor_id]["__ack"] = true
+	else:
+		var existing: Dictionary = _pending_sync.get(actor_id, {})
+		if bool(existing.get("__ack", false)) or bool(existing.get("consume_pending", false)):
+			# Keep the ACK; fold latest progress into it.
+			existing["local_pos"] = payload["local_pos"]
+			existing["progress_ms"] = payload["progress_ms"]
+			existing["phase"] = payload["phase"]
+			existing["presenting_node"] = payload["presenting_node"]
+			_pending_sync[actor_id] = existing
+		else:
+			_pending_sync[actor_id] = payload
+
+
+func _predict_pos(track: Dictionary, delta_sec: float) -> Vector2:
+	if delta_sec <= 0.0:
+		return track.get("local_pos", Vector2.ZERO)
+	var path: Array = track.get("path", [])
+	if path.is_empty():
+		return track.get("local_pos", track.get("local_to", Vector2.ZERO))
+	var path_i := int(track.get("path_i", 0))
+	var segment_t := float(track.get("segment_t", 0.0))
+	var pos: Vector2 = track.get("local_pos", path[mini(path_i, path.size() - 1)])
+	var speed := DEFAULT_SPEED_PX / TILE
+	var remaining := delta_sec * speed
+	while remaining > 0.0 and path_i < path.size() - 1:
+		var a: Vector2 = path[path_i]
+		var b: Vector2 = path[path_i + 1]
+		var seg_len := a.distance_to(b)
+		if seg_len < 0.001:
+			path_i += 1
+			segment_t = 0.0
+			pos = b
+			continue
+		var dist_left := (1.0 - segment_t) * seg_len
+		if remaining >= dist_left:
+			remaining -= dist_left
+			path_i += 1
+			segment_t = 0.0
+			pos = b
+		else:
+			segment_t += remaining / seg_len
+			pos = a.lerp(b, segment_t)
+			remaining = 0.0
+	return pos
+
+
+func _apply_sprite_at(actor_id: String, track: Dictionary, pos: Vector2) -> void:
+	if _area == null:
+		return
+	var node_id := str(_area.current_node)
+	var phase := str(track.get("phase"))
+	var presenting := str(track.get("presenting_node", ""))
+	if phase == "hidden" or presenting == "":
+		if _area._npc_nodes.has(actor_id):
+			_area._npc_nodes[actor_id].visible = false
+			if _area._label_nodes.has(actor_id):
+				_area._label_nodes[actor_id].visible = false
+		return
+	if node_id != presenting:
+		if _area._npc_nodes.has(actor_id):
+			_area._npc_nodes[actor_id].visible = false
+			if _area._label_nodes.has(actor_id):
+				_area._label_nodes[actor_id].visible = false
+		return
+	if phase == "departing":
+		if pos.x > 12.85 or pos.x < 0.15:
+			if _area._npc_nodes.has(actor_id):
+				_area._npc_nodes[actor_id].visible = false
+				if _area._label_nodes.has(actor_id):
+					_area._label_nodes[actor_id].visible = false
+			return
+	if not _area._npc_nodes.has(actor_id):
+		return
+	var spr: Node2D = _area._npc_nodes[actor_id]
+	spr.visible = true
+	spr.position = Vector2(pos.x * TILE + TILE * 0.5, pos.y * TILE + TILE * 0.5)
+	if _area._label_nodes.has(actor_id):
+		var lbl: Label = _area._label_nodes[actor_id]
+		lbl.visible = true
+		lbl.position = spr.position + Vector2(-30, -48)
+	journey_progress.emit(actor_id, int(track.get("progress_ms", 0)), pos)
 
 
 func _flush_syncs() -> void:
 	if _client == null:
 		_pending_sync.clear()
 		return
-	for actor_id in _pending_sync.keys():
-		var payload: Dictionary = _pending_sync[actor_id]
+	if not _client.has_method("enqueue_command"):
+		return
+	var keys: Array = _pending_sync.keys()
+	for actor_id in keys:
+		var payload: Dictionary = _pending_sync[actor_id].duplicate(true)
+		payload.erase("__ack")
+		_pending_sync.erase(actor_id)
 		needs_sync.emit(str(actor_id), payload)
-		var reply: Dictionary = _client.send_command(
+		var replaceable := not bool(payload.get("consume_pending", false))
+		var rid := str(_client.enqueue_command(
 			"pres-%s-%s" % [actor_id, Time.get_ticks_msec()],
 			"SyncPresentation",
-			payload
-		)
-		# Only treat pending as consumed after Python accepts the sequence ACK.
+			payload,
+			{
+				"replaceable": replaceable,
+				"coalesce_key": ("pres-progress:%s" % actor_id) if replaceable else "",
+			}
+		))
 		if payload.get("consume_pending", false):
-			var body: Dictionary = reply.get("payload", {})
-			if str(body.get("status", "")) == "ok":
-				var journey: Dictionary = body.get("journey", {})
-				var track: Dictionary = _tracks.get(actor_id, {})
-				if not track.is_empty():
-					track["last_consumed_sequence"] = int(journey.get("last_consumed_sequence", track.get("last_consumed_sequence", 0)))
-					track["awaiting_ack"] = false
-					track["applied_auth_last"] = int(track["last_consumed_sequence"])
-					_tracks[actor_id] = track
-	_pending_sync.clear()
+			_pres_wait[rid] = str(actor_id)
+
+
+func _on_request_finished(finished_id: String, reply: Dictionary) -> void:
+	if not _pres_wait.has(finished_id):
+		return
+	var actor_id := str(_pres_wait[finished_id])
+	_pres_wait.erase(finished_id)
+	var body: Dictionary = reply.get("payload", {})
+	if str(body.get("status", "")) != "ok":
+		return
+	var journey: Dictionary = body.get("journey", {})
+	var track: Dictionary = _tracks.get(actor_id, {})
+	if track.is_empty():
+		return
+	track["last_consumed_sequence"] = int(journey.get("last_consumed_sequence", track.get("last_consumed_sequence", 0)))
+	track["awaiting_ack"] = false
+	track["applied_auth_last"] = int(track["last_consumed_sequence"])
+	_tracks[actor_id] = track
 
 
 func world_position_for(actor_id: String) -> Vector2:

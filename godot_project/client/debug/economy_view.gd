@@ -2,10 +2,20 @@ extends Control
 class_name DmbEconomyView
 
 ## Developer-only economy inspector. Bounded collapsible panel — never fullscreen.
-## Child controls that should not steal movement input use MOUSE_FILTER_IGNORE;
-## only the toggle / action buttons intercept clicks.
+## Refreshes only while expanded (~2 Hz) with a lean field set (no receipts).
 
 @export var release_mode: bool = false
+
+const REFRESH_INTERVAL_SEC := 0.5
+const ECONOMY_FIELDS := [
+	"fx_cargo",
+	"clock",
+	"tech_draft",
+	"factions",
+	"stocks",
+	"carts",
+	"orders",
+]
 
 var _client = null
 var _panel: PanelContainer
@@ -15,13 +25,17 @@ var _toggle: Button
 var _expanded := true
 var _route_row: HBoxContainer
 var _on_route: Callable
+var _refresh_acc := 0.0
+var _inflight := false
+var _pending_rid := ""
+var _last_text := ""
+var _dirty_prompt := false
 
 
 func _ready() -> void:
 	if release_mode:
 		visible = false
 		return
-	# Anchor top-right; bounded, not PRESET_FULL_RECT.
 	set_anchors_preset(PRESET_TOP_RIGHT)
 	offset_left = -300
 	offset_top = 96
@@ -58,11 +72,10 @@ func _ready() -> void:
 	_label.custom_minimum_size = Vector2(280, 160)
 	_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_label.add_theme_font_size_override("normal_font_size", 12)
-	# Text must not steal pad / Wait clicks when the panel is collapsed;
-	# when expanded, STOP is fine inside the bounded panel only.
 	_label.mouse_filter = Control.MOUSE_FILTER_STOP
 	_body.add_child(_label)
 	_label.text = "[b]FX-CARGO[/b]\nWaiting…"
+	_last_text = _label.text
 
 	_route_row = HBoxContainer.new()
 	_route_row.add_theme_constant_override("separation", 4)
@@ -72,7 +85,10 @@ func _ready() -> void:
 
 func bind_client(client) -> void:
 	_client = client
-	refresh()
+	if _client != null and _client.has_signal("request_finished"):
+		if not _client.request_finished.is_connected(_on_request_finished):
+			_client.request_finished.connect(_on_request_finished)
+	refresh(true)
 
 
 func add_clear_route_button(on_pressed: Callable) -> void:
@@ -98,9 +114,15 @@ func add_clear_route_button(on_pressed: Callable) -> void:
 	_route_row.add_child(clear)
 
 
+func is_expanded() -> bool:
+	return _expanded
+
+
 func _on_toggle() -> void:
 	_expanded = not _expanded
 	_apply_expanded()
+	if _expanded:
+		refresh(true)
 
 
 func _apply_expanded() -> void:
@@ -112,12 +134,56 @@ func _apply_expanded() -> void:
 		offset_bottom = 96 + 36
 
 
-func refresh() -> void:
+func _process(delta: float) -> void:
+	if release_mode or not _expanded or _client == null:
+		return
+	_refresh_acc += delta
+	if _refresh_acc >= REFRESH_INTERVAL_SEC:
+		_refresh_acc = 0.0
+		refresh(false)
+
+
+func refresh(force: bool = false) -> void:
 	if release_mode or _client == null or _label == null:
 		return
-	var view: Dictionary = {}
-	if _client.has_method("request_view"):
-		view = _client.request_view("economy")
+	if not _expanded and not force:
+		return
+	if _inflight and not force:
+		_dirty_prompt = true
+		return
+	if not _client.has_method("enqueue_view"):
+		return
+	_inflight = true
+	_pending_rid = str(_client.enqueue_view(
+		"economy",
+		ECONOMY_FIELDS,
+		{"replaceable": true, "coalesce_key": "view:economy"}
+	))
+
+
+func _on_request_finished(request_id: String, reply: Dictionary) -> void:
+	if request_id != _pending_rid:
+		return
+	_pending_rid = ""
+	_inflight = false
+	if str(reply.get("status", "")) != "ACCEPTED":
+		if _dirty_prompt:
+			_dirty_prompt = false
+			refresh(true)
+		return
+	var view: Dictionary = reply.get("view", {})
+	if typeof(view) != TYPE_DICTIONARY or view.is_empty():
+		if _dirty_prompt:
+			_dirty_prompt = false
+			refresh(true)
+		return
+	_apply_view(view)
+	if _dirty_prompt:
+		_dirty_prompt = false
+		refresh(true)
+
+
+func _apply_view(view: Dictionary) -> void:
 	var fx: Dictionary = view.get("fx_cargo", {})
 	var lines: PackedStringArray = PackedStringArray()
 	lines.append("[b]FX-CARGO[/b] seed=%s" % str(fx.get("seed", "?")))
@@ -205,4 +271,8 @@ func refresh() -> void:
 	for oid in orders.keys():
 		var order: Dictionary = orders[oid]
 		lines.append("%s %s → %s" % [str(order.get("action")), str(order.get("status")), str(order.get("target_node", ""))])
-	_label.text = "\n".join(lines)
+	var text := "\n".join(lines)
+	if text == _last_text:
+		return
+	_last_text = text
+	_label.text = text

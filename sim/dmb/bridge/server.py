@@ -96,22 +96,28 @@ class SidecarServer:
                         outer.session.paused_for_bridge_failure = True
                         return
                     for frame in frames:
-                        reply = outer._handle_frame(frame, authenticated)
+                        reply, deferred = outer._handle_frame(frame, authenticated)
                         if frame.get("kind") == "Handshake" and reply.get("status") == "ACCEPTED":
                             authenticated = True
+                        # Reply first so the client is never blocked on recovery disk I/O.
                         self.request.sendall(codec.encode(reply))
+                        if deferred is not None:
+                            try:
+                                deferred()
+                            except Exception:
+                                pass
 
         return Handler
 
-    def _handle_frame(self, frame: dict[str, Any], authenticated: bool) -> dict[str, Any]:
+    def _handle_frame(self, frame: dict[str, Any], authenticated: bool) -> tuple[dict[str, Any], Any]:
         kind = frame.get("kind")
         if kind == "Handshake":
             if frame.get("token") != self.token:
-                return {"status": "REJECTED", "code": "BAD_TOKEN"}
+                return {"status": "REJECTED", "code": "BAD_TOKEN"}, None
             if int(frame.get("protocol_version", -1)) != PROTOCOL_VERSION:
-                return {"status": "REJECTED", "code": "BAD_PROTOCOL"}
+                return {"status": "REJECTED", "code": "BAD_PROTOCOL"}, None
             if frame.get("role") != ROLE_LOCAL_CLIENT:
-                return {"status": "REJECTED", "code": "BAD_ROLE"}
+                return {"status": "REJECTED", "code": "BAD_ROLE"}, None
             self.session.session_id = str(frame.get("session_id", "session"))
             return {
                 "status": "ACCEPTED",
@@ -128,14 +134,21 @@ class SidecarServer:
                     "Resume",
                     "RecoverCheckpoint",
                 ],
-            }
+            }, None
         if not authenticated:
-            return {"status": "REJECTED", "code": "UNAUTHENTICATED"}
+            return {"status": "REJECTED", "code": "UNAUTHENTICATED"}, None
         if kind == "RequestView":
+            fields = frame.get("fields")
+            field_list = [str(item) for item in fields] if isinstance(fields, list) else None
             return {
                 "status": "ACCEPTED",
-                "view": _jsonable(self.session.sim.state.read_view(str(frame.get("scope", "player")))),
-            }
+                "view": _jsonable(
+                    self.session.sim.state.read_view(
+                        str(frame.get("scope", "player")),
+                        fields=field_list,
+                    )
+                ),
+            }, None
         if kind == "Command":
             envelope = CommandEnvelope(
                 protocol_version=int(frame.get("protocol_version", 1)),
@@ -162,7 +175,7 @@ class SidecarServer:
                 result = self.session.sim.dispatch(envelope)
                 body = result.to_dict()
                 body["save"] = saved
-                return body
+                return body, None
             if envelope.kind == "Load":
                 self.session.coordinator.prepare_load(str(envelope.payload.get("slot", "slot0")))
                 self.session.sim = self.session.coordinator.commit_load()
@@ -174,7 +187,7 @@ class SidecarServer:
                     "world_version": self.session.sim.state.world_version,
                     "events": [],
                     "payload": {"loaded": True},
-                }
+                }, None
             if envelope.kind == "RecoverCheckpoint":
                 if not self.session.coordinator.has_recovery_checkpoint():
                     return {
@@ -184,7 +197,7 @@ class SidecarServer:
                         "world_version": self.session.sim.state.world_version,
                         "events": [],
                         "payload": {},
-                    }
+                    }, None
                 restored = self.session.coordinator.restore_recovery_checkpoint()
                 self.session.sim = restored["sim"]
                 self.session.coordinator = SaveCoordinator(self.session.sim, SaveRepository(self.save_root))
@@ -205,18 +218,21 @@ class SidecarServer:
                     "world_version": self.session.sim.state.world_version,
                     "events": [],
                     "payload": {"recovered": True, **restored["meta"]},
-                }
+                }, None
             result = self.session.sim.dispatch(envelope)
             body = result.to_dict()
+            deferred = None
             if envelope.kind in {"Travel", "Wait"} and result.status == "ACCEPTED":
-                recovery = self.session.coordinator.write_recovery_checkpoint(reason=envelope.kind.lower())
-                body["recovery"] = recovery.get("recovery")
+                prepared = self.session.coordinator.prepare_recovery_checkpoint(reason=envelope.kind.lower())
+                body["recovery"] = prepared.get("recovery")
+                deferred = prepared.get("write")
             elif envelope.kind == "AdvanceGame" and result.status == "ACCEPTED":
-                recovery = self.session.coordinator.maybe_write_recovery_checkpoint(reason="periodic")
-                if recovery:
-                    body["recovery"] = recovery.get("recovery")
-            return body
-        return {"status": "REJECTED", "code": "UNKNOWN_KIND"}
+                prepared = self.session.coordinator.maybe_prepare_recovery_checkpoint(reason="periodic")
+                if prepared:
+                    body["recovery"] = prepared.get("recovery")
+                    deferred = prepared.get("write")
+            return body, deferred
+        return {"status": "REJECTED", "code": "UNKNOWN_KIND"}, None
 
     def serve_forever(self) -> None:
         self._server.serve_forever()

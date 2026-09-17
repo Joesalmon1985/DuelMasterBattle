@@ -19,6 +19,8 @@ func start(project_root: String) -> Dictionary:
 	if FileAccess.file_exists(endpoint_path):
 		DirAccess.remove_absolute(endpoint_path)
 	var python := "python3"
+	if OS.get_name() == "Windows":
+		python = "python"
 	var script := project_root.path_join("tools/run_sidecar.py")
 	var args := PackedStringArray([
 		script,
@@ -35,13 +37,19 @@ func start(project_root: String) -> Dictionary:
 		args.append("--seed")
 		args.append(seed)
 	pid = OS.create_process(python, args)
+	if pid <= 0 and python == "python":
+		pid = OS.create_process("python3", args)
+	if pid <= 0 and python == "python3":
+		pid = OS.create_process("python", args)
 	if pid <= 0:
-		failed.emit("failed to start python3 sidecar")
+		failed.emit("failed to start python sidecar")
 		return {"ok": false, "error": "spawn_failed"}
 	for _i in range(100):
 		OS.delay_msec(50)
 		if FileAccess.file_exists(endpoint_path):
 			var raw := FileAccess.get_file_as_string(endpoint_path)
+			if raw.strip_edges() == "":
+				continue
 			var data = JSON.parse_string(raw)
 			if typeof(data) == TYPE_DICTIONARY and int(data.get("port", 0)) > 0:
 				var ep_token := str(data.get("token", ""))
