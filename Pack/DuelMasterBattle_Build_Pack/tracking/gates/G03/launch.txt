@@ -1,0 +1,18 @@
+candidate_implementation: 5b6ac03ae477bca40c8dc944d9a54c2d3391682a
+platform_tested: Linux 6.8 / Godot 4.4.1
+fixture: FX-INDUSTRY
+seed: 303
+save_slot: g03_playtest
+
+cd /home/joe/Projects/DuelMasterBattle
+bash tools/play_g03.sh
+
+# Linux menu:
+bash tools/playtest.sh
+
+# Automated:
+python3 tools/check.py --gate G03
+
+# Windows:
+Playtest.bat
+# Select 1 to play G03, 5 for G03 checks, 6 for all G01-G03 checks.

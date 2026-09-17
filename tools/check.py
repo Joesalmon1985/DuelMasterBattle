@@ -477,6 +477,34 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 [ROOT / "godot_project" / "content" / "fixtures" / "industry" / "fx_industry_v1.json"],
             ),
         ],
+        "T058": lambda: [
+            _pytest(
+                "g03_industry_cumulative",
+                "tests/sim/test_t054_industry_service.py",
+                "tests/sim/test_t055_workers_projection.py",
+                "tests/sim/test_t056_industry_repairs_routes.py",
+                "tests/scenarios/test_industry_causality.py",
+            ),
+            _godot_script(
+                "g03_playable_smoke",
+                "res://client/tests/run_g03_smoke.gd",
+                r"G03_SMOKE_OK",
+            ),
+            validate_evidence(
+                "g03_task_packet",
+                [
+                    TRACKING / "gates" / "G03" / "packet.md",
+                    TRACKING / "gates" / "G03" / "launch.txt",
+                    TRACKING / "gates" / "G03" / "acceptance.json",
+                    TRACKING / "gates" / "G03" / "fx_industry_record.json",
+                    TRACKING / "gates" / "G03" / "screenshot_450x800.png",
+                    TRACKING / "gates" / "G03" / "screenshots" / "worker_path_blocked.png",
+                    TRACKING / "gates" / "G03" / "screenshots" / "damaged_bottleneck.png",
+                    TRACKING / "gates" / "G03" / "known_defects.md",
+                    TRACKING / "gates" / "G03" / "reset.md",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -587,6 +615,47 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g01_regression_bridge_play",
                 "res://client/tests/run_g01_bridge_play.gd",
                 r"G01_BRIDGE_PLAY_OK",
+            ),
+        ]
+    if gate == "G03":
+        packet = TRACKING / "gates" / "G03"
+        return [
+            _pytest(
+                "g03_cumulative_python",
+                "tests/sim/test_t054_industry_service.py",
+                "tests/sim/test_t055_workers_projection.py",
+                "tests/sim/test_t056_industry_repairs_routes.py",
+                "tests/scenarios/test_industry_causality.py",
+            ),
+            validate_evidence(
+                "g03_packet_files",
+                [
+                    packet / "packet.md",
+                    packet / "launch.txt",
+                    packet / "acceptance.json",
+                    packet / "fx_industry_record.json",
+                    packet / "screenshot_wizard.png",
+                    packet / "screenshot_450x800.png",
+                    packet / "screenshots" / "worker_path_blocked.png",
+                    packet / "screenshots" / "damaged_bottleneck.png",
+                    packet / "known_defects.md",
+                    packet / "reset.md",
+                ],
+            ),
+            _godot_script(
+                "g03_sidecar_playable",
+                "res://client/tests/run_g03_smoke.gd",
+                r"G03_SMOKE_OK",
+            ),
+            _godot_script(
+                "g02_regression_smoke",
+                "res://client/tests/run_g02_smoke.gd",
+                r"G02_SMOKE_OK",
+            ),
+            _godot_script(
+                "g01_regression_smoke",
+                "res://client/tests/run_g01_smoke.gd",
+                r"G01_SMOKE_OK",
             ),
         ]
     return [
