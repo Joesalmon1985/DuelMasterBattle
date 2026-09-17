@@ -30,3 +30,5 @@ generated/dialogue/
 .dmb_endpoint_test.json
 .dmb_saves/
 .dmb_saves_test/
+.dmb_windows_local.json
+logs/

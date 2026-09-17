@@ -18,9 +18,12 @@ func start(project_root: String) -> Dictionary:
 	# Remove stale endpoint so we never connect to a previous sidecar port.
 	if FileAccess.file_exists(endpoint_path):
 		DirAccess.remove_absolute(endpoint_path)
-	var python := "python3"
-	if OS.get_name() == "Windows":
-		python = "python"
+	# Prefer an explicit interpreter from the Windows playtest launcher (or CI).
+	var python := str(OS.get_environment("DMB_PYTHON")).strip_edges()
+	if python == "":
+		python = "python3"
+		if OS.get_name() == "Windows":
+			python = "python"
 	var script := project_root.path_join("tools/run_sidecar.py")
 	var args := PackedStringArray([
 		script,
@@ -37,9 +40,14 @@ func start(project_root: String) -> Dictionary:
 		args.append("--seed")
 		args.append(seed)
 	pid = OS.create_process(python, args)
-	if pid <= 0 and python == "python":
+	if pid <= 0 and not str(OS.get_environment("DMB_PYTHON")).strip_edges().is_empty():
+		# Absolute DMB_PYTHON failed; fall back to PATH names.
+		pid = OS.create_process("python", args)
+		if pid <= 0:
+			pid = OS.create_process("python3", args)
+	elif pid <= 0 and python == "python":
 		pid = OS.create_process("python3", args)
-	if pid <= 0 and python == "python3":
+	elif pid <= 0 and python == "python3":
 		pid = OS.create_process("python", args)
 	if pid <= 0:
 		failed.emit("failed to start python sidecar")

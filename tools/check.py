@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -264,6 +265,19 @@ def _pytest(name: str, *paths: str) -> CheckResult:
 
 
 def _godot_bin() -> str | None:
+    env = os.environ.get("GODOT", "").strip()
+    if env and Path(env).is_file():
+        return env
+    local = ROOT / ".dmb_windows_local.json"
+    if local.is_file():
+        try:
+            data = _read_json(local)
+            if isinstance(data, dict):
+                exe = data.get("godot")
+                if isinstance(exe, str) and Path(exe).is_file():
+                    return exe
+        except (OSError, json.JSONDecodeError):
+            pass
     toolchain = TRACKING / "toolchain.json"
     if toolchain.is_file():
         try:
@@ -287,7 +301,7 @@ def _godot_script(name: str, script: str, required_pattern: str) -> CheckResult:
             status="FAIL",
             exit_code=2,
             duration_seconds=0.0,
-            detail="Godot 4.4.1 executable not found in toolchain.json",
+            detail="Godot executable not found (GODOT env, .dmb_windows_local.json, or toolchain.json)",
         )
     return run_command(
         CommandCheck(
