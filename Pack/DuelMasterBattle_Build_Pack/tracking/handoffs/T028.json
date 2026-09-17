@@ -1,7 +1,7 @@
 {
   "task_id": "T028",
   "status": "DONE",
-  "commit": null,
+  "commit": "ac53773b131f99939d212d1d88611efa1b0c185a",
   "files": [
     "sim/dmb/people/registry.py",
     "sim/dmb/people/jobs.py",
