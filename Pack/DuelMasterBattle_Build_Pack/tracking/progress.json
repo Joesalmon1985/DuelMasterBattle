@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pack_version": "1.0",
   "status": "READY_FOR_EXECUTION",
-  "current_task": "T058",
+  "current_task": "STOP_FOR_G03",
   "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
   "repository_map": "tracking/repository_map.json",
   "resume_policy": {
@@ -70,7 +70,7 @@
     "T055": "DONE",
     "T056": "DONE",
     "T057": "DONE",
-    "T058": "NOT_STARTED",
+    "T058": "DONE",
     "T059": "NOT_STARTED",
     "T060": "NOT_STARTED",
     "T061": "NOT_STARTED",
@@ -190,10 +190,10 @@
       "evidence": "tracking/gates/G02/packet.md"
     },
     "G03": {
-      "status": "NOT_READY",
+      "status": "AWAITING_HUMAN",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": null
+      "evidence": "tracking/gates/G03/packet.md"
     },
     "G04": {
       "status": "NOT_READY",
