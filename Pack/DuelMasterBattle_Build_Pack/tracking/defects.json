@@ -108,6 +108,57 @@
       "files_changed": [],
       "attempted_fixes": [],
       "next_diagnostic": "Verified via playable FX-CLOCK area + semantic interact/observe"
+    },
+    {
+      "id": "D006",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "G01 camera scrolled/clipped HUD and controls; layout unplayable",
+      "reproduction_command": "bash tools/play_g01.sh --direct",
+      "seed": "7",
+      "failing_assertion_or_log": "controls/playfield displaced or clipped",
+      "expected_state": "CanvasLayer HUD/controls; fitted playfield; readable at 450x800/720x1280/1280x720",
+      "observed_state": "Camera2D follow displaced UI; unreliable movement",
+      "suspected_owner": "g01_shell.gd / fx_clock_area.gd",
+      "files_changed": [
+        "godot_project/client/scenes/g01_shell.gd",
+        "godot_project/client/world/fx_clock_area.gd"
+      ],
+      "attempted_fixes": ["CanvasLayer UI", "fit world host", "remove Camera2D follow"],
+      "next_diagnostic": "Verified via multi-res screenshots + bridge play"
+    },
+    {
+      "id": "D007",
+      "task_id": "T020",
+      "status": "RESOLVED",
+      "summary": "Clock refresh rebuild_from_view reset wizard pose each AdvanceGame",
+      "reproduction_command": "Walk while Game Time advances",
+      "seed": "7",
+      "failing_assertion_or_log": "position snaps back on counter refresh",
+      "expected_state": "Local Godot pose preserved between SyncPose/load/travel",
+      "observed_state": "rebuild_from_view on every _refresh_counters",
+      "suspected_owner": "g01_shell.gd _refresh_counters",
+      "files_changed": [
+        "godot_project/client/scenes/g01_shell.gd",
+        "godot_project/client/world/fx_clock_area.gd"
+      ],
+      "attempted_fixes": ["apply_projections vs rebuild_from_view"],
+      "next_diagnostic": "G01_PLAYABLE_OK + G01_BRIDGE_PLAY_OK"
+    },
+    {
+      "id": "D008",
+      "task_id": "T014",
+      "status": "RESOLVED",
+      "summary": "Save persisted ephemeral save-pause token freezing Game Time after Load",
+      "reproduction_command": "Save then Load g01_playtest",
+      "seed": "7",
+      "failing_assertion_or_log": "clock remains paused after load",
+      "expected_state": "Unpaused save loads without save: tokens; Game Time advances",
+      "observed_state": "save:coordinator token written into snapshot",
+      "suspected_owner": "sim/dmb/persistence/coordinator.py",
+      "files_changed": ["sim/dmb/persistence/coordinator.py"],
+      "attempted_fixes": ["strip save: tokens before write and on load"],
+      "next_diagnostic": "test_save_does_not_persist_ephemeral_save_pause_token"
     }
   ]
 }

@@ -28,5 +28,5 @@
     "Wine/Windows packaging deferred until T155-T160 (DEFERRED_NOT_PASSED)"
   ],
   "next_task": "T015",
-  "notes": ""
+  "notes": "G01 FIX: SaveCoordinator strips ephemeral save: pause tokens."
 }

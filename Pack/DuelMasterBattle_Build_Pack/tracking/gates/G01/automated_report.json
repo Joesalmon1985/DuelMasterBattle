@@ -6,8 +6,8 @@
       "name": "g01_cumulative_python",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 3.325,
-      "detail": ".................                                                        [100%]\n17 passed in 2.85s",
+      "duration_seconds": 3.357,
+      "detail": "......................                                                   [100%]\n22 passed in 2.66s",
       "command": [
         "/usr/bin/python3",
         "-m",
@@ -17,23 +17,24 @@
         "tests/sim/test_t012_clock.py",
         "tests/sim/test_t016_bridge.py",
         "tests/integration/test_bridge_clock.py",
-        "tests/sim/test_t023_fixtures.py"
+        "tests/sim/test_t023_fixtures.py",
+        "tests/sim/test_t020_playable.py"
       ]
     },
     {
       "name": "g01_packet_files",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 0.007,
-      "detail": "3 evidence files valid",
+      "duration_seconds": 0.003,
+      "detail": "7 evidence files valid",
       "command": null
     },
     {
       "name": "g01_sidecar_smoke",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 1.254,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=42949\nG01_SMOKE_OK world_id=world:g01",
+      "duration_seconds": 2.913,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=37875\nG01_SMOKE_OK world_id=world:g01",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",
@@ -41,6 +42,36 @@
         "godot_project",
         "--script",
         "res://client/tests/run_g01_smoke.gd"
+      ]
+    },
+    {
+      "name": "g01_playable_scene",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 1.602,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nG01_PLAYABLE_OK moved=210.0 turn=0",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g01_playable.gd"
+      ]
+    },
+    {
+      "name": "g01_bridge_play",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 3.459,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=44755\nG01_BRIDGE_PLAY_OK moved=168.0 advances=12 turn=0\u21921 node=node:2",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g01_bridge_play.gd"
       ]
     }
   ]

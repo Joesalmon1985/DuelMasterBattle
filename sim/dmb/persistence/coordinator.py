@@ -12,6 +12,22 @@ from sim.dmb.core.world import WorldSim
 from sim.dmb.persistence.repository import SaveRepository
 
 
+def _strip_ephemeral_save_tokens(snapshot: dict[str, Any], active_token: str | None = None) -> None:
+    """Remove temporary save-barrier tokens so loads do not leave Game Time frozen."""
+    world = snapshot.get("world")
+    if not isinstance(world, dict):
+        return
+    clock = world.get("clock")
+    if not isinstance(clock, dict):
+        return
+    tokens = dict(clock.get("pause_tokens") or {})
+    if active_token:
+        tokens.pop(active_token, None)
+    clock["pause_tokens"] = {
+        key: value for key, value in tokens.items() if not str(key).startswith("save:")
+    }
+
+
 @dataclass
 class SaveCoordinator:
     sim: WorldSim
@@ -22,6 +38,7 @@ class SaveCoordinator:
         token = self.sim.clock.acquire_pause("save", "coordinator")
         try:
             snapshot = self.sim.snapshot()
+            _strip_ephemeral_save_tokens(snapshot, active_token=token)
             path = self.repository.write(slot, snapshot)
             return {"slot": slot, "path": str(path), "world_version": self.sim.state.world_version}
         finally:
@@ -29,6 +46,7 @@ class SaveCoordinator:
 
     def prepare_load(self, slot: str) -> dict[str, Any]:
         payload = self.repository.read(slot)
+        _strip_ephemeral_save_tokens(payload)
         self._pending_load = payload
         return {
             "slot": slot,
@@ -40,6 +58,7 @@ class SaveCoordinator:
         if self._pending_load is None:
             raise RuntimeError("no prepared load")
         payload = self._pending_load
+        _strip_ephemeral_save_tokens(payload)
         state = WorldState.from_dict(payload["world"])
         sim = WorldSim(state=state)
         sim.events = EventJournal.from_dict(payload.get("events", {}))

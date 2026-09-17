@@ -332,6 +332,11 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "res://client/tests/run_g01_playable.gd",
                 r"G01_PLAYABLE_OK",
             ),
+            _godot_script(
+                "g01_bridge_play",
+                "res://client/tests/run_g01_bridge_play.gd",
+                r"G01_BRIDGE_PLAY_OK",
+            ),
         ],
         "T021": lambda: [_pytest("semantic_knowledge_tests", "tests/sim/test_t021_semantic.py")],
         "T022": lambda: [_pytest("clock_driver_tests", "tests/sim/test_t022_clock_driver.py")],
@@ -379,6 +384,7 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "tests/sim/test_t016_bridge.py",
                 "tests/integration/test_bridge_clock.py",
                 "tests/sim/test_t023_fixtures.py",
+                "tests/sim/test_t020_playable.py",
             ),
             validate_evidence(
                 "g01_packet_files",
@@ -386,18 +392,29 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                     packet / "packet.md",
                     packet / "launch.txt",
                     packet / "fx_clock_record.json",
+                    packet / "screenshot_wizard.png",
+                    packet / "screenshot_450x800.png",
+                    packet / "screenshot_720x1280.png",
+                    packet / "screenshot_1280x720.png",
                 ],
             ),
+            # Fail closed if Godot is unavailable — G01 requires scene checks.
+            _godot_script(
+                "g01_sidecar_smoke",
+                "res://client/tests/run_g01_smoke.gd",
+                r"G01_SMOKE_OK",
+            ),
+            _godot_script(
+                "g01_playable_scene",
+                "res://client/tests/run_g01_playable.gd",
+                r"G01_PLAYABLE_OK",
+            ),
+            _godot_script(
+                "g01_bridge_play",
+                "res://client/tests/run_g01_bridge_play.gd",
+                r"G01_BRIDGE_PLAY_OK",
+            ),
         ]
-        godot = _godot_bin()
-        if godot:
-            results.append(
-                _godot_script(
-                    "g01_sidecar_smoke",
-                    "res://client/tests/run_g01_smoke.gd",
-                    r"G01_SMOKE_OK",
-                )
-            )
         return results
     return [
         CheckResult(

@@ -1,24 +1,38 @@
 {
   "task_id": "T020",
   "status": "DONE",
-  "commit": "6252be79acbcd7d71f7ea5a748672622a79db3f5",
+  "commit": "pending",
   "files": [
     "godot_project/client/world/fx_clock_area.gd",
     "godot_project/client/scenes/g01_shell.gd",
+    "godot_project/client/scenes/g01_shell.tscn",
+    "godot_project/client/world/touch_pad.gd",
     "godot_project/client/tests/run_g01_playable.gd",
+    "godot_project/client/tests/run_g01_bridge_play.gd",
+    "godot_project/client/tests/run_g01_capture.gd",
     "tests/sim/test_t020_playable.py",
-    "sim/dmb/core/world.py"
+    "sim/dmb/persistence/coordinator.py",
+    "tools/check.py",
+    "tools/capture_g01_screens.sh"
   ],
   "public_contracts": [
-    "Playable FX-CLOCK wizard local area on Python-backed runtime"
+    "Playable FX-CLOCK wizard local area on Python-backed runtime",
+    "Local motion preserved across clock/projection refreshes",
+    "CanvasLayer HUD/controls with fitted playfield"
   ],
   "source_rules": [
     "C01/C02/C03/C14",
-    "EXECUTION_AMENDMENTS G01 evidence"
+    "EXECUTION_AMENDMENTS G01 evidence",
+    "G01 FIX_REQUIRED playability repair"
   ],
   "checks": [
     {
       "command": "python3 tools/check.py --task T020",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tools/check.py --gate G01",
       "exit_code": 0,
       "result": "PASS"
     }
@@ -27,8 +41,8 @@
     "FX-CLOCK_seed": 7
   },
   "defects": [
-    "D004/D005 resolved for playable presentation; D001-D003 remain deferred"
+    "D006/D007/D008 resolved; D001-D003 remain deferred"
   ],
-  "next_task": "T021",
-  "notes": ""
+  "next_task": "G01",
+  "notes": "G01 AWAITING_HUMAN after FIX_REQUIRED repair; do not start T025. Scope extension: SaveCoordinator strips ephemeral save: pause tokens."
 }

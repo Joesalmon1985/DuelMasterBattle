@@ -20,14 +20,15 @@ var client  # DmbWorldClient
 var current_node: String = "node:1"
 var selected_entity: String = ""
 var travel_pending: bool = false
+var movement_enabled: bool = true
 
 var _wizard: Sprite2D
-var _camera: Camera2D
 var _tiles: Node2D
 var _actors: Node2D
 var _labels: Node2D
 var _npc_nodes: Dictionary = {}  # entity_id -> Sprite2D
-var _exit_nodes: Dictionary = {}  # to_node -> Area2D marker
+var _exit_nodes: Dictionary = {}  # to_node -> Node2D marker
+var _label_nodes: Dictionary = {}  # entity_id -> Label
 var _move_dir := Vector2.ZERO
 var _facing := "down"
 var _anim_t := 0.0
@@ -36,6 +37,7 @@ var _blockers: Dictionary = {}  # Vector2i -> true
 var _touch  # TouchPad
 var _feedback: Label
 var _area_title: Label
+var _built := false
 
 
 func setup(world_client, touch_pad) -> void:
@@ -48,7 +50,16 @@ func setup(world_client, touch_pad) -> void:
 	rebuild_from_view(client.request_view("player"))
 
 
+func set_movement_enabled(on: bool) -> void:
+	movement_enabled = on
+	if not on:
+		_move_dir = Vector2.ZERO
+
+
 func _build_roots() -> void:
+	if _built:
+		return
+	_built = true
 	_tiles = Node2D.new()
 	add_child(_tiles)
 	_actors = Node2D.new()
@@ -59,10 +70,7 @@ func _build_roots() -> void:
 	_wizard.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_wizard.scale = Vector2(4, 4)
 	_actors.add_child(_wizard)
-	_camera = Camera2D.new()
-	_camera.position_smoothing_enabled = true
-	_wizard.add_child(_camera)
-	_camera.call_deferred("make_current")
+	# Shell fits the whole local grid into the play region; HUD/controls stay on CanvasLayer.
 	_feedback = Label.new()
 	_feedback.position = Vector2(8, -28)
 	_feedback.z_index = 20
@@ -76,13 +84,12 @@ func _build_roots() -> void:
 
 
 func rebuild_from_view(view: Dictionary) -> void:
+	## Full scene construction / deliberate pose restore (load, travel, bootstrap).
+	if not _built:
+		_build_roots()
 	var player: Dictionary = view.get("player", {})
 	current_node = str(player.get("node_id", current_node))
-	var pos = player.get("position", [4, 5])
-	if typeof(pos) == TYPE_ARRAY or typeof(pos) == TYPE_PACKED_FLOAT32_ARRAY:
-		_wizard.position = Vector2(float(pos[0]) * TILE + TILE * 0.5, float(pos[1]) * TILE + TILE * 0.5)
-	_facing = str(player.get("facing", _facing))
-	_set_wizard_texture(_facing, _anim_frame)
+	_restore_wizard_pose(player)
 	_rebuild_tiles()
 	_rebuild_people(view.get("people", {}))
 	_rebuild_exits(view.get("board", {}).get("nodes", {}))
@@ -90,8 +97,34 @@ func rebuild_from_view(view: Dictionary) -> void:
 	_area_title.text = str(node_info.get("label", current_node))
 
 
+func apply_projections(view: Dictionary) -> void:
+	## HUD/knowledge refresh only — never resets Godot-owned local pose.
+	if not _built or _wizard == null:
+		return
+	var player: Dictionary = view.get("player", {})
+	var node_id := str(player.get("node_id", current_node))
+	if node_id != current_node:
+		# Node change without acknowledge_travel is unexpected; rebuild deliberately.
+		rebuild_from_view(view)
+		return
+	var people: Dictionary = view.get("people", {})
+	for entity_id in _label_nodes.keys():
+		if people.has(entity_id):
+			_label_nodes[entity_id].text = _label_for(people[entity_id])
+	var node_info: Dictionary = view.get("board", {}).get("nodes", {}).get(current_node, {})
+	if _area_title:
+		_area_title.text = str(node_info.get("label", current_node))
+
+
+func _restore_wizard_pose(player: Dictionary) -> void:
+	var pos = player.get("position", [4, 5])
+	if typeof(pos) == TYPE_ARRAY or typeof(pos) == TYPE_PACKED_FLOAT32_ARRAY:
+		_wizard.position = Vector2(float(pos[0]) * TILE + TILE * 0.5, float(pos[1]) * TILE + TILE * 0.5)
+	_facing = str(player.get("facing", _facing))
+	_set_wizard_texture(_facing, _anim_frame)
+
+
 func _theme() -> String:
-	# Distinct themes so adjacent nodes look different.
 	return "grass" if current_node == "node:1" else "path"
 
 
@@ -105,7 +138,6 @@ func _rebuild_tiles() -> void:
 	for y in range(GRID_H):
 		for x in range(GRID_W):
 			var edge := x == 0 or y == 0 or x == GRID_W - 1 or y == GRID_H - 1
-			# Leave an exit gap on the east for home, west for road.
 			var exit_gap := false
 			if current_node == "node:1" and x == GRID_W - 1 and y in [4, 5]:
 				exit_gap = true
@@ -122,7 +154,6 @@ func _rebuild_tiles() -> void:
 			else:
 				spr.texture = load(PIXEL + ground)
 				if theme == "grass" and (x + y) % 7 == 0 and not edge:
-					# Sparse trees as blockers / readable obstacles.
 					var tree := Sprite2D.new()
 					tree.texture = load(PIXEL + "props/tree_1.png")
 					tree.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -132,7 +163,6 @@ func _rebuild_tiles() -> void:
 					_tiles.add_child(tree)
 					_blockers[Vector2i(x, y)] = true
 			_tiles.add_child(spr)
-	# Sign near exit
 	var sign := Sprite2D.new()
 	sign.texture = load(PIXEL + "props/sign.png")
 	sign.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -148,6 +178,9 @@ func _rebuild_people(people: Dictionary) -> void:
 	for id in _npc_nodes.keys():
 		_npc_nodes[id].queue_free()
 	_npc_nodes.clear()
+	for id in _label_nodes.keys():
+		_label_nodes[id].queue_free()
+	_label_nodes.clear()
 	for c in _labels.get_children():
 		c.queue_free()
 	for entity_id in people.keys():
@@ -169,7 +202,7 @@ func _rebuild_people(people: Dictionary) -> void:
 		lbl.add_theme_font_size_override("font_size", 16)
 		lbl.set_meta("entity_id", entity_id)
 		_labels.add_child(lbl)
-
+		_label_nodes[entity_id] = lbl
 
 
 func _person_grid_from_info(info: Dictionary) -> Vector2i:
@@ -203,9 +236,13 @@ func _rebuild_exits(nodes: Dictionary) -> void:
 		shape.size = Vector2(TILE * 1.2, TILE * 2.2)
 		col.shape = shape
 		marker.add_child(col)
-		var glow := ColorRect.new()
-		glow.size = Vector2(TILE, TILE * 2)
-		glow.position = Vector2(-TILE * 0.5, -TILE)
+		var glow := Polygon2D.new()
+		glow.polygon = PackedVector2Array([
+			Vector2(-TILE * 0.5, -TILE),
+			Vector2(TILE * 0.5, -TILE),
+			Vector2(TILE * 0.5, TILE),
+			Vector2(-TILE * 0.5, TILE),
+		])
 		glow.color = Color(0.95, 0.85, 0.2, 0.35) if current_node == "node:1" else Color(0.3, 0.7, 1.0, 0.35)
 		marker.add_child(glow)
 		var tip := Label.new()
@@ -234,6 +271,8 @@ func try_use_exit() -> void:
 
 
 func _on_exit_input(_viewport, event: InputEvent, _shape_idx: int, to_node: String) -> void:
+	if not movement_enabled:
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_activate_exit(to_node)
 	elif event is InputEventScreenTouch and event.pressed:
@@ -241,7 +280,7 @@ func _on_exit_input(_viewport, event: InputEvent, _shape_idx: int, to_node: Stri
 
 
 func _activate_exit(to_node: String) -> void:
-	if travel_pending:
+	if travel_pending or not movement_enabled:
 		return
 	if _wizard.position.distance_to(_exit_nodes[to_node].position) > TILE * 1.8:
 		_feedback.text = "Move closer to the exit"
@@ -263,11 +302,15 @@ func reject_travel(reason: String) -> void:
 
 
 func _on_dir(dir: Vector2i) -> void:
+	if not movement_enabled:
+		_move_dir = Vector2.ZERO
+		return
 	_move_dir = Vector2(dir)
 
 
 func _on_action() -> void:
-	# Prefer exit when standing on it; else observe/interact selection.
+	if not movement_enabled:
+		return
 	for to_node in _exit_nodes.keys():
 		if _wizard.position.distance_to(_exit_nodes[to_node].position) <= TILE * 1.8:
 			_activate_exit(to_node)
@@ -307,14 +350,17 @@ func _distance_to(entity_id: String) -> float:
 	return _wizard.position.distance_to(_npc_nodes[entity_id].position)
 
 
+func _gui_blocks_world_pointer() -> bool:
+	var hovered := get_viewport().gui_get_hovered_control()
+	return hovered != null
+
+
 func _process(delta: float) -> void:
-	if client == null or travel_pending:
+	if client == null or travel_pending or not movement_enabled:
 		return
-	# Pointer / pad movement
 	var step := _move_dir
-	if step == Vector2.ZERO:
-		# Drag / click-to-nudge on open ground via one pointer: mouse held.
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if step == Vector2.ZERO and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		if not _gui_blocks_world_pointer():
 			var local := get_global_mouse_position()
 			var delta_v := local - _wizard.global_position
 			if delta_v.length() > 12:
@@ -333,7 +379,6 @@ func _process(delta: float) -> void:
 			_anim_t = 0.0
 			_anim_frame = 1 - _anim_frame
 			_set_wizard_texture(_facing, _anim_frame)
-	# Highlight selection
 	for entity_id in _npc_nodes.keys():
 		var spr: Sprite2D = _npc_nodes[entity_id]
 		spr.modulate = Color(1.3, 1.3, 0.7) if entity_id == selected_entity else Color.WHITE
@@ -357,8 +402,17 @@ func wizard_grid() -> Array:
 	return [snapped(_wizard.position.x / TILE - 0.5, 0.01), snapped(_wizard.position.y / TILE - 0.5, 0.01)]
 
 
+func world_pixel_size() -> Vector2:
+	return Vector2(GRID_W * TILE, GRID_H * TILE)
+
+
+func wizard_position() -> Vector2:
+	return _wizard.position if _wizard else Vector2.ZERO
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	# Tap entities to select / observe.
+	if not movement_enabled:
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var gp := get_global_mouse_position()
 		for entity_id in _npc_nodes.keys():

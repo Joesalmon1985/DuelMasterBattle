@@ -57,3 +57,27 @@ def test_held_wait_unique_press_ids() -> None:
     assert b.status == "REJECTED"
     assert c.status == "ACCEPTED"
     assert int(sim.state.clock["turn"]) == 2
+
+
+def test_save_does_not_persist_ephemeral_save_pause_token(tmp_path) -> None:
+    from sim.dmb.persistence.coordinator import SaveCoordinator
+    from sim.dmb.persistence.repository import SaveRepository
+    from sim.dmb.time.clock import ClockService
+
+    sim = bootstrap_world(seed=7)
+    assert not sim.state.clock.get("pause_tokens")
+    coord = SaveCoordinator(sim, SaveRepository(tmp_path))
+    saved = coord.request_save("g01_playtest")
+    assert "path" in saved
+    loaded = coord.prepare_load("g01_playtest")
+    assert loaded["slot"] == "g01_playtest"
+    sim2 = coord.commit_load()
+    tokens = sim2.state.clock.get("pause_tokens") or {}
+    assert not any(str(k).startswith("save:") for k in tokens)
+    # Game Time must continue after loading an unpaused save.
+    clock = ClockService(sim2.state.clock)
+    before = int(sim2.state.clock["game_ms"])
+    seq = int(sim2.state.clock.get("clock_sequence", 0))
+    quanta = clock.request_advance(100, seq + 1)
+    assert quanta == 1
+    assert int(sim2.state.clock["game_ms"]) == before + 100

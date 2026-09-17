@@ -13,5 +13,14 @@
   },
   "world_id": "world:fx-clock",
   "catalog_hash": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6",
-  "legacy_writers_disabled": true
+  "legacy_writers_disabled": true,
+  "scenario": "FX-CLOCK",
+  "slot": "g01_playtest",
+  "repair": "FIX_REQUIRED playability: CanvasLayer UI, apply_projections, save-token strip, bridge play asserts",
+  "screenshots": [
+    "screenshot_450x800.png",
+    "screenshot_720x1280.png",
+    "screenshot_1280x720.png",
+    "screenshot_wizard.png"
+  ]
 }
