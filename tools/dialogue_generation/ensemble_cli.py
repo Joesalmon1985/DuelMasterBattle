@@ -156,6 +156,17 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_paths(p)
     p.add_argument("--persist-baseline", action="store_true", help="Store this report as the committed quality baseline")
 
+    p = sub.add_parser("generate-pilot", help="Offline LLM authoring pilot for a few validated scene manifests")
+    p.add_argument("--manifest", type=Path, default=Path("generated/dialogue/ensemble/scene_manifests.json"))
+    p.add_argument("--pilot-output", type=Path, default=Path("generated/dialogue/ensemble_pilot"))
+    p.add_argument("--model", default=None)
+    p.add_argument("--count", type=int, default=5)
+    p.add_argument("--force", action="store_true")
+    p.add_argument("--allow-more", action="store_true")
+    p.add_argument("--offline", action="store_true")
+    p.add_argument("--reaudit", action="store_true")
+    p.add_argument("--local-audits", action="store_true")
+
     return parser
 
 
@@ -174,6 +185,28 @@ def main() -> int:
             report = quality_existing(args.profiles, args.output_dir, persist_baseline=args.persist_baseline)
             print(json.dumps({"pass": report.get("pass"), "flags": report.get("flags"), "delta_from_baseline": report.get("delta_from_baseline")}, indent=2))
             return 0 if report.get("pass") else 1
+        if args.command == "generate-pilot":
+            from .ensemble_writer.pilot import run_pilot
+
+            summary = run_pilot(
+                manifest_path=args.manifest,
+                output_dir=args.pilot_output,
+                model=args.model,
+                count=args.count,
+                force=args.force,
+                allow_more=args.allow_more,
+                offline=args.offline,
+                reaudit=args.reaudit,
+                local_audits=args.local_audits,
+            )
+            print(json.dumps({
+                "scene_ids": summary["selection"]["scene_ids"],
+                "approved": summary["approved"],
+                "canon_blocks_before_revision": summary["canon_blocks_before_revision"],
+                "canon_blocks_after_revision": summary["canon_blocks_after_revision"],
+            }, indent=2))
+            failed = [item for item in summary["scenes"] if str(item.get("status", "")).startswith("failed")]
+            return 1 if failed else 0
         return 2
     except KeyboardInterrupt:
         print("\nInterrupted safely.")
