@@ -105,12 +105,23 @@ class TurnRunner:
         def validate_edge(a: str, b: str, cart: dict[str, Any]):
             return routes.validate_next_edge(str(cart.get("owner_faction")), a, b)
 
+        before_nodes = {cid: str(c.get("current_node")) for cid, c in self.state.carts.items()}
+        before_status = {cid: str(c.get("status")) for cid, c in self.state.carts.items()}
         moved = carts.advance_all(validate_edge=validate_edge)
-        self._sync_fx_cargo_cart_person()
+        self._sync_fx_cargo_cart_person(before_nodes=before_nodes, before_status=before_status)
         self._maybe_queue_fx_construction(ledger)
         return {"moved": [m.get("id") for m in moved], "carts": moved}
 
-    def _sync_fx_cargo_cart_person(self) -> None:
+    def _sync_fx_cargo_cart_person(
+        self,
+        *,
+        before_nodes: dict[str, str] | None = None,
+        before_status: dict[str, str] | None = None,
+    ) -> None:
+        from sim.dmb.presentation.journeys import (
+            enqueue_committed_edge,
+        )
+
         fx = self.state.board.get("fx_cargo") or {}
         cart_id = str(fx.get("cart_id") or "")
         person_id = str(fx.get("cart_person_id") or "")
@@ -118,22 +129,44 @@ class TurnRunner:
         person = self.state.people.get(person_id) if person_id else None
         if not isinstance(cart, dict) or not isinstance(person, dict):
             return
-        person["node_id"] = cart.get("current_node", person.get("node_id"))
+        prev_node = (before_nodes or {}).get(cart_id) or str(person.get("node_id") or "")
+        new_node = str(cart.get("current_node") or prev_node)
         status = str(cart.get("status") or "idle")
+        prev_status = (before_status or {}).get(cart_id) or ""
+
         if status == "blocked":
             fx["delivery_status"] = "blocked_route"
             label = "Hauler Cart (blocked)"
+            person["node_id"] = new_node
+            # Attempted hop toward next route node.
+            route = list(cart.get("route") or [])
+            idx = int(cart.get("route_index", 0))
+            nxt = str(route[idx + 1]) if idx + 1 < len(route) else new_node
+            enqueue_committed_edge(self.state, cart_id, from_node=new_node, to_node=nxt, blocked=True)
         elif status in {"en_route", "assigned", "loaded"}:
             fx["delivery_status"] = "en_route"
             label = "Hauler Cart (travelling)"
+            if prev_node and new_node and prev_node != new_node:
+                enqueue_committed_edge(self.state, cart_id, from_node=prev_node, to_node=new_node)
+            else:
+                person["node_id"] = new_node
         elif status in {"arrived", "delivered"}:
             fx["delivery_status"] = "delivered"
             label = "Hauler Cart (delivered)"
+            if prev_node and new_node and prev_node != new_node:
+                enqueue_committed_edge(self.state, cart_id, from_node=prev_node, to_node=new_node)
+            else:
+                person["node_id"] = new_node
+            if prev_status not in {"arrived", "delivered"} and status == "arrived":
+                from sim.dmb.presentation.journeys import maybe_begin_unload_presentation
+
+                maybe_begin_unload_presentation(self.state, cart_id)
         else:
             label = "Hauler Cart (idle)"
+            person["node_id"] = new_node
+
         person["label"] = label
         person["display_name"] = label
-        # Keep knowledge name in sync for labels.
         if person_id in self.state.knowledge:
             self.state.knowledge[person_id]["name"] = label
 

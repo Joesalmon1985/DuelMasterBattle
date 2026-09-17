@@ -16,6 +16,7 @@ const GRID_W := 14
 const GRID_H := 10
 const INTERACT_RANGE_PX := 72.0
 const OBSERVE_RANGE_PX := 280.0
+const LocalMover = preload("res://client/world/local_movement_presenter.gd")
 
 # Fixture interior blockers (full-tile trees). Keep row y=5 and the NPC approach clear.
 # Spawn [4,5] → NPC [10,3] → east exit (13,4–5) and the return path stay open.
@@ -58,6 +59,8 @@ var _built := false
 var _last_hint := ""
 var _travel_armed := true  # false after arrival until input releases / moves inward
 var _hold_grid := Vector2.ZERO
+var _mover = null
+var _last_view: Dictionary = {}
 
 
 func setup(world_client, touch_pad) -> void:
@@ -66,9 +69,22 @@ func setup(world_client, touch_pad) -> void:
 	if _touch:
 		_touch.direction_changed.connect(_on_dir)
 		_touch.action_pressed.connect(_on_action)
+	_mover = LocalMover.new()
+	_mover.bind(self, client)
 	_build_roots()
 	rebuild_from_view(client.request_view("player"))
 	_refresh_action_hint()
+
+
+func set_presentation_paused(on: bool) -> void:
+	if _mover:
+		_mover.set_paused(on)
+
+
+func tick_presentation(delta_sec: float) -> void:
+	## Advance local journeys using Game Time quanta (not wall-clock alone).
+	if _mover:
+		_mover.tick(delta_sec)
 
 
 func set_movement_enabled(on: bool) -> void:
@@ -118,10 +134,14 @@ func rebuild_from_view(view: Dictionary) -> void:
 	## Full scene construction / deliberate pose restore (load, travel, bootstrap).
 	if not _built:
 		_build_roots()
+	_last_view = view
 	var player: Dictionary = view.get("player", {})
 	current_node = str(player.get("node_id", current_node))
 	pose_generation = int(player.get("pose_generation", pose_generation))
 	_restore_wizard_pose(player)
+	# Ingest journeys before people so force_present / entrance adopt are ready.
+	if _mover:
+		_mover.ingest_view(view)
 	_rebuild_tiles()
 	_rebuild_people(view.get("people", {}))
 	_rebuild_exits(view.get("board", {}).get("nodes", {}))
@@ -134,17 +154,28 @@ func apply_projections(view: Dictionary) -> void:
 	## HUD/knowledge refresh only — never resets Godot-owned local pose.
 	if not _built or _wizard == null:
 		return
+	_last_view = view
 	var player: Dictionary = view.get("player", {})
 	var node_id := str(player.get("node_id", current_node))
 	if node_id != current_node:
 		rebuild_from_view(view)
 		return
+	if _mover:
+		_mover.ingest_view(view)
 	var people: Dictionary = view.get("people", {})
 	var needs_people_rebuild := false
 	for entity_id in people.keys():
 		var info: Dictionary = people[entity_id]
 		var on_here := str(info.get("node_id", "")) == current_node
+		if _mover and _mover.presenting_on_node(str(entity_id), current_node):
+			on_here = true
 		var has := _npc_nodes.has(entity_id)
+		# Mover-driven actors: never teleport their sprite via grid refresh.
+		if _mover and _mover.is_driving(str(entity_id)):
+			if on_here and not has:
+				needs_people_rebuild = true
+				break
+			continue
 		if on_here != has:
 			needs_people_rebuild = true
 			break
@@ -250,26 +281,50 @@ func _rebuild_people(people: Dictionary) -> void:
 	_label_nodes.clear()
 	for c in _labels.get_children():
 		c.queue_free()
+	var spawned: Dictionary = {}
 	for entity_id in people.keys():
 		var info: Dictionary = people[entity_id]
 		var grid := _person_grid_from_info(info)
-		if grid.x < 0:
+		var force_present: bool = _mover != null and _mover.presenting_on_node(str(entity_id), current_node)
+		if grid.x < 0 and not force_present:
 			continue
-		var spr := Sprite2D.new()
-		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		spr.scale = Vector2(4, 4)
-		spr.position = Vector2(grid.x * TILE + TILE * 0.5, grid.y * TILE + TILE * 0.5)
-		DmbActorVisual.apply(spr, PIXEL, "villager_a", "down", 0, "person")
-		spr.set_meta("entity_id", entity_id)
-		_actors.add_child(spr)
-		_npc_nodes[entity_id] = spr
-		var lbl := Label.new()
-		lbl.text = _label_for(info)
-		lbl.position = spr.position + Vector2(-30, -48)
-		lbl.add_theme_font_size_override("font_size", 16)
-		lbl.set_meta("entity_id", entity_id)
-		_labels.add_child(lbl)
-		_label_nodes[entity_id] = lbl
+		if force_present and grid.x < 0:
+			grid = Vector2i(6, 5)
+		_spawn_person_sprite(str(entity_id), info, grid)
+		spawned[str(entity_id)] = true
+	# Ensure journey actors visible on this node even if authoritative node already advanced.
+	if _mover and _last_view.has("presentation"):
+		var journeys: Dictionary = _last_view.get("presentation", {}).get("journeys", {})
+		for entity_id in journeys.keys():
+			if spawned.has(str(entity_id)):
+				continue
+			if not _mover.presenting_on_node(str(entity_id), current_node):
+				continue
+			var info2: Dictionary = people.get(entity_id, {"known": true, "name": "Hauler Cart", "role": "cart"})
+			_spawn_person_sprite(str(entity_id), info2, Vector2i(6, 5))
+
+
+func _spawn_person_sprite(entity_id: String, info: Dictionary, grid: Vector2i) -> void:
+	var spr := Sprite2D.new()
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	spr.scale = Vector2(4, 4)
+	spr.position = Vector2(grid.x * TILE + TILE * 0.5, grid.y * TILE + TILE * 0.5)
+	DmbActorVisual.apply(spr, PIXEL, "villager_a", "down", 0, "person")
+	spr.set_meta("entity_id", entity_id)
+	_actors.add_child(spr)
+	_npc_nodes[entity_id] = spr
+	var lbl := Label.new()
+	lbl.text = _label_for(info)
+	lbl.position = spr.position + Vector2(-30, -48)
+	lbl.add_theme_font_size_override("font_size", 16)
+	lbl.set_meta("entity_id", entity_id)
+	_labels.add_child(lbl)
+	_label_nodes[entity_id] = lbl
+	if _mover and _mover.is_driving(str(entity_id)):
+		var wp: Vector2 = _mover.world_position_for(str(entity_id))
+		if wp != Vector2.ZERO:
+			spr.position = wp
+			lbl.position = spr.position + Vector2(-30, -48)
 
 
 func _person_grid_from_info(info: Dictionary) -> Vector2i:
@@ -326,7 +381,12 @@ func _rebuild_exits(nodes: Dictionary) -> void:
 		tip.text = "Exit → %s" % ("Road" if to_node == "node:2" else "Home")
 		tip.position = Vector2(-40, -TILE - 24)
 		marker.add_child(tip)
-		if current_node == "node:1":
+		var link: Dictionary = _exit_links.get(str(to_node), {})
+		var direction := str(link.get("direction", ""))
+		var hold = link.get("hold_position", [])
+		if typeof(hold) == TYPE_ARRAY and hold.size() >= 2:
+			marker.position = Vector2(float(hold[0]) * TILE + TILE * 0.5, float(hold[1]) * TILE)
+		elif direction == "east" or current_node == "node:1":
 			marker.position = Vector2((GRID_W - 1) * TILE + TILE * 0.5, 5 * TILE)
 		else:
 			marker.position = Vector2(TILE * 0.5, 5 * TILE)

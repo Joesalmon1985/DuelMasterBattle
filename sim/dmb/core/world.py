@@ -162,6 +162,7 @@ class WorldSim:
         self.router.register("Observe", self._handle_observe)
         self.router.register("Interact", self._handle_interact)
         self.router.register("SyncPose", self._handle_sync_pose)
+        self.router.register("SyncPresentation", self._handle_sync_presentation)
 
     def dispatch(self, envelope: CommandEnvelope) -> CommandResult:
         if self.state.legacy_godot_world_tick_enabled or self.state.legacy_godot_world_save_enabled:
@@ -358,6 +359,9 @@ class WorldSim:
             if isinstance(cart, dict) and cart.get("status") == "blocked":
                 cart["status"] = "en_route"
                 cart.pop("block_reason", None)
+                from sim.dmb.presentation.journeys import begin_cart_assignment_journey
+
+                begin_cart_assignment_journey(self.state, cart_id)
             if fx:
                 fx["delivery_status"] = "en_route"
             self.state.world_version += 1
@@ -684,8 +688,11 @@ class WorldSim:
         person = self.state.people.get(person_id)
         if isinstance(person, dict):
             person["node_id"] = cart.get("current_node", n0)
-            person["label"] = f"Hauler Cart (travelling)"
+            person["label"] = "Hauler Cart (travelling)"
             person["display_name"] = person["label"]
+        from sim.dmb.presentation.journeys import begin_cart_assignment_journey
+
+        journey = begin_cart_assignment_journey(self.state, cart_id)
         self.state.world_version += 1
         return CommandResult(
             status="ACCEPTED",
@@ -698,8 +705,24 @@ class WorldSim:
                 "path": planned["path"],
                 "reservation_id": reservation_id,
                 "required": required,
+                "journey": journey,
             },
             public_feedback="delivery started",
+        )
+
+    def _handle_sync_presentation(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.presentation.journeys import apply_presentation_progress
+
+        # Presentation lease: does not advance turns or bump world_version.
+        result = apply_presentation_progress(self.state, dict(envelope.payload or {}))
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[],
+            payload=result,
+            public_feedback="presentation_synced",
         )
 
     def _handle_sync_pose(self, envelope: CommandEnvelope) -> CommandResult:

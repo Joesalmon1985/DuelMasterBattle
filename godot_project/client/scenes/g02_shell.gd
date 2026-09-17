@@ -218,6 +218,7 @@ func _apply_movement_gate() -> void:
 	var allow := not _paused and _focus and not _bridge_down and _client != null
 	if _area:
 		_area.set_movement_enabled(allow)
+		_area.set_presentation_paused(not allow)
 	if _touch:
 		_touch.set_enabled(allow)
 
@@ -260,6 +261,8 @@ func _on_clock_advance(delta_ms: int, sequence: int) -> void:
 		"advance-%d" % sequence, "AdvanceGame", {"delta_ms": delta_ms, "clock_sequence": sequence}
 	)
 	if str(reply.get("status", "")) == "ACCEPTED":
+		if _area:
+			_area.tick_presentation(float(delta_ms) / 1000.0)
 		_refresh_counters(false)
 
 
@@ -362,7 +365,10 @@ func _on_clear_route(mode: String = "clear") -> void:
 	var reply := _cmd("Interact", {"action": action})
 	if str(reply.get("status", "")) == "ACCEPTED":
 		if mode == "start":
-			_prompt.text = "Delivery started — Wait moves the cart one road edge/turn (loads immediately)"
+			_prompt.text = "Delivery started — cart walks to the exit (Game Time); Wait authorises the crossing"
+			_refresh_counters(false)
+			if _area:
+				_area.tick_presentation(0.05)
 		elif mode == "clear":
 			_prompt.text = "Route cleared — Wait resumes the same cart/cargo"
 		else:

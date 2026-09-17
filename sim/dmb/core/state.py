@@ -90,7 +90,17 @@ class WorldState:
             filtered = dict(filtered)
             filtered["node_id"] = record.get("node_id")
             filtered["grid"] = list(record.get("grid", []))
+            if record.get("presentation_phase") is not None:
+                filtered["presentation_phase"] = record.get("presentation_phase")
+            if record.get("cart_id") is not None:
+                filtered["cart_id"] = record.get("cart_id")
+            if record.get("store_id") is not None:
+                filtered["store_id"] = record.get("store_id")
+            if record.get("role") is not None and filtered.get("role") is None:
+                filtered["role"] = record.get("role")
             people[entity_id] = filtered
+        from sim.dmb.presentation.journeys import journeys_for_view
+
         payload = {
             "world_id": self.world_id,
             "world_version": self.world_version,
@@ -98,6 +108,7 @@ class WorldState:
             "player": deepcopy(self.player),
             "board": {"nodes": deepcopy(self.board.get("nodes", {}))},
             "people": people,
+            "presentation": journeys_for_view(self),
             "scope": scope,
         }
         if scope in {"debug", "economy"}:
