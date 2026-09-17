@@ -1,9 +1,9 @@
-commit: 34b950f84da07b5c1787115214d099dcc7bffe74
+commit: 90c0d6511bbff7163a1d88b267cd83a2f2259bba
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g02.sh --direct
 
 # Portrait 450x800 (native Godot 4.4.1)
-# Repair implementation: 90c0d6511bbff7163a1d88b267cd83a2f2259bba
+# Docs/handoff tip: 5b268a388903d7ba12a60dcbaac3afab985683b0
 # DMB_FIXTURE=FX-CARGO DMB_SEED=202
 # Save: g02_playtest  Recovery: _recovery
 # Economy: Start delivery → Block → Wait → Clear → Wait (construction follows)
