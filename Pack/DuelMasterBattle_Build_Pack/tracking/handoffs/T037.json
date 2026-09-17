@@ -1,7 +1,7 @@
 {
   "task_id": "T037",
   "status": "DONE",
-  "commit": null,
+  "commit": "219b620bd2e2d59616f59178a5dbb643ae4a0563",
   "files": [
     "sim/dmb/construction/buildings.py",
     "tests/sim/test_t037_destruction.py",
