@@ -2,46 +2,55 @@
 
 **Status:** AWAITING_HUMAN (do not start T049)  
 **Scenario:** FX-CARGO · **Seed:** 202  
-**Tested revision:** `6b1add33c5f3f2df49933b854612788a3487fe35`  
+**Tested revision:** `PENDING_COMMIT`  
 **Save slot:** `g02_playtest` · recovery: `_recovery`
 
-## Launch (verified)
+## Launch (verified on this host)
 
 ```bash
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g02.sh --direct
 ```
 
-Portrait default **450×800**. Economy debug panel shows warehouse/cart/order fields from the Python `economy` view (not release UI).
+Portrait default **450×800** (native Linux Godot 4.4.1). Economy is a **bounded collapsible** top-right panel (toggle **Economy ▾ / ▸**). Movement pad, Observe/✦, Wait and the bottom action bar stay clickable.
 
-## Fixture
+## Playable world (fresh launch)
 
-- Seed **202**
-- Warehouse store + named cart from `fx_cargo` (see economy panel)
-- Road N0–N1–N2; Place route block / Clear route block buttons use Interact (`place_route_block` / `clear_hazard`)
-- Wait/Travel advances World Turns and cart movement (≤1 road edge/turn)
+- Three linked rooms: **Warehouse Yard** (`node:1`) → **Blocked Way** (`node:2`) → **Construction Staging** (`node:3`)
+- Visible/inspectable: **Timber Warehouse**, **Hauler Cart**, exit toward the road; staging has **Construction Site**
+- G01-style automatic exits and linked arrival poses preserved
 
-## Automated
+## Manual checklist (normal simulation commands — not `run_fx_cargo()`)
 
-- FX-CARGO scenario via `python3 tools/run_scenario.py --fixture FX-CARGO --seed 202` — PASS (`block_cleared`, in-transit cargo preserved)
-- `python3 tools/check.py --gate G02` — PASS (includes G01 smoke regression)
-- Godot: `res://client/tests/run_g02_smoke.gd` → `G02_SMOKE_OK seed=202 cart=cart:1`
-- Screenshots under `tracking/gates/G02/` and `screenshots/`
-
-## 15–20 minute checklist
-
-| Step | Expect |
-| --- | --- |
-| Launch portrait `--direct` | Economy panel lists store timber and cart id; wizard still moves on pad |
-| Inspect warehouse + cart | Labels show real available/reserved/escrow and cart node/cargo |
-| Place route block, Wait after cargo is assigned | Cart parks/blocked; goods remain on cart (no teleport) |
-| Clear route block, Wait/Travel | Same cart resumes; cargo arrives at destination store |
-| Construction | Settlement only after costs delivered to staging |
-| Faction seats + tech | Full seat round yields one tech pick per faction (draft) |
-| Save with cargo aboard (`g02_playtest`), reload | Same cargo lots / node / quantities |
+| Step | How | Expect |
+| --- | --- | --- |
+| Inspect | Open Economy panel; approach warehouse/cart | Stocks + cart id/node; labels **Timber Warehouse** / **Hauler Cart** |
+| Start delivery | Economy → **Start delivery** | Cart `en_route`, cargo aboard (reserved from warehouse) |
+| Block route | Economy → **Block**, then **Wait** | `delivery=blocked_route`; cart `blocked` at `node:1`; goods stay aboard (no teleport) |
+| Clear + resume | Economy → **Clear**, then **Wait** twice | Cart resumes `node:2` then `node:3` / `arrived`; staging store gains goods |
+| Construction | Keep **Wait**-ing after delivery | Settlement commits at staging once costs are local; Economy shows construction/order fields |
+| Faction + tech | Watch Economy after full seat rounds | `turn` / `round` / `seat`; tech draft active + pick results under `last_seat` / tech lines |
+| Save/load | **Save** while cargo aboard, **Load** | Same cart node, cargo lots and quantities |
 
 **Experience question:** Can you see why goods and construction are delayed?
 
 Reply `G02 PASS — <build/commit>` or `G02 FIX_REQUIRED — <symptom>`.
+
+## Automated evidence
+
+- `python3 tools/run_scenario.py --fixture FX-CARGO --seed 202 --record Pack/DuelMasterBattle_Build_Pack/tracking/gates/G02/fx_cargo_record.json` — PASS
+- `python3 -m pytest tests/integration/test_construction_cargo.py` — includes Interact start/block/clear path
+- `python3 tools/check.py --gate G02` — cumulative Python + packet files + G02 pointer smoke + G01 smoke/playable/bridge
+- Godot `run_g02_smoke.gd`: real `g02_shell`, pointer pad move, Wait click (+1 turn), block/resume/save
+
+## Screenshots (actual gameplay capture dimensions)
+
+| File | Captured size |
+| --- | --- |
+| `screenshot_450x800.png` / `screenshot_wizard.png` | **450×800** |
+| `screenshot_720x1280.png` (desktop-clamped alias of `screenshot_720x1011.png`) | **720×1011** |
+| `screenshot_1280x720.png` | **1280×720** |
+| `screenshots/warehouse_cart.png` | **450×800** |
+| `screenshots/blocked_route.png` | **450×800** (`delivery=blocked_route`) |
 
 **Not claimed as human gate PASS.**

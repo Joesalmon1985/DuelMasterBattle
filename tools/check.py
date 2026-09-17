@@ -499,11 +499,21 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "res://client/tests/run_g02_smoke.gd",
                 r"G02_SMOKE_OK",
             ),
-            # Retain meaningful G01 regressions.
+            # Retain meaningful G01 regressions (playable + bridge, not smoke alone).
             _godot_script(
                 "g01_regression_smoke",
                 "res://client/tests/run_g01_smoke.gd",
                 r"G01_SMOKE_OK",
+            ),
+            _godot_script(
+                "g01_regression_playable",
+                "res://client/tests/run_g01_playable.gd",
+                r"G01_PLAYABLE_OK",
+            ),
+            _godot_script(
+                "g01_regression_bridge_play",
+                "res://client/tests/run_g01_bridge_play.gd",
+                r"G01_BRIDGE_PLAY_OK",
             ),
         ]
     return [

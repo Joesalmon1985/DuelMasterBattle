@@ -24,7 +24,17 @@ def hex_has_catastrophe(board: Mapping[str, Any], hex_id: str) -> bool:
 
 
 def node_blocked_for_civilian(board: Mapping[str, Any], node_id: str, *, touching_hexes) -> bool:
-    """Any catastrophe cube on a hex touching the node blocks civilian/cart entry."""
+    """Any catastrophe cube on a hex touching the node blocks civilian/cart entry.
+
+    Also honour cubes that name a player-graph node_id directly (FX-CARGO playable path).
+    """
+    cubes = board.get("hazard_cubes") or board.get("cubes") or {}
+    if isinstance(cubes, dict):
+        for cube in cubes.values():
+            if not cube.get("active", True):
+                continue
+            if str(cube.get("node_id") or "") == node_id:
+                return True
     for hex_id in touching_hexes(node_id):
         if hex_has_catastrophe(board, hex_id):
             return True

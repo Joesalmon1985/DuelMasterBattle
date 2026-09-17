@@ -210,6 +210,33 @@
         "RecoverCheckpoint path"
       ],
       "next_diagnostic": "G01_BRIDGE_PLAY_OK arrivals=ok; T019 recovery_tests PASS"
+    },
+    {
+      "id": "D011",
+      "task_id": "T048",
+      "status": "RESOLVED",
+      "summary": "G02 EconomyView fullscreen RichTextLabel intercepted pointer; FX-CARGO not playable on same graph",
+      "reproduction_command": "bash tools/play_g02.sh --direct",
+      "seed": "202",
+      "failing_assertion_or_log": "Joe cannot use the controls; warehouse/cart on separate hex path",
+      "expected_state": "bounded economy panel; pad/Wait/menu usable; warehouse/cart/route on linked rooms; Interact start/block/clear",
+      "observed_state": "fullscreen mouse steal; G01 rooms without cargo actors",
+      "suspected_owner": "economy_view.gd + fixtures._load_fx_cargo + g02_shell.gd",
+      "files_changed": [
+        "godot_project/client/debug/economy_view.gd",
+        "godot_project/client/scenes/g02_shell.gd",
+        "sim/dmb/testing/fixtures.py",
+        "sim/dmb/core/world.py",
+        "sim/dmb/time/runner.py",
+        "godot_project/client/tests/run_g02_smoke.gd"
+      ],
+      "attempted_fixes": [
+        "collapsible top-right EconomyView with MOUSE_FILTER_IGNORE parent",
+        "three-node playable FX-CARGO graph + knowledge labels",
+        "Interact start_delivery / node_id block / clear resumes cart",
+        "pointer Wait smoke + gameplay screenshots"
+      ],
+      "next_diagnostic": "G02_SMOKE_OK pointer move + Wait +1; check.py --gate G02 PASS"
     }
   ]
 }

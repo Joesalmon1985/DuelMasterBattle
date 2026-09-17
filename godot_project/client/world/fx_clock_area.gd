@@ -140,9 +140,26 @@ func apply_projections(view: Dictionary) -> void:
 		rebuild_from_view(view)
 		return
 	var people: Dictionary = view.get("people", {})
-	for entity_id in _label_nodes.keys():
-		if people.has(entity_id):
-			_label_nodes[entity_id].text = _label_for(people[entity_id])
+	var needs_people_rebuild := false
+	for entity_id in people.keys():
+		var info: Dictionary = people[entity_id]
+		var on_here := str(info.get("node_id", "")) == current_node
+		var has := _npc_nodes.has(entity_id)
+		if on_here != has:
+			needs_people_rebuild = true
+			break
+		if on_here and has:
+			var grid := _person_grid_from_info(info)
+			if grid.x >= 0:
+				_npc_nodes[entity_id].position = Vector2(grid.x * TILE + TILE * 0.5, grid.y * TILE + TILE * 0.5)
+				if _label_nodes.has(entity_id):
+					_label_nodes[entity_id].position = _npc_nodes[entity_id].position + Vector2(-30, -48)
+	if needs_people_rebuild:
+		_rebuild_people(people)
+	else:
+		for entity_id in _label_nodes.keys():
+			if people.has(entity_id):
+				_label_nodes[entity_id].text = _label_for(people[entity_id])
 	var node_info: Dictionary = view.get("board", {}).get("nodes", {}).get(current_node, {})
 	if _area_title:
 		_area_title.text = str(node_info.get("label", current_node))
@@ -182,6 +199,10 @@ func _rebuild_tiles() -> void:
 			if current_node == "node:1" and x == GRID_W - 1 and y in [4, 5]:
 				exit_gap = true
 			if current_node == "node:2" and x == 0 and y in [4, 5]:
+				exit_gap = true
+			if current_node == "node:2" and x == GRID_W - 1 and y in [4, 5]:
+				exit_gap = true
+			if current_node == "node:3" and x == 0 and y in [4, 5]:
 				exit_gap = true
 			var spr := Sprite2D.new()
 			spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST

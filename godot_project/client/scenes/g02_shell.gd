@@ -75,11 +75,10 @@ func _ready() -> void:
 	_refresh_counters(false)
 	_apply_movement_gate()
 	_economy = EconomyView.new()
-	_economy.custom_minimum_size = Vector2(0, 180)
 	_ui_root.add_child(_economy)
 	_economy.bind_client(_client)
 	_economy.add_clear_route_button(_on_clear_route)
-	_set_status("Python-backed FX-CARGO — inspect warehouse/cart in economy panel; Travel/Wait advances cargo")
+	_set_status("Python-backed FX-CARGO — Start delivery in Economy; Block/Clear route; Wait advances cargo")
 
 
 func _build_chrome() -> void:
@@ -336,10 +335,19 @@ func _on_interact(entity_id: String) -> void:
 
 
 func _on_clear_route(mode: String = "clear") -> void:
-	var action := "clear_hazard" if mode == "clear" else "place_route_block"
+	var action := "clear_hazard"
+	if mode == "place":
+		action = "place_route_block"
+	elif mode == "start":
+		action = "start_delivery"
 	var reply := _cmd("Interact", {"action": action})
 	if str(reply.get("status", "")) == "ACCEPTED":
-		_prompt.text = ("Route block cleared" if mode == "clear" else "Route block placed") + " — use Wait/Travel to observe cargo"
+		if mode == "start":
+			_prompt.text = "Delivery started — Wait advances the cart; Block/Clear to test the route"
+		elif mode == "clear":
+			_prompt.text = "Route block cleared — Wait/Travel to resume cargo"
+		else:
+			_prompt.text = "Route block placed — Wait to observe blockage (no teleport)"
 	else:
 		_prompt.text = "Route action failed: %s" % reply.get("public_feedback", reply.get("code", "?"))
 	_refresh_counters(false)

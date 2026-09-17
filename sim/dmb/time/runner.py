@@ -106,7 +106,59 @@ class TurnRunner:
             return routes.validate_next_edge(str(cart.get("owner_faction")), a, b)
 
         moved = carts.advance_all(validate_edge=validate_edge)
+        self._sync_fx_cargo_cart_person()
+        self._maybe_queue_fx_construction(ledger)
         return {"moved": [m.get("id") for m in moved], "carts": moved}
+
+    def _sync_fx_cargo_cart_person(self) -> None:
+        fx = self.state.board.get("fx_cargo") or {}
+        cart_id = str(fx.get("cart_id") or "")
+        person_id = str(fx.get("cart_person_id") or "")
+        cart = self.state.carts.get(cart_id) if cart_id else None
+        person = self.state.people.get(person_id) if person_id else None
+        if not isinstance(cart, dict) or not isinstance(person, dict):
+            return
+        person["node_id"] = cart.get("current_node", person.get("node_id"))
+        if cart.get("status") == "blocked":
+            fx["delivery_status"] = "blocked_route"
+        elif cart.get("status") in {"en_route", "assigned"}:
+            fx["delivery_status"] = "en_route"
+        elif cart.get("status") == "arrived":
+            fx["delivery_status"] = "delivered"
+
+    def _maybe_queue_fx_construction(self, ledger) -> None:
+        """After playable delivery lands, reserve a settlement order for completions."""
+        fx = self.state.board.get("fx_cargo") or {}
+        if not fx.get("construction_pending"):
+            return
+        cart_id = str(fx.get("cart_id") or "")
+        cart = self.state.carts.get(cart_id) if cart_id else None
+        if not isinstance(cart, dict) or cart.get("status") != "arrived":
+            return
+        staging_store = str(fx.get("staging_store") or "")
+        n2 = str(fx.get("N2") or "")
+        required = dict(fx.get("required") or {"timber": 1, "brick": 1, "wool": 1, "grain": 1})
+        if not staging_store or not n2:
+            return
+        for good, qty in required.items():
+            if ledger.available(staging_store, good) < qty:
+                return
+        from sim.dmb.construction.orders import ConstructionService
+
+        order = ConstructionService(self.state, ledger=ledger).reserve_order(
+            "settlement",
+            faction_id="faction:1",
+            store_id=staging_store,
+            target_node=n2,
+        )
+        fx["construction_pending"] = False
+        fx["delivery_status"] = "delivered"
+        fx["construction_order_id"] = order.get("id")
+        if order.get("status") == "ready":
+            fx["construction_status"] = "ready"
+        else:
+            fx["construction_status"] = str(order.get("status") or "blocked")
+            fx["construction_reason"] = order.get("reason")
 
     def _stage_completions(self) -> dict[str, Any]:
         from sim.dmb.construction.orders import ConstructionService
@@ -259,6 +311,13 @@ class TurnRunner:
         else:
             seat = self.scheduler.finish_seat()
             seat = self._maybe_resolve_tech_draft(seat)
+        self.state.clock["last_seat"] = {
+            "round_complete": bool(seat.get("round_complete")),
+            "active_faction_id": self.scheduler.active_seat(),
+            "tech_draft": seat.get("tech_draft"),
+            "tech_snapshot_pick_index": seat.get("tech_snapshot_pick_index"),
+            "interrupted": bool(seat.get("interrupted") or self.interrupted),
+        }
         return {
             "turn": int(self.state.clock["turn"]),
             "node_id": current_node,

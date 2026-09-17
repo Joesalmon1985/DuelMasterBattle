@@ -352,6 +352,14 @@ class WorldSim:
                     events=[],
                     public_feedback="no hazard to clear",
                 )
+            fx = self.state.board.get("fx_cargo") or {}
+            cart_id = str(fx.get("cart_id") or "")
+            cart = self.state.carts.get(cart_id) if cart_id else None
+            if isinstance(cart, dict) and cart.get("status") == "blocked":
+                cart["status"] = "en_route"
+                cart.pop("block_reason", None)
+            if fx:
+                fx["delivery_status"] = "en_route"
             self.state.world_version += 1
             return CommandResult(
                 status="ACCEPTED",
@@ -364,30 +372,34 @@ class WorldSim:
             )
         if str(payload.get("action") or "") == "place_route_block":
             fx = self.state.board.get("fx_cargo") or {}
-            block_hex = str(payload.get("hex_id") or fx.get("block_hex") or "")
-            if not block_hex:
+            block_node = str(payload.get("node_id") or fx.get("block_node") or fx.get("block_hex") or "")
+            if not block_node:
                 return CommandResult(
                     status="REJECTED",
                     code="INVALID",
                     command_id=envelope.command_id,
                     world_version=self.state.world_version,
                     events=[],
-                    public_feedback="no block hex",
+                    public_feedback="no block node",
                 )
             self.state.board.setdefault("hazard_cubes", {})["fx-block"] = {
-                "hex_id": block_hex,
+                "node_id": block_node,
+                "hex_id": block_node,
                 "active": True,
             }
+            fx["delivery_status"] = "blocked_route"
             self.state.world_version += 1
             return CommandResult(
                 status="ACCEPTED",
                 code="OK",
                 command_id=envelope.command_id,
                 world_version=self.state.world_version,
-                events=[{"kind": "hazard_placed", "hex_id": block_hex}],
-                payload={"hex_id": block_hex},
+                events=[{"kind": "hazard_placed", "node_id": block_node}],
+                payload={"node_id": block_node},
                 public_feedback="route blocked",
             )
+        if str(payload.get("action") or "") == "start_delivery":
+            return self._start_fx_cargo_delivery(envelope)
 
         entity_id = str(payload.get("entity_id", ""))
         person = self.state.people.get(entity_id)
@@ -427,6 +439,89 @@ class WorldSim:
             events=[],
             payload=view,
             public_feedback="interacted",
+        )
+
+    def _start_fx_cargo_delivery(self, envelope: CommandEnvelope) -> CommandResult:
+        """Assign the FX-CARGO cart through normal Interact — not only run_fx_cargo()."""
+        from sim.dmb.logistics.carts import CartService
+        from sim.dmb.logistics.director import LogisticsService
+        from sim.dmb.logistics.routes import RoutePlanner
+        from sim.dmb.logistics.stock import StockLedger
+
+        fx = self.state.board.setdefault("fx_cargo", {})
+        cart_id = str(fx.get("cart_id") or "")
+        store = str(fx.get("store") or "")
+        staging_store = str(fx.get("staging_store") or "")
+        n0 = str(fx.get("N0") or "")
+        n2 = str(fx.get("N2") or "")
+        required = dict(fx.get("required") or {"timber": 1, "brick": 1, "wool": 1, "grain": 1})
+        if not cart_id or not store or not staging_store or not n0 or not n2:
+            return CommandResult(
+                status="REJECTED",
+                code="INVALID",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="fx_cargo incomplete",
+            )
+        cart = self.state.carts.get(cart_id)
+        if cart is None:
+            return CommandResult(
+                status="REJECTED",
+                code="INVALID",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="missing cart",
+            )
+        if cart.get("status") in {"assigned", "en_route", "blocked"} and any(
+            lot.get("status") == "aboard" for lot in cart.get("cargo_lots") or []
+        ):
+            return CommandResult(
+                status="REJECTED",
+                code="BUSY",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="delivery already in progress",
+            )
+        ledger = StockLedger(self.state)
+        carts = CartService(self.state, ledger=ledger)
+        director = LogisticsService(self.state, carts=carts, routes=RoutePlanner(self.state), ledger=ledger)
+        res = ledger.reserve(f"fx-play-{envelope.command_id}", required, store_id=store)
+        assign = director.assign(
+            cart_id, source=n0, target=n2, destination_store=staging_store, reservation_id=res["id"]
+        )
+        if assign.get("status") != "assigned":
+            try:
+                ledger.release_reservation(res["id"])
+            except Exception:
+                pass
+            return CommandResult(
+                status="REJECTED",
+                code="BLOCKED",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload=dict(assign),
+                public_feedback=str(assign.get("reason") or "route blocked"),
+            )
+        fx["delivery_status"] = "en_route"
+        fx["construction_pending"] = True
+        fx["reservation_id"] = res["id"]
+        person_id = str(fx.get("cart_person_id") or "person:cart")
+        person = self.state.people.get(person_id)
+        if isinstance(person, dict):
+            person["node_id"] = cart.get("current_node", n0)
+        self.state.world_version += 1
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[{"kind": "delivery_started", "cart_id": cart_id, "path": assign.get("path")}],
+            payload={"cart_id": cart_id, "path": assign.get("path"), "reservation_id": res["id"]},
+            public_feedback="delivery started",
         )
 
     def _handle_sync_pose(self, envelope: CommandEnvelope) -> CommandResult:
