@@ -1,0 +1,2379 @@
+{
+  "schema_version": "dmb-ensemble-quality-v1",
+  "pass": false,
+  "flags": [
+    "Major characters share identical Central_Contradiction: ['Wants independence but has structured daily life around being needed by other people.', 'Believes in personal responsibility but readily explains their own failures through circumstance.', 'Publicly values principled, but becomes self-righteous when the issue touches their own status.', 'Demands honesty from others while maintaining one carefully bounded deception.', 'Claims to hate village gossip yet tracks social information with professional precision.']",
+    "Major characters share identical Core_Fear: ['being remembered for a single failure rather than years of useful work', 'becoming dependent on people they do not trust', 'discovering that the harm they rationalised was avoidable', 'losing the one relationship that lets them believe their compromises were worthwhile', 'being publicly exposed as less competent than their role requires']",
+    "Major characters share identical False_Belief: ['A private compromise is harmless if it prevents a public crisis.', 'People only stay loyal while I remain useful.', 'Admitting uncertainty gives other people permission to ignore me.', 'My worst decision is also the truest measure of who I am.', 'If everyone understands the facts, they will eventually choose the decent option.']",
+    "Central_Contradiction exceeds cap 3: [('Wants independence but has structured daily life around being needed by other people.', 22), ('Claims to hate village gossip yet tracks social information with professional precision.', 10), ('Demands honesty from others while maintaining one carefully bounded deception.', 18), ('Believes in personal responsibility but readily explains their own failures through circumstance.', 18)]",
+    "Core_Fear exceeds cap 4: [('being remembered for a single failure rather than years of useful work', 18), ('discovering that the harm they rationalised was avoidable', 17), ('having private grief converted into public gossip', 8), ('losing the one relationship that lets them believe their compromises were worthwhile', 15), ('being publicly exposed as less competent than their role requires', 18)]",
+    "False_Belief exceeds cap 4: [('A private compromise is harmless if it prevents a public crisis.', 18), ('If everyone understands the facts, they will eventually choose the decent option.', 9), ('Admitting uncertainty gives other people permission to ignore me.', 17), ('If I control the procedure, I can control the damage.', 15), ('People only stay loyal while I remain useful.', 17)]",
+    "Characters whose psychology lacks occupation/place specificity: ['NPC_002', 'NPC_003', 'NPC_007', 'NPC_009', 'NPC_011', 'NPC_012', 'NPC_013', 'NPC_015', 'NPC_019', 'NPC_020', 'NPC_022', 'NPC_028']",
+    "Only 8 distinct responsibility targets (need >= 30)",
+    "Responsibility indegree exceeds 4 without counting overrides: {'NPC_006': 11, 'NPC_017': 11, 'NPC_083': 11, 'NPC_028': 11, 'NPC_050': 11, 'NPC_039': 11, 'NPC_061': 11, 'NPC_072': 11}",
+    "8 cross_district edges join same-district characters",
+    "26 consequence scenes lack valid predecessor bindings",
+    "300 scenes still duplicate global writer-policy text"
+  ],
+  "profiles": {
+    "character_count": 88,
+    "major_count": 21,
+    "psychological_fields": [
+      {
+        "field": "Core_Desire",
+        "populated": 88,
+        "unique": 49,
+        "most_repeated": [
+          {
+            "value": "to protect the part of village life they understand best without becoming responsible for everything around it",
+            "count": 23
+          },
+          {
+            "value": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "count": 4
+          },
+          {
+            "value": "to resolve a concrete problem in timber quarter before it becomes a public judgement on their worth",
+            "count": 4
+          },
+          {
+            "value": "to resolve a concrete problem in shrine & care before it becomes a public judgement on their worth",
+            "count": 4
+          },
+          {
+            "value": "to resolve a concrete problem in households before it becomes a public judgement on their worth",
+            "count": 4
+          },
+          {
+            "value": "to resolve a concrete problem in outsiders & oddities before it becomes a public judgement on their worth",
+            "count": 3
+          },
+          {
+            "value": "to resolve a concrete problem in market & inn before it becomes a public judgement on their worth",
+            "count": 2
+          },
+          {
+            "value": "to resolve a concrete problem in clay & builders before it becomes a public judgement on their worth",
+            "count": 2
+          }
+        ],
+        "repeat_count": 9,
+        "near_duplicates": [
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in market & inn before it becomes a public judgement on their worth",
+            "similarity": 0.904
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in market & inn before it becomes a public judgement on their worth",
+            "similarity": 0.904
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in timber quarter before it becomes a public judgement on their worth",
+            "similarity": 0.864
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in timber quarter before it becomes a public judgement on their worth",
+            "similarity": 0.864
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in timber quarter before it becomes a public judgement on their worth",
+            "similarity": 0.864
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in timber quarter before it becomes a public judgement on their worth",
+            "similarity": 0.864
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in clay & builders before it becomes a public judgement on their worth",
+            "similarity": 0.91
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in clay & builders before it becomes a public judgement on their worth",
+            "similarity": 0.91
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in mine & forge before it becomes a public judgement on their worth",
+            "similarity": 0.904
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in shrine & care before it becomes a public judgement on their worth",
+            "similarity": 0.909
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in shrine & care before it becomes a public judgement on their worth",
+            "similarity": 0.909
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in shrine & care before it becomes a public judgement on their worth",
+            "similarity": 0.909
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in shrine & care before it becomes a public judgement on their worth",
+            "similarity": 0.909
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in households before it becomes a public judgement on their worth",
+            "similarity": 0.903
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in households before it becomes a public judgement on their worth",
+            "similarity": 0.903
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in households before it becomes a public judgement on their worth",
+            "similarity": 0.903
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in households before it becomes a public judgement on their worth",
+            "similarity": 0.903
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in outsiders & oddities before it becomes a public judgement on their worth",
+            "similarity": 0.907
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in outsiders & oddities before it becomes a public judgement on their worth",
+            "similarity": 0.907
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in outsiders & oddities before it becomes a public judgement on their worth",
+            "similarity": 0.907
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in market & inn before it becomes a public judgement on their worth",
+            "similarity": 0.904
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in market & inn before it becomes a public judgement on their worth",
+            "similarity": 0.904
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in timber quarter before it becomes a public judgement on their worth",
+            "similarity": 0.864
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in timber quarter before it becomes a public judgement on their worth",
+            "similarity": 0.864
+          },
+          {
+            "left": "to resolve a concrete problem in council & civic before it becomes a public judgement on their worth",
+            "right": "to resolve a concrete problem in timber quarter before it becomes a public judgement on their worth",
+            "similarity": 0.864
+          }
+        ]
+      },
+      {
+        "field": "Immediate_Want",
+        "populated": 88,
+        "unique": 35,
+        "most_repeated": [
+          {
+            "value": "wants a missing object, record or resource recovered before the next work cycle",
+            "count": 24
+          },
+          {
+            "value": "wants the player to verify one disputed fact before anyone acts",
+            "count": 18
+          },
+          {
+            "value": "wants a practical favour completed without turning it into public theatre",
+            "count": 14
+          }
+        ],
+        "repeat_count": 3,
+        "near_duplicates": [
+          {
+            "left": "wants the player to speak to Kessa Dorn before confronting Tomas Pell",
+            "right": "wants the player to speak to Kell Varn before confronting Bran Elt",
+            "similarity": 0.859
+          },
+          {
+            "left": "wants the player to speak to Kessa Dorn before confronting Tomas Pell",
+            "right": "wants the player to speak to Kiva Roan before confronting Pell Dray",
+            "similarity": 0.853
+          },
+          {
+            "left": "wants the player to speak to Kessa Dorn before confronting Tomas Pell",
+            "right": "wants the player to speak to Ilya Sorn before confronting Tovin Ash",
+            "similarity": 0.853
+          },
+          {
+            "left": "wants the player to speak to Kessa Dorn before confronting Tomas Pell",
+            "right": "wants the player to speak to Etta Marr before confronting Lio Pell",
+            "similarity": 0.874
+          },
+          {
+            "left": "wants the player to speak to Mara Vey before confronting Iven Tarrow",
+            "right": "wants the player to speak to Yara Fen before confronting Tebb Crow",
+            "similarity": 0.881
+          },
+          {
+            "left": "wants the player to speak to Mara Vey before confronting Iven Tarrow",
+            "right": "wants the player to speak to Haro Keld before confronting Etta Marr",
+            "similarity": 0.859
+          },
+          {
+            "left": "wants the player to speak to Mara Vey before confronting Iven Tarrow",
+            "right": "wants the player to speak to Master Oren before confronting Nox",
+            "similarity": 0.855
+          },
+          {
+            "left": "wants the player to speak to Della Marr before confronting Lysa Rook",
+            "right": "wants the player to speak to Pella Vane before confronting Lenn Cask",
+            "similarity": 0.853
+          },
+          {
+            "left": "wants the player to speak to Della Marr before confronting Lysa Rook",
+            "right": "wants the player to speak to Ellen Briar before confronting Maela Hurn",
+            "similarity": 0.841
+          },
+          {
+            "left": "wants the player to speak to Della Marr before confronting Lysa Rook",
+            "right": "wants the player to speak to Pell Dray before confronting Siva Noll",
+            "similarity": 0.844
+          },
+          {
+            "left": "wants the player to speak to Della Marr before confronting Lysa Rook",
+            "right": "wants the player to speak to Etta Marr before confronting Lio Pell",
+            "similarity": 0.866
+          },
+          {
+            "left": "wants the player to speak to Odo Tren before confronting Hobb Cren",
+            "right": "wants the player to speak to Yara Fen before confronting Tebb Crow",
+            "similarity": 0.864
+          },
+          {
+            "left": "wants the player to speak to Tessa Keld before confronting Bera Moss",
+            "right": "wants the player to speak to Ossa Rime before confronting Veyra Korr",
+            "similarity": 0.868
+          },
+          {
+            "left": "wants the player to speak to Tessa Keld before confronting Bera Moss",
+            "right": "wants the player to speak to Haro Keld before confronting Etta Marr",
+            "similarity": 0.874
+          },
+          {
+            "left": "wants the player to speak to Sori Ash before confronting Tessa Keld",
+            "right": "wants the player to speak to Berric Vale before confronting Haro Keld",
+            "similarity": 0.868
+          },
+          {
+            "left": "wants the player to speak to Sori Ash before confronting Tessa Keld",
+            "right": "wants the player to speak to Korin Dust before confronting Master Oren",
+            "similarity": 0.847
+          },
+          {
+            "left": "wants the player to speak to Mikel Darr before confronting Cadrin Foy",
+            "right": "wants the player to speak to Kell Varn before confronting Bran Elt",
+            "similarity": 0.859
+          },
+          {
+            "left": "wants the player to speak to Nim Voss before confronting Orry Fen",
+            "right": "wants the player to speak to Tavi Gress before confronting Dara Flint",
+            "similarity": 0.851
+          },
+          {
+            "left": "wants the player to speak to Pella Vane before confronting Lenn Cask",
+            "right": "wants the player to speak to Kell Varn before confronting Bran Elt",
+            "similarity": 0.866
+          },
+          {
+            "left": "wants the player to speak to Pella Vane before confronting Lenn Cask",
+            "right": "wants the player to speak to Ilya Sorn before confronting Tovin Ash",
+            "similarity": 0.844
+          },
+          {
+            "left": "wants the player to speak to Pella Vane before confronting Lenn Cask",
+            "right": "wants the player to speak to Pere Venn before confronting Ysolde Crane",
+            "similarity": 0.855
+          },
+          {
+            "left": "wants the player to speak to Ellen Briar before confronting Maela Hurn",
+            "right": "wants the player to speak to Kell Varn before confronting Bran Elt",
+            "similarity": 0.853
+          },
+          {
+            "left": "wants the player to speak to Ellen Briar before confronting Maela Hurn",
+            "right": "wants the player to speak to Pell Dray before confronting Siva Noll",
+            "similarity": 0.847
+          },
+          {
+            "left": "wants the player to speak to Kell Varn before confronting Bran Elt",
+            "right": "wants the player to speak to Kiva Roan before confronting Pell Dray",
+            "similarity": 0.842
+          },
+          {
+            "left": "wants the player to speak to Kell Varn before confronting Bran Elt",
+            "right": "wants the player to speak to Pell Dray before confronting Siva Noll",
+            "similarity": 0.857
+          }
+        ]
+      },
+      {
+        "field": "Core_Fear",
+        "populated": 88,
+        "unique": 6,
+        "most_repeated": [
+          {
+            "value": "being remembered for a single failure rather than years of useful work",
+            "count": 18
+          },
+          {
+            "value": "being publicly exposed as less competent than their role requires",
+            "count": 18
+          },
+          {
+            "value": "discovering that the harm they rationalised was avoidable",
+            "count": 17
+          },
+          {
+            "value": "losing the one relationship that lets them believe their compromises were worthwhile",
+            "count": 15
+          },
+          {
+            "value": "becoming dependent on people they do not trust",
+            "count": 12
+          },
+          {
+            "value": "having private grief converted into public gossip",
+            "count": 8
+          }
+        ],
+        "repeat_count": 6,
+        "near_duplicates": []
+      },
+      {
+        "field": "Shame_or_Vulnerability",
+        "populated": 88,
+        "unique": 88,
+        "most_repeated": [],
+        "repeat_count": 0,
+        "near_duplicates": []
+      },
+      {
+        "field": "False_Belief",
+        "populated": 88,
+        "unique": 6,
+        "most_repeated": [
+          {
+            "value": "A private compromise is harmless if it prevents a public crisis.",
+            "count": 18
+          },
+          {
+            "value": "Admitting uncertainty gives other people permission to ignore me.",
+            "count": 17
+          },
+          {
+            "value": "People only stay loyal while I remain useful.",
+            "count": 17
+          },
+          {
+            "value": "If I control the procedure, I can control the damage.",
+            "count": 15
+          },
+          {
+            "value": "My worst decision is also the truest measure of who I am.",
+            "count": 12
+          },
+          {
+            "value": "If everyone understands the facts, they will eventually choose the decent option.",
+            "count": 9
+          }
+        ],
+        "repeat_count": 6,
+        "near_duplicates": []
+      },
+      {
+        "field": "Central_Contradiction",
+        "populated": 88,
+        "unique": 17,
+        "most_repeated": [
+          {
+            "value": "Wants independence but has structured daily life around being needed by other people.",
+            "count": 22
+          },
+          {
+            "value": "Demands honesty from others while maintaining one carefully bounded deception.",
+            "count": 18
+          },
+          {
+            "value": "Believes in personal responsibility but readily explains their own failures through circumstance.",
+            "count": 18
+          },
+          {
+            "value": "Claims to hate village gossip yet tracks social information with professional precision.",
+            "count": 10
+          },
+          {
+            "value": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "count": 3
+          },
+          {
+            "value": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "count": 2
+          },
+          {
+            "value": "Publicly values principled, but becomes self-righteous when the issue touches their own status.",
+            "count": 2
+          },
+          {
+            "value": "Publicly values loyal, but becomes tribal when the issue touches their own status.",
+            "count": 2
+          }
+        ],
+        "repeat_count": 10,
+        "near_duplicates": [
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "similarity": 0.876
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values loyal, but becomes tribal when the issue touches their own status.",
+            "similarity": 0.869
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "similarity": 0.876
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values decisive, but becomes domineering when the issue touches their own status.",
+            "similarity": 0.864
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values inventive, but becomes impractical when the issue touches their own status.",
+            "similarity": 0.859
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values curious, but becomes intrusive when the issue touches their own status.",
+            "similarity": 0.879
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values patient, but becomes stubborn when the issue touches their own status.",
+            "similarity": 0.86
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values loyal, but becomes tribal when the issue touches their own status.",
+            "similarity": 0.869
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values inventive, but becomes impractical when the issue touches their own status.",
+            "similarity": 0.859
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "similarity": 0.876
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values disciplined, but becomes rigid when the issue touches their own status.",
+            "similarity": 0.844
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values adaptable, but becomes unreliable when the issue touches their own status.",
+            "similarity": 0.864
+          },
+          {
+            "left": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "right": "Publicly values observant, but becomes suspicious when the issue touches their own status.",
+            "similarity": 0.841
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values principled, but becomes self-righteous when the issue touches their own status.",
+            "similarity": 0.843
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values witty, but becomes deflective when the issue touches their own status.",
+            "similarity": 0.876
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values loyal, but becomes tribal when the issue touches their own status.",
+            "similarity": 0.897
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values decisive, but becomes domineering when the issue touches their own status.",
+            "similarity": 0.855
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values inventive, but becomes impractical when the issue touches their own status.",
+            "similarity": 0.851
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values curious, but becomes intrusive when the issue touches their own status.",
+            "similarity": 0.906
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values patient, but becomes stubborn when the issue touches their own status.",
+            "similarity": 0.876
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values principled, but becomes self-righteous when the issue touches their own status.",
+            "similarity": 0.843
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values generous, but becomes controlling when the issue touches their own status.",
+            "similarity": 0.867
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values loyal, but becomes tribal when the issue touches their own status.",
+            "similarity": 0.897
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values inventive, but becomes impractical when the issue touches their own status.",
+            "similarity": 0.851
+          },
+          {
+            "left": "Publicly values hopeful, but becomes naive when the issue touches their own status.",
+            "right": "Publicly values disciplined, but becomes rigid when the issue touches their own status.",
+            "similarity": 0.871
+          }
+        ]
+      },
+      {
+        "field": "Moral_Boundary",
+        "populated": 88,
+        "unique": 4,
+        "most_repeated": [
+          {
+            "value": "will not knowingly send someone into a danger they would not face themselves",
+            "count": 26
+          },
+          {
+            "value": "will not expose a confidence merely to win an argument",
+            "count": 25
+          },
+          {
+            "value": "will not falsify physical evidence",
+            "count": 20
+          },
+          {
+            "value": "will not deliberately harm a child or dependent",
+            "count": 17
+          }
+        ],
+        "repeat_count": 4,
+        "near_duplicates": []
+      },
+      {
+        "field": "Secret",
+        "populated": 88,
+        "unique": 88,
+        "most_repeated": [],
+        "repeat_count": 0,
+        "near_duplicates": []
+      },
+      {
+        "field": "Protective_Lie",
+        "populated": 88,
+        "unique": 6,
+        "most_repeated": [
+          {
+            "value": "There is no one else you need to speak to.",
+            "count": 20
+          },
+          {
+            "value": "I have already told you everything relevant.",
+            "count": 16
+          },
+          {
+            "value": "This is only a work problem.",
+            "count": 15
+          },
+          {
+            "value": "I made peace with that years ago.",
+            "count": 14
+          },
+          {
+            "value": "Nothing about this is personal.",
+            "count": 13
+          },
+          {
+            "value": "I do not care what the village says about me.",
+            "count": 10
+          }
+        ],
+        "repeat_count": 6,
+        "near_duplicates": []
+      },
+      {
+        "field": "Post_Quest_State",
+        "populated": 88,
+        "unique": 68,
+        "most_repeated": [
+          {
+            "value": "After the quest, their daily route changes to reflect the practical consequence rather than resetting to a pre-quest loop.",
+            "count": 21
+          }
+        ],
+        "repeat_count": 1,
+        "near_duplicates": [
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Nera Quill stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.945
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Selka Mora stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.936
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Joryn Pike stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.945
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Perrin Saye stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.922
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Della Marr stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.936
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Hobb Cren stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.94
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Mira Joss stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.931
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Tessa Keld stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.954
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Pate Wren stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.94
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Hessa Brin stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.927
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Mikel Darr stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.936
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Veva Coil stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.931
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Hew Marr stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.935
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Pella Vane stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.945
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Orry Fen stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.944
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Lenn Cask stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.931
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Asha Wold stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.949
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Maela Hurn stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.945
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Tarin Noss stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.936
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Ossa Rime stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.94
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Mara Silt stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.949
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Ilya Sorn stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.922
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Ria Lorne stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.931
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Lio Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.972
+          },
+          {
+            "left": "After exposure, Tomas Pell stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "right": "After exposure, Berric Vale stops maintaining one lie but becomes much more careful about what they volunteer.",
+            "similarity": 0.922
+          }
+        ]
+      }
+    ],
+    "depth_fields": [],
+    "missing_depth_fields": [
+      "Formative_Event",
+      "Self_Image",
+      "Private_Need",
+      "Social_Mask",
+      "Specific_Regret",
+      "Specific_Hope",
+      "Relationship_Wound",
+      "Pressure_Behaviour",
+      "Repair_Behaviour",
+      "Misjudges_Others_By"
+    ],
+    "occupation_token_count": 79,
+    "flags": [
+      "Major characters share identical Central_Contradiction: ['Wants independence but has structured daily life around being needed by other people.', 'Believes in personal responsibility but readily explains their own failures through circumstance.', 'Publicly values principled, but becomes self-righteous when the issue touches their own status.', 'Demands honesty from others while maintaining one carefully bounded deception.', 'Claims to hate village gossip yet tracks social information with professional precision.']",
+      "Major characters share identical Core_Fear: ['being remembered for a single failure rather than years of useful work', 'becoming dependent on people they do not trust', 'discovering that the harm they rationalised was avoidable', 'losing the one relationship that lets them believe their compromises were worthwhile', 'being publicly exposed as less competent than their role requires']",
+      "Major characters share identical False_Belief: ['A private compromise is harmless if it prevents a public crisis.', 'People only stay loyal while I remain useful.', 'Admitting uncertainty gives other people permission to ignore me.', 'My worst decision is also the truest measure of who I am.', 'If everyone understands the facts, they will eventually choose the decent option.']",
+      "Central_Contradiction exceeds cap 3: [('Wants independence but has structured daily life around being needed by other people.', 22), ('Claims to hate village gossip yet tracks social information with professional precision.', 10), ('Demands honesty from others while maintaining one carefully bounded deception.', 18), ('Believes in personal responsibility but readily explains their own failures through circumstance.', 18)]",
+      "Core_Fear exceeds cap 4: [('being remembered for a single failure rather than years of useful work', 18), ('discovering that the harm they rationalised was avoidable', 17), ('having private grief converted into public gossip', 8), ('losing the one relationship that lets them believe their compromises were worthwhile', 15), ('being publicly exposed as less competent than their role requires', 18)]",
+      "False_Belief exceeds cap 4: [('A private compromise is harmless if it prevents a public crisis.', 18), ('If everyone understands the facts, they will eventually choose the decent option.', 9), ('Admitting uncertainty gives other people permission to ignore me.', 17), ('If I control the procedure, I can control the damage.', 15), ('People only stay loyal while I remain useful.', 17)]",
+      "Characters whose psychology lacks occupation/place specificity: ['NPC_002', 'NPC_003', 'NPC_007', 'NPC_009', 'NPC_011', 'NPC_012', 'NPC_013', 'NPC_015', 'NPC_019', 'NPC_020', 'NPC_022', 'NPC_028']"
+    ]
+  },
+  "relationships": {
+    "edge_count": 352,
+    "counts_by_type": {
+      "rival": 88,
+      "responsibility": 88,
+      "cross_district": 88,
+      "ally": 88
+    },
+    "reciprocity": {
+      "one_way": 322,
+      "explicit": 30
+    },
+    "distinct_responsibility_targets": 8,
+    "responsibility_targets": [
+      "NPC_006",
+      "NPC_017",
+      "NPC_028",
+      "NPC_039",
+      "NPC_050",
+      "NPC_061",
+      "NPC_072",
+      "NPC_083"
+    ],
+    "max_responsibility_indegree": 11,
+    "responsibility_indegree": {
+      "NPC_006": 11,
+      "NPC_017": 11,
+      "NPC_083": 11,
+      "NPC_028": 11,
+      "NPC_050": 11,
+      "NPC_039": 11,
+      "NPC_061": 11,
+      "NPC_072": 11
+    },
+    "cross_district_true": 80,
+    "cross_district_same_district_failures": [
+      {
+        "relationship_id": "REL_C8CD7D90BE",
+        "source": "Odo Tren",
+        "target": "Alis Fen",
+        "district": "Market & Inn"
+      },
+      {
+        "relationship_id": "REL_EDDCC68C8D",
+        "source": "Etta Marr",
+        "target": "Nali Fen",
+        "district": "Households"
+      },
+      {
+        "relationship_id": "REL_FDBF7EAD55",
+        "source": "Tali Quist",
+        "target": "Doctor Veyl",
+        "district": "Outsiders & Oddities"
+      },
+      {
+        "relationship_id": "REL_4220DB676A",
+        "source": "Cadrin Foy",
+        "target": "Runa Pell",
+        "district": "Clay & Builders"
+      },
+      {
+        "relationship_id": "REL_731E37B34E",
+        "source": "Ora Vell",
+        "target": "Tarin Noss",
+        "district": "Wool & Weavery"
+      },
+      {
+        "relationship_id": "REL_B7B5862FA1",
+        "source": "Tebb Crow",
+        "target": "Kiva Roan",
+        "district": "Wastes & Edge"
+      },
+      {
+        "relationship_id": "REL_2E7259290B",
+        "source": "Ria Lorne",
+        "target": "Tovin Ash",
+        "district": "Shrine & Care"
+      },
+      {
+        "relationship_id": "REL_03CC25C13A",
+        "source": "Nox",
+        "target": "Pere Venn",
+        "district": "Outsiders & Oddities"
+      }
+    ],
+    "exact_description_repeats": [],
+    "masked_description_patterns": [
+      {
+        "pattern": "{name} challenges {name}'s preferred explanation of events. their conflict should contain at least one point on which the rival is genuinely right.",
+        "count": 88
+      },
+      {
+        "pattern": "{name} feels responsible for {name} in a way that can produce care, control, resentment or sacrifice depending on state.",
+        "count": 88
+      },
+      {
+        "pattern": "{name} has an obligation, history or recurring exchange with {name}; this link exists so quests can leave the home district without inventing a stranger.",
+        "count": 88
+      },
+      {
+        "pattern": "{name} sees the part of {name} that is most useful and least performative; they cooperate easily until the profile's secret becomes relevant.",
+        "count": 88
+      }
+    ],
+    "relationships_lacking_specific_history": [
+      "REL_D108B38A5A",
+      "REL_710B764641",
+      "REL_01E2BC073A",
+      "REL_CFB851920C",
+      "REL_470FBADC38",
+      "REL_058145297C",
+      "REL_E82497FAFE",
+      "REL_6AFA719B57",
+      "REL_B50B8BA864",
+      "REL_CABCB34A16",
+      "REL_E048C72408",
+      "REL_810664DD6B",
+      "REL_27DE644A39",
+      "REL_C4E56A9B1B",
+      "REL_3A7B5F16BA",
+      "REL_4153DAE7D0",
+      "REL_7B28848861",
+      "REL_CD2DB05B8A",
+      "REL_7BEC09312B",
+      "REL_CFDDAAB712",
+      "REL_2DE62AD03E",
+      "REL_2F2FEF54A6",
+      "REL_F05F909D18",
+      "REL_44F5F7AA50",
+      "REL_E652992FFB",
+      "REL_7F38BF0318",
+      "REL_21D5303E8F",
+      "REL_3CE3AF47E8",
+      "REL_4C5877A20C",
+      "REL_1B7FFBA3D7",
+      "REL_C873C85B78",
+      "REL_78B29866A9",
+      "REL_F3FCD11333",
+      "REL_1BB85AE092",
+      "REL_8DC8368B5E",
+      "REL_462F1D4E03",
+      "REL_EDDB836284",
+      "REL_2ACE8644B0",
+      "REL_CCC641AD29",
+      "REL_199763A430",
+      "REL_38C4482524",
+      "REL_36634E250B",
+      "REL_78DA7145A9",
+      "REL_9A5024B027",
+      "REL_29A3FBF72E",
+      "REL_44640ABF55",
+      "REL_1E05BF7FB6",
+      "REL_2DE6FE7D7C",
+      "REL_AA62865D0E",
+      "REL_AAFE7983FE",
+      "REL_720504E6E8",
+      "REL_1DD1AE4CB7",
+      "REL_808F58320D",
+      "REL_11E44F095E",
+      "REL_E743F1FA1C",
+      "REL_482BD914BA",
+      "REL_5C5A307627",
+      "REL_BF5925B90C",
+      "REL_13F5363AD1",
+      "REL_66926349C7",
+      "REL_D48C21A40C",
+      "REL_AA1CA012C2",
+      "REL_6ADCE5969E",
+      "REL_D1B8FC4A05",
+      "REL_6628BB5EF2",
+      "REL_2F132F15BA",
+      "REL_74151E03EF",
+      "REL_91C4DF3E2C",
+      "REL_D158D970B5",
+      "REL_4941716231",
+      "REL_6530E15A9B",
+      "REL_0A3FF5D6AF",
+      "REL_3ABE50A23B",
+      "REL_1C402CFDCE",
+      "REL_6B4480889F",
+      "REL_16FF282B9D",
+      "REL_18F92FC635",
+      "REL_D6AD2DE901",
+      "REL_F81871545F",
+      "REL_6CD86B507C",
+      "REL_5913757635",
+      "REL_CED3AAB125",
+      "REL_ED42186D62",
+      "REL_F8D5C110D7",
+      "REL_A382088C04",
+      "REL_EBAFC4FCBA",
+      "REL_F4FAC4CAFE",
+      "REL_5950212205",
+      "REL_542F2FC6AA",
+      "REL_ABD595DB90",
+      "REL_7E33F3C9AB",
+      "REL_1C4FDF3457",
+      "REL_BA72BEA431",
+      "REL_8B38E13F6E",
+      "REL_ED825820F7",
+      "REL_A524710EDF",
+      "REL_4C4C4963EB",
+      "REL_BC793087A5",
+      "REL_02BE1B16C4",
+      "REL_0D70E43F7F",
+      "REL_8DA69811DF",
+      "REL_7BF9BA83E8",
+      "REL_9B49CE5B4D",
+      "REL_3F9467B994",
+      "REL_EA0F5A946C",
+      "REL_47FEB4978F",
+      "REL_C488B2BAE9",
+      "REL_622BA25CF1",
+      "REL_327D0B874C",
+      "REL_E02E2C44E5",
+      "REL_88BF9736C8",
+      "REL_8A74BC30CB",
+      "REL_AE787EC303",
+      "REL_B17A19EDE2",
+      "REL_0ACEA07F5C",
+      "REL_D8941DA8FD",
+      "REL_4CE4BF1DD4",
+      "REL_99411860C9",
+      "REL_3B9F3ADE24",
+      "REL_1955D0A991",
+      "REL_B930AB62F2",
+      "REL_1AFBC4DAAD",
+      "REL_0A064A4A3A",
+      "REL_D8F3D84FD1",
+      "REL_CE269BCF95",
+      "REL_55C5BB5020",
+      "REL_0EDC715130",
+      "REL_9160C83F03",
+      "REL_07CBD8D090",
+      "REL_A6E9DB16E7",
+      "REL_9626674170",
+      "REL_912B130518",
+      "REL_C4C5FEE647",
+      "REL_3BE6D09865",
+      "REL_748F82CD13",
+      "REL_57883C9FA2",
+      "REL_62B34CDC1E",
+      "REL_4F277A0346",
+      "REL_9B4671850C",
+      "REL_59479AB8DF",
+      "REL_EAAAF4C5E7",
+      "REL_C5F453EB1F",
+      "REL_F7C54CE49B",
+      "REL_4562162B73",
+      "REL_1E8FF6064C",
+      "REL_0EB80323C6",
+      "REL_DCD97B80D6",
+      "REL_B1E6B87C6D",
+      "REL_C35B1EACAD",
+      "REL_397C64E9EB",
+      "REL_CC648C8732",
+      "REL_7AB14D152E",
+      "REL_7097542571",
+      "REL_DD683DBF70",
+      "REL_CB6937116A",
+      "REL_AA8177B8BD",
+      "REL_F4811EA637",
+      "REL_D12A88BC73",
+      "REL_26B5D05E12",
+      "REL_A34C20CD84",
+      "REL_19054845C7",
+      "REL_378B2BDCF5",
+      "REL_C8CD7D90BE",
+      "REL_98E067C097",
+      "REL_193FE0C25A",
+      "REL_2B2EFE6195",
+      "REL_DBC97E7880",
+      "REL_C25E77807F",
+      "REL_1D53D2D8C6",
+      "REL_8127598F91",
+      "REL_15518AE1C5",
+      "REL_8A3DCA55DC",
+      "REL_D6B972AD47",
+      "REL_494CB8688E",
+      "REL_C205E19D97",
+      "REL_B7B54ACBE5",
+      "REL_D089493924",
+      "REL_21B8A53D7D",
+      "REL_BAEB7F8306",
+      "REL_121B13234C",
+      "REL_A35ABEE4D3",
+      "REL_EB603516C9",
+      "REL_BA0D6B5833",
+      "REL_163CBE45AE",
+      "REL_AB759DB981",
+      "REL_B5F2E41192",
+      "REL_2A45DA8513",
+      "REL_1FCF463682",
+      "REL_4A6C657B3E",
+      "REL_23AA1DD8A7",
+      "REL_8444F312BF",
+      "REL_49F979FB99",
+      "REL_93ED2B55EE",
+      "REL_5C7AAED2BF",
+      "REL_88517F3AA4",
+      "REL_17B3E41FF8",
+      "REL_16AA6DB077",
+      "REL_D71C86623E",
+      "REL_3232192B92",
+      "REL_B842CFADC4",
+      "REL_C1B7A365FA",
+      "REL_5EE36B695B",
+      "REL_2030CA1382",
+      "REL_274B7A9239",
+      "REL_069FD49DDA",
+      "REL_D6FA3B01B8",
+      "REL_2E2A252E77",
+      "REL_A21B524ACA",
+      "REL_B1EF708935",
+      "REL_D2A5AC1479",
+      "REL_E508E58B44",
+      "REL_A3EA5FF565",
+      "REL_7BB1754DD9",
+      "REL_5BB0077817",
+      "REL_20819B3079",
+      "REL_99446CA374",
+      "REL_2D74AFAD7F",
+      "REL_45DC5615B4",
+      "REL_EDDCC68C8D",
+      "REL_6C8304B5BC",
+      "REL_30FCB23BA2",
+      "REL_636D7E5371",
+      "REL_885458CD70",
+      "REL_62D80F58CE",
+      "REL_AB2B983015",
+      "REL_09F9FCCF50",
+      "REL_E5365CCA48",
+      "REL_5DA4C39BA9",
+      "REL_ABDED2CA3E",
+      "REL_5ADA45D46A",
+      "REL_FDBF7EAD55",
+      "REL_8F690B8C17",
+      "REL_772B9BBC23",
+      "REL_07E797C24F",
+      "REL_20343F9126",
+      "REL_239B5149A8",
+      "REL_3B92BF8A94",
+      "REL_C0D29A9441",
+      "REL_2C8A885C74",
+      "REL_9C60C50863",
+      "REL_1C010D0692",
+      "REL_2302F3A924",
+      "REL_87EFFEFE22",
+      "REL_6861D9C1CB",
+      "REL_7B8530460F",
+      "REL_CBB7136C47",
+      "REL_968A75CC52",
+      "REL_BFFD91BAB6",
+      "REL_C084C77B70",
+      "REL_B068D5B8A5",
+      "REL_8BFD0F1011",
+      "REL_B693CFFD8F",
+      "REL_D0D0B52C74",
+      "REL_1DE0CD395F",
+      "REL_64A13A3FE6",
+      "REL_04315DF64C",
+      "REL_72AB1AFF5E",
+      "REL_4220DB676A",
+      "REL_E64EBB169B",
+      "REL_3FB86F6C1B",
+      "REL_DA06DDCE30",
+      "REL_CCD5CBF7C8",
+      "REL_899A16192D",
+      "REL_0925D42693",
+      "REL_5D227EB7C8",
+      "REL_0C68889A7F",
+      "REL_F86D24362E",
+      "REL_B1C30B5D66",
+      "REL_5B5AFF2600",
+      "REL_2F99657260",
+      "REL_1A5EADEA46",
+      "REL_CFBD65C608",
+      "REL_26FF8C0518",
+      "REL_4B66AFCC37",
+      "REL_D8BCF64A11",
+      "REL_731E37B34E",
+      "REL_431E39A014",
+      "REL_A00ECFB5B7",
+      "REL_7B1566BD76",
+      "REL_D23797E10C",
+      "REL_3B7C8485E2",
+      "REL_BB7D03DF25",
+      "REL_F182799234",
+      "REL_D4DCC965FD",
+      "REL_EF59730E15",
+      "REL_B7B5862FA1",
+      "REL_1F8094DE66",
+      "REL_B056184BC5",
+      "REL_86B66717BD",
+      "REL_289D4A193D",
+      "REL_6319B1245A",
+      "REL_E26FE53564",
+      "REL_2149A8D280",
+      "REL_F6895C7433",
+      "REL_65337F4397",
+      "REL_06A2141A38",
+      "REL_D6B0179381",
+      "REL_AC29128727",
+      "REL_BB20C35E38",
+      "REL_715142BFCB",
+      "REL_74A98E9792",
+      "REL_2E7259290B",
+      "REL_8D36EE2B3B",
+      "REL_49B4ED7E69",
+      "REL_8445A59E52",
+      "REL_8636B1359A",
+      "REL_D34217E33B",
+      "REL_4B6BA71C33",
+      "REL_D6AC307572",
+      "REL_46F3BD4A48",
+      "REL_F516245A4C",
+      "REL_6792C48FC2",
+      "REL_8D225B8FE1",
+      "REL_08D0770B50",
+      "REL_E6E7A098B0",
+      "REL_A9756738C0",
+      "REL_F6E425476E",
+      "REL_01CC12D529",
+      "REL_03CC25C13A",
+      "REL_3795A19C9E",
+      "REL_83EEF08A79",
+      "REL_D6C95AAAE1",
+      "REL_AE9AAD0399",
+      "REL_198234CFCE",
+      "REL_D7076F6403",
+      "REL_C03ADAB8AE",
+      "REL_30F202525D",
+      "REL_7600430030",
+      "REL_5E763ACEA3",
+      "REL_8CEC850E7D",
+      "REL_B9012B8129",
+      "REL_3E779F3D68",
+      "REL_9C4093A824",
+      "REL_08F9E10257",
+      "REL_F75B2C9FC9",
+      "REL_4D9E229D19",
+      "REL_FD500C4EC0",
+      "REL_EFD826BE39",
+      "REL_FC908B2F7F",
+      "REL_08702D518C",
+      "REL_2457A58C60",
+      "REL_16B47E2E86",
+      "REL_24EF1946AB",
+      "REL_AB33618300",
+      "REL_E27809B0B5",
+      "REL_C41072BD81",
+      "REL_3151196255",
+      "REL_014702B544",
+      "REL_FFBC219ABA",
+      "REL_2ACAB78C7E",
+      "REL_002D3AA08E",
+      "REL_F64C6246D3"
+    ],
+    "hubs": [
+      {
+        "character_id": "NPC_017",
+        "name": "Renn Halver",
+        "incoming": 14,
+        "outgoing": 4
+      },
+      {
+        "character_id": "NPC_006",
+        "name": "Selka Mora",
+        "incoming": 14,
+        "outgoing": 4
+      },
+      {
+        "character_id": "NPC_028",
+        "name": "Cadrin Foy",
+        "incoming": 14,
+        "outgoing": 4
+      },
+      {
+        "character_id": "NPC_039",
+        "name": "Asha Wold",
+        "incoming": 14,
+        "outgoing": 4
+      },
+      {
+        "character_id": "NPC_050",
+        "name": "Kell Varn",
+        "incoming": 14,
+        "outgoing": 4
+      },
+      {
+        "character_id": "NPC_083",
+        "name": "Korin Dust",
+        "incoming": 14,
+        "outgoing": 4
+      },
+      {
+        "character_id": "NPC_061",
+        "name": "Kiva Roan",
+        "incoming": 14,
+        "outgoing": 4
+      },
+      {
+        "character_id": "NPC_072",
+        "name": "Ria Lorne",
+        "incoming": 14,
+        "outgoing": 4
+      }
+    ],
+    "degrees": {
+      "NPC_001": {
+        "name": "Mara Vey",
+        "tier": "Major",
+        "district": "Council & Civic",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_002": {
+        "name": "Tomas Pell",
+        "tier": "Supporting",
+        "district": "Council & Civic",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_003": {
+        "name": "Iven Tarrow",
+        "tier": "Supporting",
+        "district": "Council & Civic",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_004": {
+        "name": "Nera Quill",
+        "tier": "Supporting",
+        "district": "Council & Civic",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_005": {
+        "name": "Bram Lusk",
+        "tier": "Minor",
+        "district": "Council & Civic",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_006": {
+        "name": "Selka Mora",
+        "tier": "Minor",
+        "district": "Council & Civic",
+        "incoming": 14,
+        "outgoing": 4,
+        "responsibility_indegree": 11
+      },
+      "NPC_007": {
+        "name": "Orin Vale",
+        "tier": "Minor",
+        "district": "Council & Civic",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_008": {
+        "name": "Kessa Dorn",
+        "tier": "Supporting",
+        "district": "Council & Civic",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_009": {
+        "name": "Joryn Pike",
+        "tier": "Major",
+        "district": "Market & Inn",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_010": {
+        "name": "Alis Fen",
+        "tier": "Major",
+        "district": "Market & Inn",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_011": {
+        "name": "Perrin Saye",
+        "tier": "Supporting",
+        "district": "Market & Inn",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_012": {
+        "name": "Della Marr",
+        "tier": "Supporting",
+        "district": "Market & Inn",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_013": {
+        "name": "Odo Tren",
+        "tier": "Minor",
+        "district": "Market & Inn",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_014": {
+        "name": "Lysa Rook",
+        "tier": "Supporting",
+        "district": "Market & Inn",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_015": {
+        "name": "Hobb Cren",
+        "tier": "Minor",
+        "district": "Market & Inn",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_016": {
+        "name": "Mira Joss",
+        "tier": "Supporting",
+        "district": "Market & Inn",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_017": {
+        "name": "Renn Halver",
+        "tier": "Major",
+        "district": "Timber Quarter",
+        "incoming": 14,
+        "outgoing": 4,
+        "responsibility_indegree": 11
+      },
+      "NPC_018": {
+        "name": "Tessa Keld",
+        "tier": "Supporting",
+        "district": "Timber Quarter",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_019": {
+        "name": "Garin Fell",
+        "tier": "Major",
+        "district": "Timber Quarter",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_020": {
+        "name": "Bera Moss",
+        "tier": "Supporting",
+        "district": "Timber Quarter",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_021": {
+        "name": "Noll Brack",
+        "tier": "Minor",
+        "district": "Timber Quarter",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_022": {
+        "name": "Evi Thorn",
+        "tier": "Supporting",
+        "district": "Timber Quarter",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_023": {
+        "name": "Pate Wren",
+        "tier": "Supporting",
+        "district": "Timber Quarter",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_024": {
+        "name": "Sori Ash",
+        "tier": "Minor",
+        "district": "Timber Quarter",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_025": {
+        "name": "Hessa Brin",
+        "tier": "Major",
+        "district": "Clay & Builders",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_026": {
+        "name": "Mikel Darr",
+        "tier": "Supporting",
+        "district": "Clay & Builders",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_027": {
+        "name": "Runa Pell",
+        "tier": "Major",
+        "district": "Clay & Builders",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_028": {
+        "name": "Cadrin Foy",
+        "tier": "Minor",
+        "district": "Clay & Builders",
+        "incoming": 14,
+        "outgoing": 4,
+        "responsibility_indegree": 11
+      },
+      "NPC_029": {
+        "name": "Veva Coil",
+        "tier": "Supporting",
+        "district": "Clay & Builders",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_030": {
+        "name": "Harl Oren",
+        "tier": "Supporting",
+        "district": "Clay & Builders",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_031": {
+        "name": "Mina Sedge",
+        "tier": "Minor",
+        "district": "Clay & Builders",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_032": {
+        "name": "Torren Beck",
+        "tier": "Supporting",
+        "district": "Clay & Builders",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_033": {
+        "name": "Sella Morn",
+        "tier": "Major",
+        "district": "Fields & Mill",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_034": {
+        "name": "Hew Marr",
+        "tier": "Supporting",
+        "district": "Fields & Mill",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_035": {
+        "name": "Nim Voss",
+        "tier": "Major",
+        "district": "Fields & Mill",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_036": {
+        "name": "Pella Vane",
+        "tier": "Supporting",
+        "district": "Fields & Mill",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_037": {
+        "name": "Orry Fen",
+        "tier": "Supporting",
+        "district": "Fields & Mill",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_038": {
+        "name": "Lenn Cask",
+        "tier": "Minor",
+        "district": "Fields & Mill",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_039": {
+        "name": "Asha Wold",
+        "tier": "Minor",
+        "district": "Fields & Mill",
+        "incoming": 14,
+        "outgoing": 4,
+        "responsibility_indegree": 11
+      },
+      "NPC_040": {
+        "name": "Bennet Roe",
+        "tier": "Supporting",
+        "district": "Fields & Mill",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_041": {
+        "name": "Maela Hurn",
+        "tier": "Major",
+        "district": "Wool & Weavery",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_042": {
+        "name": "Jannic Loam",
+        "tier": "Minor",
+        "district": "Wool & Weavery",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_043": {
+        "name": "Ora Vell",
+        "tier": "Major",
+        "district": "Wool & Weavery",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_044": {
+        "name": "Tarin Noss",
+        "tier": "Supporting",
+        "district": "Wool & Weavery",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_045": {
+        "name": "Kel Arda",
+        "tier": "Supporting",
+        "district": "Wool & Weavery",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_046": {
+        "name": "Vessa Ire",
+        "tier": "Major",
+        "district": "Wool & Weavery",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_047": {
+        "name": "Ellen Briar",
+        "tier": "Minor",
+        "district": "Wool & Weavery",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_048": {
+        "name": "Rusk Hallow",
+        "tier": "Supporting",
+        "district": "Wool & Weavery",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_049": {
+        "name": "Dara Flint",
+        "tier": "Major",
+        "district": "Mine & Forge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_050": {
+        "name": "Kell Varn",
+        "tier": "Supporting",
+        "district": "Mine & Forge",
+        "incoming": 14,
+        "outgoing": 4,
+        "responsibility_indegree": 11
+      },
+      "NPC_051": {
+        "name": "Ossa Rime",
+        "tier": "Major",
+        "district": "Mine & Forge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_052": {
+        "name": "Bran Elt",
+        "tier": "Supporting",
+        "district": "Mine & Forge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_053": {
+        "name": "Veyra Korr",
+        "tier": "Supporting",
+        "district": "Mine & Forge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_054": {
+        "name": "Edrin Sol",
+        "tier": "Minor",
+        "district": "Mine & Forge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_055": {
+        "name": "Tavi Gress",
+        "tier": "Minor",
+        "district": "Mine & Forge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_056": {
+        "name": "Morren Pike",
+        "tier": "Major",
+        "district": "Mine & Forge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_057": {
+        "name": "Siva Noll",
+        "tier": "Major",
+        "district": "Wastes & Edge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_058": {
+        "name": "Tebb Crow",
+        "tier": "Supporting",
+        "district": "Wastes & Edge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_059": {
+        "name": "Mara Silt",
+        "tier": "Supporting",
+        "district": "Wastes & Edge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_060": {
+        "name": "Fenn Oris",
+        "tier": "Minor",
+        "district": "Wastes & Edge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_061": {
+        "name": "Kiva Roan",
+        "tier": "Supporting",
+        "district": "Wastes & Edge",
+        "incoming": 14,
+        "outgoing": 4,
+        "responsibility_indegree": 11
+      },
+      "NPC_062": {
+        "name": "Old Mere",
+        "tier": "Minor",
+        "district": "Wastes & Edge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_063": {
+        "name": "Pell Dray",
+        "tier": "Minor",
+        "district": "Wastes & Edge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_064": {
+        "name": "Yara Fen",
+        "tier": "Supporting",
+        "district": "Wastes & Edge",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_065": {
+        "name": "Sister Eline",
+        "tier": "Major",
+        "district": "Shrine & Care",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_066": {
+        "name": "Brother Cale",
+        "tier": "Supporting",
+        "district": "Shrine & Care",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_067": {
+        "name": "Anwen Mere",
+        "tier": "Major",
+        "district": "Shrine & Care",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_068": {
+        "name": "Daro Pell",
+        "tier": "Minor",
+        "district": "Shrine & Care",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_069": {
+        "name": "Ilya Sorn",
+        "tier": "Supporting",
+        "district": "Shrine & Care",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_070": {
+        "name": "Mera Voss",
+        "tier": "Supporting",
+        "district": "Shrine & Care",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_071": {
+        "name": "Tovin Ash",
+        "tier": "Supporting",
+        "district": "Shrine & Care",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_072": {
+        "name": "Ria Lorne",
+        "tier": "Minor",
+        "district": "Shrine & Care",
+        "incoming": 14,
+        "outgoing": 4,
+        "responsibility_indegree": 11
+      },
+      "NPC_073": {
+        "name": "Etta Marr",
+        "tier": "Major",
+        "district": "Households",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_074": {
+        "name": "Dain Rook",
+        "tier": "Supporting",
+        "district": "Households",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_075": {
+        "name": "Lio Pell",
+        "tier": "Minor",
+        "district": "Households",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_076": {
+        "name": "Sena Mora",
+        "tier": "Minor",
+        "district": "Households",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_077": {
+        "name": "Berric Vale",
+        "tier": "Supporting",
+        "district": "Households",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_078": {
+        "name": "Nali Fen",
+        "tier": "Supporting",
+        "district": "Households",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_079": {
+        "name": "Haro Keld",
+        "tier": "Minor",
+        "district": "Households",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_080": {
+        "name": "Miri Soss",
+        "tier": "Supporting",
+        "district": "Households",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_081": {
+        "name": "Doctor Veyl",
+        "tier": "Major",
+        "district": "Outsiders & Oddities",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_082": {
+        "name": "Ysolde Crane",
+        "tier": "Supporting",
+        "district": "Outsiders & Oddities",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_083": {
+        "name": "Korin Dust",
+        "tier": "Supporting",
+        "district": "Outsiders & Oddities",
+        "incoming": 14,
+        "outgoing": 4,
+        "responsibility_indegree": 11
+      },
+      "NPC_084": {
+        "name": "Fara Linn",
+        "tier": "Supporting",
+        "district": "Outsiders & Oddities",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_085": {
+        "name": "Master Oren",
+        "tier": "Major",
+        "district": "Outsiders & Oddities",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_086": {
+        "name": "Tali Quist",
+        "tier": "Supporting",
+        "district": "Outsiders & Oddities",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_087": {
+        "name": "Nox",
+        "tier": "Minor",
+        "district": "Outsiders & Oddities",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      },
+      "NPC_088": {
+        "name": "Pere Venn",
+        "tier": "Supporting",
+        "district": "Outsiders & Oddities",
+        "incoming": 3,
+        "outgoing": 4,
+        "responsibility_indegree": 0
+      }
+    },
+    "flags": [
+      "Only 8 distinct responsibility targets (need >= 30)",
+      "Responsibility indegree exceeds 4 without counting overrides: {'NPC_006': 11, 'NPC_017': 11, 'NPC_083': 11, 'NPC_028': 11, 'NPC_050': 11, 'NPC_039': 11, 'NPC_061': 11, 'NPC_072': 11}",
+      "8 cross_district edges join same-district characters"
+    ]
+  },
+  "scenes": {
+    "scene_count": 300,
+    "scenes_by_type": {
+      "introduction": 88,
+      "relationship": 65,
+      "quest": 64,
+      "secret_pressure": 35,
+      "district_group": 22,
+      "consequence": 26
+    },
+    "primary_scenes_by_character": {
+      "NPC_001": 4,
+      "NPC_002": 4,
+      "NPC_003": 3,
+      "NPC_004": 4,
+      "NPC_005": 3,
+      "NPC_006": 2,
+      "NPC_007": 2,
+      "NPC_008": 3,
+      "NPC_009": 6,
+      "NPC_010": 5,
+      "NPC_011": 4,
+      "NPC_012": 5,
+      "NPC_013": 3,
+      "NPC_014": 3,
+      "NPC_015": 2,
+      "NPC_016": 3,
+      "NPC_017": 7,
+      "NPC_018": 3,
+      "NPC_019": 4,
+      "NPC_020": 4,
+      "NPC_021": 3,
+      "NPC_022": 3,
+      "NPC_023": 4,
+      "NPC_024": 3,
+      "NPC_025": 6,
+      "NPC_026": 4,
+      "NPC_027": 4,
+      "NPC_028": 3,
+      "NPC_029": 3,
+      "NPC_030": 4,
+      "NPC_031": 3,
+      "NPC_032": 4,
+      "NPC_033": 5,
+      "NPC_034": 3,
+      "NPC_035": 4,
+      "NPC_036": 5,
+      "NPC_037": 3,
+      "NPC_038": 2,
+      "NPC_039": 3,
+      "NPC_040": 3,
+      "NPC_041": 5,
+      "NPC_042": 3,
+      "NPC_043": 4,
+      "NPC_044": 3,
+      "NPC_045": 4,
+      "NPC_046": 4,
+      "NPC_047": 3,
+      "NPC_048": 3,
+      "NPC_049": 4,
+      "NPC_050": 3,
+      "NPC_051": 4,
+      "NPC_052": 3,
+      "NPC_053": 3,
+      "NPC_054": 2,
+      "NPC_055": 3,
+      "NPC_056": 5,
+      "NPC_057": 4,
+      "NPC_058": 3,
+      "NPC_059": 3,
+      "NPC_060": 3,
+      "NPC_061": 3,
+      "NPC_062": 2,
+      "NPC_063": 2,
+      "NPC_064": 3,
+      "NPC_065": 4,
+      "NPC_066": 3,
+      "NPC_067": 5,
+      "NPC_068": 2,
+      "NPC_069": 3,
+      "NPC_070": 3,
+      "NPC_071": 3,
+      "NPC_072": 3,
+      "NPC_073": 4,
+      "NPC_074": 3,
+      "NPC_075": 2,
+      "NPC_076": 2,
+      "NPC_077": 3,
+      "NPC_078": 4,
+      "NPC_079": 2,
+      "NPC_080": 4,
+      "NPC_081": 4,
+      "NPC_082": 3,
+      "NPC_083": 3,
+      "NPC_084": 3,
+      "NPC_085": 4,
+      "NPC_086": 3,
+      "NPC_087": 2,
+      "NPC_088": 3
+    },
+    "appearances_by_character": {
+      "NPC_001": 6,
+      "NPC_008": 6,
+      "NPC_002": 13,
+      "NPC_021": 7,
+      "NPC_003": 7,
+      "NPC_004": 6,
+      "NPC_039": 21,
+      "NPC_005": 8,
+      "NPC_042": 8,
+      "NPC_006": 19,
+      "NPC_041": 13,
+      "NPC_007": 7,
+      "NPC_088": 5,
+      "NPC_009": 11,
+      "NPC_010": 11,
+      "NPC_077": 11,
+      "NPC_011": 10,
+      "NPC_012": 13,
+      "NPC_013": 7,
+      "NPC_050": 18,
+      "NPC_014": 6,
+      "NPC_061": 17,
+      "NPC_015": 9,
+      "NPC_072": 12,
+      "NPC_016": 8,
+      "NPC_017": 17,
+      "NPC_018": 7,
+      "NPC_019": 9,
+      "NPC_022": 9,
+      "NPC_020": 7,
+      "NPC_027": 7,
+      "NPC_066": 12,
+      "NPC_073": 10,
+      "NPC_023": 10,
+      "NPC_024": 4,
+      "NPC_025": 9,
+      "NPC_026": 8,
+      "NPC_028": 21,
+      "NPC_083": 19,
+      "NPC_029": 8,
+      "NPC_030": 10,
+      "NPC_031": 10,
+      "NPC_032": 8,
+      "NPC_033": 10,
+      "NPC_038": 8,
+      "NPC_034": 10,
+      "NPC_037": 7,
+      "NPC_035": 7,
+      "NPC_076": 6,
+      "NPC_036": 13,
+      "NPC_040": 10,
+      "NPC_048": 11,
+      "NPC_043": 7,
+      "NPC_068": 12,
+      "NPC_044": 9,
+      "NPC_051": 11,
+      "NPC_045": 8,
+      "NPC_046": 11,
+      "NPC_047": 7,
+      "NPC_049": 5,
+      "NPC_052": 8,
+      "NPC_053": 6,
+      "NPC_082": 7,
+      "NPC_054": 7,
+      "NPC_055": 8,
+      "NPC_056": 8,
+      "NPC_057": 7,
+      "NPC_058": 9,
+      "NPC_059": 8,
+      "NPC_064": 7,
+      "NPC_060": 6,
+      "NPC_075": 7,
+      "NPC_062": 6,
+      "NPC_063": 5,
+      "NPC_065": 7,
+      "NPC_067": 15,
+      "NPC_069": 6,
+      "NPC_070": 7,
+      "NPC_071": 5,
+      "NPC_074": 9,
+      "NPC_078": 8,
+      "NPC_079": 5,
+      "NPC_080": 7,
+      "NPC_081": 6,
+      "NPC_084": 6,
+      "NPC_087": 7,
+      "NPC_085": 7,
+      "NPC_086": 8
+    },
+    "off_district_unexplained_by_type": {},
+    "unexplained_off_district_scenes": [],
+    "introduction_unexplained_outsiders": [],
+    "district_group_unexplained_outsiders": [],
+    "repeated_dramatic_problem_patterns": [
+      {
+        "value": "events around {name} put pressure on something {name} is protecting. the writer may dramatise the pressure, but must not reveal the private fact unless the manifest's reveal policy permits it.",
+        "count": 35
+      },
+      {
+        "value": "introduce {name} through ordinary work at {name}, while a live obligation involving {name} puts their central contradiction under mild pressure: wants independence but has structured daily life around being needed by other people. the player must learn an actionable affordance without receiving a generic quest-terminal speech.",
+        "count": 17
+      },
+      {
+        "value": "a concrete disagreement between {name} and {name} forces the relationship into the open. the scene should make both positions intelligible and test {name}'s contradiction: wants independence but has structured daily life around being needed by other people.",
+        "count": 16
+      },
+      {
+        "value": "a concrete disagreement between {name} and {name} forces the relationship into the open. the scene should make both positions intelligible and test {name}'s contradiction: demands honesty from others while maintaining one carefully bounded deception.",
+        "count": 14
+      },
+      {
+        "value": "a concrete disagreement between {name} and {name} forces the relationship into the open. the scene should make both positions intelligible and test {name}'s contradiction: believes in personal responsibility but readily explains their own failures through circumstance.",
+        "count": 13
+      },
+      {
+        "value": "introduce {name} through ordinary work at {name}, while a live obligation involving {name} puts their central contradiction under mild pressure: demands honesty from others while maintaining one carefully bounded deception. the player must learn an actionable affordance without receiving a generic quest-terminal speech.",
+        "count": 12
+      },
+      {
+        "value": "introduce {name} through ordinary work at {name}, while a live obligation involving {name} puts their central contradiction under mild pressure: believes in personal responsibility but readily explains their own failures through circumstance. the player must learn an actionable affordance without receiving a generic quest-terminal speech.",
+        "count": 11
+      },
+      {
+        "value": "revisit {name} after a meaningful prior outcome. their behaviour must reflect: after a respectful resolution, {name} volunteers context they previously withheld and uses less defensive language. the scene is about changed relationships and memory, not replaying the original exposition.",
+        "count": 8
+      },
+      {
+        "value": "a concrete disagreement between {name} and {name} forces the relationship into the open. the scene should make both positions intelligible and test {name}'s contradiction: claims to hate village gossip yet tracks social information with professional precision.",
+        "count": 7
+      },
+      {
+        "value": "revisit {name} after a meaningful prior outcome. their behaviour must reflect: after the quest, their daily route changes to reflect the practical consequence rather than resetting to a pre-quest loop. the scene is about changed relationships and memory, not replaying the original exposition.",
+        "count": 7
+      },
+      {
+        "value": "introduce {name} through ordinary work at {name}, while a live obligation involving {name} puts their central contradiction under mild pressure: claims to hate village gossip yet tracks social information with professional precision. the player must learn an actionable affordance without receiving a generic quest-terminal speech.",
+        "count": 6
+      },
+      {
+        "value": "revisit {name} after a meaningful prior outcome. their behaviour must reflect: after exposure, {name} stops maintaining one lie but becomes much more careful about what they volunteer. the scene is about changed relationships and memory, not replaying the original exposition.",
+        "count": 5
+      }
+    ],
+    "repeated_quest_hooks": [
+      {
+        "value": "decide how to settle a debt when repayment is possible only by shifting the burden onto someone else.",
+        "count": 17
+      },
+      {
+        "value": "identify why a routine exchange has broken down by speaking to people who each know a different part of the chain.",
+        "count": 14
+      },
+      {
+        "value": "decode meaning hidden in a crafted object and decide who should learn what it says.",
+        "count": 14
+      },
+      {
+        "value": "follow physical evidence through timber, resin or tool marks to discover who altered a worksite.",
+        "count": 13
+      },
+      {
+        "value": "test competing claims about workmanship using physical clues rather than reputation.",
+        "count": 13
+      },
+      {
+        "value": "recover evidence from a hazardous industrial site, then decide what must become public.",
+        "count": 12
+      },
+      {
+        "value": "determine whether a valuable material or technique is genuine, stolen or misunderstood.",
+        "count": 12
+      },
+      {
+        "value": "test an outsider's extraordinary claim against local evidence without assuming either fraud or truth.",
+        "count": 12
+      },
+      {
+        "value": "investigate a production problem whose real cause is a concealed maintenance or boundary decision.",
+        "count": 11
+      },
+      {
+        "value": "inspect a structure or boundary whose visible defect points to an older hidden compromise.",
+        "count": 11
+      },
+      {
+        "value": "reconstruct an event from discarded objects and routes that respectable witnesses never noticed.",
+        "count": 10
+      },
+      {
+        "value": "investigate a ritual, grave or medical discrepancy without violating every confidence involved.",
+        "count": 10
+      }
+    ],
+    "repeated_alternate_solutions": [
+      {
+        "value": "a non-confrontational route should exist through evidence, exchange, repair or mediation; it changes who trusts the player even when the material outcome is similar.",
+        "count": 300
+      }
+    ],
+    "repeated_scene_requirements": [
+      {
+        "value": "a house scene should reveal at least one ordinary-life detail, one relationship, and one actionable affordance before or alongside any quest objective.",
+        "count": 300
+      },
+      {
+        "value": "at least one line or action must reveal relationship, attitude or pressure rather than pure exposition.",
+        "count": 300
+      }
+    ],
+    "generic_policy_requirement_scenes": 300,
+    "consequence_valid_bindings": 0,
+    "consequence_missing_or_invalid": [
+      "SCN_275_8C20187B",
+      "SCN_276_91FB3D31",
+      "SCN_277_E0D2E96F",
+      "SCN_278_FBF82FA3",
+      "SCN_279_7EF132F5",
+      "SCN_280_F11CF914",
+      "SCN_281_92FE806B",
+      "SCN_282_6010EB98",
+      "SCN_283_1156EC39",
+      "SCN_284_4CEE4132",
+      "SCN_285_DA66CF10",
+      "SCN_286_D6380E74",
+      "SCN_287_BAB8CCDB",
+      "SCN_288_EF9024EF",
+      "SCN_289_F9ED0A28",
+      "SCN_290_8441CAE5",
+      "SCN_291_C88342C1",
+      "SCN_292_276E22FF",
+      "SCN_293_12C6A867",
+      "SCN_294_7492A9A1",
+      "SCN_295_FEE8FC7F",
+      "SCN_296_2D890F16",
+      "SCN_297_A24F5CDD",
+      "SCN_298_81FAD842",
+      "SCN_299_2CDA141D",
+      "SCN_300_5D5B6E83"
+    ],
+    "minor_overrepresentation": [],
+    "district_isolates": [],
+    "policy_refs_expected": [
+      "POLICY_KNOWLEDGE_BOUNDARY",
+      "POLICY_ALLOWLISTED_EFFECTS",
+      "POLICY_PRIVATE_FACT_REVEAL"
+    ],
+    "flags": [
+      "26 consequence scenes lack valid predecessor bindings",
+      "300 scenes still duplicate global writer-policy text"
+    ]
+  }
+}

@@ -50,6 +50,17 @@ REQUIRED_FIELDS = {
     "Puzzle_Clue_Source",
     "Post_Quest_State",
     "House_Content_Rule",
+    "Formative_Event",
+    "Self_Image",
+    "Private_Need",
+    "Social_Mask",
+    "Specific_Regret",
+    "Specific_Hope",
+    "Relationship_Wound",
+    "Pressure_Behaviour",
+    "Repair_Behaviour",
+    "Misjudges_Others_By",
+    "Cross_District_Reason",
     *WORLDVIEW_SCORE_FIELDS,
 }
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 from typing import Iterable
 
@@ -17,6 +17,8 @@ RELATION_FIELDS = (
 )
 
 TIER_WEIGHT = {"Major": 3, "Supporting": 2, "Minor": 1}
+MAX_RESPONSIBILITY_INDEGREE = 4
+MIN_RESPONSIBILITY_TARGETS = 30
 
 
 @dataclass(frozen=True)
@@ -43,6 +45,23 @@ class RelationshipEdge:
     target_immediate_want: str
     source_secret: str
     target_secret: str
+    origin_event: str = ""
+    shared_history: str = ""
+    source_view_of_target: str = ""
+    target_view_of_source: str = ""
+    public_story: str = ""
+    private_truth: str = ""
+    current_tension: str = ""
+    source_wants: str = ""
+    target_wants: str = ""
+    source_leverage: str = ""
+    target_leverage: str = ""
+    misunderstanding: str = ""
+    reason_relationship_matters_now: str = ""
+    breaking_point: str = ""
+    repair_condition: str = ""
+    reason_for_presence: str = ""
+    contact_reason: str = ""
 
 
 def _stable_id(source_id: str, target_id: str, relation_type: str) -> str:
@@ -62,6 +81,91 @@ def _reverse_types(source: CharacterProfile, target: CharacterProfile) -> list[s
     return result
 
 
+def _first_sentence(text: str) -> str:
+    text = (text or "").strip()
+    if not text:
+        return ""
+    cut = text.find(". ")
+    return text[: cut + 1] if cut != -1 else text
+
+
+def _compose_history(source: CharacterProfile, target: CharacterProfile, rel_type: str, description: str) -> dict[str, str]:
+    contact = source["Cross_District_Reason"] if rel_type == "cross_district" else rel_type.replace("_", " ")
+    origin = _first_sentence(description) or (
+        f"{source.name} and {target.name} were bound through {source['Village_Role'].lower()} work at {source['Home_or_Base']}."
+    )
+    if rel_type == "responsibility":
+        source_view = (
+            f"{source.name} tells {source['Self_Image']} while managing {target.name}: {source['Pressure_Behaviour']}"
+        )
+        target_view = (
+            f"{target.name} experiences the duty as control because {target['Misjudges_Others_By']}"
+        )
+        public_story = f"{source.name} is simply looking after {target.name} as part of {source['Village_Role'].lower()} work."
+        private_truth = description
+        tension = f"{source['Immediate_Want']} collides with {target['Immediate_Want']}"
+        presence = (
+            f"{target.name} is here because {source.name} still carries the unpaid practical debt described in their history."
+        )
+    elif rel_type == "rival":
+        source_view = f"{source['Relationship_Wound']} {source['Misjudges_Others_By']}"
+        target_view = f"{target['Relationship_Wound']}"
+        public_story = (
+            f"{source.district} treats {source.name} and {target.name} as people who disagree about {source['Village_Role'].lower()} work."
+        )
+        private_truth = description
+        tension = f"{source.name} needs {target.name} to be slightly wrong about {source['Secret']}"
+        presence = f"{target.name} is present because the live dispute with {source.name} is already in motion."
+    elif rel_type == "cross_district":
+        source_view = (
+            f"{source.name} keeps the {contact} unofficial so {source['Secret']} does not travel on a second district's books."
+        )
+        target_view = (
+            f"{target.name} answers the {contact} because {target['Private_Need']}"
+        )
+        public_story = f"A routine {contact} between {source.district} and {target.district}."
+        private_truth = description
+        tension = f"The {contact} is due now, and neither can use an official route without exposing private facts."
+        presence = (
+            f"{target.name} has a concrete {contact} reason to be in {source.district}: {description}"
+        )
+    else:
+        source_view = f"{source['Private_Need']} {source.name} uses {target.name} as the witness who has not yet become a judge."
+        target_view = f"{target['Repair_Behaviour']}"
+        public_story = f"{source.name} and {target.name} are known to work well together in {source.district}."
+        private_truth = description
+        tension = f"{source['Immediate_Want']} now requires {target.name}'s cover without giving {target.name} the whole of {source['Secret']}"
+        presence = f"{target.name} is present as {source.name}'s working ally at {source.location}."
+
+    return {
+        "origin_event": origin,
+        "shared_history": description,
+        "source_view_of_target": source_view,
+        "target_view_of_source": target_view,
+        "public_story": public_story,
+        "private_truth": private_truth,
+        "current_tension": tension,
+        "source_wants": source["Immediate_Want"],
+        "target_wants": target["Immediate_Want"],
+        "source_leverage": f"{source['Village_Role']} access at {source['Home_or_Base']}: {source['Social_Mask']}",
+        "target_leverage": f"{target['Village_Role']} access at {target['Home_or_Base']}: {target['Specific_Regret']}",
+        "misunderstanding": (
+            f"{source.name} hears {target.name} through {source['Misjudges_Others_By']} "
+            f"{target.name} hears {source.name} through {target['Misjudges_Others_By']}"
+        ),
+        "reason_relationship_matters_now": (
+            f"{source['Immediate_Want']} cannot be finished without {target.name}, "
+            f"and {source['Specific_Hope']} is already entangled with {target.name}."
+        ),
+        "breaking_point": (
+            f"If {source['Secret']} becomes public through {target.name}, or if {target['Secret']} is used as a weapon, the relationship ends as working trust."
+        ),
+        "repair_condition": source["Repair_Behaviour"],
+        "reason_for_presence": presence,
+        "contact_reason": contact,
+    }
+
+
 def build_relationship_graph(profiles: Iterable[CharacterProfile]) -> list[RelationshipEdge]:
     profiles = list(profiles)
     by_name = {p.name: p for p in profiles}
@@ -79,6 +183,7 @@ def build_relationship_graph(profiles: Iterable[CharacterProfile]) -> list[Relat
             tension_bonus = 1 if rel_type in {"rival", "responsibility"} else 0
             worldview_bonus = 1 if distance >= 10 else 0
             dramatic_weight = base_weight + tier_bonus + tension_bonus + worldview_bonus
+            history = _compose_history(source, target, rel_type, source[description_field])
             edges.append(
                 RelationshipEdge(
                     relationship_id=_stable_id(source.id, target.id, rel_type),
@@ -103,6 +208,7 @@ def build_relationship_graph(profiles: Iterable[CharacterProfile]) -> list[Relat
                     target_immediate_want=target["Immediate_Want"],
                     source_secret=source["Secret"],
                     target_secret=target["Secret"],
+                    **history,
                 )
             )
 
@@ -128,7 +234,7 @@ def write_relationship_json(profiles: Iterable[CharacterProfile], edges: Iterabl
     profiles = list(profiles)
     edges = list(edges)
     payload = {
-        "schema_version": "dmb-relationship-graph-v1",
+        "schema_version": "dmb-relationship-graph-v2",
         "nodes": [
             {
                 "character_id": p.id,
@@ -146,3 +252,8 @@ def write_relationship_json(profiles: Iterable[CharacterProfile], edges: Iterabl
         "edges": [asdict(edge) for edge in edges],
     }
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def edge_from_mapping(row: dict) -> RelationshipEdge:
+    allowed = {item.name for item in fields(RelationshipEdge)}
+    return RelationshipEdge(**{key: value for key, value in row.items() if key in allowed})

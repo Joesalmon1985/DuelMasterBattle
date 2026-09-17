@@ -4,10 +4,13 @@ import argparse
 import json
 from pathlib import Path
 
+from .ensemble.policies import WRITER_POLICIES
 from .ensemble.profiles import load_profiles
+from .ensemble.quality import build_quality_report, write_quality_report
 from .ensemble.relationship_graph import (
     RelationshipEdge,
     build_relationship_graph,
+    edge_from_mapping,
     write_relationship_csv,
     write_relationship_json,
 )
@@ -32,6 +35,9 @@ def _paths(output_dir: Path) -> dict[str, Path]:
         "scene_summary": output_dir / "scene_manifest_summary.csv",
         "coverage": output_dir / "coverage_report.json",
         "validation": output_dir / "validation_report.json",
+        "quality_json": output_dir / "quality_report.json",
+        "quality_txt": output_dir / "quality_report.txt",
+        "policies": output_dir / "writer_policies.json",
     }
 
 
@@ -53,9 +59,14 @@ def build_all(profiles_path: Path, output_dir: Path, target_scenes: int, seed: i
         encoding="utf-8",
     )
     paths["validation"].write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    paths["policies"].write_text(json.dumps(WRITER_POLICIES, indent=2) + "\n", encoding="utf-8")
+    quality = build_quality_report(profiles, edges, manifests, baseline=_load_baseline())
+    write_quality_report(quality, output_dir)
 
     if not report["valid"]:
         raise RuntimeError("Ensemble generation failed validation: " + "; ".join(report["errors"]))
+    if quality["flags"]:
+        raise RuntimeError("Ensemble quality gates failed: " + "; ".join(quality["flags"]))
 
     return {
         "profiles": len(profiles),
@@ -64,7 +75,21 @@ def build_all(profiles_path: Path, output_dir: Path, target_scenes: int, seed: i
         "seed": seed,
         "output_dir": str(output_dir),
         "validation": report,
+        "quality_flags": quality["flags"],
     }
+
+
+BASELINE_PATH = Path("tools/dialogue_generation/ensemble/quality_baseline.json")
+
+
+def _load_baseline() -> dict | None:
+    if BASELINE_PATH.exists():
+        return json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
+    return None
+
+
+def _edges_from_payload(payload: dict) -> list[RelationshipEdge]:
+    return [edge_from_mapping(row) for row in payload.get("edges", [])]
 
 
 def validate_existing(profiles_path: Path, output_dir: Path) -> dict:
@@ -78,13 +103,32 @@ def validate_existing(profiles_path: Path, output_dir: Path) -> dict:
     relationship_payload = json.loads(paths["relationships_json"].read_text(encoding="utf-8"))
     scene_payload = json.loads(paths["scenes_json"].read_text(encoding="utf-8"))
 
-    edges = [RelationshipEdge(**row) for row in relationship_payload.get("edges", [])]
+    edges = _edges_from_payload(relationship_payload)
     manifests = scene_payload.get("scenes", [])
     if not isinstance(manifests, list):
         raise ValueError("scene_manifests.json must contain a 'scenes' list")
 
     report = validate_ensemble(profiles, edges, manifests)
     paths["validation"].write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    return report
+
+
+def quality_existing(profiles_path: Path, output_dir: Path, *, persist_baseline: bool = False) -> dict:
+    profiles = load_profiles(profiles_path)
+    paths = _paths(output_dir)
+    missing = [str(path) for path in (paths["relationships_json"], paths["scenes_json"]) if not path.exists()]
+    if missing:
+        raise FileNotFoundError("Missing generated ensemble file(s): " + ", ".join(missing))
+    relationship_payload = json.loads(paths["relationships_json"].read_text(encoding="utf-8"))
+    scene_payload = json.loads(paths["scenes_json"].read_text(encoding="utf-8"))
+    edges = _edges_from_payload(relationship_payload)
+    manifests = scene_payload.get("scenes", [])
+    report = build_quality_report(profiles, edges, manifests, baseline=_load_baseline())
+    write_quality_report(report, output_dir)
+    if persist_baseline:
+        BASELINE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        snapshot = {key: value for key, value in report.items() if key != "delta_from_baseline"}
+        BASELINE_PATH.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return report
 
 
@@ -108,6 +152,10 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("validate-output", help="Validate already generated relationship and scene files")
     _add_common_paths(p)
 
+    p = sub.add_parser("quality-report", help="Write a quality/diversity report for profiles, graph and scenes")
+    _add_common_paths(p)
+    p.add_argument("--persist-baseline", action="store_true", help="Store this report as the committed quality baseline")
+
     return parser
 
 
@@ -122,6 +170,10 @@ def main() -> int:
             report = validate_existing(args.profiles, args.output_dir)
             print(json.dumps(report, indent=2))
             return 0 if report.get("valid") else 1
+        if args.command == "quality-report":
+            report = quality_existing(args.profiles, args.output_dir, persist_baseline=args.persist_baseline)
+            print(json.dumps({"pass": report.get("pass"), "flags": report.get("flags"), "delta_from_baseline": report.get("delta_from_baseline")}, indent=2))
+            return 0 if report.get("pass") else 1
         return 2
     except KeyboardInterrupt:
         print("\nInterrupted safely.")
