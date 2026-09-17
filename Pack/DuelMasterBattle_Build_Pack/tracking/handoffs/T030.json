@@ -1,7 +1,7 @@
 {
   "task_id": "T030",
   "status": "DONE",
-  "commit": null,
+  "commit": "83a209600c28737a8c81f72e498f791b7d259295",
   "files": [
     "sim/dmb/logistics/stock.py",
     "sim/dmb/logistics/__init__.py",
