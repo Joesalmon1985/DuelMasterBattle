@@ -1,4 +1,4 @@
-commit: PENDING_STAMP
+commit: 72944fff2dbc4a7126c2c423d75c2cc683807395
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g02.sh --direct
 
