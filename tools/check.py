@@ -466,6 +466,17 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "tests/sim/test_t051_routes_constraints.py",
             )
         ],
+        "T057": lambda: [
+            _pytest(
+                "industry_causality_scenarios",
+                "tests/scenarios/test_industry_causality.py",
+                "tests/sim/test_t054_industry_service.py",
+            ),
+            validate_evidence(
+                "fx_industry_fixture_manifest",
+                [ROOT / "godot_project" / "content" / "fixtures" / "industry" / "fx_industry_v1.json"],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

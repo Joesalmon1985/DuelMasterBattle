@@ -1,0 +1,24 @@
+{
+  "fixture_id": "FX-INDUSTRY",
+  "schema_version": 1,
+  "seed": 303,
+  "runtime_loader": "sim.dmb.testing.fixtures:load_fixture",
+  "accounting_quantum_ms": 100,
+  "oracles": {
+    "factory_rates_per_second": ["1/100", "1/100", "1/100"],
+    "meters_after_60_seconds": ["3/5", "3/5", "3/5"],
+    "units_after_100_seconds": 3,
+    "finite_start": "600",
+    "finite_after_100_seconds": "590"
+  },
+  "causes": [
+    "finite_source_depletion",
+    "shared_last_unit",
+    "source_catastrophe",
+    "explicit_strike",
+    "installed_route_fallback",
+    "building_destruction",
+    "animation_only_no_effect",
+    "legacy_layer_continuation"
+  ]
+}
