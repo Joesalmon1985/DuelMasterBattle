@@ -66,6 +66,7 @@ class WorldState:
     items: dict[str, Any] = field(default_factory=dict)
     leases: dict[str, Any] = field(default_factory=dict)
     knowledge: dict[str, Any] = field(default_factory=dict)
+    research: dict[str, Any] = field(default_factory=dict)
     tombstones: dict[str, Any] = field(default_factory=dict)
     command_receipts: dict[str, Any] = field(default_factory=dict)
     definitions: dict[str, Any] = field(default_factory=dict)

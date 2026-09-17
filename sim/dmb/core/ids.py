@@ -22,6 +22,7 @@ INSTANCE_KINDS = (
     "effect",
     "cause",
     "node",
+    "tech",
 )
 
 
