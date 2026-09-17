@@ -1,7 +1,7 @@
 {
   "task_id": "T043",
   "status": "DONE",
-  "commit": null,
+  "commit": "0560c9e0e90120f281aeb057d20608b290714a11",
   "files": [
     "sim/dmb/ai/heuristic.py",
     "sim/dmb/ai/policy.py",
