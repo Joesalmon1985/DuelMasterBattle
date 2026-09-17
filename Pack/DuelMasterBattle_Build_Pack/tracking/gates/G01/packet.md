@@ -1,6 +1,6 @@
 
-**Tested implementation commit:** `5775fcd9844c50abd8c90ceee0cb9117a3c29f60`  
-**Handoff HEAD:** `5775fcd9844c50abd8c90ceee0cb9117a3c29f60`
+**Tested implementation commit:** `4dc6da9d22254d2b88a1eb3f38913155d07312c8`  
+**Handoff HEAD:** `4dc6da9d22254d2b88a1eb3f38913155d07312c8`
 
 # G01 playtest handoff — playable wizard FX-CLOCK (FIX_REQUIRED repair)
 
