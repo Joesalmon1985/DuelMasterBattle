@@ -1,10 +1,12 @@
 # G02 playtest handoff — FX-CARGO performance repair
 
-**Status:** AWAITING_HUMAN (do not start T049)  
+**Status:** PASS (Joe Salmon)  
 **Scenario:** FX-CARGO · **Seed:** 202  
 **Review baseline:** `f947f57d06ad6ab1b2223baae152ff1ecfcc67f3`  
-**Tested revision:** `72944fff2dbc4a7126c2c423d75c2cc683807395`  
-**Save slot:** `g02_playtest` · recovery: `_recovery`
+**Tested revision / accepted_build:** `72944fff2dbc4a7126c2c423d75c2cc683807395`  
+**Accepted at:** `2026-09-17T22:05:00Z`  
+**Save slot:** `g02_playtest` · recovery: `_recovery`  
+**Human note:** Joe confirmed “G02 is all good.” No additional observations invented.
 
 ## Launch (verified)
 

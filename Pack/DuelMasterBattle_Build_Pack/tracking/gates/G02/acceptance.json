@@ -1,0 +1,9 @@
+{
+  "gate": "G02",
+  "status": "PASS",
+  "accepted_by": "Joe Salmon",
+  "accepted_build": "72944fff2dbc4a7126c2c423d75c2cc683807395",
+  "accepted_at": "2026-09-17T22:05:00Z",
+  "branch": "BuildPackV03",
+  "notes": "Explicit human acceptance: Joe confirmed \"G02 is all good.\" Recorded against the packet tested revision without inventing observations or test evidence. G01 acceptance preserved."
+}
