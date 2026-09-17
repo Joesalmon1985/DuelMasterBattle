@@ -1,12 +1,11 @@
-# Verified portrait launch (450x800)
+commit: 90c0d6511bbff7163a1d88b267cd83a2f2259bba
 cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g02.sh --direct
 
-# Defaults set by play_g02.sh:
-#   DMB_FIXTURE=FX-CARGO
-#   DMB_SEED=202
-# Save slot: g02_playtest
-# Recovery slot: _recovery
+# Portrait 450x800 (native Godot 4.4.1)
+# DMB_FIXTURE=FX-CARGO DMB_SEED=202
+# Save: g02_playtest  Recovery: _recovery
+# Economy: Start delivery → Block → Wait → Clear → Wait (construction follows)
 
-# Landscape optional:
+# Optional landscape:
 # bash tools/play_g02.sh --direct --landscape
