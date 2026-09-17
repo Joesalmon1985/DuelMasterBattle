@@ -1,7 +1,7 @@
 {
   "task_id": "T031",
   "status": "DONE",
-  "commit": null,
+  "commit": "c6edba2107d933a3e4b105cad4bf6eff27e2a2f2",
   "files": [
     "sim/dmb/construction/placement.py",
     "sim/dmb/construction/scoring.py",
