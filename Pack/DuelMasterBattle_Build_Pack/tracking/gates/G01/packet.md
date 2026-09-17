@@ -51,3 +51,7 @@ Landscape: `bash tools/play_g01.sh --direct --landscape`
 | Save/load after arrival | Pose/node preserved |
 
 Reply `G01 PASS — <commit>` or `G01 FIX_REQUIRED — <symptom>`.
+
+## Joe acceptance
+
+**G01 PASS** recorded by agent against verified playtested revision `4021d7cffe991aa605889829a53df974c53a1dcd` on BuildPackV03 (local HEAD matches pushed origin). Manual playtest accepted; gate cleared. Continue to T025.

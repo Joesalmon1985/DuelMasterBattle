@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "pack_version": "1.0",
-  "status": "AWAITING_HUMAN",
-  "current_task": "G01",
+  "status": "READY_FOR_EXECUTION",
+  "current_task": "T025",
   "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
   "repository_map": "tracking/repository_map.json",
   "resume_policy": {
@@ -37,7 +37,7 @@
     "T022": "DONE",
     "T023": "DONE",
     "T024": "DONE",
-    "T025": "NOT_STARTED",
+    "T025": "IN_PROGRESS",
     "T026": "NOT_STARTED",
     "T027": "NOT_STARTED",
     "T028": "NOT_STARTED",
@@ -176,9 +176,10 @@
   },
   "gates": {
     "G01": {
-      "status": "AWAITING_HUMAN",
-      "accepted_by": null,
-      "accepted_build": null,
+      "status": "PASS",
+      "accepted_by": "Joe Salmon",
+      "accepted_build": "4021d7cffe991aa605889829a53df974c53a1dcd",
+      "accepted_at": "2026-09-17T09:06:30Z",
       "evidence": "tracking/gates/G01/packet.md"
     },
     "G02": {

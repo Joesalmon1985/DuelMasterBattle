@@ -1,0 +1,9 @@
+{
+  "gate": "G01",
+  "status": "PASS",
+  "accepted_by": "Joe Salmon",
+  "accepted_build": "4021d7cffe991aa605889829a53df974c53a1dcd",
+  "accepted_at": "2026-09-17T09:06:30Z",
+  "branch": "BuildPackV03",
+  "notes": "Explicit G01 PASS after manual playtest of repaired travel/recovery build."
+}
