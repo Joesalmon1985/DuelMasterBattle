@@ -1,0 +1,15 @@
+{
+  "task_id": "T054",
+  "status": "DONE",
+  "commit": "142649ebf76d301b05dc7d984ea4b59d20359911",
+  "files": ["sim/dmb/industry/service.py", "sim/dmb/core/world.py", "sim/dmb/testing/fixtures.py", "tests/sim/test_t054_industry_service.py", "tools/check.py"],
+  "public_contracts": ["IndustryService.advance_quanta", "WorldSim global industry clock path", "FX-INDUSTRY"],
+  "source_rules": ["C06 fixed 100 ms global accounting and commit ordering"],
+  "checks": [
+    {"command": "python3 tools/check.py --task T054", "exit_code": 0, "result": "PASS; 5 passed in 2.98s"},
+    {"command": "python3 -m pytest -q tests/sim/test_t049_catalogues.py tests/sim/test_t050_layers_primary.py tests/sim/test_t051_routes_constraints.py tests/sim/test_t052_allocation.py tests/sim/test_t053_factories.py tests/sim/test_t054_industry_service.py tests/sim/test_t014_persistence.py", "exit_code": 0, "result": "24 passed in 3.04s"}
+  ],
+  "defects": [],
+  "next_task": "T055",
+  "notes": "Stopped before T055 as explicitly requested. FX-INDUSTRY uses the normal WorldSim clock and serialized industry state."
+}
