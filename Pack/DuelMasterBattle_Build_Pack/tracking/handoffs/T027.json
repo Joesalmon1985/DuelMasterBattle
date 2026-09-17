@@ -1,7 +1,7 @@
 {
   "task_id": "T027",
   "status": "DONE",
-  "commit": null,
+  "commit": "cd4ed788ab002df3a240b6d5852b2e611a2b45ad",
   "files": [
     "sim/dmb/construction/buildings.py",
     "sim/dmb/construction/__init__.py",
