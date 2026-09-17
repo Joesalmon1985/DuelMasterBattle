@@ -1,0 +1,26 @@
+{
+  "task_id": "T025",
+  "status": "DONE",
+  "commit": "pending",
+  "files": [
+    "sim/dmb/world/board.py",
+    "tests/sim/test_t025_board.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "HexBoard radius-2 topology"
+  ],
+  "source_rules": [
+    "C04"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T025",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T026",
+  "notes": "19/54/72 validated; G01 PASS already recorded"
+}
