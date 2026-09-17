@@ -1,7 +1,7 @@
 {
   "task_id": "T032",
   "status": "DONE",
-  "commit": null,
+  "commit": "04b98c82ce7a8ef53ee001c9da05577289f837e0",
   "files": [
     "sim/dmb/construction/orders.py",
     "sim/dmb/core/world.py",
