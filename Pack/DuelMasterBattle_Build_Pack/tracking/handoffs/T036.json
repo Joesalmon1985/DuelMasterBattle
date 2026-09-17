@@ -1,7 +1,7 @@
 {
   "task_id": "T036",
   "status": "DONE",
-  "commit": null,
+  "commit": "e7f2e4d91f23ef4972d33741cfb1bd01c7e69f3d",
   "files": [
     "sim/dmb/world/setup.py",
     "tests/sim/test_t036_setup.py",
