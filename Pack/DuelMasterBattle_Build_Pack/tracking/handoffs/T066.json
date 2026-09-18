@@ -1,7 +1,7 @@
 {
   "task_id": "T066",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "484dd6cf4524f171091afbdbc4e4fe3d2b6c2606",
   "files": [
     "sim/dmb/military/buffs.py",
     "sim/dmb/player/magic.py",
