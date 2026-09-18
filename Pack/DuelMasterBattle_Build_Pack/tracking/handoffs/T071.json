@@ -1,7 +1,7 @@
 {
   "task_id": "T071",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "505337ac1754e4652a1b94b3b69f675d07ac1bf2",
   "files": [
     "sim/dmb/hazards/queries.py",
     "sim/dmb/industry/service.py",
