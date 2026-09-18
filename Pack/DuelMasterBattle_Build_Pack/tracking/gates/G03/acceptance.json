@@ -1,7 +1,7 @@
 {
   "gate": "G03",
   "status": "AWAITING_HUMAN",
-  "candidate_implementation": null,
+  "candidate_implementation": "da27bd46d3659830d0222f071c2353aa93f0ce8b",
   "accepted_by": null,
   "accepted_at": null,
   "observations": [],
