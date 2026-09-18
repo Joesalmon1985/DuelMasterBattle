@@ -1,7 +1,7 @@
 {
   "task_id": "T065",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "7bc7768ae3717ccff57ffe4ad527901fcd3523d5",
   "files": [
     "sim/dmb/player/magic.py",
     "sim/dmb/player/__init__.py",
