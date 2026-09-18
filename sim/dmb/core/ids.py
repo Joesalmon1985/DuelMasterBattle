@@ -12,6 +12,9 @@ INSTANCE_KINDS = (
     "building",
     "cart",
     "unit",
+    "formation",
+    "battle",
+    "cube",
     "settlement",
     "faction",
     "item",
@@ -23,6 +26,7 @@ INSTANCE_KINDS = (
     "cause",
     "node",
     "tech",
+    "visit",
 )
 
 
