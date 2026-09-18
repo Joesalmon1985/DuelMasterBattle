@@ -1,7 +1,7 @@
 # G04 — Battles, wizard power and catastrophe
 
 **Status:** AWAITING_HUMAN  
-**Candidate commit:** (filled on T076 commit)  
+**Candidate commit:** a6d6ff702c30fd565a5dadf0243aa3d743296921  
 **Platform:** Linux (Windows launcher wired but not executed on this host)
 
 ## What to play

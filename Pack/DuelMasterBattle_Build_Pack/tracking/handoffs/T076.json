@@ -1,7 +1,7 @@
 {
   "task_id": "T076",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "a6d6ff702c30fd565a5dadf0243aa3d743296921",
   "files": [
     "godot_project/client/scenes/g04_battle_shell.gd",
     "godot_project/client/scenes/g04_battle_shell.tscn",

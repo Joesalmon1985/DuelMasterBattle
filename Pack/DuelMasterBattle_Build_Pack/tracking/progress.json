@@ -203,7 +203,7 @@
       "accepted_by": null,
       "accepted_build": null,
       "evidence": "tracking/gates/G04/packet.md",
-      "candidate_implementation": null,
+      "candidate_implementation": "a6d6ff702c30fd565a5dadf0243aa3d743296921",
       "notes": "Playable FX-BATTLE + FX-HAZARD; Windows not run on Linux host"
     },
     "G05": {
