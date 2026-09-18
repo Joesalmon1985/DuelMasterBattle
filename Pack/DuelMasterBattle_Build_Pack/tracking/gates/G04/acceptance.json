@@ -1,7 +1,7 @@
 {
   "gate": "G04",
   "status": "AWAITING_HUMAN",
-  "candidate_implementation": null,
+  "candidate_implementation": "d30df58e565c9dbc3a78c7f20c18f96ab50b4869",
   "repair": "R01-R08",
   "started_from": "d265f6005c621dcd9b0d60348590e07083d9e312",
   "accepted_by": null,

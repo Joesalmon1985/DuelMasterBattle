@@ -3,7 +3,7 @@
 **Status:** AWAITING_HUMAN  
 **Repair:** R01–R08 (G04 Interaction Repair Brief)  
 **Started from:** `d265f6005c621dcd9b0d60348590e07083d9e312`  
-**Candidate:** see `acceptance.json` / git HEAD after stamp commit  
+**Candidate:** `d30df58e565c9dbc3a78c7f20c18f96ab50b4869`  
 **Platform:** Linux 6.8, Godot 4.4.1 (Windows **not** run on this host)
 
 ## What changed

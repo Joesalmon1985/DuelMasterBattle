@@ -203,7 +203,7 @@
       "accepted_by": null,
       "accepted_build": null,
       "evidence": "tracking/gates/G04/packet.md",
-      "candidate_implementation": null,
+      "candidate_implementation": "d30df58e565c9dbc3a78c7f20c18f96ab50b4869",
       "fix_required_at": "2026-09-18T22:00:00Z",
       "fix_summary": "G04 Interaction Repair Brief R01–R08 completed; resubmitted for human checklist. Automated PASS is not decisive.",
       "notes": "T077 remains NOT_STARTED. Reset g04_battle/g04_hazard before play. Launch: bash tools/play_g04_battle.sh / play_g04_hazard.sh"
