@@ -1,7 +1,7 @@
 {
   "task_id": "T073",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "fa4349f00512e6910d5970770be851acf275c34e",
   "files": [
     "sim/dmb/hazards/responders.py",
     "sim/dmb/ai/legal.py",
