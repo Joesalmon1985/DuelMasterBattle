@@ -528,6 +528,16 @@ def checks_for_task(task: str) -> list[CheckResult]:
             ),
         ],
         "T064": lambda: [_pytest("battle_handoffs", "tests/sim/test_t064_handoffs.py")],
+        "T065": lambda: [_pytest("destruction_magic", "tests/sim/test_t065_magic.py")],
+        "T066": lambda: [_pytest("support_buffs", "tests/sim/test_t066_buffs.py")],
+        "T067": lambda: [_pytest("military_ai_turn", "tests/sim/test_t067_military_ai.py")],
+        "T068": lambda: [
+            _pytest("battle_magic_scenarios", "tests/scenarios/test_battle_magic.py"),
+            validate_evidence(
+                "fx_battle_fixture",
+                [ROOT / "godot_project" / "content" / "fixtures" / "battle" / "fx_battle_v1.json"],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
