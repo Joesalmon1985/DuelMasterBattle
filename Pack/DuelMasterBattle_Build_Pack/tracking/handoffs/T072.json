@@ -1,7 +1,7 @@
 {
   "task_id": "T072",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "ee5c0675f9bad9bff5ede685c3789c682e4b445b",
   "files": [
     "sim/dmb/player/visits.py",
     "sim/dmb/player/state.py",
