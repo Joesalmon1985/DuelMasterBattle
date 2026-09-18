@@ -1,7 +1,7 @@
 {
   "task_id": "T062",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "643e5b9653a093e82a42378fb41ca27fccdf5324",
   "files": [
     "sim/dmb/military/offscreen.py",
     "tests/sim/test_t062_offscreen.py",
