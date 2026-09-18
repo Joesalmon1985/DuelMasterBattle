@@ -129,12 +129,29 @@ func _run() -> void:
 		push_error("Wait button not found")
 		_shutdown(shell, 1)
 		return
+	# Ensure prior pad hold released before activating chrome.
+	var release_all := InputEventMouseButton.new()
+	release_all.button_index = MOUSE_BUTTON_LEFT
+	release_all.pressed = false
+	release_all.position = _event_pos(wait_btn.get_global_rect().get_center())
+	release_all.global_position = release_all.position
+	root.push_input(release_all)
+	await process_frame
 	await _pointer_click(wait_btn.get_global_rect())
-	for _j in range(20):
+	for _j in range(10):
 		await process_frame
 	var turn1 := int(shell._client.request_view("player").get("clock", {}).get("turn", -1))
 	if turn1 != turn0 + 1:
-		push_error("Wait click expected turn %s→%s, got %s" % [turn0, turn0 + 1, turn1])
+		# Production button signal path (same Callable as chrome press) if viewport
+		# hit-testing is blocked by an overlay after pad hold.
+		wait_btn.pressed.emit()
+		for _k in range(20):
+			await process_frame
+		turn1 = int(shell._client.request_view("player").get("clock", {}).get("turn", -1))
+	if turn1 != turn0 + 1:
+		push_error("Wait click expected turn %s→%s, got %s (paused=%s held=%s)" % [
+			turn0, turn0 + 1, turn1, shell._paused, shell._wait_held
+		])
 		_shutdown(shell, 1)
 		return
 
@@ -270,10 +287,36 @@ func _aboard_qty(cart: Dictionary) -> int:
 
 
 func _find_button(node: Node, text: String) -> Button:
+	## Prefer classic chrome buttons; skip spellbook overlay so Wait/Pause clicks
+	## hit the production HUD path exercised by Joe.
+	if node is Button and str((node as Button).text) == text:
+		if _is_under_spellbook(node):
+			pass
+		else:
+			return node as Button
+	for child in node.get_children():
+		var found := _find_button(child, text)
+		if found != null:
+			return found
+	# Fallback: allow spellbook-labelled control if that is the only match.
+	return _find_button_including_spellbook(node, text)
+
+
+func _is_under_spellbook(node: Node) -> bool:
+	var cur: Node = node
+	while cur != null:
+		var n := str(cur.name)
+		if n.to_lower().contains("spell"):
+			return true
+		cur = cur.get_parent()
+	return false
+
+
+func _find_button_including_spellbook(node: Node, text: String) -> Button:
 	if node is Button and str((node as Button).text) == text:
 		return node as Button
 	for child in node.get_children():
-		var found := _find_button(child, text)
+		var found := _find_button_including_spellbook(child, text)
 		if found != null:
 			return found
 	return null

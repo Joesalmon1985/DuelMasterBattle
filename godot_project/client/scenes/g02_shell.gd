@@ -10,6 +10,7 @@ const ClockDriver = preload("res://client/core/clock_driver.gd")
 const FxArea = preload("res://client/world/fx_clock_area.gd")
 const TouchPadScript = preload("res://client/world/touch_pad.gd")
 const EconomyView = preload("res://client/debug/economy_view.gd")
+const SpellbookAttach = preload("res://client/ui/spellbook/spellbook_non_g01_attach.gd")
 
 const SAVE_SLOT := "g02_playtest"
 
@@ -44,6 +45,9 @@ var _frame_times: Array = []
 var _stalls_over_100 := 0
 var _last_frame_usec := 0
 var _recovering := false
+var _spell_attach
+var _spell_host
+var _spell_model
 
 
 func _ready() -> void:
@@ -89,6 +93,11 @@ func _ready() -> void:
 	_economy.bind_client(_client)
 	_economy.add_clear_route_button(_on_clear_route)
 	_set_status("Python-backed FX-CARGO — Start delivery in Economy; Block/Clear route; Wait advances cargo")
+	_spell_attach = SpellbookAttach.new()
+	_spell_attach.mount(self, _ui_root, "g02", "G02 Spellbook", "g02")
+	_spell_host = _spell_attach.host
+	_spell_model = _spell_attach.model
+	_apply_movement_gate()
 	_last_frame_usec = Time.get_ticks_usec()
 
 
@@ -226,12 +235,14 @@ func _btn(parent: HBoxContainer, text: String, cb: Callable) -> void:
 
 
 func _apply_movement_gate() -> void:
-	var allow := not _paused and _focus and not _bridge_down and _client != null
+	var book_blocks: bool = _spell_host != null and _spell_host.is_blocking_world()
+	var allow: bool = not _paused and _focus and not _bridge_down and _client != null and not book_blocks
 	if _area:
 		_area.set_movement_enabled(allow)
 		_area.set_presentation_paused(not allow)
 	if _touch:
-		_touch.set_enabled(allow)
+		var targeting: bool = _spell_host != null and _spell_host.is_targeting()
+		_touch.set_enabled(allow and not targeting)
 
 
 func _set_interaction_blocked(blocked: bool) -> void:
@@ -518,10 +529,13 @@ func _on_wait() -> void:
 	var node := "node:1"
 	if _client.has_player_cache():
 		node = str(_client.cached_player_view().get("player", {}).get("node_id", node))
-	_cmd("Wait", {"current_node": node, "press_id": "wait-%s" % Time.get_ticks_msec()})
-	_prompt.text = "Wait accepted — World Turn +1"
-	await get_tree().create_timer(0.4).timeout
-	_wait_held = false
+	var reply := _cmd("Wait", {"current_node": node, "press_id": "wait-%s" % Time.get_ticks_msec()})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_prompt.text = "Wait accepted — World Turn +1"
+	else:
+		_prompt.text = "Wait %s" % reply.get("status", reply.get("code", "?"))
+		_log("Wait rejected: %s" % reply)
+	get_tree().create_timer(0.4).timeout.connect(func(): _wait_held = false)
 
 
 func _on_invalid() -> void:
@@ -674,12 +688,15 @@ func _on_back() -> void:
 
 func _set_status(t: String) -> void:
 	_status.text = t
+	if _spell_attach:
+		_spell_attach.sync_live()
 
 
 func _log(t: String) -> void:
 	if _diag_log:
 		_diag_log.append_text(t + "\n")
-
+	if _spell_attach:
+		_spell_attach.append_log(t)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:

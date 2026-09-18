@@ -91,7 +91,13 @@ def test_old_era_weaker_and_wizard_intervention() -> None:
     assert hist["derived_attack"] > pre["derived_attack"]
     magic = MagicService(state)
     victim = next(u for u in state.units.values() if u["faction_id"] == "faction:blue")
-    out = magic.destroy(victim["id"], command_id="wiz:1")
+    # Cast must be within synchronised two-tile range (G04 / C07).
+    pos = list(victim.get("position") or [0.0, 0.0])
+    out = magic.destroy(
+        victim["id"],
+        command_id="wiz:1",
+        local_poses={"wizard": pos, victim["id"]: pos},
+    )
     assert out["status"] == "destroyed"
     # No army orders required — destroy works without formation objective.
 

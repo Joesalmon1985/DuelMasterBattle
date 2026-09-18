@@ -1,27 +1,53 @@
-# G04 — Battles, wizard power and catastrophe
+# G04 — Battles, wizard power and catastrophe (Interaction Repair)
 
 **Status:** AWAITING_HUMAN  
-**Candidate commit:** a6d6ff702c30fd565a5dadf0243aa3d743296921  
-**Platform:** Linux (Windows launcher wired but not executed on this host)
+**Repair:** R01–R08 (G04 Interaction Repair Brief)  
+**Started from:** `d265f6005c621dcd9b0d60348590e07083d9e312`  
+**Candidate:** `0f1d58a427b499415d8d6e07dd7036a2dc1e0f47`  
+**Platform:** Linux 6.8, Godot 4.4.1 (Windows **not** run on this host)
 
-## What to play
+## What changed
 
-1. FX-BATTLE — walk as wizard among labelled Red/Blue units; cast destroy/buffs without army orders.
-2. FX-HAZARD — three adjacent demon hexes with treatment eligibility cues and outbreak warnings.
+- One-owner FX-BATTLE (Red settlement + Blue invaders); safe spawn; paced armies
+- Target-first Observe / Buff… / Destroy choice cards — **no permanent spell toolbar**
+- Two-tile range validated against synchronised local/moving poses
+- Field-aware view merge (omit ≠ empty); external actors not freed by people rebuild
+- Three boundary hazard manifestations; Challenge opens C10 Mastermind (4/6/10)
+- Channel×3 shortcut **rejected**; treatment ledger persists across Wait/save/load
+- Automated playable path no longer forces `queue_destruction` or Channel wins
 
-## Save isolation
+## Reset (required before judging)
 
-- Battle: `g04_battle`
-- Hazard: `g04_hazard`
-- Terminal destructive tests: `g04_hazard_terminal` (separate from G01–G03 slots)
+See [reset.md](reset.md). Delete isolated slots `g04_battle`, `g04_hazard`, `g04_hazard_terminal` so an old fixture save does not obscure the repair.
+
+## Launch
+
+```bash
+cd /home/joe/Projects/DuelMasterBattle
+bash tools/play_g04_battle.sh
+bash tools/play_g04_hazard.sh
+```
+
+Portrait default 450×800. Landscape: `bash tools/play_g04_battle.sh --resolution 1280x720`
+
+## Joe checklist
+
+Use the table in [gates/G04.md](../../gates/G04.md). Decisive proof is walking up to a moving soldier, clicking, choosing a spell, seeing a persistent result — then the equivalent observe/Challenge flow on a visible hazard. **Do not accept G04 merely because automated checks pass.**
 
 ## Automated evidence
 
-- `python3 tools/check.py --task T076`
-- `python3 tools/check.py --gate G04`
-- Scenario records: `fx_battle_record.json`, `fx_hazard_record.json`
-- Screenshots under this directory and `screenshots/`
+```bash
+python3 tools/check.py --gate G04
+```
 
-## Experience question
+Result on this handoff host: PASS (Python cumulative + G04 playable + G01–G03 smokes). Captures refreshed under this folder (450×800 and 1280×720).
 
-Do intervention and competing threats feel powerful and readable?
+## Known limits
+
+- Windows playtest not executed on Linux
+- Dense melee labels may overlap cosmetically
+- Spellbook overlay can intercept chrome Wait clicks; smoke prefers HUD Wait / signal path
+
+## Stop
+
+`current_task = STOP_FOR_G04`. **T077 remains NOT_STARTED.** Agent must not mark G04 PASS.

@@ -1,0 +1,20 @@
+{
+  "repair_id": "R02",
+  "status": "DONE",
+  "summary": "Field-aware player view merge (omit≠empty); clear cache on Load/world change; reject stale world_id; non-owning register_external_actor; hazard shell applies only hazard-bearing replies.",
+  "files": [
+    "godot_project/client/bridge/world_client.gd",
+    "godot_project/client/world/fx_clock_area.gd",
+    "godot_project/client/scenes/g04_hazard_shell.gd",
+    "godot_project/client/scenes/g04_battle_shell.gd",
+    "tests/sim/test_r02_view_merge.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 -m pytest tests/sim/test_r02_view_merge.py -q",
+      "exit_code": 0,
+      "result": "4 passed"
+    }
+  ],
+  "next": "R03"
+}

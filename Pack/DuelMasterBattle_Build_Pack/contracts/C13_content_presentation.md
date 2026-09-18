@@ -40,6 +40,10 @@ Create a coverage grid by era × family × cause/status × speaker role. Lines t
 
 Logical scene root `client/main.tscn`: launcher/client service, local world root, player controller, focused semantic labels, speech/choices, transient contextual controls and pause screens. No permanent strategy-management HUD. Developer inspectors are accessible only in development builds or explicit debug mode.
 
+## G04 amendment — contextual controls
+
+There is no permanent spell or Treat toolbar in playtest or normal gameplay. Battle/hazard actions use world-anchored attached choice cards (roughly three visible choices plus paging/back), readable text, and ≥48 logical-pixel touch targets. Distant observation is nonmodal; formal choices acquire the existing pause token and freeze local battle consistently with C02/C03. Essential actions work with a single pointer/touch.
+
 Terrain 16×16 pixels, character baseline 16×24, four directions, integer 4× rendering with optional 3×/5×, scalable independent UI. Use 48-logical-pixel minimum pointer/touch hit areas. All actions must work with one pointer: move, observe/interact, choose, use/drop/give/equip, grimoire, target/cancel cast, Wait, pause, save/load and discovered map/history. No hover/right-click/keyboard-only essential action. Label only focused/nearby entities; use silhouettes and faction patterns/colours for groups.
 
 Sprites reuse animation families: idle, four-frame walk, work, attack, hit, death/displacement and magic. Worker paths illustrate state; soldier paths affect tactics. Make legacy/new-era buildings distinguishable while preserving footprints and people. Responsive layout tests include 1280×720 and 960×540 desktop windows and a narrow touch-like viewport; actual Android packaging is deferred.

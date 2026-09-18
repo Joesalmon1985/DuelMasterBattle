@@ -39,3 +39,7 @@ Ordinary transition resets era outbreak counter/cadence/round escalation, retain
 Terminal catastrophe is the only ordinary game-over route. Faction extinction recovers under C11; military attacks do not hurt the wizard. On the threshold, stop input/industry/encounters, record one terminal event and return to menu. Retain manual saves; loading a doomed save is allowed.
 
 Test a three-hex cycle at saturation: each outbreaks at most once in one propagation. With outbreak count 7, another saturated target emits exactly one terminal event and no subsequent neighbouring mutations. Test same-turn recovery, three adjacent treatments, two types on one hex, fifth treatment attempt after Wait/reload, pollution duel rejection, retired cause adaptation and ordinary-era retention.
+
+## G04 amendment — Challenge and duel
+
+Eligible hazard treatment is offered through the shared semantic path as Challenge (plus observation/cancel), not a permanent Treat toolbar. Ordinary Destroy does not bypass the duel. Challenge starts the C10 Mastermind (or audited single-owner C10 fallback) for that specific cube. Channel-three-times/Falter is not an acceptable substitute. Outcomes apply only through validated lease completion; Wait/save/load must not renew treatment allowances.

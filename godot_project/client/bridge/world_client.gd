@@ -96,7 +96,10 @@ func connect_sidecar(host: String, port: int, token: String) -> bool:
 		bridge_failed.emit("handshake_rejected:%s" % str(reply))
 		_paused = true
 		return false
-	_world_id = str(reply.get("world_id", ""))
+	var new_world := str(reply.get("world_id", ""))
+	if new_world != "" and new_world != _world_id and _world_id != "":
+		clear_player_cache("world_change")
+	_world_id = new_world
 	_world_version = int(reply.get("world_version", 0))
 	return true
 
@@ -117,6 +120,40 @@ func cached_player_view() -> Dictionary:
 
 func has_player_cache() -> bool:
 	return not _player_cache.is_empty()
+
+
+func clear_player_cache(reason: String = "") -> void:
+	## Call on world change / Load of a different slot so omitted fields cannot revive stale entities.
+	_player_cache.clear()
+	if reason != "":
+		projection_updated.emit({})
+
+
+func player_cache_has_field(field: String) -> bool:
+	return _player_cache.has(field)
+
+
+static func merge_player_view(cache: Dictionary, incoming: Dictionary, requested_fields: Array = []) -> Dictionary:
+	## Omitted keys mean no update. Explicitly present keys (including empty collections) replace.
+	## When requested_fields is non-empty, only those economy keys plus always-present base keys are authoritative.
+	var out: Dictionary = cache.duplicate(true)
+	var base_keys := {
+		"world_id": true,
+		"world_version": true,
+		"clock": true,
+		"player": true,
+		"board": true,
+		"people": true,
+		"presentation": true,
+		"scope": true,
+	}
+	for key in incoming.keys():
+		var apply := true
+		if requested_fields.size() > 0 and not base_keys.has(key):
+			apply = requested_fields.has(key)
+		if apply:
+			out[key] = incoming[key]
+	return out
 
 
 func bridge_metrics() -> Dictionary:
@@ -426,18 +463,36 @@ func _finish_request(item: Dictionary, reply: Dictionary) -> void:
 	_stats["latency_sum_ms"] = float(_stats.get("latency_sum_ms", 0.0)) + latency
 	_stats["latency_count"] = int(_stats.get("latency_count", 0)) + 1
 	_stats["requests_completed"] = int(_stats.get("requests_completed", 0)) + 1
-	if reply.has("world_version"):
+	if str(reply.get("status", "")) == "ACCEPTED" and not _accept_reply_identity(item, reply):
+		reply = {
+			"status": "REJECTED",
+			"code": "STALE_REPLY",
+			"request_id": rid,
+			"detail": "world_id/version mismatch",
+		}
+	if reply.has("world_version") and str(reply.get("status", "")) == "ACCEPTED":
 		_world_version = int(reply["world_version"])
 	if str(item.get("type", "")) == "view" and str(reply.get("status", "")) == "ACCEPTED":
 		var view: Dictionary = reply.get("view", {})
 		if str(item.get("scope", "player")) == "player":
-			_player_cache = view.duplicate(true)
-		projection_updated.emit(view)
+			var fields: Array = item.get("fields", [])
+			_player_cache = merge_player_view(_player_cache, view, fields)
+			projection_updated.emit(_player_cache.duplicate(true))
+		else:
+			projection_updated.emit(view)
 	elif str(item.get("type", "")) == "command" and str(reply.get("status", "")) == "ACCEPTED":
-		# Commands may include projection hints; keep cache clock/player fresh when present.
+		var kind := str(item.get("command_kind", ""))
+		if kind == "Load":
+			clear_player_cache("load")
+			var loaded_world := str(reply.get("world_id", ""))
+			if loaded_world == "" and reply.has("view") and typeof(reply.get("view")) == TYPE_DICTIONARY:
+				loaded_world = str(reply.get("view").get("world_id", ""))
+			if loaded_world != "":
+				_world_id = loaded_world
+		# Commands may include projection hints; merge when present (omit ≠ delete).
 		if reply.has("view") and typeof(reply.get("view")) == TYPE_DICTIONARY:
-			_player_cache = reply.get("view").duplicate(true)
-			projection_updated.emit(_player_cache)
+			_player_cache = merge_player_view(_player_cache, reply.get("view"), [])
+			projection_updated.emit(_player_cache.duplicate(true))
 	_completed[rid] = reply
 	request_finished.emit(rid, reply)
 	result.emit(reply)
@@ -449,6 +504,22 @@ func _finish_request(item: Dictionary, reply: Dictionary) -> void:
 			var k := str(keys[i])
 			if not _waiting.has(k):
 				_completed.erase(k)
+
+
+func _accept_reply_identity(item: Dictionary, reply: Dictionary) -> bool:
+	## Reject views/commands that belong to a different world than the active session.
+	## Load intentionally switches worlds and is exempt.
+	if str(item.get("command_kind", "")) == "Load":
+		return true
+	var view: Variant = reply.get("view", null)
+	var wid := ""
+	if typeof(view) == TYPE_DICTIONARY:
+		wid = str(view.get("world_id", ""))
+	if wid == "":
+		wid = str(reply.get("world_id", ""))
+	if wid == "" or _world_id == "":
+		return true
+	return wid == _world_id
 
 
 func _blocking_roundtrip(payload: Dictionary) -> Dictionary:

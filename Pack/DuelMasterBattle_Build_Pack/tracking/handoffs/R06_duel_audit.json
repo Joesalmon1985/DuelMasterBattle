@@ -1,0 +1,19 @@
+{
+  "repair_id": "R06_duel_audit",
+  "candidates": [
+    {
+      "path": "python_prototype/duel_mastermind",
+      "notes": "Exact/colour scoring correct; constants use 10 colours / 12 guesses — not C10 baseline."
+    },
+    {
+      "path": "godot_project/sim/realtime_duel_sim.gd",
+      "notes": "Realtime cast windows / wards — incompatible with Mastermind lease ownership."
+    },
+    {
+      "path": "sim/dmb/adventure/duels.py (prior Channel×3)",
+      "notes": "Forbidden shortcut; replaced."
+    }
+  ],
+  "chosen": "sim/dmb/adventure/mastermind.py (Python single owner, C10 4/6/10)",
+  "rejected_shortcuts": ["channel", "falter"]
+}

@@ -1,0 +1,20 @@
+{
+  "repair_id": "R03",
+  "status": "DONE",
+  "summary": "One-owner FX-BATTLE (Red settlement + Blue invaders from node:2); safe spawn [4,5]; paced army spacing; three boundary hazard anchors; ownership validator; labelled reset.md.",
+  "files": [
+    "sim/dmb/testing/fixtures.py",
+    "sim/dmb/construction/placement.py",
+    "sim/dmb/core/state.py",
+    "tests/sim/test_r03_fixture_ownership.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G04/reset.md"
+  ],
+  "checks": [
+    {
+      "command": "python3 -m pytest tests/sim/test_r03_fixture_ownership.py -q",
+      "exit_code": 0,
+      "result": "3 passed"
+    }
+  ],
+  "next": "R04"
+}

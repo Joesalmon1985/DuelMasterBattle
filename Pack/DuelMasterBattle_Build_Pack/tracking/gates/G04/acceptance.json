@@ -1,21 +1,17 @@
 {
   "gate": "G04",
   "status": "AWAITING_HUMAN",
-  "fixtures": [
-    "FX-BATTLE",
-    "FX-HAZARD"
-  ],
-  "seeds": {
-    "FX-BATTLE": 404,
-    "FX-HAZARD": 408
+  "candidate_implementation": "0f1d58a427b499415d8d6e07dd7036a2dc1e0f47",
+  "repair": "R01-R08",
+  "started_from": "d265f6005c621dcd9b0d60348590e07083d9e312",
+  "accepted_by": null,
+  "accepted_at": null,
+  "observations": [],
+  "human_result": null,
+  "prior_fix_required": {
+    "at": "2026-09-18T22:00:00Z",
+    "summary": "G04 Interaction Repair Brief: mixed-faction factories, toolbar-only magic, hazard wipe, Channel×3, result-forcing tests."
   },
-  "saves": [
-    "g04_battle",
-    "g04_hazard",
-    "g04_hazard_terminal"
-  ],
-  "platform_linux": true,
-  "platform_windows": "unavailable_not_run",
-  "candidate_commit_pending": false,
-  "candidate_commit": "a6d6ff702c30fd565a5dadf0243aa3d743296921"
+  "automated_gate_check": "PASS on Linux (not decisive)",
+  "windows": "not_run"
 }

@@ -44,7 +44,8 @@ var _ground: Node2D
 var _props: Node2D
 var _actors: Node2D
 var _labels: Node2D
-var _npc_nodes: Dictionary = {}  # entity_id -> Sprite2D
+var _npc_nodes: Dictionary = {}  # entity_id -> Node2D (owned people sprites)
+var _external_actors: Dictionary = {}  # entity_id -> Node2D (non-owning selection registration)
 var _exit_nodes: Dictionary = {}  # to_node -> Node2D marker
 var _exit_links: Dictionary = {}  # to_node -> link dict from board
 var _label_nodes: Dictionary = {}  # entity_id -> Label
@@ -285,8 +286,11 @@ func _rebuild_tiles() -> void:
 
 
 func _rebuild_people(people: Dictionary) -> void:
+	## Free only owned people sprites. External battle/hazard actors are non-owning registrations.
 	for id in _npc_nodes.keys():
-		_npc_nodes[id].queue_free()
+		var node = _npc_nodes[id]
+		if is_instance_valid(node):
+			node.queue_free()
 	_npc_nodes.clear()
 	for id in _label_nodes.keys():
 		_label_nodes[id].queue_free()
@@ -315,6 +319,47 @@ func _rebuild_people(people: Dictionary) -> void:
 			var info2: Dictionary = people.get(entity_id, {"known": true, "name": "Hauler Cart", "role": "cart"})
 			_spawn_person_sprite(str(entity_id), info2, Vector2i(6, 5))
 
+
+func register_external_actor(entity_id: String, node: Node2D) -> void:
+	## Non-owning: selection can find this node; people rebuild must not free it.
+	if entity_id == "":
+		return
+	_external_actors[entity_id] = node
+
+
+func unregister_external_actor(entity_id: String) -> void:
+	_external_actors.erase(entity_id)
+
+
+func clear_external_actors() -> void:
+	_external_actors.clear()
+
+
+func selectable_actor(entity_id: String) -> Node2D:
+	if _external_actors.has(entity_id):
+		var ext = _external_actors[entity_id]
+		if is_instance_valid(ext):
+			return ext
+		_external_actors.erase(entity_id)
+	if _npc_nodes.has(entity_id):
+		var npc = _npc_nodes[entity_id]
+		if is_instance_valid(npc):
+			return npc
+		_npc_nodes.erase(entity_id)
+	return null
+
+
+func selectable_actor_ids() -> Array:
+	var out: Array = []
+	for id in _external_actors.keys():
+		if is_instance_valid(_external_actors[id]):
+			out.append(id)
+		else:
+			_external_actors.erase(id)
+	for id in _npc_nodes.keys():
+		if not out.has(id) and is_instance_valid(_npc_nodes[id]):
+			out.append(id)
+	return out
 
 func _spawn_person_sprite(entity_id: String, info: Dictionary, grid: Vector2i) -> void:
 	var spr := Sprite2D.new()
@@ -369,7 +414,11 @@ func _rebuild_exits(nodes: Dictionary) -> void:
 	if typeof(exits) == TYPE_DICTIONARY:
 		for to_node in exits.keys():
 			destinations.append(str(to_node))
-			_exit_links[str(to_node)] = exits[to_node].duplicate(true)
+			var link = exits[to_node]
+			if typeof(link) == TYPE_DICTIONARY:
+				_exit_links[str(to_node)] = link.duplicate(true)
+			else:
+				_exit_links[str(to_node)] = {"to_node": str(link)}
 	elif typeof(exits) == TYPE_ARRAY:
 		for to_node in exits:
 			destinations.append(str(to_node))
@@ -606,11 +655,14 @@ func _on_action() -> void:
 func _pick_nearest(emit_signal: bool = true) -> void:
 	var best := ""
 	var best_d := INF
-	for entity_id in _npc_nodes.keys():
-		var d := _wizard.position.distance_to(_npc_nodes[entity_id].position)
+	for entity_id in selectable_actor_ids():
+		var node := selectable_actor(str(entity_id))
+		if node == null:
+			continue
+		var d := _wizard.position.distance_to(node.position)
 		if d < best_d:
 			best_d = d
-			best = entity_id
+			best = str(entity_id)
 	if best != "" and best_d <= OBSERVE_RANGE_PX:
 		selected_entity = best
 		if emit_signal:
@@ -618,9 +670,10 @@ func _pick_nearest(emit_signal: bool = true) -> void:
 
 
 func _distance_to(entity_id: String) -> float:
-	if not _npc_nodes.has(entity_id):
+	var node := selectable_actor(entity_id)
+	if node == null:
 		return -1.0
-	return _wizard.position.distance_to(_npc_nodes[entity_id].position)
+	return _wizard.position.distance_to(node.position)
 
 
 func _gui_blocks_world_pointer() -> bool:
@@ -670,8 +723,13 @@ func _process(delta: float) -> void:
 			_anim_frame = 1 - _anim_frame
 			_set_wizard_texture(_facing, _anim_frame)
 	for entity_id in _npc_nodes.keys():
-		var spr: Sprite2D = _npc_nodes[entity_id]
-		spr.modulate = Color(1.3, 1.3, 0.7) if entity_id == selected_entity else Color.WHITE
+		var spr: Node2D = _npc_nodes[entity_id]
+		if is_instance_valid(spr):
+			spr.modulate = Color(1.3, 1.3, 0.7) if entity_id == selected_entity else Color.WHITE
+	for entity_id in _external_actors.keys():
+		var ext = _external_actors[entity_id]
+		if is_instance_valid(ext):
+			ext.modulate = Color(1.3, 1.3, 0.7) if entity_id == selected_entity else Color.WHITE
 	_refresh_action_hint()
 
 
@@ -713,15 +771,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var gp := get_global_mouse_position()
-		for entity_id in _npc_nodes.keys():
-			if _npc_nodes[entity_id].global_position.distance_to(gp) < 40:
-				selected_entity = entity_id
-				entity_selected.emit(entity_id)
-				var d := _distance_to(entity_id)
+		for entity_id in selectable_actor_ids():
+			var node := selectable_actor(str(entity_id))
+			if node == null:
+				continue
+			if node.global_position.distance_to(gp) < 40:
+				selected_entity = str(entity_id)
+				entity_selected.emit(str(entity_id))
+				var d := _distance_to(str(entity_id))
 				if d <= INTERACT_RANGE_PX:
-					request_interact.emit(entity_id)
+					request_interact.emit(str(entity_id))
 				elif d <= OBSERVE_RANGE_PX:
-					request_observe.emit(entity_id)
+					request_observe.emit(str(entity_id))
 				get_viewport().set_input_as_handled()
 				_refresh_action_hint()
 				return

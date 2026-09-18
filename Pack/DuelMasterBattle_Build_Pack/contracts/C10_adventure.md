@@ -55,4 +55,8 @@ Rival baseline maintains candidates consistent with its observed feedback, selec
 
 Starting any duel acquires a global pause; industry, battles, puzzles and buffs freeze while the duel clock runs. End outcome is applied once after target/quest revalidation. Victory removes one eligible hazard cube or applies rival quest effects. Non-victory returns to last surviving friendly settlement (wizard relation neutral-or-better); otherwise nearest non-hostile settlement, then nearest catastrophe-free wilderness, then least-affected node, ID ties. No turn, catch-up or fresh same-turn treatment allowance. A rival/hazard duel actor cannot be bypassed by ordinary destruction.
 
+## G04 amendment — duel adoption rule
+
+Before wiring hazard Challenge, audit retained Godot and `python_prototype` duel implementations against this contract. Reuse whichever satisfies the baseline without creating a second owner of duel state. Prefer adapting the retained Mastermind runtime into `DuelAdapter`/`DuelController` ownership. If none are compatible, implement the explicit I07 fallback as the single owner. Channel×3/Falter shortcuts are forbidden.
+
 Tests cover branch reachability, world repair before player action, target destruction mid-choice, mandatory item recovery, duplicate outcome, mid-puzzle/mid-duel save, feedback multiplicities, simultaneous solutions and same-engine fixture loading. G05 is a required manual break before scaling content.

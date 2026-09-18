@@ -1,12 +1,12 @@
 {
-  "fixture": "FX-HAZARD",
-  "status": "PASS",
-  "owner": "T069-T075",
+  "name": "FX-HAZARD",
   "seed": 408,
-  "details": {
-    "seed": 408,
-    "active_cubes": 3,
-    "save_slot": "g04_hazard"
+  "save_slot": "g04_hazard",
+  "anchors": {
+    "hex:a": [2.0, 5.0],
+    "hex:b": [7.0, 2.0],
+    "hex:c": [11.0, 5.0]
   },
-  "world_id": "world:fx-hazard"
+  "duel": "c10_mastermind_baseline",
+  "notes": "Three boundary approaches; Challenge → Mastermind; Channel×3 rejected"
 }
