@@ -403,6 +403,9 @@ class TurnRunner:
             self.state.player["position"] = [float(pos[0]), float(pos[1])]
             self.state.player["facing"] = facing
             self.state.player["pose_generation"] = int(self.state.player.get("pose_generation", 0)) + 1
+            from sim.dmb.player.visits import VisitService
+
+            VisitService(self.state).arrive(to_node, "travel", int(self.state.clock.get("turn", 0)))
             self.state.clock["last_travel"] = {
                 "from_node": from_node,
                 "to_node": to_node,
@@ -445,6 +448,9 @@ class TurnRunner:
         self.state.clock["wait_press_ids"] = sorted(seen)
         self.interrupted = False
         self.scheduler.begin_turn("Wait")
+        from sim.dmb.player.visits import VisitService
+
+        VisitService(self.state).arrive(current_node, "wait", int(self.state.clock.get("turn", 0)))
         self._run_stages(arrival_handler=None)
         if self.interrupted:
             seat = {"round_complete": False, "interrupted": True, "draft": None}
