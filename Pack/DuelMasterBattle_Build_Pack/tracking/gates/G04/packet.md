@@ -1,7 +1,7 @@
 # G04 — Battles, wizard power and catastrophe (FIX resubmission)
 
 **Status:** AWAITING_HUMAN  
-**Candidate commit:** (set at commit time)  
+**Candidate commit:** `67c75808072d8027d57d47f3741850c4793149de`
 **Platform:** Linux 6.8, Godot 4.4.1 (Windows launcher wired, not executed here)
 
 ## Why this resubmission
