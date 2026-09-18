@@ -203,8 +203,10 @@
       "accepted_by": null,
       "accepted_build": null,
       "evidence": "tracking/gates/G04/packet.md",
-      "candidate_implementation": "a6d6ff702c30fd565a5dadf0243aa3d743296921",
-      "notes": "Playable FX-BATTLE + FX-HAZARD; Windows not run on Linux host"
+      "candidate_implementation": null,
+      "fix_required_at": "2026-09-18T18:07:00Z",
+      "fix_summary": "Three stationary white squares in FX-BATTLE; three uninteractable red dots in FX-HAZARD — not a playable G04 handoff.",
+      "notes": "FIX resubmission: playable battle lease + magic HUD + hazard duel; Windows not run on Linux host"
     },
     "G05": {
       "status": "NOT_READY",

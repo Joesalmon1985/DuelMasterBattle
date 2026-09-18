@@ -730,7 +730,11 @@ def run_fx_cargo(sim: WorldSim | None = None, seed: int = 202) -> FixtureResult:
 
 
 def _load_fx_battle(seed: int = 404) -> WorldSim:
-    """Playable FX-BATTLE isolated from G01–G03 saves (slot g04_battle)."""
+    """Playable FX-BATTLE isolated from G01–G03 saves (slot g04_battle).
+
+    Default demo uses comparable-era (prehistoric) forces so Joe can observe
+    and intervene. Cross-era units remain available via fx_battle.cross_era_ids.
+    """
     from sim.dmb.military.units import MilitaryService
 
     sim = bootstrap_world(world_id="world:fx-battle", seed=seed)
@@ -739,8 +743,9 @@ def _load_fx_battle(seed: int = 404) -> WorldSim:
         "id": "wizard",
         "node_id": "node:1",
         "area_id": "area.battle",
-        "position": [2.0, 6.0],
+        "position": [7.0, 8.0],
         "facing": "up",
+        "pose_generation": 0,
     }
     state.board.setdefault("nodes", {})
     state.board["nodes"]["node:1"] = {
@@ -748,32 +753,77 @@ def _load_fx_battle(seed: int = 404) -> WorldSim:
         "exits": {},
         "area_id": "area.battle",
         "label": "Battle Glade",
+        "theme": "grass",
     }
     mil = MilitaryService(state)
-    red = mil.spawn(
+    # Walkable positions clear of FX-CLOCK home trees (2,2)/(7,7)/(11,7).
+    red_line = mil.spawn(
         "unit.ancient.line",
         home_node_id="node:1",
         faction_id="faction:red",
         era="prehistoric",
         factory_id="building:factory_red",
-        position=[1.0, 3.0],
+        position=[3.0, 3.0],
     )
-    blue = mil.spawn(
+    red_skirm = mil.spawn(
         "unit.ancient.skirmisher",
-        home_node_id="node:1",
-        faction_id="faction:blue",
-        era="historic",
-        factory_id="building:factory_blue",
-        position=[4.0, 3.0],
-    )
-    heavy = mil.spawn(
-        "unit.ancient.heavy",
         home_node_id="node:1",
         faction_id="faction:red",
         era="prehistoric",
         factory_id="building:factory_red",
         position=[2.0, 4.0],
     )
+    red_heavy = mil.spawn(
+        "unit.ancient.heavy",
+        home_node_id="node:1",
+        faction_id="faction:red",
+        era="prehistoric",
+        factory_id="building:factory_red",
+        position=[4.0, 4.0],
+    )
+    blue_line = mil.spawn(
+        "unit.ancient.line",
+        home_node_id="node:1",
+        faction_id="faction:blue",
+        era="prehistoric",
+        factory_id="building:factory_blue",
+        position=[10.0, 3.0],
+    )
+    blue_skirm = mil.spawn(
+        "unit.ancient.skirmisher",
+        home_node_id="node:1",
+        faction_id="faction:blue",
+        era="prehistoric",
+        factory_id="building:factory_blue",
+        position=[11.0, 4.0],
+    )
+    blue_heavy = mil.spawn(
+        "unit.ancient.heavy",
+        home_node_id="node:1",
+        faction_id="faction:blue",
+        era="prehistoric",
+        factory_id="building:factory_blue",
+        position=[9.0, 4.0],
+    )
+    # Cross-era reference unit (not in default active fight).
+    historic = mil.spawn(
+        "unit.ancient.line",
+        home_node_id="node:1",
+        faction_id="faction:blue",
+        era="historic",
+        factory_id="building:factory_blue",
+        position=[12.0, 8.0],
+    )
+    historic["status"] = "reserve"
+    historic["alive"] = True
+    participants = [
+        red_line["id"],
+        red_skirm["id"],
+        red_heavy["id"],
+        blue_line["id"],
+        blue_skirm["id"],
+        blue_heavy["id"],
+    ]
     state.buildings["building:factory_red"] = {
         "id": "building:factory_red",
         "definition_id": "building.factory",
@@ -785,27 +835,59 @@ def _load_fx_battle(seed: int = 404) -> WorldSim:
         "alive": True,
         "status": "active",
         "label": "Red Factory",
+        "position": [1.0, 1.0],
+        "kind": "building",
     }
-    state.factions["faction:red"] = {"id": "faction:red", "label": "Red Line"}
-    state.factions["faction:blue"] = {"id": "faction:blue", "label": "Blue Skirmish"}
+    state.buildings["building:factory_blue"] = {
+        "id": "building:factory_blue",
+        "definition_id": "building.factory",
+        "faction_id": "faction:blue",
+        "node_id": "node:1",
+        "health": 200,
+        "max_health": 200,
+        "current_health": 200,
+        "alive": True,
+        "status": "active",
+        "label": "Blue Factory",
+        "position": [12.0, 1.0],
+        "kind": "building",
+    }
+    state.factions["faction:red"] = {"id": "faction:red", "label": "Red Host"}
+    state.factions["faction:blue"] = {"id": "faction:blue", "label": "Blue Host"}
+    # Explicit hostility graph — different IDs alone do not imply hostility.
+    hostiles = {
+        "faction:red": ["faction:blue"],
+        "faction:blue": ["faction:red"],
+    }
+    blockers = [
+        {"position": [7.0, 5.0], "half": 0.55, "blocks_los": True, "blocks_move": True, "label": "ruin"},
+    ]
     state.battles["battle:fx"] = {
         "id": "battle:fx",
         "node_id": "node:1",
-        "participants": [red["id"], blue["id"], heavy["id"]],
-        "buildings": ["building:factory_red"],
-        "state": "LOCAL",
+        "participants": participants,
+        "buildings": ["building:factory_red", "building:factory_blue"],
+        "state": "READY",
         "prefer_local": True,
-        "cover_by_target": {blue["id"]: 0.25},
+        "hostiles": hostiles,
+        "blockers": blockers,
+        "cover_by_target": {blue_skirm["id"]: 0.25},
     }
     state.board["fx_battle"] = {
         "seed": seed,
         "save_slot": "g04_battle",
+        "demo_mode": "comparable_era",
+        "cross_era_ids": [historic["id"]],
         "labels": {
-            red["id"]: "Red Line (prehistoric)",
-            blue["id"]: "Blue Skirmisher (historic)",
-            heavy["id"]: "Red Heavy (prehistoric)",
+            red_line["id"]: "Red LINE",
+            red_skirm["id"]: "Red SKIRM",
+            red_heavy["id"]: "Red HEAVY",
+            blue_line["id"]: "Blue LINE",
+            blue_skirm["id"]: "Blue SKIRM",
+            blue_heavy["id"]: "Blue HEAVY",
         },
         "wizard_intervene": True,
+        "hostiles": hostiles,
     }
     return sim
 
@@ -821,20 +903,28 @@ def _load_fx_hazard(seed: int = 408) -> WorldSim:
         "id": "wizard",
         "node_id": "node:1",
         "area_id": "area.hazard",
-        "position": [3.0, 5.0],
+        "position": [7.0, 5.0],
         "facing": "up",
+        "pose_generation": 0,
     }
     state.board["nodes"]["node:1"] = {
         "id": "node:1",
         "exits": {},
         "area_id": "area.hazard",
         "label": "Pressure Crossroads",
+        "theme": "grass",
     }
     state.board["node_hexes"] = {"node:1": ["hex:a", "hex:b", "hex:c"]}
     state.board["hex_adjacency"] = {
         "hex:a": ["hex:b"],
         "hex:b": ["hex:a", "hex:c"],
         "hex:c": ["hex:b"],
+    }
+    # Boundary anchors inside walkable space near wizard (avoid trees/exits/HUD).
+    state.board["hex_anchors"] = {
+        "hex:a": {"grid": [4.0, 6.0], "label": "Hex A"},
+        "hex:b": {"grid": [7.0, 6.0], "label": "Hex B"},
+        "hex:c": {"grid": [10.0, 6.0], "label": "Hex C"},
     }
     state.clock["era"] = "prehistoric"
     state.clock["turn"] = 1
@@ -844,16 +934,23 @@ def _load_fx_hazard(seed: int = 408) -> WorldSim:
     for hid in ("hex:a", "hex:b", "hex:c"):
         svc.add_cube(hid, "demon")
     VisitService(state).arrive("node:1", "travel", 1)
+    cubes = (state.hazards.get("catastrophe") or {}).get("cubes") or {}
+    cube_by_hex = {}
+    for cube in cubes.values():
+        if cube.get("active", True):
+            cube_by_hex[str(cube.get("hex_id"))] = str(cube.get("id"))
     state.board["fx_hazard"] = {
         "seed": seed,
         "save_slot": "g04_hazard",
         "terminal_slot": "g04_hazard_terminal",
         "outbreak_warning_at": 7,
         "hex_labels": {
-            "hex:a": "Demon hex A — treat eligible",
-            "hex:b": "Demon hex B — treat eligible",
-            "hex:c": "Demon hex C — treat eligible",
+            "hex:a": "Demon hex A",
+            "hex:b": "Demon hex B",
+            "hex:c": "Demon hex C",
         },
+        "hex_anchors": state.board["hex_anchors"],
+        "cube_by_hex": cube_by_hex,
     }
     return sim
 

@@ -1,7 +1,8 @@
-# G04 known defects
+# G04 known defects (FIX candidate)
 
-- Windows launchers are wired but were not executed on the Linux build host (report unavailable).
-- Headless Godot on this host cannot grab viewport textures (dummy renderer); screenshot PNGs were composed from the live FX-BATTLE/FX-HAZARD fixture labels after G04_SMOKE_OK sidecar boot. Install Xvfb for camera captures if required.
-- Off-screen battle is an approximation; exact casualty equality vs local is not required.
-- G04 shells reuse G01 chrome with labelled battle/hazard overlays (not full RTS polish).
-- Godot smoke shutdown may report existing resource-leak warnings despite exit 0.
+- Windows Playtest.bat options are wired but were **not executed** on this Linux host.
+- Dense melee can overlap unit labels; shapes/HP bars remain distinguishable.
+- Bootstrap FX-CLOCK NPC may still appear as "unknown" in hazard/battle shells (cosmetic).
+- Godot smoke/playable shutdown may print ObjectDB/resource leak warnings despite exit 0.
+- Off-screen battle remains an approximation (by design); exact local/offscreen casualty equality is not required.
+- G03 presentation/balance backlog (PB001–PB004) remains deferred and non-blocking.

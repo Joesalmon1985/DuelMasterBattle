@@ -44,7 +44,7 @@ var _ground: Node2D
 var _props: Node2D
 var _actors: Node2D
 var _labels: Node2D
-var _npc_nodes: Dictionary = {}  # entity_id -> Sprite2D
+var _npc_nodes: Dictionary = {}  # entity_id -> Node2D (Sprite2D or external actor)
 var _exit_nodes: Dictionary = {}  # to_node -> Node2D marker
 var _exit_links: Dictionary = {}  # to_node -> link dict from board
 var _label_nodes: Dictionary = {}  # entity_id -> Label
@@ -670,7 +670,7 @@ func _process(delta: float) -> void:
 			_anim_frame = 1 - _anim_frame
 			_set_wizard_texture(_facing, _anim_frame)
 	for entity_id in _npc_nodes.keys():
-		var spr: Sprite2D = _npc_nodes[entity_id]
+		var spr: Node2D = _npc_nodes[entity_id]
 		spr.modulate = Color(1.3, 1.3, 0.7) if entity_id == selected_entity else Color.WHITE
 	_refresh_action_hint()
 

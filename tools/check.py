@@ -564,9 +564,9 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "tests/sim/test_t072_visits.py",
             ),
             _godot_script(
-                "g04_playable_smoke",
-                "res://client/tests/run_g04_smoke.gd",
-                r"G04_SMOKE_OK",
+                "g04_playable_bridge",
+                "res://client/tests/run_g04_playable.gd",
+                r"G04_PLAYABLE_OK",
             ),
             validate_evidence(
                 "g04_task_packet",
@@ -771,8 +771,8 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
             ),
             _godot_script(
                 "g04_sidecar_playable",
-                "res://client/tests/run_g04_smoke.gd",
-                r"G04_SMOKE_OK",
+                "res://client/tests/run_g04_playable.gd",
+                r"G04_PLAYABLE_OK",
             ),
             _godot_script(
                 "g03_regression_smoke",

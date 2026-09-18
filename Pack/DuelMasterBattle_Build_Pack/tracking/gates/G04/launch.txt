@@ -6,13 +6,18 @@ Linux hazard:
   bash tools/play_g04_hazard.sh
 
 Linux menu:
-  bash tools/playtest.sh   # options 1/2 for G04
+  bash tools/playtest.sh   # G04 battle / hazard options
 
 Windows (unavailable on this Linux host — report if not run):
-  Playtest.bat → 1 Play G04 battle / 2 Play G04 hazard
+  Playtest.bat → Play G04 battle / Play G04 hazard
   python tools\windows_playtest.py play-g04-battle
   python tools\windows_playtest.py play-g04-hazard
 
 Checks:
   python3 tools/check.py --task T076
   python3 tools/check.py --gate G04
+
+Saves (isolated):
+  g04_battle
+  g04_hazard
+  g04_hazard_terminal
