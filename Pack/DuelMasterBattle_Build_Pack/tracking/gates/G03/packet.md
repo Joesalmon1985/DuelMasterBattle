@@ -2,7 +2,7 @@
 
 **Status:** AWAITING_HUMAN  
 **Scenario:** FX-INDUSTRY · **Seed:** 303  
-**Candidate implementation:**   
+**Candidate implementation:** `f37ffe1ceee75209015fd1016e78bf9c74935ce4`
 **Platform tested:** Linux 6.8, Godot 4.4.1  
 **Save slot:** `g03_playtest` (isolated from G01/G02)
 
