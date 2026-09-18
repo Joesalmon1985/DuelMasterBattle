@@ -195,7 +195,8 @@
       "accepted_build": null,
       "evidence": "tracking/gates/G03/packet.md",
       "fix_required_at": "2026-09-18T08:00:00Z",
-      "fix_summary": "Industry not visually understandable: one L-R sweep worker, no obstruction, no workplaces/outputs."
+      "fix_summary": "Industry not visually understandable: one L-R sweep worker, no obstruction, no workplaces/outputs.",
+      "candidate_implementation": "f37ffe1ceee75209015fd1016e78bf9c74935ce4"
     },
     "G04": {
       "status": "NOT_READY",

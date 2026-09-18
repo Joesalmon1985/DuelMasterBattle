@@ -1,4 +1,4 @@
-candidate_implementation: da27bd46d3659830d0222f071c2353aa93f0ce8b
+candidate_implementation: f37ffe1ceee75209015fd1016e78bf9c74935ce4
 platform_tested: Linux 6.8 / Godot 4.4.1
 fixture: FX-INDUSTRY
 seed: 303
