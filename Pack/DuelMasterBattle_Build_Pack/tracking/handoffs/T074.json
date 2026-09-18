@@ -1,7 +1,7 @@
 {
   "task_id": "T074",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "797a458e6a97e998c54fcf757c338c47d68a1649",
   "files": [
     "sim/dmb/adventure/duels.py",
     "sim/dmb/adventure/__init__.py",
