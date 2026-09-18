@@ -52,6 +52,7 @@ class LegalActionGenerator:
         self.validators.setdefault("trade_propose", self._validate_trade)
         self.validators.setdefault("military_move", self._validate_military_move)
         self.validators.setdefault("military_withdraw", self._validate_military_withdraw)
+        self.validators.setdefault("military_objective", self._validate_military_objective)
 
     def enumerate(self, view: dict[str, Any], decision_kind: str) -> list[dict[str, Any]]:
         faction_id = str(view["faction_id"])
@@ -68,6 +69,7 @@ class LegalActionGenerator:
             candidates.extend(self._trade_candidates(faction_id, version, view))
         if decision_kind in {"seat", "military", "all"}:
             candidates.extend(self._military_candidates(faction_id, version, view))
+            candidates.extend(self._military_objective_candidates(faction_id, version, view))
 
 
         # Always include a legal no-op when the seat cannot usefully act / as fallback.
@@ -217,6 +219,73 @@ class LegalActionGenerator:
                         params={"formation_id": formation_id},
                         legal_version=version,
                         explanation="execute pending withdrawal on activation",
+                    )
+                )
+        return out
+
+    def _validate_military_objective(self, view: dict[str, Any], candidate: dict[str, Any]) -> bool:
+        params = candidate.get("params") or {}
+        objective = str(params.get("objective") or "")
+        if objective not in {"defend", "assemble", "attack", "hold"}:
+            return False
+        formation_id = str(params.get("formation_id") or "")
+        formation = (getattr(self.state, "formations", {}) or {}).get(formation_id)
+        return formation is not None and str(formation.get("faction_id")) == view.get("faction_id")
+
+    def _military_objective_candidates(
+        self, faction_id: str, version: int, view: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        """defend/assemble/attack/hold using only observed strength (no fog peeking)."""
+        out: list[dict[str, Any]] = []
+        knowledge = (view.get("knowledge") or view.get("observed") or {})
+        observed_enemy_nodes = set(knowledge.get("enemy_military_nodes") or [])
+        # Never include unobserved enemy strength figures in benefits.
+        for formation_id, formation in sorted((getattr(self.state, "formations", {}) or {}).items()):
+            if str(formation.get("faction_id")) != faction_id:
+                continue
+            node_id = str(formation.get("node_id"))
+            out.append(
+                _candidate(
+                    action_kind="military_objective",
+                    faction_id=faction_id,
+                    params={"formation_id": formation_id, "objective": "hold", "node_id": node_id},
+                    legal_version=version,
+                    benefit={"own_strength": int(formation.get("derived_strength") or 0)},
+                    explanation="hold position",
+                )
+            )
+            out.append(
+                _candidate(
+                    action_kind="military_objective",
+                    faction_id=faction_id,
+                    params={"formation_id": formation_id, "objective": "defend", "node_id": node_id},
+                    legal_version=version,
+                    benefit={"own_strength": int(formation.get("derived_strength") or 0)},
+                    explanation="defend settlement",
+                )
+            )
+            out.append(
+                _candidate(
+                    action_kind="military_objective",
+                    faction_id=faction_id,
+                    params={"formation_id": formation_id, "objective": "assemble", "node_id": node_id},
+                    legal_version=version,
+                    explanation="assemble reinforcements",
+                )
+            )
+            for enemy_node in sorted(observed_enemy_nodes):
+                out.append(
+                    _candidate(
+                        action_kind="military_objective",
+                        faction_id=faction_id,
+                        params={
+                            "formation_id": formation_id,
+                            "objective": "attack",
+                            "node_id": enemy_node,
+                        },
+                        legal_version=version,
+                        benefit={"target_observed": True},
+                        explanation="attack observed enemy",
                     )
                 )
         return out
