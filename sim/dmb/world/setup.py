@@ -34,9 +34,16 @@ class WorldSetupService:
         self.state.board["hex_nodes"] = {hid: list(board.nodes_of_hex(hid)) for hid in board.hexes}
         self.state.board["node_hexes"] = {nid: list(board.touching_hexes(nid)) for nid in board.nodes}
         self.state.board["hazard_hexes"] = list(plan.hazard_hexes)
-        self.state.board["hazard_cubes"] = {
-            f"cube:{i}": {"hex_id": hid, "active": True} for i, hid in enumerate(plan.hazard_hexes)
-        }
+        # C08: three distinct demon cubes via CatastropheService when hexes provided.
+        if plan.hazard_hexes:
+            from sim.dmb.hazards.service import CatastropheService
+
+            svc = CatastropheService(self.state)
+            # Prefer validated placement hexes from the plan as the deck universe.
+            all_hexes = list(board.hexes) if hasattr(board, "hexes") else list(plan.hazard_hexes)
+            svc.setup_initial(all_hexes or list(plan.hazard_hexes), count=min(3, len(all_hexes) or 3))
+        else:
+            self.state.board["hazard_cubes"] = {}
 
         buildings = BuildingService(self.state)
         ledger = StockLedger(self.state)

@@ -538,6 +538,19 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 [ROOT / "godot_project" / "content" / "fixtures" / "battle" / "fx_battle_v1.json"],
             ),
         ],
+        "T069": lambda: [_pytest("hazard_cubes_deck", "tests/sim/test_t069_hazards.py")],
+        "T070": lambda: [_pytest("outbreak_terminal", "tests/sim/test_t070_propagation.py")],
+        "T071": lambda: [_pytest("hazard_disruption", "tests/sim/test_t071_disruption.py")],
+        "T072": lambda: [_pytest("visit_allowances", "tests/sim/test_t072_visits.py")],
+        "T073": lambda: [_pytest("hazard_responders", "tests/sim/test_t073_responders.py")],
+        "T074": lambda: [_pytest("hazard_duels", "tests/sim/test_t074_hazard_duels.py")],
+        "T075": lambda: [
+            _pytest("catastrophe_scenarios", "tests/scenarios/test_catastrophe.py"),
+            validate_evidence(
+                "fx_hazard_fixture",
+                [ROOT / "godot_project" / "content" / "fixtures" / "hazards" / "fx_hazard_v1.json"],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

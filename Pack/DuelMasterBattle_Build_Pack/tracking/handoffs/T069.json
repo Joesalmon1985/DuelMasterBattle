@@ -1,0 +1,31 @@
+{
+  "task_id": "T069",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "sim/dmb/hazards/service.py",
+    "sim/dmb/hazards/deck.py",
+    "sim/dmb/hazards/__init__.py",
+    "sim/dmb/world/setup.py",
+    "tests/sim/test_t069_hazards.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "CatastropheService",
+    "HazardDeck"
+  ],
+  "source_rules": [
+    "C08 \u00a7\u00a7placement/deck"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T069",
+      "exit_code": 0,
+      "result": "PASS; 4 Python tests"
+    }
+  ],
+  "extra_scope": {},
+  "fixture_hashes": {},
+  "defects": [],
+  "next_task": "T070"
+}
