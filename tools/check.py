@@ -518,6 +518,16 @@ def checks_for_task(task: str) -> list[CheckResult]:
             ),
         ],
         "T061": lambda: [_pytest("strategic_movement", "tests/sim/test_t061_movement.py")],
+        "T062": lambda: [_pytest("offscreen_battle", "tests/sim/test_t062_offscreen.py")],
+        "T063": lambda: [
+            _pytest("local_battle_python", "tests/sim/test_t063_local_battle.py"),
+            _godot_script(
+                "local_battle_godot",
+                "res://client/tests/run_local_battle.gd",
+                r"LOCAL_BATTLE_OK",
+            ),
+        ],
+        "T064": lambda: [_pytest("battle_handoffs", "tests/sim/test_t064_handoffs.py")],
     }
     if task in mapping:
         return mapping[task]()
