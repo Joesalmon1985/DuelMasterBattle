@@ -1,10 +1,18 @@
-# G03 playtest handoff — FX-INDUSTRY
+# G03 playtest handoff — FX-INDUSTRY (visual readability repair)
 
 **Status:** AWAITING_HUMAN  
 **Scenario:** FX-INDUSTRY · **Seed:** 303  
-**Candidate implementation:** `5b6ac03ae477bca40c8dc944d9a54c2d3391682a`  
+**Candidate implementation:** (set at commit time — see launch.txt)  
 **Platform tested:** Linux 6.8, Godot 4.4.1  
 **Save slot:** `g03_playtest` (isolated from G01/G02)
+
+## Why this resubmission
+
+Joe returned `G03 FIX_REQUIRED — industry is not visually understandable`
+(one L↔R sweep worker, no workplaces/outputs, path block not visible).
+This candidate projects the real FX-INDUSTRY entities as labelled coloured
+rectangles, route-based worker activity, factory progress bars, and unit
+placeholders. Path obstruction is presentation-only.
 
 ## Launch
 
@@ -13,47 +21,27 @@ cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g03.sh
 ```
 
-Default viewport is portrait 450×800. `bash tools/playtest.sh` provides the
-Linux menu. Windows uses `Playtest.bat`, option 1.
+Default viewport is portrait 450×800. Linux menu: `bash tools/playtest.sh`.
+Windows: `Playtest.bat` → option **1**.
 
-## Joe's ordered check
+## Joe's visual checklist
 
-1. Leave the game unpaused for at least 100 Game Time seconds. Expect one
-   skirmisher, one line unit and one heavy unit; each carry returns to zero.
-2. Walk onto the worker's horizontal route near the upper trees, or press
-   **Block worker path**. Expect the worker to idle/adapt while rates and
-   production continue.
-3. Press **Damage 25%**. Expect processor health 25/100 and lower rates.
-4. Press **Paid repair**. Expect health 100/100 and one brick plus one ore
-   consumed. Alternatively use **Strike** then **Clear strike** and observe
-   zero then resumed output.
-5. Save with a partial carry, walk away, return, and load. Expect the same
-   worker person ID/job and the exact saved carry.
-6. Keep the window focused and walk with the Industry panel visible, then
-   repeat after covering it with **Dev panel**/normal play. Report any
-   recurring freeze separately from intentional focus-loss pause.
+1. See labelled coloured sites: Woodland source, Ore/Flint source, Cooking Hearth processor, three factories, Assembly yard.
+2. Watch the orange worker move between those sites (collecting / carrying / working labels; small carry marker when carrying).
+3. Stand in their path (or **Block worker path**) → worker stops or detours with **blocked**; production rates continue.
+4. Leave unpaused ≥100 Game Time seconds → one Skirmisher, one Line, one Heavy appear at Assembly with progress bars driven by Python meters.
+5. **Set health to 25%** → processor goes red / 25%; rates drop. **Strike** → worker shows on strike; rates 0. **Paid repair** → health 100% and brick+ore cost shown.
+6. **Hide Industry inspector** so the village is visible; Pause → worker freezes.
 
 ## Automated evidence
 
-- Production scenario: `fx_industry_record.json` — PASS at exactly 100,000 ms;
-  three unit types, finite balance 590, carries zero.
-- Rendered captures: `screenshot_450x800.png`, `screenshot_wizard.png`,
-  `screenshots/worker_path_blocked.png`,
-  `screenshots/damaged_bottleneck.png`.
-- G03 sidecar smoke runs the real scene, Python sidecar, 100-second clock,
-  damage/paid repair and save/load.
-- G01/G02 remain human PASS and their automated regression checks are included
-  in the G03 gate wrapper.
+- `fx_industry_record.json` — PASS at 100,000 ms; three unit types; finite 590.
+- Captures: `before_production.png`, `after_unit_production.png`,
+  `worker_path_blocked.png`, `damaged_bottleneck.png`, `strike_stopped.png`,
+  plus `screenshot_450x800.png` / `screenshot_wizard.png`.
+- `python3 tools/check.py --gate G01|G02|G03` — automated PASS (G03 still human-pending).
 
 ## Human acceptance
 
-No human observations are recorded yet. Joe should reply:
-
-`G03 PASS — <build/commit>`
-
-or
-
-`G03 FIX_REQUIRED — <observed behavior and expected behavior>`
-
-Known limitations are in `known_defects.md`; reset instructions are in
-`reset.md`.
+Reply `G03 PASS — <build/commit>` or `G03 FIX_REQUIRED — <symptom>`.
+Only Joe's explicit PASS clears this gate. T059 remains blocked.

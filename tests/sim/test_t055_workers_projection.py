@@ -59,7 +59,8 @@ def test_projection_and_visual_obstruction_cannot_change_accounting() -> None:
     before = deepcopy(sim.state.to_dict())
     rows = IndustryProjection(sim.state).workers(node_id=fx["node_id"])
     assert rows and rows[0]["person_id"] in sim.state.people
-    assert rows[0]["cue"] in {"work", "carry"}
+    assert rows[0]["cue"] in {"working", "carrying"}
+    assert rows[0]["waypoints"], "route workplaces must be projected for presentation"
     assert sim.state.to_dict() == before
 
     # Blocking a decorative route is represented only in the client and sends
@@ -88,4 +89,4 @@ def test_explicit_job_strike_changes_output_while_unloaded_people_remain() -> No
     _advance(sim, 1000)
     assert _meters(sim) == baseline
     assert person_id in sim.state.people
-    assert IndustryProjection(sim.state).workers(node_id=fx["node_id"])[0]["cue"] == "idle"
+    assert IndustryProjection(sim.state).workers(node_id=fx["node_id"])[0]["cue"] == "on_strike"

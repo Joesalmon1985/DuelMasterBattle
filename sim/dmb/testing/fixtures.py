@@ -309,7 +309,7 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
     )
     processor = ProcessorBinding(
         "processor:fx-industry",
-        "recipe.prehistoric.pre_06",
+        "recipe.prehistoric.pre_07",
         "prehistoric",
         channels[0].channel_id,
         channels[1].channel_id,
@@ -322,11 +322,54 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
     for channel in channels:
         sim.industry.install_channel(channel)
     sim.industry.install_processor(processor)
-    state.buildings[processor.building_id] = {
-        "id": processor.building_id, "node_id": node_id, "health": 100,
-        "max_health": 100, "active": True, "status": "built",
+    # Authoritative primary sites already referenced by channels — persist as buildings.
+    state.buildings["source:woodland"] = {
+        "id": "source:woodland",
+        "node_id": node_id,
+        "slot_kind": "primary",
+        "slot_index": 0,
+        "definition_id": "building.primary",
+        "label": "Woodland source",
+        "resource_name": "Foraged berries and nuts",
+        "terrain": "woodland",
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
     }
-    for route in routes:
+    state.buildings["source:ore"] = {
+        "id": "source:ore",
+        "node_id": node_id,
+        "slot_kind": "primary",
+        "slot_index": 1,
+        "definition_id": "building.primary",
+        "label": "Ore Mountains source",
+        "resource_name": "Flint",
+        "terrain": "ore_mountains",
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    state.buildings[processor.building_id] = {
+        "id": processor.building_id,
+        "node_id": node_id,
+        "slot_kind": "processor",
+        "slot_index": 0,
+        "definition_id": "processor.prehistoric.pre_07",
+        "label": "Stone-ground berry paste Cooking Hearth",
+        "recipe_id": "recipe.prehistoric.pre_07",
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    factory_labels = {
+        "factory:fx-skirmisher": "Skirmisher factory",
+        "factory:fx-line": "Line factory",
+        "factory:fx-heavy": "Heavy factory",
+    }
+    for index, route in enumerate(routes):
         sim.industry.install_route(route)
         sim.industry.factories.create(
             route.factory_id,
@@ -336,17 +379,100 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
             unit_def_id=route.unit_def_id,
         )
         state.buildings[route.factory_id] = {
-            "id": route.factory_id, "node_id": node_id, "health": 100,
-            "max_health": 100, "active": True, "status": "built",
+            "id": route.factory_id,
+            "node_id": node_id,
+            "slot_kind": "factory",
+            "slot_index": index,
+            "definition_id": "building.factory",
+            "label": factory_labels[route.factory_id],
+            "unit_def_id": route.unit_def_id,
+            "health": 100,
+            "max_health": 100,
+            "active": True,
+            "status": "built",
         }
+    # Presentation anchors for the Godot village (project existing IDs; no extra authority).
+    layout_sites = [
+        {
+            "id": "source:woodland",
+            "kind": "source",
+            "label": "Woodland source\nForaged berries and nuts",
+            "short_label": "Woodland",
+            "grid": [2, 2],
+            "entrance": [2, 3],
+            "color": "#2f7d32",
+        },
+        {
+            "id": "source:ore",
+            "kind": "source",
+            "label": "Ore Mountains source\nFlint (finite)",
+            "short_label": "Ore / Flint",
+            "grid": [11, 2],
+            "entrance": [11, 3],
+            "color": "#8a8f98",
+        },
+        {
+            "id": "processor:fx-industry",
+            "kind": "processor",
+            "label": "Cooking Hearth\nStone-ground berry paste",
+            "short_label": "Processor",
+            "grid": [6, 3],
+            "entrance": [6, 4],
+            "color": "#c47a2c",
+        },
+        {
+            "id": "factory:fx-skirmisher",
+            "kind": "factory",
+            "label": "Skirmisher factory",
+            "short_label": "Skirmisher",
+            "grid": [2, 7],
+            "entrance": [2, 6],
+            "color": "#3b6ea5",
+            "unit_def_id": "unit.ancient.skirmisher",
+        },
+        {
+            "id": "factory:fx-line",
+            "kind": "factory",
+            "label": "Line factory",
+            "short_label": "Line",
+            "grid": [7, 7],
+            "entrance": [7, 6],
+            "color": "#7a4bb5",
+            "unit_def_id": "unit.ancient.line",
+        },
+        {
+            "id": "factory:fx-heavy",
+            "kind": "factory",
+            "label": "Heavy factory",
+            "short_label": "Heavy",
+            "grid": [11, 7],
+            "entrance": [11, 6],
+            "color": "#a33b3b",
+            "unit_def_id": "unit.ancient.heavy",
+        },
+    ]
     state.board["fx_industry"] = {
         "seed": seed,
         "node_id": node_id,
         "processor_id": processor.building_id,
         "factory_ids": [route.factory_id for route in routes],
+        "source_ids": ["source:woodland", "source:ore"],
         "finite_layer_id": finite.layer_id,
         "renewable_layer_id": renewable.layer_id,
         "repair_store_id": "store:fx-industry",
+        "repair_cost": {"brick": 1, "ore": 1},
+        "recipe_id": "recipe.prehistoric.pre_07",
+        "layout": {
+            "sites": layout_sites,
+            "assembly": {"grid": [7, 9], "label": "Assembly yard"},
+            "walk_lanes": [
+                [[2, 3], [6, 4]],
+                [[11, 3], [6, 4]],
+                [[6, 4], [2, 6]],
+                [[6, 4], [7, 6]],
+                [[6, 4], [11, 6]],
+            ],
+        },
     }
     fixture_jobs = JobService(state)
     fixture_jobs.register_job(

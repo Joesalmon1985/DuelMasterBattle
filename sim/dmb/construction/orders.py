@@ -343,11 +343,16 @@ class ConstructionService:
                 for item in self.state.settlements.values()
                 if item.get("node_id") == target_node and item.get("faction_id") == faction_id
             )
+            occupied = self.buildings._occupied_slots(target_node, "processor")
+            slot_index = 0
+            while slot_index in occupied:
+                slot_index += 1
             processor = self.buildings.create(
                 "building.processor",
                 node_id=target_node,
                 faction_id=faction_id,
                 settlement_id=settlement.get("id"),
+                slot_index=slot_index,
             )
             result_payload["building_id"] = processor["id"]
         elif action == "replacement_cart":

@@ -134,6 +134,7 @@ class WorldState:
             "industry": lambda: deepcopy(self.industry),
             "fx_industry": lambda: deepcopy(self.board.get("fx_industry") or {}),
             "buildings": lambda: deepcopy(self.buildings),
+            "units": lambda: deepcopy(self.units),
             "industry_workers": lambda: IndustryProjection(self).workers(),
             "leases": lambda: deepcopy(self.leases),
             "command_receipts": lambda: deepcopy(self.command_receipts),
@@ -152,6 +153,7 @@ class WorldState:
                 "industry",
                 "fx_industry",
                 "buildings",
+                "units",
                 "industry_workers",
             }
             for key in wanted:

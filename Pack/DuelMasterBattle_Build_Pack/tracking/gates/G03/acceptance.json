@@ -1,9 +1,13 @@
 {
   "gate": "G03",
   "status": "AWAITING_HUMAN",
-  "candidate_implementation": "5b6ac03ae477bca40c8dc944d9a54c2d3391682a",
+  "candidate_implementation": null,
   "accepted_by": null,
   "accepted_at": null,
   "observations": [],
-  "human_result": null
+  "human_result": null,
+  "prior_fix_required": {
+    "at": "2026-09-18T08:00:00Z",
+    "summary": "Industry not visually understandable: L-R sweep, no obstruction, no workplaces/outputs."
+  }
 }

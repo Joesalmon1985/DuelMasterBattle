@@ -1,11 +1,11 @@
 # G03 known defects and test limits
 
-- No known automated-oracle failure at this candidate.
-- Linux rendered controls and captures were exercised at 450×800. A sustained
-  inspector-open versus inspector-closed walking session was not completed;
-  Joe's focused-window manual step remains required.
-- Focus loss intentionally pauses Game Time with no catch-up. Do not classify
-  that expected pause as a periodic freeze.
-- The Industry panel is dense at 450×800; scroll it to see all three factory
-  rate/carry rows and finite-layer details.
-- Windows launch options are implemented but not executed on this Linux host.
+- Prior FIX_REQUIRED (visual readability) is addressed in this candidate;
+  human re-acceptance is still required.
+- Linux rendered captures at 450×800 cover before production, after units,
+  path obstruction, damage, and strike. Sustained inspector-open vs closed
+  walking freeze comparison still needs Joe's focused-window step.
+- Focus loss intentionally pauses Game Time with no catch-up.
+- Windows Playtest.bat options are implemented but not executed on this Linux host.
+- Godot smoke/capture runs may print ObjectDB/resource leak warnings at exit while
+  returning PASS.

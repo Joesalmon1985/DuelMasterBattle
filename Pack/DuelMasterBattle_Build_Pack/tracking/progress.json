@@ -193,7 +193,9 @@
       "status": "AWAITING_HUMAN",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": "tracking/gates/G03/packet.md"
+      "evidence": "tracking/gates/G03/packet.md",
+      "fix_required_at": "2026-09-18T08:00:00Z",
+      "fix_summary": "Industry not visually understandable: one L-R sweep worker, no obstruction, no workplaces/outputs."
     },
     "G04": {
       "status": "NOT_READY",
