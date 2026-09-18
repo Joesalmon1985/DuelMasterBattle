@@ -1,7 +1,7 @@
 {
   "task_id": "T063",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "595773e754ea615e050394f57d108f0a0123b56d",
   "files": [
     "godot_project/client/combat/local_battle.gd",
     "godot_project/client/combat/unit_controller.gd",
