@@ -1,7 +1,8 @@
 # G03 playtest handoff — FX-INDUSTRY (per-connection carriers)
 
-**Status:** AWAITING_HUMAN  
+**Status:** PASS (Joe Salmon, 2026-09-18)  
 **Scenario:** FX-INDUSTRY · **Seed:** 303  
+**Accepted build:** `f37ffe1ceee75209015fd1016e78bf9c74935ce4`  
 **Candidate implementation:** `f37ffe1ceee75209015fd1016e78bf9c74935ce4`
 **Platform tested:** Linux 6.8, Godot 4.4.1  
 **Save slot:** `g03_playtest` (isolated from G01/G02)
@@ -80,5 +81,17 @@ language. **Hide Industry inspector** to see the village; Pause freezes carriers
 
 ## Human acceptance
 
-Reply `G03 PASS — <build/commit>` or `G03 FIX_REQUIRED — <symptom>`.
-Only Joe's explicit PASS clears this gate. T059 remains blocked.
+**PASS** — Joe Salmon accepted G03 as functionally satisfactory against
+`f37ffe1ceee75209015fd1016e78bf9c74935ce4` and authorized progression to G04.
+
+Recorded observations (only those Joe supplied):
+
+- Functionally satisfactory.
+- Progression to G04 authorized.
+- Deferred non-blocking presentation/balance backlog: hide worker route lines
+  by default (debug toggle), slower carrier walking, collection/processing/
+  unloading pauses consistent with actual flow, varied military production
+  timings through gameplay data.
+- Preserve existing G03 numerical fixture and expected results.
+
+See `tracking/presentation_balance_backlog.md` and `acceptance.json`.
