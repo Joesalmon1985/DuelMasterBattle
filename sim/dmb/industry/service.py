@@ -96,13 +96,38 @@ class IndustryService:
         routes = [_route_from_dict(record) for _, record in sorted(self.state["routes"].items())]
 
         active: dict[str, bool] = {}
+        from sim.dmb.hazards.queries import industrial_blocked
+
         for route in routes:
             factory_record = self.factories.factories.get(route.factory_id, {})
             building = self.world.buildings.get(route.factory_id)
             operational = bool(factory_record.get("active", True))
             if building is not None:
                 operational = operational and building.get("status") != "destroyed" and bool(building.get("active", True))
+            source_hex = factory_record.get("source_hex") or (building or {}).get("hex_id")
+            if source_hex and industrial_blocked(self.world.board, str(source_hex)):
+                operational = False
             active[route.factory_id] = operational
+        # Zero capacity for primary channels whose building sits on a blocked hex.
+        for channel_id, channel in list(channels.items()):
+            building = self.world.buildings.get(channel.building_id)
+            hex_id = (building or {}).get("hex_id") or (self.world.board.get("primary_hex_by_building") or {}).get(
+                channel.building_id
+            )
+            if hex_id and industrial_blocked(self.world.board, str(hex_id)):
+                channels[channel_id] = PrimaryChannel(
+                    channel.channel_id,
+                    channel.building_id,
+                    channel.node_id,
+                    channel.terrain,
+                    channel.era,
+                    channel.cycle,
+                    channel.resource_id,
+                    channel.layer_id,
+                    channel.finite,
+                    Fraction(0),
+                    channel.storable,
+                )
         for processor_id, processor in list(processors.items()):
             building = self.world.buildings.get(processor_id)
             job_modifiers = [
