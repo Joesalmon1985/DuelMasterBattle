@@ -1,7 +1,7 @@
 {
   "task_id": "T061",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "e68145c16efee5603c40e7e1ef1d36a865b16314",
   "files": [
     "sim/dmb/military/movement.py",
     "sim/dmb/military/formations.py",
