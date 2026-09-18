@@ -14,6 +14,10 @@ var _progress_bars: Dictionary = {}
 var _unit_nodes: Dictionary = {}
 var _assembly_marker: Node2D
 var _last_unit_ids: Dictionary = {}
+var _links_layer: Node2D
+var _selected_building := ""
+var _focus_label: Label
+var _mouse_was_down := false
 
 
 func _ready() -> void:
@@ -30,14 +34,23 @@ func _ready() -> void:
 	_sites_layer = Node2D.new()
 	_sites_layer.name = "IndustrySites"
 	_world_host.add_child(_sites_layer)
+	_links_layer = Node2D.new()
+	_links_layer.name = "IndustryLinks"
+	_world_host.add_child(_links_layer)
 	_units_layer = Node2D.new()
 	_units_layer.name = "IndustryUnits"
 	_world_host.add_child(_units_layer)
 	_workers = WorkerControllerScript.new()
 	_world_host.add_child(_workers)
 	_workers.layout_diagnostic.connect(func(pid, msg): _log("%s %s" % [pid, msg]))
-	_set_status("Python-backed FX-INDUSTRY — walk the labelled production chain")
-	_prompt.text = "Stand in a worker path to divert them. Use the Industry panel for health/strike/repair."
+	_focus_label = Label.new()
+	_focus_label.position = Vector2(12, 70)
+	_focus_label.add_theme_font_size_override("font_size", 13)
+	_focus_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_focus_label.custom_minimum_size = Vector2(280, 0)
+	_ui_root.add_child(_focus_label)
+	_set_status("Python-backed FX-INDUSTRY — per-connection carriers")
+	_prompt.text = "Tap a building for its connections. Block path is presentation-only."
 
 
 func _process(delta: float) -> void:
@@ -50,6 +63,7 @@ func _process(delta: float) -> void:
 	_ensure_sites(view)
 	_update_sites(view)
 	_update_units(view)
+	_draw_connections(view)
 	var rows: Array = view.get("industry_workers", [])
 	_workers.apply_projection(rows)
 	var frozen := _paused or not _focus or _bridge_down
@@ -59,6 +73,10 @@ func _process(delta: float) -> void:
 		_workers.set_wizard_world_position(_area._wizard.global_position)
 	if not frozen:
 		_workers.tick(delta)
+	var mouse_down := Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
+	if (mouse_down and not _mouse_was_down) or Input.is_action_just_pressed("ui_accept"):
+		_try_select_building(view)
+	_mouse_was_down = mouse_down
 
 
 func _on_path_toggled(blocked: bool) -> void:
@@ -335,3 +353,87 @@ func _on_load() -> void:
 		_prompt.text = "Loaded %s — worker ID/job and exact carry restored" % G03_SAVE_SLOT
 		if _economy:
 			_economy.refresh(true)
+
+
+func _draw_connections(view: Dictionary) -> void:
+	if _links_layer == null:
+		return
+	for child in _links_layer.get_children():
+		child.queue_free()
+	var connections: Array = view.get("industry_connections", [])
+	for conn_variant in connections:
+		var conn: Dictionary = conn_variant
+		var from_id := str(conn.get("from_id", ""))
+		var to_id := str(conn.get("to_id", ""))
+		if not _site_nodes.has(from_id) or not _site_nodes.has(to_id):
+			continue
+		var highlight := _selected_building != "" and (
+			_selected_building == from_id or _selected_building == to_id
+		)
+		if _selected_building != "" and not highlight:
+			continue
+		var a: Vector2 = _site_nodes[from_id].position
+		var b: Vector2 = _site_nodes[to_id].position
+		var line := Line2D.new()
+		line.width = 3.0 if highlight else 1.5
+		line.default_color = Color(0.95, 0.9, 0.35, 0.95) if highlight else Color(0.8, 0.8, 0.75, 0.45)
+		line.points = PackedVector2Array([a, b])
+		_links_layer.add_child(line)
+		var mid := (a + b) * 0.5
+		var tag := Label.new()
+		tag.text = "%s %s" % [conn.get("marker", {}).get("symbol", "?"), conn.get("resource_label", "")]
+		tag.position = mid + Vector2(-36, -14)
+		tag.add_theme_font_size_override("font_size", 10)
+		_links_layer.add_child(tag)
+
+
+func _try_select_building(view: Dictionary) -> void:
+	if _area == null or _area._wizard == null:
+		return
+	var probe: Vector2 = _area._wizard.global_position
+	var best_id := ""
+	var best_dist := 72.0
+	for site_id in _site_nodes.keys():
+		var node: Node2D = _site_nodes[site_id]
+		var dist: float = node.global_position.distance_to(probe)
+		if dist < best_dist:
+			best_dist = dist
+			best_id = str(site_id)
+	if best_id == "":
+		return
+	_selected_building = best_id
+	var plain := _plain_building_focus(view, best_id)
+	if _focus_label:
+		_focus_label.text = plain
+	_prompt.text = plain
+
+
+func _plain_building_focus(view: Dictionary, building_id: String) -> String:
+	var buildings: Dictionary = view.get("buildings", {})
+	var building: Dictionary = buildings.get(building_id, {})
+	var label := str(building.get("label", building_id))
+	var connections: Array = view.get("industry_connections", [])
+	var bits: PackedStringArray = PackedStringArray()
+	bits.append(label.replace("\n", " / ") + ":")
+	var bottleneck := ""
+	for conn_variant in connections:
+		var conn: Dictionary = conn_variant
+		if str(conn.get("from_id", "")) == building_id:
+			bits.append(
+				"sends %s to %s (%.3f/s)"
+				% [conn.get("resource_label", "?"), conn.get("to_id", "?"), float(conn.get("throughput_per_sec", 0))]
+			)
+			if conn.get("bottleneck"):
+				bottleneck = str(conn.get("bottleneck"))
+		elif str(conn.get("to_id", "")) == building_id:
+			bits.append(
+				"receives %s from %s (%.3f/s)"
+				% [conn.get("resource_label", "?"), conn.get("from_id", "?"), float(conn.get("throughput_per_sec", 0))]
+			)
+			if conn.get("bottleneck"):
+				bottleneck = str(conn.get("bottleneck"))
+	if bottleneck != "":
+		bits.append("Bottleneck: %s." % bottleneck)
+	elif bits.size() == 1:
+		bits.append("no active connections.")
+	return " ".join(bits)

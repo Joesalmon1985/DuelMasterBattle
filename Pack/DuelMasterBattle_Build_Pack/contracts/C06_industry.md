@@ -12,7 +12,7 @@ Source: GDD §§78–86, 93–103. Python is the sole economic owner. This is a 
 | `RateAllocator` / `allocation.py` | `solve(requests,constraints) -> AllocationPlan`; pure deterministic progressive filling |
 | `FactoryService` / `factories.py` | Saved fractions/carries; `apply_allocations(plan,dt) -> completed_unit_requests` |
 | `IndustryService` / `service.py` | Coordinates global 100 ms accounting, consumption and unit creation transaction |
-| `IndustryProjection` / `projection.py` | Read-only rates, active route and bottleneck reason → visible work cues |
+| `IndustryProjection` / `projection.py` | Read-only rates, active route and bottleneck reason → visible work cues; derives **per-connection carriers** from installed routes/recipe inputs (presentation only) |
 
 `LayerState`: hex_id, resource_id, era, cycle, finite_balance/carry, retired flag. Initially each finite resource has 600 extraction units; renewable resources have capacity without a balance. Old layers remain distinct. Resource names never determine compatibility.
 
@@ -41,6 +41,16 @@ Two identical settlements sharing the same finite layer, with only 0.01 input le
 At each C02/C03 boundary apply accepted encounter damage/destruction first. Read current channels/routes. Solve all occupied nodes together; reserve shared finite usage; commit depletion, stock consumption and meter fractions atomically. For each meter crossing 1, create one unit via MilitaryService and subtract the completed integer count. Preserve overflow/remainder. Emit rates/shortage causes and unit IDs after commit. A locally active battle receives a versioned reinforcement, not a second spawn request from animation.
 
 Ordinary vacant jobs are backfilled with new people on the accounting tick without reducing output. Worker pathfinding, the wizard's position, local render culling and industrial crate animations cannot affect accounting. Explicit strike/sabotage modifiers may. Source catastrophe blocks both raw channels and the separate matching Catan grant; it does not erase the finite deposit. Clearing the cause resumes from the same balance/meters.
+
+### Presentation carriers (visual only)
+
+Each **active directed building connection** implied by installed processor bindings and factory routes has its own carrier assignment for street readability:
+
+- A carrier transports **one** resource type along that single connection, delivers it, then returns empty. It must not tour unrelated buildings.
+- Recipes with multiple inputs show **separate** resource-specific inbound legs (one connection per input channel).
+- Outbound processed-product legs follow each selected factory route; do not invent connections to make idle buildings participate.
+- Documented tunables: `VISUAL_CARRY_CAPACITY_PER_SEC` (default 0.01 units/s) and `MAX_CARRIERS_PER_CONNECTION` (default 3). Carrier count = clamp(ceil(connection_throughput / capacity), 0, max). Outbound carrier activity scales with allocated processed flow to that factory, not merely inbound headcount.
+- Carrier jobs reuse persistent person IDs; projection refresh must not recreate identities. Carrier arrival **never** awards resources or advances meters — Python accounting remains sole authority. Path obstruction and decorative routing change presentation only.
 
 Damaged buildings multiply their capacity by health/max health. Permanent tech applies after city/source baseline; source, processor and factory modifiers affect only their own stage. Do not multiply all three stages together into free output. Legacy primary/factory definitions stay in their layer; upgraded slots change binding in place and reset only the new-era factory meter. Extra legacy processors remain real.
 

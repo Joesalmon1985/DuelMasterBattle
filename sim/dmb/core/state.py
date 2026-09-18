@@ -136,6 +136,8 @@ class WorldState:
             "buildings": lambda: deepcopy(self.buildings),
             "units": lambda: deepcopy(self.units),
             "industry_workers": lambda: IndustryProjection(self).workers(),
+            "industry_connections": lambda: IndustryProjection(self).connections(),
+            "industry_factories": lambda: IndustryProjection(self).factory_readout(),
             "leases": lambda: deepcopy(self.leases),
             "command_receipts": lambda: deepcopy(self.command_receipts),
             "knowledge_raw": lambda: deepcopy(self.knowledge),
@@ -155,6 +157,8 @@ class WorldState:
                 "buildings",
                 "units",
                 "industry_workers",
+                "industry_connections",
+                "industry_factories",
             }
             for key in wanted:
                 factory = economy_extras.get(key)

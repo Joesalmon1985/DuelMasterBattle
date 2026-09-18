@@ -23,9 +23,23 @@
     "finite_balance": "590",
     "worker_ids": [
       "person:1",
-      "person:2"
+      "person:10",
+      "person:11",
+      "person:12",
+      "person:13",
+      "person:14",
+      "person:15",
+      "person:16",
+      "person:2",
+      "person:3",
+      "person:4",
+      "person:5",
+      "person:6",
+      "person:7",
+      "person:8",
+      "person:9"
     ],
     "save_schema_version": 1
   },
-  "repair_notes": "G03 visual readability FIX_REQUIRED repair"
+  "repair_notes": "G03 per-connection carriers FIX_REQUIRED repair"
 }

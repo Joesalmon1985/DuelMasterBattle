@@ -12,6 +12,7 @@ from sim.dmb.industry.constraints import build_constraints
 from sim.dmb.industry.factories import FactoryService
 from sim.dmb.industry.layers import LayerState
 from sim.dmb.industry.primary import PrimaryChannel
+from sim.dmb.industry.projection import IndustryProjection
 from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
 from sim.dmb.people.jobs import JobService
 
@@ -142,4 +143,6 @@ class IndustryService:
         if spawned:
             emitted.append({"kind": "industry_spawn", "unit_ids": [unit["id"] for unit in spawned]})
         self.state["events"].extend(emitted)
+        # Carrier roster follows committed rates; presentation only.
+        IndustryProjection(self.world).sync_carrier_jobs()
         return emitted

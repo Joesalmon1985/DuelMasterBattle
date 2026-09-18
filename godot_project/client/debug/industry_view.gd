@@ -4,7 +4,10 @@ class_name DmbIndustryView
 signal action_requested(action: String)
 signal worker_path_toggled(blocked: bool)
 
-const FIELDS := ["fx_industry", "industry", "buildings", "industry_workers", "stocks", "units"]
+const FIELDS := [
+	"fx_industry", "industry", "buildings", "industry_workers",
+	"industry_connections", "industry_factories", "stocks", "units",
+]
 const REFRESH_SECONDS := 0.5
 
 var _client
@@ -139,16 +142,46 @@ func _apply_view(view: Dictionary) -> void:
 	lines.append("Processor health: [b]%d%%[/b] (%d/%d)" % [health_pct, int(health), int(max_health)])
 	lines.append(street_feedback(view))
 	lines.append("")
-	lines.append("[b]Factories[/b]")
-	for factory_id in fx.get("factory_ids", []):
-		var factory: Dictionary = industry.get("factories", {}).get(factory_id, {})
-		var meter := _frac(factory.get("meter", 0))
-		var rate := _frac(rates.get(factory_id, 0))
-		var short := str(factory_id).replace("factory:fx-", "")
+	lines.append("[b]Connections[/b]")
+	var connections: Array = view.get("industry_connections", [])
+	for conn_variant in connections:
+		var conn: Dictionary = conn_variant
 		lines.append(
-			"%s  progress [b]%d%%[/b]  rate [b]%.3f/s[/b]  (%s)"
-			% [short.capitalize(), int(round(meter * 100.0)), rate, reasons.get(factory_id, "running")]
+			"%s → %s  [%s]  %.3f/s  carriers=%s"
+			% [
+				conn.get("from_id", "?"),
+				conn.get("to_id", "?"),
+				conn.get("resource_label", "?"),
+				float(conn.get("throughput_per_sec", 0)),
+				conn.get("carrier_count", 0),
+			]
 		)
+	lines.append("")
+	lines.append("[b]Factories[/b]")
+	var factory_rows: Array = view.get("industry_factories", [])
+	if factory_rows.is_empty():
+		for factory_id in fx.get("factory_ids", []):
+			var factory: Dictionary = industry.get("factories", {}).get(factory_id, {})
+			var meter := _frac(factory.get("meter", 0))
+			var rate := _frac(rates.get(factory_id, 0))
+			var short := str(factory_id).replace("factory:fx-", "")
+			lines.append(
+				"%s  progress [b]%d%%[/b]  rate [b]%.3f/s[/b]  (%s)"
+				% [short.capitalize(), int(round(meter * 100.0)), rate, reasons.get(factory_id, "running")]
+			)
+	else:
+		for row_variant in factory_rows:
+			var row: Dictionary = row_variant
+			lines.append(
+				"%s  progress [b]%d%%[/b]  rate [b]%.3f/s[/b]  done=%s  (%s)"
+				% [
+					row.get("unit_label", row.get("factory_id", "?")),
+					int(round(float(row.get("meter_pct", 0)))),
+					float(row.get("rate_per_sec", 0)),
+					row.get("completed_units", 0),
+					row.get("bottleneck_reason", "running"),
+				]
+			)
 	var unit_counts := {}
 	for unit in units.values():
 		var def_id := str(unit.get("definition_id", "?"))
@@ -174,16 +207,25 @@ func _apply_view(view: Dictionary) -> void:
 
 func street_feedback(view: Dictionary) -> String:
 	var workers: Array = view.get("industry_workers", [])
-	if workers.is_empty():
-		return "Street: no assigned worker is visible."
-	var worker: Dictionary = workers[0]
-	var cue := str(worker.get("activity", worker.get("cue", "idle")))
+	var carriers: Array = []
+	for worker_variant in workers:
+		var worker: Dictionary = worker_variant
+		if str(worker.get("role", "")) == "carrier":
+			carriers.append(worker)
+	if carriers.is_empty():
+		return "Street: no carriers on active connections."
+	var sample: Dictionary = carriers[0]
+	var cue := str(sample.get("activity", sample.get("cue", "idle")))
 	if _path_blocked and cue != "on_strike":
 		cue = "blocked"
-	var reason = worker.get("bottleneck_reason")
-	if reason:
-		return "Street: %s is [b]%s[/b] because %s." % [worker.get("name", "worker"), cue, reason]
-	return "Street: %s is [b]%s[/b] on the installed route." % [worker.get("name", "worker"), cue]
+	return "Street: %d carriers; e.g. %s is [b]%s[/b] on %s→%s (%s)." % [
+		carriers.size(),
+		sample.get("name", "carrier"),
+		cue,
+		sample.get("from_id", "?"),
+		sample.get("to_id", "?"),
+		sample.get("resource_label", "?"),
+	]
 
 
 func finite_diagnostics(view: Dictionary) -> String:

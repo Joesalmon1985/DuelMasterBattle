@@ -396,8 +396,9 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         {
             "id": "source:woodland",
             "kind": "source",
-            "label": "Woodland source\nForaged berries and nuts",
-            "short_label": "Woodland",
+            "label": "Woodland\nForaged berries and nuts",
+            "short_label": "Berries",
+            "resource_name": "Foraged berries and nuts",
             "grid": [2, 2],
             "entrance": [2, 3],
             "color": "#2f7d32",
@@ -405,8 +406,9 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         {
             "id": "source:ore",
             "kind": "source",
-            "label": "Ore Mountains source\nFlint (finite)",
-            "short_label": "Ore / Flint",
+            "label": "Ore Mountains\nFlint (finite)",
+            "short_label": "Flint",
+            "resource_name": "Flint",
             "grid": [11, 2],
             "entrance": [11, 3],
             "color": "#8a8f98",
@@ -414,8 +416,10 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         {
             "id": "processor:fx-industry",
             "kind": "processor",
-            "label": "Cooking Hearth\nStone-ground berry paste",
-            "short_label": "Processor",
+            "label": "Cooking Hearth\nin: Berries + Flint\nout: Berry paste",
+            "short_label": "Hearth",
+            "inputs": ["Foraged berries and nuts", "Flint"],
+            "output_name": "Stone-ground berry paste",
             "grid": [6, 3],
             "entrance": [6, 4],
             "color": "#c47a2c",
@@ -423,7 +427,7 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         {
             "id": "factory:fx-skirmisher",
             "kind": "factory",
-            "label": "Skirmisher factory",
+            "label": "Factory\n→ Skirmisher",
             "short_label": "Skirmisher",
             "grid": [2, 7],
             "entrance": [2, 6],
@@ -433,7 +437,7 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         {
             "id": "factory:fx-line",
             "kind": "factory",
-            "label": "Line factory",
+            "label": "Factory\n→ Line",
             "short_label": "Line",
             "grid": [7, 7],
             "entrance": [7, 6],
@@ -443,7 +447,7 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         {
             "id": "factory:fx-heavy",
             "kind": "factory",
-            "label": "Heavy factory",
+            "label": "Factory\n→ Heavy",
             "short_label": "Heavy",
             "grid": [11, 7],
             "entrance": [11, 6],
@@ -462,6 +466,8 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         "repair_store_id": "store:fx-industry",
         "repair_cost": {"brick": 1, "ore": 1},
         "recipe_id": "recipe.prehistoric.pre_07",
+        "output_id": "processed.prehistoric.pre_07",
+        "output_name": "Stone-ground berry paste",
         "layout": {
             "sites": layout_sites,
             "assembly": {"grid": [7, 9], "label": "Assembly yard"},
@@ -472,6 +478,8 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
                 [[6, 4], [7, 6]],
                 [[6, 4], [11, 6]],
             ],
+            "visual_carry_capacity_per_sec": "0.01",
+            "max_carriers_per_connection": 3,
         },
     }
     fixture_jobs = JobService(state)
@@ -482,6 +490,9 @@ def _load_fx_industry(seed: int = 303) -> WorldSim:
         node_id=node_id,
     )
     fixture_jobs.backfill_tick(name_prefix="FX Worker")
+    from sim.dmb.industry.projection import IndustryProjection
+
+    IndustryProjection(state).sync_carrier_jobs()
     repair_ledger = StockLedger(state)
     repair_ledger.credit("store:fx-industry", "brick", 3)
     repair_ledger.credit("store:fx-industry", "ore", 3)
