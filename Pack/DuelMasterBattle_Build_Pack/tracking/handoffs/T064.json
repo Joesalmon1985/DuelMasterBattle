@@ -1,7 +1,7 @@
 {
   "task_id": "T064",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "90397a21bc2bede5552d589c5bbaab75357b66f2",
   "files": [
     "sim/dmb/encounters/registry.py",
     "sim/dmb/military/offscreen.py",
