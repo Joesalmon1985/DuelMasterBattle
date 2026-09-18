@@ -1,0 +1,27 @@
+{
+  "task_id": "T068",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tests/scenarios/test_battle_magic.py",
+    "godot_project/content/fixtures/battle/fx_battle_v1.json",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "FX-BATTLE continuity scenarios"
+  ],
+  "source_rules": [
+    "C07 \u00a7\u00a7required tests"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T068",
+      "exit_code": 0,
+      "result": "PASS; 4 Python tests + fixture evidence"
+    }
+  ],
+  "extra_scope": {},
+  "fixture_hashes": {},
+  "defects": [],
+  "next_task": "T069"
+}

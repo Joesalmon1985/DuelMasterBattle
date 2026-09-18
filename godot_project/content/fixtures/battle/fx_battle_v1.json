@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "fixture_id": "fx_battle_v1",
+  "seed": 404,
+  "node_id": "node:battle",
+  "factions": [
+    {"id": "faction:red", "label": "Red Line"},
+    {"id": "faction:blue", "label": "Blue Skirmish"}
+  ],
+  "buildings": [
+    {
+      "id": "building:factory_red",
+      "definition_id": "building.factory",
+      "faction_id": "faction:red",
+      "node_id": "node:battle",
+      "health": 200,
+      "max_health": 200
+    }
+  ],
+  "units": [
+    {
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:red",
+      "era": "prehistoric",
+      "position": [0, 0],
+      "cover": 0.25
+    },
+    {
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:blue",
+      "era": "historic",
+      "position": [3, 0],
+      "cover": 0.0
+    },
+    {
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:red",
+      "era": "prehistoric",
+      "position": [1, 1],
+      "cover": 0.0
+    }
+  ],
+  "wizard": {
+    "node_id": "node:battle",
+    "can_intervene_without_army_orders": true
+  }
+}
