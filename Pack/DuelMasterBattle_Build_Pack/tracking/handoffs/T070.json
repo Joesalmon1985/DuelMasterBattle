@@ -1,7 +1,7 @@
 {
   "task_id": "T070",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "9d1341043811dca0322550fa0db39956cd78c2f6",
   "files": [
     "sim/dmb/hazards/propagation.py",
     "sim/dmb/core/terminal.py",
