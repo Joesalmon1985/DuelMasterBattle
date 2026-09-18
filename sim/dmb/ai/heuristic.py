@@ -90,6 +90,8 @@ def _tier(candidate: dict[str, Any], observation: dict[str, Any]) -> int:
         return PRIORITY["military_hold"]
     if kind in {"military_move", "military_withdraw"}:
         return PRIORITY["military_attack"]
+    if kind == "hazard_treat":
+        return PRIORITY["catastrophe"]
     if kind == "noop":
         return PRIORITY["noop"]
     return 8

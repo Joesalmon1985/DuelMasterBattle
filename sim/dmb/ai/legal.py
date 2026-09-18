@@ -53,6 +53,7 @@ class LegalActionGenerator:
         self.validators.setdefault("military_move", self._validate_military_move)
         self.validators.setdefault("military_withdraw", self._validate_military_withdraw)
         self.validators.setdefault("military_objective", self._validate_military_objective)
+        self.validators.setdefault("hazard_treat", self._validate_hazard_treat)
 
     def enumerate(self, view: dict[str, Any], decision_kind: str) -> list[dict[str, Any]]:
         faction_id = str(view["faction_id"])
@@ -70,6 +71,7 @@ class LegalActionGenerator:
         if decision_kind in {"seat", "military", "all"}:
             candidates.extend(self._military_candidates(faction_id, version, view))
             candidates.extend(self._military_objective_candidates(faction_id, version, view))
+            candidates.extend(self._hazard_treat_candidates(faction_id, version, view))
 
 
         # Always include a legal no-op when the seat cannot usefully act / as fallback.
@@ -221,6 +223,39 @@ class LegalActionGenerator:
                         explanation="execute pending withdrawal on activation",
                     )
                 )
+        return out
+
+    def _validate_hazard_treat(self, view: dict[str, Any], candidate: dict[str, Any]) -> bool:
+        params = candidate.get("params") or {}
+        from sim.dmb.hazards.responders import HazardResponder
+
+        responder = HazardResponder(self.state)
+        eligible = {
+            (e["formation_id"], e["cube_id"]) for e in responder.eligible_treatments(str(view["faction_id"]))
+        }
+        return (params.get("formation_id"), params.get("cube_id")) in eligible
+
+    def _hazard_treat_candidates(
+        self, faction_id: str, version: int, view: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        from sim.dmb.hazards.responders import HazardResponder
+
+        out = []
+        for entry in HazardResponder(self.state).eligible_treatments(faction_id):
+            out.append(
+                _candidate(
+                    action_kind="hazard_treat",
+                    faction_id=faction_id,
+                    params={
+                        "formation_id": entry["formation_id"],
+                        "cube_id": entry["cube_id"],
+                        "hex_id": entry["hex_id"],
+                    },
+                    legal_version=version,
+                    benefit={"cubes_removed": 1, "edges": 0},
+                    explanation="treat adjacent hazard instead of moving",
+                )
+            )
         return out
 
     def _validate_military_objective(self, view: dict[str, Any], candidate: dict[str, Any]) -> bool:
