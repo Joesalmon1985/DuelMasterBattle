@@ -101,6 +101,7 @@ class MilitaryService:
             "era": era,
             "era_factor": factor,
             "factory_id": factory_id,
+            "spawned_turn": int(getattr(self.state, "clock", {}).get("turn", 0) or 0),
             "status": "available",
             "alive": True,
             "formation_id": None,

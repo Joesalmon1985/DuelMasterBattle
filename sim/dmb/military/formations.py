@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Sequence
 
 from sim.dmb.military.units import MilitaryService
 
 
 class FormationDirector:
-    """Thin facade: grouping and strength live on MilitaryService."""
+    """Grouping plus strategic movement/withdrawal via StrategicMovement."""
 
     def __init__(self, world_state: Any):
         self.state = world_state
@@ -23,6 +23,36 @@ class FormationDirector:
 
     def strength(self, formation_id: str) -> int:
         return self.military.formation_strength(formation_id)
+
+    def _movement(self):
+        from sim.dmb.military.movement import StrategicMovement
+
+        return StrategicMovement(self.state)
+
+    def legal_objectives(self, formation_id: str, *, active_faction_id: str) -> list[dict[str, Any]]:
+        return self._movement().legal_objectives(formation_id, active_faction_id=active_faction_id)
+
+    def activate(
+        self,
+        formation_id: str,
+        path: Sequence[str],
+        *,
+        active_faction_id: str,
+        turn: int | None = None,
+    ) -> dict[str, Any]:
+        return self._movement().activate(
+            formation_id, path, active_faction_id=active_faction_id, turn=turn
+        )
+
+    def mark_withdrawal(
+        self,
+        formation_id: str,
+        *,
+        entry_effective_health: int | None = None,
+    ) -> dict[str, Any]:
+        return self._movement().mark_withdrawal(
+            formation_id, entry_effective_health=entry_effective_health
+        )
 
     def assert_exclusive_membership(self) -> None:
         seen: dict[str, str] = {}

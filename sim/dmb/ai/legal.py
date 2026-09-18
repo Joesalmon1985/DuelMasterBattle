@@ -50,6 +50,8 @@ class LegalActionGenerator:
         self.validators.setdefault("tech_pick", self._validate_tech_pick)
         self.validators.setdefault("diplomacy_propose", self._validate_diplomacy)
         self.validators.setdefault("trade_propose", self._validate_trade)
+        self.validators.setdefault("military_move", self._validate_military_move)
+        self.validators.setdefault("military_withdraw", self._validate_military_withdraw)
 
     def enumerate(self, view: dict[str, Any], decision_kind: str) -> list[dict[str, Any]]:
         faction_id = str(view["faction_id"])
@@ -64,6 +66,9 @@ class LegalActionGenerator:
             candidates.extend(self._diplomacy_candidates(faction_id, version, view))
         if decision_kind in {"seat", "trade", "all"}:
             candidates.extend(self._trade_candidates(faction_id, version, view))
+        if decision_kind in {"seat", "military", "all"}:
+            candidates.extend(self._military_candidates(faction_id, version, view))
+
 
         # Always include a legal no-op when the seat cannot usefully act / as fallback.
         candidates.append(
@@ -151,6 +156,70 @@ class LegalActionGenerator:
         params = candidate.get("params") or {}
         target = str(params.get("target_faction") or "")
         return bool(target) and target != view.get("faction_id") and target in self.state.factions
+
+    def _validate_military_move(self, view: dict[str, Any], candidate: dict[str, Any]) -> bool:
+        params = candidate.get("params") or {}
+        formation_id = str(params.get("formation_id") or "")
+        formations = getattr(self.state, "formations", {}) or {}
+        formation = formations.get(formation_id)
+        if formation is None:
+            return False
+        if str(formation.get("faction_id")) != view.get("faction_id"):
+            return False
+        active = self.state.clock.get("active_faction_id")
+        if active is not None and str(active) != view.get("faction_id"):
+            return False
+        path = list(params.get("path") or [])
+        if len(path) > 2:
+            return False
+        return True
+
+    def _validate_military_withdraw(self, view: dict[str, Any], candidate: dict[str, Any]) -> bool:
+        params = candidate.get("params") or {}
+        formation_id = str(params.get("formation_id") or "")
+        formations = getattr(self.state, "formations", {}) or {}
+        formation = formations.get(formation_id)
+        return formation is not None and str(formation.get("faction_id")) == view.get("faction_id")
+
+    def _military_candidates(
+        self, faction_id: str, version: int, view: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        from sim.dmb.military.formations import FormationDirector
+
+        out: list[dict[str, Any]] = []
+        active = self.state.clock.get("active_faction_id")
+        if active is not None and str(active) != faction_id:
+            return out
+        director = FormationDirector(self.state)
+        for formation_id, formation in sorted((getattr(self.state, "formations", {}) or {}).items()):
+            if str(formation.get("faction_id")) != faction_id:
+                continue
+            for objective in director.legal_objectives(formation_id, active_faction_id=faction_id):
+                out.append(
+                    _candidate(
+                        action_kind="military_move",
+                        faction_id=faction_id,
+                        params={
+                            "formation_id": formation_id,
+                            "path": list(objective["path"]),
+                            "node_id": objective["node_id"],
+                        },
+                        legal_version=version,
+                        benefit={"edges": objective["edges"]},
+                        explanation="strategic formation move ≤2 edges",
+                    )
+                )
+            if formation.get("withdrawal_status") == "pending":
+                out.append(
+                    _candidate(
+                        action_kind="military_withdraw",
+                        faction_id=faction_id,
+                        params={"formation_id": formation_id},
+                        legal_version=version,
+                        explanation="execute pending withdrawal on activation",
+                    )
+                )
+        return out
 
     def _construction_candidates(
         self, faction_id: str, version: int, view: dict[str, Any]
