@@ -1,7 +1,7 @@
 {
   "task_id": "T060",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "5ac994eac7573d101f1d5df4ba4d58bdcdf1297d",
   "files": [
     "sim/dmb/military/math.py",
     "sim/dmb/military/__init__.py",
@@ -16,7 +16,9 @@
     "CombatMath.choose_target nearest/health/id",
     "CombatMath.resolve_combat_step simultaneous gather/apply"
   ],
-  "source_rules": ["C07 §§damage/targeting/simultaneity"],
+  "source_rules": [
+    "C07 \u00a7\u00a7damage/targeting/simultaneity"
+  ],
   "checks": [
     {
       "command": "python3 tools/check.py --task T060",
