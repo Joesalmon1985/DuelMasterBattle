@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "fixture_id": "fx_hazard_v1",
+  "seed": 408,
+  "node_id": "node:hazard",
+  "adjacent_hexes": [
+    "hex:a",
+    "hex:b",
+    "hex:c"
+  ],
+  "cubes": [
+    {
+      "hex_id": "hex:a",
+      "type": "demon"
+    },
+    {
+      "hex_id": "hex:b",
+      "type": "demon"
+    },
+    {
+      "hex_id": "hex:c",
+      "type": "demon"
+    }
+  ],
+  "pollution_placeholder": {
+    "hex_id": "hex:d",
+    "type": "pollution",
+    "duel": false
+  },
+  "outbreak_warning_at": 7
+}
