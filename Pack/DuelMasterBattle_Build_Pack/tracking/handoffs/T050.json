@@ -1,0 +1,12 @@
+{
+  "task_id": "T050",
+  "status": "DONE",
+  "commit": "84ec2af9eea9454a2449b8d43b29f94f6f53cd33",
+  "files": ["sim/dmb/industry/layers.py", "sim/dmb/industry/primary.py", "sim/dmb/core/state.py", "tests/sim/test_t050_layers_primary.py", "tools/check.py"],
+  "public_contracts": ["LayerState", "ResourceLayerService", "PrimaryBinding", "PrimaryCapacity"],
+  "source_rules": ["C06 shared finite layers and primary channels"],
+  "checks": [{"command": "python3 tools/check.py --task T050", "exit_code": 0, "result": "PASS; 4 passed"}],
+  "defects": [],
+  "next_task": "T051",
+  "notes": "Industry mutable state is versioned and serialized on WorldState."
+}

@@ -1,0 +1,12 @@
+{
+  "task_id": "T053",
+  "status": "DONE",
+  "commit": "b5f368e28a7837ca6ee481f6040cd7487d08711b",
+  "files": ["sim/dmb/industry/factories.py", "sim/dmb/military/units.py", "tests/sim/test_t053_factories.py", "tools/check.py"],
+  "public_contracts": ["FactoryService.apply_allocations", "MilitaryService.spawn"],
+  "source_rules": ["C06 atomic commit ordering and numerical oracle"],
+  "checks": [{"command": "python3 tools/check.py --task T053", "exit_code": 0, "result": "PASS; 2 passed"}],
+  "defects": [],
+  "next_task": "T054",
+  "notes": "Exact meters survive serialization; each completion creates one persistent unit identity."
+}

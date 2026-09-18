@@ -1,0 +1,31 @@
+{
+  "task_id": "T067",
+  "status": "DONE",
+  "commit": "1702b87213b9e0d584029f0f6a8b96d2a26b2ee4",
+  "files": [
+    "sim/dmb/ai/heuristic.py",
+    "sim/dmb/ai/legal.py",
+    "sim/dmb/time/runner.py",
+    "tests/sim/test_t067_military_ai.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "military_objective candidates",
+    "TurnRunner offscreen/local lease integration"
+  ],
+  "source_rules": [
+    "C12 \u00a7\u00a7military objectives",
+    "C07 \u00a7\u00a7turn battles"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T067",
+      "exit_code": 0,
+      "result": "PASS; 3 Python tests"
+    }
+  ],
+  "extra_scope": {},
+  "fixture_hashes": {},
+  "defects": [],
+  "next_task": "T068"
+}

@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "formula": "max(1, round_half_up(base_attack * era_factor * attack_modifiers * (1 - cover) - armour))",
+  "cover_values": [0.0, 0.25],
+  "cases": [
+    {
+      "id": "prehistoric_line_cover",
+      "base_attack": 15,
+      "era_factor": 1,
+      "attack_modifiers": 1.0,
+      "cover": 0.25,
+      "armour": 0,
+      "expected_damage": 11
+    },
+    {
+      "id": "historic_line_cover",
+      "base_attack": 15,
+      "era_factor": 10,
+      "attack_modifiers": 1.0,
+      "cover": 0.25,
+      "armour": 0,
+      "expected_damage": 113
+    },
+    {
+      "id": "prehistoric_line_open",
+      "base_attack": 15,
+      "era_factor": 1,
+      "attack_modifiers": 1.0,
+      "cover": 0.0,
+      "armour": 0,
+      "expected_damage": 15
+    },
+    {
+      "id": "minimum_one",
+      "base_attack": 1,
+      "era_factor": 1,
+      "attack_modifiers": 1.0,
+      "cover": 0.25,
+      "armour": 10,
+      "expected_damage": 1
+    },
+    {
+      "id": "half_up_from_point_five",
+      "base_attack": 3,
+      "era_factor": 1,
+      "attack_modifiers": 1.0,
+      "cover": 0.25,
+      "armour": 0,
+      "expected_damage": 2
+    }
+  ],
+  "targeting": {
+    "order": ["nearest", "lowest_health", "id"],
+    "cases": [
+      {
+        "id": "equal_distance_lowest_health",
+        "attacker": {
+          "id": "a",
+          "faction_id": "f1",
+          "alive": true,
+          "position": [0, 0],
+          "range_tiles": 5,
+          "base_attack": 10,
+          "era_factor": 1
+        },
+        "candidates": [
+          {
+            "id": "t_high",
+            "faction_id": "f2",
+            "alive": true,
+            "position": [2, 0],
+            "current_health": 80
+          },
+          {
+            "id": "t_low",
+            "faction_id": "f2",
+            "alive": true,
+            "position": [2, 0],
+            "current_health": 40
+          }
+        ],
+        "expected_target": "t_low"
+      },
+      {
+        "id": "equal_health_break_by_id",
+        "attacker": {
+          "id": "a",
+          "faction_id": "f1",
+          "alive": true,
+          "position": [0, 0],
+          "range_tiles": 5,
+          "base_attack": 10,
+          "era_factor": 1
+        },
+        "candidates": [
+          {
+            "id": "t_b",
+            "faction_id": "f2",
+            "alive": true,
+            "position": [1, 0],
+            "current_health": 50
+          },
+          {
+            "id": "t_a",
+            "faction_id": "f2",
+            "alive": true,
+            "position": [1, 0],
+            "current_health": 50
+          }
+        ],
+        "expected_target": "t_a"
+      }
+    ]
+  },
+  "simultaneity": {
+    "step_ms": 50,
+    "units": {
+      "u1": {
+        "id": "u1",
+        "faction_id": "red",
+        "alive": true,
+        "position": [0, 0],
+        "range_tiles": 2,
+        "base_attack": 50,
+        "era_factor": 1,
+        "armour": 0,
+        "current_health": 40,
+        "period_ms": 1000,
+        "remaining_attack_cooldown_ms": 0
+      },
+      "u2": {
+        "id": "u2",
+        "faction_id": "blue",
+        "alive": true,
+        "position": [1, 0],
+        "range_tiles": 2,
+        "base_attack": 50,
+        "era_factor": 1,
+        "armour": 0,
+        "current_health": 40,
+        "period_ms": 1000,
+        "remaining_attack_cooldown_ms": 0
+      }
+    },
+    "expect_both_fire_step1": true,
+    "expect_both_dead_after_step1": true,
+    "expect_no_fire_step2": true
+  }
+}

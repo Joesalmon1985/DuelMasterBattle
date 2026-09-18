@@ -235,19 +235,117 @@ class TurnRunner:
         return {"committed": committed}
 
     def _stage_active_decisions(self) -> dict[str, Any]:
-        """Only the active seat may initiate construction/trade/diplomacy."""
+        """Only the active seat may initiate construction/trade/diplomacy/military."""
         if self.interrupted:
             return {"skipped": True, "reason": "interrupted"}
         active = self.scheduler.active_seat()
+        battle_results = self._resolve_pending_offscreen(active)
         if not active or active == "faction:player":
-            # Wizard/player seat: no autonomous faction brain.
-            return {"faction_id": active, "applied": []}
+            return {"faction_id": active, "applied": [], "battles": battle_results}
         from sim.dmb.ai.policy import PolicyService
 
         policy = PolicyService(self.state)
         policy.assign_brain(active, "heuristic")
         record = policy.activate(active, decision_kind="seat")
-        return {"faction_id": active, "activation": record}
+        # Apply accepted military objectives without granting ownership on victory.
+        applied_objectives = self._apply_military_commitments(active, record)
+        return {
+            "faction_id": active,
+            "activation": record,
+            "battles": battle_results,
+            "military_objectives": applied_objectives,
+        }
+
+    def _resolve_pending_offscreen(self, active_faction: str | None) -> list[dict[str, Any]]:
+        """Resolve disengaged battles offscreen; open local leases when player present."""
+        from sim.dmb.military.offscreen import OffscreenBattleResolver
+
+        results = []
+        player_node = str((self.state.player or {}).get("node_id") or "")
+        for battle_id, battle in list((getattr(self.state, "battles", {}) or {}).items()):
+            if battle.get("state") not in {"PENDING", "OFFSCREEN", "ACTIVE"}:
+                continue
+            if battle.get("local_lease_id"):
+                # Local lease owns resolution.
+                continue
+            node_id = str(battle.get("node_id") or "")
+            if node_id == player_node and battle.get("prefer_local"):
+                # Open local lease for correct participant units.
+                participants = list(battle.get("participants") or [])
+                lease_id = self.state.ids.new("lease")
+                from sim.dmb.encounters.registry import EncounterRegistry
+
+                # Persist lightweight lease marker on world; full registry may be session-scoped.
+                snap = {
+                    "units": {
+                        uid: dict(self.state.units[uid])
+                        for uid in participants
+                        if uid in self.state.units
+                    },
+                    "node_id": node_id,
+                }
+                self.state.leases[lease_id] = {
+                    "lease_id": lease_id,
+                    "kind": "battle",
+                    "entity_ids": participants,
+                    "state": "ACTIVE",
+                    "checkpoint": snap,
+                }
+                battle["local_lease_id"] = lease_id
+                battle["state"] = "LOCAL"
+                results.append({"battle_id": battle_id, "mode": "local_lease", "lease_id": lease_id})
+                continue
+            resolver = OffscreenBattleResolver(self.state)
+            snap = {
+                "units": {
+                    uid: dict(self.state.units[uid])
+                    for uid in (battle.get("participants") or [])
+                    if uid in self.state.units
+                },
+                "buildings": {
+                    bid: dict(self.state.buildings[bid])
+                    for bid in (battle.get("buildings") or [])
+                    if bid in self.state.buildings
+                },
+                "entry_effective_health": dict(battle.get("entry_effective_health") or {}),
+                "material_change_version": int(battle.get("material_change_version") or 0),
+            }
+            outcome = resolver.resolve(snap)
+            resolver.commit_to_world(outcome, battle_id=battle_id)
+            # Attacker victory may destroy a centre but never assigns ownership.
+            if outcome.get("outcome") == "victory":
+                for bid in battle.get("buildings") or []:
+                    building = self.state.buildings.get(bid)
+                    if building and not building.get("alive", True):
+                        building["destroyed_by_battle"] = True
+                        # Explicitly do not set faction_id to attacker.
+            results.append(
+                {
+                    "battle_id": battle_id,
+                    "mode": "offscreen",
+                    "outcome": outcome.get("outcome"),
+                    "ownership_transferred": False,
+                }
+            )
+        return results
+
+    def _apply_military_commitments(self, faction_id: str, record: dict[str, Any]) -> list[dict[str, Any]]:
+        applied = []
+        commitments = (self.state.factions.get(faction_id) or {}).get("commitments") or []
+        for commitment in commitments[-5:]:
+            if commitment.get("action_kind") != "military_objective":
+                continue
+            params = commitment.get("params") or {}
+            fid = params.get("formation_id")
+            formation = (getattr(self.state, "formations", {}) or {}).get(fid)
+            if formation is None:
+                continue
+            formation["objective"] = params.get("objective")
+            if params.get("objective") == "attack" and params.get("node_id"):
+                # Movement happens via military_move candidates; record intent only.
+                formation["objective_node"] = params.get("node_id")
+            applied.append({"formation_id": fid, "objective": formation.get("objective")})
+        return applied
 
     def _run_stages(self, *, arrival_handler=None) -> None:
         self.stages_executed = []
@@ -305,6 +403,9 @@ class TurnRunner:
             self.state.player["position"] = [float(pos[0]), float(pos[1])]
             self.state.player["facing"] = facing
             self.state.player["pose_generation"] = int(self.state.player.get("pose_generation", 0)) + 1
+            from sim.dmb.player.visits import VisitService
+
+            VisitService(self.state).arrive(to_node, "travel", int(self.state.clock.get("turn", 0)))
             self.state.clock["last_travel"] = {
                 "from_node": from_node,
                 "to_node": to_node,
@@ -347,6 +448,9 @@ class TurnRunner:
         self.state.clock["wait_press_ids"] = sorted(seen)
         self.interrupted = False
         self.scheduler.begin_turn("Wait")
+        from sim.dmb.player.visits import VisitService
+
+        VisitService(self.state).arrive(current_node, "wait", int(self.state.clock.get("turn", 0)))
         self._run_stages(arrival_handler=None)
         if self.interrupted:
             seat = {"round_complete": False, "interrupted": True, "draft": None}

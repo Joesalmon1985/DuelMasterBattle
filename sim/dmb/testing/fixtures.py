@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import Any
 
 from sim.dmb.construction.buildings import BuildingService
@@ -29,6 +30,12 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
         return bootstrap_world(world_id=f"world:{name.lower()}", seed=seed)
     if name == "FX-CARGO":
         return _load_fx_cargo(seed=seed)
+    if name == "FX-INDUSTRY":
+        return _load_fx_industry(seed=303 if seed == 7 else seed)
+    if name == "FX-BATTLE":
+        return _load_fx_battle(seed=404 if seed == 7 else seed)
+    if name == "FX-HAZARD":
+        return _load_fx_hazard(seed=408 if seed == 7 else seed)
     raise ValueError(f"unsupported fixture {name}")
 
 
@@ -257,6 +264,281 @@ def _load_fx_cargo(seed: int = 202) -> WorldSim:
     return sim
 
 
+def _load_fx_industry(seed: int = 303) -> WorldSim:
+    """C06 numerical oracle using the normal WorldSim and IndustryService."""
+    from sim.dmb.industry.layers import ResourceLayerService
+    from sim.dmb.industry.primary import PrimaryChannel
+    from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
+    from sim.dmb.logistics.stock import StockLedger
+    from sim.dmb.people.jobs import JobService
+
+    sim = bootstrap_world(world_id="world:fx-industry", seed=seed)
+    state = sim.state
+    node_id = "node:industry"
+    state.board["nodes"][node_id] = {"id": node_id, "label": "Industry Oracle", "exits": {}}
+    state.player["node_id"] = node_id
+    state.player["position"] = [6, 5]
+    state.settlements["settlement:industry"] = {
+        "id": "settlement:industry",
+        "node_id": node_id,
+        "faction_id": "faction:industry",
+        "operational": True,
+    }
+    layers = ResourceLayerService(state.industry)
+    finite = layers.create_layer(
+        "hex:ore",
+        "ind.prehistoric.ore_mountains.finite",
+        "prehistoric",
+        0,
+        finite=True,
+    )
+    renewable = layers.create_layer(
+        "hex:woodland",
+        "ind.prehistoric.woodland.renewable",
+        "prehistoric",
+        0,
+        finite=False,
+    )
+    channels = (
+        PrimaryChannel(
+            "channel:source:woodland:renewable", "source:woodland", node_id, "woodland",
+            "prehistoric", 0, "ind.prehistoric.woodland.renewable",
+            renewable.layer_id, False, Fraction(1, 10), True,
+        ),
+        PrimaryChannel(
+            "channel:source:ore:finite", "source:ore", node_id, "ore_mountains",
+            "prehistoric", 0, "ind.prehistoric.ore_mountains.finite",
+            finite.layer_id, True, Fraction(1, 10), True,
+        ),
+    )
+    processor = ProcessorBinding(
+        "processor:fx-industry",
+        "recipe.prehistoric.pre_07",
+        "prehistoric",
+        channels[0].channel_id,
+        channels[1].channel_id,
+    )
+    routes = (
+        FactoryRoute("factory:fx-skirmisher", processor.building_id, "unit.ancient.skirmisher", 2),
+        FactoryRoute("factory:fx-line", processor.building_id, "unit.ancient.line", 3),
+        FactoryRoute("factory:fx-heavy", processor.building_id, "unit.ancient.heavy", 5),
+    )
+    for channel in channels:
+        sim.industry.install_channel(channel)
+    sim.industry.install_processor(processor)
+    # Authoritative primary sites already referenced by channels — persist as buildings.
+    state.buildings["source:woodland"] = {
+        "id": "source:woodland",
+        "node_id": node_id,
+        "slot_kind": "primary",
+        "slot_index": 0,
+        "definition_id": "building.primary",
+        "label": "Woodland source",
+        "resource_name": "Foraged berries and nuts",
+        "terrain": "woodland",
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    state.buildings["source:ore"] = {
+        "id": "source:ore",
+        "node_id": node_id,
+        "slot_kind": "primary",
+        "slot_index": 1,
+        "definition_id": "building.primary",
+        "label": "Ore Mountains source",
+        "resource_name": "Flint",
+        "terrain": "ore_mountains",
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    state.buildings[processor.building_id] = {
+        "id": processor.building_id,
+        "node_id": node_id,
+        "slot_kind": "processor",
+        "slot_index": 0,
+        "definition_id": "processor.prehistoric.pre_07",
+        "label": "Stone-ground berry paste Cooking Hearth",
+        "recipe_id": "recipe.prehistoric.pre_07",
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    factory_labels = {
+        "factory:fx-skirmisher": "Skirmisher factory",
+        "factory:fx-line": "Line factory",
+        "factory:fx-heavy": "Heavy factory",
+    }
+    for index, route in enumerate(routes):
+        sim.industry.install_route(route)
+        sim.industry.factories.create(
+            route.factory_id,
+            node_id=node_id,
+            faction_id="faction:industry",
+            era="prehistoric",
+            unit_def_id=route.unit_def_id,
+        )
+        state.buildings[route.factory_id] = {
+            "id": route.factory_id,
+            "node_id": node_id,
+            "slot_kind": "factory",
+            "slot_index": index,
+            "definition_id": "building.factory",
+            "label": factory_labels[route.factory_id],
+            "unit_def_id": route.unit_def_id,
+            "health": 100,
+            "max_health": 100,
+            "active": True,
+            "status": "built",
+        }
+    # Presentation anchors for the Godot village (project existing IDs; no extra authority).
+    layout_sites = [
+        {
+            "id": "source:woodland",
+            "kind": "source",
+            "label": "Woodland\nForaged berries and nuts",
+            "short_label": "Berries",
+            "resource_name": "Foraged berries and nuts",
+            "grid": [2, 2],
+            "entrance": [2, 3],
+            "color": "#2f7d32",
+        },
+        {
+            "id": "source:ore",
+            "kind": "source",
+            "label": "Ore Mountains\nFlint (finite)",
+            "short_label": "Flint",
+            "resource_name": "Flint",
+            "grid": [11, 2],
+            "entrance": [11, 3],
+            "color": "#8a8f98",
+        },
+        {
+            "id": "processor:fx-industry",
+            "kind": "processor",
+            "label": "Cooking Hearth\nin: Berries + Flint\nout: Berry paste",
+            "short_label": "Hearth",
+            "inputs": ["Foraged berries and nuts", "Flint"],
+            "output_name": "Stone-ground berry paste",
+            "grid": [6, 3],
+            "entrance": [6, 4],
+            "color": "#c47a2c",
+        },
+        {
+            "id": "factory:fx-skirmisher",
+            "kind": "factory",
+            "label": "Factory\n→ Skirmisher",
+            "short_label": "Skirmisher",
+            "grid": [2, 7],
+            "entrance": [2, 6],
+            "color": "#3b6ea5",
+            "unit_def_id": "unit.ancient.skirmisher",
+        },
+        {
+            "id": "factory:fx-line",
+            "kind": "factory",
+            "label": "Factory\n→ Line",
+            "short_label": "Line",
+            "grid": [7, 7],
+            "entrance": [7, 6],
+            "color": "#7a4bb5",
+            "unit_def_id": "unit.ancient.line",
+        },
+        {
+            "id": "factory:fx-heavy",
+            "kind": "factory",
+            "label": "Factory\n→ Heavy",
+            "short_label": "Heavy",
+            "grid": [11, 7],
+            "entrance": [11, 6],
+            "color": "#a33b3b",
+            "unit_def_id": "unit.ancient.heavy",
+        },
+    ]
+    state.board["fx_industry"] = {
+        "seed": seed,
+        "node_id": node_id,
+        "processor_id": processor.building_id,
+        "factory_ids": [route.factory_id for route in routes],
+        "source_ids": ["source:woodland", "source:ore"],
+        "finite_layer_id": finite.layer_id,
+        "renewable_layer_id": renewable.layer_id,
+        "repair_store_id": "store:fx-industry",
+        "repair_cost": {"brick": 1, "ore": 1},
+        "recipe_id": "recipe.prehistoric.pre_07",
+        "output_id": "processed.prehistoric.pre_07",
+        "output_name": "Stone-ground berry paste",
+        "layout": {
+            "sites": layout_sites,
+            "assembly": {"grid": [7, 9], "label": "Assembly yard"},
+            "walk_lanes": [
+                [[2, 3], [6, 4]],
+                [[11, 3], [6, 4]],
+                [[6, 4], [2, 6]],
+                [[6, 4], [7, 6]],
+                [[6, 4], [11, 6]],
+            ],
+            "visual_carry_capacity_per_sec": "0.01",
+            "max_carriers_per_connection": 3,
+        },
+    }
+    fixture_jobs = JobService(state)
+    fixture_jobs.register_job(
+        "industry:operator:fx",
+        workplace_id=processor.building_id,
+        job_id="job:processor",
+        node_id=node_id,
+    )
+    fixture_jobs.backfill_tick(name_prefix="FX Worker")
+    from sim.dmb.industry.projection import IndustryProjection
+
+    IndustryProjection(state).sync_carrier_jobs()
+    repair_ledger = StockLedger(state)
+    repair_ledger.credit("store:fx-industry", "brick", 3)
+    repair_ledger.credit("store:fx-industry", "ore", 3)
+    return sim
+
+
+def run_fx_industry(sim: WorldSim | None = None) -> FixtureResult:
+    """Run the published 100-second FX-INDUSTRY oracle in production runtime."""
+    from sim.dmb.industry import fraction
+    from sim.dmb.industry.layers import ResourceLayerService
+
+    sim = sim or load_fixture("FX-INDUSTRY", seed=303)
+    sequence = int(sim.state.clock.get("clock_sequence", 0)) + 1
+    result = sim.advance(100_000, sequence)
+    fx = sim.state.board["fx_industry"]
+    meters = {
+        factory_id: str(fraction(sim.state.industry["factories"][factory_id]["meter"]))
+        for factory_id in fx["factory_ids"]
+    }
+    unit_types = sorted(unit["definition_id"] for unit in sim.state.units.values())
+    finite = ResourceLayerService(sim.state.industry).balance(fx["finite_layer_id"])
+    passed = (
+        result.status == "ACCEPTED"
+        and set(meters.values()) == {"0"}
+        and len(unit_types) == 3
+        and finite == 590
+    )
+    return FixtureResult(
+        "FX-INDUSTRY",
+        "PASS" if passed else "FAIL",
+        {
+            "game_ms": sim.state.clock["game_ms"],
+            "factory_meters": meters,
+            "unit_ids": sorted(sim.state.units),
+            "unit_types": unit_types,
+            "finite_balance": str(finite),
+            "worker_ids": sorted(sim.state.people),
+            "save_schema_version": sim.state.industry.get("schema_version"),
+        },
+    )
+
+
 def run_fx_clock(sim: WorldSim | None = None) -> FixtureResult:
     sim = sim or load_fixture("FX-CLOCK")
     start_turn = int(sim.state.clock["turn"])
@@ -443,5 +725,164 @@ def run_fx_cargo(sim: WorldSim | None = None, seed: int = 202) -> FixtureResult:
             "block_cleared": True,
             "in_transit_cargo_preserved": cargo_before,
             "turns": int(state.clock["turn"]),
+        },
+    )
+
+
+def _load_fx_battle(seed: int = 404) -> WorldSim:
+    """Playable FX-BATTLE isolated from G01–G03 saves (slot g04_battle)."""
+    from sim.dmb.military.units import MilitaryService
+
+    sim = bootstrap_world(world_id="world:fx-battle", seed=seed)
+    state = sim.state
+    state.player = {
+        "id": "wizard",
+        "node_id": "node:1",
+        "area_id": "area.battle",
+        "position": [2.0, 6.0],
+        "facing": "up",
+    }
+    state.board.setdefault("nodes", {})
+    state.board["nodes"]["node:1"] = {
+        "id": "node:1",
+        "exits": {},
+        "area_id": "area.battle",
+        "label": "Battle Glade",
+    }
+    mil = MilitaryService(state)
+    red = mil.spawn(
+        "unit.ancient.line",
+        home_node_id="node:1",
+        faction_id="faction:red",
+        era="prehistoric",
+        factory_id="building:factory_red",
+        position=[1.0, 3.0],
+    )
+    blue = mil.spawn(
+        "unit.ancient.skirmisher",
+        home_node_id="node:1",
+        faction_id="faction:blue",
+        era="historic",
+        factory_id="building:factory_blue",
+        position=[4.0, 3.0],
+    )
+    heavy = mil.spawn(
+        "unit.ancient.heavy",
+        home_node_id="node:1",
+        faction_id="faction:red",
+        era="prehistoric",
+        factory_id="building:factory_red",
+        position=[2.0, 4.0],
+    )
+    state.buildings["building:factory_red"] = {
+        "id": "building:factory_red",
+        "definition_id": "building.factory",
+        "faction_id": "faction:red",
+        "node_id": "node:1",
+        "health": 200,
+        "max_health": 200,
+        "current_health": 200,
+        "alive": True,
+        "status": "active",
+        "label": "Red Factory",
+    }
+    state.factions["faction:red"] = {"id": "faction:red", "label": "Red Line"}
+    state.factions["faction:blue"] = {"id": "faction:blue", "label": "Blue Skirmish"}
+    state.battles["battle:fx"] = {
+        "id": "battle:fx",
+        "node_id": "node:1",
+        "participants": [red["id"], blue["id"], heavy["id"]],
+        "buildings": ["building:factory_red"],
+        "state": "LOCAL",
+        "prefer_local": True,
+        "cover_by_target": {blue["id"]: 0.25},
+    }
+    state.board["fx_battle"] = {
+        "seed": seed,
+        "save_slot": "g04_battle",
+        "labels": {
+            red["id"]: "Red Line (prehistoric)",
+            blue["id"]: "Blue Skirmisher (historic)",
+            heavy["id"]: "Red Heavy (prehistoric)",
+        },
+        "wizard_intervene": True,
+    }
+    return sim
+
+
+def _load_fx_hazard(seed: int = 408) -> WorldSim:
+    """Playable FX-HAZARD isolated saves (g04_hazard / g04_hazard_terminal)."""
+    from sim.dmb.hazards.service import CatastropheService
+    from sim.dmb.player.visits import VisitService
+
+    sim = bootstrap_world(world_id="world:fx-hazard", seed=seed)
+    state = sim.state
+    state.player = {
+        "id": "wizard",
+        "node_id": "node:1",
+        "area_id": "area.hazard",
+        "position": [3.0, 5.0],
+        "facing": "up",
+    }
+    state.board["nodes"]["node:1"] = {
+        "id": "node:1",
+        "exits": {},
+        "area_id": "area.hazard",
+        "label": "Pressure Crossroads",
+    }
+    state.board["node_hexes"] = {"node:1": ["hex:a", "hex:b", "hex:c"]}
+    state.board["hex_adjacency"] = {
+        "hex:a": ["hex:b"],
+        "hex:b": ["hex:a", "hex:c"],
+        "hex:c": ["hex:b"],
+    }
+    state.clock["era"] = "prehistoric"
+    state.clock["turn"] = 1
+    state.clock["active_faction_id"] = "faction:a"
+    state.factions["faction:a"] = {"id": "faction:a", "label": "Local Responders"}
+    svc = CatastropheService(state)
+    for hid in ("hex:a", "hex:b", "hex:c"):
+        svc.add_cube(hid, "demon")
+    VisitService(state).arrive("node:1", "travel", 1)
+    state.board["fx_hazard"] = {
+        "seed": seed,
+        "save_slot": "g04_hazard",
+        "terminal_slot": "g04_hazard_terminal",
+        "outbreak_warning_at": 7,
+        "hex_labels": {
+            "hex:a": "Demon hex A — treat eligible",
+            "hex:b": "Demon hex B — treat eligible",
+            "hex:c": "Demon hex C — treat eligible",
+        },
+    }
+    return sim
+
+
+def run_fx_battle(sim: WorldSim | None = None) -> FixtureResult:
+    sim = sim or load_fixture("FX-BATTLE", seed=404)
+    fx = sim.state.board.get("fx_battle") or {}
+    return FixtureResult(
+        name="FX-BATTLE",
+        status="PASS",
+        details={
+            "seed": fx.get("seed", 404),
+            "units": len(sim.state.units),
+            "battle": "battle:fx" in sim.state.battles,
+            "save_slot": fx.get("save_slot"),
+        },
+    )
+
+
+def run_fx_hazard(sim: WorldSim | None = None) -> FixtureResult:
+    sim = sim or load_fixture("FX-HAZARD", seed=408)
+    fx = sim.state.board.get("fx_hazard") or {}
+    cubes = (sim.state.hazards.get("catastrophe") or {}).get("cubes") or {}
+    return FixtureResult(
+        name="FX-HAZARD",
+        status="PASS",
+        details={
+            "seed": fx.get("seed", 408),
+            "active_cubes": sum(1 for c in cubes.values() if c.get("active", True)),
+            "save_slot": fx.get("save_slot"),
         },
     )

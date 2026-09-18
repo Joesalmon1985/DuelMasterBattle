@@ -1,0 +1,62 @@
+{
+  "visual_carry_capacity_per_sec": 0.01,
+  "max_carriers_per_connection": 3,
+  "connections": [
+    {
+      "connection_id": "conn:raw:source:woodland->processor:fx-industry:a",
+      "kind": "raw_input",
+      "from_id": "source:woodland",
+      "to_id": "processor:fx-industry",
+      "resource_id": "ind.prehistoric.woodland.renewable",
+      "resource_label": "Foraged berries and nuts",
+      "throughput_per_sec": 0.03,
+      "carrier_count": 3,
+      "bottleneck": null
+    },
+    {
+      "connection_id": "conn:raw:source:ore->processor:fx-industry:b",
+      "kind": "raw_input",
+      "from_id": "source:ore",
+      "to_id": "processor:fx-industry",
+      "resource_id": "ind.prehistoric.ore_mountains.finite",
+      "resource_label": "Flint",
+      "throughput_per_sec": 0.03,
+      "carrier_count": 3,
+      "bottleneck": null
+    },
+    {
+      "connection_id": "conn:out:processor:fx-industry->factory:fx-heavy",
+      "kind": "processed_output",
+      "from_id": "processor:fx-industry",
+      "to_id": "factory:fx-heavy",
+      "resource_id": "processed.prehistoric.pre_07",
+      "resource_label": "Stone-ground berry paste",
+      "throughput_per_sec": 0.05,
+      "carrier_count": 3,
+      "bottleneck": null
+    },
+    {
+      "connection_id": "conn:out:processor:fx-industry->factory:fx-line",
+      "kind": "processed_output",
+      "from_id": "processor:fx-industry",
+      "to_id": "factory:fx-line",
+      "resource_id": "processed.prehistoric.pre_07",
+      "resource_label": "Stone-ground berry paste",
+      "throughput_per_sec": 0.03,
+      "carrier_count": 3,
+      "bottleneck": null
+    },
+    {
+      "connection_id": "conn:out:processor:fx-industry->factory:fx-skirmisher",
+      "kind": "processed_output",
+      "from_id": "processor:fx-industry",
+      "to_id": "factory:fx-skirmisher",
+      "resource_id": "processed.prehistoric.pre_07",
+      "resource_label": "Stone-ground berry paste",
+      "throughput_per_sec": 0.02,
+      "carrier_count": 2,
+      "bottleneck": null
+    }
+  ],
+  "carrier_count": 15
+}

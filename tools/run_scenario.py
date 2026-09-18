@@ -13,7 +13,14 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from sim.dmb.testing.fixtures import load_fixture, run_fx_cargo, run_fx_clock  # noqa: E402
+from sim.dmb.testing.fixtures import (  # noqa: E402
+    load_fixture,
+    run_fx_battle,
+    run_fx_cargo,
+    run_fx_clock,
+    run_fx_hazard,
+    run_fx_industry,
+)
 
 SCENARIO_OWNERS = {
     "FX-CLOCK": "T012/T024",
@@ -98,6 +105,89 @@ def main(argv: Sequence[str] | None = None) -> int:
                     not sim.state.legacy_godot_world_tick_enabled
                     and not sim.state.legacy_godot_world_save_enabled
                 ),
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 0 if result.status == "PASS" else 1
+        except Exception as exc:  # noqa: BLE001
+            payload = {
+                "fixture": args.fixture,
+                "status": "FAIL",
+                "owner": owner,
+                "message": str(exc),
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 1
+
+    if args.fixture == "FX-INDUSTRY":
+        try:
+            sim = load_fixture("FX-INDUSTRY", seed=args.seed)
+            result = run_fx_industry(sim)
+            payload = {
+                "fixture": args.fixture,
+                "status": result.status,
+                "owner": owner,
+                "seed": args.seed,
+                "details": result.details,
+                "world_id": sim.state.world_id,
+                "catalog_hash": sim.state.catalog_hash,
+                "legacy_writers_disabled": (
+                    not sim.state.legacy_godot_world_tick_enabled
+                    and not sim.state.legacy_godot_world_save_enabled
+                ),
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 0 if result.status == "PASS" else 1
+        except Exception as exc:  # noqa: BLE001
+            payload = {
+                "fixture": args.fixture,
+                "status": "FAIL",
+                "owner": owner,
+                "message": str(exc),
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 1
+
+    if args.fixture == "FX-BATTLE":
+        try:
+            sim = load_fixture("FX-BATTLE", seed=args.seed)
+            result = run_fx_battle(sim)
+            payload = {
+                "fixture": args.fixture,
+                "status": result.status,
+                "owner": owner,
+                "seed": args.seed,
+                "details": result.details,
+                "world_id": sim.state.world_id,
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 0 if result.status == "PASS" else 1
+        except Exception as exc:  # noqa: BLE001
+            payload = {
+                "fixture": args.fixture,
+                "status": "FAIL",
+                "owner": owner,
+                "message": str(exc),
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 1
+
+    if args.fixture == "FX-HAZARD":
+        try:
+            sim = load_fixture("FX-HAZARD", seed=args.seed)
+            result = run_fx_hazard(sim)
+            payload = {
+                "fixture": args.fixture,
+                "status": result.status,
+                "owner": owner,
+                "seed": args.seed,
+                "details": result.details,
+                "world_id": sim.state.world_id,
             }
             _record(args.record, payload)
             print(json.dumps(payload, indent=2))

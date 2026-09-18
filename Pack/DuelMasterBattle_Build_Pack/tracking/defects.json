@@ -266,6 +266,66 @@
         "begin_turn preserves mid-round seats; last_picks in tech_draft"
       ],
       "next_diagnostic": "pytest explore-then-start + G02_SMOKE_OK after explore/wait"
+    },
+    {
+      "id": "D013",
+      "task_id": "T058",
+      "status": "DEFERRED",
+      "summary": "Hide worker route lines by default; retain debug toggle (PB001)",
+      "reproduction_command": "bash tools/play_g03.sh",
+      "seed": "303",
+      "failing_assertion_or_log": "route lines visible by default",
+      "expected_state": "route lines hidden unless debug toggle enabled",
+      "observed_state": "deferred at G03 PASS",
+      "suspected_owner": "godot_project/client/world/worker_controller.gd",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Presentation polish; does not block G04"
+    },
+    {
+      "id": "D014",
+      "task_id": "T058",
+      "status": "DEFERRED",
+      "summary": "Slower carrier walking (PB002)",
+      "reproduction_command": "bash tools/play_g03.sh",
+      "seed": "303",
+      "failing_assertion_or_log": "carrier walk speed feels fast",
+      "expected_state": "slower readable carrier walking",
+      "observed_state": "deferred at G03 PASS",
+      "suspected_owner": "godot_project/client/world/worker_controller.gd WALK_SPEED",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Presentation polish; does not block G04"
+    },
+    {
+      "id": "D015",
+      "task_id": "T058",
+      "status": "DEFERRED",
+      "summary": "Collection, processing and unloading pauses consistent with actual flow (PB003)",
+      "reproduction_command": "bash tools/play_g03.sh",
+      "seed": "303",
+      "failing_assertion_or_log": "carriers do not pause at collect/process/unload",
+      "expected_state": "visible pauses aligned with flow stages",
+      "observed_state": "deferred at G03 PASS",
+      "suspected_owner": "worker_controller.gd / industry projection",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Presentation polish; preserve FX-INDUSTRY numerical oracle"
+    },
+    {
+      "id": "D016",
+      "task_id": "T058",
+      "status": "DEFERRED",
+      "summary": "Varied military production timings through gameplay data (PB004)",
+      "reproduction_command": "python3 tools/run_scenario.py --fixture FX-INDUSTRY",
+      "seed": "303",
+      "failing_assertion_or_log": "uniform factory completion timing feel",
+      "expected_state": "varied timings from gameplay data without breaking numerical fixture",
+      "observed_state": "deferred at G03 PASS",
+      "suspected_owner": "industry factories / content data",
+      "files_changed": [],
+      "attempted_fixes": [],
+      "next_diagnostic": "Balance/content; preserve existing G03 expected results"
     }
   ]
 }

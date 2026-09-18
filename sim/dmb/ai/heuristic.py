@@ -11,11 +11,14 @@ PRIORITY = {
     "catastrophe": 0,
     "win_vp": 1,
     "restore_core": 2,
+    "military_defend": 2,
+    "military_attack": 3,
     "expand": 3,  # city/settlement/road/legacy
     "extra": 4,  # processor / military (military deferred)
     "trade": 5,
     "diplomacy": 6,
     "tech_pick": 7,
+    "military_hold": 8,
     "noop": 9,
 }
 
@@ -58,13 +61,13 @@ def _tier(candidate: dict[str, Any], observation: dict[str, Any]) -> int:
             vp_gain = max(vp_gain, 1)
         if own_vp + vp_gain >= 10:
             return PRIORITY["win_vp"]
-        if action in {"repair", "replacement_cart", "processor"} and "missing" in str(
+        if action in {"repair", "replacement_cart", "processor", "route"} and "missing" in str(
             candidate.get("explanation") or ""
         ):
             return PRIORITY["restore_core"]
         if action in {"city", "settlement", "road", "legacy_upgrade"}:
             return PRIORITY["expand"]
-        if action == "processor":
+        if action in {"processor", "route"}:
             return PRIORITY["extra"]
         return PRIORITY["expand"]
     if kind == "trade_propose":
@@ -73,6 +76,22 @@ def _tier(candidate: dict[str, Any], observation: dict[str, Any]) -> int:
         return PRIORITY["diplomacy"]
     if kind == "tech_pick":
         return PRIORITY["tech_pick"]
+    if kind == "military_objective":
+        objective = str(params.get("objective") or "")
+        if objective == "defend":
+            return PRIORITY["military_defend"]
+        if objective == "attack":
+            # Only when observation marked target_observed — never use hidden strength.
+            if (candidate.get("benefit") or {}).get("target_observed"):
+                return PRIORITY["military_attack"]
+            return PRIORITY["noop"]
+        if objective in {"hold", "assemble"}:
+            return PRIORITY["military_hold"]
+        return PRIORITY["military_hold"]
+    if kind in {"military_move", "military_withdraw"}:
+        return PRIORITY["military_attack"]
+    if kind == "hazard_treat":
+        return PRIORITY["catastrophe"]
     if kind == "noop":
         return PRIORITY["noop"]
     return 8

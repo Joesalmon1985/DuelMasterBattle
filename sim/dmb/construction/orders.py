@@ -71,6 +71,29 @@ class ConstructionService:
             legal, reason = self.placement.can_road(faction_id, target_edge[0], target_edge[1])
         elif action == "legacy_upgrade" and target_node:
             legal, reason = self.placement.can_upgrade_legacy(faction_id, target_node)
+        elif action == "repair":
+            target = self.state.buildings.get(str(target_building))
+            if target is None:
+                legal, reason = False, "unknown_target_building"
+            elif target.get("status") == "destroyed":
+                legal, reason = False, "destroyed_building_requires_replacement"
+            elif target.get("faction_id") not in (None, faction_id):
+                legal, reason = False, "not_owned"
+            elif int(target.get("health", 0)) >= int(target.get("max_health", 0)):
+                legal, reason = False, "building_not_damaged"
+        elif action == "processor":
+            settlement = next(
+                (
+                    item
+                    for item in self.state.settlements.values()
+                    if item.get("node_id") == target_node
+                    and item.get("faction_id") == faction_id
+                    and item.get("operational", True)
+                ),
+                None,
+            )
+            if settlement is None:
+                legal, reason = False, "processor_requires_owned_operational_settlement"
         if missing:
             return {
                 "action": action,
@@ -197,6 +220,24 @@ class ConstructionService:
             legal, reason = self.placement.can_road(faction_id, target_edge[0], target_edge[1])
         elif action == "legacy_upgrade" and target_node:
             legal, reason = self.placement.can_upgrade_legacy(faction_id, target_node)
+        elif action == "repair":
+            target = self.state.buildings.get(str(order.get("target_building")))
+            if target is None:
+                legal, reason = False, "unknown_target_building"
+            elif target.get("status") == "destroyed":
+                legal, reason = False, "destroyed_building_requires_replacement"
+            elif target.get("faction_id") not in (None, faction_id):
+                legal, reason = False, "not_owned"
+            elif int(target.get("health", 0)) >= int(target.get("max_health", 0)):
+                legal, reason = False, "building_not_damaged"
+        elif action == "processor":
+            legal = any(
+                item.get("node_id") == target_node
+                and item.get("faction_id") == faction_id
+                and item.get("operational", True)
+                for item in self.state.settlements.values()
+            )
+            reason = "ok" if legal else "processor_requires_owned_operational_settlement"
 
         if not legal:
             # Illegal target: reclaim reserved goods to accessible store.
@@ -293,7 +334,27 @@ class ConstructionService:
             }
             result_payload["road_id"] = road_id
         elif action == "repair" and order.get("target_building"):
-            self.buildings.repair(str(order["target_building"]))
+            repaired = self.buildings.repair(str(order["target_building"]))
+            result_payload["building_id"] = repaired["id"]
+            result_payload["health"] = repaired["health"]
+        elif action == "processor" and target_node:
+            settlement = next(
+                item
+                for item in self.state.settlements.values()
+                if item.get("node_id") == target_node and item.get("faction_id") == faction_id
+            )
+            occupied = self.buildings._occupied_slots(target_node, "processor")
+            slot_index = 0
+            while slot_index in occupied:
+                slot_index += 1
+            processor = self.buildings.create(
+                "building.processor",
+                node_id=target_node,
+                faction_id=faction_id,
+                settlement_id=settlement.get("id"),
+                slot_index=slot_index,
+            )
+            result_payload["building_id"] = processor["id"]
         elif action == "replacement_cart":
             cart_id = self.state.ids.new("cart")
             self.state.carts[cart_id] = {

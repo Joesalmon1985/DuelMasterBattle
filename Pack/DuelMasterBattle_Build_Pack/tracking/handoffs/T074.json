@@ -1,0 +1,30 @@
+{
+  "task_id": "T074",
+  "status": "DONE",
+  "commit": "797a458e6a97e998c54fcf757c338c47d68a1649",
+  "files": [
+    "sim/dmb/adventure/duels.py",
+    "sim/dmb/adventure/__init__.py",
+    "godot_project/client/world/hazard_actor.gd",
+    "godot_project/client/encounters/encounter_host.gd",
+    "tests/sim/test_t074_hazard_duels.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "HazardDuelService playable duels"
+  ],
+  "source_rules": [
+    "C10/C08 \u00a7\u00a7hazard duels"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T074",
+      "exit_code": 0,
+      "result": "PASS; 3 Python tests"
+    }
+  ],
+  "extra_scope": {},
+  "fixture_hashes": {},
+  "defects": [],
+  "next_task": "T075"
+}

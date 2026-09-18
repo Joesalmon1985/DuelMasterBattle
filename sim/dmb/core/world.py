@@ -137,6 +137,7 @@ class WorldSim:
     turns: TurnScheduler = field(init=False)
     runner: TurnRunner = field(init=False)
     outcomes: ImmediateOutcomeService = field(init=False)
+    industry: Any = field(init=False)
     rng: RngBank = field(init=False)
 
     def __post_init__(self) -> None:
@@ -146,6 +147,9 @@ class WorldSim:
         self.turns = TurnScheduler(self.state.clock)
         self.runner = TurnRunner(self.state, self.turns)
         self.outcomes = ImmediateOutcomeService(self.state)
+        from sim.dmb.industry.service import IndustryService
+
+        self.industry = IndustryService(self.state)
         self.rng = RngBank.from_dict(self.state.rng)
         self._register_handlers()
         if self.catalog.catalog_hash == "" and self.state.definitions.get("payloads"):
@@ -246,13 +250,18 @@ class WorldSim:
     def _handle_advance(self, envelope: CommandEnvelope) -> CommandResult:
         payload = envelope.payload
         quanta = self.clock.request_advance(int(payload["delta_ms"]), int(payload["clock_sequence"]))
+        industry_events = self.industry.advance_quanta(quanta)
         self.state.world_version += 1
         events = self.events.append_batch(
             [
                 {
                     "kind": "advanced",
                     "command_id": envelope.command_id,
-                    "payload": {"quanta": quanta, "clock": self.clock.clock_view()},
+                    "payload": {
+                        "quanta": quanta,
+                        "clock": self.clock.clock_view(),
+                        "industry_events": industry_events,
+                    },
                 }
             ]
         )
@@ -262,7 +271,7 @@ class WorldSim:
             command_id=envelope.command_id,
             world_version=self.state.world_version,
             events=events,
-            payload={"quanta": quanta, "clock": self.clock.clock_view()},
+            payload={"quanta": quanta, "clock": self.clock.clock_view(), "industry_events": industry_events},
             public_feedback="advanced",
         )
 
@@ -404,6 +413,67 @@ class WorldSim:
             )
         if str(payload.get("action") or "") == "start_delivery":
             return self._start_fx_cargo_delivery(envelope)
+        action = str(payload.get("action") or "")
+        if action in {"industry_damage", "industry_strike", "industry_clear_strike", "industry_repair"}:
+            from sim.dmb.construction.orders import ConstructionService
+            from sim.dmb.people.jobs import JobService
+
+            fx = self.state.board.get("fx_industry") or {}
+            processor_id = str(fx.get("processor_id") or "")
+            if not processor_id or processor_id not in self.state.buildings:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback="industry fixture unavailable",
+                )
+            event: dict[str, Any]
+            if action == "industry_damage":
+                building = self.state.buildings[processor_id]
+                building["health"] = max(1, int(building.get("max_health", 100)) // 4)
+                event = {"kind": "industry_damage", "building_id": processor_id}
+            elif action in {"industry_strike", "industry_clear_strike"}:
+                modifier = 0 if action == "industry_strike" else 1
+                JobService(self.state).set_modifier("industry:operator:fx", modifier)
+                event = {"kind": action, "modifier": modifier}
+            else:
+                service = ConstructionService(self.state)
+                order = service.reserve_order(
+                    "repair",
+                    faction_id="faction:industry",
+                    store_id=str(fx["repair_store_id"]),
+                    target_building=processor_id,
+                )
+                if order.get("status") != "ready":
+                    return CommandResult(
+                        status="REJECTED",
+                        code="INVALID",
+                        command_id=envelope.command_id,
+                        world_version=self.state.world_version,
+                        events=[],
+                        payload=order,
+                        public_feedback=str(order.get("reason", "repair unavailable")),
+                    )
+                committed = service.commit_delivered(str(order["id"]))
+                event = {
+                    "kind": "industry_repair",
+                    "building_id": processor_id,
+                    "order_id": order["id"],
+                    "paid": dict(order["required_goods"]),
+                    "result": committed.get("completion_receipt", {}).get("result", {}),
+                }
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[event],
+                payload=event,
+                public_feedback=event["kind"].replace("_", " "),
+            )
 
         entity_id = str(payload.get("entity_id", ""))
         person = self.state.people.get(entity_id)

@@ -1,0 +1,31 @@
+{
+  "task_id": "T065",
+  "status": "DONE",
+  "commit": "7bc7768ae3717ccff57ffe4ad527901fcd3523d5",
+  "files": [
+    "sim/dmb/player/magic.py",
+    "sim/dmb/player/__init__.py",
+    "sim/dmb/core/effects.py",
+    "godot_project/client/ui/magic_targeting.gd",
+    "tests/sim/test_t065_magic.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "MagicService.destroy/validate",
+    "apply_effect idempotent destruction"
+  ],
+  "source_rules": [
+    "C07 \u00a7\u00a7wizard destruction"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T065",
+      "exit_code": 0,
+      "result": "PASS; 3 Python tests"
+    }
+  ],
+  "extra_scope": {},
+  "fixture_hashes": {},
+  "defects": [],
+  "next_task": "T066"
+}

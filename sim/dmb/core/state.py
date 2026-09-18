@@ -59,6 +59,9 @@ class WorldState:
     people: dict[str, Any] = field(default_factory=dict)
     carts: dict[str, Any] = field(default_factory=dict)
     units: dict[str, Any] = field(default_factory=dict)
+    formations: dict[str, Any] = field(default_factory=dict)
+    battles: dict[str, Any] = field(default_factory=dict)
+    hazards: dict[str, Any] = field(default_factory=dict)
     stocks: dict[str, Any] = field(default_factory=dict)
     orders: dict[str, Any] = field(default_factory=dict)
     roads: dict[str, Any] = field(default_factory=dict)
@@ -69,6 +72,17 @@ class WorldState:
     research: dict[str, Any] = field(default_factory=dict)
     tech_draft: dict[str, Any] = field(default_factory=dict)
     diplomacy: dict[str, Any] = field(default_factory=dict)
+    industry: dict[str, Any] = field(
+        default_factory=lambda: {
+            "schema_version": 1,
+            "layers": {},
+            "primary_bindings": {},
+            "processors": {},
+            "routes": {},
+            "factories": {},
+            "events": [],
+        }
+    )
     tombstones: dict[str, Any] = field(default_factory=dict)
     command_receipts: dict[str, Any] = field(default_factory=dict)
     definitions: dict[str, Any] = field(default_factory=dict)
@@ -100,6 +114,7 @@ class WorldState:
                 filtered["role"] = record.get("role")
             people[entity_id] = filtered
         from sim.dmb.presentation.journeys import journeys_for_view
+        from sim.dmb.industry.projection import IndustryProjection
 
         payload: dict[str, Any] = {
             "world_id": self.world_id,
@@ -119,6 +134,17 @@ class WorldState:
             "factions": lambda: deepcopy(self.factions),
             "fx_cargo": lambda: deepcopy(self.board.get("fx_cargo") or {}),
             "tech_draft": lambda: deepcopy(getattr(self, "tech_draft", {}) or {}),
+            "industry": lambda: deepcopy(self.industry),
+            "fx_industry": lambda: deepcopy(self.board.get("fx_industry") or {}),
+            "fx_battle": lambda: deepcopy(self.board.get("fx_battle") or {}),
+            "fx_hazard": lambda: deepcopy(self.board.get("fx_hazard") or {}),
+            "battles": lambda: deepcopy(self.battles),
+            "hazards": lambda: deepcopy(self.hazards),
+            "buildings": lambda: deepcopy(self.buildings),
+            "units": lambda: deepcopy(self.units),
+            "industry_workers": lambda: IndustryProjection(self).workers(),
+            "industry_connections": lambda: IndustryProjection(self).connections(),
+            "industry_factories": lambda: IndustryProjection(self).factory_readout(),
             "leases": lambda: deepcopy(self.leases),
             "command_receipts": lambda: deepcopy(self.command_receipts),
             "knowledge_raw": lambda: deepcopy(self.knowledge),
@@ -133,6 +159,13 @@ class WorldState:
                 "factions",
                 "fx_cargo",
                 "tech_draft",
+                "industry",
+                "fx_industry",
+                "buildings",
+                "units",
+                "industry_workers",
+                "industry_connections",
+                "industry_factories",
             }
             for key in wanted:
                 factory = economy_extras.get(key)
@@ -185,6 +218,9 @@ class WorldState:
             "people": deepcopy(self.people),
             "carts": deepcopy(self.carts),
             "units": deepcopy(self.units),
+            "formations": deepcopy(self.formations),
+            "battles": deepcopy(self.battles),
+            "hazards": deepcopy(self.hazards),
             "stocks": deepcopy(self.stocks),
             "orders": deepcopy(self.orders),
             "roads": deepcopy(self.roads),
@@ -192,6 +228,7 @@ class WorldState:
             "items": deepcopy(self.items),
             "leases": deepcopy(self.leases),
             "knowledge": deepcopy(self.knowledge),
+            "industry": deepcopy(self.industry),
             "tombstones": deepcopy(self.tombstones),
             "command_receipts": deepcopy(self.command_receipts),
             "definitions": deepcopy(self.definitions),
@@ -218,6 +255,9 @@ class WorldState:
             people=dict(payload.get("people", {})),
             carts=dict(payload.get("carts", {})),
             units=dict(payload.get("units", {})),
+            formations=dict(payload.get("formations", {})),
+            battles=dict(payload.get("battles", {})),
+            hazards=dict(payload.get("hazards", {})),
             stocks=dict(payload.get("stocks", {})),
             orders=dict(payload.get("orders", {})),
             roads=dict(payload.get("roads", {})),
@@ -225,6 +265,15 @@ class WorldState:
             items=dict(payload.get("items", {})),
             leases=dict(payload.get("leases", {})),
             knowledge=dict(payload.get("knowledge", {})),
+            industry=dict(payload.get("industry", {
+                "schema_version": 1,
+                "layers": {},
+                "primary_bindings": {},
+                "processors": {},
+                "routes": {},
+                "factories": {},
+                "events": [],
+            })),
             tombstones=dict(payload.get("tombstones", {})),
             command_receipts=dict(payload.get("command_receipts", {})),
             definitions=dict(payload.get("definitions", {})),

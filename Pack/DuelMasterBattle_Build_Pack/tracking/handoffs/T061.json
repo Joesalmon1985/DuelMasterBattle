@@ -1,0 +1,35 @@
+{
+  "task_id": "T061",
+  "status": "DONE",
+  "commit": "e68145c16efee5603c40e7e1ef1d36a865b16314",
+  "files": [
+    "sim/dmb/military/movement.py",
+    "sim/dmb/military/formations.py",
+    "sim/dmb/military/units.py",
+    "sim/dmb/ai/legal.py",
+    "tests/sim/test_t061_movement.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "FormationDirector.legal_objectives/activate/mark_withdrawal",
+    "StrategicMovement \u22642 edges stop on hostility",
+    "LegalActionGenerator military_move/withdraw"
+  ],
+  "source_rules": [
+    "C07 \u00a7\u00a7strategic activation/withdrawal"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T061",
+      "exit_code": 0,
+      "result": "PASS; 5 Python tests"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/military/formations.py": "Expose C07 movement API on FormationDirector.",
+    "sim/dmb/military/units.py": "Track spawned_turn so new units cannot change node same activation."
+  },
+  "fixture_hashes": {},
+  "defects": [],
+  "next_task": "T062"
+}

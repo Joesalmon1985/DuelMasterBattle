@@ -1,0 +1,21 @@
+{
+  "gate": "G03",
+  "status": "PASS",
+  "candidate_implementation": "f37ffe1ceee75209015fd1016e78bf9c74935ce4",
+  "accepted_by": "Joe Salmon",
+  "accepted_at": "2026-09-18T11:53:00Z",
+  "accepted_build": "f37ffe1ceee75209015fd1016e78bf9c74935ce4",
+  "branch": "BuildPackV03",
+  "observations": [
+    "Joe accepts G03 as functionally satisfactory.",
+    "Joe authorizes progression to G04.",
+    "Deferred (non-blocking) presentation/balance backlog: hide worker route lines by default with debug toggle; slower carrier walking; collection/processing/unloading pauses consistent with actual flow; varied military production timings through gameplay data.",
+    "Existing G03 numerical fixture and expected results must be preserved."
+  ],
+  "human_result": "PASS",
+  "notes": "Explicit human acceptance against the latest playtested per-connection carrier build. G01/G02 acceptance preserved. No invented test evidence.",
+  "prior_fix_required": {
+    "at": "2026-09-18T10:00:00Z",
+    "summary": "Replace single touring worker with per-connection carriers; path block must not stop production."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "task_id": "T049",
+  "status": "DONE",
+  "commit": "a6069352129e6bd3afa9377bf6bf976ca0a2163c",
+  "files": [
+    "godot_project/content/source/resources/",
+    "godot_project/content/source/recipes/",
+    "tools/content/import_recipes.py",
+    "tests/sim/test_t049_catalogues.py",
+    "tools/check.py"
+  ],
+  "public_contracts": ["48 industrial resources", "240 full recipes", "MVP16 per implemented era"],
+  "source_rules": ["C06 catalogue and route defaults"],
+  "checks": [
+    {"command": "python3 tools/check.py --task T049", "exit_code": 0, "result": "PASS; 3 pytest checks and reproducibility check"}
+  ],
+  "defects": [],
+  "next_task": "T050",
+  "notes": "Catan IDs are separate; source aliases are explicit; gameplay role remains metadata."
+}

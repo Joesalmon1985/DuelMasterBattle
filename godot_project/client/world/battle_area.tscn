@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://client/combat/local_battle.gd" id="1_local"]
+[ext_resource type="Script" path="res://client/combat/unit_controller.gd" id="2_unit"]
+
+[node name="BattleArea" type="Node2D"]
+script = ExtResource("1_local")
+
+[node name="Ground" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.18, 0.22, 0.2, 1)
+
+[node name="Units" type="Node2D" parent="."]
+
+[node name="UnitTemplate" type="Node2D" parent="Units"]
+visible = false
+script = ExtResource("2_unit")
+
+[node name="Body" type="ColorRect" parent="Units/UnitTemplate"]
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+color = Color(0.35, 0.75, 0.4, 1)
+
+[node name="Label" type="Label" parent="Units/UnitTemplate"]
+offset_left = -40.0
+offset_top = -28.0
+offset_right = 80.0
+offset_bottom = -8.0
+theme_override_font_sizes/font_size = 12
+text = "unit"
+
+[node name="Hud" type="CanvasLayer" parent="."]
+
+[node name="Status" type="Label" parent="Hud"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 400.0
+offset_bottom = 40.0
+text = "Local battle lease"

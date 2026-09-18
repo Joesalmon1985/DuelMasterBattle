@@ -1,0 +1,35 @@
+{
+  "task_id": "T059",
+  "status": "DONE",
+  "commit": "3961778cfd8d6fdcbebbdc77bc6a02682d8d86a0",
+  "files": [
+    "sim/dmb/military/units.py",
+    "sim/dmb/military/formations.py",
+    "sim/dmb/military/buffs.py",
+    "sim/dmb/military/__init__.py",
+    "sim/dmb/core/state.py",
+    "sim/dmb/core/ids.py",
+    "tests/sim/test_t059_units.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "MilitaryService.spawn/group/apply_casualties/receive_checkpoint",
+    "FormationDirector exclusive unit membership",
+    "BuffService timed shield/frequency/range stacks"
+  ],
+  "source_rules": ["C07 §§unit/formation/buff state"],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T059",
+      "exit_code": 0,
+      "result": "PASS; 3 Python tests"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/core/state.py": "Persist formations/battles/hazards registries with units.",
+    "sim/dmb/core/ids.py": "Add formation/battle/cube/visit id kinds for C07/C08."
+  },
+  "fixture_hashes": {},
+  "defects": [],
+  "next_task": "T060"
+}

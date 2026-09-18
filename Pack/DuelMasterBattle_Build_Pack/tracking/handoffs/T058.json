@@ -1,0 +1,70 @@
+{
+  "task_id": "T058",
+  "status": "DONE",
+  "commit": "f1628cf7f18c1b911ac4f34e5e1e215587460713",
+  "files": [
+    "godot_project/client/debug/industry_view.gd",
+    "godot_project/client/scenes/g03_shell.gd",
+    "godot_project/client/scenes/g03_shell.tscn",
+    "godot_project/client/tests/run_g03_smoke.gd",
+    "godot_project/client/tests/run_g03_capture.gd",
+    "sim/dmb/core/state.py",
+    "sim/dmb/core/world.py",
+    "sim/dmb/testing/fixtures.py",
+    "tools/play_g03.sh",
+    "tools/playtest.sh",
+    "Playtest.bat",
+    "tools/windows_playtest.py",
+    "tools/run_scenario.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G03/"
+  ],
+  "public_contracts": [
+    "Playable Python-backed G03 shell",
+    "DmbIndustryView allocation/constraint/finite diagnostics",
+    "FX-INDUSTRY production scenario record",
+    "Linux and Windows G01-G03 playtest launchers"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T058",
+      "exit_code": 0,
+      "result": "PASS; 12 Python tests, G03 sidecar smoke, 9 evidence files"
+    },
+    {
+      "command": "python3 tools/check.py --gate G01",
+      "exit_code": 0,
+      "result": "PASS; 22 Python tests and three Godot checks"
+    },
+    {
+      "command": "python3 tools/check.py --gate G02",
+      "exit_code": 0,
+      "result": "PASS; 36 Python tests and five Godot checks"
+    },
+    {
+      "command": "python3 tools/check.py --gate G03",
+      "exit_code": 0,
+      "result": "PASS; 12 Python tests, packet evidence, G03/G02/G01 Godot smokes"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/core/state.py": "Expose bounded industry/worker read projections to the client.",
+    "sim/dmb/core/world.py": "Provide real Python-owned damage, strike, cause removal, and paid repair controls.",
+    "sim/dmb/testing/fixtures.py": "Seed the persistent FX worker/repair stock and production scenario record.",
+    "tools/run_scenario.py": "Connect required FX-INDUSTRY evidence runner.",
+    "launcher_and_scene_files": "Required by Joe's explicit playable and cross-platform launcher scope."
+  },
+  "evidence": {
+    "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G03/packet.md",
+    "scenario": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G03/fx_industry_record.json",
+    "platform": "Linux",
+    "seed": 303,
+    "save_slot": "g03_playtest"
+  },
+  "defects": [
+    "Sustained focused-window inspector-open/closed freeze comparison remains a human playtest step.",
+    "Windows launcher was not executed on the Linux host.",
+    "Godot smoke shutdown reports existing resource-leak warnings despite exit 0 and passing oracle."
+  ],
+  "next_task": "STOP_FOR_G03"
+}

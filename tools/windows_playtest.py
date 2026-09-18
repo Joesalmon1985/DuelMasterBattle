@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Windows playtest helper for G01/G02 launch and gate checks.
+"""Windows playtest helper for G01/G02/G03 launch and gate checks.
 
 Used by Playtest.bat. Resolves native Godot/Python, launches the same scenes
 and fixtures as tools/play_g01.sh / tools/play_g02.sh, and invokes
@@ -28,6 +28,12 @@ G01_FIXTURE = "FX-CLOCK"
 G01_SEED = "7"
 G02_FIXTURE = "FX-CARGO"
 G02_SEED = "202"
+G03_FIXTURE = "FX-INDUSTRY"
+G03_SEED = "303"
+G04_BATTLE_FIXTURE = "FX-BATTLE"
+G04_BATTLE_SEED = "404"
+G04_HAZARD_FIXTURE = "FX-HAZARD"
+G04_HAZARD_SEED = "408"
 DEFAULT_RESOLUTION = "450x800"
 
 
@@ -291,6 +297,33 @@ def cmd_play_g02(_: argparse.Namespace) -> int:
     )
 
 
+def cmd_play_g03(_: argparse.Namespace) -> int:
+    return launch_godot(
+        scene="res://client/scenes/g03_shell.tscn",
+        fixture=G03_FIXTURE,
+        seed=G03_SEED,
+        resolution=DEFAULT_RESOLUTION,
+    )
+
+
+def cmd_play_g04_battle(_: argparse.Namespace) -> int:
+    return launch_godot(
+        scene="res://client/scenes/g04_battle_shell.tscn",
+        fixture=G04_BATTLE_FIXTURE,
+        seed=G04_BATTLE_SEED,
+        resolution=DEFAULT_RESOLUTION,
+    )
+
+
+def cmd_play_g04_hazard(_: argparse.Namespace) -> int:
+    return launch_godot(
+        scene="res://client/scenes/g04_hazard_shell.tscn",
+        fixture=G04_HAZARD_FIXTURE,
+        seed=G04_HAZARD_SEED,
+        resolution=DEFAULT_RESOLUTION,
+    )
+
+
 def cmd_play_g01(_: argparse.Namespace) -> int:
     # Match documented G01 gate launch (FX-CLOCK / seed 7) with --direct scene.
     return launch_godot(
@@ -412,9 +445,22 @@ def cmd_check_g02(_: argparse.Namespace) -> int:
     return run_gate("G02")
 
 
+def cmd_check_g03(_: argparse.Namespace) -> int:
+    return run_gate("G03")
+
+
+def cmd_check_g04(_: argparse.Namespace) -> int:
+    return run_gate("G04")
+
+
+def cmd_check_all(_: argparse.Namespace) -> int:
+    codes = [run_gate("G01"), run_gate("G02"), run_gate("G03"), run_gate("G04")]
+    # Any nonzero / non-PASS must surface.
+    return 0 if all(code == 0 for code in codes) else 1
+
+
 def cmd_check_both(_: argparse.Namespace) -> int:
     codes = [run_gate("G01"), run_gate("G02")]
-    # Any nonzero / non-PASS must surface.
     return 0 if all(code == 0 for code in codes) else 1
 
 
@@ -423,40 +469,45 @@ def interactive_menu() -> int:
         print()
         print("DuelMasterBattle Windows playtest")
         print(f"Repo: {ROOT}")
-        print("1. Play G02 directly — default portrait 450x800")
-        print("2. Play G01 directly")
-        print("3. Open the main menu")
-        print("4. Run automated G01 checks")
-        print("5. Run automated G02 checks")
-        print("6. Run both gates")
+        print("1. Play G04 battle — default portrait 450x800")
+        print("2. Play G04 hazard — default portrait 450x800")
+        print("3. Play G03 directly")
+        print("4. Play G02 directly")
+        print("5. Play G01 directly")
+        print("6. Open the main menu")
+        print("7. Run automated G04 checks")
+        print("8. Run all implemented gates G01-G04")
         print("0. Exit")
         choice = input("Select: ").strip()
         if choice == "1":
-            code = cmd_play_g02(argparse.Namespace())
-            if code != 0:
-                print(f"Launch ended with exit code {code}")
+            code = cmd_play_g04_battle(argparse.Namespace())
+            if code:
                 input("Press Enter to continue...")
         elif choice == "2":
-            code = cmd_play_g01(argparse.Namespace())
-            if code != 0:
-                print(f"Launch ended with exit code {code}")
+            code = cmd_play_g04_hazard(argparse.Namespace())
+            if code:
                 input("Press Enter to continue...")
         elif choice == "3":
-            code = cmd_play_menu(argparse.Namespace())
-            if code != 0:
-                print(f"Launch ended with exit code {code}")
+            code = cmd_play_g03(argparse.Namespace())
+            if code:
                 input("Press Enter to continue...")
         elif choice == "4":
-            code = cmd_check_g01(argparse.Namespace())
-            input("Press Enter to continue...")
-            if code != 0:
-                # Keep menu usable; nonzero already printed.
-                pass
+            code = cmd_play_g02(argparse.Namespace())
+            if code:
+                input("Press Enter to continue...")
         elif choice == "5":
-            code = cmd_check_g02(argparse.Namespace())
-            input("Press Enter to continue...")
+            code = cmd_play_g01(argparse.Namespace())
+            if code:
+                input("Press Enter to continue...")
         elif choice == "6":
-            code = cmd_check_both(argparse.Namespace())
+            code = cmd_play_menu(argparse.Namespace())
+            if code:
+                input("Press Enter to continue...")
+        elif choice == "7":
+            code = cmd_check_g04(argparse.Namespace())
+            input("Press Enter to continue...")
+        elif choice == "8":
+            code = cmd_check_all(argparse.Namespace())
             input("Press Enter to continue...")
         elif choice == "0":
             return 0
@@ -469,11 +520,17 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command")
     sub.add_parser("resolve", help="Resolve and remember Godot/Python")
     sub.add_parser("play-g02", help="Launch G02 shell directly")
+    sub.add_parser("play-g03", help="Launch G03 shell directly")
+    sub.add_parser("play-g04-battle", help="Launch G04 battle shell")
+    sub.add_parser("play-g04-hazard", help="Launch G04 hazard shell")
     sub.add_parser("play-g01", help="Launch G01 shell directly")
     sub.add_parser("play-menu", help="Launch main menu")
     sub.add_parser("check-g01", help="Run tools/check.py --gate G01")
     sub.add_parser("check-g02", help="Run tools/check.py --gate G02")
-    sub.add_parser("check-both", help="Run G01 then G02 gates")
+    sub.add_parser("check-g03", help="Run tools/check.py --gate G03")
+    sub.add_parser("check-g04", help="Run tools/check.py --gate G04")
+    sub.add_parser("check-all", help="Run G01 through G04 gates")
+    sub.add_parser("check-both", help="Run G01 and G02 gates")
     sub.add_parser("menu", help="Interactive menu (default)")
     return parser
 
@@ -485,10 +542,16 @@ def main(argv: list[str] | None = None) -> int:
     handlers = {
         "resolve": cmd_resolve,
         "play-g02": cmd_play_g02,
+        "play-g03": cmd_play_g03,
+        "play-g04-battle": cmd_play_g04_battle,
+        "play-g04-hazard": cmd_play_g04_hazard,
         "play-g01": cmd_play_g01,
         "play-menu": cmd_play_menu,
         "check-g01": cmd_check_g01,
         "check-g02": cmd_check_g02,
+        "check-g03": cmd_check_g03,
+        "check-g04": cmd_check_g04,
+        "check-all": cmd_check_all,
         "check-both": cmd_check_both,
         "menu": lambda _a: interactive_menu(),
     }

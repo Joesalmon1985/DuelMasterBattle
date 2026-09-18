@@ -1,0 +1,12 @@
+{
+  "fixture": "FX-HAZARD",
+  "status": "PASS",
+  "owner": "T069-T075",
+  "seed": 408,
+  "details": {
+    "seed": 408,
+    "active_cubes": 3,
+    "save_slot": "g04_hazard"
+  },
+  "world_id": "world:fx-hazard"
+}

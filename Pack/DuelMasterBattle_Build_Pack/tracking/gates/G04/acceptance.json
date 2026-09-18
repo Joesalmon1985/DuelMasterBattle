@@ -1,0 +1,21 @@
+{
+  "gate": "G04",
+  "status": "AWAITING_HUMAN",
+  "fixtures": [
+    "FX-BATTLE",
+    "FX-HAZARD"
+  ],
+  "seeds": {
+    "FX-BATTLE": 404,
+    "FX-HAZARD": 408
+  },
+  "saves": [
+    "g04_battle",
+    "g04_hazard",
+    "g04_hazard_terminal"
+  ],
+  "platform_linux": true,
+  "platform_windows": "unavailable_not_run",
+  "candidate_commit_pending": false,
+  "candidate_commit": "a6d6ff702c30fd565a5dadf0243aa3d743296921"
+}

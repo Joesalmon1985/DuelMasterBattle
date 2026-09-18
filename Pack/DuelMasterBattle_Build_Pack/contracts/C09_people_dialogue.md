@@ -26,7 +26,7 @@ Create each area's stable layout once from world/node seed, then save persistent
 
 Local movement is Godot-authoritative; snapshots preserve position. Cross an exit only after acknowledged Travel. A target outside interaction range (baseline two tiles) can be observed; within range it offers valid context actions. Visible but unknown entities remain targetable. Unknown person → occupation → faction → name/detail depends on learned facts. A discovered map displays remembered information with age, not live omniscient enemy strength.
 
-Worker work/idle/carry cues follow real route and bottleneck status. Movement obstruction changes animation only. Soldiers use actual collision/tactics. Destroyed buildings and people must never reappear because a fresh view was built. Era upgrades reuse building anchors; displaced important objects move to a recorded accessible location.
+Worker work/idle/carry cues follow real route and bottleneck status. **Industry carriers** are assigned per active directed building connection (one resource type, deliver then empty return); they must not tour unrelated buildings. Movement obstruction changes animation only. Soldiers use actual collision/tactics. Destroyed buildings and people must never reappear because a fresh view was built. Era upgrades reuse building anchors; displaced important objects move to a recorded accessible location.
 
 ## Seven Aspects
 
