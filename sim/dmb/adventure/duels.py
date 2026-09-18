@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 from typing import Any
 
 from sim.dmb.hazards.service import CatastropheService
@@ -52,8 +53,20 @@ class HazardDuelService:
             "state": "ACTIVE",
             "playable": True,
         }
+        from sim.dmb.adventure.mastermind import MastermindDuel
+
+        if not isinstance(getattr(self.state, "rng", None), dict):
+            self.state.rng = {}
+        # Seed from world RNG stream so save/resume does not reroll mid-duel secrets.
+        stream = int(self.state.rng.get("stream", 0) or 0)
+        MastermindDuel.attach(record, rng=random.Random(stream ^ (hash(cube_id) & 0xFFFFFFFF)))
+        self.state.rng["stream"] = stream + 1
         self.state.leases[duel_id] = record
-        return {"status": "started", "duel": record}
+        return {
+            "status": "started",
+            "duel": record,
+            "public": MastermindDuel.public_view(record),
+        }
 
     def resolve(self, duel_id: str, *, success: bool, command_id: str | None = None) -> dict[str, Any]:
         duel = (getattr(self.state, "leases", {}) or {}).get(duel_id)

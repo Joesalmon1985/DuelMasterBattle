@@ -1,0 +1,28 @@
+{
+  "repair_id": "R01",
+  "status": "DONE",
+  "started_from_head": "d265f6005c621dcd9b0d60348590e07083d9e312",
+  "summary": "Integrated G04 Interaction Repair Brief into pack: FIX_REQUIRED, amendments, contracts, gate checklist, T079/T085 deps, cursor rule, traceability.",
+  "files": [
+    "Pack/DuelMasterBattle_Build_Pack/EXECUTION_AMENDMENTS.md",
+    "Pack/DuelMasterBattle_Build_Pack/gates/G04.md",
+    "Pack/DuelMasterBattle_Build_Pack/contracts/C04_board_building.md",
+    "Pack/DuelMasterBattle_Build_Pack/contracts/C07_combat.md",
+    "Pack/DuelMasterBattle_Build_Pack/contracts/C08_catastrophe.md",
+    "Pack/DuelMasterBattle_Build_Pack/contracts/C09_people_dialogue.md",
+    "Pack/DuelMasterBattle_Build_Pack/contracts/C10_adventure.md",
+    "Pack/DuelMasterBattle_Build_Pack/contracts/C13_content_presentation.md",
+    "Pack/DuelMasterBattle_Build_Pack/tasks/T079.md",
+    "Pack/DuelMasterBattle_Build_Pack/tasks/T085.md",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/interaction_traceability.json",
+    ".cursor/rules/dmb-build-pack.mdc"
+  ],
+  "checks": [
+    {
+      "command": "document review",
+      "result": "G04 FIX_REQUIRED; T077 NOT_STARTED; G01-G03 PASS preserved"
+    }
+  ],
+  "next": "R02"
+}

@@ -1,8 +1,6 @@
-# G04 known defects (FIX candidate)
+# G04 known defects / limits (Interaction Repair handoff)
 
-- Windows Playtest.bat options are wired but were **not executed** on this Linux host.
-- Dense melee can overlap unit labels; shapes/HP bars remain distinguishable.
-- Bootstrap FX-CLOCK NPC may still appear as "unknown" in hazard/battle shells (cosmetic).
-- Godot smoke/playable shutdown may print ObjectDB/resource leak warnings despite exit 0.
-- Off-screen battle remains an approximation (by design); exact local/offscreen casualty equality is not required.
-- G03 presentation/balance backlog (PB001–PB004) remains deferred and non-blocking.
+- Windows playtest not executed on this Linux host.
+- Dense melee unit labels may overlap cosmetically.
+- Spellbook overlay on G02 can intercept chrome Wait pointer hits; production Wait still works via HUD signal (smoke covers both).
+- Automated PASS is necessary but not sufficient — Joe's walk/click/spell and hazard Challenge checklist is decisive.

@@ -1,13 +1,18 @@
 extends "res://client/scenes/g01_shell.gd"
 
 ## G04 FX-BATTLE playable shell — isolated save g04_battle.
+## Target-first interaction: distant Observe; nearby attached Observe/Buff/Destroy.
 
 const UnitController = preload("res://client/combat/unit_controller.gd")
 const LocalBattle = preload("res://client/combat/local_battle.gd")
 const EncounterHost = preload("res://client/encounters/encounter_host.gd")
+const ChoiceCard = preload("res://client/ui/attached_choice_card.gd")
+const SemanticLabels = preload("res://client/ui/semantic_labels.gd")
+const ContextActions = preload("res://client/ui/context_actions.gd")
 const G04_BATTLE_SAVE := "g04_battle"
 const TILE := 64.0
 const CHECKPOINT_EVERY_STEPS := 10
+const INTERACTION_RANGE_TILES := 2.0
 
 var _battle
 var _host
@@ -15,15 +20,16 @@ var _units_layer: Node2D
 var _unit_nodes: Dictionary = {}
 var _obstacle_nodes: Array = []
 var _selected_unit: String = ""
-var _spell_mode := "destroy"
-var _spell_bar: HBoxContainer
 var _feedback: Label
 var _view_acc := 0.0
-var _combat_acc_ms := 0.0
 var _lease_opened := false
 var _steps_since_checkpoint := 0
-var _last_status := ""
 var _building_nodes: Dictionary = {}
+var _choice_card
+var _router
+var _choice_pause_token := ""
+var _choice_open := false
+var _fx_labels: Dictionary = {}
 
 
 func _ready() -> void:
@@ -33,11 +39,16 @@ func _ready() -> void:
 	super()
 	_battle = LocalBattle.new()
 	_host = EncounterHost.new()
+	_router = ContextActions.new()
 	_units_layer = Node2D.new()
 	_units_layer.name = "BattleUnits"
 	_units_layer.z_index = 20
 	_world_host.add_child(_units_layer)
-	_build_spell_bar()
+	_choice_card = ChoiceCard.new()
+	_choice_card.name = "ChoiceCard"
+	_ui_root.add_child(_choice_card)
+	_choice_card.action_chosen.connect(_on_choice_action)
+	_choice_card.closed.connect(_on_choice_closed)
 	_feedback = Label.new()
 	_feedback.set_anchors_preset(PRESET_TOP_WIDE)
 	_feedback.offset_left = 12
@@ -48,43 +59,55 @@ func _ready() -> void:
 	_feedback.add_theme_font_size_override("font_size", 13)
 	_feedback.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_ui_root.add_child(_feedback)
-	# Avoid overlapping the shared prompt with oversized world messages.
-	_prompt.text = "Select unit, then Destroy / Shield / AtkSpd / Range. No army orders."
-	_set_status("G04 FX-BATTLE — walk + cast; armies fight autonomously")
+	_prompt.text = "Click a unit: far = Observe, near = choices. No permanent spell bar."
+	_set_status("G04 FX-BATTLE — walk + target choices; armies fight autonomously")
+	_apply_mode_chrome_visibility()
 	call_deferred("_open_battle_lease")
 
 
-func _build_spell_bar() -> void:
-	_spell_bar = HBoxContainer.new()
-	_spell_bar.name = "SpellBar"
-	_spell_bar.set_anchors_preset(PRESET_BOTTOM_WIDE)
-	_spell_bar.offset_left = 8
-	_spell_bar.offset_right = -8
-	_spell_bar.offset_top = -150
-	_spell_bar.offset_bottom = -88
-	_spell_bar.add_theme_constant_override("separation", 6)
-	_spell_bar.alignment = BoxContainer.ALIGNMENT_CENTER
-	_ui_root.add_child(_spell_bar)
-	for item in [
-		["destroy", "Destroy"],
-		["shield", "Shield"],
-		["frequency", "Atk Spd"],
-		["range", "Range"],
-		["cast", "Cast"],
-	]:
-		var btn := Button.new()
-		btn.text = item[1]
-		btn.custom_minimum_size = Vector2(72, 40)
-		btn.pressed.connect(_on_spell_button.bind(item[0]))
-		_spell_bar.add_child(btn)
+func _configure_spellbook() -> void:
+	super._configure_spellbook()
+	_spell_binder.setup(_spell_model, "g04_battle", "G04 Battle Spellbook")
+	_spell_binder.build_g04_battle_pages()
+	_spell_binder.register("wait", func(_p): return _spell_wait())
+	_spell_binder.register("invalid_exit", func(_p): return _spell_invalid())
+	_spell_binder.register("pause", func(_p): return _spell_pause())
+	_spell_binder.register("resume", func(_p): return _spell_resume())
+	_spell_binder.register("save", func(_p): return _spell_save_battle())
+	_spell_binder.register("load", func(_p): return _spell_load_battle())
+	_spell_binder.register("bridge_fail", func(_p): return _spell_bridge_fail())
+	_spell_binder.register("toggle_diag", func(_p): _toggle_diag(); return {"status": "OK", "message": "Dev panel %s" % ("open" if _diag_open else "closed")})
+	_spell_binder.register("spell_destroy", func(p): return _spell_cast_targeted(p, "destroy"))
+	_spell_binder.register("spell_shield", func(p): return _spell_cast_targeted(p, "shield"))
+	_spell_binder.register("spell_frequency", func(p): return _spell_cast_targeted(p, "frequency"))
+	_spell_binder.register("spell_range", func(p): return _spell_cast_targeted(p, "range"))
 
 
-func _on_spell_button(mode: String) -> void:
-	if mode == "cast":
-		_cast_selected()
-		return
-	_spell_mode = mode
-	_feedback.text = "Spell ready: %s — select a unit, then Cast" % mode.capitalize()
+func _apply_mode_chrome_visibility() -> void:
+	# Permanent spell toolbar removed — contextual cards only.
+	pass
+
+
+func _spell_save_battle() -> Dictionary:
+	_on_save()
+	return {"status": "OK", "message": _prompt.text}
+
+
+func _spell_load_battle() -> Dictionary:
+	_on_load()
+	return {"status": "OK", "message": _prompt.text}
+
+
+func _spell_cast_targeted(payload: Dictionary, mode: String) -> Dictionary:
+	_selected_unit = str(payload.get("target_id", ""))
+	if _selected_unit == "":
+		return {"status": "REJECTED", "message": "No target"}
+	if mode == "destroy":
+		_apply_destroy(_selected_unit)
+	else:
+		_apply_buff(_selected_unit, mode)
+	var ok := _feedback.text.find("rejected") < 0 and _feedback.text.find("Select") < 0
+	return {"status": "ACCEPTED" if ok else "REJECTED", "message": _feedback.text}
 
 
 func _open_battle_lease() -> void:
@@ -105,26 +128,187 @@ func _open_battle_lease() -> void:
 		"snapshot": snap,
 	})
 	_lease_opened = true
+	if _client.has_player_cache():
+		var view: Dictionary = _client.cached_player_view()
+		_fx_labels = view.get("fx_battle", {}).get("labels", {})
 	_sync_unit_nodes_from_battle()
 	_draw_obstacles(snap.get("blockers", []))
-	_feedback.text = "Battle lease open — units advancing"
+	_feedback.text = "Battle lease open — click units to Observe or choose spells"
+
+
+func _public_label(uid: String) -> String:
+	if _fx_labels.has(uid):
+		return str(_fx_labels[uid])
+	var node = _unit_nodes.get(uid)
+	if node == null:
+		return "Unit"
+	var view := {
+		"faction_id": node.faction_id if "faction_id" in node else "",
+		"archetype": node.archetype if "archetype" in node else "",
+		"known": true,
+	}
+	return SemanticLabels.label_for(view)
+
+
+func _wizard_tile() -> Array:
+	if _area != null and _area.has_method("wizard_grid"):
+		return _area.wizard_grid()
+	return [4.0, 5.0]
+
+
+func _unit_tile(uid: String) -> Array:
+	var node = _unit_nodes.get(uid)
+	if node == null:
+		return []
+	return [snapped(node.position.x / TILE - 0.5, 0.01), snapped(node.position.y / TILE - 0.5, 0.01)]
+
+
+func _is_nearby(uid: String) -> bool:
+	var w := _wizard_tile()
+	var t := _unit_tile(uid)
+	if t.is_empty():
+		return false
+	return SemanticLabels.in_interaction_range(w, t, INTERACTION_RANGE_TILES)
+
+
+func _collect_local_poses() -> Dictionary:
+	var poses := {"wizard": _wizard_tile()}
+	for uid in _unit_nodes.keys():
+		poses[uid] = _unit_tile(uid)
+	return poses
+
+
+func _acquire_choice_pause() -> void:
+	if _choice_pause_token != "":
+		return
+	var reply := _cmd("Pause", {"reason": "choice"})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_choice_pause_token = str(reply.get("payload", {}).get("token", ""))
+	_choice_open = true
+
+
+func _release_choice_pause() -> void:
+	if _choice_pause_token != "":
+		_cmd("Resume", {"token": _choice_pause_token})
+		_choice_pause_token = ""
+	_choice_open = false
+
+
+func _open_observation(uid: String) -> void:
+	_selected_unit = uid
+	for id in _unit_nodes.keys():
+		_unit_nodes[id].set_selected(id == uid)
+	var label := _public_label(uid)
+	_feedback.text = label
+	_prompt.text = label
+
+
+func _open_choice_card(uid: String) -> void:
+	_selected_unit = uid
+	for id in _unit_nodes.keys():
+		_unit_nodes[id].set_selected(id == uid)
+	var label := _public_label(uid)
+	_acquire_choice_pause()
+	_router.begin_formal_choice(uid)
+	_choice_card.open_for(uid, label, [
+		{"id": "observe", "label": "Observe"},
+		{"id": "buff", "label": "Buff…"},
+		{"id": "destroy", "label": "Destroy"},
+	], _unit_nodes.get(uid))
+	_feedback.text = "Choose an action for %s" % label
+
+
+func _on_choice_action(action_id: String, payload: Dictionary) -> void:
+	var uid: String = str(_choice_card.target_id())
+	if uid == "":
+		uid = _selected_unit
+	match action_id:
+		"observe":
+			_open_observation(uid)
+			_close_choice_card(false)
+		"buff":
+			_choice_card.open_buff_submenu(uid, "Buff — %s" % _public_label(uid), _unit_nodes.get(uid))
+		"buff_shield", "buff_frequency", "buff_range":
+			var kind := str(payload.get("buff_kind", action_id.replace("buff_", "")))
+			_apply_buff(uid, kind)
+			_close_choice_card(true)
+		"destroy":
+			_apply_destroy(uid)
+			_close_choice_card(true)
+		"back":
+			_open_choice_card(uid)
+		_:
+			_close_choice_card(false)
+
+
+func _on_choice_closed() -> void:
+	_release_choice_pause()
+	_router.cancel_choice(_selected_unit)
+
+
+func _close_choice_card(applied: bool) -> void:
+	_choice_card.visible = false
+	_release_choice_pause()
+	if not applied:
+		_feedback.text = "Choice closed — nothing cast"
+
+
+func _apply_destroy(uid: String) -> void:
+	if not _is_nearby(uid):
+		_feedback.text = "Destroy rejected: out_of_range"
+		return
+	var reply := _cmd("CastDestroy", {
+		"target_id": uid,
+		"lease_id": _battle.lease_id,
+		"local_poses": _collect_local_poses(),
+	})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_battle.queue_destruction(uid)
+		_feedback.text = "Destroy accepted → %s" % _public_label(uid)
+	else:
+		_feedback.text = "Destroy rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
+
+
+func _apply_buff(uid: String, buff_kind: String) -> void:
+	if not _is_nearby(uid):
+		_feedback.text = "Buff rejected: out_of_range"
+		return
+	var reply := _cmd("CastBuff", {
+		"target_id": uid,
+		"buff_kind": buff_kind,
+		"local_poses": _collect_local_poses(),
+	})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_feedback.text = "%s on %s" % [buff_kind.capitalize(), _public_label(uid)]
+		if _battle.units.has(uid):
+			var u: Dictionary = _battle.units[uid]
+			if buff_kind == "shield":
+				u["shield_remaining"] = int(u.get("shield_remaining", 0)) + int(round(float(u.get("max_health", 1)) * 0.25))
+			elif buff_kind == "frequency":
+				u["attack_frequency_mult"] = minf(3.0, float(u.get("attack_frequency_mult", 1.0)) + 0.25)
+			elif buff_kind == "range":
+				u["extra_range"] = mini(4, int(u.get("extra_range", 0)) + 1)
+			_battle.units[uid] = u
+			if _unit_nodes.has(uid):
+				_unit_nodes[uid].bind_unit(u)
+	else:
+		_feedback.text = "Buff rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
 
 
 func _process(delta: float) -> void:
 	super(delta)
 	if _client == null:
 		return
-	# Keyboard supplements only.
-	if Input.is_action_just_pressed("ui_accept"):
-		_spell_mode = "destroy"
-	elif Input.is_key_pressed(KEY_1):
-		_spell_mode = "shield"
-	elif Input.is_key_pressed(KEY_2):
-		_spell_mode = "frequency"
-	elif Input.is_key_pressed(KEY_3):
-		_spell_mode = "range"
-	if Input.is_action_just_pressed("ui_select"):
-		_cast_selected()
+	# Walk-away closes the choice card without casting.
+	if _choice_open and _area != null:
+		var moving := false
+		if _area.has_method("wizard_grid"):
+			# Any directional input / pad motion dismisses safely.
+			moving = Input.is_action_pressed("ui_left") or Input.is_action_pressed("ui_right") \
+				or Input.is_action_pressed("ui_up") or Input.is_action_pressed("ui_down")
+		if moving:
+			_close_choice_card(false)
+			_choice_card.close()
 
 	_view_acc += delta
 	if _view_acc >= 0.35:
@@ -134,12 +318,15 @@ func _process(delta: float) -> void:
 			["units", "battles", "fx_battle", "buildings", "leases", "player", "clock"],
 			{"replaceable": true, "coalesce_key": "view:g04_battle"}
 		)
+		if _client.has_player_cache():
+			var view: Dictionary = _client.cached_player_view()
+			if view.has("fx_battle"):
+				_fx_labels = view.get("fx_battle", {}).get("labels", _fx_labels)
 
-	if _paused or _bridge_down or not _lease_opened or _battle.closed:
+	if _paused or _choice_open or _bridge_down or not _lease_opened or _battle.closed:
 		return
 	if _area != null and not _area.movement_enabled:
 		return
-	# Local battle steps use Game Time when unpaused; wall clock when focused play.
 	var step_ms := delta * 1000.0
 	var results: Array = _battle.tick(step_ms)
 	for result in results:
@@ -154,7 +341,15 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var hovered := get_viewport().gui_get_hovered_control()
 		if hovered != null:
-			return  # HUD / spell bar — do not move wizard or reselect via world
+			# Choice card buttons handle themselves; ignore other HUD.
+			if _choice_card != null and _choice_card.visible and _choice_card.is_ancestor_of(hovered):
+				return
+			if _spell_host != null and _spell_host.accepts_world_target():
+				pass
+			else:
+				return
+		if _spell_host != null and _spell_host.is_blocking_world():
+			return
 		var gp: Vector2 = _units_layer.get_global_mouse_position() if _units_layer else get_global_mouse_position()
 		var best := ""
 		var best_d := 40.0
@@ -167,56 +362,20 @@ func _input(event: InputEvent) -> void:
 				best_d = d
 				best = uid
 		if best != "":
-			_select_unit(best)
+			_router.consume_pointer()
+			if _spell_host != null and _spell_host.accepts_world_target():
+				_selected_unit = best
+				_spell_model.complete_targeting(best)
+				get_viewport().set_input_as_handled()
+				return
+			if _is_nearby(best):
+				_open_choice_card(best)
+			else:
+				if _choice_open:
+					_close_choice_card(false)
+					_choice_card.close()
+				_open_observation(best)
 			get_viewport().set_input_as_handled()
-
-
-func _select_unit(uid: String) -> void:
-	_selected_unit = uid
-	for id in _unit_nodes.keys():
-		_unit_nodes[id].set_selected(id == uid)
-	var node = _unit_nodes.get(uid)
-	if node:
-		_feedback.text = "Selected %s (%s) — spell=%s" % [uid, node.archetype, _spell_mode]
-
-
-func _cast_selected() -> void:
-	if _selected_unit == "":
-		_feedback.text = "Select a unit first"
-		return
-	var observed: Array = _unit_nodes.keys()
-	var reply: Dictionary
-	if _spell_mode == "destroy":
-		reply = _cmd("CastDestroy", {
-			"target_id": _selected_unit,
-			"observed_ids": observed,
-			"lease_id": _battle.lease_id,
-		})
-		if str(reply.get("status", "")) == "ACCEPTED":
-			_battle.queue_destruction(_selected_unit)
-			_feedback.text = "Destroy accepted → %s" % _selected_unit
-		else:
-			_feedback.text = "Destroy rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
-	else:
-		reply = _cmd("CastBuff", {
-			"target_id": _selected_unit,
-			"buff_kind": _spell_mode,
-			"observed_ids": observed,
-		})
-		if str(reply.get("status", "")) == "ACCEPTED":
-			_feedback.text = "%s buff applied → %s" % [_spell_mode.capitalize(), _selected_unit]
-			# Reflect buff modifiers locally for immediate readability.
-			if _battle.units.has(_selected_unit):
-				var u: Dictionary = _battle.units[_selected_unit]
-				if _spell_mode == "shield":
-					u["shield_remaining"] = int(u.get("shield_remaining", 0)) + int(round(float(u.get("max_health", 1)) * 0.25))
-				elif _spell_mode == "frequency":
-					u["attack_frequency_mult"] = minf(3.0, float(u.get("attack_frequency_mult", 1.0)) + 0.25)
-				elif _spell_mode == "range":
-					u["extra_range"] = mini(4, int(u.get("extra_range", 0)) + 1)
-				_battle.units[_selected_unit] = u
-		else:
-			_feedback.text = "Buff rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
 
 
 func _apply_step_visuals(result: Dictionary) -> void:
@@ -236,14 +395,10 @@ func _sync_unit_nodes_from_battle() -> void:
 			node.set_script(UnitController)
 			_units_layer.add_child(node)
 			_unit_nodes[uid] = node
-			# Register with area selection map so Interact can see soldiers.
 			if _area != null and _area.has_method("register_external_actor"):
 				_area.register_external_actor(uid, node)
-			elif _area != null:
-				_area._npc_nodes[uid] = node
 		_unit_nodes[uid].bind_unit(state)
 		_unit_nodes[uid].set_selected(uid == _selected_unit)
-	# Buildings as simple markers
 	for bid in _battle.buildings.keys():
 		var b: Dictionary = _battle.buildings[bid]
 		if not _building_nodes.has(bid):
@@ -317,6 +472,23 @@ func _on_load() -> void:
 		_prompt.text = "Loaded %s — casualties preserved" % G04_BATTLE_SAVE
 		_lease_opened = false
 		for uid in _unit_nodes.keys():
+			if _area != null and _area.has_method("unregister_external_actor"):
+				_area.unregister_external_actor(uid)
 			_unit_nodes[uid].queue_free()
 		_unit_nodes.clear()
 		_open_battle_lease()
+
+
+# Compatibility shims for older tests that still call private helpers.
+func _select_unit(uid: String) -> void:
+	if _is_nearby(uid):
+		_open_choice_card(uid)
+	else:
+		_open_observation(uid)
+
+
+func _cast_selected() -> void:
+	if _selected_unit == "":
+		_feedback.text = "Select a unit first"
+		return
+	_apply_destroy(_selected_unit)

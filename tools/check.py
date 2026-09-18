@@ -562,6 +562,10 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "tests/scenarios/test_catastrophe.py",
                 "tests/sim/test_t070_propagation.py",
                 "tests/sim/test_t072_visits.py",
+                "tests/sim/test_r02_view_merge.py",
+                "tests/sim/test_r03_fixture_ownership.py",
+                "tests/sim/test_r04_semantic_magic.py",
+                "tests/sim/test_r06_mastermind_duel.py",
             ),
             _godot_script(
                 "g04_playable_bridge",
@@ -753,6 +757,10 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "tests/scenarios/test_catastrophe.py",
                 "tests/sim/test_t070_propagation.py",
                 "tests/sim/test_t072_visits.py",
+                "tests/sim/test_r02_view_merge.py",
+                "tests/sim/test_r03_fixture_ownership.py",
+                "tests/sim/test_r04_semantic_magic.py",
+                "tests/sim/test_r06_mastermind_duel.py",
             ),
             validate_evidence(
                 "g04_packet_files",

@@ -1,0 +1,21 @@
+{
+  "repair_id": "R04",
+  "status": "DONE",
+  "summary": "SemanticResolver with two-tile Chebyshev range; MagicService ignores forged observed_ids and validates synchronised local_poses; Godot semantic_labels + context_actions router.",
+  "files": [
+    "sim/dmb/narrative/semantic.py",
+    "sim/dmb/player/magic.py",
+    "sim/dmb/core/world.py",
+    "godot_project/client/ui/semantic_labels.gd",
+    "godot_project/client/ui/context_actions.gd",
+    "tests/sim/test_r04_semantic_magic.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 -m pytest tests/sim/test_r04_semantic_magic.py tests/sim/test_t065_magic.py -q",
+      "exit_code": 0,
+      "result": "6 passed"
+    }
+  ],
+  "next": "R05"
+}

@@ -1,13 +1,17 @@
 {
   "gate": "G04",
   "status": "AWAITING_HUMAN",
-  "candidate_implementation": "67c75808072d8027d57d47f3741850c4793149de",
+  "candidate_implementation": null,
+  "repair": "R01-R08",
+  "started_from": "d265f6005c621dcd9b0d60348590e07083d9e312",
   "accepted_by": null,
   "accepted_at": null,
   "observations": [],
   "human_result": null,
   "prior_fix_required": {
-    "at": "2026-09-18T18:07:00Z",
-    "summary": "Three stationary white squares in FX-BATTLE; three uninteractable red dots in FX-HAZARD \u2014 not a playable G04 handoff."
-  }
+    "at": "2026-09-18T22:00:00Z",
+    "summary": "G04 Interaction Repair Brief: mixed-faction factories, toolbar-only magic, hazard wipe, Channel×3, result-forcing tests."
+  },
+  "automated_gate_check": "PASS on Linux (not decisive)",
+  "windows": "not_run"
 }

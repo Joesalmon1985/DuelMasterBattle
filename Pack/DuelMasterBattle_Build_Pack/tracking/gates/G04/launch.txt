@@ -1,23 +1,24 @@
-Linux battle (450x800):
+Linux battle (after reset):
   bash tools/play_g04_battle.sh
   # or: bash tools/play_g04_battle.sh --resolution 1280x720
 
-Linux hazard:
+Linux hazard (after reset):
   bash tools/play_g04_hazard.sh
 
-Linux menu:
-  bash tools/playtest.sh   # G04 battle / hazard options
+Reset first:
+  Pack/DuelMasterBattle_Build_Pack/tracking/gates/G04/reset.md
+  Delete slots: g04_battle, g04_hazard, g04_hazard_terminal
 
-Windows (unavailable on this Linux host — report if not run):
+Linux menu:
+  bash tools/playtest.sh
+
+Windows (not run on this Linux host):
   Playtest.bat → Play G04 battle / Play G04 hazard
-  python tools\windows_playtest.py play-g04-battle
-  python tools\windows_playtest.py play-g04-hazard
 
 Checks:
-  python3 tools/check.py --task T076
   python3 tools/check.py --gate G04
 
-Saves (isolated):
+Saves (isolated only):
   g04_battle
   g04_hazard
   g04_hazard_terminal

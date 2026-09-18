@@ -96,3 +96,63 @@ Before requesting G01, automated and manual evidence must establish:
 
 The authenticated loopback Python/Godot bridge is permitted. "No network at
 runtime" means no internet or LLM dependency.
+
+## G04 interaction repair (18 September 2026)
+
+Joe-directed corrective pass for G04 controls, ownership and hazards. Source
+brief: `docs/DuelMasterBattle_G04_Interaction_Repair_Brief.md`. Receipt IDs
+R01–R08 record this repair; do not renumber T001 onward. While the pass is in
+progress G04 is FIX_REQUIRED; after honest evidence, stop at AWAITING_HUMAN.
+Do not start T077. Do not mark G04 PASS from automation.
+
+### Control and validation
+
+- Target first, action second: distant targets yield observation only; within
+  shared tile-unit interaction range (baseline two tiles) open attached
+  Observe / Buff… / Destroy (or Challenge for eligible hazards). No permanent
+  spell toolbar in play or normal gameplay.
+- Validate distance against synchronised local poses, including moving leased
+  units and the wizard after SyncPose/checkpoint. Re-evaluate at choice open
+  and again at commit. Caller-supplied `observed_ids` grant no authority.
+- One input router: UI choice vs semantic target vs ground move; no duplicate
+  touch/mouse actions. Formal choices acquire a pause token; cancel/walk-away
+  releases only that token.
+
+### Ownership, fixtures and pace
+
+- A strategic node has zero or one controlling settlement. Invading armies may
+  fight there with valid home/factory IDs elsewhere. Active industry at an
+  owned node belongs to that settlement. FX-BATTLE must be a lawful one-owner
+  defended settlement with a clear spawn and free cardinal movement.
+- Pace the battle so a human can approach and inspect before it ends without
+  weakening C07 combat math (spawn spacing / approach time only). Provide a
+  clearly labelled isolated fixture reset (`g04_battle` / `g04_hazard`).
+
+### Projection lifecycle
+
+- Omitted view fields mean no update; an explicitly empty authoritative
+  collection means remove those entities. Clear caches on world change or load
+  of a different save. Reject stale replies (wrong world/version/request id).
+  External unit/hazard actors must not be owned by people rebuild.
+
+### Duel audit
+
+- Before wiring Challenge, audit retained Godot/`python_prototype` duel
+  implementations against C10. Reuse whichever satisfies C10 without creating a
+  second owner of duel state. Channel×3/Falter is not an acceptable substitute.
+  If none fit, use C10's explicit I07 deduction fallback as the single owner.
+
+### Task ownership
+
+- G04 owns the minimum shared target/observation/choice path on the production
+  bridge. T079 and T085 extend narrative coverage; they must not recreate a
+  competing interface. Traceability:
+  `tracking/interaction_traceability.json`.
+
+### Human-decisive acceptance
+
+- Automated checks are necessary but not sufficient. Decisive proof is walking
+  up to a moving soldier, clicking, choosing a spell, seeing a persistent
+  result, then the equivalent observe/Challenge flow on a visible hazard.
+  Linux launchers: `bash tools/play_g04_battle.sh`,
+  `bash tools/play_g04_hazard.sh`.

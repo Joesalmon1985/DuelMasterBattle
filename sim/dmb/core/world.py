@@ -856,11 +856,14 @@ class WorldSim:
         lease_id = envelope.payload.get("lease_id")
         observed = envelope.payload.get("observed_ids")
         observed_set = set(str(x) for x in observed) if isinstance(observed, list) else None
+        local_poses = envelope.payload.get("local_poses")
+        poses = local_poses if isinstance(local_poses, dict) else None
         out = MagicService(self.state).destroy(
             target_id,
             observed_local_ids=observed_set,
             command_id=envelope.command_id,
             lease_id=str(lease_id) if lease_id else None,
+            local_poses=poses,
         )
         if out.get("status") == "rejected":
             return CommandResult(
@@ -891,6 +894,8 @@ class WorldSim:
         buff_kind = str(envelope.payload.get("buff_kind") or "")
         observed = envelope.payload.get("observed_ids")
         observed_set = set(str(x) for x in observed) if isinstance(observed, list) else None
+        local_poses = envelope.payload.get("local_poses")
+        poses = local_poses if isinstance(local_poses, dict) else None
         frozen = bool(self.state.clock.get("pause_tokens"))
         out = MagicService(self.state).apply_buff(
             target_id,
@@ -898,6 +903,7 @@ class WorldSim:
             observed_local_ids=observed_set,
             command_id=envelope.command_id,
             frozen=frozen,
+            local_poses=poses,
         )
         if out.get("status") == "rejected":
             return CommandResult(
@@ -1157,6 +1163,7 @@ class WorldSim:
 
     def _handle_start_hazard_duel(self, envelope: CommandEnvelope) -> CommandResult:
         from sim.dmb.adventure.duels import HazardDuelService
+        from sim.dmb.adventure.mastermind import MastermindDuel
 
         cube_id = str(envelope.payload.get("cube_id") or "")
         out = HazardDuelService(self.state).begin(cube_id)
@@ -1171,18 +1178,22 @@ class WorldSim:
                 public_feedback=str(out.get("reason") or "rejected"),
             )
         self.state.world_version += 1
+        # Never ship the secret to the client.
+        public = out.get("public") or MastermindDuel.public_view(out.get("duel") or {})
         return CommandResult(
             status="ACCEPTED",
             code="OK",
             command_id=envelope.command_id,
             world_version=self.state.world_version,
             events=[{"kind": "hazard_duel_started", "cube_id": cube_id}],
-            payload=out,
+            payload={"status": "started", "duel": {"id": public.get("duel_id"), **{k: v for k, v in (out.get("duel") or {}).items() if k != "mastermind"}}, "public": public},
             public_feedback="duel_started",
         )
 
     def _handle_hazard_duel_action(self, envelope: CommandEnvelope) -> CommandResult:
-        """Playable duel step — advances authored encounter, not a win button."""
+        """Playable Mastermind step — Channel×3 shortcuts are rejected."""
+        from sim.dmb.adventure.mastermind import MastermindDuel
+
         duel_id = str(envelope.payload.get("duel_id") or "")
         action = str(envelope.payload.get("action") or "")
         duel = (self.state.leases or {}).get(duel_id)
@@ -1204,14 +1215,45 @@ class WorldSim:
                 events=[],
                 public_feedback="already resolved",
             )
-        progress = int(duel.get("progress") or 0)
-        # Simple retained duel: three successful "channel" actions win; "falter" fails.
-        if action == "channel":
-            progress += 1
-            duel["progress"] = progress
-            duel["last_action"] = action
+        if action in {"channel", "falter"}:
+            return CommandResult(
+                status="REJECTED",
+                code="FORBIDDEN_SHORTCUT",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload={"reason": "use_guess"},
+                public_feedback="Mastermind guesses required; Channel shortcut removed",
+            )
+        if action == "resign":
+            return self._handle_resolve_hazard_duel(
+                CommandEnvelope(
+                    protocol_version=envelope.protocol_version,
+                    session_id=envelope.session_id,
+                    world_id=envelope.world_id,
+                    command_id=envelope.command_id,
+                    expected_world_version=self.state.world_version,
+                    kind="ResolveHazardDuel",
+                    payload={"duel_id": duel_id, "success": False},
+                )
+            )
+        if action == "guess":
+            guess = envelope.payload.get("guess")
+            if not isinstance(guess, list):
+                guess = envelope.payload.get("colours")
+            result = MastermindDuel.submit_guess(duel, guess if isinstance(guess, list) else [])
+            if result.get("status") == "rejected":
+                return CommandResult(
+                    status="REJECTED",
+                    code=str(result.get("reason") or "INVALID_GUESS"),
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    payload=result,
+                    public_feedback=str(result.get("reason") or "invalid guess"),
+                )
             self.state.world_version += 1
-            if progress >= 3:
+            if result.get("outcome") == "success":
                 return self._handle_resolve_hazard_duel(
                     CommandEnvelope(
                         protocol_version=envelope.protocol_version,
@@ -1223,26 +1265,30 @@ class WorldSim:
                         payload={"duel_id": duel_id, "success": True},
                     )
                 )
+            if result.get("outcome") in {"draw", "failure"}:
+                return self._handle_resolve_hazard_duel(
+                    CommandEnvelope(
+                        protocol_version=envelope.protocol_version,
+                        session_id=envelope.session_id,
+                        world_id=envelope.world_id,
+                        command_id=envelope.command_id,
+                        expected_world_version=self.state.world_version,
+                        kind="ResolveHazardDuel",
+                        payload={"duel_id": duel_id, "success": False},
+                    )
+                )
             return CommandResult(
                 status="ACCEPTED",
                 code="OK",
                 command_id=envelope.command_id,
                 world_version=self.state.world_version,
-                events=[{"kind": "hazard_duel_action", "action": action, "progress": progress}],
-                payload={"duel_id": duel_id, "progress": progress, "needed": 3},
-                public_feedback=f"channel {progress}/3",
-            )
-        if action == "falter":
-            return self._handle_resolve_hazard_duel(
-                CommandEnvelope(
-                    protocol_version=envelope.protocol_version,
-                    session_id=envelope.session_id,
-                    world_id=envelope.world_id,
-                    command_id=envelope.command_id,
-                    expected_world_version=self.state.world_version,
-                    kind="ResolveHazardDuel",
-                    payload={"duel_id": duel_id, "success": False},
-                )
+                events=[{"kind": "hazard_duel_guess", "feedback": result.get("feedback")}],
+                payload=result,
+                public_feedback="exact=%s colour=%s"
+                % (
+                    (result.get("feedback") or {}).get("exact"),
+                    (result.get("feedback") or {}).get("colour_only"),
+                ),
             )
         return CommandResult(
             status="REJECTED",

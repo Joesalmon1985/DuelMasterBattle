@@ -1,13 +1,8 @@
 {
-  "fixture": "FX-BATTLE",
-  "status": "PASS",
-  "owner": "T063-T076-FIX",
+  "name": "FX-BATTLE",
   "seed": 404,
-  "details": {
-    "seed": 404,
-    "units": 7,
-    "battle": true,
-    "save_slot": "g04_battle"
-  },
-  "world_id": "world:fx-battle"
+  "save_slot": "g04_battle",
+  "owner_faction": "faction:red",
+  "spawn": [4.0, 5.0],
+  "notes": "One-owner settlement; Blue invaders from node:2; attached choices; no spell toolbar"
 }

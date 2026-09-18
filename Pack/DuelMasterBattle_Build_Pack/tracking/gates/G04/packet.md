@@ -1,63 +1,53 @@
-# G04 — Battles, wizard power and catastrophe (FIX resubmission)
+# G04 — Battles, wizard power and catastrophe (Interaction Repair)
 
 **Status:** AWAITING_HUMAN  
-**Candidate commit:** `67c75808072d8027d57d47f3741850c4793149de`
-**Platform:** Linux 6.8, Godot 4.4.1 (Windows launcher wired, not executed here)
+**Repair:** R01–R08 (G04 Interaction Repair Brief)  
+**Started from:** `d265f6005c621dcd9b0d60348590e07083d9e312`  
+**Candidate:** see `acceptance.json` / git HEAD after stamp commit  
+**Platform:** Linux 6.8, Godot 4.4.1 (Windows **not** run on this host)
 
-## Why this resubmission
+## What changed
 
-Joe returned `G04 FIX_REQUIRED` — three stationary white squares / uninteractable red
-dots; not a playable handoff. This candidate:
+- One-owner FX-BATTLE (Red settlement + Blue invaders); safe spawn; paced armies
+- Target-first Observe / Buff… / Destroy choice cards — **no permanent spell toolbar**
+- Two-tile range validated against synchronised local/moving poses
+- Field-aware view merge (omit ≠ empty); external actors not freed by people rebuild
+- Three boundary hazard manifestations; Challenge opens C10 Mastermind (4/6/10)
+- Channel×3 shortcut **rejected**; treatment ledger persists across Wait/save/load
+- Automated playable path no longer forces `queue_destruction` or Channel wins
 
-- Fixes unit visuals (triangle/square/hexagon, faction colours, HP bars, cues)
-- Opens a real local battle lease with pursuit/LOS/hostility graph and checkpoints
-- Provides Destroy / Shield / Atk Spd / Range / Cast HUD controls wired to Python
-- Places labelled demon diamond manifestations and a real Channel×3 duel (no win button)
-- Uses async projections; casualties/treatment survive save/load
+## Reset (required before judging)
+
+See [reset.md](reset.md). Delete isolated slots `g04_battle`, `g04_hazard`, `g04_hazard_terminal` so an old fixture save does not obscure the repair.
 
 ## Launch
 
 ```bash
 cd /home/joe/Projects/DuelMasterBattle
-bash tools/play_g04_battle.sh          # seed 404, save g04_battle
-bash tools/play_g04_hazard.sh          # seed 408, save g04_hazard
-bash tools/playtest.sh                 # menu options for G04
+bash tools/play_g04_battle.sh
+bash tools/play_g04_hazard.sh
 ```
 
 Portrait default 450×800. Landscape: `bash tools/play_g04_battle.sh --resolution 1280x720`
 
-## Controls
+## Joe checklist
 
-**Battle**
-1. Watch Red vs Blue (comparable prehistoric era; all three unit types).
-2. Tap a unit to select (yellow outline). HUD Cast does not move the wizard.
-3. Destroy / Shield / Atk Spd / Range then **Cast** (keys 1/2/3 + Enter as supplements).
-4. Pause/focus freezes combat; Save/Load uses isolated `g04_battle`.
-
-**Hazard**
-1. Three red diamonds near the wizard: hex:a / hex:b / hex:c with cube counts.
-2. Tap a diamond → **Treat (duel)** → Channel three times (or Falter).
-3. Success removes only that cube; other hexes stay; Visit ledger persists across Wait/Save/Load.
-4. Terminal destructive tests use separate slot `g04_hazard_terminal`.
-
-## Manual checklist
-
-1. Units show distinct shapes/colours and fight (approach, HP drop, death).
-2. Destroy and each buff affect the selected living unit with feedback.
-3. Leave/return or Save/Load — casualties remain.
-4. Hazard duel opens, Channel×3 clears one cube only; treated hex cannot be re-treated this visit.
-5. Walking remains responsive while combat runs.
+Use the table in [gates/G04.md](../../gates/G04.md). Decisive proof is walking up to a moving soldier, clicking, choosing a spell, seeing a persistent result — then the equivalent observe/Challenge flow on a visible hazard. **Do not accept G04 merely because automated checks pass.**
 
 ## Automated evidence
 
-- `python3 tools/check.py --task T076` / `--gate G04` → PASS
-- `run_g04_playable.gd` → `G04_PLAYABLE_OK` (combat + destroy + hazard duel via bridge)
-- Rendered captures: `screenshot_battle_450x800.png`, combat_00–03, `screenshot_hazard_450x800.png`, hazard_selected/duel/channel, `screenshot_1280x720.png`
+```bash
+python3 tools/check.py --gate G04
+```
+
+Result on this handoff host: PASS (Python cumulative + G04 playable + G01–G03 smokes). Captures refreshed under this folder (450×800 and 1280×720).
 
 ## Known limits
 
-See `known_defects.md`. Windows not run on this host.
+- Windows playtest not executed on Linux
+- Dense melee labels may overlap cosmetically
+- Spellbook overlay can intercept chrome Wait clicks; smoke prefers HUD Wait / signal path
 
-## Human acceptance
+## Stop
 
-Reply `G04 PASS — <build/commit>` or `G04 FIX_REQUIRED — <symptom>`.
+`current_task = STOP_FOR_G04`. **T077 remains NOT_STARTED.** Agent must not mark G04 PASS.
