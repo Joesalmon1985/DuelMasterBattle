@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pack_version": "1.0",
   "status": "READY_FOR_EXECUTION",
-  "current_task": "T076",
+  "current_task": "STOP_FOR_G04",
   "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
   "repository_map": "tracking/repository_map.json",
   "resume_policy": {
@@ -88,7 +88,7 @@
     "T073": "DONE",
     "T074": "DONE",
     "T075": "DONE",
-    "T076": "IN_PROGRESS",
+    "T076": "DONE",
     "T077": "NOT_STARTED",
     "T078": "NOT_STARTED",
     "T079": "NOT_STARTED",
@@ -199,10 +199,12 @@
       "notes": "Functionally satisfactory; deferred presentation/balance items recorded in tracking/presentation_balance_backlog.md"
     },
     "G04": {
-      "status": "NOT_READY",
+      "status": "AWAITING_HUMAN",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": null
+      "evidence": "tracking/gates/G04/packet.md",
+      "candidate_implementation": null,
+      "notes": "Playable FX-BATTLE + FX-HAZARD; Windows not run on Linux host"
     },
     "G05": {
       "status": "NOT_READY",

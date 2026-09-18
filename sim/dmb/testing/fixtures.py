@@ -32,6 +32,10 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
         return _load_fx_cargo(seed=seed)
     if name == "FX-INDUSTRY":
         return _load_fx_industry(seed=303 if seed == 7 else seed)
+    if name == "FX-BATTLE":
+        return _load_fx_battle(seed=404 if seed == 7 else seed)
+    if name == "FX-HAZARD":
+        return _load_fx_hazard(seed=408 if seed == 7 else seed)
     raise ValueError(f"unsupported fixture {name}")
 
 
@@ -721,5 +725,164 @@ def run_fx_cargo(sim: WorldSim | None = None, seed: int = 202) -> FixtureResult:
             "block_cleared": True,
             "in_transit_cargo_preserved": cargo_before,
             "turns": int(state.clock["turn"]),
+        },
+    )
+
+
+def _load_fx_battle(seed: int = 404) -> WorldSim:
+    """Playable FX-BATTLE isolated from G01–G03 saves (slot g04_battle)."""
+    from sim.dmb.military.units import MilitaryService
+
+    sim = bootstrap_world(world_id="world:fx-battle", seed=seed)
+    state = sim.state
+    state.player = {
+        "id": "wizard",
+        "node_id": "node:1",
+        "area_id": "area.battle",
+        "position": [2.0, 6.0],
+        "facing": "up",
+    }
+    state.board.setdefault("nodes", {})
+    state.board["nodes"]["node:1"] = {
+        "id": "node:1",
+        "exits": {},
+        "area_id": "area.battle",
+        "label": "Battle Glade",
+    }
+    mil = MilitaryService(state)
+    red = mil.spawn(
+        "unit.ancient.line",
+        home_node_id="node:1",
+        faction_id="faction:red",
+        era="prehistoric",
+        factory_id="building:factory_red",
+        position=[1.0, 3.0],
+    )
+    blue = mil.spawn(
+        "unit.ancient.skirmisher",
+        home_node_id="node:1",
+        faction_id="faction:blue",
+        era="historic",
+        factory_id="building:factory_blue",
+        position=[4.0, 3.0],
+    )
+    heavy = mil.spawn(
+        "unit.ancient.heavy",
+        home_node_id="node:1",
+        faction_id="faction:red",
+        era="prehistoric",
+        factory_id="building:factory_red",
+        position=[2.0, 4.0],
+    )
+    state.buildings["building:factory_red"] = {
+        "id": "building:factory_red",
+        "definition_id": "building.factory",
+        "faction_id": "faction:red",
+        "node_id": "node:1",
+        "health": 200,
+        "max_health": 200,
+        "current_health": 200,
+        "alive": True,
+        "status": "active",
+        "label": "Red Factory",
+    }
+    state.factions["faction:red"] = {"id": "faction:red", "label": "Red Line"}
+    state.factions["faction:blue"] = {"id": "faction:blue", "label": "Blue Skirmish"}
+    state.battles["battle:fx"] = {
+        "id": "battle:fx",
+        "node_id": "node:1",
+        "participants": [red["id"], blue["id"], heavy["id"]],
+        "buildings": ["building:factory_red"],
+        "state": "LOCAL",
+        "prefer_local": True,
+        "cover_by_target": {blue["id"]: 0.25},
+    }
+    state.board["fx_battle"] = {
+        "seed": seed,
+        "save_slot": "g04_battle",
+        "labels": {
+            red["id"]: "Red Line (prehistoric)",
+            blue["id"]: "Blue Skirmisher (historic)",
+            heavy["id"]: "Red Heavy (prehistoric)",
+        },
+        "wizard_intervene": True,
+    }
+    return sim
+
+
+def _load_fx_hazard(seed: int = 408) -> WorldSim:
+    """Playable FX-HAZARD isolated saves (g04_hazard / g04_hazard_terminal)."""
+    from sim.dmb.hazards.service import CatastropheService
+    from sim.dmb.player.visits import VisitService
+
+    sim = bootstrap_world(world_id="world:fx-hazard", seed=seed)
+    state = sim.state
+    state.player = {
+        "id": "wizard",
+        "node_id": "node:1",
+        "area_id": "area.hazard",
+        "position": [3.0, 5.0],
+        "facing": "up",
+    }
+    state.board["nodes"]["node:1"] = {
+        "id": "node:1",
+        "exits": {},
+        "area_id": "area.hazard",
+        "label": "Pressure Crossroads",
+    }
+    state.board["node_hexes"] = {"node:1": ["hex:a", "hex:b", "hex:c"]}
+    state.board["hex_adjacency"] = {
+        "hex:a": ["hex:b"],
+        "hex:b": ["hex:a", "hex:c"],
+        "hex:c": ["hex:b"],
+    }
+    state.clock["era"] = "prehistoric"
+    state.clock["turn"] = 1
+    state.clock["active_faction_id"] = "faction:a"
+    state.factions["faction:a"] = {"id": "faction:a", "label": "Local Responders"}
+    svc = CatastropheService(state)
+    for hid in ("hex:a", "hex:b", "hex:c"):
+        svc.add_cube(hid, "demon")
+    VisitService(state).arrive("node:1", "travel", 1)
+    state.board["fx_hazard"] = {
+        "seed": seed,
+        "save_slot": "g04_hazard",
+        "terminal_slot": "g04_hazard_terminal",
+        "outbreak_warning_at": 7,
+        "hex_labels": {
+            "hex:a": "Demon hex A — treat eligible",
+            "hex:b": "Demon hex B — treat eligible",
+            "hex:c": "Demon hex C — treat eligible",
+        },
+    }
+    return sim
+
+
+def run_fx_battle(sim: WorldSim | None = None) -> FixtureResult:
+    sim = sim or load_fixture("FX-BATTLE", seed=404)
+    fx = sim.state.board.get("fx_battle") or {}
+    return FixtureResult(
+        name="FX-BATTLE",
+        status="PASS",
+        details={
+            "seed": fx.get("seed", 404),
+            "units": len(sim.state.units),
+            "battle": "battle:fx" in sim.state.battles,
+            "save_slot": fx.get("save_slot"),
+        },
+    )
+
+
+def run_fx_hazard(sim: WorldSim | None = None) -> FixtureResult:
+    sim = sim or load_fixture("FX-HAZARD", seed=408)
+    fx = sim.state.board.get("fx_hazard") or {}
+    cubes = (sim.state.hazards.get("catastrophe") or {}).get("cubes") or {}
+    return FixtureResult(
+        name="FX-HAZARD",
+        status="PASS",
+        details={
+            "seed": fx.get("seed", 408),
+            "active_cubes": sum(1 for c in cubes.values() if c.get("active", True)),
+            "save_slot": fx.get("save_slot"),
         },
     )

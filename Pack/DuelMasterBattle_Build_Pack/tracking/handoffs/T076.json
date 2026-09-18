@@ -1,0 +1,70 @@
+{
+  "task_id": "T076",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "godot_project/client/scenes/g04_battle_shell.gd",
+    "godot_project/client/scenes/g04_battle_shell.tscn",
+    "godot_project/client/scenes/g04_hazard_shell.gd",
+    "godot_project/client/scenes/g04_hazard_shell.tscn",
+    "godot_project/client/ui/catastrophe_feedback.gd",
+    "godot_project/client/tests/run_g04_smoke.gd",
+    "godot_project/client/tests/run_g04_capture.gd",
+    "sim/dmb/testing/fixtures.py",
+    "sim/dmb/core/state.py",
+    "tools/play_g04_battle.sh",
+    "tools/play_g04_hazard.sh",
+    "tools/playtest.sh",
+    "Playtest.bat",
+    "tools/windows_playtest.py",
+    "tools/run_scenario.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G04/"
+  ],
+  "public_contracts": [
+    "Playable G04 FX-BATTLE and FX-HAZARD shells",
+    "Isolated saves g04_battle/g04_hazard/g04_hazard_terminal",
+    "Linux/Windows G01-G04 playtest launchers",
+    "check.py --task T076 and --gate G04"
+  ],
+  "source_rules": [
+    "C14 \u00a7\u00a7G04",
+    "gates/G04.md"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T076",
+      "exit_code": 0,
+      "result": "PASS; 26 Python tests, G04 smoke, 10 evidence files"
+    },
+    {
+      "command": "python3 tools/check.py --gate G04",
+      "exit_code": 0,
+      "result": "PASS; cumulative + G01-G03 regression smokes"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/testing/fixtures.py": "FX-BATTLE/FX-HAZARD loaders required for playable gate.",
+    "sim/dmb/core/state.py": "Expose fx_battle/fx_hazard/battles/hazards in views.",
+    "launcher_files": "Required by Joe's explicit G04 playable and cross-platform launcher scope."
+  },
+  "evidence": {
+    "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G04/packet.md",
+    "platform": "Linux",
+    "windows": "unavailable_not_run",
+    "seeds": {
+      "FX-BATTLE": 404,
+      "FX-HAZARD": 408
+    },
+    "save_slots": [
+      "g04_battle",
+      "g04_hazard",
+      "g04_hazard_terminal"
+    ]
+  },
+  "defects": [
+    "Windows not executed on Linux host",
+    "Headless viewport capture unavailable; labelled PNGs composed from live fixture after smoke PASS"
+  ],
+  "next_task": "STOP_FOR_G04"
+}

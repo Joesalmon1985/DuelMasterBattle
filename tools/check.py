@@ -551,6 +551,39 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 [ROOT / "godot_project" / "content" / "fixtures" / "hazards" / "fx_hazard_v1.json"],
             ),
         ],
+        "T076": lambda: [
+            _pytest(
+                "g04_cumulative_python",
+                "tests/sim/test_t060_combat_math.py",
+                "tests/sim/test_t064_handoffs.py",
+                "tests/sim/test_t065_magic.py",
+                "tests/sim/test_t066_buffs.py",
+                "tests/scenarios/test_battle_magic.py",
+                "tests/scenarios/test_catastrophe.py",
+                "tests/sim/test_t070_propagation.py",
+                "tests/sim/test_t072_visits.py",
+            ),
+            _godot_script(
+                "g04_playable_smoke",
+                "res://client/tests/run_g04_smoke.gd",
+                r"G04_SMOKE_OK",
+            ),
+            validate_evidence(
+                "g04_task_packet",
+                [
+                    TRACKING / "gates" / "G04" / "packet.md",
+                    TRACKING / "gates" / "G04" / "launch.txt",
+                    TRACKING / "gates" / "G04" / "acceptance.json",
+                    TRACKING / "gates" / "G04" / "fx_battle_record.json",
+                    TRACKING / "gates" / "G04" / "fx_hazard_record.json",
+                    TRACKING / "gates" / "G04" / "screenshot_450x800.png",
+                    TRACKING / "gates" / "G04" / "screenshot_battle_450x800.png",
+                    TRACKING / "gates" / "G04" / "screenshot_hazard_450x800.png",
+                    TRACKING / "gates" / "G04" / "known_defects.md",
+                    TRACKING / "gates" / "G04" / "reset.md",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -693,6 +726,56 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
             ),
             _godot_script(
                 "g03_sidecar_playable",
+                "res://client/tests/run_g03_smoke.gd",
+                r"G03_SMOKE_OK",
+            ),
+            _godot_script(
+                "g02_regression_smoke",
+                "res://client/tests/run_g02_smoke.gd",
+                r"G02_SMOKE_OK",
+            ),
+            _godot_script(
+                "g01_regression_smoke",
+                "res://client/tests/run_g01_smoke.gd",
+                r"G01_SMOKE_OK",
+            ),
+        ]
+    if gate == "G04":
+        packet = TRACKING / "gates" / "G04"
+        return [
+            _pytest(
+                "g04_cumulative_python",
+                "tests/sim/test_t060_combat_math.py",
+                "tests/sim/test_t064_handoffs.py",
+                "tests/sim/test_t065_magic.py",
+                "tests/sim/test_t066_buffs.py",
+                "tests/scenarios/test_battle_magic.py",
+                "tests/scenarios/test_catastrophe.py",
+                "tests/sim/test_t070_propagation.py",
+                "tests/sim/test_t072_visits.py",
+            ),
+            validate_evidence(
+                "g04_packet_files",
+                [
+                    packet / "packet.md",
+                    packet / "launch.txt",
+                    packet / "acceptance.json",
+                    packet / "fx_battle_record.json",
+                    packet / "fx_hazard_record.json",
+                    packet / "screenshot_450x800.png",
+                    packet / "screenshot_battle_450x800.png",
+                    packet / "screenshot_hazard_450x800.png",
+                    packet / "known_defects.md",
+                    packet / "reset.md",
+                ],
+            ),
+            _godot_script(
+                "g04_sidecar_playable",
+                "res://client/tests/run_g04_smoke.gd",
+                r"G04_SMOKE_OK",
+            ),
+            _godot_script(
+                "g03_regression_smoke",
                 "res://client/tests/run_g03_smoke.gd",
                 r"G03_SMOKE_OK",
             ),

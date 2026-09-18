@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-rem Windows double-click playtest menu for G01/G02/G03 (BuildPackV03).
+rem Windows double-click playtest menu for G01/G02/G03/G04 (BuildPackV03).
 rem Always run from the repository root, even if launched from elsewhere.
 
 cd /d "%~dp0"
@@ -62,26 +62,52 @@ echo DuelMasterBattle — Windows playtest
 echo Repo: %ROOT%
 echo Python: %PY%
 echo.
-echo 1. Play G03 directly — default portrait 450x800
-echo 2. Play G02 directly
-echo 3. Play G01 directly
-echo 4. Open the main menu
-echo 5. Run G03 automated checks
-echo 6. Run all implemented gates G01-G03
+echo 1. Play G04 battle — default portrait 450x800
+echo 2. Play G04 hazard — default portrait 450x800
+echo 3. Play G03 directly
+echo 4. Play G02 directly
+echo 5. Play G01 directly
+echo 6. Open the main menu
+echo 7. Run G04 automated checks
+echo 8. Run all implemented gates G01-G04
 echo 0. Exit
 echo.
 set "CHOICE="
 set /p "CHOICE=Select: "
 
-if "%CHOICE%"=="1" goto play_g03
-if "%CHOICE%"=="2" goto play_g02
-if "%CHOICE%"=="3" goto play_g01
-if "%CHOICE%"=="4" goto play_menu
-if "%CHOICE%"=="5" goto check_g03
-if "%CHOICE%"=="6" goto check_all
+if "%CHOICE%"=="1" goto play_g04_battle
+if "%CHOICE%"=="2" goto play_g04_hazard
+if "%CHOICE%"=="3" goto play_g03
+if "%CHOICE%"=="4" goto play_g02
+if "%CHOICE%"=="5" goto play_g01
+if "%CHOICE%"=="6" goto play_menu
+if "%CHOICE%"=="7" goto check_g04
+if "%CHOICE%"=="8" goto check_all
 if "%CHOICE%"=="0" goto bye
 echo Invalid choice.
 pause
+goto menu
+
+:play_g04_battle
+echo.
+"%PY%" "%HELPER%" play-g04-battle
+set "ERR=!ERRORLEVEL!"
+if not "!ERR!"=="0" (
+  echo.
+  echo Launch failed with exit code !ERR!.
+  pause
+)
+goto menu
+
+:play_g04_hazard
+echo.
+"%PY%" "%HELPER%" play-g04-hazard
+set "ERR=!ERRORLEVEL!"
+if not "!ERR!"=="0" (
+  echo.
+  echo Launch failed with exit code !ERR!.
+  pause
+)
 goto menu
 
 :play_g03
@@ -149,6 +175,15 @@ goto menu
 :check_g03
 echo.
 "%PY%" "%HELPER%" check-g03
+set "ERR=!ERRORLEVEL!"
+echo.
+echo Check finished with exit code !ERR!.
+pause
+goto menu
+
+:check_g04
+echo.
+"%PY%" "%HELPER%" check-g04
 set "ERR=!ERRORLEVEL!"
 echo.
 echo Check finished with exit code !ERR!.

@@ -1,0 +1,13 @@
+{
+  "fixture": "FX-BATTLE",
+  "status": "PASS",
+  "owner": "T059-T068",
+  "seed": 404,
+  "details": {
+    "seed": 404,
+    "units": 3,
+    "battle": true,
+    "save_slot": "g04_battle"
+  },
+  "world_id": "world:fx-battle"
+}
