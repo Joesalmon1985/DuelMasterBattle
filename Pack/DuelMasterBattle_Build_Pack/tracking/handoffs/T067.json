@@ -1,7 +1,7 @@
 {
   "task_id": "T067",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "1702b87213b9e0d584029f0f6a8b96d2a26b2ee4",
   "files": [
     "sim/dmb/ai/heuristic.py",
     "sim/dmb/ai/legal.py",
