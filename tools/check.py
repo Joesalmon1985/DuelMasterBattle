@@ -509,6 +509,14 @@ def checks_for_task(task: str) -> list[CheckResult]:
             ),
         ],
         "T059": lambda: [_pytest("military_unit_state", "tests/sim/test_t059_units.py")],
+        "T060": lambda: [
+            _pytest("combat_math", "tests/sim/test_t060_combat_math.py"),
+            _godot_script(
+                "combat_math_godot",
+                "res://client/tests/run_combat_math.gd",
+                r"COMBAT_MATH_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
