@@ -716,6 +716,18 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 [ROOT / "godot_project" / "content" / "source" / "items" / "catalog.json"],
             ),
         ],
+        "T089": lambda: [
+            _pytest("puzzle_lease", "tests/sim/test_t089_puzzles.py"),
+            validate_evidence(
+                "puzzle_schema",
+                [ROOT / "content" / "schemas" / "puzzles.json"],
+            ),
+            _godot_script(
+                "puzzle_presenter",
+                "res://client/tests/run_t089_puzzle.gd",
+                r"T089_PUZZLE_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

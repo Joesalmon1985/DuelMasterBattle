@@ -1,0 +1,36 @@
+{
+  "task_id": "T089",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "sim/dmb/adventure/puzzles.py",
+    "sim/dmb/adventure/__init__.py",
+    "godot_project/client/adventure/puzzle.gd",
+    "godot_project/client/tests/run_t089_puzzle.gd",
+    "content/schemas/puzzles.json",
+    "tests/sim/test_t089_puzzles.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "PuzzleService.prepare_lease / sync_local_pose / act / finish",
+    "DmbPuzzlePresenter (client/adventure/puzzle.gd)"
+  ],
+  "source_rules": [
+    "C10 PuzzleRegistry + PuzzleController",
+    "GDD §§73, 74, 188"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T089",
+      "exit_code": 0,
+      "result": "PASS; 4 pytest + schema + T089_PUZZLE_OK"
+    }
+  ],
+  "extra_scope": {
+    "tools/check.py": "Wire T089",
+    "sim/dmb/adventure/__init__.py": "Export PuzzleService"
+  },
+  "defects": [],
+  "next_task": "T090",
+  "notes": "Checkpoint version enforced; pressure plate tracks real box pose; receptor holds one real inventory item; duplicate finish is idempotent."
+}
