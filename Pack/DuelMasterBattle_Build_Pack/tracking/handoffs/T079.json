@@ -1,0 +1,36 @@
+{
+  "task_id": "T079",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/narrative/semantic.py",
+    "godot_project/client/ui/semantic_labels.gd",
+    "godot_project/client/tests/run_t079_semantic_labels.gd",
+    "tests/sim/test_t079_semantic_coverage.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "SemanticResolver.select / player_view / kinds_supported",
+    "SemanticResolver coverage for person/building/unit/cart/road/item/mechanism/entrance/hazard",
+    "DmbSemanticLabels.is_targetable / needs_refresh / strip_hidden_keys"
+  ],
+  "source_rules": [
+    "C09 SemanticResolver",
+    "GDD §§20, 22, 34, 124",
+    "G04 shared interaction path extension"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T079",
+      "exit_code": 0,
+      "result": "PASS; 9 pytest (T079+R04) + T079_SEMANTIC_LABELS_OK"
+    }
+  ],
+  "extra_scope": {
+    "tools/check.py": "Wire T079 checks",
+    "tests/sim/test_t079_semantic_coverage.py": "Kind/stale/hidden-fact oracles"
+  },
+  "defects": [],
+  "next_task": "T080",
+  "notes": "Extends G04 SemanticResolver; does not recreate toolbar. Unknown identity targetable; stale refresh; economy/army secrets stripped."
+}

@@ -1,4 +1,4 @@
-"""Semantic labels, inspection and available actions (C09 / G04)."""
+"""Semantic labels, inspection and available actions (C09 / G04 / T079)."""
 
 from __future__ import annotations
 
@@ -15,6 +15,18 @@ from .knowledge import (
 
 INTERACTION_RANGE_TILES = 2.0
 
+REQUIRED_KINDS = (
+    "person",
+    "building",
+    "unit",
+    "cart",
+    "road",
+    "item",
+    "mechanism",
+    "entrance",
+    "hazard",
+)
+
 ARCHETYPE_LABELS = {
     "line": "Line",
     "skirmisher": "Skirmisher",
@@ -26,6 +38,25 @@ FACTION_COLOUR = {
     "faction:blue": "Blue",
     "faction:a": "Local",
 }
+
+# Exact facts that must never appear in ordinary player semantic views.
+HIDDEN_PLAYER_KEYS = frozenset(
+    {
+        "stocks",
+        "stock",
+        "economy",
+        "production_rate",
+        "army_strength",
+        "unit_count",
+        "formation_strength",
+        "hidden_strength",
+        "secret_inventory",
+        "leases",
+        "command_receipts",
+        "rng",
+        "knowledge_raw",
+    }
+)
 
 
 def tile_distance(a: list[float] | tuple[float, ...] | None, b: list[float] | tuple[float, ...] | None) -> float | None:
@@ -49,6 +80,10 @@ def in_interaction_range(
     return dist <= float(range_tiles)
 
 
+def _strip_hidden(payload: dict[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in payload.items() if k not in HIDDEN_PLAYER_KEYS}
+
+
 class SemanticResolver:
     """Knowledge- and range-aware target view for the production bridge."""
 
@@ -69,6 +104,11 @@ class SemanticResolver:
             return [float(pos[0]), float(pos[1])]
         return None
 
+    def _board_bucket(self, name: str) -> dict[str, Any]:
+        board = self.state.board if isinstance(self.state.board, dict) else {}
+        bucket = board.get(name)
+        return bucket if isinstance(bucket, dict) else {}
+
     def _record_for(self, entity_id: str) -> tuple[str, dict[str, Any]] | None:
         if entity_id in (self.state.units or {}):
             return "unit", self.state.units[entity_id]
@@ -78,6 +118,22 @@ class SemanticResolver:
             return "person", self.state.people[entity_id]
         if entity_id in (self.state.carts or {}):
             return "cart", self.state.carts[entity_id]
+        if entity_id in (self.state.roads or {}):
+            return "road", self.state.roads[entity_id]
+        if entity_id in (self.state.items or {}):
+            item = self.state.items[entity_id]
+            kind = str(item.get("kind") or "item")
+            if kind == "mechanism":
+                return "mechanism", item
+            if kind in {"entrance", "exit", "door"}:
+                return "entrance", item
+            return "item", item
+        for mech_id, mech in self._board_bucket("mechanisms").items():
+            if mech_id == entity_id:
+                return "mechanism", mech
+        for ent_id, entrance in self._board_bucket("entrances").items():
+            if ent_id == entity_id:
+                return "entrance", entrance
         cubes = ((self.state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
         if entity_id in cubes:
             return "hazard", cubes[entity_id]
@@ -101,6 +157,11 @@ class SemanticResolver:
         pos = record.get("position") or record.get("grid")
         if isinstance(pos, (list, tuple)) and len(pos) >= 2:
             return [float(pos[0]), float(pos[1])]
+        if kind == "road":
+            # Roads use edge midpoints when authored.
+            mid = record.get("midpoint") or record.get("from_grid")
+            if isinstance(mid, (list, tuple)) and len(mid) >= 2:
+                return [float(mid[0]), float(mid[1])]
         if kind == "hazard":
             hid = str(record.get("hex_id") or "")
             anchors = (self.state.board or {}).get("hex_anchors") or {}
@@ -119,6 +180,54 @@ class SemanticResolver:
             or record.get("home_node_id")
             or ""
         )
+
+    def select(
+        self,
+        entity_id: str,
+        *,
+        local_poses: Mapping[str, Any] | None = None,
+        expected_world_version: int | None = None,
+    ) -> dict[str, Any]:
+        """Select any visible/targetable entity; unknown identity stays targetable."""
+        if expected_world_version is not None and int(expected_world_version) != int(self.state.world_version):
+            return {
+                "ok": False,
+                "reason": "stale_world",
+                "refresh": True,
+                "entity_id": entity_id,
+                "world_version": int(self.state.world_version),
+                "label": "Outdated",
+                "targetable": False,
+            }
+        classified = self._record_for(entity_id)
+        if classified is None:
+            # Stale / destroyed entity: still returns structured refresh feedback.
+            return {
+                "ok": False,
+                "reason": "missing_entity",
+                "refresh": True,
+                "entity_id": entity_id,
+                "world_version": int(self.state.world_version),
+                "label": "Gone",
+                "targetable": False,
+            }
+        kind, record = classified
+        known = filter_entity(self.state, entity_id)
+        unknown_identity = not bool(known.get("known")) and known.get("name") is None
+        info = self.inspect(entity_id, local_poses=local_poses)
+        payload = {
+            "ok": True,
+            "entity_id": entity_id,
+            "kind": kind,
+            "label": info.get("label"),
+            "unknown_identity": unknown_identity,
+            "targetable": True,
+            "refresh": False,
+            "world_version": int(self.state.world_version),
+            "nearby": info.get("nearby"),
+            "actions": self.available_actions(entity_id, local_poses=local_poses),
+        }
+        return _strip_hidden(payload)
 
     def label(self, entity_id: str, *, local_poses: Mapping[str, Any] | None = None) -> str:
         classified = self._record_for(entity_id)
@@ -154,7 +263,19 @@ class SemanticResolver:
                 return str(known["role"])
             return "Person"
         if kind == "cart":
-            return "Cart"
+            return str(record.get("label") or "Cart")
+        if kind == "road":
+            return str(record.get("label") or "Road")
+        if kind == "item":
+            if known_name:
+                return str(known_name)
+            return str(record.get("label") or record.get("definition_id") or "Item")
+        if kind == "mechanism":
+            return str(record.get("label") or "Mechanism")
+        if kind == "entrance":
+            if record.get("dungeon_id"):
+                return str(record.get("label") or "Dungeon")
+            return str(record.get("label") or "Door")
         return "Unknown"
 
     def inspect(
@@ -165,14 +286,21 @@ class SemanticResolver:
     ) -> dict[str, Any]:
         classified = self._record_for(entity_id)
         if classified is None:
-            return {"ok": False, "reason": "unknown_target", "label": "Unknown"}
+            return {
+                "ok": False,
+                "reason": "unknown_target",
+                "label": "Unknown",
+                "refresh": True,
+                "world_version": int(self.state.world_version),
+            }
         kind, record = classified
         wizard_pos = self._wizard_pos(local_poses)
         target_pos = self._target_pos(entity_id, record, kind, local_poses)
         dist = tile_distance(wizard_pos, target_pos)
         nearby = in_interaction_range(wizard_pos, target_pos, range_tiles=self.range_tiles)
         same_node = self._target_node(record, kind) in {"", self._player_node()}
-        return {
+        known = filter_entity(self.state, entity_id)
+        payload = {
             "ok": True,
             "entity_id": entity_id,
             "kind": kind,
@@ -183,7 +311,11 @@ class SemanticResolver:
             "nearby": bool(nearby and same_node),
             "faction_id": record.get("faction_id"),
             "alive": record.get("alive", record.get("active", True)),
+            "unknown_identity": not bool(known.get("known")) and known.get("name") is None,
+            "world_version": int(self.state.world_version),
+            "refresh": False,
         }
+        return _strip_hidden(payload)
 
     def _description(self, kind: str, record: dict[str, Any], entity_id: str) -> str:
         label = self.label(entity_id)
@@ -196,6 +328,16 @@ class SemanticResolver:
         if kind == "hazard":
             return f"{label}. Catastrophe manifestation."
         if kind == "building":
+            return f"{label}."
+        if kind == "road":
+            return f"{label}."
+        if kind == "item":
+            return f"{label}."
+        if kind == "mechanism":
+            return f"{label}."
+        if kind == "entrance":
+            return f"{label}."
+        if kind == "cart":
             return f"{label}."
         return f"{label}."
 
@@ -230,19 +372,37 @@ class SemanticResolver:
                 }
             )
             actions.append({"id": "destroy", "label": "Destroy", "requires_nearby": True})
-        elif kind in {"building", "cart", "worker"} and info.get("alive", True):
+        elif kind in {"building", "cart"} and info.get("alive", True):
             actions.append({"id": "destroy", "label": "Destroy", "requires_nearby": True})
         elif kind == "person" and info.get("alive", True):
             actions.append({"id": "talk", "label": "Talk", "requires_nearby": True})
         elif kind == "hazard" and info.get("alive", True):
             actions.append({"id": "challenge", "label": "Challenge", "requires_nearby": True})
+        elif kind == "item" and info.get("alive", True):
+            actions.append({"id": "take", "label": "Take", "requires_nearby": True})
+        elif kind == "mechanism" and info.get("alive", True):
+            actions.append({"id": "use", "label": "Use", "requires_nearby": True})
+        elif kind == "entrance" and info.get("alive", True):
+            actions.append({"id": "enter", "label": "Enter", "requires_nearby": True})
+        elif kind == "road":
+            actions.append({"id": "inspect_road", "label": "Inspect", "requires_nearby": True})
         return actions
+
+    def player_view(self, entity_id: str, *, local_poses: Mapping[str, Any] | None = None) -> dict[str, Any]:
+        """Player-facing semantic payload with hidden economy/army facts stripped."""
+        selected = self.select(entity_id, local_poses=local_poses)
+        return _strip_hidden(selected)
+
+    def kinds_supported(self) -> tuple[str, ...]:
+        return REQUIRED_KINDS
 
 
 __all__ = [
     "KnowledgeFact",
     "SemanticResolver",
     "INTERACTION_RANGE_TILES",
+    "REQUIRED_KINDS",
+    "HIDDEN_PLAYER_KEYS",
     "debug_projection",
     "filter_entity",
     "in_interaction_range",

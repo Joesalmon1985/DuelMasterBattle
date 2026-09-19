@@ -628,6 +628,18 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"T078_VILLAGE_PROJECTOR_OK",
             ),
         ],
+        "T079": lambda: [
+            _pytest(
+                "semantic_coverage",
+                "tests/sim/test_t079_semantic_coverage.py",
+                "tests/sim/test_r04_semantic_magic.py",
+            ),
+            _godot_script(
+                "semantic_labels",
+                "res://client/tests/run_t079_semantic_labels.gd",
+                r"T079_SEMANTIC_LABELS_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
