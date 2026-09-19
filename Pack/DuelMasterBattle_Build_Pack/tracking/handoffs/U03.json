@@ -1,0 +1,11 @@
+{
+  "repair_id": "U03",
+  "summary": "Added DmbTargetSession + DmbBridgeInteractionPresenter; wired g04_battle_shell and g04_hazard_shell to shared military AttachedChoiceCard flow; NPC Talk action in SemanticResolver; WIL bind_bridge reused.",
+  "files": [
+    "godot_project/client/ui/target_session.gd",
+    "godot_project/client/world/bridge_interaction_presenter.gd",
+    "godot_project/client/scenes/g04_battle_shell.gd",
+    "godot_project/client/scenes/g04_hazard_shell.gd",
+    "sim/dmb/narrative/semantic.py"
+  ]
+}

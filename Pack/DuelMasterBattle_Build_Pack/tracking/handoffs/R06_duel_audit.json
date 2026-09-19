@@ -1,19 +1,32 @@
 {
   "repair_id": "R06_duel_audit",
+  "status": "SUPERSEDED",
+  "superseded_by": "docs/DuelMasterBattle_G04_Reuse_Repair_Addendum.md",
+  "superseded_at": "2026-09-19",
   "candidates": [
     {
       "path": "python_prototype/duel_mastermind",
-      "notes": "Exact/colour scoring correct; constants use 10 colours / 12 guesses — not C10 baseline."
+      "notes": "Exact/colour scoring correct; constants use 10 colours / 12 guesses — not C10 baseline. Reference scoring only."
     },
     {
       "path": "godot_project/sim/realtime_duel_sim.gd",
-      "notes": "Realtime cast windows / wards — incompatible with Mastermind lease ownership."
+      "notes": "Regression/reference until DmbBattleSim lease has equivalent coverage; not production Challenge."
+    },
+    {
+      "path": "godot_project/sim/battle_sim.gd (DmbBattleSim)",
+      "notes": "Omitted from the original R06 audit. T002 retention decision already identified this as the production engine with game_board.tscn."
     },
     {
       "path": "sim/dmb/adventure/duels.py (prior Channel×3)",
       "notes": "Forbidden shortcut; replaced."
+    },
+    {
+      "path": "sim/dmb/adventure/mastermind.py",
+      "notes": "Prior R06 production choice. Retained as reference scoring evidence only; disconnected from production Challenge."
     }
   ],
-  "chosen": "sim/dmb/adventure/mastermind.py (Python single owner, C10 4/6/10)",
-  "rejected_shortcuts": ["channel", "falter"]
+  "prior_chosen": "sim/dmb/adventure/mastermind.py (Python single owner, C10 4/6/10)",
+  "corrected_chosen": "godot_project/client/scenes/game_board.tscn + godot_project/sim/battle_sim.gd (DmbBattleSim) under Python lease",
+  "correction_reason": "T002 duel_rules.md already selected the compatible production board. Default colour/cast differences are encounter configuration, not grounds for replacing the duel. R06 omitted production battle_sim.gd.",
+  "rejected_shortcuts": ["channel", "falter", "guess_resign_panel_as_production"]
 }

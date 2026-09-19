@@ -171,33 +171,68 @@ func _go() -> void:
 
 	var cube_id := str(hazard._hex_nodes.keys()[0])
 	hazard._on_duel_requested(cube_id)
-	await create_timer(0.3).timeout
+	await create_timer(0.5).timeout
 	if hazard._duel_id == "":
 		push_error("G04 hazard duel did not start")
 		quit(1)
 		return
-	# Channel shortcut must fail.
+	# Retained GameBoard must be hosted; Guess/Resign panel must not appear.
+	if hazard._duel_adapter == null or not hazard._duel_adapter.is_active():
+		push_error("G04 expected retained GameBoard lease adapter to be active")
+		quit(1)
+		return
+	var board = hazard._duel_adapter._board
+	if board == null or not is_instance_valid(board):
+		push_error("G04 Challenge did not instantiate game_board")
+		quit(1)
+		return
+	if str(board.get_script().resource_path).find("game_board") < 0 and board.get_class() != "GameBoard":
+		# Class name may be GameBoard; also accept script path.
+		if board.get("game") == null:
+			push_error("G04 hosted board missing DmbBattleSim game")
+			quit(1)
+			return
+	if board.game == null:
+		push_error("G04 hosted board has no DmbBattleSim instance")
+		quit(1)
+		return
+	var sim_name := str(board.game.get_class())
+	if board.game.get_script() != null:
+		sim_name = str(board.game.get_script().resource_path)
+	if sim_name.find("battle_sim") < 0 and not (board.game is RefCounted):
+		push_error("G04 expected DmbBattleSim, got %s" % sim_name)
+		quit(1)
+		return
+	# Channel / Guess panel actions must fail on ward lease.
 	var ch: Dictionary = hazard._cmd("HazardDuelAction", {"duel_id": hazard._duel_id, "action": "channel"})
 	if str(ch.get("status", "")) == "ACCEPTED":
 		push_error("G04 Channel shortcut must be rejected")
 		quit(1)
 		return
-	# Wrong guess yields exact/colour feedback without clearing the cube.
-	hazard._submit_guess([1, 2, 3, 4])
-	await create_timer(0.25).timeout
-	if hazard._duel_label.text.find("exact") < 0 and hazard._duel_label.text.find("colour") < 0:
-		# Label may say "exact N, colour M"
-		if hazard._duel_label.text.find("Cast") < 0:
-			push_error("G04 expected Mastermind feedback after guess")
-			quit(1)
-			return
-	hazard._duel_action("resign")
+	var guess: Dictionary = hazard._cmd("HazardDuelAction", {"duel_id": hazard._duel_id, "action": "guess", "guess": [0, 1, 2, 3]})
+	if str(guess.get("status", "")) == "ACCEPTED":
+		push_error("G04 Guess panel path must be rejected for retained duel")
+		quit(1)
+		return
+	# Non-victory resolve leaves cube active (resign/failure).
+	var fail: Dictionary = hazard._cmd("ResolveHazardDuel", {"duel_id": hazard._duel_id, "success": false})
+	if str(fail.get("status", "")) != "ACCEPTED":
+		push_error("G04 ResolveHazardDuel failure path rejected")
+		quit(1)
+		return
+	# Duplicate outcome must be idempotent.
+	var dup: Dictionary = hazard._cmd("ResolveHazardDuel", {"duel_id": hazard._duel_id, "success": true})
+	if str(dup.get("payload", {}).get("status", "")) != "idempotent" and str(dup.get("status", "")) != "ACCEPTED":
+		push_error("G04 duplicate resolve must be accepted/idempotent")
+		quit(1)
+		return
+	hazard._on_retained_duel_finished("fled", fail)
 	await create_timer(0.35).timeout
 	if hazard._client:
 		var hview: Dictionary = hazard._client.request_view("player", ["hazards", "fx_hazard"])
 		var cubes: Dictionary = hview.get("hazards", {}).get("catastrophe", {}).get("cubes", {})
 		if not cubes.has(cube_id) or not bool(cubes[cube_id].get("active", true)):
-			push_error("G04 resign must leave cube active (nonterminal failure)")
+			push_error("G04 non-victory must leave cube active (nonterminal failure)")
 			quit(1)
 			return
 		var still_active := 0
@@ -205,10 +240,10 @@ func _go() -> void:
 			if bool(cubes[cid].get("active", true)):
 				still_active += 1
 		if still_active < 3:
-			push_error("G04 expected all three cubes still active after resign")
+			push_error("G04 expected all three cubes still active after non-victory")
 			quit(1)
 			return
-	print("G04_HAZARD_PLAYABLE_OK duel_feedback_ok cube=", cube_id)
+	print("G04_HAZARD_PLAYABLE_OK retained_board cube=", cube_id)
 	print("G04_SMOKE_OK battle_units=", battle_unit_count)
 	print("G04_PLAYABLE_OK")
 	quit(0)

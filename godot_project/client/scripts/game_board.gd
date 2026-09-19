@@ -22,6 +22,7 @@ const _CompositeWizard = preload("res://client/components/composite_wizard.gd")
 const _SpellVfx = preload("res://client/components/spell_vfx.gd")
 const _PlayabilityHaptics = preload("res://client/scripts/playability_haptics.gd")
 const _SaveData = preload("res://client/scripts/save_data.gd")
+const _Constants = preload("res://sim/constants.gd")
 
 signal game_finished
 
@@ -124,6 +125,21 @@ var _result_shown: bool = false
 var _history_rows: Array = []
 var _time_since_start: float = 0.0
 
+# Migrated hazard Challenge lease — configure BEFORE add_child / _ready.
+var _lease_mode := false
+var _lease_config: Dictionary = {}
+var _lease_finished_cb: Callable = Callable()
+var _lease_started := false
+
+
+func configure_from_lease(request: Dictionary, finished_cb: Callable = Callable()) -> void:
+	## Must be called on an instantiated board BEFORE add_child so _ready uses lease combatants.
+	## Preserves quick-duel and Adventure pending_battle when _lease_mode is false.
+	_lease_mode = true
+	_lease_config = request.duplicate(true)
+	_lease_finished_cb = finished_cb
+	_no_scene_change = true
+
 
 func _session() -> Node:
 	return get_node("/root/EncounterSession")
@@ -132,23 +148,77 @@ func _session() -> Node:
 func _ready() -> void:
 	_screenshot_mode = "--screenshot-mode" in OS.get_cmdline_user_args()
 	_reduce_motion = bool(_SaveData.get_setting("reduce_motion", false))
-	_ruleset = _session().get_ruleset()
+	if not _lease_mode:
+		_ruleset = _session().get_ruleset()
 	_resolve_combatants()
 	_build_ui()
-	start_new_game(_bot_seed)
+	var seed := _bot_seed
+	if _lease_mode and _lease_config.has("bot_seed"):
+		seed = int(_lease_config.get("bot_seed", _bot_seed))
+	elif _lease_mode and _lease_config.get("encounter", {}).has("bot_seed"):
+		seed = int(_lease_config["encounter"].get("bot_seed", _bot_seed))
+	start_new_game(seed)
+	if _lease_mode:
+		_lease_started = true
+		if game != null:
+			game.forced_defeat_by_cast = int(_lease_config.get("forced_defeat_by_cast", 0))
+			var cp: Dictionary = _lease_config.get("checkpoint", {})
+			if typeof(cp) == TYPE_DICTIONARY and not cp.is_empty() and game.has_method("restore_checkpoint"):
+				game.restore_checkpoint(cp)
+		_set_status_lease()
+		return
 	if _adventure_mode:
 		_show_encounter_intro()
 	elif not _screenshot_mode and not bool(_SaveData.get_setting("seen_how_to_play", false)):
 		_show_help_overlay(true)
 
 
+func _set_status_lease() -> void:
+	# Lease Challenge skips adventure intro / how-to-play gates.
+	pass
+
+
 func _adventure() -> Node:
 	return get_node_or_null("/root/Adventure")
 
 
-## Decide who is fighting. Adventure battles come from Adventure.pending_battle;
+## Decide who is fighting. Lease mode uses configure_from_lease combatants.
+## Adventure battles come from Adventure.pending_battle;
 ## otherwise the quick duel uses the session's ruleset as a symmetric pair.
 func _resolve_combatants() -> void:
+	if _lease_mode:
+		_adventure_mode = false
+		var enc: Dictionary = _lease_config.get("encounter", {})
+		if typeof(enc) != TYPE_DICTIONARY:
+			enc = {}
+		var player_data: Dictionary = enc.get("player_combatant", {})
+		var enemy_data: Dictionary = enc.get("enemy_combatant", {})
+		if typeof(player_data) != TYPE_DICTIONARY or player_data.is_empty():
+			player_data = {
+				"id": "player", "display_name": "You", "archetype": "player", "kind": "player",
+				"weave_size": 4, "attack_pool": _Constants.CORE_SPELL_POOL.duplicate(),
+				"ward_size": 4, "ward_pool": _Constants.CORE_SPELL_POOL.duplicate(),
+				"allow_repeats": true, "max_casts": 10,
+				"min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+			}
+		if typeof(enemy_data) != TYPE_DICTIONARY or enemy_data.is_empty():
+			enemy_data = {
+				"id": "hazard_rival", "display_name": "Manifestation", "archetype": "wizard", "kind": "wizard",
+				"weave_size": 4, "attack_pool": _Constants.CORE_SPELL_POOL.duplicate(),
+				"ward_size": 4, "ward_pool": _Constants.CORE_SPELL_POOL.duplicate(),
+				"allow_repeats": true, "max_casts": 10,
+				"min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+				"bot_logic": "candidate_filter", "bot_solver_cap": 60, "bot_mistake_rate": 0.0,
+				"think_min_seconds": 8.0, "think_max_seconds": 18.0,
+			}
+		_player_c = DmbCombatant.make(player_data)
+		_enemy_c = DmbCombatant.make(enemy_data)
+		_battle_request = {
+			"lease_id": _lease_config.get("lease_id", _lease_config.get("duel_id", "")),
+			"cube_id": _lease_config.get("cube_id", ""),
+			"policy": "HAZARD_LEASE",
+		}
+		return
 	var adv := _adventure()
 	if adv != null and not adv.pending_battle.is_empty():
 		_adventure_mode = true
@@ -1456,6 +1526,19 @@ var _no_scene_change: bool = false  # test harness: report result but do not cha
 
 
 func _return_to_world(outcome: String) -> void:
+	if _lease_mode:
+		var details := {}
+		if game != null and game.result != null:
+			details = {
+				"player_casts": game.result.human_guess_count,
+				"enemy_casts": game.result.bot_guess_count,
+				"outcome": outcome,
+			}
+		if game != null and game.has_method("export_checkpoint"):
+			details["checkpoint"] = game.export_checkpoint()
+		if _lease_finished_cb.is_valid():
+			_lease_finished_cb.call(outcome, details)
+		return
 	var adv := _adventure()
 	if adv:
 		var details := {}

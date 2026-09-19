@@ -1,0 +1,9 @@
+{
+  "repair_id": "U04",
+  "summary": "Observe command learns durable person/unit names once; SemanticResolver labels compose public type + known name; shared movement dismissal via TargetSession keyboard/ground intent.",
+  "files": [
+    "sim/dmb/core/world.py",
+    "sim/dmb/narrative/semantic.py",
+    "godot_project/client/ui/target_session.gd"
+  ]
+}

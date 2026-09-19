@@ -125,16 +125,22 @@ class SemanticResolver:
         if classified is None:
             return "Unknown"
         kind, record = classified
+        known = filter_entity(self.state, entity_id)
+        known_name = known.get("name")
         fx = (self.state.board or {}).get("fx_battle") or {}
         labels = fx.get("labels") or {}
-        if entity_id in labels:
-            return str(labels[entity_id])
         if kind == "unit":
-            fac = str(record.get("faction_id") or "")
-            colour = FACTION_COLOUR.get(fac, fac.replace("faction:", "").title() or "Unit")
-            arch = str(record.get("archetype") or "")
-            arch_label = ARCHETYPE_LABELS.get(arch, arch.title() or "Soldier")
-            return f"{colour} {arch_label}".strip()
+            if entity_id in labels:
+                public = str(labels[entity_id])
+            else:
+                fac = str(record.get("faction_id") or "")
+                colour = FACTION_COLOUR.get(fac, fac.replace("faction:", "").title() or "Unit")
+                arch = str(record.get("archetype") or "")
+                arch_label = ARCHETYPE_LABELS.get(arch, arch.title() or "Soldier")
+                public = f"{colour} {arch_label}".strip()
+            if known_name and " — " not in public:
+                return f"{public} — {known_name}"
+            return public
         if kind == "building":
             return str(record.get("label") or record.get("definition_id") or "Building")
         if kind == "hazard":
@@ -142,11 +148,10 @@ class SemanticResolver:
             fxh = (self.state.board or {}).get("fx_hazard") or {}
             return str((fxh.get("hex_labels") or {}).get(hid) or f"Hazard {hid}")
         if kind == "person":
-            filtered = filter_entity(self.state, entity_id)
-            if filtered.get("name"):
-                return str(filtered["name"])
-            if filtered.get("role"):
-                return str(filtered["role"])
+            if known_name:
+                return str(known_name)
+            if known.get("role"):
+                return str(known["role"])
             return "Person"
         if kind == "cart":
             return "Cart"
@@ -225,8 +230,10 @@ class SemanticResolver:
                 }
             )
             actions.append({"id": "destroy", "label": "Destroy", "requires_nearby": True})
-        elif kind in {"building", "person", "cart", "worker"} and info.get("alive", True):
+        elif kind in {"building", "cart", "worker"} and info.get("alive", True):
             actions.append({"id": "destroy", "label": "Destroy", "requires_nearby": True})
+        elif kind == "person" and info.get("alive", True):
+            actions.append({"id": "talk", "label": "Talk", "requires_nearby": True})
         elif kind == "hazard" and info.get("alive", True):
             actions.append({"id": "challenge", "label": "Challenge", "requires_nearby": True})
         return actions

@@ -23,8 +23,9 @@ alwaysApply: true
   after three focused failed repairs with a diagnostic handoff.
 - Do not load the full GDD or all task cards unless a concrete ambiguity
   requires it.
-- G04 interaction repair: follow
-  `docs/DuelMasterBattle_G04_Interaction_Repair_Brief.md` and the G04 section
-  of `EXECUTION_AMENDMENTS.md`. Receipts R01–R08; keep T077 unstarted until Joe
-  clears G04. Traceability:
+- G04 retained-UI repair: follow
+  `docs/DuelMasterBattle_G04_Reuse_Repair_Addendum.md` (U01–U08) and the G04
+  section of `EXECUTION_AMENDMENTS.md`. Reuse `game_board` + `DmbBattleSim`;
+  preserve military menu appearance; observation-led names; shared target
+  session. Keep T077 unstarted until Joe clears G04. Traceability:
   `Pack/DuelMasterBattle_Build_Pack/tracking/interaction_traceability.json`.

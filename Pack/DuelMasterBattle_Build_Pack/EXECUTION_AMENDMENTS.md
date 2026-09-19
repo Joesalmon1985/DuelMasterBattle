@@ -101,22 +101,40 @@ runtime" means no internet or LLM dependency.
 
 Joe-directed corrective pass for G04 controls, ownership and hazards. Source
 brief: `docs/DuelMasterBattle_G04_Interaction_Repair_Brief.md`. Receipt IDs
-R01–R08 record this repair; do not renumber T001 onward. While the pass is in
-progress G04 is FIX_REQUIRED; after honest evidence, stop at AWAITING_HUMAN.
-Do not start T077. Do not mark G04 PASS from automation.
+R01–R08 record the first repair pass; do not renumber T001 onward.
+
+## G04 retained duel and shared interaction repair (19 September 2026)
+
+Supersedes conflicting R06 / “choose fallback” decisions from the 18 September
+pass. Authoritative addendum:
+`docs/DuelMasterBattle_G04_Reuse_Repair_Addendum.md` (U01–U08).
+
+While this repair is in progress G04 is FIX_REQUIRED. Reach AWAITING_HUMAN only
+after all required automated checks pass. Do not start T077. Do not mark G04
+PASS from automation. Integration branch: `fix/g04-retained-ui` from
+`origin/feature/spellbook-ui`, with `origin/main` merged. Ensemble-only commits
+`58ea2d2` and `6f7be0f` remain a separate follow-up on
+`BuildPackV03-ensemble-depth-pass` and are not part of this repair.
 
 ### Control and validation
 
 - Target first, action second: distant targets yield observation only; within
-  shared tile-unit interaction range (baseline two tiles) open attached
-  Observe / Buff… / Destroy (or Challenge for eligible hazards). No permanent
-  spell toolbar in play or normal gameplay.
+  shared tile-unit interaction range (baseline two tiles) open the approved
+  military attached menu. Actions differ by capability: NPC Observe/Talk;
+  soldier Observe/Buff…/Destroy; hazard Observe/Challenge when eligible. No
+  permanent spell toolbar in play or normal gameplay.
+- One shared target/action session serves NPCs, soldiers and hazards. Preserve
+  the AttachedChoiceCard appearance Joe approved.
+- A validated Observe learns that individual's permitted display name through
+  the authoritative knowledge service (people and soldiers). Mere proximity
+  must not silently name them. Talk uses the retained village
+  WorldInteractionLabel / dialogue presentation with filtered bridge data.
 - Validate distance against synchronised local poses, including moving leased
   units and the wizard after SyncPose/checkpoint. Re-evaluate at choice open
   and again at commit. Caller-supplied `observed_ids` grant no authority.
 - One input router: UI choice vs semantic target vs ground move; no duplicate
   touch/mouse actions. Formal choices acquire a pause token; cancel/walk-away
-  releases only that token.
+  via shared movement intent (keyboard, pad, ground) releases only that token.
 
 ### Ownership, fixtures and pace
 
@@ -135,24 +153,42 @@ Do not start T077. Do not mark G04 PASS from automation.
   of a different save. Reject stale replies (wrong world/version/request id).
   External unit/hazard actors must not be owned by people rebuild.
 
-### Duel audit
+### Retained duel (supersedes R06 Mastermind production choice)
 
-- Before wiring Challenge, audit retained Godot/`python_prototype` duel
-  implementations against C10. Reuse whichever satisfies C10 without creating a
-  second owner of duel state. Channel×3/Falter is not an acceptable substitute.
-  If none fit, use C10's explicit I07 deduction fallback as the single owner.
+- T002 already selected `client/scenes/game_board.tscn`,
+  `client/scripts/game_board.gd` and `sim/battle_sim.gd` (`DmbBattleSim`).
+- Hazard Challenge must launch that retained scene/engine under a Python lease.
+  The simplified Guess/Resign Mastermind panel is not the production Challenge
+  path. Keep `sim/dmb/adventure/mastermind.py` as reference scoring evidence
+  only.
+- Configure GameBoard from the lease **before** scene startup (`configure_from_lease`
+  before `add_child`). Preserve existing quick-duel and Adventure
+  `pending_battle` entry points unchanged.
+- Encounter differences (including G04 baseline four slots / six colours / ten
+  casts) are explicit combatant/encounter data. Do not flatten other working
+  encounters. Ordinary challenges must not inherit the prologue forced-defeat
+  flag.
+- Versioned duel checkpoints must restore wards, histories, windows, casts,
+  duel time, 64-bit RNG and rival planner state without reroll. Duplicate or
+  stale outcome submission is idempotent: the first valid result applies once;
+  retransmits return the same receipt without a second cube/allowance mutation.
+- Do not call legacy `Adventure.report_battle_result` to save a second campaign
+  or transition into the old overworld from migrated Challenge play.
 
 ### Task ownership
 
-- G04 owns the minimum shared target/observation/choice path on the production
-  bridge. T079 and T085 extend narrative coverage; they must not recreate a
-  competing interface. Traceability:
+- G04 owns the minimum shared target/observation/choice path and retained
+  Challenge lease on the production bridge. T079 and T085 extend narrative
+  coverage; T091 and T092 extend the retained `DmbBattleSim` implementation
+  (not Python Mastermind as production). They must not recreate a competing
+  interface or mark remaining work complete from this repair. Traceability:
   `tracking/interaction_traceability.json`.
 
 ### Human-decisive acceptance
 
-- Automated checks are necessary but not sufficient. Decisive proof is walking
-  up to a moving soldier, clicking, choosing a spell, seeing a persistent
-  result, then the equivalent observe/Challenge flow on a visible hazard.
+- Automated checks are necessary and must pass before AWAITING_HUMAN; they are
+  not sufficient for PASS. Decisive proof is walking up to a moving soldier,
+  clicking, choosing a spell, seeing a persistent result, then the equivalent
+  observe/Challenge flow on a visible hazard using the full retained duel UI.
   Linux launchers: `bash tools/play_g04_battle.sh`,
   `bash tools/play_g04_hazard.sh`.

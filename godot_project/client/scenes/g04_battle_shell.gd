@@ -9,6 +9,8 @@ const EncounterHost = preload("res://client/encounters/encounter_host.gd")
 const ChoiceCard = preload("res://client/ui/attached_choice_card.gd")
 const SemanticLabels = preload("res://client/ui/semantic_labels.gd")
 const ContextActions = preload("res://client/ui/context_actions.gd")
+const TargetSession = preload("res://client/ui/target_session.gd")
+const BridgePresenter = preload("res://client/world/bridge_interaction_presenter.gd")
 const G04_BATTLE_SAVE := "g04_battle"
 const TILE := 64.0
 const CHECKPOINT_EVERY_STEPS := 10
@@ -30,6 +32,8 @@ var _router
 var _choice_pause_token := ""
 var _choice_open := false
 var _fx_labels: Dictionary = {}
+var _session
+var _presenter
 
 
 func _ready() -> void:
@@ -47,8 +51,14 @@ func _ready() -> void:
 	_choice_card = ChoiceCard.new()
 	_choice_card.name = "ChoiceCard"
 	_ui_root.add_child(_choice_card)
-	_choice_card.action_chosen.connect(_on_choice_action)
-	_choice_card.closed.connect(_on_choice_closed)
+	_session = TargetSession.new()
+	_session.setup(_choice_card, Callable(self, "_acquire_choice_pause"), Callable(self, "_release_choice_pause"))
+	_session.observation_requested.connect(_on_session_observe)
+	_session.action_requested.connect(_on_session_action)
+	_session.dismissed.connect(func(_id): _choice_open = false)
+	_presenter = BridgePresenter.new()
+	_ui_root.add_child(_presenter)
+	_presenter.setup(_ui_root, null, Callable(self, "_cmd"))
 	_feedback = Label.new()
 	_feedback.set_anchors_preset(PRESET_TOP_WIDE)
 	_feedback.offset_left = 12
@@ -106,7 +116,7 @@ func _spell_cast_targeted(payload: Dictionary, mode: String) -> Dictionary:
 		_apply_destroy(_selected_unit)
 	else:
 		_apply_buff(_selected_unit, mode)
-	var ok := _feedback.text.find("rejected") < 0 and _feedback.text.find("Select") < 0
+	var ok: bool = _feedback.text.find("rejected") < 0 and _feedback.text.find("Select") < 0
 	return {"status": "ACCEPTED" if ok else "REJECTED", "message": _feedback.text}
 
 
@@ -195,12 +205,37 @@ func _release_choice_pause() -> void:
 
 
 func _open_observation(uid: String) -> void:
+	_on_session_observe(uid, "unit")
+
+
+func _on_session_observe(uid: String, _kind: String) -> void:
 	_selected_unit = uid
 	for id in _unit_nodes.keys():
 		_unit_nodes[id].set_selected(id == uid)
-	var label := _public_label(uid)
-	_feedback.text = label
+	var reply := _cmd("Observe", {
+		"entity_id": uid,
+		"local_poses": _collect_local_poses(),
+	})
+	var view: Dictionary = reply.get("payload", {})
+	var label := str(view.get("label", _public_label(uid)))
+	_fx_labels[uid] = label
+	_feedback.text = str(view.get("description", label))
 	_prompt.text = label
+	if _presenter:
+		_presenter.show_observation(uid, _unit_nodes.get(uid), view)
+
+
+func _on_session_action(uid: String, action_id: String, payload: Dictionary) -> void:
+	_selected_unit = uid
+	match action_id:
+		"buff_shield", "buff_frequency", "buff_range":
+			var kind := str(payload.get("buff_kind", action_id.replace("buff_", "")))
+			_apply_buff(uid, kind)
+		"destroy":
+			_apply_destroy(uid)
+		_:
+			pass
+	_choice_open = false
 
 
 func _open_choice_card(uid: String) -> void:
@@ -208,47 +243,29 @@ func _open_choice_card(uid: String) -> void:
 	for id in _unit_nodes.keys():
 		_unit_nodes[id].set_selected(id == uid)
 	var label := _public_label(uid)
-	_acquire_choice_pause()
-	_router.begin_formal_choice(uid)
-	_choice_card.open_for(uid, label, [
-		{"id": "observe", "label": "Observe"},
-		{"id": "buff", "label": "Buff…"},
-		{"id": "destroy", "label": "Destroy"},
-	], _unit_nodes.get(uid))
+	_choice_open = true
+	_session.handle_target_click(uid, true, "unit", label, _unit_nodes.get(uid))
 	_feedback.text = "Choose an action for %s" % label
 
 
 func _on_choice_action(action_id: String, payload: Dictionary) -> void:
-	var uid: String = str(_choice_card.target_id())
-	if uid == "":
-		uid = _selected_unit
-	match action_id:
-		"observe":
-			_open_observation(uid)
-			_close_choice_card(false)
-		"buff":
-			_choice_card.open_buff_submenu(uid, "Buff — %s" % _public_label(uid), _unit_nodes.get(uid))
-		"buff_shield", "buff_frequency", "buff_range":
-			var kind := str(payload.get("buff_kind", action_id.replace("buff_", "")))
-			_apply_buff(uid, kind)
-			_close_choice_card(true)
-		"destroy":
-			_apply_destroy(uid)
-			_close_choice_card(true)
-		"back":
-			_open_choice_card(uid)
-		_:
-			_close_choice_card(false)
+	# Retained for older tests; TargetSession owns the live card.
+	_on_session_action(str(_choice_card.target_id()), action_id, payload)
 
 
 func _on_choice_closed() -> void:
 	_release_choice_pause()
+	_choice_open = false
 	_router.cancel_choice(_selected_unit)
 
 
 func _close_choice_card(applied: bool) -> void:
-	_choice_card.visible = false
-	_release_choice_pause()
+	if _session != null:
+		_session.close(applied)
+	else:
+		_choice_card.visible = false
+		_release_choice_pause()
+	_choice_open = false
 	if not applied:
 		_feedback.text = "Choice closed — nothing cast"
 
@@ -299,17 +316,12 @@ func _process(delta: float) -> void:
 	super(delta)
 	if _client == null:
 		return
-	# Walk-away closes the choice card without casting.
-	if _choice_open and _area != null:
-		var moving := false
-		if _area.has_method("wizard_grid"):
-			# Any directional input / pad motion dismisses safely.
-			moving = Input.is_action_pressed("ui_left") or Input.is_action_pressed("ui_right") \
-				or Input.is_action_pressed("ui_up") or Input.is_action_pressed("ui_down")
-		if moving:
-			_close_choice_card(false)
-			_choice_card.close()
-
+	# Walk-away closes the choice card without casting (keyboard, pad, shared intent).
+	if _choice_open and _session != null:
+		if _session.poll_keyboard_movement_intent():
+			_choice_open = false
+			if _presenter:
+				_presenter.notify_player_moved()
 	_view_acc += delta
 	if _view_acc >= 0.35:
 		_view_acc = 0.0
@@ -341,7 +353,6 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var hovered := get_viewport().gui_get_hovered_control()
 		if hovered != null:
-			# Choice card buttons handle themselves; ignore other HUD.
 			if _choice_card != null and _choice_card.visible and _choice_card.is_ancestor_of(hovered):
 				return
 			if _spell_host != null and _spell_host.accepts_world_target():
@@ -361,21 +372,23 @@ func _input(event: InputEvent) -> void:
 			if d < best_d:
 				best_d = d
 				best = uid
-		if best != "":
-			_router.consume_pointer()
-			if _spell_host != null and _spell_host.accepts_world_target():
-				_selected_unit = best
-				_spell_model.complete_targeting(best)
-				get_viewport().set_input_as_handled()
-				return
-			if _is_nearby(best):
-				_open_choice_card(best)
-			else:
-				if _choice_open:
-					_close_choice_card(false)
-					_choice_card.close()
-				_open_observation(best)
+		if best == "":
+			if _session != null and _session.is_open():
+				_session.notify_movement_intent()
+				_choice_open = false
+				if _presenter:
+					_presenter.notify_player_moved()
+			return
+		_router.consume_pointer()
+		if _spell_host != null and _spell_host.accepts_world_target():
+			_selected_unit = best
+			_spell_model.complete_targeting(best)
 			get_viewport().set_input_as_handled()
+			return
+		var label := _public_label(best)
+		var route: String = _session.handle_target_click(best, _is_nearby(best), "unit", label, _unit_nodes.get(best))
+		_choice_open = route == "choice"
+		get_viewport().set_input_as_handled()
 
 
 func _apply_step_visuals(result: Dictionary) -> void:

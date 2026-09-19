@@ -65,6 +65,8 @@ var _choice_trace: Array = []
 var _touch_down: Dictionary = {}
 var _gesture_down := false
 var _fade: Tween
+var _knowledge_provider: Callable
+var _bridge_view: Dictionary = {}
 
 
 func _ready() -> void:
@@ -104,6 +106,42 @@ func bind(adv: Node, semantic: Dictionary, entity_id: String, anchor: Node2D, ca
 	if adv != null:
 		_connect_adventure()
 	refresh()
+	_follow()
+
+
+## Bind without Adventure. The knowledge level comes from `knowledge_provider`
+## (called with the knowledge key) or from the filtered bridge view set later.
+func bind_bridge(
+	semantic: Dictionary,
+	entity_id: String,
+	anchor: Node2D,
+	camera: Camera2D,
+	offset: Vector2,
+	knowledge_provider: Callable = Callable()
+) -> void:
+	_knowledge_provider = knowledge_provider
+	bind(null, semantic, entity_id, anchor, camera, offset)
+
+
+## Filtered bridge observation payload: {known, name, label, …}.
+func set_bridge_view(view: Dictionary) -> void:
+	_bridge_view = view.duplicate(true)
+	refresh()
+
+
+func bridge_view() -> Dictionary:
+	return _bridge_view.duplicate(true)
+
+
+func update_semantic(semantic: Dictionary) -> void:
+	_semantic = semantic.duplicate(true)
+	refresh()
+
+
+func rebind_anchor(anchor: Node2D, camera: Camera2D = null) -> void:
+	_anchor = anchor
+	if camera != null:
+		_camera = camera
 	_follow()
 
 
@@ -455,7 +493,7 @@ func collapse() -> void:
 
 
 func _show_observation() -> void:
-	var resolved: Dictionary = _Resolver.resolve(_semantic, _adv, false)
+	var resolved: Dictionary = _resolve()
 	_button.text = str(resolved.get("observe_far", ""))
 	_enter_state(STATE_OBSERVATION)
 	_fit_speech()
@@ -567,13 +605,33 @@ func _on_button_gui(event: InputEvent) -> void:
 
 
 func refresh() -> void:
-	if _button == null or _adv == null:
+	if _button == null:
+		return
+	if _adv == null and not _has_bridge_source():
 		return
 	if _state != STATE_LABEL:
 		return
-	var resolved: Dictionary = _Resolver.resolve(_semantic, _adv)
+	var resolved: Dictionary = _resolve()
 	_button.text = str(resolved.get("label", ""))
 	_fit_label()
+
+
+func _resolve(in_range: bool = false) -> Dictionary:
+	return _Resolver.resolve(_semantic, _adv, in_range, _knowledge_level())
+
+
+## -1 keeps the Adventure lookup. Bridge-bound labels supply their own level.
+func _knowledge_level() -> int:
+	if _knowledge_provider.is_valid():
+		return maxi(0, int(_knowledge_provider.call(knowledge_key())))
+	if not _bridge_view.is_empty():
+		var name := str(_bridge_view.get("name", ""))
+		return 1 if name != "" and name != "<null>" else 0
+	return -1
+
+
+func _has_bridge_source() -> bool:
+	return _knowledge_provider.is_valid() or not _bridge_view.is_empty()
 
 
 func _on_state_changed() -> void:
@@ -754,7 +812,7 @@ func _label_size_for(text: String) -> Vector2:
 
 
 func _resolved_label() -> String:
-	var resolved: Dictionary = _Resolver.resolve(_semantic, _adv)
+	var resolved: Dictionary = _resolve()
 	return str(resolved.get("label", ""))
 
 
@@ -772,7 +830,7 @@ func _apply_shown() -> void:
 
 
 func _dismisses_on_move() -> bool:
-	var resolved: Dictionary = _Resolver.resolve(_semantic, _adv)
+	var resolved: Dictionary = _resolve()
 	return bool(resolved.get("dismiss_on_move", true))
 
 

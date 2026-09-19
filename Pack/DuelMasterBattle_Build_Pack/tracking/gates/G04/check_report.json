@@ -1,0 +1,99 @@
+{
+  "target": "G04",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "g04_cumulative_python",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.442,
+      "detail": "........................................                                 [100%]\n40 passed in 0.19s",
+      "command": [
+        "C:\\Users\\joesa\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t060_combat_math.py",
+        "tests/sim/test_t064_handoffs.py",
+        "tests/sim/test_t065_magic.py",
+        "tests/sim/test_t066_buffs.py",
+        "tests/scenarios/test_battle_magic.py",
+        "tests/scenarios/test_catastrophe.py",
+        "tests/sim/test_t070_propagation.py",
+        "tests/sim/test_t072_visits.py",
+        "tests/sim/test_r02_view_merge.py",
+        "tests/sim/test_r03_fixture_ownership.py",
+        "tests/sim/test_r04_semantic_magic.py",
+        "tests/sim/test_r06_mastermind_duel.py"
+      ]
+    },
+    {
+      "name": "g04_packet_files",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.001,
+      "detail": "10 evidence files valid",
+      "command": null
+    },
+    {
+      "name": "g04_sidecar_playable",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 10.17,
+      "detail": "Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org\n\nG04_BATTLE_PLAYABLE_OK units=6 destroyed=unit:1\nG04_HAZARD_PLAYABLE_OK retained_board cube=cube:1\nG04_SMOKE_OK battle_units=6\nG04_PLAYABLE_OK\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n   at: cleanup (core/object/object.cpp:2514)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:795)",
+      "command": [
+        "C:\\Users\\joesa\\Downloads\\Godot_v4.5.1-stable_win64.exe\\Godot_v4.5.1-stable_win64_console.exe",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g04_playable.gd"
+      ]
+    },
+    {
+      "name": "g03_regression_smoke",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 3.416,
+      "detail": "Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org\n\nG03_SMOKE_OK worker=person:3 factories=3 finite=590\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n   at: cleanup (core/object/object.cpp:2514)\nERROR: 4 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:795)",
+      "command": [
+        "C:\\Users\\joesa\\Downloads\\Godot_v4.5.1-stable_win64.exe\\Godot_v4.5.1-stable_win64_console.exe",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g03_smoke.gd"
+      ]
+    },
+    {
+      "name": "g02_regression_smoke",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 1.845,
+      "detail": "Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org\n\nG02_SMOKE_OK seed=202.0 cart=cart:1 store=store:building:2 moved=672.0 wait_turn=8\u00e2\u2020\u20199 delivery=delivered construction=ready\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n   at: cleanup (core/object/object.cpp:2514)\nERROR: 4 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:795)",
+      "command": [
+        "C:\\Users\\joesa\\Downloads\\Godot_v4.5.1-stable_win64.exe\\Godot_v4.5.1-stable_win64_console.exe",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g02_smoke.gd"
+      ]
+    },
+    {
+      "name": "g01_regression_smoke",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.828,
+      "detail": "Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org\n\nG01_SMOKE_OK world_id=world:g01",
+      "command": [
+        "C:\\Users\\joesa\\Downloads\\Godot_v4.5.1-stable_win64.exe\\Godot_v4.5.1-stable_win64_console.exe",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g01_smoke.gd"
+      ]
+    }
+  ]
+}

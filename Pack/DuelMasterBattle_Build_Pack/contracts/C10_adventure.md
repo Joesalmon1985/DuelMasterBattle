@@ -13,7 +13,7 @@ Source: GDD §§48–77, 128–145, 188–191. All production fixtures and autho
 | `PuzzleRegistry` / `adventure/puzzles.py` | Prepare/checkpoint puzzle lease and persistent object bindings |
 | `PuzzleController` / `client/adventure/puzzle.gd` | Execute whitelisted mechanism graph, local fixed time, submit effects |
 | `DuelAdapter` / `adventure/duels.py` | Validate rival/hazard entry, acquire global pause, grant lease, apply result/recovery once |
-| `DuelController` / `client/duel/duel_controller.gd` | Preserve/adapt existing Mastermind runtime; own only leased duel state |
+| `DuelController` / `client/encounters/duel_lease_adapter.gd` + `game_board.gd` | Preserve/adapt retained `game_board.tscn` + `DmbBattleSim`; own only leased duel state |
 | `RecoveryService` / `player/recovery.py` | Pick safe return location without extra World Turn or treatment renewal |
 
 ## Quest graph and effects
@@ -57,6 +57,12 @@ Starting any duel acquires a global pause; industry, battles, puzzles and buffs 
 
 ## G04 amendment — duel adoption rule
 
-Before wiring hazard Challenge, audit retained Godot and `python_prototype` duel implementations against this contract. Reuse whichever satisfies the baseline without creating a second owner of duel state. Prefer adapting the retained Mastermind runtime into `DuelAdapter`/`DuelController` ownership. If none are compatible, implement the explicit I07 fallback as the single owner. Channel×3/Falter shortcuts are forbidden.
+T002 and the G04 Reuse Repair Addendum select the retained production duel:
+`game_board.tscn` / `game_board.gd` / `DmbBattleSim`. Hazard Challenge must
+lease that implementation. Configure the board from the lease before startup;
+preserve quick-duel and Adventure `pending_battle` paths. Duplicate outcome
+submission is idempotent. Python `mastermind.py` remains reference scoring
+only. Channel×3/Falter and the Guess/Resign panel are forbidden as production
+Challenge. Do not invent a second owner of duel state.
 
 Tests cover branch reachability, world repair before player action, target destruction mid-choice, mandatory item recovery, duplicate outcome, mid-puzzle/mid-duel save, feedback multiplicities, simultaneous solutions and same-engine fixture loading. G05 is a required manual break before scaling content.

@@ -1,53 +1,69 @@
-# G04 — Battles, wizard power and catastrophe (Interaction Repair)
+# G04 — Battles, wizard power and catastrophe (Reuse Repair U01–U08)
 
 **Status:** AWAITING_HUMAN  
-**Repair:** R01–R08 (G04 Interaction Repair Brief)  
-**Started from:** `d265f6005c621dcd9b0d60348590e07083d9e312`  
-**Candidate:** `0f1d58a427b499415d8d6e07dd7036a2dc1e0f47`  
-**Platform:** Linux 6.8, Godot 4.4.1 (Windows **not** run on this host)
+**Repair:** U01–U08 (`docs/DuelMasterBattle_G04_Reuse_Repair_Addendum.md`)  
+**Branch:** `fix/g04-retained-ui`  
+**Base:** `origin/feature/spellbook-ui` @ `454ccf1` + merge `origin/main` @ `441899b`  
+**Candidate:** see `git rev-parse HEAD` after the U08 stamp commit on this branch  
+**Platform (automated):** Windows 10, Godot 4.5.1 (local), Python 3.14 / project venv 3.11  
 
 ## What changed
 
-- One-owner FX-BATTLE (Red settlement + Blue invaders); safe spawn; paced armies
-- Target-first Observe / Buff… / Destroy choice cards — **no permanent spell toolbar**
-- Two-tile range validated against synchronised local/moving poses
-- Field-aware view merge (omit ≠ empty); external actors not freed by people rebuild
-- Three boundary hazard manifestations; Challenge opens C10 Mastermind (4/6/10)
-- Channel×3 shortcut **rejected**; treatment ledger persists across Wait/save/load
-- Automated playable path no longer forces `queue_destruction` or Channel wins
+- Shared `DmbTargetSession` + approved military `AttachedChoiceCard` for units/hazards
+- Observation-led durable names (people + soldiers); movement dismissal via shared intent
+- Bridge presenter reuses village `WorldInteractionLabel` presentation
+- Hazard Challenge hosts retained `game_board.tscn` + `DmbBattleSim` (configure before startup)
+- Guess/Resign Mastermind panel removed from production Challenge; Mastermind kept as reference scoring
+- Quick duel and Adventure `pending_battle` paths preserved
+- Duplicate `ResolveHazardDuel` submission is idempotent
+- R06 Mastermind production choice superseded; T077 remains NOT_STARTED
+
+## Ensemble follow-up (not in this PR)
+
+Commits `58ea2d2` and `6f7be0f` on `BuildPackV03-ensemble-depth-pass` are tracked separately and were not merged into this repair branch.
 
 ## Reset (required before judging)
 
-See [reset.md](reset.md). Delete isolated slots `g04_battle`, `g04_hazard`, `g04_hazard_terminal` so an old fixture save does not obscure the repair.
+See [reset.md](reset.md). Delete isolated slots `g04_battle`, `g04_hazard`, `g04_hazard_terminal`.
 
 ## Launch
 
+Windows (this candidate host):
+
+```bat
+Playtest.bat
+```
+
+Then Play G04 battle / Play G04 hazard, or:
+
+```bat
+set GODOT=C:\Users\joesa\Downloads\Godot_v4.5.1-stable_win64.exe\Godot_v4.5.1-stable_win64_console.exe
+%GODOT% --path godot_project res://client/scenes/g04_battle_shell.tscn
+```
+
+Linux:
+
 ```bash
-cd /home/joe/Projects/DuelMasterBattle
 bash tools/play_g04_battle.sh
 bash tools/play_g04_hazard.sh
 ```
 
-Portrait default 450×800. Landscape: `bash tools/play_g04_battle.sh --resolution 1280x720`
-
 ## Joe checklist
 
-Use the table in [gates/G04.md](../../gates/G04.md). Decisive proof is walking up to a moving soldier, clicking, choosing a spell, seeing a persistent result — then the equivalent observe/Challenge flow on a visible hazard. **Do not accept G04 merely because automated checks pass.**
+Use the table in [gates/G04.md](../../gates/G04.md). Expect the **full Ward duel** on Challenge — not four colour buttons + Guess/Resign. **Do not accept G04 merely because automated checks pass.**
 
 ## Automated evidence
 
 ```bash
-python3 tools/check.py --gate G04
+python tools/check.py --gate G04
 ```
 
-Result on this handoff host: PASS (Python cumulative + G04 playable + G01–G03 smokes). Captures refreshed under this folder (450×800 and 1280×720).
+Result on this handoff host: **PASS** (see `check_report.json`). Includes Python cumulative, G04 playable (`G04_PLAYABLE_OK`), G01–G03 smokes.
 
 ## Known limits
 
-- Windows playtest not executed on Linux
-- Dense melee labels may overlap cosmetically
-- Spellbook overlay can intercept chrome Wait clicks; smoke prefers HUD Wait / signal path
+See [known_defects.md](known_defects.md).
 
 ## Stop
 
-`current_task = STOP_FOR_G04`. **T077 remains NOT_STARTED.** Agent must not mark G04 PASS.
+`current_task = STOP_FOR_G04`. **T077 remains NOT_STARTED.** Agent must not mark G04 PASS or merge before Joe's playtest.
