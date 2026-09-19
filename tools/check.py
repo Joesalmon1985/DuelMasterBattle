@@ -779,6 +779,16 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"T092_RECOVERY_OK",
             ),
         ],
+        "T093": lambda: [
+            _pytest("village_solutions", "tests/scenarios/test_village_solutions.py"),
+            validate_evidence(
+                "shortage_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "shortage" / "factory_shortage.json",
+                    ROOT / "godot_project" / "content" / "source" / "dialogue" / "shortage" / "mara_lines.json",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

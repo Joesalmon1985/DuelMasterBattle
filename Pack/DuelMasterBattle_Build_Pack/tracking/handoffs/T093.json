@@ -1,0 +1,33 @@
+{
+  "task_id": "T093",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "godot_project/content/source/quests/shortage/factory_shortage.json",
+    "godot_project/content/source/dialogue/shortage/mara_lines.json",
+    "tests/scenarios/test_village_solutions.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "quest.factory_shortage v2 dual solutions + acknowledgements",
+    "shortage Mara dialogue bank",
+    "tests/scenarios/test_village_solutions.py"
+  ],
+  "source_rules": [
+    "C10 FX-VILLAGE both solutions",
+    "GDD §§141, 214, 227"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T093",
+      "exit_code": 0,
+      "result": "PASS; 5 scenario pytest + shortage content"
+    }
+  ],
+  "extra_scope": {
+    "tools/check.py": "Wire T093"
+  },
+  "defects": [],
+  "next_task": "T094",
+  "notes": "Route B ack does not claim demon cleared; both solutions restore industry; world-resolved and destroyed remain playable; leave/return/save keeps one quest with no duplicate reward."
+}

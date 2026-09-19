@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pack_version": "1.0",
   "status": "READY_FOR_EXECUTION",
-  "current_task": "T093",
+  "current_task": "T094",
   "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
   "repository_map": "tracking/repository_map.json",
   "resume_policy": {
@@ -105,7 +105,7 @@
     "T090": "DONE",
     "T091": "DONE",
     "T092": "DONE",
-    "T093": "NOT_STARTED",
+    "T093": "DONE",
     "T094": "NOT_STARTED",
     "T095": "NOT_STARTED",
     "T096": "NOT_STARTED",

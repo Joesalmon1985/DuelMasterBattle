@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "bank_id": "shortage.mara",
+  "lines": [
+    {
+      "id": "dialogue.mara.offer",
+      "speaker": "mara",
+      "text": "The yard has gone quiet. I can show you where the work stopped.",
+      "quest_id": "quest.factory_shortage",
+      "stage": "offered"
+    },
+    {
+      "id": "dialogue.mara.demon_hint",
+      "speaker": "mara",
+      "text": "Nothing comes from the ridge while that thing is there.",
+      "quest_id": "quest.factory_shortage",
+      "requires_knowledge": ["demon_cube"]
+    },
+    {
+      "id": "dialogue.mara.sluice_hint",
+      "speaker": "mara",
+      "text": "The water channel could keep us working, if someone opened it.",
+      "quest_id": "quest.factory_shortage",
+      "requires_knowledge": ["sluice_sabotage"]
+    },
+    {
+      "id": "dialogue.mara.world_resolved",
+      "speaker": "mara",
+      "text": "The patrol cleared the ridge before you returned.",
+      "quest_id": "quest.factory_shortage",
+      "resolution": "world_fix_first"
+    },
+    {
+      "id": "dialogue.mara.route_a_complete",
+      "speaker": "mara",
+      "text": "The ridge is clear. Route A is feeding the yard again.",
+      "quest_id": "quest.factory_shortage",
+      "resolution": "demon_duel",
+      "claims_demon_cleared": true
+    },
+    {
+      "id": "dialogue.mara.route_b_complete",
+      "speaker": "mara",
+      "text": "The channel is open. We can work again, though the ridge is still unsafe.",
+      "quest_id": "quest.factory_shortage",
+      "resolution": "sluice_route",
+      "claims_demon_cleared": false
+    },
+    {
+      "id": "dialogue.mara.displaced_loss",
+      "speaker": "witness",
+      "text": "The factory is gone. Mara still waits elsewhere — the work cannot resume here.",
+      "quest_id": "quest.factory_shortage",
+      "resolution": "target_destroyed"
+    }
+  ]
+}
