@@ -1,7 +1,7 @@
 {
   "task_id": "T082",
   "status": "DONE",
-  "commit": null,
+  "commit": "0e0f83a6b9799d3f41d3a18d672c447bea9ee53d",
   "files": [
     "sim/dmb/quests/__init__.py",
     "sim/dmb/quests/causes.py",
@@ -13,7 +13,10 @@
     "CauseTracker.observe_changes / resolve / active_causes",
     "QuestBinder.eligible_templates / bind"
   ],
-  "source_rules": ["C10 CauseTracker / QuestBinder", "GDD §§141, 144"],
+  "source_rules": [
+    "C10 CauseTracker / QuestBinder",
+    "GDD \u00a7\u00a7141, 144"
+  ],
   "checks": [
     {
       "command": "python3 tools/check.py --task T082",
@@ -21,7 +24,9 @@
       "result": "PASS; 3 pytest"
     }
   ],
-  "extra_scope": {"tools/check.py": "Wire T082"},
+  "extra_scope": {
+    "tools/check.py": "Wire T082"
+  },
   "defects": [],
   "next_task": "T083",
   "notes": "Revisit dedupes quest; resolved then recurring creates new cause ID; dead stakeholder cannot be fabricated."
