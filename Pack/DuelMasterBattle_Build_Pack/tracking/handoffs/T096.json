@@ -1,7 +1,7 @@
 {
   "task_id": "T096",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "2c7ea8aef3af33a8e512a8bfaa5b5bc34b2acbca",
   "files": [
     "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/",
     "tools/play_g05.sh",
@@ -18,7 +18,7 @@
   ],
   "source_rules": [
     "C14 G05 gate",
-    "GDD §§222, 224, 226, 227"
+    "GDD \u00a7\u00a7222, 224, 226, 227"
   ],
   "checks": [
     {
@@ -40,6 +40,6 @@
   "defects": [
     "G05 shell is status/host; full overworld art polish may lag (see known_defects.md)"
   ],
-  "next_task": "STOP — G05 AWAITING_HUMAN; do not start T097",
+  "next_task": "STOP \u2014 G05 AWAITING_HUMAN; do not start T097",
   "notes": "Packet includes launch/reset/two solutions/world-resolved/destroyed-target/known defects/optional hints separate. Automated checks PASS. Joe must explicitly PASS."
 }

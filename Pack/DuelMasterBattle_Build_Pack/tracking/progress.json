@@ -213,7 +213,7 @@
       "accepted_by": null,
       "accepted_build": null,
       "evidence": "tracking/gates/G05/packet.md",
-      "candidate_implementation": null,
+      "candidate_implementation": "2c7ea8aef3af33a8e512a8bfaa5b5bc34b2acbca",
       "notes": "T096 prepared packet; automated gate checks PASS. Awaiting Joe explicit G05 PASS. Do not start T097."
     },
     "G06": {
