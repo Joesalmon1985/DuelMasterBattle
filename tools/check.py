@@ -620,6 +620,14 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T078": lambda: [
+            _pytest("village_projection", "tests/sim/test_t078_village_projection.py"),
+            _godot_script(
+                "village_projector",
+                "res://client/tests/run_t078_village_projector.gd",
+                r"T078_VILLAGE_PROJECTOR_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

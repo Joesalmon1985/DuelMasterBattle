@@ -1,0 +1,35 @@
+{
+  "task_id": "T078",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/world/projection.py",
+    "godot_project/client/world/village_projector.gd",
+    "godot_project/client/tests/run_t078_village_projector.gd",
+    "tests/sim/test_t078_village_projection.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "LocalProjectionService.project / ensure_layout / save_override / mark_destroyed",
+    "DmbVillageProjector.apply_projection"
+  ],
+  "source_rules": [
+    "C09 LocalProjectionService",
+    "GDD §§100, 128, 191"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T078",
+      "exit_code": 0,
+      "result": "PASS; 6 pytest + T078_VILLAGE_PROJECTOR_OK"
+    }
+  ],
+  "extra_scope": {
+    "tools/check.py": "Wire T078 checks",
+    "tests/sim/test_t078_village_projection.py": "Behavioural oracles",
+    "godot_project/client/tests/run_t078_village_projector.gd": "Client projector binding"
+  },
+  "defects": [],
+  "next_task": "T079",
+  "notes": "Two visits preserve IDs/positions; destroyed stay absent; exits reachable; processor overload expands 48→+16 tiles without dropping structures."
+}
