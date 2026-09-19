@@ -1,7 +1,7 @@
 {
   "task_id": "T078",
   "status": "DONE",
-  "commit": null,
+  "commit": "124212b7aabb78c6afd8e512d9188f39a94a2f71",
   "files": [
     "sim/dmb/world/projection.py",
     "godot_project/client/world/village_projector.gd",
@@ -15,7 +15,7 @@
   ],
   "source_rules": [
     "C09 LocalProjectionService",
-    "GDD §§100, 128, 191"
+    "GDD \u00a7\u00a7100, 128, 191"
   ],
   "checks": [
     {
@@ -31,5 +31,5 @@
   },
   "defects": [],
   "next_task": "T079",
-  "notes": "Two visits preserve IDs/positions; destroyed stay absent; exits reachable; processor overload expands 48→+16 tiles without dropping structures."
+  "notes": "Two visits preserve IDs/positions; destroyed stay absent; exits reachable; processor overload expands 48\u2192+16 tiles without dropping structures."
 }
