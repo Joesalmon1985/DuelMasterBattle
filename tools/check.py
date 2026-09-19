@@ -264,6 +264,16 @@ def _pytest(name: str, *paths: str) -> CheckResult:
     )
 
 
+def _python_module(name: str, module: str, required_pattern: str) -> CheckResult:
+    return run_command(
+        CommandCheck(
+            name=name,
+            argv=(sys.executable, "-m", module),
+            required_pattern=required_pattern,
+        )
+    )
+
+
 def _godot_bin() -> str | None:
     env = os.environ.get("GODOT", "").strip()
     if env and Path(env).is_file():
@@ -726,6 +736,27 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "puzzle_presenter",
                 "res://client/tests/run_t089_puzzle.gd",
                 r"T089_PUZZLE_OK",
+            ),
+        ],
+        "T090": lambda: [
+            _pytest("sluice_dungeon", "tests/sim/test_t090_sluice.py"),
+            _python_module(
+                "validate_puzzles",
+                "tools.content.validate_puzzles",
+                r"validate_puzzles: PASS",
+            ),
+            validate_evidence(
+                "sluice_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "dungeons" / "sluice" / "layout.json",
+                    ROOT / "godot_project" / "content" / "source" / "dungeons" / "sluice" / "puzzle.json",
+                    ROOT / "godot_project" / "client" / "adventure" / "dungeon_area.tscn",
+                ],
+            ),
+            _godot_script(
+                "dungeon_area",
+                "res://client/tests/run_t090_dungeon.gd",
+                r"T090_DUNGEON_OK",
             ),
         ],
     }

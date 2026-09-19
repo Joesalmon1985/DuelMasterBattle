@@ -1,0 +1,77 @@
+{
+  "id": "puzzle.sluice",
+  "schema_version": 1,
+  "area_id": "area.sluice",
+  "dungeon_id": "dungeon.sluice",
+  "mechanisms": [
+    {
+      "id": "switch.corridor",
+      "kind": "switch",
+      "position": [1.0, 0.0]
+    },
+    {
+      "id": "box.sluice",
+      "kind": "movable_box",
+      "position": [0.0, 2.0],
+      "push_delta": [0.0, -1.0]
+    },
+    {
+      "id": "plate.sluice",
+      "kind": "pressure_plate",
+      "position": [0.0, 0.0],
+      "linked_box": "box.sluice"
+    },
+    {
+      "id": "receptor.sluice",
+      "kind": "item_receptor",
+      "position": [3.0, 0.0],
+      "accepts_definition_id": "item.sluice_handle",
+      "holds": true,
+      "consumes": false
+    },
+    {
+      "id": "gate.final",
+      "kind": "gate",
+      "position": [4.0, 0.0],
+      "requires": ["plate.sluice", "receptor.sluice"]
+    },
+    {
+      "id": "sluice.actuator",
+      "kind": "switch",
+      "position": [5.0, 0.0],
+      "requires": ["gate.final"]
+    }
+  ],
+  "solve_when": {"all": ["sluice.actuator"]},
+  "finish_effects": [
+    {
+      "kind": "history_fact",
+      "effect_id": "effect.sluice_open",
+      "fact_id": "sluice_open",
+      "predicate": "sluice_open",
+      "value": true
+    },
+    {
+      "kind": "production_modifier",
+      "effect_id": "effect.remove_sluice_sabotage",
+      "modifier_id": "sluice_sabotage",
+      "remove": true
+    }
+  ],
+  "solution_trace": [
+    {"op": "pickup_handle", "definition_id": "item.sluice_handle"},
+    {"op": "sync_pose", "actor_id": "box.sluice", "position": [0.0, 0.0]},
+    {"op": "act", "mechanism_id": "receptor.sluice", "action": "place", "item": "held_handle"},
+    {"op": "act", "mechanism_id": "gate.final", "action": "open"},
+    {"op": "act", "mechanism_id": "sluice.actuator", "action": "on"}
+  ],
+  "reset_states": [
+    {"id": "default", "mechanisms": {}},
+    {
+      "id": "box_near_plate",
+      "mechanisms": {
+        "box.sluice": {"position": [0.0, 1.0]}
+      }
+    }
+  ]
+}

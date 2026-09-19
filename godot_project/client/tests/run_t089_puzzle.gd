@@ -48,11 +48,13 @@ func _run() -> void:
 	_assert(_action_calls[0][3] == "place", "action kind")
 	if _failures.is_empty():
 		print("T089_PUZZLE_OK")
+		ui.free()
 		quit(0)
 	else:
 		for f in _failures:
 			push_error(str(f))
 		print("T089_PUZZLE_FAIL")
+		ui.free()
 		quit(1)
 
 

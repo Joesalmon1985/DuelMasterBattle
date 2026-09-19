@@ -230,6 +230,8 @@ class PuzzleService:
         action = str(action)
 
         if kind == "switch" and action in {"toggle", "on", "off"}:
+            if action in {"toggle", "on"} and not self._requirements_met(lease, mech_defs[mechanism_id]):
+                raise TypeValidationError("switch requirements not met")
             if action == "toggle":
                 mech["on"] = not bool(mech.get("on"))
             else:

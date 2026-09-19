@@ -1,4 +1,4 @@
-extends RefCounted
+extends Node
 class_name DmbPuzzlePresenter
 
 ## Client puzzle controller (C10 / T089).
