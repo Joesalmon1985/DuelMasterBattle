@@ -1,0 +1,69 @@
+[
+  {
+    "id": "dialogue.mara.offer",
+    "schema_version": 1,
+    "speaker_role": "worker",
+    "quest_id": "quest.factory_shortage",
+    "stage": 0,
+    "cause_id": "cause.factory_shortage",
+    "era_id": "all",
+    "text": "The yard has gone quiet. I can show you where the work stopped.",
+    "fallback": "Work has stopped here.",
+    "choices": [
+      {"id": "ask_why", "text": "Why did it stop?", "next": "dialogue.mara.demon_hint"}
+    ]
+  },
+  {
+    "id": "dialogue.mara.demon_hint",
+    "schema_version": 1,
+    "speaker_role": "worker",
+    "quest_id": "quest.factory_shortage",
+    "stage": 1,
+    "cause_id": "cause.factory_shortage",
+    "era_id": "all",
+    "require_cause": true,
+    "text": "Nothing comes from the ridge while that thing is there.",
+    "fallback": "Something on the ridge is blocking work.",
+    "choices": []
+  },
+  {
+    "id": "dialogue.mara.sluice_hint",
+    "schema_version": 1,
+    "speaker_role": "worker",
+    "quest_id": "quest.factory_shortage",
+    "stage": 1,
+    "cause_id": "cause.sluice_sabotage",
+    "era_id": "all",
+    "text": "The water channel could keep us working, if someone opened it.",
+    "fallback": "There may be another way to keep working.",
+    "choices": []
+  },
+  {
+    "id": "dialogue.mara.named",
+    "schema_version": 1,
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "I am {speaker_name}.",
+    "fallback": "They introduce themselves carefully.",
+    "variables": {"speaker_name": {"type": "known_name"}},
+    "choices": []
+  },
+  {
+    "id": "dialogue.wrong_era",
+    "schema_version": 1,
+    "speaker_role": "worker",
+    "era_id": "future",
+    "text": "In the future we fly carts.",
+    "fallback": "They look puzzled.",
+    "choices": []
+  },
+  {
+    "id": "dialogue.neutral_fallback",
+    "schema_version": 1,
+    "priority": "fallback",
+    "era_id": "all",
+    "text": "They have nothing more to say right now.",
+    "fallback": "Silence.",
+    "choices": []
+  }
+]

@@ -671,6 +671,13 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 [ROOT / "content" / "schemas" / "quests.json"],
             ),
         ],
+        "T084": lambda: [
+            _pytest("dialogue_runtime", "tests/sim/test_t084_dialogue.py"),
+            validate_evidence(
+                "dialogue_content",
+                [ROOT / "godot_project" / "content" / "source" / "dialogue" / "mvp_bank.json"],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

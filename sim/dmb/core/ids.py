@@ -27,6 +27,7 @@ INSTANCE_KINDS = (
     "node",
     "tech",
     "visit",
+    "dialogue",
 )
 
 

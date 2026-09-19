@@ -1,0 +1,32 @@
+{
+  "task_id": "T084",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/narrative/dialogue.py",
+    "sim/dmb/narrative/line_catalog.py",
+    "godot_project/content/source/dialogue/mvp_bank.json",
+    "sim/dmb/core/ids.py",
+    "tests/sim/test_t084_dialogue.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "LineCatalog.load / candidates",
+    "DialogueResolver.start / choices / choose / close"
+  ],
+  "source_rules": ["C09 DialogueResolver", "GDD §§143, 144, 196"],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T084",
+      "exit_code": 0,
+      "result": "PASS; 4 pytest + dialogue content"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/core/ids.py": "Add dialogue id kind for session allocation",
+    "tools/check.py": "Wire T084"
+  },
+  "defects": [],
+  "next_task": "T085",
+  "notes": "Missing vars → fallback; unknown names never leak; wrong era/cause rejected; no LLM/network imports."
+}
