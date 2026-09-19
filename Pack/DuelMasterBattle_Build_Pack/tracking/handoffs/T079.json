@@ -1,7 +1,7 @@
 {
   "task_id": "T079",
   "status": "DONE",
-  "commit": null,
+  "commit": "e61285db0ef21813134921457e9a49fc60232917",
   "files": [
     "sim/dmb/narrative/semantic.py",
     "godot_project/client/ui/semantic_labels.gd",
@@ -16,7 +16,7 @@
   ],
   "source_rules": [
     "C09 SemanticResolver",
-    "GDD §§20, 22, 34, 124",
+    "GDD \u00a7\u00a720, 22, 34, 124",
     "G04 shared interaction path extension"
   ],
   "checks": [
