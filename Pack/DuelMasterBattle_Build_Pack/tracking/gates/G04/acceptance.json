@@ -1,7 +1,7 @@
 {
   "gate": "G04",
   "status": "AWAITING_HUMAN",
-  "candidate_implementation": null,
+  "candidate_implementation": "ad56031d416bc23cde0a256e8a2a12d0821cd896",
   "repair": "U01-U08",
   "branch": "fix/g04-retained-ui",
   "accepted_by": null,
@@ -12,7 +12,7 @@
     "at": "2026-09-19T10:46:00Z",
     "summary": "G04 Reuse Repair Addendum: retain game_board+DmbBattleSim; shared military menu; observation-led names; supersede R06 Mastermind production path."
   },
-  "automated_gate_check": "PASS on Windows (check_report.json) — not decisive",
+  "automated_gate_check": "PASS on Windows (check_report.json) \u2014 not decisive",
   "windows": "automated_checks_run",
   "t077": "NOT_STARTED"
 }
