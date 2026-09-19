@@ -1,7 +1,7 @@
 {
   "task_id": "T080",
   "status": "DONE",
-  "commit": null,
+  "commit": "2367f70ba4838f8077472f64604cf5eb2d222d4a",
   "files": [
     "sim/dmb/narrative/aspects.py",
     "godot_project/content/source/aspects/aspects.json",
@@ -13,7 +13,7 @@
   ],
   "source_rules": [
     "C09 Seven Aspects",
-    "GDD §§47, 48, 49"
+    "GDD \u00a7\u00a747, 48, 49"
   ],
   "checks": [
     {
