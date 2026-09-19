@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "id": "item.sluice_handle",
+      "label": "Sluice Handle",
+      "unique": true,
+      "quest_bound": true,
+      "stackable": false,
+      "uses": [
+        {
+          "id": "use.place_sluice_handle",
+          "requires_target": "receptor.sluice",
+          "consumes": true,
+          "effects": [
+            {
+              "kind": "history_fact",
+              "effect_id": "effect.handle_placed",
+              "fact_id": "fact.sluice_handle_placed",
+              "predicate": "handle_in_receptor",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "item.rope",
+      "label": "Rope",
+      "unique": false,
+      "stackable": true,
+      "uses": []
+    },
+    {
+      "id": "item.hook",
+      "label": "Hook",
+      "unique": false,
+      "stackable": true,
+      "uses": []
+    },
+    {
+      "id": "item.grappling_hook",
+      "label": "Grappling Hook",
+      "unique": true,
+      "quest_bound": true,
+      "stackable": false,
+      "uses": [
+        {
+          "id": "use.deploy_grappling_hook",
+          "consumes": false,
+          "effects": [
+            {
+              "kind": "history_fact",
+              "effect_id": "effect.grappling_deployed",
+              "fact_id": "fact.grappling_deployed",
+              "predicate": "grappling_ready",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "item.herb_salve",
+      "label": "Herb Salve",
+      "unique": false,
+      "stackable": true,
+      "uses": [
+        {
+          "id": "use.apply_salve",
+          "consumes": true,
+          "effects": [
+            {
+              "kind": "history_fact",
+              "effect_id": "effect.salve_applied",
+              "fact_id": "fact.salve_applied",
+              "predicate": "player_treated",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "item.brick",
+      "label": "Brick",
+      "unique": false,
+      "stackable": true,
+      "uses": []
+    }
+  ],
+  "combinations": [
+    {
+      "id": "combine.rope_hook",
+      "inputs": [
+        {"definition_id": "item.rope", "quantity": 1},
+        {"definition_id": "item.hook", "quantity": 1}
+      ],
+      "result_definition_id": "item.grappling_hook",
+      "effects": []
+    }
+  ],
+  "recovery": {
+    "item.sluice_handle": {
+      "required": true,
+      "home_area_id": "area.sluice.workshop",
+      "home_position": [2.0, 1.0],
+      "accessible_points": [
+        {"area_id": "area.sluice.workshop", "position": [2.0, 1.0]},
+        {"area_id": "area.sluice.entrance", "position": [0.5, 0.5]},
+        {"area_id": "area.sluice.corridor", "position": [1.0, 0.0]}
+      ],
+      "destroyed_location_route": {
+        "interaction_id": "recovery.handle_witness",
+        "area_id": "area.sluice.entrance",
+        "position": [0.0, 0.0],
+        "witness_id": "npc:sluice_witness"
+      }
+    }
+  }
+}
