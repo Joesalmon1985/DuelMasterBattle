@@ -342,10 +342,76 @@ class HazardDuelService:
             return {"status": "missing_duel"}
         if duel.get("resolved"):
             return {"status": "idempotent", "duel_id": duel_id, "outcome": duel.get("outcome")}
-        duel["checkpoint"] = copy.deepcopy(checkpoint)
-        return {"status": "saved", "duel_id": duel_id}
+        # Preserve private secrets / RNG / window / input — never reroll on resume.
+        prior = dict(duel.get("checkpoint") or {})
+        merged = copy.deepcopy(prior)
+        merged.update(copy.deepcopy(checkpoint))
+        # Lock secret once set.
+        if prior.get("secret") is not None and checkpoint.get("secret") is not None:
+            if list(prior["secret"]) != list(checkpoint["secret"]):
+                return {"status": "rejected", "reason": "secret_reroll_forbidden"}
+            merged["secret"] = list(prior["secret"])
+        if prior.get("rng_state") is not None and "rng_state" not in checkpoint:
+            merged["rng_state"] = copy.deepcopy(prior["rng_state"])
+        duel["checkpoint"] = merged
+        duel["checkpoint_version"] = int(duel.get("checkpoint_version") or 0) + 1
+        return {
+            "status": "saved",
+            "duel_id": duel_id,
+            "checkpoint_version": duel["checkpoint_version"],
+            "checkpoint": copy.deepcopy(merged),
+        }
 
-    def resolve(self, duel_id: str, *, success: bool, command_id: str | None = None) -> dict[str, Any]:
+    def resume(self, duel_id: str) -> dict[str, Any]:
+        """Resume mid-window without secret reroll; world clocks stay frozen."""
+        duel = (getattr(self.state, "leases", {}) or {}).get(duel_id)
+        if duel is None:
+            return {"status": "missing_duel"}
+        if duel.get("resolved"):
+            return {"status": "already_resolved", "outcome": duel.get("outcome")}
+        checkpoint = copy.deepcopy(duel.get("checkpoint") or {})
+        self.state.clock.setdefault("pause_tokens", {})["hazard_duel"] = True
+        from sim.dmb.military.buffs import BuffService
+
+        BuffService(self.state).set_frozen(True)
+        return {
+            "status": "resumed",
+            "duel_id": duel_id,
+            "checkpoint": checkpoint,
+            "secret": list(checkpoint.get("secret") or []),
+            "next_feedback": checkpoint.get("next_feedback"),
+            "window": checkpoint.get("window"),
+            "input": checkpoint.get("input"),
+            "rng_state": checkpoint.get("rng_state"),
+            "public": self.public_view(duel),
+        }
+
+    def tick_duel_clock(self, duel_id: str, *, duel_ms: int) -> dict[str, Any]:
+        """Advance private duel clock only — Game Time / World Turn stay put."""
+        duel = (getattr(self.state, "leases", {}) or {}).get(duel_id)
+        if duel is None:
+            return {"status": "missing_duel"}
+        turn_before = int(self.state.clock.get("turn") or 0)
+        game_ms_before = int(self.state.clock.get("game_ms") or 0)
+        checkpoint = duel.setdefault("checkpoint", {})
+        checkpoint["duel_ms"] = int(checkpoint.get("duel_ms") or 0) + int(duel_ms)
+        assert int(self.state.clock.get("turn") or 0) == turn_before
+        assert int(self.state.clock.get("game_ms") or 0) == game_ms_before
+        return {
+            "status": "ticked",
+            "duel_ms": checkpoint["duel_ms"],
+            "world_turn": turn_before,
+            "world_game_ms": game_ms_before,
+        }
+
+    def resolve(
+        self,
+        duel_id: str,
+        *,
+        success: bool,
+        command_id: str | None = None,
+        apply_recovery_on_failure: bool = False,
+    ) -> dict[str, Any]:
         duel = (getattr(self.state, "leases", {}) or {}).get(duel_id)
         if duel is None:
             return {"status": "missing_duel"}
@@ -357,6 +423,7 @@ class HazardDuelService:
                 "outcome": duel.get("outcome"),
                 "allowance_spent": duel.get("allowance_spent", False),
                 "removal": duel.get("removal"),
+                "recovery": duel.get("recovery"),
                 "terminal": False,
             }
         cube_id = str(duel.get("cube_id"))
@@ -370,7 +437,21 @@ class HazardDuelService:
             duel["resolved"] = True
             duel["outcome"] = "failure"
             duel["allowance_spent"] = False
-            return {"status": "failed", "allowance_spent": False, "terminal": False}
+            recovery = None
+            if apply_recovery_on_failure:
+                from sim.dmb.player.recovery import RecoveryService
+
+                recovery = RecoveryService(self.state).apply_return(
+                    from_node_id=str(duel.get("hex_id") or self.state.player.get("node_id")),
+                    command_id=command_id or f"recovery:{duel_id}",
+                )
+                duel["recovery"] = recovery
+            return {
+                "status": "failed",
+                "allowance_spent": False,
+                "terminal": False,
+                "recovery": recovery,
+            }
 
         if cube is None or not cube.get("active", True):
             duel["resolved"] = True

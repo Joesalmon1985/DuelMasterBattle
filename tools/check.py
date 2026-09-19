@@ -771,6 +771,14 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"T091_DUEL_OK",
             ),
         ],
+        "T092": lambda: [
+            _pytest("duel_recovery", "tests/sim/test_t092_duel_recovery.py"),
+            _godot_script(
+                "duel_recovery_ui",
+                "res://client/tests/run_t092_recovery.gd",
+                r"T092_RECOVERY_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
