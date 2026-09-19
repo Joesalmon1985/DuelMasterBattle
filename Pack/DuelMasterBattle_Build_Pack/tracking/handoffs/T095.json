@@ -1,7 +1,7 @@
 {
   "task_id": "T095",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "a01c1d7c61624e3b2b0cc667e6864577de21a2c0",
   "files": [
     "godot_project/client/debug/scenario_panel.gd",
     "godot_project/client/tests/run_t095_panel.gd",
@@ -21,7 +21,7 @@
   ],
   "source_rules": [
     "C13 village testing panel",
-    "GDD §§197, 198, 223"
+    "GDD \u00a7\u00a7197, 198, 223"
   ],
   "checks": [
     {
