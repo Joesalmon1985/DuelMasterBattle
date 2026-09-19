@@ -1,7 +1,7 @@
 {
   "task_id": "T092",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "a0e221ea589c2dd81570ac66b7cfe82e07b39633",
   "files": [
     "sim/dmb/player/recovery.py",
     "sim/dmb/adventure/duels.py",
@@ -16,7 +16,7 @@
   ],
   "source_rules": [
     "C10 RecoveryService + duel checkpoint",
-    "GDD §§51, 58, 166, 191"
+    "GDD \u00a7\u00a751, 58, 166, 191"
   ],
   "checks": [
     {
