@@ -1,7 +1,7 @@
 {
   "task_id": "T090",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "1e39906d3679eaeb4f9cb08fa87e0bdd95780e7d",
   "files": [
     "godot_project/content/source/dungeons/sluice/layout.json",
     "godot_project/content/source/dungeons/sluice/puzzle.json",
@@ -21,7 +21,7 @@
   ],
   "source_rules": [
     "C10 sluice dungeon",
-    "GDD §§72, 75, 76, 77"
+    "GDD \u00a7\u00a772, 75, 76, 77"
   ],
   "checks": [
     {
