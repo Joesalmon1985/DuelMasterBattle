@@ -1,7 +1,7 @@
 {
   "task_id": "T084",
   "status": "DONE",
-  "commit": null,
+  "commit": "e059b8a3ad838487d5b48209add7c4332e32a75f",
   "files": [
     "sim/dmb/narrative/dialogue.py",
     "sim/dmb/narrative/line_catalog.py",
@@ -14,7 +14,10 @@
     "LineCatalog.load / candidates",
     "DialogueResolver.start / choices / choose / close"
   ],
-  "source_rules": ["C09 DialogueResolver", "GDD §§143, 144, 196"],
+  "source_rules": [
+    "C09 DialogueResolver",
+    "GDD \u00a7\u00a7143, 144, 196"
+  ],
   "checks": [
     {
       "command": "python3 tools/check.py --task T084",
@@ -28,5 +31,5 @@
   },
   "defects": [],
   "next_task": "T085",
-  "notes": "Missing vars → fallback; unknown names never leak; wrong era/cause rejected; no LLM/network imports."
+  "notes": "Missing vars \u2192 fallback; unknown names never leak; wrong era/cause rejected; no LLM/network imports."
 }
