@@ -1,0 +1,35 @@
+{
+  "task_id": "T091",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "sim/dmb/adventure/duels.py",
+    "godot_project/content/source/duel_rules/progression.json",
+    "godot_project/client/duel/progression.gd",
+    "godot_project/client/tests/run_t091_duel.gd",
+    "tests/sim/test_t091_duel_progression.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "score_feedback / rival_legal_candidates / encounter_for_tier",
+    "HazardDuelService.begin (DmbBattleSim + progression)",
+    "DmbDuelProgression client helper"
+  ],
+  "source_rules": [
+    "C10 retained DmbBattleSim duel",
+    "GDD §§49, 58, 60, 67"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T091",
+      "exit_code": 0,
+      "result": "PASS; 4 pytest + rules + T091_DUEL_OK"
+    }
+  ],
+  "extra_scope": {
+    "tools/check.py": "Wire T091"
+  },
+  "defects": [],
+  "next_task": "T092",
+  "notes": "AABC/ABAD = 1 exact/2 colour; rival candidate filter ignores opponent secret; overflow uses authored chronicle reward; era binds authored tiers only; production engine remains DmbBattleSim."
+}
