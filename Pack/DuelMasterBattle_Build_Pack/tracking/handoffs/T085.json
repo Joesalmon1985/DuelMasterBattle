@@ -1,7 +1,7 @@
 {
   "task_id": "T085",
   "status": "DONE",
-  "commit": null,
+  "commit": "02fed520fe942c4f793da60df6261d347499791e",
   "files": [
     "godot_project/client/ui/dialogue.gd",
     "godot_project/client/ui/aspect_interjection.gd",
@@ -14,7 +14,10 @@
     "DmbAspectInterjection.line_for",
     "DmbContextActions.walk_away_from_formal"
   ],
-  "source_rules": ["C09 DialoguePresenter", "GDD §§21, 143, 167, 172"],
+  "source_rules": [
+    "C09 DialoguePresenter",
+    "GDD \u00a7\u00a721, 143, 167, 172"
+  ],
   "checks": [
     {
       "command": "python3 tools/check.py --task T085",
@@ -22,7 +25,9 @@
       "result": "PASS; T085_DIALOGUE_UI_OK"
     }
   ],
-  "extra_scope": {"tools/check.py": "Wire T085"},
+  "extra_scope": {
+    "tools/check.py": "Wire T085"
+  },
   "defects": [],
   "next_task": "T086",
   "notes": "Formal conversation pauses; ambient does not; walk-away grants no reward; ~3 choices with More paging; reuses WorldInteractionLabel."
