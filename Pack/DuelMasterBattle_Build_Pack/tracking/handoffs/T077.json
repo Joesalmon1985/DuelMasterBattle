@@ -1,7 +1,7 @@
 {
   "task_id": "T077",
   "status": "DONE",
-  "commit": null,
+  "commit": "5fc2017d4ccd13d8355769778d3e90a4f87e5bba",
   "files": [
     "sim/dmb/people/registry.py",
     "godot_project/content/source/people/preferences.json",
@@ -19,7 +19,7 @@
   ],
   "source_rules": [
     "C09 PersonState deep profiles",
-    "GDD §§45, 93, 94, 184"
+    "GDD \u00a7\u00a745, 93, 94, 184"
   ],
   "checks": [
     {
