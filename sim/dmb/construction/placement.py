@@ -33,6 +33,60 @@ class PlacementRules:
             return settlement
         return None
 
+    def active_settlements_at(self, node_id: str) -> list[dict[str, Any]]:
+        found: list[dict[str, Any]] = []
+        for settlement in self.state.settlements.values():
+            if settlement.get("node_id") != node_id:
+                continue
+            if settlement.get("status") in {"ruined", "inert", "destroyed"}:
+                continue
+            if settlement.get("ruin_only"):
+                continue
+            if settlement.get("operational") is False and settlement.get("staging"):
+                continue
+            found.append(settlement)
+        return found
+
+    def validate_one_owner_per_node(self) -> list[str]:
+        """C04 / G04: a strategic node has zero or one controlling settlement."""
+        violations: list[str] = []
+        by_node: dict[str, list[str]] = {}
+        for settlement in self.state.settlements.values():
+            if settlement.get("status") in {"ruined", "inert", "destroyed"}:
+                continue
+            if settlement.get("ruin_only") or settlement.get("staging"):
+                continue
+            if settlement.get("operational") is False:
+                continue
+            node_id = str(settlement.get("node_id") or "")
+            if not node_id:
+                continue
+            by_node.setdefault(node_id, []).append(str(settlement.get("id")))
+        for node_id, sids in by_node.items():
+            if len(sids) > 1:
+                violations.append(
+                    f"node {node_id} has {len(sids)} active settlements: {', '.join(sids)}"
+                )
+        # Active industry at an owned node must match the settlement faction.
+        owners = {
+            node_id: self._node_owner(node_id)
+            for node_id in {str(s.get("node_id")) for s in self.state.settlements.values()}
+        }
+        for bid, building in self.state.buildings.items():
+            if building.get("status") not in {None, "active", "operational"}:
+                if building.get("alive") is False:
+                    continue
+            if building.get("status") in {"ruined", "inert", "destroyed", "inactive"}:
+                continue
+            node_id = str(building.get("node_id") or "")
+            owner = owners.get(node_id) or self._node_owner(node_id)
+            fac = building.get("faction_id")
+            if owner and fac and fac != owner:
+                violations.append(
+                    f"active building {bid} faction {fac} mismatches node owner {owner}"
+                )
+        return violations
+
     def _owned_road_endpoints(self, faction_id: str) -> set[str]:
         endpoints: set[str] = set()
         for road in self.state.roads.values():

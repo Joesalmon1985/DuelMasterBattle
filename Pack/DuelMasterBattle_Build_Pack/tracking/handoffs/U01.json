@@ -1,0 +1,11 @@
+{
+  "repair_id": "U01",
+  "summary": "Created fix/g04-retained-ui from origin/feature/spellbook-ui@454ccf1; merged origin/main@441899b (commit 7184623). Set G04 FIX_REQUIRED. Integrated addendum into EXECUTION_AMENDMENTS, C10, G04 gate, cursor rule, R06 supersession, T079/T085/T091/T092 notes. Ensemble-only commits 58ea2d2+6f7be0f tracked as follow-up on BuildPackV03-ensemble-depth-pass; preservation stash not applied whole (only addendum restored).",
+  "source_heads": {
+    "feature/spellbook-ui": "454ccf11482b79559d40ffa8c95ed38f65242a15",
+    "main": "441899bb8917e868d86a5628d0760b2e9de60663",
+    "integrated_merge": "7184623",
+    "ensemble_followup": ["58ea2d2", "6f7be0f"]
+  },
+  "t077": "NOT_STARTED"
+}

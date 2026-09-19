@@ -1,0 +1,10 @@
+{
+  "repair_id": "U05",
+  "summary": "HazardDuelService.begin grants hazard_ward_duel lease for game_board+DmbBattleSim; Guess panel disconnected; DmbDuelLeaseAdapter configures GameBoard before add_child; quick duel / Adventure pending_battle paths preserved.",
+  "files": [
+    "sim/dmb/adventure/duels.py",
+    "godot_project/client/encounters/duel_lease_adapter.gd",
+    "godot_project/client/scripts/game_board.gd",
+    "godot_project/client/scenes/g04_hazard_shell.gd"
+  ]
+}

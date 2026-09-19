@@ -1,0 +1,11 @@
+{
+  "repair_id": "U06",
+  "summary": "DmbBattleSim export_checkpoint/restore_checkpoint; HazardDuelCheckpoint command; ResolveHazardDuel duplicate submission returns idempotent receipt with prior outcome.",
+  "files": [
+    "godot_project/sim/battle_sim.gd",
+    "sim/dmb/adventure/duels.py",
+    "sim/dmb/core/world.py",
+    "tests/sim/test_u05_retained_ward_duel.py",
+    "tests/sim/test_r06_mastermind_duel.py"
+  ]
+}

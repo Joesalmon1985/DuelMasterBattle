@@ -53,3 +53,7 @@ Support on military units: shield +25% era-adjusted max HP, attack frequency +25
 The wizard has no faction-combat HP and cannot be harmed, expelled or defeated by armies. Destroying assets creates relationship/history/quest consequences. Building destruction displaces workers unless a separate explicit death is committed. Cart destruction loses actual cargo. C04 owns centre/warehouse consequences.
 
 Required tests: individual identity/casualty conservation, repeated reinforcement, impossible lease overlap, target/allegiance matrix, shield cap and expiry order, fixed-step damage simultaneity, retreat without free travel, 120-second stalemate bound, and departure after losing half an army. Human gate G04 judges navigation, target readability and whether wizard intervention is satisfying.
+
+## G04 amendment — MagicService validation
+
+`MagicService` validates Destroy and Buff from current node membership, lease membership when applicable, knowledge-filtered visibility, and shared tile-unit interaction range (baseline two tiles) against synchronised local poses—including moving leased units and the wizard after SyncPose/checkpoint. Re-evaluate at commit. Caller-supplied `observed_ids` grant no authority and must not bypass same-node or range checks. A failed cast must not be repaired by a client-only kill or buff.

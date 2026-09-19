@@ -562,11 +562,22 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "tests/scenarios/test_catastrophe.py",
                 "tests/sim/test_t070_propagation.py",
                 "tests/sim/test_t072_visits.py",
+                "tests/sim/test_r02_view_merge.py",
+                "tests/sim/test_r03_fixture_ownership.py",
+                "tests/sim/test_r04_semantic_magic.py",
+                "tests/sim/test_r06_mastermind_duel.py",
+                "tests/sim/test_g04_ward_pool_int_coercion.py",
+                "tests/sim/test_u05_retained_ward_duel.py",
             ),
             _godot_script(
-                "g04_playable_smoke",
-                "res://client/tests/run_g04_smoke.gd",
-                r"G04_SMOKE_OK",
+                "g04_playable_bridge",
+                "res://client/tests/run_g04_playable.gd",
+                r"G04_PLAYABLE_OK",
+            ),
+            _godot_script(
+                "mira_semantic_label",
+                "res://client/tests/run_mira_semantic_label.gd",
+                r"MIRA_SEMANTIC_OK",
             ),
             validate_evidence(
                 "g04_task_packet",
@@ -753,6 +764,10 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "tests/scenarios/test_catastrophe.py",
                 "tests/sim/test_t070_propagation.py",
                 "tests/sim/test_t072_visits.py",
+                "tests/sim/test_r02_view_merge.py",
+                "tests/sim/test_r03_fixture_ownership.py",
+                "tests/sim/test_r04_semantic_magic.py",
+                "tests/sim/test_r06_mastermind_duel.py",
             ),
             validate_evidence(
                 "g04_packet_files",
@@ -771,8 +786,8 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
             ),
             _godot_script(
                 "g04_sidecar_playable",
-                "res://client/tests/run_g04_smoke.gd",
-                r"G04_SMOKE_OK",
+                "res://client/tests/run_g04_playable.gd",
+                r"G04_PLAYABLE_OK",
             ),
             _godot_script(
                 "g03_regression_smoke",

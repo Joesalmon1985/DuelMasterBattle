@@ -55,3 +55,7 @@ Centre loss removes settlement ownership/score, leaves surviving industrial stru
 Warehouse destruction records loss of its spendable/reserved/escrow goods exactly once; goods already aboard carts are unaffected. Building destruction displaces living workers. Worker deaths require a separate explicit event. A faction losing its last centre dissolves; C11 handles organisations and displaced people. All cross-system consequences carry the original entity/cause IDs.
 
 Tests cover geometry counts, seeded setup/fallback, all token mappings, two touching settlements sharing a roll, desert industrial eligibility, legacy scores, missing warehouses, ordered simultaneous winners, cargo-only build funding, rebuild legality and different treatment of stranded structures versus inert collapse ruins.
+
+## G04 amendment — settlement ownership
+
+A strategic node has zero or one controlling settlement faction. Several armies may fight there; army presence is not settlement ownership. All active industrial buildings at an owned node belong to that settlement faction. Invading units retain valid original home/factory IDs on a separate settlement while their current node is the battle node. Fixture setup and load validation must reject two simultaneous active settlement owners on one node. Attacker victory may destroy a centre but never assigns node ownership to the attacker.

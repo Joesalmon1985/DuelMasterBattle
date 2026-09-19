@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "purpose": "G04 interaction repair requirement → production owner → acceptance check",
+  "source_brief": "docs/DuelMasterBattle_G04_Interaction_Repair_Brief.md",
+  "rows": [
+    {
+      "requirement": "Distant observation / nearby attached choices; no permanent spell toolbar",
+      "owner": "SemanticResolver + context_actions.gd + g04_battle_shell / g04_hazard_shell",
+      "check": "Far click observation only; near click Observe/Buff/Destroy or Challenge; toolbar absent"
+    },
+    {
+      "requirement": "Shared two-tile range vs synchronised local/moving poses",
+      "owner": "MagicService + SemanticResolver + SyncPose/lease checkpoint",
+      "check": "UI and commit agree on range for moving units; forged observed_ids cannot bypass"
+    },
+    {
+      "requirement": "One settlement owner; invading army with valid home refs",
+      "owner": "fixtures._load_fx_battle + C04 validators",
+      "check": "Two-active-owner fixture rejected; FX-BATTLE one-owner + invaders"
+    },
+    {
+      "requirement": "Safe spawn and paced human-inspectable battle",
+      "owner": "fixtures + local_battle spawn spacing",
+      "check": "Cardinal exit from spawn; labelled reset; enough approach time without changing C07 math"
+    },
+    {
+      "requirement": "Missing vs empty projection fields; cache clear; reject stale",
+      "owner": "world_client.gd + hazard/battle view consumers",
+      "check": "Interleaved partial views keep hazards ≥60s; explicit empty removes; world/save change clears cache"
+    },
+    {
+      "requirement": "Non-owning external actor registration",
+      "owner": "fx_clock_area.register_external_actor",
+      "check": "People rebuild does not free units/hazards"
+    },
+    {
+      "requirement": "Three boundary hazard manifestations + C10 Challenge duel",
+      "owner": "fixtures hex_anchors + audited DuelAdapter/Controller",
+      "check": "Three approaches visible; Mastermind or I07 fallback; no Channel×3; treatment ledger persists"
+    },
+    {
+      "requirement": "Real pointer acceptance evidence",
+      "owner": "run_g04_playable.gd + tools/check.py --gate G04",
+      "check": "No private select/cast or queue_destruction fallback; human checklist decisive"
+    }
+  ]
+}

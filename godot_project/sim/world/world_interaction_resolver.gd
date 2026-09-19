@@ -7,10 +7,14 @@ class_name WorldInteractionResolver
 const _Knowledge = preload("res://sim/world/world_knowledge.gd")
 
 
-static func resolve(semantic: Dictionary, adv: Node, in_range: bool = false) -> Dictionary:
+## `level_override` >= 0 supplies the knowledge level directly, for callers bound
+## to filtered bridge views instead of the legacy Adventure knowledge bag.
+static func resolve(semantic: Dictionary, adv: Node, in_range: bool = false, level_override: int = -1) -> Dictionary:
 	var key := str(semantic.get("knowledge_key", ""))
 	var level := 0
-	if adv != null and key != "":
+	if level_override >= 0:
+		level = level_override
+	elif adv != null and key != "":
 		level = _Knowledge.get_level(adv, key)
 	return {
 		"label": _label_for(semantic.get("labels", []), level),

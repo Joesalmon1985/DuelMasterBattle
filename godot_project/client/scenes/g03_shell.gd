@@ -31,6 +31,13 @@ func _ready() -> void:
 	_economy.bind_client(_client)
 	_economy.action_requested.connect(_on_industry_action)
 	_economy.worker_path_toggled.connect(_on_path_toggled)
+	# Replace G02 spellbook pages with G03 industry pages.
+	if _spell_attach != null and _spell_attach.host != null:
+		_spell_attach.host.queue_free()
+	_spell_attach = SpellbookAttach.new()
+	_spell_attach.mount(self, _ui_root, "g03", "G03 Spellbook", "g03")
+	_spell_host = _spell_attach.host
+	_spell_model = _spell_attach.model
 	_sites_layer = Node2D.new()
 	_sites_layer.name = "IndustrySites"
 	_world_host.add_child(_sites_layer)
@@ -81,9 +88,15 @@ func _process(delta: float) -> void:
 
 func _on_path_toggled(blocked: bool) -> void:
 	_manual_path_block = blocked
+	if _workers:
+		_workers.set_manual_path_block(_manual_path_block)
 	_prompt.text = "Worker path %s (presentation only — production continues)." % (
 		"blocked" if blocked else "cleared"
 	)
+
+
+func _toggle_path() -> void:
+	_on_path_toggled(not _manual_path_block)
 
 
 func _ensure_sites(view: Dictionary) -> void:

@@ -26,6 +26,26 @@ def get_construction_service(sim: "WorldSim") -> "ConstructionService":
     return ConstructionService(sim.state)
 
 
+_UNIT_PERSON_NAMES = (
+    "Bren", "Cal", "Dorin", "Ellis", "Fenna", "Garr", "Hale", "Ivo",
+    "Jora", "Kest", "Lira", "Marn", "Ness", "Orin", "Piet", "Quinn",
+    "Rusk", "Sera", "Tovin", "Una", "Vell", "Wren", "Yara", "Zell",
+)
+
+
+def _ensure_unit_person_name(unit: dict[str, Any]) -> str:
+    """Stable once-generated individual name for a soldier (save-compatible)."""
+    existing = unit.get("person_name") or unit.get("given_name")
+    if existing:
+        return str(existing)
+    import zlib
+
+    digest = zlib.crc32(str(unit.get("id", "")).encode("utf-8")) & 0xFFFFFFFF
+    name = _UNIT_PERSON_NAMES[digest % len(_UNIT_PERSON_NAMES)]
+    unit["person_name"] = name
+    return name
+
+
 def bootstrap_world(world_id: str = "world:g01", seed: int = 7) -> "WorldSim":
     state = WorldState(world_id=WorldId(world_id), ids=IdAllocator(WorldId(world_id)))
     state.clock["scheduled_faction_ids"] = ["faction:player"]
@@ -167,6 +187,15 @@ class WorldSim:
         self.router.register("Interact", self._handle_interact)
         self.router.register("SyncPose", self._handle_sync_pose)
         self.router.register("SyncPresentation", self._handle_sync_presentation)
+        self.router.register("CastDestroy", self._handle_cast_destroy)
+        self.router.register("CastBuff", self._handle_cast_buff)
+        self.router.register("OpenBattleLease", self._handle_open_battle_lease)
+        self.router.register("BattleCheckpoint", self._handle_battle_checkpoint)
+        self.router.register("CloseBattleLease", self._handle_close_battle_lease)
+        self.router.register("StartHazardDuel", self._handle_start_hazard_duel)
+        self.router.register("ResolveHazardDuel", self._handle_resolve_hazard_duel)
+        self.router.register("HazardDuelAction", self._handle_hazard_duel_action)
+        self.router.register("HazardDuelCheckpoint", self._handle_hazard_duel_checkpoint)
 
     def dispatch(self, envelope: CommandEnvelope) -> CommandResult:
         if self.state.legacy_godot_world_tick_enabled or self.state.legacy_godot_world_save_enabled:
@@ -324,16 +353,77 @@ class WorldSim:
         )
 
     def _handle_observe(self, envelope: CommandEnvelope) -> CommandResult:
-        from sim.dmb.narrative.knowledge import filter_entity
+        from sim.dmb.narrative.knowledge import KnowledgeFact, filter_entity, reveal
+        from sim.dmb.narrative.semantic import SemanticResolver
 
         entity_id = str(envelope.payload.get("entity_id", ""))
+        local_poses = envelope.payload.get("local_poses")
+        resolver = SemanticResolver(self.state)
+        classified = resolver._record_for(entity_id)
+        if classified is None:
+            view = filter_entity(self.state, entity_id)
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload=view,
+                public_feedback="observed",
+            )
+        kind, record = classified
+        # Observation-led durable identity for people and soldiers.
+        if kind == "person":
+            reveal(
+                self.state,
+                entity_id,
+                KnowledgeFact(entity_id, "met", role=str(record.get("role", "villager"))),
+                role=str(record.get("role", "villager")),
+            )
+            self.state.knowledge[entity_id]["name"] = record.get("display_name")
+            self.state.world_version += 1
+        elif kind == "unit":
+            person_name = _ensure_unit_person_name(record)
+            reveal(
+                self.state,
+                entity_id,
+                KnowledgeFact(entity_id, "observed", role=str(record.get("archetype", "soldier"))),
+                role=str(record.get("archetype", "soldier")),
+            )
+            self.state.knowledge[entity_id]["name"] = person_name
+            fx = self.state.board.setdefault("fx_battle", {})
+            labels = fx.setdefault("labels", {})
+            base = str(labels.get(entity_id) or "")
+            if " — " in base:
+                base = base.split(" — ", 1)[0]
+            if not base:
+                fac = str(record.get("faction_id") or "")
+                from sim.dmb.narrative.semantic import ARCHETYPE_LABELS, FACTION_COLOUR
+
+                colour = FACTION_COLOUR.get(fac, fac.replace("faction:", "").title() or "Unit")
+                arch = str(record.get("archetype") or "")
+                base = f"{colour} {ARCHETYPE_LABELS.get(arch, arch.title() or 'Soldier')}".strip()
+            labels[entity_id] = f"{base} — {person_name}"
+            self.state.world_version += 1
+        inspect = resolver.inspect(
+            entity_id,
+            local_poses=local_poses if isinstance(local_poses, dict) else None,
+        )
         view = filter_entity(self.state, entity_id)
+        view.update(
+            {
+                "kind": kind,
+                "label": inspect.get("label"),
+                "description": inspect.get("description"),
+                "nearby": inspect.get("nearby"),
+            }
+        )
         return CommandResult(
             status="ACCEPTED",
             code="OK",
             command_id=envelope.command_id,
             world_version=self.state.world_version,
-            events=[],
+            events=[{"kind": "observed", "entity_id": entity_id}],
             payload=view,
             public_feedback="observed",
         )
@@ -839,4 +929,542 @@ class WorldSim:
                 "pose_generation": self.state.player.get("pose_generation", 0),
             },
             public_feedback="pose_synced",
+        )
+
+    def _handle_cast_destroy(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.player.magic import MagicService
+
+        target_id = str(envelope.payload.get("target_id") or "")
+        lease_id = envelope.payload.get("lease_id")
+        observed = envelope.payload.get("observed_ids")
+        observed_set = set(str(x) for x in observed) if isinstance(observed, list) else None
+        local_poses = envelope.payload.get("local_poses")
+        poses = local_poses if isinstance(local_poses, dict) else None
+        out = MagicService(self.state).destroy(
+            target_id,
+            observed_local_ids=observed_set,
+            command_id=envelope.command_id,
+            lease_id=str(lease_id) if lease_id else None,
+            local_poses=poses,
+        )
+        if out.get("status") == "rejected":
+            return CommandResult(
+                status="REJECTED",
+                code=str(out.get("reason") or "INVALID"),
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload=out,
+                public_feedback=str(out.get("reason") or "rejected"),
+            )
+        if out.get("status") not in {"pending_lease", "idempotent"}:
+            self.state.world_version += 1
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[{"kind": "cast_destroy", "payload": out}],
+            payload=out,
+            public_feedback=str(out.get("status")),
+        )
+
+    def _handle_cast_buff(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.player.magic import MagicService
+
+        target_id = str(envelope.payload.get("target_id") or "")
+        buff_kind = str(envelope.payload.get("buff_kind") or "")
+        observed = envelope.payload.get("observed_ids")
+        observed_set = set(str(x) for x in observed) if isinstance(observed, list) else None
+        local_poses = envelope.payload.get("local_poses")
+        poses = local_poses if isinstance(local_poses, dict) else None
+        frozen = bool(self.state.clock.get("pause_tokens"))
+        out = MagicService(self.state).apply_buff(
+            target_id,
+            buff_kind,
+            observed_local_ids=observed_set,
+            command_id=envelope.command_id,
+            frozen=frozen,
+            local_poses=poses,
+        )
+        if out.get("status") == "rejected":
+            return CommandResult(
+                status="REJECTED",
+                code=str(out.get("reason") or "INVALID"),
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload=out,
+                public_feedback=str(out.get("reason") or "rejected"),
+            )
+        self.state.world_version += 1
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[{"kind": "cast_buff", "payload": out}],
+            payload=out,
+            public_feedback=str(out.get("status")),
+        )
+
+    def _handle_open_battle_lease(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.encounters.registry import EncounterRegistry
+
+        battle_id = str(envelope.payload.get("battle_id") or "battle:fx")
+        battle = (self.state.battles or {}).get(battle_id)
+        if not isinstance(battle, dict):
+            return CommandResult(
+                status="REJECTED",
+                code="NO_BATTLE",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="no battle",
+            )
+        # Prevent duplicate active local lease for same participants.
+        for existing in (self.state.leases or {}).values():
+            if (
+                isinstance(existing, dict)
+                and existing.get("kind") == "battle"
+                and existing.get("state") == "ACTIVE"
+                and existing.get("battle_id") == battle_id
+            ):
+                return CommandResult(
+                    status="ACCEPTED",
+                    code="OK",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    payload={"lease": existing, "reused": True},
+                    public_feedback="lease_active",
+                )
+        unit_ids = [str(uid) for uid in (battle.get("participants") or []) if uid in self.state.units]
+        snapshot_units = {uid: dict(self.state.units[uid]) for uid in unit_ids}
+        buildings = {
+            bid: dict(self.state.buildings[bid])
+            for bid in (battle.get("buildings") or [])
+            if bid in self.state.buildings
+        }
+        hostiles = battle.get("hostiles") or {
+            "faction:red": ["faction:blue"],
+            "faction:blue": ["faction:red"],
+        }
+        snapshot = {
+            "units": snapshot_units,
+            "buildings": buildings,
+            "cover_by_target": dict(battle.get("cover_by_target") or {}),
+            "blockers": list(battle.get("blockers") or []),
+            "hostiles": hostiles,
+            "battle_id": battle_id,
+        }
+        lease_id = self.state.ids.new("lease")
+        registry = EncounterRegistry()
+        # Seed registry from durable leases index for exclusivity checks.
+        for lid, lease in (self.state.leases or {}).items():
+            if isinstance(lease, dict) and lease.get("state") == "ACTIVE":
+                for eid in lease.get("entity_ids") or []:
+                    registry.entity_index[str(eid)] = str(lid)
+        try:
+            lease = registry.grant(
+                "battle",
+                unit_ids,
+                snapshot,
+                lease_id,
+                owner_session=str(envelope.session_id or ""),
+            )
+        except TypeValidationError as exc:
+            return CommandResult(
+                status="REJECTED",
+                code="LEASE_CONFLICT",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback=str(exc),
+            )
+        record = {
+            "lease_id": lease.lease_id,
+            "kind": "battle",
+            "battle_id": battle_id,
+            "entity_ids": list(unit_ids),
+            "version": lease.version,
+            "state": "ACTIVE",
+            "checkpoint": snapshot,
+            "checkpoint_hash": lease.checkpoint_hash,
+            "pending_destructions": [],
+        }
+        self.state.leases[lease_id] = record
+        for uid in unit_ids:
+            self.state.units[uid]["lease_id"] = lease_id
+            self.state.units[uid]["lease_version"] = lease.version
+        battle["state"] = "LOCAL"
+        battle["lease_id"] = lease_id
+        self.state.world_version += 1
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[{"kind": "battle_lease_opened", "lease_id": lease_id}],
+            payload={"lease": record, "snapshot": snapshot},
+            public_feedback="lease_opened",
+        )
+
+    def _handle_battle_checkpoint(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.military.units import MilitaryService
+
+        lease_id = str(envelope.payload.get("lease_id") or "")
+        lease = (self.state.leases or {}).get(lease_id)
+        if not isinstance(lease, dict) or lease.get("state") not in {"ACTIVE", "FREEZING"}:
+            return CommandResult(
+                status="REJECTED",
+                code="NO_LEASE",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="no lease",
+            )
+        version = int(envelope.payload.get("version") or 0)
+        base_hash = str(envelope.payload.get("base_checkpoint_hash") or "")
+        if version and int(lease.get("version") or 0) != version:
+            return CommandResult(
+                status="REJECTED",
+                code="STALE_CHECKPOINT",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="stale checkpoint",
+            )
+        if base_hash and str(lease.get("checkpoint_hash") or "") and base_hash != str(lease.get("checkpoint_hash")):
+            return CommandResult(
+                status="REJECTED",
+                code="STALE_CHECKPOINT",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="stale checkpoint hash",
+            )
+        delta = envelope.payload.get("delta") or envelope.payload.get("checkpoint") or {}
+        # Apply pending destructions from magic.
+        for pending in list(lease.get("pending_destructions") or []):
+            tid = str(pending.get("target_id") or "")
+            units_delta = delta.setdefault("units", {})
+            if tid in self.state.units:
+                units_delta.setdefault(tid, {})
+                units_delta[tid]["alive"] = False
+                units_delta[tid]["current_health"] = 0
+                units_delta[tid]["status"] = "dead"
+        lease["pending_destructions"] = []
+        applied = MilitaryService(self.state).receive_checkpoint(lease_id, delta)
+        # Persist building damage if present.
+        for bid, patch in (delta.get("buildings") or {}).items():
+            building = self.state.buildings.get(bid)
+            if building is None:
+                continue
+            for key in ("current_health", "health", "alive", "status"):
+                if key in patch:
+                    building[key] = patch[key]
+        lease["checkpoint"] = delta
+        lease["version"] = int(lease.get("version") or 0) + 1
+        import hashlib
+        import json
+
+        lease["checkpoint_hash"] = hashlib.sha256(
+            json.dumps(delta, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
+        ).hexdigest()
+        self.state.world_version += 1
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[{"kind": "battle_checkpoint", "lease_id": lease_id}],
+            payload={"lease": lease, "applied": applied},
+            public_feedback="checkpoint",
+        )
+
+    def _handle_close_battle_lease(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.military.offscreen import OffscreenBattleResolver
+
+        lease_id = str(envelope.payload.get("lease_id") or "")
+        reason = str(envelope.payload.get("reason") or "travel")
+        lease = (self.state.leases or {}).pop(lease_id, None)
+        if lease is None:
+            return CommandResult(
+                status="REJECTED",
+                code="NO_LEASE",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="no lease",
+            )
+        # Final checkpoint commit if provided.
+        final = envelope.payload.get("checkpoint") or lease.get("checkpoint") or {}
+        if final.get("units"):
+            from sim.dmb.military.units import MilitaryService
+
+            MilitaryService(self.state).receive_checkpoint(lease_id, final)
+        for uid in lease.get("entity_ids") or []:
+            unit = self.state.units.get(uid)
+            if unit is not None:
+                unit["lease_id"] = None
+        battle_id = str(lease.get("battle_id") or "")
+        battle = (self.state.battles or {}).get(battle_id)
+        outcome = None
+        if reason == "travel" and battle is not None:
+            # Offscreen continues from checkpoint; no global clock advance.
+            snap = {
+                "units": {
+                    uid: dict(self.state.units[uid])
+                    for uid in (battle.get("participants") or [])
+                    if uid in self.state.units
+                },
+                "buildings": {
+                    bid: dict(self.state.buildings[bid])
+                    for bid in (battle.get("buildings") or [])
+                    if bid in self.state.buildings
+                },
+                "cover_by_target": dict(battle.get("cover_by_target") or {}),
+                "hostiles": battle.get("hostiles"),
+            }
+            outcome = OffscreenBattleResolver(self.state).resolve(snap)
+            battle["state"] = "OFFSCREEN_RESOLVED"
+            battle["last_outcome"] = outcome
+        elif battle is not None:
+            battle["state"] = "CLOSED"
+        self.state.world_version += 1
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[{"kind": "battle_lease_closed", "lease_id": lease_id, "reason": reason}],
+            payload={"lease_id": lease_id, "reason": reason, "outcome": outcome},
+            public_feedback="lease_closed",
+        )
+
+    def _handle_start_hazard_duel(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.adventure.duels import HazardDuelService
+
+        cube_id = str(envelope.payload.get("cube_id") or "")
+        out = HazardDuelService(self.state).begin(cube_id)
+        if out.get("status") != "started":
+            return CommandResult(
+                status="REJECTED",
+                code=str(out.get("reason") or "INVALID"),
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload=out,
+                public_feedback=str(out.get("reason") or "rejected"),
+            )
+        self.state.world_version += 1
+        public = out.get("public") or HazardDuelService.public_view(out.get("duel") or {})
+        duel = out.get("duel") or {}
+        # Never ship private checkpoint secrets beyond what the lease needs.
+        safe_duel = {
+            k: v
+            for k, v in duel.items()
+            if k not in {"mastermind", "checkpoint"}
+        }
+        safe_duel["has_checkpoint"] = bool(duel.get("checkpoint"))
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[{"kind": "hazard_duel_started", "cube_id": cube_id}],
+            payload={"status": "started", "duel": safe_duel, "public": public},
+            public_feedback="duel_started",
+        )
+
+    def _handle_hazard_duel_action(self, envelope: CommandEnvelope) -> CommandResult:
+        """Legacy Mastermind step — only for kind=hazard_duel reference leases.
+
+        Production Challenge uses retained GameBoard; Channel×3 shortcuts stay rejected.
+        """
+        from sim.dmb.adventure.mastermind import MastermindDuel
+
+        duel_id = str(envelope.payload.get("duel_id") or "")
+        action = str(envelope.payload.get("action") or "")
+        duel = (self.state.leases or {}).get(duel_id)
+        if not isinstance(duel, dict):
+            return CommandResult(
+                status="REJECTED",
+                code="NO_DUEL",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="no duel",
+            )
+        if duel.get("kind") == "hazard_ward_duel":
+            return CommandResult(
+                status="REJECTED",
+                code="USE_RETAINED_BOARD",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload={"reason": "use_game_board"},
+                public_feedback="Retained GameBoard owns this duel; Guess panel removed",
+            )
+        if duel.get("kind") != "hazard_duel":
+            return CommandResult(
+                status="REJECTED",
+                code="NO_DUEL",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="no duel",
+            )
+        if duel.get("resolved"):
+            return CommandResult(
+                status="REJECTED",
+                code="ALREADY_RESOLVED",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                public_feedback="already resolved",
+            )
+        if action in {"channel", "falter"}:
+            return CommandResult(
+                status="REJECTED",
+                code="FORBIDDEN_SHORTCUT",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload={"reason": "use_guess"},
+                public_feedback="Mastermind guesses required; Channel shortcut removed",
+            )
+        if action == "resign":
+            return self._handle_resolve_hazard_duel(
+                CommandEnvelope(
+                    protocol_version=envelope.protocol_version,
+                    session_id=envelope.session_id,
+                    world_id=envelope.world_id,
+                    command_id=envelope.command_id,
+                    expected_world_version=self.state.world_version,
+                    kind="ResolveHazardDuel",
+                    payload={"duel_id": duel_id, "success": False},
+                )
+            )
+        if action == "guess":
+            guess = envelope.payload.get("guess")
+            if not isinstance(guess, list):
+                guess = envelope.payload.get("colours")
+            result = MastermindDuel.submit_guess(duel, guess if isinstance(guess, list) else [])
+            if result.get("status") == "rejected":
+                return CommandResult(
+                    status="REJECTED",
+                    code=str(result.get("reason") or "INVALID_GUESS"),
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    payload=result,
+                    public_feedback=str(result.get("reason") or "invalid guess"),
+                )
+            self.state.world_version += 1
+            if result.get("outcome") == "success":
+                return self._handle_resolve_hazard_duel(
+                    CommandEnvelope(
+                        protocol_version=envelope.protocol_version,
+                        session_id=envelope.session_id,
+                        world_id=envelope.world_id,
+                        command_id=envelope.command_id,
+                        expected_world_version=self.state.world_version,
+                        kind="ResolveHazardDuel",
+                        payload={"duel_id": duel_id, "success": True},
+                    )
+                )
+            if result.get("outcome") in {"draw", "failure"}:
+                return self._handle_resolve_hazard_duel(
+                    CommandEnvelope(
+                        protocol_version=envelope.protocol_version,
+                        session_id=envelope.session_id,
+                        world_id=envelope.world_id,
+                        command_id=envelope.command_id,
+                        expected_world_version=self.state.world_version,
+                        kind="ResolveHazardDuel",
+                        payload={"duel_id": duel_id, "success": False},
+                    )
+                )
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "hazard_duel_guess", "feedback": result.get("feedback")}],
+                payload=result,
+                public_feedback="exact=%s colour=%s"
+                % (
+                    (result.get("feedback") or {}).get("exact"),
+                    (result.get("feedback") or {}).get("colour_only"),
+                ),
+            )
+        return CommandResult(
+            status="REJECTED",
+            code="UNKNOWN_ACTION",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[],
+            public_feedback="unknown duel action",
+        )
+
+    def _handle_resolve_hazard_duel(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.adventure.duels import HazardDuelService
+
+        duel_id = str(envelope.payload.get("duel_id") or "")
+        success = bool(envelope.payload.get("success"))
+        out = HazardDuelService(self.state).resolve(
+            duel_id, success=success, command_id=envelope.command_id
+        )
+        if out.get("status") in {"missing_duel"}:
+            return CommandResult(
+                status="REJECTED",
+                code="NO_DUEL",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload=out,
+                public_feedback="no duel",
+            )
+        if out.get("status") != "idempotent":
+            self.state.world_version += 1
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[{"kind": "hazard_duel_resolved", "payload": out}],
+            payload=out,
+            public_feedback=str(out.get("status")),
+        )
+
+    def _handle_hazard_duel_checkpoint(self, envelope: CommandEnvelope) -> CommandResult:
+        from sim.dmb.adventure.duels import HazardDuelService
+
+        duel_id = str(envelope.payload.get("duel_id") or "")
+        checkpoint = envelope.payload.get("checkpoint") or {}
+        out = HazardDuelService(self.state).save_checkpoint(
+            duel_id, checkpoint if isinstance(checkpoint, dict) else {}
+        )
+        if out.get("status") == "missing_duel":
+            return CommandResult(
+                status="REJECTED",
+                code="NO_DUEL",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[],
+                payload=out,
+                public_feedback="no duel",
+            )
+        if out.get("status") == "saved":
+            self.state.world_version += 1
+        return CommandResult(
+            status="ACCEPTED",
+            code="OK",
+            command_id=envelope.command_id,
+            world_version=self.state.world_version,
+            events=[],
+            payload=out,
+            public_feedback=str(out.get("status")),
         )

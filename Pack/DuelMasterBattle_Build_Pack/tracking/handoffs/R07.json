@@ -1,0 +1,13 @@
+{
+  "repair_id": "R07",
+  "status": "DONE",
+  "summary": "Rewrote run_g04_playable without destroy fallback or Channel×3; added R02–R06 pytest to G04 gate; fixed G02 Wait chrome hit after spellbook overlay; battle_magic uses sync range.",
+  "checks": [
+    {
+      "command": "python3 tools/check.py --gate G04",
+      "exit_code": 0,
+      "result": "all PASS including G01–G03 regressions"
+    }
+  ],
+  "next": "R08"
+}

@@ -291,8 +291,11 @@ func _build_ui() -> void:
 	_touch.direction_changed.connect(func(d): _held_dir = d)
 	_touch.action_pressed.connect(_on_action)
 	_touch.set_action_visible(false)
-	# Dialogue
-	_dialogue = _Dialogue.new()
+	# Dialogue — optional spellbook surface for real village conversations.
+	if OS.get_environment("DMB_SPELLBOOK_DIALOGUE") == "1":
+		_dialogue = load("res://client/ui/spellbook/spellbook_dialogue_presenter.gd").new()
+	else:
+		_dialogue = _Dialogue.new()
 	_ui.add_child(_dialogue)
 	_dialogue.opened.connect(func(): _input_locked = true; _touch.set_enabled(false); dialogue_started.emit())
 	_dialogue.closed.connect(func():

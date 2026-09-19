@@ -1,7 +1,10 @@
-# G04 known defects
+# G04 known defects / limits (Reuse Repair handoff)
 
-- Windows launchers are wired but were not executed on the Linux build host (report unavailable).
-- Headless Godot on this host cannot grab viewport textures (dummy renderer); screenshot PNGs were composed from the live FX-BATTLE/FX-HAZARD fixture labels after G04_SMOKE_OK sidecar boot. Install Xvfb for camera captures if required.
-- Off-screen battle is an approximation; exact casualty equality vs local is not required.
-- G04 shells reuse G01 chrome with labelled battle/hazard overlays (not full RTS polish).
-- Godot smoke shutdown may report existing resource-leak warnings despite exit 0.
+- Automated PASS is necessary but not sufficient — Joe's walk/click/spell and hazard Challenge checklist is decisive.
+- Local Windows tool is Godot 4.5.1 while pack pin is 4.4.1; behaviour should be rechecked on the pinned engine when available.
+- Dense melee unit labels may overlap cosmetically.
+- Spellbook overlay can intercept chrome Wait pointer hits on other gates; production Wait still works via HUD signal.
+- Headless runs may log ObjectDB/resource leak warnings at exit; playable markers still emit.
+- Mid-duel visual save/resume through GameBoard UI is implemented via checkpoint APIs; Joe should still exercise resume in the manual checklist.
+- Ensemble depth commits `58ea2d2` / `6f7be0f` are a separate follow-up and are not on this branch.
+- Playtest repair (this candidate): battle actors must release on travel; Ward taps use SpellSlot.pressed + int pools; Mira uses WorldInteractionLabel. Status remains AWAITING_HUMAN until Joe retests.

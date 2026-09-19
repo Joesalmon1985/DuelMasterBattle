@@ -13,7 +13,7 @@ Source: GDD §§48–77, 128–145, 188–191. All production fixtures and autho
 | `PuzzleRegistry` / `adventure/puzzles.py` | Prepare/checkpoint puzzle lease and persistent object bindings |
 | `PuzzleController` / `client/adventure/puzzle.gd` | Execute whitelisted mechanism graph, local fixed time, submit effects |
 | `DuelAdapter` / `adventure/duels.py` | Validate rival/hazard entry, acquire global pause, grant lease, apply result/recovery once |
-| `DuelController` / `client/duel/duel_controller.gd` | Preserve/adapt existing Mastermind runtime; own only leased duel state |
+| `DuelController` / `client/encounters/duel_lease_adapter.gd` + `game_board.gd` | Preserve/adapt retained `game_board.tscn` + `DmbBattleSim`; own only leased duel state |
 | `RecoveryService` / `player/recovery.py` | Pick safe return location without extra World Turn or treatment renewal |
 
 ## Quest graph and effects
@@ -54,5 +54,15 @@ If no valid duel implementation exists, use this explicit fallback (I07): each s
 Rival baseline maintains candidates consistent with its observed feedback, selects a legal candidate by deterministic strategy and never reads the opponent's secret. At larger supported rulesets use a bounded candidate representation/sampler plus constraints; a chosen guess must satisfy its own feedback history. Store secrets, guesses, feedback, windows, current input, rival candidates/strategy state and duel RNG in checkpoints. Do not reroll a resumed secret. Progression supports up to 8 colours/6 slots initially; authored overflow rewards follow C00.
 
 Starting any duel acquires a global pause; industry, battles, puzzles and buffs freeze while the duel clock runs. End outcome is applied once after target/quest revalidation. Victory removes one eligible hazard cube or applies rival quest effects. Non-victory returns to last surviving friendly settlement (wizard relation neutral-or-better); otherwise nearest non-hostile settlement, then nearest catastrophe-free wilderness, then least-affected node, ID ties. No turn, catch-up or fresh same-turn treatment allowance. A rival/hazard duel actor cannot be bypassed by ordinary destruction.
+
+## G04 amendment — duel adoption rule
+
+T002 and the G04 Reuse Repair Addendum select the retained production duel:
+`game_board.tscn` / `game_board.gd` / `DmbBattleSim`. Hazard Challenge must
+lease that implementation. Configure the board from the lease before startup;
+preserve quick-duel and Adventure `pending_battle` paths. Duplicate outcome
+submission is idempotent. Python `mastermind.py` remains reference scoring
+only. Channel×3/Falter and the Guess/Resign panel are forbidden as production
+Challenge. Do not invent a second owner of duel state.
 
 Tests cover branch reachability, world repair before player action, target destruction mid-choice, mandatory item recovery, duplicate outcome, mid-puzzle/mid-duel save, feedback multiplicities, simultaneous solutions and same-engine fixture loading. G05 is a required manual break before scaling content.
