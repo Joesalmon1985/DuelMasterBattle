@@ -1,0 +1,46 @@
+[
+  {
+    "id": "pref.diligent",
+    "schema_version": 1,
+    "kind": "person_preference",
+    "era_id": "all",
+    "name_key": "Diligent",
+    "fields": {
+      "trait_kind": "work",
+      "default_strength": 1
+    }
+  },
+  {
+    "id": "pref.curious",
+    "schema_version": 1,
+    "kind": "person_preference",
+    "era_id": "all",
+    "name_key": "Curious",
+    "fields": {
+      "trait_kind": "curiosity",
+      "default_strength": 1
+    }
+  },
+  {
+    "id": "pref.loyal",
+    "schema_version": 1,
+    "kind": "person_preference",
+    "era_id": "all",
+    "name_key": "Loyal",
+    "fields": {
+      "trait_kind": "social",
+      "default_strength": 1
+    }
+  },
+  {
+    "id": "pref.pragmatic",
+    "schema_version": 1,
+    "kind": "person_preference",
+    "era_id": "all",
+    "name_key": "Pragmatic",
+    "fields": {
+      "trait_kind": "work",
+      "default_strength": 1
+    }
+  }
+]

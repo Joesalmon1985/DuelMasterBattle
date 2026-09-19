@@ -1,0 +1,38 @@
+{
+  "task_id": "T077",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/people/registry.py",
+    "godot_project/content/source/people/preferences.json",
+    "godot_project/content/source/people/dialogue_profiles.json",
+    "godot_project/content/source/people/goals.json",
+    "tests/sim/test_t077_people_profiles.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "PeopleService.create_person (typed preferences/goals/dialogue/relationships/known_facts)",
+    "PeopleService.promote_profile / apply_profile_state",
+    "PeopleService.production_job_occupancy / ensure_production_job_anchor",
+    "PeopleService.set_relationship / add_known_fact / set_goals",
+    "load_people_content"
+  ],
+  "source_rules": [
+    "C09 PersonState deep profiles",
+    "GDD §§45, 93, 94, 184"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T077",
+      "exit_code": 0,
+      "result": "PASS; 11 pytest (T077+T028) + people content evidence"
+    }
+  ],
+  "extra_scope": {
+    "tools/check.py": "Wire T077 task checks",
+    "tests/sim/test_t077_people_profiles.py": "Behavioural acceptance oracles"
+  },
+  "defects": [],
+  "next_task": "T078",
+  "notes": "Role promotion preserves relationships/history; death keeps tombstone+profile refs; production jobs expose living anchor or explicit vacancy; save round-trip preserves profile refs. Existing T028 people/jobs APIs retained."
+}

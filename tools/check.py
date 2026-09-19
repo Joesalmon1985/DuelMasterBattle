@@ -605,6 +605,21 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T077": lambda: [
+            _pytest(
+                "people_profiles",
+                "tests/sim/test_t077_people_profiles.py",
+                "tests/sim/test_t028_people.py",
+            ),
+            validate_evidence(
+                "people_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "people" / "preferences.json",
+                    ROOT / "godot_project" / "content" / "source" / "people" / "dialogue_profiles.json",
+                    ROOT / "godot_project" / "content" / "source" / "people" / "goals.json",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
