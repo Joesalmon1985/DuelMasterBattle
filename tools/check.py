@@ -789,6 +789,18 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T094": lambda: [
+            _python_module("validate_dialogue", "tools.content.validate", r"validate_dialogue: PASS"),
+            _python_module("compile_dialogue", "tools.content.compile", r"compile_dialogue: PASS"),
+            validate_evidence(
+                "mvp_dialogue_bank",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "dialogue" / "mvp_bank.json",
+                    ROOT / "godot_project" / "content" / "source" / "dialogue" / "human_review_sample.json",
+                    ROOT / "godot_project" / "content" / "compiled" / "dialogue" / "manifest.json",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

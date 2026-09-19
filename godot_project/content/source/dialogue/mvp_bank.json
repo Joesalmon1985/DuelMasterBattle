@@ -1,69 +1,3625 @@
 [
   {
-    "id": "dialogue.mara.offer",
     "schema_version": 1,
+    "id": "dialogue.mara.offer",
     "speaker_role": "worker",
-    "quest_id": "quest.factory_shortage",
-    "stage": 0,
-    "cause_id": "cause.factory_shortage",
     "era_id": "all",
     "text": "The yard has gone quiet. I can show you where the work stopped.",
     "fallback": "Work has stopped here.",
-    "choices": [
-      {"id": "ask_why", "text": "Why did it stop?", "next": "dialogue.mara.demon_hint"}
-    ]
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "stage": 0,
+    "cause_id": "cause.factory_shortage"
   },
   {
-    "id": "dialogue.mara.demon_hint",
     "schema_version": 1,
+    "id": "dialogue.mara.demon_hint",
     "speaker_role": "worker",
+    "era_id": "all",
+    "text": "Nothing comes from the ridge while that thing is there.",
+    "fallback": "Something on the ridge is blocking work.",
+    "choices": [],
     "quest_id": "quest.factory_shortage",
     "stage": 1,
     "cause_id": "cause.factory_shortage",
-    "era_id": "all",
-    "require_cause": true,
-    "text": "Nothing comes from the ridge while that thing is there.",
-    "fallback": "Something on the ridge is blocking work.",
-    "choices": []
+    "require_cause": true
   },
   {
-    "id": "dialogue.mara.sluice_hint",
     "schema_version": 1,
+    "id": "dialogue.mara.sluice_hint",
     "speaker_role": "worker",
-    "quest_id": "quest.factory_shortage",
-    "stage": 1,
-    "cause_id": "cause.sluice_sabotage",
     "era_id": "all",
     "text": "The water channel could keep us working, if someone opened it.",
     "fallback": "There may be another way to keep working.",
-    "choices": []
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "stage": 1,
+    "cause_id": "cause.sluice_sabotage"
   },
   {
-    "id": "dialogue.mara.named",
     "schema_version": 1,
+    "id": "dialogue.mara.world_resolved",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The patrol cleared the ridge before you returned.",
+    "fallback": "Someone else cleared the ridge.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "resolution": "world_fix_first"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.route_a_complete",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The ridge is clear. Route A is feeding the yard again.",
+    "fallback": "Work resumed on the main route.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "resolution": "demon_duel",
+    "claims_demon_cleared": true
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.route_b_complete",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The channel is open. We can work again, though the ridge is still unsafe.",
+    "fallback": "The alternate channel is working.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "resolution": "sluice_route",
+    "claims_demon_cleared": false
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.displaced_loss",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "The factory is gone. Mara still waits elsewhere \u2014 the work cannot resume here.",
+    "fallback": "The workplace was destroyed.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "resolution": "target_destroyed"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.named",
     "speaker_role": "worker",
     "era_id": "all",
     "text": "I am {speaker_name}.",
     "fallback": "They introduce themselves carefully.",
-    "variables": {"speaker_name": {"type": "known_name"}},
+    "choices": [],
+    "variables": {
+      "speaker_name": {
+        "type": "known_name"
+      }
+    }
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.neutral_fallback",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "They have nothing more to say right now.",
+    "fallback": "Silence.",
+    "choices": [],
+    "priority": "fallback"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.onboarding.welcome",
+    "speaker_role": "onboarding",
+    "era_id": "all",
+    "text": "Travel between nodes with intent. Wait advances the world. Duels pause it.",
+    "fallback": "Welcome.",
     "choices": []
   },
   {
-    "id": "dialogue.wrong_era",
     "schema_version": 1,
+    "id": "dialogue.onboarding.observe",
+    "speaker_role": "onboarding",
+    "era_id": "all",
+    "text": "Observe someone before you learn their name. Proximity alone is not enough.",
+    "fallback": "Look carefully.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.onboarding.inventory",
+    "speaker_role": "onboarding",
+    "era_id": "all",
+    "text": "Quest tools keep their identity. Dropping them does not clone them.",
+    "fallback": "Items persist.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.missing_cause",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "The trouble you asked about is already gone.",
+    "fallback": "That problem has passed.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.dead_speaker",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "Only a record remains of who stood here.",
+    "fallback": "They are gone.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.destroyed_site",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "This place no longer holds the work you sought.",
+    "fallback": "The site is ruined.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.wrong_era",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "That way of speaking belongs to another age.",
+    "fallback": "They look puzzled.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.unknown_fact",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "I will not invent what I have not seen.",
+    "fallback": "They withhold guesswork.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.quest_complete",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "We already settled that. I will not re-open the reward.",
+    "fallback": "Already resolved.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.softlock_recovery",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "If you lost the handle, ask at the entrance \u2014 someone kept a spare path.",
+    "fallback": "Recovery remains open.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.worker.0",
+    "speaker_role": "worker",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As worker, reason notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.worker.1",
+    "speaker_role": "worker",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As worker, reason urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.worker.2",
+    "speaker_role": "worker",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As worker, reason asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.worker.3",
+    "speaker_role": "worker",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As worker, reason refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.worker.4",
+    "speaker_role": "worker",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As worker, reason marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.worker.5",
+    "speaker_role": "worker",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As worker, reason reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.worker.6",
+    "speaker_role": "worker",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As worker, reason keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.soldier.0",
+    "speaker_role": "soldier",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As soldier, reason notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.soldier.1",
+    "speaker_role": "soldier",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As soldier, reason urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.soldier.2",
+    "speaker_role": "soldier",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As soldier, reason asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.soldier.3",
+    "speaker_role": "soldier",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As soldier, reason refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.soldier.4",
+    "speaker_role": "soldier",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As soldier, reason marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.soldier.5",
+    "speaker_role": "soldier",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As soldier, reason reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.soldier.6",
+    "speaker_role": "soldier",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As soldier, reason keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.merchant.0",
+    "speaker_role": "merchant",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As merchant, reason notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.merchant.1",
+    "speaker_role": "merchant",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As merchant, reason urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.merchant.2",
+    "speaker_role": "merchant",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As merchant, reason asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.merchant.3",
+    "speaker_role": "merchant",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As merchant, reason refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.merchant.4",
+    "speaker_role": "merchant",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As merchant, reason marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.merchant.5",
+    "speaker_role": "merchant",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As merchant, reason reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.merchant.6",
+    "speaker_role": "merchant",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As merchant, reason keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.displaced.0",
+    "speaker_role": "displaced",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As displaced, reason notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.displaced.1",
+    "speaker_role": "displaced",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As displaced, reason urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.displaced.2",
+    "speaker_role": "displaced",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As displaced, reason asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.displaced.3",
+    "speaker_role": "displaced",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As displaced, reason refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.displaced.4",
+    "speaker_role": "displaced",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As displaced, reason marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.displaced.5",
+    "speaker_role": "displaced",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As displaced, reason reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.displaced.6",
+    "speaker_role": "displaced",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As displaced, reason keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.witness.0",
+    "speaker_role": "witness",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As witness, reason notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.witness.1",
+    "speaker_role": "witness",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As witness, reason urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.witness.2",
+    "speaker_role": "witness",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As witness, reason asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.witness.3",
+    "speaker_role": "witness",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As witness, reason refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.witness.4",
+    "speaker_role": "witness",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As witness, reason marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.witness.5",
+    "speaker_role": "witness",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As witness, reason reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.witness.6",
+    "speaker_role": "witness",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As witness, reason keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.elder.0",
+    "speaker_role": "elder",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As elder, reason notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.elder.1",
+    "speaker_role": "elder",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As elder, reason urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.elder.2",
+    "speaker_role": "elder",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As elder, reason asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.elder.3",
+    "speaker_role": "elder",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As elder, reason refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.elder.4",
+    "speaker_role": "elder",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As elder, reason marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.elder.5",
+    "speaker_role": "elder",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As elder, reason reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.elder.6",
+    "speaker_role": "elder",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As elder, reason keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.scout.0",
+    "speaker_role": "scout",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As scout, reason notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.scout.1",
+    "speaker_role": "scout",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As scout, reason urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.scout.2",
+    "speaker_role": "scout",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As scout, reason asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.scout.3",
+    "speaker_role": "scout",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As scout, reason refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.scout.4",
+    "speaker_role": "scout",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As scout, reason marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.scout.5",
+    "speaker_role": "scout",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As scout, reason reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.scout.6",
+    "speaker_role": "scout",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As scout, reason keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.onboarding.0",
+    "speaker_role": "onboarding",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As onboarding, reason notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.onboarding.1",
+    "speaker_role": "onboarding",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As onboarding, reason urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.onboarding.2",
+    "speaker_role": "onboarding",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As onboarding, reason asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.onboarding.3",
+    "speaker_role": "onboarding",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As onboarding, reason refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.onboarding.4",
+    "speaker_role": "onboarding",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As onboarding, reason marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.onboarding.5",
+    "speaker_role": "onboarding",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As onboarding, reason reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.reason.onboarding.6",
+    "speaker_role": "onboarding",
+    "aspect_id": "reason",
+    "era_id": "all",
+    "text": "As onboarding, reason keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.worker.0",
+    "speaker_role": "worker",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As worker, empathy notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.worker.1",
+    "speaker_role": "worker",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As worker, empathy urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.worker.2",
+    "speaker_role": "worker",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As worker, empathy asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.worker.3",
+    "speaker_role": "worker",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As worker, empathy refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.worker.4",
+    "speaker_role": "worker",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As worker, empathy marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.worker.5",
+    "speaker_role": "worker",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As worker, empathy reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.worker.6",
+    "speaker_role": "worker",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As worker, empathy keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.soldier.0",
+    "speaker_role": "soldier",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As soldier, empathy notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.soldier.1",
+    "speaker_role": "soldier",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As soldier, empathy urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.soldier.2",
+    "speaker_role": "soldier",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As soldier, empathy asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.soldier.3",
+    "speaker_role": "soldier",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As soldier, empathy refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.soldier.4",
+    "speaker_role": "soldier",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As soldier, empathy marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.soldier.5",
+    "speaker_role": "soldier",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As soldier, empathy reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.soldier.6",
+    "speaker_role": "soldier",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As soldier, empathy keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.merchant.0",
+    "speaker_role": "merchant",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As merchant, empathy notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.merchant.1",
+    "speaker_role": "merchant",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As merchant, empathy urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.merchant.2",
+    "speaker_role": "merchant",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As merchant, empathy asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.merchant.3",
+    "speaker_role": "merchant",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As merchant, empathy refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.merchant.4",
+    "speaker_role": "merchant",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As merchant, empathy marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.merchant.5",
+    "speaker_role": "merchant",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As merchant, empathy reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.merchant.6",
+    "speaker_role": "merchant",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As merchant, empathy keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.displaced.0",
+    "speaker_role": "displaced",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As displaced, empathy notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.displaced.1",
+    "speaker_role": "displaced",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As displaced, empathy urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.displaced.2",
+    "speaker_role": "displaced",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As displaced, empathy asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.displaced.3",
+    "speaker_role": "displaced",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As displaced, empathy refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.displaced.4",
+    "speaker_role": "displaced",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As displaced, empathy marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.displaced.5",
+    "speaker_role": "displaced",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As displaced, empathy reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.displaced.6",
+    "speaker_role": "displaced",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As displaced, empathy keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.witness.0",
+    "speaker_role": "witness",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As witness, empathy notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.witness.1",
+    "speaker_role": "witness",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As witness, empathy urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.witness.2",
+    "speaker_role": "witness",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As witness, empathy asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.witness.3",
+    "speaker_role": "witness",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As witness, empathy refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.witness.4",
+    "speaker_role": "witness",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As witness, empathy marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.witness.5",
+    "speaker_role": "witness",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As witness, empathy reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.witness.6",
+    "speaker_role": "witness",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As witness, empathy keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.elder.0",
+    "speaker_role": "elder",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As elder, empathy notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.elder.1",
+    "speaker_role": "elder",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As elder, empathy urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.elder.2",
+    "speaker_role": "elder",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As elder, empathy asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.elder.3",
+    "speaker_role": "elder",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As elder, empathy refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.elder.4",
+    "speaker_role": "elder",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As elder, empathy marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.elder.5",
+    "speaker_role": "elder",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As elder, empathy reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.elder.6",
+    "speaker_role": "elder",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As elder, empathy keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.scout.0",
+    "speaker_role": "scout",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As scout, empathy notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.scout.1",
+    "speaker_role": "scout",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As scout, empathy urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.scout.2",
+    "speaker_role": "scout",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As scout, empathy asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.scout.3",
+    "speaker_role": "scout",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As scout, empathy refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.scout.4",
+    "speaker_role": "scout",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As scout, empathy marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.scout.5",
+    "speaker_role": "scout",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As scout, empathy reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.scout.6",
+    "speaker_role": "scout",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As scout, empathy keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.onboarding.0",
+    "speaker_role": "onboarding",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As onboarding, empathy notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.onboarding.1",
+    "speaker_role": "onboarding",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As onboarding, empathy urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.onboarding.2",
+    "speaker_role": "onboarding",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As onboarding, empathy asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.onboarding.3",
+    "speaker_role": "onboarding",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As onboarding, empathy refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.onboarding.4",
+    "speaker_role": "onboarding",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As onboarding, empathy marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.onboarding.5",
+    "speaker_role": "onboarding",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As onboarding, empathy reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.empathy.onboarding.6",
+    "speaker_role": "onboarding",
+    "aspect_id": "empathy",
+    "era_id": "all",
+    "text": "As onboarding, empathy keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.worker.0",
+    "speaker_role": "worker",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As worker, authority notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.worker.1",
+    "speaker_role": "worker",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As worker, authority urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.worker.2",
+    "speaker_role": "worker",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As worker, authority asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.worker.3",
+    "speaker_role": "worker",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As worker, authority refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.worker.4",
+    "speaker_role": "worker",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As worker, authority marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.worker.5",
+    "speaker_role": "worker",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As worker, authority reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.worker.6",
+    "speaker_role": "worker",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As worker, authority keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.soldier.0",
+    "speaker_role": "soldier",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As soldier, authority notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.soldier.1",
+    "speaker_role": "soldier",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As soldier, authority urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.soldier.2",
+    "speaker_role": "soldier",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As soldier, authority asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.soldier.3",
+    "speaker_role": "soldier",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As soldier, authority refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.soldier.4",
+    "speaker_role": "soldier",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As soldier, authority marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.soldier.5",
+    "speaker_role": "soldier",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As soldier, authority reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.soldier.6",
+    "speaker_role": "soldier",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As soldier, authority keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.merchant.0",
+    "speaker_role": "merchant",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As merchant, authority notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.merchant.1",
+    "speaker_role": "merchant",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As merchant, authority urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.merchant.2",
+    "speaker_role": "merchant",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As merchant, authority asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.merchant.3",
+    "speaker_role": "merchant",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As merchant, authority refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.merchant.4",
+    "speaker_role": "merchant",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As merchant, authority marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.merchant.5",
+    "speaker_role": "merchant",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As merchant, authority reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.merchant.6",
+    "speaker_role": "merchant",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As merchant, authority keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.displaced.0",
+    "speaker_role": "displaced",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As displaced, authority notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.displaced.1",
+    "speaker_role": "displaced",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As displaced, authority urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.displaced.2",
+    "speaker_role": "displaced",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As displaced, authority asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.displaced.3",
+    "speaker_role": "displaced",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As displaced, authority refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.displaced.4",
+    "speaker_role": "displaced",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As displaced, authority marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.displaced.5",
+    "speaker_role": "displaced",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As displaced, authority reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.displaced.6",
+    "speaker_role": "displaced",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As displaced, authority keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.witness.0",
+    "speaker_role": "witness",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As witness, authority notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.witness.1",
+    "speaker_role": "witness",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As witness, authority urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.witness.2",
+    "speaker_role": "witness",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As witness, authority asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.witness.3",
+    "speaker_role": "witness",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As witness, authority refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.witness.4",
+    "speaker_role": "witness",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As witness, authority marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.witness.5",
+    "speaker_role": "witness",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As witness, authority reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.witness.6",
+    "speaker_role": "witness",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As witness, authority keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.elder.0",
+    "speaker_role": "elder",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As elder, authority notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.elder.1",
+    "speaker_role": "elder",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As elder, authority urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.elder.2",
+    "speaker_role": "elder",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As elder, authority asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.elder.3",
+    "speaker_role": "elder",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As elder, authority refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.elder.4",
+    "speaker_role": "elder",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As elder, authority marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.elder.5",
+    "speaker_role": "elder",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As elder, authority reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.elder.6",
+    "speaker_role": "elder",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As elder, authority keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.scout.0",
+    "speaker_role": "scout",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As scout, authority notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.scout.1",
+    "speaker_role": "scout",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As scout, authority urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.scout.2",
+    "speaker_role": "scout",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As scout, authority asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.scout.3",
+    "speaker_role": "scout",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As scout, authority refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.scout.4",
+    "speaker_role": "scout",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As scout, authority marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.scout.5",
+    "speaker_role": "scout",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As scout, authority reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.scout.6",
+    "speaker_role": "scout",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As scout, authority keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.onboarding.0",
+    "speaker_role": "onboarding",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As onboarding, authority notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.onboarding.1",
+    "speaker_role": "onboarding",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As onboarding, authority urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.onboarding.2",
+    "speaker_role": "onboarding",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As onboarding, authority asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.onboarding.3",
+    "speaker_role": "onboarding",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As onboarding, authority refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.onboarding.4",
+    "speaker_role": "onboarding",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As onboarding, authority marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.onboarding.5",
+    "speaker_role": "onboarding",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As onboarding, authority reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.authority.onboarding.6",
+    "speaker_role": "onboarding",
+    "aspect_id": "authority",
+    "era_id": "all",
+    "text": "As onboarding, authority keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.worker.0",
+    "speaker_role": "worker",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As worker, curiosity notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.worker.1",
+    "speaker_role": "worker",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As worker, curiosity urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.worker.2",
+    "speaker_role": "worker",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As worker, curiosity asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.worker.3",
+    "speaker_role": "worker",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As worker, curiosity refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.worker.4",
+    "speaker_role": "worker",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As worker, curiosity marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.worker.5",
+    "speaker_role": "worker",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As worker, curiosity reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.worker.6",
+    "speaker_role": "worker",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As worker, curiosity keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.soldier.0",
+    "speaker_role": "soldier",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As soldier, curiosity notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.soldier.1",
+    "speaker_role": "soldier",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As soldier, curiosity urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.soldier.2",
+    "speaker_role": "soldier",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As soldier, curiosity asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.soldier.3",
+    "speaker_role": "soldier",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As soldier, curiosity refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.soldier.4",
+    "speaker_role": "soldier",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As soldier, curiosity marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.soldier.5",
+    "speaker_role": "soldier",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As soldier, curiosity reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.soldier.6",
+    "speaker_role": "soldier",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As soldier, curiosity keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.merchant.0",
+    "speaker_role": "merchant",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As merchant, curiosity notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.merchant.1",
+    "speaker_role": "merchant",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As merchant, curiosity urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.merchant.2",
+    "speaker_role": "merchant",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As merchant, curiosity asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.merchant.3",
+    "speaker_role": "merchant",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As merchant, curiosity refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.merchant.4",
+    "speaker_role": "merchant",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As merchant, curiosity marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.merchant.5",
+    "speaker_role": "merchant",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As merchant, curiosity reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.merchant.6",
+    "speaker_role": "merchant",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As merchant, curiosity keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.displaced.0",
+    "speaker_role": "displaced",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As displaced, curiosity notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.displaced.1",
+    "speaker_role": "displaced",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As displaced, curiosity urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.displaced.2",
+    "speaker_role": "displaced",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As displaced, curiosity asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.displaced.3",
+    "speaker_role": "displaced",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As displaced, curiosity refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.displaced.4",
+    "speaker_role": "displaced",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As displaced, curiosity marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.displaced.5",
+    "speaker_role": "displaced",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As displaced, curiosity reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.displaced.6",
+    "speaker_role": "displaced",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As displaced, curiosity keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.witness.0",
+    "speaker_role": "witness",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As witness, curiosity notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.witness.1",
+    "speaker_role": "witness",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As witness, curiosity urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.witness.2",
+    "speaker_role": "witness",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As witness, curiosity asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.witness.3",
+    "speaker_role": "witness",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As witness, curiosity refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.witness.4",
+    "speaker_role": "witness",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As witness, curiosity marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.witness.5",
+    "speaker_role": "witness",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As witness, curiosity reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.witness.6",
+    "speaker_role": "witness",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As witness, curiosity keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.elder.0",
+    "speaker_role": "elder",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As elder, curiosity notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.elder.1",
+    "speaker_role": "elder",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As elder, curiosity urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.elder.2",
+    "speaker_role": "elder",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As elder, curiosity asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.elder.3",
+    "speaker_role": "elder",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As elder, curiosity refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.elder.4",
+    "speaker_role": "elder",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As elder, curiosity marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.elder.5",
+    "speaker_role": "elder",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As elder, curiosity reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.elder.6",
+    "speaker_role": "elder",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As elder, curiosity keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.scout.0",
+    "speaker_role": "scout",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As scout, curiosity notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.scout.1",
+    "speaker_role": "scout",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As scout, curiosity urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.scout.2",
+    "speaker_role": "scout",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As scout, curiosity asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.scout.3",
+    "speaker_role": "scout",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As scout, curiosity refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.scout.4",
+    "speaker_role": "scout",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As scout, curiosity marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.scout.5",
+    "speaker_role": "scout",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As scout, curiosity reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.scout.6",
+    "speaker_role": "scout",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As scout, curiosity keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.onboarding.0",
+    "speaker_role": "onboarding",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As onboarding, curiosity notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.onboarding.1",
+    "speaker_role": "onboarding",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As onboarding, curiosity urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.onboarding.2",
+    "speaker_role": "onboarding",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As onboarding, curiosity asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.onboarding.3",
+    "speaker_role": "onboarding",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As onboarding, curiosity refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.onboarding.4",
+    "speaker_role": "onboarding",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As onboarding, curiosity marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.onboarding.5",
+    "speaker_role": "onboarding",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As onboarding, curiosity reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.curiosity.onboarding.6",
+    "speaker_role": "onboarding",
+    "aspect_id": "curiosity",
+    "era_id": "all",
+    "text": "As onboarding, curiosity keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.worker.0",
+    "speaker_role": "worker",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As worker, caution notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.worker.1",
+    "speaker_role": "worker",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As worker, caution urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.worker.2",
+    "speaker_role": "worker",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As worker, caution asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.worker.3",
+    "speaker_role": "worker",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As worker, caution refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.worker.4",
+    "speaker_role": "worker",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As worker, caution marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.worker.5",
+    "speaker_role": "worker",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As worker, caution reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.worker.6",
+    "speaker_role": "worker",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As worker, caution keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.soldier.0",
+    "speaker_role": "soldier",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As soldier, caution notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.soldier.1",
+    "speaker_role": "soldier",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As soldier, caution urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.soldier.2",
+    "speaker_role": "soldier",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As soldier, caution asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.soldier.3",
+    "speaker_role": "soldier",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As soldier, caution refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.soldier.4",
+    "speaker_role": "soldier",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As soldier, caution marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.soldier.5",
+    "speaker_role": "soldier",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As soldier, caution reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.soldier.6",
+    "speaker_role": "soldier",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As soldier, caution keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.merchant.0",
+    "speaker_role": "merchant",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As merchant, caution notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.merchant.1",
+    "speaker_role": "merchant",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As merchant, caution urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.merchant.2",
+    "speaker_role": "merchant",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As merchant, caution asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.merchant.3",
+    "speaker_role": "merchant",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As merchant, caution refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.merchant.4",
+    "speaker_role": "merchant",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As merchant, caution marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.merchant.5",
+    "speaker_role": "merchant",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As merchant, caution reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.merchant.6",
+    "speaker_role": "merchant",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As merchant, caution keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.displaced.0",
+    "speaker_role": "displaced",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As displaced, caution notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.displaced.1",
+    "speaker_role": "displaced",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As displaced, caution urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.displaced.2",
+    "speaker_role": "displaced",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As displaced, caution asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.displaced.3",
+    "speaker_role": "displaced",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As displaced, caution refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.displaced.4",
+    "speaker_role": "displaced",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As displaced, caution marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.displaced.5",
+    "speaker_role": "displaced",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As displaced, caution reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.displaced.6",
+    "speaker_role": "displaced",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As displaced, caution keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.witness.0",
+    "speaker_role": "witness",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As witness, caution notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.witness.1",
+    "speaker_role": "witness",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As witness, caution urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.witness.2",
+    "speaker_role": "witness",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As witness, caution asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.witness.3",
+    "speaker_role": "witness",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As witness, caution refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.witness.4",
+    "speaker_role": "witness",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As witness, caution marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.witness.5",
+    "speaker_role": "witness",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As witness, caution reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.witness.6",
+    "speaker_role": "witness",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As witness, caution keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.elder.0",
+    "speaker_role": "elder",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As elder, caution notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.elder.1",
+    "speaker_role": "elder",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As elder, caution urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.elder.2",
+    "speaker_role": "elder",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As elder, caution asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.elder.3",
+    "speaker_role": "elder",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As elder, caution refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.elder.4",
+    "speaker_role": "elder",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As elder, caution marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.elder.5",
+    "speaker_role": "elder",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As elder, caution reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.elder.6",
+    "speaker_role": "elder",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As elder, caution keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.scout.0",
+    "speaker_role": "scout",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As scout, caution notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.scout.1",
+    "speaker_role": "scout",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As scout, caution urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.scout.2",
+    "speaker_role": "scout",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As scout, caution asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.scout.3",
+    "speaker_role": "scout",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As scout, caution refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.scout.4",
+    "speaker_role": "scout",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As scout, caution marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.scout.5",
+    "speaker_role": "scout",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As scout, caution reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.scout.6",
+    "speaker_role": "scout",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As scout, caution keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.onboarding.0",
+    "speaker_role": "onboarding",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As onboarding, caution notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.onboarding.1",
+    "speaker_role": "onboarding",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As onboarding, caution urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.onboarding.2",
+    "speaker_role": "onboarding",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As onboarding, caution asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.onboarding.3",
+    "speaker_role": "onboarding",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As onboarding, caution refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.onboarding.4",
+    "speaker_role": "onboarding",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As onboarding, caution marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.onboarding.5",
+    "speaker_role": "onboarding",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As onboarding, caution reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.caution.onboarding.6",
+    "speaker_role": "onboarding",
+    "aspect_id": "caution",
+    "era_id": "all",
+    "text": "As onboarding, caution keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.worker.0",
+    "speaker_role": "worker",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As worker, hope notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.worker.1",
+    "speaker_role": "worker",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As worker, hope urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.worker.2",
+    "speaker_role": "worker",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As worker, hope asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.worker.3",
+    "speaker_role": "worker",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As worker, hope refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.worker.4",
+    "speaker_role": "worker",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As worker, hope marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.worker.5",
+    "speaker_role": "worker",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As worker, hope reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.worker.6",
+    "speaker_role": "worker",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As worker, hope keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.soldier.0",
+    "speaker_role": "soldier",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As soldier, hope notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.soldier.1",
+    "speaker_role": "soldier",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As soldier, hope urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.soldier.2",
+    "speaker_role": "soldier",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As soldier, hope asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.soldier.3",
+    "speaker_role": "soldier",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As soldier, hope refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.soldier.4",
+    "speaker_role": "soldier",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As soldier, hope marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.soldier.5",
+    "speaker_role": "soldier",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As soldier, hope reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.soldier.6",
+    "speaker_role": "soldier",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As soldier, hope keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.merchant.0",
+    "speaker_role": "merchant",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As merchant, hope notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.merchant.1",
+    "speaker_role": "merchant",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As merchant, hope urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.merchant.2",
+    "speaker_role": "merchant",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As merchant, hope asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.merchant.3",
+    "speaker_role": "merchant",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As merchant, hope refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.merchant.4",
+    "speaker_role": "merchant",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As merchant, hope marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.merchant.5",
+    "speaker_role": "merchant",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As merchant, hope reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.merchant.6",
+    "speaker_role": "merchant",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As merchant, hope keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.displaced.0",
+    "speaker_role": "displaced",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As displaced, hope notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.displaced.1",
+    "speaker_role": "displaced",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As displaced, hope urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.displaced.2",
+    "speaker_role": "displaced",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As displaced, hope asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.displaced.3",
+    "speaker_role": "displaced",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As displaced, hope refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.displaced.4",
+    "speaker_role": "displaced",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As displaced, hope marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.displaced.5",
+    "speaker_role": "displaced",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As displaced, hope reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.displaced.6",
+    "speaker_role": "displaced",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As displaced, hope keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.witness.0",
+    "speaker_role": "witness",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As witness, hope notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.witness.1",
+    "speaker_role": "witness",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As witness, hope urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.witness.2",
+    "speaker_role": "witness",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As witness, hope asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.witness.3",
+    "speaker_role": "witness",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As witness, hope refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.witness.4",
+    "speaker_role": "witness",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As witness, hope marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.witness.5",
+    "speaker_role": "witness",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As witness, hope reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.witness.6",
+    "speaker_role": "witness",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As witness, hope keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.elder.0",
+    "speaker_role": "elder",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As elder, hope notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.elder.1",
+    "speaker_role": "elder",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As elder, hope urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.elder.2",
+    "speaker_role": "elder",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As elder, hope asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.elder.3",
+    "speaker_role": "elder",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As elder, hope refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.elder.4",
+    "speaker_role": "elder",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As elder, hope marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.elder.5",
+    "speaker_role": "elder",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As elder, hope reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.elder.6",
+    "speaker_role": "elder",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As elder, hope keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.scout.0",
+    "speaker_role": "scout",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As scout, hope notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.scout.1",
+    "speaker_role": "scout",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As scout, hope urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.scout.2",
+    "speaker_role": "scout",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As scout, hope asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.scout.3",
+    "speaker_role": "scout",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As scout, hope refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.scout.4",
+    "speaker_role": "scout",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As scout, hope marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.scout.5",
+    "speaker_role": "scout",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As scout, hope reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.scout.6",
+    "speaker_role": "scout",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As scout, hope keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.onboarding.0",
+    "speaker_role": "onboarding",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As onboarding, hope notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.onboarding.1",
+    "speaker_role": "onboarding",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As onboarding, hope urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.onboarding.2",
+    "speaker_role": "onboarding",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As onboarding, hope asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.onboarding.3",
+    "speaker_role": "onboarding",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As onboarding, hope refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.onboarding.4",
+    "speaker_role": "onboarding",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As onboarding, hope marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.onboarding.5",
+    "speaker_role": "onboarding",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As onboarding, hope reminds you that industry follows real routes.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.hope.onboarding.6",
+    "speaker_role": "onboarding",
+    "aspect_id": "hope",
+    "era_id": "all",
+    "text": "As onboarding, hope keeps the promise even after the era shifts.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.defiance.worker.0",
+    "speaker_role": "worker",
+    "aspect_id": "defiance",
+    "era_id": "all",
+    "text": "As worker, defiance notes the pattern before the names.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.defiance.worker.1",
+    "speaker_role": "worker",
+    "aspect_id": "defiance",
+    "era_id": "all",
+    "text": "As worker, defiance urges patience with the yard's quiet.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.defiance.worker.2",
+    "speaker_role": "worker",
+    "aspect_id": "defiance",
+    "era_id": "all",
+    "text": "As worker, defiance asks what the workers still fear.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.defiance.worker.3",
+    "speaker_role": "worker",
+    "aspect_id": "defiance",
+    "era_id": "all",
+    "text": "As worker, defiance refuses to blame the first story heard.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.aspect.defiance.worker.4",
+    "speaker_role": "worker",
+    "aspect_id": "defiance",
+    "era_id": "all",
+    "text": "As worker, defiance marks the ridge and the channel as separate truths.",
+    "fallback": "They speak from an Aspect.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.wrong_era",
     "speaker_role": "worker",
     "era_id": "future",
     "text": "In the future we fly carts.",
     "fallback": "They look puzzled.",
-    "choices": []
-  },
-  {
-    "id": "dialogue.neutral_fallback",
-    "schema_version": 1,
-    "priority": "fallback",
-    "era_id": "all",
-    "text": "They have nothing more to say right now.",
-    "fallback": "Silence.",
     "choices": []
   }
 ]
