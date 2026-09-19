@@ -98,6 +98,20 @@ func _apply_mode_chrome_visibility() -> void:
 	pass
 
 
+func _on_book_overlay_chrome(book_open: bool) -> void:
+	if book_open:
+		if _session != null and _session.is_open():
+			_session.close(false)
+			_choice_open = false
+		elif _choice_card != null and _choice_card.visible:
+			_choice_card.visible = false
+			_choice_open = false
+		if _presenter != null:
+			_presenter.notify_player_moved()
+		if _spell_host != null:
+			_spell_host.move_to_front()
+
+
 func _spell_save_battle() -> Dictionary:
 	_on_save()
 	return {"status": "OK", "message": _prompt.text}

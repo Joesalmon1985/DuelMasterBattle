@@ -203,10 +203,10 @@
       "accepted_by": null,
       "accepted_build": null,
       "evidence": "tracking/gates/G04/packet.md",
-      "candidate_implementation": "81262a817420dc1717d404c47b79b4a55ed7b137",
-      "fix_required_at": "2026-09-19T10:46:00Z",
-      "fix_summary": "G04 Reuse Repair Addendum U01\u2013U08 complete; automated gate PASS; awaiting Joe playtest. Retained game_board+DmbBattleSim; shared military menu; observation-led names.",
-      "notes": "T077 remains NOT_STARTED. Branch fix/g04-retained-ui. Ensemble-only commits 58ea2d2+6f7be0f remain follow-up on BuildPackV03-ensemble-depth-pass. Do not mark PASS before manual checklist."
+      "candidate_implementation": "5257b01c80b8e16a8340b83b4e41f98b9c9a8bae",
+      "fix_required_at": "2026-09-19T21:00:00Z",
+      "fix_summary": "Manual retest required after spellbook bounded-panel + pointer-input repair and leased hazard Continue/Abandon return-to-world. Prior battle travel/Ward/Mira fixes retained. Do not PASS from automation.",
+      "notes": "T077 remains NOT_STARTED. Branch fix/g04-retained-ui. Working tree adds spellbook_host panel layout, game_board lease result/menu branches, run_g04_spellbook_pointer.gd, run_g04_lease_return.gd. Ensemble-only commits 58ea2d2+6f7be0f remain follow-up."
     },
     "G05": {
       "status": "NOT_READY",

@@ -43,10 +43,23 @@ const RESULT_FONT := 18
 const SPREAD_MIN_WIDTH := 900.0
 const SPREAD_MIN_PAGE_WIDTH := 280.0
 
+## Bounded open-book panel — artwork fits inside these caps; world stays visible around it.
+const OPEN_MAX_WIDTH_LANDSCAPE := 880.0
+const OPEN_MAX_HEIGHT_LANDSCAPE := 560.0
+const OPEN_VIEWPORT_FRAC_W_LANDSCAPE := 0.68
+const OPEN_VIEWPORT_FRAC_H_LANDSCAPE := 0.70
+const OPEN_MAX_WIDTH_PORTRAIT := 520.0
+const OPEN_MAX_HEIGHT_PORTRAIT := 700.0
+const OPEN_VIEWPORT_FRAC_W_PORTRAIT := 0.92
+const OPEN_VIEWPORT_FRAC_H_PORTRAIT := 0.82
+
 ## Compact launcher stays clear of touch pad / action chrome.
 const COMPACT_BOTTOM_CLEARANCE := 200.0
 const COMPACT_SIDE_PAD := 12.0
 const SAFE_TOP := 8.0
+
+## Open-book chrome (persistent Close).
+const PANEL_CLOSE_SIZE := Vector2(132, 48)
 
 
 static func reduced_motion() -> bool:

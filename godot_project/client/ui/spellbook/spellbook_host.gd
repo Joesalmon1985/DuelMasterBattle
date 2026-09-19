@@ -2,6 +2,8 @@ extends Control
 class_name SpellbookHost
 
 ## Reusable animated spellbook presentation. Binds to SpellbookModel only.
+## Open book is a bounded centred panel (not a full-viewport overlay). Artwork
+## fits inside the panel; the dim blocker sits behind and only covers outside clicks.
 
 const Margins = preload("res://client/ui/spellbook/spellbook_margins.gd")
 const ModelScript = preload("res://client/ui/spellbook/spellbook_model.gd")
@@ -12,6 +14,8 @@ signal close_requested
 signal exit_menu_requested
 signal classic_hud_toggled(enabled: bool)
 signal world_target_needed(active: bool)
+## Emitted when open/confirm overlay starts or stops blocking underlying HUD.
+signal overlay_blocking_changed(blocking: bool)
 
 var model = null
 
@@ -21,9 +25,10 @@ var _compact_btn: Button
 var _compact_summary: Label
 var _open_root: Control
 var _art: TextureRect
-var _content_left: MarginContainer
-var _content_right: MarginContainer
-var _content_single: MarginContainer
+var _panel_close: Button
+var _content_left: Control
+var _content_right: Control
+var _content_single: Control
 var _left_box: VBoxContainer
 var _right_box: VBoxContainer
 var _single_box: VBoxContainer
@@ -41,8 +46,10 @@ var _targeting_guide: Label
 var _tween: Tween
 var _use_spread := false
 var _press_guard_msec := 0
+var _press_guard_key := ""
 var _last_built_page := ""
 var _built := false
+var _was_blocking := false
 
 
 func _ready() -> void:
@@ -50,6 +57,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_ensure_built()
 	set_process(true)
+	set_process_unhandled_input(true)
 
 
 func bind_model(m) -> void:
@@ -76,8 +84,10 @@ func _ensure_built() -> void:
 
 
 func _build() -> void:
+	# Dimmer sits behind the book panel. It must never sit above book controls.
 	_blocker = ColorRect.new()
-	_blocker.color = Color(0, 0, 0, 0.35)
+	_blocker.name = "SpellbookBlocker"
+	_blocker.color = Color(0, 0, 0, 0.42)
 	_blocker.set_anchors_preset(PRESET_FULL_RECT)
 	_blocker.mouse_filter = Control.MOUSE_FILTER_STOP
 	_blocker.visible = false
@@ -178,23 +188,17 @@ func _build() -> void:
 	_style_ink_button(cancel)
 	tv.add_child(cancel)
 
-	# Build open-book art and page slots BEFORE add_child(_open_root) so the first
-	# RESIZED notification can lay out against a populated tree (avoids empty-slot race).
+	# Bounded book panel — STOP so panel chrome receives clicks; never full-viewport.
 	_open_root = Control.new()
 	_open_root.name = "OpenBook"
 	_open_root.visible = false
-	_open_root.set_anchors_preset(PRESET_FULL_RECT)
-	_open_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_open_root.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	_art = TextureRect.new()
 	_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_art.set_anchors_preset(PRESET_FULL_RECT)
-	_art.offset_left = 8
-	_art.offset_right = -8
-	_art.offset_top = 24
-	_art.offset_bottom = -24
 	_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_open_root.add_child(_art)
 
@@ -205,15 +209,19 @@ func _build() -> void:
 	_open_root.add_child(_content_right)
 	_open_root.add_child(_content_single)
 
-	_left_box = VBoxContainer.new()
-	_left_box.add_theme_constant_override("separation", 6)
-	_content_left.add_child(_left_box)
-	_right_box = VBoxContainer.new()
-	_right_box.add_theme_constant_override("separation", 6)
-	_content_right.add_child(_right_box)
-	_single_box = VBoxContainer.new()
-	_single_box.add_theme_constant_override("separation", 6)
-	_content_single.add_child(_single_box)
+	_left_box = _mount_page_box(_content_left)
+	_right_box = _mount_page_box(_content_right)
+	_single_box = _mount_page_box(_content_single)
+
+	_panel_close = Button.new()
+	_panel_close.name = "CloseBook"
+	_panel_close.text = "Close book"
+	_panel_close.focus_mode = Control.FOCUS_NONE
+	_panel_close.custom_minimum_size = Margins.PANEL_CLOSE_SIZE
+	_panel_close.mouse_filter = Control.MOUSE_FILTER_STOP
+	_panel_close.pressed.connect(_on_close_pressed)
+	_style_ink_button(_panel_close)
+	_open_root.add_child(_panel_close)
 
 	add_child(_open_root)
 
@@ -228,15 +236,32 @@ func _build() -> void:
 	add_child(_confirm_panel)
 
 
-func _make_content_slot() -> MarginContainer:
-	var m := MarginContainer.new()
-	m.visible = false
-	m.mouse_filter = Control.MOUSE_FILTER_STOP
-	m.add_theme_constant_override("margin_left", 8)
-	m.add_theme_constant_override("margin_right", 8)
-	m.add_theme_constant_override("margin_top", 8)
-	m.add_theme_constant_override("margin_bottom", 8)
-	return m
+func _make_content_slot() -> Control:
+	## Plain Control keeps the fractional art rect; MarginContainer children would
+	## expand the slot from page content and break pointer hit-testing.
+	var slot := Control.new()
+	slot.visible = false
+	slot.mouse_filter = Control.MOUSE_FILTER_STOP
+	# Do not clip — lean spell buttons must remain pointer-reachable.
+	slot.clip_contents = false
+	return slot
+
+
+func _mount_page_box(slot: Control) -> VBoxContainer:
+	var margin := MarginContainer.new()
+	margin.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	margin.mouse_filter = Control.MOUSE_FILTER_STOP
+	slot.add_child(margin)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_child(box)
+	return box
 
 
 func _process(_delta: float) -> void:
@@ -249,6 +274,27 @@ func _notification(what: int) -> void:
 		_layout_art_slots()
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if model == null:
+		return
+	var cancel := false
+	if event.is_action_pressed("ui_cancel"):
+		cancel = true
+	elif event is InputEventKey and event.pressed and not event.echo \
+			and (event.keycode == KEY_ESCAPE or event.physical_keycode == KEY_ESCAPE):
+		cancel = true
+	if not cancel:
+		return
+	if model.host_mode == ModelScript.HostMode.OPEN \
+			or model.host_mode == ModelScript.HostMode.TARGETING \
+			or not model.confirm_pending.is_empty():
+		if not model.confirm_pending.is_empty():
+			model.confirm_no()
+		else:
+			_on_close_pressed()
+		get_viewport().set_input_as_handled()
+
+
 func _on_model_changed() -> void:
 	if model == null:
 		return
@@ -258,6 +304,10 @@ func _on_model_changed() -> void:
 	_refresh_open()
 	_refresh_confirm()
 	emit_signal("world_target_needed", model.host_mode == ModelScript.HostMode.TARGETING)
+	var blocking := is_blocking_world()
+	if blocking != _was_blocking:
+		_was_blocking = blocking
+		emit_signal("overlay_blocking_changed", blocking)
 
 
 func _refresh_visibility() -> void:
@@ -266,7 +316,16 @@ func _refresh_visibility() -> void:
 	_open_root.visible = mode == ModelScript.HostMode.OPEN
 	_blocker.visible = mode == ModelScript.HostMode.OPEN or not model.confirm_pending.is_empty()
 	_targeting_card.visible = mode == ModelScript.HostMode.TARGETING
+	# Host stays IGNORE so empty chrome never swallows world/targeting clicks.
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if mode == ModelScript.HostMode.OPEN or not model.confirm_pending.is_empty():
+		z_index = 80
+		move_to_front()
+	elif mode == ModelScript.HostMode.TARGETING:
+		z_index = 40
+		move_to_front()
+	else:
+		z_index = 0
 
 
 func _refresh_compact() -> void:
@@ -298,6 +357,7 @@ func _refresh_confirm() -> void:
 		_confirm_panel.visible = false
 		return
 	_confirm_panel.visible = true
+	_confirm_panel.move_to_front()
 	var v := VBoxContainer.new()
 	_confirm_panel.add_child(v)
 	var t := Label.new()
@@ -337,35 +397,64 @@ func _layout_art_slots() -> void:
 	if _art == null or _open_root == null:
 		return
 	var vp := get_viewport_rect().size
+	if vp.x < 8.0 or vp.y < 8.0:
+		return
 	_use_spread = vp.x >= Margins.SPREAD_MIN_WIDTH and vp.x * 0.34 >= Margins.SPREAD_MIN_PAGE_WIDTH
+	var tex_path := Margins.TEX_BOOK if _use_spread else Margins.TEX_PAGE
+	_art.texture = load(tex_path)
+	var tex: Texture2D = _art.texture
+	var tex_size := Vector2(1248, 832) if _use_spread else Vector2(640, 896)
+	if tex != null:
+		tex_size = Vector2(tex.get_width(), tex.get_height())
+
+	var max_w: float
+	var max_h: float
 	if _use_spread:
-		_art.texture = load(Margins.TEX_BOOK)
-		_place_slot(_content_left, Margins.BOOK_LEFT)
-		_place_slot(_content_right, Margins.BOOK_RIGHT)
+		max_w = minf(Margins.OPEN_MAX_WIDTH_LANDSCAPE, vp.x * Margins.OPEN_VIEWPORT_FRAC_W_LANDSCAPE)
+		max_h = minf(Margins.OPEN_MAX_HEIGHT_LANDSCAPE, vp.y * Margins.OPEN_VIEWPORT_FRAC_H_LANDSCAPE)
+	else:
+		max_w = minf(Margins.OPEN_MAX_WIDTH_PORTRAIT, vp.x * Margins.OPEN_VIEWPORT_FRAC_W_PORTRAIT)
+		max_h = minf(Margins.OPEN_MAX_HEIGHT_PORTRAIT, vp.y * Margins.OPEN_VIEWPORT_FRAC_H_PORTRAIT)
+
+	var fit := minf(max_w / tex_size.x, max_h / tex_size.y)
+	var panel := tex_size * fit
+	_open_root.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_open_root.size = panel
+	_open_root.position = (vp - panel) * 0.5
+	_open_root.pivot_offset = panel * 0.5
+
+	_art.set_anchors_preset(PRESET_FULL_RECT)
+	_art.offset_left = 0
+	_art.offset_right = 0
+	_art.offset_top = 0
+	_art.offset_bottom = 0
+
+	if _use_spread:
+		_place_slot(_content_left, Margins.BOOK_LEFT, panel, tex_size)
+		_place_slot(_content_right, Margins.BOOK_RIGHT, panel, tex_size)
 		_content_left.visible = true
 		_content_right.visible = true
 		_content_single.visible = false
 	else:
-		_art.texture = load(Margins.TEX_PAGE)
-		_place_slot(_content_single, Margins.PAGE_CONTENT)
+		_place_slot(_content_single, Margins.PAGE_CONTENT, panel, tex_size)
 		_content_left.visible = false
 		_content_right.visible = false
 		_content_single.visible = true
 
+	if _panel_close != null:
+		_panel_close.position = Vector2(panel.x - Margins.PANEL_CLOSE_SIZE.x - 10.0, 8.0)
+		_panel_close.size = Margins.PANEL_CLOSE_SIZE
+		_panel_close.move_to_front()
 
-func _place_slot(slot: MarginContainer, frac: Rect2) -> void:
-	# Position relative to _art's drawn aspect-fit rectangle.
-	var art_size := _art.size
-	if art_size.x < 8 or art_size.y < 8:
-		art_size = get_viewport_rect().size - Vector2(16, 48)
-	var tex: Texture2D = _art.texture
-	var tex_size := Vector2(1248, 832)
-	if tex != null:
-		tex_size = Vector2(tex.get_width(), tex.get_height())
-	var scale := minf(art_size.x / tex_size.x, art_size.y / tex_size.y)
+
+func _place_slot(slot: Control, frac: Rect2, panel: Vector2, tex_size: Vector2) -> void:
+	# Artwork is aspect-fit into the panel; content slots track the drawn parchment.
+	var scale := minf(panel.x / tex_size.x, panel.y / tex_size.y)
 	var drawn := tex_size * scale
-	var origin := _art.position + (art_size - drawn) * 0.5
+	var origin := (panel - drawn) * 0.5
 	slot.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	slot.anchor_right = 0.0
+	slot.anchor_bottom = 0.0
 	slot.position = origin + Vector2(frac.position.x * drawn.x, frac.position.y * drawn.y)
 	slot.size = Vector2(frac.size.x * drawn.x, frac.size.y * drawn.y)
 
@@ -378,16 +467,54 @@ func _rebuild_page_content() -> void:
 	var page_id := str(page.get("id", ""))
 	var animate := page_id != _last_built_page and _last_built_page != ""
 	_last_built_page = page_id
+	var lean := _is_lean_page(page)
 
 	if _use_spread:
-		_fill_status_column(_left_box)
-		_fill_page_column(_right_box, page)
+		if lean:
+			_fill_lean_nav(_left_box, page)
+			_fill_lean_actions(_right_box, page)
+		else:
+			_fill_status_column(_left_box)
+			_fill_page_column(_right_box, page)
 	else:
-		_fill_status_column(_single_box)
-		_fill_page_column(_single_box, page)
+		if lean:
+			_fill_lean_nav(_single_box, page)
+			_fill_lean_actions(_single_box, page)
+		else:
+			_fill_status_column(_single_box)
+			_fill_page_column(_single_box, page)
 
 	if animate and not Margins.reduced_motion():
 		_play_page_transition()
+
+
+func _is_lean_page(page: Dictionary) -> bool:
+	var id := str(page.get("id", ""))
+	if id == "spells" or id == "hazard":
+		return true
+	return str(page.get("presentation", "")) == "battle_spells"
+
+
+func _fill_lean_nav(box: VBoxContainer, _page: Dictionary) -> void:
+	## Principal spell/hazard pages: title, tabs — no status/result dump.
+	_add_heading(box, model.title)
+	_add_caption(box, "Select a spell, then a unit in the world.")
+	_add_page_tabs(box)
+	_add_nav_row(box, false)
+
+
+func _fill_lean_actions(box: VBoxContainer, page: Dictionary) -> void:
+	## Large direct buttons — no ScrollContainer so targets stay hit-testable.
+	_add_heading(box, str(page.get("title", "Spells")))
+	var hint := str(page.get("body", ""))
+	if hint != "":
+		_add_caption(box, hint)
+	_actions = VBoxContainer.new()
+	_actions.add_theme_constant_override("separation", Margins.TOUCH_GAP)
+	_actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(_actions)
+	for act in page.get("actions", []):
+		_add_action_button(_actions, act)
 
 
 func _fill_status_column(box: VBoxContainer) -> void:
@@ -403,7 +530,11 @@ func _fill_status_column(box: VBoxContainer) -> void:
 	_result_lbl.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.RESULT_FONT))
 	_paint_result(_result_lbl)
 	box.add_child(_result_lbl)
+	_add_page_tabs(box)
+	_add_nav_row(box, true)
 
+
+func _add_page_tabs(box: VBoxContainer) -> void:
 	_page_tabs = HBoxContainer.new()
 	_page_tabs.add_theme_constant_override("separation", Margins.TOUCH_GAP)
 	box.add_child(_page_tabs)
@@ -419,6 +550,8 @@ func _fill_status_column(box: VBoxContainer) -> void:
 		_style_ink_button(tab)
 		_page_tabs.add_child(tab)
 
+
+func _add_nav_row(box: VBoxContainer, include_exit: bool) -> void:
 	_nav = HBoxContainer.new()
 	_nav.add_theme_constant_override("separation", Margins.TOUCH_GAP)
 	box.add_child(_nav)
@@ -429,13 +562,14 @@ func _fill_status_column(box: VBoxContainer) -> void:
 	close_btn.pressed.connect(_on_close_pressed)
 	_style_ink_button(close_btn)
 	_nav.add_child(close_btn)
-	var menu_btn := Button.new()
-	menu_btn.text = "Exit to menu"
-	menu_btn.focus_mode = Control.FOCUS_NONE
-	menu_btn.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
-	menu_btn.pressed.connect(_on_exit_menu_pressed)
-	_style_ink_button(menu_btn)
-	_nav.add_child(menu_btn)
+	if include_exit:
+		var menu_btn := Button.new()
+		menu_btn.text = "Exit to menu"
+		menu_btn.focus_mode = Control.FOCUS_NONE
+		menu_btn.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
+		menu_btn.pressed.connect(_on_exit_menu_pressed)
+		_style_ink_button(menu_btn)
+		_nav.add_child(menu_btn)
 
 
 func _fill_page_column(box: VBoxContainer, page: Dictionary) -> void:
@@ -462,9 +596,11 @@ func _fill_page_column(box: VBoxContainer, page: Dictionary) -> void:
 		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 		scroll.custom_minimum_size = Vector2(0, 120)
+		scroll.mouse_filter = Control.MOUSE_FILTER_STOP
 		box.add_child(scroll)
 		_actions = VBoxContainer.new()
 		_actions.add_theme_constant_override("separation", Margins.TOUCH_GAP)
+		_actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		scroll.add_child(_actions)
 		var actions: Array = page.get("actions", [])
 		for act in actions:
@@ -478,6 +614,7 @@ func _add_action_button(parent: VBoxContainer, act: Dictionary) -> void:
 	b.text = label
 	b.focus_mode = Control.FOCUS_NONE
 	b.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
+	b.mouse_filter = Control.MOUSE_FILTER_STOP
 	b.disabled = bool(act.get("disabled", false)) or model.pending_token != "" \
 		or model.conn_state == ModelScript.ConnState.DISCONNECTED
 	if str(act.get("hint", "")) != "":
@@ -574,9 +711,13 @@ func _play_page_transition() -> void:
 
 
 func _on_open_pressed() -> void:
-	if _duplicate_press():
+	if _duplicate_press("open"):
 		return
 	if model == null:
+		return
+	# Toggle: if somehow reachable while open, close instead.
+	if model.host_mode == ModelScript.HostMode.OPEN:
+		_on_close_pressed()
 		return
 	if Margins.reduced_motion():
 		model.open_book()
@@ -594,11 +735,14 @@ func _on_open_pressed() -> void:
 
 
 func _on_close_pressed() -> void:
-	if _duplicate_press():
+	if _duplicate_press("close"):
 		return
 	if model == null:
 		return
 	if Margins.reduced_motion():
+		model.close_book()
+		return
+	if model.host_mode != ModelScript.HostMode.OPEN:
 		model.close_book()
 		return
 	if _tween != null and _tween.is_valid():
@@ -613,7 +757,7 @@ func _on_close_pressed() -> void:
 
 
 func _on_exit_menu_pressed() -> void:
-	if _duplicate_press():
+	if _duplicate_press("exit"):
 		return
 	if model:
 		model.request_exit_menu()
@@ -630,7 +774,7 @@ func _on_tab(index: int) -> void:
 
 
 func _on_action_pressed(action_id: String, payload: Dictionary, opts: Dictionary) -> void:
-	if _duplicate_press():
+	if _duplicate_press("action:%s" % action_id):
 		return
 	if model == null:
 		return
@@ -638,15 +782,29 @@ func _on_action_pressed(action_id: String, payload: Dictionary, opts: Dictionary
 
 
 func _on_blocker_input(event: InputEvent) -> void:
-	# Swallow all input so clicks cannot reach the world while the book is open.
-	if event is InputEventMouseButton or event is InputEventScreenTouch:
+	## Outside the bounded book: swallow world clicks; click/tap closes the book.
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:
+			accept_event()
+			_on_close_pressed()
+			return
+		accept_event()
+	elif event is InputEventScreenTouch:
+		var st := event as InputEventScreenTouch
+		if st.pressed:
+			accept_event()
+			_on_close_pressed()
+			return
 		accept_event()
 
 
-func _duplicate_press() -> bool:
+func _duplicate_press(key: String = "") -> bool:
+	## Guard only identical consecutive presses — never block Open→Shield.
 	var now := Time.get_ticks_msec()
-	if now < _press_guard_msec:
+	if key != "" and key == _press_guard_key and now < _press_guard_msec:
 		return true
+	_press_guard_key = key
 	_press_guard_msec = now + 120
 	return false
 
@@ -663,3 +821,17 @@ func is_targeting() -> bool:
 
 func accepts_world_target() -> bool:
 	return is_targeting() and model != null and not model.world_input_blocked_for_select()
+
+
+func open_panel_rect() -> Rect2:
+	if _open_root == null or not _open_root.visible:
+		return Rect2()
+	return _open_root.get_global_rect()
+
+
+func compact_open_button() -> Button:
+	return _compact_btn
+
+
+func panel_close_button() -> Button:
+	return _panel_close

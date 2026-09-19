@@ -575,6 +575,16 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"G04_PLAYABLE_OK",
             ),
             _godot_script(
+                "g04_spellbook_pointer",
+                "res://client/tests/run_g04_spellbook_pointer.gd",
+                r"G04_SPELLBOOK_POINTER_OK",
+            ),
+            _godot_script(
+                "g04_lease_return",
+                "res://client/tests/run_g04_lease_return.gd",
+                r"G04_LEASE_RETURN_OK",
+            ),
+            _godot_script(
                 "mira_semantic_label",
                 "res://client/tests/run_mira_semantic_label.gd",
                 r"MIRA_SEMANTIC_OK",
@@ -788,6 +798,16 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g04_sidecar_playable",
                 "res://client/tests/run_g04_playable.gd",
                 r"G04_PLAYABLE_OK",
+            ),
+            _godot_script(
+                "g04_spellbook_pointer",
+                "res://client/tests/run_g04_spellbook_pointer.gd",
+                r"G04_SPELLBOOK_POINTER_OK",
+            ),
+            _godot_script(
+                "g04_lease_return",
+                "res://client/tests/run_g04_lease_return.gd",
+                r"G04_LEASE_RETURN_OK",
             ),
             _godot_script(
                 "g03_regression_smoke",

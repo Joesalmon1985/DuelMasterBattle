@@ -14,6 +14,8 @@ var _parent: Node = null
 var _duel_id: String = ""
 var _cmd: Callable = Callable()
 var _resolved := false
+var resolve_submit_count := 0
+var finished_emit_count := 0
 
 
 func begin_from_start_reply(parent: Node, reply: Dictionary, cmd: Callable) -> bool:
@@ -73,8 +75,10 @@ func _on_board_finished(outcome: String, details: Dictionary = {}) -> void:
 	resolve_payload.merge(details, true)
 	var reply: Dictionary = {}
 	if _cmd.is_valid():
+		resolve_submit_count += 1
 		reply = _cmd.call("ResolveHazardDuel", resolve_payload)
 		# Python resolve is idempotent; a duplicate submit must not mutate again.
+	finished_emit_count += 1
 	finished.emit(outcome, reply if typeof(reply) == TYPE_DICTIONARY else {})
 	_teardown()
 

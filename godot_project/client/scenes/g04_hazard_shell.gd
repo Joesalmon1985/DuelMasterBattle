@@ -101,6 +101,18 @@ func _apply_mode_chrome_visibility() -> void:
 		_action_bar.visible = false
 
 
+func _on_book_overlay_chrome(book_open: bool) -> void:
+	if book_open:
+		if _session != null and _session.is_open():
+			_session.close(false)
+		elif _choice_card != null and _choice_card.visible:
+			_choice_card.visible = false
+		if _presenter != null:
+			_presenter.notify_player_moved()
+		if _spell_host != null:
+			_spell_host.move_to_front()
+
+
 func _spell_treat(payload: Dictionary) -> Dictionary:
 	_selected_cube = str(payload.get("target_id", _selected_cube))
 	if _selected_cube == "":

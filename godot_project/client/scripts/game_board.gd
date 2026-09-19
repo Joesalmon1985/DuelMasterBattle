@@ -1436,7 +1436,10 @@ func _show_menu_overlay() -> void:
 		_set_paused(false)
 	)
 	_overlay_button("How to play", false, func(): _show_help_overlay(false))
-	if _adventure_mode:
+	if _lease_mode:
+		# Hazard Challenge lease: abandon returns to G04 world, not quick-duel chrome.
+		_overlay_button("Abandon challenge", false, func(): _return_to_world("fled"))
+	elif _adventure_mode:
 		_overlay_button("Flee (counts as a loss)", false, func(): _return_to_world("fled"))
 	else:
 		_overlay_button("Restart duel", false, func():
@@ -1471,6 +1474,8 @@ func _show_result() -> void:
 	var r = game.result
 	var w: Array = game.get_enemy_ward()
 	for i in range(mini(_rival_ward_slots.size(), w.size())):
+		if w[i] == null:
+			continue
 		_rival_ward_slots[i].set_spell(int(w[i]))
 	_rival_progress.value = 0
 	_rival_status_lbl.text = ""
@@ -1498,7 +1503,10 @@ func _show_result() -> void:
 	_overlay_ward_row("Their Ward", game.get_enemy_ward())
 	_overlay_ward_row("Your Ward", game.get_player_ward())
 	_overlay_text("You cast %d · Rival cast %d" % [r.human_guess_count, r.bot_guess_count], false)
-	if _adventure_mode:
+	if _lease_mode:
+		# Leased hazard duels must return via the lease callback — never Play again.
+		_overlay_button("Continue", true, func(): _return_to_world(r.outcome))
+	elif _adventure_mode:
 		# Story battles never offer a retry here: the combat UI reports the
 		# result and the story layer decides what defeat means (policy).
 		_overlay_button("Continue", true, func(): _return_to_world(r.outcome))
@@ -1558,6 +1566,17 @@ func ui_adventure_continue() -> void:
 	if game.result != null:
 		outcome = game.result.outcome
 	_return_to_world(outcome)
+
+
+func ui_pointer_press_overlay_button(label: String) -> bool:
+	## Fire the visible overlay Button.pressed path (lease Continue / Abandon / etc.).
+	if _overlay_vbox == null or not _overlay.visible:
+		return false
+	for c in _overlay_vbox.get_children():
+		if c is Button and str((c as Button).text) == label:
+			(c as Button).pressed.emit()
+			return true
+	return false
 
 
 func _show_encounter_intro() -> void:

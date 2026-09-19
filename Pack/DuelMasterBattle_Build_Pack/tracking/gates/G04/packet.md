@@ -1,26 +1,26 @@
-# G04 — Battles, wizard power and catastrophe (Reuse Repair U01–U08)
+# G04 — Battles, wizard power and catastrophe (Reuse Repair + UI/lifecycle repair)
 
-**Status:** AWAITING_HUMAN  
-**Repair:** U01–U08 (`docs/DuelMasterBattle_G04_Reuse_Repair_Addendum.md`)  
+**Status:** AWAITING_HUMAN (FIX_REQUIRED cleared in code; manual retest required)  
+**Repair:** U01–U08 + 2026-09-19 spellbook/lease-return defects  
 **Branch:** `fix/g04-retained-ui`  
-**Base:** `origin/feature/spellbook-ui` @ `454ccf1` + merge `origin/main` @ `441899b`  
-**Candidate:** 81262a817420dc1717d404c47b79b4a55ed7b137
-**Platform (automated):** Windows 10, Godot 4.5.1 (local), Python 3.14 / project venv 3.11  
+**Base tip before this repair:** `5257b01`  
+**Candidate:** working tree on `fix/g04-retained-ui` (spellbook panel + lease Continue; commit when accepted)  
+**Platform (automated):** Linux, Godot 4.4.1 pin, Python 3.12  
 
-## What changed
+## What changed (this repair)
 
-- Shared `DmbTargetSession` + approved military `AttachedChoiceCard` for units/hazards
-- Observation-led durable names (people + soldiers); movement dismissal via shared intent
-- Bridge presenter reuses village `WorldInteractionLabel` presentation
-- Hazard Challenge hosts retained `game_board.tscn` + `DmbBattleSim` (configure before startup)
-- Guess/Resign Mastermind panel removed from production Challenge; Mastermind kept as reference scoring
-- Quick duel and Adventure `pending_battle` paths preserved
-- Duplicate `ResolveHazardDuel` submission is idempotent
-- R06 Mastermind production choice superseded; T077 remains NOT_STARTED
+- Open spellbook is a **bounded centred panel** (artwork fits inside max width/height); world remains visible around it
+- Spellbook sits above D-pad / action / choice chrome; touch HUD hides while open and restores on close
+- Persistent Close control; Escape/ui_cancel and outside-blocker click close the book
+- G04 Spells page is lean (Destroy / Shield / Attack Speed / Range) without status dump clutter
+- Real pointer regression: `run_g04_spellbook_pointer.gd` at 450×800, 720×1280, 1280×720
+- Leased hazard result → **Continue** → `_return_to_world`; menu → **Abandon challenge** (not Play again / Restart)
+- Lease-return regression: `run_g04_lease_return.gd`
+- Prior fixes retained: battle travel cleanup, Ward SpellSlot presses, Mira semantic labels
 
 ## Ensemble follow-up (not in this PR)
 
-Commits `58ea2d2` and `6f7be0f` on `BuildPackV03-ensemble-depth-pass` are tracked separately and were not merged into this repair branch.
+Commits `58ea2d2` and `6f7be0f` on `BuildPackV03-ensemble-depth-pass` remain separate.
 
 ## Reset (required before judging)
 
@@ -28,37 +28,27 @@ See [reset.md](reset.md). Delete isolated slots `g04_battle`, `g04_hazard`, `g04
 
 ## Launch
 
-Windows (this candidate host):
-
-```bat
-Playtest.bat
-```
-
-Then Play G04 battle / Play G04 hazard, or:
-
-```bat
-set GODOT=C:\Users\joesa\Downloads\Godot_v4.5.1-stable_win64.exe\Godot_v4.5.1-stable_win64_console.exe
-%GODOT% --path godot_project res://client/scenes/g04_battle_shell.tscn
-```
-
-Linux:
-
 ```bash
 bash tools/play_g04_battle.sh
 bash tools/play_g04_hazard.sh
 ```
 
-## Joe checklist
+## Joe checklist (decisive)
 
-Use the table in [gates/G04.md](../../gates/G04.md). Expect the **full Ward duel** on Challenge — not four colour buttons + Guess/Resign. **Do not accept G04 merely because automated checks pass.**
+1. Open spellbook in G04 battle — bounded panel, D-pad hidden, spells clickable, Close works, Escape closes.
+2. Shield → targeting card → world visible → cancel → reopen → Close.
+3. Hazard Challenge → finish duel → **Continue** returns to world (no Play again loop); victory removes that cube only.
+4. Mid-duel menu offers **Abandon challenge**, not Restart/Quit-to-menu as the lease escape.
+
+**Do not accept G04 merely because automated checks pass.**
 
 ## Automated evidence
 
 ```bash
-python tools/check.py --gate G04
+python3 tools/check.py --gate G04
 ```
 
-Result on this handoff host: **PASS** (see `check_report.json`). Includes Python cumulative, G04 playable (`G04_PLAYABLE_OK`), G01–G03 smokes.
+Includes `G04_SPELLBOOK_POINTER_OK` and `G04_LEASE_RETURN_OK` in addition to prior playable/smokes.
 
 ## Known limits
 
@@ -66,4 +56,4 @@ See [known_defects.md](known_defects.md).
 
 ## Stop
 
-`current_task = STOP_FOR_G04`. **T077 remains NOT_STARTED.** Agent must not mark G04 PASS or merge before Joe's playtest.
+`current_task = STOP_FOR_G04`. **T077 remains NOT_STARTED.** Do not mark G04 PASS before Joe's retest.

@@ -217,6 +217,7 @@ func _setup_spellbook() -> void:
 	_spell_host.exit_menu_requested.connect(_on_back)
 	_spell_host.classic_hud_toggled.connect(_on_classic_hud_toggled)
 	_spell_host.world_target_needed.connect(func(_active): _apply_movement_gate())
+	_spell_host.overlay_blocking_changed.connect(_on_spellbook_overlay_blocking)
 	_spell_model.changed.connect(func(): _apply_movement_gate())
 	_apply_classic_hud_visibility()
 
@@ -381,12 +382,33 @@ func _btn(parent: HBoxContainer, text: String, cb: Callable) -> void:
 
 func _apply_movement_gate() -> void:
 	var book_blocks: bool = _spell_host != null and _spell_host.is_blocking_world()
+	var targeting: bool = _spell_host != null and _spell_host.is_targeting()
 	var allow: bool = not _paused and _focus and not _bridge_down and _client != null and not book_blocks
 	if _area:
-		_area.set_movement_enabled(allow)
+		_area.set_movement_enabled(allow and not targeting)
 	if _touch:
-		var targeting: bool = _spell_host != null and _spell_host.is_targeting()
-		_touch.set_enabled(allow and not targeting)
+		# Hide D-pad / action while the open book or targeting card owns the foreground.
+		_touch.visible = not book_blocks and not targeting
+		_touch.set_enabled(allow and not targeting and not book_blocks)
+	if book_blocks and _spell_host != null:
+		_spell_host.move_to_front()
+	_apply_book_overlay_chrome(book_blocks)
+
+
+func _on_spellbook_overlay_blocking(blocking: bool) -> void:
+	_apply_book_overlay_chrome(blocking)
+	_apply_movement_gate()
+
+
+func _apply_book_overlay_chrome(book_open: bool) -> void:
+	## Gate shells hide interaction chrome that would otherwise sit above the book.
+	if _action_bar_scroll != null and not _classic_hud:
+		pass
+	_on_book_overlay_chrome(book_open)
+
+
+func _on_book_overlay_chrome(_book_open: bool) -> void:
+	pass
 
 
 func _set_interaction_blocked(blocked: bool) -> void:
