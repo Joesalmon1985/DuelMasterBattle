@@ -701,6 +701,14 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T087": lambda: [
+            _pytest("inventory", "tests/sim/test_t087_inventory.py"),
+            _godot_script(
+                "inventory_ui",
+                "res://client/tests/run_t087_inventory.gd",
+                r"T087_INVENTORY_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

@@ -1,0 +1,27 @@
+{
+  "task_id": "T087",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/player/inventory.py",
+    "godot_project/client/ui/inventory.gd",
+    "godot_project/client/tests/run_t087_inventory.gd",
+    "tests/sim/test_t087_inventory.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "InventoryService.pickup / drop / give / equip / combine / use"
+  ],
+  "source_rules": ["C10 InventoryService", "GDD §§52, 53, 55, 56"],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T087",
+      "exit_code": 0,
+      "result": "PASS; 4 pytest + T087_INVENTORY_OK"
+    }
+  ],
+  "extra_scope": {"tools/check.py": "Wire T087"},
+  "defects": [],
+  "next_task": "T088",
+  "notes": "Pickup/drop/revisit keeps one ID; transfers conserve quantity; wrong owner/range rejected; personal items cannot pay construction."
+}
