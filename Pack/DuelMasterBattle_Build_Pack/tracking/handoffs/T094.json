@@ -1,7 +1,7 @@
 {
   "task_id": "T094",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "d91d89ea920319539afa9f3bf1d289982c98fb88",
   "files": [
     "godot_project/content/source/dialogue/mvp_bank.json",
     "godot_project/content/source/dialogue/human_review_sample.json",
@@ -13,11 +13,11 @@
   ],
   "public_contracts": [
     "tools.content.validate / compile",
-    "MVP dialogue bank ≥300 unique lines"
+    "MVP dialogue bank \u2265300 unique lines"
   ],
   "source_rules": [
     "C13 dialogue MVP",
-    "GDD §§144, 184, 211, 217"
+    "GDD \u00a7\u00a7144, 184, 211, 217"
   ],
   "checks": [
     {
