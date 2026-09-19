@@ -1,7 +1,7 @@
 {
   "task_id": "T088",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "7da0477124e5f58bd0f4296be15b823960881aed",
   "files": [
     "sim/dmb/player/inventory.py",
     "sim/dmb/adventure/item_recovery.py",
@@ -16,7 +16,7 @@
   ],
   "source_rules": [
     "C10 InventoryService + recovery",
-    "GDD §§55, 56, 77"
+    "GDD \u00a7\u00a755, 56, 77"
   ],
   "checks": [
     {
