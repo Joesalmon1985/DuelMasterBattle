@@ -678,6 +678,13 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 [ROOT / "godot_project" / "content" / "source" / "dialogue" / "mvp_bank.json"],
             ),
         ],
+        "T085": lambda: [
+            _godot_script(
+                "dialogue_ui",
+                "res://client/tests/run_t085_dialogue_ui.gd",
+                r"T085_DIALOGUE_UI_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
