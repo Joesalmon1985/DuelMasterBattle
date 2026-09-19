@@ -109,12 +109,15 @@ Supersedes conflicting R06 / “choose fallback” decisions from the 18 Septemb
 pass. Authoritative addendum:
 `docs/DuelMasterBattle_G04_Reuse_Repair_Addendum.md` (U01–U08).
 
-While this repair is in progress G04 is FIX_REQUIRED. Reach AWAITING_HUMAN only
-after all required automated checks pass. Do not start T077. Do not mark G04
-PASS from automation. Integration branch: `fix/g04-retained-ui` from
-`origin/feature/spellbook-ui`, with `origin/main` merged. Ensemble-only commits
-`58ea2d2` and `6f7be0f` remain a separate follow-up on
-`BuildPackV03-ensemble-depth-pass` and are not part of this repair.
+**Cleared 2026-09-19:** Joe Salmon accepted G04 PASS against implementation
+`75b7f539aa1916fb6c0a5f156be3efa5184dd7eb` on main via merge
+`15eadbd7dd82ebb56167c745e4998f2fa06809fb`. T077/G05 is authorized.
+Historical note: during the repair G04 was FIX_REQUIRED then AWAITING_HUMAN;
+PASS was never granted from automation alone. Integration branch was
+`fix/g04-retained-ui` from `origin/feature/spellbook-ui`, with `origin/main`
+merged. Ensemble-only commits `58ea2d2` and `6f7be0f` remain a separate
+follow-up on `BuildPackV03-ensemble-depth-pass` and were not part of the
+accepted G04 merge.
 
 ### Control and validation
 

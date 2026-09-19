@@ -1,59 +1,49 @@
 # G04 — Battles, wizard power and catastrophe (Reuse Repair + UI/lifecycle repair)
 
-**Status:** AWAITING_HUMAN (FIX_REQUIRED cleared in code; manual retest required)  
+**Status:** PASS  
+**Accepted by:** Joe Salmon  
+**Accepted at:** 2026-09-19T22:05:00Z  
+**Accepted implementation / build:** `75b7f539aa1916fb6c0a5f156be3efa5184dd7eb`  
+**Present on main via merge:** `15eadbd7dd82ebb56167c745e4998f2fa06809fb`  
 **Repair:** U01–U08 + 2026-09-19 spellbook/lease-return defects  
-**Branch:** `fix/g04-retained-ui`  
-**Base tip before this repair:** `5257b01`  
-**Candidate:** working tree on `fix/g04-retained-ui` (spellbook panel + lease Continue; commit when accepted)  
-**Platform (automated):** Linux, Godot 4.4.1 pin, Python 3.12  
+**Repair branch (historical):** `fix/g04-retained-ui`  
 
-## What changed (this repair)
+## Human acceptance
 
-- Open spellbook is a **bounded centred panel** (artwork fits inside max width/height); world remains visible around it
+Joe manually tested the final G04 implementation and considers **G04 PASS**.
+The merged main tree contains the same accepted implementation.
+
+Progression to **T077 / G05** is authorized.
+
+## What landed (accepted)
+
+- Open spellbook is a **bounded centred panel**; world remains visible around it
 - Spellbook sits above D-pad / action / choice chrome; touch HUD hides while open and restores on close
 - Persistent Close control; Escape/ui_cancel and outside-blocker click close the book
-- G04 Spells page is lean (Destroy / Shield / Attack Speed / Range) without status dump clutter
-- Real pointer regression: `run_g04_spellbook_pointer.gd` at 450×800, 720×1280, 1280×720
-- Leased hazard result → **Continue** → `_return_to_world`; menu → **Abandon challenge** (not Play again / Restart)
+- G04 Spells page is lean (Destroy / Shield / Attack Speed / Range)
+- Real pointer regression: `run_g04_spellbook_pointer.gd`
+- Leased hazard result → **Continue** → `_return_to_world`; menu → **Abandon challenge**
 - Lease-return regression: `run_g04_lease_return.gd`
 - Prior fixes retained: battle travel cleanup, Ward SpellSlot presses, Mira semantic labels
+- Retained `game_board.tscn` + `DmbBattleSim` duel path (not Python Mastermind as production)
 
-## Ensemble follow-up (not in this PR)
+## Ensemble follow-up (not in this acceptance)
 
 Commits `58ea2d2` and `6f7be0f` on `BuildPackV03-ensemble-depth-pass` remain separate.
 
-## Reset (required before judging)
-
-See [reset.md](reset.md). Delete isolated slots `g04_battle`, `g04_hazard`, `g04_hazard_terminal`.
-
-## Launch
-
-```bash
-bash tools/play_g04_battle.sh
-bash tools/play_g04_hazard.sh
-```
-
-## Joe checklist (decisive)
-
-1. Open spellbook in G04 battle — bounded panel, D-pad hidden, spells clickable, Close works, Escape closes.
-2. Shield → targeting card → world visible → cancel → reopen → Close.
-3. Hazard Challenge → finish duel → **Continue** returns to world (no Play again loop); victory removes that cube only.
-4. Mid-duel menu offers **Abandon challenge**, not Restart/Quit-to-menu as the lease escape.
-
-**Do not accept G04 merely because automated checks pass.**
-
-## Automated evidence
+## Automated evidence (necessary, not decisive)
 
 ```bash
 python3 tools/check.py --gate G04
 ```
 
-Includes `G04_SPELLBOOK_POINTER_OK` and `G04_LEASE_RETURN_OK` in addition to prior playable/smokes.
+## Historical repair notes
 
-## Known limits
+Prior FIX_REQUIRED / AWAITING_HUMAN wording described the repair-in-progress and
+manual-retest hold. That hold is cleared by Joe's explicit PASS. Useful
+observations remain in `known_defects.md`, `acceptance.json`, and U01–U08 /
+R01–R08 handoffs.
 
-See [known_defects.md](known_defects.md).
+## Next
 
-## Stop
-
-`current_task = STOP_FOR_G04`. **T077 remains NOT_STARTED.** Do not mark G04 PASS before Joe's retest.
+`current_task = T077`. Do not reopen G04 without a new FIX_REQUIRED from Joe.
