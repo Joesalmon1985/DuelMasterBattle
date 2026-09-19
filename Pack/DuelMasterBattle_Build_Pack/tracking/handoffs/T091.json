@@ -1,7 +1,7 @@
 {
   "task_id": "T091",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "5f8b53fef0b5a5ba6b9c9adeca9f654bc4e955c0",
   "files": [
     "sim/dmb/adventure/duels.py",
     "godot_project/content/source/duel_rules/progression.json",
@@ -17,7 +17,7 @@
   ],
   "source_rules": [
     "C10 retained DmbBattleSim duel",
-    "GDD §§49, 58, 60, 67"
+    "GDD \u00a7\u00a749, 58, 60, 67"
   ],
   "checks": [
     {
