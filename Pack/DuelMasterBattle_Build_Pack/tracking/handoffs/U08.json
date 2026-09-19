@@ -1,0 +1,6 @@
+{
+  "repair_id": "U08",
+  "summary": "Packet/launch/known_defects updated; G04 AWAITING_HUMAN; T077 NOT_STARTED; stop for Joe. Draft PR to main will include spellbook work from PR #9.",
+  "t077": "NOT_STARTED",
+  "gate": "AWAITING_HUMAN"
+}

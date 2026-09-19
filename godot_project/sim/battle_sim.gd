@@ -156,8 +156,8 @@ func set_player_ward_locus(i: int, spell: int) -> void:
 		return
 	if spell < 0:
 		_player_ward[i] = null
-	elif spell in player.ward_pool:
-		_player_ward[i] = spell
+	elif _spell_in_pool(spell, player.ward_pool):
+		_player_ward[i] = int(spell)
 
 
 func clear_player_ward() -> void:
@@ -191,8 +191,8 @@ func set_player_attack_locus(i: int, spell: int) -> void:
 		return
 	if spell < 0:
 		_player_attack[i] = null
-	elif spell in player.attack_pool:
-		_player_attack[i] = spell
+	elif _spell_in_pool(spell, player.attack_pool):
+		_player_attack[i] = int(spell)
 
 
 func clear_player_attack() -> void:
@@ -205,7 +205,7 @@ func load_player_attack(pattern: Array) -> void:
 		return
 	var out := _empty(player.weave_size)
 	for i in range(mini(pattern.size(), player.weave_size)):
-		if pattern[i] != null and int(pattern[i]) in player.attack_pool:
+		if pattern[i] != null and _spell_in_pool(int(pattern[i]), player.attack_pool):
 			out[i] = int(pattern[i])
 	_player_attack = out
 
@@ -499,3 +499,123 @@ func get_current_state() -> Dictionary:
 		"enemy_last_stand": false,
 		"outcome": result.outcome if result else "",
 	}
+
+
+func export_checkpoint() -> Dictionary:
+	## Versioned restore payload for leased hazard duels. RNG as string to avoid float loss.
+	return {
+		"schema": 1,
+		"seed": _seed,
+		"rng_state": str(_rng.state),
+		"phase": phase,
+		"duel_time": duel_time,
+		"paused": _paused,
+		"forced_defeat_by_cast": forced_defeat_by_cast,
+		"player_ward": _player_ward.duplicate(),
+		"enemy_ward": _enemy_ward.duplicate(),
+		"player_attack": _player_attack.duplicate(),
+		"player_casts": _player_casts,
+		"enemy_casts": _enemy_casts,
+		"enemy_cast_at": _enemy_cast_at,
+		"player_history": _serialize_history(player_history),
+		"enemy_history": _serialize_history(enemy_history),
+		"player_window": _serialize_window(_player_window),
+		"enemy_window": _serialize_window(_enemy_window),
+		"bot": _serialize_bot(_bot),
+		"outcome": result.outcome if result else "",
+	}
+
+
+func restore_checkpoint(data: Dictionary) -> void:
+	if data.is_empty():
+		return
+	_seed = int(data.get("seed", _seed))
+	_rng.seed = _seed
+	var rng_state = data.get("rng_state", "")
+	if str(rng_state) != "":
+		_rng.state = int(str(rng_state))
+	phase = int(data.get("phase", phase))
+	duel_time = float(data.get("duel_time", 0.0))
+	_paused = bool(data.get("paused", false))
+	forced_defeat_by_cast = int(data.get("forced_defeat_by_cast", 0))
+	_player_ward = data.get("player_ward", _player_ward).duplicate()
+	_enemy_ward = data.get("enemy_ward", _enemy_ward).duplicate()
+	_player_attack = data.get("player_attack", _player_attack).duplicate()
+	_player_casts = int(data.get("player_casts", 0))
+	_enemy_casts = int(data.get("enemy_casts", 0))
+	_enemy_cast_at = float(data.get("enemy_cast_at", 0.0))
+	_restore_window(_player_window, data.get("player_window", {}))
+	_restore_window(_enemy_window, data.get("enemy_window", {}))
+	_restore_bot(_bot, data.get("bot", {}))
+	# Histories restored as plain dictionaries for HUD continuity.
+	player_history = data.get("player_history", []).duplicate()
+	enemy_history = data.get("enemy_history", []).duplicate()
+
+
+func _serialize_history(history: Array) -> Array:
+	var out: Array = []
+	for item in history:
+		if typeof(item) == TYPE_DICTIONARY:
+			out.append(item.duplicate(true))
+		elif item != null and item.has_method("to_dict"):
+			out.append(item.to_dict())
+		else:
+			out.append(str(item))
+	return out
+
+
+func _serialize_window(window) -> Dictionary:
+	if window == null:
+		return {}
+	return {
+		"min_cast_time": window.min_cast_time,
+		"max_cast_time": window.max_cast_time,
+		"elapsed": window.elapsed,
+		"state": window.state,
+		"attacks_remaining": window.attacks_remaining,
+		"pending_pattern": window.pending_pattern.duplicate(),
+		"cast_timestamp": window.cast_timestamp,
+	}
+
+
+func _restore_window(window, data: Dictionary) -> void:
+	if window == null or data.is_empty():
+		return
+	window.min_cast_time = float(data.get("min_cast_time", window.min_cast_time))
+	window.max_cast_time = float(data.get("max_cast_time", window.max_cast_time))
+	window.elapsed = float(data.get("elapsed", 0.0))
+	window.state = int(data.get("state", window.state))
+	window.attacks_remaining = int(data.get("attacks_remaining", window.attacks_remaining))
+	window.pending_pattern = data.get("pending_pattern", []).duplicate()
+	window.cast_timestamp = float(data.get("cast_timestamp", 0.0))
+
+
+func _serialize_bot(bot) -> Dictionary:
+	if bot == null:
+		return {}
+	var payload := {
+		"guess_count": bot.guess_count() if bot.has_method("guess_count") else 0,
+		"candidate_count": bot.candidate_count() if bot.has_method("candidate_count") else 0,
+	}
+	if "_rng" in bot:
+		payload["rng_state"] = str(bot._rng.state)
+	if "_guess_count" in bot:
+		payload["guess_count"] = int(bot._guess_count)
+	return payload
+
+
+func _restore_bot(bot, data: Dictionary) -> void:
+	if bot == null or data.is_empty():
+		return
+	if "_guess_count" in bot:
+		bot._guess_count = int(data.get("guess_count", bot._guess_count))
+	if "_rng" in bot and str(data.get("rng_state", "")) != "":
+		bot._rng.state = int(str(data["rng_state"]))
+
+
+static func _spell_in_pool(spell: int, pool: Array) -> bool:
+	var needle := int(spell)
+	for v in pool:
+		if v != null and int(v) == needle:
+			return true
+	return false

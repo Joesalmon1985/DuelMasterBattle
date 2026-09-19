@@ -1,0 +1,34 @@
+{
+  "repair_id": "R06",
+  "status": "DONE",
+  "summary": "Audited retained duels; adopted Python Mastermind (4/6/10) as single owner. Channel×3 rejected. Hazard shell uses Challenge + colour guesses.",
+  "audit": [
+    {
+      "candidate": "python_prototype/duel_mastermind",
+      "c10_fit": "scoring matches; pools/cast counts differ — adapted into sim/dmb/adventure/mastermind.py"
+    },
+    {
+      "candidate": "godot_project/sim/realtime_duel_sim.gd",
+      "c10_fit": "live cast windows, not Mastermind — not used as duel-state owner"
+    },
+    {
+      "decision": "Python MastermindDuel on hazard_duel lease; Godot presents only"
+    }
+  ],
+  "files": [
+    "sim/dmb/adventure/mastermind.py",
+    "sim/dmb/adventure/duels.py",
+    "sim/dmb/core/world.py",
+    "godot_project/client/scenes/g04_hazard_shell.gd",
+    "tests/sim/test_r06_mastermind_duel.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/R06_duel_audit.json"
+  ],
+  "checks": [
+    {
+      "command": "python3 -m pytest tests/sim/test_r06_mastermind_duel.py -q",
+      "exit_code": 0,
+      "result": "3 passed"
+    }
+  ],
+  "next": "R07"
+}

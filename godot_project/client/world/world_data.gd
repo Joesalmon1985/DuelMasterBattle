@@ -199,6 +199,12 @@ static func _village() -> Dictionary:
 				],
 				"lines_phase": {"halvard_prologue": ["A charm for the great Halvard? Free. Advertising.", "...You don't need one. Fine. Everyone else does, apparently."]},
 				"lines_flag": {"has_staff": ["...Is that a real wizard's staff? Put it away before somebody sees!", "Buy a charm? For luck? No? Worth a try."]}},
+			{"kind": "npc", "id": "guide_mira", "name": "Mira", "sprite": "villager_a", "pos": [9, 9], "facing": "left",
+				"lines": [
+					"If you're looking for the hill road, keep north past the elder.",
+					"I walk the yard so strangers don't get lost. Or robbed. Same difference some days.",
+				],
+				"lines_phase": {"halvard_prologue": ["Halvard? Then the Trial really is today. Go on — they'll be waiting.", "Come back when you've finished throwing the sky around."]}},
 			{"kind": "npc", "id": "elder", "name": "Elder Wren", "sprite": "elder", "pos": [15, 5], "facing": "down",
 				"lines": [
 					"A woodcutter watching wizards. Stranger things have started better stories.",

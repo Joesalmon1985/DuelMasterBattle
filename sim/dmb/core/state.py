@@ -201,6 +201,12 @@ class WorldState:
                 violations.append(f"incomplete tombstone {tomb_id}")
         if self.legacy_godot_world_tick_enabled or self.legacy_godot_world_save_enabled:
             violations.append("legacy Godot world writers must remain disabled in migrated runtime")
+        try:
+            from sim.dmb.construction.placement import PlacementRules
+
+            violations.extend(PlacementRules(self).validate_one_owner_per_node())
+        except Exception as exc:  # pragma: no cover - defensive
+            violations.append(f"ownership validation error: {exc}")
         return violations
 
     def to_dict(self) -> dict[str, Any]:

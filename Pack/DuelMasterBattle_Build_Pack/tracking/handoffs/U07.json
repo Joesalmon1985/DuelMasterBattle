@@ -1,0 +1,8 @@
+{
+  "repair_id": "U07",
+  "summary": "Updated run_g04_playable for retained GameBoard Challenge; python tools/check.py --gate G04 PASS on Windows (Python cumulative, playable, G01–G03 smokes).",
+  "commands": [
+    "python tools/check.py --gate G04 --json-report Pack/DuelMasterBattle_Build_Pack/tracking/gates/G04/check_report.json"
+  ],
+  "platform": "Windows 10; Godot 4.5.1; python 3.14 host for pytest"
+}

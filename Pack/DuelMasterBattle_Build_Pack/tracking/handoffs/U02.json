@@ -1,0 +1,5 @@
+{
+  "repair_id": "U02",
+  "summary": "Spellbook helper/base present on spellbook-ui; reimported Spellbook assets on Windows Godot 4.5.1 so spellcard.png loads. G04 shells keep _configure_spellbook overrides.",
+  "notes": "Project pin is 4.4.1; local Windows tool is 4.5.1 per .dmb_windows_local.json."
+}

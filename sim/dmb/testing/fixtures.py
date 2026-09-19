@@ -730,83 +730,349 @@ def run_fx_cargo(sim: WorldSim | None = None, seed: int = 202) -> FixtureResult:
 
 
 def _load_fx_battle(seed: int = 404) -> WorldSim:
-    """Playable FX-BATTLE isolated from G01–G03 saves (slot g04_battle)."""
+    """Playable FX-BATTLE isolated from G01–G03 saves (slot g04_battle).
+
+    Lawful one-owner defended settlement: Red owns node:1 and its active
+    factories; Blue invades from a separate home settlement on node:2.
+    Spawn is clear for cardinal movement; armies start far enough apart for
+    a human to approach and inspect before melee resolves (C07 math unchanged).
+    """
+    from sim.dmb.construction.placement import PlacementRules
     from sim.dmb.military.units import MilitaryService
 
     sim = bootstrap_world(world_id="world:fx-battle", seed=seed)
     state = sim.state
+    # Clear of FIXTURE_TREES_HOME (2,2)/(7,7)/(11,7) and south boundary row 9.
     state.player = {
         "id": "wizard",
         "node_id": "node:1",
         "area_id": "area.battle",
-        "position": [2.0, 6.0],
+        "position": [4.0, 5.0],
         "facing": "up",
+        "pose_generation": 0,
     }
     state.board.setdefault("nodes", {})
     state.board["nodes"]["node:1"] = {
         "id": "node:1",
-        "exits": {},
+        "exits": {
+            "node:2": {
+                "exit_id": "battle.east",
+                "direction": "east",
+                "hold_position": [12.0, 5.0],
+                "hold_facing": "right",
+                "arrival": {
+                    "node_id": "node:2",
+                    "area_id": "area.blue_home",
+                    "position": [1.5, 5.0],
+                    "facing": "right",
+                },
+            }
+        },
         "area_id": "area.battle",
         "label": "Battle Glade",
+        "theme": "grass",
     }
-    mil = MilitaryService(state)
-    red = mil.spawn(
-        "unit.ancient.line",
-        home_node_id="node:1",
-        faction_id="faction:red",
-        era="prehistoric",
-        factory_id="building:factory_red",
-        position=[1.0, 3.0],
-    )
-    blue = mil.spawn(
-        "unit.ancient.skirmisher",
-        home_node_id="node:1",
-        faction_id="faction:blue",
-        era="historic",
-        factory_id="building:factory_blue",
-        position=[4.0, 3.0],
-    )
-    heavy = mil.spawn(
-        "unit.ancient.heavy",
-        home_node_id="node:1",
-        faction_id="faction:red",
-        era="prehistoric",
-        factory_id="building:factory_red",
-        position=[2.0, 4.0],
-    )
-    state.buildings["building:factory_red"] = {
-        "id": "building:factory_red",
+    state.board["nodes"]["node:2"] = {
+        "id": "node:2",
+        "exits": {
+            "node:1": {
+                "exit_id": "blue.west",
+                "direction": "west",
+                "hold_position": [1.5, 5.0],
+                "hold_facing": "left",
+                "arrival": {
+                    "node_id": "node:1",
+                    "area_id": "area.battle",
+                    "position": [12.0, 5.0],
+                    "facing": "left",
+                },
+            }
+        },
+        "area_id": "area.blue_home",
+        "label": "Blue Muster",
+        "theme": "grass",
+    }
+    state.factions["faction:red"] = {"id": "faction:red", "label": "Red Host", "settlement_ids": []}
+    state.factions["faction:blue"] = {"id": "faction:blue", "label": "Blue Host", "settlement_ids": []}
+
+    red_sid = "settlement:red_glade"
+    blue_sid = "settlement:blue_muster"
+    # Red owns the battle node: centre + three distinct military factories.
+    state.buildings["building:centre_red"] = {
+        "id": "building:centre_red",
+        "definition_id": "building.centre",
+        "faction_id": "faction:red",
+        "settlement_id": red_sid,
+        "node_id": "node:1",
+        "health": 300,
+        "max_health": 300,
+        "current_health": 300,
+        "alive": True,
+        "status": "active",
+        "label": "Red Centre",
+        "position": [1.0, 1.0],
+        "kind": "building",
+    }
+    state.buildings["building:factory_red_line"] = {
+        "id": "building:factory_red_line",
         "definition_id": "building.factory",
         "faction_id": "faction:red",
+        "settlement_id": red_sid,
         "node_id": "node:1",
+        "produces": "unit.ancient.line",
         "health": 200,
         "max_health": 200,
         "current_health": 200,
         "alive": True,
         "status": "active",
-        "label": "Red Factory",
+        "label": "Red Line Yard",
+        "position": [2.0, 1.0],
+        "kind": "building",
     }
-    state.factions["faction:red"] = {"id": "faction:red", "label": "Red Line"}
-    state.factions["faction:blue"] = {"id": "faction:blue", "label": "Blue Skirmish"}
+    state.buildings["building:factory_red_skirm"] = {
+        "id": "building:factory_red_skirm",
+        "definition_id": "building.factory",
+        "faction_id": "faction:red",
+        "settlement_id": red_sid,
+        "node_id": "node:1",
+        "produces": "unit.ancient.skirmisher",
+        "health": 200,
+        "max_health": 200,
+        "current_health": 200,
+        "alive": True,
+        "status": "active",
+        "label": "Red Skirm Yard",
+        "position": [3.0, 1.0],
+        "kind": "building",
+    }
+    state.buildings["building:factory_red_heavy"] = {
+        "id": "building:factory_red_heavy",
+        "definition_id": "building.factory",
+        "faction_id": "faction:red",
+        "settlement_id": red_sid,
+        "node_id": "node:1",
+        "produces": "unit.ancient.heavy",
+        "health": 200,
+        "max_health": 200,
+        "current_health": 200,
+        "alive": True,
+        "status": "active",
+        "label": "Red Heavy Yard",
+        "position": [4.0, 1.0],
+        "kind": "building",
+    }
+    state.settlements[red_sid] = {
+        "id": red_sid,
+        "node_id": "node:1",
+        "faction_id": "faction:red",
+        "tier": "settlement",
+        "operational": True,
+        "centre_id": "building:centre_red",
+        "status": "active",
+    }
+    state.factions["faction:red"]["settlement_ids"] = [red_sid]
+
+    # Blue home settlement on a separate node (factories stay there).
+    state.buildings["building:centre_blue"] = {
+        "id": "building:centre_blue",
+        "definition_id": "building.centre",
+        "faction_id": "faction:blue",
+        "settlement_id": blue_sid,
+        "node_id": "node:2",
+        "health": 300,
+        "max_health": 300,
+        "current_health": 300,
+        "alive": True,
+        "status": "active",
+        "label": "Blue Centre",
+        "position": [2.0, 2.0],
+        "kind": "building",
+    }
+    state.buildings["building:factory_blue_line"] = {
+        "id": "building:factory_blue_line",
+        "definition_id": "building.factory",
+        "faction_id": "faction:blue",
+        "settlement_id": blue_sid,
+        "node_id": "node:2",
+        "produces": "unit.ancient.line",
+        "health": 200,
+        "max_health": 200,
+        "current_health": 200,
+        "alive": True,
+        "status": "active",
+        "label": "Blue Line Yard",
+        "position": [3.0, 2.0],
+        "kind": "building",
+    }
+    state.buildings["building:factory_blue_skirm"] = {
+        "id": "building:factory_blue_skirm",
+        "definition_id": "building.factory",
+        "faction_id": "faction:blue",
+        "settlement_id": blue_sid,
+        "node_id": "node:2",
+        "produces": "unit.ancient.skirmisher",
+        "health": 200,
+        "max_health": 200,
+        "current_health": 200,
+        "alive": True,
+        "status": "active",
+        "label": "Blue Skirm Yard",
+        "position": [4.0, 2.0],
+        "kind": "building",
+    }
+    state.buildings["building:factory_blue_heavy"] = {
+        "id": "building:factory_blue_heavy",
+        "definition_id": "building.factory",
+        "faction_id": "faction:blue",
+        "settlement_id": blue_sid,
+        "node_id": "node:2",
+        "produces": "unit.ancient.heavy",
+        "health": 200,
+        "max_health": 200,
+        "current_health": 200,
+        "alive": True,
+        "status": "active",
+        "label": "Blue Heavy Yard",
+        "position": [5.0, 2.0],
+        "kind": "building",
+    }
+    state.settlements[blue_sid] = {
+        "id": blue_sid,
+        "node_id": "node:2",
+        "faction_id": "faction:blue",
+        "tier": "settlement",
+        "operational": True,
+        "centre_id": "building:centre_blue",
+        "status": "active",
+    }
+    state.factions["faction:blue"]["settlement_ids"] = [blue_sid]
+
+    mil = MilitaryService(state)
+    # Defenders west/south; invaders east/north — spaced for approach time.
+    red_line = mil.spawn(
+        "unit.ancient.line",
+        home_node_id="node:1",
+        faction_id="faction:red",
+        era="prehistoric",
+        factory_id="building:factory_red_line",
+        position=[2.5, 6.5],
+    )
+    red_skirm = mil.spawn(
+        "unit.ancient.skirmisher",
+        home_node_id="node:1",
+        faction_id="faction:red",
+        era="prehistoric",
+        factory_id="building:factory_red_skirm",
+        position=[3.5, 7.0],
+    )
+    red_heavy = mil.spawn(
+        "unit.ancient.heavy",
+        home_node_id="node:1",
+        faction_id="faction:red",
+        era="prehistoric",
+        factory_id="building:factory_red_heavy",
+        position=[4.5, 6.5],
+    )
+    blue_line = mil.spawn(
+        "unit.ancient.line",
+        home_node_id="node:2",
+        faction_id="faction:blue",
+        era="prehistoric",
+        factory_id="building:factory_blue_line",
+        position=[11.0, 2.5],
+    )
+    blue_skirm = mil.spawn(
+        "unit.ancient.skirmisher",
+        home_node_id="node:2",
+        faction_id="faction:blue",
+        era="prehistoric",
+        factory_id="building:factory_blue_skirm",
+        position=[12.0, 3.0],
+    )
+    blue_heavy = mil.spawn(
+        "unit.ancient.heavy",
+        home_node_id="node:2",
+        faction_id="faction:blue",
+        era="prehistoric",
+        factory_id="building:factory_blue_heavy",
+        position=[10.0, 2.5],
+    )
+    # Invaders are currently on the battle node; home/factory remain on node:2.
+    for unit in (blue_line, blue_skirm, blue_heavy):
+        unit["node_id"] = "node:1"
+        unit["home_settlement"] = blue_sid
+    for unit in (red_line, red_skirm, red_heavy):
+        unit["home_settlement"] = red_sid
+
+    historic = mil.spawn(
+        "unit.ancient.line",
+        home_node_id="node:2",
+        faction_id="faction:blue",
+        era="historic",
+        factory_id="building:factory_blue_line",
+        position=[12.0, 8.0],
+    )
+    historic["status"] = "reserve"
+    historic["alive"] = True
+    historic["node_id"] = "node:1"
+    historic["home_settlement"] = blue_sid
+
+    participants = [
+        red_line["id"],
+        red_skirm["id"],
+        red_heavy["id"],
+        blue_line["id"],
+        blue_skirm["id"],
+        blue_heavy["id"],
+    ]
+    hostiles = {
+        "faction:red": ["faction:blue"],
+        "faction:blue": ["faction:red"],
+    }
+    # Mid-field ruin; keep spawn [4,5] and cardinal exits clear.
+    blockers = [
+        {"position": [7.0, 4.0], "half": 0.55, "blocks_los": True, "blocks_move": True, "label": "ruin"},
+    ]
     state.battles["battle:fx"] = {
         "id": "battle:fx",
         "node_id": "node:1",
-        "participants": [red["id"], blue["id"], heavy["id"]],
-        "buildings": ["building:factory_red"],
-        "state": "LOCAL",
+        "participants": participants,
+        "buildings": [
+            "building:centre_red",
+            "building:factory_red_line",
+            "building:factory_red_skirm",
+            "building:factory_red_heavy",
+        ],
+        "state": "READY",
         "prefer_local": True,
-        "cover_by_target": {blue["id"]: 0.25},
+        "hostiles": hostiles,
+        "blockers": blockers,
+        "cover_by_target": {blue_skirm["id"]: 0.25},
+        "owner_faction_id": "faction:red",
+        "owner_settlement_id": red_sid,
     }
     state.board["fx_battle"] = {
         "seed": seed,
         "save_slot": "g04_battle",
+        "demo_mode": "comparable_era",
+        "cross_era_ids": [historic["id"]],
         "labels": {
-            red["id"]: "Red Line (prehistoric)",
-            blue["id"]: "Blue Skirmisher (historic)",
-            heavy["id"]: "Red Heavy (prehistoric)",
+            red_line["id"]: "Red Line",
+            red_skirm["id"]: "Red Skirmisher",
+            red_heavy["id"]: "Red Heavy",
+            blue_line["id"]: "Blue Line",
+            blue_skirm["id"]: "Blue Skirmisher",
+            blue_heavy["id"]: "Blue Heavy",
         },
         "wizard_intervene": True,
+        "hostiles": hostiles,
+        "owner_faction_id": "faction:red",
+        "spawn": [4.0, 5.0],
+        "reset_hint": "Delete user save slot g04_battle then relaunch tools/play_g04_battle.sh",
     }
+    ownership_errors = PlacementRules(state).validate_one_owner_per_node()
+    if ownership_errors:
+        raise ValueError("FX-BATTLE ownership invalid: " + "; ".join(ownership_errors))
     return sim
 
 
@@ -821,20 +1087,28 @@ def _load_fx_hazard(seed: int = 408) -> WorldSim:
         "id": "wizard",
         "node_id": "node:1",
         "area_id": "area.hazard",
-        "position": [3.0, 5.0],
+        "position": [7.0, 5.0],
         "facing": "up",
+        "pose_generation": 0,
     }
     state.board["nodes"]["node:1"] = {
         "id": "node:1",
         "exits": {},
         "area_id": "area.hazard",
         "label": "Pressure Crossroads",
+        "theme": "grass",
     }
     state.board["node_hexes"] = {"node:1": ["hex:a", "hex:b", "hex:c"]}
     state.board["hex_adjacency"] = {
         "hex:a": ["hex:b"],
         "hex:b": ["hex:a", "hex:c"],
         "hex:c": ["hex:b"],
+    }
+    # Three distinct boundary approaches (west / north / east), walkable and clear of trees.
+    state.board["hex_anchors"] = {
+        "hex:a": {"grid": [2.0, 5.0], "label": "West Approach"},
+        "hex:b": {"grid": [7.0, 2.0], "label": "North Approach"},
+        "hex:c": {"grid": [11.0, 5.0], "label": "East Approach"},
     }
     state.clock["era"] = "prehistoric"
     state.clock["turn"] = 1
@@ -844,16 +1118,24 @@ def _load_fx_hazard(seed: int = 408) -> WorldSim:
     for hid in ("hex:a", "hex:b", "hex:c"):
         svc.add_cube(hid, "demon")
     VisitService(state).arrive("node:1", "travel", 1)
+    cubes = (state.hazards.get("catastrophe") or {}).get("cubes") or {}
+    cube_by_hex = {}
+    for cube in cubes.values():
+        if cube.get("active", True):
+            cube_by_hex[str(cube.get("hex_id"))] = str(cube.get("id"))
     state.board["fx_hazard"] = {
         "seed": seed,
         "save_slot": "g04_hazard",
         "terminal_slot": "g04_hazard_terminal",
         "outbreak_warning_at": 7,
         "hex_labels": {
-            "hex:a": "Demon hex A — treat eligible",
-            "hex:b": "Demon hex B — treat eligible",
-            "hex:c": "Demon hex C — treat eligible",
+            "hex:a": "West Demon",
+            "hex:b": "North Demon",
+            "hex:c": "East Demon",
         },
+        "hex_anchors": state.board["hex_anchors"],
+        "cube_by_hex": cube_by_hex,
+        "reset_hint": "Delete user save slots g04_hazard and g04_hazard_terminal then relaunch tools/play_g04_hazard.sh",
     }
     return sim
 

@@ -38,10 +38,25 @@ static func make(data: Dictionary) -> DmbCombatant:
 	for k in data.keys():
 		if k in c:
 			c.set(k, data[k])
+	# JSON bridge often delivers spell ids as floats; membership checks need ints.
+	c.attack_pool = _coerce_spell_ids(c.attack_pool)
+	c.ward_pool = _coerce_spell_ids(c.ward_pool)
+	c.fixed_ward = _coerce_spell_ids(c.fixed_ward)
+	c.bot_opening_attack = _coerce_spell_ids(c.bot_opening_attack)
 	if c.ward_pool.is_empty():
 		c.ward_pool = c.attack_pool.duplicate()
 	c.validate()
 	return c
+
+
+static func _coerce_spell_ids(raw: Array) -> Array:
+	var out: Array = []
+	for v in raw:
+		if v == null:
+			out.append(null)
+		else:
+			out.append(int(v))
+	return out
 
 
 func duplicate_combatant() -> DmbCombatant:

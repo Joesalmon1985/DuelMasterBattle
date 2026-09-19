@@ -1,0 +1,16 @@
+{
+  "repair_id": "R05",
+  "status": "DONE",
+  "summary": "Removed permanent spell toolbar; attached Observe/Buff/Destroy choice card with choice pause token; casts send synchronised local_poses; walk-away cancels.",
+  "files": [
+    "godot_project/client/scenes/g04_battle_shell.gd",
+    "godot_project/client/ui/attached_choice_card.gd"
+  ],
+  "checks": [
+    {
+      "command": "document + prior R04 magic/range tests",
+      "result": "R05 UX wired; full Godot playable check deferred to R07"
+    }
+  ],
+  "next": "R06"
+}

@@ -9,6 +9,10 @@ const Migrated = preload("res://client/core/migrated_runtime.gd")
 const ClockDriver = preload("res://client/core/clock_driver.gd")
 const FxArea = preload("res://client/world/fx_clock_area.gd")
 const TouchPadScript = preload("res://client/world/touch_pad.gd")
+const SpellbookModel = preload("res://client/ui/spellbook/spellbook_model.gd")
+const SpellbookHost = preload("res://client/ui/spellbook/spellbook_host.gd")
+const SpellbookBinder = preload("res://client/ui/spellbook/spellbook_gate_binder.gd")
+const PeoplePresenterScript = preload("res://client/world/bridge_interaction_presenter.gd")
 
 const SAVE_SLOT := "g01_playtest"
 
@@ -38,6 +42,12 @@ var _clock_inflight_seq := -1
 var _player_refresh_id := ""
 var _counters_rebuild := false
 var _recovering := false
+var _action_bar_scroll: ScrollContainer
+var _spell_model
+var _spell_host
+var _spell_binder
+var _classic_hud := false
+var _people_presenter
 
 
 func _ready() -> void:
@@ -45,6 +55,7 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_chrome()
+	_setup_spellbook()
 	_clock = ClockDriver.new()
 	_clock.advance_requested.connect(_on_clock_advance)
 	_launcher = SidecarLauncher.new()
@@ -60,10 +71,14 @@ func _ready() -> void:
 	if not started.get("ok", false):
 		_set_status("Sidecar failed — paused (no Godot sim fallback)")
 		_set_interaction_blocked(true)
+		if _spell_binder:
+			_spell_binder.set_error("Sidecar failed")
 		return
 	if not _client.connect_sidecar(str(started["host"]), int(started["port"]), str(started["token"])):
 		_set_status("Handshake failed — paused (no Godot sim fallback)")
 		_set_interaction_blocked(true)
+		if _spell_binder:
+			_spell_binder.set_error("Handshake failed")
 		return
 	_area = FxArea.new()
 	_world_host.add_child(_area)
@@ -73,12 +88,20 @@ func _ready() -> void:
 	_area.exit_activated.connect(_on_exit)
 	_area.request_observe.connect(_on_observe)
 	_area.request_interact.connect(_on_interact)
-	_area.entity_selected.connect(func(id): _prompt.text = "Selected %s" % id)
-	_area.action_hint_changed.connect(func(hint): _prompt.text = "Action: %s" % hint)
+	_area.entity_selected.connect(func(id): _prompt.text = "Selected %s" % id; _sync_spell_live())
+	_area.action_hint_changed.connect(func(hint): _prompt.text = "Action: %s" % hint; _sync_spell_live())
+	_area.people_presentation_changed.connect(_on_people_presentation_changed)
+	_people_presenter = PeoplePresenterScript.new()
+	_ui_root.add_child(_people_presenter)
+	_people_presenter.setup(_ui_root, null, Callable(self, "_cmd"))
 	_fit_world_host()
 	_refresh_counters(false)
 	_apply_movement_gate()
 	_set_status("Python-backed FX-CLOCK — pad/drag to move; action button shows Observe/Interact/Travel")
+	if _spell_binder:
+		_spell_binder.set_ready()
+		_sync_spell_live()
+	_apply_classic_hud_visibility()
 
 
 func _build_chrome() -> void:
@@ -144,6 +167,7 @@ func _build_chrome() -> void:
 	bar_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	bar_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_ui_root.add_child(bar_scroll)
+	_action_bar_scroll = bar_scroll
 	var bar := HBoxContainer.new()
 	bar.name = "ActionBar"
 	bar.add_theme_constant_override("separation", 6)
@@ -178,6 +202,148 @@ func _build_chrome() -> void:
 	_diag_log.scroll_following = true
 	_diag_log.fit_content = false
 	dv.add_child(_diag_log)
+
+
+func _setup_spellbook() -> void:
+	_spell_model = SpellbookModel.new()
+	_spell_binder = SpellbookBinder.new()
+	_spell_binder.setup(_spell_model, "g01", "G01 Spellbook")
+	_configure_spellbook()
+	_spell_host = SpellbookHost.new()
+	_spell_host.name = "SpellbookHost"
+	_ui_root.add_child(_spell_host)
+	_spell_host.bind_model(_spell_model)
+	_spell_host.action_requested.connect(_on_spell_action)
+	_spell_host.exit_menu_requested.connect(_on_back)
+	_spell_host.classic_hud_toggled.connect(_on_classic_hud_toggled)
+	_spell_host.world_target_needed.connect(func(_active): _apply_movement_gate())
+	_spell_host.overlay_blocking_changed.connect(_on_spellbook_overlay_blocking)
+	_spell_model.changed.connect(func(): _apply_movement_gate())
+	_apply_classic_hud_visibility()
+
+
+func _configure_spellbook() -> void:
+	_spell_binder.build_g01_pages()
+	_spell_binder.register("wait", func(_p): return _spell_wait())
+	_spell_binder.register("invalid_exit", func(_p): return _spell_invalid())
+	_spell_binder.register("pause", func(_p): return _spell_pause())
+	_spell_binder.register("resume", func(_p): return _spell_resume())
+	_spell_binder.register("save", func(_p): return _spell_save())
+	_spell_binder.register("load", func(_p): return _spell_load())
+	_spell_binder.register("bridge_fail", func(_p): return _spell_bridge_fail())
+	_spell_binder.register("toggle_diag", func(_p): _toggle_diag(); return {"status": "OK", "message": "Dev panel %s" % ("open" if _diag_open else "closed")})
+
+
+func _on_spell_action(action_id: String, payload: Dictionary, token: String) -> void:
+	_spell_binder.handle_action(action_id, payload, token)
+	_sync_spell_live()
+
+
+func _on_classic_hud_toggled(enabled: bool) -> void:
+	_classic_hud = enabled
+	_apply_classic_hud_visibility()
+
+
+func _apply_classic_hud_visibility() -> void:
+	if _action_bar_scroll:
+		_action_bar_scroll.visible = _classic_hud
+	_apply_mode_chrome_visibility()
+
+
+func _apply_mode_chrome_visibility() -> void:
+	pass
+
+
+func _sync_spell_live() -> void:
+	if _spell_binder == null:
+		return
+	_spell_binder.sync_live(
+		_status.text if _status else "",
+		_counters.text if _counters else "",
+		_prompt.text if _prompt else "",
+		_paused or _bridge_down
+	)
+
+
+func _spell_wait() -> Dictionary:
+	if _wait_held:
+		_prompt.text = "Hold ignored — one Wait per distinct press"
+		_sync_spell_live()
+		return {"status": "REJECTED", "message": _prompt.text}
+	_wait_held = true
+	var node := str(_client.request_view("player").get("player", {}).get("node_id", "node:1"))
+	var reply := _cmd("Wait", {"current_node": node, "press_id": "wait-%s" % Time.get_ticks_msec()})
+	_prompt.text = "Wait accepted — World Turn +1" if str(reply.get("status", "")) == "ACCEPTED" else "Wait %s" % reply.get("status", "?")
+	_sync_spell_live()
+	get_tree().create_timer(0.4).timeout.connect(func(): _wait_held = false)
+	return {"status": reply.get("status", "?"), "message": _prompt.text}
+
+
+func _spell_invalid() -> Dictionary:
+	var node := str(_client.request_view("player").get("player", {}).get("node_id", "node:1"))
+	var reply := _cmd("Travel", {"from_node": node, "to_node": "node:99"})
+	if str(reply.get("status", "")) == "REJECTED":
+		_prompt.text = "Invalid travel rejected — node/turn unchanged"
+	else:
+		_prompt.text = "Unexpected status %s" % reply.get("status", "?")
+	_sync_spell_live()
+	return {"status": reply.get("status", "?"), "message": _prompt.text}
+
+
+func _spell_pause() -> Dictionary:
+	var reply := _cmd("Pause", {"reason": "menu"})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_pause_token = str(reply.get("payload", {}).get("token", ""))
+		_paused = true
+		_clock.open_pause_screen()
+		_prompt.text = "Paused — Game Time frozen"
+		_apply_movement_gate()
+	_sync_spell_live()
+	return {"status": reply.get("status", "?"), "message": _prompt.text}
+
+
+func _spell_resume() -> Dictionary:
+	var token := _pause_token if _pause_token != "" else "menu:client:1"
+	var reply := _cmd("Resume", {"token": token})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_paused = false
+		_pause_token = ""
+		_clock.close_pause_screen()
+		_clock.notify_focus(true)
+		_prompt.text = "Resumed — no catch-up"
+		_apply_movement_gate()
+	_sync_spell_live()
+	return {"status": reply.get("status", "?"), "message": _prompt.text}
+
+
+func _spell_save() -> Dictionary:
+	_sync_pose()
+	var reply := _cmd("Save", {"slot": SAVE_SLOT})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_prompt.text = "Saved isolated slot %s → %s/.dmb_saves/" % [SAVE_SLOT, _project_root]
+	_sync_spell_live()
+	return {"status": reply.get("status", "?"), "message": _prompt.text}
+
+
+func _spell_load() -> Dictionary:
+	var reply := _cmd("Load", {"slot": SAVE_SLOT})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_paused = false
+		_pause_token = ""
+		_bridge_down = false
+		_clock.close_pause_screen()
+		_clock.notify_focus(true)
+		_refresh_counters(true)
+		_apply_movement_gate()
+		_prompt.text = "Loaded %s" % SAVE_SLOT
+	_sync_spell_live()
+	return {"status": reply.get("status", "?"), "message": _prompt.text}
+
+
+func _spell_bridge_fail() -> Dictionary:
+	_on_bridge_fail()
+	_sync_spell_live()
+	return {"status": "OK", "message": _prompt.text}
 
 
 func _fit_world_host() -> void:
@@ -215,11 +381,34 @@ func _btn(parent: HBoxContainer, text: String, cb: Callable) -> void:
 
 
 func _apply_movement_gate() -> void:
-	var allow := not _paused and _focus and not _bridge_down and _client != null
+	var book_blocks: bool = _spell_host != null and _spell_host.is_blocking_world()
+	var targeting: bool = _spell_host != null and _spell_host.is_targeting()
+	var allow: bool = not _paused and _focus and not _bridge_down and _client != null and not book_blocks
 	if _area:
-		_area.set_movement_enabled(allow)
+		_area.set_movement_enabled(allow and not targeting)
 	if _touch:
-		_touch.set_enabled(allow)
+		# Hide D-pad / action while the open book or targeting card owns the foreground.
+		_touch.visible = not book_blocks and not targeting
+		_touch.set_enabled(allow and not targeting and not book_blocks)
+	if book_blocks and _spell_host != null:
+		_spell_host.move_to_front()
+	_apply_book_overlay_chrome(book_blocks)
+
+
+func _on_spellbook_overlay_blocking(blocking: bool) -> void:
+	_apply_book_overlay_chrome(blocking)
+	_apply_movement_gate()
+
+
+func _apply_book_overlay_chrome(book_open: bool) -> void:
+	## Gate shells hide interaction chrome that would otherwise sit above the book.
+	if _action_bar_scroll != null and not _classic_hud:
+		pass
+	_on_book_overlay_chrome(book_open)
+
+
+func _on_book_overlay_chrome(_book_open: bool) -> void:
+	pass
 
 
 func _set_interaction_blocked(blocked: bool) -> void:
@@ -343,6 +532,7 @@ func _apply_view_to_counters(view: Dictionary, rebuild_world: bool) -> void:
 		player.get("node_id", "?"),
 		bool(clock.get("paused", false)) or _paused,
 	]
+	_sync_spell_live()
 	if _area == null or _area.travel_pending:
 		return
 	if rebuild_world:
@@ -377,6 +567,9 @@ func _on_observe(entity_id: String) -> void:
 	var reply := _cmd("Observe", {"entity_id": entity_id})
 	var payload: Dictionary = reply.get("payload", {})
 	_prompt.text = "Observed %s → %s" % [entity_id, payload.get("label", "unknown")]
+	var anchor = _area.selectable_actor(entity_id) if _area else null
+	if _people_presenter != null and anchor != null:
+		_people_presenter.show_observation(entity_id, anchor, payload)
 	_refresh_counters(false)
 
 
@@ -384,10 +577,31 @@ func _on_interact(entity_id: String) -> void:
 	var reply := _cmd("Interact", {"entity_id": entity_id})
 	var payload: Dictionary = reply.get("payload", {})
 	if str(reply.get("status", "")) == "ACCEPTED":
-		_prompt.text = "Interacted: %s" % payload.get("name", payload.get("role", payload.get("label", "?")))
+		var name := str(payload.get("name", payload.get("role", payload.get("label", "?"))))
+		_prompt.text = "Interacted: %s" % name
+		var anchor = _area.selectable_actor(entity_id) if _area else null
+		if _people_presenter != null and anchor != null:
+			var lines: Array = payload.get("lines", [])
+			if typeof(lines) != TYPE_ARRAY or lines.is_empty():
+				lines = ["Hello. I'm %s." % name]
+			_people_presenter.begin_talk(entity_id, anchor, lines, payload.get("responses", []))
+			var lbl = _people_presenter.label_for(entity_id)
+			if lbl != null:
+				lbl.set_bridge_view({
+					"known": true,
+					"name": name,
+					"label": name,
+					"description": str(payload.get("description", "")),
+				})
 	else:
 		_prompt.text = "Interact failed: %s" % reply.get("code", "?")
 	_refresh_counters(false)
+
+
+func _on_people_presentation_changed(people: Dictionary) -> void:
+	if _people_presenter == null or _area == null:
+		return
+	_people_presenter.sync_people(people, _area)
 
 
 func _on_wait() -> void:
@@ -550,11 +764,14 @@ func _on_back() -> void:
 
 func _set_status(t: String) -> void:
 	_status.text = t
+	_sync_spell_live()
 
 
 func _log(t: String) -> void:
 	if _diag_log:
 		_diag_log.append_text(t + "\n")
+	if _spell_binder:
+		_spell_binder.append_log(t)
 
 
 func _notification(what: int) -> void:
