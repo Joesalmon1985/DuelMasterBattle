@@ -685,6 +685,22 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"T085_DIALOGUE_UI_OK",
             ),
         ],
+        "T086": lambda: [
+            _pytest("village_quest_fixture", "tests/scenarios/test_village_quest.py"),
+            validate_evidence(
+                "fx_village_content",
+                [
+                    ROOT / "godot_project" / "content" / "fixtures" / "village" / "fx_village_v1.json",
+                    ROOT
+                    / "godot_project"
+                    / "content"
+                    / "source"
+                    / "quests"
+                    / "shortage"
+                    / "factory_shortage.json",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

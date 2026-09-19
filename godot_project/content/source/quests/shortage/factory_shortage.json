@@ -1,0 +1,46 @@
+{
+  "id": "quest.factory_shortage",
+  "schema_version": 1,
+  "version": 1,
+  "family": "village_production",
+  "required_cause": {
+    "kinds": ["factory_output_shortage"]
+  },
+  "binding": {
+    "stakeholder_role": "worker"
+  },
+  "stages": [
+    {"id": "offered", "index": 0},
+    {"id": "investigate", "index": 1},
+    {"id": "intervention", "index": 2},
+    {"id": "acknowledged", "index": 3}
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {"id": "demon_duel", "restores": "route:A"},
+    {"id": "sluice_route", "removes_modifier": "sluice_sabotage", "enables": "route:B"}
+  ],
+  "world_resolved_route": {
+    "when": "cube_cleared_by_military",
+    "status": "resolved_by_world"
+  },
+  "invalid_target_route": {
+    "when": "factory_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "displaced_loss"
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.mara.offer",
+    "demon": "dialogue.mara.demon_hint",
+    "sluice": "dialogue.mara.sluice_hint",
+    "world_resolved": "dialogue.mara.world_resolved",
+    "route_b_complete": "dialogue.mara.route_b"
+  }
+}

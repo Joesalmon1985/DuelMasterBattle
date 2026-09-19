@@ -36,6 +36,8 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
         return _load_fx_battle(seed=404 if seed == 7 else seed)
     if name == "FX-HAZARD":
         return _load_fx_hazard(seed=408 if seed == 7 else seed)
+    if name == "FX-VILLAGE":
+        return _load_fx_village(seed=505 if seed == 7 else seed)
     raise ValueError(f"unsupported fixture {name}")
 
 
@@ -1168,3 +1170,161 @@ def run_fx_hazard(sim: WorldSim | None = None) -> FixtureResult:
             "save_slot": fx.get("save_slot"),
         },
     )
+
+
+def _load_fx_village(seed: int = 505) -> WorldSim:
+    """FX-VILLAGE: real factory shortage bound to Mara + demon/sluice causes (C10 / T086)."""
+    import json
+    from pathlib import Path
+
+    from sim.dmb.people.registry import PeopleService
+    from sim.dmb.quests.binding import QuestBinder
+    from sim.dmb.quests.causes import CauseTracker
+
+    fixture_path = (
+        Path(__file__).resolve().parents[3]
+        / "godot_project"
+        / "content"
+        / "fixtures"
+        / "village"
+        / "fx_village_v1.json"
+    )
+    template_path = (
+        Path(__file__).resolve().parents[3]
+        / "godot_project"
+        / "content"
+        / "source"
+        / "quests"
+        / "shortage"
+        / "factory_shortage.json"
+    )
+    meta = json.loads(fixture_path.read_text(encoding="utf-8"))
+    template = json.loads(template_path.read_text(encoding="utf-8"))
+    sim = bootstrap_world(world_id="world:fx-village", seed=seed)
+    state = sim.state
+    node_id = str(meta["node_id"])
+    factory_id = str(meta["factory_id"])
+    state.player = {
+        "node_id": node_id,
+        "area_id": "area.village",
+        "position": [8.0, 8.0],
+        "facing": "down",
+    }
+    state.board.setdefault("nodes", {})[node_id] = {
+        "id": node_id,
+        "label": "FX Village",
+        "area_id": "area.village",
+        "token": int(meta.get("token", 6)),
+        "terrains": list(meta.get("terrains") or []),
+        "exits": {},
+    }
+    state.board["fx_village"] = dict(meta)
+    state.board["era_id"] = "ancient"
+    # Primaries / factory building records (authoritative IDs).
+    for i, terrain in enumerate(["woodland", "ore_mountains", "clay_mountains", "fields", "grazing_land"]):
+        bid = f"building:primary:{i}"
+        state.buildings[bid] = {
+            "id": bid,
+            "node_id": node_id,
+            "slot_kind": "primary",
+            "slot_index": i,
+            "definition_id": "building.primary",
+            "terrain": terrain,
+            "active": True,
+            "status": "built",
+            "health": 100,
+            "max_health": 100,
+        }
+    state.buildings[factory_id] = {
+        "id": factory_id,
+        "node_id": node_id,
+        "slot_kind": "factory",
+        "slot_index": 0,
+        "definition_id": "building.factory",
+        "label": "Village factory",
+        "active": True,
+        "status": "built",
+        "health": 200,
+        "max_health": 200,
+        "output_rate": 0.0,
+    }
+    # Two installed routes; A selected but blocked by demon; B sabotaged.
+    state.definitions["installed_routes"] = {
+        "route:A": {
+            "id": "route:A",
+            "factory_id": factory_id,
+            "inputs": ["woodland_renewable", "ore_finite"],
+            "selected": True,
+            "available": False,
+            "blocked_by": "demon_cube",
+        },
+        "route:B": {
+            "id": "route:B",
+            "factory_id": factory_id,
+            "inputs": ["woodland_renewable", "clay_renewable"],
+            "selected": False,
+            "available": False,
+            "modifier": "sluice_sabotage",
+        },
+    }
+    state.definitions["production_modifiers"] = {
+        "sluice_sabotage": {
+            "modifier_id": "sluice_sabotage",
+            "target_id": "route:B",
+            "kind": "sluice_sabotage",
+            "active": True,
+        }
+    }
+    # One demon cube on ore hex.
+    state.hazards = {
+        "catastrophe": {
+            "cubes": {
+                "cube:demon": {
+                    "id": "cube:demon",
+                    "hex_id": str(meta.get("demon_hex") or "hex:ore"),
+                    "type": "demon",
+                    "active": True,
+                    "node_id": node_id,
+                }
+            }
+        }
+    }
+    state.board["hex_anchors"] = {str(meta.get("demon_hex") or "hex:ore"): {"grid": [14.0, 4.0]}}
+    # Persistent factory worker Mara.
+    people = PeopleService(state)
+    mara = people.create_person(
+        name=str(meta.get("worker_display_name") or "Mara"),
+        role="worker",
+        node_id=node_id,
+        workplace_id=factory_id,
+        job_id="job.factory_worker",
+        dialogue_profile="dialogue.factory_worker",
+        goal_ids=["goal.keep_production"],
+        anchor=True,
+    )
+    people.assign_job(mara["id"], "job.factory_worker", factory_id)
+    people.promote_profile(mara["id"], anchor=True, role="worker")
+    # Real shortage: both routes unavailable → zero factory output.
+    state.buildings[factory_id]["output_rate"] = 0.0
+    state.buildings[factory_id]["shortage"] = True
+    tracker = CauseTracker(state)
+    binder = QuestBinder(state, tracker)
+    binder.register_template(template)
+    observed = tracker.observe_changes(
+        [
+            {
+                "kind": "factory_output_shortage",
+                "affected_entity_id": factory_id,
+                "stakeholder_id": mara["id"],
+                "site_id": node_id,
+                "template_id": template["id"],
+                "output_rate": 0.0,
+            }
+        ]
+    )
+    cause = observed[0]["cause"]
+    bound = binder.bind(template["id"], cause)
+    state.board["fx_village"]["mara_id"] = mara["id"]
+    state.board["fx_village"]["cause_id"] = cause["id"]
+    state.board["fx_village"]["quest_id"] = bound["quest"]["id"]
+    return sim

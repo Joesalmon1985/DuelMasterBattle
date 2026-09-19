@@ -1,0 +1,31 @@
+{
+  "task_id": "T086",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "godot_project/content/fixtures/village/fx_village_v1.json",
+    "godot_project/content/source/quests/shortage/factory_shortage.json",
+    "tests/scenarios/test_village_quest.py",
+    "sim/dmb/testing/fixtures.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "load_fixture('FX-VILLAGE')",
+    "quest.factory_shortage bound to Mara + factory shortage cause"
+  ],
+  "source_rules": ["C10 FX-VILLAGE", "GDD §§141, 213, 227"],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T086",
+      "exit_code": 0,
+      "result": "PASS; 5 scenario pytest + fixture/quest content"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/testing/fixtures.py": "Production FX-VILLAGE loader required for same-engine fixture entry",
+    "tools/check.py": "Wire T086"
+  },
+  "defects": [],
+  "next_task": "T087",
+  "notes": "Quest binds Mara/factory; zero output is real shortage; demon victory restores route A; world repair → resolved_by_world; destroyed factory never respawns."
+}
