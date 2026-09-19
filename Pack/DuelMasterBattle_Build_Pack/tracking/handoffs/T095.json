@@ -1,0 +1,40 @@
+{
+  "task_id": "T095",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "godot_project/client/debug/scenario_panel.gd",
+    "godot_project/client/tests/run_t095_panel.gd",
+    "tools/run_scenario.py",
+    "sim/dmb/testing/fixtures.py",
+    "tests/sim/test_t095_village_panel.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/README.md",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/fx_village_record.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/mid_quest_seed_505.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/failure_bundles/bundle_example_missing_line.json",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "DmbScenarioPanel launch/reset/replay/export",
+    "run_scenario FX-VILLAGE + run_fx_village",
+    "tracking/village_runs failure bundles"
+  ],
+  "source_rules": [
+    "C13 village testing panel",
+    "GDD §§197, 198, 223"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T095",
+      "exit_code": 0,
+      "result": "PASS; pytest + FX-VILLAGE scenario + panel + village_runs"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/testing/fixtures.py": "Add run_fx_village for scenario/panel parity",
+    "tools/check.py": "Wire T095"
+  },
+  "defects": [],
+  "next_task": "T096",
+  "notes": "Panel and scenario share FX-VILLAGE outcomes; failure bundles include replay commands; mid-quest snapshot saved for Joe."
+}

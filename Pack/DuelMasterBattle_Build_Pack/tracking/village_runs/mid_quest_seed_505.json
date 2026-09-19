@@ -1,0 +1,9 @@
+{
+  "seed": 505,
+  "fixture": "FX-VILLAGE",
+  "quest_id": "quest:1",
+  "mara_id": "person:2",
+  "factory_id": "building:factory_main",
+  "quest_status": "offered",
+  "world_version": 0
+}

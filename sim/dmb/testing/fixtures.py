@@ -1172,6 +1172,33 @@ def run_fx_hazard(sim: WorldSim | None = None) -> FixtureResult:
     )
 
 
+def run_fx_village(sim: WorldSim | None = None, seed: int = 505) -> FixtureResult:
+    """Smoke the FX-VILLAGE shortage binding for scenario/panel parity (T095)."""
+    sim = sim or load_fixture("FX-VILLAGE", seed=seed)
+    fx = sim.state.board.get("fx_village") or {}
+    quest_id = str(fx.get("quest_id") or "")
+    quest = (sim.state.quests or {}).get(quest_id) or {}
+    mara_id = str(fx.get("mara_id") or "")
+    factory_id = str(fx.get("factory_id") or "")
+    routes = sim.state.definitions.get("installed_routes") or {}
+    ok = bool(quest) and bool(mara_id) and bool(factory_id)
+    return FixtureResult(
+        name="FX-VILLAGE",
+        status="PASS" if ok else "FAIL",
+        details={
+            "seed": seed,
+            "quest_id": quest_id,
+            "quest_status": quest.get("status"),
+            "mara_id": mara_id,
+            "factory_id": factory_id,
+            "route_a_available": bool((routes.get("route:A") or {}).get("available")),
+            "route_b_available": bool((routes.get("route:B") or {}).get("available")),
+            "shortage": bool((sim.state.buildings.get(factory_id) or {}).get("shortage")),
+            "command_log": list(fx.get("command_log") or []),
+        },
+    )
+
+
 def _load_fx_village(seed: int = 505) -> WorldSim:
     """FX-VILLAGE: real factory shortage bound to Mara + demon/sluice causes (C10 / T086)."""
     import json

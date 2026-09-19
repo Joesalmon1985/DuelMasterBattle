@@ -20,6 +20,7 @@ from sim.dmb.testing.fixtures import (  # noqa: E402
     run_fx_clock,
     run_fx_hazard,
     run_fx_industry,
+    run_fx_village,
 )
 
 SCENARIO_OWNERS = {
@@ -200,6 +201,76 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "message": str(exc),
             }
             _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 1
+
+    if args.fixture == "FX-VILLAGE":
+        try:
+            sim = load_fixture("FX-VILLAGE", seed=args.seed)
+            result = run_fx_village(sim, seed=args.seed)
+            payload = {
+                "fixture": args.fixture,
+                "status": result.status,
+                "owner": owner,
+                "seed": args.seed,
+                "details": result.details,
+                "world_id": sim.state.world_id,
+                "quest_id": result.details.get("quest_id"),
+                "puzzle_id": "puzzle.sluice",
+                "same_engine": True,
+            }
+            _record(args.record, payload)
+            # Also write a mid-quest snapshot for Joe under village_runs.
+            runs = ROOT / "Pack" / "DuelMasterBattle_Build_Pack" / "tracking" / "village_runs"
+            runs.mkdir(parents=True, exist_ok=True)
+            snap = {
+                "seed": args.seed,
+                "fixture": "FX-VILLAGE",
+                "quest_id": result.details.get("quest_id"),
+                "mara_id": result.details.get("mara_id"),
+                "factory_id": result.details.get("factory_id"),
+                "quest_status": result.details.get("quest_status"),
+                "world_version": sim.state.world_version,
+            }
+            _record(runs / f"mid_quest_seed_{args.seed}.json", snap)
+            print(json.dumps(payload, indent=2))
+            return 0 if result.status == "PASS" else 1
+        except Exception as exc:  # noqa: BLE001
+            payload = {
+                "fixture": args.fixture,
+                "status": "FAIL",
+                "owner": owner,
+                "message": str(exc),
+            }
+            _record(args.record, payload)
+            # Failure bundle for missing-line / softlock / cause replay.
+            bundle_dir = (
+                ROOT
+                / "Pack"
+                / "DuelMasterBattle_Build_Pack"
+                / "tracking"
+                / "village_runs"
+                / "failure_bundles"
+            )
+            bundle_dir.mkdir(parents=True, exist_ok=True)
+            bundle = {
+                "fixture": args.fixture,
+                "seed": args.seed,
+                "error": str(exc),
+                "replay": {
+                    "command": [
+                        "python3",
+                        "tools/run_scenario.py",
+                        "--fixture",
+                        "FX-VILLAGE",
+                        "--seed",
+                        str(args.seed),
+                        "--record",
+                        str(args.record),
+                    ]
+                },
+            }
+            _record(bundle_dir / f"bundle_seed_{args.seed}.json", bundle)
             print(json.dumps(payload, indent=2))
             return 1
 

@@ -801,6 +801,37 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T095": lambda: [
+            _pytest("village_panel", "tests/sim/test_t095_village_panel.py"),
+            run_command(
+                CommandCheck(
+                    name="fx_village_scenario",
+                    argv=(
+                        sys.executable,
+                        "tools/run_scenario.py",
+                        "--fixture",
+                        "FX-VILLAGE",
+                        "--seed",
+                        "505",
+                        "--record",
+                        str(TRACKING / "village_runs" / "fx_village_record.json"),
+                    ),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            validate_evidence(
+                "village_runs",
+                [
+                    TRACKING / "village_runs" / "README.md",
+                    TRACKING / "village_runs" / "fx_village_record.json",
+                ],
+            ),
+            _godot_script(
+                "scenario_panel",
+                "res://client/tests/run_t095_panel.gd",
+                r"T095_PANEL_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
