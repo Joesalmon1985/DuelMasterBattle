@@ -5,6 +5,8 @@ class_name DmbFxClockArea
 ## Local motion is Godot-owned; Travel/Wait/Observe/Interact go through WorldClient.
 
 signal exit_activated(to_node: String)
+signal people_presentation_changed(people: Dictionary)
+
 signal entity_selected(entity_id: String)
 signal request_interact(entity_id: String)
 signal request_observe(entity_id: String)
@@ -196,14 +198,9 @@ func apply_projections(view: Dictionary) -> void:
 			var grid := _person_grid_from_info(info)
 			if grid.x >= 0:
 				_npc_nodes[entity_id].position = Vector2(grid.x * TILE + TILE * 0.5, grid.y * TILE + TILE * 0.5)
-				if _label_nodes.has(entity_id):
-					_label_nodes[entity_id].position = _npc_nodes[entity_id].position + Vector2(-30, -48)
 	if needs_people_rebuild:
 		_rebuild_people(people)
-	else:
-		for entity_id in _label_nodes.keys():
-			if people.has(entity_id):
-				_label_nodes[entity_id].text = _label_for(people[entity_id])
+	people_presentation_changed.emit(people)
 	var node_info: Dictionary = view.get("board", {}).get("nodes", {}).get(current_node, {})
 	if _area_title:
 		_area_title.text = str(node_info.get("label", current_node))
@@ -292,8 +289,6 @@ func _rebuild_people(people: Dictionary) -> void:
 		if is_instance_valid(node):
 			node.queue_free()
 	_npc_nodes.clear()
-	for id in _label_nodes.keys():
-		_label_nodes[id].queue_free()
 	_label_nodes.clear()
 	for c in _labels.get_children():
 		c.queue_free()
@@ -318,6 +313,7 @@ func _rebuild_people(people: Dictionary) -> void:
 				continue
 			var info2: Dictionary = people.get(entity_id, {"known": true, "name": "Hauler Cart", "role": "cart"})
 			_spawn_person_sprite(str(entity_id), info2, Vector2i(6, 5))
+	people_presentation_changed.emit(people)
 
 
 func register_external_actor(entity_id: String, node: Node2D) -> void:
@@ -366,22 +362,22 @@ func _spawn_person_sprite(entity_id: String, info: Dictionary, grid: Vector2i) -
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	spr.scale = Vector2(4, 4)
 	spr.position = Vector2(grid.x * TILE + TILE * 0.5, grid.y * TILE + TILE * 0.5)
-	ActorVisual.apply(spr, PIXEL, "villager_a", "down", 0, "person")
+	var known_name := _label_for(info)
+	ActorVisual.apply(spr, PIXEL, "villager_a", "down", 0, known_name)
+	# Semantic WorldInteractionLabel owns the visible name; hide crude fallback.
+	var fallback = spr.get_node_or_null("fallback_label")
+	if fallback != null:
+		fallback.visible = false
 	spr.set_meta("entity_id", entity_id)
+	spr.set_meta("display_name", known_name)
 	_actors.add_child(spr)
 	_npc_nodes[entity_id] = spr
-	var lbl := Label.new()
-	lbl.text = _label_for(info)
-	lbl.position = spr.position + Vector2(-30, -48)
-	lbl.add_theme_font_size_override("font_size", 16)
-	lbl.set_meta("entity_id", entity_id)
-	_labels.add_child(lbl)
-	_label_nodes[entity_id] = lbl
+	# Standing name is owned by BridgePresenter / WorldInteractionLabel (same as overworld NPCs).
+	# Keep a lightweight meta marker so tests can find people without a crude world Label.
 	if _mover and _mover.is_driving(str(entity_id)):
 		var wp: Vector2 = _mover.world_position_for(str(entity_id))
 		if wp != Vector2.ZERO:
 			spr.position = wp
-			lbl.position = spr.position + Vector2(-30, -48)
 
 
 func _person_grid_from_info(info: Dictionary) -> Vector2i:

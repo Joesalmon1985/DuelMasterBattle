@@ -142,11 +142,54 @@ func _go() -> void:
 
 	battle._submit_checkpoint()
 	print("G04_BATTLE_PLAYABLE_OK units=", battle._unit_nodes.size(), " destroyed=", target)
-	var battle_unit_count: int = battle._unit_nodes.size()
+
+	# Travel away must release the local battle lease and drop all battle visuals.
+	var casualties_before: Array = []
+	if battle._battle != null and battle._battle.has_method("checkpoint"):
+		casualties_before = battle._battle.checkpoint().get("casualties", [])
+	var unit_count_before_travel: int = battle._unit_nodes.size()
+	if unit_count_before_travel < 1:
+		push_error("G04 expected battle unit visuals before travel")
+		quit(1)
+		return
+	battle._on_exit("node:2")
+	await create_timer(0.6).timeout
+	if battle._lease_opened:
+		push_error("G04 lease must close after travel")
+		quit(1)
+		return
+	if battle._battle == null or not battle._battle.closed:
+		push_error("G04 LocalBattle must stop ticking after CloseBattleLease travel")
+		quit(1)
+		return
+	if battle._unit_nodes.size() != 0:
+		push_error("G04 stale battle unit actors after travel: %s" % battle._unit_nodes.size())
+		quit(1)
+		return
+	if battle._building_nodes.size() != 0 or battle._obstacle_nodes.size() != 0:
+		push_error("G04 stale battle buildings/obstacles after travel")
+		quit(1)
+		return
+	if battle._area != null:
+		for aid in battle._area.selectable_actor_ids():
+			if str(aid).begins_with("unit:") or str(aid).begins_with("building:"):
+				push_error("G04 external actor still registered after travel: %s" % aid)
+				quit(1)
+				return
+	if typeof(casualties_before) == TYPE_ARRAY and casualties_before.size() > 0:
+		print("G04_TRAVEL_CASUALTIES_OK count=", casualties_before.size())
+	battle._on_exit("node:1")
+	await create_timer(0.5).timeout
+	if battle._unit_nodes.size() > unit_count_before_travel:
+		push_error("G04 return duplicated battle actors")
+		quit(1)
+		return
+	print("G04_BATTLE_TRAVEL_OK dest_units=", battle._unit_nodes.size())
+	var battle_unit_count: int = unit_count_before_travel
 	battle.queue_free()
 	await create_timer(0.4).timeout
 
-	# Hazard: three manifestations + Mastermind (no Channel shortcut).
+	# Hazard: three manifestations + retained Ward UI (not Channel shortcut).
 	OS.set_environment("DMB_FIXTURE", "FX-HAZARD")
 	OS.set_environment("DMB_SEED", "408")
 	var hazard: Control = HazardShell.new()
@@ -159,7 +202,6 @@ func _go() -> void:
 		push_error("G04 hazard expected 3 manifestations, got %s" % hazard._hex_nodes.size())
 		quit(1)
 		return
-	# Anchors must not all share one row.
 	var rows := {}
 	for cid in hazard._hex_nodes.keys():
 		var p: Vector2 = hazard._hex_nodes[cid].position
@@ -176,34 +218,56 @@ func _go() -> void:
 		push_error("G04 hazard duel did not start")
 		quit(1)
 		return
-	# Retained GameBoard must be hosted; Guess/Resign panel must not appear.
 	if hazard._duel_adapter == null or not hazard._duel_adapter.is_active():
 		push_error("G04 expected retained GameBoard lease adapter to be active")
 		quit(1)
 		return
 	var board = hazard._duel_adapter._board
-	if board == null or not is_instance_valid(board):
-		push_error("G04 Challenge did not instantiate game_board")
+	if board == null or not is_instance_valid(board) or board.game == null:
+		push_error("G04 Challenge did not instantiate game_board / DmbBattleSim")
 		quit(1)
 		return
-	if str(board.get_script().resource_path).find("game_board") < 0 and board.get_class() != "GameBoard":
-		# Class name may be GameBoard; also accept script path.
-		if board.get("game") == null:
-			push_error("G04 hosted board missing DmbBattleSim game")
+	var RealtimeSim = load("res://sim/battle_sim.gd")
+	if int(board.game.phase) != int(RealtimeSim.Phase.WARD_SETUP):
+		push_error("G04 retained board must start in WARD_SETUP, got %s" % board.game.phase)
+		quit(1)
+		return
+	var pool: Array = board.game.player_ward_pool()
+	if pool.size() < 4:
+		push_error("G04 ward pool too small")
+		quit(1)
+		return
+	var before_ward: Array = board.game.get_player_ward().duplicate()
+	var changed := 0
+	for i in range(mini(4, pool.size())):
+		var spell_id := int(pool[i])
+		if not board.ui_pointer_press_tray_spell(spell_id):
+			push_error("G04 tray SpellSlot press failed for spell %s" % spell_id)
 			quit(1)
 			return
-	if board.game == null:
-		push_error("G04 hosted board has no DmbBattleSim instance")
+		await create_timer(0.05).timeout
+	var after_ward: Array = board.game.get_player_ward()
+	for i in range(after_ward.size()):
+		if after_ward[i] != null and (i >= before_ward.size() or after_ward[i] != before_ward[i]):
+			changed += 1
+	if changed < 4:
+		push_error("G04 Ward did not populate via SpellSlot.pressed (changed=%s ward=%s)" % [changed, after_ward])
 		quit(1)
 		return
-	var sim_name := str(board.game.get_class())
-	if board.game.get_script() != null:
-		sim_name = str(board.game.get_script().resource_path)
-	if sim_name.find("battle_sim") < 0 and not (board.game is RefCounted):
-		push_error("G04 expected DmbBattleSim, got %s" % sim_name)
+	if not board.game.can_lock_player_ward():
+		push_error("G04 Lock Ward still disabled after filling loci")
 		quit(1)
 		return
-	# Channel / Guess panel actions must fail on ward lease.
+	if not board.ui_pointer_press_lock_ward():
+		push_error("G04 Lock Ward button press failed")
+		quit(1)
+		return
+	await create_timer(0.1).timeout
+	if int(board.game.phase) == int(RealtimeSim.Phase.WARD_SETUP):
+		push_error("G04 phase stuck in WARD_SETUP after Lock Ward")
+		quit(1)
+		return
+	print("G04_HAZARD_WARD_UI_OK phase=", board.game.phase)
 	var ch: Dictionary = hazard._cmd("HazardDuelAction", {"duel_id": hazard._duel_id, "action": "channel"})
 	if str(ch.get("status", "")) == "ACCEPTED":
 		push_error("G04 Channel shortcut must be rejected")
@@ -214,13 +278,11 @@ func _go() -> void:
 		push_error("G04 Guess panel path must be rejected for retained duel")
 		quit(1)
 		return
-	# Non-victory resolve leaves cube active (resign/failure).
 	var fail: Dictionary = hazard._cmd("ResolveHazardDuel", {"duel_id": hazard._duel_id, "success": false})
 	if str(fail.get("status", "")) != "ACCEPTED":
 		push_error("G04 ResolveHazardDuel failure path rejected")
 		quit(1)
 		return
-	# Duplicate outcome must be idempotent.
 	var dup: Dictionary = hazard._cmd("ResolveHazardDuel", {"duel_id": hazard._duel_id, "success": true})
 	if str(dup.get("payload", {}).get("status", "")) != "idempotent" and str(dup.get("status", "")) != "ACCEPTED":
 		push_error("G04 duplicate resolve must be accepted/idempotent")

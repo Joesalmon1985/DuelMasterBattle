@@ -7,3 +7,4 @@
 - Headless runs may log ObjectDB/resource leak warnings at exit; playable markers still emit.
 - Mid-duel visual save/resume through GameBoard UI is implemented via checkpoint APIs; Joe should still exercise resume in the manual checklist.
 - Ensemble depth commits `58ea2d2` / `6f7be0f` are a separate follow-up and are not on this branch.
+- Playtest repair (this candidate): battle actors must release on travel; Ward taps use SpellSlot.pressed + int pools; Mira uses WorldInteractionLabel. Status remains AWAITING_HUMAN until Joe retests.

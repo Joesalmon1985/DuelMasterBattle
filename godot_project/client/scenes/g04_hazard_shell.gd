@@ -65,8 +65,10 @@ func _ready() -> void:
 	_duel_adapter = DuelLeaseAdapter.new()
 	_duel_adapter.finished.connect(_on_retained_duel_finished)
 	_duel_host = Control.new()
-	_duel_host.set_anchors_preset(PRESET_FULL_RECT)
-	_duel_host.mouse_filter = Control.MOUSE_FILTER_STOP
+	_duel_host.name = "DuelHost"
+	_duel_host.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	# IGNORE so empty host chrome never swallows GameBoard SpellSlot presses.
+	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_duel_host.visible = false
 	_ui_root.add_child(_duel_host)
 	if _client != null and not _client.request_finished.is_connected(_on_hazard_request_finished):
@@ -329,6 +331,13 @@ func _start_selected_duel() -> void:
 
 
 func _on_duel_requested(cube_id: String) -> void:
+	# Close observation/choice UI so nothing sits above the retained board.
+	if _session != null and _session.is_open():
+		_session.close(true)
+	_release_choice_pause()
+	if _presenter != null:
+		_presenter.notify_player_moved()
+		_presenter.clear_entity(cube_id)
 	var reply := _cmd("StartHazardDuel", {"cube_id": cube_id})
 	if str(reply.get("status", "")) != "ACCEPTED":
 		_prompt.text = "Challenge rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
@@ -337,6 +346,8 @@ func _on_duel_requested(cube_id: String) -> void:
 	var duel: Dictionary = reply.get("payload", {}).get("duel", {})
 	_duel_id = str(public.get("duel_id", duel.get("id", "")))
 	_duel_host.visible = true
+	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_duel_host.move_to_front()
 	if _area:
 		_area.set_movement_enabled(false)
 	var ok: bool = _duel_adapter.begin_from_start_reply(_duel_host, reply, Callable(self, "_cmd"))

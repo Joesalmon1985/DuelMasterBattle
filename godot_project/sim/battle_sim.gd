@@ -156,8 +156,8 @@ func set_player_ward_locus(i: int, spell: int) -> void:
 		return
 	if spell < 0:
 		_player_ward[i] = null
-	elif spell in player.ward_pool:
-		_player_ward[i] = spell
+	elif _spell_in_pool(spell, player.ward_pool):
+		_player_ward[i] = int(spell)
 
 
 func clear_player_ward() -> void:
@@ -191,8 +191,8 @@ func set_player_attack_locus(i: int, spell: int) -> void:
 		return
 	if spell < 0:
 		_player_attack[i] = null
-	elif spell in player.attack_pool:
-		_player_attack[i] = spell
+	elif _spell_in_pool(spell, player.attack_pool):
+		_player_attack[i] = int(spell)
 
 
 func clear_player_attack() -> void:
@@ -205,7 +205,7 @@ func load_player_attack(pattern: Array) -> void:
 		return
 	var out := _empty(player.weave_size)
 	for i in range(mini(pattern.size(), player.weave_size)):
-		if pattern[i] != null and int(pattern[i]) in player.attack_pool:
+		if pattern[i] != null and _spell_in_pool(int(pattern[i]), player.attack_pool):
 			out[i] = int(pattern[i])
 	_player_attack = out
 
@@ -611,3 +611,11 @@ func _restore_bot(bot, data: Dictionary) -> void:
 		bot._guess_count = int(data.get("guess_count", bot._guess_count))
 	if "_rng" in bot and str(data.get("rng_state", "")) != "":
 		bot._rng.state = int(str(data["rng_state"]))
+
+
+static func _spell_in_pool(spell: int, pool: Array) -> bool:
+	var needle := int(spell)
+	for v in pool:
+		if v != null and int(v) == needle:
+			return true
+	return false

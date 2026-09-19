@@ -46,6 +46,17 @@ func begin_from_start_reply(parent: Node, reply: Dictionary, cmd: Callable) -> b
 		_board = null
 		return false
 	_parent.add_child(_board)
+	if _board is Control:
+		var board_ctrl: Control = _board
+		board_ctrl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		board_ctrl.mouse_filter = Control.MOUSE_FILTER_STOP
+		if _parent is Control:
+			var host_ctrl: Control = _parent
+			var host_size: Vector2 = host_ctrl.size
+			if host_size == Vector2.ZERO and host_ctrl.get_viewport() != null:
+				host_size = host_ctrl.get_viewport().get_visible_rect().size
+			if host_size != Vector2.ZERO:
+				board_ctrl.set_deferred("size", host_size)
 	return true
 
 

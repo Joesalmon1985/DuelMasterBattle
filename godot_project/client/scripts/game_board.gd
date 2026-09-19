@@ -1660,6 +1660,22 @@ func ui_action_pick_spell(spell_id: int) -> void:
 	_on_tray_tapped(spell_id)
 
 
+func ui_pointer_press_tray_spell(spell_id: int) -> bool:
+	## Fire the visible SpellSlot.pressed path (not a direct handler call).
+	for slot in _tray_slots:
+		if int(slot.slot_index) == int(spell_id):
+			slot.pressed.emit()
+			return true
+	return false
+
+
+func ui_pointer_press_lock_ward() -> bool:
+	if _lock_btn == null or not _lock_btn.visible or _lock_btn.disabled:
+		return false
+	_lock_btn.pressed.emit()
+	return true
+
+
 func ui_action_clear() -> void:
 	_on_clear_pressed()
 

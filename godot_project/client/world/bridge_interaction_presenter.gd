@@ -62,11 +62,77 @@ func clear_entity(entity_id: String) -> void:
 		_active_id = ""
 
 
+func sync_people(people: Dictionary, area) -> void:
+	## Keep standing WorldInteractionLabels for every person on the current node.
+	## Matches overworld Bram/Greta/Mara presentation for FX people (including Mira).
+	var keep: Dictionary = {}
+	for entity_id in people.keys():
+		var info: Dictionary = people[entity_id]
+		var anchor: Node2D = null
+		if area != null and area.has_method("selectable_actor"):
+			anchor = area.selectable_actor(str(entity_id))
+		if anchor == null:
+			continue
+		keep[str(entity_id)] = true
+		_hide_actor_fallback(anchor)
+		var known := bool(info.get("known", false))
+		var display := str(info.get("name", ""))
+		if display == "" or display == "<null>":
+			display = str(info.get("label", info.get("role", "unknown")))
+		var unknown_text := "unknown"
+		if str(info.get("role", "")) != "":
+			unknown_text = str(info.get("role"))
+		var semantic := {
+			"knowledge_key": str(entity_id),
+			"name": display,
+			"kind": "npc",
+			"interaction": "npc",
+			"dismiss_on_move": true,
+			"labels": [
+				{"level": 0, "text": unknown_text if not known else display},
+				{"level": 1, "text": display if display != "" else "Mira"},
+			],
+			"observe_far": str(info.get("description", "Someone stands here.")),
+			"observe_near": str(info.get("description", "Someone stands here.")),
+		}
+		var label = _ensure_label(str(entity_id), anchor, semantic)
+		var view := {
+			"known": known,
+			"name": str(info.get("name", "")) if known else "",
+			"label": display,
+			"role": str(info.get("role", "")),
+			"description": str(info.get("description", "")),
+		}
+		label.set_bridge_view(view)
+	for entity_id in _labels.keys():
+		if keep.has(entity_id):
+			continue
+		# Drop missing people only — leave battle/hazard labels alone.
+		if str(entity_id).begins_with("person:"):
+			clear_entity(entity_id)
+
+
+func label_for(entity_id: String):
+	if _labels.has(entity_id) and is_instance_valid(_labels[entity_id]):
+		return _labels[entity_id]
+	return null
+
+
+func _hide_actor_fallback(anchor: Node2D) -> void:
+	if not is_instance_valid(anchor):
+		return
+	var direct = anchor.get_node_or_null("fallback_label")
+	if direct != null:
+		direct.visible = false
+
+
 func _ensure_label(entity_id: String, anchor: Node2D, semantic: Dictionary):
 	if _labels.has(entity_id) and is_instance_valid(_labels[entity_id]):
 		var existing = _labels[entity_id]
-		if existing.has_method("set_bridge_view") and not semantic.is_empty():
-			pass
+		if existing.has_method("rebind_anchor"):
+			existing.rebind_anchor(anchor, _camera)
+		if existing.has_method("update_semantic") and not semantic.is_empty():
+			existing.update_semantic(semantic)
 		return existing
 	var label := Control.new()
 	label.set_script(WIL)

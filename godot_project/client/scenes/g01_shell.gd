@@ -12,6 +12,7 @@ const TouchPadScript = preload("res://client/world/touch_pad.gd")
 const SpellbookModel = preload("res://client/ui/spellbook/spellbook_model.gd")
 const SpellbookHost = preload("res://client/ui/spellbook/spellbook_host.gd")
 const SpellbookBinder = preload("res://client/ui/spellbook/spellbook_gate_binder.gd")
+const PeoplePresenterScript = preload("res://client/world/bridge_interaction_presenter.gd")
 
 const SAVE_SLOT := "g01_playtest"
 
@@ -46,6 +47,7 @@ var _spell_model
 var _spell_host
 var _spell_binder
 var _classic_hud := false
+var _people_presenter
 
 
 func _ready() -> void:
@@ -88,6 +90,10 @@ func _ready() -> void:
 	_area.request_interact.connect(_on_interact)
 	_area.entity_selected.connect(func(id): _prompt.text = "Selected %s" % id; _sync_spell_live())
 	_area.action_hint_changed.connect(func(hint): _prompt.text = "Action: %s" % hint; _sync_spell_live())
+	_area.people_presentation_changed.connect(_on_people_presentation_changed)
+	_people_presenter = PeoplePresenterScript.new()
+	_ui_root.add_child(_people_presenter)
+	_people_presenter.setup(_ui_root, null, Callable(self, "_cmd"))
 	_fit_world_host()
 	_refresh_counters(false)
 	_apply_movement_gate()
@@ -539,6 +545,9 @@ func _on_observe(entity_id: String) -> void:
 	var reply := _cmd("Observe", {"entity_id": entity_id})
 	var payload: Dictionary = reply.get("payload", {})
 	_prompt.text = "Observed %s → %s" % [entity_id, payload.get("label", "unknown")]
+	var anchor = _area.selectable_actor(entity_id) if _area else null
+	if _people_presenter != null and anchor != null:
+		_people_presenter.show_observation(entity_id, anchor, payload)
 	_refresh_counters(false)
 
 
@@ -546,10 +555,31 @@ func _on_interact(entity_id: String) -> void:
 	var reply := _cmd("Interact", {"entity_id": entity_id})
 	var payload: Dictionary = reply.get("payload", {})
 	if str(reply.get("status", "")) == "ACCEPTED":
-		_prompt.text = "Interacted: %s" % payload.get("name", payload.get("role", payload.get("label", "?")))
+		var name := str(payload.get("name", payload.get("role", payload.get("label", "?"))))
+		_prompt.text = "Interacted: %s" % name
+		var anchor = _area.selectable_actor(entity_id) if _area else null
+		if _people_presenter != null and anchor != null:
+			var lines: Array = payload.get("lines", [])
+			if typeof(lines) != TYPE_ARRAY or lines.is_empty():
+				lines = ["Hello. I'm %s." % name]
+			_people_presenter.begin_talk(entity_id, anchor, lines, payload.get("responses", []))
+			var lbl = _people_presenter.label_for(entity_id)
+			if lbl != null:
+				lbl.set_bridge_view({
+					"known": true,
+					"name": name,
+					"label": name,
+					"description": str(payload.get("description", "")),
+				})
 	else:
 		_prompt.text = "Interact failed: %s" % reply.get("code", "?")
 	_refresh_counters(false)
+
+
+func _on_people_presentation_changed(people: Dictionary) -> void:
+	if _people_presenter == null or _area == null:
+		return
+	_people_presenter.sync_people(people, _area)
 
 
 func _on_wait() -> void:

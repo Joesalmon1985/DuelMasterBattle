@@ -312,6 +312,96 @@ func _apply_buff(uid: String, buff_kind: String) -> void:
 		_feedback.text = "Buff rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
 
 
+func _on_exit(to_node: String) -> void:
+	## Travel first; only tear down the local battle after Python accepts it.
+	var from_node := "node:1"
+	if _client.has_player_cache():
+		from_node = str(_client.cached_player_view().get("player", {}).get("node_id", from_node))
+	else:
+		from_node = str(_client.request_view("player").get("player", {}).get("node_id", "node:1"))
+	_prompt.text = "Travel pending %s → %s (waiting for acknowledgement)" % [from_node, to_node]
+	_sync_pose()
+	var reply := _cmd("Travel", {"from_node": from_node, "to_node": to_node})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		_leave_local_battle_for_travel()
+		var view: Dictionary = _client.request_view("player")
+		_area.acknowledge_travel(to_node, view)
+		_prompt.text = "Travel acknowledged — arrived %s; local battle released" % [
+			view.get("player", {}).get("node_id", to_node),
+		]
+		_refresh_counters(false)
+		# Reconstruct presentation if a new lease is still available on this node.
+		_try_reopen_battle_lease_if_present()
+	else:
+		_area.reject_travel(str(reply.get("code", reply.get("public_feedback", "rejected"))))
+		_prompt.text = "Travel rejected — local battle intact (%s)" % reply.get("code", "?")
+
+
+func _leave_local_battle_for_travel() -> void:
+	## Final checkpoint + CloseBattleLease(travel), then clear all local battle presentation.
+	if _battle == null or not _lease_opened:
+		_clear_local_battle_visuals()
+		return
+	_close_choice_card(false)
+	var cp: Dictionary = _battle.checkpoint()
+	var lease_id := str(_battle.lease_id)
+	_cmd("CloseBattleLease", {
+		"lease_id": lease_id,
+		"reason": "travel",
+		"checkpoint": cp,
+	})
+	_battle.close({"reason": "travel"})
+	_lease_opened = false
+	_steps_since_checkpoint = 0
+	_clear_local_battle_visuals()
+
+
+func _clear_local_battle_visuals() -> void:
+	## Drop every battle-node-only actor/building/obstacle and selection state.
+	if _session != null and _session.is_open():
+		_session.close(false)
+	_choice_open = false
+	_selected_unit = ""
+	for uid in _unit_nodes.keys():
+		if _area != null and _area.has_method("unregister_external_actor"):
+			_area.unregister_external_actor(uid)
+		if is_instance_valid(_unit_nodes[uid]):
+			_unit_nodes[uid].queue_free()
+	_unit_nodes.clear()
+	for bid in _building_nodes.keys():
+		if is_instance_valid(_building_nodes[bid]):
+			_building_nodes[bid].queue_free()
+	_building_nodes.clear()
+	for n in _obstacle_nodes:
+		if is_instance_valid(n):
+			n.queue_free()
+	_obstacle_nodes.clear()
+	if _area != null and _area.has_method("clear_external_actors"):
+		# Ensure no stale battle registrations remain after travel.
+		for uid in _area.selectable_actor_ids():
+			if str(uid).begins_with("unit:") or str(uid).begins_with("building:"):
+				_area.unregister_external_actor(uid)
+
+
+func _try_reopen_battle_lease_if_present() -> void:
+	## Returning to a battle node must rebuild from a fresh lease — never resurrect old nodes.
+	if _lease_opened or _client == null:
+		return
+	var view: Dictionary = _client.request_view("player", ["battles", "leases", "player"])
+	var battles: Dictionary = view.get("battles", {})
+	var battle: Dictionary = battles.get("battle:fx", {})
+	if battle.is_empty():
+		return
+	var state := str(battle.get("state", ""))
+	if state in ["OFFSCREEN_RESOLVED", "CLOSED", ""]:
+		return
+	var player_node := str(view.get("player", {}).get("node_id", ""))
+	var battle_node := str(battle.get("node_id", "node:1"))
+	if player_node != "" and battle_node != "" and player_node != battle_node:
+		return
+	_open_battle_lease()
+
+
 func _process(delta: float) -> void:
 	super(delta)
 	if _client == null:
@@ -335,7 +425,7 @@ func _process(delta: float) -> void:
 			if view.has("fx_battle"):
 				_fx_labels = view.get("fx_battle", {}).get("labels", _fx_labels)
 
-	if _paused or _choice_open or _bridge_down or not _lease_opened or _battle.closed:
+	if _paused or _choice_open or _bridge_down or not _lease_opened or _battle == null or _battle.closed:
 		return
 	if _area != null and not _area.movement_enabled:
 		return
@@ -399,10 +489,16 @@ func _apply_step_visuals(result: Dictionary) -> void:
 
 
 func _sync_unit_nodes_from_battle() -> void:
+	## Full reconciliation: create/update present units and remove stale presentation.
+	if _battle == null or _battle.closed or not _lease_opened:
+		return
+	var keep_units: Dictionary = {}
 	for uid in _battle.units.keys():
 		var state: Dictionary = _battle.units[uid]
 		if str(state.get("status", "")) == "reserve":
 			continue
+		# Dead units stay visible only while the lease is still open on this node.
+		keep_units[uid] = true
 		if not _unit_nodes.has(uid):
 			var node := Node2D.new()
 			node.set_script(UnitController)
@@ -412,8 +508,20 @@ func _sync_unit_nodes_from_battle() -> void:
 				_area.register_external_actor(uid, node)
 		_unit_nodes[uid].bind_unit(state)
 		_unit_nodes[uid].set_selected(uid == _selected_unit)
+	for uid in _unit_nodes.keys():
+		if keep_units.has(uid):
+			continue
+		if _area != null and _area.has_method("unregister_external_actor"):
+			_area.unregister_external_actor(uid)
+		if is_instance_valid(_unit_nodes[uid]):
+			_unit_nodes[uid].queue_free()
+		_unit_nodes.erase(uid)
+		if _selected_unit == uid:
+			_selected_unit = ""
+	var keep_buildings: Dictionary = {}
 	for bid in _battle.buildings.keys():
 		var b: Dictionary = _battle.buildings[bid]
+		keep_buildings[bid] = true
 		if not _building_nodes.has(bid):
 			var marker := ColorRect.new()
 			marker.size = Vector2(40, 40)
@@ -428,6 +536,12 @@ func _sync_unit_nodes_from_battle() -> void:
 		var pos = b.get("position", [0, 0])
 		_building_nodes[bid].position = Vector2(float(pos[0]) * TILE, float(pos[1]) * TILE)
 		_building_nodes[bid].modulate = Color(1, 1, 1) if bool(b.get("alive", true)) else Color(0.3, 0.3, 0.3)
+	for bid in _building_nodes.keys():
+		if keep_buildings.has(bid):
+			continue
+		if is_instance_valid(_building_nodes[bid]):
+			_building_nodes[bid].queue_free()
+		_building_nodes.erase(bid)
 
 
 func _draw_obstacles(blockers: Array) -> void:
@@ -484,11 +598,9 @@ func _on_load() -> void:
 	if str(reply.get("status", "")) == "ACCEPTED":
 		_prompt.text = "Loaded %s — casualties preserved" % G04_BATTLE_SAVE
 		_lease_opened = false
-		for uid in _unit_nodes.keys():
-			if _area != null and _area.has_method("unregister_external_actor"):
-				_area.unregister_external_actor(uid)
-			_unit_nodes[uid].queue_free()
-		_unit_nodes.clear()
+		if _battle != null:
+			_battle.close({"reason": "load"})
+		_clear_local_battle_visuals()
 		_open_battle_lease()
 
 
