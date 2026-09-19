@@ -1,0 +1,45 @@
+{
+  "task_id": "T096",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/",
+    "tools/play_g05.sh",
+    "godot_project/client/scenes/g05_shell.tscn",
+    "godot_project/client/scenes/g05_shell.gd",
+    "godot_project/client/tests/run_g05_smoke.gd",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json"
+  ],
+  "public_contracts": [
+    "G05 packet AWAITING_HUMAN",
+    "bash tools/play_g05.sh",
+    "python3 tools/check.py --gate G05"
+  ],
+  "source_rules": [
+    "C14 G05 gate",
+    "GDD §§222, 224, 226, 227"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T096",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "python3 tools/check.py --gate G05",
+      "exit_code": 0,
+      "result": "PASS automated; human gate AWAITING_HUMAN"
+    }
+  ],
+  "extra_scope": {
+    "tools/play_g05.sh": "Verified launch entry",
+    "godot_project/client/scenes/g05_shell.*": "FX-VILLAGE Python sidecar host",
+    "tools/check.py": "Wire T096 + G05"
+  },
+  "defects": [
+    "G05 shell is status/host; full overworld art polish may lag (see known_defects.md)"
+  ],
+  "next_task": "STOP — G05 AWAITING_HUMAN; do not start T097",
+  "notes": "Packet includes launch/reset/two solutions/world-resolved/destroyed-target/known defects/optional hints separate. Automated checks PASS. Joe must explicitly PASS."
+}

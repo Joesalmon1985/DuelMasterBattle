@@ -832,6 +832,51 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"T095_PANEL_OK",
             ),
         ],
+        "T096": lambda: [
+            validate_evidence(
+                "g05_packet",
+                [
+                    TRACKING / "gates" / "G05" / "packet.md",
+                    TRACKING / "gates" / "G05" / "launch.txt",
+                    TRACKING / "gates" / "G05" / "reset.md",
+                    TRACKING / "gates" / "G05" / "known_defects.md",
+                    TRACKING / "gates" / "G05" / "optional_hints.md",
+                    TRACKING / "gates" / "G05" / "acceptance.json",
+                    TRACKING / "gates" / "G05" / "fx_village_record.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "fresh_launch.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "solution_demon_duel.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "solution_sluice_route.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "world_resolved.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "destroyed_target.json",
+                ],
+            ),
+            _pytest(
+                "g05_scenarios",
+                "tests/scenarios/test_village_solutions.py",
+                "tests/scenarios/test_village_quest.py",
+            ),
+            run_command(
+                CommandCheck(
+                    name="g05_fx_village",
+                    argv=(
+                        sys.executable,
+                        "tools/run_scenario.py",
+                        "--fixture",
+                        "FX-VILLAGE",
+                        "--seed",
+                        "505",
+                        "--record",
+                        str(TRACKING / "gates" / "G05" / "fx_village_record.json"),
+                    ),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            _godot_script(
+                "g05_smoke",
+                "res://client/tests/run_g05_smoke.gd",
+                r"G05_SMOKE_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -1050,6 +1095,69 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g01_regression_smoke",
                 "res://client/tests/run_g01_smoke.gd",
                 r"G01_SMOKE_OK",
+            ),
+        ]
+    if gate == "G05":
+        packet = TRACKING / "gates" / "G05"
+        return [
+            _pytest(
+                "g05_cumulative_python",
+                "tests/scenarios/test_village_quest.py",
+                "tests/scenarios/test_village_solutions.py",
+                "tests/sim/test_t088_inventory_use.py",
+                "tests/sim/test_t089_puzzles.py",
+                "tests/sim/test_t090_sluice.py",
+                "tests/sim/test_t091_duel_progression.py",
+                "tests/sim/test_t092_duel_recovery.py",
+                "tests/sim/test_t095_village_panel.py",
+            ),
+            validate_evidence(
+                "g05_packet_files",
+                [
+                    packet / "packet.md",
+                    packet / "launch.txt",
+                    packet / "reset.md",
+                    packet / "known_defects.md",
+                    packet / "optional_hints.md",
+                    packet / "acceptance.json",
+                    packet / "fx_village_record.json",
+                    packet / "scenarios" / "fresh_launch.json",
+                    packet / "scenarios" / "solution_demon_duel.json",
+                    packet / "scenarios" / "solution_sluice_route.json",
+                    packet / "scenarios" / "world_resolved.json",
+                    packet / "scenarios" / "destroyed_target.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g05_fx_village_scenario",
+                    argv=(
+                        sys.executable,
+                        "tools/run_scenario.py",
+                        "--fixture",
+                        "FX-VILLAGE",
+                        "--seed",
+                        "505",
+                        "--record",
+                        str(packet / "fx_village_record.json"),
+                    ),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            _python_module(
+                "g05_validate_puzzles",
+                "tools.content.validate_puzzles",
+                r"validate_puzzles: PASS",
+            ),
+            _godot_script(
+                "g05_sidecar_smoke",
+                "res://client/tests/run_g05_smoke.gd",
+                r"G05_SMOKE_OK",
+            ),
+            _godot_script(
+                "g04_regression_playable",
+                "res://client/tests/run_g04_playable.gd",
+                r"G04_PLAYABLE_OK",
             ),
         ]
     return [

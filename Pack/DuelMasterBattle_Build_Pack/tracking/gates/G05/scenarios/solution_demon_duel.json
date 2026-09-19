@@ -1,0 +1,574 @@
+{
+  "fixture": "FX-VILLAGE",
+  "seed": 505,
+  "quest_id": "quest:1",
+  "mara_id": "person:2",
+  "factory_id": "building:factory_main",
+  "cause_id": "cause:1",
+  "scenario": "solution_demon_duel",
+  "quest_status": "completed",
+  "resolution": "demon_duel",
+  "route_a_available": true,
+  "demon_active": false,
+  "world": {
+    "world_id": "world:fx-village",
+    "world_version": 0,
+    "ids": {
+      "world_id": "world:fx-village",
+      "counters": {
+        "cause": 1,
+        "person": 2,
+        "quest": 1
+      }
+    },
+    "catalog_hash": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6",
+    "clock": {
+      "game_ms": 0,
+      "residual_ms": 0,
+      "turn": 0,
+      "round": 0,
+      "scheduled_faction_ids": [
+        "faction:player"
+      ],
+      "completed_seats": [],
+      "active_faction_id": null,
+      "pause_tokens": {},
+      "clock_sequence": 0
+    },
+    "player": {
+      "node_id": "node:village",
+      "area_id": "area.village",
+      "position": [
+        8.0,
+        8.0
+      ],
+      "facing": "down"
+    },
+    "board": {
+      "nodes": {
+        "node:1": {
+          "id": "node:1",
+          "def": "node.home",
+          "label": "Home Clearing",
+          "area_id": "area.home",
+          "theme": "grass",
+          "exits": {
+            "node:2": {
+              "exit_id": "home.east",
+              "direction": "east",
+              "hold_position": [
+                12.0,
+                5.0
+              ],
+              "hold_facing": "right",
+              "arrival": {
+                "node_id": "node:2",
+                "area_id": "area.road",
+                "position": [
+                  1.5,
+                  5.0
+                ],
+                "facing": "right"
+              }
+            }
+          }
+        },
+        "node:2": {
+          "id": "node:2",
+          "def": "node.road",
+          "label": "Stone Road",
+          "area_id": "area.road",
+          "theme": "path",
+          "exits": {
+            "node:1": {
+              "exit_id": "road.west",
+              "direction": "west",
+              "hold_position": [
+                1.0,
+                5.0
+              ],
+              "hold_facing": "left",
+              "arrival": {
+                "node_id": "node:1",
+                "area_id": "area.home",
+                "position": [
+                  12.0,
+                  5.0
+                ],
+                "facing": "left"
+              }
+            }
+          }
+        },
+        "node:village": {
+          "id": "node:village",
+          "label": "FX Village",
+          "area_id": "area.village",
+          "token": 6,
+          "terrains": [
+            "woodland",
+            "clay_mountains",
+            "ore_mountains"
+          ],
+          "exits": {}
+        }
+      },
+      "fx_village": {
+        "id": "FX-VILLAGE",
+        "schema_version": 1,
+        "seed": 505,
+        "node_id": "node:village",
+        "token": 6,
+        "terrains": [
+          "woodland",
+          "clay_mountains",
+          "ore_mountains"
+        ],
+        "primary_slots": 5,
+        "factories": 3,
+        "routes": [
+          {
+            "id": "route:A",
+            "inputs": [
+              "woodland_renewable",
+              "ore_finite"
+            ],
+            "selected": true,
+            "blocked_by": "demon_cube"
+          },
+          {
+            "id": "route:B",
+            "inputs": [
+              "woodland_renewable",
+              "clay_renewable"
+            ],
+            "selected": false,
+            "modifier": "sluice_sabotage"
+          }
+        ],
+        "demon_hex": "hex:ore",
+        "factory_id": "building:factory_main",
+        "worker_display_name": "Mara",
+        "quest_template_id": "quest.factory_shortage",
+        "mara_id": "person:2",
+        "cause_id": "cause:1",
+        "quest_id": "quest:1"
+      },
+      "era_id": "ancient",
+      "hex_anchors": {
+        "hex:ore": {
+          "grid": [
+            14.0,
+            4.0
+          ]
+        }
+      }
+    },
+    "factions": {},
+    "settlements": {},
+    "buildings": {
+      "building:primary:0": {
+        "id": "building:primary:0",
+        "node_id": "node:village",
+        "slot_kind": "primary",
+        "slot_index": 0,
+        "definition_id": "building.primary",
+        "terrain": "woodland",
+        "active": true,
+        "status": "built",
+        "health": 100,
+        "max_health": 100
+      },
+      "building:primary:1": {
+        "id": "building:primary:1",
+        "node_id": "node:village",
+        "slot_kind": "primary",
+        "slot_index": 1,
+        "definition_id": "building.primary",
+        "terrain": "ore_mountains",
+        "active": true,
+        "status": "built",
+        "health": 100,
+        "max_health": 100
+      },
+      "building:primary:2": {
+        "id": "building:primary:2",
+        "node_id": "node:village",
+        "slot_kind": "primary",
+        "slot_index": 2,
+        "definition_id": "building.primary",
+        "terrain": "clay_mountains",
+        "active": true,
+        "status": "built",
+        "health": 100,
+        "max_health": 100
+      },
+      "building:primary:3": {
+        "id": "building:primary:3",
+        "node_id": "node:village",
+        "slot_kind": "primary",
+        "slot_index": 3,
+        "definition_id": "building.primary",
+        "terrain": "fields",
+        "active": true,
+        "status": "built",
+        "health": 100,
+        "max_health": 100
+      },
+      "building:primary:4": {
+        "id": "building:primary:4",
+        "node_id": "node:village",
+        "slot_kind": "primary",
+        "slot_index": 4,
+        "definition_id": "building.primary",
+        "terrain": "grazing_land",
+        "active": true,
+        "status": "built",
+        "health": 100,
+        "max_health": 100
+      },
+      "building:factory_main": {
+        "id": "building:factory_main",
+        "node_id": "node:village",
+        "slot_kind": "factory",
+        "slot_index": 0,
+        "definition_id": "building.factory",
+        "label": "Village factory",
+        "active": true,
+        "status": "built",
+        "health": 200,
+        "max_health": 200,
+        "output_rate": 1.0,
+        "shortage": false
+      }
+    },
+    "people": {
+      "person:1": {
+        "id": "person:1",
+        "definition_id": "npc.villager",
+        "node_id": "node:1",
+        "grid": [
+          10,
+          3
+        ],
+        "role": "guide",
+        "display_name": "Mira"
+      },
+      "person:2": {
+        "id": "person:2",
+        "name": "Mara",
+        "display_name": "Mara",
+        "alive": true,
+        "status": "employed",
+        "affiliation": null,
+        "role": "worker",
+        "job_id": "job.factory_worker",
+        "workplace_id": "building:factory_main",
+        "node_id": "node:village",
+        "home_node_id": "node:village",
+        "area_id": null,
+        "position": null,
+        "profile_schema_version": 1,
+        "cultural_appearance": {
+          "culture_id": "culture.common",
+          "appearance_id": "appearance.default"
+        },
+        "preferences": [
+          {
+            "trait_id": "pref.diligent",
+            "kind": "work",
+            "strength": 1
+          },
+          {
+            "trait_id": "pref.curious",
+            "kind": "curiosity",
+            "strength": 1
+          },
+          {
+            "trait_id": "pref.loyal",
+            "kind": "social",
+            "strength": 1
+          }
+        ],
+        "goal_ids": [
+          "goal.keep_production"
+        ],
+        "relationship_map": {},
+        "known_facts": [],
+        "dialogue_profile": {
+          "profile_id": "dialogue.factory_worker",
+          "voice_id": "voice.common",
+          "tone_tags": [],
+          "schema_version": 1
+        },
+        "history_refs": [],
+        "anchor": true,
+        "profile_flags": [
+          "anchor",
+          "worker"
+        ]
+      }
+    },
+    "carts": {},
+    "units": {},
+    "formations": {},
+    "battles": {},
+    "hazards": {
+      "catastrophe": {
+        "cubes": {
+          "cube:demon": {
+            "id": "cube:demon",
+            "hex_id": "hex:ore",
+            "type": "demon",
+            "active": false,
+            "node_id": "node:village"
+          }
+        }
+      }
+    },
+    "stocks": {},
+    "orders": {},
+    "roads": {},
+    "quests": {
+      "quest:1": {
+        "id": "quest:1",
+        "schema_version": 1,
+        "template_id": "quest.factory_shortage",
+        "template_version": 2,
+        "cause_id": "cause:1",
+        "occurrence_key": "causeocc:49255eb73981afd6",
+        "affected_entity_id": "building:factory_main",
+        "stakeholder_id": "person:2",
+        "site_id": "node:village",
+        "status": "completed",
+        "stage": 0,
+        "branch": null,
+        "bindings": {
+          "stakeholder_id": "person:2",
+          "site_id": "node:village",
+          "affected_entity_id": "building:factory_main"
+        },
+        "effect_receipts": [],
+        "history_refs": [],
+        "resolution": "demon_duel"
+      }
+    },
+    "items": {},
+    "leases": {},
+    "knowledge": {},
+    "industry": {
+      "schema_version": 1,
+      "layers": {},
+      "primary_bindings": {},
+      "processors": {},
+      "routes": {},
+      "factories": {},
+      "events": [],
+      "channels": {}
+    },
+    "tombstones": {},
+    "command_receipts": {},
+    "definitions": {
+      "payloads": [
+        {
+          "id": "node.home",
+          "schema_version": 1,
+          "kind": "node",
+          "era_id": "all",
+          "name_key": "Home",
+          "description_key": "node.home",
+          "asset_family_id": "default",
+          "tags": [],
+          "fields": {
+            "rate": 1
+          }
+        },
+        {
+          "id": "node.road",
+          "schema_version": 1,
+          "kind": "node",
+          "era_id": "all",
+          "name_key": "Road",
+          "description_key": "node.road",
+          "asset_family_id": "default",
+          "tags": [],
+          "fields": {
+            "rate": 1,
+            "home_ref": "node.home"
+          }
+        }
+      ],
+      "hash": "29476a4e8ca3380bf329fee5b1afb736b8980b203054ac12a8e1237cdf184bb6",
+      "installed_routes": {
+        "route:A": {
+          "id": "route:A",
+          "factory_id": "building:factory_main",
+          "inputs": [
+            "woodland_renewable",
+            "ore_finite"
+          ],
+          "selected": true,
+          "available": true,
+          "blocked_by": "demon_cube"
+        },
+        "route:B": {
+          "id": "route:B",
+          "factory_id": "building:factory_main",
+          "inputs": [
+            "woodland_renewable",
+            "clay_renewable"
+          ],
+          "selected": false,
+          "available": false,
+          "modifier": "sluice_sabotage"
+        }
+      },
+      "production_modifiers": {
+        "sluice_sabotage": {
+          "modifier_id": "sluice_sabotage",
+          "target_id": "route:B",
+          "kind": "sluice_sabotage",
+          "active": true
+        }
+      },
+      "quest_templates": {
+        "quest.factory_shortage": {
+          "id": "quest.factory_shortage",
+          "schema_version": 1,
+          "version": 2,
+          "family": "village_production",
+          "required_cause": {
+            "kinds": [
+              "factory_output_shortage"
+            ]
+          },
+          "binding": {
+            "stakeholder_role": "worker"
+          },
+          "stages": [
+            {
+              "id": "offered",
+              "index": 0
+            },
+            {
+              "id": "investigate",
+              "index": 1
+            },
+            {
+              "id": "intervention",
+              "index": 2
+            },
+            {
+              "id": "acknowledged",
+              "index": 3
+            }
+          ],
+          "statuses": [
+            "offered",
+            "active",
+            "suspended",
+            "completed",
+            "resolved_by_world",
+            "failed_with_consequence"
+          ],
+          "solutions": [
+            {
+              "id": "demon_duel",
+              "restores": "route:A",
+              "acknowledgement": "dialogue.mara.route_a_complete",
+              "claims_demon_cleared": true
+            },
+            {
+              "id": "sluice_route",
+              "removes_modifier": "sluice_sabotage",
+              "enables": "route:B",
+              "sets": {
+                "sluice_open": true
+              },
+              "acknowledgement": "dialogue.mara.route_b_complete",
+              "claims_demon_cleared": false
+            }
+          ],
+          "world_resolved_route": {
+            "when": "cube_cleared_by_military",
+            "status": "resolved_by_world",
+            "acknowledgement": "dialogue.mara.world_resolved"
+          },
+          "invalid_target_route": {
+            "when": "factory_destroyed",
+            "status": "failed_with_consequence",
+            "branch": "displaced_loss",
+            "acknowledgement": "dialogue.mara.displaced_loss"
+          },
+          "ignore_route": {
+            "when": "player_leaves_without_intervention",
+            "status": "active",
+            "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+          },
+          "persistent_return": {
+            "dedupe_by": [
+              "template_id",
+              "cause_id",
+              "stakeholder_id"
+            ],
+            "preserve_on_leave": true,
+            "no_duplicate_reward": true
+          },
+          "dialogue_keys": {
+            "offer": "dialogue.mara.offer",
+            "demon": "dialogue.mara.demon_hint",
+            "sluice": "dialogue.mara.sluice_hint",
+            "world_resolved": "dialogue.mara.world_resolved",
+            "route_a_complete": "dialogue.mara.route_a_complete",
+            "route_b_complete": "dialogue.mara.route_b_complete",
+            "displaced_loss": "dialogue.mara.displaced_loss"
+          }
+        }
+      },
+      "causes": {
+        "schema_version": 1,
+        "active": {
+          "cause:1": {
+            "id": "cause:1",
+            "occurrence_key": "causeocc:49255eb73981afd6",
+            "template_id": "quest.factory_shortage",
+            "cause_kind": "factory_output_shortage",
+            "affected_entity_id": "building:factory_main",
+            "stakeholder_id": "person:2",
+            "site_id": "node:village",
+            "active": true,
+            "event": {
+              "kind": "factory_output_shortage",
+              "affected_entity_id": "building:factory_main",
+              "stakeholder_id": "person:2",
+              "site_id": "node:village",
+              "template_id": "quest.factory_shortage",
+              "output_rate": 0.0
+            },
+            "created_game_ms": 0
+          }
+        },
+        "resolved": {},
+        "index": {
+          "causeocc:49255eb73981afd6": "cause:1"
+        }
+      }
+    },
+    "rng": {
+      "streams": {
+        "ambient": {
+          "seed": "ambient:505",
+          "version": 1,
+          "draws": 0
+        },
+        "gameplay": {
+          "seed": 505,
+          "version": 1,
+          "draws": 0
+        }
+      }
+    },
+    "legacy_godot_world_tick_enabled": false,
+    "legacy_godot_world_save_enabled": false
+  }
+}

@@ -108,7 +108,7 @@
     "T093": "DONE",
     "T094": "DONE",
     "T095": "DONE",
-    "T096": "NOT_STARTED",
+    "T096": "DONE",
     "T097": "NOT_STARTED",
     "T098": "NOT_STARTED",
     "T099": "NOT_STARTED",
@@ -209,10 +209,12 @@
       "notes": "Joe manually accepted G04. Accepted implementation 75b7f53 is on main via merge 15eadbd. Historical FIX_REQUIRED/AWAITING_HUMAN repair notes retained in gates/G04 and handoffs. Progression to T077/G05 authorized. Ensemble-only commits 58ea2d2+6f7be0f remain separate follow-up."
     },
     "G05": {
-      "status": "NOT_READY",
+      "status": "AWAITING_HUMAN",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": null
+      "evidence": "tracking/gates/G05/packet.md",
+      "candidate_implementation": null,
+      "notes": "T096 prepared packet; automated gate checks PASS. Awaiting Joe explicit G05 PASS. Do not start T097."
     },
     "G06": {
       "status": "NOT_READY",

@@ -1,0 +1,94 @@
+{
+  "target": "G05",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "g05_cumulative_python",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.445,
+      "detail": ".................................                                        [100%]\n33 passed in 0.16s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/scenarios/test_village_quest.py",
+        "tests/scenarios/test_village_solutions.py",
+        "tests/sim/test_t088_inventory_use.py",
+        "tests/sim/test_t089_puzzles.py",
+        "tests/sim/test_t090_sluice.py",
+        "tests/sim/test_t091_duel_progression.py",
+        "tests/sim/test_t092_duel_recovery.py",
+        "tests/sim/test_t095_village_panel.py"
+      ]
+    },
+    {
+      "name": "g05_packet_files",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.005,
+      "detail": "12 evidence files valid",
+      "command": null
+    },
+    {
+      "name": "g05_fx_village_scenario",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.147,
+      "detail": "    \"mara_id\": \"person:2\",\n    \"factory_id\": \"building:factory_main\",\n    \"route_a_available\": false,\n    \"route_b_available\": false,\n    \"shortage\": true,\n    \"command_log\": []\n  },\n  \"world_id\": \"world:fx-village\",\n  \"quest_id\": \"quest:1\",\n  \"puzzle_id\": \"puzzle.sluice\",\n  \"same_engine\": true\n}",
+      "command": [
+        "/usr/bin/python3",
+        "tools/run_scenario.py",
+        "--fixture",
+        "FX-VILLAGE",
+        "--seed",
+        "505",
+        "--record",
+        "/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/fx_village_record.json"
+      ]
+    },
+    {
+      "name": "g05_validate_puzzles",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.104,
+      "detail": "validate_puzzles: PASS (puzzle.sluice)\n  TRACE default: solved=True route_b=True\n  TRACE box_near_plate: solved=True route_b=True",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "tools.content.validate_puzzles"
+      ]
+    },
+    {
+      "name": "g05_sidecar_smoke",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 1.242,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=38613\nG05_SMOKE_OK",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g05_smoke.gd"
+      ]
+    },
+    {
+      "name": "g04_regression_playable",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 12.258,
+      "detail": "G04_BATTLE_PLAYABLE_OK units=6 destroyed=unit:1\nG04_TRAVEL_CASUALTIES_OK count=2\nG04_BATTLE_TRAVEL_OK dest_units=0\nDMB_SIDECAR host=127.0.0.1 port=41289\nG04_HAZARD_WARD_UI_OK phase=1\nG04_HAZARD_PLAYABLE_OK retained_board cube=cube:1\nG04_SMOKE_OK battle_units=6\nG04_PLAYABLE_OK\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g04_playable.gd"
+      ]
+    }
+  ]
+}

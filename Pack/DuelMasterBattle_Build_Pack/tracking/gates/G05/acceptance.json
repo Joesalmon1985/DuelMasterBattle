@@ -1,0 +1,13 @@
+{
+  "gate": "G05",
+  "status": "AWAITING_HUMAN",
+  "accepted_by": null,
+  "accepted_build": null,
+  "candidate_branch": "feature/g05-village-quest",
+  "fixture": "FX-VILLAGE",
+  "seed": 505,
+  "launch": "bash tools/play_g05.sh",
+  "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
+  "notes": "Automated checks passed; human playtest required. Do not mark PASS from automation.",
+  "prepared_at": "2026-09-19T23:30:00Z"
+}
