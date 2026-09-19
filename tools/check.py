@@ -661,6 +661,16 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T082": lambda: [
+            _pytest("causes_binding", "tests/sim/test_t082_causes_binding.py"),
+        ],
+        "T083": lambda: [
+            _pytest("quest_runtime", "tests/sim/test_t083_quest_runtime.py"),
+            validate_evidence(
+                "quests_schema",
+                [ROOT / "content" / "schemas" / "quests.json"],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
