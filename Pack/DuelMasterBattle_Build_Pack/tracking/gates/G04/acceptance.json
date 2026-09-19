@@ -1,7 +1,7 @@
 {
   "gate": "G04",
   "status": "AWAITING_HUMAN",
-  "candidate_implementation": "0d853d79ad05efcf442bf016a45e2c086c45a64c",
+  "candidate_implementation": "a40b1cbe0db064c4e4e13c07bf7f44c61094587d",
   "repair": "U01-U08",
   "branch": "fix/g04-retained-ui",
   "accepted_by": null,
