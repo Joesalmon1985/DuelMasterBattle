@@ -1,7 +1,7 @@
 {
   "task_id": "T081",
   "status": "DONE",
-  "commit": null,
+  "commit": "52ff11768f274059f26e9fec61166336f1d231b7",
   "files": [
     "sim/dmb/narrative/conditions.py",
     "sim/dmb/core/effects.py",
@@ -17,7 +17,7 @@
   "source_rules": [
     "C10 typed effects",
     "C09 condition allowlist",
-    "GDD §§142, 145, 196"
+    "GDD \u00a7\u00a7142, 145, 196"
   ],
   "checks": [
     {
