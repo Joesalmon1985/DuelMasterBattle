@@ -1,7 +1,7 @@
 {
   "task_id": "T093",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "3e6afa8ef7796e7020482cf9fd346158160f7849",
   "files": [
     "godot_project/content/source/quests/shortage/factory_shortage.json",
     "godot_project/content/source/dialogue/shortage/mara_lines.json",
@@ -15,7 +15,7 @@
   ],
   "source_rules": [
     "C10 FX-VILLAGE both solutions",
-    "GDD §§141, 214, 227"
+    "GDD \u00a7\u00a7141, 214, 227"
   ],
   "checks": [
     {
