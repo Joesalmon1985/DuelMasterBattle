@@ -1,7 +1,7 @@
 {
   "task_id": "T089",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "694bba5b894f59f05468b8a3d27f768b0c5f2a00",
   "files": [
     "sim/dmb/adventure/puzzles.py",
     "sim/dmb/adventure/__init__.py",
@@ -17,7 +17,7 @@
   ],
   "source_rules": [
     "C10 PuzzleRegistry + PuzzleController",
-    "GDD §§73, 74, 188"
+    "GDD \u00a7\u00a773, 74, 188"
   ],
   "checks": [
     {
