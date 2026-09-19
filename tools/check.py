@@ -640,6 +640,13 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"T079_SEMANTIC_LABELS_OK",
             ),
         ],
+        "T080": lambda: [
+            _pytest("aspects", "tests/sim/test_t080_aspects.py"),
+            validate_evidence(
+                "aspect_content",
+                [ROOT / "godot_project" / "content" / "source" / "aspects" / "aspects.json"],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

@@ -1,0 +1,100 @@
+[
+  {
+    "id": "aspect.reason",
+    "schema_version": 1,
+    "kind": "aspect",
+    "era_id": "all",
+    "name_key": "Reason",
+    "fields": {
+      "aspect_id": "reason",
+      "fallibility": "overlooks_emotion",
+      "initial_score": 1,
+      "min": 0,
+      "max": 5
+    }
+  },
+  {
+    "id": "aspect.empathy",
+    "schema_version": 1,
+    "kind": "aspect",
+    "era_id": "all",
+    "name_key": "Empathy",
+    "fields": {
+      "aspect_id": "empathy",
+      "fallibility": "overtrusts",
+      "initial_score": 1,
+      "min": 0,
+      "max": 5
+    }
+  },
+  {
+    "id": "aspect.authority",
+    "schema_version": 1,
+    "kind": "aspect",
+    "era_id": "all",
+    "name_key": "Authority",
+    "fields": {
+      "aspect_id": "authority",
+      "fallibility": "overvalues_legitimacy",
+      "initial_score": 1,
+      "min": 0,
+      "max": 5
+    }
+  },
+  {
+    "id": "aspect.guile",
+    "schema_version": 1,
+    "kind": "aspect",
+    "era_id": "all",
+    "name_key": "Guile",
+    "fields": {
+      "aspect_id": "guile",
+      "fallibility": "suspects_too_much",
+      "initial_score": 1,
+      "min": 0,
+      "max": 5
+    }
+  },
+  {
+    "id": "aspect.resolve",
+    "schema_version": 1,
+    "kind": "aspect",
+    "era_id": "all",
+    "name_key": "Resolve",
+    "fields": {
+      "aspect_id": "resolve",
+      "fallibility": "persists_unwisely",
+      "initial_score": 1,
+      "min": 0,
+      "max": 5
+    }
+  },
+  {
+    "id": "aspect.curiosity",
+    "schema_version": 1,
+    "kind": "aspect",
+    "era_id": "all",
+    "name_key": "Curiosity",
+    "fields": {
+      "aspect_id": "curiosity",
+      "fallibility": "discounts_danger",
+      "initial_score": 1,
+      "min": 0,
+      "max": 5
+    }
+  },
+  {
+    "id": "aspect.wonder",
+    "schema_version": 1,
+    "kind": "aspect",
+    "era_id": "all",
+    "name_key": "Wonder",
+    "fields": {
+      "aspect_id": "wonder",
+      "fallibility": "overinterprets_patterns",
+      "initial_score": 1,
+      "min": 0,
+      "max": 5
+    }
+  }
+]
