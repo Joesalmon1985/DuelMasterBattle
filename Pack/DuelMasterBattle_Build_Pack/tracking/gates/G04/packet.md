@@ -4,7 +4,7 @@
 **Repair:** U01–U08 (`docs/DuelMasterBattle_G04_Reuse_Repair_Addendum.md`)  
 **Branch:** `fix/g04-retained-ui`  
 **Base:** `origin/feature/spellbook-ui` @ `454ccf1` + merge `origin/main` @ `441899b`  
-**Candidate:** see `git rev-parse HEAD` after the U08 stamp commit on this branch  
+**Candidate:** 0d853d79ad05efcf442bf016a45e2c086c45a64c
 **Platform (automated):** Windows 10, Godot 4.5.1 (local), Python 3.14 / project venv 3.11  
 
 ## What changed
