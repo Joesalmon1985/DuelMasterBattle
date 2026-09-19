@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DMBTypedEffect",
+  "type": "object",
+  "required": ["effect_id", "kind"],
+  "properties": {
+    "effect_id": {"type": "string", "minLength": 1},
+    "kind": {
+      "type": "string",
+      "enum": [
+        "destroy_unit",
+        "destroy_person",
+        "destroy_cart",
+        "destroy_building",
+        "apply_buff",
+        "relationship_change",
+        "knowledge_reveal",
+        "aspect_change",
+        "quest_transition",
+        "policy_commitment",
+        "diplomatic_agreement",
+        "item_transfer",
+        "production_modifier",
+        "conserved_stock_transfer",
+        "hazard_treatment",
+        "entity_relocation",
+        "history_fact"
+      ]
+    },
+    "target_id": {"type": "string"},
+    "condition": {"type": "object"},
+    "expected_world_version": {"type": "integer"},
+    "delta": {"type": "integer"},
+    "amount": {"type": "integer", "minimum": 1},
+    "good": {"type": "string"},
+    "from_store": {"type": "string"},
+    "to_store": {"type": "string"},
+    "mint": {"type": "boolean"},
+    "bypass_cart": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

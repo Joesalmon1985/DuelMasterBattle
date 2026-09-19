@@ -647,6 +647,20 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 [ROOT / "godot_project" / "content" / "source" / "aspects" / "aspects.json"],
             ),
         ],
+        "T081": lambda: [
+            _pytest(
+                "conditions_effects",
+                "tests/sim/test_t081_conditions_effects.py",
+                "tests/sim/test_t065_magic.py",
+            ),
+            validate_evidence(
+                "effects_schema",
+                [
+                    ROOT / "content" / "schemas" / "effects.json",
+                    ROOT / "godot_project" / "content" / "schemas" / "effects.json",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
