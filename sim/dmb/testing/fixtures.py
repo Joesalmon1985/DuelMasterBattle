@@ -1248,39 +1248,14 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
     }
     state.board["fx_village"] = dict(meta)
     state.board["era_id"] = "ancient"
-    # Primaries / factory building records (authoritative IDs).
-    for i, terrain in enumerate(["woodland", "ore_mountains", "clay_mountains", "fields", "grazing_land"]):
-        bid = f"building:primary:{i}"
-        state.buildings[bid] = {
-            "id": bid,
-            "node_id": node_id,
-            "slot_kind": "primary",
-            "slot_index": i,
-            "definition_id": "building.primary",
-            "terrain": terrain,
-            "active": True,
-            "status": "built",
-            "health": 100,
-            "max_health": 100,
-        }
-    state.buildings[factory_id] = {
-        "id": factory_id,
-        "node_id": node_id,
-        "slot_kind": "factory",
-        "slot_index": 0,
-        "definition_id": "building.factory",
-        "label": "Village factory",
-        "active": True,
-        "status": "built",
-        "health": 200,
-        "max_health": 200,
-        "output_rate": 0.0,
-    }
-    # Two installed routes; A selected but blocked by demon; B sabotaged.
+    # Real C06/G03 industry: channels, processors, factory routes (not stub output_rate).
+    _seed_fx_village_industry(sim, node_id=node_id, factory_id=factory_id, meta=meta)
+    # Quest metadata mirrors (not production authority).
     state.definitions["installed_routes"] = {
         "route:A": {
             "id": "route:A",
             "factory_id": factory_id,
+            "processor_id": "processor:route_a",
             "inputs": ["woodland_renewable", "ore_finite"],
             "selected": True,
             "available": False,
@@ -1289,6 +1264,7 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
         "route:B": {
             "id": "route:B",
             "factory_id": factory_id,
+            "processor_id": "processor:route_b",
             "inputs": ["woodland_renewable", "clay_renewable"],
             "selected": False,
             "available": False,
@@ -1299,30 +1275,49 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
         "sluice_sabotage": {
             "modifier_id": "sluice_sabotage",
             "target_id": "route:B",
+            "processor_id": "processor:route_b",
             "kind": "sluice_sabotage",
             "active": True,
         }
     }
-    # One demon cube on ore hex.
+    # Demon on ore hex — CatastropheService mirrors board.hazard_cubes for industrial_blocked.
+    demon_hex = str(meta.get("demon_hex") or "hex:ore")
+    from sim.dmb.hazards.service import CatastropheService
+
+    cat = CatastropheService(state)
+    # Stable cube id for G05 presentation / StartHazardDuel.
     state.hazards = {
         "catastrophe": {
             "cubes": {
                 "cube:demon": {
                     "id": "cube:demon",
-                    "hex_id": str(meta.get("demon_hex") or "hex:ore"),
+                    "hex_id": demon_hex,
                     "type": "demon",
                     "active": True,
                     "node_id": node_id,
+                    "cause_id": "cause:demon_ore",
                 }
-            }
+            },
+            "deck": [],
+            "discard": [],
+            "visited_outbreaks": [],
+            "era_outbreaks": 0,
+            "lifetime_outbreaks": 0,
+            "placement_ordinal": 0,
+            "cursor": 0,
         }
     }
-    state.board["hex_anchors"] = {str(meta.get("demon_hex") or "hex:ore"): {"grid": [14.0, 4.0]}}
+    state.board.setdefault("hazard_cubes", {})["cube:demon"] = {
+        "hex_id": demon_hex,
+        "active": True,
+        "type": "demon",
+        "node_id": node_id,
+    }
+    state.board["hex_anchors"] = {demon_hex: {"grid": [14.0, 4.0]}}
     # Visit ledger so Route A Challenge is eligible on launch.
     from sim.dmb.player.visits import VisitService
 
     VisitService(state).arrive(node_id, "travel", int(state.clock.get("turn") or 0))
-    demon_hex = str(meta.get("demon_hex") or "hex:ore")
     state.board.setdefault("node_adjacent_hexes", {})[node_id] = [demon_hex]
     state.board.setdefault("node_hexes", {})[node_id] = [demon_hex]
     # Persistent factory worker Mara.
@@ -1339,9 +1334,19 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
     )
     people.assign_job(mara["id"], "job.factory_worker", factory_id)
     people.promote_profile(mara["id"], anchor=True, role="worker")
-    # Real shortage: both routes unavailable → zero factory output.
-    state.buildings[factory_id]["output_rate"] = 0.0
-    state.buildings[factory_id]["shortage"] = True
+    # Industry tick with demon present → zero rates (shortage is computed, not assigned).
+    sim.industry.advance_quanta(1)
+    from sim.dmb.industry import fraction
+
+    rates = {}
+    for event in reversed(state.industry.get("events") or []):
+        if event.get("kind") == "industry_rates":
+            rates = event.get("rates") or {}
+            break
+    factory_rate = float(fraction(rates.get(factory_id) or 0))
+    state.buildings[factory_id]["shortage"] = factory_rate <= 0
+    # Presentation mirror of the last computed rate only — never used to restore production.
+    state.buildings[factory_id]["output_rate"] = factory_rate
     tracker = CauseTracker(state)
     binder = QuestBinder(state, tracker)
     binder.register_template(template)
@@ -1353,7 +1358,7 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
                 "stakeholder_id": mara["id"],
                 "site_id": node_id,
                 "template_id": template["id"],
-                "output_rate": 0.0,
+                "output_rate": factory_rate,
             }
         ]
     )
@@ -1365,6 +1370,270 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
     # Sluice puzzle + handle item for Route B presentation.
     _seed_fx_village_sluice(state, node_id)
     return sim
+
+
+def _seed_fx_village_industry(sim, *, node_id: str, factory_id: str, meta: dict) -> None:
+    """Install real PrimaryChannels / processors / FactoryRoute for FX-VILLAGE."""
+    from fractions import Fraction
+
+    from sim.dmb.industry.layers import ResourceLayerService
+    from sim.dmb.industry.primary import PrimaryChannel
+    from sim.dmb.industry.projection import IndustryProjection
+    from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
+    from sim.dmb.people.jobs import JobService
+
+    state = sim.state
+    demon_hex = str(meta.get("demon_hex") or "hex:ore")
+    layers = ResourceLayerService(state.industry)
+    woodland_layer = layers.create_layer(
+        "hex:woodland",
+        "ind.prehistoric.woodland.renewable",
+        "prehistoric",
+        0,
+        finite=False,
+    )
+    ore_layer = layers.create_layer(
+        demon_hex,
+        "ind.prehistoric.ore_mountains.finite",
+        "prehistoric",
+        0,
+        finite=True,
+    )
+    clay_layer = layers.create_layer(
+        "hex:clay",
+        "ind.prehistoric.clay_mountains.renewable",
+        "prehistoric",
+        0,
+        finite=False,
+    )
+    ch_wood = PrimaryChannel(
+        "channel:source:woodland:renewable",
+        "source:woodland",
+        node_id,
+        "woodland",
+        "prehistoric",
+        0,
+        "ind.prehistoric.woodland.renewable",
+        woodland_layer.layer_id,
+        False,
+        Fraction(1, 10),
+        True,
+    )
+    ch_ore = PrimaryChannel(
+        "channel:source:ore:finite",
+        "source:ore",
+        node_id,
+        "ore_mountains",
+        "prehistoric",
+        0,
+        "ind.prehistoric.ore_mountains.finite",
+        ore_layer.layer_id,
+        True,
+        Fraction(1, 10),
+        True,
+    )
+    ch_clay = PrimaryChannel(
+        "channel:source:clay:renewable",
+        "source:clay",
+        node_id,
+        "clay_mountains",
+        "prehistoric",
+        0,
+        "ind.prehistoric.clay_mountains.renewable",
+        clay_layer.layer_id,
+        False,
+        Fraction(1, 10),
+        True,
+    )
+    for channel in (ch_wood, ch_ore, ch_clay):
+        sim.industry.install_channel(channel)
+    # Route A processor (selected): woodland + ore — ore blocked by demon.
+    proc_a = ProcessorBinding(
+        "processor:route_a",
+        "recipe.prehistoric.pre_07",
+        "prehistoric",
+        ch_wood.channel_id,
+        ch_ore.channel_id,
+        active=True,
+    )
+    # Route B processor (sluice-sabotaged): woodland + clay — inactive until sluice open.
+    proc_b = ProcessorBinding(
+        "processor:route_b",
+        "recipe.prehistoric.pre_07",
+        "prehistoric",
+        ch_wood.channel_id,
+        ch_clay.channel_id,
+        active=False,
+        strike=False,
+        modifier=Fraction(0),
+    )
+    sim.industry.install_processor(proc_a)
+    sim.industry.install_processor(proc_b)
+    # Source buildings with hex_id so industrial_blocked applies to ore.
+    state.buildings["source:woodland"] = {
+        "id": "source:woodland",
+        "node_id": node_id,
+        "slot_kind": "primary",
+        "slot_index": 0,
+        "definition_id": "building.primary",
+        "label": "Woodland source",
+        "resource_name": "Timber",
+        "terrain": "woodland",
+        "hex_id": "hex:woodland",
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    state.buildings["source:ore"] = {
+        "id": "source:ore",
+        "node_id": node_id,
+        "slot_kind": "primary",
+        "slot_index": 1,
+        "definition_id": "building.primary",
+        "label": "Ore Mountains source",
+        "resource_name": "Ore",
+        "terrain": "ore_mountains",
+        "hex_id": demon_hex,
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    state.buildings["source:clay"] = {
+        "id": "source:clay",
+        "node_id": node_id,
+        "slot_kind": "primary",
+        "slot_index": 2,
+        "definition_id": "building.primary",
+        "label": "Clay Mountains source",
+        "resource_name": "Clay",
+        "terrain": "clay_mountains",
+        "hex_id": "hex:clay",
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    state.buildings[proc_a.building_id] = {
+        "id": proc_a.building_id,
+        "node_id": node_id,
+        "slot_kind": "processor",
+        "definition_id": "processor.prehistoric.pre_07",
+        "label": "Route A works",
+        "recipe_id": proc_a.recipe_id,
+        "health": 100,
+        "max_health": 100,
+        "active": True,
+        "status": "built",
+    }
+    state.buildings[proc_b.building_id] = {
+        "id": proc_b.building_id,
+        "node_id": node_id,
+        "slot_kind": "processor",
+        "definition_id": "processor.prehistoric.pre_07",
+        "label": "Route B works (sluice)",
+        "recipe_id": proc_b.recipe_id,
+        "health": 100,
+        "max_health": 100,
+        "active": False,
+        "status": "built",
+    }
+    state.buildings[factory_id] = {
+        "id": factory_id,
+        "node_id": node_id,
+        "slot_kind": "factory",
+        "slot_index": 0,
+        "definition_id": "building.factory",
+        "label": "Village factory",
+        "unit_def_id": "unit.ancient.skirmisher",
+        "health": 200,
+        "max_health": 200,
+        "active": True,
+        "status": "built",
+        "shortage": True,
+    }
+    # Selected route A (ore path). IndustryService keys one route per factory_id.
+    route_a = FactoryRoute(factory_id, proc_a.building_id, "unit.ancient.skirmisher", 2)
+    sim.industry.install_route(route_a)
+    sim.industry.factories.create(
+        factory_id,
+        node_id=node_id,
+        faction_id="faction:industry",
+        era="prehistoric",
+        unit_def_id="unit.ancient.skirmisher",
+    )
+    # Presentation layout for carriers (WorkerController).
+    state.board["fx_industry"] = {
+        "node_id": node_id,
+        "processor_id": proc_a.building_id,
+        "processor_ids": [proc_a.building_id, proc_b.building_id],
+        "factory_ids": [factory_id],
+        "output_id": "processed.prehistoric.pre_07",
+        "output_name": "Processed goods",
+        "selected_route": "route:A",
+        "layout": {
+            "sites": [
+                {
+                    "id": "source:woodland",
+                    "kind": "source",
+                    "label": "Woodland",
+                    "grid": [18, 20],
+                    "entrance": [18, 21],
+                    "color": "#2f7d32",
+                },
+                {
+                    "id": "source:ore",
+                    "kind": "source",
+                    "label": "Ore (ridge)",
+                    "grid": [14, 6],
+                    "entrance": [14, 7],
+                    "color": "#8a8f98",
+                },
+                {
+                    "id": "source:clay",
+                    "kind": "source",
+                    "label": "Clay",
+                    "grid": [10, 24],
+                    "entrance": [10, 25],
+                    "color": "#b87333",
+                },
+                {
+                    "id": "processor:route_a",
+                    "kind": "processor",
+                    "label": "Route A works",
+                    "grid": [22, 22],
+                    "entrance": [22, 23],
+                    "color": "#5a6a8a",
+                },
+                {
+                    "id": "processor:route_b",
+                    "kind": "processor",
+                    "label": "Route B works",
+                    "grid": [16, 26],
+                    "entrance": [16, 27],
+                    "color": "#6a5a4a",
+                },
+                {
+                    "id": factory_id,
+                    "kind": "factory",
+                    "label": "Village factory",
+                    "grid": [28, 26],
+                    "entrance": [28, 27],
+                    "color": "#4a4a5a",
+                },
+            ],
+            "assembly": {"grid": [24, 30], "label": "Yard"},
+        },
+    }
+    JobService(state).register_job(
+        "job:attendant:factory",
+        workplace_id=factory_id,
+        job_id="job:attendant",
+        node_id=node_id,
+        person_id=None,
+    )
+    IndustryProjection(state).sync_carrier_jobs()
 
 
 def _seed_fx_village_sluice(state, node_id: str) -> None:

@@ -213,11 +213,14 @@
       "accepted_by": null,
       "accepted_build": null,
       "evidence": "tracking/gates/G05/packet.md",
-      "candidate_implementation": null,
-      "fix_required_at": "2026-09-20T07:30:00Z",
-      "fix_summary": "Joe: play_g05.sh launches status-only g05_shell; not a playable village. Must reuse Overworld/VillageTestRunner presentation fed by Python FX-VILLAGE. Do not start T097.",
-      "repaired_at": "2026-09-20T08:30:00Z",
-      "notes": "Playable Overworld host repaired (Python overworld_area → VillageTestRunner → overworld.tscn). Joe must play; do not self-PASS; do not start T097."
+      "candidate_branch": "feature/g05-village-quest",
+      "fixture": "FX-VILLAGE",
+      "seed": 505,
+      "launch": "bash tools/play_g05.sh",
+      "fix_required_at": "2026-09-20T10:41:00Z",
+      "returned_awaiting_human_at": "2026-09-20T11:10:00Z",
+      "fix_summary": "Combined Overworld with ClockDriver/IndustryService/WorkerController/SyncPose/mouse; real industrial blockage/solutions; cumulative Godot test mandatory.",
+      "notes": "Automated gate checks PASS including g05_cumulative_runtime and G01\u2013G04 regressions. Manual play_g05 launch verified (OpenGL + sidecar). Do not start T097 until Joe PASSes G05."
     },
     "G06": {
       "status": "NOT_READY",

@@ -876,6 +876,11 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "res://client/tests/run_g05_playable.gd",
                 r"G05_PLAYABLE_OK",
             ),
+            _godot_script(
+                "g05_cumulative_runtime",
+                "res://client/tests/run_g05_cumulative.gd",
+                r"G05_CUMULATIVE_OK",
+            ),
         ],
     }
     if task in mapping:
@@ -1153,6 +1158,26 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g05_playable",
                 "res://client/tests/run_g05_playable.gd",
                 r"G05_PLAYABLE_OK",
+            ),
+            _godot_script(
+                "g05_cumulative_runtime",
+                "res://client/tests/run_g05_cumulative.gd",
+                r"G05_CUMULATIVE_OK",
+            ),
+            _godot_script(
+                "g03_regression_smoke",
+                "res://client/tests/run_g03_smoke.gd",
+                r"G03_SMOKE_OK",
+            ),
+            _godot_script(
+                "g02_regression_smoke",
+                "res://client/tests/run_g02_smoke.gd",
+                r"G02_SMOKE_OK",
+            ),
+            _godot_script(
+                "g01_regression_smoke",
+                "res://client/tests/run_g01_smoke.gd",
+                r"G01_SMOKE_OK",
             ),
             _godot_script(
                 "g04_regression_playable",

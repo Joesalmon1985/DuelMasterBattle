@@ -6,9 +6,11 @@ import json
 from pathlib import Path
 
 from sim.dmb.construction.buildings import BuildingService
-from sim.dmb.core.effects import apply_effect
+from sim.dmb.hazards.service import CatastropheService
+from sim.dmb.industry import fraction
 from sim.dmb.quests.runtime import QuestService
 from sim.dmb.testing.fixtures import load_fixture
+from sim.dmb.world.fx_village_solutions import apply_demon_solution
 
 FIXTURE = (
     Path(__file__).resolve().parents[2]
@@ -27,6 +29,15 @@ QUEST = (
     / "shortage"
     / "factory_shortage.json"
 )
+
+
+def _factory_rate(state, factory_id: str) -> float:
+    rates: dict = {}
+    for event in reversed((state.industry or {}).get("events") or []):
+        if event.get("kind") == "industry_rates":
+            rates = event.get("rates") or {}
+            break
+    return float(fraction(rates.get(factory_id) or 0))
 
 
 def test_fixture_content_present() -> None:
@@ -52,9 +63,11 @@ def test_quest_binds_real_person_and_factory_shortage() -> None:
     assert mara["workplace_id"] == factory_id
     assert mara["alive"] is True
     assert factory["shortage"] is True
-    assert float(factory["output_rate"]) == 0.0
+    assert _factory_rate(state, factory_id) == 0.0
+    assert float(factory.get("output_rate") or 0) == 0.0
     assert state.definitions["installed_routes"]["route:A"]["available"] is False
     assert state.definitions["installed_routes"]["route:B"]["available"] is False
+    assert "channel:source:ore:finite" in (state.industry or {}).get("channels", {})
     assert quest["stakeholder_id"] == mara_id
     assert quest["affected_entity_id"] == factory_id
     assert quest["status"] == "offered"
@@ -68,13 +81,10 @@ def test_demon_victory_restores_route_a() -> None:
     factory_id = fx["factory_id"]
     svc = QuestService(state)
     svc.accept(quest_id)
-    # Remove demon cube (duel victory path).
-    cube = state.hazards["catastrophe"]["cubes"]["cube:demon"]
-    cube["active"] = False
-    state.definitions["installed_routes"]["route:A"]["available"] = True
-    state.definitions["installed_routes"]["route:A"]["blocked_by"] = None
-    state.buildings[factory_id]["output_rate"] = 1.0
-    state.buildings[factory_id]["shortage"] = False
+    CatastropheService(state).remove_cube("cube:demon", authority="test")
+    applied = apply_demon_solution(state)
+    assert applied["computed_rate"] > 0.0
+    assert _factory_rate(state, factory_id) > 0.0
     out = svc.evaluate(
         quest_id,
         world_signals={"output_confirmed": True, "intervention": "demon_duel"},
@@ -82,7 +92,6 @@ def test_demon_victory_restores_route_a() -> None:
     assert out["status"] == "completed"
     assert state.quests[quest_id]["resolution"] == "demon_duel"
     assert state.definitions["installed_routes"]["route:A"]["available"] is True
-    assert float(state.buildings[factory_id]["output_rate"]) > 0.0
 
 
 def test_world_repair_acknowledges_correct_actor() -> None:

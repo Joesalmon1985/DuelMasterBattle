@@ -8,11 +8,8 @@
   "seed": 505,
   "launch": "bash tools/play_g05.sh",
   "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
-  "automated_checks": "PASS (tools/check.py --gate G05) — necessary, not decisive",
-  "repair": {
-    "from": "FIX_REQUIRED",
-    "at": "2026-09-20T08:30:00Z",
-    "summary": "Replaced status-shell with Overworld host fed by Python overworld_area; playable integration test required for gate prep."
-  },
-  "notes": "Do not mark PASS from automation. Do not start T097. Joe must physically play the village via bash tools/play_g05.sh."
+  "fix_required_at": "2026-09-20T10:41:00Z",
+  "returned_awaiting_human_at": "2026-09-20T11:10:00Z",
+  "fix_summary": "Combined Overworld presentation with ClockDriver/IndustryService/WorkerController/SyncPose/mouse; FX-VILLAGE uses real industrial blockage and solutions; cumulative G05 Godot test mandatory.",
+  "notes": "Do not mark PASS from automation. Do not start T097. Automated gate checks PASS including g05_cumulative_runtime and G01–G04 regressions."
 }

@@ -66,14 +66,27 @@ def export_overworld_area(
         building = state.buildings.get(bid) or {}
         label = str(building.get("label") or bid)
         is_factory = str(building.get("slot_kind") or "") == "factory" or "factory" in bid
-        if is_factory and (
-            bool(building.get("shortage")) or float(building.get("output_rate") or 0) <= 0
-        ):
-            label = f"{label} (quiet)"
-        elif is_factory:
-            label = f"{label} (working)"
+        if is_factory:
+            from sim.dmb.industry import fraction
+
+            rates: dict = {}
+            for event in reversed((state.industry or {}).get("events") or []):
+                if event.get("kind") == "industry_rates":
+                    rates = event.get("rates") or {}
+                    break
+            rate = float(fraction(rates.get(bid) or 0))
+            shortage = bool(building.get("shortage")) or rate <= 0
+            if shortage:
+                label = f"{label} (quiet)"
+            else:
+                label = f"{label} (working)"
         # Skip primary slots as interactive doors — keep factory + landmarks only.
         if str(building.get("slot_kind") or "") == "primary":
+            continue
+        if str(building.get("slot_kind") or "") == "processor":
+            # Processors are shown via industry layout / WorkerController, not duplicate doors.
+            continue
+        if str(bid).startswith("source:"):
             continue
         entities.append(
             {
@@ -196,6 +209,52 @@ def export_overworld_area(
                     "knowledge_key": str(item_id),
                     "interaction": "pickup",
                     "labels": [{"level": 0, "text": str(item.get("label") or "Item")}],
+                },
+            }
+        )
+
+    # Live carts / units from LocalProjectionService (durable IDs; WorkerController owns carriers).
+    for cart in view.get("carts") or []:
+        cid = str(cart.get("id") or "")
+        if not cid:
+            continue
+        grid = cart.get("grid") or [cx + 2, cy]
+        entities.append(
+            {
+                "kind": "deco",
+                "id": cid,
+                "pos": [int(grid[0]), int(grid[1])],
+                "marker": "box",
+                "bridge_entity": True,
+                "dynamic": True,
+                "semantic": {
+                    "knowledge_key": cid,
+                    "interaction": "cart",
+                    "labels": [{"level": 0, "text": "Cart"}],
+                },
+            }
+        )
+    for unit in view.get("units") or []:
+        uid = str(unit.get("id") or "")
+        if not uid:
+            continue
+        grid = unit.get("grid") or [cx - 2, cy]
+        unit_rec = (state.units or {}).get(uid) or {}
+        label = str(unit_rec.get("label") or unit_rec.get("definition_id") or "Unit")
+        entities.append(
+            {
+                "kind": "npc",
+                "id": uid,
+                "pos": [int(grid[0]), int(grid[1])],
+                "name": label,
+                "sprite": "soldier",
+                "facing": "down",
+                "bridge_entity": True,
+                "dynamic": True,
+                "semantic": {
+                    "knowledge_key": uid,
+                    "interaction": "unit",
+                    "labels": [{"level": 0, "text": label}],
                 },
             }
         )

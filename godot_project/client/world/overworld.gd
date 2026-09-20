@@ -68,6 +68,9 @@ var _anim_time: float = 0.0
 var _steps_taken: int = 0
 var _input_locked: bool = false
 var _held_dir: Vector2i = Vector2i.ZERO
+var _bridge_runtime = null  # G05 shell host when Python-backed
+var _mouse_steer_held := false
+var _pointer_on_entity := false
 
 var _entities: Array = []          # live entity dicts with "node" refs
 var _entity_at: Dictionary = {}    # Vector2i -> entity
@@ -99,6 +102,15 @@ func _adv() -> Node:
 
 func _sfx() -> Node:
 	return get_node_or_null("/root/Sfx")
+
+
+func set_bridge_runtime(host) -> void:
+	## G05 shell: clock/SyncPose/WorkerController owner.
+	_bridge_runtime = host
+
+
+func bridge_runtime():
+	return _bridge_runtime
 
 
 # ---------------------------------------------------------------------------------
@@ -593,21 +605,6 @@ func _bob(node: Node2D) -> void:
 # Movement
 # ---------------------------------------------------------------------------------
 
-func _unhandled_input(event: InputEvent) -> void:
-	if _is_empty_pointer_press(event):
-		# A label tap is consumed by the button. A leftover synthesised touch in
-		# the same frame must not clear the focus that tap just set.
-		if Engine.get_process_frames() != _semantic_press_frame:
-			_semantic_focus = ""
-		get_viewport().set_input_as_handled()
-		return
-	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode in [KEY_SPACE, KEY_ENTER, KEY_Z, KEY_E]:
-			_on_action()
-		elif event.keycode == KEY_ESCAPE:
-			_on_menu()
-
-
 func _process(delta: float) -> void:
 	_fire_time += delta
 	if _fire_time > 0.18:
@@ -620,7 +617,8 @@ func _process(delta: float) -> void:
 				f.texture = _tex(f.get_meta("frames")[_anim_frame])
 			else:
 				f.texture = _tex("props/fire_%d.png" % ((_anim_frame + int(f.position.x) / TPX) % 3))
-	_tick_workers(delta)
+	if not _VRunner.is_bridge_mode():
+		_tick_workers(delta)
 	_tick_kit(delta)
 	if _moving:
 		_move_t += delta / STEP_SECONDS
@@ -706,6 +704,8 @@ func _arrived() -> void:
 		_arrived_kit()
 		return
 	_adv().set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
+	if _VRunner.is_bridge_mode() and _bridge_runtime != null and _bridge_runtime.has_method("notify_local_step"):
+		_bridge_runtime.notify_local_step()
 	_update_prompt()
 	for e in _entities:
 		match e["kind"]:
@@ -1805,7 +1805,72 @@ func _movement_input() -> Vector2i:
 	var key := _keyboard_dir()
 	if key != Vector2i.ZERO:
 		return key
-	return _held_dir
+	if _held_dir != Vector2i.ZERO:
+		return _held_dir
+	if _VRunner.is_bridge_mode():
+		return _mouse_steer_dir()
+	return Vector2i.ZERO
+
+
+func _mouse_steer_dir() -> Vector2i:
+	## G03 fx_clock_area parity: LMB hold on empty world steers John (grid dominant axis).
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_mouse_steer_held = false
+		return Vector2i.ZERO
+	if _gui_blocks_world_pointer():
+		return Vector2i.ZERO
+	if _pointer_on_entity:
+		return Vector2i.ZERO
+	_mouse_steer_held = true
+	var mouse := get_global_mouse_position()
+	var john_center := _john.global_position + Vector2(TPX * 0.5, TPX * 0.5)
+	var delta_v := mouse - john_center
+	if delta_v.length() < 18.0:
+		return Vector2i.ZERO
+	if absf(delta_v.x) >= absf(delta_v.y):
+		return Vector2i(1 if delta_v.x > 0 else -1, 0)
+	return Vector2i(0, 1 if delta_v.y > 0 else -1)
+
+
+func _gui_blocks_world_pointer() -> bool:
+	var hovered = get_viewport().gui_get_hovered_control()
+	if hovered == null:
+		return false
+	# Touch pad / dialogue / semantic focus / inventory chrome.
+	var n: Control = hovered
+	while n != null:
+		var nm := str(n.name)
+		if nm in ["TouchPad", "UIRoot", "SemanticFocus", "SemanticFocusRoot", "Dialogue", "SpellHost", "DuelHost"]:
+			return true
+		if n.mouse_filter == Control.MOUSE_FILTER_STOP and n is Button:
+			return true
+		n = n.get_parent() as Control
+	return false
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		_pointer_on_entity = _entity_under_pointer(event.position) != null
+	if _is_empty_pointer_press(event):
+		if Engine.get_process_frames() != _semantic_press_frame:
+			_semantic_focus = ""
+		# Do not consume — mouse steer needs the button held in _process.
+		if not (_VRunner.is_bridge_mode() and event is InputEventMouseButton):
+			get_viewport().set_input_as_handled()
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode in [KEY_SPACE, KEY_ENTER, KEY_Z, KEY_E]:
+			_on_action()
+		elif event.keycode == KEY_ESCAPE:
+			_on_menu()
+
+
+func _entity_under_pointer(screen_pos: Vector2) -> Variant:
+	var world := get_canvas_transform().affine_inverse() * screen_pos
+	var cell := Vector2i(int(floor(world.x / float(TPX))), int(floor(world.y / float(TPX))))
+	if _entity_at.has(cell):
+		return _entity_at[cell]
+	return null
 
 
 func _poll_move_dismiss_arm() -> void:
@@ -2761,9 +2826,12 @@ func _interact_bridge_npc(e: Dictionary) -> void:
 	var choices: Array = payload.get("choices", [])
 	var pause_token := ""
 	if choices.size() > 0:
-		var pause_reply: Dictionary = _VRunner.bridge_command("pause-dlg", "Pause", {"reason": "choice"})
-		if str(pause_reply.get("status", "")) == "ACCEPTED":
-			pause_token = str(pause_reply.get("payload", {}).get("token", ""))
+		if _bridge_runtime != null and _bridge_runtime.has_method("acquire_pause"):
+			pause_token = str(_bridge_runtime.acquire_pause("choice"))
+		else:
+			var pause_reply: Dictionary = _VRunner.bridge_command("pause-dlg", "Pause", {"reason": "choice"})
+			if str(pause_reply.get("status", "")) == "ACCEPTED":
+				pause_token = str(pause_reply.get("payload", {}).get("token", ""))
 	await _dialogue.say_async(speaker, text)
 	if choices.size() > 0 and not _present_cancelled:
 		var labels: Array = []
@@ -2795,7 +2863,10 @@ func _interact_bridge_npc(e: Dictionary) -> void:
 			{"action": "close_dialogue", "session_id": str(session.get("id", ""))}
 		)
 	if pause_token != "":
-		_VRunner.bridge_command("resume-dlg", "Resume", {"token": pause_token})
+		if _bridge_runtime != null and _bridge_runtime.has_method("release_pause"):
+			_bridge_runtime.release_pause()
+		else:
+			_VRunner.bridge_command("resume-dlg", "Resume", {"token": pause_token})
 	_input_locked = false
 	_touch.set_enabled(true)
 	_update_prompt()

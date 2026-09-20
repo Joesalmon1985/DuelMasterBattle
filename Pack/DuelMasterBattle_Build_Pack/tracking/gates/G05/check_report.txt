@@ -1,0 +1,12 @@
+G05 check_report status=PASS
+
+PASS g05_cumulative_python
+PASS g05_packet_files
+PASS g05_fx_village_scenario
+PASS g05_validate_puzzles
+PASS g05_playable
+PASS g05_cumulative_runtime
+PASS g03_regression_smoke
+PASS g02_regression_smoke
+PASS g01_regression_smoke
+PASS g04_regression_playable
