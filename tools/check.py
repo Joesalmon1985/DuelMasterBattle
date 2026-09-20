@@ -872,9 +872,9 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 )
             ),
             _godot_script(
-                "g05_smoke",
-                "res://client/tests/run_g05_smoke.gd",
-                r"G05_SMOKE_OK",
+                "g05_playable",
+                "res://client/tests/run_g05_playable.gd",
+                r"G05_PLAYABLE_OK",
             ),
         ],
     }
@@ -1150,9 +1150,9 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 r"validate_puzzles: PASS",
             ),
             _godot_script(
-                "g05_sidecar_smoke",
-                "res://client/tests/run_g05_smoke.gd",
-                r"G05_SMOKE_OK",
+                "g05_playable",
+                "res://client/tests/run_g05_playable.gd",
+                r"G05_PLAYABLE_OK",
             ),
             _godot_script(
                 "g04_regression_playable",

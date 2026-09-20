@@ -436,12 +436,18 @@ class PuzzleService:
             "effects": applied,
         }
         lease["version"] = int(lease["version"]) + 1
+        village = None
+        if (self.state.board or {}).get("fx_village") and str(lease.get("puzzle_id")) == "puzzle.sluice":
+            from sim.dmb.world.fx_village_solutions import apply_sluice_solution
+
+            village = apply_sluice_solution(self.state)
         return {
             "status": "applied",
             "finish_id": finish_id,
             "effects": applied,
             "lease": dict(lease),
             "version": lease["version"],
+            "fx_village": village,
         }
 
     def release(self, lease_id: str) -> dict[str, Any]:

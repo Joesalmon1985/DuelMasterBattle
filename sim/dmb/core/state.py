@@ -19,6 +19,16 @@ def _freeze(value: Any) -> Any:
     return value
 
 
+def _overworld_area_view(state: "WorldState") -> dict[str, Any]:
+    """Presentation area dict for Overworld; empty when not an FX-VILLAGE world."""
+    fx = state.board.get("fx_village") if isinstance(state.board, dict) else None
+    if not fx:
+        return {}
+    from sim.dmb.world.overworld_export import export_overworld_area
+
+    return export_overworld_area(state)
+
+
 @dataclass
 class WorldState:
     world_id: WorldId
@@ -148,6 +158,10 @@ class WorldState:
             "leases": lambda: deepcopy(self.leases),
             "command_receipts": lambda: deepcopy(self.command_receipts),
             "knowledge_raw": lambda: deepcopy(self.knowledge),
+            "fx_village": lambda: deepcopy(self.board.get("fx_village") or {}),
+            "overworld_area": lambda: _overworld_area_view(self),
+            "items": lambda: deepcopy(self.items),
+            "quests": lambda: deepcopy(self.quests),
         }
         if scope == "economy":
             # Lean inspector default: exclude receipts / raw knowledge / leases.

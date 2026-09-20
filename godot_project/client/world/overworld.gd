@@ -967,6 +967,9 @@ func _spawn_water_burst(at: Vector2i) -> void:
 
 
 func _interact_pickup(e: Dictionary) -> void:
+	if _VRunner.is_bridge_mode() and bool(e.get("bridge_pickup", false)):
+		await _interact_bridge_pickup(e)
+		return
 	var adv := _adv()
 	var grant: Dictionary = e.get("grant", {})
 	if e.has("dungeon_reward"):
@@ -1035,6 +1038,9 @@ func _interact_pickup(e: Dictionary) -> void:
 func _interact_npc(e: Dictionary) -> void:
 	var adv := _adv()
 	var id := str(e["id"])
+	if _VRunner.is_bridge_mode() and bool(e.get("bridge_talk", false)):
+		await _interact_bridge_npc(e)
+		return
 	if _VRunner.is_active() and e.has("village_test_story"):
 		await _interact_village_npc(e)
 		return
@@ -1099,6 +1105,9 @@ func _face_npc_toward_john(e: Dictionary) -> void:
 
 
 func _interact_enemy(e: Dictionary) -> void:
+	if _VRunner.is_bridge_mode() and bool(e.get("bridge_challenge", false)):
+		await _interact_bridge_challenge(e)
+		return
 	var adv := _adv()
 	var enemy := DmbBestiary.get_data(str(e["enemy_id"]))
 	if e["kind"] == "wizard" and adv.marked("defeated", str(e["id"])):
@@ -1870,6 +1879,9 @@ func _perform_entity_action(e: Dictionary) -> void:
 		return
 	if _VRunner.is_active() and e.has("village_quest_node"):
 		await _interact_village_anchor(e)
+		return
+	if _VRunner.is_bridge_mode() and bool(e.get("bridge_entity", false)):
+		await _interact_bridge_entity(e)
 		return
 	match str(e.get("kind", "")):
 		"sign", "door", "logs", "corpse":
@@ -2724,7 +2736,215 @@ func _finish_village_build(at: Vector2i, facing: String) -> void:
 	_update_prompt()
 
 
+func _bridge_host():
+	return _VRunner.bridge_host()
+
+
+func _interact_bridge_npc(e: Dictionary) -> void:
+	var host = _bridge_host()
+	var id := str(e["id"])
+	_input_locked = true
+	_touch.set_enabled(false)
+	_face_npc_toward_john(e)
+	var reply: Dictionary = {}
+	if host != null and host.has_method("talk_to"):
+		reply = host.talk_to(id)
+	else:
+		reply = _VRunner.bridge_command("talk-%s" % id, "Interact", {"action": "talk", "entity_id": id})
+	var payload: Dictionary = reply.get("payload", {}) if typeof(reply.get("payload", {})) == TYPE_DICTIONARY else {}
+	var text := str(payload.get("text", reply.get("public_feedback", "")))
+	var speaker := str(payload.get("speaker_name", e.get("name", "Worker")))
+	if text == "":
+		text = "…"
+	# Formal dialogue: Pause Game Time while choices are open.
+	var session: Dictionary = payload.get("session", {}) if typeof(payload.get("session", {})) == TYPE_DICTIONARY else {}
+	var choices: Array = payload.get("choices", [])
+	var pause_token := ""
+	if choices.size() > 0:
+		var pause_reply: Dictionary = _VRunner.bridge_command("pause-dlg", "Pause", {"reason": "choice"})
+		if str(pause_reply.get("status", "")) == "ACCEPTED":
+			pause_token = str(pause_reply.get("payload", {}).get("token", ""))
+	await _dialogue.say_async(speaker, text)
+	if choices.size() > 0 and not _present_cancelled:
+		var labels: Array = []
+		for c in choices:
+			if typeof(c) == TYPE_DICTIONARY:
+				labels.append(str(c.get("label", c.get("id", "…"))))
+			else:
+				labels.append(str(c))
+		labels.append("Walk away")
+		var picked: String = await _dialogue.choose_async("Respond", labels)
+		if picked != "Walk away" and picked != "":
+			var choice_id := ""
+			for c in choices:
+				if typeof(c) == TYPE_DICTIONARY and str(c.get("label", "")) == picked:
+					choice_id = str(c.get("id", ""))
+					break
+			if choice_id != "":
+				var choose_reply: Dictionary = _VRunner.bridge_command(
+					"choose-%s" % choice_id,
+					"Interact",
+					{"action": "choose_dialogue", "session_id": str(session.get("id", "")), "choice_id": choice_id}
+				)
+				var next_text := str(choose_reply.get("payload", {}).get("session", {}).get("text", choose_reply.get("public_feedback", "")))
+				if next_text != "":
+					await _dialogue.say_async(speaker, next_text)
+		_VRunner.bridge_command(
+			"close-dlg",
+			"Interact",
+			{"action": "close_dialogue", "session_id": str(session.get("id", ""))}
+		)
+	if pause_token != "":
+		_VRunner.bridge_command("resume-dlg", "Resume", {"token": pause_token})
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _interact_bridge_challenge(e: Dictionary) -> void:
+	var host = _bridge_host()
+	var cube_id := str(e.get("cube_id", e.get("id", "")))
+	_input_locked = true
+	_touch.set_enabled(false)
+	await _dialogue.say_async("", "A ridge manifestation blocks the ore path.")
+	var choice: String = await _dialogue.choose_async("Challenge the manifestation?", ["Challenge", "Walk away"])
+	if choice == "Challenge" and host != null and host.has_method("start_demon_challenge"):
+		host.start_demon_challenge(cube_id)
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _interact_bridge_pickup(e: Dictionary) -> void:
+	var host = _bridge_host()
+	_input_locked = true
+	_touch.set_enabled(false)
+	var reply: Dictionary = {}
+	if host != null and host.has_method("pickup_item"):
+		reply = host.pickup_item(str(e["id"]))
+	else:
+		reply = _VRunner.bridge_command("pickup", "Interact", {"action": "pickup", "item_id": str(e["id"])})
+	await _dialogue.say_async("", str(reply.get("public_feedback", "Taken.")))
+	if host != null and host.has_method("reproject_from_python"):
+		host.reproject_from_python()
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _interact_bridge_entity(e: Dictionary) -> void:
+	var host = _bridge_host()
+	if bool(e.get("bridge_enter", false)) or str(e.get("dungeon_id", "")) == "dungeon.sluice":
+		_input_locked = true
+		_touch.set_enabled(false)
+		await _dialogue.say_async("", str(e.get("text", "Sluice works")))
+		if host != null and host.has_method("enter_sluice"):
+			host.enter_sluice()
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	if bool(e.get("bridge_return_village", false)) or str(e.get("to_area", "")) == "area.village":
+		_input_locked = true
+		_touch.set_enabled(false)
+		if host != null and host.has_method("return_village"):
+			host.return_village()
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	if bool(e.get("bridge_puzzle", false)):
+		await _interact_bridge_puzzle(e)
+		return
+	if bool(e.get("bridge_pickup", false)):
+		await _interact_bridge_pickup(e)
+		return
+	# Factory / building observe — no debug causal facts.
+	var label := str(e.get("text", ""))
+	if label == "":
+		label = "A quiet worksite."
+	await _dialogue.say_async("", label)
+
+
+func _interact_bridge_puzzle(e: Dictionary) -> void:
+	var host = _bridge_host()
+	var mid := str(e.get("mechanism_id", e.get("id", "")))
+	var kind := str(e.get("mechanism_kind", ""))
+	var lease_id := str(e.get("lease_id", _VRunner.get_area().get("puzzle_lease_id", "")))
+	var lease_version := int(e.get("lease_version", _VRunner.get_area().get("puzzle_lease_version", 1)))
+	_input_locked = true
+	_touch.set_enabled(false)
+	var options: Array = ["Inspect"]
+	var default_action := "toggle"
+	if kind == "movable_box":
+		options = ["Push", "Inspect"]
+		default_action = "push"
+	elif kind == "item_receptor":
+		options = ["Place handle", "Inspect"]
+		default_action = "place"
+	elif kind == "gate":
+		options = ["Open", "Inspect"]
+		default_action = "open"
+	elif kind == "switch":
+		options = ["Activate", "Inspect"]
+		default_action = "on"
+	options.append("Walk away")
+	var picked: String = await _dialogue.choose_async(str(e.get("text", mid)), options)
+	if picked == "Walk away" or picked == "Inspect" or picked == "":
+		if picked == "Inspect":
+			await _dialogue.say_async("", str(e.get("text", mid)))
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	var mech_action := default_action
+	if picked == "Push":
+		mech_action = "push"
+	elif picked == "Place handle":
+		mech_action = "place"
+	elif picked == "Open":
+		mech_action = "open"
+	elif picked == "Activate":
+		mech_action = "on"
+	var item_id := ""
+	if mech_action == "place":
+		item_id = "item:sluice_handle"
+	var reply: Dictionary = {}
+	if mech_action == "push":
+		reply = _VRunner.bridge_command(
+			"push-%s" % mid,
+			"Interact",
+			{"action": "puzzle_push", "lease_id": lease_id, "mechanism_id": mid, "expected_version": lease_version}
+		)
+	elif host != null and host.has_method("puzzle_act"):
+		reply = host.puzzle_act(lease_id, mid, mech_action, lease_version, item_id)
+	else:
+		var payload := {
+			"action": "puzzle_act",
+			"lease_id": lease_id,
+			"mechanism_id": mid,
+			"mechanism_action": mech_action,
+			"expected_version": lease_version,
+		}
+		if item_id != "":
+			payload["item_id"] = item_id
+		reply = _VRunner.bridge_command("puzzle-%s" % mid, "Interact", payload)
+	await _dialogue.say_async("", str(reply.get("public_feedback", "Done.")))
+	var finish: Dictionary = reply.get("payload", {}).get("finish", {}) if typeof(reply.get("payload", {})) == TYPE_DICTIONARY else {}
+	if str(finish.get("status", "")) == "applied" or bool(reply.get("payload", {}).get("solved_now", false)):
+		_VRunner.bridge_command("confirm-quest", "Interact", {"action": "confirm_village_quest"})
+	if host != null and host.has_method("reproject_from_python"):
+		host.reproject_from_python()
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
 ## Leave the village test session: restore the exact pre-test campaign snapshot.
 func _exit_village_test() -> void:
+	if _VRunner.is_bridge_mode():
+		# Hosted under G05 shell — do not bounce to Village Test Menu.
+		_VRunner.end(_adv())
+		return
 	_VRunner.end(_adv())
 	get_tree().change_scene_to_file("res://client/scenes/village_test_menu.tscn")

@@ -29,6 +29,11 @@ static var _show_entity_ids := false
 static var _gen: Dictionary = {}          # {"seed", "node", "turns"} or empty
 static var _gen_sim: DmbWorldSim = null
 static var _review_facing := ""
+## Python-backed FX-VILLAGE / G05: presentation only; no Godot world sim owner.
+static var _bridge_mode := false
+static var _bridge_cmd: Callable = Callable()
+static var _bridge_view: Callable = Callable()
+static var _bridge_host: Node = null
 
 const _SOLID_TILES := ["T", "#", "R", "f", "~", "r", " ", "X", "t"]
 const _REVIEW_VIEW := Vector2(720, 1280)
@@ -36,6 +41,7 @@ const _REVIEW_TPX := 64
 
 const GEN_PREFIX := "gen:"
 const DEFAULT_TURNS := 30
+const FX_VILLAGE_PROFILE := "FX-VILLAGE"
 
 
 static func get_profile() -> String:
@@ -48,11 +54,56 @@ static func set_profile(profile_id: String) -> void:
     _initial_area = {}
     _gen = {}
     _gen_sim = null
+    _bridge_mode = false
     _QuestRunner.clear()
     if selected_profile.begins_with(GEN_PREFIX):
         var parts := selected_profile.substr(GEN_PREFIX.length()).split(":")
         if parts.size() >= 2:
             _gen = {"seed": int(parts[0]), "node": int(parts[1]), "turns": int(parts[2]) if parts.size() > 2 else DEFAULT_TURNS}
+
+
+## Install a Python-exported Overworld area (G05 FX-VILLAGE). Skips Godot projection.
+static func set_prepared_area(area: Dictionary, profile_id: String = FX_VILLAGE_PROFILE) -> void:
+    selected_profile = profile_id
+    _gen = {}
+    _gen_sim = null
+    _QuestRunner.clear()
+    _area = area.duplicate(true)
+    _initial_area = area.duplicate(true)
+    _bridge_mode = bool(area.get("bridge_mode", true))
+    _review_facing = str(area.get("player_facing", "down"))
+
+
+static func replace_area(area: Dictionary) -> void:
+    _area = area.duplicate(true)
+    if _initial_area.is_empty():
+        _initial_area = area.duplicate(true)
+
+
+static func set_bridge_hooks(cmd: Callable, view: Callable = Callable(), host: Node = null) -> void:
+    _bridge_cmd = cmd
+    _bridge_view = view
+    _bridge_host = host
+
+
+static func is_bridge_mode() -> bool:
+    return _bridge_mode and selected_profile != "" and not _area.is_empty()
+
+
+static func bridge_command(command_id: String, kind: String, payload: Dictionary = {}) -> Dictionary:
+    if _bridge_cmd.is_valid():
+        return _bridge_cmd.call(command_id, kind, payload)
+    return {}
+
+
+static func bridge_view(scope: String = "player", fields: Array = []) -> Dictionary:
+    if _bridge_view.is_valid():
+        return _bridge_view.call(scope, fields)
+    return {}
+
+
+static func bridge_host() -> Node:
+    return _bridge_host
 
 
 ## Select a production settlement by world seed + node (+ turns advanced).
@@ -122,10 +173,17 @@ static func clear() -> void:
     _gen = {}
     _gen_sim = null
     _review_facing = ""
+    _bridge_mode = false
+    _bridge_cmd = Callable()
+    _bridge_view = Callable()
+    _bridge_host = null
     _QuestRunner.clear()
 
 
 static func has_pending() -> bool:
+    # Bridge prepared areas stay pending until begin() snapshots the session.
+    if _bridge_mode and not _area.is_empty() and not _has_saved_session:
+        return true
     return selected_profile != "" and _area.is_empty()
 
 
@@ -145,6 +203,8 @@ static func isolates_campaign_story() -> bool:
 
 static func get_area() -> Dictionary:
     if _area.is_empty():
+        if _bridge_mode:
+            return {}
         _area = _project()
         _initial_area = _area.duplicate(true)
     return _area
@@ -207,6 +267,15 @@ static func _seed_prereqs(adv: Node, area: Dictionary) -> void:
     adv.state["village_test_profile"] = selected_profile
     adv.state["village_test_area_id"] = area.get("id", "")
     adv.state["village_test_quest"] = area.get("quest_id", "")
+    if _bridge_mode:
+        # Python owns durable world — do not hand Adventure a Godot DmbWorldSim.
+        adv.state["area"] = str(area.get("id", ""))
+        adv.state["pos"] = area.get("player_start", [0, 0]).duplicate()
+        adv.state["facing"] = session_facing()
+        for f in ["opening_seen", "jane_placeholder_seen"]:
+            adv.set_flag(f)
+        adv.state["story"]["phase"] = "pre_trial"
+        return
     if is_generated():
         # The production Overworld reads the world through WorldFlow, which
         # restores DmbWorldSim from adv.state["world"]: hand it the very sim the

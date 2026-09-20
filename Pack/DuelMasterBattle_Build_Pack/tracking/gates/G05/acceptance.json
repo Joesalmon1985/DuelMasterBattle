@@ -8,7 +8,11 @@
   "seed": 505,
   "launch": "bash tools/play_g05.sh",
   "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
-  "notes": "Automated checks passed; human playtest required. Do not mark PASS from automation.",
-  "prepared_at": "2026-09-19T23:30:00Z",
-  "candidate_implementation": "2c7ea8aef3af33a8e512a8bfaa5b5bc34b2acbca"
+  "automated_checks": "PASS (tools/check.py --gate G05) — necessary, not decisive",
+  "repair": {
+    "from": "FIX_REQUIRED",
+    "at": "2026-09-20T08:30:00Z",
+    "summary": "Replaced status-shell with Overworld host fed by Python overworld_area; playable integration test required for gate prep."
+  },
+  "notes": "Do not mark PASS from automation. Do not start T097. Joe must physically play the village via bash tools/play_g05.sh."
 }

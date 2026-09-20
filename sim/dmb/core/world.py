@@ -432,8 +432,188 @@ class WorldSim:
         from sim.dmb.narrative.knowledge import KnowledgeFact, filter_entity, reveal
 
         payload = envelope.payload
+        action = str(payload.get("action") or "")
+        if action == "confirm_village_quest":
+            from sim.dmb.world.fx_village_solutions import confirm_pending_quest
+
+            out = confirm_pending_quest(self.state) or {"status": "noop"}
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "quest_confirm", "payload": out}],
+                payload=out,
+                public_feedback=str(out.get("status") or "confirmed"),
+            )
+        if action == "pickup":
+            from sim.dmb.player.inventory import InventoryService
+
+            item_id = str(payload.get("item_id") or payload.get("entity_id") or "")
+            try:
+                item = InventoryService(self.state).pickup(item_id)
+            except Exception as exc:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback=str(exc),
+                )
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "pickup", "item_id": item_id}],
+                payload=item,
+                public_feedback=f"picked up {item.get('label') or item_id}",
+            )
+        if action == "drop":
+            from sim.dmb.player.inventory import InventoryService
+
+            item_id = str(payload.get("item_id") or payload.get("entity_id") or "")
+            area_id = str(payload.get("area_id") or self.state.player.get("area_id") or "area.village")
+            position = payload.get("position") or self.state.player.get("position") or [0, 0]
+            try:
+                item = InventoryService(self.state).drop(
+                    item_id, area_id=area_id, position=[float(position[0]), float(position[1])]
+                )
+            except Exception as exc:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback=str(exc),
+                )
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "drop", "item_id": item_id}],
+                payload=item,
+                public_feedback=f"dropped {item.get('label') or item_id}",
+            )
+        if action == "enter_sluice":
+            self.state.player["area_id"] = "area.sluice"
+            self.state.player["position"] = [8.0, 9.0]
+            from sim.dmb.adventure.puzzles import PuzzleService
+            from sim.dmb.world.overworld_export import export_sluice_area
+
+            lease = PuzzleService(self.state).prepare_lease("puzzle.sluice", area_id="area.sluice")
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "enter_sluice"}],
+                payload={"area": export_sluice_area(self.state), "lease": lease},
+                public_feedback="entered sluice works",
+            )
+        if action == "return_village":
+            fx = self.state.board.get("fx_village") or {}
+            self.state.player["area_id"] = "area.village"
+            self.state.player["node_id"] = str(fx.get("node_id") or "node:village")
+            self.state.player["position"] = [28.0, 32.0]
+            from sim.dmb.world.overworld_export import export_overworld_area
+
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "return_village"}],
+                payload={"area": export_overworld_area(self.state)},
+                public_feedback="returned to village",
+            )
+        if action == "puzzle_act":
+            from sim.dmb.adventure.puzzles import PuzzleService
+
+            lease_id = str(payload.get("lease_id") or "")
+            mechanism_id = str(payload.get("mechanism_id") or payload.get("entity_id") or "")
+            mech_action = str(payload.get("mechanism_action") or payload.get("op") or "toggle")
+            expected = int(payload.get("expected_version") or payload.get("lease_version") or 0)
+            item_id = payload.get("item_id")
+            try:
+                out = PuzzleService(self.state).act(
+                    lease_id,
+                    expected_version=expected,
+                    mechanism_id=mechanism_id,
+                    action=mech_action,
+                    item_id=str(item_id) if item_id else None,
+                )
+            except Exception as exc:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback=str(exc),
+                )
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "puzzle_act", "mechanism_id": mechanism_id}],
+                payload=out,
+                public_feedback=str(out.get("status") or "acted"),
+            )
+        if action == "puzzle_push":
+            from sim.dmb.adventure.puzzles import PuzzleService
+
+            lease_id = str(payload.get("lease_id") or "")
+            mechanism_id = str(payload.get("mechanism_id") or payload.get("entity_id") or "")
+            expected = int(payload.get("expected_version") or payload.get("lease_version") or 0)
+            position = payload.get("position")
+            try:
+                if position is not None:
+                    out = PuzzleService(self.state).sync_local_pose(
+                        lease_id,
+                        expected_version=expected,
+                        actor_id=mechanism_id,
+                        position=[float(position[0]), float(position[1])],
+                        kind="movable_box",
+                    )
+                else:
+                    out = PuzzleService(self.state).act(
+                        lease_id,
+                        expected_version=expected,
+                        mechanism_id=mechanism_id,
+                        action="push",
+                    )
+            except Exception as exc:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback=str(exc),
+                )
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "puzzle_push", "mechanism_id": mechanism_id}],
+                payload=out,
+                public_feedback=str(out.get("status") or "pushed"),
+            )
         # Route-clearing interaction for catastrophe cubes (G02 / FX-CARGO).
-        if str(payload.get("action") or "") == "clear_hazard":
+        if action == "clear_hazard":
             cube_id = str(payload.get("cube_id") or payload.get("entity_id") or "")
             cubes = self.state.board.setdefault("hazard_cubes", {})
             if cube_id and cube_id in cubes:
@@ -584,6 +764,88 @@ class WorldSim:
                 world_version=self.state.world_version,
                 events=[],
                 public_feedback="too far to interact",
+            )
+        action = str(payload.get("action") or "inspect")
+        if action in {"talk", "dialogue", "start_dialogue"}:
+            from sim.dmb.narrative.dialogue import DialogueResolver
+            from sim.dmb.narrative.line_catalog import LineCatalog
+
+            reveal(
+                self.state,
+                entity_id,
+                KnowledgeFact(entity_id, "met", role=str(person.get("role", "villager"))),
+                role=str(person.get("role", "villager")),
+            )
+            self.state.knowledge[entity_id]["name"] = person.get("display_name")
+            fx = self.state.board.get("fx_village") or {}
+            quests = self.state.quests or {}
+            quest_id = str(fx.get("quest_template_id") or "quest.factory_shortage")
+            stage = 0
+            for q in quests.values():
+                if str(q.get("template_id") or q.get("definition_id") or "") == quest_id:
+                    stage = int(q.get("stage") or 0)
+                    break
+            resolver = DialogueResolver(self.state, LineCatalog.load())
+            session = resolver.start(
+                speaker_id=entity_id,
+                quest_id=quest_id,
+                stage=stage,
+                cause_id=str(fx.get("cause_template_id") or "cause.factory_shortage"),
+                era_id=str((self.state.board or {}).get("era_id") or "ancient"),
+                node_id=str(self.state.player.get("node_id") or ""),
+            )
+            choices = resolver.choices(str(session["id"]))
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "dialogue_started", "entity_id": entity_id, "session_id": session["id"]}],
+                payload={
+                    "kind": "dialogue",
+                    "entity_id": entity_id,
+                    "session": session,
+                    "choices": choices,
+                    "text": session.get("text"),
+                    "speaker_name": person.get("display_name") or "Worker",
+                },
+                public_feedback=str(session.get("text") or "talked"),
+            )
+        if action in {"choose_dialogue", "dialogue_choose"}:
+            from sim.dmb.narrative.dialogue import DialogueResolver
+            from sim.dmb.narrative.line_catalog import LineCatalog
+
+            session_id = str(payload.get("session_id") or "")
+            choice_id = str(payload.get("choice_id") or "")
+            resolver = DialogueResolver(self.state, LineCatalog.load())
+            result = resolver.choose(session_id, choice_id)
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "dialogue_choice", "session_id": session_id, "choice_id": choice_id}],
+                payload=result,
+                public_feedback=str((result.get("session") or {}).get("text") or "chosen"),
+            )
+        if action in {"close_dialogue", "dialogue_close"}:
+            from sim.dmb.narrative.dialogue import DialogueResolver
+            from sim.dmb.narrative.line_catalog import LineCatalog
+
+            session_id = str(payload.get("session_id") or "")
+            resolver = DialogueResolver(self.state, LineCatalog.load())
+            closed = resolver.close(session_id)
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "dialogue_closed", "session_id": session_id}],
+                payload=closed,
+                public_feedback="closed",
             )
         # Bind visible warehouse / cart / staging to authoritative records.
         inspect_payload = self._inspect_fx_person(entity_id, person)

@@ -1234,8 +1234,9 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
     state.player = {
         "node_id": node_id,
         "area_id": "area.village",
-        "position": [8.0, 8.0],
-        "facing": "down",
+        # Near factory approach so the gate opens onto a playable yard.
+        "position": [28.0, 32.0],
+        "facing": "up",
     }
     state.board.setdefault("nodes", {})[node_id] = {
         "id": node_id,
@@ -1317,6 +1318,13 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
         }
     }
     state.board["hex_anchors"] = {str(meta.get("demon_hex") or "hex:ore"): {"grid": [14.0, 4.0]}}
+    # Visit ledger so Route A Challenge is eligible on launch.
+    from sim.dmb.player.visits import VisitService
+
+    VisitService(state).arrive(node_id, "travel", int(state.clock.get("turn") or 0))
+    demon_hex = str(meta.get("demon_hex") or "hex:ore")
+    state.board.setdefault("node_adjacent_hexes", {})[node_id] = [demon_hex]
+    state.board.setdefault("node_hexes", {})[node_id] = [demon_hex]
     # Persistent factory worker Mara.
     people = PeopleService(state)
     mara = people.create_person(
@@ -1354,4 +1362,47 @@ def _load_fx_village(seed: int = 505) -> WorldSim:
     state.board["fx_village"]["mara_id"] = mara["id"]
     state.board["fx_village"]["cause_id"] = cause["id"]
     state.board["fx_village"]["quest_id"] = bound["quest"]["id"]
+    # Sluice puzzle + handle item for Route B presentation.
+    _seed_fx_village_sluice(state, node_id)
     return sim
+
+
+def _seed_fx_village_sluice(state, node_id: str) -> None:
+    import json
+    from pathlib import Path
+
+    from sim.dmb.adventure.puzzles import PuzzleService
+    from sim.dmb.player.inventory import InventoryService
+
+    root = Path(__file__).resolve().parents[3] / "godot_project" / "content" / "source" / "dungeons" / "sluice"
+    puzzle_path = root / "puzzle.json"
+    layout_path = root / "layout.json"
+    if puzzle_path.is_file():
+        PuzzleService(state).register_definition(json.loads(puzzle_path.read_text(encoding="utf-8")))
+    if layout_path.is_file():
+        state.board["dungeon_layouts"] = state.board.get("dungeon_layouts") or {}
+        state.board["dungeon_layouts"]["dungeon.sluice"] = json.loads(layout_path.read_text(encoding="utf-8"))
+    inv = InventoryService(state)
+    # Only spawn if missing (idempotent reloads).
+    existing = [
+        iid
+        for iid, item in (state.items or {}).items()
+        if item.get("definition_id") == "item.sluice_handle" and item.get("alive", True)
+    ]
+    if not existing:
+        inv.spawn_ground(
+            definition_id="item.sluice_handle",
+            area_id="area.sluice",
+            position=[2.0, 1.0],
+            quest_bound=True,
+            label="Sluice handle",
+            item_id="item:sluice_handle",
+        )
+    state.board.setdefault("entrances", {})["entrance:sluice"] = {
+        "id": "entrance:sluice",
+        "node_id": node_id,
+        "grid": [16, 28],
+        "label": "Sluice works",
+        "dungeon_id": "dungeon.sluice",
+        "active": True,
+    }

@@ -469,12 +469,19 @@ class HazardDuelService:
         duel["outcome"] = "success"
         duel["allowance_spent"] = recorded.get("status") == "recorded"
         duel["removal"] = removed
+        village = None
+        if (self.state.board or {}).get("fx_village"):
+            from sim.dmb.world.fx_village_solutions import apply_demon_solution
+
+            village = apply_demon_solution(self.state)
+            duel["fx_village"] = village
         return {
             "status": "success",
             "removal": removed,
             "visit": recorded,
             "allowance_spent": recorded.get("status") == "recorded",
             "terminal": False,
+            "fx_village": village,
         }
 
 
