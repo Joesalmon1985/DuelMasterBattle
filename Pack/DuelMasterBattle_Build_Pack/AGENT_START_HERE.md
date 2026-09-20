@@ -43,6 +43,10 @@ Do not disguise balance changes as bug fixes. Use existing TUNABLE fields and re
 
 Python owns persistent world truth; Godot owns rendering/input/local movement and explicitly leased encounters. Worker animations do not drive production. Catan cargo and industrial flow are separate. Every worker, soldier and cart retains identity. The wizard is immune to faction military and can destroy any local ordinary unit/building. Only Travel/Wait advance strategic turns. Duels pause the world. NPCs/active quests survive era changes. Runtime has no LLM/network service dependency.
 
+Read `docs/INTEGRATED_RUNTIME_ARCHITECTURE.md` before any cross-system village,
+industry, logistics or quest work. Fixtures arrange production state; they must
+not invent parallel gameplay semantics. ONE person ID = ONE visible actor.
+
 ## Completion
 
 G06 accepts the integrated MVP. Full baseline completion requires all 160 tasks, all ten human gates, all four eras/full cycles, 240 recipes, full baseline content, three genuinely accepted trained policies and a tested Windows desktop bundle. Optional Utopia/mobile/culture/voice/content-scale extensions remain explicitly deferred. Do not call a stub, untrained model or untested export finished. Do not publish externally unless Joe separately asks.

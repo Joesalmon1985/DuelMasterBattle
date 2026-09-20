@@ -63,9 +63,10 @@ def export_overworld_area(
         ax, ay = int(approach[0]), int(approach[1])
         if 0 <= ex < width and 0 <= ey < height:
             rows[ey][ex] = "D"
-        building = state.buildings.get(bid) or {}
-        label = str(building.get("label") or bid)
-        is_factory = str(building.get("slot_kind") or "") == "factory" or "factory" in bid
+        building_rec = state.buildings.get(bid) or {}
+        label = str(building_rec.get("label") or bid)
+        slot_kind = str(building_rec.get("slot_kind") or "")
+        is_factory = slot_kind == "factory" or "factory" in bid
         if is_factory:
             from sim.dmb.industry import fraction
 
@@ -75,25 +76,28 @@ def export_overworld_area(
                     rates = event.get("rates") or {}
                     break
             rate = float(fraction(rates.get(bid) or 0))
-            shortage = bool(building.get("shortage")) or rate <= 0
-            if shortage:
-                label = f"{label} (quiet)"
-            else:
-                label = f"{label} (working)"
-        # Skip primary slots as interactive doors — keep factory + landmarks only.
-        if str(building.get("slot_kind") or "") == "primary":
+            shortage = bool(building_rec.get("shortage")) or rate <= 0
+            if shortage and "(quiet)" not in label and "(working)" not in label:
+                label = f"{label} (quiet)" if "factory" in label.lower() else label
+            elif not shortage and "(working)" not in label and "Muster" in label:
+                pass
+        # Present all settlement buildings; skip only destroyed.
+        if building_rec.get("status") == "destroyed":
             continue
-        if str(building.get("slot_kind") or "") == "processor":
-            # Processors are shown via industry layout / WorkerController, not duplicate doors.
-            continue
-        if str(bid).startswith("source:"):
-            continue
+        if not label or label == bid or label.startswith("building:"):
+            label = {
+                "primary": "Resource site",
+                "processor": "Works",
+                "factory": "Factory",
+                "centre": "Settlement centre",
+                "warehouse": "Warehouse",
+            }.get(slot_kind, "Building")
         entities.append(
             {
                 "kind": "door",
                 "id": bid,
                 "pos": [ax, ay],
-                "marker": "door_closed",
+                "marker": "door_closed" if slot_kind != "primary" else "sign",
                 "text": label,
                 "building": bid,
                 "bridge_entity": True,
@@ -105,14 +109,23 @@ def export_overworld_area(
             }
         )
 
-    # People / Mara.
+    # People — exclude anyone owned by IndustryProjection/WorkerController.
+    industry_people = _industry_person_ids(state)
     for person_view in view.get("people") or []:
         pid = str(person_view["id"])
+        if pid in industry_people:
+            continue
         person = state.people.get(pid) or {}
         grid = person_view.get("grid") or person.get("grid") or person.get("position") or [cx, cy + 2]
         px, py = int(grid[0]), int(grid[1])
-        display = str(person.get("display_name") or person.get("name") or "Person")
-        # Stand beside the factory approach so Mara and the door are both selectable.
+        display = str(person.get("display_name") or person.get("name") or "Villager")
+        from sim.dmb.world.fx_village_world import person_sprite_for
+
+        sprite = person_sprite_for(person)
+        known = (state.knowledge or {}).get(pid) or {}
+        label_text = str(known.get("name") or display)
+        if label_text.startswith("person:"):
+            label_text = "Villager"
         stand = [px, py + 1]
         entities.append(
             {
@@ -120,7 +133,7 @@ def export_overworld_area(
                 "id": pid,
                 "pos": stand,
                 "name": display,
-                "sprite": "worker" if "mara" in display.lower() else "villager_a",
+                "sprite": sprite,
                 "facing": "down",
                 "lines": _opening_lines(state, pid),
                 "bridge_entity": True,
@@ -129,31 +142,31 @@ def export_overworld_area(
                 "semantic": {
                     "knowledge_key": pid,
                     "interaction": "npc",
-                    "labels": [{"level": 0, "text": "Worker" if not (state.knowledge or {}).get(pid, {}).get("name") else display}],
+                    "labels": [{"level": 0, "text": label_text}],
                 },
             }
         )
 
-    # Demon cube.
+    # Demon cube — only the G05 shortage cause on this settlement (not distant world cubes).
+    demon_id = str(fx.get("demon_cube_id") or "cube:demon")
     cubes = ((state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
-    for cube_id, cube in cubes.items():
-        if not cube.get("active", True):
-            continue
-        hid = str(cube.get("hex_id") or "")
+    cube = cubes.get(demon_id) or {}
+    if cube.get("active", True) and cube:
+        hid = str(cube.get("hex_id") or fx.get("demon_hex") or "")
         anchors = (state.board or {}).get("hex_anchors") or {}
         grid = (anchors.get(hid) or {}).get("grid") or cube.get("position") or [cx + 6, cy - 4]
         entities.append(
             {
                 "kind": "creature",
-                "id": str(cube_id),
+                "id": demon_id,
                 "pos": [int(grid[0]), int(grid[1])],
                 "enemy_id": "cave_troll",
                 "bridge_entity": True,
                 "bridge_challenge": True,
-                "cube_id": str(cube_id),
+                "cube_id": demon_id,
                 "intro": "A ridge manifestation blocks the ore path.",
                 "semantic": {
-                    "knowledge_key": str(cube_id),
+                    "knowledge_key": demon_id,
                     "interaction": "enemy",
                     "labels": [{"level": 0, "text": "Ridge manifestation"}],
                 },
@@ -429,6 +442,17 @@ def _ensure_g05_landmarks(state: WorldState, layout: dict[str, Any], fx: dict[st
     # Persist layout edits.
     store = board.setdefault("local_projections", {})
     store[str(layout.get("node_id"))] = layout
+
+
+def _industry_person_ids(state: WorldState) -> set[str]:
+    """Person IDs owned by IndustryProjection / WorkerController presentation."""
+    from sim.dmb.industry.projection import IndustryProjection
+
+    return {
+        str(row.get("person_id"))
+        for row in IndustryProjection(state).workers()
+        if row.get("person_id")
+    }
 
 
 def _opening_lines(state: WorldState, person_id: str) -> list[str]:

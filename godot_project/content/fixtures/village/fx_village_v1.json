@@ -1,28 +1,8 @@
 {
   "id": "FX-VILLAGE",
-  "schema_version": 1,
-  "seed": 505,
-  "node_id": "node:village",
-  "token": 6,
-  "terrains": ["woodland", "clay_mountains", "ore_mountains"],
-  "primary_slots": 5,
-  "factories": 3,
-  "routes": [
-    {
-      "id": "route:A",
-      "inputs": ["woodland_renewable", "ore_finite"],
-      "selected": true,
-      "blocked_by": "demon_cube"
-    },
-    {
-      "id": "route:B",
-      "inputs": ["woodland_renewable", "clay_renewable"],
-      "selected": false,
-      "modifier": "sluice_sabotage"
-    }
-  ],
-  "demon_hex": "hex:ore",
-  "factory_id": "building:factory_main",
+  "schema_version": 2,
+  "seed": 507,
   "worker_display_name": "Mara",
-  "quest_template_id": "quest.factory_shortage"
+  "quest_template_id": "quest.factory_shortage",
+  "notes": "Seed 507 selects a real BoardBuilder core (node:35 / faction:2) whose touching hexes include woodland, ore_mountains and clay_mountains. Factory/processor/primary IDs are assigned by WorldSetupService at load time."
 }

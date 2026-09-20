@@ -215,12 +215,12 @@
       "evidence": "tracking/gates/G05/packet.md",
       "candidate_branch": "feature/g05-village-quest",
       "fixture": "FX-VILLAGE",
-      "seed": 505,
+      "seed": 507,
       "launch": "bash tools/play_g05.sh",
       "fix_required_at": "2026-09-20T10:41:00Z",
-      "returned_awaiting_human_at": "2026-09-20T11:10:00Z",
-      "fix_summary": "Combined Overworld with ClockDriver/IndustryService/WorkerController/SyncPose/mouse; real industrial blockage/solutions; cumulative Godot test mandatory.",
-      "notes": "Automated gate checks PASS including g05_cumulative_runtime and G01\u2013G04 regressions. Manual play_g05 launch verified (OpenGL + sidecar). Do not start T097 until Joe PASSes G05."
+      "fix_summary": "Integrated-world repair: FX-VILLAGE is BoardBuilder seed 507 settlement node:35 / settlement:3 / faction:2 with living+blocked IndustryService chains, one actor per person_id, ActorVisual sprites, world-integrity cumulative proofs.",
+      "notes": "Automated gate checks PASS (g05_cumulative_runtime + G01\u2013G04 regressions). Manual play_g05 inspected (seed 507). Do not start T097 until Joe PASSes G05. Agents must not self-PASS.",
+      "returned_awaiting_human_at": "2026-09-20T11:02:25Z"
     },
     "G06": {
       "status": "NOT_READY",

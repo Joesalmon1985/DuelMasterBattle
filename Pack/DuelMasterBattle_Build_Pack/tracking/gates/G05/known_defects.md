@@ -1,35 +1,20 @@
-# G05 FIX_REQUIRED — cumulative runtime regression
+# G05 FIX_REQUIRED → AWAITING_HUMAN
 
-**Status:** repaired candidate — AWAITING_HUMAN after automated pass
+**Status:** AWAITING_HUMAN after integrated-world repair
 
-## Audit matrix (G05 vs accepted G01–G03)
+## Audit
 
-| Behaviour | Status | Notes |
-|-----------|--------|-------|
-| Game Time / AdvanceGame | **preserved** | ClockDriver + nonblocking AdvanceGame on G05 shell |
-| Pause/Resume / no catch-up | **preserved** | acquire_pause/release_pause; dialogue/duel freeze Game Time |
-| SyncPose | **preserved** | Coalesced SyncPose after Overworld steps + periodic |
-| Mouse world steering | **preserved** | LMB hold dominant-axis grid step; GUI/entity priority |
-| Touch D-pad | **preserved** | Overworld TouchPad |
-| Keyboard movement | **preserved** | WASD/arrows |
-| Carts / journeys | **N/A (fixture)** | FX-VILLAGE has no cart hauls; export keeps cart/unit IDs |
-| Workers / carriers | **preserved** | IndustryProjection + WorkerController (not `_tick_workers`) |
-| Industry connections | **preserved** | Real IndustryService routes / factory_readout |
-| Factory meters | **preserved** | Computed rates; solutions never assign `output_rate` |
-| Military units | **N/A initially** | Spawn after positive factory rate |
-| Save/load | **preserved** | SyncPose before Save; IDs/pose survive Load |
-| Semantic interaction | **preserved** | Bridge talk / labels |
-| G04 retained duel | **preserved** | DuelLeaseAdapter |
+| Item | Result |
+|------|--------|
+| Real BoardBuilder board | seed **507** — 19 hexes / 54 nodes / 72 edges |
+| Real settlement node | `node:35` / `settlement:3` / `faction:2` |
+| Working + shortage chains | wood+clay working; wood+ore blocked by demon on `hex:1,1` |
+| One person = one actor | industry people excluded from Overworld NPC export; uniqueness asserted in cumulative Godot test |
+| ActorVisual sprites | WorkerController uses character families (woodcutter/miner/worker/…) |
+| No output_rate fakes | IndustryService computes rates |
+| Architecture doc | `docs/INTEGRATED_RUNTIME_ARCHITECTURE.md` (linked from AGENT_START_HERE) |
+| Manual play_g05 | Launched seed 507; settlement reads as a real village slice (pixel sprites, human labels such as Clay pits / Clay works) |
 
-## Root cause (fixed)
+Raw connection IDs must not appear in player-facing labels (debug overlay only).
 
-G05 fed `overworld_area` into legacy Overworld and bypassed ClockDriver /
-IndustryService / WorkerController. FX-VILLAGE stubbed `output_rate` instead of
-real PrimaryChannels / ProcessorBinding / FactoryRoutes.
-
-## Repair
-
-Combine Overworld presentation with migrated G01–G03 clock + industry runtime.
-Route A blocked by demon via `industrial_blocked`; Route B blocked by inactive
-sluice processor (`modifier=0`). Solutions clear causes through owning services
-and let the next industry tick compute positive production.
+Spare setup factory `building:27` is labelled **Idle factory** (present from WorldSetupService, not on the shortage routes).

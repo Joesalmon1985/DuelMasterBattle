@@ -4,47 +4,60 @@
 **Stop point:** T096  
 **Scenario:** FX-VILLAGE  
 **Branch:** `feature/g05-village-quest`  
-**Launch:** `bash tools/play_g05.sh` → playable Overworld + G01–G03 clocked industry
+**Launch:** `bash tools/play_g05.sh`  
+**Deterministic board seed:** **507**
 
-## What you should see immediately
+## Generated world slice (not a mini-game)
 
-- Terrain / village streets
-- Player character near the quiet factory
-- Mara (authoritative Python person id)
-- Factory door labeled quiet/working from Python shortage state
-- Live workers/carriers on real production connections (WorkerController)
-- Ridge manifestation (demon cube)
-- Sluice works entrance
-- Interaction labels + keyboard / mouse-hold / touch movement
-- Game Time advancing while unpaused (industry progresses)
+| Field | Value |
+|-------|-------|
+| Board seed | 507 |
+| Topology | 19 hexes / 54 nodes / 72 edges |
+| Selected node | `node:35` |
+| Settlement | `settlement:3` |
+| Faction | `faction:2` |
+| Touching terrains | woodland, ore_mountains, clay_mountains |
+| Wood hex | `hex:1,0` |
+| Demon / ore hex | `hex:1,1` |
+| Clay hex | `hex:0,1` |
+| Primary woodland | `building:21` |
+| Primary ore | `building:22` |
+| Primary clay | `building:23` |
+| Working processor | `building:24` (Clay works) |
+| Shortage Route A processor | `building:37` (Ridge works) |
+| Route B processor | `building:38` (Sluice works) |
+| Working factory | `building:25` (Muster factory) |
+| Shortage factory | `building:26` (Village factory) |
+| Mara | `person:10` |
 
-## What to play
+FX-VILLAGE uses `BoardBuilder.generate` + `WorldSetupService`, then binds IndustryService
+channels to the settlement’s real touching hexes. A working wood+clay factory runs
+while the shortage wood+ore route waits under the demon; sluice enables the alternate
+processor for the shortage factory.
 
-1. Launch without reading optional hints.
-2. Confirm carriers move when production is active; mouse click/hold steers John on empty ground.
-3. Walk to Mara; observe / talk. Infer why work stopped (no debug causal dump).
-4. On one save, challenge the ridge manifestation (retained GameBoard duel). Confirm factory resumes via real industry rates and Mara acknowledges Route A; demon is gone.
-5. On a fresh save, enter the sluice works; pick up the handle; push the box; place handle; open gate/actuator. Confirm Route B dialogue does **not** claim the demon was cleared.
-6. Drop/recover the handle; save/reload; re-enter village — entity IDs / pose must stay stable.
-7. Optional: world-resolved / destroyed-target scenario snapshots under `scenarios/`.
+## What you should see
 
-## Automated evidence (necessary, not decisive)
+- One settlement in a larger simulated world
+- Existing character sprites (no orange debug people)
+- No duplicate workers (one person ID → one actor)
+- Live carriers on the working chain; waiting carriers on the blocked chain
+- Real buildings from settlement state
+- Game Time / mouse-hold / SyncPose / retained duel preserved
+
+## Automated evidence
 
 ```bash
-python3 tools/check.py --gate G05
+python3 tools/check.py --gate G05 --json-report Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/check_report.json
 ```
 
-Includes `run_g05_playable.gd` and **`run_g05_cumulative.gd`** (game_ms, IndustryService
-blockage/restore, carriers, SyncPose, pause freeze, Route A/B solutions). G01–G04
-regression smokes are also mandatory on this gate.
+Includes world-integrity + one-actor-per-person + live-economy proofs in
+`run_g05_cumulative.gd`, plus G01–G04 regressions. Latest report: **PASS**.
 
-Agents cannot self-PASS the experience question. Only Joe's explicit  
-`G05 PASS — <commit>` clears this gate.
+Agents cannot self-PASS. Only Joe's explicit `G05 PASS — <commit>` clears this gate.
 
-## Same presentation path
+## Architecture
 
-- `tools/play_g05.sh` → `g05_shell.tscn` (Python + Overworld + ClockDriver)
-- Village Test Menu → **FX-VILLAGE (Python-backed)** → same shell
+See `docs/INTEGRATED_RUNTIME_ARCHITECTURE.md`.
 
 ## Experience question
 

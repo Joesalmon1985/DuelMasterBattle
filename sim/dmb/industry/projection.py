@@ -218,6 +218,8 @@ class IndustryProjection:
                     {
                         "person_id": person_id,
                         "name": person.get("name") or person_id,
+                        "sprite": person.get("sprite") or person.get("visual_profile") or "worker",
+                        "visual_profile": person.get("visual_profile") or person.get("sprite") or "worker",
                         "job_key": job_key,
                         "job_id": job.get("job_id"),
                         "role": "carrier",
@@ -252,6 +254,8 @@ class IndustryProjection:
                 {
                     "person_id": person_id,
                     "name": person.get("name") or person_id,
+                    "sprite": person.get("sprite") or person.get("visual_profile") or "worker",
+                    "visual_profile": person.get("visual_profile") or person.get("sprite") or "worker",
                     "job_key": job_key,
                     "job_id": job.get("job_id"),
                     "role": "attendant",

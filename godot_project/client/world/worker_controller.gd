@@ -4,12 +4,16 @@ extends Node2D
 ## Persistent carriers keyed by Python person IDs.
 ## Each carrier walks one directed connection: loaded outbound, empty return.
 ## Obstruction is presentation-only — never sends production commands.
+## Uses ActorVisual + existing character sprites (never orange placeholders when assets exist).
 
 signal layout_diagnostic(person_id: String, message: String)
 
+const ActorVisual = preload("res://client/world/actor_visual.gd")
+const PIXEL_ROOT := "res://assets/pixel/"
 const TILE := 64.0
 const WALK_SPEED := 78.0
 const STOP_RADIUS := 30.0
+const TILE_SCALE := 2
 
 var _workers: Dictionary = {}  # person_id -> Node2D
 var _phase: Dictionary = {}  # person_id -> float 0..2 (0-1 outbound, 1-2 return)
@@ -66,10 +70,9 @@ func tick(delta: float) -> void:
 			continue
 		var cue := str(row.get("activity", row.get("cue", "idle")))
 		if cue == "on_strike":
-			_set_activity(worker, "on strike", null, false)
+			_set_activity(worker, "idle", null, false)
 			continue
 		if cue == "waiting" or cue == "idle":
-			# Park at the origin of their connection.
 			var origin: Vector2 = _grid_to_world(outbound[0].get("grid", [0, 0]))
 			worker.position = worker.position.move_toward(origin, WALK_SPEED * delta)
 			_set_activity(worker, "waiting", null, false)
@@ -80,32 +83,32 @@ func tick(delta: float) -> void:
 		var leg: Array = outbound if loaded else inbound
 		if leg.size() < 2:
 			leg = outbound
-			loaded = true
 		var from_pt: Vector2 = _grid_to_world(leg[0].get("grid", [0, 0]))
 		var to_pt: Vector2 = _grid_to_world(leg[1].get("grid", [0, 0]))
-		var seg_len: float = maxf(from_pt.distance_to(to_pt), 1.0)
-		var local_t: float = phase if loaded else (phase - 1.0)
+		var local_t := phase if loaded else (phase - 1.0)
 		var target: Vector2 = from_pt.lerp(to_pt, clampf(local_t, 0.0, 1.0))
-
-		var obstructed: bool = _path_obstructed(from_pt, to_pt, worker.position)
-		if obstructed:
-			var detour: Vector2 = _detour_around(worker.position, to_pt)
-			worker.position = worker.position.move_toward(detour, WALK_SPEED * delta * 0.55)
-			_set_activity(worker, "blocked", row.get("resource_label") if loaded else null, loaded)
-			continue
-
-		var step: float = WALK_SPEED * delta / seg_len
-		phase = fmod(phase + step, 2.0)
-		_phase[person_id] = phase
+		if _path_obstructed(from_pt, to_pt, worker.position):
+			target = _detour_around(worker.position, target)
+		var prev: Vector2 = worker.position
 		worker.position = worker.position.move_toward(target, WALK_SPEED * delta)
+		_face_sprite(worker, worker.position - prev)
+		var step: float = (WALK_SPEED * delta) / maxf(from_pt.distance_to(to_pt), 1.0)
+		phase += step
+		if phase >= 2.0:
+			phase -= 2.0
+		_phase[person_id] = phase
 		if loaded:
 			_set_activity(worker, "carrying", row.get("resource_label"), true)
 		else:
-			_set_activity(worker, "returning empty", null, false)
+			_set_activity(worker, "returning", null, false)
 
 
 func worker_for_person(person_id: String) -> Node2D:
 	return _workers.get(person_id)
+
+
+func person_ids() -> Array:
+	return _workers.keys()
 
 
 func report_visual_route_failure(person_id: String, detail: String) -> void:
@@ -117,35 +120,30 @@ func report_visual_route_failure(person_id: String, detail: String) -> void:
 
 func _spawn_worker(person_id: String, row: Dictionary) -> Node2D:
 	var worker := Node2D.new()
-	worker.name = "Carrier_%s" % person_id.validate_node_name()
+	worker.name = "Person_%s" % person_id.validate_node_name()
 	worker.set_meta("person_id", person_id)
 	add_child(worker)
-	var body := Polygon2D.new()
-	body.name = "Body"
-	body.polygon = PackedVector2Array([
-		Vector2(-11, -16), Vector2(11, -16), Vector2(14, 14), Vector2(-14, 14)
-	])
-	body.color = Color(0.95, 0.62, 0.18)
-	worker.add_child(body)
+	var spr := Sprite2D.new()
+	spr.name = "Sprite"
+	spr.centered = false
+	spr.scale = Vector2(TILE_SCALE, TILE_SCALE)
+	worker.add_child(spr)
+	var display := str(row.get("name", "Worker"))
+	if display.begins_with("person:") or display.begins_with("Carrier"):
+		display = "Worker"
+	var sprite_key := str(row.get("sprite", row.get("visual_profile", "worker")))
+	if sprite_key.is_empty():
+		sprite_key = "worker"
+	ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, "down", 0, display)
+	# Soft activity tag — player-facing, not connection IDs.
 	var tag := Label.new()
 	tag.name = "Tag"
-	tag.position = Vector2(-46, -52)
-	tag.add_theme_font_size_override("font_size", 11)
+	tag.position = Vector2(-20, -28)
+	tag.add_theme_font_size_override("font_size", 10)
+	tag.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	tag.add_theme_constant_override("outline_size", 2)
+	tag.visible = false
 	worker.add_child(tag)
-	var carry := Polygon2D.new()
-	carry.name = "Carry"
-	carry.polygon = PackedVector2Array([
-		Vector2(12, -12), Vector2(26, -12), Vector2(26, 2), Vector2(12, 2)
-	])
-	carry.color = Color(0.85, 0.75, 0.2)
-	carry.visible = false
-	worker.add_child(carry)
-	var mark := Label.new()
-	mark.name = "Mark"
-	mark.position = Vector2(13, -14)
-	mark.add_theme_font_size_override("font_size", 11)
-	mark.text = "?"
-	worker.add_child(mark)
 	var waypoints: Array = row.get("waypoints", [])
 	if not waypoints.is_empty():
 		worker.position = _grid_to_world(waypoints[0].get("grid", [4, 5]))
@@ -167,39 +165,40 @@ func _hold_stationary(worker: Node2D, row: Dictionary) -> void:
 func _sync_meta(worker: Node2D, row: Dictionary) -> void:
 	worker.set_meta("row", row)
 	worker.set_meta("industry_cue", str(row.get("cue", "idle")))
-	var marker: Dictionary = row.get("marker", {})
-	var mark: Label = worker.get_node_or_null("Mark")
-	if mark:
-		mark.text = str(marker.get("symbol", "?"))
+	var spr: Sprite2D = worker.get_node_or_null("Sprite")
+	if spr != null:
+		var sprite_key := str(row.get("sprite", row.get("visual_profile", "worker")))
+		if sprite_key.is_empty():
+			sprite_key = "worker"
+		var display := str(row.get("name", "Worker"))
+		if display.begins_with("person:") or ":" in display and display.begins_with("Carrier"):
+			display = "Worker"
+		var facing := str(spr.get_meta("facing", "down"))
+		ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, facing, 0, display)
+
+
+func _face_sprite(worker: Node2D, delta: Vector2) -> void:
+	if delta.length() < 0.4:
+		return
+	var spr: Sprite2D = worker.get_node_or_null("Sprite")
+	if spr == null:
+		return
+	var facing := "down"
+	if absf(delta.x) >= absf(delta.y):
+		facing = "right" if delta.x > 0.0 else "left"
+	else:
+		facing = "down" if delta.y > 0.0 else "up"
+	var sprite_key := str(spr.get_meta("sprite", "worker"))
+	var label := str(spr.get_meta("label", "Worker"))
+	ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, facing, 0, label)
 
 
 func _set_activity(worker: Node2D, activity: String, carry_resource, loaded: bool) -> void:
 	worker.set_meta("industry_cue", activity)
-	var row: Dictionary = worker.get_meta("row", {})
+	# Keep tags off by default — semantic labels / debug overlay own text.
 	var tag: Label = worker.get_node_or_null("Tag")
 	if tag:
-		var name := str(row.get("name", "Carrier"))
-		var resource := str(carry_resource) if carry_resource != null else ""
-		if loaded and resource != "":
-			tag.text = "%s\n%s [%s]" % [name, activity, resource]
-		else:
-			tag.text = "%s\n%s" % [name, activity]
-	var carry: Polygon2D = worker.get_node_or_null("Carry")
-	var mark: Label = worker.get_node_or_null("Mark")
-	if carry:
-		carry.visible = true
-		if loaded:
-			carry.color = Color(0.9, 0.78, 0.2)
-		else:
-			carry.color = Color(0.55, 0.55, 0.58)
-	if mark:
-		if loaded:
-			var marker: Dictionary = row.get("marker", {})
-			mark.text = str(marker.get("symbol", "?"))
-			mark.modulate = Color(1, 1, 1, 1)
-		else:
-			mark.text = "∅"
-			mark.modulate = Color(0.75, 0.75, 0.8, 1)
+		tag.visible = false
 
 
 func _grid_to_world(grid) -> Vector2:

@@ -1,6 +1,6 @@
 {
   "fixture": "FX-VILLAGE",
-  "seed": 505,
+  "seed": 507,
   "error": "missing_line:dialogue.mara.offer",
   "cause_id": "cause.factory_shortage",
   "quest_id": "quest.factory_shortage",
@@ -12,7 +12,7 @@
       "--fixture",
       "FX-VILLAGE",
       "--seed",
-      "505",
+      "507",
       "--record",
       "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/fx_village_record.json"
     ],

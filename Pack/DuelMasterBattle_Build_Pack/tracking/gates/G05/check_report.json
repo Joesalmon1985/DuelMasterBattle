@@ -6,8 +6,8 @@
       "name": "g05_cumulative_python",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 0.695,
-      "detail": "..................................                                       [100%]\n34 passed in 0.34s",
+      "duration_seconds": 0.641,
+      "detail": "..................................                                       [100%]\n34 passed in 0.29s",
       "command": [
         "/usr/bin/python3",
         "-m",
@@ -27,7 +27,7 @@
       "name": "g05_packet_files",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 0.01,
+      "duration_seconds": 0.004,
       "detail": "12 evidence files valid",
       "command": null
     },
@@ -35,15 +35,15 @@
       "name": "g05_fx_village_scenario",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 0.253,
-      "detail": "    \"mara_id\": \"person:6\",\n    \"factory_id\": \"building:factory_main\",\n    \"route_a_available\": false,\n    \"route_b_available\": false,\n    \"shortage\": true,\n    \"command_log\": []\n  },\n  \"world_id\": \"world:fx-village\",\n  \"quest_id\": \"quest:1\",\n  \"puzzle_id\": \"puzzle.sluice\",\n  \"same_engine\": true\n}",
+      "duration_seconds": 0.197,
+      "detail": "    \"mara_id\": \"person:10\",\n    \"factory_id\": \"building:26\",\n    \"route_a_available\": false,\n    \"route_b_available\": false,\n    \"shortage\": true,\n    \"command_log\": []\n  },\n  \"world_id\": \"world:fx-village\",\n  \"quest_id\": \"quest:1\",\n  \"puzzle_id\": \"puzzle.sluice\",\n  \"same_engine\": true\n}",
       "command": [
         "/usr/bin/python3",
         "tools/run_scenario.py",
         "--fixture",
         "FX-VILLAGE",
         "--seed",
-        "505",
+        "507",
         "--record",
         "/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/fx_village_record.json"
       ]
@@ -52,7 +52,7 @@
       "name": "g05_validate_puzzles",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 0.134,
+      "duration_seconds": 0.113,
       "detail": "validate_puzzles: PASS (puzzle.sluice)\n  TRACE default: solved=True route_b=True\n  TRACE box_near_plate: solved=True route_b=True",
       "command": [
         "/usr/bin/python3",
@@ -64,8 +64,8 @@
       "name": "g05_playable",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 4.29,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=42869\nG05_PLAYABLE_OK mara=person:6 factory=building:factory_main john_before=(28, 32)\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "duration_seconds": 4.279,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=38353\nG05_PLAYABLE_OK mara=person:10 factory=building:26 john_before=(28, 32)\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",
@@ -79,8 +79,8 @@
       "name": "g05_cumulative_runtime",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 12.3,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=33909\nG05_CUMULATIVE_OK game_ms=1000\u21922800 rate_a=0.01666666666667 rate_b=0.01666666666667 carriers=3 moved=true mara=person:6 factory=building:factory_main\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "duration_seconds": 11.323,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=40535\nG05_CUMULATIVE_OK seed=507.0 node=node:35 settlement=settlement:3 faction=faction:2 game_ms=1000\u21922900 rate_work=0.01666666666667 rate_a=0.01666666666667 rate_b=0.01666666666667 mara=person:10\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",
@@ -94,8 +94,8 @@
       "name": "g03_regression_smoke",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 6.302,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=35929\nG03_SMOKE_OK worker=person:3 factories=3 finite=590\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 4 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "duration_seconds": 7.311,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=39931\nG03_SMOKE_OK worker=person:3 factories=3 finite=590\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 4 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",
@@ -109,8 +109,8 @@
       "name": "g02_regression_smoke",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 3.27,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=42111\nG02_SMOKE_OK seed=202.0 cart=cart:1 store=store:building:2 moved=672.0 wait_turn=8\u21929 delivery=delivered construction=ready\nDMB_SIDECAR host=127.0.0.1 port=34213\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 4 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "duration_seconds": 4.293,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=45597\nG02_SMOKE_OK seed=202.0 cart=cart:1 store=store:building:2 moved=672.0 wait_turn=8\u21929 delivery=delivered construction=ready\nDMB_SIDECAR host=127.0.0.1 port=44647\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 4 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",
@@ -124,8 +124,8 @@
       "name": "g01_regression_smoke",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 1.314,
-      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=36641\nG01_SMOKE_OK world_id=world:g01",
+      "duration_seconds": 1.323,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=35099\nG01_SMOKE_OK world_id=world:g01",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",
@@ -139,8 +139,8 @@
       "name": "g04_regression_playable",
       "status": "PASS",
       "exit_code": 0,
-      "duration_seconds": 13.294,
-      "detail": "G04_BATTLE_PLAYABLE_OK units=6 destroyed=unit:1\nG04_TRAVEL_CASUALTIES_OK count=2\nG04_BATTLE_TRAVEL_OK dest_units=0\nDMB_SIDECAR host=127.0.0.1 port=44571\nG04_HAZARD_WARD_UI_OK phase=1\nG04_HAZARD_PLAYABLE_OK retained_board cube=cube:1\nG04_SMOKE_OK battle_units=6\nG04_PLAYABLE_OK\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "duration_seconds": 13.265,
+      "detail": "G04_BATTLE_PLAYABLE_OK units=6 destroyed=unit:1\nG04_TRAVEL_CASUALTIES_OK count=2\nG04_BATTLE_TRAVEL_OK dest_units=0\nDMB_SIDECAR host=127.0.0.1 port=46625\nG04_HAZARD_WARD_UI_OK phase=1\nG04_HAZARD_PLAYABLE_OK retained_board cube=cube:1\nG04_SMOKE_OK battle_units=6\nG04_PLAYABLE_OK\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
       "command": [
         "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
         "--headless",

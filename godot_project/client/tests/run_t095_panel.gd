@@ -24,7 +24,7 @@ func _run() -> void:
 	_assert(ui.selected_quest() == "quest.factory_shortage", "quest")
 	ui.request_launch()
 	_assert(_launched.size() == 1, "launch signal")
-	ui.apply_sandbox_outcome({"status": "PASS", "seed": 505, "quest_id": "quest.factory_shortage"})
+	ui.apply_sandbox_outcome({"status": "PASS", "seed": 507, "quest_id": "quest.factory_shortage"})
 	_assert(str(ui.last_outcome().get("status", "")) == "PASS", "outcome parity shape")
 	ui.set_debug_facts_visible(true)
 	ui.show_causal_debug(["cause.factory_shortage"], ["effect.remove_sluice_sabotage"])

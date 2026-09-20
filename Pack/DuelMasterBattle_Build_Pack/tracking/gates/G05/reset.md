@@ -8,7 +8,7 @@ Isolated slots / files (delete before a clean playtest):
 
 Scenario snapshots (do not edit; reload from packet):
 
-- `scenarios/fresh_launch.json` — seed 505 offered shortage
+- `scenarios/fresh_launch.json` — seed 507 offered shortage
 - `scenarios/solution_demon_duel.json` — Route A completed
 - `scenarios/solution_sluice_route.json` — Route B completed, demon still active
 - `scenarios/world_resolved.json` — patrol cleared ridge first
@@ -17,11 +17,11 @@ Scenario snapshots (do not edit; reload from packet):
 Reload FX-VILLAGE with:
 
 ```bash
-DMB_SEED=505 bash tools/play_g05.sh
+DMB_SEED=507 bash tools/play_g05.sh
 ```
 
 Or re-run:
 
 ```bash
-python3 tools/run_scenario.py --fixture FX-VILLAGE --seed 505 --record Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/fx_village_record.json
+python3 tools/run_scenario.py --fixture FX-VILLAGE --seed 507 --record Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/fx_village_record.json
 ```

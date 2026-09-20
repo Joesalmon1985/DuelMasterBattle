@@ -12,7 +12,7 @@ RUNS = ROOT / "Pack" / "DuelMasterBattle_Build_Pack" / "tracking" / "village_run
 
 
 def test_panel_and_scenario_same_engine_outcome(tmp_path: Path) -> None:
-    seed = 505
+    seed = 507
     sim = load_fixture("FX-VILLAGE", seed=seed)
     result = run_fx_village(sim, seed=seed)
     assert result.status == "PASS"
@@ -37,7 +37,7 @@ def test_failure_bundle_has_replay_fields() -> None:
     bundle_dir.mkdir(parents=True, exist_ok=True)
     bundle = {
         "fixture": "FX-VILLAGE",
-        "seed": 505,
+        "seed": 507,
         "error": "missing_line:dialogue.mara.offer",
         "cause_id": "cause.factory_shortage",
         "quest_id": "quest.factory_shortage",
@@ -49,7 +49,7 @@ def test_failure_bundle_has_replay_fields() -> None:
                 "--fixture",
                 "FX-VILLAGE",
                 "--seed",
-                "505",
+                "507",
                 "--record",
                 "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/fx_village_record.json",
             ],

@@ -46,7 +46,7 @@ def test_quest_and_dialogue_content() -> None:
 
 
 def test_route_b_completion_does_not_claim_demon_cleared() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
@@ -85,7 +85,7 @@ def test_route_b_completion_does_not_claim_demon_cleared() -> None:
         out = puzzles.act(lid, expected_version=ver, mechanism_id="sluice.actuator", action="on")
     assert "sluice_sabotage" not in state.definitions.get("production_modifiers", {})
     assert (state.definitions.get("history_facts") or {}).get("sluice_open", {}).get("value") is True
-    assert state.hazards["catastrophe"]["cubes"]["cube:demon"]["active"] is True
+    assert state.hazards["catastrophe"]["cubes"][fx["demon_cube_id"]]["active"] is True
     assert _factory_rate(state, factory_id) > 0.0
     result = svc.evaluate(
         quest_id,
@@ -99,14 +99,14 @@ def test_route_b_completion_does_not_claim_demon_cleared() -> None:
 
 
 def test_demon_solution_restores_route_a_industry() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
     factory_id = fx["factory_id"]
     svc = QuestService(state)
     svc.accept(quest_id)
-    CatastropheService(state).remove_cube("cube:demon", authority="test")
+    CatastropheService(state).remove_cube(fx["demon_cube_id"], authority="test")
     applied = apply_demon_solution(state)
     assert applied["route"] == "route:A"
     assert applied["computed_rate"] > 0.0
@@ -122,32 +122,36 @@ def test_demon_solution_restores_route_a_industry() -> None:
 
 
 def test_sluice_solution_restores_route_b_without_clearing_demon() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
-    factory_id = state.board["fx_village"]["factory_id"]
+    fx = state.board["fx_village"]
+    factory_id = fx["factory_id"]
+    proc_b = fx["processor_route_b_id"]
+    demon_id = fx["demon_cube_id"]
     assert _factory_rate(state, factory_id) == 0.0
     applied = apply_sluice_solution(state)
     assert applied["route"] == "route:B"
     assert applied["computed_rate"] > 0.0
     assert _factory_rate(state, factory_id) > 0.0
-    assert state.hazards["catastrophe"]["cubes"]["cube:demon"]["active"] is True
-    assert state.industry["processors"]["processor:route_b"]["active"] is True
+    assert state.hazards["catastrophe"]["cubes"][demon_id]["active"] is True
+    assert state.industry["processors"][proc_b]["active"] is True
 
 
 def test_world_resolved_and_destroyed_remain_playable() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
+    demon_id = fx["demon_cube_id"]
     svc = QuestService(state)
     svc.accept(quest_id)
-    state.hazards["catastrophe"]["cubes"]["cube:demon"]["active"] = False
+    state.hazards["catastrophe"]["cubes"][demon_id]["active"] = False
     state.definitions["installed_routes"]["route:A"]["available"] = True
     world = svc.evaluate(quest_id, world_signals={"world_repaired": True, "actor": "patrol"})
     assert world["status"] == "resolved_by_world"
     assert _ack_for("world_fix_first")["id"] == "dialogue.mara.world_resolved"
 
-    sim2 = load_fixture("FX-VILLAGE", seed=506)
+    sim2 = load_fixture("FX-VILLAGE", seed=509)
     state2 = sim2.state
     fx2 = state2.board["fx_village"]
     q2 = fx2["quest_id"]
@@ -160,7 +164,7 @@ def test_world_resolved_and_destroyed_remain_playable() -> None:
 
 
 def test_no_duplicate_quest_or_reward_on_return() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
@@ -174,7 +178,9 @@ def test_no_duplicate_quest_or_reward_on_return() -> None:
     assert restored_state.quests[quest_id]["stakeholder_id"] == mara_id
     assert restored_state.quests[quest_id]["status"] == "active"
     svc2 = QuestService(restored_state)
-    CatastropheService(restored_state).remove_cube("cube:demon", authority="test")
+    CatastropheService(restored_state).remove_cube(
+        restored_state.board["fx_village"]["demon_cube_id"], authority="test"
+    )
     apply_demon_solution(restored_state)
     first = svc2.evaluate(
         quest_id,

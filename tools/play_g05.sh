@@ -17,7 +17,7 @@ resolve_godot() {
 GODOT_BIN="$(resolve_godot)"
 export GODOT="$GODOT_BIN"
 export DMB_FIXTURE="FX-VILLAGE"
-export DMB_SEED="${DMB_SEED:-505}"
+export DMB_SEED="${DMB_SEED:-507}"
 RESOLUTION="${DMB_RESOLUTION:-450x800}"
 if [[ "${1:-}" == "--resolution" ]]; then RESOLUTION="${2:?--resolution requires WxH}"; fi
 echo "G05 FX-VILLAGE seed=$DMB_SEED resolution=$RESOLUTION"

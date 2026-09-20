@@ -5,11 +5,26 @@
   "accepted_build": null,
   "candidate_branch": "feature/g05-village-quest",
   "fixture": "FX-VILLAGE",
-  "seed": 505,
+  "seed": 507,
   "launch": "bash tools/play_g05.sh",
   "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
   "fix_required_at": "2026-09-20T10:41:00Z",
-  "returned_awaiting_human_at": "2026-09-20T11:10:00Z",
-  "fix_summary": "Combined Overworld presentation with ClockDriver/IndustryService/WorkerController/SyncPose/mouse; FX-VILLAGE uses real industrial blockage and solutions; cumulative G05 Godot test mandatory.",
-  "notes": "Do not mark PASS from automation. Do not start T097. Automated gate checks PASS including g05_cumulative_runtime and G01–G04 regressions."
+  "returned_awaiting_human_at": "2026-09-20T11:02:25Z",
+  "fix_summary": "Integrated-world repair: FX-VILLAGE is BoardBuilder seed 507 settlement node:35 / settlement:3 / faction:2 with living+blocked IndustryService chains, one actor per person_id, ActorVisual sprites, world-integrity cumulative proofs.",
+  "notes": "Do not mark PASS from automation. Do not start T097. Automated checks PASS; awaiting Joe playtest.",
+  "world_slice": {
+    "board_seed": 507,
+    "topology": {
+      "hexes": 19,
+      "nodes": 54,
+      "edges": 72
+    },
+    "node_id": "node:35",
+    "settlement_id": "settlement:3",
+    "faction_id": "faction:2",
+    "demon_hex": "hex:1,1",
+    "shortage_factory_id": "building:26",
+    "working_factory_id": "building:25",
+    "mara_id": "person:10"
+  }
 }

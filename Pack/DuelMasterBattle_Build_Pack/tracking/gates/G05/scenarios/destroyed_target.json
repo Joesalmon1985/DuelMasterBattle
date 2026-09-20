@@ -111,7 +111,7 @@
       "fx_village": {
         "id": "FX-VILLAGE",
         "schema_version": 1,
-        "seed": 505,
+        "seed": 507,
         "node_id": "node:village",
         "token": 6,
         "terrains": [

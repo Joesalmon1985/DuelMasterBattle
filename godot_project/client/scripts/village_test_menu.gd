@@ -304,7 +304,7 @@ func _on_run_pressed() -> void:
         return
     if selected_profile_id == "FX-VILLAGE" or bool(_fixture_by_id(selected_profile_id).get("python_backed", false)):
         OS.set_environment("DMB_FIXTURE", "FX-VILLAGE")
-        OS.set_environment("DMB_SEED", "505")
+        OS.set_environment("DMB_SEED", "507")
         get_tree().change_scene_to_file("res://client/scenes/g05_shell.tscn")
         return
     Runner.set_profile(selected_profile_id)

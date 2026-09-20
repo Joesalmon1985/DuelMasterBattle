@@ -10,6 +10,7 @@ from sim.dmb.hazards.service import CatastropheService
 from sim.dmb.industry import fraction
 from sim.dmb.quests.runtime import QuestService
 from sim.dmb.testing.fixtures import load_fixture
+from sim.dmb.world.board import HexBoard
 from sim.dmb.world.fx_village_solutions import apply_demon_solution
 
 FIXTURE = (
@@ -44,13 +45,14 @@ def test_fixture_content_present() -> None:
     meta = json.loads(FIXTURE.read_text(encoding="utf-8"))
     quest = json.loads(QUEST.read_text(encoding="utf-8"))
     assert meta["id"] == "FX-VILLAGE"
-    assert len(meta["routes"]) == 2
+    assert int(meta["seed"]) == 507
     assert quest["id"] == "quest.factory_shortage"
     assert len(quest["stages"]) == 4
+    assert {s["id"] for s in quest["solutions"]} == {"demon_duel", "sluice_route"}
 
 
 def test_quest_binds_real_person_and_factory_shortage() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     mara_id = fx["mara_id"]
@@ -67,21 +69,27 @@ def test_quest_binds_real_person_and_factory_shortage() -> None:
     assert float(factory.get("output_rate") or 0) == 0.0
     assert state.definitions["installed_routes"]["route:A"]["available"] is False
     assert state.definitions["installed_routes"]["route:B"]["available"] is False
-    assert "channel:source:ore:finite" in (state.industry or {}).get("channels", {})
+    channels = (state.industry or {}).get("channels", {})
+    assert any("ore" in str(ch.get("resource_id", "")) for ch in channels.values())
+    assert fx["node_id"] in HexBoard.from_dict(state.board["topology"]).nodes
+    assert len(state.board.get("hex_terrain") or {}) == 19
     assert quest["stakeholder_id"] == mara_id
     assert quest["affected_entity_id"] == factory_id
     assert quest["status"] == "offered"
+    # Working factory continues while shortage factory is blocked.
+    work_id = fx["factory_work_id"]
+    assert _factory_rate(state, work_id) > 0.0
 
 
 def test_demon_victory_restores_route_a() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
     factory_id = fx["factory_id"]
     svc = QuestService(state)
     svc.accept(quest_id)
-    CatastropheService(state).remove_cube("cube:demon", authority="test")
+    CatastropheService(state).remove_cube(fx["demon_cube_id"], authority="test")
     applied = apply_demon_solution(state)
     assert applied["computed_rate"] > 0.0
     assert _factory_rate(state, factory_id) > 0.0
@@ -95,13 +103,14 @@ def test_demon_victory_restores_route_a() -> None:
 
 
 def test_world_repair_acknowledges_correct_actor() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
-    quest_id = state.board["fx_village"]["quest_id"]
+    fx = state.board["fx_village"]
+    quest_id = fx["quest_id"]
     svc = QuestService(state)
     svc.accept(quest_id)
     # Military clears cube before player returns.
-    state.hazards["catastrophe"]["cubes"]["cube:demon"]["active"] = False
+    state.hazards["catastrophe"]["cubes"][fx["demon_cube_id"]]["active"] = False
     state.definitions["installed_routes"]["route:A"]["available"] = True
     out = svc.evaluate(quest_id, world_signals={"world_repaired": True, "actor": "patrol"})
     assert out["status"] == "resolved_by_world"
@@ -109,7 +118,7 @@ def test_world_repair_acknowledges_correct_actor() -> None:
 
 
 def test_destroyed_target_never_respawns() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=505)
+    sim = load_fixture("FX-VILLAGE", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     factory_id = fx["factory_id"]

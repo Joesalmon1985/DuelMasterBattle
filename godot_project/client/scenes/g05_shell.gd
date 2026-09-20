@@ -47,7 +47,7 @@ func _ready() -> void:
 	Migrated.enable()
 	OS.set_environment("DMB_FIXTURE", "FX-VILLAGE")
 	if OS.get_environment("DMB_SEED") == "":
-		OS.set_environment("DMB_SEED", "505")
+		OS.set_environment("DMB_SEED", "507")
 	if OS.get_environment("DMB_SAVE_SLOT") == "":
 		OS.set_environment("DMB_SAVE_SLOT", G05_SAVE)
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)

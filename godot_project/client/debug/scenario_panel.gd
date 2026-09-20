@@ -28,7 +28,7 @@ func _ready() -> void:
 		_visible_in_dev = false
 		return
 	_seed_edit = LineEdit.new()
-	_seed_edit.text = "505"
+	_seed_edit.text = "507"
 	_seed_edit.placeholder_text = "seed"
 	add_child(_seed_edit)
 	_fixture_edit = LineEdit.new()
@@ -55,7 +55,7 @@ func is_developer_controls_visible() -> bool:
 
 
 func selected_seed() -> int:
-	return int(_seed_edit.text) if _seed_edit != null and _seed_edit.text.is_valid_int() else 505
+	return int(_seed_edit.text) if _seed_edit != null and _seed_edit.text.is_valid_int() else 507
 
 
 func selected_fixture() -> String:

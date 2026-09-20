@@ -19,7 +19,7 @@ func _fail(msg: String) -> void:
 
 func _run() -> void:
 	OS.set_environment("DMB_FIXTURE", "FX-VILLAGE")
-	OS.set_environment("DMB_SEED", "505")
+	OS.set_environment("DMB_SEED", "507")
 	var shell = Shell.new()
 	root.add_child(shell)
 	var deadline := Time.get_ticks_msec() + 20000
@@ -90,7 +90,8 @@ func _run() -> void:
 		_fail("sluice entrance missing")
 		return
 	# Demon route entrance.
-	var demon := _entity(area, "cube:demon")
+	var demon_id := str(shell.fx_meta().get("demon_cube_id", "cube:demon"))
+	var demon := _entity(area, demon_id)
 	if demon.is_empty():
 		_fail("demon cube missing")
 		return
@@ -146,7 +147,7 @@ func _run() -> void:
 		_fail("return village lost ids")
 		return
 	# Demon challenge start (lease open) then resign without claiming victory.
-	var started: bool = shell.start_demon_challenge("cube:demon")
+	var started: bool = shell.start_demon_challenge(demon_id)
 	if not started:
 		_fail("demon challenge failed to start")
 		return

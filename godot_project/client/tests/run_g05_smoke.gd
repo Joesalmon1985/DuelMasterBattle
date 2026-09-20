@@ -12,7 +12,7 @@ func _init() -> void:
 
 func _run() -> void:
 	OS.set_environment("DMB_FIXTURE", "FX-VILLAGE")
-	OS.set_environment("DMB_SEED", "505")
+	OS.set_environment("DMB_SEED", "507")
 	var shell = Shell.new()
 	root.add_child(shell)
 	var deadline := Time.get_ticks_msec() + 12000
