@@ -305,7 +305,8 @@ class IndustryProjection:
                         "visual_profile": person.get("visual_profile") or person.get("sprite") or "worker",
                         "job_key": None,
                         "job_id": job.get("job_id"),
-                        "role": person.get("role") or "worker",
+                        # Projection activity tag for presenters/tests — not Person.identity.
+                        "role": "carrier",
                         "occupation": occupation,
                         "public_role": occupation,
                         "node_id": person.get("node_id"),

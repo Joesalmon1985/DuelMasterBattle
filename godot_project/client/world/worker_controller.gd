@@ -9,6 +9,8 @@ extends Node2D
 signal person_spawned(person_id: String, actor: Node2D, row: Dictionary)
 signal person_updated(person_id: String, actor: Node2D, row: Dictionary)
 signal person_removed(person_id: String)
+## Optional diagnostic for G03 industry shells (no-op unless emitted).
+signal layout_diagnostic(person_id: String, message: String)
 
 const ActorVisual = preload("res://client/world/actor_visual.gd")
 const PIXEL_ROOT := "res://assets/pixel/"
