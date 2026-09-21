@@ -157,6 +157,8 @@ func _process(delta: float) -> void:
 		if _overworld != null and _overworld.get("_john") != null:
 			_workers.set_wizard_world_position(_overworld._john.global_position)
 		_workers.tick(delta)
+		if _overworld != null and _overworld.has_method("sync_dynamic_person_poses"):
+			_overworld.sync_dynamic_person_poses()
 
 
 func _notification(what: int) -> void:

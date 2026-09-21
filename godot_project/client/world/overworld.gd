@@ -1755,7 +1755,7 @@ func register_dynamic_person(person_id: String, actor: Node2D, row: Dictionary) 
 	var e := {
 		"kind": "npc",
 		"id": person_id,
-		"pos": [0, 0],
+		"pos": _actor_tile_pos(actor),
 		"name": display if known else role,
 		"bridge_entity": true,
 		"bridge_talk": true,
@@ -1768,11 +1768,32 @@ func register_dynamic_person(person_id: String, actor: Node2D, row: Dictionary) 
 	_hide_name_fallback(actor)
 
 
+func _actor_tile_pos(actor: Node2D) -> Array:
+	if not is_instance_valid(actor):
+		return [0, 0]
+	var gx := int(floor(actor.position.x / float(TPX)))
+	var gy := int(floor(actor.position.y / float(TPX)))
+	return [gx, gy]
+
+
+func sync_dynamic_person_poses() -> void:
+	"""Keep semantic range in sync with moving Person actors."""
+	for e in _entities:
+		if not bool(e.get("dynamic", false)):
+			continue
+		var actor = e.get("node")
+		if actor != null and is_instance_valid(actor):
+			e["pos"] = _actor_tile_pos(actor)
+
+
 func update_dynamic_person(person_id: String, row: Dictionary) -> void:
 	var e := _entity_by_id(person_id)
 	if e.is_empty():
 		return
-	var role := str(row.get("public_role", row.get("role", "Worker")))
+	var actor = e.get("node")
+	if actor != null and is_instance_valid(actor):
+		e["pos"] = _actor_tile_pos(actor)
+	var role := str(row.get("public_role", row.get("occupation", row.get("role", "Worker"))))
 	if role == "" or role.begins_with("person:"):
 		role = "Worker"
 	var far := str(row.get("observe_far", e.get("semantic", {}).get("observe_far", "")))
@@ -2030,7 +2051,13 @@ func _semantic_owns_talk(e: Dictionary) -> bool:
 
 
 func _semantic_in_range(e: Dictionary) -> bool:
+	if bool(e.get("dynamic", false)):
+		var actor = e.get("node")
+		if actor != null and is_instance_valid(actor):
+			e["pos"] = _actor_tile_pos(actor)
 	var pos: Array = e.get("pos", [-99, -99])
+	if pos.size() < 2:
+		return false
 	var d: Vector2i = (_john_pos - Vector2i(int(pos[0]), int(pos[1]))).abs()
 	return d.x + d.y <= 1
 
@@ -2892,8 +2919,12 @@ func _finish_village_build(at: Vector2i, facing: String) -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c != _john:
-			c.queue_free()
+		if c == _john:
+			continue
+		# Preserve G05 WorkerController / activity presenters mounted under actors.
+		if str(c.name) == "WorkerController" or c.is_in_group("dmb_person_presenter"):
+			continue
+		c.queue_free()
 	_entities.clear()
 	_entity_at.clear()
 	_fire_frames.clear()
@@ -3019,6 +3050,12 @@ func _interact_bridge_pickup(e: Dictionary) -> void:
 
 
 func _interact_bridge_entity(e: Dictionary) -> void:
+	if bool(e.get("bridge_talk", false)):
+		await _interact_bridge_npc(e)
+		return
+	if bool(e.get("bridge_challenge", false)):
+		await _interact_bridge_challenge(e)
+		return
 	var host = _bridge_host()
 	if bool(e.get("bridge_enter", false)) or str(e.get("dungeon_id", "")) == "dungeon.sluice":
 		_input_locked = true
@@ -3062,11 +3099,9 @@ func _interact_bridge_entity(e: Dictionary) -> void:
 		var options: Array = ["Inspect"]
 		if str(semantic.get("interaction", "")) == "building":
 			options.append("Observe")
-		options.append("Walk away")
-		var picked: String = await _dialogue.choose_async(str(e.get("text", "Inspect")), options)
-		if picked == "Inspect" or picked == "Observe":
-			await _dialogue.say_async("", near if picked == "Inspect" else far)
-		# Destroy remains available via magic route — do not remove G04 capability here.
+		var choice: String = await _dialogue.choose_async(far if far != near else "Look closer?", options)
+		if choice == "Inspect" or choice == "Observe":
+			await _dialogue.say_async("", near)
 	else:
 		await _dialogue.say_async("", far)
 	_input_locked = false
