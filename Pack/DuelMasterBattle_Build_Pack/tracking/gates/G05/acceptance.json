@@ -1,16 +1,21 @@
 {
   "gate": "G05",
-  "status": "FIX_REQUIRED",
+  "status": "AWAITING_HUMAN",
   "accepted_by": null,
   "accepted_build": null,
   "candidate_branch": "refactor/canonical-ontology-g05",
   "fixture": "FX-VILLAGE",
-  "quest_fixture": "FX-VILLAGE-QUEST",
+  "archived_quest_fixture": "FX-VILLAGE-QUEST",
   "seed": 507,
+  "start_node_id": "node:35",
+  "start_settlement_id": "settlement:3",
+  "local_area_size": [48, 48],
+  "board": {"hexes": 19, "nodes": 54, "edges": 72},
   "launch": "bash tools/play_g05.sh",
   "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
-  "checkpoint": "village_foundation",
-  "fix_required_at": "2026-09-21T19:00:00Z",
-  "fix_summary": "Village Foundation: healthy baseline play_g05; quest disabled behind FX-VILLAGE-QUEST; perimeter primaries; occupation vocabulary; no quest contamination in ordinary dialogue.",
-  "notes": "Do not mark PASS. Do not start T097. Quest remains unresolved until foundation is accepted and reintegrated."
+  "objective": "full_prehistoric_world_exploration",
+  "quest_active": false,
+  "awaiting_human_at": "2026-09-21T22:00:00Z",
+  "acceptance_criterion": "Starting inside a real settlement, walk the entire generated board; every strategic node is a same-sized persistent LocalArea reflecting real board state.",
+  "notes": "Do not mark PASS. Do not start T097. Shortage quest archived; generic quest/puzzle/duel frameworks retained unused."
 }

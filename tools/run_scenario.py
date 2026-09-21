@@ -205,38 +205,22 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(json.dumps(payload, indent=2))
             return 1
 
-    if args.fixture in {"FX-VILLAGE", "FX-VILLAGE-QUEST"}:
+    if args.fixture == "FX-VILLAGE-QUEST":
         try:
-            # Scenario/panel records the shortage quest; use QUEST fixture even if
-            # caller still passes the historical FX-VILLAGE name.
-            quest_fixture = "FX-VILLAGE-QUEST"
-            sim = load_fixture(quest_fixture, seed=args.seed)
+            sim = load_fixture("FX-VILLAGE-QUEST", seed=args.seed)
             result = run_fx_village(sim, seed=args.seed)
             payload = {
-                "fixture": quest_fixture,
+                "fixture": "FX-VILLAGE-QUEST",
                 "status": result.status,
                 "owner": owner,
                 "seed": args.seed,
                 "details": result.details,
                 "world_id": sim.state.world_id,
                 "quest_id": result.details.get("quest_id"),
-                "puzzle_id": "puzzle.sluice",
+                "archived": True,
                 "same_engine": True,
             }
             _record(args.record, payload)
-            # Also write a mid-quest snapshot for Joe under village_runs.
-            runs = ROOT / "Pack" / "DuelMasterBattle_Build_Pack" / "tracking" / "village_runs"
-            runs.mkdir(parents=True, exist_ok=True)
-            snap = {
-                "seed": args.seed,
-                "fixture": quest_fixture,
-                "quest_id": result.details.get("quest_id"),
-                "mara_id": result.details.get("mara_id"),
-                "factory_id": result.details.get("factory_id"),
-                "quest_status": result.details.get("quest_status"),
-                "world_version": sim.state.world_version,
-            }
-            _record(runs / f"mid_quest_seed_{args.seed}.json", snap)
             print(json.dumps(payload, indent=2))
             return 0 if result.status == "PASS" else 1
         except Exception as exc:  # noqa: BLE001
@@ -247,34 +231,37 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "message": str(exc),
             }
             _record(args.record, payload)
-            # Failure bundle for missing-line / softlock / cause replay.
-            bundle_dir = (
-                ROOT
-                / "Pack"
-                / "DuelMasterBattle_Build_Pack"
-                / "tracking"
-                / "village_runs"
-                / "failure_bundles"
-            )
-            bundle_dir.mkdir(parents=True, exist_ok=True)
-            bundle = {
-                "fixture": args.fixture,
+            print(json.dumps(payload, indent=2))
+            return 1
+
+    if args.fixture == "FX-VILLAGE":
+        try:
+            from sim.dmb.world.prehistoric_world import board_summary
+
+            sim = load_fixture("FX-VILLAGE", seed=args.seed)
+            summary = board_summary(sim)
+            ok = int(summary.get("nodes") or 0) == 54 and int(summary.get("hexes") or 0) == 19
+            payload = {
+                "fixture": "FX-VILLAGE",
+                "status": "PASS" if ok else "FAIL",
+                "owner": owner,
                 "seed": args.seed,
-                "error": str(exc),
-                "replay": {
-                    "command": [
-                        "python3",
-                        "tools/run_scenario.py",
-                        "--fixture",
-                        "FX-VILLAGE",
-                        "--seed",
-                        str(args.seed),
-                        "--record",
-                        str(args.record),
-                    ]
-                },
+                "details": summary,
+                "world_id": sim.state.world_id,
+                "quest_id": None,
+                "same_engine": True,
             }
-            _record(bundle_dir / f"bundle_seed_{args.seed}.json", bundle)
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 0 if ok else 1
+        except Exception as exc:  # noqa: BLE001
+            payload = {
+                "fixture": args.fixture,
+                "status": "FAIL",
+                "owner": owner,
+                "message": str(exc),
+            }
+            _record(args.record, payload)
             print(json.dumps(payload, indent=2))
             return 1
 

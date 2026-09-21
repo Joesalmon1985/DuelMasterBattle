@@ -12,14 +12,14 @@ You should be asked to play at the following ten breaks, not after every task. R
 | [G02](gates/G02.md) | T048 | Autonomous factions, construction and carts | 15–20 minutes |
 | [G03](gates/G03.md) | T058 | Industry and persistent workers | 15–20 minutes |
 | [G04](gates/G04.md) | T076 | Battles, wizard power and catastrophe | 20–30 minutes |
-| [G05](gates/G05.md) | T096 | The procedural village and quest test | 30–40 minutes |
+| [G05](gates/G05.md) | T096 | Fully explorable Prehistoric world (no active quest) | 30–40 minutes |
 | [G06](gates/G06.md) | T114 | Integrated MVP through Historic transition | 45–60 minutes; use supplied near-transition save for focused recheck |
 | [G07](gates/G07.md) | T132 | All eras and repeated historical cycles | 25–35 minutes |
 | [G08](gates/G08.md) | T142 | Narrative breadth, presentation and authoring tools | 30–45 minutes |
 | [G09](gates/G09.md) | T150 | Trained faction leadership | 20–30 minutes plus review of evaluation summary |
 | [G10](gates/G10.md) | T160 | Packaged full-baseline acceptance | 45–60 minutes |
 
-G05 is your requested village-testing milestone. G06 is the complete playable MVP. G07–G10 finish the full baseline. A “working MVP” message does not close the remaining tasks.
+G05 is the full-board exploration milestone (walk every strategic node as a same-sized LocalArea). Active quest content is deferred. G06 is the complete playable MVP. G07–G10 finish the full baseline. A “working MVP” message does not close the remaining tasks.
 
 At each gate the agent owes you a build that it has actually launched, a seed/save, simple steps, automated results and known defects. You should not have to diagnose raw stack traces before you can play. If it only supplies a list of classes or says the tests pass, ask for the gate packet.
 

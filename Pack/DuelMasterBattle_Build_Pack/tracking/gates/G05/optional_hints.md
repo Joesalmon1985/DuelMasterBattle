@@ -1,19 +1,20 @@
-# G05 optional hints (read after trying)
+# Archived — prototype shortage quest hints
 
-Try inference first. These hints are intentionally separate from launch/reset steps.
+**Not part of current G05 acceptance.** Baseline play has no active quest.
 
-## Cause
+These notes remain for the archived fixture `FX-VILLAGE-QUEST` only.
 
-Both factory routes are blocked: Route A by a demon cube on the ore ridge; Route B by a `sluice_sabotage` production modifier. Mara is bound to the real shortage.
+## Historical setup
 
-## Solution A
+Both factory routes were blocked: Route A by a demon cube on the ore ridge;
+Route B by a `sluice_sabotage` production modifier. Mara was bound to the shortage.
 
-Challenge the demon with the retained `game_board` / `DmbBattleSim` lease. Victory removes that cube within visit allowance and restores Route A. Confirm real factory output.
+## Route A (archived)
 
-## Solution B
+Challenge the demon with the retained `game_board` / `DmbBattleSim` lease.
 
-Enter the sluice dungeon: workshop handle → push box onto pressure plate → place handle in receptor → open gate → activate sluice. This removes only the sabotage modifier and sets `sluice_open`. Route B becomes eligible; dialogue must not claim the demon was cleared.
+## Route B (archived)
 
-## World-resolved / destroyed
+Enter the sluice dungeon and clear sabotage so Route B becomes eligible.
 
-If military clears the cube first, acknowledgement uses the world-resolved line. If the factory is destroyed, the quest fails with displaced loss — no respawn.
+Reintroduce narrative quests only after the base explorable world is accepted.

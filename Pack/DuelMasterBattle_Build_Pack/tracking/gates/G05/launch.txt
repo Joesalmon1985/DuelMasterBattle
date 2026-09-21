@@ -1,16 +1,20 @@
 Linux (verified):
   bash tools/play_g05.sh
   # or: bash tools/play_g05.sh --resolution 1280x720
-  # env: DMB_FIXTURE=FX-VILLAGE DMB_SEED=505
+  # env: DMB_FIXTURE=FX-VILLAGE DMB_SEED=507
 
-Scenario runner (same engine, headless):
-  python3 tools/run_scenario.py --fixture FX-VILLAGE --seed 505 \
+Headless playable smoke:
+  godot --headless --path godot_project --script res://client/tests/run_g05_playable.gd
+
+Scenario runner (board smoke, no quest):
+  python3 tools/run_scenario.py --fixture FX-VILLAGE --seed 507 \
     --record Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/fx_village_record.json
 
 Gate checks:
   python3 tools/check.py --gate G05
 
-Village panel / mid-quest fixtures:
-  Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/
+54-node traversal:
+  python3 -m pytest tests/sim/test_g05_full_world.py -q
 
-Do not start with optional_hints.md open.
+Archived quest fixture (not baseline):
+  DMB_FIXTURE=FX-VILLAGE-QUEST bash tools/play_g05.sh

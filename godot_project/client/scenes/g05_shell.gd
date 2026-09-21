@@ -60,7 +60,8 @@ func _ready() -> void:
 	_status.offset_bottom = 36
 	_status.add_theme_font_size_override("font_size", 12)
 	_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_status.text = "G05 Village Foundation — healthy baseline"
+	_status.text = "Prehistoric world — walk the board"
+
 	add_child(_status)
 	_clock = ClockDriver.new()
 	_clock.advance_requested.connect(_on_clock_advance)
@@ -126,7 +127,8 @@ func _boot() -> void:
 		_workers.person_updated.connect(_on_worker_updated)
 		_workers.person_removed.connect(_on_worker_removed)
 	_apply_workers(view)
-	_status.text = "Village Foundation — walk, talk, travel, watch the works"
+	_status.text = "Explore — every path leads to a neighbouring place"
+
 	_boot_done = true
 	_village_ready = true
 	_sync_pose(true)

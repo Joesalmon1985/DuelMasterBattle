@@ -15,12 +15,15 @@ from typing import Any
 from sim.dmb.core.state import WorldState
 from sim.dmb.core.types import TypeValidationError
 
-from sim.dmb.world.settlement_layout import LAYOUT_SCHEMA_VERSION as SETTLEMENT_LAYOUT_VERSION
-
-LAYOUT_SCHEMA_VERSION = SETTLEMENT_LAYOUT_VERSION
+LAYOUT_SCHEMA_VERSION = 3  # Full-board LocalArea: fixed 48×48, geography + road/trail exits
 BASE_SIZE = 48
 GROW_STEP = 16
 FOOTPRINT = (3, 3)
+
+# Keep settlement_layout version in sync for settlement anchors written elsewhere.
+from sim.dmb.world import settlement_layout as _settlement_layout
+
+_settlement_layout.LAYOUT_SCHEMA_VERSION = LAYOUT_SCHEMA_VERSION
 
 
 def _stable_rng(seed_material: str) -> random.Random:
@@ -100,12 +103,6 @@ class LocalProjectionService:
         width = BASE_SIZE
         height = BASE_SIZE
         centre = [width // 2, height // 2]
-        exits = [
-            {"id": "exit.north", "grid": [centre[0], 1], "direction": "north", "to": "overworld"},
-            {"id": "exit.south", "grid": [centre[0], height - 2], "direction": "south", "to": "overworld"},
-            {"id": "exit.east", "grid": [width - 2, centre[1]], "direction": "east", "to": "overworld"},
-            {"id": "exit.west", "grid": [1, centre[1]], "direction": "west", "to": "overworld"},
-        ]
         record: dict[str, Any] = {
             "schema_version": LAYOUT_SCHEMA_VERSION,
             "node_id": node_id,
@@ -118,16 +115,149 @@ class LocalProjectionService:
             "cart_anchors": {},
             "unit_anchors": {},
             "objects": {},
-            "exits": exits,
+            "exits": [],
             "destroyed_ids": [],
             "overrides": {},
             "edits": [],
+            "geography": [],
+            "kind": self._derive_node_kind(node_id),
         }
+        self._generate_geography(record, node_id)
+        self._place_settlement_buildings(record, node_id)
         self._ensure_capacity(record, manifest or self._default_manifest(node_id))
         self._apply_manifest_bindings(record, manifest)
         self._bind_topology_exits(record, node_id)
         store[node_id] = record
         return dict(record)
+
+    def project_node(self, node_id: str) -> dict[str, Any]:
+        """Production entry: ensure + project any strategic node."""
+        return self.project(node_id)
+
+    def _derive_node_kind(self, node_id: str) -> str:
+        for s in (self.state.settlements or {}).values():
+            if s.get("node_id") == node_id and not s.get("staging") and s.get("operational", True):
+                tier = str(s.get("tier") or "settlement")
+                return "city" if tier == "city" else "settlement"
+        if self._incident_roads(node_id):
+            return "road"
+        return "wilderness"
+
+    def _incident_roads(self, node_id: str) -> list[dict[str, Any]]:
+        out = []
+        for road in (self.state.roads or {}).values():
+            if road.get("status") != "built":
+                continue
+            if node_id in {str(road.get("a")), str(road.get("b"))}:
+                out.append(road)
+        return out
+
+    def _road_to_neighbour(self, node_id: str, other: str) -> dict[str, Any] | None:
+        for road in self._incident_roads(node_id):
+            ends = {str(road.get("a")), str(road.get("b"))}
+            if other in ends:
+                return road
+        return None
+
+    def _generate_geography(self, record: dict[str, Any], node_id: str) -> None:
+        """Deterministic terrain patches from touching hexes — persisted with the layout."""
+        from sim.dmb.world.settlement_layout import hex_sector, perimeter_anchor
+
+        board_topo = self.state.board.get("topology") or {}
+        hex_terrain = self.state.board.get("hex_terrain") or {}
+        touching = list(self.state.board.get("node_hexes", {}).get(node_id) or [])
+        rng = _stable_rng(f"{record.get('seed')}:geo")
+        width = int(record["width"])
+        height = int(record["height"])
+        patches: list[dict[str, Any]] = []
+        # Reconstruct a minimal HexBoard-like API via topology dict if needed.
+        try:
+            from sim.dmb.world.board import HexBoard
+
+            board = HexBoard.from_dict(board_topo) if board_topo.get("hexes") else None
+        except Exception:
+            board = None
+        for hid in touching:
+            terrain = str(hex_terrain.get(hid) or "fields")
+            if board is not None:
+                try:
+                    sector = hex_sector(board, node_id, str(hid))
+                except Exception:
+                    sector = rng.choice(
+                        ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"]
+                    )
+            else:
+                sector = rng.choice(
+                    ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"]
+                )
+            anchor = perimeter_anchor(width, height, sector, footprint=(6, 5), margin=2)
+            tile = {"woodland": "T", "ore_mountains": "r", "clay_mountains": "r", "fields": ",", "grazing_land": ",", "desert": "."}.get(
+                terrain, "."
+            )
+            patches.append(
+                {
+                    "hex_id": str(hid),
+                    "terrain": terrain,
+                    "sector": sector,
+                    "grid": list(anchor["grid"]),
+                    "footprint": list(anchor["footprint"]),
+                    "tile": tile,
+                }
+            )
+        record["geography"] = patches
+
+    def _place_settlement_buildings(self, record: dict[str, Any], node_id: str) -> None:
+        """If this node has a settlement, place buildings via spatial grammar."""
+        has_settlement = any(
+            s.get("node_id") == node_id and not s.get("staging") for s in (self.state.settlements or {}).values()
+        )
+        if not has_settlement:
+            return
+        from sim.dmb.world.board import HexBoard
+        from sim.dmb.world.settlement_layout import build_village_layout_sites
+
+        board_topo = self.state.board.get("topology") or {}
+        try:
+            board = HexBoard.from_dict(board_topo)
+        except Exception:
+            return
+        node_buildings = {
+            str(bid): b
+            for bid, b in (self.state.buildings or {}).items()
+            if b.get("node_id") == node_id and b.get("active", True)
+        }
+        anchors, sites = build_village_layout_sites(
+            board=board,
+            node_id=node_id,
+            buildings=node_buildings,
+            width=int(record["width"]),
+            height=int(record["height"]),
+        )
+        record["buildings"] = anchors
+        # Sync industry layout site grids for worker paths.
+        by_node = self.state.board.setdefault("fx_industry_by_node", {})
+        if node_id in by_node:
+            # Merge grids into existing site rows.
+            by_id = {str(s["id"]): s for s in sites}
+            merged = []
+            for site in (by_node[node_id].get("layout") or {}).get("sites") or []:
+                extra = by_id.get(str(site.get("id"))) or {}
+                row = dict(site)
+                if extra:
+                    row.update(
+                        {
+                            "grid": extra.get("grid", site.get("grid")),
+                            "entrance": extra.get("entrance", site.get("entrance")),
+                            "approach": extra.get("approach", site.get("approach")),
+                            "footprint": extra.get("footprint", site.get("footprint")),
+                            "sector": extra.get("sector"),
+                            "presentation": extra.get("presentation"),
+                        }
+                    )
+                merged.append(row)
+            by_node[node_id]["layout"] = {"sites": merged or sites}
+            if str((self.state.player or {}).get("node_id") or "") == node_id:
+                self.state.board["fx_industry"] = dict(by_node[node_id])
 
     def save_override(self, node_id: str, override: dict[str, Any]) -> dict[str, Any]:
         record = self._store().get(node_id)
@@ -213,6 +343,39 @@ class LocalProjectionService:
                 continue
             units_view.append({"id": unit_id, "grid": list(anchor.get("grid") or [])})
 
+        # Live people on this node (anchors + anyone currently located here).
+        people_ids = {str(p["id"]) for p in people_view}
+        for person_id, person in (self.state.people or {}).items():
+            if person_id in people_ids or person_id in destroyed:
+                continue
+            if not person.get("alive", True) or person.get("node_id") != node_id:
+                continue
+            people_view.append(
+                {
+                    "id": person_id,
+                    "grid": list(person.get("grid") or layout.get("centre") or [24, 24]),
+                    "role": person.get("role"),
+                    "workplace_id": person.get("workplace_id"),
+                }
+            )
+        # Live carts / units at this node.
+        for cart_id, cart in (self.state.carts or {}).items():
+            if cart_id in destroyed:
+                continue
+            if str(cart.get("current_node") or cart.get("node_id") or "") != node_id:
+                continue
+            if any(c["id"] == cart_id for c in carts_view):
+                continue
+            carts_view.append({"id": cart_id, "grid": list(layout.get("centre") or [24, 24])})
+        for unit_id, unit in (self.state.units or {}).items():
+            if unit_id in destroyed or unit.get("status") == "dead":
+                continue
+            if str(unit.get("node_id") or "") != node_id:
+                continue
+            if any(u["id"] == unit_id for u in units_view):
+                continue
+            units_view.append({"id": unit_id, "grid": list(layout.get("centre") or [24, 24])})
+
         exits = [dict(e) for e in layout.get("exits") or []]
         reachable = self.exits_reachable(layout)
         view = {
@@ -222,6 +385,8 @@ class LocalProjectionService:
             "width": int(layout["width"]),
             "height": int(layout["height"]),
             "centre": list(layout.get("centre") or []),
+            "kind": layout.get("kind") or self._derive_node_kind(node_id),
+            "geography": list(layout.get("geography") or []),
             "buildings": buildings_view,
             "people": people_view,
             "carts": carts_view,
@@ -261,13 +426,25 @@ class LocalProjectionService:
         return [goals[cell] for cell in sorted(reached_cells)]
 
     def _bind_topology_exits(self, record: dict[str, Any], node_id: str) -> None:
-        """Replace placeholder overworld exits with real adjacent Travel destinations."""
-        node = (self.state.board.get("nodes") or {}).get(node_id) or {}
-        exits_map = node.get("exits") or {}
-        if not isinstance(exits_map, dict) or not exits_map:
-            return
+        """Bind one exit per topology neighbour; mark constructed roads vs trails."""
         width = int(record.get("width") or BASE_SIZE)
         height = int(record.get("height") or BASE_SIZE)
+        node = (self.state.board.get("nodes") or {}).get(node_id) or {}
+        exits_map = node.get("exits") or {}
+        # Fall back to topology adjacency if exits not wired yet.
+        if not isinstance(exits_map, dict) or not exits_map:
+            topo = self.state.board.get("topology") or {}
+            try:
+                from sim.dmb.world.board import HexBoard
+
+                board = HexBoard.from_dict(topo)
+                from sim.dmb.world.fx_village_world import wire_topology_travel
+
+                wire_topology_travel(self.state, board, home_node_id=node_id, width=width, height=height)
+                node = (self.state.board.get("nodes") or {}).get(node_id) or {}
+                exits_map = node.get("exits") or {}
+            except Exception:
+                exits_map = {}
         grids = {
             "north": [width // 2, 1],
             "south": [width // 2, height - 2],
@@ -275,24 +452,41 @@ class LocalProjectionService:
             "west": [1, height // 2],
         }
         bound: list[dict[str, Any]] = []
-        for to_node, link in exits_map.items():
+        used_dirs: set[str] = set()
+        for to_node, link in sorted((exits_map or {}).items()):
             direction = str((link or {}).get("direction") or "north")
-            if direction not in grids:
-                direction = "north"
-            label = str((link or {}).get("label") or f"{direction.title()} path")
+            if direction not in grids or direction in used_dirs:
+                for cand in ("north", "east", "south", "west"):
+                    if cand not in used_dirs:
+                        direction = cand
+                        break
+            used_dirs.add(direction)
+            road = self._road_to_neighbour(node_id, str(to_node))
+            is_road = road is not None and str(road.get("status")) == "built"
             dest_rec = (self.state.board.get("nodes") or {}).get(str(to_node)) or {}
-            dest_label = str(dest_rec.get("label") or "the path")
+            dest_label = str(dest_rec.get("label") or "")
+            known = bool(dest_rec.get("settlement_id") or dest_label not in {"", "Wilderness"})
+            if is_road and known and dest_label and dest_label != "Wilderness":
+                label = f"Road to {dest_label}"
+            elif is_road:
+                label = f"{direction.title()} road"
+            elif known and dest_label and dest_label != "Wilderness":
+                label = f"Path to {dest_label}"
+            else:
+                label = f"Path {direction}"
             bound.append(
                 {
-                    "id": f"exit.{direction}",
+                    "id": f"exit.{direction}.{to_node.replace(':', '_')}",
                     "grid": list(grids[direction]),
                     "direction": direction,
                     "to": str(to_node),
                     "to_node": str(to_node),
                     "from_node": str(node_id),
                     "label": label,
-                    "dest_label": dest_label,
+                    "dest_label": dest_label or "Wilderness",
+                    "passage": "road" if is_road else "trail",
                     "interactive": True,
+                    "quiet_label": True,
                 }
             )
         record["exits"] = bound
@@ -375,28 +569,13 @@ class LocalProjectionService:
         }
 
     def _ensure_capacity(self, record: dict[str, Any], manifest: dict[str, Any] | None) -> None:
-        """Expand area in 16-tile increments rather than dropping real structures."""
-        needed = len((manifest or {}).get("building_ids") or record.get("buildings") or {})
-        # Match _next_open_origin packing: 5-cell stride south of centre with margins.
-        while True:
-            width = int(record["width"])
-            height = int(record["height"])
-            centre_y = height // 2
-            cols = len(range(4, width - 6, 5))
-            rows = len(range(centre_y + 2, height - 6, 5))
-            capacity = max(0, cols * rows)
-            if needed <= capacity:
-                break
-            record["width"] = width + GROW_STEP
-            record["height"] = height + GROW_STEP
-            centre = [record["width"] // 2, record["height"] // 2]
-            record["centre"] = centre
-            record["exits"] = [
-                {"id": "exit.north", "grid": [centre[0], 1], "direction": "north", "to": "overworld"},
-                {"id": "exit.south", "grid": [centre[0], record["height"] - 2], "direction": "south", "to": "overworld"},
-                {"id": "exit.east", "grid": [record["width"] - 2, centre[1]], "direction": "east", "to": "overworld"},
-                {"id": "exit.west", "grid": [1, centre[1]], "direction": "west", "to": "overworld"},
-            ]
+        """Ordinary strategic nodes stay at the canonical LocalArea size (BASE_SIZE)."""
+        record["width"] = BASE_SIZE
+        record["height"] = BASE_SIZE
+        centre = [BASE_SIZE // 2, BASE_SIZE // 2]
+        record["centre"] = centre
+        # Do not expand — pack within the standard footprint.
+        _ = manifest
 
     def _next_open_origin(
         self,

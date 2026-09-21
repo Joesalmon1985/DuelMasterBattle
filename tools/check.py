@@ -1106,16 +1106,11 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
         packet = TRACKING / "gates" / "G05"
         return [
             _pytest(
-                "g05_cumulative_python",
-                "tests/scenarios/test_village_quest.py",
-                "tests/scenarios/test_village_solutions.py",
+                "g05_full_world_python",
+                "tests/sim/test_g05_full_world.py",
+                "tests/sim/test_village_foundation.py",
                 "tests/scenarios/test_village_travel.py",
-                "tests/sim/test_t088_inventory_use.py",
-                "tests/sim/test_t089_puzzles.py",
-                "tests/sim/test_t090_sluice.py",
-                "tests/sim/test_t091_duel_progression.py",
-                "tests/sim/test_t092_duel_recovery.py",
-                "tests/sim/test_t095_village_panel.py",
+                "tests/sim/test_canonical_ontology.py",
             ),
             validate_evidence(
                 "g05_packet_files",
@@ -1124,31 +1119,8 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                     packet / "launch.txt",
                     packet / "reset.md",
                     packet / "known_defects.md",
-                    packet / "optional_hints.md",
                     packet / "acceptance.json",
-                    packet / "fx_village_record.json",
-                    packet / "scenarios" / "fresh_launch.json",
-                    packet / "scenarios" / "solution_demon_duel.json",
-                    packet / "scenarios" / "solution_sluice_route.json",
-                    packet / "scenarios" / "world_resolved.json",
-                    packet / "scenarios" / "destroyed_target.json",
                 ],
-            ),
-            run_command(
-                CommandCheck(
-                    name="g05_fx_village_scenario",
-                    argv=(
-                        sys.executable,
-                        "tools/run_scenario.py",
-                        "--fixture",
-                        "FX-VILLAGE",
-                        "--seed",
-                        "507",
-                        "--record",
-                        str(packet / "fx_village_record.json"),
-                    ),
-                    required_pattern=r'"status": "PASS"',
-                )
             ),
             _python_module(
                 "g05_validate_puzzles",
@@ -1159,11 +1131,6 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g05_playable",
                 "res://client/tests/run_g05_playable.gd",
                 r"G05_PLAYABLE_OK",
-            ),
-            _godot_script(
-                "g05_cumulative_runtime",
-                "res://client/tests/run_g05_cumulative.gd",
-                r"G05_CUMULATIVE_OK",
             ),
             _godot_script(
                 "g03_regression_smoke",

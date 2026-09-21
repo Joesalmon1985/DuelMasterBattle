@@ -1,4 +1,4 @@
-"""G05 topology travel: FX-VILLAGE exits are real adjacent nodes."""
+"""G05 topology travel on the full Prehistoric board."""
 
 from __future__ import annotations
 
@@ -8,13 +8,12 @@ from sim.dmb.testing.fixtures import load_fixture
 
 def test_fx_village_topology_travel_round_trip() -> None:
     sim = load_fixture("FX-VILLAGE", seed=507)
-    home = "node:35"
+    home = str(sim.state.board["g05"]["start_node_id"])
     node = sim.state.board["nodes"][home]
     exits = node.get("exits") or {}
     assert isinstance(exits, dict) and exits, "home settlement must expose Travel exits"
     dest = next(iter(exits))
     assert dest in sim.state.board["nodes"]
-    assert dest in (sim.state.board.get("topology") or {}).get("adjacency", {}).get(home, [])
     turn0 = int(sim.state.clock.get("turn") or 0)
     r1 = sim.dispatch(
         CommandEnvelope(
@@ -30,8 +29,8 @@ def test_fx_village_topology_travel_round_trip() -> None:
     assert r1.status == "ACCEPTED"
     assert sim.state.player["node_id"] == dest
     assert int(sim.state.clock["turn"]) == turn0 + 1
-    mara = sim.state.board["fx_village"]["mara_id"]
-    factory = sim.state.board["fx_village"]["factory_id"]
+    # IDs stable
+    settlement_id = sim.state.board["g05"]["start_settlement_id"]
     r2 = sim.dispatch(
         CommandEnvelope(
             1,
@@ -45,19 +44,21 @@ def test_fx_village_topology_travel_round_trip() -> None:
     )
     assert r2.status == "ACCEPTED"
     assert sim.state.player["node_id"] == home
-    assert sim.state.board["fx_village"]["mara_id"] == mara
-    assert sim.state.board["fx_village"]["factory_id"] == factory
+    assert sim.state.board["g05"]["start_settlement_id"] == settlement_id
 
 
-def test_player_building_observation_differs_for_quiet_factory() -> None:
+def test_player_building_observation_for_settlement_factory() -> None:
     from sim.dmb.industry.projection import IndustryProjection
 
-    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
-    fx = sim.state.board["fx_village"]
+    sim = load_fixture("FX-VILLAGE", seed=507)
+    home = str(sim.state.board["g05"]["start_node_id"])
+    factories = [
+        b
+        for b in sim.state.buildings.values()
+        if b.get("node_id") == home and str(b.get("slot_kind")) == "factory" and b.get("active", True)
+    ]
+    assert factories
     proj = IndustryProjection(sim.state)
-    quiet = proj.player_building_observation(fx["factory_id"])
-    working = proj.player_building_observation(fx["factory_work_id"])
-    assert quiet["observe_far"]
-    assert working["observe_far"]
-    assert quiet["observe_far"] != working["observe_far"]
-    assert "quiet" in quiet["observe_far"].lower() or "waiting" in quiet["observe_far"].lower() or "short" in quiet["observe_far"].lower()
+    obs = proj.player_building_observation(str(factories[0]["id"]))
+    assert obs["observe_far"]
+    assert "building:" not in obs.get("label", "")

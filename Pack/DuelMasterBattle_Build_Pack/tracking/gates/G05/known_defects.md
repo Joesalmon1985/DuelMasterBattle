@@ -1,23 +1,24 @@
-# G05 known defects / notes — Village Foundation
+# G05 known defects / notes — full Prehistoric world
 
-**Status:** FIX_REQUIRED — Village Foundation human sanity check (quest paused)
+**Status:** AWAITING_HUMAN — full-board exploration (no active quest)
 
 ## This checkpoint
 
 | Item | Result |
 |------|--------|
-| Baseline fixture | `FX-VILLAGE` healthy; no demon / sluice / shortage quest |
-| Quest preserved | `FX-VILLAGE-QUEST` |
-| Primaries | Perimeter sectors; terrain props not houses |
-| Occupations | Canonical `public_occupation` (not Carrier / attendant churn) |
-| Dialogue | Baseline has no quest/cause/guide promises |
-| Humanoid scale | `ActorVisual.normalize_humanoid_scale` → 96px height |
-| Worker rhythm | Presentation-only load/unload pauses |
+| Board | 19 hexes / 54 nodes / 72 edges from normal prehistoric loader |
+| LocalArea | 48×48 for every ordinary strategic node |
+| Quest | Disabled in baseline; `FX-VILLAGE-QUEST` archived |
+| Settlements | Shared `project_node` projector; ≥2 visitable cores |
+| Roads vs trails | Passage from authoritative road edges only |
+| Industry | Normal C04/C06 starting-core bootstrap; industrial catalogue IDs |
 
-## Remaining oddities (non-blocking if true)
+## Known limitations (non-blocking)
 
-- Soft-contiguous countryside between nodes still discrete LocalArea loads
-- Decorative housing scenery not yet densified
-- Quest reintegration still required after foundation acceptance
+- Soft-contiguous countryside between nodes still discrete LocalArea loads on Travel
+- Settlement display names are provisional (`Settlement F-N`); place-naming later
+- City density variant not yet authored beyond settlement occupancy
+- Industry worker actors are presentation-bound via WorkerController (not static area NPCs)
+- Decorative housing density still light outside the civic core
 
-Do not expose internal IDs in ordinary labels.
+Do not expose internal IDs in ordinary player-facing labels.

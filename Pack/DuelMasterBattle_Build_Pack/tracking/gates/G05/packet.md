@@ -1,60 +1,67 @@
-# G05 — Village Foundation checkpoint (quest paused)
+# G05 — Fully explorable Prehistoric world
 
-**Status:** FIX_REQUIRED (Village Foundation human sanity check)  
+**Status:** AWAITING_HUMAN  
 **Stop point:** T096 — do **not** start T097 / G06  
-**Play fixture:** `FX-VILLAGE` — **healthy baseline**, quest disabled  
-**Quest fixture (preserved):** `FX-VILLAGE-QUEST`  
+**Play fixture:** `FX-VILLAGE` — full Prehistoric board, **no active quest**  
+**Archived quest fixture:** `FX-VILLAGE-QUEST` (prototype shortage / demon / sluice)  
 **Branch:** `refactor/canonical-ontology-g05`  
 **Launch:** `bash tools/play_g05.sh`  
 **Seed:** **507**
 
-## Purpose of this checkpoint
+## Human acceptance
 
-Establish a plain, believable working village **without** shortage-quest pressure.
+> Starting inside a real settlement, I can walk out and explore the entire
+> generated board. Every strategic node becomes a same-sized, persistent local
+> area whose geography and population reflect the real board state.
 
-Acceptance question:
+## Starting placement
 
-> If I know nothing about the quest, does this place make common sense as a functioning settlement?
+| Field | Value |
+|-------|-------|
+| Start node | `node:35` |
+| Settlement | `settlement:3` — Settlement 2-1 (faction:2) |
+| Board | 19 hexes / 54 nodes / 72 edges |
+| LocalArea | **48 × 48** for every ordinary strategic node |
 
-Do **not** ask Joe to solve the shortage quest on this return.
+Other core settlements (visit these):
 
-## Spatial grammar
+| Settlement | Node | Faction |
+|------------|------|---------|
+| Settlement 1-1 | `node:2` | faction:1 |
+| Settlement 1-2 | `node:12` | faction:1 |
+| Settlement 2-2 | `node:27` | faction:2 |
 
-```text
-                 NORTH / OUTSKIRTS
-              [resource extraction]
+Constructed roads (seed 507): `node:2↔5`, `node:12↔17`, `node:35↔29`, `node:27↔21`.
 
-[resource]        VILLAGE CORE         [resource]
-                  centre / warehouse
-                  workshops / factories
+## LocalArea generation rules
 
-                 SOUTH / ROAD OUT
-```
-
-Primaries sit on perimeter sectors from touching-hex orientation.  
-Core holds centre, warehouse, processors, factories.  
-See `docs/LOCAL_SETTLEMENT_PRESENTATION.md`.
+1. **One projector:** `LocalProjectionService.project_node(node_id)` / `export_overworld_area`.
+2. **Derived kind** (presentation only): settlement/city if active settlement on node; else wilderness with road or trail approaches from incident edges.
+3. **Geography:** touching hex terrains stamp perimeter sectors from real board geometry; deterministic from `world seed + node_id`.
+4. **Persisted:** layout stored in world state after first generation; dynamic people/carts/units rebound on revisit.
+5. **Exits:** every `board.adjacent_nodes` neighbour → one reachable exit; passage=`road` iff authoritative road edge, else `trail`.
+6. **Settlements:** same path places centre / warehouse / processors / factories / primaries (primaries toward relevant terrain edge).
 
 ## What you should verify
 
-1. Looks like a settlement, not a test grid of houses  
-2. Resource sites look like woodland / ridge / pits — not cottages  
-3. Occupations stable (Woodcutter / Miner / Clay worker / Factory worker)  
-4. Talking to ordinary workers is ordinary speech — no quest/guide promises  
-5. Workers originate from sensible workplaces with pauses, not perpetual ants  
-6. Paths leave the settlement; Travel out and return preserves IDs  
-7. No demon, sluice entrance, or shortage-quest Mara dialogue in baseline  
-
-## Quest content
-
-Preserved under `FX-VILLAGE-QUEST` / `mode=quest`. Not deleted. Re-enable after foundation passes.
+1. Walk the starting settlement — civic middle, resource edges that match terrain.
+2. Leave on a path; wilderness nodes show geography, not blank grass + labels.
+3. Follow a constructed road vs ordinary trail (visually distinct).
+4. Enter another settlement; real faction buildings and workers.
+5. Return by a different route; home layout persists.
+6. No demon, sluice entrance, factory-shortage Mara, or Route A/B UI.
 
 ## Automated
 
 ```bash
-python3 -m pytest tests/sim/test_village_foundation.py -q
-python3 tools/check.py --gate G04   # regressions
+python3 -m pytest tests/sim/test_g05_full_world.py tests/sim/test_village_foundation.py -q
+python3 tools/check.py --gate G05   # includes G01–G04 regressions
 bash tools/play_g05.sh
 ```
 
-Agents cannot self-PASS G05. Quest gate remains unresolved.
+Agents cannot self-PASS G05.
+
+## Archived prototype quest
+
+Shortage / demon / sluice material is **not** part of this gate. See
+`optional_hints.md` (archived) and fixture `FX-VILLAGE-QUEST` if needed later.

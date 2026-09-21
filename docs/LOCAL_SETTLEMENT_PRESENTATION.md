@@ -1,42 +1,37 @@
-# Local settlement presentation
+# Local settlement / LocalArea presentation
 
 **Status:** CANONICAL companion to [`CANONICAL_GAME_ONTOLOGY.md`](CANONICAL_GAME_ONTOLOGY.md).  
-Implements the Village Foundation spatial grammar.
+Applies to **every ordinary strategic node** (48×48), not only the starting village.
 
 ## Pipeline
 
 ```text
-strategic node
-+ touching hex directions
-+ actual settlement / buildings
+strategic node_id
+    + touching hex directions / terrain
+    + settlement buildings (if any)
+    + incident roads vs trails
             ↓
-persisted LocalArea (schema v2)
+LocalProjectionService.ensure_layout  (persisted geography)
             ↓
-perimeter resource sites
-+ built core
-+ internal paths
-+ strategic exits
+export_overworld_area                 (live people/carts/units)
+            ↓
+Godot Overworld presentation
 ```
 
 ## Rules
 
-1. **Primary / resource sites** occupy **perimeter sectors** derived from the
-   orientation of their touching strategic hex relative to the node.
-2. **Civic / processing / manufacturing** occupy the **built core** near map centre.
-3. Primaries are **not houses**. Presentation uses terrain props (trees, rocks,
-   logs, open ground) — never ordinary wall/roof/door footprints.
-4. Worker routes are illustrative, but **waypoints must come from real site
-   entrances** on that spatial grammar.
-5. **Occupation** is the stable player-facing job label; **activity** is what
-   they are doing now. Never brand a person as “Carrier” merely for carrying.
-6. Fixtures may arrange healthy baseline (`FX-VILLAGE`) or shortage quest
-   (`FX-VILLAGE-QUEST`). Presentation must not invent quest landmarks in baseline.
+1. **Same footprint** for every ordinary strategic node (`BASE_SIZE` = 48).
+2. **Primary / resource sites** occupy **perimeter sectors** from touching-hex orientation.
+3. **Civic / processing / manufacturing** occupy the **built core** near map centre.
+4. Primaries are **not houses** — terrain props for woodland/ridge/pits/fields.
+5. **Exits** = every topology neighbour; **road art** only for constructed road edges.
+6. **Occupation** is stable; **activity** is momentary. No Carrier identity.
+7. Baseline `FX-VILLAGE` has **no active quest**. Archived: `FX-VILLAGE-QUEST`.
 
 ## Implementation
 
-- `sim/dmb/world/settlement_layout.py` — sector math, anchors, occupation/dialogue helpers
-- `sim/dmb/world/fx_village_world.py` — applies grammar when building FX village
-- `sim/dmb/world/overworld_export.py` — primary vs structure drawing; baseline dialogue
-- Local projection schema version **2**
-
-Do not regress primary extraction sites into generic houses.
+- `sim/dmb/world/prehistoric_world.py` — full board loader
+- `sim/dmb/world/industry_bootstrap.py` — normal starting-core industry
+- `sim/dmb/world/settlement_layout.py` — sector math / anchors
+- `sim/dmb/world/projection.py` — LocalProjectionService schema v3
+- `sim/dmb/world/overworld_export.py` — rows + entities for any node

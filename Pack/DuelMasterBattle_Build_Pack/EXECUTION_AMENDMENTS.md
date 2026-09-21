@@ -22,8 +22,11 @@ simulate or save fields also owned by Python. Old code may remain as reference,
 isolated regression tests or offline comparison. Do not expose an old-sim
 backend in the new production entrypoint.
 
-G01 certifies this migration slice, not complete village gameplay. G05 remains
-the complete procedural village/quest/puzzle/duel gate.
+G01 certifies this migration slice, not complete village gameplay. **G05
+(re-scoped):** fully explorable Prehistoric board — 19/54/72 nodes projected
+through one standard LocalArea; no active quest content. Shortage/demon/sluice
+prototype is archived (`FX-VILLAGE-QUEST`). Do not start era-transition (T097)
+until Joe clears this gate.
 
 ## Toolchain and pack location
 

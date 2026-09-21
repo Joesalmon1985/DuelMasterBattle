@@ -66,6 +66,17 @@ class IndustryProjection:
     world: Any
 
     def layout_sites(self) -> list[dict[str, Any]]:
+        node_id = str((self.world.player or {}).get("node_id") or "")
+        by_node = (self.world.board or {}).get("fx_industry_by_node") or {}
+        if node_id and node_id in by_node:
+            sites = list((by_node[node_id].get("layout") or {}).get("sites") or [])
+            # Ensure LocalArea placement has stamped grids (lazy geography sync).
+            if sites and any(site.get("grid") is None for site in sites):
+                from sim.dmb.world.projection import LocalProjectionService
+
+                LocalProjectionService(self.world).ensure_layout(node_id)
+                sites = list((by_node[node_id].get("layout") or {}).get("sites") or [])
+            return sites
         fx = self.world.board.get("fx_industry") or {}
         return list(fx.get("layout", {}).get("sites", []))
 

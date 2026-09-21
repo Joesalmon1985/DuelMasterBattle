@@ -5,17 +5,68 @@
   "seed": 507,
   "details": {
     "seed": 507,
-    "quest_id": "quest:1",
-    "quest_status": "offered",
-    "mara_id": "person:9",
-    "factory_id": "building:26",
-    "route_a_available": false,
-    "route_b_available": false,
-    "shortage": true,
-    "command_log": []
+    "hexes": 19,
+    "nodes": 54,
+    "edges": 72,
+    "start_node_id": "node:35",
+    "settlements": [
+      {
+        "settlement_id": "settlement:1",
+        "node_id": "node:2",
+        "faction_id": "faction:1",
+        "label": "Settlement 1-1"
+      },
+      {
+        "settlement_id": "settlement:2",
+        "node_id": "node:12",
+        "faction_id": "faction:1",
+        "label": "Settlement 1-2"
+      },
+      {
+        "settlement_id": "settlement:3",
+        "node_id": "node:35",
+        "faction_id": "faction:2",
+        "label": "Settlement 2-1"
+      },
+      {
+        "settlement_id": "settlement:4",
+        "node_id": "node:27",
+        "faction_id": "faction:2",
+        "label": "Settlement 2-2"
+      }
+    ],
+    "roads": [
+      {
+        "id": "command:1",
+        "a": "node:2",
+        "b": "node:5",
+        "faction_id": "faction:1",
+        "status": "built"
+      },
+      {
+        "id": "command:2",
+        "a": "node:12",
+        "b": "node:17",
+        "faction_id": "faction:1",
+        "status": "built"
+      },
+      {
+        "id": "command:3",
+        "a": "node:35",
+        "b": "node:29",
+        "faction_id": "faction:2",
+        "status": "built"
+      },
+      {
+        "id": "command:4",
+        "a": "node:27",
+        "b": "node:21",
+        "faction_id": "faction:2",
+        "status": "built"
+      }
+    ]
   },
-  "world_id": "world:fx-village",
-  "quest_id": "quest:1",
-  "puzzle_id": "puzzle.sluice",
+  "world_id": "world:prehistoric",
+  "quest_id": null,
   "same_engine": true
 }

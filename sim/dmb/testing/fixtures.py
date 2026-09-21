@@ -1202,7 +1202,12 @@ def run_fx_village(sim: WorldSim | None = None, seed: int = 507) -> FixtureResul
 
 
 def _load_fx_village(seed: int = 507, *, mode: str = "baseline") -> WorldSim:
-    """FX-VILLAGE baseline or FX-VILLAGE-QUEST shortage scenario (C10 / T086 / G05)."""
-    from sim.dmb.world.fx_village_world import load_fx_village
+    """FX-VILLAGE: full Prehistoric board (baseline) or archived quest (mode=quest)."""
+    if mode == "quest":
+        from sim.dmb.world.fx_village_world import load_fx_village
 
-    return load_fx_village(seed=507 if seed == 7 else seed, mode=mode)
+        return load_fx_village(seed=507 if seed == 7 else seed, mode="quest")
+    from sim.dmb.world.prehistoric_world import load_prehistoric_world
+
+    return load_prehistoric_world(seed=507 if seed == 7 else seed)
+
