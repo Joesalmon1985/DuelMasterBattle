@@ -7,7 +7,7 @@
     "seed": 507,
     "quest_id": "quest:1",
     "quest_status": "offered",
-    "mara_id": "person:10",
+    "mara_id": "person:9",
     "factory_id": "building:26",
     "route_a_available": false,
     "route_b_available": false,

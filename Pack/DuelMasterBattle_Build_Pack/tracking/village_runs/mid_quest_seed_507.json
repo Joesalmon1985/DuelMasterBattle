@@ -2,7 +2,7 @@
   "seed": 507,
   "fixture": "FX-VILLAGE",
   "quest_id": "quest:1",
-  "mara_id": "person:10",
+  "mara_id": "person:9",
   "factory_id": "building:26",
   "quest_status": "offered",
   "world_version": 0

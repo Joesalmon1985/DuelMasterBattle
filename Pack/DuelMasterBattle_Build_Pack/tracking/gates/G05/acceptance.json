@@ -3,13 +3,13 @@
   "status": "AWAITING_HUMAN",
   "accepted_by": null,
   "accepted_build": null,
-  "candidate_branch": "feature/g05-village-quest",
+  "candidate_branch": "refactor/canonical-ontology-g05",
   "fixture": "FX-VILLAGE",
   "seed": 507,
   "launch": "bash tools/play_g05.sh",
   "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
-  "fix_required_at": "2026-09-20T16:04:00Z",
-  "returned_awaiting_human_at": "2026-09-20T16:17:21Z",
-  "fix_summary": "UX interaction repair: WorkerController shares WorldInteractionLabel at TILE_SCALE 4; player-safe building observations; real topology Travel round-trip.",
-  "notes": "Do not mark PASS from automation. Do not start T097."
+  "fix_required_at": "2026-09-21T17:00:00Z",
+  "returned_awaiting_human_at": "2026-09-21T17:00:00Z",
+  "fix_summary": "Canonical ontology consolidation: Person-linked UnitState, no presentation-minted People, one Person actor, player-safe building observations, topology Travel. G05 as coherent Prehistoric slice.",
+  "notes": "Do not mark PASS from automation. Do not start T097 until Joe PASSes G05."
 }
