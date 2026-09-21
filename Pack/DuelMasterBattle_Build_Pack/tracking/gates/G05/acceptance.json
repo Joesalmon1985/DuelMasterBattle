@@ -1,15 +1,16 @@
 {
   "gate": "G05",
-  "status": "AWAITING_HUMAN",
+  "status": "FIX_REQUIRED",
   "accepted_by": null,
   "accepted_build": null,
   "candidate_branch": "refactor/canonical-ontology-g05",
   "fixture": "FX-VILLAGE",
+  "quest_fixture": "FX-VILLAGE-QUEST",
   "seed": 507,
   "launch": "bash tools/play_g05.sh",
   "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
-  "fix_required_at": "2026-09-21T17:00:00Z",
-  "returned_awaiting_human_at": "2026-09-21T17:00:00Z",
-  "fix_summary": "Canonical ontology consolidation: Person-linked UnitState, no presentation-minted People, one Person actor, player-safe building observations, topology Travel. G05 as coherent Prehistoric slice.",
-  "notes": "Do not mark PASS from automation. Do not start T097 until Joe PASSes G05."
+  "checkpoint": "village_foundation",
+  "fix_required_at": "2026-09-21T19:00:00Z",
+  "fix_summary": "Village Foundation: healthy baseline play_g05; quest disabled behind FX-VILLAGE-QUEST; perimeter primaries; occupation vocabulary; no quest contamination in ordinary dialogue.",
+  "notes": "Do not mark PASS. Do not start T097. Quest remains unresolved until foundation is accepted and reintegrated."
 }

@@ -1,26 +1,23 @@
-# G05 known defects / notes — ontology consolidation return
+# G05 known defects / notes — Village Foundation
 
-**Status:** AWAITING_HUMAN after canonical ontology consolidation
+**Status:** FIX_REQUIRED — Village Foundation human sanity check (quest paused)
 
-## Audit
+## This checkpoint
 
 | Item | Result |
 |------|--------|
-| Person identity | Workers + Mara are persistent Persons; no `job:carrier` mint |
-| Occupation ≠ activity | e.g. Woodcutter + carrying; projection `role=carrier` is activity tag only |
-| One actor | `register_dynamic_person` + WorkerController preserve |
-| Building Observe/Inspect | `player_building_observation` — Clay pits / Clay works style labels |
-| Topology Travel | real adjacent nodes; turn +1 |
-| Unit↔Person | schema 2; G04 battle units linked |
-| Gate check | `tools/check.py --gate G05` PASS |
-| Manual capture | `play_inspect.png` refreshed |
+| Baseline fixture | `FX-VILLAGE` healthy; no demon / sluice / shortage quest |
+| Quest preserved | `FX-VILLAGE-QUEST` |
+| Primaries | Perimeter sectors; terrain props not houses |
+| Occupations | Canonical `public_occupation` (not Carrier / attendant churn) |
+| Dialogue | Baseline has no quest/cause/guide promises |
+| Humanoid scale | `ActorVisual.normalize_humanoid_scale` → 96px height |
+| Worker rhythm | Presentation-only load/unload pauses |
 
-## Deliberate limitations (not blockers for this return)
+## Remaining oddities (non-blocking if true)
 
-- Soft-contiguous countryside art between nodes is still discrete LocalArea loads.
-- FX-VILLAGE seed 507 may have zero locally visible soldiers (linkage still enforced in G04 / spawn).
-- Battle combat sprites remain specialised; identity bridge via `person_id`.
-- G01/G02 cart journey demos may still mention legacy `person:cart` paths (debt).
-- Civilian consumption of typed processed goods remains MVP-abstracted into military supply.
+- Soft-contiguous countryside between nodes still discrete LocalArea loads
+- Decorative housing scenery not yet densified
+- Quest reintegration still required after foundation acceptance
 
-Do not expose `person:` / `building:` / connection IDs in ordinary labels.
+Do not expose internal IDs in ordinary labels.

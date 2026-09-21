@@ -1,82 +1,69 @@
-# Ontology implementation report
+# Ontology + Village Foundation implementation report
 
 **Branch:** `refactor/canonical-ontology-g05`  
-**Starting commit (G05 tip + review docs):** `3124555a521d77e875d974710ef2dffa9b3c9758`  
-**Parent G05 preserve commit:** `c8acb8f`  
-**Baseline before dirty work:** `ff23066`  
-**Docs commit:** `f1d94cb`  
-**Schema/migration commit:** `d7e8293`  
-**Godot one-actor commit:** `5b3b19e`  
-**Current tip:** `fe2a62030ac1aaa0e42a51efb37f052744780d15`
+**Starting ontology tip:** `b418d5dcbe1c1895a876f92b2c0178ac62c4fe55`  
+**This pass:** Village Foundation / common-sense presentation
 
-## Decisions implemented
+## Checkpoint
 
-See [`docs/CANONICAL_GAME_ONTOLOGY.md`](../CANONICAL_GAME_ONTOLOGY.md).
+G05 = **FIX_REQUIRED** (Village Foundation sanity check).  
+Quest remains **disabled** in `bash tools/play_g05.sh` (`FX-VILLAGE` baseline).  
+Quest preserved as **`FX-VILLAGE-QUEST`**. Do not start T097.
 
-| ID | Decision | Status |
-|---|---|---|
-| D01 | Soldiers are Persons | done |
-| D02 | UnitState + `person_id` | done |
-| D03 | Unit death ⇒ Person death | done |
-| D04 | NPC = shorthand only | docs |
-| D05 | Observe + Talk for living Persons | done (Talk via person or unit→person) |
-| D06–D07 | Occupation ≠ activity | done |
-| D09–D10 | Fixtures=setup; one actor | done for G05 workers |
-| D16 | No presentation-created People | done (`job:site_worker`) |
-| D19 | Carts = `cart:*` only | docs; journey purge deferred |
+## Decisions implemented (this pass)
+
+| Item | Status |
+|---|---|
+| Healthy baseline village launch | done |
+| Quest behind FX-VILLAGE-QUEST | done |
+| No quest contamination in ordinary dialogue | done |
+| Canonical `public_occupation` | done |
+| Primaries ≠ houses | done |
+| Perimeter sources from touching-hex orientation | done |
+| Built-core civic/industry packing | done |
+| Humanoid display-height normalisation | done |
+| Presentation-only worker rhythm pauses | done |
+| `docs/LOCAL_SETTLEMENT_PRESENTATION.md` | done |
 
 ## CONCEPT | OLD | NEW | STATUS
 
-| CONCEPT | OLD REPRESENTATION | NEW CANONICAL REPRESENTATION | STATUS |
+| CONCEPT | OLD | NEW | STATUS |
 |---|---|---|---|
-| Person | `state.people` | same + optional `unit_id` | done |
-| worker | Person + job | Person + Employment; activity separate | done |
-| carrier | presentation_only Person | activity on employed site workers; projection may tag `role=carrier` | done |
-| leader | profile flag | LeadershipRole on Person | affirmed |
-| soldier | Unit + `person_name` | Unit + `person_id` → Person | done |
-| formation | unit ID set | unchanged | keep |
-| building | Building entity | Building + industry processes | done (player observations) |
-| processor | industry binding | process on Building | docs |
-| factory | building + meter | same | docs |
-| cart | cart:* (+ person:cart journeys) | cart:* only | debt: G01 journeys |
-| quest participant | Person binding | Person + QuestBindings | keep |
-| hazard | cube:* | unchanged | keep |
-| local area | projection | lazy persist | keep |
-| fixture | specialised loaders | setup profiles | audit ongoing |
+| FX-VILLAGE | Always shortage quest | Healthy baseline | done |
+| FX-VILLAGE-QUEST | (none) | Shortage quest scenario | done |
+| primary site | House walls + door | Terrain props + sign | done |
+| carrier label | Oscillating Carrier/Worker | Stable occupation + activity | done |
+| worker dialogue | Unconditional quest.factory_shortage | Baseline occupation lines | done |
+| local layout | Hardcoded grids / south packing | Settlement spatial grammar v2 | done |
 
-## Schema changes
+## Spatial diagram (seed 507 / node:35)
 
-- Save schema **1 → 2** (`sim/dmb/persistence/migrate.py`)
-- Living units require `person_id`; migration creates Persons for legacy units
-- Idempotent; covered by `tests/sim/test_canonical_ontology.py`
+```text
+                    NORTH
+              Woodland Cuttings (building:21)
+                    sector=north
 
-## Systems retired / adapted
+SW Clay Pits (23)          CORE                    SE Ore Ridge (22)
+                           Settlement Centre (19)
+                           Warehouse (20)
+                           Clay Works (24)
+                           Ridge Works (37)
+                           Muster Yard (25)
+                           Village Factory (26)
 
-- `IndustryProjection.sync_carrier_jobs` no longer mints `job:carrier` presentation People
-- Real `job:site_worker` employment drives carrying/waiting animation
-- Projection `role=carrier` is an **activity tag for presenters/tests**, not Person identity
-- Godot: `bridge_talk` / `bridge_challenge` routed; WorkerController `layout_diagnostic` restored for G03; dynamic person registry preserved on rebuild
+                    SOUTH / roads out
+```
 
-## Remaining deliberate debt
+## Remaining debt
 
-- Soft-contiguous art between nodes
-- Civilian consumption economy for processed goods
-- Full purge of `person:cart` from G01/G02 journey demos
-- Battle Overworld soldier actor fully sharing PersonPresenter (identity bridge exists; combat sprites still specialised)
-- Some FX shells remain specialised setup UIs (semantics now production services)
+- Wider zoomed settlement capture of all three primaries in one frame
+- Decorative housing scenery density
+- Quest reintegration after foundation acceptance
+- Generated person display names still technical (`Worker-site_worker:…`) — labels use occupation
 
-## Tests / gates
+## Tests
 
-- `tests/sim/test_canonical_ontology.py` + updated t019/t020/t021/t055/u05
-- `python3 tools/check.py --gate G05` → **PASS** (includes G01–G04 regressions)
-- Manual: `bash tools/play_g05.sh`; viewport capture `gates/G05/play_inspect.png`
-
-## Documentation superseded
-
-- [`PROPOSED_CANONICAL_ONTOLOGY.md`](PROPOSED_CANONICAL_ONTOLOGY.md) → superseded by `docs/CANONICAL_GAME_ONTOLOGY.md`
-- Joe decision register marked accepted for consolidation
-- Roadmap: ontology consolidation → revised G05 → **then** T097–T106 / G06 (not started)
-
-## Stop condition
-
-**G05 = AWAITING_HUMAN.** Do not mark PASS. Do not start T097.
+- `tests/sim/test_village_foundation.py`
+- G04 gate PASS (incl. G01–G03 regressions)
+- Humanoid scale Godot script PASS
+- Village scenario suite PASS (quest tests on FX-VILLAGE-QUEST)

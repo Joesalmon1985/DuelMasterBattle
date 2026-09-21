@@ -95,6 +95,9 @@ state.units[unit:…]        archetype, HP, buffs, formation, lease, battle pose
 - Strategic truth: 19 hexes, 54 nodes, 72 edges.
 - Play: soft-contiguous feel over **discrete node Travel** (one adjacent Travel = one World Turn).
 - `LocalArea` is generated on first visit and **persisted**; never a second board of all 54 nodes at once.
+- Settlement presentation follows [`docs/LOCAL_SETTLEMENT_PRESENTATION.md`](LOCAL_SETTLEMENT_PRESENTATION.md):
+  perimeter resource sites from touching-hex orientation + built core + exits.
+  Primaries are not houses.
 
 ---
 

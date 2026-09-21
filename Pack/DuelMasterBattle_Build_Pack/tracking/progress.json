@@ -209,18 +209,20 @@
       "notes": "Joe manually accepted G04. Accepted implementation 75b7f53 is on main via merge 15eadbd. Historical FIX_REQUIRED/AWAITING_HUMAN repair notes retained in gates/G04 and handoffs. Progression to T077/G05 authorized. Ensemble-only commits 58ea2d2+6f7be0f remain separate follow-up."
     },
     "G05": {
-      "status": "AWAITING_HUMAN",
+      "status": "FIX_REQUIRED",
       "accepted_by": null,
       "accepted_build": null,
       "evidence": "tracking/gates/G05/packet.md",
       "candidate_branch": "refactor/canonical-ontology-g05",
       "fixture": "FX-VILLAGE",
+      "quest_fixture": "FX-VILLAGE-QUEST",
       "seed": 507,
       "launch": "bash tools/play_g05.sh",
-      "fix_required_at": "2026-09-21T17:00:00Z",
-      "fix_summary": "Canonical ontology consolidation: Person-linked UnitState, no presentation-minted People, one Person actor, coherent Prehistoric slice.",
-      "notes": "Automated G05 gate PASS including G01\u2013G04 regressions. Ontology docs in docs/CANONICAL_GAME_ONTOLOGY.md. Manual play_g05 + play_inspect.png. Do not start T097 until Joe PASSes G05. Agents must not self-PASS.",
-      "returned_awaiting_human_at": "2026-09-21T17:00:00Z"
+      "checkpoint": "village_foundation",
+      "fix_required_at": "2026-09-21T19:00:00Z",
+      "fix_summary": "Village Foundation checkpoint: healthy baseline village; quest paused behind FX-VILLAGE-QUEST.",
+      "notes": "play_g05 launches FX-VILLAGE baseline only. Do not start T097. Agents must not self-PASS. Quest gate unresolved.",
+      "returned_fix_required_at": "2026-09-21T19:00:00Z"
     },
     "G06": {
       "status": "NOT_READY",
