@@ -211,51 +211,253 @@ def export_overworld_area(
         cid = str(cart.get("id") or "")
         if not cid:
             continue
+        cart_rec = (state.carts or {}).get(cid) or {}
         grid = cart.get("grid") or [cx + 2, cy]
+        cargo_goods = []
+        for lot in cart_rec.get("cargo_lots") or []:
+            if str(lot.get("status") or "") not in {"aboard", "loaded", ""}:
+                # still show aboard / default
+                if str(lot.get("physical_container") or "") != cid:
+                    continue
+            good = str(lot.get("good_id") or "")
+            if good:
+                cargo_goods.append(good)
+        faction_id = str(cart_rec.get("owner_faction") or cart_rec.get("faction_id") or "")
+        route = list(cart_rec.get("route") or [])
+        status = str(cart_rec.get("status") or "idle")
+        cargo_label = "+".join(g.title() for g in cargo_goods) if cargo_goods else "empty"
         entities.append(
             {
-                "kind": "deco",
+                "kind": "cart",
                 "id": cid,
                 "pos": [int(grid[0]), int(grid[1])],
-                "marker": "box",
+                "faction_id": faction_id,
+                "status": status,
+                "cargo": cargo_goods,
+                "route": route,
                 "bridge_entity": True,
                 "dynamic": True,
+                "presentation": "cart",
                 "semantic": {
                     "knowledge_key": cid,
                     "interaction": "cart",
-                    "labels": [{"level": 0, "text": "Cart"}],
+                    "labels": [
+                        {"level": 0, "text": "Cart"},
+                        {"level": 1, "text": f"Cart — {cargo_label}"},
+                    ],
+                    "observe_far": "A cart stands on the way.",
+                    "observe_near": (
+                        f"Cart carrying {cargo_label}."
+                        if cargo_goods
+                        else "An empty cart waits here."
+                    ),
                 },
             }
         )
 
+    soldier_index = 0
     for unit in view.get("units") or []:
         uid = str(unit.get("id") or "")
         if not uid:
             continue
         unit_rec = (state.units or {}).get(uid) or {}
+        if unit_rec.get("status") == "dead" or not unit_rec.get("alive", True):
+            continue
         person_id = str(unit_rec.get("person_id") or "")
         person = (state.people or {}).get(person_id) or {}
-        label = str(person.get("name") or unit_rec.get("label") or "Soldier")
-        if label.startswith("person:"):
-            label = "Soldier"
-        grid = unit.get("grid") or [cx - 2, cy]
+        archetype = str(unit_rec.get("archetype") or "")
+        def_id = str(unit_rec.get("definition_id") or "")
+        if not archetype:
+            low = def_id.lower()
+            if "skirmish" in low:
+                archetype = "skirmisher"
+            elif "heavy" in low:
+                archetype = "heavy"
+            else:
+                archetype = "line"
+        faction_id = str(unit_rec.get("faction_id") or "")
+        person_name = str(person.get("name") or unit_rec.get("person_name") or "")
+        if person_name.startswith("person:"):
+            person_name = ""
+        label = {
+            "skirmisher": "Skirmisher",
+            "line": "Line",
+            "heavy": "Heavy",
+        }.get(archetype, "Soldier")
+        grid = unit.get("grid") or unit_rec.get("position") or [cx - 2, cy]
+        try:
+            gx = int(float(grid[0]))
+            gy = int(float(grid[1]))
+        except (TypeError, ValueError, IndexError):
+            gx, gy = cx - 2, cy
+        if gx < 0 or gx >= width or gy < 0 or gy >= height or (gx, gy) == (cx, cy):
+            gx = cx - 4 + (soldier_index % 5) * 2
+            gy = cy + 2 + (soldier_index // 5) * 2
+        soldier_index += 1
         entities.append(
             {
-                "kind": "npc",
-                "id": person_id or uid,
-                "pos": [int(grid[0]), int(grid[1])],
-                "name": label,
-                "sprite": str(person.get("sprite") or "worker"),
-                "facing": "down",
+                "kind": "soldier",
+                "id": uid,
+                "unit_id": uid,
+                "person_id": person_id,
+                "pos": [gx, gy],
+                "faction_id": faction_id,
+                "archetype": archetype,
+                "definition_id": def_id,
+                "name": person_name or label,
                 "bridge_entity": True,
                 "dynamic": True,
+                "presentation": "soldier",
                 "semantic": {
                     "knowledge_key": person_id or uid,
-                    "interaction": "npc",
-                    "labels": [{"level": 0, "text": label}],
+                    "interaction": "soldier",
+                    "unit_id": uid,
+                    "person_id": person_id,
+                    "labels": [
+                        {"level": 0, "text": label},
+                        {"level": 1, "text": f"{label} — {person_name}" if person_name else label},
+                    ],
+                    "observe_far": f"A {label.lower()} stands ready.",
+                    "observe_near": (
+                        f"You can speak with this {label.lower()}"
+                        + (f", {person_name}." if person_name else ".")
+                    ),
                 },
             }
         )
+
+    # Catastrophe cubes whose hex touches this node — one cube_id, not cloned authority.
+    touching = set((state.board.get("node_hexes") or {}).get(node_id) or [])
+    cubes = ((state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
+    for cube_id, cube in sorted(cubes.items()):
+        if not cube.get("active", True):
+            continue
+        hex_id = str(cube.get("hex_id") or "")
+        if hex_id not in touching:
+            continue
+        # Place near the geography sector matching the hex, else rim.
+        hx, hy = cx, 2
+        for patch in view.get("geography") or []:
+            if str(patch.get("hex_id") or "") == hex_id:
+                g = patch.get("grid") or [cx, 2]
+                hx, hy = int(g[0]) + 1, int(g[1]) + 1
+                break
+        htype = str(cube.get("type") or "demon")
+        entities.append(
+            {
+                "kind": "hazard",
+                "id": cube_id,
+                "cube_id": cube_id,
+                "hex_id": hex_id,
+                "hazard_type": htype,
+                "pos": [max(1, min(width - 2, hx)), max(1, min(height - 2, hy))],
+                "bridge_entity": True,
+                "bridge_challenge": htype != "pollution",
+                "dynamic": True,
+                "presentation": "hazard",
+                "semantic": {
+                    "knowledge_key": cube_id,
+                    "interaction": "hazard",
+                    "labels": [{"level": 0, "text": htype.replace("_", " ").title()}],
+                    "observe_far": "A dangerous manifestation fouls this ground.",
+                    "observe_near": "You may Challenge this manifestation.",
+                },
+            }
+        )
+
+    # Construction orders on this node / incident edges.
+    for order_id, order in sorted((state.orders or {}).items()):
+        if str(order.get("status") or "") not in {"ready", "reserved", "in_progress", "delivering"}:
+            continue
+        edge = order.get("target_edge")
+        target_node = str(order.get("target_node") or "")
+        target_building = str(order.get("target_building") or "")
+        action = str(order.get("action") or "build")
+        show = False
+        pos = [cx, cy]
+        if isinstance(edge, (list, tuple)) and len(edge) == 2:
+            a, b = str(edge[0]), str(edge[1])
+            if node_id in {a, b}:
+                show = True
+                # Midway toward the other endpoint exit.
+                other = b if a == node_id else a
+                for exit_rec in view.get("exits") or []:
+                    if str(exit_rec.get("to_node")) == other:
+                        eg = exit_rec.get("grid") or [cx, cy]
+                        pos = [int((cx + int(eg[0])) / 2), int((cy + int(eg[1])) / 2)]
+                        break
+        elif target_node == node_id or (
+            target_building and str((state.buildings.get(target_building) or {}).get("node_id") or "") == node_id
+        ):
+            show = True
+            if target_building and target_building in (layout.get("buildings") or {}):
+                g = (layout["buildings"][target_building] or {}).get("grid") or [cx, cy]
+                pos = [int(g[0]), int(g[1])]
+        if not show:
+            continue
+        entities.append(
+            {
+                "kind": "construction",
+                "id": order_id,
+                "order_id": order_id,
+                "action": action,
+                "pos": pos,
+                "faction_id": str(order.get("faction_id") or ""),
+                "bridge_entity": True,
+                "dynamic": True,
+                "presentation": "construction",
+                "semantic": {
+                    "knowledge_key": order_id,
+                    "interaction": "construction",
+                    "labels": [{"level": 0, "text": f"Building {action}"}],
+                    "observe_far": "Construction is underway.",
+                    "observe_near": f"A {action} order is ready here.",
+                },
+            }
+        )
+
+    # Industry factory meters / processor recipe for presentation overlays.
+    industry_overlay: list[dict[str, Any]] = []
+    try:
+        from sim.dmb.industry.projection import IndustryProjection
+
+        ip = IndustryProjection(state)
+        for row in ip.factory_readout():
+            fid = str(row.get("factory_id") or "")
+            b = state.buildings.get(fid) or {}
+            if str(b.get("node_id") or "") != node_id:
+                continue
+            anchor = (layout.get("buildings") or {}).get(fid) or {}
+            grid = anchor.get("grid") or [cx, cy]
+            industry_overlay.append(
+                {
+                    "kind": "factory_meter",
+                    "building_id": fid,
+                    "grid": list(grid),
+                    "unit_label": row.get("unit_label"),
+                    "meter_progress": row.get("meter_progress"),
+                    "meter_pct": row.get("meter_pct"),
+                    "bottleneck_reason": row.get("bottleneck_reason"),
+                    "unit_def_id": row.get("unit_def_id"),
+                }
+            )
+        fx = state.board.get("fx_industry") or {}
+        proc_id = str(fx.get("processor_id") or "")
+        if proc_id and str((state.buildings.get(proc_id) or {}).get("node_id") or "") == node_id:
+            proc = (state.industry.get("processors") or {}).get(proc_id) or {}
+            recipe_id = str(proc.get("recipe_id") or fx.get("recipe_id") or "")
+            industry_overlay.append(
+                {
+                    "kind": "processor_recipe",
+                    "building_id": proc_id,
+                    "recipe_id": recipe_id,
+                    "output_name": fx.get("output_name"),
+                    "input_a_channel_id": proc.get("input_a_channel_id"),
+                    "input_b_channel_id": proc.get("input_b_channel_id"),
+                }
+            )
+    except Exception:
+        pass
 
     for exit_rec in view.get("exits") or []:
         eg = exit_rec.get("grid") or [0, 0]
@@ -312,10 +514,11 @@ def export_overworld_area(
         "bridge_mode": True,
         "node_id": node_id,
         "node_kind": kind,
+        "industry_overlay": industry_overlay,
         "fx_village": {
             "seed": (state.board.get("g05") or {}).get("seed"),
             "node_id": node_id,
-            "mode": "full_prehistoric_world",
+            "mode": str((state.board.get("g05") or {}).get("mode") or "full_prehistoric_world"),
             "quest_enabled": False,
         },
         "width": width,

@@ -1,24 +1,27 @@
-# G05 known defects / notes — full Prehistoric world
+# G05 known defects / notes — visual integration
 
-**Status:** AWAITING_HUMAN — full-board exploration (no active quest)
+**Status:** AWAITING_HUMAN — full board + G01–G04 layers
 
 ## This checkpoint
 
 | Item | Result |
 |------|--------|
-| Board | 19 hexes / 54 nodes / 72 edges from normal prehistoric loader |
-| LocalArea | 48×48 for every ordinary strategic node |
-| Quest | Disabled in baseline; `FX-VILLAGE-QUEST` archived |
-| Settlements | Shared `project_node` projector; ≥2 visitable cores |
-| Roads vs trails | Passage from authoritative road edges only |
-| Industry | Normal C04/C06 starting-core bootstrap; industrial catalogue IDs |
+| Topology | Unchanged from `85fca3c` (19/54/72) |
+| Quest | Still disabled; sluice helpers gated to FX-VILLAGE-QUEST |
+| Carts | Faction accent + Catan cargo pips from `cargo_lots` |
+| Soldiers | Geometric △■● with unit_id + person_id |
+| Hazards | Existing catastrophe cubes exported; Challenge → retained duel |
+| Industry | Factory meter bars from Python meters |
+| Map | M opens read-only strategic map (pauses) |
 
-## Known limitations (non-blocking)
+## Remaining gaps (honest)
 
-- Soft-contiguous countryside between nodes still discrete LocalArea loads on Travel
-- Settlement display names are provisional (`Settlement F-N`); place-naming later
-- City density variant not yet authored beyond settlement occupancy
-- Industry worker actors are presentation-bound via WorkerController (not static area NPCs)
-- Decorative housing density still light outside the civic core
+- Full **LocalBattle** lease host inside Overworld when stepping onto an active
+  battle node is not as complete as standalone `g04_battle_shell` yet.
+  Soldiers + READY battle state are present; animated lease combat is next.
+- World-map node dots are schematic, not true board geometry for nodes.
+- Processor recipe Inspect UI is data-ready (`industry_overlay`) but not a
+  dedicated dialogue card yet.
+- Dev-layers toggle panel is minimal (map reveal_all path exists; checkbox UI later).
 
 Do not expose internal IDs in ordinary player-facing labels.

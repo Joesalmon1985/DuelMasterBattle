@@ -1108,6 +1108,7 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
             _pytest(
                 "g05_full_world_python",
                 "tests/sim/test_g05_full_world.py",
+                "tests/sim/test_g05_visual_layers.py",
                 "tests/sim/test_village_foundation.py",
                 "tests/scenarios/test_village_travel.py",
                 "tests/sim/test_canonical_ontology.py",

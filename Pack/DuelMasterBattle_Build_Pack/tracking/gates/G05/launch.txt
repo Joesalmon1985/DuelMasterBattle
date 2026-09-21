@@ -1,20 +1,21 @@
 Linux (verified):
   bash tools/play_g05.sh
+  # normal world, seed 507
+  bash tools/play_world_layers.sh
+  # FX-WORLD-LAYERS — same board, staged carts/soldiers/battle/hazard
+
   # or: bash tools/play_g05.sh --resolution 1280x720
   # env: DMB_FIXTURE=FX-VILLAGE DMB_SEED=507
+  # Map: press M (pauses)
 
 Headless playable smoke:
   godot --headless --path godot_project --script res://client/tests/run_g05_playable.gd
 
-Scenario runner (board smoke, no quest):
-  python3 tools/run_scenario.py --fixture FX-VILLAGE --seed 507 \
-    --record Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/fx_village_record.json
-
 Gate checks:
   python3 tools/check.py --gate G05
 
-54-node traversal:
-  python3 -m pytest tests/sim/test_g05_full_world.py -q
+Visual-layer tests:
+  python3 -m pytest tests/sim/test_g05_visual_layers.py tests/sim/test_g05_full_world.py -q
 
 Archived quest fixture (not baseline):
   DMB_FIXTURE=FX-VILLAGE-QUEST bash tools/play_g05.sh

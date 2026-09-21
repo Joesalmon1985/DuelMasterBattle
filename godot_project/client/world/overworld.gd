@@ -540,6 +540,20 @@ func _spawn_entity(e: Dictionary) -> void:
 			if marker != "":
 				node = _add_prop(pos.x, pos.y, marker, marker_off, 1)
 				node.z_index = 2
+		"hazard":
+			# Geometric HazardActor mounted by WorldLayerPresenters; still register for Challenge.
+			e["node"] = null
+			_entities.append(e)
+			_entity_at[pos] = e
+			_ensure_semantic(e, null)
+			return
+		"cart", "soldier", "construction":
+			# Geometric presenters own the Node2D; register for inspect/focus.
+			e["node"] = null
+			_entities.append(e)
+			_entity_at[pos] = e
+			_ensure_semantic(e, null)
+			return
 		"deco":
 				# Projected kit puzzle visuals (plates, beams, goals, teleporters,
 				# pits, crumble, hazards, markers): visible state only. Walk-through
@@ -3023,10 +3037,13 @@ func _interact_bridge_challenge(e: Dictionary) -> void:
 	var cube_id := str(e.get("cube_id", e.get("id", "")))
 	_input_locked = true
 	_touch.set_enabled(false)
-	await _dialogue.say_async("", "A ridge manifestation blocks the ore path.")
+	await _dialogue.say_async("", "A dangerous manifestation fouls this ground.")
 	var choice: String = await _dialogue.choose_async("Challenge the manifestation?", ["Challenge", "Walk away"])
-	if choice == "Challenge" and host != null and host.has_method("start_demon_challenge"):
-		host.start_demon_challenge(cube_id)
+	if choice == "Challenge" and host != null:
+		if host.has_method("start_hazard_challenge"):
+			host.start_hazard_challenge(cube_id)
+		elif host.has_method("start_demon_challenge"):
+			host.start_demon_challenge(cube_id)
 	_input_locked = false
 	_touch.set_enabled(true)
 	_update_prompt()

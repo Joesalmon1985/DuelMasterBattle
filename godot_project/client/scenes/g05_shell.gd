@@ -1,6 +1,6 @@
 extends Control
 
-## G05 FX-VILLAGE — Overworld presentation + G01–G03 clocked industry runtime.
+## G05 full Prehistoric world — Overworld hosts G01–G04 presentation layers.
 
 const SidecarLauncher = preload("res://client/bridge/sidecar_launcher.gd")
 const WorldClient = preload("res://client/bridge/world_client.gd")
@@ -10,12 +10,15 @@ const VillageTestRunner = preload("res://client/scripts/village_test_runner.gd")
 const OverworldScene = preload("res://client/scenes/overworld.tscn")
 const DuelLeaseAdapter = preload("res://client/encounters/duel_lease_adapter.gd")
 const WorkerControllerScript = preload("res://client/world/worker_controller.gd")
+const WorldLayerPresenters = preload("res://client/world/world_layer_presenters.gd")
+const WorldMapPanel = preload("res://client/ui/world_map_panel.gd")
 
 const G05_SAVE := "g05_village"
 const INDUSTRY_FIELDS := [
 	"overworld_area", "fx_village", "fx_industry", "industry", "buildings",
 	"industry_workers", "industry_connections", "industry_factories",
-	"hazards", "items", "quests", "units", "carts", "player", "clock",
+	"hazards", "items", "units", "carts", "orders", "player", "clock",
+	"presentation", "battles", "world_map",
 ]
 
 var _launcher
@@ -23,6 +26,9 @@ var _client
 var _clock
 var _overworld: Node = null
 var _workers
+var _layers
+var _map_panel
+var _time_hud: Label
 var _boot_done := false
 var _village_ready := false
 var _project_root := ""
@@ -41,11 +47,13 @@ var _pose_sync_acc := 0.0
 var _industry_acc := 0.0
 var _last_industry: Dictionary = {}
 var _game_ms_sample := 0
+var _map_pause_token := ""
 
 
 func _ready() -> void:
 	Migrated.enable()
-	OS.set_environment("DMB_FIXTURE", "FX-VILLAGE")
+	if OS.get_environment("DMB_FIXTURE") == "":
+		OS.set_environment("DMB_FIXTURE", "FX-VILLAGE")
 	if OS.get_environment("DMB_SEED") == "":
 		OS.set_environment("DMB_SEED", "507")
 	if OS.get_environment("DMB_SAVE_SLOT") == "":
@@ -61,8 +69,18 @@ func _ready() -> void:
 	_status.add_theme_font_size_override("font_size", 12)
 	_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_status.text = "Prehistoric world — walk the board"
-
 	add_child(_status)
+	_time_hud = Label.new()
+	_time_hud.set_anchors_preset(PRESET_TOP_RIGHT)
+	_time_hud.offset_left = -220
+	_time_hud.offset_top = 4
+	_time_hud.offset_right = -8
+	_time_hud.offset_bottom = 40
+	_time_hud.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_time_hud.add_theme_font_size_override("font_size", 12)
+	_time_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_time_hud.text = "Turn — · Game Time: …"
+	add_child(_time_hud)
 	_clock = ClockDriver.new()
 	_clock.advance_requested.connect(_on_clock_advance)
 	_launcher = SidecarLauncher.new()
@@ -79,6 +97,10 @@ func _ready() -> void:
 	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_duel_host.visible = false
 	add_child(_duel_host)
+	_map_panel = WorldMapPanel.new()
+	_map_panel.name = "WorldMap"
+	_map_panel.closed.connect(_on_map_closed)
+	add_child(_map_panel)
 	_project_root = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	if _project_root.ends_with("godot_project"):
 		_project_root = _project_root.get_base_dir()
@@ -109,7 +131,10 @@ func _boot() -> void:
 	if _fx_meta.is_empty():
 		_fx_meta = _coerce_dict(area.get("fx_village"))
 	_last_industry = view
-	VillageTestRunner.set_prepared_area(area, "FX-VILLAGE")
+	var fixture_name := str(OS.get_environment("DMB_FIXTURE"))
+	if fixture_name == "":
+		fixture_name = "FX-VILLAGE"
+	VillageTestRunner.set_prepared_area(area, fixture_name)
 	_overworld = OverworldScene.instantiate()
 	_overworld.name = "Overworld"
 	add_child(_overworld)
@@ -126,8 +151,18 @@ func _boot() -> void:
 		_workers.person_spawned.connect(_on_worker_spawned)
 		_workers.person_updated.connect(_on_worker_updated)
 		_workers.person_removed.connect(_on_worker_removed)
+	_layers = WorldLayerPresenters.new()
+	_layers.name = "WorldLayerPresenters"
+	if _overworld.get("_actors_root") != null:
+		_layers.bind_host(_overworld._actors_root)
+		_overworld._actors_root.add_child(_layers)
+	else:
+		_layers.bind_host(_overworld)
+		_overworld.add_child(_layers)
 	_apply_workers(view)
-	_status.text = "Explore — every path leads to a neighbouring place"
+	_apply_world_layers(area)
+	_refresh_time_hud(view)
+	_status.text = "Explore — M map · paths lead to neighbouring places"
 
 	_boot_done = true
 	_village_ready = true
@@ -243,6 +278,11 @@ func _apply_workers(view: Dictionary) -> void:
 				filtered.append(row_v)
 		rows = filtered
 	_workers.apply_projection(rows)
+	var area: Dictionary = _coerce_dict(view.get("overworld_area"))
+	if area.is_empty():
+		area = VillageTestRunner.get_area()
+	_apply_world_layers(area)
+	_refresh_time_hud(view)
 
 
 func _on_worker_spawned(person_id: String, actor: Node2D, row: Dictionary) -> void:
@@ -374,9 +414,57 @@ func reproject_from_python() -> void:
 		var facing := str(player.get("facing", area.get("player_facing", "down")))
 		_overworld._finish_village_build(Vector2i(int(ppos[0]), int(ppos[1])), facing)
 	_apply_workers(view)
+	_apply_world_layers(area)
+	_refresh_time_hud(view)
 
 
-func start_demon_challenge(cube_id: String) -> bool:
+func _apply_world_layers(area: Dictionary) -> void:
+	if _layers != null and _layers.has_method("apply_area"):
+		_layers.apply_area(area)
+
+
+func _refresh_time_hud(view: Dictionary = {}) -> void:
+	if _time_hud == null:
+		return
+	var clock: Dictionary = _coerce_dict(view.get("clock")) if not view.is_empty() else {}
+	if clock.is_empty() and not _last_industry.is_empty():
+		clock = _coerce_dict(_last_industry.get("clock"))
+	var turn := int(clock.get("turn", 0))
+	var running := not _paused and _focus and not _bridge_down
+	var state_txt := "paused" if _paused or not _focus else "running"
+	_time_hud.text = "Turn %s · Game Time: %s" % [turn, state_txt]
+	if clock.has("game_ms"):
+		_game_ms_sample = int(clock.get("game_ms", _game_ms_sample))
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_M:
+			_toggle_world_map()
+			get_viewport().set_input_as_handled()
+
+
+func _toggle_world_map() -> void:
+	if _map_panel == null or _client == null:
+		return
+	if _map_panel.visible:
+		_map_panel.hide_map()
+		return
+	_map_pause_token = acquire_pause("world_map")
+	var view: Dictionary = _client.request_view("player", ["world_map", "clock", "player"])
+	var payload: Dictionary = _coerce_dict(view.get("world_map"))
+	_map_panel.show_map(payload)
+	_map_panel.move_to_front()
+
+
+func _on_map_closed() -> void:
+	if _map_pause_token != "":
+		release_pause()
+		_map_pause_token = ""
+
+
+func start_hazard_challenge(cube_id: String) -> bool:
+	## G04 retained duel path — Challenge a catastrophe cube.
 	acquire_pause("duel")
 	var reply := _cmd("StartHazardDuel", {"cube_id": cube_id})
 	if str(reply.get("status", "")) != "ACCEPTED":
@@ -393,12 +481,17 @@ func start_demon_challenge(cube_id: String) -> bool:
 		release_pause()
 		_status.text = "Failed to host retained GameBoard duel"
 		return false
-	_status.text = "Retained Ward duel — GameBoard / DmbBattleSim"
+	_status.text = "Hazard Challenge — retained GameBoard / DmbBattleSim"
 	_status.modulate.a = 1.0
 	return true
 
 
-func resolve_demon_success(cube_id: String = "cube:demon") -> Dictionary:
+func start_demon_challenge(cube_id: String) -> bool:
+	## Compatibility alias for archived quest / older tests.
+	return start_hazard_challenge(cube_id)
+
+
+func resolve_hazard_success(cube_id: String) -> Dictionary:
 	## Headless/integration path: Start + Resolve without mounting GameBoard UI.
 	acquire_pause("duel")
 	var start_reply := _cmd("StartHazardDuel", {"cube_id": cube_id})
@@ -414,12 +507,20 @@ func resolve_demon_success(cube_id: String = "cube:demon") -> Dictionary:
 		return {"status": "REJECTED", "code": "NO_DUEL_ID", "payload": payload}
 	var resolve_reply := _cmd("ResolveHazardDuel", {"duel_id": duel_id, "success": true})
 	release_pause()
+	reproject_from_python()
 	_request_industry_view()
 	return resolve_reply
 
 
+func resolve_demon_success(cube_id: String = "cube:demon") -> Dictionary:
+	## Archived-quest alias — prefer resolve_hazard_success.
+	return resolve_hazard_success(cube_id)
+
+
 func solve_sluice_via_bridge() -> Dictionary:
-	## Drive the authoritative sluice puzzle to finish (applies Route B industry).
+	## Archived FX-VILLAGE-QUEST helper only — not part of baseline G05.
+	if str(OS.get_environment("DMB_FIXTURE")) != "FX-VILLAGE-QUEST":
+		return {"status": "REJECTED", "code": "QUEST_ARCHIVED", "public_feedback": "sluice quest not active"}
 	acquire_pause("sluice")
 	var enter := _cmd("Interact", {"action": "enter_sluice"})
 	if str(enter.get("status", "")) != "ACCEPTED":
@@ -469,8 +570,7 @@ func _on_duel_finished(outcome: String, payload: Dictionary) -> void:
 	release_pause()
 	var status := str(payload.get("payload", {}).get("status", payload.get("status", outcome)))
 	if status in ["success", "idempotent"] or outcome in ["win", "victory", "success"]:
-		_status.text = "Manifestation cleared — industry should resume on next ticks"
-		_cmd("Interact", {"action": "confirm_village_quest"})
+		_status.text = "Manifestation cleared — blocked sources should resume"
 	else:
 		_status.text = "Duel ended (%s)" % outcome
 	_status.modulate.a = 1.0
@@ -478,6 +578,9 @@ func _on_duel_finished(outcome: String, payload: Dictionary) -> void:
 
 
 func enter_sluice() -> void:
+	if str(OS.get_environment("DMB_FIXTURE")) != "FX-VILLAGE-QUEST":
+		_status.text = "No sluice entrance in the baseline world"
+		return
 	var reply := _cmd("Interact", {"action": "enter_sluice"})
 	if str(reply.get("status", "")) != "ACCEPTED":
 		_status.text = str(reply.get("public_feedback", "cannot enter"))
@@ -571,8 +674,15 @@ func travel_to_node(from_node: String, to_node: String) -> bool:
 	if turn_before >= 0 and turn_after != turn_before + 1:
 		_status.text = "Travel turn mismatch %s→%s" % [turn_before, turn_after]
 		# Still accept projection — report but do not soft-fail play.
-	_status.text = "Arrived at %s (turn %s)" % [to_node, turn_after]
+	var dest_name := to_node
+	var area2: Dictionary = VillageTestRunner.get_area()
+	if not area2.is_empty():
+		dest_name = str(area2.get("name", to_node))
+		if dest_name.begins_with("node:"):
+			dest_name = str(area2.get("node_kind", "wilderness")).capitalize()
+	_status.text = "Arrived: %s (turn %s)" % [dest_name, turn_after]
 	_status.modulate.a = 1.0
+	_refresh_time_hud(after)
 	return true
 
 

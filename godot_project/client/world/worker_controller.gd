@@ -223,8 +223,26 @@ func _face_sprite(worker: Node2D, delta: Vector2) -> void:
 	ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, facing, 0, label)
 
 
-func _set_activity(worker: Node2D, activity: String, _carry_resource, _loaded: bool) -> void:
+func _set_activity(worker: Node2D, activity: String, carry_resource, loaded: bool) -> void:
 	worker.set_meta("industry_cue", activity)
+	worker.set_meta("carry_resource", str(carry_resource) if carry_resource != null else "")
+	worker.set_meta("loaded", bool(loaded))
+	# Tiny carried-resource pip (presentation only).
+	var pip_name := "CarryPip"
+	var pip: Polygon2D = worker.get_node_or_null(pip_name)
+	if bool(loaded) and carry_resource != null and str(carry_resource) != "":
+		if pip == null:
+			pip = Polygon2D.new()
+			pip.name = pip_name
+			pip.polygon = PackedVector2Array([
+				Vector2(-4, -4), Vector2(4, -4), Vector2(4, 4), Vector2(-4, 4)
+			])
+			pip.position = Vector2(18, -28)
+			worker.add_child(pip)
+		pip.color = Color(0.45, 0.75, 0.35)
+		pip.visible = true
+	elif pip != null:
+		pip.visible = false
 
 
 func _grid_to_world(grid) -> Vector2:

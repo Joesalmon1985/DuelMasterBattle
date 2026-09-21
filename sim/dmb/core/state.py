@@ -155,6 +155,9 @@ class WorldState:
             "industry_workers": lambda: IndustryProjection(self).workers(),
             "industry_connections": lambda: IndustryProjection(self).connections(),
             "industry_factories": lambda: IndustryProjection(self).factory_readout(),
+            "world_map": lambda: __import__(
+                "sim.dmb.world.world_map", fromlist=["export_world_map"]
+            ).export_world_map(self),
             "leases": lambda: deepcopy(self.leases),
             "command_receipts": lambda: deepcopy(self.command_receipts),
             "knowledge_raw": lambda: deepcopy(self.knowledge),
