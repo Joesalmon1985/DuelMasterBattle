@@ -20,13 +20,24 @@ def filter_entity(state: WorldState, entity_id: str) -> dict[str, Any]:
     record = state.knowledge.get(entity_id)
     if not record:
         return {"entity_id": entity_id, "label": "unknown", "known": False, "name": None}
-    label = str(record.get("role") or record.get("fact") or entity_id)
+    name = record.get("name")
+    role = record.get("role")
+    # known == personal name learned; role may be known earlier via Observe.
+    if name:
+        label = str(name)
+        known = True
+    elif role:
+        label = str(role)
+        known = False
+    else:
+        label = str(record.get("fact") or "unknown")
+        known = False
     return {
         "entity_id": entity_id,
         "label": label,
-        "known": True,
-        "name": record.get("name"),
-        "role": record.get("role"),
+        "known": known,
+        "name": name,
+        "role": role,
     }
 
 

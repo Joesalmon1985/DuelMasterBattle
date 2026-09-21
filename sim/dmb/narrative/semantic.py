@@ -239,6 +239,11 @@ class SemanticResolver:
         fx = (self.state.board or {}).get("fx_battle") or {}
         labels = fx.get("labels") or {}
         if kind == "unit":
+            person_id = record.get("person_id")
+            person = self.state.people.get(person_id) if person_id else None
+            person_name = None
+            if person:
+                person_name = person.get("name") or person.get("display_name")
             if entity_id in labels:
                 public = str(labels[entity_id])
             else:
@@ -247,8 +252,10 @@ class SemanticResolver:
                 arch = str(record.get("archetype") or "")
                 arch_label = ARCHETYPE_LABELS.get(arch, arch.title() or "Soldier")
                 public = f"{colour} {arch_label}".strip()
-            if known_name and " — " not in public:
-                return f"{public} — {known_name}"
+            known_person = filter_entity(self.state, str(person_id)) if person_id else {}
+            display = known_name or known_person.get("name") or person_name or record.get("person_name")
+            if display and " — " not in public:
+                return f"{public} — {display}"
             return public
         if kind == "building":
             return str(record.get("label") or record.get("definition_id") or "Building")
@@ -359,6 +366,7 @@ class SemanticResolver:
             return actions
         kind = info["kind"]
         if kind == "unit" and info.get("alive", True):
+            actions.append({"id": "talk", "label": "Talk", "requires_nearby": True})
             actions.append(
                 {
                     "id": "buff",
@@ -376,6 +384,26 @@ class SemanticResolver:
             actions.append({"id": "destroy", "label": "Destroy", "requires_nearby": True})
         elif kind == "person" and info.get("alive", True):
             actions.append({"id": "talk", "label": "Talk", "requires_nearby": True})
+            # Combatant persons also expose magic verbs via linked unit when present.
+            unit_id = (self.state.people.get(entity_id) or {}).get("unit_id")
+            unit = self.state.units.get(unit_id) if unit_id else None
+            if unit and unit.get("alive", True):
+                actions.append(
+                    {
+                        "id": "buff",
+                        "label": "Buff…",
+                        "requires_nearby": True,
+                        "submenu": [
+                            {"id": "buff_shield", "label": "Shield", "buff_kind": "shield"},
+                            {"id": "buff_frequency", "label": "Attack speed", "buff_kind": "frequency"},
+                            {"id": "buff_range", "label": "Range", "buff_kind": "range"},
+                        ],
+                        "target_unit_id": unit_id,
+                    }
+                )
+                actions.append(
+                    {"id": "destroy", "label": "Destroy", "requires_nearby": True, "target_unit_id": unit_id}
+                )
         elif kind == "hazard" and info.get("alive", True):
             actions.append({"id": "challenge", "label": "Challenge", "requires_nearby": True})
         elif kind == "item" and info.get("alive", True):

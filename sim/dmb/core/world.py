@@ -174,6 +174,9 @@ class WorldSim:
         self._register_handlers()
         if self.catalog.catalog_hash == "" and self.state.definitions.get("payloads"):
             self.catalog.load(self.state.definitions["payloads"])
+        from sim.dmb.persistence.migrate import ensure_unit_person_links
+
+        ensure_unit_person_links(self.state)
 
     def _register_handlers(self) -> None:
         self.router.register("Travel", self._handle_travel)
@@ -221,8 +224,11 @@ class WorldSim:
         return self.dispatch(envelope)
 
     def snapshot(self) -> dict[str, Any]:
+        from sim.dmb.persistence.migrate import SCHEMA_VERSION, ensure_unit_person_links
+
+        ensure_unit_person_links(self.state)
         return {
-            "schema_version": 1,
+            "schema_version": SCHEMA_VERSION,
             "world": self.state.to_dict(),
             "events": self.events.to_dict(),
             "replay": self.replay.to_dict(),
@@ -373,47 +379,53 @@ class WorldSim:
             )
         kind, record = classified
         # Observation-led durable identity for people and soldiers.
+        # People: Observe does not stamp personal names (Interact/Talk does).
+        # Units: Observe reveals public archetype label; Talk uses linked Person.
         if kind == "person":
-            reveal(
-                self.state,
-                entity_id,
-                KnowledgeFact(entity_id, "met", role=str(record.get("role", "villager"))),
-                role=str(record.get("role", "villager")),
-            )
-            self.state.knowledge[entity_id]["name"] = record.get("display_name")
-            self.state.world_version += 1
+            pass
         elif kind == "unit":
-            person_name = _ensure_unit_person_name(record)
+            person_id = record.get("person_id")
+            person = self.state.people.get(person_id) if person_id else None
+            if person and not record.get("person_name"):
+                record["person_name"] = person.get("name") or person.get("display_name")
+            elif not record.get("person_name"):
+                _ensure_unit_person_name(record)
             reveal(
                 self.state,
                 entity_id,
                 KnowledgeFact(entity_id, "observed", role=str(record.get("archetype", "soldier"))),
                 role=str(record.get("archetype", "soldier")),
             )
-            self.state.knowledge[entity_id]["name"] = person_name
+            self.state.knowledge[entity_id].pop("name", None)
             fx = self.state.board.setdefault("fx_battle", {})
             labels = fx.setdefault("labels", {})
-            base = str(labels.get(entity_id) or "")
-            if " — " in base:
-                base = base.split(" — ", 1)[0]
-            if not base:
-                fac = str(record.get("faction_id") or "")
-                from sim.dmb.narrative.semantic import ARCHETYPE_LABELS, FACTION_COLOUR
+            fac = str(record.get("faction_id") or "")
+            from sim.dmb.narrative.semantic import ARCHETYPE_LABELS, FACTION_COLOUR
 
-                colour = FACTION_COLOUR.get(fac, fac.replace("faction:", "").title() or "Unit")
-                arch = str(record.get("archetype") or "")
-                base = f"{colour} {ARCHETYPE_LABELS.get(arch, arch.title() or 'Soldier')}".strip()
-            labels[entity_id] = f"{base} — {person_name}"
+            colour = FACTION_COLOUR.get(fac, fac.replace("faction:", "").title() or "Unit")
+            arch = str(record.get("archetype") or "")
+            labels[entity_id] = f"{colour} {ARCHETYPE_LABELS.get(arch, arch.title() or 'Soldier')}".strip()
             self.state.world_version += 1
+            if person_id and person_id not in self.state.knowledge:
+                reveal(
+                    self.state,
+                    str(person_id),
+                    KnowledgeFact(str(person_id), "met", role="soldier"),
+                    role="soldier",
+                )
+                self.state.knowledge[str(person_id)].pop("name", None)
         inspect = resolver.inspect(
             entity_id,
             local_poses=local_poses if isinstance(local_poses, dict) else None,
         )
         view = filter_entity(self.state, entity_id)
+        label = view.get("label") or inspect.get("label")
+        if kind == "person" and not view.get("known"):
+            label = view.get("label") or "unknown"
         view.update(
             {
                 "kind": kind,
-                "label": inspect.get("label"),
+                "label": label,
                 "description": inspect.get("description"),
                 "nearby": inspect.get("nearby"),
             }
@@ -747,6 +759,12 @@ class WorldSim:
 
         entity_id = str(payload.get("entity_id", ""))
         person = self.state.people.get(entity_id)
+        if person is None and entity_id in self.state.units:
+            # Soldiers are Persons; Talk may target unit_id and resolve via person_id.
+            linked = self.state.units[entity_id].get("person_id")
+            person = self.state.people.get(linked) if linked else None
+            if person is not None:
+                entity_id = str(linked)
         if person is None:
             return CommandResult(
                 status="REJECTED",

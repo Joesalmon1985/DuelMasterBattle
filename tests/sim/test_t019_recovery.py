@@ -84,7 +84,7 @@ def test_travel_writes_recovery_and_sidecar_recover_command(tmp_path: Path) -> N
             payload={"from_node": "node:1", "to_node": "node:2"},
         )
         # Drive through server command path so recovery is written.
-        body = server._handle_frame(
+        body, deferred = server._handle_frame(
             {
                 "kind": "Command",
                 "protocol_version": 1,
@@ -99,10 +99,12 @@ def test_travel_writes_recovery_and_sidecar_recover_command(tmp_path: Path) -> N
         )
         assert body["status"] == "ACCEPTED"
         assert body.get("recovery")
+        if callable(deferred):
+            deferred()
         assert server.session.coordinator.has_recovery_checkpoint()
         # Mutate then recover via command.
         server.session.sim.state.clock["game_ms"] = 8000
-        recovered = server._handle_frame(
+        recovered, _ = server._handle_frame(
             {
                 "kind": "Command",
                 "protocol_version": 1,

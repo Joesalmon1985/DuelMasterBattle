@@ -12,9 +12,11 @@ from typing import Any
 from sim.dmb.core.state import WorldState
 from sim.dmb.core.types import TypeValidationError
 from sim.dmb.core.world import WorldSim
+from sim.dmb.persistence.migrate import SCHEMA_VERSION, migrate_world_dict
 
 
-SUPPORTED_SCHEMA = 1
+SUPPORTED_SCHEMA = SCHEMA_VERSION
+LEGACY_READABLE = {1, SCHEMA_VERSION}
 
 
 @dataclass
@@ -71,19 +73,28 @@ class SaveRepository:
         raw = path.read_text(encoding="utf-8")
         try:
             payload = json.loads(raw)
-            if int(payload.get("schema_version", -1)) != SUPPORTED_SCHEMA:
-                raise TypeValidationError("unsupported-version")
-            WorldState.from_dict(payload["world"])
-            return payload
+            return self._normalize_payload(payload)
         except (json.JSONDecodeError, TypeValidationError, KeyError, TypeError) as exc:
             backup = self.backup_path(slot)
             if backup.is_file():
                 payload = json.loads(backup.read_text(encoding="utf-8"))
-                if int(payload.get("schema_version", -1)) != SUPPORTED_SCHEMA:
-                    raise TypeValidationError("unsupported-version") from exc
-                WorldState.from_dict(payload["world"])
-                return payload
+                return self._normalize_payload(payload)
             raise TypeValidationError(f"corrupt save and no backup: {exc}") from exc
+
+    def _normalize_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
+        version = int(payload.get("schema_version", -1))
+        if version not in LEGACY_READABLE:
+            raise TypeValidationError("unsupported-version")
+        world = payload.get("world")
+        if not isinstance(world, dict):
+            raise TypeValidationError("missing world")
+        if version < SUPPORTED_SCHEMA:
+            world = migrate_world_dict(world, from_schema=version)
+            payload = dict(payload)
+            payload["world"] = world
+            payload["schema_version"] = SUPPORTED_SCHEMA
+        WorldState.from_dict(payload["world"])
+        return payload
 
     def load_world(self, slot: str) -> WorldSim:
         payload = self.read(slot)

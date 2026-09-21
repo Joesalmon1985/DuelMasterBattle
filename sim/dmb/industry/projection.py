@@ -9,7 +9,6 @@ from math import ceil
 from typing import Any
 
 from sim.dmb.industry import fraction, fraction_wire
-from sim.dmb.people.jobs import JobService
 
 # Documented presentation tunables (not balance). Throughput above capacity
 # adds carriers up to MAX; accounting never reads these values.
@@ -174,75 +173,144 @@ class IndustryProjection:
         return out
 
     def sync_carrier_jobs(self) -> list[dict[str, Any]]:
-        """Ensure persistent carrier jobs exist for active connections (no identity churn)."""
-        jobs = JobService(self.world)
+        """Ensure real workplace jobs exist for connection endpoints — never mint presentation-only People.
+
+        Legacy `job:carrier` presentation slots are vacated. Real `job:site_worker` slots are
+        registered once per building that is a connection `from_id`, then backfilled as ordinary
+        employment (simulation-owned Persons).
+        """
+        from sim.dmb.people.jobs import JobService
+
+        jobs_svc = JobService(self.world)
+        jobs = self.world.definitions.setdefault("jobs", {})
+        # Retire presentation-minted carrier employment.
+        for job_key, job in list(jobs.items()):
+            if str(job.get("job_id")) != "job:carrier":
+                continue
+            person_id = job.get("person_id")
+            job["vacant"] = True
+            job["presentation_only"] = False
+            job["surplus"] = True
+            job["person_id"] = None
+            if person_id and person_id in self.world.people:
+                person = self.world.people[person_id]
+                if str(person.get("job_id") or "") == "job:carrier":
+                    person["job_id"] = None
+                    person["workplace_id"] = None
+                    if person.get("alive"):
+                        person["status"] = "idle"
+                        if person.get("occupation") == "carrier":
+                            person["occupation"] = "villager"
+                        if person.get("role") == "carrier":
+                            person["role"] = "worker"
+
+        fx = self.world.board.get("fx_industry") or self.world.board.get("fx_village") or {}
+        node_id = str(fx.get("node_id") or self.world.player.get("node_id") or "")
         created: list[dict[str, Any]] = []
-        fx = self.world.board.get("fx_industry") or {}
-        node_id = str(fx.get("node_id") or self.world.player.get("node_id"))
         for connection in self.connections():
-            needed = int(connection["carrier_count"])
-            for index in range(MAX_CARRIERS_PER_CONNECTION):
-                job_key = f"carrier:{connection['connection_id']}:{index}"
-                existing = self.world.definitions.get("jobs", {}).get(job_key)
-                if index < needed:
-                    if existing is None:
-                        jobs.register_job(
-                            job_key,
-                            workplace_id=str(connection["from_id"]),
-                            job_id="job:carrier",
-                            node_id=node_id,
-                        )
-                        existing = self.world.definitions["jobs"][job_key]
-                    # Persist connection metadata on the job for save/load.
-                    existing["connection_id"] = connection["connection_id"]
-                    existing["carrier_index"] = index
-                    existing["presentation_only"] = True
-                    existing["surplus"] = False
-                elif existing is not None:
-                    existing["connection_id"] = connection["connection_id"]
-                    existing["carrier_index"] = index
-                    existing["presentation_only"] = True
-                    existing["surplus"] = True
-        created.extend(jobs.backfill_tick(name_prefix="Carrier"))
+            from_id = str(connection["from_id"])
+            if float(connection.get("throughput_per_sec") or 0) <= 0 and int(connection.get("carrier_count") or 0) <= 0:
+                continue
+            job_key = f"site_worker:{from_id}"
+            existing = jobs.get(job_key)
+            if existing is None:
+                jobs_svc.register_job(
+                    job_key,
+                    workplace_id=from_id,
+                    job_id="job:site_worker",
+                    node_id=node_id,
+                )
+                existing = jobs[job_key]
+            existing["vacant"] = bool(existing.get("vacant", True)) and not existing.get("person_id")
+            existing["presentation_only"] = False
+            existing["connection_id"] = connection["connection_id"]
+        created.extend(jobs_svc.backfill_tick(name_prefix="Worker"))
+        # Stamp occupation from workplace rather than "carrier".
+        for job_key, job in jobs.items():
+            if str(job.get("job_id")) != "job:site_worker":
+                continue
+            pid = job.get("person_id")
+            if not pid or pid not in self.world.people:
+                continue
+            person = self.world.people[pid]
+            person["occupation"] = self.public_role_for(person, job)
+            person["role"] = "worker"
         return created
 
-    def workers(self, *, node_id: str | None = None) -> list[dict[str, Any]]:
-        """Project carriers for connection jobs; non-carrier jobs stay stationary cues."""
-        connections = {row["connection_id"]: row for row in self.connections()}
-        _rates, reasons = self.latest_rates_and_reasons()
+    def _employees_at(self, workplace_id: str) -> list[tuple[str, dict[str, Any], dict[str, Any]]]:
+        out: list[tuple[str, dict[str, Any], dict[str, Any]]] = []
         jobs = self.world.definitions.get("jobs", {})
-        result: list[dict[str, Any]] = []
         for job_key, job in sorted(jobs.items()):
+            if str(job.get("job_id")) == "job:carrier":
+                continue
+            if str(job.get("workplace_id") or "") != str(workplace_id):
+                continue
+            if job.get("vacant"):
+                continue
             person_id = job.get("person_id")
             person = self.world.people.get(person_id)
-            if not person or not person.get("alive") or job.get("vacant"):
+            if not person or not person.get("alive"):
                 continue
-            if node_id is not None and person.get("node_id") != node_id:
+            out.append((str(person_id), person, job))
+        # Also include people whose workplace matches even if job table sparse.
+        for person_id, person in sorted(self.world.people.items()):
+            if not person.get("alive"):
                 continue
-            connection_id = str(job.get("connection_id") or "")
-            if str(job.get("job_id")) == "job:carrier" and connection_id in connections:
-                connection = connections[connection_id]
+            if str(person.get("workplace_id") or "") != str(workplace_id):
+                continue
+            if any(pid == person_id for pid, _, _ in out):
+                continue
+            if str(person.get("job_id") or "") == "job:carrier":
+                continue
+            out.append((str(person_id), person, {"job_id": person.get("job_id"), "workplace_id": workplace_id}))
+        return out
+
+    def workers(self, *, node_id: str | None = None) -> list[dict[str, Any]]:
+        """Project activities onto existing employees — occupation unchanged."""
+        connections = {row["connection_id"]: row for row in self.connections()}
+        _rates, reasons = self.latest_rates_and_reasons()
+        claimed: set[str] = set()
+        result: list[dict[str, Any]] = []
+
+        # Carrying activity: assign up to MAX_CARRIERS_PER_CONNECTION employees at from_id.
+        for connection in self.connections():
+            needed = int(connection["carrier_count"])
+            if needed <= 0:
+                continue
+            employees = self._employees_at(str(connection["from_id"]))
+            assigned = 0
+            for person_id, person, job in employees:
+                if assigned >= needed:
+                    break
+                if person_id in claimed:
+                    continue
+                if node_id is not None and person.get("node_id") != node_id:
+                    continue
+                claimed.add(person_id)
+                assigned += 1
                 throughput = fraction(connection["throughput"])
                 job_modifier = fraction(job.get("modifier", 1))
                 if job_modifier <= Fraction():
                     activity = "on_strike"
-                elif throughput <= Fraction() or job.get("surplus"):
+                elif throughput <= Fraction():
                     activity = "waiting"
                 else:
                     activity = "carrying"
+                occupation = self.public_role_for(person, job)
                 result.append(
                     {
                         "person_id": person_id,
                         "name": person.get("name") or person_id,
                         "sprite": person.get("sprite") or person.get("visual_profile") or "worker",
                         "visual_profile": person.get("visual_profile") or person.get("sprite") or "worker",
-                        "job_key": job_key,
+                        "job_key": None,
                         "job_id": job.get("job_id"),
-                        "role": "carrier",
-                        "public_role": self.public_role_for(person, job),
+                        "role": person.get("role") or "worker",
+                        "occupation": occupation,
+                        "public_role": occupation,
                         "node_id": person.get("node_id"),
-                        "workplace_id": job.get("workplace_id"),
-                        "connection_id": connection_id,
+                        "workplace_id": job.get("workplace_id") or connection["from_id"],
+                        "connection_id": connection["connection_id"],
                         "connection_kind": connection["kind"],
                         "from_id": connection["from_id"],
                         "to_id": connection["to_id"],
@@ -261,13 +329,27 @@ class IndustryProjection:
                     }
                 )
                 result[-1].update(self.worker_observation(result[-1]))
+
+        # Remaining non-carrier jobs: stationary working cues.
+        jobs = self.world.definitions.get("jobs", {})
+        for job_key, job in sorted(jobs.items()):
+            if str(job.get("job_id")) == "job:carrier":
                 continue
-            # Processor attendant / other jobs: stationary presentation only.
+            person_id = job.get("person_id")
+            if not person_id or person_id in claimed:
+                continue
+            person = self.world.people.get(person_id)
+            if not person or not person.get("alive") or job.get("vacant"):
+                continue
+            if node_id is not None and person.get("node_id") != node_id:
+                continue
+            claimed.add(str(person_id))
             workplace_id = str(job.get("workplace_id", ""))
             job_modifier = fraction(job.get("modifier", 1))
             activity = "on_strike" if job_modifier <= Fraction() else "working"
             site = next((s for s in self.layout_sites() if s.get("id") == workplace_id), None)
             grid = list(site.get("grid", [6, 3])) if site else [6, 3]
+            occupation = self.public_role_for(person, job)
             result.append(
                 {
                     "person_id": person_id,
@@ -276,8 +358,9 @@ class IndustryProjection:
                     "visual_profile": person.get("visual_profile") or person.get("sprite") or "worker",
                     "job_key": job_key,
                     "job_id": job.get("job_id"),
-                    "role": "attendant",
-                    "public_role": self.public_role_for(person, job),
+                    "role": person.get("role") or "attendant",
+                    "occupation": occupation,
+                    "public_role": occupation,
                     "node_id": person.get("node_id"),
                     "workplace_id": workplace_id,
                     "cue": activity,

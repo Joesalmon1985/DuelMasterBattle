@@ -227,7 +227,10 @@ class PeopleService:
             flags.add("anchor")
         if role == "leader":
             flags.add("leader")
-        if role == "worker" or job_id:
+        if role == "soldier":
+            # Combatants are Persons; do not mark them as industry workers by default.
+            pass
+        elif role == "worker" or job_id:
             flags.add("worker")
         record = {
             "id": person_id,
