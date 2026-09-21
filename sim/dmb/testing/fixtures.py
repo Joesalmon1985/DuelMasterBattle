@@ -37,7 +37,9 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
     if name == "FX-HAZARD":
         return _load_fx_hazard(seed=408 if seed == 7 else seed)
     if name == "FX-VILLAGE":
-        return _load_fx_village(seed=507 if seed == 7 else seed)
+        return _load_fx_village(seed=507 if seed == 7 else seed, mode="baseline")
+    if name == "FX-VILLAGE-QUEST":
+        return _load_fx_village(seed=507 if seed == 7 else seed, mode="quest")
     raise ValueError(f"unsupported fixture {name}")
 
 
@@ -1173,8 +1175,8 @@ def run_fx_hazard(sim: WorldSim | None = None) -> FixtureResult:
 
 
 def run_fx_village(sim: WorldSim | None = None, seed: int = 507) -> FixtureResult:
-    """Smoke the FX-VILLAGE shortage binding for scenario/panel parity (T095)."""
-    sim = sim or load_fixture("FX-VILLAGE", seed=seed)
+    """Smoke the FX-VILLAGE-QUEST shortage binding for scenario/panel parity (T095)."""
+    sim = sim or load_fixture("FX-VILLAGE-QUEST", seed=seed)
     fx = sim.state.board.get("fx_village") or {}
     quest_id = str(fx.get("quest_id") or "")
     quest = (sim.state.quests or {}).get(quest_id) or {}
@@ -1199,8 +1201,8 @@ def run_fx_village(sim: WorldSim | None = None, seed: int = 507) -> FixtureResul
     )
 
 
-def _load_fx_village(seed: int = 507) -> WorldSim:
-    """FX-VILLAGE: real BoardBuilder settlement + shortage quest (C10 / T086 / G05)."""
+def _load_fx_village(seed: int = 507, *, mode: str = "baseline") -> WorldSim:
+    """FX-VILLAGE baseline or FX-VILLAGE-QUEST shortage scenario (C10 / T086 / G05)."""
     from sim.dmb.world.fx_village_world import load_fx_village
 
-    return load_fx_village(seed=507 if seed == 7 else seed)
+    return load_fx_village(seed=507 if seed == 7 else seed, mode=mode)

@@ -30,16 +30,16 @@ UNIT_LABELS = {
 PUBLIC_ROLE_BY_SPRITE = {
     "woodcutter": "Woodcutter",
     "miner": "Miner",
-    "farmer": "Farmer",
+    "farmer": "Field worker",
     "shepherd": "Shepherd",
-    "worker": "Worker",
+    "worker": "Factory worker",
     "villager_a": "Villager",
     "villager_b": "Villager",
 }
 
 PUBLIC_ROLE_BY_JOB = {
-    "job:carrier": "Carrier",
-    "job:attendant": "Works attendant",
+    "job:site_worker": "Worker",
+    "job:attendant": "Factory worker",
     "job.factory_worker": "Factory worker",
 }
 
@@ -233,7 +233,7 @@ class IndustryProjection:
             if not pid or pid not in self.world.people:
                 continue
             person = self.world.people[pid]
-            person["occupation"] = self.public_role_for(person, job)
+            person["occupation"] = self.public_occupation_for(person, job)
             person["role"] = "worker"
         return created
 
@@ -296,7 +296,7 @@ class IndustryProjection:
                     activity = "waiting"
                 else:
                     activity = "carrying"
-                occupation = self.public_role_for(person, job)
+                occupation = self.public_occupation_for(person, job)
                 result.append(
                     {
                         "person_id": person_id,
@@ -308,6 +308,7 @@ class IndustryProjection:
                         # Projection activity tag for presenters/tests — not Person.identity.
                         "role": "carrier",
                         "occupation": occupation,
+                        "public_occupation": occupation,
                         "public_role": occupation,
                         "node_id": person.get("node_id"),
                         "workplace_id": job.get("workplace_id") or connection["from_id"],
@@ -350,7 +351,7 @@ class IndustryProjection:
             activity = "on_strike" if job_modifier <= Fraction() else "working"
             site = next((s for s in self.layout_sites() if s.get("id") == workplace_id), None)
             grid = list(site.get("grid", [6, 3])) if site else [6, 3]
-            occupation = self.public_role_for(person, job)
+            occupation = self.public_occupation_for(person, job)
             result.append(
                 {
                     "person_id": person_id,
@@ -359,8 +360,9 @@ class IndustryProjection:
                     "visual_profile": person.get("visual_profile") or person.get("sprite") or "worker",
                     "job_key": job_key,
                     "job_id": job.get("job_id"),
-                    "role": person.get("role") or "attendant",
+                    "role": person.get("role") or "worker",
                     "occupation": occupation,
+                    "public_occupation": occupation,
                     "public_role": occupation,
                     "node_id": person.get("node_id"),
                     "workplace_id": workplace_id,
@@ -471,90 +473,95 @@ class IndustryProjection:
         quiet: bool,
     ) -> tuple[str, str]:
         terrain = str(building.get("terrain") or "")
+        quest_mode = bool(((self.world.board or {}).get("fx_village") or {}).get("quest_enabled"))
         if slot == "primary":
             if terrain == "woodland":
-                far = "People are cutting and bundling timber here."
+                far = "A worked patch of woodland. Cut branches and gathered material are stacked ready to be carried into the settlement."
                 near = (
-                    "The cutting site is staffed, but no loads are leaving."
+                    "Timber is stacked, but no loads are leaving just now."
                     if waiting and not active
-                    else "Timber is being carried toward the works."
+                    else "Woodcutters move timber from the cuttings toward the works."
                 )
             elif terrain == "ore_mountains":
-                far = "An ore-working path climbs toward the ridge."
+                far = "A rocky working above the village. Miners move material down toward the works."
                 near = (
-                    "The route toward the workings is deserted. Something is wrong further up."
-                    if waiting and not active
-                    else "Ore is being carried down from the ridge."
+                    "The ridge path is quiet. Something may be wrong further up."
+                    if quest_mode and waiting and not active
+                    else "Ore is carried down from the ridge toward the works."
+                    if active
+                    else "The ridge workings are quiet just now."
                 )
             elif terrain == "clay_mountains":
-                far = "Clay is being dug and stacked for the works."
+                far = "Open clay workings at the edge of the settlement."
                 near = (
-                    "Clay workers wait with no loads leaving."
+                    "Clay is stacked with nowhere to go."
                     if waiting and not active
-                    else "Clay is carried toward the works."
+                    else "Clay is carried from the pits toward the works."
                 )
+            elif terrain == "fields":
+                far = "Cultivated ground at the edge of the settlement."
+                near = "Field workers gather what the land provides."
+            elif terrain == "grazing_land":
+                far = "Pasture at the edge of the settlement."
+                near = "Shepherds keep livestock and gather what they can."
             else:
-                far = f"A resource site for the settlement."
+                far = "A resource site for the settlement."
                 near = "Workers gather materials here." if active else "The site is quiet."
             return far, near
         if slot == "processor":
             if quiet or (waiting and not active):
                 return (
-                    "The works stand ready, but little is moving.",
-                    "Workers wait for materials. No loads leave for the factory.",
+                    "Raw materials arrive here to be processed — little is moving now.",
+                    "The works stand ready, waiting for materials.",
                 )
             return (
-                "Smoke and hammering come from the works.",
-                "Materials arrive here. Workers carry processed goods toward the factory.",
+                "Raw materials arrive here to be processed.",
+                "Workers process goods and send them toward the factory.",
             )
         if slot == "factory":
-            if quiet:
+            if quiet and quest_mode:
                 return (
-                    "The yard is quiet. Workers are waiting and no new units are being assembled.",
-                    "The factory waits for materials. Assembly has stopped.",
+                    "Processed material is used here to produce military equipment and units — the yard is quiet.",
+                    "Assembly has stopped while materials are short.",
                 )
             return (
-                "The yard is active. Materials arrive and assembly continues.",
-                "Processed goods arrive here and new units are being assembled.",
+                "Processed material is used here to produce military equipment and units.",
+                "The yard is active. Materials arrive and assembly continues."
+                if not quiet
+                else "The factory stands ready.",
             )
         if slot == "warehouse":
             return (
-                "Carts and workers use this storehouse.",
-                "This is the settlement warehouse. Supplies for the settlement pass through here.",
+                "The settlement's goods are stored and dispatched here.",
+                "This is the settlement warehouse. Supplies pass through here.",
             )
         if slot == "centre":
             return (
                 "The settlement centre stands at the heart of this place.",
-                "This is the faction centre for the settlement — civic business is done here.",
+                "This is the civic centre of the settlement.",
             )
         return f"{label} stands here.", f"You inspect {label}."
 
-    def public_role_for(self, person: dict[str, Any], job: dict[str, Any] | None = None) -> str:
-        """Occupational standing label — not personal identity."""
+    def public_occupation_for(self, person: dict[str, Any], job: dict[str, Any] | None = None) -> str:
+        """Canonical stable occupational label (not activity, not Carrier identity)."""
+        from sim.dmb.world.settlement_layout import public_occupation_for as _occ
+
         job = job or {}
-        job_id = str(job.get("job_id") or person.get("job_id") or "")
-        if job_id in PUBLIC_ROLE_BY_JOB:
-            role = PUBLIC_ROLE_BY_JOB[job_id]
-            if job_id == "job:carrier":
-                sprite = str(person.get("sprite") or person.get("visual_profile") or "")
-                if sprite in PUBLIC_ROLE_BY_SPRITE and sprite != "worker":
-                    return PUBLIC_ROLE_BY_SPRITE[sprite]
-            return role
-        sprite = str(person.get("sprite") or person.get("visual_profile") or "")
-        if sprite in PUBLIC_ROLE_BY_SPRITE:
-            return PUBLIC_ROLE_BY_SPRITE[sprite]
-        role = str(person.get("role") or "")
-        if role in {"carrier", "attendant", "worker"}:
-            return role.replace("_", " ").title()
-        return "Villager"
+        workplace_id = str(job.get("workplace_id") or person.get("workplace_id") or "")
+        workplace = (self.world.buildings or {}).get(workplace_id) or {}
+        return _occ(person, workplace=workplace, job=job)
+
+    def public_role_for(self, person: dict[str, Any], job: dict[str, Any] | None = None) -> str:
+        """Back-compat alias — prefer public_occupation_for."""
+        return self.public_occupation_for(person, job)
 
     def worker_observation(self, row: dict[str, Any]) -> dict[str, str]:
         """Player-safe observe lines for an industry worker projection row."""
-        role = str(row.get("public_role") or "Worker")
+        role = str(row.get("public_occupation") or row.get("public_role") or row.get("occupation") or "Worker")
         cue = str(row.get("cue") or row.get("activity") or "idle")
         resource = str(row.get("resource_label") or "goods")
         if cue in {"waiting", "idle", "on_strike"}:
-            far = f"A {role.lower()} waits near a quiet worksite."
+            far = f"A {role.lower()} waits near their workplace."
             near = f"A {role.lower()} is waiting. Nothing useful is moving on their route."
         elif cue == "carrying":
             far = f"A {role.lower()} carries {resource.lower()} along the path."
@@ -568,7 +575,7 @@ class IndustryProjection:
         else:
             far = f"A {role.lower()} is here."
             near = f"You can speak with this {role.lower()}."
-        return {"observe_far": far, "observe_near": near, "public_role": role}
+        return {"observe_far": far, "observe_near": near, "public_role": role, "public_occupation": role}
 
     def _plain_focus(
         self,

@@ -52,7 +52,7 @@ def test_fixture_content_present() -> None:
 
 
 def test_quest_binds_real_person_and_factory_shortage() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     mara_id = fx["mara_id"]
@@ -82,7 +82,7 @@ def test_quest_binds_real_person_and_factory_shortage() -> None:
 
 
 def test_demon_victory_restores_route_a() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
@@ -103,7 +103,7 @@ def test_demon_victory_restores_route_a() -> None:
 
 
 def test_world_repair_acknowledges_correct_actor() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
@@ -118,7 +118,7 @@ def test_world_repair_acknowledges_correct_actor() -> None:
 
 
 def test_destroyed_target_never_respawns() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     factory_id = fx["factory_id"]

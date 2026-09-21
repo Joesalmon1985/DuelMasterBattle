@@ -15,7 +15,9 @@ from typing import Any
 from sim.dmb.core.state import WorldState
 from sim.dmb.core.types import TypeValidationError
 
-LAYOUT_SCHEMA_VERSION = 1
+from sim.dmb.world.settlement_layout import LAYOUT_SCHEMA_VERSION as SETTLEMENT_LAYOUT_VERSION
+
+LAYOUT_SCHEMA_VERSION = SETTLEMENT_LAYOUT_VERSION
 BASE_SIZE = 48
 GROW_STEP = 16
 FOOTPRINT = (3, 3)

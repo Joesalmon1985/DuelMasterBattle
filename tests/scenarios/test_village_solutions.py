@@ -46,7 +46,7 @@ def test_quest_and_dialogue_content() -> None:
 
 
 def test_route_b_completion_does_not_claim_demon_cleared() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
@@ -99,7 +99,7 @@ def test_route_b_completion_does_not_claim_demon_cleared() -> None:
 
 
 def test_demon_solution_restores_route_a_industry() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
@@ -122,7 +122,7 @@ def test_demon_solution_restores_route_a_industry() -> None:
 
 
 def test_sluice_solution_restores_route_b_without_clearing_demon() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     factory_id = fx["factory_id"]
@@ -138,7 +138,7 @@ def test_sluice_solution_restores_route_b_without_clearing_demon() -> None:
 
 
 def test_world_resolved_and_destroyed_remain_playable() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]
@@ -151,7 +151,7 @@ def test_world_resolved_and_destroyed_remain_playable() -> None:
     assert world["status"] == "resolved_by_world"
     assert _ack_for("world_fix_first")["id"] == "dialogue.mara.world_resolved"
 
-    sim2 = load_fixture("FX-VILLAGE", seed=509)
+    sim2 = load_fixture("FX-VILLAGE-QUEST", seed=509)
     state2 = sim2.state
     fx2 = state2.board["fx_village"]
     q2 = fx2["quest_id"]
@@ -164,7 +164,7 @@ def test_world_resolved_and_destroyed_remain_playable() -> None:
 
 
 def test_no_duplicate_quest_or_reward_on_return() -> None:
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     state = sim.state
     fx = state.board["fx_village"]
     quest_id = fx["quest_id"]

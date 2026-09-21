@@ -30,6 +30,7 @@ SCENARIO_OWNERS = {
     "FX-BATTLE": "T059-T068",
     "FX-HAZARD": "T069-T075",
     "FX-VILLAGE": "T077-T095",
+    "FX-VILLAGE-QUEST": "T077-T095",
     "FX-ERA": "T097-T106",
     "FX-SOLO": "T102/T106",
     "FX-CYCLE": "T125-T131",
@@ -204,12 +205,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(json.dumps(payload, indent=2))
             return 1
 
-    if args.fixture == "FX-VILLAGE":
+    if args.fixture in {"FX-VILLAGE", "FX-VILLAGE-QUEST"}:
         try:
-            sim = load_fixture("FX-VILLAGE", seed=args.seed)
+            # Scenario/panel records the shortage quest; use QUEST fixture even if
+            # caller still passes the historical FX-VILLAGE name.
+            quest_fixture = "FX-VILLAGE-QUEST"
+            sim = load_fixture(quest_fixture, seed=args.seed)
             result = run_fx_village(sim, seed=args.seed)
             payload = {
-                "fixture": args.fixture,
+                "fixture": quest_fixture,
                 "status": result.status,
                 "owner": owner,
                 "seed": args.seed,
@@ -225,7 +229,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             runs.mkdir(parents=True, exist_ok=True)
             snap = {
                 "seed": args.seed,
-                "fixture": "FX-VILLAGE",
+                "fixture": quest_fixture,
                 "quest_id": result.details.get("quest_id"),
                 "mara_id": result.details.get("mara_id"),
                 "factory_id": result.details.get("factory_id"),

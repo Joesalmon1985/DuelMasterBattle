@@ -111,31 +111,32 @@ def _buildings_on_node(state, node_id: str, slot_kind: str) -> list[dict[str, An
 
 
 def _human_building_label(slot_kind: str, terrain: str | None = None, shortage: bool | None = None) -> str:
+    # Proper names stay clean; status belongs in observation text, not the name.
+    del shortage  # retained for call-site compatibility
     if slot_kind == "primary" and terrain:
-        return {
-            "woodland": "Woodland cuttings",
-            "ore_mountains": "Ore ridge",
-            "clay_mountains": "Clay pits",
-            "fields": "Grain fields",
-            "grazing_land": "Pasture",
-        }.get(terrain, f"{terrain.replace('_', ' ').title()} source")
+        from sim.dmb.world.settlement_layout import PRIMARY_LABEL
+
+        return PRIMARY_LABEL.get(terrain, f"{terrain.replace('_', ' ').title()} source")
     if slot_kind == "processor":
         return "Works"
     if slot_kind == "factory":
-        if shortage is True:
-            return "Village factory (quiet)"
-        if shortage is False:
-            return "Village factory (working)"
-        return "Village factory"
+        return "Village Factory"
     if slot_kind == "centre":
-        return "Settlement centre"
+        return "Settlement Centre"
     if slot_kind == "warehouse":
         return "Warehouse"
     return slot_kind.replace("_", " ").title()
 
 
-def load_fx_village(seed: int = 507) -> WorldSim:
-    """Build FX-VILLAGE on a real generated two-faction board settlement."""
+def load_fx_village(seed: int = 507, *, mode: str = "baseline") -> WorldSim:
+    """Build FX-VILLAGE on a real generated two-faction board settlement.
+
+    mode:
+      - baseline: healthy working village (Village Foundation / play_g05)
+      - quest: shortage quest scenario (FX-VILLAGE-QUEST)
+    """
+    if mode not in {"baseline", "quest"}:
+        raise ValueError(f"unknown fx village mode {mode!r}")
     meta_file = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
     template = json.loads(QUEST_PATH.read_text(encoding="utf-8"))
     sim = bootstrap_world(world_id="world:fx-village", seed=seed)
@@ -208,18 +209,18 @@ def load_fx_village(seed: int = 507) -> WorldSim:
     factory_work = factories[0]
     factory_shortage = factories[1]
     alt_label = {
-        "clay_mountains": "Clay works",
-        "fields": "Grain works",
-        "grazing_land": "Wool works",
-        "woodland": "Timber works",
-        "ore_mountains": "Ore works",
-    }.get(alt_terrain, "Village works")
+        "clay_mountains": "Clay Works",
+        "fields": "Grain Works",
+        "grazing_land": "Wool Works",
+        "woodland": "Timber Works",
+        "ore_mountains": "Ore Works",
+    }.get(alt_terrain, "Village Works")
     for row, label in (
         (proc_work, alt_label),
-        (proc_a, "Ridge works"),
-        (proc_b, "Sluice works"),
-        (factory_work, "Muster factory"),
-        (factory_shortage, "Village factory"),
+        (proc_a, "Ridge Works"),
+        (proc_b, "Alternate Works"),
+        (factory_work, "Muster Yard"),
+        (factory_shortage, "Village Factory"),
     ):
         state.buildings[str(row["id"])]["label"] = label
         row["label"] = label
@@ -229,7 +230,7 @@ def load_fx_village(seed: int = 507) -> WorldSim:
     # Label remaining settlement buildings from setup (not on the quest routes).
     for b in _buildings_on_node(state, node_id, "factory"):
         if not b.get("label"):
-            b["label"] = "Idle factory"
+            b["label"] = "Idle Factory"
     for b in _buildings_on_node(state, node_id, "centre"):
         b["label"] = b.get("label") or _human_building_label("centre")
     for b in _buildings_on_node(state, node_id, "warehouse"):
@@ -290,20 +291,27 @@ def load_fx_village(seed: int = 507) -> WorldSim:
             active=True,
         )
     )
-    # Route B alternate: woodland + alt — inactive under sluice sabotage.
-    sim.industry.install_processor(
-        ProcessorBinding(
-            str(proc_b["id"]),
-            "recipe.prehistoric.pre_07",
-            "prehistoric",
-            wood_ch,
-            alt_ch,
-            active=False,
-            strike=False,
-            modifier=Fraction(0),
+    # Route B alternate: woodland + alt — inactive under sluice sabotage (quest only).
+    if mode == "quest":
+        sim.industry.install_processor(
+            ProcessorBinding(
+                str(proc_b["id"]),
+                "recipe.prehistoric.pre_07",
+                "prehistoric",
+                wood_ch,
+                alt_ch,
+                active=False,
+                strike=False,
+                modifier=Fraction(0),
+            )
         )
-    )
-    proc_b["active"] = False
+        proc_b["active"] = False
+    else:
+        # Baseline: leave alternate works unused / inactive without quest framing.
+        proc_b["active"] = False
+        proc_b["label"] = "Unused Works"
+        state.buildings[str(proc_b["id"])]["label"] = "Unused Works"
+        state.buildings[str(proc_b["id"])]["active"] = False
 
     sim.industry.install_route(
         FactoryRoute(str(factory_work["id"]), str(proc_work["id"]), "unit.ancient.skirmisher", 2)
@@ -320,7 +328,24 @@ def load_fx_village(seed: int = 507) -> WorldSim:
             unit_def_id="unit.ancient.skirmisher",
         )
 
-    # Presentation layout sites from real building IDs + local grid anchors.
+    # Spatial grammar: perimeter primaries from touching-hex orientation + built core.
+    from sim.dmb.world.settlement_layout import (
+        apply_anchors_to_local_projection,
+        build_village_layout_sites,
+        public_occupation_for,
+    )
+
+    node_buildings = {
+        str(bid): b
+        for bid, b in state.buildings.items()
+        if b.get("node_id") == node_id
+    }
+    anchors, industry_sites = build_village_layout_sites(
+        board=plan.board,
+        node_id=node_id,
+        buildings=node_buildings,
+    )
+    apply_anchors_to_local_projection(state, node_id, anchors, seed=f"{seed}:{node_id}:v2")
     state.board["fx_industry"] = {
         "node_id": node_id,
         "processor_id": str(proc_a["id"]),
@@ -328,78 +353,16 @@ def load_fx_village(seed: int = 507) -> WorldSim:
         "factory_ids": [str(factory_work["id"]), str(factory_shortage["id"])],
         "output_id": "processed.prehistoric.pre_07",
         "output_name": "Processed goods",
-        "selected_route": "route:A",
+        "selected_route": "route:work" if mode == "baseline" else "route:A",
         "layout": {
-            "sites": [
-                {
-                    "id": str(primary_by_terrain["woodland"]["id"]),
-                    "kind": "source",
-                    "label": primary_by_terrain["woodland"]["label"],
-                    "grid": [16, 18],
-                    "entrance": [16, 19],
-                    "color": "#2f7d32",
-                    "terrain": "woodland",
-                },
-                {
-                    "id": str(primary_by_terrain["ore_mountains"]["id"]),
-                    "kind": "source",
-                    "label": primary_by_terrain["ore_mountains"]["label"],
-                    "grid": [14, 6],
-                    "entrance": [14, 7],
-                    "color": "#8a8f98",
-                    "terrain": "ore_mountains",
-                },
-                {
-                    "id": str(primary_by_terrain[alt_terrain]["id"]),
-                    "kind": "source",
-                    "label": primary_by_terrain[alt_terrain]["label"],
-                    "grid": [10, 24],
-                    "entrance": [10, 25],
-                    "color": "#b87333",
-                    "terrain": alt_terrain,
-                },
-                {
-                    "id": str(proc_work["id"]),
-                    "kind": "processor",
-                    "label": proc_work["label"],
-                    "grid": [20, 22],
-                    "entrance": [20, 23],
-                    "color": "#4a7a5a",
-                },
-                {
-                    "id": str(proc_a["id"]),
-                    "kind": "processor",
-                    "label": proc_a["label"],
-                    "grid": [22, 14],
-                    "entrance": [22, 15],
-                    "color": "#5a6a8a",
-                },
-                {
-                    "id": str(proc_b["id"]),
-                    "kind": "processor",
-                    "label": proc_b["label"],
-                    "grid": [18, 26],
-                    "entrance": [18, 27],
-                    "color": "#6a5a4a",
-                },
-                {
-                    "id": str(factory_work["id"]),
-                    "kind": "factory",
-                    "label": factory_work["label"],
-                    "grid": [26, 22],
-                    "entrance": [26, 23],
-                    "color": "#3a5a4a",
-                },
-                {
-                    "id": str(factory_shortage["id"]),
-                    "kind": "factory",
-                    "label": factory_shortage["label"],
-                    "grid": [28, 26],
-                    "entrance": [28, 27],
-                    "color": "#4a4a5a",
-                },
-            ],
-            "assembly": {"grid": [24, 30], "label": "Yard"},
+            "sites": industry_sites,
+            "assembly": {
+                "grid": [
+                    int(anchors.get(str(factory_work["id"]), {}).get("approach", [24, 30])[0]),
+                    int(anchors.get(str(factory_work["id"]), {}).get("approach", [24, 30])[1]) + 2,
+                ],
+                "label": "Yard",
+            },
         },
     }
 
@@ -419,8 +382,8 @@ def load_fx_village(seed: int = 507) -> WorldSim:
     )
     IndustryProjection(state).sync_carrier_jobs()
 
-    # Keep distant world catastrophe pressure, but the G05 settlement's touching
-    # hexes must only carry the intentional ore-route demon (not random setup cubes).
+    # Keep distant world catastrophe pressure; settlement touching hexes stay clear
+    # unless the quest mode places its intentional ore-route demon.
     touching = {str(h) for h in plan.board.touching_hexes(node_id)}
     cubes = ((state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
     board_cubes = state.board.setdefault("hazard_cubes", {})
@@ -429,26 +392,30 @@ def load_fx_village(seed: int = 507) -> WorldSim:
             cube["active"] = False
             if cid in board_cubes:
                 board_cubes[cid]["active"] = False
-    # Plan hazard_hexes also suppress industry; clear them on this settlement.
     state.board["hazard_hexes"] = [
         str(h) for h in (state.board.get("hazard_hexes") or []) if str(h) not in touching
     ]
     demon_id = "cube:demon"
-    cubes[demon_id] = {
-        "id": demon_id,
-        "hex_id": ore_hex,
-        "type": "demon",
-        "active": True,
-        "node_id": node_id,
-        "cause_id": "cause:demon_ore",
-    }
-    board_cubes[demon_id] = {
-        "hex_id": ore_hex,
-        "active": True,
-        "type": "demon",
-        "node_id": node_id,
-    }
-    state.board.setdefault("hex_anchors", {})[ore_hex] = {"grid": [14.0, 4.0]}
+    if mode == "quest":
+        cubes[demon_id] = {
+            "id": demon_id,
+            "hex_id": ore_hex,
+            "type": "demon",
+            "active": True,
+            "node_id": node_id,
+            "cause_id": "cause:demon_ore",
+        }
+        board_cubes[demon_id] = {
+            "hex_id": ore_hex,
+            "active": True,
+            "type": "demon",
+            "node_id": node_id,
+        }
+        ore_anchor = anchors.get(str(primary_by_terrain["ore_mountains"]["id"]), {})
+        demon_grid = list(ore_anchor.get("grid") or [14, 4])
+        state.board.setdefault("hex_anchors", {})[ore_hex] = {
+            "grid": [float(demon_grid[0]) + 1.0, float(demon_grid[1]) - 1.0]
+        }
     state.board.setdefault("node_adjacent_hexes", {})[node_id] = list(
         plan.board.touching_hexes(node_id)
     )
@@ -460,9 +427,9 @@ def load_fx_village(seed: int = 507) -> WorldSim:
             "factory_id": str(factory_shortage["id"]),
             "processor_id": str(proc_a["id"]),
             "inputs": ["woodland", "ore_mountains"],
-            "selected": True,
-            "available": False,
-            "blocked_by": "demon_cube",
+            "selected": mode == "quest",
+            "available": mode == "baseline",
+            "blocked_by": "demon_cube" if mode == "quest" else None,
         },
         "route:B": {
             "id": "route:B",
@@ -471,7 +438,7 @@ def load_fx_village(seed: int = 507) -> WorldSim:
             "inputs": ["woodland", alt_terrain],
             "selected": False,
             "available": False,
-            "modifier": "sluice_sabotage",
+            "modifier": "sluice_sabotage" if mode == "quest" else None,
         },
         "route:work": {
             "id": "route:work",
@@ -482,23 +449,27 @@ def load_fx_village(seed: int = 507) -> WorldSim:
             "available": True,
         },
     }
-    state.definitions["production_modifiers"] = {
-        "sluice_sabotage": {
-            "modifier_id": "sluice_sabotage",
-            "target_id": "route:B",
-            "processor_id": str(proc_b["id"]),
-            "kind": "sluice_sabotage",
-            "active": True,
+    if mode == "quest":
+        state.definitions["production_modifiers"] = {
+            "sluice_sabotage": {
+                "modifier_id": "sluice_sabotage",
+                "target_id": "route:B",
+                "processor_id": str(proc_b["id"]),
+                "kind": "sluice_sabotage",
+                "active": True,
+            }
         }
-    }
+    else:
+        state.definitions["production_modifiers"] = {}
 
-    # Persistent Mara at the shortage factory.
+    # Persistent Mara — ordinary factory worker in baseline; quest binds later.
     people = PeopleService(state)
+    mara_workplace = str(factory_work["id"] if mode == "baseline" else factory_shortage["id"])
     mara = people.create_person(
         name=str(meta_file.get("worker_display_name") or "Mara"),
         role="worker",
         node_id=node_id,
-        workplace_id=str(factory_shortage["id"]),
+        workplace_id=mara_workplace,
         job_id="job.factory_worker",
         dialogue_profile="dialogue.factory_worker",
         goal_ids=["goal.keep_production"],
@@ -506,25 +477,35 @@ def load_fx_village(seed: int = 507) -> WorldSim:
     )
     mara["sprite"] = "worker"
     mara["visual_profile"] = "worker"
-    people.assign_job(mara["id"], "job.factory_worker", str(factory_shortage["id"]))
+    mara["occupation"] = "Factory worker"
+    people.assign_job(mara["id"], "job.factory_worker", mara_workplace)
     people.promote_profile(mara["id"], anchor=True, role="worker")
-    # Stamp sprites on industry people after carrier sync.
+    # Stamp sprites + occupations on industry people after carrier sync.
     IndustryProjection(state).sync_carrier_jobs()
     for person in state.people.values():
         if person.get("node_id") != node_id:
             continue
         workplace = str(person.get("workplace_id") or "")
-        terrain = None
-        for t, b in primary_by_terrain.items():
-            if workplace == b["id"] or workplace.startswith("channel:"):
-                terrain = t
-        person["sprite"] = person_sprite_for(person, terrain=terrain)
+        workplace_rec = state.buildings.get(workplace) or {}
+        terrain = str(workplace_rec.get("terrain") or "")
+        if not terrain:
+            for t, b in primary_by_terrain.items():
+                if workplace == b["id"]:
+                    terrain = t
+                    break
+        person["sprite"] = person_sprite_for(person, terrain=terrain or None)
         person.setdefault("visual_profile", person["sprite"])
+        person["occupation"] = public_occupation_for(
+            person, workplace=workplace_rec if workplace_rec else {"terrain": terrain}
+        )
 
+    # Player start near built core, south of centre.
+    layout_rec = (state.board.get("local_projections") or {}).get(node_id) or {}
+    centre = layout_rec.get("centre") or [24, 24]
     state.player = {
         "node_id": node_id,
         "area_id": "area.village",
-        "position": [28.0, 32.0],
+        "position": [float(centre[0]), float(centre[1]) + 8.0],
         "facing": "up",
     }
     # Visit after player record exists so Challenge eligibility is retained.
@@ -549,6 +530,8 @@ def load_fx_village(seed: int = 507) -> WorldSim:
     state.board["fx_village"] = {
         **meta_file,
         "seed": seed,
+        "mode": mode,
+        "quest_enabled": mode == "quest",
         "node_id": node_id,
         "settlement_id": settlement_id,
         "faction_id": faction_id,
@@ -561,8 +544,8 @@ def load_fx_village(seed: int = 507) -> WorldSim:
         "primary_ore_id": str(primary_by_terrain["ore_mountains"]["id"]),
         "primary_alt_id": str(primary_by_terrain[alt_terrain]["id"]),
         "alt_terrain": alt_terrain,
-        "demon_hex": ore_hex,
-        "demon_cube_id": demon_id,
+        "demon_hex": ore_hex if mode == "quest" else None,
+        "demon_cube_id": demon_id if mode == "quest" else None,
         "wood_hex": wood_hex,
         "alt_hex": alt_hex,
         "terrains": sorted(terrain_hexes.keys()),
@@ -570,9 +553,10 @@ def load_fx_village(seed: int = 507) -> WorldSim:
         "topology_hexes": len(plan.board.hexes),
         "topology_nodes": len(plan.board.nodes),
         "topology_edges": len(plan.board.edges),
+        "mara_id": mara["id"],
     }
 
-    # Industry tick with demon present.
+    # Industry tick (quest mode includes demon pressure; baseline is healthy).
     sim.industry.advance_quanta(1)
     rates: dict[str, Any] = {}
     for event in reversed(state.industry.get("events") or []):
@@ -581,37 +565,49 @@ def load_fx_village(seed: int = 507) -> WorldSim:
             break
     shortage_rate = float(fraction(rates.get(str(factory_shortage["id"])) or 0))
     work_rate = float(fraction(rates.get(str(factory_work["id"])) or 0))
-    factory_shortage["shortage"] = shortage_rate <= 0
+    factory_shortage["shortage"] = mode == "quest" and shortage_rate <= 0
     factory_shortage["output_rate"] = shortage_rate
-    factory_shortage["label"] = _human_building_label("factory", shortage=shortage_rate <= 0)
-    factory_work["shortage"] = work_rate <= 0
+    factory_shortage["label"] = "Village Factory"
+    factory_work["shortage"] = False
     factory_work["output_rate"] = work_rate
-    factory_work["label"] = _human_building_label("factory", shortage=work_rate <= 0).replace(
-        "Village factory", "Muster factory"
-    )
+    factory_work["label"] = "Muster Yard"
+    state.buildings[str(factory_shortage["id"])]["label"] = "Village Factory"
+    state.buildings[str(factory_work["id"])]["label"] = "Muster Yard"
+    state.buildings[str(factory_shortage["id"])]["shortage"] = factory_shortage["shortage"]
+    state.buildings[str(factory_work["id"])]["shortage"] = False
 
-    tracker = CauseTracker(state)
-    binder = QuestBinder(state, tracker)
-    binder.register_template(template)
-    observed = tracker.observe_changes(
-        [
-            {
-                "kind": "factory_output_shortage",
-                "affected_entity_id": str(factory_shortage["id"]),
-                "stakeholder_id": mara["id"],
-                "site_id": node_id,
-                "template_id": template["id"],
-                "output_rate": shortage_rate,
-            }
-        ]
-    )
-    cause = observed[0]["cause"]
-    bound = binder.bind(template["id"], cause)
-    state.board["fx_village"]["mara_id"] = mara["id"]
-    state.board["fx_village"]["cause_id"] = cause["id"]
-    state.board["fx_village"]["quest_id"] = bound["quest"]["id"]
+    if mode == "quest":
+        tracker = CauseTracker(state)
+        binder = QuestBinder(state, tracker)
+        binder.register_template(template)
+        observed = tracker.observe_changes(
+            [
+                {
+                    "kind": "factory_output_shortage",
+                    "affected_entity_id": str(factory_shortage["id"]),
+                    "stakeholder_id": mara["id"],
+                    "site_id": node_id,
+                    "template_id": template["id"],
+                    "output_rate": shortage_rate,
+                }
+            ]
+        )
+        cause = observed[0]["cause"]
+        bound = binder.bind(template["id"], cause)
+        state.board["fx_village"]["cause_id"] = cause["id"]
+        state.board["fx_village"]["quest_id"] = bound["quest"]["id"]
+        state.board["fx_village"]["quest_template_id"] = template["id"]
+        _seed_fx_village_sluice(state, node_id)
+    else:
+        state.board["fx_village"]["cause_id"] = None
+        state.board["fx_village"]["quest_id"] = None
+        state.board["fx_village"]["quest_template_id"] = None
+        # Ensure no sluice entrance leaks into baseline play.
+        entrances = state.board.setdefault("entrances", {})
+        entrances.pop("entrance:sluice", None)
 
-    _seed_fx_village_sluice(state, node_id)
+    # Refresh people anchors after Mara exists.
+    apply_anchors_to_local_projection(state, node_id, anchors, seed=f"{seed}:{node_id}:v2")
     return sim
 
 

@@ -13,7 +13,7 @@ RUNS = ROOT / "Pack" / "DuelMasterBattle_Build_Pack" / "tracking" / "village_run
 
 def test_panel_and_scenario_same_engine_outcome(tmp_path: Path) -> None:
     seed = 507
-    sim = load_fixture("FX-VILLAGE", seed=seed)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=seed)
     result = run_fx_village(sim, seed=seed)
     assert result.status == "PASS"
     # Simulate panel applying the same outcome dictionary the runner records.

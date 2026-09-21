@@ -52,7 +52,7 @@ def test_fx_village_topology_travel_round_trip() -> None:
 def test_player_building_observation_differs_for_quiet_factory() -> None:
     from sim.dmb.industry.projection import IndustryProjection
 
-    sim = load_fixture("FX-VILLAGE", seed=507)
+    sim = load_fixture("FX-VILLAGE-QUEST", seed=507)
     fx = sim.state.board["fx_village"]
     proj = IndustryProjection(sim.state)
     quiet = proj.player_building_observation(fx["factory_id"])
@@ -60,4 +60,4 @@ def test_player_building_observation_differs_for_quiet_factory() -> None:
     assert quiet["observe_far"]
     assert working["observe_far"]
     assert quiet["observe_far"] != working["observe_far"]
-    assert "quiet" in quiet["observe_far"].lower() or "waiting" in quiet["observe_far"].lower()
+    assert "quiet" in quiet["observe_far"].lower() or "waiting" in quiet["observe_far"].lower() or "short" in quiet["observe_far"].lower()

@@ -12,6 +12,12 @@ from sim.dmb.core.state import WorldState
 from sim.dmb.narrative.dialogue import DialogueResolver
 from sim.dmb.narrative.line_catalog import LineCatalog
 from sim.dmb.world.projection import LocalProjectionService
+from sim.dmb.world.settlement_layout import (
+    PRIMARY_PROP_MARKERS,
+    PRIMARY_TILE_CHARS,
+    baseline_dialogue,
+    public_occupation_for,
+)
 
 
 def export_overworld_area(
@@ -25,19 +31,20 @@ def export_overworld_area(
     if player_area == "area.sluice":
         return export_sluice_area(state)
     fx = (state.board or {}).get("fx_village") or {}
+    quest_enabled = bool(fx.get("quest_enabled"))
     node_id = str(node_id or fx.get("node_id") or state.player.get("node_id") or "node:village")
     proj = LocalProjectionService(state)
     # Ensure durable layout exists (idempotent).
     layout = proj.ensure_layout(node_id, seed=seed or fx.get("seed") or f"{state.world_id}:{node_id}")
-    # Bind demon + sluice entrance into layout objects if missing.
-    _ensure_g05_landmarks(state, layout, fx)
+    if quest_enabled:
+        _ensure_g05_landmarks(state, layout, fx)
     view = proj.project(node_id)
 
     width = int(view.get("width") or layout.get("width") or 48)
     height = int(view.get("height") or layout.get("height") or 48)
     rows = [["."] * width for _ in range(height)]
 
-    # Soft path cross through centre.
+    # Soft path cross through centre — roads out of the settlement.
     cx, cy = width // 2, height // 2
     for x in range(width):
         rows[cy][x] = ":"
@@ -45,13 +52,64 @@ def export_overworld_area(
         rows[y][cx] = ":"
 
     entities: list[dict[str, Any]] = []
-    # Buildings → footprint walls + entrance markers.
     for building in view.get("buildings") or []:
         bid = str(building["id"])
+        building_rec = state.buildings.get(bid) or {}
+        if building_rec.get("status") == "destroyed":
+            continue
+        if not building_rec.get("active", True):
+            continue
         grid = building.get("grid") or [0, 0]
         footprint = building.get("footprint") or [3, 3]
         gx, gy = int(grid[0]), int(grid[1])
         fw, fh = int(footprint[0]), int(footprint[1])
+        slot_kind = str(building_rec.get("slot_kind") or "")
+        terrain = str(building_rec.get("terrain") or "")
+        presentation = str(
+            (layout.get("buildings") or {}).get(bid, {}).get("presentation")
+            or ("primary_site" if slot_kind == "primary" else "structure")
+        )
+
+        if presentation == "primary_site" or slot_kind == "primary":
+            tile_ch = PRIMARY_TILE_CHARS.get(terrain, "r")
+            for dy in range(fh):
+                for dx in range(fw):
+                    x, y = gx + dx, gy + dy
+                    if 0 <= x < width and 0 <= y < height:
+                        # Keep road cells as road if they cross; otherwise site tiles.
+                        if rows[y][x] != ":":
+                            rows[y][x] = tile_ch if tile_ch != "." else ","
+            # Stacked logs / rocks as work markers (not house doors).
+            entrance = building.get("entrance") or [gx + fw // 2, gy + fh]
+            approach = building.get("approach") or [entrance[0], entrance[1] + 1]
+            ax, ay = int(approach[0]), int(approach[1])
+            marker = PRIMARY_PROP_MARKERS.get(terrain, "sign")
+            label = _clean_building_label(building_rec, slot_kind)
+            from sim.dmb.industry.projection import IndustryProjection
+
+            obs = IndustryProjection(state).player_building_observation(bid)
+            entities.append(
+                {
+                    "kind": "sign",
+                    "id": bid,
+                    "pos": [ax, ay],
+                    "marker": marker,
+                    "text": label,
+                    "building": bid,
+                    "bridge_entity": True,
+                    "semantic": {
+                        "knowledge_key": bid,
+                        "interaction": "building",
+                        "dismiss_on_move": True,
+                        "labels": [{"level": 0, "text": label}],
+                        "observe_far": str(obs.get("observe_far") or f"{label} lies at the settlement edge."),
+                        "observe_near": str(obs.get("observe_near") or obs.get("inspect") or ""),
+                    },
+                }
+            )
+            continue
+
+        # Ordinary structures: walls + door.
         for dy in range(fh):
             for dx in range(fw):
                 x, y = gx + dx, gy + dy
@@ -63,35 +121,7 @@ def export_overworld_area(
         ax, ay = int(approach[0]), int(approach[1])
         if 0 <= ex < width and 0 <= ey < height:
             rows[ey][ex] = "D"
-        building_rec = state.buildings.get(bid) or {}
-        label = str(building_rec.get("label") or bid)
-        slot_kind = str(building_rec.get("slot_kind") or "")
-        is_factory = slot_kind == "factory" or "factory" in bid
-        if is_factory:
-            from sim.dmb.industry import fraction
-
-            rates: dict = {}
-            for event in reversed((state.industry or {}).get("events") or []):
-                if event.get("kind") == "industry_rates":
-                    rates = event.get("rates") or {}
-                    break
-            rate = float(fraction(rates.get(bid) or 0))
-            shortage = bool(building_rec.get("shortage")) or rate <= 0
-            if shortage and "(quiet)" not in label and "(working)" not in label:
-                label = f"{label} (quiet)" if "factory" in label.lower() else label
-            elif not shortage and "(working)" not in label and "Muster" in label:
-                pass
-        # Present all settlement buildings; skip only destroyed.
-        if building_rec.get("status") == "destroyed":
-            continue
-        if not label or label == bid or label.startswith("building:"):
-            label = {
-                "primary": "Resource site",
-                "processor": "Works",
-                "factory": "Factory",
-                "centre": "Settlement centre",
-                "warehouse": "Warehouse",
-            }.get(slot_kind, "Building")
+        label = _clean_building_label(building_rec, slot_kind)
         from sim.dmb.industry.projection import IndustryProjection
 
         obs = IndustryProjection(state).player_building_observation(bid)
@@ -102,7 +132,7 @@ def export_overworld_area(
                 "kind": "door",
                 "id": bid,
                 "pos": [ax, ay],
-                "marker": "door_closed" if slot_kind != "primary" else "sign",
+                "marker": "door_closed",
                 "text": label,
                 "building": bid,
                 "bridge_entity": True,
@@ -130,15 +160,13 @@ def export_overworld_area(
         from sim.dmb.world.fx_village_world import person_sprite_for
 
         sprite = person_sprite_for(person)
+        workplace = state.buildings.get(str(person.get("workplace_id") or "")) or {}
+        occupation = public_occupation_for(person, workplace=workplace)
         known = (state.knowledge or {}).get(pid) or {}
         label_text = str(known.get("name") or display)
         if label_text.startswith("person:"):
-            label_text = "Villager"
-        role = str(person.get("role") or "villager").replace("_", " ").title()
-        if not known.get("name"):
-            standing = role if role and role != "Villager" else "Villager"
-        else:
-            standing = label_text
+            label_text = occupation
+        standing = occupation if not known.get("name") else label_text
         stand = [px, py + 1]
         entities.append(
             {
@@ -157,67 +185,63 @@ def export_overworld_area(
                     "interaction": "npc",
                     "dismiss_on_move": True,
                     "labels": [
-                        {"level": 0, "text": standing if not known.get("name") else label_text},
+                        {"level": 0, "text": standing},
                         {"level": 1, "text": label_text},
                     ],
-                    "observe_far": f"Someone stands here — a {standing.lower()}.",
-                    "observe_near": f"You can speak with this {standing.lower()}.",
+                    "observe_far": f"Someone stands here — a {occupation.lower()}.",
+                    "observe_near": f"You can speak with this {occupation.lower()}.",
                 },
             }
         )
 
-    # Demon cube — only the G05 shortage cause on this settlement (not distant world cubes).
-    demon_id = str(fx.get("demon_cube_id") or "cube:demon")
-    cubes = ((state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
-    cube = cubes.get(demon_id) or {}
-    if cube.get("active", True) and cube:
-        hid = str(cube.get("hex_id") or fx.get("demon_hex") or "")
-        anchors = (state.board or {}).get("hex_anchors") or {}
-        grid = (anchors.get(hid) or {}).get("grid") or cube.get("position") or [cx + 6, cy - 4]
-        entities.append(
-            {
-                "kind": "creature",
-                "id": demon_id,
-                "pos": [int(grid[0]), int(grid[1])],
-                "enemy_id": "cave_troll",
-                "bridge_entity": True,
-                "bridge_challenge": True,
-                "cube_id": demon_id,
-                "intro": "A ridge manifestation blocks the ore path.",
-                "semantic": {
-                    "knowledge_key": demon_id,
-                    "interaction": "enemy",
-                    "labels": [{"level": 0, "text": "Ridge manifestation"}],
-                },
-            }
-        )
+    # Demon cube — quest mode only.
+    if quest_enabled:
+        demon_id = str(fx.get("demon_cube_id") or "cube:demon")
+        cubes = ((state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
+        cube = cubes.get(demon_id) or {}
+        if cube.get("active", True) and cube:
+            hid = str(cube.get("hex_id") or fx.get("demon_hex") or "")
+            anchors = (state.board or {}).get("hex_anchors") or {}
+            grid = (anchors.get(hid) or {}).get("grid") or cube.get("position") or [cx + 6, cy - 4]
+            entities.append(
+                {
+                    "kind": "creature",
+                    "id": demon_id,
+                    "pos": [int(grid[0]), int(grid[1])],
+                    "enemy_id": "cave_troll",
+                    "bridge_entity": True,
+                    "bridge_challenge": True,
+                    "cube_id": demon_id,
+                    "intro": "A ridge manifestation blocks the ore path.",
+                    "semantic": {
+                        "knowledge_key": demon_id,
+                        "interaction": "enemy",
+                        "labels": [{"level": 0, "text": "Ridge manifestation"}],
+                    },
+                }
+            )
 
-    # Sluice dungeon entrance.
-    entrances = ((state.board or {}).get("entrances") or {})
-    sluice = entrances.get("entrance:sluice") or {
-        "id": "entrance:sluice",
-        "grid": [cx - 8, cy + 4],
-        "label": "Sluice works",
-        "dungeon_id": "dungeon.sluice",
-    }
-    sg = sluice.get("grid") or [cx - 8, cy + 4]
-    entities.append(
-        {
-            "kind": "door",
-            "id": str(sluice.get("id") or "entrance:sluice"),
-            "pos": [int(sg[0]), int(sg[1])],
-            "marker": "door_dungeon",
-            "text": str(sluice.get("label") or "Sluice works"),
-            "dungeon_id": str(sluice.get("dungeon_id") or "dungeon.sluice"),
-            "bridge_entity": True,
-            "bridge_enter": True,
-            "semantic": {
-                "knowledge_key": "entrance:sluice",
-                "interaction": "entrance",
-                "labels": [{"level": 0, "text": "Sluice works"}],
-            },
-        }
-    )
+        entrances = ((state.board or {}).get("entrances") or {})
+        sluice = entrances.get("entrance:sluice")
+        if sluice and sluice.get("active", True):
+            sg = sluice.get("grid") or [cx - 8, cy + 4]
+            entities.append(
+                {
+                    "kind": "door",
+                    "id": str(sluice.get("id") or "entrance:sluice"),
+                    "pos": [int(sg[0]), int(sg[1])],
+                    "marker": "door_dungeon",
+                    "text": str(sluice.get("label") or "Sluice Works"),
+                    "dungeon_id": str(sluice.get("dungeon_id") or "dungeon.sluice"),
+                    "bridge_entity": True,
+                    "bridge_enter": True,
+                    "semantic": {
+                        "knowledge_key": "entrance:sluice",
+                        "interaction": "entrance",
+                        "labels": [{"level": 0, "text": "Sluice Works"}],
+                    },
+                }
+            )
 
     # Ground items for the current village area only.
     for item_id, item in (state.items or {}).items():
@@ -226,6 +250,8 @@ def export_overworld_area(
             continue
         area_id = str(ground.get("area_id") or "")
         if area_id not in {"", "area.village", str(fx.get("area_id") or "area.village")}:
+            continue
+        if item.get("quest_bound") and not quest_enabled:
             continue
         pos = ground.get("position") or [cx, cy]
         entities.append(
@@ -245,7 +271,6 @@ def export_overworld_area(
             }
         )
 
-    # Live carts / units from LocalProjectionService (durable IDs; WorkerController owns carriers).
     for cart in view.get("carts") or []:
         cid = str(cart.get("id") or "")
         if not cid:
@@ -272,26 +297,27 @@ def export_overworld_area(
             continue
         grid = unit.get("grid") or [cx - 2, cy]
         unit_rec = (state.units or {}).get(uid) or {}
-        label = str(unit_rec.get("label") or unit_rec.get("definition_id") or "Unit")
+        person_id = str(unit_rec.get("person_id") or "")
+        person = (state.people or {}).get(person_id) or {}
+        label = str(person.get("name") or unit_rec.get("label") or unit_rec.get("definition_id") or "Soldier")
         entities.append(
             {
                 "kind": "npc",
-                "id": uid,
+                "id": person_id or uid,
                 "pos": [int(grid[0]), int(grid[1])],
                 "name": label,
-                "sprite": "soldier",
+                "sprite": str(person.get("sprite") or "worker"),
                 "facing": "down",
                 "bridge_entity": True,
                 "dynamic": True,
                 "semantic": {
-                    "knowledge_key": uid,
-                    "interaction": "unit",
-                    "labels": [{"level": 0, "text": label}],
+                    "knowledge_key": person_id or uid,
+                    "interaction": "npc",
+                    "labels": [{"level": 0, "text": label if not label.startswith("person:") else "Soldier"}],
                 },
             }
         )
 
-    # Exits — real topology Travel destinations when present.
     for exit_rec in view.get("exits") or []:
         eg = exit_rec.get("grid") or [0, 0]
         direction = str(exit_rec.get("direction") or "north")
@@ -335,9 +361,9 @@ def export_overworld_area(
     player = state.player or {}
     ppos = player.get("position") or [cx, cy + 6]
     node_rec = ((state.board or {}).get("nodes") or {}).get(node_id) or {}
-    area_name = str(node_rec.get("label") or fx.get("name") or "FX Village")
+    area_name = str(node_rec.get("label") or fx.get("name") or "Village")
     if node_id == str(fx.get("node_id") or ""):
-        area_name = "FX Village"
+        area_name = "Village" if not quest_enabled else "FX Village"
     row_strings = ["".join(row) for row in rows]
     return {
         "id": str(node_rec.get("area_id") or "area.fx_village"),
@@ -346,17 +372,18 @@ def export_overworld_area(
         "rows": row_strings,
         "entities": entities,
         "player_start": [int(ppos[0]), int(ppos[1])],
-        "profile_id": "FX-VILLAGE",
-        "quest_id": str(fx.get("quest_id") or ""),
+        "profile_id": "FX-VILLAGE-QUEST" if quest_enabled else "FX-VILLAGE",
+        "quest_id": str(fx.get("quest_id") or "") if quest_enabled else "",
         "bridge_mode": True,
         "node_id": node_id,
         "fx_village": {
             "mara_id": fx.get("mara_id"),
             "factory_id": fx.get("factory_id"),
-            "cause_id": fx.get("cause_id"),
-            "quest_id": fx.get("quest_id"),
+            "cause_id": fx.get("cause_id") if quest_enabled else None,
+            "quest_id": fx.get("quest_id") if quest_enabled else None,
             "seed": fx.get("seed"),
             "node_id": fx.get("node_id"),
+            "mode": fx.get("mode") or ("quest" if quest_enabled else "baseline"),
         },
         "width": width,
         "height": height,
@@ -375,7 +402,6 @@ def export_sluice_area(state: WorldState) -> dict[str, Any]:
     for y in range(height):
         rows[y][0] = "#"
         rows[y][width - 1] = "#"
-    # Open corridor
     for x in range(1, width - 1):
         rows[height // 2][x] = ":"
     for y in range(1, height - 1):
@@ -383,7 +409,6 @@ def export_sluice_area(state: WorldState) -> dict[str, Any]:
 
     entities: list[dict[str, Any]] = []
     origin = [2, 2]
-    # Ensure lease exists so mechanism poses are authoritative.
     puzzles = PuzzleService(state)
     lease_payload = puzzles.prepare_lease("puzzle.sluice", area_id="area.sluice")
     lease = lease_payload.get("lease") or {}
@@ -425,7 +450,6 @@ def export_sluice_area(state: WorldState) -> dict[str, Any]:
                 },
             }
         )
-    # Ground handle in workshop corner.
     for item_id, item in (state.items or {}).items():
         ground = item.get("ground")
         if not ground or ground.get("area_id") != "area.sluice":
@@ -449,7 +473,6 @@ def export_sluice_area(state: WorldState) -> dict[str, Any]:
                 },
             }
         )
-    # Exit back to village.
     entities.append(
         {
             "kind": "exit",
@@ -469,14 +492,32 @@ def export_sluice_area(state: WorldState) -> dict[str, Any]:
         "theme": "dungeon",
         "rows": ["".join(r) for r in rows],
         "entities": entities,
-        "player_start": [int(ppos[0]) if float(ppos[0]) < width else width // 2, int(ppos[1]) if float(ppos[1]) < height else height - 3],
-        "profile_id": "FX-VILLAGE",
+        "player_start": [
+            int(ppos[0]) if float(ppos[0]) < width else width // 2,
+            int(ppos[1]) if float(ppos[1]) < height else height - 3,
+        ],
+        "profile_id": "FX-VILLAGE-QUEST",
         "bridge_mode": True,
         "puzzle_lease_id": lease.get("id"),
         "puzzle_lease_version": lease.get("version"),
         "width": width,
         "height": height,
     }
+
+
+def _clean_building_label(building_rec: dict[str, Any], slot_kind: str) -> str:
+    label = str(building_rec.get("label") or "")
+    for suffix in (" (quiet)", " (working)"):
+        label = label.replace(suffix, "")
+    if not label or label.startswith("building:"):
+        label = {
+            "primary": "Resource site",
+            "processor": "Works",
+            "factory": "Factory",
+            "centre": "Settlement Centre",
+            "warehouse": "Warehouse",
+        }.get(slot_kind, "Building")
+    return label
 
 
 def _ensure_g05_landmarks(state: WorldState, layout: dict[str, Any], fx: dict[str, Any]) -> None:
@@ -488,17 +529,15 @@ def _ensure_g05_landmarks(state: WorldState, layout: dict[str, Any], fx: dict[st
             "id": "entrance:sluice",
             "node_id": layout.get("node_id"),
             "grid": [int(centre[0]) - 8, int(centre[1]) + 4],
-            "label": "Sluice works",
+            "label": "Sluice Works",
             "dungeon_id": "dungeon.sluice",
             "active": True,
         }
-    # Persist layout edits.
     store = board.setdefault("local_projections", {})
     store[str(layout.get("node_id"))] = layout
 
 
 def _industry_person_ids(state: WorldState) -> set[str]:
-    """Person IDs owned by IndustryProjection / WorkerController presentation."""
     from sim.dmb.industry.projection import IndustryProjection
 
     return {
@@ -509,21 +548,61 @@ def _industry_person_ids(state: WorldState) -> set[str]:
 
 
 def _opening_lines(state: WorldState, person_id: str) -> list[str]:
-    """Authored dialogue lines from DialogueResolver; never debug facts."""
+    """Dialogue from actual Person + world state — quest only when bound/active."""
+    person = state.people.get(person_id) or {}
+    workplace = state.buildings.get(str(person.get("workplace_id") or "")) or {}
+    occupation = public_occupation_for(person, workplace=workplace)
+    fx = (state.board or {}).get("fx_village") or {}
+    quest_enabled = bool(fx.get("quest_enabled"))
+    quest_id = str(fx.get("quest_id") or "")
+    cause_id = str(fx.get("cause_id") or "")
+    mara_id = str(fx.get("mara_id") or "")
+
+    # Quest-authored dialogue only for genuinely bound active quest stakeholders.
+    if quest_enabled and quest_id and person_id == mara_id:
+        try:
+            catalog = LineCatalog.load()
+            resolver = DialogueResolver(state, catalog)
+            session = resolver.start(
+                speaker_id=person_id,
+                quest_id=str(fx.get("quest_template_id") or "quest.factory_shortage"),
+                stage=0,
+                cause_id=cause_id or "cause.factory_shortage",
+                era_id=str((state.board or {}).get("era_id") or "ancient"),
+            )
+            text = str(session.get("text") or "").strip()
+            if text and "show you where" not in text.lower() and "follow me" not in text.lower():
+                return [text]
+        except Exception:
+            pass
+
+    # Industry worker activity when projected.
+    activity = "idle"
+    resource_label = None
     try:
-        catalog = LineCatalog.load()
-        resolver = DialogueResolver(state, catalog)
-        fx = (state.board or {}).get("fx_village") or {}
-        session = resolver.start(
-            speaker_id=person_id,
-            quest_id=str(fx.get("quest_template_id") or "quest.factory_shortage"),
-            stage=0,
-            cause_id="cause.factory_shortage",
-            era_id=str((state.board or {}).get("era_id") or "ancient"),
-        )
-        text = str(session.get("text") or "").strip()
-        if text:
-            return [text]
+        from sim.dmb.industry.projection import IndustryProjection
+
+        for row in IndustryProjection(state).workers():
+            if str(row.get("person_id")) == person_id:
+                activity = str(row.get("activity") or "idle")
+                resource_label = row.get("resource_label")
+                occupation = str(row.get("public_occupation") or row.get("occupation") or occupation)
+                break
     except Exception:
         pass
-    return ["The yard has gone quiet."]
+
+    lines = baseline_dialogue(
+        person,
+        occupation=occupation,
+        activity=activity,
+        resource_label=str(resource_label) if resource_label else None,
+        workplace_label=str(workplace.get("label") or "") or None,
+    )
+    # Hard ban on unimplemented guide promises.
+    cleaned = []
+    for line in lines:
+        low = line.lower()
+        if "show you where" in low or "follow me" in low or "i can guide" in low:
+            continue
+        cleaned.append(line)
+    return cleaned or ["The settlement keeps us busy."]
