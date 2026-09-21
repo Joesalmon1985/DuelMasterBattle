@@ -572,13 +572,13 @@ func _wizard_present(e: Dictionary) -> bool:
 func _add_actor(pos: Vector2i, path: String, offset_px: Vector2, sprite: String = "", facing: String = "down", label: String = "") -> Sprite2D:
 	var s := Sprite2D.new()
 	s.centered = false
-	s.scale = Vector2(TILE_SCALE, TILE_SCALE)
 	s.position = Vector2(pos) * TPX + offset_px * TILE_SCALE
 	s.z_index = 5
 	_actors_root.add_child(s)
 	if sprite != "":
 		_apply_char(s, sprite, facing, 0, label)
 	else:
+		s.scale = Vector2(TILE_SCALE, TILE_SCALE)
 		s.texture = _tex(path)
 	return s
 

@@ -22,9 +22,13 @@ const STOP_RADIUS := 30.0
 
 var _workers: Dictionary = {}  # person_id -> Node2D
 var _phase: Dictionary = {}  # person_id -> float 0..2 (0-1 outbound, 1-2 return)
+var _pause: Dictionary = {}  # person_id -> remaining pause seconds (presentation only)
 var _blocked_manual := false
 var _wizard_world := Vector2(9999, 9999)
 var _frozen := false
+
+const LOAD_PAUSE_SEC := 0.55
+const UNLOAD_PAUSE_SEC := 0.45
 
 
 func set_frozen(frozen: bool) -> void:
@@ -61,6 +65,7 @@ func apply_projection(rows: Array) -> void:
 			_workers[person_id].queue_free()
 			_workers.erase(person_id)
 			_phase.erase(person_id)
+			_pause.erase(person_id)
 			person_removed.emit(str(person_id))
 
 
@@ -87,6 +92,12 @@ func tick(delta: float) -> void:
 			_set_activity(worker, "waiting", null, false)
 			continue
 
+		# Presentation-only pause at endpoints (does not affect throughput).
+		var pause_left: float = float(_pause.get(person_id, 0.0))
+		if pause_left > 0.0:
+			_pause[person_id] = pause_left - delta
+			continue
+
 		var phase: float = float(_phase.get(person_id, 0.0))
 		var loaded: bool = phase < 1.0
 		var leg: Array = outbound if loaded else inbound
@@ -94,6 +105,10 @@ func tick(delta: float) -> void:
 			leg = outbound
 		var from_pt: Vector2 = _grid_to_world(leg[0].get("grid", [0, 0]))
 		var to_pt: Vector2 = _grid_to_world(leg[1].get("grid", [0, 0]))
+		# Small deterministic offset so co-routed workers don't stack perfectly.
+		var offset := float(hash(str(person_id)) % 7) - 3.0
+		from_pt += Vector2(offset, -offset * 0.35)
+		to_pt += Vector2(offset, -offset * 0.35)
 		var local_t := phase if loaded else (phase - 1.0)
 		var target: Vector2 = from_pt.lerp(to_pt, clampf(local_t, 0.0, 1.0))
 		if _path_obstructed(from_pt, to_pt, worker.position):
@@ -102,7 +117,12 @@ func tick(delta: float) -> void:
 		worker.position = worker.position.move_toward(target, WALK_SPEED * delta)
 		_face_sprite(worker, worker.position - prev)
 		var step: float = (WALK_SPEED * delta) / maxf(from_pt.distance_to(to_pt), 1.0)
+		var prev_phase := phase
 		phase += step
+		if prev_phase < 1.0 and phase >= 1.0:
+			_pause[person_id] = UNLOAD_PAUSE_SEC
+		elif prev_phase < 2.0 and phase >= 2.0:
+			_pause[person_id] = LOAD_PAUSE_SEC
 		if phase >= 2.0:
 			phase -= 2.0
 		_phase[person_id] = phase
@@ -136,7 +156,6 @@ func _spawn_worker(person_id: String, row: Dictionary) -> Node2D:
 	var spr := Sprite2D.new()
 	spr.name = "Sprite"
 	spr.centered = false
-	spr.scale = Vector2(TILE_SCALE, TILE_SCALE)
 	worker.add_child(spr)
 	var display := _standing_label(row)
 	var sprite_key := str(row.get("sprite", row.get("visual_profile", "worker")))
@@ -148,17 +167,20 @@ func _spawn_worker(person_id: String, row: Dictionary) -> Node2D:
 		worker.position = _grid_to_world(waypoints[0].get("grid", [4, 5]))
 	else:
 		worker.position = Vector2(4, 5) * TPX
+	# Stagger phase so workers don't move in lockstep.
+	_phase[person_id] = float(hash(person_id) % 100) / 100.0
+	_pause[person_id] = float(hash(person_id + ":pause") % 40) / 80.0
 	_sync_meta(worker, row)
 	return worker
 
 
 func _standing_label(row: Dictionary) -> String:
-	var role := str(row.get("public_role", ""))
-	if role != "" and not role.begins_with("person:"):
+	var role := str(row.get("public_occupation", row.get("public_role", row.get("occupation", ""))))
+	if role != "" and not role.begins_with("person:") and role.to_lower() != "carrier":
 		return role
-	var display := str(row.get("name", "Worker"))
+	var display := str(row.get("name", "Villager"))
 	if display.begins_with("person:") or display.begins_with("Carrier"):
-		return "Worker"
+		return "Villager"
 	return display
 
 

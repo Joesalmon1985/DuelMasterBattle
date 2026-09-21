@@ -4,6 +4,10 @@ class_name DmbActorVisual
 ## Never calls load() on a missing resource. The stand-in is a generated
 ## rectangle-and-circle texture plus a name label, so the NPC stays visible.
 
+## Target displayed height in screen pixels (texture height × scale.y).
+## 16×24 art at scale 4 → 96px; all humanoids normalise to this footprint.
+const TARGET_DISPLAY_HEIGHT_PX := 96.0
+
 
 static func rel_path(sprite: String, facing: String, frame: int = 0) -> String:
 	return "chars/%s_%s_%d.png" % [sprite, facing, frame]
@@ -25,11 +29,32 @@ static func apply(node: Sprite2D, pixel_root: String, sprite: String, facing: St
 	if missing:
 		node.texture = _placeholder_texture(label if label != "" else sprite)
 		_ensure_label(node, label if label != "" else sprite)
+		normalize_humanoid_scale(node)
 		return true
 	var tex: Texture2D = load(pixel_root + rel)
 	node.texture = tex
 	_clear_label(node)
+	normalize_humanoid_scale(node)
 	return false
+
+
+## Uniform world footprint: preserve aspect; never stretch X/Y independently.
+static func normalize_humanoid_scale(node: Sprite2D) -> void:
+	if node == null or node.texture == null:
+		return
+	var th := float(node.texture.get_height())
+	if th <= 0.0:
+		return
+	var s := TARGET_DISPLAY_HEIGHT_PX / th
+	node.scale = Vector2(s, s)
+	node.set_meta("display_height_px", TARGET_DISPLAY_HEIGHT_PX)
+	node.set_meta("normalized_scale", s)
+
+
+static func displayed_height_px(node: Sprite2D) -> float:
+	if node == null or node.texture == null:
+		return 0.0
+	return float(node.texture.get_height()) * absf(node.scale.y)
 
 
 static func is_placeholder(node: Sprite2D) -> bool:

@@ -60,7 +60,7 @@ func _ready() -> void:
 	_status.offset_bottom = 36
 	_status.add_theme_font_size_override("font_size", 12)
 	_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_status.text = "G05 FX-VILLAGE — starting…"
+	_status.text = "G05 Village Foundation — healthy baseline"
 	add_child(_status)
 	_clock = ClockDriver.new()
 	_clock.advance_requested.connect(_on_clock_advance)
@@ -126,7 +126,7 @@ func _boot() -> void:
 		_workers.person_updated.connect(_on_worker_updated)
 		_workers.person_removed.connect(_on_worker_removed)
 	_apply_workers(view)
-	_status.text = "G05 FX-VILLAGE — live industry + Game Time"
+	_status.text = "Village Foundation — walk, talk, travel, watch the works"
 	_boot_done = true
 	_village_ready = true
 	_sync_pose(true)
