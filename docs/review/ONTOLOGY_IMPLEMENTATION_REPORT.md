@@ -7,7 +7,7 @@
 **Docs commit:** `f1d94cb`  
 **Schema/migration commit:** `d7e8293`  
 **Godot one-actor commit:** `5b3b19e`  
-**Current tip:** see `git rev-parse HEAD` on this branch after final packet commit.
+**Current tip:** `fe2a62030ac1aaa0e42a51efb37f052744780d15`
 
 ## Decisions implemented
 
