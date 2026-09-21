@@ -10,13 +10,15 @@
 
 | Document | Purpose |
 |---|---|
-| [CURRENT_GAME_ONTOLOGY.md](CURRENT_GAME_ONTOLOGY.md) | What exists in code today |
+| [../CANONICAL_GAME_ONTOLOGY.md](../CANONICAL_GAME_ONTOLOGY.md) | **CANONICAL** ontology (Joe 2026-09-21) — required agent reading |
+| [ONTOLOGY_IMPLEMENTATION_REPORT.md](ONTOLOGY_IMPLEMENTATION_REPORT.md) | Consolidation progress / migration table |
+| [CURRENT_GAME_ONTOLOGY.md](CURRENT_GAME_ONTOLOGY.md) | Pre-consolidation snapshot (historical audit) |
 | [PLAYER_WORLD_MODEL.md](PLAYER_WORLD_MODEL.md) | What the player should believe exists |
 | [DESIGN_CONTRADICTIONS.md](DESIGN_CONTRADICTIONS.md) | Contradictions / ambiguities with evidence |
-| [PROPOSED_CANONICAL_ONTOLOGY.md](PROPOSED_CANONICAL_ONTOLOGY.md) | Recommended model (not approved) |
+| [PROPOSED_CANONICAL_ONTOLOGY.md](PROPOSED_CANONICAL_ONTOLOGY.md) | Pre-decision proposal (superseded by CANONICAL) |
 | [ENTITY_PRESENTATION_CONTRACT.md](ENTITY_PRESENTATION_CONTRACT.md) | Entity → projection → actor → verbs |
-| [ROADMAP_RECONCILIATION.md](ROADMAP_RECONCILIATION.md) | G05 onward options |
-| [JOE_DESIGN_DECISIONS.md](JOE_DESIGN_DECISIONS.md) | Decision register (primary handoff) |
+| [ROADMAP_RECONCILIATION.md](ROADMAP_RECONCILIATION.md) | G05 onward options (Option 1 accepted) |
+| [JOE_DESIGN_DECISIONS.md](JOE_DESIGN_DECISIONS.md) | Decision register (accepted for consolidation) |
 
 ## Source classification used in this review
 

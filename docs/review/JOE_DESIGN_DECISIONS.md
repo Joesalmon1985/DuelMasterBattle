@@ -6,6 +6,32 @@ Review entry: [README.md](README.md).
 
 ---
 
+## Recommendation status (Joe 2026-09-21)
+
+The following decisions are **ACCEPTED for implementation** on `refactor/canonical-ontology-g05`. See [`docs/CANONICAL_GAME_ONTOLOGY.md`](../CANONICAL_GAME_ONTOLOGY.md).
+
+| ID | Accepted direction |
+|---|---|
+| D01 | Soldiers are Persons |
+| D02 | Model B — UnitState + `person_id` |
+| D03 | Unit death ⇒ Person death |
+| D04 | NPC = shorthand only |
+| D05 | All living Persons Observe + Talk |
+| D06–D07 | Composition; occupation ≠ activity |
+| D09–D10 | Fixtures = setup; one actor per Person |
+| D11 | Building names; industry processes hidden |
+| D14 | Quests bind real causes |
+| D15 | G05 coherent slice before T097 |
+| D16 | No presentation-created People |
+| D17 | Leaders = Person role |
+| D19 | Carts = `cart:*` only |
+| D20 | Defer Champion; Vehicle=Cart |
+| D21 | No inventory encumbrance cap |
+
+Individual sections below retain Option text for history; **Joe decision** lines are updated where accepted.
+
+---
+
 ## D01 — Are military units Persons?
 
 **Current documentation:** C01 separates `people/jobs` and `units/formations`. C07 defines UnitState. GDD says every visible soldier is a persistent unit; living NPCs (including workers) survive eras; collapse keeps civilian NPCs and disbands military.
@@ -22,7 +48,7 @@ Review entry: [README.md](README.md).
 
 **What changes depending on the answer:** Save schema; spawn; dialogue/quests about soldiers; era/collapse tables; semantic Talk; tests.
 
-**Joe decision:** [UNDECIDED]
+**Joe decision:** **B ACCEPTED** (2026-09-21) — every soldier is a Person; UnitState requires `person_id`.
 
 ---
 

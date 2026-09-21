@@ -119,16 +119,27 @@ Move era tasks after broader content (toward G08) so “history” lands on a ri
 
 ---
 
-## 5. Recommendation
+## Favour: Option 1 with teeth (Joe 2026-09-21)
 
-**Favour Option 1**, with teeth:
+Canonical ontology consolidation **before** T097; G05 becomes the coherent Prehistoric living-world slice; Joe PASS required before era work.
 
-1. **Do not start T097** until Joe PASSes G05 *and* records decisions on **D01, D02, D03, D06, D09, D10, D15** (minimum set).  
-2. Treat consolidation repairs as G05 follow-on / amendments work, not as quiet T097 prep.  
-3. If Joe’s G05 playtest finds the village still feels like stitched demos, **upgrade to Option 2** (re-scope acceptance) without waiting for era code.
+```text
+Canonical ontology consolidation
+       ↓
+G05 coherent playable Prehistoric world slice
+       ↓
+G05 HUMAN PASS
+       ↓
+T097–T106 Era transformation
+       ↓
+T107–T114 Integrated two-era MVP
+       ↓
+G06 — same coherent game survives becoming Historic
+       ↓
+later eras/cycles → G07+
+```
 
-**Why not Option 2 as default?** Task/gate numbering and existing packet cost are high; Option 1 preserves them while still blocking era work on design grounds.  
-**Why not Option 3?** Era transition is core to the GDD fantasy of history; delaying it past full content overfits polish before the central loop.
+Do **not** renumber the build pack. Do **not** start T097 until Joe PASSes revised G05.
 
 ---
 

@@ -4,7 +4,9 @@ Authoritative short architecture for DuelMasterBattle after G01–G05.
 Later gates **extend** this production runtime; they must not invent a second
 implementation of a gameplay concept already accepted at an earlier gate.
 
-**Ontology / roadmap review (awaiting Joe decisions):** [`docs/review/README.md`](review/README.md) — do not start T097/G06 or migrate Person/Unit ontology until decisions in [`docs/review/JOE_DESIGN_DECISIONS.md`](review/JOE_DESIGN_DECISIONS.md) are approved.
+**Canonical ontology:** [`docs/CANONICAL_GAME_ONTOLOGY.md`](CANONICAL_GAME_ONTOLOGY.md) (Joe decisions 2026-09-21).  
+Review corpus: [`docs/review/README.md`](review/README.md). Implementation report: [`docs/review/ONTOLOGY_IMPLEMENTATION_REPORT.md`](review/ONTOLOGY_IMPLEMENTATION_REPORT.md).  
+Do not start T097/G06 until Joe PASSes the revised G05 coherent Prehistoric slice.
 
 ## Hard rule
 
@@ -64,18 +66,20 @@ ONE Godot Overworld / presentation runtime
 
 | Concept | Rule |
 |---|---|
-| Person | ONE person ID = ONE person = ONE visible local actor |
-| Building | ONE building ID = ONE real building |
-| Factory | ONE factory = IndustryService factory / meter |
+| Person | ONE person ID = ONE human identity = ONE visible local Person actor |
+| Soldier | Person + UnitState with `person_id`; combat fields stay on Unit |
+| Building | ONE building ID = ONE real building; industry bindings are processes |
+| Factory | ONE factory = building + IndustryService meter/route |
+| Cart | `cart:*` only — never invent `person:cart` |
 | Clock | ONE world clock |
 | Player pose | ONE durable Python pose (Godot SyncPose coalesces local steps) |
 | Quest | ONE quest state owner (Python QuestService) |
 
-Static Overworld NPC export and `WorkerController` must never both present the
-same `person_id`. Carriers / industry attendants are presented by
-`WorkerController` using `ActorVisual` and existing character sprite families.
-Quest stakeholders such as Mara remain Overworld dialogue actors when they are
-not in the industry worker projection.
+Never create a Person solely for presentation. Occupation ≠ activity.
+Static Overworld export and activity presenters must never both present the
+same `person_id` as two actors. Activity presenters update the registered
+Person actor (carrying/working/waiting) rather than spawning a second identity.
+Every living Person supports Observe and Talk (fallback dialogue allowed).
 
 A projected entity that is **visible and presented as interactive** must use the
 shared semantic interaction system (`WorldInteractionLabel` / bridge binding)

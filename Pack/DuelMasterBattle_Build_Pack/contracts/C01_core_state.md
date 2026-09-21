@@ -40,8 +40,8 @@ Use a single simulation writer. Read views never expose mutable references. Work
 | `layers` | hex_id, cycle, era, finite_resource_id, balance and carry | IndustryService |
 | `factory_meters` | building_id, unit_def_id, route_id, fraction/carry, allocated_rate, reason codes | IndustryService |
 | `carts` / `trades` | See C05; one physical location per cargo lot | LogisticsService |
-| `people` / `jobs` | name, role, affiliation, workplace, location, relationship map, knowledge, dialogue profile, alive/displaced, job status | PeopleService |
-| `units` / `formations` | definition, home, faction, node, health, shields, buffs, position, cooldown; unit-ID membership and order | MilitaryService except leased live fields |
+| `people` / `jobs` | name, role, affiliation, workplace, location, relationship map, knowledge, dialogue profile, alive/displaced, job status; optional leadership; optional `unit_id` reverse hint | PeopleService |
+| `units` / `formations` | definition, home, faction, node, health, shields, buffs, position, cooldown; **required `person_id`** linking to `people`; unit-ID membership and order | MilitaryService except leased live fields |
 | `hazards` | typed cube IDs per hex, cause IDs, deck/discard, era/total outbreaks, placement ordinal | CatastropheService |
 | `player` | node/area/position, inventory refs, focus/artifact, colours/slots, seven Aspects, friendly fallback, visit ledgers | PlayerService and typed effects |
 | `knowledge` | observer, entity/fact IDs, evidence/version/time, confidence/testimony status | KnowledgeService |
