@@ -67,3 +67,70 @@ static func cart_rect(half_w: float = 16.0, half_h: float = 10.0) -> PackedVecto
 		Vector2(-half_w, -half_h), Vector2(half_w, -half_h),
 		Vector2(half_w, half_h), Vector2(-half_w, half_h)
 	])
+
+
+static func nature_polygon(kind: String, radius: float = 10.0) -> PackedVector2Array:
+	match str(kind):
+		"tree", "stump":
+			return PackedVector2Array([
+				Vector2(0, -radius * 1.4),
+				Vector2(radius * 0.9, radius * 0.5),
+				Vector2(-radius * 0.9, radius * 0.5),
+			])
+		"animal":
+			return PackedVector2Array([
+				Vector2(-radius * 0.7, 0),
+				Vector2(-radius * 0.2, -radius * 0.5),
+				Vector2(radius * 0.7, 0),
+				Vector2(-radius * 0.2, radius * 0.5),
+			])
+		"ore", "rock", "stone":
+			return PackedVector2Array([
+				Vector2(0, -radius), Vector2(radius, 0), Vector2(0, radius), Vector2(-radius, 0)
+			])
+		"clay_patch", "pit":
+			return PackedVector2Array([
+				Vector2(-radius, -radius * 0.4),
+				Vector2(radius, -radius * 0.4),
+				Vector2(radius * 0.7, radius * 0.6),
+				Vector2(-radius * 0.7, radius * 0.6),
+			])
+		"field_patch":
+			return PackedVector2Array([
+				Vector2(-radius, -radius * 0.5),
+				Vector2(radius, -radius * 0.5),
+				Vector2(radius, radius * 0.5),
+				Vector2(-radius, radius * 0.5),
+			])
+		_:
+			var circ := PackedVector2Array()
+			for i in 6:
+				var a := TAU * float(i) / 6.0
+				circ.append(Vector2(cos(a), sin(a)) * radius * 0.7)
+			return circ
+
+
+static func nature_color(kind: String, terrain: String = "") -> Color:
+	match str(kind):
+		"tree":
+			return Color(0.22, 0.48, 0.22)
+		"stump", "logs":
+			return Color(0.4, 0.28, 0.14)
+		"animal":
+			return Color(0.85, 0.82, 0.72)
+		"ore":
+			return Color(0.3, 0.32, 0.38)
+		"rock", "stone":
+			return Color(0.5, 0.5, 0.52)
+		"clay_patch", "pit":
+			return Color(0.72, 0.45, 0.28)
+		"field_patch", "scrub":
+			return Color(0.78, 0.72, 0.28)
+		"mine":
+			return Color(0.35, 0.35, 0.4)
+		_:
+			if terrain == "desert":
+				return Color(0.78, 0.68, 0.42)
+			if terrain == "grazing_land":
+				return Color(0.45, 0.65, 0.35)
+			return Color(0.55, 0.6, 0.45)

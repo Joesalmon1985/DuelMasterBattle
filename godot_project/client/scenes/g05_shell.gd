@@ -13,6 +13,9 @@ const WorkerControllerScript = preload("res://client/world/worker_controller.gd"
 const WorldLayerPresenters = preload("res://client/world/world_layer_presenters.gd")
 const WorldMapPanel = preload("res://client/ui/world_map_panel.gd")
 
+const LocalBattle = preload("res://client/combat/local_battle.gd")
+const EncounterHost = preload("res://client/encounters/encounter_host.gd")
+
 const G05_SAVE := "g05_village"
 const INDUSTRY_FIELDS := [
 	"overworld_area", "fx_village", "fx_industry", "industry", "buildings",
@@ -48,6 +51,15 @@ var _industry_acc := 0.0
 var _last_industry: Dictionary = {}
 var _game_ms_sample := 0
 var _map_pause_token := ""
+var _long_world := false
+var _long_speed := 1
+var _long_autorun := false
+var _long_event_log: RichTextLabel
+var _long_panel: VBoxContainer
+var _battle
+var _battle_host
+var _spectator_node := ""
+var _follow_major := false
 
 
 func _ready() -> void:
@@ -162,13 +174,18 @@ func _boot() -> void:
 	_apply_workers(view)
 	_apply_world_layers(area)
 	_refresh_time_hud(view)
-	_status.text = "Explore — M map · paths lead to neighbouring places"
+	_long_world = str(OS.get_environment("DMB_FIXTURE")) == "FX-LONG-WORLD"
+	if _long_world:
+		_setup_long_world_observer()
+		_status.text = "LONG-WORLD observer — fast-forward / event log (dev only)"
+	else:
+		_status.text = "Explore — M map · paths lead to neighbouring places"
 
 	_boot_done = true
 	_village_ready = true
 	_sync_pose(true)
 	await get_tree().create_timer(2.0).timeout
-	if is_instance_valid(_status):
+	if is_instance_valid(_status) and not _long_world:
 		_status.modulate.a = 0.55
 
 
@@ -196,6 +213,9 @@ func _process(delta: float) -> void:
 		_workers.tick(delta)
 		if _overworld != null and _overworld.has_method("sync_dynamic_person_poses"):
 			_overworld.sync_dynamic_person_poses()
+	_maybe_host_local_battle()
+	if _long_world and _long_autorun:
+		_long_world_tick(delta)
 
 
 func _notification(what: int) -> void:
@@ -278,6 +298,8 @@ func _apply_workers(view: Dictionary) -> void:
 				filtered.append(row_v)
 		rows = filtered
 	_workers.apply_projection(rows)
+	if _workers.has_method("draw_connections"):
+		_workers.draw_connections(view.get("industry_connections", []))
 	var area: Dictionary = _coerce_dict(view.get("overworld_area"))
 	if area.is_empty():
 		area = VillageTestRunner.get_area()
@@ -760,6 +782,167 @@ func factory_id() -> String:
 
 func is_game_time_paused() -> bool:
 	return _paused
+
+
+func _setup_long_world_observer() -> void:
+	_long_panel = VBoxContainer.new()
+	_long_panel.name = "LongWorldControls"
+	_long_panel.set_anchors_preset(PRESET_BOTTOM_LEFT)
+	_long_panel.offset_left = 8
+	_long_panel.offset_top = -220
+	_long_panel.offset_right = 320
+	_long_panel.offset_bottom = -8
+	_long_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(_long_panel)
+	var title := Label.new()
+	title.text = "Dev observer — Wait/AdvanceGame only"
+	_long_panel.add_child(title)
+	var row := HBoxContainer.new()
+	_long_panel.add_child(row)
+	for item in [["Pause", 0], ["1x", 1], ["10x", 10], ["50x", 50]]:
+		var btn := Button.new()
+		btn.text = str(item[0])
+		var spd := int(item[1])
+		btn.pressed.connect(func(): _set_long_speed(spd))
+		row.add_child(btn)
+	var row2 := HBoxContainer.new()
+	_long_panel.add_child(row2)
+	for item in [["+1 Turn", 1], ["+10 Turns", 10], ["+50 Turns", 50]]:
+		var btn2 := Button.new()
+		btn2.text = str(item[0])
+		var n := int(item[1])
+		btn2.pressed.connect(func(): _run_long_turns(n))
+		row2.add_child(btn2)
+	var follow := CheckButton.new()
+	follow.text = "Follow major events"
+	follow.toggled.connect(func(on: bool): _follow_major = on)
+	_long_panel.add_child(follow)
+	_long_event_log = RichTextLabel.new()
+	_long_event_log.custom_minimum_size = Vector2(300, 110)
+	_long_event_log.scroll_following = true
+	_long_event_log.bbcode_enabled = true
+	_long_event_log.fit_content = false
+	_long_panel.add_child(_long_event_log)
+	_long_autorun = true
+	_long_speed = 10
+	_append_long_event("Observer ready — seed 507 FX-LONG-WORLD")
+
+
+func _set_long_speed(speed: int) -> void:
+	_long_speed = speed
+	_long_autorun = speed > 0
+	if speed == 0:
+		acquire_pause("long_world_pause")
+	elif _pause_token != "":
+		release_pause()
+	_append_long_event("Speed %sx" % speed)
+
+
+func _run_long_turns(n: int) -> void:
+	for _i in n:
+		_submit_long_wait()
+		for _q in range(max(1, _long_speed)):
+			_submit_long_advance()
+	reproject_from_python()
+	_refresh_long_map()
+
+
+var _long_tick_acc := 0.0
+
+
+func _long_world_tick(delta: float) -> void:
+	_long_tick_acc += delta * float(max(1, _long_speed))
+	while _long_tick_acc >= 0.35:
+		_long_tick_acc -= 0.35
+		_submit_long_wait()
+		for _q in range(max(1, mini(_long_speed, 10))):
+			_submit_long_advance()
+		reproject_from_python()
+		_refresh_long_map()
+
+
+func _submit_long_wait() -> void:
+	if _client == null:
+		return
+	var player: Dictionary = _coerce_dict(_last_industry.get("player"))
+	var node_id := str(player.get("node_id", _fx_meta.get("node_id", "")))
+	_cmd_seq += 1
+	_client.enqueue_command(
+		"long-wait-%s" % _cmd_seq,
+		"Wait",
+		{"current_node": node_id, "press_id": "long-%s" % _cmd_seq},
+		{"replaceable": false}
+	)
+
+
+func _submit_long_advance() -> void:
+	if _client == null:
+		return
+	_cmd_seq += 1
+	_client.enqueue_command(
+		"long-adv-%s" % _cmd_seq,
+		"AdvanceGame",
+		{"delta_ms": 100, "clock_sequence": _cmd_seq},
+		{"replaceable": true, "coalesce_key": "AdvanceGame"}
+	)
+
+
+func _refresh_long_map() -> void:
+	if _map_panel == null or not _map_panel.visible:
+		return
+	var view: Dictionary = _client.request_view("player", ["world_map", "clock", "battles", "player"])
+	_map_panel.show_map(_coerce_dict(view.get("world_map")))
+	_note_major_events(view)
+
+
+func _note_major_events(view: Dictionary) -> void:
+	var battles: Dictionary = _coerce_dict(view.get("battles"))
+	for bid in battles.keys():
+		var b: Dictionary = _coerce_dict(battles[bid])
+		var st := str(b.get("state", ""))
+		if st in ["PENDING", "ACTIVE", "LOCAL", "OFFSCREEN", "READY"]:
+			_append_long_event("Battle %s at %s (%s)" % [bid, b.get("node_id", "?"), st])
+			if _follow_major:
+				_spectator_node = str(b.get("node_id", ""))
+
+
+func _append_long_event(text: String) -> void:
+	if _long_event_log == null:
+		return
+	_long_event_log.append_text(text + "\n")
+
+
+func _maybe_host_local_battle() -> void:
+	## When the viewed node has an active battle, mount LocalBattle (G04 reuse).
+	if _client == null or _overworld == null:
+		return
+	var battles: Dictionary = _coerce_dict(_last_industry.get("battles"))
+	if battles.is_empty():
+		return
+	var player: Dictionary = _coerce_dict(_last_industry.get("player"))
+	var node_id := str(player.get("node_id", ""))
+	if _spectator_node != "":
+		node_id = _spectator_node
+	var active_id := ""
+	for bid in battles.keys():
+		var b: Dictionary = _coerce_dict(battles[bid])
+		if str(b.get("node_id", "")) != node_id:
+			continue
+		if str(b.get("state", "")) in ["PENDING", "ACTIVE", "LOCAL", "OFFSCREEN", "READY"]:
+			active_id = str(bid)
+			break
+	if active_id == "":
+		return
+	if _battle != null and is_instance_valid(_battle):
+		return
+	_battle = LocalBattle.new()
+	_battle.name = "LocalBattleHost"
+	_battle_host = EncounterHost.new()
+	if _overworld.get("_actors_root") != null:
+		_overworld._actors_root.add_child(_battle)
+	else:
+		add_child(_battle)
+	_append_long_event("Hosting LocalBattle for %s" % active_id)
 
 
 func _exit_tree() -> void:

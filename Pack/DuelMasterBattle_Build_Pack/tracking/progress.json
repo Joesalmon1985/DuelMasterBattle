@@ -216,16 +216,19 @@
       "candidate_branch": "refactor/canonical-ontology-g05",
       "fixture": "FX-VILLAGE",
       "layers_fixture": "FX-WORLD-LAYERS",
+      "long_run_fixture": "FX-LONG-WORLD",
       "archived_quest_fixture": "FX-VILLAGE-QUEST",
       "seed": 507,
       "start_node_id": "node:35",
       "launch": "bash tools/play_g05.sh",
       "layers_launch": "bash tools/play_world_layers.sh",
-      "objective": "full_prehistoric_world_visual_integration",
-      "foundation_commit": "85fca3c7b5f52bcb754ce7dbd7673f4730e54150",
+      "long_run_launch": "bash tools/play_long_world.sh",
+      "long_run_report": "tracking/gates/G05/long_run_report.md",
+      "objective": "living_world_and_long_run_visual",
+      "foundation_commit": "a9323e7ced8a842cc201ec56ffbc24a255513e78",
       "quest_active": false,
-      "awaiting_human_at": "2026-09-21T23:30:00Z",
-      "notes": "Full board preserved; G01–G04 presentation integrated into Overworld. No quest. Do not start T097. Agents must not self-PASS."
+      "awaiting_human_at": "2026-09-21T23:50:00Z",
+      "notes": "Living workers + dense nature + FX-LONG-WORLD natural progression (battle at turn 93). No quest. No T097. Design: no new settlements in 200 turns; local single-terrain craft fallback."
     },
     "G06": {
       "status": "NOT_READY",

@@ -209,7 +209,10 @@ class LegalActionGenerator:
                             "node_id": objective["node_id"],
                         },
                         legal_version=version,
-                        benefit={"edges": objective["edges"]},
+                        benefit={
+                            "edges": objective["edges"],
+                            "stopped_on_hostility": bool(objective.get("stopped_on_hostility")),
+                        },
                         explanation="strategic formation move ≤2 edges",
                     )
                 )

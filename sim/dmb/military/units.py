@@ -162,7 +162,28 @@ class MilitaryService:
             "material_change_version": 0,
         }
         self.state.units[unit_id] = record
-        return record
+        # Attach to a home garrison formation so strategic AI can move produced units.
+        self._attach_to_home_formation(unit_id, faction_id=faction_id, node_id=home_node_id)
+        return self.state.units[unit_id]
+
+    def _attach_to_home_formation(self, unit_id: str, *, faction_id: str, node_id: str) -> str:
+        formations = self._ensure_formations()
+        unit = self.state.units[unit_id]
+        if unit.get("formation_id"):
+            return str(unit["formation_id"])
+        for fid, formation in sorted(formations.items()):
+            if str(formation.get("faction_id")) != faction_id:
+                continue
+            if str(formation.get("node_id")) != node_id:
+                continue
+            if formation.get("engagement_id"):
+                continue
+            formation.setdefault("unit_ids", []).append(unit_id)
+            unit["formation_id"] = fid
+            self.formation_strength(fid)
+            return str(fid)
+        grouped = self.group([unit_id], faction_id=faction_id, node_id=node_id)
+        return str(grouped["id"])
 
     def group(self, unit_ids: list[str], *, faction_id: str, node_id: str) -> dict[str, Any]:
         formations = self._ensure_formations()

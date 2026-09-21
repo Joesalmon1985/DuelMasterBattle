@@ -554,19 +554,13 @@ func _spawn_entity(e: Dictionary) -> void:
 			_entity_at[pos] = e
 			_ensure_semantic(e, null)
 			return
-		"deco":
-				# Projected kit puzzle visuals (plates, beams, goals, teleporters,
-				# pits, crumble, hazards, markers): visible state only. Walk-through
-				# and never interactable — registered in _entities but NOT in
-				# _entity_at, so the sim (kit_blocks) owns blocking, not the art.
-				var marker_path := "props/%s.png" % str(e.get("marker", "box"))
-				var moff := Vector2.ZERO
-				if e.has("marker_off"):
-					var a: Array = e["marker_off"]
-					moff = Vector2(float(a[0]), float(a[1]))
-				node = _add_prop(pos.x, pos.y, marker_path, moff, 1)
-				node.modulate = _parse_tint(e.get("tint", Color.WHITE))
-				node.z_index = 3
+		"deco", "nature":
+				# Dense natural-world props: register for walk-through only.
+				# Geometric WorldLayerPresenters owns the visible Node2D.
+				e["node"] = null
+				_entities.append(e)
+				_ensure_semantic(e, null)
+				return
 	e["node"] = node
 	_entities.append(e)
 	if e["kind"] in ["fire", "pickup", "creature", "wizard", "npc", "corpse", "sign", "door", "logs"]:

@@ -47,6 +47,9 @@ func apply_area(area: Dictionary) -> void:
 			"construction":
 				_upsert_construction(e)
 				keep[str(e.get("id", ""))] = true
+			"nature", "deco":
+				_upsert_nature(e)
+				keep[str(e.get("id", ""))] = true
 	for row in area.get("industry_overlay", []):
 		if typeof(row) != TYPE_DICTIONARY:
 			continue
@@ -192,6 +195,45 @@ func _upsert_construction(e: Dictionary) -> void:
 	node.position = _grid_pos(e)
 	node.z_index = 4
 	(node.get_node("Label") as Label).text = "Building %s" % str(e.get("action", "work"))
+
+
+func _upsert_nature(e: Dictionary) -> void:
+	var id := str(e.get("id", ""))
+	if id.is_empty():
+		return
+	var node: Node2D = _by_id.get(id)
+	var kind := str(e.get("kind", "nature"))
+	var prop_kind := str(e.get("prop_kind", e.get("nature_kind", "")))
+	if prop_kind.is_empty():
+		# Infer from marker / id fragments for export rows.
+		var marker := str(e.get("marker", ""))
+		if "tree" in marker:
+			prop_kind = "tree"
+		elif "animal" in id or bool(e.get("ambient", false)):
+			prop_kind = "animal"
+		elif "clay" in marker or "charcoal" in marker:
+			prop_kind = "clay_patch"
+		elif "seed" in marker:
+			prop_kind = "field_patch"
+		elif "stone" in marker or "rock" in marker:
+			prop_kind = "rock"
+		elif "mine" in marker or "miner" in marker:
+			prop_kind = "mine"
+		else:
+			prop_kind = "scrub"
+	if node == null:
+		node = Node2D.new()
+		node.name = id
+		_root.add_child(node)
+		var body := Polygon2D.new()
+		body.name = "Body"
+		node.add_child(body)
+		_by_id[id] = node
+	node.position = _grid_pos(e)
+	node.z_index = 2 if kind == "deco" else 3
+	var terrain := str(e.get("terrain", ""))
+	(node.get_node("Body") as Polygon2D).polygon = VisualLanguage.nature_polygon(prop_kind)
+	(node.get_node("Body") as Polygon2D).color = VisualLanguage.nature_color(prop_kind, terrain)
 
 
 func _upsert_factory_meter(row: Dictionary) -> void:

@@ -38,6 +38,30 @@ def _pick_start_settlement(plan, state) -> tuple[str, str, str]:
     return str(best.node_id), str(settlement["id"]), str(best.faction_id)
 
 
+def _clear_settlement_catastrophe_cubes(state, plan) -> None:
+    """Deactivate catastrophe cubes on hexes touched by operational settlements."""
+    touching: set[str] = set()
+    for settlement in state.settlements.values():
+        if settlement.get("staging") or not settlement.get("operational", True):
+            continue
+        node_id = str(settlement.get("node_id") or "")
+        if not node_id:
+            continue
+        touching.update(str(h) for h in plan.board.touching_hexes(node_id))
+    if not touching:
+        return
+    cubes = ((state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
+    board_cubes = state.board.setdefault("hazard_cubes", {})
+    for cid, cube in list(cubes.items()):
+        if str(cube.get("hex_id") or "") in touching:
+            cube["active"] = False
+            if cid in board_cubes:
+                board_cubes[cid]["active"] = False
+    state.board["hazard_hexes"] = [
+        str(h) for h in (state.board.get("hazard_hexes") or []) if str(h) not in touching
+    ]
+
+
 def load_prehistoric_world(seed: int = 507) -> WorldSim:
     """Authoritative Prehistoric world — entire board exists; no quest content."""
     sim = bootstrap_world(world_id="world:prehistoric", seed=seed)
@@ -60,6 +84,10 @@ def load_prehistoric_world(seed: int = 507) -> WorldSim:
             rec["settlement_id"] = settlement["id"]
             rec["faction_id"] = faction
             rec["area_id"] = f"area.{node_id.replace(':', '_')}"
+
+    # Keep distant catastrophe pressure, but never start with cubes on settlement
+    # primary hexes — matches FX-VILLAGE and unblocks normal industry bootstrap.
+    _clear_settlement_catastrophe_cubes(state, plan)
 
     bootstrap_all_settlement_industry(sim)
 
@@ -90,6 +118,18 @@ def load_prehistoric_world(seed: int = 507) -> WorldSim:
         state.board["fx_industry"] = dict(by_node[start_node])
 
     state.board["era_id"] = "ancient"
+    # Autonomous factions sit the World Turn roster (player is observer/wizard).
+    faction_ids = sorted(
+        {
+            str(s.get("faction_id"))
+            for s in state.settlements.values()
+            if not s.get("staging") and s.get("faction_id")
+        }
+    )
+    state.clock["scheduled_faction_ids"] = faction_ids or ["faction:1", "faction:2"]
+    state.clock["active_faction_id"] = state.clock["scheduled_faction_ids"][0]
+    state.clock["completed_seats"] = []
+    state.clock["round_complete"] = False
     state.board["g05"] = {
         "mode": "full_prehistoric_world",
         "quest_enabled": False,

@@ -28,13 +28,18 @@ def _neighbours(board: Mapping[str, Any], node_id: str) -> list[str]:
 
 
 def _hostile_at_node(state: Any, node_id: str, faction_id: str) -> bool:
-    """True if a living enemy unit or hostile settlement occupies the node."""
+    """True if a living enemy unit, enemy formation, or hostile settlement occupies the node."""
     for unit in (getattr(state, "units", {}) or {}).values():
         if not unit.get("alive", True):
             continue
         if str(unit.get("node_id")) != node_id:
             continue
         if str(unit.get("faction_id")) != faction_id:
+            return True
+    for formation in (getattr(state, "formations", {}) or {}).values():
+        if str(formation.get("node_id")) != node_id:
+            continue
+        if str(formation.get("faction_id") or "") not in {"", faction_id}:
             return True
     for settlement in (getattr(state, "settlements", {}) or {}).values():
         if str(settlement.get("node_id")) != node_id:
@@ -45,7 +50,7 @@ def _hostile_at_node(state: Any, node_id: str, faction_id: str) -> bool:
     for battle in (getattr(state, "battles", {}) or {}).values():
         if str(battle.get("node_id")) != node_id:
             continue
-        if battle.get("state") in {"ACTIVE", "LOCAL", "OFFSCREEN", "STALEMATE"}:
+        if battle.get("state") in {"ACTIVE", "LOCAL", "OFFSCREEN", "STALEMATE", "PENDING"}:
             participants = battle.get("factions") or battle.get("participant_factions") or []
             if faction_id in participants or any(
                 str(p) != faction_id for p in participants
@@ -53,6 +58,109 @@ def _hostile_at_node(state: Any, node_id: str, faction_id: str) -> bool:
                 # Entering a node with an ongoing battle is hostility.
                 return True
     return False
+
+
+def open_contact_battle(
+    state: Any,
+    *,
+    node_id: str,
+    attacker_faction_id: str,
+    attacker_formation_id: str,
+) -> dict[str, Any]:
+    """Create an authoritative battle when a formation contacts hostility.
+
+    Reuses an existing unfinished battle on the node when present. Does not
+    invent enemy units — defenders are whoever is actually there.
+    """
+    battles = getattr(state, "battles", None)
+    if not isinstance(battles, dict):
+        battles = {}
+        state.battles = battles
+    for bid, existing in battles.items():
+        if str(existing.get("node_id")) != node_id:
+            continue
+        if str(existing.get("state") or "") in {"PENDING", "ACTIVE", "OFFSCREEN", "LOCAL", "READY"}:
+            # Attach attacker formation if not already linked.
+            formation = (getattr(state, "formations", {}) or {}).get(attacker_formation_id) or {}
+            formation["engagement_id"] = bid
+            return existing
+
+    attacker_units = [
+        uid
+        for uid, unit in (getattr(state, "units", {}) or {}).items()
+        if unit.get("alive", True)
+        and str(unit.get("faction_id")) == attacker_faction_id
+        and str(unit.get("node_id")) == node_id
+    ]
+    # Include units still listed on the attacker formation even if spawn-locked on prior node.
+    formation = (getattr(state, "formations", {}) or {}).get(attacker_formation_id) or {}
+    for uid in list(formation.get("unit_ids") or []):
+        if uid not in attacker_units:
+            unit = (getattr(state, "units", {}) or {}).get(uid)
+            if unit and unit.get("alive", True) and str(unit.get("faction_id")) == attacker_faction_id:
+                attacker_units.append(uid)
+                unit["node_id"] = node_id
+
+    defender_units = [
+        uid
+        for uid, unit in (getattr(state, "units", {}) or {}).items()
+        if unit.get("alive", True)
+        and str(unit.get("faction_id")) != attacker_faction_id
+        and str(unit.get("node_id")) == node_id
+    ]
+    defender_faction = None
+    owner_settlement = None
+    for settlement in (getattr(state, "settlements", {}) or {}).values():
+        if str(settlement.get("node_id")) != node_id or settlement.get("staging"):
+            continue
+        owner = str(settlement.get("faction_id") or "")
+        if owner and owner != attacker_faction_id:
+            defender_faction = owner
+            owner_settlement = str(settlement.get("id") or "")
+            break
+    if defender_units and defender_faction is None:
+        defender_faction = str((state.units.get(defender_units[0]) or {}).get("faction_id") or "")
+
+    building_ids = [
+        bid
+        for bid, building in (getattr(state, "buildings", {}) or {}).items()
+        if str(building.get("node_id")) == node_id and building.get("status") != "destroyed"
+    ]
+
+    factions = [attacker_faction_id]
+    if defender_faction:
+        factions.append(defender_faction)
+    hostiles = {attacker_faction_id: [f for f in factions if f != attacker_faction_id]}
+    for fac in factions:
+        if fac != attacker_faction_id:
+            hostiles[fac] = [attacker_faction_id]
+
+    battle_id = state.ids.new("battle")
+    battle = {
+        "id": battle_id,
+        "node_id": node_id,
+        "participants": list(dict.fromkeys(attacker_units + defender_units)),
+        "buildings": building_ids,
+        "state": "PENDING",
+        "prefer_local": True,
+        "hostiles": hostiles,
+        "factions": factions,
+        "participant_factions": factions,
+        "blockers": [],
+        "owner_faction_id": defender_faction,
+        "owner_settlement_id": owner_settlement,
+        "attacker_formation_id": attacker_formation_id,
+        "opened_turn": int((getattr(state, "clock", {}) or {}).get("turn") or 0),
+    }
+    battles[battle_id] = battle
+    formation["engagement_id"] = battle_id
+    for fid, form in (getattr(state, "formations", {}) or {}).items():
+        if str(form.get("node_id")) != node_id:
+            continue
+        if str(form.get("faction_id")) == attacker_faction_id:
+            continue
+        form["engagement_id"] = battle_id
+    return battle
 
 
 def _friendly_neighbour(state: Any, node_id: str, faction_id: str) -> str | None:
@@ -149,17 +257,33 @@ class StrategicMovement:
             step_s = str(step)
             if step_s not in _neighbours(self.state.board, current):
                 raise ValueError(f"illegal edge {current}->{step_s}")
-            # Units produced this turn at current node cannot change node until later activation.
+            # Units produced this turn cannot leave their spawn node until a later turn.
             movable = []
             for uid in list(formation.get("unit_ids") or []):
                 unit = self.state.units.get(uid)
                 if unit is None or not unit.get("alive", True):
                     continue
                 spawned_turn = unit.get("spawned_turn")
-                if spawned_turn is not None and int(spawned_turn) == turn_n and str(unit.get("node_id")) == current:
-                    # New unit stays; does not block formation travel of older members.
+                unit_node = str(unit.get("node_id") or "")
+                if (
+                    spawned_turn is not None
+                    and int(spawned_turn) == turn_n
+                    and unit_node == str(formation.get("node_id") or current)
+                ):
                     continue
                 movable.append(uid)
+            # Keep formation members collocated with the formation marker.
+            if not movable:
+                # If every member is spawn-locked, the formation stays put this activation.
+                formation["movement_spent_turn"] = turn_n
+                return {
+                    "formation_id": formation_id,
+                    "node_id": current,
+                    "path": [],
+                    "stopped": False,
+                    "movement_spent_turn": turn_n,
+                    "reason": "spawn_locked",
+                }
             current = step_s
             travelled.append(step_s)
             for uid in movable:
@@ -167,7 +291,13 @@ class StrategicMovement:
             formation["node_id"] = current
             if _hostile_at_node(self.state, current, active_faction_id):
                 stopped = True
-                formation["engagement_id"] = formation.get("engagement_id") or f"pending:{current}"
+                battle = open_contact_battle(
+                    self.state,
+                    node_id=current,
+                    attacker_faction_id=active_faction_id,
+                    attacker_formation_id=formation_id,
+                )
+                formation["engagement_id"] = str(battle.get("id") or f"pending:{current}")
                 break
         formation["path"] = list(travelled)
         formation["movement_spent_turn"] = turn_n
@@ -179,7 +309,13 @@ class StrategicMovement:
                 formation["withdrawal_target"] = None
             elif target and _hostile_at_node(self.state, str(target), active_faction_id):
                 formation["withdrawal_status"] = "blocked"
-                formation["engagement_id"] = formation.get("engagement_id") or f"reengage:{current}"
+                battle = open_contact_battle(
+                    self.state,
+                    node_id=str(current),
+                    attacker_faction_id=active_faction_id,
+                    attacker_formation_id=formation_id,
+                )
+                formation["engagement_id"] = str(battle.get("id") or f"reengage:{current}")
         return {
             "formation_id": formation_id,
             "node_id": current,

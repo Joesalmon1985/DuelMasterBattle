@@ -58,11 +58,12 @@ class PolicyService:
     def activate(self, faction_id: str, *, decision_kind: str = "seat") -> dict[str, Any]:
         """One seat activation: observe, enumerate, choose ≤1 construct + ≤1 proposal."""
         assert self.observations is not None and self.legal is not None
+        cargo_retries = self._retry_pending_cargo(faction_id)
         obs = self.observations.build(faction_id, decision_kind)
         candidates = self.legal.enumerate(obs, decision_kind)
         choice = self.brain.choose_activation(obs, candidates)
         by_id = {c["id"]: c for c in candidates}
-        applied: list[dict[str, Any]] = []
+        applied: list[dict[str, Any]] = list(cargo_retries)
         for cid in choice["selected_ids"]:
             cand = by_id[cid]
             result = self._apply_candidate(obs, cand)
@@ -126,6 +127,58 @@ class PolicyService:
             except TypeValidationError as exc:
                 return {"status": "trade_blocked", "reason": str(exc), "commit": commit}
             return {"status": "trade_proposed", "commit": commit, "contract": contract}
+        if kind == "military_move":
+            from sim.dmb.military.movement import StrategicMovement
+
+            mover = StrategicMovement(self.state)
+            fid = str(params.get("formation_id") or "")
+            path = list(params.get("path") or params.get("nodes") or [])
+            faction_id = str(candidate.get("faction_id") or "")
+            if not fid or len(path) < 1:
+                return {"status": "military_move_skipped", "reason": "missing_path", "commit": commit}
+            try:
+                result = mover.activate(
+                    fid,
+                    path,
+                    active_faction_id=faction_id,
+                    turn=int(self.state.clock.get("turn", 0)),
+                )
+            except Exception as exc:  # pragma: no cover - defensive
+                return {"status": "military_move_blocked", "reason": str(exc), "commit": commit}
+            return {"status": "military_moved", "commit": commit, "result": result}
+        if kind == "military_objective":
+            from sim.dmb.military.formations import FormationDirector
+
+            director = FormationDirector(self.state)
+            fid = str(params.get("formation_id") or "")
+            objective = str(params.get("objective") or "")
+            if not fid or not objective:
+                return {"status": "military_objective_skipped", "commit": commit}
+            try:
+                formation = director.get(fid)
+                formation["objective"] = objective
+                if params.get("node_id"):
+                    formation["objective_node_id"] = str(params.get("node_id"))
+            except Exception as exc:  # pragma: no cover
+                return {"status": "military_objective_blocked", "reason": str(exc), "commit": commit}
+            return {
+                "status": "military_objective_set",
+                "commit": commit,
+                "formation_id": fid,
+                "objective": objective,
+            }
+        if kind == "military_withdraw":
+            from sim.dmb.military.formations import FormationDirector
+
+            director = FormationDirector(self.state)
+            fid = str(params.get("formation_id") or "")
+            if not fid:
+                return {"status": "military_withdraw_skipped", "commit": commit}
+            try:
+                result = director.mark_withdrawal(fid)
+            except Exception as exc:  # pragma: no cover
+                return {"status": "military_withdraw_blocked", "reason": str(exc), "commit": commit}
+            return {"status": "military_withdrawn", "commit": commit, "result": result}
         return {"status": "proposed", "commit": commit, "candidate_id": candidate["id"]}
 
     def _primary_store(self, faction_id: str) -> str | None:
@@ -136,6 +189,123 @@ class PolicyService:
             if wh:
                 return f"store:{wh}"
         return None
+
+    def _faction_stores(self, faction_id: str) -> list[str]:
+        out: list[str] = []
+        for settlement in self.state.settlements.values():
+            if settlement.get("faction_id") != faction_id or settlement.get("staging"):
+                continue
+            wh = settlement.get("warehouse_id")
+            if wh:
+                out.append(f"store:{wh}")
+        return out
+
+    def _store_node(self, store_id: str) -> str | None:
+        bid = store_id.split("store:", 1)[-1]
+        building = self.state.buildings.get(bid) or {}
+        node = building.get("node_id")
+        return str(node) if node else None
+
+    def _find_source_store(
+        self,
+        faction_id: str,
+        missing: dict[str, int],
+        *,
+        destination_store: str,
+    ) -> str | None:
+        """Find a same-faction warehouse that can cover all missing goods."""
+        assert self.director is not None and self.director.ledger is not None
+        ledger = self.director.ledger
+        for store_id in self._faction_stores(faction_id):
+            if store_id == destination_store:
+                continue
+            if all(ledger.available(store_id, good) >= qty for good, qty in missing.items()):
+                return store_id
+        return None
+
+    def _assign_cargo_haul(
+        self,
+        *,
+        faction_id: str,
+        destination_store: str,
+        missing: dict[str, int],
+        pending_id: str,
+    ) -> dict[str, Any] | None:
+        """Reserve at a source warehouse and assign an idle cart via LogisticsService."""
+        assert self.director is not None and self.director.ledger is not None
+        source = self._find_source_store(faction_id, missing, destination_store=destination_store)
+        if not source:
+            return None
+        idle = self.director.idle_carts(faction_id)
+        if not idle:
+            return None
+        cart_id = idle[0]
+        source_node = self._store_node(source)
+        dest_node = self._store_node(destination_store)
+        if not source_node or not dest_node:
+            return None
+        try:
+            reservation = self.director.ledger.reserve(
+                pending_id,
+                {k: int(v) for k, v in missing.items()},
+                store_id=source,
+            )
+        except TypeValidationError:
+            return None
+        assigned = self.director.assign(
+            cart_id,
+            source=source_node,
+            target=dest_node,
+            destination_store=destination_store,
+            reservation_id=str(reservation.get("id") or ""),
+        )
+        return {"cart_id": cart_id, "source": source, "assign": assigned, "reservation": reservation}
+
+    def _retry_pending_cargo(self, faction_id: str) -> list[dict[str, Any]]:
+        """When goods arrive, convert awaiting_cargo pending orders into real reservations."""
+        assert self.construction is not None
+        applied: list[dict[str, Any]] = []
+        for oid, order in list((self.state.orders or {}).items()):
+            if not str(oid).startswith("pending:"):
+                continue
+            if order.get("status") != "awaiting_cargo":
+                continue
+            if str(order.get("faction_id") or "") != faction_id:
+                continue
+            action = str(order.get("action") or "")
+            store_id = str(order.get("store_id") or "")
+            target_node = order.get("target_node")
+            edge_raw = order.get("target_edge")
+            edge = tuple(edge_raw) if isinstance(edge_raw, (list, tuple)) and len(edge_raw) == 2 else None
+            quote = self.construction.quote(
+                action,
+                faction_id=faction_id,
+                store_id=store_id,
+                target_node=target_node,
+                target_edge=edge,
+            )
+            if quote.get("status") != "ok":
+                missing = dict(quote.get("missing") or {})
+                if missing and quote.get("reason") == "insufficient_local_goods":
+                    haul = self._assign_cargo_haul(
+                        faction_id=faction_id,
+                        destination_store=store_id,
+                        missing=missing,
+                        pending_id=str(oid),
+                    )
+                    if haul:
+                        applied.append({"status": "cargo_assigned", "pending": oid, "haul": haul})
+                continue
+            reserved = self.construction.reserve_order(
+                action,
+                faction_id=faction_id,
+                store_id=store_id,
+                target_node=target_node,
+                target_edge=edge,
+            )
+            order["status"] = "superseded"
+            applied.append({"status": "pending_reserved", "pending": oid, "order": reserved})
+        return applied
 
     def _apply_construct(self, candidate: dict[str, Any], params: dict[str, Any]) -> dict[str, Any]:
         assert self.construction is not None and self.director is not None
@@ -161,8 +331,15 @@ class PolicyService:
                 target_edge=edge,
             )
             return {"status": "reserved", "order": order, "candidate_id": candidate["id"]}
-        # Unaffordable: schedule cargo for missing goods (no free resources).
-        missing = dict(quote.get("missing") or quote.get("required") or {})
+        # Only schedule cargo when local goods are the blocker — never for placement illegality.
+        if quote.get("reason") != "insufficient_local_goods":
+            return {
+                "status": "construct_blocked",
+                "reason": quote.get("reason"),
+                "quote": quote,
+                "candidate_id": candidate["id"],
+            }
+        missing = dict(quote.get("missing") or {})
         schedule = {
             "faction_id": faction_id,
             "action": action,
@@ -172,10 +349,8 @@ class PolicyService:
             "turn": int(self.state.clock.get("turn", 0)),
             "director": "cargo_intent",
         }
-        # Record haul intent against idle carts when a source store exists; never invent stock.
         idle = self.director.idle_carts(faction_id) if self.director else []
         schedule["idle_carts"] = list(idle)
-        self._policy_bucket(faction_id)["cargo_schedules"].append(schedule)
         pending = self.state.orders.setdefault(
             f"pending:{candidate['id']}",
             {
@@ -190,6 +365,17 @@ class PolicyService:
             },
         )
         schedule["pending_order_id"] = pending["id"]
+        haul = self._assign_cargo_haul(
+            faction_id=faction_id,
+            destination_store=store_id,
+            missing=missing,
+            pending_id=str(pending["id"]),
+        )
+        if haul:
+            schedule["haul"] = haul
+            self._policy_bucket(faction_id)["cargo_schedules"].append(schedule)
+            return {"status": "cargo_assigned", "schedule": schedule, "candidate_id": candidate["id"]}
+        self._policy_bucket(faction_id)["cargo_schedules"].append(schedule)
         return {"status": "cargo_scheduled", "schedule": schedule, "candidate_id": candidate["id"]}
 
     def replay_selection(self, faction_id: str, selection_index: int = -1) -> dict[str, Any]:

@@ -15,10 +15,31 @@ from typing import Any
 from sim.dmb.core.state import WorldState
 from sim.dmb.core.types import TypeValidationError
 
-LAYOUT_SCHEMA_VERSION = 3  # Full-board LocalArea: fixed 48×48, geography + road/trail exits
+LAYOUT_SCHEMA_VERSION = 4  # Dense natural_props per touching-hex geography sector
 BASE_SIZE = 48
 GROW_STEP = 16
 FOOTPRINT = (3, 3)
+
+# Authoritative strategic terrain ids — never invent unrelated types for decoration.
+KNOWN_HEX_TERRAINS = frozenset(
+    {
+        "woodland",
+        "clay_mountains",
+        "ore_mountains",
+        "fields",
+        "grazing_land",
+        "desert",
+    }
+)
+GEO_FOOTPRINT = (10, 8)
+SECTOR_LABELS = {
+    "woodland": "Woodland",
+    "clay_mountains": "Clay hills",
+    "ore_mountains": "Ore ridge",
+    "fields": "Fields",
+    "grazing_land": "Grazing land",
+    "desert": "Desert",
+}
 
 # Keep settlement_layout version in sync for settlement anchors written elsewhere.
 from sim.dmb.world import settlement_layout as _settlement_layout
@@ -166,7 +187,8 @@ class LocalProjectionService:
         board_topo = self.state.board.get("topology") or {}
         hex_terrain = self.state.board.get("hex_terrain") or {}
         touching = list(self.state.board.get("node_hexes", {}).get(node_id) or [])
-        rng = _stable_rng(f"{record.get('seed')}:geo")
+        world_seed = str(self.state.board.get("g05", {}).get("seed") or record.get("seed") or self.state.world_id)
+        rng = _stable_rng(f"{world_seed}:{node_id}:geo")
         width = int(record["width"])
         height = int(record["height"])
         patches: list[dict[str, Any]] = []
@@ -179,6 +201,8 @@ class LocalProjectionService:
             board = None
         for hid in touching:
             terrain = str(hex_terrain.get(hid) or "fields")
+            if terrain not in KNOWN_HEX_TERRAINS:
+                terrain = "fields"
             if board is not None:
                 try:
                     sector = hex_sector(board, node_id, str(hid))
@@ -190,9 +214,29 @@ class LocalProjectionService:
                 sector = rng.choice(
                     ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"]
                 )
-            anchor = perimeter_anchor(width, height, sector, footprint=(6, 5), margin=2)
-            tile = {"woodland": "T", "ore_mountains": "r", "clay_mountains": "r", "fields": ",", "grazing_land": ",", "desert": "."}.get(
-                terrain, "."
+            anchor = perimeter_anchor(width, height, sector, footprint=GEO_FOOTPRINT, margin=2)
+            tile = {
+                "woodland": "T",
+                "ore_mountains": "r",
+                "clay_mountains": "c",
+                "fields": ",",
+                "grazing_land": "g",
+                "desert": "d",
+            }.get(terrain, ".")
+            has_primary = any(
+                str(b.get("node_id") or "") == node_id
+                and str(b.get("slot_kind") or "") == "primary"
+                and str(b.get("terrain") or "") == terrain
+                and b.get("active", True)
+                for b in (self.state.buildings or {}).values()
+            )
+            prop_rng = _stable_rng(f"{world_seed}:{node_id}:{hid}:props")
+            natural_props = _generate_natural_props(
+                prop_rng,
+                terrain=terrain,
+                origin=(int(anchor["grid"][0]), int(anchor["grid"][1])),
+                footprint=(int(anchor["footprint"][0]), int(anchor["footprint"][1])),
+                has_primary=has_primary,
             )
             patches.append(
                 {
@@ -202,9 +246,87 @@ class LocalProjectionService:
                     "grid": list(anchor["grid"]),
                     "footprint": list(anchor["footprint"]),
                     "tile": tile,
+                    "natural_props": natural_props,
                 }
             )
         record["geography"] = patches
+
+
+def _generate_natural_props(
+    rng: random.Random,
+    *,
+    terrain: str,
+    origin: tuple[int, int],
+    footprint: tuple[int, int],
+    has_primary: bool,
+) -> list[dict[str, Any]]:
+    """Deterministic placeholder props inside a sector footprint (presentation only)."""
+    ox, oy = origin
+    fw, fh = footprint
+    used: set[tuple[int, int]] = set()
+    props: list[dict[str, Any]] = []
+
+    def place(kind: str, marker: str, label: str | None = None) -> bool:
+        for _ in range(48):
+            x = ox + rng.randint(0, max(0, fw - 1))
+            y = oy + rng.randint(0, max(0, fh - 1))
+            if (x, y) in used:
+                continue
+            used.add((x, y))
+            row: dict[str, Any] = {"kind": kind, "grid": [x, y], "marker": marker}
+            if label:
+                row["label"] = label
+            props.append(row)
+            return True
+        return False
+
+    label = SECTOR_LABELS.get(terrain)
+
+    if terrain == "woodland":
+        tree_n = rng.randint(12, 20)
+        for i in range(tree_n):
+            place("tree", f"tree_{rng.randint(0, 3)}", label if i == 0 else None)
+        for _ in range(rng.randint(0, 3)):
+            place("stump", "tree_burnt_0")
+        if rng.random() < 0.35:
+            place("logs", "logs")
+    elif terrain == "clay_mountains":
+        for i in range(rng.randint(6, 10)):
+            place("clay_patch", "charcoal" if i % 3 == 0 else "rock", label if i == 0 else None)
+        for _ in range(rng.randint(3, 6)):
+            place("rock", "rock")
+        if has_primary:
+            place("pit", "stalagmite", "Clay workings")
+    elif terrain == "ore_mountains":
+        for i in range(rng.randint(8, 14)):
+            place("rock", "rock", label if i == 0 else None)
+        for _ in range(rng.randint(2, 4)):
+            place("ore", "stone_shard")
+        if has_primary:
+            place("mine", "miner_house", "Flint working")
+    elif terrain == "fields":
+        for i in range(rng.randint(8, 14)):
+            place("field_patch", "seed", label if i == 0 else None)
+    elif terrain == "grazing_land":
+        place("open", "sign", label)
+        # Ambient animals — presentation only; no durable world entity IDs.
+        animal_n = rng.randint(3, 7)
+        for i in range(animal_n):
+            place("animal", "ring", "Wild sheep" if i == 0 else None)
+    elif terrain == "desert":
+        for i in range(rng.randint(5, 9)):
+            place("stone", "rock", label if i == 0 else None)
+        for _ in range(rng.randint(2, 5)):
+            place("scrub", "seed")
+    else:
+        # Unknown terrains already normalised; keep empty rather than inventing.
+        pass
+
+    return props
+
+
+class _LocalProjectionGeographyMixin:
+    """Methods kept on a helper class then grafted onto LocalProjectionService."""
 
     def _place_settlement_buildings(self, record: dict[str, Any], node_id: str) -> None:
         """If this node has a settlement, place buildings via spatial grammar."""
@@ -606,3 +728,10 @@ class LocalProjectionService:
         # Stable pick: first candidate (seeded order already row-major). Touch rng for seed binding.
         _ = rng.random()
         return candidates[0]
+
+
+# Graft geography-era methods onto LocalProjectionService (kept below helper for readability).
+for _attr, _val in _LocalProjectionGeographyMixin.__dict__.items():
+    if callable(_val) and _attr != "__class__":
+        setattr(LocalProjectionService, _attr, _val)
+del _LocalProjectionGeographyMixin

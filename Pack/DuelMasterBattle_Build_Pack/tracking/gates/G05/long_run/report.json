@@ -1,0 +1,102 @@
+{
+  "seed": 507,
+  "fixture": "FX-LONG-WORLD",
+  "mode": "long_world",
+  "world_turns": 200,
+  "max_turns": 200,
+  "game_ms_start": 0,
+  "game_ms_end": 200000,
+  "settlements_start": 4,
+  "settlements_end": 4,
+  "cities_start": 0,
+  "cities_end": 0,
+  "roads_start": 4,
+  "roads_end": 5,
+  "units_start": 0,
+  "units_end": 24,
+  "counts": {
+    "ROAD_BUILT": 1,
+    "SETTLEMENT_FOUNDED": 0,
+    "CITY_UPGRADED": 0,
+    "UNIT_PRODUCED": 24,
+    "BATTLE_STARTED": 1,
+    "BATTLE_ENDED": 1,
+    "CART_DEPARTED": 0,
+    "CART_DELIVERED": 0,
+    "FORMATION_MOVED": 6,
+    "FORMATION_CREATED": 8,
+    "CASUALTY": 6,
+    "HAZARD_PLACED": 0,
+    "OUTBREAK": 0
+  },
+  "units_produced_by_faction": {
+    "faction:1": 12,
+    "faction:2": 12
+  },
+  "first_seen": {
+    "ROAD_BUILT": 3,
+    "UNIT_PRODUCED": 90,
+    "FORMATION_CREATED": 90,
+    "FORMATION_MOVED": 91,
+    "BATTLE_STARTED": 93,
+    "CASUALTY": 94,
+    "BATTLE_ENDED": 94
+  },
+  "stagnation": [
+    "no_cart_activity"
+  ],
+  "checkpoints": {
+    "turn_000_start": {
+      "turn": 0,
+      "roads": 4,
+      "settlements": 4,
+      "units": 0
+    },
+    "first_road_built": {
+      "turn": 3,
+      "roads": 5,
+      "settlements": 4,
+      "units": 0
+    },
+    "first_unit_produced": {
+      "turn": 90,
+      "roads": 5,
+      "settlements": 4,
+      "units": 12
+    },
+    "first_formation_move": {
+      "turn": 91,
+      "roads": 5,
+      "settlements": 4,
+      "units": 12
+    },
+    "first_battle_start": {
+      "turn": 93,
+      "roads": 5,
+      "settlements": 4,
+      "units": 12
+    },
+    "final_state": {
+      "turn": 200,
+      "roads": 5,
+      "settlements": 4,
+      "units": 24
+    }
+  },
+  "determinism_ok": true,
+  "determinism_b_counts": {
+    "ROAD_BUILT": 1,
+    "SETTLEMENT_FOUNDED": 0,
+    "CITY_UPGRADED": 0,
+    "UNIT_PRODUCED": 24,
+    "BATTLE_STARTED": 1,
+    "BATTLE_ENDED": 1,
+    "CART_DEPARTED": 0,
+    "CART_DELIVERED": 0,
+    "FORMATION_MOVED": 6,
+    "FORMATION_CREATED": 8,
+    "CASUALTY": 6,
+    "HAZARD_PLACED": 0,
+    "OUTBREAK": 0
+  }
+}

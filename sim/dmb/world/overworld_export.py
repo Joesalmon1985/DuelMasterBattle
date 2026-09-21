@@ -48,15 +48,9 @@ def export_overworld_area(
     cx, cy = width // 2, height // 2
 
     # Geography patches from touching hexes (before paths so trails overlay).
+    # Dense fill uses walkable ground chars plus sparse solids so exits stay open.
     for patch in view.get("geography") or layout.get("geography") or []:
-        gx, gy = int(patch["grid"][0]), int(patch["grid"][1])
-        fw, fh = int(patch["footprint"][0]), int(patch["footprint"][1])
-        tile = str(patch.get("tile") or ".")
-        for dy in range(fh):
-            for dx in range(fw):
-                x, y = gx + dx, gy + dy
-                if 0 <= x < width and 0 <= y < height and rows[y][x] not in {"#", "D"}:
-                    rows[y][x] = tile
+        _paint_geography_patch(rows, patch, width, height)
 
     # Paths only toward real topology exits — no artificial N/E/S/W cross.
     for exit_rec in view.get("exits") or []:
@@ -459,6 +453,9 @@ def export_overworld_area(
     except Exception:
         pass
 
+    # Natural props + sector labels (presentation only; animals are non-interactive).
+    _emit_natural_entities(entities, view.get("geography") or layout.get("geography") or [], width, height)
+
     for exit_rec in view.get("exits") or []:
         eg = exit_rec.get("grid") or [0, 0]
         direction = str(exit_rec.get("direction") or "north")
@@ -582,3 +579,140 @@ def _opening_lines(state: WorldState, person_id: str) -> list[str]:
             continue
         cleaned.append(line)
     return cleaned or ["The land keeps us busy."]
+
+
+_TERRAIN_GROUND = {
+    "woodland": ",",
+    "clay_mountains": "c",
+    "ore_mountains": ".",
+    "fields": ",",
+    "grazing_land": "g",
+    "desert": "d",
+}
+
+_TERRAIN_ACCENT = {
+    "woodland": "T",
+    "clay_mountains": "r",
+    "ore_mountains": "r",
+    "fields": "f",
+    "grazing_land": ",",
+    "desert": ".",
+}
+
+
+def _paint_geography_patch(
+    rows: list[list[str]],
+    patch: dict[str, Any],
+    width: int,
+    height: int,
+) -> None:
+    """Fill a sector densely from touching-hex terrain without sealing exits."""
+    import hashlib
+
+    gx, gy = int(patch["grid"][0]), int(patch["grid"][1])
+    fw, fh = int(patch["footprint"][0]), int(patch["footprint"][1])
+    terrain = str(patch.get("terrain") or "fields")
+    ground = _TERRAIN_GROUND.get(terrain, str(patch.get("tile") or "."))
+    accent = _TERRAIN_ACCENT.get(terrain, ground)
+    digest = hashlib.sha256(f"{patch.get('hex_id')}:{terrain}:paint".encode()).digest()
+    for dy in range(fh):
+        for dx in range(fw):
+            x, y = gx + dx, gy + dy
+            if not (0 <= x < width and 0 <= y < height):
+                continue
+            if rows[y][x] in {"#", "D"}:
+                continue
+            # Stable sparse accent so solid tiles never fill the sector solidly.
+            pick = digest[(dy * fw + dx) % len(digest)]
+            if terrain == "fields":
+                # Striped patches: accent on even columns, ground elsewhere.
+                ch = accent if dx % 2 == 0 and pick % 3 != 0 else ground
+            elif terrain == "woodland":
+                ch = accent if pick % 5 == 0 else ground
+            elif terrain in {"clay_mountains", "ore_mountains"}:
+                ch = accent if pick % 4 == 0 else ground
+            elif terrain == "desert":
+                ch = "r" if pick % 7 == 0 else ground
+            else:
+                ch = ground if pick % 11 != 0 else accent
+            rows[y][x] = ch
+
+
+def _emit_natural_entities(
+    entities: list[dict[str, Any]],
+    geography: list[dict[str, Any]],
+    width: int,
+    height: int,
+) -> None:
+    """Emit nature/deco props and quiet sector signs from persisted natural_props."""
+    for patch in geography:
+        hid = str(patch.get("hex_id") or "hex")
+        terrain = str(patch.get("terrain") or "")
+        props = list(patch.get("natural_props") or [])
+        label_emitted = False
+        for idx, prop in enumerate(props):
+            grid = prop.get("grid") or [0, 0]
+            px, py = int(grid[0]), int(grid[1])
+            if not (0 <= px < width and 0 <= py < height):
+                continue
+            kind = str(prop.get("kind") or "nature")
+            marker = str(prop.get("marker") or "rock")
+            label = prop.get("label")
+            # Ambient animals: presentation-only, never bridge-interactable.
+            is_animal = kind == "animal"
+            ent: dict[str, Any] = {
+                "kind": "deco" if is_animal else "nature",
+                "id": f"ambient.{hid}.{idx}" if is_animal else f"nature.{hid}.{idx}",
+                "pos": [px, py],
+                "marker": marker,
+                "prop_kind": kind,
+                "nature_kind": kind,
+                "presentation": "nature",
+                "terrain": terrain,
+                "bridge_entity": False,
+                "ambient": is_animal,
+            }
+            entities.append(ent)
+            if label and not label_emitted and kind != "animal":
+                label_emitted = True
+                entities.append(
+                    {
+                        "kind": "sign",
+                        "id": f"sign.nature.{hid}",
+                        "pos": [px, max(0, py - 1) if py > 0 else py],
+                        "marker": "sign",
+                        "text": str(label),
+                        "bridge_entity": False,
+                        "semantic": {
+                            "knowledge_key": f"nature.{hid}.label",
+                            "interaction": "observe",
+                            "dismiss_on_move": True,
+                            "labels": [{"level": 0, "text": str(label)}],
+                            "observe_far": str(label),
+                            "observe_near": str(label),
+                            "quiet_label": True,
+                        },
+                    }
+                )
+            elif label and is_animal and not any(
+                e.get("kind") == "sign" and e.get("id") == f"sign.animal.{hid}" for e in entities
+            ):
+                entities.append(
+                    {
+                        "kind": "sign",
+                        "id": f"sign.animal.{hid}",
+                        "pos": [px, py],
+                        "marker": "sign",
+                        "text": str(label),
+                        "bridge_entity": False,
+                        "semantic": {
+                            "knowledge_key": f"nature.{hid}.animals",
+                            "interaction": "observe",
+                            "dismiss_on_move": True,
+                            "labels": [{"level": 0, "text": str(label)}],
+                            "observe_far": str(label),
+                            "observe_near": str(label),
+                            "quiet_label": True,
+                        },
+                    }
+                )

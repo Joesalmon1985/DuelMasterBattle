@@ -42,6 +42,8 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
         return _load_fx_village(seed=507 if seed == 7 else seed, mode="quest")
     if name == "FX-WORLD-LAYERS":
         return _load_fx_world_layers(seed=507 if seed == 7 else seed)
+    if name == "FX-LONG-WORLD":
+        return _load_fx_long_world(seed=507 if seed == 7 else seed)
     raise ValueError(f"unsupported fixture {name}")
 
 
@@ -1212,6 +1214,21 @@ def _load_fx_village(seed: int = 507, *, mode: str = "baseline") -> WorldSim:
     from sim.dmb.world.prehistoric_world import load_prehistoric_world
 
     return load_prehistoric_world(seed=507 if seed == 7 else seed)
+
+
+def _load_fx_long_world(seed: int = 507) -> WorldSim:
+    """FX-LONG-WORLD: same Prehistoric baseline as FX-VILLAGE; meta g05.mode=long_world.
+
+    No staged soldiers, battles, or factory meters — natural progression only.
+    """
+    sim = _load_fx_village(seed=seed, mode="baseline")
+    g05 = sim.state.board.setdefault("g05", {})
+    g05["mode"] = "long_world"
+    g05["quest_enabled"] = False
+    fx = sim.state.board.setdefault("fx_village", {})
+    fx["mode"] = "long_world"
+    fx["quest_enabled"] = False
+    return sim
 
 
 def _load_fx_world_layers(seed: int = 507) -> WorldSim:

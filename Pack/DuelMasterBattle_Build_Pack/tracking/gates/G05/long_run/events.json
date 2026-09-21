@@ -1,0 +1,316 @@
+[
+  {
+    "kind": "ROAD_BUILT",
+    "turn": 3,
+    "road_id": "command:6"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:1",
+    "definition_id": "unit.ancient.skirmisher",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:10",
+    "definition_id": "unit.ancient.skirmisher",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:11",
+    "definition_id": "unit.ancient.line",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:12",
+    "definition_id": "unit.ancient.heavy",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:2",
+    "definition_id": "unit.ancient.line",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:3",
+    "definition_id": "unit.ancient.heavy",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:4",
+    "definition_id": "unit.ancient.skirmisher",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:5",
+    "definition_id": "unit.ancient.line",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:6",
+    "definition_id": "unit.ancient.heavy",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:7",
+    "definition_id": "unit.ancient.skirmisher",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:8",
+    "definition_id": "unit.ancient.line",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 90,
+    "unit_id": "unit:9",
+    "definition_id": "unit.ancient.heavy",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "FORMATION_CREATED",
+    "turn": 90,
+    "formation_id": "formation:1",
+    "node_id": "node:12",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "FORMATION_CREATED",
+    "turn": 90,
+    "formation_id": "formation:3",
+    "node_id": "node:27",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "FORMATION_CREATED",
+    "turn": 90,
+    "formation_id": "formation:4",
+    "node_id": "node:2",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "FORMATION_CREATED",
+    "turn": 90,
+    "formation_id": "formation:2",
+    "node_id": "node:35",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "FORMATION_MOVED",
+    "turn": 91,
+    "formation_id": "formation:1",
+    "from": "node:12",
+    "to": "node:13"
+  },
+  {
+    "kind": "FORMATION_MOVED",
+    "turn": 92,
+    "formation_id": "formation:2",
+    "from": "node:35",
+    "to": "node:23"
+  },
+  {
+    "kind": "BATTLE_STARTED",
+    "turn": 93,
+    "battle_id": "battle:1",
+    "node_id": "node:23"
+  },
+  {
+    "kind": "FORMATION_MOVED",
+    "turn": 93,
+    "formation_id": "formation:1",
+    "from": "node:13",
+    "to": "node:23"
+  },
+  {
+    "kind": "CASUALTY",
+    "turn": 94,
+    "unit_id": "unit:1"
+  },
+  {
+    "kind": "CASUALTY",
+    "turn": 94,
+    "unit_id": "unit:2"
+  },
+  {
+    "kind": "CASUALTY",
+    "turn": 94,
+    "unit_id": "unit:3"
+  },
+  {
+    "kind": "CASUALTY",
+    "turn": 94,
+    "unit_id": "unit:4"
+  },
+  {
+    "kind": "CASUALTY",
+    "turn": 94,
+    "unit_id": "unit:5"
+  },
+  {
+    "kind": "CASUALTY",
+    "turn": 94,
+    "unit_id": "unit:6"
+  },
+  {
+    "kind": "BATTLE_ENDED",
+    "turn": 94,
+    "battle_id": "battle:1",
+    "node_id": "node:23",
+    "outcome": "wipe"
+  },
+  {
+    "kind": "FORMATION_MOVED",
+    "turn": 94,
+    "formation_id": "formation:3",
+    "from": "node:27",
+    "to": "node:16"
+  },
+  {
+    "kind": "FORMATION_MOVED",
+    "turn": 95,
+    "formation_id": "formation:4",
+    "from": "node:2",
+    "to": "node:10"
+  },
+  {
+    "kind": "FORMATION_MOVED",
+    "turn": 96,
+    "formation_id": "formation:3",
+    "from": "node:16",
+    "to": "node:15"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:13",
+    "definition_id": "unit.ancient.skirmisher",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:14",
+    "definition_id": "unit.ancient.line",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:15",
+    "definition_id": "unit.ancient.heavy",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:16",
+    "definition_id": "unit.ancient.skirmisher",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:17",
+    "definition_id": "unit.ancient.line",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:18",
+    "definition_id": "unit.ancient.heavy",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:19",
+    "definition_id": "unit.ancient.skirmisher",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:20",
+    "definition_id": "unit.ancient.line",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:21",
+    "definition_id": "unit.ancient.heavy",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:22",
+    "definition_id": "unit.ancient.skirmisher",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:23",
+    "definition_id": "unit.ancient.line",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "UNIT_PRODUCED",
+    "turn": 180,
+    "unit_id": "unit:24",
+    "definition_id": "unit.ancient.heavy",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "FORMATION_CREATED",
+    "turn": 180,
+    "formation_id": "formation:7",
+    "node_id": "node:27",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "FORMATION_CREATED",
+    "turn": 180,
+    "formation_id": "formation:8",
+    "node_id": "node:2",
+    "faction_id": "faction:1"
+  },
+  {
+    "kind": "FORMATION_CREATED",
+    "turn": 180,
+    "formation_id": "formation:6",
+    "node_id": "node:35",
+    "faction_id": "faction:2"
+  },
+  {
+    "kind": "FORMATION_CREATED",
+    "turn": 180,
+    "formation_id": "formation:5",
+    "node_id": "node:12",
+    "faction_id": "faction:1"
+  }
+]

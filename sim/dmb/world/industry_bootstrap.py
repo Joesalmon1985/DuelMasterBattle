@@ -79,22 +79,82 @@ def _terrain_for_resource(resource_id: str) -> str | None:
     return None
 
 
-def _pick_recipe(available_terrains: set[str]) -> dict[str, Any] | None:
-    """Pick first MVP recipe whose both inputs are available as renewable/finite on site terrains."""
+def _pick_recipe(available_terrains: set[str], *, blocked_terrains: set[str] | None = None) -> dict[str, Any] | None:
+    """Pick an MVP recipe whose both inputs are available; prefer unblocked terrains."""
+    blocked = blocked_terrains or set()
+    candidates: list[tuple[int, dict[str, Any]]] = []
     for recipe in _load_mvp_recipes():
         ta = _terrain_for_resource(str(recipe.get("input_a_id") or ""))
         tb = _terrain_for_resource(str(recipe.get("input_b_id") or ""))
-        if ta and tb and ta in available_terrains and tb in available_terrains and ta != tb:
-            return recipe
-    return None
+        if not (ta and tb and ta in available_terrains and tb in available_terrains and ta != tb):
+            continue
+        blocked_count = int(ta in blocked) + int(tb in blocked)
+        # Prefer fewer blocked inputs, then catalogue order.
+        candidates.append((blocked_count, recipe))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda row: row[0])
+    return candidates[0][1]
 
 
-def _channel_kind_for_resource(terrain: str, resource_id: str) -> str:
-    kinds = TERRAIN_INDUSTRIAL.get(terrain) or {}
-    for kind, (rid, _name) in kinds.items():
-        if rid == resource_id:
-            return kind
-    return "renewable"
+def _blocked_terrains_for_node(state: Any, node_id: str, by_terrain: dict[str, list[str]]) -> set[str]:
+    from sim.dmb.hazards.queries import industrial_blocked
+
+    blocked: set[str] = set()
+    for terrain, hexes in by_terrain.items():
+        if any(industrial_blocked(state.board, hid) for hid in hexes):
+            blocked.add(terrain)
+    return blocked
+
+
+def _ensure_workplace_jobs(state: Any, *, node_id: str, building_ids: list[str]) -> None:
+    """Register vacant site-worker slots for settlement workplaces; backfill people."""
+    jobs = JobService(state)
+    for bid in building_ids:
+        building = state.buildings.get(bid) or {}
+        slot = str(building.get("slot_kind") or "")
+        job_id = "job:attendant" if slot == "factory" else "job:site_worker"
+        key = f"{'attendant' if slot == 'factory' else 'site_worker'}:{bid}"
+        if key not in (state.definitions.get("jobs") or {}):
+            jobs.register_job(key, workplace_id=bid, job_id=job_id, node_id=node_id, person_id=None)
+    jobs.backfill_tick(name_prefix="Worker")
+
+
+def _write_fx_layout(
+    state: Any,
+    *,
+    node_id: str,
+    processor_id: str | None,
+    factory_ids: list[str],
+    recipe: dict[str, Any] | None,
+) -> None:
+    sites = []
+    for b in state.buildings.values():
+        if b.get("node_id") != node_id or not b.get("active", True):
+            continue
+        slot = str(b.get("slot_kind") or "")
+        if slot not in {"primary", "processor", "factory"}:
+            continue
+        sites.append(
+            {
+                "id": str(b["id"]),
+                "kind": "source" if slot == "primary" else slot,
+                "label": b.get("label") or slot,
+                "terrain": b.get("terrain"),
+            }
+        )
+    fx_industry = state.board.setdefault("fx_industry_by_node", {})
+    fx_industry[node_id] = {
+        "node_id": node_id,
+        "processor_id": processor_id,
+        "factory_ids": list(factory_ids),
+        "output_id": (recipe or {}).get("output_id"),
+        "output_name": (recipe or {}).get("output_name"),
+        "recipe_id": (recipe or {}).get("id"),
+        "layout": {"sites": sites},
+    }
+    if str((state.player or {}).get("node_id") or "") == node_id or not state.board.get("fx_industry"):
+        state.board["fx_industry"] = dict(fx_industry[node_id])
 
 
 def bootstrap_settlement_industry(sim: Any, *, node_id: str, settlement_id: str, faction_id: str) -> dict[str, Any]:
@@ -196,7 +256,29 @@ def bootstrap_settlement_industry(sim: Any, *, node_id: str, settlement_id: str,
             sim.industry.install_channel(ch)
             channel_by_resource.setdefault(finite[0], ch.channel_id)
 
-    recipe = _pick_recipe(bound_terrains)
+    blocked = _blocked_terrains_for_node(state, node_id, by_terrain)
+    recipe = _pick_recipe(bound_terrains, blocked_terrains=blocked)
+    local_recipe: dict[str, Any] | None = None
+    if recipe is None and bound_terrains:
+        # Single-terrain settlements still process renewable+finite from their
+        # own hex — otherwise only multi-hex vertices can ever muster units.
+        terrain = sorted(bound_terrains)[0]
+        meta = TERRAIN_INDUSTRIAL.get(terrain) or {}
+        renew = meta.get("renewable")
+        finite = meta.get("finite")
+        if renew and finite and renew[0] in channel_by_resource and finite[0] in channel_by_resource:
+            local_recipe = {
+                "id": f"recipe.local.{terrain}",
+                "input_a_id": renew[0],
+                "input_b_id": finite[0],
+                "processor_name": f"{terrain.replace('_', ' ').title()} Works",
+                "output_name": f"{terrain.replace('_', ' ').title()} provisions",
+                "output_id": f"processed.local.{terrain}",
+            }
+            recipe = local_recipe
+    workplace_ids = [str(b["id"]) for b in primaries + processors + factories]
+    _ensure_workplace_jobs(state, node_id=node_id, building_ids=workplace_ids)
+
     result: dict[str, Any] = {
         "node_id": node_id,
         "settlement_id": settlement_id,
@@ -206,83 +288,77 @@ def bootstrap_settlement_industry(sim: Any, *, node_id: str, settlement_id: str,
         "factory_ids": [],
         "industry_active": False,
     }
-    if not recipe or not processors or len(factories) < 1:
-        return result
 
-    input_a = str(recipe["input_a_id"])
-    input_b = str(recipe["input_b_id"])
-    ch_a = channel_by_resource.get(input_a)
-    ch_b = channel_by_resource.get(input_b)
-    if not ch_a or not ch_b:
-        return result
-
-    processor = processors[0]
-    processor["label"] = str(recipe.get("processor_name") or recipe.get("building_family") or "Works")
-    processor["recipe_id"] = recipe["id"]
-    processor["output_name"] = recipe.get("output_name")
-    sim.industry.install_processor(
-        ProcessorBinding(
-            str(processor["id"]),
-            str(recipe["id"]),
-            "prehistoric",
-            ch_a,
-            ch_b,
-            active=True,
-        )
-    )
+    processor = processors[0] if processors else None
     factory_ids: list[str] = []
-    for i, factory in enumerate(factories[:3]):
-        unit_def = UNIT_DEFS[i % len(UNIT_DEFS)]
-        label = {0: "Skirmisher Yard", 1: "Line Yard", 2: "Heavy Yard"}.get(i, "Muster Yard")
-        factory["label"] = label
-        sim.industry.install_route(FactoryRoute(str(factory["id"]), str(processor["id"]), unit_def, 2 + i))
-        sim.industry.factories.create(
-            str(factory["id"]),
-            node_id=node_id,
-            faction_id=faction_id,
-            era="prehistoric",
-            unit_def_id=unit_def,
-        )
-        JobService(state).register_job(
-            f"job:attendant:{factory['id']}",
-            workplace_id=str(factory["id"]),
-            job_id="job:attendant",
-            node_id=node_id,
-            person_id=None,
-        )
-        factory_ids.append(str(factory["id"]))
 
-    # Presentation sites for IndustryProjection connections.
-    sites = []
-    for b in state.buildings.values():
-        if b.get("node_id") != node_id or not b.get("active", True):
-            continue
-        slot = str(b.get("slot_kind") or "")
-        if slot not in {"primary", "processor", "factory"}:
-            continue
-        sites.append(
-            {
-                "id": str(b["id"]),
-                "kind": "source" if slot == "primary" else slot,
-                "label": b.get("label") or slot,
-                "terrain": b.get("terrain"),
-            }
-        )
-    fx_industry = state.board.setdefault("fx_industry_by_node", {})
-    fx_industry[node_id] = {
-        "node_id": node_id,
-        "processor_id": str(processor["id"]),
-        "factory_ids": factory_ids,
-        "output_id": recipe.get("output_id"),
-        "output_name": recipe.get("output_name"),
-        "recipe_id": recipe["id"],
-        "layout": {"sites": sites},
-    }
-    # Active node industry view used by IndustryProjection.layout_sites().
-    if str((state.player or {}).get("node_id") or "") == node_id or not state.board.get("fx_industry"):
-        state.board["fx_industry"] = dict(fx_industry[node_id])
+    if recipe and processor and len(factories) >= 1:
+        input_a = str(recipe["input_a_id"])
+        input_b = str(recipe["input_b_id"])
+        ch_a = channel_by_resource.get(input_a)
+        ch_b = channel_by_resource.get(input_b)
+        if ch_a and ch_b:
+            processor["label"] = str(recipe.get("processor_name") or recipe.get("building_family") or "Works")
+            processor["recipe_id"] = recipe["id"]
+            processor["output_name"] = recipe.get("output_name")
+            sim.industry.install_processor(
+                ProcessorBinding(
+                    str(processor["id"]),
+                    str(recipe["id"]),
+                    "prehistoric",
+                    ch_a,
+                    ch_b,
+                    active=True,
+                )
+            )
+            for i, factory in enumerate(factories[:3]):
+                unit_def = UNIT_DEFS[i % len(UNIT_DEFS)]
+                label = {0: "Skirmisher Yard", 1: "Line Yard", 2: "Heavy Yard"}.get(i, "Muster Yard")
+                factory["label"] = label
+                # Avoid double-installing routes on re-bootstrap.
+                if str(factory["id"]) not in (sim.state.industry.get("routes") or {}):
+                    sim.industry.install_route(
+                        FactoryRoute(str(factory["id"]), str(processor["id"]), unit_def, 2 + i)
+                    )
+                sim.industry.factories.create(
+                    str(factory["id"]),
+                    node_id=node_id,
+                    faction_id=faction_id,
+                    era="prehistoric",
+                    unit_def_id=unit_def,
+                )
+                factory_ids.append(str(factory["id"]))
+            result.update(
+                {
+                    "recipe_id": recipe["id"],
+                    "processor_id": str(processor["id"]),
+                    "factory_ids": factory_ids,
+                    "industry_active": True,
+                    "output_name": recipe.get("output_name"),
+                }
+            )
+        else:
+            recipe = None
+    else:
+        recipe = None
+        if processor:
+            processor["label"] = processor.get("label") or "Works"
 
+    _write_fx_layout(
+        state,
+        node_id=node_id,
+        processor_id=str(processor["id"]) if processor else None,
+        factory_ids=factory_ids,
+        recipe=recipe,
+    )
+
+    # Point projection at this node briefly so sync_carrier_jobs sees local connections.
+    prev_fx = state.board.get("fx_industry")
+    state.board["fx_industry"] = dict((state.board.get("fx_industry_by_node") or {}).get(node_id) or {})
     IndustryProjection(state).sync_carrier_jobs()
+    if prev_fx is not None and str((state.player or {}).get("node_id") or "") != node_id:
+        state.board["fx_industry"] = prev_fx
+
     for person in state.people.values():
         if person.get("node_id") != node_id:
             continue
@@ -296,15 +372,6 @@ def bootstrap_settlement_industry(sim: Any, *, node_id: str, settlement_id: str,
             person["visual_profile"] = "worker"
         person["occupation"] = public_occupation_for(person, workplace=workplace)
 
-    result.update(
-        {
-            "recipe_id": recipe["id"],
-            "processor_id": str(processor["id"]),
-            "factory_ids": factory_ids,
-            "industry_active": True,
-            "output_name": recipe.get("output_name"),
-        }
-    )
     return result
 
 

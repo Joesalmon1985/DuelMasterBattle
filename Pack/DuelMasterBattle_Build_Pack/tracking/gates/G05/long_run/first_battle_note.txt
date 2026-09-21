@@ -1,0 +1,2 @@
+Turn 93 battle:1 at node:23 — faction:1 units 1-3 vs faction:2 units 4-6; wipe at turn 94.
+Reached via Wait+AdvanceGame only (FX-LONG-WORLD). Not FX-WORLD-LAYERS.

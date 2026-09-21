@@ -45,7 +45,32 @@ Do not invent alternate faction palettes per subsystem.
 | Grain | Gold |
 | Ore | Slate |
 
-**Industrial resources** use catalogue display names and a separate muted-green family so they are never confused with Catan goods.
+# Resource placeholder grammar (industrial carried / ambient)
+
+| Resource cue | Shape | Colour hint |
+|---|---|---|
+| Berries / nuts | Small circle | Magenta-red |
+| Flint / ore | Diamond | Slate |
+| Clay | Brown square | Terracotta |
+| Water / spring | Blue circle | Blue |
+| Grain / food | Yellow marker | Gold |
+| Wool / sheep | White marker | Cream |
+| Processed good | Outlined hexagon | Muted purple |
+
+Carried markers must derive from the projected `resource_id` / `resource_label`. Never invent a resource for looks.
+
+## Terrain placeholder grammar
+
+| Terrain | Props | Sparse labels |
+|---|---|---|
+| Woodland | Many ▲ / tree triangles; occasional stump / log stack | One `Woodland`; `… workings` at real primary |
+| Clay mountains | Brown irregular patches; pit at real working | `Clay hills` / `Clay workings` |
+| Ore mountains | Grey rocks; darker ore shapes; mine at working | `Ore ridge` / `Flint working` |
+| Fields | Striped rectangular patches | `Fields` |
+| Grazing land | Open green + ambient animal markers | `Grazing land` + collective `Wild sheep` |
+| Desert | Bare stones + scrub | `Desert` |
+
+Ambient animals are presentation-only: no durable IDs, quests, or interaction state.
 
 ## Labels
 
