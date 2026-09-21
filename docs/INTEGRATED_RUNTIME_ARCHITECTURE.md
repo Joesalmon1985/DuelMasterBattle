@@ -4,6 +4,8 @@ Authoritative short architecture for DuelMasterBattle after G01–G05.
 Later gates **extend** this production runtime; they must not invent a second
 implementation of a gameplay concept already accepted at an earlier gate.
 
+**Ontology / roadmap review (awaiting Joe decisions):** [`docs/review/README.md`](review/README.md) — do not start T097/G06 or migrate Person/Unit ontology until decisions in [`docs/review/JOE_DESIGN_DECISIONS.md`](review/JOE_DESIGN_DECISIONS.md) are approved.
+
 ## Hard rule
 
 > Later gates extend the accepted production runtime. They must not create a
@@ -74,6 +76,15 @@ same `person_id`. Carriers / industry attendants are presented by
 `WorkerController` using `ActorVisual` and existing character sprite families.
 Quest stakeholders such as Mara remain Overworld dialogue actors when they are
 not in the industry worker projection.
+
+A projected entity that is **visible and presented as interactive** must use the
+shared semantic interaction system (`WorldInteractionLabel` / bridge binding)
+whether it is static or dynamically animated. WorkerController actors register
+into Overworld as the single semantic actor for that person ID.
+
+Strategic **Travel** changes which node the SAME Overworld is projecting. It must
+not switch to a separate gameplay implementation. Local exits map to real
+topology adjacency and the G01 `Travel` command.
 
 ## FX-VILLAGE / G05
 
