@@ -92,6 +92,11 @@ def export_overworld_area(
                 "centre": "Settlement centre",
                 "warehouse": "Warehouse",
             }.get(slot_kind, "Building")
+        from sim.dmb.industry.projection import IndustryProjection
+
+        obs = IndustryProjection(state).player_building_observation(bid)
+        observe_far = str(obs.get("observe_far") or f"{label} stands here.")
+        observe_near = str(obs.get("observe_near") or observe_far)
         entities.append(
             {
                 "kind": "door",
@@ -104,7 +109,10 @@ def export_overworld_area(
                 "semantic": {
                     "knowledge_key": bid,
                     "interaction": "building",
+                    "dismiss_on_move": True,
                     "labels": [{"level": 0, "text": label}],
+                    "observe_far": observe_far,
+                    "observe_near": observe_near,
                 },
             }
         )
@@ -126,6 +134,11 @@ def export_overworld_area(
         label_text = str(known.get("name") or display)
         if label_text.startswith("person:"):
             label_text = "Villager"
+        role = str(person.get("role") or "villager").replace("_", " ").title()
+        if not known.get("name"):
+            standing = role if role and role != "Villager" else "Villager"
+        else:
+            standing = label_text
         stand = [px, py + 1]
         entities.append(
             {
@@ -142,7 +155,13 @@ def export_overworld_area(
                 "semantic": {
                     "knowledge_key": pid,
                     "interaction": "npc",
-                    "labels": [{"level": 0, "text": label_text}],
+                    "dismiss_on_move": True,
+                    "labels": [
+                        {"level": 0, "text": standing if not known.get("name") else label_text},
+                        {"level": 1, "text": label_text},
+                    ],
+                    "observe_far": f"Someone stands here — a {standing.lower()}.",
+                    "observe_near": f"You can speak with this {standing.lower()}.",
                 },
             }
         )
@@ -272,38 +291,72 @@ def export_overworld_area(
             }
         )
 
-    # Exits.
+    # Exits — real topology Travel destinations when present.
     for exit_rec in view.get("exits") or []:
         eg = exit_rec.get("grid") or [0, 0]
-        entities.append(
-            {
-                "kind": "exit",
-                "id": str(exit_rec.get("id") or "exit"),
-                "pos": [int(eg[0]), int(eg[1])],
-                "to_area": str(exit_rec.get("to") or "overworld"),
-                "bridge_entity": True,
+        direction = str(exit_rec.get("direction") or "north")
+        to_node = str(exit_rec.get("to_node") or exit_rec.get("to") or "")
+        interactive = bool(exit_rec.get("interactive", to_node.startswith("node:")))
+        label = str(exit_rec.get("label") or f"{direction.title()} path")
+        dest_label = str(exit_rec.get("dest_label") or "")
+        if dest_label and dest_label not in {"Wilderness", "Settlement", ""}:
+            known_label = f"Path to {dest_label}"
+        elif dest_label == "Settlement":
+            known_label = "Path to the settlement"
+        else:
+            known_label = label
+        far = f"The path leads {direction} out of this place."
+        if dest_label:
+            far = f"The path leads {direction} toward {dest_label.lower()}."
+        entity = {
+            "kind": "exit",
+            "id": str(exit_rec.get("id") or f"exit.{direction}"),
+            "pos": [int(eg[0]), int(eg[1])],
+            "to_area": to_node if interactive else "",
+            "to_node": to_node if interactive else "",
+            "from_node": str(exit_rec.get("from_node") or node_id),
+            "direction": direction,
+            "travel_text": far,
+            "bridge_entity": interactive,
+            "bridge_travel": interactive,
+            "text": known_label,
+        }
+        if interactive:
+            entity["semantic"] = {
+                "knowledge_key": str(exit_rec.get("id") or f"exit.{direction}"),
+                "interaction": "travel",
+                "dismiss_on_move": True,
+                "labels": [{"level": 0, "text": known_label}],
+                "observe_far": far,
+                "observe_near": "Travel along this path to leave for a neighbouring place.",
             }
-        )
+        entities.append(entity)
 
     player = state.player or {}
     ppos = player.get("position") or [cx, cy + 6]
+    node_rec = ((state.board or {}).get("nodes") or {}).get(node_id) or {}
+    area_name = str(node_rec.get("label") or fx.get("name") or "FX Village")
+    if node_id == str(fx.get("node_id") or ""):
+        area_name = "FX Village"
     row_strings = ["".join(row) for row in rows]
     return {
-        "id": "area.fx_village",
-        "name": "FX Village",
-        "theme": "grass",
+        "id": str(node_rec.get("area_id") or "area.fx_village"),
+        "name": area_name,
+        "theme": "grass" if area_name != "Wilderness" else "path",
         "rows": row_strings,
         "entities": entities,
         "player_start": [int(ppos[0]), int(ppos[1])],
         "profile_id": "FX-VILLAGE",
         "quest_id": str(fx.get("quest_id") or ""),
         "bridge_mode": True,
+        "node_id": node_id,
         "fx_village": {
             "mara_id": fx.get("mara_id"),
             "factory_id": fx.get("factory_id"),
             "cause_id": fx.get("cause_id"),
             "quest_id": fx.get("quest_id"),
             "seed": fx.get("seed"),
+            "node_id": fx.get("node_id"),
         },
         "width": width,
         "height": height,

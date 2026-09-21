@@ -90,6 +90,7 @@ class LocalProjectionService:
         if isinstance(existing, dict) and existing.get("schema_version") == LAYOUT_SCHEMA_VERSION:
             self._ensure_capacity(existing, manifest or self._default_manifest(node_id))
             self._apply_manifest_bindings(existing, manifest)
+            self._bind_topology_exits(existing, node_id)
             store[node_id] = existing
             return dict(existing)
 
@@ -122,6 +123,7 @@ class LocalProjectionService:
         }
         self._ensure_capacity(record, manifest or self._default_manifest(node_id))
         self._apply_manifest_bindings(record, manifest)
+        self._bind_topology_exits(record, node_id)
         store[node_id] = record
         return dict(record)
 
@@ -255,6 +257,43 @@ class LocalProjectionService:
         }
         reached_cells = _bfs_reachable(width, height, blocked, (int(centre[0]), int(centre[1])), set(goals))
         return [goals[cell] for cell in sorted(reached_cells)]
+
+    def _bind_topology_exits(self, record: dict[str, Any], node_id: str) -> None:
+        """Replace placeholder overworld exits with real adjacent Travel destinations."""
+        node = (self.state.board.get("nodes") or {}).get(node_id) or {}
+        exits_map = node.get("exits") or {}
+        if not isinstance(exits_map, dict) or not exits_map:
+            return
+        width = int(record.get("width") or BASE_SIZE)
+        height = int(record.get("height") or BASE_SIZE)
+        grids = {
+            "north": [width // 2, 1],
+            "south": [width // 2, height - 2],
+            "east": [width - 2, height // 2],
+            "west": [1, height // 2],
+        }
+        bound: list[dict[str, Any]] = []
+        for to_node, link in exits_map.items():
+            direction = str((link or {}).get("direction") or "north")
+            if direction not in grids:
+                direction = "north"
+            label = str((link or {}).get("label") or f"{direction.title()} path")
+            dest_rec = (self.state.board.get("nodes") or {}).get(str(to_node)) or {}
+            dest_label = str(dest_rec.get("label") or "the path")
+            bound.append(
+                {
+                    "id": f"exit.{direction}",
+                    "grid": list(grids[direction]),
+                    "direction": direction,
+                    "to": str(to_node),
+                    "to_node": str(to_node),
+                    "from_node": str(node_id),
+                    "label": label,
+                    "dest_label": dest_label,
+                    "interactive": True,
+                }
+            )
+        record["exits"] = bound
 
     def _apply_manifest_bindings(self, record: dict[str, Any], manifest: dict[str, Any] | None) -> None:
         if not manifest:

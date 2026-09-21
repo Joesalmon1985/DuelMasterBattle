@@ -28,6 +28,22 @@ UNIT_LABELS = {
     "unit.ancient.heavy": "Heavy",
 }
 
+PUBLIC_ROLE_BY_SPRITE = {
+    "woodcutter": "Woodcutter",
+    "miner": "Miner",
+    "farmer": "Farmer",
+    "shepherd": "Shepherd",
+    "worker": "Worker",
+    "villager_a": "Villager",
+    "villager_b": "Villager",
+}
+
+PUBLIC_ROLE_BY_JOB = {
+    "job:carrier": "Carrier",
+    "job:attendant": "Works attendant",
+    "job.factory_worker": "Factory worker",
+}
+
 
 def _as_float(value: Any) -> float:
     return float(fraction(value))
@@ -223,6 +239,7 @@ class IndustryProjection:
                         "job_key": job_key,
                         "job_id": job.get("job_id"),
                         "role": "carrier",
+                        "public_role": self.public_role_for(person, job),
                         "node_id": person.get("node_id"),
                         "workplace_id": job.get("workplace_id"),
                         "connection_id": connection_id,
@@ -243,6 +260,7 @@ class IndustryProjection:
                         "game_ms": int(self.world.clock.get("game_ms", 0)),
                     }
                 )
+                result[-1].update(self.worker_observation(result[-1]))
                 continue
             # Processor attendant / other jobs: stationary presentation only.
             workplace_id = str(job.get("workplace_id", ""))
@@ -259,6 +277,7 @@ class IndustryProjection:
                     "job_key": job_key,
                     "job_id": job.get("job_id"),
                     "role": "attendant",
+                    "public_role": self.public_role_for(person, job),
                     "node_id": person.get("node_id"),
                     "workplace_id": workplace_id,
                     "cue": activity,
@@ -273,6 +292,7 @@ class IndustryProjection:
                     "rate_per_sec": 0.0,
                 }
             )
+            result[-1].update(self.worker_observation(result[-1]))
         return result
 
     def factory_readout(self) -> list[dict[str, Any]]:
@@ -319,7 +339,152 @@ class IndustryProjection:
             "outgoing": [row for row in related if row["from_id"] == building_id],
             "bottleneck": bottleneck or "none",
             "plain": self._plain_focus(building_id, building, related, bottleneck),
+            "player": self.player_building_observation(building_id),
         }
+
+    def player_building_observation(self, building_id: str) -> dict[str, str]:
+        """Filtered human-readable building evidence for Overworld Observe/Inspect."""
+        building_id = str(building_id)
+        building = self.world.buildings.get(building_id) or {}
+        label = str(building.get("label") or "Building")
+        if label.startswith("building:"):
+            label = str(building.get("slot_kind") or "Building").replace("_", " ").title()
+        slot = str(building.get("slot_kind") or "")
+        related = [
+            row
+            for row in self.connections()
+            if row["from_id"] == building_id or row["to_id"] == building_id
+        ]
+        active = [row for row in related if float(row.get("throughput_per_sec") or 0) > 0]
+        waiting = [row for row in related if float(row.get("throughput_per_sec") or 0) <= 0]
+        rates, _reasons = self.latest_rates_and_reasons()
+        rate = float(fraction(rates.get(building_id) or 0))
+        quiet = bool(building.get("shortage")) or (slot == "factory" and rate <= 0)
+
+        far, near = self._player_building_lines(
+            slot=slot,
+            label=label,
+            building=building,
+            active=active,
+            waiting=waiting,
+            quiet=quiet,
+        )
+        return {
+            "label": label,
+            "observe_far": far,
+            "observe_near": near,
+            "inspect": near,
+        }
+
+    def _player_building_lines(
+        self,
+        *,
+        slot: str,
+        label: str,
+        building: dict[str, Any],
+        active: list[dict[str, Any]],
+        waiting: list[dict[str, Any]],
+        quiet: bool,
+    ) -> tuple[str, str]:
+        terrain = str(building.get("terrain") or "")
+        if slot == "primary":
+            if terrain == "woodland":
+                far = "People are cutting and bundling timber here."
+                near = (
+                    "The cutting site is staffed, but no loads are leaving."
+                    if waiting and not active
+                    else "Timber is being carried toward the works."
+                )
+            elif terrain == "ore_mountains":
+                far = "An ore-working path climbs toward the ridge."
+                near = (
+                    "The route toward the workings is deserted. Something is wrong further up."
+                    if waiting and not active
+                    else "Ore is being carried down from the ridge."
+                )
+            elif terrain == "clay_mountains":
+                far = "Clay is being dug and stacked for the works."
+                near = (
+                    "Clay workers wait with no loads leaving."
+                    if waiting and not active
+                    else "Clay is carried toward the works."
+                )
+            else:
+                far = f"A resource site for the settlement."
+                near = "Workers gather materials here." if active else "The site is quiet."
+            return far, near
+        if slot == "processor":
+            if quiet or (waiting and not active):
+                return (
+                    "The works stand ready, but little is moving.",
+                    "Workers wait for materials. No loads leave for the factory.",
+                )
+            return (
+                "Smoke and hammering come from the works.",
+                "Materials arrive here. Workers carry processed goods toward the factory.",
+            )
+        if slot == "factory":
+            if quiet:
+                return (
+                    "The yard is quiet. Workers are waiting and no new units are being assembled.",
+                    "The factory waits for materials. Assembly has stopped.",
+                )
+            return (
+                "The yard is active. Materials arrive and assembly continues.",
+                "Processed goods arrive here and new units are being assembled.",
+            )
+        if slot == "warehouse":
+            return (
+                "Carts and workers use this storehouse.",
+                "This is the settlement warehouse. Supplies for the settlement pass through here.",
+            )
+        if slot == "centre":
+            return (
+                "The settlement centre stands at the heart of this place.",
+                "This is the faction centre for the settlement — civic business is done here.",
+            )
+        return f"{label} stands here.", f"You inspect {label}."
+
+    def public_role_for(self, person: dict[str, Any], job: dict[str, Any] | None = None) -> str:
+        """Occupational standing label — not personal identity."""
+        job = job or {}
+        job_id = str(job.get("job_id") or person.get("job_id") or "")
+        if job_id in PUBLIC_ROLE_BY_JOB:
+            role = PUBLIC_ROLE_BY_JOB[job_id]
+            if job_id == "job:carrier":
+                sprite = str(person.get("sprite") or person.get("visual_profile") or "")
+                if sprite in PUBLIC_ROLE_BY_SPRITE and sprite != "worker":
+                    return PUBLIC_ROLE_BY_SPRITE[sprite]
+            return role
+        sprite = str(person.get("sprite") or person.get("visual_profile") or "")
+        if sprite in PUBLIC_ROLE_BY_SPRITE:
+            return PUBLIC_ROLE_BY_SPRITE[sprite]
+        role = str(person.get("role") or "")
+        if role in {"carrier", "attendant", "worker"}:
+            return role.replace("_", " ").title()
+        return "Villager"
+
+    def worker_observation(self, row: dict[str, Any]) -> dict[str, str]:
+        """Player-safe observe lines for an industry worker projection row."""
+        role = str(row.get("public_role") or "Worker")
+        cue = str(row.get("cue") or row.get("activity") or "idle")
+        resource = str(row.get("resource_label") or "goods")
+        if cue in {"waiting", "idle", "on_strike"}:
+            far = f"A {role.lower()} waits near a quiet worksite."
+            near = f"A {role.lower()} is waiting. Nothing useful is moving on their route."
+        elif cue == "carrying":
+            far = f"A {role.lower()} carries {resource.lower()} along the path."
+            near = f"A {role.lower()} is taking {resource.lower()} toward the next stop."
+        elif cue == "returning":
+            far = f"A {role.lower()} walks back for another load."
+            near = f"A {role.lower()} returns empty-handed for the next trip."
+        elif cue == "working":
+            far = f"A {role.lower()} works at their post."
+            near = f"A {role.lower()} keeps the works running."
+        else:
+            far = f"A {role.lower()} is here."
+            near = f"You can speak with this {role.lower()}."
+        return {"observe_far": far, "observe_near": near, "public_role": role}
 
     def _plain_focus(
         self,

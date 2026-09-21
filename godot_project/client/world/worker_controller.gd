@@ -4,16 +4,19 @@ extends Node2D
 ## Persistent carriers keyed by Python person IDs.
 ## Each carrier walks one directed connection: loaded outbound, empty return.
 ## Obstruction is presentation-only — never sends production commands.
-## Uses ActorVisual + existing character sprites (never orange placeholders when assets exist).
+## Uses ActorVisual + existing character sprites at Overworld TILE_SCALE.
 
-signal layout_diagnostic(person_id: String, message: String)
+signal person_spawned(person_id: String, actor: Node2D, row: Dictionary)
+signal person_updated(person_id: String, actor: Node2D, row: Dictionary)
+signal person_removed(person_id: String)
 
 const ActorVisual = preload("res://client/world/actor_visual.gd")
 const PIXEL_ROOT := "res://assets/pixel/"
-const TILE := 64.0
+const TILE := 16
+const TILE_SCALE := 4
+const TPX := TILE * TILE_SCALE
 const WALK_SPEED := 78.0
 const STOP_RADIUS := 30.0
-const TILE_SCALE := 2
 
 var _workers: Dictionary = {}  # person_id -> Node2D
 var _phase: Dictionary = {}  # person_id -> float 0..2 (0-1 outbound, 1-2 return)
@@ -47,12 +50,16 @@ func apply_projection(rows: Array) -> void:
 			worker = _spawn_worker(person_id, row)
 			_workers[person_id] = worker
 			_phase[person_id] = float(hash(person_id) % 100) / 100.0
-		_sync_meta(worker, row)
+			person_spawned.emit(person_id, worker, row)
+		else:
+			_sync_meta(worker, row)
+			person_updated.emit(person_id, worker, row)
 	for person_id in _workers.keys():
 		if not present.has(person_id):
 			_workers[person_id].queue_free()
 			_workers.erase(person_id)
 			_phase.erase(person_id)
+			person_removed.emit(str(person_id))
 
 
 func tick(delta: float) -> void:
@@ -115,42 +122,42 @@ func report_visual_route_failure(person_id: String, detail: String) -> void:
 	var worker: Node2D = _workers.get(person_id)
 	if worker != null:
 		_set_activity(worker, "waiting", null, false)
-	layout_diagnostic.emit(person_id, "worker_layout_route_failed:%s" % detail)
+	# Diagnostic only — never shown as player UI.
 
 
 func _spawn_worker(person_id: String, row: Dictionary) -> Node2D:
 	var worker := Node2D.new()
 	worker.name = "Person_%s" % person_id.validate_node_name()
 	worker.set_meta("person_id", person_id)
+	worker.z_index = 5
 	add_child(worker)
 	var spr := Sprite2D.new()
 	spr.name = "Sprite"
 	spr.centered = false
 	spr.scale = Vector2(TILE_SCALE, TILE_SCALE)
 	worker.add_child(spr)
-	var display := str(row.get("name", "Worker"))
-	if display.begins_with("person:") or display.begins_with("Carrier"):
-		display = "Worker"
+	var display := _standing_label(row)
 	var sprite_key := str(row.get("sprite", row.get("visual_profile", "worker")))
 	if sprite_key.is_empty():
 		sprite_key = "worker"
 	ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, "down", 0, display)
-	# Soft activity tag — player-facing, not connection IDs.
-	var tag := Label.new()
-	tag.name = "Tag"
-	tag.position = Vector2(-20, -28)
-	tag.add_theme_font_size_override("font_size", 10)
-	tag.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-	tag.add_theme_constant_override("outline_size", 2)
-	tag.visible = false
-	worker.add_child(tag)
 	var waypoints: Array = row.get("waypoints", [])
 	if not waypoints.is_empty():
 		worker.position = _grid_to_world(waypoints[0].get("grid", [4, 5]))
 	else:
-		worker.position = Vector2(4.0 * TILE + 32.0, 5.0 * TILE + 32.0)
+		worker.position = Vector2(4, 5) * TPX
 	_sync_meta(worker, row)
 	return worker
+
+
+func _standing_label(row: Dictionary) -> String:
+	var role := str(row.get("public_role", ""))
+	if role != "" and not role.begins_with("person:"):
+		return role
+	var display := str(row.get("name", "Worker"))
+	if display.begins_with("person:") or display.begins_with("Carrier"):
+		return "Worker"
+	return display
 
 
 func _hold_stationary(worker: Node2D, row: Dictionary) -> void:
@@ -165,14 +172,13 @@ func _hold_stationary(worker: Node2D, row: Dictionary) -> void:
 func _sync_meta(worker: Node2D, row: Dictionary) -> void:
 	worker.set_meta("row", row)
 	worker.set_meta("industry_cue", str(row.get("cue", "idle")))
+	worker.set_meta("public_role", _standing_label(row))
 	var spr: Sprite2D = worker.get_node_or_null("Sprite")
 	if spr != null:
 		var sprite_key := str(row.get("sprite", row.get("visual_profile", "worker")))
 		if sprite_key.is_empty():
 			sprite_key = "worker"
-		var display := str(row.get("name", "Worker"))
-		if display.begins_with("person:") or ":" in display and display.begins_with("Carrier"):
-			display = "Worker"
+		var display := _standing_label(row)
 		var facing := str(spr.get_meta("facing", "down"))
 		ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, facing, 0, display)
 
@@ -193,12 +199,8 @@ func _face_sprite(worker: Node2D, delta: Vector2) -> void:
 	ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, facing, 0, label)
 
 
-func _set_activity(worker: Node2D, activity: String, carry_resource, loaded: bool) -> void:
+func _set_activity(worker: Node2D, activity: String, _carry_resource, _loaded: bool) -> void:
 	worker.set_meta("industry_cue", activity)
-	# Keep tags off by default — semantic labels / debug overlay own text.
-	var tag: Label = worker.get_node_or_null("Tag")
-	if tag:
-		tag.visible = false
 
 
 func _grid_to_world(grid) -> Vector2:
@@ -210,7 +212,8 @@ func _grid_to_world(grid) -> Vector2:
 	elif typeof(grid) == TYPE_PACKED_INT32_ARRAY or typeof(grid) == TYPE_PACKED_FLOAT32_ARRAY:
 		gx = float(grid[0])
 		gy = float(grid[1])
-	return Vector2(gx * TILE + TILE * 0.5, gy * TILE + TILE * 0.5)
+	# Match Overworld NPC anchoring (top-left of cell at TILE_SCALE).
+	return Vector2(gx, gy) * TPX
 
 
 func _path_obstructed(from_pt: Vector2, to_pt: Vector2, worker_pos: Vector2) -> bool:

@@ -1109,6 +1109,7 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g05_cumulative_python",
                 "tests/scenarios/test_village_quest.py",
                 "tests/scenarios/test_village_solutions.py",
+                "tests/scenarios/test_village_travel.py",
                 "tests/sim/test_t088_inventory_use.py",
                 "tests/sim/test_t089_puzzles.py",
                 "tests/sim/test_t090_sluice.py",

@@ -15,7 +15,7 @@ const G05_SAVE := "g05_village"
 const INDUSTRY_FIELDS := [
 	"overworld_area", "fx_village", "fx_industry", "industry", "buildings",
 	"industry_workers", "industry_connections", "industry_factories",
-	"hazards", "items", "quests", "units", "carts",
+	"hazards", "items", "quests", "units", "carts", "player", "clock",
 ]
 
 var _launcher
@@ -121,6 +121,10 @@ func _boot() -> void:
 		_overworld._actors_root.add_child(_workers)
 	else:
 		_overworld.add_child(_workers)
+	if _workers.has_signal("person_spawned"):
+		_workers.person_spawned.connect(_on_worker_spawned)
+		_workers.person_updated.connect(_on_worker_updated)
+		_workers.person_removed.connect(_on_worker_removed)
 	_apply_workers(view)
 	_status.text = "G05 FX-VILLAGE — live industry + Game Time"
 	_boot_done = true
@@ -223,7 +227,42 @@ func _apply_workers(view: Dictionary) -> void:
 	if _workers == null:
 		return
 	var rows: Array = view.get("industry_workers", [])
+	# Only present workers on the player's current node.
+	var player: Dictionary = _coerce_dict(view.get("player"))
+	var node_id := str(player.get("node_id", _fx_meta.get("node_id", "")))
+	if node_id != "":
+		var filtered: Array = []
+		for row_v in rows:
+			if typeof(row_v) != TYPE_DICTIONARY:
+				continue
+			if str(row_v.get("node_id", node_id)) == node_id:
+				filtered.append(row_v)
+		rows = filtered
 	_workers.apply_projection(rows)
+
+
+func _on_worker_spawned(person_id: String, actor: Node2D, row: Dictionary) -> void:
+	if _overworld != null and _overworld.has_method("register_dynamic_person"):
+		_overworld.register_dynamic_person(person_id, actor, row)
+
+
+func _on_worker_updated(person_id: String, actor: Node2D, row: Dictionary) -> void:
+	if _overworld == null:
+		return
+	if _overworld.has_method("update_dynamic_person"):
+		# After area rebuild, dynamic entities are wiped — re-register if needed.
+		var existing: Dictionary = {}
+		if _overworld.has_method("_entity_by_id"):
+			existing = _overworld._entity_by_id(person_id)
+		if existing.is_empty() and _overworld.has_method("register_dynamic_person"):
+			_overworld.register_dynamic_person(person_id, actor, row)
+		else:
+			_overworld.update_dynamic_person(person_id, row)
+
+
+func _on_worker_removed(person_id: String) -> void:
+	if _overworld != null and _overworld.has_method("unregister_dynamic_person"):
+		_overworld.unregister_dynamic_person(person_id)
 
 
 func _sync_pose(force: bool = false) -> void:
@@ -233,7 +272,9 @@ func _sync_pose(force: bool = false) -> void:
 		return
 	var pos: Vector2i = _overworld._john_pos if "_john_pos" in _overworld else Vector2i.ZERO
 	var facing := str(_overworld._john_facing) if "_john_facing" in _overworld else "down"
-	var node_id := str(_fx_meta.get("node_id", "node:village"))
+	var player: Dictionary = _coerce_dict(_last_industry.get("player"))
+	var node_id := str(player.get("node_id", _fx_meta.get("node_id", "node:village")))
+	var area_id := str(player.get("area_id", VillageTestRunner.get_area().get("id", "area.village")))
 	_client.enqueue_command(
 		"pose-%s" % Time.get_ticks_msec(),
 		"SyncPose",
@@ -241,7 +282,7 @@ func _sync_pose(force: bool = false) -> void:
 			"position": [float(pos.x), float(pos.y)],
 			"facing": facing,
 			"node_id": node_id,
-			"area_id": str(VillageTestRunner.get_area().get("id", "area.village")),
+			"area_id": area_id,
 		},
 		{"replaceable": true, "coalesce_key": "SyncPose"}
 	)
@@ -500,6 +541,35 @@ func load_slot(slot: String = G05_SAVE) -> Dictionary:
 	if str(reply.get("status", "")) == "ACCEPTED":
 		reproject_from_python()
 	return reply
+
+
+func travel_to_node(from_node: String, to_node: String) -> bool:
+	## Authoritative G01 Travel: SyncPose, Travel once, reproject destination.
+	if from_node == "" or to_node == "":
+		return false
+	_sync_pose(true)
+	# Flush pose before Travel so from_node matches Python player pose.
+	var turn_before := -1
+	var before: Dictionary = _bridge_view("player", ["clock", "player", "fx_village"])
+	turn_before = int(before.get("clock", {}).get("turn", -1))
+	var reply: Dictionary = _cmd("Travel", {"from_node": from_node, "to_node": to_node})
+	if str(reply.get("status", "")) != "ACCEPTED":
+		_status.text = "Travel rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
+		_status.modulate.a = 1.0
+		return false
+	reproject_from_python()
+	var after: Dictionary = _bridge_view("player", ["clock", "player"])
+	var turn_after := int(after.get("clock", {}).get("turn", turn_before))
+	var player: Dictionary = _coerce_dict(after.get("player"))
+	if str(player.get("node_id", "")) != to_node:
+		_status.text = "Travel failed to land on %s" % to_node
+		return false
+	if turn_before >= 0 and turn_after != turn_before + 1:
+		_status.text = "Travel turn mismatch %s→%s" % [turn_before, turn_after]
+		# Still accept projection — report but do not soft-fail play.
+	_status.text = "Arrived at %s (turn %s)" % [to_node, turn_after]
+	_status.modulate.a = 1.0
+	return true
 
 
 func fx_meta() -> Dictionary:

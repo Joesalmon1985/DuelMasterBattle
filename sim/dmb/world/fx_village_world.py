@@ -529,16 +529,22 @@ def load_fx_village(seed: int = 507) -> WorldSim:
     }
     # Visit after player record exists so Challenge eligibility is retained.
     VisitService(state).arrive(node_id, "travel", int(state.clock.get("turn") or 0))
-    state.board.setdefault("nodes", {})[node_id] = {
-        "id": node_id,
-        "label": "Settlement",
-        "area_id": "area.village",
-        "token": int(plan.hex_token.get(wood_hex) or meta_file.get("token") or 6),
-        "terrains": sorted(terrain_hexes.keys()),
-        "exits": {},
-        "settlement_id": settlement_id,
-        "faction_id": faction_id,
-    }
+    # Wire real topology exits before stamping settlement metadata.
+    wire_topology_travel(state, plan.board, home_node_id=node_id)
+    home = state.board.setdefault("nodes", {}).setdefault(node_id, {"id": node_id})
+    home.update(
+        {
+            "id": node_id,
+            "label": "Settlement",
+            "area_id": "area.village",
+            "token": int(plan.hex_token.get(wood_hex) or meta_file.get("token") or 6),
+            "terrains": sorted(terrain_hexes.keys()),
+            "settlement_id": settlement_id,
+            "faction_id": faction_id,
+        }
+    )
+    # Preserve exits from wire_topology_travel (do not wipe).
+    home.setdefault("exits", {})
     state.board["era_id"] = "ancient"
     state.board["fx_village"] = {
         **meta_file,
@@ -607,6 +613,113 @@ def load_fx_village(seed: int = 507) -> WorldSim:
 
     _seed_fx_village_sluice(state, node_id)
     return sim
+
+
+_DIR_GRIDS = {
+    "north": lambda w, h: [w // 2, 1],
+    "south": lambda w, h: [w // 2, h - 2],
+    "east": lambda w, h: [w - 2, h // 2],
+    "west": lambda w, h: [1, h // 2],
+}
+_OPPOSITE = {"north": "south", "south": "north", "east": "west", "west": "east"}
+_LEAVE_FACING = {"north": "up", "south": "down", "east": "right", "west": "left"}
+_ARRIVE_FACING = {"north": "down", "south": "up", "east": "left", "west": "right"}
+
+
+def _node_plane(board, node_id: str) -> tuple[float, float]:
+    from sim.dmb.world.board import parse_hex_id
+
+    hexes = board.touching_hexes(node_id)
+    if not hexes:
+        return (0.0, 0.0)
+    qs: list[float] = []
+    rs: list[float] = []
+    for hid in hexes:
+        q, r = parse_hex_id(str(hid))
+        qs.append(float(q))
+        rs.append(float(r))
+    return (sum(qs) / len(qs), sum(rs) / len(rs))
+
+
+def _cardinal_for(dx: float, dy: float) -> str:
+    if abs(dx) >= abs(dy):
+        return "east" if dx >= 0 else "west"
+    return "south" if dy >= 0 else "north"
+
+
+def wire_topology_travel(state, board, *, home_node_id: str, width: int = 48, height: int = 48) -> None:
+    """Ensure every topology node exists with lawful Travel exits to adjacent nodes."""
+    import math
+
+    nodes = state.board.setdefault("nodes", {})
+    settlement_by_node = {
+        str(s.get("node_id")): s
+        for s in state.settlements.values()
+        if not s.get("staging") and s.get("node_id")
+    }
+    for nid in board.nodes:
+        nid = str(nid)
+        rec = nodes.setdefault(nid, {"id": nid})
+        rec["id"] = nid
+        if nid == home_node_id:
+            rec.setdefault("label", "Settlement")
+            rec.setdefault("area_id", "area.village")
+        elif nid in settlement_by_node:
+            rec.setdefault("label", "Settlement")
+            rec.setdefault("area_id", f"area.{nid.replace(':', '_')}")
+            rec["settlement_id"] = settlement_by_node[nid].get("id")
+            rec["faction_id"] = settlement_by_node[nid].get("faction_id")
+        else:
+            rec.setdefault("label", "Wilderness")
+            rec.setdefault("area_id", f"area.{nid.replace(':', '_')}")
+        rec.setdefault("exits", {})
+
+    # Assign unique cardinals per node among neighbours.
+    for nid in board.nodes:
+        nid = str(nid)
+        ox, oy = _node_plane(board, nid)
+        ranked: list[tuple[float, str, str]] = []
+        for other in board.adjacent_nodes(nid):
+            other = str(other)
+            tx, ty = _node_plane(board, other)
+            dx, dy = tx - ox, ty - oy
+            ang = math.atan2(dy, dx)
+            ranked.append((ang, other, _cardinal_for(dx, dy)))
+        ranked.sort(key=lambda row: row[0])
+        used: set[str] = set()
+        assigned: dict[str, str] = {}
+        for _ang, other, preferred in ranked:
+            direction = preferred
+            if direction in used:
+                for cand in ("north", "east", "south", "west"):
+                    if cand not in used:
+                        direction = cand
+                        break
+            used.add(direction)
+            assigned[other] = direction
+
+        exits: dict[str, Any] = {}
+        for other, direction in assigned.items():
+            opp = _OPPOSITE[direction]
+            hold = _DIR_GRIDS[direction](width, height)
+            arrive = _DIR_GRIDS[opp](width, height)
+            other_rec = nodes[other]
+            exits[other] = {
+                "exit_id": f"{nid}.{direction}",
+                "direction": direction,
+                "label": f"{direction.title()} path",
+                "hold_position": [float(hold[0]), float(hold[1])],
+                "hold_facing": _LEAVE_FACING[direction],
+                "arrival": {
+                    "node_id": other,
+                    "area_id": str(other_rec.get("area_id") or f"area.{other.replace(':', '_')}"),
+                    "position": [float(arrive[0]), float(arrive[1])],
+                    "facing": _ARRIVE_FACING[direction],
+                },
+            }
+        nodes[nid]["exits"] = exits
+
+    state.board["nodes"] = nodes
 
 
 def _seed_fx_village_sluice(state, node_id: str) -> None:

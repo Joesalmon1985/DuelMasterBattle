@@ -8,23 +8,8 @@
   "seed": 507,
   "launch": "bash tools/play_g05.sh",
   "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
-  "fix_required_at": "2026-09-20T10:41:00Z",
-  "returned_awaiting_human_at": "2026-09-20T11:02:25Z",
-  "fix_summary": "Integrated-world repair: FX-VILLAGE is BoardBuilder seed 507 settlement node:35 / settlement:3 / faction:2 with living+blocked IndustryService chains, one actor per person_id, ActorVisual sprites, world-integrity cumulative proofs.",
-  "notes": "Do not mark PASS from automation. Do not start T097. Automated checks PASS; awaiting Joe playtest.",
-  "world_slice": {
-    "board_seed": 507,
-    "topology": {
-      "hexes": 19,
-      "nodes": 54,
-      "edges": 72
-    },
-    "node_id": "node:35",
-    "settlement_id": "settlement:3",
-    "faction_id": "faction:2",
-    "demon_hex": "hex:1,1",
-    "shortage_factory_id": "building:26",
-    "working_factory_id": "building:25",
-    "mara_id": "person:10"
-  }
+  "fix_required_at": "2026-09-20T16:04:00Z",
+  "returned_awaiting_human_at": "2026-09-20T16:17:21Z",
+  "fix_summary": "UX interaction repair: WorkerController shares WorldInteractionLabel at TILE_SCALE 4; player-safe building observations; real topology Travel round-trip.",
+  "notes": "Do not mark PASS from automation. Do not start T097."
 }

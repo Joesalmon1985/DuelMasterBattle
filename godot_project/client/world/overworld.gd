@@ -711,6 +711,9 @@ func _arrived() -> void:
 		match e["kind"]:
 			"exit":
 				if Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos and _entity_visible(e):
+					if _VRunner.is_bridge_mode() and bool(e.get("bridge_travel", false)):
+						await _bridge_travel_exit(e)
+						return
 					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")), str(e.get("travel_text", "")))
 					return
 			"trigger":
@@ -1685,7 +1688,27 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 	var lbl = _SemanticLabel.new()
 	lbl.name = "Semantic_%s" % str(e.get("id", ""))
 	_semantic_root.add_child(lbl)
-	lbl.bind(_adv(), e["semantic"], str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
+	var semantic: Dictionary = e.get("semantic", {})
+	if _VRunner.is_bridge_mode():
+		lbl.bind_bridge(semantic, str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
+		var label_text := str(e.get("text", ""))
+		var labels = semantic.get("labels", [])
+		if labels is Array and (labels as Array).size() > 0 and typeof(labels[0]) == TYPE_DICTIONARY:
+			label_text = str(labels[0].get("text", label_text))
+		var view := {
+			"known": false,
+			"name": "",
+			"label": label_text,
+			"description": str(semantic.get("observe_far", label_text)),
+		}
+		var nm := str(e.get("name", ""))
+		if nm != "" and not nm.begins_with("person:") and str(e.get("kind", "")) == "npc":
+			view["known"] = true
+			view["name"] = nm
+			view["label"] = nm
+		lbl.set_bridge_view(view)
+	else:
+		lbl.bind(_adv(), semantic, str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
 	if not lbl.activated.is_connected(_on_semantic_activated):
 		lbl.activated.connect(_on_semantic_activated)
 	if not lbl.interact_requested.is_connected(_on_semantic_interact):
@@ -1699,6 +1722,98 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 	if not lbl.line_done.is_connected(_on_semantic_line_done):
 		lbl.line_done.connect(_on_semantic_line_done)
 	_semantic_labels.append(lbl)
+
+
+## Register a moving industry person as ONE shared Overworld semantic actor.
+func register_dynamic_person(person_id: String, actor: Node2D, row: Dictionary) -> void:
+	if not is_instance_valid(actor) or person_id == "":
+		return
+	unregister_dynamic_person(person_id)
+	var role := str(row.get("public_role", row.get("role", "Worker")))
+	if role == "" or role.begins_with("person:"):
+		role = "Worker"
+	var known := false
+	var display := role
+	# Prefer revealed personal name when knowledge already present on the row.
+	var personal := str(row.get("known_name", ""))
+	if personal != "" and not personal.begins_with("person:"):
+		known = true
+		display = personal
+	var far := str(row.get("observe_far", "A worker is here."))
+	var near := str(row.get("observe_near", far))
+	var semantic := {
+		"knowledge_key": person_id,
+		"interaction": "npc",
+		"dismiss_on_move": true,
+		"labels": [
+			{"level": 0, "text": role},
+			{"level": 1, "text": display},
+		],
+		"observe_far": far,
+		"observe_near": near,
+	}
+	var e := {
+		"kind": "npc",
+		"id": person_id,
+		"pos": [0, 0],
+		"name": display if known else role,
+		"bridge_entity": true,
+		"bridge_talk": true,
+		"dynamic": true,
+		"node": actor,
+		"semantic": semantic,
+	}
+	_entities.append(e)
+	_attach_semantic_label(e, actor)
+	_hide_name_fallback(actor)
+
+
+func update_dynamic_person(person_id: String, row: Dictionary) -> void:
+	var e := _entity_by_id(person_id)
+	if e.is_empty():
+		return
+	var role := str(row.get("public_role", row.get("role", "Worker")))
+	if role == "" or role.begins_with("person:"):
+		role = "Worker"
+	var far := str(row.get("observe_far", e.get("semantic", {}).get("observe_far", "")))
+	var near := str(row.get("observe_near", e.get("semantic", {}).get("observe_near", far)))
+	var semantic: Dictionary = e.get("semantic", {})
+	semantic["observe_far"] = far
+	semantic["observe_near"] = near
+	if semantic.get("labels") is Array and (semantic["labels"] as Array).size() > 0:
+		semantic["labels"][0]["text"] = role
+	e["semantic"] = semantic
+	var lbl = ui_semantic_label(person_id)
+	if lbl != null:
+		if lbl.has_method("update_semantic"):
+			lbl.update_semantic(semantic)
+		if lbl.has_method("set_bridge_view"):
+			lbl.set_bridge_view({
+				"known": false,
+				"name": "",
+				"label": role,
+				"description": far,
+			})
+
+
+func unregister_dynamic_person(person_id: String) -> void:
+	var keep: Array = []
+	for e in _entities:
+		if str(e.get("id", "")) == person_id and bool(e.get("dynamic", false)):
+			continue
+		keep.append(e)
+	_entities = keep
+	var lbl = ui_semantic_label(person_id)
+	if lbl != null and is_instance_valid(lbl):
+		_semantic_labels.erase(lbl)
+		lbl.queue_free()
+
+
+func _entity_by_id(entity_id: String) -> Dictionary:
+	for e in _entities:
+		if str(e.get("id", "")) == entity_id:
+			return e
+	return {}
 
 
 func _dismiss_semantic_on_move() -> void:
@@ -2924,17 +3039,69 @@ func _interact_bridge_entity(e: Dictionary) -> void:
 		_touch.set_enabled(true)
 		_update_prompt()
 		return
+	if bool(e.get("bridge_travel", false)) and str(e.get("to_node", "")) != "":
+		await _bridge_travel_exit(e)
+		return
 	if bool(e.get("bridge_puzzle", false)):
 		await _interact_bridge_puzzle(e)
 		return
 	if bool(e.get("bridge_pickup", false)):
 		await _interact_bridge_pickup(e)
 		return
-	# Factory / building observe — no debug causal facts.
-	var label := str(e.get("text", ""))
-	if label == "":
-		label = "A quiet worksite."
-	await _dialogue.say_async("", label)
+	# Buildings / generic bridge entities: player-safe observation, then Inspect nearby.
+	var semantic: Dictionary = e.get("semantic", {})
+	var far := str(semantic.get("observe_far", ""))
+	var near := str(semantic.get("observe_near", ""))
+	if far == "":
+		far = str(e.get("text", "Nothing remarkable."))
+	if near == "":
+		near = far
+	_input_locked = true
+	_touch.set_enabled(false)
+	if _semantic_in_range(e):
+		var options: Array = ["Inspect"]
+		if str(semantic.get("interaction", "")) == "building":
+			options.append("Observe")
+		options.append("Walk away")
+		var picked: String = await _dialogue.choose_async(str(e.get("text", "Inspect")), options)
+		if picked == "Inspect" or picked == "Observe":
+			await _dialogue.say_async("", near if picked == "Inspect" else far)
+		# Destroy remains available via magic route — do not remove G04 capability here.
+	else:
+		await _dialogue.say_async("", far)
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _bridge_travel_exit(e: Dictionary) -> void:
+	var host = _bridge_host()
+	var to_node := str(e.get("to_node", ""))
+	var from_node := str(e.get("from_node", ""))
+	if to_node == "" or host == null or not host.has_method("travel_to_node"):
+		await _dialogue.say_async("", str(e.get("travel_text", "The path goes nowhere useful.")))
+		return
+	_input_locked = true
+	_touch.set_enabled(false)
+	var travel_text := str(e.get("travel_text", ""))
+	if travel_text != "":
+		await _dialogue.say_async("", travel_text)
+	var choice: String = await _dialogue.choose_async("Leave this place?", ["Travel", "Stay"])
+	if choice != "Travel":
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	var tw := create_tween()
+	tw.tween_property(_fader, "modulate:a", 1.0, 0.25)
+	await tw.finished
+	var ok: bool = host.travel_to_node(from_node, to_node)
+	_fade_in()
+	if not ok:
+		await _dialogue.say_async("", "You cannot travel that way right now.")
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
 
 
 func _interact_bridge_puzzle(e: Dictionary) -> void:
