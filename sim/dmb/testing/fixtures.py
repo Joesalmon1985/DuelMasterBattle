@@ -1420,6 +1420,9 @@ def _load_fx_world_layers(seed: int = 507) -> WorldSim:
         inv["node_id"] = battle_node
         invaders.append(inv)
 
+    # Prefer fresh formations for staged defenders/invaders; clear auto-hire links first.
+    for u in defenders + invaders:
+        u.pop("formation_id", None)
     form_def = mil.group([u["id"] for u in defenders], faction_id=faction_id, node_id=battle_node)
     form_inv = mil.group([u["id"] for u in invaders], faction_id=enemy_faction, node_id=battle_node)
     participants = [u["id"] for u in defenders + invaders]
@@ -1440,17 +1443,35 @@ def _load_fx_world_layers(seed: int = 507) -> WorldSim:
     form_def["engagement_id"] = battle_id
     form_inv["engagement_id"] = battle_id
 
-    # --- Catastrophe: verify cube:2 remains on hex:0,1 touching start ---
+    # --- Catastrophe: staged demo needs cube:2 active on hex:0,1 (cleared for industry bootstrap) ---
     cubes = (state.hazards.get("catastrophe") or {}).get("cubes") or {}
-    board_cubes = state.board.get("hazard_cubes") or {}
+    board_cubes = state.board.setdefault("hazard_cubes", {})
     cube2 = cubes.get("cube:2") or board_cubes.get("cube:2")
-    if cube2 is None or str(cube2.get("hex_id")) != "hex:0,1" or not cube2.get("active", True):
+    if cube2 is None:
+        raise ValueError("FX-WORLD-LAYERS expected cube:2 record")
+    cube2["active"] = True
+    cube2["hex_id"] = "hex:0,1"
+    board_cubes["cube:2"] = dict(cube2)
+    hazard_hexes = set(str(h) for h in (state.board.get("hazard_hexes") or []))
+    hazard_hexes.add("hex:0,1")
+    state.board["hazard_hexes"] = sorted(hazard_hexes)
+    if str(cube2.get("hex_id")) != "hex:0,1" or not cube2.get("active", True):
         raise ValueError("FX-WORLD-LAYERS expected active cube:2 on hex:0,1 touching node:35")
 
+    # Staged layers demo is not the narrative boulder quest.
     g05["mode"] = "world_layers"
     g05["quest_enabled"] = False
+    g05.pop("boulder_quest", None)
     fx_village = state.board.setdefault("fx_village", {})
     fx_village["quest_enabled"] = False
+    fx_village["mode"] = "world_layers"
+    # Keep boulder object for world continuity but do not gate Travel in this demo.
+    mechs = state.board.get("mechanisms") or {}
+    if "boulder:1" in mechs:
+        mechs["boulder:1"]["status"] = "moved"
+        mechs["boulder:1"]["position"] = list(mechs["boulder:1"].get("moved_position") or [27, 40])
+    if "quest.blocked_exit_boulder" in state.quests:
+        state.quests["quest.blocked_exit_boulder"]["status"] = "resolved_by_world"
     state.board["fx_world_layers"] = {
         "seed": seed,
         "start_node_id": start,

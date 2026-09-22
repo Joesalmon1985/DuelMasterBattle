@@ -390,7 +390,12 @@ class IndustryProjection:
                 }
             )
             result[-1].update(self.worker_observation(result[-1]))
-        return result
+        from sim.dmb.world.boulder_quest import worker_row_override
+
+        overridden: list[dict[str, Any]] = []
+        for row in result:
+            overridden.append(worker_row_override(self.world, str(row.get("person_id") or ""), row))
+        return overridden
 
     def factory_readout(self) -> list[dict[str, Any]]:
         industry = self.world.industry
@@ -583,6 +588,13 @@ class IndustryProjection:
         elif cue == "working":
             far = f"A {role.lower()} works at their post."
             near = f"A {role.lower()} keeps the works running."
+        elif cue in {"moving_boulder", "pushing_boulder"} or str(row.get("activity") or "") == "Moving boulder":
+            far = f"A {role.lower()} is heading toward the boulder."
+            near = (
+                f"A {role.lower()} braces against the boulder."
+                if cue == "pushing_boulder"
+                else f"A {role.lower()} is moving the boulder."
+            )
         else:
             far = f"A {role.lower()} is here."
             near = f"You can speak with this {role.lower()}."

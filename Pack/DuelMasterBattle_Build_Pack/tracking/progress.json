@@ -224,11 +224,17 @@
       "layers_launch": "bash tools/play_world_layers.sh",
       "long_run_launch": "bash tools/play_long_world.sh",
       "long_run_report": "tracking/gates/G05/long_run_report.md",
-      "objective": "living_world_and_long_run_visual",
-      "foundation_commit": "a9323e7ced8a842cc201ec56ffbc24a255513e78",
-      "quest_active": false,
-      "awaiting_human_at": "2026-09-21T23:50:00Z",
-      "notes": "Living workers + dense nature + FX-LONG-WORLD natural progression (battle at turn 93). No quest. No T097. Design: no new settlements in 200 turns; local single-terrain craft fallback."
+      "objective": "full_world_plus_simple_boulder_quest",
+      "quest_active": true,
+      "quest_id": "quest.blocked_exit_boulder",
+      "boulder_id": "boulder:1",
+      "blocked_exit": "node:35.south",
+      "blocked_neighbour": "node:29",
+      "worker_person_id": "person:16",
+      "worker_workplace_id": "building:25",
+      "superseded_scenario": "shortage_demon_sluice",
+      "awaiting_human_at": "2026-09-22T10:00:00Z",
+      "notes": "G05 narrative return: persistent boulder quest on south exit. Full-world living presentation retained. Shortage/demon/sluice superseded. No T097."
     },
     "G06": {
       "status": "NOT_READY",

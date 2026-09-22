@@ -385,6 +385,12 @@ class TurnRunner:
         link = _exit_link(source, to_node)
         if link is None:
             raise TypeValidationError("missing exit link")
+        # Persistent boulder may block local passage without altering adjacency.
+        from sim.dmb.world.boulder_quest import travel_block_reason
+
+        blocked = travel_block_reason(self.state, from_node, to_node)
+        if blocked:
+            raise TypeValidationError(blocked)
         arrival = dict(link.get("arrival") or {})
         if str(arrival.get("node_id", to_node)) != to_node:
             raise TypeValidationError("arrival node mismatch")

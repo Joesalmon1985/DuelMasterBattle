@@ -456,6 +456,12 @@ def export_overworld_area(
     # Natural props + sector labels (presentation only; animals are non-interactive).
     _emit_natural_entities(entities, view.get("geography") or layout.get("geography") or [], width, height)
 
+    from sim.dmb.world.boulder_quest import export_entity as export_boulder
+
+    boulder_ent = export_boulder(state, node_id)
+    if boulder_ent:
+        entities.append(boulder_ent)
+
     for exit_rec in view.get("exits") or []:
         eg = exit_rec.get("grid") or [0, 0]
         direction = str(exit_rec.get("direction") or "north")
@@ -516,7 +522,8 @@ def export_overworld_area(
             "seed": (state.board.get("g05") or {}).get("seed"),
             "node_id": node_id,
             "mode": str((state.board.get("g05") or {}).get("mode") or "full_prehistoric_world"),
-            "quest_enabled": False,
+            "quest_enabled": bool((state.board.get("g05") or {}).get("quest_enabled")),
+            "boulder_quest": dict(((state.board.get("g05") or {}).get("boulder_quest") or {})),
         },
         "width": width,
         "height": height,

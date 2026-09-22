@@ -33,6 +33,7 @@ ALLOWED_EFFECT_KINDS = frozenset(
         "hazard_treatment",
         "entity_relocation",
         "history_fact",
+        "boulder_quest_accept",
     }
 )
 
@@ -120,6 +121,10 @@ def apply_effect(state: Any, effect: dict[str, Any], *, context: dict[str, Any] 
         result = _entity_relocation(state, effect)
     elif kind == "history_fact":
         result = _history_fact(state, effect)
+    elif kind == "boulder_quest_accept":
+        from sim.dmb.world.boulder_quest import accept_move
+
+        result = accept_move(state, effect_id=effect_id)
     else:
         raise TypeValidationError(f"unknown effect kind {kind!r}")
 

@@ -88,6 +88,9 @@ func tick(delta: float) -> void:
 		if cue == "on_strike":
 			_set_activity(worker, "idle", null, false)
 			continue
+		if cue == "moving_boulder" or cue == "pushing_boulder" or bool(row.get("quest_path", false)):
+			_tick_quest_path(person_id, worker, row, delta, cue)
+			continue
 		if cue == "waiting" or cue == "idle":
 			var origin: Vector2 = _grid_to_world(outbound[0].get("grid", [0, 0]))
 			worker.position = worker.position.move_toward(origin, WALK_SPEED * delta)
@@ -217,6 +220,33 @@ func _hold_stationary(worker: Node2D, row: Dictionary) -> void:
 	pos += Vector2(0, sin(t) * 3.0)
 	worker.position = pos
 	_set_activity(worker, str(row.get("activity", "working")), null, false)
+
+
+func _tick_quest_path(person_id: String, worker: Node2D, row: Dictionary, delta: float, cue: String) -> void:
+	## One-shot walk to the boulder; hold/push at the end. Presentation only.
+	var waypoints: Array = row.get("waypoints", [])
+	if waypoints.size() < 2:
+		_hold_stationary(worker, row)
+		return
+	var pause_left: float = float(_pause.get(person_id, 0.0))
+	if pause_left > 0.0:
+		_pause[person_id] = pause_left - delta
+		_set_activity(worker, "pushing" if cue == "pushing_boulder" else "working", null, false)
+		return
+	var from_pt: Vector2 = _grid_to_world(waypoints[0].get("grid", [0, 0]))
+	var to_pt: Vector2 = _grid_to_world(waypoints[1].get("grid", [0, 0]))
+	var prev: Vector2 = worker.position
+	worker.position = worker.position.move_toward(to_pt, WALK_SPEED * 1.15 * delta)
+	_face_sprite(worker, worker.position - prev)
+	if worker.position.distance_to(to_pt) <= STOP_RADIUS:
+		worker.position = to_pt
+		if cue == "pushing_boulder":
+			_pause[person_id] = 0.35
+			_set_activity(worker, "pushing", null, false)
+		else:
+			_set_activity(worker, "working", null, false)
+	else:
+		_set_activity(worker, "carrying", null, false)
 
 
 func _sync_meta(worker: Node2D, row: Dictionary) -> void:

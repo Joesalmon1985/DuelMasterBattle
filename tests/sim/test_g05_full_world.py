@@ -18,8 +18,10 @@ def test_prehistoric_board_topology() -> None:
     assert summary["edges"] == 72
     assert len(summary["settlements"]) >= 2
     assert summary["start_node_id"]
-    assert not sim.state.board.get("fx_village", {}).get("quest_enabled")
-    assert not sim.state.board.get("g05", {}).get("quest_enabled")
+    # G05 narrative: simple boulder quest (not the archived shortage scenario).
+    assert sim.state.board.get("g05", {}).get("quest_enabled")
+    assert (sim.state.board.get("g05") or {}).get("boulder_quest", {}).get("boulder_id") == "boulder:1"
+    assert "quest.factory_shortage" not in (sim.state.quests or {})
     assert "cube:demon" not in ((sim.state.hazards or {}).get("catastrophe") or {}).get("cubes", {}) or not (
         ((sim.state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
     ).get("cube:demon", {}).get("active")
@@ -131,6 +133,10 @@ def test_graph_travel_reaches_all_54_nodes() -> None:
                 continue
             if str(sim.state.player.get("node_id")) != nid:
                 sim.state.player["node_id"] = nid
+            from sim.dmb.world.boulder_quest import boulder_blocks_travel, complete_move
+
+            if boulder_blocks_travel(sim.state, nid, dest):
+                complete_move(sim.state)
             r = travel(nid, dest)
             assert r.status == "ACCEPTED", (nid, dest, r)
             travels += 1

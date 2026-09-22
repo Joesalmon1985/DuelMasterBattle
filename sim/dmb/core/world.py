@@ -286,6 +286,9 @@ class WorldSim:
         payload = envelope.payload
         quanta = self.clock.request_advance(int(payload["delta_ms"]), int(payload["clock_sequence"]))
         industry_events = self.industry.advance_quanta(quanta)
+        from sim.dmb.world.boulder_quest import tick as tick_boulder_quest
+
+        boulder_events = tick_boulder_quest(self.state) if quanta > 0 else []
         self.state.world_version += 1
         events = self.events.append_batch(
             [
@@ -296,6 +299,7 @@ class WorldSim:
                         "quanta": quanta,
                         "clock": self.clock.clock_view(),
                         "industry_events": industry_events,
+                        "boulder_events": boulder_events,
                     },
                 }
             ]
@@ -306,7 +310,12 @@ class WorldSim:
             command_id=envelope.command_id,
             world_version=self.state.world_version,
             events=events,
-            payload={"quanta": quanta, "clock": self.clock.clock_view(), "industry_events": industry_events},
+            payload={
+                "quanta": quanta,
+                "clock": self.clock.clock_view(),
+                "industry_events": industry_events,
+                "boulder_events": boulder_events,
+            },
             public_feedback="advanced",
         )
 
@@ -383,6 +392,16 @@ class WorldSim:
         # Units: Observe reveals public archetype label; Talk uses linked Person.
         if kind == "person":
             pass
+        elif kind == "mechanism" and (
+            str(record.get("kind") or "") == "boulder" or str(entity_id).startswith("boulder:")
+        ):
+            reveal(
+                self.state,
+                entity_id,
+                KnowledgeFact(entity_id, "observed", role="boulder"),
+                role="boulder",
+            )
+            self.state.world_version += 1
         elif kind == "unit":
             person_id = record.get("person_id")
             person = self.state.people.get(person_id) if person_id else None
@@ -458,6 +477,49 @@ class WorldSim:
                 events=[{"kind": "quest_confirm", "payload": out}],
                 payload=out,
                 public_feedback=str(out.get("status") or "confirmed"),
+            )
+        if action in {"choose_dialogue", "dialogue_choose"}:
+            from sim.dmb.core.effects import apply_effects
+            from sim.dmb.narrative.dialogue import DialogueResolver
+            from sim.dmb.narrative.line_catalog import LineCatalog
+
+            session_id = str(payload.get("session_id") or "")
+            choice_id = str(payload.get("choice_id") or "")
+            resolver = DialogueResolver(self.state, LineCatalog.load())
+            result = resolver.choose(session_id, choice_id)
+            pending = list((result.get("session") or {}).get("pending_effects") or [])
+            effects: list[dict] = []
+            for item in pending:
+                if isinstance(item, dict):
+                    effects.append(dict(item))
+            if effects and result.get("status") == "chosen":
+                result["effects"] = apply_effects(self.state, effects)
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "dialogue_choice", "session_id": session_id, "choice_id": choice_id}],
+                payload=result,
+                public_feedback=str((result.get("session") or {}).get("text") or "chosen"),
+            )
+        if action in {"close_dialogue", "dialogue_close"}:
+            from sim.dmb.narrative.dialogue import DialogueResolver
+            from sim.dmb.narrative.line_catalog import LineCatalog
+
+            session_id = str(payload.get("session_id") or "")
+            resolver = DialogueResolver(self.state, LineCatalog.load())
+            closed = resolver.close(session_id)
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "dialogue_closed", "session_id": session_id}],
+                payload=closed,
+                public_feedback="closed",
             )
         if action == "pickup":
             from sim.dmb.player.inventory import InventoryService
@@ -787,6 +849,7 @@ class WorldSim:
         if action in {"talk", "dialogue", "start_dialogue"}:
             from sim.dmb.narrative.dialogue import DialogueResolver
             from sim.dmb.narrative.line_catalog import LineCatalog
+            from sim.dmb.world.boulder_quest import talk_context as boulder_talk_context
 
             reveal(
                 self.state,
@@ -796,19 +859,29 @@ class WorldSim:
             )
             self.state.knowledge[entity_id]["name"] = person.get("display_name")
             fx = self.state.board.get("fx_village") or {}
-            quests = self.state.quests or {}
-            quest_id = str(fx.get("quest_template_id") or "quest.factory_shortage")
-            stage = 0
-            for q in quests.values():
-                if str(q.get("template_id") or q.get("definition_id") or "") == quest_id:
-                    stage = int(q.get("stage") or 0)
-                    break
+            bq_ctx = boulder_talk_context(self.state, entity_id)
+            if bq_ctx:
+                quest_id = str(bq_ctx.get("quest_id") or "")
+                stage = int(bq_ctx.get("stage") or 0)
+                cause_id = str(bq_ctx.get("cause_id") or "")
+            elif fx.get("quest_enabled") and str(fx.get("quest_template_id") or "") == "quest.factory_shortage":
+                quest_id = str(fx.get("quest_template_id") or "quest.factory_shortage")
+                stage = 0
+                for q in (self.state.quests or {}).values():
+                    if str(q.get("template_id") or q.get("definition_id") or "") == quest_id:
+                        stage = int(q.get("stage") or 0)
+                        break
+                cause_id = str(fx.get("cause_template_id") or "cause.factory_shortage")
+            else:
+                quest_id = None
+                stage = None
+                cause_id = None
             resolver = DialogueResolver(self.state, LineCatalog.load())
             session = resolver.start(
                 speaker_id=entity_id,
                 quest_id=quest_id,
                 stage=stage,
-                cause_id=str(fx.get("cause_template_id") or "cause.factory_shortage"),
+                cause_id=cause_id,
                 era_id=str((self.state.board or {}).get("era_id") or "ancient"),
                 node_id=str(self.state.player.get("node_id") or ""),
             )
@@ -829,41 +902,6 @@ class WorldSim:
                     "speaker_name": person.get("display_name") or "Worker",
                 },
                 public_feedback=str(session.get("text") or "talked"),
-            )
-        if action in {"choose_dialogue", "dialogue_choose"}:
-            from sim.dmb.narrative.dialogue import DialogueResolver
-            from sim.dmb.narrative.line_catalog import LineCatalog
-
-            session_id = str(payload.get("session_id") or "")
-            choice_id = str(payload.get("choice_id") or "")
-            resolver = DialogueResolver(self.state, LineCatalog.load())
-            result = resolver.choose(session_id, choice_id)
-            self.state.world_version += 1
-            return CommandResult(
-                status="ACCEPTED",
-                code="OK",
-                command_id=envelope.command_id,
-                world_version=self.state.world_version,
-                events=[{"kind": "dialogue_choice", "session_id": session_id, "choice_id": choice_id}],
-                payload=result,
-                public_feedback=str((result.get("session") or {}).get("text") or "chosen"),
-            )
-        if action in {"close_dialogue", "dialogue_close"}:
-            from sim.dmb.narrative.dialogue import DialogueResolver
-            from sim.dmb.narrative.line_catalog import LineCatalog
-
-            session_id = str(payload.get("session_id") or "")
-            resolver = DialogueResolver(self.state, LineCatalog.load())
-            closed = resolver.close(session_id)
-            self.state.world_version += 1
-            return CommandResult(
-                status="ACCEPTED",
-                code="OK",
-                command_id=envelope.command_id,
-                world_version=self.state.world_version,
-                events=[{"kind": "dialogue_closed", "session_id": session_id}],
-                payload=closed,
-                public_feedback="closed",
             )
         # Bind visible warehouse / cart / staging to authoritative records.
         inspect_payload = self._inspect_fx_person(entity_id, person)

@@ -547,6 +547,14 @@ func _spawn_entity(e: Dictionary) -> void:
 			_entity_at[pos] = e
 			_ensure_semantic(e, null)
 			return
+		"boulder":
+			# Geometric boulder presenter; register for Observe/Inspect and walk block.
+			e["node"] = null
+			_entities.append(e)
+			if bool(e.get("blocks_walk", true)):
+				_entity_at[pos] = e
+			_ensure_semantic(e, null)
+			return
 		"cart", "soldier", "construction":
 			# Geometric presenters own the Node2D; register for inspect/focus.
 			e["node"] = null
@@ -682,7 +690,7 @@ func is_walkable(p: Vector2i) -> bool:
 		return not _play.kit_blocks(p)  # kit: true = blocked; walkable = NOT blocked
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
-		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs"]:
+		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs", "boulder"]:
 			return false
 	return true
 
@@ -3104,6 +3112,10 @@ func _interact_bridge_entity(e: Dictionary) -> void:
 		far = str(e.get("text", "Nothing remarkable."))
 	if near == "":
 		near = far
+	# Durable Observe for world objects (boulder knowledge, etc.).
+	if str(e.get("kind", "")) == "boulder" or str(e.get("id", "")).begins_with("boulder:"):
+		var eid := str(e.get("id", ""))
+		_VRunner.bridge_command("obs-%s" % eid, "Observe", {"entity_id": eid})
 	_input_locked = true
 	_touch.set_enabled(false)
 	if _semantic_in_range(e):
@@ -3144,7 +3156,12 @@ func _bridge_travel_exit(e: Dictionary) -> void:
 	var ok: bool = host.travel_to_node(from_node, to_node)
 	_fade_in()
 	if not ok:
-		await _dialogue.say_async("", "You cannot travel that way right now.")
+		var blocked := "You cannot travel that way right now."
+		if host.has_method("last_travel_feedback"):
+			var fb := str(host.last_travel_feedback())
+			if fb != "":
+				blocked = fb
+		await _dialogue.say_async("", blocked)
 	_input_locked = false
 	_touch.set_enabled(true)
 	_update_prompt()

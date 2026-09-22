@@ -8,14 +8,14 @@ from sim.dmb.world.overworld_export import export_overworld_area, _opening_lines
 from sim.dmb.world.settlement_layout import public_occupation_for
 
 
-def test_baseline_has_no_active_quest() -> None:
+def test_baseline_has_boulder_quest_not_shortage() -> None:
     sim = load_fixture("FX-VILLAGE", seed=507)
-    assert not sim.state.board.get("g05", {}).get("quest_enabled")
-    assert not sim.state.board.get("fx_village", {}).get("quest_enabled")
-    assert not sim.state.board.get("fx_village", {}).get("quest_id")
+    assert sim.state.board.get("g05", {}).get("quest_enabled")
+    assert (sim.state.board.get("g05") or {}).get("boulder_quest", {}).get("boulder_id") == "boulder:1"
+    assert "quest.factory_shortage" not in (sim.state.quests or {})
     area = export_overworld_area(sim.state)
-    assert area.get("quest_id") in {"", None}
     ids = {str(e.get("id")) for e in area["entities"]}
+    assert "boulder:1" in ids
     assert "cube:demon" not in ids
     assert "entrance:sluice" not in ids
 

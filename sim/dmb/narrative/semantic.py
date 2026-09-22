@@ -307,15 +307,16 @@ class SemanticResolver:
         nearby = in_interaction_range(wizard_pos, target_pos, range_tiles=self.range_tiles)
         same_node = self._target_node(record, kind) in {"", self._player_node()}
         known = filter_entity(self.state, entity_id)
+        is_nearby = bool(nearby and same_node)
         payload = {
             "ok": True,
             "entity_id": entity_id,
             "kind": kind,
             "label": self.label(entity_id, local_poses=local_poses),
-            "description": self._description(kind, record, entity_id),
+            "description": self._description(kind, record, entity_id, nearby=is_nearby),
             "same_node": same_node,
             "distance_tiles": dist,
-            "nearby": bool(nearby and same_node),
+            "nearby": is_nearby,
             "faction_id": record.get("faction_id"),
             "alive": record.get("alive", record.get("active", True)),
             "unknown_identity": not bool(known.get("known")) and known.get("name") is None,
@@ -324,7 +325,7 @@ class SemanticResolver:
         }
         return _strip_hidden(payload)
 
-    def _description(self, kind: str, record: dict[str, Any], entity_id: str) -> str:
+    def _description(self, kind: str, record: dict[str, Any], entity_id: str, *, nearby: bool = False) -> str:
         label = self.label(entity_id)
         if kind == "unit":
             hp = record.get("current_health")
@@ -341,6 +342,17 @@ class SemanticResolver:
         if kind == "item":
             return f"{label}."
         if kind == "mechanism":
+            if str(record.get("kind") or "") == "boulder" or str(entity_id).startswith("boulder:"):
+                status = str(record.get("status") or "blocking")
+                if status == "moved":
+                    return str(
+                        record.get("observe_near_moved")
+                        or record.get("observe_near")
+                        or "The boulder has been rolled clear of the path."
+                    )
+                if nearby:
+                    return str(record.get("observe_near") or "It is far too heavy for John to move alone.")
+                return str(record.get("observe_far") or "A large boulder blocks the path out of the village.")
             return f"{label}."
         if kind == "entrance":
             return f"{label}."

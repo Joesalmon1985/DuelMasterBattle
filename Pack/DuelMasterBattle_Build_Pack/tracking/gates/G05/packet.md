@@ -1,47 +1,50 @@
-# G05 — Living Prehistoric world + natural long-run visual test
+# G05 — Full world + simple persistent boulder quest
 
 **Status:** AWAITING_HUMAN  
 **Stop point:** T096 — do **not** start T097 / G06  
-**Foundation commit:** `a9323e7` (visual layers) → living-world + long-run pass  
-**Play (normal):** `bash tools/play_g05.sh` — seed **507**, FX-VILLAGE  
-**Play (long-run observer):** `bash tools/play_long_world.sh` — FX-LONG-WORLD  
-**Play (staged layers demo):** `bash tools/play_world_layers.sh` — FX-WORLD-LAYERS (not autonomy proof)  
+**Play:** `bash tools/play_g05.sh` — seed **507**, FX-VILLAGE  
 **Branch:** `refactor/canonical-ontology-g05`
 
-## Human acceptance
+## Revised G05 definition
 
-> Villages look busy (geometric workers with carry cycles). Natural geography is
-> obvious in every LocalArea. The **ordinary** seeded world, advanced only with
-> Wait + AdvanceGame, produces roads, units, formation movement, and a real
-> battle with casualties — without staged FX-WORLD-LAYERS cheating.
+Full explorable Prehistoric world (19/54/72) + one simple persistent village
+quest: a durable boulder blocks one real topology exit; John observes it, asks
+a living factory worker for help; the worker moves it; the path opens; save/
+load and leave/return preserve IDs.
 
-## What this pass adds
+### Original G05 prototype (superseded)
 
-| Area | Delivered |
-|------|-----------|
-| Workers | Geometric WorkerController; occupation + activity labels; carry pips from projected resource |
-| Nature | Dense `natural_props` per touching hex; geometric nature presenters; ambient animals (no IDs) |
-| Industry | Settlement cubes cleared at start; all settlements hire workers; single-terrain local craft fallback |
-| Military | Produced units auto-form; AI selects military moves; contact opens real battles |
-| Long-run | `FX-LONG-WORLD` + `tools/play_long_world.sh` + `tools/run_long_world.py` |
-| Observer | Fast-forward / event log / follow-major (dev only; not in normal play) |
+Shortage / demon / sluice / Route A–B — archived as `FX-VILLAGE-QUEST`. Not the
+current human acceptance scenario.
 
-Quest content remains **archived**. No T097.
+## Binding (seed 507)
+
+| Field | Value |
+|-------|-------|
+| Start | `node:35` Settlement 2-1 |
+| Blocked exit | `node:35.south` → `node:29` |
+| Boulder | `boulder:1` |
+| Worker | `person:16` (Factory worker, workplace `building:25` Skirmisher Yard) |
+| Quest | `quest.blocked_exit_boulder` — offered → active/intervention → completed |
+| Cause | `exit_blocked_by_boulder` |
+
+## Human acceptance checklist
+
+- [ ] South path obviously blocked by labelled Boulder
+- [ ] Observe/Inspect copy correct; Travel rejected without World Turn
+- [ ] Talk → ask worker → worker walks → boulder slides aside
+- [ ] Path traversable; same worker acknowledges; boulder remains beside path
+- [ ] Save/load and leave/return preserve boulder, person, quest IDs
+- [ ] Rest of board still explorable; G01–G04 layers intact
+
+**Experience question:** Does talking to a person cause a simple, understandable change in a persistent world?
 
 ## Evidence
 
-- Long-run report: `long_run_report.md`
-- Visual language: `docs/WORLD_VISUAL_LANGUAGE.md`
-- Tests: `tests/sim/test_natural_world.py`, full-world suite, deterministic long-run ×2
-
-## Known limitations / design decisions needed
-
-- **No new settlements or cities** within 200 World Turns (placement/economy).
-- **No cart deliveries** in the soak (`no_cart_activity` flag).
-- LocalBattle mount in Overworld is present for active battle nodes but thinner
-  than standalone `g04_battle_shell`.
-- Confirm retaining `recipe.local.{terrain}` for single-hex settlement industry.
+- Tests: `tests/sim/test_boulder_quest.py` (+ G05 full-world / foundation / visual regressions)
+- Docs: `gates/G05.md`, `EXECUTION_AMENDMENTS.md`, this packet
+- Living-world long-run evidence retained under `long_run/` / `long_run_report.md`
 
 ## Stop
 
-Do **not** start G06 / T097 until Joe PASSes this gate.
+Do **not** start G06 / T097 until Joe PASSes this gate. Agents must not self-PASS.

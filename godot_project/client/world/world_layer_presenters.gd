@@ -44,6 +44,9 @@ func apply_area(area: Dictionary) -> void:
 			"hazard":
 				_upsert_hazard(e)
 				keep[str(e.get("id", ""))] = true
+			"boulder":
+				_upsert_boulder(e)
+				keep[str(e.get("id", ""))] = true
 			"construction":
 				_upsert_construction(e)
 				keep[str(e.get("id", ""))] = true
@@ -167,6 +170,43 @@ func _upsert_hazard(e: Dictionary) -> void:
 		})
 	node.position = _grid_pos(e)
 	node.z_index = 8
+
+
+func _upsert_boulder(e: Dictionary) -> void:
+	var id := str(e.get("id", ""))
+	if id.is_empty():
+		return
+	var node: Node2D = _by_id.get(id)
+	if node == null:
+		node = Node2D.new()
+		node.name = id
+		_root.add_child(node)
+		var body := Polygon2D.new()
+		body.name = "Body"
+		var radius := 28.0
+		var pts := PackedVector2Array()
+		for i in 10:
+			var a := TAU * float(i) / 10.0
+			pts.append(Vector2(cos(a), sin(a)) * radius)
+		body.polygon = pts
+		body.color = Color(0.55, 0.55, 0.58)
+		node.add_child(body)
+		var label := Label.new()
+		label.name = "Label"
+		label.text = "Boulder"
+		label.position = Vector2(-36, 30)
+		label.add_theme_font_size_override("font_size", 12)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.custom_minimum_size = Vector2(72, 0)
+		node.add_child(label)
+		_by_id[id] = node
+	if e.has("pos_f") and typeof(e.get("pos_f")) == TYPE_ARRAY and e["pos_f"].size() >= 2:
+		node.position = Vector2(float(e["pos_f"][0]), float(e["pos_f"][1])) * TPX + Vector2(TPX * 0.5, TPX * 0.5)
+	else:
+		node.position = _grid_pos(e)
+	node.z_index = 6
+	var status := str(e.get("status", "blocking"))
+	(node.get_node("Body") as Polygon2D).color = Color(0.45, 0.45, 0.48) if status == "moved" else Color(0.55, 0.55, 0.58)
 
 
 func _upsert_construction(e: Dictionary) -> void:

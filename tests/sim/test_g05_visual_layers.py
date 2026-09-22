@@ -74,12 +74,16 @@ def test_world_layers_export_matches_authority() -> None:
     assert wmap["john"]["node_id"] == "node:35"
 
 
-def test_baseline_still_has_hazard_without_quest() -> None:
+def test_baseline_still_has_hazard_with_boulder_quest() -> None:
     sim = load_fixture("FX-VILLAGE", seed=507)
-    assert not sim.state.board.get("g05", {}).get("quest_enabled")
+    assert sim.state.board.get("g05", {}).get("quest_enabled")
+    assert (sim.state.board.get("g05") or {}).get("boulder_quest", {}).get("boulder_id") == "boulder:1"
     area = export_overworld_area(sim.state, "node:35")
-    assert any(e.get("kind") == "hazard" for e in area["entities"])
+    assert any(e.get("id") == "boulder:1" for e in area["entities"])
     assert not any(e.get("id") == "cube:demon" for e in area["entities"])
+    # Settlement hexes clear catastrophe for industry; distant cubes may remain.
+    cubes = ((sim.state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
+    assert any(bool(c.get("active", True)) for c in cubes.values())
 
 
 def test_full_board_unchanged() -> None:

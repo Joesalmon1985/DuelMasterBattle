@@ -146,10 +146,10 @@ class DialogueResolver:
                 continue
             if line.get("cause_id") and not cause_id and line.get("require_cause"):
                 continue
-            if line.get("quest_id") and quest_id and line["quest_id"] == quest_id:
+            if line.get("quest_id"):
+                if not quest_id or line["quest_id"] != quest_id:
+                    continue
                 score += 8
-            elif line.get("quest_id") and quest_id and line["quest_id"] != quest_id:
-                continue
             if stage is not None and line.get("stage") is not None and int(line["stage"]) == int(stage):
                 score += 4
             if line.get("cause_id") and cause_id and line["cause_id"] == cause_id:
@@ -158,6 +158,8 @@ class DialogueResolver:
                 score += 2
             if line.get("priority") == "fallback":
                 score += 0
+            elif line.get("priority") == "role_default":
+                score += 5
             if line.get("condition") is not None:
                 if not evaluate_condition(
                     self.state,

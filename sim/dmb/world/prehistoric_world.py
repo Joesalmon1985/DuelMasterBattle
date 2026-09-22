@@ -1,8 +1,9 @@
-"""Full Prehistoric board world for G05 exploration (no active quests).
+"""Full Prehistoric board world for G05 exploration + simple boulder quest.
 
 Generates the authoritative 19-hex / 54-node board, applies normal C04 setup,
 installs settlement industry from catalogue recipes, and wires topology Travel
 for every adjacency. Local areas are projected lazily via LocalProjectionService.
+Installs one persistent blocked-exit boulder quest at the starting settlement.
 """
 
 from __future__ import annotations
@@ -63,7 +64,7 @@ def _clear_settlement_catastrophe_cubes(state, plan) -> None:
 
 
 def load_prehistoric_world(seed: int = 507) -> WorldSim:
-    """Authoritative Prehistoric world — entire board exists; no quest content."""
+    """Authoritative Prehistoric world — full board + one simple boulder quest."""
     sim = bootstrap_world(world_id="world:prehistoric", seed=seed)
     state = sim.state
     plan = BoardBuilder.generate(seed, 2)
@@ -131,8 +132,8 @@ def load_prehistoric_world(seed: int = 507) -> WorldSim:
     state.clock["completed_seats"] = []
     state.clock["round_complete"] = False
     state.board["g05"] = {
-        "mode": "full_prehistoric_world",
-        "quest_enabled": False,
+        "mode": "full_prehistoric_world_boulder_quest",
+        "quest_enabled": True,
         "seed": seed,
         "start_node_id": start_node,
         "start_settlement_id": settlement_id,
@@ -144,8 +145,8 @@ def load_prehistoric_world(seed: int = 507) -> WorldSim:
     # Compatibility shim for older read sites that still peek fx_village metadata.
     state.board["fx_village"] = {
         "seed": seed,
-        "mode": "baseline",
-        "quest_enabled": False,
+        "mode": "boulder_quest",
+        "quest_enabled": True,
         "node_id": start_node,
         "settlement_id": settlement_id,
         "faction_id": faction_id,
@@ -153,6 +154,10 @@ def load_prehistoric_world(seed: int = 507) -> WorldSim:
         "cause_id": None,
         "name": "Prehistoric World",
     }
+
+    from sim.dmb.world.boulder_quest import install_boulder_quest
+
+    install_boulder_quest(state, start_node_id=start_node)
 
     # Advance industry once so rates exist for the home settlement.
     try:

@@ -60,6 +60,7 @@ var _battle
 var _battle_host
 var _spectator_node := ""
 var _follow_major := false
+var _last_travel_feedback := ""
 
 
 func _ready() -> void:
@@ -683,9 +684,11 @@ func travel_to_node(from_node: String, to_node: String) -> bool:
 	turn_before = int(before.get("clock", {}).get("turn", -1))
 	var reply: Dictionary = _cmd("Travel", {"from_node": from_node, "to_node": to_node})
 	if str(reply.get("status", "")) != "ACCEPTED":
-		_status.text = "Travel rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
+		_last_travel_feedback = str(reply.get("public_feedback", reply.get("code", "rejected")))
+		_status.text = "Travel rejected: %s" % _last_travel_feedback
 		_status.modulate.a = 1.0
 		return false
+	_last_travel_feedback = ""
 	reproject_from_python()
 	var after: Dictionary = _bridge_view("player", ["clock", "player"])
 	var turn_after := int(after.get("clock", {}).get("turn", turn_before))
@@ -706,6 +709,10 @@ func travel_to_node(from_node: String, to_node: String) -> bool:
 	_status.modulate.a = 1.0
 	_refresh_time_hud(after)
 	return true
+
+
+func last_travel_feedback() -> String:
+	return _last_travel_feedback
 
 
 func fx_meta() -> Dictionary:
