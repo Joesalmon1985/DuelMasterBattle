@@ -72,6 +72,30 @@ def _rebind_building(building: dict[str, Any], new_def: str, *, era: str = "hist
     building["presentation_era"] = era
 
 
+def mark_legacy_sites(
+    state: Any,
+    settlement_ids: Sequence[str],
+    *,
+    source_era: str = "prehistoric",
+) -> list[dict[str, Any]]:
+    """Mark surviving non-core settlements as operational legacy (0 current VP)."""
+    marked: list[dict[str, Any]] = []
+    for sid in settlement_ids:
+        settlement = state.settlements.get(sid)
+        if settlement is None or settlement.get("ruin_only"):
+            continue
+        settlement["legacy"] = True
+        settlement["upgraded"] = False
+        settlement["historic_core"] = False
+        settlement["operational"] = True
+        settlement["era"] = source_era
+        settlement["source_era"] = source_era
+        settlement["status"] = settlement.get("status") or "active"
+        # Industry/units/stocks/people unchanged — still score 0 via ScoreService.
+        marked.append({"settlement_id": sid, "legacy": True, "vp": 0})
+    return marked
+
+
 @dataclass
 class CoreUpgradeService:
     state: Any
@@ -87,8 +111,9 @@ class CoreUpgradeService:
         *,
         transition_id: str,
         next_era: str = "historic",
+        grant_starter: bool = True,
     ) -> dict[str, Any]:
-        """Upgrade centre/warehouse/primary/factory slots in place; grant starter once."""
+        """Upgrade centre/warehouse/primary/factory slots in place; optional starter grant."""
         settlement = self.state.settlements.get(settlement_id)
         if settlement is None:
             raise TypeValidationError(f"unknown settlement {settlement_id}")
@@ -100,6 +125,16 @@ class CoreUpgradeService:
         cfg = (self.config or {}).get("core_upgrade") or {}
         people_before = set(self.state.people)
         building_ids_before = set(self.state.buildings)
+        primary_before = sum(
+            1
+            for b in self.state.buildings.values()
+            if b.get("settlement_id") == settlement_id and _slot_kind(b) == "primary"
+        )
+        factory_before = sum(
+            1
+            for b in self.state.buildings.values()
+            if b.get("settlement_id") == settlement_id and _slot_kind(b) == "factory"
+        )
 
         upgraded: list[str] = []
         for bid, building in list(self.state.buildings.items()):
@@ -134,25 +169,21 @@ class CoreUpgradeService:
             )
             record["era"] = next_era
             record["meter"] = fraction_wire(Fraction())
-            # Bind to historic unit archetype by slot index when possible.
             slot = int(building.get("slot_index") or 0)
             units = list(cfg.get("unit_defs") or HISTORIC_UNITS)
             record["unit_def_id"] = units[min(slot, len(units) - 1)]
             meter_resets.append(bid)
-            # Update routes to historic unit defs without duplicating factory slots.
             routes = self.state.industry.setdefault("routes", {})
             if bid in routes:
                 routes[bid]["unit_def_id"] = record["unit_def_id"]
             else:
-                # Keep existing processor binding if present; unit target updates.
-                for rid, route in list(routes.items()):
+                for _rid, route in list(routes.items()):
                     if route.get("factory_id") == bid:
                         route["unit_def_id"] = record["unit_def_id"]
                         route["era"] = next_era
 
         processor_route = self._install_minimal_historic_processor(settlement_id, next_era=next_era)
 
-        # Core becomes 1-VP settlement even if previously a city.
         settlement["tier"] = "settlement"
         settlement["era"] = next_era
         settlement["legacy"] = False
@@ -162,13 +193,14 @@ class CoreUpgradeService:
         settlement["ruin_only"] = False
         settlement["status"] = "active"
 
-        grant = self._grant_starter_once(settlement, transition_id=transition_id, cfg=cfg)
+        grant: dict[str, Any] | None = None
+        if grant_starter:
+            grant = self._grant_starter_once(settlement, transition_id=transition_id, cfg=cfg)
 
         if set(self.state.people) != people_before:
             raise TypeValidationError("core upgrade must not create or delete people")
         if not set(self.state.buildings).issuperset(building_ids_before):
             raise TypeValidationError("core upgrade must not remove buildings")
-        # No duplicate primary/factory slots: counts unchanged.
         primaries = [
             b
             for b in self.state.buildings.values()
@@ -179,6 +211,8 @@ class CoreUpgradeService:
             for b in self.state.buildings.values()
             if b.get("settlement_id") == settlement_id and _slot_kind(b) == "factory"
         ]
+        if len(primaries) != primary_before or len(factories) != factory_before:
+            raise TypeValidationError("core upgrade must not add primary/factory slots")
         receipt = {
             "settlement_id": settlement_id,
             "transition_id": transition_id,
@@ -189,9 +223,46 @@ class CoreUpgradeService:
             "vp": ScoreService(self.state).settlement_vp(settlement),
             "primary_count": len(primaries),
             "factory_count": len(factories),
+            "grant_starter": grant_starter,
         }
         receipts[receipt_key] = receipt
         return {"idempotent": False, "receipt": receipt}
+
+    def upgrade_legacy(
+        self,
+        settlement_id: str,
+        *,
+        order_id: str,
+        next_era: str = "historic",
+    ) -> dict[str, Any]:
+        """Paid legacy upgrade: same in-place rebind, no free starter grant."""
+        settlement = self.state.settlements.get(settlement_id)
+        if settlement is None:
+            raise TypeValidationError(f"unknown settlement {settlement_id}")
+        if not settlement.get("legacy"):
+            raise TypeValidationError("not_legacy")
+        # Do not refill depleted source layers.
+        layers = (self.state.industry or {}).get("layers") or {}
+        layer_balances = {
+            lid: dict(rec) if isinstance(rec, dict) else rec for lid, rec in layers.items()
+        }
+        result = self.upgrade_core(
+            settlement_id,
+            transition_id=f"legacy:{order_id}",
+            next_era=next_era,
+            grant_starter=False,
+        )
+        settlement["legacy"] = False
+        settlement["upgraded"] = True
+        settlement["historic_core"] = False  # paid upgrade site, not transition core
+        settlement["paid_legacy_upgrade"] = True
+        # Layer balances must be unchanged (no silent refill).
+        for lid, before in layer_balances.items():
+            after = layers.get(lid)
+            if isinstance(before, dict) and isinstance(after, dict):
+                if before.get("finite_balance") != after.get("finite_balance"):
+                    raise TypeValidationError(f"legacy upgrade refilled layer {lid}")
+        return result
 
     def _grant_starter_once(
         self, settlement: dict[str, Any], *, transition_id: str, cfg: Mapping[str, Any]

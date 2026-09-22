@@ -10,7 +10,7 @@ from sim.dmb.eras.planner import (
     theoretical_site_capacity,
     validate_plan_freshness,
 )
-from sim.dmb.eras.upgrades import CoreUpgradeService, upgrade_cores
+from sim.dmb.eras.upgrades import CoreUpgradeService, mark_legacy_sites, upgrade_cores
 
 __all__ = [
     "CollapseDisposition",
@@ -21,6 +21,7 @@ __all__ = [
     "TransitionTrigger",
     "choose_compact_pairing",
     "compute_plan_hash",
+    "mark_legacy_sites",
     "plan_fission",
     "select_collapse_factions",
     "theoretical_site_capacity",

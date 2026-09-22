@@ -323,6 +323,25 @@ class ConstructionService:
                 settlement["primary_flow_multiplier"] = 2.0
                 settlement["primary_slot_multiplier"] = 1.0
             result_payload["settlement_id"] = settlement.get("id") if settlement else None
+        elif action == "legacy_upgrade" and target_node:
+            settlement = next(
+                (
+                    item
+                    for item in self.state.settlements.values()
+                    if item.get("node_id") == target_node and item.get("faction_id") == faction_id
+                ),
+                None,
+            )
+            if settlement is None:
+                raise TypeValidationError("legacy upgrade target missing")
+            from sim.dmb.eras.upgrades import CoreUpgradeService
+
+            upgraded = CoreUpgradeService(self.state).upgrade_legacy(
+                str(settlement["id"]),
+                order_id=str(order_id),
+            )
+            result_payload["settlement_id"] = settlement["id"]
+            result_payload["legacy_upgrade"] = upgraded
         elif action == "road" and target_edge:
             road_id = self.state.ids.new("command")
             self.state.roads[road_id] = {
