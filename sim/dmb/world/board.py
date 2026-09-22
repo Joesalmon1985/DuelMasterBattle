@@ -202,6 +202,27 @@ class HexBoard:
     def edge_nodes(self, edge_id: str) -> tuple[str, str]:
         return self._edge_endpoints[edge_id]
 
+    def node_corner(self, node_id: str) -> tuple[int, int, int]:
+        """Return the integer cube lattice corner for a board vertex."""
+        return self._node_corners[node_id]
+
+    def node_map_position(self, node_id: str) -> tuple[float, float]:
+        """Unscaled axial map coordinates for a vertex (compatible with axial→pixel).
+
+        Corner cube (cx,cy,cz) maps to fractional axial (cx/3, cz/3), matching
+        pointy-top hex vertices of centres at integer (q, r).
+        """
+        cx, _cy, cz = self._node_corners[node_id]
+        return (cx / 3.0, cz / 3.0)
+
+    def map_coordinates(self) -> dict[str, tuple[float, float]]:
+        """All 54 node map positions keyed by node id."""
+        return {nid: self.node_map_position(nid) for nid in self.nodes}
+
+    def hex_corner_positions(self, hid: str) -> tuple[tuple[float, float], ...]:
+        """Ordered six vertex map positions around a hex (matches _CORNER_OFFSETS)."""
+        return tuple(self.node_map_position(nid) for nid in self._hex_nodes[hid])
+
     def distance(self, a: str, b: str) -> int:
         if a == b:
             return 0

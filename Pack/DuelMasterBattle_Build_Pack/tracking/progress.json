@@ -246,7 +246,7 @@
       "fixture": "FX-ERA",
       "seed": 507,
       "launch": "bash tools/play_fx_era.sh",
-      "notes": "T103\u2013T106 complete. Early Historic transition checkpoint awaiting Joe. Do not mark G06 PASS. Do not start T107 until checkpoint accepted.",
+      "notes": "T103\u2013T106 complete. Responsive overlays + exact HexBoard map geometry. Early Historic transition checkpoint awaiting Joe. Do not mark G06 PASS. Do not start T107 until checkpoint accepted.",
       "stop_after": "T106",
       "next_blocked": "T107"
     },

@@ -962,6 +962,7 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "era_fixtures",
                 "tests/scenarios/test_era_transition.py",
                 "tests/sim/test_t105_chronicle.py",
+                "tests/sim/test_world_map_geometry.py",
             ),
             validate_evidence(
                 "fx_era_launcher",

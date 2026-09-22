@@ -13,7 +13,7 @@
 | T103 | Rockfall/Person continuity |
 | T104 | Atomic EraService + Historic industry |
 | T105 | TransitionPresenter + Chronicle |
-| T106 | FX-ERA fixture + launcher + **responsive overlay UI fix** |
+| T106 | FX-ERA fixture + launcher + responsive overlays + **map geometry** |
 
 ## Fixture
 
@@ -79,18 +79,11 @@ DMB_RESOLUTION=960x540 bash tools/play_fx_era.sh
 
 Also: **M** opens World Map; **C** opens Chronicle (same paths as the buttons).
 
-## Responsive UI fix (this checkpoint retest)
+## Responsive UI fix (prior)
 
 **Root cause:** World Map / Chronicle used hard-coded panel sizes (`460×420`, `420×480`) and `PRESET_CENTER` offsets wider than a `450×800` viewport; map draw used fixed `origin=(200,200)` / `size=18`.
 
-**Layout changes:**
-
-- Shared `DmbResponsiveModal` (`responsive_modal.gd`): full-screen dim → MarginContainer safe margins → expand-fill Panel.
-- World Map / Chronicle rebuild onto that shell; canvas/list use `SIZE_EXPAND_FILL`.
-- Map `_on_draw_map` fits hex axial bounds to canvas with padding; markers scale with hex size (clamped).
-- Nodes prefer `touching_hexes` averages from `export_world_map` (fallback scatter only if links missing).
-- FX-ERA panel: compact top-left, vertical Map/Chronicle buttons (≥48px), hidden while modals open.
-- Status + Time HUD stacked on the left for narrow widths (no side-by-side overlap).
+**Layout changes:** shared `DmbResponsiveModal`; expand-fill Map/Chronicle; FX panel compact; HUD stacked on narrow widths.
 
 ### Viewport verification
 
@@ -101,34 +94,55 @@ Also: **M** opens World Map; **C** opens Chronicle (same paths as the buttons).
 | 960×540 | PASS | PASS | PASS | Compact landscape |
 | 1280×720 | PASS | PASS | PASS | Desktop landscape |
 
-Automated: `godot --headless --path godot_project --script res://client/tests/run_fx_era_ui.gd` → `FX_ERA_UI_OK`  
-(asserts `global_rect` inside viewport for FX / Map / Chronicle / Close / ≥48px buttons; map canvas min size vs viewport).
+Automated: `godot --headless --path godot_project --script res://client/tests/run_fx_era_ui.gd` → `FX_ERA_UI_OK`
 
-Screenshots (real Godot GLES frames):
+## World Map geometry fix (this retest)
 
-`Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/`
+**Root cause:** `_node_pixel()` averaged touching hex centres. One-touch nodes landed on hex centres (covering numbers); two-touch nodes landed on edge midpoints; roads therefore cut through hex interiors.
 
-- `village_{450x800,960x540,1280x720}.png`
-- `world_map_{450x800,960x540,1280x720}.png`
-- `chronicle_{450x800,960x540,1280x720}.png`
+**Geometry representation:** Python `HexBoard.node_map_position()` / `map_coordinates()` export integer cube corners as fractional axial `(cx/3, cz/3)`. `export_world_map` schema v2 includes `map_position` on all 54 nodes and the 72 topology `edges`. Godot applies the same fit transform as hexes — **no** centre-average fallback for the canonical board.
 
-Recapture: `bash tools/capture_fx_era_layout.sh`
+**Symbol legend (on-map):**
+
+| Symbol | Meaning |
+|---|---|
+| ■ small square | Settlement (faction colour) |
+| ▣ / octagon+ring | City / Historic core |
+| square + gold ring | Legacy site |
+| grey ✕ | Ruin |
+| faction line | Road (exact edge A→B) |
+| ◆ magenta | Hazard (upper-right of hex; `×N` if stacked) |
+| ◎ white/cyan | You (John); offset if sharing a settled vertex |
+| dark roundel + number | Production token (always drawn) |
+
+Formations/carts are **omitted** from the strategic presentation layer (`presentation.formations/carts = omitted`).
+
+**Tests:** `tests/sim/test_world_map_geometry.py` (wired into T106 check) — 54 unique coords, 72 edge sides, one-touch ≠ centre, seed-507 tokens/hazards/John, post-transition site kinds.
+
+**Screenshots:**
+
+- Before (centre-average bug): `layout_captures/world_map_450x800_before_geometry.png`
+- After (exact corners): `layout_captures/world_map_450x800.png` / `world_map_450x800_geometry.png`
+
+```bash
+DMB_RESOLUTION=450x800 DMB_SAVE_SLOT=fx_era_map_check bash tools/play_fx_era.sh
+```
 
 ### Remaining visual limits
 
-- Settlement/road markers use average of touching hex centres (true board geometry), not exact Catan vertex coordinates; fine for strategic readability.
-- FX-ERA panel still covers the top-left of the village while open (by design — compact, not full-screen).
-- Overworld building labels / Magic button are separate Overworld HUD and can still crowd landscape tops; not part of this modal fix.
+- Terrain cues are sparse placeholder strokes (not full art).
+- FX-ERA panel still covers the top-left of the village while open (compact by design).
+- Overworld building labels / Magic button are separate Overworld HUD.
 
 ## Manual checklist (≈10–15 min)
 
 1. Confirm FX-ERA panel is visible (badge + three buttons). If not → **stop**; build not ready.
 2. At **450×800**: panel fully on-screen; status/time not overlapping buttons.
-3. Click **World Map** → large centred modal, full 19-hex board readable, Close visible → Close.
+3. Click **World Map** → large centred modal; **numbers clear in centres**; **roads on edges only**; **settlements on corners**; **hazards offset**; legend visible; Close → Close.
 4. Click **Chronicle** → fills usable area with margins, no horizontal scroll needed → Close.
 5. Optionally resize / relaunch at **960×540** and repeat Map/Chronicle.
 6. Walk Prehistoric node:35; talk to a worker; inspect Rockfall.
-7. Click **Complete founding → 10 VP** → Wait commits → transition → panel shows Historic.
+7. Click **Complete founding → 10 VP** → Wait commits → transition → panel shows Historic; reopen Map and confirm Historic core / legacy / ruin symbols.
 8. Confirm same LocalArea / same Person; save/reload does not re-transition.
 
 ## Verification layers
@@ -138,6 +152,7 @@ Recapture: `bash tools/capture_fx_era_layout.sh`
 | PROCESS LAUNCH | Godot window + sidecar started |
 | HUMAN CONTROL SURFACE | Panel/buttons visible & usable (`run_fx_era_ui.gd` / live retest) |
 | RESPONSIVE LAYOUT | Map/Chronicle/FX fit at 450×800 and landscape sizes |
+| MAP GEOMETRY | Exact HexBoard corners; roads on edges; legend |
 
 A process launch alone is **not** sufficient for this checkpoint.
 
