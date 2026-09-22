@@ -1,0 +1,24 @@
+{
+  "task_id": "T120",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "godot_project/content/source/hazards/nuclear.json",
+    "godot_project/content/source/hazards/machines.json",
+    "godot_project/content/source/duel_rules/hazard_nuclear.json",
+    "godot_project/content/source/duel_rules/hazard_machine.json",
+    "tests/sim/test_t120_nuclear_machines.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T120",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T121",
+  "notes": "Future nuclear/machine alternation; shared hex cap 3; eligible responses."
+}

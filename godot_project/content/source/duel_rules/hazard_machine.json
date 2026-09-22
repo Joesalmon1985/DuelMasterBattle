@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "id": "duel.hazard.machine",
+  "hazard_type": "machine",
+  "display_name": "Hostile Machine Hazard Duel",
+  "lease_kind": "hazard_duel",
+  "pollution_forbidden": true,
+  "semantic_placeholder": true
+}

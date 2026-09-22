@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "hazard_type": "machine",
+  "display_name": "Hostile Machine",
+  "semantic_id": "hazard.hostile_machine",
+  "eras": ["future"],
+  "duel_allowed": true,
+  "duel_rule_id": "duel.hazard.machine",
+  "max_cubes_per_hex": 3,
+  "response": {
+    "kind": "military_treat_or_duel",
+    "capable_archetypes": ["heavy", "line"],
+    "treats_instead_of_move": true
+  },
+  "placement": {
+    "future_alternation_with": "nuclear",
+    "ordinal_parity": "odd"
+  },
+  "presentation": {
+    "shape": "gear",
+    "abbrev": "HM",
+    "semantic_placeholder": true
+  }
+}
