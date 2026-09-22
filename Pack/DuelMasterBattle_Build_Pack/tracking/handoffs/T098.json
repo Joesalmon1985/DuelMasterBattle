@@ -1,7 +1,7 @@
 {
   "task_id": "T098",
   "status": "DONE",
-  "commit": null,
+  "commit": "5bbb222f316041fd6ba702249e7de3ddfd12e6bc",
   "files": [
     "sim/dmb/eras/collapse.py",
     "sim/dmb/eras/planner.py",
@@ -13,11 +13,11 @@
   ],
   "public_contracts": [
     "select_collapse_factions (all <5 + one lowest; capacity/ID ties; winner protection)",
-    "CollapseDisposition.apply — inert ruins, stock loss once, displace civilians, disband military"
+    "CollapseDisposition.apply \u2014 inert ruins, stock loss once, displace civilians, disband military"
   ],
   "source_rules": [
     "C11 collapse / inert ruins",
-    "GDD §§40, 104, 107"
+    "GDD \u00a7\u00a740, 104, 107"
   ],
   "checks": [
     {
