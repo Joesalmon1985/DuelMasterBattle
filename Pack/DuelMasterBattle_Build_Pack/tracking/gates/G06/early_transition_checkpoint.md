@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | Branch | `phase/g06-historic-mvp` |
-| Tip commit | `f724717585d88d0e5dac2b9a037ffb3ce4be39e5` |
+| Tip commit | `a0650e06008e75a208e6bab678fe5df660cdfb6a` |
 | T103 | Rockfall/Person continuity |
 | T104 | Atomic EraService + Historic industry |
 | T105 | TransitionPresenter + Chronicle |
