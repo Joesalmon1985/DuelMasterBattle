@@ -1,7 +1,7 @@
 {
   "task_id": "T120",
   "status": "DONE",
-  "commit": null,
+  "commit": "952e63518b19d1a037f75b1519e782356ab51463",
   "files": [
     "godot_project/content/source/hazards/nuclear.json",
     "godot_project/content/source/hazards/machines.json",
