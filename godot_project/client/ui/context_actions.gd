@@ -84,3 +84,13 @@ func route_world_click(nearby: bool, entity_id: String) -> String:
 		return "choice"
 	press_observe(entity_id)
 	return "observe"
+
+
+func walk_away_from_formal(entity_id: String = "") -> void:
+	## Shared movement intent cancels formal choice without reward.
+	cancel_choice(entity_id)
+
+
+func one_pointer_targets_ui() -> bool:
+	## Formal open consumes the pointer so ground-move does not also fire.
+	return _formal_open or _pointer_consumed

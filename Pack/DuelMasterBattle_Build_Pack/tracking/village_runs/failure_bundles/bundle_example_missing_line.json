@@ -1,0 +1,21 @@
+{
+  "fixture": "FX-VILLAGE",
+  "seed": 507,
+  "error": "missing_line:dialogue.mara.offer",
+  "cause_id": "cause.factory_shortage",
+  "quest_id": "quest.factory_shortage",
+  "softlock": false,
+  "replay": {
+    "command": [
+      "python3",
+      "tools/run_scenario.py",
+      "--fixture",
+      "FX-VILLAGE",
+      "--seed",
+      "507",
+      "--record",
+      "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/fx_village_record.json"
+    ],
+    "notes": "Enough to replay missing-line / softlock / cause bugs."
+  }
+}

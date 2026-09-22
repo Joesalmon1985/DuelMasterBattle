@@ -1,0 +1,134 @@
+[
+  {
+    "schema_version": 1,
+    "id": "dialogue.neutral_fallback",
+    "scope": "normal",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "They have nothing more to say right now.",
+    "fallback": "Silence.",
+    "choices": [],
+    "priority": "fallback"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.villager.baseline",
+    "scope": "normal",
+    "speaker_role": "villager",
+    "era_id": "all",
+    "text": "I've lived around here for some time.",
+    "fallback": "They nod.",
+    "choices": [],
+    "priority": "role_default"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.leader.baseline",
+    "scope": "normal",
+    "speaker_role": "leader",
+    "era_id": "all",
+    "text": "I keep an eye on what the settlement needs.",
+    "fallback": "They speak carefully.",
+    "choices": [],
+    "priority": "role_default"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.soldier.baseline",
+    "scope": "normal",
+    "speaker_role": "soldier",
+    "era_id": "all",
+    "text": "I'm with the settlement's fighting force.",
+    "fallback": "They stand ready.",
+    "choices": [],
+    "priority": "role_default"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.worker.baseline",
+    "scope": "normal",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The settlement keeps us busy.",
+    "fallback": "They nod and keep working.",
+    "choices": [],
+    "priority": "fallback"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.missing_cause",
+    "scope": "normal",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "The trouble you asked about is already gone.",
+    "fallback": "That problem has passed.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.dead_speaker",
+    "scope": "normal",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "Only a record remains of who stood here.",
+    "fallback": "They are gone.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.destroyed_site",
+    "scope": "normal",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "This place no longer holds the work you sought.",
+    "fallback": "The site is ruined.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.wrong_era",
+    "scope": "normal",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "That way of speaking belongs to another age.",
+    "fallback": "They look puzzled.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.unknown_fact",
+    "scope": "normal",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "I will not invent what I have not seen.",
+    "fallback": "They withhold guesswork.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.quest_complete",
+    "scope": "normal",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "We already settled that. I will not re-open the reward.",
+    "fallback": "Already resolved.",
+    "priority": "invalidation",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.invalid.softlock_recovery",
+    "scope": "normal",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "If you are stuck, ask at the entrance — someone kept a spare path.",
+    "fallback": "Recovery remains open.",
+    "priority": "invalidation",
+    "choices": []
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "battles": {},
+  "carts": {
+    "cart:1": {
+      "node": "node:2",
+      "status": "idle"
+    },
+    "cart:2": {
+      "node": "node:2",
+      "status": "idle"
+    },
+    "cart:3": {
+      "node": "node:12",
+      "status": "idle"
+    },
+    "cart:4": {
+      "node": "node:12",
+      "status": "idle"
+    },
+    "cart:5": {
+      "node": "node:35",
+      "status": "idle"
+    },
+    "cart:6": {
+      "node": "node:35",
+      "status": "idle"
+    },
+    "cart:7": {
+      "node": "node:27",
+      "status": "idle"
+    },
+    "cart:8": {
+      "node": "node:27",
+      "status": "idle"
+    }
+  },
+  "cities": [],
+  "formations": {},
+  "game_ms": 0,
+  "hazards": [
+    "cube:1",
+    "cube:3"
+  ],
+  "roads": [
+    "command:1",
+    "command:2",
+    "command:3",
+    "command:4"
+  ],
+  "settlement_tiers": {
+    "settlement:1": "settlement",
+    "settlement:2": "settlement",
+    "settlement:3": "settlement",
+    "settlement:4": "settlement"
+  },
+  "settlements": [
+    "settlement:1",
+    "settlement:2",
+    "settlement:3",
+    "settlement:4"
+  ],
+  "turn": 0,
+  "units": {}
+}

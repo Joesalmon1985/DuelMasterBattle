@@ -1,0 +1,36 @@
+{
+  "task_id": "T101",
+  "status": "DONE",
+  "commit": "05260199f5828eef7502cb21b7c031cfd82bea48",
+  "files": [
+    "sim/dmb/eras/upgrades.py",
+    "sim/dmb/eras/__init__.py",
+    "sim/dmb/construction/orders.py",
+    "tests/sim/test_t101_legacy.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T101.json"
+  ],
+  "public_contracts": [
+    "mark_legacy_sites \u2014 operational old-era sites at 0 VP",
+    "CoreUpgradeService.upgrade_legacy \u2014 paid in-place upgrade, no free grant, no layer refill",
+    "ConstructionService.commit_delivered(legacy_upgrade)"
+  ],
+  "source_rules": [
+    "C11 legacy sites / paid upgrades",
+    "GDD \u00a7\u00a740, 79, 103, 116"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T101",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/construction/orders.py": "Wire legacy_upgrade completion to CoreUpgradeService"
+  },
+  "defects": [],
+  "next_task": "T102",
+  "notes": "Legacy factories keep prehistoric unit routes until paid upgrade; depleted layers unchanged."
+}

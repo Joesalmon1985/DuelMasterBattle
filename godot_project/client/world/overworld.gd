@@ -68,6 +68,9 @@ var _anim_time: float = 0.0
 var _steps_taken: int = 0
 var _input_locked: bool = false
 var _held_dir: Vector2i = Vector2i.ZERO
+var _bridge_runtime = null  # G05 shell host when Python-backed
+var _mouse_steer_held := false
+var _pointer_on_entity := false
 
 var _entities: Array = []          # live entity dicts with "node" refs
 var _entity_at: Dictionary = {}    # Vector2i -> entity
@@ -99,6 +102,15 @@ func _adv() -> Node:
 
 func _sfx() -> Node:
 	return get_node_or_null("/root/Sfx")
+
+
+func set_bridge_runtime(host) -> void:
+	## G05 shell: clock/SyncPose/WorkerController owner.
+	_bridge_runtime = host
+
+
+func bridge_runtime():
+	return _bridge_runtime
 
 
 # ---------------------------------------------------------------------------------
@@ -528,19 +540,32 @@ func _spawn_entity(e: Dictionary) -> void:
 			if marker != "":
 				node = _add_prop(pos.x, pos.y, marker, marker_off, 1)
 				node.z_index = 2
-		"deco":
-				# Projected kit puzzle visuals (plates, beams, goals, teleporters,
-				# pits, crumble, hazards, markers): visible state only. Walk-through
-				# and never interactable — registered in _entities but NOT in
-				# _entity_at, so the sim (kit_blocks) owns blocking, not the art.
-				var marker_path := "props/%s.png" % str(e.get("marker", "box"))
-				var moff := Vector2.ZERO
-				if e.has("marker_off"):
-					var a: Array = e["marker_off"]
-					moff = Vector2(float(a[0]), float(a[1]))
-				node = _add_prop(pos.x, pos.y, marker_path, moff, 1)
-				node.modulate = _parse_tint(e.get("tint", Color.WHITE))
-				node.z_index = 3
+		"hazard":
+			# Geometric HazardActor mounted by WorldLayerPresenters; still register for Challenge.
+			e["node"] = null
+			_entities.append(e)
+			_entity_at[pos] = e
+			_ensure_semantic(e, null)
+			return
+		"boulder", "rockfall":
+			# Geometric presenter owns visuals; collision via sync_dynamic_obstacle.
+			e["node"] = null
+			sync_dynamic_obstacle(e)
+			return
+		"cart", "soldier", "construction":
+			# Geometric presenters own the Node2D; register for inspect/focus.
+			e["node"] = null
+			_entities.append(e)
+			_entity_at[pos] = e
+			_ensure_semantic(e, null)
+			return
+		"deco", "nature":
+				# Dense natural-world props: register for walk-through only.
+				# Geometric WorldLayerPresenters owns the visible Node2D.
+				e["node"] = null
+				_entities.append(e)
+				_ensure_semantic(e, null)
+				return
 	e["node"] = node
 	_entities.append(e)
 	if e["kind"] in ["fire", "pickup", "creature", "wizard", "npc", "corpse", "sign", "door", "logs"]:
@@ -560,13 +585,13 @@ func _wizard_present(e: Dictionary) -> bool:
 func _add_actor(pos: Vector2i, path: String, offset_px: Vector2, sprite: String = "", facing: String = "down", label: String = "") -> Sprite2D:
 	var s := Sprite2D.new()
 	s.centered = false
-	s.scale = Vector2(TILE_SCALE, TILE_SCALE)
 	s.position = Vector2(pos) * TPX + offset_px * TILE_SCALE
 	s.z_index = 5
 	_actors_root.add_child(s)
 	if sprite != "":
 		_apply_char(s, sprite, facing, 0, label)
 	else:
+		s.scale = Vector2(TILE_SCALE, TILE_SCALE)
 		s.texture = _tex(path)
 	return s
 
@@ -593,21 +618,6 @@ func _bob(node: Node2D) -> void:
 # Movement
 # ---------------------------------------------------------------------------------
 
-func _unhandled_input(event: InputEvent) -> void:
-	if _is_empty_pointer_press(event):
-		# A label tap is consumed by the button. A leftover synthesised touch in
-		# the same frame must not clear the focus that tap just set.
-		if Engine.get_process_frames() != _semantic_press_frame:
-			_semantic_focus = ""
-		get_viewport().set_input_as_handled()
-		return
-	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode in [KEY_SPACE, KEY_ENTER, KEY_Z, KEY_E]:
-			_on_action()
-		elif event.keycode == KEY_ESCAPE:
-			_on_menu()
-
-
 func _process(delta: float) -> void:
 	_fire_time += delta
 	if _fire_time > 0.18:
@@ -620,7 +630,8 @@ func _process(delta: float) -> void:
 				f.texture = _tex(f.get_meta("frames")[_anim_frame])
 			else:
 				f.texture = _tex("props/fire_%d.png" % ((_anim_frame + int(f.position.x) / TPX) % 3))
-	_tick_workers(delta)
+	if not _VRunner.is_bridge_mode():
+		_tick_workers(delta)
 	_tick_kit(delta)
 	if _moving:
 		_move_t += delta / STEP_SECONDS
@@ -676,9 +687,96 @@ func is_walkable(p: Vector2i) -> bool:
 		return not _play.kit_blocks(p)  # kit: true = blocked; walkable = NOT blocked
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
-		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs"]:
+		var kind := str(e.get("kind", ""))
+		if kind in ["boulder", "rockfall"] and not bool(e.get("blocks_walk", true)):
+			# Cleared/dynamic non-blocking obstacle may remain registered for focus.
+			pass
+		elif kind in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs", "boulder", "rockfall"]:
 			return false
 	return true
+
+
+func path_reachable(from: Vector2i, to: Vector2i, max_steps: int = 4000) -> bool:
+	## BFS over is_walkable tiles — used by rockfall / dynamic-obstacle regressions.
+	if from == to:
+		return true
+	if not is_walkable(from):
+		return false
+	var q: Array = [from]
+	var seen: Dictionary = {}
+	seen[from] = true
+	var steps := 0
+	while not q.is_empty() and steps < max_steps:
+		var cur: Vector2i = q.pop_front()
+		steps += 1
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var nxt: Vector2i = cur + d
+			if seen.has(nxt):
+				continue
+			if nxt.x < 0 or nxt.y < 0 or nxt.x >= grid_w or nxt.y >= grid_h:
+				continue
+			if not is_walkable(nxt):
+				continue
+			if nxt == to:
+				return true
+			seen[nxt] = true
+			q.append(nxt)
+	return false
+
+
+func sync_dynamic_obstacle(entity: Dictionary) -> void:
+	## Update local collision for a world entity whose blocking state changed
+	## while John stays in the same LocalArea (rockfall clear, gates, hazards…).
+	## Removes only this entity id from _entity_at — never wipes the whole map.
+	## Visuals stay with WorldLayerPresenters; this owns walkability.
+	var eid := str(entity.get("id", ""))
+	if eid.is_empty():
+		return
+	_purge_entity_at_owned_by(eid)
+	var e := _entity_by_id(eid)
+	if e.is_empty():
+		_entities.append(entity)
+		e = entity
+	else:
+		for k in entity.keys():
+			e[k] = entity[k]
+	e["node"] = e.get("node", null)
+	if bool(e.get("blocks_walk", false)):
+		var pos_v = e.get("pos", [0, 0])
+		if typeof(pos_v) == TYPE_ARRAY and pos_v.size() >= 2:
+			_entity_at[Vector2i(int(pos_v[0]), int(pos_v[1]))] = e
+		for tile_v in e.get("blocked_tiles", []):
+			if typeof(tile_v) != TYPE_ARRAY or tile_v.size() < 2:
+				continue
+			_entity_at[Vector2i(int(tile_v[0]), int(tile_v[1]))] = e
+		for piece_v in e.get("pieces", []):
+			if typeof(piece_v) != TYPE_DICTIONARY:
+				continue
+			var pp = piece_v.get("pos", [])
+			if typeof(pp) == TYPE_ARRAY and pp.size() >= 2:
+				_entity_at[Vector2i(int(pp[0]), int(pp[1]))] = e
+	# blocks_walk false → corridor fully walkable; entity remains in _entities for Observe.
+	_ensure_semantic(e, e.get("node"))
+
+
+func sync_dynamic_obstacles_from_area(area: Dictionary) -> void:
+	## Apply Python overworld_area entity payloads to live collision without a full rebuild.
+	for raw in area.get("entities", []):
+		if typeof(raw) != TYPE_DICTIONARY:
+			continue
+		var kind := str(raw.get("kind", ""))
+		if kind in ["boulder", "rockfall"]:
+			sync_dynamic_obstacle(raw)
+
+
+func _purge_entity_at_owned_by(eid: String) -> void:
+	var drop: Array = []
+	for cell in _entity_at.keys():
+		var ent = _entity_at[cell]
+		if typeof(ent) == TYPE_DICTIONARY and str(ent.get("id", "")) == eid:
+			drop.append(cell)
+	for cell in drop:
+		_entity_at.erase(cell)
 
 
 func _try_step(dir: Vector2i) -> void:
@@ -706,11 +804,16 @@ func _arrived() -> void:
 		_arrived_kit()
 		return
 	_adv().set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
+	if _VRunner.is_bridge_mode() and _bridge_runtime != null and _bridge_runtime.has_method("notify_local_step"):
+		_bridge_runtime.notify_local_step()
 	_update_prompt()
 	for e in _entities:
 		match e["kind"]:
 			"exit":
 				if Vector2i(int(e["pos"][0]), int(e["pos"][1])) == _john_pos and _entity_visible(e):
+					if _VRunner.is_bridge_mode() and bool(e.get("bridge_travel", false)):
+						await _bridge_travel_exit(e)
+						return
 					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")), str(e.get("travel_text", "")))
 					return
 			"trigger":
@@ -967,6 +1070,9 @@ func _spawn_water_burst(at: Vector2i) -> void:
 
 
 func _interact_pickup(e: Dictionary) -> void:
+	if _VRunner.is_bridge_mode() and bool(e.get("bridge_pickup", false)):
+		await _interact_bridge_pickup(e)
+		return
 	var adv := _adv()
 	var grant: Dictionary = e.get("grant", {})
 	if e.has("dungeon_reward"):
@@ -1035,6 +1141,9 @@ func _interact_pickup(e: Dictionary) -> void:
 func _interact_npc(e: Dictionary) -> void:
 	var adv := _adv()
 	var id := str(e["id"])
+	if _VRunner.is_bridge_mode() and bool(e.get("bridge_talk", false)):
+		await _interact_bridge_npc(e)
+		return
 	if _VRunner.is_active() and e.has("village_test_story"):
 		await _interact_village_npc(e)
 		return
@@ -1099,6 +1208,9 @@ func _face_npc_toward_john(e: Dictionary) -> void:
 
 
 func _interact_enemy(e: Dictionary) -> void:
+	if _VRunner.is_bridge_mode() and bool(e.get("bridge_challenge", false)):
+		await _interact_bridge_challenge(e)
+		return
 	var adv := _adv()
 	var enemy := DmbBestiary.get_data(str(e["enemy_id"]))
 	if e["kind"] == "wizard" and adv.marked("defeated", str(e["id"])):
@@ -1676,7 +1788,27 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 	var lbl = _SemanticLabel.new()
 	lbl.name = "Semantic_%s" % str(e.get("id", ""))
 	_semantic_root.add_child(lbl)
-	lbl.bind(_adv(), e["semantic"], str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
+	var semantic: Dictionary = e.get("semantic", {})
+	if _VRunner.is_bridge_mode():
+		lbl.bind_bridge(semantic, str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
+		var label_text := str(e.get("text", ""))
+		var labels = semantic.get("labels", [])
+		if labels is Array and (labels as Array).size() > 0 and typeof(labels[0]) == TYPE_DICTIONARY:
+			label_text = str(labels[0].get("text", label_text))
+		var view := {
+			"known": false,
+			"name": "",
+			"label": label_text,
+			"description": str(semantic.get("observe_far", label_text)),
+		}
+		var nm := str(e.get("name", ""))
+		if nm != "" and not nm.begins_with("person:") and str(e.get("kind", "")) == "npc":
+			view["known"] = true
+			view["name"] = nm
+			view["label"] = nm
+		lbl.set_bridge_view(view)
+	else:
+		lbl.bind(_adv(), semantic, str(e.get("id", "")), node, _camera, Vector2(TPX * 0.5, -40))
 	if not lbl.activated.is_connected(_on_semantic_activated):
 		lbl.activated.connect(_on_semantic_activated)
 	if not lbl.interact_requested.is_connected(_on_semantic_interact):
@@ -1690,6 +1822,119 @@ func _attach_semantic_label(e: Dictionary, node: Node2D) -> void:
 	if not lbl.line_done.is_connected(_on_semantic_line_done):
 		lbl.line_done.connect(_on_semantic_line_done)
 	_semantic_labels.append(lbl)
+
+
+## Register a moving industry person as ONE shared Overworld semantic actor.
+func register_dynamic_person(person_id: String, actor: Node2D, row: Dictionary) -> void:
+	if not is_instance_valid(actor) or person_id == "":
+		return
+	unregister_dynamic_person(person_id)
+	var role := str(row.get("public_role", row.get("role", "Worker")))
+	if role == "" or role.begins_with("person:"):
+		role = "Worker"
+	var known := false
+	var display := role
+	# Prefer revealed personal name when knowledge already present on the row.
+	var personal := str(row.get("known_name", ""))
+	if personal != "" and not personal.begins_with("person:"):
+		known = true
+		display = personal
+	var far := str(row.get("observe_far", "A worker is here."))
+	var near := str(row.get("observe_near", far))
+	var semantic := {
+		"knowledge_key": person_id,
+		"interaction": "npc",
+		"dismiss_on_move": true,
+		"labels": [
+			{"level": 0, "text": role},
+			{"level": 1, "text": display},
+		],
+		"observe_far": far,
+		"observe_near": near,
+	}
+	var e := {
+		"kind": "npc",
+		"id": person_id,
+		"pos": _actor_tile_pos(actor),
+		"name": display if known else role,
+		"bridge_entity": true,
+		"bridge_talk": true,
+		"dynamic": true,
+		"node": actor,
+		"semantic": semantic,
+	}
+	_entities.append(e)
+	_attach_semantic_label(e, actor)
+	_hide_name_fallback(actor)
+
+
+func _actor_tile_pos(actor: Node2D) -> Array:
+	if not is_instance_valid(actor):
+		return [0, 0]
+	var gx := int(floor(actor.position.x / float(TPX)))
+	var gy := int(floor(actor.position.y / float(TPX)))
+	return [gx, gy]
+
+
+func sync_dynamic_person_poses() -> void:
+	"""Keep semantic range in sync with moving Person actors."""
+	for e in _entities:
+		if not bool(e.get("dynamic", false)):
+			continue
+		var actor = e.get("node")
+		if actor != null and is_instance_valid(actor):
+			e["pos"] = _actor_tile_pos(actor)
+
+
+func update_dynamic_person(person_id: String, row: Dictionary) -> void:
+	var e := _entity_by_id(person_id)
+	if e.is_empty():
+		return
+	var actor = e.get("node")
+	if actor != null and is_instance_valid(actor):
+		e["pos"] = _actor_tile_pos(actor)
+	var role := str(row.get("public_role", row.get("occupation", row.get("role", "Worker"))))
+	if role == "" or role.begins_with("person:"):
+		role = "Worker"
+	var far := str(row.get("observe_far", e.get("semantic", {}).get("observe_far", "")))
+	var near := str(row.get("observe_near", e.get("semantic", {}).get("observe_near", far)))
+	var semantic: Dictionary = e.get("semantic", {})
+	semantic["observe_far"] = far
+	semantic["observe_near"] = near
+	if semantic.get("labels") is Array and (semantic["labels"] as Array).size() > 0:
+		semantic["labels"][0]["text"] = role
+	e["semantic"] = semantic
+	var lbl = ui_semantic_label(person_id)
+	if lbl != null:
+		if lbl.has_method("update_semantic"):
+			lbl.update_semantic(semantic)
+		if lbl.has_method("set_bridge_view"):
+			lbl.set_bridge_view({
+				"known": false,
+				"name": "",
+				"label": role,
+				"description": far,
+			})
+
+
+func unregister_dynamic_person(person_id: String) -> void:
+	var keep: Array = []
+	for e in _entities:
+		if str(e.get("id", "")) == person_id and bool(e.get("dynamic", false)):
+			continue
+		keep.append(e)
+	_entities = keep
+	var lbl = ui_semantic_label(person_id)
+	if lbl != null and is_instance_valid(lbl):
+		_semantic_labels.erase(lbl)
+		lbl.queue_free()
+
+
+func _entity_by_id(entity_id: String) -> Dictionary:
+	for e in _entities:
+		if str(e.get("id", "")) == entity_id:
+			return e
+	return {}
 
 
 func _dismiss_semantic_on_move() -> void:
@@ -1796,7 +2041,72 @@ func _movement_input() -> Vector2i:
 	var key := _keyboard_dir()
 	if key != Vector2i.ZERO:
 		return key
-	return _held_dir
+	if _held_dir != Vector2i.ZERO:
+		return _held_dir
+	if _VRunner.is_bridge_mode():
+		return _mouse_steer_dir()
+	return Vector2i.ZERO
+
+
+func _mouse_steer_dir() -> Vector2i:
+	## G03 fx_clock_area parity: LMB hold on empty world steers John (grid dominant axis).
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_mouse_steer_held = false
+		return Vector2i.ZERO
+	if _gui_blocks_world_pointer():
+		return Vector2i.ZERO
+	if _pointer_on_entity:
+		return Vector2i.ZERO
+	_mouse_steer_held = true
+	var mouse := get_global_mouse_position()
+	var john_center := _john.global_position + Vector2(TPX * 0.5, TPX * 0.5)
+	var delta_v := mouse - john_center
+	if delta_v.length() < 18.0:
+		return Vector2i.ZERO
+	if absf(delta_v.x) >= absf(delta_v.y):
+		return Vector2i(1 if delta_v.x > 0 else -1, 0)
+	return Vector2i(0, 1 if delta_v.y > 0 else -1)
+
+
+func _gui_blocks_world_pointer() -> bool:
+	var hovered = get_viewport().gui_get_hovered_control()
+	if hovered == null:
+		return false
+	# Touch pad / dialogue / semantic focus / inventory chrome.
+	var n: Control = hovered
+	while n != null:
+		var nm := str(n.name)
+		if nm in ["TouchPad", "UIRoot", "SemanticFocus", "SemanticFocusRoot", "Dialogue", "SpellHost", "DuelHost"]:
+			return true
+		if n.mouse_filter == Control.MOUSE_FILTER_STOP and n is Button:
+			return true
+		n = n.get_parent() as Control
+	return false
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		_pointer_on_entity = _entity_under_pointer(event.position) != null
+	if _is_empty_pointer_press(event):
+		if Engine.get_process_frames() != _semantic_press_frame:
+			_semantic_focus = ""
+		# Do not consume — mouse steer needs the button held in _process.
+		if not (_VRunner.is_bridge_mode() and event is InputEventMouseButton):
+			get_viewport().set_input_as_handled()
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode in [KEY_SPACE, KEY_ENTER, KEY_Z, KEY_E]:
+			_on_action()
+		elif event.keycode == KEY_ESCAPE:
+			_on_menu()
+
+
+func _entity_under_pointer(screen_pos: Vector2) -> Variant:
+	var world := get_canvas_transform().affine_inverse() * screen_pos
+	var cell := Vector2i(int(floor(world.x / float(TPX))), int(floor(world.y / float(TPX))))
+	if _entity_at.has(cell):
+		return _entity_at[cell]
+	return null
 
 
 func _poll_move_dismiss_arm() -> void:
@@ -1841,7 +2151,13 @@ func _semantic_owns_talk(e: Dictionary) -> bool:
 
 
 func _semantic_in_range(e: Dictionary) -> bool:
+	if bool(e.get("dynamic", false)):
+		var actor = e.get("node")
+		if actor != null and is_instance_valid(actor):
+			e["pos"] = _actor_tile_pos(actor)
 	var pos: Array = e.get("pos", [-99, -99])
+	if pos.size() < 2:
+		return false
 	var d: Vector2i = (_john_pos - Vector2i(int(pos[0]), int(pos[1]))).abs()
 	return d.x + d.y <= 1
 
@@ -1870,6 +2186,9 @@ func _perform_entity_action(e: Dictionary) -> void:
 		return
 	if _VRunner.is_active() and e.has("village_quest_node"):
 		await _interact_village_anchor(e)
+		return
+	if _VRunner.is_bridge_mode() and bool(e.get("bridge_entity", false)):
+		await _interact_bridge_entity(e)
 		return
 	match str(e.get("kind", "")):
 		"sign", "door", "logs", "corpse":
@@ -2700,8 +3019,12 @@ func _finish_village_build(at: Vector2i, facing: String) -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c != _john:
-			c.queue_free()
+		if c == _john:
+			continue
+		# Preserve G05 WorkerController / activity presenters mounted under actors.
+		if str(c.name) == "WorkerController" or c.is_in_group("dmb_person_presenter"):
+			continue
+		c.queue_free()
 	_entities.clear()
 	_entity_at.clear()
 	_fire_frames.clear()
@@ -2724,7 +3047,289 @@ func _finish_village_build(at: Vector2i, facing: String) -> void:
 	_update_prompt()
 
 
+func _bridge_host():
+	return _VRunner.bridge_host()
+
+
+func _interact_bridge_npc(e: Dictionary) -> void:
+	var host = _bridge_host()
+	var id := str(e["id"])
+	_input_locked = true
+	_touch.set_enabled(false)
+	_face_npc_toward_john(e)
+	var reply: Dictionary = {}
+	if host != null and host.has_method("talk_to"):
+		reply = host.talk_to(id)
+	else:
+		reply = _VRunner.bridge_command("talk-%s" % id, "Interact", {"action": "talk", "entity_id": id})
+	var payload: Dictionary = reply.get("payload", {}) if typeof(reply.get("payload", {})) == TYPE_DICTIONARY else {}
+	var text := str(payload.get("text", reply.get("public_feedback", "")))
+	var speaker := str(payload.get("speaker_name", e.get("name", "Worker")))
+	if text == "":
+		text = "…"
+	# Formal dialogue: Pause Game Time while choices are open.
+	var session: Dictionary = payload.get("session", {}) if typeof(payload.get("session", {})) == TYPE_DICTIONARY else {}
+	var choices: Array = payload.get("choices", [])
+	var pause_token := ""
+	if choices.size() > 0:
+		if _bridge_runtime != null and _bridge_runtime.has_method("acquire_pause"):
+			pause_token = str(_bridge_runtime.acquire_pause("choice"))
+		else:
+			var pause_reply: Dictionary = _VRunner.bridge_command("pause-dlg", "Pause", {"reason": "choice"})
+			if str(pause_reply.get("status", "")) == "ACCEPTED":
+				pause_token = str(pause_reply.get("payload", {}).get("token", ""))
+	await _dialogue.say_async(speaker, text)
+	if choices.size() > 0 and not _present_cancelled:
+		var labels: Array = []
+		for c in choices:
+			if typeof(c) == TYPE_DICTIONARY:
+				labels.append(str(c.get("label", c.get("id", "…"))))
+			else:
+				labels.append(str(c))
+		labels.append("Walk away")
+		var picked: String = await _dialogue.choose_async("Respond", labels)
+		if picked != "Walk away" and picked != "":
+			var choice_id := ""
+			for c in choices:
+				if typeof(c) == TYPE_DICTIONARY and str(c.get("label", "")) == picked:
+					choice_id = str(c.get("id", ""))
+					break
+			if choice_id != "":
+				var choose_reply: Dictionary = _VRunner.bridge_command(
+					"choose-%s" % choice_id,
+					"Interact",
+					{"action": "choose_dialogue", "session_id": str(session.get("id", "")), "choice_id": choice_id}
+				)
+				var next_text := str(choose_reply.get("payload", {}).get("session", {}).get("text", choose_reply.get("public_feedback", "")))
+				if next_text != "":
+					await _dialogue.say_async(speaker, next_text)
+		_VRunner.bridge_command(
+			"close-dlg",
+			"Interact",
+			{"action": "close_dialogue", "session_id": str(session.get("id", ""))}
+		)
+	if pause_token != "":
+		if _bridge_runtime != null and _bridge_runtime.has_method("release_pause"):
+			_bridge_runtime.release_pause()
+		else:
+			_VRunner.bridge_command("resume-dlg", "Resume", {"token": pause_token})
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _interact_bridge_challenge(e: Dictionary) -> void:
+	var host = _bridge_host()
+	var cube_id := str(e.get("cube_id", e.get("id", "")))
+	_input_locked = true
+	_touch.set_enabled(false)
+	await _dialogue.say_async("", "A dangerous manifestation fouls this ground.")
+	var choice: String = await _dialogue.choose_async("Challenge the manifestation?", ["Challenge", "Walk away"])
+	if choice == "Challenge" and host != null:
+		if host.has_method("start_hazard_challenge"):
+			host.start_hazard_challenge(cube_id)
+		elif host.has_method("start_demon_challenge"):
+			host.start_demon_challenge(cube_id)
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _interact_bridge_pickup(e: Dictionary) -> void:
+	var host = _bridge_host()
+	_input_locked = true
+	_touch.set_enabled(false)
+	var reply: Dictionary = {}
+	if host != null and host.has_method("pickup_item"):
+		reply = host.pickup_item(str(e["id"]))
+	else:
+		reply = _VRunner.bridge_command("pickup", "Interact", {"action": "pickup", "item_id": str(e["id"])})
+	await _dialogue.say_async("", str(reply.get("public_feedback", "Taken.")))
+	if host != null and host.has_method("reproject_from_python"):
+		host.reproject_from_python()
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _interact_bridge_entity(e: Dictionary) -> void:
+	if bool(e.get("bridge_talk", false)):
+		await _interact_bridge_npc(e)
+		return
+	if bool(e.get("bridge_challenge", false)):
+		await _interact_bridge_challenge(e)
+		return
+	var host = _bridge_host()
+	if bool(e.get("bridge_enter", false)) or str(e.get("dungeon_id", "")) == "dungeon.sluice":
+		_input_locked = true
+		_touch.set_enabled(false)
+		await _dialogue.say_async("", str(e.get("text", "Sluice works")))
+		if host != null and host.has_method("enter_sluice"):
+			host.enter_sluice()
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	if bool(e.get("bridge_return_village", false)) or str(e.get("to_area", "")) == "area.village":
+		_input_locked = true
+		_touch.set_enabled(false)
+		if host != null and host.has_method("return_village"):
+			host.return_village()
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	if bool(e.get("bridge_travel", false)) and str(e.get("to_node", "")) != "":
+		await _bridge_travel_exit(e)
+		return
+	if bool(e.get("bridge_puzzle", false)):
+		await _interact_bridge_puzzle(e)
+		return
+	if bool(e.get("bridge_pickup", false)):
+		await _interact_bridge_pickup(e)
+		return
+	# Buildings / generic bridge entities: player-safe observation, then Inspect nearby.
+	var semantic: Dictionary = e.get("semantic", {})
+	var far := str(semantic.get("observe_far", ""))
+	var near := str(semantic.get("observe_near", ""))
+	if far == "":
+		far = str(e.get("text", "Nothing remarkable."))
+	if near == "":
+		near = far
+	# Durable Observe for world objects (rockfall knowledge, etc.).
+	if str(e.get("kind", "")) in ["boulder", "rockfall"] or str(e.get("id", "")).begins_with("boulder:") or str(e.get("id", "")).begins_with("rockfall:"):
+		var eid := str(e.get("id", ""))
+		_VRunner.bridge_command("obs-%s" % eid, "Observe", {"entity_id": eid})
+	_input_locked = true
+	_touch.set_enabled(false)
+	if _semantic_in_range(e):
+		var options: Array = ["Inspect"]
+		if str(semantic.get("interaction", "")) == "building":
+			options.append("Observe")
+		var choice: String = await _dialogue.choose_async(far if far != near else "Look closer?", options)
+		if choice == "Inspect" or choice == "Observe":
+			await _dialogue.say_async("", near)
+	else:
+		await _dialogue.say_async("", far)
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _bridge_travel_exit(e: Dictionary) -> void:
+	var host = _bridge_host()
+	var to_node := str(e.get("to_node", ""))
+	var from_node := str(e.get("from_node", ""))
+	if to_node == "" or host == null or not host.has_method("travel_to_node"):
+		await _dialogue.say_async("", str(e.get("travel_text", "The path goes nowhere useful.")))
+		return
+	_input_locked = true
+	_touch.set_enabled(false)
+	var travel_text := str(e.get("travel_text", ""))
+	if travel_text != "":
+		await _dialogue.say_async("", travel_text)
+	var choice: String = await _dialogue.choose_async("Leave this place?", ["Travel", "Stay"])
+	if choice != "Travel":
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	var tw := create_tween()
+	tw.tween_property(_fader, "modulate:a", 1.0, 0.25)
+	await tw.finished
+	var ok: bool = host.travel_to_node(from_node, to_node)
+	_fade_in()
+	if not ok:
+		var blocked := "You cannot travel that way right now."
+		if host.has_method("last_travel_feedback"):
+			var fb := str(host.last_travel_feedback())
+			if fb != "":
+				blocked = fb
+		await _dialogue.say_async("", blocked)
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
+func _interact_bridge_puzzle(e: Dictionary) -> void:
+	var host = _bridge_host()
+	var mid := str(e.get("mechanism_id", e.get("id", "")))
+	var kind := str(e.get("mechanism_kind", ""))
+	var lease_id := str(e.get("lease_id", _VRunner.get_area().get("puzzle_lease_id", "")))
+	var lease_version := int(e.get("lease_version", _VRunner.get_area().get("puzzle_lease_version", 1)))
+	_input_locked = true
+	_touch.set_enabled(false)
+	var options: Array = ["Inspect"]
+	var default_action := "toggle"
+	if kind == "movable_box":
+		options = ["Push", "Inspect"]
+		default_action = "push"
+	elif kind == "item_receptor":
+		options = ["Place handle", "Inspect"]
+		default_action = "place"
+	elif kind == "gate":
+		options = ["Open", "Inspect"]
+		default_action = "open"
+	elif kind == "switch":
+		options = ["Activate", "Inspect"]
+		default_action = "on"
+	options.append("Walk away")
+	var picked: String = await _dialogue.choose_async(str(e.get("text", mid)), options)
+	if picked == "Walk away" or picked == "Inspect" or picked == "":
+		if picked == "Inspect":
+			await _dialogue.say_async("", str(e.get("text", mid)))
+		_input_locked = false
+		_touch.set_enabled(true)
+		_update_prompt()
+		return
+	var mech_action := default_action
+	if picked == "Push":
+		mech_action = "push"
+	elif picked == "Place handle":
+		mech_action = "place"
+	elif picked == "Open":
+		mech_action = "open"
+	elif picked == "Activate":
+		mech_action = "on"
+	var item_id := ""
+	if mech_action == "place":
+		item_id = "item:sluice_handle"
+	var reply: Dictionary = {}
+	if mech_action == "push":
+		reply = _VRunner.bridge_command(
+			"push-%s" % mid,
+			"Interact",
+			{"action": "puzzle_push", "lease_id": lease_id, "mechanism_id": mid, "expected_version": lease_version}
+		)
+	elif host != null and host.has_method("puzzle_act"):
+		reply = host.puzzle_act(lease_id, mid, mech_action, lease_version, item_id)
+	else:
+		var payload := {
+			"action": "puzzle_act",
+			"lease_id": lease_id,
+			"mechanism_id": mid,
+			"mechanism_action": mech_action,
+			"expected_version": lease_version,
+		}
+		if item_id != "":
+			payload["item_id"] = item_id
+		reply = _VRunner.bridge_command("puzzle-%s" % mid, "Interact", payload)
+	await _dialogue.say_async("", str(reply.get("public_feedback", "Done.")))
+	var finish: Dictionary = reply.get("payload", {}).get("finish", {}) if typeof(reply.get("payload", {})) == TYPE_DICTIONARY else {}
+	if str(finish.get("status", "")) == "applied" or bool(reply.get("payload", {}).get("solved_now", false)):
+		_VRunner.bridge_command("confirm-quest", "Interact", {"action": "confirm_village_quest"})
+	if host != null and host.has_method("reproject_from_python"):
+		host.reproject_from_python()
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
+
+
 ## Leave the village test session: restore the exact pre-test campaign snapshot.
 func _exit_village_test() -> void:
+	if _VRunner.is_bridge_mode():
+		# Hosted under G05 shell — do not bounce to Village Test Menu.
+		_VRunner.end(_adv())
+		return
 	_VRunner.end(_adv())
 	get_tree().change_scene_to_file("res://client/scenes/village_test_menu.tscn")

@@ -22,8 +22,19 @@ simulate or save fields also owned by Python. Old code may remain as reference,
 isolated regression tests or offline comparison. Do not expose an old-sim
 backend in the new production entrypoint.
 
-G01 certifies this migration slice, not complete village gameplay. G05 remains
-the complete procedural village/quest/puzzle/duel gate.
+G01 certifies this migration slice, not complete village gameplay. **G05
+(re-scoped again — return to narrative + usability):** fully explorable
+Prehistoric board (19/54/72) **plus one simple persistent blocked-exit rockfall
+quest**. Helper is **any eligible village worker** chosen via dialogue after
+Inspect — not a preselected Person. Original shortage/demon/sluice prototype
+remains **superseded** and archived (`FX-VILLAGE-QUEST`). Do not start
+era-transition (T097) until Joe clears this gate.
+
+**G05 dynamic local obstacles:** when Python clears a rockfall (or similar),
+Godot must refresh Overworld `_entity_at` via `sync_dynamic_obstacle` /
+`sync_dynamic_obstacles_from_area` on the same area payload that updates
+WorldLayerPresenters. Visual-only layer updates leave stale walk blocks.
+A full LocalArea rebuild also works but is not the preferred live path.
 
 ## Toolchain and pack location
 
@@ -109,12 +120,15 @@ Supersedes conflicting R06 / “choose fallback” decisions from the 18 Septemb
 pass. Authoritative addendum:
 `docs/DuelMasterBattle_G04_Reuse_Repair_Addendum.md` (U01–U08).
 
-While this repair is in progress G04 is FIX_REQUIRED. Reach AWAITING_HUMAN only
-after all required automated checks pass. Do not start T077. Do not mark G04
-PASS from automation. Integration branch: `fix/g04-retained-ui` from
-`origin/feature/spellbook-ui`, with `origin/main` merged. Ensemble-only commits
-`58ea2d2` and `6f7be0f` remain a separate follow-up on
-`BuildPackV03-ensemble-depth-pass` and are not part of this repair.
+**Cleared 2026-09-19:** Joe Salmon accepted G04 PASS against implementation
+`75b7f539aa1916fb6c0a5f156be3efa5184dd7eb` on main via merge
+`15eadbd7dd82ebb56167c745e4998f2fa06809fb`. T077/G05 is authorized.
+Historical note: during the repair G04 was FIX_REQUIRED then AWAITING_HUMAN;
+PASS was never granted from automation alone. Integration branch was
+`fix/g04-retained-ui` from `origin/feature/spellbook-ui`, with `origin/main`
+merged. Ensemble-only commits `58ea2d2` and `6f7be0f` remain a separate
+follow-up on `BuildPackV03-ensemble-depth-pass` and were not part of the
+accepted G04 merge.
 
 ### Control and validation
 

@@ -30,6 +30,7 @@ const TESTS := [
 	"res://sim/tests/test_dungeons.gd",
 	"res://sim/tests/test_puzzle_rooms.gd",
 	"res://sim/tests/test_puzzle_walkable.gd",
+	"res://sim/tests/test_rockfall_walkable.gd",
 	"res://sim/tests/test_puzzle_r01.gd",
 	"res://sim/tests/test_quests.gd",
 ]

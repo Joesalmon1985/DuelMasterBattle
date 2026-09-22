@@ -1,5 +1,11 @@
 # Duel Master Battle — Project Plan
 
+> **HISTORICAL / STALE (2026-09-21 architecture review).**  
+> This document describes an earlier **mobile-first Mastermind duel** product plan.  
+> It is **not** the authoritative product definition for the current systemic RPG/adventure.  
+> Current authority: `Pack/DuelMasterBattle_Build_Pack/source/GDD_v0.3.md`, build-pack contracts, and [`docs/review/`](review/README.md).  
+> Content below is preserved for history only.
+
 ## Goal
 
 Build a **mobile-first real-time wizard ward duel** in Godot 4.4.x: Human vs rival wizard with independent cast windows, encounter-driven rules (1–8 loci), global difficulty selection, and tested pure logic in Python and GDScript.

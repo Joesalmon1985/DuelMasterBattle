@@ -41,7 +41,11 @@ Do not disguise balance changes as bug fixes. Use existing TUNABLE fields and re
 
 ## Non-negotiable ownership
 
-Python owns persistent world truth; Godot owns rendering/input/local movement and explicitly leased encounters. Worker animations do not drive production. Catan cargo and industrial flow are separate. Every worker, soldier and cart retains identity. The wizard is immune to faction military and can destroy any local ordinary unit/building. Only Travel/Wait advance strategic turns. Duels pause the world. NPCs/active quests survive era changes. Runtime has no LLM/network service dependency.
+Python owns persistent world truth; Godot owns rendering/input/local movement and explicitly leased encounters. Worker animations do not drive production. Catan cargo and industrial flow are separate. Every worker, soldier and cart retains identity. The wizard is immune to faction military and can destroy any local ordinary unit/building. Only Travel/Wait advance strategic turns. Duels pause the world. Living Persons and active quests survive era changes. Runtime has no LLM/network service dependency.
+
+**Required ontology reading:** `docs/CANONICAL_GAME_ONTOLOGY.md` before any cross-system people, military, industry, village, logistics or quest work. Also read `docs/INTEGRATED_RUNTIME_ARCHITECTURE.md` and, for village layout, `docs/LOCAL_SETTLEMENT_PRESENTATION.md`. Fixtures arrange production state; they must not invent parallel gameplay semantics. ONE Person ID = ONE visible actor. Soldiers are Persons with linked UnitState (`person_id`). Never create a Person solely for presentation. Primary resource sites must not be drawn as ordinary houses.
+
+Do not start T097 / G06 until Joe explicitly PASSes the revised G05 coherent Prehistoric slice.
 
 ## Completion
 

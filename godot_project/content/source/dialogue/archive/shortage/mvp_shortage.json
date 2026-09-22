@@ -1,0 +1,117 @@
+[
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.offer",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The yard has gone quiet. I can show you where the work stopped.",
+    "fallback": "Work has stopped here.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "stage": 0,
+    "cause_id": "cause.factory_shortage",
+    "scope": "archived"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.demon_hint",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "Nothing comes from the ridge while that thing is there.",
+    "fallback": "Something on the ridge is blocking work.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "stage": 1,
+    "cause_id": "cause.factory_shortage",
+    "require_cause": true,
+    "scope": "archived"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.sluice_hint",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The water channel could keep us working, if someone opened it.",
+    "fallback": "There may be another way to keep working.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "stage": 1,
+    "cause_id": "cause.sluice_sabotage",
+    "scope": "archived"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.world_resolved",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The patrol cleared the ridge before you returned.",
+    "fallback": "Someone else cleared the ridge.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "resolution": "world_fix_first",
+    "scope": "archived"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.route_a_complete",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The ridge is clear. Route A is feeding the yard again.",
+    "fallback": "Work resumed on the main route.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "resolution": "demon_duel",
+    "claims_demon_cleared": true,
+    "scope": "archived"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.route_b_complete",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "The channel is open. We can work again, though the ridge is still unsafe.",
+    "fallback": "The alternate channel is working.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "resolution": "sluice_route",
+    "claims_demon_cleared": false,
+    "scope": "archived"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.displaced_loss",
+    "speaker_role": "witness",
+    "era_id": "all",
+    "text": "The factory is gone. Mara still waits elsewhere \u2014 the work cannot resume here.",
+    "fallback": "The workplace was destroyed.",
+    "choices": [],
+    "quest_id": "quest.factory_shortage",
+    "resolution": "target_destroyed",
+    "scope": "archived"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.mara.named",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "text": "I am {speaker_name}.",
+    "fallback": "They introduce themselves carefully.",
+    "choices": [],
+    "variables": {
+      "speaker_name": {
+        "type": "known_name"
+      }
+    },
+    "scope": "archived"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.wrong_era",
+    "speaker_role": "worker",
+    "era_id": "future",
+    "text": "In the future we fly carts.",
+    "fallback": "They look puzzled.",
+    "choices": [],
+    "scope": "archived"
+  }
+]

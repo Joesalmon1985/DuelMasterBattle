@@ -1,0 +1,35 @@
+{
+  "task_id": "T088",
+  "status": "DONE",
+  "commit": "7da0477124e5f58bd0f4296be15b823960881aed",
+  "files": [
+    "sim/dmb/player/inventory.py",
+    "sim/dmb/adventure/item_recovery.py",
+    "sim/dmb/adventure/__init__.py",
+    "godot_project/content/source/items/catalog.json",
+    "tests/sim/test_t088_inventory_use.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "InventoryService.use / combine (allowlisted)",
+    "ItemRecoveryService.relocate_stranded / open_destroyed_location_route"
+  ],
+  "source_rules": [
+    "C10 InventoryService + recovery",
+    "GDD \u00a7\u00a755, 56, 77"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T088",
+      "exit_code": 0,
+      "result": "PASS; 6 pytest + item catalog evidence"
+    }
+  ],
+  "extra_scope": {
+    "tools/check.py": "Wire T088",
+    "sim/dmb/adventure/__init__.py": "Export ItemRecoveryService"
+  },
+  "defects": [],
+  "next_task": "T089",
+  "notes": "Combine consumes exact allowlisted inputs once; invalid use leaves unrelated items untouched; layout relocation writes one receipt; destroyed location opens alternate recovery for sluice handle."
+}

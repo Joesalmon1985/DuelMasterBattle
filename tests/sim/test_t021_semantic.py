@@ -28,8 +28,15 @@ def test_observation_reveals_permitted_role() -> None:
     state = WorldState(world_id=WorldId("world:t021"))
     reveal(state, "person:1", KnowledgeFact("person:1", "met", role="guard"))
     view = filter_entity(state, "person:1")
-    assert view["known"] is True
+    # Role may be known before personal name; known==True only after name learned.
+    assert view["known"] is False
     assert view["role"] == "guard"
+    assert view["label"] == "guard"
+    state.knowledge["person:1"]["name"] = "Bren"
+    named = filter_entity(state, "person:1")
+    assert named["known"] is True
+    assert named["name"] == "Bren"
+    assert named["label"] == "Bren"
 
 
 def test_remote_invisible_token_cannot_be_minted() -> None:

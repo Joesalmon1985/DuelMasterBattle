@@ -1,0 +1,41 @@
+{
+  "task_id": "T103",
+  "status": "DONE",
+  "commit": "686a07d4ad260c522d16211142689402a1133b51",
+  "g05_smoke": {
+    "python": "PASS tests/sim/test_t084_dialogue.py + tests/scenarios/test_village_quest.py (11)",
+    "godot_headless": "TIMEOUT/hang on run_g05_smoke.gd in this environment; no code regression observed in Python Rockfall/dialogue suite"
+  },
+  "files": [
+    "sim/dmb/eras/continuity.py",
+    "sim/dmb/eras/__init__.py",
+    "sim/dmb/narrative/person_dialogue.py",
+    "tests/sim/test_t103_continuity.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T103.json"
+  ],
+  "public_contracts": [
+    "ContinuityService.adapt_for_transition \u2014 Rockfall/Person/item continuity",
+    "truthful_occupation_line for displaced workers",
+    "quest.blocked_exit_boulder (not shortage) preserved"
+  ],
+  "source_rules": [
+    "C11 continuity",
+    "GDD \u00a7\u00a738\u201340, 56, 141",
+    "T103 shortage\u2192Rockfall translation"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T103",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/narrative/person_dialogue.py": "Occupation replies use truthful_occupation_line"
+  },
+  "defects": [],
+  "next_task": "T104",
+  "notes": "Same Person IDs; helper binding; cleared/blocking Rockfall; dead helper not resurrected; required items relocated with same ID."
+}

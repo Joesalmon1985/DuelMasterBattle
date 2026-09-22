@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "era_id": "historic",
+  "display_name": "Historic",
+  "core_upgrade": {
+    "centre_def": "building.centre.historic",
+    "warehouse_def": "building.warehouse.historic",
+    "primary_def": "building.primary.historic",
+    "processor_def": "building.processor.historic",
+    "factory_def": "building.factory.historic",
+    "unit_defs": [
+      "unit.historic.skirmisher",
+      "unit.historic.line",
+      "unit.historic.heavy"
+    ],
+    "starter_grant": {
+      "timber": 2,
+      "brick": 2,
+      "wool": 1,
+      "grain": 1
+    },
+    "settlement_tier_after": "settlement",
+    "vp_after": 1,
+    "reset_factory_meters": true
+  },
+  "terrain_industrial": {
+    "woodland": {
+      "renewable": ["ind.historic.woodland.renewable", "Managed wood"],
+      "finite": ["ind.historic.woodland.finite", "Timber stands"]
+    },
+    "ore_mountains": {
+      "renewable": ["ind.historic.ore_mountains.renewable", "Mountain forage"],
+      "finite": ["ind.historic.ore_mountains.finite", "Iron ore"]
+    },
+    "clay_mountains": {
+      "renewable": ["ind.historic.clay_mountains.renewable", "Pottery clay"],
+      "finite": ["ind.historic.clay_mountains.finite", "Brick clay"]
+    },
+    "fields": {
+      "renewable": ["ind.historic.fields.renewable", "Orchard fruit"],
+      "finite": ["ind.historic.fields.finite", "Cultivated grain"]
+    },
+    "grazing_land": {
+      "renewable": ["ind.historic.grazing_land.renewable", "Pasture wool"],
+      "finite": ["ind.historic.grazing_land.finite", "Livestock"]
+    },
+    "desert": {
+      "renewable": ["ind.historic.desert.renewable", "Oasis crops"],
+      "finite": ["ind.historic.desert.finite", "Desert minerals"]
+    }
+  },
+  "notes": "In-place core transform for G06; no duplicate primary/factory slots."
+}

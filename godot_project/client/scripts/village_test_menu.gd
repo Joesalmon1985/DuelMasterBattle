@@ -101,6 +101,22 @@ func _generated_entries() -> Array:
 
 func _discover_fixtures() -> void:
     all_fixtures = _generated_entries() + Catalog.discover()
+    all_fixtures.push_front({
+        "id": "FX-VILLAGE",
+        "name": "G05 FX-VILLAGE (Python-backed)",
+        "valid": true,
+        "economic_profile": "G05",
+        "cast_count": 1,
+        "quest_title": "Factory shortage",
+        "quest_premise": "Playable Python FX-VILLAGE — same path as tools/play_g05.sh",
+        "node_count": 1,
+        "regions": ["village"],
+        "semantic_anchors": [],
+        "map_size": {"width": 48, "height": 48},
+        "errors": [],
+        "python_backed": true,
+        "generated": false,
+    })
     # Populate filter dropdown
     filter_profile.clear()
     filter_profile.add_item("All Profiles", -1)
@@ -227,8 +243,8 @@ func _update_details_panel(f: Dictionary) -> void:
     details_panel.get_node("ValidLabel").visible = false
     details_panel.get_node("DetailsContent").visible = true
     
-    details_panel.get_node("DetailsContent/IdLabel").text = str(f["id"])
-    details_panel.get_node("DetailsContent/NameLabel").text = str(f["name"])
+    details_panel.get_node("DetailsContent/HeaderRow/IdLabel").text = str(f["id"])
+    details_panel.get_node("DetailsContent/HeaderRow/NameLabel").text = str(f["name"])
     details_panel.get_node("DetailsContent/EconomyLabel").text = "Economic Profile: " + str(f.get("economic_profile", "Unknown"))
     details_panel.get_node("DetailsContent/CastLabel").text = "Cast: %d characters" % f.get("cast_count", 0)
     details_panel.get_node("DetailsContent/QuestLabel").text = "Quest: " + str(f.get("quest_title", "None"))
@@ -266,8 +282,8 @@ func _update_generated_details(f: Dictionary) -> void:
     var prod: Array = []
     for pr in p["production"]:
         prod.append("%d %s%s" % [int(pr["n"]), str(pr["building"]), " (idle)" if bool(pr.get("idle", false)) else ""])
-    details_panel.get_node("DetailsContent/IdLabel").text = str(f["id"])
-    details_panel.get_node("DetailsContent/NameLabel").text = str(f["name"])
+    details_panel.get_node("DetailsContent/HeaderRow/IdLabel").text = str(f["id"])
+    details_panel.get_node("DetailsContent/HeaderRow/NameLabel").text = str(f["name"])
     details_panel.get_node("DetailsContent/EconomyLabel").text = "%s of %s — dev %d, housing %d, infection %d%s" % [str(p["kind"]).capitalize(), DmbFactions.name_of(str(p["owner"])), int(p["development"]), int(p["housing"]), int(p["infection"]), (", mood " + str(p["mood"])) if str(p["mood"]) != "" else ""]
     details_panel.get_node("DetailsContent/CastLabel").text = "Terrain: %s | Production: %s" % [", ".join(PackedStringArray(terr)), ", ".join(PackedStringArray(prod))]
     details_panel.get_node("DetailsContent/QuestLabel").text = "Works: %s | Civic: %s" % [", ".join(PackedStringArray(p["processing"])) if not p["processing"].is_empty() else "none", ", ".join(PackedStringArray(p["civic"]))]
@@ -285,6 +301,11 @@ func _update_run_button() -> void:
 
 func _on_run_pressed() -> void:
     if selected_profile_id == "" or not _fixture_by_id(selected_profile_id).get("valid", true):
+        return
+    if selected_profile_id == "FX-VILLAGE" or bool(_fixture_by_id(selected_profile_id).get("python_backed", false)):
+        OS.set_environment("DMB_FIXTURE", "FX-VILLAGE")
+        OS.set_environment("DMB_SEED", "507")
+        get_tree().change_scene_to_file("res://client/scenes/g05_shell.tscn")
         return
     Runner.set_profile(selected_profile_id)
     get_tree().change_scene_to_file("res://client/scenes/overworld.tscn")

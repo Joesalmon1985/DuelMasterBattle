@@ -44,19 +44,24 @@ Ordinary vacant jobs are backfilled with new people on the accounting tick witho
 
 ### Presentation carriers (visual only)
 
-Each **active directed building connection** implied by installed processor bindings and factory routes has its own carrier assignment for street readability:
+Each **active directed building connection** may show carrying **activity** on an **existing** workplace Person (occupation unchanged). Animation is illustrative:
 
-- A carrier transports **one** resource type along that single connection, delivers it, then returns empty. It must not tour unrelated buildings.
+- Prefer employees already assigned to the from/to buildings; do **not** mint persistent Persons for sprites.
+- A shown carrier activity transports **one** resource type along that single connection, delivers, then returns empty. It must not tour unrelated buildings.
 - Recipes with multiple inputs show **separate** resource-specific inbound legs (one connection per input channel).
 - Outbound processed-product legs follow each selected factory route; do not invent connections to make idle buildings participate.
-- Documented tunables: `VISUAL_CARRY_CAPACITY_PER_SEC` (default 0.01 units/s) and `MAX_CARRIERS_PER_CONNECTION` (default 3). Carrier count = clamp(ceil(connection_throughput / capacity), 0, max). Outbound carrier activity scales with allocated processed flow to that factory, not merely inbound headcount.
-- Carrier jobs reuse persistent person IDs; projection refresh must not recreate identities. Carrier arrival **never** awards resources or advances meters — Python accounting remains sole authority. Path obstruction and decorative routing change presentation only.
+- Documented tunables: `VISUAL_CARRY_CAPACITY_PER_SEC` (default 0.01 units/s) and `MAX_CARRIERS_PER_CONNECTION` (default 3) for how many employee animations to cue — not how many People to create.
+- Ambient non-Person decoration (no ID, not targetable) is allowed if more motion is desired.
+- Carrier arrival **never** awards resources or advances meters — Python accounting remains sole authority. Path obstruction changes presentation only.
+- See `docs/CANONICAL_GAME_ONTOLOGY.md`.
 
 Damaged buildings multiply their capacity by health/max health. Permanent tech applies after city/source baseline; source, processor and factory modifiers affect only their own stage. Do not multiply all three stages together into free output. Legacy primary/factory definitions stay in their layer; upgraded slots change binding in place and reset only the new-era factory meter. Extra legacy processors remain real.
 
 ## Catalogue and route defaults
 
-The included 240 recipe records are normalized from the prior workbook, with GDD v0.3 resource names authoritative. Historical workbook columns such as Population supply are descriptive metadata; they do not introduce hunger, population consumption or technology costs. All processor outputs are eligible for baseline military supply.
+The included 240 recipe records are normalized from the prior workbook, with GDD v0.3 resource names authoritative. Historical workbook columns such as Population supply are descriptive metadata; they do not introduce hunger, population consumption or technology costs.
+
+**Processed outputs are real typed goods** (food, pottery, medicine, tools, household goods, processed materials, …). Player-facing text must keep those names. For the MVP, factory routes may consume a processed output as **military-production supply** — a deliberate downstream abstraction, not proof that all processed outputs are ontologically identical. A fuller civilian consumption/equipment economy is later design work. Schema/API debt: where C06 currently treats “all processor outputs eligible for baseline military supply” as a single pool, retain typed `resource_id` / recipe output names on routes and meters so expansion remains possible.
 
 MVP manifest enables all 15 renewable+renewable terrain pairs per implemented era and the Woodland-renewable/Ore-Mountains-finite route used by the shortage fixture: 16 per era. This ensures any cross-terrain node can bootstrap legally while preserving a finite-source example. Full manifest enables all 60 per era. Culture access references the full era catalogue even when the demonstration manifest enables a subset. Every raw type must appear ten times in the full catalogue.
 

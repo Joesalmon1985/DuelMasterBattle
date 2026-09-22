@@ -1,0 +1,272 @@
+{
+  "battles": {
+    "battle:1": {
+      "node_id": "node:23",
+      "state": "wipe"
+    }
+  },
+  "carts": {
+    "cart:1": {
+      "node": "node:2",
+      "status": "idle"
+    },
+    "cart:2": {
+      "node": "node:2",
+      "status": "idle"
+    },
+    "cart:3": {
+      "node": "node:12",
+      "status": "idle"
+    },
+    "cart:4": {
+      "node": "node:12",
+      "status": "idle"
+    },
+    "cart:5": {
+      "node": "node:35",
+      "status": "idle"
+    },
+    "cart:6": {
+      "node": "node:35",
+      "status": "idle"
+    },
+    "cart:7": {
+      "node": "node:27",
+      "status": "idle"
+    },
+    "cart:8": {
+      "node": "node:27",
+      "status": "idle"
+    }
+  },
+  "cities": [],
+  "formations": {
+    "formation:1": {
+      "faction_id": "faction:1",
+      "node_id": "node:23"
+    },
+    "formation:2": {
+      "faction_id": "faction:2",
+      "node_id": "node:23"
+    },
+    "formation:3": {
+      "faction_id": "faction:2",
+      "node_id": "node:15"
+    },
+    "formation:4": {
+      "faction_id": "faction:1",
+      "node_id": "node:10"
+    },
+    "formation:5": {
+      "faction_id": "faction:1",
+      "node_id": "node:12"
+    },
+    "formation:6": {
+      "faction_id": "faction:2",
+      "node_id": "node:35"
+    },
+    "formation:7": {
+      "faction_id": "faction:2",
+      "node_id": "node:27"
+    },
+    "formation:8": {
+      "faction_id": "faction:1",
+      "node_id": "node:2"
+    }
+  },
+  "game_ms": 200000,
+  "hazards": [
+    "cube:1",
+    "cube:3"
+  ],
+  "roads": [
+    "command:1",
+    "command:2",
+    "command:3",
+    "command:4",
+    "command:6"
+  ],
+  "settlement_tiers": {
+    "settlement:1": "settlement",
+    "settlement:2": "settlement",
+    "settlement:3": "settlement",
+    "settlement:4": "settlement"
+  },
+  "settlements": [
+    "settlement:1",
+    "settlement:2",
+    "settlement:3",
+    "settlement:4"
+  ],
+  "turn": 200,
+  "units": {
+    "unit:1": {
+      "alive": false,
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:1",
+      "node_id": "node:23",
+      "status": "dead"
+    },
+    "unit:10": {
+      "alive": true,
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:1",
+      "node_id": "node:10",
+      "status": "available"
+    },
+    "unit:11": {
+      "alive": true,
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:1",
+      "node_id": "node:10",
+      "status": "available"
+    },
+    "unit:12": {
+      "alive": true,
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:1",
+      "node_id": "node:10",
+      "status": "available"
+    },
+    "unit:13": {
+      "alive": true,
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:1",
+      "node_id": "node:12",
+      "status": "available"
+    },
+    "unit:14": {
+      "alive": true,
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:1",
+      "node_id": "node:12",
+      "status": "available"
+    },
+    "unit:15": {
+      "alive": true,
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:1",
+      "node_id": "node:12",
+      "status": "available"
+    },
+    "unit:16": {
+      "alive": true,
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:2",
+      "node_id": "node:35",
+      "status": "available"
+    },
+    "unit:17": {
+      "alive": true,
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:2",
+      "node_id": "node:35",
+      "status": "available"
+    },
+    "unit:18": {
+      "alive": true,
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:2",
+      "node_id": "node:35",
+      "status": "available"
+    },
+    "unit:19": {
+      "alive": true,
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:2",
+      "node_id": "node:27",
+      "status": "available"
+    },
+    "unit:2": {
+      "alive": false,
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:1",
+      "node_id": "node:23",
+      "status": "dead"
+    },
+    "unit:20": {
+      "alive": true,
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:2",
+      "node_id": "node:27",
+      "status": "available"
+    },
+    "unit:21": {
+      "alive": true,
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:2",
+      "node_id": "node:27",
+      "status": "available"
+    },
+    "unit:22": {
+      "alive": true,
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:1",
+      "node_id": "node:2",
+      "status": "available"
+    },
+    "unit:23": {
+      "alive": true,
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:1",
+      "node_id": "node:2",
+      "status": "available"
+    },
+    "unit:24": {
+      "alive": true,
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:1",
+      "node_id": "node:2",
+      "status": "available"
+    },
+    "unit:3": {
+      "alive": false,
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:1",
+      "node_id": "node:23",
+      "status": "dead"
+    },
+    "unit:4": {
+      "alive": false,
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:2",
+      "node_id": "node:23",
+      "status": "dead"
+    },
+    "unit:5": {
+      "alive": false,
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:2",
+      "node_id": "node:23",
+      "status": "dead"
+    },
+    "unit:6": {
+      "alive": false,
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:2",
+      "node_id": "node:23",
+      "status": "dead"
+    },
+    "unit:7": {
+      "alive": true,
+      "definition_id": "unit.ancient.skirmisher",
+      "faction_id": "faction:2",
+      "node_id": "node:15",
+      "status": "available"
+    },
+    "unit:8": {
+      "alive": true,
+      "definition_id": "unit.ancient.line",
+      "faction_id": "faction:2",
+      "node_id": "node:15",
+      "status": "available"
+    },
+    "unit:9": {
+      "alive": true,
+      "definition_id": "unit.ancient.heavy",
+      "faction_id": "faction:2",
+      "node_id": "node:15",
+      "status": "available"
+    }
+  }
+}

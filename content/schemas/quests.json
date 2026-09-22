@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DMBQuestTemplate",
+  "type": "object",
+  "required": ["id", "schema_version", "stages", "statuses"],
+  "properties": {
+    "id": {"type": "string"},
+    "schema_version": {"type": "integer", "minimum": 1},
+    "version": {"type": "integer", "minimum": 1},
+    "family": {"type": "string"},
+    "required_cause": {"type": "object"},
+    "binding": {"type": "object"},
+    "stages": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 5,
+      "items": {"type": "object"}
+    },
+    "statuses": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "offered",
+          "active",
+          "suspended",
+          "completed",
+          "resolved_by_world",
+          "failed_with_consequence"
+        ]
+      }
+    },
+    "solutions": {"type": "array"},
+    "deadlines": {"type": "object"},
+    "world_resolved_route": {"type": "object"},
+    "invalid_target_route": {"type": "object"},
+    "dialogue_keys": {"type": "object"},
+    "effects": {"type": "array"}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DMBPuzzleDefinition",
+  "type": "object",
+  "required": ["id", "schema_version", "mechanisms", "solve_when"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "schema_version": {"type": "integer", "minimum": 1},
+    "area_id": {"type": "string"},
+    "reset_state": {"type": "object"},
+    "mechanisms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind"],
+        "properties": {
+          "id": {"type": "string"},
+          "kind": {
+            "type": "string",
+            "enum": [
+              "switch",
+              "pressure_plate",
+              "movable_box",
+              "item_receptor",
+              "door",
+              "gate",
+              "sequence",
+              "timed_gate"
+            ]
+          },
+          "position": {
+            "type": "array",
+            "items": {"type": "number"},
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "accepts_definition_id": {"type": "string"},
+          "holds": {"type": "boolean"},
+          "consumes": {"type": "boolean"},
+          "requires": {"type": "array", "items": {"type": "string"}},
+          "sequence": {"type": "array", "items": {"type": "string"}},
+          "duration_game_ms": {"type": "integer", "minimum": 0},
+          "opens": {"type": "string"},
+          "linked_box": {"type": "string"}
+        }
+      }
+    },
+    "solve_when": {
+      "type": "object",
+      "required": ["all"],
+      "properties": {
+        "all": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1
+        }
+      }
+    },
+    "finish_effects": {
+      "type": "array",
+      "items": {"$ref": "effects.json"}
+    }
+  },
+  "additionalProperties": true
+}

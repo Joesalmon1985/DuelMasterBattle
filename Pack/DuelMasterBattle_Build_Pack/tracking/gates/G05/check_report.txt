@@ -1,0 +1,119 @@
+{
+  "target": "G05",
+  "status": "PASS",
+  "results": [
+    {
+      "name": "g05_full_world_python",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 5.727,
+      "detail": "......................                                                   [100%]\n22 passed in 5.28s",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_g05_full_world.py",
+        "tests/sim/test_g05_visual_layers.py",
+        "tests/sim/test_village_foundation.py",
+        "tests/scenarios/test_village_travel.py",
+        "tests/sim/test_canonical_ontology.py"
+      ]
+    },
+    {
+      "name": "g05_packet_files",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.001,
+      "detail": "5 evidence files valid",
+      "command": null
+    },
+    {
+      "name": "g05_validate_puzzles",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 0.117,
+      "detail": "validate_puzzles: PASS (puzzle.sluice)\n  TRACE default: solved=True route_b=True\n  TRACE box_near_plate: solved=True route_b=True",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "tools.content.validate_puzzles"
+      ]
+    },
+    {
+      "name": "g05_playable",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 3.285,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=43175\nG05_PLAYABLE_OK node=node:35 buildings=9 exits=3 people=0\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g05_playable.gd"
+      ]
+    },
+    {
+      "name": "g03_regression_smoke",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 6.28,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=35663\nG03_SMOKE_OK worker=person:5 factories=3 finite=590\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 4 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g03_smoke.gd"
+      ]
+    },
+    {
+      "name": "g02_regression_smoke",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 3.279,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=42491\nG02_SMOKE_OK seed=202.0 cart=cart:1 store=store:building:2 moved=672.0 wait_turn=8\u21929 delivery=delivered construction=ready\nDMB_SIDECAR host=127.0.0.1 port=33593\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 4 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g02_smoke.gd"
+      ]
+    },
+    {
+      "name": "g01_regression_smoke",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 1.314,
+      "detail": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\n\nDMB_SIDECAR host=127.0.0.1 port=42367\nG01_SMOKE_OK world_id=world:g01",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g01_smoke.gd"
+      ]
+    },
+    {
+      "name": "g04_regression_playable",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_seconds": 13.317,
+      "detail": "G04_BATTLE_PLAYABLE_OK units=6 destroyed=unit:1\nG04_TRAVEL_CASUALTIES_OK count=2\nG04_BATTLE_TRAVEL_OK dest_units=0\nDMB_SIDECAR host=127.0.0.1 port=44239\nG04_HAZARD_WARD_UI_OK phase=1\nG04_HAZARD_PLAYABLE_OK retained_board cube=cube:1\nG04_SMOKE_OK battle_units=6\nG04_PLAYABLE_OK\nWARNING: ObjectDB instances leaked at exit (run with --verbose for details).\n     at: cleanup (core/object/object.cpp:2378)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:614)",
+      "command": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_g04_playable.gd"
+      ]
+    }
+  ]
+}

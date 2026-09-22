@@ -264,6 +264,16 @@ def _pytest(name: str, *paths: str) -> CheckResult:
     )
 
 
+def _python_module(name: str, module: str, required_pattern: str) -> CheckResult:
+    return run_command(
+        CommandCheck(
+            name=name,
+            argv=(sys.executable, "-m", module),
+            required_pattern=required_pattern,
+        )
+    )
+
+
 def _godot_bin() -> str | None:
     env = os.environ.get("GODOT", "").strip()
     if env and Path(env).is_file():
@@ -605,6 +615,375 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T077": lambda: [
+            _pytest(
+                "people_profiles",
+                "tests/sim/test_t077_people_profiles.py",
+                "tests/sim/test_t028_people.py",
+            ),
+            validate_evidence(
+                "people_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "people" / "preferences.json",
+                    ROOT / "godot_project" / "content" / "source" / "people" / "dialogue_profiles.json",
+                    ROOT / "godot_project" / "content" / "source" / "people" / "goals.json",
+                ],
+            ),
+        ],
+        "T078": lambda: [
+            _pytest("village_projection", "tests/sim/test_t078_village_projection.py"),
+            _godot_script(
+                "village_projector",
+                "res://client/tests/run_t078_village_projector.gd",
+                r"T078_VILLAGE_PROJECTOR_OK",
+            ),
+        ],
+        "T079": lambda: [
+            _pytest(
+                "semantic_coverage",
+                "tests/sim/test_t079_semantic_coverage.py",
+                "tests/sim/test_r04_semantic_magic.py",
+            ),
+            _godot_script(
+                "semantic_labels",
+                "res://client/tests/run_t079_semantic_labels.gd",
+                r"T079_SEMANTIC_LABELS_OK",
+            ),
+        ],
+        "T080": lambda: [
+            _pytest("aspects", "tests/sim/test_t080_aspects.py"),
+            validate_evidence(
+                "aspect_content",
+                [ROOT / "godot_project" / "content" / "source" / "aspects" / "aspects.json"],
+            ),
+        ],
+        "T081": lambda: [
+            _pytest(
+                "conditions_effects",
+                "tests/sim/test_t081_conditions_effects.py",
+                "tests/sim/test_t065_magic.py",
+            ),
+            validate_evidence(
+                "effects_schema",
+                [
+                    ROOT / "content" / "schemas" / "effects.json",
+                    ROOT / "godot_project" / "content" / "schemas" / "effects.json",
+                ],
+            ),
+        ],
+        "T082": lambda: [
+            _pytest("causes_binding", "tests/sim/test_t082_causes_binding.py"),
+        ],
+        "T083": lambda: [
+            _pytest("quest_runtime", "tests/sim/test_t083_quest_runtime.py"),
+            validate_evidence(
+                "quests_schema",
+                [ROOT / "content" / "schemas" / "quests.json"],
+            ),
+        ],
+        "T084": lambda: [
+            _pytest("dialogue_runtime", "tests/sim/test_t084_dialogue.py"),
+            validate_evidence(
+                "dialogue_content",
+                [ROOT / "godot_project" / "content" / "source" / "dialogue" / "mvp_bank.json"],
+            ),
+        ],
+        "T085": lambda: [
+            _godot_script(
+                "dialogue_ui",
+                "res://client/tests/run_t085_dialogue_ui.gd",
+                r"T085_DIALOGUE_UI_OK",
+            ),
+        ],
+        "T086": lambda: [
+            _pytest("village_quest_fixture", "tests/scenarios/test_village_quest.py"),
+            validate_evidence(
+                "fx_village_content",
+                [
+                    ROOT / "godot_project" / "content" / "fixtures" / "village" / "fx_village_v1.json",
+                    ROOT
+                    / "godot_project"
+                    / "content"
+                    / "source"
+                    / "quests"
+                    / "shortage"
+                    / "factory_shortage.json",
+                ],
+            ),
+        ],
+        "T087": lambda: [
+            _pytest("inventory", "tests/sim/test_t087_inventory.py"),
+            _godot_script(
+                "inventory_ui",
+                "res://client/tests/run_t087_inventory.gd",
+                r"T087_INVENTORY_OK",
+            ),
+        ],
+        "T088": lambda: [
+            _pytest("item_use_recovery", "tests/sim/test_t088_inventory_use.py"),
+            validate_evidence(
+                "item_catalog",
+                [ROOT / "godot_project" / "content" / "source" / "items" / "catalog.json"],
+            ),
+        ],
+        "T089": lambda: [
+            _pytest("puzzle_lease", "tests/sim/test_t089_puzzles.py"),
+            validate_evidence(
+                "puzzle_schema",
+                [ROOT / "content" / "schemas" / "puzzles.json"],
+            ),
+            _godot_script(
+                "puzzle_presenter",
+                "res://client/tests/run_t089_puzzle.gd",
+                r"T089_PUZZLE_OK",
+            ),
+        ],
+        "T090": lambda: [
+            _pytest("sluice_dungeon", "tests/sim/test_t090_sluice.py"),
+            _python_module(
+                "validate_puzzles",
+                "tools.content.validate_puzzles",
+                r"validate_puzzles: PASS",
+            ),
+            validate_evidence(
+                "sluice_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "dungeons" / "sluice" / "layout.json",
+                    ROOT / "godot_project" / "content" / "source" / "dungeons" / "sluice" / "puzzle.json",
+                    ROOT / "godot_project" / "client" / "adventure" / "dungeon_area.tscn",
+                ],
+            ),
+            _godot_script(
+                "dungeon_area",
+                "res://client/tests/run_t090_dungeon.gd",
+                r"T090_DUNGEON_OK",
+            ),
+        ],
+        "T091": lambda: [
+            _pytest("duel_progression", "tests/sim/test_t091_duel_progression.py"),
+            validate_evidence(
+                "duel_rules",
+                [ROOT / "godot_project" / "content" / "source" / "duel_rules" / "progression.json"],
+            ),
+            _godot_script(
+                "duel_progression_ui",
+                "res://client/tests/run_t091_duel.gd",
+                r"T091_DUEL_OK",
+            ),
+        ],
+        "T092": lambda: [
+            _pytest("duel_recovery", "tests/sim/test_t092_duel_recovery.py"),
+            _godot_script(
+                "duel_recovery_ui",
+                "res://client/tests/run_t092_recovery.gd",
+                r"T092_RECOVERY_OK",
+            ),
+        ],
+        "T093": lambda: [
+            _pytest("village_solutions", "tests/scenarios/test_village_solutions.py"),
+            validate_evidence(
+                "shortage_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "shortage" / "factory_shortage.json",
+                    ROOT / "godot_project" / "content" / "source" / "dialogue" / "shortage" / "mara_lines.json",
+                ],
+            ),
+        ],
+        "T094": lambda: [
+            _python_module("validate_dialogue", "tools.content.validate", r"validate_dialogue: PASS"),
+            _python_module("compile_dialogue", "tools.content.compile", r"compile_dialogue: PASS"),
+            validate_evidence(
+                "mvp_dialogue_bank",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "dialogue" / "mvp_bank.json",
+                    ROOT / "godot_project" / "content" / "source" / "dialogue" / "human_review_sample.json",
+                    ROOT / "godot_project" / "content" / "compiled" / "dialogue" / "manifest.json",
+                ],
+            ),
+        ],
+        "T095": lambda: [
+            _pytest("village_panel", "tests/sim/test_t095_village_panel.py"),
+            run_command(
+                CommandCheck(
+                    name="fx_village_scenario",
+                    argv=(
+                        sys.executable,
+                        "tools/run_scenario.py",
+                        "--fixture",
+                        "FX-VILLAGE",
+                        "--seed",
+                        "507",
+                        "--record",
+                        str(TRACKING / "village_runs" / "fx_village_record.json"),
+                    ),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            validate_evidence(
+                "village_runs",
+                [
+                    TRACKING / "village_runs" / "README.md",
+                    TRACKING / "village_runs" / "fx_village_record.json",
+                ],
+            ),
+            _godot_script(
+                "scenario_panel",
+                "res://client/tests/run_t095_panel.gd",
+                r"T095_PANEL_OK",
+            ),
+        ],
+        "T096": lambda: [
+            validate_evidence(
+                "g05_packet",
+                [
+                    TRACKING / "gates" / "G05" / "packet.md",
+                    TRACKING / "gates" / "G05" / "launch.txt",
+                    TRACKING / "gates" / "G05" / "reset.md",
+                    TRACKING / "gates" / "G05" / "known_defects.md",
+                    TRACKING / "gates" / "G05" / "optional_hints.md",
+                    TRACKING / "gates" / "G05" / "acceptance.json",
+                    TRACKING / "gates" / "G05" / "fx_village_record.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "fresh_launch.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "solution_demon_duel.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "solution_sluice_route.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "world_resolved.json",
+                    TRACKING / "gates" / "G05" / "scenarios" / "destroyed_target.json",
+                ],
+            ),
+            _pytest(
+                "g05_scenarios",
+                "tests/scenarios/test_village_solutions.py",
+                "tests/scenarios/test_village_quest.py",
+            ),
+            run_command(
+                CommandCheck(
+                    name="g05_fx_village",
+                    argv=(
+                        sys.executable,
+                        "tools/run_scenario.py",
+                        "--fixture",
+                        "FX-VILLAGE",
+                        "--seed",
+                        "507",
+                        "--record",
+                        str(TRACKING / "gates" / "G05" / "fx_village_record.json"),
+                    ),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            _godot_script(
+                "g05_playable",
+                "res://client/tests/run_g05_playable.gd",
+                r"G05_PLAYABLE_OK",
+            ),
+            _godot_script(
+                "g05_rockfall_walk",
+                "res://client/tests/run_g05_rockfall_walk.gd",
+                r"G05_ROCKFALL_WALK_OK",
+            ),
+            _godot_script(
+                "g05_cumulative_runtime",
+                "res://client/tests/run_g05_cumulative.gd",
+                r"G05_CUMULATIVE_OK",
+            ),
+        ],
+        "T097": lambda: [
+            _pytest("era_transition_planner", "tests/sim/test_t097_era_planner.py"),
+            validate_evidence(
+                "g06_implementation_plan",
+                [ROOT / "docs" / "review" / "G06_IMPLEMENTATION_PLAN.md"],
+            ),
+        ],
+        "T098": lambda: [
+            _pytest(
+                "era_collapse",
+                "tests/sim/test_t098_collapse.py",
+                "tests/sim/test_t097_era_planner.py",
+            ),
+        ],
+        "T099": lambda: [
+            _pytest("era_fission", "tests/sim/test_t099_fission.py"),
+        ],
+        "T100": lambda: [
+            _pytest("historic_core_upgrade", "tests/sim/test_t100_core_upgrade.py"),
+            validate_evidence(
+                "historic_core_content",
+                [
+                    ROOT
+                    / "godot_project"
+                    / "content"
+                    / "source"
+                    / "eras"
+                    / "historic"
+                    / "core_upgrade.json"
+                ],
+            ),
+        ],
+        "T101": lambda: [
+            _pytest(
+                "legacy_sites",
+                "tests/sim/test_t101_legacy.py",
+                "tests/sim/test_t100_core_upgrade.py",
+            ),
+        ],
+        "T102": lambda: [
+            _pytest("era_safeguards", "tests/sim/test_t102_safeguards.py"),
+        ],
+        "T103": lambda: [
+            _pytest(
+                "era_continuity",
+                "tests/sim/test_t103_continuity.py",
+                "tests/sim/test_boulder_quest.py",
+            ),
+        ],
+        "T104": lambda: [
+            _pytest(
+                "era_service",
+                "tests/sim/test_t104_era_service.py",
+                "tests/sim/test_t103_continuity.py",
+            ),
+        ],
+        "T105": lambda: [
+            _pytest(
+                "era_chronicle",
+                "tests/sim/test_t105_chronicle.py",
+            ),
+            validate_evidence(
+                "era_transition_presenter",
+                [
+                    ROOT / "godot_project" / "client" / "world" / "era_transition.gd",
+                    ROOT / "godot_project" / "client" / "ui" / "chronicle.gd",
+                    ROOT / "docs" / "WORLD_VISUAL_LANGUAGE.md",
+                ],
+            ),
+        ],
+        "T106": lambda: [
+            _pytest(
+                "era_fixtures",
+                "tests/scenarios/test_era_transition.py",
+                "tests/sim/test_t105_chronicle.py",
+                "tests/sim/test_world_map_geometry.py",
+            ),
+            validate_evidence(
+                "fx_era_launcher",
+                [
+                    ROOT / "tools" / "play_fx_era.sh",
+                    ROOT / "godot_project" / "content" / "fixtures" / "eras" / "fx_era.json",
+                    ROOT
+                    / "Pack"
+                    / "DuelMasterBattle_Build_Pack"
+                    / "tracking"
+                    / "gates"
+                    / "G06"
+                    / "early_transition_checkpoint.md",
+                ],
+            ),
+            _godot_script(
+                "fx_era_ui_controls",
+                "res://client/tests/run_fx_era_ui.gd",
+                r"FX_ERA_UI_OK",
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -823,6 +1202,63 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g01_regression_smoke",
                 "res://client/tests/run_g01_smoke.gd",
                 r"G01_SMOKE_OK",
+            ),
+        ]
+    if gate == "G05":
+        packet = TRACKING / "gates" / "G05"
+        return [
+            _pytest(
+                "g05_full_world_python",
+                "tests/sim/test_g05_full_world.py",
+                "tests/sim/test_g05_visual_layers.py",
+                "tests/sim/test_village_foundation.py",
+                "tests/scenarios/test_village_travel.py",
+                "tests/sim/test_canonical_ontology.py",
+            ),
+            validate_evidence(
+                "g05_packet_files",
+                [
+                    packet / "packet.md",
+                    packet / "launch.txt",
+                    packet / "reset.md",
+                    packet / "known_defects.md",
+                    packet / "acceptance.json",
+                ],
+            ),
+            _python_module(
+                "g05_validate_puzzles",
+                "tools.content.validate_puzzles",
+                r"validate_puzzles: PASS",
+            ),
+            _godot_script(
+                "g05_playable",
+                "res://client/tests/run_g05_playable.gd",
+                r"G05_PLAYABLE_OK",
+            ),
+            _godot_script(
+                "g05_rockfall_walk",
+                "res://client/tests/run_g05_rockfall_walk.gd",
+                r"G05_ROCKFALL_WALK_OK",
+            ),
+            _godot_script(
+                "g03_regression_smoke",
+                "res://client/tests/run_g03_smoke.gd",
+                r"G03_SMOKE_OK",
+            ),
+            _godot_script(
+                "g02_regression_smoke",
+                "res://client/tests/run_g02_smoke.gd",
+                r"G02_SMOKE_OK",
+            ),
+            _godot_script(
+                "g01_regression_smoke",
+                "res://client/tests/run_g01_smoke.gd",
+                r"G01_SMOKE_OK",
+            ),
+            _godot_script(
+                "g04_regression_playable",
+                "res://client/tests/run_g04_playable.gd",
+                r"G04_PLAYABLE_OK",
             ),
         ]
     return [

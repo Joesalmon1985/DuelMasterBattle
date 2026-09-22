@@ -1,0 +1,103 @@
+{
+  "total": 360,
+  "duplicate_pairs_flagged": 0,
+  "sample": [
+    {
+      "schema_version": 1,
+      "id": "dialogue.mara.offer",
+      "speaker_role": "worker",
+      "era_id": "all",
+      "text": "The yard has gone quiet. I can show you where the work stopped.",
+      "fallback": "Work has stopped here.",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.mara.demon_hint",
+      "speaker_role": "worker",
+      "era_id": "all",
+      "text": "Nothing comes from the ridge while that thing is there.",
+      "fallback": "Something on the ridge is blocking work.",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.mara.sluice_hint",
+      "speaker_role": "worker",
+      "era_id": "all",
+      "text": "The water channel could keep us working, if someone opened it.",
+      "fallback": "There may be another way to keep working.",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.invalid.missing_cause",
+      "speaker_role": "witness",
+      "era_id": "all",
+      "text": "The trouble you asked about is already gone.",
+      "fallback": "That problem has passed.",
+      "priority": "invalidation",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.aspect.reason.displaced.0",
+      "speaker_role": "displaced",
+      "aspect_id": "reason",
+      "era_id": "all",
+      "text": "As displaced, reason notes the pattern before the names.",
+      "fallback": "They speak from an Aspect.",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.aspect.empathy.worker.5",
+      "speaker_role": "worker",
+      "aspect_id": "empathy",
+      "era_id": "all",
+      "text": "As worker, empathy reminds you that industry follows real routes.",
+      "fallback": "They speak from an Aspect.",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.aspect.empathy.scout.3",
+      "speaker_role": "scout",
+      "aspect_id": "empathy",
+      "era_id": "all",
+      "text": "As scout, empathy refuses to blame the first story heard.",
+      "fallback": "They speak from an Aspect.",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.aspect.authority.onboarding.0",
+      "speaker_role": "onboarding",
+      "aspect_id": "authority",
+      "era_id": "all",
+      "text": "As onboarding, authority notes the pattern before the names.",
+      "fallback": "They speak from an Aspect.",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.aspect.curiosity.onboarding.4",
+      "speaker_role": "onboarding",
+      "aspect_id": "curiosity",
+      "era_id": "all",
+      "text": "As onboarding, curiosity marks the ridge and the channel as separate truths.",
+      "fallback": "They speak from an Aspect.",
+      "choices": []
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.aspect.hope.worker.0",
+      "speaker_role": "worker",
+      "aspect_id": "hope",
+      "era_id": "all",
+      "text": "As worker, hope notes the pattern before the names.",
+      "fallback": "They speak from an Aspect.",
+      "choices": []
+    }
+  ]
+}

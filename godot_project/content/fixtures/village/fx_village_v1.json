@@ -1,0 +1,8 @@
+{
+  "id": "FX-VILLAGE",
+  "schema_version": 2,
+  "seed": 507,
+  "worker_display_name": "Mara",
+  "quest_template_id": "quest.factory_shortage",
+  "notes": "Seed 507 selects a real BoardBuilder core (node:35 / faction:2) whose touching hexes include woodland, ore_mountains and clay_mountains. Factory/processor/primary IDs are assigned by WorldSetupService at load time."
+}

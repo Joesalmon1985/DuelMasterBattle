@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dialogue.worker",
+    "schema_version": 1,
+    "kind": "dialogue_profile",
+    "era_id": "all",
+    "name_key": "Worker voice",
+    "fields": {
+      "voice_id": "voice.common",
+      "tone_tags": ["practical", "plain"],
+      "reusable": true
+    }
+  },
+  {
+    "id": "dialogue.anchor",
+    "schema_version": 1,
+    "kind": "dialogue_profile",
+    "era_id": "all",
+    "name_key": "Workplace anchor voice",
+    "fields": {
+      "voice_id": "voice.common",
+      "tone_tags": ["concerned", "local"],
+      "reusable": false
+    }
+  },
+  {
+    "id": "dialogue.leader",
+    "schema_version": 1,
+    "kind": "dialogue_profile",
+    "era_id": "all",
+    "name_key": "Settlement leader voice",
+    "fields": {
+      "voice_id": "voice.authority",
+      "tone_tags": ["formal", "measured"],
+      "reusable": false
+    }
+  },
+  {
+    "id": "dialogue.factory_worker",
+    "schema_version": 1,
+    "kind": "dialogue_profile",
+    "era_id": "all",
+    "name_key": "Factory worker voice",
+    "fields": {
+      "voice_id": "voice.common",
+      "tone_tags": ["worried", "practical"],
+      "reusable": false
+    }
+  }
+]

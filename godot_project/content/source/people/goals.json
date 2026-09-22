@@ -1,0 +1,35 @@
+[
+  {
+    "id": "goal.keep_production",
+    "schema_version": 1,
+    "kind": "person_goal",
+    "era_id": "all",
+    "name_key": "Keep production running",
+    "fields": {
+      "priority": 2,
+      "tags": ["work", "factory"]
+    }
+  },
+  {
+    "id": "goal.protect_kin",
+    "schema_version": 1,
+    "kind": "person_goal",
+    "era_id": "all",
+    "name_key": "Protect kin",
+    "fields": {
+      "priority": 3,
+      "tags": ["social", "family"]
+    }
+  },
+  {
+    "id": "goal.find_work",
+    "schema_version": 1,
+    "kind": "person_goal",
+    "era_id": "all",
+    "name_key": "Find work",
+    "fields": {
+      "priority": 1,
+      "tags": ["displaced", "work"]
+    }
+  }
+]

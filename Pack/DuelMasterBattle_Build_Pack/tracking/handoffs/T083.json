@@ -1,0 +1,31 @@
+{
+  "task_id": "T083",
+  "status": "DONE",
+  "commit": "0e0f83a6b9799d3f41d3a18d672c447bea9ee53d",
+  "files": [
+    "sim/dmb/quests/runtime.py",
+    "content/schemas/quests.json",
+    "tests/sim/test_t083_quest_runtime.py",
+    "tools/check.py"
+  ],
+  "public_contracts": [
+    "QuestService.offer / accept / choose_branch / evaluate / apply_outcome"
+  ],
+  "source_rules": [
+    "C10 QuestService",
+    "GDD \u00a7\u00a7141, 142, 145"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T083",
+      "exit_code": 0,
+      "result": "PASS; 4 pytest + quests schema"
+    }
+  ],
+  "extra_scope": {
+    "tools/check.py": "Wire T083"
+  },
+  "defects": [],
+  "next_task": "T084",
+  "notes": "World repair \u2192 resolved_by_world; target destruction uses declared branch; choice rewards once; era flag alone is a no-op."
+}

@@ -1,5 +1,11 @@
 # Duel Master Battle — Village / Story / Dialogue Current-State Architecture
 
+> **STALE ownership rules (2026-09-21 architecture review).**  
+> This 2026-09-12 snapshot describes a Godot `DmbWorldSim` → `DmbNodeProjection` production path.  
+> **Current ownership:** Python `WorldState` is durable world truth; Godot presents projections (`docs/INTEGRATED_RUNTIME_ARCHITECTURE.md`).  
+> Layout / village-composition intent may remain **OLD_BUT_USEFUL**; do not revive Godot as the durable sim.  
+> Ontology reconciliation: [`docs/review/`](review/README.md).
+
 **Repository reviewed:** `Joesalmon1985/DuelMasterBattle`  
 **Branch reviewed:** `main`  
 **Review date:** 2026-09-12  

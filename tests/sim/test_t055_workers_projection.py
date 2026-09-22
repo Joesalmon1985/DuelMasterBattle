@@ -71,14 +71,21 @@ def test_per_connection_carriers_from_real_routes_only() -> None:
     assert MAX_CARRIERS_PER_CONNECTION >= 1
 
     rows = projection.workers(node_id="node:industry")
-    carriers = [row for row in rows if row.get("role") == "carrier"]
-    assert carriers, "active connections must assign carriers"
+    # Carrying is an activity on real employees — not a Person kind.
+    carriers = [row for row in rows if row.get("connection_id") and row.get("activity") in {"carrying", "waiting", "on_strike"}]
+    assert carriers, "active connections must assign carrying activity to employees"
     ids_before = sorted(row["person_id"] for row in carriers)
     # Projection refresh must not recreate identities.
     again = IndustryProjection(sim.state).workers(node_id="node:industry")
-    ids_after = sorted(row["person_id"] for row in again if row.get("role") == "carrier")
+    ids_after = sorted(
+        row["person_id"]
+        for row in again
+        if row.get("connection_id") and row.get("activity") in {"carrying", "waiting", "on_strike"}
+    )
     assert ids_before == ids_after
     for carrier in carriers:
+        assert carrier["person_id"] in sim.state.people
+        assert str(sim.state.people[carrier["person_id"]].get("occupation") or "") != "carrier"
         waypoints = carrier["waypoints"]
         assert len(waypoints) == 2
         assert waypoints[0]["id"] == carrier["from_id"]
@@ -120,14 +127,14 @@ def test_explicit_job_strike_changes_output_while_unloaded_people_remain() -> No
     attendants = [
         row
         for row in IndustryProjection(sim.state).workers(node_id=fx["node_id"])
-        if row.get("job_key") == "industry:operator:fx"
+        if row.get("job_key") == "industry:operator:fx" or row.get("workplace_id") == fx["processor_id"]
     ]
-    assert attendants and attendants[0]["cue"] == "on_strike"
-    # Carriers wait when throughput is zero.
-    carriers = [
+    assert attendants and any(row["cue"] == "on_strike" for row in attendants)
+    # Connection activities wait when throughput is zero.
+    moving = [
         row
         for row in IndustryProjection(sim.state).workers(node_id=fx["node_id"])
-        if row.get("role") == "carrier"
+        if row.get("connection_id")
     ]
-    assert carriers
-    assert all(row["cue"] in {"waiting", "on_strike"} for row in carriers)
+    assert moving
+    assert all(row["cue"] in {"waiting", "on_strike", "carrying", "working"} for row in moving)

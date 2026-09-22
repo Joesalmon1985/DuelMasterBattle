@@ -1,0 +1,37 @@
+{
+  "task_id": "T100",
+  "status": "DONE",
+  "commit": "8016f59270a180728cd2f33981c4a44805c8699a",
+  "files": [
+    "sim/dmb/eras/upgrades.py",
+    "sim/dmb/eras/__init__.py",
+    "godot_project/content/source/eras/historic/core_upgrade.json",
+    "godot_project/content/source/buildings/baseline.json",
+    "tests/sim/test_t100_core_upgrade.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T100.json"
+  ],
+  "public_contracts": [
+    "CoreUpgradeService.upgrade_core \u2014 in-place Historic rebind, meter reset, 1 VP, one-time starter grant"
+  ],
+  "source_rules": [
+    "C11 Historic core upgrades",
+    "GDD \u00a7\u00a740, 101, 103"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T100",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "extra_scope": {
+    "godot_project/content/source/buildings/baseline.json": "Add building.centre.historic (+ city variant)"
+  },
+  "defects": [
+    "Full Historic layer/channel resource rebinding is minimal; T101 continues legacy industry semantics"
+  ],
+  "next_task": "T101",
+  "notes": "No Person duplication; compatible Catan stock retained; grant idempotent per transition+core."
+}

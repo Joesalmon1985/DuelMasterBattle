@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://dmb_dungeon_area_sluice"]
+
+[ext_resource type="Script" path="res://client/adventure/puzzle.gd" id="1_puzzle"]
+
+[node name="DungeonArea" type="Node2D"]
+
+[node name="Rooms" type="Node2D" parent="."]
+
+[node name="Entrance" type="Marker2D" parent="Rooms"]
+position = Vector2(0, 0)
+
+[node name="Workshop" type="Marker2D" parent="Rooms"]
+position = Vector2(-192, 0)
+
+[node name="Corridor" type="Marker2D" parent="Rooms"]
+position = Vector2(192, 0)
+
+[node name="Chamber" type="Marker2D" parent="Rooms"]
+position = Vector2(384, 0)
+
+[node name="Exit" type="Marker2D" parent="Rooms"]
+position = Vector2(576, 0)
+
+[node name="PuzzlePresenter" type="Node" parent="."]
+script = ExtResource("1_puzzle")
+
+[node name="ClueLabel" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 640.0
+offset_bottom = 64.0
+text = "The pressure plate must hold the gate while the handle opens the sluice."
+autowrap_mode = 3

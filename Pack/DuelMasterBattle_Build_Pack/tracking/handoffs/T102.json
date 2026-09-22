@@ -1,0 +1,35 @@
+{
+  "task_id": "T102",
+  "status": "DONE",
+  "commit": "df7610d91330b5bf13b26f5c75e300a188393028",
+  "files": [
+    "sim/dmb/eras/safeguards.py",
+    "sim/dmb/time/runner.py",
+    "tests/sim/test_t102_safeguards.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T102.json"
+  ],
+  "public_contracts": [
+    "sole-era starter protection + mandatory fission mark",
+    "plan_undersized_mandatory_split (1/2/3 sites; emergency seed)",
+    "RecoveryService.ensure_factions_for_world_turn \u2014 seed two, not Game Over"
+  ],
+  "source_rules": [
+    "C11 sole/zero-faction safeguards",
+    "GDD \u00a7\u00a740, 104, 166"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T102",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/time/runner.py": "Invoke recovery + mandatory fission marks each World Turn stage run"
+  },
+  "defects": [],
+  "next_task": "T103",
+  "notes": "Displaced people/quests/cargo preserved across zero-faction recovery."
+}

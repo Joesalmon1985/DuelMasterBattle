@@ -1,0 +1,113 @@
+# Integrated runtime architecture
+
+Authoritative short architecture for DuelMasterBattle after G01–G05.
+Later gates **extend** this production runtime; they must not invent a second
+implementation of a gameplay concept already accepted at an earlier gate.
+
+**Canonical ontology:** [`docs/CANONICAL_GAME_ONTOLOGY.md`](CANONICAL_GAME_ONTOLOGY.md) (Joe decisions 2026-09-21).  
+Review corpus: [`docs/review/README.md`](review/README.md). Implementation report: [`docs/review/ONTOLOGY_IMPLEMENTATION_REPORT.md`](review/ONTOLOGY_IMPLEMENTATION_REPORT.md).  
+Do not start T097/G06 until Joe PASSes the revised G05 coherent Prehistoric slice.
+
+## Hard rule
+
+> Later gates extend the accepted production runtime. They must not create a
+> second implementation of a gameplay concept already accepted at an earlier
+> gate.
+
+Fixtures may select or arrange deterministic initial state. They must not
+implement parallel gameplay semantics, alternate clocks, alternate industry, or
+shadow routes that IndustryService does not own.
+
+## One world pipeline
+
+```text
+BoardBuilder / WorldSetupService  (topology, cores, buildings, carts, hazards)
+        ↓
+authoritative Python WorldState
+        ↓
+LocalProjectionService + IndustryProjection + domain views
+        ↓
+ONE Godot Overworld / presentation runtime
+```
+
+## Ownership
+
+### Python owns
+
+- board / topology (19 hexes, 54 nodes, 72 edges)
+- factions and settlements
+- buildings (centre, warehouse, primary, processor, factory, …)
+- resources / stocks / ledgers
+- industry (channels, processors, routes, factory meters, allocation)
+- carts and logistics journeys
+- people / jobs / dialogue profiles
+- units / military identity
+- hazards / catastrophe cubes
+- quests / causes / knowledge
+- inventory
+- durable player pose
+- clocks (`game_ms`, pause tokens, no catch-up)
+- saves / loads
+
+### Godot owns
+
+- rendering and camera
+- local grid movement and input routing
+- local animation
+- UI / semantic labels / dialogue presentation
+- presentation of Python projections
+- explicitly leased encounters (retained GameBoard duel, puzzle lease)
+
+### Offline tools own
+
+- content and dialogue generation only (never runtime authority)
+
+## Identity invariants
+
+| Concept | Rule |
+|---|---|
+| Person | ONE person ID = ONE human identity = ONE visible local Person actor |
+| Soldier | Person + UnitState with `person_id`; combat fields stay on Unit |
+| Building | ONE building ID = ONE real building; industry bindings are processes |
+| Factory | ONE factory = building + IndustryService meter/route |
+| Cart | `cart:*` only — never invent `person:cart` |
+| Clock | ONE world clock |
+| Player pose | ONE durable Python pose (Godot SyncPose coalesces local steps) |
+| Quest | ONE quest state owner (Python QuestService) |
+
+Never create a Person solely for presentation. Occupation ≠ activity.
+Static Overworld export and activity presenters must never both present the
+same `person_id` as two actors. Activity presenters update the registered
+Person actor (carrying/working/waiting) rather than spawning a second identity.
+Every living Person supports Observe and Talk (fallback dialogue allowed).
+
+A projected entity that is **visible and presented as interactive** must use the
+shared semantic interaction system (`WorldInteractionLabel` / bridge binding)
+whether it is static or dynamically animated. WorkerController actors register
+into Overworld as the single semantic actor for that person ID.
+
+Strategic **Travel** changes which node the SAME Overworld is projecting. It must
+not switch to a separate gameplay implementation. Local exits map to real
+topology adjacency and the G01 `Travel` command.
+
+## FX-VILLAGE / G05
+
+FX-VILLAGE is a deterministic seed (currently **507**) that:
+
+1. generates a full two-faction board via `BoardBuilder.generate`;
+2. applies `WorldSetupService` (real settlements, buildings, carts, roads);
+3. selects a real core node whose touching hexes include woodland + ore
+   (and clay when present);
+4. binds primary channels to those real hexes;
+5. runs a living working factory chain **and** a shortage factory chain;
+6. places the demon cube on the real ore hex; sluice sabotage disables the
+   legitimate alternate processor for the shortage factory.
+
+The local 48×48 village is a projection of that strategic node — not a second
+board and not invented terrain.
+
+## Cumulative gates
+
+G02 cargo, G03 industry, G04 hazards/duels, and G05 village/quest all share this
+runtime. A later gate that needs workers, carts, factories, or demons must reuse
+these systems rather than assemble a miniature special-purpose game.

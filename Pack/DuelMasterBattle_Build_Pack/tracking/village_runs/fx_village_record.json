@@ -1,0 +1,21 @@
+{
+  "fixture": "FX-VILLAGE",
+  "status": "PASS",
+  "owner": "T077-T095",
+  "seed": 505,
+  "details": {
+    "seed": 505,
+    "quest_id": "quest:1",
+    "quest_status": "offered",
+    "mara_id": "person:2",
+    "factory_id": "building:factory_main",
+    "route_a_available": false,
+    "route_b_available": false,
+    "shortage": true,
+    "command_log": []
+  },
+  "world_id": "world:fx-village",
+  "quest_id": "quest:1",
+  "puzzle_id": "puzzle.sluice",
+  "same_engine": true
+}

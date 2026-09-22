@@ -98,18 +98,18 @@ Every task is initially NOT_STARTED. All path mappings and code evidence must be
 | [T083](tasks/T083.md) | Implement quest state machine and invalidation |  |
 | [T084](tasks/T084.md) | Implement offline dialogue catalogue and runtime fallback |  |
 | [T085](tasks/T085.md) | Build attached speech and paused conversation UI |  |
-| [T086](tasks/T086.md) | Wire the real shortage quest fixture and branch tests |  |
+| [T086](tasks/T086.md) | Wire the real shortage quest fixture and branch tests | *Historical — shortage scenario superseded for G05; keep tests as archived infra* |
 | **P09 — Items, puzzles and personal duels** | | |
 | [T087](tasks/T087.md) | Implement persistent inventory and unique ground objects |  |
 | [T088](tasks/T088.md) | Implement item use, combinations and recovery routes |  |
 | [T089](tasks/T089.md) | Implement leased puzzle mechanism runtime |  |
-| [T090](tasks/T090.md) | Implement the sluice dungeon and bounded solution validator |  |
+| [T090](tasks/T090.md) | Implement the sluice dungeon and bounded solution validator | *Implemented/tested infra; not exercised by current G05 narrative* |
 | [T091](tasks/T091.md) | Complete retained Mastermind mechanics and progression |  |
 | [T092](tasks/T092.md) | Implement duel checkpoint, recovery and outcome revalidation |  |
-| [T093](tasks/T093.md) | Complete both village solutions and persistent return loop |  |
+| [T093](tasks/T093.md) | Complete both village solutions and persistent return loop | *Historical shortage Route A/B — superseded for G05 human gate* |
 | [T094](tasks/T094.md) | Author and validate the MVP dialogue bank |  |
 | [T095](tasks/T095.md) | Complete the village testing panel and failure bundles |  |
-| [T096](tasks/T096.md) | Prepare generated village, quest and duel playtest gate | G05 |
+| [T096](tasks/T096.md) | Prepare generated village, quest and duel playtest gate | G05 — **current:** full world + boulder quest (not shortage/sluice) |
 | **P10 — Immediate era transformation and survival** | | |
 | [T097](tasks/T097.md) | Implement theoretical capacity ranking and transition plans |  |
 | [T098](tasks/T098.md) | Implement multi-faction collapse and inert ruin disposition |  |

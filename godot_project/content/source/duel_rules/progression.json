@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "engine": "DmbBattleSim",
+  "baseline": {
+    "id": "duel.baseline_c10",
+    "slot_count": 4,
+    "colour_count": 6,
+    "max_casts": 10,
+    "allow_repeats": true,
+    "min_cast_seconds": 5.0,
+    "max_cast_seconds": 60.0,
+    "bot_logic": "candidate_filter"
+  },
+  "progression": [
+    {
+      "id": "duel.tier_0",
+      "slot_count": 4,
+      "colour_count": 6,
+      "max_casts": 10,
+      "allow_repeats": true
+    },
+    {
+      "id": "duel.tier_1",
+      "slot_count": 5,
+      "colour_count": 7,
+      "max_casts": 10,
+      "allow_repeats": true
+    },
+    {
+      "id": "duel.tier_2",
+      "slot_count": 6,
+      "colour_count": 8,
+      "max_casts": 12,
+      "allow_repeats": true
+    }
+  ],
+  "supported_caps": {
+    "max_slot_count": 6,
+    "max_colour_count": 8
+  },
+  "overflow_reward": {
+    "id": "reward.duel_overflow_chronicle",
+    "kind": "history_fact",
+    "fact_id": "fact.duel_overflow_acknowledged",
+    "predicate": "authored_overflow_alternative",
+    "value": true,
+    "note": "Requests beyond 8 colours / 6 slots use this authored alternative instead of expanding live duel mechanics."
+  },
+  "era_binding": {
+    "prehistoric": "duel.tier_0",
+    "historic": "duel.tier_0",
+    "modern": "duel.tier_1",
+    "futuristic": "duel.tier_2"
+  },
+  "notes": "Era selects an authored progression tier only. Mechanics never silently change without this table."
+}

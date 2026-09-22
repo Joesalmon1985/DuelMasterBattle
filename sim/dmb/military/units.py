@@ -83,15 +83,49 @@ class MilitaryService:
         era: str,
         factory_id: str,
         position: list[float] | None = None,
+        person_id: str | None = None,
     ) -> dict[str, Any]:
+        from sim.dmb.people.registry import PeopleService
+        from sim.dmb.persistence.migrate import stable_soldier_name
+
         unit_id = self.state.ids.new("unit")
         archetype = archetype_from_definition(unit_def_id)
         base = ARCHETYPES[archetype]
         factor = era_factor(era)
         max_hp = base["base_hp"] * factor
         derived_attack = base["base_attack"] * factor
+
+        people = PeopleService(self.state)
+        linked_person_id = person_id
+        if linked_person_id and linked_person_id in self.state.people:
+            person = self.state.people[linked_person_id]
+            name = str(person.get("name") or person.get("display_name") or linked_person_id)
+        else:
+            name = stable_soldier_name(unit_id)
+            person = people.create_person(
+                name=name,
+                affiliation=faction_id,
+                role="soldier",
+                node_id=home_node_id,
+                position=list(position or [0.0, 0.0]),
+                dialogue_profile="dialogue.soldier",
+                cultural_appearance={
+                    "culture_id": "culture.common",
+                    "appearance_id": "appearance.soldier",
+                },
+                history_refs=[f"unit:{unit_id}"],
+                profile_flags=[],
+            )
+            linked_person_id = person["id"]
+            self.state.people[linked_person_id]["occupation"] = "soldier"
+        self.state.people[linked_person_id]["unit_id"] = unit_id
+        self.state.people[linked_person_id]["node_id"] = home_node_id
+        self.state.people[linked_person_id]["affiliation"] = faction_id
+
         record = {
             "id": unit_id,
+            "person_id": linked_person_id,
+            "person_name": name,
             "definition_id": unit_def_id,
             "archetype": archetype,
             "home_node_id": home_node_id,
@@ -128,7 +162,28 @@ class MilitaryService:
             "material_change_version": 0,
         }
         self.state.units[unit_id] = record
-        return record
+        # Attach to a home garrison formation so strategic AI can move produced units.
+        self._attach_to_home_formation(unit_id, faction_id=faction_id, node_id=home_node_id)
+        return self.state.units[unit_id]
+
+    def _attach_to_home_formation(self, unit_id: str, *, faction_id: str, node_id: str) -> str:
+        formations = self._ensure_formations()
+        unit = self.state.units[unit_id]
+        if unit.get("formation_id"):
+            return str(unit["formation_id"])
+        for fid, formation in sorted(formations.items()):
+            if str(formation.get("faction_id")) != faction_id:
+                continue
+            if str(formation.get("node_id")) != node_id:
+                continue
+            if formation.get("engagement_id"):
+                continue
+            formation.setdefault("unit_ids", []).append(unit_id)
+            unit["formation_id"] = fid
+            self.formation_strength(fid)
+            return str(fid)
+        grouped = self.group([unit_id], faction_id=faction_id, node_id=node_id)
+        return str(grouped["id"])
 
     def group(self, unit_ids: list[str], *, faction_id: str, node_id: str) -> dict[str, Any]:
         formations = self._ensure_formations()
@@ -198,6 +253,7 @@ class MilitaryService:
                 unit["status"] = "dead"
                 unit["target_id"] = None
                 self._tombstone(unit)
+                self._kill_linked_person(unit)
                 formation_id = unit.get("formation_id")
                 if formation_id:
                     self._detach_from_formation(unit_id, formation_id)
@@ -234,6 +290,7 @@ class MilitaryService:
                 unit["status"] = "dead"
                 unit["current_health"] = 0
                 self._tombstone(unit)
+                self._kill_linked_person(unit)
             applied.append(unit_id)
         return {"lease_id": lease_id, "applied": applied}
 
@@ -265,9 +322,21 @@ class MilitaryService:
         unit_id = unit["id"]
         self.state.tombstones[unit_id] = {
             "kind": "unit",
-            "display_name": unit.get("definition_id", unit_id),
+            "display_name": unit.get("person_name") or unit.get("definition_id", unit_id),
             "faction_id": unit.get("faction_id"),
             "node_id": unit.get("node_id"),
             "definition_id": unit.get("definition_id"),
+            "person_id": unit.get("person_id"),
             "alive": False,
         }
+
+    def _kill_linked_person(self, unit: dict[str, Any]) -> None:
+        person_id = unit.get("person_id")
+        if not person_id or person_id not in self.state.people:
+            return
+        person = self.state.people[person_id]
+        if not person.get("alive", True):
+            return
+        from sim.dmb.people.registry import PeopleService
+
+        PeopleService(self.state).record_death(str(person_id), cause_id="combat")

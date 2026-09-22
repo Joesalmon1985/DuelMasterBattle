@@ -79,7 +79,12 @@ def _tier(candidate: dict[str, Any], observation: dict[str, Any]) -> int:
     if kind == "military_objective":
         objective = str(params.get("objective") or "")
         if objective == "defend":
-            return PRIORITY["military_defend"]
+            # Defend is urgent only when a threat is observed; otherwise it parks forever.
+            if (candidate.get("benefit") or {}).get("threat_observed") or (
+                observation.get("knowledge") or {}
+            ).get("under_attack"):
+                return PRIORITY["military_defend"]
+            return PRIORITY["military_hold"]
         if objective == "attack":
             # Only when observation marked target_observed — never use hidden strength.
             if (candidate.get("benefit") or {}).get("target_observed"):
@@ -113,6 +118,12 @@ class HeuristicBrain:
                 10 * int(benefit.get("shortage_goods_covered") or 0)
                 - int(benefit.get("route_length") or 0)
             )
+        elif candidate.get("action_kind") == "military_move":
+            benefit = candidate.get("benefit") or {}
+            # Prefer contact with hostility / longer marches over idle shuffles.
+            utility = 50 * int(benefit.get("stopped_on_hostility") or 0) + 5 * int(
+                benefit.get("edges") or 0
+            )
         elif candidate.get("action_kind") == "tech_pick":
             # Prefer first stable id among hand (definition id as weak signal).
             utility = 0
@@ -130,14 +141,25 @@ class HeuristicBrain:
     def choose_activation(
         self, observation: dict[str, Any], candidates: list[dict[str, Any]]
     ) -> dict[str, Any]:
-        """Select ≤1 construction and ≤1 proposal (trade/diplomacy), plus optional tech."""
+        """Select ≤1 primary (construct/military/hazard/tech) and ≤1 proposal."""
         ranked = sorted(candidates, key=lambda c: self.score(observation, c))
+        primary = None
         construction = None
         proposal = None
         tech = None
         noop = None
+        primary_kinds = {
+            "construct",
+            "military_move",
+            "military_objective",
+            "military_withdraw",
+            "hazard_treat",
+            "tech_pick",
+        }
         for cand in ranked:
             kind = cand.get("action_kind")
+            if kind in primary_kinds and primary is None:
+                primary = cand
             if kind == "construct" and construction is None:
                 construction = cand
             elif kind in {"trade_propose", "diplomacy_propose"} and proposal is None:
@@ -146,7 +168,10 @@ class HeuristicBrain:
                 tech = cand
             elif kind == "noop" and noop is None:
                 noop = cand
-        selected = [c for c in (construction, proposal, tech) if c is not None]
+        selected = [c for c in (primary, proposal) if c is not None]
+        # Avoid duplicating tech if it was already chosen as primary.
+        if tech is not None and primary is not tech and tech not in selected:
+            selected.append(tech)
         if not selected and noop is not None:
             selected = [noop]
         elif not selected and ranked:

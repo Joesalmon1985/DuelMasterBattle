@@ -36,6 +36,20 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
         return _load_fx_battle(seed=404 if seed == 7 else seed)
     if name == "FX-HAZARD":
         return _load_fx_hazard(seed=408 if seed == 7 else seed)
+    if name == "FX-VILLAGE":
+        return _load_fx_village(seed=507 if seed == 7 else seed, mode="baseline")
+    if name == "FX-VILLAGE-QUEST":
+        return _load_fx_village(seed=507 if seed == 7 else seed, mode="quest")
+    if name == "FX-WORLD-LAYERS":
+        return _load_fx_world_layers(seed=507 if seed == 7 else seed)
+    if name == "FX-LONG-WORLD":
+        return _load_fx_long_world(seed=507 if seed == 7 else seed)
+    if name == "FX-ERA":
+        from sim.dmb.world.fx_era_world import load_fx_era
+
+        return load_fx_era(seed=507 if seed == 7 else seed)
+    if name == "FX-SOLO":
+        return _load_fx_solo(seed=808 if seed == 7 else seed)
     raise ValueError(f"unsupported fixture {name}")
 
 
@@ -1168,3 +1182,400 @@ def run_fx_hazard(sim: WorldSim | None = None) -> FixtureResult:
             "save_slot": fx.get("save_slot"),
         },
     )
+
+
+def run_fx_village(sim: WorldSim | None = None, seed: int = 507) -> FixtureResult:
+    """Smoke the FX-VILLAGE-QUEST shortage binding for scenario/panel parity (T095)."""
+    sim = sim or load_fixture("FX-VILLAGE-QUEST", seed=seed)
+    fx = sim.state.board.get("fx_village") or {}
+    quest_id = str(fx.get("quest_id") or "")
+    quest = (sim.state.quests or {}).get(quest_id) or {}
+    mara_id = str(fx.get("mara_id") or "")
+    factory_id = str(fx.get("factory_id") or "")
+    routes = sim.state.definitions.get("installed_routes") or {}
+    ok = bool(quest) and bool(mara_id) and bool(factory_id)
+    return FixtureResult(
+        name="FX-VILLAGE",
+        status="PASS" if ok else "FAIL",
+        details={
+            "seed": seed,
+            "quest_id": quest_id,
+            "quest_status": quest.get("status"),
+            "mara_id": mara_id,
+            "factory_id": factory_id,
+            "route_a_available": bool((routes.get("route:A") or {}).get("available")),
+            "route_b_available": bool((routes.get("route:B") or {}).get("available")),
+            "shortage": bool((sim.state.buildings.get(factory_id) or {}).get("shortage")),
+            "command_log": list(fx.get("command_log") or []),
+        },
+    )
+
+
+def _load_fx_village(seed: int = 507, *, mode: str = "baseline") -> WorldSim:
+    """FX-VILLAGE: full Prehistoric board (baseline) or archived quest (mode=quest)."""
+    if mode == "quest":
+        from sim.dmb.world.fx_village_world import load_fx_village
+
+        return load_fx_village(seed=507 if seed == 7 else seed, mode="quest")
+    from sim.dmb.world.prehistoric_world import load_prehistoric_world
+
+    return load_prehistoric_world(seed=507 if seed == 7 else seed)
+
+
+def _load_fx_long_world(seed: int = 507) -> WorldSim:
+    """FX-LONG-WORLD: same Prehistoric baseline as FX-VILLAGE; meta g05.mode=long_world.
+
+    No staged soldiers, battles, or factory meters — natural progression only.
+    """
+    sim = _load_fx_village(seed=seed, mode="baseline")
+    g05 = sim.state.board.setdefault("g05", {})
+    g05["mode"] = "long_world"
+    g05["quest_enabled"] = False
+    fx = sim.state.board.setdefault("fx_village", {})
+    fx["mode"] = "long_world"
+    fx["quest_enabled"] = False
+    return sim
+
+
+def _load_fx_world_layers(seed: int = 507) -> WorldSim:
+    """FX-WORLD-LAYERS: same Prehistoric board as FX-VILLAGE, with G01–G04 layers staged near start.
+
+    Does not invent a separate simulation or change topology. Arranges cargo,
+    construction, industry meters, soldiers, a local battle, and keeps the
+    existing catastrophe cube on a hex touching John's start (node:35).
+    """
+    from sim.dmb.industry import fraction_wire
+    from sim.dmb.military.units import MilitaryService
+
+    sim = _load_fx_village(seed=seed, mode="baseline")
+    state = sim.state
+    g05 = state.board.setdefault("g05", {})
+    start = str(g05.get("start_node_id") or state.player.get("node_id") or "node:35")
+    settlement_id = str(g05.get("start_settlement_id") or "")
+    faction_id = str(g05.get("start_faction_id") or state.player.get("faction_id") or "faction:2")
+    settlement = state.settlements.get(settlement_id) or next(
+        s
+        for s in state.settlements.values()
+        if s.get("node_id") == start and not s.get("staging")
+    )
+    settlement_id = str(settlement["id"])
+    store = f"store:{settlement['warehouse_id']}"
+
+    exits = list(((state.board.get("nodes") or {}).get(start) or {}).get("exits") or {})
+    # Prefer an open road target for cart assignment; fall back to first exit.
+    road_target = None
+    for rid, road in state.roads.items():
+        if road.get("status") != "built":
+            continue
+        ends = {str(road.get("a")), str(road.get("b"))}
+        if start in ends:
+            other = next(iter(ends - {start}))
+            road_target = other
+            break
+    if road_target is None and exits:
+        road_target = str(exits[0])
+    build_edge_target = next((str(n) for n in exits if n != road_target), str(exits[0]) if exits else "node:30")
+    battle_node = str(exits[0]) if exits else "node:30"
+
+    # --- Cargo: loaded cart with real delivery assignment (FX-CARGO services) ---
+    ledger = StockLedger(state)
+    carts = CartService(state, ledger=ledger)
+    # Ensure warehouse can fund delivery + subsequent road order.
+    for good, qty in (("timber", 2), ("brick", 2), ("wool", 1), ("grain", 1)):
+        have = ledger.available(store, good)
+        if have < qty:
+            ledger.credit(store, good, qty - have)
+    required = {"timber": 1, "brick": 1, "wool": 1, "grain": 1}
+    delivery_res = ledger.reserve("fx-world-layers-delivery", required, store_id=store)
+    cart_id = next(
+        cid
+        for cid, cart in sorted(state.carts.items())
+        if cart.get("owner_faction") == faction_id
+        and cart.get("current_node") == start
+        and cart.get("status") in {"idle", "arrived", "delivered"}
+    )
+    carts.load_from_reservation(cart_id, delivery_res["id"])
+    dest_store = f"store:staging:{road_target}"
+    # RoutePlanner blocks while cube:2 touches start — assign via CartService on the
+    # existing constructed road (same load/assign steps LogisticsService.assign uses).
+    carts.assign(cart_id, [start, str(road_target)], destination_store=dest_store)
+
+    # --- Construction: genuine ready order on a nearby edge ---
+    construction = ConstructionService(state, ledger=ledger)
+    order = construction.reserve_order(
+        "road",
+        faction_id=faction_id,
+        store_id=store,
+        target_edge=(start, build_edge_target),
+    )
+    if order.get("status") != "ready":
+        # Fall back to repair-style order on centre if road illegal for any reason.
+        centre_id = str(settlement.get("centre_id") or "")
+        if centre_id and centre_id in state.buildings:
+            b = state.buildings[centre_id]
+            b["health"] = max(1, int(b.get("max_health", 100)) // 2)
+            for good, qty in (("brick", 1), ("ore", 1)):
+                if ledger.available(store, good) < qty:
+                    ledger.credit(store, good, qty)
+            order = construction.reserve_order(
+                "repair",
+                faction_id=faction_id,
+                store_id=store,
+                target_building=centre_id,
+            )
+
+    # --- Industry meters partly progressed on starting settlement factories ---
+    factories = state.industry.setdefault("factories", {})
+    start_factories = [
+        (fid, rec)
+        for fid, rec in sorted(factories.items())
+        if rec.get("node_id") == start and rec.get("active", True)
+    ]
+    progressions = (Fraction(1, 3), Fraction(1, 2), Fraction(2, 3))
+    for index, (_fid, rec) in enumerate(start_factories):
+        rec["meter"] = fraction_wire(progressions[index % len(progressions)])
+
+    # --- Persistent soldiers (both factions, all archetypes) + hostile battle ---
+    mil = MilitaryService(state)
+    unit_defs = (
+        "unit.ancient.skirmisher",
+        "unit.ancient.line",
+        "unit.ancient.heavy",
+    )
+    home_factory_by_def = {
+        str(rec.get("unit_def_id")): fid
+        for fid, rec in start_factories
+        if rec.get("unit_def_id")
+    }
+    # Enemy settlement factories (may lack industry meter records; IDs still valid).
+    enemy_faction = next(
+        (
+            str(s.get("faction_id"))
+            for s in state.settlements.values()
+            if not s.get("staging") and str(s.get("faction_id") or "") not in {"", faction_id}
+        ),
+        "faction:1",
+    )
+    enemy_settlement = next(
+        (
+            s
+            for s in state.settlements.values()
+            if not s.get("staging") and s.get("faction_id") == enemy_faction
+        ),
+        None,
+    )
+    enemy_home = str((enemy_settlement or {}).get("node_id") or "node:2")
+    enemy_factory_ids = sorted(
+        bid
+        for bid, b in state.buildings.items()
+        if b.get("node_id") == enemy_home
+        and (b.get("slot_kind") == "factory" or str(b.get("definition_id") or "") == "building.factory")
+    )
+    while len(enemy_factory_ids) < 3:
+        enemy_factory_ids.append(enemy_factory_ids[-1] if enemy_factory_ids else f"building:enemy_factory")
+
+    neighbour = battle_node if battle_node != start else str(road_target or build_edge_target)
+    persistent: list[dict[str, Any]] = []
+    # Home node: defending faction, all three archetypes.
+    for i, udef in enumerate(unit_defs):
+        factory_id = home_factory_by_def.get(udef) or (start_factories[i][0] if start_factories else "building:25")
+        unit = mil.spawn(
+            udef,
+            home_node_id=start,
+            faction_id=faction_id,
+            era="prehistoric",
+            factory_id=factory_id,
+            position=[6.0 + i * 2.0, 14.0],
+        )
+        persistent.append(unit)
+    # Neighbour: invading faction archetypes (person_id linked by spawn).
+    for i, udef in enumerate(unit_defs):
+        unit = mil.spawn(
+            udef,
+            home_node_id=enemy_home,
+            faction_id=enemy_faction,
+            era="prehistoric",
+            factory_id=enemy_factory_ids[i],
+            position=[18.0 + i * 2.0, 8.0],
+        )
+        unit["node_id"] = neighbour
+        persistent.append(unit)
+
+    defenders: list[dict[str, Any]] = []
+    invaders: list[dict[str, Any]] = []
+    for i, udef in enumerate(unit_defs):
+        factory_id = home_factory_by_def.get(udef) or (start_factories[i][0] if start_factories else "building:25")
+        d = mil.spawn(
+            udef,
+            home_node_id=start,
+            faction_id=faction_id,
+            era="prehistoric",
+            factory_id=factory_id,
+            position=[8.0 + i * 1.5, 20.0],
+        )
+        d["node_id"] = battle_node
+        defenders.append(d)
+        inv = mil.spawn(
+            udef,
+            home_node_id=enemy_home,
+            faction_id=enemy_faction,
+            era="prehistoric",
+            factory_id=enemy_factory_ids[i],
+            position=[22.0 + i * 1.5, 6.0],
+        )
+        inv["node_id"] = battle_node
+        invaders.append(inv)
+
+    # Prefer fresh formations for staged defenders/invaders; clear auto-hire links first.
+    for u in defenders + invaders:
+        u.pop("formation_id", None)
+    form_def = mil.group([u["id"] for u in defenders], faction_id=faction_id, node_id=battle_node)
+    form_inv = mil.group([u["id"] for u in invaders], faction_id=enemy_faction, node_id=battle_node)
+    participants = [u["id"] for u in defenders + invaders]
+    hostiles = {faction_id: [enemy_faction], enemy_faction: [faction_id]}
+    battle_id = "battle:world-layers"
+    state.battles[battle_id] = {
+        "id": battle_id,
+        "node_id": battle_node,
+        "participants": participants,
+        "buildings": [],
+        "state": "READY",
+        "prefer_local": True,
+        "hostiles": hostiles,
+        "blockers": [],
+        "owner_faction_id": faction_id,
+        "owner_settlement_id": settlement_id,
+    }
+    form_def["engagement_id"] = battle_id
+    form_inv["engagement_id"] = battle_id
+
+    # --- Catastrophe: staged demo needs cube:2 active on hex:0,1 (cleared for industry bootstrap) ---
+    cubes = (state.hazards.get("catastrophe") or {}).get("cubes") or {}
+    board_cubes = state.board.setdefault("hazard_cubes", {})
+    cube2 = cubes.get("cube:2") or board_cubes.get("cube:2")
+    if cube2 is None:
+        raise ValueError("FX-WORLD-LAYERS expected cube:2 record")
+    cube2["active"] = True
+    cube2["hex_id"] = "hex:0,1"
+    board_cubes["cube:2"] = dict(cube2)
+    hazard_hexes = set(str(h) for h in (state.board.get("hazard_hexes") or []))
+    hazard_hexes.add("hex:0,1")
+    state.board["hazard_hexes"] = sorted(hazard_hexes)
+    if str(cube2.get("hex_id")) != "hex:0,1" or not cube2.get("active", True):
+        raise ValueError("FX-WORLD-LAYERS expected active cube:2 on hex:0,1 touching node:35")
+
+    # Staged layers demo is not the narrative boulder quest.
+    g05["mode"] = "world_layers"
+    g05["quest_enabled"] = False
+    g05.pop("boulder_quest", None)
+    fx_village = state.board.setdefault("fx_village", {})
+    fx_village["quest_enabled"] = False
+    fx_village["mode"] = "world_layers"
+    # Keep rockfall object for world continuity but do not gate Travel in this demo.
+    mechs = state.board.get("mechanisms") or {}
+    for rid in ("rockfall:1", "boulder:1"):
+        if rid in mechs:
+            mechs[rid]["status"] = "cleared"
+            for piece in mechs[rid].get("pieces") or []:
+                piece["position"] = list(piece.get("cleared_position") or piece.get("position") or [])
+            if mechs[rid].get("moved_position"):
+                mechs[rid]["position"] = list(mechs[rid]["moved_position"])
+    if "quest.blocked_exit_boulder" in state.quests:
+        state.quests["quest.blocked_exit_boulder"]["status"] = "resolved_by_world"
+    state.board["fx_world_layers"] = {
+        "seed": seed,
+        "start_node_id": start,
+        "cart_id": cart_id,
+        "delivery_reservation_id": delivery_res["id"],
+        "construction_order_id": order.get("id"),
+        "battle_id": battle_id,
+        "battle_node_id": battle_node,
+        "formation_ids": [form_def["id"], form_inv["id"]],
+        "persistent_unit_ids": [u["id"] for u in persistent],
+        "cube_id": "cube:2",
+        "cube_hex_id": "hex:0,1",
+    }
+    return sim
+
+
+def run_fx_world_layers(sim: WorldSim | None = None, seed: int = 507) -> FixtureResult:
+    """Smoke FX-WORLD-LAYERS layer staging on the Prehistoric board."""
+    sim = sim or load_fixture("FX-WORLD-LAYERS", seed=seed)
+    state = sim.state
+    fx = state.board.get("fx_world_layers") or {}
+    g05 = state.board.get("g05") or {}
+    cubes = (state.hazards.get("catastrophe") or {}).get("cubes") or {}
+    cube2 = cubes.get("cube:2") or (state.board.get("hazard_cubes") or {}).get("cube:2")
+    cart = state.carts.get(str(fx.get("cart_id") or ""))
+    cargo_aboard = 0
+    if cart:
+        cargo_aboard = sum(
+            int(lot.get("quantity") or 0)
+            for lot in cart.get("cargo_lots") or []
+            if lot.get("status") == "aboard"
+        )
+    orders_ready = sum(1 for o in state.orders.values() if o.get("status") == "ready")
+    meters_progressed = 0
+    start = str(g05.get("start_node_id") or "")
+    for rec in (state.industry.get("factories") or {}).values():
+        if rec.get("node_id") != start:
+            continue
+        meter = rec.get("meter") or {}
+        try:
+            num = Fraction(str(meter.get("numerator", "0")))
+            den = Fraction(str(meter.get("denominator", "1")))
+            if den and num / den > 0:
+                meters_progressed += 1
+        except (ValueError, ZeroDivisionError, TypeError):
+            pass
+    units_with_person = sum(
+        1 for u in state.units.values() if u.get("alive", True) and u.get("person_id") in state.people
+    )
+    ok = (
+        g05.get("mode") == "world_layers"
+        and not bool((state.board.get("fx_village") or {}).get("quest_enabled"))
+        and cargo_aboard > 0
+        and orders_ready >= 1
+        and meters_progressed >= 1
+        and units_with_person >= 6
+        and len(state.formations or {}) >= 2
+        and str(fx.get("battle_id") or "") in state.battles
+        and cube2 is not None
+        and str(cube2.get("hex_id")) == "hex:0,1"
+        and bool(cube2.get("active", True))
+    )
+    return FixtureResult(
+        name="FX-WORLD-LAYERS",
+        status="PASS" if ok else "FAIL",
+        details={
+            "seed": seed,
+            "g05_mode": g05.get("mode"),
+            "quest_enabled": (state.board.get("fx_village") or {}).get("quest_enabled"),
+            "cart_id": fx.get("cart_id"),
+            "cargo_aboard": cargo_aboard,
+            "orders_ready": orders_ready,
+            "meters_progressed": meters_progressed,
+            "units": len(state.units),
+            "units_with_person": units_with_person,
+            "formations": len(state.formations or {}),
+            "battle_id": fx.get("battle_id"),
+            "battle_node_id": fx.get("battle_node_id"),
+            "cube_2_hex": (cube2 or {}).get("hex_id"),
+            "start_node_id": start,
+        },
+    )
+
+
+
+def _load_fx_solo(seed: int = 808) -> WorldSim:
+    """FX-SOLO: sole-survivor / mandatory fission regression world (T106)."""
+    from sim.dmb.world.fx_era_world import load_fx_era
+    from sim.dmb.eras.safeguards import mark_mandatory_fission
+
+    sim = load_fx_era(seed=507)
+    state = sim.state
+    # Collapse path already multi-faction; mark winner for next-era fission after transition.
+    winner = str((state.board.get("fx_era") or {}).get("winner_faction_id") or "faction:2")
+    state.clock["sole_era_starter"] = False
+    state.board.setdefault("fx_solo", {"seed": seed, "parent_fixture": "FX-ERA", "winner": winner})
+    return sim

@@ -227,10 +227,25 @@ class TurnRunner:
             committed.append(result)
             if result.get("interrupt"):
                 self.interrupt(str(result["interrupt"].get("kind") or "vp_threshold"))
+                if str(result["interrupt"].get("kind") or "") == "vp_threshold":
+                    self.state.clock["interrupt_factions"] = list(
+                        result["interrupt"].get("factions") or []
+                    )
+                    from sim.dmb.eras.service import EraService
+
+                    EraService(self.state).maybe_trigger_from_interrupt(
+                        event_id=f"era:{self.state.world_id}:{result.get('id')}"
+                    )
                 break
             winners = ScoreService(self.state).check_threshold(VP_THRESHOLD)
             if winners:
                 self.interrupt("vp_threshold")
+                self.state.clock["interrupt_factions"] = winners
+                from sim.dmb.eras.service import EraService
+
+                EraService(self.state).maybe_trigger_from_interrupt(
+                    event_id=f"era:{self.state.world_id}:score"
+                )
                 break
         return {"committed": committed}
 
@@ -349,6 +364,12 @@ class TurnRunner:
 
     def _run_stages(self, *, arrival_handler=None) -> None:
         self.stages_executed = []
+        from sim.dmb.eras.safeguards import RecoveryService, mark_mandatory_fission, sole_era_starter_ids
+
+        recovery = RecoveryService(self.state).ensure_factions_for_world_turn()
+        self.state.clock["last_faction_recovery"] = recovery
+        for fid in sole_era_starter_ids(self.state):
+            mark_mandatory_fission(self.state, fid)
         for stage in STAGES:
             self.stage_id = stage
             if stage == "1_arrival" and arrival_handler is not None:
@@ -385,6 +406,12 @@ class TurnRunner:
         link = _exit_link(source, to_node)
         if link is None:
             raise TypeValidationError("missing exit link")
+        # Persistent boulder may block local passage without altering adjacency.
+        from sim.dmb.world.boulder_quest import travel_block_reason
+
+        blocked = travel_block_reason(self.state, from_node, to_node)
+        if blocked:
+            raise TypeValidationError(blocked)
         arrival = dict(link.get("arrival") or {})
         if str(arrival.get("node_id", to_node)) != to_node:
             raise TypeValidationError("arrival node mismatch")

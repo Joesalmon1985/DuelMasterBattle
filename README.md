@@ -1,5 +1,9 @@
 # Duel Master Battle — Village Dialogue / Story Test Patch
 
+> **Note (2026-09-21):** Root README framing below is partly **historical** (Village Test Mode patch).  
+> Authoritative design/execution: `Pack/DuelMasterBattle_Build_Pack/`.  
+> Architecture ontology review: [`docs/review/README.md`](docs/review/README.md).
+
 This is a **focused vertical slice** for the current Village Test Mode.
 
 ## Windows G01 / G02 playtest (BuildPackV03)

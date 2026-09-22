@@ -1,0 +1,48 @@
+{
+  "task_id": "T105",
+  "status": "DONE",
+  "commit": "f4b52f6e6ab9e43263a519586ccd4cdb0b08e261",
+  "files": [
+    "sim/dmb/history/chronicle.py",
+    "sim/dmb/history/__init__.py",
+    "sim/dmb/eras/service.py",
+    "sim/dmb/core/ids.py",
+    "sim/dmb/core/state.py",
+    "sim/dmb/world/overworld_export.py",
+    "godot_project/client/world/era_transition.gd",
+    "godot_project/client/ui/chronicle.gd",
+    "godot_project/client/world/visual_language.gd",
+    "godot_project/client/world/world_layer_presenters.gd",
+    "godot_project/client/scenes/g05_shell.gd",
+    "docs/WORLD_VISUAL_LANGUAGE.md",
+    "tests/sim/test_t105_chronicle.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T105.json"
+  ],
+  "public_contracts": [
+    "HistoryService.record / query_known_history / record_transition_receipt",
+    "DmbEraTransitionPresenter (~4s, skip, reduced motion)",
+    "DmbChroniclePanel knowledge-filtered UI",
+    "Historic/legacy/ruin placeholder presentation"
+  ],
+  "source_rules": [
+    "C11 TransitionPresenter + Chronicle",
+    "GDD \u00a7\u00a738, 173, 182, 185"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T105",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/core/ids.py": "history id kind",
+    "sim/dmb/eras/service.py": "Chronicle write + prefer player-start core selection",
+    "godot_project/client/scenes/g05_shell.gd": "Presenter/Chronicle/FX-ERA Wait chrome"
+  },
+  "defects": [],
+  "next_task": "T106",
+  "notes": "Presentation-only transition; reload does not re-convert."
+}

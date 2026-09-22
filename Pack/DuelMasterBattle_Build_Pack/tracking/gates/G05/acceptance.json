@@ -1,0 +1,19 @@
+{
+  "gate": "G05",
+  "status": "AWAITING_HUMAN",
+  "accepted_by": null,
+  "accepted_build": null,
+  "candidate_branch": "refactor/canonical-ontology-g05",
+  "fixture": "FX-VILLAGE",
+  "seed": 507,
+  "start_node_id": "node:35",
+  "launch": "bash tools/play_g05.sh",
+  "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
+  "dialogue_audit": "docs/review/G05_STARTING_VILLAGE_DIALOGUE_AUDIT.md",
+  "dialogue_matrix": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/dialogue_matrix.md",
+  "objective": "full_world_plus_simple_rockfall_quest",
+  "quest_active": true,
+  "awaiting_human_at": "2026-09-22T13:30:00Z",
+  "acceptance_criterion": "Every starting-village Person has truthful occupational Talk; no retired shortage/Aspect lines; Rockfall overlay only after Inspect; south road walkable after clear.",
+  "notes": "Dialogue sanity pass. Do not mark PASS. Do not start T097."
+}

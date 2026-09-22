@@ -1,0 +1,72 @@
+{
+  "id": "quest.factory_shortage",
+  "schema_version": 1,
+  "version": 2,
+  "family": "village_production",
+  "required_cause": {
+    "kinds": ["factory_output_shortage"]
+  },
+  "binding": {
+    "stakeholder_role": "worker"
+  },
+  "stages": [
+    {"id": "offered", "index": 0},
+    {"id": "investigate", "index": 1},
+    {"id": "intervention", "index": 2},
+    {"id": "acknowledged", "index": 3}
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "demon_duel",
+      "restores": "route:A",
+      "acknowledgement": "dialogue.mara.route_a_complete",
+      "claims_demon_cleared": true
+    },
+    {
+      "id": "sluice_route",
+      "removes_modifier": "sluice_sabotage",
+      "enables": "route:B",
+      "sets": {"sluice_open": true},
+      "acknowledgement": "dialogue.mara.route_b_complete",
+      "claims_demon_cleared": false
+    }
+  ],
+  "world_resolved_route": {
+    "when": "cube_cleared_by_military",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.mara.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "factory_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "displaced_loss",
+    "acknowledgement": "dialogue.mara.displaced_loss"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": ["template_id", "cause_id", "stakeholder_id"],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.mara.offer",
+    "demon": "dialogue.mara.demon_hint",
+    "sluice": "dialogue.mara.sluice_hint",
+    "world_resolved": "dialogue.mara.world_resolved",
+    "route_a_complete": "dialogue.mara.route_a_complete",
+    "route_b_complete": "dialogue.mara.route_b_complete",
+    "displaced_loss": "dialogue.mara.displaced_loss"
+  }
+}

@@ -20,6 +20,7 @@ from sim.dmb.testing.fixtures import (  # noqa: E402
     run_fx_clock,
     run_fx_hazard,
     run_fx_industry,
+    run_fx_village,
 )
 
 SCENARIO_OWNERS = {
@@ -29,6 +30,7 @@ SCENARIO_OWNERS = {
     "FX-BATTLE": "T059-T068",
     "FX-HAZARD": "T069-T075",
     "FX-VILLAGE": "T077-T095",
+    "FX-VILLAGE-QUEST": "T077-T095",
     "FX-ERA": "T097-T106",
     "FX-SOLO": "T102/T106",
     "FX-CYCLE": "T125-T131",
@@ -192,6 +194,66 @@ def main(argv: Sequence[str] | None = None) -> int:
             _record(args.record, payload)
             print(json.dumps(payload, indent=2))
             return 0 if result.status == "PASS" else 1
+        except Exception as exc:  # noqa: BLE001
+            payload = {
+                "fixture": args.fixture,
+                "status": "FAIL",
+                "owner": owner,
+                "message": str(exc),
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 1
+
+    if args.fixture == "FX-VILLAGE-QUEST":
+        try:
+            sim = load_fixture("FX-VILLAGE-QUEST", seed=args.seed)
+            result = run_fx_village(sim, seed=args.seed)
+            payload = {
+                "fixture": "FX-VILLAGE-QUEST",
+                "status": result.status,
+                "owner": owner,
+                "seed": args.seed,
+                "details": result.details,
+                "world_id": sim.state.world_id,
+                "quest_id": result.details.get("quest_id"),
+                "archived": True,
+                "same_engine": True,
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 0 if result.status == "PASS" else 1
+        except Exception as exc:  # noqa: BLE001
+            payload = {
+                "fixture": args.fixture,
+                "status": "FAIL",
+                "owner": owner,
+                "message": str(exc),
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 1
+
+    if args.fixture == "FX-VILLAGE":
+        try:
+            from sim.dmb.world.prehistoric_world import board_summary
+
+            sim = load_fixture("FX-VILLAGE", seed=args.seed)
+            summary = board_summary(sim)
+            ok = int(summary.get("nodes") or 0) == 54 and int(summary.get("hexes") or 0) == 19
+            payload = {
+                "fixture": "FX-VILLAGE",
+                "status": "PASS" if ok else "FAIL",
+                "owner": owner,
+                "seed": args.seed,
+                "details": summary,
+                "world_id": sim.state.world_id,
+                "quest_id": None,
+                "same_engine": True,
+            }
+            _record(args.record, payload)
+            print(json.dumps(payload, indent=2))
+            return 0 if ok else 1
         except Exception as exc:  # noqa: BLE001
             payload = {
                 "fixture": args.fixture,
