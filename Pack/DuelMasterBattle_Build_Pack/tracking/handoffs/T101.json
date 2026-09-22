@@ -1,7 +1,7 @@
 {
   "task_id": "T101",
   "status": "DONE",
-  "commit": null,
+  "commit": "05260199f5828eef7502cb21b7c031cfd82bea48",
   "files": [
     "sim/dmb/eras/upgrades.py",
     "sim/dmb/eras/__init__.py",
@@ -12,13 +12,13 @@
     "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T101.json"
   ],
   "public_contracts": [
-    "mark_legacy_sites — operational old-era sites at 0 VP",
-    "CoreUpgradeService.upgrade_legacy — paid in-place upgrade, no free grant, no layer refill",
+    "mark_legacy_sites \u2014 operational old-era sites at 0 VP",
+    "CoreUpgradeService.upgrade_legacy \u2014 paid in-place upgrade, no free grant, no layer refill",
     "ConstructionService.commit_delivered(legacy_upgrade)"
   ],
   "source_rules": [
     "C11 legacy sites / paid upgrades",
-    "GDD §§40, 79, 103, 116"
+    "GDD \u00a7\u00a740, 79, 103, 116"
   ],
   "checks": [
     {
