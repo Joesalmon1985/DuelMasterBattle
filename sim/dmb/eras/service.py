@@ -62,9 +62,6 @@ def _hazard_rollover(state: Any, *, next_era: str) -> dict[str, Any]:
 
 def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
     """Ensure upgraded Historic core has a working cross-terrain production chain."""
-    import json
-    from pathlib import Path
-
     from sim.dmb.industry.layers import ResourceLayerService
     from sim.dmb.industry.primary import PrimaryChannel
     from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
@@ -163,25 +160,18 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
             industry.install_channel(ch)
             channel_by_resource.setdefault(rid, ch.channel_id)
 
-    # Pick a Historic MVP recipe whose both inputs are available (cross-terrain).
-    recipes_path = (
-        Path(__file__).resolve().parents[3]
-        / "godot_project"
-        / "content"
-        / "source"
-        / "recipes"
-        / "mvp.json"
-    )
+    # Prefer full-catalogue Historic recipes; fall back to MVP subset wiring.
+    from sim.dmb.content.catalogue import recipes_for_era
+
     recipe = None
-    if recipes_path.exists():
-        data = json.loads(recipes_path.read_text(encoding="utf-8"))
-        for r in data.get("recipes") or []:
-            if r.get("era") != "historic" or not r.get("mvp_subset"):
-                continue
+    for prefer_mvp in (False, True):
+        for r in recipes_for_era("historic", mvp_only=prefer_mvp):
             a, b = str(r.get("input_a_id")), str(r.get("input_b_id"))
             if a in channel_by_resource and b in channel_by_resource and a != b:
                 recipe = r
                 break
+        if recipe is not None:
+            break
     if recipe is None:
         return {
             "status": "no_cross_terrain_recipe",

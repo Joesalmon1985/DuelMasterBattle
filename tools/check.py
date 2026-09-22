@@ -1095,6 +1095,18 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 )
             ),
         ],
+        "T115": lambda: [
+            _pytest("full_catalogue", "tests/sim/test_t115_full_catalogue.py"),
+            validate_evidence(
+                "full_catalogue_sources",
+                [
+                    ROOT / "sim" / "dmb" / "content" / "catalogue.py",
+                    ROOT / "godot_project" / "content" / "manifests" / "full.json",
+                    ROOT / "godot_project" / "content" / "source" / "resources" / "catalog.json",
+                    ROOT / "godot_project" / "content" / "source" / "recipes" / "full.json",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

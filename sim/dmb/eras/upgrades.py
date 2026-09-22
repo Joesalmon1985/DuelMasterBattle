@@ -349,15 +349,14 @@ class CoreUpgradeService:
         return {"processor_id": processor_id, "recipe_id": recipe["id"], "status": "pending_channels"}
 
     def _pick_historic_recipe(self) -> dict[str, Any] | None:
-        if not RECIPES_PATH.exists():
-            return None
-        data = json.loads(RECIPES_PATH.read_text(encoding="utf-8"))
-        recipes = [
-            r
-            for r in data.get("recipes") or []
-            if r.get("era") == "historic" and r.get("mvp_subset")
-        ]
-        return recipes[0] if recipes else None
+        from sim.dmb.content.catalogue import recipes_for_era
+
+        # Prefer MVP-marked Historic recipes for G06 continuity; fall back to full set.
+        mvp = recipes_for_era("historic", mvp_only=True)
+        if mvp:
+            return dict(mvp[0])
+        full = recipes_for_era("historic")
+        return dict(full[0]) if full else None
 
 
 def upgrade_cores(

@@ -1,0 +1,42 @@
+{
+  "task_id": "T115",
+  "status": "DONE",
+  "commit": "00e284a3d6cc6187854f8353ac536ca15fbdbd9c",
+  "files": [
+    "sim/dmb/content/catalogue.py",
+    "godot_project/content/manifests/full.json",
+    "tests/sim/test_t115_full_catalogue.py",
+    "tools/check.py",
+    "sim/dmb/eras/service.py",
+    "sim/dmb/eras/upgrades.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json"
+  ],
+  "scope_additions": [
+    "sim/dmb/content/catalogue.py \u2014 required runtime owner for era-filtered full recipes (outside listed content/ paths)",
+    "sim/dmb/eras/service.py + upgrades.py \u2014 wire Historic rebind/pick through FullCatalogue"
+  ],
+  "public_contracts": [
+    "48 industrial resources",
+    "240 recipes / 60 per era",
+    "raw frequency 10",
+    "cross-terrain pairs",
+    "culture access all 60",
+    "services nonstorable",
+    "1:1 inputs + military-supply compatibility",
+    "workbook roles metadata-only"
+  ],
+  "source_rules": [
+    "C13 content floors",
+    "C06 catalogue pairing"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T115",
+      "exit_code": 0,
+      "result": "PASS; 7 pytest checks + evidence"
+    }
+  ],
+  "defects": [],
+  "next_task": "T116",
+  "notes": "MVP 16+16 subset preserved via mvp_only. Pre\u2192Hist path now prefers full Historic catalogue with MVP fallback."
+}
