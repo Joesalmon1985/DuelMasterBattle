@@ -139,11 +139,13 @@ def ordinary_talk_line(
 
 
 def occupation_reply_line(state: Any, person_id: str) -> dict[str, Any]:
+    from sim.dmb.eras.continuity import truthful_occupation_line
+
     ctx = person_talk_context(state, person_id)
     return {
         "id": "dialogue.boulder.occupation",
         "scope": "rockfall",
-        "text": occupation_answer_line(ctx),
+        "text": truthful_occupation_line(state, person_id),
         "fallback": "They describe their ordinary work.",
         "choices": [],
         "context": ctx,

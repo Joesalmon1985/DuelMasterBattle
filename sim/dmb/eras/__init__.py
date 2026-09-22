@@ -1,5 +1,6 @@
 """Era transition planning package (C11 / G06)."""
 
+from sim.dmb.eras.continuity import ContinuityService
 from sim.dmb.eras.collapse import CollapseDisposition, select_collapse_factions
 from sim.dmb.eras.fission import FissionDisposition, choose_compact_pairing, plan_fission
 from sim.dmb.eras.planner import (
@@ -14,6 +15,7 @@ from sim.dmb.eras.upgrades import CoreUpgradeService, mark_legacy_sites, upgrade
 
 __all__ = [
     "CollapseDisposition",
+    "ContinuityService",
     "CoreUpgradeService",
     "EraTransitionPlan",
     "EraTransitionPlanner",
