@@ -349,6 +349,12 @@ class TurnRunner:
 
     def _run_stages(self, *, arrival_handler=None) -> None:
         self.stages_executed = []
+        from sim.dmb.eras.safeguards import RecoveryService, mark_mandatory_fission, sole_era_starter_ids
+
+        recovery = RecoveryService(self.state).ensure_factions_for_world_turn()
+        self.state.clock["last_faction_recovery"] = recovery
+        for fid in sole_era_starter_ids(self.state):
+            mark_mandatory_fission(self.state, fid)
         for stage in STAGES:
             self.stage_id = stage
             if stage == "1_arrival" and arrival_handler is not None:
