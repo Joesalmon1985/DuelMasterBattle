@@ -1,7 +1,7 @@
 {
   "task_id": "T103",
   "status": "DONE",
-  "commit": null,
+  "commit": "686a07d4ad260c522d16211142689402a1133b51",
   "g05_smoke": {
     "python": "PASS tests/sim/test_t084_dialogue.py + tests/scenarios/test_village_quest.py (11)",
     "godot_headless": "TIMEOUT/hang on run_g05_smoke.gd in this environment; no code regression observed in Python Rockfall/dialogue suite"
@@ -16,14 +16,14 @@
     "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T103.json"
   ],
   "public_contracts": [
-    "ContinuityService.adapt_for_transition — Rockfall/Person/item continuity",
+    "ContinuityService.adapt_for_transition \u2014 Rockfall/Person/item continuity",
     "truthful_occupation_line for displaced workers",
     "quest.blocked_exit_boulder (not shortage) preserved"
   ],
   "source_rules": [
     "C11 continuity",
-    "GDD §§38–40, 56, 141",
-    "T103 shortage→Rockfall translation"
+    "GDD \u00a7\u00a738\u201340, 56, 141",
+    "T103 shortage\u2192Rockfall translation"
   ],
   "checks": [
     {
