@@ -1,14 +1,15 @@
 {
   "task_id": "T142",
   "status": "DONE",
-  "commit": null,
+  "commit": "85729b0220a88b3e647e72402643f3fbe8b2bacc",
   "files": [
     "G08 overnight chunk"
   ],
   "checks": [
     {
       "command": "python3 tools/check.py --task T142",
-      "result": "PENDING_COMMIT"
+      "exit_code": 0,
+      "result": "PASS"
     }
   ],
   "next_task": "T143",
