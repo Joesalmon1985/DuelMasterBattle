@@ -1,0 +1,34 @@
+{
+  "task_id": "T099",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/eras/fission.py",
+    "sim/dmb/eras/__init__.py",
+    "tests/sim/test_t099_fission.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T099.json"
+  ],
+  "public_contracts": [
+    "choose_compact_pairing — 3 pairings, min within-pair distance, stable ties",
+    "plan_fission / FissionDisposition.apply — ownership without Person duplication; cargo aboard unchanged; siblings neutral/trade-permitted"
+  ],
+  "source_rules": [
+    "C11 fission / successor ownership",
+    "GDD §§40, 120"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T099",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "extra_scope": {},
+  "defects": [
+    "ai/legal.py voluntary fission candidates deferred; mandatory era fission is plan-driven"
+  ],
+  "next_task": "T100",
+  "notes": "Successor IDs supplied from reserved commit block; planner does not allocate."
+}
