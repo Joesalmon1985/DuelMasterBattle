@@ -1264,6 +1264,135 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T134": lambda: [
+            _pytest("quest_templates_t134", "tests/sim/test_t134_t136_content.py"),
+            validate_evidence(
+                "shortage_transport_catastrophe_diplomacy",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "shortage" / "grain_store.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "transport" / "bridge_washout.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "catastrophe" / "flood_berm.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "diplomacy" / "border_truce.json",
+                ],
+            ),
+        ],
+        "T135": lambda: [
+            _pytest("quest_templates_t135", "tests/sim/test_t134_t136_content.py"),
+            validate_evidence(
+                "military_personal_discovery_conflict",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "military" / "raid_warning.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "personal" / "lost_heirloom.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "discovery" / "ruin_map.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "conflict" / "water_rights.json",
+                ],
+            ),
+        ],
+        "T136": lambda: [
+            _pytest("dungeons_rivals", "tests/sim/test_t134_t136_content.py"),
+            validate_evidence(
+                "dungeons_and_rivals",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "dungeons" / "cave" / "layout.json",
+                    ROOT / "godot_project" / "content" / "source" / "dungeons" / "machine" / "layout.json",
+                    ROOT / "godot_project" / "content" / "source" / "rivals" / "ashen_tactician.json",
+                    ROOT / "godot_project" / "content" / "source" / "rivals" / "ember_duelist.json",
+                ],
+            ),
+        ],
+        "T137": lambda: [
+            _pytest("dialogue_baseline", "tests/sim/test_t137_dialogue_baseline.py"),
+            run_command(
+                CommandCheck(
+                    name="validate_baseline_dialogue",
+                    argv=(
+                        sys.executable,
+                        "-m",
+                        "tools.content.validate",
+                        "--include-baseline",
+                        "--integrity",
+                    ),
+                    required_pattern=r"validate_dialogue: PASS",
+                )
+            ),
+            validate_evidence(
+                "content_review",
+                [
+                    TRACKING / "content_review" / "baseline_review.md",
+                ],
+            ),
+        ],
+        "T138": lambda: [
+            _pytest("era_assets", "tests/sim/test_t138_assets.py"),
+            validate_evidence(
+                "asset_manifest",
+                [
+                    ROOT / "godot_project" / "content" / "asset_manifest.json",
+                    ROOT / "godot_project" / "client" / "assets" / "prehistoric" / "manifest.json",
+                    ROOT / "godot_project" / "client" / "assets" / "future" / "manifest.json",
+                    ROOT / "godot_project" / "client" / "audio" / "palettes.json",
+                ],
+            ),
+        ],
+        "T139": lambda: [
+            _pytest("debug_inspectors", "tests/sim/test_t139_t140_tools.py"),
+            validate_evidence(
+                "economy_tech_culture_policy",
+                [
+                    ROOT / "godot_project" / "client" / "debug" / "economy_view.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "technology_view.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "culture_editor.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "policy_view.gd",
+                ],
+            ),
+        ],
+        "T140": lambda: [
+            _pytest("narrative_tools", "tests/sim/test_t139_t140_tools.py"),
+            validate_evidence(
+                "narrative_puzzle_era_tools",
+                [
+                    ROOT / "godot_project" / "client" / "debug" / "narrative_tools" / "quest_dialogue_preview.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "puzzle_editor.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "era_plan_view.gd",
+                ],
+            ),
+        ],
+        "T141": lambda: [
+            _pytest("content_matrix", "tests/scenarios/test_content_matrix.py"),
+            run_command(
+                CommandCheck(
+                    name="validate_corpus",
+                    argv=(sys.executable, str(ROOT / "tools" / "content" / "validate_corpus.py"), "--write"),
+                    required_pattern=r"validate_content: PASS",
+                )
+            ),
+            validate_evidence(
+                "content_coverage",
+                [
+                    TRACKING / "content_coverage" / "coverage_report.json",
+                    TRACKING / "content_coverage" / "coverage_report.md",
+                ],
+            ),
+        ],
+        "T142": lambda: [
+            validate_evidence(
+                "g08_gate_packet",
+                [
+                    TRACKING / "gates" / "G08" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G08" / "auto" / "result.json",
+                    TRACKING / "gates" / "G08" / "auto" / "summary.md",
+                    TRACKING / "gates" / "G08" / "sample_manifest.json",
+                    TRACKING / "gates" / "G08" / "dialogue_preview.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g08_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G08"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -1569,6 +1698,55 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 CommandCheck(
                     name="g06_auto_gate_runner",
                     argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G06"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G07":
+        packet = TRACKING / "gates" / "G07"
+        return [
+            validate_evidence(
+                "g07_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g07_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G07"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G08":
+        packet = TRACKING / "gates" / "G08"
+        return [
+            _pytest(
+                "g08_content_python",
+                "tests/sim/test_t133_content_pipeline.py",
+                "tests/sim/test_t134_t136_content.py",
+                "tests/sim/test_t137_dialogue_baseline.py",
+                "tests/sim/test_t138_assets.py",
+                "tests/sim/test_t139_t140_tools.py",
+                "tests/scenarios/test_content_matrix.py",
+            ),
+            validate_evidence(
+                "g08_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    packet / "sample_manifest.json",
+                    packet / "dialogue_preview.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g08_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G08"),
                     required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
                 )
             ),

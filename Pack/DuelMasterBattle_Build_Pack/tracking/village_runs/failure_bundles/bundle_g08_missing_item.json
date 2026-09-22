@@ -1,0 +1,26 @@
+{
+  "fixture": "FX-CONTENT-SAMPLE",
+  "seed": 808,
+  "error": "softlock_recovery:missing_item.ruin_sketch",
+  "quest_id": "quest.discovery.ruin_map",
+  "cause_id": "cause.unmapped_ruin",
+  "branch": "required_item_recovery",
+  "accessibility": {
+    "label_scale": 1.25,
+    "reduced_motion": true
+  },
+  "replay": {
+    "command": [
+      "python3",
+      "tools/run_scenario.py",
+      "--fixture",
+      "FX-CONTENT-SAMPLE",
+      "--seed",
+      "808",
+      "--record",
+      "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/g08_sample_record.json"
+    ],
+    "notes": "Replay missing-item recovery for discovery.ruin_map"
+  },
+  "exported_at": "2026-09-22T23:04:34Z"
+}

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pack_version": "1.0",
   "status": "READY_FOR_EXECUTION",
-  "current_task": "T133",
+  "current_task": "T143",
   "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
   "repository_map": "tracking/repository_map.json",
   "resume_policy": {
@@ -145,16 +145,16 @@
     "T130": "DONE",
     "T131": "DONE",
     "T132": "DONE",
-    "T133": "NOT_STARTED",
-    "T134": "NOT_STARTED",
-    "T135": "NOT_STARTED",
-    "T136": "NOT_STARTED",
-    "T137": "NOT_STARTED",
-    "T138": "NOT_STARTED",
-    "T139": "NOT_STARTED",
-    "T140": "NOT_STARTED",
-    "T141": "NOT_STARTED",
-    "T142": "NOT_STARTED",
+    "T133": "DONE",
+    "T134": "DONE",
+    "T135": "DONE",
+    "T136": "DONE",
+    "T137": "DONE",
+    "T138": "DONE",
+    "T139": "DONE",
+    "T140": "DONE",
+    "T141": "DONE",
+    "T142": "DONE",
     "T143": "NOT_STARTED",
     "T144": "NOT_STARTED",
     "T145": "NOT_STARTED",
@@ -274,10 +274,16 @@
       "notes": "Automated gate AUTO_READY_FOR_OWNER_REVIEW. Human acceptance PENDING \u2014 do not invent PASS. Overnight continue to T133."
     },
     "G08": {
-      "status": "NOT_READY",
+      "status": "AUTO_READY_FOR_OWNER_REVIEW",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": null
+      "evidence": "tracking/gates/G08/MORNING_REVIEW.md",
+      "auto_evidence": "tracking/gates/G08/auto/result.json",
+      "fixture": "FX-CONTENT-SAMPLE",
+      "seed": 808,
+      "launch": "bash tools/play_g08_sample.sh",
+      "awaiting_owner_review_at": "2026-09-22T23:06:26Z",
+      "notes": "Automated gate AUTO_READY_FOR_OWNER_REVIEW. Human acceptance PENDING \u2014 do not invent PASS. Overnight continue to T143."
     },
     "G09": {
       "status": "NOT_READY",
@@ -311,6 +317,7 @@
     "authorised_at": "2026-09-22T22:18:00Z",
     "policy": "AUTO_READY_FOR_OWNER_REVIEW permits continuation; never invent human PASS",
     "amendment": "EXECUTION_AMENDMENTS.md#Overnight G06\u2192G12 autonomous run",
-    "g06_completed_at": "2026-09-22T22:31:52Z"
+    "g06_completed_at": "2026-09-22T22:31:52Z",
+    "g08_completed_at": "2026-09-22T23:06:26Z"
   }
 }

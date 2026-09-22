@@ -1,0 +1,101 @@
+{
+  "gate": "G08",
+  "generated_at": "2026-09-22T23:06:45Z",
+  "status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "results": [
+    {
+      "cmd": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t133_content_pipeline.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.508,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/00_content_pipeline.log",
+      "status": "PASS",
+      "name": "content_pipeline",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t134_t136_content.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.333,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/01_quest_dungeon_rival_matrix.log",
+      "status": "PASS",
+      "name": "quest_dungeon_rival_matrix",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t137_dialogue_baseline.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.749,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/02_dialogue_baseline.log",
+      "status": "PASS",
+      "name": "dialogue_baseline",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t138_assets.py",
+        "tests/sim/test_t139_t140_tools.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.365,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/03_assets_and_tools.log",
+      "status": "PASS",
+      "name": "assets_and_tools",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/scenarios/test_content_matrix.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.718,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/04_content_matrix.log",
+      "status": "PASS",
+      "name": "content_matrix",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "python3",
+        "tools/content/validate_corpus.py",
+        "--write",
+        "--compile-baseline"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.672,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/05_validate_corpus.log",
+      "status": "PASS",
+      "name": "validate_corpus",
+      "kind": "shell"
+    }
+  ],
+  "spec": "G08",
+  "seed": 808,
+  "fixture": "FX-CONTENT-SAMPLE"
+}

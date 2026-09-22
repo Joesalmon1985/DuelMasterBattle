@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "FX-CONTENT-SAMPLE",
+  "seed": 808,
+  "description": "G08 stratified content sample across quest families, two eras, two dungeons, four rivals.",
+  "eras": ["historic", "modern"],
+  "quest_template_ids": [
+    "quest.shortage.grain_store",
+    "quest.transport.bridge_washout",
+    "quest.catastrophe.flood_berm",
+    "quest.diplomacy.border_truce",
+    "quest.military.raid_warning",
+    "quest.personal.lost_heirloom",
+    "quest.discovery.ruin_map",
+    "quest.conflict.water_rights"
+  ],
+  "dungeon_ids": ["dungeon.cave", "dungeon.sluice"],
+  "rival_ids": [
+    "rival.ashen_tactician",
+    "rival.iron_broker",
+    "rival.veil_scout",
+    "rival.ember_duelist"
+  ],
+  "branches": [
+    "displaced_target",
+    "dead_target",
+    "already_world_resolved",
+    "full_cycle"
+  ],
+  "accessibility": {
+    "label_scale": 1.25,
+    "reduced_motion": true
+  },
+  "content_pack": "content.g08_baseline",
+  "notes": "Arranges starting state only; outcomes use production WorldSim commands."
+}

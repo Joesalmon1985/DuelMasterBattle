@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "counts": {
+    "recipes": 240,
+    "tech": 24,
+    "quests_by_family": {
+      "shortage": 2,
+      "transport": 2,
+      "catastrophe": 2,
+      "diplomacy": 2,
+      "military": 2,
+      "personal": 2,
+      "discovery": 2,
+      "conflict": 2
+    },
+    "quest_templates_total": 17,
+    "dungeons": 8,
+    "rivals": 4,
+    "dialogue_lines": 1423
+  },
+  "unreviewed_items": [],
+  "integrity": {
+    "missing_semantic_ids": 0,
+    "repetitive_phrase_count": 0
+  }
+}

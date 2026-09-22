@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "pack_id": "content.g08_baseline",
+  "quests": [
+    {
+      "id": "quest.catastrophe.fire_break",
+      "family": "catastrophe",
+      "source": "godot_project/content/source/quests/catastrophe/fire_break.json"
+    },
+    {
+      "id": "quest.catastrophe.flood_berm",
+      "family": "catastrophe",
+      "source": "godot_project/content/source/quests/catastrophe/flood_berm.json"
+    },
+    {
+      "id": "quest.conflict.labour_strike",
+      "family": "conflict",
+      "source": "godot_project/content/source/quests/conflict/labour_strike.json"
+    },
+    {
+      "id": "quest.conflict.water_rights",
+      "family": "conflict",
+      "source": "godot_project/content/source/quests/conflict/water_rights.json"
+    },
+    {
+      "id": "quest.diplomacy.border_truce",
+      "family": "diplomacy",
+      "source": "godot_project/content/source/quests/diplomacy/border_truce.json"
+    },
+    {
+      "id": "quest.diplomacy.trade_embargo",
+      "family": "diplomacy",
+      "source": "godot_project/content/source/quests/diplomacy/trade_embargo.json"
+    },
+    {
+      "id": "quest.discovery.ruin_map",
+      "family": "discovery",
+      "source": "godot_project/content/source/quests/discovery/ruin_map.json"
+    },
+    {
+      "id": "quest.discovery.strange_signal",
+      "family": "discovery",
+      "source": "godot_project/content/source/quests/discovery/strange_signal.json"
+    },
+    {
+      "id": "quest.military.deserter_hunt",
+      "family": "military",
+      "source": "godot_project/content/source/quests/military/deserter_hunt.json"
+    },
+    {
+      "id": "quest.military.raid_warning",
+      "family": "military",
+      "source": "godot_project/content/source/quests/military/raid_warning.json"
+    },
+    {
+      "id": "quest.personal.lost_heirloom",
+      "family": "personal",
+      "source": "godot_project/content/source/quests/personal/lost_heirloom.json"
+    },
+    {
+      "id": "quest.personal.sibling_feud",
+      "family": "personal",
+      "source": "godot_project/content/source/quests/personal/sibling_feud.json"
+    },
+    {
+      "id": "quest.factory_shortage",
+      "family": "village_production",
+      "source": "godot_project/content/source/quests/shortage/factory_shortage.json"
+    },
+    {
+      "id": "quest.shortage.fuel_yard",
+      "family": "shortage",
+      "source": "godot_project/content/source/quests/shortage/fuel_yard.json"
+    },
+    {
+      "id": "quest.shortage.grain_store",
+      "family": "shortage",
+      "source": "godot_project/content/source/quests/shortage/grain_store.json"
+    },
+    {
+      "id": "quest.transport.bridge_washout",
+      "family": "transport",
+      "source": "godot_project/content/source/quests/transport/bridge_washout.json"
+    },
+    {
+      "id": "quest.transport.cart_blockade",
+      "family": "transport",
+      "source": "godot_project/content/source/quests/transport/cart_blockade.json"
+    }
+  ],
+  "quest_count": 17,
+  "batches": [
+    {
+      "id": "batch.t133.valid",
+      "hash": "800463bc1c789df9a834f5ced39a42ae0a39bfdd9f2bde440428ace18e5a844a"
+    }
+  ],
+  "rivals": [
+    {
+      "id": "rival.ashen_tactician"
+    },
+    {
+      "id": "rival.ember_duelist"
+    },
+    {
+      "id": "rival.iron_broker"
+    },
+    {
+      "id": "rival.veil_scout"
+    }
+  ],
+  "dungeons": [
+    {
+      "id": "dungeon.alien"
+    },
+    {
+      "id": "dungeon.bunker"
+    },
+    {
+      "id": "dungeon.cave"
+    },
+    {
+      "id": "dungeon.industrial"
+    },
+    {
+      "id": "dungeon.machine"
+    },
+    {
+      "id": "dungeon.mine"
+    },
+    {
+      "id": "dungeon.sluice"
+    },
+    {
+      "id": "dungeon.temple"
+    }
+  ],
+  "dialogue_manifest": null,
+  "provenance": {
+    "validator": "tools.content.compile",
+    "api_dependency": false
+  },
+  "content_hash": "299b4ee0336ac0148a82e17a9891d0b9c2b37970bd83ea712cf028bb21fb522f"
+}
