@@ -1,0 +1,25 @@
+{
+  "task_id": "T114",
+  "status": "DONE",
+  "commit": "83cbef14901d241cf2b80d6958177f663b507fe1",
+  "files": [
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/MORNING_REVIEW.md",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/",
+    "qa/auto_gates/G06.json",
+    "tools/run_auto_gate.py",
+    "tools/auto_visual_gate_report.py"
+  ],
+  "public_contracts": [
+    "G06 AUTO_READY_FOR_OWNER_REVIEW",
+    "no invented human PASS"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T114",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T115",
+  "notes": "Owner review PENDING. Overnight policy permits continue to G07."
+}

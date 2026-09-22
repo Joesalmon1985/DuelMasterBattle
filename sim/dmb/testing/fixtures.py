@@ -48,6 +48,8 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
         from sim.dmb.world.fx_era_world import load_fx_era
 
         return load_fx_era(seed=507 if seed == 7 else seed)
+    if name == "FX-MVP":
+        return _load_fx_mvp(seed=507 if seed == 7 else seed)
     if name == "FX-SOLO":
         return _load_fx_solo(seed=808 if seed == 7 else seed)
     raise ValueError(f"unsupported fixture {name}")
@@ -1220,6 +1222,29 @@ def _load_fx_village(seed: int = 507, *, mode: str = "baseline") -> WorldSim:
     from sim.dmb.world.prehistoric_world import load_prehistoric_world
 
     return load_prehistoric_world(seed=507 if seed == 7 else seed)
+
+
+def _load_fx_mvp(seed: int = 507) -> WorldSim:
+    """FX-MVP: normal generated two-faction Prehistoric sandbox (T108).
+
+    Uses the same production prehistoric loader as FX-VILLAGE — no injected VP,
+    stocks, or staged transition. Historic continuation uses EraService when 10 VP
+    is reached through ordinary play (or FX-ERA for accelerated gate checks).
+    """
+    sim = _load_fx_village(seed=seed, mode="baseline")
+    state = sim.state
+    g05 = state.board.setdefault("g05", {})
+    g05["mode"] = "mvp"
+    g05["fixture"] = "FX-MVP"
+    state.board["mvp"] = {
+        "seed": seed,
+        "fixture": "FX-MVP",
+        "factions": sorted(state.factions.keys()),
+        "era": str(state.clock.get("era") or "prehistoric"),
+        "forces_game_over": False,
+        "debug_injected_resources": False,
+    }
+    return sim
 
 
 def _load_fx_long_world(seed: int = 507) -> WorldSim:

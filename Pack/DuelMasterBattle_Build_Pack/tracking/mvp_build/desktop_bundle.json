@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-09-22T22:31:22.414196+00:00",
+  "platform": "Linux",
+  "machine": "x86_64",
+  "windows_certified": false,
+  "bundle": "build/desktop/mvp_linux",
+  "launchers": [
+    "play_mvp.sh",
+    "play_fx_era.sh",
+    "play_g05.sh"
+  ]
+}

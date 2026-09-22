@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pack_version": "1.0",
   "status": "READY_FOR_EXECUTION",
-  "current_task": "T108",
+  "current_task": "T115",
   "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
   "repository_map": "tracking/repository_map.json",
   "resume_policy": {
@@ -120,13 +120,13 @@
     "T105": "DONE",
     "T106": "DONE",
     "T107": "DONE",
-    "T108": "NOT_STARTED",
-    "T109": "NOT_STARTED",
-    "T110": "NOT_STARTED",
-    "T111": "NOT_STARTED",
-    "T112": "NOT_STARTED",
-    "T113": "NOT_STARTED",
-    "T114": "NOT_STARTED",
+    "T108": "DONE",
+    "T109": "DONE",
+    "T110": "DONE",
+    "T111": "DONE",
+    "T112": "DONE",
+    "T113": "DONE",
+    "T114": "DONE",
     "T115": "NOT_STARTED",
     "T116": "NOT_STARTED",
     "T117": "NOT_STARTED",
@@ -247,18 +247,19 @@
       "overnight_note": "Joe authorised overnight G06\u2192G12 continuation past human stops. G05 remains without human PASS; do not fabricate acceptance."
     },
     "G06": {
-      "status": "IN_PROGRESS",
+      "status": "AUTO_READY_FOR_OWNER_REVIEW",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": "tracking/gates/G06/early_transition_checkpoint.md",
+      "evidence": "tracking/gates/G06/MORNING_REVIEW.md",
       "early_transition_checkpoint": "AWAITING_HUMAN",
       "fixture": "FX-ERA",
       "seed": 507,
       "launch": "bash tools/play_fx_era.sh",
-      "notes": "T103\u2013T106 complete on main. Overnight run authorised to continue T107\u2013T114 and later gates without inventing human PASS. Early checkpoint evidence retained.",
+      "notes": "T107\u2013T114 complete. Automated gate AUTO_READY_FOR_OWNER_REVIEW. Human acceptance PENDING \u2014 do not invent PASS. Overnight continue to T115.",
       "stop_after": null,
       "next_blocked": null,
-      "overnight_policy": "AUTO_READY_FOR_OWNER_REVIEW when objective auto suite passes; continue to T107+"
+      "overnight_policy": "AUTO_READY_FOR_OWNER_REVIEW when objective auto suite passes; continue to T107+",
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW"
     },
     "G07": {
       "status": "NOT_READY",
@@ -303,6 +304,7 @@
     "starting_sha": "d6b78d3883eb20d6ccd31ace92b1a2126fbbe39d",
     "authorised_at": "2026-09-22T22:18:00Z",
     "policy": "AUTO_READY_FOR_OWNER_REVIEW permits continuation; never invent human PASS",
-    "amendment": "EXECUTION_AMENDMENTS.md#Overnight G06\u2192G12 autonomous run"
+    "amendment": "EXECUTION_AMENDMENTS.md#Overnight G06\u2192G12 autonomous run",
+    "g06_completed_at": "2026-09-22T22:31:52Z"
   }
 }

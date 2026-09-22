@@ -1,0 +1,22 @@
+{
+  "gate": "G06",
+  "generated_at": "2026-09-22T22:31:00.618794+00:00",
+  "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "steps_passed": 6,
+  "steps_failed": 0,
+  "auto_screenshots": [],
+  "layout_captures": [
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/chronicle_1280x720.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/chronicle_450x800.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/chronicle_960x540.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/village_1280x720.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/village_450x800.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/village_960x540.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_1280x720.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_450x800.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_450x800_before_geometry.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_450x800_geometry.png",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_960x540.png"
+  ],
+  "human_acceptance": "PENDING"
+}

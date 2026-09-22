@@ -17,10 +17,30 @@
       "timeout_s": 180
     },
     {
-      "name": "semantic_visual_registry",
+      "name": "mvp_sandbox_continuation",
       "kind": "pytest",
-      "paths": ["tests/sim/test_semantic_visuals.py"],
-      "timeout_s": 60
+      "paths": [
+        "tests/scenarios/test_mvp_sandbox.py",
+        "tests/scenarios/test_mvp_continuation.py"
+      ],
+      "timeout_s": 180
+    },
+    {
+      "name": "mvp_hints_a11y_screens",
+      "kind": "pytest",
+      "paths": [
+        "tests/sim/test_t107_player_screens.py",
+        "tests/sim/test_t109_hints.py",
+        "tests/sim/test_t110_mvp_a11y.py",
+        "tests/sim/test_semantic_visuals.py"
+      ],
+      "timeout_s": 120
+    },
+    {
+      "name": "evaluate_mvp_pacing",
+      "kind": "shell",
+      "cmd": ["python3", "tools/evaluate_mvp.py"],
+      "timeout_s": 120
     },
     {
       "name": "fx_era_ui_controls",
@@ -39,6 +59,7 @@
     "historic_core",
     "legacy_site",
     "chronicle",
+    "inventory_grimoire_knowledge",
     "save_reload_continuity"
   ]
 }

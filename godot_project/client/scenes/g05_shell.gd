@@ -580,7 +580,7 @@ func _apply_fixture_status() -> void:
 	elif _long_world:
 		_status.text = "LONG-WORLD observer — fast-forward / event log (dev only)"
 	else:
-		_status.text = "Explore — M map · paths lead to neighbouring places"
+		_status.text = "Explore — M map · I inventory · G grimoire · K knowledge"
 
 
 func _raise_shell_overlays() -> void:

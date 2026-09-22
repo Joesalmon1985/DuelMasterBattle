@@ -1,0 +1,23 @@
+{
+  "task_id": "T113",
+  "status": "DONE",
+  "commit": "83cbef14901d241cf2b80d6958177f663b507fe1",
+  "files": [
+    "tools/package_desktop.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/mvp_build/desktop_bundle.json",
+    "build/desktop/mvp_linux/"
+  ],
+  "public_contracts": [
+    "Linux launch bundle",
+    "windows_certified=false"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T113",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T114",
+  "notes": "Windows not packaged or certified on this host."
+}

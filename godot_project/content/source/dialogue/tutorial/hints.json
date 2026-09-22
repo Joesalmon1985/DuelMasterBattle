@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "hints_optional": true,
+  "spoiler_separated": true,
+  "lines": [
+    {"id": "hint.move", "text": "Walk by tapping the ground or using the pad.", "topic": "movement", "spoiler": false},
+    {"id": "hint.wait", "text": "Wait advances one strategic turn when you are ready.", "topic": "wait", "spoiler": false},
+    {"id": "hint.observe", "text": "Tap nearby people or hazards to Observe, then choose an action.", "topic": "observe", "spoiler": false},
+    {"id": "hint.inventory", "text": "Open Inventory (I) to use, equip or drop carried items.", "topic": "inventory", "spoiler": false},
+    {"id": "hint.map", "text": "World Map (M) is read-only strategic geography.", "topic": "map", "spoiler": false},
+    {"id": "hint.quest", "text": "Talk to workers after Inspecting the rockfall for quest help.", "topic": "quest", "spoiler": true},
+    {"id": "hint.era", "text": "Reaching 10 VP triggers the Historic transition automatically.", "topic": "era", "spoiler": true}
+  ]
+}

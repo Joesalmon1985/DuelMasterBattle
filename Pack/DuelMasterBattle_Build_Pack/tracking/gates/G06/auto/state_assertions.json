@@ -1,0 +1,34 @@
+{
+  "gate": "G06",
+  "seed": 507,
+  "fixture": "FX-ERA",
+  "checkpoints": [
+    {
+      "id": "01_prehistoric_settlement",
+      "screenshot": "screenshots/01_prehistoric_settlement_450x800.png",
+      "expected_semantic_ids": ["building.prehistoric.settlement_centre", "unit.line"],
+      "state_assertions": ["era=prehistoric_or_unset", "player_at_start_settlement"],
+      "proves": "Normal Prehistoric settlement view boots"
+    },
+    {
+      "id": "02_world_map",
+      "screenshot": "screenshots/02_world_map_450x800.png",
+      "expected_semantic_ids": [],
+      "state_assertions": ["hexboard_geometry_matches_map_position"],
+      "proves": "World map responsive geometry before era transition"
+    },
+    {
+      "id": "03_chronicle",
+      "screenshot": "screenshots/03_chronicle_450x800.png",
+      "expected_semantic_ids": [],
+      "state_assertions": ["chronicle_modal_fits_viewport"],
+      "proves": "Chronicle overlay readable after continuity events"
+    }
+  ],
+  "state_oracles": {
+    "historic_via_fx_era": true,
+    "mvp_boot_seeds": [507, 508, 509, 510, 511, 512],
+    "debug_injected_resources": false,
+    "people_persist_across_save": true
+  }
+}

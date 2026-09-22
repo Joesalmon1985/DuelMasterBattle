@@ -33,6 +33,8 @@ GATE_OWNER = {
     "G08": "T142",
     "G09": "T150",
     "G10": "T160",
+    "G11": "T164",
+    "G12": "T168",
 }
 GATE_AFTER_TASK = {
     24: "G01",
@@ -45,6 +47,8 @@ GATE_AFTER_TASK = {
     142: "G08",
     150: "G09",
     160: "G10",
+    164: "G11",
+    168: "G12",
 }
 TASK_STATUSES = {
     "NOT_STARTED",
@@ -999,6 +1003,98 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T108": lambda: [
+            _pytest(
+                "mvp_sandbox",
+                "tests/scenarios/test_mvp_sandbox.py",
+            ),
+            validate_evidence(
+                "fx_mvp_fixture",
+                [
+                    ROOT / "godot_project" / "content" / "fixtures" / "mvp" / "fx_mvp.json",
+                    ROOT / "tools" / "play_mvp.sh",
+                ],
+            ),
+        ],
+        "T109": lambda: [
+            _pytest("hints", "tests/sim/test_t109_hints.py"),
+            validate_evidence(
+                "hints_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "dialogue" / "tutorial" / "hints.json",
+                    ROOT / "godot_project" / "client" / "ui" / "hints.gd",
+                ],
+            ),
+        ],
+        "T110": lambda: [
+            _pytest("mvp_a11y", "tests/sim/test_t110_mvp_a11y.py"),
+            validate_evidence(
+                "mvp_assets_settings",
+                [
+                    ROOT / "godot_project" / "client" / "assets" / "mvp" / "manifest.json",
+                    ROOT / "godot_project" / "client" / "ui" / "settings.gd",
+                ],
+            ),
+        ],
+        "T111": lambda: [
+            _pytest("mvp_continuation", "tests/scenarios/test_mvp_continuation.py"),
+            validate_evidence(
+                "mvp_validation",
+                [
+                    TRACKING / "mvp_validation" / "era_persistence.json",
+                ],
+            ),
+        ],
+        "T112": lambda: [
+            run_command(
+                CommandCheck(
+                    name="evaluate_mvp",
+                    argv=(sys.executable, str(ROOT / "tools" / "evaluate_mvp.py")),
+                    required_pattern=r'"historic_reached": true',
+                )
+            ),
+            validate_evidence(
+                "mvp_balance",
+                [
+                    TRACKING / "mvp_balance" / "pacing_report.json",
+                    TRACKING / "mvp_balance" / "pacing_report.md",
+                ],
+            ),
+        ],
+        "T113": lambda: [
+            run_command(
+                CommandCheck(
+                    name="package_desktop",
+                    argv=(sys.executable, str(ROOT / "tools" / "package_desktop.py")),
+                    required_pattern=r'"windows_certified": false',
+                )
+            ),
+            validate_evidence(
+                "mvp_desktop_bundle",
+                [
+                    TRACKING / "mvp_build" / "desktop_bundle.json",
+                    ROOT / "build" / "desktop" / "mvp_linux" / "README.md",
+                ],
+            ),
+        ],
+        "T114": lambda: [
+            validate_evidence(
+                "g06_gate_packet",
+                [
+                    TRACKING / "gates" / "G06" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G06" / "auto" / "result.json",
+                    TRACKING / "gates" / "G06" / "auto" / "summary.md",
+                    TRACKING / "gates" / "G06" / "early_transition_checkpoint.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g06_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G06"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -1276,6 +1372,38 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 r"G04_PLAYABLE_OK",
             ),
         ]
+    if gate == "G06":
+        packet = TRACKING / "gates" / "G06"
+        return [
+            _pytest(
+                "g06_mvp_python",
+                "tests/scenarios/test_mvp_sandbox.py",
+                "tests/scenarios/test_mvp_continuation.py",
+                "tests/scenarios/test_era_transition.py",
+                "tests/sim/test_t105_chronicle.py",
+                "tests/sim/test_t107_player_screens.py",
+                "tests/sim/test_t109_hints.py",
+                "tests/sim/test_t110_mvp_a11y.py",
+                "tests/sim/test_world_map_geometry.py",
+                "tests/sim/test_semantic_visuals.py",
+            ),
+            validate_evidence(
+                "g06_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    packet / "early_transition_checkpoint.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g06_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G06"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
     return [
         CheckResult(
             name=f"gate_contract_{gate}",
@@ -1283,7 +1411,7 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
             exit_code=2,
             duration_seconds=0.0,
             detail=(
-                f"{gate} is recognized but remains blocked through {GATE_OWNER[gate]}; "
+                f"{gate} is recognized but remains blocked through {GATE_OWNER.get(gate, '?')}; "
                 "its cumulative behavioural suite and gate packet are not implemented."
             ),
         )
@@ -1310,8 +1438,8 @@ def _write_report(path: Path, payload: dict[str, object]) -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     choice = parser.add_mutually_exclusive_group(required=True)
-    choice.add_argument("--task", type=lambda value: _target(value, "T", 160))
-    choice.add_argument("--gate", type=lambda value: _target(value, "G", 10))
+    choice.add_argument("--task", type=lambda value: _target(value, "T", 168))
+    choice.add_argument("--gate", type=lambda value: _target(value, "G", 12))
     choice.add_argument("--resume", action="store_true")
     parser.add_argument("--json-report", type=Path)
     args = parser.parse_args(argv)

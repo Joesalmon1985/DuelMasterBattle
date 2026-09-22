@@ -1,0 +1,25 @@
+{
+  "task_id": "T108",
+  "status": "DONE",
+  "commit": "83cbef14901d241cf2b80d6958177f663b507fe1",
+  "files": [
+    "sim/dmb/testing/fixtures.py",
+    "godot_project/content/fixtures/mvp/fx_mvp.json",
+    "tools/play_mvp.sh",
+    "tests/scenarios/test_mvp_sandbox.py",
+    "sim/dmb/world/prehistoric_world.py"
+  ],
+  "public_contracts": [
+    "FX-MVP normal generation sandbox",
+    "Historic via FX-ERA checkpoint without Game Over"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T108",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T109",
+  "notes": "No debug-injected resources. Seed 512 start re-homes for boulder south exit."
+}
