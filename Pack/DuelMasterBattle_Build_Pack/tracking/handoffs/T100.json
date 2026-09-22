@@ -1,7 +1,7 @@
 {
   "task_id": "T100",
   "status": "DONE",
-  "commit": null,
+  "commit": "8016f59270a180728cd2f33981c4a44805c8699a",
   "files": [
     "sim/dmb/eras/upgrades.py",
     "sim/dmb/eras/__init__.py",
@@ -13,11 +13,11 @@
     "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T100.json"
   ],
   "public_contracts": [
-    "CoreUpgradeService.upgrade_core — in-place Historic rebind, meter reset, 1 VP, one-time starter grant"
+    "CoreUpgradeService.upgrade_core \u2014 in-place Historic rebind, meter reset, 1 VP, one-time starter grant"
   ],
   "source_rules": [
     "C11 Historic core upgrades",
-    "GDD §§40, 101, 103"
+    "GDD \u00a7\u00a740, 101, 103"
   ],
   "checks": [
     {
