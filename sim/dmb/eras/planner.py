@@ -398,6 +398,9 @@ class EraTransitionPlanner:
             source_era = "prehistoric"
         source_cycle = int(clock.get("cycle") or board.get("cycle") or 0)
         ranking = rank_theoretical_sites(snapshot)
+        from sim.dmb.eras.collapse import plan_collapse_fields
+
+        collapse_fields = plan_collapse_fields(snapshot, trig)
         world_hash = snapshot_world_hash(snapshot)
         plan_id = f"era_plan:{getattr(snapshot, 'world_id', 'world')}:{getattr(snapshot, 'world_version', 0)}:{trig.event_id}"
 
@@ -413,10 +416,9 @@ class EraTransitionPlanner:
             "next_cycle": source_cycle,
             "scores": dict(sorted(effective_scores.items())),
             "theoretical_site_ranking": ranking,
-            # Populated by later pure stages / T098–T103; present for schema completeness.
-            "collapse_faction_ids": [],
-            "collapse_reasons": {},
-            "survivor_faction_ids": [],
+            "collapse_faction_ids": collapse_fields["collapse_faction_ids"],
+            "collapse_reasons": collapse_fields["collapse_reasons"],
+            "survivor_faction_ids": collapse_fields["survivor_faction_ids"],
             "split_decisions": [],
             "successor_lineage": [],
             "core_pairs": [],
@@ -444,6 +446,7 @@ class EraTransitionPlanner:
                 "ranking_ignores_temporary_disruption": True,
                 "planner_mutated_snapshot": False,
                 "site_count": len(ranking),
+                "faction_theoretical_capacities": collapse_fields["faction_theoretical_capacities"],
             },
         }
         body["plan_hash"] = compute_plan_hash(body)

@@ -1,0 +1,35 @@
+{
+  "task_id": "T098",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "sim/dmb/eras/collapse.py",
+    "sim/dmb/eras/planner.py",
+    "sim/dmb/eras/__init__.py",
+    "tests/sim/test_t098_collapse.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T098.json"
+  ],
+  "public_contracts": [
+    "select_collapse_factions (all <5 + one lowest; capacity/ID ties; winner protection)",
+    "CollapseDisposition.apply — inert ruins, stock loss once, displace civilians, disband military"
+  ],
+  "source_rules": [
+    "C11 collapse / inert ruins",
+    "GDD §§40, 104, 107"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T098",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/eras/planner.py": "Fill collapse fields on EraTransitionPlan from pure selection"
+  },
+  "defects": [],
+  "next_task": "T099",
+  "notes": "Ruins: no collision/VP/loot/site reservation/road capacity. Quests retain helper Person IDs."
+}
