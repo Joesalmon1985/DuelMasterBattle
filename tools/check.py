@@ -943,6 +943,41 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 "tests/sim/test_t103_continuity.py",
             ),
         ],
+        "T105": lambda: [
+            _pytest(
+                "era_chronicle",
+                "tests/sim/test_t105_chronicle.py",
+            ),
+            validate_evidence(
+                "era_transition_presenter",
+                [
+                    ROOT / "godot_project" / "client" / "world" / "era_transition.gd",
+                    ROOT / "godot_project" / "client" / "ui" / "chronicle.gd",
+                    ROOT / "docs" / "WORLD_VISUAL_LANGUAGE.md",
+                ],
+            ),
+        ],
+        "T106": lambda: [
+            _pytest(
+                "era_fixtures",
+                "tests/scenarios/test_era_transition.py",
+                "tests/sim/test_t105_chronicle.py",
+            ),
+            validate_evidence(
+                "fx_era_launcher",
+                [
+                    ROOT / "tools" / "play_fx_era.sh",
+                    ROOT / "godot_project" / "content" / "fixtures" / "eras" / "fx_era.json",
+                    ROOT
+                    / "Pack"
+                    / "DuelMasterBattle_Build_Pack"
+                    / "tracking"
+                    / "gates"
+                    / "G06"
+                    / "early_transition_checkpoint.md",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

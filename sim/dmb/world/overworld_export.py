@@ -88,6 +88,10 @@ def export_overworld_area(
             or ("primary_site" if slot_kind == "primary" else "structure")
         )
         label = _clean_building_label(building_rec, slot_kind)
+        settlement_id = str(building_rec.get("settlement_id") or "")
+        era_flags = _settlement_era_flags(state, settlement_id) if settlement_id else {}
+        if era_flags.get("legacy") and "LEGACY" not in label:
+            label = f"LEGACY {label}"
         from sim.dmb.industry.projection import IndustryProjection
 
         obs = IndustryProjection(state).player_building_observation(bid)
@@ -111,6 +115,8 @@ def export_overworld_area(
                     "text": label,
                     "building": bid,
                     "bridge_entity": True,
+                    "era": building_rec.get("era") or era_flags.get("presentation_era") or "",
+                    "legacy": bool(era_flags.get("legacy")),
                     "semantic": {
                         "knowledge_key": bid,
                         "interaction": "building",
@@ -143,6 +149,9 @@ def export_overworld_area(
                 "text": label,
                 "building": bid,
                 "bridge_entity": True,
+                "era": building_rec.get("era") or era_flags.get("presentation_era") or "",
+                "legacy": bool(era_flags.get("legacy")),
+                "historic": str(building_rec.get("era") or "") == "historic",
                 "semantic": {
                     "knowledge_key": bid,
                     "interaction": "building",
@@ -499,11 +508,40 @@ def export_overworld_area(
             }
         entities.append(entity)
 
+    # Inert ruin markers for collapsed settlements on this node (no walk block).
+    for sid, settlement in (state.settlements or {}).items():
+        if not settlement.get("ruin_only"):
+            continue
+        if str(settlement.get("node_id") or "") != node_id:
+            continue
+        entities.append(
+            {
+                "kind": "ruin",
+                "id": f"ruin:{sid}",
+                "pos": [cx, cy],
+                "marker": "ruin",
+                "text": "Ruins",
+                "settlement_id": sid,
+                "blocks_walk": False,
+                "bridge_entity": False,
+                "inert": True,
+                "semantic": {
+                    "knowledge_key": f"ruin:{sid}",
+                    "interaction": "observe",
+                    "dismiss_on_move": True,
+                    "labels": [{"level": 0, "text": "Ruins"}],
+                    "observe_far": "Broken outlines mark a fallen settlement.",
+                    "observe_near": "These ruins are inert — nothing lives or works here now.",
+                },
+            }
+        )
+
     player = state.player or {}
     ppos = player.get("position") or [cx, cy + 6]
     node_rec = ((state.board or {}).get("nodes") or {}).get(node_id) or {}
     area_name = str(node_rec.get("label") or "Wilderness")
     kind = str(view.get("kind") or layout.get("kind") or "wilderness")
+    presentation_transition = dict(state.board.get("presentation_era_transition") or {})
     return {
         "id": str(node_rec.get("area_id") or f"area.{node_id.replace(':', '_')}"),
         "name": area_name,
@@ -517,6 +555,8 @@ def export_overworld_area(
         "node_id": node_id,
         "node_kind": kind,
         "industry_overlay": industry_overlay,
+        "presentation_era_transition": presentation_transition,
+        "era_id": str(state.clock.get("era") or state.board.get("era_id") or "prehistoric"),
         "fx_village": {
             "seed": (state.board.get("g05") or {}).get("seed"),
             "node_id": node_id,
@@ -541,8 +581,21 @@ def _clean_building_label(building_rec: dict[str, Any], slot_kind: str) -> str:
             "centre": "Settlement Centre",
             "warehouse": "Warehouse",
         }.get(slot_kind, "Building")
+    era = str(building_rec.get("presentation_era") or building_rec.get("era") or "")
+    if era == "historic":
+        return f"HISTORIC {label}"
+    settlement_id = str(building_rec.get("settlement_id") or "")
     return label
 
+
+def _settlement_era_flags(state: WorldState, settlement_id: str) -> dict[str, Any]:
+    settlement = (state.settlements or {}).get(settlement_id) or {}
+    return {
+        "ruin_only": bool(settlement.get("ruin_only")),
+        "legacy": bool(settlement.get("legacy")),
+        "era": str(settlement.get("era") or settlement.get("source_era") or ""),
+        "presentation_era": str(settlement.get("presentation_era") or ""),
+    }
 
 def _industry_person_ids(state: WorldState, node_id: str) -> set[str]:
     from sim.dmb.industry.projection import IndustryProjection

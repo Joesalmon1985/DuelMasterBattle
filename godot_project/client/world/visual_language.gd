@@ -134,3 +134,36 @@ static func nature_color(kind: String, terrain: String = "") -> Color:
 			if terrain == "grazing_land":
 				return Color(0.45, 0.65, 0.35)
 			return Color(0.55, 0.6, 0.45)
+
+
+static func historic_building_polygon(radius: float = 18.0) -> PackedVector2Array:
+	## Octagon — distinct from Prehistoric rectangular footprints.
+	var pts := PackedVector2Array()
+	for i in 8:
+		var a := TAU * float(i) / 8.0 - PI / 8.0
+		pts.append(Vector2(cos(a), sin(a)) * radius)
+	return pts
+
+
+static func ruin_outline(radius: float = 16.0) -> PackedVector2Array:
+	## Broken irregular outline for inert ruins.
+	return PackedVector2Array([
+		Vector2(-radius, -radius * 0.4),
+		Vector2(-radius * 0.3, -radius),
+		Vector2(radius * 0.5, -radius * 0.7),
+		Vector2(radius, -radius * 0.2),
+		Vector2(radius * 0.6, radius * 0.5),
+		Vector2(0, radius * 0.3),
+		Vector2(-radius * 0.7, radius * 0.6),
+	])
+
+
+static func era_building_color(era: String, *, ruin: bool = false, legacy: bool = false) -> Color:
+	if ruin:
+		return Color(0.45, 0.45, 0.48, 0.85)
+	if legacy:
+		return Color(0.55, 0.48, 0.32)
+	if str(era) == "historic":
+		return Color(0.35, 0.55, 0.75)
+	return Color(0.5, 0.42, 0.28)
+

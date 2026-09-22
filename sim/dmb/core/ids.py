@@ -28,6 +28,7 @@ INSTANCE_KINDS = (
     "tech",
     "visit",
     "dialogue",
+    "history",
 )
 
 

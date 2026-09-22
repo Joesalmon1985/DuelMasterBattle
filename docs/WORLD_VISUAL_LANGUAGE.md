@@ -83,3 +83,17 @@ Ambient animals are presentation-only: no durable IDs, quests, or interaction st
 Normal play: shapes communicate road vs trail, loaded cart, working people, factory progress, soldiers fighting, hazard diamond.
 
 Developer overlay may toggle Topology / Roads / Logistics / Industry / Military / Hazards with IDs and meters.
+
+## Era presentation (G06 / Historic MVP)
+
+Placeholder silhouettes — final art not required for the first transition checkpoint.
+
+| Site / unit | Presentation | Notes |
+|---|---|---|
+| Prehistoric building | Existing primitive `#` / door footprint | Unchanged silhouette |
+| Historic core building | Distinct geometric silhouette (octagon / double border) + `HISTORIC` label | Same LocalArea; structures upgrade in place |
+| Legacy Prehistoric site | Prehistoric silhouette + `LEGACY` label | Still produces under old-era rules |
+| Ruins (collapsed) | Grey broken outline + `Ruins` | Inert: no walk block, no build reserve, no VP/stock/roads |
+| Historic military | Same archetype polygons with brighter stroke / `H-` name prefix | Distinguishable from Prehistoric units |
+
+Transition animation (`era_transition.gd`) is presentation-only (~4s; skip / reduced motion supported). Reload during presentation loads committed Historic state and does not replay conversion.

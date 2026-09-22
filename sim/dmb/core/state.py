@@ -165,6 +165,12 @@ class WorldState:
             "overworld_area": lambda: _overworld_area_view(self),
             "items": lambda: deepcopy(self.items),
             "quests": lambda: deepcopy(self.quests),
+            "chronicle": lambda: __import__(
+                "sim.dmb.history.chronicle", fromlist=["HistoryService"]
+            ).HistoryService(self).query_known_history(debug=False),
+            "chronicle_debug": lambda: __import__(
+                "sim.dmb.history.chronicle", fromlist=["HistoryService"]
+            ).HistoryService(self).query_known_history(debug=True),
         }
         if scope == "economy":
             # Lean inspector default: exclude receipts / raw knowledge / leases.

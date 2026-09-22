@@ -300,11 +300,21 @@ class EraService:
     def commit(self, plan: EraTransitionPlan | dict[str, Any]) -> dict[str, Any]:
         """Atomic commit: collapse → fission → cores → legacy → continuity → hazards → roster."""
         body = plan.to_dict() if isinstance(plan, EraTransitionPlan) else dict(plan)
-        event_id = str((body.get("trigger") or {}).get("event_id") or body.get("id"))
+        event_id = str(
+            (body.get("trigger") or {}).get("event_id")
+            or body.get("transition_id")
+            or body.get("id")
+            or ""
+        )
         receipts = self.state.command_receipts.setdefault("era_transition", {})
         existing = receipts.get(event_id) or {}
         if existing.get("status") == "committed":
             return {"idempotent": True, "receipt": existing}
+        # Also accept a committed receipt body re-submitted without trigger wrapper.
+        if body.get("status") == "committed" and body.get("transition_id"):
+            stored = receipts.get(str(body.get("transition_id"))) or {}
+            if stored.get("status") == "committed":
+                return {"idempotent": True, "receipt": stored}
 
         freshness = validate_plan_freshness(body, self.state)
         if not freshness.get("can_commit"):
@@ -396,8 +406,32 @@ class EraService:
                     if sid not in core_settlement_ids:
                         legacy_settlement_ids.append(sid)
             else:
-                ranked = sorted(sites, key=lambda sid: sid)
-                cores = ranked[:2] if len(ranked) >= 2 else ranked[:1]
+                from sim.dmb.eras.planner import rank_theoretical_sites
+
+                ranked_rows = [
+                    row
+                    for row in rank_theoretical_sites(self.state)
+                    if row.get("settlement_id") in sites
+                ]
+                # Prefer player start node, then theoretical capacity ranking.
+                player_node = str((self.state.player or {}).get("node_id") or "")
+                preferred = [
+                    sid
+                    for sid in sites
+                    if str((self.state.settlements.get(sid) or {}).get("node_id") or "") == player_node
+                ]
+                cores: list[str] = []
+                for sid in preferred:
+                    if sid not in cores:
+                        cores.append(sid)
+                for row in ranked_rows:
+                    sid = str(row.get("settlement_id") or "")
+                    if sid and sid not in cores:
+                        cores.append(sid)
+                for sid in sorted(sites):
+                    if sid not in cores:
+                        cores.append(sid)
+                cores = cores[:2] if len(cores) >= 2 else cores[:1]
                 core_settlement_ids.extend(cores)
                 for sid in all_sites:
                     settlement_assignments[sid] = parent
@@ -511,6 +545,9 @@ class EraService:
             "legacy_settlement_ids": legacy_settlement_ids,
         }
         receipts[event_id] = receipt
+        from sim.dmb.history.chronicle import HistoryService
+
+        HistoryService(self.state).record_transition_receipt(receipt)
         return {"idempotent": False, "receipt": receipt}
 
     def maybe_trigger_from_interrupt(self, *, event_id: str | None = None) -> dict[str, Any] | None:

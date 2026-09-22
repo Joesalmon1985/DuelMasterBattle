@@ -12,6 +12,8 @@ const DuelLeaseAdapter = preload("res://client/encounters/duel_lease_adapter.gd"
 const WorkerControllerScript = preload("res://client/world/worker_controller.gd")
 const WorldLayerPresenters = preload("res://client/world/world_layer_presenters.gd")
 const WorldMapPanel = preload("res://client/ui/world_map_panel.gd")
+const EraTransitionPresenter = preload("res://client/world/era_transition.gd")
+const ChroniclePanel = preload("res://client/ui/chronicle.gd")
 
 const LocalBattle = preload("res://client/combat/local_battle.gd")
 const EncounterHost = preload("res://client/encounters/encounter_host.gd")
@@ -21,7 +23,7 @@ const INDUSTRY_FIELDS := [
 	"overworld_area", "fx_village", "fx_industry", "industry", "buildings",
 	"industry_workers", "industry_connections", "industry_factories",
 	"hazards", "items", "units", "carts", "orders", "player", "clock",
-	"presentation", "battles", "world_map",
+	"presentation", "battles", "world_map", "chronicle",
 ]
 
 var _launcher
@@ -31,6 +33,11 @@ var _overworld: Node = null
 var _workers
 var _layers
 var _map_panel
+var _era_presenter
+var _chronicle_panel
+var _fx_era_bar: HBoxContainer
+var _fx_era_wait_id := ""
+var _transition_seen_id := ""
 var _time_hud: Label
 var _boot_done := false
 var _village_ready := false
@@ -114,6 +121,13 @@ func _ready() -> void:
 	_map_panel.name = "WorldMap"
 	_map_panel.closed.connect(_on_map_closed)
 	add_child(_map_panel)
+	_era_presenter = EraTransitionPresenter.new()
+	_era_presenter.name = "EraTransition"
+	_era_presenter.finished.connect(_on_era_transition_finished)
+	add_child(_era_presenter)
+	_chronicle_panel = ChroniclePanel.new()
+	_chronicle_panel.name = "Chronicle"
+	add_child(_chronicle_panel)
 	_project_root = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	if _project_root.ends_with("godot_project"):
 		_project_root = _project_root.get_base_dir()
@@ -175,6 +189,8 @@ func _boot() -> void:
 	_apply_workers(view)
 	_apply_world_layers(area)
 	_refresh_time_hud(view)
+	_maybe_setup_fx_era_ui()
+	_maybe_play_era_transition(area)
 	_long_world = str(OS.get_environment("DMB_FIXTURE")) == "FX-LONG-WORLD"
 	if _long_world:
 		_setup_long_world_observer()
@@ -270,11 +286,19 @@ func _on_client_finished(request_id: String, reply: Dictionary) -> void:
 					_game_ms_sample = int(cached.get("clock", {}).get("game_ms", _game_ms_sample))
 		_pump_clock()
 		return
+	if request_id == _fx_era_wait_id:
+		_fx_era_wait_id = ""
+		if str(reply.get("status", "")) == "ACCEPTED":
+			_fx_era_refresh_after_wait()
+		return
 	if str(reply.get("status", "")) == "ACCEPTED" and reply.has("view"):
 		var v: Dictionary = reply.get("view", {})
-		if v.has("industry_workers") or v.has("industry"):
+		if v.has("industry_workers") or v.has("industry") or v.has("overworld_area") or v.has("clock"):
 			_last_industry = _client.merge_player_view(_last_industry, v, INDUSTRY_FIELDS) if _client.has_method("merge_player_view") else v
 			_apply_workers(_last_industry)
+			var area: Dictionary = _coerce_dict(_last_industry.get("overworld_area"))
+			if not area.is_empty():
+				_maybe_play_era_transition(area)
 
 
 func _request_industry_view() -> void:
@@ -439,6 +463,7 @@ func reproject_from_python() -> void:
 	_apply_workers(view)
 	_apply_world_layers(area)
 	_refresh_time_hud(view)
+	_maybe_play_era_transition(area)
 
 
 func _apply_world_layers(area: Dictionary) -> void:
@@ -470,6 +495,117 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_M:
 			_toggle_world_map()
 			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_C:
+			_toggle_chronicle()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_ESCAPE and _era_presenter != null and _era_presenter.is_playing():
+			_era_presenter.skip()
+			get_viewport().set_input_as_handled()
+
+
+func _maybe_setup_fx_era_ui() -> void:
+	if str(OS.get_environment("DMB_FIXTURE")) != "FX-ERA":
+		return
+	if _fx_era_bar != null:
+		return
+	_fx_era_bar = HBoxContainer.new()
+	_fx_era_bar.set_anchors_preset(PRESET_BOTTOM_WIDE)
+	_fx_era_bar.offset_left = 8
+	_fx_era_bar.offset_top = -52
+	_fx_era_bar.offset_right = -8
+	_fx_era_bar.offset_bottom = -8
+	add_child(_fx_era_bar)
+	var wait_btn := Button.new()
+	wait_btn.text = "Wait (complete founding → 10 VP)"
+	wait_btn.pressed.connect(_on_fx_era_wait)
+	_fx_era_bar.add_child(wait_btn)
+	var chron_btn := Button.new()
+	chron_btn.text = "Chronicle"
+	chron_btn.pressed.connect(_toggle_chronicle)
+	_fx_era_bar.add_child(chron_btn)
+	_status.text = "FX-ERA — near-threshold Prehistoric; Wait commits the staged settlement"
+
+
+func _on_fx_era_wait() -> void:
+	if _client == null or _bridge_down:
+		return
+	var node_id := "node:35"
+	if _overworld != null and _overworld.has_method("current_node_id"):
+		node_id = str(_overworld.current_node_id())
+	elif not _last_industry.is_empty():
+		var player: Dictionary = _coerce_dict(_last_industry.get("player"))
+		node_id = str(player.get("node_id", node_id))
+	_cmd_seq += 1
+	_fx_era_wait_id = _client.enqueue_command(
+		"fx-era-wait-%s" % _cmd_seq,
+		"Wait",
+		{"current_node": node_id, "press_id": "fx-era-%s" % Time.get_ticks_msec()},
+		{"replaceable": false}
+	)
+
+
+func _fx_era_refresh_after_wait() -> void:
+	if _client == null:
+		return
+	var view: Dictionary = _client.request_view("player", INDUSTRY_FIELDS)
+	_last_industry = view
+	var area: Dictionary = _coerce_dict(view.get("overworld_area"))
+	if not area.is_empty():
+		VillageTestRunner.replace_area(area)
+		if _overworld != null and _overworld.has_method("_finish_village_build"):
+			var player: Dictionary = _coerce_dict(view.get("player"))
+			var ppos = player.get("position", area.get("player_start", [0, 0]))
+			var facing := str(player.get("facing", "down"))
+			_overworld._finish_village_build(Vector2i(int(ppos[0]), int(ppos[1])), facing)
+		_apply_world_layers(area)
+		_maybe_play_era_transition(area)
+	_apply_workers(view)
+	_refresh_time_hud(view)
+	_status.text = "Historic era — same LocalArea; open Chronicle (C)"
+
+
+func _maybe_play_era_transition(area: Dictionary) -> void:
+	if _era_presenter == null:
+		return
+	var payload: Dictionary = _coerce_dict(area.get("presentation_era_transition"))
+	if payload.is_empty() and not _last_industry.is_empty():
+		payload = _coerce_dict(_last_industry.get("presentation_era_transition"))
+	if payload.is_empty():
+		return
+	if not bool(payload.get("committed", false)):
+		return
+	var tid := str(payload.get("transition_id", ""))
+	if tid == "" or tid == _transition_seen_id:
+		return
+	if _era_presenter.is_playing():
+		return
+	_transition_seen_id = tid
+	_paused = true
+	if _clock:
+		_clock.notify_focus(false)
+	_era_presenter.play(payload)
+
+
+func _on_era_transition_finished(_skipped: bool) -> void:
+	_paused = false
+	if _clock:
+		_clock.notify_focus(true)
+	# Clear presentation flag locally so reload-safe UI does not loop; Python keeps receipt.
+	if not _last_industry.is_empty():
+		var area: Dictionary = _coerce_dict(_last_industry.get("overworld_area"))
+		if area.has("presentation_era_transition"):
+			area["presentation_era_transition"] = {}
+
+
+func _toggle_chronicle() -> void:
+	if _chronicle_panel == null or _client == null:
+		return
+	if _chronicle_panel.visible:
+		_chronicle_panel.hide_panel()
+		return
+	var view: Dictionary = _client.request_view("player", ["chronicle", "chronicle_debug", "clock"])
+	var events: Array = view.get("chronicle", [])
+	_chronicle_panel.show_events(events, debug=false)
 
 
 func _toggle_world_map() -> void:

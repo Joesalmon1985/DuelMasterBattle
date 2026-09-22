@@ -47,12 +47,22 @@ func apply_area(area: Dictionary) -> void:
 			"boulder", "rockfall":
 				_upsert_rockfall(e)
 				keep[str(e.get("id", ""))] = true
+			"ruin":
+				_upsert_ruin(e)
+				keep[str(e.get("id", ""))] = true
 			"construction":
 				_upsert_construction(e)
 				keep[str(e.get("id", ""))] = true
 			"nature", "deco":
 				_upsert_nature(e)
 				keep[str(e.get("id", ""))] = true
+			"door", "sign":
+				if bool(e.get("historic", false)) or str(e.get("era", "")) == "historic":
+					_upsert_historic_marker(e)
+					keep["era:%s" % str(e.get("id", ""))] = true
+				elif bool(e.get("legacy", false)):
+					_upsert_legacy_marker(e)
+					keep["era:%s" % str(e.get("id", ""))] = true
 	for row in area.get("industry_overlay", []):
 		if typeof(row) != TYPE_DICTIONARY:
 			continue
@@ -340,3 +350,80 @@ func _upsert_factory_meter(row: Dictionary) -> void:
 	pct = clampf(pct, 0.0, 1.0)
 	(node.get_node("Fg") as ColorRect).size = Vector2(48.0 * pct, 6)
 	(node.get_node("Label") as Label).text = str(row.get("unit_label", "Yard"))
+
+
+func _upsert_ruin(e: Dictionary) -> void:
+	var id := str(e.get("id", ""))
+	var node: Node2D = _by_id.get(id)
+	if node == null:
+		node = Node2D.new()
+		node.name = id
+		_root.add_child(node)
+		var body := Polygon2D.new()
+		body.name = "Body"
+		body.polygon = VisualLanguage.ruin_outline()
+		body.color = VisualLanguage.era_building_color("", ruin=true)
+		node.add_child(body)
+		var label := Label.new()
+		label.name = "Label"
+		label.text = "Ruins"
+		label.position = Vector2(-28, 18)
+		label.add_theme_font_size_override("font_size", 11)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.custom_minimum_size = Vector2(56, 0)
+		node.add_child(label)
+		_by_id[id] = node
+	node.position = _grid_pos(e)
+	node.z_index = 4
+
+
+func _upsert_historic_marker(e: Dictionary) -> void:
+	var id := "era:%s" % str(e.get("id", ""))
+	var node: Node2D = _by_id.get(id)
+	if node == null:
+		node = Node2D.new()
+		node.name = id
+		_root.add_child(node)
+		var body := Polygon2D.new()
+		body.name = "Body"
+		body.polygon = VisualLanguage.historic_building_polygon(12.0)
+		body.color = VisualLanguage.era_building_color("historic")
+		node.add_child(body)
+		var label := Label.new()
+		label.name = "Label"
+		label.position = Vector2(-36, 14)
+		label.add_theme_font_size_override("font_size", 10)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.custom_minimum_size = Vector2(72, 0)
+		node.add_child(label)
+		_by_id[id] = node
+	node.position = _grid_pos(e)
+	node.z_index = 5
+	(node.get_node("Label") as Label).text = str(e.get("text", "HISTORIC"))
+
+
+func _upsert_legacy_marker(e: Dictionary) -> void:
+	var id := "era:%s" % str(e.get("id", ""))
+	var node: Node2D = _by_id.get(id)
+	if node == null:
+		node = Node2D.new()
+		node.name = id
+		_root.add_child(node)
+		var body := Polygon2D.new()
+		body.name = "Body"
+		body.polygon = PackedVector2Array([
+			Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
+		])
+		body.color = VisualLanguage.era_building_color("", legacy=true)
+		node.add_child(body)
+		var label := Label.new()
+		label.name = "Label"
+		label.position = Vector2(-36, 14)
+		label.add_theme_font_size_override("font_size", 10)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.custom_minimum_size = Vector2(72, 0)
+		node.add_child(label)
+		_by_id[id] = node
+	node.position = _grid_pos(e)
+	node.z_index = 5
+	(node.get_node("Label") as Label).text = str(e.get("text", "LEGACY"))
