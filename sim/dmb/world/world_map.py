@@ -35,6 +35,7 @@ def export_world_map(state: WorldState, *, reveal_all: bool = False) -> dict[str
 
     nodes = []
     node_recs = (state.board.get("nodes") or {})
+    node_hexes = state.board.get("node_hexes") or {}
     settlements_by_node = {
         str(s.get("node_id")): s
         for s in (state.settlements or {}).values()
@@ -43,6 +44,9 @@ def export_world_map(state: WorldState, *, reveal_all: bool = False) -> dict[str
     for nid, rec in sorted(node_recs.items(), key=lambda kv: str(kv[0])):
         nid = str(nid)
         settle = settlements_by_node.get(nid)
+        touching = list(node_hexes.get(nid) or [])
+        if not touching and topo.get("node_hexes"):
+            touching = list((topo.get("node_hexes") or {}).get(nid) or [])
         nodes.append(
             {
                 "id": nid,
@@ -50,6 +54,7 @@ def export_world_map(state: WorldState, *, reveal_all: bool = False) -> dict[str
                 "settlement_id": str((settle or {}).get("id") or ""),
                 "faction_id": str((settle or {}).get("faction_id") or ""),
                 "is_settlement": settle is not None,
+                "touching_hexes": [str(h) for h in touching],
             }
         )
 

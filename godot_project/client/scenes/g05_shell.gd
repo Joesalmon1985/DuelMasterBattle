@@ -90,22 +90,25 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_status = Label.new()
+	_status.name = "StatusLabel"
 	_status.set_anchors_preset(PRESET_TOP_WIDE)
 	_status.offset_left = 8
 	_status.offset_top = 4
 	_status.offset_right = -8
-	_status.offset_bottom = 36
+	_status.offset_bottom = 28
 	_status.add_theme_font_size_override("font_size", 12)
 	_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_status.text = "Prehistoric world — walk the board"
 	add_child(_status)
 	_time_hud = Label.new()
-	_time_hud.set_anchors_preset(PRESET_TOP_RIGHT)
-	_time_hud.offset_left = -220
-	_time_hud.offset_top = 4
+	_time_hud.name = "TimeHud"
+	_time_hud.set_anchors_preset(PRESET_TOP_WIDE)
+	_time_hud.offset_left = 8
+	_time_hud.offset_top = 28
 	_time_hud.offset_right = -8
-	_time_hud.offset_bottom = 40
-	_time_hud.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_time_hud.offset_bottom = 48
+	_time_hud.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_time_hud.add_theme_font_size_override("font_size", 12)
 	_time_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_time_hud.text = "Turn — · Game Time: …"
@@ -141,6 +144,7 @@ func _ready() -> void:
 	_ui_layer.add_child(_era_presenter)
 	_chronicle_panel = ChroniclePanel.new()
 	_chronicle_panel.name = "Chronicle"
+	_chronicle_panel.closed.connect(_on_chronicle_closed)
 	_ui_layer.add_child(_chronicle_panel)
 	_project_root = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	if _project_root.ends_with("godot_project"):
@@ -551,19 +555,32 @@ func _apply_fixture_status() -> void:
 func _raise_shell_overlays() -> void:
 	if _ui_layer != null:
 		_ui_layer.visible = true
+	var modal_open := false
+	if _map_panel != null and _map_panel.visible:
+		modal_open = true
+	if _chronicle_panel != null and _chronicle_panel.visible:
+		modal_open = true
 	if _fx_era_panel != null:
-		_fx_era_panel.visible = true
-		_fx_era_panel.move_to_front()
-	if _status != null:
+		# Keep FX panel usable in village; hide under Map/Chronicle so it cannot
+		# cover modal chrome / Close / content.
+		_fx_era_panel.visible = not modal_open
+		if not modal_open:
+			_fx_era_panel.move_to_front()
+	if _status != null and not modal_open:
 		_status.move_to_front()
-	if _time_hud != null:
+	if _time_hud != null and not modal_open:
 		_time_hud.move_to_front()
+	if _map_panel != null and _map_panel.visible:
+		_map_panel.move_to_front()
+	if _chronicle_panel != null and _chronicle_panel.visible:
+		_chronicle_panel.move_to_front()
 
 
 func _maybe_setup_fx_era_ui(view: Dictionary = {}) -> void:
 	if not _is_fx_era():
 		return
 	if _fx_era_panel != null:
+		_layout_fx_era_panel()
 		_refresh_fx_era_panel(view)
 		_raise_shell_overlays()
 		return
@@ -571,26 +588,21 @@ func _maybe_setup_fx_era_ui(view: Dictionary = {}) -> void:
 	_fx_era_panel = PanelContainer.new()
 	_fx_era_panel.name = "FxEraDevPanel"
 	_fx_era_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	_fx_era_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	_fx_era_panel.offset_left = 8
-	_fx_era_panel.offset_top = 44
-	_fx_era_panel.offset_right = 320
-	_fx_era_panel.offset_bottom = 220
-	_fx_era_panel.custom_minimum_size = Vector2(300, 168)
 	host.add_child(_fx_era_panel)
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 10)
-	margin.add_theme_constant_override("margin_right", 10)
-	margin.add_theme_constant_override("margin_top", 8)
-	margin.add_theme_constant_override("margin_bottom", 8)
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_top", 6)
+	margin.add_theme_constant_override("margin_bottom", 6)
 	_fx_era_panel.add_child(margin)
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 8)
+	vbox.name = "FxEraVBox"
+	vbox.add_theme_constant_override("separation", 6)
 	margin.add_child(vbox)
 	_fx_era_badge = Label.new()
 	_fx_era_badge.name = "FxEraBadge"
 	_fx_era_badge.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_fx_era_badge.add_theme_font_size_override("font_size", 14)
+	_fx_era_badge.add_theme_font_size_override("font_size", 13)
 	_fx_era_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(_fx_era_badge)
 	_fx_era_hint = Label.new()
@@ -598,6 +610,7 @@ func _maybe_setup_fx_era_ui(view: Dictionary = {}) -> void:
 	_fx_era_hint.text = "Test action: Wait one turn"
 	_fx_era_hint.add_theme_font_size_override("font_size", 11)
 	_fx_era_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fx_era_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(_fx_era_hint)
 	_fx_era_wait_btn = Button.new()
 	_fx_era_wait_btn.name = "FxEraWaitButton"
@@ -606,27 +619,60 @@ func _maybe_setup_fx_era_ui(view: Dictionary = {}) -> void:
 	_fx_era_wait_btn.mouse_filter = Control.MOUSE_FILTER_STOP
 	_fx_era_wait_btn.pressed.connect(_on_fx_era_wait)
 	vbox.add_child(_fx_era_wait_btn)
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	vbox.add_child(row)
+	# Stack Map/Chronicle vertically on narrow screens via a VBox that always works.
+	var actions := VBoxContainer.new()
+	actions.name = "FxEraActions"
+	actions.add_theme_constant_override("separation", 6)
+	vbox.add_child(actions)
 	_fx_era_map_btn = Button.new()
 	_fx_era_map_btn.name = "FxEraMapButton"
 	_fx_era_map_btn.text = "World Map"
-	_fx_era_map_btn.custom_minimum_size = Vector2(120, 48)
+	_fx_era_map_btn.custom_minimum_size = Vector2(0, 48)
 	_fx_era_map_btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	_fx_era_map_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_fx_era_map_btn.pressed.connect(_toggle_world_map)
-	row.add_child(_fx_era_map_btn)
+	actions.add_child(_fx_era_map_btn)
 	_fx_era_chron_btn = Button.new()
 	_fx_era_chron_btn.name = "FxEraChronicleButton"
 	_fx_era_chron_btn.text = "Chronicle"
-	_fx_era_chron_btn.custom_minimum_size = Vector2(120, 48)
+	_fx_era_chron_btn.custom_minimum_size = Vector2(0, 48)
 	_fx_era_chron_btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	_fx_era_chron_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_fx_era_chron_btn.pressed.connect(_toggle_chronicle)
-	row.add_child(_fx_era_chron_btn)
+	actions.add_child(_fx_era_chron_btn)
+	if not get_viewport().size_changed.is_connected(_layout_fx_era_panel):
+		get_viewport().size_changed.connect(_layout_fx_era_panel)
+	_layout_fx_era_panel()
 	_refresh_fx_era_panel(view)
 	_raise_shell_overlays()
+
+
+func _layout_fx_era_panel() -> void:
+	if _fx_era_panel == null:
+		return
+	var vp := get_viewport().get_visible_rect().size
+	var margin := 8.0
+	var top := 52.0
+	# Compact top-left panel — leave most of the village visible.
+	var max_w := clampf(vp.x - margin * 2.0, 200.0, minf(300.0, vp.x * 0.72))
+	_fx_era_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_fx_era_panel.anchor_right = 0.0
+	_fx_era_panel.anchor_bottom = 0.0
+	_fx_era_panel.offset_left = margin
+	_fx_era_panel.offset_top = top
+	_fx_era_panel.offset_right = margin + max_w
+	_fx_era_panel.offset_bottom = top  # grow with content via minimum size
+	_fx_era_panel.custom_minimum_size = Vector2(max_w, 0)
+	_fx_era_panel.reset_size()
+	# Keep status/time stacked above the panel without overlap.
+	if _status != null:
+		_status.offset_top = 4
+		_status.offset_bottom = 26
+		_status.offset_right = -8
+	if _time_hud != null:
+		_time_hud.offset_top = 26
+		_time_hud.offset_bottom = 48
+		_time_hud.offset_left = 8
+		_time_hud.offset_right = -8
+		_time_hud.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 
 func _refresh_fx_era_panel(view: Dictionary = {}) -> void:
@@ -757,11 +803,11 @@ func _toggle_chronicle() -> void:
 		return
 	if _chronicle_panel.visible:
 		_chronicle_panel.hide_panel()
+		_raise_shell_overlays()
 		return
 	var view: Dictionary = _client.request_view("player", ["chronicle", "chronicle_debug", "clock"])
 	var events: Array = view.get("chronicle", [])
 	_chronicle_panel.show_events(events, false)
-	_chronicle_panel.move_to_front()
 	_raise_shell_overlays()
 
 
@@ -770,6 +816,7 @@ func _toggle_world_map() -> void:
 		return
 	if _map_panel.visible:
 		_map_panel.hide_map()
+		_raise_shell_overlays()
 		return
 	# Avoid sync Pause while AdvanceGame is in flight (bridge deadlock risk).
 	if _clock_inflight_id != "":
@@ -790,7 +837,6 @@ func _open_world_map_now() -> void:
 	var view: Dictionary = _client.request_view("player", ["world_map", "clock", "player"])
 	var payload: Dictionary = _coerce_dict(view.get("world_map"))
 	_map_panel.show_map(payload)
-	_map_panel.move_to_front()
 	_raise_shell_overlays()
 
 
@@ -799,6 +845,10 @@ func _on_map_closed() -> void:
 	if _map_pause_token != "":
 		release_pause()
 		_map_pause_token = ""
+	_raise_shell_overlays()
+
+
+func _on_chronicle_closed() -> void:
 	_raise_shell_overlays()
 
 
