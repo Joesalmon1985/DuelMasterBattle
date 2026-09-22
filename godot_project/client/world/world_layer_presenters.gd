@@ -362,7 +362,7 @@ func _upsert_ruin(e: Dictionary) -> void:
 		var body := Polygon2D.new()
 		body.name = "Body"
 		body.polygon = VisualLanguage.ruin_outline()
-		body.color = VisualLanguage.era_building_color("", ruin=true)
+		body.color = VisualLanguage.era_building_color("", true, false)
 		node.add_child(body)
 		var label := Label.new()
 		label.name = "Label"
@@ -414,7 +414,7 @@ func _upsert_legacy_marker(e: Dictionary) -> void:
 		body.polygon = PackedVector2Array([
 			Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
 		])
-		body.color = VisualLanguage.era_building_color("", legacy=true)
+		body.color = VisualLanguage.era_building_color("", false, true)
 		node.add_child(body)
 		var label := Label.new()
 		label.name = "Label"

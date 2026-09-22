@@ -158,7 +158,7 @@ static func ruin_outline(radius: float = 16.0) -> PackedVector2Array:
 	])
 
 
-static func era_building_color(era: String, *, ruin: bool = false, legacy: bool = false) -> Color:
+static func era_building_color(era: String, ruin: bool = false, legacy: bool = false) -> Color:
 	if ruin:
 		return Color(0.45, 0.45, 0.48, 0.85)
 	if legacy:

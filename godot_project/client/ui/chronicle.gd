@@ -46,7 +46,7 @@ func _ready() -> void:
 	row.add_child(close_btn)
 
 
-func show_events(events: Array, *, debug: bool = false) -> void:
+func show_events(events: Array, debug: bool = false) -> void:
 	_events = events
 	_debug = debug
 	_refresh()

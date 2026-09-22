@@ -605,7 +605,7 @@ func _toggle_chronicle() -> void:
 		return
 	var view: Dictionary = _client.request_view("player", ["chronicle", "chronicle_debug", "clock"])
 	var events: Array = view.get("chronicle", [])
-	_chronicle_panel.show_events(events, debug=false)
+	_chronicle_panel.show_events(events, false)
 
 
 func _toggle_world_map() -> void:
