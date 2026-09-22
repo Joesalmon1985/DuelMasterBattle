@@ -1,0 +1,23 @@
+{
+  "task_id": "T119",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "godot_project/content/source/hazards/aliens.json",
+    "godot_project/content/source/duel_rules/hazard_alien.json",
+    "godot_project/client/world/hazards/manifest.json",
+    "tests/sim/test_t119_aliens.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T119",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T120",
+  "notes": "Alien duel/treat; demon IDs preserved; modern alternation reload-safe."
+}

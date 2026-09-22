@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "presentation": "semantic_placeholder",
+  "types": {
+    "demon": {
+      "semantic_id": "hazard.catastrophe",
+      "duel_eligible": true
+    },
+    "pollution": {
+      "semantic_id": "hazard.pollution",
+      "duel_eligible": false
+    },
+    "alien": {
+      "semantic_id": "hazard.alien",
+      "duel_eligible": true
+    },
+    "nuclear": {
+      "semantic_id": "hazard.nuclear",
+      "duel_eligible": true
+    },
+    "machine": {
+      "semantic_id": "hazard.hostile_machine",
+      "duel_eligible": true
+    }
+  }
+}
