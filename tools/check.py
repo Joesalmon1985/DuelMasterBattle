@@ -1107,6 +1107,20 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T116": lambda: [
+            _pytest("modern_future_content", "tests/sim/test_t116_modern_future.py"),
+            _pytest("tech_defs_full", "tests/sim/test_t039_tech_defs.py"),
+            validate_evidence(
+                "modern_future_sources",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "eras" / "modern" / "core_upgrade.json",
+                    ROOT / "godot_project" / "content" / "source" / "eras" / "future" / "core_upgrade.json",
+                    ROOT / "godot_project" / "content" / "source" / "technology" / "modern.json",
+                    ROOT / "godot_project" / "content" / "source" / "technology" / "future.json",
+                    ROOT / "godot_project" / "content" / "source" / "units" / "later.json",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

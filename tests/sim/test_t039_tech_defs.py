@@ -19,9 +19,13 @@ def test_six_cards_per_mvp_era() -> None:
     catalog.load()
     assert len(catalog.by_era("prehistoric")) == 6
     assert len(catalog.by_era("historic")) == 6
-    assert len(catalog.all()) == 12
+    assert len(catalog.by_era("modern")) == 6
+    assert len(catalog.by_era("future")) == 6
+    assert len(catalog.all()) == 24
     assert catalog.pool_for_era("prehistoric")
     assert catalog.pool_for_era("historic")
+    assert catalog.pool_for_era("modern")
+    assert catalog.pool_for_era("future")
 
 
 def test_prehistoric_has_no_prerequisites() -> None:

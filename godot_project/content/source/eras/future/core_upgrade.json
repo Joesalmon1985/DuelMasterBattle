@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "era_id": "future",
+  "display_name": "Future",
+  "combat_factor": 1000,
+  "previous_era": "modern",
+  "next_cycle_path": "dystopia",
+  "core_upgrade": {
+    "centre_def": "building.centre.future",
+    "warehouse_def": "building.warehouse.future",
+    "primary_def": "building.primary.future",
+    "processor_def": "building.processor.future",
+    "factory_def": "building.factory.future",
+    "unit_defs": [
+      "unit.future.skirmisher",
+      "unit.future.line",
+      "unit.future.heavy"
+    ],
+    "starter_grant": {
+      "timber": 2,
+      "brick": 2,
+      "wool": 1,
+      "grain": 1
+    },
+    "settlement_tier_after": "settlement",
+    "vp_after": 1,
+    "reset_factory_meters": true
+  },
+  "terrain_industrial": {
+    "woodland": {
+      "renewable": ["ind.future.woodland.renewable", "Clean air"],
+      "finite": ["ind.future.woodland.finite", "Ancient hardwood"]
+    },
+    "ore_mountains": {
+      "renewable": ["ind.future.ore_mountains.renewable", "Geothermal power"],
+      "finite": ["ind.future.ore_mountains.finite", "Rare minerals"]
+    },
+    "clay_mountains": {
+      "renewable": ["ind.future.clay_mountains.renewable", "Purified water"],
+      "finite": ["ind.future.clay_mountains.finite", "Rare-earth clay"]
+    },
+    "fields": {
+      "renewable": ["ind.future.fields.renewable", "Synthetic crops"],
+      "finite": ["ind.future.fields.finite", "Concentrated nutrients"]
+    },
+    "grazing_land": {
+      "renewable": ["ind.future.grazing_land.renewable", "Cultured protein"],
+      "finite": ["ind.future.grazing_land.finite", "Fertile topsoil"]
+    },
+    "desert": {
+      "renewable": ["ind.future.desert.renewable", "Solar power"],
+      "finite": ["ind.future.desert.finite", "Exotic minerals"]
+    }
+  },
+  "notes": "Semantic-placeholder Future core; combat factor 1000 applied once at spawn. Dystopia-only continuation."
+}
