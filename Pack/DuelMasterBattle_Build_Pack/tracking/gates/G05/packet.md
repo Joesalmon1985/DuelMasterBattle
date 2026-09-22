@@ -2,48 +2,44 @@
 
 **Status:** AWAITING_HUMAN  
 **Stop point:** T096 — do **not** start T097 / G06  
-**Candidate commit:** `83cbe0f`  
+**Candidate commit:** *(pending)*  
 **Play:** `bash tools/play_g05.sh` — seed **507**, FX-VILLAGE  
 **Branch:** `refactor/canonical-ontology-g05`
 
-## Revised G05 definition
+## Dialogue universe (production)
 
-Full explorable Prehistoric world (19/54/72) + one simple persistent village
-quest: a durable **Rockfall** (cluster of stones) blocks one real topology exit;
-John inspects it, asks **any** eligible village worker for help; that worker
-clears it; the path opens; save/load and leave/return preserve IDs.
+Active sources (top-level only):
 
-### Original G05 prototype (superseded)
+- `content/source/dialogue/settlement_normal.json`
+- `content/source/dialogue/boulder_quest.json`
 
-Shortage / demon / sluice / Route A–B — archived as `FX-VILLAGE-QUEST`.
+Archived (not loaded by `LineCatalog.load()`):
+
+- `archive/shortage/` — Mara / factory-shortage / Route A–B
+- `archive/aspect/` — Aspect-tagged prose
+- `archive/onboarding/` — instructional lines
+
+Ordinary Talk uses person context (occupation / workplace / activity).
+Rockfall is an overlay after Inspect. Aspect lines require explicit `aspect_id`.
+
+Audit: `docs/review/G05_STARTING_VILLAGE_DIALOGUE_AUDIT.md`  
+Matrix: `tracking/gates/G05/dialogue_matrix.md`
 
 ## Binding (seed 507)
 
 | Field | Value |
 |-------|-------|
-| Start | `node:35` Settlement 2-1 |
+| Start | `node:35` |
 | Blocked exit | `node:35.south` → `node:29` |
-| Obstruction | `rockfall:1` (5 stone pieces across the south approach) |
-| Helper | **Not preselected** — any eligible employed worker on node:35 |
-| Quest | `quest.blocked_exit_boulder` — offered → active/clearing → completed |
-| Cause | `exit_blocked_by_rockfall` |
+| Obstruction | `rockfall:1` |
+| Helper | any eligible village worker via dialogue |
+| Quest | `quest.blocked_exit_boulder` |
 
-Eligible helpers include factory, primary/resource, and works workers with a
-real workplace on the start node. Helper is bound only when John chooses
-“Could you help clear the boulders from the path?”
+## Human checklist
 
-## Human acceptance checklist
-
-- [ ] South path clearly blocked by labelled **Rockfall** (several stones)
-- [ ] Nearby Inspect: too heavy alone; *maybe one of the workers could help*
-- [ ] Talk to **any** worker → several choices; occupation choice does not clear
-- [ ] Ask chosen worker → that Person walks to rocks → stones slide aside
-- [ ] **Immediately** walk the former corridor tiles and south exit (no leave/re-enter)
-- [ ] Travel to node:29; return; road still open
-- [ ] Save/load preserves cleared stones and open road
-
-## South-road collision fix
-
-Root cause: WorldLayerPresenters moved stones visually while Overworld `_entity_at`
-kept stale blocking tiles. Fix: `sync_dynamic_obstacle` /
-`sync_dynamic_obstacles_from_area` on every `_apply_world_layers` refresh.
+- [ ] Talk to every visible Person before Rockfall — occupational, no shortage/Aspect
+- [ ] Inspect Rockfall → workers offer clear + job question
+- [ ] Job question is truthful; does not clear rocks
+- [ ] Chosen worker clears; others may note someone is dealing with rocks
+- [ ] Completion line only after path open; then ordinary dialogue
+- [ ] South corridor walkable after clear

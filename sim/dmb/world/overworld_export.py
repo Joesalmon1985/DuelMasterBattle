@@ -13,7 +13,6 @@ from sim.dmb.world.projection import LocalProjectionService
 from sim.dmb.world.settlement_layout import (
     PRIMARY_PROP_MARKERS,
     PRIMARY_TILE_CHARS,
-    baseline_dialogue,
     public_occupation_for,
 )
 
@@ -556,35 +555,15 @@ def _industry_person_ids(state: WorldState, node_id: str) -> set[str]:
 
 
 def _opening_lines(state: WorldState, person_id: str) -> list[str]:
-    person = state.people.get(person_id) or {}
-    workplace = state.buildings.get(str(person.get("workplace_id") or "")) or {}
-    occupation = public_occupation_for(person, workplace=workplace)
-    activity = "idle"
-    resource_label = None
-    try:
-        from sim.dmb.industry.projection import IndustryProjection
+    from sim.dmb.narrative.person_dialogue import ordinary_opening_line, person_talk_context
 
-        for row in IndustryProjection(state).workers():
-            if str(row.get("person_id")) == person_id:
-                activity = str(row.get("activity") or "idle")
-                resource_label = row.get("resource_label")
-                occupation = str(row.get("public_occupation") or row.get("occupation") or occupation)
-                break
-    except Exception:
-        pass
-    lines = baseline_dialogue(
-        person,
-        occupation=occupation,
-        activity=activity,
-        resource_label=str(resource_label) if resource_label else None,
-        workplace_label=str(workplace.get("label") or "") or None,
-    )
+    person = state.people.get(person_id) or {}
+    ctx = person_talk_context(state, person_id)
+    text = ordinary_opening_line(ctx, person)
     cleaned = []
-    for line in lines:
-        low = line.lower()
-        if "show you where" in low or "follow me" in low or "blockage" in low:
-            continue
-        cleaned.append(line)
+    low = text.lower()
+    if "show you where" not in low and "follow me" not in low and "blockage" not in low:
+        cleaned.append(text)
     return cleaned or ["The land keeps us busy."]
 
 

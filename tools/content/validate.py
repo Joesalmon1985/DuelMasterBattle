@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Validate authored dialogue sources (C13 / T094)."""
+"""Validate authored dialogue sources (C13 / T094).
+
+Production scope = top-level JSON under content/source/dialogue (not archive/).
+"""
 
 from __future__ import annotations
 
@@ -16,16 +19,36 @@ DIALOGUE = ROOT / "godot_project" / "content" / "source" / "dialogue"
 PLACEHOLDER_RE = re.compile(r"\{([a-zA-Z0-9_]+)\}")
 UNKNOWN_FACT_RE = re.compile(r"\b(TODO|TBD|UNKNOWN_FACT|lorem ipsum)\b", re.I)
 
+RETIRED_MARKERS = (
+    "route a",
+    "route b",
+    "sluice",
+    "channel is open",
+    "demon",
+    "manifestation",
+    "yard has gone quiet",
+    "patrol cleared",
+    "factory shortage",
+    "lost handle",
+)
 
-def load_bank() -> list[dict]:
-    path = DIALOGUE / "mvp_bank.json"
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if isinstance(data, dict):
-        return list(data.get("lines") or data.get("entries") or [])
-    return list(data)
+
+def load_bank(*, include_archive: bool = False) -> list[dict]:
+    lines: list[dict] = []
+    paths = sorted(DIALOGUE.glob("*.json"))
+    if include_archive:
+        paths.extend(sorted(DIALOGUE.glob("archive/**/*.json")))
+    for path in paths:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        items = data if isinstance(data, list) else list(data.get("lines") or data.get("entries") or [])
+        for item in items:
+            rec = dict(item)
+            rec.setdefault("_source_file", str(path.relative_to(ROOT)))
+            lines.append(rec)
+    return lines
 
 
-def validate_bank(lines: list[dict]) -> dict:
+def validate_bank(lines: list[dict], *, production: bool = True) -> dict:
     errors: list[str] = []
     warnings: list[str] = []
     texts = Counter()
@@ -46,19 +69,29 @@ def validate_bank(lines: list[dict]) -> dict:
             errors.append(f"{lid}: unknown/placeholder fact language")
         for var in PLACEHOLDER_RE.findall(text):
             declared = (line.get("variables") or {}) if isinstance(line.get("variables"), dict) else {}
-            # Allow known_name style without full schema when fallback exists.
             if var not in declared and var not in {"speaker_name"}:
                 errors.append(f"{lid}: undeclared variable {{{var}}}")
         texts[text] += 1
         if line.get("priority") == "invalidation" or lid.startswith("dialogue.invalid."):
             invalidation_ids.append(lid)
+        if production:
+            low = text.lower()
+            for marker in RETIRED_MARKERS:
+                if marker in low:
+                    errors.append(f"{lid}: retired terminology {marker!r}")
+            if line.get("quest_id") == "quest.factory_shortage":
+                errors.append(f"{lid}: retired quest.factory_shortage in production bank")
+            if line.get("aspect_id") and str(line.get("scope") or "") != "aspect":
+                # Aspect lines must not sit in production without scope=aspect,
+                # and production load should not include them at all.
+                errors.append(f"{lid}: aspect_id present in production catalogue")
 
     for lid, count in ids.items():
         if count > 1:
             errors.append(f"duplicate id {lid}")
-    padding = [t for t, c in texts.items() if c > 1]
-    for t in padding:
-        warnings.append(f"duplicate padding text flagged: {t[:60]!r} x{texts[t]}")
+    for t, c in texts.items():
+        if c > 1:
+            warnings.append(f"duplicate padding text flagged: {t[:60]!r} x{c}")
 
     required_invalidations = {
         "dialogue.invalid.missing_cause",
@@ -73,6 +106,10 @@ def validate_bank(lines: list[dict]) -> dict:
     for mid in sorted(missing_inv):
         errors.append(f"missing invalidation line {mid}")
 
+    # Production G05 catalogue is intentionally small; archived aspect bank
+    # retains the historical ≥300-line MVP corpus.
+    meets_mvp = True if production else (len(lines) >= 300 and len(texts) >= 300)
+
     return {
         "ok": not errors,
         "line_count": len(lines),
@@ -80,15 +117,19 @@ def validate_bank(lines: list[dict]) -> dict:
         "errors": errors,
         "warnings": warnings,
         "invalidation_count": len(invalidation_ids),
-        "meets_mvp_minimum": len(lines) >= 300 and len(texts) >= 300,
+        "meets_mvp_minimum": meets_mvp,
+        "production": production,
     }
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--include-archive", action="store_true")
     args = parser.parse_args(argv)
-    report = validate_bank(load_bank())
+    production = not args.include_archive
+    lines = load_bank(include_archive=args.include_archive)
+    report = validate_bank(lines, production=production)
     if not report["meets_mvp_minimum"]:
         report["ok"] = False
         report["errors"].append("MVP bank must have ≥300 unique useful lines")
@@ -99,8 +140,6 @@ def main(argv: list[str] | None = None) -> int:
         print(f"validate_dialogue: {status} lines={report['line_count']} unique={report['unique_texts']}")
         for err in report["errors"]:
             print(f"  ERROR: {err}")
-        for warn in report["warnings"][:10]:
-            print(f"  WARN: {warn}")
     return 0 if report["ok"] else 1
 
 

@@ -9,13 +9,11 @@
   "start_node_id": "node:35",
   "launch": "bash tools/play_g05.sh",
   "packet": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/packet.md",
+  "dialogue_audit": "docs/review/G05_STARTING_VILLAGE_DIALOGUE_AUDIT.md",
+  "dialogue_matrix": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G05/dialogue_matrix.md",
   "objective": "full_world_plus_simple_rockfall_quest",
   "quest_active": true,
-  "quest_id": "quest.blocked_exit_boulder",
-  "rockfall_id": "rockfall:1",
-  "blocked_exit": "node:35.south",
-  "blocked_neighbour": "node:29",
-  "awaiting_human_at": "2026-09-22T12:50:00Z",
-  "acceptance_criterion": "Inspect Rockfall, ask any worker, watch clear, immediately walk south corridor and Travel to node:29; save/load keeps road open.",
-  "notes": "South-road collision sync fix. Do not mark PASS. Do not start T097."
+  "awaiting_human_at": "2026-09-22T13:30:00Z",
+  "acceptance_criterion": "Every starting-village Person has truthful occupational Talk; no retired shortage/Aspect lines; Rockfall overlay only after Inspect; south road walkable after clear.",
+  "notes": "Dialogue sanity pass. Do not mark PASS. Do not start T097."
 }

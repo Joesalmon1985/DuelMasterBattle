@@ -1,5 +1,12 @@
 {
   "active_pack": "mvp_pack.json",
-  "content_hash": "5d0f819bcd35cabd419f5835d4e132c6488690486662705ef59fb913da765063",
-  "line_count": 361
+  "content_hash": "f653b96dbb27fa18763f118c7e1a20f0fbb6157386b729811ab33127cdb58854",
+  "line_count": 19,
+  "archive_pack": "archive_full_pack.json",
+  "archive_line_count": 379,
+  "production_scopes": [
+    "normal",
+    "rockfall",
+    "soldier"
+  ]
 }

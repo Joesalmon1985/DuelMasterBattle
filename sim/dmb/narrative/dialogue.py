@@ -1,14 +1,14 @@
 """Offline dialogue runtime selection (C09 / T084).
 
 No LLM/network. Priority: exact quest/stage/cause/role/era → role/cause/era →
-role/state → neutral truthful fallback. Missing variables select fallback text.
+role/state → person-context ordinary talk → neutral truthful fallback.
+Aspect-tagged lines require an explicit matching aspect_id.
 """
 
 from __future__ import annotations
 
 import hashlib
 import re
-from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -16,7 +16,8 @@ from sim.dmb.core.state import WorldState
 from sim.dmb.core.types import TypeValidationError
 from sim.dmb.narrative.conditions import evaluate_condition
 from sim.dmb.narrative.knowledge import filter_entity
-from sim.dmb.narrative.line_catalog import LineCatalog
+from sim.dmb.narrative.line_catalog import ARCHIVED_SCOPES, LineCatalog
+from sim.dmb.narrative.person_dialogue import occupation_reply_line, ordinary_talk_line
 
 _VAR_PATTERN = re.compile(r"\{([a-zA-Z0-9_\.]+)\}")
 SESSION_SCHEMA_VERSION = 1
@@ -51,6 +52,7 @@ class DialogueResolver:
         cause_id: str | None = None,
         era_id: str | None = None,
         node_id: str | None = None,
+        aspect_id: str | None = None,
     ) -> dict[str, Any]:
         speaker = self.state.people.get(speaker_id) or {}
         role = str(speaker.get("role") or "worker")
@@ -62,6 +64,7 @@ class DialogueResolver:
             stage=stage,
             cause_id=cause_id,
             era_id=era_id or str((self.state.board or {}).get("era_id") or "ancient"),
+            aspect_id=aspect_id,
         )
         session = {
             "id": session_id,
@@ -71,6 +74,7 @@ class DialogueResolver:
             "cause_id": cause_id,
             "era_id": era_id,
             "node_id": node_id,
+            "aspect_id": aspect_id,
             "line_id": line.get("id"),
             "text": line.get("text"),
             "choices": list(line.get("choices") or []),
@@ -92,7 +96,7 @@ class DialogueResolver:
             ):
                 continue
             visible.append(dict(choice))
-        return visible[:3]  # ~three visible; paging later
+        return visible[:3]
 
     def choose(self, session_id: str, choice_id: str) -> dict[str, Any]:
         session = self._require(session_id)
@@ -100,15 +104,19 @@ class DialogueResolver:
             raise TypeValidationError("dialogue already closed")
         match = next((c for c in self.choices(session_id) if c.get("id") == choice_id), None)
         if match is None:
-            # Stale context — refresh choices.
             return {"status": "stale", "choices": self.choices(session_id), "session": dict(session)}
         session["last_choice_id"] = choice_id
         session["pending_effects"] = list(match.get("effect_ids") or match.get("effects") or [])
         next_node = match.get("next")
         if next_node:
-            line = self.catalog.get(str(next_node)) or {"id": next_node, "text": "", "choices": []}
+            if str(next_node) == "dialogue.boulder.occupation":
+                line = occupation_reply_line(self.state, str(session["speaker_id"]))
+            else:
+                line = self.catalog.get(str(next_node)) or {"id": next_node, "text": "", "choices": []}
+                line = dict(line)
+                line["text"] = self._render(line, speaker_id=session["speaker_id"])
             session["line_id"] = line.get("id")
-            session["text"] = self._render(line, speaker_id=session["speaker_id"])
+            session["text"] = line.get("text")
             session["choices"] = list(line.get("choices") or [])
         return {"status": "chosen", "choice": match, "session": dict(session)}
 
@@ -132,23 +140,50 @@ class DialogueResolver:
         stage: int | None,
         cause_id: str | None,
         era_id: str,
+        aspect_id: str | None = None,
     ) -> dict[str, Any]:
-        # Score candidates by specificity.
         scored: list[tuple[int, dict[str, Any]]] = []
         for line in self.catalog.lines.values():
-            if line.get("speaker_role") and line["speaker_role"] != speaker_role:
+            scope = str(line.get("scope") or ("aspect" if line.get("aspect_id") else "normal"))
+            # Archived/test banks stay out of ordinary play. Explicit quest/Aspect
+            # requests may still resolve historical lines when the catalog includes them.
+            if scope in ARCHIVED_SCOPES:
+                if line.get("aspect_id"):
+                    if not aspect_id or str(line["aspect_id"]) != str(aspect_id):
+                        continue
+                elif line.get("quest_id"):
+                    if not quest_id or line["quest_id"] != quest_id:
+                        continue
+                else:
+                    continue
+            # Aspect lines require an explicit matching Aspect conversation.
+            if line.get("aspect_id"):
+                if not aspect_id or str(line["aspect_id"]) != str(aspect_id):
+                    continue
+            elif aspect_id:
                 continue
-            score = 0
-            # Reject wrong era/cause when the line requires them.
+            if line.get("speaker_role") and line["speaker_role"] != speaker_role:
+                # Workers may also use generic villager fallbacks only via procedural path.
+                continue
             if line.get("era_id") and line["era_id"] not in {era_id, "all"}:
                 continue
             if line.get("cause_id") and cause_id and line["cause_id"] != cause_id:
                 continue
             if line.get("cause_id") and not cause_id and line.get("require_cause"):
                 continue
+            # Quest-bound lines only when this conversation requested that quest.
             if line.get("quest_id"):
                 if not quest_id or line["quest_id"] != quest_id:
                     continue
+            # Stage must match when both sides declare one (prevents wrong rockfall beats).
+            if (
+                stage is not None
+                and line.get("stage") is not None
+                and int(line["stage"]) != int(stage)
+            ):
+                continue
+            score = 0
+            if line.get("quest_id") and quest_id and line["quest_id"] == quest_id:
                 score += 8
             if stage is not None and line.get("stage") is not None and int(line["stage"]) == int(stage):
                 score += 4
@@ -156,10 +191,10 @@ class DialogueResolver:
                 score += 4
             if line.get("speaker_role") == speaker_role:
                 score += 2
+            if line.get("priority") == "role_default":
+                score += 5
             if line.get("priority") == "fallback":
                 score += 0
-            elif line.get("priority") == "role_default":
-                score += 5
             if line.get("condition") is not None:
                 if not evaluate_condition(
                     self.state,
@@ -168,19 +203,25 @@ class DialogueResolver:
                 ):
                     continue
             scored.append((score, line))
+
+        # No quest / Aspect context → prefer person-aware ordinary talk over static bank.
+        if not quest_id and not aspect_id:
+            procedural = ordinary_talk_line(self.state, speaker_id)
+            scored.append((20, procedural))
+
         if not scored:
             return {
                 "id": "dialogue.neutral_fallback",
                 "text": "They have nothing more to say right now.",
                 "choices": [],
                 "priority": "fallback",
+                "scope": "normal",
             }
         scored.sort(key=lambda pair: (-pair[0], str(pair[1].get("id"))))
         best_score = scored[0][0]
         tied = [line for score, line in scored if score == best_score]
-        # Stable variant binding per context.
         ids = [str(line["id"]) for line in tied]
-        ctx = f"{speaker_id}|{quest_id}|{stage}|{cause_id}|{era_id}|{best_score}"
+        ctx = f"{speaker_id}|{quest_id}|{stage}|{cause_id}|{era_id}|{aspect_id}|{best_score}"
         bindings = self._sessions()["variant_bindings"]
         if ctx in bindings and bindings[ctx] in ids:
             chosen_id = bindings[ctx]
@@ -189,7 +230,10 @@ class DialogueResolver:
             bindings[ctx] = chosen_id
         line = next(line for line in tied if line["id"] == chosen_id)
         rendered = dict(line)
-        rendered["text"] = self._render(line, speaker_id=speaker_id)
+        if line.get("id") == "dialogue.person.ordinary":
+            rendered["text"] = line.get("text")
+        else:
+            rendered["text"] = self._render(line, speaker_id=speaker_id)
         rendered["match_score"] = best_score
         return rendered
 
@@ -200,9 +244,8 @@ class DialogueResolver:
         known = filter_entity(self.state, speaker_id)
         safe_vars = {
             "speaker_role": known.get("role") or "someone",
-            "speaker_name": known.get("name"),  # may be None — must not leak true name
+            "speaker_name": known.get("name"),
         }
-        # Never leak authoritative person.name when unknown.
         person = self.state.people.get(speaker_id) or {}
         if known.get("name"):
             safe_vars["speaker_name"] = known["name"]
@@ -212,7 +255,6 @@ class DialogueResolver:
         def repl(match: re.Match[str]) -> str:
             key = match.group(1)
             if key in variables:
-                # Typed declaration only; resolve via knowledge/context.
                 declared = variables[key]
                 value = safe_vars.get(key)
                 if value is None and isinstance(declared, dict):
@@ -228,10 +270,8 @@ class DialogueResolver:
             text = _VAR_PATTERN.sub(repl, template)
         except KeyError:
             return fallback
-        # Escape residual braces / markup-ish tokens.
         if "{" in text or "}" in text:
             return fallback
-        # Guard: raw secret name must not appear when unknown.
         secret = person.get("name")
         if secret and not known.get("name") and secret in text:
             return fallback

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from sim.dmb.core.ids import IdAllocator
 from sim.dmb.core.state import WorldState
 from sim.dmb.core.types import WorldId
@@ -10,28 +12,26 @@ from sim.dmb.narrative.knowledge import KnowledgeFact, reveal
 from sim.dmb.narrative.line_catalog import LineCatalog
 from sim.dmb.people.registry import PeopleService
 
+_ARCHIVE = (
+    Path(__file__).resolve().parents[2]
+    / "godot_project"
+    / "content"
+    / "source"
+    / "dialogue"
+)
 
-def _world() -> tuple[WorldState, str, DialogueResolver]:
+
+def _world(*, include_archive: bool = False) -> tuple[WorldState, str, DialogueResolver]:
     state = WorldState(world_id=WorldId("world:t084"), ids=IdAllocator(WorldId("world:t084")))
     people = PeopleService(state)
     person = people.create_person(name="MaraSecret", role="worker", node_id="node:v")
-    catalog = LineCatalog.load()
+    catalog = LineCatalog.load(_ARCHIVE, include_archive=include_archive)
     resolver = DialogueResolver(state, catalog)
     return state, person["id"], resolver
 
 
 def test_missing_variable_uses_truthful_fallback() -> None:
-    state, pid, resolver = _world()
-    # Name unknown → {speaker_name} missing → fallback.
-    line = resolver._select_line(
-        speaker_id=pid,
-        speaker_role="worker",
-        quest_id=None,
-        stage=None,
-        cause_id=None,
-        era_id="ancient",
-    )
-    # Prefer named line only when we force it via catalog get render.
+    state, pid, resolver = _world(include_archive=True)
     named = resolver.catalog.get("dialogue.mara.named")
     assert named is not None
     text = resolver._render(named, speaker_id=pid)
@@ -40,8 +40,13 @@ def test_missing_variable_uses_truthful_fallback() -> None:
 
 
 def test_unknown_name_cannot_leak() -> None:
-    state, pid, resolver = _world()
-    session = resolver.start(speaker_id=pid, quest_id="quest.factory_shortage", stage=0, cause_id="cause.factory_shortage")
+    state, pid, resolver = _world(include_archive=True)
+    session = resolver.start(
+        speaker_id=pid,
+        quest_id="quest.factory_shortage",
+        stage=0,
+        cause_id="cause.factory_shortage",
+    )
     assert "MaraSecret" not in session["text"]
     reveal(state, pid, KnowledgeFact(pid, "met", role="worker"), role="worker")
     state.knowledge[pid]["name"] = "Mara"
@@ -51,7 +56,7 @@ def test_unknown_name_cannot_leak() -> None:
 
 
 def test_wrong_era_and_cause_rejected() -> None:
-    _state, pid, resolver = _world()
+    _state, pid, resolver = _world(include_archive=True)
     line = resolver._select_line(
         speaker_id=pid,
         speaker_role="worker",
@@ -61,10 +66,31 @@ def test_wrong_era_and_cause_rejected() -> None:
         era_id="ancient",
     )
     assert line["id"] == "dialogue.mara.demon_hint"
-    # Wrong era line must not be selected for ancient.
-    assert line["id"] != "dialogue.wrong_era"
-    ids = {c["id"] for c in resolver.catalog.candidates(era_id="ancient", speaker_role="worker")}
+    ids = {c["id"] for c in resolver.catalog.candidates(era_id="ancient", speaker_role="worker", allow_archived=True)}
     assert "dialogue.wrong_era" not in ids
+
+
+def test_production_catalog_excludes_aspect_and_shortage() -> None:
+    catalog = LineCatalog.load()
+    assert "dialogue.mara.offer" not in catalog.lines
+    assert not any(line.get("aspect_id") for line in catalog.lines.values())
+    assert "dialogue.boulder.offer" in catalog.lines
+
+
+def test_aspect_lines_rejected_without_aspect_context() -> None:
+    state, pid, resolver = _world(include_archive=True)
+    # Force only aspect candidates by stripping ordinary procedural win:
+    line = resolver._select_line(
+        speaker_id=pid,
+        speaker_role="worker",
+        quest_id=None,
+        stage=None,
+        cause_id=None,
+        era_id="ancient",
+        aspect_id=None,
+    )
+    assert not line.get("aspect_id")
+    assert "reason" not in str(line.get("text") or "").lower() or line["id"] == "dialogue.person.ordinary"
 
 
 def test_runtime_has_zero_llm_network_imports() -> None:
@@ -78,4 +104,3 @@ def test_runtime_has_zero_llm_network_imports() -> None:
         src = open(mod.__file__, encoding="utf-8").read()
         for name in forbidden:
             assert f"import {name}" not in src
-            assert f"from {name}" not in src

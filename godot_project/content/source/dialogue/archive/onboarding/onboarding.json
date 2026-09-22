@@ -1,0 +1,32 @@
+[
+  {
+    "schema_version": 1,
+    "id": "dialogue.onboarding.welcome",
+    "speaker_role": "onboarding",
+    "era_id": "all",
+    "text": "Travel between nodes with intent. Wait advances the world. Duels pause it.",
+    "fallback": "Welcome.",
+    "choices": [],
+    "scope": "test"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.onboarding.observe",
+    "speaker_role": "onboarding",
+    "era_id": "all",
+    "text": "Observe someone before you learn their name. Proximity alone is not enough.",
+    "fallback": "Look carefully.",
+    "choices": [],
+    "scope": "test"
+  },
+  {
+    "schema_version": 1,
+    "id": "dialogue.onboarding.inventory",
+    "speaker_role": "onboarding",
+    "era_id": "all",
+    "text": "Quest tools keep their identity. Dropping them does not clone them.",
+    "fallback": "Items persist.",
+    "choices": [],
+    "scope": "test"
+  }
+]

@@ -452,6 +452,10 @@ def talk_context(state: Any, speaker_id: str) -> dict[str, Any] | None:
     if q_status == "offered" and rock_status == "blocking":
         if not _is_eligible_helper(state, speaker_id, node_id):
             return None
+        # Quest overlay only after John has inspected/discovered the rockfall.
+        known = (getattr(state, "knowledge", None) or {}).get(ROCKFALL_ID) or {}
+        if str(known.get("fact") or "") != "observed":
+            return None
         return {
             "quest_id": TEMPLATE_ID,
             "instance_id": QUEST_INSTANCE_ID,

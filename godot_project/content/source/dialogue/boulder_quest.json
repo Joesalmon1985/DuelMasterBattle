@@ -1,17 +1,8 @@
 [
   {
     "schema_version": 1,
-    "id": "dialogue.worker.yard_baseline",
-    "speaker_role": "worker",
-    "era_id": "all",
-    "text": "The yard keeps me busy.",
-    "fallback": "They nod and keep working.",
-    "choices": [],
-    "priority": "role_default"
-  },
-  {
-    "schema_version": 1,
     "id": "dialogue.boulder.offer",
+    "scope": "rockfall",
     "speaker_role": "worker",
     "era_id": "all",
     "quest_id": "quest.blocked_exit_boulder",
@@ -58,6 +49,7 @@
   {
     "schema_version": 1,
     "id": "dialogue.boulder.accept",
+    "scope": "rockfall",
     "speaker_role": "worker",
     "era_id": "all",
     "quest_id": "quest.blocked_exit_boulder",
@@ -68,16 +60,18 @@
   {
     "schema_version": 1,
     "id": "dialogue.boulder.occupation",
+    "scope": "rockfall",
     "speaker_role": "worker",
     "era_id": "all",
     "quest_id": "quest.blocked_exit_boulder",
-    "text": "I work my post for the settlement — same as always.",
+    "text": "I work my post for the settlement.",
     "fallback": "They describe their ordinary work.",
     "choices": []
   },
   {
     "schema_version": 1,
     "id": "dialogue.boulder.decline",
+    "scope": "rockfall",
     "speaker_role": "worker",
     "era_id": "all",
     "quest_id": "quest.blocked_exit_boulder",
@@ -88,6 +82,7 @@
   {
     "schema_version": 1,
     "id": "dialogue.boulder.other_watching",
+    "scope": "rockfall",
     "speaker_role": "worker",
     "era_id": "all",
     "quest_id": "quest.blocked_exit_boulder",
@@ -100,6 +95,7 @@
   {
     "schema_version": 1,
     "id": "dialogue.boulder.moving",
+    "scope": "rockfall",
     "speaker_role": "worker",
     "era_id": "all",
     "quest_id": "quest.blocked_exit_boulder",
@@ -112,6 +108,7 @@
   {
     "schema_version": 1,
     "id": "dialogue.boulder.done",
+    "scope": "rockfall",
     "speaker_role": "worker",
     "era_id": "all",
     "quest_id": "quest.blocked_exit_boulder",

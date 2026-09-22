@@ -16,7 +16,7 @@ from sim.dmb.world.fx_village_solutions import apply_demon_solution, apply_sluic
 
 ROOT = Path(__file__).resolve().parents[2]
 QUEST = ROOT / "godot_project" / "content" / "source" / "quests" / "shortage" / "factory_shortage.json"
-DIALOGUE = ROOT / "godot_project" / "content" / "source" / "dialogue" / "shortage" / "mara_lines.json"
+DIALOGUE = ROOT / "godot_project" / "content" / "source" / "dialogue" / "archive" / "shortage" / "mara_lines.json"
 SLUICE_PUZZLE = ROOT / "godot_project" / "content" / "source" / "dungeons" / "sluice" / "puzzle.json"
 
 

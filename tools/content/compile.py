@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Compile dialogue sources into an immutable content pack (C13 / T094)."""
+"""Compile dialogue sources into an immutable content pack (C13 / T094).
+
+Production pack = top-level dialogue only (normal + rockfall + invalidation).
+Archived shortage/aspect banks remain under archive/ for history/tests.
+"""
 
 from __future__ import annotations
 
@@ -20,23 +24,22 @@ from tools.content.validate import load_bank, validate_bank  # noqa: E402
 
 
 def compile_dialogue() -> dict:
-    lines = load_bank()
-    report = validate_bank(lines)
-    if not report.get("meets_mvp_minimum"):
-        report["ok"] = False
-        report.setdefault("errors", []).append("MVP bank must have ≥300 unique useful lines")
+    lines = load_bank(include_archive=False)
+    report = validate_bank(lines, production=True)
     if not report["ok"]:
         return {"ok": False, "validate": report}
 
     COMPILED.mkdir(parents=True, exist_ok=True)
     payload = {
         "schema_version": 1,
-        "pack_id": "dialogue.mvp",
+        "pack_id": "dialogue.g05_production",
         "line_count": len(lines),
         "lines": lines,
         "provenance": {
-            "source": "godot_project/content/source/dialogue/mvp_bank.json",
+            "source": "godot_project/content/source/dialogue/*.json",
+            "archived": "godot_project/content/source/dialogue/archive/",
             "validator": "tools.content.validate",
+            "scopes": ["normal", "rockfall", "soldier"],
         },
     }
     raw = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -44,10 +47,26 @@ def compile_dialogue() -> dict:
     payload["content_hash"] = digest
     out = COMPILED / "mvp_pack.json"
     out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    # Keep a historical archive pack for tooling that still wants the old corpus.
+    archive_lines = load_bank(include_archive=True)
+    archive_payload = {
+        "schema_version": 1,
+        "pack_id": "dialogue.archive_full",
+        "line_count": len(archive_lines),
+        "lines": archive_lines,
+    }
+    archive_raw = json.dumps(archive_payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    archive_payload["content_hash"] = hashlib.sha256(archive_raw).hexdigest()
+    (COMPILED / "archive_full_pack.json").write_text(
+        json.dumps(archive_payload, indent=2) + "\n", encoding="utf-8"
+    )
     manifest = {
         "active_pack": "mvp_pack.json",
         "content_hash": digest,
         "line_count": len(lines),
+        "archive_pack": "archive_full_pack.json",
+        "archive_line_count": len(archive_lines),
+        "production_scopes": ["normal", "rockfall", "soldier"],
     }
     (COMPILED / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return {"ok": True, "validate": report, "manifest": manifest, "path": str(out)}
@@ -64,7 +83,11 @@ def main(argv: list[str] | None = None) -> int:
         status = "PASS" if result["ok"] else "FAIL"
         print(f"compile_dialogue: {status}")
         if result["ok"]:
-            print(f"  hash={result['manifest']['content_hash'][:12]} lines={result['manifest']['line_count']}")
+            print(
+                f"  hash={result['manifest']['content_hash'][:12]} "
+                f"lines={result['manifest']['line_count']} "
+                f"archive={result['manifest']['archive_line_count']}"
+            )
         else:
             for err in result.get("validate", {}).get("errors", []):
                 print(f"  ERROR: {err}")
