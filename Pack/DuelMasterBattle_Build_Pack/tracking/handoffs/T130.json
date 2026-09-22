@@ -1,0 +1,20 @@
+{
+  "task_id": "T130",
+  "status": "DONE",
+  "commit": "a3b1057bc40eaaad6d015e540b58b173646ff882",
+  "files": [
+    "tests/scenarios/test_full_cycles.py",
+    "godot_project/content/fixtures/cycles/",
+    "tools/play_fx_cycle.sh"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T130",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T131",
+  "notes": "G07 overnight implementation chunk."
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {"kind": "inert_ruin", "loot": false, "collision": false, "vp": 0},
+    {"kind": "bunker", "retains_puzzle": true, "faction_id": null},
+    {"kind": "future_soldier", "joins_army": false, "status": "unsupported_army_relic"},
+    {"kind": "demon_scar", "active": true},
+    {"kind": "contamination", "active": true}
+  ]
+}

@@ -546,6 +546,21 @@ class EraService:
         HistoryService(self.state).record_transition_receipt(receipt)
         return {"idempotent": False, "receipt": receipt}
 
+    def reseed_cycle(self, *, plan_id: str | None = None, faction_count: int = 6) -> dict[str, Any]:
+        """Future→Prehistoric political reseeding (C11 / T125)."""
+        from sim.dmb.eras.cycles import CycleReseedService
+        from sim.dmb.eras.continuity import ContinuityService
+        from sim.dmb.eras.path_selection import baseline_path_or_default
+
+        baseline_path_or_default(self.state)
+        result = CycleReseedService(self.state).reseed_cycle(
+            plan_id=plan_id, faction_count=faction_count
+        )
+        ContinuityService(self.state).adapt_for_full_cycle(
+            transition_id=str((result.get("receipt") or {}).get("plan_id") or plan_id or "reseed")
+        )
+        return result
+
     def maybe_trigger_from_interrupt(self, *, event_id: str | None = None) -> dict[str, Any] | None:
         """If clock shows vp_threshold, request+commit once per interrupt."""
         if str(self.state.clock.get("interrupt_reason") or "") != "vp_threshold":

@@ -1156,6 +1156,103 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 ],
             ),
         ],
+        "T121": lambda: [
+            _pytest("later_visuals", "tests/sim/test_t121_later_visuals.py"),
+            validate_evidence(
+                "later_assets",
+                [
+                    ROOT / "godot_project" / "client" / "assets" / "modern" / "manifest.json",
+                    ROOT / "godot_project" / "client" / "assets" / "future" / "manifest.json",
+                    ROOT / "godot_project" / "content" / "source" / "labels" / "later_eras.json",
+                ],
+            ),
+        ],
+        "T122": lambda: [
+            _pytest("all_era_economy_combat", "tests/scenarios/test_all_era_economy_combat.py"),
+        ],
+        "T123": lambda: [
+            _pytest("mixed_hazards", "tests/scenarios/test_mixed_hazards.py"),
+            validate_evidence(
+                "mixed_hazards_fixture",
+                [ROOT / "godot_project" / "content" / "fixtures" / "mixed_hazards" / "fx_mixed_hazards.json"],
+            ),
+        ],
+        "T124": lambda: [
+            run_command(
+                CommandCheck(
+                    name="evaluate_full_world",
+                    argv=(sys.executable, str(ROOT / "tools" / "evaluate_full_world.py")),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            validate_evidence(
+                "full_era_validation",
+                [
+                    TRACKING / "full_era_validation" / "full_world_report.json",
+                    TRACKING / "full_era_validation" / "full_world_report.md",
+                ],
+            ),
+        ],
+        "T125": lambda: [_pytest("cycle_reseed", "tests/sim/test_t125_cycles.py")],
+        "T126": lambda: [
+            _pytest("legacy_dispositions", "tests/sim/test_t126_legacy.py"),
+            validate_evidence(
+                "legacy_rules",
+                [ROOT / "godot_project" / "content" / "source" / "legacy_rules" / "baseline.json"],
+            ),
+        ],
+        "T127": lambda: [_pytest("full_cycle_continuity", "tests/sim/test_t127_full_cycle_continuity.py")],
+        "T128": lambda: [_pytest("chronicle_pins", "tests/sim/test_t128_chronicle_pins.py")],
+        "T129": lambda: [
+            _pytest("path_selection", "tests/sim/test_t129_path_selection.py"),
+            validate_evidence(
+                "eras_schema",
+                [ROOT / "godot_project" / "content" / "schemas" / "eras.json"],
+            ),
+        ],
+        "T130": lambda: [
+            _pytest("full_cycles", "tests/scenarios/test_full_cycles.py"),
+            validate_evidence(
+                "fx_cycle",
+                [
+                    ROOT / "godot_project" / "content" / "fixtures" / "cycles" / "fx_cycle.json",
+                    ROOT / "tools" / "play_fx_cycle.sh",
+                ],
+            ),
+        ],
+        "T131": lambda: [
+            run_command(
+                CommandCheck(
+                    name="profile_world",
+                    argv=(sys.executable, str(ROOT / "tools" / "profile_world.py")),
+                    required_pattern=r"PASS_WITH_HONEST_LIMITS",
+                )
+            ),
+            validate_evidence(
+                "performance_profile",
+                [
+                    TRACKING / "performance" / "profile_world.json",
+                    TRACKING / "performance" / "profile_world.md",
+                ],
+            ),
+        ],
+        "T132": lambda: [
+            validate_evidence(
+                "g07_gate_packet",
+                [
+                    TRACKING / "gates" / "G07" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G07" / "auto" / "result.json",
+                    TRACKING / "gates" / "G07" / "auto" / "summary.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g07_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G07"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

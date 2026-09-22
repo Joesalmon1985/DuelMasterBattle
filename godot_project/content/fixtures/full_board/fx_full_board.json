@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "fixture_id": "FX-FULL-BOARD",
+  "seed": 909,
+  "factions_target": 6,
+  "notes": "Six-faction full-board validation seed marker for evaluate_full_world."
+}

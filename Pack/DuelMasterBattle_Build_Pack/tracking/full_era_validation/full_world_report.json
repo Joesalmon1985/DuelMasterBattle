@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-09-22T22:53:54.561590+00:00",
+  "seed": 507,
+  "fixture": "FX-ERA",
+  "eras_traversed": [
+    "historic",
+    "modern",
+    "future"
+  ],
+  "people_preserved": true,
+  "quests_preserved": true,
+  "free_goods": false,
+  "illegal_overcrowding": false,
+  "factions_active": 3,
+  "status": "PASS"
+}

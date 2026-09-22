@@ -1,0 +1,21 @@
+{
+  "task_id": "T121",
+  "status": "DONE",
+  "commit": "a3b1057bc40eaaad6d015e540b58b173646ff882",
+  "files": [
+    "godot_project/client/assets/modern/",
+    "godot_project/client/assets/future/",
+    "godot_project/content/source/labels/later_eras.json",
+    "tests/sim/test_t121_later_visuals.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T121",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T122",
+  "notes": "G07 overnight implementation chunk."
+}

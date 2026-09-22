@@ -115,6 +115,39 @@ class ContinuityService:
         receipts[transition_id] = receipt
         return {"idempotent": False, "receipt": receipt}
 
+    def adapt_for_full_cycle(self, *, transition_id: str) -> dict[str, Any]:
+        """Preserve living people/quests/items across Future→Prehistoric reseeding."""
+        receipts = self.state.command_receipts.setdefault("full_cycle_continuity", {})
+        if transition_id in receipts:
+            return {"idempotent": True, "receipt": receipts[transition_id]}
+        people_before = set(self.state.people)
+        quest_ids = set(self.state.quests)
+        wizard_before = deepcopy(self.state.player.get("wizard") or self.state.player)
+        adaptations: list[dict[str, Any]] = []
+        for qid, quest in list(self.state.quests.items()):
+            target = quest.get("hazard_target_id") or quest.get("target_id")
+            if target and target not in (self.state.hazards.get("catastrophe", {}).get("cubes") or {}):
+                # Retired hazard → suspend without false completion.
+                if quest.get("status") not in {"completed", "failed"}:
+                    quest["status"] = "suspended_cycle"
+                    quest["adaptation"] = "hazard_target_retired"
+                    quest["false_completion"] = False
+                    adaptations.append({"quest_id": qid, "action": "suspended_cycle"})
+        # Wizard colours/Aspects/memory persist.
+        if wizard_before:
+            self.state.player.setdefault("wizard", deepcopy(wizard_before if isinstance(wizard_before, dict) else {}))
+        if set(self.state.people) != people_before:
+            raise RuntimeError("full-cycle continuity must not create or delete Person IDs")
+        receipt = {
+            "transition_id": transition_id,
+            "people_ids": sorted(people_before),
+            "quest_ids": sorted(quest_ids),
+            "quest_adaptations": adaptations,
+            "wizard_persisted": True,
+        }
+        receipts[transition_id] = receipt
+        return {"idempotent": False, "receipt": receipt}
+
     def _adapt_people(
         self,
         *,

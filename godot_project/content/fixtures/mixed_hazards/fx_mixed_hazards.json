@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "fixture_id": "FX-MIXED-HAZARDS",
+  "seed": 707,
+  "era": "future",
+  "cubes": [
+    {
+      "hex_id": "h1",
+      "type": "demon"
+    },
+    {
+      "hex_id": "h1",
+      "type": "pollution"
+    },
+    {
+      "hex_id": "h2",
+      "type": "alien"
+    },
+    {
+      "hex_id": "h3",
+      "type": "nuclear"
+    },
+    {
+      "hex_id": "h3",
+      "type": "machine"
+    }
+  ],
+  "notes": "Mixed retained types for G07 response/rollover validation."
+}

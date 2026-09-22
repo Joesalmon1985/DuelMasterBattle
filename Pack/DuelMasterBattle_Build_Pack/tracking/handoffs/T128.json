@@ -1,0 +1,19 @@
+{
+  "task_id": "T128",
+  "status": "DONE",
+  "commit": "a3b1057bc40eaaad6d015e540b58b173646ff882",
+  "files": [
+    "sim/dmb/history/compaction.py",
+    "tests/sim/test_t128_chronicle_pins.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T128",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T129",
+  "notes": "G07 overnight implementation chunk."
+}

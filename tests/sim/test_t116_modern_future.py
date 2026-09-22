@@ -49,14 +49,18 @@ def test_modern_future_core_upgrade_maps() -> None:
 
 def test_thin_unit_defs_and_single_era_factor() -> None:
     units = json.loads((CONTENT / "units" / "later.json").read_text(encoding="utf-8"))
-    assert len(units) == 6
+    assert len(units) >= 6
     by_era = {}
     for unit in units:
         by_era.setdefault(unit["era_id"], []).append(unit)
+        if unit["id"] == "unit.modern.cleanup":
+            assert unit["fields"].get("cleanup_capable") is True
+            continue
         assert unit["fields"]["combat_factor"] == ERA_FACTORS[unit["era_id"]]
         assert unit["fields"].get("semantic_placeholder") is True
-    assert set(by_era) == {"modern", "future"}
-    assert all(len(v) == 3 for v in by_era.values())
+    assert {"modern", "future"} <= set(by_era)
+    assert len([u for u in by_era["modern"] if u["id"] != "unit.modern.cleanup"]) == 3
+    assert len(by_era["future"]) == 3
 
     world = _world()
     mil = MilitaryService(world)

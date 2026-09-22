@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "era": "modern",
+  "presentation": "semantic_placeholder",
+  "animation_families": [
+    "idle",
+    "walk",
+    "work",
+    "attack",
+    "hit",
+    "death",
+    "magic"
+  ],
+  "assets": [
+    {
+      "id": "sil.modern.centre",
+      "semantic_id": "building.modern.works",
+      "kind": "silhouette",
+      "footprint": "settlement"
+    },
+    {
+      "id": "sil.modern.worker",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "legacy_distinct": true
+    },
+    {
+      "id": "sil.modern.skirmisher",
+      "semantic_id": "unit.skirmisher",
+      "kind": "silhouette"
+    },
+    {
+      "id": "sil.modern.line",
+      "semantic_id": "unit.line",
+      "kind": "silhouette"
+    },
+    {
+      "id": "sil.modern.heavy",
+      "semantic_id": "unit.heavy",
+      "kind": "silhouette"
+    },
+    {
+      "id": "sil.modern.road",
+      "semantic_id": "road.modern",
+      "kind": "overlay"
+    },
+    {
+      "id": "sil.modern.hazard",
+      "semantic_id": "hazard.pollution",
+      "kind": "overlay"
+    }
+  ],
+  "notes": "Semantic placeholders only; stable footprints/identities."
+}

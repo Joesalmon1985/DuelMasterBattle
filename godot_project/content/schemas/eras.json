@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "eras": ["prehistoric", "historic", "modern", "future"],
+  "next_future_path": {
+    "default": "dystopia",
+    "allowed": ["dystopia", "utopia"],
+    "utopia_requires_pack": true
+  },
+  "utopia_pack_path": "content/source/eras/utopia/pack.json"
+}
