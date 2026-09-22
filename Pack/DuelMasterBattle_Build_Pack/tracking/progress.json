@@ -234,8 +234,8 @@
       "helper_person_id": null,
       "helper_selection": "any_eligible_village_worker_via_dialogue",
       "superseded_scenario": "shortage_demon_sluice",
-      "awaiting_human_at": "2026-09-22T11:30:00Z",
-      "notes": "G05 usability pass: rockfall cluster; any village worker can help; no preselected helper. Shortage/demon/sluice superseded. No T097."
+      "awaiting_human_at": "2026-09-22T12:50:00Z",
+      "notes": "South-road fix: sync_dynamic_obstacle clears stale Overworld _entity_at after rockfall clear. Usability pass retained. No T097."
     },
     "G06": {
       "status": "NOT_READY",

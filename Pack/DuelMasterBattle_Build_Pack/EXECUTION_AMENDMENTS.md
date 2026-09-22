@@ -30,6 +30,12 @@ Inspect — not a preselected Person. Original shortage/demon/sluice prototype
 remains **superseded** and archived (`FX-VILLAGE-QUEST`). Do not start
 era-transition (T097) until Joe clears this gate.
 
+**G05 dynamic local obstacles:** when Python clears a rockfall (or similar),
+Godot must refresh Overworld `_entity_at` via `sync_dynamic_obstacle` /
+`sync_dynamic_obstacles_from_area` on the same area payload that updates
+WorldLayerPresenters. Visual-only layer updates leave stale walk blocks.
+A full LocalArea rebuild also works but is not the preferred live path.
+
 ## Toolchain and pack location
 
 - Initially pin Godot 4.4.1, subject to T003 confirming the executable and

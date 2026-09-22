@@ -442,8 +442,13 @@ func reproject_from_python() -> void:
 
 
 func _apply_world_layers(area: Dictionary) -> void:
+	## Visual layers + Overworld collision must both follow Python entity payloads.
+	## WorldLayerPresenters moves stone meshes; sync_dynamic_obstacles_from_area
+	## clears stale _entity_at blocks when rockfall.blocks_walk becomes false.
 	if _layers != null and _layers.has_method("apply_area"):
 		_layers.apply_area(area)
+	if _overworld != null and _overworld.has_method("sync_dynamic_obstacles_from_area"):
+		_overworld.sync_dynamic_obstacles_from_area(area)
 
 
 func _refresh_time_hud(view: Dictionary = {}) -> void:

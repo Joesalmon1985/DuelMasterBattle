@@ -548,23 +548,9 @@ func _spawn_entity(e: Dictionary) -> void:
 			_ensure_semantic(e, null)
 			return
 		"boulder", "rockfall":
-			# Geometric rockfall presenter; register for Observe/Inspect and walk block.
+			# Geometric presenter owns visuals; collision via sync_dynamic_obstacle.
 			e["node"] = null
-			_entities.append(e)
-			if bool(e.get("blocks_walk", true)):
-				_entity_at[pos] = e
-				for tile_v in e.get("blocked_tiles", []):
-					if typeof(tile_v) != TYPE_ARRAY or tile_v.size() < 2:
-						continue
-					var tp := Vector2i(int(tile_v[0]), int(tile_v[1]))
-					_entity_at[tp] = e
-				for piece_v in e.get("pieces", []):
-					if typeof(piece_v) != TYPE_DICTIONARY:
-						continue
-					var pp = piece_v.get("pos", [])
-					if typeof(pp) == TYPE_ARRAY and pp.size() >= 2:
-						_entity_at[Vector2i(int(pp[0]), int(pp[1]))] = e
-			_ensure_semantic(e, null)
+			sync_dynamic_obstacle(e)
 			return
 		"cart", "soldier", "construction":
 			# Geometric presenters own the Node2D; register for inspect/focus.
@@ -701,9 +687,96 @@ func is_walkable(p: Vector2i) -> bool:
 		return not _play.kit_blocks(p)  # kit: true = blocked; walkable = NOT blocked
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
-		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs", "boulder", "rockfall"]:
+		var kind := str(e.get("kind", ""))
+		if kind in ["boulder", "rockfall"] and not bool(e.get("blocks_walk", true)):
+			# Cleared/dynamic non-blocking obstacle may remain registered for focus.
+			pass
+		elif kind in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs", "boulder", "rockfall"]:
 			return false
 	return true
+
+
+func path_reachable(from: Vector2i, to: Vector2i, max_steps: int = 4000) -> bool:
+	## BFS over is_walkable tiles — used by rockfall / dynamic-obstacle regressions.
+	if from == to:
+		return true
+	if not is_walkable(from):
+		return false
+	var q: Array = [from]
+	var seen: Dictionary = {}
+	seen[from] = true
+	var steps := 0
+	while not q.is_empty() and steps < max_steps:
+		var cur: Vector2i = q.pop_front()
+		steps += 1
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var nxt: Vector2i = cur + d
+			if seen.has(nxt):
+				continue
+			if nxt.x < 0 or nxt.y < 0 or nxt.x >= grid_w or nxt.y >= grid_h:
+				continue
+			if not is_walkable(nxt):
+				continue
+			if nxt == to:
+				return true
+			seen[nxt] = true
+			q.append(nxt)
+	return false
+
+
+func sync_dynamic_obstacle(entity: Dictionary) -> void:
+	## Update local collision for a world entity whose blocking state changed
+	## while John stays in the same LocalArea (rockfall clear, gates, hazards…).
+	## Removes only this entity id from _entity_at — never wipes the whole map.
+	## Visuals stay with WorldLayerPresenters; this owns walkability.
+	var eid := str(entity.get("id", ""))
+	if eid.is_empty():
+		return
+	_purge_entity_at_owned_by(eid)
+	var e := _entity_by_id(eid)
+	if e.is_empty():
+		_entities.append(entity)
+		e = entity
+	else:
+		for k in entity.keys():
+			e[k] = entity[k]
+	e["node"] = e.get("node", null)
+	if bool(e.get("blocks_walk", false)):
+		var pos_v = e.get("pos", [0, 0])
+		if typeof(pos_v) == TYPE_ARRAY and pos_v.size() >= 2:
+			_entity_at[Vector2i(int(pos_v[0]), int(pos_v[1]))] = e
+		for tile_v in e.get("blocked_tiles", []):
+			if typeof(tile_v) != TYPE_ARRAY or tile_v.size() < 2:
+				continue
+			_entity_at[Vector2i(int(tile_v[0]), int(tile_v[1]))] = e
+		for piece_v in e.get("pieces", []):
+			if typeof(piece_v) != TYPE_DICTIONARY:
+				continue
+			var pp = piece_v.get("pos", [])
+			if typeof(pp) == TYPE_ARRAY and pp.size() >= 2:
+				_entity_at[Vector2i(int(pp[0]), int(pp[1]))] = e
+	# blocks_walk false → corridor fully walkable; entity remains in _entities for Observe.
+	_ensure_semantic(e, e.get("node"))
+
+
+func sync_dynamic_obstacles_from_area(area: Dictionary) -> void:
+	## Apply Python overworld_area entity payloads to live collision without a full rebuild.
+	for raw in area.get("entities", []):
+		if typeof(raw) != TYPE_DICTIONARY:
+			continue
+		var kind := str(raw.get("kind", ""))
+		if kind in ["boulder", "rockfall"]:
+			sync_dynamic_obstacle(raw)
+
+
+func _purge_entity_at_owned_by(eid: String) -> void:
+	var drop: Array = []
+	for cell in _entity_at.keys():
+		var ent = _entity_at[cell]
+		if typeof(ent) == TYPE_DICTIONARY and str(ent.get("id", "")) == eid:
+			drop.append(cell)
+	for cell in drop:
+		_entity_at.erase(cell)
 
 
 func _try_step(dir: Vector2i) -> void:

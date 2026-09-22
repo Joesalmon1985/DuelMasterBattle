@@ -1,27 +1,21 @@
-# G05 known defects / notes — visual integration
+# G05 known defects / notes — rockfall quest
 
-**Status:** AWAITING_HUMAN — full board + G01–G04 layers
+**Status:** AWAITING_HUMAN — full board + simple rockfall quest
 
-## This checkpoint
+## Fixed this pass
 
 | Item | Result |
 |------|--------|
-| Topology | Unchanged from `85fca3c` (19/54/72) |
-| Quest | Still disabled; sluice helpers gated to FX-VILLAGE-QUEST |
-| Carts | Faction accent + Catan cargo pips from `cargo_lots` |
-| Soldiers | Geometric △■● with unit_id + person_id |
-| Hazards | Existing catastrophe cubes exported; Challenge → retained duel |
-| Industry | Factory meter bars from Python meters |
-| Map | M opens read-only strategic map (pauses) |
+| Stale south-road collision after clear | Fixed via `Overworld.sync_dynamic_obstacle` on `_apply_world_layers` |
+| Python Travel after clear | Already correct; unchanged |
+| Godot walkability after clear | `run_g05_rockfall_walk.gd` + `test_rockfall_walkable.gd` |
 
 ## Remaining gaps (honest)
 
-- Full **LocalBattle** lease host inside Overworld when stepping onto an active
-  battle node is not as complete as standalone `g04_battle_shell` yet.
-  Soldiers + READY battle state are present; animated lease combat is next.
-- World-map node dots are schematic, not true board geometry for nodes.
-- Processor recipe Inspect UI is data-ready (`industry_overlay`) but not a
-  dedicated dialogue card yet.
-- Dev-layers toggle panel is minimal (map reveal_all path exists; checkbox UI later).
+- Cleared stone pieces are non-solid (path usability first); optional aside-tile
+  solidity can be added later without new quest logic.
+- Full **LocalBattle** lease host inside Overworld is still less complete than
+  standalone `g04_battle_shell`.
+- World-map node dots remain schematic.
 
 Do not expose internal IDs in ordinary player-facing labels.

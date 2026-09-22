@@ -2,7 +2,7 @@
 
 **Status:** AWAITING_HUMAN  
 **Stop point:** T096 — do **not** start T097 / G06  
-**Candidate commit:** `8215f86` (usability feature: `b9b4032`)  
+**Candidate commit:** *(set after commit)*  
 **Play:** `bash tools/play_g05.sh` — seed **507**, FX-VILLAGE  
 **Branch:** `refactor/canonical-ontology-g05`
 
@@ -38,11 +38,12 @@ real workplace on the start node. Helper is bound only when John chooses
 - [ ] Nearby Inspect: too heavy alone; *maybe one of the workers could help*
 - [ ] Talk to **any** worker → several choices; occupation choice does not clear
 - [ ] Ask chosen worker → that Person walks to rocks → stones slide aside
-- [ ] Travel south succeeds (one World Turn); stones remain beside the path
-- [ ] Completion dialogue only after clear; no special hidden Person ID needed
+- [ ] **Immediately** walk the former corridor tiles and south exit (no leave/re-enter)
+- [ ] Travel to node:29; return; road still open
+- [ ] Save/load preserves cleared stones and open road
 
-**Experience question:** Does talking to a person cause a simple, understandable change in a persistent world?
+## South-road collision fix
 
-## Stop
-
-Do **not** start G06 / T097 until Joe PASSes this gate. Agents must not self-PASS.
+Root cause: WorldLayerPresenters moved stones visually while Overworld `_entity_at`
+kept stale blocking tiles. Fix: `sync_dynamic_obstacle` /
+`sync_dynamic_obstacles_from_area` on every `_apply_world_layers` refresh.

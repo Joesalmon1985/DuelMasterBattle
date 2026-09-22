@@ -877,6 +877,11 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"G05_PLAYABLE_OK",
             ),
             _godot_script(
+                "g05_rockfall_walk",
+                "res://client/tests/run_g05_rockfall_walk.gd",
+                r"G05_ROCKFALL_WALK_OK",
+            ),
+            _godot_script(
                 "g05_cumulative_runtime",
                 "res://client/tests/run_g05_cumulative.gd",
                 r"G05_CUMULATIVE_OK",
@@ -1132,6 +1137,11 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 "g05_playable",
                 "res://client/tests/run_g05_playable.gd",
                 r"G05_PLAYABLE_OK",
+            ),
+            _godot_script(
+                "g05_rockfall_walk",
+                "res://client/tests/run_g05_rockfall_walk.gd",
+                r"G05_ROCKFALL_WALK_OK",
             ),
             _godot_script(
                 "g03_regression_smoke",
