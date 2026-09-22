@@ -1,0 +1,14 @@
+{
+  "id": "rival.iron_broker",
+  "display_name": "Iron Broker",
+  "difficulty": "economic",
+  "deduction_strategy": "cargo_and_toll_leverage",
+  "reads_hidden_secrets": false,
+  "dialogue_profile": "rival.broker",
+  "persistent_across_appearances": true,
+  "distinct_from": [
+    "rival.ashen_tactician",
+    "rival.veil_scout",
+    "rival.ember_duelist"
+  ]
+}

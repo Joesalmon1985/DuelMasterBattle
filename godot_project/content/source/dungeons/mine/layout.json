@@ -1,18 +1,24 @@
 {
-  "id": "dungeon.sluice",
+  "id": "dungeon.mine",
   "schema_version": 1,
-  "area_id": "area.sluice",
-  "puzzle_id": "puzzle.sluice",
+  "area_id": "area.mine",
+  "puzzle_id": "puzzle.mine",
+  "blurb": "Abandoned mine with cart-weight plate puzzles.",
   "rooms": [
     {
       "id": "room.entrance",
-      "label": "Sluice Entrance",
+      "label": "Mine Entrance",
       "exits": [
         "room.workshop",
         "room.corridor",
         "room.exit"
       ],
-      "clues": [],
+      "clues": [
+        {
+          "id": "clue.mine.entry",
+          "text": "The mine entrance shows recent traffic."
+        }
+      ],
       "spawn": [
         0.0,
         0.0
@@ -20,19 +26,19 @@
     },
     {
       "id": "room.workshop",
-      "label": "Side Workshop",
+      "label": "Side Cache",
       "exits": [
         "room.entrance"
       ],
       "clues": [
         {
-          "id": "clue.handle_rack",
-          "text": "A spare sluice handle rests on the rack. Without it the channel stays jammed."
+          "id": "clue.mine.cache",
+          "text": "A recovery item for the mine puzzle rests here."
         }
       ],
       "items": [
         {
-          "definition_id": "item.sluice_handle",
+          "definition_id": "item.mine_key",
           "position": [
             2.0,
             1.0
@@ -43,20 +49,21 @@
     },
     {
       "id": "room.corridor",
-      "label": "Switch Corridor",
+      "label": "Mechanism Corridor",
       "exits": [
         "room.entrance",
         "room.chamber"
       ],
       "clues": [
         {
-          "id": "clue.inscription",
-          "text": "The pressure plate must hold the gate while the handle opens the sluice."
+          "id": "clue.mine.plate",
+          "text": "Hold the plate while the switch opens the gate."
         }
       ],
       "mechanisms": [
-        "switch.corridor"
-      ]
+        "switch.mine"
+      ],
+      "alternate_route": "room.exit"
     },
     {
       "id": "room.chamber",
@@ -67,11 +74,11 @@
       ],
       "clues": [],
       "mechanisms": [
-        "box.sluice",
-        "plate.sluice",
-        "receptor.sluice",
+        "box.mine",
+        "plate.mine",
+        "receptor.mine",
         "gate.final",
-        "sluice.actuator"
+        "actuator.mine"
       ]
     },
     {
@@ -88,7 +95,8 @@
   ],
   "entry_room": "room.entrance",
   "exit_room": "room.exit",
-  "blurb": "Existing sluice works; preserve prior rooms.",
   "persistent_state": true,
-  "common_puzzle_vocabulary": true
+  "common_puzzle_vocabulary": true,
+  "clues_and_alternate_routes": true,
+  "bind_systemic_context": true
 }

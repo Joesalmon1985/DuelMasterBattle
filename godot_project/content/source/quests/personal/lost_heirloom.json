@@ -1,0 +1,126 @@
+{
+  "id": "quest.personal.lost_heirloom",
+  "schema_version": 1,
+  "version": 1,
+  "family": "personal",
+  "required_cause": {
+    "kinds": [
+      "missing_heirloom"
+    ],
+    "detail": "A worker lost a family token in the mine."
+  },
+  "binding": {
+    "stakeholder_role": "grieving_worker",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Replica spends ore reserved for tools.",
+    "era_continuity": "Personal grief persists across eras for living person.",
+    "death_displacement": "Dead worker fails; token may remain world object.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "retrieve_from_mine",
+      "cost_bearer": "player_time",
+      "effects": [
+        {
+          "kind": "grant_item",
+          "item_id": "item.heirloom_token"
+        }
+      ],
+      "acknowledgement": "dialogue.personal.lost_heirloom.retrieve"
+    },
+    {
+      "id": "commission_replica",
+      "cost_bearer": "worker_wages",
+      "effects": [
+        {
+          "kind": "grant_item",
+          "item_id": "item.heirloom_replica"
+        }
+      ],
+      "acknowledgement": "dialogue.personal.lost_heirloom.replica"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "heirloom_found_by_passerby",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.personal.lost_heirloom.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "mine_collapsed_permanently",
+    "status": "failed_with_consequence",
+    "branch": "mine_lost",
+    "acknowledgement": "dialogue.personal.lost_heirloom.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.personal.lost_heirloom.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.personal.lost_heirloom.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.personal.lost_heirloom.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.heirloom_token",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.personal.lost_heirloom.offer",
+    "world_resolved": "dialogue.personal.lost_heirloom.world_resolved",
+    "invalid_target": "dialogue.personal.lost_heirloom.invalid_target",
+    "dead_target": "dialogue.personal.lost_heirloom.dead_target",
+    "displaced_target": "dialogue.personal.lost_heirloom.displaced_target",
+    "full_cycle": "dialogue.personal.lost_heirloom.full_cycle"
+  }
+}

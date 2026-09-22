@@ -1,0 +1,14 @@
+{
+  "id": "rival.veil_scout",
+  "display_name": "Veil Scout",
+  "difficulty": "evasive",
+  "deduction_strategy": "information_denial",
+  "reads_hidden_secrets": false,
+  "dialogue_profile": "rival.veil",
+  "persistent_across_appearances": true,
+  "distinct_from": [
+    "rival.ashen_tactician",
+    "rival.iron_broker",
+    "rival.ember_duelist"
+  ]
+}

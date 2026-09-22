@@ -1,0 +1,126 @@
+{
+  "id": "quest.transport.bridge_washout",
+  "schema_version": 1,
+  "version": 1,
+  "family": "transport",
+  "required_cause": {
+    "kinds": [
+      "bridge_out"
+    ],
+    "detail": "Flood washed the south bridge; cargo loops break."
+  },
+  "binding": {
+    "stakeholder_role": "cart_driver",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Rebuild consumes stone reserved for wall repair.",
+    "era_continuity": "Detour remains valid across eras until bridge restored.",
+    "death_displacement": "Dead driver suspends; cargo ledger retains pending loads.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "rebuild_bridge",
+      "cost_bearer": "builders",
+      "effects": [
+        {
+          "kind": "open_route",
+          "route_id": "route.south_bridge"
+        }
+      ],
+      "acknowledgement": "dialogue.transport.bridge_washout.rebuild"
+    },
+    {
+      "id": "ford_detour",
+      "cost_bearer": "cart_teams",
+      "effects": [
+        {
+          "kind": "open_route",
+          "route_id": "route.ford_detour"
+        }
+      ],
+      "acknowledgement": "dialogue.transport.bridge_washout.ford"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "faction_rebuilds_bridge",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.transport.bridge_washout.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "bridge_site_lost",
+    "status": "failed_with_consequence",
+    "branch": "site_lost",
+    "acknowledgement": "dialogue.transport.bridge_washout.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.transport.bridge_washout.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.transport.bridge_washout.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.transport.bridge_washout.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.survey_stake",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.transport.bridge_washout.offer",
+    "world_resolved": "dialogue.transport.bridge_washout.world_resolved",
+    "invalid_target": "dialogue.transport.bridge_washout.invalid_target",
+    "dead_target": "dialogue.transport.bridge_washout.dead_target",
+    "displaced_target": "dialogue.transport.bridge_washout.displaced_target",
+    "full_cycle": "dialogue.transport.bridge_washout.full_cycle"
+  }
+}

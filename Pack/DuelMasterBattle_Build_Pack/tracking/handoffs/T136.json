@@ -1,0 +1,16 @@
+{
+  "task_id": "T136",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "G08 overnight chunk"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T136",
+      "result": "PENDING_COMMIT"
+    }
+  ],
+  "next_task": "T137",
+  "notes": "Eight dungeon layouts + four rivals; solution/recovery traces."
+}

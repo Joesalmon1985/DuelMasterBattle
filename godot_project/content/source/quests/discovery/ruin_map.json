@@ -1,0 +1,126 @@
+{
+  "id": "quest.discovery.ruin_map",
+  "schema_version": 1,
+  "version": 1,
+  "family": "discovery",
+  "required_cause": {
+    "kinds": [
+      "unmapped_ruin"
+    ],
+    "detail": "Shepherds found a sealed hatch under the ridge."
+  },
+  "binding": {
+    "stakeholder_role": "shepherd",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Sealing denies dungeon loot to settlement.",
+    "era_continuity": "Mapped ruin binds to dungeon layout id.",
+    "death_displacement": "Dead shepherd fails; map clue may remain.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "map_and_enter",
+      "cost_bearer": "exploration_risk",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "ruin_mapped"
+        }
+      ],
+      "acknowledgement": "dialogue.discovery.ruin_map.map"
+    },
+    {
+      "id": "seal_and_report",
+      "cost_bearer": "curiosity",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "ruin_sealed"
+        }
+      ],
+      "acknowledgement": "dialogue.discovery.ruin_map.seal"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "another_faction_maps_ruin",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.discovery.ruin_map.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "hatch_collapsed",
+    "status": "failed_with_consequence",
+    "branch": "entrance_lost",
+    "acknowledgement": "dialogue.discovery.ruin_map.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.discovery.ruin_map.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.discovery.ruin_map.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.discovery.ruin_map.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.ruin_sketch",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.discovery.ruin_map.offer",
+    "world_resolved": "dialogue.discovery.ruin_map.world_resolved",
+    "invalid_target": "dialogue.discovery.ruin_map.invalid_target",
+    "dead_target": "dialogue.discovery.ruin_map.dead_target",
+    "displaced_target": "dialogue.discovery.ruin_map.displaced_target",
+    "full_cycle": "dialogue.discovery.ruin_map.full_cycle"
+  }
+}

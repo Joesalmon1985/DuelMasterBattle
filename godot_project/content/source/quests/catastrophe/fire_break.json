@@ -1,0 +1,126 @@
+{
+  "id": "quest.catastrophe.fire_break",
+  "schema_version": 1,
+  "version": 1,
+  "family": "catastrophe",
+  "required_cause": {
+    "kinds": [
+      "wildfire_front"
+    ],
+    "detail": "Dry winds drive fire toward timber yards."
+  },
+  "binding": {
+    "stakeholder_role": "watch_captain",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Firebreak consumes reserved construction timber.",
+    "era_continuity": "Burn scars persist as legacy disposition.",
+    "death_displacement": "Displaced captain uses displaced branch.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "cut_firebreak",
+      "cost_bearer": "timber_rights",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "firebreak_cut"
+        }
+      ],
+      "acknowledgement": "dialogue.catastrophe.fire_break.cut"
+    },
+    {
+      "id": "bucket_line",
+      "cost_bearer": "villagers",
+      "effects": [
+        {
+          "kind": "clear_cause",
+          "cause_kind": "wildfire_front"
+        }
+      ],
+      "acknowledgement": "dialogue.catastrophe.fire_break.bucket"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "rain_quenches_front",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.catastrophe.fire_break.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "timber_yard_burned",
+    "status": "failed_with_consequence",
+    "branch": "yard_burned",
+    "acknowledgement": "dialogue.catastrophe.fire_break.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.catastrophe.fire_break.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.catastrophe.fire_break.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.catastrophe.fire_break.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.fire_horn",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.catastrophe.fire_break.offer",
+    "world_resolved": "dialogue.catastrophe.fire_break.world_resolved",
+    "invalid_target": "dialogue.catastrophe.fire_break.invalid_target",
+    "dead_target": "dialogue.catastrophe.fire_break.dead_target",
+    "displaced_target": "dialogue.catastrophe.fire_break.displaced_target",
+    "full_cycle": "dialogue.catastrophe.fire_break.full_cycle"
+  }
+}

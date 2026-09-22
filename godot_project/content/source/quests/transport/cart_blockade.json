@@ -1,0 +1,126 @@
+{
+  "id": "quest.transport.cart_blockade",
+  "schema_version": 1,
+  "version": 1,
+  "family": "transport",
+  "required_cause": {
+    "kinds": [
+      "road_blockade"
+    ],
+    "detail": "Rival checkpoint holds the ridge road for toll."
+  },
+  "binding": {
+    "stakeholder_role": "merchant",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Escort pulls soldiers from village watch.",
+    "era_continuity": "Toll agreement recorded in chronicle pins.",
+    "death_displacement": "Displaced merchant relocates offer to new node.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "pay_toll",
+      "cost_bearer": "merchant_purse",
+      "effects": [
+        {
+          "kind": "open_route",
+          "route_id": "route.ridge"
+        }
+      ],
+      "acknowledgement": "dialogue.transport.cart_blockade.pay"
+    },
+    {
+      "id": "escort_break",
+      "cost_bearer": "local_soldiers",
+      "effects": [
+        {
+          "kind": "clear_cause",
+          "cause_kind": "road_blockade"
+        }
+      ],
+      "acknowledgement": "dialogue.transport.cart_blockade.escort"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "rival_abandons_checkpoint",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.transport.cart_blockade.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "merchant_caravan_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "caravan_lost",
+    "acknowledgement": "dialogue.transport.cart_blockade.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.transport.cart_blockade.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.transport.cart_blockade.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.transport.cart_blockade.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.waybill",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.transport.cart_blockade.offer",
+    "world_resolved": "dialogue.transport.cart_blockade.world_resolved",
+    "invalid_target": "dialogue.transport.cart_blockade.invalid_target",
+    "dead_target": "dialogue.transport.cart_blockade.dead_target",
+    "displaced_target": "dialogue.transport.cart_blockade.displaced_target",
+    "full_cycle": "dialogue.transport.cart_blockade.full_cycle"
+  }
+}

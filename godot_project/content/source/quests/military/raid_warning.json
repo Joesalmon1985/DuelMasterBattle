@@ -1,0 +1,126 @@
+{
+  "id": "quest.military.raid_warning",
+  "schema_version": 1,
+  "version": 1,
+  "family": "military",
+  "required_cause": {
+    "kinds": [
+      "impending_raid"
+    ],
+    "detail": "Scouts report a rival column two turns out."
+  },
+  "binding": {
+    "stakeholder_role": "militia_sergeant",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Fortify delays civilian housing.",
+    "era_continuity": "Raid memory remains for living persons across eras.",
+    "death_displacement": "War death of sergeant fails quest; no auto-victory.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "fortify_gate",
+      "cost_bearer": "builders",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "gate_fortified"
+        }
+      ],
+      "acknowledgement": "dialogue.military.raid_warning.fortify"
+    },
+    {
+      "id": "ambush_column",
+      "cost_bearer": "militia",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "ambush_set"
+        }
+      ],
+      "acknowledgement": "dialogue.military.raid_warning.ambush"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "raid_aborts_due_to_weather",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.military.raid_warning.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "settlement_centre_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "centre_lost",
+    "acknowledgement": "dialogue.military.raid_warning.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.military.raid_warning.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.military.raid_warning.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.military.raid_warning.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.scout_map",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.military.raid_warning.offer",
+    "world_resolved": "dialogue.military.raid_warning.world_resolved",
+    "invalid_target": "dialogue.military.raid_warning.invalid_target",
+    "dead_target": "dialogue.military.raid_warning.dead_target",
+    "displaced_target": "dialogue.military.raid_warning.displaced_target",
+    "full_cycle": "dialogue.military.raid_warning.full_cycle"
+  }
+}

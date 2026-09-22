@@ -1,0 +1,14 @@
+{
+  "id": "rival.ashen_tactician",
+  "display_name": "Ashen Tactician",
+  "difficulty": "measured",
+  "deduction_strategy": "legal_pressures_first",
+  "reads_hidden_secrets": false,
+  "dialogue_profile": "rival.ashen",
+  "persistent_across_appearances": true,
+  "distinct_from": [
+    "rival.iron_broker",
+    "rival.veil_scout",
+    "rival.ember_duelist"
+  ]
+}

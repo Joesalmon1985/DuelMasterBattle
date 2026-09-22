@@ -1,7 +1,7 @@
 {
-  "id": "puzzle.sluice",
+  "id": "puzzle.cave",
   "schema_version": 1,
-  "dungeon_id": "dungeon.sluice",
+  "dungeon_id": "dungeon.cave",
   "solution_trace": [
     "enter",
     "collect_key",
@@ -15,6 +15,6 @@
     "if_plate_released_reset_switch",
     "softlock_recovery_via_entrance_loop"
   ],
-  "required_item": "item.sluice_key",
+  "required_item": "item.cave_key",
   "hidden_secret_readable_by_rivals": false
 }
