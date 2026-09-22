@@ -1,0 +1,24 @@
+{
+  "task_id": "T118",
+  "status": "DONE",
+  "commit": null,
+  "files": [
+    "godot_project/content/source/hazards/pollution.json",
+    "godot_project/content/source/quests/pollution_cleanup.json",
+    "godot_project/content/source/units/later.json",
+    "sim/dmb/hazards/responders.py",
+    "tests/sim/test_t118_pollution.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T118",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T119",
+  "notes": "Pollution cleanup via facility/unit; wizard duel rejected; type persists."
+}

@@ -1125,6 +1125,37 @@ def checks_for_task(task: str) -> list[CheckResult]:
             _pytest("later_eras", "tests/scenarios/test_later_eras.py"),
             _pytest("era_transition_regressions", "tests/scenarios/test_era_transition.py"),
         ],
+        "T118": lambda: [
+            _pytest("pollution_cleanup", "tests/sim/test_t118_pollution.py"),
+            validate_evidence(
+                "pollution_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "hazards" / "pollution.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "pollution_cleanup.json",
+                ],
+            ),
+        ],
+        "T119": lambda: [
+            _pytest("alien_hazards", "tests/sim/test_t119_aliens.py"),
+            validate_evidence(
+                "alien_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "hazards" / "aliens.json",
+                    ROOT / "godot_project" / "content" / "source" / "duel_rules" / "hazard_alien.json",
+                    ROOT / "godot_project" / "client" / "world" / "hazards" / "manifest.json",
+                ],
+            ),
+        ],
+        "T120": lambda: [
+            _pytest("nuclear_machines", "tests/sim/test_t120_nuclear_machines.py"),
+            validate_evidence(
+                "future_hazard_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "hazards" / "nuclear.json",
+                    ROOT / "godot_project" / "content" / "source" / "hazards" / "machines.json",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

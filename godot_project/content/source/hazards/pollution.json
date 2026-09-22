@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "hazard_type": "pollution",
+  "display_name": "Pollution",
+  "semantic_id": "hazard.pollution",
+  "eras": ["modern", "future"],
+  "duel_allowed": false,
+  "suppresses": ["source", "transit"],
+  "max_cubes_per_hex": 3,
+  "response": {
+    "kind": "cleanup",
+    "requires_facility": true,
+    "facility_tags": ["cleanup", "cleanup_capable"],
+    "capable_unit_defs": ["unit.modern.cleanup"],
+    "treats_instead_of_move": true,
+    "quest_template_id": "quest.pollution_cleanup"
+  },
+  "presentation": {
+    "shape": "blob",
+    "pattern": "haze",
+    "abbrev": "PL",
+    "semantic_placeholder": true
+  },
+  "notes": "Pollution cubes persist across later eras; wizard duel commands are rejected."
+}

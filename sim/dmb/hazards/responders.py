@@ -56,12 +56,19 @@ class HazardResponder:
         if era not in caps["eras"]:
             return False
         if htype == "pollution":
-            # Needs cleanup facility — check buildings at node.
+            # Cleanup facility at the formation node, or a cleanup-capable modern unit.
             node_id = formation.get("node_id")
             for b in (self.state.buildings or {}).values():
                 if b.get("node_id") == node_id and (
                     b.get("cleanup_capable") or "cleanup" in str(b.get("definition_id") or "")
                 ):
+                    return True
+            for uid in formation.get("unit_ids") or []:
+                unit = self.state.units.get(uid)
+                if unit is None or not unit.get("alive", True):
+                    continue
+                def_id = str(unit.get("definition_id") or "")
+                if unit.get("cleanup_capable") or "cleanup" in def_id:
                     return True
             return False
         for uid in formation.get("unit_ids") or []:
@@ -71,7 +78,6 @@ class HazardResponder:
             arch = str(unit.get("archetype") or "")
             if arch in caps.get("units", set()):
                 return True
-            # Full-era extension: modern unit may gain cleanup for pollution only (above).
         return False
 
     def treat(self, formation_id: str, cube_id: str) -> dict[str, Any]:

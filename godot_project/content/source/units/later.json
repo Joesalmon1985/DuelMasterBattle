@@ -94,5 +94,22 @@
       "range_tiles": 1,
       "semantic_placeholder": true
     }
+  },
+  {
+    "id": "unit.modern.cleanup",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "modern",
+    "name_key": "Modern Cleanup Crew",
+    "fields": {
+      "archetype": "line",
+      "processed_units_per_unit": 3,
+      "combat_factor": 100,
+      "cleanup_capable": true,
+      "max_health": 80,
+      "attack_cooldown_ms": 1200,
+      "range_tiles": 1,
+      "semantic_placeholder": true
+    }
   }
 ]

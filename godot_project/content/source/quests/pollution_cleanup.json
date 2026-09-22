@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "quest.pollution_cleanup",
+  "family": "catastrophe",
+  "hazard_type": "pollution",
+  "interventions": [
+    "cleanup_facility_treat",
+    "cleanup_unit_treat"
+  ],
+  "semantic_placeholder": true
+}
