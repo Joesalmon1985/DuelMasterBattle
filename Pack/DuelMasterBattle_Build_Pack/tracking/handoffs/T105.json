@@ -1,7 +1,7 @@
 {
   "task_id": "T105",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "f4b52f6e6ab9e43263a519586ccd4cdb0b08e261",
   "files": [
     "sim/dmb/history/chronicle.py",
     "sim/dmb/history/__init__.py",
@@ -26,8 +26,17 @@
     "DmbChroniclePanel knowledge-filtered UI",
     "Historic/legacy/ruin placeholder presentation"
   ],
-  "source_rules": ["C11 TransitionPresenter + Chronicle", "GDD §§38, 173, 182, 185"],
-  "checks": [{"command": "python3 tools/check.py --task T105", "exit_code": 0, "result": "PASS"}],
+  "source_rules": [
+    "C11 TransitionPresenter + Chronicle",
+    "GDD \u00a7\u00a738, 173, 182, 185"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T105",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
   "extra_scope": {
     "sim/dmb/core/ids.py": "history id kind",
     "sim/dmb/eras/service.py": "Chronicle write + prefer player-start core selection",
