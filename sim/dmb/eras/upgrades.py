@@ -15,9 +15,8 @@ from sim.dmb.logistics.stock import StockLedger
 from sim.dmb.world.setup import STARTER_GOODS
 
 ROOT = Path(__file__).resolve().parents[3]
-HISTORIC_CORE_PATH = (
-    ROOT / "godot_project" / "content" / "source" / "eras" / "historic" / "core_upgrade.json"
-)
+ERAS_ROOT = ROOT / "godot_project" / "content" / "source" / "eras"
+HISTORIC_CORE_PATH = ERAS_ROOT / "historic" / "core_upgrade.json"
 RECIPES_PATH = ROOT / "godot_project" / "content" / "source" / "recipes" / "mvp.json"
 
 SLOT_UPGRADE = {
@@ -34,23 +33,47 @@ HISTORIC_UNITS = (
     "unit.historic.heavy",
 )
 
+DEFAULT_UNITS = {
+    "historic": HISTORIC_UNITS,
+    "modern": (
+        "unit.modern.skirmisher",
+        "unit.modern.line",
+        "unit.modern.heavy",
+    ),
+    "future": (
+        "unit.future.skirmisher",
+        "unit.future.line",
+        "unit.future.heavy",
+    ),
+}
 
-def load_historic_core_config(path: Path | None = None) -> dict[str, Any]:
-    target = path or HISTORIC_CORE_PATH
+
+def load_core_config(era: str = "historic", path: Path | None = None) -> dict[str, Any]:
+    """Load era core-upgrade JSON (historic/modern/future)."""
+    era_key = str(era or "historic").lower()
+    if era_key in {"ancient", "prehistoric"}:
+        era_key = "historic"
+    target = path or (ERAS_ROOT / era_key / "core_upgrade.json")
     if not target.exists():
+        units = list(DEFAULT_UNITS.get(era_key, HISTORIC_UNITS))
         return {
             "core_upgrade": {
-                "centre_def": SLOT_UPGRADE["centre"],
-                "warehouse_def": SLOT_UPGRADE["warehouse"],
-                "primary_def": SLOT_UPGRADE["primary"],
-                "processor_def": SLOT_UPGRADE["processor"],
-                "factory_def": SLOT_UPGRADE["factory"],
-                "unit_defs": list(HISTORIC_UNITS),
+                "centre_def": f"building.centre.{era_key}",
+                "warehouse_def": f"building.warehouse.{era_key}",
+                "primary_def": f"building.primary.{era_key}",
+                "processor_def": f"building.processor.{era_key}",
+                "factory_def": f"building.factory.{era_key}",
+                "unit_defs": units,
                 "starter_grant": dict(STARTER_GOODS),
             },
             "terrain_industrial": {},
         }
     return json.loads(target.read_text(encoding="utf-8"))
+
+
+def load_historic_core_config(path: Path | None = None) -> dict[str, Any]:
+    """Backward-compatible Historic loader."""
+    return load_core_config("historic", path=path)
 
 
 def _slot_kind(building: Mapping[str, Any]) -> str:
@@ -103,7 +126,7 @@ class CoreUpgradeService:
 
     def __post_init__(self) -> None:
         if self.config is None:
-            self.config = load_historic_core_config()
+            self.config = load_core_config("historic")
 
     def upgrade_core(
         self,
@@ -122,7 +145,9 @@ class CoreUpgradeService:
         if receipt_key in receipts:
             return {"idempotent": True, "receipt": receipts[receipt_key]}
 
+        self.config = load_core_config(next_era)
         cfg = (self.config or {}).get("core_upgrade") or {}
+        default_units = list(DEFAULT_UNITS.get(str(next_era).lower(), HISTORIC_UNITS))
         people_before = set(self.state.people)
         building_ids_before = set(self.state.buildings)
         primary_before = sum(
@@ -141,7 +166,7 @@ class CoreUpgradeService:
             if building.get("settlement_id") != settlement_id:
                 continue
             kind = _slot_kind(building)
-            target = cfg.get(f"{kind}_def") or SLOT_UPGRADE.get(kind)
+            target = cfg.get(f"{kind}_def") or f"building.{kind}.{next_era}"
             if not target:
                 continue
             _rebind_building(building, str(target), era=next_era)
@@ -162,7 +187,7 @@ class CoreUpgradeService:
                     "faction_id": settlement.get("faction_id"),
                     "settlement_id": settlement_id,
                     "era": next_era,
-                    "unit_def_id": HISTORIC_UNITS[0],
+                    "unit_def_id": default_units[0],
                     "meter": fraction_wire(Fraction()),
                     "active": True,
                 },
@@ -170,7 +195,7 @@ class CoreUpgradeService:
             record["era"] = next_era
             record["meter"] = fraction_wire(Fraction())
             slot = int(building.get("slot_index") or 0)
-            units = list(cfg.get("unit_defs") or HISTORIC_UNITS)
+            units = list(cfg.get("unit_defs") or default_units)
             record["unit_def_id"] = units[min(slot, len(units) - 1)]
             meter_resets.append(bid)
             routes = self.state.industry.setdefault("routes", {})
@@ -182,13 +207,14 @@ class CoreUpgradeService:
                         route["unit_def_id"] = record["unit_def_id"]
                         route["era"] = next_era
 
-        processor_route = self._install_minimal_historic_processor(settlement_id, next_era=next_era)
+        processor_route = self._install_minimal_era_processor(settlement_id, next_era=next_era)
 
         settlement["tier"] = "settlement"
         settlement["era"] = next_era
         settlement["legacy"] = False
         settlement["upgraded"] = True
-        settlement["historic_core"] = True
+        settlement["era_core"] = True
+        settlement["historic_core"] = str(next_era).lower() == "historic"
         settlement["operational"] = True
         settlement["ruin_only"] = False
         settlement["status"] = "active"
@@ -298,10 +324,10 @@ class CoreUpgradeService:
         grant_receipts[key] = record
         return record
 
-    def _install_minimal_historic_processor(
+    def _install_minimal_era_processor(
         self, settlement_id: str, *, next_era: str
     ) -> dict[str, Any] | None:
-        """Rebind existing processor to a feasible Historic recipe when possible.
+        """Rebind existing processor to a feasible era recipe when possible.
 
         Extra legacy processors remain; we do not add duplicate primary/factory slots.
         """
@@ -313,7 +339,7 @@ class CoreUpgradeService:
         if not processors:
             return None
         processor_id = sorted(processors)[0]
-        recipe = self._pick_historic_recipe()
+        recipe = self._pick_era_recipe(next_era)
         if recipe is None:
             # Still mark processor era for presentation; routes may stay until layers exist.
             binding = self.state.industry.setdefault("processors", {}).get(processor_id)
@@ -338,8 +364,6 @@ class CoreUpgradeService:
                 or fraction_wire(Fraction(1, 10)),
                 "active": True,
             }
-            # Channel resource ids stay on installed layers for T101 legacy distinction;
-            # minimal historic route records the intended recipe for later layer install.
             return {
                 "processor_id": processor_id,
                 "recipe_id": recipe["id"],
@@ -348,15 +372,24 @@ class CoreUpgradeService:
             }
         return {"processor_id": processor_id, "recipe_id": recipe["id"], "status": "pending_channels"}
 
-    def _pick_historic_recipe(self) -> dict[str, Any] | None:
+    def _install_minimal_historic_processor(
+        self, settlement_id: str, *, next_era: str
+    ) -> dict[str, Any] | None:
+        return self._install_minimal_era_processor(settlement_id, next_era=next_era)
+
+    def _pick_era_recipe(self, era: str) -> dict[str, Any] | None:
         from sim.dmb.content.catalogue import recipes_for_era
 
-        # Prefer MVP-marked Historic recipes for G06 continuity; fall back to full set.
-        mvp = recipes_for_era("historic", mvp_only=True)
+        era_key = str(era or "historic").lower()
+        # Prefer MVP-marked recipes when present (G06 Pre/Hist); else full catalogue.
+        mvp = recipes_for_era(era_key, mvp_only=True)
         if mvp:
             return dict(mvp[0])
-        full = recipes_for_era("historic")
+        full = recipes_for_era(era_key)
         return dict(full[0]) if full else None
+
+    def _pick_historic_recipe(self) -> dict[str, Any] | None:
+        return self._pick_era_recipe("historic")
 
 
 def upgrade_cores(
