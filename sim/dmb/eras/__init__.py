@@ -10,9 +10,11 @@ from sim.dmb.eras.planner import (
     theoretical_site_capacity,
     validate_plan_freshness,
 )
+from sim.dmb.eras.upgrades import CoreUpgradeService, upgrade_cores
 
 __all__ = [
     "CollapseDisposition",
+    "CoreUpgradeService",
     "EraTransitionPlan",
     "EraTransitionPlanner",
     "FissionDisposition",
@@ -22,5 +24,6 @@ __all__ = [
     "plan_fission",
     "select_collapse_factions",
     "theoretical_site_capacity",
+    "upgrade_cores",
     "validate_plan_freshness",
 ]

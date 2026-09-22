@@ -904,6 +904,21 @@ def checks_for_task(task: str) -> list[CheckResult]:
         "T099": lambda: [
             _pytest("era_fission", "tests/sim/test_t099_fission.py"),
         ],
+        "T100": lambda: [
+            _pytest("historic_core_upgrade", "tests/sim/test_t100_core_upgrade.py"),
+            validate_evidence(
+                "historic_core_content",
+                [
+                    ROOT
+                    / "godot_project"
+                    / "content"
+                    / "source"
+                    / "eras"
+                    / "historic"
+                    / "core_upgrade.json"
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

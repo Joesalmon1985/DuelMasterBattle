@@ -51,7 +51,8 @@
       "footprint": 1,
       "job_ref": "job.centre_clerk",
       "capacity_base": 1.0,
-      "upgrade_ref": "building.centre.city"
+      "upgrade_ref": "building.centre.city",
+      "era_upgrade_ref": "building.centre.historic"
     }
   },
   {
@@ -68,7 +69,41 @@
       "capacity_base": 1.0,
       "settlement_tier": "city",
       "primary_flow_multiplier": 2.0,
-      "primary_slot_multiplier": 1.0
+      "primary_slot_multiplier": 1.0,
+      "era_upgrade_ref": "building.centre.historic"
+    }
+  },
+  {
+    "id": "building.centre.historic",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "historic",
+    "name_key": "Historic Settlement Centre",
+    "fields": {
+      "slot_kind": "centre",
+      "max_health": 500,
+      "footprint": 1,
+      "job_ref": "job.centre_clerk",
+      "capacity_base": 1.0,
+      "presentation": "historic_core"
+    }
+  },
+  {
+    "id": "building.centre.historic.city",
+    "schema_version": 1,
+    "kind": "building",
+    "era_id": "historic",
+    "name_key": "Historic City Centre",
+    "fields": {
+      "slot_kind": "centre",
+      "max_health": 500,
+      "footprint": 1,
+      "job_ref": "job.centre_clerk",
+      "capacity_base": 1.0,
+      "settlement_tier": "city",
+      "primary_flow_multiplier": 2.0,
+      "primary_slot_multiplier": 1.0,
+      "presentation": "historic_core"
     }
   },
   {
