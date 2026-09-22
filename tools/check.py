@@ -977,6 +977,11 @@ def checks_for_task(task: str) -> list[CheckResult]:
                     / "early_transition_checkpoint.md",
                 ],
             ),
+            _godot_script(
+                "fx_era_ui_controls",
+                "res://client/tests/run_fx_era_ui.gd",
+                r"FX_ERA_UI_OK",
+            ),
         ],
     }
     if task in mapping:

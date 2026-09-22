@@ -9,11 +9,11 @@
 | Field | Value |
 |---|---|
 | Branch | `phase/g06-historic-mvp` |
-| Tip commit | 341a82c2b3b55993103f35d9555a03b96cf354b2 |
+| Tip commit | *(fill after UI fix commit)* |
 | T103 | Rockfall/Person continuity |
 | T104 | Atomic EraService + Historic industry |
 | T105 | TransitionPresenter + Chronicle |
-| T106 | FX-ERA fixture + launcher |
+| T106 | FX-ERA fixture + launcher + **control surface fix** |
 
 ## Fixture
 
@@ -31,7 +31,7 @@
 | Winner | `faction:2` (player) @ **9 VP** |
 | Loser | `faction:1` @ **5 VP** (expected collapse) |
 | Start node | `node:35` (`settlement:3`) |
-| Expected scoring action | **Wait** → commits staged settlement order → **10 VP** |
+| Expected scoring action | Click **Complete founding → 10 VP** (Wait one turn) |
 | Scoring order | `board.fx_era.scoring_order_id` targeting `scoring_node_id` |
 
 ## Expected transition outcome
@@ -40,49 +40,63 @@
 |---|---|
 | Trigger | Automatic on 10 VP (no debug button) |
 | Winner | `faction:2` survives |
-| Collapse | `faction:1` → inert ruins |
-| Fission | None at this boundary (multi-faction start; sole survivor marked for later mandatory fission) |
-| Historic cores | Prefer player start: **`settlement:3` @ `node:35`**, plus second ranked core (often `settlement:4` @ `node:27`) |
-| Legacy sites | Later expansion settlements retain Prehistoric industry (e.g. `settlement:8+`) |
-| Historic industry | `settlement:3` cross-terrain chain operational (`recipe.historic.his_04` class) |
+| Collapse | `faction:1` → ruins |
+| Fission | None at this boundary |
+| Historic cores | Prefer player start: **`settlement:3` @ `node:35`**, plus second ranked core |
+| Legacy sites | Later expansion settlements retain Prehistoric industry |
+| Historic industry | `settlement:3` cross-terrain chain operational |
 
 ## Continuity anchors
 
 | Field | Value |
 |---|---|
-| Known Person IDs | See `board.fx_era.known_person_ids` (workers on node:35, e.g. `person:16`…) |
-| Rockfall | `rockfall:1` status **blocking**; quest `quest.blocked_exit_boulder` offered |
-| Same LocalArea | Transition must not regenerate 48×48; structures upgrade in place |
+| Known Person IDs | `board.fx_era.known_person_ids` (e.g. `person:16`…) |
+| Rockfall | `rockfall:1` **blocking**; quest `quest.blocked_exit_boulder` |
+| Same LocalArea | No 48×48 regenerate |
 
 ## Launch / reset
 
 ```bash
-bash tools/play_fx_era.sh
-# optional:
-DMB_SEED=507 DMB_SAVE_SLOT=fx_era bash tools/play_fx_era.sh
+DMB_SAVE_SLOT=fx_era_manual_1 bash tools/play_fx_era.sh
 ```
 
-Reset: delete Godot user save slot `fx_era` / restart with a fresh seed env; or relaunch without loading a prior Historic save.
+**Required visible panel (if absent, build is not ready):**
+
+```
+┌────────────────────────────────────┐
+│ FX-ERA • Prehistoric • 9 / 10 VP  │
+│ Test action: Wait one turn         │
+│ [Complete founding → 10 VP]        │
+│ [World Map] [Chronicle]            │
+└────────────────────────────────────┘
+```
+
+Also: **M** opens World Map; **C** opens Chronicle (same paths as the buttons).
 
 ## Manual checklist (≈10–15 min)
 
-1. Launch FX-ERA; walk Prehistoric core at node:35 briefly.
-2. Talk to a known worker; confirm dialogue is truthful.
-3. Inspect Rockfall (still blocking).
-4. Press **Wait (complete founding → 10 VP)**.
-5. Confirm transition presentation (~4s; Esc/Skip OK).
-6. Confirm Historic labels/shapes on the **same** LocalArea.
-7. Talk to the same Person again.
-8. Open **Chronicle** (button or `C`).
-9. Travel to a legacy Prehistoric expansion site; confirm old-era industry still marked LEGACY.
-10. Save / reload; confirm transition does **not** repeat.
+1. Confirm FX-ERA panel is visible (badge + three buttons). If not → **stop**; build not ready.
+2. Walk Prehistoric node:35; talk to a worker; inspect Rockfall.
+3. Click **World Map** → map opens, Game Time paused → **Close** → resumes.
+4. Press **M** → same map path.
+5. Click **Chronicle** (or **C**) → opens → close.
+6. Click **Complete founding → 10 VP** → Wait commits → transition → panel shows Historic.
+7. Confirm same LocalArea / same Person; save/reload does not re-transition.
+
+## Verification layers
+
+| Layer | Meaning |
+|---|---|
+| PROCESS LAUNCH | Godot window + sidecar started |
+| HUMAN CONTROL SURFACE | Panel/buttons visible & usable (`run_fx_era_ui.gd` / live retest) |
+
+A process launch alone is **not** sufficient for this checkpoint.
 
 ## Known defects / limits
 
-- Full normal-start → 10 VP pacing remains deferred to T108/T112 (autonomous cart/settlement growth risk).
-- Second Historic core may lack cross-terrain recipe if its hexes are mono-terrain (`no_cross_terrain_recipe`); primary core at node:35 is validated operational.
-- Godot transition overlay is prototype geometry (acceptable per T105).
-- G05 Godot headless smoke may still hang in this environment; Python Rockfall/dialogue suites are the regression authority.
+- Second Historic core may be mono-terrain; node:35 core is operational.
+- Normal-start → 10 VP pacing deferred (T108/T112).
+- `run_g05_smoke.gd` may still hang in this environment; Python dialogue/quest suite remains PASS. Keep separate from FX-ERA UI work.
 
 ## Progress state
 

@@ -162,6 +162,7 @@ class WorldState:
             "command_receipts": lambda: deepcopy(self.command_receipts),
             "knowledge_raw": lambda: deepcopy(self.knowledge),
             "fx_village": lambda: deepcopy(self.board.get("fx_village") or {}),
+            "fx_era": lambda: deepcopy(self.board.get("fx_era") or {}),
             "overworld_area": lambda: _overworld_area_view(self),
             "items": lambda: deepcopy(self.items),
             "quests": lambda: deepcopy(self.quests),

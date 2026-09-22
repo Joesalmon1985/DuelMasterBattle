@@ -20,7 +20,7 @@ const EncounterHost = preload("res://client/encounters/encounter_host.gd")
 
 const G05_SAVE := "g05_village"
 const INDUSTRY_FIELDS := [
-	"overworld_area", "fx_village", "fx_industry", "industry", "buildings",
+	"overworld_area", "fx_village", "fx_era", "fx_industry", "industry", "buildings",
 	"industry_workers", "industry_connections", "industry_factories",
 	"hazards", "items", "units", "carts", "orders", "player", "clock",
 	"presentation", "battles", "world_map", "chronicle",
@@ -35,8 +35,17 @@ var _layers
 var _map_panel
 var _era_presenter
 var _chronicle_panel
-var _fx_era_bar: HBoxContainer
+var _ui_layer: CanvasLayer
+var _fx_era_panel: PanelContainer
+var _fx_era_badge: Label
+var _fx_era_hint: Label
+var _fx_era_wait_btn: Button
+var _fx_era_map_btn: Button
+var _fx_era_chron_btn: Button
 var _fx_era_wait_id := ""
+var _fx_era_wait_pending := false
+var _fx_era_transitioned := false
+var _map_open_pending := false
 var _transition_seen_id := ""
 var _time_hud: Label
 var _boot_done := false
@@ -117,17 +126,22 @@ func _ready() -> void:
 	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_duel_host.visible = false
 	add_child(_duel_host)
+	# High canvas layer keeps FX-ERA / map / chronicle above Overworld Node2D UI.
+	_ui_layer = CanvasLayer.new()
+	_ui_layer.name = "ShellUILayer"
+	_ui_layer.layer = 40
+	add_child(_ui_layer)
 	_map_panel = WorldMapPanel.new()
 	_map_panel.name = "WorldMap"
 	_map_panel.closed.connect(_on_map_closed)
-	add_child(_map_panel)
+	_ui_layer.add_child(_map_panel)
 	_era_presenter = EraTransitionPresenter.new()
 	_era_presenter.name = "EraTransition"
 	_era_presenter.finished.connect(_on_era_transition_finished)
-	add_child(_era_presenter)
+	_ui_layer.add_child(_era_presenter)
 	_chronicle_panel = ChroniclePanel.new()
 	_chronicle_panel.name = "Chronicle"
-	add_child(_chronicle_panel)
+	_ui_layer.add_child(_chronicle_panel)
 	_project_root = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	if _project_root.ends_with("godot_project"):
 		_project_root = _project_root.get_base_dir()
@@ -189,26 +203,29 @@ func _boot() -> void:
 	_apply_workers(view)
 	_apply_world_layers(area)
 	_refresh_time_hud(view)
-	_maybe_setup_fx_era_ui()
+	_maybe_setup_fx_era_ui(view)
 	_maybe_play_era_transition(area)
 	_long_world = str(OS.get_environment("DMB_FIXTURE")) == "FX-LONG-WORLD"
 	if _long_world:
 		_setup_long_world_observer()
-		_status.text = "LONG-WORLD observer — fast-forward / event log (dev only)"
-	else:
-		_status.text = "Explore — M map · paths lead to neighbouring places"
+	_apply_fixture_status()
+	_raise_shell_overlays()
 
 	_boot_done = true
 	_village_ready = true
 	_sync_pose(true)
 	await get_tree().create_timer(2.0).timeout
-	if is_instance_valid(_status) and not _long_world:
+	if is_instance_valid(_status) and not _long_world and not _is_fx_era():
 		_status.modulate.a = 0.55
 
 
 func _process(delta: float) -> void:
 	if not _boot_done or _bridge_down or _client == null:
 		return
+	# Finish deferred World Map open after in-flight AdvanceGame completes.
+	if _map_open_pending and _clock_inflight_id == "":
+		_map_open_pending = false
+		_open_world_map_now()
 	if _paused or not _focus:
 		if _workers:
 			_workers.set_frozen(true)
@@ -290,6 +307,11 @@ func _on_client_finished(request_id: String, reply: Dictionary) -> void:
 		_fx_era_wait_id = ""
 		if str(reply.get("status", "")) == "ACCEPTED":
 			_fx_era_refresh_after_wait()
+		else:
+			_fx_era_wait_pending = false
+			_refresh_fx_era_panel()
+			_status.text = "FX-ERA Wait failed: %s" % reply.get("code", "?")
+			_status.modulate.a = 1.0
 		return
 	if str(reply.get("status", "")) == "ACCEPTED" and reply.has("view"):
 		var v: Dictionary = reply.get("view", {})
@@ -464,6 +486,9 @@ func reproject_from_python() -> void:
 	_apply_world_layers(area)
 	_refresh_time_hud(view)
 	_maybe_play_era_transition(area)
+	if _is_fx_era():
+		_refresh_fx_era_panel(view)
+		_raise_shell_overlays()
 
 
 func _apply_world_layers(area: Dictionary) -> void:
@@ -490,7 +515,8 @@ func _refresh_time_hud(view: Dictionary = {}) -> void:
 		_game_ms_sample = int(clock.get("game_ms", _game_ms_sample))
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	## Global shortcuts — _unhandled_input alone can miss keys consumed by Overworld UI.
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_M:
 			_toggle_world_map()
@@ -503,31 +529,148 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 
-func _maybe_setup_fx_era_ui() -> void:
-	if str(OS.get_environment("DMB_FIXTURE")) != "FX-ERA":
+func _is_fx_era() -> bool:
+	return str(OS.get_environment("DMB_FIXTURE")) == "FX-ERA"
+
+
+func _apply_fixture_status() -> void:
+	if not is_instance_valid(_status):
 		return
-	if _fx_era_bar != null:
+	_status.modulate.a = 1.0
+	if _is_fx_era():
+		if _fx_era_transitioned:
+			_status.text = "FX-ERA • Historic — transition committed · same LocalArea"
+		else:
+			_status.text = "FX-ERA — use panel: Complete founding → 10 VP · World Map · Chronicle"
+	elif _long_world:
+		_status.text = "LONG-WORLD observer — fast-forward / event log (dev only)"
+	else:
+		_status.text = "Explore — M map · paths lead to neighbouring places"
+
+
+func _raise_shell_overlays() -> void:
+	if _ui_layer != null:
+		_ui_layer.visible = true
+	if _fx_era_panel != null:
+		_fx_era_panel.visible = true
+		_fx_era_panel.move_to_front()
+	if _status != null:
+		_status.move_to_front()
+	if _time_hud != null:
+		_time_hud.move_to_front()
+
+
+func _maybe_setup_fx_era_ui(view: Dictionary = {}) -> void:
+	if not _is_fx_era():
 		return
-	_fx_era_bar = HBoxContainer.new()
-	_fx_era_bar.set_anchors_preset(PRESET_BOTTOM_WIDE)
-	_fx_era_bar.offset_left = 8
-	_fx_era_bar.offset_top = -52
-	_fx_era_bar.offset_right = -8
-	_fx_era_bar.offset_bottom = -8
-	add_child(_fx_era_bar)
-	var wait_btn := Button.new()
-	wait_btn.text = "Wait (complete founding → 10 VP)"
-	wait_btn.pressed.connect(_on_fx_era_wait)
-	_fx_era_bar.add_child(wait_btn)
-	var chron_btn := Button.new()
-	chron_btn.text = "Chronicle"
-	chron_btn.pressed.connect(_toggle_chronicle)
-	_fx_era_bar.add_child(chron_btn)
-	_status.text = "FX-ERA — near-threshold Prehistoric; Wait commits the staged settlement"
+	if _fx_era_panel != null:
+		_refresh_fx_era_panel(view)
+		_raise_shell_overlays()
+		return
+	var host: Node = _ui_layer if _ui_layer != null else self
+	_fx_era_panel = PanelContainer.new()
+	_fx_era_panel.name = "FxEraDevPanel"
+	_fx_era_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	_fx_era_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_fx_era_panel.offset_left = 8
+	_fx_era_panel.offset_top = 44
+	_fx_era_panel.offset_right = 320
+	_fx_era_panel.offset_bottom = 220
+	_fx_era_panel.custom_minimum_size = Vector2(300, 168)
+	host.add_child(_fx_era_panel)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	_fx_era_panel.add_child(margin)
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 8)
+	margin.add_child(vbox)
+	_fx_era_badge = Label.new()
+	_fx_era_badge.name = "FxEraBadge"
+	_fx_era_badge.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_fx_era_badge.add_theme_font_size_override("font_size", 14)
+	_fx_era_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(_fx_era_badge)
+	_fx_era_hint = Label.new()
+	_fx_era_hint.name = "FxEraHint"
+	_fx_era_hint.text = "Test action: Wait one turn"
+	_fx_era_hint.add_theme_font_size_override("font_size", 11)
+	_fx_era_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(_fx_era_hint)
+	_fx_era_wait_btn = Button.new()
+	_fx_era_wait_btn.name = "FxEraWaitButton"
+	_fx_era_wait_btn.text = "Complete founding → 10 VP"
+	_fx_era_wait_btn.custom_minimum_size = Vector2(0, 48)
+	_fx_era_wait_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	_fx_era_wait_btn.pressed.connect(_on_fx_era_wait)
+	vbox.add_child(_fx_era_wait_btn)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	vbox.add_child(row)
+	_fx_era_map_btn = Button.new()
+	_fx_era_map_btn.name = "FxEraMapButton"
+	_fx_era_map_btn.text = "World Map"
+	_fx_era_map_btn.custom_minimum_size = Vector2(120, 48)
+	_fx_era_map_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	_fx_era_map_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_fx_era_map_btn.pressed.connect(_toggle_world_map)
+	row.add_child(_fx_era_map_btn)
+	_fx_era_chron_btn = Button.new()
+	_fx_era_chron_btn.name = "FxEraChronicleButton"
+	_fx_era_chron_btn.text = "Chronicle"
+	_fx_era_chron_btn.custom_minimum_size = Vector2(120, 48)
+	_fx_era_chron_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	_fx_era_chron_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_fx_era_chron_btn.pressed.connect(_toggle_chronicle)
+	row.add_child(_fx_era_chron_btn)
+	_refresh_fx_era_panel(view)
+	_raise_shell_overlays()
+
+
+func _refresh_fx_era_panel(view: Dictionary = {}) -> void:
+	if _fx_era_badge == null:
+		return
+	var payload: Dictionary = view if not view.is_empty() else _last_industry
+	var fx: Dictionary = _coerce_dict(payload.get("fx_era"))
+	var env_ok := _is_fx_era()
+	var meta_ok := not fx.is_empty() and str(fx.get("fixture", "FX-ERA")) == "FX-ERA"
+	if env_ok and not meta_ok and _boot_done:
+		_fx_era_badge.text = "FX-ERA ERROR — Python fixture metadata missing (got normal G05?)"
+		_fx_era_badge.add_theme_color_override("font_color", Color(0.95, 0.25, 0.2))
+		return
+	var clock: Dictionary = _coerce_dict(payload.get("clock"))
+	var era := str(clock.get("era") or clock.get("era_id") or "prehistoric")
+	if era == "":
+		era = "prehistoric"
+	var winner := str(fx.get("winner_faction_id", "faction:2"))
+	var scores: Dictionary = _coerce_dict(fx.get("scores"))
+	var vp := int(scores.get(winner, 9))
+	if _fx_era_transitioned or era == "historic":
+		_fx_era_transitioned = true
+		_fx_era_badge.text = "FX-ERA • Historic\nTransition committed"
+		if _fx_era_wait_btn != null:
+			_fx_era_wait_btn.disabled = true
+			_fx_era_wait_btn.visible = false
+		if _fx_era_hint != null:
+			_fx_era_hint.text = "Same LocalArea · open Chronicle / World Map"
+	else:
+		_fx_era_badge.text = "FX-ERA • %s\n%s — %s / 10 VP" % [
+			era.capitalize() if era != "prehistoric" else "Prehistoric",
+			winner,
+			vp
+		]
+		if _fx_era_wait_btn != null:
+			_fx_era_wait_btn.visible = true
+			_fx_era_wait_btn.disabled = _fx_era_wait_pending
+			_fx_era_wait_btn.text = (
+				"Waiting…" if _fx_era_wait_pending else "Complete founding → 10 VP"
+			)
 
 
 func _on_fx_era_wait() -> void:
-	if _client == null or _bridge_down:
+	if _client == null or _bridge_down or _fx_era_wait_pending or _fx_era_transitioned:
 		return
 	var node_id := "node:35"
 	if _overworld != null and _overworld.has_method("current_node_id"):
@@ -535,6 +678,8 @@ func _on_fx_era_wait() -> void:
 	elif not _last_industry.is_empty():
 		var player: Dictionary = _coerce_dict(_last_industry.get("player"))
 		node_id = str(player.get("node_id", node_id))
+	_fx_era_wait_pending = true
+	_refresh_fx_era_panel()
 	_cmd_seq += 1
 	_fx_era_wait_id = _client.enqueue_command(
 		"fx-era-wait-%s" % _cmd_seq,
@@ -547,8 +692,12 @@ func _on_fx_era_wait() -> void:
 func _fx_era_refresh_after_wait() -> void:
 	if _client == null:
 		return
+	_fx_era_wait_pending = false
 	var view: Dictionary = _client.request_view("player", INDUSTRY_FIELDS)
 	_last_industry = view
+	var clock: Dictionary = _coerce_dict(view.get("clock"))
+	if str(clock.get("era") or "") == "historic" or clock.get("last_era_transition_id"):
+		_fx_era_transitioned = true
 	var area: Dictionary = _coerce_dict(view.get("overworld_area"))
 	if not area.is_empty():
 		VillageTestRunner.replace_area(area)
@@ -561,7 +710,9 @@ func _fx_era_refresh_after_wait() -> void:
 		_maybe_play_era_transition(area)
 	_apply_workers(view)
 	_refresh_time_hud(view)
-	_status.text = "Historic era — same LocalArea; open Chronicle (C)"
+	_refresh_fx_era_panel(view)
+	_apply_fixture_status()
+	_raise_shell_overlays()
 
 
 func _maybe_play_era_transition(area: Dictionary) -> void:
@@ -580,9 +731,11 @@ func _maybe_play_era_transition(area: Dictionary) -> void:
 	if _era_presenter.is_playing():
 		return
 	_transition_seen_id = tid
+	_fx_era_transitioned = true
 	_paused = true
 	if _clock:
 		_clock.notify_focus(false)
+	_raise_shell_overlays()
 	_era_presenter.play(payload)
 
 
@@ -590,11 +743,13 @@ func _on_era_transition_finished(_skipped: bool) -> void:
 	_paused = false
 	if _clock:
 		_clock.notify_focus(true)
-	# Clear presentation flag locally so reload-safe UI does not loop; Python keeps receipt.
 	if not _last_industry.is_empty():
 		var area: Dictionary = _coerce_dict(_last_industry.get("overworld_area"))
 		if area.has("presentation_era_transition"):
 			area["presentation_era_transition"] = {}
+	_refresh_fx_era_panel()
+	_apply_fixture_status()
+	_raise_shell_overlays()
 
 
 func _toggle_chronicle() -> void:
@@ -606,6 +761,8 @@ func _toggle_chronicle() -> void:
 	var view: Dictionary = _client.request_view("player", ["chronicle", "chronicle_debug", "clock"])
 	var events: Array = view.get("chronicle", [])
 	_chronicle_panel.show_events(events, false)
+	_chronicle_panel.move_to_front()
+	_raise_shell_overlays()
 
 
 func _toggle_world_map() -> void:
@@ -614,17 +771,35 @@ func _toggle_world_map() -> void:
 	if _map_panel.visible:
 		_map_panel.hide_map()
 		return
+	# Avoid sync Pause while AdvanceGame is in flight (bridge deadlock risk).
+	if _clock_inflight_id != "":
+		_map_open_pending = true
+		_paused = true
+		if _workers:
+			_workers.set_frozen(true)
+		return
+	_open_world_map_now()
+
+
+func _open_world_map_now() -> void:
+	if _map_panel == null or _client == null:
+		return
+	if _map_panel.visible:
+		return
 	_map_pause_token = acquire_pause("world_map")
 	var view: Dictionary = _client.request_view("player", ["world_map", "clock", "player"])
 	var payload: Dictionary = _coerce_dict(view.get("world_map"))
 	_map_panel.show_map(payload)
 	_map_panel.move_to_front()
+	_raise_shell_overlays()
 
 
 func _on_map_closed() -> void:
+	_map_open_pending = false
 	if _map_pause_token != "":
 		release_pause()
 		_map_pause_token = ""
+	_raise_shell_overlays()
 
 
 func start_hazard_challenge(cube_id: String) -> bool:
@@ -918,6 +1093,42 @@ func is_village_ready() -> bool:
 
 func overworld() -> Node:
 	return _overworld
+
+
+func fx_era_panel() -> Control:
+	return _fx_era_panel
+
+
+func fx_era_wait_button() -> Button:
+	return _fx_era_wait_btn
+
+
+func fx_era_map_button() -> Button:
+	return _fx_era_map_btn
+
+
+func fx_era_chronicle_button() -> Button:
+	return _fx_era_chron_btn
+
+
+func world_map_panel() -> Control:
+	return _map_panel
+
+
+func chronicle_panel() -> Control:
+	return _chronicle_panel
+
+
+func invoke_fx_era_wait_for_test() -> void:
+	_on_fx_era_wait()
+
+
+func invoke_world_map_for_test() -> void:
+	_toggle_world_map()
+
+
+func invoke_chronicle_for_test() -> void:
+	_toggle_chronicle()
 
 
 func mara_actor_id() -> String:

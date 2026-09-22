@@ -22,6 +22,7 @@ export DMB_SAVE_SLOT="${DMB_SAVE_SLOT:-fx_era}"
 RESOLUTION="${DMB_RESOLUTION:-450x800}"
 if [[ "${1:-}" == "--resolution" ]]; then RESOLUTION="${2:?--resolution requires WxH}"; fi
 echo "FX-ERA seed=$DMB_SEED resolution=$RESOLUTION"
-echo "Press Wait to complete the staged settlement (9→10 VP) and trigger Historic transition."
+echo "You should see an FX-ERA panel with: Complete founding → 10 VP · World Map · Chronicle"
+echo "If that panel is absent, the build is not ready for the early Historic checkpoint."
 exec "$GODOT_BIN" --path "$ROOT/godot_project" --resolution "$RESOLUTION" \
   res://client/scenes/g05_shell.tscn
