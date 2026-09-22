@@ -1,7 +1,7 @@
 {
   "task_id": "T104",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "dee291d23257fd034c38c3249e392cf644fc0a51",
   "files": [
     "sim/dmb/eras/service.py",
     "sim/dmb/time/runner.py",
@@ -12,13 +12,13 @@
   ],
   "public_contracts": [
     "EraService.request_transition / commit / maybe_trigger_from_interrupt",
-    "atomic collapse→fission→core upgrade→legacy→continuity→hazard→roster",
+    "atomic collapse\u2192fission\u2192core upgrade\u2192legacy\u2192continuity\u2192hazard\u2192roster",
     "idempotent commit; no half-converted era state",
-    "_rebind_historic_industry — cross-terrain Historic production chain"
+    "_rebind_historic_industry \u2014 cross-terrain Historic production chain"
   ],
   "source_rules": [
     "C11 EraService atomic order",
-    "GDD §§40, 114, 166, 189",
+    "GDD \u00a7\u00a740, 114, 166, 189",
     "T100 follow-up: Historic industry operational (not label-only)"
   ],
   "checks": [
@@ -34,5 +34,5 @@
   },
   "defects": [],
   "next_task": "T105",
-  "notes": "Historic industry rebind requires ≥2 touching terrains at core; core selection prefers upgradeable centre+warehouse sites."
+  "notes": "Historic industry rebind requires \u22652 touching terrains at core; core selection prefers upgradeable centre+warehouse sites."
 }
