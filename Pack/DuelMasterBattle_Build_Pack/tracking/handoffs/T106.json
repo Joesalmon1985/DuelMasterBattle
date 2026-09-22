@@ -1,7 +1,7 @@
 {
   "task_id": "T106",
   "status": "DONE",
-  "commit": "PENDING",
+  "commit": "341a82c2b3b55993103f35d9555a03b96cf354b2",
   "files": [
     "sim/dmb/world/fx_era_world.py",
     "sim/dmb/testing/fixtures.py",
@@ -16,11 +16,20 @@
   "public_contracts": [
     "FX-ERA near-10-VP checkpoint (seed 507)",
     "tools/play_fx_era.sh",
-    "Wait commits staged settlement → EraService",
+    "Wait commits staged settlement \u2192 EraService",
     "early_transition_checkpoint.md"
   ],
-  "source_rules": ["C11 FX-ERA/FX-SOLO", "GDD §§205, 225, 231"],
-  "checks": [{"command": "python3 tools/check.py --task T106", "exit_code": 0, "result": "PASS"}],
+  "source_rules": [
+    "C11 FX-ERA/FX-SOLO",
+    "GDD \u00a7\u00a7205, 225, 231"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T106",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
   "extra_scope": {
     "sim/dmb/testing/fixtures.py": "FX-ERA + FX-SOLO loaders",
     "godot_project/client/scenes/g05_shell.gd": "FX-ERA Wait/Chronicle chrome (committed under T105)"
@@ -29,6 +38,6 @@
     "Second Historic core may be mono-terrain (no_cross_terrain_recipe); node:35 core is operational",
     "Normal-start 10 VP pacing deferred to T108/T112"
   ],
-  "next_task": "STOP — EARLY_TRANSITION_CHECKPOINT AWAITING_HUMAN (do not start T107)",
+  "next_task": "STOP \u2014 EARLY_TRANSITION_CHECKPOINT AWAITING_HUMAN (do not start T107)",
   "notes": "Legitimate ConstructionService expansion to 9 VP; ready order; Wait triggers transition once."
 }
