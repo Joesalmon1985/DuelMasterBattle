@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "eras": {
+    "prehistoric": {
+      "id": "audio.prehistoric",
+      "buses": [
+        "master",
+        "music",
+        "world",
+        "ui"
+      ],
+      "cues": [
+        {
+          "id": "cue.prehistoric.alert",
+          "text_equivalent": "prehistoric local alert",
+          "bus": "ui",
+          "rate_limit_ms": 1500
+        },
+        {
+          "id": "cue.prehistoric.danger",
+          "text_equivalent": "prehistoric danger",
+          "bus": "world",
+          "rate_limit_ms": 2000
+        },
+        {
+          "id": "cue.prehistoric.confirm",
+          "text_equivalent": "Confirm",
+          "bus": "ui",
+          "rate_limit_ms": 200
+        }
+      ],
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic"
+      }
+    },
+    "historic": {
+      "id": "audio.historic",
+      "buses": [
+        "master",
+        "music",
+        "world",
+        "ui"
+      ],
+      "cues": [
+        {
+          "id": "cue.historic.alert",
+          "text_equivalent": "historic local alert",
+          "bus": "ui",
+          "rate_limit_ms": 1500
+        },
+        {
+          "id": "cue.historic.danger",
+          "text_equivalent": "historic danger",
+          "bus": "world",
+          "rate_limit_ms": 2000
+        },
+        {
+          "id": "cue.historic.confirm",
+          "text_equivalent": "Confirm",
+          "bus": "ui",
+          "rate_limit_ms": 200
+        }
+      ],
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic"
+      }
+    },
+    "modern": {
+      "id": "audio.modern",
+      "buses": [
+        "master",
+        "music",
+        "world",
+        "ui"
+      ],
+      "cues": [
+        {
+          "id": "cue.modern.alert",
+          "text_equivalent": "modern local alert",
+          "bus": "ui",
+          "rate_limit_ms": 1500
+        },
+        {
+          "id": "cue.modern.danger",
+          "text_equivalent": "modern danger",
+          "bus": "world",
+          "rate_limit_ms": 2000
+        },
+        {
+          "id": "cue.modern.confirm",
+          "text_equivalent": "Confirm",
+          "bus": "ui",
+          "rate_limit_ms": 200
+        }
+      ],
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic"
+      }
+    },
+    "future": {
+      "id": "audio.future",
+      "buses": [
+        "master",
+        "music",
+        "world",
+        "ui"
+      ],
+      "cues": [
+        {
+          "id": "cue.future.alert",
+          "text_equivalent": "future local alert",
+          "bus": "ui",
+          "rate_limit_ms": 1500
+        },
+        {
+          "id": "cue.future.danger",
+          "text_equivalent": "future danger",
+          "bus": "world",
+          "rate_limit_ms": 2000
+        },
+        {
+          "id": "cue.future.confirm",
+          "text_equivalent": "Confirm",
+          "bus": "ui",
+          "rate_limit_ms": 200
+        }
+      ],
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic"
+      }
+    }
+  }
+}

@@ -8,5 +8,8 @@
     "normal",
     "rockfall",
     "soldier"
-  ]
+  ],
+  "baseline_pack": "baseline_pack.json",
+  "baseline_line_count": 1423,
+  "baseline_content_hash": "f2938756ad4557bb12df9abeb3c019ddb761b99aa3be63497a41b3bf06591809"
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "era": "modern",
+  "era": "prehistoric",
   "presentation": "semantic_placeholder",
   "animation_families": [
     "idle",
@@ -13,8 +13,8 @@
   ],
   "assets": [
     {
-      "id": "sil.modern.centre",
-      "semantic_id": "building.modern.settlement_centre",
+      "id": "sil.prehistoric.centre",
+      "semantic_id": "building.prehistoric.settlement_centre",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
       "provenance": {
@@ -22,10 +22,10 @@
         "source": "overnight-g08-semantic",
         "final_art": false
       },
-      "non_colour_cue": "pattern:modern:centre"
+      "non_colour_cue": "pattern:prehistoric:centre"
     },
     {
-      "id": "sil.modern.worker",
+      "id": "sil.prehistoric.worker",
       "semantic_id": "unit.line",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -34,10 +34,10 @@
         "source": "overnight-g08-semantic",
         "final_art": false
       },
-      "non_colour_cue": "pattern:modern:worker"
+      "non_colour_cue": "pattern:prehistoric:worker"
     },
     {
-      "id": "sil.modern.skirmisher",
+      "id": "sil.prehistoric.skirmisher",
       "semantic_id": "unit.skirmisher",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -46,10 +46,10 @@
         "source": "overnight-g08-semantic",
         "final_art": false
       },
-      "non_colour_cue": "pattern:modern:skirmisher"
+      "non_colour_cue": "pattern:prehistoric:skirmisher"
     },
     {
-      "id": "sil.modern.line",
+      "id": "sil.prehistoric.line",
       "semantic_id": "unit.line",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -58,10 +58,10 @@
         "source": "overnight-g08-semantic",
         "final_art": false
       },
-      "non_colour_cue": "pattern:modern:line"
+      "non_colour_cue": "pattern:prehistoric:line"
     },
     {
-      "id": "sil.modern.heavy",
+      "id": "sil.prehistoric.heavy",
       "semantic_id": "unit.heavy",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -70,10 +70,10 @@
         "source": "overnight-g08-semantic",
         "final_art": false
       },
-      "non_colour_cue": "pattern:modern:heavy"
+      "non_colour_cue": "pattern:prehistoric:heavy"
     },
     {
-      "id": "sil.modern.cart",
+      "id": "sil.prehistoric.cart",
       "semantic_id": "unit.cart",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -82,10 +82,10 @@
         "source": "overnight-g08-semantic",
         "final_art": false
       },
-      "non_colour_cue": "pattern:modern:cart"
+      "non_colour_cue": "pattern:prehistoric:cart"
     },
     {
-      "id": "sil.modern.wizard",
+      "id": "sil.prehistoric.wizard",
       "semantic_id": "unit.wizard",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -94,10 +94,10 @@
         "source": "overnight-g08-semantic",
         "final_art": false
       },
-      "non_colour_cue": "pattern:modern:wizard"
+      "non_colour_cue": "pattern:prehistoric:wizard"
     },
     {
-      "id": "sil.modern.hazard.catastrophe",
+      "id": "sil.prehistoric.hazard.catastrophe",
       "semantic_id": "hazard.catastrophe",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -109,7 +109,7 @@
       "non_colour_cue": "icon:catastrophe"
     },
     {
-      "id": "sil.modern.hazard.pollution",
+      "id": "sil.prehistoric.hazard.pollution",
       "semantic_id": "hazard.pollution",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -121,7 +121,7 @@
       "non_colour_cue": "icon:pollution"
     },
     {
-      "id": "sil.modern.hazard.alien",
+      "id": "sil.prehistoric.hazard.alien",
       "semantic_id": "hazard.alien",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -133,7 +133,7 @@
       "non_colour_cue": "icon:alien"
     },
     {
-      "id": "sil.modern.hazard.nuclear",
+      "id": "sil.prehistoric.hazard.nuclear",
       "semantic_id": "hazard.nuclear",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -145,7 +145,7 @@
       "non_colour_cue": "icon:nuclear"
     },
     {
-      "id": "sil.modern.hazard.machine",
+      "id": "sil.prehistoric.hazard.machine",
       "semantic_id": "hazard.machine",
       "kind": "silhouette",
       "presentation": "semantic_placeholder",
@@ -157,7 +157,7 @@
       "non_colour_cue": "icon:machine"
     },
     {
-      "id": "fx.modern.magic",
+      "id": "fx.prehistoric.magic",
       "semantic_id": "fx.magic",
       "kind": "effect",
       "presentation": "semantic_placeholder",

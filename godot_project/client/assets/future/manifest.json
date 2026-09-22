@@ -14,41 +14,160 @@
   "assets": [
     {
       "id": "sil.future.centre",
-      "semantic_id": "building.future.core",
+      "semantic_id": "building.future.settlement_centre",
       "kind": "silhouette",
-      "footprint": "settlement"
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:centre"
     },
     {
       "id": "sil.future.worker",
       "semantic_id": "unit.line",
       "kind": "silhouette",
-      "legacy_distinct": true
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:worker"
     },
     {
       "id": "sil.future.skirmisher",
       "semantic_id": "unit.skirmisher",
-      "kind": "silhouette"
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:skirmisher"
     },
     {
       "id": "sil.future.line",
       "semantic_id": "unit.line",
-      "kind": "silhouette"
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:line"
     },
     {
       "id": "sil.future.heavy",
       "semantic_id": "unit.heavy",
-      "kind": "silhouette"
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:heavy"
     },
     {
-      "id": "sil.future.road",
-      "semantic_id": "road.future",
-      "kind": "overlay"
+      "id": "sil.future.cart",
+      "semantic_id": "unit.cart",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:cart"
     },
     {
-      "id": "sil.future.hazard",
+      "id": "sil.future.wizard",
+      "semantic_id": "unit.wizard",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:wizard"
+    },
+    {
+      "id": "sil.future.hazard.catastrophe",
+      "semantic_id": "hazard.catastrophe",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:catastrophe"
+    },
+    {
+      "id": "sil.future.hazard.pollution",
+      "semantic_id": "hazard.pollution",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:pollution"
+    },
+    {
+      "id": "sil.future.hazard.alien",
+      "semantic_id": "hazard.alien",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:alien"
+    },
+    {
+      "id": "sil.future.hazard.nuclear",
       "semantic_id": "hazard.nuclear",
-      "kind": "overlay"
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:nuclear"
+    },
+    {
+      "id": "sil.future.hazard.machine",
+      "semantic_id": "hazard.machine",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:machine"
+    },
+    {
+      "id": "fx.future.magic",
+      "semantic_id": "fx.magic",
+      "kind": "effect",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      }
     }
   ],
-  "notes": "Semantic placeholders only; stable footprints/identities."
+  "missing_assets": [],
+  "readable_without_colour_alone": true
 }
