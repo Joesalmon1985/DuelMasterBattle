@@ -1,7 +1,7 @@
 {
   "task_id": "T107",
   "status": "DONE",
-  "commit": "pending",
+  "commit": "6c8fe22d51464cd82f1de1758d86387f4e94542d",
   "files": [
     "godot_project/client/ui/inventory_panel.gd",
     "godot_project/client/ui/grimoire.gd",
@@ -21,7 +21,11 @@
     "prepare_spell does not allow remote cast"
   ],
   "checks": [
-    {"command": "python3 tools/check.py --task T107", "exit_code": 0, "result": "PASS"}
+    {
+      "command": "python3 tools/check.py --task T107",
+      "exit_code": 0,
+      "result": "PASS"
+    }
   ],
   "next_task": "T108",
   "notes": "Pointer-only screens via ResponsiveModal; map remains read-only from Knowledge."
