@@ -887,6 +887,13 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"G05_CUMULATIVE_OK",
             ),
         ],
+        "T097": lambda: [
+            _pytest("era_transition_planner", "tests/sim/test_t097_era_planner.py"),
+            validate_evidence(
+                "g06_implementation_plan",
+                [ROOT / "docs" / "review" / "G06_IMPLEMENTATION_PLAN.md"],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()

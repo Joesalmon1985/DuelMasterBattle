@@ -1,0 +1,44 @@
+{
+  "task_id": "T097",
+  "status": "DONE",
+  "commit": "52de3130c0680e74ee5c1627f35fd0018ae7f02f",
+  "base_g05_commit": "3df9090ae081928d000b5acf4290ccf707abf771",
+  "branch": "phase/g06-historic-mvp",
+  "files": [
+    "docs/review/G06_IMPLEMENTATION_PLAN.md",
+    "sim/dmb/eras/__init__.py",
+    "sim/dmb/eras/planner.py",
+    "sim/dmb/industry/allocation.py",
+    "tests/sim/test_t097_era_planner.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T097.json"
+  ],
+  "public_contracts": [
+    "EraTransitionPlanner.plan(snapshot, trigger) -> EraTransitionPlan",
+    "theoretical_site_capacity / rank_theoretical_sites",
+    "validate_plan_freshness (stale hash cannot commit)",
+    "build_theoretical_constraints / solve_theoretical"
+  ],
+  "source_rules": [
+    "C11 eras \u2014 pure hashed EraTransitionPlan",
+    "GDD \u00a7\u00a740, 82, 189",
+    "Theoretical capacity ignores temporary catastrophe/damage/depletion"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T097",
+      "exit_code": 0,
+      "result": "PASS; 6 pytest + G06 implementation plan evidence"
+    }
+  ],
+  "extra_scope": {
+    "docs/review/G06_IMPLEMENTATION_PLAN.md": "Required G06 kickoff plan mapping T097\u2013T114 to current code",
+    "sim/dmb/eras/": "New package (logical path was absent)"
+  },
+  "defects": [
+    "Collapse/fission/upgrade fields on plan are schema placeholders until T098\u2013T103 fill them"
+  ],
+  "next_task": "T098",
+  "notes": "Branch created from accepted G05 tip. Planner is pure and does not allocate successor IDs. Rockfall (not shortage) noted for T103 translation."
+}
