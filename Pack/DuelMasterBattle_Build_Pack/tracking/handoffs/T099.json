@@ -1,7 +1,7 @@
 {
   "task_id": "T099",
   "status": "DONE",
-  "commit": null,
+  "commit": "d13165e8d0a9239d670966ebf690bc03c3f93636",
   "files": [
     "sim/dmb/eras/fission.py",
     "sim/dmb/eras/__init__.py",
@@ -11,12 +11,12 @@
     "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T099.json"
   ],
   "public_contracts": [
-    "choose_compact_pairing — 3 pairings, min within-pair distance, stable ties",
-    "plan_fission / FissionDisposition.apply — ownership without Person duplication; cargo aboard unchanged; siblings neutral/trade-permitted"
+    "choose_compact_pairing \u2014 3 pairings, min within-pair distance, stable ties",
+    "plan_fission / FissionDisposition.apply \u2014 ownership without Person duplication; cargo aboard unchanged; siblings neutral/trade-permitted"
   ],
   "source_rules": [
     "C11 fission / successor ownership",
-    "GDD §§40, 120"
+    "GDD \u00a7\u00a740, 120"
   ],
   "checks": [
     {
