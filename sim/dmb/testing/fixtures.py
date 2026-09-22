@@ -44,6 +44,12 @@ def load_fixture(name: str, seed: int = 7) -> WorldSim:
         return _load_fx_world_layers(seed=507 if seed == 7 else seed)
     if name == "FX-LONG-WORLD":
         return _load_fx_long_world(seed=507 if seed == 7 else seed)
+    if name == "FX-ERA":
+        from sim.dmb.world.fx_era_world import load_fx_era
+
+        return load_fx_era(seed=507 if seed == 7 else seed)
+    if name == "FX-SOLO":
+        return _load_fx_solo(seed=808 if seed == 7 else seed)
     raise ValueError(f"unsupported fixture {name}")
 
 
@@ -1559,3 +1565,17 @@ def run_fx_world_layers(sim: WorldSim | None = None, seed: int = 507) -> Fixture
         },
     )
 
+
+
+def _load_fx_solo(seed: int = 808) -> WorldSim:
+    """FX-SOLO: sole-survivor / mandatory fission regression world (T106)."""
+    from sim.dmb.world.fx_era_world import load_fx_era
+    from sim.dmb.eras.safeguards import mark_mandatory_fission
+
+    sim = load_fx_era(seed=507)
+    state = sim.state
+    # Collapse path already multi-faction; mark winner for next-era fission after transition.
+    winner = str((state.board.get("fx_era") or {}).get("winner_faction_id") or "faction:2")
+    state.clock["sole_era_starter"] = False
+    state.board.setdefault("fx_solo", {"seed": seed, "parent_fixture": "FX-ERA", "winner": winner})
+    return sim

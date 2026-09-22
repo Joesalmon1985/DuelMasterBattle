@@ -1,0 +1,10 @@
+{
+  "id": "FX-ERA",
+  "schema_version": 1,
+  "seed": 507,
+  "description": "Near-threshold Prehistoric checkpoint for first Historic transition manual test. Built from FX-VILLAGE via ConstructionService road+settlement expansion; ready settlement order stages the 10th VP.",
+  "launch": "bash tools/play_fx_era.sh",
+  "scoring_action": "Wait (complete founding → 10 VP)",
+  "winner_faction_id": "faction:2",
+  "start_node_id": "node:35"
+}

@@ -118,7 +118,7 @@
     "T103": "DONE",
     "T104": "DONE",
     "T105": "DONE",
-    "T106": "NOT_STARTED",
+    "T106": "DONE",
     "T107": "NOT_STARTED",
     "T108": "NOT_STARTED",
     "T109": "NOT_STARTED",
@@ -238,10 +238,17 @@
       "notes": "Dialogue sanity: archived shortage/Aspect banks; person-context ordinary Talk; rockfall overlay only after Inspect. South-road collision fix retained. No T097."
     },
     "G06": {
-      "status": "NOT_READY",
+      "status": "IN_PROGRESS",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": null
+      "evidence": "tracking/gates/G06/early_transition_checkpoint.md",
+      "early_transition_checkpoint": "AWAITING_HUMAN",
+      "fixture": "FX-ERA",
+      "seed": 507,
+      "launch": "bash tools/play_fx_era.sh",
+      "notes": "T103\u2013T106 complete. Early Historic transition checkpoint awaiting Joe. Do not mark G06 PASS. Do not start T107 until checkpoint accepted.",
+      "stop_after": "T106",
+      "next_blocked": "T107"
     },
     "G07": {
       "status": "NOT_READY",
