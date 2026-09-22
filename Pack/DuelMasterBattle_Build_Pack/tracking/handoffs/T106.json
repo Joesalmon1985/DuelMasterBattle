@@ -1,7 +1,7 @@
 {
   "task_id": "T106",
   "status": "DONE",
-  "commit": "341a82c2b3b55993103f35d9555a03b96cf354b2",
+  "commit": "60ddb35046e63205706871e4c45d1f9beaf9d183",
   "files": [
     "sim/dmb/world/fx_era_world.py",
     "sim/dmb/testing/fixtures.py",
@@ -39,5 +39,11 @@
     "Normal-start 10 VP pacing deferred to T108/T112"
   ],
   "next_task": "STOP \u2014 EARLY_TRANSITION_CHECKPOINT AWAITING_HUMAN (do not start T107)",
-  "notes": "Legitimate ConstructionService expansion to 9 VP; ready order; Wait triggers transition once."
+  "notes": "Legitimate ConstructionService expansion to 9 VP; ready order; Wait triggers transition once.",
+  "followup_commits": [
+    {
+      "sha": "60ddb35046e63205706871e4c45d1f9beaf9d183",
+      "note": "Godot named-arg parse fix for play_fx_era.sh"
+    }
+  ]
 }
