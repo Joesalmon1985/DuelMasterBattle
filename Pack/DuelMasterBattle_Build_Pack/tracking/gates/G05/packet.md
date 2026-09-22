@@ -2,7 +2,7 @@
 
 **Status:** AWAITING_HUMAN  
 **Stop point:** T096 — do **not** start T097 / G06  
-**Candidate commit:** *(pending)*  
+**Candidate commit:** `a8690a3`  
 **Play:** `bash tools/play_g05.sh` — seed **507**, FX-VILLAGE  
 **Branch:** `refactor/canonical-ontology-g05`
 
