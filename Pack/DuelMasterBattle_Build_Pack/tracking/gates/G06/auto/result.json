@@ -1,0 +1,75 @@
+{
+  "gate": "G06",
+  "generated_at": "2026-09-22T22:25:52Z",
+  "status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "results": [
+    {
+      "cmd": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_world_map_geometry.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 1.512,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/logs/00_world_map_geometry.log",
+      "status": "PASS",
+      "name": "world_map_geometry",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/scenarios/test_era_transition.py",
+        "tests/sim/test_t105_chronicle.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 3.632,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/logs/01_era_transition_scenarios.log",
+      "status": "PASS",
+      "name": "era_transition_scenarios",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "/usr/bin/python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_semantic_visuals.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.586,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/logs/02_semantic_visual_registry.log",
+      "status": "PASS",
+      "name": "semantic_visual_registry",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "/home/joe/Documents/Godot/Godot_v4.4.1-stable_linux.x86_64",
+        "--headless",
+        "--path",
+        "/home/joe/Projects/DuelMasterBattle/godot_project",
+        "--resolution",
+        "450x800",
+        "--script",
+        "res://client/tests/run_fx_era_ui.gd"
+      ],
+      "exit_code": 0,
+      "duration_s": 5.439,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/logs/03_fx_era_ui_controls.log",
+      "status": "PASS",
+      "name": "fx_era_ui_controls",
+      "kind": "godot_script"
+    }
+  ],
+  "spec": "G06",
+  "seed": 507,
+  "fixture": "FX-ERA"
+}

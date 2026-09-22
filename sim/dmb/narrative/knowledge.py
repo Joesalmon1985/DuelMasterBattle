@@ -79,3 +79,23 @@ def debug_projection(state: WorldState) -> dict[str, Any]:
         "knowledge_raw": dict(state.knowledge),
     }
     return payload
+
+
+def export_knowledge_list(state: WorldState) -> list[dict[str, Any]]:
+    """Flat, knowledge-filtered list for the Knowledge screen."""
+    rows: list[dict[str, Any]] = []
+    for entity_id, raw in sorted((state.knowledge or {}).items(), key=lambda kv: str(kv[0])):
+        view = filter_entity(state, str(entity_id))
+        if not view.get("known") and not view.get("role") and view.get("label") == "unknown":
+            continue
+        summary = str(raw.get("fact") or view.get("role") or "")
+        rows.append(
+            {
+                "id": str(entity_id),
+                "label": str(view.get("label") or entity_id),
+                "summary": summary,
+                "known": bool(view.get("known")),
+                "role": view.get("role"),
+            }
+        )
+    return rows

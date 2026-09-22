@@ -1,0 +1,44 @@
+{
+  "id": "G06",
+  "fixture": "FX-ERA",
+  "seed": 507,
+  "resolutions_layout": ["450x800", "960x540", "1280x720"],
+  "steps": [
+    {
+      "name": "world_map_geometry",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_world_map_geometry.py"],
+      "timeout_s": 120
+    },
+    {
+      "name": "era_transition_scenarios",
+      "kind": "pytest",
+      "paths": ["tests/scenarios/test_era_transition.py", "tests/sim/test_t105_chronicle.py"],
+      "timeout_s": 180
+    },
+    {
+      "name": "semantic_visual_registry",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_semantic_visuals.py"],
+      "timeout_s": 60
+    },
+    {
+      "name": "fx_era_ui_controls",
+      "kind": "godot_script",
+      "script": "res://client/tests/run_fx_era_ui.gd",
+      "headed": false,
+      "resolution": "450x800",
+      "timeout_s": 120
+    }
+  ],
+  "screenshot_plan": [
+    "prehistoric_settlement",
+    "world_map_pre_transition",
+    "near_10vp_panel",
+    "transition_presentation",
+    "historic_core",
+    "legacy_site",
+    "chronicle",
+    "save_reload_continuity"
+  ]
+}

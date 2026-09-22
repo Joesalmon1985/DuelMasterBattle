@@ -172,6 +172,15 @@ class WorldState:
             "chronicle_debug": lambda: __import__(
                 "sim.dmb.history.chronicle", fromlist=["HistoryService"]
             ).HistoryService(self).query_known_history(debug=True),
+            "inventory": lambda: __import__(
+                "sim.dmb.player.inventory", fromlist=["InventoryService"]
+            ).InventoryService(self).player_view(),
+            "grimoire": lambda: __import__(
+                "sim.dmb.player.grimoire", fromlist=["export_grimoire"]
+            ).export_grimoire(self),
+            "knowledge": lambda: __import__(
+                "sim.dmb.narrative.knowledge", fromlist=["export_knowledge_list"]
+            ).export_knowledge_list(self),
         }
         if scope == "economy":
             # Lean inspector default: exclude receipts / raw knowledge / leases.

@@ -984,6 +984,21 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"FX_ERA_UI_OK",
             ),
         ],
+        "T107": lambda: [
+            _pytest(
+                "player_screens",
+                "tests/sim/test_t107_player_screens.py",
+                "tests/sim/test_semantic_visuals.py",
+            ),
+            validate_evidence(
+                "player_screen_ui",
+                [
+                    ROOT / "godot_project" / "client" / "ui" / "inventory_panel.gd",
+                    ROOT / "godot_project" / "client" / "ui" / "grimoire.gd",
+                    ROOT / "godot_project" / "client" / "ui" / "knowledge.gd",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
