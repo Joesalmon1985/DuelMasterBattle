@@ -1,0 +1,38 @@
+{
+  "task_id": "T104",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "sim/dmb/eras/service.py",
+    "sim/dmb/time/runner.py",
+    "tests/sim/test_t104_era_service.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/handoffs/T104.json"
+  ],
+  "public_contracts": [
+    "EraService.request_transition / commit / maybe_trigger_from_interrupt",
+    "atomic collapse→fission→core upgrade→legacy→continuity→hazard→roster",
+    "idempotent commit; no half-converted era state",
+    "_rebind_historic_industry — cross-terrain Historic production chain"
+  ],
+  "source_rules": [
+    "C11 EraService atomic order",
+    "GDD §§40, 114, 166, 189",
+    "T100 follow-up: Historic industry operational (not label-only)"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T104",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "extra_scope": {
+    "sim/dmb/time/runner.py": "VP threshold interrupt triggers EraService.maybe_trigger_from_interrupt",
+    "tests/sim/test_t104_era_service.py": "atomic/idempotent, stale plan, industry, Rockfall path"
+  },
+  "defects": [],
+  "next_task": "T105",
+  "notes": "Historic industry rebind requires ≥2 touching terrains at core; core selection prefers upgradeable centre+warehouse sites."
+}

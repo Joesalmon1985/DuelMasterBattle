@@ -227,10 +227,25 @@ class TurnRunner:
             committed.append(result)
             if result.get("interrupt"):
                 self.interrupt(str(result["interrupt"].get("kind") or "vp_threshold"))
+                if str(result["interrupt"].get("kind") or "") == "vp_threshold":
+                    self.state.clock["interrupt_factions"] = list(
+                        result["interrupt"].get("factions") or []
+                    )
+                    from sim.dmb.eras.service import EraService
+
+                    EraService(self.state).maybe_trigger_from_interrupt(
+                        event_id=f"era:{self.state.world_id}:{result.get('id')}"
+                    )
                 break
             winners = ScoreService(self.state).check_threshold(VP_THRESHOLD)
             if winners:
                 self.interrupt("vp_threshold")
+                self.state.clock["interrupt_factions"] = winners
+                from sim.dmb.eras.service import EraService
+
+                EraService(self.state).maybe_trigger_from_interrupt(
+                    event_id=f"era:{self.state.world_id}:score"
+                )
                 break
         return {"committed": committed}
 
