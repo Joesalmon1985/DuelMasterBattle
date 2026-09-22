@@ -1,0 +1,670 @@
+{
+  "schema_version": 1,
+  "id": "batch.t133.valid",
+  "requested_templates": [],
+  "requested_profiles": [],
+  "requested_roles": [],
+  "known_facts": {},
+  "allowed_vocabulary": [
+    "settlement",
+    "route",
+    "cause",
+    "rival",
+    "era"
+  ],
+  "allowed_effects": [
+    "boulder_quest_accept",
+    "clear_cause",
+    "dialogue_advance",
+    "grant_item",
+    "noop",
+    "open_route",
+    "quest_accept",
+    "quest_complete",
+    "quest_fail",
+    "set_flag"
+  ],
+  "expected_output_schema": "dialogue_line.v1",
+  "maximum_lines": 50,
+  "minimum_lines": 25,
+  "validator_version": "content.batch.v1",
+  "provenance": {
+    "authored_at": "2026-09-22T23:06:42Z",
+    "authoring_mode": "file",
+    "api_dependency": false,
+    "credentials": null
+  },
+  "lines": [
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.000",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 0: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_0",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.001",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 1: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_1",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.002",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 2: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_2",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.003",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 3: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_3",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.004",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 4: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_4",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.005",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 5: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_5",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.006",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 6: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_6",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.6"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.007",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 7: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_7",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.7"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.008",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 8: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_8",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.8"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.009",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 9: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_9",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.010",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 10: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_10",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.10"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.011",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 11: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_11",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.11"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.012",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 12: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_12",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.12"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.013",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 13: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_13",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.13"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.014",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 14: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_14",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.14"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.015",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 15: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_15",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.15"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.016",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 16: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_16",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.16"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.017",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 17: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_17",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.17"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.018",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 18: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_18",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.18"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.019",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 19: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_19",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.19"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.020",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 20: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_20",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.021",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 21: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_21",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.21"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.022",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 22: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_22",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.22"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.023",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 23: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_23",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.23"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.024",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 24: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_24",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.24"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.025",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 25: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_25",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.25"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.026",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 26: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_26",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.26"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.027",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 27: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_27",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.27"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.028",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 28: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_28",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.28"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "dialogue.t133.029",
+      "scope": "normal",
+      "speaker_role": "worker",
+      "era_id": "historic",
+      "text": "T133 pipeline sample 29: harvest carts still need watching.",
+      "fallback": "They shrug.",
+      "choices": [
+        {
+          "id": "ok_29",
+          "label": "Alright",
+          "effects": [
+            {
+              "kind": "noop",
+              "effect_id": "effect.t133.29"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "content_hash": "eeda82483d21704e6d9a17b0e1e7a55c7e9b160ab161f97536741da172f48a30"
+}

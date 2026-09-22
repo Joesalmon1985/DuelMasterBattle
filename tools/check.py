@@ -1253,6 +1253,17 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 )
             ),
         ],
+        "T133": lambda: [
+            _pytest("content_pipeline", "tests/sim/test_t133_content_pipeline.py"),
+            validate_evidence(
+                "content_authoring_tools",
+                [
+                    ROOT / "tools" / "content" / "make_batch.py",
+                    ROOT / "tools" / "content" / "compile.py",
+                    ROOT / "tools" / "content" / "quality_report.py",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
