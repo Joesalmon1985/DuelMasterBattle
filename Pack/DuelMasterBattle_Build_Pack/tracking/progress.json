@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pack_version": "1.0",
   "status": "READY_FOR_EXECUTION",
-  "current_task": "T106",
+  "current_task": "T107",
   "baseline_commit": "a0936dd41f00ee7393067b1f800411800175d23e",
   "repository_map": "tracking/repository_map.json",
   "resume_policy": {
@@ -172,7 +172,15 @@
     "T157": "NOT_STARTED",
     "T158": "NOT_STARTED",
     "T159": "NOT_STARTED",
-    "T160": "NOT_STARTED"
+    "T160": "NOT_STARTED",
+    "T161": "NOT_STARTED",
+    "T162": "NOT_STARTED",
+    "T163": "NOT_STARTED",
+    "T164": "NOT_STARTED",
+    "T165": "NOT_STARTED",
+    "T166": "NOT_STARTED",
+    "T167": "NOT_STARTED",
+    "T168": "NOT_STARTED"
   },
   "gates": {
     "G01": {
@@ -235,7 +243,8 @@
       "helper_selection": "any_eligible_village_worker_via_dialogue",
       "superseded_scenario": "shortage_demon_sluice",
       "awaiting_human_at": "2026-09-22T13:30:00Z",
-      "notes": "Dialogue sanity: archived shortage/Aspect banks; person-context ordinary Talk; rockfall overlay only after Inspect. South-road collision fix retained. No T097."
+      "notes": "Dialogue sanity: archived shortage/Aspect banks; person-context ordinary Talk; rockfall overlay only after Inspect. South-road collision fix retained. No T097.",
+      "overnight_note": "Joe authorised overnight G06\u2192G12 continuation past human stops. G05 remains without human PASS; do not fabricate acceptance."
     },
     "G06": {
       "status": "IN_PROGRESS",
@@ -246,9 +255,10 @@
       "fixture": "FX-ERA",
       "seed": 507,
       "launch": "bash tools/play_fx_era.sh",
-      "notes": "T103\u2013T106 complete. Responsive overlays + exact HexBoard map geometry. Early Historic transition checkpoint awaiting Joe. Do not mark G06 PASS. Do not start T107 until checkpoint accepted.",
-      "stop_after": "T106",
-      "next_blocked": "T107"
+      "notes": "T103\u2013T106 complete on main. Overnight run authorised to continue T107\u2013T114 and later gates without inventing human PASS. Early checkpoint evidence retained.",
+      "stop_after": null,
+      "next_blocked": null,
+      "overnight_policy": "AUTO_READY_FOR_OWNER_REVIEW when objective auto suite passes; continue to T107+"
     },
     "G07": {
       "status": "NOT_READY",
@@ -273,6 +283,26 @@
       "accepted_by": null,
       "accepted_build": null,
       "evidence": null
+    },
+    "G11": {
+      "status": "NOT_READY",
+      "accepted_by": null,
+      "accepted_build": null,
+      "evidence": null
+    },
+    "G12": {
+      "status": "NOT_READY",
+      "accepted_by": null,
+      "accepted_build": null,
+      "evidence": null
     }
+  },
+  "overnight_run": {
+    "branch": "phase/g06-g12-autoqa",
+    "authorised": true,
+    "starting_sha": "d6b78d3883eb20d6ccd31ace92b1a2126fbbe39d",
+    "authorised_at": "2026-09-22T22:18:00Z",
+    "policy": "AUTO_READY_FOR_OWNER_REVIEW permits continuation; never invent human PASS",
+    "amendment": "EXECUTION_AMENDMENTS.md#Overnight G06\u2192G12 autonomous run"
   }
 }

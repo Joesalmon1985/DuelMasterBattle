@@ -31,7 +31,9 @@ Required stops occur after T024, T048, T058, T076, T096, T114, T132, T142, T150 
 
 Only an explicit Joe PASS for the identified build clears a manual gate. Silence, a screenshot, headless import or your own judgement does not. FIX_REQUIRED reopens affected tasks; fix and rerun relevant checks/manual steps. Do not invalidate all earlier gates for unrelated minor changes, but record and retest any affected accepted behaviour.
 
-For G10, T160 remains WAITING_HUMAN until Joe accepts the final candidate; then complete its receipt and the build ledger. Other gate-preparation tasks can be DONE while their gate remains AWAITING_HUMAN. Later tasks are blocked either way.
+**Overnight exception:** when Joe explicitly authorises an unattended G06→G12 run (see `EXECUTION_AMENDMENTS.md` “Overnight G06→G12 autonomous run”), the agent may continue past human stops using status `AUTO_READY_FOR_OWNER_REVIEW`. That status never equals PASS and never invents `accepted_by`.
+
+For G10, T160 remains WAITING_HUMAN until Joe accepts the final candidate; then complete its receipt and the build ledger. Other gate-preparation tasks can be DONE while their gate remains AWAITING_HUMAN. Later tasks are blocked either way — except under the overnight amendment above, where `AUTO_READY_FOR_OWNER_REVIEW` unblocks continuation without claiming PASS.
 
 ## Failures and design changes
 
