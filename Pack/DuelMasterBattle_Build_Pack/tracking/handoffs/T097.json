@@ -1,7 +1,7 @@
 {
   "task_id": "T097",
   "status": "DONE",
-  "commit": "52de3130c0680e74ee5c1627f35fd0018ae7f02f",
+  "commit": "2b9b5116d858f7eced311673f5193dba4be99453",
   "base_g05_commit": "3df9090ae081928d000b5acf4290ccf707abf771",
   "branch": "phase/g06-historic-mvp",
   "files": [
