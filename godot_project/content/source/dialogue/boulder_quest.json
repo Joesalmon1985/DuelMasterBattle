@@ -17,12 +17,12 @@
     "quest_id": "quest.blocked_exit_boulder",
     "stage": 0,
     "cause_id": "cause.blocked_exit_boulder",
-    "text": "Need something from the yard?",
+    "text": "Need something?",
     "fallback": "They wait for you to speak.",
     "condition": {
       "op": "all",
       "args": [
-        {"op": "has_knowledge", "entity_id": "boulder:1", "fact": "observed"},
+        {"op": "has_knowledge", "entity_id": "rockfall:1", "fact": "observed"},
         {
           "op": "quest_state",
           "quest_id": "quest.blocked_exit_boulder",
@@ -32,20 +32,25 @@
     },
     "choices": [
       {
-        "id": "ask_move_boulder",
-        "label": "Ask them to move the boulder",
+        "id": "ask_clear_rockfall",
+        "label": "Could you help clear the boulders from the path?",
         "effects": [
           {
             "kind": "boulder_quest_accept",
             "effect_id": "effect.boulder_quest.accept",
-            "target_id": "boulder:1"
+            "target_id": "rockfall:1"
           }
         ],
         "next": "dialogue.boulder.accept"
       },
       {
+        "id": "ask_occupation",
+        "label": "What work do you do here?",
+        "next": "dialogue.boulder.occupation"
+      },
+      {
         "id": "not_now",
-        "label": "Not now",
+        "label": "Never mind",
         "next": "dialogue.boulder.decline"
       }
     ]
@@ -62,6 +67,16 @@
   },
   {
     "schema_version": 1,
+    "id": "dialogue.boulder.occupation",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "quest_id": "quest.blocked_exit_boulder",
+    "text": "I work my post for the settlement — same as always.",
+    "fallback": "They describe their ordinary work.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
     "id": "dialogue.boulder.decline",
     "speaker_role": "worker",
     "era_id": "all",
@@ -72,14 +87,26 @@
   },
   {
     "schema_version": 1,
+    "id": "dialogue.boulder.other_watching",
+    "speaker_role": "worker",
+    "era_id": "all",
+    "quest_id": "quest.blocked_exit_boulder",
+    "stage": 1,
+    "cause_id": "cause.blocked_exit_boulder",
+    "text": "Looks like someone's dealing with those rocks.",
+    "fallback": "They glance toward the path.",
+    "choices": []
+  },
+  {
+    "schema_version": 1,
     "id": "dialogue.boulder.moving",
     "speaker_role": "worker",
     "era_id": "all",
     "quest_id": "quest.blocked_exit_boulder",
     "stage": 2,
     "cause_id": "cause.blocked_exit_boulder",
-    "text": "Give me a moment — I'm moving that boulder.",
-    "fallback": "They are busy with the boulder.",
+    "text": "Give me a moment. I'll get these shifted.",
+    "fallback": "They are busy with the rocks.",
     "choices": []
   },
   {

@@ -44,8 +44,8 @@ func apply_area(area: Dictionary) -> void:
 			"hazard":
 				_upsert_hazard(e)
 				keep[str(e.get("id", ""))] = true
-			"boulder":
-				_upsert_boulder(e)
+			"boulder", "rockfall":
+				_upsert_rockfall(e)
 				keep[str(e.get("id", ""))] = true
 			"construction":
 				_upsert_construction(e)
@@ -173,6 +173,10 @@ func _upsert_hazard(e: Dictionary) -> void:
 
 
 func _upsert_boulder(e: Dictionary) -> void:
+	_upsert_rockfall(e)
+
+
+func _upsert_rockfall(e: Dictionary) -> void:
 	var id := str(e.get("id", ""))
 	if id.is_empty():
 		return
@@ -181,32 +185,55 @@ func _upsert_boulder(e: Dictionary) -> void:
 		node = Node2D.new()
 		node.name = id
 		_root.add_child(node)
+		var stones := Node2D.new()
+		stones.name = "Stones"
+		node.add_child(stones)
+		var label := Label.new()
+		label.name = "Label"
+		label.text = "Rockfall"
+		label.position = Vector2(-40, 36)
+		label.add_theme_font_size_override("font_size", 12)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.custom_minimum_size = Vector2(80, 0)
+		node.add_child(label)
+		_by_id[id] = node
+	var stones_root: Node2D = node.get_node("Stones")
+	var pieces: Array = e.get("pieces", [])
+	if pieces.is_empty():
+		pieces = [{"id": "%s.stone:1" % id, "pos_f": e.get("pos_f", e.get("pos", [0, 0]))}]
+	# Rebuild stone polygons to match piece count.
+	while stones_root.get_child_count() > pieces.size():
+		stones_root.get_child(stones_root.get_child_count() - 1).queue_free()
+	while stones_root.get_child_count() < pieces.size():
 		var body := Polygon2D.new()
-		body.name = "Body"
-		var radius := 28.0
+		body.name = "Stone_%d" % stones_root.get_child_count()
+		var radius := 22.0 + float(stones_root.get_child_count() % 3) * 3.0
 		var pts := PackedVector2Array()
-		for i in 10:
-			var a := TAU * float(i) / 10.0
+		var sides := 8 + (stones_root.get_child_count() % 3)
+		for i in sides:
+			var a := TAU * float(i) / float(sides)
 			pts.append(Vector2(cos(a), sin(a)) * radius)
 		body.polygon = pts
 		body.color = Color(0.55, 0.55, 0.58)
-		node.add_child(body)
-		var label := Label.new()
-		label.name = "Label"
-		label.text = "Boulder"
-		label.position = Vector2(-36, 30)
-		label.add_theme_font_size_override("font_size", 12)
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.custom_minimum_size = Vector2(72, 0)
-		node.add_child(label)
-		_by_id[id] = node
+		stones_root.add_child(body)
+	var origin := _grid_pos(e)
 	if e.has("pos_f") and typeof(e.get("pos_f")) == TYPE_ARRAY and e["pos_f"].size() >= 2:
-		node.position = Vector2(float(e["pos_f"][0]), float(e["pos_f"][1])) * TPX + Vector2(TPX * 0.5, TPX * 0.5)
-	else:
-		node.position = _grid_pos(e)
+		origin = Vector2(float(e["pos_f"][0]), float(e["pos_f"][1])) * TPX + Vector2(TPX * 0.5, TPX * 0.5)
+	node.position = origin
 	node.z_index = 6
 	var status := str(e.get("status", "blocking"))
-	(node.get_node("Body") as Polygon2D).color = Color(0.45, 0.45, 0.48) if status == "moved" else Color(0.55, 0.55, 0.58)
+	var base_col := Color(0.45, 0.45, 0.48) if status in ["moved", "cleared"] else Color(0.55, 0.55, 0.58)
+	for i in pieces.size():
+		var piece: Dictionary = pieces[i]
+		var stone: Polygon2D = stones_root.get_child(i)
+		stone.color = base_col
+		var pf = piece.get("pos_f", piece.get("pos", []))
+		if typeof(pf) == TYPE_ARRAY and pf.size() >= 2:
+			var world := Vector2(float(pf[0]), float(pf[1])) * TPX + Vector2(TPX * 0.5, TPX * 0.5)
+			stone.position = world - origin
+		else:
+			stone.position = Vector2.ZERO
+	(node.get_node("Label") as Label).text = str(e.get("label", "Rockfall"))
 
 
 func _upsert_construction(e: Dictionary) -> void:

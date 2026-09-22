@@ -124,7 +124,11 @@ def apply_effect(state: Any, effect: dict[str, Any], *, context: dict[str, Any] 
     elif kind == "boulder_quest_accept":
         from sim.dmb.world.boulder_quest import accept_move
 
-        result = accept_move(state, effect_id=effect_id)
+        result = accept_move(
+            state,
+            helper_person_id=str(effect.get("helper_person_id") or effect.get("person_id") or "") or None,
+            effect_id=effect_id,
+        )
     else:
         raise TypeValidationError(f"unknown effect kind {kind!r}")
 

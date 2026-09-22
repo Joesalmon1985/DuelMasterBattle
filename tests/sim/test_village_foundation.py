@@ -11,11 +11,12 @@ from sim.dmb.world.settlement_layout import public_occupation_for
 def test_baseline_has_boulder_quest_not_shortage() -> None:
     sim = load_fixture("FX-VILLAGE", seed=507)
     assert sim.state.board.get("g05", {}).get("quest_enabled")
-    assert (sim.state.board.get("g05") or {}).get("boulder_quest", {}).get("boulder_id") == "boulder:1"
+    bq = (sim.state.board.get("g05") or {}).get("boulder_quest") or {}
+    assert bq.get("rockfall_id") == "rockfall:1" or bq.get("boulder_id") == "rockfall:1"
     assert "quest.factory_shortage" not in (sim.state.quests or {})
     area = export_overworld_area(sim.state)
     ids = {str(e.get("id")) for e in area["entities"]}
-    assert "boulder:1" in ids
+    assert "rockfall:1" in ids
     assert "cube:demon" not in ids
     assert "entrance:sluice" not in ids
 

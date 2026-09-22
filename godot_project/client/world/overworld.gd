@@ -547,12 +547,23 @@ func _spawn_entity(e: Dictionary) -> void:
 			_entity_at[pos] = e
 			_ensure_semantic(e, null)
 			return
-		"boulder":
-			# Geometric boulder presenter; register for Observe/Inspect and walk block.
+		"boulder", "rockfall":
+			# Geometric rockfall presenter; register for Observe/Inspect and walk block.
 			e["node"] = null
 			_entities.append(e)
 			if bool(e.get("blocks_walk", true)):
 				_entity_at[pos] = e
+				for tile_v in e.get("blocked_tiles", []):
+					if typeof(tile_v) != TYPE_ARRAY or tile_v.size() < 2:
+						continue
+					var tp := Vector2i(int(tile_v[0]), int(tile_v[1]))
+					_entity_at[tp] = e
+				for piece_v in e.get("pieces", []):
+					if typeof(piece_v) != TYPE_DICTIONARY:
+						continue
+					var pp = piece_v.get("pos", [])
+					if typeof(pp) == TYPE_ARRAY and pp.size() >= 2:
+						_entity_at[Vector2i(int(pp[0]), int(pp[1]))] = e
 			_ensure_semantic(e, null)
 			return
 		"cart", "soldier", "construction":
@@ -690,7 +701,7 @@ func is_walkable(p: Vector2i) -> bool:
 		return not _play.kit_blocks(p)  # kit: true = blocked; walkable = NOT blocked
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
-		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs", "boulder"]:
+		if e["kind"] in ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs", "boulder", "rockfall"]:
 			return false
 	return true
 
@@ -3112,8 +3123,8 @@ func _interact_bridge_entity(e: Dictionary) -> void:
 		far = str(e.get("text", "Nothing remarkable."))
 	if near == "":
 		near = far
-	# Durable Observe for world objects (boulder knowledge, etc.).
-	if str(e.get("kind", "")) == "boulder" or str(e.get("id", "")).begins_with("boulder:"):
+	# Durable Observe for world objects (rockfall knowledge, etc.).
+	if str(e.get("kind", "")) in ["boulder", "rockfall"] or str(e.get("id", "")).begins_with("boulder:") or str(e.get("id", "")).begins_with("rockfall:"):
 		var eid := str(e.get("id", ""))
 		_VRunner.bridge_command("obs-%s" % eid, "Observe", {"entity_id": eid})
 	_input_locked = true

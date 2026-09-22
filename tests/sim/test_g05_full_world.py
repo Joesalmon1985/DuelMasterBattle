@@ -20,7 +20,10 @@ def test_prehistoric_board_topology() -> None:
     assert summary["start_node_id"]
     # G05 narrative: simple boulder quest (not the archived shortage scenario).
     assert sim.state.board.get("g05", {}).get("quest_enabled")
-    assert (sim.state.board.get("g05") or {}).get("boulder_quest", {}).get("boulder_id") == "boulder:1"
+    assert (sim.state.board.get("g05") or {}).get("boulder_quest", {}).get("boulder_id") in {
+        "rockfall:1",
+        "boulder:1",
+    } or (sim.state.board.get("g05") or {}).get("boulder_quest", {}).get("rockfall_id") == "rockfall:1"
     assert "quest.factory_shortage" not in (sim.state.quests or {})
     assert "cube:demon" not in ((sim.state.hazards or {}).get("catastrophe") or {}).get("cubes", {}) or not (
         ((sim.state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}
@@ -133,9 +136,9 @@ def test_graph_travel_reaches_all_54_nodes() -> None:
                 continue
             if str(sim.state.player.get("node_id")) != nid:
                 sim.state.player["node_id"] = nid
-            from sim.dmb.world.boulder_quest import boulder_blocks_travel, complete_move
+            from sim.dmb.world.boulder_quest import rockfall_blocks_travel, complete_move
 
-            if boulder_blocks_travel(sim.state, nid, dest):
+            if rockfall_blocks_travel(sim.state, nid, dest):
                 complete_move(sim.state)
             r = travel(nid, dest)
             assert r.status == "ACCEPTED", (nid, dest, r)

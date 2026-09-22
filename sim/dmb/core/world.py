@@ -393,13 +393,15 @@ class WorldSim:
         if kind == "person":
             pass
         elif kind == "mechanism" and (
-            str(record.get("kind") or "") == "boulder" or str(entity_id).startswith("boulder:")
+            str(record.get("kind") or "") in {"boulder", "rockfall"}
+            or str(entity_id).startswith("boulder:")
+            or str(entity_id).startswith("rockfall:")
         ):
             reveal(
                 self.state,
                 entity_id,
-                KnowledgeFact(entity_id, "observed", role="boulder"),
-                role="boulder",
+                KnowledgeFact(entity_id, "observed", role="rockfall"),
+                role="rockfall",
             )
             self.state.world_version += 1
         elif kind == "unit":
@@ -487,11 +489,16 @@ class WorldSim:
             choice_id = str(payload.get("choice_id") or "")
             resolver = DialogueResolver(self.state, LineCatalog.load())
             result = resolver.choose(session_id, choice_id)
-            pending = list((result.get("session") or {}).get("pending_effects") or [])
+            session = result.get("session") or {}
+            speaker_id = str(session.get("speaker_id") or "")
+            pending = list(session.get("pending_effects") or [])
             effects: list[dict] = []
             for item in pending:
                 if isinstance(item, dict):
-                    effects.append(dict(item))
+                    effect = dict(item)
+                    if effect.get("kind") == "boulder_quest_accept" and speaker_id:
+                        effect["helper_person_id"] = speaker_id
+                    effects.append(effect)
             if effects and result.get("status") == "chosen":
                 result["effects"] = apply_effects(self.state, effects)
             self.state.world_version += 1
@@ -507,10 +514,12 @@ class WorldSim:
         if action in {"close_dialogue", "dialogue_close"}:
             from sim.dmb.narrative.dialogue import DialogueResolver
             from sim.dmb.narrative.line_catalog import LineCatalog
+            from sim.dmb.world.boulder_quest import mark_completion_ack
 
             session_id = str(payload.get("session_id") or "")
             resolver = DialogueResolver(self.state, LineCatalog.load())
             closed = resolver.close(session_id)
+            mark_completion_ack(self.state, session=closed)
             self.state.world_version += 1
             return CommandResult(
                 status="ACCEPTED",

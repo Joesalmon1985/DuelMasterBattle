@@ -342,17 +342,29 @@ class SemanticResolver:
         if kind == "item":
             return f"{label}."
         if kind == "mechanism":
-            if str(record.get("kind") or "") == "boulder" or str(entity_id).startswith("boulder:"):
+            if str(record.get("kind") or "") in {"boulder", "rockfall"} or str(entity_id).startswith(
+                ("boulder:", "rockfall:")
+            ):
                 status = str(record.get("status") or "blocking")
-                if status == "moved":
+                if status in {"moved", "cleared"}:
                     return str(
-                        record.get("observe_near_moved")
+                        record.get("observe_near_cleared")
+                        or record.get("observe_near_moved")
                         or record.get("observe_near")
-                        or "The boulder has been rolled clear of the path."
+                        or "The boulders have been rolled clear of the path."
                     )
                 if nearby:
-                    return str(record.get("observe_near") or "It is far too heavy for John to move alone.")
-                return str(record.get("observe_far") or "A large boulder blocks the path out of the village.")
+                    return str(
+                        record.get("observe_near")
+                        or (
+                            "The rocks are far too heavy for John to move alone. "
+                            "Maybe one of the workers in the village could help."
+                        )
+                    )
+                return str(
+                    record.get("observe_far")
+                    or "Several large boulders block the path out of the village."
+                )
             return f"{label}."
         if kind == "entrance":
             return f"{label}."

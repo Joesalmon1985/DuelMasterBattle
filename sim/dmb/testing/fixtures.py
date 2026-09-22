@@ -1465,11 +1465,15 @@ def _load_fx_world_layers(seed: int = 507) -> WorldSim:
     fx_village = state.board.setdefault("fx_village", {})
     fx_village["quest_enabled"] = False
     fx_village["mode"] = "world_layers"
-    # Keep boulder object for world continuity but do not gate Travel in this demo.
+    # Keep rockfall object for world continuity but do not gate Travel in this demo.
     mechs = state.board.get("mechanisms") or {}
-    if "boulder:1" in mechs:
-        mechs["boulder:1"]["status"] = "moved"
-        mechs["boulder:1"]["position"] = list(mechs["boulder:1"].get("moved_position") or [27, 40])
+    for rid in ("rockfall:1", "boulder:1"):
+        if rid in mechs:
+            mechs[rid]["status"] = "cleared"
+            for piece in mechs[rid].get("pieces") or []:
+                piece["position"] = list(piece.get("cleared_position") or piece.get("position") or [])
+            if mechs[rid].get("moved_position"):
+                mechs[rid]["position"] = list(mechs[rid]["moved_position"])
     if "quest.blocked_exit_boulder" in state.quests:
         state.quests["quest.blocked_exit_boulder"]["status"] = "resolved_by_world"
     state.board["fx_world_layers"] = {

@@ -588,12 +588,14 @@ class IndustryProjection:
         elif cue == "working":
             far = f"A {role.lower()} works at their post."
             near = f"A {role.lower()} keeps the works running."
-        elif cue in {"moving_boulder", "pushing_boulder"} or str(row.get("activity") or "") == "Moving boulder":
-            far = f"A {role.lower()} is heading toward the boulder."
+        elif cue in {"moving_boulder", "pushing_boulder", "clearing_rockfall", "pushing_rockfall"} or str(
+            row.get("activity") or ""
+        ) in {"Moving boulder", "Clearing rockfall"}:
+            far = f"A {role.lower()} is heading toward the rockfall."
             near = (
-                f"A {role.lower()} braces against the boulder."
-                if cue == "pushing_boulder"
-                else f"A {role.lower()} is moving the boulder."
+                f"A {role.lower()} braces against the rocks."
+                if cue in {"pushing_boulder", "pushing_rockfall"}
+                else f"A {role.lower()} is clearing the rockfall."
             )
         else:
             far = f"A {role.lower()} is here."

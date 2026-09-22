@@ -77,9 +77,10 @@ def test_world_layers_export_matches_authority() -> None:
 def test_baseline_still_has_hazard_with_boulder_quest() -> None:
     sim = load_fixture("FX-VILLAGE", seed=507)
     assert sim.state.board.get("g05", {}).get("quest_enabled")
-    assert (sim.state.board.get("g05") or {}).get("boulder_quest", {}).get("boulder_id") == "boulder:1"
+    bq = (sim.state.board.get("g05") or {}).get("boulder_quest") or {}
+    assert bq.get("rockfall_id") == "rockfall:1" or bq.get("boulder_id") == "rockfall:1"
     area = export_overworld_area(sim.state, "node:35")
-    assert any(e.get("id") == "boulder:1" for e in area["entities"])
+    assert any(e.get("id") == "rockfall:1" for e in area["entities"])
     assert not any(e.get("id") == "cube:demon" for e in area["entities"])
     # Settlement hexes clear catastrophe for industry; distant cubes may remain.
     cubes = ((sim.state.hazards or {}).get("catastrophe") or {}).get("cubes") or {}

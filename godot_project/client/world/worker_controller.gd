@@ -88,7 +88,7 @@ func tick(delta: float) -> void:
 		if cue == "on_strike":
 			_set_activity(worker, "idle", null, false)
 			continue
-		if cue == "moving_boulder" or cue == "pushing_boulder" or bool(row.get("quest_path", false)):
+		if cue == "moving_boulder" or cue == "pushing_boulder" or cue == "clearing_rockfall" or cue == "pushing_rockfall" or bool(row.get("quest_path", false)):
 			_tick_quest_path(person_id, worker, row, delta, cue)
 			continue
 		if cue == "waiting" or cue == "idle":
@@ -240,7 +240,7 @@ func _tick_quest_path(person_id: String, worker: Node2D, row: Dictionary, delta:
 	_face_sprite(worker, worker.position - prev)
 	if worker.position.distance_to(to_pt) <= STOP_RADIUS:
 		worker.position = to_pt
-		if cue == "pushing_boulder":
+		if cue == "pushing_boulder" or cue == "pushing_rockfall":
 			_pause[person_id] = 0.35
 			_set_activity(worker, "pushing", null, false)
 		else:

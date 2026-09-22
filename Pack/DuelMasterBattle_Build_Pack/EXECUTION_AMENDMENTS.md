@@ -23,12 +23,12 @@ isolated regression tests or offline comparison. Do not expose an old-sim
 backend in the new production entrypoint.
 
 G01 certifies this migration slice, not complete village gameplay. **G05
-(re-scoped again — return to narrative):** fully explorable Prehistoric board
-(19/54/72) **plus one simple persistent blocked-exit boulder quest** at the
-starting settlement. Original shortage/demon/sluice prototype remains
-**superseded** and archived (`FX-VILLAGE-QUEST`). T086/T093/T096 content that
-assumes the shortage scenario is historical; do not rebuild it for G05 human
-acceptance. Do not start era-transition (T097) until Joe clears this gate.
+(re-scoped again — return to narrative + usability):** fully explorable
+Prehistoric board (19/54/72) **plus one simple persistent blocked-exit rockfall
+quest**. Helper is **any eligible village worker** chosen via dialogue after
+Inspect — not a preselected Person. Original shortage/demon/sluice prototype
+remains **superseded** and archived (`FX-VILLAGE-QUEST`). Do not start
+era-transition (T097) until Joe clears this gate.
 
 ## Toolchain and pack location
 
