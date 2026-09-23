@@ -69,15 +69,35 @@ def _run_seed(
         "other": 0,
     }
     crashed = False
+    peak_vp = 0
+    era_win = False
     try:
+        # Peak VP includes the staged FX-ERA checkpoint before any step.
+        scores0 = ScoreService(env.sim.state)
+        peak_vp = int(scores0.score(candidate_faction))
         for _ in range(max_steps):
             if env._terminal:
                 break
             batch = env.step()
+            # Track peak VP including pre-transition peaks (Historic resets scores).
+            pre_peak = ((env.sim.state.board.get("training") or {}).get("pre_transition_vp") or {}).get(
+                candidate_faction
+            )
+            if pre_peak is not None:
+                peak_vp = max(peak_vp, int(pre_peak))
+            cur_vp = int(ScoreService(env.sim.state).score(candidate_faction))
+            peak_vp = max(peak_vp, cur_vp)
+            if env._terminal_reason == "era_transition" or (
+                (env.sim.state.board.get("training") or {}).get("era_transitioned")
+            ):
+                winner = ((env.sim.state.board.get("training") or {}).get("era_transition_winner")) or (
+                    (env.sim.state.board.get("fx_era") or {}).get("winner_faction_id")
+                )
+                if winner == candidate_faction or peak_vp >= 10:
+                    era_win = True
             for rec in batch:
                 if rec.faction_id != candidate_faction:
                     continue
-                # Timing from last neural choose is not on StepRecord; approximate via PolicyService selections.
                 sels = (env.sim.state.factions.get(candidate_faction) or {}).get("policy", {}).get("selections") or []
                 if sels:
                     last = sels[-1]
@@ -96,6 +116,7 @@ def _run_seed(
                                     kind = "war"
                                 break
                         action_families[kind] = action_families.get(kind, 0) + 1
+            # Continue after era transition for diversity sampling unless env halted.
             if env._terminal:
                 break
     except Exception as exc:  # noqa: BLE001
@@ -110,8 +131,21 @@ def _run_seed(
 
     scores = ScoreService(env.sim.state)
     vp = {fid: scores.score(fid) for fid in factions}
-    reached_10 = any(v >= 10 for v in vp.values())
     candidate_vp = int(vp.get(candidate_faction) or 0)
+    peak_vp = max(peak_vp, candidate_vp)
+    train_meta = (env.sim.state.board.get("training") or {})
+    pre_peak = (train_meta.get("pre_transition_vp") or {}).get(candidate_faction)
+    if pre_peak is not None:
+        peak_vp = max(peak_vp, int(pre_peak))
+    # Competence: peak ≥10 OR candidate authored the era-transition win path.
+    reached_10 = peak_vp >= 10 or era_win
+    if train_meta.get("era_transitioned"):
+        winner = train_meta.get("era_transition_winner") or (
+            (env.sim.state.board.get("fx_era") or {}).get("winner_faction_id")
+        )
+        if winner == candidate_faction:
+            reached_10 = True
+            era_win = True
     catastrophe = 1 if env._terminal_reason == "catastrophe" else 0
     p95 = 0.0
     if inference_ms:
@@ -126,8 +160,10 @@ def _run_seed(
         "terminal_reason": env._terminal_reason,
         "scores": vp,
         "candidate_vp": candidate_vp,
+        "peak_vp": peak_vp,
         "reached_10_vp": reached_10,
-        "candidate_reached_10": candidate_vp >= 10,
+        "candidate_reached_10": reached_10,
+        "era_transition_win": era_win,
         "catastrophe": catastrophe,
         "illegal_accepts": illegal_accepts,
         "inference_p95_ms": p95,

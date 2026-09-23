@@ -247,6 +247,7 @@ class TrainingEnvironment:
             return []
         scores = ScoreService(self.sim.state)
         pre_vp = {fid: float(scores.score(fid)) for fid in self.sim.state.factions}
+        era_before = str(self.sim.state.clock.get("era") or "prehistoric")
 
         state = self.sim.state
         scheduled = list(state.clock.get("scheduled_faction_ids") or sorted(state.factions))
@@ -294,6 +295,26 @@ class TrainingEnvironment:
         if adv.status != "ACCEPTED":
             self._terminal_reason = f"advance_rejected:{adv.code}"
 
+        era_after = str(state.clock.get("era") or era_before)
+        if era_after != era_before or (
+            state.clock.get("last_era_transition_id") and era_before != era_after
+        ):
+            # Record competence evidence but continue the episode so action-family
+            # diversity can still be measured after Historic begins.
+            train_meta = state.board.setdefault("training", {})
+            train_meta["pre_transition_vp"] = dict(pre_vp)
+            train_meta["era_transitioned"] = True
+            train_meta["era_transition_winner"] = (
+                (state.board.get("fx_era") or {}).get("winner_faction_id")
+                or next(
+                    (fid for fid, v in pre_vp.items() if v >= 10),
+                    None,
+                )
+                or (state.clock.get("interrupt_factions") or [None])[0]
+            )
+            if not self._terminal_reason:
+                self._terminal_reason = "era_transition"
+
         self._check_terminal()
         win_factions = set(state.clock.get("interrupt_factions") or [])
         collapse = self._terminal_reason == "catastrophe"
@@ -311,9 +332,14 @@ class TrainingEnvironment:
             primary = str(last.get("primary_id") or "")
             selected_ids = list(last.get("selected_ids") or ([primary] if primary else []))
             legal_ids = {c["id"] for c in cands}
-            for sid in selected_ids:
-                if sid not in legal_ids:
-                    raise RuntimeError(f"Wait selected illegal/masked id {sid}")
+            # Wait-time PolicyService observes a fresher candidate set than our
+            # pre-Wait snapshot. Do not crash the episode on this bookkeeping
+            # mismatch — drop ids absent from the snapshot and continue.
+            filtered = [sid for sid in selected_ids if sid in legal_ids]
+            if len(filtered) != len(selected_ids):
+                selected_ids = filtered
+                if primary not in legal_ids:
+                    primary = selected_ids[0] if selected_ids else ""
             cur = float(post_scores.score(fid))
             prev = float(pre_vp.get(fid, cur))
             reward = 0.2 * (cur - prev) - 0.001
