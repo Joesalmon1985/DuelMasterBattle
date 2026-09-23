@@ -9,7 +9,7 @@
 | Source date | 2026-09-23 11:07:05 +0100 |
 | Why selected | Newest legitimate development tip (G09 policy library); includes historic MVP world/board systems via ancestry. Not stale `main`. |
 | Test branch | `test/full-board-dungeon-spatial` |
-| Final SHA | *(filled at commit)* |
+| Final SHA | `1bef86a617d4d53c7c779131d4070c2d94909e9c` |
 | Spec followed | `docs/testing/WIZARD_DUNGEON_SPATIAL_SPEC.txt` |
 | Architecture note | `docs/testing/DUNGEON_WORLD_ARCHITECTURE_NOTE.md` |
 | Metrics JSON | `docs/testing/DUNGEON_WORLD_SPATIAL_METRICS.json` |
