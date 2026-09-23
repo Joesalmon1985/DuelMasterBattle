@@ -1,0 +1,21 @@
+{
+  "checkpoint": "training/checkpoints/imitation_build.json",
+  "trained": true,
+  "decisions_trained": 4000,
+  "target_decisions": 4000,
+  "elapsed_seconds": 7.321,
+  "budget": {
+    "label": "imitation",
+    "max_seconds": 600.0,
+    "max_decisions": 4000,
+    "decisions": 4000,
+    "elapsed_seconds": 7.321,
+    "stopped_reason": "max_decisions",
+    "complete": true,
+    "incomplete_batch": false
+  },
+  "weights_digest": "c64ab2390f1d516f",
+  "init_digest": "6ad538e1de1198e9",
+  "mean_loss_tail": 1.9285158829009676,
+  "incomplete_batch": false
+}

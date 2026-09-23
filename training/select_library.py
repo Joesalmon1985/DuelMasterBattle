@@ -82,36 +82,19 @@ def select_library(
         else:
             rejected.append(entry)
 
-    # Diversity: ≥10pp difference in one action-family share (C14).
+    # Diversity: ≥10pp difference vs every already-selected policy (C14).
     selected: list[dict[str, Any]] = []
     for entry in qualified:
         share = entry["evaluation"]["action_family_share"]
         if not selected:
+            entry = dict(entry)
+            entry["diversity_ok"] = True
             selected.append(entry)
             continue
-        if any(_family_distance(share, s["evaluation"]["action_family_share"]) >= 0.10 for s in selected):
-            selected.append(entry)
-        elif len(selected) < 3:
-            # Keep as alternate if diversity not met — do not fake diversity.
-            entry = dict(entry)
-            entry["diversity_ok"] = False
-            # Only add if we still need slots AND competence holds; mark diversity fail.
-            if len([s for s in selected if s.get("diversity_ok", True)]) < 3:
-                # Prefer not adding non-diverse as "accepted library" members.
-                pass
-        if len(selected) >= 3:
-            break
-
-    # Rebuild selection with explicit diversity gate.
-    selected = []
-    for entry in qualified:
-        share = entry["evaluation"]["action_family_share"]
-        diverse = True
-        if selected:
-            diverse = any(
-                _family_distance(share, s["evaluation"]["action_family_share"]) >= 0.10 for s in selected
-            )
-        if not selected or diverse:
+        diverse = all(
+            _family_distance(share, s["evaluation"]["action_family_share"]) >= 0.10 for s in selected
+        )
+        if diverse:
             entry = dict(entry)
             entry["diversity_ok"] = True
             selected.append(entry)

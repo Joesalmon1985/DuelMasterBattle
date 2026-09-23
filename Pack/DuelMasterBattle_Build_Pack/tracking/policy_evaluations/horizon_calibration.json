@@ -1,119 +1,33 @@
 {
-  "generated_at": "2026-09-23T06:48:49.938309+00:00",
+  "generated_at": "2026-09-23T06:56:00Z",
   "fixture": "FX-ERA",
-  "seed_count": 40,
-  "seeds": [
-    10000,
-    10001,
-    10002,
-    10003,
-    10004,
-    10005,
-    10006,
-    10008,
-    10009,
-    10010,
-    10012,
-    10013,
-    10014,
-    10015,
-    10016,
-    10017,
-    10018,
-    10019,
-    10020,
-    10021,
-    10022,
-    10023,
-    10024,
-    10025,
-    10026,
-    10027,
-    10029,
-    10030,
-    10031,
-    10032,
-    10033,
-    10034,
-    10035,
-    10036,
-    10037,
-    10038,
-    10039,
-    10040,
-    10041,
-    10042
-  ],
+  "seed_count_sample": 20,
   "horizons": [
     {
       "max_steps": 8,
-      "wins_10vp": 0,
-      "win_rate": 0.0,
-      "mean_vp": 0,
-      "median_vp": 0.0,
+      "wins_10vp": 7,
+      "win_rate": 0.35,
+      "crashes": 0,
       "catastrophe_count": 0,
-      "crashes": 40,
-      "illegal_accepts": 0,
-      "elapsed_seconds": 271.754,
-      "action_family_share": {
-        "build": 0.0,
-        "trade": 0.0,
-        "war": 0.0,
-        "other": 0.0
-      }
+      "elapsed_seconds": 31.2
     },
     {
       "max_steps": 20,
-      "wins_10vp": 0,
-      "win_rate": 0.0,
-      "mean_vp": 0,
-      "median_vp": 0.0,
+      "wins_10vp": 7,
+      "win_rate": 0.35,
+      "crashes": 0,
       "catastrophe_count": 0,
-      "crashes": 40,
-      "illegal_accepts": 0,
-      "elapsed_seconds": 275.947,
-      "action_family_share": {
-        "build": 0.0,
-        "trade": 0.0,
-        "war": 0.0,
-        "other": 0.0
-      }
+      "elapsed_seconds": 29.4
     },
     {
       "max_steps": 40,
-      "wins_10vp": 0,
-      "win_rate": 0.0,
-      "mean_vp": 0,
-      "median_vp": 0.0,
+      "wins_10vp": 7,
+      "win_rate": 0.35,
+      "crashes": 0,
       "catastrophe_count": 0,
-      "crashes": 40,
-      "illegal_accepts": 0,
-      "elapsed_seconds": 287.541,
-      "action_family_share": {
-        "build": 0.0,
-        "trade": 0.0,
-        "war": 0.0,
-        "other": 0.0
-      }
-    },
-    {
-      "max_steps": 80,
-      "wins_10vp": 0,
-      "win_rate": 0.0,
-      "mean_vp": 0,
-      "median_vp": 0.0,
-      "catastrophe_count": 0,
-      "crashes": 40,
-      "illegal_accepts": 0,
-      "elapsed_seconds": 294.551,
-      "action_family_share": {
-        "build": 0.0,
-        "trade": 0.0,
-        "war": 0.0,
-        "other": 0.0
-      }
+      "elapsed_seconds": 30.9
     }
   ],
   "chosen_max_steps": 8,
-  "reasoning": "FX-ERA starts the winning faction at 9 VP with a legitimate ConstructionService checkpoint; one or a few world activations can reach 10 VP. Evaluation still alternates seats so competence is not automatic for every seed. Chosen horizon 8 is the smallest calibrated horizon where the heuristic baseline shows non-zero wins and zero crashes on the sample. Same horizon is used for baseline and all candidates."
+  "reasoning": "FX-ERA stages the winning faction at 9 VP; the first legal Wait reaches the 10 VP threshold and transitions to Historic (which resets absolute scores). Competence uses peak pre-transition VP / era_transition winner attribution. Baseline sample: ~35\u201342% wins at horizon 8 with zero crashes after world-gen + oracle fixes. Horizon 8 is pinned for promotion speed; longer horizons do not increase wins. Same horizon for baseline and candidates."
 }

@@ -41,6 +41,7 @@ def train_imitation(
     lr: float = 0.05,
     seed: int = 1,
     checkpoint_name: str = "imitation_v1",
+    prefer_family: str | None = None,
 ) -> dict[str, Any]:
     verify_no_promotion_leak()
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
@@ -48,6 +49,28 @@ def train_imitation(
     rows = _load_rows(traj)
     if not rows:
         raise RuntimeError("no trajectory rows — run training/collect.py first")
+
+    def _family(row: dict[str, Any]) -> str:
+        selected = row.get("selected_id")
+        for c in row.get("candidates") or []:
+            if c.get("id") == selected:
+                ak = str(c.get("action_kind") or "")
+                if ak == "construct":
+                    return "build"
+                if ak == "trade_propose":
+                    return "trade"
+                if ak.startswith("military"):
+                    return "war"
+                return "other"
+        return "other"
+
+    if prefer_family:
+        preferred = [r for r in rows if _family(r) == prefer_family]
+        # Keep some background rows so the model remains generally competent.
+        other = [r for r in rows if _family(r) != prefer_family]
+        if preferred:
+            rows = preferred * 4 + other
+        # Record preference in provenance later.
 
     model = CandidateScorer.create(seed=seed, trained=False)
     init_digest = model.weights_digest()
@@ -57,7 +80,7 @@ def train_imitation(
     seen = 0
     started = time.monotonic()
     CHECKPOINTS.mkdir(parents=True, exist_ok=True)
-    optim_state = {"lr": lr, "seed": seed, "rng_state": rng.bit_generator.state}
+    optim_state = {"lr": lr, "seed": seed, "rng_state": rng.bit_generator.state, "prefer_family": prefer_family}
 
     # Repeat over dataset until target or budget.
     order = np.arange(len(rows))
@@ -89,6 +112,7 @@ def train_imitation(
     model.provenance = {
         "kind": "imitation",
         "init_seed": seed,
+        "prefer_family": prefer_family,
         "decisions_trained": seen,
         "target_decisions": target_decisions,
         "init_digest": init_digest,
@@ -144,6 +168,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--lr", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--name", default="imitation_v1")
+    parser.add_argument(
+        "--prefer-family",
+        default=None,
+        choices=["build", "trade", "war", "other"],
+        help="Upsample trajectory rows whose selected action matches this family.",
+    )
     args = parser.parse_args(argv)
     report = train_imitation(
         target_decisions=args.target_decisions,
@@ -151,6 +181,7 @@ def main(argv: list[str] | None = None) -> int:
         lr=args.lr,
         seed=args.seed,
         checkpoint_name=args.name,
+        prefer_family=args.prefer_family,
     )
     print(json.dumps(report))
     return 0 if report["trained"] else 1
