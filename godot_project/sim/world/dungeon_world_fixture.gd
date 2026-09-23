@@ -207,7 +207,7 @@ func types_for(nid: int) -> Array:
 
 
 ## Build a normal node area at an optional forced size, then stamp embedded dungeon.
-func project_node(nid: int, size: Vector2i = Vector2i.ZERO, type_code: String = "", interactive: bool = false) -> Dictionary:
+func project_node(nid: int, size: Vector2i = Vector2i.ZERO, type_code: String = "", interactive: bool = true) -> Dictionary:
 	var prev: Vector2i = DmbSettlementLayout.FORCE_DIMS
 	if size != Vector2i.ZERO:
 		DmbSettlementLayout.FORCE_DIMS = size
@@ -224,7 +224,7 @@ func project_node(nid: int, size: Vector2i = Vector2i.ZERO, type_code: String = 
 	if code == "":
 		area["embedded_dungeon"] = {"fit": "NO_DUNGEON_TYPE"}
 		return area
-	var emb: Dictionary = Emb.stamp(area, code, interactive and nid == specimen_node)
+	var emb: Dictionary = Emb.stamp(area, code, interactive)
 	area["embedded_dungeon"] = emb
 	area["dungeon_world_test"] = true
 	area["fixture_node"] = nid

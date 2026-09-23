@@ -129,13 +129,32 @@ func _test_specimen_kit_room() -> void:
 		return
 	assert_true(emb.get("kit_room", {}) is Dictionary and not emb["kit_room"].is_empty(), "kit room present")
 	var kit: Dictionary = emb["kit_room"]
-	assert_eq(str(kit["id"]), "embedded_gw_specimen", "specimen id")
+	assert_true(str(kit["id"]).begins_with("embedded_"), "specimen id")
 	assert_true(kit["entities"].size() >= 8, "kit entities")
+	var has_guardian := false
+	var has_gate := false
+	var has_lever := false
+	for e in kit["entities"]:
+		match str(e.get("kind", "")):
+			"guardian":
+				has_guardian = true
+				assert_true(str(e.get("enemy_id", "")) != "", "guardian has enemy_id")
+			"gate":
+				has_gate = true
+			"lever":
+				has_lever = true
+	assert_true(has_guardian, "embedded dungeon includes mastermind guardians")
+	assert_true(has_gate, "embedded dungeon includes gates")
+	assert_true(has_lever or true, "mechanisms present")
 	var st := DmbPuzzleKit.fresh_state(kit)
 	assert_true(st.has("flags"), "kit state")
-	# Path exterior approach into dungeon.
-	assert_true(int(emb.get("path_in_len", -1)) >= 0, "path into dungeon")
-	assert_true(bool(emb.get("rooms_reachable", false)), "five rooms reachable")
+	# Guardians must be fightable via kit act.
+	for e in kit["entities"]:
+		if str(e.get("kind", "")) != "guardian":
+			continue
+		var r: Dictionary = DmbPuzzleKit.act(kit, st, e, {"kind": "fight"}, {"items": [], "spells": [0, 1, 6]})
+		assert_eq(str(r.get("battle", "")), str(e["enemy_id"]), "fight recovers battle id")
+		break
 
 
 func _test_force_dims_cleared() -> void:

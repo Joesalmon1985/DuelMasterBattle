@@ -79,20 +79,19 @@ func _wire_augment() -> void:
 
 func _augment_area(area: Dictionary, nid: int) -> Dictionary:
 	DmbSettlementLayout.FORCE_DIMS = current_size
-	# Re-project at forced size (area may already be sized if FORCE_DIMS was set).
 	var sized: Dictionary = DmbNodeProjection.area_for(fixture.sim, nid, {})
 	DmbSettlementLayout.FORCE_DIMS = Vector2i.ZERO
 	var code: String = fixture.primary_type_for(nid)
-	var interactive: bool = nid == fixture.specimen_node and fixture.types_for(nid).has("GW")
 	if code == "" and nid == fixture.bg_test_node:
 		code = "BG"
-	if interactive:
+	if nid == fixture.specimen_node and fixture.types_for(nid).has("GW"):
 		code = "GW"
 	if code == "":
 		sized["dungeon_world_test"] = true
 		sized["fixture_node"] = nid
 		return _filter_debug(sized)
-	var emb: Dictionary = Emb.stamp(sized, code, interactive)
+	# Always stamp an interactive PuzzleKit dungeon for playable fixture nodes.
+	var emb: Dictionary = Emb.stamp(sized, code, true)
 	sized["embedded_dungeon"] = emb
 	sized["dungeon_world_test"] = true
 	sized["fixture_node"] = nid
@@ -147,7 +146,7 @@ func _build_ui() -> void:
 	panel.add_child(status)
 
 	_btn("Strategic Board", func(): _show_strategic())
-	_btn("Enter Current Node", func(): _enter_node(current_node))
+	_btn("Enter Current Node (puzzle)", func(): _enter_node(current_node))
 	_btn("Prev Node", func(): _step_node(-1))
 	_btn("Next Node", func(): _step_node(1))
 	_btn("Size 65×49", func(): _set_profile_size(Vector2i(65, 49)))
@@ -163,7 +162,7 @@ func _build_ui() -> void:
 	_btn("Toggle Room Bounds", func(): show_room_bounds = not show_room_bounds; _reload_if_local())
 	_btn("Toggle Entity IDs", func(): show_entity_ids = not show_entity_ids; _reload_if_local())
 	_btn("Test BG Rotgarden", func(): _enter_bg())
-	_btn("Enter Specimen (PuzzleKit)", func(): _enter_specimen())
+	_btn("Enter Specimen GW", func(): _enter_specimen())
 	_btn("Reset Node", func(): _reload_if_local())
 	_btn("Reset Fixture", func(): _reset_fixture())
 
@@ -202,29 +201,42 @@ func _enter_node(nid: int, as_specimen: bool = false) -> void:
 	var adv: Node = get_node("/root/Adventure")
 	if Runner.is_active():
 		Runner.end(adv)
-	if as_specimen or (nid == fixture.specimen_node and fixture.types_for(nid).has("GW")):
-		var area: Dictionary = fixture.project_node(nid, current_size, "GW", true)
-		var emb: Dictionary = area.get("embedded_dungeon", {})
-		if str(emb.get("fit", "")) != "OK":
-			status.text = "Specimen DOES NOT FIT at %dx%d: %s" % [current_size.x, current_size.y, emb.get("reason", emb.get("fit", "?"))]
-			DmbSettlementLayout.FORCE_DIMS = Vector2i.ZERO
-			_show_strategic()
-			return
-		var kit: Dictionary = emb.get("kit_room", {})
-		if kit.is_empty():
-			status.text = "No kit room built for specimen"
-			_show_strategic()
-			return
-		Runner.begin_with_room(adv, kit)
-		world.visible = true
-		world._boot_kit_session(adv)
-		status.text = "SPECIMEN node %d @ %dx%d · PuzzleKit embedded · %s" % [nid, current_size.x, current_size.y, emb.get("dungeon_id", "")]
-	else:
+	var code: String = "GW" if as_specimen else fixture.primary_type_for(nid)
+	if code == "" and nid == fixture.bg_test_node:
+		code = "BG"
+	if as_specimen:
+		nid = fixture.specimen_node
+		current_node = nid
+		code = "GW"
+	if code == "":
+		# No dungeon type — plain local area projection.
 		adv.state["area"] = DmbNodeProjection.area_id(nid)
-		var start: Array = [current_size.x / 2, current_size.y - 3]
 		world.visible = true
-		world.load_area(DmbNodeProjection.area_id(nid), Vector2i(int(start[0]), int(start[1])), "up")
-		status.text = "Node %d @ %dx%d · types=%s" % [nid, current_size.x, current_size.y, str(fixture.types_for(nid))]
+		world.load_area(DmbNodeProjection.area_id(nid), Vector2i(current_size.x / 2, current_size.y - 3), "up")
+		status.text = "Node %d @ %dx%d · no dungeon type" % [nid, current_size.x, current_size.y]
+		DmbSettlementLayout.FORCE_DIMS = Vector2i.ZERO
+		_refresh_metrics()
+		return
+	var area: Dictionary = fixture.project_node(nid, current_size, code, true)
+	var emb: Dictionary = area.get("embedded_dungeon", {})
+	if str(emb.get("fit", "")) != "OK":
+		status.text = "DOES NOT FIT at %dx%d: %s" % [current_size.x, current_size.y, emb.get("reason", emb.get("fit", "?"))]
+		DmbSettlementLayout.FORCE_DIMS = Vector2i.ZERO
+		_show_strategic()
+		return
+	var kit: Dictionary = emb.get("kit_room", {})
+	if kit.is_empty():
+		status.text = "No PuzzleKit room for %s" % code
+		_show_strategic()
+		return
+	# Ensure combat spells are present for guardian fights.
+	for sid in [0, 1, 6]:
+		adv.learn_spell(sid)
+	Runner.begin_with_room(adv, kit)
+	world.visible = true
+	world._boot_kit_session(adv)
+	status.text = "%s node %d @ %dx%d · interact: Space · fight guardians · D drop · T throw" % [
+		code, nid, current_size.x, current_size.y]
 	DmbSettlementLayout.FORCE_DIMS = Vector2i.ZERO
 	_refresh_metrics()
 

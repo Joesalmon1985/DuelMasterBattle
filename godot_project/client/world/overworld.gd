@@ -567,12 +567,14 @@ func _spawn_entity(e: Dictionary) -> void:
 				_ensure_semantic(e, null)
 				return
 		"debug_label":
-			# Fixture instrumentation: small floating text, no collision.
+			# Fixture instrumentation: small floating text above the tile, no collision.
 			var lbl := Label.new()
 			lbl.text = str(e.get("text", ""))
-			lbl.add_theme_font_size_override("font_size", 10)
-			lbl.modulate = Color(1.0, 0.95, 0.4, 0.95)
-			lbl.position = Vector2(pos) * TPX + Vector2(2, -6)
+			lbl.add_theme_font_size_override("font_size", 9)
+			lbl.modulate = Color(1.0, 0.95, 0.4, 0.9)
+			lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			# Lift above the tile so labels never sit on interactable sprites.
+			lbl.position = Vector2(pos) * TPX + Vector2(2, -18)
 			lbl.z_index = 20
 			_props_root.add_child(lbl)
 			e["node"] = lbl
