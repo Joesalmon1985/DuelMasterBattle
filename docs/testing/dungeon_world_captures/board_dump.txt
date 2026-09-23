@@ -1,0 +1,68 @@
+Strategic board dump seed=507
+hexes=19 nodes=54
+HEX 0 q=0 r=0 terrain=forest
+HEX 1 q=-1 r=1 terrain=forest
+HEX 2 q=0 r=1 terrain=hills
+HEX 3 q=1 r=0 terrain=hills
+HEX 4 q=1 r=-1 terrain=mountains
+HEX 5 q=0 r=-1 terrain=fields
+HEX 6 q=-1 r=0 terrain=pasture
+HEX 7 q=-2 r=2 terrain=fields
+HEX 8 q=-1 r=2 terrain=fields
+HEX 9 q=0 r=2 terrain=pasture
+HEX 10 q=1 r=1 terrain=mountains
+HEX 11 q=2 r=0 terrain=mountains
+HEX 12 q=2 r=-1 terrain=fields
+HEX 13 q=2 r=-2 terrain=hills
+HEX 14 q=1 r=-2 terrain=pasture
+HEX 15 q=0 r=-2 terrain=forest
+HEX 16 q=-1 r=-1 terrain=desert
+HEX 17 q=-2 r=0 terrain=forest
+HEX 18 q=-2 r=1 terrain=pasture
+SETTLEMENT wardens node=17 hexes=[4, 12, 13]
+SETTLEMENT levy node=14 hexes=[3, 11, 12]
+SETTLEMENT kilns node=8 hexes=[1, 7, 18]
+SETTLEMENT drovers node=1 hexes=[0, 3, 4]
+SETTLEMENT ironmoot node=19 hexes=[5, 14, 15]
+SETTLEMENT tithe node=3 hexes=[0, 1, 2]
+CAND node=0 faction=wardens types=["GW", "WB"] terrains=["forest", "mountains", "fields"] coastal=false reasons=["touches forest hex", "touches mountains/ore hex"]
+CAND node=1 faction=wardens types=["GW", "BR", "WB"] terrains=["forest", "hills", "mountains"] coastal=false reasons=["touches forest hex", "touches hills/brick hex", "touches mountains/ore hex"]
+CAND node=2 faction=levy types=["GW", "BR"] terrains=["forest", "hills"] coastal=false reasons=["touches forest hex", "touches hills/brick hex"]
+CAND node=3 faction=kilns types=["GW", "BR"] terrains=["forest", "hills"] coastal=false reasons=["touches forest hex", "touches hills/brick hex"]
+CAND node=4 faction=kilns types=["GW"] terrains=["forest", "pasture"] coastal=false reasons=["touches forest hex"]
+CAND node=5 faction=drovers types=["GW"] terrains=["forest", "fields", "pasture"] coastal=false reasons=["touches forest hex"]
+CAND node=6 faction=kilns types=["GW", "BR"] terrains=["forest", "hills", "fields"] coastal=false reasons=["touches forest hex", "touches hills/brick hex"]
+CAND node=7 faction=kilns types=["GW"] terrains=["forest", "fields"] coastal=false reasons=["touches forest hex"]
+CAND node=8 faction=tithe types=["GW"] terrains=["forest", "fields", "pasture"] coastal=false reasons=["touches forest hex"]
+CAND node=9 faction=kilns types=["GW"] terrains=["forest", "pasture"] coastal=false reasons=["touches forest hex"]
+CAND node=10 faction=levy types=["BR", "WB"] terrains=["hills", "mountains"] coastal=false reasons=["touches hills/brick hex", "touches mountains/ore hex"]
+CAND node=11 faction=tithe types=["BR", "WB"] terrains=["hills", "pasture", "mountains"] coastal=false reasons=["touches hills/brick hex", "touches mountains/ore hex"]
+CAND node=12 faction=tithe types=["BR"] terrains=["hills", "fields", "pasture"] coastal=false reasons=["touches hills/brick hex"]
+CAND node=13 faction=wardens types=["BR", "WB"] terrains=["hills", "mountains", "fields"] coastal=false reasons=["touches hills/brick hex", "touches mountains/ore hex"]
+CAND node=14 faction=wardens types=["BR", "WB"] terrains=["hills", "mountains", "fields"] coastal=false reasons=["touches hills/brick hex", "touches mountains/ore hex"]
+CAND node=15 faction=levy types=["BR", "WB"] terrains=["hills", "mountains"] coastal=false reasons=["touches hills/brick hex", "touches mountains/ore hex"]
+CAND node=16 faction=wardens types=["WB", "BR"] terrains=["mountains", "hills", "pasture"] coastal=false reasons=["touches mountains/ore hex", "touches hills/brick hex"]
+CAND node=17 faction=levy types=["WB", "BR"] terrains=["mountains", "fields", "hills"] coastal=false reasons=["touches mountains/ore hex", "touches hills/brick hex"]
+CAND node=18 faction=wardens types=["WB"] terrains=["mountains", "fields", "pasture"] coastal=false reasons=["touches mountains/ore hex"]
+CAND node=21 faction=ironmoot types=["GW"] terrains=["fields", "forest", "desert"] coastal=false reasons=["touches forest hex"]
+CAND node=22 faction=kilns types=["GW"] terrains=["pasture", "forest"] coastal=false reasons=["touches forest hex"]
+CAND node=24 faction=kilns types=["UB"] terrains=["fields"] coastal=true reasons=["coastal node (hexes=2 < 3)"]
+CAND node=25 faction=kilns types=["UB"] terrains=["fields"] coastal=true reasons=["coastal node (hexes=1 < 3)"]
+CAND node=26 faction=kilns types=["UB"] terrains=["fields"] coastal=true reasons=["coastal node (hexes=1 < 3)"]
+CAND node=27 faction=kilns types=["UB"] terrains=["fields", "pasture"] coastal=true reasons=["coastal node (hexes=2 < 3)"]
+CAND node=33 faction=levy types=["WB", "UB"] terrains=["mountains"] coastal=true reasons=["touches mountains/ore hex", "coastal node (hexes=2 < 3)"]
+CAND node=35 faction=wardens types=["WB", "UB"] terrains=["mountains", "fields"] coastal=true reasons=["touches mountains/ore hex", "coastal node (hexes=2 < 3)"]
+CAND node=36 faction=levy types=["WB", "UB"] terrains=["mountains"] coastal=true reasons=["touches mountains/ore hex", "coastal node (hexes=1 < 3)"]
+CAND node=37 faction=levy types=["WB", "UB"] terrains=["mountains"] coastal=true reasons=["touches mountains/ore hex", "coastal node (hexes=1 < 3)"]
+CAND node=38 faction=wardens types=["BR", "UB"] terrains=["fields", "hills"] coastal=true reasons=["touches hills/brick hex", "coastal node (hexes=2 < 3)"]
+CAND node=39 faction=wardens types=["UB"] terrains=["fields"] coastal=true reasons=["coastal node (hexes=1 < 3)"]
+CAND node=40 faction=wardens types=["BR", "UB"] terrains=["hills"] coastal=true reasons=["touches hills/brick hex", "coastal node (hexes=1 < 3)"]
+CAND node=41 faction=wardens types=["BR", "UB"] terrains=["hills"] coastal=true reasons=["touches hills/brick hex", "coastal node (hexes=1 < 3)"]
+CAND node=42 faction=wardens types=["BR", "UB"] terrains=["hills", "pasture"] coastal=true reasons=["touches hills/brick hex", "coastal node (hexes=2 < 3)"]
+CAND node=43 faction=ironmoot types=["UB"] terrains=["pasture"] coastal=true reasons=["coastal node (hexes=1 < 3)"]
+CAND node=44 faction=ironmoot types=["GW", "UB"] terrains=["pasture", "forest"] coastal=true reasons=["touches forest hex", "coastal node (hexes=2 < 3)"]
+CAND node=45 faction=ironmoot types=["GW", "UB"] terrains=["forest"] coastal=true reasons=["touches forest hex", "coastal node (hexes=1 < 3)"]
+CAND node=46 faction=ironmoot types=["GW", "UB"] terrains=["forest", "desert"] coastal=true reasons=["touches forest hex", "coastal node (hexes=2 < 3)"]
+CAND node=47 faction=ironmoot types=["GW", "UB"] terrains=["forest"] coastal=true reasons=["touches forest hex", "coastal node (hexes=1 < 3)"]
+CAND node=50 faction=kilns types=["GW", "UB"] terrains=["forest", "pasture"] coastal=true reasons=["touches forest hex", "coastal node (hexes=2 < 3)"]
+CAND node=53 faction=kilns types=["UB"] terrains=["pasture"] coastal=true reasons=["coastal node (hexes=1 < 3)"]

@@ -1,0 +1,355 @@
+DUELMASTERBATTLE — WIZARD DUNGEON SPATIAL TEST SPEC
+
+Purpose
+-------
+This file is the authoritative spatial/content brief for the Dungeon World Test.
+It defines how the five non-human wizard dungeons should fit inside node maps,
+their standard size, required rooms, objects, labels, mechanisms, and the state
+relationships between them.
+
+STANDARD SIZE
+-------------
+Verify current PuzzleKit room dimensions first. Historical values:
+- common room: about 13x11 tiles
+- maximum room: about 15x13 tiles
+
+For this test use:
+- standard room envelope: 15x13 tiles
+- five-room dungeon reservation: 53x32 tiles
+
+Reference packing:
+
++---------------+----+---------------+----+---------------+
+|    ROOM 1     |    |    ROOM 2     |    |    ROOM 3     |
+|     15x13     |    |     15x13     |    |     15x13     |
++---------------+    +---------------+    +---------------+
+                         |
+                         |
++---------------+----+---------------+
+|    ROOM 5     |    |    ROOM 4     |
+|     15x13     |    |     15x13     |
++---------------+    +---------------+
+
+Width = 15 + 4 + 15 + 4 + 15 = 53
+Height = 13 + 6 + 13 = 32
+
+The reservation must not overlap node exits, mandatory roads/tracks, player
+arrival points, or critical settlement buildings. The player must be able to
+walk from node exterior into all five rooms and back outside without loading a
+separate dungeon scene.
+
+STANDARD DEBUG LABELS
+---------------------
+DUNGEON:<dungeon_id>
+ROOM:<room_id>
+WIZARD:<wizard_id>
+ITEM:<item_id>
+MECH:<mechanism_id>
+GATE:<gate_id>
+STATE:<state_id>
+RECEPTOR:<receptor_id>
+
+Labels must be toggleable.
+
+COMMON REQUIREMENTS
+-------------------
+Every dungeon must have:
+- an exterior approach inside the node
+- five room envelopes
+- physical walkable connectors
+- no loading transition between node and dungeon
+- a safe route back outside
+- at least one real PuzzleKit interaction in the spatial prototype
+- debug labels for rooms and critical entities
+- a final wizard marker/actor in room 5
+- recoverable/resettable required puzzle states
+- enough adjacent walkable space to interact with objects
+
+GW — THE ROOTBOUND SANCTUARY
+----------------------------
+Dungeon ID: dungeon.gw.rootbound_sanctuary
+Wizard ID: wizard.gw.treefolk
+Terrain concept: Forest/Woodland
+Fantasy: RESTORE THE SYSTEM RATHER THAN BREAK IT.
+
+Room 1 — ROOT GATE
+Room ID: gw.root_gate
+Required:
+- SIGN:gw.seasons_carving
+- MECH:gw.root_barrier
+- GATE:gw.root_gate
+Clue: a tree passes through four seasons and returns to life.
+Must always permit retreat to exterior.
+
+Room 2 — SEED SHRINE
+Room ID: gw.seed_shrine
+Required:
+- ITEM:item.gw.sun_seed
+- RECEPTOR:gw.seed_shrine
+Clue: "What sleeps in winter is not dead."
+Sun Seed must remain recoverable while required.
+
+Room 3 — WITHERED CHANNEL
+Room ID: gw.withered_channel
+Required:
+- MECH:gw.channel_weight
+- MECH:gw.channel_plate
+- MECH:gw.water_switch
+- STATE:gw.water_restored
+Correct state visibly restores water/life.
+
+Room 4 — HEARTWOOD CHAMBER
+Room ID: gw.heartwood_chamber
+Required:
+- ITEM:item.gw.sun_seed
+- RECEPTOR:gw.growth_point
+- STATE:gw.water_restored
+- GATE:gw.living_gate
+Rule: water_restored AND sun_seed installed -> living gate opens.
+
+Room 5 — ELDER COURT
+Room ID: gw.elder_court
+Required:
+- WIZARD:wizard.gw.treefolk
+- safe exit/return route
+
+Flow:
+restore water -> install seed -> open living gate -> reach GW wizard
+
+BR — THE KILN WARRENS
+----------------------
+Dungeon ID: dungeon.br.kiln_warrens
+Wizard ID: wizard.br.goblin_orc
+Terrain concept: Brick/Hills/Clay
+Fantasy: MAKE THE DANGEROUS MACHINE WORK LONG ENOUGH TO GET THROUGH IT.
+
+Room 1 — COLLAPSED CLAYWORKS
+Room ID: br.collapsed_clayworks
+Required:
+- SIGN:br.furnace_clue
+- GATE:br.blocked_route
+Clue: main furnace is missing a control lever.
+
+Room 2 — SCRAP DEN
+Room ID: br.scrap_den
+Required:
+- ITEM:item.br.furnace_lever
+
+Room 3 — KILN GALLERY
+Room ID: br.kiln_gallery
+Required:
+- MECH:br.vent_a
+- MECH:br.vent_b
+- STATE:br.pressure_routed
+Wrong settings give harmless feedback and never softlock.
+
+Room 4 — GREAT FURNACE
+Room ID: br.great_furnace
+Required:
+- ITEM:item.br.furnace_lever
+- RECEPTOR:br.lever_socket
+- MECH:br.furnace_control
+- MECH:br.weight_or_plate
+- GATE:br.furnace_gate
+Rule: lever installed plus correct mechanism state -> gate opens.
+
+Room 5 — BOSS'S FOUNDRY
+Room ID: br.boss_foundry
+Required:
+- WIZARD:wizard.br.goblin_orc
+- safe exit/return route
+
+Flow:
+recover lever -> route pressure -> install/use lever -> open gate -> reach BR wizard
+
+UB — THE DROWNED ARCHIVE
+------------------------
+Dungeon ID: dungeon.ub.drowned_archive
+Wizard ID: wizard.ub.merfolk
+Terrain concept: playable land touching sea/coast
+Fantasy: WHAT IS HIDDEN DEPENDS ON WHICH STATE THE PLAYER CHOOSES TO REVEAL.
+
+Room 1 — TIDAL STAIR
+Room ID: ub.tidal_stair
+Required:
+- STATE:ub.water_level
+Water-level relevance must be visually obvious.
+
+Room 2 — DROWNED SCRIPTORIUM
+Room ID: ub.drowned_scriptorium
+Required:
+- ITEM:item.ub.pearl_sluice_handle
+
+Room 3 — VALVE GALLERY
+Room ID: ub.valve_gallery
+Required:
+- ITEM:item.ub.pearl_sluice_handle
+- RECEPTOR:ub.sluice_handle_socket
+- MECH:ub.sluice_control
+- STATE:ub.water_low
+- STATE:ub.water_high
+LOW/HIGH state must be reversible.
+
+Room 4 — SUNKEN ARCHIVE
+Room ID: ub.sunken_archive
+Required:
+- one access/control associated with LOW
+- one access/control associated with HIGH
+- GATE:ub.archive_gate
+No fluid simulation required; state-driven visibility/passability is enough.
+
+Room 5 — BLACK-TIDE OBSERVATORY
+Room ID: ub.black_tide_observatory
+Required:
+- WIZARD:wizard.ub.merfolk
+- archive/map props
+- safe exit/return route
+
+Flow:
+recover handle -> install sluice -> change water state -> reveal route/control ->
+open archive gate -> reach UB wizard
+
+WB — THE OSSUARY MINE
+---------------------
+Dungeon ID: dungeon.wb.ossuary_mine
+Wizard ID: wizard.wb.necromancer
+Terrain concept: Ore/Mountains
+Fantasy: FOLLOW THE RULES OF THE DEAD TO BE ALLOWED THROUGH.
+
+Room 1 — OLD SHAFT
+Room ID: wb.old_shaft
+Required:
+- mine dressing
+- clues gradually revealing formal burial use
+
+Room 2 — MEMORIAL ALCOVE
+Room ID: wb.memorial_alcove
+Required:
+- ITEM:item.wb.funerary_token
+Clue: the dead are admitted according to an old funerary order.
+
+Room 3 — WEIGHING HALL
+Room ID: wb.weighing_hall
+Required:
+- MECH:wb.funeral_weight
+- MECH:wb.weighing_plate
+- STATE:wb.weight_correct
+
+Room 4 — OSSUARY LIFT
+Room ID: wb.ossuary_lift
+Required:
+- ITEM:item.wb.funerary_token
+- RECEPTOR:wb.token_slot
+- STATE:wb.weight_correct
+- GATE:wb.ossuary_lift
+Rule: correct weight AND funerary token -> lift/gate opens.
+Do not irreversibly consume the required token in a softlocking way.
+
+Room 5 — SEPULCHRAL FORGE
+Room ID: wb.sepulchral_forge
+Required:
+- WIZARD:wizard.wb.necromancer
+- safe exit/return route
+
+Flow:
+obtain token -> set correct weight -> present token -> open lift -> reach WB wizard
+
+BG — THE ROTGARDEN VAULT
+------------------------
+Dungeon ID: dungeon.bg.rotgarden_vault
+Wizard ID: wizard.bg.elf
+Production terrain: UNASSIGNED
+Fantasy: DECAY IS NOT FAILURE; IT IS INPUT FOR WHAT GROWS NEXT.
+
+Room 1 — THORN GATE
+Room ID: bg.thorn_gate
+Required:
+- GATE:bg.thorn_gate
+
+Room 2 — SPORE GARDEN
+Room ID: bg.spore_garden
+Required:
+- ITEM:item.bg.blackbloom_bulb
+
+Room 3 — COMPOST VAULT
+Room ID: bg.compost_vault
+Required:
+- MECH:bg.decay_mass
+- RECEPTOR:bg.compost_bed
+- STATE:bg.compost_ready
+
+Room 4 — CORPSE ORCHARD
+Room ID: bg.corpse_orchard
+Required:
+- ITEM:item.bg.blackbloom_bulb
+- RECEPTOR:bg.growth_point
+- STATE:bg.compost_ready
+- GATE:bg.living_gate
+Rule: compost_ready plus bulb installed -> new growth opens route.
+
+Room 5 — BLACKBLOOM COURT
+Room ID: bg.blackbloom_court
+Required:
+- WIZARD:wizard.bg.elf
+- safe exit/return route
+
+Flow:
+obtain bulb -> prepare compost -> plant bulb -> growth opens route -> reach BG wizard
+
+BG is test-fixture content only until a production terrain assignment is explicitly chosen.
+
+NODE SIZE COMPARISON
+--------------------
+The test must support:
+- 65x49
+- 73x55
+- 81x61
+
+For each profile show or record:
+- node dimensions
+- 53x32 dungeon reservation bounds
+- remaining exterior area
+- whether exits/roads/settlement geometry remain usable
+- approximate traversal distance
+- path from node exterior into dungeon and back
+
+PUZZLEKIT REUSE
+---------------
+At least one embedded five-room sample must reuse real existing PuzzleKit mechanics.
+Prefer representative mechanisms covering:
+- ordered sequence/reveal
+- NPC scripted interaction
+- timed/moving mechanism
+- environmental magic
+- counterweight/drop
+- throw/pressure plate/multi-solution
+
+Verify current catalogue IDs on the branch before choosing exact puzzles.
+
+ACCEPTANCE
+----------
+PASS requires:
+1. Five rooms physically fit inside a node.
+2. No dungeon scene/loading transition is used inside the test node.
+3. Player can walk in and back out.
+4. Node exits and critical settlement routes remain usable.
+5. At least one embedded dungeon uses real PuzzleKit logic.
+6. Required objects/mechanisms are clearly identifiable.
+7. State changes are readable.
+8. Debug labels can identify rooms and critical entities.
+9. No required sequence can permanently softlock.
+10. 65x49, 73x55 and 81x61 can be compared.
+11. 450x800 and 720x1280 portrait remain usable.
+12. Production dungeon behavior remains intact outside the fixture.
+
+SCOPE LIMIT
+-----------
+This file describes dungeon SHAPE, SIZE, REQUIRED OBJECTS, LABELS and STATE
+RELATIONSHIPS. It does not authorize:
+- final dungeon art
+- permanent production replacement of dungeon scene transitions
+- final plot implementation
+- permanent BG terrain assignment
+- combat redesign
+- PuzzleKit rewrite
+- permanent global node-size choice

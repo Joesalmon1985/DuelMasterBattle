@@ -566,6 +566,18 @@ func _spawn_entity(e: Dictionary) -> void:
 				_entities.append(e)
 				_ensure_semantic(e, null)
 				return
+		"debug_label":
+			# Fixture instrumentation: small floating text, no collision.
+			var lbl := Label.new()
+			lbl.text = str(e.get("text", ""))
+			lbl.add_theme_font_size_override("font_size", 10)
+			lbl.modulate = Color(1.0, 0.95, 0.4, 0.95)
+			lbl.position = Vector2(pos) * TPX + Vector2(2, -6)
+			lbl.z_index = 20
+			_props_root.add_child(lbl)
+			e["node"] = lbl
+			_entities.append(e)
+			return
 	e["node"] = node
 	_entities.append(e)
 	if e["kind"] in ["fire", "pickup", "creature", "wizard", "npc", "corpse", "sign", "door", "logs"]:
@@ -2684,7 +2696,12 @@ func _boot_kit_session(adv: Node) -> void:
 	if not adv.is_active():
 		adv.new_game()
 	_play.setup(self, adv, _world_flow)
-	var start := _Runner.begin(adv)
+	var start: Vector2i
+	if _Runner.is_active():
+		var room: Dictionary = _Runner.kit_room()
+		start = Vector2i(int(room["start"][0]), int(room["start"][1]))
+	else:
+		start = _Runner.begin(adv)
 	_finish_kit_build(start, "down")
 	adv.state_changed.connect(_refresh_hud)
 	_refresh_hud()

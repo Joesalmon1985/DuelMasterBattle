@@ -11,6 +11,9 @@ const Migrated = preload("res://client/core/migrated_runtime.gd")
 
 var sim: DmbWorldSim
 var _adv: Node
+## Optional fixture hook: Callable(area: Dictionary, nid: int) -> Dictionary.
+## Used by the dungeon-world spatial test only; production leaves this empty.
+static var test_augment: Callable = Callable()
 
 
 func setup(adv: Node) -> void:
@@ -63,13 +66,20 @@ func enter(id: String) -> Dictionary:
 		sim.advance_turn()
 	_adv.state["world_node"] = nid
 	_store()
-	return DmbNodeProjection.area_for(sim, nid, _adv.state)
+	return _maybe_augment(DmbNodeProjection.area_for(sim, nid, _adv.state), nid)
 
 
 func area_for(id: String) -> Dictionary:
 	if Migrated.active:
 		return {}
-	return DmbNodeProjection.area_for(sim, resolve(id), _adv.state)
+	var nid := resolve(id)
+	return _maybe_augment(DmbNodeProjection.area_for(sim, nid, _adv.state), nid)
+
+
+func _maybe_augment(area: Dictionary, nid: int) -> Dictionary:
+	if test_augment.is_valid():
+		return test_augment.call(area, nid)
+	return area
 
 
 ## John beat a demon standing for hex `world_hex`: one piece leaves the board.

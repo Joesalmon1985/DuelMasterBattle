@@ -31,6 +31,9 @@ const MAX_STEADING := Vector2i(73, 55)
 const MIN_TOWN := Vector2i(81, 61)
 const MAX_TOWN := Vector2i(113, 85)
 const INSET := 2   # interior starts here: border ring + (for towns) the wall ring
+## Fixture-only size override for spatial tests. Vector2i.ZERO = production sizing.
+## Never set this from production campaign paths; clear after use.
+static var FORCE_DIMS := Vector2i.ZERO
 ## Building footprints, width x height (the bottom row is wall with a door).
 const FOOT := {
 	"production": Vector2i(2, 2), "processing": Vector2i(3, 2), "house": Vector2i(2, 2),
@@ -96,6 +99,8 @@ class Ctx:
 
 
 static func dims(p: Dictionary) -> Vector2i:
+	if FORCE_DIMS.x > 0 and FORCE_DIMS.y > 0:
+		return FORCE_DIMS
 	if str(p.get("kind", "wild")) == "wild":
 		return Vector2i(WILD_W, WILD_H)
 	var town: bool = str(p["kind"]) == "town"

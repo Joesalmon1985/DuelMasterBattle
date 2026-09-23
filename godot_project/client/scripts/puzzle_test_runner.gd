@@ -59,6 +59,30 @@ static func begin(adv: Node) -> Vector2i:
 	return Vector2i(int(_room["start"][0]), int(_room["start"][1]))
 
 
+## Fixture/spatial tests: begin a kit session from an already-built room dict
+## (e.g. an embedded five-room specimen covering a full local-area map).
+static func begin_with_room(adv: Node, room: Dictionary) -> Vector2i:
+	selected_puzzle = str(room.get("id", "embedded_custom"))
+	_room = room.duplicate(true)
+	_kit_state = DmbPuzzleKit.fresh_state(_room)
+	_saved_adv_state = (adv.state as Dictionary).duplicate(true)
+	_saved_adv_prog = adv.progression.to_dict()
+	_has_saved_session = true
+	adv.test_mode = true
+	_seed_prereqs(adv, _room)
+	DmbPuzzleKit.sync_inventory(_kit_state, adv.items())
+	return Vector2i(int(_room["start"][0]), int(_room["start"][1]))
+
+
+## Replace the active kit room/state without touching the Adventure snapshot
+## (used when regenerating an embedded specimen at a new node size).
+static func replace_room(room: Dictionary) -> Vector2i:
+	selected_puzzle = str(room.get("id", selected_puzzle))
+	_room = room.duplicate(true)
+	_kit_state = DmbPuzzleKit.fresh_state(_room)
+	return Vector2i(int(_room["start"][0]), int(_room["start"][1]))
+
+
 ## End the session: restore the pre-test campaign snapshot, clear kit state.
 static func end(adv: Node) -> void:
 	if _has_saved_session:

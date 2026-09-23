@@ -1,0 +1,2794 @@
+{
+	"bg_test_node": 2,
+	"bg_unassigned": true,
+	"candidates": [
+		{
+			"coastal": false,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 0,
+			"node_hexes": [
+				0,
+				4,
+				5
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"touches mountains/ore hex"
+			],
+			"settlement": 17,
+			"terrains": [
+				"forest",
+				"mountains",
+				"fields"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"GW",
+				"WB"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 1,
+			"node_hexes": [
+				0,
+				3,
+				4
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"touches hills/brick hex",
+				"touches mountains/ore hex"
+			],
+			"settlement": 17,
+			"terrains": [
+				"forest",
+				"hills",
+				"mountains"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"GW",
+				"BR",
+				"WB"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "levy",
+			"faction_name": "The Sukumvit Levy",
+			"node": 2,
+			"node_hexes": [
+				0,
+				2,
+				3
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"touches hills/brick hex"
+			],
+			"settlement": 14,
+			"terrains": [
+				"forest",
+				"hills"
+			],
+			"touching_hexes": [
+				3,
+				11,
+				12
+			],
+			"types": [
+				"GW",
+				"BR"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 3,
+			"node_hexes": [
+				0,
+				1,
+				2
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"touches hills/brick hex"
+			],
+			"settlement": 8,
+			"terrains": [
+				"forest",
+				"hills"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"GW",
+				"BR"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 4,
+			"node_hexes": [
+				0,
+				1,
+				6
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex"
+			],
+			"settlement": 8,
+			"terrains": [
+				"forest",
+				"pasture"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"GW"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "drovers",
+			"faction_name": "The Drover Compact",
+			"node": 5,
+			"node_hexes": [
+				0,
+				5,
+				6
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex"
+			],
+			"settlement": 1,
+			"terrains": [
+				"forest",
+				"fields",
+				"pasture"
+			],
+			"touching_hexes": [
+				0,
+				3,
+				4
+			],
+			"types": [
+				"GW"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 6,
+			"node_hexes": [
+				1,
+				2,
+				8
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"touches hills/brick hex"
+			],
+			"settlement": 8,
+			"terrains": [
+				"forest",
+				"hills",
+				"fields"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"GW",
+				"BR"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 7,
+			"node_hexes": [
+				1,
+				7,
+				8
+			],
+			"production_dungeon": {
+				"faction": "tithe",
+				"id": "tower_7",
+				"index": 1,
+				"kind": "tower",
+				"needs": {
+					"from": "tower_18",
+					"item": "sigil_ash"
+				},
+				"node": 7,
+				"provides": "sigil_salt",
+				"puzzles": [
+					{
+						"clue": "The way on is blocked by a wall of old ice. No lever. No key. This room wants a wizard.",
+						"desc": "a wall of old ice",
+						"id": "p1",
+						"prompt": "Melt it",
+						"result": "The ice runs to water and the water runs away. Cold stone, and a door.",
+						"room": 0,
+						"spell": 0,
+						"target": "p1_target",
+						"title": "The Room Answers Magic",
+						"type": "magic_target"
+					},
+					{
+						"clue": "A plate in the floor. Stand on it and the door grinds open; step off and it slams. Something has to stay behind.",
+						"id": "p2",
+						"items": [
+							"grey_stone"
+						],
+						"plate": "p2_plate",
+						"room": 1,
+						"title": "Hold the Plate",
+						"type": "plate_hold"
+					},
+					{
+						"accepts": [
+							"clay_idol",
+							"brass_gear",
+							"tallow_candle",
+							"mirror_shard",
+							"black_seed"
+						],
+						"clue": "The key sits on a plate that hums. Lift it and the door seals. Something else of weight must take its place.",
+						"gives": "iron_key",
+						"id": "p3",
+						"items": [
+							"black_seed"
+						],
+						"pedestal": "p3_ped",
+						"room": 2,
+						"title": "Fair Exchange",
+						"type": "exchange"
+					},
+					{
+						"clue": "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — carved in the heart of the tower 18.",
+						"id": "p4",
+						"items": [
+							"brass_gear"
+						],
+						"room": 3,
+						"slots": [
+							{
+								"id": "p4_s0",
+								"item": "brass_gear"
+							},
+							{
+								"id": "p4_s1",
+								"item": "sigil_ash",
+								"keep": true
+							}
+						],
+						"title": "The Two Offerings",
+						"type": "offerings"
+					}
+				],
+				"reward": {
+
+				},
+				"seed": 2354512818,
+				"settlement": 3
+			},
+			"reasons": [
+				"touches forest hex"
+			],
+			"settlement": 8,
+			"terrains": [
+				"forest",
+				"fields"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"GW"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "tithe",
+			"faction_name": "The Wheatlord's Tithe",
+			"node": 8,
+			"node_hexes": [
+				1,
+				7,
+				18
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex"
+			],
+			"settlement": 3,
+			"terrains": [
+				"forest",
+				"fields",
+				"pasture"
+			],
+			"touching_hexes": [
+				0,
+				1,
+				2
+			],
+			"types": [
+				"GW"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 9,
+			"node_hexes": [
+				1,
+				6,
+				18
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex"
+			],
+			"settlement": 8,
+			"terrains": [
+				"forest",
+				"pasture"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"GW"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "levy",
+			"faction_name": "The Sukumvit Levy",
+			"node": 10,
+			"node_hexes": [
+				2,
+				3,
+				10
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"touches mountains/ore hex"
+			],
+			"settlement": 14,
+			"terrains": [
+				"hills",
+				"mountains"
+			],
+			"touching_hexes": [
+				3,
+				11,
+				12
+			],
+			"types": [
+				"BR",
+				"WB"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "tithe",
+			"faction_name": "The Wheatlord's Tithe",
+			"node": 11,
+			"node_hexes": [
+				2,
+				9,
+				10
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"touches mountains/ore hex"
+			],
+			"settlement": 3,
+			"terrains": [
+				"hills",
+				"pasture",
+				"mountains"
+			],
+			"touching_hexes": [
+				0,
+				1,
+				2
+			],
+			"types": [
+				"BR",
+				"WB"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "tithe",
+			"faction_name": "The Wheatlord's Tithe",
+			"node": 12,
+			"node_hexes": [
+				2,
+				8,
+				9
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches hills/brick hex"
+			],
+			"settlement": 3,
+			"terrains": [
+				"hills",
+				"fields",
+				"pasture"
+			],
+			"touching_hexes": [
+				0,
+				1,
+				2
+			],
+			"types": [
+				"BR"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 13,
+			"node_hexes": [
+				3,
+				4,
+				12
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"touches mountains/ore hex"
+			],
+			"settlement": 17,
+			"terrains": [
+				"hills",
+				"mountains",
+				"fields"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"BR",
+				"WB"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 14,
+			"node_hexes": [
+				3,
+				11,
+				12
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"touches mountains/ore hex"
+			],
+			"settlement": 17,
+			"terrains": [
+				"hills",
+				"mountains",
+				"fields"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"BR",
+				"WB"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "levy",
+			"faction_name": "The Sukumvit Levy",
+			"node": 15,
+			"node_hexes": [
+				3,
+				10,
+				11
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"touches mountains/ore hex"
+			],
+			"settlement": 14,
+			"terrains": [
+				"hills",
+				"mountains"
+			],
+			"touching_hexes": [
+				3,
+				11,
+				12
+			],
+			"types": [
+				"BR",
+				"WB"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 16,
+			"node_hexes": [
+				4,
+				13,
+				14
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches mountains/ore hex",
+				"touches hills/brick hex"
+			],
+			"settlement": 17,
+			"terrains": [
+				"mountains",
+				"hills",
+				"pasture"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"WB",
+				"BR"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "levy",
+			"faction_name": "The Sukumvit Levy",
+			"node": 17,
+			"node_hexes": [
+				4,
+				12,
+				13
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches mountains/ore hex",
+				"touches hills/brick hex"
+			],
+			"settlement": 14,
+			"terrains": [
+				"mountains",
+				"fields",
+				"hills"
+			],
+			"touching_hexes": [
+				3,
+				11,
+				12
+			],
+			"types": [
+				"WB",
+				"BR"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 18,
+			"node_hexes": [
+				4,
+				5,
+				14
+			],
+			"production_dungeon": {
+				"faction": "drovers",
+				"id": "tower_18",
+				"index": 0,
+				"kind": "tower",
+				"needs": {
+					"from": "settlement",
+					"item": "token_drovers"
+				},
+				"node": 18,
+				"provides": "sigil_ash",
+				"puzzles": [
+					{
+						"accepts": [
+							"clay_idol",
+							"brass_gear",
+							"tallow_candle",
+							"mirror_shard",
+							"black_seed"
+						],
+						"clue": "The key sits on a plate that hums. Lift it and the door seals. Something else of weight must take its place.",
+						"gives": "iron_key",
+						"id": "p1",
+						"items": [
+							"mirror_shard"
+						],
+						"pedestal": "p1_ped",
+						"room": 0,
+						"title": "Fair Exchange",
+						"type": "exchange"
+					},
+					{
+						"clue": "Three levers. Scratched beside them: 'third, then first, then second'. A wrong pull resets them all.",
+						"id": "p2",
+						"levers": [
+							"p2_l0",
+							"p2_l1",
+							"p2_l2"
+						],
+						"n": 3,
+						"order": [
+							2,
+							0,
+							1
+						],
+						"room": 1,
+						"title": "The Switch Chain",
+						"type": "switch_chain"
+					},
+					{
+						"clue": "The way on is blocked by a wall of old ice. No lever. No key. This room wants a wizard.",
+						"desc": "a wall of old ice",
+						"id": "p3",
+						"prompt": "Melt it",
+						"result": "The ice runs to water and the water runs away. Cold stone, and a door.",
+						"room": 2,
+						"spell": 0,
+						"target": "p3_target",
+						"title": "The Room Answers Magic",
+						"type": "magic_target"
+					},
+					{
+						"clue": "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — the people of the steading that raised this place carry such marks.",
+						"id": "p4",
+						"items": [
+							"brass_gear"
+						],
+						"room": 3,
+						"slots": [
+							{
+								"id": "p4_s0",
+								"item": "brass_gear"
+							},
+							{
+								"id": "p4_s1",
+								"item": "token_drovers",
+								"keep": true
+							}
+						],
+						"title": "The Two Offerings",
+						"type": "offerings"
+					}
+				],
+				"reward": {
+
+				},
+				"seed": 3491370495,
+				"settlement": 1
+			},
+			"reasons": [
+				"touches mountains/ore hex"
+			],
+			"settlement": 17,
+			"terrains": [
+				"mountains",
+				"fields",
+				"pasture"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"WB"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "ironmoot",
+			"faction_name": "The Ironmoot",
+			"node": 21,
+			"node_hexes": [
+				5,
+				15,
+				16
+			],
+			"production_dungeon": {
+				"faction": "ironmoot",
+				"id": "tower_21",
+				"index": 8,
+				"kind": "tower",
+				"needs": {
+					"from": "tower_30",
+					"item": "sigil_bone"
+				},
+				"node": 21,
+				"provides": "sigil_glass",
+				"puzzles": [
+					{
+						"clue": "Three levers. Scratched beside them: 'third, then second, then first'. A wrong pull resets them all.",
+						"id": "p1",
+						"levers": [
+							"p1_l0",
+							"p1_l1",
+							"p1_l2"
+						],
+						"n": 3,
+						"order": [
+							2,
+							1,
+							0
+						],
+						"room": 0,
+						"title": "The Switch Chain",
+						"type": "switch_chain"
+					},
+					{
+						"clue": "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — carved in the heart of the tower 30.",
+						"id": "p2",
+						"items": [
+							"mirror_shard"
+						],
+						"room": 1,
+						"slots": [
+							{
+								"id": "p2_s0",
+								"item": "mirror_shard"
+							},
+							{
+								"id": "p2_s1",
+								"item": "sigil_bone",
+								"keep": true
+							}
+						],
+						"title": "The Two Offerings",
+						"type": "offerings"
+					},
+					{
+						"clue": "Pull the lever and the gate lifts — and counts. Nine steps, no more. Then it drops.",
+						"id": "p3",
+						"lever": "p3_lever",
+						"room": 2,
+						"steps": 9,
+						"title": "The Timed Gate",
+						"type": "timed_gate"
+					},
+					{
+						"clue": "Four coloured stones set in the floor. The mural says: fourth, then third, then second, then first. Tread them so, or start again.",
+						"id": "p4",
+						"order": [
+							3,
+							2,
+							1,
+							0
+						],
+						"room": 3,
+						"tiles": 4,
+						"title": "The Mosaic Floor",
+						"type": "mosaic"
+					}
+				],
+				"reward": {
+
+				},
+				"seed": 2813510237,
+				"settlement": 19
+			},
+			"reasons": [
+				"touches forest hex"
+			],
+			"settlement": 19,
+			"terrains": [
+				"fields",
+				"forest",
+				"desert"
+			],
+			"touching_hexes": [
+				5,
+				14,
+				15
+			],
+			"types": [
+				"GW"
+			]
+		},
+		{
+			"coastal": false,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 22,
+			"node_hexes": [
+				6,
+				17,
+				18
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex"
+			],
+			"settlement": 8,
+			"terrains": [
+				"pasture",
+				"forest"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"GW"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 24,
+			"node_hexes": [
+				7,
+				8
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 8,
+			"terrains": [
+				"fields"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 25,
+			"node_hexes": [
+				7
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 8,
+			"terrains": [
+				"fields"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 26,
+			"node_hexes": [
+				7
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 8,
+			"terrains": [
+				"fields"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 27,
+			"node_hexes": [
+				7,
+				18
+			],
+			"production_dungeon": {
+				"faction": "kilns",
+				"id": "tower_27",
+				"index": 3,
+				"kind": "tower",
+				"needs": {
+					"from": "tower_18",
+					"item": "sigil_ash"
+				},
+				"node": 27,
+				"provides": "sigil_moss",
+				"puzzles": [
+					{
+						"clue": "The way on is blocked by a brazier roaring far too hot for the room. No lever. No key. This room wants a wizard.",
+						"desc": "a brazier roaring far too hot for the room",
+						"id": "p1",
+						"prompt": "Douse it",
+						"result": "The fire dies with a hiss. Behind the smoke, the way is open.",
+						"room": 0,
+						"spell": 1,
+						"target": "p1_target",
+						"title": "The Room Answers Magic",
+						"type": "magic_target"
+					},
+					{
+						"clue": "A plate in the floor. Stand on it and the door grinds open; step off and it slams. Something has to stay behind.",
+						"id": "p2",
+						"items": [
+							"grey_stone"
+						],
+						"plate": "p2_plate",
+						"room": 1,
+						"title": "Hold the Plate",
+						"type": "plate_hold"
+					},
+					{
+						"clue": "A carved face says: 'Pull the left.' Beneath it, in another hand: 'The face is honest, for once.'",
+						"correct": 0,
+						"id": "p3",
+						"levers": [
+							"p3_left",
+							"p3_right"
+						],
+						"liar": false,
+						"room": 2,
+						"title": "Left Lever, Right Lever",
+						"type": "two_levers",
+						"wrong_enemy": "flame_imp"
+					},
+					{
+						"clue": "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — carved in the heart of the tower 18.",
+						"id": "p4",
+						"items": [
+							"mirror_shard"
+						],
+						"room": 3,
+						"slots": [
+							{
+								"id": "p4_s0",
+								"item": "mirror_shard"
+							},
+							{
+								"id": "p4_s1",
+								"item": "sigil_ash",
+								"keep": true
+							}
+						],
+						"title": "The Two Offerings",
+						"type": "offerings"
+					}
+				],
+				"reward": {
+
+				},
+				"seed": 4203444751,
+				"settlement": 8
+			},
+			"reasons": [
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 8,
+			"terrains": [
+				"fields",
+				"pasture"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "levy",
+			"faction_name": "The Sukumvit Levy",
+			"node": 33,
+			"node_hexes": [
+				10,
+				11
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches mountains/ore hex",
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 14,
+			"terrains": [
+				"mountains"
+			],
+			"touching_hexes": [
+				3,
+				11,
+				12
+			],
+			"types": [
+				"WB",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 35,
+			"node_hexes": [
+				11,
+				12
+			],
+			"production_dungeon": {
+				"faction": "levy",
+				"id": "tower_35",
+				"index": 6,
+				"kind": "tower",
+				"needs": {
+					"from": "tower_18",
+					"item": "sigil_ash"
+				},
+				"node": 35,
+				"provides": "sigil_ember",
+				"puzzles": [
+					{
+						"clue": "A plate in the floor. Stand on it and the door grinds open; step off and it slams. Something has to stay behind.",
+						"id": "p1",
+						"items": [
+							"grey_stone"
+						],
+						"plate": "p1_plate",
+						"room": 0,
+						"title": "Hold the Plate",
+						"type": "plate_hold"
+					},
+					{
+						"clue": "Four coloured stones set in the floor. The mural says: first, then second, then third, then fourth. Tread them so, or start again.",
+						"id": "p2",
+						"order": [
+							0,
+							1,
+							2,
+							3
+						],
+						"room": 1,
+						"tiles": 4,
+						"title": "The Mosaic Floor",
+						"type": "mosaic"
+					},
+					{
+						"clue": "Three levers. Scratched beside them: 'second, then first, then third'. A wrong pull resets them all.",
+						"id": "p3",
+						"levers": [
+							"p3_l0",
+							"p3_l1",
+							"p3_l2"
+						],
+						"n": 3,
+						"order": [
+							1,
+							0,
+							2
+						],
+						"room": 2,
+						"title": "The Switch Chain",
+						"type": "switch_chain"
+					},
+					{
+						"clue": "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — carved in the heart of the tower 18.",
+						"id": "p4",
+						"items": [
+							"tallow_candle"
+						],
+						"room": 3,
+						"slots": [
+							{
+								"id": "p4_s0",
+								"item": "tallow_candle"
+							},
+							{
+								"id": "p4_s1",
+								"item": "sigil_ash",
+								"keep": true
+							}
+						],
+						"title": "The Two Offerings",
+						"type": "offerings"
+					}
+				],
+				"reward": {
+
+				},
+				"seed": 590879984,
+				"settlement": 14
+			},
+			"reasons": [
+				"touches mountains/ore hex",
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 17,
+			"terrains": [
+				"mountains",
+				"fields"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"WB",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "levy",
+			"faction_name": "The Sukumvit Levy",
+			"node": 36,
+			"node_hexes": [
+				11
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches mountains/ore hex",
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 14,
+			"terrains": [
+				"mountains"
+			],
+			"touching_hexes": [
+				3,
+				11,
+				12
+			],
+			"types": [
+				"WB",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "levy",
+			"faction_name": "The Sukumvit Levy",
+			"node": 37,
+			"node_hexes": [
+				11
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches mountains/ore hex",
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 14,
+			"terrains": [
+				"mountains"
+			],
+			"touching_hexes": [
+				3,
+				11,
+				12
+			],
+			"types": [
+				"WB",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 38,
+			"node_hexes": [
+				12,
+				13
+			],
+			"production_dungeon": {
+				"faction": "wardens",
+				"id": "tower_38",
+				"index": 7,
+				"kind": "tower",
+				"needs": {
+					"from": "tower_18",
+					"item": "sigil_ash"
+				},
+				"node": 38,
+				"provides": "sigil_root",
+				"puzzles": [
+					{
+						"clue": "The way on is blocked by a brazier roaring far too hot for the room. No lever. No key. This room wants a wizard.",
+						"desc": "a brazier roaring far too hot for the room",
+						"id": "p1",
+						"prompt": "Douse it",
+						"result": "The fire dies with a hiss. Behind the smoke, the way is open.",
+						"room": 0,
+						"spell": 1,
+						"target": "p1_target",
+						"title": "The Room Answers Magic",
+						"type": "magic_target"
+					},
+					{
+						"clue": "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — carved in the heart of the tower 18.",
+						"id": "p2",
+						"items": [
+							"brass_gear"
+						],
+						"room": 1,
+						"slots": [
+							{
+								"id": "p2_s0",
+								"item": "brass_gear"
+							},
+							{
+								"id": "p2_s1",
+								"item": "sigil_ash",
+								"keep": true
+							}
+						],
+						"title": "The Two Offerings",
+						"type": "offerings"
+					},
+					{
+						"clue": "Three levers. Scratched beside them: 'first, then third, then second'. A wrong pull resets them all.",
+						"id": "p3",
+						"levers": [
+							"p3_l0",
+							"p3_l1",
+							"p3_l2"
+						],
+						"n": 3,
+						"order": [
+							0,
+							2,
+							1
+						],
+						"room": 2,
+						"title": "The Switch Chain",
+						"type": "switch_chain"
+					},
+					{
+						"clue": "Four coloured stones set in the floor. The mural says: second, then fourth, then third, then first. Tread them so, or start again.",
+						"id": "p4",
+						"order": [
+							1,
+							3,
+							2,
+							0
+						],
+						"room": 3,
+						"tiles": 4,
+						"title": "The Mosaic Floor",
+						"type": "mosaic"
+					}
+				],
+				"reward": {
+
+				},
+				"seed": 3480940694,
+				"settlement": 17
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 17,
+			"terrains": [
+				"fields",
+				"hills"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"BR",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 39,
+			"node_hexes": [
+				12
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 17,
+			"terrains": [
+				"fields"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 40,
+			"node_hexes": [
+				13
+			],
+			"production_dungeon": {
+				"faction": "levy",
+				"id": "tower_40",
+				"index": 10,
+				"kind": "tower",
+				"needs": {
+					"from": "tower_38",
+					"item": "sigil_root"
+				},
+				"node": 40,
+				"provides": "sigil_lime",
+				"puzzles": [
+					{
+						"clue": "Four coloured stones set in the floor. The mural says: second, then fourth, then third, then first. Tread them so, or start again.",
+						"id": "p1",
+						"order": [
+							1,
+							3,
+							2,
+							0
+						],
+						"room": 0,
+						"tiles": 4,
+						"title": "The Mosaic Floor",
+						"type": "mosaic"
+					},
+					{
+						"clue": "Pull the lever and the gate lifts — and counts. Nine steps, no more. Then it drops.",
+						"id": "p2",
+						"lever": "p2_lever",
+						"room": 1,
+						"steps": 9,
+						"title": "The Timed Gate",
+						"type": "timed_gate"
+					},
+					{
+						"clue": "Three levers. Scratched beside them: 'third, then second, then first'. A wrong pull resets them all.",
+						"id": "p3",
+						"levers": [
+							"p3_l0",
+							"p3_l1",
+							"p3_l2"
+						],
+						"n": 3,
+						"order": [
+							2,
+							1,
+							0
+						],
+						"room": 2,
+						"title": "The Switch Chain",
+						"type": "switch_chain"
+					},
+					{
+						"clue": "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — carved in the heart of the tower 38.",
+						"id": "p4",
+						"items": [
+							"tallow_candle"
+						],
+						"room": 3,
+						"slots": [
+							{
+								"id": "p4_s0",
+								"item": "tallow_candle"
+							},
+							{
+								"id": "p4_s1",
+								"item": "sigil_root",
+								"keep": true
+							}
+						],
+						"title": "The Two Offerings",
+						"type": "offerings"
+					}
+				],
+				"reward": {
+
+				},
+				"seed": 4050587618,
+				"settlement": 42
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 17,
+			"terrains": [
+				"hills"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"BR",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 41,
+			"node_hexes": [
+				13
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 17,
+			"terrains": [
+				"hills"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"BR",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"node": 42,
+			"node_hexes": [
+				13,
+				14
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches hills/brick hex",
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 17,
+			"terrains": [
+				"hills",
+				"pasture"
+			],
+			"touching_hexes": [
+				4,
+				12,
+				13
+			],
+			"types": [
+				"BR",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "ironmoot",
+			"faction_name": "The Ironmoot",
+			"node": 43,
+			"node_hexes": [
+				14
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 19,
+			"terrains": [
+				"pasture"
+			],
+			"touching_hexes": [
+				5,
+				14,
+				15
+			],
+			"types": [
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "ironmoot",
+			"faction_name": "The Ironmoot",
+			"node": 44,
+			"node_hexes": [
+				14,
+				15
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 19,
+			"terrains": [
+				"pasture",
+				"forest"
+			],
+			"touching_hexes": [
+				5,
+				14,
+				15
+			],
+			"types": [
+				"GW",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "ironmoot",
+			"faction_name": "The Ironmoot",
+			"node": 45,
+			"node_hexes": [
+				15
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 19,
+			"terrains": [
+				"forest"
+			],
+			"touching_hexes": [
+				5,
+				14,
+				15
+			],
+			"types": [
+				"GW",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "ironmoot",
+			"faction_name": "The Ironmoot",
+			"node": 46,
+			"node_hexes": [
+				15,
+				16
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 19,
+			"terrains": [
+				"forest",
+				"desert"
+			],
+			"touching_hexes": [
+				5,
+				14,
+				15
+			],
+			"types": [
+				"GW",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "ironmoot",
+			"faction_name": "The Ironmoot",
+			"node": 47,
+			"node_hexes": [
+				15
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"touches forest hex",
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 19,
+			"terrains": [
+				"forest"
+			],
+			"touching_hexes": [
+				5,
+				14,
+				15
+			],
+			"types": [
+				"GW",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 50,
+			"node_hexes": [
+				17,
+				18
+			],
+			"production_dungeon": {
+				"faction": "ironmoot",
+				"id": "tower_50",
+				"index": 9,
+				"kind": "tower",
+				"needs": {
+					"from": "tower_35",
+					"item": "sigil_ember"
+				},
+				"node": 50,
+				"provides": "sigil_frost",
+				"puzzles": [
+					{
+						"clue": "A carved face says: 'Pull the left.' Beneath it, in another hand: 'The face is honest, for once.'",
+						"correct": 0,
+						"id": "p1",
+						"levers": [
+							"p1_left",
+							"p1_right"
+						],
+						"liar": false,
+						"room": 0,
+						"title": "Left Lever, Right Lever",
+						"type": "two_levers",
+						"wrong_enemy": "flame_imp"
+					},
+					{
+						"clue": "Two niches, two shapes cut into the stone. One shape is in this room. The other was made somewhere else — carved in the heart of the tower 35.",
+						"id": "p2",
+						"items": [
+							"clay_idol"
+						],
+						"room": 1,
+						"slots": [
+							{
+								"id": "p2_s0",
+								"item": "clay_idol"
+							},
+							{
+								"id": "p2_s1",
+								"item": "sigil_ember",
+								"keep": true
+							}
+						],
+						"title": "The Two Offerings",
+						"type": "offerings"
+					},
+					{
+						"accepts": [
+							"clay_idol",
+							"brass_gear",
+							"tallow_candle",
+							"mirror_shard",
+							"black_seed"
+						],
+						"clue": "The key sits on a plate that hums. Lift it and the door seals. Something else of weight must take its place.",
+						"gives": "iron_key",
+						"id": "p3",
+						"items": [
+							"clay_idol"
+						],
+						"pedestal": "p3_ped",
+						"room": 2,
+						"title": "Fair Exchange",
+						"type": "exchange"
+					},
+					{
+						"clue": "Four coloured stones set in the floor. The mural says: third, then first, then second, then fourth. Tread them so, or start again.",
+						"id": "p4",
+						"order": [
+							2,
+							0,
+							1,
+							3
+						],
+						"room": 3,
+						"tiles": 4,
+						"title": "The Mosaic Floor",
+						"type": "mosaic"
+					}
+				],
+				"reward": {
+
+				},
+				"seed": 1802043077,
+				"settlement": 22
+			},
+			"reasons": [
+				"touches forest hex",
+				"coastal node (hexes=2 < 3)"
+			],
+			"settlement": 8,
+			"terrains": [
+				"forest",
+				"pasture"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"GW",
+				"UB"
+			]
+		},
+		{
+			"coastal": true,
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"node": 53,
+			"node_hexes": [
+				18
+			],
+			"production_dungeon": {
+
+			},
+			"reasons": [
+				"coastal node (hexes=1 < 3)"
+			],
+			"settlement": 8,
+			"terrains": [
+				"pasture"
+			],
+			"touching_hexes": [
+				1,
+				7,
+				18
+			],
+			"types": [
+				"UB"
+			]
+		}
+	],
+	"catalogue_max_room": [
+		15,
+		13
+	],
+	"dungeon_defs": {
+		"BG": {
+			"dungeon_id": "dungeon.bg.rotgarden_vault",
+			"flow": "obtain bulb -> prepare compost -> plant bulb -> growth opens route -> reach BG wizard",
+			"production_terrain": "",
+			"rooms": [
+				{
+					"index": 1,
+					"labels": [
+						"GATE:bg.thorn_gate"
+					],
+					"name": "THORN GATE",
+					"room_id": "bg.thorn_gate"
+				},
+				{
+					"index": 2,
+					"labels": [
+						"ITEM:item.bg.blackbloom_bulb"
+					],
+					"name": "SPORE GARDEN",
+					"room_id": "bg.spore_garden"
+				},
+				{
+					"index": 3,
+					"labels": [
+						"MECH:bg.decay_mass",
+						"RECEPTOR:bg.compost_bed",
+						"STATE:bg.compost_ready"
+					],
+					"name": "COMPOST VAULT",
+					"room_id": "bg.compost_vault"
+				},
+				{
+					"index": 4,
+					"labels": [
+						"ITEM:item.bg.blackbloom_bulb",
+						"RECEPTOR:bg.growth_point",
+						"STATE:bg.compost_ready",
+						"GATE:bg.living_gate"
+					],
+					"name": "CORPSE ORCHARD",
+					"room_id": "bg.corpse_orchard",
+					"rule": "compost_ready plus bulb installed -> new growth opens route"
+				},
+				{
+					"index": 5,
+					"labels": [
+						"WIZARD:wizard.bg.elf"
+					],
+					"name": "BLACKBLOOM COURT",
+					"room_id": "bg.blackbloom_court"
+				}
+			],
+			"wizard_id": "wizard.bg.elf"
+		},
+		"BR": {
+			"dungeon_id": "dungeon.br.kiln_warrens",
+			"flow": "recover lever -> route pressure -> install/use lever -> open gate -> reach BR wizard",
+			"production_terrain": "hills",
+			"rooms": [
+				{
+					"index": 1,
+					"labels": [
+						"SIGN:br.furnace_clue",
+						"GATE:br.blocked_route"
+					],
+					"name": "COLLAPSED CLAYWORKS",
+					"room_id": "br.collapsed_clayworks"
+				},
+				{
+					"index": 2,
+					"labels": [
+						"ITEM:item.br.furnace_lever"
+					],
+					"name": "SCRAP DEN",
+					"room_id": "br.scrap_den"
+				},
+				{
+					"index": 3,
+					"labels": [
+						"MECH:br.vent_a",
+						"MECH:br.vent_b",
+						"STATE:br.pressure_routed"
+					],
+					"name": "KILN GALLERY",
+					"room_id": "br.kiln_gallery"
+				},
+				{
+					"index": 4,
+					"labels": [
+						"ITEM:item.br.furnace_lever",
+						"RECEPTOR:br.lever_socket",
+						"MECH:br.furnace_control",
+						"MECH:br.weight_or_plate",
+						"GATE:br.furnace_gate"
+					],
+					"name": "GREAT FURNACE",
+					"room_id": "br.great_furnace",
+					"rule": "lever installed plus correct mechanism state -> gate opens"
+				},
+				{
+					"index": 5,
+					"labels": [
+						"WIZARD:wizard.br.goblin_orc"
+					],
+					"name": "BOSS'S FOUNDRY",
+					"room_id": "br.boss_foundry"
+				}
+			],
+			"wizard_id": "wizard.br.goblin_orc"
+		},
+		"GW": {
+			"dungeon_id": "dungeon.gw.rootbound_sanctuary",
+			"flow": "restore water -> install seed -> open living gate -> reach GW wizard",
+			"production_terrain": "forest",
+			"rooms": [
+				{
+					"index": 1,
+					"labels": [
+						"SIGN:gw.seasons_carving",
+						"MECH:gw.root_barrier",
+						"GATE:gw.root_gate"
+					],
+					"name": "ROOT GATE",
+					"room_id": "gw.root_gate"
+				},
+				{
+					"index": 2,
+					"labels": [
+						"ITEM:item.gw.sun_seed",
+						"RECEPTOR:gw.seed_shrine"
+					],
+					"name": "SEED SHRINE",
+					"room_id": "gw.seed_shrine"
+				},
+				{
+					"index": 3,
+					"labels": [
+						"MECH:gw.channel_weight",
+						"MECH:gw.channel_plate",
+						"MECH:gw.water_switch",
+						"STATE:gw.water_restored"
+					],
+					"name": "WITHERED CHANNEL",
+					"room_id": "gw.withered_channel"
+				},
+				{
+					"index": 4,
+					"labels": [
+						"ITEM:item.gw.sun_seed",
+						"RECEPTOR:gw.growth_point",
+						"STATE:gw.water_restored",
+						"GATE:gw.living_gate"
+					],
+					"name": "HEARTWOOD CHAMBER",
+					"room_id": "gw.heartwood_chamber",
+					"rule": "water_restored AND sun_seed installed -> living gate opens"
+				},
+				{
+					"index": 5,
+					"labels": [
+						"WIZARD:wizard.gw.treefolk"
+					],
+					"name": "ELDER COURT",
+					"room_id": "gw.elder_court"
+				}
+			],
+			"wizard_id": "wizard.gw.treefolk"
+		},
+		"UB": {
+			"dungeon_id": "dungeon.ub.drowned_archive",
+			"flow": "recover handle -> install sluice -> change water state -> reveal route -> open archive gate -> reach UB wizard",
+			"production_terrain": "coastal",
+			"rooms": [
+				{
+					"index": 1,
+					"labels": [
+						"STATE:ub.water_level"
+					],
+					"name": "TIDAL STAIR",
+					"room_id": "ub.tidal_stair"
+				},
+				{
+					"index": 2,
+					"labels": [
+						"ITEM:item.ub.pearl_sluice_handle"
+					],
+					"name": "DROWNED SCRIPTORIUM",
+					"room_id": "ub.drowned_scriptorium"
+				},
+				{
+					"index": 3,
+					"labels": [
+						"ITEM:item.ub.pearl_sluice_handle",
+						"RECEPTOR:ub.sluice_handle_socket",
+						"MECH:ub.sluice_control",
+						"STATE:ub.water_low",
+						"STATE:ub.water_high"
+					],
+					"name": "VALVE GALLERY",
+					"room_id": "ub.valve_gallery"
+				},
+				{
+					"index": 4,
+					"labels": [
+						"GATE:ub.archive_gate"
+					],
+					"name": "SUNKEN ARCHIVE",
+					"room_id": "ub.sunken_archive"
+				},
+				{
+					"index": 5,
+					"labels": [
+						"WIZARD:wizard.ub.merfolk"
+					],
+					"name": "BLACK-TIDE OBSERVATORY",
+					"room_id": "ub.black_tide_observatory"
+				}
+			],
+			"wizard_id": "wizard.ub.merfolk"
+		},
+		"WB": {
+			"dungeon_id": "dungeon.wb.ossuary_mine",
+			"flow": "obtain token -> set correct weight -> present token -> open lift -> reach WB wizard",
+			"production_terrain": "mountains",
+			"rooms": [
+				{
+					"index": 1,
+					"labels": [],
+					"name": "OLD SHAFT",
+					"room_id": "wb.old_shaft"
+				},
+				{
+					"index": 2,
+					"labels": [
+						"ITEM:item.wb.funerary_token"
+					],
+					"name": "MEMORIAL ALCOVE",
+					"room_id": "wb.memorial_alcove"
+				},
+				{
+					"index": 3,
+					"labels": [
+						"MECH:wb.funeral_weight",
+						"MECH:wb.weighing_plate",
+						"STATE:wb.weight_correct"
+					],
+					"name": "WEIGHING HALL",
+					"room_id": "wb.weighing_hall"
+				},
+				{
+					"index": 4,
+					"labels": [
+						"ITEM:item.wb.funerary_token",
+						"RECEPTOR:wb.token_slot",
+						"STATE:wb.weight_correct",
+						"GATE:wb.ossuary_lift"
+					],
+					"name": "OSSUARY LIFT",
+					"room_id": "wb.ossuary_lift",
+					"rule": "correct weight AND funerary token -> lift/gate opens"
+				},
+				{
+					"index": 5,
+					"labels": [
+						"WIZARD:wizard.wb.necromancer"
+					],
+					"name": "SEPULCHRAL FORGE",
+					"room_id": "wb.sepulchral_forge"
+				}
+			],
+			"wizard_id": "wizard.wb.necromancer"
+		}
+	},
+	"edges": 72,
+	"hexes": 19,
+	"nodes": 54,
+	"reservation": [
+		53,
+		32
+	],
+	"seed": 507,
+	"settlements": [
+		{
+			"faction": "wardens",
+			"faction_name": "The Fang Wardens",
+			"hexes": [
+				4,
+				12,
+				13
+			],
+			"neighbours": [
+				16,
+				13,
+				38
+			],
+			"node": 17
+		},
+		{
+			"faction": "levy",
+			"faction_name": "The Sukumvit Levy",
+			"hexes": [
+				3,
+				11,
+				12
+			],
+			"neighbours": [
+				13,
+				15,
+				35
+			],
+			"node": 14
+		},
+		{
+			"faction": "kilns",
+			"faction_name": "The Hollow Kilns",
+			"hexes": [
+				1,
+				7,
+				18
+			],
+			"neighbours": [
+				7,
+				9,
+				27
+			],
+			"node": 8
+		},
+		{
+			"faction": "drovers",
+			"faction_name": "The Drover Compact",
+			"hexes": [
+				0,
+				3,
+				4
+			],
+			"neighbours": [
+				0,
+				2,
+				13
+			],
+			"node": 1
+		},
+		{
+			"faction": "ironmoot",
+			"faction_name": "The Ironmoot",
+			"hexes": [
+				5,
+				14,
+				15
+			],
+			"neighbours": [
+				18,
+				21,
+				44
+			],
+			"node": 19
+		},
+		{
+			"faction": "tithe",
+			"faction_name": "The Wheatlord's Tithe",
+			"hexes": [
+				0,
+				1,
+				2
+			],
+			"neighbours": [
+				2,
+				4,
+				6
+			],
+			"node": 3
+		}
+	],
+	"size_profiles": [
+		{
+			"fit": "OK",
+			"label": "specimen",
+			"metrics": {
+				"approach": [
+					9,
+					35
+				],
+				"dungeon_h": 32,
+				"dungeon_pct": 53.2496075353218,
+				"dungeon_tiles": 1696,
+				"dungeon_w": 53,
+				"exits": 3,
+				"exits_clear": true,
+				"fit": "OK",
+				"free_tiles": 1489,
+				"h": 49,
+				"origin": [
+					2,
+					2
+				],
+				"path_in": 0,
+				"path_out": 43,
+				"rooms_reachable": true,
+				"settlement_reachable": true,
+				"total_tiles": 3185,
+				"w": 65
+			},
+			"node": 0,
+			"rooms": [
+				{
+					"index": 1,
+					"rect": [
+						2,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.root_gate"
+				},
+				{
+					"index": 2,
+					"rect": [
+						21,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.seed_shrine"
+				},
+				{
+					"index": 3,
+					"rect": [
+						40,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.withered_channel"
+				},
+				{
+					"index": 4,
+					"rect": [
+						21,
+						21,
+						15,
+						13
+					],
+					"room_id": "gw.heartwood_chamber"
+				},
+				{
+					"index": 5,
+					"rect": [
+						2,
+						21,
+						15,
+						13
+					],
+					"room_id": "gw.elder_court"
+				}
+			],
+			"size": [
+				65,
+				49
+			]
+		},
+		{
+			"fit": "OK",
+			"label": "specimen",
+			"metrics": {
+				"approach": [
+					9,
+					35
+				],
+				"dungeon_h": 32,
+				"dungeon_pct": 42.2415940224159,
+				"dungeon_tiles": 1696,
+				"dungeon_w": 53,
+				"exits": 3,
+				"exits_clear": true,
+				"fit": "OK",
+				"free_tiles": 2319,
+				"h": 55,
+				"origin": [
+					2,
+					2
+				],
+				"path_in": 0,
+				"path_out": 43,
+				"rooms_reachable": true,
+				"settlement_reachable": true,
+				"total_tiles": 4015,
+				"w": 73
+			},
+			"node": 0,
+			"rooms": [
+				{
+					"index": 1,
+					"rect": [
+						2,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.root_gate"
+				},
+				{
+					"index": 2,
+					"rect": [
+						21,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.seed_shrine"
+				},
+				{
+					"index": 3,
+					"rect": [
+						40,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.withered_channel"
+				},
+				{
+					"index": 4,
+					"rect": [
+						21,
+						21,
+						15,
+						13
+					],
+					"room_id": "gw.heartwood_chamber"
+				},
+				{
+					"index": 5,
+					"rect": [
+						2,
+						21,
+						15,
+						13
+					],
+					"room_id": "gw.elder_court"
+				}
+			],
+			"size": [
+				73,
+				55
+			]
+		},
+		{
+			"fit": "OK",
+			"label": "specimen",
+			"metrics": {
+				"approach": [
+					9,
+					35
+				],
+				"dungeon_h": 32,
+				"dungeon_pct": 34.3250354179316,
+				"dungeon_tiles": 1696,
+				"dungeon_w": 53,
+				"exits": 3,
+				"exits_clear": true,
+				"fit": "OK",
+				"free_tiles": 3245,
+				"h": 61,
+				"origin": [
+					2,
+					2
+				],
+				"path_in": 0,
+				"path_out": 43,
+				"rooms_reachable": true,
+				"settlement_reachable": true,
+				"total_tiles": 4941,
+				"w": 81
+			},
+			"node": 0,
+			"rooms": [
+				{
+					"index": 1,
+					"rect": [
+						2,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.root_gate"
+				},
+				{
+					"index": 2,
+					"rect": [
+						21,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.seed_shrine"
+				},
+				{
+					"index": 3,
+					"rect": [
+						40,
+						2,
+						15,
+						13
+					],
+					"room_id": "gw.withered_channel"
+				},
+				{
+					"index": 4,
+					"rect": [
+						21,
+						21,
+						15,
+						13
+					],
+					"room_id": "gw.heartwood_chamber"
+				},
+				{
+					"index": 5,
+					"rect": [
+						2,
+						21,
+						15,
+						13
+					],
+					"room_id": "gw.elder_court"
+				}
+			],
+			"size": [
+				81,
+				61
+			]
+		},
+		{
+			"fit": "OK",
+			"label": "bg",
+			"metrics": {
+				"approach": [
+					9,
+					35
+				],
+				"dungeon_h": 32,
+				"dungeon_pct": 53.2496075353218,
+				"dungeon_tiles": 1696,
+				"dungeon_w": 53,
+				"exits": 3,
+				"exits_clear": true,
+				"fit": "OK",
+				"free_tiles": 1489,
+				"h": 49,
+				"origin": [
+					2,
+					2
+				],
+				"path_in": 0,
+				"path_out": 43,
+				"rooms_reachable": true,
+				"settlement_reachable": true,
+				"total_tiles": 3185,
+				"w": 65
+			},
+			"node": 2,
+			"rooms": [
+				{
+					"index": 1,
+					"rect": [
+						2,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.thorn_gate"
+				},
+				{
+					"index": 2,
+					"rect": [
+						21,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.spore_garden"
+				},
+				{
+					"index": 3,
+					"rect": [
+						40,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.compost_vault"
+				},
+				{
+					"index": 4,
+					"rect": [
+						21,
+						21,
+						15,
+						13
+					],
+					"room_id": "bg.corpse_orchard"
+				},
+				{
+					"index": 5,
+					"rect": [
+						2,
+						21,
+						15,
+						13
+					],
+					"room_id": "bg.blackbloom_court"
+				}
+			],
+			"size": [
+				65,
+				49
+			]
+		},
+		{
+			"fit": "OK",
+			"label": "bg",
+			"metrics": {
+				"approach": [
+					9,
+					35
+				],
+				"dungeon_h": 32,
+				"dungeon_pct": 42.2415940224159,
+				"dungeon_tiles": 1696,
+				"dungeon_w": 53,
+				"exits": 3,
+				"exits_clear": true,
+				"fit": "OK",
+				"free_tiles": 2319,
+				"h": 55,
+				"origin": [
+					2,
+					2
+				],
+				"path_in": 0,
+				"path_out": 43,
+				"rooms_reachable": true,
+				"settlement_reachable": true,
+				"total_tiles": 4015,
+				"w": 73
+			},
+			"node": 2,
+			"rooms": [
+				{
+					"index": 1,
+					"rect": [
+						2,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.thorn_gate"
+				},
+				{
+					"index": 2,
+					"rect": [
+						21,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.spore_garden"
+				},
+				{
+					"index": 3,
+					"rect": [
+						40,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.compost_vault"
+				},
+				{
+					"index": 4,
+					"rect": [
+						21,
+						21,
+						15,
+						13
+					],
+					"room_id": "bg.corpse_orchard"
+				},
+				{
+					"index": 5,
+					"rect": [
+						2,
+						21,
+						15,
+						13
+					],
+					"room_id": "bg.blackbloom_court"
+				}
+			],
+			"size": [
+				73,
+				55
+			]
+		},
+		{
+			"fit": "OK",
+			"label": "bg",
+			"metrics": {
+				"approach": [
+					9,
+					35
+				],
+				"dungeon_h": 32,
+				"dungeon_pct": 34.3250354179316,
+				"dungeon_tiles": 1696,
+				"dungeon_w": 53,
+				"exits": 3,
+				"exits_clear": true,
+				"fit": "OK",
+				"free_tiles": 3245,
+				"h": 61,
+				"origin": [
+					2,
+					2
+				],
+				"path_in": 0,
+				"path_out": 43,
+				"rooms_reachable": true,
+				"settlement_reachable": true,
+				"total_tiles": 4941,
+				"w": 81
+			},
+			"node": 2,
+			"rooms": [
+				{
+					"index": 1,
+					"rect": [
+						2,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.thorn_gate"
+				},
+				{
+					"index": 2,
+					"rect": [
+						21,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.spore_garden"
+				},
+				{
+					"index": 3,
+					"rect": [
+						40,
+						2,
+						15,
+						13
+					],
+					"room_id": "bg.compost_vault"
+				},
+				{
+					"index": 4,
+					"rect": [
+						21,
+						21,
+						15,
+						13
+					],
+					"room_id": "bg.corpse_orchard"
+				},
+				{
+					"index": 5,
+					"rect": [
+						2,
+						21,
+						15,
+						13
+					],
+					"room_id": "bg.blackbloom_court"
+				}
+			],
+			"size": [
+				81,
+				61
+			]
+		}
+	],
+	"specimen_node": 0
+}

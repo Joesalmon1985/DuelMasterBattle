@@ -37,6 +37,13 @@ const DATA := {
 	"old_bone": {"name": "Old bone", "sprite": "box", "desc": "Gnawed clean years ago. A dog would still follow it anywhere.", "tags": ["bait", "bait_bone", "small"]},
 	"glass_bead": {"name": "Glass bead", "sprite": "diamond", "desc": "Pretty, and worthless.", "tags": ["small", "token"]},
 	"charcoal": {"name": "Charcoal", "sprite": "charcoal", "desc": "A black lump of charcoal. Light enough to carry, dirty enough to leave its mark.", "tags": ["small", "char"]},
+	# --- dungeon-world spatial fixture labels (not production loot tables) ---
+	"item.gw.sun_seed": {"name": "Sun Seed", "sprite": "seed", "desc": "ITEM:item.gw.sun_seed — warm, waiting for water and earth.", "tags": ["small", "seed", "sun_seed"]},
+	"item.gw.channel_stone": {"name": "Channel Stone", "sprite": "rock", "desc": "MECH:gw.channel_weight — heavy enough to seat a plate.", "tags": ["heavy"]},
+	"item.br.furnace_lever": {"name": "Furnace Lever", "sprite": "staff", "desc": "ITEM:item.br.furnace_lever", "tags": ["small", "lever"]},
+	"item.ub.pearl_sluice_handle": {"name": "Pearl Sluice Handle", "sprite": "ring", "desc": "ITEM:item.ub.pearl_sluice_handle", "tags": ["small"]},
+	"item.wb.funerary_token": {"name": "Funerary Token", "sprite": "ring", "desc": "ITEM:item.wb.funerary_token", "tags": ["small", "token"]},
+	"item.bg.blackbloom_bulb": {"name": "Blackbloom Bulb", "sprite": "seed", "desc": "ITEM:item.bg.blackbloom_bulb", "tags": ["small", "seed"]},
 }
 
 
