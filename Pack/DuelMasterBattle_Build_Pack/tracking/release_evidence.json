@@ -2,7 +2,7 @@
   "schema_version": 1,
   "gate": "G10",
   "build_policy": "functional_placeholder_art_baseline",
-  "commit": "PENDING_COMMIT",
+  "commit": "8e3badc363db228dd4f6ea8bf1f33996f7b0fab6",
   "linux_bundle": "build/desktop/mvp_linux",
   "windows_certified": false,
   "windows_status": "tracking/gates/G10/windows_status.md",
@@ -13,6 +13,6 @@
   "performance": "tracking/performance/profile_world.json",
   "recovery_tests": "tests/integration/test_release_recovery.py",
   "release_tests": "tracking/release_tests/",
-  "g09_policies": "BLOCKED_OR_PARALLEL — do not invent trained library",
-  "human_acceptance": "PENDING — AUTO_READY_FOR_OWNER_REVIEW is not PASS"
+  "g09_policies": "BLOCKED_OR_PARALLEL \u2014 do not invent trained library",
+  "human_acceptance": "PENDING \u2014 AUTO_READY_FOR_OWNER_REVIEW is not PASS"
 }

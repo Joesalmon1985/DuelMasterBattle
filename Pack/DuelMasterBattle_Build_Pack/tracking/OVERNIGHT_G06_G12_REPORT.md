@@ -41,6 +41,10 @@
 
 ## SHAs
 
-- Tip before this overnight chunk: `7c61c6e`
-- G10 commit: `45a7fc3`
-- G11/G12 commits: see `git log` on `phase/g06-g12-autoqa`
+| Ref | SHA |
+|-----|-----|
+| Pull tip at start | `7c61c6e` |
+| G10 | `45a7fc3` |
+| G11 | `21737e4` |
+| G12 + progress/report | `8e3badc` |
+| Branch tip (this amend note) | `8e3badc` (`8e3badc363db228dd4f6ea8bf1f33996f7b0fab6`) |
