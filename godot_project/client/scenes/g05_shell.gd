@@ -20,6 +20,7 @@ const KnowledgePanel = preload("res://client/ui/knowledge.gd")
 
 const LocalBattle = preload("res://client/combat/local_battle.gd")
 const EncounterHost = preload("res://client/encounters/encounter_host.gd")
+const PresentationMode = preload("res://client/core/presentation_mode.gd")
 
 const G05_SAVE := "g05_village"
 const INDUSTRY_FIELDS := [
@@ -60,6 +61,8 @@ var _village_ready := false
 var _project_root := ""
 var _duel_adapter
 var _duel_host: Control
+var _duel_layer: CanvasLayer
+var _presentation
 var _fx_meta: Dictionary = {}
 var _cmd_seq := 0
 var _status: Label
@@ -130,17 +133,26 @@ func _ready() -> void:
 	_client.bridge_failed.connect(_on_bridge_failed)
 	_duel_adapter = DuelLeaseAdapter.new()
 	_duel_adapter.finished.connect(_on_duel_finished)
+	# Ward Duel on its own high canvas layer so world CanvasLayers cannot stack over it.
+	_duel_layer = CanvasLayer.new()
+	_duel_layer.name = "DuelLayer"
+	_duel_layer.layer = 50
+	_duel_layer.visible = false
+	add_child(_duel_layer)
 	_duel_host = Control.new()
 	_duel_host.name = "DuelHost"
 	_duel_host.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_duel_host.visible = false
-	add_child(_duel_host)
+	_duel_layer.add_child(_duel_host)
 	# High canvas layer keeps FX-ERA / map / chronicle above Overworld Node2D UI.
 	_ui_layer = CanvasLayer.new()
 	_ui_layer.name = "ShellUILayer"
 	_ui_layer.layer = 40
 	add_child(_ui_layer)
+	_presentation = PresentationMode.new()
+	# Overworld is created in _boot; bind chrome/duel now and attach world root later.
+	_presentation.bind(null, _ui_layer, [_status, _time_hud], _duel_layer, _duel_host)
 	_map_panel = WorldMapPanel.new()
 	_map_panel.name = "WorldMap"
 	_map_panel.closed.connect(_on_map_closed)
@@ -205,6 +217,9 @@ func _boot() -> void:
 	_overworld = OverworldScene.instantiate()
 	_overworld.name = "Overworld"
 	add_child(_overworld)
+	if _presentation != null:
+		_presentation.set_world_root(_overworld)
+		_presentation.set_mode(PresentationMode.Mode.WORLD)
 	if _overworld.has_method("set_bridge_runtime"):
 		_overworld.set_bridge_runtime(self)
 	_workers = WorkerControllerScript.new()
@@ -584,6 +599,9 @@ func _apply_fixture_status() -> void:
 
 
 func _raise_shell_overlays() -> void:
+	# Never re-show world chrome while Ward Duel owns the screen.
+	if _presentation != null and _presentation.is_ward_duel():
+		return
 	if _ui_layer != null:
 		_ui_layer.visible = true
 	var modal_open := false
@@ -965,6 +983,7 @@ func _on_knowledge_open_map() -> void:
 
 func start_hazard_challenge(cube_id: String) -> bool:
 	## G04 retained duel path — Challenge a catastrophe cube.
+	## Presentation: hide all world-space chrome before mounting Ward Duel.
 	acquire_pause("duel")
 	var reply := _cmd("StartHazardDuel", {"cube_id": cube_id})
 	if str(reply.get("status", "")) != "ACCEPTED":
@@ -972,18 +991,62 @@ func start_hazard_challenge(cube_id: String) -> bool:
 		_status.text = "Challenge rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
 		_status.modulate.a = 1.0
 		return false
-	_duel_host.visible = true
-	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_duel_host.move_to_front()
+	_enter_ward_duel_presentation()
 	var ok: bool = _duel_adapter.begin_from_start_reply(_duel_host, reply, Callable(self, "_cmd"))
 	if not ok:
-		_duel_host.visible = false
+		_leave_ward_duel_presentation()
 		release_pause()
 		_status.text = "Failed to host retained GameBoard duel"
 		return false
 	_status.text = "Hazard Challenge — retained GameBoard / DmbBattleSim"
 	_status.modulate.a = 1.0
 	return true
+
+
+func _enter_ward_duel_presentation() -> void:
+	## Strategic sim stays paused via acquire_pause; only presentation is swapped.
+	if _presentation == null:
+		_presentation = PresentationMode.new()
+		_presentation.bind(_overworld, _ui_layer, [_status, _time_hud], _duel_layer, _duel_host)
+	if _battle != null and is_instance_valid(_battle):
+		_battle.visible = false
+		_battle.process_mode = Node.PROCESS_MODE_DISABLED
+	_presentation.set_mode(PresentationMode.Mode.WARD_DUEL)
+
+
+func _leave_ward_duel_presentation() -> void:
+	if _presentation == null:
+		if _duel_host != null:
+			_duel_host.visible = false
+		if _duel_layer != null:
+			_duel_layer.visible = false
+		if _overworld != null:
+			_overworld.visible = true
+			_overworld.process_mode = Node.PROCESS_MODE_INHERIT
+		return
+	_presentation.set_mode(PresentationMode.Mode.WORLD)
+	if _battle != null and is_instance_valid(_battle):
+		_battle.visible = true
+		_battle.process_mode = Node.PROCESS_MODE_INHERIT
+	_raise_shell_overlays()
+
+
+func presentation_mode_name() -> String:
+	if _presentation == null:
+		return "UNBOUND"
+	return _presentation.current_name()
+
+
+func presentation_assert_ward_clean() -> Dictionary:
+	if _presentation == null:
+		return {"ok": false, "leaks": ["presentation_unbound"]}
+	return _presentation.assert_ward_duel_clean()
+
+
+func presentation_assert_world_restored() -> Dictionary:
+	if _presentation == null:
+		return {"ok": false, "issues": ["presentation_unbound"]}
+	return _presentation.assert_world_restored()
 
 
 func start_demon_challenge(cube_id: String) -> bool:
@@ -1066,7 +1129,8 @@ func solve_sluice_via_bridge() -> Dictionary:
 
 
 func _on_duel_finished(outcome: String, payload: Dictionary) -> void:
-	_duel_host.visible = false
+	# Restore world presentation exactly once before reproject (avoids hidden dupes).
+	_leave_ward_duel_presentation()
 	release_pause()
 	var status := str(payload.get("payload", {}).get("status", payload.get("status", outcome)))
 	if status in ["success", "idempotent"] or outcome in ["win", "victory", "success"]:
@@ -1075,6 +1139,9 @@ func _on_duel_finished(outcome: String, payload: Dictionary) -> void:
 		_status.text = "Duel ended (%s)" % outcome
 	_status.modulate.a = 1.0
 	reproject_from_python()
+	# Reproject may rebuild actors; ensure we did not leave duel chrome up.
+	if _presentation != null and _presentation.is_ward_duel():
+		_leave_ward_duel_presentation()
 
 
 func enter_sluice() -> void:
