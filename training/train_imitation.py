@@ -111,7 +111,7 @@ def train_imitation(
         "weights_digest": model.weights_digest(),
         "init_digest": init_digest,
         "mean_loss_tail": model.provenance["mean_loss"],
-        "incomplete_batch": bool(budget.stopped_reason) and seen < target_decisions,
+        "incomplete_batch": bool(budget.snapshot().get("incomplete_batch")),
     }
     (CHECKPOINTS / f"{checkpoint_name}_report.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8"

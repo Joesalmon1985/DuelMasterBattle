@@ -51,24 +51,35 @@ def _pick_start_settlement(plan, state) -> tuple[str, str, str]:
     return str(best.node_id), str(settlement["id"]), str(best.faction_id)
 
 
+def _node_has_any_exit(state, node_id: str) -> bool:
+    node = ((state.board or {}).get("nodes") or {}).get(node_id) or {}
+    exits = node.get("exits") or {}
+    return isinstance(exits, dict) and bool(exits)
+
+
 def _ensure_boulder_start(plan, state, start_node: str, settlement_id: str, faction_id: str) -> tuple[str, str, str]:
-    """Boulder quest needs a south exit; re-home to another core when the pick lacks one."""
+    """Prefer a south exit for presentation; otherwise any core with a connected exit."""
     if _node_has_south_exit(state, start_node):
         return start_node, settlement_id, faction_id
-    ranked: list[tuple[int, Any]] = []
-    for core in plan.cores:
+
+    def _rank_core(core) -> tuple[int, str]:
         nid = str(core.node_id)
-        if not _node_has_south_exit(state, nid):
-            continue
         terrains = {str(plan.hex_terrain[h]) for h in plan.board.touching_hexes(nid)}
         score = len(terrains) + (2 if "woodland" in terrains else 0)
-        ranked.append((score, core))
-    if not ranked:
-        return start_node, settlement_id, faction_id
-    ranked.sort(key=lambda row: (-row[0], str(row[1].node_id)))
-    core = ranked[0][1]
-    settlement = _settlement_for_node(state, core.node_id)
-    return str(core.node_id), str(settlement["id"]), str(core.faction_id)
+        if _node_has_south_exit(state, nid):
+            score += 100
+        elif _node_has_any_exit(state, nid):
+            score += 10
+        return (score, nid)
+
+    ranked = sorted(plan.cores, key=_rank_core, reverse=True)
+    for core in ranked:
+        nid = str(core.node_id)
+        if not _node_has_any_exit(state, nid):
+            continue
+        settlement = _settlement_for_node(state, nid)
+        return nid, str(settlement["id"]), str(core.faction_id)
+    return start_node, settlement_id, faction_id
 
 
 def _clear_settlement_catastrophe_cubes(state, plan) -> None:

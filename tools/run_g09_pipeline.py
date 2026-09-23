@@ -55,6 +55,35 @@ def main() -> int:
     auto.mkdir(parents=True, exist_ok=True)
 
     steps: list[tuple[str, dict]] = []
+    # Promotion-seed world-generation must pass before spending compute.
+    steps.append(
+        (
+            "preflight_promotion_seeds",
+            _run(
+                [sys.executable, "tools/preflight_promotion_seeds.py", "--fixture", "FX-ERA"],
+                timeout=1800,
+            ),
+        )
+    )
+    if steps[-1][1]["exit_code"] != 0:
+        blockers = ["promotion_seed_preflight_failed"]
+        status = "AUTO_FAILED — promotion_seed_preflight_failed"
+        (auto / "result.json").write_text(
+            json.dumps(
+                {
+                    "gate": "G09",
+                    "generated_at": _now(),
+                    "status": status,
+                    "human_acceptance": "PENDING — never invent PASS",
+                    "blockers": blockers,
+                    "steps": [{"name": n, **r} for n, r in steps],
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        return 1
     # Bounded overnight budgets — incomplete batches are recorded, not claimed promotion.
     steps.append(
         (

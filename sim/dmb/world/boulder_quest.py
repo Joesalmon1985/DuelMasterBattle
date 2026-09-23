@@ -69,6 +69,31 @@ def _south_exit(state: Any, node_id: str) -> tuple[str, dict[str, Any]] | None:
     return None
 
 
+def _pick_blocked_exit(state: Any, node_id: str) -> tuple[str, dict[str, Any], str] | None:
+    """Prefer south for presentation; otherwise any real connected exit (stable order).
+
+    Returns (target_node_id, link, direction). Does not invent topology edges.
+    """
+    preferred = _south_exit(state, node_id)
+    if preferred is not None:
+        target_node, link = preferred
+        direction = str(link.get("direction") or "south")
+        return target_node, link, direction
+    node = ((state.board or {}).get("nodes") or {}).get(node_id) or {}
+    exits = node.get("exits") or {}
+    if not isinstance(exits, dict) or not exits:
+        return None
+    ranked: list[tuple[str, str, dict[str, Any]]] = []
+    for to_node, link in exits.items():
+        link = dict(link or {})
+        direction = str(link.get("direction") or "unknown")
+        ranked.append((direction, str(to_node), link))
+    ranked.sort(key=lambda row: (row[0], row[1]))
+    direction, target_node, link = ranked[0]
+    return target_node, link, direction
+
+
+
 def _norm_status(raw: str | None) -> str:
     s = str(raw or "blocking")
     if s == "moving":
@@ -233,7 +258,7 @@ def _build_pieces(hold: list[float]) -> list[dict[str, Any]]:
 
 
 def install_boulder_quest(state: Any, *, start_node_id: str | None = None) -> dict[str, Any]:
-    """Place a durable rockfall on the home settlement south exit; no helper yet."""
+    """Place a durable rockfall on one home settlement exit; prefer south when present."""
     node_id = str(start_node_id or (state.player or {}).get("node_id") or "")
     if not node_id:
         raise ValueError("install_boulder_quest requires start_node_id")
@@ -250,6 +275,7 @@ def install_boulder_quest(state: Any, *, start_node_id: str | None = None) -> di
             "cause_id": meta.get("cause_id"),
             "helper_person_id": meta.get("helper_person_id"),
             "exit_id": existing.get("exit_id"),
+            "direction": existing.get("direction") or meta.get("direction"),
             "to_node": existing.get("target_node_id"),
             "from_node": existing.get("node_id"),
             "status": "deduped",
@@ -260,11 +286,11 @@ def install_boulder_quest(state: Any, *, start_node_id: str | None = None) -> di
     if not helpers:
         raise ValueError(f"no eligible village workers on {node_id}")
 
-    picked = _south_exit(state, node_id)
+    picked = _pick_blocked_exit(state, node_id)
     if picked is None:
-        raise ValueError(f"no south exit on {node_id}")
-    target_node, link = picked
-    exit_id = str(link.get("exit_id") or f"{node_id}.south")
+        raise ValueError(f"no connected exit on {node_id}")
+    target_node, link, direction = picked
+    exit_id = str(link.get("exit_id") or f"{node_id}.{direction}")
     hold = list(link.get("hold_position") or [24.0, 46.0])
     pieces = _build_pieces(hold)
     # Anchor at corridor centre (middle stone).
@@ -277,6 +303,7 @@ def install_boulder_quest(state: Any, *, start_node_id: str | None = None) -> di
         "label": "Rockfall",
         "node_id": node_id,
         "exit_id": exit_id,
+        "direction": direction,
         "target_node_id": target_node,
         "position": list(anchor),
         "blocking_position": list(anchor),
@@ -301,7 +328,7 @@ def install_boulder_quest(state: Any, *, start_node_id: str | None = None) -> di
         "required_cause": {"kinds": [CAUSE_KIND, "exit_blocked_by_boulder"]},
         "binding": {"site_id": node_id},
         "stage_count": 4,
-        "summary": "A rockfall blocks one village exit; any village worker can clear it.",
+        "summary": "A rockfall blocks one village path/exit; any village worker can clear it.",
     }
     tracker = CauseTracker(state)
     binder = QuestBinder(state, tracker)
@@ -340,6 +367,7 @@ def install_boulder_quest(state: Any, *, start_node_id: str | None = None) -> di
         "rockfall_id": ROCKFALL_ID,
         "boulder_id": ROCKFALL_ID,
         "blocked_exit_id": exit_id,
+        "blocked_direction": direction,
         "target_node_id": target_node,
         "site_id": node_id,
         "stakeholder_id": None,
@@ -357,6 +385,7 @@ def install_boulder_quest(state: Any, *, start_node_id: str | None = None) -> di
         "cause_id": cause["id"],
         "cause_kind": CAUSE_KIND,
         "exit_id": exit_id,
+        "direction": direction,
         "from_node": node_id,
         "to_node": target_node,
         "helper_person_id": None,
@@ -380,6 +409,7 @@ def install_boulder_quest(state: Any, *, start_node_id: str | None = None) -> di
         "cause_id": cause["id"],
         "helper_person_id": None,
         "exit_id": exit_id,
+        "direction": direction,
         "to_node": target_node,
         "from_node": node_id,
         "eligible_helpers": helpers,

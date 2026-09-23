@@ -155,9 +155,9 @@ def train_actor_critic(
         "budget": budget.snapshot(),
         "weights_digest": model.weights_digest(),
         "parent_digest": init_digest,
-        "incomplete_batch": bool(budget.stopped_reason) and seen < target_decisions,
+        "incomplete_batch": bool(budget.snapshot().get("incomplete_batch")),
         "promotion_claimed": False,
-        "notes": "Budget stop is incomplete batch progress, not claimed promotion.",
+        "notes": "Reaching the decision target is complete; premature stops are incomplete_batch.",
     }
     (CHECKPOINTS / f"{checkpoint_name}_report.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8"
