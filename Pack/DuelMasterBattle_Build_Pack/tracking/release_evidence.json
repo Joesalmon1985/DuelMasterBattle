@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "gate": "G10",
+  "build_policy": "functional_placeholder_art_baseline",
+  "commit": "PENDING_COMMIT",
+  "linux_bundle": "build/desktop/mvp_linux",
+  "windows_certified": false,
+  "windows_status": "tracking/gates/G10/windows_status.md",
+  "release_coverage": "tracking/release_coverage.json",
+  "player_guide": "docs/player_guide.md",
+  "release_notes": "docs/release_notes.md",
+  "a11y_matrix": "tracking/gates/G10/auto/a11y_matrix.json",
+  "performance": "tracking/performance/profile_world.json",
+  "recovery_tests": "tests/integration/test_release_recovery.py",
+  "release_tests": "tracking/release_tests/",
+  "g09_policies": "BLOCKED_OR_PARALLEL — do not invent trained library",
+  "human_acceptance": "PENDING — AUTO_READY_FOR_OWNER_REVIEW is not PASS"
+}

@@ -1,0 +1,11 @@
+{
+  "generated_at": "2026-09-23T07:34:25.247975+00:00",
+  "host": "Linux-6.8.0-139-generic-x86_64-with-glibc2.39",
+  "requested_platform": "windows",
+  "offline_required": true,
+  "developer_deps_required": false,
+  "bundle_exists": false,
+  "windows_certified": false,
+  "status": "BLOCKED",
+  "blocker": "smoke_release --platform windows must run on a Windows host/runner."
+}

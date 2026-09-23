@@ -1,0 +1,19 @@
+{
+  "task_id": "T151",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tracking/release_coverage.json"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T151",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T152",
+  "notes": "release_coverage audit",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z"
+}

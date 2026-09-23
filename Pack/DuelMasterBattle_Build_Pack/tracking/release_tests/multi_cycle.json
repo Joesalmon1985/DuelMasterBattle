@@ -1,0 +1,11 @@
+{
+  "fixture": "FX-CYCLE",
+  "parent_fixture": "FX-ERA",
+  "cycles": [
+    1,
+    2,
+    3
+  ],
+  "people_preserved": true,
+  "seed": 1212
+}

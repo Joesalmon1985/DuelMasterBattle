@@ -12,6 +12,34 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "Pack" / "DuelMasterBattle_Build_Pack" / "tracking" / "performance"
+G10_PERF = (
+    ROOT
+    / "Pack"
+    / "DuelMasterBattle_Build_Pack"
+    / "tracking"
+    / "gates"
+    / "G10"
+    / "auto"
+    / "performance.json"
+)
+
+
+def _write_g10_performance_note(report: dict) -> None:
+    """T153 — attach mean-cycle proxy into G10 auto evidence."""
+    G10_PERF.parent.mkdir(parents=True, exist_ok=True)
+    elapsed = float(report.get("elapsed_seconds") or 0)
+    cycles = int(report.get("cycles_run") or 0)
+    per_cycle = (elapsed / cycles) if cycles else elapsed
+    payload = dict(report)
+    payload["p95_proxy"] = {
+        "note": "Single-machine probe; not a multi-run percentile. Recorded as mean cycle proxy.",
+        "cycles": cycles,
+        "elapsed_seconds": elapsed,
+        "mean_cycle_seconds": round(per_cycle, 4),
+        "hardware": report.get("hardware"),
+    }
+    payload["g10_budget_misses"] = report.get("limits") or {}
+    G10_PERF.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> int:
@@ -76,6 +104,7 @@ def main() -> int:
         ),
         encoding="utf-8",
     )
+    _write_g10_performance_note(report)
     print(json.dumps({"status": report["status"], "cycles": len(cycles), "spawn_probe": spawn_n}))
     return 0
 

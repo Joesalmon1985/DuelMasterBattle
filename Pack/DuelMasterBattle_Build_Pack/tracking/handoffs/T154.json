@@ -1,0 +1,19 @@
+{
+  "task_id": "T154",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tools/verify_a11y_release.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T154",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T155",
+  "notes": "a11y/touch release matrix",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z"
+}

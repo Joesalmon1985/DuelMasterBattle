@@ -39,5 +39,21 @@
     "reason": "Overnight probe uses 200-unit spawn sample; 10k remains a documented stress target.",
     "ordinary_era_transitions_per_cycle": "NOT_INCLUDED \u2014 reseed_cycle only"
   },
-  "status": "PASS_WITH_HONEST_LIMITS"
+  "status": "PASS_WITH_HONEST_LIMITS",
+  "p95_proxy": {
+    "note": "Single-machine probe; not a multi-run percentile. Recorded as mean cycle proxy.",
+    "cycles": 20,
+    "elapsed_seconds": 0.037,
+    "mean_cycle_seconds": 0.0018,
+    "hardware": {
+      "platform": "Linux-6.8.0-139-generic-x86_64-with-glibc2.39",
+      "python": "3.12.3",
+      "machine": "x86_64"
+    }
+  },
+  "g10_budget_misses": {
+    "full_10000_unit_headless": "NOT_RUN_IN_THIS_PROBE",
+    "reason": "Overnight probe uses 200-unit spawn sample; 10k remains a documented stress target.",
+    "ordinary_era_transitions_per_cycle": "NOT_INCLUDED \u2014 reseed_cycle only"
+  }
 }
