@@ -1,153 +1,48 @@
 {
   "gate": "G09",
-  "status": "AUTO_FAILED",
-  "owner_review_status": "AUTO_FAILED \u2014 fewer_than_three_qualified_policies (0)",
+  "generated_at": "2026-09-23T16:29:09Z",
+  "status": "AUTO_READY_FOR_OWNER_REVIEW",
   "human_acceptance": "PENDING \u2014 never invent PASS",
-  "generated_at": "2026-09-23T00:17:55Z",
-  "qualified_policies": 0,
-  "required_policies": 3,
-  "blockers": [
-    "fewer_than_three_qualified_policies (0)"
-  ],
-  "manifest": "godot_project/content/policies/manifest.json",
-  "steps": [
+  "results": [
     {
-      "name": "collect",
       "cmd": [
-        "/usr/bin/python3",
-        "training/collect.py",
-        "--train-seeds",
-        "48",
-        "--max-steps",
-        "20",
-        "--budget-seconds",
-        "900"
-      ],
-      "exit_code": 0,
-      "duration_s": 926.221,
-      "stderr_tail": "",
-      "stdout_tail": "{\"decision_rows\": 381, \"episodes\": 20}\n"
-    },
-    {
-      "name": "imitation_v1",
-      "cmd": [
-        "/usr/bin/python3",
-        "training/train_imitation.py",
-        "--target-decisions",
-        "10000",
-        "--budget-seconds",
-        "1800",
-        "--seed",
-        "1",
-        "--name",
-        "imitation_v1"
-      ],
-      "exit_code": 0,
-      "duration_s": 16.471,
-      "stderr_tail": "",
-      "stdout_tail": "{\"checkpoint\": \"training/checkpoints/imitation_v1.json\", \"trained\": true, \"decisions_trained\": 10000, \"target_decisions\": 10000, \"elapsed_seconds\": 16.068, \"budget\": {\"label\": \"imitation\", \"max_seconds\": 1800.0, \"max_decisions\": 10000, \"decisions\": 10000, \"elapsed_seconds\": 16.069, \"stopped_reason\": \"max_decisions\", \"complete\": false, \"incomplete_batch\": true}, \"weights_digest\": \"cdb79a1327b538b4\", \"init_digest\": \"5588a381bd00019e\", \"mean_loss_tail\": 1.9199871531418364, \"incomplete_batch\": false}\n"
-    },
-    {
-      "name": "imitation_v2",
-      "cmd": [
-        "/usr/bin/python3",
-        "training/train_imitation.py",
-        "--target-decisions",
-        "8000",
-        "--budget-seconds",
-        "1200",
-        "--seed",
-        "11",
-        "--name",
-        "imitation_v2"
-      ],
-      "exit_code": 0,
-      "duration_s": 13.525,
-      "stderr_tail": "",
-      "stdout_tail": "{\"checkpoint\": \"training/checkpoints/imitation_v2.json\", \"trained\": true, \"decisions_trained\": 8000, \"target_decisions\": 8000, \"elapsed_seconds\": 13.126, \"budget\": {\"label\": \"imitation\", \"max_seconds\": 1200.0, \"max_decisions\": 8000, \"decisions\": 8000, \"elapsed_seconds\": 13.126, \"stopped_reason\": \"max_decisions\", \"complete\": false, \"incomplete_batch\": true}, \"weights_digest\": \"3ea610d9d8989dce\", \"init_digest\": \"6ad538e1de1198e9\", \"mean_loss_tail\": 1.8632478363608782, \"incomplete_batch\": false}\n"
-    },
-    {
-      "name": "imitation_v3",
-      "cmd": [
-        "/usr/bin/python3",
-        "training/train_imitation.py",
-        "--target-decisions",
-        "8000",
-        "--budget-seconds",
-        "1200",
-        "--seed",
-        "21",
-        "--name",
-        "imitation_v3"
-      ],
-      "exit_code": 0,
-      "duration_s": 13.389,
-      "stderr_tail": "",
-      "stdout_tail": "{\"checkpoint\": \"training/checkpoints/imitation_v3.json\", \"trained\": true, \"decisions_trained\": 8000, \"target_decisions\": 8000, \"elapsed_seconds\": 12.998, \"budget\": {\"label\": \"imitation\", \"max_seconds\": 1200.0, \"max_decisions\": 8000, \"decisions\": 8000, \"elapsed_seconds\": 12.998, \"stopped_reason\": \"max_decisions\", \"complete\": false, \"incomplete_batch\": true}, \"weights_digest\": \"ae5571e54cc1ca1d\", \"init_digest\": \"a80e7d8385cd6101\", \"mean_loss_tail\": 1.9918739409650865, \"incomplete_batch\": false}\n"
-    },
-    {
-      "name": "actor_critic_v1",
-      "cmd": [
-        "/usr/bin/python3",
-        "training/train_actor_critic.py",
-        "--init",
-        "/home/joe/Projects/DuelMasterBattle/training/checkpoints/imitation_v1.json",
-        "--target-decisions",
-        "20000",
-        "--budget-seconds",
-        "2400",
-        "--max-steps",
-        "25",
-        "--seed",
-        "2",
-        "--name",
-        "actor_critic_v1"
-      ],
-      "exit_code": 1,
-      "duration_s": 1050.632,
-      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/joe/Projects/DuelMasterBattle/training/train_actor_critic.py\", line 196, in <module>\n  File \"/home/joe/Projects/DuelMasterBattle/training/train_actor_critic.py\", line 182, in main\n    lr=args.lr,\n         ^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/training/train_actor_critic.py\", line 55, in train_actor_critic\n    try:\n    ^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/training/environment.py\", line 86, in reset\n    self.sim = load_fixture(self.fixture, seed=self.seed)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/testing/fixtures.py\", line 52, in load_fixture\n    return _load_fx_mvp(seed=507 if seed == 7 else seed)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/testing/fixtures.py\", line 1234, in _load_fx_mvp\n    sim = _load_fx_village(seed=seed, mode=\"baseline\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/testing/fixtures.py\", line 1224, in _load_fx_village\n    return load_prehistoric_world(seed=507 if seed == 7 else seed)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/world/prehistoric_world.py\", line 200, in load_prehistoric_world\n    install_boulder_quest(state, start_node_id=start_node)\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/world/boulder_quest.py\", line 265, in install_boulder_quest\n    raise ValueError(f\"no south exit on {node_id}\")\nValueError: no south exit on node:11\n",
-      "stdout_tail": ""
-    },
-    {
-      "name": "select_library",
-      "cmd": [
-        "/usr/bin/python3",
-        "training/select_library.py",
-        "--seed-count",
-        "200",
-        "--max-steps",
-        "8",
-        "--candidate",
-        "policy-im-1=training/checkpoints/imitation_v1.json",
-        "--candidate",
-        "policy-im-2=training/checkpoints/imitation_v2.json",
-        "--candidate",
-        "policy-im-3=training/checkpoints/imitation_v3.json"
-      ],
-      "exit_code": 1,
-      "duration_s": 41.507,
-      "stderr_tail": "Traceback (most recent call last):\n  File \"/home/joe/Projects/DuelMasterBattle/training/select_library.py\", line 204, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/training/select_library.py\", line 198, in main\n    manifest = select_library(candidates=candidates, seed_count=args.seed_count, max_steps=args.max_steps)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/training/select_library.py\", line 37, in select_library\n    baseline = evaluate_policy(\n               ^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/training/evaluate.py\", line 145, in evaluate_policy\n    _run_seed(\n  File \"/home/joe/Projects/DuelMasterBattle/training/evaluate.py\", line 41, in _run_seed\n    env.reset(seed)\n  File \"/home/joe/Projects/DuelMasterBattle/training/environment.py\", line 86, in reset\n    self.sim = load_fixture(self.fixture, seed=self.seed)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/testing/fixtures.py\", line 50, in load_fixture\n    return load_fx_era(seed=507 if seed == 7 else seed)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/world/fx_era_world.py\", line 311, in load_fx_era\n    sim = load_prehistoric_world(seed=seed)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/world/prehistoric_world.py\", line 200, in load_prehistoric_world\n    install_boulder_quest(state, start_node_id=start_node)\n  File \"/home/joe/Projects/DuelMasterBattle/sim/dmb/world/boulder_quest.py\", line 265, in install_boulder_quest\n    raise ValueError(f\"no south exit on {node_id}\")\nValueError: no south exit on node:9\n",
-      "stdout_tail": ""
-    },
-    {
-      "name": "pytest_g09",
-      "cmd": [
-        "/usr/bin/python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "-m",
         "pytest",
         "-q",
         "tests/sim/test_t143_t150_leadership.py"
       ],
       "exit_code": 0,
-      "duration_s": 5.544,
-      "stderr_tail": "",
-      "stdout_tail": "........                                                                 [100%]\n8 passed in 5.23s\n"
+      "duration_s": 3.282,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G09\\auto\\logs\\00_leadership_unit_tests.log",
+      "status": "PASS",
+      "name": "leadership_unit_tests",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-c",
+        "import json; from pathlib import Path; m=json.load(open('godot_project/content/policies/manifest.json')); assert m['heuristic_fallback'].get('trained') is False; q=int(m.get('qualified_count') or 0); review=Path('Pack/DuelMasterBattle_Build_Pack/tracking/gates/G09/MORNING_REVIEW.md'); assert review.is_file(); print('MANIFEST_OK', m.get('status'), q); print('GATE_STATUS=' + ('AUTO_READY_FOR_OWNER_REVIEW' if q>=3 else ('PARTIAL_BLOCKED' if review.stat().st_size>0 else 'AUTO_FAILED')))"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.056,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G09\\auto\\logs\\01_policy_manifest_present.log",
+      "status": "PASS",
+      "name": "policy_manifest_present",
+      "kind": "shell"
     }
   ],
+  "spec": "G09",
+  "seed": 10001,
+  "fixture": "FX-ERA",
+  "qualified_policies": 3,
+  "blockers": [],
+  "owner_review_status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "honesty": "200 held-out PROMOTION_SEEDS; family specialists with prefer_family primary-seat elevation; heuristic never labelled trained.",
   "evidence": {
-    "action_samples": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G09/decision_traces/action_samples.json",
-    "fallback_demo": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G09/decision_traces/fallback_demo.json",
-    "policy_identity": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G09/decision_traces/policy_identity.json"
-  },
-  "honesty": "Statistical/evaluation report is the primary oracle. Heuristic fallback is legal and required. Heuristic clones are never labelled trained. Incomplete training batches due to local compute budget are not claimed as promotion."
+    "action_samples": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G09\\decision_traces\\action_samples.json",
+    "fallback_demo": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G09\\decision_traces\\fallback_demo.json",
+    "policy_identity": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G09\\decision_traces\\policy_identity.json"
+  }
 }

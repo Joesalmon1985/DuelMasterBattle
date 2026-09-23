@@ -19,14 +19,14 @@
       "seed": 10001,
       "turn": 2,
       "faction_id": "faction:2",
-      "selected_id": "construct:action=road:store_id=store:building:20:target_edge=['node:21', 'node:16']",
+      "selected_id": "construct:action=road:store_id=store:building:20:target_edge=['node:27', 'node:21']",
       "action_kind": "construct",
       "params": {
         "action": "road",
         "store_id": "store:building:20",
         "target_edge": [
-          "node:21",
-          "node:16"
+          "node:27",
+          "node:21"
         ]
       }
     },

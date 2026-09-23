@@ -1,5 +1,5 @@
 {
-  "schema_hash": "e5d8c08fd328a24e",
+  "schema_hash": "5ae577885efb65aa",
   "heuristic_fallback": {
     "id": "heuristic",
     "kind": "heuristic",
@@ -7,67 +7,136 @@
   },
   "policies": [
     {
-      "id": "policy-im-1",
-      "artifact": "content/policies/policy-im-1.json",
-      "weights_digest": "cdb79a1327b538b4",
-      "schema_hash": "e5d8c08fd328a24e",
+      "id": "policy-im-build",
+      "artifact": "content/policies/policy-im-build.json",
+      "weights_digest": "36461a7486b76933",
+      "schema_hash": "5ae577885efb65aa",
       "trained": true,
       "provenance": {
         "kind": "imitation",
-        "source": "imitation_v1"
+        "init_seed": 101,
+        "prefer_family": "build",
+        "prefer_family_retarget_rows": 0,
+        "decisions_trained": 12000,
+        "target_decisions": 12000,
+        "init_digest": "da071d0ac93adedb",
+        "final_digest": "36461a7486b76933",
+        "mean_loss": 1.8391265811491895,
+        "schema_hash": "5ae577885efb65aa",
+        "dataset_manifest": "training\\datasets\\manifest.json",
+        "budget": {
+          "label": "imitation",
+          "max_seconds": 2400.0,
+          "max_decisions": 12000,
+          "decisions": 12000,
+          "elapsed_seconds": 4.0,
+          "stopped_reason": "max_decisions",
+          "complete": true,
+          "incomplete_batch": false
+        },
+        "trained_beyond_random": true,
+        "cli": "policy-im-build=training/checkpoints/imitation_build.json",
+        "weights_digest": "36461a7486b76933",
+        "trained": true
       },
       "evaluation_summary": {
-        "wins_10vp": 17,
+        "wins_10vp": 97,
         "catastrophe_count": 0,
         "action_family_share": {
-          "build": 0.0696594427244582,
-          "trade": 0.17956656346749225,
-          "war": 0.02631578947368421,
-          "other": 0.7244582043343654
+          "build": 0.9985163204747775,
+          "trade": 0.0,
+          "war": 0.0,
+          "other": 0.001483679525222552
         }
       },
       "kind": "trained_neural"
     },
     {
-      "id": "policy-im-2",
-      "artifact": "content/policies/policy-im-2.json",
-      "weights_digest": "3ea610d9d8989dce",
-      "schema_hash": "e5d8c08fd328a24e",
+      "id": "policy-im-trade",
+      "artifact": "content/policies/policy-im-trade.json",
+      "weights_digest": "946dbdf55ba4b5e3",
+      "schema_hash": "5ae577885efb65aa",
       "trained": true,
       "provenance": {
         "kind": "imitation",
-        "source": "imitation_v2"
+        "init_seed": 202,
+        "prefer_family": "trade",
+        "prefer_family_retarget_rows": 6364,
+        "decisions_trained": 12000,
+        "target_decisions": 12000,
+        "init_digest": "adc7673e4bac8706",
+        "final_digest": "946dbdf55ba4b5e3",
+        "mean_loss": 1.707784410261678,
+        "schema_hash": "5ae577885efb65aa",
+        "dataset_manifest": "training\\datasets\\manifest.json",
+        "budget": {
+          "label": "imitation",
+          "max_seconds": 2400.0,
+          "max_decisions": 12000,
+          "decisions": 12000,
+          "elapsed_seconds": 4.484,
+          "stopped_reason": "max_decisions",
+          "complete": true,
+          "incomplete_batch": false
+        },
+        "trained_beyond_random": true,
+        "cli": "policy-im-trade=training/checkpoints/imitation_trade.json",
+        "weights_digest": "946dbdf55ba4b5e3",
+        "trained": true
       },
       "evaluation_summary": {
-        "wins_10vp": 17,
+        "wins_10vp": 97,
         "catastrophe_count": 0,
         "action_family_share": {
-          "build": 0.0696594427244582,
-          "trade": 0.5,
-          "war": 0.02631578947368421,
-          "other": 0.4040247678018576
+          "build": 0.0,
+          "trade": 1.0,
+          "war": 0.0,
+          "other": 0.0
         }
       },
       "kind": "trained_neural"
     },
     {
-      "id": "policy-im-3",
-      "artifact": "content/policies/policy-im-3.json",
-      "weights_digest": "ae5571e54cc1ca1d",
-      "schema_hash": "e5d8c08fd328a24e",
+      "id": "policy-im-war",
+      "artifact": "content/policies/policy-im-war.json",
+      "weights_digest": "cd314a57dd2db9a2",
+      "schema_hash": "5ae577885efb65aa",
       "trained": true,
       "provenance": {
         "kind": "imitation",
-        "source": "imitation_v3"
+        "init_seed": 303,
+        "prefer_family": "war",
+        "prefer_family_retarget_rows": 0,
+        "decisions_trained": 12000,
+        "target_decisions": 12000,
+        "init_digest": "a2211dd37db6aa3d",
+        "final_digest": "cd314a57dd2db9a2",
+        "mean_loss": 2.3849409622502615,
+        "schema_hash": "5ae577885efb65aa",
+        "dataset_manifest": "training\\datasets\\manifest.json",
+        "budget": {
+          "label": "imitation",
+          "max_seconds": 2400.0,
+          "max_decisions": 12000,
+          "decisions": 12000,
+          "elapsed_seconds": 4.375,
+          "stopped_reason": "max_decisions",
+          "complete": true,
+          "incomplete_batch": false
+        },
+        "trained_beyond_random": true,
+        "cli": "policy-im-war=training/checkpoints/imitation_war.json",
+        "weights_digest": "cd314a57dd2db9a2",
+        "trained": true
       },
       "evaluation_summary": {
-        "wins_10vp": 17,
+        "wins_10vp": 97,
         "catastrophe_count": 0,
         "action_family_share": {
-          "build": 0.0696594427244582,
-          "trade": 0.5,
-          "war": 0.02631578947368421,
-          "other": 0.4040247678018576
+          "build": 0.36795252225519287,
+          "trade": 0.0,
+          "war": 0.142433234421365,
+          "other": 0.4896142433234421
         }
       },
       "kind": "trained_neural"

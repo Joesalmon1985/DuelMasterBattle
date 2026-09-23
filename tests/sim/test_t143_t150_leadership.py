@@ -93,7 +93,10 @@ def test_t146_budget_marks_incomplete() -> None:
     import time
 
     budget = ComputeBudget(max_seconds=0.05, max_decisions=10_000, label="t")
-    time.sleep(0.06)
+    # Windows timer resolution can be coarse under load — wait until exhausted.
+    deadline = time.monotonic() + 1.0
+    while time.monotonic() < deadline and not budget.exhausted():
+        time.sleep(0.05)
     assert budget.exhausted()
     assert budget.snapshot()["incomplete_batch"] is True
     assert budget.snapshot().get("stopped_reason") == "max_seconds"

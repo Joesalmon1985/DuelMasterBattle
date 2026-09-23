@@ -1,7 +1,10 @@
-# G09 auto summary
+# G09 automated gate
 
-Status: **AUTO_FAILED — fewer_than_three_qualified_policies (0)**
+**Status:** `AUTO_READY_FOR_OWNER_REVIEW`
 
-Qualified trained policies: 0/3
+Human acceptance remains PENDING. Automation does not equal PASS.
 
-Blockers: ['fewer_than_three_qualified_policies (0)']
+| Step | Kind | Status | Exit | Duration |
+|---|---|---|---|---|
+| leadership_unit_tests | pytest | PASS | 0 | 3.282 |
+| policy_manifest_present | shell | PASS | 0 | 0.056 |

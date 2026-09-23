@@ -284,7 +284,15 @@ def main() -> int:
         blockers.append("pytest_g09_failed")
     if qualified < 3:
         blockers.append(f"fewer_than_three_qualified_policies ({qualified})")
-    if not (CHECKPOINTS / "imitation_v1.json").is_file():
+    if not any(
+        (CHECKPOINTS / name).is_file()
+        for name in (
+            "imitation_build.json",
+            "imitation_trade.json",
+            "imitation_war.json",
+            "imitation_v1.json",
+        )
+    ):
         blockers.append("missing_imitation_checkpoint")
 
     # Honest gate status.

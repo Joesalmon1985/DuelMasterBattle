@@ -5,7 +5,7 @@
     "construct:action=road:store_id=store:building:2:target_edge=['node:1', 'node:4']",
     "trade_propose:give={'brick': 1}:receive={'timber': 1}:target_faction=faction:2"
   ],
-  "fallback_reason": "inference_error_or_timeout",
+  "fallback_reason": "schema mismatch: model=e5d8c08fd328a24e expected=5ae577885efb65aa",
   "candidate_count": 14,
   "note": "Forced inference failure used legal heuristic within same seat budget."
 }

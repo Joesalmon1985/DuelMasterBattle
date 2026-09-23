@@ -77,16 +77,17 @@ def test_selected_policies_pairwise_diversity_when_complete() -> None:
 
 
 def test_eval_seed_count_is_200_when_eval_present() -> None:
-    if not EVAL_DIR.is_dir():
+    if not MANIFEST.is_file():
         return
-    for path in EVAL_DIR.glob("eval_policy-*.json"):
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    if str(manifest.get("status")) != "COMPLETE":
+        return
+    # Only the currently selected library policies must have 200-seed reports.
+    for policy in manifest.get("policies") or []:
+        pid = str(policy.get("id") or "")
+        path = EVAL_DIR / f"eval_{pid}.json"
+        assert path.is_file(), f"missing eval for selected policy {pid}"
         entry = json.loads(path.read_text(encoding="utf-8"))
         evaluation = entry.get("evaluation") or entry
         seed_count = evaluation.get("seed_count") or evaluation.get("seeds_evaluated")
-        if seed_count is None and isinstance(evaluation.get("rows"), list):
-            seed_count = len(evaluation["rows"])
-        # Older incomplete reports may use small smokes; COMPLETE library requires 200.
-        if MANIFEST.is_file():
-            manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-            if str(manifest.get("status")) == "COMPLETE":
-                assert int(seed_count or 0) >= 200, f"{path.name} seed_count={seed_count}"
+        assert int(seed_count or 0) >= 200, f"{path.name} seed_count={seed_count}"

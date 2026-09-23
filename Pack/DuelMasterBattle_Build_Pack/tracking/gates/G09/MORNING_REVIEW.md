@@ -1,13 +1,13 @@
-# G09 Morning Review — AUTO_FAILED — fewer_than_three_qualified_policies (0)
+# G09 Morning Review — AUTO_READY_FOR_OWNER_REVIEW
 
 **Gate:** G09 — Trained faction leadership  
-**Status:** `AUTO_FAILED — fewer_than_three_qualified_policies (0)`  
+**Status:** `AUTO_READY_FOR_OWNER_REVIEW`  
 **Human acceptance:** PENDING — do **not** invent `PASS` or `accepted_by`  
 **Overnight policy:** continuation past G09 only when status is AUTO_READY_FOR_OWNER_REVIEW; PARTIAL/AUTO_FAILED still leaves infrastructure for independent G10 work
 
 ## Candidate
 
-- Branch: `phase/g06-g12-autoqa`
+- Branch: `overnight/g12-visual-training-finish`
 - Evaluation dir: `tracking/policy_evaluations/`
 - Policy manifest: `godot_project/content/policies/manifest.json`
 - Auto report: `tracking/gates/G09/auto/result.json`
@@ -25,18 +25,18 @@
 
 | Metric | Value |
 |---|---|
-| Qualified trained policies | 0 / 3 |
-| Manifest status | NONE_QUALIFIED |
-| Blockers | ['fewer_than_three_qualified_policies (0)'] |
+| Qualified trained policies | 3 / 3 |
+| Manifest status | COMPLETE |
+| Blockers | none |
 
 ## Automated evidence
 
 | Suite | Path |
 |---|---|
-| Eval reports | `none yet` |
-| Action samples | `Pack/DuelMasterBattle_Build_Pack/tracking/gates/G09/decision_traces/action_samples.json` |
-| Fallback demo | `Pack/DuelMasterBattle_Build_Pack/tracking/gates/G09/decision_traces/fallback_demo.json` |
-| Policy identity | `Pack/DuelMasterBattle_Build_Pack/tracking/gates/G09/decision_traces/policy_identity.json` |
+| Eval reports | `eval_policy-ac-1.json, eval_policy-build.json, eval_policy-im-1.json, eval_policy-im-2.json, eval_policy-im-3.json, eval_policy-im-build.json, eval_policy-im-gen.json, eval_policy-im-trade.json, eval_policy-im-war.json, eval_policy-war.json, horizon_calibration.json, library_baseline.json, library_selection.json, promotion_seed_preflight.json, promotion_seed_preflight_full.json` |
+| Action samples | `Pack\DuelMasterBattle_Build_Pack\tracking\gates\G09\decision_traces\action_samples.json` |
+| Fallback demo | `Pack\DuelMasterBattle_Build_Pack\tracking\gates\G09\decision_traces\fallback_demo.json` |
+| Policy identity | `Pack\DuelMasterBattle_Build_Pack\tracking\gates\G09\decision_traces\policy_identity.json` |
 
 ## Owner playtest focus
 
@@ -47,6 +47,6 @@
 
 ## Known limits / blockers
 
-- fewer_than_three_qualified_policies (0)
+- None recorded for automation; owner still decides library readiness.
 
 G05–G08 remain without human PASS; do not invent acceptance.
