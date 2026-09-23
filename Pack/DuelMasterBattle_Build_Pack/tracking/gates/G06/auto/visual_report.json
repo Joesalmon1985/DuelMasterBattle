@@ -1,22 +1,174 @@
 {
   "gate": "G06",
-  "generated_at": "2026-09-22T22:31:00.618794+00:00",
+  "generated_at": "2026-09-23T07:07:46.716981+00:00",
   "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
-  "steps_passed": 6,
-  "steps_failed": 0,
-  "auto_screenshots": [],
-  "layout_captures": [
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/chronicle_1280x720.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/chronicle_450x800.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/chronicle_960x540.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/village_1280x720.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/village_450x800.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/village_960x540.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_1280x720.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_450x800.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_450x800_before_geometry.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_450x800_geometry.png",
-    "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/layout_captures/world_map_960x540.png"
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "visual_status": "PASS",
+  "screenshot_count": 10,
+  "shots_passed": 10,
+  "shots_failed": 0,
+  "shots": [
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/01_prehistoric_settlement_450x800.png",
+      "status": "PASS",
+      "bytes": 33226,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 18.931,
+        "grey_frac": 0.002
+      },
+      "checkpoint": "prehistoric_settlement",
+      "era": "",
+      "modal_open": "",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/02_inventory_450x800.png",
+      "status": "PASS",
+      "bytes": 36140,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 18.983,
+        "grey_frac": 0.0811
+      },
+      "checkpoint": "inventory",
+      "era": "",
+      "modal_open": "inventory",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/03_world_map_450x800.png",
+      "status": "PASS",
+      "bytes": 66668,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 42.078,
+        "grey_frac": 0.0468
+      },
+      "checkpoint": "world_map",
+      "era": "prehistoric",
+      "modal_open": "world_map",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/04_chronicle_450x800.png",
+      "status": "PASS",
+      "bytes": 31187,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 17.584,
+        "grey_frac": 0.0798
+      },
+      "checkpoint": "chronicle",
+      "era": "prehistoric",
+      "modal_open": "chronicle",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/05_world_map_1280x720.png",
+      "status": "PASS",
+      "bytes": 93737,
+      "image_width": 1280,
+      "image_height": 720,
+      "near_blank": {
+        "stddev": 39.433,
+        "grey_frac": 0.0251
+      },
+      "checkpoint": "world_map",
+      "era": "prehistoric",
+      "modal_open": "world_map",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/06_chronicle_1280x720.png",
+      "status": "PASS",
+      "bytes": 50425,
+      "image_width": 1280,
+      "image_height": 720,
+      "near_blank": {
+        "stddev": 15.077,
+        "grey_frac": 0.0835
+      },
+      "checkpoint": "chronicle",
+      "era": "prehistoric",
+      "modal_open": "chronicle",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/07_world_map_via_button_450x800.png",
+      "status": "PASS",
+      "bytes": 66722,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 42.101,
+        "grey_frac": 0.0493
+      },
+      "checkpoint": "world_map_via_button",
+      "era": "prehistoric",
+      "modal_open": "world_map",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/08_historic_after_wait_450x800.png",
+      "status": "PASS",
+      "bytes": 52689,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 22.008,
+        "grey_frac": 0.083
+      },
+      "checkpoint": "historic_after_wait",
+      "era": "historic",
+      "modal_open": "",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/09_post_save_450x800.png",
+      "status": "PASS",
+      "bytes": 52192,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 19.743,
+        "grey_frac": 0.0878
+      },
+      "checkpoint": "post_save",
+      "era": "historic",
+      "modal_open": "",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/10_post_reload_450x800.png",
+      "status": "PASS",
+      "bytes": 51561,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 17.191,
+        "grey_frac": 0.0927
+      },
+      "checkpoint": "post_reload",
+      "era": "historic",
+      "modal_open": "",
+      "issues": [],
+      "warnings": []
+    }
   ],
-  "human_acceptance": "PENDING"
+  "montage": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/montages/g06_storyboard.png",
+  "result_json": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/result.json"
 }

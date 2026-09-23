@@ -1,0 +1,126 @@
+{
+  "gate": "G08",
+  "generated_at": "2026-09-23T07:07:47.780321+00:00",
+  "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "visual_status": "PASS",
+  "screenshot_count": 7,
+  "shots_passed": 7,
+  "shots_failed": 0,
+  "shots": [
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/screenshots/01_village_panel_450x800.png",
+      "status": "PASS",
+      "bytes": 53552,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 23.312,
+        "grey_frac": 0.1009
+      },
+      "checkpoint": "village_panel",
+      "era": "prehistoric",
+      "modal_open": "",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/screenshots/02_world_map_450x800.png",
+      "status": "PASS",
+      "bytes": 70814,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 42.249,
+        "grey_frac": 0.0499
+      },
+      "checkpoint": "world_map",
+      "era": "prehistoric",
+      "modal_open": "world_map",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/screenshots/03_chronicle_450x800.png",
+      "status": "PASS",
+      "bytes": 35311,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 18.529,
+        "grey_frac": 0.0805
+      },
+      "checkpoint": "chronicle",
+      "era": "prehistoric",
+      "modal_open": "chronicle",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/screenshots/04_world_map_1280x720.png",
+      "status": "PASS",
+      "bytes": 92489,
+      "image_width": 1280,
+      "image_height": 720,
+      "near_blank": {
+        "stddev": 39.267,
+        "grey_frac": 0.0245
+      },
+      "checkpoint": "world_map",
+      "era": "prehistoric",
+      "modal_open": "world_map",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/screenshots/05_chronicle_1280x720.png",
+      "status": "PASS",
+      "bytes": 50712,
+      "image_width": 1280,
+      "image_height": 720,
+      "near_blank": {
+        "stddev": 15.13,
+        "grey_frac": 0.0828
+      },
+      "checkpoint": "chronicle",
+      "era": "prehistoric",
+      "modal_open": "chronicle",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/screenshots/06_knowledge_1280x720.png",
+      "status": "PASS",
+      "bytes": 60017,
+      "image_width": 1280,
+      "image_height": 720,
+      "near_blank": {
+        "stddev": 16.237,
+        "grey_frac": 0.0809
+      },
+      "checkpoint": "knowledge",
+      "era": "prehistoric",
+      "modal_open": "knowledge",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/screenshots/07_inventory_1280x720.png",
+      "status": "PASS",
+      "bytes": 57770,
+      "image_width": 1280,
+      "image_height": 720,
+      "near_blank": {
+        "stddev": 15.638,
+        "grey_frac": 0.0829
+      },
+      "checkpoint": "inventory",
+      "era": "prehistoric",
+      "modal_open": "inventory",
+      "issues": [],
+      "warnings": []
+    }
+  ],
+  "montage": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/montages/g08_storyboard.png",
+  "result_json": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/result.json"
+}
