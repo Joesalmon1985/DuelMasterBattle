@@ -1,7 +1,8 @@
 # Morning handoff — overnight G06–G12
 
 **Final branch:** `overnight/g12-visual-training-finish`  
-**Final SHA:** 61013c80f96d17741e78c80b5a9c8b719a386b46  
+**Final SHA:** `8da68d980b7cca614c037780152956c4d3ded89a` (handoff stamp; confirm with `git rev-parse HEAD`)
+**Note:** After this handoff commit, tip may be one commit ahead; run `git rev-parse HEAD`.
 **Started from:** `1aa2205` on `phase/g06-g12-autoqa`  
 **Platform:** Windows · Godot 4.5.1 · `.venv\Scripts\python.exe`  
 **Human acceptance:** PENDING for every gate — automation is `AUTO_READY_FOR_OWNER_REVIEW` only. Never treat this as PASS.
