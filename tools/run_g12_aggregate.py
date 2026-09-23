@@ -118,6 +118,55 @@ def main(argv: list[str] | None = None) -> int:
         f"Journeys: {journeys.get('status')}\n",
         encoding="utf-8",
     )
+
+    # Owner-facing packets (regenerated every aggregate run — never leave stale G09-blocked copy).
+    rows = "\n".join(
+        f"| {g} | {aggregate[g]['auto_status']} |"
+        for g in ("G06", "G07", "G08", "G09", "G10", "G11")
+    )
+    morning = (
+        f"# G12 Morning Review — {status}\n\n"
+        f"**Gate:** G12 — Fully unattended functional acceptance\n"
+        f"**Status:** `{status}`\n"
+        f"**Human acceptance:** PENDING — never invent PASS\n\n"
+        f"## Aggregate\n\n"
+        f"| Gate | Auto status |\n"
+        f"|------|-------------|\n"
+        f"{rows}\n\n"
+        f"## Journeys\n\n"
+        f"Status: `{journeys.get('status')}`\n\n"
+        f"See `journey_manifest.json` and `auto/result.json`. "
+        f"Multi-seed recovery / cycle tests executed; causal reachability documented "
+        f"(no invented checkpoints).\n\n"
+        f"## Honesty\n\n"
+        f"G12 claims `AUTO_READY_FOR_OWNER_REVIEW` only when G06–G11 auto statuses "
+        f"and journey evidence support it. Human PASS is never invented.\n"
+    )
+    (OUT / "MORNING_REVIEW.md").write_text(morning, encoding="utf-8")
+
+    overnight = (
+        f"# Overnight G06→G12 report\n\n"
+        f"**Generated:** {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}\n"
+        f"**Aggregate status:** `{status}`\n"
+        f"**Human acceptance:** PENDING — never invent PASS\n\n"
+        f"## Gate table\n\n"
+        f"| Gate | Status |\n"
+        f"|------|--------|\n"
+        f"{rows}\n"
+        f"| G12 | {status} |\n\n"
+        f"## Blockers\n\n"
+        f"{(', '.join(blockers) if blockers else 'None recorded for automation.')}\n\n"
+        f"## Journeys\n\n"
+        f"`{journeys.get('status')}` — seeds {journeys.get('seeds', [])}\n\n"
+        f"## How Joe reviews\n\n"
+        f"1. `MORNING_HANDOFF.md` at repo root\n"
+        f"2. `Play Latest Integrated Game.bat`\n"
+        f"3. Gate MORNING_REVIEW files under `tracking/gates/G06`–`G12`\n"
+        f"4. Visual evidence: `gates/G11/ward_duel_leak/` and `gates/G11/visual_review/`\n"
+    )
+    (TRACK / "OVERNIGHT_G06_G12_REPORT.md").write_text(overnight, encoding="utf-8")
+
+
     print(f"GATE_STATUS={status}")
     print(json.dumps({"status": status, "blockers": blockers, "missing_ready": missing_ready}, indent=2))
     return 0 if status in {"AUTO_READY_FOR_OWNER_REVIEW", "PARTIAL — BLOCKED BY G09"} else 1

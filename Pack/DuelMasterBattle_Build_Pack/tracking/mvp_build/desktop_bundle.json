@@ -1,24 +1,24 @@
 {
-  "generated_at": "2026-09-23T07:34:11.131425+00:00",
-  "platform": "Linux",
-  "machine": "x86_64",
+  "generated_at": "2026-09-23T14:56:07.899479+00:00",
+  "platform": "Windows",
+  "machine": "AMD64",
   "target": "linux",
   "windows_certified": false,
-  "bundle": "build/desktop/mvp_linux",
+  "bundle": "build\\desktop\\mvp_linux",
   "launchers": [
-    "play_g10_release.sh",
-    "play_fx_era.sh",
     "find_godot.sh",
+    "play_fx_era.sh",
     "play_g05.sh",
+    "play_g10_release.sh",
     "play_mvp.sh"
   ],
   "hashes": {
-    "play_g10_release.sh": "74b4eeb7c5342732763a16d45463dcb6f4ae561d1a9d9506d7809b7b0cfa08f3",
-    "play_fx_era.sh": "d2c161d85f7517144a4ace30ff66407c0fbc31f6163aa2346d13abf377e8dfb8",
-    "bundle.json": "47ccf37d469b5ca01937d491c3562498d642a41089d0fe7dc2af80030df3e775",
+    "bundle.json": "8d1d309f2d2f8f902103f9557847edac88d17fdbabe2aaf11157e62b5fe5e696",
     "find_godot.sh": "ca41e9ab10f6e99d199fda88a90baccb90203d0ef8dc2a35dd6b0be75ac6591c",
+    "play_fx_era.sh": "d2c161d85f7517144a4ace30ff66407c0fbc31f6163aa2346d13abf377e8dfb8",
     "play_g05.sh": "36ebf2975f672db1ccd7d8a023e3c07465b7d070b254645c33dbe22025b6fac7",
+    "play_g10_release.sh": "74b4eeb7c5342732763a16d45463dcb6f4ae561d1a9d9506d7809b7b0cfa08f3",
     "play_mvp.sh": "64569edfa86ccee972133506b4c6169e88565c66e06c1e04e23b772a865218d8",
-    "README.md": "4ce8b0369625133674b36fe9d3e6464d315398c240e85fc0aa418fbd6c8f2733"
+    "README.md": "70981e4ade7011bfec9b4d5ac4ac4504efd89e3a4a72e949223a343659d63e2b"
   }
 }

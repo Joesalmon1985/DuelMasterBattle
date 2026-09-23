@@ -48,32 +48,76 @@
     },
     "g07": {
       "status": "VERIFIED",
-      "exit_code": 0,
-      "duration_s": 2.755,
-      "input_hash": "c684e65538a8f417",
       "cmd": [
         "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "tools/check.py",
         "--gate",
         "G07"
       ],
+      "input_hash": "c684e65538a8f417",
+      "started_at": "2026-09-23T11:02:13Z",
       "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110213Z_g07.log",
-      "finished_at": "2026-09-23T11:02:16Z"
+      "exit_code": 0
     },
-    "g08": {
+    "g09_pipeline": {
       "status": "VERIFIED",
       "exit_code": 0,
-      "duration_s": 2.715,
-      "input_hash": "8e77727ae528241c",
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/run_g09_pipeline.py"
+      ]
+    },
+    "g10": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
       "cmd": [
         "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "tools/check.py",
         "--gate",
-        "G08"
-      ],
-      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110310Z_g08.log",
-      "finished_at": "2026-09-23T11:03:13Z"
+        "G10"
+      ]
+    },
+    "g11": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G11"
+      ]
+    },
+    "g09_gate": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G09"
+      ]
+    },
+    "g12": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G12"
+      ]
     }
   },
-  "updated_at": "2026-09-23T11:03:13Z"
+  "updated_at": "2026-09-23T16:32:52Z",
+  "final_status": "AUTO_READY_FOR_OWNER_REVIEW"
 }

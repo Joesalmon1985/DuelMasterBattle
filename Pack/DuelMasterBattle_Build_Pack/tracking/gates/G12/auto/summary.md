@@ -1,9 +1,7 @@
-# G12 automated gate
+# G12 auto summary
 
-**Status:** `PARTIAL — BLOCKED BY G09`
+**Status:** `AUTO_READY_FOR_OWNER_REVIEW`
 
-Human acceptance remains PENDING. Automation does not equal PASS.
+Blockers: none
 
-| Step | Kind | Status | Exit | Duration |
-|---|---|---|---|---|
-| g12_aggregate | shell | PASS | 0 | 4.888 |
+Journeys: PASS

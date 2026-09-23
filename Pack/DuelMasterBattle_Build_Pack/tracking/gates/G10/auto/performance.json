@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-23T07:34:13.278966+00:00",
+  "generated_at": "2026-09-23T14:56:08.768916+00:00",
   "hardware": {
-    "platform": "Linux-6.8.0-139-generic-x86_64-with-glibc2.39",
-    "python": "3.12.3",
-    "machine": "x86_64"
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.16",
+    "machine": "AMD64"
   },
   "cycles_run": 20,
   "cycle_numbers": [
@@ -30,7 +30,7 @@
   ],
   "people_preserved": false,
   "units_spawned_probe": 200,
-  "elapsed_seconds": 0.037,
+  "elapsed_seconds": 0.011,
   "save_bytes": 678690,
   "undeclared_army_cap": false,
   "deleted_living_identities": false,
@@ -43,12 +43,12 @@
   "p95_proxy": {
     "note": "Single-machine probe; not a multi-run percentile. Recorded as mean cycle proxy.",
     "cycles": 20,
-    "elapsed_seconds": 0.037,
-    "mean_cycle_seconds": 0.0018,
+    "elapsed_seconds": 0.011,
+    "mean_cycle_seconds": 0.0005,
     "hardware": {
-      "platform": "Linux-6.8.0-139-generic-x86_64-with-glibc2.39",
-      "python": "3.12.3",
-      "machine": "x86_64"
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python": "3.11.16",
+      "machine": "AMD64"
     }
   },
   "g10_budget_misses": {

@@ -92,7 +92,7 @@
   "batches": [
     {
       "id": "batch.t133.valid",
-      "hash": "170ff1be8127a6c345a8a2078e73154db3e50c06f7711c3c77809aeb52403063"
+      "hash": "eca58ecdd4b51be06d9113c36166ca0268674613aa83b04c9da346c2c6414ecf"
     }
   ],
   "rivals": [
@@ -140,5 +140,5 @@
     "validator": "tools.content.compile",
     "api_dependency": false
   },
-  "content_hash": "5eae14a7c11a6a83338e2926e4ca92f4baa07838c6561e18b518faac6e0a7d7c"
+  "content_hash": "1d9faf793c7db47b17ec8c5856178cec5696ea96dbea2a2da56fc7fcae70d9c0"
 }

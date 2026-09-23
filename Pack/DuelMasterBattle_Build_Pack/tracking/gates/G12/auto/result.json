@@ -1,23 +1,62 @@
 {
   "gate": "G12",
-  "generated_at": "2026-09-23T07:34:19Z",
-  "status": "PARTIAL \u2014 BLOCKED BY G09",
+  "generated_at": "2026-09-23T16:33:31.908492+00:00",
+  "status": "AUTO_READY_FOR_OWNER_REVIEW",
   "human_acceptance": "PENDING \u2014 never invent PASS",
-  "results": [
-    {
-      "cmd": [
-        "python3",
-        "tools/run_g12_aggregate.py"
-      ],
-      "exit_code": 0,
-      "duration_s": 4.888,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G12/auto/logs/00_g12_aggregate.log",
-      "status": "PASS",
-      "name": "g12_aggregate",
-      "kind": "shell"
+  "aggregate": {
+    "G06": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G07": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G08": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G09": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G10": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G11": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
     }
-  ],
-  "spec": "G12",
-  "seed": 1101,
-  "fixture": "FX-RELEASE"
+  },
+  "journeys": {
+    "seeds": [
+      507,
+      808,
+      1212
+    ],
+    "cmd": [
+      "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/scenarios/test_era_transition.py",
+      "tests/scenarios/test_full_cycles.py",
+      "tests/scenarios/test_release.py",
+      "tests/integration/test_release_recovery.py"
+    ],
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout_tail": "..............                                                           [100%]\n14 passed in 0.98s",
+    "stderr_tail": "",
+    "causal_reachability": "Checkpoints used by FX-ERA/FX-CYCLE are reached via production loaders and reseed_cycle; recovery uses SaveCoordinator barriers."
+  },
+  "blockers": [],
+  "missing_ready": []
 }

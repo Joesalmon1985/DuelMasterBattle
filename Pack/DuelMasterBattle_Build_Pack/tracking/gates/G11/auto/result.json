@@ -1,45 +1,45 @@
 {
   "gate": "G11",
-  "generated_at": "2026-09-23T07:34:14Z",
+  "generated_at": "2026-09-23T14:56:07Z",
   "status": "AUTO_READY_FOR_OWNER_REVIEW",
   "human_acceptance": "PENDING \u2014 never invent PASS",
   "results": [
     {
       "cmd": [
-        "python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "tools/validate_semantic_catalogue.py",
         "--write"
       ],
       "exit_code": 0,
-      "duration_s": 0.152,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G11/auto/logs/00_semantic_registry_sync.log",
+      "duration_s": 0.092,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G11\\auto\\logs\\00_semantic_registry_sync.log",
       "status": "PASS",
       "name": "semantic_registry_sync",
       "kind": "shell"
     },
     {
       "cmd": [
-        "/usr/bin/python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "-m",
         "pytest",
         "-q",
         "tests/sim/test_semantic_visuals.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.532,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G11/auto/logs/01_semantic_tests.log",
+      "duration_s": 0.295,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G11\\auto\\logs\\01_semantic_tests.log",
       "status": "PASS",
       "name": "semantic_tests",
       "kind": "pytest"
     },
     {
       "cmd": [
-        "python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "tools/generate_semantic_gallery.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.123,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G11/auto/logs/02_gallery_index.log",
+      "duration_s": 0.072,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G11\\auto\\logs\\02_gallery_index.log",
       "status": "PASS",
       "name": "gallery_index",
       "kind": "shell"
