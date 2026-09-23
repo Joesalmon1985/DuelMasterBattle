@@ -1,0 +1,34 @@
+{
+  "checkpoint": "training/checkpoints/actor_critic_v1.json",
+  "decisions_trained": 400,
+  "weights_digest": "a028280c1d7a1ce2",
+  "trained": true,
+  "incomplete_batch": true,
+  "promotion_claimed": false,
+  "notes": "Recovered from partial after fixture seed error; budget stop incomplete \u2014 not claimed promotion.",
+  "provenance": {
+    "kind": "actor_critic",
+    "init_seed": 1,
+    "decisions_trained": 400,
+    "target_decisions": 10000,
+    "init_digest": "5588a381bd00019e",
+    "final_digest": "cdb79a1327b538b4",
+    "mean_loss": 1.9199871531418364,
+    "schema_hash": "e5d8c08fd328a24e",
+    "dataset_manifest": "training/datasets/manifest.json",
+    "budget": {
+      "label": "imitation",
+      "max_seconds": 1800.0,
+      "max_decisions": 10000,
+      "decisions": 10000,
+      "elapsed_seconds": 16.036,
+      "stopped_reason": "max_decisions",
+      "complete": false,
+      "incomplete_batch": true
+    },
+    "trained_beyond_random": true,
+    "rng_seed": 2,
+    "seed_i": 16,
+    "recovered_from_partial": true
+  }
+}

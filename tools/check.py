@@ -1393,6 +1393,94 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 )
             ),
         ],
+        "T143": lambda: [
+            _pytest("t143_training_env", "tests/sim/test_t143_t150_leadership.py::test_t143_env_advances_and_masks_validate"),
+            _pytest("t143_no_free_stock", "tests/sim/test_t143_t150_leadership.py::test_t143_replay_no_free_stock"),
+            validate_evidence(
+                "t143_training_modules",
+                [
+                    ROOT / "training" / "environment.py",
+                    ROOT / "training" / "observation_schema.json",
+                ],
+            ),
+        ],
+        "T144": lambda: [
+            _pytest("t144_seed_split", "tests/sim/test_t143_t150_leadership.py::test_t144_promotion_seeds_locked_and_disjoint"),
+            validate_evidence(
+                "t144_collect",
+                [
+                    ROOT / "training" / "collect.py",
+                    ROOT / "training" / "datasets" / "manifest.json",
+                ],
+            ),
+        ],
+        "T145": lambda: [
+            _pytest("t145_model", "tests/sim/test_t143_t150_leadership.py::test_t145_model_ranks_only_supplied_candidates"),
+            validate_evidence(
+                "t145_train_imitation",
+                [
+                    ROOT / "training" / "model.py",
+                    ROOT / "training" / "train_imitation.py",
+                ],
+            ),
+        ],
+        "T146": lambda: [
+            _pytest("t146_budget", "tests/sim/test_t143_t150_leadership.py::test_t146_budget_marks_incomplete"),
+            validate_evidence(
+                "t146_actor_critic",
+                [
+                    ROOT / "training" / "train_actor_critic.py",
+                    ROOT / "training" / "budget.py",
+                ],
+            ),
+        ],
+        "T147": lambda: [
+            _pytest("t147_neural_fallback", "tests/sim/test_t143_t150_leadership.py::test_t147_neural_fallback_and_policy_identity"),
+            validate_evidence(
+                "t147_runtime_inference",
+                [
+                    ROOT / "sim" / "dmb" / "ai" / "neural.py",
+                    ROOT / "sim" / "dmb" / "ai" / "policy.py",
+                    ROOT / "godot_project" / "content" / "policies" / "manifest.json",
+                ],
+            ),
+        ],
+        "T148": lambda: [
+            _pytest("t148_promotion_oracle", "tests/sim/test_t143_t150_leadership.py::test_t148_promotion_oracle_rejects_weak_candidate"),
+            validate_evidence(
+                "t148_evaluate",
+                [
+                    ROOT / "training" / "evaluate.py",
+                ],
+            ),
+        ],
+        "T149": lambda: [
+            _pytest("t149_honesty", "tests/sim/test_t143_t150_leadership.py::test_t149_does_not_label_heuristic_trained"),
+            validate_evidence(
+                "t149_library",
+                [
+                    ROOT / "training" / "select_library.py",
+                    ROOT / "godot_project" / "content" / "policies" / "manifest.json",
+                ],
+            ),
+        ],
+        "T150": lambda: [
+            validate_evidence(
+                "g09_gate_packet",
+                [
+                    TRACKING / "gates" / "G09" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G09" / "auto" / "result.json",
+                    TRACKING / "gates" / "G09" / "auto" / "summary.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g09_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G09"),
+                    required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL|AUTO_FAILED)",
+                )
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -1748,6 +1836,30 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                     name="g08_auto_gate_runner",
                     argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G08"),
                     required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G09":
+        packet = TRACKING / "gates" / "G09"
+        return [
+            _pytest(
+                "g09_leadership_python",
+                "tests/sim/test_t143_t150_leadership.py",
+            ),
+            validate_evidence(
+                "g09_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    ROOT / "godot_project" / "content" / "policies" / "manifest.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g09_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G09"),
+                    required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL|AUTO_FAILED)",
                 )
             ),
         ]

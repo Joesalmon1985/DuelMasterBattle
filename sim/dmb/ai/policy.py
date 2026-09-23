@@ -15,11 +15,34 @@ from sim.dmb.core.types import TypeValidationError
 from sim.dmb.logistics.director import LogisticsService
 from sim.dmb.logistics.stock import StockLedger
 
+# Optional neural brain registry: policy_id -> artifact path (pinned, local only).
+_NEURAL_ARTIFACTS: dict[str, str] = {}
+_NEURAL_CACHE: dict[str, Any] = {}
+
+
+def register_neural_artifact(policy_id: str, artifact_path: str) -> None:
+    """Pin a local inference artifact for a policy id (no network fetch)."""
+    _NEURAL_ARTIFACTS[policy_id] = artifact_path
+    _NEURAL_CACHE.pop(policy_id, None)
+
+
+def load_policy_manifest(path: str | None = None) -> dict[str, Any]:
+    """Load content/policies/manifest.json if present."""
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[3]
+    manifest_path = Path(path) if path else root / "godot_project" / "content" / "policies" / "manifest.json"
+    if not manifest_path.is_file():
+        return {"policies": []}
+    import json
+
+    return json.loads(manifest_path.read_text(encoding="utf-8"))
+
 
 @dataclass
 class PolicyService:
     state: WorldState
-    brain: HeuristicBrain = field(default_factory=HeuristicBrain)
+    brain: Any = field(default_factory=HeuristicBrain)
     observations: ObservationBuilder | None = None
     legal: LegalActionGenerator | None = None
     construction: ConstructionService | None = None
@@ -41,6 +64,7 @@ class PolicyService:
             "policy",
             {
                 "brain": "heuristic",
+                "policy_id": "heuristic",
                 "assignments": [],
                 "selections": [],
                 "cargo_schedules": [],
@@ -51,9 +75,40 @@ class PolicyService:
     def assign_brain(self, faction_id: str, brain_name: str = "heuristic") -> None:
         bucket = self._policy_bucket(faction_id)
         bucket["brain"] = brain_name
+        bucket["policy_id"] = brain_name
         bucket["assignments"].append(
             {"brain": brain_name, "turn": int(self.state.clock.get("turn", 0))}
         )
+
+    def resolve_brain(self, faction_id: str) -> Any:
+        """Resolve per-faction brain; neural failures fall back inside NeuralBrain."""
+        bucket = self._policy_bucket(faction_id)
+        name = str(bucket.get("brain") or bucket.get("policy_id") or "heuristic")
+        if name in {"heuristic", "scripted"}:
+            return self.brain if name == "heuristic" else self.brain
+        # Neural / named policy artifact.
+        if name not in _NEURAL_CACHE:
+            artifact = _NEURAL_ARTIFACTS.get(name)
+            if artifact is None:
+                # Try manifest.
+                for entry in load_policy_manifest().get("policies") or []:
+                    if entry.get("id") == name and entry.get("artifact"):
+                        artifact = entry["artifact"]
+                        break
+            if artifact:
+                from pathlib import Path
+
+                from sim.dmb.ai.neural import NeuralBrain
+
+                root = Path(__file__).resolve().parents[3]
+                path = Path(artifact)
+                if not path.is_file():
+                    path = root / artifact
+                brain = NeuralBrain(artifact_path=path, policy_id=name)
+                _NEURAL_CACHE[name] = brain
+            else:
+                _NEURAL_CACHE[name] = HeuristicBrain()
+        return _NEURAL_CACHE[name]
 
     def activate(self, faction_id: str, *, decision_kind: str = "seat") -> dict[str, Any]:
         """One seat activation: observe, enumerate, choose ≤1 construct + ≤1 proposal."""
@@ -61,13 +116,23 @@ class PolicyService:
         cargo_retries = self._retry_pending_cargo(faction_id)
         obs = self.observations.build(faction_id, decision_kind)
         candidates = self.legal.enumerate(obs, decision_kind)
-        choice = self.brain.choose_activation(obs, candidates)
+        brain = self.resolve_brain(faction_id)
+        if hasattr(brain, "choose_activation"):
+            choice = brain.choose_activation(obs, candidates)
+        else:
+            cid = brain.choose(obs, candidates)
+            choice = {"primary_id": cid, "selected_ids": [cid]}
         by_id = {c["id"]: c for c in candidates}
         applied: list[dict[str, Any]] = list(cargo_retries)
-        for cid in choice["selected_ids"]:
-            cand = by_id[cid]
-            result = self._apply_candidate(obs, cand)
-            applied.append(result)
+        selected_ids = list(choice.get("selected_ids") or [])
+        illegal = [cid for cid in selected_ids if cid not in by_id]
+        if illegal:
+            # Illegal/stale neural output → best legal heuristic; no partial neural action.
+            choice = HeuristicBrain().choose_activation(obs, candidates)
+            selected_ids = list(choice["selected_ids"])
+            applied.append({"status": "neural_illegal_fallback", "rejected_ids": illegal})
+        for cid in selected_ids:
+            applied.append(self._apply_candidate(obs, by_id[cid]))
         record = {
             "faction_id": faction_id,
             "turn": int(self.state.clock.get("turn", 0)),
@@ -78,6 +143,9 @@ class PolicyService:
             "selected_ids": list(choice["selected_ids"]),
             "primary_id": choice["primary_id"],
             "applied": applied,
+            "source": choice.get("source") or str(self._policy_bucket(faction_id).get("brain")),
+            "policy_id": self._policy_bucket(faction_id).get("policy_id"),
+            "inference_ms": choice.get("inference_ms"),
         }
         self._policy_bucket(faction_id)["selections"].append(deepcopy(record))
         return record

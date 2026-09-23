@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22T22:53:55.237599+00:00",
+  "generated_at": "2026-09-22T22:55:09.607266+00:00",
   "hardware": {
     "platform": "Linux-6.8.0-139-generic-x86_64-with-glibc2.39",
     "python": "3.12.3",
@@ -30,7 +30,7 @@
   ],
   "people_preserved": false,
   "units_spawned_probe": 200,
-  "elapsed_seconds": 0.023,
+  "elapsed_seconds": 0.032,
   "save_bytes": 678611,
   "undeclared_army_cap": false,
   "deleted_living_identities": false,

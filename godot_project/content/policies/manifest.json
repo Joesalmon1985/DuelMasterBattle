@@ -1,0 +1,43 @@
+{
+  "schema_hash": "e5d8c08fd328a24e",
+  "heuristic_fallback": {
+    "id": "heuristic",
+    "kind": "heuristic",
+    "trained": false
+  },
+  "policies": [],
+  "qualified_count": 0,
+  "required_count": 3,
+  "rejected": [
+    {
+      "id": "policy-ac-1",
+      "reasons": [
+        "baseline_zero_competence",
+        "crashes_or_illegal"
+      ]
+    },
+    {
+      "id": "policy-im-1",
+      "reasons": [
+        "baseline_zero_competence",
+        "crashes_or_illegal"
+      ]
+    },
+    {
+      "id": "policy-im-2",
+      "reasons": [
+        "baseline_zero_competence",
+        "crashes_or_illegal"
+      ]
+    },
+    {
+      "id": "policy-im-3",
+      "reasons": [
+        "baseline_zero_competence",
+        "crashes_or_illegal"
+      ]
+    }
+  ],
+  "status": "NONE_QUALIFIED",
+  "honesty": "Heuristic clones are not listed as trained policies. Fewer than three qualified policies means G09 cannot claim a full library."
+}

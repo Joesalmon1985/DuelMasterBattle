@@ -1,6 +1,6 @@
 {
   "gate": "G07",
-  "generated_at": "2026-09-22T22:53:55Z",
+  "generated_at": "2026-09-22T22:55:09Z",
   "status": "AUTO_READY_FOR_OWNER_REVIEW",
   "human_acceptance": "PENDING \u2014 never invent PASS",
   "results": [
@@ -14,7 +14,7 @@
         "tests/sim/test_t116_modern_future.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.392,
+      "duration_s": 0.38,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/00_full_catalogue.log",
       "status": "PASS",
       "name": "full_catalogue",
@@ -32,7 +32,7 @@
         "tests/sim/test_t129_path_selection.py"
       ],
       "exit_code": 0,
-      "duration_s": 2.848,
+      "duration_s": 2.165,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/01_later_eras_and_cycles.log",
       "status": "PASS",
       "name": "later_eras_and_cycles",
@@ -50,7 +50,7 @@
         "tests/scenarios/test_mixed_hazards.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.395,
+      "duration_s": 0.396,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/02_hazards_mixed.log",
       "status": "PASS",
       "name": "hazards_mixed",
@@ -62,7 +62,7 @@
         "tools/evaluate_full_world.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.672,
+      "duration_s": 0.681,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/03_evaluate_full_world.log",
       "status": "PASS",
       "name": "evaluate_full_world",
@@ -74,7 +74,7 @@
         "tools/profile_world.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.69,
+      "duration_s": 0.67,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/04_profile_world_honest.log",
       "status": "PASS",
       "name": "profile_world_honest",

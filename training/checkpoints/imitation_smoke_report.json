@@ -1,0 +1,21 @@
+{
+  "checkpoint": "training/checkpoints/imitation_smoke.json",
+  "trained": true,
+  "decisions_trained": 200,
+  "target_decisions": 200,
+  "elapsed_seconds": 0.328,
+  "budget": {
+    "label": "imitation",
+    "max_seconds": 60.0,
+    "max_decisions": 200,
+    "decisions": 200,
+    "elapsed_seconds": 0.328,
+    "stopped_reason": "max_decisions",
+    "complete": false,
+    "incomplete_batch": true
+  },
+  "weights_digest": "161276cc7d4dac10",
+  "init_digest": "5588a381bd00019e",
+  "mean_loss_tail": 2.647571912635639,
+  "incomplete_batch": false
+}

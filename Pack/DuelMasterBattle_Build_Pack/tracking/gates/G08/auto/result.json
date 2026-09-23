@@ -1,6 +1,6 @@
 {
   "gate": "G08",
-  "generated_at": "2026-09-22T23:06:45Z",
+  "generated_at": "2026-09-22T23:08:06Z",
   "status": "AUTO_READY_FOR_OWNER_REVIEW",
   "human_acceptance": "PENDING \u2014 never invent PASS",
   "results": [
@@ -13,7 +13,7 @@
         "tests/sim/test_t133_content_pipeline.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.508,
+      "duration_s": 0.518,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/00_content_pipeline.log",
       "status": "PASS",
       "name": "content_pipeline",
@@ -28,7 +28,7 @@
         "tests/sim/test_t134_t136_content.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.333,
+      "duration_s": 0.346,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/01_quest_dungeon_rival_matrix.log",
       "status": "PASS",
       "name": "quest_dungeon_rival_matrix",
@@ -43,7 +43,7 @@
         "tests/sim/test_t137_dialogue_baseline.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.749,
+      "duration_s": 0.702,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/02_dialogue_baseline.log",
       "status": "PASS",
       "name": "dialogue_baseline",
@@ -59,7 +59,7 @@
         "tests/sim/test_t139_t140_tools.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.365,
+      "duration_s": 0.344,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/03_assets_and_tools.log",
       "status": "PASS",
       "name": "assets_and_tools",
@@ -74,7 +74,7 @@
         "tests/scenarios/test_content_matrix.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.718,
+      "duration_s": 0.624,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/04_content_matrix.log",
       "status": "PASS",
       "name": "content_matrix",
@@ -88,7 +88,7 @@
         "--compile-baseline"
       ],
       "exit_code": 0,
-      "duration_s": 0.672,
+      "duration_s": 0.741,
       "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G08/auto/logs/05_validate_corpus.log",
       "status": "PASS",
       "name": "validate_corpus",

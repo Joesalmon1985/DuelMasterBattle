@@ -1,0 +1,24 @@
+{
+  "id": "G09",
+  "fixture": "FX-ERA",
+  "seed": 10001,
+  "notes": "Statistical evaluation is the primary oracle. Heuristic clones are never labelled trained.",
+  "steps": [
+    {
+      "name": "leadership_unit_tests",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_t143_t150_leadership.py"],
+      "timeout_s": 300
+    },
+    {
+      "name": "policy_manifest_present",
+      "kind": "shell",
+      "cmd": [
+        "python3",
+        "-c",
+        "import json; from pathlib import Path; m=json.load(open('godot_project/content/policies/manifest.json')); assert m['heuristic_fallback'].get('trained') is False; q=int(m.get('qualified_count') or 0); review=Path('Pack/DuelMasterBattle_Build_Pack/tracking/gates/G09/MORNING_REVIEW.md'); assert review.is_file(); print('MANIFEST_OK', m.get('status'), q); print('GATE_STATUS=' + ('AUTO_READY_FOR_OWNER_REVIEW' if q>=3 else ('PARTIAL_BLOCKED' if review.stat().st_size>0 else 'AUTO_FAILED')))"
+      ],
+      "timeout_s": 30
+    }
+  ]
+}

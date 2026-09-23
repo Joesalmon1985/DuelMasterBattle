@@ -1,0 +1,35 @@
+{
+  "before": {
+    "brain": "policy-im-1",
+    "policy_id": "policy-im-1",
+    "assignments": [
+      {
+        "brain": "heuristic",
+        "turn": 0
+      },
+      {
+        "brain": "policy-im-1",
+        "turn": 0
+      }
+    ],
+    "selections": [],
+    "cargo_schedules": []
+  },
+  "after_reload": {
+    "brain": "policy-im-1",
+    "policy_id": "policy-im-1",
+    "assignments": [
+      {
+        "brain": "heuristic",
+        "turn": 0
+      },
+      {
+        "brain": "policy-im-1",
+        "turn": 0
+      }
+    ],
+    "selections": [],
+    "cargo_schedules": []
+  },
+  "stable": true
+}

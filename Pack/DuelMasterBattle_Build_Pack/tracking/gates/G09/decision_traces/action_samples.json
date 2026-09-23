@@ -1,0 +1,97 @@
+{
+  "build": [
+    {
+      "seed": 10001,
+      "turn": 1,
+      "faction_id": "faction:1",
+      "selected_id": "construct:action=road:store_id=store:building:2:target_edge=['node:1', 'node:4']",
+      "action_kind": "construct",
+      "params": {
+        "action": "road",
+        "store_id": "store:building:2",
+        "target_edge": [
+          "node:1",
+          "node:4"
+        ]
+      }
+    },
+    {
+      "seed": 10001,
+      "turn": 2,
+      "faction_id": "faction:2",
+      "selected_id": "construct:action=road:store_id=store:building:20:target_edge=['node:21', 'node:16']",
+      "action_kind": "construct",
+      "params": {
+        "action": "road",
+        "store_id": "store:building:20",
+        "target_edge": [
+          "node:21",
+          "node:16"
+        ]
+      }
+    },
+    {
+      "seed": 10001,
+      "turn": 3,
+      "faction_id": "faction:1",
+      "selected_id": "construct:action=road:store_id=store:building:2:target_edge=['node:1', 'node:4']",
+      "action_kind": "construct",
+      "params": {
+        "action": "road",
+        "store_id": "store:building:2",
+        "target_edge": [
+          "node:1",
+          "node:4"
+        ]
+      }
+    }
+  ],
+  "trade": [],
+  "war": [
+    {
+      "seed": 10001,
+      "turn": 4,
+      "faction_id": "faction:2",
+      "selected_id": "military_move:formation_id=formation:2:node_id=node:16:path=['node:21', 'node:16']",
+      "action_kind": "military_move",
+      "params": {
+        "formation_id": "formation:2",
+        "path": [
+          "node:21",
+          "node:16"
+        ],
+        "node_id": "node:16"
+      }
+    },
+    {
+      "seed": 10001,
+      "turn": 5,
+      "faction_id": "faction:1",
+      "selected_id": "military_move:formation_id=formation:1:node_id=node:2:path=['node:5', 'node:2']",
+      "action_kind": "military_move",
+      "params": {
+        "formation_id": "formation:1",
+        "path": [
+          "node:5",
+          "node:2"
+        ],
+        "node_id": "node:2"
+      }
+    },
+    {
+      "seed": 10001,
+      "turn": 6,
+      "faction_id": "faction:2",
+      "selected_id": "military_move:formation_id=formation:2:node_id=node:15:path=['node:11', 'node:15']",
+      "action_kind": "military_move",
+      "params": {
+        "formation_id": "formation:2",
+        "path": [
+          "node:11",
+          "node:15"
+        ],
+        "node_id": "node:15"
+      }
+    }
+  ]
+}

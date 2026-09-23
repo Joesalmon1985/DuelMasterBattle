@@ -130,6 +130,36 @@ def main() -> int:
 
     failed = [r for r in results if r.get("status") not in {"PASS"}]
     status = "AUTO_READY_FOR_OWNER_REVIEW" if not failed else "AUTO_FAILED"
+    # G09: prefer honest pipeline status when present (PARTIAL / blockers).
+    prior_path = out_dir / "result.json"
+    if gate == "G09" and prior_path.is_file():
+        try:
+            prior = json.loads(prior_path.read_text(encoding="utf-8"))
+            prior_status = str(prior.get("status") or "")
+            if prior_status in {"PARTIAL_BLOCKED", "PARTIAL", "AUTO_FAILED", "AUTO_READY_FOR_OWNER_REVIEW"}:
+                if not failed:
+                    # Keep PARTIAL when infrastructure passes but qualification incomplete.
+                    if prior_status.startswith("PARTIAL"):
+                        status = prior_status
+                    elif prior.get("qualified_policies", 3) < 3 and prior_status != "AUTO_READY_FOR_OWNER_REVIEW":
+                        status = prior_status
+                else:
+                    status = "AUTO_FAILED"
+        except json.JSONDecodeError:
+            pass
+    # Optional gate-declared status probe from last successful step stdout.
+    for r in results:
+        tail = ""
+        log = r.get("log")
+        if log:
+            try:
+                text = (ROOT / log).read_text(encoding="utf-8") if (ROOT / log).is_file() else ""
+            except OSError:
+                text = ""
+            if "GATE_STATUS=" in text:
+                for line in text.splitlines():
+                    if line.startswith("GATE_STATUS="):
+                        status = line.split("=", 1)[1].strip()
     report = {
         "gate": gate,
         "generated_at": _now(),
@@ -140,6 +170,17 @@ def main() -> int:
         "seed": spec.get("seed"),
         "fixture": spec.get("fixture"),
     }
+    # Preserve G09 pipeline fields when merging.
+    if gate == "G09" and prior_path.is_file():
+        try:
+            prior = json.loads(prior_path.read_text(encoding="utf-8"))
+            for key in ("qualified_policies", "blockers", "owner_review_status", "honesty", "evidence"):
+                if key in prior and key not in report:
+                    report[key] = prior[key]
+            if prior.get("owner_review_status"):
+                report["owner_review_status"] = prior["owner_review_status"]
+        except json.JSONDecodeError:
+            pass
     (out_dir / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     summary = out_dir / "summary.md"
     lines = [
