@@ -1481,6 +1481,225 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 )
             ),
         ],
+        "T151": lambda: [
+            validate_evidence(
+                "release_coverage",
+                [TRACKING / "release_coverage.json"],
+            ),
+            run_command(
+                CommandCheck(
+                    name="release_coverage_verbs",
+                    argv=(
+                        sys.executable,
+                        "-c",
+                        "import json; d=json.load(open('Pack/DuelMasterBattle_Build_Pack/tracking/release_coverage.json')); assert len(d['player_verbs'])>=10; print('T151_OK')",
+                    ),
+                    required_pattern=r"T151_OK",
+                )
+            ),
+        ],
+        "T152": lambda: [
+            _pytest("release_recovery", "tests/integration/test_release_recovery.py"),
+        ],
+        "T153": lambda: [
+            run_command(
+                CommandCheck(
+                    name="profile_world",
+                    argv=(sys.executable, str(ROOT / "tools" / "profile_world.py")),
+                    required_pattern=r"PASS_WITH_HONEST_LIMITS",
+                )
+            ),
+            validate_evidence(
+                "g10_performance",
+                [
+                    TRACKING / "performance" / "profile_world.json",
+                    TRACKING / "gates" / "G10" / "auto" / "performance.json",
+                ],
+            ),
+        ],
+        "T154": lambda: [
+            run_command(
+                CommandCheck(
+                    name="verify_a11y_release",
+                    argv=(sys.executable, str(ROOT / "tools" / "verify_a11y_release.py")),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            _pytest("t154_a11y", "tests/sim/test_t154_a11y_release.py"),
+        ],
+        "T155": lambda: [
+            run_command(
+                CommandCheck(
+                    name="package_desktop",
+                    argv=(sys.executable, str(ROOT / "tools" / "package_desktop.py"), "--target", "all"),
+                    required_pattern=r"windows_certified",
+                )
+            ),
+            validate_evidence(
+                "release_manifest_and_windows_scaffold",
+                [
+                    ROOT / "godot_project" / "content" / "manifests" / "release.json",
+                    TRACKING / "gates" / "G10" / "windows_scaffold.json",
+                    ROOT / ".github" / "workflows" / "windows-packaged-runtime.yml",
+                ],
+            ),
+        ],
+        "T156": lambda: [
+            run_command(
+                CommandCheck(
+                    name="smoke_linux",
+                    argv=(sys.executable, str(ROOT / "tools" / "smoke_release.py"), "--platform", "linux"),
+                    required_pattern=r"PASS_LINUX_ONLY",
+                )
+            ),
+            validate_evidence(
+                "windows_status_honest",
+                [
+                    TRACKING / "gates" / "G10" / "windows_status.md",
+                    TRACKING / "clean_machine" / "smoke_linux.json",
+                ],
+            ),
+        ],
+        "T157": lambda: [
+            _pytest("release_scenarios", "tests/scenarios/test_release.py"),
+            validate_evidence(
+                "release_test_reports",
+                [
+                    TRACKING / "release_tests" / "fx_recovery.json",
+                    TRACKING / "release_tests" / "multi_cycle.json",
+                ],
+            ),
+        ],
+        "T158": lambda: [
+            validate_evidence(
+                "release_docs",
+                [
+                    ROOT / "docs" / "player_guide.md",
+                    ROOT / "docs" / "release_notes.md",
+                    TRACKING / "release_evidence.json",
+                ],
+            ),
+        ],
+        "T159": lambda: [
+            validate_evidence(
+                "g10_candidate_packet",
+                [
+                    TRACKING / "gates" / "G10" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G10" / "windows_status.md",
+                    TRACKING / "gates" / "G10" / "auto" / "result.json",
+                    TRACKING / "gates" / "G10" / "auto" / "summary.md",
+                ],
+            ),
+        ],
+        "T160": lambda: [
+            validate_evidence(
+                "g10_owner_review_packet",
+                [
+                    TRACKING / "gates" / "G10" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G10" / "auto" / "result.json",
+                    TRACKING / "release_evidence.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g10_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G10"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
+        "T161": lambda: [
+            run_command(
+                CommandCheck(
+                    name="semantic_catalogue",
+                    argv=(sys.executable, str(ROOT / "tools" / "validate_semantic_catalogue.py"), "--write"),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            validate_evidence(
+                "g11_registry",
+                [
+                    TRACKING / "gates" / "G11" / "registry_report.json",
+                    TRACKING / "gates" / "G11" / "registry_manifest.json",
+                ],
+            ),
+        ],
+        "T162": lambda: [
+            run_command(
+                CommandCheck(
+                    name="semantic_gallery",
+                    argv=(sys.executable, str(ROOT / "tools" / "generate_semantic_gallery.py")),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            validate_evidence(
+                "gallery_index",
+                [
+                    TRACKING / "gates" / "G11" / "gallery" / "catalogue_index.json",
+                    TRACKING / "gates" / "G11" / "gallery" / "catalogue_montage.md",
+                ],
+            ),
+        ],
+        "T163": lambda: [
+            _pytest("semantic_visuals", "tests/sim/test_semantic_visuals.py"),
+            run_command(
+                CommandCheck(
+                    name="revalidate_catalogue",
+                    argv=(sys.executable, str(ROOT / "tools" / "validate_semantic_catalogue.py"), "--write"),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+        ],
+        "T164": lambda: [
+            validate_evidence(
+                "g11_morning",
+                [
+                    TRACKING / "gates" / "G11" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G11" / "auto" / "result.json",
+                    TRACKING / "gates" / "G11" / "auto" / "summary.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g11_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G11"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
+        "T165": lambda: [
+            validate_evidence(
+                "g12_journey_manifest",
+                [TRACKING / "gates" / "G12" / "journey_manifest.json"],
+            ),
+        ],
+        "T166": lambda: [
+            _pytest(
+                "g12_journeys",
+                "tests/scenarios/test_full_cycles.py",
+                "tests/scenarios/test_release.py",
+                "tests/integration/test_release_recovery.py",
+            ),
+        ],
+        "T167": lambda: [
+            run_command(
+                CommandCheck(
+                    name="g12_aggregate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_g12_aggregate.py")),
+                    required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL)",
+                )
+            ),
+        ],
+        "T168": lambda: [
+            validate_evidence(
+                "g12_owner_packet",
+                [
+                    TRACKING / "gates" / "G12" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G12" / "auto" / "result.json",
+                    TRACKING / "OVERNIGHT_G06_G12_REPORT.md",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -1491,7 +1710,7 @@ def checks_for_task(task: str) -> list[CheckResult]:
             exit_code=2,
             duration_seconds=0.0,
             detail=(
-                f"{task} is recognized (task {number}/160), but its required checks "
+                f"{task} is recognized (task {number}/168), but its required checks "
                 "have not been implemented by its owning task."
             ),
         )
@@ -1860,6 +2079,77 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                     name="g09_auto_gate_runner",
                     argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G09"),
                     required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL|AUTO_FAILED)",
+                )
+            ),
+        ]
+    if gate == "G10":
+        packet = TRACKING / "gates" / "G10"
+        return [
+            _pytest(
+                "g10_release_python",
+                "tests/integration/test_release_recovery.py",
+                "tests/sim/test_t154_a11y_release.py",
+                "tests/scenarios/test_release.py",
+            ),
+            validate_evidence(
+                "g10_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "windows_status.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    TRACKING / "release_coverage.json",
+                    TRACKING / "release_evidence.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g10_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G10"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G11":
+        packet = TRACKING / "gates" / "G11"
+        return [
+            _pytest("g11_semantic_python", "tests/sim/test_semantic_visuals.py"),
+            validate_evidence(
+                "g11_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    packet / "registry_report.json",
+                    packet / "gallery" / "catalogue_index.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g11_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G11"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G12":
+        packet = TRACKING / "gates" / "G12"
+        return [
+            validate_evidence(
+                "g12_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    packet / "journey_manifest.json",
+                    TRACKING / "OVERNIGHT_G06_G12_REPORT.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g12_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G12"),
+                    required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL)",
                 )
             ),
         ]

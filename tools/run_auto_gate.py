@@ -130,6 +130,7 @@ def main() -> int:
 
     failed = [r for r in results if r.get("status") not in {"PASS"}]
     status = "AUTO_READY_FOR_OWNER_REVIEW" if not failed else "AUTO_FAILED"
+    # G12 aggregate may declare PARTIAL — BLOCKED BY G09 via GATE_STATUS= probe below.
     # G09: prefer honest pipeline status when present (PARTIAL / blockers).
     prior_path = out_dir / "result.json"
     if gate == "G09" and prior_path.is_file():

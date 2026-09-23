@@ -1,0 +1,21 @@
+{
+  "task_id": "T168",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tracking/gates/G12/MORNING_REVIEW.md"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T168",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "DONE",
+  "notes": "G12 PARTIAL owner packet",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z",
+  "gate": "G12",
+  "gate_status": "PARTIAL \u2014 BLOCKED BY G09"
+}

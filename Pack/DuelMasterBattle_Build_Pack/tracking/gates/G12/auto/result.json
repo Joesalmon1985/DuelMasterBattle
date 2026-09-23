@@ -1,0 +1,23 @@
+{
+  "gate": "G12",
+  "generated_at": "2026-09-23T07:34:19Z",
+  "status": "PARTIAL \u2014 BLOCKED BY G09",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "results": [
+    {
+      "cmd": [
+        "python3",
+        "tools/run_g12_aggregate.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 4.888,
+      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G12/auto/logs/00_g12_aggregate.log",
+      "status": "PASS",
+      "name": "g12_aggregate",
+      "kind": "shell"
+    }
+  ],
+  "spec": "G12",
+  "seed": 1101,
+  "fixture": "FX-RELEASE"
+}

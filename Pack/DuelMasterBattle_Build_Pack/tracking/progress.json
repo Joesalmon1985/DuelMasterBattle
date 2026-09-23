@@ -163,24 +163,24 @@
     "T148": "NOT_STARTED",
     "T149": "NOT_STARTED",
     "T150": "NOT_STARTED",
-    "T151": "NOT_STARTED",
-    "T152": "NOT_STARTED",
-    "T153": "NOT_STARTED",
-    "T154": "NOT_STARTED",
-    "T155": "NOT_STARTED",
-    "T156": "NOT_STARTED",
-    "T157": "NOT_STARTED",
-    "T158": "NOT_STARTED",
-    "T159": "NOT_STARTED",
-    "T160": "NOT_STARTED",
-    "T161": "NOT_STARTED",
-    "T162": "NOT_STARTED",
-    "T163": "NOT_STARTED",
-    "T164": "NOT_STARTED",
-    "T165": "NOT_STARTED",
-    "T166": "NOT_STARTED",
-    "T167": "NOT_STARTED",
-    "T168": "NOT_STARTED"
+    "T151": "DONE",
+    "T152": "DONE",
+    "T153": "DONE",
+    "T154": "DONE",
+    "T155": "DONE",
+    "T156": "DONE",
+    "T157": "DONE",
+    "T158": "DONE",
+    "T159": "DONE",
+    "T160": "WAITING_HUMAN",
+    "T161": "DONE",
+    "T162": "DONE",
+    "T163": "DONE",
+    "T164": "DONE",
+    "T165": "DONE",
+    "T166": "DONE",
+    "T167": "DONE",
+    "T168": "DONE"
   },
   "gates": {
     "G01": {
@@ -292,22 +292,35 @@
       "evidence": null
     },
     "G10": {
-      "status": "NOT_READY",
+      "status": "AUTO_READY_FOR_OWNER_REVIEW",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": null
+      "evidence": "tracking/gates/G10/MORNING_REVIEW.md",
+      "auto_evidence": "tracking/gates/G10/auto/result.json",
+      "fixture": "FX-RELEASE",
+      "seed": 1101,
+      "launch": "bash tools/play_g10_release.sh",
+      "windows_certified": false,
+      "awaiting_owner_review_at": "2026-09-23T07:33:56Z",
+      "notes": "Functional placeholder-art baseline AUTO_READY. Human PASS PENDING. Windows not certified."
     },
     "G11": {
-      "status": "NOT_READY",
+      "status": "AUTO_READY_FOR_OWNER_REVIEW",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": null
+      "evidence": "tracking/gates/G11/MORNING_REVIEW.md",
+      "auto_evidence": "tracking/gates/G11/auto/result.json",
+      "awaiting_owner_review_at": "2026-09-23T07:33:56Z",
+      "notes": "Semantic placeholder completeness AUTO_READY. Human PASS PENDING."
     },
     "G12": {
-      "status": "NOT_READY",
+      "status": "PARTIAL \u2014 BLOCKED BY G09",
       "accepted_by": null,
       "accepted_build": null,
-      "evidence": null
+      "evidence": "tracking/gates/G12/MORNING_REVIEW.md",
+      "auto_evidence": "tracking/gates/G12/auto/result.json",
+      "awaiting_owner_review_at": "2026-09-23T07:33:56Z",
+      "notes": "Umbrella aggregate complete except G09. Do not invent full AUTO_READY."
     }
   },
   "overnight_run": {
@@ -318,6 +331,9 @@
     "policy": "AUTO_READY_FOR_OWNER_REVIEW permits continuation; never invent human PASS",
     "amendment": "EXECUTION_AMENDMENTS.md#Overnight G06\u2192G12 autonomous run",
     "g06_completed_at": "2026-09-22T22:31:52Z",
-    "g08_completed_at": "2026-09-22T23:06:26Z"
+    "g08_completed_at": "2026-09-22T23:06:26Z",
+    "g10_completed_at": "2026-09-23T07:33:56Z",
+    "g11_completed_at": "2026-09-23T07:33:56Z",
+    "g12_status": "PARTIAL \u2014 BLOCKED BY G09"
   }
 }

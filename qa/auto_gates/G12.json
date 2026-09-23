@@ -1,0 +1,14 @@
+{
+  "id": "G12",
+  "fixture": "FX-RELEASE",
+  "seed": 1101,
+  "steps": [
+    {
+      "name": "g12_aggregate",
+      "kind": "shell",
+      "cmd": ["python3", "tools/run_g12_aggregate.py"],
+      "timeout_s": 600
+    }
+  ],
+  "notes": "Umbrella gate. PARTIAL — BLOCKED BY G09 is an honest success-with-blocker outcome for overnight."
+}
