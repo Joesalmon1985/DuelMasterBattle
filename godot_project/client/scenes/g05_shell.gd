@@ -1292,6 +1292,30 @@ func invoke_chronicle_for_test() -> void:
 	_toggle_chronicle()
 
 
+func invoke_inventory_for_test() -> void:
+	_toggle_inventory()
+
+
+func invoke_grimoire_for_test() -> void:
+	_toggle_grimoire()
+
+
+func invoke_knowledge_for_test() -> void:
+	_toggle_knowledge()
+
+
+func inventory_panel() -> Control:
+	return _inventory_panel
+
+
+func grimoire_panel() -> Control:
+	return _grimoire_panel
+
+
+func knowledge_panel() -> Control:
+	return _knowledge_panel
+
+
 func mara_actor_id() -> String:
 	return str(_fx_meta.get("mara_id", ""))
 

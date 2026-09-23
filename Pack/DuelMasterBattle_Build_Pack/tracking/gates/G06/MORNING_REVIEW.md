@@ -6,26 +6,30 @@ Human acceptance remains **PENDING**. Automation is not PASS.
 
 | Checkpoint | Screenshot | What it proves | Automated result |
 | ---------- | ---------- | -------------- | ---------------- |
-| Prehistoric settlement | `auto/screenshots/01_prehistoric_settlement_450x800.png` | Normal start settlement boots | PASS (layout capture + FX-MVP boot) |
-| World map | `auto/screenshots/02_world_map_450x800.png` | HexBoard map geometry / responsive overlay | PASS (`test_world_map_geometry`) |
-| Chronicle | `auto/screenshots/03_chronicle_450x800.png` | History overlay fits viewport | PASS (layout + chronicle tests) |
-| Historic via FX-ERA | (state oracle) | Legitimate 9→10 VP transition | PASS (`test_era_transition`, `evaluate_mvp`) |
-| Save/reload people | (state oracle) | People set unchanged post-transition save | PASS (`test_mvp_continuation`) |
-| I/G/K screens | (code + pytest) | Inventory/Grimoire/Knowledge pause modals | PASS (`test_t107_player_screens`) |
+| Prehistoric settlement | `auto/screenshots/01_prehistoric_settlement_450x800.png` | FX-MVP normal start settlement boots | PASS (headed capture + state JSON) |
+| Inventory modal | `auto/screenshots/02_inventory_450x800.png` | Inventory overlay opens on MVP shell | PASS (headed + metadata) |
+| World map 450×800 | `auto/screenshots/03_world_map_450x800.png` | HexBoard map overlay fits portrait | PASS (`expected_modal=world_map`) |
+| Chronicle 450×800 | `auto/screenshots/04_chronicle_450x800.png` | Chronicle modal fits portrait | PASS (`expected_modal=chronicle`) |
+| World map 1280×720 | `auto/screenshots/05_world_map_1280x720.png` | Responsive landscape map | PASS |
+| Chronicle 1280×720 | `auto/screenshots/06_chronicle_1280x720.png` | Responsive landscape chronicle | PASS |
+| World map via button | `auto/screenshots/07_world_map_via_button_450x800.png` | FX-ERA panel button / invoke opens map | PASS |
+| Historic after Wait | `auto/screenshots/08_historic_after_wait_450x800.png` | Legitimate 9→10 VP FX-ERA Wait → Historic | PASS (`era=historic`) |
+| Post-save | `auto/screenshots/09_post_save_450x800.png` | Save after Historic | PASS |
+| Post-reload | `auto/screenshots/10_post_reload_450x800.png` | Reload continuity | PASS |
+| State oracles | (pytest / evaluate_mvp) | MVP boot matrix, persistence, geometry | PASS (see `auto/result.json`) |
 
 ## Build
 
 * branch: `phase/g06-g12-autoqa`
 * SHA: see `git rev-parse HEAD` at review time
-* date: 2026-09-22
+* date: 2026-09-23
 * seed(s): 507 (primary), 508–512 (MVP boot matrix)
 * fixture/checkpoint IDs: `FX-MVP`, `FX-ERA`
 * commands used:
-  * `PYTHONPATH=. python3 -m pytest -q tests/scenarios/test_mvp_sandbox.py tests/scenarios/test_mvp_continuation.py …`
-  * `python3 tools/evaluate_mvp.py`
-  * `python3 tools/package_desktop.py`
+  * `python3 tools/run_headed_storyboard.py --gate G06`
+  * `python3 tools/auto_visual_gate_report.py --gate G06`
   * `python3 tools/run_auto_gate.py --gate G06`
-  * `python3 tools/check.py --task T108` … `T114`
+  * `python3 tools/evaluate_mvp.py`
 
 ## What changed
 
@@ -34,39 +38,37 @@ Human acceptance remains **PENDING**. Automation is not PASS.
 * MVP asset manifest with semantic placeholder IDs
 * Era persistence validation + six-seed pacing evaluation
 * Linux desktop launch bundle (explicitly **not** Windows-certified)
-* Boulder-quest start re-home when preferred core lacks a south exit (seed 512)
+* Headed auto-gate storyboard via `auto_gate_driver.gd` + per-shot JSON metadata
 * G06 automated gate package under `tracking/gates/G06/auto/`
 
 ## Automated results
 
-See `auto/result.json` and `auto/summary.md`. Objective suite status: `AUTO_READY_FOR_OWNER_REVIEW`.
+See `auto/result.json`, `auto/summary.md`, `auto/visual_report.json`. Objective suite status: `AUTO_READY_FOR_OWNER_REVIEW`. Visual evidence status: see `auto/visual_report.md` (montage `auto/montages/g06_storyboard.png`).
 
 ## Screenshot storyboard
 
-01 — Prehistoric settlement  
-Expected: readable settlement local view  
-Observed: layout capture from FX-era/village path  
-State assertions: MVP boots without debug-injected resources  
-Screenshot: `auto/screenshots/01_prehistoric_settlement_450x800.png`
+01 — Prehistoric settlement (FX-MVP)  
+Screenshot: `auto/screenshots/01_prehistoric_settlement_450x800.png` · meta: `.json`
 
-02 — World map  
-Expected: HexBoard geometry aligned with strategic map  
-Observed: geometry-fixed capture  
-State assertions: `test_world_map_geometry` PASS  
-Screenshot: `auto/screenshots/02_world_map_450x800.png`
+02 — Inventory  
+Screenshot: `auto/screenshots/02_inventory_450x800.png`
 
-03 — Chronicle  
-Expected: Chronicle modal usable on portrait + landscape  
-Observed: multi-resolution captures  
-State assertions: chronicle pytest PASS  
-Screenshot: `auto/screenshots/03_chronicle_450x800.png`
+03–06 — World map / Chronicle at 450×800 and 1280×720 (FX-ERA)  
+Screenshots: `03`–`06` under `auto/screenshots/`
 
-04–21 — Full 21-beat storyboard: covered by state oracles (FX-ERA transition, persistence, MVP boot) plus existing layout captures. Full interactive pointer walk of every beat is deferred to expanded headed capture when compute allows; semantic/state oracles already gate the critical continuity claims.
+07 — World map via FX-ERA panel control  
+Screenshot: `auto/screenshots/07_world_map_via_button_450x800.png`
+
+08 — Historic after Wait  
+Screenshot: `auto/screenshots/08_historic_after_wait_450x800.png`
+
+09–10 — Save / reload continuity  
+Screenshots: `09_post_save_450x800.png`, `10_post_reload_450x800.png`
 
 ## Known issues
 
 * Windows packaged clean-machine pass **not** claimed (Linux host only).
-* Headed multi-resolution storyboard for all 21 narrative beats is partial; relies on layout captures + state oracles for several beats.
+* Top-bar settlement labels can overlap cosmetically on compact portrait (owner polish).
 * G05 human PASS still absent (overnight exception allows continue without fabricating it).
 
 ## Owner questions

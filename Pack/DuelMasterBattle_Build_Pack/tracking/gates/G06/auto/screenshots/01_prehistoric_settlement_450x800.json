@@ -1,0 +1,151 @@
+{
+	"bytes": 33226,
+	"capture_ok": true,
+	"checkpoint": "prehistoric_settlement",
+	"controls_outside_viewport": [],
+	"era": "",
+	"expected_semantic_ids": [
+		"building.prehistoric.settlement_centre",
+		"unit.line"
+	],
+	"fixture": "FX-MVP",
+	"gate": "G06",
+	"image_height": 800,
+	"image_width": 450,
+	"missing_semantic_ids": [],
+	"modal_open": "",
+	"node_id": "node:35",
+	"observed_semantic_ids": [
+		"building.prehistoric.settlement_centre",
+		"unit.line"
+	],
+	"overlap_flags": [],
+	"player_position": [
+		24.0,
+		32.0
+	],
+	"proves": "FX-MVP normal Prehistoric settlement boots",
+	"save_error": 0,
+	"screenshot": "01_prehistoric_settlement_450x800.png",
+	"screenshot_path": "/home/joe/Projects/DuelMasterBattle/Pack/DuelMasterBattle_Build_Pack/tracking/gates/G06/auto/screenshots/01_prehistoric_settlement_450x800.png",
+	"script_errors": [],
+	"seed": 507,
+	"state_assertions": [
+		"era=prehistoric_or_unset",
+		"fixture=FX-MVP"
+	],
+	"touch_below_min": [],
+	"viewport": {
+		"height": 800.0,
+		"width": 450.0
+	},
+	"visible_ui": [
+		{
+			"present": false,
+			"role": "fx_era_panel"
+		},
+		{
+			"present": false,
+			"role": "fx_era_wait"
+		},
+		{
+			"present": false,
+			"role": "fx_era_map"
+		},
+		{
+			"present": false,
+			"role": "fx_era_chronicle"
+		},
+		{
+			"below_touch_min": false,
+			"height": 0.0,
+			"inside_viewport": true,
+			"is_touch_target": false,
+			"name": "WorldMap",
+			"present": true,
+			"role": "world_map",
+			"visible": false,
+			"width": 0.0,
+			"x": 0.0,
+			"y": 0.0
+		},
+		{
+			"below_touch_min": false,
+			"height": 0.0,
+			"inside_viewport": true,
+			"is_touch_target": false,
+			"name": "Chronicle",
+			"present": true,
+			"role": "chronicle",
+			"visible": false,
+			"width": 0.0,
+			"x": 0.0,
+			"y": 0.0
+		},
+		{
+			"below_touch_min": false,
+			"height": 0.0,
+			"inside_viewport": true,
+			"is_touch_target": false,
+			"name": "Inventory",
+			"present": true,
+			"role": "inventory",
+			"visible": false,
+			"width": 0.0,
+			"x": 0.0,
+			"y": 0.0
+		},
+		{
+			"below_touch_min": false,
+			"height": 0.0,
+			"inside_viewport": true,
+			"is_touch_target": false,
+			"name": "Grimoire",
+			"present": true,
+			"role": "grimoire",
+			"visible": false,
+			"width": 0.0,
+			"x": 0.0,
+			"y": 0.0
+		},
+		{
+			"below_touch_min": false,
+			"height": 0.0,
+			"inside_viewport": true,
+			"is_touch_target": false,
+			"name": "Knowledge",
+			"present": true,
+			"role": "knowledge",
+			"visible": false,
+			"width": 0.0,
+			"x": 0.0,
+			"y": 0.0
+		},
+		{
+			"below_touch_min": false,
+			"height": 48.0,
+			"inside_viewport": true,
+			"is_touch_target": true,
+			"name": "CloseButton",
+			"present": true,
+			"role": "world_map_close",
+			"visible": false,
+			"width": 96.0,
+			"x": 0.0,
+			"y": 0.0
+		},
+		{
+			"below_touch_min": false,
+			"height": 48.0,
+			"inside_viewport": true,
+			"is_touch_target": true,
+			"name": "CloseButton",
+			"present": true,
+			"role": "chronicle_close",
+			"visible": false,
+			"width": 96.0,
+			"x": 0.0,
+			"y": 0.0
+		}
+	]
+}

@@ -8,11 +8,28 @@
 ## Candidate
 
 - Branch: `phase/g06-g12-autoqa`
-- Fixture sample: `FX-CONTENT-SAMPLE` (seed 808) — `godot_project/content/fixtures/content_sample/fx_content_sample.json`
+- Fixture sample: `FX-CONTENT-SAMPLE` (seed 808) — Godot headed frames use **FX-ERA** seed 808 (same as `play_g08_sample.sh` / prior layout captures)
+- Content graph: `godot_project/content/fixtures/content_sample/fx_content_sample.json`
 - Launch: `bash tools/play_g08_sample.sh`
+- Headed storyboard: `python3 tools/run_headed_storyboard.py --gate G08`
 - Auto report: `tracking/gates/G08/auto/result.json`
+- Visual report: `tracking/gates/G08/auto/visual_report.json`
+- Montage: `tracking/gates/G08/auto/montages/g08_storyboard.png`
 - Dialogue text sample: `tracking/gates/G08/dialogue_preview.md`
-- Screenshots: `tracking/gates/G08/screenshots/` (real Godot frames)
+
+## Screenshot storyboard
+
+| Checkpoint | Screenshot | What it proves | Automated result |
+|---|---|---|---|
+| Village panel | `auto/screenshots/01_village_panel_450x800.png` | Content-sample village shell | PASS |
+| World map 450×800 | `auto/screenshots/02_world_map_450x800.png` | Map overlay portrait | PASS |
+| Chronicle 450×800 | `auto/screenshots/03_chronicle_450x800.png` | Chronicle portrait | PASS |
+| World map 1280×720 | `auto/screenshots/04_world_map_1280x720.png` | Map landscape | PASS |
+| Chronicle 1280×720 | `auto/screenshots/05_chronicle_1280x720.png` | Chronicle landscape | PASS |
+| Knowledge | `auto/screenshots/06_knowledge_1280x720.png` | Knowledge modal | PASS |
+| Inventory | `auto/screenshots/07_inventory_1280x720.png` | Inventory modal | PASS |
+
+Legacy layout frames also remain under `tracking/gates/G08/screenshots/` for comparison.
 
 ## Automated evidence
 
@@ -26,6 +43,7 @@
 | Debug inspectors / narrative tools (T139–T140) | PASS |
 | Corpus / coverage matrix (T141) | PASS |
 | `tools/run_auto_gate.py --gate G08` | AUTO_READY_FOR_OWNER_REVIEW |
+| Headed storyboard + visual validator | PASS (`visual_status`) |
 
 ## Sample coverage (objective)
 
