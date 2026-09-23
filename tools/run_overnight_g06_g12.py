@@ -238,39 +238,43 @@ def run_stage(stage: dict, *, force: bool = False) -> dict:
     }
     _save_state(state)
     try:
-        proc = subprocess.run(
-            cmd,
-            cwd=str(ROOT),
-            env=env,
-            capture_output=True,
-            text=True,
-            timeout=int(stage.get("timeout_s") or 3600),
-        )
-        log_path.write_text(
-            f"$ {' '.join(cmd)}\nexit={proc.returncode}\n\nSTDOUT:\n{proc.stdout}\n\nSTDERR:\n{proc.stderr}\n",
-            encoding="utf-8",
-        )
-        ok = proc.returncode == 0
+        with log_path.open("w", encoding="utf-8") as log_fh:
+            log_fh.write(f"$ {' '.join(cmd)}\n")
+            log_fh.flush()
+            proc = subprocess.Popen(
+                cmd,
+                cwd=str(ROOT),
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+            )
+            assert proc.stdout is not None
+            for line in proc.stdout:
+                log_fh.write(line)
+                log_fh.flush()
+                # Mirror progress for overnight monitoring.
+                sys.stdout.write(line)
+                sys.stdout.flush()
+            code = proc.wait(timeout=int(stage.get("timeout_s") or 3600))
+        ok = code == 0
         rec = {
             "status": "VERIFIED" if ok else "FAILED",
-            "exit_code": proc.returncode,
+            "exit_code": code,
             "duration_s": round(time.time() - started, 3),
             "input_hash": input_hash,
             "cmd": cmd,
             "log": str(log_path.relative_to(ROOT)),
             "finished_at": _now(),
         }
-    except subprocess.TimeoutExpired as exc:
-        out = (exc.stdout or b"")
-        err = (exc.stderr or b"")
-        if isinstance(out, bytes):
-            out = out.decode(errors="replace")
-        if isinstance(err, bytes):
-            err = err.decode(errors="replace")
-        log_path.write_text(
-            f"$ {' '.join(cmd)}\nTIMEOUT\n\nSTDOUT:\n{out}\n\nSTDERR:\n{err}\n",
-            encoding="utf-8",
-        )
+    except subprocess.TimeoutExpired:
+        try:
+            proc.kill()  # type: ignore[name-defined]
+        except Exception:
+            pass
+        with log_path.open("a", encoding="utf-8") as log_fh:
+            log_fh.write("\nTIMEOUT\n")
         rec = {
             "status": "TIMEOUT",
             "exit_code": 124,

@@ -45,7 +45,35 @@
       ],
       "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110009Z_g06.log",
       "finished_at": "2026-09-23T11:00:18Z"
+    },
+    "g07": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "duration_s": 2.755,
+      "input_hash": "c684e65538a8f417",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G07"
+      ],
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110213Z_g07.log",
+      "finished_at": "2026-09-23T11:02:16Z"
+    },
+    "g08": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "duration_s": 2.715,
+      "input_hash": "8e77727ae528241c",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G08"
+      ],
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110310Z_g08.log",
+      "finished_at": "2026-09-23T11:03:13Z"
     }
   },
-  "updated_at": "2026-09-23T11:00:18Z"
+  "updated_at": "2026-09-23T11:03:13Z"
 }

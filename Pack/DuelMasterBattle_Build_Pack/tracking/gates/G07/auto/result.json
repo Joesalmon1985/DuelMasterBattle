@@ -1,12 +1,12 @@
 {
   "gate": "G07",
-  "generated_at": "2026-09-22T22:55:09Z",
+  "generated_at": "2026-09-23T11:02:16Z",
   "status": "AUTO_READY_FOR_OWNER_REVIEW",
   "human_acceptance": "PENDING \u2014 never invent PASS",
   "results": [
     {
       "cmd": [
-        "/usr/bin/python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -14,15 +14,15 @@
         "tests/sim/test_t116_modern_future.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.38,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/00_full_catalogue.log",
+      "duration_s": 0.375,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\00_full_catalogue.log",
       "status": "PASS",
       "name": "full_catalogue",
       "kind": "pytest"
     },
     {
       "cmd": [
-        "/usr/bin/python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -32,15 +32,15 @@
         "tests/sim/test_t129_path_selection.py"
       ],
       "exit_code": 0,
-      "duration_s": 2.165,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/01_later_eras_and_cycles.log",
+      "duration_s": 1.067,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\01_later_eras_and_cycles.log",
       "status": "PASS",
       "name": "later_eras_and_cycles",
       "kind": "pytest"
     },
     {
       "cmd": [
-        "/usr/bin/python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -50,32 +50,32 @@
         "tests/scenarios/test_mixed_hazards.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.396,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/02_hazards_mixed.log",
+      "duration_s": 0.422,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\02_hazards_mixed.log",
       "status": "PASS",
       "name": "hazards_mixed",
       "kind": "pytest"
     },
     {
       "cmd": [
-        "python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "tools/evaluate_full_world.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.681,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/03_evaluate_full_world.log",
+      "duration_s": 0.356,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\03_evaluate_full_world.log",
       "status": "PASS",
       "name": "evaluate_full_world",
       "kind": "shell"
     },
     {
       "cmd": [
-        "python3",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
         "tools/profile_world.py"
       ],
       "exit_code": 0,
-      "duration_s": 0.67,
-      "log": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/logs/04_profile_world_honest.log",
+      "duration_s": 0.369,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\04_profile_world_honest.log",
       "status": "PASS",
       "name": "profile_world_honest",
       "kind": "shell"
