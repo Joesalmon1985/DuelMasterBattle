@@ -134,31 +134,25 @@ class NeuralBrain:
             "hazard_treat",
             "tech_pick",
         }
-        # Specialists may take their family as the primary seat action. Without this,
-        # trade_propose is dual-slot only and C14 primary-action diversity cannot see it.
+        # Pass 1: family specialists elevate their family into the primary seat when present.
+        # C14 diversity measures primary actions only — trade was previously dual-slot-only.
         if prefer_family == "trade":
-            primary_kinds = set(primary_kinds) | {"trade_propose", "diplomacy_propose"}
+            for cand in ranked:
+                if cand.get("action_kind") in {"trade_propose", "diplomacy_propose"}:
+                    primary = cand
+                    break
         elif prefer_family == "war":
-            # Prefer military over construct when choosing primary.
-            primary_kinds = {
-                "military_move",
-                "military_objective",
-                "military_withdraw",
-                "hazard_treat",
-                "construct",
-                "tech_pick",
-            }
+            for cand in ranked:
+                if str(cand.get("action_kind") or "").startswith("military"):
+                    primary = cand
+                    break
+        elif prefer_family == "build":
+            for cand in ranked:
+                if cand.get("action_kind") == "construct":
+                    primary = cand
+                    break
         for cand in ranked:
             kind = cand.get("action_kind")
-            if prefer_family == "war" and kind and str(kind).startswith("military") and primary is None:
-                primary = cand
-                continue
-            if prefer_family == "build" and kind == "construct" and primary is None:
-                primary = cand
-                continue
-            if prefer_family == "trade" and kind in {"trade_propose", "diplomacy_propose"} and primary is None:
-                primary = cand
-                continue
             if kind in primary_kinds and primary is None:
                 primary = cand
             if kind == "construct" and construction is None:
