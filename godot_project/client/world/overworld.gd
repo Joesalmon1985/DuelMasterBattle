@@ -16,6 +16,7 @@ var _play := WorldPlay.new()
 const _SaveData = preload("res://client/scripts/save_data.gd")
 const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
 const _VRunner = preload("res://client/scripts/village_test_runner.gd")
+const _DWRunner = preload("res://sim/world/dungeon_world_test_runner.gd")
 const _ActorVisual = preload("res://client/world/actor_visual.gd")
 const _VQuest = preload("res://sim/world/village_quest_runner.gd")
 const _SemanticLabel = preload("res://client/world/world_interaction_label.gd")
@@ -126,6 +127,9 @@ func _ready() -> void:
 	if _Runner.has_pending() or _Runner.is_active():
 		_boot_kit_session(adv)
 		return
+	if _DWRunner.has_pending() or _DWRunner.is_active():
+		_boot_dungeon_world_test(adv)
+		return
 	if _VRunner.has_pending():
 		_boot_village_test(adv)
 		return
@@ -142,9 +146,15 @@ func _ready() -> void:
 func _after_ready() -> void:
 	# Returning from a battle?
 	var adv := _adv()
-	# Fixture E17A must not play or consume campaign story (Trial Day, pending
-	# battle aftermath). last_battle_result stays put so exit still has it.
-	if _VRunner.isolates_campaign_story():
+	# Fixture E17A / Dungeon World Test must not play or consume campaign story
+	# (Trial Day, Halvard prologue, pending battle aftermath).
+	if _VRunner.isolates_campaign_story() or _DWRunner.isolates_campaign_story():
+		if _DWRunner.isolates_campaign_story() and not adv.last_battle_result.is_empty():
+			var br: Dictionary = adv.last_battle_result
+			adv.last_battle_result = {}
+			if _DWRunner.has_kit():
+				await _after_kit_battle(br)
+				return
 		_maybe_autosave()
 		return
 	if not adv.last_battle_result.is_empty():
@@ -163,7 +173,7 @@ func _after_ready() -> void:
 			_world_flow.setup(adv)
 			_play.setup(self, adv, _world_flow)
 			await _play.after_battle(str(r.get("outcome", "")))
-	elif not adv.flag("opening_seen") and not _Runner.is_active():
+	elif not adv.flag("opening_seen") and not _Runner.is_active() and not _DWRunner.is_active():
 		adv.set_flag("opening_seen")
 		await _story.prologue_open()
 	_maybe_autosave()
@@ -699,6 +709,8 @@ func is_walkable(p: Vector2i) -> bool:
 		return false
 	if _play.is_kit_puzzle_area(area):
 		return not _play.kit_blocks(p)  # kit: true = blocked; walkable = NOT blocked
+	if _play.has_embedded_kit(area) and _play.kit_blocks(p):
+		return false
 	if _entity_at.has(p):
 		var e: Dictionary = _entity_at[p]
 		var kind := str(e.get("kind", ""))
@@ -820,6 +832,15 @@ func _arrived() -> void:
 	_adv().set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
 	if _VRunner.is_bridge_mode() and _bridge_runtime != null and _bridge_runtime.has_method("notify_local_step"):
 		_bridge_runtime.notify_local_step()
+	# Embedded dungeon: PuzzleKit on-step (plates) without converting the whole
+	# world node into a detached puzzle-test level. Exits still work below.
+	if _play.has_embedded_kit(area):
+		var kr: Dictionary = _play.kit_on_step(_adv(), _john_pos)
+		_apply_kit_relocate(kr)
+		for line in kr.get("text", []):
+			await _dialogue.say_async("", str(line))
+		if bool(kr.get("changed", false)):
+			_after_kit_world_change()
 	_update_prompt()
 	for e in _entities:
 		match e["kind"]:
@@ -831,6 +852,9 @@ func _arrived() -> void:
 					_travel(str(e["to_area"]), Vector2i(int(e["to_pos"][0]), int(e["to_pos"][1])), str(e.get("facing", "down")), str(e.get("travel_text", "")))
 					return
 			"trigger":
+				# Dungeon World Test isolates campaign story — ignore story triggers.
+				if _DWRunner.isolates_campaign_story():
+					continue
 				if e.has("requires_phase") and _adv().story_phase() != str(e["requires_phase"]):
 					continue
 				if _in_trigger(e) and not _adv().flag(str(e.get("once_flag", ""))) and _steps_taken >= int(e.get("requires_steps", 0)):
@@ -1434,7 +1458,7 @@ func _refresh_hud() -> void:
 	else:
 		_hud_weave_lbl.text = "woodcutter"
 	if _items_btn:
-		_items_btn.visible = adv.story_phase() == "post_trial_recovery" or not adv.items().is_empty()
+		_items_btn.visible = adv.story_phase() == "post_trial_recovery" or not adv.items().is_empty() or _DWRunner.is_active()
 		_items_btn.text = "Pockets %d/%d" % [adv.items().size(), DmbItems.MAX_SLOTS] if not adv.items().is_empty() else "Pockets"
 
 
@@ -1445,6 +1469,9 @@ func _on_menu() -> void:
 	_touch.set_enabled(false)
 	if _Runner.is_active():
 		await _kit_menu()
+		return
+	if _DWRunner.is_active():
+		await _dungeon_world_menu()
 		return
 	if _VRunner.is_active():
 		await _village_menu()
@@ -1458,6 +1485,39 @@ func _on_menu() -> void:
 			"Journal":
 				await _dialogue.say_async("", _adv().notebook_text())
 			"Main menu":
+				get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
+				return
+			_:
+				_input_locked = false
+				_touch.set_enabled(true)
+				return
+
+
+## Pause menu for the disposable Dungeon World Playtest session.
+func _dungeon_world_menu() -> void:
+	while true:
+		var choice: String = await _dialogue.choose_async(
+			"Dungeon World Playtest",
+			["Continue", "World Map (M)", "Dungeon Test Tools", "How to play", "Exit Test"])
+		match choice:
+			"World Map (M)":
+				var host := get_parent()
+				if host != null and host.has_method("toggle_strategic_map"):
+					host.toggle_strategic_map()
+				_input_locked = false
+				_touch.set_enabled(true)
+				return
+			"Dungeon Test Tools":
+				var host2 := get_parent()
+				if host2 != null and host2.has_method("open_test_tools"):
+					await host2.open_test_tools()
+				continue
+			"How to play":
+				await _dialogue.say_async("How to play",
+					"Arrow keys/WASD: move\nSpace/E: interact\nPockets: carried items (Drop here to place)\nM: world map\nEsc: this menu\n\nLeave the settlement by a path at the edge. An adjoining node holds a dungeon — walk in, solve its puzzles, walk out.")
+				continue
+			"Exit Test":
+				_DWRunner.end(_adv())
 				get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
 				return
 			_:
@@ -2113,6 +2173,18 @@ func _unhandled_input(event: InputEvent) -> void:
 			_on_action()
 		elif event.keycode == KEY_ESCAPE:
 			_on_menu()
+		elif event.keycode == KEY_M and _DWRunner.is_active():
+			var host := get_parent()
+			if host != null and host.has_method("toggle_strategic_map"):
+				host.toggle_strategic_map()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_G and _DWRunner.has_kit() and not _adv().items().is_empty():
+			# Quick-drop first pocket item for embedded playtest.
+			_input_locked = true
+			await _play.kit_drop_item(str(_adv().items()[0]))
+			_input_locked = false
+			_update_prompt()
+			get_viewport().set_input_as_handled()
 
 
 func _entity_under_pointer(screen_pos: Vector2) -> Variant:
@@ -2785,18 +2857,36 @@ func _do_kit_action(e: Dictionary) -> void:
 	var r: Dictionary = await _play.interact_kit_puzzle(e)
 	_apply_kit_relocate(r)
 	if str(r.get("battle", "")) != "":
-		_Runner.set_battle_eid(str(e.get("puzzle_eid", "")))
+		if _Runner.is_active():
+			_Runner.set_battle_eid(str(e.get("puzzle_eid", "")))
+		elif _DWRunner.has_kit():
+			_Runner.set_battle_eid(str(e.get("puzzle_eid", "")))  # reuse slot for return
 		_start_battle(_play.kit_battle_entity(e, str(r["battle"])))
 		return
 	if bool(r.get("changed", false)):
-		_rebuild_kit_area()
+		_after_kit_world_change()
 	else:
 		_update_prompt()
-	if bool(r.get("solved_now", false)):
+	if bool(r.get("solved_now", false)) and _Runner.is_active():
 		await _on_kit_solved()
 	_input_locked = false
 	_touch.set_enabled(true)
 	_update_prompt()
+
+
+## Rebuild after kit state change: full kit session vs embedded world node.
+func _after_kit_world_change() -> void:
+	if _play.is_kit_puzzle_area(area) or _Runner.is_active():
+		_rebuild_kit_area()
+		return
+	if _play.has_embedded_kit(area) or _DWRunner.has_kit():
+		var keep := _john_pos
+		var keep_f := _john_facing
+		# Re-enter same world node (no turn advance) to re-merge kit projection.
+		load_area(area_id, keep, keep_f)
+		_refresh_hud()
+		return
+	_rebuild_kit_area()
 
 
 ## Apply a sim relocation (teleport / pit / reset-to-start / sequence move).
@@ -2812,7 +2902,7 @@ func _apply_kit_relocate(r: Dictionary) -> void:
 
 ## Deterministic kit tick quantum; rebuild only when the sim reports change.
 func _tick_kit(delta: float) -> void:
-	if not _Runner.is_active() or not _play.is_kit_puzzle_area(area):
+	if not ((_Runner.is_active() and _play.is_kit_puzzle_area(area)) or _play.has_embedded_kit(area)):
 		_kit_tick_acc = 0.0
 		return
 	if _input_locked or _scripted_running:
@@ -2825,7 +2915,7 @@ func _tick_kit(delta: float) -> void:
 	if bool(r.get("changed", false)):
 		var keep := _john_pos
 		var keep_f := _john_facing
-		_rebuild_kit_area()
+		_after_kit_world_change()
 		_john_pos = keep
 		_john_facing = keep_f
 		_john.position = Vector2(_john_pos) * TPX + Vector2(0, -8 * TILE_SCALE)
@@ -2840,6 +2930,13 @@ func _after_kit_battle(r: Dictionary) -> void:
 	if victory and eid != "":
 		_play.kit_on_battle_result(eid, true)
 	_play.setup(self, adv, _world_flow)
+	if _DWRunner.is_active() and WorldFlow.is_world_area(area_id):
+		_after_kit_world_change()
+		_refresh_hud()
+		_fade_in()
+		if victory:
+			await _dialogue.say_async("", "The guardian falls. The way responds.")
+		return
 	_finish_kit_build(_john_pos, _john_facing)
 	_refresh_hud()
 	_fade_in()
@@ -3016,6 +3113,68 @@ func _boot_village_test(adv: Node) -> void:
 	_refresh_hud()
 	_fade_in()
 	call_deferred("_after_ready")
+
+
+## Boot the disposable Dungeon World Playtest: isolation contract active, start
+## in the player's home settlement as a normal world node (not a kit session).
+func _boot_dungeon_world_test(adv: Node) -> void:
+	var start: Vector2i = _DWRunner.begin(adv)
+	_world_flow.setup(adv)
+	_world_flow.sim = _DWRunner.fixture.sim
+	_play.setup(self, adv, _world_flow)
+	var aid := DmbNodeProjection.area_id(_DWRunner.home_node)
+	# area_for (not enter) so the first load does not spend a world turn.
+	area = _world_flow.area_for(aid)
+	area_id = str(area["id"])
+	var rows: Array = area["rows"]
+	grid_h = rows.size()
+	grid_w = str(rows[0]).length()
+	for c in _tiles_root.get_children():
+		c.queue_free()
+	for c in _props_root.get_children():
+		c.queue_free()
+	for c in _actors_root.get_children():
+		if c != _john:
+			c.queue_free()
+	_entities.clear()
+	_entity_at.clear()
+	_fire_frames.clear()
+	_cutscene_actors.clear()
+	_build_tiles()
+	_build_entities()
+	_john_pos = start
+	_john_facing = "down"
+	_john.position = Vector2(_john_pos) * TPX + Vector2(0, -8 * TILE_SCALE)
+	_moving = false
+	_update_john_sprite()
+	_camera.position = _john.position + Vector2(TPX * 0.5, TPX * 0.5)
+	_camera.reset_smoothing()
+	_camera.limit_left = 0
+	_camera.limit_top = 0
+	_camera.limit_right = grid_w * TPX
+	_camera.limit_bottom = grid_h * TPX
+	_hud_area_lbl.text = str(area.get("name", "Settlement"))
+	adv.set_location(area_id, _john_pos.x, _john_pos.y, _john_facing)
+	adv.state["world_node"] = _DWRunner.home_node
+	adv.state_changed.connect(_refresh_hud)
+	_refresh_hud()
+	_fade_in()
+	_update_prompt()
+	call_deferred("_after_ready")
+	call_deferred("_show_dungeon_world_intro")
+
+
+func _show_dungeon_world_intro() -> void:
+	if not _DWRunner.is_active() or _DWRunner.intro_seen:
+		return
+	_DWRunner.intro_seen = true
+	_input_locked = true
+	_touch.set_enabled(false)
+	await _dialogue.say_async("DUNGEON WORLD PLAYTEST",
+		"You are in the starting settlement.\nLeave by one of the paths at the edge of the node.\nAn adjoining terrain node contains a dungeon.\nExplore it and solve its puzzles.\n\nArrow keys/WASD: move\nSpace/E: interact\nPockets: carried items\nM: world map\nEsc: test menu")
+	_input_locked = false
+	_touch.set_enabled(true)
+	_update_prompt()
 
 
 ## Load (or reload) the projected village test area.

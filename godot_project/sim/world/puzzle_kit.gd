@@ -641,6 +641,9 @@ static func _act_receptacle(room: Dictionary, st: Dictionary, e: Dictionary, act
 			_say(r, "You do not have that.")
 		elif inst != "":
 			_say(r, str(e.get("occupied_text", "Something already sits there.")))
+		elif e.has("install_requires") and not cond(e["install_requires"], flags_now(room, st)):
+			r["rejected"] = true
+			_say(r, str(e.get("dry_text", e.get("reject_text", "Nothing answers. The place is not ready."))))
 		elif not _accepts(e, item):
 			r["rejected"] = true
 			_say(r, str(e.get("reject_text", "%s does not fit." % DmbItems.name_of(item))))

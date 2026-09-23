@@ -98,11 +98,24 @@ BG remains **unassigned** in production terrain maps (`TERRAIN_TO_TYPES` has no 
 
 ## Embedded PuzzleKit result
 
-- Specimen: node **0**, type **GW**, interactive kit room `embedded_gw_specimen`
-- Reused **generic PuzzleKit kinds** (not five bespoke engines): ordered levers/sequence, item pickup, pressure plate + heavy drop, receptacle install, dynamic gate, NPC lines, goal tile
-- Spec labels mirrored (`ITEM:item.gw.sun_seed`, `MECH:gw.channel_plate`, `GATE:gw.living_gate`, `WIZARD:wizard.gw.treefolk`, …)
-- Flow: season levers → sun seed → channel plate (water) → install seed → living gate → Elder Court
-- Known limitations: visual dressing is placeholder; only GW specimen is fully interactive; other types are geometric/label prototypes; fixture relocates `player_start` to the dungeon approach so the centred wild spawn cannot block the 53×32 reservation
+Playtest route (seed 507): home settlement → real neighbour with fixture-assigned
+**GW Rootbound Sanctuary** (interactive) coexisting inside a normal world node
+(exits + exterior + embedded kit region). Other dungeon type definitions remain
+available as visual/prototype stamps.
+
+Primary three-puzzle chain (no combat required):
+
+1. Ordered Four Seasons sequence (wrong order resets) → root gate
+2. Carry/drop **Channel Stone** onto plate → `gw_water_restored`
+3. Install **Sun Seed** at growth point (refuses until water) → living gate → final chamber
+
+Optional guardian remains off the critical path. Debug labels off by default.
+Default node profile for playtest: **73×55**.
+
+Strategic board is optional (`M`). Campaign story is isolated via
+`DungeonWorldTestRunner.isolates_campaign_story()`.
+
+See `docs/testing/DUNGEON_WORLD_PLAYTEST.md` for the manual route.
 
 ## Production dungeon behaviour
 

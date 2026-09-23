@@ -5,6 +5,9 @@ class_name WorldPlay
 ## eight-slot quest inventory (§2). Owns no state — everything persists through
 ## Adventure (items, puzzles, quests) and the world sim (moods, effects).
 
+const _DWRunner = preload("res://sim/world/dungeon_world_test_runner.gd")
+const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
+
 var _w: Node        # Overworld
 var _adv: Node      # Adventure
 var _flow: WorldFlow
@@ -16,9 +19,29 @@ func setup(world: Node, adv: Node, flow: WorldFlow) -> void:
 	_flow = flow
 
 
+## Active PuzzleKit session: embedded Dungeon World Test takes priority over
+## the detached PuzzleTestRunner catalogue session.
+func _kit_live() -> bool:
+	return _DWRunner.has_kit() or _Runner.is_active()
+
+
+func _kit_room() -> Dictionary:
+	if _DWRunner.has_kit():
+		return _DWRunner.kit_room()
+	return _Runner.kit_room()
+
+
+func _kit_state() -> Dictionary:
+	if _DWRunner.has_kit():
+		return _DWRunner.kit_state()
+	return _Runner.kit_state()
+
+
 # --- inventory --------------------------------------------------------------------
 
 ## Mobile-friendly sheet: one line per item, tap to inspect. Returns after close.
+## When an embedded / kit session is live, Drop places the object at the player's
+## feet through PuzzleKit so plates and receptors can respond.
 func show_inventory() -> void:
 	var items: Array = _adv.items()
 	if items.is_empty():
@@ -33,8 +56,35 @@ func show_inventory() -> void:
 		if pick == "Close" or pick == "":
 			return
 		var idx := labels.find(pick)
-		if idx >= 0 and idx < items.size():
-			await _w._dialogue.say_async(pick, DmbItems.describe(str(items[idx])))
+		if idx < 0 or idx >= items.size():
+			continue
+		var item_id := str(items[idx])
+		if _kit_live():
+			var act: String = await _w._dialogue.choose_async(DmbItems.name_of(item_id), ["Look", "Drop here", "Back"])
+			if act == "Look":
+				await _w._dialogue.say_async(DmbItems.name_of(item_id), DmbItems.describe(item_id))
+			elif act == "Drop here":
+				await kit_drop_item(item_id)
+				return
+		else:
+			await _w._dialogue.say_async(DmbItems.name_of(item_id), DmbItems.describe(item_id))
+
+
+## Drop a carried item at the player's feet via PuzzleKit (embedded or catalogue).
+func kit_drop_item(item_id: String) -> Dictionary:
+	if not _kit_live():
+		return {"changed": false}
+	kit_sync(_adv)
+	var st: Dictionary = _kit_state()
+	st["player"] = [_w._john_pos.x, _w._john_pos.y]
+	var r: Dictionary = DmbPuzzleKit.drop(_kit_room(), st, item_id, kit_ctx(_adv))
+	_apply_kit_result(_adv, r)
+	kit_sync(_adv)
+	for line in r.get("text", []):
+		await _w._dialogue.say_async("", str(line))
+	if bool(r.get("changed", false)) and _w.has_method("_after_kit_world_change"):
+		_w._after_kit_world_change()
+	return r
 
 
 ## Grant an item from a pickup/quest/puzzle. Handles the full-pockets case.
@@ -293,14 +343,11 @@ func after_battle(outcome: String) -> void:
 # Adapter/controller only: DmbPuzzleKit is authoritative for rules and state.
 # ---------------------------------------------------------------------------------
 
-const _Runner = preload("res://client/scripts/puzzle_test_runner.gd")
-
-
 ## Production area dict for the active test puzzle, via DmbPuzzleProjection.
 ## Explicit dungeon theme so _is_dungeon() needs no ID-prefix knowledge.
 func puzzle_area() -> Dictionary:
-	var room: Dictionary = _Runner.kit_room()
-	var st: Dictionary = _Runner.kit_state()
+	var room: Dictionary = _kit_room()
+	var st: Dictionary = _kit_state()
 	var area: Dictionary = DmbPuzzleProjection.area_for(room, st)
 	area["theme"] = "dungeon"
 	area["puzzle_test"] = true
@@ -311,6 +358,10 @@ func is_kit_puzzle_area(a: Dictionary) -> bool:
 	return bool(a.get("puzzle_test", false))
 
 
+func has_embedded_kit(a: Dictionary) -> bool:
+	return _DWRunner.kit_active_for_area(a)
+
+
 func kit_ctx(adv: Node) -> Dictionary:
 	return {"items": adv.items(), "spells": adv.progression.spells_known}
 
@@ -318,7 +369,9 @@ func kit_ctx(adv: Node) -> Dictionary:
 ## Sync the single player inventory (Adventure) into the kit simulation
 ## mirror before any condition evaluation / projection / action / step.
 func kit_sync(adv: Node) -> void:
-	DmbPuzzleKit.sync_inventory(_Runner.kit_state(), adv.items())
+	if not _kit_live():
+		return
+	DmbPuzzleKit.sync_inventory(_kit_state(), adv.items())
 
 
 ## Resolve the kit entity dict behind a projected production entity.
@@ -327,7 +380,7 @@ func kit_sync(adv: Node) -> void:
 ## {"kind": "world_item", ...} dict, which Kit.act() resolves by position
 ## through world_item_at() — never passed to Kit.entity().
 func kit_resolve(e: Dictionary) -> Dictionary:
-	var room: Dictionary = _Runner.kit_room()
+	var room: Dictionary = _kit_room()
 	var eid := str(e.get("puzzle_eid", ""))
 	if eid.begins_with("wi:"):
 		var pos: Array = (e.get("pos", [0, 0]) as Array).duplicate()
@@ -342,8 +395,8 @@ func kit_resolve(e: Dictionary) -> Dictionary:
 ## Returns {"result": r, "solved": bool}.
 func kit_apply(adv: Node, kit_e: Dictionary, action: Dictionary) -> Dictionary:
 	kit_sync(adv)
-	var room: Dictionary = _Runner.kit_room()
-	var st: Dictionary = _Runner.kit_state()
+	var room: Dictionary = _kit_room()
+	var st: Dictionary = _kit_state()
 	var r: Dictionary = DmbPuzzleKit.act(room, st, kit_e, action, kit_ctx(adv))
 	_apply_kit_result(adv, r)
 	kit_sync(adv)
@@ -365,10 +418,10 @@ func _apply_kit_result(adv: Node, r: Dictionary) -> void:
 func interact_kit_puzzle(e: Dictionary) -> Dictionary:
 	var adv := _adv
 	kit_sync(adv)
-	var st: Dictionary = _Runner.kit_state()
+	var st: Dictionary = _kit_state()
 	var ke := kit_resolve(e)
 	var ctx := kit_ctx(adv)
-	var options: Array = DmbPuzzleKit.actions_for(_Runner.kit_room(), st, ke, ctx)
+	var options: Array = DmbPuzzleKit.actions_for(_kit_room(), st, ke, ctx)
 	if options.is_empty():
 		await _w._dialogue.say_async("", str(e.get("text", "Nothing happens.")))
 		return {"changed": false, "solved": bool(st.get("solved", false))}
@@ -436,8 +489,8 @@ func _choose_offering(e: Dictionary, ke: Dictionary, options: Array) -> Dictiona
 ## (relocate/pits/plates/crumble/teleport/hazard hits) with adv applied.
 func kit_on_step(adv: Node, pos: Vector2i) -> Dictionary:
 	kit_sync(adv)
-	var room: Dictionary = _Runner.kit_room()
-	var st: Dictionary = _Runner.kit_state()
+	var room: Dictionary = _kit_room()
+	var st: Dictionary = _kit_state()
 	var r: Dictionary = DmbPuzzleKit.on_step(room, st, pos, kit_ctx(adv))
 	_apply_kit_result(adv, r)
 	kit_sync(adv)
@@ -447,8 +500,8 @@ func kit_on_step(adv: Node, pos: Vector2i) -> Dictionary:
 ## Kit time rules at a fixed deterministic quantum. Returns raw kit result.
 func kit_tick(adv: Node, dt: float) -> Dictionary:
 	kit_sync(adv)
-	var room: Dictionary = _Runner.kit_room()
-	var st: Dictionary = _Runner.kit_state()
+	var room: Dictionary = _kit_room()
+	var st: Dictionary = _kit_state()
 	var r: Dictionary = DmbPuzzleKit.tick(room, st, dt)
 	_apply_kit_result(adv, r)
 	kit_sync(adv)
@@ -457,8 +510,10 @@ func kit_tick(adv: Node, dt: float) -> Dictionary:
 
 ## Kit blocking for a tile: the simulation determines reality.
 func kit_blocks(pos: Vector2i) -> bool:
+	if not _kit_live():
+		return false
 	kit_sync(_adv)
-	return DmbPuzzleKit.blocks(_Runner.kit_room(), _Runner.kit_state(), pos)
+	return DmbPuzzleKit.blocks(_kit_room(), _kit_state(), pos)
 
 
 ## After a victorious kit-guardian battle: set the guardian's defeated flag
@@ -466,10 +521,10 @@ func kit_blocks(pos: Vector2i) -> bool:
 ## tile stops blocking. Generic — reads the entity, no per-room code.
 ## Returns true when kit state changed.
 func kit_on_battle_result(eid: String, victory: bool) -> bool:
-	if not victory or eid == "":
+	if not victory or eid == "" or not _kit_live():
 		return false
-	var room: Dictionary = _Runner.kit_room()
-	var st: Dictionary = _Runner.kit_state()
+	var room: Dictionary = _kit_room()
+	var st: Dictionary = _kit_state()
 	var ke := DmbPuzzleKit.entity(room, eid)
 	if ke.is_empty():
 		return false

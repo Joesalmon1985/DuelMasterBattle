@@ -133,7 +133,7 @@ func _test_specimen_kit_room() -> void:
 	assert_true(kit["entities"].size() >= 8, "kit entities")
 	var has_guardian := false
 	var has_gate := false
-	var has_lever := false
+	var has_seq := false
 	for e in kit["entities"]:
 		match str(e.get("kind", "")):
 			"guardian":
@@ -141,11 +141,11 @@ func _test_specimen_kit_room() -> void:
 				assert_true(str(e.get("enemy_id", "")) != "", "guardian has enemy_id")
 			"gate":
 				has_gate = true
-			"lever":
-				has_lever = true
-	assert_true(has_guardian, "embedded dungeon includes mastermind guardians")
+			"sequence", "button", "lever":
+				has_seq = true
+	assert_true(has_guardian, "embedded dungeon includes optional guardians")
 	assert_true(has_gate, "embedded dungeon includes gates")
-	assert_true(has_lever or true, "mechanisms present")
+	assert_true(has_seq, "mechanisms present")
 	var st := DmbPuzzleKit.fresh_state(kit)
 	assert_true(st.has("flags"), "kit state")
 	# Guardians must be fightable via kit act.

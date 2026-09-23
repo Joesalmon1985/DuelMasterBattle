@@ -347,7 +347,8 @@ static func _kit_base(area: Dictionary, def: Dictionary, title: String, hint: St
 	}
 
 
-## GW — restore water, plant seed, fight a shade, reach the treefolk.
+## GW — ordered seasons → move channel stone → plant sun seed after water.
+## Guardians are optional side encounters; the three puzzles do not require combat.
 static func _kit_gw(area: Dictionary, ox: int, oy: int, def: Dictionary) -> Dictionary:
 	var r1 := _room_origin(ox, oy, 0)
 	var r2 := _room_origin(ox, oy, 1)
@@ -365,52 +366,58 @@ static func _kit_gw(area: Dictionary, ox: int, oy: int, def: Dictionary) -> Dict
 	var g45 := _gate_on_path(c4, c5)
 	var ents: Array = [
 		{"kind": "plaque", "id": "gw_seasons_carving", "pos": [r1.x + 3, r1.y + 2],
-			"text": "SIGN:gw.seasons_carving\nA tree passes through four seasons and returns to life.\nPull the four season levers, then face what wakes."},
-		{"kind": "lever", "id": "lev_spring", "pos": [r1.x + 3, r1.y + 5], "flag": "gw_spring",
-			"on_text": "Spring — sap rises."},
-		{"kind": "lever", "id": "lev_summer", "pos": [r1.x + 6, r1.y + 5], "flag": "gw_summer",
-			"on_text": "Summer — leaves thicken."},
-		{"kind": "lever", "id": "lev_autumn", "pos": [r1.x + 9, r1.y + 5], "flag": "gw_autumn",
-			"on_text": "Autumn — fruit falls."},
-		{"kind": "lever", "id": "lev_winter", "pos": [r1.x + 12, r1.y + 5], "flag": "gw_winter",
-			"on_text": "Winter — quiet returns, and life with it."},
+			"text": "A year wakes in spring, ripens in summer, falls in autumn, and sleeps in winter."},
+		{"kind": "sequence", "id": "seasons_seq", "flag": "gw_seasons_complete",
+			"steps": ["btn_spring", "btn_summer", "btn_autumn", "btn_winter"],
+			"done_text": "The four seasons complete their turn. Roots pull aside.",
+			"step_text": "A soft click. The year advances.",
+			"wrong_text": "A dull thud. The seasons forget, and begin again.",
+			"reset_on_wrong": true},
+		{"kind": "button", "id": "btn_spring", "pos": [r1.x + 3, r1.y + 5], "symbol": "green",
+			"label": "Spring", "verb": "Pull", "seq": "seasons_seq", "text": "Spring — sap rises."},
+		{"kind": "button", "id": "btn_summer", "pos": [r1.x + 6, r1.y + 5], "symbol": "red",
+			"label": "Summer", "verb": "Pull", "seq": "seasons_seq", "text": "Summer — leaves thicken."},
+		{"kind": "button", "id": "btn_autumn", "pos": [r1.x + 9, r1.y + 5], "symbol": "grey",
+			"label": "Autumn", "verb": "Pull", "seq": "seasons_seq", "text": "Autumn — fruit falls."},
+		{"kind": "button", "id": "btn_winter", "pos": [r1.x + 12, r1.y + 5], "symbol": "blue",
+			"label": "Winter", "verb": "Pull", "seq": "seasons_seq", "text": "Winter — quiet returns."},
 		{"kind": "gate", "id": "gw_root_gate", "pos": [g12.x, g12.y],
-			"open_when": {"all": ["gw_spring", "gw_summer", "gw_autumn", "gw_winter"]}, "look": "gate"},
-		{"kind": "guardian", "id": "gw_shade", "pos": [c2.x, c2.y], "enemy_id": "moss_shade",
-			"defeated_flag": "gw_shade_down",
-			"text": "A moss shade blocks the shrine. Defeat it in combat to pass."},
-		{"kind": "gate", "id": "gw_shrine_gate", "pos": [g23.x, g23.y],
-			"open_when": "gw_shade_down", "look": "gate"},
+			"open_when": "gw_seasons_complete", "look": "gate"},
 		{"kind": "plaque", "id": "gw_seed_clue", "pos": [r2.x + 3, r2.y + 2],
-			"text": "What sleeps in winter is not dead.\nTake the Sun Seed."},
+			"text": "What sleeps in winter is not dead.\nTake the Sun Seed when you find it."},
 		{"kind": "item", "id": "sun_seed_item", "item": "item.gw.sun_seed", "pos": [r2.x + 7, r2.y + 6],
-			"text": "ITEM:item.gw.sun_seed"},
+			"text": "A warm Sun Seed rests in a shallow niche."},
+		{"kind": "gate", "id": "gw_shrine_gate", "pos": [g23.x, g23.y],
+			"open_when": "gw_seasons_complete", "look": "gate"},
 		{"kind": "plaque", "id": "gw_channel_clue", "pos": [r3.x + 3, r3.y + 2],
-			"text": "MECH:gw.channel_plate\nDrop the Channel Stone on the plate (or stand on it while carrying the stone) to restore the water."},
+			"text": "The heart drinks only while the old weight holds the channel open."},
 		{"kind": "item", "id": "channel_weight", "item": "item.gw.channel_stone", "pos": [r3.x + 3, r3.y + 6],
-			"text": "MECH:gw.channel_weight"},
+			"text": "A heavy Channel Stone. It wants the floor."},
 		{"kind": "plate", "id": "channel_plate", "pos": [r3.x + 8, r3.y + 6], "flag": "gw_water_restored",
-			"accepts": ["item", "player"], "item_tags": ["heavy"],
-			"text": "MECH:gw.channel_plate — seat the weight here."},
+			"accepts": ["item"], "item_tags": ["heavy"],
+			"text": "A worn pressure plate in the dry channel."},
 		{"kind": "gate", "id": "gw_water_gate", "pos": [g34.x, g34.y],
 			"open_when": "gw_water_restored", "look": "gate"},
 		{"kind": "plaque", "id": "gw_growth_clue", "pos": [r4.x + 3, r4.y + 2],
-			"text": "RECEPTOR:gw.growth_point\nInstall the Sun Seed. Water must already be restored."},
+			"text": "What sleeps in winter is not dead — but it will not wake without water."},
 		{"kind": "receptacle", "id": "growth_point", "pos": [r4.x + 7, r4.y + 6], "flag": "gw_sun_seed_installed",
 			"accepts_items": ["item.gw.sun_seed"], "accepts_tags": ["sun_seed"], "removable": true,
-			"text": "RECEPTOR:gw.growth_point — place the Sun Seed."},
-		{"kind": "guardian", "id": "gw_warden", "pos": [c4.x, r4.y + 9], "enemy_id": "steam_sprite",
+			"install_requires": "gw_water_restored",
+			"dry_text": "The growth point is dry. Water must reach it before a seed will take.",
+			"install_text": "The Sun Seed settles. Living wood answers the water.",
+			"text": "A living growth point — a hollow in living root."},
+		{"kind": "guardian", "id": "gw_warden", "pos": [r4.x + 2, r4.y + 9], "enemy_id": "steam_sprite",
 			"defeated_flag": "gw_warden_down",
-			"text": "A root warden guards the living gate. Fight it."},
+			"text": "A root warden watches from the side. Optional — the living gate does not need its fall."},
 		{"kind": "gate", "id": "gw_living_gate", "pos": [g45.x, g45.y],
-			"open_when": {"all": ["gw_water_restored", "gw_sun_seed_installed", "gw_warden_down"]}, "look": "gate"},
+			"open_when": {"all": ["gw_water_restored", "gw_sun_seed_installed"]}, "look": "gate"},
 		{"kind": "npc", "id": "wizard_gw", "pos": [c5.x, c5.y], "name": "Treefolk Presence",
-			"lines": ["WIZARD:wizard.gw.treefolk — the Elder Court acknowledges you."]},
+			"lines": ["The Elder Court acknowledges you. The ruin is open behind you — walk free."]},
 		{"kind": "goal", "id": "goal", "pos": [c5.x, c5.y + 2],
 			"text": "Through the Elder Court."},
 	]
 	return _kit_base(area, def, "Rootbound Sanctuary (embedded)",
-		"Seasons levers → fight shade → take Sun Seed → weight on plate → plant seed → fight warden → Elder Court.", ents)
+		"Seasons in order → take Sun Seed → seat Channel Stone → plant seed after water → Elder Court.", ents)
 
 
 static func _kit_br(area: Dictionary, ox: int, oy: int, def: Dictionary) -> Dictionary:
