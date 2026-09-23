@@ -93,13 +93,13 @@ def main() -> int:
                     sys.executable,
                     "training/collect.py",
                     "--train-seeds",
-                    "48",
+                    "96",
                     "--max-steps",
-                    "20",
+                    "30",
                     "--budget-seconds",
-                    "900",
+                    "2400",
                 ],
-                timeout=1200,
+                timeout=3000,
             ),
         )
     )
@@ -128,7 +128,73 @@ def main() -> int:
         return 1
     steps.append(
         (
-            "imitation_v1",
+            "imitation_build",
+            _run(
+                [
+                    sys.executable,
+                    "training/train_imitation.py",
+                    "--target-decisions",
+                    "12000",
+                    "--budget-seconds",
+                    "2400",
+                    "--seed",
+                    "101",
+                    "--name",
+                    "imitation_build",
+                    "--prefer-family",
+                    "build",
+                ],
+                timeout=2800,
+            ),
+        )
+    )
+    steps.append(
+        (
+            "imitation_trade",
+            _run(
+                [
+                    sys.executable,
+                    "training/train_imitation.py",
+                    "--target-decisions",
+                    "12000",
+                    "--budget-seconds",
+                    "2400",
+                    "--seed",
+                    "202",
+                    "--name",
+                    "imitation_trade",
+                    "--prefer-family",
+                    "trade",
+                ],
+                timeout=2800,
+            ),
+        )
+    )
+    steps.append(
+        (
+            "imitation_war",
+            _run(
+                [
+                    sys.executable,
+                    "training/train_imitation.py",
+                    "--target-decisions",
+                    "12000",
+                    "--budget-seconds",
+                    "2400",
+                    "--seed",
+                    "303",
+                    "--name",
+                    "imitation_war",
+                    "--prefer-family",
+                    "war",
+                ],
+                timeout=2800,
+            ),
+        )
+    )
+    steps.append(
+        (
+            "imitation_generalist",
             _run(
                 [
                     sys.executable,
@@ -140,53 +206,13 @@ def main() -> int:
                     "--seed",
                     "1",
                     "--name",
-                    "imitation_v1",
+                    "imitation_generalist",
                 ],
                 timeout=2000,
             ),
         )
     )
-    steps.append(
-        (
-            "imitation_v2",
-            _run(
-                [
-                    sys.executable,
-                    "training/train_imitation.py",
-                    "--target-decisions",
-                    "8000",
-                    "--budget-seconds",
-                    "1200",
-                    "--seed",
-                    "11",
-                    "--name",
-                    "imitation_v2",
-                ],
-                timeout=1500,
-            ),
-        )
-    )
-    steps.append(
-        (
-            "imitation_v3",
-            _run(
-                [
-                    sys.executable,
-                    "training/train_imitation.py",
-                    "--target-decisions",
-                    "8000",
-                    "--budget-seconds",
-                    "1200",
-                    "--seed",
-                    "21",
-                    "--name",
-                    "imitation_v3",
-                ],
-                timeout=1500,
-            ),
-        )
-    )
-    if (CHECKPOINTS / "imitation_v1.json").is_file():
+    if (CHECKPOINTS / "imitation_generalist.json").is_file():
         steps.append(
             (
                 "actor_critic_v1",
@@ -195,7 +221,7 @@ def main() -> int:
                         sys.executable,
                         "training/train_actor_critic.py",
                         "--init",
-                        str(CHECKPOINTS / "imitation_v1.json"),
+                        str(CHECKPOINTS / "imitation_generalist.json"),
                         "--target-decisions",
                         "20000",
                         "--budget-seconds",
@@ -212,13 +238,14 @@ def main() -> int:
             )
         )
 
-    # Evaluation on full 200 promotion seeds (bounded episode length).
+    # Evaluation on full 200 promotion seeds (calibrated horizon).
     cand_args: list[str] = []
     for name, pid in (
+        ("imitation_build", "policy-im-build"),
+        ("imitation_trade", "policy-im-trade"),
+        ("imitation_war", "policy-im-war"),
+        ("imitation_generalist", "policy-im-gen"),
         ("actor_critic_v1", "policy-ac-1"),
-        ("imitation_v1", "policy-im-1"),
-        ("imitation_v2", "policy-im-2"),
-        ("imitation_v3", "policy-im-3"),
     ):
         path = CHECKPOINTS / f"{name}.json"
         if path.is_file():

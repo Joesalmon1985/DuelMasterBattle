@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "stages": {
+    "auto_gate_portability": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "duration_s": 0.254,
+      "input_hash": "0aa82f938da9561b",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/tools/test_run_auto_gate_portability.py"
+      ],
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110004Z_auto_gate_portability.log",
+      "finished_at": "2026-09-23T11:00:05Z"
+    },
+    "ward_duel_regression": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "duration_s": 3.96,
+      "input_hash": "01ccf2f6aa9ec797",
+      "cmd": [
+        "C:\\Users\\joesa\\Downloads\\Godot_v4.5.1-stable_win64.exe\\Godot_v4.5.1-stable_win64.exe",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_ward_duel_presentation.gd"
+      ],
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110005Z_ward_duel_regression.log",
+      "finished_at": "2026-09-23T11:00:09Z"
+    },
+    "g06": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "duration_s": 8.834,
+      "input_hash": "91ad00756d5be829",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G06"
+      ],
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110009Z_g06.log",
+      "finished_at": "2026-09-23T11:00:18Z"
+    }
+  },
+  "updated_at": "2026-09-23T11:00:18Z"
+}

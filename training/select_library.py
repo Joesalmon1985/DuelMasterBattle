@@ -62,44 +62,82 @@ def select_library(
             label=str(cand["id"]),
         )
         promo = paired_promotion_check(baseline, report)
+        # Provenance must come from the trained artifact itself, not caller guesses.
+        payload = json.loads(artifact.read_text(encoding="utf-8"))
+        artifact_prov = payload.get("provenance") if isinstance(payload.get("provenance"), dict) else {}
+        provenance = {**artifact_prov, **(cand.get("provenance") or {})}
+        provenance.setdefault("weights_digest", payload.get("weights_digest"))
+        provenance.setdefault("trained", bool(payload.get("trained")))
+        provenance.setdefault("schema_hash", payload.get("schema_hash") or schema_hash())
         entry = {
             "id": cand["id"],
             "artifact": str(artifact.relative_to(ROOT)) if artifact.is_relative_to(ROOT) else str(artifact),
-            "provenance": cand.get("provenance") or {},
+            "provenance": provenance,
             "evaluation": {k: v for k, v in report.items() if k != "rows"},
             "promotion": promo,
         }
         (EVAL_DIR / f"eval_{cand['id']}.json").write_text(json.dumps(entry, indent=2) + "\n", encoding="utf-8")
         if promo["promoted"] and report.get("artifact"):
             # Require genuinely trained provenance mark on the artifact file.
-            payload = json.loads(artifact.read_text(encoding="utf-8"))
             if not payload.get("trained"):
                 entry["promotion"]["promoted"] = False
                 entry["promotion"]["reasons"] = list(promo["reasons"]) + ["artifact_not_marked_trained"]
                 rejected.append(entry)
                 continue
+            if payload.get("weights_digest") and artifact_prov.get("init_digest"):
+                if payload.get("weights_digest") == artifact_prov.get("init_digest"):
+                    entry["promotion"]["promoted"] = False
+                    entry["promotion"]["reasons"] = list(promo.get("reasons") or []) + [
+                        "weights_unchanged_from_init"
+                    ]
+                    rejected.append(entry)
+                    continue
             qualified.append(entry)
         else:
             rejected.append(entry)
 
     # Diversity: ≥10pp difference vs every already-selected policy (C14).
+    # Prefer candidates that maximise pairwise distance when multiple qualify.
     selected: list[dict[str, Any]] = []
-    for entry in qualified:
-        share = entry["evaluation"]["action_family_share"]
-        if not selected:
-            entry = dict(entry)
-            entry["diversity_ok"] = True
-            selected.append(entry)
-            continue
-        diverse = all(
-            _family_distance(share, s["evaluation"]["action_family_share"]) >= 0.10 for s in selected
-        )
-        if diverse:
-            entry = dict(entry)
-            entry["diversity_ok"] = True
-            selected.append(entry)
-        if len(selected) >= 3:
+    remaining = list(qualified)
+    while remaining and len(selected) < 3:
+        best = None
+        best_score = -1.0
+        for entry in remaining:
+            share = entry["evaluation"]["action_family_share"]
+            if not selected:
+                best = entry
+                best_score = 1.0
+                break
+            dists = [
+                _family_distance(share, s["evaluation"]["action_family_share"]) for s in selected
+            ]
+            if min(dists) < 0.10:
+                continue
+            score = min(dists)
+            if score > best_score:
+                best = entry
+                best_score = score
+        if best is None:
+            # Record remaining as diversity rejects.
+            for entry in remaining:
+                fail = dict(entry)
+                fail["diversity_ok"] = False
+                fail["reason"] = "diversity_below_0.10_vs_selected"
+                rejected.append(fail)
             break
+        chosen = dict(best)
+        chosen["diversity_ok"] = True
+        if selected:
+            chosen["pairwise_diversity"] = {
+                s["id"]: _family_distance(
+                    chosen["evaluation"]["action_family_share"],
+                    s["evaluation"]["action_family_share"],
+                )
+                for s in selected
+            }
+        selected.append(chosen)
+        remaining = [e for e in remaining if e["id"] != chosen["id"]]
 
     POLICIES_DIR.mkdir(parents=True, exist_ok=True)
     # Copy accepted artifacts into content/policies (inference-only).
@@ -165,17 +203,42 @@ def main(argv: list[str] | None = None) -> int:
     candidates: list[dict[str, Any]] = []
     for item in args.candidate:
         pid, _, path = item.partition("=")
-        candidates.append({"id": pid, "artifact": str(ROOT / path), "provenance": {"cli": item}})
+        artifact = ROOT / path
+        provenance: dict[str, Any] = {"cli": item}
+        if artifact.is_file():
+            try:
+                payload = json.loads(artifact.read_text(encoding="utf-8"))
+                if isinstance(payload.get("provenance"), dict):
+                    provenance = {**payload["provenance"], **provenance}
+            except json.JSONDecodeError:
+                pass
+        candidates.append({"id": pid, "artifact": str(artifact), "provenance": provenance})
     if not candidates:
         # Default overnight candidates if present.
-        for name in ("actor_critic_v1", "imitation_v1", "actor_critic_v2", "imitation_v2", "imitation_v3"):
+        for name in (
+            "imitation_build",
+            "imitation_trade",
+            "imitation_war",
+            "imitation_generalist",
+            "actor_critic_v1",
+            "imitation_v1",
+            "imitation_v2",
+            "imitation_v3",
+        ):
             path = CHECKPOINTS / f"{name}.json"
             if path.is_file():
+                provenance = {"checkpoint": name}
+                try:
+                    payload = json.loads(path.read_text(encoding="utf-8"))
+                    if isinstance(payload.get("provenance"), dict):
+                        provenance = {**payload["provenance"], **provenance}
+                except json.JSONDecodeError:
+                    pass
                 candidates.append(
                     {
                         "id": name.replace("_", "-"),
                         "artifact": str(path),
-                        "provenance": {"checkpoint": name},
+                        "provenance": provenance,
                     }
                 )
     manifest = select_library(candidates=candidates, seed_count=args.seed_count, max_steps=args.max_steps)
