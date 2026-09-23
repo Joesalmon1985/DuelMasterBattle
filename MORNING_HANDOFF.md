@@ -1,7 +1,7 @@
 # Morning handoff — overnight G06–G12
 
 **Final branch:** `overnight/g12-visual-training-finish`  
-**Final SHA:** `418a8f80be00e2da27923f699f785494ee9b9a78`
+**Final SHA:** ee7b6c118c3b8961877936ae587d510b6ea165a5
 **Note:** After this handoff commit, tip may be one commit ahead; run `git rev-parse HEAD`.
 **Started from:** `1aa2205` on `phase/g06-g12-autoqa`  
 **Platform:** Windows · Godot 4.5.1 · `.venv\Scripts\python.exe`  
