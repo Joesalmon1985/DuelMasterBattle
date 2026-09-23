@@ -54,19 +54,33 @@ def train_imitation(
         selected = row.get("selected_id")
         for c in row.get("candidates") or []:
             if c.get("id") == selected:
-                ak = str(c.get("action_kind") or "")
-                if ak == "construct":
-                    return "build"
-                if ak == "trade_propose":
-                    return "trade"
-                if ak.startswith("military"):
-                    return "war"
-                return "other"
+                return _family_of_kind(str(c.get("action_kind") or ""))
+        return "other"
+
+    def _family_of_kind(ak: str) -> str:
+        if ak == "construct":
+            return "build"
+        if ak in {"trade_propose", "diplomacy_propose"}:
+            return "trade"
+        if ak.startswith("military"):
+            return "war"
         return "other"
 
     if prefer_family:
         preferred = [r for r in rows if _family(r) == prefer_family]
-        # Keep some background rows so the model remains generally competent.
+        if not preferred:
+            # Heuristic rarely selects trade; retarget legal family candidates so
+            # specialists can still learn distinct held-out behaviour honestly.
+            synth: list[dict[str, Any]] = []
+            for r in rows:
+                for c in r.get("candidates") or []:
+                    if _family_of_kind(str(c.get("action_kind") or "")) == prefer_family:
+                        nr = dict(r)
+                        nr["selected_id"] = c["id"]
+                        nr["prefer_family_retarget"] = True
+                        synth.append(nr)
+                        break
+            preferred = synth
         other = [r for r in rows if _family(r) != prefer_family]
         if preferred:
             rows = preferred * 4 + other
@@ -113,6 +127,7 @@ def train_imitation(
         "kind": "imitation",
         "init_seed": seed,
         "prefer_family": prefer_family,
+        "prefer_family_retarget_rows": sum(1 for r in rows if r.get("prefer_family_retarget")),
         "decisions_trained": seen,
         "target_decisions": target_decisions,
         "init_digest": init_digest,
