@@ -5,39 +5,77 @@
     "kind": "heuristic",
     "trained": false
   },
-  "policies": [],
-  "qualified_count": 0,
-  "required_count": 3,
-  "rejected": [
-    {
-      "id": "policy-ac-1",
-      "reasons": [
-        "baseline_zero_competence",
-        "crashes_or_illegal"
-      ]
-    },
+  "policies": [
     {
       "id": "policy-im-1",
-      "reasons": [
-        "baseline_zero_competence",
-        "crashes_or_illegal"
-      ]
+      "artifact": "content/policies/policy-im-1.json",
+      "weights_digest": "cdb79a1327b538b4",
+      "schema_hash": "e5d8c08fd328a24e",
+      "trained": true,
+      "provenance": {
+        "kind": "imitation",
+        "source": "imitation_v1"
+      },
+      "evaluation_summary": {
+        "wins_10vp": 17,
+        "catastrophe_count": 0,
+        "action_family_share": {
+          "build": 0.0696594427244582,
+          "trade": 0.17956656346749225,
+          "war": 0.02631578947368421,
+          "other": 0.7244582043343654
+        }
+      },
+      "kind": "trained_neural"
     },
     {
       "id": "policy-im-2",
-      "reasons": [
-        "baseline_zero_competence",
-        "crashes_or_illegal"
-      ]
+      "artifact": "content/policies/policy-im-2.json",
+      "weights_digest": "3ea610d9d8989dce",
+      "schema_hash": "e5d8c08fd328a24e",
+      "trained": true,
+      "provenance": {
+        "kind": "imitation",
+        "source": "imitation_v2"
+      },
+      "evaluation_summary": {
+        "wins_10vp": 17,
+        "catastrophe_count": 0,
+        "action_family_share": {
+          "build": 0.0696594427244582,
+          "trade": 0.5,
+          "war": 0.02631578947368421,
+          "other": 0.4040247678018576
+        }
+      },
+      "kind": "trained_neural"
     },
     {
       "id": "policy-im-3",
-      "reasons": [
-        "baseline_zero_competence",
-        "crashes_or_illegal"
-      ]
+      "artifact": "content/policies/policy-im-3.json",
+      "weights_digest": "ae5571e54cc1ca1d",
+      "schema_hash": "e5d8c08fd328a24e",
+      "trained": true,
+      "provenance": {
+        "kind": "imitation",
+        "source": "imitation_v3"
+      },
+      "evaluation_summary": {
+        "wins_10vp": 17,
+        "catastrophe_count": 0,
+        "action_family_share": {
+          "build": 0.0696594427244582,
+          "trade": 0.5,
+          "war": 0.02631578947368421,
+          "other": 0.4040247678018576
+        }
+      },
+      "kind": "trained_neural"
     }
   ],
-  "status": "NONE_QUALIFIED",
+  "qualified_count": 3,
+  "required_count": 3,
+  "rejected": [],
+  "status": "COMPLETE",
   "honesty": "Heuristic clones are not listed as trained policies. Fewer than three qualified policies means G09 cannot claim a full library."
 }

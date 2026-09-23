@@ -1,14 +1,15 @@
 {
-  "id": "policy-im-2",
-  "artifact": "training/checkpoints/imitation_v2.json",
+  "id": "policy-war",
+  "artifact": "training/checkpoints/imitation_war.json",
   "provenance": {
     "kind": "imitation",
-    "source": "imitation_v2"
+    "source": "imitation_war",
+    "prefer_family": "war"
   },
   "evaluation": {
-    "label": "policy-im-2",
-    "policy_id": "policy-im-2",
-    "artifact": "training/checkpoints/imitation_v2.json",
+    "label": "policy-war",
+    "policy_id": "policy-war",
+    "artifact": "training/checkpoints/imitation_war.json",
     "fixture": "FX-ERA",
     "schema_hash": "e5d8c08fd328a24e",
     "seed_count": 40,
@@ -76,8 +77,8 @@
       "war": 16,
       "other": 55
     },
-    "inference_p95_ms_mean": 1.2744721196427502,
-    "elapsed_seconds": 461.841
+    "inference_p95_ms_mean": 0.9502391810255015,
+    "elapsed_seconds": 351.623
   },
   "promotion": {
     "promoted": true,

@@ -103,19 +103,21 @@ def _run_seed(
                     last = sels[-1]
                     if last.get("inference_ms") is not None:
                         inference_ms.append(float(last["inference_ms"]))
-                    for sid in last.get("selected_ids") or []:
-                        kind = "other"
-                        for c in rec.candidates:
-                            if c.get("id") == sid:
-                                ak = str(c.get("action_kind") or "")
-                                if ak == "construct":
-                                    kind = "build"
-                                elif ak == "trade_propose":
-                                    kind = "trade"
-                                elif ak.startswith("military"):
-                                    kind = "war"
-                                break
-                        action_families[kind] = action_families.get(kind, 0) + 1
+                    # Diversity oracle uses the primary seat action only — dual-slot
+                    # trade/diplomacy companions would otherwise collapse all policies.
+                    primary = str(last.get("primary_id") or "")
+                    kind = "other"
+                    for c in rec.candidates:
+                        if c.get("id") == primary:
+                            ak = str(c.get("action_kind") or "")
+                            if ak == "construct":
+                                kind = "build"
+                            elif ak == "trade_propose":
+                                kind = "trade"
+                            elif ak.startswith("military"):
+                                kind = "war"
+                            break
+                    action_families[kind] = action_families.get(kind, 0) + 1
             # Continue after era transition for diversity sampling unless env halted.
             if env._terminal:
                 break

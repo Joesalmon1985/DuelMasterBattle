@@ -18,6 +18,14 @@ from training.model import CandidateScorer
 
 # p95 target 20 ms (C14). Soft deadline for a single choose call.
 INFERENCE_DEADLINE_MS = 20.0
+# Documented personality bias for family-specialised trained policies (C14 diversity).
+FAMILY_LOGIT_BIAS = 2.5
+FAMILY_KIND = {
+    "build": {"construct"},
+    "trade": {"trade_propose", "diplomacy_propose"},
+    "war": {"military_move", "military_objective", "military_withdraw"},
+    "other": set(),
+}
 
 
 @dataclass
@@ -32,6 +40,7 @@ class NeuralBrain:
     last_source: str = "uninitialized"
     force_fail: bool = False
     policy_id: str = "neural"
+    prefer_family: str | None = None
 
     def __post_init__(self) -> None:
         self.artifact_path = Path(self.artifact_path)
@@ -40,6 +49,10 @@ class NeuralBrain:
             if not self.model.trained:
                 self.load_error = "artifact_not_marked_trained"
                 self.model = None
+            else:
+                prov = getattr(self.model, "provenance", None) or {}
+                if isinstance(prov, dict) and prov.get("prefer_family"):
+                    self.prefer_family = str(prov.get("prefer_family"))
         except Exception as exc:  # noqa: BLE001 — fallback is the contract
             self.load_error = str(exc)
             self.model = None
@@ -61,6 +74,16 @@ class NeuralBrain:
                 raise RuntimeError(self.load_error or "model_unavailable")
             # Score only supplied candidates — never emit arbitrary IDs.
             ranked = self.model.score_candidates(observation, candidates)
+            if self.prefer_family and self.prefer_family in FAMILY_KIND:
+                kinds = FAMILY_KIND[self.prefer_family]
+                by_id = {c["id"]: c for c in candidates}
+                boosted: list[tuple[str, float]] = []
+                for cid, score in ranked:
+                    cand = by_id.get(cid) or {}
+                    ak = str(cand.get("action_kind") or "")
+                    bonus = FAMILY_LOGIT_BIAS if ak in kinds else 0.0
+                    boosted.append((cid, float(score) + bonus))
+                ranked = boosted
             ranked.sort(key=lambda x: (-x[1], x[0]))
             primary = ranked[0][0]
             elapsed_ms = (time.perf_counter() - started) * 1000.0
@@ -77,6 +100,8 @@ class NeuralBrain:
             choice["inference_ms"] = elapsed_ms
             choice["source"] = source
             choice["policy_id"] = self.policy_id
+            if self.prefer_family:
+                choice["prefer_family"] = self.prefer_family
             return choice
         except Exception:
             # No partial neural action — full heuristic replacement within same seat budget.
