@@ -25,9 +25,58 @@ ROOT = Path(__file__).resolve().parents[1]
 QA_GATES = ROOT / "qa" / "auto_gates"
 TRACKING = ROOT / "Pack" / "DuelMasterBattle_Build_Pack" / "tracking" / "gates"
 
+# Shell executables that mean "run with the repository Python interpreter".
+_REPO_PYTHON_NAMES = frozenset({"python", "python3", "py"})
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def rewrite_shell_cmd(cmd: list[str], *, python_executable: str | None = None) -> list[str]:
+    """Rewrite python/python3/py shell steps to the active interpreter.
+
+    Gate JSON files historically start with literal ``python3``. On Windows the
+    project may only expose ``.venv\\Scripts\\python.exe``. Substitute when the
+    first token is a known Python launcher; leave arbitrary external commands
+    (godot, bash, etc.) untouched.
+    """
+    if not cmd:
+        return list(cmd)
+    rewritten = [str(x) for x in cmd]
+    head = Path(rewritten[0]).name.lower()
+    # Windows may pass ``python3.exe``; strip suffix for comparison.
+    if head.endswith(".exe"):
+        head = head[:-4]
+    if head in _REPO_PYTHON_NAMES:
+        rewritten[0] = python_executable or sys.executable
+    return rewritten
+
+
+def _kill_process_tree(proc: subprocess.Popen[str] | None) -> None:
+    """Best-effort cross-platform cleanup after timeout."""
+    if proc is None:
+        return
+    try:
+        if proc.poll() is None:
+            if os.name == "nt":
+                # Kill the whole child tree without touching unrelated processes.
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(proc.pid)],
+                    check=False,
+                    capture_output=True,
+                    timeout=10,
+                )
+            else:
+                proc.kill()
+            proc.wait(timeout=5)
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    if os.name != "nt":
+        try:
+            subprocess.run(["pkill", "-f", "Godot.*godot_project"], check=False, timeout=10)
+        except (OSError, subprocess.TimeoutExpired):
+            pass
 
 
 def _load_gate(gate: str) -> dict:
@@ -41,17 +90,38 @@ def _run(cmd: list[str], *, cwd: Path, timeout: int, log_path: Path) -> dict:
     log_path.parent.mkdir(parents=True, exist_ok=True)
     started = time.time()
     env = os.environ.copy()
+    cmd = rewrite_shell_cmd(cmd)
+    proc: subprocess.Popen[str] | None = None
     try:
-        proc = subprocess.run(
+        proc = subprocess.Popen(
             cmd,
             cwd=str(cwd),
             env=env,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
-            timeout=timeout,
         )
+        try:
+            stdout, stderr = proc.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            _kill_process_tree(proc)
+            try:
+                stdout, stderr = proc.communicate(timeout=5)
+            except (subprocess.TimeoutExpired, ValueError):
+                stdout, stderr = "", ""
+            log_path.write_text(
+                f"$ {' '.join(cmd)}\nTIMEOUT after {timeout}s\n\nSTDOUT:\n{stdout}\n\nSTDERR:\n{stderr}\n",
+                encoding="utf-8",
+            )
+            return {
+                "cmd": cmd,
+                "exit_code": 124,
+                "duration_s": round(time.time() - started, 3),
+                "log": str(log_path.relative_to(ROOT)),
+                "status": "TIMEOUT",
+            }
         log_path.write_text(
-            f"$ {' '.join(cmd)}\nexit={proc.returncode}\n\nSTDOUT:\n{proc.stdout}\n\nSTDERR:\n{proc.stderr}\n",
+            f"$ {' '.join(cmd)}\nexit={proc.returncode}\n\nSTDOUT:\n{stdout}\n\nSTDERR:\n{stderr}\n",
             encoding="utf-8",
         )
         return {
@@ -61,25 +131,22 @@ def _run(cmd: list[str], *, cwd: Path, timeout: int, log_path: Path) -> dict:
             "log": str(log_path.relative_to(ROOT)),
             "status": "PASS" if proc.returncode == 0 else "FAIL",
         }
-    except subprocess.TimeoutExpired as exc:
-        # Best-effort kill of hung Godot/sidecar trees
-        try:
-            subprocess.run(["pkill", "-f", "Godot.*godot_project"], check=False)
-        except OSError:
-            pass
-        out = (exc.stdout or b"").decode() if isinstance(exc.stdout, bytes) else (exc.stdout or "")
-        err = (exc.stderr or b"").decode() if isinstance(exc.stderr, bytes) else (exc.stderr or "")
+    except OSError as exc:
         log_path.write_text(
-            f"$ {' '.join(cmd)}\nTIMEOUT after {timeout}s\n\nSTDOUT:\n{out}\n\nSTDERR:\n{err}\n",
+            f"$ {' '.join(cmd)}\nOSError: {exc}\n",
             encoding="utf-8",
         )
         return {
             "cmd": cmd,
-            "exit_code": 124,
+            "exit_code": 127,
             "duration_s": round(time.time() - started, 3),
             "log": str(log_path.relative_to(ROOT)),
-            "status": "TIMEOUT",
+            "status": "FAIL",
+            "error": str(exc),
         }
+    finally:
+        if proc is not None and proc.poll() is None:
+            _kill_process_tree(proc)
 
 
 def main() -> int:
@@ -93,7 +160,14 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     results: list[dict] = []
     if args.dry_run:
-        print(json.dumps({"gate": gate, "steps": spec.get("steps"), "dry_run": True}, indent=2))
+        steps = []
+        for step in spec.get("steps") or []:
+            kind = str(step.get("kind") or "shell")
+            entry = {"name": step.get("name"), "kind": kind}
+            if kind == "shell":
+                entry["cmd"] = rewrite_shell_cmd(list(step.get("cmd") or []))
+            steps.append(entry)
+        print(json.dumps({"gate": gate, "steps": steps, "dry_run": True}, indent=2))
         return 0
     for i, step in enumerate(spec.get("steps") or []):
         name = str(step.get("name") or f"step_{i}")
@@ -121,10 +195,12 @@ def main() -> int:
             cmd += ["--script", script]
             results.append(_run(cmd, cwd=ROOT, timeout=timeout, log_path=log_path))
         elif kind == "shell":
-            cmd = list(step.get("cmd") or [])
+            cmd = rewrite_shell_cmd(list(step.get("cmd") or []))
             results.append(_run(cmd, cwd=ROOT, timeout=timeout, log_path=log_path))
         else:
-            results.append({"name": name, "status": "FAIL", "exit_code": 2, "detail": f"unknown kind {kind}"})
+            results.append(
+                {"name": name, "status": "FAIL", "exit_code": 2, "detail": f"unknown kind {kind}"}
+            )
         results[-1]["name"] = name
         results[-1]["kind"] = kind
 
@@ -137,12 +213,20 @@ def main() -> int:
         try:
             prior = json.loads(prior_path.read_text(encoding="utf-8"))
             prior_status = str(prior.get("status") or "")
-            if prior_status in {"PARTIAL_BLOCKED", "PARTIAL", "AUTO_FAILED", "AUTO_READY_FOR_OWNER_REVIEW"}:
+            if prior_status in {
+                "PARTIAL_BLOCKED",
+                "PARTIAL",
+                "AUTO_FAILED",
+                "AUTO_READY_FOR_OWNER_REVIEW",
+            }:
                 if not failed:
                     # Keep PARTIAL when infrastructure passes but qualification incomplete.
                     if prior_status.startswith("PARTIAL"):
                         status = prior_status
-                    elif prior.get("qualified_policies", 3) < 3 and prior_status != "AUTO_READY_FOR_OWNER_REVIEW":
+                    elif (
+                        prior.get("qualified_policies", 3) < 3
+                        and prior_status != "AUTO_READY_FOR_OWNER_REVIEW"
+                    ):
                         status = prior_status
                 else:
                     status = "AUTO_FAILED"
@@ -150,7 +234,6 @@ def main() -> int:
             pass
     # Optional gate-declared status probe from last successful step stdout.
     for r in results:
-        tail = ""
         log = r.get("log")
         if log:
             try:
@@ -196,7 +279,8 @@ def main() -> int:
     ]
     for r in results:
         lines.append(
-            f"| {r.get('name')} | {r.get('kind')} | {r.get('status')} | {r.get('exit_code')} | {r.get('duration_s', '')} |"
+            f"| {r.get('name')} | {r.get('kind')} | {r.get('status')} | "
+            f"{r.get('exit_code')} | {r.get('duration_s', '')} |"
         )
     summary.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps({"gate": gate, "status": status, "failed": len(failed)}, indent=2))
