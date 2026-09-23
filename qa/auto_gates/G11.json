@@ -1,0 +1,26 @@
+{
+  "id": "G11",
+  "fixture": "FX-ERA",
+  "seed": 507,
+  "steps": [
+    {
+      "name": "semantic_registry_sync",
+      "kind": "shell",
+      "cmd": ["python3", "tools/validate_semantic_catalogue.py", "--write"],
+      "timeout_s": 120
+    },
+    {
+      "name": "semantic_tests",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_semantic_visuals.py"],
+      "timeout_s": 60
+    },
+    {
+      "name": "gallery_index",
+      "kind": "shell",
+      "cmd": ["python3", "tools/generate_semantic_gallery.py"],
+      "timeout_s": 60
+    }
+  ],
+  "notes": "Semantic placeholders permitted; anonymous blobs fail."
+}

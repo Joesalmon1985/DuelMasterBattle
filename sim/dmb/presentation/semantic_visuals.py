@@ -37,6 +37,11 @@ CATEGORY_SHAPES: dict[str, dict[str, Any]] = {
     "alien": {"shape": "oval", "border": "solid", "abbrev_len": 2},
     "machine": {"shape": "gear", "border": "solid", "abbrev_len": 2},
     "nuclear": {"shape": "trefoil", "border": "solid", "abbrev_len": 2},
+    "presentation": {"shape": "line", "border": "solid", "abbrev_len": 2},
+    "rival": {"shape": "hex", "border": "dashed", "abbrev_len": 2},
+    "quest": {"shape": "star", "border": "dotted", "abbrev_len": 2},
+    "dungeon": {"shape": "diamond", "border": "dashed", "abbrev_len": 2},
+    "job": {"shape": "rect", "border": "dotted", "abbrev_len": 2},
 }
 
 

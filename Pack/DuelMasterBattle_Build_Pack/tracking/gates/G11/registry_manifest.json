@@ -1,6 +1,5 @@
 {
   "schema_version": 1,
-  "notes": "Semantic placeholder registry for overnight G06\u2013G12. Real art may override via asset_path.",
   "entries": [
     {
       "semantic_id": "building.prehistoric.settlement_centre",
@@ -1415,5 +1414,6 @@
       "border": "solid",
       "placeholder": true
     }
-  ]
+  ],
+  "count": 162
 }

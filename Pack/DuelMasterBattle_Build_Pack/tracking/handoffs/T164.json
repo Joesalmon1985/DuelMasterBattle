@@ -1,0 +1,21 @@
+{
+  "task_id": "T164",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tracking/gates/G11/MORNING_REVIEW.md"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T164",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T165",
+  "notes": "G11 AUTO_READY packet",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z",
+  "gate": "G11",
+  "gate_status": "AUTO_READY_FOR_OWNER_REVIEW"
+}

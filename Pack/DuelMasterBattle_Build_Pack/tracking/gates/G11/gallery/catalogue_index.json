@@ -1,6 +1,25 @@
 {
-  "schema_version": 1,
-  "notes": "Semantic placeholder registry for overnight G06\u2013G12. Real art may override via asset_path.",
+  "generated_at": "2026-09-23T07:34:14.401083+00:00",
+  "count": 162,
+  "categories": {
+    "alien": 1,
+    "building": 18,
+    "card": 2,
+    "hazard": 1,
+    "item": 60,
+    "job": 5,
+    "machine": 1,
+    "nuclear": 1,
+    "pollution": 1,
+    "presentation": 3,
+    "quest": 18,
+    "quest_item": 2,
+    "relic": 1,
+    "resource": 5,
+    "technology": 26,
+    "unit": 16,
+    "upgrade": 1
+  },
   "entries": [
     {
       "semantic_id": "building.prehistoric.settlement_centre",
@@ -8,7 +27,8 @@
       "label": "Settlement Centre",
       "abbrev": "SC",
       "shape": "rect",
-      "border": "solid"
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "building.prehistoric.warehouse",
@@ -16,7 +36,8 @@
       "label": "Warehouse",
       "abbrev": "WH",
       "shape": "rect",
-      "border": "solid"
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "building.prehistoric.factory",
@@ -24,7 +45,8 @@
       "label": "Factory",
       "abbrev": "FAC",
       "shape": "rect",
-      "border": "double"
+      "border": "double",
+      "registered": true
     },
     {
       "semantic_id": "building.historic.smelter",
@@ -33,7 +55,7 @@
       "abbrev": "SML",
       "shape": "rect",
       "border": "solid",
-      "badge": "H"
+      "registered": true
     },
     {
       "semantic_id": "building.modern.works",
@@ -42,7 +64,7 @@
       "abbrev": "WRK",
       "shape": "rect",
       "border": "solid",
-      "badge": "M"
+      "registered": true
     },
     {
       "semantic_id": "building.future.core",
@@ -51,7 +73,7 @@
       "abbrev": "FC",
       "shape": "hex",
       "border": "double",
-      "badge": "F"
+      "registered": true
     },
     {
       "semantic_id": "upgrade.factory.capacity_1",
@@ -59,21 +81,26 @@
       "label": "Capacity I",
       "abbrev": "C1",
       "shape": "rect",
-      "border": "double"
+      "border": "double",
+      "registered": true
     },
     {
       "semantic_id": "technology.modern.logistics",
       "category": "technology",
       "label": "Logistics",
       "abbrev": "LOG",
-      "shape": "hex"
+      "shape": "hex",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "technology.historic.metallurgy",
       "category": "technology",
       "label": "Metallurgy",
       "abbrev": "MET",
-      "shape": "hex"
+      "shape": "hex",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "resource.timber",
@@ -81,7 +108,8 @@
       "label": "Timber",
       "abbrev": "Ti",
       "shape": "circle",
-      "pattern": "wood"
+      "border": "dotted",
+      "registered": true
     },
     {
       "semantic_id": "resource.brick",
@@ -89,21 +117,26 @@
       "label": "Brick",
       "abbrev": "Br",
       "shape": "circle",
-      "pattern": "brick"
+      "border": "dotted",
+      "registered": true
     },
     {
       "semantic_id": "resource.wool",
       "category": "resource",
       "label": "Wool",
       "abbrev": "Wo",
-      "shape": "circle"
+      "shape": "circle",
+      "border": "dotted",
+      "registered": true
     },
     {
       "semantic_id": "resource.grain",
       "category": "resource",
       "label": "Grain",
       "abbrev": "Gr",
-      "shape": "circle"
+      "shape": "circle",
+      "border": "dotted",
+      "registered": true
     },
     {
       "semantic_id": "resource.ore",
@@ -111,7 +144,8 @@
       "label": "Ore",
       "abbrev": "Or",
       "shape": "circle",
-      "pattern": "dots"
+      "border": "dotted",
+      "registered": true
     },
     {
       "semantic_id": "unit.skirmisher",
@@ -119,7 +153,8 @@
       "label": "Skirmisher",
       "abbrev": "SK",
       "shape": "triangle",
-      "faction_tint": true
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "unit.line",
@@ -127,7 +162,8 @@
       "label": "Line",
       "abbrev": "LN",
       "shape": "rect",
-      "faction_tint": true
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "unit.heavy",
@@ -135,14 +171,17 @@
       "label": "Heavy",
       "abbrev": "HV",
       "shape": "hex",
-      "faction_tint": true
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "hazard.catastrophe",
       "category": "hazard",
       "label": "Catastrophe",
       "abbrev": "HZ",
-      "shape": "diamond"
+      "shape": "diamond",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "hazard.pollution",
@@ -150,28 +189,35 @@
       "label": "Pollution",
       "abbrev": "PL",
       "shape": "blob",
-      "pattern": "haze"
+      "border": "dotted",
+      "registered": true
     },
     {
       "semantic_id": "hazard.alien",
       "category": "alien",
       "label": "Alien",
       "abbrev": "AL",
-      "shape": "oval"
+      "shape": "oval",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "hazard.hostile_machine",
       "category": "machine",
       "label": "Hostile Machine",
       "abbrev": "HM",
-      "shape": "gear"
+      "shape": "gear",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "hazard.nuclear",
       "category": "nuclear",
       "label": "Nuclear",
       "abbrev": "NU",
-      "shape": "trefoil"
+      "shape": "trefoil",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "item.quest.rockfall_tool",
@@ -179,7 +225,8 @@
       "label": "Clearing Tool",
       "abbrev": "RT",
       "shape": "rounded_rect",
-      "border": "dashed"
+      "border": "dashed",
+      "registered": true
     },
     {
       "semantic_id": "item.sluice_handle",
@@ -187,63 +234,80 @@
       "label": "Sluice Handle",
       "abbrev": "SH",
       "shape": "rounded_rect",
-      "border": "dashed"
+      "border": "dashed",
+      "registered": true
     },
     {
       "semantic_id": "item.rope",
       "category": "item",
       "label": "Rope",
       "abbrev": "RP",
-      "shape": "rounded_rect"
+      "shape": "rounded_rect",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "item.hook",
       "category": "item",
       "label": "Hook",
       "abbrev": "HK",
-      "shape": "rounded_rect"
+      "shape": "rounded_rect",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "relic.era_seed",
       "category": "relic",
       "label": "Era Seed",
       "abbrev": "ES",
-      "shape": "star"
+      "shape": "star",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "card.spell.ward",
       "category": "card",
       "label": "Ward",
       "abbrev": "WRD",
-      "shape": "portrait_rect"
+      "shape": "portrait_rect",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "card.spell.attack",
       "category": "card",
       "label": "Attack",
       "abbrev": "ATK",
-      "shape": "portrait_rect"
+      "shape": "portrait_rect",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "road.modern",
       "category": "presentation",
       "label": "Modern Road",
       "abbrev": "RM",
-      "shape": "line"
+      "shape": "line",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "road.future",
       "category": "presentation",
       "label": "Future Road",
       "abbrev": "RF",
-      "shape": "line"
+      "shape": "line",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "building.modern.cleanup",
       "category": "presentation",
       "label": "Cleanup Works",
       "abbrev": "CU",
-      "shape": "rect"
+      "shape": "rect",
+      "border": "solid",
+      "registered": true
     },
     {
       "semantic_id": "aspect.authority",
@@ -252,7 +316,7 @@
       "abbrev": "AUT",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "aspect.curiosity",
@@ -261,7 +325,7 @@
       "abbrev": "CUR",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "aspect.empathy",
@@ -270,7 +334,7 @@
       "abbrev": "EMP",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "aspect.guile",
@@ -279,7 +343,7 @@
       "abbrev": "GUI",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "aspect.reason",
@@ -288,7 +352,7 @@
       "abbrev": "REA",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "aspect.resolve",
@@ -297,7 +361,7 @@
       "abbrev": "RES",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "aspect.wonder",
@@ -306,7 +370,7 @@
       "abbrev": "WON",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.centre",
@@ -315,7 +379,7 @@
       "abbrev": "CEN",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.centre.city",
@@ -324,7 +388,7 @@
       "abbrev": "BCC",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.centre.historic",
@@ -333,7 +397,7 @@
       "abbrev": "BCH",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.centre.historic.city",
@@ -342,7 +406,7 @@
       "abbrev": "BCH",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.factory",
@@ -351,7 +415,7 @@
       "abbrev": "FAC",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.factory.historic",
@@ -360,7 +424,7 @@
       "abbrev": "BFH",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.primary",
@@ -369,7 +433,7 @@
       "abbrev": "PRI",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.primary.historic",
@@ -378,7 +442,7 @@
       "abbrev": "BPH",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.processor",
@@ -387,7 +451,7 @@
       "abbrev": "PRO",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.processor.historic",
@@ -396,7 +460,7 @@
       "abbrev": "BPH",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.warehouse",
@@ -405,7 +469,7 @@
       "abbrev": "WAR",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "building.warehouse.historic",
@@ -414,7 +478,7 @@
       "abbrev": "BWH",
       "shape": "rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.clay_mountains.finite",
@@ -423,7 +487,7 @@
       "abbrev": "IFC",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.clay_mountains.renewable",
@@ -432,7 +496,7 @@
       "abbrev": "IFC",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.desert.finite",
@@ -441,7 +505,7 @@
       "abbrev": "IFD",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.desert.renewable",
@@ -450,7 +514,7 @@
       "abbrev": "IFD",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.fields.finite",
@@ -459,7 +523,7 @@
       "abbrev": "IFF",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.fields.renewable",
@@ -468,7 +532,7 @@
       "abbrev": "IFF",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.grazing_land.finite",
@@ -477,7 +541,7 @@
       "abbrev": "IFG",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.grazing_land.renewable",
@@ -486,7 +550,7 @@
       "abbrev": "IFG",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.ore_mountains.finite",
@@ -495,7 +559,7 @@
       "abbrev": "IFO",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.ore_mountains.renewable",
@@ -504,7 +568,7 @@
       "abbrev": "IFO",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.woodland.finite",
@@ -513,7 +577,7 @@
       "abbrev": "IFW",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.future.woodland.renewable",
@@ -522,7 +586,7 @@
       "abbrev": "IFW",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.clay_mountains.finite",
@@ -531,7 +595,7 @@
       "abbrev": "IHC",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.clay_mountains.renewable",
@@ -540,7 +604,7 @@
       "abbrev": "IHC",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.desert.finite",
@@ -549,7 +613,7 @@
       "abbrev": "IHD",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.desert.renewable",
@@ -558,7 +622,7 @@
       "abbrev": "IHD",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.fields.finite",
@@ -567,7 +631,7 @@
       "abbrev": "IHF",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.fields.renewable",
@@ -576,7 +640,7 @@
       "abbrev": "IHF",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.grazing_land.finite",
@@ -585,7 +649,7 @@
       "abbrev": "IHG",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.grazing_land.renewable",
@@ -594,7 +658,7 @@
       "abbrev": "IHG",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.ore_mountains.finite",
@@ -603,7 +667,7 @@
       "abbrev": "IHO",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.ore_mountains.renewable",
@@ -612,7 +676,7 @@
       "abbrev": "IHO",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.woodland.finite",
@@ -621,7 +685,7 @@
       "abbrev": "IHW",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.historic.woodland.renewable",
@@ -630,7 +694,7 @@
       "abbrev": "IHW",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.clay_mountains.finite",
@@ -639,7 +703,7 @@
       "abbrev": "IMC",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.clay_mountains.renewable",
@@ -648,7 +712,7 @@
       "abbrev": "IMC",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.desert.finite",
@@ -657,7 +721,7 @@
       "abbrev": "IMD",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.desert.renewable",
@@ -666,7 +730,7 @@
       "abbrev": "IMD",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.fields.finite",
@@ -675,7 +739,7 @@
       "abbrev": "IMF",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.fields.renewable",
@@ -684,7 +748,7 @@
       "abbrev": "IMF",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.grazing_land.finite",
@@ -693,7 +757,7 @@
       "abbrev": "IMG",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.grazing_land.renewable",
@@ -702,7 +766,7 @@
       "abbrev": "IMG",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.ore_mountains.finite",
@@ -711,7 +775,7 @@
       "abbrev": "IMO",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.ore_mountains.renewable",
@@ -720,7 +784,7 @@
       "abbrev": "IMO",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.woodland.finite",
@@ -729,7 +793,7 @@
       "abbrev": "IMW",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.modern.woodland.renewable",
@@ -738,7 +802,7 @@
       "abbrev": "IMW",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.clay_mountains.finite",
@@ -747,7 +811,7 @@
       "abbrev": "IPC",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.clay_mountains.renewable",
@@ -756,7 +820,7 @@
       "abbrev": "IPC",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.desert.finite",
@@ -765,7 +829,7 @@
       "abbrev": "IPD",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.desert.renewable",
@@ -774,7 +838,7 @@
       "abbrev": "IPD",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.fields.finite",
@@ -783,7 +847,7 @@
       "abbrev": "IPF",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.fields.renewable",
@@ -792,7 +856,7 @@
       "abbrev": "IPF",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.grazing_land.finite",
@@ -801,7 +865,7 @@
       "abbrev": "IPG",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.grazing_land.renewable",
@@ -810,7 +874,7 @@
       "abbrev": "IPG",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.ore_mountains.finite",
@@ -819,7 +883,7 @@
       "abbrev": "IPO",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.ore_mountains.renewable",
@@ -828,7 +892,7 @@
       "abbrev": "IPO",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.woodland.finite",
@@ -837,7 +901,7 @@
       "abbrev": "IPW",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "ind.prehistoric.woodland.renewable",
@@ -846,7 +910,7 @@
       "abbrev": "IPW",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "item.brick",
@@ -855,7 +919,7 @@
       "abbrev": "BRI",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "item.grappling_hook",
@@ -864,7 +928,7 @@
       "abbrev": "GRA",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "item.herb_salve",
@@ -873,7 +937,7 @@
       "abbrev": "HER",
       "shape": "rounded_rect",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "job.centre_clerk",
@@ -882,7 +946,7 @@
       "abbrev": "JC",
       "shape": "rect",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "job.factory_worker",
@@ -891,7 +955,7 @@
       "abbrev": "JF",
       "shape": "rect",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "job.primary_worker",
@@ -900,7 +964,7 @@
       "abbrev": "JP",
       "shape": "rect",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "job.processor_worker",
@@ -909,7 +973,7 @@
       "abbrev": "JP",
       "shape": "rect",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "job.warehouse_keeper",
@@ -918,7 +982,7 @@
       "abbrev": "JW",
       "shape": "rect",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.catastrophe.fire_break",
@@ -927,7 +991,7 @@
       "abbrev": "QC",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.catastrophe.flood_berm",
@@ -936,7 +1000,7 @@
       "abbrev": "QC",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.conflict.labour_strike",
@@ -945,7 +1009,7 @@
       "abbrev": "QC",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.conflict.water_rights",
@@ -954,7 +1018,7 @@
       "abbrev": "QC",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.diplomacy.border_truce",
@@ -963,7 +1027,7 @@
       "abbrev": "QD",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.diplomacy.trade_embargo",
@@ -972,7 +1036,7 @@
       "abbrev": "QD",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.discovery.ruin_map",
@@ -981,7 +1045,7 @@
       "abbrev": "QD",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.discovery.strange_signal",
@@ -990,7 +1054,7 @@
       "abbrev": "QD",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.factory_shortage",
@@ -999,7 +1063,7 @@
       "abbrev": "QF",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.military.deserter_hunt",
@@ -1008,7 +1072,7 @@
       "abbrev": "QM",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.military.raid_warning",
@@ -1017,7 +1081,7 @@
       "abbrev": "QM",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.personal.lost_heirloom",
@@ -1026,7 +1090,7 @@
       "abbrev": "QP",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.personal.sibling_feud",
@@ -1035,7 +1099,7 @@
       "abbrev": "QP",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.pollution_cleanup",
@@ -1044,7 +1108,7 @@
       "abbrev": "QP",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.shortage.fuel_yard",
@@ -1053,7 +1117,7 @@
       "abbrev": "QS",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.shortage.grain_store",
@@ -1062,7 +1126,7 @@
       "abbrev": "QS",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.transport.bridge_washout",
@@ -1071,7 +1135,7 @@
       "abbrev": "QT",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "quest.transport.cart_blockade",
@@ -1080,7 +1144,7 @@
       "abbrev": "QT",
       "shape": "star",
       "border": "dotted",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.future.cart_capacity",
@@ -1089,7 +1153,7 @@
       "abbrev": "TFC",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.future.factory_ceiling",
@@ -1098,7 +1162,7 @@
       "abbrev": "TFF",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.future.primary_flow",
@@ -1107,7 +1171,7 @@
       "abbrev": "TFP",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.future.processor_cap",
@@ -1116,7 +1180,7 @@
       "abbrev": "TFP",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.future.unit_attack",
@@ -1125,7 +1189,7 @@
       "abbrev": "TFU",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.future.unit_health",
@@ -1134,7 +1198,7 @@
       "abbrev": "TFU",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.historic.cart_capacity",
@@ -1143,7 +1207,7 @@
       "abbrev": "THC",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.historic.factory_ceiling",
@@ -1152,7 +1216,7 @@
       "abbrev": "THF",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.historic.primary_flow",
@@ -1161,7 +1225,7 @@
       "abbrev": "THP",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.historic.processor_cap",
@@ -1170,7 +1234,7 @@
       "abbrev": "THP",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.historic.unit_attack",
@@ -1179,7 +1243,7 @@
       "abbrev": "THU",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.historic.unit_health",
@@ -1188,7 +1252,7 @@
       "abbrev": "THU",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.modern.cart_capacity",
@@ -1197,7 +1261,7 @@
       "abbrev": "TMC",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.modern.factory_ceiling",
@@ -1206,7 +1270,7 @@
       "abbrev": "TMF",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.modern.primary_flow",
@@ -1215,7 +1279,7 @@
       "abbrev": "TMP",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.modern.processor_cap",
@@ -1224,7 +1288,7 @@
       "abbrev": "TMP",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.modern.unit_attack",
@@ -1233,7 +1297,7 @@
       "abbrev": "TMU",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.modern.unit_health",
@@ -1242,7 +1306,7 @@
       "abbrev": "TMU",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.prehistoric.cart_capacity",
@@ -1251,7 +1315,7 @@
       "abbrev": "TPC",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.prehistoric.factory_ceiling",
@@ -1260,7 +1324,7 @@
       "abbrev": "TPF",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.prehistoric.primary_flow",
@@ -1269,7 +1333,7 @@
       "abbrev": "TPP",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.prehistoric.processor_cap",
@@ -1278,7 +1342,7 @@
       "abbrev": "TPP",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.prehistoric.unit_attack",
@@ -1287,7 +1351,7 @@
       "abbrev": "TPU",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "tech.prehistoric.unit_health",
@@ -1296,7 +1360,7 @@
       "abbrev": "TPU",
       "shape": "hex",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.ancient.heavy",
@@ -1305,7 +1369,7 @@
       "abbrev": "UA",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.ancient.line",
@@ -1314,7 +1378,7 @@
       "abbrev": "UA",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.ancient.skirmisher",
@@ -1323,7 +1387,7 @@
       "abbrev": "UA",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.future.heavy",
@@ -1332,7 +1396,7 @@
       "abbrev": "UF",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.future.line",
@@ -1341,7 +1405,7 @@
       "abbrev": "UF",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.future.skirmisher",
@@ -1350,7 +1414,7 @@
       "abbrev": "UF",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.historic.heavy",
@@ -1359,7 +1423,7 @@
       "abbrev": "UH",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.historic.line",
@@ -1368,7 +1432,7 @@
       "abbrev": "UH",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.historic.skirmisher",
@@ -1377,7 +1441,7 @@
       "abbrev": "UH",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.modern.cleanup",
@@ -1386,7 +1450,7 @@
       "abbrev": "UM",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.modern.heavy",
@@ -1395,7 +1459,7 @@
       "abbrev": "UM",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.modern.line",
@@ -1404,7 +1468,7 @@
       "abbrev": "UM",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     },
     {
       "semantic_id": "unit.modern.skirmisher",
@@ -1413,7 +1477,8 @@
       "abbrev": "UM",
       "shape": "triangle",
       "border": "solid",
-      "placeholder": true
+      "registered": true
     }
-  ]
+  ],
+  "notes": "Catalogue index for owner review. Headed Godot gallery frames may be attached later; semantic descriptors are the objective completeness proof."
 }

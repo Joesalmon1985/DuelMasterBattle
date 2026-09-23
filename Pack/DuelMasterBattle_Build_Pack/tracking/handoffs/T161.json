@@ -1,0 +1,19 @@
+{
+  "task_id": "T161",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tools/validate_semantic_catalogue.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T161",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T162",
+  "notes": "semantic registry contract/sync",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z"
+}
