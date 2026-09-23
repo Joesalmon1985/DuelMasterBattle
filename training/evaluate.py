@@ -112,7 +112,7 @@ def _run_seed(
                             ak = str(c.get("action_kind") or "")
                             if ak == "construct":
                                 kind = "build"
-                            elif ak == "trade_propose":
+                            elif ak in {"trade_propose", "diplomacy_propose"}:
                                 kind = "trade"
                             elif ak.startswith("military"):
                                 kind = "war"

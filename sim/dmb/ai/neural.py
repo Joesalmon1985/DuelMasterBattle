@@ -74,9 +74,9 @@ class NeuralBrain:
                 raise RuntimeError(self.load_error or "model_unavailable")
             # Score only supplied candidates — never emit arbitrary IDs.
             ranked = self.model.score_candidates(observation, candidates)
+            by_id = {c["id"]: c for c in candidates}
             if self.prefer_family and self.prefer_family in FAMILY_KIND:
                 kinds = FAMILY_KIND[self.prefer_family]
-                by_id = {c["id"]: c for c in candidates}
                 boosted: list[tuple[str, float]] = []
                 for cid, score in ranked:
                     cand = by_id.get(cid) or {}
@@ -91,10 +91,10 @@ class NeuralBrain:
             if elapsed_ms > INFERENCE_DEADLINE_MS:
                 raise TimeoutError(f"inference_deadline_ms={elapsed_ms:.3f}")
             # Deterministic dual-slot selection mirroring heuristic structure,
-            # but ordered by neural scores.
-            by_id = {c["id"]: c for c in candidates}
+            # but ordered by neural scores. Family specialists may elevate their
+            # family into the primary seat (C14 diversity is primary-action based).
             score_order = [by_id[cid] for cid, _ in ranked if cid in by_id]
-            choice = self._select_slots(score_order)
+            choice = self._select_slots(score_order, prefer_family=self.prefer_family)
             source = "neural"
             self.last_source = source
             choice["inference_ms"] = elapsed_ms
@@ -116,7 +116,11 @@ class NeuralBrain:
             return choice
 
     @staticmethod
-    def _select_slots(ranked: list[dict[str, Any]]) -> dict[str, Any]:
+    def _select_slots(
+        ranked: list[dict[str, Any]],
+        *,
+        prefer_family: str | None = None,
+    ) -> dict[str, Any]:
         primary = None
         construction = None
         proposal = None
@@ -130,8 +134,31 @@ class NeuralBrain:
             "hazard_treat",
             "tech_pick",
         }
+        # Specialists may take their family as the primary seat action. Without this,
+        # trade_propose is dual-slot only and C14 primary-action diversity cannot see it.
+        if prefer_family == "trade":
+            primary_kinds = set(primary_kinds) | {"trade_propose", "diplomacy_propose"}
+        elif prefer_family == "war":
+            # Prefer military over construct when choosing primary.
+            primary_kinds = {
+                "military_move",
+                "military_objective",
+                "military_withdraw",
+                "hazard_treat",
+                "construct",
+                "tech_pick",
+            }
         for cand in ranked:
             kind = cand.get("action_kind")
+            if prefer_family == "war" and kind and str(kind).startswith("military") and primary is None:
+                primary = cand
+                continue
+            if prefer_family == "build" and kind == "construct" and primary is None:
+                primary = cand
+                continue
+            if prefer_family == "trade" and kind in {"trade_propose", "diplomacy_propose"} and primary is None:
+                primary = cand
+                continue
             if kind in primary_kinds and primary is None:
                 primary = cand
             if kind == "construct" and construction is None:
@@ -143,6 +170,13 @@ class NeuralBrain:
             elif kind == "noop" and noop is None:
                 noop = cand
         selected = [c for c in (primary, proposal) if c is not None]
+        # Avoid duplicating a trade primary into the proposal companion slot.
+        if (
+            primary is not None
+            and proposal is not None
+            and primary.get("id") == proposal.get("id")
+        ):
+            selected = [primary]
         if tech is not None and primary is not tech and tech not in selected:
             selected.append(tech)
         if not selected and noop is not None:
