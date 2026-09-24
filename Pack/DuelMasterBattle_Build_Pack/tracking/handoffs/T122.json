@@ -1,0 +1,18 @@
+{
+  "task_id": "T122",
+  "status": "DONE",
+  "commit": "06b43abecfa491610230f59d9d3ee1060e7f64bb",
+  "files": [
+    "tests/scenarios/test_all_era_economy_combat.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T122",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T123",
+  "notes": "G07 overnight implementation chunk."
+}

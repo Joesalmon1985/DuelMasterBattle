@@ -1,0 +1,1811 @@
+{
+  "generated_at": "2026-09-23T11:02:47.752872+00:00",
+  "fixture": "FX-ERA",
+  "seed_count": 200,
+  "passed": 200,
+  "failed": 0,
+  "elapsed_seconds": 34.14,
+  "failures": [],
+  "rows": [
+    {
+      "seed": 10000,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:23",
+      "exit_id": "node:23.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10001,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10002,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10003,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10004,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10005,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:5",
+      "exit_id": "node:5.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10006,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10008,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10009,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10010,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:6",
+      "exit_id": "node:6.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10012,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:49",
+      "exit_id": "node:49.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10013,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10014,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10015,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10016,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10017,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:14",
+      "exit_id": "node:14.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10018,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10019,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10020,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10021,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10022,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:36",
+      "exit_id": "node:36.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10023,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10024,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:36",
+      "exit_id": "node:36.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10025,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10026,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:6",
+      "exit_id": "node:6.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10027,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10029,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10030,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10031,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:23",
+      "exit_id": "node:23.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10032,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:23",
+      "exit_id": "node:23.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10033,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10034,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10035,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10036,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10037,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10038,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:49",
+      "exit_id": "node:49.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10039,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10040,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10041,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10042,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:53",
+      "exit_id": "node:53.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10043,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10044,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10046,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10047,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10048,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10049,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:15",
+      "exit_id": "node:15.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10050,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10051,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:49",
+      "exit_id": "node:49.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10052,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10053,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:47",
+      "exit_id": "node:47.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10054,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10055,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:5",
+      "exit_id": "node:5.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10056,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10058,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:26",
+      "exit_id": "node:26.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10059,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10060,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10061,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10062,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10063,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10064,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10065,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:5",
+      "exit_id": "node:5.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10066,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10067,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:54",
+      "exit_id": "node:54.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10068,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10069,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10070,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10071,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10072,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10073,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:47",
+      "exit_id": "node:47.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10074,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10075,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10076,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10077,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:26",
+      "exit_id": "node:26.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10078,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10080,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:14",
+      "exit_id": "node:14.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10081,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10082,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10083,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:14",
+      "exit_id": "node:14.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10084,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10085,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:49",
+      "exit_id": "node:49.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10086,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:26",
+      "exit_id": "node:26.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10087,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:15",
+      "exit_id": "node:15.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10088,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:23",
+      "exit_id": "node:23.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10090,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:5",
+      "exit_id": "node:5.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10091,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10092,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10093,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10095,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:50",
+      "exit_id": "node:50.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10096,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10098,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10099,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:36",
+      "exit_id": "node:36.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10100,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10101,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:15",
+      "exit_id": "node:15.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10102,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:53",
+      "exit_id": "node:53.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10103,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:14",
+      "exit_id": "node:14.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10104,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:6",
+      "exit_id": "node:6.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10106,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10107,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:23",
+      "exit_id": "node:23.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10108,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10110,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10111,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10113,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10114,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10115,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:53",
+      "exit_id": "node:53.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10116,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10117,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:50",
+      "exit_id": "node:50.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10118,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:14",
+      "exit_id": "node:14.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10119,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10120,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10121,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:50",
+      "exit_id": "node:50.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10122,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10123,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10124,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10125,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:14",
+      "exit_id": "node:14.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10126,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:23",
+      "exit_id": "node:23.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10127,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:26",
+      "exit_id": "node:26.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10128,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10129,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:47",
+      "exit_id": "node:47.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10130,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10131,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:47",
+      "exit_id": "node:47.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10132,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:5",
+      "exit_id": "node:5.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10133,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10134,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10135,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:53",
+      "exit_id": "node:53.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10136,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:47",
+      "exit_id": "node:47.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10137,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10138,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10139,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10140,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10141,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:49",
+      "exit_id": "node:49.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10142,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10143,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10144,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:50",
+      "exit_id": "node:50.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10145,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10146,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10147,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:15",
+      "exit_id": "node:15.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10148,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10149,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:15",
+      "exit_id": "node:15.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10150,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10152,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:49",
+      "exit_id": "node:49.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10153,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10154,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:50",
+      "exit_id": "node:50.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10155,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:36",
+      "exit_id": "node:36.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10156,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10157,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10158,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10159,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10160,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10161,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10162,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:50",
+      "exit_id": "node:50.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10164,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10165,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10166,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10167,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:23",
+      "exit_id": "node:23.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10168,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10169,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:47",
+      "exit_id": "node:47.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10170,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10171,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10172,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10173,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10174,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10175,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10176,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10177,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10178,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:49",
+      "exit_id": "node:49.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10179,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10180,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:13",
+      "exit_id": "node:13.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10181,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:49",
+      "exit_id": "node:49.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10183,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:15",
+      "exit_id": "node:15.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10184,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10185,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10186,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:35",
+      "exit_id": "node:35.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10187,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:6",
+      "exit_id": "node:6.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10188,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:45",
+      "exit_id": "node:45.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10189,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:2",
+      "exit_id": "node:2.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10190,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:47",
+      "exit_id": "node:47.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10191,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:53",
+      "exit_id": "node:53.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10192,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10193,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:14",
+      "exit_id": "node:14.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10194,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:29",
+      "exit_id": "node:29.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10195,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:36",
+      "exit_id": "node:36.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10197,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:24",
+      "exit_id": "node:24.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10198,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10200,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:15",
+      "exit_id": "node:15.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10202,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10203,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:32",
+      "exit_id": "node:32.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10204,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:36",
+      "exit_id": "node:36.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10205,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:18",
+      "exit_id": "node:18.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10206,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10207,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:46",
+      "exit_id": "node:46.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10208,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10209,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:21",
+      "exit_id": "node:21.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10210,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10211,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:25",
+      "exit_id": "node:25.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10212,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:38",
+      "exit_id": "node:38.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10213,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:2",
+      "exit_id": "node:2.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10214,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:37",
+      "exit_id": "node:37.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10215,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:26",
+      "exit_id": "node:26.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10216,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:50",
+      "exit_id": "node:50.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    },
+    {
+      "seed": 10217,
+      "fixture": "FX-ERA",
+      "start_node_id": "node:15",
+      "exit_id": "node:15.south",
+      "direction": "south",
+      "helpers": 7,
+      "status": "ok"
+    }
+  ]
+}

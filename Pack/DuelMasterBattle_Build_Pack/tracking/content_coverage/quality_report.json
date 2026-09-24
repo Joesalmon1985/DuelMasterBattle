@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "quests": {
+    "count": 17,
+    "by_family": {
+      "village_production": 1,
+      "shortage": 2,
+      "transport": 2,
+      "catastrophe": 2,
+      "diplomacy": 2,
+      "military": 2,
+      "personal": 2,
+      "discovery": 2,
+      "conflict": 2
+    },
+    "target_per_family": 2,
+    "missing_families": []
+  },
+  "dungeons": {
+    "count": 8,
+    "ids": [
+      "cave",
+      "mine",
+      "sluice",
+      "temple",
+      "bunker",
+      "industrial",
+      "alien",
+      "machine"
+    ],
+    "missing": []
+  },
+  "rivals": {
+    "count": 4,
+    "ids": [
+      "ashen_tactician",
+      "ember_duelist",
+      "iron_broker",
+      "veil_scout"
+    ]
+  },
+  "dialogue": {
+    "line_count": 1423,
+    "eras_seen": [
+      "all",
+      "future",
+      "historic",
+      "modern",
+      "prehistoric"
+    ],
+    "target": 1200
+  },
+  "recipes": {
+    "count": 240,
+    "target": 240
+  },
+  "assets": {
+    "manifest_present": true,
+    "missing": []
+  },
+  "gaps": [],
+  "compiled_manifest_present": true
+}

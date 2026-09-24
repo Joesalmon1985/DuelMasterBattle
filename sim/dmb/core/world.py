@@ -584,6 +584,85 @@ class WorldSim:
                 payload=item,
                 public_feedback=f"dropped {item.get('label') or item_id}",
             )
+        if action == "equip":
+            from sim.dmb.player.inventory import InventoryService
+
+            item_id = str(payload.get("item_id") or "")
+            slot = str(payload.get("slot") or "focus")
+            try:
+                item = InventoryService(self.state).equip(item_id, slot=slot)
+            except Exception as exc:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback=str(exc),
+                )
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "equip", "item_id": item_id, "slot": slot}],
+                payload=item,
+                public_feedback=f"equipped {item.get('label') or item_id}",
+            )
+        if action in {"use_item", "use"}:
+            from sim.dmb.player.inventory import InventoryService
+
+            item_id = str(payload.get("item_id") or "")
+            use_id = payload.get("use_id")
+            try:
+                result = InventoryService(self.state).use(
+                    item_id,
+                    use_id=str(use_id) if use_id else None,
+                    target=str(payload.get("target_id") or payload.get("target") or "") or None,
+                )
+            except Exception as exc:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback=str(exc),
+                )
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "use_item", "item_id": item_id}],
+                payload=result,
+                public_feedback="used item",
+            )
+        if action == "prepare_spell":
+            spell_id = str(payload.get("spell_id") or "")
+            if not spell_id:
+                return CommandResult(
+                    status="REJECTED",
+                    code="INVALID",
+                    command_id=envelope.command_id,
+                    world_version=self.state.world_version,
+                    events=[],
+                    public_feedback="spell_id required",
+                )
+            self.state.player = dict(self.state.player or {})
+            self.state.player["prepared_spell"] = spell_id
+            self.state.world_version += 1
+            return CommandResult(
+                status="ACCEPTED",
+                code="OK",
+                command_id=envelope.command_id,
+                world_version=self.state.world_version,
+                events=[{"kind": "prepare_spell", "spell_id": spell_id}],
+                payload={"prepared_spell": spell_id, "remote_cast_allowed": False},
+                public_feedback=f"prepared {spell_id}",
+            )
         if action == "enter_sluice":
             self.state.player["area_id"] = "area.sluice"
             self.state.player["position"] = [8.0, 9.0]

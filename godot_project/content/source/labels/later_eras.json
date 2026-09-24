@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "labels": {
+    "era.modern": {
+      "text": "Modern",
+      "badge": "M"
+    },
+    "era.future": {
+      "text": "Future",
+      "badge": "F"
+    },
+    "building.modern.works": {
+      "text": "Works",
+      "legacy": false
+    },
+    "building.future.core": {
+      "text": "Future Core",
+      "legacy": false
+    },
+    "building.historic.smelter": {
+      "text": "Smelter",
+      "legacy": true
+    },
+    "unit.modern.cleanup": {
+      "text": "Cleanup Crew"
+    }
+  }
+}

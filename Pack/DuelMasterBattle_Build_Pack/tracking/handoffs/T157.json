@@ -1,0 +1,19 @@
+{
+  "task_id": "T157",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tests/scenarios/test_release.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T157",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T158",
+  "notes": "release regression suite",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z"
+}

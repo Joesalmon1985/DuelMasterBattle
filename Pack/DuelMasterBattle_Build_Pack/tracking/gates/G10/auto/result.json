@@ -1,0 +1,121 @@
+{
+  "gate": "G10",
+  "generated_at": "2026-09-23T14:56:08Z",
+  "status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "results": [
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-c",
+        "import json,pathlib; p=pathlib.Path('Pack/DuelMasterBattle_Build_Pack/tracking/release_coverage.json'); d=json.loads(p.read_text()); assert d.get('player_verbs'); print('RELEASE_COVERAGE_OK')"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.055,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G10\\auto\\logs\\00_release_coverage.log",
+      "status": "PASS",
+      "name": "release_coverage",
+      "kind": "shell"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/integration/test_release_recovery.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.329,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G10\\auto\\logs\\01_save_recovery.log",
+      "status": "PASS",
+      "name": "save_recovery",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/verify_a11y_release.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.057,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G10\\auto\\logs\\02_a11y_matrix.log",
+      "status": "PASS",
+      "name": "a11y_matrix",
+      "kind": "shell"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t154_a11y_release.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.289,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G10\\auto\\logs\\03_a11y_tests.log",
+      "status": "PASS",
+      "name": "a11y_tests",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/package_desktop.py",
+        "--target",
+        "all"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.101,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G10\\auto\\logs\\04_package_desktop.log",
+      "status": "PASS",
+      "name": "package_desktop",
+      "kind": "shell"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/smoke_release.py",
+        "--platform",
+        "linux"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.101,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G10\\auto\\logs\\05_smoke_linux.log",
+      "status": "PASS",
+      "name": "smoke_linux",
+      "kind": "shell"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/scenarios/test_release.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.422,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G10\\auto\\logs\\06_release_regression.log",
+      "status": "PASS",
+      "name": "release_regression",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/profile_world.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.359,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G10\\auto\\logs\\07_profile_world.log",
+      "status": "PASS",
+      "name": "profile_world",
+      "kind": "shell"
+    }
+  ],
+  "spec": "G10",
+  "seed": 1101,
+  "fixture": "FX-RELEASE"
+}

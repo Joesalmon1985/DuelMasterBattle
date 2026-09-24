@@ -1,0 +1,42 @@
+{
+  "manifest_version": 1,
+  "profile_id": "full_catalogue",
+  "status": "IMPLEMENTED",
+  "acceptance_gate": "G07",
+  "required": {
+    "eras": [
+      "Prehistoric",
+      "Historic",
+      "Modern",
+      "Future"
+    ],
+    "industrial_resources": 48,
+    "processor_recipes": 240,
+    "runtime_internet": false,
+    "runtime_llm": false
+  },
+  "catalogue": {
+    "industrial_resources": 48,
+    "processor_recipes": 240,
+    "prehistoric_recipes": 60,
+    "historic_recipes": 60,
+    "modern_recipes": 60,
+    "future_recipes": 60,
+    "raw_frequency_per_era": 10,
+    "input_quantities": [1, 1],
+    "baseline_military_supply": true,
+    "services_nonstorable": true,
+    "era_filtered_full_recipes": true,
+    "culture_access_all_60": true,
+    "workbook_roles_metadata_only": true,
+    "mvp_subset_preserved": true
+  },
+  "sources": {
+    "resources": "res://content/source/resources/catalog.json",
+    "recipes": "res://content/source/recipes/full.json",
+    "culture_access": "res://content/source/recipes/culture_access.json",
+    "runtime_module": "sim.dmb.content.catalogue"
+  },
+  "completion_claim": false,
+  "notes": "Enables the full four-era industrial catalogue for G07. MVP 16+16 subset remains available via mvp_only filtering."
+}

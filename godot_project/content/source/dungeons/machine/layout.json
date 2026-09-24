@@ -1,0 +1,102 @@
+{
+  "id": "dungeon.machine",
+  "schema_version": 1,
+  "area_id": "area.machine",
+  "puzzle_id": "puzzle.machine",
+  "blurb": "Machine complex with rate-limited alarms.",
+  "rooms": [
+    {
+      "id": "room.entrance",
+      "label": "Machine Entrance",
+      "exits": [
+        "room.workshop",
+        "room.corridor",
+        "room.exit"
+      ],
+      "clues": [
+        {
+          "id": "clue.machine.entry",
+          "text": "The machine entrance shows recent traffic."
+        }
+      ],
+      "spawn": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "room.workshop",
+      "label": "Side Cache",
+      "exits": [
+        "room.entrance"
+      ],
+      "clues": [
+        {
+          "id": "clue.machine.cache",
+          "text": "A recovery item for the machine puzzle rests here."
+        }
+      ],
+      "items": [
+        {
+          "definition_id": "item.machine_key",
+          "position": [
+            2.0,
+            1.0
+          ],
+          "quest_bound": true
+        }
+      ]
+    },
+    {
+      "id": "room.corridor",
+      "label": "Mechanism Corridor",
+      "exits": [
+        "room.entrance",
+        "room.chamber"
+      ],
+      "clues": [
+        {
+          "id": "clue.machine.plate",
+          "text": "Hold the plate while the switch opens the gate."
+        }
+      ],
+      "mechanisms": [
+        "switch.machine"
+      ],
+      "alternate_route": "room.exit"
+    },
+    {
+      "id": "room.chamber",
+      "label": "Gate Chamber",
+      "exits": [
+        "room.corridor",
+        "room.exit"
+      ],
+      "clues": [],
+      "mechanisms": [
+        "box.machine",
+        "plate.machine",
+        "receptor.machine",
+        "gate.final",
+        "actuator.machine"
+      ]
+    },
+    {
+      "id": "room.exit",
+      "label": "Exit Loop",
+      "exits": [
+        "room.entrance",
+        "room.chamber"
+      ],
+      "clues": [],
+      "locked_by": "gate.final",
+      "permanent_lock": false
+    }
+  ],
+  "entry_room": "room.entrance",
+  "exit_room": "room.exit",
+  "persistent_state": true,
+  "common_puzzle_vocabulary": true,
+  "clues_and_alternate_routes": true,
+  "bind_systemic_context": true
+}

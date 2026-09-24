@@ -51,9 +51,7 @@ class SaveRepository:
                 raise TypeValidationError(f"invalid world payload: {exc}") from exc
             temporary = path.with_suffix(".tmp")
             payload = dict(snapshot)
-            payload["content_hash"] = hashlib.sha256(
-                json.dumps(snapshot, sort_keys=True, separators=(",", ":")).encode("utf-8")
-            ).hexdigest()
+            payload["content_hash"] = self.compute_content_hash(payload)
             temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
             if path.exists():
                 backup = self.backup_path(slot)
@@ -77,14 +75,42 @@ class SaveRepository:
         except (json.JSONDecodeError, TypeValidationError, KeyError, TypeError) as exc:
             backup = self.backup_path(slot)
             if backup.is_file():
-                payload = json.loads(backup.read_text(encoding="utf-8"))
-                return self._normalize_payload(payload)
+                try:
+                    payload = json.loads(backup.read_text(encoding="utf-8"))
+                    restored = self._normalize_payload(payload)
+                    restored["_recovery"] = {
+                        "restored_from_backup": True,
+                        "slot": slot,
+                        "message": (
+                            "Primary save was corrupt or mismatched; "
+                            "restored previous backup without deleting prototype files."
+                        ),
+                        "cause": str(exc),
+                    }
+                    return restored
+                except (json.JSONDecodeError, TypeValidationError, KeyError, TypeError) as backup_exc:
+                    raise TypeValidationError(
+                        f"corrupt save and backup also unusable: {backup_exc}"
+                    ) from backup_exc
             raise TypeValidationError(f"corrupt save and no backup: {exc}") from exc
+
+    @staticmethod
+    def compute_content_hash(snapshot: dict[str, Any]) -> str:
+        """Hash payload body excluding the content_hash field itself."""
+        body = {key: value for key, value in snapshot.items() if key != "content_hash"}
+        return hashlib.sha256(
+            json.dumps(body, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
 
     def _normalize_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
         version = int(payload.get("schema_version", -1))
         if version not in LEGACY_READABLE:
             raise TypeValidationError("unsupported-version")
+        stored_hash = payload.get("content_hash")
+        if stored_hash is not None:
+            expected = self.compute_content_hash(payload)
+            if stored_hash != expected:
+                raise TypeValidationError("content hash mismatch — refusing silent load")
         world = payload.get("world")
         if not isinstance(world, dict):
             raise TypeValidationError("missing world")

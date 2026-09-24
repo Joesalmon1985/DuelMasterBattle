@@ -34,7 +34,12 @@ G04_BATTLE_FIXTURE = "FX-BATTLE"
 G04_BATTLE_SEED = "404"
 G04_HAZARD_FIXTURE = "FX-HAZARD"
 G04_HAZARD_SEED = "408"
+G05_MVP_FIXTURE = "FX-MVP"
+G05_MVP_SEED = "507"
+G05_ERA_FIXTURE = "FX-ERA"
+G05_ERA_SEED = "507"
 DEFAULT_RESOLUTION = "450x800"
+G05_SCENE = "res://client/scenes/g05_shell.tscn"
 
 
 def _load_local() -> dict:
@@ -324,6 +329,109 @@ def cmd_play_g04_hazard(_: argparse.Namespace) -> int:
     )
 
 
+def cmd_play_latest(_: argparse.Namespace) -> int:
+    """Latest integrated strategic world — FX-MVP via g05_shell."""
+    print("=" * 60)
+    print("LATEST INTEGRATED STRATEGIC-WORLD BUILD")
+    print("Fixture FX-MVP seed 507 — g05_shell (not main-menu story alone)")
+    print("=" * 60)
+    return launch_godot(
+        scene=G05_SCENE,
+        fixture=G05_MVP_FIXTURE,
+        seed=G05_MVP_SEED,
+        resolution=DEFAULT_RESOLUTION,
+    )
+
+
+def cmd_play_fx_mvp(_: argparse.Namespace) -> int:
+    return cmd_play_latest(_)
+
+
+def cmd_play_fx_era(_: argparse.Namespace) -> int:
+    print("Near-era-transition build — FX-ERA via g05_shell")
+    return launch_godot(
+        scene=G05_SCENE,
+        fixture=G05_ERA_FIXTURE,
+        seed=G05_ERA_SEED,
+        resolution=DEFAULT_RESOLUTION,
+    )
+
+
+def cmd_play_g05(_: argparse.Namespace) -> int:
+    return cmd_play_latest(_)
+
+
+def cmd_play_visual_review(_: argparse.Namespace) -> int:
+    """Headed in-world visual review harness (Phase C)."""
+    try:
+        python = resolve_python()
+        godot = resolve_godot(prompt=True)
+    except FileNotFoundError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    env = prepare_env(python, godot)
+    env["DMB_FIXTURE"] = G05_MVP_FIXTURE
+    env["DMB_SEED"] = G05_MVP_SEED
+    env["DMB_VISUAL_REVIEW"] = "1"
+    script = "res://client/tests/run_visual_review_harness.gd"
+    argv = [
+        str(godot),
+        "--path",
+        str(ROOT / "godot_project"),
+        "--resolution",
+        DEFAULT_RESOLUTION,
+        "--script",
+        script,
+    ]
+    print(f"Visual review harness: {script}")
+    print(f"Using Godot: {godot}")
+    try:
+        proc = subprocess.run(argv, cwd=str(ROOT), env=env, check=False)
+    except OSError as exc:
+        print(f"ERROR: failed to launch Godot: {exc}")
+        return 1
+    return int(proc.returncode)
+
+
+def cmd_play_ward_duel_review(_: argparse.Namespace) -> int:
+    """Headed Ward Duel presentation regression with screenshots."""
+    try:
+        python = resolve_python()
+        godot = resolve_godot(prompt=True)
+    except FileNotFoundError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    env = prepare_env(python, godot)
+    env["DMB_WARD_DUEL_SHOTS"] = "1"
+    shot_dir = (
+        ROOT
+        / "Pack"
+        / "DuelMasterBattle_Build_Pack"
+        / "tracking"
+        / "gates"
+        / "G11"
+        / "ward_duel_leak"
+    )
+    shot_dir.mkdir(parents=True, exist_ok=True)
+    env["DMB_SHOT_DIR"] = str(shot_dir)
+    argv = [
+        str(godot),
+        "--path",
+        str(ROOT / "godot_project"),
+        "--resolution",
+        DEFAULT_RESOLUTION,
+        "--script",
+        "res://client/tests/run_ward_duel_presentation.gd",
+    ]
+    print("Ward Duel presentation review (headed)")
+    try:
+        proc = subprocess.run(argv, cwd=str(ROOT), env=env, check=False)
+    except OSError as exc:
+        print(f"ERROR: failed to launch Godot: {exc}")
+        return 1
+    return int(proc.returncode)
+
+
 def cmd_play_g01(_: argparse.Namespace) -> int:
     # Match documented G01 gate launch (FX-CLOCK / seed 7) with --direct scene.
     return launch_godot(
@@ -469,62 +577,71 @@ def interactive_menu() -> int:
         print()
         print("DuelMasterBattle Windows playtest")
         print(f"Repo: {ROOT}")
-        print("1. Play G04 battle — default portrait 450x800")
-        print("2. Play G04 hazard — default portrait 450x800")
-        print("3. Play G03 directly")
-        print("4. Play G02 directly")
+        print()
+        print("=== Latest integrated world ===")
+        print("L. Latest integrated world / FX-MVP (g05_shell) — RECOMMENDED")
+        print("E. Near-era-transition / FX-ERA")
+        print()
+        print("=== Production / combat / hazards ===")
+        print("3. Unit production / G03")
+        print("1. Local combat / G04 battle")
+        print("2. Hazard/manifestation combat / G04 hazard")
+        print()
+        print("=== Story / earlier gates ===")
+        print("6. Main story/menu")
         print("5. Play G01 directly")
-        print("6. Open the main menu")
+        print("4. Play G02 directly")
+        print()
+        print("=== Visual review ===")
+        print("V. In-world visual review harness")
+        print("W. Ward Duel presentation review (headed shots)")
+        print()
+        print("=== Checks ===")
         print("7. Run automated G04 checks")
         print("8. Run all implemented gates G01-G04")
         print("0. Exit")
-        choice = input("Select: ").strip()
-        if choice == "1":
-            code = cmd_play_g04_battle(argparse.Namespace())
-            if code:
-                input("Press Enter to continue...")
-        elif choice == "2":
-            code = cmd_play_g04_hazard(argparse.Namespace())
-            if code:
-                input("Press Enter to continue...")
-        elif choice == "3":
-            code = cmd_play_g03(argparse.Namespace())
-            if code:
-                input("Press Enter to continue...")
-        elif choice == "4":
-            code = cmd_play_g02(argparse.Namespace())
-            if code:
-                input("Press Enter to continue...")
-        elif choice == "5":
-            code = cmd_play_g01(argparse.Namespace())
-            if code:
-                input("Press Enter to continue...")
-        elif choice == "6":
-            code = cmd_play_menu(argparse.Namespace())
-            if code:
-                input("Press Enter to continue...")
-        elif choice == "7":
-            code = cmd_check_g04(argparse.Namespace())
-            input("Press Enter to continue...")
-        elif choice == "8":
-            code = cmd_check_all(argparse.Namespace())
-            input("Press Enter to continue...")
-        elif choice == "0":
+        choice = input("Select: ").strip().upper()
+        dispatch = {
+            "L": cmd_play_latest,
+            "E": cmd_play_fx_era,
+            "1": cmd_play_g04_battle,
+            "2": cmd_play_g04_hazard,
+            "3": cmd_play_g03,
+            "4": cmd_play_g02,
+            "5": cmd_play_g01,
+            "6": cmd_play_menu,
+            "V": cmd_play_visual_review,
+            "W": cmd_play_ward_duel_review,
+            "7": cmd_check_g04,
+            "8": cmd_check_all,
+        }
+        if choice == "0":
             return 0
-        else:
+        fn = dispatch.get(choice)
+        if fn is None:
             print("Invalid choice.")
+            continue
+        code = fn(argparse.Namespace())
+        if choice in {"7", "8"} or code:
+            input("Press Enter to continue...")
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command")
     sub.add_parser("resolve", help="Resolve and remember Godot/Python")
+    sub.add_parser("play-latest", help="Latest integrated FX-MVP / g05_shell")
+    sub.add_parser("play-fx-mvp", help="Alias for play-latest")
+    sub.add_parser("play-fx-era", help="Near-era FX-ERA / g05_shell")
+    sub.add_parser("play-g05", help="Alias for play-latest")
     sub.add_parser("play-g02", help="Launch G02 shell directly")
     sub.add_parser("play-g03", help="Launch G03 shell directly")
     sub.add_parser("play-g04-battle", help="Launch G04 battle shell")
     sub.add_parser("play-g04-hazard", help="Launch G04 hazard shell")
     sub.add_parser("play-g01", help="Launch G01 shell directly")
     sub.add_parser("play-menu", help="Launch main menu")
+    sub.add_parser("play-visual-review", help="In-world visual review harness")
+    sub.add_parser("play-ward-duel-review", help="Ward Duel presentation review")
     sub.add_parser("check-g01", help="Run tools/check.py --gate G01")
     sub.add_parser("check-g02", help="Run tools/check.py --gate G02")
     sub.add_parser("check-g03", help="Run tools/check.py --gate G03")
@@ -541,12 +658,18 @@ def main(argv: list[str] | None = None) -> int:
     command = args.command or "menu"
     handlers = {
         "resolve": cmd_resolve,
+        "play-latest": cmd_play_latest,
+        "play-fx-mvp": cmd_play_fx_mvp,
+        "play-fx-era": cmd_play_fx_era,
+        "play-g05": cmd_play_g05,
         "play-g02": cmd_play_g02,
         "play-g03": cmd_play_g03,
         "play-g04-battle": cmd_play_g04_battle,
         "play-g04-hazard": cmd_play_g04_hazard,
         "play-g01": cmd_play_g01,
         "play-menu": cmd_play_menu,
+        "play-visual-review": cmd_play_visual_review,
+        "play-ward-duel-review": cmd_play_ward_duel_review,
         "check-g01": cmd_check_g01,
         "check-g02": cmd_check_g02,
         "check-g03": cmd_check_g03,

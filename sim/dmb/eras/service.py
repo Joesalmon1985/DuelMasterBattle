@@ -60,20 +60,18 @@ def _hazard_rollover(state: Any, *, next_era: str) -> dict[str, Any]:
     }
 
 
-def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
-    """Ensure upgraded Historic core has a working cross-terrain production chain."""
-    import json
-    from pathlib import Path
-
+def _rebind_era_industry(state: Any, settlement_id: str, *, era: str) -> dict[str, Any]:
+    """Ensure upgraded core has a working cross-terrain production chain for ``era``."""
     from sim.dmb.industry.layers import ResourceLayerService
     from sim.dmb.industry.primary import PrimaryChannel
     from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
     from sim.dmb.industry.service import IndustryService
-    from sim.dmb.eras.upgrades import load_historic_core_config
+    from sim.dmb.eras.upgrades import DEFAULT_UNITS, load_core_config
 
+    era_key = str(era or "historic").lower()
     settlement = state.settlements.get(settlement_id) or {}
     node_id = str(settlement.get("node_id") or "")
-    cfg = load_historic_core_config()
+    cfg = load_core_config(era_key)
     terrain_map = cfg.get("terrain_industrial") or {}
     industry = IndustryService(state)
     layers = ResourceLayerService(state.industry)
@@ -97,9 +95,8 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
         key=lambda b: int(b.get("slot_index") or 0),
     )
     if not primaries or not processors or not factories:
-        return {"status": "insufficient_slots", "settlement_id": settlement_id}
+        return {"status": "insufficient_slots", "settlement_id": settlement_id, "era": era_key}
 
-    # Resolve touching hex terrains.
     node_hexes = (state.board or {}).get("node_hexes") or {}
     hex_terrain = (state.board or {}).get("hex_terrain") or {}
     touching = list(node_hexes.get(node_id) or [])
@@ -111,6 +108,7 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
 
     channel_by_resource: dict[str, str] = {}
     bound_terrains: list[str] = []
+    cycle = int(state.clock.get("cycle") or 0)
     for i, primary in enumerate(sorted(primaries, key=lambda b: str(b["id"]))):
         terrains = sorted(by_terrain.keys())
         if not terrains:
@@ -122,19 +120,19 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
         finite = meta.get("finite")
         primary["terrain"] = terrain
         primary["hex_id"] = hid
-        primary["era"] = "historic"
+        primary["era"] = era_key
         if renew:
             rid, label = renew[0], renew[1]
             primary["label"] = primary.get("label") or f"{label} workings"
             primary["resource_name"] = label
-            layer = layers.create_layer(hid, rid, "historic", int(state.clock.get("cycle") or 0), finite=False)
+            layer = layers.create_layer(hid, rid, era_key, cycle, finite=False)
             ch = PrimaryChannel(
                 f"channel:{primary['id']}:renewable",
                 str(primary["id"]),
                 node_id,
                 terrain,
-                "historic",
-                int(state.clock.get("cycle") or 0),
+                era_key,
+                cycle,
                 rid,
                 layer.layer_id,
                 False,
@@ -146,14 +144,14 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
             bound_terrains.append(terrain)
         if finite:
             rid, label = finite[0], finite[1]
-            layer = layers.create_layer(hid, rid, "historic", int(state.clock.get("cycle") or 0), finite=True)
+            layer = layers.create_layer(hid, rid, era_key, cycle, finite=True)
             ch = PrimaryChannel(
                 f"channel:{primary['id']}:finite",
                 str(primary["id"]),
                 node_id,
                 terrain,
-                "historic",
-                int(state.clock.get("cycle") or 0),
+                era_key,
+                cycle,
                 rid,
                 layer.layer_id,
                 True,
@@ -163,29 +161,22 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
             industry.install_channel(ch)
             channel_by_resource.setdefault(rid, ch.channel_id)
 
-    # Pick a Historic MVP recipe whose both inputs are available (cross-terrain).
-    recipes_path = (
-        Path(__file__).resolve().parents[3]
-        / "godot_project"
-        / "content"
-        / "source"
-        / "recipes"
-        / "mvp.json"
-    )
+    from sim.dmb.content.catalogue import recipes_for_era
+
     recipe = None
-    if recipes_path.exists():
-        data = json.loads(recipes_path.read_text(encoding="utf-8"))
-        for r in data.get("recipes") or []:
-            if r.get("era") != "historic" or not r.get("mvp_subset"):
-                continue
+    for prefer_mvp in (False, True):
+        for r in recipes_for_era(era_key, mvp_only=prefer_mvp):
             a, b = str(r.get("input_a_id")), str(r.get("input_b_id"))
             if a in channel_by_resource and b in channel_by_resource and a != b:
                 recipe = r
                 break
+        if recipe is not None:
+            break
     if recipe is None:
         return {
             "status": "no_cross_terrain_recipe",
             "settlement_id": settlement_id,
+            "era": era_key,
             "channels": sorted(channel_by_resource),
             "terrains": sorted(set(bound_terrains)),
         }
@@ -195,7 +186,7 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
     binding = ProcessorBinding(
         building_id=pid,
         recipe_id=str(recipe["id"]),
-        era="historic",
+        era=era_key,
         input_a_channel_id=channel_by_resource[str(recipe["input_a_id"])],
         input_b_channel_id=channel_by_resource[str(recipe["input_b_id"])],
         output_capacity=Fraction(1, 10),
@@ -204,11 +195,11 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
         active=True,
     )
     industry.install_processor(binding)
-    unit_defs = list((cfg.get("core_upgrade") or {}).get("unit_defs") or [
-        "unit.historic.skirmisher",
-        "unit.historic.line",
-        "unit.historic.heavy",
-    ])
+    unit_defs = list(
+        (cfg.get("core_upgrade") or {}).get("unit_defs")
+        or DEFAULT_UNITS.get(era_key)
+        or DEFAULT_UNITS["historic"]
+    )
     factory_ids = []
     for i, factory in enumerate(factories[:3]):
         fid = str(factory["id"])
@@ -217,27 +208,31 @@ def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
             fid,
             node_id=node_id,
             faction_id=str(settlement.get("faction_id") or ""),
-            era="historic",
+            era=era_key,
             unit_def_id=unit_def,
         )
         industry.factories.factories[fid]["meter"] = fraction_wire(Fraction())
         industry.factories.factories[fid]["settlement_id"] = settlement_id
-        # Cost from unit archetype processed_units — default 2/3/5.
         cost = 2 if "skirmisher" in unit_def else 3 if "line" in unit_def else 5
-        industry.install_route(
-            FactoryRoute(fid, pid, unit_def, cost, Fraction(1))
-        )
+        industry.install_route(FactoryRoute(fid, pid, unit_def, cost, Fraction(1)))
         factory_ids.append(fid)
 
     return {
         "status": "operational",
         "settlement_id": settlement_id,
+        "era": era_key,
         "recipe_id": recipe["id"],
         "processor_id": pid,
         "factory_ids": factory_ids,
         "channels": sorted(channel_by_resource),
         "terrains": sorted(set(bound_terrains)),
     }
+
+
+def _rebind_historic_industry(state: Any, settlement_id: str) -> dict[str, Any]:
+    """Backward-compatible Historic industry rebind."""
+    return _rebind_era_industry(state, settlement_id, era="historic")
+
 
 
 @dataclass
@@ -271,8 +266,8 @@ class EraService:
     ) -> EraTransitionPlan:
         """Freeze, snapshot scores, build hashed plan. Does not mutate economy yet."""
         receipts = self.state.command_receipts.setdefault("era_transition", {})
-        if any(r.get("status") == "committed" for r in receipts.values()):
-            raise TypeValidationError("era transition already committed")
+        if any(r.get("status") == "planned" for r in receipts.values()):
+            raise TypeValidationError("era transition already planned")
         freeze = _freeze_clocks(self.state)
         scores = ScoreService(self.state).scores()
         if int(scores.get(winner_faction_id, 0)) < VP_THRESHOLD:
@@ -453,7 +448,7 @@ class EraService:
             if sid not in core_settlement_ids and sid not in legacy_settlement_ids:
                 legacy_settlement_ids.append(sid)
 
-        # 3) Core upgrades + Historic industry
+        # 3) Core upgrades + era industry
         upgrade_svc = CoreUpgradeService(self.state)
         upgrade_results = []
         industry_results = []
@@ -463,7 +458,7 @@ class EraService:
             upgrade_results.append(
                 upgrade_svc.upgrade_core(sid, transition_id=event_id, next_era=next_era, grant_starter=True)
             )
-            industry_results.append(_rebind_historic_industry(self.state, sid))
+            industry_results.append(_rebind_era_industry(self.state, sid, era=next_era))
 
         # 4) Legacy mark
         legacy_marks = mark_legacy_sites(self.state, legacy_settlement_ids, source_era=str(body.get("source_era") or "prehistoric"))
@@ -535,7 +530,8 @@ class EraService:
             "collapse": collapse_result,
             "fission": fission_results,
             "core_upgrades": upgrade_results,
-            "historic_industry": industry_results,
+            "era_industry": industry_results,
+            "historic_industry": industry_results,  # G06 receipt alias
             "legacy_sites": legacy_marks,
             "continuity": continuity,
             "hazard_rollover": hazard,
@@ -550,16 +546,40 @@ class EraService:
         HistoryService(self.state).record_transition_receipt(receipt)
         return {"idempotent": False, "receipt": receipt}
 
+    def reseed_cycle(self, *, plan_id: str | None = None, faction_count: int = 6) -> dict[str, Any]:
+        """Future→Prehistoric political reseeding (C11 / T125)."""
+        from sim.dmb.eras.cycles import CycleReseedService
+        from sim.dmb.eras.continuity import ContinuityService
+        from sim.dmb.eras.path_selection import baseline_path_or_default
+
+        baseline_path_or_default(self.state)
+        result = CycleReseedService(self.state).reseed_cycle(
+            plan_id=plan_id, faction_count=faction_count
+        )
+        ContinuityService(self.state).adapt_for_full_cycle(
+            transition_id=str((result.get("receipt") or {}).get("plan_id") or plan_id or "reseed")
+        )
+        return result
+
     def maybe_trigger_from_interrupt(self, *, event_id: str | None = None) -> dict[str, Any] | None:
-        """If clock shows vp_threshold, request+commit once."""
-        if self.state.clock.get("last_era_transition_id"):
-            return None
+        """If clock shows vp_threshold, request+commit once per interrupt."""
         if str(self.state.clock.get("interrupt_reason") or "") != "vp_threshold":
             return None
         winners = list(self.state.clock.get("interrupt_factions") or ScoreService(self.state).check_threshold())
         if not winners:
             return None
         winner = winners[0]
+        # One transition per interrupt token; later eras may interrupt again after scoring 10 VP.
+        interrupt_token = str(
+            self.state.clock.get("interrupt_token")
+            or event_id
+            or f"{self.state.clock.get('era')}:{winner}:{int(self.state.world_version)}"
+        )
+        if self.state.clock.get("era_transition_handled_interrupt") == interrupt_token:
+            return None
         eid = event_id or f"era_transition:{self.state.world_id}:{self.state.world_version}:{winner}"
         plan = self.request_transition(winner, eid)
-        return self.commit(plan)
+        result = self.commit(plan)
+        self.state.clock["era_transition_handled_interrupt"] = interrupt_token
+        self.state.clock.pop("interrupt_reason", None)
+        return result

@@ -260,7 +260,10 @@ class TurnRunner:
         from sim.dmb.ai.policy import PolicyService
 
         policy = PolicyService(self.state)
-        policy.assign_brain(active, "heuristic")
+        # Honour saved era policy assignment; default heuristic when unset.
+        bucket = (self.state.factions.get(active) or {}).get("policy") or {}
+        if not bucket.get("brain"):
+            policy.assign_brain(active, "heuristic")
         record = policy.activate(active, decision_kind="seat")
         # Apply accepted military objectives without granting ownership on victory.
         applied_objectives = self._apply_military_commitments(active, record)

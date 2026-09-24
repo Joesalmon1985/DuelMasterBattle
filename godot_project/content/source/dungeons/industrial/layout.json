@@ -1,0 +1,102 @@
+{
+  "id": "dungeon.industrial",
+  "schema_version": 1,
+  "area_id": "area.industrial",
+  "puzzle_id": "puzzle.industrial",
+  "blurb": "Industrial works with conveyor switch logic.",
+  "rooms": [
+    {
+      "id": "room.entrance",
+      "label": "Industrial Entrance",
+      "exits": [
+        "room.workshop",
+        "room.corridor",
+        "room.exit"
+      ],
+      "clues": [
+        {
+          "id": "clue.industrial.entry",
+          "text": "The industrial entrance shows recent traffic."
+        }
+      ],
+      "spawn": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "room.workshop",
+      "label": "Side Cache",
+      "exits": [
+        "room.entrance"
+      ],
+      "clues": [
+        {
+          "id": "clue.industrial.cache",
+          "text": "A recovery item for the industrial puzzle rests here."
+        }
+      ],
+      "items": [
+        {
+          "definition_id": "item.industrial_key",
+          "position": [
+            2.0,
+            1.0
+          ],
+          "quest_bound": true
+        }
+      ]
+    },
+    {
+      "id": "room.corridor",
+      "label": "Mechanism Corridor",
+      "exits": [
+        "room.entrance",
+        "room.chamber"
+      ],
+      "clues": [
+        {
+          "id": "clue.industrial.plate",
+          "text": "Hold the plate while the switch opens the gate."
+        }
+      ],
+      "mechanisms": [
+        "switch.industrial"
+      ],
+      "alternate_route": "room.exit"
+    },
+    {
+      "id": "room.chamber",
+      "label": "Gate Chamber",
+      "exits": [
+        "room.corridor",
+        "room.exit"
+      ],
+      "clues": [],
+      "mechanisms": [
+        "box.industrial",
+        "plate.industrial",
+        "receptor.industrial",
+        "gate.final",
+        "actuator.industrial"
+      ]
+    },
+    {
+      "id": "room.exit",
+      "label": "Exit Loop",
+      "exits": [
+        "room.entrance",
+        "room.chamber"
+      ],
+      "clues": [],
+      "locked_by": "gate.final",
+      "permanent_lock": false
+    }
+  ],
+  "entry_room": "room.entrance",
+  "exit_room": "room.exit",
+  "persistent_state": true,
+  "common_puzzle_vocabulary": true,
+  "clues_and_alternate_routes": true,
+  "bind_systemic_context": true
+}

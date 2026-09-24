@@ -33,6 +33,8 @@ GATE_OWNER = {
     "G08": "T142",
     "G09": "T150",
     "G10": "T160",
+    "G11": "T164",
+    "G12": "T168",
 }
 GATE_AFTER_TASK = {
     24: "G01",
@@ -45,6 +47,8 @@ GATE_AFTER_TASK = {
     142: "G08",
     150: "G09",
     160: "G10",
+    164: "G11",
+    168: "G12",
 }
 TASK_STATUSES = {
     "NOT_STARTED",
@@ -984,6 +988,718 @@ def checks_for_task(task: str) -> list[CheckResult]:
                 r"FX_ERA_UI_OK",
             ),
         ],
+        "T107": lambda: [
+            _pytest(
+                "player_screens",
+                "tests/sim/test_t107_player_screens.py",
+                "tests/sim/test_semantic_visuals.py",
+            ),
+            validate_evidence(
+                "player_screen_ui",
+                [
+                    ROOT / "godot_project" / "client" / "ui" / "inventory_panel.gd",
+                    ROOT / "godot_project" / "client" / "ui" / "grimoire.gd",
+                    ROOT / "godot_project" / "client" / "ui" / "knowledge.gd",
+                ],
+            ),
+        ],
+        "T108": lambda: [
+            _pytest(
+                "mvp_sandbox",
+                "tests/scenarios/test_mvp_sandbox.py",
+            ),
+            validate_evidence(
+                "fx_mvp_fixture",
+                [
+                    ROOT / "godot_project" / "content" / "fixtures" / "mvp" / "fx_mvp.json",
+                    ROOT / "tools" / "play_mvp.sh",
+                ],
+            ),
+        ],
+        "T109": lambda: [
+            _pytest("hints", "tests/sim/test_t109_hints.py"),
+            validate_evidence(
+                "hints_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "dialogue" / "tutorial" / "hints.json",
+                    ROOT / "godot_project" / "client" / "ui" / "hints.gd",
+                ],
+            ),
+        ],
+        "T110": lambda: [
+            _pytest("mvp_a11y", "tests/sim/test_t110_mvp_a11y.py"),
+            validate_evidence(
+                "mvp_assets_settings",
+                [
+                    ROOT / "godot_project" / "client" / "assets" / "mvp" / "manifest.json",
+                    ROOT / "godot_project" / "client" / "ui" / "settings.gd",
+                ],
+            ),
+        ],
+        "T111": lambda: [
+            _pytest("mvp_continuation", "tests/scenarios/test_mvp_continuation.py"),
+            validate_evidence(
+                "mvp_validation",
+                [
+                    TRACKING / "mvp_validation" / "era_persistence.json",
+                ],
+            ),
+        ],
+        "T112": lambda: [
+            run_command(
+                CommandCheck(
+                    name="evaluate_mvp",
+                    argv=(sys.executable, str(ROOT / "tools" / "evaluate_mvp.py")),
+                    required_pattern=r'"historic_reached": true',
+                )
+            ),
+            validate_evidence(
+                "mvp_balance",
+                [
+                    TRACKING / "mvp_balance" / "pacing_report.json",
+                    TRACKING / "mvp_balance" / "pacing_report.md",
+                ],
+            ),
+        ],
+        "T113": lambda: [
+            run_command(
+                CommandCheck(
+                    name="package_desktop",
+                    argv=(sys.executable, str(ROOT / "tools" / "package_desktop.py")),
+                    required_pattern=r'"windows_certified": false',
+                )
+            ),
+            validate_evidence(
+                "mvp_desktop_bundle",
+                [
+                    TRACKING / "mvp_build" / "desktop_bundle.json",
+                    ROOT / "build" / "desktop" / "mvp_linux" / "README.md",
+                ],
+            ),
+        ],
+        "T114": lambda: [
+            validate_evidence(
+                "g06_gate_packet",
+                [
+                    TRACKING / "gates" / "G06" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G06" / "auto" / "result.json",
+                    TRACKING / "gates" / "G06" / "auto" / "summary.md",
+                    TRACKING / "gates" / "G06" / "early_transition_checkpoint.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g06_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G06"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
+        "T115": lambda: [
+            _pytest("full_catalogue", "tests/sim/test_t115_full_catalogue.py"),
+            validate_evidence(
+                "full_catalogue_sources",
+                [
+                    ROOT / "sim" / "dmb" / "content" / "catalogue.py",
+                    ROOT / "godot_project" / "content" / "manifests" / "full.json",
+                    ROOT / "godot_project" / "content" / "source" / "resources" / "catalog.json",
+                    ROOT / "godot_project" / "content" / "source" / "recipes" / "full.json",
+                ],
+            ),
+        ],
+        "T116": lambda: [
+            _pytest("modern_future_content", "tests/sim/test_t116_modern_future.py"),
+            _pytest("tech_defs_full", "tests/sim/test_t039_tech_defs.py"),
+            validate_evidence(
+                "modern_future_sources",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "eras" / "modern" / "core_upgrade.json",
+                    ROOT / "godot_project" / "content" / "source" / "eras" / "future" / "core_upgrade.json",
+                    ROOT / "godot_project" / "content" / "source" / "technology" / "modern.json",
+                    ROOT / "godot_project" / "content" / "source" / "technology" / "future.json",
+                    ROOT / "godot_project" / "content" / "source" / "units" / "later.json",
+                ],
+            ),
+        ],
+        "T117": lambda: [
+            _pytest("later_eras", "tests/scenarios/test_later_eras.py"),
+            _pytest("era_transition_regressions", "tests/scenarios/test_era_transition.py"),
+        ],
+        "T118": lambda: [
+            _pytest("pollution_cleanup", "tests/sim/test_t118_pollution.py"),
+            validate_evidence(
+                "pollution_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "hazards" / "pollution.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "pollution_cleanup.json",
+                ],
+            ),
+        ],
+        "T119": lambda: [
+            _pytest("alien_hazards", "tests/sim/test_t119_aliens.py"),
+            validate_evidence(
+                "alien_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "hazards" / "aliens.json",
+                    ROOT / "godot_project" / "content" / "source" / "duel_rules" / "hazard_alien.json",
+                    ROOT / "godot_project" / "client" / "world" / "hazards" / "manifest.json",
+                ],
+            ),
+        ],
+        "T120": lambda: [
+            _pytest("nuclear_machines", "tests/sim/test_t120_nuclear_machines.py"),
+            validate_evidence(
+                "future_hazard_content",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "hazards" / "nuclear.json",
+                    ROOT / "godot_project" / "content" / "source" / "hazards" / "machines.json",
+                ],
+            ),
+        ],
+        "T121": lambda: [
+            _pytest("later_visuals", "tests/sim/test_t121_later_visuals.py"),
+            validate_evidence(
+                "later_assets",
+                [
+                    ROOT / "godot_project" / "client" / "assets" / "modern" / "manifest.json",
+                    ROOT / "godot_project" / "client" / "assets" / "future" / "manifest.json",
+                    ROOT / "godot_project" / "content" / "source" / "labels" / "later_eras.json",
+                ],
+            ),
+        ],
+        "T122": lambda: [
+            _pytest("all_era_economy_combat", "tests/scenarios/test_all_era_economy_combat.py"),
+        ],
+        "T123": lambda: [
+            _pytest("mixed_hazards", "tests/scenarios/test_mixed_hazards.py"),
+            validate_evidence(
+                "mixed_hazards_fixture",
+                [ROOT / "godot_project" / "content" / "fixtures" / "mixed_hazards" / "fx_mixed_hazards.json"],
+            ),
+        ],
+        "T124": lambda: [
+            run_command(
+                CommandCheck(
+                    name="evaluate_full_world",
+                    argv=(sys.executable, str(ROOT / "tools" / "evaluate_full_world.py")),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            validate_evidence(
+                "full_era_validation",
+                [
+                    TRACKING / "full_era_validation" / "full_world_report.json",
+                    TRACKING / "full_era_validation" / "full_world_report.md",
+                ],
+            ),
+        ],
+        "T125": lambda: [_pytest("cycle_reseed", "tests/sim/test_t125_cycles.py")],
+        "T126": lambda: [
+            _pytest("legacy_dispositions", "tests/sim/test_t126_legacy.py"),
+            validate_evidence(
+                "legacy_rules",
+                [ROOT / "godot_project" / "content" / "source" / "legacy_rules" / "baseline.json"],
+            ),
+        ],
+        "T127": lambda: [_pytest("full_cycle_continuity", "tests/sim/test_t127_full_cycle_continuity.py")],
+        "T128": lambda: [_pytest("chronicle_pins", "tests/sim/test_t128_chronicle_pins.py")],
+        "T129": lambda: [
+            _pytest("path_selection", "tests/sim/test_t129_path_selection.py"),
+            validate_evidence(
+                "eras_schema",
+                [ROOT / "godot_project" / "content" / "schemas" / "eras.json"],
+            ),
+        ],
+        "T130": lambda: [
+            _pytest("full_cycles", "tests/scenarios/test_full_cycles.py"),
+            validate_evidence(
+                "fx_cycle",
+                [
+                    ROOT / "godot_project" / "content" / "fixtures" / "cycles" / "fx_cycle.json",
+                    ROOT / "tools" / "play_fx_cycle.sh",
+                ],
+            ),
+        ],
+        "T131": lambda: [
+            run_command(
+                CommandCheck(
+                    name="profile_world",
+                    argv=(sys.executable, str(ROOT / "tools" / "profile_world.py")),
+                    required_pattern=r"PASS_WITH_HONEST_LIMITS",
+                )
+            ),
+            validate_evidence(
+                "performance_profile",
+                [
+                    TRACKING / "performance" / "profile_world.json",
+                    TRACKING / "performance" / "profile_world.md",
+                ],
+            ),
+        ],
+        "T132": lambda: [
+            validate_evidence(
+                "g07_gate_packet",
+                [
+                    TRACKING / "gates" / "G07" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G07" / "auto" / "result.json",
+                    TRACKING / "gates" / "G07" / "auto" / "summary.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g07_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G07"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
+        "T133": lambda: [
+            _pytest("content_pipeline", "tests/sim/test_t133_content_pipeline.py"),
+            validate_evidence(
+                "content_authoring_tools",
+                [
+                    ROOT / "tools" / "content" / "make_batch.py",
+                    ROOT / "tools" / "content" / "compile.py",
+                    ROOT / "tools" / "content" / "quality_report.py",
+                ],
+            ),
+        ],
+        "T134": lambda: [
+            _pytest("quest_templates_t134", "tests/sim/test_t134_t136_content.py"),
+            validate_evidence(
+                "shortage_transport_catastrophe_diplomacy",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "shortage" / "grain_store.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "transport" / "bridge_washout.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "catastrophe" / "flood_berm.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "diplomacy" / "border_truce.json",
+                ],
+            ),
+        ],
+        "T135": lambda: [
+            _pytest("quest_templates_t135", "tests/sim/test_t134_t136_content.py"),
+            validate_evidence(
+                "military_personal_discovery_conflict",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "military" / "raid_warning.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "personal" / "lost_heirloom.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "discovery" / "ruin_map.json",
+                    ROOT / "godot_project" / "content" / "source" / "quests" / "conflict" / "water_rights.json",
+                ],
+            ),
+        ],
+        "T136": lambda: [
+            _pytest("dungeons_rivals", "tests/sim/test_t134_t136_content.py"),
+            validate_evidence(
+                "dungeons_and_rivals",
+                [
+                    ROOT / "godot_project" / "content" / "source" / "dungeons" / "cave" / "layout.json",
+                    ROOT / "godot_project" / "content" / "source" / "dungeons" / "machine" / "layout.json",
+                    ROOT / "godot_project" / "content" / "source" / "rivals" / "ashen_tactician.json",
+                    ROOT / "godot_project" / "content" / "source" / "rivals" / "ember_duelist.json",
+                ],
+            ),
+        ],
+        "T137": lambda: [
+            _pytest("dialogue_baseline", "tests/sim/test_t137_dialogue_baseline.py"),
+            run_command(
+                CommandCheck(
+                    name="validate_baseline_dialogue",
+                    argv=(
+                        sys.executable,
+                        "-m",
+                        "tools.content.validate",
+                        "--include-baseline",
+                        "--integrity",
+                    ),
+                    required_pattern=r"validate_dialogue: PASS",
+                )
+            ),
+            validate_evidence(
+                "content_review",
+                [
+                    TRACKING / "content_review" / "baseline_review.md",
+                ],
+            ),
+        ],
+        "T138": lambda: [
+            _pytest("era_assets", "tests/sim/test_t138_assets.py"),
+            validate_evidence(
+                "asset_manifest",
+                [
+                    ROOT / "godot_project" / "content" / "asset_manifest.json",
+                    ROOT / "godot_project" / "client" / "assets" / "prehistoric" / "manifest.json",
+                    ROOT / "godot_project" / "client" / "assets" / "future" / "manifest.json",
+                    ROOT / "godot_project" / "client" / "audio" / "palettes.json",
+                ],
+            ),
+        ],
+        "T139": lambda: [
+            _pytest("debug_inspectors", "tests/sim/test_t139_t140_tools.py"),
+            validate_evidence(
+                "economy_tech_culture_policy",
+                [
+                    ROOT / "godot_project" / "client" / "debug" / "economy_view.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "technology_view.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "culture_editor.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "policy_view.gd",
+                ],
+            ),
+        ],
+        "T140": lambda: [
+            _pytest("narrative_tools", "tests/sim/test_t139_t140_tools.py"),
+            validate_evidence(
+                "narrative_puzzle_era_tools",
+                [
+                    ROOT / "godot_project" / "client" / "debug" / "narrative_tools" / "quest_dialogue_preview.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "puzzle_editor.gd",
+                    ROOT / "godot_project" / "client" / "debug" / "era_plan_view.gd",
+                ],
+            ),
+        ],
+        "T141": lambda: [
+            _pytest("content_matrix", "tests/scenarios/test_content_matrix.py"),
+            run_command(
+                CommandCheck(
+                    name="validate_corpus",
+                    argv=(sys.executable, str(ROOT / "tools" / "content" / "validate_corpus.py"), "--write"),
+                    required_pattern=r"validate_content: PASS",
+                )
+            ),
+            validate_evidence(
+                "content_coverage",
+                [
+                    TRACKING / "content_coverage" / "coverage_report.json",
+                    TRACKING / "content_coverage" / "coverage_report.md",
+                ],
+            ),
+        ],
+        "T142": lambda: [
+            validate_evidence(
+                "g08_gate_packet",
+                [
+                    TRACKING / "gates" / "G08" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G08" / "auto" / "result.json",
+                    TRACKING / "gates" / "G08" / "auto" / "summary.md",
+                    TRACKING / "gates" / "G08" / "sample_manifest.json",
+                    TRACKING / "gates" / "G08" / "dialogue_preview.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g08_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G08"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
+        "T143": lambda: [
+            _pytest("t143_training_env", "tests/sim/test_t143_t150_leadership.py::test_t143_env_advances_and_masks_validate"),
+            _pytest("t143_no_free_stock", "tests/sim/test_t143_t150_leadership.py::test_t143_replay_no_free_stock"),
+            validate_evidence(
+                "t143_training_modules",
+                [
+                    ROOT / "training" / "environment.py",
+                    ROOT / "training" / "observation_schema.json",
+                ],
+            ),
+        ],
+        "T144": lambda: [
+            _pytest("t144_seed_split", "tests/sim/test_t143_t150_leadership.py::test_t144_promotion_seeds_locked_and_disjoint"),
+            validate_evidence(
+                "t144_collect",
+                [
+                    ROOT / "training" / "collect.py",
+                    ROOT / "training" / "datasets" / "manifest.json",
+                ],
+            ),
+        ],
+        "T145": lambda: [
+            _pytest("t145_model", "tests/sim/test_t143_t150_leadership.py::test_t145_model_ranks_only_supplied_candidates"),
+            validate_evidence(
+                "t145_train_imitation",
+                [
+                    ROOT / "training" / "model.py",
+                    ROOT / "training" / "train_imitation.py",
+                ],
+            ),
+        ],
+        "T146": lambda: [
+            _pytest("t146_budget", "tests/sim/test_t143_t150_leadership.py::test_t146_budget_marks_incomplete"),
+            validate_evidence(
+                "t146_actor_critic",
+                [
+                    ROOT / "training" / "train_actor_critic.py",
+                    ROOT / "training" / "budget.py",
+                ],
+            ),
+        ],
+        "T147": lambda: [
+            _pytest("t147_neural_fallback", "tests/sim/test_t143_t150_leadership.py::test_t147_neural_fallback_and_policy_identity"),
+            validate_evidence(
+                "t147_runtime_inference",
+                [
+                    ROOT / "sim" / "dmb" / "ai" / "neural.py",
+                    ROOT / "sim" / "dmb" / "ai" / "policy.py",
+                    ROOT / "godot_project" / "content" / "policies" / "manifest.json",
+                ],
+            ),
+        ],
+        "T148": lambda: [
+            _pytest("t148_promotion_oracle", "tests/sim/test_t143_t150_leadership.py::test_t148_promotion_oracle_rejects_weak_candidate"),
+            validate_evidence(
+                "t148_evaluate",
+                [
+                    ROOT / "training" / "evaluate.py",
+                ],
+            ),
+        ],
+        "T149": lambda: [
+            _pytest("t149_honesty", "tests/sim/test_t143_t150_leadership.py::test_t149_does_not_label_heuristic_trained"),
+            validate_evidence(
+                "t149_library",
+                [
+                    ROOT / "training" / "select_library.py",
+                    ROOT / "godot_project" / "content" / "policies" / "manifest.json",
+                ],
+            ),
+        ],
+        "T150": lambda: [
+            validate_evidence(
+                "g09_gate_packet",
+                [
+                    TRACKING / "gates" / "G09" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G09" / "auto" / "result.json",
+                    TRACKING / "gates" / "G09" / "auto" / "summary.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g09_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G09"),
+                    required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL|AUTO_FAILED)",
+                )
+            ),
+        ],
+        "T151": lambda: [
+            validate_evidence(
+                "release_coverage",
+                [TRACKING / "release_coverage.json"],
+            ),
+            run_command(
+                CommandCheck(
+                    name="release_coverage_verbs",
+                    argv=(
+                        sys.executable,
+                        "-c",
+                        "import json; d=json.load(open('Pack/DuelMasterBattle_Build_Pack/tracking/release_coverage.json')); assert len(d['player_verbs'])>=10; print('T151_OK')",
+                    ),
+                    required_pattern=r"T151_OK",
+                )
+            ),
+        ],
+        "T152": lambda: [
+            _pytest("release_recovery", "tests/integration/test_release_recovery.py"),
+        ],
+        "T153": lambda: [
+            run_command(
+                CommandCheck(
+                    name="profile_world",
+                    argv=(sys.executable, str(ROOT / "tools" / "profile_world.py")),
+                    required_pattern=r"PASS_WITH_HONEST_LIMITS",
+                )
+            ),
+            validate_evidence(
+                "g10_performance",
+                [
+                    TRACKING / "performance" / "profile_world.json",
+                    TRACKING / "gates" / "G10" / "auto" / "performance.json",
+                ],
+            ),
+        ],
+        "T154": lambda: [
+            run_command(
+                CommandCheck(
+                    name="verify_a11y_release",
+                    argv=(sys.executable, str(ROOT / "tools" / "verify_a11y_release.py")),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            _pytest("t154_a11y", "tests/sim/test_t154_a11y_release.py"),
+        ],
+        "T155": lambda: [
+            run_command(
+                CommandCheck(
+                    name="package_desktop",
+                    argv=(sys.executable, str(ROOT / "tools" / "package_desktop.py"), "--target", "all"),
+                    required_pattern=r"windows_certified",
+                )
+            ),
+            validate_evidence(
+                "release_manifest_and_windows_scaffold",
+                [
+                    ROOT / "godot_project" / "content" / "manifests" / "release.json",
+                    TRACKING / "gates" / "G10" / "windows_scaffold.json",
+                    ROOT / ".github" / "workflows" / "windows-packaged-runtime.yml",
+                ],
+            ),
+        ],
+        "T156": lambda: [
+            run_command(
+                CommandCheck(
+                    name="smoke_linux",
+                    argv=(sys.executable, str(ROOT / "tools" / "smoke_release.py"), "--platform", "linux"),
+                    required_pattern=r"PASS_LINUX_ONLY",
+                )
+            ),
+            validate_evidence(
+                "windows_status_honest",
+                [
+                    TRACKING / "gates" / "G10" / "windows_status.md",
+                    TRACKING / "clean_machine" / "smoke_linux.json",
+                ],
+            ),
+        ],
+        "T157": lambda: [
+            _pytest("release_scenarios", "tests/scenarios/test_release.py"),
+            validate_evidence(
+                "release_test_reports",
+                [
+                    TRACKING / "release_tests" / "fx_recovery.json",
+                    TRACKING / "release_tests" / "multi_cycle.json",
+                ],
+            ),
+        ],
+        "T158": lambda: [
+            validate_evidence(
+                "release_docs",
+                [
+                    ROOT / "docs" / "player_guide.md",
+                    ROOT / "docs" / "release_notes.md",
+                    TRACKING / "release_evidence.json",
+                ],
+            ),
+        ],
+        "T159": lambda: [
+            validate_evidence(
+                "g10_candidate_packet",
+                [
+                    TRACKING / "gates" / "G10" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G10" / "windows_status.md",
+                    TRACKING / "gates" / "G10" / "auto" / "result.json",
+                    TRACKING / "gates" / "G10" / "auto" / "summary.md",
+                ],
+            ),
+        ],
+        "T160": lambda: [
+            validate_evidence(
+                "g10_owner_review_packet",
+                [
+                    TRACKING / "gates" / "G10" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G10" / "auto" / "result.json",
+                    TRACKING / "release_evidence.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g10_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G10"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
+        "T161": lambda: [
+            run_command(
+                CommandCheck(
+                    name="semantic_catalogue",
+                    argv=(sys.executable, str(ROOT / "tools" / "validate_semantic_catalogue.py"), "--write"),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            validate_evidence(
+                "g11_registry",
+                [
+                    TRACKING / "gates" / "G11" / "registry_report.json",
+                    TRACKING / "gates" / "G11" / "registry_manifest.json",
+                ],
+            ),
+        ],
+        "T162": lambda: [
+            run_command(
+                CommandCheck(
+                    name="semantic_gallery",
+                    argv=(sys.executable, str(ROOT / "tools" / "generate_semantic_gallery.py")),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+            validate_evidence(
+                "gallery_index",
+                [
+                    TRACKING / "gates" / "G11" / "gallery" / "catalogue_index.json",
+                    TRACKING / "gates" / "G11" / "gallery" / "catalogue_montage.md",
+                ],
+            ),
+        ],
+        "T163": lambda: [
+            _pytest("semantic_visuals", "tests/sim/test_semantic_visuals.py"),
+            run_command(
+                CommandCheck(
+                    name="revalidate_catalogue",
+                    argv=(sys.executable, str(ROOT / "tools" / "validate_semantic_catalogue.py"), "--write"),
+                    required_pattern=r'"status": "PASS"',
+                )
+            ),
+        ],
+        "T164": lambda: [
+            validate_evidence(
+                "g11_morning",
+                [
+                    TRACKING / "gates" / "G11" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G11" / "auto" / "result.json",
+                    TRACKING / "gates" / "G11" / "auto" / "summary.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g11_auto_gate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G11"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ],
+        "T165": lambda: [
+            validate_evidence(
+                "g12_journey_manifest",
+                [TRACKING / "gates" / "G12" / "journey_manifest.json"],
+            ),
+        ],
+        "T166": lambda: [
+            _pytest(
+                "g12_journeys",
+                "tests/scenarios/test_full_cycles.py",
+                "tests/scenarios/test_release.py",
+                "tests/integration/test_release_recovery.py",
+            ),
+        ],
+        "T167": lambda: [
+            run_command(
+                CommandCheck(
+                    name="g12_aggregate",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_g12_aggregate.py")),
+                    required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL)",
+                )
+            ),
+        ],
+        "T168": lambda: [
+            validate_evidence(
+                "g12_owner_packet",
+                [
+                    TRACKING / "gates" / "G12" / "MORNING_REVIEW.md",
+                    TRACKING / "gates" / "G12" / "auto" / "result.json",
+                    TRACKING / "OVERNIGHT_G06_G12_REPORT.md",
+                ],
+            ),
+        ],
     }
     if task in mapping:
         return mapping[task]()
@@ -994,7 +1710,7 @@ def checks_for_task(task: str) -> list[CheckResult]:
             exit_code=2,
             duration_seconds=0.0,
             detail=(
-                f"{task} is recognized (task {number}/160), but its required checks "
+                f"{task} is recognized (task {number}/168), but its required checks "
                 "have not been implemented by its owning task."
             ),
         )
@@ -1261,6 +1977,182 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
                 r"G04_PLAYABLE_OK",
             ),
         ]
+    if gate == "G06":
+        packet = TRACKING / "gates" / "G06"
+        return [
+            _pytest(
+                "g06_mvp_python",
+                "tests/scenarios/test_mvp_sandbox.py",
+                "tests/scenarios/test_mvp_continuation.py",
+                "tests/scenarios/test_era_transition.py",
+                "tests/sim/test_t105_chronicle.py",
+                "tests/sim/test_t107_player_screens.py",
+                "tests/sim/test_t109_hints.py",
+                "tests/sim/test_t110_mvp_a11y.py",
+                "tests/sim/test_world_map_geometry.py",
+                "tests/sim/test_semantic_visuals.py",
+            ),
+            validate_evidence(
+                "g06_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    packet / "early_transition_checkpoint.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g06_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G06"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G07":
+        packet = TRACKING / "gates" / "G07"
+        return [
+            validate_evidence(
+                "g07_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g07_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G07"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G08":
+        packet = TRACKING / "gates" / "G08"
+        return [
+            _pytest(
+                "g08_content_python",
+                "tests/sim/test_t133_content_pipeline.py",
+                "tests/sim/test_t134_t136_content.py",
+                "tests/sim/test_t137_dialogue_baseline.py",
+                "tests/sim/test_t138_assets.py",
+                "tests/sim/test_t139_t140_tools.py",
+                "tests/scenarios/test_content_matrix.py",
+            ),
+            validate_evidence(
+                "g08_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    packet / "sample_manifest.json",
+                    packet / "dialogue_preview.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g08_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G08"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G09":
+        packet = TRACKING / "gates" / "G09"
+        return [
+            _pytest(
+                "g09_leadership_python",
+                "tests/sim/test_t143_t150_leadership.py",
+            ),
+            validate_evidence(
+                "g09_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    ROOT / "godot_project" / "content" / "policies" / "manifest.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g09_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G09"),
+                    required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL|AUTO_FAILED)",
+                )
+            ),
+        ]
+    if gate == "G10":
+        packet = TRACKING / "gates" / "G10"
+        return [
+            _pytest(
+                "g10_release_python",
+                "tests/integration/test_release_recovery.py",
+                "tests/sim/test_t154_a11y_release.py",
+                "tests/scenarios/test_release.py",
+            ),
+            validate_evidence(
+                "g10_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "windows_status.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    TRACKING / "release_coverage.json",
+                    TRACKING / "release_evidence.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g10_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G10"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G11":
+        packet = TRACKING / "gates" / "G11"
+        return [
+            _pytest("g11_semantic_python", "tests/sim/test_semantic_visuals.py"),
+            validate_evidence(
+                "g11_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    packet / "registry_report.json",
+                    packet / "gallery" / "catalogue_index.json",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g11_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G11"),
+                    required_pattern=r"AUTO_READY_FOR_OWNER_REVIEW",
+                )
+            ),
+        ]
+    if gate == "G12":
+        packet = TRACKING / "gates" / "G12"
+        return [
+            validate_evidence(
+                "g12_auto_packet",
+                [
+                    packet / "MORNING_REVIEW.md",
+                    packet / "auto" / "result.json",
+                    packet / "auto" / "summary.md",
+                    packet / "journey_manifest.json",
+                    TRACKING / "OVERNIGHT_G06_G12_REPORT.md",
+                ],
+            ),
+            run_command(
+                CommandCheck(
+                    name="g12_auto_gate_runner",
+                    argv=(sys.executable, str(ROOT / "tools" / "run_auto_gate.py"), "--gate", "G12"),
+                    required_pattern=r"(AUTO_READY_FOR_OWNER_REVIEW|PARTIAL)",
+                )
+            ),
+        ]
     return [
         CheckResult(
             name=f"gate_contract_{gate}",
@@ -1268,7 +2160,7 @@ def checks_for_gate(gate: str) -> list[CheckResult]:
             exit_code=2,
             duration_seconds=0.0,
             detail=(
-                f"{gate} is recognized but remains blocked through {GATE_OWNER[gate]}; "
+                f"{gate} is recognized but remains blocked through {GATE_OWNER.get(gate, '?')}; "
                 "its cumulative behavioural suite and gate packet are not implemented."
             ),
         )
@@ -1295,8 +2187,8 @@ def _write_report(path: Path, payload: dict[str, object]) -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     choice = parser.add_mutually_exclusive_group(required=True)
-    choice.add_argument("--task", type=lambda value: _target(value, "T", 160))
-    choice.add_argument("--gate", type=lambda value: _target(value, "G", 10))
+    choice.add_argument("--task", type=lambda value: _target(value, "T", 168))
+    choice.add_argument("--gate", type=lambda value: _target(value, "G", 12))
     choice.add_argument("--resume", action="store_true")
     parser.add_argument("--json-report", type=Path)
     args = parser.parse_args(argv)

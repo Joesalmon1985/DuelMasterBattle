@@ -1,0 +1,87 @@
+{
+  "gate": "G07",
+  "generated_at": "2026-09-23T11:02:16Z",
+  "status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "results": [
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t115_full_catalogue.py",
+        "tests/sim/test_t116_modern_future.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.375,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\00_full_catalogue.log",
+      "status": "PASS",
+      "name": "full_catalogue",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/scenarios/test_later_eras.py",
+        "tests/sim/test_t125_cycles.py",
+        "tests/scenarios/test_full_cycles.py",
+        "tests/sim/test_t129_path_selection.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 1.067,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\01_later_eras_and_cycles.log",
+      "status": "PASS",
+      "name": "later_eras_and_cycles",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t118_pollution.py",
+        "tests/sim/test_t119_aliens.py",
+        "tests/sim/test_t120_nuclear_machines.py",
+        "tests/scenarios/test_mixed_hazards.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.422,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\02_hazards_mixed.log",
+      "status": "PASS",
+      "name": "hazards_mixed",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/evaluate_full_world.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.356,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\03_evaluate_full_world.log",
+      "status": "PASS",
+      "name": "evaluate_full_world",
+      "kind": "shell"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/profile_world.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.369,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G07\\auto\\logs\\04_profile_world_honest.log",
+      "status": "PASS",
+      "name": "profile_world_honest",
+      "kind": "shell"
+    }
+  ],
+  "spec": "G07",
+  "seed": 1212,
+  "fixture": "FX-CYCLE"
+}

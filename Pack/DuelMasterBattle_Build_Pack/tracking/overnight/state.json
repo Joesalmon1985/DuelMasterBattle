@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "stages": {
+    "auto_gate_portability": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "duration_s": 0.254,
+      "input_hash": "0aa82f938da9561b",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/tools/test_run_auto_gate_portability.py"
+      ],
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110004Z_auto_gate_portability.log",
+      "finished_at": "2026-09-23T11:00:05Z"
+    },
+    "ward_duel_regression": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "duration_s": 3.96,
+      "input_hash": "01ccf2f6aa9ec797",
+      "cmd": [
+        "C:\\Users\\joesa\\Downloads\\Godot_v4.5.1-stable_win64.exe\\Godot_v4.5.1-stable_win64.exe",
+        "--headless",
+        "--path",
+        "godot_project",
+        "--script",
+        "res://client/tests/run_ward_duel_presentation.gd"
+      ],
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110005Z_ward_duel_regression.log",
+      "finished_at": "2026-09-23T11:00:09Z"
+    },
+    "g06": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "duration_s": 8.834,
+      "input_hash": "91ad00756d5be829",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G06"
+      ],
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110009Z_g06.log",
+      "finished_at": "2026-09-23T11:00:18Z"
+    },
+    "g07": {
+      "status": "VERIFIED",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G07"
+      ],
+      "input_hash": "c684e65538a8f417",
+      "started_at": "2026-09-23T11:02:13Z",
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\overnight\\logs\\20260923T110213Z_g07.log",
+      "exit_code": 0
+    },
+    "g09_pipeline": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/run_g09_pipeline.py"
+      ]
+    },
+    "g10": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G10"
+      ]
+    },
+    "g11": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G11"
+      ]
+    },
+    "g09_gate": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G09"
+      ]
+    },
+    "g12": {
+      "status": "VERIFIED",
+      "exit_code": 0,
+      "finished_at": "2026-09-23T16:32:52Z",
+      "note": "finalized after manual resume past earlier PARTIAL/FAILED orchestrator stages",
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/check.py",
+        "--gate",
+        "G12"
+      ]
+    }
+  },
+  "updated_at": "2026-09-23T16:32:52Z",
+  "final_status": "AUTO_READY_FOR_OWNER_REVIEW"
+}

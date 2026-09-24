@@ -1,0 +1,126 @@
+{
+  "id": "quest.diplomacy.trade_embargo",
+  "schema_version": 1,
+  "version": 1,
+  "family": "diplomacy",
+  "required_cause": {
+    "kinds": [
+      "embargo"
+    ],
+    "detail": "Coastal seat embargoes ore until apology delivered."
+  },
+  "binding": {
+    "stakeholder_role": "harbour_master",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Apology weakens hardline faction support.",
+    "era_continuity": "Embargo state stored on bilateral policy.",
+    "death_displacement": "Displaced harbour master relocates dialogue.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "formal_apology",
+      "cost_bearer": "player_reputation",
+      "effects": [
+        {
+          "kind": "clear_cause",
+          "cause_kind": "embargo"
+        }
+      ],
+      "acknowledgement": "dialogue.diplomacy.trade_embargo.apology"
+    },
+    {
+      "id": "smuggle_ore",
+      "cost_bearer": "cart_risk",
+      "effects": [
+        {
+          "kind": "open_route",
+          "route_id": "route.smuggle_cove"
+        }
+      ],
+      "acknowledgement": "dialogue.diplomacy.trade_embargo.smuggle"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "embargo_expires_by_policy",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.diplomacy.trade_embargo.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "harbour_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "harbour_lost",
+    "acknowledgement": "dialogue.diplomacy.trade_embargo.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.diplomacy.trade_embargo.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.diplomacy.trade_embargo.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.diplomacy.trade_embargo.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.apology_scroll",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.diplomacy.trade_embargo.offer",
+    "world_resolved": "dialogue.diplomacy.trade_embargo.world_resolved",
+    "invalid_target": "dialogue.diplomacy.trade_embargo.invalid_target",
+    "dead_target": "dialogue.diplomacy.trade_embargo.dead_target",
+    "displaced_target": "dialogue.diplomacy.trade_embargo.displaced_target",
+    "full_cycle": "dialogue.diplomacy.trade_embargo.full_cycle"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "T117",
+  "status": "DONE",
+  "commit": "5ced16c47005b221c7dd47b7c3601e9ddde5a2f0",
+  "files": [
+    "sim/dmb/eras/service.py",
+    "sim/dmb/eras/upgrades.py",
+    "sim/dmb/eras/planner.py",
+    "tests/scenarios/test_later_eras.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json"
+  ],
+  "public_contracts": [
+    "Hist\u2192Mod\u2192Fut ordinary transitions",
+    "person/quest ID continuity",
+    "legacy factories remain old",
+    "core grants once per transition",
+    "Pre\u2192Hist preserved"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T117",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T118",
+  "notes": "EraService allows successive ordinary transitions; industry rebind is era-generic."
+}

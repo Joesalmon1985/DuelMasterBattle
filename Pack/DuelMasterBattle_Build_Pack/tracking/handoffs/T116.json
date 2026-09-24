@@ -1,0 +1,34 @@
+{
+  "task_id": "T116",
+  "status": "DONE",
+  "commit": "556e2c9c740b20812dd3dc299ddb0150cf1076c1",
+  "files": [
+    "godot_project/content/source/eras/modern/core_upgrade.json",
+    "godot_project/content/source/eras/future/core_upgrade.json",
+    "godot_project/content/source/technology/modern.json",
+    "godot_project/content/source/technology/future.json",
+    "godot_project/content/source/units/later.json",
+    "sim/dmb/technology/definitions.py",
+    "tests/sim/test_t116_modern_future.py",
+    "tests/sim/test_t039_tech_defs.py",
+    "tools/check.py",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/progress.json"
+  ],
+  "public_contracts": [
+    "3 unit archetypes x modern/future",
+    "combat factors 100/1000 once",
+    "6 tech cards per era (24 total)",
+    "predecessor pairs",
+    "core upgrade maps"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T116",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T117",
+  "notes": "Semantic placeholders only. Utopia path not offered."
+}

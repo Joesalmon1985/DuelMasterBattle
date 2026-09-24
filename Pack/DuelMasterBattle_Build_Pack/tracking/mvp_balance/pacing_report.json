@@ -1,0 +1,78 @@
+{
+  "generated_at": "2026-09-23T11:00:15.958951+00:00",
+  "seeds": [
+    507,
+    508,
+    509,
+    510,
+    511,
+    512
+  ],
+  "historic_reached_at_least_once": true,
+  "hidden_shortcuts": false,
+  "runs": [
+    {
+      "seed": 507,
+      "fixture": "FX-MVP",
+      "era": null,
+      "factions": 2,
+      "hexes": 19,
+      "debug_injected": false,
+      "status": "booted"
+    },
+    {
+      "seed": 508,
+      "fixture": "FX-MVP",
+      "era": null,
+      "factions": 2,
+      "hexes": 19,
+      "debug_injected": false,
+      "status": "booted"
+    },
+    {
+      "seed": 509,
+      "fixture": "FX-MVP",
+      "era": null,
+      "factions": 2,
+      "hexes": 19,
+      "debug_injected": false,
+      "status": "booted"
+    },
+    {
+      "seed": 510,
+      "fixture": "FX-MVP",
+      "era": null,
+      "factions": 2,
+      "hexes": 19,
+      "debug_injected": false,
+      "status": "booted"
+    },
+    {
+      "seed": 511,
+      "fixture": "FX-MVP",
+      "era": null,
+      "factions": 2,
+      "hexes": 19,
+      "debug_injected": false,
+      "status": "booted"
+    },
+    {
+      "seed": 512,
+      "fixture": "FX-MVP",
+      "era": null,
+      "factions": 2,
+      "hexes": 19,
+      "debug_injected": false,
+      "status": "booted"
+    },
+    {
+      "seed": 507,
+      "fixture": "FX-ERA",
+      "before_vp": 9,
+      "era_after": "historic",
+      "transition_id": "era:world:prehistoric:command:71",
+      "historic_reached": true,
+      "status": "terminated_historic"
+    }
+  ]
+}

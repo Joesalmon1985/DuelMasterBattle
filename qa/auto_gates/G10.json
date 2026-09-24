@@ -1,0 +1,57 @@
+{
+  "id": "G10",
+  "fixture": "FX-RELEASE",
+  "seed": 1101,
+  "resolutions_layout": ["450x800", "960x540", "1280x720"],
+  "steps": [
+    {
+      "name": "release_coverage",
+      "kind": "shell",
+      "cmd": ["python3", "-c", "import json,pathlib; p=pathlib.Path('Pack/DuelMasterBattle_Build_Pack/tracking/release_coverage.json'); d=json.loads(p.read_text()); assert d.get('player_verbs'); print('RELEASE_COVERAGE_OK')"],
+      "timeout_s": 30
+    },
+    {
+      "name": "save_recovery",
+      "kind": "pytest",
+      "paths": ["tests/integration/test_release_recovery.py"],
+      "timeout_s": 120
+    },
+    {
+      "name": "a11y_matrix",
+      "kind": "shell",
+      "cmd": ["python3", "tools/verify_a11y_release.py"],
+      "timeout_s": 60
+    },
+    {
+      "name": "a11y_tests",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_t154_a11y_release.py"],
+      "timeout_s": 60
+    },
+    {
+      "name": "package_desktop",
+      "kind": "shell",
+      "cmd": ["python3", "tools/package_desktop.py", "--target", "all"],
+      "timeout_s": 60
+    },
+    {
+      "name": "smoke_linux",
+      "kind": "shell",
+      "cmd": ["python3", "tools/smoke_release.py", "--platform", "linux"],
+      "timeout_s": 60
+    },
+    {
+      "name": "release_regression",
+      "kind": "pytest",
+      "paths": ["tests/scenarios/test_release.py"],
+      "timeout_s": 180
+    },
+    {
+      "name": "profile_world",
+      "kind": "shell",
+      "cmd": ["python3", "tools/profile_world.py"],
+      "timeout_s": 180
+    }
+  ],
+  "notes": "Windows certification is out-of-band; see windows_status.md. Placeholder art permitted."
+}

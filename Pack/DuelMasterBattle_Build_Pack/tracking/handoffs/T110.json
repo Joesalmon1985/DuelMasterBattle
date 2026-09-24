@@ -1,0 +1,23 @@
+{
+  "task_id": "T110",
+  "status": "DONE",
+  "commit": "83cbef14901d241cf2b80d6958177f663b507fe1",
+  "files": [
+    "godot_project/client/assets/mvp/manifest.json",
+    "godot_project/client/ui/settings.gd",
+    "tests/sim/test_t110_mvp_a11y.py"
+  ],
+  "public_contracts": [
+    "48px touch minimum",
+    "semantic silhouettes",
+    "settings persistence"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T110",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T111"
+}

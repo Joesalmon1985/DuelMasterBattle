@@ -1,0 +1,17 @@
+{
+  "task_id": "T135",
+  "status": "DONE",
+  "commit": "12a8749bbbb64c917675e5c339225767468dff8a",
+  "files": [
+    "G08 overnight chunk"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T135",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T136",
+  "notes": "Military/personal/discovery/conflict templates (2 each); 16 total."
+}

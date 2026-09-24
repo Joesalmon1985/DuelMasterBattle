@@ -1,0 +1,17 @@
+{
+  "task_id": "T133",
+  "status": "DONE",
+  "commit": "e7d9ae4bc1c65d6620bc218fc55e0d69591bda9f",
+  "files": [
+    "G08 overnight chunk"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T133",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T134",
+  "notes": "Offline batch authoring pipeline (make_batch/compile/quality_report)."
+}

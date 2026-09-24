@@ -12,8 +12,10 @@ from sim.dmb.core.types import TypeValidationError, validate_definition_id
 CONTENT_ROOT = Path(__file__).resolve().parents[3] / "godot_project" / "content" / "source"
 TECHNOLOGY_DIR = CONTENT_ROOT / "technology"
 
-# MVP eras for baseline technology (Modern/Future arrive in later content tasks).
+# Full baseline eras for technology (Modern/Future enabled by T116).
 MVP_ERAS = ("prehistoric", "historic")
+FULL_ERAS = ("prehistoric", "historic", "modern", "future")
+BASELINE_ERAS = FULL_ERAS
 
 EFFECT_KINDS = (
     "primary_flow",

@@ -1,0 +1,126 @@
+{
+  "id": "quest.military.deserter_hunt",
+  "schema_version": 1,
+  "version": 1,
+  "family": "military",
+  "required_cause": {
+    "kinds": [
+      "desertion"
+    ],
+    "detail": "A named soldier fled with a sealed order."
+  },
+  "binding": {
+    "stakeholder_role": "captain",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Pardon weakens unit cohesion scores.",
+    "era_continuity": "Person ID of deserter survives cycle if living.",
+    "death_displacement": "Dead deserter closes hunt via dead_target.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "track_and_return",
+      "cost_bearer": "patrol_time",
+      "effects": [
+        {
+          "kind": "clear_cause",
+          "cause_kind": "desertion"
+        }
+      ],
+      "acknowledgement": "dialogue.military.deserter_hunt.return"
+    },
+    {
+      "id": "pardon_in_exile",
+      "cost_bearer": "discipline_norm",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "deserter_pardoned"
+        }
+      ],
+      "acknowledgement": "dialogue.military.deserter_hunt.pardon"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "deserter_captured_by_another_faction",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.military.deserter_hunt.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "order_document_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "order_lost",
+    "acknowledgement": "dialogue.military.deserter_hunt.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.military.deserter_hunt.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.military.deserter_hunt.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.military.deserter_hunt.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.sealed_order",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.military.deserter_hunt.offer",
+    "world_resolved": "dialogue.military.deserter_hunt.world_resolved",
+    "invalid_target": "dialogue.military.deserter_hunt.invalid_target",
+    "dead_target": "dialogue.military.deserter_hunt.dead_target",
+    "displaced_target": "dialogue.military.deserter_hunt.displaced_target",
+    "full_cycle": "dialogue.military.deserter_hunt.full_cycle"
+  }
+}

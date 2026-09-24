@@ -1,0 +1,17 @@
+{
+  "task_id": "T137",
+  "status": "DONE",
+  "commit": "2abd646351446b18de8e55a9a055e32d52f40e7d",
+  "files": [
+    "G08 overnight chunk"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T137",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T138",
+  "notes": "\u22651200 baseline dialogue lines + integrity + content review."
+}

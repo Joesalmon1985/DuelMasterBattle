@@ -1,0 +1,22 @@
+{
+  "task_id": "T109",
+  "status": "DONE",
+  "commit": "83cbef14901d241cf2b80d6958177f663b507fe1",
+  "files": [
+    "godot_project/client/ui/hints.gd",
+    "godot_project/content/source/dialogue/tutorial/hints.json",
+    "tests/sim/test_t109_hints.py"
+  ],
+  "public_contracts": [
+    "optional contextual hints",
+    "spoiler-separated"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T109",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T110"
+}

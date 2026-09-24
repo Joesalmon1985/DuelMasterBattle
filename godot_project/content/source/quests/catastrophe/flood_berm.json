@@ -1,0 +1,126 @@
+{
+  "id": "quest.catastrophe.flood_berm",
+  "schema_version": 1,
+  "version": 1,
+  "family": "catastrophe",
+  "required_cause": {
+    "kinds": [
+      "river_flood"
+    ],
+    "detail": "Rising river threatens low workshops."
+  },
+  "binding": {
+    "stakeholder_role": "engineer",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Berm labour delays harvest.",
+    "era_continuity": "Flood memory remains after cycle reseed.",
+    "death_displacement": "Dead engineer fails; berm incomplete.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "raise_berm",
+      "cost_bearer": "labour_pool",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "berm_raised"
+        }
+      ],
+      "acknowledgement": "dialogue.catastrophe.flood_berm.raise"
+    },
+    {
+      "id": "evacuate_stock",
+      "cost_bearer": "workshop_owners",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "stock_evacuated"
+        }
+      ],
+      "acknowledgement": "dialogue.catastrophe.flood_berm.evacuate"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "flood_crests_and_recedes",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.catastrophe.flood_berm.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "workshops_destroyed_by_flood",
+    "status": "failed_with_consequence",
+    "branch": "flood_destruction",
+    "acknowledgement": "dialogue.catastrophe.flood_berm.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.catastrophe.flood_berm.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.catastrophe.flood_berm.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.catastrophe.flood_berm.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.berm_plan",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.catastrophe.flood_berm.offer",
+    "world_resolved": "dialogue.catastrophe.flood_berm.world_resolved",
+    "invalid_target": "dialogue.catastrophe.flood_berm.invalid_target",
+    "dead_target": "dialogue.catastrophe.flood_berm.dead_target",
+    "displaced_target": "dialogue.catastrophe.flood_berm.displaced_target",
+    "full_cycle": "dialogue.catastrophe.flood_berm.full_cycle"
+  }
+}

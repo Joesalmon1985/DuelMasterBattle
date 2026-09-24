@@ -1,0 +1,10 @@
+{
+  "label": "actor_critic",
+  "max_seconds": 2400.0,
+  "max_decisions": 20000,
+  "decisions": 1600,
+  "elapsed_seconds": 2145.422,
+  "stopped_reason": null,
+  "complete": false,
+  "incomplete_batch": false
+}

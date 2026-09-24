@@ -1,0 +1,115 @@
+[
+  {
+    "id": "unit.modern.skirmisher",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "modern",
+    "name_key": "Modern Skirmisher",
+    "fields": {
+      "archetype": "skirmisher",
+      "processed_units_per_unit": 2,
+      "combat_factor": 100,
+      "max_health": 60,
+      "attack_cooldown_ms": 1000,
+      "range_tiles": 2,
+      "semantic_placeholder": true
+    }
+  },
+  {
+    "id": "unit.modern.line",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "modern",
+    "name_key": "Modern Line",
+    "fields": {
+      "archetype": "line",
+      "processed_units_per_unit": 3,
+      "combat_factor": 100,
+      "max_health": 100,
+      "attack_cooldown_ms": 1200,
+      "range_tiles": 1,
+      "semantic_placeholder": true
+    }
+  },
+  {
+    "id": "unit.modern.heavy",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "modern",
+    "name_key": "Modern Heavy",
+    "fields": {
+      "archetype": "heavy",
+      "processed_units_per_unit": 5,
+      "combat_factor": 100,
+      "max_health": 180,
+      "attack_cooldown_ms": 1500,
+      "range_tiles": 1,
+      "semantic_placeholder": true
+    }
+  },
+  {
+    "id": "unit.future.skirmisher",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "future",
+    "name_key": "Future Skirmisher",
+    "fields": {
+      "archetype": "skirmisher",
+      "processed_units_per_unit": 2,
+      "combat_factor": 1000,
+      "max_health": 60,
+      "attack_cooldown_ms": 1000,
+      "range_tiles": 2,
+      "semantic_placeholder": true
+    }
+  },
+  {
+    "id": "unit.future.line",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "future",
+    "name_key": "Future Line",
+    "fields": {
+      "archetype": "line",
+      "processed_units_per_unit": 3,
+      "combat_factor": 1000,
+      "max_health": 100,
+      "attack_cooldown_ms": 1200,
+      "range_tiles": 1,
+      "semantic_placeholder": true
+    }
+  },
+  {
+    "id": "unit.future.heavy",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "future",
+    "name_key": "Future Heavy",
+    "fields": {
+      "archetype": "heavy",
+      "processed_units_per_unit": 5,
+      "combat_factor": 1000,
+      "max_health": 180,
+      "attack_cooldown_ms": 1500,
+      "range_tiles": 1,
+      "semantic_placeholder": true
+    }
+  },
+  {
+    "id": "unit.modern.cleanup",
+    "schema_version": 1,
+    "kind": "unit",
+    "era_id": "modern",
+    "name_key": "Modern Cleanup Crew",
+    "fields": {
+      "archetype": "line",
+      "processed_units_per_unit": 3,
+      "combat_factor": 100,
+      "cleanup_capable": true,
+      "max_health": 80,
+      "attack_cooldown_ms": 1200,
+      "range_tiles": 1,
+      "semantic_placeholder": true
+    }
+  }
+]

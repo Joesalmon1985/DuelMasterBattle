@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "gate": "G12",
+  "journeys": [
+    {
+      "id": "era_transition",
+      "seeds": [507],
+      "tests": ["tests/scenarios/test_era_transition.py"],
+      "causal": "FX-ERA production loader; era service transitions"
+    },
+    {
+      "id": "full_cycles",
+      "seeds": [1212],
+      "tests": ["tests/scenarios/test_full_cycles.py"],
+      "causal": "FX-CYCLE parent FX-ERA; reseed_cycle x3 with identity preservation"
+    },
+    {
+      "id": "release_recovery",
+      "seeds": [1001, 1101],
+      "tests": ["tests/scenarios/test_release.py", "tests/integration/test_release_recovery.py"],
+      "causal": "SaveCoordinator barriers; backup restore; content-hash refuse"
+    }
+  ],
+  "aggregates": ["G06", "G07", "G08", "G09", "G10", "G11"],
+  "notes": "Checkpoints must remain reachable from legal prior state; no invented outcomes."
+}

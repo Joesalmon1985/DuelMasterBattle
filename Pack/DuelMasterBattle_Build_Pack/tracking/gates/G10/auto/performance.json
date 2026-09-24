@@ -1,0 +1,59 @@
+{
+  "generated_at": "2026-09-23T14:56:08.768916+00:00",
+  "hardware": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.16",
+    "machine": "AMD64"
+  },
+  "cycles_run": 20,
+  "cycle_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "people_preserved": false,
+  "units_spawned_probe": 200,
+  "elapsed_seconds": 0.011,
+  "save_bytes": 678690,
+  "undeclared_army_cap": false,
+  "deleted_living_identities": false,
+  "limits": {
+    "full_10000_unit_headless": "NOT_RUN_IN_THIS_PROBE",
+    "reason": "Overnight probe uses 200-unit spawn sample; 10k remains a documented stress target.",
+    "ordinary_era_transitions_per_cycle": "NOT_INCLUDED \u2014 reseed_cycle only"
+  },
+  "status": "PASS_WITH_HONEST_LIMITS",
+  "p95_proxy": {
+    "note": "Single-machine probe; not a multi-run percentile. Recorded as mean cycle proxy.",
+    "cycles": 20,
+    "elapsed_seconds": 0.011,
+    "mean_cycle_seconds": 0.0005,
+    "hardware": {
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python": "3.11.16",
+      "machine": "AMD64"
+    }
+  },
+  "g10_budget_misses": {
+    "full_10000_unit_headless": "NOT_RUN_IN_THIS_PROBE",
+    "reason": "Overnight probe uses 200-unit spawn sample; 10k remains a documented stress target.",
+    "ordinary_era_transitions_per_cycle": "NOT_INCLUDED \u2014 reseed_cycle only"
+  }
+}

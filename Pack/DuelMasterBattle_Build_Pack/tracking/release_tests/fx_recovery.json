@@ -1,0 +1,7 @@
+{
+  "slot": "release0",
+  "world_version": 0,
+  "fixture": "FX-RECOVERY",
+  "seed": 1001,
+  "parent_fixture": "FX-CLOCK"
+}

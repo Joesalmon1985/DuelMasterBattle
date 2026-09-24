@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "pack_id": "content.g08_baseline",
+  "quests": [
+    {
+      "id": "quest.factory_shortage",
+      "family": "village_production",
+      "source": "godot_project/content/source/quests/shortage/factory_shortage.json"
+    }
+  ],
+  "quest_count": 1,
+  "batches": [
+    {
+      "id": "batch.t133.valid",
+      "hash": "4de4832d2ba7d01e3cd4d1d20c89508d79b414d5597c3f9a5ac701e59d16be6b"
+    }
+  ],
+  "rivals": [],
+  "dungeons": [
+    {
+      "id": "dungeon.sluice"
+    }
+  ],
+  "dialogue_manifest": null,
+  "provenance": {
+    "validator": "tools.content.compile",
+    "api_dependency": false
+  },
+  "content_hash": "597cf20cce114f15ece0d90c1442f32729fc9f0898c7dbdb353af41d5004d124"
+}

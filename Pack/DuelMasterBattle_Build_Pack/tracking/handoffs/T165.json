@@ -1,0 +1,19 @@
+{
+  "task_id": "T165",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tracking/gates/G12/journey_manifest.json"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T165",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T166",
+  "notes": "G12 journey manifest",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z"
+}

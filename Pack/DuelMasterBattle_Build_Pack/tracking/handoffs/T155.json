@@ -1,0 +1,19 @@
+{
+  "task_id": "T155",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tools/package_desktop.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T155",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T156",
+  "notes": "package desktop + windows scaffold",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z"
+}

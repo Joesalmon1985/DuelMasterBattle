@@ -1,0 +1,126 @@
+{
+  "id": "quest.conflict.water_rights",
+  "schema_version": 1,
+  "version": 1,
+  "family": "conflict",
+  "required_cause": {
+    "kinds": [
+      "shared_resource_claim"
+    ],
+    "detail": "Upstream mill and downstream farm claim the same sluice hours."
+  },
+  "binding": {
+    "stakeholder_role": "miller",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Favouring farm starves mill cargo.",
+    "era_continuity": "Schedule persists until renegotiated.",
+    "death_displacement": "War/displacement of miller fails with consequence.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "schedule_hours",
+      "cost_bearer": "both_parties_output",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "water_schedule"
+        }
+      ],
+      "acknowledgement": "dialogue.conflict.water_rights.schedule"
+    },
+    {
+      "id": "favor_farm",
+      "cost_bearer": "miller_output",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "farm_priority"
+        }
+      ],
+      "acknowledgement": "dialogue.conflict.water_rights.farm"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "drought_ends_and_pressure_drops",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.conflict.water_rights.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "sluice_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "sluice_gone",
+    "acknowledgement": "dialogue.conflict.water_rights.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.conflict.water_rights.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.conflict.water_rights.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.conflict.water_rights.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.water_token",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.conflict.water_rights.offer",
+    "world_resolved": "dialogue.conflict.water_rights.world_resolved",
+    "invalid_target": "dialogue.conflict.water_rights.invalid_target",
+    "dead_target": "dialogue.conflict.water_rights.dead_target",
+    "displaced_target": "dialogue.conflict.water_rights.displaced_target",
+    "full_cycle": "dialogue.conflict.water_rights.full_cycle"
+  }
+}

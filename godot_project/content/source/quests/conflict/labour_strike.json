@@ -1,0 +1,126 @@
+{
+  "id": "quest.conflict.labour_strike",
+  "schema_version": 1,
+  "version": 1,
+  "family": "conflict",
+  "required_cause": {
+    "kinds": [
+      "labour_dispute"
+    ],
+    "detail": "Yard workers refuse shifts until safety gear arrives."
+  },
+  "binding": {
+    "stakeholder_role": "union_speaker",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Replacements permanently displace strikers.",
+    "era_continuity": "Dispute history remains on living workers.",
+    "death_displacement": "Endless-history: no compulsory main quest win.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "deliver_gear",
+      "cost_bearer": "faction_stock",
+      "effects": [
+        {
+          "kind": "grant_item",
+          "item_id": "item.safety_kit"
+        }
+      ],
+      "acknowledgement": "dialogue.conflict.labour_strike.gear"
+    },
+    {
+      "id": "hire_replacements",
+      "cost_bearer": "displaced_workers",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "replacements_hired"
+        }
+      ],
+      "acknowledgement": "dialogue.conflict.labour_strike.replace"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "workers_return_after_cooling_off",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.conflict.labour_strike.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "yard_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "yard_gone",
+    "acknowledgement": "dialogue.conflict.labour_strike.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.conflict.labour_strike.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.conflict.labour_strike.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.conflict.labour_strike.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.safety_kit",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.conflict.labour_strike.offer",
+    "world_resolved": "dialogue.conflict.labour_strike.world_resolved",
+    "invalid_target": "dialogue.conflict.labour_strike.invalid_target",
+    "dead_target": "dialogue.conflict.labour_strike.dead_target",
+    "displaced_target": "dialogue.conflict.labour_strike.displaced_target",
+    "full_cycle": "dialogue.conflict.labour_strike.full_cycle"
+  }
+}

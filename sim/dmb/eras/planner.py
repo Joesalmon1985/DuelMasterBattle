@@ -327,7 +327,13 @@ def faction_theoretical_capacity(snapshot: Any, faction_id: str) -> Fraction:
 
 def next_era_id(source_era: str) -> str:
     order = ("prehistoric", "historic", "modern", "future")
-    aliases = {"ancient": "prehistoric", "prehistoric": "prehistoric", "historic": "historic"}
+    aliases = {
+        "ancient": "prehistoric",
+        "prehistoric": "prehistoric",
+        "historic": "historic",
+        "modern": "modern",
+        "future": "future",
+    }
     normalised = aliases.get(str(source_era).lower(), str(source_era).lower())
     if normalised not in order:
         return "historic"

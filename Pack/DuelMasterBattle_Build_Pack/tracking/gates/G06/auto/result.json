@@ -1,0 +1,106 @@
+{
+  "gate": "G06",
+  "generated_at": "2026-09-23T11:00:18Z",
+  "status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "results": [
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_world_map_geometry.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.683,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G06\\auto\\logs\\00_world_map_geometry.log",
+      "status": "PASS",
+      "name": "world_map_geometry",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/scenarios/test_era_transition.py",
+        "tests/sim/test_t105_chronicle.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 1.383,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G06\\auto\\logs\\01_era_transition_scenarios.log",
+      "status": "PASS",
+      "name": "era_transition_scenarios",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/scenarios/test_mvp_sandbox.py",
+        "tests/scenarios/test_mvp_continuation.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.764,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G06\\auto\\logs\\02_mvp_sandbox_continuation.log",
+      "status": "PASS",
+      "name": "mvp_sandbox_continuation",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/sim/test_t107_player_screens.py",
+        "tests/sim/test_t109_hints.py",
+        "tests/sim/test_t110_mvp_a11y.py",
+        "tests/sim/test_semantic_visuals.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.737,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G06\\auto\\logs\\03_mvp_hints_a11y_screens.log",
+      "status": "PASS",
+      "name": "mvp_hints_a11y_screens",
+      "kind": "pytest"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+        "tools/evaluate_mvp.py"
+      ],
+      "exit_code": 0,
+      "duration_s": 0.355,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G06\\auto\\logs\\04_evaluate_mvp_pacing.log",
+      "status": "PASS",
+      "name": "evaluate_mvp_pacing",
+      "kind": "shell"
+    },
+    {
+      "cmd": [
+        "C:\\Users\\joesa\\Downloads\\Godot_v4.5.1-stable_win64.exe\\Godot_v4.5.1-stable_win64.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\godot_project",
+        "--resolution",
+        "450x800",
+        "--script",
+        "res://client/tests/run_fx_era_ui.gd"
+      ],
+      "exit_code": 0,
+      "duration_s": 2.111,
+      "log": "Pack\\DuelMasterBattle_Build_Pack\\tracking\\gates\\G06\\auto\\logs\\05_fx_era_ui_controls.log",
+      "status": "PASS",
+      "name": "fx_era_ui_controls",
+      "kind": "godot_script"
+    }
+  ],
+  "spec": "G06",
+  "seed": 507,
+  "fixture": "FX-ERA"
+}

@@ -1,0 +1,126 @@
+{
+  "id": "quest.personal.sibling_feud",
+  "schema_version": 1,
+  "version": 1,
+  "family": "personal",
+  "required_cause": {
+    "kinds": [
+      "inheritance_dispute"
+    ],
+    "detail": "Two siblings claim the same workshop share."
+  },
+  "binding": {
+    "stakeholder_role": "elder_sibling",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Awarding one sibling creates lasting enmity.",
+    "era_continuity": "Dispute record survives on person history.",
+    "death_displacement": "Either sibling death triggers dead_target branch.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "split_share",
+      "cost_bearer": "both_siblings_income",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "share_split"
+        }
+      ],
+      "acknowledgement": "dialogue.personal.sibling_feud.split"
+    },
+    {
+      "id": "arbitrate_for_one",
+      "cost_bearer": "losing_sibling",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "share_awarded"
+        }
+      ],
+      "acknowledgement": "dialogue.personal.sibling_feud.arbitrate"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "elder_dies_and_custom_resolves",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.personal.sibling_feud.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "workshop_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "workshop_gone",
+    "acknowledgement": "dialogue.personal.sibling_feud.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.personal.sibling_feud.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.personal.sibling_feud.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.personal.sibling_feud.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.share_deed",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.personal.sibling_feud.offer",
+    "world_resolved": "dialogue.personal.sibling_feud.world_resolved",
+    "invalid_target": "dialogue.personal.sibling_feud.invalid_target",
+    "dead_target": "dialogue.personal.sibling_feud.dead_target",
+    "displaced_target": "dialogue.personal.sibling_feud.displaced_target",
+    "full_cycle": "dialogue.personal.sibling_feud.full_cycle"
+  }
+}

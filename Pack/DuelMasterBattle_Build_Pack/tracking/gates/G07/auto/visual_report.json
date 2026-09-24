@@ -1,0 +1,110 @@
+{
+  "gate": "G07",
+  "generated_at": "2026-09-23T07:07:47.189234+00:00",
+  "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "visual_status": "PASS",
+  "screenshot_count": 6,
+  "shots_passed": 6,
+  "shots_failed": 0,
+  "shots": [
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/screenshots/01_cycle_prehistoric_core_450x800.png",
+      "status": "PASS",
+      "bytes": 47089,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 21.311,
+        "grey_frac": 0.1009
+      },
+      "checkpoint": "cycle_prehistoric_core",
+      "era": "prehistoric",
+      "modal_open": "",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/screenshots/02_cycle_world_map_450x800.png",
+      "status": "PASS",
+      "bytes": 66723,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 41.78,
+        "grey_frac": 0.0497
+      },
+      "checkpoint": "cycle_world_map",
+      "era": "prehistoric",
+      "modal_open": "world_map",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/screenshots/03_cycle_chronicle_pins_450x800.png",
+      "status": "PASS",
+      "bytes": 31238,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 17.606,
+        "grey_frac": 0.0807
+      },
+      "checkpoint": "cycle_chronicle_pins",
+      "era": "prehistoric",
+      "modal_open": "chronicle",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/screenshots/04_cycle_world_map_1280x720.png",
+      "status": "PASS",
+      "bytes": 93829,
+      "image_width": 1280,
+      "image_height": 720,
+      "near_blank": {
+        "stddev": 39.144,
+        "grey_frac": 0.0251
+      },
+      "checkpoint": "cycle_world_map",
+      "era": "prehistoric",
+      "modal_open": "world_map",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/screenshots/05_cycle_chronicle_pins_1280x720.png",
+      "status": "PASS",
+      "bytes": 50474,
+      "image_width": 1280,
+      "image_height": 720,
+      "near_blank": {
+        "stddev": 15.08,
+        "grey_frac": 0.0835
+      },
+      "checkpoint": "cycle_chronicle_pins",
+      "era": "prehistoric",
+      "modal_open": "chronicle",
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "file": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/screenshots/06_historic_core_450x800.png",
+      "status": "PASS",
+      "bytes": 52780,
+      "image_width": 450,
+      "image_height": 800,
+      "near_blank": {
+        "stddev": 21.811,
+        "grey_frac": 0.0836
+      },
+      "checkpoint": "historic_core",
+      "era": "historic",
+      "modal_open": "",
+      "issues": [],
+      "warnings": []
+    }
+  ],
+  "montage": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/montages/g07_storyboard.png",
+  "result_json": "Pack/DuelMasterBattle_Build_Pack/tracking/gates/G07/auto/result.json"
+}

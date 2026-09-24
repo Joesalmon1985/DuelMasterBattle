@@ -383,6 +383,18 @@ class InventoryService:
             if item.get("holder_id") == holder_id and item.get("alive", True)
         ]
 
+    def player_view(self, holder_id: str = "player") -> dict[str, Any]:
+        """Lean inventory slice for UI/bridge."""
+        items = self.player_items(holder_id=holder_id)
+        area = str((self.state.player or {}).get("area_id") or (self.state.player or {}).get("node_id") or "")
+        return {
+            "schema_version": INVENTORY_SCHEMA_VERSION,
+            "holder_id": holder_id,
+            "items": items,
+            "ground": self.ground_items(area) if area else [],
+            "can_manage_remotely": False,
+        }
+
     def ground_items(self, area_id: str) -> list[dict[str, Any]]:
         out = []
         for item in self.state.items.values():

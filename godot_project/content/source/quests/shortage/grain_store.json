@@ -1,0 +1,126 @@
+{
+  "id": "quest.shortage.grain_store",
+  "schema_version": 1,
+  "version": 1,
+  "family": "shortage",
+  "required_cause": {
+    "kinds": [
+      "storehouse_depletion"
+    ],
+    "detail": "Grain stores empty after blighted harvest; carts idle."
+  },
+  "binding": {
+    "stakeholder_role": "storekeeper",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Diverting carts delays neighbour construction.",
+    "era_continuity": "Bindings survive Historic\u2192Modern if storekeeper lives.",
+    "death_displacement": "Dead storekeeper fails with consequence; successor may re-offer.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "divert_trade_cart",
+      "cost_bearer": "neighbouring_village",
+      "effects": [
+        {
+          "kind": "open_route",
+          "route_id": "route.grain_relief"
+        }
+      ],
+      "acknowledgement": "dialogue.shortage.grain_store.divert"
+    },
+    {
+      "id": "ration_and_forage",
+      "cost_bearer": "local_workers",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "rationing_active"
+        }
+      ],
+      "acknowledgement": "dialogue.shortage.grain_store.ration"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "military_escort_delivers_grain",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.shortage.grain_store.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "storehouse_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "destroyed_store",
+    "acknowledgement": "dialogue.shortage.grain_store.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.shortage.grain_store.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.shortage.grain_store.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.shortage.grain_store.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.grain_ledger",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.shortage.grain_store.offer",
+    "world_resolved": "dialogue.shortage.grain_store.world_resolved",
+    "invalid_target": "dialogue.shortage.grain_store.invalid_target",
+    "dead_target": "dialogue.shortage.grain_store.dead_target",
+    "displaced_target": "dialogue.shortage.grain_store.displaced_target",
+    "full_cycle": "dialogue.shortage.grain_store.full_cycle"
+  }
+}

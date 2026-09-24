@@ -1,0 +1,19 @@
+{
+  "task_id": "T156",
+  "status": "DONE",
+  "commit": "PENDING",
+  "files": [
+    "tools/smoke_release.py"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T156",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T157",
+  "notes": "clean-machine smoke + windows_status",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z"
+}

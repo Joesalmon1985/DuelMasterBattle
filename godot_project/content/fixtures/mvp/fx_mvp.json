@@ -1,0 +1,8 @@
+{
+  "id": "FX-MVP",
+  "schema_version": 1,
+  "seed": 507,
+  "description": "Integrated two-faction Prehistoric sandbox using normal world generation. No injected VP or stocks. Historic continuation via EraService at 10 VP.",
+  "launch": "bash tools/play_mvp.sh",
+  "forces_game_over": false
+}

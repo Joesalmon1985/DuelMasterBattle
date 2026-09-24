@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "fixture_id": "FX-CYCLE",
+  "seed": 1212,
+  "cycles": 3,
+  "parent_fixture": "FX-ERA",
+  "notes": "Multi-cycle replay marker; runtime builds from FX-ERA + reseed_cycle."
+}

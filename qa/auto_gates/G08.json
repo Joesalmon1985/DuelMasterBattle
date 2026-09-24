@@ -1,0 +1,61 @@
+{
+  "id": "G08",
+  "fixture": "FX-CONTENT-SAMPLE",
+  "seed": 808,
+  "resolutions_layout": ["450x800", "960x540", "1280x720"],
+  "steps": [
+    {
+      "name": "content_pipeline",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_t133_content_pipeline.py"],
+      "timeout_s": 60
+    },
+    {
+      "name": "quest_dungeon_rival_matrix",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_t134_t136_content.py"],
+      "timeout_s": 60
+    },
+    {
+      "name": "dialogue_baseline",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_t137_dialogue_baseline.py"],
+      "timeout_s": 120
+    },
+    {
+      "name": "assets_and_tools",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_t138_assets.py", "tests/sim/test_t139_t140_tools.py"],
+      "timeout_s": 60
+    },
+    {
+      "name": "content_matrix",
+      "kind": "pytest",
+      "paths": ["tests/scenarios/test_content_matrix.py"],
+      "timeout_s": 120
+    },
+    {
+      "name": "validate_corpus",
+      "kind": "shell",
+      "cmd": ["python3", "tools/content/validate_corpus.py", "--write", "--compile-baseline"],
+      "timeout_s": 120
+    }
+  ],
+  "screenshot_plan": [
+    "quest_family_sample",
+    "dungeon_cave",
+    "dungeon_sluice",
+    "rival_sample",
+    "dialogue_dead_target",
+    "dialogue_world_resolved",
+    "village_panel_preview",
+    "a11y_label_scale"
+  ],
+  "coverage_required": {
+    "quest_families": 8,
+    "eras": 2,
+    "dungeons": 2,
+    "rivals": 4,
+    "branches": ["displaced_target", "dead_target", "already_world_resolved", "full_cycle"]
+  }
+}

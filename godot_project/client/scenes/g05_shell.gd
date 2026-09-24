@@ -14,9 +14,13 @@ const WorldLayerPresenters = preload("res://client/world/world_layer_presenters.
 const WorldMapPanel = preload("res://client/ui/world_map_panel.gd")
 const EraTransitionPresenter = preload("res://client/world/era_transition.gd")
 const ChroniclePanel = preload("res://client/ui/chronicle.gd")
+const InventoryPanel = preload("res://client/ui/inventory_panel.gd")
+const GrimoirePanel = preload("res://client/ui/grimoire.gd")
+const KnowledgePanel = preload("res://client/ui/knowledge.gd")
 
 const LocalBattle = preload("res://client/combat/local_battle.gd")
 const EncounterHost = preload("res://client/encounters/encounter_host.gd")
+const PresentationMode = preload("res://client/core/presentation_mode.gd")
 
 const G05_SAVE := "g05_village"
 const INDUSTRY_FIELDS := [
@@ -35,6 +39,10 @@ var _layers
 var _map_panel
 var _era_presenter
 var _chronicle_panel
+var _inventory_panel
+var _grimoire_panel
+var _knowledge_panel
+var _ui_modal_pause := ""
 var _ui_layer: CanvasLayer
 var _fx_era_panel: PanelContainer
 var _fx_era_badge: Label
@@ -53,6 +61,8 @@ var _village_ready := false
 var _project_root := ""
 var _duel_adapter
 var _duel_host: Control
+var _duel_layer: CanvasLayer
+var _presentation
 var _fx_meta: Dictionary = {}
 var _cmd_seq := 0
 var _status: Label
@@ -123,17 +133,26 @@ func _ready() -> void:
 	_client.bridge_failed.connect(_on_bridge_failed)
 	_duel_adapter = DuelLeaseAdapter.new()
 	_duel_adapter.finished.connect(_on_duel_finished)
+	# Ward Duel on its own high canvas layer so world CanvasLayers cannot stack over it.
+	_duel_layer = CanvasLayer.new()
+	_duel_layer.name = "DuelLayer"
+	_duel_layer.layer = 50
+	_duel_layer.visible = false
+	add_child(_duel_layer)
 	_duel_host = Control.new()
 	_duel_host.name = "DuelHost"
 	_duel_host.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_duel_host.visible = false
-	add_child(_duel_host)
+	_duel_layer.add_child(_duel_host)
 	# High canvas layer keeps FX-ERA / map / chronicle above Overworld Node2D UI.
 	_ui_layer = CanvasLayer.new()
 	_ui_layer.name = "ShellUILayer"
 	_ui_layer.layer = 40
 	add_child(_ui_layer)
+	_presentation = PresentationMode.new()
+	# Overworld is created in _boot; bind chrome/duel now and attach world root later.
+	_presentation.bind(null, _ui_layer, [_status, _time_hud], _duel_layer, _duel_host)
 	_map_panel = WorldMapPanel.new()
 	_map_panel.name = "WorldMap"
 	_map_panel.closed.connect(_on_map_closed)
@@ -146,6 +165,21 @@ func _ready() -> void:
 	_chronicle_panel.name = "Chronicle"
 	_chronicle_panel.closed.connect(_on_chronicle_closed)
 	_ui_layer.add_child(_chronicle_panel)
+	_inventory_panel = InventoryPanel.new()
+	_inventory_panel.name = "Inventory"
+	_inventory_panel.closed.connect(_on_ui_modal_closed)
+	_inventory_panel.action_requested.connect(_on_inventory_action)
+	_ui_layer.add_child(_inventory_panel)
+	_grimoire_panel = GrimoirePanel.new()
+	_grimoire_panel.name = "Grimoire"
+	_grimoire_panel.closed.connect(_on_ui_modal_closed)
+	_grimoire_panel.spell_selected.connect(_on_grimoire_prepared)
+	_ui_layer.add_child(_grimoire_panel)
+	_knowledge_panel = KnowledgePanel.new()
+	_knowledge_panel.name = "Knowledge"
+	_knowledge_panel.closed.connect(_on_ui_modal_closed)
+	_knowledge_panel.open_world_map_requested.connect(_on_knowledge_open_map)
+	_ui_layer.add_child(_knowledge_panel)
 	_project_root = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	if _project_root.ends_with("godot_project"):
 		_project_root = _project_root.get_base_dir()
@@ -183,6 +217,9 @@ func _boot() -> void:
 	_overworld = OverworldScene.instantiate()
 	_overworld.name = "Overworld"
 	add_child(_overworld)
+	if _presentation != null:
+		_presentation.set_world_root(_overworld)
+		_presentation.set_mode(PresentationMode.Mode.WORLD)
 	if _overworld.has_method("set_bridge_runtime"):
 		_overworld.set_bridge_runtime(self)
 	_workers = WorkerControllerScript.new()
@@ -528,6 +565,15 @@ func _input(event: InputEvent) -> void:
 		elif event.keycode == KEY_C:
 			_toggle_chronicle()
 			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_I:
+			_toggle_inventory()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_G:
+			_toggle_grimoire()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_K:
+			_toggle_knowledge()
+			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ESCAPE and _era_presenter != null and _era_presenter.is_playing():
 			_era_presenter.skip()
 			get_viewport().set_input_as_handled()
@@ -549,20 +595,21 @@ func _apply_fixture_status() -> void:
 	elif _long_world:
 		_status.text = "LONG-WORLD observer — fast-forward / event log (dev only)"
 	else:
-		_status.text = "Explore — M map · paths lead to neighbouring places"
+		_status.text = "Explore — M map · I inventory · G grimoire · K knowledge"
 
 
 func _raise_shell_overlays() -> void:
+	# Never re-show world chrome while Ward Duel owns the screen.
+	if _presentation != null and _presentation.is_ward_duel():
+		return
 	if _ui_layer != null:
 		_ui_layer.visible = true
 	var modal_open := false
-	if _map_panel != null and _map_panel.visible:
-		modal_open = true
-	if _chronicle_panel != null and _chronicle_panel.visible:
-		modal_open = true
+	for p in [_map_panel, _chronicle_panel, _inventory_panel, _grimoire_panel, _knowledge_panel]:
+		if p != null and p.visible:
+			modal_open = true
+			break
 	if _fx_era_panel != null:
-		# Keep FX panel usable in village; hide under Map/Chronicle so it cannot
-		# cover modal chrome / Close / content.
 		_fx_era_panel.visible = not modal_open
 		if not modal_open:
 			_fx_era_panel.move_to_front()
@@ -570,10 +617,9 @@ func _raise_shell_overlays() -> void:
 		_status.move_to_front()
 	if _time_hud != null and not modal_open:
 		_time_hud.move_to_front()
-	if _map_panel != null and _map_panel.visible:
-		_map_panel.move_to_front()
-	if _chronicle_panel != null and _chronicle_panel.visible:
-		_chronicle_panel.move_to_front()
+	for p in [_map_panel, _chronicle_panel, _inventory_panel, _grimoire_panel, _knowledge_panel]:
+		if p != null and p.visible:
+			p.move_to_front()
 
 
 func _maybe_setup_fx_era_ui(view: Dictionary = {}) -> void:
@@ -852,8 +898,92 @@ func _on_chronicle_closed() -> void:
 	_raise_shell_overlays()
 
 
+func _ensure_ui_modal_pause() -> void:
+	if _ui_modal_pause == "":
+		_ui_modal_pause = acquire_pause("ui_modal")
+
+
+func _on_ui_modal_closed() -> void:
+	if _ui_modal_pause != "":
+		release_pause()
+		_ui_modal_pause = ""
+	_raise_shell_overlays()
+
+
+func _toggle_inventory() -> void:
+	if _inventory_panel == null or _client == null:
+		return
+	if _inventory_panel.visible:
+		_inventory_panel.hide_panel()
+		_on_ui_modal_closed()
+		return
+	_ensure_ui_modal_pause()
+	var view: Dictionary = _client.request_view("player", ["inventory"])
+	var inv: Dictionary = _coerce_dict(view.get("inventory"))
+	_inventory_panel.show_items(inv.get("items", []))
+	_raise_shell_overlays()
+
+
+func _toggle_grimoire() -> void:
+	if _grimoire_panel == null or _client == null:
+		return
+	if _grimoire_panel.visible:
+		_grimoire_panel.hide_panel()
+		_on_ui_modal_closed()
+		return
+	_ensure_ui_modal_pause()
+	var view: Dictionary = _client.request_view("player", ["grimoire"])
+	var grim: Dictionary = _coerce_dict(view.get("grimoire"))
+	_grimoire_panel.show_spells(grim.get("spells", []))
+	_raise_shell_overlays()
+
+
+func _toggle_knowledge() -> void:
+	if _knowledge_panel == null or _client == null:
+		return
+	if _knowledge_panel.visible:
+		_knowledge_panel.hide_panel()
+		_on_ui_modal_closed()
+		return
+	_ensure_ui_modal_pause()
+	var view: Dictionary = _client.request_view("player", ["knowledge", "chronicle"])
+	var entries: Array = view.get("knowledge", [])
+	_knowledge_panel.show_knowledge(entries)
+	_raise_shell_overlays()
+
+
+func _on_inventory_action(action: String, item_id: String, extra: Dictionary) -> void:
+	var payload := {"item_id": item_id, "action": action}
+	for k in extra.keys():
+		payload[k] = extra[k]
+	if action == "equip":
+		payload["action"] = "equip"
+	elif action == "drop":
+		payload["action"] = "drop"
+		var player_view: Dictionary = _client.request_view("player", ["player"])
+		var player: Dictionary = _coerce_dict(player_view.get("player"))
+		payload["area_id"] = str(player.get("node_id") or player.get("area_id") or "")
+		payload["position"] = player.get("position") or [0, 0]
+	elif action == "use":
+		payload["action"] = "use_item"
+	_cmd("Interact", payload)
+	var refreshed: Dictionary = _client.request_view("player", ["inventory"])
+	_inventory_panel.show_items(_coerce_dict(refreshed.get("inventory")).get("items", []))
+
+
+func _on_grimoire_prepared(spell_id: String) -> void:
+	_cmd("Interact", {"action": "prepare_spell", "spell_id": spell_id})
+
+
+func _on_knowledge_open_map() -> void:
+	if _knowledge_panel != null and _knowledge_panel.visible:
+		_knowledge_panel.hide_panel()
+	_toggle_world_map()
+
+
 func start_hazard_challenge(cube_id: String) -> bool:
 	## G04 retained duel path — Challenge a catastrophe cube.
+	## Presentation: hide all world-space chrome before mounting Ward Duel.
 	acquire_pause("duel")
 	var reply := _cmd("StartHazardDuel", {"cube_id": cube_id})
 	if str(reply.get("status", "")) != "ACCEPTED":
@@ -861,18 +991,62 @@ func start_hazard_challenge(cube_id: String) -> bool:
 		_status.text = "Challenge rejected: %s" % reply.get("public_feedback", reply.get("code", "?"))
 		_status.modulate.a = 1.0
 		return false
-	_duel_host.visible = true
-	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_duel_host.move_to_front()
+	_enter_ward_duel_presentation()
 	var ok: bool = _duel_adapter.begin_from_start_reply(_duel_host, reply, Callable(self, "_cmd"))
 	if not ok:
-		_duel_host.visible = false
+		_leave_ward_duel_presentation()
 		release_pause()
 		_status.text = "Failed to host retained GameBoard duel"
 		return false
 	_status.text = "Hazard Challenge — retained GameBoard / DmbBattleSim"
 	_status.modulate.a = 1.0
 	return true
+
+
+func _enter_ward_duel_presentation() -> void:
+	## Strategic sim stays paused via acquire_pause; only presentation is swapped.
+	if _presentation == null:
+		_presentation = PresentationMode.new()
+		_presentation.bind(_overworld, _ui_layer, [_status, _time_hud], _duel_layer, _duel_host)
+	if _battle != null and is_instance_valid(_battle):
+		_battle.visible = false
+		_battle.process_mode = Node.PROCESS_MODE_DISABLED
+	_presentation.set_mode(PresentationMode.Mode.WARD_DUEL)
+
+
+func _leave_ward_duel_presentation() -> void:
+	if _presentation == null:
+		if _duel_host != null:
+			_duel_host.visible = false
+		if _duel_layer != null:
+			_duel_layer.visible = false
+		if _overworld != null:
+			_overworld.visible = true
+			_overworld.process_mode = Node.PROCESS_MODE_INHERIT
+		return
+	_presentation.set_mode(PresentationMode.Mode.WORLD)
+	if _battle != null and is_instance_valid(_battle):
+		_battle.visible = true
+		_battle.process_mode = Node.PROCESS_MODE_INHERIT
+	_raise_shell_overlays()
+
+
+func presentation_mode_name() -> String:
+	if _presentation == null:
+		return "UNBOUND"
+	return _presentation.current_name()
+
+
+func presentation_assert_ward_clean() -> Dictionary:
+	if _presentation == null:
+		return {"ok": false, "leaks": ["presentation_unbound"]}
+	return _presentation.assert_ward_duel_clean()
+
+
+func presentation_assert_world_restored() -> Dictionary:
+	if _presentation == null:
+		return {"ok": false, "issues": ["presentation_unbound"]}
+	return _presentation.assert_world_restored()
 
 
 func start_demon_challenge(cube_id: String) -> bool:
@@ -955,7 +1129,8 @@ func solve_sluice_via_bridge() -> Dictionary:
 
 
 func _on_duel_finished(outcome: String, payload: Dictionary) -> void:
-	_duel_host.visible = false
+	# Restore world presentation exactly once before reproject (avoids hidden dupes).
+	_leave_ward_duel_presentation()
 	release_pause()
 	var status := str(payload.get("payload", {}).get("status", payload.get("status", outcome)))
 	if status in ["success", "idempotent"] or outcome in ["win", "victory", "success"]:
@@ -964,6 +1139,9 @@ func _on_duel_finished(outcome: String, payload: Dictionary) -> void:
 		_status.text = "Duel ended (%s)" % outcome
 	_status.modulate.a = 1.0
 	reproject_from_python()
+	# Reproject may rebuild actors; ensure we did not leave duel chrome up.
+	if _presentation != null and _presentation.is_ward_duel():
+		_leave_ward_duel_presentation()
 
 
 func enter_sluice() -> void:
@@ -1179,6 +1357,30 @@ func invoke_world_map_for_test() -> void:
 
 func invoke_chronicle_for_test() -> void:
 	_toggle_chronicle()
+
+
+func invoke_inventory_for_test() -> void:
+	_toggle_inventory()
+
+
+func invoke_grimoire_for_test() -> void:
+	_toggle_grimoire()
+
+
+func invoke_knowledge_for_test() -> void:
+	_toggle_knowledge()
+
+
+func inventory_panel() -> Control:
+	return _inventory_panel
+
+
+func grimoire_panel() -> Control:
+	return _grimoire_panel
+
+
+func knowledge_panel() -> Control:
+	return _knowledge_panel
 
 
 func mara_actor_id() -> String:

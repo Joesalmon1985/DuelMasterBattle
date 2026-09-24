@@ -1,0 +1,126 @@
+{
+  "id": "quest.diplomacy.border_truce",
+  "schema_version": 1,
+  "version": 1,
+  "family": "diplomacy",
+  "required_cause": {
+    "kinds": [
+      "border_skirmish"
+    ],
+    "detail": "Two factions contest a shared pasture node."
+  },
+  "binding": {
+    "stakeholder_role": "envoy",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Treaty reduces exclusive pasture grants.",
+    "era_continuity": "Treaty text survives era if both seats persist.",
+    "death_displacement": "Dead envoy fails; war may resume.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "shared_pasture_treaty",
+      "cost_bearer": "both_factions_grazing",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "truce_pasture"
+        }
+      ],
+      "acknowledgement": "dialogue.diplomacy.border_truce.treaty"
+    },
+    {
+      "id": "tribute_for_access",
+      "cost_bearer": "player_faction",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "tribute_paid"
+        }
+      ],
+      "acknowledgement": "dialogue.diplomacy.border_truce.tribute"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "factions_exhaust_and_withdraw",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.diplomacy.border_truce.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "envoy_declared_persona_non_grata",
+    "status": "failed_with_consequence",
+    "branch": "envoy_expelled",
+    "acknowledgement": "dialogue.diplomacy.border_truce.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.diplomacy.border_truce.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.diplomacy.border_truce.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.diplomacy.border_truce.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.seal_ring",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.diplomacy.border_truce.offer",
+    "world_resolved": "dialogue.diplomacy.border_truce.world_resolved",
+    "invalid_target": "dialogue.diplomacy.border_truce.invalid_target",
+    "dead_target": "dialogue.diplomacy.border_truce.dead_target",
+    "displaced_target": "dialogue.diplomacy.border_truce.displaced_target",
+    "full_cycle": "dialogue.diplomacy.border_truce.full_cycle"
+  }
+}

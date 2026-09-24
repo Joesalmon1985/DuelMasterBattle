@@ -1,0 +1,126 @@
+{
+  "id": "quest.shortage.fuel_yard",
+  "schema_version": 1,
+  "version": 1,
+  "family": "shortage",
+  "required_cause": {
+    "kinds": [
+      "fuel_stockout"
+    ],
+    "detail": "Kiln fuel exhausted; processors stall without charcoal."
+  },
+  "binding": {
+    "stakeholder_role": "yard_foreman",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Grove cut reduces future timber grants.",
+    "era_continuity": "Cause rebinds to successor yard after era conversion.",
+    "death_displacement": "Displaced foreman uses displaced_target branch.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "cut_grove_permit",
+      "cost_bearer": "grove_keepers",
+      "effects": [
+        {
+          "kind": "clear_cause",
+          "cause_kind": "fuel_stockout"
+        }
+      ],
+      "acknowledgement": "dialogue.shortage.fuel_yard.cut"
+    },
+    {
+      "id": "buy_imported_fuel",
+      "cost_bearer": "faction_treasury",
+      "effects": [
+        {
+          "kind": "grant_item",
+          "item_id": "item.charcoal_crate"
+        }
+      ],
+      "acknowledgement": "dialogue.shortage.fuel_yard.buy"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "faction_imports_fuel_autonomously",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.shortage.fuel_yard.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "yard_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "destroyed_yard",
+    "acknowledgement": "dialogue.shortage.fuel_yard.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.shortage.fuel_yard.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.shortage.fuel_yard.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.shortage.fuel_yard.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.fuel_tally",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.shortage.fuel_yard.offer",
+    "world_resolved": "dialogue.shortage.fuel_yard.world_resolved",
+    "invalid_target": "dialogue.shortage.fuel_yard.invalid_target",
+    "dead_target": "dialogue.shortage.fuel_yard.dead_target",
+    "displaced_target": "dialogue.shortage.fuel_yard.displaced_target",
+    "full_cycle": "dialogue.shortage.fuel_yard.full_cycle"
+  }
+}

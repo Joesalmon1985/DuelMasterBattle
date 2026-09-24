@@ -1,0 +1,58 @@
+{
+  "id": "G07",
+  "fixture": "FX-CYCLE",
+  "seed": 1212,
+  "resolutions_layout": ["450x800", "960x540", "1280x720"],
+  "steps": [
+    {
+      "name": "full_catalogue",
+      "kind": "pytest",
+      "paths": ["tests/sim/test_t115_full_catalogue.py", "tests/sim/test_t116_modern_future.py"],
+      "timeout_s": 120
+    },
+    {
+      "name": "later_eras_and_cycles",
+      "kind": "pytest",
+      "paths": [
+        "tests/scenarios/test_later_eras.py",
+        "tests/sim/test_t125_cycles.py",
+        "tests/scenarios/test_full_cycles.py",
+        "tests/sim/test_t129_path_selection.py"
+      ],
+      "timeout_s": 180
+    },
+    {
+      "name": "hazards_mixed",
+      "kind": "pytest",
+      "paths": [
+        "tests/sim/test_t118_pollution.py",
+        "tests/sim/test_t119_aliens.py",
+        "tests/sim/test_t120_nuclear_machines.py",
+        "tests/scenarios/test_mixed_hazards.py"
+      ],
+      "timeout_s": 180
+    },
+    {
+      "name": "evaluate_full_world",
+      "kind": "shell",
+      "cmd": ["python3", "tools/evaluate_full_world.py"],
+      "timeout_s": 180
+    },
+    {
+      "name": "profile_world_honest",
+      "kind": "shell",
+      "cmd": ["python3", "tools/profile_world.py"],
+      "timeout_s": 300
+    }
+  ],
+  "screenshot_plan": [
+    "historic_core",
+    "modern_core",
+    "future_hazard",
+    "pollution_cleanup",
+    "alien_response",
+    "cycle_reseed_prehistoric",
+    "chronicle_pins",
+    "six_faction_board"
+  ]
+}

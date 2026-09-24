@@ -1,0 +1,93 @@
+{
+  "id": "policy-im-2",
+  "artifact": "training/checkpoints/imitation_v2.json",
+  "provenance": {
+    "kind": "imitation",
+    "source": "imitation_v2"
+  },
+  "evaluation": {
+    "label": "policy-im-2",
+    "policy_id": "policy-im-2",
+    "artifact": "training/checkpoints/imitation_v2.json",
+    "fixture": "FX-ERA",
+    "schema_hash": "e5d8c08fd328a24e",
+    "seed_count": 40,
+    "seeds": [
+      10000,
+      10001,
+      10002,
+      10003,
+      10004,
+      10005,
+      10006,
+      10008,
+      10009,
+      10010,
+      10012,
+      10013,
+      10014,
+      10015,
+      10016,
+      10017,
+      10018,
+      10019,
+      10020,
+      10021,
+      10022,
+      10023,
+      10024,
+      10025,
+      10026,
+      10027,
+      10029,
+      10030,
+      10031,
+      10032,
+      10033,
+      10034,
+      10035,
+      10036,
+      10037,
+      10038,
+      10039,
+      10040,
+      10041,
+      10042
+    ],
+    "wins_10vp": 17,
+    "win_uncertainty": {
+      "rate": 0.425,
+      "se": 0.07816249100431741,
+      "ci95_low": 0.27180151763153787,
+      "ci95_high": 0.578198482368462
+    },
+    "catastrophe_count": 0,
+    "crashes": 0,
+    "illegal_accepts": 0,
+    "action_family_share": {
+      "build": 0.18859649122807018,
+      "trade": 0.5,
+      "war": 0.07017543859649122,
+      "other": 0.2412280701754386
+    },
+    "action_family_counts": {
+      "build": 43,
+      "trade": 114,
+      "war": 16,
+      "other": 55
+    },
+    "inference_p95_ms_mean": 1.2744721196427502,
+    "elapsed_seconds": 461.841
+  },
+  "promotion": {
+    "promoted": true,
+    "reasons": [],
+    "baseline_wins": 17,
+    "candidate_wins": 17,
+    "baseline_catastrophe": 0,
+    "candidate_catastrophe": 0,
+    "baseline_win_rate": 0.425,
+    "candidate_win_rate": 0.425,
+    "required_candidate_rate": 0.3825
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "rival.ember_duelist",
+  "display_name": "Ember Duelist",
+  "difficulty": "aggressive",
+  "deduction_strategy": "direct_challenge",
+  "reads_hidden_secrets": false,
+  "dialogue_profile": "rival.ember",
+  "persistent_across_appearances": true,
+  "distinct_from": [
+    "rival.ashen_tactician",
+    "rival.iron_broker",
+    "rival.veil_scout"
+  ]
+}

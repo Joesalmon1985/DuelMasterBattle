@@ -18,6 +18,22 @@ from sim.dmb.world.setup import WorldSetupService
 from sim.dmb.world.fx_village_world import wire_topology_travel
 
 
+def _node_has_south_exit(state, node_id: str) -> bool:
+    node = ((state.board or {}).get("nodes") or {}).get(node_id) or {}
+    exits = node.get("exits") or {}
+    if not isinstance(exits, dict):
+        return False
+    return any(str((link or {}).get("direction") or "") == "south" for link in exits.values())
+
+
+def _settlement_for_node(state, node_id: str) -> dict:
+    return next(
+        s
+        for s in state.settlements.values()
+        if s.get("node_id") == node_id and not s.get("staging")
+    )
+
+
 def _pick_start_settlement(plan, state) -> tuple[str, str, str]:
     """Prefer a multi-terrain core (richer local landscape); fall back to first core."""
     best = None
@@ -31,12 +47,39 @@ def _pick_start_settlement(plan, state) -> tuple[str, str, str]:
             best_score = score
             best = core
     assert best is not None
-    settlement = next(
-        s
-        for s in state.settlements.values()
-        if s.get("node_id") == best.node_id and not s.get("staging")
-    )
+    settlement = _settlement_for_node(state, best.node_id)
     return str(best.node_id), str(settlement["id"]), str(best.faction_id)
+
+
+def _node_has_any_exit(state, node_id: str) -> bool:
+    node = ((state.board or {}).get("nodes") or {}).get(node_id) or {}
+    exits = node.get("exits") or {}
+    return isinstance(exits, dict) and bool(exits)
+
+
+def _ensure_boulder_start(plan, state, start_node: str, settlement_id: str, faction_id: str) -> tuple[str, str, str]:
+    """Prefer a south exit for presentation; otherwise any core with a connected exit."""
+    if _node_has_south_exit(state, start_node):
+        return start_node, settlement_id, faction_id
+
+    def _rank_core(core) -> tuple[int, str]:
+        nid = str(core.node_id)
+        terrains = {str(plan.hex_terrain[h]) for h in plan.board.touching_hexes(nid)}
+        score = len(terrains) + (2 if "woodland" in terrains else 0)
+        if _node_has_south_exit(state, nid):
+            score += 100
+        elif _node_has_any_exit(state, nid):
+            score += 10
+        return (score, nid)
+
+    ranked = sorted(plan.cores, key=_rank_core, reverse=True)
+    for core in ranked:
+        nid = str(core.node_id)
+        if not _node_has_any_exit(state, nid):
+            continue
+        settlement = _settlement_for_node(state, nid)
+        return nid, str(settlement["id"]), str(core.faction_id)
+    return start_node, settlement_id, faction_id
 
 
 def _clear_settlement_catastrophe_cubes(state, plan) -> None:
@@ -94,6 +137,14 @@ def load_prehistoric_world(seed: int = 507) -> WorldSim:
 
     start_node, settlement_id, faction_id = _pick_start_settlement(plan, state)
     wire_topology_travel(state, plan.board, home_node_id=start_node)
+    start_node, settlement_id, faction_id = _ensure_boulder_start(
+        plan, state, start_node, settlement_id, faction_id
+    )
+    if str((state.board.get("nodes") or {}).get(start_node, {}).get("id") or "") == start_node:
+        # Re-label home if we re-homed after the initial wire pass.
+        home = state.board["nodes"][start_node]
+        home.setdefault("label", "Settlement")
+        home.setdefault("area_id", "area.village")
 
     # Ensure every topology node has a board record + wilderness label.
     for nid in plan.board.nodes:

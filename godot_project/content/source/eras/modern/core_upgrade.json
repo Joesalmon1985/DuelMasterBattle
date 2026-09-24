@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "era_id": "modern",
+  "display_name": "Modern",
+  "combat_factor": 100,
+  "previous_era": "historic",
+  "core_upgrade": {
+    "centre_def": "building.centre.modern",
+    "warehouse_def": "building.warehouse.modern",
+    "primary_def": "building.primary.modern",
+    "processor_def": "building.processor.modern",
+    "factory_def": "building.factory.modern",
+    "unit_defs": [
+      "unit.modern.skirmisher",
+      "unit.modern.line",
+      "unit.modern.heavy"
+    ],
+    "starter_grant": {
+      "timber": 2,
+      "brick": 2,
+      "wool": 1,
+      "grain": 1
+    },
+    "settlement_tier_after": "settlement",
+    "vp_after": 1,
+    "reset_factory_meters": true
+  },
+  "terrain_industrial": {
+    "woodland": {
+      "renewable": ["ind.modern.woodland.renewable", "Industrial timber"],
+      "finite": ["ind.modern.woodland.finite", "Hardwood"]
+    },
+    "ore_mountains": {
+      "renewable": ["ind.modern.ore_mountains.renewable", "Hydroelectric power"],
+      "finite": ["ind.modern.ore_mountains.finite", "Metals"]
+    },
+    "clay_mountains": {
+      "renewable": ["ind.modern.clay_mountains.renewable", "Industrial bricks"],
+      "finite": ["ind.modern.clay_mountains.finite", "Cement minerals"]
+    },
+    "fields": {
+      "renewable": ["ind.modern.fields.renewable", "Mechanised crops"],
+      "finite": ["ind.modern.fields.finite", "Phosphate fertiliser"]
+    },
+    "grazing_land": {
+      "renewable": ["ind.modern.grazing_land.renewable", "Dairy products"],
+      "finite": ["ind.modern.grazing_land.finite", "Meat"]
+    },
+    "desert": {
+      "renewable": ["ind.modern.desert.renewable", "Solar power"],
+      "finite": ["ind.modern.desert.finite", "Oil"]
+    }
+  },
+  "notes": "Semantic-placeholder Modern core; combat factor 100 applied once at spawn."
+}

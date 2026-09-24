@@ -7,14 +7,23 @@
     {
       "id": "room.entrance",
       "label": "Sluice Entrance",
-      "exits": ["room.workshop", "room.corridor", "room.exit"],
+      "exits": [
+        "room.workshop",
+        "room.corridor",
+        "room.exit"
+      ],
       "clues": [],
-      "spawn": [0.0, 0.0]
+      "spawn": [
+        0.0,
+        0.0
+      ]
     },
     {
       "id": "room.workshop",
       "label": "Side Workshop",
-      "exits": ["room.entrance"],
+      "exits": [
+        "room.entrance"
+      ],
       "clues": [
         {
           "id": "clue.handle_rack",
@@ -24,7 +33,10 @@
       "items": [
         {
           "definition_id": "item.sluice_handle",
-          "position": [2.0, 1.0],
+          "position": [
+            2.0,
+            1.0
+          ],
           "quest_bound": true
         }
       ]
@@ -32,19 +44,27 @@
     {
       "id": "room.corridor",
       "label": "Switch Corridor",
-      "exits": ["room.entrance", "room.chamber"],
+      "exits": [
+        "room.entrance",
+        "room.chamber"
+      ],
       "clues": [
         {
           "id": "clue.inscription",
           "text": "The pressure plate must hold the gate while the handle opens the sluice."
         }
       ],
-      "mechanisms": ["switch.corridor"]
+      "mechanisms": [
+        "switch.corridor"
+      ]
     },
     {
       "id": "room.chamber",
       "label": "Gate Chamber",
-      "exits": ["room.corridor", "room.exit"],
+      "exits": [
+        "room.corridor",
+        "room.exit"
+      ],
       "clues": [],
       "mechanisms": [
         "box.sluice",
@@ -57,12 +77,18 @@
     {
       "id": "room.exit",
       "label": "Exit Loop",
-      "exits": ["room.entrance", "room.chamber"],
+      "exits": [
+        "room.entrance",
+        "room.chamber"
+      ],
       "clues": [],
       "locked_by": "gate.final",
       "permanent_lock": false
     }
   ],
   "entry_room": "room.entrance",
-  "exit_room": "room.exit"
+  "exit_room": "room.exit",
+  "blurb": "Existing sluice works; preserve prior rooms.",
+  "persistent_state": true,
+  "common_puzzle_vocabulary": true
 }

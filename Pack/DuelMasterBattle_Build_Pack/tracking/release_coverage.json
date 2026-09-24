@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "generated_for": "T151",
+  "gate": "G10",
+  "overnight_note": "G10 = functionally complete placeholder-art baseline (EXECUTION_AMENDMENTS overnight). Semantic placeholders permitted.",
+  "g09_dependency": "Overnight run continues G10 independently of G09 human PASS; G09 policy qualification owned by parallel agent.",
+  "player_verbs": [
+    {"verb": "move", "owner": "sim/dmb + godot client local movement", "tests": ["tests/scenarios/test_village_travel.py"], "gate": "G05"},
+    {"verb": "wait", "owner": "sim/dmb/core/clock", "tests": ["tests/sim/test_t012_clock.py"], "gate": "G01"},
+    {"verb": "travel", "owner": "sim/dmb strategic travel", "tests": ["tests/scenarios/test_village_travel.py"], "gate": "G05"},
+    {"verb": "talk", "owner": "dialogue banks + person context", "tests": ["tests/sim/test_t137_dialogue_baseline.py"], "gate": "G08"},
+    {"verb": "inspect", "owner": "presentation + quest overlays", "tests": ["tests/sim/test_g05_full_world.py"], "gate": "G05"},
+    {"verb": "inventory", "owner": "stock + item defs", "tests": ["tests/sim/test_t030_stock.py"], "gate": "G02"},
+    {"verb": "magic", "owner": "sim/dmb magic + spellbook UI", "tests": ["tests/scenarios/test_battle_magic.py"], "gate": "G04"},
+    {"verb": "save", "owner": "sim/dmb/persistence", "tests": ["tests/sim/test_t014_persistence.py", "tests/integration/test_release_recovery.py"], "gate": "G10"},
+    {"verb": "load", "owner": "sim/dmb/persistence", "tests": ["tests/integration/test_release_recovery.py"], "gate": "G10"},
+    {"verb": "duel", "owner": "leased encounter", "tests": ["tests/sim/test_r06_mastermind_duel.py"], "gate": "G04"},
+    {"verb": "battle", "owner": "military + game_board", "tests": ["tests/scenarios/test_battle_magic.py"], "gate": "G04"},
+    {"verb": "build", "owner": "construction orders", "tests": ["tests/integration/test_construction_cargo.py"], "gate": "G02"},
+    {"verb": "research", "owner": "tech archive", "tests": ["tests/sim/test_t040_research.py"], "gate": "G02"},
+    {"verb": "trade", "owner": "trade seats", "tests": ["tests/sim/test_t045_trade.py"], "gate": "G02"},
+    {"verb": "quest", "owner": "quest runtime", "tests": ["tests/scenarios/test_content_matrix.py"], "gate": "G08"}
+  ],
+  "source_invariants": [
+    {"id": "python_owns_world", "status": "covered", "evidence": "docs/INTEGRATED_RUNTIME_ARCHITECTURE.md"},
+    {"id": "godot_presentation_only", "status": "covered", "evidence": "godot_project/client"},
+    {"id": "no_llm_runtime", "status": "covered", "evidence": "C00 / packaging offline"},
+    {"id": "identity_preserved", "status": "covered", "evidence": "tests/sim/test_canonical_ontology.py"},
+    {"id": "travel_wait_advance_turns", "status": "covered", "evidence": "tests/sim/test_t012_clock.py"},
+    {"id": "duels_pause_world", "status": "covered", "evidence": "tests/sim/test_t018_leases.py"}
+  ],
+  "content_floors": {
+    "eras": {"required": 4, "status": "covered_via_G07"},
+    "recipes": {"required": 240, "status": "covered_via_G08_corpus", "note": "validate_corpus"},
+    "trained_policies": {"required": 3, "status": "BLOCKED_BY_G09", "qualified": 0},
+    "windows_bundle": {"required": true, "status": "BLOCKED_NO_WINDOWS_RUNNER", "note": "workflow scaffolded; Linux ≠ Windows certification"}
+  },
+  "stubs_and_deferred": [
+    {"item": "production art polish", "scope": "deferred — semantic placeholders permitted for G10"},
+    {"item": "mobile / Utopia / full voice", "scope": "explicitly deferred optional extensions"},
+    {"item": "G09 three qualified policies", "scope": "parallel agent; do not invent trained status"},
+    {"item": "Windows offline clean-machine evidence", "scope": "GitHub Actions workflow present; no PASS without Windows execution"}
+  ],
+  "task_receipt_resolvability": {
+    "T001_T142": "DONE with handoffs under tracking/handoffs/",
+    "T143_T150": "NOT_STARTED in this checkout — G09 owned by parallel qualification run",
+    "T151_T160": "G10 functional baseline (this run)",
+    "T161_T168": "G11/G12 overnight extension"
+  },
+  "gates": {
+    "G01_G04": "PASS (Joe)",
+    "G05": "AWAITING_HUMAN (overnight continue authorised)",
+    "G06_G08": "AUTO_READY_FOR_OWNER_REVIEW",
+    "G09": "NOT_READY / parallel",
+    "G10": "in progress this run"
+  }
+}

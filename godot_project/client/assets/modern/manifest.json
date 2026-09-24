@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "era": "modern",
+  "presentation": "semantic_placeholder",
+  "animation_families": [
+    "idle",
+    "walk",
+    "work",
+    "attack",
+    "hit",
+    "death",
+    "magic"
+  ],
+  "assets": [
+    {
+      "id": "sil.modern.centre",
+      "semantic_id": "building.modern.settlement_centre",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:centre"
+    },
+    {
+      "id": "sil.modern.worker",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:worker"
+    },
+    {
+      "id": "sil.modern.skirmisher",
+      "semantic_id": "unit.skirmisher",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:skirmisher"
+    },
+    {
+      "id": "sil.modern.line",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:line"
+    },
+    {
+      "id": "sil.modern.heavy",
+      "semantic_id": "unit.heavy",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:heavy"
+    },
+    {
+      "id": "sil.modern.cart",
+      "semantic_id": "unit.cart",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:cart"
+    },
+    {
+      "id": "sil.modern.wizard",
+      "semantic_id": "unit.wizard",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:wizard"
+    },
+    {
+      "id": "sil.modern.hazard.catastrophe",
+      "semantic_id": "hazard.catastrophe",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:catastrophe"
+    },
+    {
+      "id": "sil.modern.hazard.pollution",
+      "semantic_id": "hazard.pollution",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:pollution"
+    },
+    {
+      "id": "sil.modern.hazard.alien",
+      "semantic_id": "hazard.alien",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:alien"
+    },
+    {
+      "id": "sil.modern.hazard.nuclear",
+      "semantic_id": "hazard.nuclear",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:nuclear"
+    },
+    {
+      "id": "sil.modern.hazard.machine",
+      "semantic_id": "hazard.machine",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:machine"
+    },
+    {
+      "id": "fx.modern.magic",
+      "semantic_id": "fx.magic",
+      "kind": "effect",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      }
+    }
+  ],
+  "missing_assets": [],
+  "readable_without_colour_alone": true
+}

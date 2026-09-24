@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "gate": "G08",
+  "fixture": "FX-CONTENT-SAMPLE",
+  "seed": 808,
+  "quest_families": [
+    "shortage",
+    "transport",
+    "catastrophe",
+    "diplomacy",
+    "military",
+    "personal",
+    "discovery",
+    "conflict"
+  ],
+  "eras_sampled": [
+    "historic",
+    "modern"
+  ],
+  "dungeons_sampled": [
+    "cave",
+    "sluice"
+  ],
+  "rivals": [
+    "rival.ashen_tactician",
+    "rival.iron_broker",
+    "rival.veil_scout",
+    "rival.ember_duelist"
+  ],
+  "branches": [
+    "displaced_target",
+    "dead_target",
+    "already_world_resolved",
+    "full_cycle"
+  ],
+  "tools": {
+    "village_panel": "godot_project/client/debug/scenario_panel.gd",
+    "dialogue_preview": "godot_project/client/debug/narrative_tools/quest_dialogue_preview.gd",
+    "failure_bundle_export": "Pack/DuelMasterBattle_Build_Pack/tracking/village_runs/failure_bundles/",
+    "accessibility": {
+      "label_scale": true,
+      "reduced_motion": true
+    }
+  },
+  "launch": "bash tools/play_g08_sample.sh"
+}

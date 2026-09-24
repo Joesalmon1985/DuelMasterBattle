@@ -1,0 +1,19 @@
+{
+  "task_id": "T123",
+  "status": "DONE",
+  "commit": "06b43abecfa491610230f59d9d3ee1060e7f64bb",
+  "files": [
+    "tests/scenarios/test_mixed_hazards.py",
+    "godot_project/content/fixtures/mixed_hazards/"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T123",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "defects": [],
+  "next_task": "T124",
+  "notes": "G07 overnight implementation chunk."
+}

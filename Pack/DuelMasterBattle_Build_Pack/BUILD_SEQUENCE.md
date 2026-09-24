@@ -181,3 +181,15 @@ Every task is initially NOT_STARTED. All path mappings and code evidence must be
 | [T158](tasks/T158.md) | Write player guide, known limits and release evidence index |  |
 | [T159](tasks/T159.md) | Assemble final manual acceptance candidate |  |
 | [T160](tasks/T160.md) | Complete final playtest gate and close the build ledger | G10 |
+| **P16 — Semantic placeholder completeness (overnight G11)** | | |
+| [T161](tasks/T161.md) | Define semantic visual registry and completeness contract |  |
+| [T162](tasks/T162.md) | Build placeholder gallery/catalogue scenes |  |
+| [T163](tasks/T163.md) | Validate all runtime-visible content against the registry |  |
+| [T164](tasks/T164.md) | Prepare G11 automated visual catalogue gate | G11 |
+| **P17 — Unattended functional acceptance (overnight G12)** | | |
+| [T165](tasks/T165.md) | Build complete automated journey manifest |  |
+| [T166](tasks/T166.md) | Run multi-seed/full-cycle unattended regression |  |
+| [T167](tasks/T167.md) | Build final evidence aggregation and failure diagnosis |  |
+| [T168](tasks/T168.md) | Prepare G12 owner-review candidate | G12 |
+
+**G10 overnight note:** for the authorised `phase/g06-g12-autoqa` run, G10 is a functionally complete **semantic placeholder-art** baseline, not a production-art release (see EXECUTION_AMENDMENTS overnight section).

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "min_touch_px": 48,
+  "eras": ["prehistoric", "historic"],
+  "assets": [
+    {"id": "sil.worker", "semantic_id": "unit.line", "kind": "silhouette"},
+    {"id": "sil.settlement", "semantic_id": "building.prehistoric.settlement_centre", "kind": "silhouette"},
+    {"id": "sil.hazard", "semantic_id": "hazard.catastrophe", "kind": "silhouette"},
+    {"id": "cue.alert", "text_equivalent": "Local alert", "bus": "ui"}
+  ],
+  "missing_assets": []
+}

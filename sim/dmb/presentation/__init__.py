@@ -1,1 +1,1 @@
-"""Presentation package: Game-Time local journeys under Python-owned world state."""
+"""Presentation helpers (semantic placeholders, visual contracts)."""

@@ -206,3 +206,69 @@ accepted G04 merge.
   observe/Challenge flow on a visible hazard using the full retained duel UI.
   Linux launchers: `bash tools/play_g04_battle.sh`,
   `bash tools/play_g04_hazard.sh`.
+
+## Overnight G06→G12 autonomous run (22–23 September 2026)
+
+**Authorised by:** Joe Salmon via explicit overnight Cursor prompt on branch
+`phase/g06-g12-autoqa` (starting SHA `d6b78d3883eb20d6ccd31ace92b1a2126fbbe39d`
+on `main` after G06 historic-MVP merge).
+
+This amendment **supersedes**, for this authorised run only, the build-pack
+requirement to stop execution after each human gate (AGENT_START_HERE
+“Human gates” / gate cards that say STOP at AWAITING_HUMAN). All other
+contracts, ownership rules and acceptance oracles remain in force.
+
+### Status vocabulary (G06 onward)
+
+Distinguish these statuses carefully. Do **not** conflate them:
+
+| Status | Meaning |
+|---|---|
+| `IN_PROGRESS` | Implementation underway |
+| `IMPLEMENTATION_COMPLETE` | Tasks for the gate are coded; automation may still be pending |
+| `AUTO_READY_FOR_OWNER_REVIEW` | Objective automated requirements for the gate passed; Joe has **not** accepted |
+| `AWAITING_HUMAN` | Packet ready; agent historically stopped (legacy) |
+| `PASS` | **Only** Joe’s explicit acceptance for the named build |
+| `FIX_REQUIRED` | Joe rejected; reopen affected tasks |
+| `PARTIAL — BLOCKED BY …` | Honest incomplete state with a concrete blocker |
+| `AUTO_FAILED` | Automation ran and failed |
+
+### Rules for this overnight run
+
+1. G06 onward still requires Joe’s eventual **subjective** review. Automated
+   testing does **not** constitute human acceptance.
+2. Automated testing does **not** clear a gate as `PASS`, does not invent
+   `accepted_by`, and does not invent acceptance timestamps.
+3. When all **objective automated** requirements for a gate pass during this
+   run, set the gate to `AUTO_READY_FOR_OWNER_REVIEW` (or equivalent wording
+   in `tracking/progress.json` and `MORNING_REVIEW.md`).
+4. `AUTO_READY_FOR_OWNER_REVIEW` **permits implementation to continue** to the
+   next phase/task without waiting for Joe overnight.
+5. Original gate evidence (screenshots, reports, saves, logs, montages) must
+   remain available under `tracking/gates/Gxx/` for Joe’s later review.
+6. No historical human acceptance may be invented. Existing true `PASS`
+   records (G01–G04) stay as recorded.
+7. If Joe later rejects a checkpoint (`FIX_REQUIRED`), reopen the relevant
+   tasks, add regressions, repair, and resubmit — do not argue automation
+   already “passed” the subjective bar.
+8. **G10 redefinition for this development sequence:** G10 is a
+   **functionally complete placeholder-art baseline**, not a production-art
+   release. Semantic placeholder graphics are explicitly permitted for cards,
+   buildings, upgrades, technologies, hazards, catastrophes, units, resources,
+   items and other content.
+9. Finished visual asset creation is deferred. Prefer readable semantic
+   placeholders over blocking on artwork.
+10. Existing real artwork may remain where already present; do not spend the
+    overnight run polishing art.
+11. **G11** (T161–T164) and **G12** (T165–T168) are added by this run for
+    semantic-placeholder completeness and unattended functional acceptance.
+    Do not renumber T001–T160.
+12. Linux does not certify Windows. Training artifacts must be genuine or the
+    blocker recorded honestly. Screenshots must be real Godot frames.
+
+### Continuation policy
+
+After T106 / early Historic checkpoint evidence, this run may begin T107 and
+continue through T168 while recording `AUTO_READY_FOR_OWNER_REVIEW` at each
+completed automated gate. Morning handoff:
+`Pack/DuelMasterBattle_Build_Pack/tracking/OVERNIGHT_G06_G12_REPORT.md`.

@@ -1,0 +1,53 @@
+name: Windows packaged runtime acceptance
+
+# T155/T156 — scaffolds Windows packaging + smoke.
+# Does NOT invent PASS from Linux. Job only runs on windows-latest.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - phase/g06-g12-autoqa
+    paths:
+      - "tools/package_desktop.py"
+      - "tools/smoke_release.py"
+      - "godot_project/content/manifests/release.json"
+      - ".github/workflows/windows-packaged-runtime.yml"
+
+jobs:
+  windows-packaged-runtime:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Scaffold Windows bundle metadata
+        shell: bash
+        run: python tools/package_desktop.py --target windows
+
+      - name: Smoke release (Windows host)
+        shell: bash
+        run: python tools/smoke_release.py --platform windows
+
+      - name: Upload clean-machine evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-clean-machine
+          path: |
+            Pack/DuelMasterBattle_Build_Pack/tracking/clean_machine/
+            Pack/DuelMasterBattle_Build_Pack/tracking/gates/G10/windows_scaffold.json
+            build/windows/
+
+      - name: Fail closed if executable missing
+        shell: bash
+        run: |
+          if ! find build -name '*.exe' 2>/dev/null | grep -q .; then
+            echo "BLOCKER: Windows .exe not produced in this workflow yet."
+            echo "Scaffold + smoke bookkeeping ran; do not mark windows_certified."
+            # Keep workflow yellow/red honest until export+PyInstaller steps are added.
+            exit 1
+          fi

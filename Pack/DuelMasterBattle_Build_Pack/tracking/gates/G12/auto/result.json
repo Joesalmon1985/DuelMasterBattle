@@ -1,0 +1,62 @@
+{
+  "gate": "G12",
+  "generated_at": "2026-09-23T16:33:31.908492+00:00",
+  "status": "AUTO_READY_FOR_OWNER_REVIEW",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "aggregate": {
+    "G06": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G07": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G08": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G09": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G10": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    },
+    "G11": {
+      "auto_status": "AUTO_READY_FOR_OWNER_REVIEW",
+      "morning_review": true,
+      "auto_result": true
+    }
+  },
+  "journeys": {
+    "seeds": [
+      507,
+      808,
+      1212
+    ],
+    "cmd": [
+      "C:\\Users\\joesa\\Documents\\Cursor\\DuelMaster\\DuelMasterBattle\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/scenarios/test_era_transition.py",
+      "tests/scenarios/test_full_cycles.py",
+      "tests/scenarios/test_release.py",
+      "tests/integration/test_release_recovery.py"
+    ],
+    "exit_code": 0,
+    "status": "PASS",
+    "stdout_tail": "..............                                                           [100%]\n14 passed in 0.98s",
+    "stderr_tail": "",
+    "causal_reachability": "Checkpoints used by FX-ERA/FX-CYCLE are reached via production loaders and reseed_cycle; recovery uses SaveCoordinator barriers."
+  },
+  "blockers": [],
+  "missing_ready": []
+}

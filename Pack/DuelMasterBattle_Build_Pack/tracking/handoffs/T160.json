@@ -1,0 +1,21 @@
+{
+  "task_id": "T160",
+  "status": "WAITING_HUMAN",
+  "commit": "PENDING",
+  "files": [
+    "tracking/gates/G10/auto/result.json"
+  ],
+  "checks": [
+    {
+      "command": "python3 tools/check.py --task T160",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "next_task": "T161",
+  "notes": "G10 AUTO_READY packet; WAITING_HUMAN for Joe PASS",
+  "human_acceptance": "PENDING \u2014 never invent PASS",
+  "recorded_at": "2026-09-23T07:34:08Z",
+  "gate": "G10",
+  "gate_status": "AUTO_READY_FOR_OWNER_REVIEW"
+}

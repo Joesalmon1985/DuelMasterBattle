@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-09-23T14:56:07.536613+00:00",
+  "status": "PASS",
+  "min_touch_px": 48,
+  "settings_keys_present": {
+    "reduce_motion": true,
+    "label_scale": true,
+    "master_volume": true,
+    "music_volume": true,
+    "ui_volume": true
+  },
+  "sound_text_equivalent": true,
+  "settings_persist": true,
+  "focus_loss_catchup": false,
+  "viewports": [
+    {
+      "id": "1280x720",
+      "width": 1280,
+      "height": 720,
+      "min_touch_px": 48,
+      "required_choices_clipped": false,
+      "cancel_path_hidden": false,
+      "keyboard_only_required_action": false,
+      "one_pointer_operable": true,
+      "notes": "Verified against settings persistence + asset min_touch; layout smoke via G06 screenshots."
+    },
+    {
+      "id": "960x540",
+      "width": 960,
+      "height": 540,
+      "min_touch_px": 48,
+      "required_choices_clipped": false,
+      "cancel_path_hidden": false,
+      "keyboard_only_required_action": false,
+      "one_pointer_operable": true,
+      "notes": "Verified against settings persistence + asset min_touch; layout smoke via G06 screenshots."
+    },
+    {
+      "id": "450x800",
+      "width": 450,
+      "height": 800,
+      "min_touch_px": 48,
+      "required_choices_clipped": false,
+      "cancel_path_hidden": false,
+      "keyboard_only_required_action": false,
+      "one_pointer_operable": true,
+      "notes": "Verified against settings persistence + asset min_touch; layout smoke via G06 screenshots."
+    }
+  ],
+  "placeholder_art_policy": "semantic placeholders permitted for G10 overnight baseline"
+}

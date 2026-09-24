@@ -1,0 +1,20 @@
+{
+  "id": "puzzle.machine",
+  "schema_version": 1,
+  "dungeon_id": "dungeon.machine",
+  "solution_trace": [
+    "enter",
+    "collect_key",
+    "hold_plate",
+    "throw_switch",
+    "open_gate",
+    "exit"
+  ],
+  "recovery_trace": [
+    "if_key_missing_return_to_workshop",
+    "if_plate_released_reset_switch",
+    "softlock_recovery_via_entrance_loop"
+  ],
+  "required_item": "item.machine_key",
+  "hidden_secret_readable_by_rivals": false
+}

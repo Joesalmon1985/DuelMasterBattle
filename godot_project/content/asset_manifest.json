@@ -1,0 +1,716 @@
+{
+  "schema_version": 1,
+  "presentation": "semantic_placeholder",
+  "min_touch_px": 48,
+  "eras": [
+    "prehistoric",
+    "historic",
+    "modern",
+    "future"
+  ],
+  "animation_families": [
+    "idle",
+    "walk",
+    "work",
+    "attack",
+    "hit",
+    "death",
+    "magic"
+  ],
+  "hazard_presentations": [
+    "catastrophe",
+    "pollution",
+    "alien",
+    "nuclear",
+    "machine"
+  ],
+  "audio_palettes": [
+    "prehistoric",
+    "historic",
+    "modern",
+    "future"
+  ],
+  "assets": [
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.centre",
+      "semantic_id": "building.prehistoric.settlement_centre",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:prehistoric:centre"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.worker",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:prehistoric:worker"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.skirmisher",
+      "semantic_id": "unit.skirmisher",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:prehistoric:skirmisher"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.line",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:prehistoric:line"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.heavy",
+      "semantic_id": "unit.heavy",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:prehistoric:heavy"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.cart",
+      "semantic_id": "unit.cart",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:prehistoric:cart"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.wizard",
+      "semantic_id": "unit.wizard",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:prehistoric:wizard"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.hazard.catastrophe",
+      "semantic_id": "hazard.catastrophe",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:catastrophe"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.hazard.pollution",
+      "semantic_id": "hazard.pollution",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:pollution"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.hazard.alien",
+      "semantic_id": "hazard.alien",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:alien"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.hazard.nuclear",
+      "semantic_id": "hazard.nuclear",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:nuclear"
+    },
+    {
+      "era": "prehistoric",
+      "id": "sil.prehistoric.hazard.machine",
+      "semantic_id": "hazard.machine",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:machine"
+    },
+    {
+      "era": "prehistoric",
+      "id": "fx.prehistoric.magic",
+      "semantic_id": "fx.magic",
+      "kind": "effect",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      }
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.centre",
+      "semantic_id": "building.historic.settlement_centre",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:historic:centre"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.worker",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:historic:worker"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.skirmisher",
+      "semantic_id": "unit.skirmisher",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:historic:skirmisher"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.line",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:historic:line"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.heavy",
+      "semantic_id": "unit.heavy",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:historic:heavy"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.cart",
+      "semantic_id": "unit.cart",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:historic:cart"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.wizard",
+      "semantic_id": "unit.wizard",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:historic:wizard"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.hazard.catastrophe",
+      "semantic_id": "hazard.catastrophe",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:catastrophe"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.hazard.pollution",
+      "semantic_id": "hazard.pollution",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:pollution"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.hazard.alien",
+      "semantic_id": "hazard.alien",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:alien"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.hazard.nuclear",
+      "semantic_id": "hazard.nuclear",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:nuclear"
+    },
+    {
+      "era": "historic",
+      "id": "sil.historic.hazard.machine",
+      "semantic_id": "hazard.machine",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:machine"
+    },
+    {
+      "era": "historic",
+      "id": "fx.historic.magic",
+      "semantic_id": "fx.magic",
+      "kind": "effect",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      }
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.centre",
+      "semantic_id": "building.modern.settlement_centre",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:centre"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.worker",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:worker"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.skirmisher",
+      "semantic_id": "unit.skirmisher",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:skirmisher"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.line",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:line"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.heavy",
+      "semantic_id": "unit.heavy",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:heavy"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.cart",
+      "semantic_id": "unit.cart",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:cart"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.wizard",
+      "semantic_id": "unit.wizard",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:modern:wizard"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.hazard.catastrophe",
+      "semantic_id": "hazard.catastrophe",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:catastrophe"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.hazard.pollution",
+      "semantic_id": "hazard.pollution",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:pollution"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.hazard.alien",
+      "semantic_id": "hazard.alien",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:alien"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.hazard.nuclear",
+      "semantic_id": "hazard.nuclear",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:nuclear"
+    },
+    {
+      "era": "modern",
+      "id": "sil.modern.hazard.machine",
+      "semantic_id": "hazard.machine",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:machine"
+    },
+    {
+      "era": "modern",
+      "id": "fx.modern.magic",
+      "semantic_id": "fx.magic",
+      "kind": "effect",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      }
+    },
+    {
+      "era": "future",
+      "id": "sil.future.centre",
+      "semantic_id": "building.future.settlement_centre",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:centre"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.worker",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:worker"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.skirmisher",
+      "semantic_id": "unit.skirmisher",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:skirmisher"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.line",
+      "semantic_id": "unit.line",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:line"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.heavy",
+      "semantic_id": "unit.heavy",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:heavy"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.cart",
+      "semantic_id": "unit.cart",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:cart"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.wizard",
+      "semantic_id": "unit.wizard",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "pattern:future:wizard"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.hazard.catastrophe",
+      "semantic_id": "hazard.catastrophe",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:catastrophe"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.hazard.pollution",
+      "semantic_id": "hazard.pollution",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:pollution"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.hazard.alien",
+      "semantic_id": "hazard.alien",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:alien"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.hazard.nuclear",
+      "semantic_id": "hazard.nuclear",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:nuclear"
+    },
+    {
+      "era": "future",
+      "id": "sil.future.hazard.machine",
+      "semantic_id": "hazard.machine",
+      "kind": "silhouette",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      },
+      "non_colour_cue": "icon:machine"
+    },
+    {
+      "era": "future",
+      "id": "fx.future.magic",
+      "semantic_id": "fx.magic",
+      "kind": "effect",
+      "presentation": "semantic_placeholder",
+      "provenance": {
+        "licence": "internal-placeholder",
+        "source": "overnight-g08-semantic",
+        "final_art": false
+      }
+    }
+  ],
+  "missing_assets": [],
+  "accessibility": {
+    "label_scale": true,
+    "reduced_motion": true,
+    "subtitles": true,
+    "non_colour_cues": true,
+    "one_pointer": true
+  },
+  "provenance_policy": "Every asset records licence/source; unexplained missing blocks release."
+}

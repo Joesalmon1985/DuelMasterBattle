@@ -1,0 +1,1419 @@
+{
+  "schema_version": 1,
+  "notes": "Semantic placeholder registry for overnight G06\u2013G12. Real art may override via asset_path.",
+  "entries": [
+    {
+      "semantic_id": "building.prehistoric.settlement_centre",
+      "category": "building",
+      "label": "Settlement Centre",
+      "abbrev": "SC",
+      "shape": "rect",
+      "border": "solid"
+    },
+    {
+      "semantic_id": "building.prehistoric.warehouse",
+      "category": "building",
+      "label": "Warehouse",
+      "abbrev": "WH",
+      "shape": "rect",
+      "border": "solid"
+    },
+    {
+      "semantic_id": "building.prehistoric.factory",
+      "category": "building",
+      "label": "Factory",
+      "abbrev": "FAC",
+      "shape": "rect",
+      "border": "double"
+    },
+    {
+      "semantic_id": "building.historic.smelter",
+      "category": "building",
+      "label": "Smelter",
+      "abbrev": "SML",
+      "shape": "rect",
+      "border": "solid",
+      "badge": "H"
+    },
+    {
+      "semantic_id": "building.modern.works",
+      "category": "building",
+      "label": "Works",
+      "abbrev": "WRK",
+      "shape": "rect",
+      "border": "solid",
+      "badge": "M"
+    },
+    {
+      "semantic_id": "building.future.core",
+      "category": "building",
+      "label": "Future Core",
+      "abbrev": "FC",
+      "shape": "hex",
+      "border": "double",
+      "badge": "F"
+    },
+    {
+      "semantic_id": "upgrade.factory.capacity_1",
+      "category": "upgrade",
+      "label": "Capacity I",
+      "abbrev": "C1",
+      "shape": "rect",
+      "border": "double"
+    },
+    {
+      "semantic_id": "technology.modern.logistics",
+      "category": "technology",
+      "label": "Logistics",
+      "abbrev": "LOG",
+      "shape": "hex"
+    },
+    {
+      "semantic_id": "technology.historic.metallurgy",
+      "category": "technology",
+      "label": "Metallurgy",
+      "abbrev": "MET",
+      "shape": "hex"
+    },
+    {
+      "semantic_id": "resource.timber",
+      "category": "resource",
+      "label": "Timber",
+      "abbrev": "Ti",
+      "shape": "circle",
+      "pattern": "wood"
+    },
+    {
+      "semantic_id": "resource.brick",
+      "category": "resource",
+      "label": "Brick",
+      "abbrev": "Br",
+      "shape": "circle",
+      "pattern": "brick"
+    },
+    {
+      "semantic_id": "resource.wool",
+      "category": "resource",
+      "label": "Wool",
+      "abbrev": "Wo",
+      "shape": "circle"
+    },
+    {
+      "semantic_id": "resource.grain",
+      "category": "resource",
+      "label": "Grain",
+      "abbrev": "Gr",
+      "shape": "circle"
+    },
+    {
+      "semantic_id": "resource.ore",
+      "category": "resource",
+      "label": "Ore",
+      "abbrev": "Or",
+      "shape": "circle",
+      "pattern": "dots"
+    },
+    {
+      "semantic_id": "unit.skirmisher",
+      "category": "unit",
+      "label": "Skirmisher",
+      "abbrev": "SK",
+      "shape": "triangle",
+      "faction_tint": true
+    },
+    {
+      "semantic_id": "unit.line",
+      "category": "unit",
+      "label": "Line",
+      "abbrev": "LN",
+      "shape": "rect",
+      "faction_tint": true
+    },
+    {
+      "semantic_id": "unit.heavy",
+      "category": "unit",
+      "label": "Heavy",
+      "abbrev": "HV",
+      "shape": "hex",
+      "faction_tint": true
+    },
+    {
+      "semantic_id": "hazard.catastrophe",
+      "category": "hazard",
+      "label": "Catastrophe",
+      "abbrev": "HZ",
+      "shape": "diamond"
+    },
+    {
+      "semantic_id": "hazard.pollution",
+      "category": "pollution",
+      "label": "Pollution",
+      "abbrev": "PL",
+      "shape": "blob",
+      "pattern": "haze"
+    },
+    {
+      "semantic_id": "hazard.alien",
+      "category": "alien",
+      "label": "Alien",
+      "abbrev": "AL",
+      "shape": "oval"
+    },
+    {
+      "semantic_id": "hazard.hostile_machine",
+      "category": "machine",
+      "label": "Hostile Machine",
+      "abbrev": "HM",
+      "shape": "gear"
+    },
+    {
+      "semantic_id": "hazard.nuclear",
+      "category": "nuclear",
+      "label": "Nuclear",
+      "abbrev": "NU",
+      "shape": "trefoil"
+    },
+    {
+      "semantic_id": "item.quest.rockfall_tool",
+      "category": "quest_item",
+      "label": "Clearing Tool",
+      "abbrev": "RT",
+      "shape": "rounded_rect",
+      "border": "dashed"
+    },
+    {
+      "semantic_id": "item.sluice_handle",
+      "category": "quest_item",
+      "label": "Sluice Handle",
+      "abbrev": "SH",
+      "shape": "rounded_rect",
+      "border": "dashed"
+    },
+    {
+      "semantic_id": "item.rope",
+      "category": "item",
+      "label": "Rope",
+      "abbrev": "RP",
+      "shape": "rounded_rect"
+    },
+    {
+      "semantic_id": "item.hook",
+      "category": "item",
+      "label": "Hook",
+      "abbrev": "HK",
+      "shape": "rounded_rect"
+    },
+    {
+      "semantic_id": "relic.era_seed",
+      "category": "relic",
+      "label": "Era Seed",
+      "abbrev": "ES",
+      "shape": "star"
+    },
+    {
+      "semantic_id": "card.spell.ward",
+      "category": "card",
+      "label": "Ward",
+      "abbrev": "WRD",
+      "shape": "portrait_rect"
+    },
+    {
+      "semantic_id": "card.spell.attack",
+      "category": "card",
+      "label": "Attack",
+      "abbrev": "ATK",
+      "shape": "portrait_rect"
+    },
+    {
+      "semantic_id": "road.modern",
+      "category": "presentation",
+      "label": "Modern Road",
+      "abbrev": "RM",
+      "shape": "line"
+    },
+    {
+      "semantic_id": "road.future",
+      "category": "presentation",
+      "label": "Future Road",
+      "abbrev": "RF",
+      "shape": "line"
+    },
+    {
+      "semantic_id": "building.modern.cleanup",
+      "category": "presentation",
+      "label": "Cleanup Works",
+      "abbrev": "CU",
+      "shape": "rect"
+    },
+    {
+      "semantic_id": "aspect.authority",
+      "category": "item",
+      "label": "Authority",
+      "abbrev": "AUT",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "aspect.curiosity",
+      "category": "item",
+      "label": "Curiosity",
+      "abbrev": "CUR",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "aspect.empathy",
+      "category": "item",
+      "label": "Empathy",
+      "abbrev": "EMP",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "aspect.guile",
+      "category": "item",
+      "label": "Guile",
+      "abbrev": "GUI",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "aspect.reason",
+      "category": "item",
+      "label": "Reason",
+      "abbrev": "REA",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "aspect.resolve",
+      "category": "item",
+      "label": "Resolve",
+      "abbrev": "RES",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "aspect.wonder",
+      "category": "item",
+      "label": "Wonder",
+      "abbrev": "WON",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.centre",
+      "category": "building",
+      "label": "Settlement Centre",
+      "abbrev": "CEN",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.centre.city",
+      "category": "building",
+      "label": "City Centre",
+      "abbrev": "BCC",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.centre.historic",
+      "category": "building",
+      "label": "Historic Settlement Centre",
+      "abbrev": "BCH",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.centre.historic.city",
+      "category": "building",
+      "label": "Historic City Centre",
+      "abbrev": "BCH",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.factory",
+      "category": "building",
+      "label": "Factory Slot",
+      "abbrev": "FAC",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.factory.historic",
+      "category": "building",
+      "label": "Historic Factory",
+      "abbrev": "BFH",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.primary",
+      "category": "building",
+      "label": "Primary Slot",
+      "abbrev": "PRI",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.primary.historic",
+      "category": "building",
+      "label": "Historic Primary",
+      "abbrev": "BPH",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.processor",
+      "category": "building",
+      "label": "Processor",
+      "abbrev": "PRO",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.processor.historic",
+      "category": "building",
+      "label": "Historic Processor",
+      "abbrev": "BPH",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.warehouse",
+      "category": "building",
+      "label": "Warehouse",
+      "abbrev": "WAR",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "building.warehouse.historic",
+      "category": "building",
+      "label": "Historic Warehouse",
+      "abbrev": "BWH",
+      "shape": "rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.clay_mountains.finite",
+      "category": "item",
+      "label": "Rare-earth clay",
+      "abbrev": "IFC",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.clay_mountains.renewable",
+      "category": "item",
+      "label": "Purified water",
+      "abbrev": "IFC",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.desert.finite",
+      "category": "item",
+      "label": "Exotic minerals",
+      "abbrev": "IFD",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.desert.renewable",
+      "category": "item",
+      "label": "Solar power",
+      "abbrev": "IFD",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.fields.finite",
+      "category": "item",
+      "label": "Concentrated nutrients",
+      "abbrev": "IFF",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.fields.renewable",
+      "category": "item",
+      "label": "Synthetic crops",
+      "abbrev": "IFF",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.grazing_land.finite",
+      "category": "item",
+      "label": "Fertile topsoil",
+      "abbrev": "IFG",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.grazing_land.renewable",
+      "category": "item",
+      "label": "Cultured protein",
+      "abbrev": "IFG",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.ore_mountains.finite",
+      "category": "item",
+      "label": "Rare minerals",
+      "abbrev": "IFO",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.ore_mountains.renewable",
+      "category": "item",
+      "label": "Geothermal power",
+      "abbrev": "IFO",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.woodland.finite",
+      "category": "item",
+      "label": "Ancient hardwood",
+      "abbrev": "IFW",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.future.woodland.renewable",
+      "category": "item",
+      "label": "Clean air",
+      "abbrev": "IFW",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.clay_mountains.finite",
+      "category": "item",
+      "label": "Brick clay",
+      "abbrev": "IHC",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.clay_mountains.renewable",
+      "category": "item",
+      "label": "Pottery",
+      "abbrev": "IHC",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.desert.finite",
+      "category": "item",
+      "label": "Salt",
+      "abbrev": "IHD",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.desert.renewable",
+      "category": "item",
+      "label": "Glass",
+      "abbrev": "IHD",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.fields.finite",
+      "category": "item",
+      "label": "Fertile soil",
+      "abbrev": "IHF",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.fields.renewable",
+      "category": "item",
+      "label": "Grain",
+      "abbrev": "IHF",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.grazing_land.finite",
+      "category": "item",
+      "label": "Livestock",
+      "abbrev": "IHG",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.grazing_land.renewable",
+      "category": "item",
+      "label": "Wool",
+      "abbrev": "IHG",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.ore_mountains.finite",
+      "category": "item",
+      "label": "Iron ore",
+      "abbrev": "IHO",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.ore_mountains.renewable",
+      "category": "item",
+      "label": "Water power",
+      "abbrev": "IHO",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.woodland.finite",
+      "category": "item",
+      "label": "Old-growth timber",
+      "abbrev": "IHW",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.historic.woodland.renewable",
+      "category": "item",
+      "label": "Managed wood",
+      "abbrev": "IHW",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.clay_mountains.finite",
+      "category": "item",
+      "label": "Cement minerals",
+      "abbrev": "IMC",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.clay_mountains.renewable",
+      "category": "item",
+      "label": "Industrial bricks",
+      "abbrev": "IMC",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.desert.finite",
+      "category": "item",
+      "label": "Oil",
+      "abbrev": "IMD",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.desert.renewable",
+      "category": "item",
+      "label": "Solar power",
+      "abbrev": "IMD",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.fields.finite",
+      "category": "item",
+      "label": "Phosphate fertiliser",
+      "abbrev": "IMF",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.fields.renewable",
+      "category": "item",
+      "label": "Mechanised crops",
+      "abbrev": "IMF",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.grazing_land.finite",
+      "category": "item",
+      "label": "Meat",
+      "abbrev": "IMG",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.grazing_land.renewable",
+      "category": "item",
+      "label": "Dairy products",
+      "abbrev": "IMG",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.ore_mountains.finite",
+      "category": "item",
+      "label": "Metals",
+      "abbrev": "IMO",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.ore_mountains.renewable",
+      "category": "item",
+      "label": "Hydroelectric power",
+      "abbrev": "IMO",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.woodland.finite",
+      "category": "item",
+      "label": "Hardwood",
+      "abbrev": "IMW",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.modern.woodland.renewable",
+      "category": "item",
+      "label": "Industrial timber",
+      "abbrev": "IMW",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.clay_mountains.finite",
+      "category": "item",
+      "label": "Surface clay",
+      "abbrev": "IPC",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.clay_mountains.renewable",
+      "category": "item",
+      "label": "Spring water",
+      "abbrev": "IPC",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.desert.finite",
+      "category": "item",
+      "label": "Surface salt",
+      "abbrev": "IPD",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.desert.renewable",
+      "category": "item",
+      "label": "Desert fruit",
+      "abbrev": "IPD",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.fields.finite",
+      "category": "item",
+      "label": "Wild grain",
+      "abbrev": "IPF",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.fields.renewable",
+      "category": "item",
+      "label": "Foraged food",
+      "abbrev": "IPF",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.grazing_land.finite",
+      "category": "item",
+      "label": "Hunted goats",
+      "abbrev": "IPG",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.grazing_land.renewable",
+      "category": "item",
+      "label": "Wild wool",
+      "abbrev": "IPG",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.ore_mountains.finite",
+      "category": "item",
+      "label": "Flint",
+      "abbrev": "IPO",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.ore_mountains.renewable",
+      "category": "item",
+      "label": "Mountain herbs",
+      "abbrev": "IPO",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.woodland.finite",
+      "category": "item",
+      "label": "Hunted boar",
+      "abbrev": "IPW",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "ind.prehistoric.woodland.renewable",
+      "category": "item",
+      "label": "Foraged berries and nuts",
+      "abbrev": "IPW",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "item.brick",
+      "category": "item",
+      "label": "Brick",
+      "abbrev": "BRI",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "item.grappling_hook",
+      "category": "item",
+      "label": "Grappling Hook",
+      "abbrev": "GRA",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "item.herb_salve",
+      "category": "item",
+      "label": "Herb Salve",
+      "abbrev": "HER",
+      "shape": "rounded_rect",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "job.centre_clerk",
+      "category": "job",
+      "label": "Centre Clerk",
+      "abbrev": "JC",
+      "shape": "rect",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "job.factory_worker",
+      "category": "job",
+      "label": "Factory Worker",
+      "abbrev": "JF",
+      "shape": "rect",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "job.primary_worker",
+      "category": "job",
+      "label": "Primary Worker",
+      "abbrev": "JP",
+      "shape": "rect",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "job.processor_worker",
+      "category": "job",
+      "label": "Processor Worker",
+      "abbrev": "JP",
+      "shape": "rect",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "job.warehouse_keeper",
+      "category": "job",
+      "label": "Warehouse Keeper",
+      "abbrev": "JW",
+      "shape": "rect",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.catastrophe.fire_break",
+      "category": "quest",
+      "label": "Fire Break",
+      "abbrev": "QC",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.catastrophe.flood_berm",
+      "category": "quest",
+      "label": "Flood Berm",
+      "abbrev": "QC",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.conflict.labour_strike",
+      "category": "quest",
+      "label": "Labour Strike",
+      "abbrev": "QC",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.conflict.water_rights",
+      "category": "quest",
+      "label": "Water Rights",
+      "abbrev": "QC",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.diplomacy.border_truce",
+      "category": "quest",
+      "label": "Border Truce",
+      "abbrev": "QD",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.diplomacy.trade_embargo",
+      "category": "quest",
+      "label": "Trade Embargo",
+      "abbrev": "QD",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.discovery.ruin_map",
+      "category": "quest",
+      "label": "Ruin Map",
+      "abbrev": "QD",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.discovery.strange_signal",
+      "category": "quest",
+      "label": "Strange Signal",
+      "abbrev": "QD",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.factory_shortage",
+      "category": "quest",
+      "label": "Factory Shortage",
+      "abbrev": "QF",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.military.deserter_hunt",
+      "category": "quest",
+      "label": "Deserter Hunt",
+      "abbrev": "QM",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.military.raid_warning",
+      "category": "quest",
+      "label": "Raid Warning",
+      "abbrev": "QM",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.personal.lost_heirloom",
+      "category": "quest",
+      "label": "Lost Heirloom",
+      "abbrev": "QP",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.personal.sibling_feud",
+      "category": "quest",
+      "label": "Sibling Feud",
+      "abbrev": "QP",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.pollution_cleanup",
+      "category": "quest",
+      "label": "Pollution Cleanup",
+      "abbrev": "QP",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.shortage.fuel_yard",
+      "category": "quest",
+      "label": "Fuel Yard",
+      "abbrev": "QS",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.shortage.grain_store",
+      "category": "quest",
+      "label": "Grain Store",
+      "abbrev": "QS",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.transport.bridge_washout",
+      "category": "quest",
+      "label": "Bridge Washout",
+      "abbrev": "QT",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "quest.transport.cart_blockade",
+      "category": "quest",
+      "label": "Cart Blockade",
+      "abbrev": "QT",
+      "shape": "star",
+      "border": "dotted",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.future.cart_capacity",
+      "category": "technology",
+      "label": "Cart Capacity",
+      "abbrev": "TFC",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.future.factory_ceiling",
+      "category": "technology",
+      "label": "Factory Ceiling",
+      "abbrev": "TFF",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.future.primary_flow",
+      "category": "technology",
+      "label": "Primary Flow",
+      "abbrev": "TFP",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.future.processor_cap",
+      "category": "technology",
+      "label": "Processor Cap",
+      "abbrev": "TFP",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.future.unit_attack",
+      "category": "technology",
+      "label": "Unit Attack",
+      "abbrev": "TFU",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.future.unit_health",
+      "category": "technology",
+      "label": "Unit Health",
+      "abbrev": "TFU",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.historic.cart_capacity",
+      "category": "technology",
+      "label": "Cart Capacity",
+      "abbrev": "THC",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.historic.factory_ceiling",
+      "category": "technology",
+      "label": "Factory Ceiling",
+      "abbrev": "THF",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.historic.primary_flow",
+      "category": "technology",
+      "label": "Primary Flow",
+      "abbrev": "THP",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.historic.processor_cap",
+      "category": "technology",
+      "label": "Processor Cap",
+      "abbrev": "THP",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.historic.unit_attack",
+      "category": "technology",
+      "label": "Unit Attack",
+      "abbrev": "THU",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.historic.unit_health",
+      "category": "technology",
+      "label": "Unit Health",
+      "abbrev": "THU",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.modern.cart_capacity",
+      "category": "technology",
+      "label": "Cart Capacity",
+      "abbrev": "TMC",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.modern.factory_ceiling",
+      "category": "technology",
+      "label": "Factory Ceiling",
+      "abbrev": "TMF",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.modern.primary_flow",
+      "category": "technology",
+      "label": "Primary Flow",
+      "abbrev": "TMP",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.modern.processor_cap",
+      "category": "technology",
+      "label": "Processor Cap",
+      "abbrev": "TMP",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.modern.unit_attack",
+      "category": "technology",
+      "label": "Unit Attack",
+      "abbrev": "TMU",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.modern.unit_health",
+      "category": "technology",
+      "label": "Unit Health",
+      "abbrev": "TMU",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.prehistoric.cart_capacity",
+      "category": "technology",
+      "label": "Cart Capacity",
+      "abbrev": "TPC",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.prehistoric.factory_ceiling",
+      "category": "technology",
+      "label": "Factory Ceiling",
+      "abbrev": "TPF",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.prehistoric.primary_flow",
+      "category": "technology",
+      "label": "Primary Flow",
+      "abbrev": "TPP",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.prehistoric.processor_cap",
+      "category": "technology",
+      "label": "Processor Cap",
+      "abbrev": "TPP",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.prehistoric.unit_attack",
+      "category": "technology",
+      "label": "Unit Attack",
+      "abbrev": "TPU",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "tech.prehistoric.unit_health",
+      "category": "technology",
+      "label": "Unit Health",
+      "abbrev": "TPU",
+      "shape": "hex",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.ancient.heavy",
+      "category": "unit",
+      "label": "Ancient Heavy",
+      "abbrev": "UA",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.ancient.line",
+      "category": "unit",
+      "label": "Ancient Line",
+      "abbrev": "UA",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.ancient.skirmisher",
+      "category": "unit",
+      "label": "Ancient Skirmisher",
+      "abbrev": "UA",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.future.heavy",
+      "category": "unit",
+      "label": "Future Heavy",
+      "abbrev": "UF",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.future.line",
+      "category": "unit",
+      "label": "Future Line",
+      "abbrev": "UF",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.future.skirmisher",
+      "category": "unit",
+      "label": "Future Skirmisher",
+      "abbrev": "UF",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.historic.heavy",
+      "category": "unit",
+      "label": "Historic Heavy",
+      "abbrev": "UH",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.historic.line",
+      "category": "unit",
+      "label": "Historic Line",
+      "abbrev": "UH",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.historic.skirmisher",
+      "category": "unit",
+      "label": "Historic Skirmisher",
+      "abbrev": "UH",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.modern.cleanup",
+      "category": "unit",
+      "label": "Modern Cleanup Crew",
+      "abbrev": "UM",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.modern.heavy",
+      "category": "unit",
+      "label": "Modern Heavy",
+      "abbrev": "UM",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.modern.line",
+      "category": "unit",
+      "label": "Modern Line",
+      "abbrev": "UM",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    },
+    {
+      "semantic_id": "unit.modern.skirmisher",
+      "category": "unit",
+      "label": "Modern Skirmisher",
+      "abbrev": "UM",
+      "shape": "triangle",
+      "border": "solid",
+      "placeholder": true
+    }
+  ]
+}

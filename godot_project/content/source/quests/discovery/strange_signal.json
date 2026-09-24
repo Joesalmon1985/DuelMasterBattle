@@ -1,0 +1,126 @@
+{
+  "id": "quest.discovery.strange_signal",
+  "schema_version": 1,
+  "version": 1,
+  "family": "discovery",
+  "required_cause": {
+    "kinds": [
+      "anomalous_signal"
+    ],
+    "detail": "Night watch hears a machine cadence from the waste."
+  },
+  "binding": {
+    "stakeholder_role": "night_watch",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Jamming delays Modern tech draft.",
+    "era_continuity": "Signal facts filtered by observer knowledge.",
+    "death_displacement": "Displaced watch uses displaced branch.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "intervention",
+      "index": 2
+    },
+    {
+      "id": "acknowledged",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "triangulate_source",
+      "cost_bearer": "watch_coverage",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "signal_located"
+        }
+      ],
+      "acknowledgement": "dialogue.discovery.strange_signal.tri"
+    },
+    {
+      "id": "jam_and_ignore",
+      "cost_bearer": "tech_research_time",
+      "effects": [
+        {
+          "kind": "set_flag",
+          "flag": "signal_jammed"
+        }
+      ],
+      "acknowledgement": "dialogue.discovery.strange_signal.jam"
+    }
+  ],
+  "world_resolved_route": {
+    "when": "signal_stops_naturally",
+    "status": "resolved_by_world",
+    "acknowledgement": "dialogue.discovery.strange_signal.world_resolved"
+  },
+  "invalid_target_route": {
+    "when": "listening_post_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "post_lost",
+    "acknowledgement": "dialogue.discovery.strange_signal.invalid_target"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "failed_with_consequence",
+    "branch": "dead_target",
+    "acknowledgement": "dialogue.discovery.strange_signal.dead_target"
+  },
+  "displaced_target_route": {
+    "when": "stakeholder_displaced",
+    "status": "failed_with_consequence",
+    "branch": "displaced_target",
+    "acknowledgement": "dialogue.discovery.strange_signal.displaced_target"
+  },
+  "full_cycle_route": {
+    "when": "full_cycle_reseed",
+    "status": "suspended",
+    "preserve_bindings": true,
+    "acknowledgement": "dialogue.discovery.strange_signal.full_cycle"
+  },
+  "required_item_recovery": {
+    "item_id": "item.signal_crystal",
+    "recoverable": true,
+    "when_missing": "softlock_recovery"
+  },
+  "ignore_route": {
+    "when": "player_leaves_without_intervention",
+    "status": "active",
+    "note": "Bindings persist across leave/return/save; no duplicate quest instance."
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dialogue_keys": {
+    "offer": "dialogue.discovery.strange_signal.offer",
+    "world_resolved": "dialogue.discovery.strange_signal.world_resolved",
+    "invalid_target": "dialogue.discovery.strange_signal.invalid_target",
+    "dead_target": "dialogue.discovery.strange_signal.dead_target",
+    "displaced_target": "dialogue.discovery.strange_signal.displaced_target",
+    "full_cycle": "dialogue.discovery.strange_signal.full_cycle"
+  }
+}
