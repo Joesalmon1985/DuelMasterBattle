@@ -1,9 +1,9 @@
 {
   "run_id": "polish-autonomous-p0-p9",
   "branch": "work/current-main-polish",
-  "updated_at": "2026-09-24T22:50:07Z",
+  "updated_at": "2026-09-24T22:51:45Z",
   "comparison_baseline_sha": "9c66ce00342698dc2900c9f7b03c18101221f799",
-  "current_head": "9c66ce00342698dc2900c9f7b03c18101221f799",
+  "current_head": "23bfdbeb482e903346044bca7d172ba56f4a151f",
   "current_phase": "P9",
   "status": "OWNER_REVIEW_PENDING",
   "phase_status": {
@@ -30,7 +30,10 @@
     "Play Visual Review.bat",
     "tools/play_visual_review.sh"
   ],
-  "next_concrete_action": "Joe: Play Visual Review.bat and walk 8 chapters; subjective Clear/Unclear/Broken",
+  "next_concrete_action": "Joe: Play Visual Review.bat; walk 8 chapters",
   "blocked_dependency": "Full personal 8-chapter pointer drive + SB03-SB08 complete matrix + Windows certification not claimed from Linux",
-  "final_status_note": "Not AUTO_READY_FOR_OWNER_REVIEW until Joe completes subjective review and remaining SB sequences; mandatory sim suite is green"
+  "final_status_note": "Not AUTO_READY_FOR_OWNER_REVIEW until Joe completes subjective review and remaining SB sequences; mandatory sim suite is green",
+  "completed_source_commits": [
+    "23bfdbeb482e903346044bca7d172ba56f4a151f"
+  ]
 }
