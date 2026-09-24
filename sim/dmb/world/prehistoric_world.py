@@ -182,6 +182,18 @@ def load_prehistoric_world(seed: int = 507) -> WorldSim:
     state.clock["active_faction_id"] = state.clock["scheduled_faction_ids"][0]
     state.clock["completed_seats"] = []
     state.clock["round_complete"] = False
+    state.clock.setdefault("era", "prehistoric")
+    state.clock.setdefault("era_id", "prehistoric")
+    from sim.dmb.technology.draft import DraftService
+
+    DraftService(state).deal("prehistoric", list(state.clock["scheduled_faction_ids"]))
+    # Assign saved trained specialist policies when artifacts exist (P5 / R10).
+    from sim.dmb.ai.policy import PolicyService
+
+    trained = ["policy-im-build", "policy-im-trade", "policy-im-war"]
+    pol = PolicyService(state)
+    for idx, fid in enumerate(state.clock["scheduled_faction_ids"]):
+        pol.assign_brain(fid, trained[idx % len(trained)])
     state.board["g05"] = {
         "mode": "full_prehistoric_world_boulder_quest",
         "quest_enabled": True,

@@ -114,6 +114,7 @@ class PolicyService:
         """One seat activation: observe, enumerate, choose ≤1 construct + ≤1 proposal."""
         assert self.observations is not None and self.legal is not None
         cargo_retries = self._retry_pending_cargo(faction_id)
+        trade_retries = self._retry_pending_trades(faction_id)
         obs = self.observations.build(faction_id, decision_kind)
         candidates = self.legal.enumerate(obs, decision_kind)
         brain = self.resolve_brain(faction_id)
@@ -123,7 +124,7 @@ class PolicyService:
             cid = brain.choose(obs, candidates)
             choice = {"primary_id": cid, "selected_ids": [cid]}
         by_id = {c["id"]: c for c in candidates}
-        applied: list[dict[str, Any]] = list(cargo_retries)
+        applied: list[dict[str, Any]] = list(cargo_retries) + list(trade_retries)
         selected_ids = list(choice.get("selected_ids") or [])
         illegal = [cid for cid in selected_ids if cid not in by_id]
         if illegal:
@@ -194,7 +195,17 @@ class PolicyService:
                 )
             except TypeValidationError as exc:
                 return {"status": "trade_blocked", "reason": str(exc), "commit": commit}
-            return {"status": "trade_proposed", "commit": commit, "contract": contract}
+            follow = self._maybe_auto_accept_trade(
+                contract,
+                counterparty=counter,
+                proposer_give=give,
+            )
+            return {
+                "status": "trade_proposed",
+                "commit": commit,
+                "contract": contract,
+                "follow_up": follow,
+            }
         if kind == "military_move":
             from sim.dmb.military.movement import StrategicMovement
 
@@ -247,7 +258,115 @@ class PolicyService:
             except Exception as exc:  # pragma: no cover
                 return {"status": "military_withdraw_blocked", "reason": str(exc), "commit": commit}
             return {"status": "military_withdrawn", "commit": commit, "result": result}
+        if kind == "hazard_treat":
+            from sim.dmb.hazards.responders import HazardResponder
+
+            fid = str(params.get("formation_id") or "")
+            cube_id = str(params.get("cube_id") or "")
+            if not fid or not cube_id:
+                return {"status": "hazard_treat_skipped", "reason": "missing_target", "commit": commit}
+            result = HazardResponder(self.state).treat(fid, cube_id)
+            return {"status": "hazard_treated", "commit": commit, "result": result}
         return {"status": "proposed", "commit": commit, "candidate_id": candidate["id"]}
+
+    def _construction_shortages(self, faction_id: str) -> dict[str, int]:
+        missing: dict[str, int] = {}
+        for order in (self.state.orders or {}).values():
+            if str(order.get("faction_id") or "") != faction_id:
+                continue
+            if order.get("status") not in {"awaiting_cargo", "pending"}:
+                continue
+            for good, qty in dict(order.get("missing") or {}).items():
+                missing[str(good)] = missing.get(str(good), 0) + int(qty)
+        return missing
+
+    def _shortage_goods_covered(self, faction_id: str, incoming: dict[str, int]) -> int:
+        shortages = self._construction_shortages(faction_id)
+        if not shortages:
+            return 0
+        covered = 0
+        for good, qty in incoming.items():
+            need = shortages.get(str(good), 0)
+            if need > 0:
+                covered += min(int(qty), need)
+        return covered
+
+    def _counterparty_accepts_trade(self, counterparty: str, proposer_give: dict[str, int]) -> bool:
+        """Heuristic-aligned: accept when incoming goods cover construction shortages."""
+        return self._shortage_goods_covered(counterparty, proposer_give) > 0
+
+    def _assign_trade_carts(self, contract: dict[str, Any]) -> bool:
+        """Attach idle faction carts to legs; never invent carts here."""
+        assert self.director is not None
+        ready = True
+        for leg in contract.get("legs", {}).values():
+            if leg.get("cart_id"):
+                continue
+            owner = str(leg.get("from_faction") or "")
+            idle = self.director.idle_carts(owner)
+            if not idle:
+                ready = False
+                continue
+            leg["cart_id"] = idle[0]
+        return ready
+
+    def _maybe_auto_accept_trade(
+        self,
+        contract: dict[str, Any],
+        *,
+        counterparty: str,
+        proposer_give: dict[str, int],
+    ) -> dict[str, Any] | None:
+        if not self._counterparty_accepts_trade(counterparty, proposer_give):
+            return None
+        from sim.dmb.logistics.stock import StockLedger
+        from sim.dmb.logistics.trade import TradeService
+
+        trade_id = str(contract.get("id") or "")
+        ledger = StockLedger(self.state)
+        trade = TradeService(self.state, ledger=ledger)
+        try:
+            accepted = trade.accept(trade_id)
+        except TypeValidationError as exc:
+            return {"status": "trade_accept_blocked", "reason": str(exc)}
+        live = trade._trades().get(trade_id) or accepted
+        if not self._assign_trade_carts(live):
+            return {"status": "trade_accepted_awaiting_carts", "trade_id": trade_id}
+        try:
+            dispatched = trade.dispatch_legs(trade_id)
+        except TypeValidationError as exc:
+            return {"status": "trade_dispatch_blocked", "reason": str(exc), "trade_id": trade_id}
+        return {"status": "trade_accepted_dispatched", "trade_id": trade_id, "dispatch": dispatched}
+
+    def _retry_pending_trades(self, faction_id: str) -> list[dict[str, Any]]:
+        """Counterparty seat pass: accept shortage-matching proposals using idle carts."""
+        from sim.dmb.logistics.stock import StockLedger
+        from sim.dmb.logistics.trade import TradeService
+
+        ledger = StockLedger(self.state)
+        trade = TradeService(self.state, ledger=ledger)
+        applied: list[dict[str, Any]] = []
+        for trade_id, contract in sorted((self.state.stocks.get("_trades") or {}).items()):
+            if contract.get("status") != "proposed":
+                continue
+            parties = list(contract.get("parties") or [])
+            if faction_id not in parties:
+                continue
+            proposer = parties[0]
+            counter = parties[1] if len(parties) > 1 else ""
+            if counter != faction_id:
+                continue
+            give = dict((contract.get("legs") or {}).get("a", {}).get("goods") or {})
+            if not self._counterparty_accepts_trade(faction_id, give):
+                continue
+            follow = self._maybe_auto_accept_trade(
+                contract,
+                counterparty=faction_id,
+                proposer_give=give,
+            )
+            if follow:
+                applied.append(follow)
+        return applied
 
     def _primary_store(self, faction_id: str) -> str | None:
         for settlement in self.state.settlements.values():

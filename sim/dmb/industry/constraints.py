@@ -41,6 +41,7 @@ def build_constraints(
     layers: Mapping[str, LayerState],
     *,
     factory_active: Mapping[str, bool] | None = None,
+    factory_ceiling: Mapping[str, Fraction] | None = None,
     tick_seconds: Fraction = Fraction(1, 10),
 ) -> ConstraintBuild:
     active_map = factory_active or {}
@@ -92,8 +93,9 @@ def build_constraints(
             bottlenecks[rid] = f"exhausted_source:{exhausted.layer_id}"
             continue
         cost = Fraction(route.processed_units_per_unit)
-        requests.append(AllocationRequest(rid, route, route.requested_weight, Fraction(1, 60)))
-        add(rid, f"factory:{rid}", Fraction(1), Fraction(1, 60), "factory_ceiling")
+        ceiling = (factory_ceiling or {}).get(rid, Fraction(1, 60))
+        requests.append(AllocationRequest(rid, route, route.requested_weight, ceiling))
+        add(rid, f"factory:{rid}", Fraction(1), ceiling, "factory_ceiling")
         add(rid, f"processor:{processor.building_id}", cost, processor.capacity, "processor_capacity")
         for channel in source_channels:
             assert channel is not None

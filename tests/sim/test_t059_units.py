@@ -46,7 +46,7 @@ def test_unit_belongs_to_at_most_one_formation() -> None:
     director = FormationDirector(state)
     u1 = mil.spawn("unit.ancient.skirmisher", home_node_id="node:1", faction_id="faction:a", era="prehistoric", factory_id="f")
     u2 = mil.spawn("unit.ancient.line", home_node_id="node:1", faction_id="faction:a", era="prehistoric", factory_id="f")
-    director.group([u1["id"], u2["id"]], faction_id="faction:a", node_id="node:1")
+    assert u1["formation_id"] == u2["formation_id"]
     try:
         director.group([u1["id"]], faction_id="faction:a", node_id="node:1")
         raise AssertionError("expected double-group failure")

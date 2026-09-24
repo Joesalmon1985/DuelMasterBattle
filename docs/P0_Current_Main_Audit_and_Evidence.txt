@@ -1,0 +1,77 @@
+# P0 — Current truth, baseline and evidence harness
+
+>>> EXECUTION OVERRIDE: docs/POLISH_AUTONOMOUS_RUN.md authorizes continuous P0–P9.
+>>> After P0 reaches BASELINE_RECORDED_WITH_DEFECTS, CONTINUE into P1–P9 automatically.
+>>> Do NOT stop the overnight solely because this file says STOP. Technical P0 criteria remain.
+
+You are implementing one gated phase of the existing DuelMasterBattle project. For a staged paste-run only: complete the named phase, preserve evidence, and STOP. For the authorized continuous run, record the baseline then continue. Do not merge, publish, or claim Joe's approval. Make small reviewable changes using existing services. No quest development, finished art, model retraining, player faction-command UI, replacement Ward Duel or parallel simulation.
+
+Read MORNING_HANDOFF.md, docs/CANONICAL_GAME_ONTOLOGY.md, docs/INTEGRATED_RUNTIME_ARCHITECTURE.md, docs/review/PLAYER_WORLD_MODEL.md, current accepted decisions, Pack/DuelMasterBattle_Build_Pack/EXECUTION_AMENDMENTS.md and the relevant C00/C03–C13 contracts. Precedence: this brief > accepted canonical decisions > current contracts/amendments > implementation > historical docs. Report a material unresolved design conflict instead of silently changing the rule. The wizard does not order factions and has no ordinary-army combat HP. People remain persistent; a soldier is a Person linked to UnitState/CombatantState. Worker motion is illustrative. Catan cargo is physical. Exact hands, AI scores, hidden strengths and production internals stay in explicit QA mode. Reuse semantic_visuals.py, content/source/presentation/semantic_visuals.json, semantic_placeholder.gd, visual_language.gd and world_layer_presenters.gd; shapes/text only.
+
+Verify git SHA/tree, OS and project toolchain before editing. Preserve user work and saves; use an isolated worktree/save slot if needed. Do not reset to historical main. The base rule below identifies the required accepted predecessor. A missing approval means you may inspect/prepare a concrete handoff, but cannot call the gate accepted or begin its successor. Existing Gxx AUTO_READY is not owner PASS. Use a new tracking/polish ledger, keeping historical evidence intact.
+
+Use the real production WorldSim and g05_shell with FX-MVP seed507. The Windows entry point is Play Latest Integrated Game.bat / tools/windows_playtest.py play-latest. Resolve the repository interpreter and Godot version first; run `python -m pytest tests/sim -q` in that environment. Use tools/run_visual_review.py and existing Godot harnesses, extended in place. Every phase runs its exact tests below and affected regressions; the full Python suite is cheap enough to run at the gate. Do not mask failures, skip substantive coverage or weaken canonical assertions for green output.
+
+For EACH screenshot row below: capture 450x800 AND 1280x720. Responsive rows also require960x540 and any additional retained sizes. Rows with suffixes require every named subframe at every required size. Load the specified full production checkpoint, verify its replay hash, then perform the recorded real input through the actual shell. CP-* names are proposed IDs, not existing files. Record fixture/seed, entity IDs, local approach cells, control identity, actual pixel coordinate per resolution, accepted command receipts and precise Game Time advances in journey_manifest.json. Use state predicates/receipts plus rendering barriers, never a fixed delay as evidence of readiness. If a normal checkpoint remains unreachable, report the blocker; an explicitly arranged production fixture can diagnose it but cannot pass normal reachability.
+
+Save under Pack/DuelMasterBattle_Build_Pack/tracking/polish/P0/SOURCE_SHA/ with manifest, commands.jsonl, full saves, state assertions, tests/logs, iterations/, final/, and review.md. Use a clean capture directory; reject missing/blank/stale/wrong-size images, wrong scenes, timeouts and engine errors. Personally open EVERY final image at native scale. Report filename, actual dimensions, expected condition, observed condition, PASS/FAIL/MANUAL REVIEW REQUIRED, visible problems, iteration count and fix/retest references. Fix visible defects and recapture affected sequences. Image existence/exit0 is not PASS. If you cannot inspect pixels, or cannot reliably judge readability, explicitly mark MANUAL REVIEW REQUIRED and leave that visual gate unaccepted. Do not infer state, reachability or persistence from pixels alone.
+
+Normal witnesses must originate from recorded legal production commands/clock advances, with no direct writes to stocks, VP, units, hazards, diplomacy, positions or hands. Arranged tests are separately labelled. Extend existing run_long_world/evaluation tools for full reloadable saves/replays; summary snapshots are insufficient. Bound searches and report unreachable events rather than waiting indefinitely or inventing owner coordinates. Keep QA data inaccessible to ordinary player projections, not merely hidden by a panel toggle.
+
+At completion report: base/final SHA and tree; changed files and reasons; exact tests and counts; each screenshot review; state/replay evidence; unresolved risks/design decisions; a short owner procedure. Separate automated readiness, manual review and owner acceptance. STOP after the phase. Do not amend the next phase's scope to avoid a failure.
+
+## Required starting commit
+
+Start from verified current main. The audited baseline is 9c66ce00342698dc2900c9f7b03c18101221f799. Fetch/recheck main; if it moved, record the new SHA and repeat affected tracing/tests before relying on this audit. Planning has not authorized any gameplay repairs in P0.
+
+## Objective
+
+Make every later integration claim reproducible from the real game, and give Joe a clear baseline of what works and what is blocked.
+
+## Current evidence
+
+Inspect core/world.py::dispatch, core/state.py::WorldState, time/turns.py::TurnRunner, testing/fixtures.py and world/prehistoric_world.py. Read tools/run_visual_review.py, tools/run_long_world.py, tools/evaluate_mvp.py, client/tests/run_visual_review_harness.gd and G11/G12 evidence. Paths under core/time/world refer to sim/dmb; client paths are under godot_project. Audit reproduced 471 passes/15 failures. The ordinary twelve-Wait dice stream repeats [1,1]; research/draft/diplomacy disappear on save/load; no initial draft, no scheduled hazards, and treatment falls through. Historical PNGs are not current interactive acceptance.
+
+## Defects and gaps
+
+Actual bugs: R01–R08. Integration gaps: proposals do not form a complete physical trade chain; trained policies are not selected in normal setup. Visual clutter: G11 settlement/battle label collisions. Test gaps: service tests bypass dispatch, serializer equality misses omitted fields, visual harness checks files rather than observations. Classify all fifteen failures individually; do not treat them as harmless just because this is a baseline.
+
+## Implementation
+
+Make only harness/documentation changes. Extend existing capture tool with exact source/scenario/seed/checkpoint/output manifest support, fresh output directories, receipt/state readiness checks, nonzero exit on missing required captures, and an explicit per-image review report. Add full production snapshot plus replay recording to existing long-world tooling; preserve summary outputs for their current callers. Create a defect ledger with source symbol, reproduction, normal reachability and owning phase. Reproduce the included probes without adding them as alternate gameplay. Classify expected new-unit/autoformation regressions separately from archived fixture regressions. Do not restore six total unit definitions or permit duplicate formation membership to satisfy obsolete tests. Record actual Windows Godot version; reconcile the 4.4.1 historical pin versus 4.5.1 handoff without an incidental upgrade.
+
+## Explicit non-goals
+
+No gameplay repairs or UX redesign; classify and reproduce defects only. Harness/schema improvements are allowed. The common scope limits above also apply.
+
+## Automated tests
+
+Run `python -m pytest tests/sim -q`; preserve the complete baseline output. Run existing `run_g05_smoke.gd`, `run_g05_playable.gd`, `run_visual_review_harness.gd` and semantic checks through the repository launchers. Add planned `tests/sim/test_polish_capture_manifest.py` for fresh-output isolation, wrong-source metadata, missing required frame, wrong decoded dimensions and explicit unreviewed status. These tests validate the harness failure contract, not screenshot aesthetics. Baseline gameplay failures remain open with owners.
+
+## Deterministic interactive procedure
+
+1. Fresh FX-MVP507 in g05_shell; capture B01–B03 through real pointer input. 2. Record exact local input route corresponding to node35→30→36→31→37 and validate cube1/hex1,-2; do not teleport. 3. In a separate reproducible production run issue twelve Waits and 120000ms AdvanceGame; record dice/draft/industry/identity changes. 4. Search seed507 for planned CP-* events for at most60 turns with30000ms unpaused Game Time per turn. Record reached and blocked checkpoints; stop after the bound. 5. Capture fresh baseline at all required sizes. Freeze ready state with the existing capture mechanism and identify its pause token. Produce a machine-readable journey_manifest schema; each reachable entry must contain actual local cells, input targets, receipts and replay hash.
+
+## Screenshot manifest
+
+All listed resolutions and named subframes are mandatory. Filename is `<ID>_<subframe-if-any>_<width>x<height>.png`. The CSV in the pack expands these into individual filenames. A QA companion is captured in a separate explicitly privileged session; it is never presented as ordinary player UI.
+
+| ID / phase | Resolutions / subframes | Scene / fixture | Starting state | Exact actions | Expected visible result | PASS evidence | Obvious failure signs | Authoritative state evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| B01 / P0 | 450×800; 1280×720; 960×540 | FX-MVP / g05_shell | Fresh seed507; node35; no old save | Launch Play Latest; wait for world-ready receipt; capture before input | Whole normal area, wizard, exits, buildings, people and controls | Correct normal scene and source revision; honest baseline defect annotations | Wrong fixture; blank scene; hidden overlays; stale PNG | Initial board19/54/72, turn0, initial identities |
+| B02 / P0 | 450×800; 1280×720; 960×540 | FX-MVP / g05_shell | B01 | Open map using its visible button; capture; close | Board, legend and underlying modal boundary | Baseline records actual legibility and any discovery leak; does not declare it fixed | Map is a different fixture; unreadable screenshot not recorded as defect | Player projection versus privileged world map |
+| B03 / P0 | 450×800; 1280×720; 960×540 | FX-MVP / g05_shell | B01; nearby existing worker | Use actual single-pointer selection, Observe and Talk; capture attached card | Selected actor and attached conversation/actions | Input receipt corresponds to selected real Person; record collisions | Direct semantic service call presented as pointer success | Person ID, observed/learned fields, interaction/range receipts |
+
+## State evidence
+
+Baseline SHA/toolchain/config/model hashes; full pytest log; field-level persistence probe; dice stream; roster/seats/rounds; actor IDs; initial cubes; world/clock versions; all checkpoint replay results. Keep source defects marked SOURCE until interactive reproduction. Existing 24 PNG dimensions and seven audit-inspected historical frames remain labelled historical.
+
+## Regression checks
+
+Run full tests/sim and the existing visual harness, semantic/ontology checks and g05 smoke. Expected baseline failures remain named open defects with phase owners. Validate the new harness fails on one deliberately missing frame and one wrong-size frame; a stale previous PNG must not satisfy it. Do not change game semantics or generate new art.
+
+## Acceptance gate
+
+P0 baseline can be READY WITH KNOWN GAME DEFECTS only if every baseline image is actually reviewed, every test failure is classified, toolchain/HEAD are verified and fresh capture/replay contracts work. Visual defects are recorded, not falsely passed. No CP reachability is invented. Stop and report; P1 requires Joe to request it.
+
+END OF P0. STOP AND REPORT EVIDENCE. Do not start the next phase.

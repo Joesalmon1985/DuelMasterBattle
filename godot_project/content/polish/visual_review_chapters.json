@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "fixture": "FX-MVP",
+  "seed": 507,
+  "save_slot": "g05_visual_review",
+  "checkpoint_dir": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507",
+  "chapters": [
+    {
+      "id": "CH01",
+      "title": "Explore and travel",
+      "minutes": "0-3",
+      "task": "Move, Observe/Talk, Travel once.",
+      "checkpoint_id": "CP-START",
+      "checkpoint_slot": "g05_visual_review_cp-start",
+      "checkpoint_path": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507/CP-START.save.json",
+      "replay_hash": "6743946ecf027693",
+      "arranged": false
+    },
+    {
+      "id": "CH02",
+      "title": "Cart delivery and construction",
+      "minutes": "3-7",
+      "task": "Follow a loaded cart and construction.",
+      "checkpoint_id": "CP-CARGO",
+      "checkpoint_slot": "g05_visual_review_cp-cargo",
+      "checkpoint_path": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507/CP-CARGO.save.json",
+      "replay_hash": "d1d20560faa0b49d",
+      "arranged": false
+    },
+    {
+      "id": "CH03",
+      "title": "Factory and soldier",
+      "minutes": "7-10",
+      "task": "Watch factory complete a soldier.",
+      "checkpoint_id": "CP-INDUSTRY",
+      "checkpoint_slot": "g05_visual_review_cp-industry",
+      "checkpoint_path": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507/CP-INDUSTRY.save.json",
+      "replay_hash": "265e88b39db16fac",
+      "arranged": false
+    },
+    {
+      "id": "CH04",
+      "title": "Technology round",
+      "minutes": "10-13",
+      "task": "Advance a round; inspect tech consequence.",
+      "checkpoint_id": "CP-ROUND",
+      "checkpoint_slot": "g05_visual_review_cp-round",
+      "checkpoint_path": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507/CP-ROUND.save.json",
+      "replay_hash": "ae3a0508a87760db",
+      "arranged": false
+    },
+    {
+      "id": "CH05",
+      "title": "Hazard and recovery",
+      "minutes": "13-17",
+      "task": "Blocked work \u2192 treatment \u2192 recovery.",
+      "checkpoint_id": "CP-WARD",
+      "checkpoint_slot": "g05_visual_review_cp-ward",
+      "checkpoint_path": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507/CP-WARD.save.json",
+      "replay_hash": "a659d55f86cdd416",
+      "arranged": false
+    },
+    {
+      "id": "CH06",
+      "title": "Hostile contact",
+      "minutes": "17-20",
+      "task": "Witness hostile contact aftermath.",
+      "checkpoint_id": "CP-CARGO",
+      "checkpoint_slot": "g05_visual_review_cp-cargo",
+      "checkpoint_path": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507/CP-CARGO.save.json",
+      "replay_hash": "d1d20560faa0b49d",
+      "arranged": false
+    },
+    {
+      "id": "CH07",
+      "title": "Ward duel",
+      "minutes": "20-25",
+      "task": "Challenge manifestation; Ward Duel; return.",
+      "checkpoint_id": "CP-WARD",
+      "checkpoint_slot": "g05_visual_review_cp-ward",
+      "checkpoint_path": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507/CP-WARD.save.json",
+      "replay_hash": "a659d55f86cdd416",
+      "arranged": false
+    },
+    {
+      "id": "CH08",
+      "title": "Save continuity and era",
+      "minutes": "25-28",
+      "task": "Save/reload; near-era checkpoint.",
+      "checkpoint_id": "CP-ERA",
+      "checkpoint_slot": "g05_visual_review_cp-era",
+      "checkpoint_path": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507/CP-ERA.save.json",
+      "replay_hash": "cb7e1a86fc6a41a6",
+      "arranged": true
+    }
+  ]
+}

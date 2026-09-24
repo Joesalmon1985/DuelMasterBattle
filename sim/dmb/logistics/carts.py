@@ -8,6 +8,7 @@ from typing import Any
 from sim.dmb.core.state import WorldState
 from sim.dmb.core.types import TypeValidationError
 from sim.dmb.logistics.stock import StockLedger
+from sim.dmb.technology.research import TechnologyService
 
 DEFAULT_CAPACITY = 4
 
@@ -23,6 +24,14 @@ class CartService:
         if self.ledger is None:
             self.ledger = StockLedger(self.state)
 
+    def _capacity_limit(self, cart: dict[str, Any]) -> int:
+        base = int(cart.get("base_capacity", cart.get("capacity", DEFAULT_CAPACITY)))
+        owner = str(cart.get("owner_faction") or "")
+        if not owner:
+            return base
+        bonus = TechnologyService(self.state).cart_capacity_bonus(owner)
+        return base + bonus
+
     def create(
         self,
         *,
@@ -32,6 +41,7 @@ class CartService:
         capacity: int = DEFAULT_CAPACITY,
     ) -> dict[str, Any]:
         cart_id = self.state.ids.new("cart")
+        base = int(capacity)
         record = {
             "id": cart_id,
             "owner_faction": owner_faction,
@@ -39,7 +49,8 @@ class CartService:
             "current_node": current_node,
             "next_edge": None,
             "status": "idle",
-            "capacity": int(capacity),
+            "base_capacity": base,
+            "capacity": base + TechnologyService(self.state).cart_capacity_bonus(owner_faction),
             "cargo_lots": [],
             "route": [],
             "route_index": 0,
@@ -79,7 +90,7 @@ class CartService:
         if existing is None:
             raise TypeValidationError("unknown reservation")
         qty = sum(int(v) for v in existing.get("goods", {}).values())
-        if self.cargo_quantity(cart_id) + qty > int(cart.get("capacity", DEFAULT_CAPACITY)):
+        if self.cargo_quantity(cart_id) + qty > self._capacity_limit(cart):
             raise TypeValidationError("capacity exceeded")
         assert self.ledger is not None
         self.ledger.load(reservation_id, cart_id)

@@ -40,6 +40,7 @@ G05_ERA_FIXTURE = "FX-ERA"
 G05_ERA_SEED = "507"
 DEFAULT_RESOLUTION = "450x800"
 G05_SCENE = "res://client/scenes/g05_shell.tscn"
+G05_REVIEW_SAVE_SLOT = "g05_visual_review"
 
 
 def _load_local() -> dict:
@@ -247,12 +248,26 @@ def cmd_resolve(_: argparse.Namespace) -> int:
     return 0
 
 
+def playtest_review_env(extra: dict[str, str] | None = None) -> dict[str, str]:
+    """Environment keys for the owner visual playtest session (isolated save, review flag)."""
+    env = {
+        "DMB_PLAYTEST_REVIEW": "1",
+        "DMB_SAVE_SLOT": G05_REVIEW_SAVE_SLOT,
+        "DMB_FIXTURE": G05_MVP_FIXTURE,
+        "DMB_SEED": G05_MVP_SEED,
+    }
+    if extra:
+        env.update(extra)
+    return env
+
+
 def launch_godot(
     *,
     scene: str,
     fixture: str | None,
     seed: str | None,
     resolution: str = DEFAULT_RESOLUTION,
+    extra_env: dict[str, str] | None = None,
 ) -> int:
     try:
         python = resolve_python()
@@ -275,6 +290,8 @@ def launch_godot(
         env["DMB_FIXTURE"] = fixture
     if seed:
         env["DMB_SEED"] = seed
+    if extra_env:
+        env.update(extra_env)
 
     argv = [
         str(godot),
@@ -359,6 +376,22 @@ def cmd_play_fx_era(_: argparse.Namespace) -> int:
 
 def cmd_play_g05(_: argparse.Namespace) -> int:
     return cmd_play_latest(_)
+
+
+def cmd_play_visual_playtest(_: argparse.Namespace) -> int:
+    """Integrated g05_shell owner playtest with spellbook review pages."""
+    print("=" * 60)
+    print("VISUAL PLAYTEST REVIEW — g05_shell + Spellbook review mode")
+    print("Fixture FX-MVP seed 507 · isolated save slot g05_visual_review")
+    print("Flag DMB_PLAYTEST_REVIEW=1")
+    print("=" * 60)
+    return launch_godot(
+        scene=G05_SCENE,
+        fixture=G05_MVP_FIXTURE,
+        seed=G05_MVP_SEED,
+        resolution=DEFAULT_RESOLUTION,
+        extra_env=playtest_review_env(),
+    )
 
 
 def cmd_play_visual_review(_: argparse.Namespace) -> int:
@@ -641,6 +674,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("play-g01", help="Launch G01 shell directly")
     sub.add_parser("play-menu", help="Launch main menu")
     sub.add_parser("play-visual-review", help="In-world visual review harness")
+    sub.add_parser(
+        "play-visual-playtest",
+        help="FX-MVP g05_shell with DMB_PLAYTEST_REVIEW spellbook pages",
+    )
     sub.add_parser("play-ward-duel-review", help="Ward Duel presentation review")
     sub.add_parser("check-g01", help="Run tools/check.py --gate G01")
     sub.add_parser("check-g02", help="Run tools/check.py --gate G02")
@@ -669,6 +706,7 @@ def main(argv: list[str] | None = None) -> int:
         "play-g01": cmd_play_g01,
         "play-menu": cmd_play_menu,
         "play-visual-review": cmd_play_visual_review,
+        "play-visual-playtest": cmd_play_visual_playtest,
         "play-ward-duel-review": cmd_play_ward_duel_review,
         "check-g01": cmd_check_g01,
         "check-g02": cmd_check_g02,

@@ -1,0 +1,36 @@
+{
+  "run_id": "polish-autonomous-p0-p9",
+  "branch": "work/current-main-polish",
+  "updated_at": "2026-09-24T22:50:07Z",
+  "comparison_baseline_sha": "9c66ce00342698dc2900c9f7b03c18101221f799",
+  "current_head": "9c66ce00342698dc2900c9f7b03c18101221f799",
+  "current_phase": "P9",
+  "status": "OWNER_REVIEW_PENDING",
+  "phase_status": {
+    "P0": "BASELINE_RECORDED_WITH_DEFECTS",
+    "P1": "AUTO_PHASE_VERIFIED",
+    "P2": "AUTO_PHASE_VERIFIED",
+    "P3": "AUTO_PHASE_VERIFIED",
+    "P4": "AUTO_PHASE_VERIFIED",
+    "P5": "AUTO_PHASE_VERIFIED",
+    "P6": "AUTO_PHASE_VERIFIED",
+    "P7": "PENDING_DEPENDENCY",
+    "P8": "PENDING_DEPENDENCY",
+    "P9": "OWNER_REVIEW_PENDING"
+  },
+  "pytest": {
+    "passed": 501,
+    "failed": 0,
+    "note": "full tests/sim green after repairs"
+  },
+  "evidence_locations": [
+    "docs/POLISH_AUTONOMOUS_RUN.md",
+    "docs/START_HERE_VISUAL_PLAYTEST.md",
+    "Pack/DuelMasterBattle_Build_Pack/tracking/polish/",
+    "Play Visual Review.bat",
+    "tools/play_visual_review.sh"
+  ],
+  "next_concrete_action": "Joe: Play Visual Review.bat and walk 8 chapters; subjective Clear/Unclear/Broken",
+  "blocked_dependency": "Full personal 8-chapter pointer drive + SB03-SB08 complete matrix + Windows certification not claimed from Linux",
+  "final_status_note": "Not AUTO_READY_FOR_OWNER_REVIEW until Joe completes subjective review and remaining SB sequences; mandatory sim suite is green"
+}

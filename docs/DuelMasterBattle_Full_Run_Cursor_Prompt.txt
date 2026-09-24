@@ -1,0 +1,221 @@
+# DuelMasterBattle — one autonomous P0–P9 run to a guided visual review
+
+This is Joe's replacement instruction for the previous “Overnight run: P0 only” plan.
+
+## 1. Authorization and intended finish
+
+Implement the entire development, integration, polish and testing plan, P0 through P9, in one continuous authorized run. Include the spellbook review/debug mode specified below. Work until the integrated build is ready for my straightforward visual playtest, or until a concrete external blocker prevents further useful work.
+
+You are explicitly authorized to make the gameplay repairs in P1–P9, add the review interface, extend tests and evidence tooling, update project documentation, and create local milestone commits on the working branch. Do not ask me to paste each phase or approve routine implementation choices. Leave the work on the review branch; merging and publishing are outside this task.
+
+This instruction supersedes the project workflow clauses that say:
+
+- “P0 only” or “harness/docs only” for this run;
+- “STOP after each phase”;
+- “P1 requires Joe to request it”;
+- “start from an owner-accepted predecessor”;
+- “three failed attempts means stop the whole overnight”.
+
+Those clauses were written for a staged run. They no longer describe my requested execution schedule. Preserve the technical requirements, design rules, tests, evidence honesty and historical Gxx records. Owner approval remains pending until I actually review the result.
+
+The finish is a working game plus ONE easy launcher, an in-spellbook guided review, replay-verified checkpoints, inspected screenshots and a short owner checklist. A completed audit, documentation bundle, nine baseline pictures or a P0 commit is not the finish.
+
+## 2. Establish the real base and persist this instruction
+
+Read the current working tree before changing it. Prefer the existing work/current-main-polish branch if it is present; preserve any completed work and user changes. Record branch, HEAD, tree and worktree status. Fetch/recheck main once at the start. The prior audit inspected 9c66ce00342698dc2900c9f7b03c18101221f799; that is a comparison baseline, not an instruction to reset the working branch to it. If main or the branch has moved, inspect the relevant changes and update the defect ledger. Do not restart already completed repairs simply because an old prompt describes them as missing.
+
+Read:
+
+- docs/DuelMasterBattle_Current_Main_Polish_Plan.md, including A–L and its phase prompts;
+- docs/P0_Current_Main_Audit_and_Evidence.txt, treating its stop/scope clauses as superseded here;
+- MORNING_HANDOFF.md, canonical ontology, accepted design decisions, integrated runtime architecture, current build-pack contracts and execution amendments;
+- existing polish handoffs, if work has already begun;
+- docs/spellbook_ui.md and the actual spellbook implementation, treating historical branch facts as historical.
+
+If a referenced document moved, locate its filename in the repository. Record this instruction as docs/POLISH_AUTONOMOUS_RUN.md. Add a conspicuous execution-override note to the current polish plan/P0 entry point so a later context window does not reintroduce P0-only stopping. Preserve the original audit facts and acceptance criteria. Do not rewrite unrelated instructions or invent authorization for actions outside this task.
+
+Create a compact persistent run state: current phase/task, completed source commits, remaining acceptance items, failing commands, evidence locations, next concrete action and any blocked dependency. Update it after each milestone. After context compaction or a resumed session, read that state and continue from the existing branch. Do not restart the audit.
+
+## 3. Internal gates, not approval interruptions
+
+For each phase: implement, run its relevant tests, exercise the real production scene, inspect required screenshots, fix defects, preserve evidence, commit the useful milestone, and continue automatically.
+
+Use distinct statuses:
+
+- BASELINE_RECORDED_WITH_DEFECTS — expected P0 result, allowing the authorized repairs to begin;
+- AUTO_PHASE_VERIFIED — the phase's completed acceptance items have evidence;
+- PENDING_DEPENDENCY — a specifically identified cross-phase acceptance item awaiting its prerequisite;
+- OWNER_REVIEW_PENDING — subjective judgment deferred to me, without pretending I accepted it;
+- BLOCKED — a concrete failing prerequisite or missing capability;
+- AUTO_READY_FOR_OWNER_REVIEW — final result only after the required integrated checks are satisfied.
+
+The audited 15 failures are a baseline to repair, not a reason to prohibit P1. Equally, do not hide them, relax invariants or describe a failed prerequisite as verified. Some original phase tests span later work: explicitly track those dependencies, continue the authorized repair chain, and close them before the final gate. Do not require owner approval to progress from P5 to the P6 conflict implementation that its remaining tests depend on.
+
+After three unsuccessful attempts at the same fix, stop repeating the hypothesis: retain the failing reproduction, inspect the cause again, reduce the case, change the approach and continue useful work. This is a diagnosis checkpoint, not automatic termination of the run. A broken prerequisite blocks dependent acceptance; independent tasks can continue. Stop the whole run only when the work is finished, the execution environment ends the run, or no further authorized useful progress is possible without external input/access or an unresolved material design decision.
+
+Respect any actual execution/time budget. A long run cannot guarantee completion by a particular morning. If interrupted, leave a resumable branch and an honest partial handoff; never rename partial completion “P9 done”.
+
+## 4. Phase order and required outcomes
+
+Use the full plan's detailed code references, Q01–Q30 oracles and screenshot matrices. This table identifies the scope of the continuous run.
+
+| Phase | Required result |
+|---|---|
+| P0 | Verify current truth, capture the small real baseline, classify failures and establish a reliable capture/replay contract. |
+| P1 | Repair command-path RNG, complete durable serialization/rollback, initial/new-era drafting and ordered turn/round boundaries. |
+| P2 | Make world/navigation/events readable and player views correctly filtered. Mount the existing spellbook for the review workflow; establish its page/binder/input/pause contract. |
+| P3 | Connect autonomous stock/trade/cart/construction decisions to physically conserved deliveries and completed roads/settlements/cities. Populate the spellbook economy review. |
+| P4 | Show real primary/processor/factory activity and production of the same persistent Person/soldier used by formations. Populate industry/people review. |
+| P5 | Repair legal policy observations/assignment/diplomacy and complete seven-card drafting plus all six real technology consumers. Populate faction/technology review. |
+| P6 | Complete normal-shell local/offscreen conflict, typed hazard cadence, responder activation and actual economic/transit recovery. Populate conflict/hazard review. |
+| P7 | Verify wizard actions, inventory/puzzle regressions and the full retained Ward Duel through actual pointer input, with clean returns. |
+| P8 | Complete funded era transitions, collapse/fission/legacy/history/full-cycle and true save/reload continuity. Populate era/persistence review. |
+| P9 | Finish the normal integrated journey, final multi-seed checks, final-source visual evidence and the simple owner launch/review packet. |
+
+Keep P0 proportionate: reuse the audited reproductions and tools; do not spend the run building a generic testing platform while leaving the game broken. Implement review pages/checkpoints with their owning systems instead of postponing all of the book integration until P9.
+
+At the audited SHA, the most urgent reproduced defects were stale RNG writeback, omitted research/tech_draft/diplomacy saves, empty/discarded draft hands, effects without consumers, unscheduled hazards, nonexecuting hazard treatment, incomplete local-battle hosting, hostility/observation mismatches and proposals without a complete trade chain. Recheck their current status, then repair real remaining defects. The normal bounded probe's inactivity is not proof that every seed can never progress.
+
+## 5. Protect the game design
+
+The player is a travelling wizard inside an autonomous historical simulation. Factions choose their own construction, trade, technology, diplomacy, military objectives and hazard responses. Preserve the three military archetypes and persistent Person/Unit linkage. Worker walking illustrates real accounting; it must not control industrial output. Goods cannot teleport.
+
+Preserve game_board.tscn / game_board.gd / DmbBattleSim as the full Ward Duel. Ordinary armies do not give the wizard faction-combat HP. Preserve existing quests/puzzles as regressions; do not add quest content. No new art production, model retraining, management HUD, replacement engine or parallel simulation.
+
+Reuse semantic_placeholder, semantic_visuals, visual_language, world_layer_presenters and the existing spellbook assets/components. Shapes, lines, borders, patterns, concise text and existing art are sufficient.
+
+## 6. Use the SPELLBOOK for review and debug information
+
+This is an explicit feature requirement for this run. Reuse:
+
+- godot_project/client/ui/spellbook/spellbook_host.gd;
+- spellbook_model.gd, spellbook_margins.gd and the existing binder pattern;
+- spellbook_info_binder.gd for ordinary player-safe information;
+- existing economy_view.gd, industry_view.gd, technology_view.gd, policy_view.gd and era_plan_view.gd as diagnostic source/presentation references;
+- run_spellbook_model.gd, run_g01_spellbook_slice.gd, run_g04_spellbook_pointer.gd and run_spellbook_capture.gd for relevant regressions.
+
+At the audited SHA, g05_shell.gd has a separate grimoire panel and does not directly mount SpellbookHost. Confirm the current integration and add a thin production-shell review binder as needed. Keep one authoritative Python world and one spellbook lifecycle. Do not build another book framework or force an unrelated rewrite of every existing inventory/dialogue screen. Preserve the grimoire's gameplay functions and ordinary spell targeting.
+
+Do NOT mount all the old gate pages indiscriminately: their actions include Start delivery, Clear hazard, Set health to 25%, Strike and simulated bridge failures. They are arranged-fixture tools, not proof that autonomous gameplay works. They must not appear as ordinary player actions or be used to manufacture the guided journey's successes.
+
+### Modes and entry point
+
+Add a dedicated “Play Visual Review.bat” entry point, reusing the production launcher/sidecar and an isolated review save directory. This is a proposed launcher to implement, not an existing command. Provide the platform-equivalent script when needed for the development environment. The ordinary Play Latest launcher still starts normal play.
+
+The review launcher opens the actual integrated game with a visible Spellbook button and explicit “Playtest / Debug” pages. A proposed DMB_PLAYTEST_REVIEW=1 flag, or the existing equivalent if present, may enable these pages; document the actual implemented flag. Normal launch must not expose privileged diagnostic requests or pages. Debug mode is a session setting, not a learned knowledge grant or a permanent property accidentally carried into normal saves.
+
+### Book pages
+
+| Page | What it provides |
+|---|---|
+| Review | Start review, current chapter, one small task, what to watch, optional explanation, previous/restart/next checkpoint and progress. |
+| This place / selected object | Human-readable role, owner, activity, last relevant event and reason. Advanced details may show stable IDs and exact state only in debug mode. |
+| Economy and industry | Actual stock/reservation/cargo/order state, trade status, route block reason, production inputs/bottlenecks and meter, connected to the selected visible site/cart. |
+| Factions and technology | Actual active seat/round, saved policy identity, diplomatic relations, exact draft hands/picks/pass/activation and real effective modifiers; score details optional. |
+| Conflict and hazards | Formation membership/objective/activation, battle state, chosen hazard and suppression, treatment receipt and recovery. |
+| History and continuity | Known history normally; privileged era/lineage/identity/save comparisons only in debug. |
+| Evidence / problem report | Recent committed events, current checkpoint/version, last acknowledged action, screenshot/report capture and concise diagnostic export. |
+
+Prioritize readable summaries over raw JSON and giant tables. Use progressive detail and a scrollable/page navigation layout that remains usable in portrait. No need for seven tiny simultaneous tabs. Show neutral explanatory examples only when they are true of the selected state.
+
+### Read-only diagnostics and safe review controls
+
+Diagnostics read authoritative state; opening, refreshing, selecting pages or closing must not mint goods, advance a turn, grant knowledge, repick cards, heal units or alter RNG. Label samples with their actual turn/Game Time/world version; stale or disconnected data must be visibly stale/disconnected, not presented as live. Obtain coherent snapshots and reject delayed replies for a previous selected entity/checkpoint.
+
+Keep guided controls separate from diagnostic values. Allowed review controls are: load/restart a verified checkpoint in the isolated review session, save/reload that session, perform one normal Wait, close the book to watch real Game Time, and capture an issue. These use the actual production command/loader paths and acknowledged outcomes. No army orders, force-build, free goods, hazard-clear, forced technology pick, forced victory or unrecorded teleport controls are needed for the owner review.
+
+Preserve review progress and isolate/autosave the current review branch before switching checkpoints. Tell the user which chapter/save is loaded. A load is a real production save load, not a reconstruction of a similar-looking fixture. “Restart chapter” reloads that checkpoint instead of reversing mutations by hand. “Next” loads a recorded checkpoint; it must not silently alter the current world to make the expected event happen.
+
+### Watching must remain possible
+
+The expanded book pauses Game Time using its own owned pause token and blocks underlying world input. Browsing must not advance World Turns. “Close and watch” releases only the book's pause; other focus/duel/modal pauses remain valid. Never release all pause tokens. A compact review card may remain with one short task and “Open book”; it must not obscure the world or movement controls.
+
+“Wait once” must send exactly one normal Wait after a distinct press and acknowledge it; disable it when a duel/transition or another mode forbids it. If it closes the book first, release only the book's pause and retain all normal action validation. Pending/rejected/timed-out requests must be shown truthfully. Reopening a page must not resend the action. The book must not leave production permanently paused when Joe is meant to watch a soldier or cart.
+
+Retain the existing compact/open/targeting lifecycle: a real spell selection collapses the book to a targeting card, selection input cannot also hit the world, and Cancel applies no effect. Opening debug pages must not change the ward, secret, spell selection or game state of a retained duel.
+
+Normal book content remains player-safe. Privileged views must never populate normal map/knowledge/history caches. Test normal launch again after exiting a review session.
+
+## 7. Guided review: simple tasks and visible consequences
+
+Provide eight short chapters, aiming for 25–30 minutes total. Each chapter begins at a verified normal-production state near a relevant event. The book supplies the actual place/person/control names and route for that build; no Python, console commands or node-ID arithmetic for me.
+
+1. Find your bearings: move, identify an exit, Observe/Talk and Travel once.
+2. Follow a delivery: see a loaded cart, its journey/arrival and a genuinely funded construction result.
+3. Meet a manufactured soldier: see working facilities, one completion and the same identifiable Person/unit.
+4. Notice faction development: observe a completed round and a real technological consequence; optionally inspect the debug hand/activation evidence.
+5. Watch hazard response: see blocked work/transit, a faction formation spend its activation treating the danger, and activity recover.
+6. Witness conflict: see legitimately hostile contact and persistent casualties/damage/withdrawal, without taking command.
+7. Intervene as the wizard: Challenge an eligible manifestation through the full Ward Duel, play and return to the changed world.
+8. Check continuity and history: save/quit/reload, recognise the same people/state, then use the near-era checkpoint to see a funded threshold and historical change. A full-cycle review can be an optional extra chapter.
+
+For each chapter provide:
+
+- “Do this”: at most three short steps at once;
+- “Watch for”: the visible consequence and the likely time/number of Wait presses;
+- “What happened?”: optional explanation based on committed state;
+- “More detail”: optional spellbook debug page;
+- Clear / Unclear / Broken feedback and a screenshot/report button;
+- Replay chapter / Next chapter, with no repeated need to search folders.
+
+Treat Clear/Unclear/Broken as my subjective feedback, not an automatic correctness assertion. Any objective event-completed tick must be tied to its actual receipt/predicate. If the event fails to arrive within the recorded bound, show that failure and offer Replay/Report; do not quietly mark the chapter complete. Build an issue report with source/checkpoint, input/state trace and screenshot so I need not write a technical bug report.
+
+Use the existing normal FX-MVP seed 507 as the principal journey. Checkpoints require a full production save plus originating seed/config, model/content versions, legal command and GameTime trace, and a replay hash matching the save. Place the wizard near the event by replayed legal travel. No direct writes to stocks, VP, positions, units, hazards or diplomacy in normal proof.
+
+Prefer one continuous seed 507 world for the connected common loop. If a rare event cannot occur in that seed within a sensible verified bound, another fixed normal seed with a legal replay is acceptable for that rare-event chapter: label the different world/checkpoint clearly. That does not excuse a broken common FX-MVP pathway. Arranged production fixtures remain useful for deterministic edge-case tests, but cannot be relabelled as naturally reached play. Do not distort design or manufacture events merely to fit every event into five minutes.
+
+A visible event should normally happen within its chapter's short review window. Prepare the checkpoint close to the event while retaining its real causal history; do not make Joe wait through the whole simulated campaign. Full arithmetic and multi-cycle validation are automation's job.
+
+## 8. Automated and screenshot acceptance
+
+Retain the full plan's logic, integration, presentation and screenshot evidence requirements. Repair the existing fifteen failures with contract-preserving fixes; do not restore obsolete six-unit catalogue assumptions or permit duplicate formation membership just to turn tests green.
+
+Add targeted book/review tests, extending existing files where appropriate:
+
+- Production-shell book opens, navigates and closes through real pointer input; actual target rectangles are recorded per resolution.
+- Normal mode excludes privileged payloads/pages; review reads do not mutate gameplay or knowledge; debug samples are coherent and stale replies cannot replace the new selection.
+- Opening/closing/rebinding/loading cannot duplicate listeners, command sends, actors, births, arrivals, picks or event notices.
+- Book/modal/focus/duel pause tokens compose correctly; “Close and watch” permits real output and no catch-up; Wait sends one accepted turn or shows rejection.
+- Chapter checkpoint load/replay/source hashes are checked; progress uses actual events and subjective feedback is stored separately.
+- Full retained Ward pointer setup, targeting/cancel and return work with the integrated book.
+- Save/quit/relaunch restores the review session and game correctly without enabling debug in a subsequent normal launch.
+
+Proposed additions if no suitable owners exist: tests/sim/test_polish_review_mode.py and godot_project/client/tests/run_polish_spellbook_review.gd. These names are implementation tasks, not claims of existing coverage.
+
+Reuse tools/run_visual_review.py and existing capture/long-world tools. Keep failed iterations and historical G11 evidence distinct. A screenshot existing, an image catalogue or exit0 does not prove readability or integration. Personally inspect every mandatory final image at native scale and record filename, actual dimensions, expected/observed conditions, PASS/FAIL/MANUAL REVIEW REQUIRED, visible defect and iteration/fix reference. Pair images with authoritative state; test exact persistence independently of pixels.
+
+Run the original dynamic sequences and add the following spellbook/review sequences:
+
+| ID | Required sequence | Visible acceptance |
+|---|---|---|
+| SB01 | Normal launch → open ordinary book/info | No privileged Debug/Review pages, concealed data or fixture controls. |
+| SB02 | Review launch → open book → Start review | Correct integrated world, clear debug label, readable chapter task and working buttons. |
+| SB03 | Select loaded cart → book Inspect → Economy detail | Same selected cart and truthful cargo/order/block reason; no clipped controls or raw dump as default. |
+| SB04 | Technology page before/after a completed round | Correct hands/pick/pass/activation in debug; separate normal-view consequence. |
+| SB05 | Expanded book → Close and watch → actual production/treatment consequence | World becomes visible and runs under correct pause ownership; compact guidance stays out of the way. |
+| SB06 | Pointer select permitted spell → targeting card → Cancel / valid target | Existing targeting works; no accidental click-through or duplicate command. |
+| SB07 | Load chapter → event completion → Clear/Unclear/Broken → capture issue → Next/Replay | Actual event state and owner feedback remain distinct; correct next/replayed production save loads. |
+| SB08 | Save/quit/load review → exit review → normal launch | World and review continuity hold; debug data/mode does not leak into normal play. |
+
+Every SB sequence/subframe requires 450×800, 1280×720 and 960×540. Also retain relevant existing spellbook responsive checks, including the 360/390-wide and 720×1280 cases found in the source tooling. Respect the project's logical viewport/stretch; record both logical and output dimensions. Check real on-screen pointer usability rather than assuming a 48-logical-pixel control remains 48 output pixels after scaling. Do not shrink text/buttons to cram the book onto the screen.
+
+Use state/receipt barriers for captures, not sleep-as-proof. Deterministic fixture arrangements must be labelled. If a headed capture environment is missing, diagnose/use the project-supported environment; continue independent implementation and state tests while tracking the missing visual evidence. Do not call the final build ready with missing required captures or an unlaunchable owner mode. Subjective uncertainty may be OWNER_REVIEW_PENDING; visible clipping, broken input, wrong state and unavailable evidence are objective defects, not aesthetic waivers.
+
+Keep fixed trained-policy artifacts; no retraining. Complete the original paired multi-seed/opportunity-based behavioural report after integration repairs. Report actual committed construction/trade/movement/treatment/combat consequences, not just candidate labels. Record unfinished runs as unfinished; no seed cherry-picking, hidden-information access, silent fallback or fabricated progress. Use bounded/resumable runs and preserve failures.
+
+## 9. Final owner handoff and completion gate
+
+Before reporting ready, personally run the complete owner sequence using the actual final build/launcher. Capture final-source evidence after the last gameplay/UI change. If committing evidence changes HEAD without changing source, record the tested source commit/tree and evidence-only commit separately; do not falsely relabel old images or endlessly recapture identical source solely because an evidence commit exists.
+
+Deliver:
+
+1. Play Visual Review.bat, with tested platform equivalent where applicable. It launches the real game and review spellbook with isolated saves; no editing environment variables or console work for me.
+2. docs/START_HERE_VISUAL_PLAYTEST.md: exact launch, actual book labels, eight short tasks, what to watch, expected waits/durations, optional debug details and how to report confusion. Keep this owner-facing sheet short.
+3. The in-book guided chapters with working replay/next/report controls, real checkpoint provenance and optional full-cycle chapter.
+4. The original Q/test and screenshot evidence plus the SB sequences, all tied to tested source/state, with an easy evidence index.
+5. A concise final handoff: branch/source/evidence commits, systems completed, exact test counts, visual inspection status, policy report, known issues and one clear owner start instruction.
+6. A resumable run ledger if external limits prevented completion; explicitly state the last completed phase and exact remaining work.
+
+Final AUTO_READY_FOR_OWNER_REVIEW requires the mandatory production chains and state assertions to work, all required automated suites to pass with substantive coverage, required final images to be inspected, no unresolved critical/high integration defect, correct ordinary/debug separation, and a tested launch-to-review path. Leave my subjective approval pending. Do not imply Windows was tested from a Linux-only run, or that an executable was certified when only the Godot project was exercised.
+
+Implement the work now in Cursor. Continue automatically through P0–P9. Report at the final review-ready state or a genuine documented blocker; do not stop merely because a phase ended.

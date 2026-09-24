@@ -25,7 +25,7 @@ def test_no_unobserved_enemy_strength_in_features() -> None:
     mil = MilitaryService(state)
     director = FormationDirector(state)
     u = mil.spawn("unit.ancient.line", home_node_id="n1", faction_id="faction:a", era="prehistoric", factory_id="f")
-    director.group([u["id"]], faction_id="faction:a", node_id="n1")
+    assert u.get("formation_id")
     # Hidden enemy elsewhere — must not appear in attack benefits without observation.
     mil.spawn("unit.ancient.heavy", home_node_id="n9", faction_id="faction:b", era="prehistoric", factory_id="f")
     gen = LegalActionGenerator(state)

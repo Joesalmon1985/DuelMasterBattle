@@ -208,7 +208,12 @@ class WorldSim:
             self.tx.abort()
         if result.status == "ACCEPTED":
             self.replay.append(envelope.kind, envelope.payload, sequence=len(self.replay.inputs) + 1)
-            self.state.rng = self.rng.to_dict()
+            # Subsystems (production, draft, hazards) advance state.rng. Never overwrite
+            # that bank with the stale WorldSim cache — that caused repeated [1,1] dice.
+            if self.state.rng:
+                self.rng = RngBank.from_dict(self.state.rng)
+            else:
+                self.state.rng = self.rng.to_dict()
         return result
 
     def advance(self, delta_ms: int, clock_sequence: int) -> CommandResult:

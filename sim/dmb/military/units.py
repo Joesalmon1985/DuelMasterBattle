@@ -94,6 +94,13 @@ class MilitaryService:
         factor = era_factor(era)
         max_hp = base["base_hp"] * factor
         derived_attack = base["base_attack"] * factor
+        from sim.dmb.technology.research import TechnologyService
+
+        health_scale, attack_scale = TechnologyService(self.state).unit_stat_multipliers(
+            faction_id, era=era
+        )
+        max_hp = round_half_up(max_hp * health_scale)
+        derived_attack = round_half_up(derived_attack * attack_scale)
 
         people = PeopleService(self.state)
         linked_person_id = person_id

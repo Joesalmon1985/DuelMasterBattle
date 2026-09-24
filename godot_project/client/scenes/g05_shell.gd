@@ -17,6 +17,9 @@ const ChroniclePanel = preload("res://client/ui/chronicle.gd")
 const InventoryPanel = preload("res://client/ui/inventory_panel.gd")
 const GrimoirePanel = preload("res://client/ui/grimoire.gd")
 const KnowledgePanel = preload("res://client/ui/knowledge.gd")
+const SpellbookModel = preload("res://client/ui/spellbook/spellbook_model.gd")
+const SpellbookHost = preload("res://client/ui/spellbook/spellbook_host.gd")
+const SpellbookReviewBinder = preload("res://client/ui/spellbook/spellbook_review_binder.gd")
 
 const LocalBattle = preload("res://client/combat/local_battle.gd")
 const EncounterHost = preload("res://client/encounters/encounter_host.gd")
@@ -42,6 +45,10 @@ var _chronicle_panel
 var _inventory_panel
 var _grimoire_panel
 var _knowledge_panel
+var _spell_model
+var _spell_host
+var _spell_binder
+var _spell_pause_owned := false
 var _ui_modal_pause := ""
 var _ui_layer: CanvasLayer
 var _fx_era_panel: PanelContainer
@@ -84,6 +91,8 @@ var _long_event_log: RichTextLabel
 var _long_panel: VBoxContainer
 var _battle
 var _battle_host
+var _battle_lease_opened := false
+var _hosted_battle_id := ""
 var _spectator_node := ""
 var _follow_major := false
 var _last_travel_feedback := ""
@@ -180,6 +189,7 @@ func _ready() -> void:
 	_knowledge_panel.closed.connect(_on_ui_modal_closed)
 	_knowledge_panel.open_world_map_requested.connect(_on_knowledge_open_map)
 	_ui_layer.add_child(_knowledge_panel)
+	_setup_spellbook()
 	_project_root = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	if _project_root.ends_with("godot_project"):
 		_project_root = _project_root.get_base_dir()
@@ -254,6 +264,7 @@ func _boot() -> void:
 
 	_boot_done = true
 	_village_ready = true
+	_on_spellbook_boot_ready()
 	_sync_pose(true)
 	await get_tree().create_timer(2.0).timeout
 	if is_instance_valid(_status) and not _long_world and not _is_fx_era():
@@ -289,6 +300,7 @@ func _process(delta: float) -> void:
 		if _overworld != null and _overworld.has_method("sync_dynamic_person_poses"):
 			_overworld.sync_dynamic_person_poses()
 	_maybe_host_local_battle()
+	_tick_local_battle(delta)
 	if _long_world and _long_autorun:
 		_long_world_tick(delta)
 
@@ -574,6 +586,9 @@ func _input(event: InputEvent) -> void:
 		elif event.keycode == KEY_K:
 			_toggle_knowledge()
 			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_B:
+			_toggle_spellbook()
+			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ESCAPE and _era_presenter != null and _era_presenter.is_playing():
 			_era_presenter.skip()
 			get_viewport().set_input_as_handled()
@@ -595,7 +610,7 @@ func _apply_fixture_status() -> void:
 	elif _long_world:
 		_status.text = "LONG-WORLD observer — fast-forward / event log (dev only)"
 	else:
-		_status.text = "Explore — M map · I inventory · G grimoire · K knowledge"
+		_status.text = "Explore — M map · I inventory · G grimoire · K knowledge · B spellbook"
 
 
 func _raise_shell_overlays() -> void:
@@ -605,10 +620,14 @@ func _raise_shell_overlays() -> void:
 	if _ui_layer != null:
 		_ui_layer.visible = true
 	var modal_open := false
+	var spell_open: bool = _spell_host != null and _spell_model != null \
+		and _spell_model.host_mode == SpellbookModel.HostMode.OPEN
 	for p in [_map_panel, _chronicle_panel, _inventory_panel, _grimoire_panel, _knowledge_panel]:
 		if p != null and p.visible:
 			modal_open = true
 			break
+	if spell_open:
+		modal_open = true
 	if _fx_era_panel != null:
 		_fx_era_panel.visible = not modal_open
 		if not modal_open:
@@ -620,6 +639,8 @@ func _raise_shell_overlays() -> void:
 	for p in [_map_panel, _chronicle_panel, _inventory_panel, _grimoire_panel, _knowledge_panel]:
 		if p != null and p.visible:
 			p.move_to_front()
+	if spell_open and _spell_host != null:
+		_spell_host.move_to_front()
 
 
 func _maybe_setup_fx_era_ui(view: Dictionary = {}) -> void:
@@ -952,6 +973,232 @@ func _toggle_knowledge() -> void:
 	_raise_shell_overlays()
 
 
+func _setup_spellbook() -> void:
+	_spell_model = SpellbookModel.new()
+	_spell_binder = SpellbookReviewBinder.new()
+	_spell_binder.setup(_spell_model, "g05")
+	_register_spellbook_handlers()
+	_spell_host = SpellbookHost.new()
+	_spell_host.name = "SpellbookHost"
+	_ui_layer.add_child(_spell_host)
+	_spell_host.bind_model(_spell_model)
+	_spell_host.action_requested.connect(_on_spellbook_action)
+	_spell_host.close_requested.connect(_on_spellbook_closed)
+	_spell_host.overlay_blocking_changed.connect(_on_spellbook_overlay_blocking)
+	if SpellbookReviewBinder.review_enabled():
+		var btn: Button = _spell_host.compact_open_button()
+		if btn != null:
+			btn.text = "Spellbook"
+
+
+func _register_spellbook_handlers() -> void:
+	_spell_binder.register("review_start", func(_p): return _spellbook_review_start())
+	_spell_binder.register("review_load_chapter", func(_p): return _spellbook_load_chapter())
+	_spell_binder.register("review_wait", func(_p): return _spellbook_wait_once())
+	_spell_binder.register("review_close_watch", func(_p): return _spellbook_close_and_watch())
+	_spell_binder.register("review_feedback_clear", func(_p): return _spellbook_feedback("Clear"))
+	_spell_binder.register("review_feedback_unclear", func(_p): return _spellbook_feedback("Unclear"))
+	_spell_binder.register("review_feedback_broken", func(_p): return _spellbook_feedback("Broken"))
+	_spell_binder.register("review_replay", func(_p): return _spellbook_load_chapter())
+	_spell_binder.register("review_next", func(_p): return _spellbook_next_chapter())
+	_spell_binder.register("capture_issue", func(_p): return _spellbook_capture_issue())
+
+
+func _on_spellbook_boot_ready() -> void:
+	if _spell_binder == null or _client == null:
+		return
+	_refresh_spellbook_views()
+	_spell_binder.set_ready()
+	_sync_spellbook_live()
+
+
+func _toggle_spellbook() -> void:
+	if _spell_host == null or _spell_model == null or _client == null:
+		return
+	if _spell_model.host_mode == SpellbookModel.HostMode.OPEN:
+		_spell_model.close_book()
+		return
+	_refresh_spellbook_views()
+	_sync_spellbook_live()
+	_spell_model.open_book()
+	_raise_shell_overlays()
+
+
+func _refresh_spellbook_views() -> void:
+	if _spell_binder == null or _client == null:
+		return
+	var player_view: Dictionary = probe_player(INDUSTRY_FIELDS)
+	var economy_view: Dictionary = probe_economy(INDUSTRY_FIELDS)
+	if SpellbookReviewBinder.review_enabled():
+		_spell_binder.refresh_diagnostics(player_view, economy_view)
+	else:
+		var area: Dictionary = _coerce_dict(player_view.get("overworld_area"))
+		var clock: Dictionary = _coerce_dict(player_view.get("clock"))
+		var player: Dictionary = _coerce_dict(player_view.get("player"))
+		_spell_binder.bind_player_safe({
+			"title": "Spellbook",
+			"status": "Turn %s" % str(clock.get("turn", "?")),
+			"details": str(area.get("name", player.get("node_id", "World"))),
+			"notes": "Learned facts only — no debug data in normal play.",
+			"body": "Walk the world, talk to people, and use Grimoire (G) for prepared magic.",
+			"paused": _paused,
+		})
+
+
+func _sync_spellbook_live() -> void:
+	if _spell_binder == null:
+		return
+	var badge := SpellbookReviewBinder.review_enabled()
+	var prompt := "Review session" if badge else "Player info"
+	_spell_binder.sync_live(_status.text if _status else "", _time_hud.text if _time_hud else "", prompt, _paused)
+
+
+func _on_spellbook_action(action_id: String, payload: Dictionary, token: String) -> void:
+	_spell_binder.handle_action(action_id, payload, token)
+	_refresh_spellbook_views()
+	_sync_spellbook_live()
+
+
+func _on_spellbook_closed() -> void:
+	_release_spellbook_pause_if_owned()
+	_raise_shell_overlays()
+
+
+func _on_spellbook_overlay_blocking(blocking: bool) -> void:
+	if blocking:
+		_ensure_spellbook_pause()
+	else:
+		_release_spellbook_pause_if_owned()
+	_raise_shell_overlays()
+
+
+func _ensure_spellbook_pause() -> void:
+	if _spell_pause_owned:
+		return
+	if _pause_token != "":
+		return
+	acquire_pause("spellbook")
+	_spell_pause_owned = _pause_token != ""
+
+
+func _release_spellbook_pause_if_owned() -> void:
+	if not _spell_pause_owned:
+		return
+	if _pause_token != "":
+		release_pause()
+	_spell_pause_owned = false
+
+
+func _spellbook_review_start() -> Dictionary:
+	_spell_binder.mark_review_started()
+	return {"status": "OK", "message": "Review started — chapter 1"}
+
+
+func _spellbook_wait_once() -> Dictionary:
+	var view: Dictionary = probe_player(["player"])
+	var node := str(view.get("player", {}).get("node_id", str(_fx_meta.get("node_id", "node:1"))))
+	var reply := _cmd("Wait", {"current_node": node, "press_id": "spellbook-wait-%d" % Time.get_ticks_msec()})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		reproject_from_python()
+	return reply
+
+
+func _spellbook_close_and_watch() -> Dictionary:
+	if _spell_model != null and _spell_model.host_mode == SpellbookModel.HostMode.OPEN:
+		_spell_model.close_book()
+	_release_spellbook_pause_if_owned()
+	return {"status": "OK", "message": "Book closed — Game Time can run"}
+
+
+func _spellbook_feedback(kind: String) -> Dictionary:
+	_spell_binder.set_feedback(kind)
+	return {"status": "OK", "message": "Marked %s" % kind}
+
+
+func _spellbook_chapter_slot() -> String:
+	var ch: Dictionary = _spell_binder.current_chapter()
+	var slot := str(ch.get("checkpoint_slot", "")).strip_edges()
+	if slot != "":
+		return slot
+	return str(OS.get_environment("DMB_SAVE_SLOT"))
+
+
+func _spellbook_load_chapter() -> Dictionary:
+	var ch: Dictionary = _spell_binder.current_chapter()
+	var slot := str(ch.get("checkpoint_slot", "")).strip_edges()
+	if slot == "":
+		slot = _spellbook_chapter_slot()
+	var cp_path := str(ch.get("checkpoint_path", "")).strip_edges()
+	if cp_path != "":
+		var abs_path := cp_path
+		if not abs_path.is_absolute_path():
+			abs_path = _project_root.path_join(cp_path)
+		if not FileAccess.file_exists(abs_path):
+			return {"status": "REJECTED", "message": "Checkpoint file missing: %s" % abs_path}
+		var save_root := _project_root.path_join(".dmb_saves")
+		DirAccess.make_dir_recursive_absolute(save_root)
+		var cleaned := ""
+		for i in range(slot.length()):
+			var c := slot[i]
+			var code := c.unicode_at(0)
+			var ok := (code >= 48 and code <= 57) or (code >= 65 and code <= 90) or (code >= 97 and code <= 122) or c == "-" or c == "_"
+			if ok:
+				cleaned += c
+		if cleaned == "":
+			cleaned = "review_checkpoint"
+		var dest := save_root.path_join("%s.json" % cleaned)
+		var src := FileAccess.open(abs_path, FileAccess.READ)
+		if src == null:
+			return {"status": "REJECTED", "message": "Cannot read checkpoint"}
+		var body := src.get_as_text()
+		src.close()
+		var dst := FileAccess.open(dest, FileAccess.WRITE)
+		if dst == null:
+			return {"status": "REJECTED", "message": "Cannot write save slot"}
+		dst.store_string(body)
+		dst.close()
+		slot = cleaned
+	if slot == "":
+		return {"status": "REJECTED", "message": "Chapter checkpoint slot not configured yet"}
+	var reply := load_slot(slot)
+	_refresh_spellbook_views()
+	return reply
+
+
+func _spellbook_next_chapter() -> Dictionary:
+	if _spell_binder.chapter_count() <= 0:
+		return {"status": "REJECTED", "message": "No chapters loaded"}
+	var next := mini(_spell_binder.chapter_index() + 1, _spell_binder.chapter_count() - 1)
+	_spell_binder.set_chapter_index(next)
+	var reply := _spellbook_load_chapter()
+	if str(reply.get("status", "")) != "ACCEPTED":
+		return {
+			"status": "OK",
+			"message": "Advanced to chapter %d (checkpoint pending)" % (next + 1),
+		}
+	return reply
+
+
+func _spellbook_capture_issue() -> Dictionary:
+	var dir_path := _project_root.path_join("logs/polish_review")
+	DirAccess.make_dir_recursive_absolute(dir_path)
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
+	var path := dir_path.path_join("issue_%s.json" % stamp)
+	var payload: Dictionary = _spell_binder.export_issue_context()
+	payload["status_line"] = _status.text if _status else ""
+	payload["time_hud"] = _time_hud.text if _time_hud else ""
+	payload["fixture"] = str(OS.get_environment("DMB_FIXTURE"))
+	payload["seed"] = str(OS.get_environment("DMB_SEED"))
+	payload["save_slot"] = str(OS.get_environment("DMB_SAVE_SLOT"))
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return {"status": "REJECTED", "message": "Could not write %s" % path}
+	file.store_string(JSON.stringify(payload, "\t"))
+	file.close()
+	_spell_binder.append_log("issue captured: %s" % path)
+	return {"status": "OK", "message": "Issue saved to logs/polish_review/"}
+
+
 func _on_inventory_action(action: String, item_id: String, extra: Dictionary) -> void:
 	var payload := {"item_id": item_id, "action": action}
 	for k in extra.keys():
@@ -1008,9 +1255,8 @@ func _enter_ward_duel_presentation() -> void:
 	if _presentation == null:
 		_presentation = PresentationMode.new()
 		_presentation.bind(_overworld, _ui_layer, [_status, _time_hud], _duel_layer, _duel_host)
-	if _battle != null and is_instance_valid(_battle):
-		_battle.visible = false
-		_battle.process_mode = Node.PROCESS_MODE_DISABLED
+	if _battle != null and not _battle.closed:
+		_battle.frozen = true
 	_presentation.set_mode(PresentationMode.Mode.WARD_DUEL)
 
 
@@ -1025,9 +1271,8 @@ func _leave_ward_duel_presentation() -> void:
 			_overworld.process_mode = Node.PROCESS_MODE_INHERIT
 		return
 	_presentation.set_mode(PresentationMode.Mode.WORLD)
-	if _battle != null and is_instance_valid(_battle):
-		_battle.visible = true
-		_battle.process_mode = Node.PROCESS_MODE_INHERIT
+	if _battle != null and not _battle.closed:
+		_battle.frozen = false
 	_raise_shell_overlays()
 
 
@@ -1371,6 +1616,18 @@ func invoke_knowledge_for_test() -> void:
 	_toggle_knowledge()
 
 
+func invoke_spellbook_for_test() -> void:
+	_toggle_spellbook()
+
+
+func spellbook_host() -> Control:
+	return _spell_host
+
+
+func spellbook_model():
+	return _spell_model
+
+
 func inventory_panel() -> Control:
 	return _inventory_panel
 
@@ -1521,6 +1778,11 @@ func _append_long_event(text: String) -> void:
 	if _long_event_log == null:
 		return
 	_long_event_log.append_text(text + "\n")
+
+
+func _tick_local_battle(delta: float) -> void:
+	if _battle != null and is_instance_valid(_battle) and _battle.has_method("tick"):
+		_battle.tick(delta * 1000.0)
 
 
 func _maybe_host_local_battle() -> void:

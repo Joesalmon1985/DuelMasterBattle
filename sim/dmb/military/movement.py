@@ -29,23 +29,32 @@ def _neighbours(board: Mapping[str, Any], node_id: str) -> list[str]:
 
 def _hostile_at_node(state: Any, node_id: str, faction_id: str) -> bool:
     """True if a living enemy unit, enemy formation, or hostile settlement occupies the node."""
+    from sim.dmb.ai.diplomacy import REL_ALLIANCE, DiplomacyService
+
+    dip = DiplomacyService(state)
+
+    def _enemy(other_faction: str) -> bool:
+        if not other_faction or other_faction == faction_id:
+            return False
+        return dip.relation(faction_id, other_faction) != REL_ALLIANCE
+
     for unit in (getattr(state, "units", {}) or {}).values():
         if not unit.get("alive", True):
             continue
         if str(unit.get("node_id")) != node_id:
             continue
-        if str(unit.get("faction_id")) != faction_id:
+        if _enemy(str(unit.get("faction_id") or "")):
             return True
     for formation in (getattr(state, "formations", {}) or {}).values():
         if str(formation.get("node_id")) != node_id:
             continue
-        if str(formation.get("faction_id") or "") not in {"", faction_id}:
+        if _enemy(str(formation.get("faction_id") or "")):
             return True
     for settlement in (getattr(state, "settlements", {}) or {}).values():
         if str(settlement.get("node_id")) != node_id:
             continue
         owner = str(settlement.get("faction_id") or "")
-        if owner and owner != faction_id:
+        if owner and _enemy(owner):
             return True
     for battle in (getattr(state, "battles", {}) or {}).values():
         if str(battle.get("node_id")) != node_id:

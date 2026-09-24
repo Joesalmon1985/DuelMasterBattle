@@ -14,7 +14,9 @@ from sim.dmb.industry.layers import LayerState
 from sim.dmb.industry.primary import PrimaryChannel
 from sim.dmb.industry.projection import IndustryProjection
 from sim.dmb.industry.routes import FactoryRoute, ProcessorBinding
+from sim.dmb.industry.tech_flow import apply_primary_flow_channels, faction_for_building
 from sim.dmb.people.jobs import JobService
+from sim.dmb.technology.research import TechnologyService
 
 
 def _channel_to_dict(channel: PrimaryChannel) -> dict[str, Any]:
@@ -89,6 +91,8 @@ class IndustryService:
             channel_id: _channel_from_dict(record)
             for channel_id, record in self.state["channels"].items()
         }
+        research = TechnologyService(self.world)
+        channels = apply_primary_flow_channels(self.world, channels, research=research)
         processors = {
             processor_id: _processor_from_dict(record)
             for processor_id, record in self.state["processors"].items()
@@ -136,6 +140,11 @@ class IndustryService:
                 if job.get("workplace_id") == processor_id and not job.get("vacant")
             ]
             job_modifier = min(job_modifiers, default=Fraction(1))
+            tech_scale = Fraction(1)
+            node_id = str((building or {}).get("node_id") or "")
+            faction = faction_for_building(self.world, processor_id, node_id) if node_id else ""
+            if faction:
+                tech_scale = fraction(research.logistics_multiplier(faction, "processor_cap"))
             if building is not None:
                 processors[processor_id] = ProcessorBinding(
                     **{
@@ -143,19 +152,35 @@ class IndustryService:
                         "health": int(building.get("health", processor.health)),
                         "max_health": int(building.get("max_health", processor.max_health)),
                         "active": processor.active and building.get("status") != "destroyed" and bool(building.get("active", True)),
-                        "modifier": processor.modifier * job_modifier,
+                        "modifier": processor.modifier * job_modifier * tech_scale,
                     }
                 )
-            elif job_modifiers:
+            elif job_modifiers or tech_scale != 1:
                 processors[processor_id] = ProcessorBinding(
-                    **{**processor.__dict__, "modifier": processor.modifier * job_modifier}
+                    **{**processor.__dict__, "modifier": processor.modifier * job_modifier * tech_scale}
                 )
+
+        factory_ceiling: dict[str, Fraction] = {}
+        for route in routes:
+            record = self.factories.factories.get(route.factory_id, {})
+            faction = str(record.get("faction_id") or "")
+            if not faction:
+                continue
+            scale = fraction(research.logistics_multiplier(faction, "factory_ceiling"))
+            factory_ceiling[route.factory_id] = Fraction(1, 60) * scale
 
         layers = {
             layer_id: LayerState.from_dict(record)
             for layer_id, record in self.state.get("layers", {}).items()
         }
-        built = build_constraints(routes, processors, channels, layers, factory_active=active)
+        built = build_constraints(
+            routes,
+            processors,
+            channels,
+            layers,
+            factory_active=active,
+            factory_ceiling=factory_ceiling or None,
+        )
         plan = self.allocator.solve(built.requests, built.constraints)
         spawned = self.factories.apply_allocations(plan, routes, processors, channels)
         rate_event = {

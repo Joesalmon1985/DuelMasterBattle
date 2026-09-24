@@ -272,6 +272,9 @@ class WorldState:
             "command_receipts": deepcopy(self.command_receipts),
             "definitions": deepcopy(self.definitions),
             "rng": deepcopy(self.rng),
+            "research": deepcopy(self.research),
+            "tech_draft": deepcopy(self.tech_draft),
+            "diplomacy": deepcopy(self.diplomacy),
             "legacy_godot_world_tick_enabled": False,
             "legacy_godot_world_save_enabled": False,
         }
@@ -317,6 +320,9 @@ class WorldState:
             command_receipts=dict(payload.get("command_receipts", {})),
             definitions=dict(payload.get("definitions", {})),
             rng=dict(payload.get("rng", {})),
+            research=dict(payload.get("research", {})),
+            tech_draft=dict(payload.get("tech_draft", {})),
+            diplomacy=dict(payload.get("diplomacy", {})),
             legacy_godot_world_tick_enabled=False,
             legacy_godot_world_save_enabled=False,
         )
