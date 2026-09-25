@@ -1245,8 +1245,8 @@ func _spellbook_load_chapter() -> Dictionary:
 func _spellbook_next_chapter() -> Dictionary:
 	if _spell_binder.chapter_count() <= 0:
 		return {"status": "REJECTED", "message": "No chapters loaded"}
-	var prev := _spell_binder.chapter_index()
-	var next := mini(prev + 1, _spell_binder.chapter_count() - 1)
+	var prev: int = int(_spell_binder.chapter_index())
+	var next: int = mini(prev + 1, _spell_binder.chapter_count() - 1)
 	if next == prev:
 		return {"status": "REJECTED", "message": "Already on last chapter"}
 	_spell_binder.set_chapter_index(next)
@@ -1989,8 +1989,9 @@ func _setup_wait_watch_hud() -> void:
 
 func _refresh_wait_watch_hud() -> void:
 	if _wait_btn != null:
-		var blocked := _hud_wait_pending or _bridge_down or _duel_adapter != null and _duel_adapter.is_active()
-		blocked = blocked or (_spell_model != null and _spell_model.host_mode == SpellbookModel.HostMode.OPEN)
+		var duel_active: bool = _duel_adapter != null and bool(_duel_adapter.is_active())
+		var book_open: bool = _spell_model != null and _spell_model.host_mode == SpellbookModel.HostMode.OPEN
+		var blocked: bool = _hud_wait_pending or _bridge_down or duel_active or book_open
 		_wait_btn.disabled = blocked
 		_wait_btn.text = "Waiting…" if _hud_wait_pending else "Wait"
 	if _watch_btn != null:
