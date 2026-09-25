@@ -3,7 +3,7 @@
   "branch": "work/current-main-polish",
   "updated_at": "2026-09-25T21:30:00Z",
   "comparison_baseline_sha": "a2766b1aae6bc48e1b2e92ce1965aadf77f4d1b5",
-  "current_head": "DIRTY_UNCOMMITTED",
+  "current_head": "b079aaca37645669d2668738bfc23fe092a45abc",
   "current_phase": "OWNER_PLAYTEST_REPAIR",
   "status": "OWNER_REVIEW_PENDING",
   "phase_status": {
@@ -52,5 +52,7 @@
   "next_concrete_action": "Headed PNG matrix at 450x800 / 1280x720 / 960x540 for book, north Travel, demon body, Wait/Watch; economy stall trace under neural; guided chapter predicate verification",
   "blocked_dependency": "Headed Godot pointer captures not yet refreshed on this repair SHA; owner approval remains pending",
   "final_status_note": "Not AUTO_READY_FOR_OWNER_REVIEW — objective headed gates and economy progression proof still open",
-  "completed_source_commits": []
+  "completed_source_commits": [
+    "b079aaca37645669d2668738bfc23fe092a45abc"
+  ]
 }
