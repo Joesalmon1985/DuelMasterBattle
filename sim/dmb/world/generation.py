@@ -86,11 +86,13 @@ class SetupPlan:
     attempts: int
     used_fallback: bool
     diagnostics: dict[str, Any] = field(default_factory=dict)
+    cores_per_faction: int = 2
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "seed": self.seed,
             "faction_count": self.faction_count,
+            "cores_per_faction": int(self.cores_per_faction),
             "board": self.board.to_dict(),
             "hex_terrain": dict(self.hex_terrain),
             "hex_token": {k: int(v) for k, v in self.hex_token.items()},
@@ -126,6 +128,7 @@ class SetupPlan:
             attempts=int(payload.get("attempts", 0)),
             used_fallback=bool(payload.get("used_fallback", False)),
             diagnostics=dict(payload.get("diagnostics", {})),
+            cores_per_faction=int(payload.get("cores_per_faction", 2)),
         )
 
 
@@ -204,12 +207,22 @@ def _select_cores(
     hazard_hexes: list[str],
     seed: int,
     attempt: int,
+    *,
+    cores_per_faction: int = 2,
 ) -> list[CoreSite] | None:
+    if cores_per_faction not in (1, 2):
+        raise ValueError("cores_per_faction must be 1 or 2")
     rng = RngBank()
-    rng.ensure("cores", seed=f"{seed}:cores:{attempt}", version=1)
+    # Preserve historical C04 stream for cores_per_faction=2 so seed 507 fixtures stay stable.
+    stream_seed = (
+        f"{seed}:cores:{attempt}"
+        if cores_per_faction == 2
+        else f"{seed}:cores:{cores_per_faction}:{attempt}"
+    )
+    rng.ensure("cores", seed=stream_seed, version=1)
     candidates = rng.shuffle("cores", list(board.nodes))
     hazard_set = set(hazard_hexes)
-    needed = faction_count * 2
+    needed = faction_count * cores_per_faction
     chosen: list[str] = []
 
     def backtrack() -> bool:
@@ -231,8 +244,18 @@ def _select_cores(
     if not backtrack():
         return None
 
-    # Pair consecutive cores per faction and validate pair constraints.
     cores: list[CoreSite] = []
+    if cores_per_faction == 1:
+        for fi in range(faction_count):
+            node = chosen[fi]
+            goods = _goods_at_node(board, node, hex_terrain)
+            if len(goods) < 1:
+                return None
+            faction_id = f"faction:{fi + 1}"
+            cores.append(CoreSite(faction_id=faction_id, node_id=node, index=0))
+        return cores
+
+    # Pair consecutive cores per faction and validate pair constraints (C04 default).
     for fi in range(faction_count):
         a = chosen[fi * 2]
         b = chosen[fi * 2 + 1]
@@ -250,6 +273,7 @@ def _select_cores(
 def validate_setup(plan: SetupPlan) -> list[str]:
     problems: list[str] = []
     board = plan.board
+    cores_per = int(getattr(plan, "cores_per_faction", 2) or 2)
     if len(board.hexes) != 19 or len(board.nodes) != 54 or len(board.edges) != 72:
         problems.append("board topology counts invalid")
     terrain_counts: dict[str, int] = {}
@@ -261,7 +285,7 @@ def validate_setup(plan: SetupPlan) -> list[str]:
     token_list = sorted(plan.hex_token.values())
     if token_list != sorted(NUMBER_MULTISET):
         problems.append(f"number multiset mismatch: {token_list}")
-    if len(plan.cores) != plan.faction_count * 2:
+    if len(plan.cores) != plan.faction_count * cores_per:
         problems.append("core count mismatch")
     nodes = [c.node_id for c in plan.cores]
     if len(set(nodes)) != len(nodes):
@@ -293,14 +317,24 @@ def _load_fallback(faction_count: int, seed: int) -> SetupPlan:
     return plan
 
 
-def generate(seed: int, faction_count: int) -> SetupPlan:
+def generate(seed: int, faction_count: int, *, cores_per_faction: int = 2) -> SetupPlan:
     if faction_count not in (2, 6):
         raise ValueError("faction_count must be 2 or 6")
+    if cores_per_faction not in (1, 2):
+        raise ValueError("cores_per_faction must be 1 or 2")
     board = HexBoard.radius2()
     for attempt in range(1, MAX_ATTEMPTS + 1):
         hex_terrain, hex_token = _assign_geography(board, seed, attempt)
         hazards = _place_hazards(board, seed, attempt)
-        cores = _select_cores(board, faction_count, hex_terrain, hazards, seed, attempt)
+        cores = _select_cores(
+            board,
+            faction_count,
+            hex_terrain,
+            hazards,
+            seed,
+            attempt,
+            cores_per_faction=cores_per_faction,
+        )
         if cores is None:
             continue
         plan = SetupPlan(
@@ -313,11 +347,16 @@ def generate(seed: int, faction_count: int) -> SetupPlan:
             hazard_hexes=hazards,
             attempts=attempt,
             used_fallback=False,
-            diagnostics={"attempt": attempt},
+            diagnostics={"attempt": attempt, "cores_per_faction": cores_per_faction},
+            cores_per_faction=cores_per_faction,
         )
         problems = validate_setup(plan)
         if not problems:
             return plan
+    if cores_per_faction != 2:
+        raise ValueError(
+            f"no valid setup for factions={faction_count} cores_per_faction={cores_per_faction} seed={seed}"
+        )
     return _load_fallback(faction_count, seed)
 
 
@@ -325,8 +364,8 @@ class BoardBuilder:
     """C04 BoardBuilder facade."""
 
     @staticmethod
-    def generate(seed: int, faction_count: int) -> SetupPlan:
-        return generate(seed, faction_count)
+    def generate(seed: int, faction_count: int, *, cores_per_faction: int = 2) -> SetupPlan:
+        return generate(seed, faction_count, cores_per_faction=cores_per_faction)
 
     @staticmethod
     def validate_setup(plan: SetupPlan) -> list[str]:

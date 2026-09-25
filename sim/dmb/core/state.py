@@ -144,6 +144,8 @@ class WorldState:
             "factions": lambda: deepcopy(self.factions),
             "fx_cargo": lambda: deepcopy(self.board.get("fx_cargo") or {}),
             "tech_draft": lambda: deepcopy(getattr(self, "tech_draft", {}) or {}),
+            "research": lambda: deepcopy(getattr(self, "research", {}) or {}),
+            "diplomacy": lambda: deepcopy(getattr(self, "diplomacy", {}) or {}),
             "industry": lambda: deepcopy(self.industry),
             "fx_industry": lambda: deepcopy(self.board.get("fx_industry") or {}),
             "fx_battle": lambda: deepcopy(self.board.get("fx_battle") or {}),

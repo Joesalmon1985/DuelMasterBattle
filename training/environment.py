@@ -29,10 +29,44 @@ DEFAULT_FIXTURE = "FX-MVP"
 MAX_TURNS = 1000
 ADVANCE_MS = 30_000
 
+# Documented hash of the current schema under CRLF bytes (trained artifact era).
+# Kept for tests; acceptance uses schema_hash_legacy_crlf() of live file bytes.
+_LEGACY_CRLF_SCHEMA_HASH = "5ae577885efb65aa"
+
+
+def _schema_normalized_bytes() -> bytes:
+    raw = SCHEMA_PATH.read_bytes()
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raw = raw[3:]
+    text = raw.decode("utf-8")
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    return text.encode("utf-8")
+
 
 def schema_hash() -> str:
-    payload = SCHEMA_PATH.read_bytes()
-    return hashlib.sha256(payload).hexdigest()[:16]
+    """Canonical schema identity — LF-normalized UTF-8, no BOM."""
+    return hashlib.sha256(_schema_normalized_bytes()).hexdigest()[:16]
+
+
+def schema_hash_legacy_crlf() -> str:
+    """Compatibility hash matching artifacts trained against CRLF raw bytes."""
+    text = _schema_normalized_bytes().decode("utf-8")
+    return hashlib.sha256(text.replace("\n", "\r\n").encode("utf-8")).hexdigest()[:16]
+
+
+def accepted_schema_hashes() -> set[str]:
+    """Hashes that identify the current schema content under LF and CRLF forms."""
+    return {schema_hash(), schema_hash_legacy_crlf()}
+
+
+def schema_hashes_compatible(artifact_hash: str, expected: str | None = None) -> bool:
+    """True when artifact and expected both name the current semantic schema."""
+    accepted = accepted_schema_hashes()
+    if artifact_hash not in accepted:
+        return False
+    if expected is None:
+        return True
+    return expected in accepted
 
 
 def _envelope(sim: WorldSim, command_id: str, kind: str, payload: dict[str, Any]) -> CommandEnvelope:

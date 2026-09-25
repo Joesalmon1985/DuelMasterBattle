@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from sim.dmb.ai.heuristic import HeuristicBrain
@@ -26,12 +27,41 @@ def register_neural_artifact(policy_id: str, artifact_path: str) -> None:
     _NEURAL_CACHE.pop(policy_id, None)
 
 
+def content_root() -> Path:
+    """Stable content root independent of process cwd.
+
+    Manifest artifact paths are written as ``content/policies/...`` relative to
+    ``godot_project/``. Resolve from the repository layout, not ``Path.cwd()``.
+    """
+    repo = Path(__file__).resolve().parents[3]
+    godot = repo / "godot_project"
+    if godot.is_dir():
+        return godot
+    return repo
+
+
+def resolve_artifact_path(artifact: str | Path) -> Path:
+    path = Path(artifact)
+    if path.is_file():
+        return path.resolve()
+    root = content_root()
+    candidates = [
+        root / artifact,
+        root / "content" / "policies" / Path(artifact).name,
+        Path(__file__).resolve().parents[3] / artifact,
+        Path(__file__).resolve().parents[3] / "godot_project" / artifact,
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate.resolve()
+    return (root / artifact).resolve()
+
+
 def load_policy_manifest(path: str | None = None) -> dict[str, Any]:
     """Load content/policies/manifest.json if present."""
     from pathlib import Path
 
-    root = Path(__file__).resolve().parents[3]
-    manifest_path = Path(path) if path else root / "godot_project" / "content" / "policies" / "manifest.json"
+    manifest_path = Path(path) if path else content_root() / "content" / "policies" / "manifest.json"
     if not manifest_path.is_file():
         return {"policies": []}
     import json
@@ -100,14 +130,22 @@ class PolicyService:
 
                 from sim.dmb.ai.neural import NeuralBrain
 
-                root = Path(__file__).resolve().parents[3]
-                path = Path(artifact)
-                if not path.is_file():
-                    path = root / artifact
+                path = resolve_artifact_path(artifact)
                 brain = NeuralBrain(artifact_path=path, policy_id=name)
+                # Surface load failures on the faction policy record for review.
+                bucket = self._policy_bucket(faction_id)
+                if brain.load_error:
+                    bucket["fallback_reason"] = brain.load_error
+                    bucket["effective_source"] = "heuristic_fallback"
+                else:
+                    bucket.pop("fallback_reason", None)
+                    bucket["effective_source"] = "neural"
+                    bucket["artifact_path"] = str(path)
                 _NEURAL_CACHE[name] = brain
             else:
                 _NEURAL_CACHE[name] = HeuristicBrain()
+                self._policy_bucket(faction_id)["fallback_reason"] = "artifact_missing"
+                self._policy_bucket(faction_id)["effective_source"] = "heuristic_fallback"
         return _NEURAL_CACHE[name]
 
     def activate(self, faction_id: str, *, decision_kind: str = "seat") -> dict[str, Any]:
@@ -147,6 +185,10 @@ class PolicyService:
             "source": choice.get("source") or str(self._policy_bucket(faction_id).get("brain")),
             "policy_id": self._policy_bucket(faction_id).get("policy_id"),
             "inference_ms": choice.get("inference_ms"),
+            "fallback_reason": choice.get("fallback_reason")
+            or self._policy_bucket(faction_id).get("fallback_reason"),
+            "effective_source": choice.get("source")
+            or self._policy_bucket(faction_id).get("effective_source"),
         }
         self._policy_bucket(faction_id)["selections"].append(deepcopy(record))
         return record

@@ -1,58 +1,54 @@
-# Polish autonomous run — handoff
+# Polish owner playtest repair — handoff (25 Sep 2026)
 
 **Branch:** `work/current-main-polish`  
-**Comparison baseline:** `9c66ce00342698dc2900c9f7b03c18101221f799`  
-**Status:** `OWNER_REVIEW_PENDING` (not owner PASS; not Windows-certified from this Linux run)
+**Comparison point:** `a2766b1aae6bc48e1b2e92ce1965aadf77f4d1b5`  
+**Status:** `OWNER_REVIEW_PENDING` (not owner PASS; not `AUTO_READY_FOR_OWNER_REVIEW`)
 
 ## Start here
 
-1. Double-click **[Play Visual Review.bat](../../../../Play%20Visual%20Review.bat)** or run `./tools/play_visual_review.sh`
-2. Read **[docs/START_HERE_VISUAL_PLAYTEST.md](../../../../docs/START_HERE_VISUAL_PLAYTEST.md)**
-3. In-game: **Spellbook** (or **B**) → **Review** → **Start review**
-4. Walk the eight chapters; mark Clear / Unclear / Broken; use Capture issue as needed
+1. **[Play Visual Review.bat](../../../../Play%20Visual%20Review.bat)** — two-faction FX-MVP review (seed 507)
+2. Optional: **[Play Six-by-One Review.bat](../../../../Play%20Six-by-One%20Review.bat)** — isolated `g05_review_six_one` slot, factions=6 / cores_per_faction=1
+3. Read **[docs/START_HERE_VISUAL_PLAYTEST.md](../../../../docs/START_HERE_VISUAL_PLAYTEST.md)**
+4. In-game: compact **Spellbook** → open → switch pages / scroll / close at both orientations
 
 Ordinary play remains **Play Latest Integrated Game.bat** (no privileged review pages).
 
-## What was repaired (authoritative)
+## What was repaired this pass
 
 | Area | Change |
 | --- | --- |
-| P1 RNG | `WorldSim.dispatch` syncs bank from `state.rng` (no stale overwrite) |
-| P1 save | `WorldState` serializes `research` / `tech_draft` / `diplomacy` |
-| P1 draft | Prehistoric boot deals seven cards; interrupt discard skips new-era hands |
-| P2/P9 spellbook | `SpellbookHost` + review binder; `DMB_PLAYTEST_REVIEW=1` |
-| P3 trade | Policy auto-accept/dispatch when carts available |
-| P4/P5 tests | Formation setup + era unit catalogue assertions |
-| P5 tech | Six modifiers applied to industry/carts/units |
-| P5 policies | FX-MVP assigns `policy-im-build/trade/war` |
-| P6 hazards | Placement on turn boundary; `hazard_treat` executes |
-| P6 battle | LocalBattle lease bind/tick (no RefCounted `add_child`) |
-| P6 diplomacy | Allies not treated as hostile in movement |
-| P7 sluice | Restored mechanisms in `puzzle.json` |
-| P2 exits | Cardinal exits when topology absent |
+| Actor lifetime | `WorldLayerPresenters` owns geometric actors; preserved across `_finish_village_build` / rebuild paths; remount if invalid |
+| Demon body | Larger filled red diamond + contrasting outline; player label is type name only (no `treat OK`) |
+| Spellbook layout | Wider portrait column; wrapping/selector page nav; diagnostic body scrolls inside panel; parchment contrast panel |
+| Review data | Explicit review fields incl. stocks/factions/tech_draft/research/diplomacy; cart `cargo_lots`/`current_node`; zero vs unavailable vs no-event |
+| HUD / Travel | Exit action cards clamp to usable rect below status/Wait row and above movement pad |
+| Wait / Watch | On-HUD **Wait** (one World Turn) + **Watch world** / Pause / speed; book pause is its own token; Close-and-watch starts observer |
+| Policy load | Content root = `godot_project/`; LF-normalized schema hash + CRLF artifact compat; `source=neural` proven in sim |
+| Six-by-one | `BoardBuilder.generate(..., cores_per_faction=1)`; env `DMB_FACTION_COUNT` / `DMB_CORES_PER_FACTION`; factions 5–6 colours |
+| Guided review | Next reverts chapter on failed load; Capture writes PNG + JSON context |
 
 ## Tests
 
-- `python -m pytest tests/sim -q` → **501 passed, 0 failed** (Linux)
-- Multi-seed Wait smoke 507–512: OK with trained brains + active draft
-- Godot: `run_polish_spellbook_review.gd` → `POLISH_SPELLBOOK_REVIEW_OK`
+- `python -m pytest tests/sim -q` → **507 passed, 0 failed**
+- Focused: `tests/sim/test_owner_playtest_repair.py` (schema LF/CRLF, artifact path cwd-independence, neural load, six-by-one, read_view research/diplomacy)
+- Neural activate on FX-MVP seed 507: `source=neural` for assigned build/trade policies
 
-## Evidence
+## Simple review tasks for Joe
 
-- Instruction: `docs/POLISH_AUTONOMOUS_RUN.md`
-- Run state: `Pack/.../tracking/polish/run_state.json`
-- P0 frames B01–B03 @ 450×800 / 1280×720 / 960×540 + `review.md` (label clutter recorded; **MANUAL REVIEW REQUIRED** for aesthetics)
-- SB02 review-book frames under `tracking/polish/P9/.../final/`
-- Checkpoints: `tracking/polish/checkpoints/seed507/` + seeded `.dmb_saves/`
+1. Open the book, switch pages, scroll and close at portrait and landscape; text/actions reachable.
+2. Walk north and Travel; return once. Watch for covered controls or disappearing actors.
+3. See a visible demon body, win one retained Ward Duel and return cleanly.
+4. Click **Wait** once, then **Watch world**. Confirm turn/round/time and pause/resume.
+5. Use industry/technology/hazard checkpoints: factory→Person/soldier, card/effect, faction response before/after.
+6. Review history at a transition and save/quit/reload.
 
-## Remaining for Joe / later automation
+## Known open (do not treat as finished)
 
-- Subjective readability of labels/controls (V01–V04 clutter still visible in B01)
-- Complete SB03–SB08 matrix at all sizes
-- Full pointer Ward / era / save-quit-relaunch personal sequence on Windows 4.5.1
-- Paired PROMOTION_SEEDS policy behavioural report (fixed artifacts; no retraining)
-- Do **not** treat this as `AUTO_READY_FOR_OWNER_REVIEW` until you finish the eight-chapter walk and remaining mandatory captures
+- Fresh headed PNG matrix at 450×800 / 1280×720 / 960×540 after these repairs (book, north Travel, demon, Wait/Watch)
+- Economy stall (idle carts / proposed trades / score growth) still needs a bounded neural-command progression proof or retained failed prerequisite
+- Guided chapter predicates vs arranged CP-ERA / CP-WARD naming
+- Windows certification not claimed from Linux/sim
 
 ## Honest gate
 
-Mandatory **sim** suite is green. Guided review **launcher + book + chapters + checkpoints** exist. Owner approval and remaining visual matrix are still pending.
+Mandatory **sim** suite is green and the listed blockers have source repairs. Owner approval stays pending until headed pointer evidence and remaining acceptance items land. Do **not** set `AUTO_READY_FOR_OWNER_REVIEW` on this handoff alone.

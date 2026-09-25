@@ -242,8 +242,9 @@ func _make_content_slot() -> Control:
 	var slot := Control.new()
 	slot.visible = false
 	slot.mouse_filter = Control.MOUSE_FILTER_STOP
-	# Do not clip — lean spell buttons must remain pointer-reachable.
-	slot.clip_contents = false
+	# Clip diagnostic pages so text stays inside the parchment; lean spell pages
+	# rebuild without relying on overflow outside the slot.
+	slot.clip_contents = true
 	return slot
 
 
@@ -535,20 +536,48 @@ func _fill_status_column(box: VBoxContainer) -> void:
 
 
 func _add_page_tabs(box: VBoxContainer) -> void:
-	_page_tabs = HBoxContainer.new()
-	_page_tabs.add_theme_constant_override("separation", Margins.TOUCH_GAP)
-	box.add_child(_page_tabs)
+	## Compact selector + wrapping secondary tabs so seven pages fit portrait width.
+	var selector := OptionButton.new()
+	selector.focus_mode = Control.FOCUS_NONE
+	selector.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
+	selector.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for i in model.pages.size():
+		var p: Dictionary = model.pages[i]
+		selector.add_item(str(p.get("title", p.get("id", "?"))))
+	selector.select(model.page_index)
+	selector.item_selected.connect(_on_tab)
+	_style_ink_button(selector)
+	box.add_child(selector)
+	_page_tabs = HBoxContainer.new()
+	_page_tabs.add_theme_constant_override("separation", 4)
+	_page_tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Wrap via nested rows when many pages (portrait).
+	var wrap := VBoxContainer.new()
+	wrap.add_theme_constant_override("separation", 4)
+	wrap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(wrap)
+	var row: HBoxContainer = null
+	var in_row := 0
+	var max_per_row := 4 if _use_spread else 3
+	for i in model.pages.size():
+		if row == null or in_row >= max_per_row:
+			row = HBoxContainer.new()
+			row.add_theme_constant_override("separation", 4)
+			wrap.add_child(row)
+			in_row = 0
 		var p: Dictionary = model.pages[i]
 		var tab := Button.new()
 		tab.text = str(p.get("title", p.get("id", "?")))
 		tab.focus_mode = Control.FOCUS_NONE
 		tab.toggle_mode = true
 		tab.button_pressed = i == model.page_index
+		tab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		tab.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
 		tab.pressed.connect(_on_tab.bind(i))
 		_style_ink_button(tab)
-		_page_tabs.add_child(tab)
+		row.add_child(tab)
+		in_row += 1
+	_page_tabs = row
 
 
 func _add_nav_row(box: VBoxContainer, include_exit: bool) -> void:
@@ -589,19 +618,43 @@ func _fill_page_column(box: VBoxContainer, page: Dictionary) -> void:
 			_log.append_text(str(line) + "\n")
 		box.add_child(_log)
 	else:
-		var body := str(page.get("body", ""))
-		if body != "":
-			_add_body(box, body, Margins.TEXT_INK)
 		var scroll := ScrollContainer.new()
 		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		scroll.custom_minimum_size = Vector2(0, 120)
+		scroll.custom_minimum_size = Vector2(0, 160)
 		scroll.mouse_filter = Control.MOUSE_FILTER_STOP
 		box.add_child(scroll)
+		var inner := VBoxContainer.new()
+		inner.add_theme_constant_override("separation", Margins.TOUCH_GAP)
+		inner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		scroll.add_child(inner)
+		var body := str(page.get("body", ""))
+		if body != "":
+			var panel := PanelContainer.new()
+			panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			var style := StyleBoxFlat.new()
+			style.bg_color = Margins.PANEL_FILL
+			style.border_color = Margins.PANEL_BORDER
+			style.set_border_width_all(1)
+			style.set_corner_radius_all(4)
+			style.content_margin_left = 8
+			style.content_margin_right = 8
+			style.content_margin_top = 6
+			style.content_margin_bottom = 6
+			panel.add_theme_stylebox_override("panel", style)
+			inner.add_child(panel)
+			var body_lbl := Label.new()
+			body_lbl.text = body
+			body_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			body_lbl.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.BODY_FONT))
+			body_lbl.add_theme_color_override("font_color", Margins.TEXT_INK)
+			body_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			panel.add_child(body_lbl)
 		_actions = VBoxContainer.new()
 		_actions.add_theme_constant_override("separation", Margins.TOUCH_GAP)
 		_actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		scroll.add_child(_actions)
+		inner.add_child(_actions)
 		var actions: Array = page.get("actions", [])
 		for act in actions:
 			_add_action_button(_actions, act)
@@ -694,7 +747,7 @@ func _clear_box(box: VBoxContainer) -> void:
 		c.queue_free()
 
 
-func _style_ink_button(b: Button) -> void:
+func _style_ink_button(b: BaseButton) -> void:
 	b.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.BODY_FONT))
 	b.add_theme_color_override("font_color", Margins.TEXT_INK)
 	b.add_theme_color_override("font_disabled_color", Margins.TEXT_MUTED)

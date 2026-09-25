@@ -1,39 +1,56 @@
 {
-  "run_id": "polish-autonomous-p0-p9",
+  "run_id": "polish-owner-playtest-repair-2026-09-25",
   "branch": "work/current-main-polish",
-  "updated_at": "2026-09-24T22:51:45Z",
-  "comparison_baseline_sha": "9c66ce00342698dc2900c9f7b03c18101221f799",
-  "current_head": "23bfdbeb482e903346044bca7d172ba56f4a151f",
-  "current_phase": "P9",
+  "updated_at": "2026-09-25T21:30:00Z",
+  "comparison_baseline_sha": "a2766b1aae6bc48e1b2e92ce1965aadf77f4d1b5",
+  "current_head": "DIRTY_UNCOMMITTED",
+  "current_phase": "OWNER_PLAYTEST_REPAIR",
   "status": "OWNER_REVIEW_PENDING",
   "phase_status": {
     "P0": "BASELINE_RECORDED_WITH_DEFECTS",
     "P1": "AUTO_PHASE_VERIFIED",
-    "P2": "AUTO_PHASE_VERIFIED",
-    "P3": "AUTO_PHASE_VERIFIED",
-    "P4": "AUTO_PHASE_VERIFIED",
-    "P5": "AUTO_PHASE_VERIFIED",
-    "P6": "AUTO_PHASE_VERIFIED",
+    "P2": "REOPENED_REPAIRED_PENDING_HEADED_PROOF",
+    "P3": "ECONOMY_TRACE_PENDING",
+    "P4": "POLICY_NEURAL_VERIFIED_IN_SIM",
+    "P5": "POLICY_LOAD_FIXED_ECONOMY_STALL_OPEN",
+    "P6": "ACTOR_LIFETIME_REPAIRED_PENDING_HEADED",
     "P7": "PENDING_DEPENDENCY",
     "P8": "PENDING_DEPENDENCY",
-    "P9": "OWNER_REVIEW_PENDING"
+    "P9": "SPELLBOOK_REPAIRED_PENDING_HEADED_MATRIX"
   },
   "pytest": {
-    "passed": 501,
+    "passed": 507,
     "failed": 0,
-    "note": "full tests/sim green after repairs"
+    "note": "tests/sim green after owner playtest repairs (+6 focused contracts)"
   },
+  "verified_in_sim": {
+    "neural_source": "policy-im-build/trade load with LF/CRLF schema compat; activate source=neural",
+    "schema_hashes": {
+      "canonical_lf": "e5d8c08fd328a24e",
+      "legacy_crlf": "5ae577885efb65aa"
+    },
+    "six_by_one": "BoardBuilder.generate(507, 6, cores_per_faction=1) → 6 cores"
+  },
+  "repairs_landed": [
+    "WorldLayerPresenters owned actor subtree + preserved across area rebuild",
+    "HazardActor visible demon body + no treat-OK player labels",
+    "Spellbook portrait/landscape usable columns; body scrolls; wrapping page nav",
+    "Review binder schema + real stocks/factions/tech_draft/research/diplomacy/cart keys",
+    "Exit labels clamp to usable world rect below HUD",
+    "HUD Wait + Watch world (Wait + 30s AdvanceGame) with per-owner pause tokens",
+    "Policy artifact path from godot_project content root; schema LF/CRLF compat",
+    "Six-by-one review preset + Play Six-by-One Review.bat (isolated slot)",
+    "Next chapter reverts on failed checkpoint load; Capture writes PNG+JSON"
+  ],
   "evidence_locations": [
-    "docs/POLISH_AUTONOMOUS_RUN.md",
     "docs/START_HERE_VISUAL_PLAYTEST.md",
     "Pack/DuelMasterBattle_Build_Pack/tracking/polish/",
     "Play Visual Review.bat",
-    "tools/play_visual_review.sh"
+    "Play Six-by-One Review.bat",
+    "tests/sim/test_owner_playtest_repair.py"
   ],
-  "next_concrete_action": "Joe: Play Visual Review.bat; walk 8 chapters",
-  "blocked_dependency": "Full personal 8-chapter pointer drive + SB03-SB08 complete matrix + Windows certification not claimed from Linux",
-  "final_status_note": "Not AUTO_READY_FOR_OWNER_REVIEW until Joe completes subjective review and remaining SB sequences; mandatory sim suite is green",
-  "completed_source_commits": [
-    "23bfdbeb482e903346044bca7d172ba56f4a151f"
-  ]
+  "next_concrete_action": "Headed PNG matrix at 450x800 / 1280x720 / 960x540 for book, north Travel, demon body, Wait/Watch; economy stall trace under neural; guided chapter predicate verification",
+  "blocked_dependency": "Headed Godot pointer captures not yet refreshed on this repair SHA; owner approval remains pending",
+  "final_status_note": "Not AUTO_READY_FOR_OWNER_REVIEW — objective headed gates and economy progression proof still open",
+  "completed_source_commits": []
 }

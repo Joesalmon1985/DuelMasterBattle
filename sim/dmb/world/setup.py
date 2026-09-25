@@ -23,7 +23,7 @@ class WorldSetupService:
     def apply(self, plan: SetupPlan, *, staging_nodes: list[str] | None = None) -> dict[str, Any]:
         """Commit centres/warehouses/primaries/factories/processor, starter goods, 2 carts, 1 road per core once."""
         receipts = self.state.command_receipts.setdefault("setup", {})
-        setup_key = f"setup:{plan.seed}:{plan.faction_count}"
+        setup_key = f"setup:{plan.seed}:{plan.faction_count}:c{int(getattr(plan, 'cores_per_faction', 2) or 2)}"
         if setup_key in receipts:
             return {"status": "already_applied", "receipt": receipts[setup_key]}
 
@@ -144,6 +144,7 @@ class WorldSetupService:
             "id": setup_key,
             "seed": plan.seed,
             "faction_count": plan.faction_count,
+            "cores_per_faction": int(getattr(plan, "cores_per_faction", 2) or 2),
             "created": created,
             "used_fallback": plan.used_fallback,
         }

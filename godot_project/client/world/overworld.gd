@@ -198,6 +198,23 @@ func _build_layers() -> void:
 	_actors_root.add_child(_john)
 
 
+## Persistent controllers mounted under Actors by the shell / G05 host.
+## Disposable area visuals (NPCs, props anchors, semantic labels) are cleared.
+func _is_persistent_actor(c: Node) -> bool:
+	if c == null or not is_instance_valid(c):
+		return false
+	if c == _john:
+		return true
+	var n := str(c.name)
+	if n == "WorkerController" or n == "WorldLayerPresenters" or n == "LocalBattle":
+		return true
+	if c.is_in_group("dmb_person_presenter"):
+		return true
+	if c.is_in_group("dmb_world_layer_presenter"):
+		return true
+	return false
+
+
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
 	layer.name = "UI"
@@ -353,8 +370,9 @@ func load_area(id: String, at: Vector2i, facing: String = "down") -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c != _john:
-			c.queue_free()
+		if _is_persistent_actor(c):
+			continue
+		c.queue_free()
 	_entities.clear()
 	_entity_at.clear()
 	_fire_frames.clear()
@@ -1337,8 +1355,9 @@ func _rebuild_entities() -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c != _john:
-			c.queue_free()
+		if _is_persistent_actor(c):
+			continue
+		c.queue_free()
 	_entities.clear()
 	_entity_at.clear()
 	_fire_frames.clear()
@@ -2712,8 +2731,9 @@ func _finish_kit_build(at: Vector2i, facing: String) -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c != _john:
-			c.queue_free()
+		if _is_persistent_actor(c):
+			continue
+		c.queue_free()
 	_entities.clear()
 	_entity_at.clear()
 	_fire_frames.clear()
@@ -3019,10 +3039,7 @@ func _finish_village_build(at: Vector2i, facing: String) -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c == _john:
-			continue
-		# Preserve G05 WorkerController / activity presenters mounted under actors.
-		if str(c.name) == "WorkerController" or c.is_in_group("dmb_person_presenter"):
+		if _is_persistent_actor(c):
 			continue
 		c.queue_free()
 	_entities.clear()

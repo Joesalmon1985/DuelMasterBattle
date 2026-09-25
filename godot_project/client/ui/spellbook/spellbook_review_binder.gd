@@ -3,11 +3,17 @@ class_name SpellbookReviewBinder
 
 ## G05 playtest review spellbook — read-only diagnostics + safe review controls.
 ## Gate fixture mutators (Clear hazard, Set health 25%, Strike, Start delivery) are intentionally absent.
+##
+## Explicit review projection schema (privileged; only when DMB_PLAYTEST_REVIEW=1):
+##   place | industry | economy | factions | conflict | history | evidence
+## Distinguishes zero / no event yet / unavailable / loading. Never prints '?' when
+## authoritative data exists. Normal Play Latest uses bind_player_safe only.
 
 const ModelScript = preload("res://client/ui/spellbook/spellbook_model.gd")
 const InfoBinder = preload("res://client/ui/spellbook/spellbook_info_binder.gd")
 
 const CHAPTERS_RES := "res://content/polish/visual_review_chapters.json"
+const REVIEW_SCHEMA_VERSION := 1
 
 var model = null
 var _handlers: Dictionary = {}
@@ -17,6 +23,7 @@ var _review_started := false
 var _feedback := ""
 var _feedback_note := ""
 var _diag: Dictionary = {}
+var _detail_open: Dictionary = {}
 
 
 static func review_enabled() -> bool:
@@ -64,8 +71,9 @@ func refresh_diagnostics(player_view: Dictionary, economy_view: Dictionary) -> v
 	if not review_enabled():
 		return
 	_diag["place"] = _format_place(player_view)
+	_diag["industry"] = _format_industry(player_view, economy_view)
 	_diag["economy"] = _format_economy(player_view, economy_view)
-	_diag["factions"] = _format_factions(player_view)
+	_diag["factions"] = _format_factions(player_view, economy_view)
 	_diag["conflict"] = _format_conflict(player_view)
 	_diag["history"] = _format_history(player_view)
 	_diag["evidence"] = _format_evidence(player_view)
@@ -73,6 +81,13 @@ func refresh_diagnostics(player_view: Dictionary, economy_view: Dictionary) -> v
 
 
 func handle_action(action_id: String, payload: Dictionary, token: String) -> void:
+	if action_id.begins_with("detail_"):
+		var key := action_id.substr(7)
+		_detail_open[key] = not bool(_detail_open.get(key, false))
+		_apply_diag_to_pages()
+		model.ack_result(token, ModelScript.ResultKind.SUCCESS, "Detail toggled", action_id)
+		model.emit_signal("changed")
+		return
 	if not _handlers.has(action_id):
 		model.ack_result(token, ModelScript.ResultKind.REJECTED, "No handler for %s" % action_id, action_id)
 		return
@@ -132,22 +147,17 @@ func _build_review_pages() -> void:
 			"body": _review_body(),
 			"actions": _review_actions(),
 		},
-		{"id": "place", "title": "This place", "kind": "info", "body": _diag.get("place", ""), "actions": []},
-		{"id": "economy", "title": "Economy", "kind": "info", "body": _diag.get("economy", ""), "actions": []},
-		{"id": "factions", "title": "Factions/tech", "kind": "info", "body": _diag.get("factions", ""), "actions": []},
-		{
-			"id": "conflict",
-			"title": "Conflict/hazards",
-			"kind": "info",
-			"body": _diag.get("conflict", ""),
-			"actions": [],
-		},
-		{"id": "history", "title": "History", "kind": "info", "body": _diag.get("history", ""), "actions": []},
+		{"id": "place", "title": "Here", "kind": "info", "body": _diag.get("place", "Loading…"), "actions": []},
+		{"id": "industry", "title": "Industry", "kind": "info", "body": _diag.get("industry", "Loading…"), "actions": []},
+		{"id": "economy", "title": "Economy", "kind": "info", "body": _diag.get("economy", "Loading…"), "actions": []},
+		{"id": "factions", "title": "Factions", "kind": "info", "body": _diag.get("factions", "Loading…"), "actions": []},
+		{"id": "conflict", "title": "Conflict", "kind": "info", "body": _diag.get("conflict", "Loading…"), "actions": []},
+		{"id": "history", "title": "History", "kind": "info", "body": _diag.get("history", "Loading…"), "actions": []},
 		{
 			"id": "evidence",
 			"title": "Evidence",
 			"kind": "actions",
-			"body": _diag.get("evidence", ""),
+			"body": _diag.get("evidence", "Loading…"),
 			"actions": [{"id": "capture_issue", "label": "Capture issue"}],
 		},
 	]
@@ -162,6 +172,13 @@ func _apply_diag_to_pages() -> void:
 		var pid := str(p.get("id", ""))
 		if _diag.has(pid):
 			p["body"] = _diag[pid]
+			if pid != "review" and pid != "evidence":
+				p["actions"] = [
+					{
+						"id": "detail_%s" % pid,
+						"label": "Less detail" if bool(_detail_open.get(pid, false)) else "More detail",
+					}
+				]
 			model.pages[i] = p
 	_rebuild_review_page()
 
@@ -184,7 +201,7 @@ func _review_body() -> String:
 	if not review_enabled():
 		lines.append("Review mode is off.")
 		return "\n".join(lines)
-	lines.append("Guided visual playtest (read-only diagnostics).")
+	lines.append("Guided visual playtest (schema v%d)." % REVIEW_SCHEMA_VERSION)
 	lines.append("Session flag: DMB_PLAYTEST_REVIEW=1")
 	if not _review_started:
 		lines.append("")
@@ -193,7 +210,7 @@ func _review_body() -> String:
 		lines.append("")
 		lines.append(
 			"Chapter %d/%d — %s (%s min)"
-			% [_chapter_index + 1, max(1, _chapters.size()), str(ch.get("title", "?")), str(ch.get("minutes", "?"))]
+			% [_chapter_index + 1, max(1, _chapters.size()), str(ch.get("title", "—")), str(ch.get("minutes", "—"))]
 		)
 		lines.append(str(ch.get("task", "")))
 		var cp := str(ch.get("checkpoint_id", ""))
@@ -252,6 +269,7 @@ func export_issue_context() -> Dictionary:
 		"feedback": _feedback,
 		"feedback_note": _feedback_note,
 		"checkpoint_id": str(ch.get("checkpoint_id", "")),
+		"review_schema_version": REVIEW_SCHEMA_VERSION,
 		"diagnostics": _diag.duplicate(true),
 	}
 
@@ -261,105 +279,270 @@ func _format_place(view: Dictionary) -> String:
 	var clock: Dictionary = _dict(view.get("clock"))
 	var area: Dictionary = _dict(view.get("overworld_area"))
 	var lines: PackedStringArray = PackedStringArray()
-	lines.append("Turn %s · game_ms %s" % [str(clock.get("turn", "?")), str(clock.get("game_ms", "?"))])
-	lines.append("Player node: %s · area: %s" % [str(player.get("node_id", "?")), str(player.get("area_id", "?"))])
-	if not area.is_empty():
-		lines.append("Area name: %s" % str(area.get("name", area.get("id", "?"))))
+	lines.append("Turn %s · game time %s ms" % [_val(clock, "turn"), _val(clock, "game_ms")])
+	lines.append("Place: %s" % _val(player, "node_id", "no event yet"))
+	lines.append("Area: %s" % _val(area, "name", _val(player, "area_id", "unavailable")))
 	var people: Dictionary = _dict(view.get("people"))
-	if not people.is_empty():
+	if people.is_empty():
+		lines.append("People: none in view yet")
+	else:
 		lines.append("People tracked: %d" % people.size())
+		if bool(_detail_open.get("place", false)):
+			var n := 0
+			for pid in people.keys():
+				if n >= 8:
+					break
+				var rec: Dictionary = _dict(people[pid])
+				lines.append("  %s — %s" % [str(pid), _val(rec, "name", _val(rec, "role", "person"))])
+				n += 1
+	var knowledge = view.get("knowledge", null)
+	if knowledge == null:
+		lines.append("Learned facts: unavailable in this view")
+	elif typeof(knowledge) == TYPE_ARRAY and knowledge.is_empty():
+		lines.append("Learned facts: none yet")
+	elif typeof(knowledge) == TYPE_ARRAY:
+		lines.append("Learned facts: %d" % knowledge.size())
+	return "\n".join(lines)
+
+
+func _format_industry(player_view: Dictionary, economy_view: Dictionary) -> String:
+	var view: Dictionary = economy_view if not economy_view.is_empty() else player_view
+	var factories = view.get("industry_factories", null)
+	var lines: PackedStringArray = PackedStringArray()
+	if factories == null:
+		lines.append("Factories: unavailable")
+		return "\n".join(lines)
+	if typeof(factories) == TYPE_ARRAY and factories.is_empty():
+		lines.append("Factories: none yet")
+	elif typeof(factories) == TYPE_DICTIONARY and factories.is_empty():
+		lines.append("Factories: none yet")
+	else:
+		var rows: Array = factories if typeof(factories) == TYPE_ARRAY else factories.values()
+		lines.append("Factories: %d" % rows.size())
+		for raw in rows:
+			if typeof(raw) != TYPE_DICTIONARY:
+				continue
+			var f: Dictionary = raw
+			lines.append(
+				"  %s → %s"
+				% [_val(f, "name", _val(f, "building_id", "factory")), _val(f, "output", _val(f, "produces", "—"))]
+			)
+			lines.append(
+				"    rate %s · progress %s · last → %s"
+				% [
+					_val(f, "rate", _val(f, "cycle_ms", "—")),
+					_val(f, "progress", _val(f, "progress_ms", "0")),
+					_val(f, "last_output_to", _val(f, "last_person_id", "no event yet")),
+				]
+			)
+			if bool(_detail_open.get("industry", false)):
+				lines.append("    person=%s unit=%s formation=%s" % [
+					_val(f, "person_id", "—"),
+					_val(f, "unit_id", "—"),
+					_val(f, "formation_id", "—"),
+				])
+				lines.append("    inputs: %s" % _short(f.get("inputs", f.get("recipe", "—"))))
+	var workers = view.get("industry_workers", null)
+	if workers == null:
+		lines.append("Workers: unavailable")
+	elif typeof(workers) == TYPE_ARRAY:
+		lines.append("Workers: %d" % workers.size())
+	elif typeof(workers) == TYPE_DICTIONARY:
+		lines.append("Workers: %d" % workers.size())
 	return "\n".join(lines)
 
 
 func _format_economy(player_view: Dictionary, economy_view: Dictionary) -> String:
 	var view: Dictionary = economy_view if not economy_view.is_empty() else player_view
-	var stocks: Dictionary = _dict(view.get("stocks"))
-	var carts: Dictionary = _dict(view.get("carts"))
-	var orders: Dictionary = _dict(view.get("orders"))
+	var stocks = view.get("stocks", null)
+	var carts = view.get("carts", null)
+	var orders = view.get("orders", null)
 	var lines: PackedStringArray = PackedStringArray()
-	if stocks.is_empty():
-		lines.append("No stock snapshot in view.")
-	else:
+	if stocks == null:
+		lines.append("Stocks: unavailable")
+	elif typeof(stocks) == TYPE_DICTIONARY and stocks.is_empty():
+		lines.append("Stocks: empty (zero)")
+	elif typeof(stocks) == TYPE_DICTIONARY:
 		lines.append("Stock keys: %d" % stocks.size())
 		var shown := 0
 		for k in stocks.keys():
-			if shown >= 6:
+			if str(k).begins_with("_"):
+				continue
+			if shown >= 8 and not bool(_detail_open.get("economy", false)):
 				break
-			lines.append("  %s: %s" % [str(k), _short(stocks[k])])
+			lines.append("  %s: %s" % [str(k), _format_stock_entry(stocks[k])])
 			shown += 1
-	if carts.is_empty():
-		lines.append("No carts in view.")
-	else:
+	if carts == null:
+		lines.append("Carts: unavailable")
+	elif typeof(carts) == TYPE_DICTIONARY and carts.is_empty():
+		lines.append("Carts: none yet")
+	elif typeof(carts) == TYPE_DICTIONARY:
 		lines.append("Carts: %d" % carts.size())
 		for cid in carts.keys():
 			var c: Dictionary = _dict(carts[cid])
+			var cargo = c.get("cargo_lots", c.get("cargo", c.get("load", null)))
+			var node_id = c.get("current_node", c.get("node_id", null))
+			var status := str(c.get("status", "idle"))
 			lines.append(
-				"  %s cargo=%s node=%s"
-				% [str(cid), _short(c.get("cargo", c.get("load", "?"))), str(c.get("node_id", "?"))]
+				"  %s @ %s — %s · cargo %s"
+				% [str(cid), _present(node_id), status, _present(cargo)]
 			)
-	if not orders.is_empty():
+			if bool(_detail_open.get("economy", false)):
+				lines.append("    route=%s reserved=%s" % [_short(c.get("route", "—")), _short(c.get("reservation_id", "—"))])
+	if orders == null:
+		lines.append("Orders: unavailable")
+	elif typeof(orders) == TYPE_DICTIONARY:
 		lines.append("Open orders: %d" % orders.size())
+		if bool(_detail_open.get("economy", false)):
+			var n := 0
+			for oid in orders.keys():
+				if n >= 6:
+					break
+				var o: Dictionary = _dict(orders[oid])
+				lines.append("  %s status=%s" % [str(oid), _val(o, "status", "—")])
+				n += 1
 	return "\n".join(lines)
 
 
-func _format_factions(view: Dictionary) -> String:
+func _format_factions(player_view: Dictionary, economy_view: Dictionary) -> String:
+	var view: Dictionary = economy_view if not economy_view.is_empty() else player_view
 	var lines: PackedStringArray = PackedStringArray()
+	var factions = view.get("factions", null)
 	var research = view.get("research", null)
-	var draft = view.get("draft", null)
+	var draft = view.get("tech_draft", view.get("draft", null))
 	var diplomacy = view.get("diplomacy", null)
-	var policies = view.get("policies", null)
-	if research == null and draft == null and diplomacy == null and policies == null:
-		lines.append("No faction/technology fields in current player view.")
-		lines.append("(Request scopes may expand as checkpoints land.)")
+	var clock: Dictionary = _dict(view.get("clock"))
+	lines.append("Seat / turn %s · round %s" % [_val(clock, "turn"), _val(clock, "round", _val(clock, "draft_round", "—"))])
+	if factions == null:
+		lines.append("Factions: unavailable")
+	elif typeof(factions) == TYPE_DICTIONARY and factions.is_empty():
+		lines.append("Factions: none yet")
+	elif typeof(factions) == TYPE_DICTIONARY:
+		lines.append("Factions: %d" % factions.size())
+		for fid in factions.keys():
+			var f: Dictionary = _dict(factions[fid])
+			var policy: Dictionary = _dict(f.get("policy"))
+			var brain := _val(policy, "brain", _val(policy, "policy_id", "unassigned"))
+			var source := _val(policy, "effective_source", "no event yet")
+			var fallback := _val(policy, "fallback_reason", "")
+			var hand = f.get("hand", f.get("cards", null))
+			var hand_n := "—"
+			if typeof(hand) == TYPE_ARRAY:
+				hand_n = str(hand.size())
+			elif typeof(hand) == TYPE_DICTIONARY:
+				hand_n = str(hand.size())
+			lines.append("  %s — policy %s · source %s · hand %s" % [str(fid), brain, source, hand_n])
+			if fallback != "" and fallback != "—":
+				lines.append("    fallback: %s" % fallback)
+			var selections: Array = policy.get("selections", [])
+			if selections.is_empty():
+				lines.append("    last card: no event yet")
+			else:
+				var last: Dictionary = _dict(selections[selections.size() - 1])
+				lines.append(
+					"    last pick %s · source %s"
+					% [_val(last, "primary_id", "—"), _val(last, "source", source)]
+				)
+				if bool(_detail_open.get("factions", false)):
+					lines.append("    applied: %s" % _short(last.get("applied", "—"), 220))
+	if research == null:
+		lines.append("Research: unavailable")
+	elif typeof(research) == TYPE_DICTIONARY and research.is_empty():
+		lines.append("Research: none yet")
 	else:
-		if research != null:
-			lines.append("Research: %s" % _short(research))
-		if draft != null:
-			lines.append("Draft: %s" % _short(draft))
-		if diplomacy != null:
-			lines.append("Diplomacy: %s" % _short(diplomacy))
-		if policies != null:
-			lines.append("Policies: %s" % _short(policies))
-	var battles: Dictionary = _dict(view.get("battles"))
-	if not battles.is_empty():
-		lines.append("Battles entries: %d" % battles.size())
+		lines.append("Research: %s" % _short(research, 200 if bool(_detail_open.get("factions", false)) else 120))
+	if draft == null:
+		lines.append("Tech draft: unavailable")
+	elif typeof(draft) == TYPE_DICTIONARY and draft.is_empty():
+		lines.append("Tech draft: no event yet")
+	else:
+		lines.append("Tech draft: %s" % _short(draft, 200 if bool(_detail_open.get("factions", false)) else 120))
+	if diplomacy == null:
+		lines.append("Diplomacy: unavailable")
+	elif typeof(diplomacy) == TYPE_DICTIONARY and diplomacy.is_empty():
+		lines.append("Diplomacy: none yet")
+	else:
+		lines.append("Diplomacy: %s" % _short(diplomacy))
 	return "\n".join(lines)
 
 
 func _format_conflict(view: Dictionary) -> String:
 	var lines: PackedStringArray = PackedStringArray()
-	var hazards: Dictionary = _dict(view.get("hazards"))
+	var hazards = view.get("hazards", null)
 	var fx_h: Dictionary = _dict(view.get("fx_hazard"))
-	if hazards.is_empty() and fx_h.is_empty():
-		lines.append("No hazard payload in view.")
+	var units = view.get("units", null)
+	var battles = view.get("battles", null)
+	if hazards == null:
+		lines.append("Hazards: unavailable")
+	elif typeof(hazards) == TYPE_DICTIONARY and hazards.is_empty():
+		lines.append("Hazards: none on board")
+	elif typeof(hazards) == TYPE_DICTIONARY:
+		lines.append("Hazards: %d" % hazards.size())
+		for hid in hazards.keys():
+			var h: Dictionary = _dict(hazards[hid])
+			lines.append(
+				"  %s type=%s @ %s"
+				% [str(hid), _val(h, "type", _val(h, "hazard_type", "—")), _val(h, "node_id", _val(h, "hex_id", "—"))]
+			)
+	if not fx_h.is_empty():
+		lines.append("Last faction treatment: %s" % _short(fx_h, 200 if bool(_detail_open.get("conflict", false)) else 140))
+		lines.append("(Faction treatment ≠ wizard Ward Duel.)")
 	else:
-		if not hazards.is_empty():
-			lines.append("Hazards: %s" % _short(hazards))
-		if not fx_h.is_empty():
-			lines.append("FX hazard: %s" % _short(fx_h))
-	var units: Dictionary = _dict(view.get("units"))
-	if not units.is_empty():
+		lines.append("Last faction treatment: no event yet")
+	if units == null:
+		lines.append("Units: unavailable")
+	elif typeof(units) == TYPE_DICTIONARY:
 		lines.append("Units: %d" % units.size())
-	var battles: Dictionary = _dict(view.get("battles"))
-	if not battles.is_empty():
+		if bool(_detail_open.get("conflict", false)):
+			var n := 0
+			for uid in units.keys():
+				if n >= 8:
+					break
+				var u: Dictionary = _dict(units[uid])
+				lines.append(
+					"  %s person=%s formation=%s @ %s"
+					% [str(uid), _val(u, "person_id", "—"), _val(u, "formation_id", "—"), _val(u, "node_id", "—")]
+				)
+				n += 1
+	if battles == null:
+		lines.append("Battles: unavailable")
+	elif typeof(battles) == TYPE_DICTIONARY and battles.is_empty():
+		lines.append("Battles: none yet")
+	elif typeof(battles) == TYPE_DICTIONARY:
 		lines.append("Battles: %s" % _short(battles))
 	return "\n".join(lines)
 
 
 func _format_history(view: Dictionary) -> String:
-	var chronicle = view.get("chronicle", [])
 	var lines: PackedStringArray = PackedStringArray()
-	if typeof(chronicle) != TYPE_ARRAY or chronicle.is_empty():
-		lines.append("Chronicle empty or unavailable.")
+	var era = view.get("fx_era", view.get("era", null))
+	var clock: Dictionary = _dict(view.get("clock"))
+	var factions: Dictionary = _dict(view.get("factions"))
+	lines.append("Era: %s" % _present(era if era != null else "unavailable"))
+	lines.append("Turn %s · game_ms %s" % [_val(clock, "turn"), _val(clock, "game_ms")])
+	if factions.is_empty():
+		lines.append("Faction scores: unavailable in this view")
 	else:
-		var n := mini(chronicle.size(), 12)
+		for fid in factions.keys():
+			var f: Dictionary = _dict(factions[fid])
+			lines.append("  %s VP %s" % [str(fid), _val(f, "vp", _val(f, "score", "0"))])
+	lines.append("Era requires 10 VP (genuine scoring — not an arbitrary Wait count).")
+	if era != null and typeof(era) == TYPE_DICTIONARY:
+		lines.append("Transition: %s" % _val(era, "status", _val(era, "phase", "no event yet")))
+		if bool(_detail_open.get("history", false)):
+			lines.append("Detail: %s" % _short(era, 240))
+	var chronicle = view.get("chronicle", null)
+	if chronicle == null:
+		lines.append("Chronicle: unavailable")
+	elif typeof(chronicle) != TYPE_ARRAY or chronicle.is_empty():
+		lines.append("Chronicle: no event yet")
+	else:
+		var n := mini(chronicle.size(), 8 if bool(_detail_open.get("history", false)) else 5)
+		lines.append("Last history:")
 		for i in range(n):
 			lines.append("- %s" % _short(chronicle[i]))
 		if chronicle.size() > n:
 			lines.append("… %d more" % (chronicle.size() - n))
-	var era = view.get("fx_era", view.get("era", null))
-	if era != null:
-		lines.append("Era: %s" % _short(era))
 	return "\n".join(lines)
 
 
@@ -367,13 +550,41 @@ func _format_evidence(view: Dictionary) -> String:
 	var clock: Dictionary = _dict(view.get("clock"))
 	var lines: PackedStringArray = PackedStringArray()
 	lines.append("Read-only evidence export uses production view snapshots.")
-	lines.append("Turn %s · seq %s" % [str(clock.get("turn", "?")), str(clock.get("clock_sequence", "?"))])
-	lines.append("Use Capture issue to write a report under logs/polish_review/.")
+	lines.append("Review schema v%d" % REVIEW_SCHEMA_VERSION)
+	lines.append("Turn %s · seq %s" % [_val(clock, "turn"), _val(clock, "clock_sequence")])
+	lines.append("Capture writes PNG + state/receipt/checkpoint context under logs/polish_review/.")
 	return "\n".join(lines)
+
+
+func _format_stock_entry(value) -> String:
+	if typeof(value) != TYPE_DICTIONARY:
+		return _present(value)
+	var d: Dictionary = value
+	if d.has("available") or d.has("reserved"):
+		return "avail %s / reserved %s" % [_val(d, "available", "0"), _val(d, "reserved", "0")]
+	return _short(d, 80)
 
 
 func _dict(value) -> Dictionary:
 	return value if typeof(value) == TYPE_DICTIONARY else {}
+
+
+func _val(d: Dictionary, key: String, fallback: String = "—") -> String:
+	if not d.has(key) or d[key] == null:
+		return fallback
+	return str(d[key])
+
+
+func _present(value) -> String:
+	if value == null:
+		return "unavailable"
+	if typeof(value) == TYPE_ARRAY and value.is_empty():
+		return "none yet"
+	if typeof(value) == TYPE_DICTIONARY and value.is_empty():
+		return "none yet"
+	if typeof(value) == TYPE_STRING and value == "":
+		return "none yet"
+	return _short(value)
 
 
 func _short(value, limit: int = 160) -> String:

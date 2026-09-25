@@ -45,7 +45,11 @@ class NeuralBrain:
     def __post_init__(self) -> None:
         self.artifact_path = Path(self.artifact_path)
         try:
-            self.model = CandidateScorer.load(self.artifact_path, expect_schema_hash=schema_hash())
+            self.model = CandidateScorer.load(
+                self.artifact_path,
+                expect_schema_hash=schema_hash(),
+                allow_line_ending_compat=True,
+            )
             if not self.model.trained:
                 self.load_error = "artifact_not_marked_trained"
                 self.model = None

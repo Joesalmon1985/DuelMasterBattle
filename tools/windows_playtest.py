@@ -249,13 +249,21 @@ def cmd_resolve(_: argparse.Namespace) -> int:
 
 
 def playtest_review_env(extra: dict[str, str] | None = None) -> dict[str, str]:
-    """Environment keys for the owner visual playtest session (isolated save, review flag)."""
+    """Environment keys for the owner visual playtest session (isolated save, review flag).
+
+    Caller-set ``DMB_SAVE_SLOT`` / ``DMB_FACTION_COUNT`` / ``DMB_CORES_PER_FACTION``
+    are preserved so the six-by-one review bat can use an isolated slot without
+    overwriting Joe's normal saves.
+    """
     env = {
         "DMB_PLAYTEST_REVIEW": "1",
-        "DMB_SAVE_SLOT": G05_REVIEW_SAVE_SLOT,
-        "DMB_FIXTURE": G05_MVP_FIXTURE,
-        "DMB_SEED": G05_MVP_SEED,
+        "DMB_SAVE_SLOT": os.environ.get("DMB_SAVE_SLOT") or G05_REVIEW_SAVE_SLOT,
+        "DMB_FIXTURE": os.environ.get("DMB_FIXTURE") or G05_MVP_FIXTURE,
+        "DMB_SEED": os.environ.get("DMB_SEED") or G05_MVP_SEED,
     }
+    for key in ("DMB_FACTION_COUNT", "DMB_CORES_PER_FACTION", "DMB_SOURCE_SHA"):
+        if os.environ.get(key):
+            env[key] = os.environ[key]
     if extra:
         env.update(extra)
     return env
