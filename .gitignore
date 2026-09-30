@@ -32,3 +32,6 @@ generated/dialogue/
 .dmb_saves_test/
 .dmb_windows_local.json
 logs/
+
+# Visual Sim QA bulk evidence
+qa/visual_sim/out/

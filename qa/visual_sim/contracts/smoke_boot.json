@@ -1,0 +1,32 @@
+{
+  "scenario_id": "smoke_boot_fx_mvp",
+  "scenario_class": "ARRANGED_STATE",
+  "fixture": "FX-MVP",
+  "seed": 507,
+  "description": "Tiny Stage-1 smoke: fixture boot; three evidence layers collected independently.",
+  "setup": {
+    "advance_seconds": 0,
+    "waits": 0
+  },
+  "captures": [
+    {
+      "capture_id": "SMOKE_BOOT",
+      "checkpoint": "after",
+      "should_be_visible": "Overworld shell with settlement/player area nonblank",
+      "assertions": ["min_buildings", "min_entities", "image_nonblank"]
+    }
+  ],
+  "expectations": {
+    "authority": {
+      "min_buildings": 1,
+      "player_node_id": "node:35"
+    },
+    "render": {
+      "min_entities": 1
+    },
+    "image": {
+      "require_nonblank": true,
+      "min_bytes": 500
+    }
+  }
+}

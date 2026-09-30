@@ -1,0 +1,23 @@
+{
+  "scenario_id": "slice_a_combat",
+  "scenario_class": "PRODUCTION_JOURNEY",
+  "fixture": "FX-MVP",
+  "seed": 507,
+  "description": "Formation contact via Wait; attended OpenBattleLease/CloseBattleLease when player co-located.",
+  "setup": {"advance_seconds": 120, "waits": 0},
+  "captures": [
+    {
+      "capture_id": "SLICE_A_AFTER",
+      "checkpoint": "after",
+      "should_be_visible": "Battle lifecycle without duplicate soldier bodies; lease closed",
+      "assertions": ["units_or_battles", "lease_lifecycle"]
+    }
+  ],
+  "expectations": {
+    "authority": {
+      "min_units": 1
+    },
+    "render": {},
+    "image": {"allow_missing": true}
+  }
+}

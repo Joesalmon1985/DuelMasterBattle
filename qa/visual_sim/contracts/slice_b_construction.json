@@ -1,0 +1,24 @@
+{
+  "scenario_id": "slice_b_construction",
+  "scenario_class": "PRODUCTION_JOURNEY",
+  "fixture": "FX-MVP",
+  "seed": 507,
+  "description": "Autonomous faction construction order reaches committed via production Wait.",
+  "setup": {"advance_seconds": 30, "waits": 0},
+  "captures": [
+    {
+      "capture_id": "SLICE_B_AFTER",
+      "checkpoint": "after",
+      "should_be_visible": "Completed construction consequence; scaffold for committed order gone",
+      "assertions": ["committed_action", "forbid_scaffold"]
+    }
+  ],
+  "expectations": {
+    "authority": {
+      "committed_action": "road",
+      "committed_min": 1
+    },
+    "render": {},
+    "image": {"allow_missing": true}
+  }
+}

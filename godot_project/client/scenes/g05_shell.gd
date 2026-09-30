@@ -93,6 +93,7 @@ var _battle
 var _battle_host
 var _battle_lease_opened := false
 var _hosted_battle_id := ""
+var _battle_ckpt_acc := 0.0
 var _spectator_node := ""
 var _follow_major := false
 var _last_travel_feedback := ""
@@ -1781,41 +1782,101 @@ func _append_long_event(text: String) -> void:
 
 
 func _tick_local_battle(delta: float) -> void:
-	if _battle != null and is_instance_valid(_battle) and _battle.has_method("tick"):
+	if _battle == null:
+		return
+	# LocalBattle is RefCounted — do not use is_instance_valid/Node APIs for liveness.
+	if _battle.closed:
+		_close_local_battle_lease()
+		return
+	if _battle.has_method("tick"):
 		_battle.tick(delta * 1000.0)
+	# Periodic checkpoint while lease open (G04 pattern).
+	if _battle_lease_opened and _client != null and _hosted_battle_id != "":
+		_battle_ckpt_acc += delta
+		if _battle_ckpt_acc >= 0.5:
+			_battle_ckpt_acc = 0.0
+			var snap: Dictionary = {}
+			if _battle.has_method("checkpoint"):
+				snap = _battle.checkpoint()
+			elif _battle.get("units") != null:
+				snap = {"units": _battle.units, "step_index": _battle.step_index}
+			_cmd("BattleCheckpoint", {
+				"lease_id": str(_battle.lease_id),
+				"battle_id": _hosted_battle_id,
+				"checkpoint": snap,
+			})
+
+
+func _close_local_battle_lease() -> void:
+	if _battle_lease_opened and _client != null and _battle != null:
+		_cmd("CloseBattleLease", {
+			"lease_id": str(_battle.lease_id),
+			"battle_id": _hosted_battle_id,
+		})
+	_battle_lease_opened = false
+	_hosted_battle_id = ""
+	_battle = null
+	_battle_host = null
+	_append_long_event("LocalBattle lease closed — world restored")
 
 
 func _maybe_host_local_battle() -> void:
-	## When the viewed node has an active battle, mount LocalBattle (G04 reuse).
+	## When the viewed node has an active/local battle, open lease + bind LocalBattle (G04 reuse).
+	## LocalBattle extends RefCounted — never add_child it as a Node.
 	if _client == null or _overworld == null:
 		return
 	var battles: Dictionary = _coerce_dict(_last_industry.get("battles"))
 	if battles.is_empty():
+		if _battle != null and not _battle_lease_opened:
+			_battle = null
 		return
 	var player: Dictionary = _coerce_dict(_last_industry.get("player"))
 	var node_id := str(player.get("node_id", ""))
 	if _spectator_node != "":
 		node_id = _spectator_node
 	var active_id := ""
+	var active_state := ""
 	for bid in battles.keys():
 		var b: Dictionary = _coerce_dict(battles[bid])
 		if str(b.get("node_id", "")) != node_id:
 			continue
-		if str(b.get("state", "")) in ["PENDING", "ACTIVE", "LOCAL", "OFFSCREEN", "READY"]:
+		var st := str(b.get("state", ""))
+		if st in ["PENDING", "ACTIVE", "LOCAL", "OFFSCREEN", "READY"]:
 			active_id = str(bid)
+			active_state = st
 			break
 	if active_id == "":
+		# No battle at this node — ensure prior lease closed.
+		if _battle != null and _battle_lease_opened:
+			_close_local_battle_lease()
 		return
-	if _battle != null and is_instance_valid(_battle):
+	if _battle != null and _hosted_battle_id == active_id and _battle_lease_opened:
 		return
+	# Open production lease (same path as g04_battle_shell).
+	var reply := _cmd("OpenBattleLease", {"battle_id": active_id})
+	if str(reply.get("status", "")) != "ACCEPTED":
+		_append_long_event("OpenBattleLease failed for %s: %s" % [active_id, reply.get("code", "?")])
+		return
+	var payload: Dictionary = _coerce_dict(reply.get("payload"))
+	var lease: Dictionary = _coerce_dict(payload.get("lease"))
+	var snap: Dictionary = _coerce_dict(payload.get("snapshot"))
+	if snap.is_empty():
+		snap = _coerce_dict(lease.get("checkpoint"))
 	_battle = LocalBattle.new()
-	_battle.name = "LocalBattleHost"
 	_battle_host = EncounterHost.new()
-	if _overworld.get("_actors_root") != null:
-		_overworld._actors_root.add_child(_battle)
-	else:
-		add_child(_battle)
-	_append_long_event("Hosting LocalBattle for %s" % active_id)
+	if _battle_host.has_method("acknowledge"):
+		_battle_host.acknowledge(lease)
+	_battle.bind_lease({
+		"lease_id": lease.get("lease_id"),
+		"version": lease.get("version"),
+		"checkpoint_hash": lease.get("checkpoint_hash"),
+		"snapshot": snap,
+	})
+	_battle_lease_opened = true
+	_hosted_battle_id = active_id
+	_battle_ckpt_acc = 0.0
+	_append_long_event("Hosting LocalBattle lease for %s (was %s)" % [active_id, active_state])
+
 
 
 func _exit_tree() -> void:

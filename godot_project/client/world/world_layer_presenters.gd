@@ -113,6 +113,9 @@ func _upsert_cart(e: Dictionary) -> void:
 		_by_id[id] = node
 	node.position = _grid_pos(e)
 	node.z_index = 6
+	node.set_meta("sim_id", id)
+	node.set_meta("sim_kind", "cart")
+	node.set_meta("sim_role", "body")
 	var faction := str(e.get("faction_id", ""))
 	var color := VisualLanguage.faction_color(faction)
 	(node.get_node("Body") as Polygon2D).color = Color(0.55, 0.4, 0.25)
@@ -152,6 +155,9 @@ func _upsert_soldier(e: Dictionary) -> void:
 		_by_id[id] = node
 	node.set_meta("unit_id", str(e.get("unit_id", id)))
 	node.set_meta("person_id", str(e.get("person_id", "")))
+	node.set_meta("sim_id", str(e.get("unit_id", id)))
+	node.set_meta("sim_kind", "soldier")
+	node.set_meta("sim_role", "body")
 	node.position = _grid_pos(e)
 	node.z_index = 7
 	var arch := str(e.get("archetype", "line"))
@@ -269,6 +275,11 @@ func _upsert_construction(e: Dictionary) -> void:
 		label.custom_minimum_size = Vector2(80, 0)
 		node.add_child(label)
 		_by_id[id] = node
+	node.set_meta("sim_id", id)
+	node.set_meta("sim_kind", "construction")
+	node.set_meta("sim_role", "body")
+	if e.get("order_id") != null:
+		node.set_meta("order_id", str(e.get("order_id")))
 	node.position = _grid_pos(e)
 	node.z_index = 4
 	(node.get_node("Label") as Label).text = "Building %s" % str(e.get("action", "work"))

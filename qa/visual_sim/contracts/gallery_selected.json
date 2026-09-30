@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "id": "gal_smoke",
+      "scenario_class": "ARRANGED_STATE",
+      "contract": "smoke_boot.json"
+    },
+    {
+      "id": "gal_slice_b",
+      "scenario_class": "PRODUCTION_JOURNEY",
+      "contract": "slice_b_construction.json"
+    }
+  ]
+}
