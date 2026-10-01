@@ -16,17 +16,18 @@
       "assertions": ["min_buildings", "min_entities", "image_nonblank"]
     }
   ],
-  "expectations": {
-    "authority": {
-      "min_buildings": 1,
-      "player_node_id": "node:35"
-    },
-    "render": {
-      "min_entities": 1
-    },
-    "image": {
-      "require_nonblank": true,
-      "min_bytes": 500
+    "expectations": {
+      "authority": {
+        "min_buildings": 1,
+        "player_node_id": "node:35"
+      },
+      "render": {
+        "min_node_backed": 1,
+        "kinds_present": ["player"]
+      },
+      "image": {
+        "require_nonblank": true,
+        "min_bytes": 500
+      }
     }
-  }
 }

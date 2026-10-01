@@ -6,52 +6,68 @@ from typing import Any
 
 
 def assert_unique_body_per_sim_id(render: dict[str, Any], *, sim_ids: list[str] | None = None) -> None:
-    """Exactly one body role per sim_id (labels/markers do not count as duplicates)."""
+    """Exactly one node-backed body per sim_id (labels/controls/registered do not count)."""
     counts: dict[str, int] = {}
     for ent in render.get("entities") or []:
-        if str(ent.get("role") or "body") != "body":
+        if str(ent.get("role") or "") != "body":
             continue
-        if str(ent.get("source") or "") not in {"", "layers", "overworld"}:
+        if str(ent.get("observation") or "") == "dict_only_no_node":
             continue
-        # Prefer layers when both exist — count layers only if present for id.
+        if ent.get("node_backed") is False:
+            continue
         sid = str(ent.get("sim_id") or "")
         if not sid:
             continue
         if sim_ids is not None and sid not in sim_ids:
             continue
         counts[sid] = counts.get(sid, 0) + 1
-    # If both layers+overworld emit same id, allow up to 2 presentation channels
-    # but never more than one per source.
-    by_source: dict[tuple[str, str], int] = {}
-    for ent in render.get("entities") or []:
-        if str(ent.get("role") or "body") != "body":
-            continue
-        sid = str(ent.get("sim_id") or "")
-        src = str(ent.get("source") or "layers")
-        if sim_ids is not None and sid not in sim_ids:
-            continue
-        key = (sid, src)
-        by_source[key] = by_source.get(key, 0) + 1
-    for (sid, src), n in by_source.items():
+    for sid, n in counts.items():
         if n > 1:
-            raise AssertionError(f"duplicate body sim_id={sid} source={src} count={n}")
+            raise AssertionError(f"duplicate body sim_id={sid} count={n}")
+    if sim_ids:
+        for sid in sim_ids:
+            if counts.get(sid, 0) != 1:
+                raise AssertionError(f"expected exactly one body for sim_id={sid} got {counts.get(sid, 0)}")
 
 
-def assert_committed_order_without_active_scaffold(authority: dict[str, Any], order_id: str) -> None:
+def assert_committed_order_without_active_scaffold(
+    authority: dict[str, Any],
+    render: dict[str, Any],
+    order_id: str,
+) -> None:
+    """Authority says committed AND render has no construction scaffold body for that order."""
     order = (authority.get("orders") or {}).get(order_id)
-    assert order is not None, order_id
-    assert order.get("status") == "committed", order
-    # No non-committed duplicate order id.
-    assert order_id in (authority.get("orders") or {})
+    if order is None:
+        raise AssertionError(f"missing order {order_id}")
+    if order.get("status") != "committed":
+        raise AssertionError(f"order {order_id} status={order.get('status')}")
+    scaffolds = [
+        e
+        for e in (render.get("entities") or [])
+        if str(e.get("sim_id")) == order_id
+        and str(e.get("role")) == "body"
+        and str(e.get("sim_kind")) == "construction"
+        and bool(e.get("node_backed", False))
+        and bool(e.get("visible_in_tree", False))
+    ]
+    if scaffolds:
+        raise AssertionError(f"stale scaffold still rendered for {order_id}: {scaffolds}")
 
 
 def assert_lease_closed(authority: dict[str, Any], battle_id: str | None = None) -> None:
-    leases = []
-    # Leases are not always in observe_authority — check battles not stuck LOCAL without closure evidence.
+    """Battle must not remain LOCAL with an active lease after CloseBattleLease."""
+    leases = authority.get("leases") or {}
     for bid, b in (authority.get("battles") or {}).items():
         if battle_id and bid != battle_id:
             continue
-        leases.append(b)
-    # After CloseBattleLease, battle should not remain LOCAL with active lease requirement.
-    for b in leases:
-        assert str(b.get("state")) != "LOCAL" or not b.get("lease_id") or True
+        state = str(b.get("state") or "")
+        lease_id = b.get("lease_id")
+        if state == "LOCAL" and lease_id:
+            lease = leases.get(str(lease_id)) or {}
+            if str(lease.get("state") or "") == "ACTIVE":
+                raise AssertionError(f"battle {bid} still LOCAL with ACTIVE lease {lease_id}")
+        if lease_id:
+            lease = leases.get(str(lease_id)) or {}
+            if str(lease.get("state") or "") == "ACTIVE" and state not in {"LOCAL", "ACTIVE", "PENDING"}:
+                # Closed battles should not keep ACTIVE leases.
+                raise AssertionError(f"stale ACTIVE lease {lease_id} for battle {bid} state={state}")

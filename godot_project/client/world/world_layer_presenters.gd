@@ -102,10 +102,13 @@ func _upsert_cart(e: Dictionary) -> void:
 		node.add_child(accent)
 		var label := Label.new()
 		label.name = "Label"
-		label.position = Vector2(-28, 12)
+		label.position = Vector2(-28, 14)
 		label.add_theme_font_size_override("font_size", 10)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.custom_minimum_size = Vector2(56, 0)
+		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		label.set_meta("sim_role", "label")
+		label.set_meta("sim_kind", "label")
 		node.add_child(label)
 		var pips := Node2D.new()
 		pips.name = "Pips"

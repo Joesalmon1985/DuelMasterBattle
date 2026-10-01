@@ -59,14 +59,17 @@ def check_image(path: str | Path, *, expect_size: tuple[int, int] | None = None)
         if max(r, g, b) - min(r, g, b) < 8:
             grey += 1
     grey_frac = grey / total if total else 1.0
-    near_blank = stddev < NEAR_BLANK_STDDEV and grey_frac >= NEAR_BLANK_GREY_FRAC
+    # Solid-coloured frames (low variance) fail even when saturated, not only grey.
+    solid = stddev < NEAR_BLANK_STDDEV
+    near_blank = solid and grey_frac >= NEAR_BLANK_GREY_FRAC
     out["near_blank"] = near_blank
+    out["solid_colour"] = solid
     out["stddev"] = round(stddev, 3)
     out["grey_frac"] = round(grey_frac, 4)
-    if near_blank:
+    if solid:
         out["status"] = "FAIL"
         out["code"] = "blank_or_missing_screenshot"
-        out["reason"] = "near_blank"
+        out["reason"] = "near_blank" if near_blank else "solid_colour"
     return out
 
 

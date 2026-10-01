@@ -242,19 +242,20 @@ func _make_content_slot() -> Control:
 	var slot := Control.new()
 	slot.visible = false
 	slot.mouse_filter = Control.MOUSE_FILTER_STOP
-	# Do not clip — lean spell buttons must remain pointer-reachable.
-	slot.clip_contents = false
+	# Clip text/artwork overflow inside the parchment content rect; buttons stay in-slot.
+	slot.clip_contents = true
 	return slot
 
 
 func _mount_page_box(slot: Control) -> VBoxContainer:
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 8)
-	margin.add_theme_constant_override("margin_right", 8)
-	margin.add_theme_constant_override("margin_top", 8)
-	margin.add_theme_constant_override("margin_bottom", 8)
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
 	margin.mouse_filter = Control.MOUSE_FILTER_STOP
+	margin.clip_contents = true
 	slot.add_child(margin)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)

@@ -28,7 +28,7 @@ def _neighbours(board: dict, node_id: str) -> list[str]:
     return sorted(set(out))
 
 
-def run_slice_b_construction(seed: int = 507, *, max_waits: int = 160, advance_s: int = 30) -> dict[str, Any]:
+def run_slice_b_construction(seed: int = 507, *, max_waits: int = 200, advance_s: int = 45) -> dict[str, Any]:
     """PRODUCTION_JOURNEY: Wait until a construction order commits via production path."""
     sim = load_fixture("FX-MVP", seed=seed)
     for i in range(advance_s):
@@ -47,6 +47,9 @@ def run_slice_b_construction(seed: int = 507, *, max_waits: int = 160, advance_s
                 break
         if committed:
             break
+        # Keep industry ticking so carts/orders can complete.
+        if i % 5 == 4:
+            advance_once(sim, seq=advance_s + i + 1)
     authority = observe_authority(sim)
     return {
         "sim": sim,

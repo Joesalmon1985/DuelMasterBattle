@@ -109,30 +109,44 @@ func _ready() -> void:
 		OS.set_environment("DMB_SAVE_SLOT", G05_SAVE)
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Exclusive top HUD strip — status + time do not share the same band.
+	var hud_strip := Control.new()
+	hud_strip.name = "HudStrip"
+	hud_strip.set_anchors_preset(PRESET_TOP_WIDE)
+	hud_strip.offset_left = 0
+	hud_strip.offset_top = 0
+	hud_strip.offset_right = 0
+	hud_strip.offset_bottom = 52
+	hud_strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_strip.clip_contents = true
+	hud_strip.set_meta("hud_exclusion", true)
+	add_child(hud_strip)
 	_status = Label.new()
 	_status.name = "StatusLabel"
 	_status.set_anchors_preset(PRESET_TOP_WIDE)
 	_status.offset_left = 8
-	_status.offset_top = 4
+	_status.offset_top = 2
 	_status.offset_right = -8
-	_status.offset_bottom = 28
+	_status.offset_bottom = 26
 	_status.add_theme_font_size_override("font_size", 12)
 	_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_status.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_status.clip_text = true
 	_status.text = "Prehistoric world — walk the board"
-	add_child(_status)
+	hud_strip.add_child(_status)
 	_time_hud = Label.new()
 	_time_hud.name = "TimeHud"
 	_time_hud.set_anchors_preset(PRESET_TOP_WIDE)
 	_time_hud.offset_left = 8
-	_time_hud.offset_top = 28
+	_time_hud.offset_top = 26
 	_time_hud.offset_right = -8
 	_time_hud.offset_bottom = 48
 	_time_hud.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_time_hud.add_theme_font_size_override("font_size", 12)
 	_time_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_time_hud.clip_text = true
 	_time_hud.text = "Turn — · Game Time: …"
-	add_child(_time_hud)
+	hud_strip.add_child(_time_hud)
 	_clock = ClockDriver.new()
 	_clock.advance_requested.connect(_on_clock_advance)
 	_launcher = SidecarLauncher.new()

@@ -24,9 +24,15 @@ def test_smoke_contract_loads_and_sim_authority_independent() -> None:
     assert contract["expectations"]["authority"]["player_node_id"] == "node:35"
     assert authority["player_node_id"] == "node:35"
     assert authority["counts"]["buildings"] >= 1
-    result = run_oracle(contract, authority=authority)
+    # Sim-only: evaluate authority expectations without requiring render/image layers.
+    auth_contract = {
+        **contract,
+        "expectations": {"authority": contract["expectations"]["authority"]},
+    }
+    result = run_oracle(auth_contract, authority=authority, require_assertions=True)
     assert result["status"] == "PASS"
     assert result["scenario_class"] == "ARRANGED_STATE"
+    assert result["assertion_count"] >= 1
 
 
 def test_oracle_missing_render_entity() -> None:

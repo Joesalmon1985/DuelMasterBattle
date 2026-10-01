@@ -195,6 +195,9 @@ func _build_layers() -> void:
 	_john.centered = false
 	_john.scale = Vector2(TILE_SCALE, TILE_SCALE)
 	_john.z_index = 10
+	_john.set_meta("sim_id", "player:wizard")
+	_john.set_meta("sim_kind", "player")
+	_john.set_meta("sim_role", "body")
 	_actors_root.add_child(_john)
 
 
@@ -570,6 +573,10 @@ func _spawn_entity(e: Dictionary) -> void:
 	_entities.append(e)
 	if e["kind"] in ["fire", "pickup", "creature", "wizard", "npc", "corpse", "sign", "door", "logs"]:
 		_entity_at[pos] = e
+	if node != null:
+		node.set_meta("sim_id", str(e.get("id", "")))
+		node.set_meta("sim_kind", str(e.get("kind", "entity")))
+		node.set_meta("sim_role", "body")
 	if node != null and e.get("semantic") is Dictionary:
 		_attach_semantic_label(e, node)
 	_ensure_semantic(e, node)

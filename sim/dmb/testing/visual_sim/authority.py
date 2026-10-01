@@ -2,17 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-from sim.dmb.core.world import WorldSim
+if TYPE_CHECKING:
+    from sim.dmb.core.state import WorldState
+    from sim.dmb.core.world import WorldSim
 
 
-def observe_authority(sim: WorldSim) -> dict[str, Any]:
-    """Snapshot kernel-relevant authoritative fields from the live WorldSim.
-
-    Never builds expectations. Does not mutate state.
-    """
-    state = sim.state
+def observe_authority_from_state(state: "WorldState") -> dict[str, Any]:
+    """Snapshot kernel-relevant authoritative fields. Never builds expectations."""
     player = dict(state.player or {})
     formations = {
         fid: {
@@ -22,6 +20,7 @@ def observe_authority(sim: WorldSim) -> dict[str, Any]:
             "unit_ids": list(f.get("unit_ids") or f.get("members") or []),
             "status": f.get("status"),
             "objective": f.get("objective"),
+            "engagement_id": f.get("engagement_id"),
         }
         for fid, f in (state.formations or {}).items()
     }
@@ -35,6 +34,7 @@ def observe_authority(sim: WorldSim) -> dict[str, Any]:
             "archetype": u.get("archetype"),
             "hp": u.get("hp"),
             "alive": u.get("alive", True),
+            "lease_id": u.get("lease_id"),
         }
         for uid, u in (state.units or {}).items()
     }
@@ -70,8 +70,10 @@ def observe_authority(sim: WorldSim) -> dict[str, Any]:
             "id": bid,
             "node_id": b.get("node_id"),
             "state": b.get("state"),
-            "participants": b.get("participants") or b.get("formation_ids") or b.get("sides"),
+            "participants": list(b.get("participants") or []),
             "outcome": b.get("outcome") or b.get("result"),
+            "lease_id": b.get("lease_id") or b.get("local_lease_id"),
+            "prefer_local": b.get("prefer_local"),
         }
         for bid, b in (state.battles or {}).items()
     }
@@ -79,11 +81,21 @@ def observe_authority(sim: WorldSim) -> dict[str, Any]:
         rid: {"id": rid, "edge": r.get("edge") or r.get("nodes"), "faction_id": r.get("faction_id")}
         for rid, r in (state.roads or {}).items()
     }
+    leases = {
+        lid: {
+            "lease_id": lid,
+            "kind": L.get("kind"),
+            "state": L.get("state"),
+            "battle_id": L.get("battle_id"),
+            "entity_ids": list(L.get("entity_ids") or []),
+        }
+        for lid, L in (state.leases or {}).items()
+    }
     clock = dict(state.clock or {}) if isinstance(state.clock, dict) else {"value": state.clock}
     return {
         "layer": "authority",
         "world_id": state.world_id,
-        "world_version": state.world_version,
+        "world_version": int(state.world_version),
         "rng": list(state.rng) if isinstance(state.rng, (list, tuple)) else state.rng,
         "player_node_id": player.get("node_id"),
         "player": player,
@@ -95,6 +107,7 @@ def observe_authority(sim: WorldSim) -> dict[str, Any]:
             "buildings": len(buildings),
             "battles": len(battles),
             "roads": len(roads),
+            "leases": len(leases),
         },
         "formations": formations,
         "units": units,
@@ -102,7 +115,12 @@ def observe_authority(sim: WorldSim) -> dict[str, Any]:
         "buildings": buildings,
         "battles": battles,
         "roads": roads,
+        "leases": leases,
         "research_keys": sorted((state.research or {}).keys()) if isinstance(state.research, dict) else [],
         "tech_draft_keys": sorted((state.tech_draft or {}).keys()) if isinstance(state.tech_draft, dict) else [],
         "diplomacy_keys": sorted((state.diplomacy or {}).keys()) if isinstance(state.diplomacy, dict) else [],
     }
+
+
+def observe_authority(sim: "WorldSim") -> dict[str, Any]:
+    return observe_authority_from_state(sim.state)

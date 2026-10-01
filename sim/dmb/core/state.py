@@ -181,6 +181,11 @@ class WorldState:
             "knowledge": lambda: __import__(
                 "sim.dmb.narrative.knowledge", fromlist=["export_knowledge_list"]
             ).export_knowledge_list(self),
+            "formations": lambda: deepcopy(self.formations),
+            "roads": lambda: deepcopy(self.roads),
+            "visual_sim_authority": lambda: __import__(
+                "sim.dmb.testing.visual_sim.authority", fromlist=["observe_authority_from_state"]
+            ).observe_authority_from_state(self),
         }
         if scope == "economy":
             # Lean inspector default: exclude receipts / raw knowledge / leases.

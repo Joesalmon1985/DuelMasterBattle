@@ -9,15 +9,16 @@ const TEX_PAGE := "res://assets/sprites/Spellbook/spellpage.png"
 const TEX_CARD := "res://assets/sprites/Spellbook/spellcard.png"
 
 ## Open book (landscape spread) — left/right page rects inside the texture.
-const BOOK_LEFT := Rect2(0.12, 0.18, 0.34, 0.62)
-const BOOK_RIGHT := Rect2(0.52, 0.18, 0.34, 0.62)
+## Inset from parchment edges so text/controls stay inside the drawn page artwork.
+const BOOK_LEFT := Rect2(0.14, 0.20, 0.30, 0.56)
+const BOOK_RIGHT := Rect2(0.54, 0.20, 0.30, 0.56)
 const BOOK_SPINE_GAP := 0.04
 
 ## Single page (portrait information / dialogue).
-const PAGE_CONTENT := Rect2(0.34, 0.18, 0.38, 0.62)
+const PAGE_CONTENT := Rect2(0.36, 0.20, 0.34, 0.56)
 
 ## Compact card.
-const CARD_CONTENT := Rect2(0.36, 0.16, 0.34, 0.64)
+const CARD_CONTENT := Rect2(0.38, 0.18, 0.30, 0.58)
 
 const TEXT_INK := Color("#2a1c12")
 const TEXT_MUTED := Color("#5a4636")
