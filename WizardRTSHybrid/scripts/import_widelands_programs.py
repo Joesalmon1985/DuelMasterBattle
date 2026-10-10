@@ -274,7 +274,7 @@ def parse_action(line: str) -> dict:
         a["target"] = rest.strip()
     elif cmd in ("call", "callworker", "callobject"):
         a["target"] = rest.split()[0] if rest else ""
-    elif cmd == "mine":
+    elif cmd in ("mine", "breed"):
         a["resource"] = rest.split()[0].replace("resource_", "")
         for key in ("radius", "yield", "when_empty"):
             m = re.search(key + r":([\d.]+)", rest)
@@ -285,6 +285,11 @@ def parse_action(line: str) -> dict:
         a["attrib"] = m.group(1) if m else ""
         m = re.search(r"radius:(\d+)", rest)
         a["radius"] = int(m.group(1)) if m else 0
+        m = re.search(r"resource:resource_(\w+)", rest)
+        a["resource"] = m.group(1) if m else ""
+        a["breed"] = bool(re.search(r"\bbreed\b", rest))
+        m = re.search(r"size:(\w+)", rest)
+        a["size"] = m.group(1) if m else ""
     elif cmd == "createware":
         a["ware"] = ware(rest.split()[0]) if rest else ""
     elif cmd == "plant":
@@ -305,7 +310,7 @@ def parse_program(entry) -> list[dict]:
 
 
 BUILDING_COMMANDS = {"consume", "produce", "sleep", "animate", "callworker", "mine", "return", "call", "playsound", "recruit"}
-WORKER_COMMANDS = {"findobject", "findspace", "walk", "animate", "callobject", "createware", "plant", "removeobject", "return", "playsound", "sleep"}
+WORKER_COMMANDS = {"findobject", "findspace", "walk", "animate", "callobject", "createware", "plant", "removeobject", "return", "playsound", "sleep", "mine", "breed"}
 OBJECT_ATTRIBS = {"tree", "rocks", "ripe_wheat", "eatable"}
 SPACE_OK = {"", "tree_sapling", "seed_wheat"}
 
@@ -333,7 +338,7 @@ def executable_worker(programs: dict[str, list[dict]]) -> tuple[bool, list[str]]
                 problems.append(f"{name}: findobject {a['args']}")
             elif a["cmd"] == "plant" and a["attrib"] not in SPACE_OK:
                 problems.append(f"{name}: plant {a['attrib']}")
-            elif a["cmd"] == "findspace" and any(k in a["args"] for k in ("swim", "resource:", "terraform", "ferry", "breed")):
+            elif a["cmd"] == "findspace" and (any(k in a["args"] for k in ("swim", "terraform", "ferry")) or (a.get("resource") and a["resource"] != "fish")):
                 problems.append(f"{name}: findspace {a['args']}")
     return not problems, problems
 

@@ -25,6 +25,7 @@ from sim.dmb.player.visits import VisitService  # noqa: E402
 from sim.dmb.time.clock import ClockService  # noqa: E402
 
 from wizard_rts.coords import hex_center_tile, in_map, neighbors, tile_in_map, tile_to_hex  # noqa: E402
+from wizard_rts import grid, mapgen, terrain as terrain_mod  # noqa: E402
 from wizard_rts.economy import PROVENANCE as ECONOMY_PROVENANCE  # noqa: E402
 from wizard_rts.economy import SCHEDULE_PROVENANCE  # noqa: E402
 from wizard_rts.widelands_stock import EconomyTotals  # noqa: E402
@@ -45,6 +46,15 @@ from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_dama
 
 WORLD_ID = "hybrid.world"
 
+# building size each showcase kind needs on the terrain (Widelands buildcaps: small/medium/big/mine)
+SHOWCASE_SIZE = {
+    "mine": "mine", "ironmine": "mine", "smelter": "medium", "smithy": "medium", "quarry": "small",
+    "tavern": "medium", "farm": "big", "bakery": "medium", "hunter": "small", "well": "small",
+    "barracks": "medium", "vehicle_factory": "big", "defense": "small",
+}
+SHOWCASE_RES = {"mine": "coal", "ironmine": "iron"}
+MIN_MINE_DEPOSIT = 150
+
 # name, axial hex of the capital, display colour (hex RGB)
 FACTIONS = (
     ("Red", (2, 2), "#d63a3a"),
@@ -57,7 +67,17 @@ FACTIONS = (
 
 
 class HybridWorld:
-    def __init__(self, seed: int = 507, minimal: bool = False) -> None:
+    def __init__(self, seed: int = 507, minimal: bool = False, terrain: bool | None = None, map_size: str = "standard") -> None:
+        """terrain=True builds the square-grid Widelands-derived map; terrain=False is the legacy flat world.
+
+        None reads HYBRID_TERRAIN (default "1"). The legacy world stays available so the
+        pre-terrain tests and a flat bench keep working (DECISIONS D5).
+        """
+        if terrain is None:
+            terrain = os.environ.get("HYBRID_TERRAIN", "1") != "0"
+        self.terrain: terrain_mod.TerrainGrid | None = mapgen.generate(int(seed), map_size) if terrain else None
+        self.map_size = map_size
+        self.move_dirs = grid.DIRS4 if terrain else grid.DIRS8
         self.seed = int(seed)
         self.dmb = WorldState(world_id=WorldId(WORLD_ID))
         self.clock = ClockService(self.dmb.clock)
@@ -103,7 +123,115 @@ class HybridWorld:
             self._layout()
 
     def tile_in_map(self, tx: int, ty: int) -> bool:
+        """True where a ground unit, worker, carrier or road may be. With terrain: inside the grid and on land."""
+        if self.terrain is not None:
+            return self.terrain.ground(tx, ty)
         return tile_in_map(tx, ty)
+
+    def state_hash(self) -> str:
+        """SHA-1 of the canonical snapshot plus the live terrain layers: identical seed and commands give identical hashes."""
+        import hashlib
+        import json
+
+        h = hashlib.sha1(json.dumps(self.snapshot(), sort_keys=True, default=str).encode())
+        if self.terrain is not None:
+            h.update(self.terrain.state_hash().encode())
+        return h.hexdigest()
+
+    def tile_speed(self, loco: str | None, x: int, y: int) -> int:
+        """Percent speed of this locomotor on a tile (0 = cannot enter). OpenRA Locomotor.TerrainSpeeds over our terrain classes."""
+        t = self.terrain
+        if t is None:
+            return 100 if (tile_in_map(x, y) and loco not in ("naval", "lcraft")) else 0
+        if not (0 <= x < t.w and 0 <= y < t.h):
+            return 0
+        i = y * t.w + x
+        pct = rules.speed_table(loco or "foot")[t.cls[i]]
+        if pct and t.cls[i] != terrain_mod.WATER and (x, y) in self.road_tile_set:
+            pct = max(pct, rules.road_speed(loco or "foot"))
+        return pct
+
+    def tile_in_bounds(self, tx: int, ty: int) -> bool:
+        if self.terrain is not None:
+            return self.terrain.in_bounds(tx, ty)
+        return tile_in_map(tx, ty)
+
+    # ---- terrain-backed resources (legacy worlds keep the dict) ----------
+    def resource_nodes(self, center: tuple[int, int], radius: int, res: str) -> list[tuple[int, int]]:
+        if self.terrain is not None:
+            return self.terrain.nodes_with(center[0], center[1], radius, res)
+        return [
+            (tx, ty) for (tx, ty), amounts in self.resources.items()
+            if max(abs(tx - center[0]), abs(ty - center[1])) <= radius and amounts.get(res, 0) > 0
+        ]
+
+    def resource_amount(self, node: tuple[int, int], res: str) -> int:
+        if self.terrain is not None:
+            return self.terrain.amount(node[0], node[1], res)
+        return self.resources.get(node, {}).get(res, 0)
+
+    def resource_total(self, center: tuple[int, int], radius: int, res: str) -> int:
+        if self.terrain is not None:
+            return self.terrain.total(center[0], center[1], radius, res)
+        return sum(self.resources.get((center[0] + dx, center[1] + dy), {}).get(res, 0)
+                   for dx in range(-radius, radius + 1) for dy in range(-radius, radius + 1))
+
+    def take_resource(self, node: tuple[int, int], res: str, n: int = 1) -> int:
+        if self.terrain is not None:
+            return self.terrain.take(node[0], node[1], res, n)
+        have = self.resources.get(node, {}).get(res, 0)
+        got = min(have, n)
+        if got:
+            self.resources[node][res] = have - got
+        return got
+
+    def tile_info(self, tx: int, ty: int) -> dict[str, Any]:
+        """What the terrain says about one node (God Mode inspector, tests)."""
+        t = self.terrain
+        if t is None:
+            return {"status": "ok", "terrain": "legacy", "ground": tile_in_map(tx, ty)}
+        if not t.in_bounds(tx, ty):
+            return {"status": "rejected", "reason": "outside_map"}
+        res, amt = t.resource(tx, ty)
+        d = t.terrain_def(tx, ty)
+        i = ty * t.w + tx
+        return {
+            "status": "ok", "terrain": t.terrain_name(tx, ty), "is": d["is"], "height": t.height[i],
+            "ground": t.ground(tx, ty), "swim": t.swimmable(tx, ty), "build": t.build_cap_name(tx, ty),
+            "resource": res, "amount": amt, "depth": t.depth[i], "water_component": t.water_comp[i],
+            "tree": self.tree_tiles.get((tx, ty), ""), "road": (tx, ty) in self.road_tile_set,
+            "fertility": t.environment(tx, ty)[1],
+        }
+
+    def resource_region(self, x0: int, y0: int, x1: int, y1: int, limit: int = 20000) -> list[list[int]]:
+        """[x, y, kind, amount] for every node with a deposit or fish in the rectangle (live amounts)."""
+        t = self.terrain
+        if t is None:
+            return []
+        out: list[list[int]] = []
+        for y in range(max(0, y0), min(t.h, y1 + 1)):
+            for x in range(max(0, x0), min(t.w, x1 + 1)):
+                i = y * t.w + x
+                if t.res_kind[i] in (1, 2, 3, 4, 5) and t.res_amt[i] > 0:
+                    out.append([x, y, t.res_kind[i], t.res_amt[i]])
+                    if len(out) >= limit:
+                        return out
+        return out
+
+    def terrain_free_sites(self, size: str, within=lambda p: True):
+        """Yield free tiles where a building of this size could stand (test and AI helper)."""
+        t = self.terrain
+        for y in range(t.h):
+            for x in range(t.w):
+                p = (x, y)
+                if within(p) and t.can_build(x, y, size) and p not in self.blocked and p not in self.tree_tiles and p not in self.road_tile_set:
+                    yield p
+
+    def can_build(self, tile: tuple[int, int], size: str) -> bool:
+        """Terrain says a building of this size may stand here (always true on the legacy flat world)."""
+        if self.terrain is None:
+            return tile_in_map(*tile)
+        return self.terrain.can_build(tile[0], tile[1], size)
 
     def damage_building(
         self,
@@ -143,7 +271,7 @@ class HybridWorld:
         """One faction with a warehouse and nothing else: an isolated bench for single-building tests."""
         name, (q, r), color = FACTIONS[0]
         faction_id = str(self.dmb.ids.new("faction"))
-        centre = hex_center_tile(q, r)
+        centre = self._home_center(q, r)
         warehouse = self._building(faction_id, name, "warehouse", centre, "Warehouse", "widelands.warehouse")
         self.faction_info[name] = {"id": faction_id, "name": name, "color": color}
         self.player = {"tx": centre[0] + 20, "ty": centre[1], "facing": "up"}
@@ -157,6 +285,8 @@ class HybridWorld:
             wh = con.faction_warehouse(self, name)
             res = con.build_road(self, name, bid, wh["id"])
             assert res["status"] == "ok", res
+        if self.terrain is not None:
+            self._plant_features()
         # Stand just east of the red settlement so the town is in frame at
         # playable zoom. Hex (2, 3)'s center is a full hex away and hides it.
         start = self._stand_near(red["road"])
@@ -164,9 +294,15 @@ class HybridWorld:
         self._place_hazard(red["road_a"])
         self.events.append({"kind": "layout", "factions": [red["faction"], blue["faction"]]})
 
+    def _home_center(self, q: int, r: int) -> tuple[int, int]:
+        if self.terrain is not None:
+            idx = [f[1] for f in FACTIONS].index((q, r))
+            return tuple(self.terrain.starts[idx])
+        return hex_center_tile(q, r)
+
     def _place_faction(self, name: str, q: int, r: int) -> dict[str, Any]:
         faction_id = str(self.dmb.ids.new("faction"))
-        center = hex_center_tile(q, r)
+        center = self._home_center(q, r)
         warehouse_tile = center
         producer_tile = self._offset_owned(q, r, center, -4, 0)
         processor_tile = self._offset_owned(q, r, center, 4, 1)
@@ -194,7 +330,8 @@ class HybridWorld:
             produce(self, warehouse, good, n)
         ranger_tile = self._free_in_hex(q, r, center, -6, 3, set(road_tiles))
         self._building(faction_id, name, "ranger", ranger_tile, "Ranger's hut", "widelands.rangers_hut")
-        self._plant_forest(producer_tile, set(road_tiles))
+        if self.terrain is None:
+            self._plant_forest(producer_tile, set(road_tiles))
         self._place_showcase(faction_id, name, q, r, center, set(road_tiles))
         unit_tile = self._offset_owned(q, r, center, 0, 3)
         self._unit(faction_id, name, "soldier", "Soldier", "widelands.soldier", unit_tile)
@@ -244,15 +381,22 @@ class HybridWorld:
             ("defense", "openra.gun", "Turret", 5, 9),
         )
         for kind, definition, label, dx, dy in specs:
-            tile = self._free_in_hex(q, r, center, dx, dy, road)
+            if self.terrain is not None:
+                tile = self._site(center, dx, dy, SHOWCASE_SIZE[kind], road, SHOWCASE_RES.get(kind))
+            else:
+                tile = self._free_in_hex(q, r, center, dx, dy, road)
             bid = self._building(faction_id, name, kind, tile, label, definition)
             if kind in ("barracks", "vehicle_factory", "mine", "ironmine", "smelter", "smithy", "quarry",
                         "farm", "tavern", "bakery", "hunter", "well"):
                 self._pending_links.append((name, bid))
-            if kind in ("mine", "ironmine"):
-                self._seed_resource(tile, "coal" if kind == "mine" else "iron")
-            if kind == "well":
-                self._seed_resource(tile, "water")
+            if self.terrain is None:
+                if kind in ("mine", "ironmine"):
+                    self._seed_resource(tile, "coal" if kind == "mine" else "iron")
+                if kind == "well":
+                    self._seed_resource(tile, "water")
+        if self.terrain is not None:
+            self._spawn_wildlife(center, road)
+            return
         self._place_scenery(faction_id, name, center, road)
         for res, (dx, dy) in (("gold", (-8, -12)), ("stones", (7, 11))):
             self._seed_resource(self._free_in_hex(q, r, center, dx, dy, road), res)
@@ -262,6 +406,80 @@ class HybridWorld:
                 if tile_to_hex(*tile) == (q, r) and tile_in_map(*tile) and tile not in self.blocked and tile not in road and tile not in self.tree_tiles:
                     spawn_animal(self, tile, "deer" if k % 3 else "bunny")
                     break
+
+    def _site(self, center: tuple[int, int], dx: int, dy: int, size: str | None, avoid: set, res: str | None = None, max_r: int = 45) -> tuple[int, int]:
+        """Nearest free tile to center+(dx, dy) where terrain allows this building size (None: any ground).
+
+        A mine needs a deposit of `res` within the programme radius under it.
+        """
+        px, py = center[0] + dx, center[1] + dy
+        t = self.terrain
+        reach = self._reach_from(center)
+        for r in range(0, max_r + 1):
+            for tile in grid.ring(px, py, r):
+                if tile not in reach:
+                    continue
+                if tile in self.blocked or tile in avoid or tile in self.tree_tiles or tile in self.road_tile_set:
+                    continue
+                if size is None:
+                    if not self.tile_in_map(*tile):
+                        continue
+                elif not t.can_build(tile[0], tile[1], size):
+                    continue
+                if res is not None and t.total(tile[0], tile[1], 2, res) < MIN_MINE_DEPOSIT:
+                    continue
+                return tile
+        raise RuntimeError(f"no {size} site near {(px, py)}" + (f" with {res}" if res else ""))
+
+    def _reach_from(self, centre: tuple[int, int], limit: int = 58) -> dict[tuple[int, int], int]:
+        """Ground tiles within `limit` steps of centre (static terrain only), so a site can always be reached by road."""
+        cache = self.__dict__.setdefault("_reach_cache", {})
+        if centre in cache:
+            return cache[centre]
+        dist = {centre: 0}
+        frontier = [centre]
+        t = self.terrain
+        while frontier:
+            nxt = []
+            for x, y in frontier:
+                d = dist[(x, y)] + 1
+                if d > limit:
+                    continue
+                for dx, dy in grid.DIRS4:
+                    n = (x + dx, y + dy)
+                    if n not in dist and t.ground(*n):
+                        dist[n] = d
+                        nxt.append(n)
+            frontier = nxt
+        cache[centre] = dist
+        return dist
+
+    def _spawn_wildlife(self, center: tuple[int, int], road: set) -> None:
+        for k in range(8):
+            for _ in range(30):
+                tile = (center[0] + self.rng.randint(-18, 18), center[1] + self.rng.randint(-16, 16))
+                if self.tile_in_map(*tile) and tile not in self.blocked and tile not in road and tile not in self.tree_tiles:
+                    spawn_animal(self, tile, "deer" if k % 3 else "bunny")
+                    break
+
+    def _plant_features(self) -> None:
+        """Turn the generator's tree and rock data into persistent world objects."""
+        occupied = self.blocked | self.road_tile_set
+        for x, y, species, stage in self.terrain.features["trees"]:
+            tile = (x, y)
+            if tile in occupied or tile in self.tree_tiles or not self.tile_in_map(x, y):
+                continue
+            tree_id = plant_tree(self, tile, stage, species)
+            self.trees[tree_id]["timer_ms"] = int(self.trees[tree_id]["timer_ms"] * (0.2 + 0.8 * self.rng.random()))
+        for x, y in self.terrain.features["rocks"]:
+            tile = (x, y)
+            if tile in occupied or tile in self.tree_tiles or not self.tile_in_map(x, y):
+                continue
+            rock_id = new_id(self, "rock")
+            self.rocks[rock_id] = {
+                "id": rock_id, "class": "rock", "kind": "rock", "definition": "widelands.rocks",
+                "tx": x, "ty": y, "amount": ROCK_AMOUNT, "reserved_by": "",
+            }
 
     def _seed_resource(self, around: tuple[int, int], resource: str) -> None:
         """A 5 by 5 resource field centred on the mine (the programme radius is 2)."""
@@ -360,6 +578,8 @@ class HybridWorld:
         dy: int,
         avoid: set[tuple[int, int]],
     ) -> tuple[int, int]:
+        if self.terrain is not None:
+            return self._site(center, dx, dy, "small", avoid)
         preferred = (center[0] + dx, center[1] + dy)
         if self._tile_open_anywhere(preferred, avoid):
             return preferred
@@ -372,7 +592,7 @@ class HybridWorld:
         raise RuntimeError(f"no free tile in hex {(q, r)}")
 
     def _tile_open_anywhere(self, tile: tuple[int, int], avoid: set[tuple[int, int]]) -> bool:
-        if tile in self.blocked or tile in avoid or not tile_in_map(*tile):
+        if tile in self.blocked or tile in avoid or not self.tile_in_map(*tile):
             return False
         return True
 
@@ -384,6 +604,9 @@ class HybridWorld:
     def _stand_near(self, road: list[tuple[int, int]]) -> tuple[int, int]:
         blocked = self.blocked
         road_set = set(road)
+        if self.terrain is not None:
+            cx, cy = self.terrain.starts[0]
+            return self._site((cx, cy), 17, 2, None, road_set)
         for tile in ((100, 50), (102, 52), (98, 54), (104, 48), (96, 56)):
             east = (tile[0] + 1, tile[1])
             if tile in blocked or tile in road_set or east in blocked:
@@ -393,6 +616,8 @@ class HybridWorld:
         return hex_center_tile(2, 3)
 
     def _offset_owned(self, q: int, r: int, center: tuple[int, int], dx: int, dy: int) -> tuple[int, int]:
+        if self.terrain is not None:
+            return self._site(center, dx, dy, "small", set())
         tile = (center[0] + dx, center[1] + dy)
         if tile_to_hex(*tile) == (q, r) and tile not in self.blocked:
             return tile
@@ -417,7 +642,7 @@ class HybridWorld:
     def set_pose(self, tx: int, ty: int, facing: str = "down") -> dict[str, Any]:
         game_ms = int(self.dmb.clock.get("game_ms", 0))
         tile = (int(tx), int(ty))
-        if not tile_in_map(*tile):
+        if not self.tile_in_map(*tile):
             return {"status": "rejected", "reason": "outside_map", "snapshot": self.snapshot()}
         if tile in self.blocked:
             return {"status": "rejected", "reason": "blocked", "snapshot": self.snapshot()}
@@ -577,11 +802,7 @@ class HybridWorld:
                 row["working"] = True
             if building["kind"] in ("mine", "ironmine", "well"):
                 res = {"mine": "coal", "ironmine": "iron", "well": "water"}[building["kind"]]
-                row["deposit_left"] = sum(
-                    self.resources.get((building["tx"] + dx, building["ty"] + dy), {}).get(res, 0)
-                    for dy in range(-2, 3)
-                    for dx in range(-2, 3)
-                )
+                row["deposit_left"] = self.resource_total((building["tx"], building["ty"]), 2, res)
                 row["deposit_exhausted"] = bool(building.get("deposit_exhausted"))
             entities.append(row)
         for carrier in self.carriers.values():
@@ -680,7 +901,7 @@ class HybridWorld:
             "factions": list(self.faction_info.values()),
             "controlled_faction": self.controlled_faction,
             "economy_totals": dict(self.economy_totals.totals),
-            "map": {"q": 20, "r": 20},
+            "map": ({"q": 20, "r": 20} if self.terrain is None else {"w": self.terrain.w, "h": self.terrain.h, "static_hash": self.terrain.static_hash()}),
             "neighbor_sample": neighbors(q, r),
             "in_map": in_map(q, r),
         }

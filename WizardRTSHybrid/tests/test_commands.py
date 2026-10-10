@@ -96,6 +96,9 @@ def test_barracks_queue_consumes_delivered_goods_and_unit_obeys_move() -> None:
     unit = max(new, key=lambda u: int(u["id"].split(":")[1]))
     start = (unit["tx"], unit["ty"])
     goal = (start[0] + 9, start[1] + 4)
+    if not w.tile_in_map(*goal):  # terrain worlds may have water or a mountain at that offset: nearest ground tile
+        goal = min(((x, y) for x in range(goal[0] - 6, goal[0] + 7) for y in range(goal[1] - 6, goal[1] + 7) if w.tile_in_map(x, y) and (x, y) not in w.blocked),
+                   key=lambda t: abs(t[0] - goal[0]) + abs(t[1] - goal[1]))
     assert w.move([unit["id"]], *goal)["status"] == "ok"
     _run(w, lambda: (unit["tx"], unit["ty"]) == goal or not unit.get("order"), 120_000)
     assert (unit["tx"], unit["ty"]) != start and max(abs(unit["tx"] - goal[0]), abs(unit["ty"] - goal[1])) <= 2

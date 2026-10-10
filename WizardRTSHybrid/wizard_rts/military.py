@@ -36,15 +36,20 @@ def apply_hit(hp: int, max_hp: int = 12) -> int:
 def init_unit(unit: dict) -> None:
     r = rules.actor(unit["definition"])
     if r is None:
-        unit.update(hp=12, max_hp=12, armor="None", move_ms=760, weapon=None, cooldown_ms=0, target=None)
+        unit.update(hp=12, max_hp=12, armor="None", move_ms=760, weapon=None, weapons=[], cds={}, loco="foot", cooldown_ms=0, target=None)
         return
     unit["hp"] = unit["max_hp"] = int(r["hp"])
     unit["armor"] = r["armor"] or "None"
     unit["move_ms"] = rules.ms_per_cell(int(r["speed"])) if r["speed"] else 760
-    w = rules.weapon(r["armaments"][0]) if r["armaments"] else None
-    unit["weapon"] = r["armaments"][0] if w else None
+    unit["loco"] = r.get("locomotor") or "foot"
+    unit["weapons"] = [n for n in r["armaments"] if rules.weapon(n)]
+    unit["cds"] = {n: 0 for n in unit["weapons"]}
+    unit["weapon"] = unit["weapons"][0] if unit["weapons"] else None
     unit["cooldown_ms"] = 0
     unit["target"] = None
+    if r.get("cloak"):
+        unit["cloaked"] = True  # OpenRA Cloak with InitialDelay 0
+        unit["uncloak_ms"] = 0
 
 
 def building_weapon(b: dict) -> dict | None:
@@ -53,6 +58,78 @@ def building_weapon(b: dict) -> dict | None:
     if r and r["armaments"] and b.get("operational", True):
         return rules.weapon(r["armaments"][0])
     return None
+
+
+# ------------------------------------------------------------------ target types, cloaking, detection
+
+def _conditions(entity: dict) -> set[str]:
+    out = set()
+    if entity.get("cloaked"):
+        out.add("underwater")
+    if int(entity.get("hp", 1)) < int(entity.get("max_hp", 1)):
+        out.add("damaged")
+    return out
+
+
+def _requires_ok(expr: str, conds: set[str]) -> bool:
+    if not expr:
+        return True
+    for part in expr.split("&&"):
+        part = part.strip()
+        if part.startswith("!"):
+            if part[1:] in conds:
+                return False
+        elif part not in conds:
+            return False
+    return True
+
+
+def target_types(entity: dict) -> set[str]:
+    """OpenRA Targetable.TargetTypes of an entity right now (conditions such as a cloaked submarine apply)."""
+    definition = entity.get("definition", "")
+    r = rules.actor(definition) if (definition.startswith("openra.") or definition == "widelands.soldier") else None
+    if r is None:
+        return {"GroundActor", "Structure"} if "target_type" in entity else {"GroundActor"}  # Widelands buildings and units
+    targ = r.get("targetable")
+    if not targ:
+        return set(r.get("target_types", []))
+    conds = _conditions(entity)
+    out: set[str] = set()
+    for spec in targ.values():
+        if _requires_ok(spec.get("requires", ""), conds):
+            out.update(spec["types"])
+    return out
+
+
+def update_cloak(unit: dict) -> None:
+    """Cloak: hidden unless it fired in the last CloakDelay or is critically damaged (GrantConditionOnDamageState Critical)."""
+    r = rules.actor(unit["definition"])
+    if not r or not r.get("cloak"):
+        return
+    unit["uncloak_ms"] = max(0, int(unit.get("uncloak_ms", 0)) - 100)
+    critical = int(unit["hp"]) * 4 <= int(unit["max_hp"])
+    unit["cloaked"] = unit["uncloak_ms"] <= 0 and not critical
+
+
+def detected_by(world: Any, faction: str, target: dict) -> bool:
+    """A cloaked target can only be attacked while a friendly DetectCloaked actor of a matching type is in range."""
+    if not target.get("cloaked"):
+        return True
+    r = rules.actor(target["definition"]) or {}
+    kinds = set((r.get("cloak") or {}).get("detection_types", []))
+    for pool in (world.units.values(), world.buildings.values()):
+        for e in pool:
+            if e["faction"] != faction or not e.get("alive", True) or ("hp" in e and int(e["hp"]) <= 0) or e.get("constructing"):
+                continue
+            er = rules.actor(e.get("definition", "")) if e.get("definition", "").startswith("openra.") else None
+            det = (er or {}).get("detect")
+            if det and kinds & set(det["types"]) and _dist(e["tx"], e["ty"], target["tx"], target["ty"]) <= float(det["range"]):
+                return True
+    return False
+
+
+def weapon_can_attack(world: Any, faction: str, w: dict, entity: dict) -> bool:
+    return rules.can_hit(w, target_types(entity)) and detected_by(world, faction, entity)
 
 
 # ------------------------------------------------------------------ geometry
@@ -86,13 +163,18 @@ def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.
         unit["path"] = []
         return "arrived"
     others = _occupied(world, unit)
+    loco = unit.get("loco")
     if not unit.get("path") or unit.get("path_goal") != list(goal):
-        path = find_path(world, here, goal, limit=400, avoid=others)
+        path = find_path(world, here, goal, limit=400, avoid=others, max_nodes=400_000, loco=loco)
+        if path is None and loco in ("naval", "lcraft"):
+            path = _path_toward(world, here, goal, others, loco)  # a ship goes as near as the water allows
         if path is None:
             unit["status"] = "stuck"
             return "stuck"
         unit["path"], unit["path_goal"] = path, list(goal)
         unit["progress_ms"] = 0
+    if not unit["path"]:
+        return "arrived"
     nxt = unit["path"][0]
     if nxt in others:
         unit["blocked_ms"] = unit.get("blocked_ms", 0) + 100
@@ -104,13 +186,40 @@ def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.
     unit["blocked_ms"] = 0
     unit["progress_ms"] = unit.get("progress_ms", 0) + 100
     unit["status"] = "moving"
-    if unit["progress_ms"] >= unit.get("move_ms", 760):
+    # OpenRA Locomotor.TerrainSpeeds: the percent speed of the terrain being entered (roads are faster)
+    pct = world.tile_speed(loco, nxt[0], nxt[1]) if loco else 100
+    if pct <= 0:
+        unit["path"] = []
+        return "moving"
+    if unit["progress_ms"] * pct >= unit.get("move_ms", 760) * 100:
         unit["facing"] = _facing(nxt[0] - here[0], nxt[1] - here[1])
         unit["tx"], unit["ty"] = nxt
         unit["path"].pop(0)
         unit["progress_ms"] = 0
         world.stats["move"] += 1
     return "moving"
+
+
+def _path_toward(world: Any, here: tuple[int, int], goal: tuple[int, int], others: set, loco: str) -> list[tuple[int, int]] | None:
+    """When the goal itself cannot be entered (a ship ordered to a shore tile), path to the nearest enterable tile."""
+    best = None
+    for r in range(1, 12):
+        for dx in range(-r, r + 1):
+            for dy in range(-r, r + 1):
+                if max(abs(dx), abs(dy)) != r:
+                    continue
+                t = (goal[0] + dx, goal[1] + dy)
+                if world.tile_speed(loco, t[0], t[1]) > 0 and t not in others:
+                    d = abs(dx) + abs(dy)
+                    if best is None or d < best[0]:
+                        best = (d, t)
+        if best is not None:
+            break
+    if best is None:
+        return None
+    from wizard_rts.workers import find_path
+
+    return find_path(world, here, best[1], limit=400, avoid=others, max_nodes=400_000, loco=loco)
 
 
 # ------------------------------------------------------------------ targets
@@ -141,7 +250,7 @@ def _build_grid(world: Any) -> None:
     world._grid = grid
 
 
-def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float) -> dict | None:
+def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float, weapon: dict | None = None) -> dict | None:
     """Nearest enemy unit, or building if no unit, within radius (cells). Uses the per-scan grid."""
     grid = getattr(world, "_grid", None)
     if grid is None:
@@ -159,12 +268,16 @@ def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float) -> 
             for u in cell[0]:
                 if u["faction"] == faction or not u.get("alive", True):
                     continue
+                if weapon is not None and not weapon_can_attack(world, faction, weapon, u):
+                    continue
                 d = _dist(pos[0], pos[1], u["tx"], u["ty"])
                 if d <= radius and (best_u is None or d < best_u[0]):
                     best_u = (d, u)
             if best_u is None:
                 for b in cell[1]:
                     if b["faction"] == faction or int(b["hp"]) <= 0:
+                        continue
+                    if weapon is not None and not rules.can_hit(weapon, target_types(b)):
                         continue
                     d = _dist(pos[0], pos[1], b["tx"], b["ty"])
                     if d <= radius and (best_b is None or d < best_b[0]):
@@ -178,6 +291,10 @@ def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float) -> 
 
 def _fire(world: Any, shooter: dict, w: dict, target: dict, entity: dict, dist: float) -> None:
     """One volley. Damage lands after the projectile's flight time."""
+    sr = rules.actor(shooter.get("definition", "")) if shooter.get("definition", "").startswith("openra.") else None
+    if sr and sr.get("cloak"):
+        shooter["uncloak_ms"] = int(sr["cloak"]["delay_ticks"]) * rules.TICK_MS  # Cloak UncloakOn Attack
+        shooter["cloaked"] = False
     speed = int(w.get("projectile_speed") or 0)
     flight_ms = int(dist * 1024 / speed * 40) if speed else 0
     for k in range(int(w.get("burst", 1))):
@@ -199,7 +316,10 @@ def _apply_warheads(world: Any, p: dict) -> None:
     if pos is None:
         return
     entity = pos[2]
+    types = target_types(entity)
     for wh in p["warheads"]:
+        if not rules.warhead_hits(wh, types):
+            continue
         if p["target"]["kind"] == "building":
             world.damage_building(p["target"]["id"], int(wh["damage"]), ["structure"], wh.get("versus", {}) or {})
             continue
@@ -256,23 +376,28 @@ def order_attack(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
 
 
 def order_move(world: Any, unit_ids: list[str], tx: int, ty: int, attack_move: bool = False) -> dict[str, Any]:
-    if not world.tile_in_map(int(tx), int(ty)):
+    if not world.tile_in_bounds(int(tx), int(ty)):
         return {"status": "rejected", "reason": "outside_map"}
     moved = 0
     for k, uid in enumerate(unit_ids):
         unit = world.units.get(uid)
         if unit is None or not unit.get("alive", True):
             continue
+        loco = unit.get("loco")
         ox, oy = k % 3 - 1, k // 3 - 1  # spread a group into a loose block
         goal = [int(tx) + ox, int(ty) + oy]
-        if not world.tile_in_map(*goal) or tuple(goal) in world.blocked:
+        if world.tile_speed(loco, *goal) <= 0 or tuple(goal) in world.blocked:
             goal = [int(tx), int(ty)]
+        if world.tile_speed(loco, *goal) <= 0:
+            continue  # this locomotor cannot enter that terrain (a tank into the sea, a ship onto land)
         unit["order"] = {"kind": "attack_move" if attack_move else "move", "tile": goal}
         unit["path"] = []
         unit["target"] = None
         moved += 1
     world.events.append({"kind": "order_attack_move" if attack_move else "order_move", "units": list(unit_ids), "tile": [int(tx), int(ty)]})
-    return {"status": "ok" if moved else "rejected", "moved": moved}
+    if not moved:
+        return {"status": "rejected", "reason": "cannot_enter", "moved": 0}
+    return {"status": "ok", "moved": moved}
 
 
 def order_stop(world: Any, unit_ids: list[str]) -> dict[str, Any]:
@@ -288,16 +413,31 @@ def order_stop(world: Any, unit_ids: list[str]) -> dict[str, Any]:
 
 # ------------------------------------------------------------------ per-unit tick
 
-def _engage(world: Any, unit: dict, w: dict, chase: bool, leash: float) -> bool:
-    """Acquire, chase and shoot. True if the unit used its turn."""
+def _weapon_order(unit: dict) -> list[str]:
+    return unit.get("weapons") or ([unit["weapon"]] if unit.get("weapon") else [])
+
+
+def _engage(world: Any, unit: dict, w: dict | None, chase: bool, leash: float) -> bool:
+    """Acquire, chase and shoot with whichever armament can hit something. True if the unit used its turn."""
     pos = (unit["tx"], unit["ty"])
+    names = _weapon_order(unit)
+    if not names:
+        return False
     target = unit.get("target")
     if target is not None and _target_pos(world, target) is None:
         target = unit["target"] = None
+    if target is not None:  # a cloaked submarine that is no longer detected is lost
+        tp = _target_pos(world, target)
+        if tp is not None and target["kind"] == "unit" and not detected_by(world, unit["faction"], tp[2]):
+            target = unit["target"] = None
     if world.military_quanta % SCAN_EVERY == 0 or target is None:
-        found = _scan(world, unit["faction"], pos, w["range"] + (leash if chase else 0.0))
-        if found is not None:
-            target = unit["target"] = found
+        for name in names:
+            wi = rules.weapon(name)
+            found = _scan(world, unit["faction"], pos, wi["range"] + (leash if chase else 0.0), wi)
+            if found is not None:
+                target = unit["target"] = found
+                unit["target_weapon"] = name
+                break
     if target is None:
         return False
     tpos = _target_pos(world, target)
@@ -305,22 +445,35 @@ def _engage(world: Any, unit: dict, w: dict, chase: bool, leash: float) -> bool:
         unit["target"] = None
         return False
     dist = _dist(pos[0], pos[1], tpos[0], tpos[1])
-    if dist <= w["range"]:
+    types = target_types(tpos[2])
+    in_range = None
+    for name in names:
+        wi = rules.weapon(name)
+        if rules.can_hit(wi, types) and dist <= wi["range"]:
+            in_range = (name, wi)
+            break
+    if in_range is not None:
+        name, wi = in_range
         unit["path"] = []
         unit["status"] = "attacking"
         unit["facing"] = _facing(int(tpos[0]) - pos[0], int(tpos[1]) - pos[1])
-        if unit["cooldown_ms"] <= 0 and dist >= w.get("min_range", 0):
-            _fire(world, unit, w, target, tpos[2], dist)
-            unit["cooldown_ms"] = rules.reload_ms(w)
+        if unit["cds"].get(name, 0) <= 0 and dist >= wi.get("min_range", 0):
+            _fire(world, unit, wi, target, tpos[2], dist)
+            unit["cds"][name] = rules.reload_ms(wi)
+            unit["cooldown_ms"] = unit["cds"][unit["weapon"]] if unit.get("weapon") else 0
         return True
     if chase:
-        _walk(world, unit, (int(tpos[0]), int(tpos[1])), stop_within=max(w["range"] - 0.5, 0.5))
+        wi = rules.weapon(unit.get("target_weapon") or names[0]) or rules.weapon(names[0])
+        _walk(world, unit, (int(tpos[0]), int(tpos[1])), stop_within=max(wi["range"] - 0.5, 0.5))
         return True
     return False
 
 
 def _unit_step(world: Any, unit: dict) -> None:
-    unit["cooldown_ms"] = max(0, int(unit.get("cooldown_ms", 0)) - 100)
+    for n in unit.get("cds", {}):
+        unit["cds"][n] = max(0, int(unit["cds"][n]) - 100)
+    unit["cooldown_ms"] = unit["cds"].get(unit.get("weapon"), 0) if unit.get("weapon") else max(0, int(unit.get("cooldown_ms", 0)) - 100)
+    update_cloak(unit)
     w = rules.weapon(unit["weapon"]) if unit.get("weapon") else None
     order = unit.get("order")
     if order is None:
@@ -348,14 +501,22 @@ def _unit_step(world: Any, unit: dict) -> None:
         unit["status"] = "idle"
         return
     dist = _dist(unit["tx"], unit["ty"], building["tx"], building["ty"])
-    if dist <= w["range"]:
+    types = target_types(building)
+    use = next(((n, rules.weapon(n)) for n in _weapon_order(unit) if rules.can_hit(rules.weapon(n), types)), None)
+    if use is None:
+        unit.pop("order", None)
+        unit["status"] = "idle"
+        world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "cannot_hit_target"})
+        return
+    name, wi = use
+    if dist <= wi["range"]:
         unit["path"] = []
         unit["status"] = "attacking"
-        if unit["cooldown_ms"] <= 0:
-            _fire(world, unit, w, {"kind": "building", "id": building["id"]}, building, dist)
-            unit["cooldown_ms"] = rules.reload_ms(w)
+        if unit["cds"].get(name, 0) <= 0:
+            _fire(world, unit, wi, {"kind": "building", "id": building["id"]}, building, dist)
+            unit["cds"][name] = rules.reload_ms(wi)
         return
-    if _walk(world, unit, (building["tx"], building["ty"]), stop_within=max(w["range"] - 0.5, 0.5)) == "stuck":
+    if _walk(world, unit, (building["tx"], building["ty"]), stop_within=max(wi["range"] - 0.5, 0.5)) == "stuck":
         unit.pop("order", None)
         unit["status"] = "idle"
         world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "no_path"})
@@ -370,7 +531,7 @@ def _building_step(world: Any, b: dict) -> None:
     if target is not None and _target_pos(world, target) is None:
         target = b["target"] = None
     if world.military_quanta % SCAN_EVERY == 0 or target is None:
-        b["target"] = target = _scan(world, b["faction"], (b["tx"], b["ty"]), w["range"])
+        b["target"] = target = _scan(world, b["faction"], (b["tx"], b["ty"]), w["range"], w)
     if target is None:
         return
     tpos = _target_pos(world, target)

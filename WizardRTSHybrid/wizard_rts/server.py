@@ -57,6 +57,14 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return world.set_speed(int(message.get("scale", 1)))
     if op == "order":
         return world.order(str(message.get("unit", "")), str(message.get("target", "")))
+    if op == "terrain":
+        if world.terrain is None:
+            return {"status": "ok", "terrain": None}
+        return {"status": "ok", "terrain": world.terrain.wire()}
+    if op == "tile":
+        return world.tile_info(int(message.get("tx", 0)), int(message.get("ty", 0)))
+    if op == "resources":
+        return {"status": "ok", "nodes": world.resource_region(int(message.get("x0", 0)), int(message.get("y0", 0)), int(message.get("x1", 0)), int(message.get("y1", 0)))}
     if op == "interact":
         return world.interact()
     if op == "resolve":

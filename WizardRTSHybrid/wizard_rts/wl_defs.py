@@ -104,7 +104,15 @@ def convert_worker_actions(actions: list[dict]) -> list[tuple[str, dict]]:
             sapl = 5
             if "saplingsearches:" in args:
                 sapl = int(args.split("saplingsearches:")[1].split()[0])
-            out.append(("findspace", {"radius": int(a["radius"] or 3), "avoid": "", "saplingsearches": sapl}))
+            step = {"radius": int(a["radius"] or 3), "avoid": "", "saplingsearches": sapl}
+            if a.get("resource"):
+                step["resource"] = a["resource"]
+                step["breed"] = bool(a.get("breed"))
+            out.append(("findspace", step))
+        elif cmd == "mine":
+            out.append(("mine", {"resource": a["resource"], "radius": int(a["radius"] or 1)}))
+        elif cmd == "breed":
+            out.append(("breed", {"resource": a["resource"], "radius": int(a["radius"] or 1)}))
         elif cmd == "walk":
             out.append(("walk", {"to": a.get("to", "")}))
         elif cmd in ("animate", "sleep"):

@@ -103,6 +103,56 @@ RECIPES: dict[str, dict[str, dict[str, Any]]] = {
 
 # ------------------------------------------------------------------ placement
 
+MENU_SIZE = {
+    "producer": "small", "ranger": "small", "processor": "medium", "farm": "big", "hunter": "small", "well": "small",
+    "tavern": "medium", "bakery": "medium", "mine": "mine", "ironmine": "mine", "quarry": "small",
+    "smelter": "medium", "smithy": "medium", "barracks": "medium", "vehicle_factory": "big", "defense": "small",
+}
+
+
+def _program_steps(kind: str):
+    from wizard_rts.workers import _programs_of
+
+    programs = _programs_of({"kind": kind}) or {}
+    for steps in programs.values():
+        for cmd, args in steps:
+            yield cmd, args
+
+
+def site_size(kind: str, spec: dict[str, Any]) -> str:
+    size = spec.get("size") or MENU_SIZE.get(kind, "small")
+    return size if size in ("small", "medium", "big", "mine", "port") else "small"
+
+
+def terrain_reject(world: Any, kind: str, spec: dict[str, Any], tile: tuple[int, int]) -> str | None:
+    """Why the terrain forbids this building here, or None. Rules: Widelands buildcaps plus what the programmes need."""
+    t = world.terrain
+    if t is None:
+        return None
+    size = site_size(kind, spec)
+    if t.is_water(*tile):
+        return "water"
+    if not t.can_build(tile[0], tile[1], size):
+        return "no_mountain" if size == "mine" else ("no_port_space" if size == "port" else "unsuitable_terrain")
+    spec_w = wl_defs.spec_for_kind(kind)
+    if spec_w:
+        for role in set(spec_w["worker_for_program"].values()):
+            for steps in (wl_defs.worker_programs(role) or {}).values():
+                for cmd, args in steps:
+                    if cmd == "findspace" and args.get("resource") == "fish":
+                        # a fisher or fish breeder needs fish-bearing water within reach of the building
+                        if not t.cells(tile[0], tile[1], int(args["radius"]) + 1, "fish"):
+                            return "no_fish"
+    for cmd, args in _program_steps(kind):
+        if cmd == "mine" and world.resource_total(tile, int(args["radius"]), args["resource"]) <= 0:
+            return "no_deposit"
+        if cmd == "findobject" and args.get("attrib") == "rocks":
+            r = int(args.get("radius", 6))
+            if not any(max(abs(rk["tx"] - tile[0]), abs(rk["ty"] - tile[1])) <= r for rk in world.rocks.values()):
+                return "no_rocks"
+    return None
+
+
 def faction_warehouse(world: Any, faction_name: str) -> dict | None:
     for b in world.buildings.values():
         if b["kind"] == "warehouse" and b["faction_name"] == faction_name:
@@ -118,6 +168,7 @@ def build_spec(kind: str) -> dict[str, Any] | None:
     if spec is None:
         return None
     return {
+        "size": spec.get("size", ""),
         "label": spec["label"], "definition": spec["definition"], "game": "widelands", "tribe": spec["tribe"],
         "cost": dict(spec["cost"]), "cost_source": f"{spec['tribe']}/{spec['name']} buildcost (imported)",
     }
@@ -141,14 +192,19 @@ def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -
         return {"status": "rejected", "reason": "unknown_faction"}
     tile = (int(tx), int(ty))
     home = faction_warehouse(world, faction_name)
-    if not world.tile_in_map(*tile):
+    if not world.tile_in_bounds(*tile):
         return {"status": "rejected", "reason": "outside_map"}
     if home is not None and max(abs(tile[0] - home["tx"]), abs(tile[1] - home["ty"])) > TERRITORY_RADIUS:
         return {"status": "rejected", "reason": "outside_territory"}
     if tile in world.blocked or tile in world.tree_tiles or tile in world.road_tile_set or tile in world.reserved_tiles:
         return {"status": "rejected", "reason": "tile_occupied"}
+    if world.terrain is None and not world.tile_in_map(*tile):
+        return {"status": "rejected", "reason": "outside_map"}
     if any((u["tx"], u["ty"]) == tile for u in world.units.values() if u.get("alive", True)):
         return {"status": "rejected", "reason": "tile_occupied"}
+    why = terrain_reject(world, kind, spec, tile)
+    if why:
+        return {"status": "rejected", "reason": why}
     bid = world._building(info["id"], faction_name, kind, tile, spec["label"], spec["definition"])
     building = world.buildings[bid]
     building["operational"] = False

@@ -2675,8 +2675,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: hunt"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_initiation_site": {
    "tribe": "amazons",
@@ -5640,8 +5640,8 @@
    "spritesheets": {},
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: breed"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_fishers_house": {
    "tribe": "atlanteans",
@@ -5683,8 +5683,8 @@
    "spritesheets": {},
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: fish"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_foresters_house": {
    "tribe": "atlanteans",
@@ -9896,8 +9896,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: fish"
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_gamekeepers_hut": {
    "tribe": "barbarians",
@@ -14583,8 +14583,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: fish"
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_foresters_house": {
    "tribe": "empire",
@@ -31026,7 +31026,10 @@
       "raw": "findspace=size:swim radius:8",
       "args": "size:swim radius:8",
       "attrib": "",
-      "radius": 8
+      "radius": 8,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      },
      {
       "cmd": "walk",
@@ -31121,7 +31124,10 @@
       "raw": "findspace=size:any radius:3 space",
       "args": "size:any radius:3 space",
       "attrib": "",
-      "radius": 3
+      "radius": 3,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -31160,7 +31166,10 @@
       "raw": "findobject=attrib:ripe_cassava radius:3",
       "args": "attrib:ripe_cassava radius:3",
       "attrib": "ripe_cassava",
-      "radius": 3
+      "radius": 3,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -31325,7 +31334,10 @@
       "raw": "findspace=size:any radius:3 space",
       "args": "size:any radius:3 space",
       "attrib": "",
-      "radius": 3
+      "radius": 3,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -31364,7 +31376,10 @@
       "raw": "findobject=attrib:ripe_cocoa radius:3",
       "args": "attrib:ripe_cocoa radius:3",
       "attrib": "ripe_cocoa",
-      "radius": 3
+      "radius": 3,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -31764,7 +31779,10 @@
       "raw": "findobject=type:bob radius:14 attrib:eatable",
       "args": "type:bob radius:14 attrib:eatable",
       "attrib": "eatable",
-      "radius": 14
+      "radius": 14,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -31802,7 +31820,10 @@
       "raw": "findspace=size:any radius:14 resource:resource_fish",
       "args": "size:any radius:14 resource:resource_fish",
       "attrib": "",
-      "radius": 14
+      "radius": 14,
+      "resource": "fish",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -31892,11 +31913,8 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "fish: findspace size:any radius:14 resource:resource_fish",
-    "fish: mine"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_jungle_master": {
    "tribe": "amazons",
@@ -31913,7 +31931,10 @@
       "raw": "findspace=size:any radius:5 avoid:field saplingsearches:7",
       "args": "size:any radius:5 avoid:field saplingsearches:7",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -31958,7 +31979,10 @@
       "raw": "findspace=size:any radius:5 avoid:field saplingsearches:7",
       "args": "size:any radius:5 avoid:field saplingsearches:7",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -32003,7 +32027,10 @@
       "raw": "findspace=size:any radius:5 avoid:field saplingsearches:7",
       "args": "size:any radius:5 avoid:field saplingsearches:7",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -32048,7 +32075,10 @@
       "raw": "findspace=size:any radius:6 terraform:amazons",
       "args": "size:any radius:6 terraform:amazons",
       "attrib": "",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      }
     ],
     "terraform": [
@@ -32057,7 +32087,10 @@
       "raw": "findspace=size:any radius:6 terraform:amazons",
       "args": "size:any radius:6 terraform:amazons",
       "attrib": "",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -32096,7 +32129,10 @@
       "raw": "findspace=size:any radius:6 avoid:field saplingsearches:7",
       "args": "size:any radius:6 avoid:field saplingsearches:7",
       "attrib": "",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -32216,7 +32252,10 @@
       "raw": "findspace=size:any radius:6 avoid:field saplingsearches:7",
       "args": "size:any radius:6 avoid:field saplingsearches:7",
       "attrib": "",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -32321,7 +32360,10 @@
       "raw": "findobject=attrib:tree radius:6",
       "args": "attrib:tree radius:6",
       "attrib": "tree",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -32556,7 +32598,10 @@
       "raw": "findspace=size:swim radius:5 ferry",
       "args": "size:swim radius:5 ferry",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      },
      {
       "cmd": "walk",
@@ -32839,7 +32884,10 @@
       "raw": "findobject=attrib:rocks radius:6",
       "args": "attrib:rocks radius:6",
       "attrib": "rocks",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -33085,7 +33133,10 @@
       "raw": "findobject=attrib:tree radius:10",
       "args": "attrib:tree radius:10",
       "attrib": "tree",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -33118,7 +33169,10 @@
       "raw": "findspace=size:swim radius:7",
       "args": "size:swim radius:7",
       "attrib": "",
-      "radius": 7
+      "radius": 7,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      },
      {
       "cmd": "walk",
@@ -33134,7 +33188,10 @@
      {
       "cmd": "breed",
       "raw": "breed=resource_fish radius:1",
-      "args": "resource_fish radius:1"
+      "resource": "fish",
+      "radius": 1.0,
+      "yield": 0.0,
+      "when_empty": 0.0
      },
      {
       "cmd": "return",
@@ -33183,8 +33240,7 @@
    "executable": false,
    "problems": [
     "release_game: createbob",
-    "breed_fish: findspace size:swim radius:7",
-    "breed_fish: breed"
+    "breed_fish: findspace size:swim radius:7"
    ]
   },
   "amazons_woodcutter": {
@@ -33205,7 +33261,10 @@
       "raw": "findobject=attrib:normal_tree radius:10",
       "args": "attrib:normal_tree radius:10",
       "attrib": "normal_tree",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -33317,7 +33376,10 @@
       "raw": "findobject=attrib:tree_ironwood radius:10",
       "args": "attrib:tree_ironwood radius:10",
       "attrib": "tree_ironwood",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -33371,7 +33433,10 @@
       "raw": "findobject=attrib:tree_rubber radius:10",
       "args": "attrib:tree_rubber radius:10",
       "attrib": "tree_rubber",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -33425,7 +33490,10 @@
       "raw": "findobject=attrib:tree_balsa radius:10",
       "args": "attrib:tree_balsa radius:10",
       "attrib": "tree_balsa",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -33479,7 +33547,10 @@
       "raw": "findobject=attrib:normal_tree radius:10",
       "args": "attrib:normal_tree radius:10",
       "attrib": "normal_tree",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -33693,7 +33764,10 @@
       "raw": "findspace=size:any radius:2",
       "args": "size:any radius:2",
       "attrib": "",
-      "radius": 2
+      "radius": 2,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -33732,7 +33806,10 @@
       "raw": "findobject=attrib:ripe_blackroot radius:2",
       "args": "attrib:ripe_blackroot radius:2",
       "attrib": "ripe_blackroot",
-      "radius": 2
+      "radius": 2,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -34005,7 +34082,10 @@
       "raw": "findspace=size:any radius:2 space",
       "args": "size:any radius:2 space",
       "attrib": "",
-      "radius": 2
+      "radius": 2,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -34044,7 +34124,10 @@
       "raw": "findobject=attrib:ripe_corn radius:2",
       "args": "attrib:ripe_corn radius:2",
       "attrib": "ripe_corn",
-      "radius": 2
+      "radius": 2,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -34171,7 +34254,10 @@
       "raw": "findspace=size:any radius:7 breed resource:resource_fish",
       "args": "size:any radius:7 breed resource:resource_fish",
       "attrib": "",
-      "radius": 7
+      "radius": 7,
+      "resource": "fish",
+      "breed": true,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -34187,7 +34273,10 @@
      {
       "cmd": "breed",
       "raw": "breed=resource_fish radius:1",
-      "args": "resource_fish radius:1"
+      "resource": "fish",
+      "radius": 1.0,
+      "yield": 0.0,
+      "when_empty": 0.0
      },
      {
       "cmd": "return",
@@ -34222,11 +34311,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "breed: findspace size:any radius:7 breed resource:resource_fish",
-    "breed: breed"
-   ]
+   "executable": true,
+   "problems": []
   },
   "atlanteans_fisher": {
    "tribe": "atlanteans",
@@ -34253,7 +34339,10 @@
       "raw": "findspace=size:any radius:7 resource:resource_fish",
       "args": "size:any radius:7 resource:resource_fish",
       "attrib": "",
-      "radius": 7
+      "radius": 7,
+      "resource": "fish",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -34333,11 +34422,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "fish: findspace size:any radius:7 resource:resource_fish",
-    "fish: mine"
-   ]
+   "executable": true,
+   "problems": []
   },
   "atlanteans_forester": {
    "tribe": "atlanteans",
@@ -34364,7 +34450,10 @@
       "raw": "findspace=size:any radius:5 avoid:field saplingsearches:12",
       "args": "size:any radius:5 avoid:field saplingsearches:12",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -34662,7 +34751,10 @@
       "raw": "findobject=type:bob radius:13 attrib:eatable",
       "args": "type:bob radius:13 attrib:eatable",
       "attrib": "eatable",
-      "radius": 13
+      "radius": 13,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -35038,7 +35130,10 @@
       "raw": "findspace=size:swim radius:5 ferry",
       "args": "size:swim radius:5 ferry",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      },
      {
       "cmd": "walk",
@@ -35283,7 +35378,10 @@
       "raw": "findobject=attrib:rocks radius:6",
       "args": "attrib:rocks radius:6",
       "attrib": "rocks",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -35568,7 +35666,10 @@
       "raw": "findobject=attrib:tree radius:10",
       "args": "attrib:tree radius:10",
       "attrib": "tree",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -36076,7 +36177,10 @@
       "raw": "findspace=size:any radius:2 space",
       "args": "size:any radius:2 space",
       "attrib": "",
-      "radius": 2
+      "radius": 2,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -36115,7 +36219,10 @@
       "raw": "findobject=attrib:ripe_wheat radius:2",
       "args": "attrib:ripe_wheat radius:2",
       "attrib": "ripe_wheat",
-      "radius": 2
+      "radius": 2,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -36241,7 +36348,10 @@
       "raw": "findspace=size:any radius:7 resource:resource_fish",
       "args": "size:any radius:7 resource:resource_fish",
       "attrib": "",
-      "radius": 7
+      "radius": 7,
+      "resource": "fish",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -36310,11 +36420,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "fish: findspace size:any radius:7 resource:resource_fish",
-    "fish: mine"
-   ]
+   "executable": true,
+   "problems": []
   },
   "barbarians_gamekeeper": {
    "tribe": "barbarians",
@@ -36340,7 +36447,10 @@
       "raw": "findspace=size:any radius:3",
       "args": "size:any radius:3",
       "attrib": "",
-      "radius": 3
+      "radius": 3,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -36437,7 +36547,10 @@
       "raw": "findspace=size:any radius:1",
       "args": "size:any radius:1",
       "attrib": "",
-      "radius": 1
+      "radius": 1,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -36476,7 +36589,10 @@
       "raw": "findobject=attrib:ripe_reed radius:1",
       "args": "attrib:ripe_reed radius:1",
       "attrib": "ripe_reed",
-      "radius": 1
+      "radius": 1,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -36709,7 +36825,10 @@
       "raw": "findobject=type:bob radius:13 attrib:eatable",
       "args": "type:bob radius:13 attrib:eatable",
       "attrib": "eatable",
-      "radius": 13
+      "radius": 13,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -36888,7 +37007,10 @@
       "raw": "findobject=attrib:tree radius:10",
       "args": "attrib:tree radius:10",
       "attrib": "tree",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -37188,7 +37310,10 @@
       "raw": "findspace=size:any radius:5 avoid:field saplingsearches:5",
       "args": "size:any radius:5 avoid:field saplingsearches:5",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -37446,7 +37571,10 @@
       "raw": "findspace=size:swim radius:5 ferry",
       "args": "size:swim radius:5 ferry",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      },
      {
       "cmd": "walk",
@@ -37599,7 +37727,10 @@
       "raw": "findobject=attrib:rocks radius:6",
       "args": "attrib:rocks radius:6",
       "attrib": "rocks",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -38206,7 +38337,10 @@
       "raw": "findspace=size:any radius:2 space",
       "args": "size:any radius:2 space",
       "attrib": "",
-      "radius": 2
+      "radius": 2,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -38245,7 +38379,10 @@
       "raw": "findobject=attrib:ripe_wheat radius:2",
       "args": "attrib:ripe_wheat radius:2",
       "attrib": "ripe_wheat",
-      "radius": 2
+      "radius": 2,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -38372,7 +38509,10 @@
       "raw": "findspace=size:any radius:7 resource:resource_fish",
       "args": "size:any radius:7 resource:resource_fish",
       "attrib": "",
-      "radius": 7
+      "radius": 7,
+      "resource": "fish",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -38453,11 +38593,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "fish: findspace size:any radius:7 resource:resource_fish",
-    "fish: mine"
-   ]
+   "executable": true,
+   "problems": []
   },
   "empire_forester": {
    "tribe": "empire",
@@ -38484,7 +38621,10 @@
       "raw": "findspace=size:any radius:5 avoid:field saplingsearches:8",
       "args": "size:any radius:5 avoid:field saplingsearches:8",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -38701,7 +38841,10 @@
       "raw": "findobject=type:bob radius:13 attrib:eatable",
       "args": "type:bob radius:13 attrib:eatable",
       "attrib": "eatable",
-      "radius": 13
+      "radius": 13,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -38835,7 +38978,10 @@
       "raw": "findobject=attrib:tree radius:10",
       "args": "attrib:tree radius:10",
       "attrib": "tree",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -39344,7 +39490,10 @@
       "raw": "findspace=size:swim radius:5 ferry",
       "args": "size:swim radius:5 ferry",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      },
      {
       "cmd": "walk",
@@ -39490,7 +39639,10 @@
       "raw": "findobject=attrib:rocks radius:6",
       "args": "attrib:rocks radius:6",
       "attrib": "rocks",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -39533,7 +39685,10 @@
       "raw": "findobject=attrib:rocks radius:6",
       "args": "attrib:rocks radius:6",
       "attrib": "rocks",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -39738,7 +39893,10 @@
       "raw": "findspace=size:any radius:1",
       "args": "size:any radius:1",
       "attrib": "",
-      "radius": 1
+      "radius": 1,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -39777,7 +39935,10 @@
       "raw": "findobject=attrib:ripe_grapes radius:1",
       "args": "attrib:ripe_grapes radius:1",
       "attrib": "ripe_grapes",
-      "radius": 1
+      "radius": 1,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -40123,7 +40284,10 @@
       "raw": "findobject=attrib:flowering radius:5",
       "args": "attrib:flowering radius:5",
       "attrib": "flowering",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -40213,7 +40377,10 @@
       "raw": "findspace=size:any radius:4",
       "args": "size:any radius:4",
       "attrib": "",
-      "radius": 4
+      "radius": 4,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -40652,7 +40819,10 @@
       "raw": "findobject=attrib:pond_coal radius:8",
       "args": "attrib:pond_coal radius:8",
       "attrib": "pond_coal",
-      "radius": 8
+      "radius": 8,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -40690,7 +40860,10 @@
       "raw": "findobject=attrib:pond_dry radius:8",
       "args": "attrib:pond_dry radius:8",
       "attrib": "pond_dry",
-      "radius": 8
+      "radius": 8,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -40729,7 +40902,10 @@
       "raw": "findobject=attrib:pond_dry radius:8",
       "args": "attrib:pond_dry radius:8",
       "attrib": "pond_dry",
-      "radius": 8
+      "radius": 8,
+      "resource": "",
+      "breed": false,
+      "size": ""
      }
     ]
    },
@@ -40819,7 +40995,10 @@
       "raw": "findspace=size:any radius:4",
       "args": "size:any radius:4",
       "attrib": "",
-      "radius": 4
+      "radius": 4,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -40911,7 +41090,10 @@
       "raw": "findspace=size:swim radius:5 terraform:diking",
       "args": "size:swim radius:5 terraform:diking",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      }
     ],
     "check_dike": [
@@ -40920,7 +41102,10 @@
       "raw": "findobject=attrib:dike radius:5",
       "args": "attrib:dike radius:5",
       "attrib": "dike",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": ""
      }
     ],
     "build": [
@@ -40929,7 +41114,10 @@
       "raw": "findspace=size:swim radius:5 terraform:diking",
       "args": "size:swim radius:5 terraform:diking",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      },
      {
       "cmd": "walk",
@@ -40962,7 +41150,10 @@
       "raw": "findobject=attrib:dike radius:5",
       "args": "attrib:dike radius:5",
       "attrib": "dike",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -41073,7 +41264,10 @@
       "raw": "findspace=size:any radius:3 space",
       "args": "size:any radius:3 space",
       "attrib": "",
-      "radius": 3
+      "radius": 3,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -41112,7 +41306,10 @@
       "raw": "findobject=attrib:ripe_barley radius:3",
       "args": "attrib:ripe_barley radius:3",
       "attrib": "ripe_barley",
-      "radius": 3
+      "radius": 3,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -41236,7 +41433,10 @@
       "raw": "findspace=size:any radius:8 resource:resource_fish",
       "args": "size:any radius:8 resource:resource_fish",
       "attrib": "",
-      "radius": 8
+      "radius": 8,
+      "resource": "fish",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -41277,7 +41477,10 @@
       "raw": "findobject=attrib:pond_mature radius:8",
       "args": "attrib:pond_mature radius:8",
       "attrib": "pond_mature",
-      "radius": 8
+      "radius": 8,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -41315,7 +41518,10 @@
       "raw": "findobject=attrib:pond_dry radius:8",
       "args": "attrib:pond_dry radius:8",
       "attrib": "pond_dry",
-      "radius": 8
+      "radius": 8,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -41389,8 +41595,6 @@
    },
    "executable": false,
    "problems": [
-    "fish: findspace size:any radius:8 resource:resource_fish",
-    "fish: mine",
     "fish_in_pond: findobject attrib:pond_mature radius:8",
     "breed_in_pond: findobject attrib:pond_dry radius:8"
    ]
@@ -41420,7 +41624,10 @@
       "raw": "findspace=size:any radius:5 avoid:field saplingsearches:7",
       "args": "size:any radius:5 avoid:field saplingsearches:7",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -41525,7 +41732,10 @@
       "raw": "findobject=attrib:ripe_bush radius:6",
       "args": "attrib:ripe_bush radius:6",
       "attrib": "ripe_bush",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -41726,7 +41936,10 @@
       "raw": "findobject=type:bob radius:14 attrib:eatable",
       "args": "type:bob radius:14 attrib:eatable",
       "attrib": "eatable",
-      "radius": 14
+      "radius": 14,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -41956,7 +42169,10 @@
       "raw": "findspace=size:any radius:1",
       "args": "size:any radius:1",
       "attrib": "",
-      "radius": 1
+      "radius": 1,
+      "resource": "",
+      "breed": false,
+      "size": "any"
      },
      {
       "cmd": "walk",
@@ -41995,7 +42211,10 @@
       "raw": "findobject=attrib:ripe_reed radius:1",
       "args": "attrib:ripe_reed radius:1",
       "attrib": "ripe_reed",
-      "radius": 1
+      "radius": 1,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -42420,7 +42639,10 @@
       "raw": "findspace=size:swim radius:5 ferry",
       "args": "size:swim radius:5 ferry",
       "attrib": "",
-      "radius": 5
+      "radius": 5,
+      "resource": "",
+      "breed": false,
+      "size": "swim"
      },
      {
       "cmd": "walk",
@@ -42619,7 +42841,10 @@
       "raw": "findobject=attrib:rocks radius:6",
       "args": "attrib:rocks radius:6",
       "attrib": "rocks",
-      "radius": 6
+      "radius": 6,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",
@@ -42754,7 +42979,10 @@
       "raw": "findobject=attrib:tree radius:10",
       "args": "attrib:tree radius:10",
       "attrib": "tree",
-      "radius": 10
+      "radius": 10,
+      "resource": "",
+      "breed": false,
+      "size": ""
      },
      {
       "cmd": "walk",

@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from wizard_rts.animals import spawn_animal  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
+from conftest import resource_sum, set_resource  # noqa: E402
 
 
 def _world() -> HybridWorld:
@@ -80,7 +81,7 @@ def test_well_draws_down_its_water_and_stops_when_dry() -> None:
     well = next(b for b in w.buildings.values() if b["kind"] == "well" and b["faction_name"] == "Red")
     nodes = [(well["tx"] + dx, well["ty"] + dy) for dx in range(-1, 2) for dy in range(-1, 2)]
     for n in nodes:
-        w.resources[n]["water"] = 1
+        set_resource(w, n, "water", 1)
     from wizard_rts import programs_data
 
     programs_data.ECONOMY_TARGETS["water"] = 10**9
@@ -88,7 +89,7 @@ def test_well_draws_down_its_water_and_stops_when_dry() -> None:
         _run(w, 9_000)
     finally:
         programs_data.ECONOMY_TARGETS["water"] = 12
-    assert sum(w.resources[n]["water"] for n in nodes) == 0
+    assert resource_sum(w, nodes, "water") == 0
     assert well.get("deposit_exhausted") is True
 
 

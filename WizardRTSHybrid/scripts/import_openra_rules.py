@@ -153,6 +153,66 @@ def weapon_info(table: dict, name: str) -> dict:
     }
 
 
+def naval_traits(a: dict) -> dict:
+    """Footprint, production, exits, cloak and detection: what ships and naval yards need."""
+    out: dict = {}
+    b = a.get("Building")
+    if b is not None:
+        c = b["_c"]
+        out["building"] = {
+            "footprint": val(c, "Footprint", default="x"),
+            "dimensions": val(c, "Dimensions", default="1,1"),
+            "terrain_types": [t.strip() for t in str(val(c, "TerrainTypes", default="")).split(",") if t.strip()],
+            "requires_buildable_adjacent": to_int(val(a, "RequiresBuildableArea", "Adjacent"), 0),
+        }
+    prod = a.get("Production")
+    if prod is not None:
+        out["produces"] = [t.strip() for t in str(val(prod["_c"], "Produces", default=prod["_v"] or "")).split(",") if t.strip()]
+        exits = []
+        for key, slot in a.items():
+            if key == "Exit" or key.startswith("Exit@"):
+                c = slot["_c"]
+                exits.append({
+                    "exit_cell": [int(x) for x in str(val(c, "ExitCell", default="0,0")).split(",")[:2]],
+                    "spawn_offset": [int(x) for x in str(val(c, "SpawnOffset", default="0,0,0")).split(",")[:3]],
+                    "facing": to_int(val(c, "Facing"), 0),
+                })
+        out["exits"] = exits
+    bap = val(a, "Buildable", "BuildAtProductionType", default="")
+    if bap:
+        out["build_at"] = bap
+    cloak = a.get("Cloak")
+    if cloak is not None:
+        out["cloak"] = {
+            "delay_ticks": to_int(val(cloak["_c"], "CloakDelay"), 30),
+            "detection_types": [t.strip() for t in str(val(cloak["_c"], "DetectionTypes", default="")).split(",") if t.strip()],
+        }
+    det = a.get("DetectCloaked")
+    if det is not None:
+        out["detect"] = {"range": cells(val(det["_c"], "Range", default="5c0")), "types": [t.strip() for t in str(val(det["_c"], "DetectionTypes", default="Cloak")).split(",") if t.strip()]}
+    targ = {}
+    for key, slot in a.items():
+        if key == "Targetable" or key.startswith("Targetable@"):
+            targ[key] = {"types": [t.strip() for t in str(val(slot["_c"], "TargetTypes", default="")).split(",") if t.strip()],
+                         "requires": val(slot["_c"], "RequiresCondition", default="")}
+    if targ:
+        out["targetable"] = targ
+    return out
+
+
+def locomotors() -> dict:
+    """TerrainSpeeds per locomotor from mods/ra/rules/world.yaml (percent of base speed by terrain type)."""
+    table = load(RA / "rules")
+    world = resolve(table, "World")
+    out = {}
+    for key, slot in world.items():
+        if key.startswith("Locomotor"):
+            c = slot["_c"]
+            speeds = {k: to_int(v["_v"]) for k, v in c.get("TerrainSpeeds", {"_c": {}})["_c"].items()}
+            out[val(c, "Name", default=key)] = {"speeds": speeds, "crushes": [t.strip() for t in str(val(c, "Crushes", default="")).split(",") if t.strip()]}
+    return out
+
+
 def main() -> None:
     actors = load(RA / "rules")
     weapons = load(RA / "weapons")
@@ -189,9 +249,12 @@ def main() -> None:
             "is_building": "Building" in a,
             "locomotor": val(a, "Mobile", "Locomotor", default=""),
         }
+        extra = naval_traits(a)
+        if extra:
+            out_actors[name.lower()].update(extra)
     out_weapons = {w: weapon_info(weapons, w) for w in sorted(wanted_weapons) if w in weapons}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"source": "OpenRA bleed e7e9e4ad mods/ra rules + weapons", "actors": out_actors, "weapons": out_weapons}, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps({"source": "OpenRA bleed e7e9e4ad mods/ra rules + weapons", "locomotors": locomotors(), "actors": out_actors, "weapons": out_weapons}, indent=1), encoding="utf-8")
     print(f"OPENRA_RULES actors={len(out_actors)} weapons={len(out_weapons)}")
     for n in ("e1", "3tnk", "gun", "barr", "weap", "e3"):
         a = out_actors.get(n)

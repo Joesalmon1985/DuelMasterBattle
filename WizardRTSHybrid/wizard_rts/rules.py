@@ -22,7 +22,7 @@ TICK_MS = 40
 HYBRID_ACTORS: dict[str, dict[str, Any]] = {
     "wl_soldier": {
         "name": "Soldier", "hp": 13000, "armor": "None", "speed": 54, "cost": 0, "queue": "", "prerequisites": "",
-        "armaments": ["WL_Axe"], "target_types": ["Ground"], "mobile": True, "is_building": False, "locomotor": "foot",
+        "armaments": ["WL_Axe"], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False, "locomotor": "foot",
     },
 }
 HYBRID_WEAPONS: dict[str, dict[str, Any]] = {
@@ -61,3 +61,41 @@ def ms_per_cell(speed: int) -> int:
 
 def reload_ms(w: dict[str, Any]) -> int:
     return max(100, int(w["reload"]) * TICK_MS)
+
+
+# ---------------------------------------------------------------- terrain movement and target typing
+
+# Widelands terrain class -> OpenRA terrain type used by Locomotor.TerrainSpeeds (engineering mapping)
+CLASS_TO_TERRAIN_TYPE = {0: "Clear", 1: "Rough", 2: "Beach", 3: "Water"}  # arable, mineable, walkable (beach), water; others impassable
+
+
+def locomotor(name: str) -> dict[str, Any]:
+    return _load().get("locomotors", {}).get(name or "foot", {"speeds": {"Clear": 100}, "crushes": []})
+
+
+@lru_cache(maxsize=None)
+def speed_table(name: str) -> tuple[int, ...]:
+    """Percent speed per terrain class code (0 arable .. 5 unreachable); 0 means the locomotor cannot enter."""
+    speeds = locomotor(name)["speeds"]
+    return tuple(int(speeds.get(CLASS_TO_TERRAIN_TYPE.get(c, ""), 0)) for c in range(6))
+
+
+def road_speed(name: str) -> int:
+    return int(locomotor(name)["speeds"].get("Road", 100))
+
+
+def actor_traits(definition: str) -> dict[str, Any]:
+    return actor(definition) or {}
+
+
+def can_hit(weapon: dict[str, Any], target_types: list[str] | set[str]) -> bool:
+    """OpenRA Armament target filter: a valid type present and no invalid type present."""
+    types = set(target_types)
+    if weapon.get("invalid_targets") and types & set(weapon["invalid_targets"]):
+        return False
+    return bool(types & set(weapon.get("valid_targets", [])))
+
+
+def warhead_hits(warhead: dict[str, Any], target_types: list[str] | set[str]) -> bool:
+    valid = warhead.get("valid_targets")
+    return not valid or bool(set(target_types) & set(valid))

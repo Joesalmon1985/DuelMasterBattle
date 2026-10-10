@@ -5,6 +5,7 @@ const SimClient = preload("res://client/hybrid/sim_client.gd")
 const DuelAdapter = preload("res://client/encounters/duel_lease_adapter.gd")
 const HybridArt = preload("res://client/hybrid/hybrid_art.gd")
 const GodMode = preload("res://client/hybrid/god_mode.gd")
+const TerrainView = preload("res://client/hybrid/terrain_view.gd")
 
 ## Continuous hybrid world. Movement, camera, and the retained duel board
 ## come from the existing Overworld and DmbDuelLeaseAdapter. The Python
@@ -26,6 +27,7 @@ var _art = HybridArt.new()
 var _camera_nudge := Vector2.ZERO
 var camera_focus := Vector2.INF
 var god: Node
+var terrain = null  # TerrainView once the sim has sent its terrain
 var selected_ids: Dictionary = {}:
 	set(v):
 		selected_ids = v
@@ -68,6 +70,9 @@ func _ready() -> void:
 		push_error("Hybrid sim server is not running on 127.0.0.1:%d" % port)
 		_hud_area_lbl.text = "Sim server missing"
 		return
+	var tview = TerrainView.new()
+	if tview.load_from(_sim.op({"op": "terrain"})):
+		terrain = tview
 	var reply := _sim.op({"op": "snapshot"})
 	_apply_snapshot(reply.get("snapshot", {}))
 	_place_john_from_snapshot()
@@ -114,14 +119,20 @@ func _arrived() -> void:
 	_update_prompt()
 
 
+func tile_ground(x: int, y: int) -> bool:
+	if terrain != null:
+		return terrain.ground(x, y)
+	return HexCoords.tile_in_map(x, y)
+
+
 func _tile_char(_x: int, _y: int) -> String:
-	if not HexCoords.tile_in_map(_x, _y):
+	if not tile_ground(_x, _y):
 		return " "
 	return "."
 
 
 func is_walkable(p: Vector2i) -> bool:
-	if not HexCoords.tile_in_map(p.x, p.y):
+	if not tile_ground(p.x, p.y):
 		return false
 	return not _blocked.has(p)
 
@@ -193,7 +204,12 @@ func _place_john_from_snapshot() -> void:
 
 func _draw() -> void:
 	var cam_tile := Vector2i(int(_camera.position.x / TPX), int(_camera.position.y / TPX))
-	_art.draw_terrain(self, cam_tile, 36, TPX)
+	if terrain != null:
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		terrain.draw(self, TPX)
+		terrain.refresh_resources(_sim, TPX, self)
+	else:
+		_art.draw_terrain(self, cam_tile, 36, TPX)
 	for road in _snapshot.get("roads", {}).values():
 		for tile in road:
 			if tile is Array:

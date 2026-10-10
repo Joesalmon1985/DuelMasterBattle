@@ -155,14 +155,18 @@ def _resolve(world: Any, name: str, tribe: str, ware: str, seen: set, depth: int
 
 def _mine_site(world: Any, wh: dict, resource: str) -> tuple[int, int] | None:
     best = None
-    for (tx, ty), amounts in world.resources.items():
-        if amounts.get(resource, 0) <= 0 or max(abs(tx - wh["tx"]), abs(ty - wh["ty"])) > 30:
+    centre = (wh["tx"], wh["ty"])
+    occupied = [(b["tx"], b["ty"], b["kind"]) for b in world.buildings.values() if "constructing" not in b]
+    if world.terrain is not None:
+        cands = [n for n in world.resource_nodes(centre, 30, resource) if world.terrain.can_build(n[0], n[1], "mine")]
+    else:
+        cands = [n for n in world.resource_nodes(centre, 30, resource)]
+    for tx, ty in cands:
+        if (tx, ty) in world.blocked or (tx, ty) in world.tree_tiles or (tx, ty) in world.road_tile_set:
             continue
-        if (tx, ty) in world.blocked or (tx, ty) in world.tree_tiles:
+        if any(max(abs(bx - tx), abs(by - ty)) <= 3 and kind in ("mine", "ironmine") or kind.startswith("wl:") and max(abs(bx - tx), abs(by - ty)) <= 2 for bx, by, kind in occupied):
             continue
-        if any(max(abs(b["tx"] - tx), abs(b["ty"] - ty)) <= 3 and "constructing" not in b and b["kind"] in ("mine", "ironmine") or b["kind"].startswith("wl:") and max(abs(b["tx"] - tx), abs(b["ty"] - ty)) <= 2 for b in world.buildings.values()):
-            continue
-        total = sum(world.resources.get((tx + dx, ty + dy), {}).get(resource, 0) for dx in range(-2, 3) for dy in range(-2, 3))
+        total = world.resource_total((tx, ty), 2, resource)
         if best is None or total > best[0]:
             best = (total, (tx, ty))
     return best[1] if best else None

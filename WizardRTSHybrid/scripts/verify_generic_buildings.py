@@ -37,12 +37,22 @@ RESOURCES = ("coal", "iron", "gold", "stones", "water")
 
 def bench(name: str, minutes: int) -> dict:
     spec = wl_defs.building_spec(name)
-    w = HybridWorld(minimal=True)
+    fishing = any(c == "findspace" and a.get("resource") == "fish" for p in (wl_defs.worker_programs(r) or {} for r in spec["worker_for_program"].values()) for steps in p.values() for c, a in steps)
+    w = HybridWorld(minimal=True, terrain=fishing)  # fishing sites need real water: they run on the generated terrain
     fid = w.faction_info["Red"]["id"]
     wh = next(b for b in w.buildings.values() if b["kind"] == "warehouse")
     base = (wh["tx"] + 10, wh["ty"])
+    if fishing:
+        lx, ly = w.terrain.meta["homes"][0]["lake"]
+        base = next(p for r in range(8, 16) for p in __import__("wizard_rts.grid", fromlist=["ring"]).ring(lx, ly, r) if w.terrain.can_build(p[0], p[1], "small"))
     bid = w._building(fid, "Red", spec["kind"], base, spec["label"], spec["definition"])
-    for res in RESOURCES:
+    if fishing:  # a fish breeder only has work where the grounds were fished down
+        for dy in range(-9, 10):
+            for dx in range(-9, 10):
+                x, y = base[0] + dx, base[1] + dy
+                if w.terrain.in_bounds(x, y) and w.terrain.res_kind[y * w.terrain.w + x] == 5:
+                    w.terrain.res_amt[y * w.terrain.w + x] //= 2
+    for res in (RESOURCES if not fishing else ()):
         for dy in range(-3, 4):
             for dx in range(-3, 4):
                 w.resources.setdefault((base[0] + dx, base[1] + dy), {})[res] = 8
@@ -87,7 +97,7 @@ def bench(name: str, minutes: int) -> dict:
             seq += 1
             w.advance(1000, seq, snapshot=False)
         made = {g: w.stats.get("made_" + g, 0) for g in spec["outputs"]}
-        planted = w.stats.get("saplings_planted", 0) + w.stats.get("fields_planted", 0) + w.stats.get("recruited", 0)
+        planted = w.stats.get("saplings_planted", 0) + w.stats.get("fields_planted", 0) + w.stats.get("recruited", 0) + w.stats.get("breed_fish", 0)
         if (any(made.values()) or (not spec["outputs"] and planted)) and minute >= 2:
             break
     made = {g: w.stats.get("made_" + g, 0) for g in spec["outputs"]}

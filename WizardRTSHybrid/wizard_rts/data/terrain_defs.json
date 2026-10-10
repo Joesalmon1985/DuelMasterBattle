@@ -1,0 +1,1305 @@
+{
+ "resources": {
+  "coal": {
+   "detectable": true,
+   "max_amount": 20
+  },
+  "fish": {
+   "detectable": false,
+   "max_amount": 20
+  },
+  "gold": {
+   "detectable": true,
+   "max_amount": 20
+  },
+  "iron": {
+   "detectable": true,
+   "max_amount": 20
+  },
+  "stones": {
+   "detectable": true,
+   "max_amount": 20
+  },
+  "water": {
+   "detectable": true,
+   "max_amount": 50
+  }
+ },
+ "source": {
+  "commit": "47c5cae8c6cb080e4bf86163a3873bd0847bc0e4",
+  "licence": "GPL-2.0-or-later",
+  "repo": "widelands/widelands"
+ },
+ "terrains": {
+  "ashes1": {
+   "default_amount": 5,
+   "default_resource": "water",
+   "dir": "ashes1",
+   "fertility": 900,
+   "humidity": 150,
+   "is": "arable",
+   "temperature": 120,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "wasteland"
+  },
+  "ashes2": {
+   "default_amount": 4,
+   "default_resource": "water",
+   "dir": "ashes2",
+   "fertility": 999,
+   "humidity": 130,
+   "is": "arable",
+   "temperature": 118,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "wasteland"
+  },
+  "desert1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "desert1",
+   "fertility": 1,
+   "humidity": 1,
+   "is": "walkable",
+   "temperature": 167,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "desert"
+  },
+  "desert2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "desert2",
+   "fertility": 1,
+   "humidity": 1,
+   "is": "walkable",
+   "temperature": 168,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "desert"
+  },
+  "desert3": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "desert3",
+   "fertility": 1,
+   "humidity": 1,
+   "is": "walkable",
+   "temperature": 178,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "desert"
+  },
+  "desert4": {
+   "default_amount": 2,
+   "default_resource": "water",
+   "dir": "desert4",
+   "fertility": 100,
+   "humidity": 1,
+   "is": "arable",
+   "temperature": 168,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "desert"
+  },
+  "desert_forested_mountain1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "forested_mountain1",
+   "fertility": 500,
+   "humidity": 500,
+   "is": "mineable",
+   "temperature": 141,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "desert"
+  },
+  "desert_forested_mountain2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "forested_mountain2",
+   "fertility": 500,
+   "humidity": 500,
+   "is": "mineable",
+   "temperature": 120,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "desert"
+  },
+  "desert_steppe": {
+   "default_amount": 5,
+   "default_resource": "water",
+   "dir": "steppe",
+   "fertility": 500,
+   "humidity": 500,
+   "is": "arable",
+   "temperature": 155,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "desert"
+  },
+  "desert_water": {
+   "default_amount": 4,
+   "default_resource": "fish",
+   "dir": "water",
+   "fertility": 1,
+   "humidity": 999,
+   "is": "water",
+   "temperature": 150,
+   "textures": [
+    "water_00.png"
+   ],
+   "valid_resources": [
+    "fish"
+   ],
+   "world": "desert"
+  },
+  "drysoil": {
+   "default_amount": 4,
+   "default_resource": "water",
+   "dir": "drysoil",
+   "fertility": 200,
+   "humidity": 200,
+   "is": "arable",
+   "temperature": 172,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "desert"
+  },
+  "hardground1": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "hardground1",
+   "fertility": 800,
+   "humidity": 250,
+   "is": "arable",
+   "temperature": 100,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "wasteland"
+  },
+  "hardground2": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "hardground2",
+   "fertility": 850,
+   "humidity": 150,
+   "is": "arable",
+   "temperature": 95,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "wasteland"
+  },
+  "hardground3": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "hardground3",
+   "fertility": 900,
+   "humidity": 200,
+   "is": "arable",
+   "temperature": 105,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "wasteland"
+  },
+  "hardground4": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "hardground4",
+   "fertility": 800,
+   "humidity": 200,
+   "is": "arable",
+   "temperature": 90,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "wasteland"
+  },
+  "hardlava": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "hardlava",
+   "fertility": 200,
+   "humidity": 100,
+   "is": "arable",
+   "temperature": 120,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "wasteland"
+  },
+  "highmountainmeadow": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "highmountainmeadow",
+   "fertility": 400,
+   "humidity": 400,
+   "is": "arable",
+   "temperature": 140,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "desert"
+  },
+  "ice": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "ice",
+   "fertility": 100,
+   "humidity": 500,
+   "is": "walkable",
+   "temperature": 25,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "winter"
+  },
+  "ice_floes": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "ice_floes",
+   "fertility": 1,
+   "humidity": 999,
+   "is": "water",
+   "temperature": 50,
+   "textures": [
+    "ice_floes_00.png"
+   ],
+   "valid_resources": [
+    "fish"
+   ],
+   "world": "winter"
+  },
+  "ice_floes2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "ice_floes2",
+   "fertility": 1,
+   "humidity": 999,
+   "is": "water",
+   "temperature": 50,
+   "textures": [
+    "ice_floes2_00.png"
+   ],
+   "valid_resources": [
+    "fish"
+   ],
+   "world": "winter"
+  },
+  "lava": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "lava",
+   "fertility": 1,
+   "humidity": 1,
+   "is": "unreachable",
+   "temperature": 1273,
+   "textures": [
+    "lava_00.png"
+   ],
+   "valid_resources": [],
+   "world": "summer"
+  },
+  "lava-stone1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "lava_stone1",
+   "fertility": 1,
+   "humidity": 1,
+   "is": "unreachable",
+   "temperature": 1273,
+   "textures": [
+    "lava-stone1_00.png"
+   ],
+   "valid_resources": [],
+   "world": "wasteland"
+  },
+  "lava-stone2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "lava_stone2",
+   "fertility": 1,
+   "humidity": 1,
+   "is": "unreachable",
+   "temperature": 1273,
+   "textures": [
+    "lava-stone2_00.png"
+   ],
+   "valid_resources": [],
+   "world": "wasteland"
+  },
+  "meadow": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "meadow",
+   "fertility": 600,
+   "humidity": 600,
+   "is": "arable",
+   "temperature": 160,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "desert"
+  },
+  "mountain1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain1",
+   "fertility": 50,
+   "humidity": 50,
+   "is": "mineable",
+   "temperature": 130,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "desert"
+  },
+  "mountain2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain2",
+   "fertility": 50,
+   "humidity": 50,
+   "is": "mineable",
+   "temperature": 130,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "desert"
+  },
+  "mountain3": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain3",
+   "fertility": 50,
+   "humidity": 50,
+   "is": "mineable",
+   "temperature": 130,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "desert"
+  },
+  "mountain4": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain4",
+   "fertility": 50,
+   "humidity": 50,
+   "is": "mineable",
+   "temperature": 130,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "desert"
+  },
+  "mountainmeadow": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountainmeadow",
+   "fertility": 500,
+   "humidity": 500,
+   "is": "arable",
+   "temperature": 145,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "desert"
+  },
+  "snow": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "snow",
+   "fertility": 100,
+   "humidity": 800,
+   "is": "arable",
+   "temperature": 25,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "winter"
+  },
+  "summer_beach": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "beach",
+   "fertility": 200,
+   "humidity": 600,
+   "is": "walkable",
+   "temperature": 120,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "summer"
+  },
+  "summer_forested_mountain1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "forested_mountain1",
+   "fertility": 500,
+   "humidity": 750,
+   "is": "mineable",
+   "temperature": 50,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "summer"
+  },
+  "summer_forested_mountain2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "forested_mountain2",
+   "fertility": 500,
+   "humidity": 750,
+   "is": "mineable",
+   "temperature": 50,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "summer"
+  },
+  "summer_meadow1": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "meadow1",
+   "fertility": 700,
+   "humidity": 600,
+   "is": "arable",
+   "temperature": 100,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "summer"
+  },
+  "summer_meadow2": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "meadow2",
+   "fertility": 650,
+   "humidity": 600,
+   "is": "arable",
+   "temperature": 100,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "summer"
+  },
+  "summer_meadow3": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "meadow3",
+   "fertility": 800,
+   "humidity": 550,
+   "is": "arable",
+   "temperature": 105,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "summer"
+  },
+  "summer_meadow4": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "meadow4",
+   "fertility": 750,
+   "humidity": 650,
+   "is": "arable",
+   "temperature": 110,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "summer"
+  },
+  "summer_mountain1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain1",
+   "fertility": 100,
+   "humidity": 100,
+   "is": "mineable",
+   "temperature": 80,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "summer"
+  },
+  "summer_mountain2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain2",
+   "fertility": 100,
+   "humidity": 100,
+   "is": "mineable",
+   "temperature": 80,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "summer"
+  },
+  "summer_mountain3": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain3",
+   "fertility": 100,
+   "humidity": 100,
+   "is": "mineable",
+   "temperature": 80,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "summer"
+  },
+  "summer_mountain4": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain4",
+   "fertility": 100,
+   "humidity": 100,
+   "is": "mineable",
+   "temperature": 80,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "summer"
+  },
+  "summer_mountain_meadow": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain_meadow",
+   "fertility": 450,
+   "humidity": 800,
+   "is": "arable",
+   "temperature": 75,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "summer"
+  },
+  "summer_snow": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "snow",
+   "fertility": 1,
+   "humidity": 999,
+   "is": "unreachable",
+   "temperature": 50,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "summer"
+  },
+  "summer_steppe": {
+   "default_amount": 5,
+   "default_resource": "water",
+   "dir": "steppe",
+   "fertility": 400,
+   "humidity": 400,
+   "is": "arable",
+   "temperature": 100,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "summer"
+  },
+  "summer_steppe_barren": {
+   "default_amount": 4,
+   "default_resource": "water",
+   "dir": "steppe_barren",
+   "fertility": 150,
+   "humidity": 150,
+   "is": "arable",
+   "temperature": 100,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "summer"
+  },
+  "summer_swamp": {
+   "default_amount": 20,
+   "default_resource": "water",
+   "dir": "swamp",
+   "fertility": 100,
+   "humidity": 999,
+   "is": "unwalkable",
+   "temperature": 105,
+   "textures": [
+    "swamp_00.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "summer"
+  },
+  "summer_water": {
+   "default_amount": 4,
+   "default_resource": "fish",
+   "dir": "water",
+   "fertility": 1,
+   "humidity": 999,
+   "is": "water",
+   "temperature": 100,
+   "textures": [
+    "water_00.png"
+   ],
+   "valid_resources": [
+    "fish"
+   ],
+   "world": "summer"
+  },
+  "tundra_taiga": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "tundra_taiga",
+   "fertility": 400,
+   "humidity": 750,
+   "is": "arable",
+   "temperature": 40,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "winter"
+  },
+  "wasteland_beach": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "beach",
+   "fertility": 200,
+   "humidity": 400,
+   "is": "walkable",
+   "temperature": 60,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "wasteland"
+  },
+  "wasteland_forested_mountain1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "forested_mountain1",
+   "fertility": 950,
+   "humidity": 150,
+   "is": "mineable",
+   "temperature": 110,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "wasteland"
+  },
+  "wasteland_forested_mountain2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "forested_mountain2",
+   "fertility": 400,
+   "humidity": 200,
+   "is": "mineable",
+   "temperature": 95,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "wasteland"
+  },
+  "wasteland_mountain1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain1",
+   "fertility": 200,
+   "humidity": 50,
+   "is": "mineable",
+   "temperature": 80,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "wasteland"
+  },
+  "wasteland_mountain2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain2",
+   "fertility": 200,
+   "humidity": 50,
+   "is": "mineable",
+   "temperature": 80,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "wasteland"
+  },
+  "wasteland_mountain3": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain3",
+   "fertility": 200,
+   "humidity": 50,
+   "is": "mineable",
+   "temperature": 80,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "wasteland"
+  },
+  "wasteland_mountain4": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain4",
+   "fertility": 200,
+   "humidity": 50,
+   "is": "mineable",
+   "temperature": 80,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "wasteland"
+  },
+  "wasteland_water": {
+   "default_amount": 4,
+   "default_resource": "fish",
+   "dir": "water",
+   "fertility": 1,
+   "humidity": 999,
+   "is": "water",
+   "temperature": 100,
+   "textures": [
+    "water_00.png"
+   ],
+   "valid_resources": [
+    "fish"
+   ],
+   "world": "wasteland"
+  },
+  "winter_beach": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "beach",
+   "fertility": 100,
+   "humidity": 500,
+   "is": "walkable",
+   "temperature": 60,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "winter"
+  },
+  "winter_forested_mountain1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "forested_mountain1",
+   "fertility": 400,
+   "humidity": 700,
+   "is": "mineable",
+   "temperature": 35,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "winter"
+  },
+  "winter_forested_mountain2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "forested_mountain2",
+   "fertility": 400,
+   "humidity": 700,
+   "is": "mineable",
+   "temperature": 35,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "winter"
+  },
+  "winter_mountain1": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain1",
+   "fertility": 50,
+   "humidity": 300,
+   "is": "mineable",
+   "temperature": 20,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "winter"
+  },
+  "winter_mountain2": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain2",
+   "fertility": 50,
+   "humidity": 300,
+   "is": "mineable",
+   "temperature": 20,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "winter"
+  },
+  "winter_mountain3": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain3",
+   "fertility": 50,
+   "humidity": 300,
+   "is": "mineable",
+   "temperature": 20,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "winter"
+  },
+  "winter_mountain4": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "mountain4",
+   "fertility": 50,
+   "humidity": 300,
+   "is": "mineable",
+   "temperature": 20,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "coal",
+    "iron",
+    "gold",
+    "stones"
+   ],
+   "world": "winter"
+  },
+  "winter_taiga1": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "taiga1",
+   "fertility": 450,
+   "humidity": 850,
+   "is": "arable",
+   "temperature": 50,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "winter"
+  },
+  "winter_taiga2": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "taiga2",
+   "fertility": 450,
+   "humidity": 750,
+   "is": "arable",
+   "temperature": 55,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "winter"
+  },
+  "winter_taiga3": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "taiga3",
+   "fertility": 400,
+   "humidity": 800,
+   "is": "arable",
+   "temperature": 50,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "winter"
+  },
+  "winter_tundra": {
+   "default_amount": 10,
+   "default_resource": "water",
+   "dir": "tundra",
+   "fertility": 300,
+   "humidity": 750,
+   "is": "arable",
+   "temperature": 35,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [
+    "water"
+   ],
+   "world": "winter"
+  },
+  "winter_water": {
+   "default_amount": 4,
+   "default_resource": "fish",
+   "dir": "water",
+   "fertility": 1,
+   "humidity": 999,
+   "is": "water",
+   "temperature": 50,
+   "textures": [
+    "water_00.png"
+   ],
+   "valid_resources": [
+    "fish"
+   ],
+   "world": "winter"
+  }
+ },
+ "tree_affinity": {
+  "alder": {
+   "pickiness": 60,
+   "preferred_fertility": 600,
+   "preferred_humidity": 650,
+   "preferred_temperature": 125
+  },
+  "aspen": {
+   "pickiness": 80,
+   "preferred_fertility": 700,
+   "preferred_humidity": 600,
+   "preferred_temperature": 100
+  },
+  "beech": {
+   "pickiness": 60,
+   "preferred_fertility": 600,
+   "preferred_humidity": 400,
+   "preferred_temperature": 110
+  },
+  "birch": {
+   "pickiness": 60,
+   "preferred_fertility": 600,
+   "preferred_humidity": 650,
+   "preferred_temperature": 80
+  },
+  "cirrus": {
+   "pickiness": 80,
+   "preferred_fertility": 950,
+   "preferred_humidity": 150,
+   "preferred_temperature": 110
+  },
+  "larch": {
+   "pickiness": 80,
+   "preferred_fertility": 450,
+   "preferred_humidity": 800,
+   "preferred_temperature": 50
+  },
+  "liana": {
+   "pickiness": 60,
+   "preferred_fertility": 700,
+   "preferred_humidity": 200,
+   "preferred_temperature": 120
+  },
+  "maple": {
+   "pickiness": 80,
+   "preferred_fertility": 800,
+   "preferred_humidity": 550,
+   "preferred_temperature": 110
+  },
+  "mushroom_dark": {
+   "pickiness": 80,
+   "preferred_fertility": 800,
+   "preferred_humidity": 200,
+   "preferred_temperature": 100
+  },
+  "mushroom_green": {
+   "pickiness": 80,
+   "preferred_fertility": 900,
+   "preferred_humidity": 200,
+   "preferred_temperature": 105
+  },
+  "mushroom_red": {
+   "pickiness": 60,
+   "preferred_fertility": 850,
+   "preferred_humidity": 350,
+   "preferred_temperature": 80
+  },
+  "oak": {
+   "pickiness": 60,
+   "preferred_fertility": 500,
+   "preferred_humidity": 700,
+   "preferred_temperature": 90
+  },
+  "palm_borassus": {
+   "pickiness": 60,
+   "preferred_fertility": 400,
+   "preferred_humidity": 400,
+   "preferred_temperature": 180
+  },
+  "palm_coconut": {
+   "pickiness": 60,
+   "preferred_fertility": 600,
+   "preferred_humidity": 500,
+   "preferred_temperature": 130
+  },
+  "palm_date": {
+   "pickiness": 80,
+   "preferred_fertility": 500,
+   "preferred_humidity": 500,
+   "preferred_temperature": 160
+  },
+  "palm_oil": {
+   "pickiness": 80,
+   "preferred_fertility": 500,
+   "preferred_humidity": 550,
+   "preferred_temperature": 150
+  },
+  "palm_roystonea": {
+   "pickiness": 90,
+   "preferred_fertility": 600,
+   "preferred_humidity": 600,
+   "preferred_temperature": 160
+  },
+  "rowan": {
+   "pickiness": 80,
+   "preferred_fertility": 750,
+   "preferred_humidity": 650,
+   "preferred_temperature": 105
+  },
+  "spruce": {
+   "pickiness": 60,
+   "preferred_fertility": 500,
+   "preferred_humidity": 700,
+   "preferred_temperature": 60
+  },
+  "twine": {
+   "pickiness": 80,
+   "preferred_fertility": 400,
+   "preferred_humidity": 200,
+   "preferred_temperature": 95
+  },
+  "umbrella_green": {
+   "pickiness": 80,
+   "preferred_fertility": 850,
+   "preferred_humidity": 200,
+   "preferred_temperature": 110
+  },
+  "umbrella_red": {
+   "pickiness": 80,
+   "preferred_fertility": 825,
+   "preferred_humidity": 150,
+   "preferred_temperature": 90
+  }
+ }
+}

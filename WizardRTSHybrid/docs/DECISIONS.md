@@ -47,3 +47,23 @@ Reopen if a headed shot shows a building floating or a unit larger than the ware
 - Construction sites request their build cost over roads and complete after 20 s with no builder worker (scaffold).
 - God Mode and AI must use the same world commands (`build`, `road`, `queue`, `move`, `order`, `demolish`). God Mode suppresses the free-unit provisional AI for the controlled faction only.
 - Walking speed: one tile per 600 ms for workers; OpenRA unit speeds 760/570 ms per cell.
+
+## D5 — Square-grid terrain on Widelands rules (2026-10-10, approved by Joe)
+
+Question: how does Widelands terrain, resources and construction fit this tile world?
+
+Decision: every tile is one terrain node on a square grid with four-direction movement (`wizard_rts/grid.py`). The hex ownership overlay (`coords.py`, D1) is kept only for the legacy flat world and the player's hex label, and is no longer the territory rule when terrain is on. `HybridWorld(terrain=False)` or `HYBRID_TERRAIN=0` keeps the old flat world so the pre-terrain tests still run; terrain is the default.
+
+Source-derived: terrain classes (arable, mineable, walkable, water, unwalkable, unreachable), fertility, humidity, temperature, valid and default resources (`data/world/terrains`, imported by `scripts/import_widelands_terrain.py`); resource types and maxima (`data/world/resources`); tree growth probability (`terrain_affinity.cc`); the shape of the buildcaps rules in `Map::calc_nodecaps_pass1/pass2` and `calc_buildsize` (nothing buildable on water, beach or unwalkable ground; a mine only where the node is entirely mineable; slope 3 limits to small, slope 4 forbids).
+
+Differences from Widelands, not an exact reproduction:
+- Adjacency: 4 neighbours (building size also reads the 8 surrounding tiles) instead of 6.
+- Distances: Manhattan on paths, Chebyshev for radii; a Widelands radius covers a different set of nodes.
+- Triangles: a node holds one terrain; Widelands has a right and a down triangle per node and decides passability from six triangles.
+- Elevation: a byte per node; slope is the largest height difference to the 8 neighbours. Height does not change walking speed.
+- Building spaces: each building occupies one tile; Widelands big buildings also occupy the nodes to their left and above. Neighbouring buildings do not shrink each other's size.
+- Road geometry: roads are tile paths, not flag-to-flag edges; there are no flags as objects.
+- Water has no depth in Widelands. Shore distance (`depth`, shallow within 2 tiles) is our engineering addition.
+- The generator (`mapgen.py`) is ours: noise, six stamped homelands, a central sea joined to the six lakes by channels.
+
+Reopen if a terrain-mode test needs hex geometry, or if imported Widelands maps (`.wmf`) require the six-neighbour layout to look right.

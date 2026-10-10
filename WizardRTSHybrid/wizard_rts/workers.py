@@ -11,7 +11,8 @@ from __future__ import annotations
 import heapq
 from typing import Any
 
-from wizard_rts import imm, wl_defs
+from wizard_rts import imm, resources, wl_defs
+from wizard_rts import terrain as terrain_mod
 from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
     ECONOMY_TARGETS,
@@ -26,6 +27,8 @@ from wizard_rts.programs_data import (
 )
 
 QUANTUM_MS = 100
+ART_SPECIES = ("beech", "wheat")  # species with imported sprites; other trees draw as beech until their art is imported
+TREE_SPECIES = ("beech", "oak", "birch", "spruce", "maple", "larch", "alder", "aspen", "rowan")
 _DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 
 
@@ -54,7 +57,7 @@ def plant_tree(world: Any, tile: tuple[int, int], stage: str, species: str = "be
     world.trees[tree_id] = {
         "id": tree_id,
         "kind": "tree",
-        "definition": f"widelands.{species}",
+        "definition": f"widelands.{species if species in ART_SPECIES else 'beech'}",
         "species": species,
         "stage": stage,
         "tx": tile[0],
@@ -69,7 +72,48 @@ def plant_tree(world: Any, tile: tuple[int, int], stage: str, species: str = "be
 def tile_free_for_tree(world: Any, tile: tuple[int, int]) -> bool:
     if not world.tile_in_map(*tile) or tile in world.blocked or tile in world.tree_tiles:
         return False
+    if world.terrain is not None and world.terrain.class_at(*tile) != terrain_mod.ARABLE:
+        return False  # trees and fields grow on arable terrain only
     return tile not in world.reserved_tiles and tile not in world.road_tile_set
+
+
+def building_of(world: Any, worker: dict) -> dict:
+    return world.buildings[worker["building"]]
+
+
+def _shore_spots(world: Any, building: dict, args: dict) -> list[tuple[int, int]]:
+    """Ground nodes within radius of the building from which the worker can reach the resource with radius 1.
+
+    Widelands findspace=size:any resource:... picks a walkable node that holds the resource (fish live on
+    shoreline nodes there); here fish sit on water tiles, so the worker stands on land beside them.
+    `breed` asks for water that is below its initial amount.
+    """
+    t = world.terrain
+    if t is None:
+        return []
+    res, radius = args["resource"], int(args["radius"])
+    bx, by = building["tx"], building["ty"]
+    out = []
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            tile = (bx + dx, by + dy)
+            if not t.ground(*tile) or tile in world.tree_tiles or tile in world.blocked and tile != (bx, by):
+                continue
+            cells = t.cells(tile[0], tile[1], 1, res)
+            if args.get("breed"):
+                ok = any(i > a for _x, _y, a, i in cells)
+            else:
+                ok = any(a > 0 for _x, _y, a, _i in cells)
+            if ok:
+                out.append(tile)
+    return out
+
+
+def best_species(world: Any, tile: tuple[int, int]) -> str:
+    """The species with the highest probability_to_grow here (Widelands rangers choose by terrain affinity)."""
+    if world.terrain is None:
+        return "beech"
+    return max(TREE_SPECIES, key=lambda sp: (world.terrain.growth_probability(sp, tile[0], tile[1]), sp == "beech"))
 
 
 def remove_tree(world: Any, tree_id: str, reason: str) -> None:
@@ -101,8 +145,13 @@ def tree_quantum(world: Any) -> None:
         table = STAGE_TABLES.get(tree["species"], TREE_STAGES)
         _duration, die, nxt = table[stage]
         if world.rng.random() * 100 < die:
-            remove_tree(world, tree_id, "died" if tree["species"] == "beech" else "rotted")
+            remove_tree(world, tree_id, "died" if tree["species"] != "wheat" else "rotted")
             continue
+        if world.terrain is not None and tree["species"] != "wheat" and stage != "old":
+            # Widelands `grow`: the next stage is reached with probability_to_grow, otherwise the tree dies
+            if world.rng.random() >= world.terrain.growth_probability(tree["species"], tree["tx"], tree["ty"]):
+                remove_tree(world, tree_id, "poor_soil")
+                continue
         if stage == "old":
             _seed(world, tree)
             tree["timer_ms"] = table["old"][0]
@@ -127,12 +176,15 @@ def _seed(world: Any, tree: dict) -> None:
 # ---------------------------------------------------------------- paths
 
 def find_path(
-    world: Any, start: tuple[int, int], goal: tuple[int, int], limit: int = 24, avoid: set | None = None, max_nodes: int = 60_000
+    world: Any, start: tuple[int, int], goal: tuple[int, int], limit: int = 24, avoid: set | None = None, max_nodes: int = 60_000,
+    loco: str | None = None,
 ) -> list[tuple[int, int]] | None:
     """A* over open tiles. The start and goal may be blocked (a workplace door)."""
     if start == goal:
         return []
     open_heap: list[tuple[float, int, tuple[int, int]]] = [(0.0, 0, start)]
+    four = len(world.move_dirs) == 4
+    enter = world.tile_in_map if loco is None else (lambda px, py: world.tile_speed(loco, px, py) > 0)
     came: dict[tuple[int, int], tuple[int, int]] = {}
     cost = {start: 0.0}
     counter = 0
@@ -147,11 +199,11 @@ def find_path(
                 cur = came[cur]
             path.reverse()
             return path
-        for dx, dy in _DIRS:
+        for dx, dy in world.move_dirs:
             nxt = (cur[0] + dx, cur[1] + dy)
             if abs(nxt[0] - start[0]) > limit or abs(nxt[1] - start[1]) > limit:
                 continue
-            if nxt != goal and (nxt in world.blocked or not world.tile_in_map(*nxt) or (avoid and nxt in avoid)):
+            if not enter(nxt[0], nxt[1]) or (nxt != goal and (nxt in world.blocked or (avoid and nxt in avoid))):
                 continue
             if dx and dy and ((cur[0] + dx, cur[1]) in world.blocked or (cur[0], cur[1] + dy) in world.blocked):
                 continue
@@ -160,7 +212,7 @@ def find_path(
                 cost[nxt] = step
                 came[nxt] = cur
                 counter += 1
-                h = max(abs(goal[0] - nxt[0]), abs(goal[1] - nxt[1]))
+                h = (abs(goal[0] - nxt[0]) + abs(goal[1] - nxt[1])) if four else max(abs(goal[0] - nxt[0]), abs(goal[1] - nxt[1]))
                 heapq.heappush(open_heap, (step + h, counter, nxt))
     return None
 
@@ -358,19 +410,36 @@ def _run_step(world: Any, worker: dict) -> None:
             tree["status"] = "frightened"
     elif cmd == "findspace":
         radius = args["radius"]
-        cands = [
-            (here[0] + dx, here[1] + dy)
-            for dy in range(-radius, radius + 1)
-            for dx in range(-radius, radius + 1)
-            if (dx or dy) and tile_free_for_tree(world, (here[0] + dx, here[1] + dy))
-        ]
+        if args.get("resource"):
+            cands = _shore_spots(world, building_of(world, worker), args)
+        else:
+            cands = [
+                (here[0] + dx, here[1] + dy)
+                for dy in range(-radius, radius + 1)
+                for dx in range(-radius, radius + 1)
+                if (dx or dy) and tile_free_for_tree(world, (here[0] + dx, here[1] + dy))
+            ]
+        if args.get("resource") and not cands:
+            _fail_program(world, worker, "no_" + args["resource"])
+            return
         tile = None
         path = None
+        best_p = -1.0
+        best_pick = None
         for _ in range(args.get("saplingsearches", 5) if cands else 0):
             tile = cands[world.rng.randrange(len(cands))]
             path = find_path(world, here, tile)
-            if path is not None:
+            if path is None:
+                continue
+            p = world.terrain.growth_probability("beech", tile[0], tile[1]) if (world.terrain is not None and not args.get("resource")) else 0.0
+            if p > best_p:
+                best_p, best_pick = p, (tile, path)
+            if world.terrain is None or args.get("resource"):
                 break
+        if best_pick is not None:
+            tile, path = best_pick
+        else:
+            path = None
         if path is None:
             _fail_program(world, worker, "no_space")
             return
@@ -447,10 +516,23 @@ def _run_step(world: Any, worker: dict) -> None:
             world.stats["fields_planted"] = world.stats.get("fields_planted", 0) + 1
             world.events.append({"kind": "field_planted", "tree": tree_id, "worker": worker["id"]})
         else:
-            tree_id = plant_tree(world, tuple(tile), "sapling")
+            tree_id = plant_tree(world, tuple(tile), "sapling", best_species(world, tuple(tile)))
             world.stats["saplings_planted"] = world.stats.get("saplings_planted", 0) + 1
             world.events.append({"kind": "sapling_planted", "tree": tree_id, "worker": worker["id"]})
         worker["target_tile"] = None
+    elif cmd in ("mine", "breed"):
+        # Worker::run_mine / run_breed: nets and fish-breeders work the water around the spot the worker stands on
+        if world.terrain is None:
+            _fail_program(world, worker, "no_terrain")
+            return
+        fn = resources.worker_mine if cmd == "mine" else resources.worker_breed
+        if not fn(world, here, args["resource"], int(args["radius"])):
+            _fail_program(world, worker, "no_" + args["resource"] if cmd == "mine" else "grounds_full")
+            return
+        stat = "fish_caught" if cmd == "mine" and args["resource"] == "fish" else cmd + "_" + args["resource"]
+        world.stats[stat] = world.stats.get(stat, 0) + 1
+        if cmd == "mine":
+            worker["target_tree"] = "@" + args["resource"]  # the catch: createware needs a source
     elif cmd == "return":
         worker["status"] = "returning"
         _begin_return(world, worker)
@@ -482,13 +564,12 @@ def economy_needs(world: Any, faction: str, good: str) -> bool:
 
 def _mine(world: Any, building: dict, args: dict) -> bool:
     """Take one unit from the resource nodes around the building. False if it fails."""
+    if world.terrain is not None:
+        return resources.production_mine(world, building, args)
     res, radius = args["resource"], args["radius"]
-    nodes = [
-        (tx, ty)
-        for (tx, ty), amounts in world.resources.items()
-        if max(abs(tx - building["tx"]), abs(ty - building["ty"])) <= radius and amounts.get(res, 0) > 0
-    ]
-    left = sum(world.resources[n].get(res, 0) for n in nodes)
+    centre = (building["tx"], building["ty"])
+    nodes = world.resource_nodes(centre, radius, res)
+    left = sum(world.resource_amount(n, res) for n in nodes)
     initial = building.setdefault("deposit_initial", {}).get(res)
     if initial is None:
         initial = building["deposit_initial"][res] = left
@@ -497,7 +578,7 @@ def _mine(world: Any, building: dict, args: dict) -> bool:
         building["deposit_exhausted"] = True
         return False
     node = nodes[world.rng.randrange(len(nodes))]
-    world.resources[node][res] -= 1
+    world.take_resource(node, res, 1)
     world.events.append({"kind": "mined", "building": building["id"], "resource": res, "node": list(node)})
     return True
 

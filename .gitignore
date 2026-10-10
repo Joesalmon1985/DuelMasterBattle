@@ -38,3 +38,4 @@ logs/
 /WizardRTSHybrid/runtime/
 /WizardRTSHybrid/dist/
 /WizardRTSHybrid/docs/original_runs/logs/
+*.gd.uid

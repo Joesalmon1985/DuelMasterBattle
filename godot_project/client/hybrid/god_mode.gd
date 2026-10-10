@@ -5,7 +5,7 @@ extends Node
 ## the commands the AI uses (build, road, queue, move, order, demolish), so
 ## the world, its clock and the wizard are shared with Wizard Mode.
 
-const MAP_TILES := Vector2(800.0, 480.0)
+var MAP_TILES := Vector2(800.0, 480.0)
 const MINI := Vector2(220.0, 132.0)
 
 var world: Node
@@ -78,6 +78,8 @@ func setup(p_world: Node) -> void:
 	menu = reply.get("build_menu", {})
 	recipes = reply.get("recipes", {})
 	_fill_build_menu()
+	if world.terrain != null:
+		MAP_TILES = Vector2(world.terrain.w, world.terrain.h)
 	var start := OS.get_environment("HYBRID_START_MODE").to_lower()
 	if start == "god" or "--god" in OS.get_cmdline_user_args():
 		enter.call_deferred()
@@ -117,7 +119,7 @@ func _build_panel() -> void:
 	tool_row = HBoxContainer.new()
 	tool_row.name = "Tools"
 	v.add_child(tool_row)
-	for t in [["Road", "road"], ["Move", "move"], ["A-Move", "amove"], ["Attack", "attack"], ["Rally", "rally"], ["Stop", "stop"], ["Demolish", "demolish"]]:
+	for t in [["Road", "road"], ["Move", "move"], ["A-Move", "amove"], ["Attack", "attack"], ["Rally", "rally"], ["Stop", "stop"], ["Demolish", "demolish"], ["Deposits", "deposits"]]:
 		var b := Button.new()
 		b.name = "Tool_%s" % t[1]
 		b.text = t[0]
@@ -371,6 +373,12 @@ func _process(delta: float) -> void:
 
 func _on_tool(t: String) -> void:
 	tool_first = ""
+	if t == "deposits":
+		if world.terrain != null:
+			world.terrain.show_resources = not world.terrain.show_resources
+			world.terrain._res_stamp = -10.0
+			_say("Deposits shown: coal, iron, gold, stones, fish" if world.terrain.show_resources else "Deposits hidden")
+		return
 	if t == "stop":
 		var reply: Dictionary = world._sim.op({"op": "stop", "units": _selected_units()})
 		world._apply_snapshot(reply.get("snapshot", {}))
@@ -559,6 +567,9 @@ func _right_click(screen: Vector2) -> void:
 func _refresh_info() -> void:
 	if selected.is_empty():
 		info.text = "[b]%s[/b]\nLeft click: select. Drag: box. Right click: move / attack.\nG: back to the wizard." % faction
+		if world.terrain != null:
+			var mp := _to_world(world.get_viewport().get_mouse_position())
+			info.text += "\n\n" + world.terrain.describe(int(floor(mp.x / world.TPX)), int(floor(mp.y / world.TPX)))
 		_set_actions([], "")
 		return
 	var lines := ""
@@ -632,6 +643,8 @@ func _mini_pos(tx: float, ty: float) -> Vector2:
 
 func _draw_minimap() -> void:
 	minimap.draw_rect(Rect2(Vector2.ZERO, MINI), Color(0.05, 0.08, 0.06, 0.9), true)
+	if world.terrain != null and world.terrain.overview != null:
+		minimap.draw_texture_rect(world.terrain.overview, Rect2(Vector2.ZERO, MINI), false)
 	minimap.draw_rect(Rect2(Vector2.ZERO, MINI), Color(0.6, 0.6, 0.7), false, 2.0)
 	var colors: Dictionary = {}
 	for f in world._snapshot.get("factions", []):
