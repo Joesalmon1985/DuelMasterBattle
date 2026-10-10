@@ -61,7 +61,7 @@ def _occupied(world: Any, me: dict) -> set[tuple[int, int]]:
 
 def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_at_range: int = 0) -> str:
     """Advance one quantum toward goal. Returns 'moving', 'arrived' or 'stuck'."""
-    from wizard_rts.forestry import find_path
+    from wizard_rts.workers import find_path
 
     here = (int(unit["tx"]), int(unit["ty"]))
     if max(abs(goal[0] - here[0]), abs(goal[1] - here[1])) <= stop_at_range or here == goal:

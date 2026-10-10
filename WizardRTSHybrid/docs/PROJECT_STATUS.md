@@ -1,6 +1,6 @@
 # Project status
 
-Branch: `feature/wizard-rts-hybrid-v02`, cut from `feature/wizard-rts-hybrid` at `5785e03`. Unrelated spellbook and content edits stay unstaged. `main` is not updated. Build-pack T143 is not advanced.
+Branch: `feature/wizard-rts-hybrid-v02` at `52fc8ea`, cut from `feature/wizard-rts-hybrid` at `5785e03`. Unrelated spellbook and content edits stay unstaged. Build-pack T143 is not advanced. Honest inventory: `docs/STATE_OF_PLAY.md`.
 
 ## What works
 

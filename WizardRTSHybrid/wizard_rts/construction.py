@@ -35,6 +35,26 @@ BUILD_MENU: dict[str, dict[str, Any]] = {
         "label": "Sawmill", "definition": "widelands.sawmill", "game": "widelands",
         "cost": {"log": 2, "plank": 1}, "cost_source": "empire/sawmill buildcost minus granite (not produced yet)",
     },
+    "mine": {
+        "label": "Coal mine", "definition": "widelands.coalmine", "game": "widelands",
+        "cost": {"log": 4, "granite": 2}, "cost_source": "barbarians/coalmine buildcost",
+    },
+    "ironmine": {
+        "label": "Iron mine", "definition": "widelands.ironmine", "game": "widelands",
+        "cost": {"log": 4, "granite": 2}, "cost_source": "barbarians/ironmine buildcost",
+    },
+    "quarry": {
+        "label": "Quarry", "definition": "widelands.quarry", "game": "widelands",
+        "cost": {"log": 4}, "cost_source": "barbarians/quarry buildcost",
+    },
+    "smelter": {
+        "label": "Smelting works", "definition": "widelands.smelting_works", "game": "widelands",
+        "cost": {"log": 3, "plank": 1, "granite": 1}, "cost_source": "barbarians/smelting_works buildcost with planks for blackwood, no grout or reed",
+    },
+    "smithy": {
+        "label": "Ax workshop", "definition": "widelands.ax_workshop", "game": "widelands",
+        "cost": {"log": 3, "plank": 2, "granite": 1}, "cost_source": "hybrid-defined from barbarians/ax_workshop",
+    },
     "barracks": {
         "label": "Barracks", "definition": "openra.barracks", "game": "openra",
         "cost": {"log": 2, "plank": 4}, "cost_source": "hybrid-defined; OpenRA credits and power removed by design",
@@ -49,13 +69,13 @@ BUILD_MENU: dict[str, dict[str, Any]] = {
     },
 }
 
-# Placeholder recipes until the smithy / brick chains exist. See docs/DECISIONS.md.
+# Hybrid recipes: a rifleman takes one ax (barbarians/barracks consume=ax, 30 s); a tank takes granite and a plank. See docs/DECISIONS.md.
 RECIPES: dict[str, dict[str, dict[str, Any]]] = {
     "barracks": {
-        "infantry": {"label": "Rifleman", "definition": "openra.e1", "cost": {"plank": 1}, "ms": 8_000},
+        "infantry": {"label": "Rifleman", "definition": "openra.e1", "cost": {"ax": 1}, "ms": 30_000},
     },
     "vehicle_factory": {
-        "tank": {"label": "Tank", "definition": "openra.3tnk", "cost": {"plank": 2}, "ms": 15_000},
+        "tank": {"label": "Tank", "definition": "openra.3tnk", "cost": {"granite": 2, "plank": 1}, "ms": 30_000},
     },
 }
 
@@ -109,6 +129,7 @@ def construction_quantum(world: Any) -> None:
         if site["progress_ms"] >= BUILD_MS:
             for good, n in site["cost"].items():
                 _supply(world, bid).remove_wares(good, n)
+                world.stats["consumed_" + good] = world.stats.get("consumed_" + good, 0) + n
             b.pop("constructing")
             b["operational"] = True
             b["hp"] = b["max_hp"]
@@ -238,6 +259,7 @@ def recruitment_quantum(world: Any) -> None:
             if all(int(stock.get(g, 0)) >= n for g, n in recipe["cost"].items()):
                 for g, n in recipe["cost"].items():
                     _supply(world, bid).remove_wares(g, n)
+                    world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
                 head["state"] = "building"
                 world.stats["recruit_started"] = world.stats.get("recruit_started", 0) + 1
                 world.events.append({"kind": "recruit_started", "building": bid, "unit": head["unit"]})

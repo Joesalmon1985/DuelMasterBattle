@@ -69,13 +69,27 @@ def test_build_road_construct_and_cost_is_delivered() -> None:
     assert w.build("Red", "producer", 5, 5)["reason"] == "outside_territory"
 
 
+def test_rifleman_comes_from_the_real_mining_smelting_smithing_chain() -> None:
+    w = _world()
+    bar = _of(w, "Red", "barracks")
+    assert w.queue(bar, "infantry")["status"] == "ok"
+    n = len(w.units)
+    _run(w, lambda: len(w.units) > n, 1_200_000)
+    # the ax came from coal + iron ore that were mined from finite deposits
+    assert w.stats["made_ax"] >= 1 and w.stats["made_iron"] >= 1 and w.stats["made_coal"] >= 2 and w.stats["made_iron_ore"] >= 1
+    assert w.stats["consumed_ax"] >= 1 and w.stats["recruit_started"] >= 1
+
+
 def test_barracks_queue_consumes_delivered_goods_and_unit_obeys_move() -> None:
     w = _world()
     bar = _of(w, "Red", "barracks")
     assert w.queue(bar, "tank")["reason"] == "cannot_build_here"
+    from wizard_rts.economy import produce
+
+    produce(w, _of(w, "Red", "warehouse"), "ax", 1)  # test shortcut: the chain has its own test above
     assert w.queue(bar, "infantry")["status"] == "ok"
     units_before = len(w.units)
-    _run(w, lambda: len(w.units) > units_before)
+    _run(w, lambda: len(w.units) > units_before, 600_000)
     assert w.stats["recruit_started"] >= 1
     new = [u for u in w.units.values() if u["id"] not in {e for e in ()} and u["kind"] == "infantry" and u["faction_name"] == "Red"]
     assert len(new) == 2

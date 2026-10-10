@@ -1035,6 +1035,90 @@
       "fps": 0
     },
     {
+      "id": "widelands.quarry",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/buildings/productionsites/barbarians/quarry/idle_00.png",
+      "source_note": "barbarians_quarry animations.idle",
+      "godot": "res://client/hybrid/art/widelands/quarry.png",
+      "mode": "sheet",
+      "width": 71,
+      "height": 62,
+      "columns": 1,
+      "rows": 1,
+      "frames": 1,
+      "hotspot": [
+        45,
+        48
+      ],
+      "scale": 2,
+      "fps": 0
+    },
+    {
+      "id": "widelands.ironmine",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/buildings/productionsites/barbarians/ironmine/idle_00.png",
+      "source_note": "barbarians_ironmine animations.idle",
+      "godot": "res://client/hybrid/art/widelands/ironmine.png",
+      "mode": "sheet",
+      "width": 64,
+      "height": 51,
+      "columns": 1,
+      "rows": 1,
+      "frames": 1,
+      "hotspot": [
+        21,
+        36
+      ],
+      "scale": 2,
+      "fps": 0
+    },
+    {
+      "id": "widelands.smelting_works",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/buildings/productionsites/barbarians/smelting_works/idle_00.png",
+      "source_note": "barbarians_smelting_works animations.idle",
+      "godot": "res://client/hybrid/art/widelands/smelting_works.png",
+      "mode": "sheet",
+      "width": 100,
+      "height": 82,
+      "columns": 1,
+      "rows": 1,
+      "frames": 1,
+      "hotspot": [
+        44,
+        58
+      ],
+      "scale": 2,
+      "fps": 0
+    },
+    {
+      "id": "widelands.ax_workshop",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/buildings/productionsites/barbarians/ax_workshop/idle_00.png",
+      "source_note": "barbarians_ax_workshop animations.idle",
+      "godot": "res://client/hybrid/art/widelands/ax_workshop.png",
+      "mode": "sheet",
+      "width": 120,
+      "height": 101,
+      "columns": 1,
+      "rows": 1,
+      "frames": 1,
+      "hotspot": [
+        57,
+        76
+      ],
+      "scale": 2,
+      "fps": 0
+    },
+    {
       "id": "widelands.log",
       "status": "imported",
       "game": "widelands",
@@ -1345,6 +1429,279 @@
       "hotspot": [
         10,
         19
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walk.e",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walk_e_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walk",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walk_e.png",
+      "mode": "sheet",
+      "width": 48,
+      "height": 80,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        9,
+        17
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walk.ne",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walk_ne_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walk",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walk_ne.png",
+      "mode": "sheet",
+      "width": 48,
+      "height": 80,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        9,
+        17
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walk.nw",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walk_nw_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walk",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walk_nw.png",
+      "mode": "sheet",
+      "width": 48,
+      "height": 80,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        9,
+        17
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walk.se",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walk_se_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walk",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walk_se.png",
+      "mode": "sheet",
+      "width": 48,
+      "height": 80,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        9,
+        17
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walk.sw",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walk_sw_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walk",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walk_sw.png",
+      "mode": "sheet",
+      "width": 48,
+      "height": 80,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        9,
+        17
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walk.w",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walk_w_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walk",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walk_w.png",
+      "mode": "sheet",
+      "width": 48,
+      "height": 80,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        9,
+        17
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walkload.e",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walkload_e_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walkload",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walkload_e.png",
+      "mode": "sheet",
+      "width": 42,
+      "height": 84,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        7,
+        19
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walkload.ne",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walkload_ne_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walkload",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walkload_ne.png",
+      "mode": "sheet",
+      "width": 42,
+      "height": 84,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        7,
+        19
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walkload.nw",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walkload_nw_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walkload",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walkload_nw.png",
+      "mode": "sheet",
+      "width": 42,
+      "height": 84,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        7,
+        19
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walkload.se",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walkload_se_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walkload",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walkload_se.png",
+      "mode": "sheet",
+      "width": 42,
+      "height": 84,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        7,
+        19
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walkload.sw",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walkload_sw_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walkload",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walkload_sw.png",
+      "mode": "sheet",
+      "width": 42,
+      "height": 84,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        7,
+        19
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.walkload.w",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/walkload_w_1.png",
+      "source_note": "barbarians/stonemason spritesheets.walkload",
+      "godot": "res://client/hybrid/art/widelands/stonemason_walkload_w.png",
+      "mode": "sheet",
+      "width": 42,
+      "height": 84,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        7,
+        19
+      ],
+      "scale": 4,
+      "fps": 10
+    },
+    {
+      "id": "widelands.stonemason_worker.hack",
+      "status": "imported",
+      "game": "widelands",
+      "license": "GPL-2.0-or-later",
+      "source": "data/tribes/workers/barbarians/stonemason/hack_1.png",
+      "source_note": "barbarians/stonemason spritesheets.hack",
+      "godot": "res://client/hybrid/art/widelands/stonemason_hack.png",
+      "mode": "sheet",
+      "width": 48,
+      "height": 76,
+      "columns": 3,
+      "rows": 4,
+      "frames": 10,
+      "hotspot": [
+        6,
+        17
       ],
       "scale": 4,
       "fps": 10

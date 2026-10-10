@@ -24,7 +24,7 @@ def test_order_rejections() -> None:
     tank = _tank(world, "Red")
     assert world.order(tank, _pick(world, "Red", "producer"))["reason"] == "friendly"
     assert world.order("nope", _pick(world, "Blue", "producer"))["reason"] == "no_unit"
-    tree = next(i for i, b in world.buildings.items() if b["kind"] == "rock")
+    tree = next(iter(world.rocks))
     assert world.order(tank, tree)["reason"] == "no_target"
 
 

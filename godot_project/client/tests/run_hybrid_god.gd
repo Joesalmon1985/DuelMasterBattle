@@ -130,7 +130,7 @@ func _run() -> void:
 	if _god == null or _world._snapshot.is_empty():
 		_fail("no god mode or snapshot")
 		return
-	_world._sim.op({"op": "speed", "scale": 8})
+	_world._sim.op({"op": "speed", "scale": 24})
 	var john_before: Vector2i = _world._john_pos
 	var game_ms_before := int(_world._snapshot.get("game_ms", 0))
 

@@ -41,7 +41,8 @@ Reopen if a headed shot shows a building floating or a unit larger than the ware
 ## Hybrid rules (2026-10-10)
 
 - OpenRA refineries, harvesters, credits and power are removed. Barracks, war factory and turret keep their units but cost Widelands wares (hybrid-defined costs in `construction.py`).
-- Recruitment recipes are placeholders (rifleman = 1 plank, tank = 2 planks) until smithy/brick chains exist. Goods must be delivered by road; a barracks with no goods builds nothing.
+- Recruitment: rifleman = 1 ax (Widelands barbarians/barracks consume=ax, 30 s), tank = 2 granite + 1 plank (hybrid). Goods must be delivered by road; a barracks with no goods builds nothing.
+- Mines do not consume rations yet (food chain pending). Hidden mine/smelter workers are not modelled as entities.
 - Each faction starts with headquarters stock (12 logs, 6 planks), as Widelands start conditions do.
 - Construction sites request their build cost over roads and complete after 20 s with no builder worker (scaffold).
 - God Mode and AI must use the same world commands (`build`, `road`, `queue`, `move`, `order`, `demolish`). God Mode suppresses the free-unit provisional AI for the controlled faction only.

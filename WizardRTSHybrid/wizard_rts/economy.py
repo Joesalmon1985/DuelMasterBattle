@@ -37,22 +37,10 @@ def produce(world: Any, building_id: str, good: str, amount: int = 1) -> None:
 
 
 def economy_quantum(world: Any) -> None:
-    """One game-time quantum of processing. Hauling is logistics.py; production is forestry.py."""
+    """Tick counter and event trimming. Hauling is logistics.py; production is workers.py."""
     world.economy_quanta += 1
-    n = world.economy_quanta
-    if n % 10 == 0:
-        for building_id, building in world.buildings.items():
-            if building["kind"] != "processor" or not building.get("operational", True):
-                continue
-            if int(world.stocks.get(building_id, {}).get("log", 0)) > 0:
-                _supply(world, building_id).remove_wares("log", 1)
-                world.stats["consumed_log"] = world.stats.get("consumed_log", 0) + 1
-                produce(world, building_id, "plank", 1)
-                world.events.append({"kind": "consume", "id": building_id, "good": "log"})
-            else:
-                world.events.append({"kind": "shortage", "id": building_id, "faction": building["faction"]})
-    if len(world.events) > 200:
-        del world.events[:-200]
+    if len(world.events) > 400:
+        del world.events[:-400]
 
 
 def _facing(dx: int, dy: int) -> str:

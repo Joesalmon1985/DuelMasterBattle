@@ -38,7 +38,7 @@ def test_structure_damage_uses_one_pipeline() -> None:
         for building_id, building in world.buildings.items()
         if building["kind"] == "warehouse" and building["faction_name"] == "Red"
     )
-    tree = next(building_id for building_id, building in world.buildings.items() if building["kind"] == "rock")
+    tree = next(iter(world.rocks))
     missed = world.damage_building(warehouse, 200, ["infantry"], {"wood": 100})
     assert missed == 0
     assert world.buildings[warehouse]["hp"] == 1000

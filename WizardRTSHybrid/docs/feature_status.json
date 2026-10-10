@@ -28,8 +28,8 @@
   "evidence": "stock list only; no requests/priorities"
  },
  "widelands.empire_sawmill": {
-  "status": "scaffolded",
-  "evidence": "log->plank timer, no worker"
+  "status": "tested",
+  "evidence": "source programme: needs planks, consume log:2, sleep 16.4 s, animate 20 s, produce planks"
  },
  "openra.barracks": {
   "status": "integrated",
@@ -54,5 +54,53 @@
  "openra.gun": {
   "status": "scaffolded",
   "evidence": "placeable via build menu; no weapon yet"
+ },
+ "widelands.barbarians_coalmine": {
+  "status": "tested",
+  "evidence": "finite 5x5 field, yield 33.33%, when_empty 5%; tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares); ration input not modelled yet"
+ },
+ "widelands.barbarians_ironmine": {
+  "status": "tested",
+  "evidence": "tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares)"
+ },
+ "widelands.barbarians_smelting_works": {
+  "status": "tested",
+  "evidence": "iron program only (gold program missing); tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares)"
+ },
+ "widelands.barbarians_ax_workshop": {
+  "status": "tested",
+  "evidence": "produce_ax only; chain test in tests/test_commands.py"
+ },
+ "widelands.barbarians_quarry": {
+  "status": "tested",
+  "evidence": "stonemason walks to a real rock, shrinks it, granite carried home; tests/test_resources.py"
+ },
+ "widelands.barbarians_stonemason": {
+  "status": "tested",
+  "evidence": "cut_granite worker programme"
+ },
+ "widelands.barbarians_barracks": {
+  "status": "scaffolded",
+  "evidence": "recruit consumes ax (source recipe), recruits an OpenRA rifleman, not a barbarian soldier"
+ },
+ "widelands.ax": {
+  "status": "tested",
+  "evidence": "made by ax workshop from mined coal and smelted iron"
+ },
+ "widelands.coal": {
+  "status": "tested",
+  "evidence": "mined from deposit"
+ },
+ "widelands.iron_ore": {
+  "status": "tested",
+  "evidence": "mined from deposit"
+ },
+ "widelands.iron": {
+  "status": "tested",
+  "evidence": "smelted"
+ },
+ "widelands.granite": {
+  "status": "tested",
+  "evidence": "cut from a rock"
  }
 }

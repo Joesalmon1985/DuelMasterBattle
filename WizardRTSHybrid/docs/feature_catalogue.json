@@ -10,29 +10,29 @@
  "totals": {
   "widelands.building": {
    "discovered": 237,
-   "missing": 233,
+   "missing": 227,
    "scaffolded": 2,
    "adapted": 0,
    "integrated": 0,
-   "tested": 2,
+   "tested": 8,
    "verified": 0
   },
   "widelands.ware": {
    "discovered": 131,
-   "missing": 130,
+   "missing": 125,
    "scaffolded": 0,
    "adapted": 0,
    "integrated": 0,
-   "tested": 1,
+   "tested": 6,
    "verified": 0
   },
   "widelands.worker": {
    "discovered": 156,
-   "missing": 153,
+   "missing": 152,
    "scaffolded": 0,
    "adapted": 0,
    "integrated": 1,
-   "tested": 2,
+   "tested": 3,
    "verified": 0
   },
   "openra.building": {
@@ -854,8 +854,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/ax_workshop/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "produce_ax only; chain test in tests/test_commands.py"
   },
   {
    "id": "widelands.barbarians_bakery",
@@ -872,8 +872,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/barracks/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "scaffolded",
+   "evidence": "recruit consumes ax (source recipe), recruits an OpenRA rifleman, not a barbarian soldier"
   },
   {
    "id": "widelands.barbarians_big_inn",
@@ -917,8 +917,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/coalmine/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "finite 5x5 field, yield 33.33%, when_empty 5%; tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares); ration input not modelled yet"
   },
   {
    "id": "widelands.barbarians_coalmine_deep",
@@ -1043,8 +1043,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/ironmine/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares)"
   },
   {
    "id": "widelands.barbarians_ironmine_deep",
@@ -1106,8 +1106,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/quarry/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "stonemason walks to a real rock, shrinks it, granite carried home; tests/test_resources.py"
   },
   {
    "id": "widelands.barbarians_rangers_hut",
@@ -1151,8 +1151,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/smelting_works/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "iron program only (gold program missing); tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares)"
   },
   {
    "id": "widelands.barbarians_tavern",
@@ -1421,8 +1421,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/empire/sawmill/init.lua",
-   "status": "scaffolded",
-   "evidence": "log->plank timer, no worker"
+   "status": "tested",
+   "evidence": "source programme: needs planks, consume log:2, sleep 16.4 s, animate 20 s, produce planks"
   },
   {
    "id": "widelands.empire_scouts_house",
@@ -2240,8 +2240,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/ax/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by ax workshop from mined coal and smelted iron"
   },
   {
    "id": "widelands.ax_battle",
@@ -2510,8 +2510,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/coal/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "mined from deposit"
   },
   {
    "id": "widelands.cocoa_beans",
@@ -2708,8 +2708,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/granite/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "cut from a rock"
   },
   {
    "id": "widelands.grape",
@@ -2834,8 +2834,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/iron/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "smelted"
   },
   {
    "id": "widelands.iron_ore",
@@ -2843,8 +2843,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/iron_ore/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "mined from deposit"
   },
   {
    "id": "widelands.ironwood",
@@ -4139,8 +4139,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/barbarians/stonemason/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "cut_granite worker programme"
   },
   {
    "id": "widelands.barbarians_trainer",

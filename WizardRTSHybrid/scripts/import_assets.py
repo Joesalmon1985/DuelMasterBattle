@@ -196,6 +196,14 @@ WORKER_SHEETS = {
             "walkload": ([10, 19], True, 3, 4, 10, 10),
         },
     ),
+    "stonemason": (
+        "barbarians/stonemason",
+        {
+            "walk": ([9, 17], True, 3, 4, 10, 10),
+            "walkload": ([7, 19], True, 3, 4, 10, 10),
+            "hack": ([6, 17], False, 3, 4, 10, 10),
+        },
+    ),
     "ranger": (
         "barbarians/ranger",
         {
@@ -237,6 +245,21 @@ def forestry_items() -> list[dict]:
             source_note="barbarians_rangers_hut spritesheets.idle (20 frames, frame 0 shown)",
         )
     )
+    for item_id, folder, hotspot in (
+        ("widelands.quarry", "quarry", [45, 48]),
+        ("widelands.ironmine", "ironmine", [21, 36]),
+        ("widelands.smelting_works", "smelting_works", [44, 58]),
+        ("widelands.ax_workshop", "ax_workshop", [57, 76]),
+    ):
+        out.append(
+            sheet(
+                item_id,
+                f"data/tribes/buildings/productionsites/barbarians/{folder}/idle_00.png",
+                f"{folder}.png",
+                columns=1, rows=1, frames=1, hotspot=hotspot, scale=2, fps=0,
+                source_note=f"barbarians_{folder} animations.idle",
+            )
+        )
     out.append(
         sheet(
             "widelands.log", "data/tribes/wares/log/idle_1.png", "ware_log.png",

@@ -11,8 +11,9 @@ from __future__ import annotations
 import heapq
 from typing import Any
 
-from wizard_rts.forest_data import (
+from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
+    ECONOMY_TARGETS,
     FAIL_SLEEP_MS,
     FELLED_MS,
     OLD_SEED_RADIUS,
@@ -192,8 +193,12 @@ def spawn_worker(world: Any, building: dict, role: str) -> str:
     return worker_id
 
 
+def _object(world: Any, object_id: str) -> dict | None:
+    return world.trees.get(object_id) or world.rocks.get(object_id)
+
+
 def _release(world: Any, worker: dict) -> None:
-    tree = world.trees.get(worker["target_tree"])
+    tree = _object(world, worker["target_tree"])
     if tree is not None and tree["reserved_by"] == worker["id"]:
         tree["reserved_by"] = ""
     if worker["target_tile"] is not None:
@@ -234,6 +239,7 @@ def _arrive_home(world: Any, worker: dict) -> None:
         good = worker["carrying"]
         produce(world, building["id"], good, 1)
         world.stats["produce"] += 1
+        world.stats["made_" + good] = world.stats.get("made_" + good, 0) + 1
         world.events.append({"kind": "ware_stored", "worker": worker["id"], "building": building["id"], "good": good})
         worker["carrying"] = ""
     worker["returning"] = False
@@ -293,8 +299,9 @@ def _run_step(world: Any, worker: dict) -> None:
     here = (worker["tx"], worker["ty"])
     if cmd == "findobject":
         best = None
-        for tree in world.trees.values():
-            if tree["stage"] != "old" or tree["reserved_by"]:
+        pool = world.rocks.values() if args["attrib"] == "rocks" else world.trees.values()
+        for tree in pool:
+            if (args["attrib"] == "tree" and tree["stage"] != "old") or tree["reserved_by"]:
                 continue
             dist = max(abs(tree["tx"] - here[0]), abs(tree["ty"] - here[1]))
             if dist > args["radius"] or (best is not None and dist >= best[0]):
@@ -303,7 +310,7 @@ def _run_step(world: Any, worker: dict) -> None:
             if path is not None:
                 best = (dist, tree, path)
         if best is None:
-            _fail_program(world, worker, "no_tree")
+            _fail_program(world, worker, "no_" + ("rock" if args["attrib"] == "rocks" else "tree"))
             return
         _dist, tree, path = best
         tree["reserved_by"] = worker["id"]
@@ -311,7 +318,9 @@ def _run_step(world: Any, worker: dict) -> None:
         worker["path"] = path
         worker["anim"] = "walk"
         worker["status"] = "walking"
-        world.events.append({"kind": "tree_reserved", "tree": tree["id"], "worker": worker["id"]})
+        world.events.append({"kind": "object_reserved", "tree": tree["id"], "worker": worker["id"]})
+        if args["attrib"] == "tree":
+            world.events.append({"kind": "tree_reserved", "tree": tree["id"], "worker": worker["id"]})
     elif cmd == "findspace":
         radius = args["radius"]
         cands = [
@@ -342,24 +351,32 @@ def _run_step(world: Any, worker: dict) -> None:
         worker["anim"] = args["name"]
         worker["status"] = "working"
         worker["wait_ms"] = args["ms"]
-        tree = world.trees.get(worker["target_tree"])
+        tree = _object(world, worker["target_tree"])
         if tree is not None:
             worker["facing"] = facing(tree["tx"] - worker["tx"], tree["ty"] - worker["ty"])
     elif cmd == "callobject":
-        tree = world.trees.get(worker["target_tree"])
+        tree = _object(world, worker["target_tree"])
         if tree is None or tree["reserved_by"] != worker["id"]:
-            _fail_program(world, worker, "tree_gone")
+            _fail_program(world, worker, "object_gone")
             return
-        tree["stage"] = "felled"
-        tree["timer_ms"] = FELLED_MS
         tree["reserved_by"] = ""
-        world.events.append({"kind": "tree_felled", "tree": tree["id"], "worker": worker["id"]})
+        if args["program"] == "fall":
+            tree["stage"] = "felled"
+            tree["timer_ms"] = FELLED_MS
+            world.events.append({"kind": "tree_felled", "tree": tree["id"], "worker": worker["id"]})
+        else:  # shrink: one load of granite comes off the rock
+            tree["amount"] -= 1
+            world.events.append({"kind": "rock_shrunk", "rock": tree["id"], "left": tree["amount"], "worker": worker["id"]})
+            if tree["amount"] <= 0:
+                world.rocks.pop(tree["id"], None)
+                world.events.append({"kind": "rock_gone", "rock": tree["id"]})
     elif cmd == "createware":
         if not worker["target_tree"]:
             _fail_program(world, worker, "no_source")
             return
         worker["carrying"] = args["ware"]
-        world.events.append({"kind": "log_created", "worker": worker["id"], "tree": worker["target_tree"]})
+        kind = "log_created" if args["ware"] == "log" else "ware_created"
+        world.events.append({"kind": kind, "worker": worker["id"], "tree": worker["target_tree"], "good": args["ware"]})
         worker["target_tree"] = ""
     elif cmd == "plant":
         tile = worker["target_tile"]
@@ -379,21 +396,69 @@ def _run_step(world: Any, worker: dict) -> None:
 
 # ---------------------------------------------------------------- production sites
 
+def economy_needs(world: Any, faction: str, good: str) -> bool:
+    """The Widelands economy-needs test: stock under the target, or an open request for the ware."""
+    from wizard_rts.logistics import io_for
+
+    have = sum(
+        int(world.stocks.get(b["id"], {}).get(good, 0))
+        for b in world.buildings.values()
+        if b["kind"] == "warehouse" and b["faction"] == faction
+    )
+    if have < ECONOMY_TARGETS.get(good, 1_000_000):
+        return True
+    for b in world.buildings.values():
+        if b["faction"] != faction:
+            continue
+        cap = io_for(world, b).get("requests", {}).get(good)
+        if cap is not None and int(world.stocks.get(b["id"], {}).get(good, 0)) < cap:
+            return True
+    return False
+
+
+def _mine(world: Any, building: dict, args: dict) -> bool:
+    """Take one unit from the resource nodes around the building. False if it fails."""
+    res, radius = args["resource"], args["radius"]
+    nodes = [
+        (tx, ty)
+        for (tx, ty), amounts in world.resources.items()
+        if max(abs(tx - building["tx"]), abs(ty - building["ty"])) <= radius and amounts.get(res, 0) > 0
+    ]
+    left = sum(world.resources[n].get(res, 0) for n in nodes)
+    initial = building.setdefault("deposit_initial", {}).get(res)
+    if initial is None:
+        initial = building["deposit_initial"][res] = left
+    exhausted_for_yield = left <= initial * (1.0 - args["yield"] / 100.0)
+    if not nodes or (exhausted_for_yield and world.rng.random() * 100 >= args["when_empty"]):
+        building["deposit_exhausted"] = True
+        return False
+    node = nodes[world.rng.randrange(len(nodes))]
+    world.resources[node][res] -= 1
+    world.events.append({"kind": "mined", "building": building["id"], "resource": res, "node": list(node)})
+    return True
+
+
 def production_quantum(world: Any) -> None:
+    from wizard_rts.economy import _supply, produce
+
     for building in list(world.buildings.values()):
-        role = WORKER_FOR_BUILDING.get(building.get("kind", ""))
-        if role is None or not building.get("operational", True):
+        program = BUILDING_PROGRAMS.get(building.get("kind", ""))
+        if program is None or not building.get("operational", True):
             continue
-        worker = world.workers.get(building.get("worker_id", ""))
-        if worker is None:
-            if building.get("respawn_ms", 0) > 0:
-                building["respawn_ms"] -= QUANTUM_MS
-            else:
-                spawn_worker(world, building, role)
-            continue
+        role = WORKER_FOR_BUILDING.get(building["kind"])
+        worker = None
+        if role:
+            worker = world.workers.get(building.get("worker_id", ""))
+            if worker is None:
+                if building.get("respawn_ms", 0) > 0:
+                    building["respawn_ms"] -= QUANTUM_MS
+                else:
+                    spawn_worker(world, building, role)
+                continue
         if building.get("sleep_ms", 0) > 0:
             building["sleep_ms"] -= int(QUANTUM_MS * _health_factor(building))
             continue
+        building["working"] = False
         if building.get("waiting_worker"):
             if building.pop("worker_done", False):
                 building["waiting_worker"] = False
@@ -402,20 +467,48 @@ def production_quantum(world: Any) -> None:
                     building["sleep_ms"] = FAIL_SLEEP_MS
                     building["pc"] = 0
             continue
-        actions = BUILDING_PROGRAMS[building["kind"]]
         pc = building.setdefault("pc", 0)
-        if pc >= len(actions):
+        if pc >= len(program):
             building["pc"] = 0
             continue
-        cmd, args = actions[pc]
+        cmd, args = program[pc]
+        building["pc"] = pc + 1
+        stock = world.stocks.setdefault(building["id"], {})
         if cmd == "callworker":
             building.pop("worker_done", None)
             building.pop("prog_failed", None)
             worker.update(program=args["program"], pc=0, status="starting")
             building["waiting_worker"] = True
+            building["pc"] = pc  # advances when the worker reports back
         elif cmd == "sleep":
             building["sleep_ms"] = args["ms"]
-            building["pc"] += 1
+        elif cmd == "animate":
+            building["working"] = True
+            building["sleep_ms"] = args["ms"]
+        elif cmd == "needs":
+            if not economy_needs(world, building["faction"], args["good"]):
+                building["pc"] = 0
+                building["sleep_ms"] = FAIL_SLEEP_MS  # return=skipped
+        elif cmd == "consume":
+            if all(int(stock.get(g, 0)) >= n for g, n in args.items()):
+                for g, n in args.items():
+                    _supply(world, building["id"]).remove_wares(g, n)
+                    world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
+            else:
+                building["pc"] = 0
+                building["sleep_ms"] = FAIL_SLEEP_MS
+                key = (building["id"], "inputs")
+                world.shortages[key] = world.shortages.get(key, 0) + 1
+        elif cmd == "mine":
+            if not _mine(world, building, args):
+                building["pc"] = 0
+                building["sleep_ms"] = FAIL_SLEEP_MS
+        elif cmd == "produce":
+            for g, n in args.items():
+                produce(world, building["id"], g, n)
+                world.stats["produce"] += n
+                world.stats["made_" + g] = world.stats.get("made_" + g, 0) + n
+                world.events.append({"kind": "produced", "building": building["id"], "good": g})
 
 
 def _health_factor(building: dict) -> float:

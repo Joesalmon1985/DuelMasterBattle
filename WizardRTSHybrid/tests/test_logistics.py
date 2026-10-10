@@ -17,17 +17,21 @@ def _log_total(world: HybridWorld, good: str) -> int:
     return sum(int(s.get(good, 0)) for s in world.stocks.values()) + in_flight(world, good)
 
 
-def test_log_conservation_over_ten_minutes() -> None:
+def test_every_ware_is_conserved_over_ten_minutes() -> None:
     world = HybridWorld()
     world.dmb.hazards["catastrophe"]["cubes"][world.hazard_id]["active"] = False
-    initial = _log_total(world, "log")  # headquarters starting wares
+    goods = ("log", "plank", "coal", "iron_ore", "iron", "ax", "granite")
+    initial = {g: _log_total(world, g) for g in goods}
     for i in range(6_000):
         world.advance(100, i + 1)
-    made = world.stats["produce"]
-    held = _log_total(world, "log")
-    assert made > 0
-    # Exact accounting: made counts wares stored in a hut; each is held, consumed, or lost.
-    assert held + world.stats.get("consumed_log", 0) + world.stats.get("lost", 0) == made + initial
+    carried = {g: sum(1 for w in world.workers.values() if w["carrying"] == g) for g in goods}
+    for g in goods:
+        made = world.stats.get("made_" + g, 0)
+        held = _log_total(world, g)
+        gone = world.stats.get("consumed_" + g, 0)
+        # a ware is made, then held (stock / flag / carrier), or consumed. Wares on a worker's back are not yet made.
+        assert held + gone == made + initial[g], (g, held, gone, made, initial[g], carried[g])
+    assert world.stats["made_log"] > 0 and world.stats["made_coal"] > 0 and world.stats["made_granite"] > 0
 
 
 def test_wares_never_teleport() -> None:

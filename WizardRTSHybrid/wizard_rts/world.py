@@ -29,7 +29,8 @@ from wizard_rts.economy import SCHEDULE_PROVENANCE  # noqa: E402
 from wizard_rts.widelands_stock import EconomyTotals  # noqa: E402
 from wizard_rts.economy import economy_quantum  # noqa: E402
 from wizard_rts.logistics import add_road, logistics_quantum  # noqa: E402
-from wizard_rts.forestry import forestry_quantum, plant_tree, find_path  # noqa: E402
+from wizard_rts.programs_data import RESOURCE_PER_NODE, ROCK_AMOUNT
+from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import military_quantum, order_attack, order_move, order_stop
@@ -64,6 +65,8 @@ class HybridWorld:
         self.node_wares: dict[str, list[dict[str, Any]]] = {}
         self.shortages: dict[tuple[str, str], int] = {}
         self.recipe_requests: dict[str, dict[str, int]] = {}
+        self.rocks: dict[str, dict[str, Any]] = {}
+        self.resources: dict[tuple[int, int], dict[str, int]] = {}
         self.trees: dict[str, dict[str, Any]] = {}
         self.tree_tiles: dict[tuple[int, int], str] = {}
         self.workers: dict[str, dict[str, Any]] = {}
@@ -97,8 +100,8 @@ class HybridWorld:
         versus: dict[str, int] | None = None,
     ) -> int:
         """One shared hit. A weapon that does not list the target type deals nothing."""
-        building = self.buildings[building_id]
-        if building.get("target_type") not in target_types:
+        building = self.buildings.get(building_id)
+        if building is None or building.get("target_type") not in target_types:
             return 0
         if int(building.get("hp", 0)) <= 0:
             return 0
@@ -198,7 +201,11 @@ class HybridWorld:
     ) -> None:
         """Real buildings from both games, sharing this faction's hex."""
         specs = (
-            ("mine", "widelands.coalmine", "Mine", -12, 5),
+            ("mine", "widelands.coalmine", "Coal mine", -12, 5),
+            ("ironmine", "widelands.ironmine", "Iron mine", -12, -3),
+            ("smelter", "widelands.smelting_works", "Smelting works", -9, -5),
+            ("smithy", "widelands.ax_workshop", "Ax workshop", 6, -8),
+            ("quarry", "widelands.quarry", "Quarry", -4, 9),
             ("tavern", "widelands.tavern", "Tavern", -10, -8),
             ("farm", "widelands.farm", "Farm", 1, -11),
             ("barracks", "openra.barracks", "Barracks", 11, -6),
@@ -208,9 +215,18 @@ class HybridWorld:
         for kind, definition, label, dx, dy in specs:
             tile = self._free_in_hex(q, r, center, dx, dy, road)
             bid = self._building(faction_id, name, kind, tile, label, definition)
-            if kind in ("barracks", "vehicle_factory"):
+            if kind in ("barracks", "vehicle_factory", "mine", "ironmine", "smelter", "smithy", "quarry"):
                 self._pending_links.append((name, bid))
+            if kind in ("mine", "ironmine"):
+                self._seed_resource(tile, "coal" if kind == "mine" else "iron")
         self._place_scenery(faction_id, name, center, road)
+
+    def _seed_resource(self, around: tuple[int, int], resource: str) -> None:
+        """A 5 by 5 resource field centred on the mine (the programme radius is 2)."""
+        for dy in range(-2, 3):
+            for dx in range(-2, 3):
+                node = (around[0] + dx, around[1] + dy)
+                self.resources.setdefault(node, {})[resource] = RESOURCE_PER_NODE[resource]
 
     def _place_scenery(
         self,
@@ -219,11 +235,15 @@ class HybridWorld:
         center: tuple[int, int],
         road: set[tuple[int, int]],
     ) -> None:
-        for dx, dy in ((-7, 5), (8, 2)):
+        for dx, dy in ((-7, 8), (-8, 11), (-6, 12), (-1, 12), (-10, 9), (8, 2)):
             tile = (center[0] + dx, center[1] + dy)
-            if not tile_in_map(*tile) or tile in self.blocked or tile in road:
+            if not tile_in_map(*tile) or tile in self.blocked or tile in road or tile in self.tree_tiles:
                 continue
-            self._building(faction_id, name, "rock", tile, "Rocks", "widelands.rocks", block=False)
+            rock_id = new_id(self, "rock")
+            self.rocks[rock_id] = {
+                "id": rock_id, "class": "rock", "kind": "rock", "definition": "widelands.rocks",
+                "tx": tile[0], "ty": tile[1], "amount": ROCK_AMOUNT, "reserved_by": "",
+            }
 
     def _unit(
         self,
@@ -473,7 +493,7 @@ class HybridWorld:
         return {"status": result.get("status"), "result": result, "snapshot": self.snapshot()}
 
     def entity_ids(self) -> list[str]:
-        ids = list(self.buildings) + list(self.carriers) + list(self.units) + list(self.workers) + list(self.trees)
+        ids = list(self.buildings) + list(self.carriers) + list(self.units) + list(self.workers) + list(self.trees) + list(self.rocks)
         if self.hazard_id:
             ids.append(self.hazard_id)
         return sorted(ids)
@@ -491,6 +511,16 @@ class HybridWorld:
         for building in self.buildings.values():
             row = _entity_row(building)
             row["class"] = "building" if "hp" in building else "scenery"
+            if building.get("working"):
+                row["working"] = True
+            if building["kind"] in ("mine", "ironmine"):
+                res = "coal" if building["kind"] == "mine" else "iron"
+                row["deposit_left"] = sum(
+                    amounts.get(res, 0)
+                    for (tx, ty), amounts in self.resources.items()
+                    if max(abs(tx - building["tx"]), abs(ty - building["ty"])) <= 2
+                )
+                row["deposit_exhausted"] = bool(building.get("deposit_exhausted"))
             entities.append(row)
         for carrier in self.carriers.values():
             row = _entity_row(carrier)
@@ -503,6 +533,14 @@ class HybridWorld:
                 {
                     "id": tree["id"], "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"],
                     "tx": tree["tx"], "ty": tree["ty"], "alive": True, "faction": "", "label": "Tree",
+                }
+            )
+        for rock in self.rocks.values():
+            entities.append(
+                {
+                    "id": rock["id"], "class": "rock", "kind": "rock", "definition": rock["definition"],
+                    "tx": rock["tx"], "ty": rock["ty"], "alive": True, "faction": "", "label": "Rocks",
+                    "amount": rock["amount"],
                 }
             )
         for worker in self.workers.values():

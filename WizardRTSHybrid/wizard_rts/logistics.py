@@ -17,14 +17,9 @@ from collections import deque
 from typing import Any
 
 from wizard_rts.economy import _supply, produce
-from wizard_rts.forestry import facing, new_id
+from wizard_rts.programs_data import BUILDING_INPUTS, BUILDING_OUTPUTS
+from wizard_rts.workers import facing, new_id
 
-# Per building kind: wares it requests (good -> stock cap) and wares it pushes out.
-BUILDING_IO: dict[str, dict[str, Any]] = {
-    "producer": {"outputs": ["log"]},
-    "ranger": {},
-    "processor": {"requests": {"log": 4}, "outputs": ["plank"]},
-}
 NODE_QUEUE_LIMIT = 8
 LOGISTICS_PERIOD = 10  # quanta between request and output scans
 
@@ -32,7 +27,12 @@ LOGISTICS_PERIOD = 10  # quanta between request and output scans
 def io_for(world: Any, building: dict) -> dict[str, Any]:
     if building.get("constructing"):
         return {"requests": dict(building["constructing"]["cost"])}
-    io = dict(BUILDING_IO.get(building.get("kind", ""), {}))
+    kind = building.get("kind", "")
+    io: dict[str, Any] = {}
+    if kind in BUILDING_INPUTS:
+        io["requests"] = dict(BUILDING_INPUTS[kind])
+    if kind in BUILDING_OUTPUTS:
+        io["outputs"] = list(BUILDING_OUTPUTS[kind])
     extra = world.recipe_requests.get(building["id"])
     if extra:
         io["requests"] = {**io.get("requests", {}), **extra}
