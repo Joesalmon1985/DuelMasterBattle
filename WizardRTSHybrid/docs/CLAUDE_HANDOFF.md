@@ -32,7 +32,7 @@ Commands are in `docs/PROJECT_STATUS.md`. One sim process on port 8765. Headed s
 
 ## Next task
 
-Put `hp`, `max_hp`, and a target type on every building. One OpenRA-derived `inflict_damage` call must lower a Widelands building's health. Do not add a second damage function. The imported sprites stay. B1 is still the missing C++ compiler. Do not rerun bare cmake.
+Call `HybridWorld.damage_building` from a unit order so a tank reduces a Widelands building's health during `advance`. At 0 health the building must stop producing. Do not add a second damage function. Latest green commit is on `feature/wizard-rts-hybrid-v02`. B1 is still the missing C++ compiler. Do not rerun bare cmake.
 
 ## First files
 

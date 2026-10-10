@@ -46,4 +46,4 @@ Set `HYBRID_SHOT_DIR` to save PNGs. The sim must be started first. One server pr
 
 ## Next task
 
-Add current health, max health, and a target type on every building, then one attack that reduces a Widelands building's health through `inflict_damage`. Do not start a second damage function. Keep the imported sprites. B1 stays blocked until a C++ compiler exists. Do not rerun bare cmake.
+`HybridWorld.damage_building` already uses `inflict_damage`. Wire a unit order through it so a tank can lower a Widelands building's health in the live tick, and stop that building's production at 0 health. Do not add a second damage function. B1 stays blocked until a C++ compiler exists. Do not rerun bare cmake.

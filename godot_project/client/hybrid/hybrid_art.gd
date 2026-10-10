@@ -86,6 +86,21 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var top_left := anchor - Vector2(float(hotspot[0]), float(hotspot[1])) * scale
 	var src := _source_rect(item, tex, entity)
 	canvas.draw_texture_rect_region(tex, Rect2(top_left, frame_size * scale), src)
+	_draw_health(canvas, entity, anchor)
+
+
+func _draw_health(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> void:
+	if not entity.has("hp") or not entity.has("max_hp"):
+		return
+	var hp := int(entity.get("hp", 0))
+	var max_hp := int(entity.get("max_hp", 0))
+	if max_hp <= 0 or hp >= max_hp:
+		return
+	var width := 36.0
+	var bar := Rect2(anchor.x - width * 0.5, anchor.y - 28.0, width, 4.0)
+	canvas.draw_rect(bar, Color(0.1, 0.1, 0.1, 0.8), true)
+	var fill := width * float(hp) / float(max_hp)
+	canvas.draw_rect(Rect2(bar.position, Vector2(fill, 4.0)), Color(0.75, 0.15, 0.12), true)
 
 
 func _item_for(entity: Dictionary) -> Dictionary:

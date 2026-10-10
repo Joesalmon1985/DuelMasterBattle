@@ -30,6 +30,7 @@ from wizard_rts.economy import economy_quantum  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import military_quantum  # noqa: E402
+from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
 
 WORLD_ID = "hybrid.world"
 
@@ -57,6 +58,29 @@ class HybridWorld:
 
     def tile_in_map(self, tx: int, ty: int) -> bool:
         return tile_in_map(tx, ty)
+
+    def damage_building(
+        self,
+        building_id: str,
+        raw_damage: int,
+        target_types: list[str],
+        versus: dict[str, int] | None = None,
+    ) -> int:
+        """One shared hit. A weapon that does not list the target type deals nothing."""
+        building = self.buildings[building_id]
+        if building.get("target_type") not in target_types:
+            return 0
+        if int(building.get("hp", 0)) <= 0:
+            return 0
+        versus_percent = damage_versus(versus or {}, [str(building.get("armor", ""))])
+        applied = warhead_damage(int(raw_damage), [], versus_percent)
+        before = int(building["hp"])
+        building["hp"] = inflict_damage(before, int(building["max_hp"]), applied)
+        if before > 0 and int(building["hp"]) <= 0:
+            building["operational"] = False
+            self.stats["destroyed"] += 1
+            self.events.append({"kind": "building_destroyed", "id": building_id})
+        return before - int(building["hp"])
 
     def tile_blocked_for_carrier(self, tile: tuple[int, int]) -> bool:
         if self.hazard_tile is None or not self._hazard_active():
@@ -215,6 +239,12 @@ class HybridWorld:
         }
         if definition:
             record["definition"] = definition
+        if kind not in ("tree", "rock"):
+            record["hp"] = 1000
+            record["max_hp"] = 1000
+            record["target_type"] = "structure"
+            record["armor"] = "wood" if definition.startswith("widelands.") else "concrete"
+            record["operational"] = True
         self.buildings[building_id] = record
         self.stocks[building_id] = {}
         if block:
@@ -427,6 +457,13 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["facing"] = row["facing"]
     if row.get("status"):
         out["status"] = row["status"]
+    if "hp" in row:
+        out["hp"] = int(row["hp"])
+        out["max_hp"] = int(row.get("max_hp", row["hp"]))
+    if row.get("target_type"):
+        out["target_type"] = row["target_type"]
+    if "operational" in row:
+        out["operational"] = bool(row["operational"])
     return out
 
 

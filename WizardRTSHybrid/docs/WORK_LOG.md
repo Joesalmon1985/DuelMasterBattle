@@ -32,3 +32,4 @@
 - Inspected `docs/evidence/gallery/mashup_1280x720.png`, `mashup_wide_1280x720.png`, and `mashup_1920x1080.png` at native size. The hut, green-roof warehouse, farm, barracks, war factory, tank, infantry, soldier, and wizard are visible together. Roads are faint. The grass texture repeats. The refinery sits near the left edge at the play zoom. OpenRA units use the temperate palette's default player colour.
 - After the move, pytest 17 passed and `HYBRID_WALK_OK` start=(100, 50) end=(522, 62) crossings=20.
 - Not done: building health, cross-game attacks, recipe economy, God Mode, long runs, a package that includes the art.
+- Follow-up on the same day: every non-scenery building has `hp`, `max_hp`, `target_type`, and `armor`. `damage_building` uses the existing OpenRA-derived `inflict_damage`. A weapon whose target list omits `structure` deals 0. A dead building is not damaged again. Units do not call this yet. Pytest 18 passed.
