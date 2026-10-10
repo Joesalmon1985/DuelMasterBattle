@@ -28,13 +28,25 @@ from wizard_rts.economy import PROVENANCE as ECONOMY_PROVENANCE  # noqa: E402
 from wizard_rts.economy import SCHEDULE_PROVENANCE  # noqa: E402
 from wizard_rts.widelands_stock import EconomyTotals  # noqa: E402
 from wizard_rts.economy import economy_quantum  # noqa: E402
+from wizard_rts.logistics import add_road, logistics_quantum  # noqa: E402
 from wizard_rts.forestry import forestry_quantum, plant_tree, find_path  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
-from wizard_rts.military import military_quantum, order_attack  # noqa: E402
+from wizard_rts.military import military_quantum, order_attack, order_move, order_stop
+from wizard_rts import construction as con  # noqa: E402
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
 
 WORLD_ID = "hybrid.world"
+
+# name, axial hex of the capital, display colour (hex RGB)
+FACTIONS = (
+    ("Red", (2, 2), "#d63a3a"),
+    ("Blue", (6, 3), "#3a6ad6"),
+    ("Green", (10, 4), "#3fae49"),
+    ("Yellow", (3, 7), "#e0c63a"),
+    ("Purple", (8, 8), "#8e4ad0"),
+    ("Orange", (13, 7), "#e8892e"),
+)
 
 
 class HybridWorld:
@@ -47,6 +59,11 @@ class HybridWorld:
         self.units: dict[str, dict[str, Any]] = {}
         self.roads: dict[str, list[tuple[int, int]]] = {}
         self.road_tile_set: set[tuple[int, int]] = set()
+        self.road_edges: dict[str, tuple[str, str]] = {}
+        self.adjacency: dict[str, list[tuple[str, str]]] = {}
+        self.node_wares: dict[str, list[dict[str, Any]]] = {}
+        self.shortages: dict[tuple[str, str], int] = {}
+        self.recipe_requests: dict[str, dict[str, int]] = {}
         self.trees: dict[str, dict[str, Any]] = {}
         self.tree_tiles: dict[tuple[int, int], str] = {}
         self.workers: dict[str, dict[str, Any]] = {}
@@ -54,6 +71,8 @@ class HybridWorld:
         self.counters: dict[str, int] = {}
         self.rng = random.Random(int(seed))
         self.time_scale = 1
+        self.faction_info: dict[str, dict[str, str]] = {}
+        self.controlled_faction = ""
         self.stocks: dict[str, dict[str, int]] = {}
         self.economy_totals = EconomyTotals()
         self.blocked: set[tuple[int, int]] = set()
@@ -64,6 +83,7 @@ class HybridWorld:
         self.hazard_id = ""
         self.hazard_tile: tuple[int, int] | None = None
         self.player = {"tx": 0, "ty": 0, "facing": "down"}
+        self._pending_links: list[tuple[str, str]] = []
         self._layout()
 
     def tile_in_map(self, tx: int, ty: int) -> bool:
@@ -102,8 +122,14 @@ class HybridWorld:
         return bool(cube and cube.get("active", True))
 
     def _layout(self) -> None:
-        red = self._place_faction("Red", 2, 2)
-        blue = self._place_faction("Blue", 6, 3)
+        placed = [self._place_faction(name, q, r) for name, (q, r), _color in FACTIONS]
+        red, blue = placed[0], placed[1]
+        for (name, _hex, color), info in zip(FACTIONS, placed):
+            self.faction_info[name] = {"id": info["faction"], "name": name, "color": color}
+        for name, bid in self._pending_links:
+            wh = con.faction_warehouse(self, name)
+            res = con.build_road(self, name, bid, wh["id"])
+            assert res["status"] == "ok", res
         # Stand just east of the red settlement so the town is in frame at
         # playable zoom. Hex (2, 3)'s center is a full hex away and hides it.
         start = self._stand_near(red["road"])
@@ -126,34 +152,15 @@ class HybridWorld:
         processor = self._building(
             faction_id, name, "processor", processor_tile, "Sawmill", "widelands.sawmill"
         )
-        self.buildings[processor]["warehouse_id"] = warehouse
         road_a = _path(producer_tile, warehouse_tile)
         road_b = _path(warehouse_tile, processor_tile)
         road_tiles = road_a + road_b[1:]
-        for suffix, road_pts, src, dst in (("a", road_a, producer, warehouse), ("b", road_b, warehouse, processor)):
-            road_id = f"road:{faction_id}:{suffix}"
-            self.roads[road_id] = road_pts
-            self.road_tile_set.update(road_pts)
-            carrier_id = str(self.dmb.ids.new("cart"))
-            self.carriers[carrier_id] = {
-                "id": carrier_id,
-                "faction": faction_id,
-                "faction_name": name,
-                "kind": "carrier",
-                "label": f"{name} carrier",
-                "tx": road_pts[0][0],
-                "ty": road_pts[0][1],
-                "index": 0,
-                "road_id": road_id,
-                "source_id": src,
-                "dest_id": dst,
-                "good": "log",
-                "cargo": None,
-                "status": "idle",
-                "definition": "widelands.carrier",
-                "facing": "e",
-            }
-            self.stocks[carrier_id] = {}
+        add_road(self, faction_id, name, producer, warehouse, road_a)
+        add_road(self, faction_id, name, warehouse, processor, road_b)
+        from wizard_rts.economy import produce
+
+        produce(self, warehouse, "log", 12)
+        produce(self, warehouse, "plank", 6)
         ranger_tile = self._free_in_hex(q, r, center, -6, 3, set(road_tiles))
         self._building(faction_id, name, "ranger", ranger_tile, "Ranger's hut", "widelands.rangers_hut")
         self._plant_forest(producer_tile, set(road_tiles))
@@ -200,7 +207,9 @@ class HybridWorld:
         )
         for kind, definition, label, dx, dy in specs:
             tile = self._free_in_hex(q, r, center, dx, dy, road)
-            self._building(faction_id, name, kind, tile, label, definition)
+            bid = self._building(faction_id, name, kind, tile, label, definition)
+            if kind in ("barracks", "vehicle_factory"):
+                self._pending_links.append((name, bid))
         self._place_scenery(faction_id, name, center, road)
 
     def _place_scenery(
@@ -359,6 +368,9 @@ class HybridWorld:
         for _ in range(quanta):
             forestry_quantum(self)
             economy_quantum(self)
+            logistics_quantum(self)
+            con.construction_quantum(self)
+            con.recruitment_quantum(self)
             military_quantum(self)
             if self.economy_quanta % 30 == 0:
                 self.events.append({"kind": "ai_economy", "game_ms": int(self.dmb.clock.get("game_ms", 0))})
@@ -367,6 +379,58 @@ class HybridWorld:
     def set_speed(self, scale: int) -> dict[str, Any]:
         self.time_scale = max(1, min(int(scale), 60))
         return {"status": "ok", "time_scale": self.time_scale, "snapshot": self.snapshot()}
+
+    # ---- commands shared by God Mode and AI -------------------------------
+    def control(self, faction: str) -> dict[str, Any]:
+        if faction and faction not in self.faction_info:
+            return {"status": "rejected", "reason": "unknown_faction"}
+        self.controlled_faction = faction
+        self.events.append({"kind": "control", "faction": faction})
+        return {"status": "ok", "snapshot": self.snapshot()}
+
+    def _guard(self, faction: str) -> dict[str, Any] | None:
+        if faction not in self.faction_info:
+            return {"status": "rejected", "reason": "unknown_faction"}
+        return None
+
+    def build(self, faction: str, kind: str, tx: int, ty: int) -> dict[str, Any]:
+        out = self._guard(faction) or con.place_building(self, faction, kind, tx, ty)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def road(self, faction: str, a: str, b: str) -> dict[str, Any]:
+        out = self._guard(faction) or con.build_road(self, faction, a, b)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def queue(self, building: str, unit_kind: str) -> dict[str, Any]:
+        out = con.queue_unit(self, building, unit_kind)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def cancel(self, building: str, index: int) -> dict[str, Any]:
+        out = con.cancel_queue(self, building, index)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def move(self, units: list[str], tx: int, ty: int) -> dict[str, Any]:
+        out = order_move(self, [str(u) for u in units], tx, ty)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def stop(self, units: list[str]) -> dict[str, Any]:
+        out = order_stop(self, [str(u) for u in units])
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def demolish(self, building: str) -> dict[str, Any]:
+        b = self.buildings.get(building)
+        if b is None or "hp" not in b:
+            return {"status": "rejected", "reason": "no_building", "snapshot": self.snapshot()}
+        if b["kind"] == "warehouse":
+            return {"status": "rejected", "reason": "cannot_demolish_warehouse", "snapshot": self.snapshot()}
+        self.damage_building(building, 10**9, ["structure"], {})
+        return {"status": "ok", "snapshot": self.snapshot()}
 
     def order(self, unit_id: str, target_id: str) -> dict[str, Any]:
         result = order_attack(self, str(unit_id), str(target_id))
@@ -493,6 +557,8 @@ class HybridWorld:
                 "military_movement": MOVEMENT_PROVENANCE,
             },
             "time_scale": self.time_scale,
+            "factions": list(self.faction_info.values()),
+            "controlled_faction": self.controlled_faction,
             "economy_totals": dict(self.economy_totals.totals),
             "map": {"q": 20, "r": 20},
             "neighbor_sample": neighbors(q, r),
@@ -524,6 +590,17 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["target_type"] = row["target_type"]
     if "operational" in row:
         out["operational"] = bool(row["operational"])
+    if row.get("constructing"):
+        site = row["constructing"]
+        out["constructing"] = {"cost": site["cost"], "progress_ms": site["progress_ms"]}
+    if row.get("queue") is not None:
+        out["queue"] = [dict(i) for i in row["queue"]]
+    if row.get("order"):
+        out["order"] = dict(row["order"])
+    if row.get("path"):
+        nxt = row["path"][0]
+        out["next_tx"], out["next_ty"] = int(nxt[0]), int(nxt[1])
+        out["move_progress"] = min(1.0, row.get("progress_ms", 0) / max(1, __import__("wizard_rts.military", fromlist=["MOVE_MS"]).MOVE_MS.get(row.get("kind", ""), 760)))
     return out
 
 

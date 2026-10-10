@@ -46,24 +46,27 @@ def test_lumberjack_fells_real_tree_and_carrier_delivers() -> None:
     steps = [b for a, b in zip(seen, seen[1:]) if a != b]
     assert steps and all(max(abs(a[0] - b[0]), abs(a[1] - b[1])) == 1 for a, b in zip(seen, seen[1:]) if a != b)
     assert (worker["tx"], worker["ty"]) == (world.trees[tree_id]["tx"], world.trees[tree_id]["ty"])
-    assert world.stocks[hut].get("log", 0) == 0 and world.stocks[warehouse].get("log", 0) == 0
+    assert world.stocks[hut].get("log", 0) == 0 and not world.node_wares.get(hut)
 
     # Chopping takes real time; the tree is still standing partway through.
     _run(world, lambda: worker["wait_ms"] <= 8_000)
     assert world.trees[tree_id]["stage"] == "old"
     _run(world, lambda: world.trees[tree_id]["stage"] == "felled")
-    assert world.stocks[hut].get("log", 0) == 0  # the log is carried, not yet stored
+    assert world.stocks[hut].get("log", 0) == 0 and not world.node_wares.get(hut)  # carried, not yet stored
     _run(world, lambda: worker["carrying"] == "log")
     created = [e for e in world.events if e["kind"] == "log_created" and e["worker"] == worker["id"]]
     assert created and created[-1]["tree"] == tree_id
 
     _run(world, lambda: any(e["kind"] == "ware_stored" and e["worker"] == worker["id"] for e in world.events))
     # carried home, into the hut output; carrier is a different entity
-    carrier = next(c for c in world.carriers.values() if c["source_id"] == hut)
+    carrier = next(c for c in world.carriers.values() if hut in world.road_edges[c["road_id"]])
     assert carrier["id"] != worker["id"]
-    _run(world, lambda: any(e["kind"] == "pickup" and e["id"] == carrier["id"] for e in world.events))
-    _run(world, lambda: any(e["kind"] == "deliver" and e["dest"] == warehouse for e in world.events))
-    delivered = [e for e in world.events if e["kind"] == "deliver" and e["dest"] == warehouse]
+    _run(world, lambda: any(e["kind"] == "pickup" and e["id"] == carrier["id"] and e["from"] == hut for e in world.events))
+    def _log_delivered() -> bool:
+        return any(e["kind"] == "deliver" and e["dest"] == warehouse and e["good"] == "log" and e["id"] == carrier["id"] for e in world.events)
+
+    _run(world, _log_delivered)
+    delivered = [e for e in world.events if e["kind"] == "deliver" and e["dest"] == warehouse and e["good"] == "log"]
     assert delivered and delivered[-1]["id"] == carrier["id"]
     # the felled tree disappears after its fall animation
     _run(world, lambda: tree_id not in world.trees, limit_ms=60_000)
@@ -73,8 +76,8 @@ def test_lumberjack_fells_real_tree_and_carrier_delivers() -> None:
 def test_logs_become_planks_at_sawmill() -> None:
     world = HybridWorld()
     world.dmb.hazards["catastrophe"]["cubes"][world.hazard_id]["active"] = False
-    sawmill = _red(world, "processor")
-    _run(world, lambda: world.stocks[sawmill].get("plank", 0) >= 1, limit_ms=900_000)
+    warehouse = _red(world, "warehouse")
+    _run(world, lambda: world.stocks[warehouse].get("plank", 0) >= 1, limit_ms=900_000)
 
 
 def test_ranger_plants_and_sapling_grows() -> None:

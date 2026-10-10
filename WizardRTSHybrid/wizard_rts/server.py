@@ -18,6 +18,7 @@ for entry in (str(_HERE), str(_ROOT)):
     if entry not in sys.path:
         sys.path.insert(0, entry)
 
+from wizard_rts import construction as con  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
 
@@ -29,6 +30,24 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return world.set_pose(int(message.get("tx", 0)), int(message.get("ty", 0)), str(message.get("facing", "down")))
     if op == "advance":
         return world.advance(int(message.get("ms", 0)), int(message.get("sequence", 0)))
+    if op == "control":
+        return world.control(str(message.get("faction", "")))
+    if op == "build":
+        return world.build(str(message.get("faction", "")), str(message.get("kind", "")), int(message.get("tx", 0)), int(message.get("ty", 0)))
+    if op == "road":
+        return world.road(str(message.get("faction", "")), str(message.get("a", "")), str(message.get("b", "")))
+    if op == "queue":
+        return world.queue(str(message.get("building", "")), str(message.get("unit", "")))
+    if op == "cancel":
+        return world.cancel(str(message.get("building", "")), int(message.get("index", 0)))
+    if op == "move":
+        return world.move(list(message.get("units", [])), int(message.get("tx", 0)), int(message.get("ty", 0)))
+    if op == "stop":
+        return world.stop(list(message.get("units", [])))
+    if op == "demolish":
+        return world.demolish(str(message.get("building", "")))
+    if op == "menu":
+        return {"status": "ok", "build_menu": con.BUILD_MENU, "recipes": con.RECIPES}
     if op == "speed":
         return world.set_speed(int(message.get("scale", 1)))
     if op == "order":

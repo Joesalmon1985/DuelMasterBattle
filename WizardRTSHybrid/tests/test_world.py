@@ -87,9 +87,10 @@ def test_idle_advance_produces_and_delivers() -> None:
 def test_hazard_blocks_delivery_until_removed() -> None:
     world = HybridWorld()
     red = _faction_named(world, "Red")
-    world.advance(30_000, 1)
+    world.advance(120_000, 1)
     assert world.stats["blocked"] > 0
-    assert int(world.stocks[_warehouse(world, red)].get("log", 0)) == 0
+    hut = next(i for i, b in world.buildings.items() if b["kind"] == "producer" and b["faction"] == red)
+    assert world.node_wares.get(hut)  # logs wait at the hut: the hazard blocks the road
 
 
 def test_military_moves_and_resolves_a_hit() -> None:
@@ -127,7 +128,7 @@ def test_duel_pauses_and_outcomes_differ() -> None:
     assert lost.snapshot()["hazard_active"] is True
     red = _faction_named(lost, "Red")
     lost.advance(240_000, 1)
-    assert int(lost.stocks[_warehouse(lost, red)].get("log", 0)) == 0
+    assert lost.node_wares.get(next(i for i, b in lost.buildings.items() if b["kind"] == "producer" and b["faction"] == red))
     assert lost.stats["blocked"] > 0
 
 

@@ -52,8 +52,56 @@ def order_attack(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
     return {"status": "ok"}
 
 
+MOVE_MS = {"tank": 570, "infantry": 760, "soldier": 760}  # OpenRA Speed 72 / 54 per cell at 25 ticks/s
+
+
+def _occupied(world: Any, me: dict) -> set[tuple[int, int]]:
+    return {(u["tx"], u["ty"]) for u in world.units.values() if u.get("alive", True) and u is not me}
+
+
+def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_at_range: int = 0) -> str:
+    """Advance one quantum toward goal. Returns 'moving', 'arrived' or 'stuck'."""
+    from wizard_rts.forestry import find_path
+
+    here = (int(unit["tx"]), int(unit["ty"]))
+    if max(abs(goal[0] - here[0]), abs(goal[1] - here[1])) <= stop_at_range or here == goal:
+        unit["path"] = []
+        return "arrived"
+    others = _occupied(world, unit)
+    if not unit.get("path") or unit.get("path_goal") != list(goal):
+        path = find_path(world, here, goal, limit=400, avoid=others)
+        if path is None:
+            unit["status"] = "stuck"
+            return "stuck"
+        unit["path"], unit["path_goal"] = path, list(goal)
+        unit["progress_ms"] = 0
+    nxt = unit["path"][0]
+    if nxt in others:
+        unit["blocked_ms"] = unit.get("blocked_ms", 0) + 100
+        unit["status"] = "blocked"
+        if unit["blocked_ms"] >= 1000:  # someone is standing in the way: route around
+            unit["path"] = []
+            unit["blocked_ms"] = 0
+        return "moving"
+    unit["blocked_ms"] = 0
+    unit["progress_ms"] = unit.get("progress_ms", 0) + 100
+    unit["status"] = "moving"
+    if unit["progress_ms"] >= MOVE_MS.get(unit["kind"], 760):
+        unit["facing"] = _facing(nxt[0] - here[0], nxt[1] - here[1])
+        unit["tx"], unit["ty"] = nxt
+        unit["path"].pop(0)
+        unit["progress_ms"] = 0
+        world.stats["move"] += 1
+    return "moving"
+
+
 def _order_step(world: Any, unit: dict) -> None:
     order = unit["order"]
+    if order["kind"] == "move":
+        if _walk(world, unit, tuple(order["tile"])) in ("arrived", "stuck"):
+            unit.pop("order", None)
+            unit["status"] = "idle"
+        return
     building = world.buildings.get(order["target"])
     if building is None or int(building.get("hp", 0)) <= 0:
         unit.pop("order", None)
@@ -62,6 +110,7 @@ def _order_step(world: Any, unit: dict) -> None:
     weapon = WEAPONS[unit["kind"]]
     dist = abs(int(unit["tx"]) - int(building["tx"])) + abs(int(unit["ty"]) - int(building["ty"]))
     if dist <= weapon["range"]:
+        unit["path"] = []
         unit["status"] = "attacking"
         if world.military_quanta % FIRE_EVERY == 0:
             dealt = world.damage_building(order["target"], weapon["damage"], ["structure"], weapon["versus"])
@@ -73,24 +122,41 @@ def _order_step(world: Any, unit: dict) -> None:
                 unit.pop("order", None)
                 unit["status"] = "idle"
         return
-    goal = (int(building["tx"]), int(building["ty"]))
-    dx, dy = goal[0] - int(unit["tx"]), goal[1] - int(unit["ty"])
-    options = []
-    if dx:
-        options.append((int(unit["tx"]) + (1 if dx > 0 else -1), int(unit["ty"])))
-    if dy:
-        options.append((int(unit["tx"]), int(unit["ty"]) + (1 if dy > 0 else -1)))
-    if abs(dy) > abs(dx):
-        options.reverse()
-    for step in options:
-        if step in world.blocked or not world.tile_in_map(*step):
+    result = _walk(world, unit, (int(building["tx"]), int(building["ty"])), stop_at_range=max(weapon["range"] - 2, 0))
+    if result == "stuck":
+        unit.pop("order", None)
+        unit["status"] = "idle"
+        world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "no_path"})
+
+
+def order_move(world: Any, unit_ids: list[str], tx: int, ty: int) -> dict[str, Any]:
+    if not world.tile_in_map(int(tx), int(ty)):
+        return {"status": "rejected", "reason": "outside_map"}
+    moved = 0
+    for k, uid in enumerate(unit_ids):
+        unit = world.units.get(uid)
+        if unit is None or not unit.get("alive", True):
             continue
-        unit["facing"] = _facing(step[0] - int(unit["tx"]), step[1] - int(unit["ty"]))
-        unit["status"] = "moving"
-        unit["tx"], unit["ty"] = step
-        world.stats["move"] += 1
-        return
-    unit["status"] = "stuck"
+        # spread a group into a loose block instead of stacking on one tile
+        ox, oy = k % 3 - 1, k // 3 - 1
+        goal = [int(tx) + ox, int(ty) + oy]
+        if not world.tile_in_map(*goal) or tuple(goal) in world.blocked:
+            goal = [int(tx), int(ty)]
+        unit["order"] = {"kind": "move", "tile": goal}
+        unit["path"] = []
+        moved += 1
+    world.events.append({"kind": "order_move", "units": list(unit_ids), "tile": [int(tx), int(ty)]})
+    return {"status": "ok" if moved else "rejected", "moved": moved}
+
+
+def order_stop(world: Any, unit_ids: list[str]) -> dict[str, Any]:
+    for uid in unit_ids:
+        unit = world.units.get(uid)
+        if unit is not None:
+            unit.pop("order", None)
+            unit["path"] = []
+            unit["status"] = "idle"
+    return {"status": "ok"}
 
 
 def military_quantum(world: Any) -> None:
@@ -98,7 +164,10 @@ def military_quantum(world: Any) -> None:
     for unit in list(world.units.values()):
         if unit.get("alive", True) and unit.get("order"):
             _order_step(world, unit)
-    units = [u for u in world.units.values() if u.get("alive", True) and not u.get("order")]
+    units = [
+        u for u in world.units.values()
+        if u.get("alive", True) and not u.get("order") and u["faction_name"] != world.controlled_faction
+    ]
     if len(units) < 2:
         return
     if world.military_quanta % 20 == 0:
@@ -108,24 +177,24 @@ def military_quantum(world: Any) -> None:
     by_faction: dict[str, dict] = {}
     for unit in units:
         by_faction[unit["faction"]] = unit
-    factions = list(by_faction)
-    if len(factions) < 2:
+    if len(by_faction) < 2:
         return
-    a = by_faction[factions[0]]
-    b = by_faction[factions[1]]
-    if _adjacent(a, b):
-        a["hp"] = apply_hit(a["hp"])
-        b["hp"] = apply_hit(b["hp"])
-        world.stats["attack"] += 1
-        world.events.append({"kind": "attack", "a": a["id"], "b": b["id"], "hp": [a["hp"], b["hp"]]})
-        for unit in (a, b):
-            if unit["hp"] <= 0:
-                unit["alive"] = False
+    reps = list(by_faction.values())
+    for unit in reps:
+        enemies = [o for o in reps if o["faction"] != unit["faction"] and o.get("alive", True)]
+        if not enemies or not unit.get("alive", True):
+            continue
+        other = min(enemies, key=lambda o: abs(int(o["tx"]) - int(unit["tx"])) + abs(int(o["ty"]) - int(unit["ty"])))
+        if _adjacent(unit, other):
+            other["hp"] = apply_hit(other["hp"])
+            world.stats["attack"] += 1
+            world.events.append({"kind": "attack", "a": unit["id"], "b": other["id"], "hp": [unit["hp"], other["hp"]]})
+            if other["hp"] <= 0:
+                other["alive"] = False
                 world.stats["destroyed"] += 1
-                world.events.append({"kind": "destroyed", "id": unit["id"]})
-        return
-    _step_toward(world, a, b)
-    _step_toward(world, b, a)
+                world.events.append({"kind": "destroyed", "id": other["id"]})
+        else:
+            _step_toward(world, unit, other)
 
 
 def _facing(dx: int, dy: int) -> str:

@@ -119,7 +119,9 @@ def _seed(world: Any, tree: dict) -> None:
 
 # ---------------------------------------------------------------- paths
 
-def find_path(world: Any, start: tuple[int, int], goal: tuple[int, int], limit: int = 24) -> list[tuple[int, int]] | None:
+def find_path(
+    world: Any, start: tuple[int, int], goal: tuple[int, int], limit: int = 24, avoid: set | None = None, max_nodes: int = 60_000
+) -> list[tuple[int, int]] | None:
     """A* over open tiles. The start and goal may be blocked (a workplace door)."""
     if start == goal:
         return []
@@ -129,6 +131,8 @@ def find_path(world: Any, start: tuple[int, int], goal: tuple[int, int], limit: 
     counter = 0
     while open_heap:
         _f, _c, cur = heapq.heappop(open_heap)
+        if counter > max_nodes:
+            return None
         if cur == goal:
             path = []
             while cur != start:
@@ -140,7 +144,7 @@ def find_path(world: Any, start: tuple[int, int], goal: tuple[int, int], limit: 
             nxt = (cur[0] + dx, cur[1] + dy)
             if abs(nxt[0] - start[0]) > limit or abs(nxt[1] - start[1]) > limit:
                 continue
-            if nxt != goal and (nxt in world.blocked or not world.tile_in_map(*nxt)):
+            if nxt != goal and (nxt in world.blocked or not world.tile_in_map(*nxt) or (avoid and nxt in avoid)):
                 continue
             if dx and dy and ((cur[0] + dx, cur[1]) in world.blocked or (cur[0], cur[1] + dy) in world.blocked):
                 continue
