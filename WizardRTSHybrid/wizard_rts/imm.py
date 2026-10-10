@@ -83,8 +83,8 @@ def _advance(world: Any, obj: dict, program: str) -> None:
     obj["timer_ms"] = LONG_MS  # nothing left to do
 
 
-def tick(world: Any, obj: dict) -> None:
-    obj["timer_ms"] -= 100
+def tick(world: Any, obj: dict, step: int = 100) -> None:
+    obj["timer_ms"] -= step
     if obj["timer_ms"] <= 0 and not obj["reserved_by"]:
         _advance(world, obj, "main")
 

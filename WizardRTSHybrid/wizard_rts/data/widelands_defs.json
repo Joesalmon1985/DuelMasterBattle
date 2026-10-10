@@ -4081,8 +4081,34 @@
       "raw": "return=skipped unless economy needs granite or economy needs quartz",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "granite",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "granite",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "quartz",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -4192,12 +4218,10 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless economy needs granite or economy needs quartz"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs granite or economy needs quartz"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_tapir_farm": {
    "tribe": "amazons",
@@ -6276,6 +6300,28 @@
          "ware": "cornmeal",
          "not": true
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "blackroot"
+          ],
+          "n": 1,
+          "not": false
+         },
+         {
+          "type": "economy_needs",
+          "ware": "blackroot_flour",
+          "not": false
+         },
+         {
+          "type": "economy_needs",
+          "ware": "cornmeal",
+          "not": true
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -6347,6 +6393,28 @@
          "ware": "blackroot_flour",
          "not": true
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "corn"
+          ],
+          "n": 1,
+          "not": false
+         },
+         {
+          "type": "economy_needs",
+          "ware": "cornmeal",
+          "not": false
+         },
+         {
+          "type": "economy_needs",
+          "ware": "blackroot_flour",
+          "not": true
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -12033,8 +12101,33 @@
       "raw": "return=skipped unless economy needs beer or workers need experience",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "beer",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "beer",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "experience",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -12065,12 +12158,10 @@
     ]
    },
    "spritesheets": {},
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless economy needs beer or workers need experience"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs beer or workers need experience"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_quarry": {
    "tribe": "barbarians",
@@ -15481,8 +15572,34 @@
       "raw": "return=skipped unless economy needs marble or economy needs granite",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "marble",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "marble",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "granite",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -15532,8 +15649,34 @@
       "raw": "return=skipped unless economy needs marble or economy needs granite",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "marble",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "marble",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "granite",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -15690,13 +15833,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "mine_granite: return condition return=skipped unless economy needs marble or economy needs granite",
-    "mine_marble: return condition return=skipped unless economy needs marble or economy needs granite"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: mine_granite: return condition return=skipped unless economy needs marble or economy needs granite; mine_marble: return condition return=skipped unless economy needs marble or economy needs granite"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_marblemine_deep": {
    "tribe": "empire",
@@ -15722,8 +15862,34 @@
       "raw": "return=skipped unless economy needs marble or economy needs granite",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "marble",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "marble",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "granite",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -15867,12 +16033,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless economy needs marble or economy needs granite"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs marble or economy needs granite"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_mill": {
    "tribe": "empire",
@@ -18273,6 +18437,18 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "water"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -18294,6 +18470,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fruit"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -18885,8 +19073,33 @@
       "raw": "return=skipped unless economy needs bread_frisians or workers need experience",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "bread_frisians",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "bread_frisians",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "experience",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -18947,12 +19160,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless economy needs bread_frisians or workers need experience"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs bread_frisians or workers need experience"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_barracks": {
    "tribe": "frisians",
@@ -19784,8 +19995,33 @@
       "raw": "return=skipped unless economy needs beer or workers need experience",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "beer",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "beer",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "experience",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -19846,12 +20082,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless economy needs beer or workers need experience"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs beer or workers need experience"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_brick_kiln": {
    "tribe": "frisians",
@@ -20219,8 +20453,41 @@
       "raw": "return=skipped unless economy needs clay or economy needs fish or economy needs coal",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "clay",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "clay",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "fish",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "coal",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
@@ -20239,6 +20506,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "water"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -20311,12 +20590,10 @@
      "rows": 1
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless economy needs clay or economy needs fish or economy needs coal"
-   ],
+   "executable": true,
+   "problems": [],
    "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs clay or economy needs fish or economy needs coal"
+   "blocked_by": "worker_program: dig"
   },
   "frisians_coalmine": {
    "tribe": "frisians",
@@ -21868,8 +22145,33 @@
       "raw": "return=skipped unless economy needs honey_bread or workers need experience",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "honey_bread",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "honey_bread",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "experience",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -21905,8 +22207,33 @@
       "raw": "return=skipped unless economy needs honey_bread or workers need experience",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "honey_bread",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "honey_bread",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "experience",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -21995,13 +22322,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "bake_honey: return condition return=skipped unless economy needs honey_bread or workers need experience",
-    "bake_honey_2: return condition return=skipped unless economy needs honey_bread or workers need experience"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: bake_honey: return condition return=skipped unless economy needs honey_bread or workers need experience; bake_honey_2: return condition return=skipped unless economy needs honey_bread or workers need experience"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_hunters_house": {
    "tribe": "frisians",
@@ -22455,8 +22779,33 @@
       "raw": "return=skipped unless economy needs mead or workers need experience",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "mead",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "mead",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "experience",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -22492,8 +22841,33 @@
       "raw": "return=skipped unless economy needs mead or workers need experience",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "mead",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "mead",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "experience",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -22582,13 +22956,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "brew_mead: return condition return=skipped unless economy needs mead or workers need experience",
-    "brew_mead_2: return condition return=skipped unless economy needs mead or workers need experience"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: brew_mead: return condition return=skipped unless economy needs mead or workers need experience; brew_mead_2: return condition return=skipped unless economy needs mead or workers need experience"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_quarry": {
    "tribe": "frisians",
@@ -22735,6 +23106,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fur_garment_old"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -22771,8 +23154,34 @@
       "raw": "return=skipped unless economy needs iron or not economy needs coal",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "iron",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "iron",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "coal",
+          "not": true
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -22807,8 +23216,41 @@
       "raw": "return=skipped unless economy needs iron or economy needs gold or not economy needs coal",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "iron",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "iron",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "gold",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "economy_needs",
+          "ware": "coal",
+          "not": true
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -22880,13 +23322,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "smelt_iron: return condition return=skipped unless economy needs iron or not economy needs coal",
-    "smelt_mixed: return condition return=skipped unless economy needs iron or economy needs gold or not economy needs coal"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: smelt_iron: return condition return=skipped unless economy needs iron or not economy needs coal; smelt_mixed: return condition return=skipped unless economy needs iron or economy needs gold or not economy needs coal"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_reed_farm": {
    "tribe": "frisians",
@@ -23633,8 +24072,33 @@
       "raw": "return=skipped unless economy needs fur_garment or workers need experience",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "economy_needs",
+         "ware": "fur_garment",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "economy_needs",
+          "ware": "fur_garment",
+          "not": false
+         }
+        ],
+        [
+         {
+          "type": "experience",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -23694,12 +24158,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless economy needs fur_garment or workers need experience"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs fur_garment or workers need experience"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_shipyard": {
    "tribe": "frisians",
@@ -23893,6 +24355,23 @@
          "ware": "smoked_fish",
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish"
+          ],
+          "n": 2,
+          "not": false
+         },
+         {
+          "type": "economy_needs",
+          "ware": "smoked_fish",
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24194,6 +24673,28 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fruit",
+           "bread_frisians"
+          ],
+          "n": 1,
+          "not": false
+         },
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24637,6 +25138,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "boots_sturdy"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24658,6 +25171,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24680,6 +25205,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24736,6 +25274,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "boots_swift"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24757,6 +25307,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24778,6 +25340,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24831,6 +25405,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "boots_hero"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24852,6 +25438,18 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24873,6 +25471,18 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24895,6 +25505,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24952,6 +25575,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "armor_wooden"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24973,6 +25608,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -24995,6 +25642,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25051,6 +25711,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "helmet_wooden"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25072,6 +25744,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25093,6 +25777,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25146,6 +25842,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "warriors_coat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25167,6 +25875,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25188,6 +25908,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25210,6 +25942,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25267,6 +26012,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "vest_padded"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25288,6 +26045,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25309,6 +26078,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25362,6 +26143,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "protector_padded"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25383,6 +26176,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25404,6 +26209,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25426,6 +26243,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25561,6 +26391,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25582,6 +26425,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25603,6 +26458,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "spear_stone_tipped"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25659,6 +26526,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25681,6 +26560,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25702,6 +26594,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "chocolate"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25723,6 +26627,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "spear_hardened"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25852,6 +26768,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "trident_long"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25873,6 +26801,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25895,6 +26835,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25950,6 +26903,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "trident_steel"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25971,6 +26936,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -25993,6 +26970,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26048,6 +27038,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "trident_double"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26069,6 +27071,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26091,6 +27105,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26146,6 +27173,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "trident_heavy_double"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26167,6 +27206,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26189,6 +27240,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26303,6 +27367,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "shield_steel"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26324,6 +27400,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26346,6 +27434,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26401,6 +27502,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "shield_advanced"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26422,6 +27535,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26444,6 +27569,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26499,6 +27637,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "tabard_golden"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26521,6 +27671,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26575,6 +27738,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26597,6 +27772,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26651,6 +27839,18 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26673,6 +27873,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26783,6 +27996,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26805,6 +28030,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26826,6 +28064,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "beer_strong"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26887,6 +28137,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26909,6 +28171,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -26930,6 +28205,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "beer_strong"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27084,6 +28371,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "ax_sharp"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27106,6 +28405,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27127,6 +28439,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27182,6 +28506,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "ax_broad"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27204,6 +28540,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27225,6 +28574,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27280,6 +28641,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "ax_bronze"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27302,6 +28675,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27323,6 +28709,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27378,6 +28776,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "ax_battle"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27400,6 +28810,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27421,6 +28844,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27476,6 +28911,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "ax_warriors"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27498,6 +28945,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27519,6 +28979,18 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27574,6 +29046,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "helmet"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27597,6 +29081,20 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread",
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27652,6 +29150,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "helmet_mask"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27674,6 +29184,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27695,6 +29218,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27750,6 +29285,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "helmet_warhelm"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27772,6 +29319,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27793,6 +29353,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27916,6 +29488,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -27938,6 +29522,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28053,6 +29650,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28075,6 +29684,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28129,6 +29751,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28151,6 +29785,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28273,6 +29920,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "spear"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28294,6 +29953,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28316,6 +29987,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28371,6 +30055,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "spear_advanced"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28392,6 +30088,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28414,6 +30122,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28469,6 +30190,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "spear_heavy"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28490,6 +30223,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28512,6 +30257,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28567,6 +30325,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "spear_war"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28588,6 +30358,18 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28610,6 +30392,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28665,6 +30460,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "armor_helmet"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28688,6 +30495,20 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread",
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28743,6 +30564,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "armor"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28764,6 +30597,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28786,6 +30631,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28841,6 +30699,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "armor_chain"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28862,6 +30732,18 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28884,6 +30766,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28939,6 +30834,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "armor_gilded"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28960,6 +30867,18 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -28982,6 +30901,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fish",
+           "meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29108,6 +31040,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "sword_long"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29130,6 +31074,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "honey_bread",
+           "mead"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29152,6 +31109,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29212,6 +31182,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "sword_broad"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29234,6 +31216,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "honey_bread",
+           "mead"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29256,6 +31251,19 @@
          "n": 2,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 2,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29323,6 +31331,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "sword_double"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29344,6 +31364,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "honey_bread"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29365,6 +31397,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "mead"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29387,6 +31431,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29457,6 +31514,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fur_garment_golden"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29479,6 +31548,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "honey_bread",
+           "mead"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29501,6 +31583,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29569,6 +31664,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "helmet_golden"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29591,6 +31698,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "honey_bread",
+           "mead"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29613,6 +31733,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29771,6 +31904,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "sword_long"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29795,6 +31940,21 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread_frisians",
+           "beer",
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29864,6 +32024,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "sword_broad"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29885,6 +32057,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread_frisians"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29907,6 +32091,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29975,6 +32172,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "sword_double"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -29996,6 +32205,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "beer"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -30018,6 +32239,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -30087,6 +32321,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "helmet"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -30109,6 +32355,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread_frisians",
+           "beer"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -30131,6 +32390,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -30191,6 +32463,18 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "fur_garment_studded"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -30213,6 +32497,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "bread_frisians",
+           "beer"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false
@@ -30235,6 +32532,19 @@
          "n": 1,
          "not": false
         }
+       ],
+       "groups": [
+        [
+         {
+          "type": "site_has",
+          "wares": [
+           "smoked_fish",
+           "smoked_meat"
+          ],
+          "n": 1,
+          "not": false
+         }
+        ]
        ]
       },
       "other_condition": false

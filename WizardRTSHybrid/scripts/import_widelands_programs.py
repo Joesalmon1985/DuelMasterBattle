@@ -228,30 +228,39 @@ def wares(text: str) -> dict[str, int]:
 
 
 def parse_condition(rest: str) -> tuple[dict, bool]:
-    """`skipped|failed unless|when <cond> [and <cond>]...` with cond = [not] economy needs W | [not] site has W[:n][,W2]."""
+    """`skipped|failed unless|when <expr>` with expr = group [or group]..., group = cond [and cond]...,
+    cond = [not] economy needs W | [not] site has W[:n][,W2] | [not] workers need experience.
+
+    Training does not exist in the hybrid, so "workers need experience" is always false. Fleet and ferry conditions are
+    not executable (OpenRA ships replace Widelands ships)."""
     m = re.match(r"(skipped|failed|completed)\s+(unless|when)\s+(.*)$", rest.strip())
     if not m:
         return {}, True
-    conds = []
-    for part in re.split(r"\s+and\s+", m.group(3)):
-        part = part.strip()
-        neg = part.startswith("not ")
-        part = part[4:] if neg else part
-        em = re.match(r"economy needs (\S+)$", part)
-        sm = re.match(r"site has (\S+)$", part)
-        if em:
-            conds.append({"type": "economy_needs", "ware": ware(em.group(1)), "not": neg})
-        elif sm:
-            alts = []
-            n = 1
-            for tok in sm.group(1).split(","):
-                name, _, cnt = tok.partition(":")
-                alts.append(ware(name))
-                n = int(cnt) if cnt.isdigit() else n
-            conds.append({"type": "site_has", "wares": alts, "n": n, "not": neg})
-        else:
-            return {}, True  # fleet needs, soldiers present, ...: not executable
-    return {"result": m.group(1), "mode": m.group(2), "conds": conds}, False
+    groups = []
+    for chunk in re.split(r"\s+or\s+", m.group(3)):
+        conds = []
+        for part in re.split(r"\s+and\s+", chunk):
+            part = part.strip()
+            neg = part.startswith("not ")
+            part = part[4:] if neg else part
+            em = re.match(r"economy needs (\S+)$", part)
+            sm = re.match(r"site has (\S+)$", part)
+            if em:
+                conds.append({"type": "economy_needs", "ware": ware(em.group(1)), "not": neg})
+            elif sm:
+                alts = []
+                n = 1
+                for tok in sm.group(1).split(","):
+                    name, _, cnt = tok.partition(":")
+                    alts.append(ware(name))
+                    n = int(cnt) if cnt.isdigit() else n
+                conds.append({"type": "site_has", "wares": alts, "n": n, "not": neg})
+            elif part in ("workers need experience", "worker needs experience"):
+                conds.append({"type": "experience", "not": neg})
+            else:
+                return {}, True  # fleet needs, soldiers present, ...: not executable
+        groups.append(conds)
+    return {"result": m.group(1), "mode": m.group(2), "conds": groups[0], "groups": groups}, False
 
 
 def parse_action(line: str) -> dict:

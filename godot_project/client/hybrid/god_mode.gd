@@ -17,6 +17,7 @@ var selected: Array = []  # entity ids
 var groups: Dictionary = {}
 var menu: Dictionary = {}
 var recipes: Dictionary = {}
+var locked: Dictionary = {}  # source units that exist but are not implemented yet, with the reason
 var message := ""
 
 var layer: CanvasLayer
@@ -77,6 +78,7 @@ func setup(p_world: Node) -> void:
 	var reply: Dictionary = world._sim.op({"op": "menu"})
 	menu = reply.get("build_menu", {})
 	recipes = reply.get("recipes", {})
+	locked = reply.get("locked", {})
 	_fill_build_menu()
 	if world.terrain != null:
 		MAP_TILES = Vector2(world.terrain.w, world.terrain.h)
@@ -595,7 +597,7 @@ func _refresh_info() -> void:
 				if int(stock[g]) > 0:
 					parts += "%s %d  " % [g, int(stock[g])]
 			lines += "Stock: %s\n" % parts
-		if str(e.get("faction_name", "")) == faction and e.has("queue") or (kind == "barracks" or kind == "vehicle_factory"):
+		if str(e.get("faction_name", "")) == faction and e.has("queue") or (kind == "barracks" or kind == "vehicle_factory" or kind == "naval_yard" or kind == "sub_pen"):
 			var q: Array = e.get("queue", [])
 			for i in q.size():
 				lines += "Queue %d: %s (%s)\n" % [i + 1, str(q[i].get("unit", "")), str(q[i].get("state", ""))]
@@ -604,6 +606,10 @@ func _refresh_info() -> void:
 					buttons.append(["Queue %s" % str(recipes[kind][ukind].get("label", ukind)), "queue", str(id), ukind])
 				for i in q.size():
 					buttons.append(["Cancel #%d" % (i + 1), "cancel", str(id), str(i)])
+			for ldef in locked.get(kind, {}):
+				lines += "[color=#999999]Locked: %s[/color]\n" % str(locked[kind][ldef])
+			if e.has("footprint"):
+				lines += "Ships spawn on the water around this yard\n"
 			key += "%s:%d:%s;" % [str(id), q.size(), str(e.get("operational", true))]
 	info.text = lines
 	_set_actions(buttons, key)
@@ -673,6 +679,38 @@ func _minimap_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+# ---------------------------------------------------------------- placement ghost
+
+## The same rule the simulation applies (terrain build caps, water for yards), read from the received terrain.
+## The simulation has the final word; this only colours the ghost.
+func _site_ok(tile: Vector2i, size: String) -> bool:
+	var t = world.terrain
+	if t == null or size == "":
+		return true
+	if size == "water3":
+		for dy in range(-1, 2):
+			for dx in range(-1, 2):
+				if t.class_name_at(tile.x + dx, tile.y + dy) != "water":
+					return false
+		return true
+	if not t.in_bounds(tile.x, tile.y):
+		return false
+	var cap: int = t.build[tile.y * t.w + tile.x]
+	var base := cap & 7
+	match size:
+		"mine":
+			return base == 4
+		"port":
+			return (cap & 8) != 0
+		"small":
+			return base >= 1 and base <= 3
+		"medium":
+			return base >= 2 and base <= 3
+		"big":
+			return base == 3
+	return base >= 1 and base <= 3
+
+
 # ---------------------------------------------------------------- overlay in world space
 
 func draw_overlay(canvas: CanvasItem) -> void:
@@ -682,8 +720,14 @@ func draw_overlay(canvas: CanvasItem) -> void:
 	if tool.begins_with("build:"):
 		var mp := _to_world(world.get_viewport().get_mouse_position())
 		var tile := Vector2(floor(mp.x / tpx), floor(mp.y / tpx))
-		canvas.draw_rect(Rect2(tile * tpx, Vector2(tpx, tpx)), Color(0.3, 1.0, 0.4, 0.35), true)
-		canvas.draw_rect(Rect2(tile * tpx, Vector2(tpx, tpx)), Color(0.3, 1.0, 0.4), false, 3.0)
+		var size := str(menu.get(tool.substr(6), {}).get("size", ""))
+		var ok := _site_ok(Vector2i(int(tile.x), int(tile.y)), size)
+		var col := Color(0.3, 1.0, 0.4) if ok else Color(1.0, 0.3, 0.25)
+		var rect := Rect2(tile * tpx, Vector2(tpx, tpx))
+		if size == "water3":
+			rect = Rect2((tile - Vector2(1, 1)) * tpx, Vector2(tpx * 3, tpx * 3))
+		canvas.draw_rect(rect, Color(col.r, col.g, col.b, 0.3), true)
+		canvas.draw_rect(rect, col, false, 3.0)
 	if tool_first != "":
 		var e := entity_by_id(tool_first)
 		if not e.is_empty():

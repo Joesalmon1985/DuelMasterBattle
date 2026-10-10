@@ -210,11 +210,32 @@ func _draw() -> void:
 		terrain.refresh_resources(_sim, TPX, self)
 	else:
 		_art.draw_terrain(self, cam_tile, 36, TPX)
+	# draw only what the camera can see (a map of thousands of trees must not cost a draw call each)
+	var xf: Transform2D = get_viewport().get_canvas_transform().affine_inverse()
+	var vp: Vector2 = get_viewport_rect().size
+	var tl: Vector2 = xf * Vector2.ZERO
+	var br: Vector2 = xf * vp
+	var margin := 6
+	var vx0 := int(floor(tl.x / TPX)) - margin
+	var vy0 := int(floor(tl.y / TPX)) - margin
+	var vx1 := int(ceil(br.x / TPX)) + margin
+	var vy1 := int(ceil(br.y / TPX)) + margin
 	for road in _snapshot.get("roads", {}).values():
 		for tile in road:
-			if tile is Array:
+			if tile is Array and int(tile[0]) >= vx0 and int(tile[0]) <= vx1 and int(tile[1]) >= vy0 and int(tile[1]) <= vy1:
 				_art.draw_road(self, tile, TPX)
-	var rows: Array = _snapshot.get("entities", [])
+	var rows: Array = []
+	for entity in _snapshot.get("entities", []):
+		if typeof(entity) != TYPE_DICTIONARY:
+			continue
+		var ex := int(entity.get("tx", 0))
+		var ey := int(entity.get("ty", 0))
+		if entity.has("footprint"):
+			ex = int(entity["anchor"][0])
+			ey = int(entity["anchor"][1])
+		if ex < vx0 or ex > vx1 or ey < vy0 or ey > vy1:
+			continue
+		rows.append(entity)
 	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		var ay := int(a.get("ty", 0))
 		var by := int(b.get("ty", 0))
@@ -223,8 +244,6 @@ func _draw() -> void:
 		return ay < by
 	)
 	for entity in rows:
-		if typeof(entity) != TYPE_DICTIONARY:
-			continue
 		_art.draw_entity(self, entity, TPX)
 	_art.draw_effects(self, _snapshot.get("effects", []), TPX)
 	if god != null:

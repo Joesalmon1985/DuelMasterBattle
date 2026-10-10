@@ -88,10 +88,28 @@ BUILD_MENU: dict[str, dict[str, Any]] = {
         "label": "Gun turret", "definition": "openra.gun", "game": "openra",
         "cost": {"plank": 3}, "cost_source": "hybrid-defined; OpenRA power removed by design",
     },
+    "naval_yard": {
+        "label": "Naval yard", "definition": "openra.syrd", "game": "openra", "size": "water3",
+        "cost": {"plank": 8, "granite": 2},
+        "cost_source": "hybrid-defined (OpenRA SYRD costs 1000 credits); placed on a 3x3 block of water beside the shore, per its Building.TerrainTypes: Water",
+    },
+    "sub_pen": {
+        "label": "Submarine pen", "definition": "openra.spen", "game": "openra", "size": "water3",
+        "cost": {"plank": 6, "granite": 2},
+        "cost_source": "hybrid-defined (OpenRA SPEN costs 800 credits); placed on a 3x3 block of water beside the shore, per its Building.TerrainTypes: Water",
+    },
 }
 
 # Hybrid recipes: a rifleman takes one ax (barbarians/barracks consume=ax, 30 s); a tank takes granite and a plank. See docs/DECISIONS.md.
 RECIPES: dict[str, dict[str, dict[str, Any]]] = {
+    # Ship recipes are hybrid-defined goods for the OpenRA unit (cost scaled from its credits): no free production.
+    # Patrol boat and submarine need nothing but their yard in OpenRA's tech tree, so they are the first naval slice.
+    "naval_yard": {
+        "patrol_boat": {"label": "Patrol boat", "definition": "openra.pt", "cost": {"plank": 3, "iron": 1}, "ms": 25_000},
+    },
+    "sub_pen": {
+        "submarine": {"label": "Submarine", "definition": "openra.ss", "cost": {"plank": 2, "iron": 3}, "ms": 40_000},
+    },
     "barracks": {
         "infantry": {"label": "Rifleman", "definition": "openra.e1", "cost": {"ax": 1}, "ms": 30_000},
     },
@@ -101,9 +119,20 @@ RECIPES: dict[str, dict[str, dict[str, Any]]] = {
 }
 
 
+# Source units that exist in the rules but are not offered yet, with the honest reason (shown greyed in God Mode).
+RECIPES_LOCKED: dict[str, dict[str, str]] = {
+    "naval_yard": {
+        "openra.dd": "Destroyer needs a radar dome (tech building not implemented)",
+        "openra.ca": "Cruiser needs the advanced tech building (not implemented)",
+        "openra.lst": "Transport needs amphibious landings (not implemented)",
+    },
+    "sub_pen": {"openra.msub": "Missile submarine needs the tech center (not implemented)"},
+}
+
 # ------------------------------------------------------------------ placement
 
 MENU_SIZE = {
+    "naval_yard": "water3", "sub_pen": "water3",
     "producer": "small", "ranger": "small", "processor": "medium", "farm": "big", "hunter": "small", "well": "small",
     "tavern": "medium", "bakery": "medium", "mine": "mine", "ironmine": "mine", "quarry": "small",
     "smelter": "medium", "smithy": "medium", "barracks": "medium", "vehicle_factory": "big", "defense": "small",
@@ -175,7 +204,7 @@ def build_spec(kind: str) -> dict[str, Any] | None:
 
 
 def full_menu() -> dict[str, dict[str, Any]]:
-    out = dict(BUILD_MENU)
+    out = {k: ({**v, "size": v.get("size") or MENU_SIZE.get(k, "")}) for k, v in BUILD_MENU.items()}
     for name in wl_defs.runnable_names():
         spec = build_spec(wl_defs.PREFIX + name)
         if spec is not None:
@@ -183,28 +212,43 @@ def full_menu() -> dict[str, dict[str, Any]]:
     return out
 
 
-def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -> dict[str, Any]:
+def check_placement(world: Any, faction_name: str, kind: str, tx: int, ty: int) -> tuple[str | None, dict[str, Any]]:
+    """Every rule `place_building` applies, with no side effects: (reason or None, context for the commit)."""
     spec = build_spec(kind)
     if spec is None:
-        return {"status": "rejected", "reason": "unknown_kind"}
+        return "unknown_kind", {}
     info = world.faction_info.get(faction_name)
     if info is None:
-        return {"status": "rejected", "reason": "unknown_faction"}
+        return "unknown_faction", {}
     tile = (int(tx), int(ty))
     home = faction_warehouse(world, faction_name)
+    ctx: dict[str, Any] = {"spec": spec, "info": info, "tile": tile, "home": home}
     if not world.tile_in_bounds(*tile):
-        return {"status": "rejected", "reason": "outside_map"}
+        return "outside_map", ctx
+    if spec.get("size") == "water3":
+        if home is not None and max(abs(tile[0] - home["tx"]), abs(tile[1] - home["ty"])) > TERRITORY_RADIUS:
+            return "outside_territory", ctx
+        why, door, fp = naval_site(world, tile, home)
+        ctx.update(door=door, footprint=fp)
+        return why, ctx
     if home is not None and max(abs(tile[0] - home["tx"]), abs(tile[1] - home["ty"])) > TERRITORY_RADIUS:
-        return {"status": "rejected", "reason": "outside_territory"}
+        return "outside_territory", ctx
     if tile in world.blocked or tile in world.tree_tiles or tile in world.road_tile_set or tile in world.reserved_tiles:
-        return {"status": "rejected", "reason": "tile_occupied"}
+        return "tile_occupied", ctx
     if world.terrain is None and not world.tile_in_map(*tile):
-        return {"status": "rejected", "reason": "outside_map"}
+        return "outside_map", ctx
     if any((u["tx"], u["ty"]) == tile for u in world.units.values() if u.get("alive", True)):
-        return {"status": "rejected", "reason": "tile_occupied"}
-    why = terrain_reject(world, kind, spec, tile)
+        return "tile_occupied", ctx
+    return terrain_reject(world, kind, spec, tile), ctx
+
+
+def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -> dict[str, Any]:
+    why, ctx = check_placement(world, faction_name, kind, tx, ty)
     if why:
         return {"status": "rejected", "reason": why}
+    spec, info, tile = ctx["spec"], ctx["info"], ctx["tile"]
+    if spec.get("size") == "water3":
+        return _place_naval(world, faction_name, info, kind, spec, tile, ctx["door"], ctx["footprint"])
     bid = world._building(info["id"], faction_name, kind, tile, spec["label"], spec["definition"])
     building = world.buildings[bid]
     building["operational"] = False
@@ -213,6 +257,59 @@ def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -
     world.recipe_requests[bid] = dict(spec["cost"])
     world.events.append({"kind": "construction_started", "id": bid, "building_kind": kind, "faction": faction_name})
     return {"status": "ok", "id": bid}
+
+
+def naval_site(world: Any, tile: tuple[int, int], home: dict | None) -> tuple[str | None, tuple[int, int] | None, list[tuple[int, int]]]:
+    """A water-built OpenRA yard: 3x3 water footprint around `tile`, on a navigable body, beside land the faction can reach.
+
+    Source: OpenRA RA SYRD/SPEN Building.TerrainTypes Water, Footprint 3x3, RequiresBuildableArea Adjacent. The footprint
+    must be water, the water must be a real body (not a pond) and one shore tile touching the footprint, reachable on foot
+    from the faction's warehouse, becomes the door the roads and carriers use.
+    """
+    from wizard_rts import terrain as T
+
+    t = world.terrain
+    if t is None:
+        return "needs_terrain", None, []
+    cx, cy = tile
+    fp = [(cx + dx, cy + dy) for dy in (-1, 0, 1) for dx in (-1, 0, 1)]
+    for p in fp:
+        if not t.in_bounds(*p):
+            return "outside_map", None, fp
+        if not t.is_water(*p):
+            return "needs_water", None, fp
+        if p in world.blocked or p in world.road_tile_set:
+            return "tile_occupied", None, fp
+    if any((u["tx"], u["ty"]) in fp for u in world.units.values() if u.get("alive", True)):
+        return "tile_occupied", None, fp
+    comp = t.water_comp[cy * t.w + cx]
+    if t.comp_size.get(comp, 0) < T.PORT_MIN_WATER:
+        return "water_too_small", None, fp
+    reach = world._reach_from((home["tx"], home["ty"]), limit=90) if home is not None else {}
+    doors = []
+    for x, y in ((cx - 2, cy - 1), (cx - 2, cy), (cx - 2, cy + 1), (cx + 2, cy - 1), (cx + 2, cy), (cx + 2, cy + 1),
+                 (cx - 1, cy - 2), (cx, cy - 2), (cx + 1, cy - 2), (cx - 1, cy + 2), (cx, cy + 2), (cx + 1, cy + 2)):
+        d = (x, y)
+        if t.ground(x, y) and d in reach and d not in world.blocked and d not in world.tree_tiles and d not in world.road_tile_set:
+            doors.append((reach[d], d))
+    if not doors:
+        return "no_shore", None, fp
+    return None, min(doors)[1], fp
+
+
+def _place_naval(world: Any, faction_name: str, info: dict, kind: str, spec: dict, tile: tuple[int, int], door: tuple[int, int], fp: list[tuple[int, int]]) -> dict[str, Any]:
+    bid = world._building(info["id"], faction_name, kind, door, spec["label"], spec["definition"])
+    building = world.buildings[bid]
+    building["footprint"] = [list(p) for p in fp]
+    building["anchor"] = list(tile)
+    for p in fp:
+        world.blocked.add(p)
+    building["operational"] = False
+    building["constructing"] = {"cost": dict(spec["cost"]), "progress_ms": 0}
+    building["hp"] = max(1, building["max_hp"] // 10)
+    world.recipe_requests[bid] = dict(spec["cost"])
+    world.events.append({"kind": "construction_started", "id": bid, "building_kind": kind, "faction": faction_name})
+    return {"status": "ok", "id": bid, "door": list(door)}
 
 
 def construction_quantum(world: Any) -> None:
@@ -349,7 +446,22 @@ def _sync_requests(world: Any, b: dict) -> None:
     world.recipe_requests[b["id"]] = need
 
 
+def _naval_exit_tile(world: Any, b: dict) -> tuple[int, int] | None:
+    """A ship leaves a yard onto free water touching its footprint (OpenRA Exit cells sit on the water side)."""
+    occupied = {(u["tx"], u["ty"]) for u in world.units.values() if u.get("alive", True)}
+    ax, ay = b["anchor"]
+    from wizard_rts.grid import ring
+
+    for r in (2, 3, 4):
+        for t in ring(ax, ay, r):
+            if world.terrain.is_water(*t) and t not in occupied and t not in world.blocked:
+                return t
+    return None
+
+
 def _exit_tile(world: Any, b: dict) -> tuple[int, int] | None:
+    if b.get("footprint"):
+        return _naval_exit_tile(world, b)
     occupied = {(u["tx"], u["ty"]) for u in world.units.values() if u.get("alive", True)}
     for r in range(1, 6):
         for dy in range(-r, r + 1):

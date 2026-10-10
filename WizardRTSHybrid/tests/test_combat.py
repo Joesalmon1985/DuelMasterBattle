@@ -92,7 +92,11 @@ def test_tank_shells_a_widelands_warehouse_in_steps_of_versus_wood() -> None:
     t = _open_tile(w, (b["tx"] - 10, b["ty"] + 3))
     tank = _unit(w, "Red", "tank", t)
     w.order(tank["id"], target)
-    _step(w, 120)
+    for _ in range(12):  # terrain worlds may start the tank farther away (trees, a lake): wait until the shelling begins
+        _step(w, 100)
+        if b["hp"] < b["max_hp"]:
+            break
+    _step(w, 40)
     lost = b["max_hp"] - b["hp"]
     assert lost > 0 and lost % 3000 == 0  # 4000 * Wood 75 %
 

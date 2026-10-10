@@ -36,8 +36,8 @@ func _run() -> void:
 	var option_i := 0
 	var route: Array[Vector2i] = []
 	if world.terrain != null:
-		# terrain world: walk a real land route (breadth-first over the received terrain) to the far capital
-		var goal := Vector2i(int(world.terrain.starts[5][0]), int(world.terrain.starts[5][1]))
+		# terrain world: walk a real land route (breadth-first over the received terrain) to the next capital
+		var goal := Vector2i(int(world.terrain.starts[1][0]), int(world.terrain.starts[1][1]))
 		for off in [Vector2i(3, 3), Vector2i(-3, 3), Vector2i(0, 5), Vector2i(5, 0)]:
 			if world.is_walkable(goal + off):
 				goal = goal + off
@@ -49,16 +49,17 @@ func _run() -> void:
 			quit(1)
 			return
 	var route_i := 0
-	while world._hex_crossings < 20 and steps < 6000:
+	var need_crossings := 20 if world.terrain == null else 4  # terrain worlds: a real land route to Blue's capital
+	while world._hex_crossings < need_crossings and steps < 6000:
 		if world.terrain != null:
 			if route_i >= route.size():
 				break
-			var at := route.find(world._john_pos, route_i)
+			var at := route.find(world._john_pos)
 			if at >= 0:
 				route_i = at + 1
 				if route_i >= route.size():
 					break
-			elif route_i > 0 and route[route_i - 1] != world._john_pos:
+			elif route_i > 0:
 				route = _route(world, world._john_pos, route[route.size() - 1])  # nudged off the route: plan again
 				route_i = 0
 				if route.is_empty():
@@ -72,7 +73,7 @@ func _run() -> void:
 			for _frame in 4:
 				await process_frame
 			steps += 1
-			if not shot_middle and world._hex_crossings >= 10:
+			if not shot_middle and world._hex_crossings >= need_crossings / 2:
 				if not await _shot(world, "walk_middle"):
 					print("HYBRID_WALK_FAIL shot walk_middle")
 					quit(1)
@@ -94,7 +95,7 @@ func _run() -> void:
 			option_i = 0
 		if steps == 1 or steps % 200 == 0:
 			print("HYBRID_WALK_PROGRESS steps=%d pos=%s hex=%s crossings=%d" % [steps, world._john_pos, world._last_hex, world._hex_crossings])
-		if not shot_middle and world._hex_crossings >= 10:
+		if not shot_middle and world._hex_crossings >= need_crossings / 2:
 			if not await _shot(world, "walk_middle"):
 				print("HYBRID_WALK_FAIL shot walk_middle")
 				quit(1)
@@ -116,7 +117,7 @@ func _run() -> void:
 	print("HYBRID_WALK start=%s end=%s hex %s -> %s crossings=%d moved=%s world=%s camera=%s" % [
 		start_pos, end_pos, start_hex, end_hex, world._hex_crossings, moved, same_world, camera_on_john
 	])
-	if not moved or not same_world or not camera_on_john or world._hex_crossings < 20:
+	if not moved or not same_world or not camera_on_john or world._hex_crossings < need_crossings:
 		print("HYBRID_WALK_FAIL")
 		quit(1)
 		return

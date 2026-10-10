@@ -80,7 +80,22 @@ def is_soldier_site(b: dict) -> bool:
     return b["type"] == "productionsite" and any(a["cmd"] == "recruit" and "soldier" in a.get("target", "") for acts in b["programs"].values() for a in acts)
 
 
+@lru_cache(maxsize=None)
+def _soldier_wares(tribe: str) -> tuple:
+    for name, b in defs()["buildings"].items():
+        if b["tribe"] == tribe and is_soldier_site(b):
+            for actions in b["programs"].values():
+                for a in actions:
+                    if a["cmd"] == "consume":
+                        return tuple((g, int(n)) for g, n in a["wares"].items() if g not in ("recruit", "carrier", "|"))
+    return ()
+
+
 def soldier_wares(tribe: str) -> dict[str, int]:
+    return dict(_soldier_wares(tribe))
+
+
+def _soldier_wares_uncached(tribe: str) -> dict[str, int]:
     """The wares one soldier costs at a tribe's barracks (workers-as-wares excluded)."""
     for name, b in defs()["buildings"].items():
         if b["tribe"] == tribe and is_soldier_site(b):

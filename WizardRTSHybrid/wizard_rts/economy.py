@@ -36,6 +36,10 @@ def produce(world: Any, building_id: str, good: str, amount: int = 1) -> None:
     _supply(world, building_id).add_wares(good, amount)
 
 
+EVENT_CAP = 6000
+EVENT_KEEP = 3000
+
+
 def economy_quantum(world: Any) -> None:
     """Tick counter and event trimming. Hauling is logistics.py; production is workers.py."""
     world.economy_quanta += 1
@@ -47,8 +51,8 @@ def economy_quantum(world: Any) -> None:
                     have = int(world.stocks.get(b["id"], {}).get(worker_ware, 0))
                     if have < 8:
                         _supply(world, b["id"]).add_wares(worker_ware, 8 - have)
-    if len(world.events) > 400:
-        del world.events[:-400]
+    if len(world.events) > EVENT_CAP:
+        del world.events[:-EVENT_KEEP]  # the log is a bounded window: long headless runs must not grow without limit
 
 
 def _facing(dx: int, dy: int) -> str:

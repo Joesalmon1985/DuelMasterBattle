@@ -370,6 +370,15 @@ def _features(g: T.TerrainGrid, rng: random.Random, homes, moist: list[float]) -
             if g.growth_probability(sp, x, y) < 0.25:
                 continue
             trees.append([x, y, sp, stages[rng.randrange(len(stages))]])
+        # the grove the lumberjack and ranger work in: dense, mostly grown, on the best-suited species
+        for _ in range(220):
+            x, y = cx - 4 + rng.randint(-9, 9), cy + rng.randint(-9, 9)
+            if not g.in_bounds(x, y) or g.cls[y * w + x] != T.ARABLE or (x - cx) ** 2 + (y - cy) ** 2 < 25:
+                continue
+            sp = "beech"
+            if g.growth_probability(sp, x, y) < 0.2:
+                continue
+            trees.append([x, y, sp, "old" if rng.random() < 0.7 else "mature"])
         mcx, mcy = home["mountain"]
         for _ in range(70):
             x, y = mcx + rng.randint(-14, 14), mcy + rng.randint(-14, 14)

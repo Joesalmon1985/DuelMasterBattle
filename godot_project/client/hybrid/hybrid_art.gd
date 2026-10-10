@@ -80,9 +80,69 @@ func draw_road(canvas: CanvasItem, tile: Array, tpx: int) -> void:
 	canvas.draw_texture_rect(tex, dest, false)
 
 
+## Naval PLACEHOLDER art: OpenRA ship and naval yard sprites are not extracted on this machine (they need the Red Alert
+## content packages on the Windows machine). These shapes are drawn from the entity's real state (position, facing,
+## footprint, faction, hull points) and are labelled "placeholder" in docs/ASSET_INVENTORY.md.
+const NAVAL_UNITS := {"openra.pt": [0.9, 0.34], "openra.ss": [1.0, 0.26], "openra.dd": [1.3, 0.4], "openra.ca": [1.6, 0.5], "openra.lst": [1.4, 0.55], "openra.msub": [1.2, 0.3]}
+const NAVAL_YARDS := ["openra.syrd", "openra.spen"]
+const FACING_DEG := {"e": 0.0, "se": 45.0, "s": 90.0, "sw": 135.0, "w": 180.0, "nw": 225.0, "n": 270.0, "ne": 315.0}
+
+
+func _draw_naval_placeholder(canvas: CanvasItem, entity: Dictionary, tpx: int) -> bool:
+	var definition := str(entity.get("definition", ""))
+	var col: Color = faction_colors.get(str(entity.get("faction_name", "")), Color(0.7, 0.7, 0.7))
+	if definition in NAVAL_YARDS:
+		var fp: Array = entity.get("footprint", [])
+		if fp.is_empty():
+			return false
+		var ax := int(entity.get("anchor", [0, 0])[0])
+		var ay := int(entity.get("anchor", [0, 0])[1])
+		var rect := Rect2((ax - 1) * tpx, (ay - 1) * tpx, tpx * 3, tpx * 3)
+		var building := not entity.has("constructing")
+		canvas.draw_rect(rect, Color(0.36, 0.26, 0.16, 0.95 if building else 0.45), true)
+		canvas.draw_rect(rect.grow(-10), Color(0.16, 0.34, 0.6, 0.9), true)  # the open slip the ships leave from
+		canvas.draw_rect(Rect2(rect.position, Vector2(rect.size.x, 14)), Color(0.5, 0.38, 0.24), true)
+		canvas.draw_rect(Rect2(rect.position + Vector2(0, rect.size.y - 14), Vector2(rect.size.x, 14)), Color(0.5, 0.38, 0.24), true)
+		canvas.draw_rect(rect, col, false, 5.0)
+		var door := Vector2(float(entity.get("tx", ax)) + 0.5, float(entity.get("ty", ay)) + 0.5) * tpx
+		canvas.draw_line(rect.get_center(), door, Color(0.5, 0.38, 0.24), 8.0)  # the jetty to the shore door
+		var font := ThemeDB.fallback_font
+		canvas.draw_string(font, rect.position + Vector2(10, 38), "NAVAL YARD" if definition == "openra.syrd" else "SUB PEN", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(1, 1, 1))
+		canvas.draw_string(font, rect.position + Vector2(10, rect.size.y - 22), "placeholder art", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(1, 1, 0.7))
+		_draw_health(canvas, entity, rect.get_center())
+		return true
+	if NAVAL_UNITS.has(definition):
+		var dims: Array = NAVAL_UNITS[definition]
+		var centre := Vector2(int(entity.get("tx", 0)) * tpx + tpx * 0.5, int(entity.get("ty", 0)) * tpx + tpx * 0.5)
+		if entity.has("next_tx"):
+			var nxt := Vector2(int(entity["next_tx"]) * tpx + tpx * 0.5, int(entity["next_ty"]) * tpx + tpx * 0.5)
+			centre = centre.lerp(nxt, float(entity.get("move_progress", 0.0)))
+		var length: float = float(dims[0]) * tpx * 0.5
+		var beam: float = float(dims[1]) * tpx * 0.5
+		var ang := deg_to_rad(float(FACING_DEG.get(str(entity.get("facing", "e")), 0.0)))
+		var xf := Transform2D(ang, centre)
+		var hull := PackedVector2Array([Vector2(length, 0), Vector2(length * 0.4, beam), Vector2(-length, beam), Vector2(-length, -beam), Vector2(length * 0.4, -beam)])
+		var pts := PackedVector2Array()
+		for p in hull:
+			pts.append(xf * p)
+		var sub := definition == "openra.ss" or definition == "openra.msub"
+		var hull_col := Color(0.2, 0.22, 0.26) if sub else Color(0.55, 0.58, 0.62)
+		if bool(entity.get("cloaked", false)):
+			hull_col.a = 0.45  # a submerged boat is drawn faint: it is hidden from the enemy
+		canvas.draw_colored_polygon(pts, hull_col)
+		canvas.draw_polyline(PackedVector2Array([pts[0], pts[1], pts[2], pts[3], pts[4], pts[0]]), col, 4.0)
+		canvas.draw_circle(xf * Vector2(-length * 0.2, 0), beam * 0.45, col)
+		_draw_marker(canvas, entity, centre)
+		_draw_health(canvas, entity, centre)
+		return true
+	return false
+
+
 func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var definition := str(entity.get("definition", ""))
 	if bool(entity.get("inside", false)):
+		return
+	if (definition in NAVAL_YARDS or NAVAL_UNITS.has(definition)) and _draw_naval_placeholder(canvas, entity, tpx):
 		return
 	if definition == "":
 		if str(entity.get("kind", "")) == "hazard":

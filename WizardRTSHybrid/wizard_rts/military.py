@@ -321,7 +321,7 @@ def _apply_warheads(world: Any, p: dict) -> None:
         if not rules.warhead_hits(wh, types):
             continue
         if p["target"]["kind"] == "building":
-            world.damage_building(p["target"]["id"], int(wh["damage"]), ["structure"], wh.get("versus", {}) or {})
+            world.damage_building(p["target"]["id"], int(wh["damage"]), ["structure"], wh.get("versus", {}) or {}, by=p["shooter"])
             continue
         versus = damage_versus(wh.get("versus", {}), [str(entity.get("armor", "None"))])
         applied = warhead_damage(int(wh["damage"]), [], versus)
@@ -335,6 +335,13 @@ def _apply_warheads(world: Any, p: dict) -> None:
             entity["path"] = []
             world.stats["destroyed"] += 1
             world.stats["units_lost"] = world.stats.get("units_lost", 0) + 1
+            vr = rules.actor(entity.get("definition", "")) or {}
+            value = int(vr.get("cost", 0))
+            world.fstat(entity["faction_name"], "loss_value", value)
+            shooter = world.units.get(p["shooter"]) or world.buildings.get(p["shooter"])
+            if shooter is not None:
+                world.fstat(shooter["faction_name"], "kill_value", value)
+                world.fstat(shooter["faction_name"], "unit_kills")
             world.effects.append({"t": "explosion", "x1": entity["tx"], "y1": entity["ty"], "x2": entity["tx"], "y2": entity["ty"], "ttl_ms": 800, "keep": 3, "p": ""})
             world.events.append({"kind": "destroyed", "id": entity["id"], "by": p["shooter"]})
 

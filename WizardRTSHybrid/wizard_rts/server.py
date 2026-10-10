@@ -49,7 +49,7 @@ def _handle(world: HybridWorld, message: dict) -> dict:
     if op == "demolish":
         return world.demolish(str(message.get("building", "")))
     if op == "menu":
-        return {"status": "ok", "build_menu": con.full_menu(), "recipes": con.RECIPES}
+        return {"status": "ok", "build_menu": con.full_menu(), "recipes": con.RECIPES, "locked": con.RECIPES_LOCKED}
     if op == "ai":
         world.ai_enabled = bool(message.get("enabled", True))
         return {"status": "ok", "ai_enabled": world.ai_enabled}
@@ -65,6 +65,31 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return world.tile_info(int(message.get("tx", 0)), int(message.get("ty", 0)))
     if op == "resources":
         return {"status": "ok", "nodes": world.resource_region(int(message.get("x0", 0)), int(message.get("y0", 0)), int(message.get("x1", 0)), int(message.get("y1", 0)))}
+    if op == "suggest":
+        # a site the simulation would accept (God Mode "suggest" and the headed tests)
+        from wizard_rts import ai
+
+        kind = str(message.get("kind", ""))
+        wh = con.faction_warehouse(world, str(message.get("faction", "")))
+        if kind in ("naval_yard", "sub_pen") and wh is not None and world.terrain is not None:
+            site = ai._naval_site(world, str(message.get("faction", "")), wh)
+            return {"status": "ok" if site else "rejected", "tile": list(site) if site else None, "reason": "" if site else "no_coast"}
+        return {"status": "rejected", "reason": "unsupported_kind"}
+    if op == "spawn":
+        if os.environ.get("HYBRID_ALLOW_SPAWN") != "1":
+            return {"status": "rejected", "reason": "spawn_disabled"}
+        faction = str(message.get("faction", ""))
+        if faction not in world.faction_info:
+            return {"status": "rejected", "reason": "unknown_faction"}
+        definition = str(message.get("definition", ""))
+        tile = (int(message.get("tx", 0)), int(message.get("ty", 0)))
+        from wizard_rts import rules
+
+        r = rules.actor(definition)
+        if r is None or not r.get("mobile") or world.tile_speed(r.get("locomotor"), *tile) <= 0:
+            return {"status": "rejected", "reason": "cannot_stand_there"}
+        uid = world._unit(world.faction_info[faction]["id"], faction, definition.split(".")[-1], r["name"], definition, tile)
+        return {"status": "ok", "id": uid}
     if op == "interact":
         return world.interact()
     if op == "resolve":

@@ -21,6 +21,17 @@ Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs
 
 **Switch modes at any time with the purple HUD button or `G`.** Both call the same toggle. Wizard Mode: WASD / arrows, Space / E / Z beside the purple hazard opens the retained Ward Duel. God Mode: pick a faction (R B G Y P O), build menu, Road / Move / A-Move / Attack / Rally / Stop / Demolish tools, left click select, drag a box, right click to move or attack, `Ctrl+1..9` groups, minimap click, mouse wheel zoom, WASD / arrows pan, `S` stop, `A` attack-move, `Esc` cancel. Other factions stay autonomous.
 
+## Session 2 additions (Ubuntu ThinkPad, 2026-10-10/11) - verified where stated
+
+| Area | Status |
+| --- | --- |
+| Square-grid terrain (D5) | Works, default. `terrain.py`, `mapgen.py`, `grid.py`. 544x288 standard map (`small` 384x224, `large` 800x480), deterministic by seed. Classes, heights, build caps, shore depth, water bodies, resources with initial amounts. Python: `tests/test_terrain.py` (11). Headed: `run_hybrid_terrain.gd` passes on the T460 (Forward+): the Godot view matches the sim tile by tile on a sample, shots of water, mountain with deposits, farmland, overview, God Mode. |
+| Six homelands | Each faction has a big meadow, a mountain with equal coal, iron, gold and stones, a lake and a grove; all six lakes join one inland sea by channels, and every capital reaches every other on foot (`tests/test_terrain.py`). |
+| Terrain consequences | Buildings need the right buildcap (`water`, `unsuitable_terrain`, `no_mountain`, `no_deposit`, `no_rocks`, `no_fish` rejections), trees and fields grow on arable land only and die by `probability_to_grow`, mines follow `ActMine` (yield limit, `when_empty`), ground units use OpenRA locomotor speeds and cannot enter water, the wizard cannot enter water. |
+| Fishing | Fisher huts (3 tribes) and the Atlantean fish breeder run on real fish: finite, weighted picks, bred back only up to the initial amount (`tests/test_fishing.py`, 4). Frisian ponds are not implemented. |
+| Naval slice | Naval yard (OpenRA SYRD) and submarine pen (SPEN) are built on a 3x3 block of water beside the shore; patrol boat (PT) and submarine (SS) are paid for in delivered planks and iron and spawn on water; ships move on the naval locomotor only; torpedo, cannon and depth charge follow OpenRA target filters; submarines cloak, are found by DetectCloaked ranges, and surface for 2 s after firing; the AI builds yards and sends fleets. `tests/test_naval.py` (13). Headed `run_hybrid_naval.gd` drives it through the God Mode GUI. Ship and yard art are PLACEHOLDER shapes. Destroyer, cruiser, transport and missile submarine are shown locked with their reason. |
+| Combat | Units carry every armament (not only the first), per-weapon cooldowns, OpenRA target-type filters on weapons and warheads. |
+
 ## What works in play (all headed or tested)
 
 | Area | Status |
@@ -53,7 +64,7 @@ Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs
 | Military | No spread damage, formations, hierarchical pathfinder, aircraft, ships, veterancy, garrisons, patrol, repair. |
 | AI | Cannot rebuild a mine (no prospecting), no repair, no expansion or new settlements. A faction whose warehouse falls does not come back. |
 | Content coverage | Catalogue: 120 of 237 Widelands buildings and 70 of 131 wares tested in the bench (not yet in a headed play-through each); 58 production sites need unsupported commands; 59 military/training/warehouse/ship sites are not implemented; OpenRA 4 of 94 actors integrated. Only the hybrid core kinds have faction AI support. |
-| Art | Terrain is one meadow tile; faction colour is a ring, not a player-colour sprite remap; other tribes' sprites not imported; unit sprites reuse rifleman/tank/soldier for every faction. |
+| Art | Terrain now uses Widelands textures per node (no transition blending yet); ships and naval yards are labelled placeholder shapes, not OpenRA sprites; faction colour is a ring, not a player-colour sprite remap; other tribes' sprites not imported; unit sprites reuse rifleman/tank/soldier for every faction. |
 | God Mode UI | No per-worker, garrison or training panels; most original menus are unmapped (no menu catalogue yet). |
 | Long run | 30-minute headless multi-seed run passes; a 30-minute headed run is not done. |
 

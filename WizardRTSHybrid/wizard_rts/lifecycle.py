@@ -19,6 +19,8 @@ def purge_building(world: Any, bid: str, reason: str) -> None:
     if b is None:
         return
     world.blocked.discard((b["tx"], b["ty"]))
+    for p in b.get("footprint", []):
+        world.blocked.discard((int(p[0]), int(p[1])))
     lost = sum(int(n) for n in world.stocks.pop(bid, {}).values())
     for rid in [r for r, (a, c) in world.road_edges.items() if bid in (a, c)]:
         _remove_road(world, rid)

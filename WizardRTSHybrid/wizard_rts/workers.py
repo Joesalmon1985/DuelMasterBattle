@@ -124,15 +124,25 @@ def remove_tree(world: Any, tree_id: str, reason: str) -> None:
     world.events.append({"kind": "tree_removed", "id": tree_id, "reason": reason})
 
 
+TREE_STRIDE = 10  # a tree is processed once per second (staggered by id), not every 100 ms: its timers are tens of seconds
+
+
 def tree_quantum(world: Any) -> None:
+    phase = world.military_quanta % TREE_STRIDE
+    step = QUANTUM_MS * TREE_STRIDE
     for tree_id in list(world.trees):
         tree = world.trees.get(tree_id)
         if tree is None:
             continue
-        if "imm" in tree:
-            imm.tick(world, tree)
+        slot = tree.get("slot")
+        if slot is None:
+            slot = tree["slot"] = int(tree_id.split(":")[1]) % TREE_STRIDE
+        if slot != phase:
             continue
-        tree["timer_ms"] -= QUANTUM_MS
+        if "imm" in tree:
+            imm.tick(world, tree, step)
+            continue
+        tree["timer_ms"] -= step
         if tree["timer_ms"] > 0:
             continue
         stage = tree["stage"]
@@ -140,7 +150,7 @@ def tree_quantum(world: Any) -> None:
             remove_tree(world, tree_id, "felled_gone")
             continue
         if tree["reserved_by"]:
-            tree["timer_ms"] = QUANTUM_MS  # a worker is about to cut it
+            tree["timer_ms"] = step  # a worker is about to cut it
             continue
         table = STAGE_TABLES.get(tree["species"], TREE_STAGES)
         _duration, die, nxt = table[stage]
@@ -692,14 +702,16 @@ def production_quantum(world: Any) -> None:
             else:
                 building["stack"] = [["main", 0]]
         elif cmd == "return_cond":
-            conds = []
-            for c in args["conds"]:
+            def _holds(c: dict) -> bool:
                 if c["type"] == "economy_needs":
                     ok = economy_needs(world, building["faction"], c["ware"])
+                elif c["type"] == "experience":
+                    ok = False  # no training sites in the hybrid: workers never need experience
                 else:
                     ok = any(int(stock.get(g, 0)) >= c["n"] for g in c["wares"])
-                conds.append(ok != c["not"])
-            holds = all(conds)
+                return ok != c["not"]
+
+            holds = any(all(_holds(c) for c in group) for group in args.get("groups", [args["conds"]]))
             if (args["mode"] == "unless" and not holds) or (args["mode"] == "when" and holds):
                 _skip(building)
         elif cmd == "recruit":

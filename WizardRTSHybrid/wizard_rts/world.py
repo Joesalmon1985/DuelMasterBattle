@@ -96,6 +96,7 @@ class HybridWorld:
         self.projectiles: list[dict[str, Any]] = []
         self.effects: list[dict[str, Any]] = []
         self.ai_enabled = os.environ.get("HYBRID_AI", "1") != "0"
+        self.ai_factions: set[str] | None = None  # None: the built-in AI plays every faction; a set restricts it (training agents play the rest)
         self.resources: dict[tuple[int, int], dict[str, int]] = {}
         self.trees: dict[str, dict[str, Any]] = {}
         self.tree_tiles: dict[tuple[int, int], str] = {}
@@ -112,6 +113,7 @@ class HybridWorld:
         self.events: list[dict[str, Any]] = []
         self.economy_quanta = 0
         self.military_quanta = 0
+        self.fstats: dict[str, dict[str, float]] = {}
         self.stats = {"deliver": 0, "blocked": 0, "move": 0, "attack": 0, "destroyed": 0, "produce": 0}
         self.hazard_id = ""
         self.hazard_tile: tuple[int, int] | None = None
@@ -239,6 +241,7 @@ class HybridWorld:
         raw_damage: int,
         target_types: list[str],
         versus: dict[str, int] | None = None,
+        by: str = "",
     ) -> int:
         """One shared hit. A weapon that does not list the target type deals nothing."""
         building = self.buildings.get(building_id)
@@ -256,7 +259,16 @@ class HybridWorld:
             self.stats["buildings_lost"] = self.stats.get("buildings_lost", 0) + 1
             self.effects.append({"t": "explosion", "x1": building["tx"], "y1": building["ty"], "x2": building["tx"], "y2": building["ty"], "ttl_ms": 2500, "keep": 3, "p": ""})
             self.events.append({"kind": "building_destroyed", "id": building_id, "faction": building["faction_name"]})
+            self.fstat(building["faction_name"], "building_losses")
+            shooter = self.units.get(by) or self.buildings.get(by)
+            if shooter is not None:
+                self.fstat(shooter["faction_name"], "building_kills")
         return before - int(building["hp"])
+
+    def fstat(self, faction: str, key: str, amount: float = 1) -> None:
+        """Per-faction counters (kills, losses): the reward signals of the training interface and a battle report."""
+        d = self.fstats.setdefault(faction, {})
+        d[key] = d.get(key, 0) + amount
 
     def tile_blocked_for_carrier(self, tile: tuple[int, int]) -> bool:
         if self.hazard_tile is None or not self._hazard_active():
@@ -815,7 +827,7 @@ class HybridWorld:
             entities.append(
                 {
                     "id": tree["id"], "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"],
-                    "tx": tree["tx"], "ty": tree["ty"], "alive": True, "faction": "", "label": "Tree",
+                    "tx": tree["tx"], "ty": tree["ty"],
                 }
             )
         for rock in self.rocks.values():
@@ -931,6 +943,13 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["target_type"] = row["target_type"]
     if row.get("rally"):
         out["rally"] = list(row["rally"])
+    if row.get("footprint"):
+        out["footprint"] = row["footprint"]
+        out["anchor"] = row["anchor"]
+    if row.get("loco"):
+        out["loco"] = row["loco"]
+    if "cloaked" in row:
+        out["cloaked"] = bool(row["cloaked"])
     if "operational" in row:
         out["operational"] = bool(row["operational"])
     if row.get("constructing"):

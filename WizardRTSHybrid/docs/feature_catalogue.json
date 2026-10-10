@@ -10,27 +10,27 @@
  "totals": {
   "widelands.building": {
    "discovered": 237,
-   "missing": 98,
+   "missing": 83,
    "scaffolded": 1,
    "adapted": 0,
    "integrated": 0,
-   "tested": 138,
+   "tested": 153,
    "verified": 0
   },
   "widelands.ware": {
    "discovered": 131,
-   "missing": 50,
+   "missing": 45,
    "scaffolded": 0,
    "adapted": 0,
    "integrated": 0,
-   "tested": 81,
+   "tested": 86,
    "verified": 0
   },
   "widelands.worker": {
    "discovered": 156,
-   "missing": 121,
+   "missing": 116,
    "scaffolded": 0,
-   "adapted": 29,
+   "adapted": 34,
    "integrated": 1,
    "tested": 5,
    "verified": 0
@@ -448,8 +448,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/amazons/hunter_gatherers_hut/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.amazons_initiation_site",
@@ -547,8 +547,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/amazons/stonemine/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.amazons_tapir_farm",
@@ -682,8 +682,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/atlanteans/fishbreeders_house/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.atlanteans_fishers_house",
@@ -691,8 +691,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/atlanteans/fishers_house/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.atlanteans_foresters_house",
@@ -970,8 +970,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/fishers_hut/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.barbarians_gamekeepers_hut",
@@ -1105,8 +1105,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/micro_brewery/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.barbarians_quarry",
@@ -1303,8 +1303,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/empire/fishers_house/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.empire_foresters_house",
@@ -1384,8 +1384,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/empire/marblemine/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.empire_marblemine_deep",
@@ -1393,8 +1393,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/empire/marblemine_deep/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.empire_mill",
@@ -1573,8 +1573,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/bakery/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_barracks",
@@ -1618,8 +1618,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/brewery/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_brick_kiln",
@@ -1771,8 +1771,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/honey_bread_bakery/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_hunters_house",
@@ -1807,8 +1807,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/mead_brewery/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_quarry",
@@ -1825,8 +1825,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/recycling_center/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_reed_farm",
@@ -1879,8 +1879,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/sewing_room/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_shipyard",
@@ -2437,8 +2437,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/bread_frisians/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.bread_paddle",
@@ -2590,8 +2590,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/fish/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.fishing_net",
@@ -2644,8 +2644,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/fur_garment/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.fur_garment_golden",
@@ -2806,8 +2806,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/honey_bread/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.hook_pole",
@@ -2923,8 +2923,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/mead/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.meal",
@@ -3472,8 +3472,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/amazons/hunter_gatherer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.amazons_jungle_master",
@@ -3607,8 +3607,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/atlanteans/armorsmith/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.atlanteans_armorsmith",
@@ -3679,8 +3679,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/atlanteans/fishbreeder/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.atlanteans_fisher",
@@ -3688,8 +3688,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/atlanteans/fisher/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.atlanteans_forester",
@@ -3976,8 +3976,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/barbarians/fisher/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.barbarians_gamekeeper",

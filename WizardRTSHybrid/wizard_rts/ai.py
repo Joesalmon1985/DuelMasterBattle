@@ -34,6 +34,10 @@ PERSONALITY = {
     "Orange": {"plan": {"vehicle_factory": 2, "barracks": 2, "quarry": 2}, "squad": 7, "targets": ["warehouse", "vehicle_factory", "barracks"]},
 }
 MAX_ARMY = 30
+MAX_NAVY = 6
+NAVAL_AFTER_MS = 8 * 60_000  # the land economy comes first
+NAVAL = ("naval", "lcraft")
+NAVAL_BUILDINGS = ("naval_yard", "sub_pen")
 ATTACK_AFTER_MS = 20 * 60_000  # factions build up for 20 game minutes before they march
 
 
@@ -115,7 +119,104 @@ def economy_step(world: Any, name: str) -> None:
         if site:
             world.events.append({"kind": "ai_build", "faction": name, "building": kind, "id": site})
             return
+    if naval_economy_step(world, name, wh, mine):
+        return
     tribe_step(world, name, wh)
+
+
+# ------------------------------------------------------------------ navy
+
+def naval_economy_step(world: Any, name: str, wh: dict, mine: list[dict]) -> bool:
+    """A faction with a navigable shore near its warehouse builds a naval yard, then (once it is working) a submarine pen."""
+    if world.terrain is None or int(world.dmb.clock.get("game_ms", 0)) < NAVAL_AFTER_MS:
+        return False
+    have = {b["kind"] for b in mine}
+    want = "naval_yard" if "naval_yard" not in have else ("sub_pen" if "sub_pen" not in have and "barracks" in have else None)
+    if want is None or not _affordable(world, name, want):
+        return False
+    if want == "sub_pen" and not any(b["kind"] == "naval_yard" and b.get("operational") for b in mine):
+        return False
+    site = _naval_site(world, name, wh)
+    if site is None:
+        return False
+    res = con.place_building(world, name, want, site[0], site[1])
+    if res["status"] != "ok":
+        return False
+    road = con.build_road(world, name, res["id"], wh["id"])
+    if road["status"] != "ok":
+        _cancel_site(world, res["id"])
+        return False
+    world.events.append({"kind": "ai_build", "faction": name, "building": want, "id": res["id"]})
+    return True
+
+
+def _naval_site(world: Any, name: str, wh: dict) -> tuple[int, int] | None:
+    """The water tile nearest the warehouse that can carry a 3x3 yard whose shore door a road can reach."""
+    t = world.terrain
+    cx, cy = wh["tx"], wh["ty"]
+    best = None
+    for dy in range(-con.TERRITORY_RADIUS + 2, con.TERRITORY_RADIUS - 1, 2):
+        for dx in range(-con.TERRITORY_RADIUS + 2, con.TERRITORY_RADIUS - 1, 2):
+            x, y = cx + dx, cy + dy
+            if not t.in_bounds(x, y) or t.depth[y * t.w + x] < 2:
+                continue
+            d = abs(dx) + abs(dy)
+            if best is not None and d >= best[0]:
+                continue
+            why, _door, _fp = con.naval_site(world, (x, y), wh)
+            if why is None:
+                best = (d, (x, y))
+    return best[1] if best else None
+
+
+def navy_step(world: Any, name: str, wh: dict, navy: list[dict]) -> None:
+    from wizard_rts.military import order_move
+
+    idle = [u for u in navy if not u.get("order") and u.get("status") in ("idle", None, "attacking", "blocked", "stuck")]
+    if not idle or not getattr(world, "ai_aggressive", True):
+        return
+    own_yards = [b for b in world.buildings.values() if b["faction_name"] == name and b.get("footprint") and int(b.get("hp", 1)) > 0]
+    for y in own_yards:  # defend the yard first
+        threat = _nearest_enemy_unit(world, name, tuple(y["anchor"]), 18.0)
+        if threat is not None and world.terrain.is_water(threat["tx"], threat["ty"]):
+            order_move(world, [u["id"] for u in idle], threat["tx"], threat["ty"], attack_move=True)
+            world.events.append({"kind": "ai_fleet_defend", "faction": name, "at": [threat["tx"], threat["ty"]]})
+            return
+    if len(idle) < 2 or int(world.dmb.clock.get("game_ms", 0)) < ATTACK_AFTER_MS:
+        return
+    cx = sum(u["tx"] for u in idle) / len(idle)
+    cy = sum(u["ty"] for u in idle) / len(idle)
+    best = None
+    for b in world.buildings.values():
+        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0:
+            continue
+        wt = _water_near(world, (b["anchor"] if b.get("footprint") else (b["tx"], b["ty"])), 9, int(idle[0]["tx"]), int(idle[0]["ty"]))
+        if wt is None:
+            continue
+        d = abs(wt[0] - cx) + abs(wt[1] - cy) - (60 if b.get("footprint") else 0)  # a yard is the preferred prize
+        if best is None or d < best[0]:
+            best = (d, wt, b)
+    if best is None:
+        return
+    order_move(world, [u["id"] for u in idle], best[1][0], best[1][1], attack_move=True)
+    world.events.append({"kind": "ai_fleet_attack", "faction": name, "target": best[2]["id"], "ships": len(idle)})
+
+
+def _water_near(world: Any, tile: tuple[int, int], radius: int, sx: int, sy: int) -> tuple[int, int] | None:
+    """The water tile within radius of `tile` that lies in the same water body as (sx, sy), nearest to `tile`."""
+    t = world.terrain
+    comp = t.water_comp[sy * t.w + sx] if t.in_bounds(sx, sy) else 0
+    if not comp:
+        return None
+    best = None
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            x, y = tile[0] + dx, tile[1] + dy
+            if t.in_bounds(x, y) and t.water_comp[y * t.w + x] == comp and (x, y) not in world.blocked:
+                d = abs(dx) + abs(dy)
+                if best is None or d < best[0]:
+                    best = (d, (x, y))
+    return best[1] if best else None
 
 
 # ------------------------------------------------------------------ tribe planner
@@ -248,12 +349,18 @@ def military_step(world: Any, name: str) -> None:
     if wh is None or int(wh["hp"]) <= 0:
         return
     mine = _mine(world, name)
-    army = [u for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("weapon")]
+    army = [u for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("weapon") and u.get("loco") not in NAVAL]
     # recruitment: keep two orders queued per production building, within the army cap
+    navy = [u for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("loco") in NAVAL]
     for b in mine:
-        if b["kind"] in con.RECIPES and b.get("operational") and len(b.get("queue", [])) < 2 and len(army) < MAX_ARMY:
-            unit_kind = next(iter(con.RECIPES[b["kind"]]))
-            con.queue_unit(world, b["id"], unit_kind)
+        if b["kind"] in con.RECIPES and b.get("operational") and len(b.get("queue", [])) < 2:
+            if b["kind"] in NAVAL_BUILDINGS:
+                if len(navy) < MAX_NAVY:
+                    con.queue_unit(world, b["id"], next(iter(con.RECIPES[b["kind"]])))
+            elif len(army) < MAX_ARMY:
+                unit_kind = next(iter(con.RECIPES[b["kind"]]))
+                con.queue_unit(world, b["id"], unit_kind)
+    navy_step(world, name, wh, navy)
     if not getattr(world, "ai_aggressive", True):
         return  # peace: factions build and recruit but do not march
     idle = [u for u in army if not u.get("order") and u.get("status") in ("idle", None, "attacking", "blocked", "stuck")]
@@ -322,5 +429,7 @@ def ai_quantum(world: Any) -> None:
     for k, name in enumerate(world.faction_info):
         if name == world.controlled_faction or (n // DECIDE_EVERY + k) % 1 != 0:
             continue
+        if world.ai_factions is not None and name not in world.ai_factions:
+            continue  # an agent or a human plays this faction
         economy_step(world, name)
         military_step(world, name)
