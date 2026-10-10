@@ -32,3 +32,9 @@ generated/dialogue/
 .dmb_saves_test/
 .dmb_windows_local.json
 logs/
+
+# WizardRTSHybrid development clones and local runtime. Not part of the game package.
+/WizardRTSHybrid/external/
+/WizardRTSHybrid/runtime/
+/WizardRTSHybrid/dist/
+/WizardRTSHybrid/docs/original_runs/logs/
