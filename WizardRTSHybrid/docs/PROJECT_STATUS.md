@@ -4,7 +4,7 @@ Branch: `feature/wizard-rts-hybrid-v02` at `52fc8ea`, cut from `feature/wizard-r
 
 ## What works
 
-See `docs/STATE_OF_PLAY.md` (authoritative). Headline: six AI-driven factions with physical forestry, quarry, mining, smelting, ax making, road logistics, construction, goods-fed recruitment and OpenRA-rule combat in one world; God Mode over the same commands; 45 Python tests; headed scripts for walk, duel, forestry, God Mode (real mouse events) and a six-faction war; a 30-minute multi-seed headless run with an HTML report.
+See `docs/STATE_OF_PLAY.md` (authoritative). Headline: six AI-driven factions with physical forestry, farming, hunting, quarry, mining, smelting, ax making, road logistics, construction, goods-fed recruitment and OpenRA-rule combat in one world; God Mode over the same commands; 45 Python tests; headed scripts for walk, duel, forestry, God Mode (real mouse events) and a six-faction war; a 30-minute multi-seed headless run with an HTML report.
 
 ## What is partial or blocked
 
@@ -26,4 +26,4 @@ Godot 4.5.1 console, Forward+, one fresh sim per script (`$env:HYBRID_SIM_PORT`)
 
 ## Next task
 
-The food chain (see `docs/CLAUDE_HANDOFF.md`).
+The Lua programme importer and wider coverage (see `docs/CLAUDE_HANDOFF.md`).

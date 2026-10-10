@@ -21,7 +21,7 @@ def _world() -> HybridWorld:
 def _step(w: HybridWorld, quanta: int) -> None:
     base = int(w.dmb.clock.get("clock_sequence", 0))
     for i in range(quanta):
-        w.advance(100, base + i + 1)
+        w.advance(100, base + i + 1, snapshot=False)
 
 
 DEFS = {"tank": "openra.3tnk", "infantry": "openra.e1", "soldier": "widelands.soldier"}

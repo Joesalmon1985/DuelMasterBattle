@@ -20,7 +20,7 @@ def _world() -> HybridWorld:
 def _run(w: HybridWorld, until, limit_ms: int = 300_000) -> None:
     seq = int(w.dmb.clock.get("clock_sequence", 0))
     for i in range(limit_ms // 100):
-        w.advance(100, seq + i + 1)
+        w.advance(100, seq + i + 1, snapshot=False)
         if until():
             return
     raise AssertionError("condition not reached")
@@ -56,7 +56,7 @@ def test_build_road_construct_and_cost_is_delivered() -> None:
     before = w.stocks[wh]["log"]
     # nothing arrives without a road
     for i in range(200):
-        w.advance(100, i + 1)
+        w.advance(100, i + 1, snapshot=False)
     assert w.stocks[site].get("log", 0) == 0 and w.buildings[site].get("constructing")
     road = w.road("Red", site, wh)
     assert road["status"] == "ok", road
@@ -107,7 +107,7 @@ def test_queue_stalls_without_goods_and_cancel_refunds() -> None:
     w.queue(bar, "infantry")
     n = len(w.units)
     for i in range(20):
-        w.advance(100, i + 1)
+        w.advance(100, i + 1, snapshot=False)
     assert len(w.units) == n and w.buildings[bar]["queue"][0]["state"] == "waiting"  # goods still on the road
     assert w.cancel(bar, 0)["status"] == "ok" and not w.buildings[bar]["queue"]
     assert w.cancel(bar, 0)["reason"] == "no_such_item"

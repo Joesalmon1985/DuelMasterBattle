@@ -22,6 +22,7 @@ DECIDE_EVERY = 50  # quanta (5 s) between decisions per faction
 BASE_PLAN = {
     "producer": 2, "ranger": 2, "quarry": 1, "mine": 1, "ironmine": 1,
     "smelter": 1, "smithy": 1, "processor": 1, "barracks": 1, "vehicle_factory": 1, "defense": 1,
+    "farm": 1, "hunter": 1, "well": 1, "tavern": 1, "bakery": 1,
 }
 # Personality: extra buildings, squad size before attacking, target preference.
 PERSONALITY = {
@@ -99,7 +100,7 @@ def economy_step(world: Any, name: str) -> None:
         return
     plan = _plan(name)
     logs = _stock(world, name, "log")
-    order = ["producer", "ranger", "processor", "quarry", "mine", "ironmine", "smelter", "smithy", "barracks", "vehicle_factory", "defense"]
+    order = ["producer", "ranger", "processor", "quarry", "hunter", "farm", "well", "tavern", "bakery", "mine", "ironmine", "smelter", "smithy", "barracks", "vehicle_factory", "defense"]
     if logs < 6:  # wood first when it runs short
         order = ["producer", "ranger"] + [k for k in order if k not in ("producer", "ranger")]
     for kind in order:

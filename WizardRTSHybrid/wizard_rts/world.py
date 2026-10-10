@@ -31,7 +31,8 @@ from wizard_rts.widelands_stock import EconomyTotals  # noqa: E402
 from wizard_rts.economy import economy_quantum  # noqa: E402
 from wizard_rts.logistics import add_road, logistics_quantum  # noqa: E402
 from wizard_rts import rules
-from wizard_rts.programs_data import RESOURCE_PER_NODE, ROCK_AMOUNT
+from wizard_rts.animals import spawn_animal
+from wizard_rts.programs_data import RESOURCE_PER_NODE, ROCK_AMOUNT, START_WARES
 from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
@@ -70,6 +71,7 @@ class HybridWorld:
         self.shortages: dict[tuple[str, str], int] = {}
         self.recipe_requests: dict[str, dict[str, int]] = {}
         self.rocks: dict[str, dict[str, Any]] = {}
+        self.animals: dict[str, dict[str, Any]] = {}
         self.projectiles: list[dict[str, Any]] = []
         self.effects: list[dict[str, Any]] = []
         self.ai_enabled = os.environ.get("HYBRID_AI", "1") != "0"
@@ -171,8 +173,8 @@ class HybridWorld:
         add_road(self, faction_id, name, warehouse, processor, road_b)
         from wizard_rts.economy import produce
 
-        produce(self, warehouse, "log", 12)
-        produce(self, warehouse, "plank", 6)
+        for good, n in START_WARES.items():
+            produce(self, warehouse, good, n)
         ranger_tile = self._free_in_hex(q, r, center, -6, 3, set(road_tiles))
         self._building(faction_id, name, "ranger", ranger_tile, "Ranger's hut", "widelands.rangers_hut")
         self._plant_forest(producer_tile, set(road_tiles))
@@ -217,6 +219,9 @@ class HybridWorld:
             ("quarry", "widelands.quarry", "Quarry", -4, 9),
             ("tavern", "widelands.tavern", "Tavern", -10, -8),
             ("farm", "widelands.farm", "Farm", 1, -11),
+            ("bakery", "widelands.bakery", "Bakery", -6, -10),
+            ("hunter", "widelands.hunters_hut", "Hunter's hut", -14, 2),
+            ("well", "widelands.well", "Well", 4, -5),
             ("barracks", "openra.barracks", "Barracks", 11, -6),
             ("vehicle_factory", "openra.weap", "War factory", 12, 7),
             ("defense", "openra.gun", "Turret", 5, 9),
@@ -224,11 +229,20 @@ class HybridWorld:
         for kind, definition, label, dx, dy in specs:
             tile = self._free_in_hex(q, r, center, dx, dy, road)
             bid = self._building(faction_id, name, kind, tile, label, definition)
-            if kind in ("barracks", "vehicle_factory", "mine", "ironmine", "smelter", "smithy", "quarry"):
+            if kind in ("barracks", "vehicle_factory", "mine", "ironmine", "smelter", "smithy", "quarry",
+                        "farm", "tavern", "bakery", "hunter", "well"):
                 self._pending_links.append((name, bid))
             if kind in ("mine", "ironmine"):
                 self._seed_resource(tile, "coal" if kind == "mine" else "iron")
+            if kind == "well":
+                self._seed_resource(tile, "water")
         self._place_scenery(faction_id, name, center, road)
+        for k in range(8):
+            for _ in range(20):
+                tile = (center[0] + self.rng.randint(-16, 16), center[1] + self.rng.randint(-14, 14))
+                if tile_to_hex(*tile) == (q, r) and tile_in_map(*tile) and tile not in self.blocked and tile not in road and tile not in self.tree_tiles:
+                    spawn_animal(self, tile, "deer" if k % 3 else "bunny")
+                    break
 
     def _seed_resource(self, around: tuple[int, int], resource: str) -> None:
         """A 5 by 5 resource field centred on the mine (the programme radius is 2)."""
@@ -393,7 +407,7 @@ class HybridWorld:
         assert int(self.dmb.clock.get("game_ms", 0)) == game_ms
         return {"status": "ok", "snapshot": self.snapshot()}
 
-    def advance(self, ms: int, sequence: int) -> dict[str, Any]:
+    def advance(self, ms: int, sequence: int, snapshot: bool = True) -> dict[str, Any]:
         quanta = self.clock.request_advance(int(ms) * int(self.time_scale), int(sequence))
         for _ in range(quanta):
             forestry_quantum(self)
@@ -407,7 +421,7 @@ class HybridWorld:
             military_quantum(self)
             if self.economy_quanta % 30 == 0:
                 self.events.append({"kind": "ai_economy", "game_ms": int(self.dmb.clock.get("game_ms", 0))})
-        return {"status": "ok", "quanta": quanta, "snapshot": self.snapshot()}
+        return {"status": "ok", "quanta": quanta, "snapshot": self.snapshot() if snapshot else None}
 
     def set_speed(self, scale: int) -> dict[str, Any]:
         self.time_scale = max(1, min(int(scale), 60))
@@ -519,7 +533,7 @@ class HybridWorld:
         return {"status": result.get("status"), "result": result, "snapshot": self.snapshot()}
 
     def entity_ids(self) -> list[str]:
-        ids = list(self.buildings) + list(self.carriers) + list(self.units) + list(self.workers) + list(self.trees) + list(self.rocks)
+        ids = list(self.buildings) + list(self.carriers) + list(self.units) + list(self.workers) + list(self.trees) + list(self.rocks) + list(self.animals)
         if self.hazard_id:
             ids.append(self.hazard_id)
         return sorted(ids)
@@ -539,8 +553,8 @@ class HybridWorld:
             row["class"] = "building" if "hp" in building else "scenery"
             if building.get("working"):
                 row["working"] = True
-            if building["kind"] in ("mine", "ironmine"):
-                res = "coal" if building["kind"] == "mine" else "iron"
+            if building["kind"] in ("mine", "ironmine", "well"):
+                res = {"mine": "coal", "ironmine": "iron", "well": "water"}[building["kind"]]
                 row["deposit_left"] = sum(
                     self.resources.get((building["tx"] + dx, building["ty"] + dy), {}).get(res, 0)
                     for dy in range(-2, 3)
@@ -569,6 +583,16 @@ class HybridWorld:
                     "amount": rock["amount"],
                 }
             )
+        for animal in self.animals.values():
+            row = {
+                "id": animal["id"], "class": "animal", "kind": "animal", "definition": animal["definition"],
+                "tx": animal["tx"], "ty": animal["ty"], "alive": True, "faction": "", "label": animal["species"].title(),
+                "facing": animal["facing"], "status": animal["status"],
+            }
+            if animal["next"] is not None:
+                row["next_tx"], row["next_ty"] = animal["next"]
+                row["move_progress"] = min(1.0, animal["progress_ms"] / 1500.0)
+            entities.append(row)
         for worker in self.workers.values():
             row = _entity_row(worker)
             row["class"] = "worker"

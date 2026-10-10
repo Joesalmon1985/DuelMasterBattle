@@ -35,6 +35,26 @@ BUILD_MENU: dict[str, dict[str, Any]] = {
         "label": "Sawmill", "definition": "widelands.sawmill", "game": "widelands",
         "cost": {"log": 2, "plank": 1}, "cost_source": "empire/sawmill buildcost minus granite (not produced yet)",
     },
+    "farm": {
+        "label": "Farm", "definition": "widelands.farm", "game": "widelands",
+        "cost": {"log": 4, "plank": 1, "granite": 3}, "cost_source": "barbarians/farm buildcost with planks for blackwood",
+    },
+    "hunter": {
+        "label": "Hunter's hut", "definition": "widelands.hunters_hut", "game": "widelands",
+        "cost": {"log": 4, "granite": 1}, "cost_source": "barbarians/hunters_hut buildcost",
+    },
+    "well": {
+        "label": "Well", "definition": "widelands.well", "game": "widelands",
+        "cost": {"log": 4}, "cost_source": "barbarians/well buildcost",
+    },
+    "tavern": {
+        "label": "Tavern", "definition": "widelands.tavern", "game": "widelands",
+        "cost": {"log": 3, "plank": 2, "granite": 1}, "cost_source": "barbarians/tavern buildcost with planks for blackwood, no reed",
+    },
+    "bakery": {
+        "label": "Bakery", "definition": "widelands.bakery", "game": "widelands",
+        "cost": {"log": 2, "plank": 2, "granite": 2}, "cost_source": "barbarians/bakery buildcost with planks for blackwood, no reed",
+    },
     "mine": {
         "label": "Coal mine", "definition": "widelands.coalmine", "game": "widelands",
         "cost": {"log": 4, "granite": 2}, "cost_source": "barbarians/coalmine buildcost",

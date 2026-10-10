@@ -24,7 +24,7 @@ def _of(w: HybridWorld, faction: str, kind: str) -> str:
 def _run(w: HybridWorld, steps: int) -> None:
     base = int(w.dmb.clock.get("clock_sequence", 0))
     for i in range(steps):
-        w.advance(100, base + i + 1)
+        w.advance(100, base + i + 1, snapshot=False)
 
 
 def test_mine_takes_exactly_what_leaves_the_deposit_and_stops_at_the_yield_limit() -> None:

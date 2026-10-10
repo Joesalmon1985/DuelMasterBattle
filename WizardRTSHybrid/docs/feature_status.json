@@ -102,5 +102,53 @@
  "widelands.granite": {
   "status": "tested",
   "evidence": "cut from a rock"
+ },
+ "widelands.barbarians_farm": {
+  "status": "tested",
+  "evidence": "farmer plants wheat fields that grow tiny/small/medium/ripe (30/45/50 s), harvest only when ripe, rot after 8m20s; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_farmer": {
+  "status": "tested",
+  "evidence": "plant + harvest worker programmes; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_hunters_hut": {
+  "status": "tested",
+  "evidence": "hunter reserves, walks to and removes a real animal; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_hunter": {
+  "status": "tested",
+  "evidence": "hunt programme; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_well": {
+  "status": "tested",
+  "evidence": "finite water field, yield 100%, when_empty 65% (fails when no nodes remain); tests/test_food.py"
+ },
+ "widelands.barbarians_tavern": {
+  "status": "tested",
+  "evidence": "ration from bread, fish or meat; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_bakery": {
+  "status": "tested",
+  "evidence": "water:3 wheat:3 -> 2 bread; tests/test_logistics.py conservation"
+ },
+ "widelands.ration": {
+  "status": "tested",
+  "evidence": "mines consume one per cycle; tests/test_food.py"
+ },
+ "widelands.wheat": {
+  "status": "tested",
+  "evidence": "from a ripe field only"
+ },
+ "widelands.meat": {
+  "status": "tested",
+  "evidence": "from a hunted animal only"
+ },
+ "widelands.water": {
+  "status": "tested",
+  "evidence": "from a well deposit"
+ },
+ "widelands.barbarians_bread": {
+  "status": "tested",
+  "evidence": "bakery"
  }
 }

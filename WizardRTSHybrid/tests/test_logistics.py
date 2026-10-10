@@ -20,10 +20,10 @@ def _log_total(world: HybridWorld, good: str) -> int:
 def test_every_ware_is_conserved_over_ten_minutes() -> None:
     world = HybridWorld()
     world.dmb.hazards["catastrophe"]["cubes"][world.hazard_id]["active"] = False
-    goods = ("log", "plank", "coal", "iron_ore", "iron", "ax", "granite")
+    goods = ("log", "plank", "coal", "iron_ore", "iron", "ax", "granite", "wheat", "water", "meat", "bread", "ration")
     initial = {g: _log_total(world, g) for g in goods}
     for i in range(6_000):
-        world.advance(100, i + 1)
+        world.advance(100, i + 1, snapshot=False)
     carried = {g: sum(1 for w in world.workers.values() if w["carrying"] == g) for g in goods}
     for g in goods:
         made = world.stats.get("made_" + g, 0)
@@ -41,7 +41,7 @@ def test_wares_never_teleport() -> None:
     last = world.stocks[wh].get("log", 0) + world.stocks[wh].get("plank", 0)
     last_delivered = world.stats["deliver"]
     for i in range(3_000):
-        world.advance(100, i + 1)
+        world.advance(100, i + 1, snapshot=False)
         now = world.stocks[wh].get("log", 0) + world.stocks[wh].get("plank", 0)
         # a warehouse can only gain a ware on a tick when a carrier delivered one
         if now > last:
@@ -56,5 +56,5 @@ def test_request_pulls_from_warehouse_by_road() -> None:
     saw = next(i for i, b in world.buildings.items() if b["kind"] == "processor" and b["faction_name"] == "Red")
     produce(world, wh, "log", 3)
     for i in range(400):
-        world.advance(100, i + 1)
+        world.advance(100, i + 1, snapshot=False)
     assert world.stocks[saw].get("log", 0) + world.stats.get("consumed_log", 0) > 0  # hauled to the sawmill by road

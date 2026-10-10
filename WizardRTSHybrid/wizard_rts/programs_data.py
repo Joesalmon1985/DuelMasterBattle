@@ -17,6 +17,15 @@ TREE_STAGES: dict[str, tuple[int, float, str]] = {
     "mature": (72_000, 7.42, "old"),
     "old": (25 * 60_000 + 25_000, 7.81, "old"),
 }
+# tribes/immovables/wheatfield/*/init.lua: tiny 30 s, small 45 s, medium 50 s, ripe 8 m 20 s then it rots; harvested 8 m 20 s then gone
+FIELD_STAGES: dict[str, tuple[int, float, str]] = {
+    "tiny": (30_000, 0.0, "small"),
+    "small": (45_000, 0.0, "medium"),
+    "medium": (50_000, 0.0, "ripe"),
+    "ripe": (500_000, 100.0, "ripe"),
+    "harvested": (500_000, 100.0, "harvested"),
+}
+STAGE_TABLES = {"beech": TREE_STAGES, "wheat": FIELD_STAGES}
 OLD_SEED_RADIUS = 3
 FELLED_MS = 30_000
 
@@ -40,6 +49,37 @@ WORKER_PROGRAMS: dict[str, dict[str, list[tuple[str, dict]]]] = {
             ("animate", {"name": "hack", "ms": 17_500}),
             ("callobject", {"program": "shrink"}),
             ("createware", {"ware": "granite"}),
+            ("return", {}),
+        ],
+    },
+    "farmer": {
+        # tribes/workers/barbarians/farmer/init.lua
+        "plant": [
+            ("findspace", {"radius": 2, "avoid": "", "saplingsearches": 5}),
+            ("walk", {"to": "coords"}),
+            ("animate", {"name": "plant", "ms": 6_000}),
+            ("plant", {"attrib": "seed_wheat"}),
+            ("animate", {"name": "plant", "ms": 6_000}),
+            ("return", {}),
+        ],
+        "harvest": [
+            ("findobject", {"attrib": "ripe_wheat", "radius": 2}),
+            ("walk", {"to": "object"}),
+            ("animate", {"name": "harvest", "ms": 10_000}),
+            ("callobject", {"program": "harvest"}),
+            ("animate", {"name": "gather", "ms": 4_000}),
+            ("createware", {"ware": "wheat"}),
+            ("return", {}),
+        ],
+    },
+    "hunter": {
+        # tribes/workers/barbarians/hunter/init.lua
+        "hunt": [
+            ("findobject", {"attrib": "eatable", "radius": 13}),
+            ("walk", {"to": "object"}),
+            ("animate", {"name": "idle", "ms": 1_000}),
+            ("removeobject", {}),
+            ("createware", {"ware": "meat"}),
             ("return", {}),
         ],
     },
@@ -68,6 +108,43 @@ BUILDING_PROGRAMS: dict[str, list[tuple[str, dict]]] = {
     "ranger": [("callworker", {"program": "plant"}), ("sleep", {"ms": 11_500})],
     "quarry": [("callworker", {"program": "cut_granite"}), ("sleep", {"ms": 17_500})],
     # empire/sawmill
+    # barbarians/farm: plant, then harvest
+    "farm": [
+        ("callworker", {"program": "plant"}),
+        ("animate", {"ms": 7_000}),
+        ("sleep", {"ms": 3_000}),
+        ("callworker", {"program": "harvest"}),
+        ("animate", {"ms": 3_000}),
+        ("sleep", {"ms": 1_000}),
+    ],
+    # barbarians/hunters_hut
+    "hunter": [("callworker", {"program": "hunt"}), ("sleep", {"ms": 35_000})],
+    # barbarians/well (a "needs water" gate is added so the hybrid does not pump forever)
+    "well": [
+        ("needs", {"good": "water"}),
+        ("sleep", {"ms": 20_000}),
+        ("animate", {"ms": 20_000}),
+        ("mine", {"resource": "water", "radius": 1, "yield": 100.0, "when_empty": 65.0}),
+        ("produce", {"water": 1}),
+    ],
+    # barbarians/tavern: one ration from bread, fish or meat
+    "tavern": [
+        ("needs", {"good": "ration"}),
+        ("consume_any", {"goods": ["bread", "fish", "meat"]}),
+        ("animate", {"ms": 23_400}),
+        ("sleep", {"ms": 10_000}),
+        ("produce", {"ration": 1}),
+    ],
+    # barbarians/bakery
+    "bakery": [
+        ("needs", {"good": "bread"}),
+        ("consume", {"water": 3, "wheat": 3}),
+        ("sleep", {"ms": 20_800}),
+        ("animate", {"ms": 20_000}),
+        ("produce", {"bread": 1}),
+        ("animate", {"ms": 20_000}),
+        ("produce", {"bread": 1}),
+    ],
     "processor": [
         ("needs", {"good": "plank"}),
         ("consume", {"log": 2}),
@@ -75,9 +152,10 @@ BUILDING_PROGRAMS: dict[str, list[tuple[str, dict]]] = {
         ("animate", {"ms": 20_000}),
         ("produce", {"plank": 1}),
     ],
-    # barbarians/coalmine and ironmine. "consume=ration" is left out until the food chain exists.
+    # barbarians/coalmine and ironmine
     "mine": [
         ("needs", {"good": "coal"}),
+        ("consume", {"ration": 1}),
         ("sleep", {"ms": 34_800}),
         ("animate", {"ms": 10_000}),
         ("mine", {"resource": "coal", "radius": 2, "yield": 33.33, "when_empty": 5.0}),
@@ -88,6 +166,7 @@ BUILDING_PROGRAMS: dict[str, list[tuple[str, dict]]] = {
     ],
     "ironmine": [
         ("needs", {"good": "iron_ore"}),
+        ("consume", {"ration": 1}),
         ("sleep", {"ms": 34_800}),
         ("animate", {"ms": 10_000}),
         ("mine", {"resource": "iron", "radius": 2, "yield": 33.33, "when_empty": 5.0}),
@@ -114,12 +193,16 @@ BUILDING_PROGRAMS: dict[str, list[tuple[str, dict]]] = {
         ("produce", {"ax": 1}),
     ],
 }
-WORKER_FOR_BUILDING = {"producer": "lumberjack", "ranger": "ranger", "quarry": "stonemason"}
+WORKER_FOR_BUILDING = {"producer": "lumberjack", "ranger": "ranger", "quarry": "stonemason", "farm": "farmer", "hunter": "hunter"}
 # Input stock caps (inputs = {...} in the building definitions) and wares pushed to a warehouse.
 BUILDING_INPUTS: dict[str, dict[str, int]] = {
     "processor": {"log": 8},
     "smelter": {"coal": 8, "iron_ore": 8},
     "smithy": {"coal": 8, "iron": 8},
+    "mine": {"ration": 6},
+    "ironmine": {"ration": 6},
+    "tavern": {"fish": 4, "meat": 4, "bread": 4},
+    "bakery": {"water": 6, "wheat": 6},
 }
 BUILDING_OUTPUTS: dict[str, list[str]] = {
     "producer": ["log"],
@@ -129,12 +212,23 @@ BUILDING_OUTPUTS: dict[str, list[str]] = {
     "ironmine": ["iron_ore"],
     "smelter": ["iron"],
     "smithy": ["ax"],
+    "farm": ["wheat"],
+    "hunter": ["meat"],
+    "well": ["water"],
+    "tavern": ["ration"],
+    "bakery": ["bread"],
 }
 # "economy needs": a ware is wanted while the faction's warehouses hold fewer than this.
-ECONOMY_TARGETS = {"plank": 20, "coal": 24, "iron_ore": 12, "iron": 10, "ax": 8, "granite": 16}
+ECONOMY_TARGETS = {"plank": 20, "coal": 24, "iron_ore": 12, "iron": 10, "ax": 8, "granite": 16, "ration": 16, "bread": 8, "water": 12, "meat": 10, "wheat": 12}
 # Resource fields: per-node amounts placed around a mine's tile (radius 2 = 25 nodes).
-RESOURCE_PER_NODE = {"coal": 6, "iron": 6}
+RESOURCE_PER_NODE = {"coal": 6, "iron": 6, "water": 8}
 ROCK_AMOUNT = 6
 FAIL_SLEEP_MS = 10_000
 # One tile per step. Widelands uses 1.8 s per node; a node is smaller than a 64 px tile here.
 WALK_MS = 600
+
+# Wild animals (world/critters/*). reproduction_rate is a percent chance per breeding check.
+ANIMAL_SPECIES = {"deer": {"reproduction": 40, "move_ms": 1500}, "bunny": {"reproduction": 50, "move_ms": 1200}}
+ANIMAL_BREED_CHECK_MS = 120_000
+ANIMAL_CAP_NEAR = 10  # animals within 14 cells of one another before breeding stops
+START_WARES = {"log": 12, "plank": 6, "ration": 10}

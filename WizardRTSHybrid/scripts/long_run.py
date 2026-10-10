@@ -81,7 +81,7 @@ def run_seed(seed: int, minutes: int) -> dict:
         for minute in range(1, minutes + 1):
             for _ in range(60):
                 seq += 1
-                world.advance(1000, seq)
+                world.advance(1000, seq, snapshot=False)
             row = sample(world)
             row["wall_s"] = round(time.time() - started, 1)
             result["samples"].append(row)

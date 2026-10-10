@@ -28,7 +28,8 @@ Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs
 | One continuous 20x20 hex world, wizard walk, retained Ward Duel | Works. `run_hybrid_walk.gd`, `run_hybrid_duel.gd`. Duel pauses `game_ms`; entity ids and pose are unchanged. |
 | Forestry | Real. Lumberjack reserves a persistent old tree, walks (A*), chops 15 s, tree falls (felled sprite 30 s), log is carried home, a separate road carrier hauls it to the warehouse. Ranger walks to free ground, digs, plants, waters; saplings grow (55 s, 65 s, 72 s stages with death chances) into trees. `run_hybrid_forestry.gd`, `tests/test_forestry.py`. |
 | Quarry | Stonemason cuts granite from a real rock that shrinks and disappears. |
-| Mining | Coal and iron mines work finite 5x5 deposits (yield 33.33 %, when_empty 5 %). |
+| Mining | Coal and iron mines work finite 5x5 deposits (yield 33.33 %, when_empty 5 %) and each cycle eats one ration. |
+| Food | Farmer plants and harvests wheat fields (growth stages); hunter kills real wild animals that wander and breed back; well draws a finite water field; bakery makes bread from wheat + water; tavern makes rations from bread/fish/meat. Headed `run_hybrid_food.gd`, `tests/test_food.py`. |
 | Industry | Sawmill (source programme), smelting works (iron), ax workshop (ax). `tests/test_commands.py` follows an ax from ground to rifleman. |
 | Logistics | Road graph, requests from warehouses, producer outputs pushed to warehouses, one carrier per road, wares conserved (seven wares tested over ten minutes). |
 | Construction | Sites request their cost over roads, finish after 20 s. Roads built by command. |
@@ -43,8 +44,8 @@ Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs
 
 | Area | Reality |
 | --- | --- |
-| Food and ecology | No farms, wheat, sheep, hunters, animals, wells, taverns or rations. Mines do not consume rations. |
-| Marble, gold, water, bricks, tools | Not produced. |
+| Food and ecology | No sheep or wool, no fisher, no gamekeeper, no cattle; animals have no diet or predators. |
+| Marble, gold, bricks, tools | Not produced. |
 | Logistics depth | No flags as objects, donkeys, priorities, rerouting around blocked roads (wares wait). |
 | Construction | No builder worker; 20 s timer once wares arrive. |
 | Workers | Hidden workers of mines, smelters and smithies are not entities. Worker training and assignment screens do not exist. |
@@ -63,11 +64,11 @@ py -3 -m pytest tests/sim/test_u05_retained_ward_duel.py -q
 godot --headless --path godot_project --script res://client/tests/run_hybrid_coords.gd
 ```
 
-With the sim running on `HYBRID_SIM_PORT` (a fresh sim for each script): `run_hybrid_walk.gd`, `run_hybrid_visual.gd`, `run_hybrid_duel.gd`, `run_hybrid_forestry.gd` (`HYBRID_SPEED=4`), `run_hybrid_god.gd`, `run_hybrid_war.gd` (`HYBRID_SPEED=20`). Expect `HYBRID_WALK_OK`, `HYBRID_VISUAL_OK`, `HYBRID_DUEL_OK`, `HYBRID_FORESTRY_OK`, `HYBRID_GOD_OK`, `HYBRID_WAR_OK`, `HYBRID_COORDS_OK 2424`. Long run: `py -3 WizardRTSHybrid/scripts/long_run.py --minutes 30 --seeds 507 11 23`.
+With the sim running on `HYBRID_SIM_PORT` (a fresh sim for each script): `run_hybrid_walk.gd`, `run_hybrid_visual.gd`, `run_hybrid_duel.gd`, `run_hybrid_forestry.gd` (`HYBRID_SPEED=4`), `run_hybrid_food.gd` (`HYBRID_SPEED=10`), `run_hybrid_god.gd`, `run_hybrid_war.gd` (`HYBRID_SPEED=20`). Expect `HYBRID_WALK_OK`, `HYBRID_VISUAL_OK`, `HYBRID_DUEL_OK`, `HYBRID_FORESTRY_OK`, `HYBRID_FOOD_OK`, `HYBRID_GOD_OK`, `HYBRID_WAR_OK`, `HYBRID_COORDS_OK 2424`. Long run: `py -3 WizardRTSHybrid/scripts/long_run.py --minutes 30 --seeds 507 11 23`.
 
 ## Evidence
 
-`docs/evidence/walk`, `duel`, `gallery`, `forestry`, `god_mode`, `war`, `long_run/report.html`.
+`docs/evidence/walk`, `duel`, `gallery`, `forestry`, `food`, `god_mode`, `war`, `long_run/report.html`.
 
 ## Blockers
 
@@ -76,4 +77,4 @@ With the sim running on `HYBRID_SIM_PORT` (a fresh sim for each script): `run_hy
 
 ## Next programme
 
-Food chain (farm fields, hunters and animals, wells, taverns and rations, sheep), then marble/gold/bricks, flags and donkeys, a Lua importer so programmes come from the source instead of hand transcription, a menu coverage catalogue for God Mode, patrol and repair, AI prospecting and expansion, a headed 30-minute run with periodic shots, and the remaining tribes' art.
+Sheep and wool, fishers and gamekeepers, then marble/gold/bricks, flags and donkeys, a Lua importer so programmes come from the source instead of hand transcription, a menu coverage catalogue for God Mode, patrol and repair, AI prospecting and expansion, a headed 30-minute run with periodic shots, and the remaining tribes' art.

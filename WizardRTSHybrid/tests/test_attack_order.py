@@ -36,7 +36,7 @@ def test_tank_destroys_producer_and_production_stops() -> None:
     seq = 0
     for _ in range(4000):
         seq += 1
-        world.advance(100, seq)
+        world.advance(100, seq, snapshot=False)
         if world.buildings[target]["hp"] <= 0:
             break
     building = world.buildings[target]
@@ -47,7 +47,7 @@ def test_tank_destroys_producer_and_production_stops() -> None:
     before = world.stocks[target].get("log", 0)
     for _ in range(100):  # the ruin burns for 15 s before it is removed
         seq += 1
-        world.advance(100, seq)
+        world.advance(100, seq, snapshot=False)
         now = world.stocks[target].get("log", 0)
         assert now <= before  # leftovers may be hauled away; nothing new is made
         before = now

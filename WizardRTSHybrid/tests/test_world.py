@@ -101,7 +101,7 @@ def test_military_moves_and_resolves_a_hit() -> None:
     blue = next(i for i, u in world.units.items() if u["kind"] == "tank" and u["faction_name"] == "Blue")
     world.move([red], world.units[blue]["tx"] - 3, world.units[blue]["ty"], attack_move=True)
     for i in range(1500):
-        world.advance(100, i + 1)
+        world.advance(100, i + 1, snapshot=False)
         if world.stats["attack"] > 0:
             break
     assert world.stats["move"] > 0

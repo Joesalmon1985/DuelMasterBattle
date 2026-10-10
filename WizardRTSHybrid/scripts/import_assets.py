@@ -196,6 +196,25 @@ WORKER_SHEETS = {
             "walkload": ([10, 19], True, 3, 4, 10, 10),
         },
     ),
+    "farmer": (
+        "barbarians/farmer",
+        {
+            "idle": ([10, 19], False, 1, 1, 1, 0),
+            "plant": ([14, 19], False, 4, 5, 20, 10),
+            "harvest": ([17, 21], False, 3, 4, 10, 10),
+            "gather": ([8, 19], False, 4, 5, 20, 5),
+            "walk": ([14, 18], True, 3, 4, 10, 10),
+            "walkload": ([12, 19], True, 3, 4, 10, 10),
+        },
+    ),
+    "hunter": (
+        "barbarians/hunter",
+        {
+            "idle": ([10, 20], False, 4, 5, 20, 10),
+            "walk": ([6, 26], True, 3, 4, 10, 10),
+            "walkload": ([6, 26], True, 3, 4, 10, 10),
+        },
+    ),
     "stonemason": (
         "barbarians/stonemason",
         {
@@ -243,6 +262,67 @@ def forestry_items() -> list[dict]:
             "rangers_hut.png",
             columns=4, rows=5, frames=1, hotspot=[45, 49], scale=2, fps=0,
             source_note="barbarians_rangers_hut spritesheets.idle (20 frames, frame 0 shown)",
+        )
+    )
+    for stage in ("tiny", "small", "medium", "ripe", "harvested"):
+        out.append(
+            sheet(
+                f"widelands.wheat.{stage}",
+                f"data/tribes/immovables/wheatfield/{stage}/idle_1.png",
+                f"wheat_{stage}.png",
+                columns=5, rows=1, frames=5, hotspot=[36, 27], scale=2, fps=0,
+                source_note=f"wheatfield_{stage} spritesheets.idle (frame 0 shown)",
+            )
+        )
+    out.append(
+        sheet(
+            "widelands.hunters_hut",
+            "data/tribes/buildings/productionsites/barbarians/hunters_hut/idle_1.png",
+            "hunters_hut.png",
+            columns=4, rows=5, frames=20, hotspot=[43, 44], scale=2, fps=8,
+            source_note="barbarians_hunters_hut spritesheets.idle",
+        )
+    )
+    for item_id, folder, hotspot in (
+        ("widelands.well", "well", [19, 33]),
+        ("widelands.bakery", "bakery", [41, 58]),
+    ):
+        out.append(
+            sheet(
+                item_id,
+                f"data/tribes/buildings/productionsites/barbarians/{folder}/idle_00.png",
+                f"{folder}.png",
+                columns=1, rows=1, frames=1, hotspot=hotspot, scale=2, fps=0,
+                source_note=f"barbarians_{folder} animations.idle",
+            )
+        )
+    out.append(
+        sheet(
+            "widelands.deer.idle", "data/world/critters/deer/idle_1.png", "deer_idle.png",
+            columns=4, rows=5, frames=20, hotspot=[1, 10], scale=3, fps=10,
+            source_note="deer spritesheets.idle",
+        )
+    )
+    for facing in ["e", "ne", "nw", "se", "sw", "w"]:
+        out.append(
+            sheet(
+                f"widelands.deer.walk.{facing}", f"data/world/critters/deer/walk_{facing}_1.png", f"deer_walk_{facing}.png",
+                columns=4, rows=5, frames=20, hotspot=[10, 19], scale=3, fps=20,
+                source_note=f"deer spritesheets.walk_{facing}",
+            )
+        )
+        out.append(
+            sheet(
+                f"widelands.bunny.walk.{facing}", f"data/world/critters/bunny/walk_{facing}_1.png", f"bunny_walk_{facing}.png",
+                columns=1, rows=2, frames=2, hotspot=[5, 9], scale=4, fps=6,
+                source_note=f"bunny spritesheets.walk_{facing}",
+            )
+        )
+    out.append(
+        sheet(
+            "widelands.bunny.idle", "data/world/critters/bunny/idle.png", "bunny_idle.png",
+            columns=1, rows=1, frames=1, hotspot=[4, 9], scale=4, fps=0,
+            source_note="bunny animations.idle",
         )
     )
     for item_id, folder, hotspot in (

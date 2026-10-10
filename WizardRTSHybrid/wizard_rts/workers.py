@@ -17,6 +17,7 @@ from wizard_rts.programs_data import (
     FAIL_SLEEP_MS,
     FELLED_MS,
     OLD_SEED_RADIUS,
+    STAGE_TABLES,
     TREE_STAGES,
     WALK_MS,
     WORKER_FOR_BUILDING,
@@ -57,7 +58,7 @@ def plant_tree(world: Any, tile: tuple[int, int], stage: str, species: str = "be
         "stage": stage,
         "tx": tile[0],
         "ty": tile[1],
-        "timer_ms": TREE_STAGES[stage][0],
+        "timer_ms": STAGE_TABLES.get(species, TREE_STAGES)[stage][0],
         "reserved_by": "",
     }
     world.tree_tiles[tile] = tree_id
@@ -93,16 +94,17 @@ def tree_quantum(world: Any) -> None:
         if tree["reserved_by"]:
             tree["timer_ms"] = QUANTUM_MS  # a worker is about to cut it
             continue
-        _duration, die, nxt = TREE_STAGES[stage]
+        table = STAGE_TABLES.get(tree["species"], TREE_STAGES)
+        _duration, die, nxt = table[stage]
         if world.rng.random() * 100 < die:
-            remove_tree(world, tree_id, "died")
+            remove_tree(world, tree_id, "died" if tree["species"] == "beech" else "rotted")
             continue
         if stage == "old":
             _seed(world, tree)
-            tree["timer_ms"] = TREE_STAGES["old"][0]
+            tree["timer_ms"] = table["old"][0]
             continue
         tree["stage"] = nxt
-        tree["timer_ms"] = TREE_STAGES[nxt][0]
+        tree["timer_ms"] = table[nxt][0]
         world.events.append({"kind": "tree_grew", "id": tree_id, "stage": nxt})
 
 
@@ -194,7 +196,7 @@ def spawn_worker(world: Any, building: dict, role: str) -> str:
 
 
 def _object(world: Any, object_id: str) -> dict | None:
-    return world.trees.get(object_id) or world.rocks.get(object_id)
+    return world.trees.get(object_id) or world.rocks.get(object_id) or world.animals.get(object_id)
 
 
 def _release(world: Any, worker: dict) -> None:
@@ -299,9 +301,19 @@ def _run_step(world: Any, worker: dict) -> None:
     here = (worker["tx"], worker["ty"])
     if cmd == "findobject":
         best = None
-        pool = world.rocks.values() if args["attrib"] == "rocks" else world.trees.values()
+        attrib = args["attrib"]
+        if attrib == "rocks":
+            pool = list(world.rocks.values())
+        elif attrib == "eatable":
+            pool = [x for x in world.animals.values() if x.get("alive", True)]
+        else:
+            pool = list(world.trees.values())
         for tree in pool:
-            if (args["attrib"] == "tree" and tree["stage"] != "old") or tree["reserved_by"]:
+            if tree["reserved_by"]:
+                continue
+            if attrib == "tree" and not (tree["species"] == "beech" and tree["stage"] == "old"):
+                continue
+            if attrib == "ripe_wheat" and not (tree["species"] == "wheat" and tree["stage"] == "ripe"):
                 continue
             dist = max(abs(tree["tx"] - here[0]), abs(tree["ty"] - here[1]))
             if dist > args["radius"] or (best is not None and dist >= best[0]):
@@ -310,7 +322,7 @@ def _run_step(world: Any, worker: dict) -> None:
             if path is not None:
                 best = (dist, tree, path)
         if best is None:
-            _fail_program(world, worker, "no_" + ("rock" if args["attrib"] == "rocks" else "tree"))
+            _fail_program(world, worker, "no_" + {"rocks": "rock", "eatable": "game", "ripe_wheat": "ripe_field"}.get(args["attrib"], "tree"))
             return
         _dist, tree, path = best
         tree["reserved_by"] = worker["id"]
@@ -321,6 +333,8 @@ def _run_step(world: Any, worker: dict) -> None:
         world.events.append({"kind": "object_reserved", "tree": tree["id"], "worker": worker["id"]})
         if args["attrib"] == "tree":
             world.events.append({"kind": "tree_reserved", "tree": tree["id"], "worker": worker["id"]})
+        if args["attrib"] == "eatable":
+            tree["status"] = "frightened"
     elif cmd == "findspace":
         radius = args["radius"]
         cands = [
@@ -364,6 +378,10 @@ def _run_step(world: Any, worker: dict) -> None:
             tree["stage"] = "felled"
             tree["timer_ms"] = FELLED_MS
             world.events.append({"kind": "tree_felled", "tree": tree["id"], "worker": worker["id"]})
+        elif args["program"] == "harvest":
+            tree["stage"] = "harvested"
+            tree["timer_ms"] = STAGE_TABLES["wheat"]["harvested"][0]
+            world.events.append({"kind": "field_harvested", "tree": tree["id"], "worker": worker["id"]})
         else:  # shrink: one load of granite comes off the rock
             tree["amount"] -= 1
             world.events.append({"kind": "rock_shrunk", "rock": tree["id"], "left": tree["amount"], "worker": worker["id"]})
@@ -378,14 +396,26 @@ def _run_step(world: Any, worker: dict) -> None:
         kind = "log_created" if args["ware"] == "log" else "ware_created"
         world.events.append({"kind": kind, "worker": worker["id"], "tree": worker["target_tree"], "good": args["ware"]})
         worker["target_tree"] = ""
+    elif cmd == "removeobject":
+        animal = world.animals.get(worker["target_tree"])
+        if animal is None or animal["reserved_by"] != worker["id"]:
+            _fail_program(world, worker, "game_gone")
+            return
+        world.animals.pop(animal["id"], None)
+        world.events.append({"kind": "animal_hunted", "animal": animal["id"], "worker": worker["id"], "species": animal["species"]})
     elif cmd == "plant":
         tile = worker["target_tile"]
         if tile is None or tuple(tile) != here:
             _fail_program(world, worker, "not_at_space")
             return
         world.reserved_tiles.discard(tuple(tile))
-        tree_id = plant_tree(world, tuple(tile), "sapling")
-        world.events.append({"kind": "sapling_planted", "tree": tree_id, "worker": worker["id"]})
+        if args["attrib"] == "seed_wheat":
+            tree_id = plant_tree(world, tuple(tile), "tiny", "wheat")
+            world.stats["fields_planted"] = world.stats.get("fields_planted", 0) + 1
+            world.events.append({"kind": "field_planted", "tree": tree_id, "worker": worker["id"]})
+        else:
+            tree_id = plant_tree(world, tuple(tile), "sapling")
+            world.events.append({"kind": "sapling_planted", "tree": tree_id, "worker": worker["id"]})
         worker["target_tile"] = None
     elif cmd == "return":
         worker["status"] = "returning"
@@ -499,6 +529,16 @@ def production_quantum(world: Any) -> None:
                 building["sleep_ms"] = FAIL_SLEEP_MS
                 key = (building["id"], "inputs")
                 world.shortages[key] = world.shortages.get(key, 0) + 1
+        elif cmd == "consume_any":
+            pick = next((g for g in args["goods"] if int(stock.get(g, 0)) >= 1), None)
+            if pick is not None:
+                _supply(world, building["id"]).remove_wares(pick, 1)
+                world.stats["consumed_" + pick] = world.stats.get("consumed_" + pick, 0) + 1
+            else:
+                building["pc"] = 0
+                building["sleep_ms"] = FAIL_SLEEP_MS
+                key = (building["id"], "inputs")
+                world.shortages[key] = world.shortages.get(key, 0) + 1
         elif cmd == "mine":
             if not _mine(world, building, args):
                 building["pc"] = 0
@@ -518,6 +558,9 @@ def _health_factor(building: dict) -> float:
 
 
 def forestry_quantum(world: Any) -> None:
+    from wizard_rts.animals import animal_quantum
+
+    animal_quantum(world)
     tree_quantum(world)
     production_quantum(world)
     for worker in list(world.workers.values()):

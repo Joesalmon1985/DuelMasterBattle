@@ -185,6 +185,11 @@ func _item_for(entity: Dictionary) -> Dictionary:
 		var stage := str(entity.get("stage", "old"))
 		var tkey := "widelands.fallentree" if stage == "felled" else "%s.%s" % [definition, stage]
 		return items.get(tkey, {})
+	if str(entity.get("class", "")) == "animal":
+		var akey := "%s.idle" % definition
+		if str(entity.get("status", "")) == "moving":
+			akey = "%s.walk.%s" % [definition, _sheet_facing(str(entity.get("facing", "e")))]
+		return items.get(akey, items.get("%s.idle" % definition, {}))
 	if kind == "worker":
 		var anim := str(entity.get("anim", "idle"))
 		var key := "%s.%s" % [definition, anim]

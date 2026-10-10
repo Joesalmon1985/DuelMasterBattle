@@ -6,7 +6,7 @@ Read `docs/STATE_OF_PLAY.md` first; it is the current inventory. In short: one c
 
 ## Does not
 
-Widelands does not compile here (`docs/BLOCKERS.md` B1). OpenRA's PathFinder and bot are not executing; the hybrid has its own A* and AI shaped after them. No food chain, farms, animals, marble, gold, bricks, flags, donkeys. Programme data is hand-transcribed from Lua, not imported. See the missing table in `STATE_OF_PLAY.md`. Do not describe provisional pieces as Widelands or OpenRA.
+Widelands does not compile here (`docs/BLOCKERS.md` B1). OpenRA's PathFinder and bot are not executing; the hybrid has its own A* and AI shaped after them. No sheep, fishers, marble, gold, bricks, flags, donkeys. Programme data is hand-transcribed from Lua, not imported. See the missing table in `STATE_OF_PLAY.md`. Do not describe provisional pieces as Widelands or OpenRA.
 
 ## Architecture
 
@@ -33,7 +33,7 @@ Commands are in `docs/PROJECT_STATUS.md` and `docs/STATE_OF_PLAY.md`. One sim pr
 
 ## Next task
 
-Phase B continued: the food chain. Add farm (plant/harvest wheat fields with growth stages), hunter and gamekeeper with wild animals as world entities, well, tavern making rations, then switch mines to `consume=ration` (`programs_data.py` has the note). Reuse `workers.py`: add object classes next to trees and rocks, add worker programmes, keep the conservation test in `tests/test_logistics.py` passing for every new ware. After that: a Lua importer for programmes (`scripts/import_widelands_programs.py`, modelled on `scripts/import_openra_rules.py`), flags and donkeys, then the God Mode menu catalogue. B1 is still the missing C++ compiler. Do not rerun bare cmake.
+Phase G, systematic coverage. Write `scripts/import_widelands_programs.py`: parse the Lua production-site, worker and immovable definitions (buildcost, inputs, programs: consume, produce, sleep, animate, callworker, mine, findobject, findspace, walk, plant, createware, return, call, return=skipped unless economy needs) into JSON like `import_openra_rules.py` does, so `programs_data.py` stops being hand-transcribed and the catalogue can count executable definitions. Then add sheep and wool (Empire sheepfarm: wheat + water -> wool), fisher, gamekeeper, marble and gold, bricks, flags and donkeys, patrol and repair, a God Mode menu coverage catalogue, AI prospecting. Keep `tests/test_logistics.py` conservation and the headed scripts green. B1 is still the missing C++ compiler. Do not rerun bare cmake.
 
 ## First files
 

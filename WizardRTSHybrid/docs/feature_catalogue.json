@@ -10,29 +10,29 @@
  "totals": {
   "widelands.building": {
    "discovered": 237,
-   "missing": 227,
+   "missing": 222,
    "scaffolded": 2,
    "adapted": 0,
    "integrated": 0,
-   "tested": 8,
+   "tested": 13,
    "verified": 0
   },
   "widelands.ware": {
    "discovered": 131,
-   "missing": 125,
+   "missing": 120,
    "scaffolded": 0,
    "adapted": 0,
    "integrated": 0,
-   "tested": 6,
+   "tested": 11,
    "verified": 0
   },
   "widelands.worker": {
    "discovered": 156,
-   "missing": 152,
+   "missing": 150,
    "scaffolded": 0,
    "adapted": 0,
    "integrated": 1,
-   "tested": 3,
+   "tested": 5,
    "verified": 0
   },
   "openra.building": {
@@ -863,8 +863,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/bakery/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "water:3 wheat:3 -> 2 bread; tests/test_logistics.py conservation"
   },
   {
    "id": "widelands.barbarians_barracks",
@@ -944,8 +944,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/farm/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "farmer plants wheat fields that grow tiny/small/medium/ripe (30/45/50 s), harvest only when ripe, rot after 8m20s; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
   },
   {
    "id": "widelands.barbarians_ferry_yard",
@@ -1025,8 +1025,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/hunters_hut/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "hunter reserves, walks to and removes a real animal; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
   },
   {
    "id": "widelands.barbarians_inn",
@@ -1160,8 +1160,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/tavern/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "ration from bread, fish or meat; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
   },
   {
    "id": "widelands.barbarians_warmill",
@@ -1187,8 +1187,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/well/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "finite water field, yield 100%, when_empty 65% (fails when no nodes remain); tests/test_food.py"
   },
   {
    "id": "widelands.barbarians_wood_hardener",
@@ -2411,8 +2411,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/bread_barbarians/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "bakery"
   },
   {
    "id": "widelands.empire_bread",
@@ -2933,8 +2933,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/meat/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "from a hunted animal only"
   },
   {
    "id": "widelands.milking_tongs",
@@ -2996,8 +2996,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/ration/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "mines consume one per cycle; tests/test_food.py"
   },
   {
    "id": "widelands.reed",
@@ -3338,8 +3338,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/water/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "from a well deposit"
   },
   {
    "id": "widelands.wheat",
@@ -3347,8 +3347,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/wheat/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "from a ripe field only"
   },
   {
    "id": "widelands.wine",
@@ -3959,8 +3959,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/barbarians/farmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "plant + harvest worker programmes; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
   },
   {
    "id": "widelands.barbarians_fisher",
@@ -4013,8 +4013,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/barbarians/hunter/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "hunt programme; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
   },
   {
    "id": "widelands.barbarians_innkeeper",

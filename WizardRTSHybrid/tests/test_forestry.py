@@ -18,7 +18,7 @@ def _red(world: HybridWorld, kind: str) -> str:
 def _run(world: HybridWorld, until, limit_ms: int = 600_000) -> int:
     seq = world.dmb.clock.get("clock_sequence", 0)
     for step in range(limit_ms // 100):
-        world.advance(100, int(seq) + step + 1)
+        world.advance(100, int(seq) + step + 1, snapshot=False)
         if until():
             return step
     raise AssertionError("condition not reached")
