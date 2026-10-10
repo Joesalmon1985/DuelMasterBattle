@@ -42,7 +42,7 @@ def economy_quantum(world: Any) -> None:
     n = world.economy_quanta
     if n % 10 == 0:
         for building_id, building in world.buildings.items():
-            if building["kind"] == "producer":
+            if building["kind"] == "producer" and building.get("operational", True):
                 produce(world, building_id, "log", 1)
                 world.stats["produce"] += 1
                 world.events.append({"kind": "produce", "id": building_id, "good": "log"})
@@ -51,7 +51,7 @@ def economy_quantum(world: Any) -> None:
             _step_carrier(world, carrier)
     if n % 10 == 0:
         for building_id, building in world.buildings.items():
-            if building["kind"] != "processor":
+            if building["kind"] != "processor" or not building.get("operational", True):
                 continue
             warehouse_id = building["warehouse_id"]
             if move_good(world, warehouse_id, building_id, "log", 1):

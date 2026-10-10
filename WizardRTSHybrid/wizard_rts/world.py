@@ -29,7 +29,7 @@ from wizard_rts.widelands_stock import EconomyTotals  # noqa: E402
 from wizard_rts.economy import economy_quantum  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
-from wizard_rts.military import military_quantum  # noqa: E402
+from wizard_rts.military import military_quantum, order_attack  # noqa: E402
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
 
 WORLD_ID = "hybrid.world"
@@ -338,6 +338,11 @@ class HybridWorld:
                 self.events.append({"kind": "ai_economy", "game_ms": int(self.dmb.clock.get("game_ms", 0))})
         return {"status": "ok", "quanta": quanta, "snapshot": self.snapshot()}
 
+    def order(self, unit_id: str, target_id: str) -> dict[str, Any]:
+        result = order_attack(self, str(unit_id), str(target_id))
+        result["snapshot"] = self.snapshot()
+        return result
+
     def interact(self) -> dict[str, Any]:
         if not self._hazard_active():
             return {"status": "rejected", "reason": "no_hazard", "snapshot": self.snapshot()}
@@ -400,6 +405,8 @@ class HybridWorld:
             row = _entity_row(unit)
             row["hp"] = unit["hp"]
             row["alive"] = unit["alive"]
+            if unit.get("order"):
+                row["order"] = dict(unit["order"])
             entities.append(row)
         if self.hazard_tile and self._hazard_active():
             entities.append(

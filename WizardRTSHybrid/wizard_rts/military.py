@@ -23,9 +23,82 @@ def apply_hit(hp: int, max_hp: int = 12) -> int:
     return inflict_damage(hp, max_hp, applied)
 
 
+# Provisional weapon table in OpenRA terms: raw damage, tile range, versus armor.
+# Values are scaffolding, not read from the OpenRA rules yaml.
+WEAPONS: dict[str, dict[str, Any]] = {
+    "tank": {"damage": 40, "range": 3, "versus": {"wood": 100, "concrete": 60}},
+    "infantry": {"damage": 8, "range": 2, "versus": {"wood": 50, "concrete": 25}},
+    "soldier": {"damage": 6, "range": 1, "versus": {"wood": 50, "concrete": 25}},
+}
+FIRE_EVERY = 4  # military quanta between shots
+
+
+def order_attack(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
+    unit = world.units.get(unit_id)
+    building = world.buildings.get(building_id)
+    if unit is None or not unit.get("alive", True):
+        return {"status": "rejected", "reason": "no_unit"}
+    if building is None or "hp" not in building:
+        return {"status": "rejected", "reason": "no_target"}
+    if unit["faction"] == building["faction"]:
+        return {"status": "rejected", "reason": "friendly"}
+    if unit["kind"] not in WEAPONS:
+        return {"status": "rejected", "reason": "no_weapon"}
+    if int(building["hp"]) <= 0:
+        return {"status": "rejected", "reason": "already_destroyed"}
+    unit["order"] = {"kind": "attack", "target": building_id}
+    unit["status"] = "ordered"
+    world.events.append({"kind": "order_attack", "unit": unit_id, "target": building_id})
+    return {"status": "ok"}
+
+
+def _order_step(world: Any, unit: dict) -> None:
+    order = unit["order"]
+    building = world.buildings.get(order["target"])
+    if building is None or int(building.get("hp", 0)) <= 0:
+        unit.pop("order", None)
+        unit["status"] = "idle"
+        return
+    weapon = WEAPONS[unit["kind"]]
+    dist = abs(int(unit["tx"]) - int(building["tx"])) + abs(int(unit["ty"]) - int(building["ty"]))
+    if dist <= weapon["range"]:
+        unit["status"] = "attacking"
+        if world.military_quanta % FIRE_EVERY == 0:
+            dealt = world.damage_building(order["target"], weapon["damage"], ["structure"], weapon["versus"])
+            world.stats["attack"] += 1
+            world.events.append(
+                {"kind": "building_hit", "unit": unit["id"], "target": order["target"], "dealt": dealt, "hp": building["hp"]}
+            )
+            if int(building["hp"]) <= 0:
+                unit.pop("order", None)
+                unit["status"] = "idle"
+        return
+    goal = (int(building["tx"]), int(building["ty"]))
+    dx, dy = goal[0] - int(unit["tx"]), goal[1] - int(unit["ty"])
+    options = []
+    if dx:
+        options.append((int(unit["tx"]) + (1 if dx > 0 else -1), int(unit["ty"])))
+    if dy:
+        options.append((int(unit["tx"]), int(unit["ty"]) + (1 if dy > 0 else -1)))
+    if abs(dy) > abs(dx):
+        options.reverse()
+    for step in options:
+        if step in world.blocked or not world.tile_in_map(*step):
+            continue
+        unit["facing"] = _facing(step[0] - int(unit["tx"]), step[1] - int(unit["ty"]))
+        unit["status"] = "moving"
+        unit["tx"], unit["ty"] = step
+        world.stats["move"] += 1
+        return
+    unit["status"] = "stuck"
+
+
 def military_quantum(world: Any) -> None:
     world.military_quanta += 1
-    units = [u for u in world.units.values() if u.get("alive", True)]
+    for unit in list(world.units.values()):
+        if unit.get("alive", True) and unit.get("order"):
+            _order_step(world, unit)
+    units = [u for u in world.units.values() if u.get("alive", True) and not u.get("order")]
     if len(units) < 2:
         return
     if world.military_quanta % 20 == 0:

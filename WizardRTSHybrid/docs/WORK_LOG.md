@@ -33,3 +33,6 @@
 - After the move, pytest 17 passed and `HYBRID_WALK_OK` start=(100, 50) end=(522, 62) crossings=20.
 - Not done: building health, cross-game attacks, recipe economy, God Mode, long runs, a package that includes the art.
 - Follow-up on the same day: every non-scenery building has `hp`, `max_hp`, `target_type`, and `armor`. `damage_building` uses the existing OpenRA-derived `inflict_damage`. A weapon whose target list omits `structure` deals 0. A dead building is not damaged again. Units do not call this yet. Pytest 18 passed.
+- Documented `docs/STATE_OF_PLAY.md` and merged the hybrid branch into `main` at Joe's request. Spellbook polish dirt stayed unstaged.
+
+- 2026-10-10 (Claude): added `order` op and unit attack orders through `damage_building`; destroyed buildings stop producing. 20 hybrid tests + 2 duel tests pass.
