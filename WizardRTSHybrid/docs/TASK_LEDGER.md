@@ -28,5 +28,6 @@
 | T-RULES | OpenRA actor/weapon rules imported as data | 1 | T-MAPS | VERIFIED | `scripts/import_openra_rules.py` (MiniYaml with Inherits) -> `wizard_rts/data/openra_rules.json`: 92 actors, 45 weapons. Runtime reads only the JSON. |
 | T-COMBAT | Units and buildings fight with OpenRA ranges, reload, burst, projectile flight, Versus armor | 1 | T-RULES | PARTIAL | `wizard_rts/military.py`, `tests/test_combat.py`. Missing: spread damage, formations, hierarchical pathfinder, aircraft/ships, veterancy, garrisons. |
 | T-AI | Six faction commanders on the shared command API | 1 | T-COMBAT, T-RECRUIT | PARTIAL | `wizard_rts/ai.py` (economy plan, road repair, recruitment, defend, attack-move squads, personalities). Missing: AI cannot rebuild mines (no prospecting), no repair, no expansion. |
+| T-IMPORT | Widelands Lua importer and generic buildings (Phase G) | 1 | T-PROGRAMS | PARTIAL | `scripts/import_widelands_programs.py`, `wizard_rts/wl_defs.py`, `tests/test_generic_buildings.py`, bench 120/120, God Mode GUI test places an Empire building. Missing: military/training sites, fishing, swimming, terraforming, breeding, scouting; AI use of imported kinds; per-building headed verification. |
 
 Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays source-derived adapted.

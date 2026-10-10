@@ -20,10 +20,12 @@ py -3 WizardRTSHybrid/scripts/long_run.py --minutes 30 --seeds 507 11 23
 py -3 WizardRTSHybrid/scripts/build_catalogue.py
 py -3 WizardRTSHybrid/scripts/import_openra_rules.py
 py -3 WizardRTSHybrid/scripts/import_assets.py
+py -3 WizardRTSHybrid/scripts/import_widelands_programs.py
+py -3 WizardRTSHybrid/scripts/verify_generic_buildings.py
 ```
 
 Godot 4.5.1 console, Forward+, one fresh sim per script (`$env:HYBRID_SIM_PORT`): `run_hybrid_walk.gd`, `run_hybrid_visual.gd`, `run_hybrid_duel.gd`, `run_hybrid_forestry.gd`, `run_hybrid_god.gd`, `run_hybrid_war.gd`, and `--headless ... run_hybrid_coords.gd`. Set `HYBRID_SHOT_DIR` to save PNGs, `HYBRID_SPEED` for the sim clock multiplier.
 
 ## Next task
 
-The Lua programme importer and wider coverage (see `docs/CLAUDE_HANDOFF.md`).
+Wider generic coverage: military and training sites, fishing, AI use of imported tribes (see `docs/CLAUDE_HANDOFF.md`).

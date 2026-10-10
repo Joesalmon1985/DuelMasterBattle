@@ -131,6 +131,7 @@ func _run() -> void:
 		_fail("no god mode or snapshot")
 		return
 	_world._sim.op({"op": "speed", "scale": 24})
+	_world._sim.op({"op": "ai", "enabled": false})  # this test is about the GUI, not about being attacked mid-click
 	var john_before: Vector2i = _world._john_pos
 	var game_ms_before := int(_world._snapshot.get("game_ms", 0))
 
@@ -156,7 +157,10 @@ func _run() -> void:
 	# 3. open the build menu and place a lumberjack hut on a free tile
 	var wh := _find("warehouse", "Green")
 	var spot := _free_tile(wh)
-	await _click_control(_god.build_grid.get_node("Build_producer"))
+	var pb: Control = _god.build_grid.get_node("Build_producer")
+	_god.build_grid.get_parent().ensure_control_visible(pb)
+	await _frames(3)
+	await _click_control(pb)
 	if _god.tool != "build:producer":
 		_fail("build tool not armed")
 		return
@@ -181,8 +185,12 @@ func _run() -> void:
 	await _click(_screen(Vector2(int(site["tx"]), int(site["ty"]))))
 	await _click(_screen(Vector2(int(wh["tx"]), int(wh["ty"]))))
 	await _frames(5)
-	if _world._snapshot.get("roads", {}).size() != roads_before + 1:
-		_fail("road not built: %s" % _god.message)
+	var has_road := false
+	for rid in _world._snapshot.get("roads", {}):
+		if str(rid).ends_with(":%s-%s" % [str(site["id"]), str(wh["id"])]):
+			has_road = true
+	if not has_road:
+		_fail("road not built: %s (roads before %d)" % [_god.message, roads_before])
 		return
 	print("GOD_STEP road built")
 	await _shot("03_road_built")
@@ -195,6 +203,51 @@ func _run() -> void:
 		_fail("warehouse info missing stock: %s" % _god.info.text)
 		return
 	print("GOD_STEP warehouse stock shown")
+
+	# 5b. an imported Widelands building from another tribe, through the same menu, tools and sim commands
+	var empire_index := -1
+	for i in _god.category_btn.item_count:
+		if _god.category_btn.get_item_text(i) == "Empire":
+			empire_index = i
+	if empire_index < 0:
+		_fail("no Empire category in the build menu")
+		return
+	_god.category_btn.select(empire_index)
+	_god._on_category(empire_index)
+	await _frames(5)
+	var gbtn: Button = _god.build_grid.get_node_or_null("Build_wl_empire_lumberjacks_house")
+	if gbtn == null:
+		_fail("imported Empire lumberjack's house is not in the menu")
+		return
+	_god.build_grid.get_parent().ensure_control_visible(gbtn)
+	await _frames(3)
+	await _click_control(gbtn)
+	var hut := _find("producer", "Green")
+	var spot2 := _free_tile(hut)
+	var before2: Dictionary = {}
+	for e in _world._snapshot.get("entities", []):
+		before2[str(e.get("id", ""))] = true
+	await _click(_screen(Vector2(spot2)))
+	await _frames(5)
+	var site2 := {}
+	for e in _world._snapshot.get("entities", []):
+		if not before2.has(str(e.get("id", ""))) and str(e.get("definition", "")) == "widelands.empire_lumberjacks_house":
+			site2 = e
+	if site2.is_empty() or not site2.has("constructing"):
+		_fail("imported building was not placed")
+		return
+	await _click_control(_god.tool_row.get_node("Tool_road"))
+	await _click(_screen(Vector2(int(site2["tx"]), int(site2["ty"]))))
+	await _click(_screen(Vector2(int(wh["tx"]), int(wh["ty"]))))
+	await _frames(5)
+	await _wait(func(): return not _entity(str(site2["id"])).has("constructing"), "imported site completes", 240.0)
+	await _wait(_empire_lumberjack_out, "imported Empire lumberjack worker exists (generic role from the Lua)", 240.0)
+	if not _world._art.items.has("widelands.empire_lumberjack_worker.walk.e") or not _world._art.items.has("widelands.empire_lumberjacks_house"):
+		_fail("imported art missing")
+		return
+	await _shot("04a_imported_empire_building")
+	_god.category_btn.select(0)
+	_god._on_category(0)
 
 	# 6. open a barracks and queue a unit
 	var bar := _find("barracks", "Green")
@@ -266,7 +319,14 @@ func _run() -> void:
 		_fail("attack order not issued: %s" % str(order))
 		return
 	print("GOD_STEP attack ordered")
-	await _wait(func(): return int(_entity(str(target["id"])).get("hp", 1000)) < t_hp, "enemy building damaged", 240.0)
+	var march_from := Vector2i(int(_entity(unit_id)["tx"]), int(_entity(unit_id)["ty"]))
+	if not await _wait(func():
+		var u := _entity(unit_id)
+		if u.is_empty() or not bool(u.get("alive", true)):
+			return true  # it marched into the enemy base and was shot down
+		var here := Vector2i(int(u["tx"]), int(u["ty"]))
+		return int(_entity(str(target["id"])).get("hp", t_hp)) < t_hp or here.distance_to(Vector2(march_from)) > 25.0, "unit marches on the enemy building", 240.0):
+		return
 	await _shot("07_attacking_enemy_building")
 
 	# 10. back to Wizard Mode through the same button
@@ -330,3 +390,10 @@ func _free_tile(wh: Dictionary) -> Vector2i:
 			if not taken.has(t) and not taken.has(t + Vector2i(1, 0)) and not taken.has(t + Vector2i(0, 1)):
 				return t
 	return base + Vector2i(8, 8)
+
+
+func _empire_lumberjack_out() -> bool:
+	for e in _world._snapshot.get("entities", []):
+		if str(e.get("role", "")) == "empire_lumberjack":
+			return true
+	return false

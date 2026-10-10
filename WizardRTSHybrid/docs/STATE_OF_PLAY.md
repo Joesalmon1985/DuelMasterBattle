@@ -37,6 +37,7 @@ Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs
 | Combat | OpenRA numbers from `wizard_rts/data/openra_rules.json` (92 actors, 45 weapons): range, reload, burst, projectile flight, Versus armor, turrets. A Widelands soldier can fight OpenRA units and buildings. Buildings burn 15 s, then are removed with their roads. |
 | Six factions | Red, Blue, Green, Yellow, Purple, Orange, each a full economy and army, colour rings (strategic dots when zoomed out). |
 | AI | `wizard_rts/ai.py`: builds to a plan, repairs roads, queues recruits, defends, sends squads attack-moving. Personalities differ. Uses the same commands as God Mode. |
+| Widelands import | `scripts/import_widelands_programs.py` parses all 237 buildings, 156 workers, 128 wares, 363 immovables, 16 critters from the Lua (no parse errors) into `wizard_rts/data/widelands_defs.json`. 120 production sites (Barbarians 31, Empire 30, Frisians 26, Atlanteans 20, Amazons 13) are **runnable on the generic interpreter**: each runs in an isolated bench (`scripts/verify_generic_buildings.py`, 120 of 120 make their wares), appears in the God Mode build menu under its tribe, and has imported art (1300 catalogue items). A worker role of any imported tribe works the same way. Supported: forestry, fields, rocks, game, mining, conversion. Not yet: fishing, water gathering by swimming, terraforming, breeding, scouting, ferries, military and training sites. |
 | God Mode | Verified with real mouse events: `run_hybrid_god.gd` (button, faction, build, road, stock, barracks queue, box select, move, attack, back to Wizard Mode with pose and world unchanged). |
 | Six-faction war | Verified headed: `run_hybrid_war.gd`; headless 30-minute multi-seed run with HTML report: `scripts/long_run.py`. |
 
@@ -51,7 +52,7 @@ Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs
 | Workers | Hidden workers of mines, smelters and smithies are not entities. Worker training and assignment screens do not exist. |
 | Military | No spread damage, formations, hierarchical pathfinder, aircraft, ships, veterancy, garrisons, patrol, repair. |
 | AI | Cannot rebuild a mine (no prospecting), no repair, no expansion or new settlements. A faction whose warehouse falls does not come back. |
-| Content coverage | 8 of 237 Widelands buildings and 6 of 131 wares tested; see the catalogue. Importer for Lua programmes is not written. |
+| Content coverage | Catalogue: 120 of 237 Widelands buildings and 70 of 131 wares tested in the bench (not yet in a headed play-through each); 58 production sites need unsupported commands; 59 military/training/warehouse/ship sites are not implemented; OpenRA 4 of 94 actors integrated. Only the hybrid core kinds have faction AI support. |
 | Art | Terrain is one meadow tile; faction colour is a ring, not a player-colour sprite remap; other tribes' sprites not imported; unit sprites reuse rifleman/tank/soldier for every faction. |
 | God Mode UI | No per-worker, garrison or training panels; most original menus are unmapped (no menu catalogue yet). |
 | Long run | 30-minute headless multi-seed run passes; a 30-minute headed run is not done. |
@@ -64,7 +65,7 @@ py -3 -m pytest tests/sim/test_u05_retained_ward_duel.py -q
 godot --headless --path godot_project --script res://client/tests/run_hybrid_coords.gd
 ```
 
-With the sim running on `HYBRID_SIM_PORT` (a fresh sim for each script): `run_hybrid_walk.gd`, `run_hybrid_visual.gd`, `run_hybrid_duel.gd`, `run_hybrid_forestry.gd` (`HYBRID_SPEED=4`), `run_hybrid_food.gd` (`HYBRID_SPEED=10`), `run_hybrid_god.gd`, `run_hybrid_war.gd` (`HYBRID_SPEED=20`). Expect `HYBRID_WALK_OK`, `HYBRID_VISUAL_OK`, `HYBRID_DUEL_OK`, `HYBRID_FORESTRY_OK`, `HYBRID_FOOD_OK`, `HYBRID_GOD_OK`, `HYBRID_WAR_OK`, `HYBRID_COORDS_OK 2424`. Long run: `py -3 WizardRTSHybrid/scripts/long_run.py --minutes 30 --seeds 507 11 23`.
+With the sim running on `HYBRID_SIM_PORT` (a fresh sim for each script): `run_hybrid_walk.gd`, `run_hybrid_visual.gd`, `run_hybrid_duel.gd`, `run_hybrid_forestry.gd` (`HYBRID_SPEED=4`), `run_hybrid_food.gd` (`HYBRID_SPEED=10`), `run_hybrid_god.gd`, `run_hybrid_war.gd` (`HYBRID_SPEED=20`). Expect `HYBRID_WALK_OK`, `HYBRID_VISUAL_OK`, `HYBRID_DUEL_OK`, `HYBRID_FORESTRY_OK`, `HYBRID_FOOD_OK`, `HYBRID_GOD_OK`, `HYBRID_WAR_OK`, `HYBRID_COORDS_OK 2424`. Long run: `py -3 WizardRTSHybrid/scripts/long_run.py --minutes 30 --seeds 507 11 23`. Regenerate data: `import_widelands_programs.py`, `import_openra_rules.py`, `import_assets.py`, `verify_generic_buildings.py`, `build_catalogue.py`.
 
 ## Evidence
 

@@ -365,6 +365,65 @@ def forestry_items() -> list[dict]:
     return out
 
 
+def generic_items() -> list[dict]:
+    """Sprites for every runnable Widelands building and the workers that run its programmes,
+    located through data/widelands_defs.json (so no per-building code)."""
+    import json as _json
+
+    defs_path = HYBRID / "wizard_rts" / "data" / "widelands_defs.json"
+    if not defs_path.is_file():
+        return []
+    defs = _json.loads(defs_path.read_text(encoding="utf-8"))
+    out: list[dict] = []
+    roles: set[str] = set()
+    for name, b in defs["buildings"].items():
+        if not b.get("runnable"):
+            continue
+        base = WIDELANDS / "data" / b["dir"]
+        sheet_meta = b["spritesheets"].get("idle")
+        anim_meta = b["animations"].get("idle")
+        if sheet_meta and (base / "idle_1.png").is_file():
+            src, cols, rows, frames, hot = "idle_1.png", int(sheet_meta.get("columns", 1)), int(sheet_meta.get("rows", 1)), int(sheet_meta.get("frames", 1)), sheet_meta.get("hotspot", [0, 0])
+        elif (base / "idle_00.png").is_file():
+            src, cols, rows, frames, hot = "idle_00.png", 1, 1, 1, (anim_meta or {}).get("hotspot") or [0, 0]
+        elif (base / "idle_1.png").is_file():
+            src, cols, rows, frames, hot = "idle_1.png", 1, 1, 1, (anim_meta or {}).get("hotspot") or [0, 0]
+        else:
+            continue
+        out.append(
+            sheet(
+                f"widelands.{name}", f"data/{b['dir']}/{src}", f"gen/{name}.png",
+                columns=cols, rows=rows, frames=frames, hotspot=list(hot), scale=2, fps=8 if frames > 1 else 0,
+                source_note=f"{name} idle (generated from widelands_defs.json)",
+            )
+        )
+        for role in b["working_positions"]:
+            if role in defs["workers"]:
+                roles.add(role)
+    for role in sorted(roles):
+        w = defs["workers"][role]
+        base = WIDELANDS / "data" / w["dir"]
+        for anim, meta in w["spritesheets"].items():
+            stem = meta.get("basename", anim)
+            hot = list(meta.get("hotspot", [0, 0]))
+            cols, rows, frames = int(meta.get("columns", 1)), int(meta.get("rows", 1)), int(meta.get("frames", 1))
+            directions = ["e", "ne", "nw", "se", "sw", "w"] if meta.get("directional") else [""]
+            for facing in directions:
+                fname = f"{stem}_{facing}_1.png" if facing else f"{stem}_1.png"
+                if not (base / fname).is_file():
+                    continue
+                suffix = f".{facing}" if facing else ""
+                out.append(
+                    sheet(
+                        f"widelands.{role}_worker.{anim}{suffix}", f"data/{w['dir']}/{fname}",
+                        f"gen/{role}_{anim}{('_' + facing) if facing else ''}.png",
+                        columns=cols, rows=rows, frames=frames, hotspot=hot, scale=4, fps=int(meta.get("fps", 10)),
+                        source_note=f"{role} spritesheets.{anim} (generated)",
+                    )
+                )
+    return out
+
+
 def main() -> None:
     if ART.exists():
         shutil.rmtree(ART)
@@ -730,6 +789,8 @@ def main() -> None:
         )
 
     items.extend(forestry_items())
+    known = {i['id'] for i in items}
+    items.extend(i for i in generic_items() if i['id'] not in known)
     required = [
         "widelands.lumberjack",
         "widelands.warehouse",

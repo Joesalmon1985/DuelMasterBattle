@@ -17,6 +17,7 @@ from collections import deque
 from typing import Any
 
 from wizard_rts.economy import _supply, produce
+from wizard_rts import wl_defs
 from wizard_rts.programs_data import BUILDING_INPUTS, BUILDING_OUTPUTS
 from wizard_rts.workers import facing, new_id
 
@@ -33,6 +34,12 @@ def io_for(world: Any, building: dict) -> dict[str, Any]:
         io["requests"] = dict(BUILDING_INPUTS[kind])
     if kind in BUILDING_OUTPUTS:
         io["outputs"] = list(BUILDING_OUTPUTS[kind])
+    spec = wl_defs.spec_for_kind(kind)
+    if spec is not None:
+        if spec["inputs"]:
+            io["requests"] = dict(spec["inputs"])
+        if spec["outputs"]:
+            io["outputs"] = list(spec["outputs"])
     extra = world.recipe_requests.get(building["id"])
     if extra:
         io["requests"] = {**io.get("requests", {}), **extra}

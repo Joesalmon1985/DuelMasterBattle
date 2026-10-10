@@ -11,6 +11,7 @@ from __future__ import annotations
 import heapq
 from typing import Any
 
+from wizard_rts import wl_defs
 from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
     ECONOMY_TARGETS,
@@ -191,7 +192,8 @@ def spawn_worker(world: Any, building: dict, role: str) -> str:
         "status": "idle",
     }
     building["worker_id"] = worker_id
-    world.events.append({"kind": "worker_spawned", "id": worker_id, "building": building["id"]})
+    building.setdefault("worker_ids", {})[role] = worker_id
+    world.events.append({"kind": "worker_spawned", "id": worker_id, "building": building["id"], "role": role})
     return worker_id
 
 
@@ -258,8 +260,10 @@ def worker_abort(world: Any, worker: dict, reason: str) -> None:
     building = world.buildings.get(worker["building"])
     if building is not None:
         building["worker_id"] = ""
+        building.get("worker_ids", {}).pop(worker["role"], None)
         building["respawn_ms"] = 30_000
         building["waiting_worker"] = False
+        building["stack"] = [["main", 0]]
 
 
 def worker_quantum(world: Any, worker: dict) -> None:
@@ -291,8 +295,16 @@ def worker_quantum(world: Any, worker: dict) -> None:
         _run_step(world, worker)
 
 
+def worker_program(role: str, name: str) -> list[tuple[str, dict]]:
+    legacy = WORKER_PROGRAMS.get(role)
+    if legacy is not None and name in legacy:
+        return legacy[name]
+    generic = wl_defs.worker_programs(role)
+    return (generic or {}).get(name, [])
+
+
 def _run_step(world: Any, worker: dict) -> None:
-    steps = WORKER_PROGRAMS[worker["role"]][worker["program"]]
+    steps = worker_program(worker["role"], worker["program"])
     if worker["pc"] >= len(steps):
         worker["program"] = ""
         return
@@ -378,6 +390,10 @@ def _run_step(world: Any, worker: dict) -> None:
             tree["stage"] = "felled"
             tree["timer_ms"] = FELLED_MS
             world.events.append({"kind": "tree_felled", "tree": tree["id"], "worker": worker["id"]})
+        elif args["program"] == "remove":  # a hunter's kill (frisian hunters use callobject=remove)
+            world.animals.pop(tree["id"], None)
+            world.trees.pop(tree["id"], None)
+            world.events.append({"kind": "animal_hunted", "animal": tree["id"], "worker": worker["id"], "species": tree.get("species", "")})
         elif args["program"] == "harvest":
             tree["stage"] = "harvested"
             tree["timer_ms"] = STAGE_TABLES["wheat"]["harvested"][0]
@@ -415,6 +431,7 @@ def _run_step(world: Any, worker: dict) -> None:
             world.events.append({"kind": "field_planted", "tree": tree_id, "worker": worker["id"]})
         else:
             tree_id = plant_tree(world, tuple(tile), "sapling")
+            world.stats["saplings_planted"] = world.stats.get("saplings_planted", 0) + 1
             world.events.append({"kind": "sapling_planted", "tree": tree_id, "worker": worker["id"]})
         worker["target_tile"] = None
     elif cmd == "return":
@@ -435,7 +452,7 @@ def economy_needs(world: Any, faction: str, good: str) -> bool:
         for b in world.buildings.values()
         if b["kind"] == "warehouse" and b["faction"] == faction
     )
-    if have < ECONOMY_TARGETS.get(good, 1_000_000):
+    if have < ECONOMY_TARGETS.get(good, 20):
         return True
     for b in world.buildings.values():
         if b["faction"] != faction:
@@ -468,87 +485,156 @@ def _mine(world: Any, building: dict, args: dict) -> bool:
     return True
 
 
+def _programs_of(building: dict) -> dict[str, list[tuple[str, dict]]] | None:
+    kind = building.get("kind", "")
+    if kind in BUILDING_PROGRAMS:
+        return {"main": BUILDING_PROGRAMS[kind]}
+    spec = wl_defs.spec_for_kind(kind)
+    return spec["programs"] if spec else None
+
+
+def _roles_of(building: dict) -> list[str]:
+    kind = building.get("kind", "")
+    if kind in BUILDING_PROGRAMS:
+        role = WORKER_FOR_BUILDING.get(kind)
+        return [role] if role else []
+    spec = wl_defs.spec_for_kind(kind)
+    return sorted(set(spec["worker_for_program"].values())) if spec else []
+
+
+def _role_for_program(building: dict, program: str) -> str | None:
+    kind = building.get("kind", "")
+    if kind in BUILDING_PROGRAMS:
+        return WORKER_FOR_BUILDING.get(kind)
+    spec = wl_defs.spec_for_kind(kind)
+    return spec["worker_for_program"].get(program) if spec else None
+
+
+def _fail(world: Any, building: dict, why: str) -> None:
+    """A programme failed: drop every frame and wait before trying again."""
+    building["stack"] = [["main", 0]]
+    building["sleep_ms"] = FAIL_SLEEP_MS
+    key = (building["id"], why)
+    world.shortages[key] = world.shortages.get(key, 0) + 1
+
+
+def _skip(building: dict) -> None:
+    """return=skipped: leave the current programme. From main this costs a 10 s delay."""
+    stack = building["stack"]
+    stack.pop()
+    if not stack:
+        building["stack"] = [["main", 0]]
+        building["sleep_ms"] = FAIL_SLEEP_MS
+
+
 def production_quantum(world: Any) -> None:
     from wizard_rts.economy import _supply, produce
 
     for building in list(world.buildings.values()):
-        program = BUILDING_PROGRAMS.get(building.get("kind", ""))
-        if program is None or not building.get("operational", True):
+        programs = _programs_of(building)
+        if programs is None or not building.get("operational", True):
             continue
-        role = WORKER_FOR_BUILDING.get(building["kind"])
-        worker = None
-        if role:
-            worker = world.workers.get(building.get("worker_id", ""))
-            if worker is None:
-                if building.get("respawn_ms", 0) > 0:
-                    building["respawn_ms"] -= QUANTUM_MS
-                else:
-                    spawn_worker(world, building, role)
-                continue
+        roles = _roles_of(building)
+        have = building.setdefault("worker_ids", {})
+        missing = [r for r in roles if have.get(r) not in world.workers]
+        if missing:
+            if building.get("respawn_ms", 0) > 0:
+                building["respawn_ms"] -= QUANTUM_MS
+            else:
+                for r in missing:
+                    spawn_worker(world, building, r)
+            continue
         if building.get("sleep_ms", 0) > 0:
             building["sleep_ms"] -= int(QUANTUM_MS * _health_factor(building))
             continue
         building["working"] = False
+        stack = building.setdefault("stack", [["main", 0]])
         if building.get("waiting_worker"):
             if building.pop("worker_done", False):
                 building["waiting_worker"] = False
-                building["pc"] = building.get("pc", 0) + 1
                 if building.pop("prog_failed", False):
-                    building["sleep_ms"] = FAIL_SLEEP_MS
-                    building["pc"] = 0
+                    _fail(world, building, "worker")
+                elif stack:
+                    stack[-1][1] += 1
             continue
-        pc = building.setdefault("pc", 0)
-        if pc >= len(program):
-            building["pc"] = 0
+        if not stack:
+            stack.append(["main", 0])
+        frame = stack[-1]
+        program = programs.get(frame[0])
+        if program is None or frame[1] >= len(program):
+            stack.pop()
+            if not stack:
+                stack.append(["main", 0])
             continue
-        cmd, args = program[pc]
-        building["pc"] = pc + 1
+        cmd, args = program[frame[1]]
+        frame[1] += 1
         stock = world.stocks.setdefault(building["id"], {})
         if cmd == "callworker":
+            role = _role_for_program(building, args["program"])
+            worker = world.workers.get(have.get(role)) if role else None
+            if worker is None:
+                frame[1] -= 1
+                continue
             building.pop("worker_done", None)
             building.pop("prog_failed", None)
             worker.update(program=args["program"], pc=0, status="starting")
             building["waiting_worker"] = True
-            building["pc"] = pc  # advances when the worker reports back
+            frame[1] -= 1  # advances when the worker reports back
         elif cmd == "sleep":
             building["sleep_ms"] = args["ms"]
         elif cmd == "animate":
             building["working"] = True
             building["sleep_ms"] = args["ms"]
-        elif cmd == "needs":
+        elif cmd in ("needs", "return_unless_needs"):
             if not economy_needs(world, building["faction"], args["good"]):
-                building["pc"] = 0
-                building["sleep_ms"] = FAIL_SLEEP_MS  # return=skipped
+                _skip(building)
+        elif cmd == "return":
+            if args.get("skipped", True):
+                _skip(building)
+            else:
+                building["stack"] = [["main", 0]]
+        elif cmd == "call":
+            if args["target"] in programs:
+                stack.append([args["target"], 0])
         elif cmd == "consume":
             if all(int(stock.get(g, 0)) >= n for g, n in args.items()):
                 for g, n in args.items():
                     _supply(world, building["id"]).remove_wares(g, n)
                     world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
             else:
-                building["pc"] = 0
-                building["sleep_ms"] = FAIL_SLEEP_MS
-                key = (building["id"], "inputs")
-                world.shortages[key] = world.shortages.get(key, 0) + 1
+                _fail(world, building, "inputs")
         elif cmd == "consume_any":
             pick = next((g for g in args["goods"] if int(stock.get(g, 0)) >= 1), None)
             if pick is not None:
                 _supply(world, building["id"]).remove_wares(pick, 1)
                 world.stats["consumed_" + pick] = world.stats.get("consumed_" + pick, 0) + 1
             else:
-                building["pc"] = 0
-                building["sleep_ms"] = FAIL_SLEEP_MS
-                key = (building["id"], "inputs")
-                world.shortages[key] = world.shortages.get(key, 0) + 1
+                _fail(world, building, "inputs")
+        elif cmd == "consume_groups":
+            picks = []
+            for alts, n in args["groups"]:
+                pick = next((g for g in alts if int(stock.get(g, 0)) >= n), None)
+                if pick is None:
+                    picks = None
+                    break
+                picks.append((pick, n))
+            if picks is None:
+                _fail(world, building, "inputs")
+            else:
+                for g, n in picks:
+                    _supply(world, building["id"]).remove_wares(g, n)
+                    world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
         elif cmd == "mine":
             if not _mine(world, building, args):
-                building["pc"] = 0
-                building["sleep_ms"] = FAIL_SLEEP_MS
+                _fail(world, building, "deposit")
         elif cmd == "produce":
             for g, n in args.items():
                 produce(world, building["id"], g, n)
                 world.stats["produce"] += n
                 world.stats["made_" + g] = world.stats.get("made_" + g, 0) + n
                 world.events.append({"kind": "produced", "building": building["id"], "good": g})
+        else:
+            _fail(world, building, "unsupported")
 
 
 def _health_factor(building: dict) -> float:

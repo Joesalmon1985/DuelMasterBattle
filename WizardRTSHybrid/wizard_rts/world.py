@@ -56,7 +56,7 @@ FACTIONS = (
 
 
 class HybridWorld:
-    def __init__(self, seed: int = 507) -> None:
+    def __init__(self, seed: int = 507, minimal: bool = False) -> None:
         self.seed = int(seed)
         self.dmb = WorldState(world_id=WorldId(WORLD_ID))
         self.clock = ClockService(self.dmb.clock)
@@ -96,7 +96,10 @@ class HybridWorld:
         self.hazard_tile: tuple[int, int] | None = None
         self.player = {"tx": 0, "ty": 0, "facing": "down"}
         self._pending_links: list[tuple[str, str]] = []
-        self._layout()
+        if minimal:
+            self._layout_minimal()
+        else:
+            self._layout()
 
     def tile_in_map(self, tx: int, ty: int) -> bool:
         return tile_in_map(tx, ty)
@@ -134,6 +137,15 @@ class HybridWorld:
     def _hazard_active(self) -> bool:
         cube = (self.dmb.hazards.get("catastrophe", {}).get("cubes") or {}).get(self.hazard_id)
         return bool(cube and cube.get("active", True))
+
+    def _layout_minimal(self) -> None:
+        """One faction with a warehouse and nothing else: an isolated bench for single-building tests."""
+        name, (q, r), color = FACTIONS[0]
+        faction_id = str(self.dmb.ids.new("faction"))
+        centre = hex_center_tile(q, r)
+        warehouse = self._building(faction_id, name, "warehouse", centre, "Warehouse", "widelands.warehouse")
+        self.faction_info[name] = {"id": faction_id, "name": name, "color": color}
+        self.player = {"tx": centre[0] + 20, "ty": centre[1], "facing": "up"}
 
     def _layout(self) -> None:
         placed = [self._place_faction(name, q, r) for name, (q, r), _color in FACTIONS]

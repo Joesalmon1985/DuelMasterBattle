@@ -24,6 +24,8 @@ var mode_btn: Button
 var panel: PanelContainer
 var faction_row: HBoxContainer
 var build_grid: GridContainer
+var category_btn: OptionButton
+var category := "Core"
 var tool_row: HBoxContainer
 var info: RichTextLabel
 var actions: VBoxContainer
@@ -98,10 +100,20 @@ func _build_panel() -> void:
 	var bl := Label.new()
 	bl.text = "Build"
 	v.add_child(bl)
+	category_btn = OptionButton.new()
+	category_btn.name = "BuildCategory"
+	category_btn.tooltip_text = "Hybrid core buildings, or every runnable building of a Widelands tribe"
+	category_btn.item_selected.connect(_on_category)
+	v.add_child(category_btn)
+	var scroll := ScrollContainer.new()
+	scroll.name = "BuildScroll"
+	scroll.custom_minimum_size = Vector2(240, 150)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	v.add_child(scroll)
 	build_grid = GridContainer.new()
 	build_grid.name = "BuildMenu"
 	build_grid.columns = 2
-	v.add_child(build_grid)
+	scroll.add_child(build_grid)
 	tool_row = HBoxContainer.new()
 	tool_row.name = "Tools"
 	v.add_child(tool_row)
@@ -142,19 +154,40 @@ func _build_minimap() -> void:
 
 
 func _fill_build_menu() -> void:
+	var cats: Array = ["Core"]
+	for kind in menu:
+		var t := str(menu[kind].get("tribe", ""))
+		if t != "" and not cats.has(t.capitalize()):
+			cats.append(t.capitalize())
+	if category_btn.item_count == 0:
+		for c in cats:
+			category_btn.add_item(str(c))
 	for c in build_grid.get_children():
 		c.queue_free()
-	for kind in menu:
+	var kinds: Array = menu.keys()
+	if category != "Core":
+		kinds.sort()
+	for kind in kinds:
 		var spec: Dictionary = menu[kind]
+		var tribe := str(spec.get("tribe", "")).capitalize()
+		if (category == "Core" and tribe != "") or (category != "Core" and tribe != category):
+			continue
 		var b := Button.new()
-		b.name = "Build_%s" % kind
+		b.name = "Build_%s" % str(kind).replace(":", "_")
 		b.text = str(spec.get("label", kind))
 		var cost := ""
 		for good in spec.get("cost", {}):
 			cost += "%s %d  " % [good, int(spec["cost"][good])]
-		b.tooltip_text = "%s\nCost: %s\n%s" % [str(spec.get("game", "")), cost, str(spec.get("cost_source", ""))]
+		b.tooltip_text = "%s
+Cost: %s
+%s" % [str(spec.get("game", "")), cost, str(spec.get("cost_source", ""))]
 		b.pressed.connect(_on_tool.bind("build:%s" % kind))
 		build_grid.add_child(b)
+
+
+func _on_category(index: int) -> void:
+	category = category_btn.get_item_text(index)
+	_fill_build_menu()
 
 
 func _fill_factions() -> void:
@@ -538,7 +571,7 @@ func _refresh_info() -> void:
 		var kind := str(e.get("kind", ""))
 		lines += "[b]%s[/b]  (%s)\n" % [str(e.get("label", kind)), str(e.get("faction_name", ""))]
 		if e.has("hp"):
-			lines += "Health %d / %d\n" % [int(e.get("hp", 0)), int(e.get("max_hp", 0))]
+			lines += "Health %d / %d\n" % [int(e.get("hp", 0)) / 100, int(e.get("max_hp", 0)) / 100]
 		if e.has("constructing"):
 			var c: Dictionary = e["constructing"]
 			lines += "Under construction. Needs: %s\nProgress %d%%\n" % [str(c.get("cost", {})), int(100.0 * float(c.get("progress_ms", 0)) / 20000.0)]

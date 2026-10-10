@@ -49,7 +49,10 @@ def _handle(world: HybridWorld, message: dict) -> dict:
     if op == "demolish":
         return world.demolish(str(message.get("building", "")))
     if op == "menu":
-        return {"status": "ok", "build_menu": con.BUILD_MENU, "recipes": con.RECIPES}
+        return {"status": "ok", "build_menu": con.full_menu(), "recipes": con.RECIPES}
+    if op == "ai":
+        world.ai_enabled = bool(message.get("enabled", True))
+        return {"status": "ok", "ai_enabled": world.ai_enabled}
     if op == "speed":
         return world.set_speed(int(message.get("scale", 1)))
     if op == "order":

@@ -54,8 +54,43 @@ def discover() -> list[dict]:
     return items
 
 
+def generic_status() -> dict[str, dict]:
+    """Statuses earned by the data-driven path: `adapted` when the definition is imported and runnable on
+    the generic interpreter, `tested` when the isolated bench made one of its wares from it."""
+    out: dict[str, dict] = {}
+    defs_path = HYBRID / "wizard_rts" / "data" / "widelands_defs.json"
+    if not defs_path.is_file():
+        return out
+    defs = json.loads(defs_path.read_text(encoding="utf-8"))
+    results = {}
+    res_path = HYBRID / "docs" / "generic_building_results.json"
+    if res_path.is_file():
+        results = {r["name"]: r for r in json.loads(res_path.read_text(encoding="utf-8"))}
+    made_wares: set[str] = set()
+    for name, b in defs["buildings"].items():
+        if not b.get("runnable"):
+            continue
+        r = results.get(name)
+        if r and r.get("passed"):
+            out[f"widelands.{name}"] = {"status": "tested", "evidence": "isolated bench: scripts/verify_generic_buildings.py"}
+            made_wares.update(g for g, n in r.get("made", {}).items() if n)
+        else:
+            out[f"widelands.{name}"] = {"status": "adapted", "evidence": "imported and runnable on the generic interpreter; bench not passed"}
+    for w, info in defs["workers"].items():
+        if info.get("executable") and info["programs"]:
+            out[f"widelands.{w}"] = {"status": "adapted", "evidence": "worker programmes convert to interpreter commands"}
+    for g in made_wares:
+        out[f"widelands.{g}"] = {"status": "tested", "evidence": "made by a bench-passed building"}
+    return out
+
+
 def main() -> None:
-    status = json.loads(STATUS.read_text(encoding="utf-8")) if STATUS.is_file() else {}
+    status = generic_status()
+    hand = json.loads(STATUS.read_text(encoding="utf-8")) if STATUS.is_file() else {}
+    for k, v in hand.items():  # hand-kept entries win when they are higher or add evidence
+        cur = status.get(k)
+        if cur is None or ORDER.index(v["status"]) >= ORDER.index(cur["status"]):
+            status[k] = v
     items = discover()
     seen = set()
     unique = []

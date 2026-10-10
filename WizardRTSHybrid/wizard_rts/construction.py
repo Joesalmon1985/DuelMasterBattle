@@ -15,6 +15,7 @@ import heapq
 from typing import Any
 
 from wizard_rts.coords import tile_to_hex
+from wizard_rts import wl_defs
 from wizard_rts.economy import _supply
 from wizard_rts.logistics import add_road
 
@@ -109,8 +110,30 @@ def faction_warehouse(world: Any, faction_name: str) -> dict | None:
     return None
 
 
+def build_spec(kind: str) -> dict[str, Any] | None:
+    """A menu entry for a hybrid kind, or for any runnable Widelands building ("wl:<name>")."""
+    if kind in BUILD_MENU:
+        return BUILD_MENU[kind]
+    spec = wl_defs.spec_for_kind(kind)
+    if spec is None:
+        return None
+    return {
+        "label": spec["label"], "definition": spec["definition"], "game": "widelands", "tribe": spec["tribe"],
+        "cost": dict(spec["cost"]), "cost_source": f"{spec['tribe']}/{spec['name']} buildcost (imported)",
+    }
+
+
+def full_menu() -> dict[str, dict[str, Any]]:
+    out = dict(BUILD_MENU)
+    for name in wl_defs.runnable_names():
+        spec = build_spec(wl_defs.PREFIX + name)
+        if spec is not None:
+            out[wl_defs.PREFIX + name] = spec
+    return out
+
+
 def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -> dict[str, Any]:
-    spec = BUILD_MENU.get(kind)
+    spec = build_spec(kind)
     if spec is None:
         return {"status": "rejected", "reason": "unknown_kind"}
     info = world.faction_info.get(faction_name)
