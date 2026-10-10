@@ -29,3 +29,11 @@ Reopen when a packaged upstream library or process performs the warehouse update
 Question: how does Godot see the Python world?
 
 The server is newline JSON on `127.0.0.1`. One process owns the world for its lifetime. A dropped client must not kill the process. The clean-environment test rejects any connect that is not loopback and any `open()` under `external/`.
+
+## D4 — One display scale per art family
+
+Question: how should Widelands and OpenRA sprites share the 64px tile plane?
+
+Terrain stays 1:1 with the tile. Widelands buildings and trees use scale 2 with the source hotspot as the ground contact. Workers use scale 4 so a carrier frame is near the wizard's height. OpenRA buildings and units use scale 3 so a barracks and a tank read next to those buildings. This pin has no Barbarian sawmill, so the plank building is the Empire sawmill.
+
+Reopen if a headed shot shows a building floating or a unit larger than the warehouse.

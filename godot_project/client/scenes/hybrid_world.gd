@@ -3,6 +3,7 @@ extends Overworld
 const HexCoords = preload("res://client/hybrid/hex_coords.gd")
 const SimClient = preload("res://client/hybrid/sim_client.gd")
 const DuelAdapter = preload("res://client/encounters/duel_lease_adapter.gd")
+const HybridArt = preload("res://client/hybrid/hybrid_art.gd")
 
 ## Continuous hybrid world. Movement, camera, and the retained duel board
 ## come from the existing Overworld and DmbDuelLeaseAdapter. The Python
@@ -20,6 +21,8 @@ var _last_hex := Vector2i(999999, 999999)
 var _duel_layer: CanvasLayer
 var _duel_host: Control
 var _font: Font
+var _art = HybridArt.new()
+var _camera_nudge := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -34,7 +37,8 @@ func _ready() -> void:
 	grid_w = 2000
 	grid_h = 2000
 	test_mode = true
-	_camera.zoom = Vector2(0.18, 0.18)
+	_camera.zoom = Vector2(0.48, 0.48)
+	_art.load_catalogue()
 	_camera.position_smoothing_enabled = false
 	# Overworld leaves the scene fader opaque until an area fade. This scene
 	# does not load an area, so hide it or the world is covered.
@@ -66,6 +70,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	if _camera_nudge != Vector2.ZERO:
+		_camera.position += _camera_nudge
 	if _snapshot.is_empty() or _duel_open:
 		queue_redraw()
 		return
@@ -171,39 +177,20 @@ func _place_john_from_snapshot() -> void:
 
 
 func _draw() -> void:
-	var radius := 48
-	for ty in range(_john_pos.y - radius, _john_pos.y + radius + 1):
-		for tx in range(_john_pos.x - radius, _john_pos.x + radius + 1):
-			if not HexCoords.tile_in_map(tx, ty):
-				continue
-			var hex: Vector2i = HexCoords.tile_to_hex(tx, ty)
-			var shade := 0.18 + float((hex.x + hex.y) % 3) * 0.06
-			draw_rect(Rect2(tx * TPX, ty * TPX, TPX - 2, TPX - 2), Color(0.15, shade, 0.18), true)
+	_art.draw_terrain(self, _john_pos, 28, TPX)
 	for road in _snapshot.get("roads", {}).values():
 		for tile in road:
-			if tile is Array and tile.size() >= 2:
-				draw_rect(Rect2(int(tile[0]) * TPX + 18, int(tile[1]) * TPX + 18, 28, 28), Color(0.45, 0.36, 0.22), true)
-	for entity in _snapshot.get("entities", []):
+			if tile is Array:
+				_art.draw_road(self, tile, TPX)
+	var rows: Array = _snapshot.get("entities", [])
+	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var ay := int(a.get("ty", 0))
+		var by := int(b.get("ty", 0))
+		if ay == by:
+			return int(a.get("tx", 0)) < int(b.get("tx", 0))
+		return ay < by
+	)
+	for entity in rows:
 		if typeof(entity) != TYPE_DICTIONARY:
 			continue
-		var tx := int(entity.get("tx", 0))
-		var ty := int(entity.get("ty", 0))
-		var kind := str(entity.get("kind", ""))
-		var color := Color(0.9, 0.9, 0.9)
-		var faction := str(entity.get("faction_name", ""))
-		if faction == "Red":
-			color = Color(0.85, 0.25, 0.2)
-		elif faction == "Blue":
-			color = Color(0.25, 0.4, 0.9)
-		if kind == "hazard":
-			color = Color(0.75, 0.2, 0.85)
-		elif kind == "carrier":
-			color = Color(0.95, 0.8, 0.2)
-		var size := 48.0 if kind in ["warehouse", "producer", "processor"] else 28.0
-		draw_rect(Rect2(tx * TPX + 8, ty * TPX + 8, size, size), color, true)
-		if _font != null:
-			draw_string(_font, Vector2(tx * TPX, ty * TPX - 4), str(entity.get("label", kind)), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1))
-	var player: Dictionary = _snapshot.get("player", {})
-	var hex_text := "hex %s  game_ms %s  crossings %d" % [str(player.get("hex", [])), str(_snapshot.get("game_ms", 0)), _hex_crossings]
-	if _font != null:
-		draw_string(_font, _camera.position + Vector2(-280, -180), hex_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(1, 1, 0.7))
+		_art.draw_entity(self, entity, TPX)

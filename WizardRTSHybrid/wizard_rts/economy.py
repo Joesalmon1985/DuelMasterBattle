@@ -93,5 +93,19 @@ def _step_carrier(world: Any, carrier: dict) -> None:
         world.events.append({"kind": "carrier_blocked", "id": carrier["id"], "tile": list(step), "faction": carrier["faction"]})
         return
     carrier["status"] = "moving"
+    carrier["facing"] = _facing(step[0] - tx, step[1] - ty)
     carrier["index"] = nxt
     carrier["tx"], carrier["ty"] = step
+
+
+def _facing(dx: int, dy: int) -> str:
+    """Six Widelands directions. Pure north and south use the nearest diagonal sheet."""
+    if dx > 0 and dy == 0:
+        return "e"
+    if dx < 0 and dy == 0:
+        return "w"
+    if dy > 0:
+        return "se" if dx >= 0 else "sw"
+    if dy < 0:
+        return "ne" if dx >= 0 else "nw"
+    return "e"

@@ -23,3 +23,12 @@
 - OpenRA launch reached `Loading mod: ra` on OpenGL at 1920x1080 and was then stopped. No skirmish was played.
 - With `external` renamed to `external.off`, the same 16 tests passed (`CLEAN_HIDDEN_OK`), then the labs were restored.
 - Still open: Widelands compiler (B1). The Mod SDK `launch-game.cmd` expects `OpenRA.exe`.
+
+## 2026-10-10 v0.2 visual import
+
+- Branch `feature/wizard-rts-hybrid-v02` from `5785e03`. Baseline before edits: 16 pytest passed, ward duel 2 passed, `HYBRID_COORDS_OK 2424`, `HYBRID_WALK_OK`.
+- `scripts/import_assets.py` copies Widelands sprites and runs `OpenRA.Utility --extract` and `--png` with `ENGINE_DIR` set. Catalogue has no missing required ids.
+- The red settlement is real entities: lumberjack, sawmill, warehouse, mine, tavern, farm, barracks, refinery, war factory, turret, trees, rocks, carrier, Barbarian soldier, rifle infantry, heavy tank. The wizard starts at (100, 50), just east of that settlement. Zoom is 0.48.
+- Inspected `docs/evidence/gallery/mashup_1280x720.png`, `mashup_wide_1280x720.png`, and `mashup_1920x1080.png` at native size. The hut, green-roof warehouse, farm, barracks, war factory, tank, infantry, soldier, and wizard are visible together. Roads are faint. The grass texture repeats. The refinery sits near the left edge at the play zoom. OpenRA units use the temperate palette's default player colour.
+- After the move, pytest 17 passed and `HYBRID_WALK_OK` start=(100, 50) end=(522, 62) crossings=20.
+- Not done: building health, cross-game attacks, recipe economy, God Mode, long runs, a package that includes the art.

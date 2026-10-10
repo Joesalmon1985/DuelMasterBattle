@@ -1,6 +1,6 @@
 # Project status
 
-Branch: `feature/wizard-rts-hybrid`. Parent commit at the start of this work: `7f8ebb5377205799c77b279f2beb0ec36ada4499`. The hybrid commit is the latest commit on this branch after the handover. Unrelated spellbook and content edits stay unstaged. `main` is not updated. Build-pack T143 is not advanced.
+Branch: `feature/wizard-rts-hybrid-v02`, cut from `feature/wizard-rts-hybrid` at `5785e03`. Unrelated spellbook and content edits stay unstaged. `main` is not updated. Build-pack T143 is not advanced.
 
 ## What works
 
@@ -16,7 +16,7 @@ Branch: `feature/wizard-rts-hybrid`. Parent commit at the start of this work: `7
 ## What is partial
 
 - Carrier routes and soldier steps are provisional scaffolding. The snapshot says so.
-- Camera zoom is 0.18. The saved walk shots are from that zoom: the wizard, the hex plane, the red settlement, and the distant blue settlement are in `walk_start.png`. Labels are small at this zoom.
+- The red settlement now has imported sprites for a lumberjack hut, Empire sawmill, Barbarian warehouse, coal mine, tavern, farm, beech trees, rocks, a carrier sheet, a Barbarian soldier, plus OpenRA barracks, refinery, war factory, gun turret, rifle infantry, and a heavy tank. Catalogue: `godot_project/client/hybrid/art/catalogue.json`. Inspected shots: `docs/evidence/gallery/`. Roads are still easy to miss. Terrain tiling is visible. This is not a finished visual gate.
 - OpenRA's game window and Widelands' game window have not been played. See `docs/original_runs/`.
 
 ## What is broken or blocked
@@ -46,4 +46,4 @@ Set `HYBRID_SHOT_DIR` to save PNGs. The sim must be started first. One server pr
 
 ## Next task
 
-Install a C++ compiler and rerun the Widelands configure in `docs/original_runs/WIDELANDS.md`. Do not retry cmake until `CMAKE_CXX_COMPILER` can be set. After that, trace a productionsite program from the built tree before replacing the provisional carrier.
+Add current health, max health, and a target type on every building, then one attack that reduces a Widelands building's health through `inflict_damage`. Do not start a second damage function. Keep the imported sprites. B1 stays blocked until a C++ compiler exists. Do not rerun bare cmake.

@@ -17,5 +17,6 @@
 | T-DUEL | In-world retained board, one outcome, pose restored | 8 | T-WORLD | VERIFIED | `HYBRID_DUEL_OK`. Shot `docs/evidence/duel/duel_open.png`. |
 | T-CLEAN | Package runs with `external/` hidden | 8 | T-ECON, T-MIL, T-DUEL | VERIFIED | `tests/test_clean_environment.py` passed. `scripts/package_hybrid.ps1`. |
 | T-HANDOFF | Docs match the repo and the next task is named | 9 | the rows above | VERIFIED | `docs/CLAUDE_HANDOFF.md` |
+| T-ART | Imported sprites on the live settlement, inspected in a headed shot | 4 | T-WORLD | PARTIAL | `scripts/import_assets.py`. `HYBRID_VISUAL_OK` and `HYBRID_WALK_OK` from start (100, 50). Roads and terrain tiling are still weak. Not a finished presentation gate. |
 
 Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays source-derived adapted.

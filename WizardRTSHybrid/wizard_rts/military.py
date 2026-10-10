@@ -55,6 +55,18 @@ def military_quantum(world: Any) -> None:
     _step_toward(world, b, a)
 
 
+def _facing(dx: int, dy: int) -> str:
+    if dx == 0 and dy == 0:
+        return "s"
+    if abs(dx) >= abs(dy) and abs(dy) * 2 < abs(dx):
+        return "e" if dx > 0 else "w"
+    if abs(dy) > abs(dx) and abs(dx) * 2 < abs(dy):
+        return "s" if dy > 0 else "n"
+    if dx > 0:
+        return "se" if dy > 0 else "ne"
+    return "sw" if dy > 0 else "nw"
+
+
 def _adjacent(a: dict, b: dict) -> bool:
     return abs(int(a["tx"]) - int(b["tx"])) + abs(int(a["ty"]) - int(b["ty"])) == 1
 
@@ -72,6 +84,8 @@ def _step_toward(world: Any, unit: dict, other: dict) -> None:
         return
     if step == (int(other["tx"]), int(other["ty"])):
         return
+    unit["facing"] = _facing(step[0] - int(unit["tx"]), step[1] - int(unit["ty"]))
+    unit["status"] = "moving"
     unit["tx"], unit["ty"] = step
     world.stats["move"] += 1
     world.events.append({"kind": "move", "id": unit["id"], "tile": [unit["tx"], unit["ty"]]})

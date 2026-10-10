@@ -70,11 +70,10 @@ class HybridWorld:
     def _layout(self) -> None:
         red = self._place_faction("Red", 2, 2)
         blue = self._place_faction("Blue", 6, 3)
-        start = hex_center_tile(2, 3)
-        # Stand just off the red warehouse so the first steps are free.
-        self.player = {"tx": start[0], "ty": start[1], "facing": "down"}
-        if tuple(start) in self.blocked:
-            self.player["tx"] += 1
+        # Stand just east of the red settlement so the town is in frame at
+        # playable zoom. Hex (2, 3)'s center is a full hex away and hides it.
+        start = self._stand_near(red["road"])
+        self.player = {"tx": start[0], "ty": start[1], "facing": "up"}
         self._place_hazard(red["road"])
         self.events.append({"kind": "layout", "factions": [red["faction"], blue["faction"]]})
 
@@ -84,13 +83,20 @@ class HybridWorld:
         warehouse_tile = center
         producer_tile = self._offset_owned(q, r, center, -4, 0)
         processor_tile = self._offset_owned(q, r, center, 4, 1)
-        warehouse = self._building(faction_id, name, "warehouse", warehouse_tile, "Warehouse")
-        producer = self._building(faction_id, name, "producer", producer_tile, "Producer")
-        processor = self._building(faction_id, name, "processor", processor_tile, "Processor")
+        warehouse = self._building(
+            faction_id, name, "warehouse", warehouse_tile, "Warehouse", "widelands.warehouse"
+        )
+        producer = self._building(
+            faction_id, name, "producer", producer_tile, "Lumberjack", "widelands.lumberjack"
+        )
+        processor = self._building(
+            faction_id, name, "processor", processor_tile, "Sawmill", "widelands.sawmill"
+        )
         self.buildings[processor]["warehouse_id"] = warehouse
         road_tiles = _path(producer_tile, warehouse_tile) + _path(warehouse_tile, processor_tile)[1:]
         road_id = f"road:{faction_id}"
         self.roads[road_id] = road_tiles
+        self._place_showcase(faction_id, name, q, r, center, set(road_tiles))
         carrier_id = str(self.dmb.ids.new("cart"))
         self.carriers[carrier_id] = {
             "id": carrier_id,
@@ -106,26 +112,99 @@ class HybridWorld:
             "warehouse_id": warehouse,
             "cargo": None,
             "status": "idle",
+            "definition": "widelands.carrier",
+            "facing": "e",
         }
         self.stocks[carrier_id] = {}
-        unit_id = str(self.dmb.ids.new("unit"))
         unit_tile = self._offset_owned(q, r, center, 0, 3)
+        self._unit(faction_id, name, "soldier", "Soldier", "widelands.soldier", unit_tile)
+        infantry_tile = self._free_in_hex(q, r, center, 1, 4, set())
+        self._unit(faction_id, name, "infantry", "Rifleman", "openra.e1", infantry_tile)
+        tank_tile = self._free_in_hex(q, r, center, -2, 4, set())
+        self._unit(faction_id, name, "tank", "Tank", "openra.3tnk", tank_tile)
+        return {"faction": faction_id, "road": road_tiles, "warehouse": warehouse}
+
+    def _place_showcase(
+        self,
+        faction_id: str,
+        name: str,
+        q: int,
+        r: int,
+        center: tuple[int, int],
+        road: set[tuple[int, int]],
+    ) -> None:
+        """Real buildings from both games, sharing this faction's hex."""
+        specs = (
+            ("mine", "widelands.coalmine", "Mine", -12, 5),
+            ("tavern", "widelands.tavern", "Tavern", -10, -8),
+            ("farm", "widelands.farm", "Farm", 1, -11),
+            ("barracks", "openra.barracks", "Barracks", 11, -6),
+            ("vehicle_factory", "openra.weap", "War factory", 12, 7),
+            ("refinery", "openra.proc", "Refinery", -12, -3),
+            ("defense", "openra.gun", "Turret", 5, 9),
+        )
+        for kind, definition, label, dx, dy in specs:
+            tile = self._free_in_hex(q, r, center, dx, dy, road)
+            self._building(faction_id, name, kind, tile, label, definition)
+        self._place_scenery(faction_id, name, center, road)
+
+    def _place_scenery(
+        self,
+        faction_id: str,
+        name: str,
+        center: tuple[int, int],
+        road: set[tuple[int, int]],
+    ) -> None:
+        trees = ((-9, -1), (-9, 1), (-8, 3), (-5, -7), (8, -6), (-2, -8))
+        for dx, dy in trees:
+            tile = (center[0] + dx, center[1] + dy)
+            if not tile_in_map(*tile) or tile in self.blocked or tile in road:
+                continue
+            self._building(faction_id, name, "tree", tile, "Beech", "widelands.beech", block=False)
+        for dx, dy in ((-7, 5), (8, 2)):
+            tile = (center[0] + dx, center[1] + dy)
+            if not tile_in_map(*tile) or tile in self.blocked or tile in road:
+                continue
+            self._building(faction_id, name, "rock", tile, "Rocks", "widelands.rocks", block=False)
+
+    def _unit(
+        self,
+        faction_id: str,
+        name: str,
+        kind: str,
+        label: str,
+        definition: str,
+        tile: tuple[int, int],
+    ) -> str:
+        unit_id = str(self.dmb.ids.new("unit"))
         self.units[unit_id] = {
             "id": unit_id,
             "faction": faction_id,
             "faction_name": name,
-            "kind": "soldier",
-            "label": f"{name} soldier",
-            "tx": unit_tile[0],
-            "ty": unit_tile[1],
+            "kind": kind,
+            "label": f"{name} {label}",
+            "definition": definition,
+            "tx": tile[0],
+            "ty": tile[1],
             "hp": 12,
             "alive": True,
+            "facing": "s",
+            "status": "idle",
         }
-        return {"faction": faction_id, "road": road_tiles, "warehouse": warehouse}
+        return unit_id
 
-    def _building(self, faction_id: str, name: str, kind: str, tile: tuple[int, int], label: str) -> str:
+    def _building(
+        self,
+        faction_id: str,
+        name: str,
+        kind: str,
+        tile: tuple[int, int],
+        label: str,
+        definition: str = "",
+        block: bool = True,
+    ) -> str:
         building_id = str(self.dmb.ids.new("building"))
-        self.buildings[building_id] = {
+        record: dict[str, Any] = {
             "id": building_id,
             "faction": faction_id,
             "faction_name": name,
@@ -134,9 +213,54 @@ class HybridWorld:
             "tx": tile[0],
             "ty": tile[1],
         }
+        if definition:
+            record["definition"] = definition
+        self.buildings[building_id] = record
         self.stocks[building_id] = {}
-        self.blocked.add(tile)
+        if block:
+            self.blocked.add(tile)
         return building_id
+
+    def _free_in_hex(
+        self,
+        q: int,
+        r: int,
+        center: tuple[int, int],
+        dx: int,
+        dy: int,
+        avoid: set[tuple[int, int]],
+    ) -> tuple[int, int]:
+        preferred = (center[0] + dx, center[1] + dy)
+        if self._tile_open_anywhere(preferred, avoid):
+            return preferred
+        for radius in range(1, 14):
+            for oy in range(-radius, radius + 1):
+                for ox in range(-radius, radius + 1):
+                    cand = (center[0] + ox, center[1] + oy)
+                    if self._tile_open_anywhere(cand, avoid):
+                        return cand
+        raise RuntimeError(f"no free tile in hex {(q, r)}")
+
+    def _tile_open_anywhere(self, tile: tuple[int, int], avoid: set[tuple[int, int]]) -> bool:
+        if tile in self.blocked or tile in avoid or not tile_in_map(*tile):
+            return False
+        return True
+
+    def _tile_open(self, q: int, r: int, tile: tuple[int, int], avoid: set[tuple[int, int]]) -> bool:
+        if tile in self.blocked or tile in avoid:
+            return False
+        return tile_to_hex(*tile) == (q, r)
+
+    def _stand_near(self, road: list[tuple[int, int]]) -> tuple[int, int]:
+        blocked = self.blocked
+        road_set = set(road)
+        for tile in ((100, 50), (102, 52), (98, 54), (104, 48), (96, 56)):
+            east = (tile[0] + 1, tile[1])
+            if tile in blocked or tile in road_set or east in blocked:
+                continue
+            if tile_in_map(*tile) and tile_in_map(*east):
+                return tile
+        return hex_center_tile(2, 3)
 
     def _offset_owned(self, q: int, r: int, center: tuple[int, int], dx: int, dy: int) -> tuple[int, int]:
         tile = (center[0] + dx, center[1] + dy)
@@ -287,7 +411,7 @@ class HybridWorld:
 
 
 def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
-    return {
+    out = {
         "id": row["id"],
         "kind": row["kind"],
         "faction": row.get("faction", ""),
@@ -297,6 +421,13 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         "ty": int(row["ty"]),
         "alive": True,
     }
+    if row.get("definition"):
+        out["definition"] = row["definition"]
+    if row.get("facing"):
+        out["facing"] = row["facing"]
+    if row.get("status"):
+        out["status"] = row["status"]
+    return out
 
 
 def _path(start: tuple[int, int], goal: tuple[int, int]) -> list[tuple[int, int]]:
