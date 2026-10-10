@@ -54,6 +54,23 @@ def bench(name: str, minutes: int) -> dict:
         tile = (base[0] + 3 + k % 4, base[1] - 4 - k // 4)
         if tile not in w.tree_tiles:
             plant_tree(w, tile, "ripe", "wheat")
+    from wizard_rts import imm
+
+    slots = sorted(
+        ((base[0] + dx, base[1] + dy) for dx in range(-5, 0) for dy in range(-5, 6)),
+        key=lambda t: (abs(t[0] - base[0]) + abs(t[1] - base[1]), t),
+    )
+    seen_attr: set[str] = set()
+    for imm_name, info in wl_defs.defs()["immovables"].items():
+        attrs = info["attributes"]
+        if any(a.startswith(("ripe_", "tree_")) and not a.endswith(("sapling", "pole")) and a not in ("ripe_wheat", "tree") for a in attrs) or ("normal_tree" in attrs and imm_name.endswith("_old")) or "flowering" in attrs:
+            if all(a in seen_attr for a in attrs):
+                continue  # one object per attribute is enough for the bench
+            seen_attr.update(attrs)
+            while slots and (slots[0] in w.tree_tiles or slots[0] in w.blocked):
+                slots.pop(0)
+            if slots:
+                imm.make(w, slots.pop(0), imm_name)
     for k in range(6):
         tile = (base[0] - 6, base[1] - 5 + k)
         w.rocks[f"rock:b{k}"] = {"id": f"rock:b{k}", "class": "rock", "kind": "rock", "definition": "widelands.rocks", "tx": tile[0], "ty": tile[1], "amount": 6, "reserved_by": ""}

@@ -181,6 +181,8 @@ func _draw_health(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> vo
 func _item_for(entity: Dictionary) -> Dictionary:
 	var definition := str(entity.get("definition", ""))
 	var kind := str(entity.get("kind", ""))
+	if kind == "tree" and items.has(definition):
+		return items[definition]
 	if kind == "tree":
 		var stage := str(entity.get("stage", "old"))
 		var tkey := "widelands.fallentree" if stage == "felled" else "%s.%s" % [definition, stage]

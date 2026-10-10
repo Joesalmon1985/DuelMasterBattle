@@ -11,7 +11,7 @@ from __future__ import annotations
 import heapq
 from typing import Any
 
-from wizard_rts import wl_defs
+from wizard_rts import imm, wl_defs
 from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
     ECONOMY_TARGETS,
@@ -84,6 +84,9 @@ def tree_quantum(world: Any) -> None:
     for tree_id in list(world.trees):
         tree = world.trees.get(tree_id)
         if tree is None:
+            continue
+        if "imm" in tree:
+            imm.tick(world, tree)
             continue
         tree["timer_ms"] -= QUANTUM_MS
         if tree["timer_ms"] > 0:
@@ -323,9 +326,15 @@ def _run_step(world: Any, worker: dict) -> None:
         for tree in pool:
             if tree["reserved_by"]:
                 continue
-            if attrib == "tree" and not (tree["species"] == "beech" and tree["stage"] == "old"):
+            if attrib in ("tree", "normal_tree") and "imm" not in tree and not (tree["species"] == "beech" and tree["stage"] == "old"):
+                continue
+            if attrib == "flowering" and "imm" not in tree and not (tree["species"] == "wheat" and tree["stage"] == "medium"):
                 continue
             if attrib == "ripe_wheat" and not (tree["species"] == "wheat" and tree["stage"] == "ripe"):
+                continue
+            if "imm" in tree and attrib not in imm.attributes(tree):
+                continue
+            if "imm" not in tree and attrib not in ("tree", "normal_tree", "flowering", "ripe_wheat", "rocks", "eatable"):
                 continue
             dist = max(abs(tree["tx"] - here[0]), abs(tree["ty"] - here[1]))
             if dist > args["radius"] or (best is not None and dist >= best[0]):
@@ -386,7 +395,10 @@ def _run_step(world: Any, worker: dict) -> None:
             _fail_program(world, worker, "object_gone")
             return
         tree["reserved_by"] = ""
-        if args["program"] == "fall":
+        if "imm" in tree and args["program"] != "shrink":
+            imm.call(world, tree, args["program"])
+            world.events.append({"kind": "imm_called", "tree": tree["id"], "program": args["program"], "worker": worker["id"]})
+        elif args["program"] == "fall":
             tree["stage"] = "felled"
             tree["timer_ms"] = FELLED_MS
             world.events.append({"kind": "tree_felled", "tree": tree["id"], "worker": worker["id"]})
@@ -425,7 +437,12 @@ def _run_step(world: Any, worker: dict) -> None:
             _fail_program(world, worker, "not_at_space")
             return
         world.reserved_tiles.discard(tuple(tile))
-        if args["attrib"] == "seed_wheat":
+        if args["attrib"] not in ("seed_wheat", "tree_sapling") and imm.candidates(args["attrib"]):
+            names = imm.candidates(args["attrib"])
+            tree_id = imm.make(world, tuple(tile), names[world.rng.randrange(len(names))])
+            world.stats["fields_planted"] = world.stats.get("fields_planted", 0) + 1
+            world.events.append({"kind": "field_planted", "tree": tree_id, "worker": worker["id"]})
+        elif args["attrib"] == "seed_wheat":
             tree_id = plant_tree(world, tuple(tile), "tiny", "wheat")
             world.stats["fields_planted"] = world.stats.get("fields_planted", 0) + 1
             world.events.append({"kind": "field_planted", "tree": tree_id, "worker": worker["id"]})

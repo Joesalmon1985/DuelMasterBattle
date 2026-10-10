@@ -41,11 +41,14 @@ Tribes per faction: Red and Orange Barbarians, Blue Empire, Green Frisians, Yell
 
 Peace-run diagnosis: tribe barracks starve because their weapon chains need things the interpreter cannot yet do. Atlanteans' tabard needs `corn` (cornfield `seed_corn`/`ripe_corn` objects: only wheat and beech exist), Frisians' fur_garment has no runnable producer, coal and iron ore are finite (one 5x5 field each) and rations are scarce, so smelters and smithies idle. The planner now adds extra producers (charcoal kilns, quarries) when a wanted ware is at 0. Aggression is gated: AI squads march only after 20 game minutes (`ai.ATTACK_AFTER_MS`); in the long run armies reach 20-34 units, then four factions fall between minutes 20 and 40.
 
+## Latest checkpoint
+
+Generic immovables landed (`wizard_rts/imm.py`): any field, bush or tree of any tribe is an object run from its imported Lua programme (animate / remove / transform, `harvest` and `fall` on `callobject`); workers can `findobject` and `plant` any attribute the immovables carry (ponds excluded). Runnable production sites: 138 of 178; bench 138 of 138; 57 Python tests, the full headed suite, 1656 art items. Cornfields, barley, reeds, grapes, berries, bees and rare trees now work, which unblocks more tribe soldier chains.
+
 ## Next task
 
-1. Generalise fields: make `STAGE_TABLES` and the `findobject`/`plant` attributes data-driven from the imported immovables (`widelands_defs.json` `immovables` with `attributes`, `programs` animate/transform) so corn, barley, rye, blackroot, cassava, reed, grapes and berries work; then more tribe soldier chains become possible. Add a bench criterion for them.
-2. Tribe barracks recruiting test in peace (all five tribes within 60 game minutes), then balance war.
-3. Military/training sites from the Lua, unsupported worker commands (fish, breed, scout, swimming), per-building headed verification, God Mode menu catalogue, player-colour sprite remap. Checkpoint every 20-30 minutes. B1 is still the missing C++ compiler.
+1. Re-run the peace diagnostic (`/tmp/dbg2.py` style: 70 game minutes, `ai_aggressive=False`) to see which tribe barracks now get their soldier wares; fix what starves (Frisian fur_garment producer, rations and coal supply, marble columns); add `tests/test_tribe_recruit.py` asserting every tribe recruits one Widelands soldier within 60 game minutes in peace.
+2. Military/training sites from the Lua, remaining worker commands (fish, breed, scout, swimming), per-building headed verification (`run_hybrid_generic.gd`), God Mode menu catalogue for the original UIs, player-colour sprite remap. Checkpoint every 20-30 minutes. B1 is still the missing C++ compiler.
 
 ## First files
 

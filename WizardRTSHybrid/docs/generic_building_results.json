@@ -1,5 +1,25 @@
 [
  {
+  "name": "amazons_cassava_plantation",
+  "tribe": "amazons",
+  "passed": true,
+  "planted": 5,
+  "made": {
+   "cassavaroot": 2
+  },
+  "outputs": [
+   "cassavaroot"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 2
+  },
+  "workers": [
+   "amazons_cassava_farmer",
+   "amazons_cassava_farmer"
+  ]
+ },
+ {
   "name": "amazons_cassava_root_cooker",
   "tribe": "amazons",
   "passed": true,
@@ -51,6 +71,26 @@
    "water": 177
   },
   "workers": []
+ },
+ {
+  "name": "amazons_cocoa_farm",
+  "tribe": "amazons",
+  "passed": true,
+  "planted": 5,
+  "made": {
+   "cocoa_beans": 1
+  },
+  "outputs": [
+   "cocoa_beans"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 3
+  },
+  "workers": [
+   "amazons_cocoa_farmer",
+   "amazons_cocoa_farmer"
+  ]
  },
  {
   "name": "amazons_dressmakery",
@@ -161,6 +201,19 @@
   "workers": []
  },
  {
+  "name": "amazons_jungle_preservers_hut",
+  "tribe": "amazons",
+  "passed": true,
+  "planted": 9,
+  "made": {},
+  "outputs": [],
+  "game_minutes": 3,
+  "shortages": {},
+  "workers": [
+   "amazons_jungle_preserver"
+  ]
+ },
+ {
   "name": "amazons_liana_cutters_hut",
   "tribe": "amazons",
   "passed": true,
@@ -175,6 +228,33 @@
   "shortages": {},
   "workers": [
    "amazons_liana_cutter"
+  ]
+ },
+ {
+  "name": "amazons_rare_tree_cutters_hut",
+  "tribe": "amazons",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "ironwood": 1,
+   "rubber": 1,
+   "balsa": 1,
+   "log": 0
+  },
+  "outputs": [
+   "ironwood",
+   "rubber",
+   "balsa",
+   "log"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 5
+  },
+  "workers": [
+   "amazons_woodcutter_master",
+   "amazons_woodcutter_master",
+   "amazons_woodcutter_master"
   ]
  },
  {
@@ -273,6 +353,23 @@
   "workers": []
  },
  {
+  "name": "amazons_woodcutters_hut",
+  "tribe": "amazons",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "log": 4
+  },
+  "outputs": [
+   "log"
+  ],
+  "game_minutes": 3,
+  "shortages": {},
+  "workers": [
+   "amazons_woodcutter"
+  ]
+ },
+ {
   "name": "atlanteans_armorsmithy",
   "tribe": "atlanteans",
   "passed": true,
@@ -326,6 +423,26 @@
    "recruit": 177
   },
   "workers": []
+ },
+ {
+  "name": "atlanteans_blackroot_farm",
+  "tribe": "atlanteans",
+  "passed": true,
+  "planted": 4,
+  "made": {
+   "blackroot": 1
+  },
+  "outputs": [
+   "blackroot"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 3
+  },
+  "workers": [
+   "atlanteans_blackroot_farmer",
+   "atlanteans_blackroot_farmer"
+  ]
  },
  {
   "name": "atlanteans_charcoal_kiln",
@@ -385,10 +502,30 @@
   "workers": []
  },
  {
+  "name": "atlanteans_farm",
+  "tribe": "atlanteans",
+  "passed": true,
+  "planted": 5,
+  "made": {
+   "corn": 2
+  },
+  "outputs": [
+   "corn"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 2
+  },
+  "workers": [
+   "atlanteans_farmer",
+   "atlanteans_farmer"
+  ]
+ },
+ {
   "name": "atlanteans_foresters_house",
   "tribe": "atlanteans",
   "passed": true,
-  "planted": 9,
+  "planted": 8,
   "made": {},
   "outputs": [],
   "game_minutes": 3,
@@ -907,16 +1044,16 @@
   "name": "barbarians_farm",
   "tribe": "barbarians",
   "passed": true,
-  "planted": 5,
+  "planted": 6,
   "made": {
-   "wheat": 1
+   "wheat": 2
   },
   "outputs": [
    "wheat"
   ],
-  "game_minutes": 3,
+  "game_minutes": 4,
   "shortages": {
-   "worker": 3
+   "worker": 4
   },
   "workers": [
    "barbarians_farmer",
@@ -1203,6 +1340,26 @@
   "shortages": {},
   "workers": [
    "barbarians_ranger"
+  ]
+ },
+ {
+  "name": "barbarians_reed_yard",
+  "tribe": "barbarians",
+  "passed": true,
+  "planted": 5,
+  "made": {
+   "reed": 1
+  },
+  "outputs": [
+   "reed"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 3
+  },
+  "workers": [
+   "barbarians_gardener",
+   "barbarians_gardener"
   ]
  },
  {
@@ -1812,6 +1969,26 @@
   "workers": []
  },
  {
+  "name": "empire_vineyard",
+  "tribe": "empire",
+  "passed": true,
+  "planted": 6,
+  "made": {
+   "grape": 2
+  },
+  "outputs": [
+   "grape"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 3
+  },
+  "workers": [
+   "empire_vinefarmer",
+   "empire_vinefarmer"
+  ]
+ },
+ {
   "name": "empire_weaponsmithy",
   "tribe": "empire",
   "passed": true,
@@ -1948,6 +2125,38 @@
   "workers": []
  },
  {
+  "name": "frisians_beekeepers_house",
+  "tribe": "frisians",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "honey": 1
+  },
+  "outputs": [
+   "honey"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 12
+  },
+  "workers": [
+   "frisians_beekeeper"
+  ]
+ },
+ {
+  "name": "frisians_berry_farm",
+  "tribe": "frisians",
+  "passed": true,
+  "planted": 6,
+  "made": {},
+  "outputs": [],
+  "game_minutes": 3,
+  "shortages": {},
+  "workers": [
+   "frisians_berry_farmer"
+  ]
+ },
+ {
   "name": "frisians_blacksmithy",
   "tribe": "frisians",
   "passed": true,
@@ -2059,6 +2268,25 @@
   "workers": []
  },
  {
+  "name": "frisians_collectors_house",
+  "tribe": "frisians",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "fruit": 2
+  },
+  "outputs": [
+   "fruit"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 3
+  },
+  "workers": [
+   "frisians_fruit_collector"
+  ]
+ },
+ {
   "name": "frisians_drinking_hall",
   "tribe": "frisians",
   "passed": true,
@@ -2079,6 +2307,26 @@
    "smoked_fish": 37
   },
   "workers": []
+ },
+ {
+  "name": "frisians_farm",
+  "tribe": "frisians",
+  "passed": true,
+  "planted": 4,
+  "made": {
+   "barley": 2
+  },
+  "outputs": [
+   "barley"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 2
+  },
+  "workers": [
+   "frisians_farmer",
+   "frisians_farmer"
+  ]
  },
  {
   "name": "frisians_foresters_house",
@@ -2216,6 +2464,26 @@
   "shortages": {},
   "workers": [
    "frisians_stonemason"
+  ]
+ },
+ {
+  "name": "frisians_reed_farm",
+  "tribe": "frisians",
+  "passed": true,
+  "planted": 5,
+  "made": {
+   "reed": 1
+  },
+  "outputs": [
+   "reed"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "worker": 3
+  },
+  "workers": [
+   "frisians_reed_farmer",
+   "frisians_reed_farmer"
   ]
  },
  {

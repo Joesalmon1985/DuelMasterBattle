@@ -400,6 +400,24 @@ def generic_items() -> list[dict]:
         for role in b["working_positions"]:
             if role in defs["workers"]:
                 roles.add(role)
+    for name, info in sorted(defs["immovables"].items()):
+        if not any(a in ("field", "ripe_bush", "flowering") or a.startswith(("seed_", "ripe_")) for a in info["attributes"]):
+            continue
+        base = WIDELANDS / "data" / info["dir"]
+        meta = info["spritesheets"].get("idle")
+        anim = info["animations"].get("idle")
+        file = next((f for f in ("idle_1.png", "idle_00.png", "idle.png") if (base / f).is_file()), None)
+        if file is None:
+            continue
+        cols, rows, frames = (int(meta.get("columns", 1)), int(meta.get("rows", 1)), int(meta.get("frames", 1))) if meta else (1, 1, 1)
+        hot = list((meta or anim or {}).get("hotspot") or [0, 0])
+        out.append(
+            sheet(
+                f"widelands.imm.{name}", f"data/{info['dir']}/{file}", f"gen/imm_{name}.png",
+                columns=cols, rows=rows, frames=frames, hotspot=hot, scale=2, fps=0,
+                source_note=f"{name} idle (generated, frame 0 shown)",
+            )
+        )
     for role in sorted(roles):
         w = defs["workers"][role]
         base = WIDELANDS / "data" / w["dir"]

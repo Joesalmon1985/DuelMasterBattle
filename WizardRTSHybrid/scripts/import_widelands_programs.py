@@ -329,7 +329,7 @@ def executable_worker(programs: dict[str, list[dict]]) -> tuple[bool, list[str]]
         for a in actions:
             if a["cmd"] not in WORKER_COMMANDS:
                 problems.append(f"{name}: {a['cmd']}")
-            elif a["cmd"] == "findobject" and a["attrib"] not in OBJECT_ATTRIBS and "eatable" not in a["args"]:
+            elif a["cmd"] == "findobject" and a["attrib"] not in OBJECT_ATTRIBS and "eatable" not in a["args"] and "attrib:" in a["args"]:
                 problems.append(f"{name}: findobject {a['args']}")
             elif a["cmd"] == "plant" and a["attrib"] not in SPACE_OK:
                 problems.append(f"{name}: plant {a['attrib']}")
@@ -440,6 +440,14 @@ def main() -> None:
                     "appetite": entry.get("appetite"), "attributes": attrs.get(name, []), "spritesheets": sheets(entry),
                     "animations": {k: {"hotspot": v.get("hotspot")} for k, v in (entry.get("animations") or {}).items() if isinstance(v, dict)},
                 }
+    # every attribute some immovable carries can be searched for (findobject) or planted (plant)
+    attribs = {a for imm in defs["immovables"].values() for a in imm["attributes"]}
+    attribs -= {a for a in attribs if a.startswith("pond_")}  # ponds need terraforming, which the hybrid does not do
+    OBJECT_ATTRIBS.update(attribs)
+    SPACE_OK.update(attribs)
+    for w in defs["workers"].values():
+        if w["programs"]:
+            w["executable"], w["problems"] = (lambda r: (r[0], r[1][:6]))(executable_worker(w["programs"]))
     mark_runnable(defs)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(defs, indent=1), encoding="utf-8")

@@ -54,3 +54,5 @@
 - 2026-10-10 (Claude): checkpoint. Tribe planner (dependency resolution over `inputs_for`, mines on deposits, extra quarries when granite is 0), tribe soldier sites incl. Amazon initiation site, 24 rocks per faction, gold/stone deposits. Honest gap: no tribe barracks recruits yet. 57 tests, headed suite, 3-seed long run pass.
 
 - 2026-10-10 (Claude): checkpoint. Starved-input resolver (kilns, quarries), `ATTACK_AFTER_MS` 20 min, 57 tests, war and god headed pass, 40-minute long run ok.
+
+- 2026-10-10 (Claude): checkpoint. `imm.py` generic immovables, importer attribute set from immovables, 138 runnable, bench 138/138 (found and fixed a loop-variable shadowing bug in the bench), 1656 art items, 57 tests and full headed suite pass.

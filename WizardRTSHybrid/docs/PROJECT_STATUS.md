@@ -28,7 +28,7 @@ Godot 4.5.1 console, Forward+, one fresh sim per script (`$env:HYBRID_SIM_PORT`)
 
 ## Checkpoint
 
-57 Python tests, the full headed suite and a 3-seed 30-minute long run pass. Tribe planner builds tribe chains; tribe soldiers are not yet produced (see `docs/CLAUDE_HANDOFF.md`).
+57 Python tests, the full headed suite and a 3-seed 30-minute long run pass. 138/138 imported production sites pass the bench. Tribe planner builds tribe chains; tribe soldiers are not yet confirmed (see `docs/CLAUDE_HANDOFF.md`).
 
 ## Next task
 

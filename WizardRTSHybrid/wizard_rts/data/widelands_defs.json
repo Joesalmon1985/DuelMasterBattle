@@ -1320,8 +1320,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_cassava_root_cooker": {
    "tribe": "amazons",
@@ -1688,8 +1688,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_dressmakery": {
    "tribe": "amazons",
@@ -2834,8 +2834,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_liana_cutters_hut": {
    "tribe": "amazons",
@@ -2997,8 +2997,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: harvest_balsa"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_rare_tree_plantation": {
    "tribe": "amazons",
@@ -4514,8 +4514,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: harvest"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_armorsmithy": {
    "tribe": "atlanteans",
@@ -4870,8 +4870,8 @@
    "spritesheets": {},
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_charcoal_kiln": {
    "tribe": "atlanteans",
@@ -5520,8 +5520,8 @@
    "spritesheets": {},
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_ferry_yard": {
    "tribe": "atlanteans",
@@ -12255,8 +12255,8 @@
    "spritesheets": {},
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_scouts_hut": {
    "tribe": "barbarians",
@@ -17590,8 +17590,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_weaponsmithy": {
    "tribe": "empire",
@@ -19117,8 +19117,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: bees"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_berry_farm": {
    "tribe": "frisians",
@@ -19181,8 +19181,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_blacksmithy": {
    "tribe": "frisians",
@@ -20699,8 +20699,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: harvest"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_dikers_house": {
    "tribe": "frisians",
@@ -21087,8 +21087,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_ferry_yard": {
    "tribe": "frisians",
@@ -22973,8 +22973,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plantreed"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_reindeer_farm": {
    "tribe": "frisians",
@@ -31254,11 +31254,8 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant seed_cassava",
-    "harvest: findobject attrib:ripe_cassava radius:3"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_charcoal_burner": {
    "tribe": "amazons",
@@ -31461,11 +31458,8 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant seed_cocoa",
-    "harvest: findobject attrib:ripe_cocoa radius:3"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_cook": {
    "tribe": "amazons",
@@ -32199,9 +32193,6 @@
    },
    "executable": false,
    "problems": [
-    "plant_ironwood: plant tree_ironwood_sapling",
-    "plant_rubber: plant tree_rubber_sapling",
-    "plant_balsa: plant tree_balsa_sapling",
     "check: findspace size:any radius:6 terraform:amazons",
     "terraform: findspace size:any radius:6 terraform:amazons",
     "terraform: terraform"
@@ -32309,10 +32300,8 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant tree_pole"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_liana_cutter": {
    "tribe": "amazons",
@@ -32641,7 +32630,6 @@
    },
    "executable": false,
    "problems": [
-    "buildship: plant amazons_shipconstruction",
     "buildship: construct",
     "buildferry: findspace size:swim radius:5 ferry",
     "buildferry: createbob"
@@ -33311,10 +33299,8 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "harvest: findobject attrib:normal_tree radius:10"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_woodcutter_master": {
    "tribe": "amazons",
@@ -33587,13 +33573,8 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "harvest_ironwood: findobject attrib:tree_ironwood radius:10",
-    "harvest_rubber: findobject attrib:tree_rubber radius:10",
-    "harvest_balsa: findobject attrib:tree_balsa radius:10",
-    "harvest: findobject attrib:normal_tree radius:10"
-   ]
+   "executable": true,
+   "problems": []
   },
   "atlanteans_armorsmith": {
    "tribe": "atlanteans",
@@ -33845,11 +33826,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant seed_blackroot",
-    "harvest: findobject attrib:ripe_blackroot radius:2"
-   ]
+   "executable": true,
+   "problems": []
   },
   "atlanteans_builder": {
    "tribe": "atlanteans",
@@ -34165,11 +34143,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant seed_corn",
-    "harvest: findobject attrib:ripe_corn radius:2"
-   ]
+   "executable": true,
+   "problems": []
   },
   "atlanteans_fishbreeder": {
    "tribe": "atlanteans",
@@ -35127,7 +35102,6 @@
    },
    "executable": false,
    "problems": [
-    "buildship: plant atlanteans_shipconstruction",
     "buildship: construct",
     "buildferry: findspace size:swim radius:5 ferry",
     "buildferry: createbob"
@@ -36579,11 +36553,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant seed_reed",
-    "harvest: findobject attrib:ripe_reed radius:1"
-   ]
+   "executable": true,
+   "problems": []
   },
   "barbarians_geologist": {
    "tribe": "barbarians",
@@ -37539,7 +37510,6 @@
    },
    "executable": false,
    "problems": [
-    "buildship: plant barbarians_shipconstruction",
     "buildship: construct",
     "buildferry: findspace size:swim radius:5 ferry",
     "buildferry: createbob"
@@ -39438,7 +39408,6 @@
    },
    "executable": false,
    "problems": [
-    "buildship: plant empire_shipconstruction",
     "buildship: construct",
     "buildferry: findspace size:swim radius:5 ferry",
     "buildferry: createbob"
@@ -39901,11 +39870,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant seed_grapes",
-    "harvest: findobject attrib:ripe_grapes radius:1"
-   ]
+   "executable": true,
+   "problems": []
   },
   "empire_vintner": {
    "tribe": "empire",
@@ -40219,10 +40185,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "bees: findobject attrib:flowering radius:5"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_berry_farmer": {
    "tribe": "frisians",
@@ -40333,10 +40297,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant seed_berrybush"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_blacksmith": {
    "tribe": "frisians",
@@ -41082,10 +41044,7 @@
    "executable": false,
    "problems": [
     "check_build: findspace size:swim radius:5 terraform:diking",
-    "check_dike: findobject attrib:dike radius:5",
     "build: findspace size:swim radius:5 terraform:diking",
-    "build: plant dike",
-    "dike: findobject attrib:dike radius:5",
     "dike: terraform"
    ]
   },
@@ -41249,11 +41208,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "plant: plant seed_barley",
-    "harvest: findobject attrib:ripe_barley radius:3"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_fisher": {
    "tribe": "frisians",
@@ -41653,10 +41609,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "harvest: findobject attrib:ripe_bush radius:6"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_geologist": {
    "tribe": "frisians",
@@ -42136,11 +42090,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "plantreed: plant seed_reed",
-    "harvestreed: findobject attrib:ripe_reed radius:1"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_reindeer": {
    "tribe": "frisians",
@@ -42533,7 +42484,6 @@
    },
    "executable": false,
    "problems": [
-    "buildship: plant frisians_shipconstruction",
     "buildship: construct",
     "buildferry: findspace size:swim radius:5 ferry",
     "buildferry: createbob"

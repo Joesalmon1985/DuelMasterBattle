@@ -10,27 +10,27 @@
  "totals": {
   "widelands.building": {
    "discovered": 237,
-   "missing": 112,
+   "missing": 98,
    "scaffolded": 1,
    "adapted": 0,
    "integrated": 0,
-   "tested": 124,
+   "tested": 138,
    "verified": 0
   },
   "widelands.ware": {
    "discovered": 131,
-   "missing": 62,
+   "missing": 50,
    "scaffolded": 0,
    "adapted": 0,
    "integrated": 0,
-   "tested": 69,
+   "tested": 81,
    "verified": 0
   },
   "widelands.worker": {
    "discovered": 156,
-   "missing": 135,
+   "missing": 121,
    "scaffolded": 0,
-   "adapted": 15,
+   "adapted": 29,
    "integrated": 1,
    "tested": 5,
    "verified": 0
@@ -349,8 +349,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/amazons/cassava_plantation/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.amazons_cassava_root_cooker",
@@ -385,8 +385,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/amazons/cocoa_farm/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.amazons_dressmakery",
@@ -466,8 +466,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/amazons/jungle_preservers_hut/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.amazons_liana_cutters_hut",
@@ -484,8 +484,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/amazons/rare_tree_cutters_hut/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.amazons_rare_tree_plantation",
@@ -583,8 +583,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/amazons/woodcutters_hut/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.atlanteans_well",
@@ -628,8 +628,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/atlanteans/blackroot_farm/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.atlanteans_charcoal_kiln",
@@ -664,8 +664,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/atlanteans/farm/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.atlanteans_ferry_yard",
@@ -1132,8 +1132,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/barbarians/reed_yard/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.barbarians_scouts_hut",
@@ -1501,8 +1501,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/empire/vineyard/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.empire_weaponsmithy",
@@ -1591,8 +1591,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/beekeepers_house/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_berry_farm",
@@ -1600,8 +1600,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/berry_farm/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_blacksmithy",
@@ -1681,8 +1681,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/collectors_house/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_dikers_house",
@@ -1708,8 +1708,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/farm/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_ferry_yard",
@@ -1834,8 +1834,8 @@
    "category": "building",
    "subtype": "productionsite",
    "source": "tribes/buildings/productionsites/frisians/reed_farm/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "isolated bench: scripts/verify_generic_buildings.py"
   },
   {
    "id": "widelands.frisians_reindeer_farm",
@@ -2302,8 +2302,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/balsa/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.barley",
@@ -2311,8 +2311,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/barley/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.basket",
@@ -2347,8 +2347,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/blackroot/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.blackroot_flour",
@@ -2473,8 +2473,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/cassavaroot/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.chisel",
@@ -2527,8 +2527,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/cocoa_beans/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.corn",
@@ -2536,8 +2536,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/corn/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.cornmeal",
@@ -2626,8 +2626,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/fruit/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.fur",
@@ -2725,8 +2725,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/grape/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.grout",
@@ -2797,8 +2797,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/honey/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.honey_bread",
@@ -2860,8 +2860,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/ironwood/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.kitchen_tools",
@@ -3013,8 +3013,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/reed/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.rope",
@@ -3031,8 +3031,8 @@
    "category": "ware",
    "subtype": "ware",
    "source": "tribes/wares/rubber/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "tested",
+   "evidence": "made by a bench-passed building"
   },
   {
    "id": "widelands.saw",
@@ -3400,8 +3400,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/amazons/cassava_farmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.amazons_charcoal_burner",
@@ -3418,8 +3418,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/amazons/cocoa_farmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.amazons_cook",
@@ -3490,8 +3490,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/amazons/jungle_preserver/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.amazons_liana_cutter",
@@ -3589,8 +3589,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/amazons/woodcutter/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.amazons_woodcutter_master",
@@ -3598,8 +3598,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/amazons/woodcutter_master/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.empire_fisher",
@@ -3634,8 +3634,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/atlanteans/blackroot_farmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.atlanteans_builder",
@@ -3670,8 +3670,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/atlanteans/farmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.atlanteans_fishbreeder",
@@ -3994,8 +3994,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/barbarians/gardener/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.barbarians_geologist",
@@ -4426,8 +4426,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/empire/vinefarmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.empire_vintner",
@@ -4480,8 +4480,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/frisians/beekeeper/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.frisians_berry_farmer",
@@ -4489,8 +4489,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/frisians/berry_farmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.frisians_blacksmith",
@@ -4588,8 +4588,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/frisians/farmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.frisians_fisher",
@@ -4615,8 +4615,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/frisians/fruit_collector/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.frisians_geologist",
@@ -4669,8 +4669,8 @@
    "category": "worker",
    "subtype": "worker",
    "source": "tribes/workers/frisians/reed_farmer/init.lua",
-   "status": "missing",
-   "evidence": ""
+   "status": "adapted",
+   "evidence": "worker programmes convert to interpreter commands"
   },
   {
    "id": "widelands.frisians_reindeer",
