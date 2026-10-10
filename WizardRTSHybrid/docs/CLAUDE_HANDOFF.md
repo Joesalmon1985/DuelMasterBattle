@@ -45,6 +45,10 @@ Peace-run diagnosis: tribe barracks starve because their weapon chains need thin
 
 Generic immovables landed (`wizard_rts/imm.py`): any field, bush or tree of any tribe is an object run from its imported Lua programme (animate / remove / transform, `harvest` and `fall` on `callobject`); workers can `findobject` and `plant` any attribute the immovables carry (ponds excluded). Runnable production sites: 138 of 178; bench 138 of 138; 57 Python tests, the full headed suite, 1656 art items. Cornfields, barley, reeds, grapes, berries, bees and rare trees now work, which unblocks more tribe soldier chains.
 
+## Progress note
+
+Mine deposits were raised 5x (30 per node) because coal and iron ran dry by minute 40 and starved every smithy. In peace, Blue now has armor_helmet and spear_wooden in its warehouse but never builds its barracks (needs marble, marble columns, cloth: the cost-ware resolver does not reach them), Yellow's barracks lacks tabards (spidercloth), Green lacks a fur_garment producer, Purple's initiation site is not built yet.
+
 ## Next task
 
 1. Re-run the peace diagnostic (`/tmp/dbg2.py` style: 70 game minutes, `ai_aggressive=False`) to see which tribe barracks now get their soldier wares; fix what starves (Frisian fur_garment producer, rations and coal supply, marble columns); add `tests/test_tribe_recruit.py` asserting every tribe recruits one Widelands soldier within 60 game minutes in peace.
