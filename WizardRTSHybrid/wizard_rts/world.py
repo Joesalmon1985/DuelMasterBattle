@@ -7,6 +7,7 @@ Crossing a hex updates the player hex and does not advance game time.
 
 from __future__ import annotations
 
+import os
 import random
 import sys
 from pathlib import Path
@@ -29,11 +30,14 @@ from wizard_rts.economy import SCHEDULE_PROVENANCE  # noqa: E402
 from wizard_rts.widelands_stock import EconomyTotals  # noqa: E402
 from wizard_rts.economy import economy_quantum  # noqa: E402
 from wizard_rts.logistics import add_road, logistics_quantum  # noqa: E402
+from wizard_rts import rules
 from wizard_rts.programs_data import RESOURCE_PER_NODE, ROCK_AMOUNT
 from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
-from wizard_rts.military import military_quantum, order_attack, order_move, order_stop
+from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
+from wizard_rts.lifecycle import lifecycle_quantum
+from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
 
@@ -66,6 +70,9 @@ class HybridWorld:
         self.shortages: dict[tuple[str, str], int] = {}
         self.recipe_requests: dict[str, dict[str, int]] = {}
         self.rocks: dict[str, dict[str, Any]] = {}
+        self.projectiles: list[dict[str, Any]] = []
+        self.effects: list[dict[str, Any]] = []
+        self.ai_enabled = os.environ.get("HYBRID_AI", "1") != "0"
         self.resources: dict[tuple[int, int], dict[str, int]] = {}
         self.trees: dict[str, dict[str, Any]] = {}
         self.tree_tiles: dict[tuple[int, int], str] = {}
@@ -112,7 +119,9 @@ class HybridWorld:
         if before > 0 and int(building["hp"]) <= 0:
             building["operational"] = False
             self.stats["destroyed"] += 1
-            self.events.append({"kind": "building_destroyed", "id": building_id})
+            self.stats["buildings_lost"] = self.stats.get("buildings_lost", 0) + 1
+            self.effects.append({"t": "explosion", "x1": building["tx"], "y1": building["ty"], "x2": building["tx"], "y2": building["ty"], "ttl_ms": 2500, "keep": 3, "p": ""})
+            self.events.append({"kind": "building_destroyed", "id": building_id, "faction": building["faction_name"]})
         return before - int(building["hp"])
 
     def tile_blocked_for_carrier(self, tile: tuple[int, int]) -> bool:
@@ -264,11 +273,11 @@ class HybridWorld:
             "definition": definition,
             "tx": tile[0],
             "ty": tile[1],
-            "hp": 12,
             "alive": True,
             "facing": "s",
             "status": "idle",
         }
+        init_unit(self.units[unit_id])
         return unit_id
 
     def _building(
@@ -294,10 +303,11 @@ class HybridWorld:
         if definition:
             record["definition"] = definition
         if kind not in ("tree", "rock"):
-            record["hp"] = 1000
-            record["max_hp"] = 1000
+            r = rules.actor(definition) if definition.startswith("openra.") else None
+            # OpenRA buildings take their rules HP; Widelands buildings have none, so 500 HP (50000) is hybrid-defined
+            record["hp"] = record["max_hp"] = int(r["hp"]) if r else 50_000
             record["target_type"] = "structure"
-            record["armor"] = "wood" if definition.startswith("widelands.") else "concrete"
+            record["armor"] = (r["armor"] if r else "Wood") or "Wood"
             record["operational"] = True
         self.buildings[building_id] = record
         self.stocks[building_id] = {}
@@ -391,6 +401,9 @@ class HybridWorld:
             logistics_quantum(self)
             con.construction_quantum(self)
             con.recruitment_quantum(self)
+            lifecycle_quantum(self)
+            if self.ai_enabled:
+                ai_quantum(self)
             military_quantum(self)
             if self.economy_quanta % 30 == 0:
                 self.events.append({"kind": "ai_economy", "game_ms": int(self.dmb.clock.get("game_ms", 0))})
@@ -407,6 +420,12 @@ class HybridWorld:
         self.controlled_faction = faction
         self.events.append({"kind": "control", "faction": faction})
         return {"status": "ok", "snapshot": self.snapshot()}
+
+    def _effects_for_snapshot(self) -> list[dict[str, Any]]:
+        out = [dict(e) for e in self.effects]
+        for e in self.effects:
+            e["keep"] = max(0, int(e.get("keep", 0)) - 1)
+        return out
 
     def _guard(self, faction: str) -> dict[str, Any] | None:
         if faction not in self.faction_info:
@@ -433,8 +452,8 @@ class HybridWorld:
         out["snapshot"] = self.snapshot()
         return out
 
-    def move(self, units: list[str], tx: int, ty: int) -> dict[str, Any]:
-        out = order_move(self, [str(u) for u in units], tx, ty)
+    def move(self, units: list[str], tx: int, ty: int, attack_move: bool = False) -> dict[str, Any]:
+        out = order_move(self, [str(u) for u in units], tx, ty, attack_move)
         out["snapshot"] = self.snapshot()
         return out
 
@@ -442,6 +461,13 @@ class HybridWorld:
         out = order_stop(self, [str(u) for u in units])
         out["snapshot"] = self.snapshot()
         return out
+
+    def rally(self, building: str, tx: int, ty: int) -> dict[str, Any]:
+        b = self.buildings.get(building)
+        if b is None or b["kind"] not in con.RECIPES or not self.tile_in_map(int(tx), int(ty)):
+            return {"status": "rejected", "reason": "no_rally", "snapshot": self.snapshot()}
+        b["rally"] = [int(tx), int(ty)]
+        return {"status": "ok", "snapshot": self.snapshot()}
 
     def demolish(self, building: str) -> dict[str, Any]:
         b = self.buildings.get(building)
@@ -516,9 +542,9 @@ class HybridWorld:
             if building["kind"] in ("mine", "ironmine"):
                 res = "coal" if building["kind"] == "mine" else "iron"
                 row["deposit_left"] = sum(
-                    amounts.get(res, 0)
-                    for (tx, ty), amounts in self.resources.items()
-                    if max(abs(tx - building["tx"]), abs(ty - building["ty"])) <= 2
+                    self.resources.get((building["tx"] + dx, building["ty"] + dy), {}).get(res, 0)
+                    for dy in range(-2, 3)
+                    for dx in range(-2, 3)
                 )
                 row["deposit_exhausted"] = bool(building.get("deposit_exhausted"))
             entities.append(row)
@@ -563,6 +589,7 @@ class HybridWorld:
             row = _entity_row(unit)
             row["class"] = "unit"
             row["hp"] = unit["hp"]
+            row["max_hp"] = unit["max_hp"]
             row["alive"] = unit["alive"]
             if unit.get("order"):
                 row["order"] = dict(unit["order"])
@@ -600,6 +627,9 @@ class HybridWorld:
                 "military_damage": MILITARY_PROVENANCE,
                 "military_movement": MOVEMENT_PROVENANCE,
             },
+            "effects": self._effects_for_snapshot(),
+            "stats": dict(self.stats),
+            "recent_events": [dict(e) for e in self.events[-30:] if e["kind"].startswith(("ai_", "unit_produced", "building_destroyed", "destroyed", "construction", "recruit"))],
             "time_scale": self.time_scale,
             "factions": list(self.faction_info.values()),
             "controlled_faction": self.controlled_faction,
@@ -632,6 +662,8 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["max_hp"] = int(row.get("max_hp", row["hp"]))
     if row.get("target_type"):
         out["target_type"] = row["target_type"]
+    if row.get("rally"):
+        out["rally"] = list(row["rally"])
     if "operational" in row:
         out["operational"] = bool(row["operational"])
     if row.get("constructing"):
@@ -644,7 +676,7 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
     if row.get("path"):
         nxt = row["path"][0]
         out["next_tx"], out["next_ty"] = int(nxt[0]), int(nxt[1])
-        out["move_progress"] = min(1.0, row.get("progress_ms", 0) / max(1, __import__("wizard_rts.military", fromlist=["MOVE_MS"]).MOVE_MS.get(row.get("kind", ""), 760)))
+        out["move_progress"] = min(1.0, row.get("progress_ms", 0) / max(1, row.get("move_ms", 760)))
     return out
 
 

@@ -25,5 +25,8 @@
 | T-SIX | Six factions with own economies (Phase E part) | 1 | T-LOGISTICS | PARTIAL | Six capitals with economies (`tests/test_commands.py`). Missing: AI commanders, six-faction autonomous war. |
 | T-RECRUIT | Goods-fed recruitment (Phase D) | 1 | T-LOGISTICS | PARTIAL | Barracks/war factory queues consume delivered planks (placeholder recipe). Missing: sword/brick chains. |
 | T-GOD | Wizard/God Mode switch and RTS HUD (Phase F) | 1 | T-FOREST | PARTIAL | Button + G key, six-faction picker, build menu, road tool, selection/box/groups, move/attack/stop/demolish, queues, minimap. GUI-input test `run_hybrid_god.gd` HYBRID_GOD_OK, shots in `docs/evidence/god_mode/`. Missing: attack-move, patrol, rally UI, repairs, worker/garrison panels, most original menus. |
+| T-RULES | OpenRA actor/weapon rules imported as data | 1 | T-MAPS | VERIFIED | `scripts/import_openra_rules.py` (MiniYaml with Inherits) -> `wizard_rts/data/openra_rules.json`: 92 actors, 45 weapons. Runtime reads only the JSON. |
+| T-COMBAT | Units and buildings fight with OpenRA ranges, reload, burst, projectile flight, Versus armor | 1 | T-RULES | PARTIAL | `wizard_rts/military.py`, `tests/test_combat.py`. Missing: spread damage, formations, hierarchical pathfinder, aircraft/ships, veterancy, garrisons. |
+| T-AI | Six faction commanders on the shared command API | 1 | T-COMBAT, T-RECRUIT | PARTIAL | `wizard_rts/ai.py` (economy plan, road repair, recruitment, defend, attack-move squads, personalities). Missing: AI cannot rebuild mines (no prospecting), no repair, no expansion. |
 
 Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays source-derived adapted.

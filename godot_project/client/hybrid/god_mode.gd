@@ -50,6 +50,16 @@ func setup(p_world: Node) -> void:
 	mode_btn.tooltip_text = "Switch between Wizard Mode and God Mode (G)"
 	mode_btn.position = Vector2(200, 12)
 	mode_btn.custom_minimum_size = Vector2(110, 34)
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.22, 0.14, 0.38, 0.95)
+	sb.border_color = Color(0.7, 0.6, 1.0)
+	sb.set_border_width_all(2)
+	sb.set_corner_radius_all(8)
+	for state in ["normal", "hover", "pressed", "focus"]:
+		var box: StyleBoxFlat = sb.duplicate()
+		if state == "hover":
+			box.bg_color = Color(0.32, 0.22, 0.52, 0.98)
+		mode_btn.add_theme_stylebox_override(state, box)
 	mode_btn.pressed.connect(toggle)
 	layer.add_child(mode_btn)
 	_build_panel()
@@ -95,7 +105,7 @@ func _build_panel() -> void:
 	tool_row = HBoxContainer.new()
 	tool_row.name = "Tools"
 	v.add_child(tool_row)
-	for t in [["Road", "road"], ["Move", "move"], ["Attack", "attack"], ["Stop", "stop"], ["Demolish", "demolish"]]:
+	for t in [["Road", "road"], ["Move", "move"], ["A-Move", "amove"], ["Attack", "attack"], ["Rally", "rally"], ["Stop", "stop"], ["Demolish", "demolish"]]:
 		var b := Button.new()
 		b.name = "Tool_%s" % t[1]
 		b.text = t[0]
@@ -259,7 +269,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_S:
 				_on_tool("stop")
 			KEY_A:
-				_on_tool("attack")
+				_on_tool("amove")
 			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9:
 				var n: int = k.keycode - KEY_0
 				if k.ctrl_pressed:
@@ -342,6 +352,10 @@ func _on_tool(t: String) -> void:
 			_say("Move: click the ground")
 		"attack":
 			_say("Attack: click an enemy building")
+		"amove":
+			_say("Attack-move: click the ground; units fight what they meet")
+		"rally":
+			_say("Rally point: select a barracks or factory, then click the ground")
 		"demolish":
 			_say("Demolish: click one of your buildings")
 		_:
@@ -453,6 +467,19 @@ func _left_click(screen: Vector2) -> void:
 		return
 	if tool == "attack":
 		_attack(hit)
+		tool = ""
+		return
+	if tool == "amove":
+		var am: Dictionary = world._sim.op({"op": "move", "units": _selected_units(), "tx": tile.x, "ty": tile.y, "attack_move": true})
+		world._apply_snapshot(am.get("snapshot", {}))
+		_say("Attack-moving %d units" % int(am.get("moved", 0)))
+		tool = ""
+		return
+	if tool == "rally":
+		for id in selected:
+			var rr2: Dictionary = world._sim.op({"op": "rally", "building": str(id), "tx": tile.x, "ty": tile.y})
+			world._apply_snapshot(rr2.get("snapshot", {}))
+			_say("Rally point: %s" % str(rr2.get("status", "")))
 		tool = ""
 		return
 	if tool == "demolish":

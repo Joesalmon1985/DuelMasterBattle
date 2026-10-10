@@ -2,15 +2,15 @@
 
 ## Works
 
-The wizard walks one continuous map. Hex crossings do not advance `game_ms`. Idle time produces logs and delivers them with the Widelands-derived warehouse list. Soldiers take OpenRA-derived damage. The retained ward board opens on the route hazard, pauses `game_ms`, clears the hazard on a win, and leaves the pose and entity ids unchanged. The red settlement draws imported Widelands and OpenRA sprites. Buildings have shared `hp` and `damage_building`. Shots: `docs/evidence/gallery/`. Full inventory: `docs/STATE_OF_PLAY.md`.
+Read `docs/STATE_OF_PLAY.md` first; it is the current inventory. In short: one continuous world with the wizard and the retained duel; six factions with real economies (forestry with persistent trees and physical workers, quarry, finite mines, smelting, ax workshop, sawmill) carried by road carriers; construction sites, roads, recruitment queues that consume delivered goods; OpenRA-rule combat; AI commanders; God Mode over the same commands; headed tests for all of it.
 
 ## Does not
 
-Widelands does not compile here (`docs/BLOCKERS.md` B1). OpenRA's pathfinder, orders, and bot are not executing. The carrier and the soldier step are provisional. God Mode, the dual-mode launcher, six factions, real forestry, and goods-fed military queues are not implemented. The hybrid does not read `external/` during play. Do not describe the provisional pieces as Widelands or OpenRA.
+Widelands does not compile here (`docs/BLOCKERS.md` B1). OpenRA's PathFinder and bot are not executing; the hybrid has its own A* and AI shaped after them. No food chain, farms, animals, marble, gold, bricks, flags, donkeys. Programme data is hand-transcribed from Lua, not imported. See the missing table in `STATE_OF_PLAY.md`. Do not describe provisional pieces as Widelands or OpenRA.
 
 ## Architecture
 
-`AGENTS.md` and `docs/DECISIONS.md`. Python `wizard_rts/world.py` owns the world. Godot `godot_project/client/scenes/hybrid_world.gd` extends Overworld.
+`AGENTS.md` and `docs/DECISIONS.md`. Python `wizard_rts/world.py` owns the world. Modules: `workers.py` (trees, worker and building programme interpreter), `programs_data.py` (Widelands data), `logistics.py` (roads, transfers, carriers), `construction.py` (menu, sites, roads, queues), `military.py` + `rules.py` + `data/openra_rules.json` (OpenRA rules), `ai.py` (commanders), `lifecycle.py` (ruins, corpses). Godot: `client/scenes/hybrid_world.gd` extends Overworld; `client/hybrid/god_mode.gd`, `hybrid_art.gd`.
 
 ## Rebuild
 
@@ -33,7 +33,7 @@ Commands are in `docs/PROJECT_STATUS.md` and `docs/STATE_OF_PLAY.md`. One sim pr
 
 ## Next task
 
-Done: `order` op (`military.order_attack`) drives units into `damage_building`; destroyed buildings stop producing (`tests/test_attack_order.py`). Next: Godot click-to-order UI, then the feature catalogue and dual-mode launcher. B1 is still the missing C++ compiler. Do not rerun bare cmake.
+Phase B continued: the food chain. Add farm (plant/harvest wheat fields with growth stages), hunter and gamekeeper with wild animals as world entities, well, tavern making rations, then switch mines to `consume=ration` (`programs_data.py` has the note). Reuse `workers.py`: add object classes next to trees and rocks, add worker programmes, keep the conservation test in `tests/test_logistics.py` passing for every new ware. After that: a Lua importer for programmes (`scripts/import_widelands_programs.py`, modelled on `scripts/import_openra_rules.py`), flags and donkeys, then the God Mode menu catalogue. B1 is still the missing C++ compiler. Do not rerun bare cmake.
 
 ## First files
 

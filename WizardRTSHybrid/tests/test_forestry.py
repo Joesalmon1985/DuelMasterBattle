@@ -108,7 +108,7 @@ def test_destroyed_workplace_cancels_job_and_releases_tree() -> None:
     hut = _red(world, "producer")
     _run(world, lambda: any(e["kind"] == "tree_reserved" for e in world.events))
     reserved = next(e for e in world.events if e["kind"] == "tree_reserved")
-    world.damage_building(hut, 10_000, ["structure"], {})
+    world.damage_building(hut, 10**9, ["structure"], {})
     _run(world, lambda: reserved["worker"] not in world.workers, limit_ms=1_000)
     assert world.buildings[hut]["operational"] is False
     assert reserved["worker"] not in world.workers

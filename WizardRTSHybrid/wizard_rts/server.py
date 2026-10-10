@@ -41,9 +41,11 @@ def _handle(world: HybridWorld, message: dict) -> dict:
     if op == "cancel":
         return world.cancel(str(message.get("building", "")), int(message.get("index", 0)))
     if op == "move":
-        return world.move(list(message.get("units", [])), int(message.get("tx", 0)), int(message.get("ty", 0)))
+        return world.move(list(message.get("units", [])), int(message.get("tx", 0)), int(message.get("ty", 0)), bool(message.get("attack_move", False)))
     if op == "stop":
         return world.stop(list(message.get("units", [])))
+    if op == "rally":
+        return world.rally(str(message.get("building", "")), int(message.get("tx", 0)), int(message.get("ty", 0)))
     if op == "demolish":
         return world.demolish(str(message.get("building", "")))
     if op == "menu":

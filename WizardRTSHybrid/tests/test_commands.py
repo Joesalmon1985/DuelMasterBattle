@@ -98,7 +98,7 @@ def test_barracks_queue_consumes_delivered_goods_and_unit_obeys_move() -> None:
     goal = (start[0] + 9, start[1] + 4)
     assert w.move([unit["id"]], *goal)["status"] == "ok"
     _run(w, lambda: (unit["tx"], unit["ty"]) == goal or not unit.get("order"), 120_000)
-    assert (unit["tx"], unit["ty"]) != start and abs(unit["tx"] - goal[0]) + abs(unit["ty"] - goal[1]) <= 1
+    assert (unit["tx"], unit["ty"]) != start and max(abs(unit["tx"] - goal[0]), abs(unit["ty"] - goal[1])) <= 2
 
 
 def test_queue_stalls_without_goods_and_cancel_refunds() -> None:

@@ -42,9 +42,10 @@ def test_tank_destroys_producer_and_production_stops() -> None:
     building = world.buildings[target]
     assert building["hp"] == 0 and building["operational"] is False
     assert "order" not in world.units[tank]
+    assert world.units[tank]["weapon"] == "105mm"
     assert any(e["kind"] == "building_destroyed" for e in world.events) or world.stats["destroyed"] >= 1
     before = world.stocks[target].get("log", 0)
-    for _ in range(300):
+    for _ in range(100):  # the ruin burns for 15 s before it is removed
         seq += 1
         world.advance(100, seq)
         now = world.stocks[target].get("log", 0)

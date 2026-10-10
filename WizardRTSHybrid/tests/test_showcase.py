@@ -39,19 +39,19 @@ def test_structure_damage_uses_one_pipeline() -> None:
         if building["kind"] == "warehouse" and building["faction_name"] == "Red"
     )
     tree = next(iter(world.rocks))
-    missed = world.damage_building(warehouse, 200, ["infantry"], {"wood": 100})
+    missed = world.damage_building(warehouse, 200, ["infantry"], {"Wood": 100})
     assert missed == 0
-    assert world.buildings[warehouse]["hp"] == 1000
-    dealt = world.damage_building(warehouse, 200, ["structure"], {"wood": 100})
+    assert world.buildings[warehouse]["hp"] == world.buildings[warehouse]["max_hp"]
+    dealt = world.damage_building(warehouse, 200, ["structure"], {"Wood": 100})
     assert dealt == 200
-    assert world.buildings[warehouse]["hp"] == 800
+    assert world.buildings[warehouse]["hp"] == world.buildings[warehouse]["max_hp"] - 200
     assert world.buildings[warehouse]["operational"] is True
-    assert world.damage_building(tree, 500, ["structure"], {"wood": 100}) == 0
+    assert world.damage_building(tree, 500, ["structure"], {"Wood": 100}) == 0
     world.buildings[warehouse]["hp"] = 50
-    world.damage_building(warehouse, 200, ["structure"], {"wood": 100})
+    world.damage_building(warehouse, 200, ["structure"], {"Wood": 100})
     assert world.buildings[warehouse]["hp"] == 0
     assert world.buildings[warehouse]["operational"] is False
-    again = world.damage_building(warehouse, 200, ["structure"], {"wood": 100})
+    again = world.damage_building(warehouse, 200, ["structure"], {"Wood": 100})
     assert again == 0
 
 

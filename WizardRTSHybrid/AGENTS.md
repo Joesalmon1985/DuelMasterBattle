@@ -16,7 +16,7 @@ Widelands, OpenRA, and the OpenRA Mod SDK are full local source labs under `exte
 - `AdvanceGameTime` is `ClockService.request_advance` from elapsed time. Pause token `hazard_duel` yields zero quanta. `tick_duel_clock` is not used to move `game_ms`.
 - Hex ownership is `cube_round` of the tile center. There is no exclusive 48 by 48 square per hex.
 - Do not call a DuelMasterBattle cart or formation Widelands or OpenRA. Provenance strings are on the snapshot.
-- Do not implement Mindustry. Do not merge this branch to `main`. Do not advance build-pack T143.
+- Do not implement Mindustry. Do not advance build-pack T143. Merges to `main` only when Joe asks for them.
 
 ## Repo layout
 
@@ -38,7 +38,7 @@ py -3 WizardRTSHybrid/tests/test_five_minutes.py
 WizardRTSHybrid/scripts/launch_hybrid.ps1
 ```
 
-Godot coordinate check: `godot --headless --path godot_project --script res://client/tests/run_hybrid_coords.gd`.
+Headed scripts: forestry, God Mode (real mouse events), six-faction war; see `docs/STATE_OF_PLAY.md`. Use a fresh sim per script. Godot coordinate check: `godot --headless --path godot_project --script res://client/tests/run_hybrid_coords.gd`.
 
 Headed walk and duel scripts need the sim on `HYBRID_SIM_PORT` (default 8765) and `--rendering-method forward_plus` so the viewport readback is not black. The Compatibility renderer returns an empty image.
 
@@ -48,7 +48,7 @@ Prefer executing an upstream algorithm, then a separate process, then a source-d
 
 ## Commits
 
-Commit verified milestones on `feature/wizard-rts-hybrid` only. Never commit `external/`, `runtime/`, `dist/`, secrets, or unrelated dirty spellbook and content files. An unfinished experiment stays unverified in the ledger.
+Commit verified milestones on `feature/wizard-rts-hybrid-v02`. Never commit `external/`, `runtime/`, `dist/`, secrets, or unrelated dirty spellbook and content files. An unfinished experiment stays unverified in the ledger.
 
 ## Failed experiments
 

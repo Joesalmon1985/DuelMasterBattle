@@ -49,7 +49,10 @@ def test_packaged_world_without_external(tmp_path: Path) -> None:
         advanced = world.advance(60_000, 1)
         assert advanced["quanta"] > 0
         assert world.stats["produce"] > 0
-        assert world.stats["move"] > 0 or world.stats["attack"] > 0
+        unit = next(iter(world.units.values()))
+        world.move([unit["id"]], unit["tx"] + 3, unit["ty"])
+        world.advance(10_000, 2)
+        assert world.stats["move"] > 0
         # Walk the avatar onto the hazard tile's neighbour and resolve once.
         hx, hy = world.hazard_tile
         for step in ((hx - 1, hy), (hx, hy - 1), (hx + 1, hy), (hx, hy + 1)):

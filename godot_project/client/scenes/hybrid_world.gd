@@ -210,5 +210,6 @@ func _draw() -> void:
 		if typeof(entity) != TYPE_DICTIONARY:
 			continue
 		_art.draw_entity(self, entity, TPX)
+	_art.draw_effects(self, _snapshot.get("effects", []), TPX)
 	if god != null:
 		god.draw_overlay(self)

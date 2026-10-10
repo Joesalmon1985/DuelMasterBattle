@@ -1,0 +1,7879 @@
+[
+ {
+  "seed": 507,
+  "samples": [
+   {
+    "t": 1,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 3,
+      "buildings": 16,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 3,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 138,
+    "rocks": 35,
+    "workers": 24,
+    "carriers_busy": 1,
+    "stats": {
+     "deliver": 30,
+     "blocked": 0,
+     "move": 0,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 43
+    },
+    "wares_in_flight": 27,
+    "wall_s": 0.2
+   },
+   {
+    "t": 2,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 3,
+      "buildings": 17,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 134,
+    "rocks": 35,
+    "workers": 24,
+    "carriers_busy": 4,
+    "stats": {
+     "deliver": 93,
+     "blocked": 0,
+     "move": 0,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 108,
+     "recruit_started": 6
+    },
+    "wares_in_flight": 36,
+    "wall_s": 0.4
+   },
+   {
+    "t": 3,
+    "factions": {
+     "Red": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 4,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 1,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 122,
+    "rocks": 35,
+    "workers": 24,
+    "carriers_busy": 6,
+    "stats": {
+     "deliver": 156,
+     "blocked": 0,
+     "move": 0,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 168,
+     "recruit_started": 12,
+     "recruited": 6
+    },
+    "wares_in_flight": 36,
+    "wall_s": 0.6
+   },
+   {
+    "t": 4,
+    "factions": {
+     "Red": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 5,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 3,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 117,
+    "rocks": 29,
+    "workers": 24,
+    "carriers_busy": 23,
+    "stats": {
+     "deliver": 225,
+     "blocked": 0,
+     "move": 0,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 242,
+     "recruit_started": 12,
+     "recruited": 12
+    },
+    "wares_in_flight": 42,
+    "wall_s": 0.9
+   },
+   {
+    "t": 5,
+    "factions": {
+     "Red": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Blue": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 6,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 3,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 114,
+    "rocks": 29,
+    "workers": 24,
+    "carriers_busy": 20,
+    "stats": {
+     "deliver": 286,
+     "blocked": 0,
+     "move": 119,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 305,
+     "recruit_started": 18,
+     "recruited": 18
+    },
+    "wares_in_flight": 45,
+    "wall_s": 1.4
+   },
+   {
+    "t": 6,
+    "factions": {
+     "Red": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Blue": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 6,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 4,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 107,
+    "rocks": 29,
+    "workers": 24,
+    "carriers_busy": 8,
+    "stats": {
+     "deliver": 361,
+     "blocked": 0,
+     "move": 652,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 368,
+     "recruit_started": 24,
+     "recruited": 18
+    },
+    "wares_in_flight": 45,
+    "wall_s": 1.7
+   },
+   {
+    "t": 7,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 5,
+      "buildings": 13,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Purple": {
+      "units": 7,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 4,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Orange": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     }
+    },
+    "trees": 103,
+    "rocks": 29,
+    "workers": 24,
+    "carriers_busy": 12,
+    "stats": {
+     "deliver": 421,
+     "blocked": 0,
+     "move": 2551,
+     "attack": 97,
+     "destroyed": 10,
+     "produce": 440,
+     "recruit_started": 30,
+     "recruited": 24,
+     "buildings_lost": 2,
+     "units_lost": 8,
+     "lost": 4
+    },
+    "wares_in_flight": 59,
+    "wall_s": 2.8
+   },
+   {
+    "t": 8,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 1,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 1,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 5
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 5
+     }
+    },
+    "trees": 93,
+    "rocks": 24,
+    "workers": 21,
+    "carriers_busy": 11,
+    "stats": {
+     "deliver": 485,
+     "blocked": 0,
+     "move": 3401,
+     "attack": 454,
+     "destroyed": 41,
+     "produce": 486,
+     "recruit_started": 30,
+     "recruited": 30,
+     "buildings_lost": 8,
+     "units_lost": 33,
+     "lost": 4
+    },
+    "wares_in_flight": 24,
+    "wall_s": 3.1
+   },
+   {
+    "t": 9,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 3,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 5,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Green": {
+      "units": 2,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 3,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 3,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 3,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 84,
+    "rocks": 24,
+    "workers": 16,
+    "carriers_busy": 6,
+    "stats": {
+     "deliver": 533,
+     "blocked": 0,
+     "move": 3521,
+     "attack": 595,
+     "destroyed": 55,
+     "produce": 550,
+     "recruit_started": 39,
+     "recruited": 35,
+     "buildings_lost": 19,
+     "units_lost": 36,
+     "lost": 42
+    },
+    "wares_in_flight": 12,
+    "wall_s": 3.3
+   },
+   {
+    "t": 10,
+    "factions": {
+     "Red": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 4,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 4,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Green": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 4,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 4,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 4
+     },
+     "Purple": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 4,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 83,
+    "rocks": 24,
+    "workers": 16,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 578,
+     "blocked": 0,
+     "move": 3766,
+     "attack": 646,
+     "destroyed": 57,
+     "produce": 596,
+     "recruit_started": 47,
+     "recruited": 39,
+     "buildings_lost": 20,
+     "units_lost": 37,
+     "lost": 42
+    },
+    "wares_in_flight": 4,
+    "wall_s": 3.5
+   },
+   {
+    "t": 11,
+    "factions": {
+     "Red": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 5,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 5,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 10,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 5,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 10
+     },
+     "Purple": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 5,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 5
+     }
+    },
+    "trees": 82,
+    "rocks": 24,
+    "workers": 16,
+    "carriers_busy": 7,
+    "stats": {
+     "deliver": 620,
+     "blocked": 0,
+     "move": 4884,
+     "attack": 740,
+     "destroyed": 63,
+     "produce": 663,
+     "recruit_started": 55,
+     "recruited": 51,
+     "buildings_lost": 24,
+     "units_lost": 39,
+     "lost": 56
+    },
+    "wares_in_flight": 19,
+    "wall_s": 4.3
+   },
+   {
+    "t": 12,
+    "factions": {
+     "Red": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 6,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 8,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 6,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 10,
+      "buildings": 12,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 6,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 10
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 7,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 8,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 6,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     }
+    },
+    "trees": 83,
+    "rocks": 20,
+    "workers": 16,
+    "carriers_busy": 8,
+    "stats": {
+     "deliver": 660,
+     "blocked": 0,
+     "move": 6637,
+     "attack": 854,
+     "destroyed": 69,
+     "produce": 708,
+     "recruit_started": 59,
+     "recruited": 58,
+     "buildings_lost": 28,
+     "units_lost": 41,
+     "lost": 67
+    },
+    "wares_in_flight": 19,
+    "wall_s": 5.0
+   },
+   {
+    "t": 13,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 10,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 1,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 7,
+       "iron": 1,
+       "ax": 1
+      },
+      "queued": 2,
+      "moving": 3
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 10,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 7,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 9
+     },
+     "Yellow": {
+      "units": 5,
+      "buildings": 11,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 1,
+       "coal": 1,
+       "iron_ore": 7,
+       "iron": 1,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 5
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 6,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 7,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 3
+     }
+    },
+    "trees": 81,
+    "rocks": 20,
+    "workers": 15,
+    "carriers_busy": 10,
+    "stats": {
+     "deliver": 705,
+     "blocked": 0,
+     "move": 8104,
+     "attack": 1193,
+     "destroyed": 94,
+     "produce": 763,
+     "recruit_started": 65,
+     "recruited": 63,
+     "buildings_lost": 36,
+     "units_lost": 58,
+     "lost": 76
+    },
+    "wares_in_flight": 26,
+    "wall_s": 5.7
+   },
+   {
+    "t": 14,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 1
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 11,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 8,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 11
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 4
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 8,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 2
+     }
+    },
+    "trees": 76,
+    "rocks": 20,
+    "workers": 15,
+    "carriers_busy": 6,
+    "stats": {
+     "deliver": 734,
+     "blocked": 0,
+     "move": 9238,
+     "attack": 1369,
+     "destroyed": 104,
+     "produce": 804,
+     "recruit_started": 69,
+     "recruited": 65,
+     "buildings_lost": 44,
+     "units_lost": 60,
+     "lost": 148
+    },
+    "wares_in_flight": 14,
+    "wall_s": 6.1
+   },
+   {
+    "t": 15,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 12,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 10,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 10
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 10,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 77,
+    "rocks": 20,
+    "workers": 15,
+    "carriers_busy": 3,
+    "stats": {
+     "deliver": 758,
+     "blocked": 0,
+     "move": 10173,
+     "attack": 1485,
+     "destroyed": 109,
+     "produce": 848,
+     "recruit_started": 73,
+     "recruited": 69,
+     "buildings_lost": 44,
+     "units_lost": 65,
+     "lost": 148
+    },
+    "wares_in_flight": 13,
+    "wall_s": 6.6
+   },
+   {
+    "t": 16,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 12,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 11,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 9
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 14,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 11,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     }
+    },
+    "trees": 78,
+    "rocks": 16,
+    "workers": 15,
+    "carriers_busy": 3,
+    "stats": {
+     "deliver": 781,
+     "blocked": 0,
+     "move": 10866,
+     "attack": 1560,
+     "destroyed": 112,
+     "produce": 889,
+     "recruit_started": 75,
+     "recruited": 72,
+     "buildings_lost": 45,
+     "units_lost": 67,
+     "lost": 148
+    },
+    "wares_in_flight": 12,
+    "wall_s": 6.7
+   },
+   {
+    "t": 17,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 12,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 2
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 4,
+      "buildings": 14,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 17,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 12,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 78,
+    "rocks": 16,
+    "workers": 15,
+    "carriers_busy": 4,
+    "stats": {
+     "deliver": 803,
+     "blocked": 0,
+     "move": 10941,
+     "attack": 1675,
+     "destroyed": 123,
+     "produce": 927,
+     "recruit_started": 81,
+     "recruited": 76,
+     "buildings_lost": 45,
+     "units_lost": 78,
+     "lost": 148
+    },
+    "wares_in_flight": 8,
+    "wall_s": 6.9
+   },
+   {
+    "t": 18,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 8,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 14,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 2
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 5,
+      "buildings": 14,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 17,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 14,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 78,
+    "rocks": 16,
+    "workers": 15,
+    "carriers_busy": 8,
+    "stats": {
+     "deliver": 824,
+     "blocked": 0,
+     "move": 10941,
+     "attack": 1675,
+     "destroyed": 123,
+     "produce": 969,
+     "recruit_started": 84,
+     "recruited": 78,
+     "buildings_lost": 45,
+     "units_lost": 78,
+     "lost": 148
+    },
+    "wares_in_flight": 10,
+    "wall_s": 7.0
+   },
+   {
+    "t": 19,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 10,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 14,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 8
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 7,
+      "buildings": 14,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 18,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 14,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     }
+    },
+    "trees": 78,
+    "rocks": 16,
+    "workers": 15,
+    "carriers_busy": 5,
+    "stats": {
+     "deliver": 848,
+     "blocked": 0,
+     "move": 11573,
+     "attack": 1675,
+     "destroyed": 123,
+     "produce": 1008,
+     "recruit_started": 87,
+     "recruited": 82,
+     "buildings_lost": 45,
+     "units_lost": 78,
+     "lost": 148
+    },
+    "wares_in_flight": 13,
+    "wall_s": 7.6
+   },
+   {
+    "t": 20,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 17,
+       "granite": 1,
+       "coal": 0,
+       "iron_ore": 15,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 9
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 13,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 18,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 16,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     }
+    },
+    "trees": 77,
+    "rocks": 13,
+    "workers": 15,
+    "carriers_busy": 1,
+    "stats": {
+     "deliver": 867,
+     "blocked": 0,
+     "move": 12560,
+     "attack": 1803,
+     "destroyed": 129,
+     "produce": 1050,
+     "recruit_started": 90,
+     "recruited": 85,
+     "buildings_lost": 46,
+     "units_lost": 83,
+     "lost": 148
+    },
+    "wares_in_flight": 9,
+    "wall_s": 7.7
+   },
+   {
+    "t": 21,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 2,
+       "coal": 0,
+       "iron_ore": 16,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 6
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 2,
+      "buildings": 10,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 2
+     }
+    },
+    "trees": 77,
+    "rocks": 13,
+    "workers": 14,
+    "carriers_busy": 2,
+    "stats": {
+     "deliver": 882,
+     "blocked": 0,
+     "move": 12669,
+     "attack": 2319,
+     "destroyed": 144,
+     "produce": 1079,
+     "recruit_started": 93,
+     "recruited": 87,
+     "buildings_lost": 52,
+     "units_lost": 92,
+     "lost": 168
+    },
+    "wares_in_flight": 4,
+    "wall_s": 7.9
+   },
+   {
+    "t": 22,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 2,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 2
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     }
+    },
+    "trees": 77,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12716,
+     "attack": 2673,
+     "destroyed": 156,
+     "produce": 1110,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 55,
+     "units_lost": 101,
+     "lost": 242
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.0
+   },
+   {
+    "t": 23,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 2,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 2
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 7,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     }
+    },
+    "trees": 79,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12722,
+     "attack": 2817,
+     "destroyed": 157,
+     "produce": 1140,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 56,
+     "units_lost": 101,
+     "lost": 242
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.0
+   },
+   {
+    "t": 24,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 2,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 2
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 7,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     }
+    },
+    "trees": 81,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12724,
+     "attack": 2966,
+     "destroyed": 157,
+     "produce": 1166,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 56,
+     "units_lost": 101,
+     "lost": 245
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.1
+   },
+   {
+    "t": 25,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 2,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 2
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 7,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     }
+    },
+    "trees": 83,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12724,
+     "attack": 3116,
+     "destroyed": 157,
+     "produce": 1175,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 56,
+     "units_lost": 101,
+     "lost": 245
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.2
+   },
+   {
+    "t": 26,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 1,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 6,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     }
+    },
+    "trees": 88,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12733,
+     "attack": 3198,
+     "destroyed": 159,
+     "produce": 1181,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 57,
+     "units_lost": 102,
+     "lost": 246
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.3
+   },
+   {
+    "t": 27,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 1,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 6,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     }
+    },
+    "trees": 96,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12733,
+     "attack": 3198,
+     "destroyed": 159,
+     "produce": 1185,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 57,
+     "units_lost": 102,
+     "lost": 246
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.4
+   },
+   {
+    "t": 28,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 1,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 6,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     }
+    },
+    "trees": 97,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12733,
+     "attack": 3198,
+     "destroyed": 159,
+     "produce": 1195,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 57,
+     "units_lost": 102,
+     "lost": 246
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.4
+   },
+   {
+    "t": 29,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 1,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 6,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     }
+    },
+    "trees": 100,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12733,
+     "attack": 3198,
+     "destroyed": 159,
+     "produce": 1201,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 57,
+     "units_lost": 102,
+     "lost": 246
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.5
+   },
+   {
+    "t": 30,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 1,
+      "buildings": 13,
+      "sites": 1,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 2,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 6,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     }
+    },
+    "trees": 106,
+    "rocks": 13,
+    "workers": 13,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 887,
+     "blocked": 0,
+     "move": 12733,
+     "attack": 3198,
+     "destroyed": 159,
+     "produce": 1208,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 57,
+     "units_lost": 102,
+     "lost": 246
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.6
+   }
+  ],
+  "problems": [],
+  "status": "ok",
+  "event_counts": {
+   "ai_military": 78,
+   "tree_removed": 20,
+   "ai_economy": 52,
+   "object_reserved": 13,
+   "tree_reserved": 13,
+   "tree_grew": 74,
+   "worker_failed": 76,
+   "produced": 5,
+   "mined": 2,
+   "tree_felled": 14,
+   "log_created": 14,
+   "sapling_planted": 23,
+   "ware_stored": 13,
+   "tree_seeded": 5
+  },
+  "final_stats": {
+   "deliver": 887,
+   "blocked": 0,
+   "move": 12733,
+   "attack": 3198,
+   "destroyed": 159,
+   "produce": 1208,
+   "consumed_log": 260,
+   "made_log": 274,
+   "made_granite": 138,
+   "made_coal": 265,
+   "made_iron_ore": 274,
+   "made_plank": 116,
+   "consumed_plank": 66,
+   "consumed_coal": 148,
+   "consumed_iron_ore": 102,
+   "consumed_granite": 114,
+   "recruit_started": 93,
+   "recruited": 90,
+   "made_iron": 99,
+   "buildings_lost": 57,
+   "units_lost": 102,
+   "lost": 246,
+   "consumed_iron": 46,
+   "made_ax": 42,
+   "consumed_ax": 36
+  },
+  "ai_events": [
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:89"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1788000
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:89"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1791000
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:89"
+    ]
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:89"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1794000
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:89"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1797000
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:89"
+    ]
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:89"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1800000
+   }
+  ],
+  "wall_s": 8.6
+ },
+ {
+  "seed": 11,
+  "samples": [
+   {
+    "t": 1,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 3,
+      "buildings": 16,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 3,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 141,
+    "rocks": 36,
+    "workers": 24,
+    "carriers_busy": 1,
+    "stats": {
+     "deliver": 30,
+     "blocked": 0,
+     "move": 0,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 42
+    },
+    "wares_in_flight": 26,
+    "wall_s": 0.2
+   },
+   {
+    "t": 2,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 3,
+      "buildings": 17,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 140,
+    "rocks": 36,
+    "workers": 24,
+    "carriers_busy": 4,
+    "stats": {
+     "deliver": 92,
+     "blocked": 0,
+     "move": 0,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 108,
+     "recruit_started": 6
+    },
+    "wares_in_flight": 36,
+    "wall_s": 0.4
+   },
+   {
+    "t": 3,
+    "factions": {
+     "Red": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 4,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 1,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 7,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 127,
+    "rocks": 36,
+    "workers": 24,
+    "carriers_busy": 6,
+    "stats": {
+     "deliver": 156,
+     "blocked": 0,
+     "move": 0,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 168,
+     "recruit_started": 12,
+     "recruited": 6
+    },
+    "wares_in_flight": 36,
+    "wall_s": 0.6
+   },
+   {
+    "t": 4,
+    "factions": {
+     "Red": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 8,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 5,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 3,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 124,
+    "rocks": 30,
+    "workers": 24,
+    "carriers_busy": 25,
+    "stats": {
+     "deliver": 225,
+     "blocked": 0,
+     "move": 0,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 242,
+     "recruit_started": 12,
+     "recruited": 12
+    },
+    "wares_in_flight": 43,
+    "wall_s": 0.9
+   },
+   {
+    "t": 5,
+    "factions": {
+     "Red": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Blue": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 6,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 3,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 9,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 118,
+    "rocks": 30,
+    "workers": 24,
+    "carriers_busy": 21,
+    "stats": {
+     "deliver": 285,
+     "blocked": 0,
+     "move": 119,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 306,
+     "recruit_started": 18,
+     "recruited": 18
+    },
+    "wares_in_flight": 46,
+    "wall_s": 1.4
+   },
+   {
+    "t": 6,
+    "factions": {
+     "Red": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Blue": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Purple": {
+      "units": 6,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 4,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 107,
+    "rocks": 30,
+    "workers": 24,
+    "carriers_busy": 6,
+    "stats": {
+     "deliver": 361,
+     "blocked": 0,
+     "move": 652,
+     "attack": 0,
+     "destroyed": 0,
+     "produce": 368,
+     "recruit_started": 24,
+     "recruited": 18
+    },
+    "wares_in_flight": 44,
+    "wall_s": 1.7
+   },
+   {
+    "t": 7,
+    "factions": {
+     "Red": {
+      "units": 1,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 5,
+      "buildings": 13,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Purple": {
+      "units": 7,
+      "buildings": 17,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 4,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Orange": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     }
+    },
+    "trees": 105,
+    "rocks": 30,
+    "workers": 24,
+    "carriers_busy": 12,
+    "stats": {
+     "deliver": 420,
+     "blocked": 0,
+     "move": 2551,
+     "attack": 97,
+     "destroyed": 10,
+     "produce": 439,
+     "recruit_started": 30,
+     "recruited": 24,
+     "buildings_lost": 2,
+     "units_lost": 8,
+     "lost": 4
+    },
+    "wares_in_flight": 58,
+    "wall_s": 2.7
+   },
+   {
+    "t": 8,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 1,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Green": {
+      "units": 1,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 5
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 6,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 2,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 5
+     }
+    },
+    "trees": 95,
+    "rocks": 25,
+    "workers": 21,
+    "carriers_busy": 12,
+    "stats": {
+     "deliver": 485,
+     "blocked": 0,
+     "move": 3401,
+     "attack": 454,
+     "destroyed": 41,
+     "produce": 487,
+     "recruit_started": 30,
+     "recruited": 30,
+     "buildings_lost": 8,
+     "units_lost": 33,
+     "lost": 4
+    },
+    "wares_in_flight": 25,
+    "wall_s": 3.0
+   },
+   {
+    "t": 9,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 3,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 5,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Green": {
+      "units": 2,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 3,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 3,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 1,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 2,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 3,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 95,
+    "rocks": 25,
+    "workers": 18,
+    "carriers_busy": 7,
+    "stats": {
+     "deliver": 532,
+     "blocked": 0,
+     "move": 3498,
+     "attack": 590,
+     "destroyed": 54,
+     "produce": 549,
+     "recruit_started": 39,
+     "recruited": 35,
+     "buildings_lost": 16,
+     "units_lost": 38,
+     "lost": 42
+    },
+    "wares_in_flight": 12,
+    "wall_s": 3.2
+   },
+   {
+    "t": 10,
+    "factions": {
+     "Red": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 4,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 4,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     },
+     "Green": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 4,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 4,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 4
+     },
+     "Purple": {
+      "units": 1,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 4,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 96,
+    "rocks": 25,
+    "workers": 18,
+    "carriers_busy": 1,
+    "stats": {
+     "deliver": 579,
+     "blocked": 0,
+     "move": 3743,
+     "attack": 641,
+     "destroyed": 56,
+     "produce": 599,
+     "recruit_started": 47,
+     "recruited": 39,
+     "buildings_lost": 17,
+     "units_lost": 39,
+     "lost": 42
+    },
+    "wares_in_flight": 5,
+    "wall_s": 3.5
+   },
+   {
+    "t": 11,
+    "factions": {
+     "Red": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 5,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 5,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 10,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 5,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 10
+     },
+     "Purple": {
+      "units": 1,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 5,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 92,
+    "rocks": 25,
+    "workers": 18,
+    "carriers_busy": 9,
+    "stats": {
+     "deliver": 623,
+     "blocked": 0,
+     "move": 4478,
+     "attack": 721,
+     "destroyed": 60,
+     "produce": 672,
+     "recruit_started": 55,
+     "recruited": 51,
+     "buildings_lost": 21,
+     "units_lost": 39,
+     "lost": 56
+    },
+    "wares_in_flight": 21,
+    "wall_s": 4.0
+   },
+   {
+    "t": 12,
+    "factions": {
+     "Red": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 6,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 8,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 6,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 10,
+      "buildings": 12,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 6,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 10
+     },
+     "Purple": {
+      "units": 1,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 1,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 8,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 6,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     }
+    },
+    "trees": 92,
+    "rocks": 20,
+    "workers": 18,
+    "carriers_busy": 9,
+    "stats": {
+     "deliver": 670,
+     "blocked": 0,
+     "move": 6338,
+     "attack": 779,
+     "destroyed": 64,
+     "produce": 721,
+     "recruit_started": 59,
+     "recruited": 58,
+     "buildings_lost": 24,
+     "units_lost": 40,
+     "lost": 67
+    },
+    "wares_in_flight": 18,
+    "wall_s": 4.9
+   },
+   {
+    "t": 13,
+    "factions": {
+     "Red": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 1,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 7,
+       "iron": 1,
+       "ax": 1
+      },
+      "queued": 2,
+      "moving": 4
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 7,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 1
+     },
+     "Yellow": {
+      "units": 6,
+      "buildings": 10,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 2,
+       "plank": 11,
+       "granite": 1,
+       "coal": 1,
+       "iron_ore": 7,
+       "iron": 1,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 6
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 10,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 7,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     }
+    },
+    "trees": 93,
+    "rocks": 20,
+    "workers": 18,
+    "carriers_busy": 10,
+    "stats": {
+     "deliver": 717,
+     "blocked": 0,
+     "move": 7899,
+     "attack": 1175,
+     "destroyed": 88,
+     "produce": 782,
+     "recruit_started": 65,
+     "recruited": 63,
+     "buildings_lost": 33,
+     "units_lost": 55,
+     "lost": 73
+    },
+    "wares_in_flight": 24,
+    "wall_s": 5.5
+   },
+   {
+    "t": 14,
+    "factions": {
+     "Red": {
+      "units": 3,
+      "buildings": 10,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 2
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 8,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 2,
+       "plank": 10,
+       "granite": 3,
+       "coal": 2,
+       "iron_ore": 8,
+       "iron": 2,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 4
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 15,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 8,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 8
+     }
+    },
+    "trees": 88,
+    "rocks": 20,
+    "workers": 18,
+    "carriers_busy": 8,
+    "stats": {
+     "deliver": 749,
+     "blocked": 0,
+     "move": 8802,
+     "attack": 1371,
+     "destroyed": 99,
+     "produce": 824,
+     "recruit_started": 69,
+     "recruited": 65,
+     "buildings_lost": 36,
+     "units_lost": 63,
+     "lost": 102
+    },
+    "wares_in_flight": 18,
+    "wall_s": 6.0
+   },
+   {
+    "t": 15,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 4,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 10,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 4
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 10,
+       "granite": 4,
+       "coal": 4,
+       "iron_ore": 10,
+       "iron": 3,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 2
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 3,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 10,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 86,
+    "rocks": 20,
+    "workers": 18,
+    "carriers_busy": 3,
+    "stats": {
+     "deliver": 784,
+     "blocked": 0,
+     "move": 9484,
+     "attack": 1534,
+     "destroyed": 111,
+     "produce": 874,
+     "recruit_started": 73,
+     "recruited": 69,
+     "buildings_lost": 37,
+     "units_lost": 74,
+     "lost": 104
+    },
+    "wares_in_flight": 16,
+    "wall_s": 6.2
+   },
+   {
+    "t": 16,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 17,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 11,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 12,
+       "granite": 6,
+       "coal": 5,
+       "iron_ore": 11,
+       "iron": 4,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 11,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 91,
+    "rocks": 15,
+    "workers": 18,
+    "carriers_busy": 4,
+    "stats": {
+     "deliver": 819,
+     "blocked": 0,
+     "move": 9547,
+     "attack": 1534,
+     "destroyed": 111,
+     "produce": 921,
+     "recruit_started": 75,
+     "recruited": 73,
+     "buildings_lost": 37,
+     "units_lost": 74,
+     "lost": 104
+    },
+    "wares_in_flight": 16,
+    "wall_s": 6.3
+   },
+   {
+    "t": 17,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 8,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 18,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 12,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 13,
+       "granite": 7,
+       "coal": 6,
+       "iron_ore": 12,
+       "iron": 5,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 17,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 12,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     }
+    },
+    "trees": 91,
+    "rocks": 15,
+    "workers": 18,
+    "carriers_busy": 6,
+    "stats": {
+     "deliver": 849,
+     "blocked": 0,
+     "move": 9902,
+     "attack": 1534,
+     "destroyed": 111,
+     "produce": 964,
+     "recruit_started": 81,
+     "recruited": 77,
+     "buildings_lost": 37,
+     "units_lost": 74,
+     "lost": 104
+    },
+    "wares_in_flight": 9,
+    "wall_s": 7.0
+   },
+   {
+    "t": 18,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 18,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 14,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 14,
+       "granite": 8,
+       "coal": 7,
+       "iron_ore": 14,
+       "iron": 6,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 8,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 14,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 8
+     }
+    },
+    "trees": 88,
+    "rocks": 15,
+    "workers": 18,
+    "carriers_busy": 13,
+    "stats": {
+     "deliver": 880,
+     "blocked": 0,
+     "move": 10963,
+     "attack": 1563,
+     "destroyed": 111,
+     "produce": 1013,
+     "recruit_started": 85,
+     "recruited": 79,
+     "buildings_lost": 37,
+     "units_lost": 74,
+     "lost": 104
+    },
+    "wares_in_flight": 17,
+    "wall_s": 7.1
+   },
+   {
+    "t": 19,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 14,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 3
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 10,
+       "coal": 9,
+       "iron_ore": 14,
+       "iron": 7,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 17,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 15,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     }
+    },
+    "trees": 87,
+    "rocks": 15,
+    "workers": 17,
+    "carriers_busy": 10,
+    "stats": {
+     "deliver": 914,
+     "blocked": 0,
+     "move": 11265,
+     "attack": 1901,
+     "destroyed": 131,
+     "produce": 1057,
+     "recruit_started": 87,
+     "recruited": 83,
+     "buildings_lost": 42,
+     "units_lost": 89,
+     "lost": 120
+    },
+    "wares_in_flight": 14,
+    "wall_s": 7.3
+   },
+   {
+    "t": 20,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 15,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 1
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 17,
+       "granite": 11,
+       "coal": 10,
+       "iron_ore": 15,
+       "iron": 7,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 2,
+      "buildings": 10,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 3,
+      "moving": 0
+     }
+    },
+    "trees": 83,
+    "rocks": 10,
+    "workers": 17,
+    "carriers_busy": 2,
+    "stats": {
+     "deliver": 934,
+     "blocked": 0,
+     "move": 11279,
+     "attack": 1994,
+     "destroyed": 134,
+     "produce": 1098,
+     "recruit_started": 90,
+     "recruited": 87,
+     "buildings_lost": 43,
+     "units_lost": 91,
+     "lost": 156
+    },
+    "wares_in_flight": 10,
+    "wall_s": 7.4
+   },
+   {
+    "t": 21,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 16,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 1
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 18,
+       "granite": 12,
+       "coal": 12,
+       "iron_ore": 16,
+       "iron": 8,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 2,
+      "buildings": 10,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 3,
+      "moving": 0
+     }
+    },
+    "trees": 87,
+    "rocks": 10,
+    "workers": 17,
+    "carriers_busy": 4,
+    "stats": {
+     "deliver": 949,
+     "blocked": 0,
+     "move": 11279,
+     "attack": 1994,
+     "destroyed": 134,
+     "produce": 1129,
+     "recruit_started": 92,
+     "recruited": 88,
+     "buildings_lost": 43,
+     "units_lost": 91,
+     "lost": 156
+    },
+    "wares_in_flight": 6,
+    "wall_s": 7.5
+   },
+   {
+    "t": 22,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 17,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 8
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 19,
+       "granite": 12,
+       "coal": 13,
+       "iron_ore": 17,
+       "iron": 9,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 2,
+      "buildings": 10,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 3,
+      "moving": 0
+     }
+    },
+    "trees": 90,
+    "rocks": 10,
+    "workers": 17,
+    "carriers_busy": 3,
+    "stats": {
+     "deliver": 965,
+     "blocked": 0,
+     "move": 11807,
+     "attack": 1994,
+     "destroyed": 134,
+     "produce": 1158,
+     "recruit_started": 93,
+     "recruited": 90,
+     "buildings_lost": 43,
+     "units_lost": 91,
+     "lost": 156
+    },
+    "wares_in_flight": 3,
+    "wall_s": 7.9
+   },
+   {
+    "t": 23,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 17,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 18,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 6
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 20,
+       "granite": 12,
+       "coal": 14,
+       "iron_ore": 18,
+       "iron": 10,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 8,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 3,
+      "moving": 0
+     }
+    },
+    "trees": 94,
+    "rocks": 10,
+    "workers": 16,
+    "carriers_busy": 1,
+    "stats": {
+     "deliver": 982,
+     "blocked": 0,
+     "move": 12271,
+     "attack": 2094,
+     "destroyed": 140,
+     "produce": 1192,
+     "recruit_started": 94,
+     "recruited": 92,
+     "buildings_lost": 45,
+     "units_lost": 95,
+     "lost": 160
+    },
+    "wares_in_flight": 3,
+    "wall_s": 8.1
+   },
+   {
+    "t": 24,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 5,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 18,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 19,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 20,
+       "granite": 12,
+       "coal": 16,
+       "iron_ore": 20,
+       "iron": 11,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 7,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     }
+    },
+    "trees": 97,
+    "rocks": 10,
+    "workers": 16,
+    "carriers_busy": 1,
+    "stats": {
+     "deliver": 997,
+     "blocked": 0,
+     "move": 12287,
+     "attack": 2213,
+     "destroyed": 146,
+     "produce": 1219,
+     "recruit_started": 95,
+     "recruited": 93,
+     "buildings_lost": 46,
+     "units_lost": 100,
+     "lost": 161
+    },
+    "wares_in_flight": 2,
+    "wall_s": 8.2
+   },
+   {
+    "t": 25,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 6,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 19,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 20,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 0
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 20,
+       "granite": 12,
+       "coal": 16,
+       "iron_ore": 20,
+       "iron": 11,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 7,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     }
+    },
+    "trees": 101,
+    "rocks": 10,
+    "workers": 16,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 1007,
+     "blocked": 0,
+     "move": 12287,
+     "attack": 2213,
+     "destroyed": 146,
+     "produce": 1230,
+     "recruit_started": 96,
+     "recruited": 94,
+     "buildings_lost": 46,
+     "units_lost": 100,
+     "lost": 161
+    },
+    "wares_in_flight": 2,
+    "wall_s": 8.3
+   },
+   {
+    "t": 26,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 7,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 20,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 19,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 20,
+       "granite": 12,
+       "coal": 16,
+       "iron_ore": 20,
+       "iron": 11,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 7,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     }
+    },
+    "trees": 96,
+    "rocks": 10,
+    "workers": 16,
+    "carriers_busy": 2,
+    "stats": {
+     "deliver": 1014,
+     "blocked": 0,
+     "move": 12403,
+     "attack": 2223,
+     "destroyed": 146,
+     "produce": 1240,
+     "recruit_started": 97,
+     "recruited": 95,
+     "buildings_lost": 46,
+     "units_lost": 100,
+     "lost": 161
+    },
+    "wares_in_flight": 3,
+    "wall_s": 8.6
+   },
+   {
+    "t": 27,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 8,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 21,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 18,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 20,
+       "granite": 12,
+       "coal": 16,
+       "iron_ore": 20,
+       "iron": 11,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 7,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 2,
+      "moving": 0
+     }
+    },
+    "trees": 104,
+    "rocks": 10,
+    "workers": 16,
+    "carriers_busy": 2,
+    "stats": {
+     "deliver": 1020,
+     "blocked": 0,
+     "move": 12847,
+     "attack": 2298,
+     "destroyed": 146,
+     "produce": 1248,
+     "recruit_started": 98,
+     "recruited": 96,
+     "buildings_lost": 46,
+     "units_lost": 100,
+     "lost": 161
+    },
+    "wares_in_flight": 2,
+    "wall_s": 8.7
+   },
+   {
+    "t": 28,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 21,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 17,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 7
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 1,
+       "plank": 20,
+       "granite": 12,
+       "coal": 16,
+       "iron_ore": 20,
+       "iron": 11,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 5,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     }
+    },
+    "trees": 111,
+    "rocks": 10,
+    "workers": 16,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 1026,
+     "blocked": 0,
+     "move": 13105,
+     "attack": 2555,
+     "destroyed": 148,
+     "produce": 1256,
+     "recruit_started": 99,
+     "recruited": 97,
+     "buildings_lost": 48,
+     "units_lost": 100,
+     "lost": 164
+    },
+    "wares_in_flight": 0,
+    "wall_s": 8.9
+   },
+   {
+    "t": 29,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 21,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 16,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 9
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 11,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 1,
+       "plank": 20,
+       "granite": 12,
+       "coal": 16,
+       "iron_ore": 20,
+       "iron": 11,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 4,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     }
+    },
+    "trees": 116,
+    "rocks": 10,
+    "workers": 16,
+    "carriers_busy": 0,
+    "stats": {
+     "deliver": 1028,
+     "blocked": 0,
+     "move": 13394,
+     "attack": 2756,
+     "destroyed": 149,
+     "produce": 1260,
+     "recruit_started": 99,
+     "recruited": 97,
+     "buildings_lost": 49,
+     "units_lost": 100,
+     "lost": 174
+    },
+    "wares_in_flight": 1,
+    "wall_s": 9.0
+   },
+   {
+    "t": 30,
+    "factions": {
+     "Red": {
+      "units": 2,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Blue": {
+      "units": 0,
+      "buildings": 0,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Green": {
+      "units": 9,
+      "buildings": 15,
+      "sites": 0,
+      "warehouse": true,
+      "stock": {
+       "log": 1,
+       "plank": 21,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 15,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 4,
+      "moving": 9
+     },
+     "Yellow": {
+      "units": 4,
+      "buildings": 12,
+      "sites": 1,
+      "warehouse": true,
+      "stock": {
+       "log": 0,
+       "plank": 16,
+       "granite": 12,
+       "coal": 16,
+       "iron_ore": 20,
+       "iron": 11,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 1
+     },
+     "Purple": {
+      "units": 0,
+      "buildings": 9,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     },
+     "Orange": {
+      "units": 0,
+      "buildings": 1,
+      "sites": 0,
+      "warehouse": false,
+      "stock": {
+       "log": 0,
+       "plank": 0,
+       "granite": 0,
+       "coal": 0,
+       "iron_ore": 0,
+       "iron": 0,
+       "ax": 0
+      },
+      "queued": 0,
+      "moving": 0
+     }
+    },
+    "trees": 118,
+    "rocks": 10,
+    "workers": 14,
+    "carriers_busy": 2,
+    "stats": {
+     "deliver": 1034,
+     "blocked": 0,
+     "move": 13519,
+     "attack": 3224,
+     "destroyed": 152,
+     "produce": 1268,
+     "recruit_started": 99,
+     "recruited": 97,
+     "buildings_lost": 52,
+     "units_lost": 100,
+     "lost": 183
+    },
+    "wares_in_flight": 3,
+    "wall_s": 9.1
+   }
+  ],
+  "problems": [],
+  "status": "ok",
+  "event_counts": {
+   "ai_economy": 36,
+   "worker_failed": 67,
+   "object_reserved": 12,
+   "tree_reserved": 12,
+   "tree_grew": 58,
+   "ai_military": 53,
+   "sapling_planted": 18,
+   "tree_removed": 15,
+   "tree_felled": 10,
+   "log_created": 10,
+   "ware_stored": 9,
+   "produced": 3,
+   "building_destroyed": 4,
+   "request_filled": 14,
+   "pickup": 22,
+   "deliver": 20,
+   "tree_seeded": 3,
+   "order_attack": 34,
+   "ai_attack": 4,
+   "building_removed": 3,
+   "worker_aborted": 2,
+   "construction_started": 1,
+   "road_built": 1,
+   "ai_build": 1
+  },
+  "final_stats": {
+   "deliver": 1034,
+   "blocked": 0,
+   "move": 13519,
+   "attack": 3224,
+   "destroyed": 152,
+   "produce": 1268,
+   "consumed_log": 300,
+   "made_log": 290,
+   "made_granite": 161,
+   "made_coal": 265,
+   "made_iron_ore": 270,
+   "made_plank": 135,
+   "consumed_plank": 74,
+   "consumed_coal": 153,
+   "consumed_iron_ore": 105,
+   "consumed_granite": 116,
+   "recruit_started": 99,
+   "recruited": 97,
+   "made_iron": 102,
+   "buildings_lost": 52,
+   "units_lost": 100,
+   "lost": 183,
+   "consumed_iron": 48,
+   "made_ax": 45,
+   "consumed_ax": 41
+  },
+  "ai_events": [
+   {
+    "kind": "ai_economy",
+    "game_ms": 1788000
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:43",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:100",
+     "unit:106",
+     "unit:109",
+     "unit:110",
+     "unit:111",
+     "unit:112",
+     "unit:113",
+     "unit:114",
+     "unit:115"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1791000
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:43",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:100",
+     "unit:106",
+     "unit:109",
+     "unit:110",
+     "unit:111",
+     "unit:112",
+     "unit:113",
+     "unit:114",
+     "unit:115"
+    ]
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:43",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:100",
+     "unit:106",
+     "unit:109",
+     "unit:110",
+     "unit:111",
+     "unit:112",
+     "unit:113",
+     "unit:114",
+     "unit:115"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1794000
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:43",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:100",
+     "unit:106",
+     "unit:109",
+     "unit:110",
+     "unit:111",
+     "unit:112",
+     "unit:113",
+     "unit:114",
+     "unit:115"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1797000
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:43",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:100",
+     "unit:106",
+     "unit:109",
+     "unit:110",
+     "unit:111",
+     "unit:112",
+     "unit:113",
+     "unit:114",
+     "unit:115"
+    ]
+   },
+   {
+    "kind": "ai_attack",
+    "faction": "Green",
+    "target": "building:84",
+    "units": 9
+   },
+   {
+    "kind": "ai_military",
+    "units": [
+     "unit:12",
+     "unit:28",
+     "unit:43",
+     "unit:46",
+     "unit:51",
+     "unit:58",
+     "unit:100",
+     "unit:106",
+     "unit:109",
+     "unit:110",
+     "unit:111",
+     "unit:112",
+     "unit:113",
+     "unit:114",
+     "unit:115"
+    ]
+   },
+   {
+    "kind": "ai_economy",
+    "game_ms": 1800000
+   }
+  ],
+  "wall_s": 9.1
+ }
+]

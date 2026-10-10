@@ -11,6 +11,8 @@ binary float drift. Size is 16 tiles from hex center to corner.
 
 from __future__ import annotations
 
+from functools import lru_cache
+
 MAP_Q = 20
 MAP_R = 20
 HEX_SIZE_TILES = 16
@@ -67,6 +69,7 @@ def in_map(q: int, r: int) -> bool:
     return 0 <= q < MAP_Q and 0 <= r < MAP_R
 
 
+@lru_cache(maxsize=1 << 21)
 def tile_in_map(tx: int, ty: int) -> bool:
     q, r = tile_to_hex(tx, ty)
     return in_map(q, r)

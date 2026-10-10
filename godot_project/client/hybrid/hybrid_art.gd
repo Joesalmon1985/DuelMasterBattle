@@ -36,9 +36,27 @@ func load_catalogue() -> void:
 
 
 func draw_terrain(canvas: CanvasItem, origin: Vector2i, radius: int, tpx: int) -> void:
+	var xf: Transform2D = canvas.get_viewport().get_canvas_transform()
+	var zoom: float = xf.get_scale().x
+	var inv := xf.affine_inverse()
+	var vp: Vector2 = canvas.get_viewport_rect().size
+	var tl: Vector2 = inv * Vector2.ZERO
+	var br: Vector2 = inv * vp
+	var x0 := int(floor(tl.x / tpx)) - 1
+	var y0 := int(floor(tl.y / tpx)) - 1
+	var x1 := int(ceil(br.x / tpx)) + 1
+	var y1 := int(ceil(br.y / tpx)) + 1
+	if zoom < 0.3:
+		# far view: flat grass per block of tiles, so a whole continent costs a few thousand rects
+		var step := 8
+		for by in range(int(floor(float(y0) / step)) * step, y1, step):
+			for bx in range(int(floor(float(x0) / step)) * step, x1, step):
+				if HexCoords.tile_in_map(bx + step / 2, by + step / 2):
+					canvas.draw_rect(Rect2(bx * tpx, by * tpx, step * tpx, step * tpx), Color(0.17, 0.34, 0.19), true)
+		return
 	var names: Array[String] = ["widelands.meadow1", "widelands.meadow2", "widelands.meadow3"]
-	for ty in range(origin.y - radius, origin.y + radius + 1):
-		for tx in range(origin.x - radius, origin.x + radius + 1):
+	for ty in range(maxi(y0, origin.y - radius), mini(y1, origin.y + radius + 1)):
+		for tx in range(maxi(x0, origin.x - radius), mini(x1, origin.x + radius + 1)):
 			if not HexCoords.tile_in_map(tx, ty):
 				continue
 			var pick: int = absi(tx * 3 + ty * 5) % names.size()
@@ -99,6 +117,27 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	_draw_health(canvas, entity, anchor)
 
 
+func draw_effects(canvas: CanvasItem, effects: Array, tpx: int) -> void:
+	for e in effects:
+		if typeof(e) != TYPE_DICTIONARY:
+			continue
+		var a := Vector2(float(e.get("x1", 0)) + 0.5, float(e.get("y1", 0)) + 0.5) * tpx + Vector2(0, -14)
+		var b := Vector2(float(e.get("x2", 0)) + 0.5, float(e.get("y2", 0)) + 0.5) * tpx + Vector2(0, -14)
+		var ttl := float(e.get("ttl_ms", 0))
+		if str(e.get("t", "")) == "explosion":
+			var f := clampf(1.0 - ttl / 2500.0, 0.0, 1.0) if ttl > 800.0 else clampf(1.0 - ttl / 800.0, 0.0, 1.0)
+			canvas.draw_circle(b, 14.0 + 30.0 * f, Color(1.0, 0.55, 0.1, 0.65 * (1.0 - f)))
+			canvas.draw_circle(b, 8.0 + 14.0 * f, Color(1.0, 0.9, 0.4, 0.8 * (1.0 - f)))
+		else:
+			var t := clampf(1.0 - ttl / 400.0, 0.0, 1.0)
+			var head := a.lerp(b, minf(t * 3.0, 1.0))
+			var tail := a.lerp(b, maxf(t * 3.0 - 0.35, 0.0))
+			var heavy := str(e.get("p", "")) in ["Bullet", "Missile"]
+			canvas.draw_line(tail, head, Color(1.0, 0.85, 0.3, 0.95), 5.0 if heavy else 3.0)
+			if t >= 1.0:
+				canvas.draw_circle(b, 6.0, Color(1.0, 0.7, 0.2, 0.6))
+
+
 func _draw_marker(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> void:
 	var kind := str(entity.get("class", ""))
 	var radius := 0.0
@@ -111,6 +150,14 @@ func _draw_marker(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> vo
 	if radius == 0.0:
 		return
 	var col: Color = faction_colors.get(str(entity.get("faction_name", "")), Color(0.7, 0.7, 0.7))
+	var zoom: float = canvas.get_viewport().get_canvas_transform().get_scale().x
+	if zoom < 0.2 and (kind == "worker" or kind == "carrier"):
+		return
+	if zoom < 0.2:
+		# strategic icon: a solid dot in the faction colour, about 6 screen px
+		var dot := 6.0 / maxf(zoom, 0.02)
+		canvas.draw_circle(anchor, dot * (1.4 if entity.has("hp") and kind != "unit" else 1.0), col)
+		return
 	var width := 3.0 if show_markers else 2.0
 	canvas.draw_arc(anchor + Vector2(0, 8), radius, 0.0, TAU, 28, Color(col.r, col.g, col.b, 0.9), width)
 	if selected.has(str(entity.get("id", ""))):

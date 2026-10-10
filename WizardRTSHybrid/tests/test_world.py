@@ -97,9 +97,15 @@ def test_military_moves_and_resolves_a_hit() -> None:
     world = HybridWorld()
     cube = world.dmb.hazards["catastrophe"]["cubes"][world.hazard_id]
     cube["active"] = False
-    world.advance(120_000, 1)
+    red = next(i for i, u in world.units.items() if u["kind"] == "tank" and u["faction_name"] == "Red")
+    blue = next(i for i, u in world.units.items() if u["kind"] == "tank" and u["faction_name"] == "Blue")
+    world.move([red], world.units[blue]["tx"] - 3, world.units[blue]["ty"], attack_move=True)
+    for i in range(1500):
+        world.advance(100, i + 1)
+        if world.stats["attack"] > 0:
+            break
     assert world.stats["move"] > 0
-    assert world.stats["attack"] > 0 or world.stats["destroyed"] > 0
+    assert world.stats["attack"] > 0
 
 
 def test_duel_pauses_and_outcomes_differ() -> None:
