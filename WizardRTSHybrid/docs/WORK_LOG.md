@@ -52,3 +52,5 @@
 - 2026-10-10 (Claude): checkpoint. `recruit` command, `return` conditions (124 runnable, bench 124/124), tribes per faction (stock and soldier cost), pseudo-wares recruit/carrier topped up by warehouses, `run_headed_suite.ps1`. Suite: 55 tests, 7 headed scripts pass. God test now plays Orange (Barbarians) because other tribes' soldier chains need the unfinished AI planner.
 
 - 2026-10-10 (Claude): checkpoint. Tribe planner (dependency resolution over `inputs_for`, mines on deposits, extra quarries when granite is 0), tribe soldier sites incl. Amazon initiation site, 24 rocks per faction, gold/stone deposits. Honest gap: no tribe barracks recruits yet. 57 tests, headed suite, 3-seed long run pass.
+
+- 2026-10-10 (Claude): checkpoint. Starved-input resolver (kilns, quarries), `ATTACK_AFTER_MS` 20 min, 57 tests, war and god headed pass, 40-minute long run ok.

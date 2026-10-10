@@ -34,6 +34,7 @@ PERSONALITY = {
     "Orange": {"plan": {"vehicle_factory": 2, "barracks": 2, "quarry": 2}, "squad": 7, "targets": ["warehouse", "vehicle_factory", "barracks"]},
 }
 MAX_ARMY = 30
+ATTACK_AFTER_MS = 20 * 60_000  # factions build up for 20 game minutes before they march
 
 
 def _plan(name: str) -> dict[str, int]:
@@ -212,6 +213,18 @@ def tribe_step(world: Any, name: str, wh: dict) -> None:
                 for dep in _resolve(world, name, tribe, ware, set(seen), force=_stock(world, name, ware) == 0):
                     if dep not in plan:
                         plan.insert(0, dep)
+    # inputs of buildings we already run that the warehouse no longer has: add another source (kilns when coal runs out)
+    starved: list[str] = []
+    for b in world.buildings.values():
+        if b["faction_name"] == name and b["kind"].startswith("wl:") and int(b.get("hp", 1)) > 0:
+            spec = wl_defs.spec_for_kind(b["kind"])
+            for ware in spec["inputs"] if spec else {}:
+                if ware not in ("recruit", "carrier") and _stock(world, name, ware) == 0 and ware not in starved:
+                    starved.append(ware)
+    for ware in starved:
+        for dep in _resolve(world, name, tribe, ware, set(seen), force=True):
+            if dep not in plan:
+                plan.append(dep)
     for bname in plan:
         if wl_defs.PREFIX + bname in have_kinds:
             continue
@@ -251,7 +264,7 @@ def military_step(world: Any, name: str) -> None:
         world.events.append({"kind": "ai_defend", "faction": name, "at": [threat["tx"], threat["ty"]]})
         return
     squad = PERSONALITY.get(name, {}).get("squad", 4)
-    if len(idle) < squad:
+    if len(idle) < squad or int(world.dmb.clock.get("game_ms", 0)) < ATTACK_AFTER_MS:
         return
     target = _pick_target(world, name, idle)
     if target is None:

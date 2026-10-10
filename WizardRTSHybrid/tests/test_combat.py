@@ -133,6 +133,9 @@ def test_destroyed_building_burns_then_is_removed_with_its_roads_and_stock() -> 
 
 
 def test_ai_builds_recruits_and_attacks_without_free_goods() -> None:
+    from wizard_rts import ai
+
+    ai.ATTACK_AFTER_MS = 0  # this test is about the attack decision, not the opening build-up
     w = _world()
     w.ai_enabled = True
     before = {n: sum(1 for b in w.buildings.values() if b["faction_name"] == n and b["kind"] == "producer") for n in w.faction_info}
@@ -144,5 +147,6 @@ def test_ai_builds_recruits_and_attacks_without_free_goods() -> None:
     assert after["Red"] >= 2 and sum(after.values()) >= 8, after  # the attacked faction may have lost some
     assert any(e["kind"] == "ai_attack" for e in w.events) or w.stats["attack"] > 0
     # nothing was free: every unit built by the AI consumed an ax or granite and plank
+    ai.ATTACK_AFTER_MS = 20 * 60_000
     made = w.stats.get("recruited", 0)
     assert made <= w.stats.get("consumed_ax", 0) + w.stats.get("consumed_granite", 0) // 2
