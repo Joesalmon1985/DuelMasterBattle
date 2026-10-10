@@ -33,13 +33,15 @@ Commands are in `docs/PROJECT_STATUS.md` and `docs/STATE_OF_PLAY.md`. One sim pr
 
 ## Checkpoint (latest)
 
-Verified: 55 Python tests, headed walk/visual/duel/forestry/food/god/war all PASS (`scripts/run_headed_suite.ps1`). 124 of 124 runnable Widelands production sites pass the bench (`verify_generic_buildings.py`), including tribe barracks (`recruit` command spawns a Widelands soldier) and `return=... when/unless` conditions.
+Verified: 57 Python tests, all 7 headed scripts (`scripts/run_headed_suite.ps1`), 30-minute x 3 seeds long run (`scripts/long_run.py`, report `docs/evidence/long_run/report.html`), 124 of 124 runnable Widelands production sites in the bench.
 
-In progress, partly landed: **tribes per faction** (`wizard_rts/tribes.py`: Red/Orange Barbarians, Blue Empire, Green Frisians, Yellow Atlanteans, Purple Amazons). Done: tribe starter stock, tribe-specific rifleman cost (`construction.recipe_for` uses the tribe barracks' consume line), gold/stone deposits per faction. NOT done: the tribe-aware AI planner. Until it exists, non-Barbarian factions cannot make their soldier wares, so their OpenRA barracks stall and only Barbarians (Red, Orange) recruit; the six-faction war is therefore lopsided. The God Mode test uses Orange for that reason.
+Tribes per faction: Red and Orange Barbarians, Blue Empire, Green Frisians, Yellow Atlanteans, Purple Amazons (`wizard_rts/tribes.py`). The tribe-aware AI planner exists (`ai.tribe_step`, `_resolve`, `tribes.inputs_for`): it resolves the soldier wares of the tribe into a small dependency chain, builds missing buildings one at a time (mines on deposits, extra quarries when granite runs dry), then the tribe barracks. Barbarians recruit well. Peace runs (`world.ai_aggressive=False`) show Blue, Green, Yellow and Purple building their chains, but by minute 90 no tribe barracks has produced a Widelands soldier: Green lacks a fur_garment producer (tailor not runnable), Blue never afforded its barracks (marble columns), supply chains are slow. In war the Barbarians still overrun everyone around minute 20.
 
 ## Next task
 
-Write the tribe-aware AI planner in `ai.py`: for a faction's tribe, resolve the soldier wares (`wl_defs.soldier_wares`) through `tribes.producers()` into a dependency-ordered list of missing buildings (recursing over each building's inputs and over missing build-cost wares), place the first affordable one near the warehouse on a deposit if it mines (`world.resources`), connect its road, one site at a time. Then build the tribe barracks. Verify with `long_run.py`: every tribe must reach `recruited > 0` by minute 30 without free goods; add `tests/test_tribe_ai.py`. After that: military/training sites from the Lua, unsupported worker commands (fish, breed, scout, swimming), per-building headed verification, God Mode menu catalogue, player-colour sprite remap. Checkpoint every 20-30 minutes. B1 is still the missing C++ compiler.
+1. Debug why tribe barracks starve (peace run `/tmp`-style script: print each tribe barracks stock vs `soldier_wares`, and each smithy's `shortages`); make the resolver add producers for unproducible wares by switching to alternate producers or enabling the blocking commands; verify with a test that every tribe recruits a Widelands soldier within 60 game minutes in peace.
+2. Balance war: stagger AI aggression (attack only after the squad threshold AND minute 25), so six factions survive long enough for the six-colour battle to be even.
+3. Military/training sites from the Lua, unsupported worker commands (fish, breed, scout, swimming), per-building headed verification, God Mode menu catalogue, player-colour sprite remap. Checkpoint every 20-30 minutes. B1 is still the missing C++ compiler.
 
 ## First files
 

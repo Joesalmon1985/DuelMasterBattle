@@ -50,8 +50,8 @@ def test_nothing_is_harvested_before_the_field_is_ripe() -> None:
     _run(w, 200)
     for f in _wheat(w):
         f["timer_ms"] = 10**9  # frozen tiny
-    for _ in range(6):
-        _run(w, 1_000)
+    for _ in range(60):
+        _run(w, 100)
         for f in _wheat(w):
             if f["stage"] != "tiny":
                 f["stage"], f["timer_ms"] = "tiny", 10**9

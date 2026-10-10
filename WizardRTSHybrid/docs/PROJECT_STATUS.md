@@ -28,8 +28,8 @@ Godot 4.5.1 console, Forward+, one fresh sim per script (`$env:HYBRID_SIM_PORT`)
 
 ## Checkpoint
 
-55 Python tests and the full headed suite pass. Tribes per faction are half landed (see `docs/CLAUDE_HANDOFF.md`).
+57 Python tests, the full headed suite and a 3-seed 30-minute long run pass. Tribe planner builds tribe chains; tribe soldiers are not yet produced (see `docs/CLAUDE_HANDOFF.md`).
 
 ## Next task
 
-Tribe-aware AI planner so all six factions recruit (see `docs/CLAUDE_HANDOFF.md`).
+Make every tribe barracks produce soldiers, then balance aggression (see `docs/CLAUDE_HANDOFF.md`).

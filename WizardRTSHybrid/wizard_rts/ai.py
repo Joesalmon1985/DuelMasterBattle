@@ -114,6 +114,111 @@ def economy_step(world: Any, name: str) -> None:
         if site:
             world.events.append({"kind": "ai_build", "faction": name, "building": kind, "id": site})
             return
+    tribe_step(world, name, wh)
+
+
+# ------------------------------------------------------------------ tribe planner
+
+def _makes(world: Any, name: str, ware: str) -> bool:
+    from wizard_rts.logistics import io_for
+
+    return any(
+        ware in io_for(world, b).get("outputs", [])
+        for b in world.buildings.values()
+        if b["faction_name"] == name and "hp" in b and int(b["hp"]) > 0
+    )
+
+
+def _resolve(world: Any, name: str, tribe: str, ware: str, seen: set, depth: int = 0, force: bool = False) -> list[str]:
+    """Dependency-ordered tribe buildings still missing for a ware (deepest first)."""
+    from wizard_rts import tribes
+
+    if depth > 8 or ware in seen or ware in ("recruit", "carrier"):
+        return []
+    seen.add(ware)
+    if not force and _makes(world, name, ware):
+        return []
+    cands = tribes.producers(tribe).get(ware, [])
+    if force:  # an extra source of a ware whose existing makers have run dry
+        have = {b["kind"] for b in world.buildings.values() if b["faction_name"] == name and int(b.get("hp", 1)) > 0}
+        cands = [c for c in cands if "wl:" + c not in have]
+    if not cands:
+        return []
+    best = cands[0]
+    order: list[str] = []
+    for inp in tribes.inputs_for(tribe, best, ware):
+        order += _resolve(world, name, tribe, inp, seen, depth + 1)
+    order.append(best)
+    return order
+
+
+def _mine_site(world: Any, wh: dict, resource: str) -> tuple[int, int] | None:
+    best = None
+    for (tx, ty), amounts in world.resources.items():
+        if amounts.get(resource, 0) <= 0 or max(abs(tx - wh["tx"]), abs(ty - wh["ty"])) > 30:
+            continue
+        if (tx, ty) in world.blocked or (tx, ty) in world.tree_tiles:
+            continue
+        if any(max(abs(b["tx"] - tx), abs(b["ty"] - ty)) <= 3 and "constructing" not in b and b["kind"] in ("mine", "ironmine") or b["kind"].startswith("wl:") and max(abs(b["tx"] - tx), abs(b["ty"] - ty)) <= 2 for b in world.buildings.values()):
+            continue
+        total = sum(world.resources.get((tx + dx, ty + dy), {}).get(resource, 0) for dx in range(-2, 3) for dy in range(-2, 3))
+        if best is None or total > best[0]:
+            best = (total, (tx, ty))
+    return best[1] if best else None
+
+
+def _build_tribe_building(world: Any, name: str, bname: str, wh: dict) -> str | None:
+    from wizard_rts import wl_defs
+
+    kind = wl_defs.PREFIX + bname
+    spec = con.build_spec(kind)
+    if spec is None or not all(_stock(world, name, g) >= n for g, n in spec["cost"].items()):
+        return None
+    mining = [a["resource"] for prog in wl_defs.building_spec(bname)["programs"].values() for cmd, a in prog if cmd == "mine"]
+    if mining:
+        tile = _mine_site(world, wh, mining[0])
+        if tile is None:
+            return None
+        res = con.place_building(world, name, kind, tile[0], tile[1])
+        if res["status"] != "ok":
+            return None
+        if con.build_road(world, name, res["id"], wh["id"])["status"] != "ok":
+            _cancel_site(world, res["id"])
+            return None
+        return res["id"]
+    return _place_near(world, name, kind, wh)
+
+
+def tribe_step(world: Any, name: str, wh: dict) -> None:
+    """Build what the faction's tribe needs to make its soldier wares, then its barracks."""
+    from wizard_rts import tribes, wl_defs
+
+    tribe = world.faction_info.get(name, {}).get("tribe")
+    if not tribe:
+        return
+    have_kinds = {b["kind"] for b in world.buildings.values() if b["faction_name"] == name and int(b.get("hp", 1)) > 0}
+    plan: list[str] = []
+    seen: set = set()
+    for ware in wl_defs.soldier_wares(tribe):
+        plan += [b for b in _resolve(world, name, tribe, ware, seen) if b not in plan]
+    barracks = tribes.barracks_of(tribe)
+    if barracks and wl_defs.PREFIX + barracks not in have_kinds:
+        plan.append(barracks)
+    # a building we cannot afford needs its build-cost wares produced first
+    for bname in list(plan):
+        spec = con.build_spec(wl_defs.PREFIX + bname)
+        for ware, n in (spec or {"cost": {}})["cost"].items():
+            if _stock(world, name, ware) < n:
+                for dep in _resolve(world, name, tribe, ware, set(seen), force=_stock(world, name, ware) == 0):
+                    if dep not in plan:
+                        plan.insert(0, dep)
+    for bname in plan:
+        if wl_defs.PREFIX + bname in have_kinds:
+            continue
+        site = _build_tribe_building(world, name, bname, wh)
+        if site:
+            world.events.append({"kind": "ai_build", "faction": name, "building": bname, "id": site})
+            return
 
 
 def _deposit_site(world: Any, name: str, kind: str) -> bool:
@@ -132,6 +237,8 @@ def military_step(world: Any, name: str) -> None:
         if b["kind"] in con.RECIPES and b.get("operational") and len(b.get("queue", [])) < 2 and len(army) < MAX_ARMY:
             unit_kind = next(iter(con.RECIPES[b["kind"]]))
             con.queue_unit(world, b["id"], unit_kind)
+    if not getattr(world, "ai_aggressive", True):
+        return  # peace: factions build and recruit but do not march
     idle = [u for u in army if not u.get("order") and u.get("status") in ("idle", None, "attacking", "blocked", "stuck")]
     if not idle:
         return

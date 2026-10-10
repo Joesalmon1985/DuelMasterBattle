@@ -58,11 +58,28 @@ def producers(tribe: str) -> dict[str, list[str]]:
 
 
 def barracks_of(tribe: str) -> str | None:
-    for name, spec in tribe_buildings(tribe).items():
-        if name.endswith("barracks"):
+    for name in tribe_buildings(tribe):
+        if wl_defs.is_soldier_site(wl_defs.defs()["buildings"][name]):
             return name
     return None
 
 
 def legacy_outputs() -> set[str]:
     return {g for goods in BUILDING_OUTPUTS.values() for g in goods}
+
+
+def inputs_for(tribe: str, building: str, ware: str) -> list[str]:
+    """Wares consumed by the programmes of a building that produce `ware` (not every input it can hold)."""
+    spec = tribe_buildings(tribe)[building]
+    out: list[str] = []
+    for actions in spec["programs"].values():
+        if any(cmd == "produce" and ware in a for cmd, a in actions):
+            for cmd, a in actions:
+                if cmd == "consume":
+                    out += [g for g in a if g not in out]
+                elif cmd == "consume_groups":
+                    for alts, _n in a["groups"]:
+                        if alts[0] not in out:
+                            out.append(alts[0])
+        # createware via a worker needs no inputs
+    return out

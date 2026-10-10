@@ -277,7 +277,10 @@ class HybridWorld:
         center: tuple[int, int],
         road: set[tuple[int, int]],
     ) -> None:
-        for dx, dy in ((-7, 8), (-8, 11), (-6, 12), (-1, 12), (-10, 9), (8, 2)):
+        scatter = []
+        for _ in range(18):  # a quarry field big enough for a long game
+            scatter.append((self.rng.randint(-9, -1), self.rng.randint(6, 13)))
+        for dx, dy in ((-7, 8), (-8, 11), (-6, 12), (-1, 12), (-10, 9), (8, 2), *scatter):
             tile = (center[0] + dx, center[1] + dy)
             if not tile_in_map(*tile) or tile in self.blocked or tile in road or tile in self.tree_tiles:
                 continue
