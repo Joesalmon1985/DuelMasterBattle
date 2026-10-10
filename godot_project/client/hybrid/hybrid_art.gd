@@ -61,6 +61,8 @@ func draw_road(canvas: CanvasItem, tile: Array, tpx: int) -> void:
 
 func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var definition := str(entity.get("definition", ""))
+	if bool(entity.get("inside", false)):
+		return
 	if definition == "":
 		if str(entity.get("kind", "")) == "hazard":
 			var hx := int(entity.get("tx", 0))
@@ -83,6 +85,10 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var tx := int(entity.get("tx", 0))
 	var ty := int(entity.get("ty", 0))
 	var anchor := Vector2(tx * tpx + tpx * 0.5, ty * tpx + tpx * 0.5)
+	if entity.has("next_tx"):
+		var t := float(entity.get("move_progress", 0.0))
+		var nxt := Vector2(int(entity["next_tx"]) * tpx + tpx * 0.5, int(entity["next_ty"]) * tpx + tpx * 0.5)
+		anchor = anchor.lerp(nxt, t)
 	var top_left := anchor - Vector2(float(hotspot[0]), float(hotspot[1])) * scale
 	var src := _source_rect(item, tex, entity)
 	canvas.draw_texture_rect_region(tex, Rect2(top_left, frame_size * scale), src)
@@ -105,6 +111,17 @@ func _draw_health(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> vo
 
 func _item_for(entity: Dictionary) -> Dictionary:
 	var definition := str(entity.get("definition", ""))
+	var kind := str(entity.get("kind", ""))
+	if kind == "tree":
+		var stage := str(entity.get("stage", "old"))
+		var tkey := "widelands.fallentree" if stage == "felled" else "%s.%s" % [definition, stage]
+		return items.get(tkey, {})
+	if kind == "worker":
+		var anim := str(entity.get("anim", "idle"))
+		var key := "%s.%s" % [definition, anim]
+		if anim == "walk" or anim == "walkload":
+			key += ".%s" % _sheet_facing(str(entity.get("facing", "e")))
+		return items.get(key, items.get("%s.idle" % definition, {}))
 	if definition == "widelands.carrier":
 		var facing := _sheet_facing(str(entity.get("facing", "e")))
 		var key := "widelands.carrier" if facing == "e" else "widelands.carrier.%s" % facing

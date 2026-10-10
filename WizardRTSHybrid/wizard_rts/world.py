@@ -7,6 +7,7 @@ Crossing a hex updates the player hex and does not advance game time.
 
 from __future__ import annotations
 
+import random
 import sys
 from pathlib import Path
 from typing import Any
@@ -27,6 +28,7 @@ from wizard_rts.economy import PROVENANCE as ECONOMY_PROVENANCE  # noqa: E402
 from wizard_rts.economy import SCHEDULE_PROVENANCE  # noqa: E402
 from wizard_rts.widelands_stock import EconomyTotals  # noqa: E402
 from wizard_rts.economy import economy_quantum  # noqa: E402
+from wizard_rts.forestry import forestry_quantum, plant_tree, find_path  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import military_quantum, order_attack  # noqa: E402
@@ -44,6 +46,14 @@ class HybridWorld:
         self.carriers: dict[str, dict[str, Any]] = {}
         self.units: dict[str, dict[str, Any]] = {}
         self.roads: dict[str, list[tuple[int, int]]] = {}
+        self.road_tile_set: set[tuple[int, int]] = set()
+        self.trees: dict[str, dict[str, Any]] = {}
+        self.tree_tiles: dict[tuple[int, int], str] = {}
+        self.workers: dict[str, dict[str, Any]] = {}
+        self.reserved_tiles: set[tuple[int, int]] = set()
+        self.counters: dict[str, int] = {}
+        self.rng = random.Random(int(seed))
+        self.time_scale = 1
         self.stocks: dict[str, dict[str, int]] = {}
         self.economy_totals = EconomyTotals()
         self.blocked: set[tuple[int, int]] = set()
@@ -98,7 +108,7 @@ class HybridWorld:
         # playable zoom. Hex (2, 3)'s center is a full hex away and hides it.
         start = self._stand_near(red["road"])
         self.player = {"tx": start[0], "ty": start[1], "facing": "up"}
-        self._place_hazard(red["road"])
+        self._place_hazard(red["road_a"])
         self.events.append({"kind": "layout", "factions": [red["faction"], blue["faction"]]})
 
     def _place_faction(self, name: str, q: int, r: int) -> dict[str, Any]:
@@ -117,36 +127,58 @@ class HybridWorld:
             faction_id, name, "processor", processor_tile, "Sawmill", "widelands.sawmill"
         )
         self.buildings[processor]["warehouse_id"] = warehouse
-        road_tiles = _path(producer_tile, warehouse_tile) + _path(warehouse_tile, processor_tile)[1:]
-        road_id = f"road:{faction_id}"
-        self.roads[road_id] = road_tiles
+        road_a = _path(producer_tile, warehouse_tile)
+        road_b = _path(warehouse_tile, processor_tile)
+        road_tiles = road_a + road_b[1:]
+        for suffix, road_pts, src, dst in (("a", road_a, producer, warehouse), ("b", road_b, warehouse, processor)):
+            road_id = f"road:{faction_id}:{suffix}"
+            self.roads[road_id] = road_pts
+            self.road_tile_set.update(road_pts)
+            carrier_id = str(self.dmb.ids.new("cart"))
+            self.carriers[carrier_id] = {
+                "id": carrier_id,
+                "faction": faction_id,
+                "faction_name": name,
+                "kind": "carrier",
+                "label": f"{name} carrier",
+                "tx": road_pts[0][0],
+                "ty": road_pts[0][1],
+                "index": 0,
+                "road_id": road_id,
+                "source_id": src,
+                "dest_id": dst,
+                "good": "log",
+                "cargo": None,
+                "status": "idle",
+                "definition": "widelands.carrier",
+                "facing": "e",
+            }
+            self.stocks[carrier_id] = {}
+        ranger_tile = self._free_in_hex(q, r, center, -6, 3, set(road_tiles))
+        self._building(faction_id, name, "ranger", ranger_tile, "Ranger's hut", "widelands.rangers_hut")
+        self._plant_forest(producer_tile, set(road_tiles))
         self._place_showcase(faction_id, name, q, r, center, set(road_tiles))
-        carrier_id = str(self.dmb.ids.new("cart"))
-        self.carriers[carrier_id] = {
-            "id": carrier_id,
-            "faction": faction_id,
-            "faction_name": name,
-            "kind": "carrier",
-            "label": f"{name} carrier",
-            "tx": road_tiles[0][0],
-            "ty": road_tiles[0][1],
-            "index": 0,
-            "road_id": road_id,
-            "producer_id": producer,
-            "warehouse_id": warehouse,
-            "cargo": None,
-            "status": "idle",
-            "definition": "widelands.carrier",
-            "facing": "e",
-        }
-        self.stocks[carrier_id] = {}
         unit_tile = self._offset_owned(q, r, center, 0, 3)
         self._unit(faction_id, name, "soldier", "Soldier", "widelands.soldier", unit_tile)
         infantry_tile = self._free_in_hex(q, r, center, 1, 4, set())
         self._unit(faction_id, name, "infantry", "Rifleman", "openra.e1", infantry_tile)
         tank_tile = self._free_in_hex(q, r, center, -2, 4, set())
         self._unit(faction_id, name, "tank", "Tank", "openra.3tnk", tank_tile)
-        return {"faction": faction_id, "road": road_tiles, "warehouse": warehouse}
+        return {"faction": faction_id, "road": road_tiles, "road_a": road_a, "warehouse": warehouse}
+
+    def _plant_forest(self, around: tuple[int, int], avoid: set[tuple[int, int]]) -> None:
+        """A mixed-age forest. Persistent ids, staggered growth timers."""
+        stages = ["old"] * 14 + ["mature"] * 4 + ["pole"] * 3 + ["sapling"] * 2
+        for stage in stages:
+            for _ in range(30):
+                tile = (around[0] + self.rng.randint(-8, 8), around[1] + self.rng.randint(-8, 8))
+                if tile in avoid or tile == around or not self._tile_open_anywhere(tile, set()):
+                    continue
+                if tile in self.tree_tiles:
+                    continue
+                tree_id = plant_tree(self, tile, stage)
+                self.trees[tree_id]["timer_ms"] = int(self.trees[tree_id]["timer_ms"] * (0.2 + 0.8 * self.rng.random()))
+                break
 
     def _place_showcase(
         self,
@@ -164,7 +196,6 @@ class HybridWorld:
             ("farm", "widelands.farm", "Farm", 1, -11),
             ("barracks", "openra.barracks", "Barracks", 11, -6),
             ("vehicle_factory", "openra.weap", "War factory", 12, 7),
-            ("refinery", "openra.proc", "Refinery", -12, -3),
             ("defense", "openra.gun", "Turret", 5, 9),
         )
         for kind, definition, label, dx, dy in specs:
@@ -179,12 +210,6 @@ class HybridWorld:
         center: tuple[int, int],
         road: set[tuple[int, int]],
     ) -> None:
-        trees = ((-9, -1), (-9, 1), (-8, 3), (-5, -7), (8, -6), (-2, -8))
-        for dx, dy in trees:
-            tile = (center[0] + dx, center[1] + dy)
-            if not tile_in_map(*tile) or tile in self.blocked or tile in road:
-                continue
-            self._building(faction_id, name, "tree", tile, "Beech", "widelands.beech", block=False)
         for dx, dy in ((-7, 5), (8, 2)):
             tile = (center[0] + dx, center[1] + dy)
             if not tile_in_map(*tile) or tile in self.blocked or tile in road:
@@ -330,13 +355,18 @@ class HybridWorld:
         return {"status": "ok", "snapshot": self.snapshot()}
 
     def advance(self, ms: int, sequence: int) -> dict[str, Any]:
-        quanta = self.clock.request_advance(int(ms), int(sequence))
+        quanta = self.clock.request_advance(int(ms) * int(self.time_scale), int(sequence))
         for _ in range(quanta):
+            forestry_quantum(self)
             economy_quantum(self)
             military_quantum(self)
             if self.economy_quanta % 30 == 0:
                 self.events.append({"kind": "ai_economy", "game_ms": int(self.dmb.clock.get("game_ms", 0))})
         return {"status": "ok", "quanta": quanta, "snapshot": self.snapshot()}
+
+    def set_speed(self, scale: int) -> dict[str, Any]:
+        self.time_scale = max(1, min(int(scale), 60))
+        return {"status": "ok", "time_scale": self.time_scale, "snapshot": self.snapshot()}
 
     def order(self, unit_id: str, target_id: str) -> dict[str, Any]:
         result = order_attack(self, str(unit_id), str(target_id))
@@ -379,7 +409,7 @@ class HybridWorld:
         return {"status": result.get("status"), "result": result, "snapshot": self.snapshot()}
 
     def entity_ids(self) -> list[str]:
-        ids = list(self.buildings) + list(self.carriers) + list(self.units)
+        ids = list(self.buildings) + list(self.carriers) + list(self.units) + list(self.workers) + list(self.trees)
         if self.hazard_id:
             ids.append(self.hazard_id)
         return sorted(ids)
@@ -400,6 +430,28 @@ class HybridWorld:
             row = _entity_row(carrier)
             row["cargo"] = carrier["cargo"]
             row["status"] = carrier["status"]
+            entities.append(row)
+        for tree in self.trees.values():
+            entities.append(
+                {
+                    "id": tree["id"], "kind": "tree", "definition": tree["definition"], "stage": tree["stage"],
+                    "tx": tree["tx"], "ty": tree["ty"], "alive": True, "faction": "", "label": "Tree",
+                }
+            )
+        for worker in self.workers.values():
+            row = _entity_row(worker)
+            row["role"] = worker["role"]
+            row["anim"] = worker["anim"]
+            row["carrying"] = worker["carrying"]
+            row["status"] = worker["status"]
+            row["inside"] = (
+                worker["anim"] == "idle"
+                and not worker["path"]
+                and (worker["tx"], worker["ty"]) == (self.buildings[worker["building"]]["tx"], self.buildings[worker["building"]]["ty"])
+            )
+            row["move_progress"] = min(1.0, worker["progress_ms"] / 600.0) if worker["path"] else 0.0
+            if worker["path"]:
+                row["next_tx"], row["next_ty"] = worker["path"][0]
             entities.append(row)
         for unit in self.units.values():
             row = _entity_row(unit)
@@ -440,6 +492,7 @@ class HybridWorld:
                 "military_damage": MILITARY_PROVENANCE,
                 "military_movement": MOVEMENT_PROVENANCE,
             },
+            "time_scale": self.time_scale,
             "economy_totals": dict(self.economy_totals.totals),
             "map": {"q": 20, "r": 20},
             "neighbor_sample": neighbors(q, r),

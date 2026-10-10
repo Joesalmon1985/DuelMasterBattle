@@ -77,9 +77,9 @@ def test_idle_advance_produces_and_delivers() -> None:
     cube = world.dmb.hazards["catastrophe"]["cubes"][world.hazard_id]
     cube["active"] = False
     before = _total(world, "log")
-    world.advance(60_000, 1)
+    world.advance(180_000, 1)
     snap = world.snapshot()
-    assert snap["game_ms"] == 60_000
+    assert snap["game_ms"] == 180_000
     assert _total(world, "log") + _total(world, "plank") > before
     assert any(event["kind"] == "deliver" for event in world.events)
 
@@ -126,7 +126,7 @@ def test_duel_pauses_and_outcomes_differ() -> None:
     lost.resolve(started_loss["payload"]["duel"]["id"], False, command_id="cmd-loss")
     assert lost.snapshot()["hazard_active"] is True
     red = _faction_named(lost, "Red")
-    lost.advance(20_000, 1)
+    lost.advance(240_000, 1)
     assert int(lost.stocks[_warehouse(lost, red)].get("log", 0)) == 0
     assert lost.stats["blocked"] > 0
 

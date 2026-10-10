@@ -36,3 +36,5 @@
 - Documented `docs/STATE_OF_PLAY.md` and merged the hybrid branch into `main` at Joe's request. Spellbook polish dirt stayed unstaged.
 
 - 2026-10-10 (Claude): added `order` op and unit attack orders through `damage_building`; destroyed buildings stop producing. 20 hybrid tests + 2 duel tests pass.
+
+- 2026-10-10 (Claude): Phase A forestry. Trees are persistent entities with Widelands lifecycle (sapling 55s, pole 65s, mature 72s, old 25m25s, death/seed chances). Workers (lumberjack, ranger) run data-driven programmes: findobject/findspace, A* walk one tile per 600 ms, animate, callobject fall, createware, plant, return. A log exists only after a felled tree; it is stored in the hut output; a road carrier hauls it to the warehouse; a second carrier feeds the sawmill. A destroyed workplace cancels the job and releases the tree. Timer-based log minting removed. OpenRA refinery removed from the default settlement. Hazard moved to the producer road. `speed` op (time_scale 1..60) for tests. Duel test now captures ids when the board opens. Evidence: `docs/evidence/forestry/`. FIVE_MINUTES_OK produce=14 deliver=7 (real worker pace).

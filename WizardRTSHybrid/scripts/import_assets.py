@@ -179,6 +179,89 @@ def sequence_item(
     return item
 
 
+TREE_STAGE_ART = {
+    "sapling": ("sapling/sapling_1.png", [5, 12], 8),
+    "pole": ("pole/pole_1.png", [12, 28], 8),
+    "mature": ("mature/mature_1.png", [18, 48], 8),
+    "old": ("old/old_1.png", [24, 60], 10),
+}
+WORKER_SHEETS = {
+    # role: (tribe dir, {anim: (hotspot, directional, columns, rows, frames, fps)})
+    "lumberjack": (
+        "barbarians/lumberjack",
+        {
+            "idle": ([5, 21], False, 3, 4, 10, 10),
+            "hack": ([19, 15], False, 3, 4, 10, 10),
+            "walk": ([10, 20], True, 3, 4, 10, 10),
+            "walkload": ([10, 19], True, 3, 4, 10, 10),
+        },
+    ),
+    "ranger": (
+        "barbarians/ranger",
+        {
+            "idle": ([11, 20], False, 1, 1, 1, 0),
+            "dig": ([12, 22], False, 3, 4, 10, 5),
+            "plant": ([16, 20], False, 3, 4, 10, 10),
+            "water": ([18, 23], False, 3, 4, 10, 5),
+            "walk": ([11, 20], True, 3, 4, 10, 10),
+        },
+    ),
+}
+
+
+def forestry_items() -> list[dict]:
+    out = []
+    for stage, (rel, hotspot, fps) in TREE_STAGE_ART.items():
+        out.append(
+            sheet(
+                f"widelands.beech.{stage}",
+                f"data/world/immovables/trees/beech/{rel}",
+                f"beech_{stage}.png",
+                columns=2, rows=2, frames=4, hotspot=hotspot, scale=2, fps=fps,
+                source_note=f"beech_summer_{stage} spritesheets.idle",
+            )
+        )
+    out.append(
+        sheet(
+            "widelands.fallentree", "data/world/immovables/trees/fallentree/idle.png", "fallentree.png",
+            columns=1, rows=1, frames=1, hotspot=[2, 31], scale=2, fps=0,
+            source_note="fallentree animations.idle hotspot {2,31}",
+        )
+    )
+    out.append(
+        sheet(
+            "widelands.rangers_hut",
+            "data/tribes/buildings/productionsites/barbarians/rangers_hut/idle_1.png",
+            "rangers_hut.png",
+            columns=4, rows=5, frames=1, hotspot=[45, 49], scale=2, fps=0,
+            source_note="barbarians_rangers_hut spritesheets.idle (20 frames, frame 0 shown)",
+        )
+    )
+    out.append(
+        sheet(
+            "widelands.log", "data/tribes/wares/log/idle_1.png", "ware_log.png",
+            columns=1, rows=1, frames=1, hotspot=[11, 9], scale=3, fps=0,
+            source_note="log ware animations.idle",
+        )
+    )
+    for role, (tribe_dir, anims) in WORKER_SHEETS.items():
+        for anim, (hotspot, directional, cols, rows, frames, fps) in anims.items():
+            dirs = ["e", "ne", "nw", "se", "sw", "w"] if directional else [""]
+            for facing in dirs:
+                name = f"{anim}_{facing}_1.png" if facing else f"{anim}_1.png"
+                suffix = f".{facing}" if facing else ""
+                out.append(
+                    sheet(
+                        f"widelands.{role}_worker.{anim}{suffix}",
+                        f"data/tribes/workers/{tribe_dir}/{name}",
+                        f"{role}_{anim}{('_' + facing) if facing else ''}.png",
+                        columns=cols, rows=rows, frames=frames, hotspot=hotspot, scale=4, fps=fps,
+                        source_note=f"{tribe_dir} spritesheets.{anim}",
+                    )
+                )
+    return out
+
+
 def main() -> None:
     if ART.exists():
         shutil.rmtree(ART)
@@ -543,6 +626,7 @@ def main() -> None:
             )
         )
 
+    items.extend(forestry_items())
     required = [
         "widelands.lumberjack",
         "widelands.warehouse",

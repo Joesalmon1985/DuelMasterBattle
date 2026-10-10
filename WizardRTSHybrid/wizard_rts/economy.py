@@ -36,16 +36,26 @@ def produce(world: Any, building_id: str, good: str, amount: int = 1) -> None:
     _supply(world, building_id).add_wares(good, amount)
 
 
+INPUT_CAPACITY = 4
+
+
+def _wants(world: Any, dest_id: str, good: str) -> bool:
+    dest = world.buildings.get(dest_id, {})
+    if dest.get("kind") == "warehouse":
+        return bool(dest.get("operational", True))
+    if not dest.get("operational", True):
+        return False
+    return int(world.stocks.get(dest_id, {}).get(good, 0)) < INPUT_CAPACITY
+
+
 def economy_quantum(world: Any) -> None:
-    """One game-time quantum of production, haul, and consumption."""
+    """One game-time quantum of hauling and processing.
+
+    Producers make nothing here: workers (forestry.py) bring wares to the
+    workplace output. Carriers move them along a road to the next building.
+    """
     world.economy_quanta += 1
     n = world.economy_quanta
-    if n % 10 == 0:
-        for building_id, building in world.buildings.items():
-            if building["kind"] == "producer" and building.get("operational", True):
-                produce(world, building_id, "log", 1)
-                world.stats["produce"] += 1
-                world.events.append({"kind": "produce", "id": building_id, "good": "log"})
     if n % 5 == 0:
         for carrier in world.carriers.values():
             _step_carrier(world, carrier)
@@ -53,32 +63,34 @@ def economy_quantum(world: Any) -> None:
         for building_id, building in world.buildings.items():
             if building["kind"] != "processor" or not building.get("operational", True):
                 continue
-            warehouse_id = building["warehouse_id"]
-            if move_good(world, warehouse_id, building_id, "log", 1):
+            if int(world.stocks.get(building_id, {}).get("log", 0)) > 0:
+                world.stocks[building_id]["log"] -= 1
                 produce(world, building_id, "plank", 1)
                 world.events.append({"kind": "consume", "id": building_id, "good": "log"})
             else:
                 world.events.append({"kind": "shortage", "id": building_id, "faction": building["faction"]})
-    if len(world.events) > 80:
-        del world.events[:-80]
+    if len(world.events) > 200:
+        del world.events[:-200]
 
 
 def _step_carrier(world: Any, carrier: dict) -> None:
     road: list[tuple[int, int]] = world.roads[carrier["road_id"]]
     idx = int(carrier["index"])
     tx, ty = road[idx]
-    producer = carrier["producer_id"]
-    warehouse = carrier["warehouse_id"]
-    if not carrier["cargo"] and idx == 0 and int(world.stocks.get(producer, {}).get("log", 0)) > 0:
-        if move_good(world, producer, carrier["id"], "log", 1):
-            carrier["cargo"] = "log"
-            world.events.append({"kind": "pickup", "id": carrier["id"]})
+    source, dest, good = carrier["source_id"], carrier["dest_id"], carrier["good"]
+    if not carrier["cargo"] and idx == 0 and int(world.stocks.get(source, {}).get(good, 0)) > 0:
+        if _wants(world, dest, good) and move_good(world, source, carrier["id"], good, 1):
+            carrier["cargo"] = good
+            carrier["status"] = "carrying"
+            world.events.append({"kind": "pickup", "id": carrier["id"], "from": source, "good": good})
         return
     if carrier["cargo"] and idx == len(road) - 1:
-        if move_good(world, carrier["id"], warehouse, "log", 1):
+        if move_good(world, carrier["id"], dest, good, 1):
             carrier["cargo"] = None
-            world.stats["deliver"] += 1
-            world.events.append({"kind": "deliver", "id": carrier["id"], "dest": warehouse, "faction": carrier["faction"]})
+            carrier["status"] = "idle"
+            if world.buildings.get(dest, {}).get("kind") == "warehouse":
+                world.stats["deliver"] += 1
+            world.events.append({"kind": "deliver", "id": carrier["id"], "dest": dest, "faction": carrier["faction"], "good": good})
         return
     if carrier["cargo"]:
         nxt = idx + 1
@@ -92,7 +104,7 @@ def _step_carrier(world: Any, carrier: dict) -> None:
         world.stats["blocked"] += 1
         world.events.append({"kind": "carrier_blocked", "id": carrier["id"], "tile": list(step), "faction": carrier["faction"]})
         return
-    carrier["status"] = "moving"
+    carrier["status"] = "carrying" if carrier["cargo"] else "moving"
     carrier["facing"] = _facing(step[0] - tx, step[1] - ty)
     carrier["index"] = nxt
     carrier["tx"], carrier["ty"] = step

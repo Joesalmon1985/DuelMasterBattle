@@ -39,12 +39,12 @@ Controls: WASD / arrows. Space / Enter / Z / E next to the purple hazard opens t
 
 | Area | Reality |
 | --- | --- |
-| Economy | Logs are still minted on a timer. No real tree chop. Carrier unloads incorrectly (warehouse credit at processor end of one polyline). |
+| Economy | Forestry is real (lumberjack fells a real tree and carries the log; a separate carrier hauls it; ranger replants; trees grow). Farms, mines and animals are not done. The sawmill is a timer conversion. Carriers are per road segment, not a flag network. |
 | Military | `order` op: a tank/infantry/soldier walks to an enemy building and fires through `damage_building`; at 0 HP the producer/processor stops. Weapon table and greedy movement are provisional. Godot has no click-to-order UI yet. |
 | Factions | Two (Red / Blue), not six. |
 | Terrain | Repeated meadow tiles. No deposits, water, snow rules, or placement constraints. |
 | God Mode | Not in the HUD. No launcher with Wizard / God entry. |
-| Refinery | Still placed in the default showcase; exclusion from hybrid rules is planned, not done. |
+| Refinery | Removed from the default settlement by design. |
 | Full civilian / military content | Feature catalogue and dual-mode launcher from the full programme are not implemented yet. |
 
 ## Tests that currently pass
@@ -81,4 +81,4 @@ Expect `HYBRID_WALK_OK`, `HYBRID_VISUAL_OK`, `HYBRID_DUEL_OK`, `HYBRID_COORDS_OK
 
 Approved order: feature catalogue → dual-mode launcher → terrain → Widelands worker programs → logistics → goods-fed OpenRA recruitment → six factions → God Mode UI → endurance tests. See the Cursor plan `hybrid_gameplay_programme` and `docs/CLAUDE_HANDOFF.md`.
 
-Immediate next coding task: Godot click-to-order UI for the `order` op, then the feature catalogue and dual-mode launcher.
+Immediate next coding task: Wizard/God Mode switch and HUD, then generic programmes for farms/mines/hunting, then the flag/road logistics network.

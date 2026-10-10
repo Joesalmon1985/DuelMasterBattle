@@ -28,7 +28,6 @@ REQUIRED = (
     "openra.e1",
     "openra.3tnk",
     "openra.weap",
-    "openra.proc",
 )
 
 
@@ -39,7 +38,7 @@ def test_structure_damage_uses_one_pipeline() -> None:
         for building_id, building in world.buildings.items()
         if building["kind"] == "warehouse" and building["faction_name"] == "Red"
     )
-    tree = next(building_id for building_id, building in world.buildings.items() if building["kind"] == "tree")
+    tree = next(building_id for building_id, building in world.buildings.items() if building["kind"] == "rock")
     missed = world.damage_building(warehouse, 200, ["infantry"], {"wood": 100})
     assert missed == 0
     assert world.buildings[warehouse]["hp"] == 1000
@@ -61,12 +60,13 @@ def test_showcase_entities_and_art() -> None:
     definitions = {building.get("definition") for building in world.buildings.values()}
     definitions.update(unit.get("definition") for unit in world.units.values())
     definitions.update(carrier.get("definition") for carrier in world.carriers.values())
+    definitions.update(tree.get("definition") for tree in world.trees.values())
     for name in REQUIRED:
         assert name in definitions, name
     start = (world.player["tx"], world.player["ty"])
     assert (start[0] + 1, start[1]) not in world.blocked
     assert world.roads
-    assert any(building.get("kind") == "tree" for building in world.buildings.values())
+    assert world.trees
     catalogue = json.loads(CATALOGUE.read_text(encoding="utf-8"))
     assert catalogue["missing_required"] == []
     present = {item["id"] for item in catalogue["items"]}

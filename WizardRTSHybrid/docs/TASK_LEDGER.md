@@ -18,5 +18,10 @@
 | T-CLEAN | Package runs with `external/` hidden | 8 | T-ECON, T-MIL, T-DUEL | VERIFIED | `tests/test_clean_environment.py` passed. `scripts/package_hybrid.ps1`. |
 | T-HANDOFF | Docs match the repo and the next task is named | 9 | the rows above | VERIFIED | `docs/CLAUDE_HANDOFF.md` |
 | T-ART | Imported sprites on the live settlement, inspected in a headed shot | 4 | T-WORLD | PARTIAL | `scripts/import_assets.py`. `HYBRID_VISUAL_OK` and `HYBRID_WALK_OK` from start (100, 50). Roads and terrain tiling are still weak. Not a finished presentation gate. |
+| T-FOREST | Physical lumberjack + ranger, tree lifecycle, separate carrier (Phase A) | 1 | T-WORLD | VERIFIED | `tests/test_forestry.py` (5 tests); headed `run_hybrid_forestry.gd` HYBRID_FORESTRY_OK, 9 shots in `docs/evidence/forestry/`. Data in `wizard_rts/forest_data.py` transcribed from Widelands Lua. |
+| T-CATALOGUE | Machine-readable feature catalogue | 1 | T-MAPS | PARTIAL | `scripts/build_catalogue.py` -> `docs/feature_catalogue.json`, statuses from `docs/feature_status.json`. Discovery counts only; Lua is not yet parsed for programmes. |
+| T-PROGRAMS | Generic worker/production programme interpreter for farms, mines, hunters (Phase B) | 1 | T-FOREST | TODO | Extend `forestry.py` commands. |
+| T-LOGISTICS | Flag/road graph, requests, multi-hop carriers (Phase C) | 1 | T-FOREST | TODO | Current carriers are one-direction per road segment. |
+| T-GOD | Wizard/God Mode switch and RTS HUD (Phase F) | 1 | T-FOREST | IN PROGRESS | See WORK_LOG. |
 
 Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays source-derived adapted.

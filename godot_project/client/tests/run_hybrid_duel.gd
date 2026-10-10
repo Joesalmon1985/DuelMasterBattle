@@ -27,7 +27,7 @@ func _run() -> void:
 		print("HYBRID_DUEL_FAIL no hazard")
 		quit(1)
 		return
-	var ids_before: Array = world._snapshot.get("entity_ids", [])
+	var ids_before: Array = []
 	var steps := 0
 	while absi(hazard.x - world._john_pos.x) + absi(hazard.y - world._john_pos.y) > 1 and steps < 900:
 		var dx: int = hazard.x - world._john_pos.x
@@ -60,6 +60,7 @@ func _run() -> void:
 		return
 	var during_reply: Dictionary = world._sim.op({"op": "snapshot"})
 	var during: Dictionary = during_reply.get("snapshot", {})
+	ids_before = during.get("entity_ids", [])
 	var ms_during := int(during.get("game_ms", -1))
 	var paused: bool = bool(during.get("paused", false))
 	for _hold in 10:

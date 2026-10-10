@@ -29,6 +29,8 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return world.set_pose(int(message.get("tx", 0)), int(message.get("ty", 0)), str(message.get("facing", "down")))
     if op == "advance":
         return world.advance(int(message.get("ms", 0)), int(message.get("sequence", 0)))
+    if op == "speed":
+        return world.set_speed(int(message.get("scale", 1)))
     if op == "order":
         return world.order(str(message.get("unit", "")), str(message.get("target", "")))
     if op == "interact":

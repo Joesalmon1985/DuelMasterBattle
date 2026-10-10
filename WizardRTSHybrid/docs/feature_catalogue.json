@@ -1,0 +1,5622 @@
+{
+ "statuses": [
+  "missing",
+  "scaffolded",
+  "adapted",
+  "integrated",
+  "tested",
+  "verified"
+ ],
+ "totals": {
+  "widelands.building": {
+   "discovered": 237,
+   "missing": 233,
+   "scaffolded": 2,
+   "adapted": 0,
+   "integrated": 0,
+   "tested": 2,
+   "verified": 0
+  },
+  "widelands.ware": {
+   "discovered": 131,
+   "missing": 130,
+   "scaffolded": 0,
+   "adapted": 0,
+   "integrated": 0,
+   "tested": 1,
+   "verified": 0
+  },
+  "widelands.worker": {
+   "discovered": 156,
+   "missing": 153,
+   "scaffolded": 0,
+   "adapted": 0,
+   "integrated": 1,
+   "tested": 2,
+   "verified": 0
+  },
+  "openra.building": {
+   "discovered": 37,
+   "missing": 35,
+   "scaffolded": 2,
+   "adapted": 0,
+   "integrated": 0,
+   "tested": 0,
+   "verified": 0
+  },
+  "openra.unit": {
+   "discovered": 57,
+   "missing": 55,
+   "scaffolded": 2,
+   "adapted": 0,
+   "integrated": 0,
+   "tested": 0,
+   "verified": 0
+  }
+ },
+ "unknown_status_keys": [],
+ "items": [
+  {
+   "id": "widelands.amazons_fortification",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/amazons/fortification/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_fortress",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/amazons/fortress/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_observation_tower",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/amazons/observation_tower/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_patrol_post",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/amazons/patrol_post/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_tower",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/amazons/tower/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_treetop_sentry",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/amazons/treetop_sentry/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_warriors_dwelling",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/amazons/warriors_dwelling/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_castle",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/atlanteans/castle/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_guardhall",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/atlanteans/guardhall/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_guardhouse",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/atlanteans/guardhouse/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_tower",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/atlanteans/tower/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_tower_high",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/atlanteans/tower_high/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_tower_small",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/atlanteans/tower_small/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_barrier",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/barbarians/barrier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_citadel",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/barbarians/citadel/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_fortress",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/barbarians/fortress/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_sentry",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/barbarians/sentry/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_tower",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/barbarians/tower/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_barrier",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/empire/barrier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_blockhouse",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/empire/blockhouse/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_castle",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/empire/castle/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_fortress",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/empire/fortress/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_outpost",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/empire/outpost/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_sentry",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/empire/sentry/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_tower",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/empire/tower/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_fortress",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/frisians/fortress/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_outpost",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/frisians/outpost/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_sentinel",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/frisians/sentinel/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_tower",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/frisians/tower/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_wooden_tower",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/frisians/wooden_tower/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_wooden_tower_high",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "militarysite",
+   "source": "tribes/buildings/militarysites/frisians/wooden_tower_high/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_cassava_plantation",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/cassava_plantation/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_cassava_root_cooker",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/cassava_root_cooker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_charcoal_kiln",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/charcoal_kiln/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_chocolate_brewery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/chocolate_brewery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_cocoa_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/cocoa_farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_dressmakery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/dressmakery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_ferry_yard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/ferry_yard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_food_preserver",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/food_preserver/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_furnace",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/furnace/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_gardening_center",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/gardening_center/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_gold_digger_dwelling",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/gold_digger_dwelling/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_hunter_gatherers_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/hunter_gatherers_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_initiation_site",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/initiation_site/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_jungle_preservers_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/jungle_preservers_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_liana_cutters_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/liana_cutters_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_rare_tree_cutters_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/rare_tree_cutters_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_rare_tree_plantation",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/rare_tree_plantation/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_rope_weaver_booth",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/rope_weaver_booth/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_scouts_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/scouts_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_shipyard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/shipyard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_stone_workshop",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/stone_workshop/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_stonecutters_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/stonecutters_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_stonemine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/stonemine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_tapir_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/tapir_farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_water_gatherers_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/water_gatherers_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_wilderness_keepers_tent",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/wilderness_keepers_tent/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_woodcutters_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/amazons/woodcutters_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_well",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/armorsmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_armorsmithy",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/armorsmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_bakery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/bakery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_barracks",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/barracks/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_blackroot_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/blackroot_farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_charcoal_kiln",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/charcoal_kiln/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_coalmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/coalmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_crystalmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/crystalmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_ferry_yard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/ferry_yard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_fishbreeders_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/fishbreeders_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_fishers_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/fishers_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_foresters_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/foresters_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_gold_spinning_mill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/gold_spinning_mill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_goldmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/goldmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_horsefarm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/horsefarm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_hunters_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/hunters_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_ironmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/ironmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_mill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/mill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_quarry",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/quarry/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_sawmill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/sawmill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_scouts_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/scouts_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_shipyard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/shipyard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_smelting_works",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/smelting_works/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_smokery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/smokery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_spiderfarm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/spiderfarm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_toolsmithy",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/toolsmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_weaponsmithy",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/weaponsmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_weaving_mill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/weaving_mill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_woodcutters_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/atlanteans/woodcutters_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_ax_workshop",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/ax_workshop/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_bakery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/bakery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_barracks",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/barracks/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_big_inn",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/big_inn/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_brewery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/brewery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_cattlefarm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/cattlefarm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_charcoal_kiln",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/charcoal_kiln/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_coalmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_coalmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_coalmine_deeper",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine_deeper/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_ferry_yard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/ferry_yard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_fishers_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/fishers_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_gamekeepers_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/gamekeepers_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_goldmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_goldmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_goldmine_deeper",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine_deeper/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_granitemine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/granitemine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_helmsmithy",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/helmsmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_hunters_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/hunters_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_inn",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/inn/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_ironmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_ironmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_ironmine_deeper",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine_deeper/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_lime_kiln",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/lime_kiln/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_lumberjacks_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/lumberjacks_hut/init.lua",
+   "status": "tested",
+   "evidence": "tests/test_forestry.py; godot run_hybrid_forestry.gd; docs/evidence/forestry"
+  },
+  {
+   "id": "widelands.barbarians_metal_workshop",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/metal_workshop/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_micro_brewery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/micro_brewery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_quarry",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/quarry/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_rangers_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/rangers_hut/init.lua",
+   "status": "tested",
+   "evidence": "tests/test_forestry.py; godot run_hybrid_forestry.gd"
+  },
+  {
+   "id": "widelands.barbarians_reed_yard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/reed_yard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_scouts_hut",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/scouts_hut/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_shipyard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/shipyard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_smelting_works",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/smelting_works/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_tavern",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/tavern/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_warmill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/warmill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_weaving_mill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/weaving_mill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_well",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/well/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_wood_hardener",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/barbarians/wood_hardener/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_armorsmithy",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/armorsmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_bakery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/bakery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_barracks",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/barracks/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_brewery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/brewery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_charcoal_kiln",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/charcoal_kiln/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_coalmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/coalmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_coalmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/coalmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_donkeyfarm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/donkeyfarm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_ferry_yard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/ferry_yard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_fishers_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/fishers_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_foresters_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/foresters_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_goldmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/goldmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_goldmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/goldmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_hunters_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/hunters_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_inn",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/inn/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_ironmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/ironmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_ironmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/ironmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_lumberjacks_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/lumberjacks_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_marblemine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/marblemine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_marblemine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/marblemine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_mill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/mill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_piggery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/piggery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_quarry",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/quarry/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_sawmill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/sawmill/init.lua",
+   "status": "scaffolded",
+   "evidence": "log->plank timer, no worker"
+  },
+  {
+   "id": "widelands.empire_scouts_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/scouts_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_sheepfarm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/sheepfarm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_shipyard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/shipyard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_smelting_works",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/smelting_works/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_stonemasons_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/stonemasons_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_tavern",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/tavern/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_toolsmithy",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/toolsmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_vineyard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/vineyard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_weaponsmithy",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/weaponsmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_weaving_mill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/weaving_mill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_well",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/well/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_winery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/empire/winery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_aqua_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/aqua_farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_armor_smithy_large",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/armor_smithy_large/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_armor_smithy_small",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/armor_smithy_small/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_bakery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/bakery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_barracks",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/barracks/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_beekeepers_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/beekeepers_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_berry_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/berry_farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_blacksmithy",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/blacksmithy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_brewery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/brewery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_brick_kiln",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/brick_kiln/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_charcoal_burners_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/charcoal_burners_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_charcoal_kiln",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/charcoal_kiln/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_clay_pit",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/clay_pit/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_coalmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/coalmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_coalmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/coalmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_collectors_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/collectors_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_dikers_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/dikers_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_drinking_hall",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/drinking_hall/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_ferry_yard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/ferry_yard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_fishers_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/fishers_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_foresters_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/foresters_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_furnace",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/furnace/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_goldmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/goldmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_goldmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/goldmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_honey_bread_bakery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/honey_bread_bakery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_hunters_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/hunters_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_ironmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/ironmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_ironmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/ironmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_mead_brewery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/mead_brewery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_quarry",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/quarry/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_recycling_center",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/recycling_center/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_reed_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/reed_farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_reindeer_farm",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/reindeer_farm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_rockmine",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/rockmine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_rockmine_deep",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/rockmine_deep/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_scouts_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/scouts_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_sewing_room",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/sewing_room/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_shipyard",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/shipyard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_smokery",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/smokery/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_tailors_shop",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/tailors_shop/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_tavern",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/tavern/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_weaving_mill",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/weaving_mill/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_well",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/well/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_woodcutters_house",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "productionsite",
+   "source": "tribes/buildings/productionsites/frisians/woodcutters_house/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_training_glade",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/amazons/training_glade/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_warriors_gathering",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/amazons/warriors_gathering/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_arena",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/atlanteans/dungeon/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_dungeon",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/atlanteans/dungeon/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_labyrinth",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/atlanteans/labyrinth/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_battlearena",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/barbarians/battlearena/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_trainingcamp",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/barbarians/trainingcamp/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_colosseum",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/empire/colosseum/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_trainingcamp",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/empire/trainingcamp/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_training_arena",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/frisians/training_arena/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_training_camp",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "trainingsite",
+   "source": "tribes/buildings/trainingsites/frisians/training_camp/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_headquarters",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/amazons/headquarters/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_port",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/amazons/port/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_warehouse",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/amazons/warehouse/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_headquarters",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/atlanteans/headquarters/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_port",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/atlanteans/port/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_warehouse",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/atlanteans/warehouse/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_headquarters",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/barbarians/headquarters/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_headquarters_interim",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/barbarians/headquarters_interim/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_port",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/barbarians/port/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_warehouse",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/barbarians/warehouse/init.lua",
+   "status": "scaffolded",
+   "evidence": "stock list only; no requests/priorities"
+  },
+  {
+   "id": "widelands.empire_headquarters",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/empire/headquarters/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_headquarters_shipwreck",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/empire/headquarters_shipwreck/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_port",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/empire/port/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_warehouse",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/empire/warehouse/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_headquarters",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/frisians/headquarters/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_port",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/frisians/port/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_warehouse",
+   "game": "widelands",
+   "category": "building",
+   "subtype": "warehouse",
+   "source": "tribes/buildings/warehouses/frisians/warehouse/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.armor",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/armor/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.armor_chain",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/armor_chain/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.armor_gilded",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/armor_gilded/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.armor_helmet",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/armor_helmet/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.armor_wooden",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/armor_wooden/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.ax",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/ax/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.ax_battle",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/ax_battle/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.ax_broad",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/ax_broad/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.ax_bronze",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/ax_bronze/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.ax_sharp",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/ax_sharp/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.ax_warriors",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/ax_warriors/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.balsa",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/balsa/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barley",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/barley/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.basket",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/basket/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.beer",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/beer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.beer_strong",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/beer_strong/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.blackroot",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/blackroot/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.blackroot_flour",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/blackroot_flour/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.blackwood",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/blackwood/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.boots_hero",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/boots_hero/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.boots_sturdy",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/boots_sturdy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.boots_swift",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/boots_swift/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_bread",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/bread_amazons/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_bread",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/bread_atlanteans/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_bread",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/bread_barbarians/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_bread",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/bread_empire/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.bread_frisians",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/bread_frisians/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.bread_paddle",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/bread_paddle/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.brick",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/brick/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.buckets",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/buckets/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.cassavaroot",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/cassavaroot/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.chisel",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/chisel/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.chocolate",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/chocolate/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.clay",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/clay/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.cloth",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/cloth/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.coal",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/coal/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.cocoa_beans",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/cocoa_beans/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.corn",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/corn/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.cornmeal",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/cornmeal/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.diamond",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/diamond/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.felling_ax",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/felling_ax/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fire_tongs",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fire_tongs/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.firestones",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/firestones/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fish",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fish/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fishing_net",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fishing_net/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fishing_rod",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fishing_rod/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.flour",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/flour/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fruit",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fruit/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fur",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fur/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fur_garment",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fur_garment/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fur_garment_golden",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fur_garment_golden/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fur_garment_old",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fur_garment_old/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.fur_garment_studded",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/fur_garment_studded/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.gold",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/gold/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.gold_dust",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/gold_dust/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.gold_ore",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/gold_ore/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.gold_thread",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/gold_thread/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.granite",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/granite/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.grape",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/grape/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.grout",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/grout/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.hammer",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/hammer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.helmet",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/helmet/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.helmet_golden",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/helmet_golden/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.helmet_mask",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/helmet_mask/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.helmet_warhelm",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/helmet_warhelm/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.helmet_wooden",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/helmet_wooden/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.honey",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/honey/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.honey_bread",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/honey_bread/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.hook_pole",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/hook_pole/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.hunting_bow",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/hunting_bow/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.hunting_spear",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/hunting_spear/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.iron",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/iron/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.iron_ore",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/iron_ore/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.ironwood",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/ironwood/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.kitchen_tools",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/kitchen_tools/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.liana",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/liana/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.log",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/log/init.lua",
+   "status": "tested",
+   "evidence": "created only by a felled tree"
+  },
+  {
+   "id": "widelands.machete",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/machete/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.marble",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/marble/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.marble_column",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/marble_column/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.mead",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/mead/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.meal",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/meal/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.meat",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/meat/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.milking_tongs",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/milking_tongs/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.needles",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/needles/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.pick",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/pick/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.planks",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/planks/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.protector_padded",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/protector_padded/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.quartz",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/quartz/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.ration",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/ration/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.reed",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/reed/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.rope",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/rope/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.rubber",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/rubber/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.saw",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/saw/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.scrap_iron",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/scrap_iron/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.scrap_metal_mixed",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/scrap_metal_mixed/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.scythe",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/scythe/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.shield_advanced",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/shield_advanced/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.shield_steel",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/shield_steel/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.shovel",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/shovel/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.smoked_fish",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/smoked_fish/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.smoked_meat",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/smoked_meat/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.snack",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/snack/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spear",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spear/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spear_advanced",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spear_advanced/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spear_hardened",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spear_hardened/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spear_heavy",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spear_heavy/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spear_stone_tipped",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spear_stone_tipped/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spear_war",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spear_war/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spear_wooden",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spear_wooden/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spider_silk",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spider_silk/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.spidercloth",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/spidercloth/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.stone_bowl",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/stone_bowl/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.sword_broad",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/sword_broad/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.sword_double",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/sword_double/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.sword_long",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/sword_long/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.sword_short",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/sword_short/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.tabard",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/tabard/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.tabard_golden",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/tabard_golden/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.trident_double",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/trident_double/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.trident_heavy_double",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/trident_heavy_double/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.trident_light",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/trident_light/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.trident_long",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/trident_long/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.trident_steel",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/trident_steel/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.tunic",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/tunic/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.vest_padded",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/vest_padded/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.warriors_coat",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/warriors_coat/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.water",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/water/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.wheat",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/wheat/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.wine",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/wine/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.wool",
+   "game": "widelands",
+   "category": "ware",
+   "subtype": "ware",
+   "source": "tribes/wares/wool/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_builder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/builder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_carrier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/amazons/carrier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_cassava_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/cassava_farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_charcoal_burner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/charcoal_burner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_cocoa_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/cocoa_farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_cook",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/cook/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_dressmaker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/dressmaker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_geologist",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/geologist/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_gold_digger",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/gold_digger/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_gold_smelter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/gold_smelter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_hunter_gatherer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/hunter_gatherer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_jungle_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/jungle_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_jungle_preserver",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/jungle_preserver/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_liana_cutter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/liana_cutter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_scout",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/scout/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_shipwright",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/shipwright/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_soldier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "soldier",
+   "source": "tribes/workers/amazons/soldier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_stone_carver",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/stone_carver/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_stonecutter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/stonecutter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_tapir",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/amazons/tapir/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_tapir_breeder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/tapir_breeder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_trainer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/trainer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_wilderness_keeper",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/wilderness_keeper/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_woodcutter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/woodcutter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.amazons_woodcutter_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/amazons/woodcutter_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_fisher",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/armorsmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_armorsmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/armorsmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_baker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/baker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_blackroot_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/blackroot_farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_builder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/builder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_carrier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/atlanteans/carrier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_charcoal_burner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/charcoal_burner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_fishbreeder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/fishbreeder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_fisher",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/fisher/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_forester",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/forester/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_geologist",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/geologist/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_horse",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/atlanteans/horse/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_horsebreeder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/horsebreeder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_hunter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/hunter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_miller",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/miller/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_miner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/miner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_recruit",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/recruit/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_sawyer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/sawyer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_scout",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/scout/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_shipwright",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/shipwright/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_smelter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/smelter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_smoker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/smoker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_soldier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "soldier",
+   "source": "tribes/workers/atlanteans/soldier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_spiderbreeder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/spiderbreeder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_stonecutter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/stonecutter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_toolsmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/toolsmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_trainer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/trainer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_weaponsmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/weaponsmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_weaver",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/weaver/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.atlanteans_woodcutter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/atlanteans/woodcutter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_baker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/baker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_blacksmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/blacksmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_blacksmith_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/blacksmith_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_brewer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/brewer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_brewer_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/brewer_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_builder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/builder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_carrier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/barbarians/carrier/init.lua",
+   "status": "integrated",
+   "evidence": "economy.py road carriers; one ware per trip"
+  },
+  {
+   "id": "widelands.barbarians_cattlebreeder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/cattlebreeder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_charcoal_burner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/charcoal_burner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_fisher",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/fisher/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_gamekeeper",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/gamekeeper/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_gardener",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/gardener/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_geologist",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/geologist/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_helmsmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/helmsmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_hunter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/hunter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_innkeeper",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/innkeeper/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_lime_burner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/lime_burner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_lumberjack",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/lumberjack/init.lua",
+   "status": "tested",
+   "evidence": "worker programme harvest, forest_data.py"
+  },
+  {
+   "id": "widelands.barbarians_miner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/miner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_miner_chief",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/miner_chief/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_miner_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/miner_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_ox",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/barbarians/ox/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_ranger",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/ranger/init.lua",
+   "status": "tested",
+   "evidence": "worker programme plant, forest_data.py"
+  },
+  {
+   "id": "widelands.barbarians_recruit",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/recruit/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_scout",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/scout/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_shipwright",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/shipwright/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_smelter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/smelter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_soldier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "soldier",
+   "source": "tribes/workers/barbarians/soldier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_stonemason",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/stonemason/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_trainer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/trainer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.barbarians_weaver",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/barbarians/weaver/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_armorsmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/armorsmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_baker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/baker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_brewer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/brewer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_builder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/builder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_carpenter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/carpenter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_carrier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/empire/carrier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_charcoal_burner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/charcoal_burner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_donkey",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/empire/donkey/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_donkeybreeder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/donkeybreeder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_forester",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/forester/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_geologist",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/geologist/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_hunter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/hunter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_innkeeper",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/innkeeper/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_lumberjack",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/lumberjack/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_miller",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/miller/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_miner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/miner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_miner_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/miner_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_pigbreeder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/pigbreeder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_recruit",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/recruit/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_scout",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/scout/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_shepherd",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/shepherd/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_shipwright",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/shipwright/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_smelter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/smelter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_soldier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "soldier",
+   "source": "tribes/workers/empire/soldier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_stonemason",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/stonemason/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_toolsmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/toolsmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_trainer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/trainer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_vinefarmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/vinefarmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_vintner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/vintner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_weaponsmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/weaponsmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.empire_weaver",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/empire/weaver/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_baker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/baker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_baker_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/baker_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_beekeeper",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/beekeeper/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_berry_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/berry_farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_blacksmith",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/blacksmith/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_blacksmith_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/blacksmith_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_brewer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/brewer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_brewer_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/brewer_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_brickmaker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/brickmaker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_builder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/builder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_carrier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/frisians/carrier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_charcoal_burner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/charcoal_burner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_claydigger",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/claydigger/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_diker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/diker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_fisher",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/fisher/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_forester",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/forester/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_fruit_collector",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/fruit_collector/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_geologist",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/geologist/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_hunter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/hunter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_landlady",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/landlady/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_miner",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/miner/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_miner_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/miner_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_reed_farmer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/reed_farmer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_reindeer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "carrier",
+   "source": "tribes/workers/frisians/reindeer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_reindeer_breeder",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/reindeer_breeder/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_scout",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/scout/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_seamstress",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/seamstress/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_seamstress_master",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/seamstress_master/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_shipwright",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/shipwright/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_smelter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/smelter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_smoker",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/smoker/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_soldier",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "soldier",
+   "source": "tribes/workers/frisians/soldier/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_stonemason",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/stonemason/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_trainer",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/trainer/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "widelands.frisians_woodcutter",
+   "game": "widelands",
+   "category": "worker",
+   "subtype": "worker",
+   "source": "tribes/workers/frisians/woodcutter/init.lua",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.dog",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.e1",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "scaffolded",
+   "evidence": "unit with provisional weapon"
+  },
+  {
+   "id": "openra.e1r1",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.e2",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.e3",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.e3r1",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.e4",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.e6",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.spy",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.e7",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.medi",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.mech",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.einstein",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.delphi",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.chan",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.gnrl",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.thf",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.shok",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.zombie",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.ant",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.fireant",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.scoutant",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.warriorant",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "infantry",
+   "source": "mods/ra/rules/infantry.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.v2rl",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.1tnk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.2tnk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.3tnk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "scaffolded",
+   "evidence": "unit with provisional weapon; order op tested"
+  },
+  {
+   "id": "openra.4tnk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.arty",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.harv",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.mcv",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.jeep",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.apc",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.mnly",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.truk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.mgg",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.mrj",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.ttnk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.ftrk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.dtrk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.ctnk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.qtnk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.stnk",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "vehicles",
+   "source": "mods/ra/rules/vehicles.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.badr",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "aircraft",
+   "source": "mods/ra/rules/aircraft.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.mig",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "aircraft",
+   "source": "mods/ra/rules/aircraft.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.yak",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "aircraft",
+   "source": "mods/ra/rules/aircraft.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.tran",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "aircraft",
+   "source": "mods/ra/rules/aircraft.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.heli",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "aircraft",
+   "source": "mods/ra/rules/aircraft.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.hind",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "aircraft",
+   "source": "mods/ra/rules/aircraft.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.u2",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "aircraft",
+   "source": "mods/ra/rules/aircraft.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.mh60",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "aircraft",
+   "source": "mods/ra/rules/aircraft.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.ss",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "ships",
+   "source": "mods/ra/rules/ships.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.msub",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "ships",
+   "source": "mods/ra/rules/ships.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.dd",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "ships",
+   "source": "mods/ra/rules/ships.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.ca",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "ships",
+   "source": "mods/ra/rules/ships.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.lst",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "ships",
+   "source": "mods/ra/rules/ships.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.pt",
+   "game": "openra",
+   "category": "unit",
+   "subtype": "ships",
+   "source": "mods/ra/rules/ships.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.mslo",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.gap",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.spen",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.syrd",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.iron",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.pdox",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.tsla",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.agun",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.dome",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.pbox",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.hbox",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.gun",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.ftur",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.sam",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.atek",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.weap",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "scaffolded",
+   "evidence": "placed and drawn; no queue"
+  },
+  {
+   "id": "openra.fact",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.proc",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": "removed from default hybrid by design (no refinery economy)"
+  },
+  {
+   "id": "openra.silo",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.hpad",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.afld",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.powr",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.apwr",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.stek",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.barr",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.kenn",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.tent",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.fix",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.sbag",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.fenc",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.brik",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.cycl",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.barb",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.wood",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.barracks",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "scaffolded",
+   "evidence": "placed and drawn; no queue"
+  },
+  {
+   "id": "openra.techcenter",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  },
+  {
+   "id": "openra.anypower",
+   "game": "openra",
+   "category": "building",
+   "subtype": "structures",
+   "source": "mods/ra/rules/structures.yaml",
+   "status": "missing",
+   "evidence": ""
+  }
+ ]
+}

@@ -23,6 +23,7 @@ var _duel_host: Control
 var _font: Font
 var _art = HybridArt.new()
 var _camera_nudge := Vector2.ZERO
+var camera_focus := Vector2.INF
 
 
 func _ready() -> void:
@@ -72,6 +73,8 @@ func _process(delta: float) -> void:
 	super._process(delta)
 	if _camera_nudge != Vector2.ZERO:
 		_camera.position += _camera_nudge
+	if camera_focus != Vector2.INF:
+		_camera.position = camera_focus
 	if _snapshot.is_empty() or _duel_open:
 		queue_redraw()
 		return
@@ -177,7 +180,8 @@ func _place_john_from_snapshot() -> void:
 
 
 func _draw() -> void:
-	_art.draw_terrain(self, _john_pos, 28, TPX)
+	var cam_tile := Vector2i(int(_camera.position.x / TPX), int(_camera.position.y / TPX))
+	_art.draw_terrain(self, cam_tile, 36, TPX)
 	for road in _snapshot.get("roads", {}).values():
 		for tile in road:
 			if tile is Array:
