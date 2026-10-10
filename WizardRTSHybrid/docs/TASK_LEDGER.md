@@ -21,7 +21,9 @@
 | T-FOREST | Physical lumberjack + ranger, tree lifecycle, separate carrier (Phase A) | 1 | T-WORLD | VERIFIED | `tests/test_forestry.py` (5 tests); headed `run_hybrid_forestry.gd` HYBRID_FORESTRY_OK, 9 shots in `docs/evidence/forestry/`. Data in `wizard_rts/forest_data.py` transcribed from Widelands Lua. |
 | T-CATALOGUE | Machine-readable feature catalogue | 1 | T-MAPS | PARTIAL | `scripts/build_catalogue.py` -> `docs/feature_catalogue.json`, statuses from `docs/feature_status.json`. Discovery counts only; Lua is not yet parsed for programmes. |
 | T-PROGRAMS | Generic worker/production programme interpreter for farms, mines, hunters (Phase B) | 1 | T-FOREST | TODO | Extend `forestry.py` commands. |
-| T-LOGISTICS | Flag/road graph, requests, multi-hop carriers (Phase C) | 1 | T-FOREST | TODO | Current carriers are one-direction per road segment. |
-| T-GOD | Wizard/God Mode switch and RTS HUD (Phase F) | 1 | T-FOREST | IN PROGRESS | See WORK_LOG. |
+| T-LOGISTICS | Road graph, requests, multi-hop carriers (Phase C) | 1 | T-FOREST | PARTIAL | `wizard_rts/logistics.py`, `tests/test_logistics.py` (conservation, no teleport, request by road). Missing: flags/junction objects, donkeys, priorities, rerouting around blocked roads. |
+| T-SIX | Six factions with own economies (Phase E part) | 1 | T-LOGISTICS | PARTIAL | Six capitals with economies (`tests/test_commands.py`). Missing: AI commanders, six-faction autonomous war. |
+| T-RECRUIT | Goods-fed recruitment (Phase D) | 1 | T-LOGISTICS | PARTIAL | Barracks/war factory queues consume delivered planks (placeholder recipe). Missing: sword/brick chains. |
+| T-GOD | Wizard/God Mode switch and RTS HUD (Phase F) | 1 | T-FOREST | PARTIAL | Button + G key, six-faction picker, build menu, road tool, selection/box/groups, move/attack/stop/demolish, queues, minimap. GUI-input test `run_hybrid_god.gd` HYBRID_GOD_OK, shots in `docs/evidence/god_mode/`. Missing: attack-move, patrol, rally UI, repairs, worker/garrison panels, most original menus. |
 
 Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays source-derived adapted.

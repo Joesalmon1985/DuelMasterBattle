@@ -4,6 +4,7 @@ const HexCoords = preload("res://client/hybrid/hex_coords.gd")
 const SimClient = preload("res://client/hybrid/sim_client.gd")
 const DuelAdapter = preload("res://client/encounters/duel_lease_adapter.gd")
 const HybridArt = preload("res://client/hybrid/hybrid_art.gd")
+const GodMode = preload("res://client/hybrid/god_mode.gd")
 
 ## Continuous hybrid world. Movement, camera, and the retained duel board
 ## come from the existing Overworld and DmbDuelLeaseAdapter. The Python
@@ -24,6 +25,11 @@ var _font: Font
 var _art = HybridArt.new()
 var _camera_nudge := Vector2.ZERO
 var camera_focus := Vector2.INF
+var god: Node
+var selected_ids: Dictionary = {}:
+	set(v):
+		selected_ids = v
+		_art.selected = v
 
 
 func _ready() -> void:
@@ -67,6 +73,10 @@ func _ready() -> void:
 	_place_john_from_snapshot()
 	_update_john_sprite(0)
 	_hud_area_lbl.text = "Wizard RTS"
+	god = GodMode.new()
+	god.name = "GodMode"
+	add_child(god)
+	god.setup(self)
 
 
 func _process(delta: float) -> void:
@@ -163,6 +173,8 @@ func _apply_snapshot(snap: Dictionary) -> void:
 	for item in snap.get("blocked", []):
 		if item is Array and item.size() >= 2:
 			_blocked[Vector2i(int(item[0]), int(item[1]))] = true
+	for f in snap.get("factions", []):
+		_art.faction_colors[str(f.get("name", ""))] = Color.html(str(f.get("color", "#ffffff")))
 	var player: Dictionary = snap.get("player", {})
 	var hex := Vector2i(int(player.get("hex", [0, 0])[0]), int(player.get("hex", [0, 0])[1]))
 	if _last_hex.x != 999999 and hex != _last_hex:
@@ -198,3 +210,5 @@ func _draw() -> void:
 		if typeof(entity) != TYPE_DICTIONARY:
 			continue
 		_art.draw_entity(self, entity, TPX)
+	if god != null:
+		god.draw_overlay(self)

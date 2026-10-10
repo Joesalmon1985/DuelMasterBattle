@@ -8,6 +8,9 @@ const HexCoords = preload("res://client/hybrid/hex_coords.gd")
 var items: Dictionary = {}
 var textures: Dictionary = {}
 var missing: Array[String] = []
+var show_markers := false
+var faction_colors: Dictionary = {}
+var selected: Dictionary = {}
 
 
 func load_catalogue() -> void:
@@ -91,8 +94,27 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 		anchor = anchor.lerp(nxt, t)
 	var top_left := anchor - Vector2(float(hotspot[0]), float(hotspot[1])) * scale
 	var src := _source_rect(item, tex, entity)
+	_draw_marker(canvas, entity, anchor)
 	canvas.draw_texture_rect_region(tex, Rect2(top_left, frame_size * scale), src)
 	_draw_health(canvas, entity, anchor)
+
+
+func _draw_marker(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> void:
+	var kind := str(entity.get("class", ""))
+	var radius := 0.0
+	if kind == "unit":
+		radius = 22.0
+	elif kind == "worker" or kind == "carrier":
+		radius = 14.0
+	elif entity.has("hp"):
+		radius = 46.0
+	if radius == 0.0:
+		return
+	var col: Color = faction_colors.get(str(entity.get("faction_name", "")), Color(0.7, 0.7, 0.7))
+	var width := 3.0 if show_markers else 2.0
+	canvas.draw_arc(anchor + Vector2(0, 8), radius, 0.0, TAU, 28, Color(col.r, col.g, col.b, 0.9), width)
+	if selected.has(str(entity.get("id", ""))):
+		canvas.draw_arc(anchor + Vector2(0, 8), radius + 6.0, 0.0, TAU, 28, Color(1, 1, 1), 4.0)
 
 
 func _draw_health(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> void:

@@ -37,3 +37,12 @@ Question: how should Widelands and OpenRA sprites share the 64px tile plane?
 Terrain stays 1:1 with the tile. Widelands buildings and trees use scale 2 with the source hotspot as the ground contact. Workers use scale 4 so a carrier frame is near the wizard's height. OpenRA buildings and units use scale 3 so a barracks and a tank read next to those buildings. This pin has no Barbarian sawmill, so the plank building is the Empire sawmill.
 
 Reopen if a headed shot shows a building floating or a unit larger than the warehouse.
+
+## Hybrid rules (2026-10-10)
+
+- OpenRA refineries, harvesters, credits and power are removed. Barracks, war factory and turret keep their units but cost Widelands wares (hybrid-defined costs in `construction.py`).
+- Recruitment recipes are placeholders (rifleman = 1 plank, tank = 2 planks) until smithy/brick chains exist. Goods must be delivered by road; a barracks with no goods builds nothing.
+- Each faction starts with headquarters stock (12 logs, 6 planks), as Widelands start conditions do.
+- Construction sites request their build cost over roads and complete after 20 s with no builder worker (scaffold).
+- God Mode and AI must use the same world commands (`build`, `road`, `queue`, `move`, `order`, `demolish`). God Mode suppresses the free-unit provisional AI for the controlled faction only.
+- Walking speed: one tile per 600 ms for workers; OpenRA unit speeds 760/570 ms per cell.

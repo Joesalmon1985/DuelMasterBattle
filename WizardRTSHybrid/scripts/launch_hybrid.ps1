@@ -1,8 +1,11 @@
 # Start the local sim and the Overworld hybrid scene.
+# -Mode Wizard (default) or God. Press G or click the HUD button to switch at any time.
+param([ValidateSet("Wizard", "God")][string]$Mode = "Wizard")
 $ErrorActionPreference = "Stop"
 $Hybrid = Split-Path $PSScriptRoot -Parent
 $Repo = Split-Path $Hybrid -Parent
 if (-not $env:HYBRID_SIM_PORT) { $env:HYBRID_SIM_PORT = "8765" }
+$env:HYBRID_START_MODE = $Mode.ToLower()
 $godot = $env:GODOT
 if (-not $godot) {
     $local = Join-Path $Repo ".dmb_windows_local.json"

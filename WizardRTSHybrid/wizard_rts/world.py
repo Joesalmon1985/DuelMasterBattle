@@ -489,21 +489,25 @@ class HybridWorld:
         q, r = tile_to_hex(self.player["tx"], self.player["ty"])
         entities = []
         for building in self.buildings.values():
-            entities.append(_entity_row(building))
+            row = _entity_row(building)
+            row["class"] = "building" if "hp" in building else "scenery"
+            entities.append(row)
         for carrier in self.carriers.values():
             row = _entity_row(carrier)
-            row["cargo"] = carrier["cargo"]
+            row["class"] = "carrier"
+            row["cargo"] = carrier["cargo"]['good'] if carrier["cargo"] else ""
             row["status"] = carrier["status"]
             entities.append(row)
         for tree in self.trees.values():
             entities.append(
                 {
-                    "id": tree["id"], "kind": "tree", "definition": tree["definition"], "stage": tree["stage"],
+                    "id": tree["id"], "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"],
                     "tx": tree["tx"], "ty": tree["ty"], "alive": True, "faction": "", "label": "Tree",
                 }
             )
         for worker in self.workers.values():
             row = _entity_row(worker)
+            row["class"] = "worker"
             row["role"] = worker["role"]
             row["anim"] = worker["anim"]
             row["carrying"] = worker["carrying"]
@@ -519,6 +523,7 @@ class HybridWorld:
             entities.append(row)
         for unit in self.units.values():
             row = _entity_row(unit)
+            row["class"] = "unit"
             row["hp"] = unit["hp"]
             row["alive"] = unit["alive"]
             if unit.get("order"):
@@ -528,6 +533,7 @@ class HybridWorld:
             entities.append(
                 {
                     "id": self.hazard_id,
+                    "class": "hazard",
                     "kind": "hazard",
                     "faction": "",
                     "label": "Magical hazard",

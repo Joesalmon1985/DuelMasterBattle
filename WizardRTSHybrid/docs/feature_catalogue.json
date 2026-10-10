@@ -37,19 +37,19 @@
   },
   "openra.building": {
    "discovered": 37,
-   "missing": 35,
-   "scaffolded": 2,
+   "missing": 34,
+   "scaffolded": 1,
    "adapted": 0,
-   "integrated": 0,
+   "integrated": 2,
    "tested": 0,
    "verified": 0
   },
   "openra.unit": {
    "discovered": 57,
    "missing": 55,
-   "scaffolded": 2,
+   "scaffolded": 0,
    "adapted": 0,
-   "integrated": 0,
+   "integrated": 2,
    "tested": 0,
    "verified": 0
   }
@@ -4787,8 +4787,8 @@
    "category": "unit",
    "subtype": "infantry",
    "source": "mods/ra/rules/infantry.yaml",
-   "status": "scaffolded",
-   "evidence": "unit with provisional weapon"
+   "status": "integrated",
+   "evidence": "recruited from barracks queue, obeys move/attack orders; run_hybrid_god.gd"
   },
   {
    "id": "openra.e1r1",
@@ -5012,8 +5012,8 @@
    "category": "unit",
    "subtype": "vehicles",
    "source": "mods/ra/rules/vehicles.yaml",
-   "status": "scaffolded",
-   "evidence": "unit with provisional weapon; order op tested"
+   "status": "integrated",
+   "evidence": "recruited from war factory queue; attack order tested"
   },
   {
    "id": "openra.4tnk",
@@ -5390,8 +5390,8 @@
    "category": "building",
    "subtype": "structures",
    "source": "mods/ra/rules/structures.yaml",
-   "status": "missing",
-   "evidence": ""
+   "status": "scaffolded",
+   "evidence": "placeable via build menu; no weapon yet"
   },
   {
    "id": "openra.ftur",
@@ -5426,8 +5426,8 @@
    "category": "building",
    "subtype": "structures",
    "source": "mods/ra/rules/structures.yaml",
-   "status": "scaffolded",
-   "evidence": "placed and drawn; no queue"
+   "status": "integrated",
+   "evidence": "recipe queue (tank, 2 planks); tests/test_commands.py"
   },
   {
    "id": "openra.fact",
@@ -5597,8 +5597,8 @@
    "category": "building",
    "subtype": "structures",
    "source": "mods/ra/rules/structures.yaml",
-   "status": "scaffolded",
-   "evidence": "placed and drawn; no queue"
+   "status": "integrated",
+   "evidence": "construction.py recipe queue consumes delivered planks; tests/test_commands.py; godot run_hybrid_god.gd"
   },
   {
    "id": "openra.techcenter",

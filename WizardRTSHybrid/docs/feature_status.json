@@ -1,15 +1,58 @@
 {
-  "widelands.barbarians_lumberjacks_hut": {"status": "tested", "evidence": "tests/test_forestry.py; godot run_hybrid_forestry.gd; docs/evidence/forestry"},
-  "widelands.barbarians_rangers_hut": {"status": "tested", "evidence": "tests/test_forestry.py; godot run_hybrid_forestry.gd"},
-  "widelands.barbarians_lumberjack": {"status": "tested", "evidence": "worker programme harvest, forest_data.py"},
-  "widelands.barbarians_ranger": {"status": "tested", "evidence": "worker programme plant, forest_data.py"},
-  "widelands.barbarians_carrier": {"status": "integrated", "evidence": "economy.py road carriers; one ware per trip"},
-  "widelands.log": {"status": "tested", "evidence": "created only by a felled tree"},
-  "widelands.barbarians_warehouse": {"status": "scaffolded", "evidence": "stock list only; no requests/priorities"},
-  "widelands.empire_sawmill": {"status": "scaffolded", "evidence": "log->plank timer, no worker"},
-  "openra.barracks": {"status": "scaffolded", "evidence": "placed and drawn; no queue"},
-  "openra.weap": {"status": "scaffolded", "evidence": "placed and drawn; no queue"},
-  "openra.proc": {"status": "missing", "evidence": "removed from default hybrid by design (no refinery economy)"},
-  "openra.e1": {"status": "scaffolded", "evidence": "unit with provisional weapon"},
-  "openra.3tnk": {"status": "scaffolded", "evidence": "unit with provisional weapon; order op tested"}
+ "widelands.barbarians_lumberjacks_hut": {
+  "status": "tested",
+  "evidence": "tests/test_forestry.py; godot run_hybrid_forestry.gd; docs/evidence/forestry"
+ },
+ "widelands.barbarians_rangers_hut": {
+  "status": "tested",
+  "evidence": "tests/test_forestry.py; godot run_hybrid_forestry.gd"
+ },
+ "widelands.barbarians_lumberjack": {
+  "status": "tested",
+  "evidence": "worker programme harvest, forest_data.py"
+ },
+ "widelands.barbarians_ranger": {
+  "status": "tested",
+  "evidence": "worker programme plant, forest_data.py"
+ },
+ "widelands.barbarians_carrier": {
+  "status": "integrated",
+  "evidence": "economy.py road carriers; one ware per trip"
+ },
+ "widelands.log": {
+  "status": "tested",
+  "evidence": "created only by a felled tree"
+ },
+ "widelands.barbarians_warehouse": {
+  "status": "scaffolded",
+  "evidence": "stock list only; no requests/priorities"
+ },
+ "widelands.empire_sawmill": {
+  "status": "scaffolded",
+  "evidence": "log->plank timer, no worker"
+ },
+ "openra.barracks": {
+  "status": "integrated",
+  "evidence": "construction.py recipe queue consumes delivered planks; tests/test_commands.py; godot run_hybrid_god.gd"
+ },
+ "openra.weap": {
+  "status": "integrated",
+  "evidence": "recipe queue (tank, 2 planks); tests/test_commands.py"
+ },
+ "openra.proc": {
+  "status": "missing",
+  "evidence": "removed from default hybrid by design (no refinery economy)"
+ },
+ "openra.e1": {
+  "status": "integrated",
+  "evidence": "recruited from barracks queue, obeys move/attack orders; run_hybrid_god.gd"
+ },
+ "openra.3tnk": {
+  "status": "integrated",
+  "evidence": "recruited from war factory queue; attack order tested"
+ },
+ "openra.gun": {
+  "status": "scaffolded",
+  "evidence": "placeable via build menu; no weapon yet"
+ }
 }
