@@ -221,7 +221,7 @@ BUILDING_OUTPUTS: dict[str, list[str]] = {
 # "economy needs": a ware is wanted while the faction's warehouses hold fewer than this.
 ECONOMY_TARGETS = {"plank": 20, "coal": 24, "iron_ore": 12, "iron": 10, "ax": 8, "granite": 16, "ration": 16, "bread": 8, "water": 12, "meat": 10, "wheat": 12}
 # Resource fields: per-node amounts placed around a mine's tile (radius 2 = 25 nodes).
-RESOURCE_PER_NODE = {"coal": 6, "iron": 6, "water": 8}
+RESOURCE_PER_NODE = {"coal": 6, "iron": 6, "water": 8, "gold": 6, "stones": 6}
 ROCK_AMOUNT = 6
 FAIL_SLEEP_MS = 10_000
 # One tile per step. Widelands uses 1.8 s per node; a node is smaller than a 64 px tile here.

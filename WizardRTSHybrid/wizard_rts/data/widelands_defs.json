@@ -1370,6 +1370,7 @@
       "raw": "return=skipped unless economy needs amazons_bread",
       "skipped": true,
       "unless_needs": "bread",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1461,6 +1462,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1548,6 +1550,7 @@
       "raw": "return=skipped unless economy needs chocolate",
       "skipped": true,
       "unless_needs": "chocolate",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1779,6 +1782,7 @@
       "raw": "return=skipped unless economy needs tunic",
       "skipped": true,
       "unless_needs": "tunic",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1814,6 +1818,7 @@
       "raw": "return=skipped unless economy needs armor_wooden",
       "skipped": true,
       "unless_needs": "armor_wooden",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1849,6 +1854,7 @@
       "raw": "return=skipped unless economy needs helmet_wooden",
       "skipped": true,
       "unless_needs": "helmet_wooden",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1884,6 +1890,7 @@
       "raw": "return=skipped unless economy needs warriors_coat",
       "skipped": true,
       "unless_needs": "warriors_coat",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1921,6 +1928,7 @@
       "raw": "return=skipped unless economy needs boots_sturdy",
       "skipped": true,
       "unless_needs": "boots_sturdy",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1956,6 +1964,7 @@
       "raw": "return=skipped unless economy needs boots_swift",
       "skipped": true,
       "unless_needs": "boots_swift",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -1990,6 +1999,7 @@
       "raw": "return=skipped unless economy needs boots_hero",
       "skipped": true,
       "unless_needs": "boots_hero",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -2025,6 +2035,7 @@
       "raw": "return=skipped unless economy needs vest_padded",
       "skipped": true,
       "unless_needs": "vest_padded",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -2060,6 +2071,7 @@
       "raw": "return=skipped unless economy needs protector_padded",
       "skipped": true,
       "unless_needs": "protector_padded",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -2154,6 +2166,7 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": true
      },
      {
@@ -2221,6 +2234,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -2310,6 +2324,7 @@
       "raw": "return=skipped unless economy needs gold",
       "skipped": true,
       "unless_needs": "gold",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -2515,6 +2530,7 @@
       "raw": "return=skipped unless economy needs gold_dust",
       "skipped": true,
       "unless_needs": "gold_dust",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -2706,6 +2722,7 @@
       "raw": "return=skipped unless economy needs amazons_soldier",
       "skipped": true,
       "unless_needs": "soldier",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -2736,7 +2753,7 @@
      {
       "cmd": "recruit",
       "raw": "recruit=amazons_soldier",
-      "args": "amazons_soldier"
+      "target": "amazons_soldier"
      }
     ]
    },
@@ -2752,12 +2769,10 @@
      "rows": 5
     }
    },
-   "executable": false,
-   "problems": [
-    "main: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_jungle_preservers_hut": {
    "tribe": "amazons",
@@ -2857,6 +2872,7 @@
       "raw": "return=skipped unless economy needs liana",
       "skipped": true,
       "unless_needs": "liana",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3032,6 +3048,7 @@
       "raw": "return=skipped unless economy needs balsa",
       "skipped": true,
       "unless_needs": "balsa",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3051,6 +3068,7 @@
       "raw": "return=skipped unless economy needs rubber",
       "skipped": true,
       "unless_needs": "rubber",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3070,6 +3088,7 @@
       "raw": "return=skipped unless economy needs ironwood",
       "skipped": true,
       "unless_needs": "ironwood",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3479,6 +3498,7 @@
       "raw": "return=skipped unless economy needs shovel",
       "skipped": true,
       "unless_needs": "shovel",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3514,6 +3534,7 @@
       "raw": "return=skipped unless economy needs felling_ax",
       "skipped": true,
       "unless_needs": "felling_ax",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3549,6 +3570,7 @@
       "raw": "return=skipped unless economy needs pick",
       "skipped": true,
       "unless_needs": "pick",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3584,6 +3606,7 @@
       "raw": "return=skipped unless economy needs machete",
       "skipped": true,
       "unless_needs": "machete",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3619,6 +3642,7 @@
       "raw": "return=skipped unless economy needs kitchen_tools",
       "skipped": true,
       "unless_needs": "kitchen_tools",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3654,6 +3678,7 @@
       "raw": "return=skipped unless economy needs hammer",
       "skipped": true,
       "unless_needs": "hammer",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3689,6 +3714,7 @@
       "raw": "return=skipped unless economy needs chisel",
       "skipped": true,
       "unless_needs": "chisel",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3723,6 +3749,7 @@
       "raw": "return=skipped unless economy needs needles",
       "skipped": true,
       "unless_needs": "needles",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3757,6 +3784,7 @@
       "raw": "return=skipped unless economy needs stone_bowl",
       "skipped": true,
       "unless_needs": "stone_bowl",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3791,6 +3819,7 @@
       "raw": "return=skipped unless economy needs firestones",
       "skipped": true,
       "unless_needs": "firestones",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3825,6 +3854,7 @@
       "raw": "return=skipped unless economy needs spear_wooden",
       "skipped": true,
       "unless_needs": "spear_wooden",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3859,6 +3889,7 @@
       "raw": "return=skipped unless economy needs spear_stone_tipped",
       "skipped": true,
       "unless_needs": "spear_stone_tipped",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -3894,6 +3925,7 @@
       "raw": "return=skipped unless economy needs spear_hardened",
       "skipped": true,
       "unless_needs": "spear_hardened",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -4048,8 +4080,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs granite or economy needs quartz",
       "skipped": true,
-      "unless_needs": "granite",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -4159,10 +4192,12 @@
      "rows": 3
     }
    },
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "main: return condition return=skipped unless economy needs granite or economy needs quartz"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs granite or economy needs quartz"
   },
   "amazons_tapir_farm": {
    "tribe": "amazons",
@@ -4204,6 +4239,7 @@
       "raw": "return=skipped unless economy needs amazons_tapir",
       "skipped": true,
       "unless_needs": "tapir",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -4228,7 +4264,7 @@
      {
       "cmd": "recruit",
       "raw": "recruit=amazons_tapir",
-      "args": "amazons_tapir"
+      "target": "amazons_tapir"
      }
     ]
    },
@@ -4263,12 +4299,10 @@
      "rows": 5
     }
    },
-   "executable": false,
-   "problems": [
-    "recruit_tapir: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: recruit_tapir: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_water_gatherers_hut": {
    "tribe": "amazons",
@@ -4452,6 +4486,7 @@
       "raw": "return=skipped unless economy needs log",
       "skipped": true,
       "unless_needs": "log",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -4536,6 +4571,7 @@
       "raw": "return=skipped unless economy needs shield_steel",
       "skipped": true,
       "unless_needs": "shield_steel",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -4571,6 +4607,7 @@
       "raw": "return=skipped unless economy needs shield_advanced",
       "skipped": true,
       "unless_needs": "shield_advanced",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -4643,6 +4680,7 @@
       "raw": "return=skipped unless economy needs atlanteans_bread",
       "skipped": true,
       "unless_needs": "bread",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -4727,6 +4765,7 @@
       "raw": "return=skipped unless economy needs atlanteans_soldier",
       "skipped": true,
       "unless_needs": "soldier",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -4746,7 +4785,7 @@
      {
       "cmd": "recruit",
       "raw": "recruit=atlanteans_soldier",
-      "args": "atlanteans_soldier"
+      "target": "atlanteans_soldier"
      }
     ]
    },
@@ -4761,12 +4800,10 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "main: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_blackroot_farm": {
    "tribe": "atlanteans",
@@ -4869,6 +4906,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -4961,6 +4999,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -5129,6 +5168,7 @@
       "raw": "return=skipped unless economy needs granite",
       "skipped": true,
       "unless_needs": "granite",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -5184,6 +5224,7 @@
       "raw": "return=skipped unless economy needs quartz",
       "skipped": true,
       "unless_needs": "quartz",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -5239,6 +5280,7 @@
       "raw": "return=skipped unless economy needs diamond",
       "skipped": true,
       "unless_needs": "diamond",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -5521,6 +5563,7 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": true
      },
      {
@@ -5726,6 +5769,7 @@
       "raw": "return=skipped unless economy needs gold_thread",
       "skipped": true,
       "unless_needs": "gold_thread",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -5813,6 +5857,7 @@
       "raw": "return=skipped unless economy needs gold_ore",
       "skipped": true,
       "unless_needs": "gold_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -5937,6 +5982,7 @@
       "raw": "return=skipped unless economy needs atlanteans_horse",
       "skipped": true,
       "unless_needs": "horse",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -5966,17 +6012,15 @@
      {
       "cmd": "recruit",
       "raw": "recruit=atlanteans_horse",
-      "args": "atlanteans_horse"
+      "target": "atlanteans_horse"
      }
     ]
    },
    "spritesheets": {},
-   "executable": false,
-   "problems": [
-    "main: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_hunters_house": {
    "tribe": "atlanteans",
@@ -6069,6 +6113,7 @@
       "raw": "return=skipped unless economy needs iron_ore",
       "skipped": true,
       "unless_needs": "iron_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -6209,13 +6254,38 @@
       "raw": "return=skipped when site has blackroot and economy needs blackroot_flour and not economy needs cornmeal",
       "skipped": true,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "when",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "blackroot"
+         ],
+         "n": 1,
+         "not": false
+        },
+        {
+         "type": "economy_needs",
+         "ware": "blackroot_flour",
+         "not": false
+        },
+        {
+         "type": "economy_needs",
+         "ware": "cornmeal",
+         "not": true
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=skipped unless economy needs cornmeal",
       "skipped": true,
       "unless_needs": "cornmeal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -6255,7 +6325,31 @@
       "raw": "return=skipped when site has corn and economy needs cornmeal and not economy needs blackroot_flour",
       "skipped": true,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "when",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "corn"
+         ],
+         "n": 1,
+         "not": false
+        },
+        {
+         "type": "economy_needs",
+         "ware": "cornmeal",
+         "not": false
+        },
+        {
+         "type": "economy_needs",
+         "ware": "blackroot_flour",
+         "not": true
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -6301,13 +6395,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "produce_cornmeal: return condition return=skipped when site has blackroot and economy needs blackroot_flour and not economy needs cornmeal",
-    "produce_blackroot_flour: return condition return=skipped when site has corn and economy needs cornmeal and not economy needs blackroot_flour"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: produce_cornmeal: return condition return=skipped when site has blackroot and economy needs blackroot_flour and not economy needs cornmeal; produce_blackroot_flour: return condition return=skipped when site has corn and economy needs cornmeal and not economy needs blackroot_flour"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_quarry": {
    "tribe": "atlanteans",
@@ -6384,6 +6475,7 @@
       "raw": "return=skipped unless economy needs planks",
       "skipped": true,
       "unless_needs": "plank",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -6684,6 +6776,7 @@
       "raw": "return=skipped unless economy needs iron",
       "skipped": true,
       "unless_needs": "iron",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -6729,6 +6822,7 @@
       "raw": "return=skipped unless economy needs iron",
       "skipped": true,
       "unless_needs": "iron",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -6774,6 +6868,7 @@
       "raw": "return=skipped unless economy needs gold",
       "skipped": true,
       "unless_needs": "gold",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -6873,6 +6968,7 @@
       "raw": "return=skipped unless economy needs smoked_meat",
       "skipped": true,
       "unless_needs": "smoked_meat",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -6908,6 +7004,7 @@
       "raw": "return=skipped unless economy needs smoked_fish",
       "skipped": true,
       "unless_needs": "smoked_fish",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -6943,6 +7040,7 @@
       "raw": "return=skipped unless economy needs smoked_fish",
       "skipped": true,
       "unless_needs": "smoked_fish",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7030,6 +7128,7 @@
       "raw": "return=skipped unless economy needs spider_silk",
       "skipped": true,
       "unless_needs": "spider_silk",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7170,6 +7269,7 @@
       "raw": "return=skipped unless economy needs bread_paddle",
       "skipped": true,
       "unless_needs": "bread_paddle",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7210,6 +7310,7 @@
       "raw": "return=skipped unless economy needs buckets",
       "skipped": true,
       "unless_needs": "buckets",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7250,6 +7351,7 @@
       "raw": "return=skipped unless economy needs fire_tongs",
       "skipped": true,
       "unless_needs": "fire_tongs",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7290,6 +7392,7 @@
       "raw": "return=skipped unless economy needs fishing_net",
       "skipped": true,
       "unless_needs": "fishing_net",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7329,6 +7432,7 @@
       "raw": "return=skipped unless economy needs hammer",
       "skipped": true,
       "unless_needs": "hammer",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7369,6 +7473,7 @@
       "raw": "return=skipped unless economy needs hook_pole",
       "skipped": true,
       "unless_needs": "hook_pole",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7409,6 +7514,7 @@
       "raw": "return=skipped unless economy needs hunting_bow",
       "skipped": true,
       "unless_needs": "hunting_bow",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7449,6 +7555,7 @@
       "raw": "return=skipped unless economy needs milking_tongs",
       "skipped": true,
       "unless_needs": "milking_tongs",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7489,6 +7596,7 @@
       "raw": "return=skipped unless economy needs pick",
       "skipped": true,
       "unless_needs": "pick",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7529,6 +7637,7 @@
       "raw": "return=skipped unless economy needs saw",
       "skipped": true,
       "unless_needs": "saw",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7569,6 +7678,7 @@
       "raw": "return=skipped unless economy needs scythe",
       "skipped": true,
       "unless_needs": "scythe",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7609,6 +7719,7 @@
       "raw": "return=skipped unless economy needs shovel",
       "skipped": true,
       "unless_needs": "shovel",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7721,6 +7832,7 @@
       "raw": "return=skipped unless economy needs trident_light",
       "skipped": true,
       "unless_needs": "trident_light",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7771,6 +7883,7 @@
       "raw": "return=skipped unless economy needs trident_long",
       "skipped": true,
       "unless_needs": "trident_long",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7822,6 +7935,7 @@
       "raw": "return=skipped unless economy needs trident_steel",
       "skipped": true,
       "unless_needs": "trident_steel",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7873,6 +7987,7 @@
       "raw": "return=skipped unless economy needs trident_double",
       "skipped": true,
       "unless_needs": "trident_double",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -7925,6 +8040,7 @@
       "raw": "return=skipped unless economy needs trident_heavy_double",
       "skipped": true,
       "unless_needs": "trident_heavy_double",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8035,6 +8151,7 @@
       "raw": "return=skipped unless economy needs spidercloth",
       "skipped": true,
       "unless_needs": "spidercloth",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8074,6 +8191,7 @@
       "raw": "return=skipped unless economy needs tabard",
       "skipped": true,
       "unless_needs": "tabard",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8113,6 +8231,7 @@
       "raw": "return=skipped unless economy needs tabard_golden",
       "skipped": true,
       "unless_needs": "tabard_golden",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8314,6 +8433,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -8323,6 +8443,7 @@
       "raw": "return=skipped unless economy needs ax",
       "skipped": true,
       "unless_needs": "ax",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8373,6 +8494,7 @@
       "raw": "return=skipped unless economy needs ax_sharp",
       "skipped": true,
       "unless_needs": "ax_sharp",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8423,6 +8545,7 @@
       "raw": "return=skipped unless economy needs ax_broad",
       "skipped": true,
       "unless_needs": "ax_broad",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8541,6 +8664,7 @@
       "raw": "return=skipped unless economy needs barbarians_bread",
       "skipped": true,
       "unless_needs": "bread",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8625,6 +8749,7 @@
       "raw": "return=skipped unless economy needs barbarians_soldier",
       "skipped": true,
       "unless_needs": "soldier",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8643,7 +8768,7 @@
      {
       "cmd": "recruit",
       "raw": "recruit=barbarians_soldier",
-      "args": "barbarians_soldier"
+      "target": "barbarians_soldier"
      }
     ]
    },
@@ -8658,12 +8783,10 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "main: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_big_inn": {
    "tribe": "barbarians",
@@ -8715,6 +8838,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8758,6 +8882,7 @@
       "raw": "return=skipped unless economy needs snack",
       "skipped": true,
       "unless_needs": "snack",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8802,6 +8927,7 @@
       "raw": "return=skipped unless economy needs meal",
       "skipped": true,
       "unless_needs": "meal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8903,6 +9029,7 @@
       "raw": "return=skipped unless economy needs beer_strong",
       "skipped": true,
       "unless_needs": "beer_strong",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -8979,6 +9106,7 @@
       "raw": "return=skipped unless economy needs barbarians_ox",
       "skipped": true,
       "unless_needs": "ox",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -9008,17 +9136,15 @@
      {
       "cmd": "recruit",
       "raw": "recruit=barbarians_ox",
-      "args": "barbarians_ox"
+      "target": "barbarians_ox"
      }
     ]
    },
    "spritesheets": {},
-   "executable": false,
-   "problems": [
-    "main: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_charcoal_kiln": {
    "tribe": "barbarians",
@@ -9053,6 +9179,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -9145,6 +9272,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -9174,6 +9302,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -9278,6 +9407,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -9317,6 +9447,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -9422,6 +9553,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -9466,6 +9598,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -9682,6 +9815,7 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": true
      },
      {
@@ -9865,6 +9999,7 @@
       "raw": "return=skipped unless economy needs gold_ore",
       "skipped": true,
       "unless_needs": "gold_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -9963,6 +10098,7 @@
       "raw": "return=skipped unless economy needs gold_ore",
       "skipped": true,
       "unless_needs": "gold_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10002,6 +10138,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -10107,6 +10244,7 @@
       "raw": "return=skipped unless economy needs gold_ore",
       "skipped": true,
       "unless_needs": "gold_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10146,6 +10284,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -10252,6 +10391,7 @@
       "raw": "return=skipped unless economy needs granite",
       "skipped": true,
       "unless_needs": "granite",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10281,6 +10421,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -10409,6 +10550,7 @@
       "raw": "return=skipped unless economy needs helmet",
       "skipped": true,
       "unless_needs": "helmet",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10449,6 +10591,7 @@
       "raw": "return=skipped unless economy needs helmet_mask",
       "skipped": true,
       "unless_needs": "helmet_mask",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10489,6 +10632,7 @@
       "raw": "return=skipped unless economy needs helmet_warhelm",
       "skipped": true,
       "unless_needs": "helmet_warhelm",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10657,6 +10801,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10700,6 +10845,7 @@
       "raw": "return=skipped unless economy needs snack",
       "skipped": true,
       "unless_needs": "snack",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10802,6 +10948,7 @@
       "raw": "return=skipped unless economy needs iron_ore",
       "skipped": true,
       "unless_needs": "iron_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10900,6 +11047,7 @@
       "raw": "return=skipped unless economy needs iron_ore",
       "skipped": true,
       "unless_needs": "iron_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -10939,6 +11087,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -11044,6 +11193,7 @@
       "raw": "return=skipped unless economy needs iron_ore",
       "skipped": true,
       "unless_needs": "iron_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11088,6 +11238,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -11197,6 +11348,7 @@
       "raw": "return=skipped unless economy needs grout",
       "skipped": true,
       "unless_needs": "grout",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11399,6 +11551,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -11408,6 +11561,7 @@
       "raw": "return=skipped unless economy needs bread_paddle",
       "skipped": true,
       "unless_needs": "bread_paddle",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11448,6 +11602,7 @@
       "raw": "return=skipped unless economy needs felling_ax",
       "skipped": true,
       "unless_needs": "felling_ax",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11488,6 +11643,7 @@
       "raw": "return=skipped unless economy needs fire_tongs",
       "skipped": true,
       "unless_needs": "fire_tongs",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11528,6 +11684,7 @@
       "raw": "return=skipped unless economy needs fishing_rod",
       "skipped": true,
       "unless_needs": "fishing_rod",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11568,6 +11725,7 @@
       "raw": "return=skipped unless economy needs hammer",
       "skipped": true,
       "unless_needs": "hammer",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11608,6 +11766,7 @@
       "raw": "return=skipped unless economy needs hunting_spear",
       "skipped": true,
       "unless_needs": "hunting_spear",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11648,6 +11807,7 @@
       "raw": "return=skipped unless economy needs kitchen_tools",
       "skipped": true,
       "unless_needs": "kitchen_tools",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11688,6 +11848,7 @@
       "raw": "return=skipped unless economy needs pick",
       "skipped": true,
       "unless_needs": "pick",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11728,6 +11889,7 @@
       "raw": "return=skipped unless economy needs scythe",
       "skipped": true,
       "unless_needs": "scythe",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11768,6 +11930,7 @@
       "raw": "return=skipped unless economy needs shovel",
       "skipped": true,
       "unless_needs": "shovel",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -11869,8 +12032,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs beer or workers need experience",
       "skipped": true,
-      "unless_needs": "beer",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -11901,10 +12065,12 @@
     ]
    },
    "spritesheets": {},
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "main: return condition return=skipped unless economy needs beer or workers need experience"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs beer or workers need experience"
   },
   "barbarians_quarry": {
    "tribe": "barbarians",
@@ -12330,6 +12496,7 @@
       "raw": "return=skipped unless economy needs iron",
       "skipped": true,
       "unless_needs": "iron",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12375,6 +12542,7 @@
       "raw": "return=skipped unless economy needs iron",
       "skipped": true,
       "unless_needs": "iron",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12420,6 +12588,7 @@
       "raw": "return=skipped unless economy needs gold",
       "skipped": true,
       "unless_needs": "gold",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12502,6 +12671,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12633,6 +12803,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -12642,6 +12813,7 @@
       "raw": "return=skipped unless economy needs ax",
       "skipped": true,
       "unless_needs": "ax",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12692,6 +12864,7 @@
       "raw": "return=skipped unless economy needs ax_sharp",
       "skipped": true,
       "unless_needs": "ax_sharp",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12742,6 +12915,7 @@
       "raw": "return=skipped unless economy needs ax_broad",
       "skipped": true,
       "unless_needs": "ax_broad",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12792,6 +12966,7 @@
       "raw": "return=skipped unless economy needs ax_bronze",
       "skipped": true,
       "unless_needs": "ax_bronze",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12842,6 +13017,7 @@
       "raw": "return=skipped unless economy needs ax_battle",
       "skipped": true,
       "unless_needs": "ax_battle",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -12893,6 +13069,7 @@
       "raw": "return=skipped unless economy needs ax_warriors",
       "skipped": true,
       "unless_needs": "ax_warriors",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13015,6 +13192,7 @@
       "raw": "return=skipped unless economy needs cloth",
       "skipped": true,
       "unless_needs": "cloth",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13159,6 +13337,7 @@
       "raw": "return=skipped unless economy needs blackwood",
       "skipped": true,
       "unless_needs": "blackwood",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13284,6 +13463,7 @@
       "raw": "return=skipped unless economy needs armor_helmet",
       "skipped": true,
       "unless_needs": "armor_helmet",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13319,6 +13499,7 @@
       "raw": "return=skipped unless economy needs armor",
       "skipped": true,
       "unless_needs": "armor",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13355,6 +13536,7 @@
       "raw": "return=skipped unless economy needs armor_chain",
       "skipped": true,
       "unless_needs": "armor_chain",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13391,6 +13573,7 @@
       "raw": "return=skipped unless economy needs armor_gilded",
       "skipped": true,
       "unless_needs": "armor_gilded",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13494,6 +13677,7 @@
       "raw": "return=skipped unless economy needs empire_bread",
       "skipped": true,
       "unless_needs": "bread",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13597,6 +13781,7 @@
       "raw": "return=skipped unless economy needs empire_soldier",
       "skipped": true,
       "unless_needs": "soldier",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13616,7 +13801,7 @@
      {
       "cmd": "recruit",
       "raw": "recruit=empire_soldier",
-      "args": "empire_soldier"
+      "target": "empire_soldier"
      }
     ]
    },
@@ -13631,12 +13816,10 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "main: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_brewery": {
    "tribe": "empire",
@@ -13665,6 +13848,7 @@
       "raw": "return=skipped unless economy needs beer",
       "skipped": true,
       "unless_needs": "beer",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13752,6 +13936,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13833,6 +14018,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -13868,6 +14054,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -13971,6 +14158,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -14016,6 +14204,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -14122,6 +14311,7 @@
       "raw": "return=skipped unless economy needs empire_donkey",
       "skipped": true,
       "unless_needs": "donkey",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -14151,7 +14341,7 @@
      {
       "cmd": "recruit",
       "raw": "recruit=empire_donkey",
-      "args": "empire_donkey"
+      "target": "empire_donkey"
      }
     ]
    },
@@ -14176,12 +14366,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "main: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_farm": {
    "tribe": "empire",
@@ -14288,6 +14476,7 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": true
      },
      {
@@ -14470,6 +14659,7 @@
       "raw": "return=skipped unless economy needs gold_ore",
       "skipped": true,
       "unless_needs": "gold_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -14500,6 +14690,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -14603,6 +14794,7 @@
       "raw": "return=skipped unless economy needs gold_ore",
       "skipped": true,
       "unless_needs": "gold_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -14638,6 +14830,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -14800,6 +14993,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -14843,6 +15037,7 @@
       "raw": "return=skipped unless economy needs meal",
       "skipped": true,
       "unless_needs": "meal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -14933,6 +15128,7 @@
       "raw": "return=skipped unless economy needs iron_ore",
       "skipped": true,
       "unless_needs": "iron_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -14968,6 +15164,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -15071,6 +15268,7 @@
       "raw": "return=skipped unless economy needs iron_ore",
       "skipped": true,
       "unless_needs": "iron_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -15111,6 +15309,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -15272,6 +15471,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -15280,8 +15480,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs marble or economy needs granite",
       "skipped": true,
-      "unless_needs": "marble",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -15321,6 +15522,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -15329,8 +15531,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs marble or economy needs granite",
       "skipped": true,
-      "unless_needs": "marble",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -15370,6 +15573,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -15486,10 +15690,13 @@
      ]
     }
    },
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "mine_granite: return condition return=skipped unless economy needs marble or economy needs granite",
+    "mine_marble: return condition return=skipped unless economy needs marble or economy needs granite"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: mine_granite: return condition return=skipped unless economy needs marble or economy needs granite; mine_marble: return condition return=skipped unless economy needs marble or economy needs granite"
   },
   "empire_marblemine_deep": {
    "tribe": "empire",
@@ -15514,8 +15721,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs marble or economy needs granite",
       "skipped": true,
-      "unless_needs": "marble",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -15560,6 +15768,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -15658,10 +15867,12 @@
      ]
     }
    },
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "main: return condition return=skipped unless economy needs marble or economy needs granite"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs marble or economy needs granite"
   },
   "empire_mill": {
    "tribe": "empire",
@@ -15689,6 +15900,7 @@
       "raw": "return=skipped unless economy needs flour",
       "skipped": true,
       "unless_needs": "flour",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -15794,6 +16006,7 @@
       "raw": "return=skipped unless economy needs meat",
       "skipped": true,
       "unless_needs": "meat",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -15976,6 +16189,7 @@
       "raw": "return=skipped unless economy needs planks",
       "skipped": true,
       "unless_needs": "plank",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16142,6 +16356,7 @@
       "raw": "return=skipped unless economy needs wool",
       "skipped": true,
       "unless_needs": "wool",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16349,6 +16564,7 @@
       "raw": "return=skipped unless economy needs iron",
       "skipped": true,
       "unless_needs": "iron",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16394,6 +16610,7 @@
       "raw": "return=skipped unless economy needs iron",
       "skipped": true,
       "unless_needs": "iron",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16439,6 +16656,7 @@
       "raw": "return=skipped unless economy needs gold",
       "skipped": true,
       "unless_needs": "gold",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16541,6 +16759,7 @@
       "raw": "return=skipped unless economy needs marble_column",
       "skipped": true,
       "unless_needs": "marble_column",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16629,6 +16848,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16788,6 +17008,7 @@
       "raw": "return=skipped unless economy needs felling_ax",
       "skipped": true,
       "unless_needs": "felling_ax",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16828,6 +17049,7 @@
       "raw": "return=skipped unless economy needs basket",
       "skipped": true,
       "unless_needs": "basket",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16868,6 +17090,7 @@
       "raw": "return=skipped unless economy needs bread_paddle",
       "skipped": true,
       "unless_needs": "bread_paddle",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16908,6 +17131,7 @@
       "raw": "return=skipped unless economy needs fire_tongs",
       "skipped": true,
       "unless_needs": "fire_tongs",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16948,6 +17172,7 @@
       "raw": "return=skipped unless economy needs fishing_rod",
       "skipped": true,
       "unless_needs": "fishing_rod",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -16988,6 +17213,7 @@
       "raw": "return=skipped unless economy needs hammer",
       "skipped": true,
       "unless_needs": "hammer",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17028,6 +17254,7 @@
       "raw": "return=skipped unless economy needs hunting_spear",
       "skipped": true,
       "unless_needs": "hunting_spear",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17068,6 +17295,7 @@
       "raw": "return=skipped unless economy needs kitchen_tools",
       "skipped": true,
       "unless_needs": "kitchen_tools",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17108,6 +17336,7 @@
       "raw": "return=skipped unless economy needs pick",
       "skipped": true,
       "unless_needs": "pick",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17148,6 +17377,7 @@
       "raw": "return=skipped unless economy needs saw",
       "skipped": true,
       "unless_needs": "saw",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17188,6 +17418,7 @@
       "raw": "return=skipped unless economy needs scythe",
       "skipped": true,
       "unless_needs": "scythe",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17228,6 +17459,7 @@
       "raw": "return=skipped unless economy needs shovel",
       "skipped": true,
       "unless_needs": "shovel",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17418,6 +17650,7 @@
       "raw": "return=skipped unless economy needs spear_wooden",
       "skipped": true,
       "unless_needs": "spear_wooden",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17467,6 +17700,7 @@
       "raw": "return=skipped unless economy needs spear",
       "skipped": true,
       "unless_needs": "spear",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17518,6 +17752,7 @@
       "raw": "return=skipped unless economy needs spear_advanced",
       "skipped": true,
       "unless_needs": "spear_advanced",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17569,6 +17804,7 @@
       "raw": "return=skipped unless economy needs spear_heavy",
       "skipped": true,
       "unless_needs": "spear_heavy",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17621,6 +17857,7 @@
       "raw": "return=skipped unless economy needs spear_war",
       "skipped": true,
       "unless_needs": "spear_war",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -17751,6 +17988,7 @@
       "raw": "return=skipped unless economy needs cloth",
       "skipped": true,
       "unless_needs": "cloth",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18015,6 +18253,7 @@
       "raw": "return=skipped unless economy needs fish",
       "skipped": true,
       "unless_needs": "fish",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18022,14 +18261,42 @@
       "raw": "return=failed unless site has water:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "water"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fruit",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fruit"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "callworker",
@@ -18056,6 +18323,7 @@
       "raw": "return=skipped unless economy needs fish",
       "skipped": true,
       "unless_needs": "fish",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18108,13 +18376,10 @@
      "rows": 1
     }
    },
-   "executable": false,
-   "problems": [
-    "breed_fish: return condition return=failed unless site has water:2",
-    "breed_fish: return condition return=failed unless site has fruit"
-   ],
+   "executable": true,
+   "problems": [],
    "runnable": false,
-   "blocked_by": "building_programs: breed_fish: return condition return=failed unless site has water:2; breed_fish: return condition return=failed unless site has fruit"
+   "blocked_by": "worker_program: breed_in_pond"
   },
   "frisians_armor_smithy_large": {
    "tribe": "frisians",
@@ -18173,6 +18438,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -18182,6 +18448,7 @@
       "raw": "return=skipped unless economy needs sword_broad",
       "skipped": true,
       "unless_needs": "sword_broad",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18233,6 +18500,7 @@
       "raw": "return=skipped unless economy needs sword_double",
       "skipped": true,
       "unless_needs": "sword_double",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18284,6 +18552,7 @@
       "raw": "return=skipped unless economy needs helmet_golden",
       "skipped": true,
       "unless_needs": "helmet_golden",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18397,6 +18666,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -18406,6 +18676,7 @@
       "raw": "return=skipped unless economy needs sword_short",
       "skipped": true,
       "unless_needs": "sword_short",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18456,6 +18727,7 @@
       "raw": "return=skipped unless economy needs sword_long",
       "skipped": true,
       "unless_needs": "sword_long",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18506,6 +18778,7 @@
       "raw": "return=skipped unless economy needs helmet",
       "skipped": true,
       "unless_needs": "helmet",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18611,8 +18884,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs bread_frisians or workers need experience",
       "skipped": true,
-      "unless_needs": "bread_frisians",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -18673,10 +18947,12 @@
      "fps": 10
     }
    },
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "main: return condition return=skipped unless economy needs bread_frisians or workers need experience"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs bread_frisians or workers need experience"
   },
   "frisians_barracks": {
    "tribe": "frisians",
@@ -18714,6 +18990,7 @@
       "raw": "return=skipped unless economy needs frisians_soldier",
       "skipped": true,
       "unless_needs": "soldier",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -18739,7 +19016,7 @@
      {
       "cmd": "recruit",
       "raw": "recruit=frisians_soldier",
-      "args": "frisians_soldier"
+      "target": "frisians_soldier"
      }
     ]
    },
@@ -18774,12 +19051,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "main: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_beekeepers_house": {
    "tribe": "frisians",
@@ -19005,6 +19280,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -19014,6 +19290,7 @@
       "raw": "return=skipped unless economy needs basket",
       "skipped": true,
       "unless_needs": "basket",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19049,6 +19326,7 @@
       "raw": "return=skipped unless economy needs bread_paddle",
       "skipped": true,
       "unless_needs": "bread_paddle",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19084,6 +19362,7 @@
       "raw": "return=skipped unless economy needs felling_ax",
       "skipped": true,
       "unless_needs": "felling_ax",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19119,6 +19398,7 @@
       "raw": "return=skipped unless economy needs fire_tongs",
       "skipped": true,
       "unless_needs": "fire_tongs",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19153,6 +19433,7 @@
       "raw": "return=skipped unless economy needs fishing_net",
       "skipped": true,
       "unless_needs": "fishing_net",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19187,6 +19468,7 @@
       "raw": "return=skipped unless economy needs hammer",
       "skipped": true,
       "unless_needs": "hammer",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19222,6 +19504,7 @@
       "raw": "return=skipped unless economy needs hunting_spear",
       "skipped": true,
       "unless_needs": "hunting_spear",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19257,6 +19540,7 @@
       "raw": "return=skipped unless economy needs kitchen_tools",
       "skipped": true,
       "unless_needs": "kitchen_tools",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19292,6 +19576,7 @@
       "raw": "return=skipped unless economy needs needles",
       "skipped": true,
       "unless_needs": "needles",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19326,6 +19611,7 @@
       "raw": "return=skipped unless economy needs pick",
       "skipped": true,
       "unless_needs": "pick",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19361,6 +19647,7 @@
       "raw": "return=skipped unless economy needs scythe",
       "skipped": true,
       "unless_needs": "scythe",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19396,6 +19683,7 @@
       "raw": "return=skipped unless economy needs shovel",
       "skipped": true,
       "unless_needs": "shovel",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19495,8 +19783,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs beer or workers need experience",
       "skipped": true,
-      "unless_needs": "beer",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -19557,10 +19846,12 @@
      "fps": 10
     }
    },
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "main: return condition return=skipped unless economy needs beer or workers need experience"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs beer or workers need experience"
   },
   "frisians_brick_kiln": {
    "tribe": "frisians",
@@ -19598,6 +19889,7 @@
       "raw": "return=skipped unless economy needs brick",
       "skipped": true,
       "unless_needs": "brick",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19711,6 +20003,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19826,6 +20119,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -19924,15 +20218,30 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs clay or economy needs fish or economy needs coal",
       "skipped": true,
-      "unless_needs": "clay",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has water",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "water"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "callworker",
@@ -20004,10 +20313,10 @@
    },
    "executable": false,
    "problems": [
-    "main: return condition return=failed unless site has water"
+    "main: return condition return=skipped unless economy needs clay or economy needs fish or economy needs coal"
    ],
    "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=failed unless site has water"
+   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs clay or economy needs fish or economy needs coal"
   },
   "frisians_coalmine": {
    "tribe": "frisians",
@@ -20043,6 +20352,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -20072,6 +20382,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -20191,6 +20502,7 @@
       "raw": "return=skipped unless economy needs coal",
       "skipped": true,
       "unless_needs": "coal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -20245,6 +20557,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -20559,6 +20872,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -20602,6 +20916,7 @@
       "raw": "return=skipped unless economy needs meal",
       "skipped": true,
       "unless_needs": "meal",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -20816,6 +21131,7 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": true
      },
      {
@@ -21042,6 +21358,7 @@
       "raw": "return=skipped unless economy needs iron",
       "skipped": true,
       "unless_needs": "iron",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -21087,6 +21404,7 @@
       "raw": "return=skipped unless economy needs iron",
       "skipped": true,
       "unless_needs": "iron",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -21132,6 +21450,7 @@
       "raw": "return=skipped unless economy needs gold",
       "skipped": true,
       "unless_needs": "gold",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -21252,6 +21571,7 @@
       "raw": "return=skipped unless economy needs gold_ore",
       "skipped": true,
       "unless_needs": "gold_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -21365,6 +21685,7 @@
       "raw": "return=skipped unless economy needs gold_ore",
       "skipped": true,
       "unless_needs": "gold_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -21409,6 +21730,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -21536,6 +21858,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -21544,8 +21867,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs honey_bread or workers need experience",
       "skipped": true,
-      "unless_needs": "honey_bread",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -21580,8 +21904,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs honey_bread or workers need experience",
       "skipped": true,
-      "unless_needs": "honey_bread",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -21617,6 +21942,7 @@
       "raw": "return=skipped unless economy needs bread_frisians",
       "skipped": true,
       "unless_needs": "bread_frisians",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -21669,10 +21995,13 @@
      "fps": 10
     }
    },
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "bake_honey: return condition return=skipped unless economy needs honey_bread or workers need experience",
+    "bake_honey_2: return condition return=skipped unless economy needs honey_bread or workers need experience"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: bake_honey: return condition return=skipped unless economy needs honey_bread or workers need experience; bake_honey_2: return condition return=skipped unless economy needs honey_bread or workers need experience"
   },
   "frisians_hunters_house": {
    "tribe": "frisians",
@@ -21819,6 +22148,7 @@
       "raw": "return=skipped unless economy needs iron_ore",
       "skipped": true,
       "unless_needs": "iron_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -21932,6 +22262,7 @@
       "raw": "return=skipped unless economy needs iron_ore",
       "skipped": true,
       "unless_needs": "iron_ore",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -21986,6 +22317,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -22113,6 +22445,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -22121,8 +22454,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs mead or workers need experience",
       "skipped": true,
-      "unless_needs": "mead",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -22157,8 +22491,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs mead or workers need experience",
       "skipped": true,
-      "unless_needs": "mead",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -22194,6 +22529,7 @@
       "raw": "return=skipped unless economy needs beer",
       "skipped": true,
       "unless_needs": "beer",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -22246,10 +22582,13 @@
      "fps": 10
     }
    },
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "brew_mead: return condition return=skipped unless economy needs mead or workers need experience",
+    "brew_mead_2: return condition return=skipped unless economy needs mead or workers need experience"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: brew_mead: return condition return=skipped unless economy needs mead or workers need experience; brew_mead_2: return condition return=skipped unless economy needs mead or workers need experience"
   },
   "frisians_quarry": {
    "tribe": "frisians",
@@ -22384,7 +22723,21 @@
       "raw": "return=skipped unless site has fur_garment_old",
       "skipped": true,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fur_garment_old"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -22417,8 +22770,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs iron or not economy needs coal",
       "skipped": true,
-      "unless_needs": "iron",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -22452,8 +22806,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs iron or economy needs gold or not economy needs coal",
       "skipped": true,
-      "unless_needs": "iron",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -22527,10 +22882,11 @@
    },
    "executable": false,
    "problems": [
-    "make_fur: return condition return=skipped unless site has fur_garment_old"
+    "smelt_iron: return condition return=skipped unless economy needs iron or not economy needs coal",
+    "smelt_mixed: return condition return=skipped unless economy needs iron or economy needs gold or not economy needs coal"
    ],
    "runnable": false,
-   "blocked_by": "building_programs: make_fur: return condition return=skipped unless site has fur_garment_old"
+   "blocked_by": "building_programs: smelt_iron: return condition return=skipped unless economy needs iron or not economy needs coal; smelt_mixed: return condition return=skipped unless economy needs iron or economy needs gold or not economy needs coal"
   },
   "frisians_reed_farm": {
    "tribe": "frisians",
@@ -22687,6 +23043,7 @@
       "raw": "return=skipped unless economy needs frisians_reindeer",
       "skipped": true,
       "unless_needs": "reindeer",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -22711,7 +23068,7 @@
      {
       "cmd": "recruit",
       "raw": "recruit=frisians_reindeer",
-      "args": "frisians_reindeer"
+      "target": "frisians_reindeer"
      }
     ],
     "make_fur": [
@@ -22720,6 +23077,7 @@
       "raw": "return=skipped unless economy needs fur",
       "skipped": true,
       "unless_needs": "fur",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -22755,6 +23113,7 @@
       "raw": "return=skipped unless economy needs fur",
       "skipped": true,
       "unless_needs": "fur",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -22817,12 +23176,10 @@
      "rows": 2
     }
    },
-   "executable": false,
-   "problems": [
-    "recruit_deer: recruit"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: recruit_deer: recruit"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_rockmine": {
    "tribe": "frisians",
@@ -22863,6 +23220,7 @@
       "raw": "return=skipped unless economy needs granite",
       "skipped": true,
       "unless_needs": "granite",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -22892,6 +23250,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -23016,6 +23375,7 @@
       "raw": "return=skipped unless economy needs granite",
       "skipped": true,
       "unless_needs": "granite",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -23070,6 +23430,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -23271,8 +23632,9 @@
       "cmd": "return",
       "raw": "return=skipped unless economy needs fur_garment or workers need experience",
       "skipped": true,
-      "unless_needs": "fur_garment",
-      "other_condition": false
+      "unless_needs": "",
+      "condition": {},
+      "other_condition": true
      },
      {
       "cmd": "consume",
@@ -23332,10 +23694,12 @@
      "fps": 10
     }
    },
-   "executable": true,
-   "problems": [],
-   "runnable": true,
-   "blocked_by": ""
+   "executable": false,
+   "problems": [
+    "main: return condition return=skipped unless economy needs fur_garment or workers need experience"
+   ],
+   "runnable": false,
+   "blocked_by": "building_programs: main: return condition return=skipped unless economy needs fur_garment or workers need experience"
   },
   "frisians_shipyard": {
    "tribe": "frisians",
@@ -23476,6 +23840,7 @@
       "raw": "return=skipped unless economy needs smoked_fish",
       "skipped": true,
       "unless_needs": "smoked_fish",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -23511,13 +23876,33 @@
       "raw": "return=skipped when site has fish:2 and economy needs smoked_fish",
       "skipped": true,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "when",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish"
+         ],
+         "n": 2,
+         "not": false
+        },
+        {
+         "type": "economy_needs",
+         "ware": "smoked_fish",
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=skipped unless economy needs smoked_meat",
       "skipped": true,
       "unless_needs": "smoked_meat",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -23579,12 +23964,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "smoke_meat: return condition return=skipped when site has fish:2 and economy needs smoked_fish"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: smoke_meat: return condition return=skipped when site has fish:2 and economy needs smoked_fish"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_tailors_shop": {
    "tribe": "frisians",
@@ -23628,6 +24011,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -23637,6 +24021,7 @@
       "raw": "return=skipped unless economy needs fur_garment_studded",
       "skipped": true,
       "unless_needs": "fur_garment_studded",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -23672,6 +24057,7 @@
       "raw": "return=skipped unless economy needs fur_garment_golden",
       "skipped": true,
       "unless_needs": "fur_garment_golden",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -23778,6 +24164,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -23785,7 +24172,31 @@
       "raw": "return=skipped when site has fruit,bread_frisians and site has smoked_fish,smoked_meat",
       "skipped": true,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "when",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fruit",
+          "bread_frisians"
+         ],
+         "n": 1,
+         "not": false
+        },
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -23829,6 +24240,7 @@
       "raw": "return=skipped unless economy needs ration",
       "skipped": true,
       "unless_needs": "ration",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -23897,12 +24309,10 @@
      "fps": 10
     }
    },
-   "executable": false,
-   "problems": [
-    "produce_malus: return condition return=skipped when site has fruit,bread_frisians and site has smoked_fish,smoked_meat"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: produce_malus: return condition return=skipped when site has fruit,bread_frisians and site has smoked_fish,smoked_meat"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_weaving_mill": {
    "tribe": "frisians",
@@ -23939,6 +24349,7 @@
       "raw": "return=skipped unless economy needs cloth",
       "skipped": true,
       "unless_needs": "cloth",
+      "condition": {},
       "other_condition": false
      },
      {
@@ -24199,6 +24610,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -24213,21 +24625,64 @@
       "raw": "return=failed unless site has boots_sturdy",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "boots_sturdy"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24269,21 +24724,63 @@
       "raw": "return=failed unless site has boots_swift",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "boots_swift"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has amazons_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24322,28 +24819,85 @@
       "raw": "return=failed unless site has boots_hero",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "boots_hero"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has amazons_bread:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24386,21 +24940,64 @@
       "raw": "return=failed unless site has armor_wooden",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "armor_wooden"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24442,21 +25039,63 @@
       "raw": "return=failed unless site has helmet_wooden",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "helmet_wooden"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has amazons_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24495,28 +25134,85 @@
       "raw": "return=failed unless site has warriors_coat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "warriors_coat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has amazons_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24559,21 +25255,63 @@
       "raw": "return=failed unless site has vest_padded",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "vest_padded"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has amazons_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24612,28 +25350,85 @@
       "raw": "return=failed unless site has protector_padded",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "protector_padded"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has amazons_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24738,6 +25533,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -24752,21 +25548,64 @@
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has spear_stone_tipped",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "spear_stone_tipped"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24808,28 +25647,85 @@
       "raw": "return=failed unless site has amazons_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has chocolate",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "chocolate"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has spear_hardened",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "spear_hardened"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "animate",
@@ -24929,6 +25825,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -24943,21 +25840,64 @@
       "raw": "return=failed unless site has trident_long",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "trident_long"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has atlanteans_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -24998,21 +25938,64 @@
       "raw": "return=failed unless site has trident_steel",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "trident_steel"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has atlanteans_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25053,21 +26036,64 @@
       "raw": "return=failed unless site has trident_double",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "trident_double"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has atlanteans_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25108,21 +26134,64 @@
       "raw": "return=failed unless site has trident_heavy_double",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "trident_heavy_double"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has atlanteans_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25207,6 +26276,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -25221,21 +26291,64 @@
       "raw": "return=failed unless site has shield_steel",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "shield_steel"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has atlanteans_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25276,21 +26389,64 @@
       "raw": "return=failed unless site has shield_advanced",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "shield_advanced"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has atlanteans_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25331,14 +26487,43 @@
       "raw": "return=failed unless site has tabard_golden",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "tabard_golden"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25378,14 +26563,43 @@
       "raw": "return=failed unless site has atlanteans_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25425,14 +26639,43 @@
       "raw": "return=failed unless site has atlanteans_bread:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25513,6 +26756,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -25527,21 +26771,64 @@
       "raw": "return=failed unless site has barbarians_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has beer_strong",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "beer_strong"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25588,21 +26875,64 @@
       "raw": "return=failed unless site has barbarians_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has beer_strong",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "beer_strong"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25727,6 +27057,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -25741,21 +27072,64 @@
       "raw": "return=failed unless site has ax_sharp",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "ax_sharp"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has barbarians_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25796,21 +27170,64 @@
       "raw": "return=failed unless site has ax_broad",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "ax_broad"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has barbarians_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25851,21 +27268,64 @@
       "raw": "return=failed unless site has ax_bronze",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "ax_bronze"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has barbarians_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25906,21 +27366,64 @@
       "raw": "return=failed unless site has ax_battle",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "ax_battle"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has barbarians_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -25961,21 +27464,64 @@
       "raw": "return=failed unless site has ax_warriors",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "ax_warriors"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has barbarians_bread:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26016,14 +27562,44 @@
       "raw": "return=failed unless site has helmet",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "helmet"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has barbarians_bread,fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread",
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26064,21 +27640,64 @@
       "raw": "return=failed unless site has helmet_mask",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "helmet_mask"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has barbarians_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26119,21 +27738,64 @@
       "raw": "return=failed unless site has helmet_warhelm",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "helmet_warhelm"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has barbarians_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26227,6 +27889,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -26241,14 +27904,43 @@
       "raw": "return=failed unless site has empire_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26334,6 +28026,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -26348,14 +28041,43 @@
       "raw": "return=failed unless site has empire_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26395,14 +28117,43 @@
       "raw": "return=failed unless site has empire_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26495,6 +28246,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -26509,21 +28261,64 @@
       "raw": "return=failed unless site has spear",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "spear"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has empire_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26564,21 +28359,64 @@
       "raw": "return=failed unless site has spear_advanced",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "spear_advanced"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has empire_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26619,21 +28457,64 @@
       "raw": "return=failed unless site has spear_heavy",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "spear_heavy"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has empire_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26674,21 +28555,64 @@
       "raw": "return=failed unless site has spear_war",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "spear_war"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has empire_bread:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26729,14 +28653,44 @@
       "raw": "return=failed unless site has armor_helmet",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "armor_helmet"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has empire_bread,fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread",
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26777,21 +28731,64 @@
       "raw": "return=failed unless site has armor",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "armor"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has empire_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26832,21 +28829,64 @@
       "raw": "return=failed unless site has armor_chain",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "armor_chain"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has empire_bread:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26887,21 +28927,64 @@
       "raw": "return=failed unless site has armor_gilded",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "armor_gilded"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has empire_bread:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has fish,meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fish",
+          "meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -26998,6 +29081,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -27012,21 +29096,65 @@
       "raw": "return=failed unless site has sword_long",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "sword_long"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has honey_bread,mead",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "honey_bread",
+          "mead"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27072,21 +29200,65 @@
       "raw": "return=failed unless site has sword_broad",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "sword_broad"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has honey_bread,mead",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "honey_bread",
+          "mead"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat:2",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 2,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27139,28 +29311,85 @@
       "raw": "return=failed unless site has sword_double",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "sword_double"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has honey_bread",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "honey_bread"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has mead",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "mead"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27216,21 +29445,65 @@
       "raw": "return=failed unless site has fur_garment_golden",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fur_garment_golden"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has honey_bread,mead",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "honey_bread",
+          "mead"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27284,21 +29557,65 @@
       "raw": "return=failed unless site has helmet_golden",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "helmet_golden"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has honey_bread,mead",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "honey_bread",
+          "mead"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27427,6 +29744,7 @@
       "raw": "return=skipped",
       "skipped": true,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -27441,14 +29759,45 @@
       "raw": "return=failed unless site has sword_long",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "sword_long"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has bread_frisians,beer,smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread_frisians",
+          "beer",
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27503,21 +29852,64 @@
       "raw": "return=failed unless site has sword_broad",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "sword_broad"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has bread_frisians",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread_frisians"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27571,21 +29963,64 @@
       "raw": "return=failed unless site has sword_double",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "sword_double"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has beer",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "beer"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27640,21 +30075,65 @@
       "raw": "return=failed unless site has helmet",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "helmet"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has bread_frisians,beer",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread_frisians",
+          "beer"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -27700,21 +30179,65 @@
       "raw": "return=failed unless site has fur_garment_studded",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "fur_garment_studded"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has bread_frisians,beer",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "bread_frisians",
+          "beer"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "return",
       "raw": "return=failed unless site has smoked_fish,smoked_meat",
       "skipped": false,
       "unless_needs": "",
-      "other_condition": true
+      "condition": {
+       "result": "failed",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "site_has",
+         "wares": [
+          "smoked_fish",
+          "smoked_meat"
+         ],
+         "n": 1,
+         "not": false
+        }
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "sleep",
@@ -28526,6 +31049,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -28626,6 +31150,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -28669,6 +31194,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -28831,6 +31357,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -28874,6 +31401,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -29270,6 +31798,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -29320,6 +31849,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -29424,6 +31954,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -29468,6 +31999,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -29512,6 +32044,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -29559,6 +32092,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -29603,6 +32137,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -29725,6 +32260,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -29835,6 +32371,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -29909,6 +32446,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -29928,6 +32466,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -30018,6 +32557,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -30050,6 +32590,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -30338,6 +32879,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -30578,6 +33120,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -30610,6 +33153,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -30717,6 +33261,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -30830,6 +33375,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -30883,6 +33429,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -30936,6 +33483,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -30989,6 +33537,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -31192,6 +33741,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -31235,6 +33785,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -31505,6 +34056,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -31553,6 +34105,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -31666,6 +34219,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -31765,6 +34319,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -31869,6 +34424,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -32159,6 +34715,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -32402,6 +34959,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -32421,6 +34979,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -32494,6 +35053,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -32526,6 +35086,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -32781,6 +35342,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -33076,6 +35638,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -33568,6 +36131,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -33616,6 +36180,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -33743,6 +36308,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -33829,6 +36395,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -33925,6 +36492,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -33962,6 +36530,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -34197,6 +36766,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -34391,6 +36961,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -34681,6 +37252,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -34792,6 +37364,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -34811,6 +37384,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -34891,6 +37465,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -34923,6 +37498,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -35086,6 +37662,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -35688,6 +38265,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -35736,6 +38314,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -35864,6 +38443,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -35969,6 +38549,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -36178,6 +38759,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -36327,6 +38909,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -36622,6 +39205,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -36641,6 +39225,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -36779,6 +39364,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -36811,6 +39397,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -36967,6 +39554,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -37009,6 +39597,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -37209,6 +39798,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -37252,6 +39842,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -37589,6 +40180,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -37692,6 +40284,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -38125,6 +40718,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -38163,6 +40757,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -38285,6 +40880,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -38394,6 +40990,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -38443,6 +41040,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -38545,6 +41143,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -38588,6 +41187,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -38711,6 +41311,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -38748,6 +41349,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -38780,6 +41382,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -38896,6 +41499,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -38999,6 +41603,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -39195,6 +41800,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -39425,6 +42031,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -39468,6 +42075,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -39655,6 +42263,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -39674,6 +42283,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -39849,6 +42459,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ],
@@ -39881,6 +42492,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -40085,6 +42697,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]
@@ -40235,6 +42848,7 @@
       "raw": "return",
       "skipped": false,
       "unless_needs": "",
+      "condition": {},
       "other_condition": false
      }
     ]

@@ -31,9 +31,15 @@ Commands are in `docs/PROJECT_STATUS.md` and `docs/STATE_OF_PLAY.md`. One sim pr
 - `docs/evidence/gallery/` and `REVIEW.md`
 - `docs/original_runs/`
 
+## Checkpoint (latest)
+
+Verified: 55 Python tests, headed walk/visual/duel/forestry/food/god/war all PASS (`scripts/run_headed_suite.ps1`). 124 of 124 runnable Widelands production sites pass the bench (`verify_generic_buildings.py`), including tribe barracks (`recruit` command spawns a Widelands soldier) and `return=... when/unless` conditions.
+
+In progress, partly landed: **tribes per faction** (`wizard_rts/tribes.py`: Red/Orange Barbarians, Blue Empire, Green Frisians, Yellow Atlanteans, Purple Amazons). Done: tribe starter stock, tribe-specific rifleman cost (`construction.recipe_for` uses the tribe barracks' consume line), gold/stone deposits per faction. NOT done: the tribe-aware AI planner. Until it exists, non-Barbarian factions cannot make their soldier wares, so their OpenRA barracks stall and only Barbarians (Red, Orange) recruit; the six-faction war is therefore lopsided. The God Mode test uses Orange for that reason.
+
 ## Next task
 
-Widen the generic path. (1) Warehouses and military/training sites from the Lua (garrisons, soldiers, `trainingsite` programmes: `upgrade_soldier_*` etc.) so Widelands military buildings exist and can be attacked, defended and fed by wares; (2) the unsupported worker commands (fisher: `findspace resource:`, `breed`, `scout`, swimming water gatherers, `createbob`, `terraform`) with fish resources and water terrain; (3) let AI factions build from the imported tribes (a tribe-aware economy plan driven by `wl_defs`), and give each of the six factions a tribe; (4) per-building headed verification for the imported set (`run_hybrid_generic.gd` driving the bench world through the renderer) so catalogue entries can reach `verified`; (5) the God Mode menu catalogue for the original Widelands and OpenRA UI; (6) player-colour sprite remap for faction ownership. Keep `tests/test_logistics.py` conservation, `tests/test_generic_buildings.py` and the headed scripts green. B1 is still the missing C++ compiler.
+Write the tribe-aware AI planner in `ai.py`: for a faction's tribe, resolve the soldier wares (`wl_defs.soldier_wares`) through `tribes.producers()` into a dependency-ordered list of missing buildings (recursing over each building's inputs and over missing build-cost wares), place the first affordable one near the warehouse on a deposit if it mines (`world.resources`), connect its road, one site at a time. Then build the tribe barracks. Verify with `long_run.py`: every tribe must reach `recruited > 0` by minute 30 without free goods; add `tests/test_tribe_ai.py`. After that: military/training sites from the Lua, unsupported worker commands (fish, breed, scout, swimming), per-building headed verification, God Mode menu catalogue, player-colour sprite remap. Checkpoint every 20-30 minutes. B1 is still the missing C++ compiler.
 
 ## First files
 

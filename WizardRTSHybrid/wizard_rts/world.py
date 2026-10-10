@@ -31,6 +31,7 @@ from wizard_rts.widelands_stock import EconomyTotals  # noqa: E402
 from wizard_rts.economy import economy_quantum  # noqa: E402
 from wizard_rts.logistics import add_road, logistics_quantum  # noqa: E402
 from wizard_rts import rules
+from wizard_rts import tribes
 from wizard_rts.animals import spawn_animal
 from wizard_rts.programs_data import RESOURCE_PER_NODE, ROCK_AMOUNT, START_WARES
 from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path  # noqa: E402
@@ -151,7 +152,7 @@ class HybridWorld:
         placed = [self._place_faction(name, q, r) for name, (q, r), _color in FACTIONS]
         red, blue = placed[0], placed[1]
         for (name, _hex, color), info in zip(FACTIONS, placed):
-            self.faction_info[name] = {"id": info["faction"], "name": name, "color": color}
+            self.faction_info[name] = {"id": info["faction"], "name": name, "color": color, "tribe": tribes.FACTION_TRIBES.get(name, "barbarians")}
         for name, bid in self._pending_links:
             wh = con.faction_warehouse(self, name)
             res = con.build_road(self, name, bid, wh["id"])
@@ -185,7 +186,11 @@ class HybridWorld:
         add_road(self, faction_id, name, warehouse, processor, road_b)
         from wizard_rts.economy import produce
 
-        for good, n in START_WARES.items():
+        stock = dict(START_WARES)
+        for good, n in tribes.starter_stock(tribes.FACTION_TRIBES.get(name, "barbarians")).items():
+            stock[good] = max(stock.get(good, 0), n)
+        stock.update({"recruit": 8, "carrier": 8})
+        for good, n in stock.items():
             produce(self, warehouse, good, n)
         ranger_tile = self._free_in_hex(q, r, center, -6, 3, set(road_tiles))
         self._building(faction_id, name, "ranger", ranger_tile, "Ranger's hut", "widelands.rangers_hut")
@@ -249,6 +254,8 @@ class HybridWorld:
             if kind == "well":
                 self._seed_resource(tile, "water")
         self._place_scenery(faction_id, name, center, road)
+        for res, (dx, dy) in (("gold", (-8, -12)), ("stones", (7, 11))):
+            self._seed_resource(self._free_in_hex(q, r, center, dx, dy, road), res)
         for k in range(8):
             for _ in range(20):
                 tile = (center[0] + self.rng.randint(-16, 16), center[1] + self.rng.randint(-14, 14))

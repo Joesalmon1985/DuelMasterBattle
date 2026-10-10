@@ -227,6 +227,33 @@ def wares(text: str) -> dict[str, int]:
     return out
 
 
+def parse_condition(rest: str) -> tuple[dict, bool]:
+    """`skipped|failed unless|when <cond> [and <cond>]...` with cond = [not] economy needs W | [not] site has W[:n][,W2]."""
+    m = re.match(r"(skipped|failed|completed)\s+(unless|when)\s+(.*)$", rest.strip())
+    if not m:
+        return {}, True
+    conds = []
+    for part in re.split(r"\s+and\s+", m.group(3)):
+        part = part.strip()
+        neg = part.startswith("not ")
+        part = part[4:] if neg else part
+        em = re.match(r"economy needs (\S+)$", part)
+        sm = re.match(r"site has (\S+)$", part)
+        if em:
+            conds.append({"type": "economy_needs", "ware": ware(em.group(1)), "not": neg})
+        elif sm:
+            alts = []
+            n = 1
+            for tok in sm.group(1).split(","):
+                name, _, cnt = tok.partition(":")
+                alts.append(ware(name))
+                n = int(cnt) if cnt.isdigit() else n
+            conds.append({"type": "site_has", "wares": alts, "n": n, "not": neg})
+        else:
+            return {}, True  # fleet needs, soldiers present, ...: not executable
+    return {"result": m.group(1), "mode": m.group(2), "conds": conds}, False
+
+
 def parse_action(line: str) -> dict:
     cmd, _, rest = line.partition("=")
     cmd, rest = cmd.strip(), rest.strip()
@@ -240,9 +267,11 @@ def parse_action(line: str) -> dict:
         a["wares"] = wares(rest)
     elif cmd == "return":
         a["skipped"] = rest.startswith("skipped")
-        m = re.search(r"unless economy needs (\S+)", rest)
+        m = re.search(r"unless economy needs (\S+)$", rest.strip())
         a["unless_needs"] = ware(m.group(1)) if m else ""
-        a["other_condition"] = bool(rest) and not m and rest.strip() != "skipped"
+        a["condition"], a["other_condition"] = ({}, False) if m or rest.strip() in ("", "skipped", "failed", "completed") else parse_condition(rest)
+    elif cmd == "recruit":
+        a["target"] = rest.strip()
     elif cmd in ("call", "callworker", "callobject"):
         a["target"] = rest.split()[0] if rest else ""
     elif cmd == "mine":
@@ -275,7 +304,7 @@ def parse_program(entry) -> list[dict]:
     return [parse_action(x) for x in (actions or []) if isinstance(x, str)]
 
 
-BUILDING_COMMANDS = {"consume", "produce", "sleep", "animate", "callworker", "mine", "return", "call", "playsound"}
+BUILDING_COMMANDS = {"consume", "produce", "sleep", "animate", "callworker", "mine", "return", "call", "playsound", "recruit"}
 WORKER_COMMANDS = {"findobject", "findspace", "walk", "animate", "callobject", "createware", "plant", "removeobject", "return", "playsound", "sleep"}
 OBJECT_ATTRIBS = {"tree", "rocks", "ripe_wheat", "eatable"}
 SPACE_OK = {"", "tree_sapling", "seed_wheat"}
@@ -349,7 +378,7 @@ def mark_runnable(defs: dict) -> None:
                 if a["cmd"] in ("consume", "produce") and not reason:
                     for k, v in a["wares"].items():
                         for g in (v if k == "|" else [k]):
-                            if g not in WA:
+                            if g not in WA and g not in ("recruit", "carrier"):
                                 reason = f"unknown_ware: {g}"
         b["runnable"], b["blocked_by"] = not reason, reason
 

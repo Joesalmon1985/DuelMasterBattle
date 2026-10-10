@@ -144,6 +144,23 @@
   "workers": []
  },
  {
+  "name": "amazons_initiation_site",
+  "tribe": "amazons",
+  "passed": true,
+  "planted": 5,
+  "made": {},
+  "outputs": [],
+  "game_minutes": 3,
+  "shortages": {
+   "spear_wooden": 177,
+   "tunic": 177,
+   "bread": 177,
+   "fish": 177,
+   "carrier": 177
+  },
+  "workers": []
+ },
+ {
   "name": "amazons_liana_cutters_hut",
   "tribe": "amazons",
   "passed": true,
@@ -238,21 +255,20 @@
   ]
  },
  {
-  "name": "amazons_stonemine",
+  "name": "amazons_tapir_farm",
   "tribe": "amazons",
   "passed": true,
   "planted": 0,
   "made": {
-   "granite": 2,
-   "quartz": 2
+   "tapir": 5
   },
   "outputs": [
-   "granite",
-   "quartz"
+   "tapir"
   ],
   "game_minutes": 3,
   "shortages": {
-   "ration": 141
+   "cassavaroot": 176,
+   "water": 176
   },
   "workers": []
  },
@@ -293,6 +309,21 @@
    "water": 165,
    "cornmeal": 165,
    "blackroot_flour": 165
+  },
+  "workers": []
+ },
+ {
+  "name": "atlanteans_barracks",
+  "tribe": "atlanteans",
+  "passed": true,
+  "planted": 5,
+  "made": {},
+  "outputs": [],
+  "game_minutes": 3,
+  "shortages": {
+   "tabard": 177,
+   "trident_light": 177,
+   "recruit": 177
   },
   "workers": []
  },
@@ -402,6 +433,24 @@
   "workers": []
  },
  {
+  "name": "atlanteans_horsefarm",
+  "tribe": "atlanteans",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "horse": 5
+  },
+  "outputs": [
+   "horse"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "water": 177,
+   "corn": 177
+  },
+  "workers": []
+ },
+ {
   "name": "atlanteans_hunters_house",
   "tribe": "atlanteans",
   "passed": true,
@@ -433,6 +482,26 @@
   "shortages": {
    "smoked_fish": 70,
    "bread": 70
+  },
+  "workers": []
+ },
+ {
+  "name": "atlanteans_mill",
+  "tribe": "atlanteans",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "cornmeal": 5,
+   "blackroot_flour": 4
+  },
+  "outputs": [
+   "cornmeal",
+   "blackroot_flour"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "corn": 120,
+   "blackroot": 111
   },
   "workers": []
  },
@@ -693,6 +762,20 @@
   "workers": []
  },
  {
+  "name": "barbarians_barracks",
+  "tribe": "barbarians",
+  "passed": true,
+  "planted": 5,
+  "made": {},
+  "outputs": [],
+  "game_minutes": 3,
+  "shortages": {
+   "ax": 177,
+   "recruit": 177
+  },
+  "workers": []
+ },
+ {
   "name": "barbarians_big_inn",
   "tribe": "barbarians",
   "passed": true,
@@ -726,6 +809,24 @@
   },
   "outputs": [
    "beer_strong"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "water": 177,
+   "wheat": 177
+  },
+  "workers": []
+ },
+ {
+  "name": "barbarians_cattlefarm",
+  "tribe": "barbarians",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "ox": 5
+  },
+  "outputs": [
+   "ox"
   ],
   "game_minutes": 3,
   "shortages": {
@@ -1075,24 +1176,6 @@
   "workers": []
  },
  {
-  "name": "barbarians_micro_brewery",
-  "tribe": "barbarians",
-  "passed": true,
-  "planted": 0,
-  "made": {
-   "beer": 2
-  },
-  "outputs": [
-   "beer"
-  ],
-  "game_minutes": 3,
-  "shortages": {
-   "water": 177,
-   "wheat": 177
-  },
-  "workers": []
- },
- {
   "name": "barbarians_quarry",
   "tribe": "barbarians",
   "passed": true,
@@ -1281,6 +1364,21 @@
   "workers": []
  },
  {
+  "name": "empire_barracks",
+  "tribe": "empire",
+  "passed": true,
+  "planted": 5,
+  "made": {},
+  "outputs": [],
+  "game_minutes": 3,
+  "shortages": {
+   "armor_helmet": 177,
+   "spear_wooden": 177,
+   "recruit": 177
+  },
+  "workers": []
+ },
+ {
   "name": "empire_brewery",
   "tribe": "empire",
   "passed": true,
@@ -1348,6 +1446,24 @@
   "shortages": {
    "meal": 121,
    "beer": 121
+  },
+  "workers": []
+ },
+ {
+  "name": "empire_donkeyfarm",
+  "tribe": "empire",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "donkey": 5
+  },
+  "outputs": [
+   "donkey"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "water": 177,
+   "wheat": 177
   },
   "workers": []
  },
@@ -1509,46 +1625,6 @@
   "workers": [
    "empire_lumberjack"
   ]
- },
- {
-  "name": "empire_marblemine",
-  "tribe": "empire",
-  "passed": true,
-  "planted": 0,
-  "made": {
-   "granite": 6,
-   "marble": 5
-  },
-  "outputs": [
-   "granite",
-   "marble"
-  ],
-  "game_minutes": 3,
-  "shortages": {
-   "ration": 116,
-   "wine": 116
-  },
-  "workers": []
- },
- {
-  "name": "empire_marblemine_deep",
-  "tribe": "empire",
-  "passed": true,
-  "planted": 0,
-  "made": {
-   "granite": 4,
-   "marble": 6
-  },
-  "outputs": [
-   "granite",
-   "marble"
-  ],
-  "game_minutes": 3,
-  "shortages": {
-   "meal": 118,
-   "wine": 118
-  },
-  "workers": []
  },
  {
   "name": "empire_mill",
@@ -1857,20 +1933,17 @@
   "workers": []
  },
  {
-  "name": "frisians_bakery",
+  "name": "frisians_barracks",
   "tribe": "frisians",
   "passed": true,
-  "planted": 0,
-  "made": {
-   "bread_frisians": 4
-  },
-  "outputs": [
-   "bread_frisians"
-  ],
+  "planted": 5,
+  "made": {},
+  "outputs": [],
   "game_minutes": 3,
   "shortages": {
-   "barley": 155,
-   "water": 155
+   "sword_short": 177,
+   "fur_garment": 177,
+   "carrier": 177
   },
   "workers": []
  },
@@ -1911,24 +1984,6 @@
   "shortages": {
    "iron": 159,
    "log": 159
-  },
-  "workers": []
- },
- {
-  "name": "frisians_brewery",
-  "tribe": "frisians",
-  "passed": true,
-  "planted": 0,
-  "made": {
-   "beer": 2
-  },
-  "outputs": [
-   "beer"
-  ],
-  "game_minutes": 3,
-  "shortages": {
-   "barley": 177,
-   "water": 177
   },
   "workers": []
  },
@@ -2094,27 +2149,6 @@
   "workers": []
  },
  {
-  "name": "frisians_honey_bread_bakery",
-  "tribe": "frisians",
-  "passed": true,
-  "planted": 0,
-  "made": {
-   "honey_bread": 3,
-   "bread_frisians": 1
-  },
-  "outputs": [
-   "honey_bread",
-   "bread_frisians"
-  ],
-  "game_minutes": 3,
-  "shortages": {
-   "barley": 147,
-   "water": 147,
-   "honey": 147
-  },
-  "workers": []
- },
- {
   "name": "frisians_hunters_house",
   "tribe": "frisians",
   "passed": true,
@@ -2168,27 +2202,6 @@
   "workers": []
  },
  {
-  "name": "frisians_mead_brewery",
-  "tribe": "frisians",
-  "passed": true,
-  "planted": 0,
-  "made": {
-   "mead": 1,
-   "beer": 1
-  },
-  "outputs": [
-   "mead",
-   "beer"
-  ],
-  "game_minutes": 3,
-  "shortages": {
-   "barley": 177,
-   "water": 177,
-   "honey": 120
-  },
-  "workers": []
- },
- {
   "name": "frisians_quarry",
   "tribe": "frisians",
   "passed": true,
@@ -2204,6 +2217,28 @@
   "workers": [
    "frisians_stonemason"
   ]
+ },
+ {
+  "name": "frisians_reindeer_farm",
+  "tribe": "frisians",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "reindeer": 3,
+   "fur": 2,
+   "meat": 0
+  },
+  "outputs": [
+   "reindeer",
+   "fur",
+   "meat"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "barley": 161,
+   "water": 161
+  },
+  "workers": []
  },
  {
   "name": "frisians_rockmine",
@@ -2240,19 +2275,22 @@
   "workers": []
  },
  {
-  "name": "frisians_sewing_room",
+  "name": "frisians_smokery",
   "tribe": "frisians",
   "passed": true,
   "planted": 0,
   "made": {
-   "fur_garment": 4
+   "smoked_fish": 6,
+   "smoked_meat": 0
   },
   "outputs": [
-   "fur_garment"
+   "smoked_fish",
+   "smoked_meat"
   ],
   "game_minutes": 3,
   "shortages": {
-   "fur": 155
+   "fish": 121,
+   "log": 121
   },
   "workers": []
  },
@@ -2274,6 +2312,23 @@
    "fur_garment": 110,
    "iron": 110,
    "gold": 46
+  },
+  "workers": []
+ },
+ {
+  "name": "frisians_tavern",
+  "tribe": "frisians",
+  "passed": true,
+  "planted": 0,
+  "made": {
+   "ration": 4
+  },
+  "outputs": [
+   "ration"
+  ],
+  "game_minutes": 3,
+  "shortages": {
+   "smoked_fish": 156
   },
   "workers": []
  },

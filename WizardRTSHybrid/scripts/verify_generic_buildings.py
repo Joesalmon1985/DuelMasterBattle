@@ -70,7 +70,7 @@ def bench(name: str, minutes: int) -> dict:
             seq += 1
             w.advance(1000, seq, snapshot=False)
         made = {g: w.stats.get("made_" + g, 0) for g in spec["outputs"]}
-        planted = w.stats.get("saplings_planted", 0) + w.stats.get("fields_planted", 0)
+        planted = w.stats.get("saplings_planted", 0) + w.stats.get("fields_planted", 0) + w.stats.get("recruited", 0)
         if (any(made.values()) or (not spec["outputs"] and planted)) and minute >= 2:
             break
     made = {g: w.stats.get("made_" + g, 0) for g in spec["outputs"]}

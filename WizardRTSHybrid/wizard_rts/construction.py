@@ -233,11 +233,27 @@ def build_road(world: Any, faction_name: str, a: str, b: str) -> dict[str, Any]:
 
 # ------------------------------------------------------------------ recruitment
 
+def recipe_for(world: Any, b: dict, unit_kind: str) -> dict[str, Any] | None:
+    """The recipe for a unit at a building. A rifleman costs what the faction's tribe pays for a soldier."""
+    recipe = RECIPES.get(b["kind"], {}).get(unit_kind)
+    if recipe is None:
+        return None
+    if unit_kind == "infantry":
+        from wizard_rts import tribes, wl_defs
+
+        tribe = world.faction_info.get(b["faction_name"], {}).get("tribe", "barbarians")
+        cost = wl_defs.soldier_wares(tribe)
+        if cost:
+            recipe = dict(recipe)
+            recipe["cost"] = cost
+    return recipe
+
+
 def queue_unit(world: Any, building_id: str, unit_kind: str) -> dict[str, Any]:
     b = world.buildings.get(building_id)
     if b is None or not b.get("operational", True) or b.get("constructing"):
         return {"status": "rejected", "reason": "not_operational"}
-    recipe = RECIPES.get(b["kind"], {}).get(unit_kind)
+    recipe = recipe_for(world, b, unit_kind)
     if recipe is None:
         return {"status": "rejected", "reason": "cannot_build_here"}
     queue = b.setdefault("queue", [])
@@ -255,7 +271,7 @@ def cancel_queue(world: Any, building_id: str, index: int) -> dict[str, Any]:
         return {"status": "rejected", "reason": "no_such_item"}
     item = b["queue"].pop(int(index))
     if item["state"] == "building":  # goods were consumed at start; refund them to the building stock
-        for good, n in RECIPES[b["kind"]][item["unit"]]["cost"].items():
+        for good, n in recipe_for(world, b, item["unit"])["cost"].items():
             from wizard_rts.economy import produce
 
             produce(world, building_id, good, n)
@@ -272,7 +288,7 @@ def _sync_requests(world: Any, b: dict) -> None:
         world.recipe_requests.pop(b["id"], None)
         return
     need: dict[str, int] = {}
-    for good, n in RECIPES[b["kind"]][waiting[0]["unit"]]["cost"].items():
+    for good, n in recipe_for(world, b, waiting[0]["unit"])["cost"].items():
         need[good] = n
     world.recipe_requests[b["id"]] = need
 
@@ -296,7 +312,7 @@ def recruitment_quantum(world: Any) -> None:
         if not queue or not b.get("operational", True):
             continue
         head = queue[0]
-        recipe = RECIPES[b["kind"]][head["unit"]]
+        recipe = recipe_for(world, b, head["unit"])
         if head["state"] == "waiting":
             stock = world.stocks.get(bid, {})
             if all(int(stock.get(g, 0)) >= n for g, n in recipe["cost"].items()):

@@ -36,7 +36,7 @@ def test_six_factions_with_own_economies() -> None:
     for name in ("Red", "Blue", "Green", "Yellow", "Purple", "Orange"):
         for kind in ("warehouse", "producer", "processor", "ranger", "barracks", "vehicle_factory"):
             assert _of(w, name, kind)
-        assert w.stocks[_of(w, name, "warehouse")]["log"] == 12
+        assert w.stocks[_of(w, name, "warehouse")]["log"] >= 12
 
 
 def test_build_road_construct_and_cost_is_delivered() -> None:

@@ -593,6 +593,34 @@ def production_quantum(world: Any) -> None:
                 _skip(building)
             else:
                 building["stack"] = [["main", 0]]
+        elif cmd == "return_cond":
+            conds = []
+            for c in args["conds"]:
+                if c["type"] == "economy_needs":
+                    ok = economy_needs(world, building["faction"], c["ware"])
+                else:
+                    ok = any(int(stock.get(g, 0)) >= c["n"] for g in c["wares"])
+                conds.append(ok != c["not"])
+            holds = all(conds)
+            if (args["mode"] == "unless" and not holds) or (args["mode"] == "when" and holds):
+                _skip(building)
+        elif cmd == "recruit":
+            from wizard_rts import construction as con
+
+            unit_ware = args.get("unit", "")
+            if "soldier" not in unit_ware:  # recruit=barbarians_ox: an animal worker, modelled as a ware
+                from wizard_rts.economy import produce as _produce
+
+                good = unit_ware.split("_", 1)[-1]
+                _produce(world, building["id"], good, 1)
+                world.stats["made_" + good] = world.stats.get("made_" + good, 0) + 1
+                world.events.append({"kind": "produced", "building": building["id"], "good": good})
+                continue
+            tile = con._exit_tile(world, building)
+            if tile is not None:
+                uid = world._unit(building["faction"], building["faction_name"], "soldier", "Soldier", "widelands.soldier", tile)
+                world.stats["recruited"] = world.stats.get("recruited", 0) + 1
+                world.events.append({"kind": "unit_produced", "building": building["id"], "unit": uid, "unit_kind": "soldier"})
         elif cmd == "call":
             if args["target"] in programs:
                 stack.append([args["target"], 0])

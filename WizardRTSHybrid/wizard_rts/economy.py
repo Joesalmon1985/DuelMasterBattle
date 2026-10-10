@@ -39,6 +39,14 @@ def produce(world: Any, building_id: str, good: str, amount: int = 1) -> None:
 def economy_quantum(world: Any) -> None:
     """Tick counter and event trimming. Hauling is logistics.py; production is workers.py."""
     world.economy_quanta += 1
+    if world.economy_quanta % 300 == 0:
+        # Widelands warehouses create workers on demand; recruits and carriers are the two the hybrid models as wares.
+        for b in world.buildings.values():
+            if b["kind"] == "warehouse" and b.get("operational", True):
+                for worker_ware in ("recruit", "carrier"):
+                    have = int(world.stocks.get(b["id"], {}).get(worker_ware, 0))
+                    if have < 8:
+                        _supply(world, b["id"]).add_wares(worker_ware, 8 - have)
     if len(world.events) > 400:
         del world.events[:-400]
 

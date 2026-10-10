@@ -146,16 +146,16 @@ func _run() -> void:
 	await _shot("01_god_mode_opened")
 
 	# 2. choose a faction through the GUI
-	var fb: Control = _god.faction_row.get_node("Faction_Green")
+	var fb: Control = _god.faction_row.get_node("Faction_Orange")
 	await _click_control(fb)
-	if str(_snap().get("controlled_faction", "")) != "Green":
+	if str(_snap().get("controlled_faction", "")) != "Orange":
 		_fail("faction not controlled")
 		return
-	print("GOD_STEP faction Green")
+	print("GOD_STEP faction Orange")
 	await _frames(10)
 
 	# 3. open the build menu and place a lumberjack hut on a free tile
-	var wh := _find("warehouse", "Green")
+	var wh := _find("warehouse", "Orange")
 	var spot := _free_tile(wh)
 	var pb: Control = _god.build_grid.get_node("Build_producer")
 	_god.build_grid.get_parent().ensure_control_visible(pb)
@@ -222,7 +222,7 @@ func _run() -> void:
 	_god.build_grid.get_parent().ensure_control_visible(gbtn)
 	await _frames(3)
 	await _click_control(gbtn)
-	var hut := _find("producer", "Green")
+	var hut := _find("producer", "Orange")
 	var spot2 := _free_tile(hut)
 	var before2: Dictionary = {}
 	for e in _world._snapshot.get("entities", []):
@@ -250,7 +250,7 @@ func _run() -> void:
 	_god._on_category(0)
 
 	# 6. open a barracks and queue a unit
-	var bar := _find("barracks", "Green")
+	var bar := _find("barracks", "Orange")
 	await _click(_screen(Vector2(int(bar["tx"]), int(bar["ty"]))))
 	await _frames(20)
 	var qbtn: Button = _god.actions.get_node_or_null("Act_queue_infantry")
@@ -259,7 +259,7 @@ func _run() -> void:
 		return
 	var units_before := 0
 	for e in _world._snapshot.get("entities", []):
-		if str(e.get("class", "")) == "unit" and str(e.get("faction_name", "")) == "Green":
+		if str(e.get("class", "")) == "unit" and str(e.get("faction_name", "")) == "Orange":
 			units_before += 1
 	await _click_control(qbtn)
 	await _frames(20)
@@ -270,19 +270,19 @@ func _run() -> void:
 	await _wait(func():
 		var n := 0
 		for e in _world._snapshot.get("entities", []):
-			if str(e.get("class", "")) == "unit" and str(e.get("faction_name", "")) == "Green":
+			if str(e.get("class", "")) == "unit" and str(e.get("faction_name", "")) == "Orange":
 				n += 1
 		return n > units_before, "unit recruited", 180.0)
 
 	# 7. box-select the new unit
 	var unit := {}
 	for e in _world._snapshot.get("entities", []):
-		if str(e.get("class", "")) == "unit" and str(e.get("faction_name", "")) == "Green" and str(e.get("class", "")) == "unit":
+		if str(e.get("class", "")) == "unit" and str(e.get("faction_name", "")) == "Orange" and str(e.get("class", "")) == "unit":
 			unit = e
 	var unit_id := str(unit["id"])
 	# the newest unit has the highest id number
 	for e in _world._snapshot.get("entities", []):
-		if str(e.get("class", "")) == "unit" and str(e.get("faction_name", "")) == "Green":
+		if str(e.get("class", "")) == "unit" and str(e.get("faction_name", "")) == "Orange":
 			if int(str(e["id"]).split(":")[1]) > int(unit_id.split(":")[1]):
 				unit = e
 				unit_id = str(e["id"])

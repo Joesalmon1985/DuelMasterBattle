@@ -65,11 +65,26 @@ def convert_actions(actions: list[dict]) -> list[tuple[str, dict]]:
         elif cmd == "return":
             if a.get("unless_needs"):
                 out.append(("return_unless_needs", {"good": a["unless_needs"]}))
+            elif a.get("condition"):
+                out.append(("return_cond", dict(a["condition"])))
             else:
                 out.append(("return", {"skipped": bool(a.get("skipped"))}))
+        elif cmd == "recruit":
+            out.append(("recruit", {"unit": a.get("target", "")}))
         else:
             out.append(("unsupported", {"cmd": cmd}))
     return out
+
+
+def soldier_wares(tribe: str) -> dict[str, int]:
+    """The wares one soldier costs at a tribe's barracks (workers-as-wares excluded)."""
+    for name, b in defs()["buildings"].items():
+        if b["tribe"] == tribe and name.endswith("barracks") and b["type"] == "productionsite":
+            for actions in b["programs"].values():
+                for a in actions:
+                    if a["cmd"] == "consume":
+                        return {g: int(n) for g, n in a["wares"].items() if g not in ("recruit", "carrier", "|")}
+    return {}
 
 
 def convert_worker_actions(actions: list[dict]) -> list[tuple[str, dict]]:
@@ -124,6 +139,10 @@ def building_spec(name: str) -> dict[str, Any] | None:
         for cmd, args in actions:
             if cmd == "produce":
                 outputs += [g for g in args if g not in outputs]
+            if cmd == "recruit" and "soldier" not in args["unit"]:
+                good = args["unit"].split("_", 1)[-1]
+                if good not in outputs:
+                    outputs.append(good)
     workers: dict[str, str] = {}  # worker program name -> role that runs it
     for actions in programs.values():
         for cmd, args in actions:
