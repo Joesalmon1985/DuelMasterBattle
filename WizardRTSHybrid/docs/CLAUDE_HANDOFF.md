@@ -1,5 +1,7 @@
 # Handoff
 
+> **Direction update 2026-10-11.** The approved game direction is `docs/DuelMasterBattle_Design_v0_5.md` (decisions `docs/DECISION_REGISTER.md`; real status and gaps `docs/CURRENT_STATUS_AND_GAPS.md`). Where this file mentions a 20 by 20 hex world, two factions, or "do not implement Mindustry", it is superseded. Kept unchanged below as evidence.
+
 ## Session 3 (Ubuntu) - read `docs/PLAYTEST_FIXES.md` first
 
 Joe played the game for the first time; real play outranked passing tests. All nine observations are fixed with regressions that look at what

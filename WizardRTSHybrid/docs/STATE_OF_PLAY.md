@@ -1,5 +1,7 @@
 # State of play — WizardRTSHybrid
 
+> **Direction update 2026-10-11.** The approved game direction is `docs/DuelMasterBattle_Design_v0_5.md` (decisions `docs/DECISION_REGISTER.md`; real status and gaps `docs/CURRENT_STATUS_AND_GAPS.md`). Where this file mentions a 20 by 20 hex world, two factions, or "do not implement Mindustry", it is superseded. Kept unchanged below as evidence.
+
 Branch `feature/hybrid-playtest-fixes-v03` (from `feature/wizard-rts-hybrid-v02` at `6096997`). This is an honest inventory of what you can launch and play, what is only scaffolding, and what is missing. A sprite on screen is not a feature; the feature catalogue (`docs/feature_catalogue.json`, rebuilt by `scripts/build_catalogue.py`) counts functionality, not files.
 
 ## How to launch

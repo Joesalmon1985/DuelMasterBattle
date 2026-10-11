@@ -28,3 +28,7 @@ Attribution to ship with the package:
 | War factory door overlay `art/openra/weap-top-0000..0009.png` | `mods/ra/bits/weap3.shp` in the OpenRA repository (pinned `e7e9e4ad`), decoded with `scripts/shp_td.py` and the temperat palette | The OpenRA engine is GPL-3.0-or-later; the Red Alert artwork is not relicensed by this copy. Use was permitted for this project (Joe), as for the other OpenRA sprites. |
 | MCV and Construction Yard `art/openra/mcv-*.png`, `fact-0000/0026.png` | The player's own Red Alert content (`conquer.mix` from OpenRA's content installer on this machine), read with `scripts/mix_read.py` and decoded with `scripts/shp_td.py` | Same terms as the line above. `conquer.mix` itself is not committed. |
 | `scripts/shp_td.py`, `scripts/mix_read.py` | Written for this project from the public file-format descriptions as OpenRA implements them (`ShpTDSprite`, `Format40/80`, `PackageEntry.HashFilename`) | Original code, no OpenRA source copied. |
+
+## Mindustry (planned, not yet in the package)
+
+Official source `https://github.com/Anuken/Mindustry`, GPL-3.0. No revision is pinned and nothing is copied yet. See `docs/MINDUSTRY_PROVENANCE.md`. Art and sound terms must be checked at the pinned revision before any asset is copied.

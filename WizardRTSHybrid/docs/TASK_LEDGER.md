@@ -50,3 +50,13 @@
 | T-PT-RL | Training readiness: interface, evaluation, small measured experiment | 2 | T-PT-AI | PARTIAL | `sim_api.py`, `scripts/rl_experiment.py`, `docs/TRAINING_PROGRAMME.md`. The learned policy is not better; the programme is recorded. |
 
 Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays source-derived adapted.
+
+## Direction ratified 2026-10-11 (documentation only)
+
+| ID | Outcome | Priority | Depends | Status | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| T-DIRECTION | Ratified direction and roadmap documented; owner review pending | 0 | none | DOCS DONE, AWAITING OWNER APPROVAL | `docs/DuelMasterBattle_Design_v0_5.md`, `DECISION_REGISTER.md`, `ROADMAP_NEXT_RUN.md` |
+| T-M1 | Campaign profiles, drafted-tech unlocks, primitive start (roadmap M1) | 1 | T-DIRECTION approved | NOT STARTED | `docs/ROADMAP_NEXT_RUN.md` |
+| T-M2 | First Mindustry industrial-to-unit slice (roadmap M2) | 1 | T-M1 | NOT STARTED | `docs/ROADMAP_NEXT_RUN.md`, `MINDUSTRY_PROVENANCE.md` |
+| T-M3 | Live-settlement quest + dungeon + duel slice (roadmap M3) | 1 | T-M1 | NOT STARTED | `docs/ROADMAP_NEXT_RUN.md` |
+| T-M4..M6 | VP/eras, catastrophe overlay, Widelands/OpenRA completion | 2 | M1 | NOT STARTED | `docs/ROADMAP_NEXT_RUN.md` |
