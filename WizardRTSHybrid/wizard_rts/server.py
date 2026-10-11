@@ -19,17 +19,23 @@ for entry in (str(_HERE), str(_ROOT)):
         sys.path.insert(0, entry)
 
 from wizard_rts import construction as con  # noqa: E402
+from wizard_rts.coords import tile_to_hex  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
 
 def _handle(world: HybridWorld, message: dict) -> dict:
     op = str(message.get("op", ""))
     if op == "snapshot":
-        return {"status": "ok", "snapshot": world.snapshot()}
+        return {"status": "ok", "snapshot": world.snapshot(tree_sync=(False if message.get("tree_delta") else None))}
     if op == "pose":
+        if message.get("light"):
+            # the wizard crossed a tile: tell the clock where he stands without shipping the whole world back
+            reply = world.set_pose(int(message.get("tx", 0)), int(message.get("ty", 0)), str(message.get("facing", "down")), snapshot=False)
+            reply["hex"] = list(tile_to_hex(world.player["tx"], world.player["ty"]))
+            return reply
         return world.set_pose(int(message.get("tx", 0)), int(message.get("ty", 0)), str(message.get("facing", "down")))
     if op == "advance":
-        return world.advance(int(message.get("ms", 0)), int(message.get("sequence", 0)))
+        return world.advance(int(message.get("ms", 0)), int(message.get("sequence", 0)), tree_sync=(True if message.get("tree_delta") else None))
     if op == "control":
         return world.control(str(message.get("faction", "")))
     if op == "build":
@@ -137,7 +143,7 @@ def serve(port: int) -> None:
                             reply = {"status": "rejected", "reason": "bad_json"}
                         else:
                             reply = _handle(world, message)
-                        conn.sendall(json.dumps(reply).encode("utf-8") + b"\n")
+                        conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
             except (ConnectionError, OSError):
                 continue
 

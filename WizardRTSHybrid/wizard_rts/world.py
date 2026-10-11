@@ -700,22 +700,22 @@ class HybridWorld:
         self.hazard_id = str(added["cube"]["id"])
         self.hazard_tile = tile
 
-    def set_pose(self, tx: int, ty: int, facing: str = "down") -> dict[str, Any]:
+    def set_pose(self, tx: int, ty: int, facing: str = "down", snapshot: bool = True) -> dict[str, Any]:
         game_ms = int(self.dmb.clock.get("game_ms", 0))
         tile = (int(tx), int(ty))
         if not self.tile_in_map(*tile):
-            return {"status": "rejected", "reason": "outside_map", "snapshot": self.snapshot()}
+            return {"status": "rejected", "reason": "outside_map", "snapshot": self.snapshot() if snapshot else None}
         if tile in self.blocked:
-            return {"status": "rejected", "reason": "blocked", "snapshot": self.snapshot()}
+            return {"status": "rejected", "reason": "blocked", "snapshot": self.snapshot() if snapshot else None}
         previous = tile_to_hex(self.player["tx"], self.player["ty"])
         self.player = {"tx": tile[0], "ty": tile[1], "facing": str(facing or "down")}
         current = tile_to_hex(tile[0], tile[1])
         if current != previous:
             self.events.append({"kind": "hex_cross", "from": list(previous), "to": list(current)})
         assert int(self.dmb.clock.get("game_ms", 0)) == game_ms
-        return {"status": "ok", "snapshot": self.snapshot()}
+        return {"status": "ok", "snapshot": self.snapshot() if snapshot else None}
 
-    def advance(self, ms: int, sequence: int, snapshot: bool = True) -> dict[str, Any]:
+    def advance(self, ms: int, sequence: int, snapshot: bool = True, tree_sync: bool | None = None) -> dict[str, Any]:
         quanta = self.clock.request_advance(int(ms) * int(self.time_scale), int(sequence))
         for _ in range(quanta):
             forestry_quantum(self)
@@ -729,7 +729,7 @@ class HybridWorld:
             military_quantum(self)
             if self.economy_quanta % 30 == 0:
                 self.events.append({"kind": "ai_economy", "game_ms": int(self.dmb.clock.get("game_ms", 0))})
-        return {"status": "ok", "quanta": quanta, "snapshot": self.snapshot() if snapshot else None}
+        return {"status": "ok", "quanta": quanta, "snapshot": self.snapshot(tree_sync=tree_sync) if snapshot else None}
 
     def set_speed(self, scale: int) -> dict[str, Any]:
         self.time_scale = max(1, min(int(scale), 60))
@@ -853,7 +853,38 @@ class HybridWorld:
         dy = abs(self.player["ty"] - self.hazard_tile[1])
         return dx + dy <= 1
 
-    def snapshot(self) -> dict[str, Any]:
+    def tree_delta(self, full: bool) -> dict[str, Any]:
+        """Trees changed since the last delta sent (one client). Trees are 90 % of the snapshot and change rarely, so the
+        Godot client asks for them as a delta and rebuilds the full list locally; the simulation is unchanged."""
+        sent = self.__dict__.setdefault("_tree_sent", {})
+        if full:
+            sent.clear()
+        upsert = []
+        for tree_id, tree in self.trees.items():
+            sig = (tree["definition"], tree["stage"])
+            if sent.get(tree_id) != sig:
+                sent[tree_id] = sig
+                upsert.append({"id": tree_id, "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"], "tx": tree["tx"], "ty": tree["ty"]})
+        for rock_id, rock in self.rocks.items():
+            sig = ("rock", rock["amount"])
+            if sent.get(rock_id) != sig:
+                sent[rock_id] = sig
+                upsert.append(self._rock_row(rock))
+        removed = [i for i in sent if i not in self.trees and i not in self.rocks]
+        for i in removed:
+            del sent[i]
+        return {"full": bool(full), "upsert": upsert, "removed": removed}
+
+    @staticmethod
+    def _rock_row(rock: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "id": rock["id"], "class": "rock", "kind": "rock", "definition": rock["definition"],
+            "tx": rock["tx"], "ty": rock["ty"], "alive": True, "faction": "", "label": "Rocks", "amount": rock["amount"],
+        }
+
+    def snapshot(self, tree_sync: bool | None = None) -> dict[str, Any]:
+        """tree_sync None: trees inline (tests, headless). False: a client that wants everything now (sends a full delta).
+        True: a client that applies deltas."""
         q, r = tile_to_hex(self.player["tx"], self.player["ty"])
         entities = []
         for building in self.buildings.values():
@@ -878,21 +909,17 @@ class HybridWorld:
             row["status"] = carrier["status"]
             row["move_ms"] = 100 * 5  # a carrier takes one tile per five logistics quanta (logistics_quantum)
             entities.append(row)
-        for tree in self.trees.values():
-            entities.append(
-                {
-                    "id": tree["id"], "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"],
-                    "tx": tree["tx"], "ty": tree["ty"],
-                }
-            )
-        for rock in self.rocks.values():
-            entities.append(
-                {
-                    "id": rock["id"], "class": "rock", "kind": "rock", "definition": rock["definition"],
-                    "tx": rock["tx"], "ty": rock["ty"], "alive": True, "faction": "", "label": "Rocks",
-                    "amount": rock["amount"],
-                }
-            )
+        if tree_sync is None:
+            for tree in self.trees.values():
+                entities.append(
+                    {
+                        "id": tree["id"], "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"],
+                        "tx": tree["tx"], "ty": tree["ty"],
+                    }
+                )
+        if tree_sync is None:
+            for rock in self.rocks.values():
+                entities.append(self._rock_row(rock))
         for animal in self.animals.values():
             row = {
                 "id": animal["id"], "class": "animal", "kind": "animal", "definition": animal["definition"],
@@ -943,7 +970,9 @@ class HybridWorld:
                     "alive": True,
                 }
             )
+        out_tree = {} if tree_sync is None else {"tree_delta": self.tree_delta(full=not tree_sync)}
         return {
+            **out_tree,
             "world_id": WORLD_ID,
             "seed": self.seed,
             "game_ms": int(self.dmb.clock.get("game_ms", 0)),
@@ -956,7 +985,7 @@ class HybridWorld:
             "roads": {rid: [list(tile) for tile in tiles] for rid, tiles in self.roads.items()},
             "hazard_active": self._hazard_active(),
             "hazard_id": self.hazard_id,
-            "entity_ids": self.entity_ids(),
+            "entity_ids": self.entity_ids() if tree_sync is None else [],
             "provenance": {
                 "economy_stock": ECONOMY_PROVENANCE,
                 "economy_schedule": SCHEDULE_PROVENANCE,

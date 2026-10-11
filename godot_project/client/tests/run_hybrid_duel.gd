@@ -87,7 +87,8 @@ func _run() -> void:
 	# the duel must not respawn or reseed the world: every building, unit and faction that existed still exists.
 	# (trees, animals and workers are ecology and economy: they change with game time, which resumes after the duel)
 	var same_ids := true
-	var ids_after: Array = snap.get("entity_ids", [])
+	# the periodic snapshots are delta-compressed and carry no id list: ask the simulation for the full one
+	var ids_after: Array = world._sim.op({"op": "snapshot"}).get("snapshot", {}).get("entity_ids", [])
 	for id in ids_before:
 		if str(id).begins_with("building:") or str(id).begins_with("unit:") or str(id).begins_with("faction:"):
 			if not ids_after.has(id):

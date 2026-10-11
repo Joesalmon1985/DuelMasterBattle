@@ -169,6 +169,63 @@ func _run() -> void:
 	print("PLAYTEST burn lasted %.1f real s" % ((Time.get_ticks_msec() - t0) / 1000.0))
 	await _shot("building_gone")
 
+	# 6. Wizard: holding a direction walks smoothly (no stop between tiles, no big hops), the camera follows without lag.
+	_world.camera_focus = Vector2.INF
+	var start: Vector2i = _world._john_pos
+	var dir := Vector2i.ZERO
+	for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var free := true
+		for k in range(1, 14):
+			if not _world.is_walkable(start + d * k):
+				free = false
+				break
+		if free:
+			dir = d
+			break
+	_check(dir != Vector2i.ZERO, "found a clear 13-tile run for the wizard")
+	if dir != Vector2i.ZERO:
+		_world._camera.zoom = Vector2(0.8, 0.8)
+		_world.ui_hold_key_direction(dir)
+		var prev: Vector2 = _world._john.position
+		var stalls := 0
+		var hop := 0.0
+		var max_dt := 0.0
+		var cam_lag := 0.0
+		var t_last := Time.get_ticks_msec()
+		var frames_walked := 0
+		var tiles0: Vector2i = _world._john_pos
+		for _f in 120:
+			await process_frame
+			var now := Time.get_ticks_msec()
+			var dt := float(now - t_last) / 1000.0
+			t_last = now
+			var step: float = (_world._john.position - prev).length()
+			prev = _world._john.position
+			if _f > 4 and step < 0.01 * _world.TPX:
+				stalls += 1
+			if _f > 5:  # the camera was parked on a building a moment ago; judge it once it has settled on the wizard
+				hop = maxf(hop, step)
+				max_dt = maxf(max_dt, dt)
+			if _f > 5:
+				cam_lag = maxf(cam_lag, (_world._camera.position - (_world._john.position + Vector2(_world.TPX * 0.5, _world.TPX * 0.5))).length())
+			frames_walked += 1
+			if _world.is_walkable(_world._john_pos + dir) == false:
+				break
+		_world.ui_hold_key_direction(Vector2i.ZERO)
+		while _world.ui_is_moving():
+			await process_frame
+		await _frames(3)
+		var walked: Vector2i = _world._john_pos - tiles0
+		var allowed: float = 1.25 * _world.TPX * max_dt / _world.STEP_SECONDS  # the longest frame of the run could move him this far
+		print("PLAYTEST wizard: %d frames, %d tiles, %d stalled frames, worst step %.1f px (allowed %.1f for a %.0f ms frame), camera lag %.1f px" % [frames_walked, absi(walked.x) + absi(walked.y), stalls, hop, allowed, max_dt * 1000.0, cam_lag])
+		_check(absi(walked.x) + absi(walked.y) >= 5, "the wizard walked several tiles")
+		_check(stalls <= 1, "no stalled frames between tiles (%d)" % stalls)
+		_check(hop <= allowed, "no step larger than the longest frame can explain (%.1f <= %.1f px)" % [hop, allowed])
+		_check(cam_lag <= 1.0, "camera sits on the wizard (lag %.1f px)" % cam_lag)
+		var pos_reply: Dictionary = _world._sim.op({"op": "snapshot"})
+		var pl: Dictionary = pos_reply.get("snapshot", {}).get("player", {})
+		_check(int(pl.get("tx", -1)) == _world._john_pos.x and int(pl.get("ty", -1)) == _world._john_pos.y, "authoritative player tile equals the walked tile")
+
 	if _fails.is_empty():
 		print("HYBRID_PLAYTEST_OK")
 		quit(0)

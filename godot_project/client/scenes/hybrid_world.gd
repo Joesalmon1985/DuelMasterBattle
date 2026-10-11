@@ -16,6 +16,8 @@ var _adapter = DuelAdapter.new()
 var _snapshot: Dictionary = {}
 var _blocked: Dictionary = {}
 var _seq := 0
+const POLL_SECONDS := 0.2  # the simulation steps in 100 ms quanta; the art layer glides between polls, so a poll is not needed every frame
+var _static_rows: Dictionary = {}  # trees and rocks, kept locally and updated from the sim's deltas
 var _clock_acc := 0.0
 var _duel_open := false
 var _hex_crossings := 0
@@ -94,11 +96,11 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 	_clock_acc += delta
-	if _clock_acc >= 0.1:
+	if _clock_acc >= POLL_SECONDS:
 		var ms := int(_clock_acc * 1000.0)
 		_clock_acc = 0.0
 		_seq += 1
-		var reply := _sim.op({"op": "advance", "ms": ms, "sequence": _seq})
+		var reply := _sim.op({"op": "advance", "ms": ms, "sequence": _seq, "tree_delta": true})
 		if str(reply.get("status", "")) == "ok":
 			_apply_snapshot(reply.get("snapshot", {}))
 			_seq = int(_snapshot.get("clock_sequence", _seq))
@@ -108,14 +110,25 @@ func _process(delta: float) -> void:
 func _arrived() -> void:
 	if _sim._peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
 		return
+	# light reply: the clock only needs to know where he stands, not the whole world back on every tile
 	var reply := _sim.op({
 		"op": "pose",
 		"tx": _john_pos.x,
 		"ty": _john_pos.y,
 		"facing": _john_facing,
+		"light": true,
 	})
 	if str(reply.get("status", "")) == "ok":
-		_apply_snapshot(reply.get("snapshot", {}))
+		var hx: Array = reply.get("hex", [0, 0])
+		var hex := Vector2i(int(hx[0]), int(hx[1]))
+		if _last_hex.x != 999999 and hex != _last_hex:
+			_hex_crossings += 1
+		_last_hex = hex
+		var player: Dictionary = _snapshot.get("player", {})
+		player["tx"] = _john_pos.x
+		player["ty"] = _john_pos.y
+		player["facing"] = _john_facing
+		player["hex"] = [hex.x, hex.y]
 	_update_prompt()
 
 
@@ -179,6 +192,20 @@ func _on_duel_finished(outcome: String, _payload: Dictionary) -> void:
 func _apply_snapshot(snap: Dictionary) -> void:
 	if snap.is_empty():
 		return
+	if snap.has("tree_delta"):
+		var d: Dictionary = snap["tree_delta"]
+		if bool(d.get("full", false)):
+			_static_rows.clear()
+		for row in d.get("upsert", []):
+			_static_rows[str(row["id"])] = row
+		for id in d.get("removed", []):
+			_static_rows.erase(str(id))
+		snap["entities"] = snap.get("entities", []) + _static_rows.values()
+	else:
+		_static_rows.clear()
+		for e in snap.get("entities", []):
+			if typeof(e) == TYPE_DICTIONARY and str(e.get("class", "")) in ["tree", "rock"]:
+				_static_rows[str(e["id"])] = e
 	_snapshot = snap
 	_blocked.clear()
 	for item in snap.get("blocked", []):

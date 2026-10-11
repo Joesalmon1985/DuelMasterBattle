@@ -655,9 +655,18 @@ func _process(delta: float) -> void:
 		_move_t += delta / STEP_SECONDS
 		_anim_time += delta
 		if _move_t >= 1.0:
+			var carry := (_move_t - 1.0) * STEP_SECONDS  # time left over from this frame belongs to the next tile
 			_moving = false
 			_john.position = _move_to
 			_arrived()
+			# Held direction: start the next tile inside the same frame so the walk never stops for a frame between tiles.
+			if not _input_locked and not _scripted_running and not _carried_move_blocked():
+				var again := _movement_input()
+				if again != Vector2i.ZERO:
+					_try_step(again)
+					if _moving:
+						_move_t = carry / STEP_SECONDS
+						_john.position = _move_from.lerp(_move_to, _move_t)
 		else:
 			_john.position = _move_from.lerp(_move_to, _move_t)
 		_update_john_sprite(int(_anim_time * 8) % 2)
