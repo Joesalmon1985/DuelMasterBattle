@@ -4,7 +4,8 @@
   "summer_water": {
    "file": "summer_water.png",
    "is": "water",
-   "source": "data/world/terrains/summer/water/water_00.png"
+   "source": "data/world/terrains/summer/water/water_00.png",
+   "frames": 33
   },
   "summer_beach": {
    "file": "summer_beach.png",

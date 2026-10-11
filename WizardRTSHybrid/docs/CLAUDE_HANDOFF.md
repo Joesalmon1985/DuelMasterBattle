@@ -31,6 +31,19 @@ Commands are in `docs/PROJECT_STATUS.md` and `docs/STATE_OF_PLAY.md`. One sim pr
 - `docs/evidence/gallery/` and `REVIEW.md`
 - `docs/original_runs/`
 
+## Session 2 (Ubuntu) - what changed and what is next
+
+Read `docs/WINDOWS_HANDOVER.md` first, then `docs/DECISIONS.md` D5 and D6. New modules: `grid.py`, `terrain.py`, `mapgen.py`, `resources.py`, `sim_api.py`; Godot `client/hybrid/terrain_view.gd`. Widelands and OpenRA source are in sparse pinned checkouts under `external/` (`scripts/setup_external.sh`).
+
+Next task (highest value first):
+1. **Tribe economies.** After the construction-priority, woodcutter and food-plan fixes, Blue (Empire) and the Barbarians recruit; Green (Frisians), Yellow (Atlanteans) and Purple (Amazons) stall on tribe wares: `fur_garment` (needs a hunter/fur chain and the sewing room), `trident_light` and `tunic`/`bread` (cassava chain). Use `/tmp`-style diagnostics: run 60 minutes of peace (`world.ai_aggressive = False`) and print `world.status_text(b)` for each `wl:` building (see `HybridWorld.status_text`). Likely fixes: planner should also resolve inputs of existing makers (iron, coal, rations), more mines when deposits are used up (done once, check), and the AI should place tribe farms and gardens on fertile land (`terrain.build` caps).
+2. Frisian ponds (clay pit, aqua farm, charcoal burner, dikes): pond immovables and a `terraform` worker command.
+3. OpenRA ship, yard and player-colour sprites (extract on Windows with `OpenRA.Utility --png`), then replace the placeholders in `hybrid_art.gd`.
+4. Remaining naval units (destroyer needs a radar dome, cruiser the advanced tech building, transport amphibious landings).
+5. Gymnasium/PettingZoo adapters over `HybridEnv`, and a trainer, only after you approve the dependency.
+
+Older notes below are from session 1 and are kept for history.
+
 ## Checkpoint (latest)
 
 Verified: 57 Python tests, all 7 headed scripts (`scripts/run_headed_suite.ps1`), 30-minute x 3 seeds long run (`scripts/long_run.py`, report `docs/evidence/long_run/report.html`), 124 of 124 runnable Widelands production sites in the bench.

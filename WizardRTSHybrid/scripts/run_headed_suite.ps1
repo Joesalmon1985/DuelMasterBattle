@@ -21,7 +21,9 @@ $tests = @(
     @("forestry", "run_hybrid_forestry.gd", @{ HYBRID_SPEED = "4" }, "HYBRID_FORESTRY_OK"),
     @("food", "run_hybrid_food.gd", @{ HYBRID_SPEED = "10" }, "HYBRID_FOOD_OK"),
     @("god", "run_hybrid_god.gd", @{}, "HYBRID_GOD_OK"),
-    @("war", "run_hybrid_war.gd", @{ HYBRID_SPEED = "20"; HYBRID_WAR_SECONDS = "240" }, "HYBRID_WAR_OK")
+    @("war", "run_hybrid_war.gd", @{ HYBRID_SPEED = "20"; HYBRID_WAR_SECONDS = "240" }, "HYBRID_WAR_OK"),
+    @("terrain", "run_hybrid_terrain.gd", @{}, "HYBRID_TERRAIN_OK"),
+    @("naval", "run_hybrid_naval.gd", @{ HYBRID_ALLOW_SPAWN = "1" }, "HYBRID_NAVAL_OK")
 )
 $port = 8900
 $failed = @()
@@ -29,8 +31,9 @@ foreach ($t in $tests) {
     if ($Only.Count -gt 0 -and $Only -notcontains $t[0]) { continue }
     $port += 1
     $env:HYBRID_SIM_PORT = "$port"
+    foreach ($k in $t[2].Keys) { if ($k -like "HYBRID_ALLOW*") { Set-Item -Path "Env:$k" -Value $t[2][$k] } }
     $sim = Start-Process -FilePath "py" -ArgumentList @("-3", "-m", "wizard_rts.server") -WorkingDirectory $Hybrid -WindowStyle Hidden -PassThru
-    Start-Sleep -Seconds 2
+    Start-Sleep -Seconds 8  # the terrain is generated at start (about 4 s on the ThinkPad)
     foreach ($k in $t[2].Keys) { Set-Item -Path "Env:$k" -Value $t[2][$k] }
     $out = & $godot --path (Join-Path $Repo "godot_project") --rendering-method forward_plus --script "res://client/tests/$($t[1])" 2>&1 | Out-String
     foreach ($k in $t[2].Keys) { Remove-Item -Path "Env:$k" -ErrorAction SilentlyContinue }

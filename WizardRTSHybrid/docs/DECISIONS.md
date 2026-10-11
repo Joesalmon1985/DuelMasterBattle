@@ -67,3 +67,11 @@ Differences from Widelands, not an exact reproduction:
 - The generator (`mapgen.py`) is ours: noise, six stamped homelands, a central sea joined to the six lakes by channels.
 
 Reopen if a terrain-mode test needs hex geometry, or if imported Widelands maps (`.wmf`) require the six-neighbour layout to look right.
+
+## D6 — Training interface, civilian-only Widelands economy, construction priority (2026-10-11)
+
+- `sim_api.HybridEnv` is the training seam: factions in `agent_factions` act only through `step(actions)`; the built-in AI (`world.ai_factions`) plays the rest. Actions are the God Mode commands, validated by the simulation (`check_placement` is the dry run behind the masks). Observations are plain dicts; rewards are deltas of wealth, territory, kills and losses (`world.fstats`) with configurable weights. Determinism, pickle save/restore and replay-by-hash are tested. No Gymnasium or PettingZoo dependency; no learner is shipped.
+- Widelands military is deprecated, not deleted: the AI no longer builds a tribe barracks (`ai.BUILD_WL_BARRACKS = False`); it plans only the weapon and armour chain, and the OpenRA barracks every faction starts with takes the tribe's soldier wares (`construction.recipe_for`). Existing soldier code and tests stay until the OpenRA path covers the same loops.
+- Construction sites are served before production inputs in `logistics.scan_requests_and_outputs`: otherwise the sawmill takes every log and no new building is finished. The AI places a site when the warehouse has the cost or when the shortfall is a base ware (log, plank, granite) its own producers make (Widelands sites request and wait).
+- Woodcutters are placed beside trees and foresters beside woodcutters (`ai._place_near` policies). Lumberjacks fell any grown tree (they had only felled beech since species were added: a bug found by the 60-minute peace run).
+- The event log is a bounded window (6000 kept 3000) so long headless runs do not grow without limit.

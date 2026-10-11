@@ -40,7 +40,10 @@ func _run() -> void:
 		return
 	world._camera_nudge = Vector2(-640, -80)
 	world._camera.zoom = Vector2(0.85, 0.85)
-	if not await _shot(world, "mashup_1920x1080", Vector2i(1920, 1080)):
+	if DisplayServer.screen_get_size().x < 1920 or DisplayServer.screen_get_size().y < 1080:
+		# a window cannot be larger than the screen: this shot is for a bigger display (the Windows desktop)
+		print("HYBRID_VISUAL_SKIP 1920x1080 needs a screen of at least 1920x1080 (this one is %s)" % str(DisplayServer.screen_get_size()))
+	elif not await _shot(world, "mashup_1920x1080", Vector2i(1920, 1080)):
 		quit(1)
 		return
 	print("HYBRID_VISUAL_OK")

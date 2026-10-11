@@ -20,9 +20,15 @@ from wizard_rts import construction as con
 
 DECIDE_EVERY = 50  # quanta (5 s) between decisions per faction
 BASE_PLAN = {
-    "producer": 2, "ranger": 2, "quarry": 1, "mine": 1, "ironmine": 1,
+    "producer": 3, "ranger": 3, "quarry": 2, "mine": 2, "ironmine": 2,
     "smelter": 1, "smithy": 1, "processor": 1, "barracks": 1, "vehicle_factory": 1, "defense": 1,
-    "farm": 1, "hunter": 1, "well": 1, "tavern": 1, "bakery": 1,
+    "farm": 2, "hunter": 2, "well": 1, "tavern": 2, "bakery": 1, "fisher": 1,
+}
+# Plan kinds that are an imported building of the faction's own tribe: fish is a ration ingredient. Frisians catch fish in
+# ponds (not implemented), so they have none here; the Amazon hunter-gatherer brings fish as well as game.
+FISHER_OF = {
+    "barbarians": "wl:barbarians_fishers_hut", "empire": "wl:empire_fishers_house", "atlanteans": "wl:atlanteans_fishers_house",
+    "amazons": "wl:amazons_hunter_gatherers_hut",
 }
 # Personality: extra buildings, squad size before attacking, target preference.
 PERSONALITY = {
@@ -35,6 +41,7 @@ PERSONALITY = {
 }
 MAX_ARMY = 30
 MAX_NAVY = 6
+BUILD_WL_BARRACKS = False
 NAVAL_AFTER_MS = 8 * 60_000  # the land economy comes first
 NAVAL = ("naval", "lcraft")
 NAVAL_BUILDINGS = ("naval_yard", "sub_pen")
@@ -60,12 +67,101 @@ def _stock(world: Any, name: str, good: str) -> int:
     )
 
 
+FLOWING = ("log", "plank", "granite")  # base wares the faction's own producers keep making: a site may wait for them
+
+
+def _can_pay(world: Any, name: str, cost: dict[str, int]) -> bool:
+    """Widelands construction sites request their wares and wait. The AI therefore places a site when the warehouse has the
+    cost, or when the only shortfall is a base ware its own working producers make (the sawmill eats logs as fast as they
+    arrive, so the stock is almost always 0 even in a healthy economy)."""
+    for g, n in cost.items():
+        if _stock(world, name, g) >= n:
+            continue
+        if g in FLOWING and _makes(world, name, g):
+            continue
+        return False
+    return True
+
+
 def _affordable(world: Any, name: str, kind: str) -> bool:
-    return all(_stock(world, name, g) >= n for g, n in con.BUILD_MENU[kind]["cost"].items())
+    return _can_pay(world, name, con.build_spec(kind)["cost"])
+
+
+def _policy(kind: str) -> str:
+    """Where a building wants to stand: woodcutters beside trees, foresters beside woodcutters, the rest near the warehouse."""
+    from wizard_rts import wl_defs
+
+    if kind == "producer":
+        return "woodcutter"
+    if kind == "ranger":
+        return "forester"
+    spec = wl_defs.spec_for_kind(kind)
+    if spec:
+        for role in set(spec["worker_for_program"].values()):
+            for steps in (wl_defs.worker_programs(role) or {}).values():
+                for cmd, args in steps:
+                    if cmd == "findobject" and args.get("attrib") == "tree":
+                        return "woodcutter"
+                    if cmd == "plant" and args.get("attrib") == "tree_sapling":
+                        return "forester"
+    return "near"
+
+
+def _trees_near(world: Any, tile: tuple[int, int], radius: int = 10) -> int:
+    n = 0
+    tt = world.tree_tiles
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            tid = tt.get((tile[0] + dx, tile[1] + dy))
+            if tid is not None:
+                tree = world.trees.get(tid)
+                if tree is not None and tree.get("species") != "wheat" and tree.get("stage") in ("old", "mature", "pole"):
+                    n += 1
+    return n
+
+
+def _place_ranked(world: Any, name: str, kind: str, anchor: dict, score) -> str | None:
+    """Try legal sites around the warehouse, best score first, until one can be reached by a road."""
+    cx, cy = anchor["tx"], anchor["ty"]
+    cands = []
+    for r in range(3, 30, 2):
+        for dy in range(-r, r + 1, 2):
+            for dx in range(-r, r + 1, 2):
+                if max(abs(dx), abs(dy)) != r:
+                    continue
+                why, _ctx = con.check_placement(world, name, kind, cx + dx, cy + dy)
+                if why is None:
+                    s = score((cx + dx, cy + dy))
+                    if s > 0:
+                        cands.append((-s, r, cx + dx, cy + dy))
+    cands.sort()
+    for _neg, _r, x, y in cands[:6]:
+        res = con.place_building(world, name, kind, x, y)
+        if res["status"] != "ok":
+            continue
+        road = con.build_road(world, name, res["id"], anchor["id"])
+        if road["status"] == "ok":
+            return res["id"]
+        _cancel_site(world, res["id"])
+    return None
 
 
 def _place_near(world: Any, name: str, kind: str, anchor: dict) -> str | None:
-    """First legal tile on a spiral around the warehouse that a road can reach."""
+    """A legal site that a road can reach: by the trees for a woodcutter, by a woodcutter for a forester, else near the warehouse."""
+    policy = _policy(kind)
+    if policy == "woodcutter":
+        site = _place_ranked(world, name, kind, anchor, lambda t: _trees_near(world, t))
+        if site:
+            return site
+    elif policy == "forester":
+        cutters = [b for b in world.buildings.values() if b["faction_name"] == name and _policy(b["kind"]) == "woodcutter" and "constructing" not in b]
+        if cutters:
+            def near_cutter(t: tuple[int, int]) -> float:
+                d = min(abs(t[0] - c["tx"]) + abs(t[1] - c["ty"]) for c in cutters)
+                return 40.0 - d if d <= 12 else 0.0
+            site = _place_ranked(world, name, kind, anchor, near_cutter)
+            if site:
+                return site
     cx, cy = anchor["tx"], anchor["ty"]
     for r in range(4, 26, 2):
         for dy in range(-r, r + 1, 3):
@@ -95,6 +191,8 @@ def economy_step(world: Any, name: str) -> None:
     mine = _mine(world, name)
     have: dict[str, int] = {}
     for b in mine:
+        if b.get("deposit_exhausted") and b["kind"] in ("mine", "ironmine"):
+            continue  # a worked-out mine does not count: the faction needs another where the deposit remains
         have[b["kind"]] = have.get(b["kind"], 0) + 1  # sites count: they are on their way
     # repair the road network: a building with no road gets one
     for b in mine:
@@ -105,17 +203,22 @@ def economy_step(world: Any, name: str) -> None:
         return
     plan = _plan(name)
     logs = _stock(world, name, "log")
-    order = ["producer", "ranger", "processor", "quarry", "hunter", "farm", "well", "tavern", "bakery", "mine", "ironmine", "smelter", "smithy", "barracks", "vehicle_factory", "defense"]
+    order = ["producer", "ranger", "processor", "quarry", "hunter", "fisher", "farm", "well", "tavern", "bakery", "mine", "ironmine", "smelter", "smithy", "barracks", "vehicle_factory", "defense"]
     if logs < 6:  # wood first when it runs short
         order = ["producer", "ranger"] + [k for k in order if k not in ("producer", "ranger")]
-    for kind in order:
-        if have.get(kind, 0) >= plan.get(kind, 0):
+    for plan_kind in order:
+        kind = plan_kind
+        if plan_kind == "fisher":
+            kind = FISHER_OF.get(world.faction_info.get(name, {}).get("tribe", ""), "")
+            if not kind:
+                continue
+        if have.get(kind, 0) >= plan.get(plan_kind, 0):
             continue
         if kind in ("mine", "ironmine") and not _deposit_site(world, name, kind):
             continue
         if not _affordable(world, name, kind):
             continue
-        site = _place_near(world, name, kind, wh) if kind not in ("mine", "ironmine") else None
+        site = _place_near(world, name, kind, wh) if kind not in ("mine", "ironmine") else _build_mine(world, name, kind, wh)
         if site:
             world.events.append({"kind": "ai_build", "faction": name, "building": kind, "id": site})
             return
@@ -278,7 +381,7 @@ def _build_tribe_building(world: Any, name: str, bname: str, wh: dict) -> str | 
 
     kind = wl_defs.PREFIX + bname
     spec = con.build_spec(kind)
-    if spec is None or not all(_stock(world, name, g) >= n for g, n in spec["cost"].items()):
+    if spec is None or not _can_pay(world, name, spec["cost"]):
         return None
     mining = [a["resource"] for prog in wl_defs.building_spec(bname)["programs"].values() for cmd, a in prog if cmd == "mine"]
     if mining:
@@ -307,9 +410,12 @@ def tribe_step(world: Any, name: str, wh: dict) -> None:
     seen: set = set()
     for ware in wl_defs.soldier_wares(tribe):
         plan += [b for b in _resolve(world, name, tribe, ware, seen) if b not in plan]
-    barracks = tribes.barracks_of(tribe)
-    if barracks and wl_defs.PREFIX + barracks not in have_kinds:
-        plan.append(barracks)
+    # The tribe's own barracks (a Widelands soldier) is deprecated: the OpenRA barracks every faction starts with takes the
+    # same civilian wares (conversion.recipe_for), so only the weapon and armour chain is planned (DECISIONS D6).
+    if BUILD_WL_BARRACKS:
+        barracks = tribes.barracks_of(tribe)
+        if barracks and wl_defs.PREFIX + barracks not in have_kinds:
+            plan.append(barracks)
     # a building we cannot afford needs its build-cost wares produced first
     for bname in list(plan):
         spec = con.build_spec(wl_defs.PREFIX + bname)
@@ -340,8 +446,23 @@ def tribe_step(world: Any, name: str, wh: dict) -> None:
 
 
 def _deposit_site(world: Any, name: str, kind: str) -> bool:
-    """A mine can only be rebuilt where a deposit still has something in it; the AI has no prospecting yet."""
-    return False
+    """A mine can only be built where a deposit still has something in it. Widelands players prospect; the simulation knows
+    the deposits, so the AI reads them directly (the same information a prospecting geologist would reveal)."""
+    wh = con.faction_warehouse(world, name)
+    return wh is not None and _mine_site(world, wh, "coal" if kind == "mine" else "iron") is not None
+
+
+def _build_mine(world: Any, name: str, kind: str, wh: dict) -> str | None:
+    tile = _mine_site(world, wh, "coal" if kind == "mine" else "iron")
+    if tile is None:
+        return None
+    res = con.place_building(world, name, kind, tile[0], tile[1])
+    if res["status"] != "ok":
+        return None
+    if con.build_road(world, name, res["id"], wh["id"])["status"] != "ok":
+        _cancel_site(world, res["id"])
+        return None
+    return res["id"]
 
 
 def military_step(world: Any, name: str) -> None:

@@ -102,7 +102,7 @@ def _handle(world: HybridWorld, message: dict) -> dict:
 
 
 def serve(port: int) -> None:
-    world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")))
+    world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"))
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(("127.0.0.1", port))

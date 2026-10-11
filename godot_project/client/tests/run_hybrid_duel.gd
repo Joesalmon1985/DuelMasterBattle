@@ -84,7 +84,14 @@ func _run() -> void:
 		await process_frame
 	var snap: Dictionary = world._snapshot
 	var same_pose: bool = world._john_pos == pose
-	var same_ids: bool = snap.get("entity_ids", []) == ids_before
+	# the duel must not respawn or reseed the world: every building, unit and faction that existed still exists.
+	# (trees, animals and workers are ecology and economy: they change with game time, which resumes after the duel)
+	var same_ids := true
+	var ids_after: Array = snap.get("entity_ids", [])
+	for id in ids_before:
+		if str(id).begins_with("building:") or str(id).begins_with("unit:") or str(id).begins_with("faction:"):
+			if not ids_after.has(id):
+				same_ids = false
 	var cleared: bool = bool(snap.get("hazard_active", true)) == false
 	print("HYBRID_DUEL pose=%s paused=%s ms=%s cleared=%s same_pose=%s same_ids=%s held_open=%s" % [
 		pose, paused, ms_during, cleared, same_pose, same_ids, ms_held_open

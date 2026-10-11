@@ -236,8 +236,43 @@ WORKER_SHEETS = {
 }
 
 
-def forestry_items() -> list[dict]:
+OTHER_TREES = ("oak", "birch", "spruce", "larch", "alder", "rowan", "aspen")
+
+
+def species_items() -> list[dict]:
+    """The other summer tree species, every stage, with their own spritesheet geometry from each init.lua."""
+    import re
+
     out = []
+    for species in OTHER_TREES:
+        for stage in ("sapling", "pole", "mature", "old"):
+            lua = wl(f"data/world/immovables/trees/{species}/{stage}/init.lua").read_text(encoding="utf-8")
+            m = re.search(r"idle\s*=\s*\{(.*?)\n      \}", lua, re.S)
+            body = m.group(1) if m else lua
+
+            def num(key: str, default: int) -> int:
+                mm = re.search(key + r"\s*=\s*(\d+)", body)
+                return int(mm.group(1)) if mm else default
+
+            hs = re.search(r"hotspot\s*=\s*\{\s*(\d+)\s*,\s*(\d+)", body)
+            item = sheet(
+                f"widelands.{species}.{stage}",
+                f"data/world/immovables/trees/{species}/{stage}/{stage}_1.png",
+                f"{species}_{stage}.png",
+                columns=num("columns", 2), rows=num("rows", 2), frames=num("frames", 4),
+                hotspot=[int(hs.group(1)), int(hs.group(2))] if hs else [18, 48], scale=2, fps=num("fps", 8),
+                source_note=f"{species}_summer_{stage} spritesheets.idle",
+            )
+            out.append(item)
+            if stage == "mature":
+                alias = dict(item)
+                alias["id"] = f"widelands.{species}"
+                out.append(alias)
+    return out
+
+
+def forestry_items() -> list[dict]:
+    out = species_items()
     for stage, (rel, hotspot, fps) in TREE_STAGE_ART.items():
         out.append(
             sheet(

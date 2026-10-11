@@ -356,7 +356,7 @@ def _features(g: T.TerrainGrid, rng: random.Random, homes, moist: list[float]) -
     trees: list[list] = []
     rocks: list[list] = []
     stages = ["old"] * 6 + ["mature"] * 3 + ["pole"] * 2 + ["sapling"]
-    species_for = ("beech", "oak", "birch", "spruce", "maple", "larch", "alder")
+    species_for = ("beech", "oak", "birch", "spruce", "larch", "alder", "rowan", "aspen")
     # homeland forests: a woodland within each homeland's meadow ring
     for home in g.meta["homes"]:
         cx, cy = home["capital"]
@@ -384,9 +384,10 @@ def _features(g: T.TerrainGrid, rng: random.Random, homes, moist: list[float]) -
             x, y = mcx + rng.randint(-14, 14), mcy + rng.randint(-14, 14)
             if g.in_bounds(x, y) and g.terrain[y * w + x] == P["mountain_meadow"]:
                 rocks.append([x, y])
-        for _ in range(22):  # a few rocks on meadow near the quarry search radius
-            x, y = cx + rng.randint(-14, 14), cy + rng.randint(4, 18)
-            if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 64:
+        # a quarry field: Widelands maps put rocks where the first quarry goes
+        for _ in range(110):
+            x, y = cx - 3 + rng.randint(-8, 8), cy + 13 + rng.randint(-6, 6)
+            if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 64 and len([r for r in rocks if abs(r[0] - cx) < 14 and abs(r[1] - (cy + 13)) < 10]) < 40:
                 rocks.append([x, y])
     # wild forests in the open country
     for _ in range(2500):

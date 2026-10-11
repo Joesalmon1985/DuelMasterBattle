@@ -147,7 +147,9 @@ def _take(world: Any, node: str, good: str) -> bool:
 
 
 def scan_requests_and_outputs(world: Any) -> None:
-    for building in list(world.buildings.values()):
+    # Construction sites are served before production inputs (a stable sort keeps creation order otherwise): the sawmill
+    # would otherwise take every log that arrives and no new building could ever be finished.
+    for building in sorted(world.buildings.values(), key=lambda b: 0 if b.get("constructing") else 1):
         if "hp" not in building or not (building.get("operational", True) or building.get("constructing")):
             continue
         io = io_for(world, building)

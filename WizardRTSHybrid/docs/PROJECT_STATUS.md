@@ -1,35 +1,31 @@
 # Project status
 
-Branch: `feature/wizard-rts-hybrid-v02` at `52fc8ea`, cut from `feature/wizard-rts-hybrid` at `5785e03`. Unrelated spellbook and content edits stay unstaged. Build-pack T143 is not advanced. Honest inventory: `docs/STATE_OF_PLAY.md`.
+Branch `feature/wizard-rts-hybrid-v02`. Honest inventory: `docs/STATE_OF_PLAY.md`. Hand-over to the Windows machine: `docs/WINDOWS_HANDOVER.md`. Last updated at the end of session 2 (Ubuntu ThinkPad T460).
 
 ## What works
 
-See `docs/STATE_OF_PLAY.md` (authoritative). Headline: six AI-driven factions with physical forestry, farming, hunting, quarry, mining, smelting, ax making, road logistics, construction, goods-fed recruitment and OpenRA-rule combat in one world; God Mode over the same commands; 45 Python tests; headed scripts for walk, duel, forestry, God Mode (real mouse events) and a six-faction war; a 30-minute multi-seed headless run with an HTML report.
+One authoritative Python world (`HybridWorld`) on a square-grid terrain derived from Widelands rules, shown by Godot and also runnable headless. Six factions (five Widelands tribes) with physical economies on that terrain: forestry on arable land with terrain-dependent tree growth, quarries on real rocks, mines on real finite deposits (`ActMine`), fishing on finite breedable fish, farming, food, smelting, ax making, road logistics with construction sites served first, goods-fed OpenRA recruitment, OpenRA-rule combat with target filters and several weapons per unit, naval yards and submarine pens on the coast, patrol boats and submarines (cloak and detection), AI commanders and fleets, God Mode with a placement ghost, deposit overlay, tile inspector, status text, worker inspection, clock buttons and naval menus, Wizard Mode on the same world with the retained Ward Duel, and a headless training interface (`HybridEnv`).
 
-## What is partial or blocked
+## What is partial or missing
 
-See the missing table in `docs/STATE_OF_PLAY.md`. Blocked: Widelands compile (B1), OpenRA skirmish screenshot (B2).
+See `docs/STATE_OF_PLAY.md` (partial and missing tables) and section 8 of `docs/WINDOWS_HANDOVER.md`. Blocked as before: Widelands compile (B1), OpenRA skirmish screenshot (B2); neither is needed for play.
 
-## Commands
+## Commands (Ubuntu; on Windows use `py -3`)
 
 ```
-py -3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py
-py -3 WizardRTSHybrid/tests/test_five_minutes.py
-py -3 -m pytest tests/sim/test_u05_retained_ward_duel.py -q
-py -3 WizardRTSHybrid/scripts/long_run.py --minutes 30 --seeds 507 11 23
-py -3 WizardRTSHybrid/scripts/build_catalogue.py
-py -3 WizardRTSHybrid/scripts/import_openra_rules.py
-py -3 WizardRTSHybrid/scripts/import_assets.py
-py -3 WizardRTSHybrid/scripts/import_widelands_programs.py
-py -3 WizardRTSHybrid/scripts/verify_generic_buildings.py
+python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py
+python3 WizardRTSHybrid/scripts/bench_sim.py --minutes 5
+python3 WizardRTSHybrid/scripts/long_run.py --minutes 30 --seeds 507 11
+WizardRTSHybrid/scripts/launch_hybrid.sh god          # or wizard
+WizardRTSHybrid/scripts/run_headed_suite.sh [walk visual duel forestry food god war terrain naval]
 ```
 
-Godot 4.5.1 console, Forward+, one fresh sim per script (`$env:HYBRID_SIM_PORT`): `run_hybrid_walk.gd`, `run_hybrid_visual.gd`, `run_hybrid_duel.gd`, `run_hybrid_forestry.gd`, `run_hybrid_god.gd`, `run_hybrid_war.gd`, and `--headless ... run_hybrid_coords.gd`. Set `HYBRID_SHOT_DIR` to save PNGs, `HYBRID_SPEED` for the sim clock multiplier.
+Regenerate data: `import_widelands_terrain.py`, `import_widelands_programs.py`, `import_openra_rules.py`, `import_terrain_textures.py`, `import_assets.py`, `verify_generic_buildings.py`, `build_catalogue.py`; source checkouts: `setup_external.sh`.
 
-## Checkpoint
+## Verified in session 2
 
-57 Python tests, the full headed suite and a 3-seed 30-minute long run pass. 138/138 imported production sites pass the bench. Tribe planner builds tribe chains; tribe soldiers are not yet confirmed (see `docs/CLAUDE_HANDOFF.md`).
+Python: see the count in `docs/WORK_LOG.md`. Headed on Ubuntu (Forward+, Intel HD 520): terrain, walk, naval; other scripts as listed in STATE_OF_PLAY. Long run: 30 game minutes x seeds 507 and 11 with six AI factions, no problems. Headless speed: standard map about 55x realtime.
 
 ## Next task
 
-Make every tribe barracks produce soldiers, then balance aggression (see `docs/CLAUDE_HANDOFF.md`).
+Make every tribe's OpenRA infantry flow in peace (iron and ration supply for the non-Barbarian tribes), then the Frisian ponds, then OpenRA ship art on Windows. Details in `docs/CLAUDE_HANDOFF.md`.

@@ -133,7 +133,7 @@ func _run() -> void:
 	if _god == null or _world._snapshot.is_empty() or _world.terrain == null:
 		_fail("no god mode, snapshot or terrain")
 		return
-	_world._sim.op({"op": "speed", "scale": 24})
+	_world._sim.op({"op": "speed", "scale": 60})
 	_world._sim.op({"op": "ai", "enabled": false})
 	await _click_control(_god.mode_btn)
 	await _click_control(_god.faction_row.get_node("Faction_Blue"))
@@ -228,6 +228,7 @@ func _run() -> void:
 	var consumed := int(_world._snapshot.get("stats", {}).get("consumed_plank", 0))
 	print("NAVAL_STEP ship %s spawned on water at %s,%s (planks consumed so far %d)" % [ship["id"], ship["tx"], ship["ty"], consumed])
 	await _shot("03_ship_spawned")
+	_world._sim.op({"op": "speed", "scale": 3})  # slow enough that the sailing is sampled tile by tile
 	# 4. select it and sail across the sea; every tile it stands on must be water
 	_world.camera_focus = (Vector2(int(ship["tx"]), int(ship["ty"])) + Vector2(0.5, 0.5)) * _world.TPX
 	_god._cam = _world.camera_focus
@@ -238,19 +239,24 @@ func _run() -> void:
 	if not _god.selected.has(str(ship["id"])):
 		_fail("box select missed the ship: %s" % str(_god.selected))
 		return
-	var goal := Vector2i(int(ship["tx"]) + 28, int(ship["ty"]) + 22)
+	# the goal is chosen on screen (250 px right and 110 px down of the ship), clear of the panel and the minimap
+	var goal_world: Vector2 = _god._to_world(_screen(Vector2(int(ship["tx"]), int(ship["ty"]))) + Vector2(250, 110))
+	var goal := Vector2i(int(floor(goal_world.x / _world.TPX)), int(floor(goal_world.y / _world.TPX)))
 	var found := false
-	for r in range(0, 20):
+	for r in range(0, 12):
 		for dy in range(-r, r + 1):
 			for dx in range(-r, r + 1):
 				if not found and maxi(absi(dx), absi(dy)) == r and _water(goal + Vector2i(dx, dy)):
 					goal = goal + Vector2i(dx, dy)
 					found = true
-	_world.camera_focus = (Vector2(ship["tx"], ship["ty"]) + Vector2(goal)) * 0.5 * _world.TPX + Vector2(32, 32)
-	_god._cam = _world.camera_focus
-	await _frames(8)
-	await _click(_screen(Vector2(goal)), MOUSE_BUTTON_RIGHT)
+	if not found:
+		_fail("no water near the goal")
+		return
+	var gs := _screen(Vector2(goal))
+	print("NAVAL_STEP right-click at screen %s for tile %s" % [str(gs), str(goal)])
+	await _click(gs, MOUSE_BUTTON_RIGHT)
 	var tiles := {}
+	var reached := false
 	var t0 := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - t0 < 120000:
 		await process_frame
@@ -263,9 +269,10 @@ func _run() -> void:
 			_fail("ship on land at %s" % str(p))
 			return
 		if maxi(absi(p.x - goal.x), absi(p.y - goal.y)) <= 1:
+			reached = true
 			break
-	if tiles.size() < 12:
-		_fail("ship barely moved (%d tiles)" % tiles.size())
+	if not reached or tiles.size() < 3:
+		_fail("ship did not sail to the goal (reached=%s, %d tiles sampled)" % [str(reached), tiles.size()])
 		return
 	print("NAVAL_STEP ship sailed %d water tiles toward %s" % [tiles.size(), goal])
 	await _shot("04_ship_sailed")
@@ -286,6 +293,7 @@ func _run() -> void:
 	_world._camera.zoom = Vector2(0.8, 0.8)
 	_world.camera_focus = (Vector2(enemy_tile) + Vector2(-1.5, 0.5)) * _world.TPX
 	_god._cam = _world.camera_focus
+	await _wait(func(): return not _entity(str(sp["id"])).is_empty(), "enemy ship appears in the view", 30.0)
 	var hp_before := int(_entity(str(sp["id"])).get("hp", 0))
 	var saw_shot := false
 	var t1 := Time.get_ticks_msec()

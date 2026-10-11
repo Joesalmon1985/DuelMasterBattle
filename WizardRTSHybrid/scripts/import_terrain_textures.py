@@ -31,7 +31,15 @@ def main() -> int:
             print("missing", src)
             return 1
         shutil.copyfile(src, OUT / f"{name}.png")
+        if d["is"] == "water":  # all animation frames (Widelands water_00..31, 14 fps)
+            frames = sorted(folder.glob("water_??.png"))
+            (OUT / "water").mkdir(exist_ok=True)
+            for i, f in enumerate(frames):
+                shutil.copyfile(f, OUT / "water" / f"{name}_{i:02d}.png")
+            index_frames = len(frames)
         index[name] = {"file": f"{name}.png", "is": d["is"], "source": str(src.relative_to(ROOT / "external/widelands"))}
+        if d["is"] == "water":
+            index[name]["frames"] = index_frames
     (OUT / "index.json").write_text(json.dumps({"widelands_commit": T.defs()["source"]["commit"], "terrains": index}, indent=1))
     print(f"{len(index)} textures -> {OUT}")
     return 0

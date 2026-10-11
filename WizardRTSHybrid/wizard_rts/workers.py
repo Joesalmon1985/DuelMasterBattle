@@ -27,8 +27,38 @@ from wizard_rts.programs_data import (
 )
 
 QUANTUM_MS = 100
-ART_SPECIES = ("beech", "wheat")  # species with imported sprites; other trees draw as beech until their art is imported
-TREE_SPECIES = ("beech", "oak", "birch", "spruce", "maple", "larch", "alder", "aspen", "rowan")
+ART_SPECIES = ("beech", "wheat", "oak", "birch", "spruce", "larch", "alder", "rowan", "aspen")  # species with imported sprites (scripts/import_tree_art.py)
+TREE_SPECIES = ("beech", "oak", "birch", "spruce", "larch", "alder", "aspen", "rowan")  # the summer species with all four stages in the Lua
+
+
+def stage_table(species: str) -> dict[str, tuple[int, float, str]]:
+    """{stage: (duration_ms, die_chance_percent, next_stage)} from the species' own Lua programmes (beech and wheat keep the
+    hand-checked tables). Every species grows at its own pace: an oak stands 37 minutes as an old tree, a beech 25."""
+    if species in STAGE_TABLES:
+        return STAGE_TABLES[species]
+    cached = _TABLES.get(species)
+    if cached is not None:
+        return cached
+    table = dict(TREE_STAGES)
+    nxt = {"sapling": "pole", "pole": "mature", "mature": "old", "old": "old"}
+    ok = True
+    for stage in nxt:
+        spec = imm.spec(f"{species}_summer_{stage}")
+        if spec is None:
+            ok = False
+            break
+        ms, die = 60_000, 0.0
+        for a in spec["programs"].get("main", []):
+            if a["cmd"] == "animate":
+                ms = int(a.get("ms", ms))
+            elif a["cmd"] in ("remove", "transform"):
+                die = imm._chance(a)
+        table[stage] = (ms, die, nxt[stage])
+    _TABLES[species] = table if ok else dict(TREE_STAGES)
+    return _TABLES[species]
+
+
+_TABLES: dict[str, dict] = {}
 _DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 
 
@@ -62,7 +92,7 @@ def plant_tree(world: Any, tile: tuple[int, int], stage: str, species: str = "be
         "stage": stage,
         "tx": tile[0],
         "ty": tile[1],
-        "timer_ms": STAGE_TABLES.get(species, TREE_STAGES)[stage][0],
+        "timer_ms": stage_table(species)[stage][0],
         "reserved_by": "",
     }
     world.tree_tiles[tile] = tree_id
@@ -152,7 +182,7 @@ def tree_quantum(world: Any) -> None:
         if tree["reserved_by"]:
             tree["timer_ms"] = step  # a worker is about to cut it
             continue
-        table = STAGE_TABLES.get(tree["species"], TREE_STAGES)
+        table = stage_table(tree["species"])
         _duration, die, nxt = table[stage]
         if world.rng.random() * 100 < die:
             remove_tree(world, tree_id, "died" if tree["species"] != "wheat" else "rotted")
@@ -286,6 +316,7 @@ def _fail_program(world: Any, worker: dict, reason: str) -> None:
     building = world.buildings.get(worker["building"])
     if building is not None:
         building["prog_failed"] = True
+        building["worker_fail"] = reason
     _begin_return(world, worker)
 
 
@@ -388,7 +419,7 @@ def _run_step(world: Any, worker: dict) -> None:
         for tree in pool:
             if tree["reserved_by"]:
                 continue
-            if attrib in ("tree", "normal_tree") and "imm" not in tree and not (tree["species"] == "beech" and tree["stage"] == "old"):
+            if attrib in ("tree", "normal_tree") and "imm" not in tree and not (tree["species"] != "wheat" and tree["stage"] == "old"):
                 continue
             if attrib == "flowering" and "imm" not in tree and not (tree["species"] == "wheat" and tree["stage"] == "medium"):
                 continue
@@ -618,10 +649,20 @@ def _role_for_program(building: dict, program: str) -> str | None:
     return spec["worker_for_program"].get(program) if spec else None
 
 
-def _fail(world: Any, building: dict, why: str) -> None:
+WORKER_FAIL_TEXT = {
+    "no_tree": "no trees in reach", "no_rock": "no rocks in reach", "no_fish": "no fish in reach", "no_space": "no free space to work",
+    "no_ripe_field": "no ripe field", "no_game": "no game to hunt", "grounds_full": "the fishing grounds are full",
+    "object_gone": "its target disappeared", "no_source": "nothing to carry", "no_terrain": "needs terrain", "game_gone": "the game escaped",
+}
+
+
+def _fail(world: Any, building: dict, why: str, detail: str = "") -> None:
     """A programme failed: drop every frame and wait before trying again."""
     building["stack"] = [["main", 0]]
     building["sleep_ms"] = FAIL_SLEEP_MS
+    if why == "worker":
+        detail = WORKER_FAIL_TEXT.get(building.get("worker_fail", ""), building.get("worker_fail", ""))
+    building["stall"] = {"reason": why, "detail": detail, "at_ms": int(world.dmb.clock.get("game_ms", 0))}
     key = (building["id"], why)
     world.shortages[key] = world.shortages.get(key, 0) + 1
 
@@ -695,6 +736,7 @@ def production_quantum(world: Any) -> None:
             building["sleep_ms"] = args["ms"]
         elif cmd in ("needs", "return_unless_needs"):
             if not economy_needs(world, building["faction"], args["good"]):
+                building["stall"] = {"reason": "not_needed", "detail": "the economy does not need %s" % args["good"], "at_ms": int(world.dmb.clock.get("game_ms", 0))}
                 _skip(building)
         elif cmd == "return":
             if args.get("skipped", True):
@@ -713,6 +755,7 @@ def production_quantum(world: Any) -> None:
 
             holds = any(all(_holds(c) for c in group) for group in args.get("groups", [args["conds"]]))
             if (args["mode"] == "unless" and not holds) or (args["mode"] == "when" and holds):
+                building["stall"] = {"reason": "not_needed", "detail": "the economy does not need what it makes", "at_ms": int(world.dmb.clock.get("game_ms", 0))}
                 _skip(building)
         elif cmd == "recruit":
             from wizard_rts import construction as con
@@ -740,14 +783,14 @@ def production_quantum(world: Any) -> None:
                     _supply(world, building["id"]).remove_wares(g, n)
                     world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
             else:
-                _fail(world, building, "inputs")
+                _fail(world, building, "inputs", "waiting for " + ", ".join("%s %d" % (g, n - int(stock.get(g, 0))) for g, n in args.items() if int(stock.get(g, 0)) < n))
         elif cmd == "consume_any":
             pick = next((g for g in args["goods"] if int(stock.get(g, 0)) >= 1), None)
             if pick is not None:
                 _supply(world, building["id"]).remove_wares(pick, 1)
                 world.stats["consumed_" + pick] = world.stats.get("consumed_" + pick, 0) + 1
             else:
-                _fail(world, building, "inputs")
+                _fail(world, building, "inputs", "waiting for one of " + ", ".join(args["goods"]))
         elif cmd == "consume_groups":
             picks = []
             for alts, n in args["groups"]:

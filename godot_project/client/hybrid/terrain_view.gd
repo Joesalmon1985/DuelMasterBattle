@@ -25,6 +25,9 @@ var overview: ImageTexture
 var show_resources := false
 var res_nodes: Array = []
 var loaded := false
+var water_frames: Array = []  # Widelands water animation, 14 frames per second
+var _edge: Array = []  # four soft-edge gradients: east, west, south, north
+var _avg: Array = []  # average colour of each palette terrain, used to blend neighbours into each other
 var _res_stamp := -1.0
 
 
@@ -48,8 +51,55 @@ func load_from(reply: Dictionary) -> bool:
 		var tex: Texture2D = load(path) if ResourceLoader.exists(path) else null
 		textures.append(tex)
 	_build_overview()
+	_load_water()
+	_build_edges()
 	loaded = true
 	return true
+
+
+func _load_water() -> void:
+	water_frames.clear()
+	for name in palette:
+		if str(palette_class[palette.find(name)]) != "water":
+			continue
+		var i := 0
+		while true:
+			var path := "res://client/hybrid/art/terrain/water/%s_%02d.png" % [str(name), i]
+			if not ResourceLoader.exists(path):
+				break
+			water_frames.append(load(path))
+			i += 1
+		break
+
+
+func _build_edges() -> void:
+	# soft alpha ramps for blending a tile's edge into the terrain next to it (Widelands dithers terrain borders)
+	_edge.clear()
+	var n := 24
+	for dir in 4:
+		var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
+		for y in n:
+			for x in n:
+				var t := 0.0
+				match dir:
+					0: t = float(x) / float(n - 1)
+					1: t = 1.0 - float(x) / float(n - 1)
+					2: t = float(y) / float(n - 1)
+					3: t = 1.0 - float(y) / float(n - 1)
+				var a := pow(t, 2.2) * 0.85
+				img.set_pixel(x, y, Color(1, 1, 1, a))
+		_edge.append(ImageTexture.create_from_image(img))
+	_avg.clear()
+	for i in palette.size():
+		var tex: Texture2D = textures[i]
+		var c := Color(0.5, 0.5, 0.5)
+		if tex != null:
+			var im := tex.get_image()
+			if im != null:
+				im.resize(1, 1, Image.INTERPOLATE_LANCZOS)
+				c = im.get_pixel(0, 0)
+				c.a = 1.0
+		_avg.append(c)
 
 
 func _decode(b64: String, size: int) -> PackedByteArray:
@@ -110,15 +160,21 @@ func draw(canvas: CanvasItem, tpx: int) -> void:
 	if zoom < 0.3:
 		canvas.draw_texture_rect(overview, Rect2(0, 0, w * tpx, h * tpx), false)
 		return
+	var wf := int(Time.get_ticks_msec() * 0.014) % maxi(water_frames.size(), 1)
 	for ty in range(y0, y1 + 1):
 		var row := ty * w
 		for tx in range(x0, x1 + 1):
-			var tex: Texture2D = textures[terrain[row + tx]]
+			var idx: int = terrain[row + tx]
+			var tex: Texture2D = textures[idx]
+			if water_frames.size() > 0 and str(palette_class[idx]) == "water":
+				tex = water_frames[wf]
 			var rect := Rect2(tx * tpx, ty * tpx, tpx, tpx)
 			if tex == null:
 				canvas.draw_rect(rect, Color.MAGENTA, true)
 			else:
 				canvas.draw_texture_rect(tex, rect, false)
+	if zoom >= 0.45:
+		_draw_edges(canvas, x0, y0, x1, y1, tpx)
 	if show_resources:
 		for n in res_nodes:
 			var kind := int(n[2])
@@ -129,6 +185,27 @@ func draw(canvas: CanvasItem, tpx: int) -> void:
 				r *= 0.6
 			canvas.draw_circle(centre, r, c)
 			canvas.draw_arc(centre, r, 0.0, TAU, 12, Color(1, 1, 1, 0.55), 1.5)
+
+
+func _draw_edges(canvas: CanvasItem, x0: int, y0: int, x1: int, y1: int, tpx: int) -> void:
+	var band := float(tpx) * 0.375
+	for ty in range(y0, y1 + 1):
+		var row := ty * w
+		for tx in range(x0, x1 + 1):
+			var idx: int = terrain[row + tx]
+			# east, west, south, north neighbours: where the terrain differs, the neighbour's colour fades in along the shared edge
+			if tx + 1 < w and terrain[row + tx + 1] != idx:
+				var c: Color = _avg[terrain[row + tx + 1]]
+				canvas.draw_texture_rect(_edge[0], Rect2((tx + 1) * tpx - band, ty * tpx, band, tpx), false, c)
+			if tx > 0 and terrain[row + tx - 1] != idx:
+				var c2: Color = _avg[terrain[row + tx - 1]]
+				canvas.draw_texture_rect(_edge[1], Rect2(tx * tpx, ty * tpx, band, tpx), false, c2)
+			if ty + 1 < h and terrain[row + w + tx] != idx:
+				var c3: Color = _avg[terrain[row + w + tx]]
+				canvas.draw_texture_rect(_edge[2], Rect2(tx * tpx, (ty + 1) * tpx - band, tpx, band), false, c3)
+			if ty > 0 and terrain[row - w + tx] != idx:
+				var c4: Color = _avg[terrain[row - w + tx]]
+				canvas.draw_texture_rect(_edge[3], Rect2(tx * tpx, ty * tpx, tpx, band), false, c4)
 
 
 func refresh_resources(sim, tpx: int, canvas: CanvasItem) -> void:

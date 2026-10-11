@@ -101,6 +101,19 @@ func _build_panel() -> void:
 	faction_row = HBoxContainer.new()
 	faction_row.name = "Factions"
 	v.add_child(faction_row)
+	var speed_row := HBoxContainer.new()
+	speed_row.name = "Speed"
+	v.add_child(speed_row)
+	var sl := Label.new()
+	sl.text = "Speed"
+	speed_row.add_child(sl)
+	for sp in [1, 2, 4, 8, 16]:
+		var sb := Button.new()
+		sb.name = "Speed_%d" % sp
+		sb.text = "%dx" % sp
+		sb.tooltip_text = "Run the simulation clock %d times faster" % sp
+		sb.pressed.connect(_on_speed.bind(sp))
+		speed_row.add_child(sb)
 	var bl := Label.new()
 	bl.text = "Build"
 	v.add_child(bl)
@@ -138,6 +151,12 @@ func _build_panel() -> void:
 	actions.name = "Actions"
 	v.add_child(actions)
 	layer.add_child(panel)
+
+
+func _on_speed(scale: int) -> void:
+	var reply: Dictionary = world._sim.op({"op": "speed", "scale": scale})
+	world._apply_snapshot(reply.get("snapshot", {}))
+	_say("Clock x%d" % scale)
 
 
 func _build_minimap() -> void:
@@ -432,7 +451,7 @@ func pick(screen: Vector2) -> Dictionary:
 	var best_d := 1.0e9
 	for e in world._snapshot.get("entities", []):
 		var kind := str(e.get("kind", ""))
-		if str(e.get("class", "")) not in ["unit", "building"]:
+		if str(e.get("class", "")) not in ["unit", "building", "worker"]:
 			continue
 		var a := _anchor(e)
 		var rect: Rect2
@@ -440,6 +459,9 @@ func pick(screen: Vector2) -> Dictionary:
 		if str(e.get("class", "")) == "unit":
 			rect = Rect2(a + Vector2(-30, -60), Vector2(60, 80))
 			bias = -40.0  # units win over the building behind them
+		elif str(e.get("class", "")) == "worker":
+			rect = Rect2(a + Vector2(-22, -50), Vector2(44, 64))
+			bias = -80.0  # a civilian worker can be inspected, not commanded
 		elif e.has("hp"):
 			rect = Rect2(a + Vector2(-60, -110), Vector2(120, 140))
 		else:
@@ -583,6 +605,12 @@ func _refresh_info() -> void:
 			continue
 		var kind := str(e.get("kind", ""))
 		lines += "[b]%s[/b]  (%s)\n" % [str(e.get("label", kind)), str(e.get("faction_name", ""))]
+		if e.has("status_text"):
+			lines += "[b]Status:[/b] %s\n" % str(e["status_text"])
+		if e.has("deposit_left"):
+			lines += "Deposit in reach: %d%s\n" % [int(e["deposit_left"]), " (used up)" if bool(e.get("deposit_exhausted", false)) else ""]
+		if str(e.get("class", "")) == "worker":
+			lines += "Role: %s  doing: %s  carrying: %s\n" % [str(e.get("role", "")).replace("_", " "), str(e.get("status", "")), str(e.get("carrying", "")) if str(e.get("carrying", "")) != "" else "nothing"]
 		if e.has("hp"):
 			lines += "Health %d / %d\n" % [int(e.get("hp", 0)) / 100, int(e.get("max_hp", 0)) / 100]
 		if e.has("constructing"):

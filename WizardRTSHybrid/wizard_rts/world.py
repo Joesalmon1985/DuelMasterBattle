@@ -265,6 +265,35 @@ class HybridWorld:
                 self.fstat(shooter["faction_name"], "building_kills")
         return before - int(building["hp"])
 
+    def status_text(self, b: dict[str, Any]) -> str:
+        """Why a building is doing what it is doing, in plain words (God Mode inspector)."""
+        now = int(self.dmb.clock.get("game_ms", 0))
+        if int(b.get("hp", 1)) <= 0:
+            return "destroyed"
+        site = b.get("constructing")
+        if site:
+            stock = self.stocks.get(b["id"], {})
+            need = ["%s %d" % (g, n - int(stock.get(g, 0))) for g, n in site["cost"].items() if int(stock.get(g, 0)) < n]
+            if not self.adjacency.get(b["id"]) and b["kind"] != "warehouse":
+                return "Under construction: needs a road to receive " + ", ".join(need) if need else "Under construction"
+            return "Under construction: waiting for " + ", ".join(need) if need else "Building (%d%%)" % int(100 * site["progress_ms"] / 20_000)
+        if b["kind"] not in ("warehouse", "ranger", "defense") and not self.adjacency.get(b["id"]) and b.get("operational", True):
+            return "No road: goods cannot arrive or leave"
+        if b.get("queue"):
+            head = b["queue"][0]
+            return "Recruiting %s (%s)" % (head["unit"], head["state"] if head["state"] != "waiting" else "waiting for goods")
+        if b.get("deposit_exhausted"):
+            return "The deposit in reach is used up (yield limit)"
+        if b.get("working"):
+            return "Working"
+        stall = b.get("stall")
+        if stall and now - int(stall["at_ms"]) < 45_000:
+            texts = {"inputs": "Stopped: " + stall["detail"], "worker": "Stopped: its worker found " + (stall["detail"] or "no work"), "not_needed": "Idle: " + stall["detail"]}
+            return texts.get(stall["reason"], "Stopped: " + stall["reason"])
+        if b.get("worker_ids") is not None and any(r not in self.workers for r in b["worker_ids"].values()):
+            return "Waiting for a worker"
+        return "Working" if b.get("waiting_worker") else "Idle"
+
     def fstat(self, faction: str, key: str, amount: float = 1) -> None:
         """Per-faction counters (kills, losses): the reward signals of the training interface and a battle report."""
         d = self.fstats.setdefault(faction, {})
@@ -812,6 +841,8 @@ class HybridWorld:
             row["class"] = "building" if "hp" in building else "scenery"
             if building.get("working"):
                 row["working"] = True
+            if "hp" in building:
+                row["status_text"] = self.status_text(building)
             if building["kind"] in ("mine", "ironmine", "well"):
                 res = {"mine": "coal", "ironmine": "iron", "well": "water"}[building["kind"]]
                 row["deposit_left"] = self.resource_total((building["tx"], building["ty"]), 2, res)
