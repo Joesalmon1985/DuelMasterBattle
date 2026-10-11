@@ -22,7 +22,8 @@ Next tasks, highest value first:
 1. Joe's second playtest. Likely asks: the war factory should show a vehicle rolling out of the open door; carriers carrying wares in their hands (needs the Widelands loaded carrier sheets); player-colour sprite remap; MCV un-deploy.
 2. AI: outposts are logistics islands (no road or ware transfer between settlements); no naval invasion; defence orders repeat each decision; the strongest faction always snowballs (add comeback/alliance behaviour or tune aggression).
 3. Learning: the score and episode length make a passive expanding policy look good (`TRAINING_PROGRAMME.md`). Rework the reward (buildings completed, army strength), lengthen episodes to 25+ minutes, then imitation from the scripted AI's `ai_*` decisions, then PPO (needs a framework: ask Joe before installing PyTorch).
-4. Tribe economies and the other items of the session 2 list below still stand.
+4. Naval art: the placeholder ship and yard shapes can now be replaced on Ubuntu. `scripts/mix_read.py` + `scripts/shp_td.py` read `SYRD.SHP`, `SPEN.SHP`, `PT.SHP`, `SS.SHP`, `DD.SHP`, `CA.SHP`, `LST.SHP` from `~/Videos/.config/openra/Content/ra/v2/conquer.mix` (checked: all present except MSUB); copy `scripts/import_openra_mcv.py` as the pattern (the sequence frame counts and facings are in OpenRA `mods/ra/sequences/ships.yaml`).
+5. Tribe economies and the other items of the session 2 list below still stand.
 
 
 ## Works
