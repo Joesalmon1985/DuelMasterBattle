@@ -1,6 +1,6 @@
 # Windows handover
 
-Written on the Ubuntu ThinkPad T460 at the end of session 2. Branch `feature/wizard-rts-hybrid-v02`. **Commit: see `git log -1` after you pull; the SHA at the time of writing is recorded in the last line of this file.** The Windows agent was stopped during session 2; nothing here needs merging, only pulling.
+Written on the Ubuntu ThinkPad T460 at the end of session 2. Branch `feature/wizard-rts-hybrid-v02`. **Commit: the last line of this file names the functional checkpoint.** The Windows agent was stopped during session 2; nothing here needs merging, only pulling.
 
 ## 1. Get the checkpoint
 
@@ -69,3 +69,6 @@ Needs Windows: all 1920x1080 and larger screenshots; a 30-minute headed run with
 ## 9. Where to look next
 
 `docs/STATE_OF_PLAY.md` (inventory), `docs/TASK_LEDGER.md` (ids and acceptance), `docs/DECISIONS.md` (D5, D6), `docs/WORK_LOG.md`, `docs/CLAUDE_HANDOFF.md` (next task). Key code: `wizard_rts/terrain.py`, `mapgen.py`, `world.py`, `construction.py`, `military.py`, `ai.py`, `sim_api.py`; Godot `client/hybrid/terrain_view.gd`, `god_mode.gd`, `hybrid_art.gd`.
+
+---
+Functional checkpoint commit: `9fe1fc554bf8db220585985dd93810eae4bafdda` (a documentation-only commit may follow it; `git log -3` shows both). Branch `feature/wizard-rts-hybrid-v02`, pushed to `origin`.
