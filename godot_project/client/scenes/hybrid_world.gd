@@ -6,6 +6,7 @@ const DuelAdapter = preload("res://client/encounters/duel_lease_adapter.gd")
 const HybridArt = preload("res://client/hybrid/hybrid_art.gd")
 const GodMode = preload("res://client/hybrid/god_mode.gd")
 const TerrainView = preload("res://client/hybrid/terrain_view.gd")
+const WizardLabels = preload("res://client/hybrid/wizard_labels.gd")
 
 ## Continuous hybrid world. Movement, camera, and the retained duel board
 ## come from the existing Overworld and DmbDuelLeaseAdapter. The Python
@@ -29,6 +30,7 @@ var _art = HybridArt.new()
 var _camera_nudge := Vector2.ZERO
 var camera_focus := Vector2.INF
 var god: Node
+var wizard_labels: Node  # semantic labels and fire magic (Wizard Mode)
 var terrain = null  # TerrainView once the sim has sent its terrain
 var selected_ids: Dictionary = {}:
 	set(v):
@@ -84,6 +86,10 @@ func _ready() -> void:
 	god.name = "GodMode"
 	add_child(god)
 	god.setup(self)
+	wizard_labels = WizardLabels.new()
+	wizard_labels.name = "WizardLabels"
+	add_child(wizard_labels)
+	wizard_labels.setup(self)
 
 
 func _process(delta: float) -> void:
@@ -105,6 +111,15 @@ func _process(delta: float) -> void:
 			_apply_snapshot(reply.get("snapshot", {}))
 			_seq = int(_snapshot.get("clock_sequence", _seq))
 	queue_redraw()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Wizard Mode: a left click on any entity opens its label (description far away, fire magic close up)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and wizard_labels != null and not _duel_open:
+		if wizard_labels.try_click(event.position):
+			get_viewport().set_input_as_handled()
+			return
+	super._unhandled_input(event)
 
 
 func _arrived() -> void:

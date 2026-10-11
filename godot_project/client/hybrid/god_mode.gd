@@ -467,6 +467,18 @@ func pick(screen: Vector2) -> Dictionary:
 		elif str(e.get("class", "")) == "worker":
 			rect = Rect2(a + Vector2(-22, -50), Vector2(44, 64))
 			bias = 30.0  # a civilian worker can be inspected (a building behind it wins, so clicks on buildings still hit the building)
+		elif e.has("ground_footprint"):
+			var fx0 := 1 << 30
+			var fy0 := 1 << 30
+			var fx1 := -(1 << 30)
+			var fy1 := -(1 << 30)
+			for fp in e["ground_footprint"]:
+				fx0 = mini(fx0, int(fp[0]))
+				fy0 = mini(fy0, int(fp[1]))
+				fx1 = maxi(fx1, int(fp[0]))
+				fy1 = maxi(fy1, int(fp[1]))
+			rect = Rect2(Vector2(fx0, fy0) * world.TPX, Vector2(fx1 - fx0 + 1, fy1 - fy0 + 1) * world.TPX)
+			a = rect.get_center()
 		elif e.has("hp"):
 			rect = Rect2(a + Vector2(-60, -110), Vector2(120, 140))
 		else:
@@ -625,6 +637,15 @@ func _refresh_info() -> void:
 			lines += "Under construction. Needs: %s\nProgress %d%%\n" % [str(c.get("cost", {})), int(100.0 * float(c.get("progress_ms", 0)) / 20000.0)]
 		if str(e.get("class", "")) == "unit":
 			lines += "Order: %s  status: %s\n" % [str(e.get("order", {}).get("kind", "none")), str(e.get("status", ""))]
+			if e.has("unit_cargo"):
+				lines += "Carrying: %s\n" % str(e["unit_cargo"])
+			if str(e.get("definition", "")) == "openra.mcv" and str(e.get("faction_name", "")) == faction and not e.has("deploying_ms"):
+				buttons.append(["Deploy", "deploy", str(id), ""])
+				key += "mcv:%s;" % str(id)
+			if e.has("deploying_ms"):
+				lines += "Deploying: a command centre will stand here\n"
+		if kind == "warehouse":
+			lines += "Command centre: build radius %d tiles%s\n" % [int(e.get("territory", 0)), " (deployed)" if bool(e.get("outpost", false)) else " (home)"]
 		var stock: Dictionary = world._snapshot.get("stocks", {}).get(str(id), {})
 		if str(e.get("class", "")) != "unit" and not stock.is_empty():
 			var parts := ""
@@ -669,6 +690,8 @@ func _on_action_button(b: Array) -> void:
 	var reply: Dictionary
 	if b[1] == "queue":
 		reply = world._sim.op({"op": "queue", "building": b[2], "unit": b[3]})
+	elif b[1] == "deploy":
+		reply = world._sim.op({"op": "deploy", "unit": b[2]})
 	else:
 		reply = world._sim.op({"op": "cancel", "building": b[2], "index": int(b[3])})
 	world._apply_snapshot(reply.get("snapshot", {}))
@@ -752,6 +775,14 @@ func draw_overlay(canvas: CanvasItem) -> void:
 	if not active:
 		return
 	var tpx: float = world.TPX
+	# the build areas of this faction's command centres: a building may only be placed inside one
+	for e in world._snapshot.get("entities", []):
+		if str(e.get("kind", "")) == "warehouse" and str(e.get("faction_name", "")) == faction and e.has("territory"):
+			var r := float(e["territory"])
+			var col: Color = world._art.faction_colors.get(faction, Color(1, 1, 1))
+			var box := Rect2((Vector2(float(e["tx"]), float(e["ty"])) - Vector2(r, r)) * tpx, Vector2(2.0 * r + 1.0, 2.0 * r + 1.0) * tpx)
+			canvas.draw_rect(box, Color(col.r, col.g, col.b, 0.05), true)
+			canvas.draw_rect(box, Color(col.r, col.g, col.b, 0.55), false, 6.0)
 	if tool.begins_with("build:"):
 		var mp := _to_world(world.get_viewport().get_mouse_position())
 		var tile := Vector2(floor(mp.x / tpx), floor(mp.y / tpx))

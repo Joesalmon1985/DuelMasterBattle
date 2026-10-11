@@ -42,6 +42,7 @@ from wizard_rts.military import init_unit, military_quantum, order_attack, order
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
+from wizard_rts import territory  # noqa: E402
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
 
 WORLD_ID = "hybrid.world"
@@ -64,6 +65,21 @@ FACTIONS = (
     ("Purple", (8, 8), "#8e4ad0"),
     ("Orange", (13, 7), "#e8892e"),
 )
+
+
+class EventLog(list):
+    """The bounded event window. Every AI decision event is also counted per faction (fstats), so long runs keep exact totals
+    after old events have been trimmed away."""
+
+    def __init__(self, world: Any) -> None:
+        super().__init__()
+        self._world = world
+
+    def append(self, e: dict) -> None:  # type: ignore[override]
+        kind = e.get("kind", "")
+        if kind.startswith("ai_") and e.get("faction"):
+            self._world.fstat(e["faction"], kind)
+        super().append(e)
 
 
 class HybridWorld:
@@ -105,12 +121,16 @@ class HybridWorld:
         self.counters: dict[str, int] = {}
         self.rng = random.Random(int(seed))
         self.time_scale = 1
+        self.path_searches = 0
+        self.carrier_respawn: dict[str, int] = {}  # road id -> ms until a new carrier walks out (logistics.carrier_quantum)
+        self.cc_ids: set[str] = set()  # warehouses = command centres; kept as a set so territory checks do not scan every building
+        self.cc_buffer = territory.BUFFER  # extra tiles between two command centres' build areas
         self.faction_info: dict[str, dict[str, str]] = {}
         self.controlled_faction = ""
         self.stocks: dict[str, dict[str, int]] = {}
         self.economy_totals = EconomyTotals()
         self.blocked: set[tuple[int, int]] = set()
-        self.events: list[dict[str, Any]] = []
+        self.events: list[dict[str, Any]] = EventLog(self)
         self.economy_quanta = 0
         self.military_quanta = 0
         self.fstats: dict[str, dict[str, float]] = {}
@@ -617,6 +637,10 @@ class HybridWorld:
         }
         if definition:
             record["definition"] = definition
+        if kind == "warehouse":
+            self.cc_ids.add(building_id)
+            record["command_center"] = True  # a warehouse is the faction's immobile command centre: it sets the build area
+            record["territory"] = territory.HOME_RADIUS
         if kind not in ("tree", "rock"):
             r = rules.actor(definition) if definition.startswith("openra.") else None
             # OpenRA buildings take their rules HP; Widelands buildings have none, so 500 HP (50000) is hybrid-defined
@@ -724,6 +748,7 @@ class HybridWorld:
             con.construction_quantum(self)
             con.recruitment_quantum(self)
             lifecycle_quantum(self)
+            territory.deploy_quantum(self)
             if self.ai_enabled:
                 ai_quantum(self)
             military_quantum(self)
@@ -799,6 +824,18 @@ class HybridWorld:
             return {"status": "rejected", "reason": "cannot_demolish_warehouse", "snapshot": self.snapshot()}
         self.damage_building(building, 10**9, ["structure"], {})
         return {"status": "ok", "snapshot": self.snapshot()}
+
+    def fire(self, target_id: str) -> dict[str, Any]:
+        from wizard_rts import magic
+
+        out = magic.fire(self, str(target_id))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def deploy(self, unit_id: str) -> dict[str, Any]:
+        out = territory.deploy(self, str(unit_id))
+        out["snapshot"] = self.snapshot()
+        return out
 
     def order(self, unit_id: str, target_id: str) -> dict[str, Any]:
         result = order_attack(self, str(unit_id), str(target_id))
@@ -894,6 +931,9 @@ class HybridWorld:
                 row["working"] = True
             if "hp" in building:
                 row["status_text"] = self.status_text(building)
+            if building["kind"] == "warehouse":
+                row["territory"] = territory.radius_of(building)
+                row["outpost"] = bool(building.get("outpost"))
             if building.get("destroyed"):
                 row["destroyed"] = True
                 row["ruin_ms"] = int(building.get("ruin_ms", 0))
@@ -951,6 +991,10 @@ class HybridWorld:
         for unit in self.units.values():
             row = _entity_row(unit)
             row["class"] = "unit"
+            if unit.get("cargo"):
+                row["unit_cargo"] = dict(unit["cargo"])
+            if unit.get("deploying_ms"):
+                row["deploying_ms"] = int(unit["deploying_ms"])
             row["hp"] = unit["hp"]
             row["max_hp"] = unit["max_hp"]
             row["alive"] = unit["alive"]

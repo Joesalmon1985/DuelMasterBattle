@@ -64,6 +64,23 @@ func _lumberjack() -> Dictionary:
 	return {}
 
 
+## The picture the renderer actually selects for an entity right now (file name), so a stage is checked as drawn, not as stored.
+func _sprite(id: String) -> String:
+	var e := _tree(id)
+	if e.is_empty():
+		return "gone"
+	return str(_world._art._item_for(e).get("godot", "")).get_file()
+
+
+func _expect(id: String, tail: String, label: String) -> bool:
+	var got := _sprite(id)
+	print("FORESTRY_RENDER %s -> %s" % [label, got])
+	if not got.ends_with(tail):
+		_fail("%s: expected a sprite ending %s, the renderer selects %s" % [label, tail, got])
+		return false
+	return true
+
+
 func _tree(id: String) -> Dictionary:
 	for e in _world._snapshot.get("entities", []):
 		if str(e.get("id", "")) == id:
@@ -117,8 +134,12 @@ func _run() -> void:
 		_fail("worker is not standing on a tree")
 		return
 	print("FORESTRY_TREE %s stage=%s" % [tree_id, _tree(tree_id).get("stage")])
+	if not _expect(tree_id, "_old.png", "standing tree while chopped"):
+		return
 	await _shot("03_chopping")
 	if not await _wait_for(func(): return str(_tree(tree_id).get("stage", "")) == "felled", "tree_falls"):
+		return
+	if not _expect(tree_id, "fallentree.png", "felled tree"):
 		return
 	await _shot("04_tree_felled")
 	if not await _wait_for(_c_carry, "carrying_log"):
@@ -139,16 +160,24 @@ func _run() -> void:
 		return
 	_focus_on(wh)
 	await _shot("07_log_at_warehouse")
+	if not await _wait_for(func(): return _tree(tree_id).is_empty(), "felled_tree_removed", 120.0):
+		return
+	if not _expect(tree_id, "gone", "felled tree after its fall"):
+		return
 	# ranger
 	if not await _wait_for(_c_sapling, "sapling_planted"):
 		return
 	_focus_on(_tree(_sapling_id))
+	if not _expect(_sapling_id, "_sapling.png", "planted sapling"):
+		return
 	await _shot("08_sapling")
 	if not await _wait_for(func(): return str(_tree(_sapling_id).get("stage", "")) in ["pole", ""], "sapling_grows", 300.0):
 		return
 	if _tree(_sapling_id).is_empty():
 		print("FORESTRY_NOTE sapling died (13.67% chance); lifecycle still verified in Python")
 	else:
+		if not _expect(_sapling_id, "_pole.png", "grown pole"):
+			return
 		await _shot("09_pole")
 	var seen := {}
 	for k in _shots:

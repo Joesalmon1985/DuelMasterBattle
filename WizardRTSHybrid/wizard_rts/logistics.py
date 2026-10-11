@@ -48,13 +48,7 @@ def io_for(world: Any, building: dict) -> dict[str, Any]:
 
 # ------------------------------------------------------------------ graph
 
-def add_road(world: Any, faction_id: str, faction_name: str, a: str, b: str, tiles: list[tuple[int, int]]) -> str:
-    road_id = f"road:{new_id(world, 'r').split(':')[1]}:{a}-{b}"
-    world.roads[road_id] = list(tiles)
-    world.road_edges[road_id] = (a, b)
-    world.road_tile_set.update(tiles)
-    world.adjacency.setdefault(a, []).append((b, road_id))
-    world.adjacency.setdefault(b, []).append((a, road_id))
+def spawn_carrier(world: Any, road_id: str, faction_id: str, faction_name: str, tiles: list[tuple[int, int]]) -> str:
     carrier_id = str(world.dmb.ids.new("cart"))
     world.carriers[carrier_id] = {
         "id": carrier_id,
@@ -72,6 +66,48 @@ def add_road(world: Any, faction_id: str, faction_name: str, a: str, b: str, til
         "definition": "widelands.carrier",
         "facing": "e",
     }
+    return carrier_id
+
+
+CARRIER_RESPAWN_MS = 20_000  # a road whose carrier died gets a new one from the nearest warehouse after this long
+
+
+def kill_carrier(world: Any, carrier_id: str, reason: str) -> None:
+    """A carrier dies: its ware is lost, and the road is without a carrier until a replacement walks out (carrier_quantum)."""
+    car = world.carriers.pop(carrier_id, None)
+    if car is None:
+        return
+    if car["cargo"]:
+        world.stats["lost"] = world.stats.get("lost", 0) + 1
+        world.events.append({"kind": "ware_lost", "good": car["cargo"]["good"], "at": car["road_id"]})
+    if car["road_id"] in world.roads:
+        world.carrier_respawn[car["road_id"]] = CARRIER_RESPAWN_MS
+    world.events.append({"kind": "carrier_killed", "id": carrier_id, "road": car["road_id"], "reason": reason})
+
+
+def carrier_quantum(world: Any) -> None:
+    for rid in list(world.carrier_respawn):
+        if rid not in world.roads:
+            world.carrier_respawn.pop(rid, None)
+            continue
+        world.carrier_respawn[rid] -= 500  # called every five quanta
+        if world.carrier_respawn[rid] <= 0:
+            world.carrier_respawn.pop(rid)
+            a, _b = world.road_edges[rid]
+            owner = world.buildings.get(a)
+            if owner is not None and not any(c["road_id"] == rid for c in world.carriers.values()):
+                cid = spawn_carrier(world, rid, owner["faction"], owner["faction_name"], world.roads[rid])
+                world.events.append({"kind": "carrier_respawned", "id": cid, "road": rid})
+
+
+def add_road(world: Any, faction_id: str, faction_name: str, a: str, b: str, tiles: list[tuple[int, int]]) -> str:
+    road_id = f"road:{new_id(world, 'r').split(':')[1]}:{a}-{b}"
+    world.roads[road_id] = list(tiles)
+    world.road_edges[road_id] = (a, b)
+    world.road_tile_set.update(tiles)
+    world.adjacency.setdefault(a, []).append((b, road_id))
+    world.adjacency.setdefault(b, []).append((a, road_id))
+    spawn_carrier(world, road_id, faction_id, faction_name, tiles)
     world.events.append({"kind": "road_built", "road": road_id, "a": a, "b": b})
     return road_id
 
@@ -149,7 +185,12 @@ def _take(world: Any, node: str, good: str) -> bool:
 def scan_requests_and_outputs(world: Any) -> None:
     # Construction sites are served before production inputs (a stable sort keeps creation order otherwise): the sawmill
     # would otherwise take every log that arrives and no new building could ever be finished.
-    for building in sorted(world.buildings.values(), key=lambda b: 0 if b.get("constructing") else 1):
+    # Unit orders (queued recruits, an MCV) come next: they were asked for by a player or an AI commander, whereas the sawmill's
+    # input is standing demand that would otherwise take every log that arrives.
+    def priority(b: dict) -> int:
+        return 0 if b.get("constructing") else (1 if b["id"] in world.recipe_requests else 2)
+
+    for building in sorted(world.buildings.values(), key=priority):
         if "hp" not in building or not (building.get("operational", True) or building.get("constructing")):
             continue
         io = io_for(world, building)
@@ -256,5 +297,6 @@ def logistics_quantum(world: Any) -> None:
     if n % LOGISTICS_PERIOD == 0:
         scan_requests_and_outputs(world)
     if n % 5 == 0:
+        carrier_quantum(world)
         for carrier in world.carriers.values():
             _step_carrier(world, carrier)

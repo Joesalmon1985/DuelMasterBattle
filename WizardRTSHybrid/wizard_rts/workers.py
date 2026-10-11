@@ -215,13 +215,86 @@ def _seed(world: Any, tree: dict) -> None:
 
 # ---------------------------------------------------------------- paths
 
+_PASSABLE: dict = {}
+
+
+def _passable(world: Any, loco: str) -> bytearray:
+    """One byte per tile: may this locomotor enter it (static terrain only; roads only make a tile faster)."""
+    from wizard_rts import rules
+
+    t = world.terrain
+    key = (id(t), loco)
+    got = _PASSABLE.get(key)
+    if got is None:
+        table = rules.speed_table(loco)
+        got = bytearray(1 if table[c] > 0 else 0 for c in t.cls)
+        _PASSABLE[key] = got
+    return got
+
+
+def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], limit: int, avoid: set | None, max_nodes: int, loco: str,
+                    join: dict | None) -> list[tuple[int, int]] | None:
+    """The same A* as find_path over integer tile ids and a precomputed passability table (about three times faster)."""
+    t = world.terrain
+    W, H = t.w, t.h
+    ok = _passable(world, loco)
+    blk = {y * W + x for x, y in world.blocked}
+    if avoid:
+        blk |= {y * W + x for x, y in avoid}
+    sx, sy = start
+    gx, gy = goal
+    s, g = sy * W + sx, gy * W + gx
+    joined = {y * W + x for x, y in join} if join else None
+    dirs = [(dx, dy, dy * W + dx) for dx, dy in world.move_dirs]
+    four = len(dirs) == 4
+    open_heap = [(0.0, 0, s)]
+    came: dict[int, int] = {}
+    cost = {s: 0.0}
+    counter = 0
+    heappop, heappush = heapq.heappop, heapq.heappush
+    while open_heap:
+        _f, _c, cur = heappop(open_heap)
+        if counter > max_nodes:
+            return None
+        if cur == g or (joined is not None and cur in joined):
+            out = []
+            while cur != s:
+                out.append((cur % W, cur // W))
+                cur = came[cur]
+            out.reverse()
+            return out
+        cx, cy = cur % W, cur // W
+        base = cost[cur] + 1.0
+        for dx, dy, di in dirs:
+            nx, ny = cx + dx, cy + dy
+            if nx < 0 or ny < 0 or nx >= W or ny >= H or nx - sx > limit or sx - nx > limit or ny - sy > limit or sy - ny > limit:
+                continue
+            n = cur + di
+            if not ok[n] or (n != g and n in blk):
+                continue
+            if dx and dy and ((cur + dx) in blk or (cur + dy * W) in blk):
+                continue
+            if n not in cost or base < cost[n]:
+                cost[n] = base
+                came[n] = cur
+                counter += 1
+                h = (abs(gx - nx) + abs(gy - ny)) if four else max(abs(gx - nx), abs(gy - ny))
+                heappush(open_heap, (base + h, counter, n))
+    return None
+
+
 def find_path(
     world: Any, start: tuple[int, int], goal: tuple[int, int], limit: int = 24, avoid: set | None = None, max_nodes: int = 60_000,
-    loco: str | None = None,
+    loco: str | None = None, join: dict | None = None,
 ) -> list[tuple[int, int]] | None:
-    """A* over open tiles. The start and goal may be blocked (a workplace door)."""
+    """A* over open tiles. The start and goal may be blocked (a workplace door).
+
+    `join` (tile -> index on a route someone else already found to the same goal): the search stops at the first tile it touches,
+    so a platoon of units pays for one long search and a short one each (military._walk)."""
     if start == goal:
         return []
+    if loco is not None and world.terrain is not None:
+        return _find_path_fast(world, start, goal, limit, avoid, max_nodes, loco, join)
     open_heap: list[tuple[float, int, tuple[int, int]]] = [(0.0, 0, start)]
     four = len(world.move_dirs) == 4
     enter = world.tile_in_map if loco is None else (lambda px, py: world.tile_speed(loco, px, py) > 0)
@@ -232,7 +305,7 @@ def find_path(
         _f, _c, cur = heapq.heappop(open_heap)
         if counter > max_nodes:
             return None
-        if cur == goal:
+        if cur == goal or (join is not None and cur in join):
             path = []
             while cur != start:
                 path.append(cur)

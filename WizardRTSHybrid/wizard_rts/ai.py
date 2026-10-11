@@ -14,10 +14,13 @@ target, attack-move). It is far smaller than either; see docs/feature_catalogue.
 from __future__ import annotations
 
 import math
+import zlib
 from typing import Any
 
 from wizard_rts import construction as con
+from wizard_rts import territory
 
+ROAD_LIMIT = 45  # a site more than this far from its command centre by road is not worth a wide failed search
 DECIDE_EVERY = 50  # quanta (5 s) between decisions per faction
 BASE_PLAN = {
     "producer": 3, "ranger": 3, "quarry": 2, "mine": 2, "ironmine": 2,
@@ -59,32 +62,33 @@ def _mine(world: Any, name: str) -> list[dict]:
     return [b for b in world.buildings.values() if b["faction_name"] == name and "hp" in b and int(b["hp"]) > 0]
 
 
-def _stock(world: Any, name: str, good: str) -> int:
+def _stock(world: Any, name: str, good: str, anchor: dict | None = None) -> int:
+    """Wares in the faction's warehouses, or in one command centre's store when `anchor` is given (a settlement pays from its own)."""
     return sum(
         int(world.stocks.get(b["id"], {}).get(good, 0))
         for b in world.buildings.values()
-        if b["faction_name"] == name and b["kind"] == "warehouse" and int(b.get("hp", 1)) > 0
+        if b["faction_name"] == name and b["kind"] == "warehouse" and int(b.get("hp", 1)) > 0 and (anchor is None or b is anchor)
     )
 
 
 FLOWING = ("log", "plank", "granite")  # base wares the faction's own producers keep making: a site may wait for them
 
 
-def _can_pay(world: Any, name: str, cost: dict[str, int]) -> bool:
+def _can_pay(world: Any, name: str, cost: dict[str, int], anchor: dict | None = None) -> bool:
     """Widelands construction sites request their wares and wait. The AI therefore places a site when the warehouse has the
     cost, or when the only shortfall is a base ware its own working producers make (the sawmill eats logs as fast as they
     arrive, so the stock is almost always 0 even in a healthy economy)."""
     for g, n in cost.items():
-        if _stock(world, name, g) >= n:
+        if _stock(world, name, g, anchor) >= n:
             continue
-        if g in FLOWING and _makes(world, name, g):
+        if g in FLOWING and _makes(world, name, g, anchor):
             continue
         return False
     return True
 
 
-def _affordable(world: Any, name: str, kind: str) -> bool:
-    return _can_pay(world, name, con.build_spec(kind)["cost"])
+def _affordable(world: Any, name: str, kind: str, anchor: dict | None = None) -> bool:
+    return _can_pay(world, name, con.build_spec(kind)["cost"], anchor)
 
 
 def _policy(kind: str) -> str:
@@ -157,7 +161,7 @@ def _place_ranked(world: Any, name: str, kind: str, anchor: dict, score) -> str 
         res = con.place_building(world, name, kind, x, y)
         if res["status"] != "ok":
             continue
-        road = con.build_road(world, name, res["id"], anchor["id"])
+        road = con.build_road(world, name, res["id"], anchor["id"], ROAD_LIMIT)
         if road["status"] == "ok":
             return res["id"]
         _cancel_site(world, res["id"])
@@ -185,6 +189,7 @@ def _place_near(world: Any, name: str, kind: str, anchor: dict) -> str | None:
             if site:
                 return site
     cx, cy = anchor["tx"], anchor["ty"]
+    failed_roads = 0
     for r in range(4, 26, 2):
         for dy in range(-r, r + 1, 3):
             for dx in range(-r, r + 1, 3):
@@ -193,10 +198,13 @@ def _place_near(world: Any, name: str, kind: str, anchor: dict) -> str | None:
                 res = con.place_building(world, name, kind, cx + dx, cy + dy)
                 if res["status"] != "ok":
                     continue
-                road = con.build_road(world, name, res["id"], anchor["id"])
+                road = con.build_road(world, name, res["id"], anchor["id"], ROAD_LIMIT)
                 if road["status"] == "ok":
                     return res["id"]
                 _cancel_site(world, res["id"])
+                failed_roads += 1
+                if failed_roads >= 3:  # each failed road is a wide A* search: give up for now rather than try a hundred sites
+                    return None
     return None
 
 
@@ -206,11 +214,25 @@ def _cancel_site(world: Any, bid: str) -> None:
     purge_building(world, bid, "site_cancelled")
 
 
+OUTPOST_PLAN = {"producer": 2, "ranger": 2, "quarry": 1, "processor": 1, "defense": 1}
+OUTPOST_ORDER = ["producer", "ranger", "processor", "quarry", "defense"]
+EXPAND_AFTER_MS = 4 * 60_000  # the home economy gets a head start before the faction asks for a second settlement
+MAX_CC = 3  # command centres per faction (the home warehouse included)
+EXPAND_REPEAT_MS = 3 * 60_000
+
+
 def economy_step(world: Any, name: str) -> None:
     wh = con.faction_warehouse(world, name)
     if wh is None or int(wh["hp"]) <= 0:
         return
-    mine = _mine(world, name)
+    for cc in territory.command_centers(world, name):
+        _settlement_step(world, name, cc, main=cc is wh)
+    expansion_step(world, name, wh)
+
+
+def _settlement_step(world: Any, name: str, wh: dict, main: bool) -> None:
+    """One settlement (a command centre and the buildings around it): repair roads, then at most one new site."""
+    mine = [b for b in _mine(world, name) if territory.settlement_of(world, b) is wh]
     have: dict[str, int] = {}
     for b in mine:
         if b.get("deposit_exhausted") and b["kind"] in ("mine", "ironmine"):
@@ -220,12 +242,12 @@ def economy_step(world: Any, name: str) -> None:
     for b in mine:
         if b["kind"] != "warehouse" and b["kind"] not in ("ranger",) and not world.adjacency.get(b["id"]):
             con.build_road(world, name, b["id"], wh["id"])
-    # one new site at a time
+    # one new site at a time per settlement
     if any(b.get("constructing") for b in mine):
         return
-    plan = _plan(name)
-    logs = _stock(world, name, "log")
-    order = ["producer", "ranger", "processor", "quarry", "hunter", "fisher", "farm", "well", "tavern", "bakery", "mine", "ironmine", "smelter", "smithy", "barracks", "vehicle_factory", "defense"]
+    plan = _plan(name) if main else dict(OUTPOST_PLAN)
+    logs = _stock(world, name, "log", wh)
+    order = ["producer", "ranger", "processor", "quarry", "hunter", "fisher", "farm", "well", "tavern", "bakery", "mine", "ironmine", "smelter", "smithy", "barracks", "vehicle_factory", "defense"] if main else list(OUTPOST_ORDER)
     if logs < 6:  # wood first when it runs short
         order = ["producer", "ranger"] + [k for k in order if k not in ("producer", "ranger")]
     for plan_kind in order:
@@ -238,15 +260,141 @@ def economy_step(world: Any, name: str) -> None:
             continue
         if kind in ("mine", "ironmine") and not _deposit_site(world, name, kind):
             continue
-        if not _affordable(world, name, kind):
+        if not _affordable(world, name, kind, wh):
             continue
+        cool = world.__dict__.setdefault("_ai_cool", {})
+        key = (name, wh["id"], kind)
+        now_ms = int(world.dmb.clock.get("game_ms", 0))
+        if cool.get(key, -1) > now_ms:
+            continue  # this kind found no site a moment ago
         site = _place_near(world, name, kind, wh) if kind not in ("mine", "ironmine") else _build_mine(world, name, kind, wh)
+        if not site:
+            cool[key] = now_ms + 60_000 + zlib.crc32(repr(key).encode()) % 30_000  # staggered, and deterministic (no salted hash)
         if site:
-            world.events.append({"kind": "ai_build", "faction": name, "building": kind, "id": site})
+            world.events.append({"kind": "ai_build", "faction": name, "building": kind, "id": site, "settlement": wh["id"]})
             return
-    if naval_economy_step(world, name, wh, mine):
+    if not main:
+        return
+    if naval_economy_step(world, name, wh, [b for b in _mine(world, name)]):
         return
     tribe_step(world, name, wh)
+
+
+# ------------------------------------------------------------------ expansion (MCV)
+
+def expansion_step(world: Any, name: str, wh: dict) -> None:
+    """Decide the faction needs another settlement, build an MCV for it, drive it to a good site and deploy it."""
+    if world.terrain is None or not getattr(world, "ai_expand", True):
+        return
+    now = int(world.dmb.clock.get("game_ms", 0))
+    mine = _mine(world, name)
+    mcvs = [u for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("definition") == territory.MCV_DEFINITION]
+    for u in mcvs:
+        _drive_mcv(world, name, u, now)
+    if mcvs:
+        return
+    queued = any(i["unit"] == "mcv" for b in mine for i in b.get("queue", []))
+    state = world.__dict__.setdefault("_ai_expand", {}).setdefault(name, {"last": -10**9})
+    if queued or len(territory.command_centers(world, name)) >= MAX_CC or now < EXPAND_AFTER_MS or now - state["last"] < EXPAND_REPEAT_MS:
+        return
+    factories = [b for b in mine if b["kind"] == "vehicle_factory" and b.get("operational") and "mcv" in con.RECIPES["vehicle_factory"]]
+    if not factories:
+        return
+    if _find_expansion_site(world, name, None) is None:
+        return  # nowhere legal to put one: do not spend the wares
+    f = factories[0]
+    if con.queue_unit(world, f["id"], "mcv")["status"] != "ok":
+        return
+    q = f["queue"]
+    item = q.pop()
+    if q and q[0]["state"] == "waiting":
+        q.insert(0, item)  # the settlement comes before more tanks
+    else:
+        q.append(item)
+    con._sync_requests(world, f)
+    state["last"] = now
+    world.fstat(name, "mcv_queued")
+    world.events.append({"kind": "ai_expand_queue", "faction": name, "building": f["id"]})
+
+
+def _site_score(world: Any, name: str, tile: tuple[int, int]) -> float:
+    wood = min(_trees_near(world, tile, 12), 60)
+    rocks = sum(1 for rk in world.rocks.values() if max(abs(rk["tx"] - tile[0]), abs(rk["ty"] - tile[1])) <= 12)
+    coal = world.resource_total(tile, 12, "coal")
+    iron = world.resource_total(tile, 12, "iron")
+    arable = min(_free_arable(world, tile, 6), 60) * 0.4
+    enemy = min((territory.cheb(tile, (b["tx"], b["ty"])) for b in territory.command_centers(world, None) if b["faction_name"] != name), default=100)
+    return wood + min(rocks, 20) * 1.5 + (15 if coal > 0 else 0) + (15 if iron > 0 else 0) + arable + min(enemy, 120) * 0.1
+
+
+def _find_expansion_site(world: Any, name: str, mcv: dict | None, bad: list | None = None) -> tuple[int, int] | None:
+    """A legal deployment tile with room, reachable by the MCV, rich in wood, stone, ore and fields. Best of a coarse sweep
+    around the home command centre; the top few are path-checked for the vehicle's locomotor."""
+    from wizard_rts.workers import find_path
+
+    t = world.terrain
+    home = con.faction_warehouse(world, name)
+    if home is None:
+        return None
+    probe = {"id": "probe", "definition": territory.MCV_DEFINITION, "faction_name": name, "alive": True, "tx": 0, "ty": 0}
+    legal = []
+    for y in range(8, t.h - 8, 8):
+        for x in range(8, t.w - 8, 8):
+            tile = (x, y)
+            d = territory.cheb(tile, (home["tx"], home["ty"]))
+            if d > 110 or not t.ground(x, y) or territory.separation_problem(world, name, tile):
+                continue
+            if bad and any(territory.cheb(tile, tuple(b)) < 12 for b in bad):
+                continue
+            probe["tx"], probe["ty"] = x, y
+            if territory.deploy_check(world, probe) is not None:
+                continue
+            legal.append((d, tile))
+    legal.sort()
+    if len(legal) > 40:  # score an even spread of the legal sites, not every one (scoring walks a 25x25 window)
+        legal = legal[:: len(legal) // 40 + 1]
+    cands = [(_site_score(world, name, tile) - d * 0.6, tile) for d, tile in legal]  # a long drive is a long exposure: stay near home
+    cands.sort(reverse=True)
+    start = (mcv["tx"], mcv["ty"]) if mcv else (home["tx"], home["ty"] + 3)
+    for _score, tile in cands[:8]:
+        if mcv is None:
+            return tile  # only asked whether a site exists
+        if find_path(world, start, tile, limit=600, avoid=set(), max_nodes=300_000, loco="heavywheeled") is not None:
+            return tile
+    return None
+
+
+def _drive_mcv(world: Any, name: str, u: dict, now: int) -> None:
+    from wizard_rts.military import order_move
+
+    if u.get("deploying_ms"):
+        return
+    st = u.setdefault("ai", {"site": None, "bad": [], "since": now, "fails": 0})
+    here = (int(u["tx"]), int(u["ty"]))
+    site = st["site"]
+    if site is not None and here == tuple(site):
+        res = territory.deploy(world, u["id"])
+        if res["status"] != "ok":
+            st["bad"].append(list(site))
+            st["site"] = None
+            world.events.append({"kind": "ai_expand_rejected", "faction": name, "reason": res["reason"], "tile": list(site)})
+        else:
+            world.fstat(name, "mcv_deployed")
+            world.events.append({"kind": "ai_expand_deploy", "faction": name, "tile": list(site)})
+        return
+    if site is None or st["fails"] >= 3 or now - st["since"] > 8 * 60_000:
+        if site is not None:
+            st["bad"].append(list(site))
+        site = _find_expansion_site(world, name, u, st["bad"])
+        st.update(site=list(site) if site else None, fails=0, since=now)
+        if site is None:
+            return
+        world.events.append({"kind": "ai_expand_site", "faction": name, "tile": list(site)})
+        order_move(world, [u["id"]], site[0], site[1])
+        return
+    if not u.get("order"):  # arrived short, or was blocked and gave up: reissue
+        st["fails"] += 1
+        order_move(world, [u["id"]], site[0], site[1])
 
 
 # ------------------------------------------------------------------ navy
@@ -267,7 +415,7 @@ def naval_economy_step(world: Any, name: str, wh: dict, mine: list[dict]) -> boo
     res = con.place_building(world, name, want, site[0], site[1])
     if res["status"] != "ok":
         return False
-    road = con.build_road(world, name, res["id"], wh["id"])
+    road = con.build_road(world, name, res["id"], wh["id"], ROAD_LIMIT)
     if road["status"] != "ok":
         _cancel_site(world, res["id"])
         return False
@@ -346,13 +494,13 @@ def _water_near(world: Any, tile: tuple[int, int], radius: int, sx: int, sy: int
 
 # ------------------------------------------------------------------ tribe planner
 
-def _makes(world: Any, name: str, ware: str) -> bool:
+def _makes(world: Any, name: str, ware: str, anchor: dict | None = None) -> bool:
     from wizard_rts.logistics import io_for
 
     return any(
         ware in io_for(world, b).get("outputs", [])
         for b in world.buildings.values()
-        if b["faction_name"] == name and "hp" in b and int(b["hp"]) > 0
+        if b["faction_name"] == name and "hp" in b and int(b["hp"]) > 0 and (anchor is None or territory.settlement_of(world, b) is anchor)
     )
 
 
@@ -413,7 +561,7 @@ def _build_tribe_building(world: Any, name: str, bname: str, wh: dict) -> str | 
         res = con.place_building(world, name, kind, tile[0], tile[1])
         if res["status"] != "ok":
             return None
-        if con.build_road(world, name, res["id"], wh["id"])["status"] != "ok":
+        if con.build_road(world, name, res["id"], wh["id"], ROAD_LIMIT)["status"] != "ok":
             _cancel_site(world, res["id"])
             return None
         return res["id"]
@@ -481,7 +629,7 @@ def _build_mine(world: Any, name: str, kind: str, wh: dict) -> str | None:
     res = con.place_building(world, name, kind, tile[0], tile[1])
     if res["status"] != "ok":
         return None
-    if con.build_road(world, name, res["id"], wh["id"])["status"] != "ok":
+    if con.build_road(world, name, res["id"], wh["id"], ROAD_LIMIT)["status"] != "ok":
         _cancel_site(world, res["id"])
         return None
     return res["id"]
@@ -510,7 +658,12 @@ def military_step(world: Any, name: str) -> None:
     if not idle:
         return
     # defend first: enemies near the capital
-    threat = _nearest_enemy_unit(world, name, (wh["tx"], wh["ty"]), 22.0)
+    threat = None
+    for cc in territory.command_centers(world, name):  # every settlement is defended, the nearest threat first
+        t = _nearest_enemy_unit(world, name, (cc["tx"], cc["ty"]), 22.0)
+        if t is not None:
+            threat = t
+            break
     if threat is not None:
         from wizard_rts.military import order_move
 

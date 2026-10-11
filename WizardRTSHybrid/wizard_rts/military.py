@@ -22,6 +22,7 @@ from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_dama
 PROVENANCE = OPENRA_DAMAGE_SOURCE["status"]
 MOVEMENT_PROVENANCE = "astar-with-occupancy (not OpenRA PathFinder)"
 SCAN_EVERY = 5  # quanta between target scans (OpenRA AutoTarget scans about every 0.5 s)
+PATH_SEARCHES_PER_QUANTUM = 1
 CHASE_LEASH = 3.0  # extra cells an idle unit will chase beyond its weapon range
 EFFECT_MS = 400
 
@@ -154,6 +155,53 @@ def _facing(dx: int, dy: int) -> str:
     return "sw" if dy > 0 else "nw"
 
 
+_NO_BUDGET: list = []  # sentinel: this quantum's route searches are spent
+
+
+def _shared_route(world: Any, here: tuple[int, int], goal: tuple[int, int], others: set, loco: str | None, fresh: bool = False) -> list | None:
+    """A route for one unit. Units heading to the same goal share a cached route: a unit standing on it just follows, any other
+    searches only as far as the route and joins it. Only a full search costs budget (PATH_SEARCHES_PER_QUANTUM per quantum)."""
+    from wizard_rts.workers import find_path
+
+    cache = world.__dict__.setdefault("_route_cache", {})
+    failed = world.__dict__.setdefault("_route_failed", {})
+    key = (loco, goal)
+    if world.military_quanta - failed.get((key, here), -10**9) < 100:
+        return None  # this unit could not get there a few seconds ago; do not repeat a failing wide search every quantum
+    hit = None if fresh else cache.get(key)
+    if hit is not None and world.military_quanta - hit["q"] > 600:
+        cache.pop(key, None)
+        hit = None
+    if hit is not None:
+        index = hit["index"]
+        if here in index:
+            return list(hit["path"][index[here] + 1:])
+        part = find_path(world, here, goal, limit=400, avoid=others, max_nodes=8_000, loco=loco, join=index)
+        if part is not None and part:
+            tail = part[-1]
+            if tail == goal:
+                return part
+            if tail in index:
+                return part + list(hit["path"][index[tail] + 1:])
+    if world.path_searches >= PATH_SEARCHES_PER_QUANTUM:
+        return _NO_BUDGET
+    world.path_searches += 1
+    path = find_path(world, here, goal, limit=400, avoid=others, max_nodes=400_000, loco=loco)
+    if path is None and loco in ("naval", "lcraft"):
+        path = _path_toward(world, here, goal, others, loco)  # a ship goes as near as the water allows
+    if path is None:
+        failed[(key, here)] = world.military_quanta
+        if len(failed) > 2000:
+            failed.clear()
+    if path:
+        full = [here] + list(path)
+        cache[key] = {"path": full, "index": {t: i for i, t in enumerate(full)}, "q": world.military_quanta}
+        if len(cache) > 200:
+            for k in sorted(cache, key=lambda k: cache[k]["q"])[:100]:
+                cache.pop(k)
+    return path
+
+
 def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.0) -> str:
     """Advance one quantum toward goal. Returns 'moving', 'arrived' or 'stuck'."""
     from wizard_rts.workers import find_path
@@ -165,7 +213,12 @@ def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.
     others = _occupied(world, unit)
     loco = unit.get("loco")
     if not unit.get("path") or unit.get("path_goal") != list(goal):
-        path = find_path(world, here, goal, limit=400, avoid=others, max_nodes=400_000, loco=loco)
+        # A long march by a whole army is dozens of wide A* searches. Spread them over quanta (a count, so replays stay deterministic):
+        # once this quantum's searches are spent the unit waits a quantum, visibly, rather than freezing the world for seconds.
+        path = _shared_route(world, here, goal, others, loco, bool(unit.pop("fresh_route", False)))
+        if path is _NO_BUDGET:
+            unit["status"] = "waiting_route"
+            return "moving"
         if path is None and loco in ("naval", "lcraft"):
             path = _path_toward(world, here, goal, others, loco)  # a ship goes as near as the water allows
         if path is None:
@@ -179,9 +232,10 @@ def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.
     if nxt in others:
         unit["blocked_ms"] = unit.get("blocked_ms", 0) + 100
         unit["status"] = "blocked"
-        if unit["blocked_ms"] >= 1000:  # someone is standing in the way: route around
+        if unit["blocked_ms"] >= 1000:  # someone is standing in the way: route around (not along a shared route that is jammed)
             unit["path"] = []
             unit["blocked_ms"] = 0
+            unit["fresh_route"] = True
         return "moving"
     unit["blocked_ms"] = 0
     unit["progress_ms"] = unit.get("progress_ms", 0) + 100
@@ -329,21 +383,30 @@ def _apply_warheads(world: Any, p: dict) -> None:
         entity["hp"] = inflict_damage(before, int(entity["max_hp"]), applied)
         world.events.append({"kind": "unit_hit", "unit": entity["id"], "by": p["shooter"], "dealt": before - entity["hp"], "hp": entity["hp"]})
         if before > 0 and entity["hp"] <= 0:
-            entity["alive"] = False
-            entity["status"] = "dead"
-            entity.pop("order", None)
-            entity["path"] = []
-            world.stats["destroyed"] += 1
-            world.stats["units_lost"] = world.stats.get("units_lost", 0) + 1
-            vr = rules.actor(entity.get("definition", "")) or {}
-            value = int(vr.get("cost", 0))
-            world.fstat(entity["faction_name"], "loss_value", value)
-            shooter = world.units.get(p["shooter"]) or world.buildings.get(p["shooter"])
-            if shooter is not None:
-                world.fstat(shooter["faction_name"], "kill_value", value)
-                world.fstat(shooter["faction_name"], "unit_kills")
-            world.effects.append({"t": "explosion", "x1": entity["tx"], "y1": entity["ty"], "x2": entity["tx"], "y2": entity["ty"], "ttl_ms": 800, "keep": 3, "p": ""})
-            world.events.append({"kind": "destroyed", "id": entity["id"], "by": p["shooter"]})
+            kill_unit(world, entity, p["shooter"])
+
+
+def kill_unit(world: Any, entity: dict, by: str = "") -> None:
+    """The one place a unit dies (combat, fire magic): it is marked dead, loses its orders, and stays as a corpse for CORPSE_MS."""
+    if not entity.get("alive", True):
+        return
+    entity["hp"] = 0
+    entity["alive"] = False
+    entity["status"] = "dead"
+    entity.pop("order", None)
+    entity.pop("deploying_ms", None)
+    entity["path"] = []
+    world.stats["destroyed"] += 1
+    world.stats["units_lost"] = world.stats.get("units_lost", 0) + 1
+    vr = rules.actor(entity.get("definition", "")) or {}
+    value = int(vr.get("cost", 0))
+    world.fstat(entity["faction_name"], "loss_value", value)
+    shooter = world.units.get(by) or world.buildings.get(by)
+    if shooter is not None:
+        world.fstat(shooter["faction_name"], "kill_value", value)
+        world.fstat(shooter["faction_name"], "unit_kills")
+    world.effects.append({"t": "explosion", "x1": entity["tx"], "y1": entity["ty"], "x2": entity["tx"], "y2": entity["ty"], "ttl_ms": 800, "keep": 3, "p": ""})
+    world.events.append({"kind": "destroyed", "id": entity["id"], "by": by})
 
 
 def projectile_quantum(world: Any) -> None:
@@ -391,7 +454,7 @@ def order_move(world: Any, unit_ids: list[str], tx: int, ty: int, attack_move: b
         if unit is None or not unit.get("alive", True):
             continue
         loco = unit.get("loco")
-        ox, oy = k % 3 - 1, k // 3 - 1  # spread a group into a loose block
+        ox, oy = (k % 3 - 1, k // 3 - 1) if len(unit_ids) > 1 else (0, 0)  # spread a group into a loose block; one unit goes exactly there
         goal = [int(tx) + ox, int(ty) + oy]
         if world.tile_speed(loco, *goal) <= 0 or tuple(goal) in world.blocked:
             goal = [int(tx), int(ty)]
@@ -552,6 +615,7 @@ def _building_step(world: Any, b: dict) -> None:
 
 def military_quantum(world: Any) -> None:
     world.military_quanta += 1
+    world.path_searches = 0  # route searches started this quantum (military._walk spends PATH_SEARCHES_PER_QUANTUM of them)
     if world.military_quanta % SCAN_EVERY == 0:
         _build_grid(world)
     projectile_quantum(world)

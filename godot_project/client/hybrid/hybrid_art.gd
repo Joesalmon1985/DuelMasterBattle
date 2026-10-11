@@ -211,6 +211,8 @@ func _draw_footprint_building(canvas: CanvasItem, entity: Dictionary, item: Dict
 	var index := 0
 	if item.has("overlay_prefix"):
 		index = 1 if hurt else 0
+	elif item.has("damaged_frame"):
+		index = int(item["damaged_frame"]) if hurt else 0
 	else:
 		index = _sequence_index(item, entity)
 	var base_path := "res://client/hybrid/art/openra/%s-%04d.png" % [str(item.get("prefix", "")), index]

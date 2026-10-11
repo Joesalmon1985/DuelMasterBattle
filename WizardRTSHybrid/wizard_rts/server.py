@@ -48,6 +48,13 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return world.cancel(str(message.get("building", "")), int(message.get("index", 0)))
     if op == "move":
         return world.move(list(message.get("units", [])), int(message.get("tx", 0)), int(message.get("ty", 0)), bool(message.get("attack_move", False)))
+    if op == "fire":
+        reply = world.fire(str(message.get("target", "")))
+        if message.get("light"):
+            reply.pop("snapshot", None)
+        return reply
+    if op == "deploy":
+        return world.deploy(str(message.get("unit", "")))
     if op == "stop":
         return world.stop(list(message.get("units", [])))
     if op == "rally":

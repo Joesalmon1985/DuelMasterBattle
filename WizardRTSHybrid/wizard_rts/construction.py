@@ -17,6 +17,7 @@ from typing import Any
 from wizard_rts.coords import tile_to_hex
 from wizard_rts import wl_defs
 from wizard_rts.economy import _supply
+from wizard_rts import territory
 from wizard_rts.logistics import add_road
 
 QUANTUM_MS = 100
@@ -123,6 +124,15 @@ RECIPES: dict[str, dict[str, dict[str, Any]]] = {
     },
     "vehicle_factory": {
         "tank": {"label": "Tank", "definition": "openra.3tnk", "cost": {"granite": 2, "plank": 1}, "ms": 30_000},
+        # The MCV is paid in delivered wares: the vehicle itself (planks, granite) plus the starter kit it carries to the new
+        # site. Everything leaves the factory's stock; on deployment the kit goes into the new command centre's store. Hybrid-defined
+        # (OpenRA's MCV costs 2000 credits, no Widelands analogue).
+        "mcv": {
+            "label": "MCV", "definition": "openra.mcv", "ms": 60_000,
+            "build": {"plank": 6, "granite": 4},
+            "cargo": {"log": 3, "plank": 2, "granite": 1},
+            "cost": {"log": 3, "plank": 8, "granite": 5},
+        },
     },
 }
 
@@ -191,10 +201,12 @@ def terrain_reject(world: Any, kind: str, spec: dict[str, Any], tile: tuple[int,
 
 
 def faction_warehouse(world: Any, faction_name: str) -> dict | None:
-    for b in world.buildings.values():
-        if b["kind"] == "warehouse" and b["faction_name"] == faction_name:
-            return b
-    return None
+    """The faction's main command centre (its first warehouse). If it has fallen, a surviving deployed centre takes over."""
+    mine = [b for b in world.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] == faction_name]
+    alive = [b for b in mine if int(b.get("hp", 1)) > 0]
+    pool = alive or mine
+    pool.sort(key=lambda b: (bool(b.get("outpost")), int(b["id"].split(":")[1])))
+    return pool[0] if pool else None
 
 
 def build_spec(kind: str) -> dict[str, Any] | None:
@@ -233,13 +245,15 @@ def check_placement(world: Any, faction_name: str, kind: str, tx: int, ty: int) 
     ctx: dict[str, Any] = {"spec": spec, "info": info, "tile": tile, "home": home}
     if not world.tile_in_bounds(*tile):
         return "outside_map", ctx
+    home = territory.covering(world, faction_name, tile) or home
+    ctx["home"] = home
     if spec.get("size") == "water3":
-        if home is not None and max(abs(tile[0] - home["tx"]), abs(tile[1] - home["ty"])) > TERRITORY_RADIUS:
+        if not territory.in_territory(world, faction_name, tile):
             return "outside_territory", ctx
         why, door, fp = naval_site(world, tile, home)
         ctx.update(door=door, footprint=fp)
         return why, ctx
-    if home is not None and max(abs(tile[0] - home["tx"]), abs(tile[1] - home["ty"])) > TERRITORY_RADIUS:
+    if not territory.in_territory(world, faction_name, tile):
         return "outside_territory", ctx
     if tile in world.blocked or tile in world.tree_tiles or tile in world.road_tile_set or tile in world.reserved_tiles:
         return "tile_occupied", ctx
@@ -354,6 +368,7 @@ def construction_quantum(world: Any) -> None:
             b["hp"] = b["max_hp"]
             world.recipe_requests.pop(bid, None)
             world.events.append({"kind": "construction_done", "id": bid, "building_kind": b["kind"]})
+            world.fstat(b["faction_name"], "buildings_completed")
 
 
 # ------------------------------------------------------------------ roads
@@ -392,7 +407,7 @@ def _road_path(world: Any, start: tuple[int, int], goal: tuple[int, int], ends: 
     return None
 
 
-def build_road(world: Any, faction_name: str, a: str, b: str) -> dict[str, Any]:
+def build_road(world: Any, faction_name: str, a: str, b: str, limit: int = 70) -> dict[str, Any]:
     ba, bb = world.buildings.get(a), world.buildings.get(b)
     if ba is None or bb is None or "hp" not in ba or "hp" not in bb:
         return {"status": "rejected", "reason": "no_building"}
@@ -400,7 +415,7 @@ def build_road(world: Any, faction_name: str, a: str, b: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "not_your_building"}
     if a == b or any(n == b for n, _r in world.adjacency.get(a, [])):
         return {"status": "rejected", "reason": "already_connected"}
-    path = _road_path(world, (ba["tx"], ba["ty"]), (bb["tx"], bb["ty"]), (a, b))
+    path = _road_path(world, (ba["tx"], ba["ty"]), (bb["tx"], bb["ty"]), (a, b), limit)
     if path is None or len(path) < 2:
         return {"status": "rejected", "reason": "no_path"}
     rid = add_road(world, world.faction_info[faction_name]["id"], faction_name, a, b, path)
@@ -523,9 +538,12 @@ def recruitment_quantum(world: Any) -> None:
                 continue
             if all(int(stock.get(g, 0)) >= n for g, n in recipe["cost"].items()):
                 b["wait_ms"] = 0
+                carried = recipe.get("cargo", {})
                 for g, n in recipe["cost"].items():
                     _supply(world, bid).remove_wares(g, n)
-                    world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
+                    used = n - int(carried.get(g, 0))  # what is loaded on the vehicle is moved, not consumed
+                    if used:
+                        world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + used
                 head["state"] = "building"
                 world.stats["recruit_started"] = world.stats.get("recruit_started", 0) + 1
                 world.events.append({"kind": "recruit_started", "building": bid, "unit": head["unit"]})
@@ -539,10 +557,13 @@ def recruitment_quantum(world: Any) -> None:
             if tile is None:
                 continue
             uid = world._unit(b["faction"], b["faction_name"], head["unit"], recipe["label"], recipe["definition"], tile)
+            if recipe.get("cargo"):
+                world.units[uid]["cargo"] = dict(recipe["cargo"])
             rally = b.get("rally")
             if rally:
                 world.units[uid]["order"] = {"kind": "move", "tile": list(rally)}
             queue.pop(0)
             world.stats["recruited"] = world.stats.get("recruited", 0) + 1
             world.events.append({"kind": "unit_produced", "building": bid, "unit": uid, "unit_kind": head["unit"]})
+            world.fstat(b["faction_name"], "units_produced")
             _sync_requests(world, b)
