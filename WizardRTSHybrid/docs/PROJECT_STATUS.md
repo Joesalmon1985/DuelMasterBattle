@@ -1,6 +1,6 @@
 # Project status
 
-Branch `feature/wizard-rts-hybrid-v02`. Honest inventory: `docs/STATE_OF_PLAY.md`. Hand-over to the Windows machine: `docs/WINDOWS_HANDOVER.md`. Last updated at the end of session 2 (Ubuntu ThinkPad T460).
+Branch `feature/hybrid-playtest-fixes-v03` (session 3, playtest fixes; see `docs/PLAYTEST_FIXES.md`). Honest inventory: `docs/STATE_OF_PLAY.md`. Hand-over to the Windows machine: `docs/WINDOWS_HANDOVER.md`. Last updated at the end of session 2 (Ubuntu ThinkPad T460).
 
 ## What works
 
@@ -17,7 +17,9 @@ python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_f
 python3 WizardRTSHybrid/scripts/bench_sim.py --minutes 5
 python3 WizardRTSHybrid/scripts/long_run.py --minutes 30 --seeds 507 11
 WizardRTSHybrid/scripts/launch_hybrid.sh god          # or wizard
-WizardRTSHybrid/scripts/run_headed_suite.sh [walk visual duel forestry food god war terrain naval]
+WizardRTSHybrid/scripts/run_headed_suite.sh [walk visual duel forestry food god war terrain naval playtest wizard mcv]
+python3 WizardRTSHybrid/scripts/ai_report.py --minutes 40 --seeds 507 11 23     # per-faction behaviour report with checks
+python3 WizardRTSHybrid/scripts/rl_experiment.py baseline|train|eval              # numpy-only learning experiment
 ```
 
 Regenerate data: `import_widelands_terrain.py`, `import_widelands_programs.py`, `import_openra_rules.py`, `import_terrain_textures.py`, `import_assets.py`, `verify_generic_buildings.py`, `build_catalogue.py`; source checkouts: `setup_external.sh`.
@@ -25,6 +27,10 @@ Regenerate data: `import_widelands_terrain.py`, `import_widelands_programs.py`, 
 ## Verified in session 2
 
 Python: see the count in `docs/WORK_LOG.md`. Headed on Ubuntu (Forward+, Intel HD 520): terrain, walk, naval; other scripts as listed in STATE_OF_PLAY. Long run: 30 game minutes x seeds 507 and 11 with six AI factions, no problems. Headless speed: standard map about 55x realtime.
+
+## Verified in session 3
+
+Python: PY_COUNT tests. Headed on Ubuntu (Forward+): HEADED_RESULT. AI: three seeds x 40 game minutes of war, all ten behaviour checks pass (`docs/evidence/ai_report/final_40m_war_seeds_507_11_23`). Details and before/after evidence: `docs/PLAYTEST_FIXES.md`.
 
 ## Next task
 

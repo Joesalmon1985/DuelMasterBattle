@@ -38,5 +38,15 @@
 | T-ECON-UNLOCK | Compound `or` return conditions: marble mines, Frisian bakeries, sewing room, breweries | 1 | T-IMPORT | VERIFIED | 153 of 178 production sites run (bench 153/153). Remaining: scouts, ferries and shipyards (replaced by OpenRA ships), ponds, gamekeeper, some Amazon rare-tree sites. |
 | T-GOD-INSPECT | God Mode explains why a building is not producing, shows deposits, tile info, workers | 2 | T-GOD | PARTIAL | `World.status_text`, deposits toggle, hover tile inspector, worker inspection. Headed GUI test of the inspector is not written. |
 | T-TRIBE-ECON | Each non-Barbarian faction recruits OpenRA infantry from its own tribe's civilian chain | 1 | T-IMPORT, T-AI | PARTIAL | Barbarians and Empire recruit from their own chains; Frisians, Atlanteans and Amazons recruit after the 25-minute hybrid ax fallback (`tests/test_tribe_fallback.py`). Their own chains still stall (Amazon rare trees, Atlantean silk and iron, Frisian fur); see `docs/CLAUDE_HANDOFF.md`. |
+| T-PT-MOVE | Smooth worker/carrier movement, visible cargo (playtest 1) | 0 | T-ART | VERIFIED | `hybrid_art.gd _motion`, 130 ware sprites, delta snapshots. `run_hybrid_playtest.gd`, `docs/evidence/playtest_v03/carrier_walking.gif`. |
+| T-PT-TREES | Trees grow and are felled visibly (playtest 2) | 0 | T-ART | VERIFIED | Stage sprite precedence fixed. `run_hybrid_forestry.gd` asserts the rendered sprite of one tree at every stage. |
+| T-PT-WEAP | War factory art, footprint and exit (playtest 3) | 0 | T-ART | VERIFIED | Door overlay from `weap3.shp`, 3x2 footprint. `docs/evidence/playtest_v03/war_factory_before_after.png`, `tests/test_playtest_fixes.py`. |
+| T-PT-STUCK | Are workers or carriers stuck? (playtest 4) | 0 | T-PT-MOVE | VERIFIED | `diagnostics.py`; cause was a walking loop on idle figures. Only standing stall: the wizard's hazard on a road. |
+| T-PT-MCV | Command centres, MCV, deploy, separation, outposts, AI expansion (playtest 5) | 1 | T-LOGISTICS | VERIFIED | `territory.py`, `tests/test_territory.py`, `run_hybrid_mcv.gd`, AI reports. |
+| T-PT-BURN | Destruction in 4 s with fire (playtest 6) | 0 | T-MIL | VERIFIED | `lifecycle.begin_destruction`, `tests/test_playtest_fixes.py`. |
+| T-PT-AI | Diagnose and improve the AI; long multi-seed evidence (playtest 7) | 1 | T-PT-MCV | VERIFIED | `docs/evidence/ai_report/`, `tests/test_ai_behaviour.py`. Open: reward and horizon for learning, naval invasion. |
+| T-PT-WIZ | Smooth wizard (playtest 8) | 0 | T-WORLD | VERIFIED | `overworld.gd` step chaining, `run_hybrid_playtest.gd`. |
+| T-PT-LABELS | Wizard labels and fire magic (playtest 9) | 1 | T-WORLD | VERIFIED | `wizard_labels.gd`, `magic.py`, `tests/test_fire_magic.py`, `run_hybrid_wizard.gd`. |
+| T-PT-RL | Training readiness: interface, evaluation, small measured experiment | 2 | T-PT-AI | PARTIAL | `sim_api.py`, `scripts/rl_experiment.py`, `docs/TRAINING_PROGRAMME.md`. The learned policy is not better; the programme is recorded. |
 
 Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays source-derived adapted.

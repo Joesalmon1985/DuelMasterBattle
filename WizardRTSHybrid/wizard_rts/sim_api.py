@@ -25,6 +25,7 @@ from typing import Any
 
 from wizard_rts import construction as con
 from wizard_rts import rules
+from wizard_rts import diagnostics, territory
 from wizard_rts.coords import tile_to_hex  # noqa: F401  (kept importable for scripts)
 from wizard_rts.world import FACTIONS, HybridWorld
 
@@ -34,7 +35,7 @@ WARE_VALUE = {  # wealth weights: raw goods count little, processed and military
     "fish": 2, "meat": 2, "wheat": 1, "water": 0, "ax": 6, "brick": 3, "marble": 4,
 }
 DEFAULT_WEIGHTS = {"wealth": 0.01, "territory": 0.5, "kill_value": 0.002, "loss_value": -0.002, "building_kill": 1.0, "building_loss": -1.0, "alive": 0.0, "eliminated": -50.0}
-ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop")
+ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy")
 
 
 class HybridEnv:
@@ -164,6 +165,10 @@ class HybridEnv:
                 return _slim(w.move(units, int(action["tx"]), int(action["ty"]), bool(action.get("attack_move", False))))
             if op == "stop":
                 return _slim(w.stop(units))
+            if op == "deploy":  # an MCV becomes a command centre where it stands (same command as God Mode's Deploy button)
+                if not self._owns_unit(faction, action["unit"]):
+                    return {"status": "rejected", "reason": "not_yours"}
+                return _slim(w.deploy(str(action["unit"])))
             if op == "order":
                 if not self._owns_unit(faction, action["unit"]):
                     return {"status": "rejected", "reason": "not_yours"}
@@ -186,7 +191,7 @@ class HybridEnv:
         w = self.world
         wh = con.faction_warehouse(w, faction)
         stocks = _stocks(w, faction)
-        out: dict[str, Any] = {"build": [], "road": [], "queue": [], "move_units": [], "attack": [], "demolish": []}
+        out: dict[str, Any] = {"build": [], "road": [], "queue": [], "move_units": [], "attack": [], "demolish": [], "deploy": [], "expansion_sites": []}
         if wh is None:
             return out
         for kind, spec in con.BUILD_MENU.items():
@@ -205,6 +210,16 @@ class HybridEnv:
                 out["demolish"].append(b["id"])
         units = [u for u in w.units.values() if u["faction_name"] == faction and u.get("alive", True)]
         out["move_units"] = [{"id": u["id"], "loco": u.get("loco", "foot")} for u in units]
+        for u in units:
+            if u.get("definition") == territory.MCV_DEFINITION:
+                why = territory.deploy_check(w, u)
+                out["deploy"].append({"unit": u["id"], "ok": why is None, "reason": why or ""})
+                if why is not None:
+                    from wizard_rts import ai
+
+                    site = ai._find_expansion_site(w, faction, u)
+                    if site is not None:
+                        out["expansion_sites"].append({"unit": u["id"], "tile": list(site)})
         armed = [u for u in units if u.get("weapon")]
         if armed:
             from wizard_rts.military import target_types
@@ -265,6 +280,13 @@ class HybridEnv:
             "military_strength": sum(rules.actor(u["definition"])["cost"] * int(u["hp"]) // max(int(u["max_hp"]), 1) for u in units if rules.actor(u["definition"])),
             "threats": threats,
             "capital": [wh["tx"], wh["ty"]] if wh else None,
+            "command_centers": [
+                {"id": c["id"], "tile": [c["tx"], c["ty"]], "radius": territory.radius_of(c), "outpost": bool(c.get("outpost")), "stock": dict(w.stocks.get(c["id"], {}))}
+                for c in territory.command_centers(w, faction)
+            ],
+            "mcvs": [{"id": u["id"], "tile": [u["tx"], u["ty"]], "cargo": dict(u.get("cargo") or {})} for u in units if u.get("definition") == territory.MCV_DEFINITION],
+            "known_enemy_buildings": len(w.__dict__.get("_ai_known", {}).get(faction, ())),
+            "stuck_entities": sum(1 for r in diagnostics.stuck_report(w) if r["faction"] == faction),
             "enemy_capitals": {n: [b["tx"], b["ty"]] for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] != faction for n in [b["faction_name"]]},
         }
         if t is not None and wh is not None:
@@ -277,10 +299,14 @@ class HybridEnv:
         return [[t.cls[y * t.w + x] if t.in_bounds(x, y) else 5 for x in range(cx - r, cx + r + 1, 2)] for y in range(cy - r, cy + r + 1, 2)]
 
     def _territory(self, faction: str) -> int:
+        """Coarse cells (TERRITORY_CELL tiles a side) covered by the build squares of the faction's command centres: growing it means
+        deploying MCVs, not building more houses beside the capital."""
         cells = set()
-        for b in self.world.buildings.values():
-            if b["faction_name"] == faction and int(b.get("hp", 1)) > 0:
-                cells.add((b["tx"] // TERRITORY_CELL, b["ty"] // TERRITORY_CELL))
+        for c in territory.command_centers(self.world, faction):
+            r = territory.radius_of(c)
+            for cy in range((c["ty"] - r) // TERRITORY_CELL, (c["ty"] + r) // TERRITORY_CELL + 1):
+                for cx in range((c["tx"] - r) // TERRITORY_CELL, (c["tx"] + r) // TERRITORY_CELL + 1):
+                    cells.add((cx, cy))
         return len(cells)
 
     def _production(self, faction: str) -> dict[str, int]:
@@ -358,6 +384,7 @@ class HybridEnv:
         th = obs["threats"]
         v += [float(th["enemy_units_near"]), float(th["enemy_strength_near"]) / 1000.0, float(th["nearest"] if th["nearest"] is not None else 99)]
         v += [float(obs.get("deposits", {}).get(r, 0)) for r in ("coal", "iron", "gold", "stones", "fish")]
+        v += [float(len(obs.get("command_centers", []))), float(len(obs.get("mcvs", []))), float(obs.get("known_enemy_buildings", 0)), float(obs.get("stuck_entities", 0))]
         return v
 
 

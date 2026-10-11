@@ -149,6 +149,24 @@ func _run() -> void:
 			_focus(Vector2(float(e["tx"]), float(e["ty"])), 1.6)
 			break
 	await _shot("carrier_with_ware")
+	# a short recording: 16 consecutive frames of one loaded carrier walking (assembled into a GIF by scripts/make_evidence.py)
+	var rec_id := ""
+	for e in _ents():
+		if str(e.get("class", "")) == "carrier" and str(e.get("cargo", "")) != "" and str(e.get("status", "")) == "carrying":
+			rec_id = str(e["id"])
+			break
+	if rec_id != "":
+		for k in 16:
+			var r := _by_id(rec_id)
+			if not r.is_empty() and _art._vis.has(rec_id):
+				var vp: Vector2 = _art._vis[rec_id]["pos"]
+				_world.camera_focus = (vp + Vector2(0.5, 0.5)) * float(_world.TPX)
+			await process_frame
+			await RenderingServer.frame_post_draw
+			var im: Image = get_root().get_viewport().get_texture().get_image()
+			DirAccess.make_dir_recursive_absolute(_dir + "/motion")
+			im.save_png(_dir.replace("\\", "/") + "/motion/frame_%02d.png" % k)
+
 
 	# 5. Burning: a building at 0 HP stops at once, burns ~4 s of game time, then goes.
 	var target := {}

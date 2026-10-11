@@ -124,7 +124,7 @@ class HybridWorld:
         self.path_searches = 0
         self.join_searches = 0
         self.carrier_respawn: dict[str, int] = {}  # road id -> ms until a new carrier walks out (logistics.carrier_quantum)
-        self.cc_ids: set[str] = set()  # warehouses = command centres; kept as a set so territory checks do not scan every building
+        self.cc_ids: dict[str, None] = {}  # warehouses = command centres, in creation order (a dict, not a set: string hashes are salted per process and would make runs differ)
         self.cc_buffer = territory.BUFFER  # extra tiles between two command centres' build areas
         self.faction_info: dict[str, dict[str, str]] = {}
         self.controlled_faction = ""
@@ -639,7 +639,7 @@ class HybridWorld:
         if definition:
             record["definition"] = definition
         if kind == "warehouse":
-            self.cc_ids.add(building_id)
+            self.cc_ids[building_id] = None
             record["command_center"] = True  # a warehouse is the faction's immobile command centre: it sets the build area
             record["territory"] = territory.HOME_RADIUS
         if kind not in ("tree", "rock"):

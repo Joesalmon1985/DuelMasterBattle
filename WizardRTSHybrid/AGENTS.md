@@ -48,7 +48,13 @@ Prefer executing an upstream algorithm, then a separate process, then a source-d
 
 ## Commits
 
-Commit verified milestones on `feature/wizard-rts-hybrid-v02`. Never commit `external/`, `runtime/`, `dist/`, secrets, or unrelated dirty spellbook and content files. An unfinished experiment stays unverified in the ledger.
+Commit verified milestones on the current feature branch (`feature/hybrid-playtest-fixes-v03` since session 3; `feature/wizard-rts-hybrid-v02` before). Never commit `external/`, `runtime/`, `dist/`, secrets, or unrelated dirty spellbook and content files. An unfinished experiment stays unverified in the ledger.
+
+## Playtest rule (session 3)
+
+A defect the owner sees in play is fixed only when a headed Godot test (a screenshot or an assertion on the rendered state) shows it fixed; a green
+Python suite does not close it. Never decide anything in the simulation by iterating a salted-hash container or by wall-clock time
+(`tests/test_determinism.py`). Read `docs/PLAYTEST_FIXES.md` and `docs/DECISIONS.md` D7, D8.
 
 ## Failed experiments
 

@@ -170,7 +170,7 @@ def _place_ranked(world: Any, name: str, kind: str, anchor: dict, score) -> str 
         res = con.place_building(world, name, kind, x, y)
         if res["status"] != "ok":
             continue
-        road = con.build_road(world, name, res["id"], anchor["id"], ROAD_LIMIT)
+        road = _road(world, name, res["id"], anchor["id"])
         if road["status"] == "ok":
             return res["id"]
         _cancel_site(world, res["id"])
@@ -207,7 +207,7 @@ def _place_near(world: Any, name: str, kind: str, anchor: dict) -> str | None:
                 res = con.place_building(world, name, kind, cx + dx, cy + dy)
                 if res["status"] != "ok":
                     continue
-                road = con.build_road(world, name, res["id"], anchor["id"], ROAD_LIMIT)
+                road = _road(world, name, res["id"], anchor["id"])
                 if road["status"] == "ok":
                     return res["id"]
                 _cancel_site(world, res["id"])
@@ -215,6 +215,19 @@ def _place_near(world: Any, name: str, kind: str, anchor: dict) -> str | None:
                 if failed_roads >= 3:  # each failed road is a wide A* search: give up for now rather than try a hundred sites
                     return None
     return None
+
+
+ROAD_FAILS_PER_DECISION = 4  # failed road searches (each a wide A*, about 80 ms) one faction may spend in one decision
+
+
+def _road(world: Any, name: str, a: str, b: str) -> dict[str, Any]:
+    """build_road for the AI with a per-decision budget of failures: a crowded base otherwise retried dozens of failing searches in one step."""
+    if world.__dict__.get("_ai_road_fails", 0) >= ROAD_FAILS_PER_DECISION:
+        return {"status": "rejected", "reason": "road_budget"}
+    out = con.build_road(world, name, a, b, ROAD_LIMIT)
+    if out["status"] != "ok" and out.get("reason") == "no_path":
+        world._ai_road_fails = world.__dict__.get("_ai_road_fails", 0) + 1
+    return out
 
 
 def _cancel_site(world: Any, bid: str) -> None:
@@ -231,6 +244,7 @@ EXPAND_REPEAT_MS = 3 * 60_000
 
 
 def economy_step(world: Any, name: str) -> None:
+    world._ai_road_fails = 0
     wh = con.faction_warehouse(world, name)
     if wh is None or int(wh["hp"]) <= 0:
         return
@@ -248,9 +262,14 @@ def _settlement_step(world: Any, name: str, wh: dict, main: bool) -> None:
             continue  # a worked-out mine does not count: the faction needs another where the deposit remains
         have[b["kind"]] = have.get(b["kind"], 0) + 1  # sites count: they are on their way
     # repair the road network: a building with no road gets one
+    now_ms = int(world.dmb.clock.get("game_ms", 0))
+    cool_road = world.__dict__.setdefault("_ai_noroad", {})
     for b in mine:
         if b["kind"] != "warehouse" and b["kind"] not in ("ranger",) and not world.adjacency.get(b["id"]):
-            con.build_road(world, name, b["id"], wh["id"])
+            if cool_road.get(b["id"], -1) > now_ms:
+                continue  # it could not be connected a moment ago: the failing search is not repeated every decision
+            if _road(world, name, b["id"], wh["id"])["status"] != "ok":
+                cool_road[b["id"]] = now_ms + 60_000 + zlib.crc32(b["id"].encode()) % 30_000
     if main:
         _bottleneck_step(world, name, wh)
         # a yard is planned ahead of the one-site gate: the home settlement always has something under construction, so behind it
@@ -428,7 +447,7 @@ def naval_economy_step(world: Any, name: str, wh: dict, mine: list[dict]) -> boo
     res = con.place_building(world, name, want, site[0], site[1])
     if res["status"] != "ok":
         return False
-    road = con.build_road(world, name, res["id"], wh["id"], ROAD_LIMIT)
+    road = _road(world, name, res["id"], wh["id"])
     if road["status"] != "ok":
         _cancel_site(world, res["id"])
         return False
@@ -574,7 +593,7 @@ def _build_tribe_building(world: Any, name: str, bname: str, wh: dict) -> str | 
         res = con.place_building(world, name, kind, tile[0], tile[1])
         if res["status"] != "ok":
             return None
-        if con.build_road(world, name, res["id"], wh["id"], ROAD_LIMIT)["status"] != "ok":
+        if _road(world, name, res["id"], wh["id"])["status"] != "ok":
             _cancel_site(world, res["id"])
             return None
         return res["id"]
@@ -642,7 +661,7 @@ def _build_mine(world: Any, name: str, kind: str, wh: dict) -> str | None:
     res = con.place_building(world, name, kind, tile[0], tile[1])
     if res["status"] != "ok":
         return None
-    if con.build_road(world, name, res["id"], wh["id"], ROAD_LIMIT)["status"] != "ok":
+    if _road(world, name, res["id"], wh["id"])["status"] != "ok":
         _cancel_site(world, res["id"])
         return None
     return res["id"]

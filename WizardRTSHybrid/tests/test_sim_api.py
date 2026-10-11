@@ -179,3 +179,66 @@ def test_flat_observation_has_a_fixed_length() -> None:
     assert len(a) == len(b) and all(isinstance(x, float) for x in a)
     assert set(obs) == {"Red", "Blue"}
     assert obs["Red"]["local_map"] and len(obs["Red"]["local_map"]) == len(obs["Red"]["local_map"][0])
+
+
+# ---------------------------------------------------------------- expansion through the training interface
+
+def _env_with_mcv(seed: int = 507):
+    from wizard_rts import territory
+
+    env = HybridEnv(seed, agent_factions=("Red",), step_ms=5000)
+    env.reset()
+    w = env.world
+    site = None
+    from wizard_rts import ai
+
+    probe = w._unit(w.faction_info["Red"]["id"], "Red", "mcv", "MCV", "openra.mcv", (w.player["tx"], w.player["ty"]))
+    site = ai._find_expansion_site(w, "Red", w.units[probe])
+    w.units.pop(probe)
+    assert site is not None
+    uid = w._unit(w.faction_info["Red"]["id"], "Red", "mcv", "MCV", "openra.mcv", tuple(site))
+    w.units[uid]["cargo"] = {"log": 3, "plank": 2, "granite": 1}
+    return env, uid, site, territory
+
+
+def test_deploy_is_an_action_with_a_mask_and_the_same_rules() -> None:
+    env, uid, site, territory = _env_with_mcv()
+    mask = env.legal_actions("Red")
+    assert {"unit": uid, "ok": True, "reason": ""} in mask["deploy"]
+    bad = env.world._unit(env.world.faction_info["Red"]["id"], "Red", "mcv", "MCV", "openra.mcv", (con.faction_warehouse(env.world, "Red")["tx"] + 6, con.faction_warehouse(env.world, "Red")["ty"] + 6))
+    mask = env.legal_actions("Red")
+    refused = next(d for d in mask["deploy"] if d["unit"] == bad)
+    assert refused["ok"] is False and refused["reason"] == "overlaps_friendly_territory"
+    assert any(e["unit"] == bad for e in mask["expansion_sites"]), "a refused MCV is offered a legal site"
+    assert env.apply("Red", {"op": "deploy", "unit": bad})["reason"] == "overlaps_friendly_territory"
+    assert env.apply("Blue", {"op": "deploy", "unit": uid})["reason"] == "not_yours"
+    cells_before = env._territory("Red")
+    assert env.apply("Red", {"op": "deploy", "unit": uid})["status"] == "ok"
+    obs, rew, *_ = env.step({"Red": []})
+    assert len(obs["Red"]["command_centers"]) == 2 and obs["Red"]["command_centers"][1]["outpost"] is True
+    assert env._territory("Red") > cells_before
+    assert rew["Red"] > 0, "territory is rewarded"
+    assert uid not in env.world.units
+
+
+def test_expansion_episode_is_deterministic_and_saves_and_replays() -> None:
+    def run() -> tuple[str, list]:
+        env, uid, site, territory = _env_with_mcv()
+        env.step({"Red": [{"op": "deploy", "unit": uid}]})
+        for _ in range(8):
+            env.step({"Red": []})
+        return env.state_hash(), env.log
+
+    h1, log1 = run()
+    h2, _ = run()
+    assert h1 == h2
+    env, uid, site, territory = _env_with_mcv()
+    env.step({"Red": [{"op": "deploy", "unit": uid}]})
+    blob = env.save()
+    env.step({"Red": []})
+    h_cont = env.state_hash()
+    twin = HybridEnv(507, agent_factions=("Red",), step_ms=5000)
+    twin.load(blob)
+    twin.step({"Red": []})
+    assert twin.state_hash() == h_cont
+    assert len(env.flatten(env.observe("Red"))) == len(env.flatten(env.observe("Red")))

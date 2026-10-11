@@ -1,5 +1,30 @@
 # Handoff
 
+## Session 3 (Ubuntu) - read `docs/PLAYTEST_FIXES.md` first
+
+Joe played the game for the first time; real play outranked passing tests. All nine observations are fixed with regressions that look at what
+is drawn (headed tests with screenshots): trees, smooth movement and visible wares, the war factory, stuck-walker diagnosis, MCV/command-centre
+territory expansion, 4 s burning destruction, AI diagnosis and rebuild, smooth wizard, wizard labels with fire magic. Branch
+`feature/hybrid-playtest-fixes-v03` (from `6096997`), never merged into `main`.
+
+New modules: `territory.py` (command centres, MCV deploy), `magic.py` (fire), `diagnostics.py` (stuck report). New Godot: `client/hybrid/wizard_labels.gd`;
+`hybrid_art.gd` has the motion layer, cargo, footprint buildings and burning ruins. New scripts: `ai_report.py`, `rl_experiment.py`, `make_evidence.py`,
+`import_ware_art.py`, `import_openra_overlays.py`, `import_openra_mcv.py`, `shp_td.py`, `mix_read.py`. Decisions: `DECISIONS.md` D7, D8.
+
+Rules learned that must not be forgotten:
+- A defect Joe sees is not fixed until a headed test (screenshot or rendered-state assertion) shows it fixed. Two of the nine were pure rendering.
+- Never iterate a `set` of strings to decide anything and never use wall-clock budgets in the simulation: `tests/test_determinism.py` catches it across processes.
+- Route searches are the cost: shared routes, a count budget per quantum with fair rotation, bounded and cooled-down failing searches. Check `ai_report.py`'s worst step (it was 15.7 s).
+- `tests/conftest.py` switches the faction AIs off; anything about the AI must enable `world.ai_enabled` itself.
+- The headed naval and wizard GUI scripts click with real mouse events and are timing-sensitive on a loaded machine; run them alone when in doubt.
+
+Next tasks, highest value first:
+1. Joe's second playtest. Likely asks: the war factory should show a vehicle rolling out of the open door; carriers carrying wares in their hands (needs the Widelands loaded carrier sheets); player-colour sprite remap; MCV un-deploy.
+2. AI: outposts are logistics islands (no road or ware transfer between settlements); no naval invasion; defence orders repeat each decision; the strongest faction always snowballs (add comeback/alliance behaviour or tune aggression).
+3. Learning: the score and episode length make a passive expanding policy look good (`TRAINING_PROGRAMME.md`). Rework the reward (buildings completed, army strength), lengthen episodes to 25+ minutes, then imitation from the scripted AI's `ai_*` decisions, then PPO (needs a framework: ask Joe before installing PyTorch).
+4. Tribe economies and the other items of the session 2 list below still stand.
+
+
 ## Works
 
 Read `docs/STATE_OF_PLAY.md` first; it is the current inventory. In short: one continuous world with the wizard and the retained duel; six factions with real economies (forestry with persistent trees and physical workers, quarry, finite mines, smelting, ax workshop, sawmill) carried by road carriers; construction sites, roads, recruitment queues that consume delivered goods; OpenRA-rule combat; AI commanders; God Mode over the same commands; headed tests for all of it.

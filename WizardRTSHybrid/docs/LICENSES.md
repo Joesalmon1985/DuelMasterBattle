@@ -19,3 +19,12 @@ Attribution to ship with the package:
 - Damage arithmetic is derived from OpenRA (GPL-3.0-or-later), copyright OpenRA Developers and Contributors.
 
 `external/` is not part of the package. `scripts/package_hybrid.ps1` copies `wizard_rts/`, `tests/`, and this file only.
+
+## Session 3 additions (playtest fixes)
+
+| Item | Source | Licence / note |
+| --- | --- | --- |
+| 130 ware pictures `art/widelands/ware_*.png`, `destroyed_building.png`, `ashes.png` | Widelands `data/tribes/wares/*/idle*.png`, `data/tribes/immovables/destroyed_building`, `.../ashes` at the pinned commit `47c5cae8` (`scripts/import_ware_art.py`) | GPL-2.0-or-later, as the other Widelands art. |
+| War factory door overlay `art/openra/weap-top-0000..0009.png` | `mods/ra/bits/weap3.shp` in the OpenRA repository (pinned `e7e9e4ad`), decoded with `scripts/shp_td.py` and the temperat palette | The OpenRA engine is GPL-3.0-or-later; the Red Alert artwork is not relicensed by this copy. Use was permitted for this project (Joe), as for the other OpenRA sprites. |
+| MCV and Construction Yard `art/openra/mcv-*.png`, `fact-0000/0026.png` | The player's own Red Alert content (`conquer.mix` from OpenRA's content installer on this machine), read with `scripts/mix_read.py` and decoded with `scripts/shp_td.py` | Same terms as the line above. `conquer.mix` itself is not committed. |
+| `scripts/shp_td.py`, `scripts/mix_read.py` | Written for this project from the public file-format descriptions as OpenRA implements them (`ShpTDSprite`, `Format40/80`, `PackageEntry.HashFilename`) | Original code, no OpenRA source copied. |

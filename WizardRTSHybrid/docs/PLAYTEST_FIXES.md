@@ -96,7 +96,41 @@ the last section.
 
 ### 7. Inert AI
 
-See "AI diagnosis" below.
+- **Diagnosis** (the AI of the playtested checkpoint run on the same tool, seed 507, six factions at war, 40 game minutes; data in
+  `docs/evidence/ai_report/before_checkpoint_6096997/`):
+  - No kill and no army movement before minute 20: the 20-game-minute attack delay (`ATTACK_AFTER_MS`) plus a squad threshold of 6-9 idle
+    units left 12-29 soldiers standing where they were built. The delay was the visible cause of "inert".
+  - Then a collapse: by minute 40 four of six factions were eliminated (each had exactly one warehouse and no way to get a second one),
+    two survived.
+  - No faction ever built a ship (one in 40 minutes): the naval step sat behind the "one new site at a time" gate and the home settlement
+    always had something under construction.
+  - Nothing expanded (no MCV), nothing took up defensive positions, targets were chosen with perfect knowledge of the whole map,
+    a lost battle was never abandoned, and the slowest simulation step was 15.7 s (hundreds of unshared A* searches when an army first moved).
+- **What changed** (`wizard_rts/ai.py`, `military.py`, `territory.py`; `DECISIONS.md` D7, D8): each command centre is a settlement with its own
+  plan paid from its own store; MCV expansion (queue, drive to a scored legal site, deploy, build there, defend there); a measured supply
+  bottleneck response (`_bottleneck_step`: logistics shortages of log, plank or granite raise the plan for woodcutters, foresters, sawmills or
+  quarries and log an `ai_bottleneck` event); naval planning ahead of the build gate; squads (formed at the personality's size, retargeted
+  when a target falls, recalled when 60 % are lost: `ai_retreat`); guard posts on the approach to each command centre with one slot per
+  soldier; targets limited to what the faction has seen (capitals are public, the army sees what it walks past: `ai_scouted`); attack delay
+  12 minutes; a faction whose home warehouse falls continues from a surviving outpost. Decisions are `ai_*` events that are also counted
+  per faction (`world.fstats`) so long runs keep exact totals.
+- **Result** (`docs/evidence/ai_report/final_40m_war_seeds_507_11_23/REPORT.md`, three seeds, 40 game minutes, all ten behaviour checks pass):
+  | | before (checkpoint `6096997`, seed 507) | after (seeds 507 / 11 / 23) |
+  | --- | --- | --- |
+  | first second command centre | never | minute 11 / 10 / 11 |
+  | peak command centres at once (of 6 factions) | 6 | 11 / 14 / 13 |
+  | first attack launched | minute 20 or later | minute 12 / 12 / 13 |
+  | first kill | minute 20 or later | minute 14 / 14 / 14 |
+  | first ship | minute 30 (Green) | minute 17 / 14 / 13 |
+  | factions alive at minute 40 | 2 of 6 | 5 / 5 / 6 of 6 |
+  | wall time for 40 game minutes | 283 s | 225 / 195 / 213 s |
+  | worst single simulation step | 15 745 ms | 502 / 380 / 433 ms |
+
+  Every faction expands, builds a navy where the sea allows, takes guard posts and fights; the strong ones (Yellow in all three seeds) snowball,
+  as in any RTS, so two to six factions are alive at minute 40 depending on the seed. The stuck report ends with at most two stalled entities
+  (the wizard's hazard on a road, a queue waiting for route budget). Run: `python3 scripts/ai_report.py --minutes 40 --seeds 507 11 23`.
+- **Tests.** `tests/test_ai_behaviour.py` (22-minute war: every faction built, at least four deployed a second centre, at least three attacks
+  were launched, no single step over 4 s; a 16-minute peace run expands without a single kill), `tests/test_determinism.py`.
 
 ### 8. Jerky wizard
 
@@ -119,9 +153,6 @@ See "AI diagnosis" below.
   trees through `remove_tree` (a lumberjack that reserved it gives up); rocks and animals are removed with their reservations.
 - **Tests.** `tests/test_fire_magic.py`, headed `run_hybrid_wizard.gd` (real mouse events).
 
-(Numbering in the playtest message: items 1 and 8 of this list are its items 1 and 8; the message's 9 interaction items are 9-10 of
-the programme text.)
-
 ## Performance found on the way
 
 A long war run had single simulation steps of up to 8.9 s (an army's first marches: hundreds of unshared A* searches) which would
@@ -129,7 +160,78 @@ have frozen the client and exceeded its 4 s reply timeout. Now: shared routes fo
 quantum (deterministic count budget), an integer-indexed A*, bounded failed road searches with cool-downs, and a coarser
 expansion-site sweep. Worst step in 25 game minutes of war: 0.34 s.
 
-## Test commands
+## Neural-network readiness (programme section 8)
+
+Short version; the full record is `docs/TRAINING_PROGRAMME.md`. The training environment (`sim_api.HybridEnv`) gained the Deploy action,
+MCV and command-centre observations, expansion sites in the legal-action masks and a territory reward that pays for expansion;
+determinism now also holds across processes (a salted-hash `set` in the new code was found and replaced by an ordered dict). A numpy-only
+experiment (masked linear macro policy, cross-entropy method, 17.5 minutes on three cores) was trained on seeds 1-2 and judged on held-out
+seeds 101-106 against the scripted AI on the same seeds and the same score: 52.2 ± 3.7 against 50.1 ± 7.2 (do nothing: 42.5, random macros:
+31.6), 5 paired wins of 6, sign-test p = 0.22. It is **not** evidence of better play: the policy waits most of the time, expands, and never
+recruits or fights, because the proxy score pays for territory and punishes losses and 14-minute episodes barely reach the first
+battle. The finding is about the reward and the horizon. No ML framework was installed.
+
+## Before / after evidence (`docs/evidence/playtest_v03/`)
+
+| Observation | Evidence |
+| --- | --- |
+| 1 Movement and wares | `carrier_walking.gif` (16 consecutive rendered frames of a loaded carrier), `carrier_with_ware.jpg` |
+| 2 Trees | `trees_before_after.png` (before: one picture for every stage; after: the five sprites), `forestry_1_chopping.jpg` to `forestry_4_pole.jpg` |
+| 3 War factory | `war_factory_before_after.png`, `war_factory_in_game.jpg` |
+| 5 MCV | `mcv_at_site.jpg`, `mcv_command_centre_deployed.jpg` (territory outline in red) |
+| 6 Destruction | `building_burning.jpg` |
+| 9 Labels and fire | `wizard_labels.jpg`, `wizard_far_tree_description.jpg`, `wizard_near_tree_fire_choice.jpg`, `wizard_tree_burned.jpg` |
+| 7 AI | `docs/evidence/ai_report/` (before, after, the rejected jammed version, the intermediate expansion-only run) |
+
+## Automated tests added or extended
+
+| Test | What it proves |
+| --- | --- |
+| `tests/test_playtest_fixes.py` (3) | destruction lifecycle in 4 s with immediate stop, real footprints for all six factions, exit through the front |
+| `tests/test_territory.py` (5) | MCV only from real deliveries with exact ware accounting, deploy consumes it once, separation (friendly, enemy), terrain, boundary, obstacles, a remote settlement builds and ships |
+| `tests/test_fire_magic.py` (5) | range from the authoritative tile, the intended tree, a building through the burning lifecycle, unit/worker/carrier lifecycles |
+| `tests/test_sim_api.py` (+2) | Deploy as an action with masks, expansion sites, territory reward, deterministic and save/restorable expansion episodes |
+| `tests/test_determinism.py` (1) | two processes with different hash seeds end in the same state through an expansion |
+| `tests/test_ai_behaviour.py` (2) | the factions actually expand, recruit, move and attack; peace runs expand without fighting |
+| `run_hybrid_playtest.gd` | tree sprites per stage, war factory art, smooth motion, still idle figures, cargo sprites, burning, wizard walk smoothness |
+| `run_hybrid_forestry.gd` (extended) | rendered sprite of the same tree at every stage |
+| `run_hybrid_wizard.gd` | far description, no fire from far, near fire on a tree, a building and a unit, labels disappear, mode switching |
+| `run_hybrid_mcv.gd` | queue MCV in the GUI, delivered wares, drive, Deploy, new area, overlap refused |
+
+Results of the final verification run: RESULTS_PLACEHOLDER
+
+## Remaining limitations
+
+- The war factory's door animation is only shown while a vehicle is being built; the unit does not visibly roll out of the bay (it appears
+  on the row in front of the door). Player colour is a ring, not a palette remap (unchanged from before).
+- Carriers carry one ware drawn above them rather than in their hands (the Widelands carrier has no loaded sheet imported).
+- Outposts are logistics islands: wares are never moved between settlements and the AI does not connect them by road.
+- Deployed command centres cannot be packed up again (no un-deploy), and an outpost has no garrison beyond one gun turret and the army.
+- The wizard's fire has no mana or cooldown beyond 0.6 game seconds, and it can destroy a faction's home warehouse (as asked: "anything").
+- A carrier waits indefinitely behind the wizard's hazard when a road crosses it (by design, the stuck report names it).
+- AI: no retreat of individual wounded units, no naval invasion, defence orders are re-issued every decision while a threat stays (the
+  `defends` counter counts decisions, not distinct battles), strong factions snowball so two or three survive 40 minutes of war.
+- The wizard test and the naval GUI test click with real mouse events and are timing-sensitive on a loaded machine (the naval script failed
+  once under heavy load and passed alone and in the final run).
+- Learned policy: see `TRAINING_PROGRAMME.md` (reward, horizon, opponent diversity).
+
+## Manual verification (Ubuntu or Windows)
+
+```
+python3 -m wizard_rts.server                      # from WizardRTSHybrid; HYBRID_ALLOW_SPAWN=1 only for the headed tests
+godot --path godot_project --rendering-method forward_plus res://client/scenes/hybrid_world.tscn
+```
+
+1. Walk (WASD): the wizard glides tile to tile with no pause between tiles. Click a tree far away: a description appears. Walk up to it
+   (3 tiles) and click it again: "Burn it with fire magic" appears; choose it and the tree is gone, a nearby building burns for about four
+   seconds with the Widelands flames, then disappears. Stand next to a soldier or a carrier and burn them.
+2. Watch a lumberjack: the tree shrinks through its stages, falls, the log is carried (you see the log), a carrier takes it on.
+3. Press `G`: God Mode. Choose Red, click the war factory (the whole building is clickable), "Queue MCV". Wait for the wares; the MCV
+   appears in front of the factory. Select it, right-click a distant legal clearing, then press **Deploy**. A command centre with its own
+   build square (red outline) appears. Try Deploy again beside your capital: it is refused with a reason.
+4. Let the six factions run (speed 8x or 16x): the first expansion outposts appear around minute 10-11, armies take guard posts, attacks start at
+   minute 12, the first kills and ships come between minutes 13 and 17.
+
 
 ```
 python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py

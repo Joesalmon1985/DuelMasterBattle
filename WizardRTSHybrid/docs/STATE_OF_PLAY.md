@@ -1,6 +1,6 @@
 # State of play — WizardRTSHybrid
 
-Branch `feature/wizard-rts-hybrid-v02`. This is an honest inventory of what you can launch and play, what is only scaffolding, and what is missing. A sprite on screen is not a feature; the feature catalogue (`docs/feature_catalogue.json`, rebuilt by `scripts/build_catalogue.py`) counts functionality, not files.
+Branch `feature/hybrid-playtest-fixes-v03` (from `feature/wizard-rts-hybrid-v02` at `6096997`). This is an honest inventory of what you can launch and play, what is only scaffolding, and what is missing. A sprite on screen is not a feature; the feature catalogue (`docs/feature_catalogue.json`, rebuilt by `scripts/build_catalogue.py`) counts functionality, not files.
 
 ## How to launch
 
@@ -20,6 +20,23 @@ godot --path godot_project --rendering-method forward_plus res://client/scenes/h
 Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs `GODOT` or `.dmb_windows_local.json`). Only one process may own port 8765. Restart the simulator for a clean world.
 
 **Switch modes at any time with the purple HUD button or `G`.** Both call the same toggle. Wizard Mode: WASD / arrows, Space / E / Z beside the purple hazard opens the retained Ward Duel. God Mode: pick a faction (R B G Y P O), build menu, Road / Move / A-Move / Attack / Rally / Stop / Demolish tools, left click select, drag a box, right click to move or attack, `Ctrl+1..9` groups, minimap click, mouse wheel zoom, WASD / arrows pan, `S` stop, `A` attack-move, `Esc` cancel. Other factions stay autonomous.
+
+## Session 3 (Ubuntu, 2026-10-11): fixes from the first manual playtest - read `docs/PLAYTEST_FIXES.md`
+
+| Area | Status |
+| --- | --- |
+| Trees | Fixed (it was rendering): each growth stage draws its own sprite, felled trees draw the fallen-tree sprite and then vanish. `run_hybrid_forestry.gd` follows one tree and asserts the sprite the renderer selects at every stage. |
+| Movement and cargo | Presentation-only glide layer (`hybrid_art.gd _motion`): workers, carriers, animals and units glide to their authoritative tile at their own speed; idle figures stand still (the "walking on the spot" was a walking loop on idle figures). All 128 Widelands wares are imported; carried wares show above workers and carriers. Snapshots are deltas for trees and rocks (614 KB to about 120 KB), polled every 0.2 s. |
+| War factory | Base + the door overlay (`weap3.shp` decoded by `scripts/shp_td.py`), one OpenRA cell per tile, real footprints (war factory 3x2, barracks 2x2), units leave through the front row. Original art from the player's own Red Alert content (see LICENSES). |
+| Destruction | 4 s Widelands fire sequence, production and orders stop at once, then collision, roads, workers, stock and logistics are released. |
+| Command centres and MCV | Warehouse = immobile command centre (34 tiles). War factory builds an MCV from delivered wares (`log 3, plank 8, granite 5`); Deploy creates a 16-tile command centre; separation rule against every centre of every faction; the starter kit is the vehicle's cargo. God Mode: Deploy button, territory outlines. `tests/test_territory.py`, headed `run_hybrid_mcv.gd`. |
+| Wizard labels and fire | Original label/resolver reused (`client/hybrid/wizard_labels.gd`): far click describes, near click offers fire; fire by stable id through the real lifecycles (`wizard_rts/magic.py`). `tests/test_fire_magic.py`, headed `run_hybrid_wizard.gd` with real mouse events. |
+| Wizard movement | Steps chain without a stopped frame, light `pose` replies, camera sits on the wizard. |
+| AI | Per-settlement economies, MCV expansion, supply-bottleneck response, navy planned ahead of the build gate, squads with retreat and retargeting, guard posts toward the nearest enemy, scouted targets, attack delay 12 minutes. Before (seed 507, checkpoint `6096997`): no movement or kills for 20 minutes, then four of six factions eliminated by minute 40, worst simulation step 15.7 s. After: all six alive at 40 minutes with 2-3 command centres each, ships built, kills on every side, worst step under 1 s on an idle machine. `docs/evidence/ai_report/`. |
+| Stuck diagnostics | `diagnostics.py`: per entity tile, destination, task, path, progress, animation, cargo, blocked reason, stalled time. The only standing stall is the wizard's hazard on a road (a carrier waits for it, by design). |
+| Training interface | `HybridEnv` gained Deploy, MCV and command-centre observations, expansion sites in the masks, a territory reward that pays for expansion; a numpy-only experiment and evaluation (`scripts/rl_experiment.py`, `docs/TRAINING_PROGRAMME.md`). Determinism now holds across processes (`tests/test_determinism.py`). |
+
+Headed on Ubuntu: twelve scripts (`scripts/run_headed_suite.sh`): the nine of session 2 plus `playtest`, `wizard`, `mcv`. Python: see `docs/WORK_LOG.md` for the count.
 
 ## Session 2 additions (Ubuntu ThinkPad, 2026-10-10/11) - verified where stated
 
@@ -50,7 +67,7 @@ Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs
 | Logistics | Road graph, requests from warehouses, producer outputs pushed to warehouses, one carrier per road, wares conserved (seven wares tested over ten minutes). |
 | Construction | Sites request their cost over roads, finish after 20 s. Roads built by command. |
 | Recruitment | Barracks queue: rifleman = 1 ax, 30 s. War factory: tank = 2 granite + 1 plank, 30 s. Nothing is free; a queue with no goods stalls. |
-| Combat | OpenRA numbers from `wizard_rts/data/openra_rules.json` (92 actors, 45 weapons): range, reload, burst, projectile flight, Versus armor, turrets. A Widelands soldier can fight OpenRA units and buildings. Buildings burn 15 s, then are removed with their roads. |
+| Combat | OpenRA numbers from `wizard_rts/data/openra_rules.json` (92 actors, 45 weapons): range, reload, burst, projectile flight, Versus armor, turrets. A Widelands soldier can fight OpenRA units and buildings. Buildings burn 4 s (Widelands fire sheet), then are removed with their roads. |
 | Six factions | Red, Blue, Green, Yellow, Purple, Orange, each a full economy and army, colour rings (strategic dots when zoomed out). |
 | AI | `wizard_rts/ai.py`: builds to a plan, repairs roads, queues recruits, defends, sends squads attack-moving. Personalities differ. Uses the same commands as God Mode. |
 | Widelands import | `scripts/import_widelands_programs.py` parses all 237 buildings, 156 workers, 128 wares, 363 immovables, 16 critters from the Lua (no parse errors) into `wizard_rts/data/widelands_defs.json`. 138 production sites across the five tribes are **runnable on the generic interpreter**: each runs in an isolated bench (`scripts/verify_generic_buildings.py`, 138 of 138 make their wares or plant, recruit or breed), appears in the God Mode build menu under its tribe, and has imported art (1656 catalogue items). A worker role of any imported tribe works the same way. Supported: forestry, fields, rocks, game, mining, conversion. Not yet: fishing, water gathering by swimming, terraforming, breeding, scouting, ferries, military and training sites. |
@@ -67,7 +84,7 @@ Or `WizardRTSHybrid/scripts/launch_hybrid.ps1 -Mode Wizard` / `-Mode God` (needs
 | Construction | No builder worker; 20 s timer once wares arrive. |
 | Workers | Hidden workers of mines, smelters and smithies are not entities. Worker training and assignment screens do not exist. |
 | Military | No spread damage, formations, hierarchical pathfinder, aircraft, ships, veterancy, garrisons, patrol, repair. |
-| AI | Cannot rebuild a mine (no prospecting), no repair, no expansion or new settlements. A faction whose warehouse falls does not come back. |
+| AI | Cannot rebuild a mine (no prospecting), no repair. Expansion exists (MCV, up to three command centres); if the home warehouse falls a surviving outpost becomes the faction's capital, otherwise it is defeated. No fog of war beyond the scouting rule; no naval invasion. |
 | Content coverage | Catalogue: 120 of 237 Widelands buildings and 70 of 131 wares tested in the bench (not yet in a headed play-through each); 58 production sites need unsupported commands; 59 military/training/warehouse/ship sites are not implemented; OpenRA 4 of 94 actors integrated. Only the hybrid core kinds have faction AI support. |
 | Art | Terrain now uses Widelands textures per node (no transition blending yet); ships and naval yards are labelled placeholder shapes, not OpenRA sprites; faction colour is a ring, not a player-colour sprite remap; other tribes' sprites not imported; unit sprites reuse rifleman/tank/soldier for every faction. |
 | God Mode UI | No per-worker, garrison or training panels; most original menus are unmapped (no menu catalogue yet). |
