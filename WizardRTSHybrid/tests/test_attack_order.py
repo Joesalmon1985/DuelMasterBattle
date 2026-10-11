@@ -45,10 +45,10 @@ def test_tank_destroys_producer_and_production_stops() -> None:
     assert world.units[tank]["weapon"] == "105mm"
     assert any(e["kind"] == "building_destroyed" for e in world.events) or world.stats["destroyed"] >= 1
     before = world.stocks[target].get("log", 0)
-    for _ in range(100):  # the ruin burns for 15 s before it is removed
+    for _ in range(100):  # the ruin burns for 4 s (lifecycle.RUIN_MS) before it is removed
         seq += 1
         world.advance(100, seq, snapshot=False)
-        now = world.stocks[target].get("log", 0)
+        now = world.stocks.get(target, {}).get("log", 0)  # the ruin is purged after 4 s and its stock with it
         assert now <= before  # leftovers may be hauled away; nothing new is made
         before = now
     red_producer = _pick(world, "Red", "producer")

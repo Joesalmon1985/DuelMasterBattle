@@ -101,6 +101,13 @@ BUILD_MENU: dict[str, dict[str, Any]] = {
     },
 }
 
+# Land footprints relative to the door tile (the tile roads and carriers use, bottom row). Taken from the picture sizes at one
+# OpenRA cell (24 px) per tile: WEAP is 72x48 = 3x2 cells over its bib row, BARR is 48x48 = 2x2. Units leave through the row below.
+GROUND_FOOTPRINT: dict[str, list[tuple[int, int]]] = {
+    "vehicle_factory": [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0)],
+    "barracks": [(-1, -1), (0, -1), (-1, 0)],
+}
+
 # Hybrid recipes: a rifleman takes one ax (barbarians/barracks consume=ax, 30 s); a tank takes granite and a plank. See docs/DECISIONS.md.
 RECIPES: dict[str, dict[str, dict[str, Any]]] = {
     # Ship recipes are hybrid-defined goods for the OpenRA unit (cost scaled from its credits): no free production.
@@ -240,6 +247,17 @@ def check_placement(world: Any, faction_name: str, kind: str, tx: int, ty: int) 
         return "outside_map", ctx
     if any((u["tx"], u["ty"]) == tile for u in world.units.values() if u.get("alive", True)):
         return "tile_occupied", ctx
+    extra = [(tile[0] + dx, tile[1] + dy) for dx, dy in GROUND_FOOTPRINT.get(kind, [])]
+    if extra:
+        occupied = {(u["tx"], u["ty"]) for u in world.units.values() if u.get("alive", True)}
+        for p in extra:
+            if not world.tile_in_bounds(*p) or (world.terrain is not None and not world.terrain.ground(*p)):
+                return "footprint_blocked", ctx
+            if p in world.blocked or p in world.tree_tiles or p in world.road_tile_set or p in world.reserved_tiles or p in occupied:
+                return "tile_occupied", ctx
+            if world.terrain is not None and not world.terrain.can_build(p[0], p[1], "small"):
+                return "unsuitable_terrain", ctx
+        ctx["ground_footprint"] = [list(tile)] + [list(p) for p in extra]
     return terrain_reject(world, kind, spec, tile), ctx
 
 
@@ -252,6 +270,10 @@ def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -
         return _place_naval(world, faction_name, info, kind, spec, tile, ctx["door"], ctx["footprint"])
     bid = world._building(info["id"], faction_name, kind, tile, spec["label"], spec["definition"])
     building = world.buildings[bid]
+    if ctx.get("ground_footprint"):
+        building["ground_footprint"] = ctx["ground_footprint"]
+        for p in ctx["ground_footprint"]:
+            world.blocked.add((int(p[0]), int(p[1])))
     building["operational"] = False
     building["constructing"] = {"cost": dict(spec["cost"]), "progress_ms": 0}
     building["hp"] = max(1, building["max_hp"] // 10)
@@ -464,6 +486,11 @@ def _exit_tile(world: Any, b: dict) -> tuple[int, int] | None:
     if b.get("footprint"):
         return _naval_exit_tile(world, b)
     occupied = {(u["tx"], u["ty"]) for u in world.units.values() if u.get("alive", True)}
+    if b.get("ground_footprint"):  # units come out of the row in front of the door, never through the walls
+        for dx in (0, -1, 1, -2, 2):
+            t = (b["tx"] + dx, b["ty"] + 1)
+            if world.tile_in_map(*t) and t not in world.blocked and t not in occupied and (world.terrain is None or world.terrain.ground(*t)):
+                return t
     for r in range(1, 6):
         for dy in range(-r, r + 1):
             for dx in range(-r, r + 1):

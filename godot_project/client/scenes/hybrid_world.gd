@@ -243,6 +243,7 @@ func _draw() -> void:
 			return int(a.get("tx", 0)) < int(b.get("tx", 0))
 		return ay < by
 	)
+	_art.begin_frame(float(_snapshot.get("time_scale", 1)))
 	for entity in rows:
 		_art.draw_entity(self, entity, TPX)
 	_art.draw_effects(self, _snapshot.get("effects", []), TPX)

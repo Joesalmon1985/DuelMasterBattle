@@ -90,6 +90,15 @@ def _handle(world: HybridWorld, message: dict) -> dict:
             return {"status": "rejected", "reason": "cannot_stand_there"}
         uid = world._unit(world.faction_info[faction]["id"], faction, definition.split(".")[-1], r["name"], definition, tile)
         return {"status": "ok", "id": uid}
+    if op == "damage":
+        # test hook (same gate as spawn): a hit through the one shared building-damage path
+        if os.environ.get("HYBRID_ALLOW_SPAWN") != "1":
+            return {"status": "rejected", "reason": "spawn_disabled"}
+        building = str(message.get("building", ""))
+        if building not in world.buildings:
+            return {"status": "rejected", "reason": "no_target"}
+        dealt = world.damage_building(building, int(message.get("amount", 1)), ["structure"], {}, by="test")
+        return {"status": "ok", "dealt": dealt, "snapshot": world.snapshot()}
     if op == "interact":
         return world.interact()
     if op == "resolve":

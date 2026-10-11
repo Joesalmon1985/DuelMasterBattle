@@ -39,7 +39,7 @@ from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path  
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
-from wizard_rts.lifecycle import lifecycle_quantum
+from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
@@ -255,7 +255,7 @@ class HybridWorld:
         before = int(building["hp"])
         building["hp"] = inflict_damage(before, int(building["max_hp"]), applied)
         if before > 0 and int(building["hp"]) <= 0:
-            building["operational"] = False
+            begin_destruction(self, building)
             self.stats["destroyed"] += 1
             self.stats["buildings_lost"] = self.stats.get("buildings_lost", 0) + 1
             self.effects.append({"t": "explosion", "x1": building["tx"], "y1": building["ty"], "x2": building["tx"], "y2": building["ty"], "ttl_ms": 2500, "keep": 3, "p": ""})
@@ -425,13 +425,17 @@ class HybridWorld:
         for kind, definition, label, dx, dy in specs:
             if self.terrain is not None:
                 try:
-                    tile = self._site(center, dx, dy, SHOWCASE_SIZE[kind], road, SHOWCASE_RES.get(kind))
+                    tile = self._site(center, dx, dy, SHOWCASE_SIZE[kind], road, SHOWCASE_RES.get(kind), extra=con.GROUND_FOOTPRINT.get(kind))
                 except RuntimeError as exc:  # an imported map may have no deposit or space within reach of this start
                     self.layout_notes.append(f"{name}: no {kind} ({exc})")
                     continue
             else:
                 tile = self._free_in_hex(q, r, center, dx, dy, road)
             bid = self._building(faction_id, name, kind, tile, label, definition)
+            if self.terrain is not None and kind in con.GROUND_FOOTPRINT:
+                fp = [list(tile)] + [[tile[0] + ox, tile[1] + oy] for ox, oy in con.GROUND_FOOTPRINT[kind]]
+                self.buildings[bid]["ground_footprint"] = fp
+                self.blocked.update((int(a), int(b)) for a, b in fp)
             if kind in ("barracks", "vehicle_factory", "mine", "ironmine", "smelter", "smithy", "quarry",
                         "farm", "tavern", "bakery", "hunter", "well"):
                 self._pending_links.append((name, bid))
@@ -452,7 +456,7 @@ class HybridWorld:
                     spawn_animal(self, tile, "deer" if k % 3 else "bunny")
                     break
 
-    def _site(self, center: tuple[int, int], dx: int, dy: int, size: str | None, avoid: set, res: str | None = None, max_r: int = 45) -> tuple[int, int]:
+    def _site(self, center: tuple[int, int], dx: int, dy: int, size: str | None, avoid: set, res: str | None = None, max_r: int = 45, extra: list | None = None) -> tuple[int, int]:
         """Nearest free tile to center+(dx, dy) where terrain allows this building size (None: any ground).
 
         A mine needs a deposit of `res` within the programme radius under it.
@@ -472,6 +476,13 @@ class HybridWorld:
                 elif not t.can_build(tile[0], tile[1], size):
                     continue
                 if res is not None and t.total(tile[0], tile[1], 2, res) < MIN_MINE_DEPOSIT:
+                    continue
+                if extra and not all(
+                    t.ground(tile[0] + ox, tile[1] + oy) and (tile[0] + ox, tile[1] + oy) not in self.blocked
+                    and (tile[0] + ox, tile[1] + oy) not in avoid and (tile[0] + ox, tile[1] + oy) not in self.tree_tiles
+                    and (tile[0] + ox, tile[1] + oy) not in self.road_tile_set and t.can_build(tile[0] + ox, tile[1] + oy, "small")
+                    for ox, oy in extra
+                ):
                     continue
                 return tile
         raise RuntimeError(f"no {size} site near {(px, py)}" + (f" with {res}" if res else ""))
@@ -852,6 +863,9 @@ class HybridWorld:
                 row["working"] = True
             if "hp" in building:
                 row["status_text"] = self.status_text(building)
+            if building.get("destroyed"):
+                row["destroyed"] = True
+                row["ruin_ms"] = int(building.get("ruin_ms", 0))
             if building["kind"] in ("mine", "ironmine", "well"):
                 res = {"mine": "coal", "ironmine": "iron", "well": "water"}[building["kind"]]
                 row["deposit_left"] = self.resource_total((building["tx"], building["ty"]), 2, res)
@@ -862,6 +876,7 @@ class HybridWorld:
             row["class"] = "carrier"
             row["cargo"] = carrier["cargo"]['good'] if carrier["cargo"] else ""
             row["status"] = carrier["status"]
+            row["move_ms"] = 100 * 5  # a carrier takes one tile per five logistics quanta (logistics_quantum)
             entities.append(row)
         for tree in self.trees.values():
             entities.append(
@@ -884,6 +899,7 @@ class HybridWorld:
                 "tx": animal["tx"], "ty": animal["ty"], "alive": True, "faction": "", "label": animal["species"].title(),
                 "facing": animal["facing"], "status": animal["status"],
             }
+            row["move_ms"] = 1500
             if animal["next"] is not None:
                 row["next_tx"], row["next_ty"] = animal["next"]
                 row["move_progress"] = min(1.0, animal["progress_ms"] / 1500.0)
@@ -900,6 +916,7 @@ class HybridWorld:
                 and not worker["path"]
                 and (worker["tx"], worker["ty"]) == (self.buildings[worker["building"]]["tx"], self.buildings[worker["building"]]["ty"])
             )
+            row["move_ms"] = 600
             row["move_progress"] = min(1.0, worker["progress_ms"] / 600.0) if worker["path"] else 0.0
             if worker["path"]:
                 row["next_tx"], row["next_ty"] = worker["path"][0]
@@ -985,6 +1002,8 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["rally"] = list(row["rally"])
     if row.get("tribe_fallback"):
         out["tribe_fallback"] = True
+    if row.get("ground_footprint"):
+        out["ground_footprint"] = row["ground_footprint"]
     if row.get("footprint"):
         out["footprint"] = row["footprint"]
         out["anchor"] = row["anchor"]
@@ -1004,6 +1023,7 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
     if row.get("path"):
         nxt = row["path"][0]
         out["next_tx"], out["next_ty"] = int(nxt[0]), int(nxt[1])
+        out["move_ms"] = int(row.get("move_ms", 760))
         out["move_progress"] = min(1.0, row.get("progress_ms", 0) / max(1, row.get("move_ms", 760)))
     return out
 

@@ -10,8 +10,22 @@ from __future__ import annotations
 
 from typing import Any
 
-RUIN_MS = 15_000
+RUIN_MS = 4_000  # the Widelands burning-building animation plays this long; playtest: 15 s was far too long
 CORPSE_MS = 2_000
+
+
+def begin_destruction(world: Any, b: dict) -> None:
+    """The moment a building reaches 0 HP: production, orders and deliveries stop now; the burning sequence starts.
+
+    Collision, roads, territory and the AI's view change when the ruin is purged RUIN_MS later (purge_building)."""
+    b["operational"] = False
+    b["destroyed"] = True
+    b["ruin_ms"] = RUIN_MS
+    lost = len(b.get("queue") or [])
+    b["queue"] = []
+    b["working"] = False
+    world.recipe_requests.pop(b["id"], None)
+    world.events.append({"kind": "destruction_started", "id": b["id"], "faction": b.get("faction_name", ""), "queued_orders_cancelled": lost})
 
 
 def purge_building(world: Any, bid: str, reason: str) -> None:
@@ -19,7 +33,7 @@ def purge_building(world: Any, bid: str, reason: str) -> None:
     if b is None:
         return
     world.blocked.discard((b["tx"], b["ty"]))
-    for p in b.get("footprint", []):
+    for p in list(b.get("footprint", [])) + list(b.get("ground_footprint", [])):
         world.blocked.discard((int(p[0]), int(p[1])))
     lost = sum(int(n) for n in world.stocks.pop(bid, {}).values())
     for rid in [r for r, (a, c) in world.road_edges.items() if bid in (a, c)]:

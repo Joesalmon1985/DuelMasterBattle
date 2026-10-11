@@ -6,6 +6,12 @@ const HexCoords = preload("res://client/hybrid/hex_coords.gd")
 ## recorded and not replaced with rectangles.
 
 var items: Dictionary = {}
+const MOBILE := ["worker", "carrier", "animal", "unit"]
+var _vis: Dictionary = {}
+var _dt := 0.0
+var _ts := 1.0
+var _last_ms := 0
+var _frames := 0
 var textures: Dictionary = {}
 var missing: Array[String] = []
 var show_markers := false
@@ -142,6 +148,8 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var definition := str(entity.get("definition", ""))
 	if bool(entity.get("inside", false)):
 		return
+	if bool(entity.get("destroyed", false)) and _draw_ruin(canvas, entity, tpx):
+		return
 	if (definition in NAVAL_YARDS or NAVAL_UNITS.has(definition)) and _draw_naval_placeholder(canvas, entity, tpx):
 		return
 	if definition == "":
@@ -163,18 +171,169 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var scale := float(item.get("scale", 1))
 	var hotspot: Array = item.get("hotspot", [0, 0])
 	var frame_size := _frame_size(item, tex)
-	var tx := int(entity.get("tx", 0))
-	var ty := int(entity.get("ty", 0))
-	var anchor := Vector2(tx * tpx + tpx * 0.5, ty * tpx + tpx * 0.5)
-	if entity.has("next_tx"):
+	var anchor := Vector2(int(entity.get("tx", 0)) * tpx + tpx * 0.5, int(entity.get("ty", 0)) * tpx + tpx * 0.5)
+	var drawn := entity
+	if MOBILE.has(str(entity.get("class", ""))):
+		drawn = _motion(entity)
+		anchor = Vector2(drawn["_vx"] * tpx + tpx * 0.5, drawn["_vy"] * tpx + tpx * 0.5)
+	elif entity.has("next_tx"):
 		var t := float(entity.get("move_progress", 0.0))
 		var nxt := Vector2(int(entity["next_tx"]) * tpx + tpx * 0.5, int(entity["next_ty"]) * tpx + tpx * 0.5)
 		anchor = anchor.lerp(nxt, t)
+	if entity.has("ground_footprint") and item.has("footprint_cells"):
+		_draw_footprint_building(canvas, entity, item, tex, tpx)
+		return
 	var top_left := anchor - Vector2(float(hotspot[0]), float(hotspot[1])) * scale
-	var src := _source_rect(item, tex, entity)
+	var src := _source_rect(item, tex, drawn)
 	_draw_marker(canvas, entity, anchor)
 	canvas.draw_texture_rect_region(tex, Rect2(top_left, frame_size * scale), src)
+	_draw_cargo(canvas, entity, anchor, float(hotspot[1]) * scale)
 	_draw_health(canvas, entity, anchor)
+
+
+## An OpenRA building sits on its real footprint: one source cell (24 px) per tile, top-left at the footprint's corner, so the
+## picture covers exactly the tiles the simulation blocks. The war factory is its base frame plus the roll-up door overlay
+## (OpenRA WithProductionDoorOverlay `build-top`): closed while idle, opening and closing while a vehicle is being built.
+func _draw_footprint_building(canvas: CanvasItem, entity: Dictionary, item: Dictionary, tex: Texture2D, tpx: int) -> void:
+	var min_x := 1 << 30
+	var min_y := 1 << 30
+	var max_x := -(1 << 30)
+	var max_y := -(1 << 30)
+	for p in entity["ground_footprint"]:
+		min_x = mini(min_x, int(p[0]))
+		min_y = mini(min_y, int(p[1]))
+		max_x = maxi(max_x, int(p[0]))
+		max_y = maxi(max_y, int(p[1]))
+	var cells: Array = item["footprint_cells"]
+	var box := Rect2(Vector2(min_x, min_y) * tpx, Vector2(int(cells[0]), int(cells[1])) * tpx)
+	var scale := float(item.get("scale", 1))
+	var hurt := entity.has("hp") and entity.has("max_hp") and int(entity["hp"]) * 2 < int(entity["max_hp"])
+	var index := 0
+	if item.has("overlay_prefix"):
+		index = 1 if hurt else 0
+	else:
+		index = _sequence_index(item, entity)
+	var base_path := "res://client/hybrid/art/openra/%s-%04d.png" % [str(item.get("prefix", "")), index]
+	var base_tex: Texture2D = _tex(base_path)
+	if base_tex == null:
+		base_tex = tex
+	var size := Vector2(base_tex.get_width(), base_tex.get_height()) * scale
+	var building_pos := box.position + Vector2(0, box.size.y - size.y)
+	canvas.draw_texture_rect(base_tex, Rect2(building_pos, size), false)
+	if item.has("overlay_prefix"):
+		var length := int(item.get("overlay_length", 1))
+		var frame := 0
+		var q: Array = entity.get("queue", [])
+		var producing := not q.is_empty() and str(q[0].get("state", "")) == "building"
+		if producing:
+			var t := int(Time.get_ticks_msec() / (1000.0 / float(item.get("overlay_fps", 8)))) % (length * 3)
+			frame = t if t < length else (length - 1 if t < length * 2 else length * 3 - 1 - t)
+		var door := _tex("res://client/hybrid/art/openra/%s-%04d.png" % [str(item["overlay_prefix"]), clampi(frame, 0, length - 1)])
+		if door != null:
+			canvas.draw_texture_rect(door, Rect2(building_pos, Vector2(door.get_width(), door.get_height()) * scale), false)
+	var centre := box.get_center()
+	var ring := entity.duplicate()
+	ring["_box"] = box
+	_draw_marker(canvas, ring, centre)
+	_draw_health(canvas, ring, centre)
+
+
+## A building at 0 HP burns for a few seconds before the simulation removes it. Widelands buildings are replaced by the
+## Widelands `destroyed_building` fire sheet; an OpenRA structure keeps its (darkened) picture with the same fire over it.
+func _draw_ruin(canvas: CanvasItem, entity: Dictionary, tpx: int) -> bool:
+	var fire: Dictionary = items.get("widelands.destroyed_building", {})
+	var tex: Texture2D = _tex("widelands.destroyed_building")
+	if fire.is_empty() or tex == null:
+		return false
+	var anchor := Vector2(int(entity.get("tx", 0)) * tpx + tpx * 0.5, int(entity.get("ty", 0)) * tpx + tpx * 0.5)
+	var scale := float(fire.get("scale", 2))
+	if str(entity.get("definition", "")).begins_with("openra."):
+		var base: Dictionary = _item_for(entity)
+		var btex: Texture2D = _frame_texture(base, entity) if not base.is_empty() else null
+		if btex != null:
+			var bhot: Array = base.get("hotspot", [0, 0])
+			var bscale := float(base.get("scale", 1))
+			var bsize := _frame_size(base, btex)
+			canvas.draw_texture_rect_region(btex, Rect2(anchor - Vector2(float(bhot[0]), float(bhot[1])) * bscale, bsize * bscale), _source_rect(base, btex, {"_static": true}), Color(0.25, 0.22, 0.2))
+			scale *= 1.5
+	var phase := int(Time.get_ticks_msec() / (1000.0 / float(fire.get("fps", 10)))) % int(fire.get("frames", 10))
+	var fw := tex.get_width() / int(fire.get("columns", 10))
+	var hot: Array = fire.get("hotspot", [43, 60])
+	var src := Rect2(phase * fw, 0, fw, tex.get_height())
+	canvas.draw_texture_rect_region(tex, Rect2(anchor - Vector2(float(hot[0]), float(hot[1])) * scale, Vector2(fw, tex.get_height()) * scale), src)
+	return true
+
+
+## Called once per rendered frame before the entities: the time step and the game speed the motion layer needs.
+func begin_frame(time_scale: float) -> void:
+	var now := Time.get_ticks_msec()
+	_dt = clampf(float(now - _last_ms) / 1000.0, 0.0, 0.1)
+	_last_ms = now
+	_ts = maxf(time_scale, 1.0)
+	_frames += 1
+	if _frames % 300 == 0:
+		for id in _vis.keys():
+			if int(_vis[id]["seen"]) < _frames - 300:
+				_vis.erase(id)
+
+
+## Presentation only. The simulation owns the tile; this layer glides the picture towards it at the entity's own speed
+## so a snapshot arriving every few frames cannot make a worker hop. It never feeds a position back.
+func _motion(entity: Dictionary) -> Dictionary:
+	var id := str(entity.get("id", ""))
+	var goal := Vector2(float(entity.get("tx", 0)), float(entity.get("ty", 0)))
+	var heading := Vector2.ZERO
+	if entity.has("next_tx"):
+		var nxt := Vector2(float(entity["next_tx"]), float(entity["next_ty"]))
+		heading = nxt - goal
+		goal = goal.lerp(nxt, float(entity.get("move_progress", 0.0)))
+	var v: Dictionary = _vis.get(id, {})
+	if v.is_empty():
+		v = {"pos": goal, "face": str(entity.get("facing", "e"))}
+	var pos: Vector2 = v["pos"]
+	var dist := pos.distance_to(goal)
+	if dist > 4.0:
+		pos = goal  # a teleport (spawn, deploy, a long stall): do not slide across the map
+		dist = 0.0
+	var speed := _ts * 1000.0 / maxf(float(entity.get("move_ms", 600)), 1.0)
+	pos = pos.move_toward(goal, minf((speed * 1.2 + dist * 2.0) * _dt, 0.5))  # never more than half a tile in one frame
+	var moving := pos.distance_to(goal) > 0.02 or heading != Vector2.ZERO
+	var face: String = v["face"]
+	var dir := heading if heading != Vector2.ZERO else goal - pos
+	if moving and dir.length() > 0.02:
+		face = ("e" if dir.x > 0.0 else "w") if absf(dir.x) >= absf(dir.y) else ("s" if dir.y > 0.0 else "n")
+	elif not moving and str(entity.get("class", "")) == "worker":
+		face = str(entity.get("facing", face))
+	v["pos"] = pos
+	v["face"] = face
+	v["seen"] = _frames
+	_vis[id] = v
+	var out := entity.duplicate()
+	out["_vx"] = pos.x
+	out["_vy"] = pos.y
+	out["_moving"] = moving
+	var cls := str(entity.get("class", ""))
+	if cls != "unit":
+		out["facing"] = face
+	var anim := str(entity.get("anim", ""))
+	# a figure that is not walking stands still: no walking frames on the spot (idle carriers, workers waiting at a door)
+	out["_static"] = not moving and (cls != "worker" or anim in ["", "idle", "walk", "walkload"])
+	return out
+
+
+func _draw_cargo(canvas: CanvasItem, entity: Dictionary, anchor: Vector2, head: float) -> void:
+	var good := str(entity.get("cargo", entity.get("carrying", "")))
+	if good == "":
+		return
+	var icon: Dictionary = items.get("widelands.ware.%s" % good, {})
+	var tex: Texture2D = _tex(str(icon.get("id", ""))) if not icon.is_empty() else null
+	if tex == null:
+		return
+	var sc := float(icon.get("scale", 2)) * 1.4
+	var size := Vector2(tex.get_width(), tex.get_height()) * sc
+	var centre := Vector2(anchor.x, anchor.y - head * 0.9 - size.y * 0.4)
+	canvas.draw_circle(centre, maxf(size.x, size.y) * 0.62, Color(0.05, 0.05, 0.05, 0.55))
+	canvas.draw_texture_rect(tex, Rect2(centre - size * 0.5, size), false)
 
 
 func draw_effects(canvas: CanvasItem, effects: Array, tpx: int) -> void:
@@ -207,6 +366,8 @@ func _draw_marker(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> vo
 		radius = 14.0
 	elif entity.has("hp"):
 		radius = 46.0
+		if entity.has("_box"):
+			radius = maxf((entity["_box"] as Rect2).size.x, (entity["_box"] as Rect2).size.y) * 0.5
 	if radius == 0.0:
 		return
 	var col: Color = faction_colors.get(str(entity.get("faction_name", "")), Color(0.7, 0.7, 0.7))
@@ -233,6 +394,10 @@ func _draw_health(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> vo
 		return
 	var width := 36.0
 	var bar := Rect2(anchor.x - width * 0.5, anchor.y - 28.0, width, 4.0)
+	if entity.has("_box"):
+		var box: Rect2 = entity["_box"]
+		width = box.size.x * 0.6
+		bar = Rect2(box.get_center().x - width * 0.5, box.position.y - 10.0, width, 5.0)
 	canvas.draw_rect(bar, Color(0.1, 0.1, 0.1, 0.8), true)
 	var fill := width * float(hp) / float(max_hp)
 	canvas.draw_rect(Rect2(bar.position, Vector2(fill, 4.0)), Color(0.75, 0.15, 0.12), true)
@@ -241,12 +406,13 @@ func _draw_health(canvas: CanvasItem, entity: Dictionary, anchor: Vector2) -> vo
 func _item_for(entity: Dictionary) -> Dictionary:
 	var definition := str(entity.get("definition", ""))
 	var kind := str(entity.get("kind", ""))
-	if kind == "tree" and items.has(definition):
-		return items[definition]
 	if kind == "tree":
+		# the stage sprite always wins: the bare definition is only the mature picture and would show every stage as a full tree
 		var stage := str(entity.get("stage", "old"))
 		var tkey := "widelands.fallentree" if stage == "felled" else "%s.%s" % [definition, stage]
-		return items.get(tkey, {})
+		if items.has(tkey):
+			return items[tkey]
+		return items.get(definition, {})
 	if str(entity.get("class", "")) == "animal":
 		var akey := "%s.idle" % definition
 		if str(entity.get("status", "")) == "moving":
@@ -309,7 +475,7 @@ func _source_rect(item: Dictionary, tex: Texture2D, entity: Dictionary) -> Rect2
 	var frame_h := tex.get_height() / rows
 	var frames := maxi(int(item.get("frames", 1)), 1)
 	var frame := 0
-	if int(item.get("fps", 0)) > 0 and frames > 1:
+	if int(item.get("fps", 0)) > 0 and frames > 1 and not bool(entity.get("_static", false)):
 		frame = int(Time.get_ticks_msec() / (1000.0 / float(item.get("fps", 1)))) % frames
 	var col := frame % columns
 	var row := frame / columns
