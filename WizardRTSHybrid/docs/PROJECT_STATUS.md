@@ -30,7 +30,7 @@ Python: see the count in `docs/WORK_LOG.md`. Headed on Ubuntu (Forward+, Intel H
 
 ## Verified in session 3
 
-Python: PY_COUNT tests. Headed on Ubuntu (Forward+): HEADED_RESULT. AI: three seeds x 40 game minutes of war, all ten behaviour checks pass (`docs/evidence/ai_report/final_40m_war_seeds_507_11_23`). Details and before/after evidence: `docs/PLAYTEST_FIXES.md`.
+Python: 123 tests. Headed on Ubuntu (Forward+): all twelve headed scripts pass: eleven (walk, visual, duel, forestry, food, god, war, terrain, naval, playtest, mcv) in one final run on an idle machine, and `wizard`, which failed once in that run on a racy click (the scripted AI was still moving the soldier it had just spawned), was made deterministic (AI frozen, click retried) and then passed twice in a row. AI: three seeds x 40 game minutes of war, all ten behaviour checks pass (`docs/evidence/ai_report/final_40m_war_seeds_507_11_23`). Details and before/after evidence: `docs/PLAYTEST_FIXES.md`.
 
 ## Next task
 

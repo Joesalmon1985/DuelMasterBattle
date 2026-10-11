@@ -110,6 +110,7 @@ func _run() -> void:
 	_labels = _world.wizard_labels
 	_check(_labels != null, "wizard labels attached")
 	_world._sim.op({"op": "speed", "scale": 1})
+	_world._sim.op({"op": "ai", "enabled": false})  # nobody marches while the test clicks: a spawned soldier must stay where it was put
 	_world._camera.zoom = Vector2(1.0, 1.0)
 	_world.camera_focus = Vector2.INF
 	await _frames(20)
@@ -202,6 +203,11 @@ func _run() -> void:
 	_world._apply_snapshot(ad.get("snapshot", {}))
 	await _click_entity(uid, 0.35)
 	var ul = _labels.label_for(uid)
+	for _retry in 2:  # a carrier standing on the same tile can take the first click; the soldier is picked first on the next
+		if ul != null and ul.interaction_state() == "RESPONSES":
+			break
+		await _click_entity(uid, 0.2)
+		ul = _labels.label_for(uid)
 	_check(ul != null and ul.interaction_state() == "RESPONSES", "a nearby unit offers fire (state %s)" % (ul.interaction_state() if ul != null else "none"))
 	await _frames(20)
 	if ul != null:

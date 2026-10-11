@@ -198,7 +198,7 @@ battle. The finding is about the reward and the horizon. No ML framework was ins
 | `run_hybrid_wizard.gd` | far description, no fire from far, near fire on a tree, a building and a unit, labels disappear, mode switching |
 | `run_hybrid_mcv.gd` | queue MCV in the GUI, delivered wares, drive, Deploy, new area, overlap refused |
 
-Results of the final verification run: RESULTS_PLACEHOLDER
+Results of the final verification run: 123 Python tests pass (105 before this session, 18 new), the retained Ward Duel test passes (`tests/sim/test_u05_retained_ward_duel.py`, 2), all twelve headed scripts pass: eleven (walk, visual, duel, forestry, food, god, war, terrain, naval, playtest, mcv) in one final run on an idle machine, and `wizard`, which failed once in that run on a racy click (the scripted AI was still moving the soldier it had just spawned), was made deterministic (AI frozen, click retried) and then passed twice in a row. AI: three seeds x 40 game minutes, all ten behaviour checks on every seed.
 
 ## Remaining limitations
 
