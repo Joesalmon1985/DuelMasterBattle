@@ -42,7 +42,7 @@ from wizard_rts.military import init_unit, military_quantum, order_attack, order
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
-from wizard_rts import territory  # noqa: E402
+from wizard_rts import diagnostics, territory  # noqa: E402
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
 
 WORLD_ID = "hybrid.world"
@@ -122,6 +122,7 @@ class HybridWorld:
         self.rng = random.Random(int(seed))
         self.time_scale = 1
         self.path_searches = 0
+        self.join_searches = 0
         self.carrier_respawn: dict[str, int] = {}  # road id -> ms until a new carrier walks out (logistics.carrier_quantum)
         self.cc_ids: set[str] = set()  # warehouses = command centres; kept as a set so territory checks do not scan every building
         self.cc_buffer = territory.BUFFER  # extra tiles between two command centres' build areas
@@ -749,6 +750,7 @@ class HybridWorld:
             con.recruitment_quantum(self)
             lifecycle_quantum(self)
             territory.deploy_quantum(self)
+            diagnostics.watch_quantum(self)
             if self.ai_enabled:
                 ai_quantum(self)
             military_quantum(self)

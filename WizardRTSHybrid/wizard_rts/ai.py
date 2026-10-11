@@ -48,13 +48,22 @@ BUILD_WL_BARRACKS = False
 NAVAL_AFTER_MS = 8 * 60_000  # the land economy comes first
 NAVAL = ("naval", "lcraft")
 NAVAL_BUILDINGS = ("naval_yard", "sub_pen")
-ATTACK_AFTER_MS = 20 * 60_000  # factions build up for 20 game minutes before they march
+ATTACK_AFTER_MS = 12 * 60_000  # was 20 minutes: the build-up alone made the factions look inert (docs/PLAYTEST_FIXES.md, AI diagnosis)
+GUARD_OUT = 12  # guard posts stand this many tiles from a command centre, towards the nearest enemy
+RETREAT_BELOW = 0.4  # a squad that is down to this share of its launch size is recalled
+SIGHT = 32  # tiles: an enemy building this close to one of our buildings or units becomes a known target
+BOTTLENECK_EVERY_MS = 60_000
+BOTTLENECK_CAP = {"producer": 6, "ranger": 6, "processor": 3, "quarry": 4}
+BOTTLENECK_FIX = {"log": ("producer", "ranger"), "plank": ("processor",), "granite": ("quarry",)}
 
 
-def _plan(name: str) -> dict[str, int]:
+def _plan(name: str, world: Any = None) -> dict[str, int]:
     plan = dict(BASE_PLAN)
     for k, v in PERSONALITY.get(name, {}).get("plan", {}).items():
         plan[k] = max(plan.get(k, 0), v)
+    if world is not None:  # supply bottlenecks the faction has measured raise its targets (_bottleneck_step)
+        for k, v in world.__dict__.get("_ai_bneck", {}).get(name, {}).get("boost", {}).items():
+            plan[k] = plan.get(k, 0) + v
     return plan
 
 
@@ -242,10 +251,16 @@ def _settlement_step(world: Any, name: str, wh: dict, main: bool) -> None:
     for b in mine:
         if b["kind"] != "warehouse" and b["kind"] not in ("ranger",) and not world.adjacency.get(b["id"]):
             con.build_road(world, name, b["id"], wh["id"])
+    if main:
+        _bottleneck_step(world, name, wh)
+        # a yard is planned ahead of the one-site gate: the home settlement always has something under construction, so behind it
+        # the navy was never started (found in the playtest AI diagnosis: no ship in 40 game minutes)
+        if naval_economy_step(world, name, wh, _mine(world, name)):
+            return
     # one new site at a time per settlement
     if any(b.get("constructing") for b in mine):
         return
-    plan = _plan(name) if main else dict(OUTPOST_PLAN)
+    plan = _plan(name, world) if main else dict(OUTPOST_PLAN)
     logs = _stock(world, name, "log", wh)
     order = ["producer", "ranger", "processor", "quarry", "hunter", "fisher", "farm", "well", "tavern", "bakery", "mine", "ironmine", "smelter", "smithy", "barracks", "vehicle_factory", "defense"] if main else list(OUTPOST_ORDER)
     if logs < 6:  # wood first when it runs short
@@ -274,8 +289,6 @@ def _settlement_step(world: Any, name: str, wh: dict, main: bool) -> None:
             world.events.append({"kind": "ai_build", "faction": name, "building": kind, "id": site, "settlement": wh["id"]})
             return
     if not main:
-        return
-    if naval_economy_step(world, name, wh, [b for b in _mine(world, name)]):
         return
     tribe_step(world, name, wh)
 
@@ -635,7 +648,133 @@ def _build_mine(world: Any, name: str, kind: str, wh: dict) -> str | None:
     return res["id"]
 
 
+def _bottleneck_step(world: Any, name: str, wh: dict) -> None:
+    """Measure what the faction's buildings could not get (logistics shortages) and raise the plan for the ware that is short."""
+    now = int(world.dmb.clock.get("game_ms", 0))
+    state = world.__dict__.setdefault("_ai_bneck", {}).setdefault(name, {"t": 0, "boost": {}})
+    if now - state["t"] < BOTTLENECK_EVERY_MS:
+        return
+    state["t"] = now
+    own = {b["id"] for b in world.buildings.values() if b["faction_name"] == name}
+    counts: dict[str, int] = {}
+    for key in [k for k in world.shortages if k[0] in own]:
+        counts[key[1]] = counts.get(key[1], 0) + world.shortages.pop(key)
+    if not counts:
+        return
+    ware, n = max(counts.items(), key=lambda kv: kv[1])
+    fix = BOTTLENECK_FIX.get(ware, ())
+    raised = []
+    if n >= 100:
+        for kind in fix:
+            if state["boost"].get(kind, 0) + _plan(name).get(kind, 0) < BOTTLENECK_CAP[kind]:
+                state["boost"][kind] = state["boost"].get(kind, 0) + 1
+                raised.append(kind)
+    world.events.append({"kind": "ai_bottleneck", "faction": name, "ware": ware, "shortages": n, "raised": raised})
+
+
+def _own_points(world: Any, name: str) -> list[tuple[int, int]]:
+    pts = [(b["tx"], b["ty"]) for b in world.buildings.values() if b["faction_name"] == name and int(b.get("hp", 1)) > 0]
+    pts += [(u["tx"], u["ty"]) for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("weapon")]
+    return pts
+
+
+def _known_targets(world: Any, name: str) -> list[dict]:
+    """Enemy buildings this faction has found: every home capital (start positions are public) plus whatever has come within SIGHT of
+    one of its own buildings or armed units. Scouting is therefore the army's own marching: it sees what it walks past."""
+    known = world.__dict__.setdefault("_ai_known", {}).setdefault(name, set())
+    pts = _own_points(world, name)
+    out = []
+    for b in world.buildings.values():
+        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0:
+            continue
+        if b["id"] not in known:
+            if b["kind"] == "warehouse" and not b.get("outpost"):
+                known.add(b["id"])
+            elif any(abs(b["tx"] - x) <= SIGHT and abs(b["ty"] - y) <= SIGHT for x, y in pts):
+                known.add(b["id"])
+                world.events.append({"kind": "ai_scouted", "faction": name, "building": b["id"], "of": b["faction_name"]})
+        if b["id"] in known:
+            out.append(b)
+    known.intersection_update(world.buildings.keys())
+    return out
+
+
+def _posts(world: Any, name: str, cc: dict) -> list[tuple[int, int]]:
+    """Guard posts of one command centre: three tiles GUARD_OUT towards the nearest enemy centre, spread across the approach."""
+    cache = world.__dict__.setdefault("_ai_posts", {})
+    key = cc["id"]
+    now = int(world.dmb.clock.get("game_ms", 0))
+    hit = cache.get(key)
+    if hit is not None and now - hit[0] < 120_000:
+        return hit[1]
+    enemies = [e for e in territory.command_centers(world) if e["faction_name"] != name]
+    posts: list[tuple[int, int]] = []
+    if enemies:
+        e = min(enemies, key=lambda e: territory.cheb((cc["tx"], cc["ty"]), (e["tx"], e["ty"])))
+        dx, dy = e["tx"] - cc["tx"], e["ty"] - cc["ty"]
+        norm = max(math.hypot(dx, dy), 1.0)
+        ux, uy = dx / norm, dy / norm
+        radius = territory.radius_of(cc)
+        out = min(GUARD_OUT, max(radius - 3, 4))
+        for lateral in (-6, 0, 6):
+            tx = int(round(cc["tx"] + ux * out - uy * lateral))
+            ty = int(round(cc["ty"] + uy * out + ux * lateral))
+            tile = _free_ground_near(world, (tx, ty), world._reach_from((cc["tx"], cc["ty"])) if world.terrain is not None else None)  # land-connected
+            if tile is not None:
+                posts.append(tile)
+    cache[key] = (now, posts)
+    return posts
+
+
+def _free_ground_near(world: Any, tile: tuple[int, int], reach: dict | None = None) -> tuple[int, int] | None:
+    t = world.terrain
+    for r in range(0, 6):
+        for dy in range(-r, r + 1):
+            for dx in range(-r, r + 1):
+                if max(abs(dx), abs(dy)) != r:
+                    continue
+                p = (tile[0] + dx, tile[1] + dy)
+                if t is not None and t.ground(*p) and p not in world.blocked and p not in world.tree_tiles and p not in world.road_tile_set \
+                        and (reach is None or p in reach):
+                    return p
+    return None
+
+
+def _station(world: Any, name: str, idle: list[dict]) -> None:
+    """Idle soldiers stand guard on the approaches to the faction's command centres instead of wherever they were built."""
+    from wizard_rts.military import order_move
+
+    posts: list[tuple[int, int]] = []
+    for cc in territory.command_centers(world, name):
+        posts += _posts(world, name, cc)
+    if not posts:
+        return
+    sent = 0
+    slots = [(0, 0), (1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1), (2, 0), (-2, 0), (0, 2), (0, -2), (2, 1), (-2, 1), (2, -1), (-2, -1)]
+    for k, u in enumerate(sorted(idle, key=lambda u: u["id"])):
+        base = posts[k % len(posts)]
+        off = slots[(k // len(posts)) % len(slots)]  # every soldier gets its own tile around the post (a shared tile jams the others)
+        post = (base[0] + off[0], base[1] + off[1])
+        if world.terrain is not None and (not world.terrain.ground(*post) or post in world.blocked):
+            post = base
+        if abs(u["tx"] - post[0]) + abs(u["ty"] - post[1]) <= 6 or u.get("order"):
+            continue
+        if int(u.get("no_route_until", 0)) > int(world.dmb.clock.get("game_ms", 0)):
+            continue  # it found no way a moment ago: do not ask again every decision
+        if u.get("status") == "stuck":
+            u["no_route_until"] = int(world.dmb.clock.get("game_ms", 0)) + 90_000
+            continue
+        if order_move(world, [u["id"]], post[0], post[1], attack_move=True)["status"] == "ok":
+            sent += 1
+        if sent >= 6:  # a few per decision: the route searches are spread out over time
+            break
+    if sent:
+        world.events.append({"kind": "ai_station", "faction": name, "units": sent, "posts": len(posts)})
+
+
 def military_step(world: Any, name: str) -> None:
+    from wizard_rts.military import order_attack, order_move
+
     wh = con.faction_warehouse(world, name)
     if wh is None or int(wh["hp"]) <= 0:
         return
@@ -652,43 +791,80 @@ def military_step(world: Any, name: str) -> None:
                 unit_kind = next(iter(con.RECIPES[b["kind"]]))
                 con.queue_unit(world, b["id"], unit_kind)
     navy_step(world, name, wh, navy)
+    idle_all = [u for u in army if not u.get("order") and u.get("status") in ("idle", None, "attacking", "blocked", "stuck", "waiting_route")]
     if not getattr(world, "ai_aggressive", True):
-        return  # peace: factions build and recruit but do not march
-    idle = [u for u in army if not u.get("order") and u.get("status") in ("idle", None, "attacking", "blocked", "stuck")]
+        _station(world, name, idle_all)  # peace: factions build, recruit and stand guard but do not march
+        return
+    now = int(world.dmb.clock.get("game_ms", 0))
+    squads = world.__dict__.setdefault("_ai_squads", {})
+    squad = squads.get(name)
+    alive = {u["id"]: u for u in army}
+    if squad is not None:
+        squad["ids"] = [i for i in squad["ids"] if i in alive]
+        if len(squad["ids"]) <= max(1, int(squad["size0"] * RETREAT_BELOW)):  # the attack has failed: bring the rest home
+            if squad["ids"]:
+                first = alive[squad["ids"][0]]
+                home = min(territory.command_centers(world, name), key=lambda c: territory.cheb((first["tx"], first["ty"]), (c["tx"], c["ty"])), default=wh)
+                order_move(world, squad["ids"], home["tx"], home["ty"] + 4)
+            world.events.append({"kind": "ai_retreat", "faction": name, "launched": squad["size0"], "left": len(squad["ids"]), "after_ms": now - squad["since"]})
+            squads.pop(name)
+            squad = None
+    if squad is not None:
+        tgt = world.buildings.get(squad["target"])
+        if tgt is None or int(tgt.get("hp", 0)) <= 0:  # target destroyed: the next known one, or home
+            members = [alive[i] for i in squad["ids"]]
+            nxt = _pick_target(world, name, members) if members else None
+            if nxt is None:
+                squads.pop(name)
+                world.events.append({"kind": "ai_squad_done", "faction": name, "left": len(members)})
+                squad = None
+            else:
+                squad["target"] = nxt["id"]
+                world.events.append({"kind": "ai_retarget", "faction": name, "target": nxt["id"], "kind_of": nxt["kind"], "units": len(members)})
+                _send(world, members, nxt)
+        else:
+            stalled = [alive[i] for i in squad["ids"] if not alive[i].get("order")]
+            if stalled:  # members that finished their march: send them on to the target again
+                _send(world, stalled, tgt)
+    members_ids = set(squad["ids"]) if squad is not None else set()
+    idle = [u for u in idle_all if u["id"] not in members_ids]
     if not idle:
         return
-    # defend first: enemies near the capital
+    # defend first: any enemy near any of our command centres, the nearest threat
     threat = None
-    for cc in territory.command_centers(world, name):  # every settlement is defended, the nearest threat first
+    for cc in territory.command_centers(world, name):
         t = _nearest_enemy_unit(world, name, (cc["tx"], cc["ty"]), 22.0)
         if t is not None:
-            threat = t
+            threat = (cc, t)
             break
     if threat is not None:
-        from wizard_rts.military import order_move
+        cc, t = threat
+        order_move(world, [u["id"] for u in idle], t["tx"], t["ty"], attack_move=True)
+        world.events.append({"kind": "ai_defend", "faction": name, "at": [t["tx"], t["ty"]], "centre": cc["id"], "units": len(idle), "enemy": t.get("faction_name", "")})
+        return
+    size = PERSONALITY.get(name, {}).get("squad", 4)
+    if squad is None and len(idle) >= size and now >= ATTACK_AFTER_MS:
+        target = _pick_target(world, name, idle)
+        if target is not None:
+            squads[name] = {"ids": [u["id"] for u in idle], "size0": len(idle), "target": target["id"], "since": now}
+            world.events.append({"kind": "ai_attack", "faction": name, "target": target["id"], "units": len(idle), "target_kind": target["kind"], "of": target["faction_name"],
+                                 "distance": round(math.hypot(target["tx"] - idle[0]["tx"], target["ty"] - idle[0]["ty"]))})
+            _send(world, idle, target)
+            return
+    _station(world, name, idle)
 
-        order_move(world, [u["id"] for u in idle], threat["tx"], threat["ty"], attack_move=True)
-        world.events.append({"kind": "ai_defend", "faction": name, "at": [threat["tx"], threat["ty"]]})
-        return
-    squad = PERSONALITY.get(name, {}).get("squad", 4)
-    if len(idle) < squad or int(world.dmb.clock.get("game_ms", 0)) < ATTACK_AFTER_MS:
-        return
-    target = _pick_target(world, name, idle)
-    if target is None:
-        return
+
+def _send(world: Any, units: list[dict], target: dict) -> None:
+    """March a squad to an enemy building: attack-move until it is in sight, then the specific attack order."""
     from wizard_rts.military import order_attack, order_move
 
-    ids = [u["id"] for u in idle]
-    # march together to the enemy base, then the squad attacks what it meets (attack-move),
-    # then the specific building order takes over once they are in sight
-    centre = (target["tx"], target["ty"])
-    near = min(idle, key=lambda u: math.hypot(u["tx"] - centre[0], u["ty"] - centre[1]))
-    if math.hypot(near["tx"] - centre[0], near["ty"] - centre[1]) > 12:
-        order_move(world, ids, centre[0], centre[1], attack_move=True)
+    ids = [u["id"] for u in units]
+    near = min(units, key=lambda u: math.hypot(u["tx"] - target["tx"], u["ty"] - target["ty"]))
+    if math.hypot(near["tx"] - target["tx"], near["ty"] - target["ty"]) > 12:
+        order_move(world, ids, target["tx"], target["ty"], attack_move=True)
     else:
         for uid in ids:
             order_attack(world, uid, target["id"])
-    world.events.append({"kind": "ai_attack", "faction": name, "target": target["id"], "units": len(ids)})
 
 
 def _nearest_enemy_unit(world: Any, name: str, pos: tuple[int, int], radius: float) -> dict | None:
@@ -707,9 +883,7 @@ def _pick_target(world: Any, name: str, squad: list[dict]) -> dict | None:
     cx = sum(u["tx"] for u in squad) / len(squad)
     cy = sum(u["ty"] for u in squad) / len(squad)
     best = None
-    for b in world.buildings.values():
-        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0:
-            continue
+    for b in _known_targets(world, name):
         rank = prefs.index(b["kind"]) if b["kind"] in prefs else len(prefs)
         d = math.hypot(b["tx"] - cx, b["ty"] - cy)
         score = d + rank * 25.0  # a preferred kind is worth walking 25 cells further per rank

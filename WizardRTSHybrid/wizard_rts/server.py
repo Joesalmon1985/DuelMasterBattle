@@ -87,6 +87,10 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         if kind in ("naval_yard", "sub_pen") and wh is not None and world.terrain is not None:
             site = ai._naval_site(world, str(message.get("faction", "")), wh)
             return {"status": "ok" if site else "rejected", "tile": list(site) if site else None, "reason": "" if site else "no_coast"}
+        if kind == "mcv_site":
+            unit = world.units.get(str(message.get("unit", "")))
+            site = ai._find_expansion_site(world, str(message.get("faction", "")), unit) if unit is not None else None
+            return {"status": "ok" if site else "rejected", "tile": list(site) if site else None, "reason": "" if site else "no_site"}
         return {"status": "rejected", "reason": "unsupported_kind"}
     if op == "spawn":
         if os.environ.get("HYBRID_ALLOW_SPAWN") != "1":

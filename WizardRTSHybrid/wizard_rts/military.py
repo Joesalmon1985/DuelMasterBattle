@@ -23,6 +23,7 @@ PROVENANCE = OPENRA_DAMAGE_SOURCE["status"]
 MOVEMENT_PROVENANCE = "astar-with-occupancy (not OpenRA PathFinder)"
 SCAN_EVERY = 5  # quanta between target scans (OpenRA AutoTarget scans about every 0.5 s)
 PATH_SEARCHES_PER_QUANTUM = 1
+JOIN_SEARCHES_PER_QUANTUM = 4  # short searches that join a shared route
 CHASE_LEASH = 3.0  # extra cells an idle unit will chase beyond its weapon range
 EFFECT_MS = 400
 
@@ -166,8 +167,9 @@ def _shared_route(world: Any, here: tuple[int, int], goal: tuple[int, int], othe
     cache = world.__dict__.setdefault("_route_cache", {})
     failed = world.__dict__.setdefault("_route_failed", {})
     key = (loco, goal)
-    if world.military_quanta - failed.get((key, here), -10**9) < 100:
-        return None  # this unit could not get there a few seconds ago; do not repeat a failing wide search every quantum
+    cell = (here[0] // 12, here[1] // 12)
+    if world.military_quanta - failed.get((key, cell), -10**9) < 100:
+        return None  # nobody near here could get there a few seconds ago; do not repeat a failing wide search every quantum
     hit = None if fresh else cache.get(key)
     if hit is not None and world.military_quanta - hit["q"] > 600:
         cache.pop(key, None)
@@ -176,6 +178,9 @@ def _shared_route(world: Any, here: tuple[int, int], goal: tuple[int, int], othe
         index = hit["index"]
         if here in index:
             return list(hit["path"][index[here] + 1:])
+        if world.join_searches >= JOIN_SEARCHES_PER_QUANTUM:
+            return _NO_BUDGET
+        world.join_searches += 1
         part = find_path(world, here, goal, limit=400, avoid=others, max_nodes=8_000, loco=loco, join=index)
         if part is not None and part:
             tail = part[-1]
@@ -186,11 +191,11 @@ def _shared_route(world: Any, here: tuple[int, int], goal: tuple[int, int], othe
     if world.path_searches >= PATH_SEARCHES_PER_QUANTUM:
         return _NO_BUDGET
     world.path_searches += 1
-    path = find_path(world, here, goal, limit=400, avoid=others, max_nodes=400_000, loco=loco)
+    path = find_path(world, here, goal, limit=400, avoid=others, max_nodes=150_000, loco=loco)
     if path is None and loco in ("naval", "lcraft"):
         path = _path_toward(world, here, goal, others, loco)  # a ship goes as near as the water allows
     if path is None:
-        failed[(key, here)] = world.military_quanta
+        failed[(key, cell)] = world.military_quanta
         if len(failed) > 2000:
             failed.clear()
     if path:
@@ -212,6 +217,9 @@ def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.
         return "arrived"
     others = _occupied(world, unit)
     loco = unit.get("loco")
+    if goal in others and _dist(here[0], here[1], goal[0], goal[1]) <= 2.0:
+        unit["path"] = []  # somebody already stands on the destination tile: this close is there (a guard post, a rally point)
+        return "arrived"
     if not unit.get("path") or unit.get("path_goal") != list(goal):
         # A long march by a whole army is dozens of wide A* searches. Spread them over quanta (a count, so replays stay deterministic):
         # once this quantum's searches are spent the unit waits a quantum, visibly, rather than freezing the world for seconds.
@@ -616,10 +624,15 @@ def _building_step(world: Any, b: dict) -> None:
 def military_quantum(world: Any) -> None:
     world.military_quanta += 1
     world.path_searches = 0  # route searches started this quantum (military._walk spends PATH_SEARCHES_PER_QUANTUM of them)
+    world.join_searches = 0
     if world.military_quanta % SCAN_EVERY == 0:
         _build_grid(world)
     projectile_quantum(world)
-    for unit in list(world.units.values()):
+    units = list(world.units.values())
+    if units:  # route budget is spent in this order: rotate the start so the same units do not always win it
+        k = world.military_quanta % len(units)
+        units = units[k:] + units[:k]
+    for unit in units:
         if unit.get("alive", True):
             _unit_step(world, unit)
     for b in list(world.buildings.values()):

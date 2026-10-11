@@ -91,6 +91,9 @@ def deploy_check(world: Any, unit: dict) -> str | None:
     if unit.get("deploying_ms"):
         return "already_deploying"
     tile = (int(unit["tx"]), int(unit["ty"]))
+    overlap = separation_problem(world, unit["faction_name"], tile)  # the rule that matters most is reported first
+    if overlap:
+        return overlap
     t = world.terrain
     fp = footprint(tile)
     occupied = {(u["tx"], u["ty"]) for uid, u in world.units.items() if u.get("alive", True) and uid != unit["id"]}
@@ -113,7 +116,7 @@ def deploy_check(world: Any, unit: dict) -> str | None:
     front = (tile[0], tile[1] + 1)
     if front in world.blocked:
         return "no_access"
-    return separation_problem(world, unit["faction_name"], tile)
+    return None
 
 
 def deploy(world: Any, unit_id: str) -> dict[str, Any]:

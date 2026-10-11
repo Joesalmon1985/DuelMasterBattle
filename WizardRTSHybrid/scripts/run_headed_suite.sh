@@ -9,10 +9,10 @@ REPO="$(dirname "$HYB")"
 GODOT="${GODOT:-$HOME/godot451/Godot_v4.5.1-stable_linux.x86_64}"
 export HYBRID_SHOT_DIR="${HYBRID_SHOT_DIR:-$HYB/docs/evidence/ubuntu}"
 mkdir -p "$HYBRID_SHOT_DIR"
-declare -A SCRIPT=( [walk]=run_hybrid_walk.gd [visual]=run_hybrid_visual.gd [duel]=run_hybrid_duel.gd [forestry]=run_hybrid_forestry.gd [food]=run_hybrid_food.gd [god]=run_hybrid_god.gd [war]=run_hybrid_war.gd [terrain]=run_hybrid_terrain.gd [naval]=run_hybrid_naval.gd [playtest]=run_hybrid_playtest.gd )
-declare -A MARK=( [walk]=HYBRID_WALK_OK [visual]=HYBRID_VISUAL_OK [duel]=HYBRID_DUEL_OK [forestry]=HYBRID_FORESTRY_OK [food]=HYBRID_FOOD_OK [god]=HYBRID_GOD_OK [war]=HYBRID_WAR_OK [terrain]=HYBRID_TERRAIN_OK [naval]=HYBRID_NAVAL_OK [playtest]=HYBRID_PLAYTEST_OK )
-declare -A ENVX=( [forestry]="HYBRID_SPEED=4" [food]="HYBRID_SPEED=10" [war]="HYBRID_SPEED=60" [naval]="HYBRID_ALLOW_SPAWN=1" [playtest]="HYBRID_ALLOW_SPAWN=1" )
-names=("$@"); [ ${#names[@]} -eq 0 ] && names=(walk visual duel forestry food god war terrain naval playtest)
+declare -A SCRIPT=( [walk]=run_hybrid_walk.gd [visual]=run_hybrid_visual.gd [duel]=run_hybrid_duel.gd [forestry]=run_hybrid_forestry.gd [food]=run_hybrid_food.gd [god]=run_hybrid_god.gd [war]=run_hybrid_war.gd [terrain]=run_hybrid_terrain.gd [naval]=run_hybrid_naval.gd [playtest]=run_hybrid_playtest.gd [wizard]=run_hybrid_wizard.gd [mcv]=run_hybrid_mcv.gd )
+declare -A MARK=( [walk]=HYBRID_WALK_OK [visual]=HYBRID_VISUAL_OK [duel]=HYBRID_DUEL_OK [forestry]=HYBRID_FORESTRY_OK [food]=HYBRID_FOOD_OK [god]=HYBRID_GOD_OK [war]=HYBRID_WAR_OK [terrain]=HYBRID_TERRAIN_OK [naval]=HYBRID_NAVAL_OK [playtest]=HYBRID_PLAYTEST_OK [wizard]=HYBRID_WIZARD_OK [mcv]=HYBRID_MCV_OK )
+declare -A ENVX=( [forestry]="HYBRID_SPEED=4" [food]="HYBRID_SPEED=10" [war]="HYBRID_SPEED=60" [naval]="HYBRID_ALLOW_SPAWN=1" [playtest]="HYBRID_ALLOW_SPAWN=1" [wizard]="HYBRID_ALLOW_SPAWN=1" [mcv]="HYBRID_ALLOW_SPAWN=1" )
+names=("$@"); [ ${#names[@]} -eq 0 ] && names=(walk visual duel forestry food god war terrain naval playtest wizard mcv)
 failed=()
 for n in "${names[@]}"; do
   # a free port every time (a simulator left behind by an interrupted run must never be reused: its clock would be advanced)
