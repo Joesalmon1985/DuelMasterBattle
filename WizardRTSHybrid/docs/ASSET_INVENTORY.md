@@ -13,3 +13,12 @@ Imported sprites live in `godot_project/client/hybrid/art/`. `WizardRTSHybrid/sc
 | Mod SDK example mod | GPL-3 code; the SDK README says art can use other terms | No |
 
 If a later change copies a file out of `external/`, add a row here and in `docs/LICENSES.md` before the package script runs.
+
+## Session 2 additions
+
+| Asset | Origin | Shipped | Status |
+| --- | --- | --- | --- |
+| 15 terrain textures, 32 water animation frames | Widelands `data/world/terrains` (`import_terrain_textures.py`) | Yes | imported |
+| 28 tree sheets (7 more species, 4 stages) | Widelands `data/world/immovables/trees` (`import_tree_art.py`) | Yes | imported |
+| Two translated Widelands maps | Widelands `data/maps` | Yes (`wizard_rts/data/maps`) | imported, licence not independently verified |
+| Naval yard, submarine pen, patrol boat, submarine, destroyer, cruiser, transport, missile submarine | none | No | **PLACEHOLDER shapes drawn by `hybrid_art.gd`, labelled "placeholder art" on the yards. OpenRA sprites need the Red Alert content packages (Windows).** |

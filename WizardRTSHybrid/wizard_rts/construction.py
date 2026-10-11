@@ -20,6 +20,7 @@ from wizard_rts.economy import _supply
 from wizard_rts.logistics import add_road
 
 QUANTUM_MS = 100
+TRIBE_PATIENCE_MS = 25 * 60_000  # how long a barracks waits for its tribe's soldier wares before the ax fallback
 TERRITORY_RADIUS = 34  # tiles from the faction's warehouse
 BUILD_MS = 20_000
 
@@ -391,7 +392,7 @@ def recipe_for(world: Any, b: dict, unit_kind: str) -> dict[str, Any] | None:
     recipe = RECIPES.get(b["kind"], {}).get(unit_kind)
     if recipe is None:
         return None
-    if unit_kind == "infantry":
+    if unit_kind == "infantry" and not b.get("tribe_fallback"):
         from wizard_rts import tribes, wl_defs
 
         tribe = world.faction_info.get(b["faction_name"], {}).get("tribe", "barbarians")
@@ -483,7 +484,18 @@ def recruitment_quantum(world: Any) -> None:
         recipe = recipe_for(world, b, head["unit"])
         if head["state"] == "waiting":
             stock = world.stocks.get(bid, {})
+            b["wait_ms"] = int(b.get("wait_ms", 0)) + QUANTUM_MS
+            if head["unit"] == "infantry" and not b.get("tribe_fallback") and b["wait_ms"] >= TRIBE_PATIENCE_MS:
+                # The tribe's weapon chain has not delivered for a long time (a chain the importer cannot run yet, or a starved
+                # one): the barracks falls back to the hybrid ax recipe so the faction can field infantry. Still goods-fed, and
+                # recorded in an event and in the building row.
+                b["tribe_fallback"] = True
+                b["wait_ms"] = 0
+                world.events.append({"kind": "tribe_fallback", "building": bid, "faction": b["faction_name"]})
+                _sync_requests(world, b)
+                continue
             if all(int(stock.get(g, 0)) >= n for g, n in recipe["cost"].items()):
+                b["wait_ms"] = 0
                 for g, n in recipe["cost"].items():
                     _supply(world, bid).remove_wares(g, n)
                     world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n

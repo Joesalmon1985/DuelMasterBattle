@@ -95,6 +95,8 @@ def _policy(kind: str) -> str:
         return "woodcutter"
     if kind == "ranger":
         return "forester"
+    if kind == "farm":
+        return "farmer"
     spec = wl_defs.spec_for_kind(kind)
     if spec:
         for role in set(spec["worker_for_program"].values()):
@@ -104,7 +106,23 @@ def _policy(kind: str) -> str:
                         return "woodcutter"
                     if cmd == "plant" and args.get("attrib") == "tree_sapling":
                         return "forester"
+                    if cmd == "plant" and str(args.get("attrib", "")).startswith("seed_"):
+                        return "farmer"
     return "near"
+
+
+def _free_arable(world: Any, tile: tuple[int, int], radius: int = 2) -> int:
+    """Free arable nodes around a site: a farm sows its fields there (no tree, road, building or reservation on them)."""
+    t = world.terrain
+    if t is None:
+        return 0
+    n = 0
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            p = (tile[0] + dx, tile[1] + dy)
+            if (dx or dy) and t.class_at(*p) == 0 and p not in world.tree_tiles and p not in world.blocked and p not in world.road_tile_set and p not in world.reserved_tiles:
+                n += 1
+    return n
 
 
 def _trees_near(world: Any, tile: tuple[int, int], radius: int = 10) -> int:
@@ -151,6 +169,10 @@ def _place_near(world: Any, name: str, kind: str, anchor: dict) -> str | None:
     policy = _policy(kind)
     if policy == "woodcutter":
         site = _place_ranked(world, name, kind, anchor, lambda t: _trees_near(world, t))
+        if site:
+            return site
+    elif policy == "farmer" and world.terrain is not None:
+        site = _place_ranked(world, name, kind, anchor, lambda t: _free_arable(world, t) - 8 if _free_arable(world, t) >= 12 else 0)
         if site:
             return site
     elif policy == "forester":

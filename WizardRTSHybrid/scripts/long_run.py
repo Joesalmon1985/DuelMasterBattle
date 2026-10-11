@@ -73,7 +73,7 @@ def run_seed(seed: int, minutes: int) -> dict:
     result: dict = {"seed": seed, "samples": [], "problems": [], "status": "ok"}
     started = time.time()
     try:
-        world = HybridWorld(seed=seed)
+        world = HybridWorld(seed=seed, map_size=os.environ.get("HYBRID_MAP", "standard"))
         world.dmb.hazards["catastrophe"]["cubes"][world.hazard_id]["active"] = False
         seq = 0
         last_signature = None

@@ -23,6 +23,7 @@ var starts: Array = []
 var textures: Array = []  # palette index -> Texture2D
 var overview: ImageTexture
 var show_resources := false
+var show_build := false  # where the simulation allows which building size
 var res_nodes: Array = []
 var loaded := false
 var water_frames: Array = []  # Widelands water animation, 14 frames per second
@@ -175,6 +176,25 @@ func draw(canvas: CanvasItem, tpx: int) -> void:
 				canvas.draw_texture_rect(tex, rect, false)
 	if zoom >= 0.45:
 		_draw_edges(canvas, x0, y0, x1, y1, tpx)
+	if show_build:
+		var sz := float(tpx) * 0.5
+		for ty2 in range(y0, y1 + 1):
+			for tx2 in range(x0, x1 + 1):
+				var cap: int = build[ty2 * w + tx2]
+				var base := cap & 7
+				if base == 0:
+					continue
+				var col := Color(0.2, 0.9, 0.3, 0.5)  # big
+				if base == 2:
+					col = Color(0.6, 0.95, 0.35, 0.5)  # medium
+				elif base == 1:
+					col = Color(1.0, 0.9, 0.2, 0.5)  # small
+				elif base == 4:
+					col = Color(1.0, 0.55, 0.1, 0.55)  # mine
+				var rc := Rect2(tx2 * tpx + sz * 0.5, ty2 * tpx + sz * 0.5, sz, sz)
+				canvas.draw_rect(rc, col, true)
+				if (cap & 8) != 0:
+					canvas.draw_rect(rc.grow(4), Color(0.2, 0.5, 1.0, 0.9), false, 3.0)
 	if show_resources:
 		for n in res_nodes:
 			var kind := int(n[2])

@@ -456,6 +456,15 @@ def generic_items() -> list[dict]:
     for role in sorted(roles):
         w = defs["workers"][role]
         base = WIDELANDS / "data" / w["dir"]
+        idle_anim = (w.get("animations") or {}).get("idle")
+        if idle_anim and "idle" not in (w.get("spritesheets") or {}) and (base / "idle_1.png").is_file():
+            out.append(
+                sheet(
+                    f"widelands.{role}_worker.idle", f"data/{w['dir']}/idle_1.png", f"gen/{role}_idle.png",
+                    columns=1, rows=1, frames=1, hotspot=list(idle_anim.get("hotspot") or [0, 0]), scale=4, fps=0,
+                    source_note=f"{role} animations.idle (generated)",
+                )
+            )
         for anim, meta in w["spritesheets"].items():
             stem = meta.get("basename", anim)
             hot = list(meta.get("hotspot", [0, 0]))

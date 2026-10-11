@@ -40,9 +40,10 @@ func _run() -> void:
 		return
 	world._camera_nudge = Vector2(-640, -80)
 	world._camera.zoom = Vector2(0.85, 0.85)
-	if DisplayServer.screen_get_size().x < 1920 or DisplayServer.screen_get_size().y < 1080:
-		# a window cannot be larger than the screen: this shot is for a bigger display (the Windows desktop)
-		print("HYBRID_VISUAL_SKIP 1920x1080 needs a screen of at least 1920x1080 (this one is %s)" % str(DisplayServer.screen_get_size()))
+	var usable := DisplayServer.screen_get_usable_rect().size
+	if usable.x < 1920 or usable.y < 1080:
+		# a window cannot be larger than the usable screen (panels take space): this shot is for a bigger display
+		print("HYBRID_VISUAL_SKIP 1920x1080 needs a usable screen of at least 1920x1080 (this one is %s)" % str(usable))
 	elif not await _shot(world, "mashup_1920x1080", Vector2i(1920, 1080)):
 		quit(1)
 		return
@@ -78,7 +79,7 @@ func _shot(world: Node, name: String, size: Vector2i) -> bool:
 	var image: Image = RenderingServer.texture_2d_get(viewport.get_texture().get_rid())
 	if image == null or image.get_width() == 0:
 		image = viewport.get_texture().get_image()
-	if image == null or image.get_width() != size.x:
+	if image == null or image.get_width() != size.x or image.get_height() != size.y:
 		print("HYBRID_VISUAL_FAIL %s size=%s" % [name, image.get_size() if image != null else "null"])
 		return false
 	var path := dir.replace("\\", "/") + "/%s.png" % name

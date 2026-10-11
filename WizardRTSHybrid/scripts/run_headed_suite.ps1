@@ -21,7 +21,7 @@ $tests = @(
     @("forestry", "run_hybrid_forestry.gd", @{ HYBRID_SPEED = "4" }, "HYBRID_FORESTRY_OK"),
     @("food", "run_hybrid_food.gd", @{ HYBRID_SPEED = "10" }, "HYBRID_FOOD_OK"),
     @("god", "run_hybrid_god.gd", @{}, "HYBRID_GOD_OK"),
-    @("war", "run_hybrid_war.gd", @{ HYBRID_SPEED = "20"; HYBRID_WAR_SECONDS = "240" }, "HYBRID_WAR_OK"),
+    @("war", "run_hybrid_war.gd", @{ HYBRID_SPEED = "40" }, "HYBRID_WAR_OK"),
     @("terrain", "run_hybrid_terrain.gd", @{}, "HYBRID_TERRAIN_OK"),
     @("naval", "run_hybrid_naval.gd", @{ HYBRID_ALLOW_SPAWN = "1" }, "HYBRID_NAVAL_OK")
 )

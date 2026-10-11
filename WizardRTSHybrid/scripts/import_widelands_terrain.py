@@ -18,7 +18,13 @@ WL = ROOT / "external" / "widelands"
 OUT = ROOT / "wizard_rts" / "data" / "terrain_defs.json"
 
 
+def _strip(src: str) -> str:
+    """Drop Lua comment lines: some init.lua files carry a commented example with another terrain's name."""
+    return "\n".join(line for line in src.splitlines() if not line.lstrip().startswith("--"))
+
+
 def _val(src: str, key: str, default=None):
+    src = _strip(src)
     m = re.search(rf"\b{key}\s*=\s*(\"[^\"]*\"|-?\d+)", src)
     if not m:
         return default
@@ -35,7 +41,7 @@ def main() -> int:
     for init in sorted((WL / "data/world/terrains").glob("*/*/init.lua")):
         src = init.read_text()
         name = _val(src, "name")
-        vr = re.search(r"valid_resources\s*=\s*\{([^}]*)\}", src)
+        vr = re.search(r"valid_resources\s*=\s*\{([^}]*)\}", _strip(src))
         res = re.findall(r"resource_(\w+)", vr.group(1)) if vr else []
         dres = _val(src, "default_resource", "") or ""
         terrains[name] = {

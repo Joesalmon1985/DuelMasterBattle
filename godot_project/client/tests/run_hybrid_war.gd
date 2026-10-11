@@ -87,30 +87,38 @@ func _run() -> void:
 	_focus(sum / float(caps.size()), 0.055)
 	await _shot("01_six_capitals_overview")
 	_t0 = Time.get_ticks_msec()
+	# The war is bounded in GAME time (a slow laptop and a fast desktop must see the same war), with a generous real-time cap.
+	# Armies march after 20 game minutes on a map whose capitals are 100+ tiles apart, so the default is 80 game minutes.
+	var game_limit_ms := int(float(OS.get_environment("HYBRID_WAR_GAME_SECONDS")) * 1000.0)
+	if game_limit_ms <= 0:
+		game_limit_ms = 80 * 60 * 1000
 	var limit_s := float(OS.get_environment("HYBRID_WAR_SECONDS"))
 	if limit_s <= 0.0:
-		limit_s = 300.0
+		limit_s = 1500.0
 	var need := {"marching": false, "firefight": false, "unit_death": false, "building_destroyed": false, "produced": false}
 	var last_units: Dictionary = {}
-	while (Time.get_ticks_msec() - _t0) / 1000.0 < limit_s:
+	while (Time.get_ticks_msec() - _t0) / 1000.0 < limit_s and int(_world._snapshot.get("game_ms", 0)) < game_limit_ms:
 		await process_frame
 		var snap: Dictionary = _world._snapshot
 		for f in factions:
 			var fname := str(f.get("name", ""))
 			for u in _units_of(fname):
 				_colors_seen[fname] = true
-		# first produced unit
+		# first produced unit: the newest unit in the world after the first recruitment (at high clock speed the event window
+		# of the snapshot may already have moved on, so the count and the highest unit id are the evidence)
 		if not need["produced"] and _stat("recruited") > 0:
-			for e in snap.get("recent_events", []):
-				if str(e.get("kind", "")) == "unit_produced":
-					var u: Dictionary = {}
-					for x in _ents():
-						if str(x.get("id", "")) == str(e.get("unit", "")):
-							u = x
-					if not u.is_empty():
-						_focus(Vector2(float(u["tx"]), float(u["ty"])), 0.7)
-						await _shot("02_unit_produced_from_delivered_goods")
-						need["produced"] = true
+			var newest: Dictionary = {}
+			var newest_id := -1
+			for x in _ents():
+				if str(x.get("class", "")) == "unit":
+					var n := int(str(x.get("id", "unit:0")).split(":")[1])
+					if n > newest_id:
+						newest_id = n
+						newest = x
+			if not newest.is_empty() and newest_id > 18:  # the six factions start with 18 units
+				_focus(Vector2(float(newest["tx"]), float(newest["ty"])), 0.7)
+				await _shot("02_unit_produced_from_delivered_goods")
+				need["produced"] = true
 		# a squad marching in a group
 		if not need["marching"]:
 			for f in factions:

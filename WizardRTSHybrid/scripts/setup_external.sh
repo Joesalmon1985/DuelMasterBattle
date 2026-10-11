@@ -25,7 +25,8 @@ if [ "$want" = widelands ] || [ "$want" = all ]; then
   fetch widelands https://github.com/widelands/widelands.git 47c5cae8c6cb080e4bf86163a3873bd0847bc0e4 \
     '/data/world/terrains/' '/data/world/resources/' '/data/world/init.lua' '/data/world/map_generation.lua' \
     '/data/world/immovables/' '/data/world/critters/' '/src/logic/map.cc' '/src/logic/map.h' '/src/logic/map_objects/terrain_affinity.*' \
-    '/src/map_io/' '/data/maps/Archipelago_Sea.wmf/' '/data/maps/Crater.wmf/' '/data/maps/Twin_Lagoons.wmf/' '/data/maps/Wideworld.wmf/' \
+    '/src/map_io/' '/data/maps/The_Big_Lake.wmf/' '/data/maps/Egyptian_Mandala_v1.2.wmf/' '/data/maps/*/elemental' \
+    '/src/logic/map_objects/descriptions_compatibility_table.*' '/src/logic/map_objects/tribes/worker_programs/' '/src/logic/map_objects/tribes/worker.cc' '/src/logic/map_objects/tribes/production_program.cc' \
     '/data/tribes/'
 fi
 if [ "$want" = openra ] || [ "$want" = all ]; then

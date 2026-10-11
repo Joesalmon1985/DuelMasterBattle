@@ -39,3 +39,4 @@ logs/
 /WizardRTSHybrid/dist/
 /WizardRTSHybrid/docs/original_runs/logs/
 *.gd.uid
+/WizardRTSHybrid/docs/evidence/ubuntu/

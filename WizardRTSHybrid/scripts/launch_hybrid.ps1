@@ -19,6 +19,20 @@ if (-not $godot -or -not (Test-Path $godot)) {
 $console = $godot -replace "Godot_v4.5.1-stable_win64.exe$", "Godot_v4.5.1-stable_win64_console.exe"
 if (Test-Path $console) { $godot = $console }
 $python = "py"
-Start-Process -FilePath $python -ArgumentList @("-3", "-m", "wizard_rts.server") -WorkingDirectory $Hybrid -WindowStyle Hidden
-Start-Sleep -Seconds 1
-& $godot --path (Join-Path $Repo "godot_project") --rendering-method forward_plus "res://client/scenes/hybrid_world.tscn"
+$sim = Start-Process -FilePath $python -ArgumentList @("-3", "-m", "wizard_rts.server") -WorkingDirectory $Hybrid -WindowStyle Hidden -PassThru
+# the simulator builds the terrain before it listens (about 4 s on a laptop, a few seconds on the desktop): wait for the port
+$ready = $false
+for ($i = 0; $i -lt 60 -and -not $ready; $i++) {
+    try {
+        $c = New-Object Net.Sockets.TcpClient
+        $c.Connect("127.0.0.1", [int]$env:HYBRID_SIM_PORT)
+        $c.Close()
+        $ready = $true
+    } catch { Start-Sleep -Seconds 1 }
+}
+if (-not $ready) { throw "The simulator did not start on port $($env:HYBRID_SIM_PORT)." }
+try {
+    & $godot --path (Join-Path $Repo "godot_project") --rendering-method forward_plus "res://client/scenes/hybrid_world.tscn"
+} finally {
+    Stop-Process -Id $sim.Id -Force -ErrorAction SilentlyContinue
+}

@@ -45,7 +45,10 @@ def test_mine_takes_exactly_what_leaves_the_deposit_and_stops_at_the_yield_limit
     nodes = w.resource_nodes(centre, 2, "coal")
     assert len(nodes) >= 10
     before = resource_sum(w, nodes, "coal")
-    _run(w, 7_000)
+    for _ in range(30):  # Widelands ActMine fails some rolls on thin nodes (the bonus part of the weight), so allow up to 50 game minutes
+        _run(w, 1_000)
+        if mine.get("deposit_exhausted"):
+            break
     after = resource_sum(w, nodes, "coal")
     mined = before - after
     assert mined > 0

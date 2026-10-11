@@ -114,6 +114,7 @@ class HybridWorld:
         self.economy_quanta = 0
         self.military_quanta = 0
         self.fstats: dict[str, dict[str, float]] = {}
+        self.layout_notes: list[str] = []  # what the opening layout could not place on this map
         self.stats = {"deliver": 0, "blocked": 0, "move": 0, "attack": 0, "destroyed": 0, "produce": 0}
         self.hazard_id = ""
         self.hazard_tile: tuple[int, int] | None = None
@@ -423,7 +424,11 @@ class HybridWorld:
         )
         for kind, definition, label, dx, dy in specs:
             if self.terrain is not None:
-                tile = self._site(center, dx, dy, SHOWCASE_SIZE[kind], road, SHOWCASE_RES.get(kind))
+                try:
+                    tile = self._site(center, dx, dy, SHOWCASE_SIZE[kind], road, SHOWCASE_RES.get(kind))
+                except RuntimeError as exc:  # an imported map may have no deposit or space within reach of this start
+                    self.layout_notes.append(f"{name}: no {kind} ({exc})")
+                    continue
             else:
                 tile = self._free_in_hex(q, r, center, dx, dy, road)
             bid = self._building(faction_id, name, kind, tile, label, definition)
@@ -436,8 +441,7 @@ class HybridWorld:
                 if kind == "well":
                     self._seed_resource(tile, "water")
         if self.terrain is not None:
-            self._spawn_wildlife(center, road)
-            return
+            return  # the generated map carries its own game (terrain.features["animals"], planted with the forests)
         self._place_scenery(faction_id, name, center, road)
         for res, (dx, dy) in (("gold", (-8, -12)), ("stones", (7, 11))):
             self._seed_resource(self._free_in_hex(q, r, center, dx, dy, road), res)
@@ -512,6 +516,11 @@ class HybridWorld:
                 continue
             tree_id = plant_tree(self, tile, stage, species)
             self.trees[tree_id]["timer_ms"] = int(self.trees[tree_id]["timer_ms"] * (0.2 + 0.8 * self.rng.random()))
+        for x, y, species in self.terrain.features.get("animals", []):
+            tile = (x, y)
+            if tile in occupied or tile in self.tree_tiles or not self.tile_in_map(x, y):
+                continue
+            spawn_animal(self, tile, species)
         for x, y in self.terrain.features["rocks"]:
             tile = (x, y)
             if tile in occupied or tile in self.tree_tiles or not self.tile_in_map(x, y):
@@ -974,6 +983,8 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["target_type"] = row["target_type"]
     if row.get("rally"):
         out["rally"] = list(row["rally"])
+    if row.get("tribe_fallback"):
+        out["tribe_fallback"] = True
     if row.get("footprint"):
         out["footprint"] = row["footprint"]
         out["anchor"] = row["anchor"]

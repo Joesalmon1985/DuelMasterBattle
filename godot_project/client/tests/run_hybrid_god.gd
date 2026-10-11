@@ -255,7 +255,7 @@ func _run() -> void:
 	await _frames(20)
 	var qbtn: Button = _god.actions.get_node_or_null("Act_queue_infantry")
 	if qbtn == null:
-		_fail("no queue button for the barracks")
+		_fail("no queue button for the barracks: selected=%s tool=%s info=%s barracks=%s screen=%s" % [str(_god.selected), _god.tool, _god.info.text.substr(0, 160), str(bar), str(_screen(Vector2(int(bar["tx"]), int(bar["ty"]))))])
 		return
 	var units_before := 0
 	for e in _world._snapshot.get("entities", []):

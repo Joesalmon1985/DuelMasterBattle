@@ -134,7 +134,7 @@ func _build_panel() -> void:
 	tool_row = HBoxContainer.new()
 	tool_row.name = "Tools"
 	v.add_child(tool_row)
-	for t in [["Road", "road"], ["Move", "move"], ["A-Move", "amove"], ["Attack", "attack"], ["Rally", "rally"], ["Stop", "stop"], ["Demolish", "demolish"], ["Deposits", "deposits"]]:
+	for t in [["Road", "road"], ["Move", "move"], ["A-Move", "amove"], ["Attack", "attack"], ["Rally", "rally"], ["Stop", "stop"], ["Demolish", "demolish"], ["Deposits", "deposits"], ["Sites", "sites"]]:
 		var b := Button.new()
 		b.name = "Tool_%s" % t[1]
 		b.text = t[0]
@@ -394,6 +394,11 @@ func _process(delta: float) -> void:
 
 func _on_tool(t: String) -> void:
 	tool_first = ""
+	if t == "sites":
+		if world.terrain != null:
+			world.terrain.show_build = not world.terrain.show_build
+			_say("Sites shown: green big, light green medium, yellow small, orange mine, blue ring port" if world.terrain.show_build else "Sites hidden")
+		return
 	if t == "deposits":
 		if world.terrain != null:
 			world.terrain.show_resources = not world.terrain.show_resources
@@ -461,7 +466,7 @@ func pick(screen: Vector2) -> Dictionary:
 			bias = -40.0  # units win over the building behind them
 		elif str(e.get("class", "")) == "worker":
 			rect = Rect2(a + Vector2(-22, -50), Vector2(44, 64))
-			bias = -80.0  # a civilian worker can be inspected, not commanded
+			bias = 30.0  # a civilian worker can be inspected (a building behind it wins, so clicks on buildings still hit the building)
 		elif e.has("hp"):
 			rect = Rect2(a + Vector2(-60, -110), Vector2(120, 140))
 		else:
@@ -577,6 +582,8 @@ func _right_click(screen: Vector2) -> void:
 	if _selected_units().is_empty():
 		return
 	var hit := pick(screen)
+	if not hit.is_empty() and str(hit.get("class", "")) == "worker":
+		hit = {}  # a civilian worker is not an attack target: look at what is behind it
 	if not hit.is_empty() and hit.has("hp") and str(hit.get("faction_name", "")) != faction and str(hit.get("class", "")) != "unit":
 		_attack(hit)
 		return

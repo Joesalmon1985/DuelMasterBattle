@@ -97,8 +97,75 @@ def _channel(g: T.TerrainGrid, rng: random.Random, a: tuple[int, int], b: tuple[
                 g.terrain[i] = P["water"]
 
 
+def generate_from_wmf(seed: int, name: str) -> T.TerrainGrid:
+    """A genuine Widelands map translated to the square grid (wl_map.py), with forests and rocks planted from its terrain."""
+    key = ("wmf", name, int(seed))
+    if key not in _CACHE:
+        from wizard_rts import wl_map
+
+        g = wl_map.load(name)
+        _features_imported(g, random.Random(int(seed) * 7919 + len(name)))
+        _CACHE[key] = g
+    return _CACHE[key].copy()
+
+
+def _features_imported(g: T.TerrainGrid, rng: random.Random) -> None:
+    """Trees and rocks for a translated map (the map's own object file is not read): groves by terrain affinity, woodland
+    where it is fertile, rocks at mountain feet, and the same starting grove and quarry field every homeland gets."""
+    w, h = g.w, g.h
+    species_for = ("beech", "oak", "birch", "spruce", "larch", "alder", "rowan", "aspen")
+    stages = ["old"] * 6 + ["mature"] * 3 + ["pole"] * 2 + ["sapling"]
+    trees: list[list] = []
+    rocks: list[list] = []
+    taken: set[tuple[int, int]] = set()
+
+    def plant(x: int, y: int, sp: str, stage: str) -> None:
+        if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x, y) not in taken and g.growth_probability(sp, x, y) >= 0.2:
+            taken.add((x, y))
+            trees.append([x, y, sp, stage])
+
+    for cx, cy in g.starts:
+        for _ in range(240):
+            x, y = cx - 4 + rng.randint(-9, 9), cy + rng.randint(-9, 9)
+            if (x - cx) ** 2 + (y - cy) ** 2 >= 25:
+                plant(x, y, "beech", "old" if rng.random() < 0.7 else "mature")
+        for _ in range(120):
+            x, y = cx - 3 + rng.randint(-9, 9), cy + 13 + rng.randint(-7, 7)
+            if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 64 and len([r for r in rocks if abs(r[0] - cx) < 14 and abs(r[1] - (cy + 13)) < 10]) < 70:
+                rocks.append([x, y])
+    for _ in range(int(w * h / 14)):
+        x, y = rng.randrange(w), rng.randrange(h)
+        if g.cls[y * w + x] != T.ARABLE:
+            continue
+        sp = species_for[rng.randrange(len(species_for))]
+        if g.growth_probability(sp, x, y) < 0.35:
+            continue
+        for _k in range(rng.randrange(2, 8)):
+            plant(x + rng.randint(-5, 5), y + rng.randint(-5, 5), sp, stages[rng.randrange(len(stages))])
+    for _ in range(int(w * h / 90)):  # rocks where meadow meets mountain
+        x, y = rng.randrange(w), rng.randrange(h)
+        i = y * w + x
+        if g.cls[i] in (T.ARABLE, T.WALKABLE) and any(g.in_bounds(x + dx, y + dy) and g.cls[(y + dy) * w + x + dx] == T.MINEABLE for dx in range(-2, 3) for dy in range(-2, 3)):
+            if (x, y) not in taken:
+                rocks.append([x, y])
+    rocks = sorted({tuple(r) for r in rocks if tuple(r) not in taken})
+    animals = []
+    for cx, cy in g.starts:
+        for _ in range(60):
+            x, y = cx + rng.randint(-22, 22), cy + rng.randint(-20, 20)
+            if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 36:
+                animals.append([x, y, "deer" if rng.random() < 0.7 else "bunny"])
+    for _ in range(int(w * h / 70)):
+        x, y = rng.randrange(w), rng.randrange(h)
+        if g.cls[y * w + x] == T.ARABLE:
+            animals.append([x, y, "deer" if rng.random() < 0.6 else "bunny"])
+    g.features = {"trees": trees, "rocks": [list(r) for r in rocks], "animals": animals}
+
+
 def generate(seed: int = 507, size: str | tuple[int, int] = "standard") -> T.TerrainGrid:
-    """Return a computed TerrainGrid. Same (seed, size) always gives the same map."""
+    """Return a computed TerrainGrid. Same (seed, size) always gives the same map. size "wmf:<name>" loads a Widelands map."""
+    if isinstance(size, str) and size.startswith("wmf:"):
+        return generate_from_wmf(int(seed), size[4:])
     w, h = SIZES[size] if isinstance(size, str) else (int(size[0]), int(size[1]))
     key = (int(seed), w, h)
     if key not in _CACHE:
@@ -385,9 +452,9 @@ def _features(g: T.TerrainGrid, rng: random.Random, homes, moist: list[float]) -
             if g.in_bounds(x, y) and g.terrain[y * w + x] == P["mountain_meadow"]:
                 rocks.append([x, y])
         # a quarry field: Widelands maps put rocks where the first quarry goes
-        for _ in range(110):
+        for _ in range(200):
             x, y = cx - 3 + rng.randint(-8, 8), cy + 13 + rng.randint(-6, 6)
-            if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 64 and len([r for r in rocks if abs(r[0] - cx) < 14 and abs(r[1] - (cy + 13)) < 10]) < 40:
+            if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 64 and len([r for r in rocks if abs(r[0] - cx) < 14 and abs(r[1] - (cy + 13)) < 10]) < 70:
                 rocks.append([x, y])
     # wild forests in the open country
     for _ in range(2500):
@@ -409,4 +476,15 @@ def _features(g: T.TerrainGrid, rng: random.Random, homes, moist: list[float]) -
             dedup.append(t)
     rocks = [list(r) for r in {tuple(r) for r in rocks if tuple(r) not in seen}]
     rocks.sort()
-    g.features = {"trees": dedup, "rocks": rocks}
+    animals: list[list] = []
+    for home in g.meta["homes"]:  # game for the hunters: a herd in every homeland (Widelands maps start with plenty)
+        cx, cy = home["capital"]
+        for _ in range(60):
+            x, y = cx + rng.randint(-22, 22), cy + rng.randint(-20, 20)
+            if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 36:
+                animals.append([x, y, "deer" if rng.random() < 0.7 else "bunny"])
+    for _ in range(500):
+        x, y = rng.randrange(w), rng.randrange(h)
+        if g.cls[y * w + x] == T.ARABLE:
+            animals.append([x, y, "deer" if rng.random() < 0.6 else "bunny"])
+    g.features = {"trees": dedup, "rocks": rocks, "animals": animals}

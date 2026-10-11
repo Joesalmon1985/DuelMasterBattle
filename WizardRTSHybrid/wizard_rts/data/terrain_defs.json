@@ -121,6 +121,20 @@
    ],
    "world": "desert"
   },
+  "desert_beach": {
+   "default_amount": 0,
+   "default_resource": "",
+   "dir": "beach",
+   "fertility": 100,
+   "humidity": 500,
+   "is": "walkable",
+   "temperature": 179,
+   "textures": [
+    "idle.png"
+   ],
+   "valid_resources": [],
+   "world": "desert"
+  },
   "desert_forested_mountain1": {
    "default_amount": 0,
    "default_resource": "",

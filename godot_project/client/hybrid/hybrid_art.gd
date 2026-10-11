@@ -257,7 +257,11 @@ func _item_for(entity: Dictionary) -> Dictionary:
 		var key := "%s.%s" % [definition, anim]
 		if anim == "walk" or anim == "walkload":
 			key += ".%s" % _sheet_facing(str(entity.get("facing", "e")))
-		return items.get(key, items.get("%s.idle" % definition, {}))
+		var found: Dictionary = items.get(key, items.get("%s.idle" % definition, {}))
+		if found.is_empty():
+			# some imported roles have no still idle sheet: stand on the first walking frame facing the same way instead
+			found = items.get("%s.walk.%s" % [definition, _sheet_facing(str(entity.get("facing", "e")))], items.get("%s.walk.e" % definition, {}))
+		return found
 	if definition == "widelands.carrier":
 		var facing := _sheet_facing(str(entity.get("facing", "e")))
 		var key := "widelands.carrier" if facing == "e" else "widelands.carrier.%s" % facing
