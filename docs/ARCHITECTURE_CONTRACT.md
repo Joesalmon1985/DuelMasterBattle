@@ -41,7 +41,8 @@ Everything the sim knows about a *kind of thing* comes from a registry loaded at
 | Units | `data/openra_rules.json` + hybrid recipes | Add `era`, `producer`, `required_cards`, cost in wares. Mindustry unit records produce the same unit row shape. |
 | Recipes/programs | Widelands programs interpreter (`workers.py`) | Add machine recipes (`industry`), with power/liquid inputs. |
 | Technology cards | none (hybrid) | `tech/cards.json`: id, era, prerequisite cards, physical prerequisites, unlocks (buildings, units, recipes). |
-| Terrain | `terrain_defs.json` (pinned Widelands) | Extend with Mindustry ore/floor mapping (S10). |
+| Terrain | `terrain_defs.json` (pinned Widelands) | **No** ore/floor additions (D21). Extraction rules (`mindustry_overrides.json` `extraction`) map the existing `res_kind` layer and desert/beach terrain names to wares. |
+| Mindustry content | pinned `external/mindustry` | Pipeline: pinned source → `scripts/import_mindustry_defs.py` → `data/mindustry_defs.json` (original numbers) → `data/mindustry_overrides.json` (labelled hybrid adaptation) → `wizard_rts/industry/registry.py`. Runtime never reads the Java tree or the raw JSON directly. |
 | Settlements | derived from warehouse buildings | Explicit `settlement` records: stable ID, name, faction, centre, radius, founded_at, state. |
 | Quests/dungeons/people | `sim/dmb/quests`, `people`, `godot_project/content/source/*` | Instances bind to settlement/building/worker/route IDs. |
 
@@ -61,7 +62,7 @@ Everything the sim knows about a *kind of thing* comes from a registry loaded at
 
 1. A ware is in exactly one place: building stock, worker/carrier hands, a conveyor/pipe/machine buffer, or an explicit reservation. A reservation is not a second copy.
 2. Production consumes its inputs once and produces its outputs once. A queued unit or building takes real delivered goods; nothing materialises (except a flagged scenario/test grant, recorded in the event log).
-3. Sources and sinks are explicit and logged: deposit extraction (reduces deposit), renewable growth (ecology model), consumption, destruction/loss, test grants.
+3. Sources and sinks are explicit and logged: deposit extraction (reduces the one canonical reserve of the site, whichever extractor takes it; `stats["extracted_units_<kind>"]`), renewable growth (ecology model), consumption, destruction/loss, test grants.
 4. Failed transport cannot teleport stock. Destruction/capture settles stock, cargo and reservations by documented policy (`lifecycle.purge_building`).
 5. Era upgrade consumes delivered wares (S08); an old building does not produce a new-era good without a validated recipe.
 6. A conservation test exists for every new transport mode: sum of wares in all locations + consumed − produced = constant.
@@ -99,3 +100,11 @@ The default for a player-facing launcher must be `campaign`. Tests assert (a) Go
 ## 10. Modules to add (not now)
 
 `tech.py` (cards, drafting, unlock queries), `eras.py` (VP, thresholds, transitions, upgrades, reset), `settlements.py` (IDs, chronicle, VP ledger), `industry/` (items, drills, belts, pipes, power, crafters, unit factories), `regions.py` (catastrophe overlay), `story_bridge.py` (quest/people/dungeon ↔ world). Each ≤ a few hundred lines at first; each registers definitions and handles commands/events through the interfaces above.
+
+
+## 10. Implemented in the M1/M2 slices (verified by tests, see `IMPLEMENTATION_RUN_STATUS.md`)
+
+- **Profiles** (`wizard_rts/tech.py`): `campaign` (primitive start, locked kinds, God/training ops rejected by the server), `developer` (same start and locks, God ops accepted), `test_showcase` (the previous fully equipped start; the `HybridWorld` default so older tests are unchanged), `test_minimal`. The server defaults to `campaign` (`HYBRID_PROFILE`). `HybridEnv` is an in-process developer tool and is not reachable from the shipped client.
+- **Gating**: every placement and unit-queue path goes through `construction.check_placement` / `queue_unit`, which return `locked_by_card`.
+- **Industry** (`wizard_rts/industry/`): machines are ordinary construction sites in `world.buildings` (kind `mdy:*`, hybrid cost in delivered Widelands goods); belts are one construction site per run whose tiles go live on completion; power graphs join adjacent blocks and laser links; drills read the existing deposit layer. One clock (the 100 ms economy quantum); produced units are ordinary `world.units`.
+- **Ledger** (`wizard_rts/ledger.py`): `snapshot_totals`/`check` balance held + consumed against held + made for every ware, counting belts and machine buffers.

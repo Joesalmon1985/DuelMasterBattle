@@ -1,4 +1,4 @@
-# Recreate the pinned full-history clones. Does not add them to DuelMasterBattle git.
+# Recreate the pinned clones (full history; Mindustry is a full clone here, the Ubuntu script offers a sparse default). Does not add them to DuelMasterBattle git.
 $ErrorActionPreference = "Stop"
 $Hybrid = Split-Path $PSScriptRoot -Parent
 $External = Join-Path $Hybrid "external"

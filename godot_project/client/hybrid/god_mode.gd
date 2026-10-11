@@ -19,6 +19,10 @@ var menu: Dictionary = {}
 var recipes: Dictionary = {}
 var locked: Dictionary = {}  # source units that exist but are not implemented yet, with the reason
 var message := ""
+var god_enabled := true      # false in the campaign profile: no God Mode button, no G key, no faction commands (D02)
+var profile := ""
+var unlocked: Dictionary = {}   # faction -> kinds a drafted card has unlocked (empty when the profile does not gate)
+var gated := false
 
 var layer: CanvasLayer
 var mode_btn: Button
@@ -67,6 +71,10 @@ func setup(p_world: Node) -> void:
 	layer.add_child(mode_btn)
 	_build_panel()
 	_build_minimap()
+	var prof: Dictionary = world._sim.op({"op": "profile"})
+	profile = str(prof.get("profile", ""))
+	god_enabled = bool(prof.get("god", true))
+	mode_btn.visible = god_enabled
 	toast = Label.new()
 	toast.name = "Toast"
 	toast.position = Vector2(300, 60)
@@ -79,6 +87,8 @@ func setup(p_world: Node) -> void:
 	menu = reply.get("build_menu", {})
 	recipes = reply.get("recipes", {})
 	locked = reply.get("locked", {})
+	gated = bool(reply.get("gated", false))
+	unlocked = reply.get("unlocked", {})
 	_fill_build_menu()
 	if world.terrain != null:
 		MAP_TILES = Vector2(world.terrain.w, world.terrain.h)
@@ -186,6 +196,7 @@ func _fill_build_menu() -> void:
 		for c in cats:
 			category_btn.add_item(str(c))
 	for c in build_grid.get_children():
+		build_grid.remove_child(c)  # out of the tree first: a queued-for-free sibling would force the new buttons to auto-generated names
 		c.queue_free()
 	var kinds: Array = menu.keys()
 	if category != "Core":
@@ -205,6 +216,9 @@ func _fill_build_menu() -> void:
 Cost: %s
 %s" % [str(spec.get("game", "")), cost, str(spec.get("cost_source", ""))]
 		b.pressed.connect(_on_tool.bind("build:%s" % kind))
+		if gated and faction != "" and not unlocked.get(faction, []).has(kind):
+			b.disabled = true
+			b.tooltip_text += "\nLocked: no drafted card unlocks this yet."
 		build_grid.add_child(b)
 
 
@@ -240,7 +254,7 @@ func set_active_visuals(on: bool) -> void:
 # ---------------------------------------------------------------- mode switch
 
 func toggle() -> void:
-	if world._duel_open:
+	if world._duel_open or not god_enabled:
 		return
 	if active:
 		leave()
@@ -280,8 +294,16 @@ func leave() -> void:
 	world.selected_ids = {}
 
 
+func reload_menu() -> void:
+	var reply: Dictionary = world._sim.op({"op": "menu"})
+	unlocked = reply.get("unlocked", {})
+	_fill_build_menu()
+
+
 func choose_faction(name: String) -> void:
 	faction = name
+	if gated:
+		reload_menu()
 	var reply: Dictionary = world._sim.op({"op": "control", "faction": name})
 	world._apply_snapshot(reply.get("snapshot", {}))
 	selected.clear()
@@ -311,7 +333,7 @@ func _say(text: String) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		var k: InputEventKey = event
-		if k.keycode == KEY_G and not world._duel_open:
+		if k.keycode == KEY_G and not world._duel_open and god_enabled:
 			toggle()
 			get_viewport().set_input_as_handled()
 			return
@@ -613,7 +635,13 @@ func _refresh_info() -> void:
 		if world.terrain != null:
 			var mp := _to_world(world.get_viewport().get_mouse_position())
 			info.text += "\n\n" + world.terrain.describe(int(floor(mp.x / world.TPX)), int(floor(mp.y / world.TPX)))
-		_set_actions([], "")
+		var tech: Dictionary = world._snapshot.get("tech", {}).get("factions", {}).get(faction, {})
+		var offers: Array = tech.get("offers", [])
+		info.text += "\n\n[b]Tech cards[/b] (%s): %s\nDraft offer: %s" % [profile, ", ".join(tech.get("cards", [])).replace("dmb.card.", "") if tech.get("cards", []).size() > 0 else "none yet", ", ".join(offers).replace("dmb.card.", "") if offers.size() > 0 else "none"]
+		var draft_buttons: Array = []
+		for card in offers:
+			draft_buttons.append(["Draft %s" % str(card).replace("dmb.card.", ""), "draft", faction, str(card)])
+		_set_actions(draft_buttons, "draft:" + ",".join(offers))
 		return
 	var lines := ""
 	var key := ""
@@ -677,10 +705,11 @@ func _set_actions(buttons: Array, key: String) -> void:
 		return
 	_last_actions_key = k
 	for c in actions.get_children():
+		actions.remove_child(c)
 		c.queue_free()
 	for b in buttons:
 		var btn := Button.new()
-		btn.name = "Act_%s_%s" % [b[1], b[3]]
+		btn.name = ("Act_%s_%s" % [b[1], b[3]]).replace(".", "_")
 		btn.text = b[0]
 		btn.pressed.connect(_on_action_button.bind(b))
 		actions.add_child(btn)
@@ -692,6 +721,9 @@ func _on_action_button(b: Array) -> void:
 		reply = world._sim.op({"op": "queue", "building": b[2], "unit": b[3]})
 	elif b[1] == "deploy":
 		reply = world._sim.op({"op": "deploy", "unit": b[2]})
+	elif b[1] == "draft":
+		reply = world._sim.op({"op": "draft", "faction": b[2], "card": b[3]})
+		reload_menu()
 	else:
 		reply = world._sim.op({"op": "cancel", "building": b[2], "index": int(b[3])})
 	world._apply_snapshot(reply.get("snapshot", {}))

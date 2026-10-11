@@ -62,7 +62,7 @@ Core loop: **travel → observe a working place → meet people and tensions →
 ## 5. The world and its resources (APPROVED D03, D17)
 
 - The **square grid with four-direction movement is authoritative** for terrain, movement, placement, territory and pathfinding. Terrain classes, heights, buildcaps, finite deposits and renewables come from Widelands rules (`terrain.py`, `mapgen.py`, `resources.py`; D5 in `WizardRTSHybrid/docs/DECISIONS.md`).
-- Resources follow **resource-specific ecology**, not one rule: trees grow by terrain affinity; fish breed up to their initial amount; game wanders and breeds; ore, coal and stone are finite deposits; Mindustry ores come from real deposits (mountains and suitable other terrain; mapping RECOMMENDED in S10). "Renewable" never means unlimited output: rate, worker access and carrying capacity limit it.
+- Resources follow **resource-specific ecology**, not one rule: trees grow by terrain affinity; fish breed up to their initial amount; game wanders and breeds; ore, coal and stone are finite deposits; there are **no Mindustry ore tiles** (D21): advanced extractors yield different wares at the same existing sites from one shared finite reserve, and sand comes from existing desert/beach terrain (mapping in S10). "Renewable" never means unlimited output: rate, worker access and carrying capacity limit it.
 - Strategic **regions** (a logical hex overlay) exist for catastrophes and history only (section 8).
 
 ## 6. Economy (APPROVED D05, D08, D15, D16, D17)
@@ -111,7 +111,8 @@ One real-time military simulation in Python: orders, movement, targeting, projec
 
 - Source: the official `https://github.com/Anuken/Mindustry` (GPL-3.0). A pinned revision is chosen and recorded at the start of the implementation run.
 - **What is used:** item, ore/floor, drill, conveyor, power, liquid, pipe, crafter and unit-factory *definitions and behaviour*, ported to Python data and small deterministic modules inside the one world. Not used: the Mindustry wave game, cores, campaign launch sectors, RTS controls, Java runtime.
-- **Chain to prove first:** real deposit → drill → conveyor → crafter (power if needed) → unit factory → a unit that joins `world.units` and fights with OpenRA-style rules, built from machines that were themselves paid for in produced Widelands goods and unlocked by a drafted card.
+- **No second geology (D21).** A Mindustry drill sits on existing Widelands deposit/terrain tiles and converts reserve units into its configured ware at a data-driven rate; upgrading a Widelands mine to a drill keeps the building's id. New wares, never new deposit squares.
+- **Chain to prove first (proven in the M2 slice, `test_industry_slice.py`):** real deposit → drill → conveyor → crafter (power if needed) → unit factory → a unit that joins `world.units` and fights with OpenRA-style rules, built from machines that were themselves paid for in produced Widelands goods and unlocked by a drafted card.
 - Fidelity must be demonstrated against upstream numbers, not claimed. A source manifest entry is not an implemented mechanic.
 
 ## 12. Time, performance and determinism (APPROVED D14, D20)

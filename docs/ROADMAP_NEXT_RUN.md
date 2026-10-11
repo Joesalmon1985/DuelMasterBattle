@@ -1,6 +1,6 @@
 # Roadmap for the next development run(s)
 
-**This is a plan for owner review, not permission to implement.** The next coding run starts only on a separate explicit instruction (`NEXT_RUN_KICKOFF_PROMPT.md`). Decisions: `DECISION_REGISTER.md`. Gaps: `CURRENT_STATUS_AND_GAPS.md`.
+**Authorised for this run (owner instruction of 11 October 2026): the stop-after-each-milestone rule is superseded for that run only; branches are still never merged to `main`.** Live status per milestone, with completed / partial / blocked / not started, is in `IMPLEMENTATION_RUN_STATUS.md`; the restart point is `NEXT_AGENT_HANDOFF.md`. Original text: this is a plan; the run started on `NEXT_RUN_KICKOFF_PROMPT.md`. Decisions: `DECISION_REGISTER.md`. Gaps: `CURRENT_STATUS_AND_GAPS.md`.
 
 ## 0. Ordering and rules
 
@@ -13,6 +13,8 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 ---
 
 ## M1 — Campaign profiles, drafted-tech unlocks, primitive start
+
+> **Status (12 Oct 2026): implemented and verified for the primitive start, drafting, gating, God-Mode gating, AI development and the 40-minute peace/war runs.** See `IMPLEMENTATION_RUN_STATUS.md` for the exact tests and what is partial (card catalogue is 13 cards; era index is fixed at 0 until M4; draft prompt exists as a God-panel developer display only).
 
 **Purpose.** Make the intended start real (D13, D15) and gate God Mode (D02) while keeping today's fully equipped start as a fixture.
 
@@ -40,11 +42,13 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 
 ## M2 — First real Mindustry industrial-to-unit slice
 
+> **Status (12 Oct 2026): the slice is implemented and verified** (pinned v146 importer, extraction on the existing deposits per D21, belts, power, crafters, unit factory, dagger, fight with an OpenRA unit, mine upgrade, conservation, determinism, headed `run_hybrid_industry.gd`). Original text below says "`terrain/mapgen` ore placement (S10)": **superseded by D21, no ore placement exists or will be added.** Liquids, routers, sorters, bridges, more machines and units, art: not done.
+
 **Purpose.** Prove D06/D08/D16: deposit → drill → conveyor → crafter(/power) → unit factory → unit in the shared military sim, paid for by real Widelands goods and unlocked by a drafted card.
 
 **Reuse.** Terrain deposits (`resources.py`), warehouse/stock API, construction sites and recipes, `world.units` spawn path, combat, God Mode build menu for dev view, M1 cards.
 
-**New/changed.** `wizard_rts/industry/` (items/registry, drill, conveyor, power graph, crafter, unit factory); `scripts/import_mindustry_defs.py` → `data/mindustry_defs.json`; `sources/manifest.json` pin; `SOURCE_REUSE.md` and `LICENSES.md` rows; `terrain/mapgen` ore placement (S10); `tech_cards.json` Mindustry cards; Godot `client/hybrid/industry_view.gd` (belts with item dots, power/flow indicator); placeholder art labelled.
+**New/changed.** `wizard_rts/industry/` (items/registry, drill, conveyor, power graph, crafter, unit factory); `scripts/import_mindustry_defs.py` → `data/mindustry_defs.json`; `sources/manifest.json` pin; `SOURCE_REUSE.md` and `LICENSES.md` rows; ~~`terrain/mapgen` ore placement (S10)~~ (removed by D21: extraction rules map the existing deposits); `tech_cards.json` Mindustry cards; Godot `client/hybrid/industry_view.gd` (belts with item dots, power/flow indicator); placeholder art labelled.
 
 **Prerequisites.** M1 (cards). Pin chosen, upstream definitions read (see `MINDUSTRY_PROVENANCE.md`).
 

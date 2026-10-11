@@ -79,7 +79,7 @@ Core loop: **travel → observe a working place → meet people and tensions →
 ### 5. The world and its resources (APPROVED D03, D17)
 
 - The **square grid with four-direction movement is authoritative** for terrain, movement, placement, territory and pathfinding. Terrain classes, heights, buildcaps, finite deposits and renewables come from Widelands rules (`terrain.py`, `mapgen.py`, `resources.py`; D5 in `WizardRTSHybrid/docs/DECISIONS.md`).
-- Resources follow **resource-specific ecology**, not one rule: trees grow by terrain affinity; fish breed up to their initial amount; game wanders and breeds; ore, coal and stone are finite deposits; Mindustry ores come from real deposits (mountains and suitable other terrain; mapping RECOMMENDED in S10). "Renewable" never means unlimited output: rate, worker access and carrying capacity limit it.
+- Resources follow **resource-specific ecology**, not one rule: trees grow by terrain affinity; fish breed up to their initial amount; game wanders and breeds; ore, coal and stone are finite deposits; there are **no Mindustry ore tiles** (D21): advanced extractors yield different wares at the same existing sites from one shared finite reserve, and sand comes from existing desert/beach terrain (mapping in S10). "Renewable" never means unlimited output: rate, worker access and carrying capacity limit it.
 - Strategic **regions** (a logical hex overlay) exist for catastrophes and history only (section 8).
 
 ### 6. Economy (APPROVED D05, D08, D15, D16, D17)
@@ -128,7 +128,8 @@ One real-time military simulation in Python: orders, movement, targeting, projec
 
 - Source: the official `https://github.com/Anuken/Mindustry` (GPL-3.0). A pinned revision is chosen and recorded at the start of the implementation run.
 - **What is used:** item, ore/floor, drill, conveyor, power, liquid, pipe, crafter and unit-factory *definitions and behaviour*, ported to Python data and small deterministic modules inside the one world. Not used: the Mindustry wave game, cores, campaign launch sectors, RTS controls, Java runtime.
-- **Chain to prove first:** real deposit → drill → conveyor → crafter (power if needed) → unit factory → a unit that joins `world.units` and fights with OpenRA-style rules, built from machines that were themselves paid for in produced Widelands goods and unlocked by a drafted card.
+- **No second geology (D21).** A Mindustry drill sits on existing Widelands deposit/terrain tiles and converts reserve units into its configured ware at a data-driven rate; upgrading a Widelands mine to a drill keeps the building's id. New wares, never new deposit squares.
+- **Chain to prove first (proven in the M2 slice, `test_industry_slice.py`):** real deposit → drill → conveyor → crafter (power if needed) → unit factory → a unit that joins `world.units` and fights with OpenRA-style rules, built from machines that were themselves paid for in produced Widelands goods and unlocked by a drafted card.
 - Fidelity must be demonstrated against upstream numbers, not claimed. A source manifest entry is not an implemented mechanic.
 
 ### 12. Time, performance and determinism (APPROVED D14, D20)
@@ -163,7 +164,7 @@ A mere RTS demo is not DuelMasterBattle, and a factory sim without stories is no
 # Part II - Decision register
 
 
-Status: **D01–D20 APPROVED by the owner (Joe), 11 October 2026.** This replaces the "PROPOSED" register in `DuelMasterBattle_Design_v0_4.md` §19 and `DuelMasterBattle_Open_Decisions_v0_4.md` (kept unchanged as history). The high-level decisions below are closed; do not ask them again. Only the sub-details marked **PROPOSED / TO VALIDATE** (section 2) remain open, and each has a recommended default so work is not blocked.
+Status: **D01–D20 APPROVED by the owner (Joe), 11 October 2026; D21 added by the owner's implementation-run instruction the same day.** This replaces the "PROPOSED" register in `DuelMasterBattle_Design_v0_4.md` §19 and `DuelMasterBattle_Open_Decisions_v0_4.md` (kept unchanged as history). The high-level decisions below are closed; do not ask them again. Only the sub-details marked **PROPOSED / TO VALIDATE** (section 2) remain open, and each has a recommended default so work is not blocked.
 
 Design context: `DuelMasterBattle_Design_v0_5.md`. Architecture: `ARCHITECTURE_CONTRACT.md`. Plan: `ROADMAP_NEXT_RUN.md`.
 
@@ -176,7 +177,7 @@ Design context: `DuelMasterBattle_Design_v0_5.md`. Architecture: `ARCHITECTURE_C
 | D03 | The square-tile, four-direction-movement terrain is the baseline. A logical hex overlay is allowed for catastrophe regions. No Catan settlement topology. | APPROVED | `grid.py`/`terrain.py` stay authoritative. Hex code (`coords.py`) is only a region/label overlay. |
 | D04 | Each established MCV/command-centre settlement is worth **1 VP**. Destroying an enemy settlement awards **1 VP**. An undeployed MCV is not a settlement. The old 10-VP era threshold is a provisional candidate. | APPROVED (rule); sub-details PROPOSED, see S01–S04 | Needs a settlement identity and a once-only event ledger (roadmap M4). |
 | D05 | Long-term: all relevant Widelands civilian buildings and OpenRA units/buildings, except explicitly superseded facilities (original Widelands barracks/training military production, OpenRA refineries/harvesters/credit economy). Six factions cover all five Widelands tribes (one repeated). Everything is era/technology gated, not available at game start. | APPROVED | Coverage is tracked by behaviour in `feature_catalogue.json`, not by file count. Exclusions are listed in `CURRENT_STATUS_AND_GAPS.md` section 6. |
-| D06 | **Mindustry is in scope for the next major run.** Copper, coal and other resources come from real terrain deposits (mountains, plus suitable other terrain such as desert sand; pasture thorium is an example to validate). First Mindustry machines are built from produced Widelands goods. Machines ultimately supply Mindustry unit production. Advanced units are meaningfully stronger than OpenRA-era units. Drafted tech cards unlock progression. | APPROVED; terrain/resource pairings PROPOSED, see S10 | See roadmap M2 and `WizardRTSHybrid/docs/MINDUSTRY_PROVENANCE.md`. |
+| D06 | **Mindustry is in scope for the next major run.** Mindustry wares come from the **existing** Widelands deposits and terrain (see D21): advanced extractors yield different wares at the same physical sites; sand comes from existing desert/beach terrain. First Mindustry machines are built from produced Widelands goods. Machines ultimately supply Mindustry unit production. Advanced units are meaningfully stronger than OpenRA-era units. Drafted tech cards unlock progression. | APPROVED; ware-per-deposit mapping is data (`mindustry_overrides.json`), see D21 and S10 | See roadmap M2 and `WizardRTSHybrid/docs/MINDUSTRY_PROVENANCE.md`. |
 | D07 | Every deployed MCV/command centre is an individual settlement; territory is its radius/footprint. Preserve per-settlement autonomy and logistics. | APPROVED | Matches the current `territory.py` model. Settlement identity must become stable and persistent (roadmap M3/M4). |
 | D08 | Early economy output is bounded by **real workers, tasks and movement**. Advanced Mindustry production uses authoritative conveyors, pipes, machines and power. No decorative workers producing unlimited goods. | APPROVED | Known current exceptions are hidden mine/smelter workers and the 20 s builder-less construction timer (gaps in `CURRENT_STATUS_AND_GAPS.md`). |
 | D09 | Era advancement and tech drafting introduce stronger units/buildings. Existing buildings upgrade to later-era versions for a real resource cost, keeping identity and history. | APPROVED; upgrade costs PROPOSED, see S08 | Upgrade is an in-place transition command that consumes delivered wares. No free grants. |
@@ -191,6 +192,7 @@ Design context: `DuelMasterBattle_Design_v0_5.md`. Architecture: `ARCHITECTURE_C
 | D18 | Keep the historical rise, decline, split and collapse of factions, driven by real settlement, economic and political conditions. Do not reintroduce all September VP elimination rules. | APPROVED; algorithm PROPOSED, see S12 | Proposed algorithm is in design v0.5 section 9.4. |
 | D19 | Defer final named character/story canon until the game is more solid. Inventory and preserve existing stories, NPCs, quests and dungeons. Plan one small genuine integration slice. | APPROVED | The inventory is in `CURRENT_STATUS_AND_GAPS.md` section 5. Do not rewrite the narrative catalogue. |
 | D20 | Simulate relevant nearby activity faithfully. Distant/headless systems may be optimised only by deterministic, item-conserving, outcome-equivalent processing with explicit tests. | APPROVED | Any level-of-detail shortcut needs an equivalence test (design v0.5 section 12). |
+| D21 | **No Mindustry ore tiles, no second map-generation pass, no geological overlay.** The Widelands terrain, deposits and resource-site positions are authoritative in every era. An advanced (Mindustry-capable) extractor pulls a *different ware* from the *same* physical site by data-driven rule (an iron-bearing site can give iron through the Widelands mine rule, or copper, lead or titanium through a drill; sand derives from existing desert/beach terrain; water from existing water). Every site has one canonical finite reserve shared by all extractors; the conversion factor (reserve units per output item) is data. Existing mines are upgradeable in place to advanced extractors for delivered wares (S08), keeping building identity. New **inventory wares** (mdy.*) are allowed; new **deposit sites** are not. These are game adaptation rules, not claims about Mindustry's geology. | APPROVED (owner clarification, 11 Oct 2026) | `data/mindustry_overrides.json` `extraction`; `wizard_rts/industry/extraction.py`; tests `test_industry_mechanics.py::test_reserve_is_shared_and_decreases_exactly`, `test_no_new_deposit_kinds_exist`. |
 
 ### 2. Implementation sub-decisions (PROPOSED / TO VALIDATE)
 
@@ -207,8 +209,8 @@ These are the only open items. Each has a recommended default; an implementation
 | S07 | D11 | What do faction "peaks" mean? | At reset, for each faction record the **centroid of its settlements weighted by peak population or building count** at the time of its highest settlement count, plus its final-era VP. New cycle faction starts are placed on the original six homelands *rotated* so the strongest faction's centroid region seeds the next cycle's most fertile start. Only positions and a small number of seed values carry over; no wares, buildings, or units. | Meets D11 (geography influences starts, nothing else survives) and is deterministic. |
 | S08 | D09 | Era upgrade costs. | Each upgrade costs the difference between the new and old building construction recipe plus a fixed fraction (default 25%) of the old recipe, paid in delivered wares. The old building keeps its ID, history and workers. | No free grants; no loss of identity. |
 | S09 | D12 | Catastrophe region size and cadence. | A logical flat-top hex grid of radius about 24 tiles per hex, about 19-37 hexes on the standard 544x288 map, anchored at the map centre. Outbreak cube added to a region on a fixed Game Time interval (default 10 game minutes) at a deterministically chosen region. Treatment requires the wizard physically within the hex. Loss threshold stays 8 outbreaks until validated. | Preserves bounded attention; size must make a hex walkable in minutes. |
-| S10 | D06 | Mindustry resource-to-terrain mapping. | Copper, lead, coal, sand (and scrap) from mountain/hill and desert deposits as Mindustry ores/floors; titanium deeper in mountains; thorium on rare mountain deposits. "Pasture thorium" is **not** assumed: the implementation agent must check Mindustry's actual ore and floor generation and record the mapping. | D06 says validate. |
-| S11 | D06 | First Mindustry machine cost. | Paid in delivered Widelands goods (planks, granite, iron, coal products). Exact amounts come from the Mindustry block `requirements` after pin review, scaled to ware units by a written conversion table. | Respects D06 "built with actually produced Widelands goods". |
+| S10 | D06/D21 | Which ware can each existing site yield to which extractor? | **Implemented (v146 pin, tunable data):** `coal` deposit: coal (tier 2). `iron` deposit: copper and lead (tier 2, 1 reserve unit per item), titanium (tier 3, 2 units per item). `stones`: scrap. `gold`: none. Sand from existing desert/beach terrain (infinite floor drop, tier 2). Tier = Mindustry `Drill.tier`; hardness from `Items.java`. Thorium and other items are not mapped yet. The Widelands mine rules are untouched. | D21: no new geography; the pairing is a game adaptation, recorded in `mindustry_overrides.json`. |
+| S11 | D06 | First Mindustry machine cost. | **Implemented:** paid in delivered Widelands goods (plank, granite, iron). Explicit hybrid costs per block in `mindustry_overrides.json`, chosen with the conversion copper→iron, lead→granite, silicon/titanium→iron at about a quarter of the Mindustry item count plus a plank per structural part; the upstream requirements are kept as `source_cost` in the registry. A conveyor run pays one plank per three tiles. | Respects D06 "built with actually produced Widelands goods". |
 | S12 | D18 | Faction rise/decline/split/collapse. | Computed from state, not VP: **decline** when a faction has lost its capital or has no productive building in 10 game minutes; **split** when a faction holds 4 or more settlements, the largest two are separated by more than N tiles with no road/ware link, and one has a low unrest/loyalty score; **collapse** when it holds no command centre and no MCV. A split creates a successor with its own ID, inheriting the disconnected settlements, their buildings, workers and units. Collapse leaves ruins. No ranking-based elimination. | Real conditions, deterministic, testable. |
 
 ### 3. Open questions that are *not* decisions
@@ -264,7 +266,8 @@ Everything the sim knows about a *kind of thing* comes from a registry loaded at
 | Units | `data/openra_rules.json` + hybrid recipes | Add `era`, `producer`, `required_cards`, cost in wares. Mindustry unit records produce the same unit row shape. |
 | Recipes/programs | Widelands programs interpreter (`workers.py`) | Add machine recipes (`industry`), with power/liquid inputs. |
 | Technology cards | none (hybrid) | `tech/cards.json`: id, era, prerequisite cards, physical prerequisites, unlocks (buildings, units, recipes). |
-| Terrain | `terrain_defs.json` (pinned Widelands) | Extend with Mindustry ore/floor mapping (S10). |
+| Terrain | `terrain_defs.json` (pinned Widelands) | **No** ore/floor additions (D21). Extraction rules (`mindustry_overrides.json` `extraction`) map the existing `res_kind` layer and desert/beach terrain names to wares. |
+| Mindustry content | pinned `external/mindustry` | Pipeline: pinned source → `scripts/import_mindustry_defs.py` → `data/mindustry_defs.json` (original numbers) → `data/mindustry_overrides.json` (labelled hybrid adaptation) → `wizard_rts/industry/registry.py`. Runtime never reads the Java tree or the raw JSON directly. |
 | Settlements | derived from warehouse buildings | Explicit `settlement` records: stable ID, name, faction, centre, radius, founded_at, state. |
 | Quests/dungeons/people | `sim/dmb/quests`, `people`, `godot_project/content/source/*` | Instances bind to settlement/building/worker/route IDs. |
 
@@ -284,7 +287,7 @@ Everything the sim knows about a *kind of thing* comes from a registry loaded at
 
 1. A ware is in exactly one place: building stock, worker/carrier hands, a conveyor/pipe/machine buffer, or an explicit reservation. A reservation is not a second copy.
 2. Production consumes its inputs once and produces its outputs once. A queued unit or building takes real delivered goods; nothing materialises (except a flagged scenario/test grant, recorded in the event log).
-3. Sources and sinks are explicit and logged: deposit extraction (reduces deposit), renewable growth (ecology model), consumption, destruction/loss, test grants.
+3. Sources and sinks are explicit and logged: deposit extraction (reduces the one canonical reserve of the site, whichever extractor takes it; `stats["extracted_units_<kind>"]`), renewable growth (ecology model), consumption, destruction/loss, test grants.
 4. Failed transport cannot teleport stock. Destruction/capture settles stock, cargo and reservations by documented policy (`lifecycle.purge_building`).
 5. Era upgrade consumes delivered wares (S08); an old building does not produce a new-era good without a validated recipe.
 6. A conservation test exists for every new transport mode: sum of wares in all locations + consumed − produced = constant.
@@ -322,6 +325,14 @@ The default for a player-facing launcher must be `campaign`. Tests assert (a) Go
 ### 10. Modules to add (not now)
 
 `tech.py` (cards, drafting, unlock queries), `eras.py` (VP, thresholds, transitions, upgrades, reset), `settlements.py` (IDs, chronicle, VP ledger), `industry/` (items, drills, belts, pipes, power, crafters, unit factories), `regions.py` (catastrophe overlay), `story_bridge.py` (quest/people/dungeon ↔ world). Each ≤ a few hundred lines at first; each registers definitions and handles commands/events through the interfaces above.
+
+
+### 10. Implemented in the M1/M2 slices (verified by tests, see `IMPLEMENTATION_RUN_STATUS.md`)
+
+- **Profiles** (`wizard_rts/tech.py`): `campaign` (primitive start, locked kinds, God/training ops rejected by the server), `developer` (same start and locks, God ops accepted), `test_showcase` (the previous fully equipped start; the `HybridWorld` default so older tests are unchanged), `test_minimal`. The server defaults to `campaign` (`HYBRID_PROFILE`). `HybridEnv` is an in-process developer tool and is not reachable from the shipped client.
+- **Gating**: every placement and unit-queue path goes through `construction.check_placement` / `queue_unit`, which return `locked_by_card`.
+- **Industry** (`wizard_rts/industry/`): machines are ordinary construction sites in `world.buildings` (kind `mdy:*`, hybrid cost in delivered Widelands goods); belts are one construction site per run whose tiles go live on completion; power graphs join adjacent blocks and laser links; drills read the existing deposit layer. One clock (the 100 ms economy quantum); produced units are ordinary `world.units`.
+- **Ledger** (`wizard_rts/ledger.py`): `snapshot_totals`/`check` balance held + consumed against held + made for every ware, counting belts and machine buffers.
 
 
 ---
@@ -437,12 +448,20 @@ Postponed (will be added, era/tech gated): remaining Widelands civilian building
 `python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py` (Ubuntu): **123 passed** (72 + 51 progress dots, no failures; run without a summary line, took roughly 25 minutes on a loaded machine). Headed Godot scripts and the legacy `tests/sim` suites were **not** re-run in this session; their results above are as reported by the project docs.
 
 
+### 9. Update from the implementation run (12 October 2026)
+
+- **G1 (God Mode / training surface not gated): fixed for the shipped entry.** `wizard_rts/server.py` rejects every faction-level op unless the profile is `developer`/`test_*`; the Godot client hides the God button and ignores `G` in `campaign`. `HybridEnv` is still an unguarded in-process developer tool (documented in `ARCHITECTURE_CONTRACT.md` §10). Tests: `test_campaign_tech.py`; headed `campaign`.
+- **D15 start**: `profile="campaign"` gives the primitive start; `test_showcase` keeps the old start (the `HybridWorld` default). Card drafting exists (S05 cadence 15 game minutes, S06 prerequisites). Era index is fixed at 0.
+- **Mindustry (D06/D16/D21)**: WORKS for the M2 slice (see `MINDUSTRY_PROVENANCE.md`). ABSENT: liquids, routers, sorters, bridges, other factories and units, art.
+- Still ABSENT: persistent settlement IDs, VP, eras, outbreaks, story bridge, headless quest/dungeon/duel/outbreak environments, trained policies.
+
+
 ---
 
 # Part V - Roadmap for the next run
 
 
-**This is a plan for owner review, not permission to implement.** The next coding run starts only on a separate explicit instruction (`NEXT_RUN_KICKOFF_PROMPT.md`). Decisions: `DECISION_REGISTER.md`. Gaps: `CURRENT_STATUS_AND_GAPS.md`.
+**Authorised for this run (owner instruction of 11 October 2026): the stop-after-each-milestone rule is superseded for that run only; branches are still never merged to `main`.** Live status per milestone, with completed / partial / blocked / not started, is in `IMPLEMENTATION_RUN_STATUS.md`; the restart point is `NEXT_AGENT_HANDOFF.md`. Original text: this is a plan; the run started on `NEXT_RUN_KICKOFF_PROMPT.md`. Decisions: `DECISION_REGISTER.md`. Gaps: `CURRENT_STATUS_AND_GAPS.md`.
 
 ### 0. Ordering and rules
 
@@ -455,6 +474,8 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 ---
 
 ### M1 — Campaign profiles, drafted-tech unlocks, primitive start
+
+> **Status (12 Oct 2026): implemented and verified for the primitive start, drafting, gating, God-Mode gating, AI development and the 40-minute peace/war runs.** See `IMPLEMENTATION_RUN_STATUS.md` for the exact tests and what is partial (card catalogue is 13 cards; era index is fixed at 0 until M4; draft prompt exists as a God-panel developer display only).
 
 **Purpose.** Make the intended start real (D13, D15) and gate God Mode (D02) while keeping today's fully equipped start as a fixture.
 
@@ -482,11 +503,13 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 
 ### M2 — First real Mindustry industrial-to-unit slice
 
+> **Status (12 Oct 2026): the slice is implemented and verified** (pinned v146 importer, extraction on the existing deposits per D21, belts, power, crafters, unit factory, dagger, fight with an OpenRA unit, mine upgrade, conservation, determinism, headed `run_hybrid_industry.gd`). Original text below says "`terrain/mapgen` ore placement (S10)": **superseded by D21, no ore placement exists or will be added.** Liquids, routers, sorters, bridges, more machines and units, art: not done.
+
 **Purpose.** Prove D06/D08/D16: deposit → drill → conveyor → crafter(/power) → unit factory → unit in the shared military sim, paid for by real Widelands goods and unlocked by a drafted card.
 
 **Reuse.** Terrain deposits (`resources.py`), warehouse/stock API, construction sites and recipes, `world.units` spawn path, combat, God Mode build menu for dev view, M1 cards.
 
-**New/changed.** `wizard_rts/industry/` (items/registry, drill, conveyor, power graph, crafter, unit factory); `scripts/import_mindustry_defs.py` → `data/mindustry_defs.json`; `sources/manifest.json` pin; `SOURCE_REUSE.md` and `LICENSES.md` rows; `terrain/mapgen` ore placement (S10); `tech_cards.json` Mindustry cards; Godot `client/hybrid/industry_view.gd` (belts with item dots, power/flow indicator); placeholder art labelled.
+**New/changed.** `wizard_rts/industry/` (items/registry, drill, conveyor, power graph, crafter, unit factory); `scripts/import_mindustry_defs.py` → `data/mindustry_defs.json`; `sources/manifest.json` pin; `SOURCE_REUSE.md` and `LICENSES.md` rows; ~~`terrain/mapgen` ore placement (S10)~~ (removed by D21: extraction rules map the existing deposits); `tech_cards.json` Mindustry cards; Godot `client/hybrid/industry_view.gd` (belts with item dots, power/flow indicator); placeholder art labelled.
 
 **Prerequisites.** M1 (cards). Pin chosen, upstream definitions read (see `MINDUSTRY_PROVENANCE.md`).
 
@@ -593,7 +616,7 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 # Part VI - Mindustry provenance and licensing
 
 
-Status: **research notes only. Nothing from Mindustry is implemented, imported, or pinned yet.** Written 11 October 2026, documentation-only; no upstream clone was made in this session.
+Status: **pinned, cloned, imported and partly implemented (M2 slice).** Original research notes of 11 October 2026 follow; the section "Pin and what is implemented" below records what the implementation run did (12 October 2026). Nothing is claimed beyond what the named tests exercise.
 
 ### What is recorded
 
@@ -602,7 +625,7 @@ Status: **research notes only. Nothing from Mindustry is implemented, imported, 
 | Official source repository | `https://github.com/Anuken/Mindustry` |
 | Language / build | Java; Gradle |
 | Licence | GPL-3.0 (stated in the upstream repository; verify the `LICENSE` file and per-directory notices at the pinned revision) |
-| Pinned revision | **NONE YET.** The implementation agent chooses a release tag or commit at least two weeks old, records the full SHA in `sources/manifest.json` (`id: mindustry`) and in `docs/SOURCE_REUSE.md`, and clones into `external/mindustry` via `scripts/setup_external.*`. |
+| Pinned revision | **`v146` = `26b66f9bdbd3a77b32f10f3cb350a9a737d5f012`** (commit date 2023-09-03; the long-lived stable release, well over two weeks old; tags up to v160.7 exist upstream and may be adopted later by changing the manifest and re-running the importer). Original wording: the implementation agent chooses a release tag or commit at least two weeks old, records the full SHA in `sources/manifest.json` (`id: mindustry`) and in `docs/SOURCE_REUSE.md`, and clones into `external/mindustry` via `scripts/setup_external.*`. |
 | Compatibility | GPL-3.0 content may be combined with this GPL-3.0-or-later project. Art, sound and any non-code assets may carry separate terms: check at the pinned revision before copying any asset. Placeholder art is acceptable until checked. |
 
 A manifest entry is not an implemented mechanic. Do not describe Mindustry as integrated until a test exercises a behaviour taken from it.
@@ -635,3 +658,18 @@ At the pinned revision read the actual definitions, not summaries:
 - How do the first Mindustry machines translate to Widelands goods (S11)?
 - Which Mindustry units are first (suggest ground: dagger/mace; air: flare)?
 - Art: use a clearly labelled placeholder if asset terms are unconfirmed.
+
+
+### Pin and what is implemented (12 October 2026)
+
+| Item | State |
+| --- | --- |
+| Pin | `sources/manifest.json` entry `mindustry` (tag `v146`, full SHA above, GPL-3.0). `scripts/setup_external.sh mindustry` makes a sparse checkout (content, type, world/blocks sources, unit sprites, about 10 MB; `MINDUSTRY_FULL=1` gives a full one). `scripts/setup_external.ps1` walks the manifest and makes a full clone. `scripts/verify_pins.py` checks every checkout against the manifest; `tests/test_mindustry_pipeline.py` runs it. |
+| Source read directly | `Items.java`, `Liquids.java`, `Blocks.java`, `UnitTypes.java` (all imported), `Drill.java` (`getDrillTime`: `drillTime + 50 * hardness`, divided by the drill multiplier), `Conveyor.java` (`itemSpace 0.4`, `capacity 3`, `speed` tiles per tick), `UnitFactory.UnitPlan`, `PowerNode` fields (`laserRange`, `maxNodes`), `Battery` (`consumePowerBuffered`). Not yet read in depth: `TechTree.java`, junction/router/sorter, pumps and conduits, reconstructors, effects. |
+| Importer | `scripts/import_mindustry_defs.py` → `wizard_rts/data/mindustry_defs.json` (22 items, 10 liquids, 214 blocks that have a `requirements` call, 39 unit types). Original numbers only; ticks converted to seconds in derived fields. `--check` fails if the JSON is out of date. Known simplification: the importer takes one weapon per unit and the first bullet's damage; drill `items_per_second` lists only the items in `DRILLABLE`. |
+| Adaptation | `wizard_rts/data/mindustry_overrides.json` (labelled as our decisions): ware map, hybrid construction costs in Widelands goods, extraction rules (D21), unit scales (`hp_scale` 50, `damage_scale` 25, speed and range in RTS cells, mirrored weapons). The registry keeps the upstream cost as `source_cost`. |
+| Registry | `wizard_rts/industry/registry.py`. Blocks: mechanical and pneumatic drill, conveyor, power node, battery, combustion generator, solar panel (small, large), silicon smelter, graphite press, ground factory. Unit: dagger. |
+| Behaviour (tests) | `tests/test_industry_mechanics.py` (18 tests), `tests/test_industry_slice.py` (4), `tests/test_mindustry_pipeline.py` (17). Rates tested: drill formula, belt speed (8 tiles in about 4.4 s), spacing, backpressure, power satisfaction, battery, combustion fuel, factory plan time. |
+| Not implemented | Liquids, pumps and conduits; junction, router, sorter, bridge; plastanium and surge items; reconstructors and other factories; air and naval Mindustry units; thorium and scrap extraction beyond the rule table; drill water boost; warmup; Erekir content. |
+| Art and sound | **None imported.** `external/mindustry/core/assets*` is checked out (sprites exist) but the asset terms were not verified (the repository `LICENSE` is GPL-3.0 for the whole tree; per-asset notices were not checked), so every machine, belt and unit is a labelled placeholder drawn by `godot_project/client/hybrid/industry_view.gd` (coloured shapes, "placeholder art" text). Never describe them as upstream art. |
+| Runtime | No Java, no second economy, battlefield or clock: the layer runs inside `HybridWorld.advance`. |

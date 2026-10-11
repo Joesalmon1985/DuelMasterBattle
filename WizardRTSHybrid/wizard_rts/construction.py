@@ -17,7 +17,7 @@ from typing import Any
 from wizard_rts.coords import tile_to_hex
 from wizard_rts import wl_defs
 from wizard_rts.economy import _supply
-from wizard_rts import territory
+from wizard_rts import tech, territory
 from wizard_rts.logistics import add_road
 
 QUANTUM_MS = 100
@@ -213,6 +213,10 @@ def build_spec(kind: str) -> dict[str, Any] | None:
     """A menu entry for a hybrid kind, or for any runnable Widelands building ("wl:<name>")."""
     if kind in BUILD_MENU:
         return BUILD_MENU[kind]
+    if kind.startswith("mdy:"):
+        from wizard_rts.industry import registry
+
+        return registry.build_spec(kind)
     spec = wl_defs.spec_for_kind(kind)
     if spec is None:
         return None
@@ -240,6 +244,8 @@ def check_placement(world: Any, faction_name: str, kind: str, tx: int, ty: int) 
     info = world.faction_info.get(faction_name)
     if info is None:
         return "unknown_faction", {}
+    if not tech.kind_allowed(world, faction_name, kind):
+        return "locked_by_card", {"spec": spec, "info": info}
     tile = (int(tx), int(ty))
     home = faction_warehouse(world, faction_name)
     ctx: dict[str, Any] = {"spec": spec, "info": info, "tile": tile, "home": home}
@@ -247,6 +253,13 @@ def check_placement(world: Any, faction_name: str, kind: str, tx: int, ty: int) 
         return "outside_map", ctx
     home = territory.covering(world, faction_name, tile) or home
     ctx["home"] = home
+    if kind.startswith("mdy:"):  # Mindustry machines: footprint, deposits underneath, belts (industry/commands.py)
+        from wizard_rts.industry import commands as ind_commands
+
+        why, mctx = ind_commands.check_machine(world, faction_name, kind, tile)
+        if why is None:
+            ctx["ground_footprint"] = [list(t) for t in mctx["footprint"]]
+        return why, ctx
     if spec.get("size") == "water3":
         if not territory.in_territory(world, faction_name, tile):
             return "outside_territory", ctx
@@ -447,6 +460,8 @@ def queue_unit(world: Any, building_id: str, unit_kind: str) -> dict[str, Any]:
     recipe = recipe_for(world, b, unit_kind)
     if recipe is None:
         return {"status": "rejected", "reason": "cannot_build_here"}
+    if not tech.unit_allowed(world, b["faction_name"], unit_kind):
+        return {"status": "rejected", "reason": "locked_by_card"}
     queue = b.setdefault("queue", [])
     if len(queue) >= 5:
         return {"status": "rejected", "reason": "queue_full"}

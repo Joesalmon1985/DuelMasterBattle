@@ -19,6 +19,10 @@ var faction_colors: Dictionary = {}
 var selected: Dictionary = {}
 
 
+const IndustryView = preload("res://client/hybrid/industry_view.gd")
+var industry = IndustryView.new()
+
+
 func load_catalogue() -> void:
 	var file := FileAccess.open("res://client/hybrid/art/catalogue.json", FileAccess.READ)
 	if file == null:
@@ -147,6 +151,9 @@ func _draw_naval_placeholder(canvas: CanvasItem, entity: Dictionary, tpx: int) -
 func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var definition := str(entity.get("definition", ""))
 	if bool(entity.get("inside", false)):
+		return
+	if definition.begins_with("mindustry."):  # labelled placeholders: the Mindustry art is not imported (docs/MINDUSTRY_PROVENANCE.md)
+		industry.draw_entity(canvas, self, entity, tpx, faction_colors.get(str(entity.get("faction_name", "")), Color(0.7, 0.7, 0.7)))
 		return
 	if bool(entity.get("destroyed", false)) and _draw_ruin(canvas, entity, tpx):
 		return

@@ -1,0 +1,302 @@
+{
+  "_doc": "Tech cards (D13/D15/S05/S06). kinds = hybrid BUILD_MENU kinds; units = unit kinds a building may queue; wl_patterns = substrings of imported Widelands building names ('wl:<tribe>_<name>') that the card unlocks for every tribe; requires_cards = drafted first; requires_working = building kinds of the faction that must be operational at draft time (S06 physical prerequisite). era is an index: 0 prehistoric, 1 historic, 2 modern, 3 dystopian.",
+  "primitive": {
+    "kinds": [
+      "producer",
+      "ranger",
+      "processor",
+      "quarry",
+      "hunter",
+      "well"
+    ],
+    "units": [],
+    "wl_patterns": [
+      "woodcutter",
+      "lumberjack",
+      "forester",
+      "ranger",
+      "preserver",
+      "quarry",
+      "stonecutter",
+      "hunter",
+      "fisher",
+      "well",
+      "sawmill",
+      "liana",
+      "rare_tree"
+    ]
+  },
+  "cards": [
+    {
+      "id": "dmb.card.farming",
+      "name": "Farming",
+      "era": 0,
+      "kinds": [
+        "farm"
+      ],
+      "units": [],
+      "wl_patterns": [
+        "farm",
+        "plantation",
+        "mill",
+        "cassava"
+      ],
+      "requires_cards": [],
+      "requires_working": [
+        "processor"
+      ]
+    },
+    {
+      "id": "dmb.card.cookery",
+      "name": "Cookery",
+      "era": 0,
+      "kinds": [
+        "tavern",
+        "bakery"
+      ],
+      "units": [],
+      "wl_patterns": [
+        "tavern",
+        "bakery",
+        "inn",
+        "cooker",
+        "preserver_booth",
+        "food_preserver",
+        "brewery"
+      ],
+      "requires_cards": [
+        "dmb.card.farming"
+      ],
+      "requires_working": [
+        "farm"
+      ]
+    },
+    {
+      "id": "dmb.card.mining",
+      "name": "Mining",
+      "era": 0,
+      "kinds": [
+        "mine",
+        "ironmine"
+      ],
+      "units": [],
+      "wl_patterns": [
+        "mine",
+        "digger",
+        "dwelling"
+      ],
+      "requires_cards": [],
+      "requires_working": [
+        "quarry"
+      ]
+    },
+    {
+      "id": "dmb.card.smelting",
+      "name": "Smelting",
+      "era": 0,
+      "kinds": [
+        "smelter"
+      ],
+      "units": [],
+      "wl_patterns": [
+        "smelting",
+        "furnace",
+        "charcoal"
+      ],
+      "requires_cards": [
+        "dmb.card.mining"
+      ],
+      "requires_working": [
+        "mine",
+        "ironmine"
+      ]
+    },
+    {
+      "id": "dmb.card.metalwork",
+      "name": "Metalwork",
+      "era": 1,
+      "kinds": [
+        "smithy"
+      ],
+      "units": [],
+      "wl_patterns": [
+        "smithy",
+        "workshop",
+        "armorsmithy",
+        "weaponsmithy",
+        "helmsmithy",
+        "stone_workshop"
+      ],
+      "requires_cards": [
+        "dmb.card.smelting"
+      ],
+      "requires_working": [
+        "smelter"
+      ]
+    },
+    {
+      "id": "dmb.card.drill_tactics",
+      "name": "Drill tactics",
+      "era": 1,
+      "kinds": [
+        "barracks"
+      ],
+      "units": [
+        "infantry"
+      ],
+      "wl_patterns": [
+        "barracks",
+        "initiation_site"
+      ],
+      "requires_cards": [
+        "dmb.card.metalwork"
+      ],
+      "requires_working": [
+        "smithy"
+      ]
+    },
+    {
+      "id": "dmb.card.fortification",
+      "name": "Fortification",
+      "era": 1,
+      "kinds": [
+        "defense"
+      ],
+      "units": [],
+      "wl_patterns": [
+        "tower",
+        "sentry",
+        "fortress",
+        "citadel",
+        "outpost",
+        "barrier"
+      ],
+      "requires_cards": [
+        "dmb.card.metalwork"
+      ],
+      "requires_working": [
+        "quarry"
+      ]
+    },
+    {
+      "id": "dmb.card.motor_pool",
+      "name": "Motor pool",
+      "era": 1,
+      "kinds": [
+        "vehicle_factory"
+      ],
+      "units": [
+        "tank",
+        "mcv"
+      ],
+      "wl_patterns": [],
+      "requires_cards": [
+        "dmb.card.drill_tactics"
+      ],
+      "requires_working": [
+        "barracks"
+      ]
+    },
+    {
+      "id": "dmb.card.seafaring",
+      "name": "Seafaring",
+      "era": 1,
+      "kinds": [
+        "naval_yard"
+      ],
+      "units": [
+        "patrol_boat"
+      ],
+      "wl_patterns": [
+        "shipyard",
+        "port",
+        "weaving"
+      ],
+      "requires_cards": [
+        "dmb.card.motor_pool"
+      ],
+      "requires_working": [
+        "vehicle_factory"
+      ]
+    },
+    {
+      "id": "dmb.card.submarines",
+      "name": "Submarines",
+      "era": 2,
+      "kinds": [
+        "sub_pen"
+      ],
+      "units": [
+        "submarine"
+      ],
+      "wl_patterns": [],
+      "requires_cards": [
+        "dmb.card.seafaring"
+      ],
+      "requires_working": [
+        "naval_yard"
+      ]
+    },
+    {
+      "id": "dmb.card.automation",
+      "name": "Automation",
+      "era": 2,
+      "kinds": [
+        "mdy:mechanical_drill",
+        "mdy:conveyor",
+        "mdy:power_node",
+        "mdy:combustion_generator",
+        "mdy:solar_panel"
+      ],
+      "units": [],
+      "wl_patterns": [],
+      "requires_cards": [
+        "dmb.card.metalwork"
+      ],
+      "requires_working": [
+        "smithy"
+      ],
+      "source": "Mindustry blocks (drills, conveyors, power) - S06: Historic+ and a working smithy chain; Modern era here"
+    },
+    {
+      "id": "dmb.card.industry",
+      "name": "Industry",
+      "era": 2,
+      "kinds": [
+        "mdy:silicon_smelter",
+        "mdy:graphite_press",
+        "mdy:battery",
+        "mdy:pneumatic_drill",
+        "mdy:solar_panel_large"
+      ],
+      "units": [],
+      "wl_patterns": [],
+      "requires_cards": [
+        "dmb.card.automation"
+      ],
+      "requires_working": [
+        "mdy:mechanical_drill"
+      ],
+      "source": "Mindustry crafters, batteries, pneumatic drill"
+    },
+    {
+      "id": "dmb.card.unit_fabrication",
+      "name": "Unit fabrication",
+      "era": 2,
+      "kinds": [
+        "mdy:ground_factory"
+      ],
+      "units": [
+        "dagger"
+      ],
+      "wl_patterns": [],
+      "requires_cards": [
+        "dmb.card.industry"
+      ],
+      "requires_working": [
+        "mdy:silicon_smelter"
+      ],
+      "source": "Mindustry ground factory and dagger"
+    }
+  ]
+}

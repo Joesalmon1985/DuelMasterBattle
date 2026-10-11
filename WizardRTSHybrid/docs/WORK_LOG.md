@@ -67,3 +67,11 @@
 
 
 - 2026-10-11 (Claude, session 4, documentation only): ratified D01-D20 recorded; new `docs/DuelMasterBattle_Design_v0_5.md`, `DECISION_REGISTER.md`, `ARCHITECTURE_CONTRACT.md`, `CURRENT_STATUS_AND_GAPS.md`, `ROADMAP_NEXT_RUN.md`, `NEXT_RUN_KICKOFF_PROMPT.md`, `MINDUSTRY_PROVENANCE.md`; AGENTS.md and CLAUDE.md rewritten (old copies in `docs/archive/`); direction banners on STATE_OF_PLAY, PROJECT_STATUS, DECISIONS, CLAUDE_HANDOFF. No code, tests, data or assets changed. Mindustry is in scope and not implemented.
+
+## 2026-10-11 / 12 (implementation run)
+
+- Harness: Claude Code, Ubuntu 24.04 (Linux 6.8), 4 cores, Python 3.12.3, Godot 4.5.1. Branch `feature/hybrid-playtest-fixes-v03`.
+- Baseline before changes: 123 Python tests passed (12 min 18 s).
+- Changes: `wizard_rts/tech.py` (profiles, cards, drafting), `data/tech_cards.json`; `wizard_rts/industry/` (registry, extraction, sim, commands, fixture), `data/mindustry_defs.json` (importer output, pin v146) and `data/mindustry_overrides.json`; `wizard_rts/ledger.py`; server God-op gating; God Mode panel (gating, draft buttons, locked menu entries); `industry_view.gd` placeholders; painter's order by footprint bottom for machines.
+- Experiments that shaped the design: a combustion generator burns the whole finite coal reserve of a 2x2 drill in about two minutes, so the fixture powers the factory with solar panels; belts were first one plank per tile, which took over 50 game minutes of carrier work, now one plank per three tiles; belt runs may cross roads and clear trees; a drill dumps into any belt that touches it, so the fixture keeps rings of other machines clear.
+- Known pre-existing limits found: the hybrid mine has no worker entity (roadmap M6); a mid-run edit of source files can fail an in-flight pytest run.

@@ -40,6 +40,8 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
+from wizard_rts import settlements, story, tech
+from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
 from wizard_rts import diagnostics, territory  # noqa: E402
@@ -82,8 +84,12 @@ class EventLog(list):
         super().append(e)
 
 
+PRIMITIVE_SHOWCASE = ("quarry", "hunter", "well")  # with the producer, sawmill and ranger every start has: D15 "bare-bones Widelands facilities"
+
+
 class HybridWorld:
-    def __init__(self, seed: int = 507, minimal: bool = False, terrain: bool | None = None, map_size: str = "standard") -> None:
+    def __init__(self, seed: int = 507, minimal: bool = False, terrain: bool | None = None, map_size: str = "standard",
+                 profile: str | None = None) -> None:
         """terrain=True builds the square-grid Widelands-derived map; terrain=False is the legacy flat world.
 
         None reads HYBRID_TERRAIN (default "1"). The legacy world stays available so the
@@ -91,6 +97,10 @@ class HybridWorld:
         """
         if terrain is None:
             terrain = os.environ.get("HYBRID_TERRAIN", "1") != "0"
+        self.profile = profile or ("test_minimal" if minimal else "test_showcase")  # tech.PROFILES; the server defaults to "campaign"
+        tech.profile_flags(self.profile)
+        self.era_index = 0
+        self.draft_interval_ms = tech.DRAFT_INTERVAL_MS
         self.terrain: terrain_mod.TerrainGrid | None = mapgen.generate(int(seed), map_size) if terrain else None
         self.map_size = map_size
         self.move_dirs = grid.DIRS4 if terrain else grid.DIRS8
@@ -145,6 +155,8 @@ class HybridWorld:
             self._layout_minimal()
         else:
             self._layout()
+        tech.init_world(self)
+        industry.init_world(self)
 
     def tile_in_map(self, tx: int, ty: int) -> bool:
         """True where a ground unit, worker, carrier or road may be. With terrain: inside the grid and on land."""
@@ -299,6 +311,11 @@ class HybridWorld:
             if not self.adjacency.get(b["id"]) and b["kind"] != "warehouse":
                 return "Under construction: needs a road to receive " + ", ".join(need) if need else "Under construction"
             return "Under construction: waiting for " + ", ".join(need) if need else "Building (%d%%)" % int(100 * site["progress_ms"] / 20_000)
+        if b["kind"].startswith("mdy:"):
+            text = industry.status_text(self, b)
+            if b["kind"] == "mdy:conveyor":
+                return "Conveyor run: %d tiles" % len(b.get("line", {}).get("tiles", []))
+            return text or "Idle"
         if b["kind"] not in ("warehouse", "ranger", "defense") and not self.adjacency.get(b["id"]) and b.get("operational", True):
             return "No road: goods cannot arrive or leave"
         if b.get("queue"):
@@ -395,9 +412,12 @@ class HybridWorld:
         self._building(faction_id, name, "ranger", ranger_tile, "Ranger's hut", "widelands.rangers_hut")
         if self.terrain is None:
             self._plant_forest(producer_tile, set(road_tiles))
-        self._place_showcase(faction_id, name, q, r, center, set(road_tiles))
+        primitive_start = tech.PROFILES[self.profile]["primitive_start"]
+        self._place_showcase(faction_id, name, q, r, center, set(road_tiles), only=PRIMITIVE_SHOWCASE if primitive_start else None)
         unit_tile = self._offset_owned(q, r, center, 0, 3)
         self._unit(faction_id, name, "soldier", "Soldier", "widelands.soldier", unit_tile)
+        if primitive_start:  # D15: a bare-bones start, no OpenRA units until the cards for them are drafted
+            return {"faction": faction_id, "road": road_tiles, "road_a": road_a, "warehouse": warehouse}
         infantry_tile = self._free_in_hex(q, r, center, 1, 4, set())
         self._unit(faction_id, name, "infantry", "Rifleman", "openra.e1", infantry_tile)
         tank_tile = self._free_in_hex(q, r, center, -2, 4, set())
@@ -426,8 +446,9 @@ class HybridWorld:
         r: int,
         center: tuple[int, int],
         road: set[tuple[int, int]],
+        only: tuple[str, ...] | None = None,
     ) -> None:
-        """Real buildings from both games, sharing this faction's hex."""
+        """Real buildings from both games, sharing this faction's hex. `only` restricts the kinds (the primitive campaign start)."""
         specs = (
             ("mine", "widelands.coalmine", "Coal mine", -12, 5),
             ("ironmine", "widelands.ironmine", "Iron mine", -12, -3),
@@ -444,6 +465,8 @@ class HybridWorld:
             ("defense", "openra.gun", "Turret", 5, 9),
         )
         for kind, definition, label, dx, dy in specs:
+            if only is not None and kind not in only:
+                continue
             if self.terrain is not None:
                 try:
                     tile = self._site(center, dx, dy, SHOWCASE_SIZE[kind], road, SHOWCASE_RES.get(kind), extra=con.GROUND_FOOTPRINT.get(kind))
@@ -651,6 +674,8 @@ class HybridWorld:
             record["operational"] = True
         self.buildings[building_id] = record
         self.stocks[building_id] = {}
+        if kind == "warehouse":
+            settlements.register(self, record)
         if block:
             self.blocked.add(tile)
         return building_id
@@ -747,9 +772,12 @@ class HybridWorld:
             economy_quantum(self)
             logistics_quantum(self)
             con.construction_quantum(self)
+            industry.industry_quantum(self)
+            story.story_quantum(self)
             con.recruitment_quantum(self)
             lifecycle_quantum(self)
             territory.deploy_quantum(self)
+            tech.tech_quantum(self)
             diagnostics.watch_quantum(self)
             if self.ai_enabled:
                 ai_quantum(self)
@@ -826,6 +854,37 @@ class HybridWorld:
             return {"status": "rejected", "reason": "cannot_demolish_warehouse", "snapshot": self.snapshot()}
         self.damage_building(building, 10**9, ["structure"], {})
         return {"status": "ok", "snapshot": self.snapshot()}
+
+    def belt(self, faction: str, tiles: list, end_dir: int | None = None) -> dict[str, Any]:
+        from wizard_rts.industry import commands as ind_commands
+
+        out = ind_commands.place_belt(self, faction, tiles, end_dir)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def upgrade(self, faction: str, building: str, to_kind: str) -> dict[str, Any]:
+        from wizard_rts.industry import commands as ind_commands
+
+        out = ind_commands.upgrade_mine(self, faction, str(building), str(to_kind))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def configure(self, faction: str, building: str, key: str, value: Any) -> dict[str, Any]:
+        from wizard_rts.industry import commands as ind_commands
+
+        out = ind_commands.configure(self, faction, str(building), str(key), value)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def draft(self, faction: str, card_id: str) -> dict[str, Any]:
+        out = tech.draft(self, faction, str(card_id))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def grant_card(self, faction: str, card_id: str) -> dict[str, Any]:
+        out = tech.grant(self, faction, str(card_id))
+        out["snapshot"] = self.snapshot()
+        return out
 
     def fire(self, target_id: str) -> dict[str, Any]:
         from wizard_rts import magic
@@ -939,6 +998,11 @@ class HybridWorld:
             if building.get("destroyed"):
                 row["destroyed"] = True
                 row["ruin_ms"] = int(building.get("ruin_ms", 0))
+            if building.get("mdy") is not None:
+                row["mdy"] = industry.row(self, building)
+            elif building["kind"] == "mdy:conveyor" and building.get("line"):
+                row["line_tiles"] = len(building["line"]["tiles"])
+                row["line_live"] = bool(building.get("line_live"))
             if building["kind"] in ("mine", "ironmine", "well"):
                 res = {"mine": "coal", "ironmine": "iron", "well": "water"}[building["kind"]]
                 row["deposit_left"] = self.resource_total((building["tx"], building["ty"]), 2, res)
@@ -962,6 +1026,7 @@ class HybridWorld:
         if tree_sync is None:
             for rock in self.rocks.values():
                 entities.append(self._rock_row(rock))
+        entities.extend(story.entity_rows(self))
         for animal in self.animals.values():
             row = {
                 "id": animal["id"], "class": "animal", "kind": "animal", "definition": animal["definition"],
@@ -1048,6 +1113,9 @@ class HybridWorld:
             "map": ({"q": 20, "r": 20} if self.terrain is None else {"w": self.terrain.w, "h": self.terrain.h, "static_hash": self.terrain.static_hash()}),
             "neighbor_sample": neighbors(q, r),
             "in_map": in_map(q, r),
+            "tech": tech.snapshot(self),
+            "industry": industry.snapshot(self),
+            "story": story.snapshot(self),
         }
 
 

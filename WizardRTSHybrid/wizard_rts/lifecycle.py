@@ -32,6 +32,10 @@ def purge_building(world: Any, bid: str, reason: str) -> None:
     b = world.buildings.pop(bid, None)
     if b is None:
         return
+    if b.get("kind") == "warehouse" and b.get("destroyed"):
+        from wizard_rts import settlements
+
+        settlements.mark_destroyed(world, b, cause=reason)
     world.cc_ids.pop(bid, None)
     world.blocked.discard((b["tx"], b["ty"]))
     for p in list(b.get("footprint", [])) + list(b.get("ground_footprint", [])):

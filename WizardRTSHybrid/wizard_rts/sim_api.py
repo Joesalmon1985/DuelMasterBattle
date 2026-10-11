@@ -24,7 +24,7 @@ import pickle
 from typing import Any
 
 from wizard_rts import construction as con
-from wizard_rts import rules
+from wizard_rts import rules, tech
 from wizard_rts import diagnostics, territory
 from wizard_rts.coords import tile_to_hex  # noqa: F401  (kept importable for scripts)
 from wizard_rts.world import FACTIONS, HybridWorld
@@ -35,7 +35,7 @@ WARE_VALUE = {  # wealth weights: raw goods count little, processed and military
     "fish": 2, "meat": 2, "wheat": 1, "water": 0, "ax": 6, "brick": 3, "marble": 4,
 }
 DEFAULT_WEIGHTS = {"wealth": 0.01, "territory": 0.5, "kill_value": 0.002, "loss_value": -0.002, "building_kill": 1.0, "building_loss": -1.0, "alive": 0.0, "eliminated": -50.0}
-ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy")
+ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy", "draft")
 
 
 class HybridEnv:
@@ -49,7 +49,9 @@ class HybridEnv:
         weights: dict[str, float] | None = None,
         aggressive: bool = True,
         terrain: bool = True,
+        profile: str = "test_showcase",
     ) -> None:
+        self.profile = profile
         self.seed = int(seed)
         self.map_size = map_size
         self.agent_factions = tuple(agent_factions)
@@ -69,7 +71,7 @@ class HybridEnv:
         if seed is not None:
             self.seed = int(seed)
         os.environ.setdefault("HYBRID_AI", "1")
-        self.world = HybridWorld(self.seed, terrain=self.use_terrain, map_size=self.map_size)
+        self.world = HybridWorld(self.seed, terrain=self.use_terrain, map_size=self.map_size, profile=self.profile)
         w = self.world
         w.ai_enabled = True
         w.ai_aggressive = self.aggressive
@@ -138,6 +140,8 @@ class HybridEnv:
         try:
             if op == "build":
                 return _slim(w.build(faction, str(action["kind"]), int(action["tx"]), int(action["ty"])))
+            if op == "draft":
+                return _slim(w.draft(faction, str(action["card"])))
             if op == "road":
                 if not (self._owns_building(faction, action["a"]) and self._owns_building(faction, action["b"])):
                     return {"status": "rejected", "reason": "not_yours"}
@@ -191,7 +195,7 @@ class HybridEnv:
         w = self.world
         wh = con.faction_warehouse(w, faction)
         stocks = _stocks(w, faction)
-        out: dict[str, Any] = {"build": [], "road": [], "queue": [], "move_units": [], "attack": [], "demolish": [], "deploy": [], "expansion_sites": []}
+        out: dict[str, Any] = {"build": [], "road": [], "queue": [], "move_units": [], "attack": [], "demolish": [], "deploy": [], "expansion_sites": [], "draft": list(w.tech.get(faction, {}).get("offers", []))}
         if wh is None:
             return out
         for kind, spec in con.BUILD_MENU.items():
@@ -205,6 +209,8 @@ class HybridEnv:
                 out["road"].append({"a": b["id"], "b": wh["id"]})
             if b.get("operational") and b["kind"] in con.RECIPES and len(b.get("queue", [])) < 5:
                 for unit in con.RECIPES[b["kind"]]:
+                    if not tech.unit_allowed(w, faction, unit):
+                        continue
                     out["queue"].append({"building": b["id"], "unit": unit})
             if b["kind"] != "warehouse":
                 out["demolish"].append(b["id"])
@@ -234,6 +240,8 @@ class HybridEnv:
         w = self.world
         spec = con.BUILD_MENU[kind]
         out: list[list[int]] = []
+        if not tech.kind_allowed(w, faction, kind):
+            return out
         if spec.get("size") == "water3":
             from wizard_rts import ai
 
@@ -369,7 +377,7 @@ class HybridEnv:
     def replay(self, log: list[dict[str, Any]] | None = None) -> str:
         """Re-run a recorded episode from its seed and return the final state hash."""
         log = self.log if log is None else log
-        twin = HybridEnv(self.seed, self.map_size, self.agent_factions, self.step_ms, self.max_game_ms, self.weights, self.aggressive, self.use_terrain)
+        twin = HybridEnv(self.seed, self.map_size, self.agent_factions, self.step_ms, self.max_game_ms, self.weights, self.aggressive, self.use_terrain, self.profile)
         twin.reset()
         for entry in log:
             twin.step(entry["actions"])

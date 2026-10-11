@@ -39,6 +39,11 @@ def _load() -> dict[str, Any]:
     data = json.loads(DATA.read_text(encoding="utf-8"))
     data["actors"].update(HYBRID_ACTORS)
     data["weapons"].update(HYBRID_WEAPONS)
+    from wizard_rts.industry import registry  # Mindustry units: the same actor/weapon schema, scaled in mindustry_overrides.json
+
+    actors, weapons = registry.unit_rules()
+    data["actors"].update(actors)
+    data["weapons"].update(weapons)
     return data
 
 
@@ -47,6 +52,8 @@ def actor(definition: str) -> dict[str, Any] | None:
     key = definition.split(".", 1)[-1].lower()
     if definition == "widelands.soldier":
         key = "wl_soldier"
+    elif definition.startswith("mindustry."):
+        key = "mdy_" + key
     return _load()["actors"].get(key)
 
 

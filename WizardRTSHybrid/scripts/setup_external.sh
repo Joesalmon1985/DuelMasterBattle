@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Ubuntu: sparse, shallow, pinned checkouts of the source labs the importers read.
 # Widelands: terrain, resource and map data, terrain-rule C++ (about 30 MB). OpenRA: rules, sequences, tilesets.
-# Usage: scripts/setup_external.sh [widelands|openra|all]
+# Mindustry: pinned tag v146, sparse (content/type/world sources and sprites, ~10 MB). MINDUSTRY_FULL=1 gives a full checkout.
+# Usage: scripts/setup_external.sh [widelands|openra|mindustry|all]
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p external
@@ -35,4 +36,15 @@ if [ "$want" = openra ] || [ "$want" = all ]; then
     '/mods/cnc/rules/' '/mods/cnc/weapons/' '/mods/d2k/rules/' '/mods/d2k/weapons/' '/mods/ts/rules/' '/mods/ts/weapons/' \
     '/OpenRA.Mods.Common/Traits/' '/OpenRA.Mods.Common/Pathfinder/' '/OpenRA.Mods.Common/Activities/'
 fi
+if [ "$want" = mindustry ] || [ "$want" = all ]; then
+  if [ "${MINDUSTRY_FULL:-0}" = 1 ]; then
+    fetch mindustry https://github.com/Anuken/Mindustry.git 26b66f9bdbd3a77b32f10f3cb350a9a737d5f012 '/*'
+  else
+    fetch mindustry https://github.com/Anuken/Mindustry.git 26b66f9bdbd3a77b32f10f3cb350a9a737d5f012 \
+      '/core/src/mindustry/content/' '/core/src/mindustry/type/' '/core/src/mindustry/world/blocks/' '/core/src/mindustry/world/meta/' \
+      '/core/src/mindustry/world/*.java' '/core/src/mindustry/ctype/' '/LICENSE' '/README.md' '/core/assets/sprites/' \
+      '/core/assets-raw/sprites/units/' '/core/assets/contributors'
+  fi
+fi
+python3 scripts/verify_pins.py || true
 du -sh external/* 

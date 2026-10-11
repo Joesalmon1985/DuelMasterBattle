@@ -89,7 +89,7 @@ def _requires_ok(expr: str, conds: set[str]) -> bool:
 def target_types(entity: dict) -> set[str]:
     """OpenRA Targetable.TargetTypes of an entity right now (conditions such as a cloaked submarine apply)."""
     definition = entity.get("definition", "")
-    r = rules.actor(definition) if (definition.startswith("openra.") or definition == "widelands.soldier") else None
+    r = rules.actor(definition) if (definition.startswith(("openra.", "mindustry.")) or definition == "widelands.soldier") else None
     if r is None:
         return {"GroundActor", "Structure"} if "target_type" in entity else {"GroundActor"}  # Widelands buildings and units
     targ = r.get("targetable")
@@ -353,7 +353,7 @@ def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float, wea
 
 def _fire(world: Any, shooter: dict, w: dict, target: dict, entity: dict, dist: float) -> None:
     """One volley. Damage lands after the projectile's flight time."""
-    sr = rules.actor(shooter.get("definition", "")) if shooter.get("definition", "").startswith("openra.") else None
+    sr = rules.actor(shooter.get("definition", "")) if shooter.get("definition", "").startswith(("openra.", "mindustry.")) else None
     if sr and sr.get("cloak"):
         shooter["uncloak_ms"] = int(sr["cloak"]["delay_ticks"]) * rules.TICK_MS  # Cloak UncloakOn Attack
         shooter["cloaked"] = False

@@ -60,3 +60,12 @@ Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays sou
 | T-M2 | First Mindustry industrial-to-unit slice (roadmap M2) | 1 | T-M1 | NOT STARTED | `docs/ROADMAP_NEXT_RUN.md`, `MINDUSTRY_PROVENANCE.md` |
 | T-M3 | Live-settlement quest + dungeon + duel slice (roadmap M3) | 1 | T-M1 | NOT STARTED | `docs/ROADMAP_NEXT_RUN.md` |
 | T-M4..M6 | VP/eras, catastrophe overlay, Widelands/OpenRA completion | 2 | M1 | NOT STARTED | `docs/ROADMAP_NEXT_RUN.md` |
+
+## Implementation run (11-12 October 2026, owner-authorised M1-M6)
+
+| ID | Outcome | Status | Evidence |
+| --- | --- | --- | --- |
+| T-RUN-P0 | Baseline, Mindustry pin and importer | VERIFIED | `sources/manifest.json`, `scripts/verify_pins.py`, `scripts/import_mindustry_defs.py`, `tests/test_mindustry_pipeline.py` |
+| T-RUN-M1 | Campaign profiles, primitive start, tech cards, gating, God-Mode gating | VERIFIED | `tests/test_campaign_tech.py`, headed `campaign` / `campaign_dev`, `docs/evidence/m1/` |
+| T-RUN-M2 | Mindustry industrial-to-unit slice on existing deposits (D21) | VERIFIED | `tests/test_industry_*.py`, headed `industry`, `docs/evidence/m2/` |
+| T-RUN-M3..M6 | Story, VP/eras, outbreaks, content breadth | NOT STARTED | `docs/IMPLEMENTATION_RUN_STATUS.md` |

@@ -94,6 +94,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	_art.industry.begin_frame(delta)
 	if _camera_nudge != Vector2.ZERO:
 		_camera.position += _camera_nudge
 	if camera_focus != Vector2.INF:
@@ -111,6 +112,15 @@ func _process(delta: float) -> void:
 			_apply_snapshot(reply.get("snapshot", {}))
 			_seq = int(_snapshot.get("clock_sequence", _seq))
 	queue_redraw()
+
+
+## Painter's order: a multi-tile machine is drawn by the bottom row of its footprint, so a unit standing beside it is not hidden under it.
+func _sort_y(e: Dictionary) -> int:
+	var y := int(e.get("ty", 0))
+	if e.has("ground_footprint") and str(e.get("definition", "")).begins_with("mindustry."):
+		for p in e["ground_footprint"]:
+			y = max(y, int(p[1]))
+	return y
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -266,6 +276,8 @@ func _draw() -> void:
 		for tile in road:
 			if tile is Array and int(tile[0]) >= vx0 and int(tile[0]) <= vx1 and int(tile[1]) >= vy0 and int(tile[1]) <= vy1:
 				_art.draw_road(self, tile, TPX)
+	_art.industry.draw_belts(self, _snapshot.get("industry", {}), TPX, vx0, vy0, vx1, vy1)
+	_art.industry.draw_links(self, _snapshot, TPX)
 	var rows: Array = []
 	for entity in _snapshot.get("entities", []):
 		if typeof(entity) != TYPE_DICTIONARY:
@@ -279,8 +291,8 @@ func _draw() -> void:
 			continue
 		rows.append(entity)
 	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		var ay := int(a.get("ty", 0))
-		var by := int(b.get("ty", 0))
+		var ay := _sort_y(a)
+		var by := _sort_y(b)
 		if ay == by:
 			return int(a.get("tx", 0)) < int(b.get("tx", 0))
 		return ay < by

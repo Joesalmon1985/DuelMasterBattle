@@ -106,3 +106,11 @@ Postponed (will be added, era/tech gated): remaining Widelands civilian building
 ## 8. Baseline test run in this session
 
 `python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py` (Ubuntu): **123 passed** (72 + 51 progress dots, no failures; run without a summary line, took roughly 25 minutes on a loaded machine). Headed Godot scripts and the legacy `tests/sim` suites were **not** re-run in this session; their results above are as reported by the project docs.
+
+
+## 9. Update from the implementation run (12 October 2026)
+
+- **G1 (God Mode / training surface not gated): fixed for the shipped entry.** `wizard_rts/server.py` rejects every faction-level op unless the profile is `developer`/`test_*`; the Godot client hides the God button and ignores `G` in `campaign`. `HybridEnv` is still an unguarded in-process developer tool (documented in `ARCHITECTURE_CONTRACT.md` §10). Tests: `test_campaign_tech.py`; headed `campaign`.
+- **D15 start**: `profile="campaign"` gives the primitive start; `test_showcase` keeps the old start (the `HybridWorld` default). Card drafting exists (S05 cadence 15 game minutes, S06 prerequisites). Era index is fixed at 0.
+- **Mindustry (D06/D16/D21)**: WORKS for the M2 slice (see `MINDUSTRY_PROVENANCE.md`). ABSENT: liquids, routers, sorters, bridges, other factories and units, art.
+- Still ABSENT: persistent settlement IDs, VP, eras, outbreaks, story bridge, headless quest/dungeon/duel/outbreak environments, trained policies.

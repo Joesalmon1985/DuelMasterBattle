@@ -19,12 +19,50 @@ for entry in (str(_HERE), str(_ROOT)):
         sys.path.insert(0, entry)
 
 from wizard_rts import construction as con  # noqa: E402
+from wizard_rts import story, tech  # noqa: E402
 from wizard_rts.coords import tile_to_hex  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
 
+# Faction-level commands: God Mode and the training surface (D02). The wizard's own ops (snapshot, pose, advance, interact,
+# resolve, fire, menu, terrain, tile, resources) stay available in every profile.
+GOD_OPS = frozenset({"control", "build", "road", "queue", "cancel", "move", "deploy", "stop", "rally", "demolish", "ai", "speed",
+                     "order", "suggest", "spawn", "damage", "draft", "grant_card", "belt", "upgrade", "configure", "fixture"})
+
+
 def _handle(world: HybridWorld, message: dict) -> dict:
     op = str(message.get("op", ""))
+    if op in GOD_OPS and not tech.god_allowed(world):
+        return {"status": "rejected", "reason": "god_mode_disabled", "profile": world.profile}
+    if op in story.WIZARD_OPS:  # the wizard's own story actions: open in every profile, narrow by construction
+        reply = story.dispatch(world, message)
+        reply["snapshot"] = world.snapshot() if message.get("snapshot") else None
+        return reply
+    if op == "profile":
+        return {"status": "ok", "profile": world.profile, "god": tech.god_allowed(world), "gated": tech.gated(world)}
+    if op == "tech":
+        return {"status": "ok", "tech": tech.snapshot(world)}
+    if op == "draft":
+        return world.draft(str(message.get("faction", "")), str(message.get("card", "")))
+    if op == "belt":
+        return world.belt(str(message.get("faction", "")), list(message.get("tiles", [])), message.get("end_dir"))
+    if op == "upgrade":
+        return world.upgrade(str(message.get("faction", "")), str(message.get("building", "")), str(message.get("to", "")))
+    if op == "configure":
+        return world.configure(str(message.get("faction", "")), str(message.get("building", "")), str(message.get("key", "")), message.get("value"))
+    if op == "fixture":  # developer: prepared scenarios (the M2 Modern industry slice)
+        from wizard_rts.industry import fixture
+
+        name = str(message.get("name", ""))
+        if name != "modern_industry":
+            return {"status": "rejected", "reason": "unknown_fixture"}
+        try:
+            ids = fixture.modern_fixture(world, str(message.get("faction", "Red")))
+        except RuntimeError as exc:
+            return {"status": "rejected", "reason": "fixture_failed", "detail": str(exc)}
+        return {"status": "ok", "fixture": name, "ids": ids, "snapshot": world.snapshot()}
+    if op == "grant_card":
+        return world.grant_card(str(message.get("faction", "")), str(message.get("card", "")))
     if op == "snapshot":
         return {"status": "ok", "snapshot": world.snapshot(tree_sync=(False if message.get("tree_delta") else None))}
     if op == "pose":
@@ -62,7 +100,10 @@ def _handle(world: HybridWorld, message: dict) -> dict:
     if op == "demolish":
         return world.demolish(str(message.get("building", "")))
     if op == "menu":
-        return {"status": "ok", "build_menu": con.full_menu(), "recipes": con.RECIPES, "locked": con.RECIPES_LOCKED}
+        menu = con.full_menu()
+        unlocked = {n: [k for k in menu if tech.kind_allowed(world, n, k)] for n in world.faction_info} if tech.gated(world) else {}
+        return {"status": "ok", "build_menu": menu, "recipes": con.RECIPES, "locked": con.RECIPES_LOCKED, "gated": tech.gated(world),
+                "unlocked": unlocked}
     if op == "ai":
         world.ai_enabled = bool(message.get("enabled", True))
         return {"status": "ok", "ai_enabled": world.ai_enabled}
@@ -128,7 +169,20 @@ def _handle(world: HybridWorld, message: dict) -> dict:
 
 
 def serve(port: int) -> None:
-    world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"))
+    world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"),
+                         profile=os.environ.get("HYBRID_PROFILE", "campaign"))
+    if os.environ.get("HYBRID_DRAFT_MS"):  # developer switch: safe accelerated drafting
+        world.draft_interval_ms = max(1000, int(os.environ["HYBRID_DRAFT_MS"])) if tech.god_allowed(world) else world.draft_interval_ms
+    if os.environ.get("HYBRID_FIXTURE") and tech.god_allowed(world):  # developer: start inside a prepared scenario
+        from wizard_rts.industry import fixture
+
+        if os.environ["HYBRID_FIXTURE"] == "story":
+            from wizard_rts import story_fixture
+
+            print("HYBRID_FIXTURE_READY", json.dumps(story_fixture.prepare(world, os.environ.get("HYBRID_FIXTURE_FACTION", "Red"))), flush=True)
+        if os.environ["HYBRID_FIXTURE"] == "modern_industry":
+            ids = fixture.modern_fixture(world, os.environ.get("HYBRID_FIXTURE_FACTION", "Red"))
+            print("HYBRID_FIXTURE_READY", json.dumps({k: v for k, v in ids.items() if k != "plan"}), flush=True)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(("127.0.0.1", port))

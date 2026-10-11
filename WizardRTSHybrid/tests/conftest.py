@@ -1,8 +1,13 @@
 """Unit tests isolate one system at a time, so the faction AIs are off unless a test turns them on."""
 
 import os
+import sys
+from pathlib import Path
 
 os.environ.setdefault("HYBRID_AI", "0")
+for _p in (Path(__file__).resolve().parents[1], Path(__file__).resolve().parents[2]):  # WizardRTSHybrid and the repository root (sim.dmb)
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 
 
 def set_resource(w, node, res, amount):

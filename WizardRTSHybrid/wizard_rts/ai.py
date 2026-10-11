@@ -18,7 +18,7 @@ import zlib
 from typing import Any
 
 from wizard_rts import construction as con
-from wizard_rts import territory
+from wizard_rts import tech, territory
 
 ROAD_LIMIT = 45  # a site more than this far from its command centre by road is not worth a wide failed search
 DECIDE_EVERY = 50  # quanta (5 s) between decisions per faction
@@ -290,7 +290,7 @@ def _settlement_step(world: Any, name: str, wh: dict, main: bool) -> None:
             kind = FISHER_OF.get(world.faction_info.get(name, {}).get("tribe", ""), "")
             if not kind:
                 continue
-        if have.get(kind, 0) >= plan.get(plan_kind, 0):
+        if have.get(kind, 0) >= plan.get(plan_kind, 0) or not tech.kind_allowed(world, name, kind):
             continue
         if kind in ("mine", "ironmine") and not _deposit_site(world, name, kind):
             continue
@@ -437,7 +437,7 @@ def naval_economy_step(world: Any, name: str, wh: dict, mine: list[dict]) -> boo
         return False
     have = {b["kind"] for b in mine}
     want = "naval_yard" if "naval_yard" not in have else ("sub_pen" if "sub_pen" not in have and "barracks" in have else None)
-    if want is None or not _affordable(world, name, want):
+    if want is None or not tech.kind_allowed(world, name, want) or not _affordable(world, name, want):
         return False
     if want == "sub_pen" and not any(b["kind"] == "naval_yard" and b.get("operational") for b in mine):
         return False
@@ -583,7 +583,7 @@ def _build_tribe_building(world: Any, name: str, bname: str, wh: dict) -> str | 
 
     kind = wl_defs.PREFIX + bname
     spec = con.build_spec(kind)
-    if spec is None or not _can_pay(world, name, spec["cost"]):
+    if spec is None or not tech.kind_allowed(world, name, kind) or not _can_pay(world, name, spec["cost"]):
         return None
     mining = [a["resource"] for prog in wl_defs.building_spec(bname)["programs"].values() for cmd, a in prog if cmd == "mine"]
     if mining:
@@ -920,5 +920,8 @@ def ai_quantum(world: Any) -> None:
             continue
         if world.ai_factions is not None and name not in world.ai_factions:
             continue  # an agent or a human plays this faction
+        pick = tech.ai_pick(world, name)
+        if pick:
+            tech.draft(world, name, pick)
         economy_step(world, name)
         military_step(world, name)
