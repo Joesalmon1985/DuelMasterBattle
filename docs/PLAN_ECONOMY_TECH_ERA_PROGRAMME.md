@@ -1,5 +1,7 @@
 # Plan: economy, technology drafting and era progression programme
 
+> **Superseded in part by `PLAN_FULL_PROGRAMME_V2.md` (12 Oct 2026, later brief).** Where they disagree (draft cadence, bonus picks, era end rule, Mindustry exclusions, placeholders) v2 wins; see v2 section 12. v1 section 1 (current state, measurements) and sections 4-5 remain valid.
+
 Status: **PROPOSAL for owner review. Nothing in this plan is implemented. No gameplay code, data or balance value has been changed.** Written 12 October 2026 on branch `feature/hybrid-playtest-fixes-v03` (HEAD `23ffc4f`) from a read-through of `WizardRTSHybrid/wizard_rts/`, the data files, the tournament evidence and the docs. Where this plan overrides an existing decision (D04, S04/S13, S05/S14, S12) it says so in section 10; none of those overrides takes effect until the owner approves.
 
 Evidence is cited by file. The one new measurement (section 1.3) came from a throwaway script in the scratchpad and was not committed.
