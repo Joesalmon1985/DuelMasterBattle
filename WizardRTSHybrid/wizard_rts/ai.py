@@ -754,11 +754,14 @@ def _posts(world: Any, name: str, cc: dict) -> list[tuple[int, int]]:
         ux, uy = dx / norm, dy / norm
         radius = territory.radius_of(cc)
         out = min(GUARD_OUT, max(radius - 3, 4))
+        from wizard_rts.military import _danger
+
+        danger = _danger(world)
         for lateral in (-6, 0, 6):
             tx = int(round(cc["tx"] + ux * out - uy * lateral))
             ty = int(round(cc["ty"] + uy * out + ux * lateral))
             tile = _free_ground_near(world, (tx, ty), world._reach_from((cc["tx"], cc["ty"])) if world.terrain is not None else None)  # land-connected
-            if tile is not None:
+            if tile is not None and tile not in danger:  # a post in a nest's reach fed it one soldier a minute (peace run, 12 Oct)
                 posts.append(tile)
     cache[key] = (now, posts)
     return posts

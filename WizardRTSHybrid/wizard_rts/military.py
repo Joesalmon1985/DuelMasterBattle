@@ -410,13 +410,14 @@ def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float, wea
     cy0, cy1 = int((pos[1] - radius) // CELL), int((pos[1] + radius) // CELL)
     best_u: tuple[float, dict] | None = None
     best_b: tuple[float, dict] | None = None
+    peace = not getattr(world, "ai_aggressive", True)  # the test-only peace switch: factions never open fire on each other, only on nests
     for cy in range(cy0, cy1 + 1):
         for cx in range(cx0, cx1 + 1):
             cell = grid.get((cx, cy))
             if cell is None:
                 continue
             for u in cell[0]:
-                if u["faction"] == faction or not u.get("alive", True):
+                if u["faction"] == faction or not u.get("alive", True) or (peace and u["faction"]):
                     continue
                 if weapon is not None and not weapon_can_attack(world, faction, weapon, u):
                     continue
@@ -425,7 +426,7 @@ def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float, wea
                     best_u = (d, u)
             if best_u is None:
                 for b in cell[1]:
-                    if b["faction"] == faction or int(b["hp"]) <= 0:
+                    if b["faction"] == faction or int(b["hp"]) <= 0 or (peace and b["faction"]):
                         continue
                     if weapon is not None and not rules.can_hit(weapon, target_types(b)):
                         continue

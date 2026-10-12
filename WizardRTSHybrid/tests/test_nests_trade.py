@@ -1,6 +1,6 @@
 """Blight nests (outbreaks as immobile hostile actors) and trade caravans (owner requests, 12 Oct 2026)."""
 from wizard_rts import construction as con
-from wizard_rts import ledger, military, nests, regions, tech, trade, vp
+from wizard_rts import ledger, military, nests, regions, tech, territory, trade, vp
 from wizard_rts.economy import produce
 from wizard_rts.world import HybridWorld
 
@@ -117,3 +117,25 @@ def test_no_trade_at_war_and_a_killed_caravan_loses_its_cargo():
     r = trade.send_caravan(w, "Red", a["id"], b["id"], {"log": 14}, {"iron": 3})
     military.kill_unit(w, w.units[r["unit"]], "")
     assert ledger.check(w, books) == [] and w.stats["destroyed_log"] >= 14
+
+
+def test_in_peace_soldiers_ignore_other_factions_but_still_see_nests():
+    w, s, i, nest = _infect(cubes=1)
+    me = w._unit(w.faction_info["Green"]["id"], "Green", "x", "X", "dmb.spearman", (nest["tx"] + 6, nest["ty"]))
+    other = w._unit(w.faction_info["Blue"]["id"], "Blue", "x", "X", "dmb.spearman", (nest["tx"] + 7, nest["ty"]))
+    u = w.units[me]
+    w._grid = None
+    military._build_grid(w)
+    assert military._scan(w, u["faction"], (u["tx"], u["ty"]), 3.0)["id"] == other  # war: the neighbour is a target
+    w.ai_aggressive = False
+    assert military._scan(w, u["faction"], (u["tx"], u["ty"]), 3.0) is None
+    assert military._scan(w, u["faction"], (u["tx"], u["ty"]), 8.0)["id"] == nest["id"]
+
+
+def test_guard_posts_keep_out_of_a_nests_reach():
+    from wizard_rts import ai
+
+    w, s, i, nest = _infect(cubes=1)
+    danger = military._danger(w)
+    for cc in territory.command_centers(w, None):
+        assert not set(ai._posts(w, cc["faction_name"], cc)) & danger
