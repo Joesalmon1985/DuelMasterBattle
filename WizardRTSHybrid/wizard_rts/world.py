@@ -311,7 +311,7 @@ class HybridWorld:
             self.fstat(building["faction_name"], "building_losses")
             shooter = self.units.get(by) or self.buildings.get(by)
             if shooter is not None:
-                self.fstat(shooter["faction_name"], "building_kills")
+                self.fstat(shooter["faction_name"], "nest_kills" if building.get("kind") == "blight_nest" else "building_kills")  # a nest is no war
         return before - int(building["hp"])
 
     def status_text(self, b: dict[str, Any]) -> str:

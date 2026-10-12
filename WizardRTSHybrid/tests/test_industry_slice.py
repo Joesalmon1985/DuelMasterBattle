@@ -16,6 +16,8 @@ SEED = 507
 def slice_run():
     w = HybridWorld(SEED, profile="developer")
     w.ai_enabled = False
+    w.outbreaks_enabled = False  # the slice is about the machines; catastrophes (nests, closures) are tested on their own
+    w.disruptions_enabled = False
     init = ledger.snapshot_totals(w)
     layer = bytes(w.terrain.res_kind)
     totals0 = {k: sum(w.terrain.res_amt[i] for i in range(len(w.terrain.res_amt)) if w.terrain.res_kind[i] == c) for k, c in (("coal", 1), ("iron", 2))}
@@ -63,12 +65,12 @@ def test_slice_builds_everything_from_real_goods_on_existing_sites(slice_run):
     assert w.buildings[ids["sand_drill"]]["mdy"]["item"] == "sand"  # floor drops never run out
 
 
-def test_slice_books_balance_and_reserves_drop_by_exactly_the_extraction(slice_run):
+def test_slice_books_balance_and_mineral_deposits_never_run_dry(slice_run):
     w, ids, init, layer, totals0, unit, log, seq = slice_run
     assert ledger.check(w, init) == []
     now = {k: sum(w.terrain.res_amt[i] for i in range(len(w.terrain.res_amt)) if w.terrain.res_kind[i] == c) for k, c in (("coal", 1), ("iron", 2))}
-    assert totals0["coal"] - now["coal"] == w.stats["extracted_units_coal"] and w.stats["extracted_units_coal"] >= 10
-    assert totals0["iron"] - now["iron"] == w.stats["extracted_units_iron"] and w.stats["extracted_units_iron"] >= 10
+    assert now == totals0  # D22: drills on coal and iron deposits extract without lowering the reserve
+    assert w.stats["extracted_units_coal"] >= 10 and w.stats["extracted_units_iron"] >= 10
     assert w.stats["made_mdy.lead"] == w.stats["extracted_units_iron"]  # one lead item per reserve unit (mindustry_overrides.json)
 
 

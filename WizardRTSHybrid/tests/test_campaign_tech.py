@@ -116,7 +116,7 @@ def test_ai_drafts_and_builds_unlocked_only():
     for name in w.faction_info:
         assert w.tech[name]["cards"], name  # every faction drafted at least once
     for b in w.buildings.values():
-        if "hp" in b and b["kind"] != "warehouse":
+        if "hp" in b and b["kind"] not in ("warehouse", "blight_nest"):  # a blight nest belongs to no faction
             assert tech.kind_allowed(w, b["faction_name"], b["kind"]), (b["faction_name"], b["kind"])
 
 

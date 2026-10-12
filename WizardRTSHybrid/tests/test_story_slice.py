@@ -201,12 +201,14 @@ def test_duel_freezes_game_time_and_keeps_entity_ids(prepared):
     ids["seq"] += 1
     r = w.advance(5000, ids["seq"], snapshot=False)
     assert r["quanta"] == 0 and int(w.dmb.clock["game_ms"]) == ms  # world time is frozen while the duel is open
+    assert w.entity_ids() == ids_before  # nothing came or went while frozen
     assert A.op(w, "duel_abandon")["status"] == "ok"
     assert not w.dmb.clock["pause_tokens"]
     ids["seq"] += 1
     assert w.advance(2000, ids["seq"], snapshot=False)["quanta"] > 0
     assert w.dmb.quests[ids["quest"]]["status"] == "active"  # abandoning the duel resolves nothing
-    assert w.entity_ids() == ids_before or set(ids_before) <= set(w.entity_ids())
+    alive = set(w.entity_ids())  # once time runs again a hunter may take a deer; nothing else of the scene may vanish
+    assert {i for i in ids_before if not i.startswith("animal:")} <= alive
 
 
 def test_exhausted_casts_give_the_shored_gallery_alternate_ending(prepared):

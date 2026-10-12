@@ -53,6 +53,7 @@ def prepare(world: Any, faction: str = "Red", max_seconds: int = 900) -> dict[st
         seq += 1
         world.advance(1000, seq, snapshot=False)
     world.disruptions_enabled = False  # no further random closures disturb the scenario; the one below is the scenario
+    world.outbreaks_enabled = False  # nor outbreaks, nests and burned workplaces (the outbreak scenario is its own fixture)
     disruption.disrupt(world, world.buildings[mine], "collapse", by="tremor")
     for _s in range(max_seconds):
         seq += 1

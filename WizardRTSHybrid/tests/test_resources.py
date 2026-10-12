@@ -37,6 +37,8 @@ def test_mine_on_a_mineral_site_never_runs_dry_and_logs_its_source() -> None:
     programs_data.ECONOMY_TARGETS["coal"] = 10**9  # keep the economy hungry so the mine never idles for lack of demand
     try:
         w = _world()
+        w.outbreaks_enabled = False  # this test is about the mine rule: no outbreak losses or closures in between
+        w.disruptions_enabled = False
         mine = w.buildings[_of(w, "Red", "mine")]
         centre = (mine["tx"], mine["ty"])
         nodes = [(centre[0] + dx, centre[1] + dy) for dx in range(-2, 3) for dy in range(-2, 3)]
