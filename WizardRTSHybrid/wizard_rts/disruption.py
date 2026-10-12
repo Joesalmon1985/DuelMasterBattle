@@ -25,7 +25,8 @@ CHECK_EVERY = 600  # economy quanta: once a game minute
 COLLAPSE_PER_MIN = 0.004  # a working mine caves in about once in four game hours on its own
 COLLAPSE_DAMAGED = 0.03  # below half health (war damage)
 COLLAPSE_OUTBREAK = 0.01  # per cube in the mine's region
-SICK_PER_CUBE = 0.012  # chance per game minute per cube that an affected workplace in the region closes
+SICK_PER_CUBE = 0.005  # chance per game minute per cube that an affected workplace in the region closes (was 0.012: whole settlements shut)
+MAX_CLOSED_SHARE = 0.25  # an outbreak never keeps more than a quarter of a region's workplaces closed at once
 REPAIR = {
     "collapse": ({"log": 4}, 12 * 60_000, "Gallery collapsed"),
     "sickness": ({"ration": 2}, 4 * 60_000, "Workers sick"),
@@ -114,7 +115,12 @@ def disruption_quantum(world: Any) -> None:
                 disrupt(world, b, "collapse", by="tremor" if cubes else ("war_damage" if int(b["hp"]) * 2 < int(b.get("max_hp", 1)) else "age"))
                 continue
         if cubes and hazard and regions.production_factor(world, b) < 1.0 and rng.random() < SICK_PER_CUBE * cubes:
-            disrupt(world, b, hazard if hazard in REPAIR else "sickness", by="outbreak")
+            rg = world.__dict__.get("regions")
+            i = rg.region_at(b["tx"], b["ty"])
+            here = [x for x in world.buildings.values() if "hp" in x and int(x["hp"]) > 0 and not x.get("command_center") and x["kind"] != "blight_nest"
+                    and rg.region_at(x["tx"], x["ty"]) == i]
+            if sum(1 for x in here if x.get("disrupted")) < MAX_CLOSED_SHARE * len(here):
+                disrupt(world, b, hazard if hazard in REPAIR else "sickness", by="outbreak")
 
 
 def _repairs(world: Any, dt_ms: int) -> None:

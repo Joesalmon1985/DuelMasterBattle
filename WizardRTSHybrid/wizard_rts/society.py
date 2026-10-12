@@ -6,7 +6,7 @@ from the world, never from a ranking:
   hunger      +0.03  its warehouse holds no food ware (ration, bread, fish, meat, smoked food) while it has workplaces
   closures    +0.01  per disrupted workplace in it (collapse, sickness... see disruption.py)
   war         +0.06  per building of it destroyed in the last ten game minutes (by any cause)
-  isolation   +0.015 an outpost further than history.SPLIT_DISTANCE from its faction's capital with no road link to it
+  isolation   +0.01 an outpost further than history.SPLIT_DISTANCE from its faction's capital with no road link to it
   garrison    -0.02  armed units of its own faction stand within its territory
   plenty      -0.02  its warehouse holds 10 or more rations
   (garrison and plenty count half with one outbreak cube in the settlement's region, not at all with two or more)
@@ -73,7 +73,7 @@ def pressures(world: Any, rec: dict) -> dict[str, float]:
     if cc.get("outpost"):
         home = next((c for c in territory.command_centers(world, rec["faction"]) if not c.get("outpost")), None)
         if home is None or (territory.cheb((cc["tx"], cc["ty"]), (home["tx"], home["ty"])) > history.SPLIT_DISTANCE and not _connected(world, cc["id"], home["id"])):
-            out["isolation"] = 0.015
+            out["isolation"] = 0.01  # was 0.015: almost every distant outpost drifted to a split
     r = territory.radius_of(cc)
     rg = world.__dict__.get("regions")
     cubes = rg.cubes[rg.region_at(cc["tx"], cc["ty"])] if rg is not None else 0
