@@ -1,16 +1,16 @@
-"""Developer fixture for the settlement story: a genuine Widelands mine whose deposit is used up (roadmap M3).
+"""Developer fixture for the settlement story: a genuine Widelands mine whose gallery has caved in (roadmap M3, revised for D22).
 
 The fixture prepares what a long campaign would have reached: the mining cards (with prerequisites), a coal mine built through the
-normal construction pipeline (delivered goods, a road, a ration), and then its reserve is drained so the real depletion rule fires
-(`production_mine` sets `deposit_exhausted`). The story then opens by itself from that state: nothing about the quest, the miner or
-the dungeon is placed by hand. Developer/test profiles only.
+normal construction pipeline (delivered goods, a road, a ration), lets it dig for real, and then brings its gallery down through the
+same `disruption.disrupt` call a tremor, war damage or age uses (the natural chance is low, so a scenario cannot wait for it). The
+story then opens by itself from that state: nothing about the quest, the miner or the dungeon is placed by hand. Developer/test only.
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-from wizard_rts import ai, construction as con, story, tech
+from wizard_rts import ai, construction as con, disruption, story, tech
 from wizard_rts.industry import fixture as F
 
 
@@ -47,9 +47,13 @@ def prepare(world: Any, faction: str = "Red", max_seconds: int = 900) -> dict[st
             break
     if not world.buildings[mine].get("operational"):
         raise RuntimeError("the mine was not built in time")
-    # the seam runs dry: drain the Widelands reserve in the mine's work area; the real depletion rule then flags the mine
-    for (x, y, amount, _i) in world.terrain.cells(tile[0], tile[1], 2, "coal"):
-        world.terrain.take(x, y, "coal", amount)
+    for _s in range(max_seconds):  # let it dig for real first: the quest is about a working mine that stopped
+        if world.buildings[mine].get("working_once"):
+            break
+        seq += 1
+        world.advance(1000, seq, snapshot=False)
+    world.disruptions_enabled = False  # no further random closures disturb the scenario; the one below is the scenario
+    disruption.disrupt(world, world.buildings[mine], "collapse", by="tremor")
     for _s in range(max_seconds):
         seq += 1
         world.advance(1000, seq, snapshot=False)
@@ -57,6 +61,6 @@ def prepare(world: Any, faction: str = "Red", max_seconds: int = 900) -> dict[st
             break
     qid = next(iter(story.state(world)["quests"]), None)
     if qid is None:
-        raise RuntimeError("no quest opened: the mine did not report exhaustion")
+        raise RuntimeError("no quest opened: the collapsed mine was not noticed")
     q = story.state(world)["quests"][qid]
     return {"faction": faction, "mine": mine, "tile": list(tile), "quest": qid, "npc": q["npc"], "dungeon": q["dungeon"], "seq": seq}

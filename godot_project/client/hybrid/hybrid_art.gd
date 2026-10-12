@@ -24,6 +24,7 @@ var industry = IndustryView.new()
 
 
 func load_catalogue() -> void:
+	industry.art_ref = self
 	var file := FileAccess.open("res://client/hybrid/art/catalogue.json", FileAccess.READ)
 	if file == null:
 		missing.append("catalogue.json")
@@ -572,6 +573,14 @@ func draw_regions(canvas: CanvasItem, snapshot: Dictionary, tpx: int) -> void:
 			pts.append(Vector2(cx + size * cos(a), cy + size * sin(a)) * tpx)
 		var n: int = int(cubes[rid])
 		canvas.draw_polyline(pts, Color(0.95, 0.2 + 0.1 * n, 0.95, 0.9), 14.0)
+		# name the outline: what it is, how bad, what it does (owner playtest: an unexplained purple hexagon)
+		var imp: Dictionary = reg.get("impact", {}).get(rid, {})
+		var txt := "%s - %d of 3 marks - work at %d%%, %d closed" % [str(imp.get("label", "Outbreak")), n, int(round(float(imp.get("factor", 1.0)) * 100.0)), int(imp.get("closed", 0))]
+		var font := ThemeDB.fallback_font
+		var at := Vector2(cx * tpx, (cy - size * 0.82) * tpx)
+		var tw := font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 44).x
+		canvas.draw_rect(Rect2(at + Vector2(-tw * 0.5 - 10, -46), Vector2(tw + 20, 60)), Color(0.1, 0.0, 0.12, 0.75), true)
+		canvas.draw_string(font, at + Vector2(-tw * 0.5, 0), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 44, Color(1.0, 0.75, 1.0))
 
 
 func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
@@ -585,20 +594,31 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 			canvas.draw_circle(c + Vector2(sin(t * 2.0 + k) * 14.0, -rise * 120.0), 22.0 + rise * 26.0, Color(col.r, col.g, col.b, 0.85 * (1.0 - rise * 0.6)))
 		canvas.draw_circle(c, 26.0, Color(0.1, 0.0, 0.1, 0.9))
 		canvas.draw_arc(c, 34.0 + 6.0 * sin(t * 3.0), 0.0, TAU, 24, col, 5.0)
-		canvas.draw_string(font, c + Vector2(-70, 56), str(e.get("label", "outbreak")) + " (placeholder)", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(1, 0.95, 0.7))
+		canvas.draw_string(font, c + Vector2(-70, 56), str(e.get("label", "outbreak")) + " (outbreak mark)", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(1, 0.95, 0.7))
 		return
 	if str(e.get("kind", "")) == "npc":
-		var col := Color(0.95, 0.65, 0.2)
-		canvas.draw_circle(c + Vector2(0, -18), 11, Color(0.95, 0.8, 0.65))
-		canvas.draw_rect(Rect2(c + Vector2(-13, -8), Vector2(26, 32)), col, true)
-		canvas.draw_rect(Rect2(c + Vector2(-13, -8), Vector2(26, 32)), Color(0.25, 0.15, 0.05), false, 3.0)
-		canvas.draw_string(font, c + Vector2(-34, 44), "MINER (placeholder)", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 1, 0.8))
+		var healer := str(e.get("role", "")) == "healer"
+		var ring := Color(0.4, 1.0, 0.55) if healer else Color(1.0, 0.8, 0.25)
+		canvas.draw_arc(c + Vector2(0, 10), 26, 0.0, TAU, 28, Color(ring.r, ring.g, ring.b, 0.9), 4.0)  # a ring on the ground: someone to talk to
+		var fig := {"id": "fig:" + str(e.get("id", "")), "class": "worker", "definition": str(e.get("figure", "widelands.barbarians_miner_worker")),
+			"tx": e["tx"], "ty": e["ty"], "facing": "se", "status": "idle", "faction_name": str(e.get("faction_name", "")), "_static": true}
+		if _item_for(fig).is_empty():
+			canvas.draw_circle(c + Vector2(0, -18), 11, Color(0.95, 0.8, 0.65))
+			canvas.draw_rect(Rect2(c + Vector2(-13, -8), Vector2(26, 32)), ring, true)
+		else:
+			draw_entity(canvas, fig, tpx)
+		var name := str(e.get("label", "Healer" if healer else "Miner"))
+		var w := font.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, 34).x
+		canvas.draw_rect(Rect2(c + Vector2(-w * 0.5 - 8, 32), Vector2(w + 16, 42)), Color(0, 0, 0, 0.7), true)
+		canvas.draw_string(font, c + Vector2(-w * 0.5, 64), name, HORIZONTAL_ALIGNMENT_LEFT, -1, 34, ring)
 		if bool(e.get("has_quest", false)):
-			canvas.draw_circle(c + Vector2(0, -44), 12, Color(1, 0.9, 0.2))
-			canvas.draw_string(font, c + Vector2(-4, -38), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(0.3, 0.1, 0.0))
+			var bob := 4.0 * sin(Time.get_ticks_msec() / 250.0)
+			canvas.draw_circle(c + Vector2(0, -78 + bob), 16, Color(1, 0.9, 0.2))
+			canvas.draw_circle(c + Vector2(0, -78 + bob), 16, Color(0.3, 0.1, 0.0), false, 3.0)
+			canvas.draw_string(font, c + Vector2(-5, -69 + bob), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color(0.3, 0.1, 0.0))
 	else:
 		var open := bool(e.get("solved", false))
 		canvas.draw_rect(Rect2(c + Vector2(-26, -26), Vector2(52, 52)), Color(0.12, 0.1, 0.1), true)
 		canvas.draw_rect(Rect2(c + Vector2(-16, -10), Vector2(32, 36)), Color(0.02, 0.02, 0.03), true)
 		canvas.draw_arc(c + Vector2(0, -10), 16, PI, TAU, 16, Color(0.7, 0.6, 0.4), 4.0)
-		canvas.draw_string(font, c + Vector2(-40, 46), "GALLERY (placeholder)", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.9, 0.85, 0.7) if not open else Color(0.6, 1, 0.7))
+		canvas.draw_string(font, c + Vector2(-58, 50), "Disused gallery (E)", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(0.9, 0.85, 0.7) if not open else Color(0.6, 1, 0.7))

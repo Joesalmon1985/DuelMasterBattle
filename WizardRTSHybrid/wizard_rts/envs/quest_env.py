@@ -169,12 +169,15 @@ class QuestEnv(Env):
             return
         q = qs[1]
         mine = w.buildings.get(q["mine"])
-        if k == "world_fix_first" and mine is not None:
+        if k == "world_fix_first" and mine is not None and mine.get("disrupted"):
+            # the faction's own dig-out finishes first: its props are in the mine and the repair is a second from done (D22 cause)
             from wizard_rts.economy import produce
 
-            for (x, y, a, i) in w.terrain.cells(mine["tx"], mine["ty"], 2, q["resource"])[:6]:
-                w.terrain.add(x, y, q["resource"], 20)
-            mine.pop("deposit_exhausted", None)
+            d = mine["disrupted"]
+            for g, n in d["repair"].items():
+                produce(w, mine["id"], g, n)
+                w.stats["made_" + g] = w.stats.get("made_" + g, 0) + n
+            d["progress_ms"] = int(d["repair_ms"]) - 500
         elif k == "mine_destroyed" and mine is not None:
             w.damage_building(mine["id"], 10 ** 9, ["structure"], {})
         elif k == "npc_dead":

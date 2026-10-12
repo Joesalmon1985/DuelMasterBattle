@@ -684,9 +684,15 @@ func _follow() -> void:
 	size = content
 	custom_minimum_size = content
 	if _state == STATE_RESPONSES and _scroll != null:
-		_scroll.position = Vector2.ZERO
-		_scroll.size = content
-		_scroll.custom_minimum_size = content
+		# keep the responses below the spoken description (_layout_responses placed them there); resetting the scroll box to the
+		# top made the fire-magic buttons cover the observation text (owner playtest, 12 Oct 2026)
+		var speech_h := 0.0
+		if _button != null and _button.visible:
+			speech_h = _button.size.y + 10.0
+		_scroll.position = Vector2(0, speech_h)
+		var shown := Vector2(content.x, maxf(RESPONSE_MIN_H, content.y - speech_h))
+		_scroll.size = shown
+		_scroll.custom_minimum_size = shown
 
 
 ## Usable rectangle below/around HUD chrome. Exit Travel cards must stay here.

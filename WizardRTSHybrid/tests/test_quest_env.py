@@ -34,7 +34,7 @@ def test_observation_holds_only_what_the_wizard_knows():
     env.step(V["go_npc0"])
     env.step(V["talk"])
     o = env.observe()
-    assert any("The seam under" in line for line in o["dialogue"]["lines"])  # he now knows what the miner told him
+    assert any("caved in" in line for line in o["dialogue"]["lines"])  # he now knows what the miner told him (a real collapse)
 
 
 def test_mask_follows_position_and_dialogue():

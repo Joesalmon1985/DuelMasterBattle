@@ -7,8 +7,10 @@ VP is *derived from the settlement chronicle*, never kept as a free counter:
 The ledger (`world.dmb.definitions["vp_ledger"]`) is idempotent: a key can be written once, so repeated events, saves and reloads never
 double count, and `replay` recomputes every faction's VP from the chronicle alone to prove the live totals.
 
-Era progress (S04): an era ends when some faction has gained `era_vp_threshold` VP since the era began, or after `era_max_ms` (the
-stall guard). Both are configurable world attributes, tuned by `scripts/vp_report.py` rather than assumed. An ordinary era change keeps
+Era progress (S04, revised 12 Oct 2026): an era ends when the WORLD has gained `ERA_VP_THRESHOLDS[era]` VP since the era began (the
+sum over factions of each one's positive gain: a founded settlement or a conquest; a loss does not count against it), or after
+`era_max_ms` (the stall guard, reported separately as a non-natural transition). The leader-only rule of the first M4 version could not
+be met without conquest (a faction holds at most a few settlements), so every measured transition was a stall-guard one. Both are configurable world attributes, tuned by `scripts/vp_report.py` rather than assumed. An ordinary era change keeps
 every building, unit and person; it opens the next card pool and gives every faction one extra draft round (S05).
 """
 
@@ -18,8 +20,9 @@ from typing import Any
 
 from wizard_rts import settlements, tech
 
-ERA_VP_THRESHOLD = 6  # S04 proposed 10; measured by scripts/vp_report.py: 10 VP was not reached in 40 minutes on three seeds (top VP 3 at 14-16 min, 5 at 26-39 min), so 6 is the working default
-ERA_MAX_MS = 60 * 60_000
+ERA_VP_THRESHOLD = 6  # legacy single threshold; a world attribute era_vp_threshold overrides every era (developer pacing switch)
+ERA_VP_THRESHOLDS = (6, 8, 10)  # world VP gained to leave Prehistoric, Historic, Modern (tuned by scripts/run_civilisation_tournament.py)
+ERA_MAX_MS = 75 * 60_000
 CHECK_EVERY = 10  # economy quanta
 
 
@@ -86,9 +89,20 @@ def era_state(world: Any) -> dict[str, Any]:
     return st
 
 
-def progress(world: Any) -> int:
+def gains(world: Any) -> dict[str, int]:
     st = era_state(world)
-    return max((v - st["base"].get(f, 0) for f, v in totals(world).items()), default=0)
+    return {f: max(0, v - st["base"].get(f, 0)) for f, v in totals(world).items()}
+
+
+def progress(world: Any) -> int:
+    return sum(gains(world).values())
+
+
+def threshold(world: Any) -> int:
+    if "era_vp_threshold" in world.__dict__:
+        return int(world.era_vp_threshold)
+    st = era_state(world)
+    return ERA_VP_THRESHOLDS[min(st["index"], len(ERA_VP_THRESHOLDS) - 1)]
 
 
 def advance_era(world: Any, reason: str) -> bool:
@@ -112,8 +126,7 @@ def vp_quantum(world: Any) -> None:
         return
     st = era_state(world)
     now = int(world.dmb.clock.get("game_ms", 0))
-    threshold = int(getattr(world, "era_vp_threshold", ERA_VP_THRESHOLD))
-    due = "vp_threshold" if progress(world) >= threshold else ("stall_guard" if now - st["started_ms"] >= int(getattr(world, "era_max_ms", ERA_MAX_MS)) else "")
+    due = "vp_threshold" if progress(world) >= threshold(world) else ("stall_guard" if now - st["started_ms"] >= int(getattr(world, "era_max_ms", ERA_MAX_MS)) else "")
     if due:
         if not advance_era(world, due) and not getattr(world, "cycle_pending", False):
             world.cycle_pending = True  # the last era is over: the full historical cycle ends (history.cycle_reset builds the next world)
@@ -122,8 +135,13 @@ def vp_quantum(world: Any) -> None:
 
 def snapshot(world: Any) -> dict[str, Any]:
     st = era_state(world)
-    return {"era": tech.ERAS[st["index"]], "era_index": st["index"], "vp": totals(world), "progress": progress(world),
-            "threshold": int(getattr(world, "era_vp_threshold", ERA_VP_THRESHOLD)), "started_ms": st["started_ms"]}
+    now = int(world.dmb.clock.get("game_ms", 0))
+    guard = int(getattr(world, "era_max_ms", ERA_MAX_MS))
+    last = st["log"][-1] if st["log"] else None
+    return {"era": tech.ERAS[st["index"]], "era_index": st["index"], "vp": totals(world), "progress": progress(world), "gains": gains(world),
+            "threshold": threshold(world), "started_ms": st["started_ms"], "elapsed_ms": now - st["started_ms"],
+            "stall_guard_in_ms": max(0, st["started_ms"] + guard - now), "next_era": tech.ERAS[st["index"] + 1] if st["index"] + 1 < len(tech.ERAS) else "",
+            "last_reason": last["reason"] if last else "", "log": [dict(e) for e in st["log"]]}
 
 
 def set_era(world: Any, index: int) -> None:

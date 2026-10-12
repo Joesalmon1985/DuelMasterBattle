@@ -432,6 +432,9 @@ def _power_and_machines(world: Any, st: Industry, machines: list[dict]) -> None:
         m = b["mdy"]
         spec = R.block(b["kind"])
         role = m["role"]
+        if b.get("disrupted"):  # closed by a collapse or an outbreak (disruption.py): no work until repaired
+            m["state"] = "closed: " + b["disrupted"]["label"].lower()
+            continue
         if role == "drill":
             _drill_step(world, st, b, spec, m)
         elif role == "crafter":
@@ -467,7 +470,7 @@ def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict) -> None:
     m["item"] = item
     m["reserve_left"] = X.reserve_left(world, o)
     ware = R.ware(item)
-    if o["source"] == "deposit" and m["reserve_left"] < int(o["units_per_item"]):
+    if o["source"] == "deposit" and 0 <= m["reserve_left"] < int(o["units_per_item"]):
         m["state"] = "deposit used up"
         b["deposit_exhausted"] = True
         _flush(world, st, b, m)
@@ -481,6 +484,7 @@ def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict) -> None:
         m["progress"] += TICKS_PER_Q * len(o["tiles"]) * regions.production_factor(world, b)  # an outbreak in the region slows the drill
         if m["progress"] >= delay:
             if X.take_reserve(world, o):
+                b["working_once"] = True
                 m["progress"] -= int(delay)
                 m["out"][ware] = m["out"].get(ware, 0) + 1
                 world.stats["made_" + ware] = world.stats.get("made_" + ware, 0) + 1

@@ -1,9 +1,9 @@
 extends RefCounted
 class_name HybridIndustryView
 
-## Placeholder presentation of the Mindustry-style industry layer (belts, machines, power links, Mindustry units). Everything here is
-## drawn from the simulation snapshot: no rules live in Godot. These are labelled placeholders (coloured shapes), NOT upstream art.
-## Mindustry art in sources/ is not imported yet; `placeholder art` is printed on every machine so nobody mistakes it for the real thing.
+## Presentation of the Mindustry-style industry layer (belts, machines, power links, Mindustry units). Everything here is drawn from
+## the simulation snapshot: no rules live in Godot. Machines, belts and units use the imported Mindustry v146 sprites
+## (scripts/import_mindustry_art.py, GPL-3.0); a block without imported art falls back to a shape labelled "placeholder art".
 
 const ROLE_COLOR := {
 	"drill": Color(0.78, 0.55, 0.22), "crafter": Color(0.72, 0.3, 0.28), "generator": Color(0.95, 0.85, 0.25), "battery": Color(0.3, 0.7, 0.75),
@@ -21,6 +21,18 @@ const SHORT := {
 const DIRS := [Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0), Vector2(0, -1)]
 
 var clock := 0.0  ## seconds of real time, for the moving chevrons and pulses (presentation only)
+var _cache: Dictionary = {}
+
+
+func _sprite(art, key: String) -> Texture2D:
+	if _cache.has(key):
+		return _cache[key]
+	var item: Dictionary = art.items.get(key, {}) if art != null else {}
+	var tex: Texture2D = null
+	if not item.is_empty() and ResourceLoader.exists(str(item.get("godot", ""))):
+		tex = load(str(item["godot"]))
+	_cache[key] = tex
+	return tex
 
 
 func begin_frame(delta: float) -> void:
@@ -31,7 +43,11 @@ func ware_color(ware: String) -> Color:
 	return WARE_COLOR.get(ware, Color(1, 0, 1))
 
 
+var art_ref = null  ## set by hybrid_art so belts can find the imported conveyor sprite
+
+
 func draw_belts(canvas: CanvasItem, industry: Dictionary, tpx: int, vx0: int, vy0: int, vx1: int, vy1: int) -> void:
+	var belt_tex: Texture2D = _sprite(art_ref, "mindustry.block.conveyor")
 	for belt in industry.get("belts", []):
 		var x := int(belt[0])
 		var y := int(belt[1])
@@ -41,7 +57,12 @@ func draw_belts(canvas: CanvasItem, industry: Dictionary, tpx: int, vx0: int, vy
 		var origin := Vector2(x, y) * tpx
 		var centre := origin + Vector2(tpx, tpx) * 0.5
 		var blocked := int(belt[4]) == 1
-		canvas.draw_rect(Rect2(origin + Vector2(6, 6), Vector2(tpx - 12, tpx - 12)), Color(0.18, 0.18, 0.2) if not blocked else Color(0.35, 0.12, 0.12), true)
+		if belt_tex != null:  # the Mindustry conveyor, turned to the run's direction (the sprite runs east)
+			canvas.draw_set_transform(centre, d.angle(), Vector2.ONE)
+			canvas.draw_texture_rect(belt_tex, Rect2(Vector2(-tpx, -tpx) * 0.5, Vector2(tpx, tpx)), false, Color(1, 0.55, 0.55) if blocked else Color.WHITE)
+			canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		else:
+			canvas.draw_rect(Rect2(origin + Vector2(6, 6), Vector2(tpx - 12, tpx - 12)), Color(0.18, 0.18, 0.2) if not blocked else Color(0.35, 0.12, 0.12), true)
 		var side := Vector2(-d.y, d.x)
 		# chevrons slide along the run (moving only while the tile is not blocked)
 		var phase := fmod(clock * 1.8, 1.0) if not blocked else 0.0
@@ -115,9 +136,22 @@ func draw_entity(canvas: CanvasItem, art, e: Dictionary, tpx: int, faction_color
 		col = base.darkened(0.45)
 	elif working:
 		col = base.lightened(0.18 + 0.12 * sin(clock * 6.0))
+	var centre := rect.get_center()
+	var tex: Texture2D = _sprite(art, "mindustry.block." + str(e.get("kind", "")).trim_prefix("mdy:"))
+	if tex != null:
+		var tint := Color(1, 1, 1, 0.45) if building else (Color(0.55, 0.5, 0.5) if blocked else Color.WHITE)
+		canvas.draw_texture_rect(tex, rect.grow(4.0), false, tint)
+		canvas.draw_rect(rect.grow(4.0), faction_color, false, 3.0)
+		if working and role == "drill":
+			_spoke(canvas, centre, min(rect.size.x, rect.size.y) * 0.18, clock * 4.0)
+		if not building and m.has("pct") and role in ["crafter", "unit_factory"]:
+			canvas.draw_rect(Rect2(rect.position + Vector2(6, rect.size.y - 14), Vector2((rect.size.x - 12) * float(m["pct"]) / 100.0, 8)), Color(0.5, 1, 0.5), true)
+		if (blocked or str(m.get("state", "")).begins_with("closed")) and not building:
+			canvas.draw_string(ThemeDB.fallback_font, rect.position + Vector2(6, rect.size.y - 18), str(m.get("state", "")).to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 0.6, 0.55))
+		art._draw_health(canvas, e, centre)
+		return
 	canvas.draw_rect(rect, col, true)
 	canvas.draw_rect(rect, faction_color, false, 4.0)
-	var centre := rect.get_center()
 	match role:
 		"drill":
 			canvas.draw_circle(centre, min(rect.size.x, rect.size.y) * 0.28, Color(0.15, 0.1, 0.05))
@@ -179,6 +213,16 @@ func _draw_unit(canvas: CanvasItem, art, e: Dictionary, tpx: int, faction_color:
 	var drawn: Dictionary = art._motion(e)
 	var c := Vector2(drawn["_vx"] * tpx + tpx * 0.5, drawn["_vy"] * tpx + tpx * 0.5)
 	var ang := deg_to_rad(float(art.FACING_DEG.get(str(e.get("facing", "e")), 0.0)))
+	var utex: Texture2D = _sprite(art, "mindustry.unit." + str(e.get("definition", "")).trim_prefix("mindustry."))
+	if utex != null:  # Mindustry unit sprites face up: turn them to the unit's heading
+		var size := Vector2(utex.get_width(), utex.get_height()) * (tpx / 40.0)
+		canvas.draw_set_transform(c, ang + PI * 0.5, Vector2.ONE)
+		canvas.draw_texture_rect(utex, Rect2(-size * 0.5, size), false)
+		canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		canvas.draw_arc(c, size.x * 0.55, 0.0, TAU, 20, faction_color, 3.0)
+		art._draw_marker(canvas, e, c)
+		art._draw_health(canvas, e, c)
+		return
 	var xf := Transform2D(ang, c)
 	var pts := PackedVector2Array([xf * Vector2(22, 0), xf * Vector2(-16, 16), xf * Vector2(-16, -16)])
 	canvas.draw_colored_polygon(pts, Color(0.88, 0.9, 0.95))

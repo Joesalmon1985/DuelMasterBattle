@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import history, regions, settlements, story, tech, vp
+from wizard_rts import disruption, feed, history, regions, settlements, society, story, tech, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -76,11 +76,15 @@ class EventLog(list):
     def __init__(self, world: Any) -> None:
         super().__init__()
         self._world = world
+        self.total = 0  # every event ever appended: a reader of the bounded window knows how many are new since it last looked
 
     def append(self, e: dict) -> None:  # type: ignore[override]
         kind = e.get("kind", "")
         if kind.startswith("ai_") and e.get("faction"):
             self._world.fstat(e["faction"], kind)
+        if kind in feed.KINDS:
+            feed.capture(self._world, e)
+        self.total = getattr(self, "total", 0) + 1
         super().append(e)
 
 
@@ -325,8 +329,13 @@ class HybridWorld:
         if b.get("queue"):
             head = b["queue"][0]
             return "Recruiting %s (%s)" % (head["unit"], head["state"] if head["state"] != "waiting" else "waiting for goods")
-        if b.get("deposit_exhausted"):
-            return "The deposit in reach is used up (yield limit)"
+        if b.get("disrupted"):
+            d = b["disrupted"]
+            need = ", ".join("%s %d" % (g, n) for g, n in d["repair"].items())
+            stock = self.stocks.get(b["id"], {})
+            if any(int(stock.get(g, 0)) < n for g, n in d["repair"].items()):
+                return "Closed: %s. Waiting for repair wares (%s)" % (d["label"], need)
+            return "Closed: %s. Repair %d%%" % (d["label"], int(100 * int(d["progress_ms"]) / max(1, int(d["repair_ms"]))))
         if b.get("working"):
             return "Working"
         stall = b.get("stall")
@@ -571,9 +580,12 @@ class HybridWorld:
     def _plant_features(self) -> None:
         """Turn the generator's tree and rock data into persistent world objects."""
         occupied = self.blocked | self.road_tile_set
+        caps = [tuple(h["capital"]) for h in self.terrain.meta.get("homes", [])] if isinstance(self.terrain.meta, dict) else []
         for x, y, species, stage in self.terrain.features["trees"]:
             tile = (x, y)
             if tile in occupied or tile in self.tree_tiles or not self.tile_in_map(x, y):
+                continue
+            if self._thinned(tile, caps):
                 continue
             tree_id = plant_tree(self, tile, stage, species)
             self.trees[tree_id]["timer_ms"] = int(self.trees[tree_id]["timer_ms"] * (0.2 + 0.8 * self.rng.random()))
@@ -591,6 +603,22 @@ class HybridWorld:
                 "id": rock_id, "class": "rock", "kind": "rock", "definition": "widelands.rocks",
                 "tx": x, "ty": y, "amount": ROCK_AMOUNT, "reserved_by": "",
             }
+
+    @staticmethod
+    def _thinned(tile: tuple[int, int], capitals: list[tuple[int, int]]) -> bool:
+        """Owner playtest (12 Oct 2026): settlement woods were overcrowded. Two in five trees of the homeland woods 12 to 26 tiles from a
+        capital are not planted; the settlement core and the lumberjack grove keep the generator's layout.
+        Decided per tile by a hash, so the map generator's own random stream (and every other feature) is unchanged."""
+        import zlib
+
+        for cx, cy in capitals:
+            d2 = (tile[0] - cx) ** 2 + (tile[1] - cy) ** 2
+            if d2 > 26 * 26:
+                continue
+            if d2 < 144:
+                return False  # the core of the settlement (and the lumberjack grove) keeps the generator's layout
+            return zlib.crc32(f"thin:{tile[0]},{tile[1]}".encode()) % 5 < 2
+        return False
 
     def _seed_resource(self, around: tuple[int, int], resource: str) -> None:
         """A 5 by 5 resource field centred on the mine (the programme radius is 2)."""
@@ -673,10 +701,13 @@ class HybridWorld:
             record["territory"] = territory.HOME_RADIUS
         if kind not in ("tree", "rock"):
             r = rules.actor(definition) if definition.startswith("openra.") else None
-            # OpenRA buildings take their rules HP; Widelands buildings have none, so 500 HP (50000) is hybrid-defined
-            record["hp"] = record["max_hp"] = int(r["hp"]) if r else 50_000
+            # OpenRA buildings take their rules HP; Widelands buildings have none, so 500 HP (50000) is hybrid-defined. A home warehouse
+            # (the capital, the faction's last stand) holds 2000 HP: at 500 a Prehistoric band razed a capital in seconds (12 Oct 2026)
+            record["hp"] = record["max_hp"] = int(r["hp"]) if r else (200_000 if kind == "warehouse" else 50_000)
             record["target_type"] = "structure"
             record["armor"] = (r["armor"] if r else "Wood") or "Wood"
+            if kind == "warehouse" and not r:
+                record["armor"] = "Concrete"  # a capital is stone-built: Prehistoric clubs and spears barely scratch it, siege weapons can take it
             record["operational"] = True
         self.buildings[building_id] = record
         self.stocks[building_id] = {}
@@ -756,6 +787,29 @@ class HybridWorld:
         self.hazard_id = str(added["cube"]["id"])
         self.hazard_tile = tile
 
+    WALKABLE_TREE_STAGES = ("sapling", "felled", "stump")
+
+    def tree_solid(self, tree: dict[str, Any]) -> bool:
+        """A grown tree is solid; saplings, stumps, felled trunks, fields, crops and bushes are not."""
+        if not tree or tree.get("stage") in self.WALKABLE_TREE_STAGES or tree.get("species") == "wheat":
+            return False
+        if "imm" in tree:
+            from wizard_rts import imm
+
+            attrs = imm.attributes(tree) if hasattr(imm, "attributes") else []
+            return "tree" in attrs or "normal_tree" in attrs
+        return True
+
+    def solid_for_wizard(self, tile: tuple[int, int]) -> bool:
+        """True where a standing tree or a rock stands (the wizard walks round them, as Godot's local movement does)."""
+        tid = self.tree_tiles.get(tile)
+        if tid is not None and self.tree_solid(self.trees.get(tid, {})):
+            return True
+        idx = self.__dict__.get("_rock_index")
+        if idx is None or idx[0] != len(self.rocks):
+            idx = self._rock_index = (len(self.rocks), {(int(r["tx"]), int(r["ty"])) for r in self.rocks.values()})
+        return tile in idx[1]
+
     def set_pose(self, tx: int, ty: int, facing: str = "down", snapshot: bool = True) -> dict[str, Any]:
         game_ms = int(self.dmb.clock.get("game_ms", 0))
         tile = (int(tx), int(ty))
@@ -763,6 +817,8 @@ class HybridWorld:
             return {"status": "rejected", "reason": "outside_map", "snapshot": self.snapshot() if snapshot else None}
         if tile in self.blocked:
             return {"status": "rejected", "reason": "blocked", "snapshot": self.snapshot() if snapshot else None}
+        if self.solid_for_wizard(tile):  # P1.1: a standing tree or a rock is solid; saplings, stumps and cleared tiles are not
+            return {"status": "rejected", "reason": "obstacle", "snapshot": self.snapshot() if snapshot else None}
         previous = tile_to_hex(self.player["tx"], self.player["ty"])
         self.player = {"tx": tile[0], "ty": tile[1], "facing": str(facing or "down")}
         current = tile_to_hex(tile[0], tile[1])
@@ -782,6 +838,8 @@ class HybridWorld:
             story.story_quantum(self)
             vp.vp_quantum(self)
             regions.regions_quantum(self)
+            disruption.disruption_quantum(self)
+            society.society_quantum(self)
             history.history_quantum(self)
             con.recruitment_quantum(self)
             lifecycle_quantum(self)
@@ -971,7 +1029,8 @@ class HybridWorld:
             sig = (tree["definition"], tree["stage"])
             if sent.get(tree_id) != sig:
                 sent[tree_id] = sig
-                upsert.append({"id": tree_id, "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"], "tx": tree["tx"], "ty": tree["ty"]})
+                upsert.append({"id": tree_id, "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"], "tx": tree["tx"], "ty": tree["ty"],
+                               "solid": self.tree_solid(tree)})
         for rock_id, rock in self.rocks.items():
             sig = ("rock", rock["amount"])
             if sent.get(rock_id) != sig:
@@ -1015,7 +1074,11 @@ class HybridWorld:
             if building["kind"] in ("mine", "ironmine", "well"):
                 res = {"mine": "coal", "ironmine": "iron", "well": "water"}[building["kind"]]
                 row["deposit_left"] = self.resource_total((building["tx"], building["ty"]), 2, res)
-                row["deposit_exhausted"] = bool(building.get("deposit_exhausted"))
+                row["inexhaustible"] = terrain_mod.is_mineral(res)  # D22: the figure is the site's richness, not a stock that runs out
+            if building.get("disrupted"):
+                d = building["disrupted"]
+                row["disrupted"] = {"cause": d["cause"], "label": d["label"], "since_ms": d["since_ms"], "repair": dict(d["repair"]),
+                                    "progress": round(int(d["progress_ms"]) / max(1, int(d["repair_ms"])), 2)}
             entities.append(row)
         for carrier in self.carriers.values():
             row = _entity_row(carrier)
@@ -1128,6 +1191,9 @@ class HybridWorld:
             "story": story.snapshot(self),
             "era": vp.snapshot(self),
             "history": history.snapshot(self),
+            "overview": feed.overview(self),
+            "feed": feed.snapshot(self),
+            "ai_notes": {k: list(v[-4:]) for k, v in self.__dict__.get("ai_notes", {}).items()},
             "regions": regions.snapshot(self),
         }
 

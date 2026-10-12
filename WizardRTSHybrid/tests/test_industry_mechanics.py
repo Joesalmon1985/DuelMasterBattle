@@ -95,7 +95,9 @@ def test_drill_needs_an_existing_deposit_or_sand_floor():
 
 
 @pytest.mark.parametrize("kind,target,upi", [("mdy:mechanical_drill", "copper", 1), ("mdy:pneumatic_drill", "titanium", 2)])
-def test_reserve_is_shared_and_decreases_exactly(kind, target, upi):
+def test_drill_on_a_shared_site_logs_its_extraction_and_never_exhausts_it(kind, target, upi):
+    """D22 (12 Oct 2026, superseding the shared finite reserve of D21): the drill reads the same Widelands site, applies the conversion
+    factor to the logged extraction, and the site does not shrink."""
     w, d, belt, fp, _b = drill_scene("iron", target, kind)
     layer_before = bytes(w.terrain.res_kind)
     start = reserve(w, fp, "iron")
@@ -104,7 +106,8 @@ def test_reserve_is_shared_and_decreases_exactly(kind, target, upi):
     ware = R.ware(target)
     made = w.stats.get("made_" + ware, 0)
     assert made >= 10
-    assert start - reserve(w, fp, "iron") == w.stats["extracted_units_iron"] == made * upi  # one canonical reserve, conversion factor applied
+    assert reserve(w, fp, "iron") == start  # the site is inexhaustible
+    assert w.stats["extracted_units_iron"] == made * upi and w.stats["mined_from_inexhaustible_deposit:iron"] == made  # conversion factor, source ledger
     assert bytes(w.terrain.res_kind) == layer_before  # no new deposit squares: the resource-kind layer is untouched
     assert S.holdings(w).get(ware, 0) == made  # every drilled item is on the belt or in the drill
     assert ledger.check(w, init) == []

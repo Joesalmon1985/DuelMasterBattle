@@ -59,6 +59,9 @@ def building_weapon(b: dict) -> dict | None:
     r = rules.actor(definition) if definition.startswith("openra.") else None
     if r and r["armaments"] and b.get("operational", True):
         return rules.weapon(r["armaments"][0])
+    if b.get("command_center") and b.get("operational", True) and not b.get("destroyed") and not b.get("constructing"):
+        # a settlement's militia (a Widelands headquarters holds soldiers): a small raid cannot simply walk in (12 Oct 2026)
+        return rules.weapon("DMB_Militia")
     return None
 
 
@@ -406,6 +409,11 @@ def kill_unit(world: Any, entity: dict, by: str = "") -> None:
     entity["path"] = []
     world.stats["destroyed"] += 1
     world.stats["units_lost"] = world.stats.get("units_lost", 0) + 1
+    if entity.get("cargo"):  # an MCV or settlers' wagon dies with the starter kit it carried
+        from wizard_rts.lifecycle import lose
+
+        for good, n in sorted(entity.pop("cargo").items()):
+            lose(world, good, int(n))
     vr = rules.actor(entity.get("definition", "")) or {}
     value = int(vr.get("cost", 0))
     world.fstat(entity["faction_name"], "loss_value", value)
@@ -636,8 +644,8 @@ def military_quantum(world: Any) -> None:
         if unit.get("alive", True):
             _unit_step(world, unit)
     for b in list(world.buildings.values()):
-        if "hp" in b and int(b["hp"]) > 0 and b.get("definition", "").startswith("openra."):
-            _building_step(world, b)
+        if "hp" in b and int(b["hp"]) > 0 and (b.get("definition", "").startswith("openra.") or b.get("command_center")):
+            _building_step(world, b)  # OpenRA defences, and every settlement's militia (building_weapon)
     if world.military_quanta % 20 == 0:
         alive = [u["id"] for u in world.units.values() if u.get("alive", True)]
         if len(alive) >= 2:

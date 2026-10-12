@@ -34,8 +34,8 @@ def prepared(seed: int, scenario: str = "story") -> tuple[Any, dict[str, Any]]:
 
 
 def attention_advance(world: Any, seconds: float, economy: bool = False) -> None:
-    """Move game time forward by `seconds`. `economy=False` runs only the systems the wizard's choices interact with (story, outbreaks,
-    VP/eras): the workers, carriers and AI are skipped so that an episode takes milliseconds. `economy=True` is the full world."""
+    """Move game time forward by `seconds`. `economy=False` runs only the systems the wizard's choices interact with (story,
+    disruptions, outbreaks, VP/eras): the workers, carriers and AI are skipped so that an episode takes milliseconds. `economy=True` is the full world."""
     n = int(math.ceil(seconds))
     for _ in range(n):
         seq = int(world.dmb.clock.get("clock_sequence", 0)) + 1
@@ -45,11 +45,12 @@ def attention_advance(world: Any, seconds: float, economy: bool = False) -> None
         if world.dmb.clock.get("pause_tokens"):
             world.dmb.clock["clock_sequence"] = seq
             continue
-        from wizard_rts import history, regions, story, vp
+        from wizard_rts import disruption, history, regions, story, vp
 
         world.dmb.clock["game_ms"] = int(world.dmb.clock.get("game_ms", 0)) + 1000
         world.dmb.clock["clock_sequence"] = seq
         world.economy_quanta += 10
+        disruption.disruption_quantum(world)  # closures and their repairs are part of the story's world (the miner's collapsed gallery)
         story.story_quantum(world)
         vp.vp_quantum(world)
         history.history_quantum(world)

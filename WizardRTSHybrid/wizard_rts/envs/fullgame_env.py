@@ -1,5 +1,5 @@
 """Cross-system environment (owner section D.6): one real HybridWorld in which the wizard must decide, minute by minute, between
-finishing a settlement's story (talk -> gallery -> four puzzles -> the warden's duel -> a changed deposit) and treating the outbreaks
+finishing a settlement's story (talk -> gallery -> four puzzles -> the warden's duel -> a reopened gallery) and treating the outbreaks
 that grow while he is underground. Everything is the real thing: the dry mine, the person, the generated dungeon, the Mastermind duel,
 the hex-region cubes, one clock. The outbreak cadence is scaled up so the two crises genuinely compete.
 

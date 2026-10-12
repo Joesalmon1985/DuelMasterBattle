@@ -26,6 +26,7 @@ BASE_PLAN = {
     "producer": 3, "ranger": 3, "quarry": 2, "mine": 2, "ironmine": 2,
     "smelter": 1, "smithy": 1, "processor": 1, "barracks": 1, "vehicle_factory": 1, "defense": 1,
     "farm": 2, "hunter": 2, "well": 1, "tavern": 2, "bakery": 1, "fisher": 1,
+    "war_lodge": 1,  # 12 Oct 2026: the Prehistoric military building added with the era roster (plan-table entry only)
 }
 # Plan kinds that are an imported building of the faction's own tribe: fish is a ration ingredient. Frisians catch fish in
 # ponds (not implemented), so they have none here; the Amazon hunter-gatherer brings fish as well as game.
@@ -284,7 +285,7 @@ def _settlement_step(world: Any, name: str, wh: dict, main: bool) -> None:
         return
     plan = _plan(name, world) if main else dict(OUTPOST_PLAN)
     logs = _stock(world, name, "log", wh)
-    order = ["producer", "ranger", "processor", "quarry", "hunter", "fisher", "farm", "well", "tavern", "bakery", "mine", "ironmine", "smelter", "smithy", "barracks", "vehicle_factory", "defense"] if main else list(OUTPOST_ORDER)
+    order = ["producer", "ranger", "processor", "quarry", "hunter", "fisher", "farm", "well", "tavern", "bakery", "mine", "ironmine", "smelter", "smithy", "war_lodge", "barracks", "vehicle_factory", "defense"] if main else list(OUTPOST_ORDER)
     if logs < 6:  # wood first when it runs short
         order = ["producer", "ranger"] + [k for k in order if k not in ("producer", "ranger")]
     for plan_kind in order:
@@ -323,22 +324,24 @@ def expansion_step(world: Any, name: str, wh: dict) -> None:
         return
     now = int(world.dmb.clock.get("game_ms", 0))
     mine = _mine(world, name)
-    mcvs = [u for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("definition") == territory.MCV_DEFINITION]
+    mcvs = [u for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and territory.is_founder(u)]
     for u in mcvs:
         _drive_mcv(world, name, u, now)
     if mcvs:
         return
-    queued = any(i["unit"] == "mcv" for b in mine for i in b.get("queue", []))
+    queued = any(i["unit"] in ("mcv", "settlers") for b in mine for i in b.get("queue", []))
     state = world.__dict__.setdefault("_ai_expand", {}).setdefault(name, {"last": -10**9})
     if queued or len(territory.command_centers(world, name)) >= MAX_CC or now < EXPAND_AFTER_MS or now - state["last"] < EXPAND_REPEAT_MS:
         return
-    factories = [b for b in mine if b["kind"] == "vehicle_factory" and b.get("operational") and "mcv" in con.RECIPES["vehicle_factory"]]
+    # 12 Oct 2026 rule adaptation (not a strategy change): the Prehistoric settlers' wagon from the warehouse is the same founder as the MCV
+    factories = [(b, "mcv") for b in mine if b["kind"] == "vehicle_factory" and b.get("operational") and tech.unit_allowed(world, name, "mcv")]
+    factories += [(wh, "settlers")] if tech.unit_allowed(world, name, "settlers") else []
     if not factories:
         return
     if _find_expansion_site(world, name, None) is None:
         return  # nowhere legal to put one: do not spend the wares
-    f = factories[0]
-    if con.queue_unit(world, f["id"], "mcv")["status"] != "ok":
+    f, founder = factories[0]
+    if con.queue_unit(world, f["id"], founder)["status"] != "ok":
         return
     q = f["queue"]
     item = q.pop()
@@ -582,6 +585,19 @@ def _mine_site(world: Any, wh: dict, resource: str) -> tuple[int, int] | None:
 
 
 def _build_tribe_building(world: Any, name: str, bname: str, wh: dict) -> str | None:
+    """Place one tribe building. Performance (12 Oct 2026, both policies): a placement that found no site is not searched again for
+    60 game seconds; before, the planner repeated every failing wide search every decision (half the simulation time)."""
+    now = int(world.dmb.clock.get("game_ms", 0))
+    cool = world.__dict__.setdefault("_ai_tribe_cool", {})
+    if cool.get((name, bname), -1) > now:
+        return None
+    site = _build_tribe_building_now(world, name, bname, wh)
+    if site is None:
+        cool[(name, bname)] = now + 60_000
+    return site
+
+
+def _build_tribe_building_now(world: Any, name: str, bname: str, wh: dict) -> str | None:
     from wizard_rts import wl_defs
 
     kind = wl_defs.PREFIX + bname
@@ -805,13 +821,18 @@ def military_step(world: Any, name: str) -> None:
     # recruitment: keep two orders queued per production building, within the army cap
     navy = [u for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("loco") in NAVAL]
     for b in mine:
-        if b["kind"] in con.RECIPES and b.get("operational") and len(b.get("queue", [])) < 2:
+        if b["kind"] in con.RECIPES and b["kind"] != "warehouse" and b.get("operational") and len(b.get("queue", [])) < 2:
+            # the first recipe the faction's cards allow (12 Oct 2026 adaptation: the menus grew per era; the choice stays naive)
+            allowed = [k for k in con.RECIPES[b["kind"]] if k not in ("mcv", "settlers") and tech.unit_allowed(world, name, k)]
+            if not allowed:
+                continue
+            payable = [k for k in allowed if _can_pay(world, name, con.recipe_for(world, b, k)["cost"])]
+            allowed = payable or allowed  # the first one it can pay for now (the old first recipe, a tank, became iron-hungry)
             if b["kind"] in NAVAL_BUILDINGS:
                 if len(navy) < MAX_NAVY:
-                    con.queue_unit(world, b["id"], next(iter(con.RECIPES[b["kind"]])))
+                    con.queue_unit(world, b["id"], allowed[0])
             elif len(army) < MAX_ARMY:
-                unit_kind = next(iter(con.RECIPES[b["kind"]]))
-                con.queue_unit(world, b["id"], unit_kind)
+                con.queue_unit(world, b["id"], allowed[0])
     navy_step(world, name, wh, navy)
     idle_all = [u for u in army if not u.get("order") and u.get("status") in ("idle", None, "attacking", "blocked", "stuck", "waiting_route")]
     if not getattr(world, "ai_aggressive", True):
@@ -914,15 +935,37 @@ def _pick_target(world: Any, name: str, squad: list[dict]) -> dict | None:
     return best[1] if best else None
 
 
+POLICIES = ("baseline", "plus")  # baseline: this module; plus: wizard_rts/ai_plus.py (the improved challenger)
+
+
+def policy_of(world: Any, name: str) -> str:
+    """Which commander plays a faction. world.ai_policy maps faction -> policy; a split successor inherits its parent's;
+    the default is HYBRID_AI_POLICY (baseline when unset)."""
+    import os
+
+    pol = world.__dict__.setdefault("ai_policy", {})
+    if name not in pol:
+        parent = world.faction_info.get(name, {}).get("parent")
+        pol[name] = pol.get(parent) if parent in pol else os.environ.get("HYBRID_AI_POLICY", "baseline")
+    return pol[name] if pol[name] in POLICIES else "baseline"
+
+
 def ai_quantum(world: Any) -> None:
     n = world.economy_quanta
     if n % DECIDE_EVERY != 0:
         return
-    for k, name in enumerate(world.faction_info):
+    from wizard_rts import ai_plus
+
+    for k, name in enumerate(list(world.faction_info)):
         if name == world.controlled_faction or (n // DECIDE_EVERY + k) % 1 != 0:
             continue
         if world.ai_factions is not None and name not in world.ai_factions:
             continue  # an agent or a human plays this faction
+        if (world.__dict__.get("history") or {}).get("faction", {}).get(name, {}).get("state") == "collapsed":
+            continue
+        if policy_of(world, name) == "plus":
+            ai_plus.decide(world, name)
+            continue
         pick = tech.ai_pick(world, name)
         if pick:
             tech.draft(world, name, pick)

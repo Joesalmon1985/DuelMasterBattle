@@ -7,6 +7,9 @@
 #                                              (click the miner; E at the gallery mouth; arrows move, E uses, 1-8 pick an item, Q/F/R spells)
 #   scripts/launch_scenario.sh outbreak        cubes in the wizard's hex region, a healer, treatment with T (hold still 8 s)
 #   scripts/launch_scenario.sh eras            historic -> modern transition and full-cycle reset                  (HYBRID_ERA_MS / HYBRID_ERA_VP set the pace)
+#   scripts/launch_scenario.sh autoplay        SPECTATOR: a normal primitive six-faction world at 16x in God Mode, nothing staged or forced;
+#                                              every faction is played by its AI (HYBRID_AI_POLICY=mixed|plus|baseline, default mixed: the
+#                                              improved AI on Red, Green, Purple). Click a faction row to inspect it; "Take control" commands it.
 # Developer switches (developer profile only, never in campaign): HYBRID_DRAFT_MS=<ms> draft interval, HYBRID_SEED, HYBRID_MAP,
 # HYBRID_FIXTURE_FACTION (default Red). In God Mode use the 16x clock button to watch the industry build up; G returns to the wizard.
 set -euo pipefail
@@ -17,6 +20,7 @@ case "${1:-}" in
   industry) export HYBRID_PROFILE=developer HYBRID_FIXTURE=modern_industry HYBRID_ALLOW_SPAWN=1; exec "$HERE/launch_hybrid.sh" god ;;
   story) export HYBRID_PROFILE=developer HYBRID_FIXTURE=story; exec "$HERE/launch_hybrid.sh" wizard ;;
   outbreak) export HYBRID_PROFILE=developer HYBRID_FIXTURE=outbreak; exec "$HERE/launch_hybrid.sh" wizard ;;
+  autoplay) export HYBRID_PROFILE=developer HYBRID_START_SPEED="${HYBRID_START_SPEED:-16}" HYBRID_AI_POLICY="${HYBRID_AI_POLICY:-mixed}" HYBRID_SEED="${HYBRID_SEED:-507}"; exec "$HERE/launch_hybrid.sh" god ;;
   eras) export HYBRID_PROFILE=developer HYBRID_ERA_MS="${HYBRID_ERA_MS:-120000}" HYBRID_ERA_VP="${HYBRID_ERA_VP:-3}" HYBRID_DRAFT_MS="${HYBRID_DRAFT_MS:-30000}"; exec "$HERE/launch_hybrid.sh" god ;;
-  *) sed -n 2,12p "$0"; exit 1 ;;
+  *) sed -n 2,15p "$0"; exit 1 ;;
 esac

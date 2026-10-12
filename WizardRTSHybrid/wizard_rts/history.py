@@ -19,7 +19,7 @@ from typing import Any
 from wizard_rts import settlements, territory, vp
 
 DECLINE_IDLE_MS = 10 * 60_000
-SPLIT_MIN_SETTLEMENTS = 4
+SPLIT_MIN_SETTLEMENTS = 3  # 12 Oct 2026: factions hold 3-6 settlements in the measured games; 4 never occurred
 SPLIT_DISTANCE = 50  # S12 leaves N open: about three settlement radii (outposts are 16, homes 34)
 SPLIT_UNREST = 0.6
 CHECK_EVERY = 10
@@ -40,7 +40,7 @@ def _note(world: Any, faction: str, event: str, **kw: Any) -> None:
 
 
 def has_mcv(world: Any, faction: str) -> bool:
-    return any(u["faction_name"] == faction and u.get("alive", True) and u.get("definition") == territory.MCV_DEFINITION for u in world.units.values())
+    return any(u["faction_name"] == faction and u.get("alive", True) and territory.is_founder(u) for u in world.units.values())
 
 
 def collapse(world: Any, faction: str) -> None:
@@ -94,7 +94,7 @@ def split(world: Any, faction: str, breakaway: dict) -> str:
     state(world)["faction"][base] = {"state": "active", "last_productive_ms": int(world.dmb.clock.get("game_ms", 0)), "peak": {"settlements": 0, "centroid": None, "weight": 0}}
     from wizard_rts import tech
 
-    world.tech[base] = {"cards": list(world.tech[faction]["cards"]), "offers": [], "round": world.tech[faction]["round"], "next_round_ms": 0}
+    world.tech[base] = {**tech.new_state(), "cards": list(world.tech[faction]["cards"]), "round": world.tech[faction]["round"]}
     bx, by = breakaway["tile"]
     others = [r for r in settlements.standing(world, faction) if r["id"] != breakaway["id"]]
 
@@ -146,7 +146,7 @@ def history_quantum(world: Any) -> None:
         elif not (lost_capital or idle) and fs["state"] == "declining":
             fs["state"] = "active"
             _note(world, name, "recovered")
-        cand = split_candidates(world, name)
+        cand = split_candidates(world, name) if world.economy_quanta % 300 == 0 else None  # every 30 game seconds is ample for a split
         if cand is not None:
             split(world, name, cand[1])
 

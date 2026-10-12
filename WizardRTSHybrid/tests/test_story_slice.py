@@ -1,6 +1,6 @@
-"""M3: one live-settlement story on the real world. A shortage that exists in the simulation opens a quest for a real person; the
-wizard talks, goes underground, solves four puzzles, breaks the warden's code in a Mastermind duel and a typed effect changes the
-Widelands deposit once; the mine digs again. Every step goes through the wizard's public ops (story.dispatch)."""
+"""M3: one live-settlement story on the real world. A shortage that exists in the simulation (a mine whose gallery caved in, D22: sites
+never run dry) opens a quest for a real person; the wizard talks, goes underground, solves four puzzles, breaks the warden's code in a
+Mastermind duel and a typed effect reopens the gallery once; the mine digs again. Every step goes through the wizard's public ops (story.dispatch)."""
 import copy
 import os
 import pickle
@@ -80,13 +80,16 @@ def test_shortage_comes_from_real_state_and_opens_one_quest(prepared):
     w, ids = clone(prepared)
     q = w.dmb.quests[ids["quest"]]
     mine = w.buildings[ids["mine"]]
-    assert mine["deposit_exhausted"] and mine["kind"] == "mine" and mine["operational"]
-    assert w.resource_total((mine["tile"] if "tile" in mine else mine["tx"], mine["ty"]), 2, "coal") == 0
-    assert q["status"] == "offered" and q["template_id"] == "quest.shortage.mine_exhausted"
+    assert mine["disrupted"]["cause"] == "collapse" and mine["kind"] == "mine" and mine["operational"]
+    assert w.resource_total((mine["tx"], mine["ty"]), 2, "coal") > 0  # the seam is still there (D22): the gallery is what failed
+    made = w.stats.get("made_coal", 0)
+    seq_run(w, ids, 60)
+    assert w.stats.get("made_coal", 0) == made  # a closed mine really produces nothing
+    assert q["status"] == "offered" and q["template_id"] == "quest.shortage.gallery_collapse"
     assert q["affected_entity_id"] == ids["mine"] and q["stakeholder_id"] == ids["npc"] and q["site_id"].startswith("settlement:")
     person = w.dmb.people[ids["npc"]]
     assert person["workplace_id"] == ids["mine"] and person["alive"]
-    seq_run(w, ids, 120)  # the check repeats every second: still exactly one quest, one cause, one person
+    seq_run(w, ids, 60)  # the check repeats every second: still exactly one quest, one cause, one person
     assert len(w.dmb.quests) == 1 and len(w.dmb.people) == 1 and len(story.state(w)["dungeons"]) == 1
     # the person and the entrance are entities of the one world
     rows = {r["kind"]: r for r in story.entity_rows(w)}
@@ -106,15 +109,17 @@ def test_dialogue_facts_come_from_the_live_world(prepared):
     A.walk_to_npc(w, ids["npc"])
     r = A.op(w, "talk", npc=ids["npc"])
     f = story.facts(w, story.state(w)["quests"][ids["quest"]])
-    assert "%d in reach" % f["deposit_left"] in r["lines"][0] and f["deposit_left"] == 0
-    assert "The warehouse holds %d" % f["stock"] in r["lines"][1]
+    assert "caved in" in r["lines"][0] and "%d minutes ago" % f["minutes_since"] in r["lines"][0]
+    assert "props on site: %d of %d" % (f["props_have"], f["props_need"]) in r["lines"][1]
     # change the world and the words change: the same person cites the new stock
     wh = con.faction_warehouse(w, "Red")
     from wizard_rts.economy import produce
-    produce(w, wh["id"], "coal", 7)
-    w.stats["made_coal"] = w.stats.get("made_coal", 0) + 7
+    mine = w.buildings[ids["mine"]]
+    produce(w, mine["id"], "log", 2)  # two props carried in (counted as made so the ledger stays balanced)
+    w.stats["made_log"] = w.stats.get("made_log", 0) + 2
     r2 = A.op(w, "talk", npc=ids["npc"])
-    assert "The warehouse holds %d" % (f["stock"] + 7) in r2["lines"][1]
+    assert "props on site: %d of %d" % (story.facts(w, story.state(w)["quests"][ids["quest"]])["props_have"], f["props_need"]) in r2["lines"][1]
+    assert r2["lines"][1] != r["lines"][1]
     assert A.op(w, "talk", npc="person:999")["reason"] == "no_such_person"
     w.player["tx"], w.player["ty"] = 5, 5
     assert A.op(w, "talk", npc=ids["npc"])["reason"] == "too_far"  # the wizard has to be standing there
@@ -141,6 +146,7 @@ def test_full_story_changes_the_world_once(prepared):
     init = ledger.snapshot_totals(w)
     reserve0 = w.resource_total(tile, 2, "coal")
     layer = bytes(w.terrain.res_kind)
+    assert mine["disrupted"]["cause"] == "collapse"
     learn_and_accept(w, ids)
     assert story.state(w)["inventory"] == [story.state(w)["dungeons"][ids["dungeon"]]["record"]["needs"]["item"]]
     go_down(w, ids)
@@ -156,17 +162,16 @@ def test_full_story_changes_the_world_once(prepared):
     assert len(result["public"]["guesses"]) <= result["public"]["max_casts"] == 12  # persuasion gave two more casts
     assert "secret" not in str(result["public"])  # the public view never leaks the code
     q = w.dmb.quests[ids["quest"]]
-    assert q["status"] == "completed" and q["resolution"] == "vein_full"
-    # a typed effect with receipts raised the real Widelands reserve, exactly once and as a logged source
-    assert w.resource_total(tile, 2, "coal") - reserve0 == w.stats["story_vein_units_coal"] == 120
+    assert q["status"] == "completed" and q["resolution"] == "gallery_full"
+    # a typed effect with receipts reopened the real mine, exactly once; the deposit layer is untouched (D22: no new geology)
+    assert not w.buildings[ids["mine"]].get("disrupted") and w.resource_total(tile, 2, "coal") == reserve0
     assert bytes(w.terrain.res_kind) == layer
     assert len(q["effect_receipts"]) == 2 and all(r in w.dmb.command_receipts for r in q["effect_receipts"])
-    assert not w.buildings[ids["mine"]].get("deposit_exhausted")
+    assert sum(1 for e in w.events if e["kind"] == "disruption_cleared" and e["how"] == "wizard") == 1
     # applying the same effects again changes nothing
-    again = story.apply_effects(w, ids["quest"], [{"kind": "deposit_vein", "units": 120, "mine": ids["mine"], "resource": "coal"},
-                                                  {"kind": "history_fact", "fact": "vein_opened:full", "person": ids["npc"]}], prefix="duel1")
+    again = story.apply_effects(w, ids["quest"], [{"kind": "reopen_gallery", "mode": "full", "mine": ids["mine"]},
+                                                  {"kind": "history_fact", "fact": "gallery_reopened:full", "person": ids["npc"]}], prefix="duel1")
     assert [a["status"] for a in again["applied"]] == ["idempotent", "idempotent"]
-    assert w.stats["story_vein_units_coal"] == 120
     walk_out(w)
     assert not story.state(w)["in_dungeon"]
     # production changes: the mine digs again and the warehouse coal stock rises
@@ -174,13 +179,13 @@ def test_full_story_changes_the_world_once(prepared):
     coal0, made0 = w.stocks[wh["id"]].get("coal", 0), w.stats.get("made_coal", 0)
     seq_run(w, ids, 400)
     assert w.stats.get("made_coal", 0) > made0 and w.stocks[wh["id"]].get("coal", 0) > coal0
-    assert ledger.check(w, init) == []  # the wares balance; the reserve source is in stats
+    assert ledger.check(w, init) == []  # the wares balance; mined coal is logged as an inexhaustible-deposit source (D22)
     # the story is closed: no second quest, the person remembers
     assert len(w.dmb.quests) == 1
     A.walk_to_npc(w, ids["npc"])
     talk = A.op(w, "talk", npc=ids["npc"])
-    assert "open again" in talk["lines"][0] and talk["choices"] == []
-    assert any(f["value"] == "vein_opened:full" for f in w.dmb.people[ids["npc"]]["known_facts"])
+    assert "coming up again" in talk["lines"][0] and talk["choices"] == []
+    assert any(f["value"] == "gallery_reopened:full" for f in w.dmb.people[ids["npc"]]["known_facts"])
 
 
 def test_duel_freezes_game_time_and_keeps_entity_ids(prepared):
@@ -204,7 +209,7 @@ def test_duel_freezes_game_time_and_keeps_entity_ids(prepared):
     assert w.entity_ids() == ids_before or set(ids_before) <= set(w.entity_ids())
 
 
-def test_exhausted_casts_give_the_thin_vein_alternate_ending(prepared):
+def test_exhausted_casts_give_the_shored_gallery_alternate_ending(prepared):
     w, ids = clone(prepared)
     learn_and_accept(w, ids, persuade=False)
     go_down(w, ids)
@@ -222,8 +227,9 @@ def test_exhausted_casts_give_the_thin_vein_alternate_ending(prepared):
         if last["status"] in ("solved", "exhausted"):
             break
     assert last["status"] == "exhausted" and last["result"]["outcome"] == "thin"
-    assert w.stats["story_vein_units_coal"] == 36
-    assert w.dmb.quests[ids["quest"]]["resolution"] == "vein_thin"  # a legitimate alternate ending, not a failure
+    assert w.dmb.quests[ids["quest"]]["resolution"] == "gallery_thin"  # a legitimate alternate ending, not a failure
+    d = w.buildings[ids["mine"]]["disrupted"]  # the dig-out is shortened to two minutes once the props are there
+    assert int(d["repair_ms"]) - int(d["progress_ms"]) <= 120_000
 
 
 def test_giving_up_fails_with_consequence_and_the_shortage_persists(prepared):
@@ -233,7 +239,7 @@ def test_giving_up_fails_with_consequence_and_the_shortage_persists(prepared):
     assert r["status"] == "ok"
     q = w.dmb.quests[ids["quest"]]
     assert q["status"] == "failed_with_consequence" and q["branch"] == "abandoned"
-    assert w.buildings[ids["mine"]]["deposit_exhausted"] and w.stats.get("story_vein_units_coal", 0) == 0
+    assert w.buildings[ids["mine"]]["disrupted"]["cause"] == "collapse"
     assert "history.abandoned.%s" % ids["quest"] in w.dmb.people[ids["npc"]]["history_refs"]
     assert w.dmb.people[ids["npc"]]["relationship_map"]["player"] < 0
     seq_run(w, ids, 120)
@@ -265,11 +271,17 @@ def test_destroying_the_mine_mid_quest_fails_it_without_a_soft_lock(prepared):
 def test_world_fixes_the_shortage_first(prepared):
     w, ids = clone(prepared)
     mine = w.buildings[ids["mine"]]
-    from conftest import set_resource
-    for (x, y, a, i) in w.terrain.cells(mine["tx"], mine["ty"], 2, "coal")[:5]:
-        set_resource(w, (x, y), "coal", 25)  # another vein turns up under the mine, as the world's own business
-    mine.pop("deposit_exhausted", None)
-    seq_run(w, ids, 5)
+    # the faction digs itself out: its props arrive over the roads and the long repair runs (no wizard involved)
+    w.disruptions_enabled = True
+    w.hazard_tile = None  # the Ward Duel hazard on Red's log road (a separate story) is gone, so logs reach the warehouse again
+    for _ in range(20 * 60):
+        ids["seq"] += 1
+        w.advance(1000, ids["seq"], snapshot=False)
+        if not mine.get("disrupted"):
+            break
+    assert not mine.get("disrupted")
+    assert any(e["kind"] == "disruption_cleared" and e["how"] == "repaired" and e["id"] == ids["mine"] for e in w.events)
+    seq_run(w, ids, 2)
     q = w.dmb.quests[ids["quest"]]
     assert q["status"] == "resolved_by_world" and q["resolution"] == "world_fix_first"
     A.walk_to_npc(w, ids["npc"])
@@ -298,7 +310,7 @@ def test_save_reload_and_reenter_never_reapply_or_respawn(prepared):
     assert A.op(w2, "dungeon_interact", entity="x")["status"] == "rejected"
     assert A.op(w2, "duel_begin")["reason"] in ("too_far", "no_open_quest")  # the quest is closed: no second duel, no second reward
     walk_out(w2)
-    assert w2.stats.get("story_vein_units_coal") == stats.get("story_vein_units_coal") == 120
+    assert sum(1 for e in w2.events if e["kind"] == "disruption_cleared" and e["how"] == "wizard") == 1
     assert len(w2.dmb.quests) == 1 and len(w2.dmb.people) == 1
 
 

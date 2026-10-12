@@ -21,6 +21,17 @@ BUFFER = 4  # extra tiles between two centres' areas
 DEPLOY_MS = 3_000
 MCV_DEFINITION = "openra.mcv"
 CC_DEFINITION = "openra.fact"
+SETTLER_DEFINITION = "dmb.settlers"  # the Prehistoric settlement founder (tech card Settlers): unfolds into a Widelands warehouse
+# what each settlement founder becomes: (definition of the new centre, label, footprint offsets)
+DEPLOYERS: dict[str, tuple[str, str, list[tuple[int, int]] | None]] = {
+    MCV_DEFINITION: (CC_DEFINITION, "Command centre", None),
+    SETTLER_DEFINITION: ("widelands.warehouse", "Settlement", []),
+}
+
+
+def is_founder(unit: dict | None) -> bool:
+    """An MCV or a settlers' wagon: a unit that can found a settlement."""
+    return unit is not None and unit.get("definition") in DEPLOYERS
 # Footprint relative to the door tile (bottom middle), the 3x3 of the Construction Yard picture (72x72 px at 24 px a cell).
 CC_FOOTPRINT: list[tuple[int, int]] = [(-1, -2), (0, -2), (1, -2), (-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0)]
 
@@ -69,8 +80,9 @@ def settlement_of(world: Any, b: dict) -> dict | None:
     return best[1] if best else None
 
 
-def footprint(tile: tuple[int, int]) -> list[tuple[int, int]]:
-    return [tile] + [(tile[0] + dx, tile[1] + dy) for dx, dy in CC_FOOTPRINT]
+def footprint(tile: tuple[int, int], definition: str = MCV_DEFINITION) -> list[tuple[int, int]]:
+    offs = DEPLOYERS.get(definition, DEPLOYERS[MCV_DEFINITION])[2]
+    return [tile] + [(tile[0] + dx, tile[1] + dy) for dx, dy in (CC_FOOTPRINT if offs is None else offs)]
 
 
 def separation_problem(world: Any, faction: str, tile: tuple[int, int]) -> str | None:
@@ -86,7 +98,7 @@ def deploy_check(world: Any, unit: dict) -> str | None:
     """Every rule for deploying this MCV where it stands, with no side effects. None means it may deploy."""
     if unit is None or not unit.get("alive", True):
         return "no_unit"
-    if unit.get("definition") != MCV_DEFINITION:
+    if not is_founder(unit):
         return "not_an_mcv"
     if unit.get("deploying_ms"):
         return "already_deploying"
@@ -95,7 +107,7 @@ def deploy_check(world: Any, unit: dict) -> str | None:
     if overlap:
         return overlap
     t = world.terrain
-    fp = footprint(tile)
+    fp = footprint(tile, unit["definition"])
     occupied = {(u["tx"], u["ty"]) for uid, u in world.units.items() if u.get("alive", True) and uid != unit["id"]}
     for p in fp:
         if not world.tile_in_bounds(*p):
@@ -160,15 +172,20 @@ def _create_command_center(world: Any, unit: dict) -> str:
     tile = (int(unit["tx"]), int(unit["ty"]))
     faction = unit["faction_name"]
     info = world.faction_info[faction]
-    bid = world._building(info["id"], faction, "warehouse", tile, "Command centre", CC_DEFINITION)
+    cc_def, label, _offs = DEPLOYERS.get(unit["definition"], DEPLOYERS[MCV_DEFINITION])
+    bid = world._building(info["id"], faction, "warehouse", tile, label, cc_def)
     b = world.buildings[bid]
-    r = rules.actor(CC_DEFINITION)
-    b["hp"] = b["max_hp"] = int(r["hp"]) if r else 150_000
+    r = rules.actor(cc_def) if cc_def.startswith("openra.") else None
+    b["hp"] = b["max_hp"] = int(r["hp"]) if r else 120_000  # a settlers' warehouse: sturdier than a hut, weaker than a capital
     b["command_center"] = True
     b["outpost"] = True
-    b["territory"] = OUTPOST_RADIUS
-    b["ground_footprint"] = [list(p) for p in footprint(tile)]
-    for p in footprint(tile):
+    from wizard_rts import tech
+
+    b["territory"] = OUTPOST_RADIUS + tech.territory_bonus(world, faction)
+    fp = footprint(tile, unit["definition"])
+    if len(fp) > 1:
+        b["ground_footprint"] = [list(p) for p in fp]
+    for p in fp:
         world.blocked.add(p)
     cargo = dict(unit.get("cargo") or {})
     from wizard_rts.economy import produce

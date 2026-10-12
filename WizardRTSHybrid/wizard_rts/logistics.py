@@ -43,6 +43,11 @@ def io_for(world: Any, building: dict) -> dict[str, Any]:
     extra = world.recipe_requests.get(building["id"])
     if extra:
         io["requests"] = {**io.get("requests", {}), **extra}
+    if building.get("disrupted"):  # repair wares (disruption.py): props for a collapsed gallery, rations for the sick
+        req = dict(io.get("requests", {}))
+        for g, n in building["disrupted"]["repair"].items():
+            req[g] = max(int(req.get(g, 0)), n)
+        io["requests"] = req
     return io
 
 
@@ -78,7 +83,9 @@ def kill_carrier(world: Any, carrier_id: str, reason: str) -> None:
     if car is None:
         return
     if car["cargo"]:
-        world.stats["lost"] = world.stats.get("lost", 0) + 1
+        from wizard_rts.lifecycle import lose
+
+        lose(world, car["cargo"]["good"], 1)
         world.events.append({"kind": "ware_lost", "good": car["cargo"]["good"], "at": car["road_id"]})
     if car["road_id"] in world.roads:
         world.carrier_respawn[car["road_id"]] = CARRIER_RESPAWN_MS
@@ -188,7 +195,7 @@ def scan_requests_and_outputs(world: Any) -> None:
     # Unit orders (queued recruits, an MCV) come next: they were asked for by a player or an AI commander, whereas the sawmill's
     # input is standing demand that would otherwise take every log that arrives.
     def priority(b: dict) -> int:
-        return 0 if b.get("constructing") else (1 if b["id"] in world.recipe_requests else 2)
+        return 0 if b.get("constructing") else (1 if b["id"] in world.recipe_requests or b.get("disrupted") else 2)  # repairs too
 
     for building in sorted(world.buildings.values(), key=priority):
         if "hp" not in building or not (building.get("operational", True) or building.get("constructing")):
@@ -232,7 +239,9 @@ def _arrive(world: Any, carrier: dict, transfer: dict, node: str) -> None:
         # destination was destroyed in transit: send to a warehouse instead
         path = _nearest(world, node, [w["id"] for w in _warehouses(world, transfer["faction"])])
         if path is None or len(path) < 2:
-            world.stats["lost"] = world.stats.get("lost", 0) + 1
+            from wizard_rts.lifecycle import lose
+
+            lose(world, transfer["good"], 1)
             world.events.append({"kind": "ware_lost", "good": transfer["good"], "at": node})
             return
         transfer["path"], transfer["i"] = path, 0

@@ -15,9 +15,10 @@ const _Label = preload("res://client/world/world_interaction_label.gd")
 const _Resolver = preload("res://sim/world/world_interaction_resolver.gd")
 
 const FIRE_RANGE := 3  # tiles; must equal wizard_rts/magic.py FIRE_RANGE
-const PASSIVE_RADIUS := 8
+const PASSIVE_RADIUS := 6
 const TREE_PASSIVE_RADIUS := 3
-const MAX_PASSIVE := 6
+const MAX_PASSIVE := 3  # owner playtest 12 Oct 2026: six labels in a settlement overlapped; three short, non-overlapping ones
+const PASSIVE_CLASSES := ["building", "unit"]  # workers, carriers, animals, trees and rocks label only when clicked
 const REFRESH_SECONDS := 0.3
 const PRIORITY := {"unit": 0, "building": 1, "worker": 2, "carrier": 3, "animal": 4, "rock": 5, "tree": 6}
 
@@ -149,7 +150,7 @@ func _semantic(e: Dictionary) -> Dictionary:
 	var d := describe(e)
 	return {
 		"knowledge_key": "hybrid:%s" % str(e["id"]),
-		"labels": [{"level": 0, "text": d["title"]}],
+		"labels": [{"level": 0, "text": short_title(e)}],
 		"observe_far": d["far"],
 		"observe_near": d["near"],
 		"interaction": "fire",
@@ -247,17 +248,30 @@ func _refresh_passive() -> void:
 		if typeof(e) != TYPE_DICTIONARY:
 			continue
 		var cls := str(e.get("class", ""))
-		if not PRIORITY.has(cls) or str(e.get("kind", "")) == "hazard" or bool(e.get("inside", false)):
+		if not cls in PASSIVE_CLASSES or str(e.get("kind", "")) == "hazard" or bool(e.get("inside", false)):
 			continue
 		var d := distance_to(e)
-		var radius := TREE_PASSIVE_RADIUS if cls == "tree" else PASSIVE_RADIUS
-		if d > radius:
+		if d > PASSIVE_RADIUS:
 			continue
 		cands.append([int(PRIORITY[cls]) * 100 + d, e])
 	cands.sort_custom(func(a, b): return a[0] < b[0])
 	var keep := {}
-	for k in mini(cands.size(), MAX_PASSIVE):
-		keep[str(cands[k][1]["id"])] = cands[k][1]
+	var taken: Array = []  # screen rectangles already used by a kept label: a label that would overlap one is not shown
+	for c in cands:
+		if keep.size() >= MAX_PASSIVE:
+			break
+		var r := _passive_rect(c[1])
+		var clash := false
+		for t in taken:
+			if (t as Rect2).intersects(r):
+				clash = true
+				break
+		if clash:
+			continue
+		taken.append(r)
+		keep[str(c[1]["id"])] = c[1]
+	if world.story_ui != null and world.story_ui.dialog.visible:
+		keep.clear()  # an open conversation owns the screen
 	for id in _entries.keys():
 		var lbl = _entries[id]["lbl"]
 		if not keep.has(id) and not (is_instance_valid(lbl) and lbl.is_expanded()):
@@ -278,6 +292,27 @@ func _refresh_passive() -> void:
 			continue
 		lbl.set_foreground(lbl == owner)
 		lbl.set_passive_suppressed(owner != null and lbl != owner and not lbl.is_expanded())
+
+
+## Where a passive label would sit on screen (title width estimate), used to keep labels apart.
+func _passive_rect(e: Dictionary) -> Rect2:
+	# the same geometry world_interaction_label uses for a LABEL: width clamp(72 + 11 * chars, 96, 220), 48 high, 8 px above its anchor
+	var tpx: float = world.TPX
+	var wp := (Vector2(float(e.get("tx", 0)), float(e.get("ty", 0))) + Vector2(0.5, 0.5)) * tpx + Vector2(0, -40)
+	var sp: Vector2 = world.get_canvas_transform() * wp
+	var w := clampf(72.0 + float(short_title(e).length()) * 11.0, 96.0, 220.0)
+	return Rect2(sp - Vector2(w * 0.5, 56.0), Vector2(w, 48.0)).grow(4.0)
+
+
+## A short passive title: the kind of thing, not the faction and the full description.
+func short_title(e: Dictionary) -> String:
+	var t := str(describe(e)["title"])
+	var faction := str(e.get("faction_name", ""))
+	if faction != "" and t.begins_with(faction + " "):
+		t = t.substr(faction.length() + 1)
+	if t.length() > 22:
+		t = t.substr(0, 21) + "…"
+	return t
 
 
 # ------------------------------------------------------------------ pointer

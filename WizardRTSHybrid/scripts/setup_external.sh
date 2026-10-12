@@ -43,7 +43,7 @@ if [ "$want" = mindustry ] || [ "$want" = all ]; then
     fetch mindustry https://github.com/Anuken/Mindustry.git 26b66f9bdbd3a77b32f10f3cb350a9a737d5f012 \
       '/core/src/mindustry/content/' '/core/src/mindustry/type/' '/core/src/mindustry/world/blocks/' '/core/src/mindustry/world/meta/' \
       '/core/src/mindustry/world/*.java' '/core/src/mindustry/ctype/' '/LICENSE' '/README.md' '/core/assets/sprites/' \
-      '/core/assets-raw/sprites/units/' '/core/assets/contributors'
+      '/core/assets-raw/sprites/units/' '/core/assets-raw/sprites/blocks/' '/core/assets/contributors'
   fi
 fi
 python3 scripts/verify_pins.py || true

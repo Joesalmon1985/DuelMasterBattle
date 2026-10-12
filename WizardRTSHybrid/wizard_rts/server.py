@@ -42,6 +42,8 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return {"status": "ok", "profile": world.profile, "god": tech.god_allowed(world), "gated": tech.gated(world)}
     if op == "tech":
         return {"status": "ok", "tech": tech.snapshot(world)}
+    if op == "cards":  # the card catalogue by era (read-only: what each card is, unlocks and needs)
+        return {"status": "ok", "catalogue": tech.catalogue(), "offer_size": tech.OFFER_SIZE}
     if op == "draft":
         return world.draft(str(message.get("faction", "")), str(message.get("card", "")))
     if op == "belt":
@@ -178,6 +180,11 @@ def serve(port: int) -> None:
             world.era_max_ms = max(10_000, int(os.environ["HYBRID_ERA_MS"]))
         if os.environ.get("HYBRID_ERA_VP"):
             world.era_vp_threshold = max(1, int(os.environ["HYBRID_ERA_VP"]))
+    if os.environ.get("HYBRID_START_SPEED") and tech.god_allowed(world):  # developer: start the clock fast (autoplay spectator at 16x)
+        world.set_speed(int(os.environ["HYBRID_START_SPEED"]))
+    if os.environ.get("HYBRID_AI_POLICY"):  # which commander plays: baseline, plus, or mixed (plus on Red, Green, Purple)
+        pol = os.environ["HYBRID_AI_POLICY"]
+        world.ai_policy = {n: ("plus" if (pol == "plus" or (pol == "mixed" and n in ("Red", "Green", "Purple"))) else "baseline") for n in world.faction_info}
     if os.environ.get("HYBRID_FIXTURE") and tech.god_allowed(world):  # developer: start inside a prepared scenario
         from wizard_rts.industry import fixture
 

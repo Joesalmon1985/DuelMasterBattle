@@ -29,7 +29,8 @@ def place_wizard_near(world: Any, tile: list[int], rng: int = 1) -> None:
     for r in range(1, 4):
         for dy in range(-r, r + 1):
             for dx in range(-r, r + 1):
-                if abs(dx) + abs(dy) == r and world.tile_in_map(x + dx, y + dy) and (x + dx, y + dy) not in world.blocked:
+                if abs(dx) + abs(dy) == r and world.tile_in_map(x + dx, y + dy) and (x + dx, y + dy) not in world.blocked \
+                        and not world.solid_for_wizard((x + dx, y + dy)):
                     world.set_pose(x + dx, y + dy, "down", snapshot=False)
                     return
     raise RuntimeError("no standing tile near %s" % (tile,))

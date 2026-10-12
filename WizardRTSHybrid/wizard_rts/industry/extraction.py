@@ -66,12 +66,20 @@ def choose_item(opts: dict[str, dict[str, Any]], target: str | None) -> str | No
 
 def take_reserve(world: Any, o: dict[str, Any]) -> bool:
     """Remove one output item's worth of reserve from the covered tile with most left. Floor drops take nothing.
-    False when the reserve cannot pay (deposit used up)."""
+    False when the reserve cannot pay (a non-mineral deposit used up; minerals are inexhaustible, D22)."""
     units = int(o["units_per_item"])
     if o["source"] == "floor" or units == 0:
         return True
     t = world.terrain
     kind = o["deposit"]
+    if kind in T.MINERALS:  # D22: a drill on a mineral site never exhausts it; logged as an inexhaustible-source inflow
+        from wizard_rts.resources import note_inexhaustible
+
+        if not any(t.res_kind[y * t.w + x] == T.RES_CODE[kind] for x, y in o["tiles"]):
+            return False
+        note_inexhaustible(world, kind, 1)
+        world.stats["extracted_units_" + kind] = world.stats.get("extracted_units_" + kind, 0) + units
+        return True
     cells = sorted(((t.amount(x, y, kind), -x, -y) for x, y in o["tiles"]), reverse=True)
     if sum(c[0] for c in cells) < units:
         return False
@@ -85,6 +93,7 @@ def take_reserve(world: Any, o: dict[str, Any]) -> bool:
 
 
 def reserve_left(world: Any, o: dict[str, Any]) -> int:
-    if o["source"] == "floor":
+    """-1 means unlimited: a floor drop, or (D22) a mineral deposit."""
+    if o["source"] == "floor" or o["deposit"] in T.MINERALS:
         return -1
     return sum(world.terrain.amount(x, y, o["deposit"]) for x, y in o["tiles"])

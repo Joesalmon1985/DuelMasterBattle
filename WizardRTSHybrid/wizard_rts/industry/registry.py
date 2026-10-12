@@ -126,11 +126,11 @@ def unit_rules() -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
         src = defs()["units"][name]
         w = src["weapons"][0]
         wname = f"MDY_{name}_gun"
-        reload_s = float(w["reload_ticks"]) / TICKS / int(o.get("mirrored_weapons", 1))  # mirrored mounts fire alternately
+        reload_s = float(o.get("reload_ticks", w["reload_ticks"])) / TICKS / int(o.get("mirrored_weapons", 1))  # mirrored mounts fire alternately
         weapons[wname] = {
             "range": float(o["range_cells"]), "min_range": 0.0, "reload": max(1, round(reload_s * 1000 / 40)), "burst": 1, "burst_delay": 5,
             "projectile": "InstantHit", "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor"], "invalid_targets": [],
-            "warheads": [{"type": "SpreadDamage", "damage": int(round(float(w["damage"]) * dmg_scale)), "spread": 0.0, "versus": {},
+            "warheads": [{"type": "SpreadDamage", "damage": int(round(float(o.get("damage", w["damage"])) * dmg_scale)), "spread": 0.0, "versus": {},
                           "valid_targets": ["GroundActor"]}],
             "source": f"Mindustry v146 UnitTypes.{name}: damage {w['damage']}, reload {w['reload_ticks']} ticks, x{dmg_scale:g} damage scale",
         }

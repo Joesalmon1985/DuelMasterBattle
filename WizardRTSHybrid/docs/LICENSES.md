@@ -32,3 +32,11 @@ Attribution to ship with the package:
 ## Mindustry (pinned, imported as data)
 
 Official source `https://github.com/Anuken/Mindustry`, GPL-3.0, tag `v146`, commit `26b66f9bdbd3a77b32f10f3cb350a9a737d5f012` (`sources/manifest.json`). Numbers (costs, drill and craft times, belt speed, power, unit stats) are imported by `scripts/import_mindustry_defs.py` into `wizard_rts/data/mindustry_defs.json` and are therefore GPL-3.0 derived data, compatible with this GPL-3.0-or-later project. No Mindustry code and no art or sound is copied: the machines and units drawn in Godot are original labelled placeholders. See `docs/MINDUSTRY_PROVENANCE.md`.
+
+## Autonomous civilisation run additions (12 Oct 2026)
+
+| Item | Source | Licence / note |
+| --- | --- | --- |
+| OpenRA vehicles and defences `art/openra/{jeep,1tnk,2tnk,3tnk,4tnk,arty,apc,v2rl,stnk}-0000..0031.png` (body with its turret composited per facing), `{ftur,tsla,pbox}-*.png` | The player's own Red Alert `conquer.mix`, read with `scripts/mix_read.py`/`shp_td.py` by `scripts/import_openra_units.py` | As the other Red Alert sprites: use permitted for this project, not relicensed. The 3TNK frames were re-imported with the turret. |
+| Alias entries `openra.e2/e3/shok/ttnk/ctnk`, `dmb.*` in `catalogue.json` | No new art: they borrow an imported picture (`status: alias_placeholder`, `alias_of`) because e2/e3/shok are in the encrypted `hires.mix` and ttnk/ctnk in the encrypted Aftermath `expand2.mix` | Honest placeholders; never counted as their own art. |
+| Mindustry block and unit sprites `art/mindustry/*.png` (mechanical/pneumatic drill, silicon smelter, graphite press, power node, combustion generator, solar panels, battery, ground factory, conveyor; dagger, crawler, nova) | `core/assets-raw/sprites/{blocks,units}` at the pinned Mindustry v146 (`26b66f9b`), layers composited by `scripts/import_mindustry_art.py` | GPL-3.0: the repository's only licence file covers the whole tree; no per-directory asset terms exist at the pin (checked 12 Oct 2026). |

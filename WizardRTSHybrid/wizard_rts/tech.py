@@ -20,8 +20,10 @@ from pathlib import Path
 from typing import Any
 
 DATA = Path(__file__).with_name("data") / "tech_cards.json"
-DRAFT_INTERVAL_MS = 15 * 60_000  # S05, tunable per world (world.draft_interval_ms)
-OFFER_SIZE = 3
+DRAFT_INTERVAL_MS = 4 * 60_000  # S05 revised 12 Oct 2026 (was 15 min: a 9-card era took over 2 hours); tunable per world (world.draft_interval_ms)
+OFFER_WINDOW_MS = 3 * 60_000  # how long an open offer stays selectable (world.offer_window_ms); it lapses unchosen after that
+OFFER_SIZE = 7  # owner: a pack of up to seven; fewer when fewer cards are eligible (never padded)
+RESTRICTED = ("_deeper", "_deep")  # Widelands deep mines need a card that names the suffix (deep_mining), not just "mine"
 ERAS = ("prehistoric", "historic", "modern", "dystopian")
 
 PROFILES: dict[str, dict[str, bool]] = {
@@ -63,7 +65,11 @@ def init_world(world: Any) -> None:
     """Per-faction tech state, created once the factions exist."""
     world.tech = {}
     for name in world.faction_info:
-        world.tech[name] = {"cards": [], "offers": [], "round": 0, "next_round_ms": 0}
+        world.tech[name] = new_state()
+
+
+def new_state() -> dict[str, Any]:
+    return {"cards": [], "offers": [], "round": 0, "next_round_ms": 0, "expires_ms": 0, "history": [], "lapsed": 0}
 
 
 def _state(world: Any, faction: str) -> dict[str, Any] | None:
@@ -102,7 +108,11 @@ def kind_allowed(world: Any, faction: str, kind: str) -> bool:
         return True
     if kind.startswith("wl:"):
         name = kind[3:]
-        return any(p in name for p in _patterns(world, faction))
+        pats = _patterns(world, faction)
+        for suffix in RESTRICTED:
+            if suffix in name:
+                return any(suffix in p for p in pats)
+        return any(p in name for p in pats)
     return kind in unlocked_kinds(world, faction)
 
 
@@ -136,21 +146,38 @@ def draftable(world: Any, faction: str) -> list[str]:
 
 
 def tech_quantum(world: Any) -> None:
-    """Open a draft round per faction every `draft_interval_ms` (S05). Unchosen offers lapse when the next round opens."""
+    """Open a draft round per faction every `draft_interval_ms` (S05). An offer stays selectable for `offer_window_ms`, then lapses
+    (logged); a new round replaces whatever is still open."""
     if not gated(world):
         return
     now = int(world.dmb.clock.get("game_ms", 0))
-    for name in world.faction_info:
-        st = world.tech[name]
+    for name in list(world.faction_info):
+        st = world.tech.setdefault(name, new_state())
+        for k, v in new_state().items():
+            st.setdefault(k, v)
+        if st["offers"] and now >= st["expires_ms"]:
+            _lapse(world, name, st, "window_closed")
         if now < st["next_round_ms"]:
             continue
+        if st["offers"]:
+            _lapse(world, name, st, "next_round")
         pool = draftable(world, name)
         rng = random.Random(f"{world.seed}:{name}:{st['round']}")
         rng.shuffle(pool)
-        st["offers"] = pool[:OFFER_SIZE]
+        st["offers"] = sorted(pool[:OFFER_SIZE], key=lambda c: (cards()[c]["era"], c))
         st["round"] += 1
         st["next_round_ms"] = now + int(getattr(world, "draft_interval_ms", DRAFT_INTERVAL_MS))
-        world.events.append({"kind": "draft_offer", "faction": name, "round": st["round"], "offers": list(st["offers"])})
+        st["expires_ms"] = now + min(int(getattr(world, "offer_window_ms", OFFER_WINDOW_MS)), int(getattr(world, "draft_interval_ms", DRAFT_INTERVAL_MS)))
+        st["history"].append({"round": st["round"], "at_ms": now, "offered": list(st["offers"]), "picked": "", "eligible": len(pool)})
+        del st["history"][:-12]
+        world.events.append({"kind": "draft_offer", "faction": name, "round": st["round"], "offers": list(st["offers"]), "eligible": len(pool),
+                             "expires_ms": st["expires_ms"]})
+
+
+def _lapse(world: Any, name: str, st: dict, why: str) -> None:
+    st["lapsed"] = int(st.get("lapsed", 0)) + 1
+    world.events.append({"kind": "draft_lapsed", "faction": name, "round": st["round"], "offers": list(st["offers"]), "why": why})
+    st["offers"] = []
 
 
 def draft(world: Any, faction: str, card_id: str) -> dict[str, Any]:
@@ -164,9 +191,48 @@ def draft(world: Any, faction: str, card_id: str) -> dict[str, Any]:
     if not _working(world, faction, c["requires_working"]):
         return {"status": "rejected", "reason": "prerequisite_lost"}
     st["cards"].append(card_id)
+    rejected = [x for x in st["offers"] if x != card_id]
     st["offers"] = []
-    world.events.append({"kind": "card_drafted", "faction": faction, "card": card_id, "round": st["round"]})
+    if st.get("history"):
+        st["history"][-1]["picked"] = card_id
+    _apply_effect(world, faction, c)
+    world.events.append({"kind": "card_drafted", "faction": faction, "card": card_id, "round": st["round"], "rejected": rejected,
+                         "unlocks": {"kinds": list(c["kinds"]), "units": list(c["units"]), "wl_patterns": list(c["wl_patterns"])}})
     return {"status": "ok", "card": card_id, "unlocks": {"kinds": c["kinds"], "units": c["units"]}}
+
+
+def _apply_effect(world: Any, faction: str, c: dict) -> None:
+    """A card's non-content modifier (data `effect`). Arcologies widen every command centre's territory now and later."""
+    eff = c.get("effect") or {}
+    bonus = int(eff.get("territory_bonus", 0))
+    if bonus:
+        from wizard_rts import territory
+
+        for cc in territory.command_centers(world, faction):
+            cc["territory"] = territory.radius_of(cc) + bonus
+
+
+def territory_bonus(world: Any, faction: str) -> int:
+    st = _state(world, faction)
+    if not st:
+        return 0
+    return sum(int((cards()[cid].get("effect") or {}).get("territory_bonus", 0)) for cid in st["cards"] if cid in cards())
+
+
+def card_info(card_id: str) -> dict[str, Any]:
+    """What the draft panel shows for a card: era, explanation, what it unlocks and what it needs."""
+    c = cards()[card_id]
+    return {"id": card_id, "name": c["name"], "era": ERAS[c["era"]], "summary": c.get("summary", ""), "kinds": list(c["kinds"]),
+            "units": list(c["units"]), "wl_patterns": list(c["wl_patterns"]), "requires_cards": [cards()[r]["name"] for r in c["requires_cards"]],
+            "requires_working": list(c["requires_working"]), "effect": dict(c.get("effect") or {})}
+
+
+def catalogue() -> dict[str, list[dict[str, Any]]]:
+    """Every card by era (the inspectable catalogue of P1.5)."""
+    out: dict[str, list[dict[str, Any]]] = {e: [] for e in ERAS}
+    for cid, c in sorted(cards().items(), key=lambda kv: (kv[1]["era"], kv[0])):
+        out[ERAS[c["era"]]].append(card_info(cid))
+    return out
 
 
 def grant(world: Any, faction: str, card_id: str) -> dict[str, Any]:
@@ -200,9 +266,18 @@ def ai_pick(world: Any, faction: str) -> str | None:
 
 
 def snapshot(world: Any) -> dict[str, Any]:
-    return {"profile": world.profile, "gated": gated(world), "god": god_allowed(world),
-            "factions": {n: {"cards": list(s["cards"]), "offers": list(s["offers"]), "round": s["round"],
-                             "next_round_ms": s["next_round_ms"]} for n, s in getattr(world, "tech", {}).items()}}
+    now = int(world.dmb.clock.get("game_ms", 0))
+    out = {"profile": world.profile, "gated": gated(world), "god": god_allowed(world), "offer_size": OFFER_SIZE,
+           "interval_ms": int(getattr(world, "draft_interval_ms", DRAFT_INTERVAL_MS)), "window_ms": int(getattr(world, "offer_window_ms", OFFER_WINDOW_MS)),
+           "factions": {}}
+    for n, s in getattr(world, "tech", {}).items():
+        last = s.get("history", [])[-1] if s.get("history") else {}
+        out["factions"][n] = {"cards": list(s["cards"]), "offers": list(s["offers"]), "round": s["round"], "next_round_ms": s["next_round_ms"],
+                              "next_round_in_ms": max(0, s["next_round_ms"] - now), "expires_ms": s.get("expires_ms", 0),
+                              "expires_in_ms": max(0, s.get("expires_ms", 0) - now) if s["offers"] else 0,
+                              "offer_names": {c: cards()[c]["name"] for c in s["offers"]}, "last_pick": last.get("picked", ""),
+                              "lapsed": int(s.get("lapsed", 0)), "eligible": int(last.get("eligible", 0))}
+    return out
 
 
 def on_era_change(world: Any) -> None:

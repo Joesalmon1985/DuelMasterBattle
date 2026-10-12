@@ -1,13 +1,13 @@
 """The wizard's first live-settlement story (roadmap M3): a real shortage, a person, a dungeon, a puzzle, a duel, a real consequence.
 
 Everything here is bound to the one HybridWorld:
-- The *cause* is a state condition: a working mine whose deposit in reach is used up (`deposit_exhausted`), so the workplaces that need
-  its ware stall. Causes, quest binding and quest states reuse the legacy `sim/dmb/quests` (CauseTracker, QuestBinder, QuestService) on
+- The *cause* is a state condition: a working mine whose gallery has caved in (`disruption.py`, cause `collapse`), so it stops and the
+  workplaces that need its ware stall. (Until 12 Oct 2026 it was an exhausted vein; D22 made mineral sites inexhaustible.) Causes, quest binding and quest states reuse the legacy `sim/dmb/quests` (CauseTracker, QuestBinder, QuestService) on
   `world.dmb`; people reuse `PeopleService`; dialogue checks reuse `AspectService`; the duel is the Python-owned `MastermindDuel`; the
   dungeon is the Python port of the game's puzzle code (`wizard_rts/puzzle`, parity-tested against the GDScript).
 - The *person* is a real Person record bound to the mine (workplace id), standing at a real tile beside it.
-- The *consequence* is a typed effect applied once with a receipt: it adds reserve units to the Widelands deposit around the mine
-  (a logged source, D17/D21), clears the exhausted flag, and the starved smelter resumes. Destroying the mine mid-quest fails the quest
+- The *consequence* is a typed effect applied once with a receipt: it reopens the collapsed gallery (`reopen_gallery`), so the mine
+  produces again and the starved smelter resumes. The faction can also dig itself out (timber props delivered, then a long repair). Destroying the mine mid-quest fails the quest
   with a consequence; the AI repairing the shortage first resolves it by the world. Nothing mutates the world from free text.
 - The wizard's actions are narrow (talk, choose, enter, move, interact, guess, leave); they work through `world.player` position and
   never command a faction (D02). Time keeps running while the wizard is underground; a duel freezes `game_ms` with a pause token.
@@ -29,13 +29,13 @@ from sim.dmb.quests.causes import CauseTracker
 from sim.dmb.quests.runtime import QuestService
 from sim.dmb.time.clock import ClockService
 
-from wizard_rts import settlements
+from wizard_rts import disruption, settlements
 from wizard_rts.puzzle import gen as puzzle_gen
 from wizard_rts.puzzle import items as puzzle_items
 from wizard_rts.puzzle.dungeon import ENTRY, DungeonRun
 
-TEMPLATE = Path(__file__).resolve().parent / "data" / "story" / "quest.shortage.mine_exhausted.json"
-TEMPLATE_ID = "quest.shortage.mine_exhausted"
+TEMPLATE = Path(__file__).resolve().parent / "data" / "story" / "quest.shortage.gallery_collapse.json"
+TEMPLATE_ID = "quest.shortage.gallery_collapse"
 OPEN = ("offered", "active", "suspended")
 TALK_RANGE = 3  # tiles (Manhattan): the wizard has to be standing close
 ENTER_RANGE = 2
@@ -83,6 +83,14 @@ def _log(world: Any, kind: str, **kw: Any) -> None:
 def _deposit_kind(world: Any, b: dict) -> str:
     if b["kind"] in MINE_RESOURCE:
         return MINE_RESOURCE[b["kind"]]
+    if b["kind"].startswith("wl:"):
+        from wizard_rts import wl_defs
+
+        spec = wl_defs.building_spec(b["kind"][3:])
+        for prog in (spec or {}).get("programs", {}).values():
+            for cmd, args in prog:
+                if cmd == "mine":
+                    return str(args["resource"])
     if b["kind"].startswith("mdy:") and world.terrain is not None:
         from wizard_rts.industry import sim as S
         from wizard_rts import terrain as T
@@ -98,12 +106,11 @@ def _deposit_kind(world: Any, b: dict) -> str:
 
 
 def _exhausted(world: Any, b: dict) -> bool:
-    if b.get("constructing") or not b.get("operational", True) or int(b.get("hp", 1)) <= 0:
+    """The mine is shut by a real collapse (the name is kept for the callers; nothing is exhausted since D22)."""
+    if b.get("constructing") or int(b.get("hp", 1)) <= 0 or b.get("destroyed"):
         return False
-    if b["kind"] in MINE_RESOURCE:
-        return bool(b.get("deposit_exhausted"))
-    m = b.get("mdy")
-    return bool(m and m.get("role") == "drill" and m.get("state") in ("deposit used up", "no deposit") and _deposit_kind(world, b))
+    d = b.get("disrupted")
+    return bool(d and d.get("cause") == "collapse")
 
 
 def _open_quest_for(world: Any, mine_id: str) -> str | None:
@@ -178,7 +185,7 @@ def _open_quest(world: Any, b: dict) -> str | None:
     resource = _deposit_kind(world, b)
     npc = _ensure_npc(world, b, sid)
     did = _ensure_dungeon(world, b, sid, npc)
-    cause = CauseTracker(world.dmb).observe_changes([{"kind": "mine_exhausted", "affected_entity_id": b["id"], "stakeholder_id": npc,
+    cause = CauseTracker(world.dmb).observe_changes([{"kind": "gallery_collapse", "affected_entity_id": b["id"], "stakeholder_id": npc,
                                                     "site_id": sid, "template_id": TEMPLATE_ID, "resource": resource}])
     if not cause or cause[0].get("status") == "deduped":
         return None
@@ -199,7 +206,7 @@ def story_quantum(world: Any) -> None:
         return
     s = state(world)
     for bid, b in sorted(world.buildings.items()):
-        if (b["kind"] in MINE_RESOURCE or b["kind"].startswith("mdy:")) and _exhausted(world, b) and _open_quest_for(world, bid) is None:
+        if disruption.is_mine(b) and _exhausted(world, b) and _open_quest_for(world, bid) is None:
             if not any(q["mine"] == bid and world.dmb.quests.get(qid, {}).get("status") in ("completed", "failed_with_consequence")
                        and q["outcome"] in ("abandoned",) for qid, q in s["quests"].items()):
                 _open_quest(world, b)
@@ -318,8 +325,14 @@ def facts(world: Any, q: dict) -> dict[str, Any]:
     if mine is None:
         return out
     left = world.resource_total((mine["tx"], mine["ty"]), 2, q["resource"]) if q["resource"] and world.terrain is not None else 0
-    wares = {"coal": "coal", "iron": "iron ore"}
-    out.update(mine_label=mine["label"], deposit_left=left, exhausted=_exhausted(world, mine), ware=wares.get(q["resource"], q["resource"]))
+    wares = {"coal": "coal", "iron": "iron ore", "gold": "gold ore", "stones": "granite"}
+    d = mine.get("disrupted") or {}
+    have = world.stocks.get(mine["id"], {})
+    props_need = sum(int(n) for n in d.get("repair", {}).values())
+    props_have = sum(min(int(have.get(g, 0)), int(n)) for g, n in d.get("repair", {}).items())
+    out.update(mine_label=mine["label"], deposit_left=left, exhausted=_exhausted(world, mine), ware=wares.get(q["resource"], q["resource"]),
+               collapsed_by=d.get("by", ""), props_need=props_need, props_have=props_have,
+               repair_pct=int(100 * int(d.get("progress_ms", 0)) / max(1, int(d.get("repair_ms", 1)))) if d else 100)
     wh = None
     for cc in sorted((x for x in world.buildings.values() if x["kind"] == "warehouse" and x["faction_name"] == mine["faction_name"]), key=lambda x: x["id"]):
         wh = cc if wh is None or settlements.of(world, mine) == cc.get("settlement_id") else wh
@@ -379,11 +392,11 @@ def _lines(world: Any, qid: str, q: dict) -> list[str]:
     lines: list[str] = []
     if status == "completed":
         if q["outcome"] == "full":
-            lines.append("The seam is open again. The wagons are coming up full.")
+            lines.append("The old gallery runs round the fall. The carts are coming up again.")
         else:
-            lines.append("There is ore again, but not much. We take what the gallery gave.")
+            lines.append("You showed us the short way through. The crew finishes the dig-out in a few minutes.")
         if f.get("mine_exists"):
-            lines.append("%s holds %d %s in reach; the warehouse has %d." % (f["mine_label"], f["deposit_left"], f["ware"], f["stock"]))
+            lines.append("%s is %s; the warehouse has %d %s." % (f["mine_label"], "shut still" if f["exhausted"] else "working", f["stock"], f["ware"]))
     elif status == "resolved_by_world":
         lines.append("The trouble you asked about is already gone.")
     elif status == "failed_with_consequence":
@@ -392,11 +405,13 @@ def _lines(world: Any, qid: str, q: dict) -> list[str]:
     else:
         if not f.get("mine_exists"):
             return ["The mine is gone."]
-        lines.append("The seam under %s gave out %d minutes ago. %d in reach, and nothing the wagons can use." % (f["mine_label"], f["minutes_since"], f["deposit_left"]))
+        why = {"tremor": "The ground shook", "war_damage": "The fighting cracked the props", "age": "Old props gave way"}.get(f.get("collapsed_by", ""), "The roof came down")
+        lines.append("%s: the gallery of %s caved in %d minutes ago. The seam is still there; we cannot reach it." % (why, f["mine_label"], f["minutes_since"]))
+        lines.append("Timber props on site: %d of %d. Digging out: %d%%. That takes the crew a long while." % (f["props_have"], f["props_need"], f["repair_pct"]))
         lines.append("%d workplace%s here %s waiting on %s. The warehouse holds %d." % (
             len(f["starved"]), "" if len(f["starved"]) == 1 else "s", "is" if len(f["starved"]) == 1 else "are", f["ware"], f["stock"]))
         if "gallery" in q["learned"]:
-            lines.append("The old gallery behind the spoil heap is still shut. The warden there keeps a code, and the stone answers only to the right sigil.")
+            lines.append("The old gallery behind the spoil heap runs round the fall. The warden there keeps a code, and the stone answers only to the right sigil.")
         if q["sigil_given"]:
             lines.append("You have my mark. The first niche will take it and give it back.")
     return lines
@@ -410,8 +425,8 @@ def _choices(world: Any, qid: str, q: dict) -> list[dict[str, Any]]:
     if q.get("family") == "outbreak":
         return [{"id": "accept_treat", "text": "I will treat the region. Stand in it and hold still.", "available": status == "offered"},
                 {"id": "give_up", "text": "I cannot help.", "available": True}]
-    out.append({"id": "ask_cause", "text": "What happened to the seam?", "available": "cause" not in q["learned"]})
-    out.append({"id": "ask_gallery", "text": "Is there another way to the ore?", "available": "cause" in q["learned"] and "gallery" not in q["learned"]})
+    out.append({"id": "ask_cause", "text": "What happened to the mine?", "available": "cause" not in q["learned"]})
+    out.append({"id": "ask_gallery", "text": "Is there another way in?", "available": "cause" in q["learned"] and "gallery" not in q["learned"]})
     out.append({"id": "accept_help", "text": "I will go down the old gallery.", "available": "gallery" in q["learned"] and not q["sigil_given"]})
     out.append({"id": "persuade", "text": "(Empathy) Tell me what the warden does.", "available": q["sigil_given"] and not q["persuaded"],
                 "check": {"aspect": "empathy", "threshold": "easy"}})
@@ -457,13 +472,13 @@ def choose(world: Any, npc_id: str, choice: str) -> dict[str, Any]:
     if choice == "ask_cause":
         q["learned"].append("cause")
         q["evidence"] = min(2, q["evidence"] + 1)
-        people.add_known_fact(npc_id, {"id": f"fact.cause.{qid}", "subject": q["mine"], "predicate": "exhausted", "value": True,
+        people.add_known_fact(npc_id, {"id": f"fact.cause.{qid}", "subject": q["mine"], "predicate": "collapsed", "value": True,
                                        "learned_time": int(world.dmb.clock.get("game_ms", 0))})
-        text = "He kneels and shows you the face of the seam: bare rock, scored by pick marks. 'Nothing left to cut.'"
+        text = "He points at the shaft mouth, choked with broken props and rubble. 'The seam is fine. We just cannot get to it.'"
         q["stage"] = "investigate"
     elif choice == "ask_gallery":
         q["learned"].append("gallery")
-        text = "'My grandfather's crew broke through into an old gallery behind the spoil heap. Collapsed it themselves. The stone there answers to a sigil, and something keeps the ore beyond.'"
+        text = "'My grandfather's crew broke through into an old gallery behind the spoil heap. It runs round the fall. The stone there answers to a sigil, and something keeps the way.'"
     elif choice == "accept_help":
         if len(s["inventory"]) >= puzzle_items.MAX_SLOTS:
             return {"status": "rejected", "reason": "inventory_full"}
@@ -473,7 +488,7 @@ def choose(world: Any, npc_id: str, choice: str) -> dict[str, Any]:
         q["stage"] = "gallery"
         if quest["status"] == "offered":
             svc.accept(qid)
-        text = "He presses a worn stone mark into your palm. 'Take it to the gallery mouth. Come back with ore.'"
+        text = "He presses a worn stone mark into your palm. 'Take it to the gallery mouth. Open the old way and we can work again.'"
         _log(world, "story_item_given", quest=qid, item=d["needs"]["item"])
     elif choice == "persuade":
         score = int(person_rel(world, npc_id))
@@ -658,18 +673,16 @@ def _end_duel(world: Any, d: dict, outcome: str) -> dict[str, Any]:
     _log(world, "story_duel_ended", quest=qid, outcome=outcome)
     if outcome == "abandoned":
         return {"outcome": outcome, "quest_status": world.dmb.quests[qid]["status"]}
-    t = _tun()
-    units = int(t["full_vein_units"] if outcome == "full" else t["thin_vein_units"])
     q["effect_pending"] = True
-    applied = apply_effects(world, qid, [{"kind": "deposit_vein", "units": units, "mine": q["mine"], "resource": q["resource"]},
-                                         {"kind": "history_fact", "fact": f"vein_opened:{outcome}", "person": q["npc"]}], prefix=f"duel{q['duel']['attempts']}")
+    applied = apply_effects(world, qid, [{"kind": "reopen_gallery", "mode": "full" if outcome == "full" else "thin", "mine": q["mine"]},
+                                         {"kind": "history_fact", "fact": f"gallery_reopened:{outcome}", "person": q["npc"]}], prefix=f"duel{q['duel']['attempts']}")
     q["effect_pending"] = False
     quest = world.dmb.quests[qid]
     if quest["status"] in OPEN:
         if quest["status"] == "offered":
             QuestService(world.dmb).accept(qid)
-        QuestService(world.dmb).evaluate(qid, world_signals={"output_confirmed": True, "intervention": f"vein_{outcome}"})
-        CauseTracker(world.dmb).resolve(quest["cause_id"], reason="vein_opened")
+        QuestService(world.dmb).evaluate(qid, world_signals={"output_confirmed": True, "intervention": f"gallery_{outcome}"})
+        CauseTracker(world.dmb).resolve(quest["cause_id"], reason="gallery_reopened")
     q["outcome"] = outcome
     q["stage"] = "resolution"
     s["dungeons"][q["dungeon"]]["solved_ms"] = int(world.dmb.clock.get("game_ms", 0))
@@ -678,7 +691,7 @@ def _end_duel(world: Any, d: dict, outcome: str) -> dict[str, Any]:
 
 # ------------------------------------------------------------------ typed effects with receipts
 
-ALLOWED_EFFECTS = ("deposit_vein", "history_fact")
+ALLOWED_EFFECTS = ("reopen_gallery", "history_fact")
 
 
 def apply_effects(world: Any, qid: str, effects: list[dict[str, Any]], prefix: str) -> dict[str, Any]:
@@ -686,16 +699,16 @@ def apply_effects(world: Any, qid: str, effects: list[dict[str, Any]], prefix: s
     for i, e in enumerate(effects):
         if str(e.get("kind")) not in ALLOWED_EFFECTS:
             return {"status": "aborted", "reason": f"unknown_effect:{e.get('kind')}"}
-        if e["kind"] == "deposit_vein" and (world.terrain is None or world.buildings.get(e["mine"]) is None or int(e["units"]) <= 0):
-            return {"status": "aborted", "reason": "vein_target_missing"}
+        if e["kind"] == "reopen_gallery" and world.buildings.get(e["mine"]) is None:
+            return {"status": "aborted", "reason": "gallery_target_missing"}
     done: list[dict[str, Any]] = []
     for i, e in enumerate(effects):
         eid = f"{qid}:{prefix}:{i}:{e['kind']}"
         if eid in world.dmb.command_receipts:
             done.append({"effect_id": eid, "status": "idempotent"})
             continue
-        if e["kind"] == "deposit_vein":
-            result = _deposit_vein(world, world.buildings[e["mine"]], str(e["resource"]), int(e["units"]))
+        if e["kind"] == "reopen_gallery":
+            result = _reopen_gallery(world, world.buildings[e["mine"]], str(e["mode"]))
         else:
             PeopleService(world.dmb).add_known_fact(str(e["person"]), {"id": f"fact.{eid}", "subject": qid, "predicate": "outcome", "value": str(e["fact"]),
                                                                        "learned_time": int(world.dmb.clock.get("game_ms", 0))})
@@ -707,44 +720,32 @@ def apply_effects(world: Any, qid: str, effects: list[dict[str, Any]], prefix: s
     return {"status": "ok", "applied": done}
 
 
-def _deposit_vein(world: Any, mine: dict, resource: str, units: int) -> dict[str, Any]:
-    """Add reserve units to the Widelands deposit nodes around the mine (a logged source; D17, D21). The weakest node is raised first
-    and each node is capped at 255. Widelands' mine rule digs only until `yield` percent of the work area's *initial* amount is gone,
-    so the baseline of the work area is rebased to the new total: the mine then digs `yield` percent of the new vein, as it would a
-    fresh deposit."""
-    t = world.terrain
-    if mine["kind"].startswith("mdy:"):
-        from wizard_rts.industry import sim as S
-
-        cells = [(x, y) for (x, y) in S.footprint(mine) if t.res_kind[y * t.w + x]]
-        radius_cells = [(x, y, t.amount(x, y, resource), t.res_init[y * t.w + x]) for x, y in cells]
-    else:
-        radius_cells = t.cells(mine["tx"], mine["ty"], 2, resource)
-    if not radius_cells:
-        return {"added": 0, "reason": "no_nodes"}
-    nodes = sorted(radius_cells, key=lambda c: (c[2], c[1], c[0]))
-    left, added = units, 0
-    i = 0
-    while left > 0 and any(t.amount(x, y, resource) < 255 for x, y, _a, _i in nodes):
-        x, y, _a, _init = nodes[i % len(nodes)]
-        got = t.add(x, y, resource, 1)
-        if got:
-            left -= 1
-            added += 1
-        i += 1
-        if i > 100000:
-            break
-    for x, y, _a, _i in nodes:  # rebase the yield baseline of the work area to the new total
-        t.res_init[y * t.w + x] = t.amount(x, y, resource)
-    world.stats["story_vein_units_" + resource] = world.stats.get("story_vein_units_" + resource, 0) + added
-    mine.pop("deposit_exhausted", None)
-    mine.pop("stall", None)
-    if mine.get("mdy"):
-        mine["mdy"]["state"] = "idle"
-    return {"added": added, "resource": resource, "nodes": len(nodes)}
+def _reopen_gallery(world: Any, mine: dict, mode: str) -> dict[str, Any]:
+    """The wizard's way round the fall. full: the collapse is cleared now and the props already carried in stay in the mine's stock
+    (nothing is created; they simply are not used up). thin: the faction's own dig-out finishes `thin_repair_left_ms` after its props
+    arrive. Either way the mine's programme runs again through the ordinary production loop, so the restored output is real."""
+    d = mine.get("disrupted")
+    if not d or d.get("cause") != "collapse":
+        return {"reopened": False, "reason": "not_collapsed"}
+    if mode == "full":
+        disruption.clear(world, mine, "wizard")
+        return {"reopened": True, "mode": mode}
+    left = int(json.loads(TEMPLATE.read_text())["tunables"]["thin_repair_left_ms"])
+    d["progress_ms"] = max(int(d["progress_ms"]), int(d["repair_ms"]) - left)
+    return {"reopened": False, "mode": mode, "repair_left_ms": int(d["repair_ms"]) - int(d["progress_ms"])}
 
 
 # ------------------------------------------------------------------ snapshot rows
+
+FIGURES = {  # the Widelands worker sprite that stands for a story person (art in godot_project/client/hybrid/art/widelands/gen)
+    "miner": {"barbarians": "barbarians_miner", "empire": "empire_miner", "atlanteans": "atlanteans_miner", "frisians": "frisians_miner", "amazons": "barbarians_miner"},
+    "healer": {"barbarians": "barbarians_innkeeper", "empire": "empire_innkeeper", "atlanteans": "empire_innkeeper", "frisians": "barbarians_innkeeper", "amazons": "amazons_cook"},
+}
+
+
+def _figure(tribe: str, role: str) -> str:
+    return "widelands.%s_worker" % FIGURES.get(role, FIGURES["miner"]).get(tribe, "barbarians_miner")
+
 
 def entity_rows(world: Any) -> list[dict[str, Any]]:
     """NPCs and dungeon entrances as ordinary snapshot entities (what Godot draws and labels)."""
@@ -755,8 +756,10 @@ def entity_rows(world: Any) -> list[dict[str, Any]]:
     for pid, n in sorted(s["npcs"].items()):
         person = world.dmb.people.get(pid, {})
         found = _quest_of_npc(world, pid)
+        tribe = world.faction_info.get(n["faction"], {}).get("tribe", "barbarians")
         rows.append({"id": pid, "class": "npc", "kind": "npc", "definition": "story.miner", "faction": "", "faction_name": n["faction"],
                      "label": person.get("name", "Miner"), "tx": n["tile"][0], "ty": n["tile"][1], "alive": bool(person.get("alive", True)),
+                     "figure": _figure(tribe, n["role"]),
                      "role": n["role"], "quest_status": world.dmb.quests[found[0]]["status"] if found else "",
                      "has_quest": bool(found and world.dmb.quests[found[0]]["status"] in OPEN)})
     for did, d in sorted(s["dungeons"].items()):

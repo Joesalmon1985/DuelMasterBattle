@@ -195,8 +195,8 @@ def test_forty_minute_campaign_every_faction_develops(mode):
     assert not [(b, g, v) for b, s in w.stocks.items() for g, v in s.items() if v < 0]
     assert ledger.check(w, initial) == []
     for name in w.faction_info:
-        assert len(w.tech[name]["cards"]) >= 3, (name, w.tech[name])  # rounds at 0, 15, 30 minutes
-        assert w.tech[name]["round"] == 3
+        assert len(w.tech[name]["cards"]) >= 6, (name, w.tech[name]["cards"])  # a round every 4 game minutes (S05 revised), offers of up to 7
+        assert w.tech[name]["round"] >= 10
         for b in w.buildings.values():
             if b["faction_name"] == name and "hp" in b and b["kind"] != "warehouse":
                 assert tech.kind_allowed(w, name, b["kind"]), (name, b["kind"])

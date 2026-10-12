@@ -25,7 +25,40 @@ HYBRID_ACTORS: dict[str, dict[str, Any]] = {
         "armaments": ["WL_Axe"], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False, "locomotor": "foot",
     },
 }
+# Prehistoric low-tech actors (design v0.5 section 2: clubs, spears, slings "through OpenRA-style rules and low-tech data").
+# Hybrid-defined, scaled against the Widelands soldier above and OpenRA infantry (E1 has 5000 HP); a lodge-trained band is weaker
+# than Historic riflemen. Settlers are an unarmed Prehistoric MCV (territory.SETTLER_DEFINITION).
+for _name, _label, _hp, _speed, _weapon in (("dmb_clubman", "Clubman", 9000, 54, "DMB_Club"), ("dmb_spearman", "Spearman", 10500, 50, "DMB_Spear"),
+                                            ("dmb_slinger", "Slinger", 6500, 58, "DMB_Sling")):
+    HYBRID_ACTORS[_name] = {"name": _label, "hp": _hp, "armor": "None", "speed": _speed, "cost": 0, "queue": "", "prerequisites": "",
+                            "armaments": [_weapon], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False,
+                            "locomotor": "foot", "source": "hybrid-defined Prehistoric unit"}
+HYBRID_ACTORS["dmb_settlers"] = {"name": "Settlers", "hp": 8000, "armor": "None", "speed": 46, "cost": 0, "queue": "", "prerequisites": "",
+                                 "armaments": [], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False,
+                                 "locomotor": "foot", "source": "hybrid-defined Prehistoric settlement founder"}
+
 HYBRID_WEAPONS: dict[str, dict[str, Any]] = {
+    "DMB_Club": {
+        "range": 1.5, "min_range": 0.0, "reload": 22, "burst": 1, "burst_delay": 5, "projectile": "InstantHit",
+        "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor", "Structure"], "invalid_targets": [],
+        "warheads": [{"type": "SpreadDamage", "damage": 1000, "spread": 0.0, "versus": {"Heavy": 30, "Light": 60, "Wood": 35, "Concrete": 15}, "valid_targets": ["GroundActor", "Structure"]}],
+    },
+    "DMB_Spear": {
+        "range": 1.8, "min_range": 0.0, "reload": 26, "burst": 1, "burst_delay": 5, "projectile": "InstantHit",
+        "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor", "Structure"], "invalid_targets": [],
+        "warheads": [{"type": "SpreadDamage", "damage": 1300, "spread": 0.0, "versus": {"Heavy": 30, "Light": 70, "Wood": 30, "Concrete": 15}, "valid_targets": ["GroundActor", "Structure"]}],
+    },
+    "DMB_Militia": {
+        "range": 5.5, "min_range": 0.0, "reload": 25, "burst": 1, "burst_delay": 5, "projectile": "InstantHit",
+        "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor"], "invalid_targets": [],
+        "warheads": [{"type": "SpreadDamage", "damage": 900, "spread": 0.0, "versus": {"None": 100, "Light": 45, "Heavy": 15, "Wood": 30, "Concrete": 10}, "valid_targets": ["GroundActor"]}],
+        "source": "hybrid-defined: the settlement militia every command centre fields (Widelands headquarters soldiers)",
+    },
+    "DMB_Sling": {
+        "range": 4.5, "min_range": 0.0, "reload": 34, "burst": 1, "burst_delay": 5, "projectile": "InstantHit",
+        "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor", "Structure"], "invalid_targets": [],
+        "warheads": [{"type": "SpreadDamage", "damage": 800, "spread": 0.0, "versus": {"Heavy": 15, "Light": 40, "Wood": 20, "Concrete": 10}, "valid_targets": ["GroundActor", "Structure"]}],
+    },
     "WL_Axe": {
         "range": 1.5, "min_range": 0.0, "reload": 25, "burst": 1, "burst_delay": 5, "projectile": "InstantHit",
         "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor"], "invalid_targets": [],
@@ -54,6 +87,8 @@ def actor(definition: str) -> dict[str, Any] | None:
         key = "wl_soldier"
     elif definition.startswith("mindustry."):
         key = "mdy_" + key
+    elif definition.startswith("dmb."):
+        key = "dmb_" + key
     return _load()["actors"].get(key)
 
 

@@ -756,6 +756,9 @@ def production_quantum(world: Any) -> None:
         programs = _programs_of(building)
         if programs is None or not building.get("operational", True):
             continue
+        if building.get("disrupted"):  # a collapse or an outbreak closed it (disruption.py): nothing is made until it is repaired
+            building["working"] = False
+            continue
         roles = _roles_of(building)
         have = building.setdefault("worker_ids", {})
         missing = [r for r in roles if have.get(r) not in world.workers]

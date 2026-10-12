@@ -12,6 +12,7 @@ grout), use a documented hybrid cost.
 from __future__ import annotations
 
 import heapq
+from array import array
 from typing import Any
 
 from wizard_rts.coords import tile_to_hex
@@ -90,6 +91,18 @@ BUILD_MENU: dict[str, dict[str, Any]] = {
         "label": "Gun turret", "definition": "openra.gun", "game": "openra",
         "cost": {"plank": 3}, "cost_source": "hybrid-defined; OpenRA power removed by design",
     },
+    "war_lodge": {
+        "label": "War lodge", "definition": "dmb.war_lodge", "game": "hybrid",
+        "cost": {"log": 4, "granite": 2}, "cost_source": "hybrid-defined Prehistoric military building (design v0.5: clubs, spears, slings); Widelands tribe barracks art",
+    },
+    "flame_tower": {
+        "label": "Flame tower", "definition": "openra.ftur", "game": "openra",
+        "cost": {"plank": 3, "granite": 2, "coal": 1}, "cost_source": "hybrid-defined; OpenRA FTUR credits and power removed by design",
+    },
+    "tesla_coil": {
+        "label": "Tesla coil", "definition": "openra.tsla", "game": "openra",
+        "cost": {"plank": 2, "granite": 3, "iron": 3, "gold": 1}, "cost_source": "hybrid-defined; OpenRA TSLA credits and power removed by design",
+    },
     "naval_yard": {
         "label": "Naval yard", "definition": "openra.syrd", "game": "openra", "size": "water3",
         "cost": {"plank": 8, "granite": 2},
@@ -119,11 +132,39 @@ RECIPES: dict[str, dict[str, dict[str, Any]]] = {
     "sub_pen": {
         "submarine": {"label": "Submarine", "definition": "openra.ss", "cost": {"plank": 2, "iron": 3}, "ms": 40_000},
     },
+    # Prehistoric (design v0.5 section 2): clubs, spears and slings, hybrid low-tech actors (rules.HYBRID_ACTORS), paid in food and wood.
+    "war_lodge": {
+        "clubman": {"label": "Clubman", "definition": "dmb.clubman", "cost": {"ration": 1, "log": 1}, "ms": 20_000},
+        "spearman": {"label": "Spearman", "definition": "dmb.spearman", "cost": {"ration": 1, "plank": 1}, "ms": 24_000},
+        "slinger": {"label": "Slinger", "definition": "dmb.slinger", "cost": {"ration": 1, "log": 1, "granite": 1}, "ms": 26_000},
+    },
+    # A warehouse (command centre) sends out settlers: a Prehistoric MCV. Vehicle and cargo leave its own store; the cargo founds the new one.
+    "warehouse": {
+        "settlers": {
+            "label": "Settlers", "definition": "dmb.settlers", "ms": 45_000,
+            "build": {"log": 2, "ration": 2},
+            "cargo": {"log": 4, "plank": 3, "granite": 2, "ration": 1},
+            "cost": {"log": 6, "plank": 3, "granite": 2, "ration": 3},
+        },
+    },
     "barracks": {
         "infantry": {"label": "Rifleman", "definition": "openra.e1", "cost": {"ax": 1}, "ms": 30_000},
+        "grenadier": {"label": "Grenadier", "definition": "openra.e2", "cost": {"iron": 1, "coal": 1, "ration": 1}, "ms": 32_000},
+        "rocket_soldier": {"label": "Rocket soldier", "definition": "openra.e3", "cost": {"iron": 2, "coal": 1, "ration": 1}, "ms": 36_000},
+        "shock_trooper": {"label": "Shock trooper", "definition": "openra.shok", "cost": {"iron": 2, "gold": 1, "ration": 1}, "ms": 40_000},
     },
     "vehicle_factory": {
-        "tank": {"label": "Tank", "definition": "openra.3tnk", "cost": {"granite": 2, "plank": 1}, "ms": 30_000},
+        "tank": {"label": "Tank", "definition": "openra.3tnk", "cost": {"granite": 2, "plank": 1, "iron": 1}, "ms": 35_000},
+        "jeep": {"label": "Ranger jeep", "definition": "openra.jeep", "cost": {"plank": 2, "granite": 1}, "ms": 22_000},
+        "light_tank": {"label": "Light tank", "definition": "openra.1tnk", "cost": {"plank": 2, "granite": 1, "iron": 1}, "ms": 28_000},
+        "medium_tank": {"label": "Medium tank", "definition": "openra.2tnk", "cost": {"plank": 1, "granite": 2, "iron": 2}, "ms": 32_000},
+        "apc": {"label": "APC", "definition": "openra.apc", "cost": {"plank": 2, "iron": 2}, "ms": 35_000},
+        "artillery": {"label": "Artillery", "definition": "openra.arty", "cost": {"plank": 2, "iron": 2, "coal": 1}, "ms": 40_000},
+        "mammoth": {"label": "Mammoth tank", "definition": "openra.4tnk", "cost": {"granite": 3, "iron": 6, "coal": 2}, "ms": 70_000},
+        "v2_launcher": {"label": "V2 launcher", "definition": "openra.v2rl", "cost": {"plank": 1, "iron": 3, "coal": 2}, "ms": 50_000},
+        "tesla_tank": {"label": "Tesla tank", "definition": "openra.ttnk", "cost": {"iron": 4, "coal": 2, "gold": 1}, "ms": 55_000},
+        "phase_tank": {"label": "Phase transport", "definition": "openra.stnk", "cost": {"plank": 2, "iron": 3, "gold": 1}, "ms": 50_000},
+        "chrono_tank": {"label": "Chrono tank", "definition": "openra.ctnk", "cost": {"iron": 4, "gold": 2}, "ms": 55_000},
         # The MCV is paid in delivered wares: the vehicle itself (planks, granite) plus the starter kit it carries to the new
         # site. Everything leaves the factory's stock; on deployment the kit goes into the new command centre's store. Hybrid-defined
         # (OpenRA's MCV costs 2000 credits, no Widelands analogue).
@@ -154,6 +195,7 @@ MENU_SIZE = {
     "producer": "small", "ranger": "small", "processor": "medium", "farm": "big", "hunter": "small", "well": "small",
     "tavern": "medium", "bakery": "medium", "mine": "mine", "ironmine": "mine", "quarry": "small",
     "smelter": "medium", "smithy": "medium", "barracks": "medium", "vehicle_factory": "big", "defense": "small",
+    "war_lodge": "medium", "flame_tower": "small", "tesla_coil": "small",
 }
 
 
@@ -387,36 +429,81 @@ def construction_quantum(world: Any) -> None:
 # ------------------------------------------------------------------ roads
 
 def _road_path(world: Any, start: tuple[int, int], goal: tuple[int, int], ends: tuple[str, str] = ("", ""), limit: int = 70) -> list[tuple[int, int]] | None:
-    avoid = world.blocked | world.road_tile_set | set(world.tree_tiles)
-    # Roads that already reach an endpoint share its flag: they may be joined there.
+    blocked, roads, trees = world.blocked, world.road_tile_set, world.tree_tiles  # membership tests: no 20k-tile set union per search
+    # Roads that already reach an endpoint share its flag: a new road may be joined along them (the hybrid has no Widelands flags,
+    # so a crowded warehouse is reached along its existing trunks). Never through a tile a carrier cannot pass (the Ward Duel hazard):
+    # until 12 Oct 2026 a new road could share the blocked tile, and the Red AI's construction sites starved behind it.
+    shared: set[tuple[int, int]] = set()
     for end in ends:
         for _nxt, rid in world.adjacency.get(end, []):
-            avoid -= set(world.roads[rid])
-    heap: list[tuple[int, int, tuple[int, int]]] = [(0, 0, start)]
-    came: dict[tuple[int, int], tuple[int, int]] = {}
-    cost = {start: 0}
+            for t in world.roads[rid]:
+                if not world.tile_blocked_for_carrier(tuple(t)):
+                    shared.add(tuple(t))
+    def open_tile(t: tuple[int, int]) -> bool:
+        return t == goal or (((t not in blocked and t not in roads and t not in trees) or t in shared) and world.tile_in_map(*t))
+
+    # fail fast: an endpoint walled in on all four sides (a site dropped into a forest) cannot be reached; the full search would
+    # explore the whole box before saying so
+    for end in (start, goal):
+        if not any(open_tile((end[0] + dx, end[1] + dy)) or (end[0] + dx, end[1] + dy) == start for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            return None
+    max_expand = int(__import__('os').environ.get('ROAD_CAP', 4 * (2 * limit + 1) * (2 * limit + 1) // 5))
+    # A* over the (2*limit+1)^2 box around the start, with flat-array bookkeeping (12 Oct 2026, a performance rewrite: the same
+    # neighbour order, heap keys and tie-breaks as the tuple/dict version, so the same path; tests/test_road_path.py compares them)
+    sx, sy = start
+    gx, gy = goal
+    if abs(gx - sx) > limit or abs(gy - sy) > limit:
+        return None
+    S = 2 * limit + 1
+    ox, oy = sx - limit, sy - limit
+    N = S * S
+    cost = array("i", [-1]) * N
+    came = array("i", [-1]) * N
+    memo = bytearray(N)  # 0 unknown, 1 open, 2 closed
+    terr = world.terrain
+    ground = terr.ground if terr is not None else world.tile_in_map
+    si = limit * S + limit
+    gi = (gy - oy) * S + (gx - ox)
+    cost[si] = 0
+    heap: list[tuple[int, int, int]] = [(0, 0, si)]
+    pop, push = heapq.heappop, heapq.heappush
     n = 0
     while heap:
-        _f, _c, cur = heapq.heappop(heap)
-        if cur == goal:
-            path = [cur]
-            while cur != start:
-                cur = came[cur]
-                path.append(cur)
+        _f, _c, ci = pop(heap)
+        if n > max_expand:
+            return None
+        if ci == gi:
+            path = []
+            while ci != -1:
+                cy, cx = divmod(ci, S)
+                path.append((cx + ox, cy + oy))
+                ci = came[ci] if ci != si else -1
             path.reverse()
             return path
+        cy, cx = divmod(ci, S)
+        x, y = cx + ox, cy + oy
+        cc = cost[ci] + 1
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            nxt = (cur[0] + dx, cur[1] + dy)
-            if nxt != goal and (nxt in avoid or not world.tile_in_map(*nxt)):
+            lx, ly = cx + dx, cy + dy
+            if lx < 0 or ly < 0 or lx >= S or ly >= S:
                 continue
-            if abs(nxt[0] - start[0]) > limit or abs(nxt[1] - start[1]) > limit:
+            ni = ly * S + lx
+            m = memo[ni]
+            if m == 0:
+                if ni == gi:
+                    m = 1
+                else:
+                    t = (x + dx, y + dy)
+                    m = 1 if (((t not in blocked and t not in roads and t not in trees) or t in shared) and ground(t[0], t[1])) else 2
+                memo[ni] = m
+            if m == 2:
                 continue
-            c = cost[cur] + 1
-            if nxt not in cost or c < cost[nxt]:
-                cost[nxt] = c
-                came[nxt] = cur
+            old = cost[ni]
+            if old == -1 or cc < old:
+                cost[ni] = cc
+                came[ni] = ci
                 n += 1
-                heapq.heappush(heap, (c + abs(goal[0] - nxt[0]) + abs(goal[1] - nxt[1]), n, nxt))
+                push(heap, (cc + abs(gx - x - dx) + abs(gy - y - dy), n, ni))
     return None
 
 
@@ -476,11 +563,15 @@ def cancel_queue(world: Any, building_id: str, index: int) -> dict[str, Any]:
     if b is None or not b.get("queue") or not (0 <= int(index) < len(b["queue"])):
         return {"status": "rejected", "reason": "no_such_item"}
     item = b["queue"].pop(int(index))
-    if item["state"] == "building":  # goods were consumed at start; refund them to the building stock
-        for good, n in recipe_for(world, b, item["unit"])["cost"].items():
+    if item["state"] == "building":  # goods were taken at start; refund them to the building stock and un-book the consumption
+        rec = recipe_for(world, b, item["unit"])
+        for good, n in rec["cost"].items():
             from wizard_rts.economy import produce
 
             produce(world, building_id, good, n)
+            used = n - int((rec.get("cargo") or {}).get(good, 0))  # the cargo part was carried, not consumed (recruitment_quantum)
+            if used:
+                world.stats["consumed_" + good] = world.stats.get("consumed_" + good, 0) - used
     _sync_requests(world, b)
     world.events.append({"kind": "queue_cancelled", "building": building_id, "unit": item["unit"]})
     return {"status": "ok"}

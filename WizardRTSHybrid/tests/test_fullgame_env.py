@@ -16,11 +16,12 @@ def test_one_world_hosts_story_and_outbreaks():
     assert obs["stage"] == "start" and not obs["inside"]
 
 
-def test_story_first_completes_the_story_and_changes_the_deposit():
+def test_story_first_completes_the_story_and_reopens_the_gallery():
     env = FullGameEnv()
     r = run_episode(env, policy_story_first, 1)
     assert r["quest"] == "completed"
-    assert env.w.stats.get("story_vein_units_coal", 0) in (36, 120)
+    receipts = [k for k in env.w.dmb.command_receipts if k.endswith(":reopen_gallery")]
+    assert len(receipts) == 1  # the typed effect was applied exactly once (full: reopened now; thin: the dig-out shortened)
     assert not story.state(env.w)["in_dungeon"]
 
 

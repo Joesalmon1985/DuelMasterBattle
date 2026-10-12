@@ -160,7 +160,8 @@ def _add_cube(world: Any, s: Regions, i: int, now: int, source: str, depth: int 
     if s.cubes[i] >= cap:
         s.outbreaks += 1
         s.log.append({"game_ms": now, "event": "outbreak", "region": s.rid(i), "source": source})
-        world.events.append({"kind": "outbreak", "region": s.rid(i), "count": s.outbreaks})
+        world.events.append({"kind": "outbreak", "region": s.rid(i), "count": s.outbreaks, "hazard": s.kind[i]})
+        _outbreak_damage(world, s, i, now)
         if depth == 0:  # one level of chain: the neighbours each receive a cube, an outbreak there does not cascade again this tick
             for n in s.neighbours[i]:
                 _add_cube(world, s, n, now, "spread", depth=1)
@@ -168,6 +169,28 @@ def _add_cube(world: Any, s: Regions, i: int, now: int, source: str, depth: int 
     s.cubes[i] += 1
     s.added += 1
     world.events.append({"kind": "outbreak_cube", "region": s.rid(i), "cubes": s.cubes[i], "source": source, "hazard": s.kind[i]})
+
+
+def _outbreak_damage(world: Any, s: Regions, i: int, now: int) -> None:
+    """An overflowing region (cubes at the cap) burns its busiest workplace down and shakes the settlements in it (P1.4: consequences
+    that change the economy, not a colour). Command centres are spared: a catastrophe ruins workplaces, war ruins settlements."""
+    from wizard_rts.lifecycle import begin_destruction
+
+    if not hasattr(world, "recipe_requests"):  # a stub world of the outbreak environment: cubes only, no buildings to burn
+        return
+    cands = [b for b in sorted(world.buildings.values(), key=lambda x: x["id"]) if "hp" in b and int(b["hp"]) > 0 and not b.get("command_center")
+             and not b.get("constructing") and not b.get("destroyed") and s.region_at(b["tx"], b["ty"]) == i]
+    if cands:
+        victim = sorted(cands, key=lambda b: (not b.get("working"), not b.get("working_once"), b["id"]))[0]
+        victim["hp"] = 0
+        begin_destruction(world, victim)
+        world.stats["catastrophe_buildings_lost"] = world.stats.get("catastrophe_buildings_lost", 0) + 1
+        world.fstat(victim["faction_name"], "catastrophe_losses")
+        world.events.append({"kind": "catastrophe_destroyed", "id": victim["id"], "faction": victim["faction_name"], "building_kind": victim["kind"],
+                             "region": s.rid(i), "hazard": s.kind[i], "tile": [victim["tx"], victim["ty"]]})
+    for rec in world.dmb.settlements.values():
+        if rec["state"] == "standing" and s.region_at(rec["tile"][0], rec["tile"][1]) == i:
+            rec["unrest"] = min(1.0, float(rec.get("unrest", 0.0)) + 0.2)
 
 
 def _pick_region(world: Any, s: Regions) -> int:
@@ -292,13 +315,28 @@ def entity_rows(world: Any) -> list[dict[str, Any]]:
     return rows
 
 
+def impact(world: Any, s: Regions, i: int) -> dict[str, Any]:
+    """What an outbreak is doing to the economy of one region right now (P1.4: the effect must be visible and measurable)."""
+    rows = [b for b in world.buildings.values() if "hp" in b and int(b["hp"]) > 0 and not b.get("constructing") and s.region_at(b["tx"], b["ty"]) == i]
+    slowed = [b for b in rows if production_factor(world, b) < 1.0]
+    k = next((x for x in config()["kinds"] if x["id"] == s.kind[i]), None)
+    return {"label": k["label"] if k else "", "clue": k["clue"] if k else "", "affects": k["affects"] if k else "",
+            "factor": round(max(float(k["min_factor"]), float(k["factor"]) ** s.cubes[i]), 2) if k and s.cubes[i] else 1.0,
+            "slowed": len(slowed), "closed": sum(1 for b in rows if b.get("disrupted")), "buildings": len(rows)}
+
+
 def snapshot(world: Any) -> dict[str, Any]:
     s = world.__dict__.get("regions")
     if s is None:
         return {}
+    now = int(world.dmb.clock.get("game_ms", 0))
+    here = s.region_at(int(world.player["tx"]), int(world.player["ty"]))
     return {"size": s.size, "count": len(s.axials), "cubes": {s.rid(i): n for i, n in enumerate(s.cubes) if n}, "kinds": {s.rid(i): s.kind[i] for i, n in enumerate(s.cubes) if n},
-            "outbreaks": s.outbreaks, "treated": s.treated, "lost": s.lost, "treating": s.treat is not None, "next_cube_ms": s.next_cube_ms,
-            "player_region": s.rid(s.region_at(int(world.player["tx"]), int(world.player["ty"])))}
+            "impact": {s.rid(i): impact(world, s, i) for i, n in enumerate(s.cubes) if n},
+            "outbreaks": s.outbreaks, "loss_at": const("loss_outbreaks"), "treated": s.treated, "lost": s.lost, "treating": s.treat is not None,
+            "treat_left_ms": max(0, int(s.treat["until_ms"]) - now) if s.treat else 0, "treat_ms": const("treat_ms"),
+            "ready_in_ms": max(0, s.treat_ready_ms - now), "next_cube_ms": s.next_cube_ms, "next_cube_in_ms": max(0, s.next_cube_ms - now),
+            "player_region": s.rid(here), "player_cubes": s.cubes[here]}
 
 
 def fixture_outbreak(world: Any, cubes: int = 2, cadence: bool = False) -> dict[str, Any]:

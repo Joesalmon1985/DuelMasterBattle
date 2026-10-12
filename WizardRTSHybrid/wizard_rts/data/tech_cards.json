@@ -1,302 +1,682 @@
 {
-  "_doc": "Tech cards (D13/D15/S05/S06). kinds = hybrid BUILD_MENU kinds; units = unit kinds a building may queue; wl_patterns = substrings of imported Widelands building names ('wl:<tribe>_<name>') that the card unlocks for every tribe; requires_cards = drafted first; requires_working = building kinds of the faction that must be operational at draft time (S06 physical prerequisite). era is an index: 0 prehistoric, 1 historic, 2 modern, 3 dystopian.",
-  "primitive": {
-    "kinds": [
-      "producer",
-      "ranger",
-      "processor",
-      "quarry",
-      "hunter",
-      "well"
-    ],
-    "units": [],
-    "wl_patterns": [
-      "woodcutter",
-      "lumberjack",
-      "forester",
-      "ranger",
-      "preserver",
-      "quarry",
-      "stonecutter",
-      "hunter",
-      "fisher",
-      "well",
-      "sawmill",
-      "liana",
-      "rare_tree"
-    ]
-  },
-  "cards": [
-    {
-      "id": "dmb.card.farming",
-      "name": "Farming",
-      "era": 0,
-      "kinds": [
-        "farm"
-      ],
-      "units": [],
-      "wl_patterns": [
-        "farm",
-        "plantation",
-        "mill",
-        "cassava"
-      ],
-      "requires_cards": [],
-      "requires_working": [
-        "processor"
-      ]
-    },
-    {
-      "id": "dmb.card.cookery",
-      "name": "Cookery",
-      "era": 0,
-      "kinds": [
-        "tavern",
-        "bakery"
-      ],
-      "units": [],
-      "wl_patterns": [
-        "tavern",
-        "bakery",
-        "inn",
-        "cooker",
-        "preserver_booth",
-        "food_preserver",
-        "brewery"
-      ],
-      "requires_cards": [
-        "dmb.card.farming"
-      ],
-      "requires_working": [
-        "farm"
-      ]
-    },
-    {
-      "id": "dmb.card.mining",
-      "name": "Mining",
-      "era": 0,
-      "kinds": [
-        "mine",
-        "ironmine"
-      ],
-      "units": [],
-      "wl_patterns": [
-        "mine",
-        "digger",
-        "dwelling"
-      ],
-      "requires_cards": [],
-      "requires_working": [
-        "quarry"
-      ]
-    },
-    {
-      "id": "dmb.card.smelting",
-      "name": "Smelting",
-      "era": 0,
-      "kinds": [
-        "smelter"
-      ],
-      "units": [],
-      "wl_patterns": [
-        "smelting",
-        "furnace",
-        "charcoal"
-      ],
-      "requires_cards": [
-        "dmb.card.mining"
-      ],
-      "requires_working": [
-        "mine",
-        "ironmine"
-      ]
-    },
-    {
-      "id": "dmb.card.metalwork",
-      "name": "Metalwork",
-      "era": 1,
-      "kinds": [
-        "smithy"
-      ],
-      "units": [],
-      "wl_patterns": [
-        "smithy",
-        "workshop",
-        "armorsmithy",
-        "weaponsmithy",
-        "helmsmithy",
-        "stone_workshop"
-      ],
-      "requires_cards": [
-        "dmb.card.smelting"
-      ],
-      "requires_working": [
-        "smelter"
-      ]
-    },
-    {
-      "id": "dmb.card.drill_tactics",
-      "name": "Drill tactics",
-      "era": 1,
-      "kinds": [
-        "barracks"
-      ],
-      "units": [
-        "infantry"
-      ],
-      "wl_patterns": [
-        "barracks",
-        "initiation_site"
-      ],
-      "requires_cards": [
-        "dmb.card.metalwork"
-      ],
-      "requires_working": [
-        "smithy"
-      ]
-    },
-    {
-      "id": "dmb.card.fortification",
-      "name": "Fortification",
-      "era": 1,
-      "kinds": [
-        "defense"
-      ],
-      "units": [],
-      "wl_patterns": [
-        "tower",
-        "sentry",
-        "fortress",
-        "citadel",
-        "outpost",
-        "barrier"
-      ],
-      "requires_cards": [
-        "dmb.card.metalwork"
-      ],
-      "requires_working": [
-        "quarry"
-      ]
-    },
-    {
-      "id": "dmb.card.motor_pool",
-      "name": "Motor pool",
-      "era": 1,
-      "kinds": [
-        "vehicle_factory"
-      ],
-      "units": [
-        "tank",
-        "mcv"
-      ],
-      "wl_patterns": [],
-      "requires_cards": [
-        "dmb.card.drill_tactics"
-      ],
-      "requires_working": [
-        "barracks"
-      ]
-    },
-    {
-      "id": "dmb.card.seafaring",
-      "name": "Seafaring",
-      "era": 1,
-      "kinds": [
-        "naval_yard"
-      ],
-      "units": [
-        "patrol_boat"
-      ],
-      "wl_patterns": [
-        "shipyard",
-        "port",
-        "weaving"
-      ],
-      "requires_cards": [
-        "dmb.card.motor_pool"
-      ],
-      "requires_working": [
-        "vehicle_factory"
-      ]
-    },
-    {
-      "id": "dmb.card.submarines",
-      "name": "Submarines",
-      "era": 2,
-      "kinds": [
-        "sub_pen"
-      ],
-      "units": [
-        "submarine"
-      ],
-      "wl_patterns": [],
-      "requires_cards": [
-        "dmb.card.seafaring"
-      ],
-      "requires_working": [
-        "naval_yard"
-      ]
-    },
-    {
-      "id": "dmb.card.automation",
-      "name": "Automation",
-      "era": 2,
-      "kinds": [
-        "mdy:mechanical_drill",
-        "mdy:conveyor",
-        "mdy:power_node",
-        "mdy:combustion_generator",
-        "mdy:solar_panel"
-      ],
-      "units": [],
-      "wl_patterns": [],
-      "requires_cards": [
-        "dmb.card.metalwork"
-      ],
-      "requires_working": [
-        "smithy"
-      ],
-      "source": "Mindustry blocks (drills, conveyors, power) - S06: Historic+ and a working smithy chain; Modern era here"
-    },
-    {
-      "id": "dmb.card.industry",
-      "name": "Industry",
-      "era": 2,
-      "kinds": [
-        "mdy:silicon_smelter",
-        "mdy:graphite_press",
-        "mdy:battery",
-        "mdy:pneumatic_drill",
-        "mdy:solar_panel_large"
-      ],
-      "units": [],
-      "wl_patterns": [],
-      "requires_cards": [
-        "dmb.card.automation"
-      ],
-      "requires_working": [
-        "mdy:mechanical_drill"
-      ],
-      "source": "Mindustry crafters, batteries, pneumatic drill"
-    },
-    {
-      "id": "dmb.card.unit_fabrication",
-      "name": "Unit fabrication",
-      "era": 2,
-      "kinds": [
-        "mdy:ground_factory"
-      ],
-      "units": [
-        "dagger"
-      ],
-      "wl_patterns": [],
-      "requires_cards": [
-        "dmb.card.industry"
-      ],
-      "requires_working": [
-        "mdy:silicon_smelter"
-      ],
-      "source": "Mindustry ground factory and dagger"
-    }
+ "_doc": "Tech cards (D13/D15/S05/S06). kinds = hybrid BUILD_MENU kinds; units = unit kinds a building may queue; wl_patterns = substrings of imported Widelands building names ('wl:<tribe>_<name>') that the card unlocks for every tribe; requires_cards = drafted first; requires_working = building kinds of the faction that must be operational at draft time (S06 physical prerequisite). era is an index: 0 prehistoric, 1 historic, 2 modern, 3 dystopian. v2 (12 Oct 2026): 32 cards over four eras; up to tech.OFFER_SIZE (7) eligible cards are offered per round; summary is the player-facing explanation; effect is an optional non-content modifier.",
+ "primitive": {
+  "kinds": [
+   "producer",
+   "ranger",
+   "processor",
+   "quarry",
+   "hunter",
+   "well"
+  ],
+  "units": [],
+  "wl_patterns": [
+   "woodcutter",
+   "lumberjack",
+   "forester",
+   "ranger",
+   "preserver",
+   "quarry",
+   "stonecutter",
+   "hunter",
+   "fisher",
+   "well",
+   "sawmill",
+   "liana",
+   "rare_tree"
   ]
+ },
+ "cards": [
+  {
+   "id": "dmb.card.farming",
+   "name": "Farming",
+   "era": 0,
+   "summary": "Fields of grain, cassava or corn: the base of bread, beer and rations.",
+   "kinds": [
+    "farm"
+   ],
+   "units": [],
+   "wl_patterns": [
+    "farm",
+    "plantation",
+    "mill",
+    "cassava"
+   ],
+   "requires_cards": [],
+   "requires_working": [
+    "processor"
+   ]
+  },
+  {
+   "id": "dmb.card.mining",
+   "name": "Mining",
+   "era": 0,
+   "summary": "Shafts into coal, iron, gold and stone deposits. The sites never run dry (D22); miners need rations.",
+   "kinds": [
+    "mine",
+    "ironmine"
+   ],
+   "units": [],
+   "wl_patterns": [
+    "mine",
+    "digger",
+    "dwelling"
+   ],
+   "requires_cards": [],
+   "requires_working": [
+    "quarry"
+   ]
+  },
+  {
+   "id": "dmb.card.cookery",
+   "name": "Cookery",
+   "era": 0,
+   "summary": "Taverns and bakeries turn meat, fish and bread into rations that feed miners and soldiers.",
+   "kinds": [
+    "tavern",
+    "bakery"
+   ],
+   "units": [],
+   "wl_patterns": [
+    "tavern",
+    "bakery",
+    "inn",
+    "cooker",
+    "preserver_booth",
+    "food_preserver",
+    "brewery",
+    "drinking_hall",
+    "smokery"
+   ],
+   "requires_cards": [
+    "dmb.card.farming"
+   ],
+   "requires_working": [
+    "farm"
+   ]
+  },
+  {
+   "id": "dmb.card.smelting",
+   "name": "Smelting",
+   "era": 0,
+   "summary": "Furnaces turn ore and coal into iron and gold; charcoal kilns burn logs into coal.",
+   "kinds": [
+    "smelter"
+   ],
+   "units": [],
+   "wl_patterns": [
+    "smelting",
+    "furnace",
+    "charcoal"
+   ],
+   "requires_cards": [
+    "dmb.card.mining"
+   ],
+   "requires_working": [
+    "mine",
+    "ironmine"
+   ]
+  },
+  {
+   "id": "dmb.card.warrior_bands",
+   "name": "Warrior bands",
+   "era": 0,
+   "summary": "A war lodge trains clubmen and spearmen from rations and wood.",
+   "kinds": [
+    "war_lodge"
+   ],
+   "units": [
+    "clubman",
+    "spearman"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [],
+   "requires_working": [
+    "hunter"
+   ]
+  },
+  {
+   "id": "dmb.card.slings",
+   "name": "Slings",
+   "era": 0,
+   "summary": "Slingers fight from range; trained at the war lodge.",
+   "kinds": [],
+   "units": [
+    "slinger"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.warrior_bands"
+   ],
+   "requires_working": [
+    "war_lodge"
+   ]
+  },
+  {
+   "id": "dmb.card.settlers",
+   "name": "Settlers",
+   "era": 0,
+   "summary": "A warehouse can send out a settlers' wagon that founds a new settlement (+1 VP).",
+   "kinds": [],
+   "units": [
+    "settlers"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.farming"
+   ],
+   "requires_working": [
+    "farm"
+   ]
+  },
+  {
+   "id": "dmb.card.crafts",
+   "name": "Crafts",
+   "era": 0,
+   "summary": "Reed yards, rope weavers, wood hardeners, lime kilns, brick kilns and masons: the special building materials of each tribe.",
+   "kinds": [],
+   "units": [],
+   "wl_patterns": [
+    "reed_yard",
+    "reed_farm",
+    "rope_weaver",
+    "wood_hardener",
+    "lime_kiln",
+    "brick_kiln",
+    "clay_pit",
+    "stonemasons_house",
+    "stonecutter",
+    "rockmine",
+    "granitemine",
+    "marblemine",
+    "crystalmine",
+    "stonemine"
+   ],
+   "requires_cards": [],
+   "requires_working": [
+    "quarry"
+   ]
+  },
+  {
+   "id": "dmb.card.husbandry",
+   "name": "Husbandry",
+   "era": 0,
+   "summary": "Pig, sheep, reindeer, cattle, tapir and bee farms, fish breeders and fruit collectors.",
+   "kinds": [],
+   "units": [],
+   "wl_patterns": [
+    "piggery",
+    "sheepfarm",
+    "reindeer",
+    "cattlefarm",
+    "donkeyfarm",
+    "horsefarm",
+    "tapir",
+    "beekeeper",
+    "fishbreeder",
+    "collectors_house",
+    "berry_farm",
+    "vineyard",
+    "winery",
+    "cocoa"
+   ],
+   "requires_cards": [
+    "dmb.card.farming"
+   ],
+   "requires_working": [
+    "farm"
+   ]
+  },
+  {
+   "id": "dmb.card.metalwork",
+   "name": "Metalwork",
+   "era": 1,
+   "summary": "Smithies forge tools, axes, swords and armour from iron and coal.",
+   "kinds": [
+    "smithy"
+   ],
+   "units": [],
+   "wl_patterns": [
+    "smithy",
+    "workshop",
+    "armorsmithy",
+    "weaponsmithy",
+    "helmsmithy",
+    "stone_workshop",
+    "warmill",
+    "armor_smithy"
+   ],
+   "requires_cards": [
+    "dmb.card.smelting"
+   ],
+   "requires_working": [
+    "smelter"
+   ]
+  },
+  {
+   "id": "dmb.card.weaving",
+   "name": "Weaving",
+   "era": 1,
+   "summary": "Weaving mills, sewing rooms, tailors and dressmakers: cloth, tabards and garments for soldiers.",
+   "kinds": [],
+   "units": [],
+   "wl_patterns": [
+    "weaving",
+    "spinning",
+    "sewing_room",
+    "tailors_shop",
+    "dressmakery",
+    "spiderfarm"
+   ],
+   "requires_cards": [
+    "dmb.card.farming"
+   ],
+   "requires_working": [
+    "farm"
+   ]
+  },
+  {
+   "id": "dmb.card.drill_tactics",
+   "name": "Drill tactics",
+   "era": 1,
+   "summary": "OpenRA barracks: riflemen equipped with the tribe's own weapons (or axes).",
+   "kinds": [
+    "barracks"
+   ],
+   "units": [
+    "infantry"
+   ],
+   "wl_patterns": [
+    "barracks",
+    "initiation_site"
+   ],
+   "requires_cards": [
+    "dmb.card.metalwork"
+   ],
+   "requires_working": [
+    "smithy"
+   ]
+  },
+  {
+   "id": "dmb.card.grenadiers",
+   "name": "Grenadiers",
+   "era": 1,
+   "summary": "Grenadiers (OpenRA E2) throw explosives over cover; cost iron and coal.",
+   "kinds": [],
+   "units": [
+    "grenadier"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.drill_tactics"
+   ],
+   "requires_working": [
+    "barracks"
+   ]
+  },
+  {
+   "id": "dmb.card.rocketry",
+   "name": "Rocketry",
+   "era": 1,
+   "summary": "Rocket soldiers (OpenRA E3) with anti-armour launchers.",
+   "kinds": [],
+   "units": [
+    "rocket_soldier"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.grenadiers"
+   ],
+   "requires_working": [
+    "barracks"
+   ]
+  },
+  {
+   "id": "dmb.card.fortification",
+   "name": "Fortification",
+   "era": 1,
+   "summary": "Gun turrets and flame towers guard the approaches to a settlement.",
+   "kinds": [
+    "defense",
+    "flame_tower"
+   ],
+   "units": [],
+   "wl_patterns": [
+    "tower",
+    "sentry",
+    "fortress",
+    "citadel",
+    "outpost",
+    "barrier"
+   ],
+   "requires_cards": [
+    "dmb.card.metalwork"
+   ],
+   "requires_working": [
+    "quarry"
+   ]
+  },
+  {
+   "id": "dmb.card.motor_pool",
+   "name": "Motor pool",
+   "era": 1,
+   "summary": "War factory: jeeps, light tanks and the MCV that founds distant settlements.",
+   "kinds": [
+    "vehicle_factory"
+   ],
+   "units": [
+    "jeep",
+    "light_tank",
+    "mcv"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.drill_tactics"
+   ],
+   "requires_working": [
+    "barracks"
+   ]
+  },
+  {
+   "id": "dmb.card.armour",
+   "name": "Armour",
+   "era": 1,
+   "summary": "Medium and heavy tanks and armoured personnel carriers.",
+   "kinds": [],
+   "units": [
+    "medium_tank",
+    "tank",
+    "apc"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.motor_pool"
+   ],
+   "requires_working": [
+    "vehicle_factory"
+   ]
+  },
+  {
+   "id": "dmb.card.artillery",
+   "name": "Artillery",
+   "era": 1,
+   "summary": "Long-range artillery shells buildings from beyond turret range.",
+   "kinds": [],
+   "units": [
+    "artillery"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.motor_pool"
+   ],
+   "requires_working": [
+    "vehicle_factory"
+   ]
+  },
+  {
+   "id": "dmb.card.seafaring",
+   "name": "Seafaring",
+   "era": 1,
+   "summary": "Naval yards and patrol boats; Widelands shipyards and ports.",
+   "kinds": [
+    "naval_yard"
+   ],
+   "units": [
+    "patrol_boat"
+   ],
+   "wl_patterns": [
+    "shipyard",
+    "port"
+   ],
+   "requires_cards": [
+    "dmb.card.motor_pool"
+   ],
+   "requires_working": [
+    "vehicle_factory"
+   ]
+  },
+  {
+   "id": "dmb.card.automation",
+   "name": "Automation",
+   "era": 2,
+   "summary": "Mindustry drills on the existing deposits, conveyors and power: machines that work without carriers.",
+   "kinds": [
+    "mdy:mechanical_drill",
+    "mdy:conveyor",
+    "mdy:power_node",
+    "mdy:combustion_generator",
+    "mdy:solar_panel"
+   ],
+   "units": [],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.metalwork"
+   ],
+   "requires_working": [
+    "smithy"
+   ],
+   "source": "Mindustry blocks (drills, conveyors, power)"
+  },
+  {
+   "id": "dmb.card.industry",
+   "name": "Industry",
+   "era": 2,
+   "summary": "Silicon smelters, graphite presses, batteries, pneumatic drills and large solar panels.",
+   "kinds": [
+    "mdy:silicon_smelter",
+    "mdy:graphite_press",
+    "mdy:battery",
+    "mdy:pneumatic_drill",
+    "mdy:solar_panel_large"
+   ],
+   "units": [],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.automation"
+   ],
+   "requires_working": [
+    "mdy:mechanical_drill"
+   ],
+   "source": "Mindustry crafters, batteries, pneumatic drill"
+  },
+  {
+   "id": "dmb.card.unit_fabrication",
+   "name": "Unit fabrication",
+   "era": 2,
+   "summary": "The Mindustry ground factory builds daggers from silicon and lead, powered by the grid.",
+   "kinds": [
+    "mdy:ground_factory"
+   ],
+   "units": [
+    "dagger"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.industry"
+   ],
+   "requires_working": [
+    "mdy:silicon_smelter"
+   ],
+   "source": "Mindustry ground factory and dagger"
+  },
+  {
+   "id": "dmb.card.heavy_armour",
+   "name": "Heavy armour",
+   "era": 2,
+   "summary": "Mammoth tanks (OpenRA 4TNK): the strongest armour of the age.",
+   "kinds": [],
+   "units": [
+    "mammoth"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.armour"
+   ],
+   "requires_working": [
+    "vehicle_factory"
+   ]
+  },
+  {
+   "id": "dmb.card.rocket_artillery",
+   "name": "Rocket artillery",
+   "era": 2,
+   "summary": "V2 rocket launchers outrange every defence.",
+   "kinds": [],
+   "units": [
+    "v2_launcher"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.artillery"
+   ],
+   "requires_working": [
+    "vehicle_factory"
+   ]
+  },
+  {
+   "id": "dmb.card.tesla",
+   "name": "Tesla coils",
+   "era": 2,
+   "summary": "Tesla coils: a high-voltage defence that destroys armour.",
+   "kinds": [
+    "tesla_coil"
+   ],
+   "units": [],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.fortification"
+   ],
+   "requires_working": [
+    "defense"
+   ]
+  },
+  {
+   "id": "dmb.card.submarines",
+   "name": "Submarines",
+   "era": 2,
+   "summary": "Submarine pens and submarines.",
+   "kinds": [
+    "sub_pen"
+   ],
+   "units": [
+    "submarine"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.seafaring"
+   ],
+   "requires_working": [
+    "naval_yard"
+   ]
+  },
+  {
+   "id": "dmb.card.deep_mining",
+   "name": "Deep mining",
+   "era": 2,
+   "summary": "Deeper Widelands mines that feed on snacks and meals and dig faster.",
+   "kinds": [],
+   "units": [],
+   "wl_patterns": [
+    "_deep",
+    "_deeper"
+   ],
+   "requires_cards": [
+    "dmb.card.mining"
+   ],
+   "requires_working": [
+    "mine",
+    "ironmine"
+   ]
+  },
+  {
+   "id": "dmb.card.tesla_armour",
+   "name": "Tesla armour",
+   "era": 3,
+   "summary": "Tesla tanks carry the coil into battle.",
+   "kinds": [],
+   "units": [
+    "tesla_tank"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.tesla",
+    "dmb.card.heavy_armour"
+   ],
+   "requires_working": [
+    "tesla_coil"
+   ]
+  },
+  {
+   "id": "dmb.card.phase_armour",
+   "name": "Phase armour",
+   "era": 3,
+   "summary": "Phase transports and chrono tanks with armour-piercing tusks.",
+   "kinds": [],
+   "units": [
+    "phase_tank",
+    "chrono_tank"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.heavy_armour"
+   ],
+   "requires_working": [
+    "vehicle_factory"
+   ]
+  },
+  {
+   "id": "dmb.card.shock_troops",
+   "name": "Shock troops",
+   "era": 3,
+   "summary": "Shock troopers armed with portable tesla guns.",
+   "kinds": [],
+   "units": [
+    "shock_trooper"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.rocketry",
+    "dmb.card.tesla"
+   ],
+   "requires_working": [
+    "tesla_coil"
+   ]
+  },
+  {
+   "id": "dmb.card.machine_war",
+   "name": "Machine war",
+   "era": 3,
+   "summary": "Ground factories also build crawlers and novas; daggers come off the line faster.",
+   "kinds": [],
+   "units": [
+    "crawler",
+    "nova"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.unit_fabrication"
+   ],
+   "requires_working": [
+    "mdy:ground_factory"
+   ]
+  },
+  {
+   "id": "dmb.card.arcology",
+   "name": "Arcologies",
+   "era": 3,
+   "summary": "Dense settlements: every command centre may support more buildings and its territory grows by 4 tiles.",
+   "kinds": [],
+   "units": [],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.automation"
+   ],
+   "requires_working": [
+    "mdy:mechanical_drill"
+   ],
+   "effect": {
+    "territory_bonus": 4
+   }
+  }
+ ]
 }

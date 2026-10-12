@@ -20,7 +20,11 @@ var _blocked: Dictionary = {}
 var _seq := 0
 const POLL_SECONDS := 0.2  # the simulation steps in 100 ms quanta; the art layer glides between polls, so a poll is not needed every frame
 var _static_rows: Dictionary = {}  # trees and rocks, kept locally and updated from the sim's deltas
+var _solid: Dictionary = {}  # Vector2i -> id of a standing tree or a rock there: the wizard walks round them (P1.1, same rule as world.set_pose)
+var _solid_tile_of: Dictionary = {}  # id -> Vector2i, so a delta can clear the tile it used to block
+const WALKABLE_TREE_STAGES := ["sapling", "felled", "stump"]
 var _clock_acc := 0.0
+var paused := false  # spectator pause: the client stops asking the sim to advance (the world clock does not move)
 var _duel_open := false
 var _hex_crossings := 0
 var _last_hex := Vector2i(999999, 999999)
@@ -139,6 +143,8 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 	_clock_acc += delta
+	if paused:
+		_clock_acc = 0.0
 	if _clock_acc >= POLL_SECONDS:
 		var ms := int(_clock_acc * 1000.0)
 		_clock_acc = 0.0
@@ -212,7 +218,29 @@ func _tile_char(_x: int, _y: int) -> String:
 func is_walkable(p: Vector2i) -> bool:
 	if not tile_ground(p.x, p.y):
 		return false
-	return not _blocked.has(p)
+	return not _blocked.has(p) and not _solid.has(p)
+
+
+## A standing tree (not a sapling, stump or field crop) or a rock blocks the wizard's tile.
+func _note_solid(row: Dictionary) -> void:
+	var id := str(row.get("id", ""))
+	_unnote_solid(id)
+	var cls := str(row.get("class", ""))
+	if cls == "tree" and (not bool(row.get("solid", true)) or str(row.get("stage", "")) in WALKABLE_TREE_STAGES):
+		return  # the simulation says which trees are solid (world.tree_solid); fields, crops, bushes and saplings are not
+	if cls != "tree" and cls != "rock":
+		return
+	var t := Vector2i(int(row.get("tx", 0)), int(row.get("ty", 0)))
+	_solid[t] = id
+	_solid_tile_of[id] = t
+
+
+func _unnote_solid(id: String) -> void:
+	if _solid_tile_of.has(id):
+		var t: Vector2i = _solid_tile_of[id]
+		if str(_solid.get(t, "")) == id:
+			_solid.erase(t)
+		_solid_tile_of.erase(id)
 
 
 func _on_action() -> void:
@@ -261,19 +289,27 @@ func _apply_snapshot(snap: Dictionary) -> void:
 		var d: Dictionary = snap["tree_delta"]
 		if bool(d.get("full", false)):
 			_static_rows.clear()
+			_solid.clear()
+			_solid_tile_of.clear()
 		for row in d.get("upsert", []):
 			_static_rows[str(row["id"])] = row
+			_note_solid(row)
 		for id in d.get("removed", []):
 			_static_rows.erase(str(id))
+			_unnote_solid(str(id))
 		snap["entities"] = snap.get("entities", []) + _static_rows.values()
 	else:
 		_static_rows.clear()
+		_solid.clear()
+		_solid_tile_of.clear()
 		for e in snap.get("entities", []):
 			if typeof(e) == TYPE_DICTIONARY and str(e.get("class", "")) in ["tree", "rock"]:
 				_static_rows[str(e["id"])] = e
+				_note_solid(e)
 	_snapshot = snap
 	if era_hud != null:
 		era_hud.text = _era_text(snap)
+		era_hud.visible = god == null or not god.active  # in God Mode the spectator HUD shows the era with its reasons
 	_blocked.clear()
 	for item in snap.get("blocked", []):
 		if item is Array and item.size() >= 2:

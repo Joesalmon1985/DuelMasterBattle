@@ -119,7 +119,8 @@ def test_building_rejected_on_invalid_terrain_and_accepted_on_valid() -> None:
     assert w.build("Red", "farm", *meadow_free)["status"] == "ok"
 
 
-def test_mine_takes_from_the_deposit_under_it_and_runs_out() -> None:
+def test_mine_works_the_deposit_under_it_and_the_site_never_runs_out() -> None:
+    """D22 (12 Oct 2026): the mine needs a coal site in reach; the site's richness weights the digs but is not consumed."""
     w = HybridWorld(507)
     mine = next(b for b in w.buildings.values() if b["kind"] == "mine" and b["faction_name"] == "Red")
     c = (mine["tx"], mine["ty"])
@@ -127,11 +128,10 @@ def test_mine_takes_from_the_deposit_under_it_and_runs_out() -> None:
     assert before >= 150
     from wizard_rts.workers import _mine
     args = {"resource": "coal", "radius": 2, "yield": 33.33, "when_empty": 5}
-    taken = 0
-    while taken < 40 and _mine(w, mine, args):
-        taken += 1
-    assert taken >= 20
-    assert w.terrain.total(c[0], c[1], 2, "coal") == before - taken
+    taken = sum(1 for _ in range(400) if _mine(w, mine, args))
+    assert taken >= 300
+    assert w.terrain.total(c[0], c[1], 2, "coal") == before
+    assert w.stats["mined_from_inexhaustible_deposit:coal"] == taken
     # a mine with no deposit in reach produces nothing
     far = {"id": "x", "tx": 5, "ty": 5}
     assert _mine(w, far, args) is False

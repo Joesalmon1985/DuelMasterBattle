@@ -35,6 +35,14 @@ CLASS_CODE = {"arable": ARABLE, "mineable": MINEABLE, "walkable": WALKABLE, "wat
 RES_NONE, RES_COAL, RES_IRON, RES_GOLD, RES_STONES, RES_FISH, RES_WATER = range(7)
 RES_NAMES = ("", "coal", "iron", "gold", "stones", "fish", "water")
 RES_CODE = {n: i for i, n in enumerate(RES_NAMES)}
+# D22 (owner decision, 12 Oct 2026): a mineral site never runs dry. Mines and drills on these kinds read the deposit but do not
+# shrink it; the ware they make is logged as `mined_from_inexhaustible_deposit` by the caller. Fish and water keep their own
+# finite, breeding ecology.
+MINERALS = frozenset(("coal", "iron", "gold", "stones"))
+
+
+def is_mineral(res: str) -> bool:
+    return res in MINERALS
 
 # build capability values (Widelands BUILDCAPS_*)
 B_NONE, B_SMALL, B_MEDIUM, B_BIG, B_MINE = 0, 1, 2, 3, 4
@@ -257,6 +265,8 @@ class TerrainGrid:
         i = y * self.w + x
         if self.res_kind[i] != RES_CODE[res]:
             return 0
+        if res in MINERALS:  # D22: the site is inexhaustible; the reserve figure is its richness, not a stock
+            return n if (self.res_amt[i] > 0 or self.res_init[i] > 0) else 0
         got = min(n, self.res_amt[i])
         self.res_amt[i] -= got
         return got
@@ -278,7 +288,7 @@ class TerrainGrid:
             base = y * w
             for x in range(max(0, cx - radius), min(w, cx + radius + 1)):
                 i = base + x
-                if self.res_kind[i] == code and self.res_amt[i] > 0:
+                if self.res_kind[i] == code and (self.res_amt[i] > 0 or (res in MINERALS and self.res_init[i] > 0)):
                     out.append((x, y))
         return out
 

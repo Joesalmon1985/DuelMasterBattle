@@ -16,6 +16,7 @@ from wizard_rts.logistics import in_flight
 
 def wares_in(world: Any) -> set[str]:
     out = {g for s in world.stocks.values() for g in s}
+    out.update(g for u in world.units.values() for g in (u.get("cargo") or {}))
     out.update(k[len("made_"):] for k in world.stats if k.startswith("made_"))
     out.update(k[len("consumed_"):] for k in world.stats if k.startswith("consumed_"))
     out.update(industry.holdings(world))
@@ -23,8 +24,25 @@ def wares_in(world: Any) -> set[str]:
 
 
 def held(world: Any, good: str, extra: dict[str, int] | None = None) -> int:
+    """Stocks, wares on roads, machine buffers and belts, and the cargo a live MCV or settlers' wagon is carrying to a new site."""
     ind = extra if extra is not None else industry.holdings(world)
-    return sum(int(s.get(good, 0)) for s in world.stocks.values()) + in_flight(world, good) + ind.get(good, 0)
+    cargo = sum(int((u.get("cargo") or {}).get(good, 0)) for u in world.units.values() if u.get("alive", True))
+    cargo += sum(int(c.get(good, 0)) for c in _queued_cargo(world))
+    return sum(int(s.get(good, 0)) for s in world.stocks.values()) + in_flight(world, good) + ind.get(good, 0) + cargo
+
+
+def _queued_cargo(world: Any) -> list[dict[str, int]]:
+    """The load of a founder (MCV, settlers) that is being built: it left the store when work began and rides out with the vehicle."""
+    from wizard_rts import construction as con
+
+    out = []
+    for b in world.buildings.values():
+        for item in b.get("queue") or []:
+            if item.get("state") == "building":
+                rec = con.recipe_for(world, b, item["unit"]) or {}
+                if rec.get("cargo"):
+                    out.append(rec["cargo"])
+    return out
 
 
 def snapshot_totals(world: Any) -> dict[str, Any]:

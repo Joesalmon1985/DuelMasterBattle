@@ -22,10 +22,29 @@ def begin_destruction(world: Any, b: dict) -> None:
     b["destroyed"] = True
     b["ruin_ms"] = RUIN_MS
     lost = len(b.get("queue") or [])
+    for item in b.get("queue") or []:  # a founder being built dies with the load already taken from the store
+        if item.get("state") == "building":
+            from wizard_rts import construction as con
+
+            for good, n in sorted(((con.recipe_for(world, b, item["unit"]) or {}).get("cargo") or {}).items()):
+                lose(world, good, int(n))
     b["queue"] = []
     b["working"] = False
     world.recipe_requests.pop(b["id"], None)
+    from wizard_rts import society
+
+    society.note_loss(world, b)
     world.events.append({"kind": "destruction_started", "id": b["id"], "faction": b.get("faction_name", ""), "queued_orders_cancelled": lost})
+
+
+def lose(world: Any, good: str, n: int = 1) -> None:
+    """Wares destroyed with a building, a road or a vehicle: booked as consumed, so the ware ledger still balances
+    (ARCHITECTURE_CONTRACT section 5); `stats['lost']` keeps the count of everything destroyed this way."""
+    if n <= 0:
+        return
+    world.stats["lost"] = world.stats.get("lost", 0) + n
+    world.stats["consumed_" + good] = world.stats.get("consumed_" + good, 0) + n
+    world.stats["destroyed_" + good] = world.stats.get("destroyed_" + good, 0) + n
 
 
 def purge_building(world: Any, bid: str, reason: str) -> None:
@@ -40,18 +59,21 @@ def purge_building(world: Any, bid: str, reason: str) -> None:
     world.blocked.discard((b["tx"], b["ty"]))
     for p in list(b.get("footprint", [])) + list(b.get("ground_footprint", [])):
         world.blocked.discard((int(p[0]), int(p[1])))
-    lost = sum(int(n) for n in world.stocks.pop(bid, {}).values())
+    lost = 0
+    for good, n in sorted(world.stocks.pop(bid, {}).items()):
+        lose(world, good, int(n))
+        lost += max(0, int(n))
     for rid in [r for r, (a, c) in world.road_edges.items() if bid in (a, c)]:
         _remove_road(world, rid)
     for t in world.node_wares.pop(bid, []):
+        lose(world, t["good"], 1)
         lost += 1
     world.recipe_requests.pop(bid, None)
     world.adjacency.pop(bid, None)
     w = world.workers.pop(b.get("worker_id", ""), None)
-    if w is not None:
-        lost += 1 if w["carrying"] else 0
-    if lost:
-        world.stats["lost"] = world.stats.get("lost", 0) + lost
+    if w is not None and w["carrying"]:
+        world.stats["lost"] = world.stats.get("lost", 0) + 1  # not yet produced, so not in the ledger
+        lost += 1
     world.events.append({"kind": "building_removed", "id": bid, "reason": reason, "lost": lost})
 
 
@@ -63,7 +85,7 @@ def _remove_road(world: Any, rid: str) -> None:
     for cid in [i for i, car in world.carriers.items() if car["road_id"] == rid]:
         car = world.carriers.pop(cid)
         if car["cargo"]:
-            world.stats["lost"] = world.stats.get("lost", 0) + 1
+            lose(world, car["cargo"]["good"], 1)
     # wares waiting for this road at either end lose their route; send them on toward a warehouse or drop them
     for node in (a, c):
         queue = world.node_wares.get(node, [])
@@ -71,7 +93,7 @@ def _remove_road(world: Any, rid: str) -> None:
         for t in queue:
             nxt = t["path"][t["i"] + 1] if t["i"] + 1 < len(t["path"]) else None
             if nxt is not None and not any(n == nxt for n, _r in world.adjacency.get(node, [])):
-                world.stats["lost"] = world.stats.get("lost", 0) + 1
+                lose(world, t["good"], 1)
                 world.events.append({"kind": "ware_lost", "good": t["good"], "at": node})
             else:
                 keep.append(t)

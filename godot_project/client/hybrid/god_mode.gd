@@ -23,6 +23,9 @@ var god_enabled := true      # false in the campaign profile: no God Mode button
 var profile := ""
 var unlocked: Dictionary = {}   # faction -> kinds a drafted card has unlocked (empty when the profile does not gate)
 var gated := false
+var card_info: Dictionary = {}  # card id -> {name, era, summary, kinds, units, ...} from the sim's catalogue (op "cards")
+var spectator: Node  # the read-only spectator HUD (spectator_hud.gd)
+const SpectatorHud = preload("res://client/hybrid/spectator_hud.gd")
 
 var layer: CanvasLayer
 var mode_btn: Button
@@ -90,6 +93,14 @@ func setup(p_world: Node) -> void:
 	gated = bool(reply.get("gated", false))
 	unlocked = reply.get("unlocked", {})
 	_fill_build_menu()
+	var cat: Dictionary = world._sim.op({"op": "cards"})
+	for era in cat.get("catalogue", {}):
+		for c in cat["catalogue"][era]:
+			card_info[str(c["id"])] = c
+	spectator = SpectatorHud.new()
+	spectator.name = "SpectatorHud"
+	add_child(spectator)
+	spectator.setup(world, self)
 	if world.terrain != null:
 		MAP_TILES = Vector2(world.terrain.w, world.terrain.h)
 	var start := OS.get_environment("HYBRID_START_MODE").to_lower()
@@ -106,7 +117,8 @@ func _build_panel() -> void:
 	v.add_theme_constant_override("separation", 6)
 	panel.add_child(v)
 	var title := Label.new()
-	title.text = "GOD MODE - choose a faction"
+	title.text = "GOD MODE (spectating). Command a faction:"
+	title.tooltip_text = "Entering God Mode only watches: every faction keeps its AI. A letter below takes control of that faction (its AI stops); Release gives it back."
 	v.add_child(title)
 	faction_row = HBoxContainer.new()
 	faction_row.name = "Factions"
@@ -246,6 +258,8 @@ func _fill_factions() -> void:
 
 func set_active_visuals(on: bool) -> void:
 	panel.visible = on
+	if spectator != null:
+		spectator.set_visible(on)
 	minimap.visible = on
 	mode_btn.text = "Wizard Mode" if on else "God Mode"
 	world._art.show_markers = on
@@ -272,10 +286,7 @@ func enter() -> void:
 	world.camera_focus = _cam
 	_fill_factions()
 	set_active_visuals(true)
-	if faction == "":
-		choose_faction("Red")
-	else:
-		choose_faction(faction)
+	inspect(faction if faction != "" else "Red")  # spectating: watching a faction never switches its AI off
 
 
 func leave() -> void:
@@ -300,6 +311,20 @@ func reload_menu() -> void:
 	_fill_build_menu()
 
 
+## Look at a faction without taking it over (camera, menu of what it has unlocked, the spectator HUD's draft panel).
+func inspect(name: String) -> void:
+	faction = name
+	if gated:
+		reload_menu()
+	if spectator != null and spectator.inspected != name:
+		spectator.inspected = name
+	selected.clear()
+	tool = ""
+	_say("Watching %s - its AI keeps playing. Take control (or its letter) to command it." % name)
+	_jump_to_capital()
+
+
+## Take command of a faction: its AI stops until Release (or leaving God Mode).
 func choose_faction(name: String) -> void:
 	faction = name
 	if gated:

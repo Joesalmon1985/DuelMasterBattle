@@ -31,6 +31,8 @@ var duel_hist: RichTextLabel
 var duel_info: Label
 var guess: Array = [-1, -1, -1, -1]
 var last_status := ""
+var hint: Label  # the objective line: where the quest giver is, what E or T will do here, the outbreak in this region
+var _hint_acc := 0.0
 
 
 func setup(p_world: Node) -> void:
@@ -42,6 +44,74 @@ func setup(p_world: Node) -> void:
 	_build_dialog()
 	_build_dungeon()
 	_build_duel()
+	hint = Label.new()
+	hint.name = "StoryHint"
+	hint.position = Vector2(16, 150)
+	hint.custom_minimum_size = Vector2(760, 0)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD
+	hint.add_theme_font_size_override("font_size", 20)
+	hint.add_theme_color_override("font_color", Color(1.0, 0.93, 0.55))
+	hint.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.95))
+	hint.add_theme_constant_override("outline_size", 5)
+	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(hint)
+
+
+func _process(delta: float) -> void:
+	_hint_acc += delta
+	if _hint_acc < 0.25 or hint == null:
+		return
+	_hint_acc = 0.0
+	hint.text = objective_text()
+	hint.visible = hint.text != "" and not dungeon.visible and (world.god == null or not world.god.active)
+
+
+static func _dir(dx: int, dy: int) -> String:
+	var ns := "N" if dy < -2 else ("S" if dy > 2 else "")
+	var ew := "W" if dx < -2 else ("E" if dx > 2 else "")
+	return ns + ew if ns + ew != "" else "here"
+
+
+## One or two lines that tell the player what to do next, computed from the snapshot (never from quest text).
+func objective_text() -> String:
+	var snap: Dictionary = world._snapshot
+	if snap.is_empty():
+		return ""
+	var p: Dictionary = snap.get("player", {})
+	var px := int(p.get("tx", 0))
+	var py := int(p.get("ty", 0))
+	var lines: PackedStringArray = []
+	var near := nearest_interactive()
+	if not near.is_empty():
+		if str(near.get("class", "")) == "npc":
+			lines.append("Press E (or click) to talk to %s." % str(near.get("label", "them")))
+		else:
+			lines.append("Press E to enter %s." % str(near.get("label", "the gallery")))
+	else:
+		var best := {}
+		var bd := 1 << 30
+		for e in snap.get("entities", []):
+			if typeof(e) == TYPE_DICTIONARY and str(e.get("class", "")) == "npc" and bool(e.get("has_quest", false)):
+				var d := absi(px - int(e["tx"])) + absi(py - int(e["ty"]))
+				if d < bd:
+					bd = d
+					best = e
+		if not best.is_empty():
+			lines.append("Quest: %s needs you - %d tiles %s. Walk beside them and press E." % [str(best.get("label", "someone")), bd, _dir(int(best["tx"]) - px, int(best["ty"]) - py)])
+	var reg: Dictionary = snap.get("regions", {})
+	var here := str(reg.get("player_region", ""))
+	if int(reg.get("player_cubes", 0)) > 0:
+		var imp: Dictionary = reg.get("impact", {}).get(here, {})
+		var t := "%s here: %d of 3 marks (%s). Work runs at %d%%; %d workplaces slowed, %d closed." % [str(imp.get("label", "Outbreak")), int(reg.get("player_cubes", 0)),
+			str(imp.get("clue", "")), int(round(float(imp.get("factor", 1.0)) * 100.0)), int(imp.get("slowed", 0)), int(imp.get("closed", 0))]
+		if bool(reg.get("treating", false)):
+			t += " Treating... %.0f s - stay inside the purple outline." % (float(reg.get("treat_left_ms", 0)) / 1000.0)
+		elif int(reg.get("ready_in_ms", 0)) > 0:
+			t += " Your strength returns in %.0f s." % (float(reg.get("ready_in_ms", 0)) / 1000.0)
+		else:
+			t += " Press T and stand still %.0f s to remove one mark." % (float(reg.get("treat_ms", 8000)) / 1000.0)
+		lines.append(t)
+	return "\n".join(lines)
 
 
 # ---------------------------------------------------------------- panels
@@ -49,19 +119,30 @@ func setup(p_world: Node) -> void:
 func _build_dialog() -> void:
 	dialog = PanelContainer.new()
 	dialog.name = "StoryDialog"
-	dialog.position = Vector2(320, 380)
-	dialog.custom_minimum_size = Vector2(640, 0)
+	dialog.position = Vector2(300, 360)
+	dialog.custom_minimum_size = Vector2(760, 0)
 	dialog.visible = false
+	var box := StyleBoxFlat.new()  # an opaque, framed panel: the conversation must be readable over a busy settlement
+	box.bg_color = Color(0.09, 0.07, 0.12, 0.96)
+	box.border_color = Color(0.85, 0.7, 0.35)
+	box.set_border_width_all(2)
+	box.set_corner_radius_all(6)
+	box.set_content_margin_all(12)
+	dialog.add_theme_stylebox_override("panel", box)
 	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
 	dialog.add_child(v)
 	dialog_title = Label.new()
 	dialog_title.name = "DialogTitle"
+	dialog_title.add_theme_font_size_override("font_size", 22)
+	dialog_title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.45))
 	v.add_child(dialog_title)
 	dialog_text = RichTextLabel.new()
 	dialog_text.name = "DialogText"
 	dialog_text.fit_content = true
-	dialog_text.custom_minimum_size = Vector2(620, 70)
+	dialog_text.custom_minimum_size = Vector2(736, 70)
 	dialog_text.bbcode_enabled = false
+	dialog_text.add_theme_font_size_override("normal_font_size", 18)
 	v.add_child(dialog_text)
 	choices_box = VBoxContainer.new()
 	choices_box.name = "Choices"
@@ -186,13 +267,22 @@ func _selected_item() -> String:
 # ---------------------------------------------------------------- dialogue
 
 func person_at(screen_pos: Vector2) -> Dictionary:
+	# the figure is drawn above its tile and is small: accept a click on the body or the head, nearest person first (owner playtest:
+	# a click on the miner landed on the mine behind him and only offered fire magic)
 	var xf: Transform2D = world.get_viewport().get_canvas_transform().affine_inverse()
 	var wp: Vector2 = xf * screen_pos
-	var tile := Vector2(floor(wp.x / world.TPX), floor(wp.y / world.TPX))
+	var cell := wp / float(world.TPX)
+	var best := {}
+	var bd := 1.25
 	for e in world._snapshot.get("entities", []):
-		if str(e.get("class", "")) in ["npc", "landmark"] and Vector2(float(e["tx"]), float(e["ty"])) == tile:
-			return e
-	return {}
+		if typeof(e) != TYPE_DICTIONARY or not str(e.get("class", "")) in ["npc", "landmark"]:
+			continue
+		var centre := Vector2(float(e["tx"]) + 0.5, float(e["ty"]) + (0.0 if str(e.get("class", "")) == "npc" else 0.5))
+		var d := centre.distance_to(cell)
+		if d < bd:
+			bd = d
+			best = e
+	return best
 
 
 func try_click(screen_pos: Vector2) -> bool:
@@ -255,6 +345,7 @@ func _show_dialog(reply: Dictionary) -> void:
 		b.name = "Choice_%s" % str(c["id"])
 		b.text = str(c["text"])
 		b.disabled = not bool(c.get("available", false))
+		b.add_theme_font_size_override("font_size", 18)
 		b.pressed.connect(_choose.bind(str(c["id"])))
 		choices_box.add_child(b)
 

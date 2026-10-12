@@ -51,6 +51,7 @@ def economy_quantum(world: Any) -> None:
                     have = int(world.stocks.get(b["id"], {}).get(worker_ware, 0))
                     if have < 8:
                         _supply(world, b["id"]).add_wares(worker_ware, 8 - have)
+                        world.stats["made_" + worker_ware] = world.stats.get("made_" + worker_ware, 0) + 8 - have  # a source: the ledger counts it
     if len(world.events) > EVENT_CAP:
         del world.events[:-EVENT_KEEP]  # the log is a bounded window: long headless runs must not grow without limit
 

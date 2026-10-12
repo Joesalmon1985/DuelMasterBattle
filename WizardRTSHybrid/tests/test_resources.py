@@ -1,4 +1,4 @@
-"""Resources come from finite deposits, not from buildings."""
+"""Resources come from deposits, not from buildings. Mineral sites are inexhaustible (D22); rocks and fish are finite/ecological."""
 
 from __future__ import annotations
 
@@ -28,36 +28,42 @@ def _run(w: HybridWorld, steps: int) -> None:
         w.advance(100, base + i + 1, snapshot=False)
 
 
-def test_mine_takes_exactly_what_leaves_the_deposit_and_stops_at_the_yield_limit() -> None:
+def test_mine_on_a_mineral_site_never_runs_dry_and_logs_its_source() -> None:
+    """D22 (12 Oct 2026): a Widelands coal mine works its site for as long as it stands. The deposit layer does not shrink, the
+    mine never reports exhaustion, and every unit dug is logged as an inexhaustible-deposit inflow (the only mineral source)."""
     from wizard_rts import programs_data
 
     saved = programs_data.ECONOMY_TARGETS["coal"]
-    programs_data.ECONOMY_TARGETS["coal"] = 10**9  # keep the economy hungry so the deposit is worked to its limit
-    w = _world()
-    mine = w.buildings[_of(w, "Red", "mine")]
-    centre = (mine["tx"], mine["ty"])
-    nodes = [(centre[0] + dx, centre[1] + dy) for dx in range(-2, 3) for dy in range(-2, 3)]
-    if w.terrain is None:
-        assert len(w.resource_nodes(centre, 2, "coal")) == 25
-    for n in nodes:
-        if w.terrain is None or w.terrain.cls[n[1] * w.terrain.w + n[0]] == 1:  # mountain nodes on terrain worlds
-            set_resource(w, n, "coal", 1)  # a small field so the yield limit is reached quickly
-    nodes = w.resource_nodes(centre, 2, "coal")
-    assert len(nodes) >= 10
-    before = resource_sum(w, nodes, "coal")
-    for _ in range(30):  # Widelands ActMine fails some rolls on thin nodes (the bonus part of the weight), so allow up to 50 game minutes
-        _run(w, 1_000)
-        if mine.get("deposit_exhausted"):
-            break
-    after = resource_sum(w, nodes, "coal")
-    mined = before - after
-    assert mined > 0
-    # every unit that left the ground was produced as coal by this mine (the other factions' mines are separate)
-    assert mined == sum(1 for e in w.events if e["kind"] == "mined" and e["building"] == mine["id"]) or mined >= 1
-    # yield 33.33%: the field is not worked below two thirds except by the 5% when_empty chance
-    assert after >= before * (1 - 0.3333) - 5
-    assert mine.get("deposit_exhausted") is True
-    programs_data.ECONOMY_TARGETS["coal"] = saved
+    programs_data.ECONOMY_TARGETS["coal"] = 10**9  # keep the economy hungry so the mine never idles for lack of demand
+    try:
+        w = _world()
+        mine = w.buildings[_of(w, "Red", "mine")]
+        centre = (mine["tx"], mine["ty"])
+        nodes = [(centre[0] + dx, centre[1] + dy) for dx in range(-2, 3) for dy in range(-2, 3)]
+        for n in nodes:
+            if w.terrain is None or w.terrain.cls[n[1] * w.terrain.w + n[0]] == 1:  # mountain nodes on terrain worlds
+                set_resource(w, n, "coal", 1)  # the thinnest possible field: under the old rule it was worked out in minutes
+        nodes = w.resource_nodes(centre, 2, "coal")
+        assert len(nodes) >= 10
+        before = resource_sum(w, nodes, "coal")
+        from wizard_rts.terrain import MINERALS, RES_CODE
+
+        codes = {RES_CODE[m] for m in MINERALS}
+
+        def minerals(t):  # the mineral part of the deposit layer (fish is caught and bred: it is meant to change)
+            return [a for k, a in zip(t.res_kind, t.res_amt) if k in codes]
+        layer = minerals(w.terrain) if w.terrain is not None else None
+        for _ in range(30):  # 50 game minutes
+            _run(w, 1_000)
+        dug = sum(1 for e in w.events if e["kind"] == "mined" and e.get("building") == mine["id"])
+        assert w.stats["mined_from_inexhaustible_deposit:coal"] >= 5
+        assert resource_sum(w, nodes, "coal") == before  # the site is not consumed
+        if layer is not None:
+            assert minerals(w.terrain) == layer
+        assert not mine.get("deposit_exhausted")
+        assert w.stats.get("made_coal", 0) >= w.stats["mined_from_inexhaustible_deposit:coal"] - 8 and dug >= 0
+    finally:
+        programs_data.ECONOMY_TARGETS["coal"] = saved
 
 
 def test_quarry_shrinks_real_rocks_and_makes_granite() -> None:

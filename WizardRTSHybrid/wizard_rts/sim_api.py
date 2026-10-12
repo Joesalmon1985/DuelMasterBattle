@@ -217,7 +217,7 @@ class HybridEnv:
         units = [u for u in w.units.values() if u["faction_name"] == faction and u.get("alive", True)]
         out["move_units"] = [{"id": u["id"], "loco": u.get("loco", "foot")} for u in units]
         for u in units:
-            if u.get("definition") == territory.MCV_DEFINITION:
+            if territory.is_founder(u):
                 why = territory.deploy_check(w, u)
                 out["deploy"].append({"unit": u["id"], "ok": why is None, "reason": why or ""})
                 if why is not None:
@@ -292,7 +292,7 @@ class HybridEnv:
                 {"id": c["id"], "tile": [c["tx"], c["ty"]], "radius": territory.radius_of(c), "outpost": bool(c.get("outpost")), "stock": dict(w.stocks.get(c["id"], {}))}
                 for c in territory.command_centers(w, faction)
             ],
-            "mcvs": [{"id": u["id"], "tile": [u["tx"], u["ty"]], "cargo": dict(u.get("cargo") or {})} for u in units if u.get("definition") == territory.MCV_DEFINITION],
+            "mcvs": [{"id": u["id"], "tile": [u["tx"], u["ty"]], "cargo": dict(u.get("cargo") or {})} for u in units if territory.is_founder(u)],
             "known_enemy_buildings": len(w.__dict__.get("_ai_known", {}).get(faction, ())),
             "stuck_entities": sum(1 for r in diagnostics.stuck_report(w) if r["faction"] == faction),
             "enemy_capitals": {n: [b["tx"], b["ty"]] for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] != faction for n in [b["faction_name"]]},
