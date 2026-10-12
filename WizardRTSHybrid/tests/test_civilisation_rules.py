@@ -170,6 +170,10 @@ def test_unrest_splits_a_distant_unlinked_settlement_into_a_successor():
 
     assert ai.policy_of(w, successor) == ai.policy_of(w, name)  # the successor keeps its parent's commander
     assert any(c["event"] == "split" for c in history.state(w)["chronicle"])
+    # no cascade: the parent cannot split again for SPLIT_COOLDOWN_MS, the successor not for SUCCESSOR_GRACE_MS
+    for r in settlements_of(w, name) + settlements_of(w, successor):
+        r["unrest"] = 0.95
+    assert history.split_candidates(w, name) is None and history.split_candidates(w, successor) is None
 
 
 def settlements_of(w, name):
