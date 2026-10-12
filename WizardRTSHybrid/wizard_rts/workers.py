@@ -265,6 +265,46 @@ def _passable(world: Any, loco: str) -> bytearray:
     return got
 
 
+_NATIVE = [False, None]  # [resolved, lib]
+
+
+def _native_astar():
+    if not _NATIVE[0]:
+        _NATIVE[0] = True
+        from wizard_rts import native
+
+        _NATIVE[1] = native.astar_lib()
+    return _NATIVE[1]
+
+
+def _find_path_native(lib: Any, W: int, H: int, ok: bytearray, blk: set, joined: set | None, s: int, g: int, sx: int, sy: int, gx: int, gy: int,
+                      limit: int, max_nodes: int, four: bool, move_dirs: Any) -> list[tuple[int, int]] | None:
+    """The C twin of the loop below: identical results (tests/test_native_astar.py)."""
+    import ctypes
+
+    blkb = bytearray(W * H)
+    n_tiles = W * H
+    for i in blk:
+        if 0 <= i < n_tiles:  # an avoid tile off the map is harmless in the set version, so skip it here
+            blkb[i] = 1
+    jb = None
+    if joined is not None:
+        jarr = bytearray(W * H)
+        for i in joined:
+            if 0 <= i < n_tiles:
+                jarr[i] = 1
+        jb = ctypes.addressof((ctypes.c_char * (W * H)).from_buffer(jarr))
+    nd = len(move_dirs)
+    ddx = (ctypes.c_int * nd)(*[d[0] for d in move_dirs])
+    ddy = (ctypes.c_int * nd)(*[d[1] for d in move_dirs])
+    out = (ctypes.c_int * (W * H))()
+    n = lib.dmb_astar(W, H, ctypes.addressof((ctypes.c_char * (W * H)).from_buffer(ok)), ctypes.addressof((ctypes.c_char * (W * H)).from_buffer(blkb)),
+                      jb, s, g, sx, sy, gx, gy, limit, max_nodes, 1 if four else 0, ddx, ddy, nd, out)
+    if n < 0:
+        return None
+    return [(out[i] % W, out[i] // W) for i in range(n)]
+
+
 def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], limit: int, avoid: set | None, max_nodes: int, loco: str,
                     join: dict | None) -> list[tuple[int, int]] | None:
     """The same A* as find_path over integer tile ids and a precomputed passability table (about three times faster)."""
@@ -280,6 +320,9 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
     joined = {y * W + x for x, y in join} if join else None
     dirs = [(dx, dy, dy * W + dx) for dx, dy in world.move_dirs]
     four = len(dirs) == 4
+    lib = _native_astar()
+    if lib is not None:
+        return _find_path_native(lib, W, H, ok, blk, joined, s, g, sx, sy, gx, gy, limit, max_nodes, four, world.move_dirs)
     open_heap = [(0.0, 0, s)]
     # flat arrays instead of dicts (12 Oct 2026, performance): the same exploration order and tie-breaks, so the same paths
     came = array("i", [-1]) * (W * H)
