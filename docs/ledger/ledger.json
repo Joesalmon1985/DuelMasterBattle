@@ -1,0 +1,18 @@
+{
+ "run": {
+  "id": "ubuntu-autonomous-v2",
+  "branch": "work/ubuntu-autonomous-v2",
+  "machine": "joe-ThinkPad-T460 (Ubuntu 24.04, i5-6200U 2c/4t, 15 GB, no GPU, ~18 GB free disk)",
+  "note": "Run was authorised for the Windows PC; that machine crashed, so it continues on the Ubuntu laptop (Tier A). Windows-only items (probe on Windows, ps1 supervisor wrapper, sleep prevention) are deferred or done as cross-platform code.",
+  "started": "2026-10-12T23:30:11+01:00",
+  "start_sha": "11b70b24f4ee06db4aac41571394714e87061b2d",
+  "plan": "docs/PLAN_FULL_PROGRAMME_V2.md"
+ },
+ "milestones": {
+  "P0": {"status": "in_progress", "done": ["probe_hardware.py (Linux run committed)", "audit_catalogues.py (reproduces plan 3.1 counts)", "ledger", "hash_gate.py"], "todo": ["supervisor + resumable run framework", "disk guards (DMB_RUNS)", "spawn fix for tournament", "smoke gate script"]},
+  "P1": {"status": "in_progress", "done": ["TreeDict slot buckets (hash-equal)"], "todo": ["territory cache", "spatial hash _scan", "waiting_for_this_road index", "AI affordability cache", "PyPy trial"]},
+  "P2": {"status": "not_started"}, "P3": {"status": "not_started"}
+ },
+ "open_questions": "docs/ledger/QUESTIONS.md",
+ "next_action": "Finish baseline pytest, commit, continue P1 caches under hash_gate"
+}

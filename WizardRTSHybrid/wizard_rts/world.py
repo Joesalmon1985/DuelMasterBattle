@@ -35,7 +35,7 @@ from wizard_rts import rules
 from wizard_rts import tribes
 from wizard_rts.animals import spawn_animal
 from wizard_rts.programs_data import RESOURCE_PER_NODE, ROCK_AMOUNT, START_WARES
-from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path  # noqa: E402
+from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path, TreeDict  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
@@ -132,7 +132,7 @@ class HybridWorld:
         self.ai_enabled = os.environ.get("HYBRID_AI", "1") != "0"
         self.ai_factions: set[str] | None = None  # None: the built-in AI plays every faction; a set restricts it (training agents play the rest)
         self.resources: dict[tuple[int, int], dict[str, int]] = {}
-        self.trees: dict[str, dict[str, Any]] = {}
+        self.trees: dict[str, dict[str, Any]] = TreeDict()
         self.tree_tiles: dict[tuple[int, int], str] = {}
         self.workers: dict[str, dict[str, Any]] = {}
         self.reserved_tiles: set[tuple[int, int]] = set()

@@ -160,17 +160,47 @@ def remove_tree(world: Any, tree_id: str, reason: str) -> None:
 TREE_STRIDE = 10  # a tree is processed once per second (staggered by id), not every 100 ms: its timers are tens of seconds
 
 
+class TreeDict(dict):
+    """world.trees, with ids bucketed by processing slot so tree_quantum visits one tenth of the trees per tick.
+
+    Behaviour is identical to a plain dict (insertion order, snapshot); the buckets keep the same relative order inside a slot."""
+
+    def __init__(self, *a: Any, **k: Any) -> None:
+        super().__init__(*a, **k)
+        self.buckets: list[dict] = [{} for _ in range(TREE_STRIDE)]
+        self.fresh: list[str] = []  # added since the last tree_quantum: their "slot" field is written there, as before
+        for k_ in self:
+            self.buckets[int(k_.split(":")[1]) % TREE_STRIDE][k_] = None
+            self.fresh.append(k_)
+
+    def __setitem__(self, key: str, value: dict) -> None:
+        if key not in self:
+            self.buckets[int(key.split(":")[1]) % TREE_STRIDE][key] = None
+            self.fresh.append(key)
+        super().__setitem__(key, value)
+
+    def pop(self, key: str, *default: Any) -> Any:
+        self.buckets[int(key.split(":")[1]) % TREE_STRIDE].pop(key, None)
+        return super().pop(key, *default)
+
+    def __delitem__(self, key: str) -> None:
+        self.buckets[int(key.split(":")[1]) % TREE_STRIDE].pop(key, None)
+        super().__delitem__(key)
+
+
 def tree_quantum(world: Any) -> None:
     phase = world.military_quanta % TREE_STRIDE
     step = QUANTUM_MS * TREE_STRIDE
-    for tree_id in list(world.trees):
-        tree = world.trees.get(tree_id)
+    trees = world.trees
+    if trees.fresh:
+        for tree_id in trees.fresh:
+            tree = trees.get(tree_id)
+            if tree is not None and tree.get("slot") is None:
+                tree["slot"] = int(tree_id.split(":")[1]) % TREE_STRIDE
+        trees.fresh.clear()
+    for tree_id in list(trees.buckets[phase]):
+        tree = trees.get(tree_id)
         if tree is None:
-            continue
-        slot = tree.get("slot")
-        if slot is None:
-            slot = tree["slot"] = int(tree_id.split(":")[1]) % TREE_STRIDE
-        if slot != phase:
             continue
         if "imm" in tree:
             imm.tick(world, tree, step)
