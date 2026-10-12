@@ -98,3 +98,13 @@ def society_quantum(world: Any) -> None:
         p = pressures(world, rec)
         rec["pressures"] = {k: round(v, 3) for k, v in p.items()}
         rec["unrest"] = round(min(1.0, max(0.0, float(rec.get("unrest", 0.0)) + sum(p.values()))), 4)
+        _track_restless(rec, now)
+
+
+def _track_restless(rec: dict, now: int) -> None:
+    from wizard_rts import history
+
+    if float(rec.get("unrest", 0.0)) >= history.SPLIT_UNREST:
+        rec.setdefault("restless_since_ms", now)
+    else:
+        rec.pop("restless_since_ms", None)

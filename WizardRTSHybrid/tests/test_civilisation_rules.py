@@ -159,9 +159,14 @@ def test_unrest_splits_a_distant_unlinked_settlement_into_a_successor():
                 founded.append((x, y))
     assert len(founded) == 2
     recs = settlements_of(w, name)
+    now = int(w.dmb.clock["game_ms"])
     for r in recs:
         if not r.get("home"):
-            r["unrest"] = 0.9
+            r["unrest"] = 0.9  # a spike alone is not a rebellion
+    assert history.split_candidates(w, name) is None
+    for r in recs:
+        if not r.get("home"):
+            r["restless_since_ms"] = now - history.SPLIT_SUSTAIN_MS  # restless for the whole sustain window
     w.economy_quanta = 299
     w.advance(1000, int(w.dmb.clock.get("clock_sequence", 0)) + 1, snapshot=False)
     assert any(n.startswith(name + "-") for n in w.faction_info), list(w.faction_info)
@@ -173,6 +178,7 @@ def test_unrest_splits_a_distant_unlinked_settlement_into_a_successor():
     # no cascade: the parent cannot split again for SPLIT_COOLDOWN_MS, the successor not for SUCCESSOR_GRACE_MS
     for r in settlements_of(w, name) + settlements_of(w, successor):
         r["unrest"] = 0.95
+        r["restless_since_ms"] = now - history.SPLIT_SUSTAIN_MS
     assert history.split_candidates(w, name) is None and history.split_candidates(w, successor) is None
 
 
@@ -289,3 +295,15 @@ def test_the_wizard_pilot_walks_tile_by_tile_and_treats_by_the_public_rule():
         if s.cubes[i] == 0:
             break
     assert s.cubes[i] == 0 and p.treatments == 2 and p.walked > 10
+
+
+def test_restlessness_is_tracked_only_while_unrest_stays_high():
+    from wizard_rts import society
+
+    rec = {"unrest": 0.7}
+    society._track_restless(rec, 1000)
+    society._track_restless(rec, 5000)
+    assert rec["restless_since_ms"] == 1000  # the clock starts at the first high reading
+    rec["unrest"] = 0.5
+    society._track_restless(rec, 6000)
+    assert "restless_since_ms" not in rec  # one calm minute resets it

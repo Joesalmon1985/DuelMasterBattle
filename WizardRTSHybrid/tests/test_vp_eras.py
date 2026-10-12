@@ -258,6 +258,7 @@ def test_split_needs_four_settlements_distance_no_link_and_unrest():
     far = max((w.buildings[b] for b in spots), key=lambda b: abs(b["tx"] - con.faction_warehouse(w, "Red")["tx"]) + abs(b["ty"] - con.faction_warehouse(w, "Red")["ty"]))
     centre_rec = next(r for r in w.dmb.settlements.values() if r["centre"] == far["id"])
     centre_rec["unrest"] = 0.9
+    centre_rec["restless_since_ms"] = int(w.dmb.clock["game_ms"]) - history.SPLIT_SUSTAIN_MS
     home = con.faction_warehouse(w, "Red")
     dist = max(abs(far["tx"] - home["tx"]), abs(far["ty"] - home["ty"]))
     cand = history.split_candidates(w, "Red")

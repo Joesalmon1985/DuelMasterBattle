@@ -22,7 +22,8 @@ DECLINE_IDLE_MS = 10 * 60_000
 SPLIT_MIN_SETTLEMENTS = 3  # 12 Oct 2026: factions hold 3-6 settlements in the measured games; 4 never occurred
 SPLIT_DISTANCE = 50  # S12 leaves N open: about three settlement radii (outposts are 16, homes 34)
 SPLIT_UNREST = 0.6
-SPLIT_COOLDOWN_MS = 20 * 60_000  # a faction splits at most once in this long (a tournament game split one faction six times in a row)
+SPLIT_COOLDOWN_MS = 40 * 60_000  # a faction splits at most once in this long (20 min still let one faction split three times in 90 min)
+SPLIT_SUSTAIN_MS = 10 * 60_000  # the unrest must have stood at SPLIT_UNREST or above this long (society.society_quantum keeps restless_since_ms)
 SUCCESSOR_GRACE_MS = 30 * 60_000  # a new successor holds together this long before it can split again
 CHECK_EVERY = 10
 
@@ -86,9 +87,16 @@ def split_candidates(world: Any, faction: str) -> tuple[dict, dict] | None:
     dist = max(abs(a["tile"][0] - b["tile"][0]), abs(a["tile"][1] - b["tile"][1]))
     if dist <= SPLIT_DISTANCE or _connected(world, a["centre"], b["centre"]):
         return None
-    if max(float(a.get("unrest", 0.0)), float(b.get("unrest", 0.0))) < SPLIT_UNREST:
+    if not (restless(world, a) or restless(world, b)):
         return None
     return a, b
+
+
+def restless(world: Any, rec: dict) -> bool:
+    """Unrest at or above SPLIT_UNREST without a break for SPLIT_SUSTAIN_MS: one bad spike (an outbreak overflow) is not a rebellion."""
+    since = rec.get("restless_since_ms")
+    return (float(rec.get("unrest", 0.0)) >= SPLIT_UNREST and since is not None
+            and int(world.dmb.clock.get("game_ms", 0)) - int(since) >= SPLIT_SUSTAIN_MS)
 
 
 def split(world: Any, faction: str, breakaway: dict) -> str:
@@ -100,7 +108,9 @@ def split(world: Any, faction: str, breakaway: dict) -> str:
     now_ms = int(world.dmb.clock.get("game_ms", 0))
     state(world)["faction"][base] = {"state": "active", "last_productive_ms": now_ms, "born_ms": now_ms, "peak": {"settlements": 0, "centroid": None, "weight": 0}}
     state(world)["faction"][faction]["last_split_ms"] = now_ms
+    why = dict(breakaway.get("pressures", {}))  # the record of what drove it (the tournament report reads the chronicle)
     breakaway["unrest"] = 0.2  # independence: the grievance that drove the split is answered
+    breakaway.pop("restless_since_ms", None)
     from wizard_rts import tech
 
     world.tech[base] = {**tech.new_state(), "cards": list(world.tech[faction]["cards"]), "round": world.tech[faction]["round"]}
@@ -125,7 +135,7 @@ def split(world: Any, faction: str, breakaway: dict) -> str:
     for w in list(world.workers.values()) + list(world.carriers.values()):
         if w.get("faction_name") == faction and w.get("building") in world.buildings and world.buildings[w["building"]]["faction_name"] == base:
             w["faction_name"], w["faction"] = base, fid
-    _note(world, faction, "split", successor=base, settlement=breakaway["id"], buildings=moved_b, units=moved_u)
+    _note(world, faction, "split", successor=base, settlement=breakaway["id"], buildings=moved_b, units=moved_u, pressures=why)
     return base
 
 
