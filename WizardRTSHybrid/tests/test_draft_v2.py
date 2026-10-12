@@ -202,3 +202,58 @@ def test_dealing_invariants_across_seeds(era, big_catalogue):
             assert len(pack) == draft.PACK_SIZE, "a dead or short pack"
             assert sum(tech.cards()[c]["era"] == era for c in pack) >= 5
         assert len({c for p in st["packs"].values() for c in p}) == 6 * draft.PACK_SIZE  # no card is dealt twice in a phase
+
+
+class StubClock(dict):
+    pass
+
+
+class Stub:
+    """Just enough world for the draft engine, so thousands of phases can be played in seconds."""
+
+    def __init__(self, seed, n, era, rng):
+        self.seed = seed
+        self.profile = "campaign"
+        self.faction_info = {f"F{i}": {} for i in range(n)}
+        self.tech = {f: tech.new_state() for f in self.faction_info}
+        self.dmb = type("D", (), {"clock": StubClock(game_ms=0)})()
+        self.events = []
+        self.era_index = era
+        self.cardset = "v2"
+        self.draft_v2 = True
+        self.history = {"faction": {}}
+
+
+@pytest.mark.parametrize("batch", range(4))
+def test_thousand_phases_conserve_cards_and_never_stall(batch):
+    import random
+
+    rng = random.Random(batch)
+    for k in range(250):
+        n = rng.randint(3, 8)
+        era = rng.randint(0, 3)
+        w = Stub(batch * 1000 + k, n, era, rng)
+        pool = tech.pool(w)
+        # some cards are already held from earlier eras
+        for f in w.faction_info:
+            w.tech[f]["cards"] = rng.sample(sorted(c for c, v in pool.items() if v["era"] < era), min(3, sum(v["era"] < era for v in pool.values())))
+        draft.deal(w, era)
+        st = draft.state(w)
+        dealt = [c for p in st["packs"].values() for c in p]
+        assert len(dealt) == len(set(dealt))  # no copies while the pool is big enough
+        picked = []
+        for r in range(draft.ROUNDS):
+            assert all(st["packs"][f] for f in st["ring"]), "dead pack"
+            for f in st["ring"]:
+                if rng.random() < 0.7 and w.tech[f]["offers"]:
+                    c = rng.choice(w.tech[f]["offers"])
+                    assert tech.draft(w, f, c)["status"] == "ok"
+                    picked.append(c)
+            w.dmb.clock["game_ms"] += draft.ROUND_MS
+            draft.quantum(w)
+        assert st["round"] == draft.ROUNDS
+        assert all(not p for p in st["packs"].values())
+        held_new = [c for f in w.faction_info for c in w.tech[f]["cards"] if c in set(dealt)]
+        assert sorted(held_new) == sorted(set(held_new)) and set(held_new) <= set(dealt)
+        for f in st["ring"]:
+            assert len([c for c in w.tech[f]["cards"] if c in set(dealt)]) == draft.ROUNDS

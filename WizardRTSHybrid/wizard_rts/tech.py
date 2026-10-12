@@ -43,6 +43,28 @@ def cards() -> dict[str, dict[str, Any]]:
     return {c["id"]: c for c in _data()["cards"]}
 
 
+_LOOKUP: list = [None, None]
+
+
+def lookup() -> dict[str, dict[str, Any]]:
+    """Every card that can be held: the hand-written set plus the generated content-graph set (`gen.*`). Held cards resolve here."""
+    base = cards()
+    if _LOOKUP[0] is not base:
+        from wizard_rts.content import graph
+
+        _LOOKUP[0], _LOOKUP[1] = base, {**base, **graph.generated_cards()}
+    return _LOOKUP[1]
+
+
+def pool(world: Any) -> dict[str, dict[str, Any]]:
+    """The cards drafting v2 deals: the generated set when `world.cardset == "v2"`, else the hand-written set."""
+    if getattr(world, "cardset", "") == "v2":
+        from wizard_rts.content import graph
+
+        return graph.generated_cards()
+    return cards()
+
+
 def primitive() -> dict[str, Any]:
     return _data()["primitive"]
 
@@ -83,36 +105,49 @@ FOUNDATION_UNITS = ("settlers",)
 FOUNDATION_PATTERNS = ("tavern", "inn")
 
 
+def foundation_on(world: Any) -> bool:
+    return bool(getattr(world, "nocards", False) or getattr(world, "cardset", "") == "v2")
+
+
 def unlocked_kinds(world: Any, faction: str) -> set[str]:
     out = set(primitive()["kinds"])
-    if getattr(world, "nocards", False):
+    if foundation_on(world):
         out.update(FOUNDATION_KINDS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
-            out.update(cards()[cid]["kinds"])
+            out.update(lookup()[cid]["kinds"])
     return out
 
 
 def unlocked_units(world: Any, faction: str) -> set[str]:
     out = set(primitive()["units"])
-    if getattr(world, "nocards", False):
+    if foundation_on(world):
         out.update(FOUNDATION_UNITS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
-            out.update(cards()[cid]["units"])
+            out.update(lookup()[cid]["units"])
+    return out
+
+
+def _exact_wl(world: Any, faction: str) -> set[str]:
+    st = _state(world, faction)
+    out: set[str] = set()
+    if st:
+        for cid in st["cards"]:
+            out.update(lookup()[cid].get("wl_kinds", ()))
     return out
 
 
 def _patterns(world: Any, faction: str) -> list[str]:
     out = list(primitive()["wl_patterns"])
-    if getattr(world, "nocards", False):
+    if foundation_on(world):
         out.extend(FOUNDATION_PATTERNS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
-            out.extend(cards()[cid]["wl_patterns"])
+            out.extend(lookup()[cid]["wl_patterns"])
     return out
 
 
@@ -120,6 +155,8 @@ def kind_allowed(world: Any, faction: str, kind: str) -> bool:
     if not gated(world):
         return True
     if kind.startswith("wl:"):
+        if kind in _exact_wl(world, faction):
+            return True
         name = kind[3:]
         pats = _patterns(world, faction)
         for suffix in RESTRICTED:
@@ -182,7 +219,7 @@ def tech_quantum(world: Any) -> None:
         pool = draftable(world, name)
         rng = random.Random(f"{world.seed}:{name}:{st['round']}")
         rng.shuffle(pool)
-        st["offers"] = sorted(pool[:OFFER_SIZE], key=lambda c: (cards()[c]["era"], c))
+        st["offers"] = sorted(pool[:OFFER_SIZE], key=lambda c: (lookup()[c]["era"], c))
         st["round"] += 1
         st["next_round_ms"] = now + int(getattr(world, "draft_interval_ms", DRAFT_INTERVAL_MS))
         st["expires_ms"] = now + min(int(getattr(world, "offer_window_ms", OFFER_WINDOW_MS)), int(getattr(world, "draft_interval_ms", DRAFT_INTERVAL_MS)))
@@ -205,7 +242,7 @@ def draft(world: Any, faction: str, card_id: str) -> dict[str, Any]:
     if card_id not in st["offers"]:
         return {"status": "rejected", "reason": "not_offered"}
     # the physical prerequisite is checked again at the moment of choice: a smithy destroyed since the offer withdraws it
-    c = cards()[card_id]
+    c = lookup()[card_id]
     from wizard_rts import draft as _draft
 
     if not _draft.enabled(world) and not _working(world, faction, c["requires_working"]):
@@ -240,14 +277,14 @@ def territory_bonus(world: Any, faction: str) -> int:
     st = _state(world, faction)
     if not st:
         return 0
-    return sum(int((cards()[cid].get("effect") or {}).get("territory_bonus", 0)) for cid in st["cards"] if cid in cards())
+    return sum(int((lookup()[cid].get("effect") or {}).get("territory_bonus", 0)) for cid in st["cards"] if cid in lookup())
 
 
 def card_info(card_id: str) -> dict[str, Any]:
     """What the draft panel shows for a card: era, explanation, what it unlocks and what it needs."""
-    c = cards()[card_id]
+    c = lookup()[card_id]
     return {"id": card_id, "name": c["name"], "era": ERAS[c["era"]], "summary": c.get("summary", ""), "kinds": list(c["kinds"]),
-            "units": list(c["units"]), "wl_patterns": list(c["wl_patterns"]), "requires_cards": [cards()[r]["name"] for r in c["requires_cards"]],
+            "units": list(c["units"]), "wl_patterns": list(c["wl_patterns"]), "requires_cards": [lookup()[r]["name"] for r in c["requires_cards"]],
             "requires_working": list(c["requires_working"]), "effect": dict(c.get("effect") or {})}
 
 
@@ -264,9 +301,9 @@ def grant(world: Any, faction: str, card_id: str) -> dict[str, Any]:
     if not god_allowed(world):
         return {"status": "rejected", "reason": "god_mode_disabled"}
     st = _state(world, faction)
-    if st is None or card_id not in cards():
+    if st is None or card_id not in lookup():
         return {"status": "rejected", "reason": "unknown_card"}
-    for cid in cards()[card_id]["requires_cards"] + [card_id]:
+    for cid in lookup()[card_id]["requires_cards"] + [card_id]:
         if cid not in st["cards"]:
             if cid != card_id:
                 grant(world, faction, cid)
@@ -299,7 +336,7 @@ def snapshot(world: Any) -> dict[str, Any]:
         out["factions"][n] = {"cards": list(s["cards"]), "offers": list(s["offers"]), "round": s["round"], "next_round_ms": s["next_round_ms"],
                               "next_round_in_ms": max(0, s["next_round_ms"] - now), "expires_ms": s.get("expires_ms", 0),
                               "expires_in_ms": max(0, s.get("expires_ms", 0) - now) if s["offers"] else 0,
-                              "offer_names": {c: cards()[c]["name"] for c in s["offers"]}, "last_pick": last.get("picked", ""),
+                              "offer_names": {c: lookup()[c]["name"] for c in s["offers"]}, "last_pick": last.get("picked", ""),
                               "lapsed": int(s.get("lapsed", 0)), "eligible": int(last.get("eligible", 0))}
     return out
 

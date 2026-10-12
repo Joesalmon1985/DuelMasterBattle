@@ -49,7 +49,7 @@ def _held(world: Any, faction: str) -> set[str]:
 
 
 def pickable(world: Any, faction: str, card_id: str) -> bool:
-    return card_id in tech.cards() and card_id not in _held(world, faction)
+    return card_id in tech.lookup() and card_id not in _held(world, faction)
 
 
 def active_factions(world: Any) -> list[str]:
@@ -65,8 +65,9 @@ def deal(world: Any, era: int) -> None:
     ring = active_factions(world)
     rng = random.Random(f"{world.seed}:draft:{era}")
     taken = set().union(*[_held(world, f) for f in ring]) if ring else set()
-    cur = sorted(c for c, v in tech.cards().items() if v["era"] == era and c not in taken)
-    old = sorted(c for c, v in tech.cards().items() if v["era"] < era and c not in taken)
+    cards = tech.pool(world)
+    cur = sorted(c for c, v in cards.items() if v["era"] == era and c not in taken)
+    old = sorted(c for c, v in cards.items() if v["era"] < era and c not in taken)
     rng.shuffle(cur)
     rng.shuffle(old)
     want_cur = max(1, round(PACK_SIZE * CURRENT_ERA_SHARE + 0.499))
@@ -75,26 +76,27 @@ def deal(world: Any, era: int) -> None:
     pools = {"cur": cur, "old": old}
     cursor = {"cur": 0, "old": 0}
 
-    def draw(kind: str) -> str | None:
+    def draw(kind: str, wrap: bool) -> str | None:
+        nonlocal dup
         pool = pools[kind]
-        if not pool:
+        if not pool or (cursor[kind] >= len(pool) and not wrap):
             return None
         card = pool[cursor[kind] % len(pool)]
         if cursor[kind] >= len(pool):
-            nonlocal dup
-            dup += 1  # the catalogue is smaller than the demand: a copy is dealt (reported, the content graph will end this)
+            dup += 1  # the catalogue is smaller than the demand: a copy is dealt (reported)
         cursor[kind] += 1
         return card
 
+    # current-era cards first, spread round-robin so no pack is starved while another is full; then older undrafted cards; copies last
     for f in ring:
-        pack: list[str] = []
-        for _ in range(PACK_SIZE):
-            kinds = ["cur"] * want_cur + ["old"] * (PACK_SIZE - want_cur)
-            kind = kinds[len(pack)]
-            card = draw(kind) or draw("cur" if kind == "old" else "old")
+        packs[f] = []
+    for turn in range(PACK_SIZE):
+        for f in ring:
+            pack = packs[f]
+            kinds = ("cur", "old") if turn < want_cur else ("old", "cur")
+            card = draw(kinds[0], False) or draw(kinds[1], False) or draw("cur", True) or draw("old", True)
             if card is not None and card not in pack:
                 pack.append(card)
-        packs[f] = pack
     reserve = [c for c in (cur + old) if all(c not in p for p in packs.values())]
     rng.shuffle(reserve)
     st.update(era=era, round=-1, open_ms=_now(world), ring=ring, packs=packs, chosen={f: False for f in ring}, reserve=reserve, bonus={})
@@ -112,7 +114,7 @@ def refresh_offers(world: Any, faction: str) -> None:
     if not st["chosen"].get(faction):
         offers += [c for c in st["packs"].get(faction, []) if pickable(world, faction, c)]
     offers += [c for c in st["bonus"].get(faction, []) if pickable(world, faction, c)]
-    s["offers"] = sorted(set(offers), key=lambda c: (tech.cards()[c]["era"], c))
+    s["offers"] = sorted(set(offers), key=lambda c: (tech.lookup()[c]["era"], c))
 
 
 def _publish(world: Any, faction: str) -> None:
@@ -231,7 +233,7 @@ def end_era(world: Any, finished: bool = False) -> None:
         if vps.get(f, 0) >= LEFTOVER_VP and f in world.tech:
             for c in left:
                 world.tech[f]["cards"].append(c)
-                tech._apply_effect(world, f, tech.cards()[c])
+                tech._apply_effect(world, f, tech.lookup()[c])
             awarded[f] = left
         else:
             lost[f] = left

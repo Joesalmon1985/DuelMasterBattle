@@ -138,7 +138,7 @@ def _threats(world: Any, name: str) -> list[tuple[dict, dict]]:
 # ------------------------------------------------------------------ drafting
 
 def score_card(world: Any, name: str, cid: str) -> tuple[float, str]:
-    c = tech.cards()[cid]
+    c = tech.lookup()[cid]
     short = cid.split(".")[-1]
     era = _era(world)
     order = PRIORITY.get(c["era"], [])
