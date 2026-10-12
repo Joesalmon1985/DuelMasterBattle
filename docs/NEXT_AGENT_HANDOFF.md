@@ -18,10 +18,17 @@ nothing merged to `main`. Rules: never `git add -A`; never `pkill -f`/grep-kill 
 ## Headless commands
 ```
 python3 WizardRTSHybrid/scripts/run_civilisation_tournament.py --mode war --seeds 507 11 23 --minutes 60 --jobs 2 --report-dir ~/dmb_runs/x
-python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py   # ~40 min on the T460
+python3 -m pytest WizardRTSHybrid/tests -q          # 338 passed at 7695535, ~38 min on the T460
+python3 WizardRTSHybrid/scripts/run_civilisation_tournament.py --mode crisis [--wizard-pilot] --seeds 507 11 23 --minutes 60 --report-dir ~/dmb_runs/y
 WizardRTSHybrid/scripts/run_headed_suite.sh playtest2 autoplay outbreak
 WizardRTSHybrid/scripts/launch_scenario.sh autoplay
 ```
+
+## Next steps (in order)
+1. Decide or measure the Modern -> Dystopian pace (0/12 in 90 min after the split tuning; `vp.ERA_VP_THRESHOLDS`).
+2. Record outbreak unrest in the split chronicle, then tune splits further if the owner wants them rarer.
+3. Late-game speed for 16x in Godot with large armies.
+4. Licensed art for the new units (status item 15).
 
 ## Earlier handoff (kept)
 # Next agent handoff (updated 12 October 2026)
@@ -35,7 +42,7 @@ Done and tested: M1, M2 (and the AI placing the line), M3 (story slice, puzzle p
 
 ## Commands
 ```
-python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py     # 312 passed, about 25 min
+python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py     # (earlier run) 312 passed at 6ab0a4c; see the top section for the current count
 python3 WizardRTSHybrid/scripts/run_all_scenarios.py --suite smoke                                  # seconds; --suite envs systems training stress parity for more
 python3 WizardRTSHybrid/scripts/train.py --domain duel dungeon outbreak quest fullgame --budget standard --seed 0   # bounded, opt-in, runs go to ~/dmb_runs
 python3 -m pytest tests/sim -q          # legacy, 507 passed (then git checkout -- godot_project/content/compiled)

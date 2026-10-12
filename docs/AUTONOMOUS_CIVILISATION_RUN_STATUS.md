@@ -48,7 +48,21 @@ measurement; **partial** = works for the cases named; **not done**.
   The A* now uses flat arrays (paths identical to the old code, compared in `tests/test_road_path.py`) and failed tribe placements cool
   down for 60 s. A 30-minute mixed game went from 12x to 24x realtime.
 
-## Stop point (session usage limit, 12 Oct 2026)
+## Verified state (12 Oct 2026, commit 7695535 and the docs commit after it)
+
+- Full suite in an isolated worktree checked out at the true tip:
+  `python3 -m pytest WizardRTSHybrid/tests -q` gave **338 passed, 0 failed in 37 min 44 s**.
+- Correction: two earlier runs reported as "312 passed" after the P0 baseline (and the message of commit 64dd9e4) tested the
+  worktree's old HEAD 6ab0a4c because of a sync-script fault. They are not evidence for later commits. The first true run at 83fde8f
+  had 7 failures, which were fixed in 49e2948 and 7695535.
+- Headed Godot (`run_headed_suite.sh playtest2 outbreak autoplay`): all PASS. The 16x God Mode autoplay saw a natural Historic at 19:10.
+- Tournaments war90_d, war90_e, crisis60 with and without the wizard pilot: see `docs/BALANCE_REPORT.md` sections 1b-1d.
+  Evidence is in `WizardRTSHybrid/docs/evidence/civilisation/`.
+
+Open: Dystopian within 90 minutes after the split tuning (0/12 in war90_e); splits still about 2.8 a game; outbreak unrest is
+missing from the split chronicle; late-game speed in Godot (about 3x at large armies on this laptop).
+
+## Earlier stop point (session usage limit, 12 Oct 2026; superseded by the section above)
 
 Committed as an UNVERIFIED checkpoint: the full suite was not re-run green on the final tree (the last full run hit a sync fault).
 Verified individually: test_story_slice, test_civilisation_rules, test_road_path, test_ai_behaviour, test_quest_env, test_dungeon_env,

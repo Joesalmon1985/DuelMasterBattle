@@ -1,0 +1,1595 @@
+{
+ "compare": {
+  "plus": {
+   "n": 18,
+   "survived": 18,
+   "collapsed": 0,
+   "vp": 4.33,
+   "settlements": 4.33,
+   "cards": 16.11,
+   "buildings": 75.06,
+   "army": 15.28,
+   "army_strength": 27419.56,
+   "units_produced": 45.67,
+   "unit_kills": 33.44,
+   "building_kills": 0.44,
+   "building_losses": 8.5,
+   "founded": 3.5,
+   "food": 97.61,
+   "iron": 7.44,
+   "unrest": 0.59,
+   "nest_cubes_cleared": 0.06,
+   "trades": 0.39,
+   "disruptions": 0.33,
+   "vp_ci95": 0.27,
+   "army_strength_ci95": 10738.49,
+   "buildings_ci95": 4.64
+  },
+  "baseline": {
+   "n": 18,
+   "survived": 18,
+   "collapsed": 0,
+   "vp": 2.89,
+   "settlements": 2.72,
+   "cards": 16.0,
+   "buildings": 53.39,
+   "army": 21.33,
+   "army_strength": 54056.82,
+   "units_produced": 57.89,
+   "unit_kills": 27.17,
+   "building_kills": 8.61,
+   "building_losses": 0.56,
+   "founded": 1.72,
+   "food": 45.56,
+   "iron": 0.06,
+   "unrest": 0.14,
+   "nest_cubes_cleared": 0.06,
+   "trades": 0.17,
+   "disruptions": 0.28,
+   "vp_ci95": 0.38,
+   "army_strength_ci95": 16864.76,
+   "buildings_ci95": 2.8
+  },
+  "game_wins_by_vp": {
+   "plus": 6.0,
+   "baseline": 0.0
+  }
+ },
+ "games": [
+  {
+   "seed": 11,
+   "leg": "A",
+   "mode": "crisis",
+   "map": "standard",
+   "minutes": 60,
+   "wall_s": 934.2,
+   "era": 2,
+   "era_log": [
+    {
+     "era": "historic",
+     "game_ms": 1099000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 3,
+      "Blue": 1,
+      "Green": 3,
+      "Yellow": 1,
+      "Purple": 3,
+      "Orange": 1
+     }
+    },
+    {
+     "era": "modern",
+     "game_ms": 1724000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 4,
+      "Blue": 2,
+      "Green": 4,
+      "Yellow": 3,
+      "Purple": 4,
+      "Orange": 3
+     }
+    }
+   ],
+   "vp": {
+    "Red": 5,
+    "Blue": 2,
+    "Green": 4,
+    "Yellow": 3,
+    "Purple": 5,
+    "Orange": 4
+   },
+   "history": {
+    "Red": "active",
+    "Blue": "active",
+    "Green": "active",
+    "Yellow": "active",
+    "Purple": "active",
+    "Orange": "active"
+   },
+   "chronicle": [],
+   "outbreaks": 0,
+   "stats": {
+    "deliver": 9127,
+    "blocked": 0,
+    "move": 196160,
+    "attack": 5259,
+    "destroyed": 239,
+    "produce": 9201,
+    "saplings_planted": 4432,
+    "fish_caught": 460,
+    "fields_planted": 979,
+    "recruit_started": 361,
+    "recruited": 354,
+    "deployed": 17,
+    "units_lost": 224,
+    "buildings_lost": 15,
+    "mined_from_inexhaustible_deposit": 903,
+    "mined_from_inexhaustible_deposit:coal": 477,
+    "mined_from_inexhaustible_deposit:iron": 426,
+    "lost": 138,
+    "destroyed_granite": 16,
+    "destroyed_log": 21,
+    "destroyed_plank": 24,
+    "destroyed_ration": 9,
+    "outbreak_losses": 11,
+    "disruptions": 2,
+    "destroyed_meat": 44,
+    "destroyed_coal": 8,
+    "nest_cubes_cleared": 1,
+    "disruption_ms_lost": 794000,
+    "destroyed_carrier": 8,
+    "destroyed_recruit": 8
+   },
+   "state_hash": "bf33010727b2f974d6e51864b78b38e8a84910bb",
+   "peak_rss_mb": 98.5,
+   "step_ms_p50": 114.61,
+   "step_ms_p95": 1054.97,
+   "step_ms_max": 1517.0,
+   "policies": {
+    "Red": "plus",
+    "Blue": "baseline",
+    "Green": "plus",
+    "Yellow": "baseline",
+    "Purple": "plus",
+    "Orange": "baseline"
+   },
+   "pilot": true,
+   "pilot_log": [
+    {
+     "game_ms": 2370000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2371000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2372000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2373000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2374000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2375000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2376000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2377000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2378000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2379000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2380000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2381000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2382000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2383000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2384000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2385000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2386000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2387000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2388000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2389000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2390000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2391000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2392000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2393000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2394000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2395000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2396000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2397000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2398000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2399000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2400000,
+     "kind": "heading",
+     "region": "region:1,1",
+     "tiles": 354
+    },
+    {
+     "game_ms": 2489000,
+     "kind": "treat",
+     "region": "region:1,1"
+    },
+    {
+     "game_ms": 2497000,
+     "kind": "heading",
+     "region": "region:3,-1",
+     "tiles": 216
+    },
+    {
+     "game_ms": 2551000,
+     "kind": "treat",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2700000,
+     "kind": "heading",
+     "region": "region:1,0",
+     "tiles": 101
+    },
+    {
+     "game_ms": 2726000,
+     "kind": "treat",
+     "region": "region:1,0"
+    },
+    {
+     "game_ms": 3000000,
+     "kind": "heading",
+     "region": "region:1,-2",
+     "tiles": 286
+    },
+    {
+     "game_ms": 3072000,
+     "kind": "treat",
+     "region": "region:1,-2"
+    },
+    {
+     "game_ms": 3300000,
+     "kind": "heading",
+     "region": "region:-2,0",
+     "tiles": 227
+    },
+    {
+     "game_ms": 3600000,
+     "kind": "heading",
+     "region": "region:3,-1",
+     "tiles": 353
+    }
+   ]
+  },
+  {
+   "seed": 11,
+   "leg": "B",
+   "mode": "crisis",
+   "map": "standard",
+   "minutes": 60,
+   "wall_s": 607.3,
+   "era": 2,
+   "era_log": [
+    {
+     "era": "historic",
+     "game_ms": 1169000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 1,
+      "Blue": 3,
+      "Green": 1,
+      "Yellow": 3,
+      "Purple": 1,
+      "Orange": 3
+     }
+    },
+    {
+     "era": "modern",
+     "game_ms": 1629000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 2,
+      "Blue": 4,
+      "Green": 3,
+      "Yellow": 4,
+      "Purple": 3,
+      "Orange": 4
+     }
+    }
+   ],
+   "vp": {
+    "Red": 4,
+    "Blue": 4,
+    "Green": 3,
+    "Yellow": 5,
+    "Purple": 3,
+    "Orange": 5
+   },
+   "history": {
+    "Red": "active",
+    "Blue": "active",
+    "Green": "active",
+    "Yellow": "active",
+    "Purple": "active",
+    "Orange": "active"
+   },
+   "chronicle": [],
+   "outbreaks": 0,
+   "stats": {
+    "deliver": 8741,
+    "blocked": 7155,
+    "move": 128023,
+    "attack": 4195,
+    "destroyed": 183,
+    "produce": 8890,
+    "saplings_planted": 4346,
+    "fish_caught": 569,
+    "fields_planted": 985,
+    "recruit_started": 278,
+    "recruited": 274,
+    "deployed": 18,
+    "outbreak_losses": 18,
+    "units_lost": 164,
+    "mined_from_inexhaustible_deposit": 824,
+    "mined_from_inexhaustible_deposit:coal": 478,
+    "mined_from_inexhaustible_deposit:iron": 346,
+    "lost": 122,
+    "destroyed_plank": 16,
+    "destroyed_fish": 28,
+    "disruptions": 4,
+    "destroyed_meat": 14,
+    "buildings_lost": 19,
+    "destroyed_log": 16,
+    "destroyed_iron": 3,
+    "destroyed_ration": 25,
+    "disruption_ms_lost": 2799000,
+    "destroyed_carrier": 8,
+    "destroyed_granite": 4,
+    "destroyed_recruit": 8,
+    "nest_cubes_cleared": 1
+   },
+   "state_hash": "2f30bef86528ba50feee03e10ce64c86e00f32e2",
+   "peak_rss_mb": 98.5,
+   "step_ms_p50": 72.82,
+   "step_ms_p95": 1092.77,
+   "step_ms_max": 1597.0,
+   "policies": {
+    "Red": "baseline",
+    "Blue": "plus",
+    "Green": "baseline",
+    "Yellow": "plus",
+    "Purple": "baseline",
+    "Orange": "plus"
+   },
+   "pilot": true,
+   "pilot_log": [
+    {
+     "game_ms": 2370000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2371000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2372000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2373000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2374000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2375000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2376000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2377000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2378000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2379000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2380000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2381000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2382000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2383000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2384000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2385000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2386000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2387000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2388000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2389000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2390000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2391000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2392000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2393000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2394000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2395000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2396000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2397000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2398000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2399000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2400000,
+     "kind": "heading",
+     "region": "region:1,1",
+     "tiles": 647
+    },
+    {
+     "game_ms": 2562000,
+     "kind": "treat",
+     "region": "region:1,1"
+    },
+    {
+     "game_ms": 2570000,
+     "kind": "heading",
+     "region": "region:3,-1",
+     "tiles": 216
+    },
+    {
+     "game_ms": 2624000,
+     "kind": "treat",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 2700000,
+     "kind": "heading",
+     "region": "region:1,0",
+     "tiles": 101
+    },
+    {
+     "game_ms": 2726000,
+     "kind": "treat",
+     "region": "region:1,0"
+    },
+    {
+     "game_ms": 3000000,
+     "kind": "heading",
+     "region": "region:1,-2",
+     "tiles": 286
+    },
+    {
+     "game_ms": 3073000,
+     "kind": "treat",
+     "region": "region:1,-2"
+    },
+    {
+     "game_ms": 3300000,
+     "kind": "heading",
+     "region": "region:-2,0",
+     "tiles": 226
+    },
+    {
+     "game_ms": 3600000,
+     "kind": "no_path",
+     "region": "region:3,-1"
+    }
+   ]
+  },
+  {
+   "seed": 23,
+   "leg": "A",
+   "mode": "crisis",
+   "map": "standard",
+   "minutes": 60,
+   "wall_s": 1323.3,
+   "era": 2,
+   "era_log": [
+    {
+     "era": "historic",
+     "game_ms": 1039000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 3,
+      "Blue": 1,
+      "Green": 3,
+      "Yellow": 1,
+      "Purple": 3,
+      "Orange": 1
+     }
+    },
+    {
+     "era": "modern",
+     "game_ms": 1869000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 4,
+      "Blue": 3,
+      "Green": 4,
+      "Yellow": 2,
+      "Purple": 4,
+      "Orange": 3
+     }
+    }
+   ],
+   "vp": {
+    "Red": 5,
+    "Blue": 3,
+    "Green": 4,
+    "Yellow": 3,
+    "Purple": 4,
+    "Orange": 4
+   },
+   "history": {
+    "Red": "active",
+    "Blue": "active",
+    "Green": "active",
+    "Yellow": "active",
+    "Purple": "active",
+    "Orange": "active"
+   },
+   "chronicle": [],
+   "outbreaks": 0,
+   "stats": {
+    "deliver": 9082,
+    "blocked": 0,
+    "move": 160810,
+    "attack": 4439,
+    "destroyed": 210,
+    "produce": 9147,
+    "saplings_planted": 4339,
+    "fish_caught": 396,
+    "fields_planted": 1060,
+    "recruit_started": 324,
+    "recruited": 321,
+    "deployed": 17,
+    "outbreak_losses": 7,
+    "units_lost": 198,
+    "mined_from_inexhaustible_deposit": 996,
+    "mined_from_inexhaustible_deposit:coal": 583,
+    "buildings_lost": 12,
+    "mined_from_inexhaustible_deposit:iron": 413,
+    "lost": 181,
+    "destroyed_fish": 15,
+    "destroyed_granite": 15,
+    "destroyed_log": 22,
+    "destroyed_plank": 36,
+    "destroyed_ration": 14,
+    "destroyed_wheat": 41,
+    "destroyed_carrier": 8,
+    "destroyed_meat": 15,
+    "destroyed_recruit": 8,
+    "destroyed_water": 7
+   },
+   "state_hash": "5535c681e2bde37415d4b61d055646d51a0ceddf",
+   "peak_rss_mb": 107.7,
+   "step_ms_p50": 67.44,
+   "step_ms_p95": 1111.2,
+   "step_ms_max": 2538.5,
+   "policies": {
+    "Red": "plus",
+    "Blue": "baseline",
+    "Green": "plus",
+    "Yellow": "baseline",
+    "Purple": "plus",
+    "Orange": "baseline"
+   },
+   "pilot": true,
+   "pilot_log": [
+    {
+     "game_ms": 3561000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3562000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3563000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3564000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3565000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3566000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3567000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3568000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3569000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3570000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3571000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3572000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3573000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3574000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3575000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3576000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3577000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3578000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3579000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3580000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3581000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3582000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3583000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3584000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3585000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3586000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3587000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3588000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3589000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3590000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3591000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3592000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3593000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3594000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3595000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3596000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3597000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3598000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3599000,
+     "kind": "no_path",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3600000,
+     "kind": "heading",
+     "region": "region:-1,1",
+     "tiles": 336
+    }
+   ]
+  },
+  {
+   "seed": 23,
+   "leg": "B",
+   "mode": "crisis",
+   "map": "standard",
+   "minutes": 60,
+   "wall_s": 308.9,
+   "era": 1,
+   "era_log": [
+    {
+     "era": "historic",
+     "game_ms": 1334000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 1,
+      "Blue": 3,
+      "Green": 1,
+      "Yellow": 3,
+      "Purple": 1,
+      "Orange": 3
+     }
+    }
+   ],
+   "vp": {
+    "Red": 3,
+    "Blue": 4,
+    "Green": 3,
+    "Yellow": 4,
+    "Purple": 1,
+    "Orange": 4
+   },
+   "history": {
+    "Red": "active",
+    "Blue": "active",
+    "Green": "active",
+    "Yellow": "active",
+    "Purple": "active",
+    "Orange": "active"
+   },
+   "chronicle": [],
+   "outbreaks": 0,
+   "stats": {
+    "deliver": 8817,
+    "blocked": 7157,
+    "move": 111424,
+    "attack": 6912,
+    "destroyed": 288,
+    "produce": 8982,
+    "saplings_planted": 3996,
+    "fish_caught": 551,
+    "fields_planted": 1035,
+    "recruit_started": 334,
+    "recruited": 331,
+    "deployed": 13,
+    "mined_from_inexhaustible_deposit": 912,
+    "mined_from_inexhaustible_deposit:coal": 477,
+    "units_lost": 225,
+    "mined_from_inexhaustible_deposit:iron": 435,
+    "lost": 332,
+    "destroyed_granite": 40,
+    "destroyed_log": 71,
+    "destroyed_plank": 28,
+    "destroyed_ration": 25,
+    "outbreak_losses": 3,
+    "buildings_lost": 63,
+    "destroyed_iron_ore": 1,
+    "disruptions": 3,
+    "destroyed_fish": 28,
+    "destroyed_meat": 70,
+    "disruption_ms_lost": 794000,
+    "destroyed_coal": 24,
+    "destroyed_iron": 8,
+    "destroyed_wheat": 28,
+    "destroyed_cloth": 8,
+    "destroyed_spear_wooden": 1
+   },
+   "state_hash": "989fc9af8e720a293c47f0c03faae0b6f83f4ac5",
+   "peak_rss_mb": 107.7,
+   "step_ms_p50": 68.53,
+   "step_ms_p95": 215.14,
+   "step_ms_max": 1026.7,
+   "policies": {
+    "Red": "baseline",
+    "Blue": "plus",
+    "Green": "baseline",
+    "Yellow": "plus",
+    "Purple": "baseline",
+    "Orange": "plus"
+   },
+   "pilot": true,
+   "pilot_log": [
+    {
+     "game_ms": 600000,
+     "kind": "heading",
+     "region": "region:-2,0",
+     "tiles": 0
+    },
+    {
+     "game_ms": 600000,
+     "kind": "treat",
+     "region": "region:-2,0"
+    },
+    {
+     "game_ms": 900000,
+     "kind": "heading",
+     "region": "region:1,0",
+     "tiles": 347
+    },
+    {
+     "game_ms": 987000,
+     "kind": "treat",
+     "region": "region:1,0"
+    },
+    {
+     "game_ms": 1200000,
+     "kind": "heading",
+     "region": "region:1,0",
+     "tiles": 0
+    },
+    {
+     "game_ms": 1200000,
+     "kind": "treat",
+     "region": "region:1,0"
+    },
+    {
+     "game_ms": 1500000,
+     "kind": "heading",
+     "region": "region:0,0",
+     "tiles": 1
+    },
+    {
+     "game_ms": 1501000,
+     "kind": "treat",
+     "region": "region:0,0"
+    },
+    {
+     "game_ms": 1800000,
+     "kind": "heading",
+     "region": "region:1,0",
+     "tiles": 1
+    },
+    {
+     "game_ms": 1801000,
+     "kind": "treat",
+     "region": "region:1,0"
+    },
+    {
+     "game_ms": 2100000,
+     "kind": "heading",
+     "region": "region:1,1",
+     "tiles": 156
+    },
+    {
+     "game_ms": 2139000,
+     "kind": "treat",
+     "region": "region:1,1"
+    },
+    {
+     "game_ms": 2400000,
+     "kind": "heading",
+     "region": "region:1,-2",
+     "tiles": 350
+    },
+    {
+     "game_ms": 2488000,
+     "kind": "treat",
+     "region": "region:1,-2"
+    },
+    {
+     "game_ms": 2700000,
+     "kind": "heading",
+     "region": "region:1,-1",
+     "tiles": 1
+    },
+    {
+     "game_ms": 2701000,
+     "kind": "treat",
+     "region": "region:1,-1"
+    },
+    {
+     "game_ms": 3000000,
+     "kind": "heading",
+     "region": "region:-2,1",
+     "tiles": 577
+    },
+    {
+     "game_ms": 3146000,
+     "kind": "treat",
+     "region": "region:-2,1"
+    },
+    {
+     "game_ms": 3300000,
+     "kind": "heading",
+     "region": "region:1,1",
+     "tiles": 258
+    },
+    {
+     "game_ms": 3365000,
+     "kind": "treat",
+     "region": "region:1,1"
+    },
+    {
+     "game_ms": 3600000,
+     "kind": "heading",
+     "region": "region:1,-1",
+     "tiles": 287
+    }
+   ]
+  },
+  {
+   "seed": 507,
+   "leg": "A",
+   "mode": "crisis",
+   "map": "standard",
+   "minutes": 60,
+   "wall_s": 329.2,
+   "era": 1,
+   "era_log": [
+    {
+     "era": "historic",
+     "game_ms": 1134000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 3,
+      "Blue": 1,
+      "Green": 3,
+      "Yellow": 1,
+      "Purple": 3,
+      "Orange": 1
+     }
+    }
+   ],
+   "vp": {
+    "Red": 4,
+    "Blue": 1,
+    "Green": 4,
+    "Yellow": 3,
+    "Purple": 4,
+    "Orange": 3
+   },
+   "history": {
+    "Red": "active",
+    "Blue": "active",
+    "Green": "active",
+    "Yellow": "active",
+    "Purple": "active",
+    "Orange": "active"
+   },
+   "chronicle": [],
+   "outbreaks": 0,
+   "stats": {
+    "deliver": 9053,
+    "blocked": 0,
+    "move": 119758,
+    "attack": 4473,
+    "destroyed": 240,
+    "produce": 9124,
+    "saplings_planted": 4190,
+    "fish_caught": 449,
+    "fields_planted": 1026,
+    "recruit_started": 297,
+    "recruited": 293,
+    "deployed": 13,
+    "units_lost": 210,
+    "disruptions": 2,
+    "outbreak_losses": 10,
+    "buildings_lost": 30,
+    "mined_from_inexhaustible_deposit": 970,
+    "mined_from_inexhaustible_deposit:coal": 543,
+    "mined_from_inexhaustible_deposit:iron": 427,
+    "disruption_ms_lost": 339000,
+    "lost": 259,
+    "destroyed_fish": 19,
+    "destroyed_granite": 34,
+    "destroyed_log": 64,
+    "destroyed_plank": 26,
+    "destroyed_ration": 17,
+    "destroyed_rope": 2,
+    "destroyed_meat": 37,
+    "destroyed_coal": 15,
+    "destroyed_iron": 4,
+    "destroyed_liana": 1,
+    "destroyed_bread": 5,
+    "destroyed_wheat": 28,
+    "destroyed_iron_ore": 7
+   },
+   "state_hash": "beb67e5a7df6f6c89c6bf17d3b60939ee2b736ec",
+   "peak_rss_mb": 61.8,
+   "step_ms_p50": 73.88,
+   "step_ms_p95": 204.6,
+   "step_ms_max": 1280.9,
+   "policies": {
+    "Red": "plus",
+    "Blue": "baseline",
+    "Green": "plus",
+    "Yellow": "baseline",
+    "Purple": "plus",
+    "Orange": "baseline"
+   },
+   "pilot": true,
+   "pilot_log": [
+    {
+     "game_ms": 600000,
+     "kind": "heading",
+     "region": "region:-2,0",
+     "tiles": 0
+    },
+    {
+     "game_ms": 600000,
+     "kind": "treat",
+     "region": "region:-2,0"
+    },
+    {
+     "game_ms": 900000,
+     "kind": "heading",
+     "region": "region:1,-1",
+     "tiles": 259
+    },
+    {
+     "game_ms": 965000,
+     "kind": "treat",
+     "region": "region:1,-1"
+    },
+    {
+     "game_ms": 1500000,
+     "kind": "heading",
+     "region": "region:1,-2",
+     "tiles": 9
+    },
+    {
+     "game_ms": 1503000,
+     "kind": "treat",
+     "region": "region:1,-2"
+    },
+    {
+     "game_ms": 1800000,
+     "kind": "heading",
+     "region": "region:0,-1",
+     "tiles": 1
+    },
+    {
+     "game_ms": 1801000,
+     "kind": "treat",
+     "region": "region:0,-1"
+    },
+    {
+     "game_ms": 2100000,
+     "kind": "heading",
+     "region": "region:-2,0",
+     "tiles": 185
+    },
+    {
+     "game_ms": 2149000,
+     "kind": "treat",
+     "region": "region:-2,0"
+    },
+    {
+     "game_ms": 2400000,
+     "kind": "heading",
+     "region": "region:-2,2",
+     "tiles": 341
+    },
+    {
+     "game_ms": 2486000,
+     "kind": "treat",
+     "region": "region:-2,2"
+    },
+    {
+     "game_ms": 2700000,
+     "kind": "heading",
+     "region": "region:1,-2",
+     "tiles": 511
+    },
+    {
+     "game_ms": 2828000,
+     "kind": "treat",
+     "region": "region:1,-2"
+    },
+    {
+     "game_ms": 3000000,
+     "kind": "heading",
+     "region": "region:1,-1",
+     "tiles": 33
+    },
+    {
+     "game_ms": 3009000,
+     "kind": "treat",
+     "region": "region:1,-1"
+    },
+    {
+     "game_ms": 3300000,
+     "kind": "heading",
+     "region": "region:3,-1",
+     "tiles": 271
+    },
+    {
+     "game_ms": 3368000,
+     "kind": "treat",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 3600000,
+     "kind": "heading",
+     "region": "region:1,-1",
+     "tiles": 114
+    }
+   ]
+  },
+  {
+   "seed": 507,
+   "leg": "B",
+   "mode": "crisis",
+   "map": "standard",
+   "minutes": 60,
+   "wall_s": 346.4,
+   "era": 2,
+   "era_log": [
+    {
+     "era": "historic",
+     "game_ms": 1339000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 1,
+      "Blue": 3,
+      "Green": 1,
+      "Yellow": 3,
+      "Purple": 2,
+      "Orange": 2
+     }
+    },
+    {
+     "era": "modern",
+     "game_ms": 1714000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 3,
+      "Blue": 3,
+      "Green": 3,
+      "Yellow": 4,
+      "Purple": 3,
+      "Orange": 4
+     }
+    }
+   ],
+   "vp": {
+    "Red": 3,
+    "Blue": 3,
+    "Green": 3,
+    "Yellow": 5,
+    "Purple": 3,
+    "Orange": 5
+   },
+   "history": {
+    "Red": "active",
+    "Blue": "active",
+    "Green": "active",
+    "Yellow": "active",
+    "Purple": "active",
+    "Orange": "active"
+   },
+   "chronicle": [],
+   "outbreaks": 0,
+   "stats": {
+    "deliver": 9556,
+    "blocked": 7157,
+    "move": 133456,
+    "attack": 2527,
+    "destroyed": 194,
+    "produce": 9677,
+    "saplings_planted": 4674,
+    "fish_caught": 732,
+    "fields_planted": 974,
+    "recruit_started": 296,
+    "recruited": 291,
+    "deployed": 16,
+    "mined_from_inexhaustible_deposit": 898,
+    "mined_from_inexhaustible_deposit:coal": 499,
+    "mined_from_inexhaustible_deposit:iron": 383,
+    "units_lost": 168,
+    "buildings_lost": 26,
+    "lost": 112,
+    "destroyed_water": 6,
+    "destroyed_wheat": 31,
+    "outbreak_losses": 9,
+    "destroyed_granite": 5,
+    "destroyed_log": 26,
+    "destroyed_plank": 10,
+    "destroyed_ration": 6,
+    "destroyed_fish": 14,
+    "destroyed_meat": 14,
+    "mined_from_inexhaustible_deposit:stones": 16
+   },
+   "state_hash": "7e1c406242ffea360f4e93c4a8d68253a8bcf52a",
+   "peak_rss_mb": 73.1,
+   "step_ms_p50": 76.38,
+   "step_ms_p95": 249.6,
+   "step_ms_max": 920.2,
+   "policies": {
+    "Red": "baseline",
+    "Blue": "plus",
+    "Green": "baseline",
+    "Yellow": "plus",
+    "Purple": "baseline",
+    "Orange": "plus"
+   },
+   "pilot": true,
+   "pilot_log": [
+    {
+     "game_ms": 600000,
+     "kind": "heading",
+     "region": "region:-2,0",
+     "tiles": 0
+    },
+    {
+     "game_ms": 600000,
+     "kind": "treat",
+     "region": "region:-2,0"
+    },
+    {
+     "game_ms": 900000,
+     "kind": "heading",
+     "region": "region:0,0",
+     "tiles": 261
+    },
+    {
+     "game_ms": 966000,
+     "kind": "treat",
+     "region": "region:0,0"
+    },
+    {
+     "game_ms": 1200000,
+     "kind": "heading",
+     "region": "region:0,0",
+     "tiles": 0
+    },
+    {
+     "game_ms": 1200000,
+     "kind": "treat",
+     "region": "region:0,0"
+    },
+    {
+     "game_ms": 1500000,
+     "kind": "heading",
+     "region": "region:1,0",
+     "tiles": 83
+    },
+    {
+     "game_ms": 1521000,
+     "kind": "treat",
+     "region": "region:1,0"
+    },
+    {
+     "game_ms": 2100000,
+     "kind": "heading",
+     "region": "region:-2,2",
+     "tiles": 193
+    },
+    {
+     "game_ms": 2149000,
+     "kind": "treat",
+     "region": "region:-2,2"
+    },
+    {
+     "game_ms": 2400000,
+     "kind": "heading",
+     "region": "region:0,0",
+     "tiles": 118
+    },
+    {
+     "game_ms": 2430000,
+     "kind": "treat",
+     "region": "region:0,0"
+    },
+    {
+     "game_ms": 2700000,
+     "kind": "heading",
+     "region": "region:3,-1",
+     "tiles": 251
+    },
+    {
+     "game_ms": 2763000,
+     "kind": "treat",
+     "region": "region:3,-1"
+    },
+    {
+     "game_ms": 3000000,
+     "kind": "heading",
+     "region": "region:3,-2",
+     "tiles": 71
+    },
+    {
+     "game_ms": 3018000,
+     "kind": "treat",
+     "region": "region:3,-2"
+    },
+    {
+     "game_ms": 3300000,
+     "kind": "heading",
+     "region": "region:-1,1",
+     "tiles": 310
+    },
+    {
+     "game_ms": 3378000,
+     "kind": "treat",
+     "region": "region:-1,1"
+    },
+    {
+     "game_ms": 3600000,
+     "kind": "heading",
+     "region": "region:-2,0",
+     "tiles": 187
+    }
+   ]
+  }
+ ]
+}
