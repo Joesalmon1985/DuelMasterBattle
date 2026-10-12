@@ -287,6 +287,8 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
     cost[s] = 0.0
     counter = 0
     heappop, heappush = heapq.heappop, heapq.heappush
+    xlo, xhi = max(0, sx - limit), min(W - 1, sx + limit)  # the window and the map edge as one bounds test
+    ylo, yhi = max(0, sy - limit), min(H - 1, sy + limit)
     while open_heap:
         _f, _c, cur = heappop(open_heap)
         if counter > max_nodes:
@@ -298,11 +300,12 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
                 cur = came[cur]
             out.reverse()
             return out
-        cx, cy = cur % W, cur // W
+        cy, cx = divmod(cur, W)
         base = cost[cur] + 1.0
         for dx, dy, di in dirs:
-            nx, ny = cx + dx, cy + dy
-            if nx < 0 or ny < 0 or nx >= W or ny >= H or nx - sx > limit or sx - nx > limit or ny - sy > limit or sy - ny > limit:
+            nx = cx + dx
+            ny = cy + dy
+            if nx < xlo or nx > xhi or ny < ylo or ny > yhi:
                 continue
             n = cur + di
             if not ok[n] or (n != g and n in blk):
@@ -313,8 +316,13 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
                 cost[n] = base
                 came[n] = cur
                 counter += 1
-                h = (abs(gx - nx) + abs(gy - ny)) if four else max(abs(gx - nx), abs(gy - ny))
-                heappush(open_heap, (base + h, counter, n))
+                ax = gx - nx
+                ay = gy - ny
+                if ax < 0:
+                    ax = -ax
+                if ay < 0:
+                    ay = -ay
+                heappush(open_heap, (base + ((ax + ay) if four else (ax if ax > ay else ay)), counter, n))
     return None
 
 
