@@ -32,6 +32,7 @@ var _camera_nudge := Vector2.ZERO
 var camera_focus := Vector2.INF
 var god: Node
 var wizard_labels: Node  # semantic labels and fire magic (Wizard Mode)
+var era_hud: Label  # era, victory points and cycle: a developer read-out of the simulation's own state
 var story_ui: Node  # the wizard's story: people, dialogue, dungeon, duel (placeholders over the Python ops)
 var terrain = null  # TerrainView once the sim has sent its terrain
 var selected_ids: Dictionary = {}:
@@ -96,6 +97,35 @@ func _ready() -> void:
 	story_ui.name = "StoryUi"
 	add_child(story_ui)
 	story_ui.setup(self)
+	var hud_layer := CanvasLayer.new()
+	hud_layer.name = "EraHudLayer"
+	hud_layer.layer = 5
+	add_child(hud_layer)
+	era_hud = Label.new()
+	era_hud.name = "EraHud"
+	era_hud.position = Vector2(16, 104)
+	era_hud.add_theme_font_size_override("font_size", 24)
+	era_hud.add_theme_color_override("font_color", Color(0.95, 0.9, 0.7))
+	era_hud.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	era_hud.add_theme_constant_override("outline_size", 4)
+	era_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_layer.add_child(era_hud)
+
+
+func _era_text(snap: Dictionary) -> String:
+	var era: Dictionary = snap.get("era", {})
+	if era.is_empty():
+		return ""
+	var hist: Dictionary = snap.get("history", {})
+	var vp: Dictionary = era.get("vp", {})
+	var parts: PackedStringArray = []
+	for f in ["Red", "Blue", "Green", "Yellow", "Purple", "Orange"]:
+		if vp.has(f):
+			parts.append("%s %d" % [f.substr(0, 1), int(vp[f])])
+	var txt := "Cycle %d  |  Era: %s  |  VP %s  |  era progress %d/%d" % [int(hist.get("cycle", 0)), str(era.get("era", "")), " ".join(parts), int(era.get("progress", 0)), int(era.get("threshold", 0))]
+	if bool(hist.get("cycle_pending", false)):
+		txt += "  |  THE CYCLE ENDS"
+	return txt
 
 
 func _process(delta: float) -> void:
@@ -242,6 +272,8 @@ func _apply_snapshot(snap: Dictionary) -> void:
 			if typeof(e) == TYPE_DICTIONARY and str(e.get("class", "")) in ["tree", "rock"]:
 				_static_rows[str(e["id"])] = e
 	_snapshot = snap
+	if era_hud != null:
+		era_hud.text = _era_text(snap)
 	_blocked.clear()
 	for item in snap.get("blocked", []):
 		if item is Array and item.size() >= 2:

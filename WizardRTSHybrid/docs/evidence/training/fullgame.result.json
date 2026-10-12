@@ -1,0 +1,94 @@
+{
+ "eval": {
+  "net": {
+   "return": -21.001166666666666,
+   "story_completed": 0.9166666666666666,
+   "loss_rate": 1.0,
+   "outbreaks": 10.75
+  },
+  "story_first": {
+   "return": 4.252666666666666,
+   "story_completed": 1.0,
+   "loss_rate": 0.0,
+   "outbreaks": 0.08333333333333333
+  },
+  "treat_first": {
+   "return": 4.258,
+   "story_completed": 1.0,
+   "loss_rate": 0.0,
+   "outbreaks": 0.08333333333333333
+  },
+  "interleaved": {
+   "return": 4.252666666666666,
+   "story_completed": 1.0,
+   "loss_rate": 0.0,
+   "outbreaks": 0.08333333333333333
+  },
+  "wait": {
+   "return": -23.759,
+   "story_completed": 0.0,
+   "loss_rate": 1.0,
+   "outbreaks": 10.75
+  },
+  "net_vs_story_first_return": {
+   "mean_a": -21.001166666666666,
+   "mean_b": 4.252666666666666,
+   "diff": -25.253833333333336,
+   "ci95_lo": -26.957970833333334,
+   "ci95_hi": -23.56804583333334,
+   "a_ge_b": 0.0,
+   "n": 12
+  },
+  "net_vs_interleaved_return": {
+   "mean_a": -21.001166666666666,
+   "mean_b": 4.252666666666666,
+   "diff": -25.253833333333336,
+   "ci95_lo": -26.957970833333334,
+   "ci95_hi": -23.56804583333334,
+   "a_ge_b": 0.0,
+   "n": 12
+  }
+ },
+ "pg_curve": [
+  {
+   "iter": 0,
+   "mean_return": 2.143333333333333,
+   "loss": -0.020373263604703894,
+   "episodes": 6
+  },
+  {
+   "iter": 1,
+   "mean_return": 2.451333333333334,
+   "loss": -0.07144462305352632,
+   "episodes": 12
+  },
+  {
+   "iter": 2,
+   "mean_return": -1.834666666666667,
+   "loss": -0.21482571037159337,
+   "episodes": 18
+  },
+  {
+   "iter": 3,
+   "mean_return": -2.8426666666666662,
+   "loss": -0.1567578936636982,
+   "episodes": 24
+  },
+  {
+   "iter": 4,
+   "mean_return": 1.7163333333333337,
+   "loss": 0.005774399602609715,
+   "episodes": 30
+  }
+ ],
+ "seeds": {
+  "train": [
+   0,
+   17
+  ],
+  "test": [
+   60,
+   71
+  ]
+ }
+}

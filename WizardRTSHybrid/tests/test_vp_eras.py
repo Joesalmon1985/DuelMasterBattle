@@ -321,3 +321,13 @@ def test_cycle_reset_is_deterministic_across_processes():
         assert r.returncode == 0, r.stderr[-600:]
         outs.append(r.stdout.strip())
     assert outs[0] == outs[1]
+
+
+def test_cycle_reset_keeps_the_same_terrain_and_moves_the_run_on():
+    w = world("developer")
+    w.era_vp_threshold = 3
+    fresh = history.cycle_reset(w)
+    assert bytes(fresh.terrain.res_kind) == bytes(w.terrain.res_kind) and list(fresh.terrain.res_amt) == list(w.terrain.res_amt)
+    assert fresh.terrain_seed == w.seed and fresh.seed != w.seed and fresh.era_vp_threshold == 3
+    again = history.cycle_reset(fresh)  # a second reset still builds from the original land
+    assert bytes(again.terrain.res_kind) == bytes(w.terrain.res_kind) and again.seed not in (w.seed, fresh.seed)

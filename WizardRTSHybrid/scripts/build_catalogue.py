@@ -51,7 +51,27 @@ def discover() -> list[dict]:
             if m:
                 items.append({"id": f"openra.{m.group(1).lower()}", "game": "openra", "category": category,
                               "subtype": fname[:-5], "source": f"mods/ra/rules/{fname}"})
+    items.extend(discover_mindustry())
     return items
+
+
+def discover_mindustry() -> list[dict]:
+    """Every block, unit, item and liquid of the pinned Mindustry import (wizard_rts/data/mindustry_defs.json). Imported data alone is
+    `missing` here by the catalogue's own rule: only a status entry with evidence raises it."""
+    path = HYBRID / "wizard_rts" / "data" / "mindustry_defs.json"
+    if not path.is_file():
+        return []
+    d = json.loads(path.read_text(encoding="utf-8"))
+    out = []
+    for bid, b in sorted(d["blocks"].items()):
+        out.append({"id": f"mindustry.{bid}", "game": "mindustry", "category": "block", "subtype": b["category"], "source": "Blocks.java"})
+    for uid in sorted(d["units"]):
+        out.append({"id": f"mindustry.{uid}", "game": "mindustry", "category": "unit", "subtype": "ground" if not d["units"][uid]["flying"] else "air", "source": "UnitTypes.java"})
+    for iid in sorted(d["items"]):
+        out.append({"id": f"mindustry.item.{iid}", "game": "mindustry", "category": "item", "subtype": "item", "source": "Items.java"})
+    for lid in sorted(d["liquids"]):
+        out.append({"id": f"mindustry.liquid.{lid}", "game": "mindustry", "category": "liquid", "subtype": "liquid", "source": "Liquids.java"})
+    return out
 
 
 def generic_status() -> dict[str, dict]:
@@ -101,9 +121,10 @@ def main() -> None:
         st = status.get(it["id"], {})
         it["status"] = st.get("status", "missing")
         it["evidence"] = st.get("evidence", "")
+        it["ai_usable"] = bool(st.get("ai_usable", False))
         unique.append(it)
     totals: dict = {}
-    for game in ("widelands", "openra"):
+    for game in ("widelands", "openra", "mindustry"):
         for cat in sorted({i["category"] for i in unique if i["game"] == game}):
             rows = [i for i in unique if i["game"] == game and i["category"] == cat]
             counts = Counter(r["status"] for r in rows)

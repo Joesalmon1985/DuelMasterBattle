@@ -140,9 +140,10 @@ func _run() -> void:
 	for c in clues:
 		var sp := _screen_of(c)
 		if sp.x > 0 and sp.y > 0 and sp.x < 1280 and sp.y < 720:
-			seen += _count_near(img, sp + Vector2(0, -12), Color(0.55, 0.45, 0.25), 0.35, 24)
-	_check(seen > 12, "the sickness smoke is drawn near the clues (%d pixels)" % seen)
-	_check(_count_near(img, Vector2(640, 360), Color(0.75, 0.3, 0.9), 0.3, 360) > 40, "the region outline is drawn (purple hex edge)")
+			seen += _count_near(img, sp + Vector2(0, -25), Color(0.85, 0.15, 0.7), 0.3, 40)
+	_check(seen > 60, "the sickness smoke (magenta) is drawn near the clues (%d pixels)" % seen)
+	var outline := _count_near(img, get_root().get_visible_rect().size * 0.5, Color(0.87, 0.39, 0.86), 0.2, 1300)
+	_check(outline > 20, "the region outline is drawn (pink hex edge, %d pixels)" % outline)
 	# the wizard walks up to the healer and talks (real click)
 	_world.set_john_pos(Vector2i(int(healer["tx"]) + 1, int(healer["ty"])))
 	_world._arrived()

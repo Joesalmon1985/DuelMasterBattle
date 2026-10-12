@@ -141,18 +141,22 @@ def grant_goods(world: Any, faction: str, goods: dict[str, int] | None = None) -
         world.stats["fixture_grant_" + g] = world.stats.get("fixture_grant_" + g, 0) + n
 
 
-def modern_fixture(world: Any, faction: str = "Red") -> dict[str, Any]:
-    """Place the slice; returns ids and a plan. Raises RuntimeError naming what could not be placed."""
+def modern_fixture(world: Any, faction: str = "Red", grant: bool = True) -> dict[str, Any]:
+    """Place the slice; returns ids and a plan. Raises RuntimeError naming what could not be placed.
+
+    `grant=True` is the developer fixture (era, cards and goods are granted, developer/test profiles only). `grant=False` is the
+    faction AI's path: nothing is granted, the line is placed with the goods and cards the faction really has."""
     from wizard_rts import ai
 
-    if not tech.god_allowed(world):
-        raise PermissionError("the Modern fixture is a developer/test command")
-    from wizard_rts import vp
+    if grant:
+        if not tech.god_allowed(world):
+            raise PermissionError("the Modern fixture is a developer/test command")
+        from wizard_rts import vp
 
-    if world.era_index < 2:
-        vp.set_era(world, 2)
-    grant_cards(world, faction)
-    grant_goods(world, faction)
+        if world.era_index < 2:
+            vp.set_era(world, 2)
+        grant_cards(world, faction)
+        grant_goods(world, faction)
     wh = con.faction_warehouse(world, faction)
     ids: dict[str, Any] = {"faction": faction, "belts": []}
     taken: set[tuple[int, int]] = set()

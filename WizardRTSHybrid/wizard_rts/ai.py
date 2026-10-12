@@ -250,6 +250,9 @@ def economy_step(world: Any, name: str) -> None:
         return
     for cc in territory.command_centers(world, name):
         _settlement_step(world, name, cc, main=cc is wh)
+    from wizard_rts import ai_industry  # the Mindustry line (M6): only once the faction has drafted the three industry cards
+
+    ai_industry.industry_step(world, name, wh)
     expansion_step(world, name, wh)
 
 

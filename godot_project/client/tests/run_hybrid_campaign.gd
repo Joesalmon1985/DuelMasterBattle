@@ -83,6 +83,16 @@ func _run() -> void:
 		var tick: Dictionary = _world._sim.op({"op": "advance", "ms": 100, "sequence": 999999})
 		_check(str(tick.get("status", "")) == "ok" or str(tick.get("reason", "")) != "god_mode_disabled", "the wizard's own clock ops still work")
 	else:
+		# Red is played by the AI until controlled, and the AI drafts at once: take the faction first, then wait for a round to open
+		_world._sim.op({"op": "control", "faction": "Red"})
+		var reply: Dictionary = _world._sim.op({"op": "tech"})
+		var offers: Array = reply["tech"]["factions"]["Red"]["offers"]
+		for _i in range(600):
+			if offers.size() > 0:
+				break
+			await _frames(2)
+			reply = _world._sim.op({"op": "tech"})
+			offers = reply["tech"]["factions"]["Red"]["offers"]
 		_check(god.god_enabled and god.mode_btn.visible, "God Mode button is shown in developer")
 		await _key(KEY_G)
 		_check(god.active, "G enters God Mode in developer")
@@ -90,10 +100,10 @@ func _run() -> void:
 		await _frames(10)
 		var tech: Dictionary = _world._snapshot.get("tech", {}).get("factions", {}).get("Red", {})
 		# the first draft round opens at the first tick
-		_world._sim.op({"op": "advance", "ms": 200, "sequence": 5000})
-		var reply: Dictionary = _world._sim.op({"op": "tech"})
-		var offers: Array = reply["tech"]["factions"]["Red"]["offers"]
 		_check(offers.size() > 0, "Red has a draft offer after the first tick")
+		if offers.is_empty():
+			quit(1)
+			return
 		god._refresh_info()
 		_world._apply_snapshot(_world._sim.op({"op": "snapshot"}).get("snapshot", {}))
 		god._last_actions_key = ""
@@ -110,14 +120,16 @@ func _run() -> void:
 			await _frames(4)
 		var after: Dictionary = _world._sim.op({"op": "tech"})
 		_check(after["tech"]["factions"]["Red"]["cards"].has(str(offers[0])), "drafting through the button adds the card in the simulation")
+		var owned: Array = after["tech"]["factions"]["Red"]["cards"]
 		var farm_btn: Button = god.build_grid.get_node_or_null("Build_farm")
 		var mine_btn: Button = god.build_grid.get_node_or_null("Build_mine")
 		_check(farm_btn != null and mine_btn != null, "the build menu lists Farm and Coal mine")
 		var drafted := str(offers[0])
-		var unlocks_farm := drafted == "dmb.card.farming"
+		var unlocks_farm := owned.has("dmb.card.farming")
+		var unlocks_mine := owned.has("dmb.card.mining")  # the AI may have drafted for Red before it was taken over
 		if farm_btn != null and mine_btn != null:
-			_check(mine_btn.disabled == (not (drafted == "dmb.card.mining")), "Coal mine button is %s after drafting %s" % ["enabled" if drafted == "dmb.card.mining" else "locked", drafted])
-			_check(farm_btn.disabled == (not unlocks_farm), "Farm button is %s after drafting %s" % ["enabled" if unlocks_farm else "locked", drafted])
+			_check(mine_btn.disabled == (not unlocks_mine), "Coal mine button is %s with cards %s" % ["enabled" if unlocks_mine else "locked", str(owned)])
+			_check(farm_btn.disabled == (not unlocks_farm), "Farm button is %s with cards %s" % ["enabled" if unlocks_farm else "locked", str(owned)])
 		var barracks: Button = god.build_grid.get_node_or_null("Build_barracks")
 		_check(barracks == null or barracks.disabled, "Barracks stays locked")
 		await _shot("developer_drafted")

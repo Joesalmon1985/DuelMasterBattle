@@ -1,26 +1,32 @@
 # Next agent handoff (updated 12 October 2026)
 
-**Branch:** `feature/hybrid-playtest-fixes-v03`. **Last verified commit:** see `git log -1` (`feat(hybrid): M1 ... M3 story core`, `d3f7375`). Nothing is merged to `main`. Owner's untracked files in `docs/` are untouched; **do not `git add -A`** (legacy `tests/sim` rewrites `godot_project/content/compiled/*` when run: restore with `git checkout -- godot_project/content/compiled` before committing).
+**Branch:** `feature/hybrid-playtest-fixes-v03`. **Last verified commit:** see `git log -1`. Nothing is merged to `main`. The owner's untracked files in `docs/` and `godot_project/content/` are untouched; **do not `git add -A`** (legacy `tests/sim` rewrites `godot_project/content/compiled/*`: restore with `git checkout -- godot_project/content/compiled` before committing; `batch.t133.valid.json` was already modified by the owner).
 
 ## State
 Authority: `docs/IMPLEMENTATION_RUN_STATUS.md` (completed / partial / blocked / not started). Direction: `docs/DuelMasterBattle_Design_v0_5.md`, `docs/DECISION_REGISTER.md` (D01-D21).
 
-Done and tested: M1 (profiles, tech cards), M2 (Mindustry slice, D21), M3 Python core (puzzle port with GDScript parity, settlements, story bridge). **Not done:** M3 headed Godot (story UI: NPC, dialogue, dungeon view, duel board), M4, M5, M6, the headless environments other than `HybridEnv`, all neural training. See the status file for the exact list.
+Done and tested: M1, M2 (and the AI placing the line), M3 (story slice, puzzle port with GDScript parity, headed UI), M4 (VP, eras, cycle reset on the same land, headed `eras`), M5 (outbreaks, headed), six headless environments, a NumPy training harness. **Partial:** M6 breadth (see `WizardRTSHybrid/docs/COVERAGE.md`), training results: the dungeon and cross-system policies did **not** learn (`WizardRTSHybrid/docs/TRAINING_PROGRAMME.md`, bottom). **Not started:** builder worker and mine workers, liquids and routers, most OpenRA content, `train.py --domain rts` re-run with the new strategy reward.
 
 ## Commands
 ```
-python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py     # about 16 min; last full run 177 passed, 2 failed (both fixed afterwards, rerun to confirm)
-python3 -m pytest WizardRTSHybrid/tests/test_story_slice.py WizardRTSHybrid/tests/test_puzzle_parity.py -q   # M3 core, about 35 s
-python3 -m pytest WizardRTSHybrid/tests/test_industry_mechanics.py WizardRTSHybrid/tests/test_industry_slice.py -q   # M2, about 2 min
-python3 -m pytest tests/sim -q          # legacy, 507 passed in 37 s (then git checkout -- godot_project/content/compiled)
-WizardRTSHybrid/scripts/run_headed_suite.sh campaign campaign_dev industry god      # headed; needs DISPLAY; HYBRID_SHOT_DIR for screenshots
-WizardRTSHybrid/scripts/run_headed_one.sh <script.gd> ENV=VAL ...                    # one headed script with full output
-GODOT_PARITY=1 python3 -m pytest WizardRTSHybrid/tests/test_puzzle_parity.py -q      # re-export from the real GDScript and compare
-python3 WizardRTSHybrid/scripts/build_consolidated_design.py                         # regenerate the consolidated design after editing parts
+python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py     # 312 passed, about 25 min
+python3 WizardRTSHybrid/scripts/run_all_scenarios.py --suite smoke                                  # seconds; --suite envs systems training stress parity for more
+python3 WizardRTSHybrid/scripts/train.py --domain duel dungeon outbreak quest fullgame --budget standard --seed 0   # bounded, opt-in, runs go to ~/dmb_runs
+python3 -m pytest tests/sim -q          # legacy, 507 passed (then git checkout -- godot_project/content/compiled)
+WizardRTSHybrid/scripts/run_headed_suite.sh [names]     # 17 headed scripts incl. campaign campaign_dev industry story outbreak eras; needs DISPLAY; HYBRID_SHOT_DIR
+WizardRTSHybrid/scripts/run_headed_one.sh <script.gd> ENV=VAL ...
+GODOT_PARITY=1 python3 -m pytest WizardRTSHybrid/tests/test_puzzle_parity.py WizardRTSHybrid/tests/test_ward_parity.py -q   # re-export from the real GDScript and compare
+python3 WizardRTSHybrid/scripts/build_catalogue.py && python3 WizardRTSHybrid/scripts/make_coverage.py   # regenerate COVERAGE.md
+python3 WizardRTSHybrid/scripts/build_consolidated_design.py                                        # after editing design parts
 ```
-Godot: `~/godot451/Godot_v4.5.1-stable_linux.x86_64`. A mid-run source edit can fail an in-flight pytest; do not edit while the full suite runs.
+Godot: `~/godot451/Godot_v4.5.1-stable_linux.x86_64`; Godot sim tests `--headless --path godot_project --script res://sim/tools/run_tests.gd` (32 pass). Do not edit sources while a pytest run or a headed suite is running. Never `pkill -f` a pattern that matches your own shell; kill by pid.
+
+## Lessons from this run
+- The live client numbers its own clock sequence; a hand-made `advance` sequence is silently ignored. Pressing G (God Mode) pauses the clock. The AI drafts for any faction the player does not control, so a test that needs an open offer must `control` the faction first and use `HYBRID_DRAFT_MS`.
+- Developer pacing switches: `HYBRID_DRAFT_MS`, `HYBRID_ERA_MS`, `HYBRID_ERA_VP`, `HYBRID_FIXTURE`, `HYBRID_FIXTURE_FACTION` (developer profile only).
+- The S04 era threshold of 10 VP was not reached in 40 game minutes on three seeds; the default is 6 until the owner decides.
 
 ## Very next actions
-1. M3 headed: Godot story UI over the existing ops (`talk`, `choose`, `enter`, `dungeon_move`, `dungeon_interact`, `duel_begin`, `duel_guess`, `duel_abandon`; snapshot `entities` with `class npc/landmark`, `story` block). Fixture: `HYBRID_PROFILE=developer HYBRID_FIXTURE=story`. Write `client/tests/run_hybrid_story.gd` (real input, screenshots under `docs/evidence/m3/`), and `scripts/launch_scenario.sh story`.
-2. M4: VP ledger and eras on `wizard_rts/settlements.py` (stable ids and chronicle exist), thresholds, upgrade command (the S08 cost function and in-place identity exist in `industry/commands.py`), collapse/split, cycle reset.
-3. M5 outbreaks, then the headless environment adapters and the neural harness, then M6 breadth.
+1. Fix the dungeon policy (richer observation: entity roles and the first unsolved puzzle; or train on the expert's macro verbs) and the cross-system policy (imitate `treat_first`/`story_first` before REINFORCE). Report held-out numbers against the scripted baselines; do not ship weights as a game dependency.
+2. M6 breadth in the order of `docs/ROADMAP_NEXT_RUN.md`: builder worker, mine workers, liquids and routers, more OpenRA buildings and units; update `feature_status.json` evidence only with a test.
+3. Owner decisions outstanding: S04 threshold (6 vs 10), S05 draft cadence, what the Modern and Dystopian eras should unlock beyond cards.

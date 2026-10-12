@@ -150,5 +150,100 @@
  "widelands.barbarians_bread": {
   "status": "tested",
   "evidence": "bakery"
+ },
+ "mindustry.mechanical-drill": {
+  "status": "verified",
+  "evidence": "drill on existing deposits, reserve exact, belt backpressure; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.pneumatic-drill": {
+  "status": "tested",
+  "evidence": "titanium 2 reserve units per item; tier 3; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.conveyor": {
+  "status": "verified",
+  "evidence": "1.8 tiles/s, spacing 0.4, capacity 3, runs paid per 3 tiles; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.power-node": {
+  "status": "verified",
+  "evidence": "laser links range 6, adjacency graphs; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.combustion-generator": {
+  "status": "tested",
+  "evidence": "burns coal 0.5/s, 60 power/s; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.solar-panel": {
+  "status": "tested",
+  "evidence": "6 power/s, adjacency; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.solar-panel-large": {
+  "status": "verified",
+  "evidence": "78 power/s; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.battery": {
+  "status": "tested",
+  "evidence": "buffers surplus, bridges a gap; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.silicon-smelter": {
+  "status": "verified",
+  "evidence": "coal 1 + sand 2 -> silicon, 30 power/s; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.graphite-press": {
+  "status": "adapted",
+  "evidence": "in the registry and card list; no behaviour test beyond the crafter code path shared with the smelter; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.ground-factory": {
+  "status": "verified",
+  "evidence": "dagger plan 15 s, 72 power/s; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.dagger": {
+  "status": "verified",
+  "evidence": "unit joins world.units, fights an OpenRA rifleman; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.coal": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.copper": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.item.lead": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.sand": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.titanium": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.item.silicon": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.graphite": {
+  "status": "adapted",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
  }
 }

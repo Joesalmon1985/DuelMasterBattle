@@ -203,7 +203,7 @@ These are the only open items. Each has a recommended default; an implementation
 | S01 | D04 | Who receives the 1 VP when a settlement is destroyed? | The faction that dealt the final destroying blow to the command centre's last standing building *of the settlement's centre kind* (the centre itself), not to the last unit nearby. Wizard-caused destruction (S03) awards nothing. | Centre destruction is a single discrete event with one actor. |
 | S02 | D04 | How is a VP counted exactly once? | A VP ledger keyed by `(settlement_id, event)`, event in {`founded`, `destroyed`}. Each key can be written once. A settlement's founding VP is a standing value (lost when the settlement stops existing); a destruction VP is permanent. Re-founding on the same tile creates a new `settlement_id`. | Idempotent, replayable, survives save/load. |
 | S03 | D04/D10 | How does wizard-caused destruction behave? | The settlement's founding VP is removed from its owner (it no longer exists). No attacker VP is awarded. The wizard has no VP. Event is recorded in the chronicle with `cause: wizard`. | The wizard is not a faction (D02). |
-| S04 | D04 | Era threshold. | Keep **10 VP** as a configurable `ERA_VP_THRESHOLD`, evaluated as the highest VP on any faction, with a time-based upper bound as a stall guard. | Provisional per D04. With six factions and 2-3 settlements each, 10 VP is reachable mainly by conquest. Validate by simulation (roadmap M4). |
+| S04 | D04 | Era threshold. | Keep **10 VP** as a configurable `ERA_VP_THRESHOLD`, evaluated as the highest VP on any faction, with a time-based upper bound as a stall guard. | Provisional per D04. With six factions and 2-3 settlements each, 10 VP is reachable mainly by conquest. Validate by simulation (roadmap M4). **Measured 12 Oct 2026** (`scripts/vp_report.py`, three seeds, 40 game minutes): 10 VP was not reached (top VP 3 at 14-16 min, 5 at 26-39 min); the working default is 6, a configurable `ERA_VP_THRESHOLD`; owner to decide. |
 | S05 | D13 | Draft cadence. | One draft round per faction per fixed Game Time interval (default 15 game minutes), plus one extra round on each era change. A draft offers 3 cards from the faction's currently unlockable pool; one is chosen. AI picks by its planner; the wizard never drafts for a faction. | Real-time, no dice, bounded and testable. |
 | S06 | D13 | Card prerequisites. | A card needs (a) era >= card era, (b) its prerequisite cards drafted, (c) *physical* prerequisite met at draft time, e.g. at least one working building of a named kind. A card that unlocks Mindustry machines needs the Historic era plus a working smithy chain. | Keeps "technology is partly real ability" (v0.4 §15.1). |
 | S07 | D11 | What do faction "peaks" mean? | At reset, for each faction record the **centroid of its settlements weighted by peak population or building count** at the time of its highest settlement count, plus its final-era VP. New cycle faction starts are placed on the original six homelands *rotated* so the strongest faction's centroid region seeds the next cycle's most fertile start. Only positions and a small number of seed values carry over; no wares, buildings, or units. | Meets D11 (geography influences starts, nothing else survives) and is deterministic. |
@@ -451,9 +451,10 @@ Postponed (will be added, era/tech gated): remaining Widelands civilian building
 ### 9. Update from the implementation run (12 October 2026)
 
 - **G1 (God Mode / training surface not gated): fixed for the shipped entry.** `wizard_rts/server.py` rejects every faction-level op unless the profile is `developer`/`test_*`; the Godot client hides the God button and ignores `G` in `campaign`. `HybridEnv` is still an unguarded in-process developer tool (documented in `ARCHITECTURE_CONTRACT.md` §10). Tests: `test_campaign_tech.py`; headed `campaign`.
-- **D15 start**: `profile="campaign"` gives the primitive start; `test_showcase` keeps the old start (the `HybridWorld` default). Card drafting exists (S05 cadence 15 game minutes, S06 prerequisites). Era index is fixed at 0.
+- **D15 start**: `profile="campaign"` gives the primitive start; `test_showcase` keeps the old start (the `HybridWorld` default). Card drafting exists (S05 cadence 15 game minutes, S06 prerequisites).
 - **Mindustry (D06/D16/D21)**: WORKS for the M2 slice (see `MINDUSTRY_PROVENANCE.md`). ABSENT: liquids, routers, sorters, bridges, other factories and units, art.
-- Still ABSENT: persistent settlement IDs, VP, eras, outbreaks, story bridge, headless quest/dungeon/duel/outbreak environments, trained policies.
+- **M3-M5 WORK** (12 Oct update): persistent settlement ids and chronicle, VP ledger, four eras with a stall guard and cycle reset on the same land, hex-region outbreaks, the story bridge (one NPC, one dungeon, one duel) with headed UI, six headless environments, a NumPy training harness. See `IMPLEMENTATION_RUN_STATUS.md`.
+- **Still ABSENT or weak:** trained dungeon and cross-system policies (they failed; `TRAINING_PROGRAMME.md`), builder and mine workers, liquids/routers, most OpenRA content, art for Mindustry machines (placeholders).
 
 
 ---
@@ -475,7 +476,7 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 
 ### M1 — Campaign profiles, drafted-tech unlocks, primitive start
 
-> **Status (12 Oct 2026): implemented and verified for the primitive start, drafting, gating, God-Mode gating, AI development and the 40-minute peace/war runs.** See `IMPLEMENTATION_RUN_STATUS.md` for the exact tests and what is partial (card catalogue is 13 cards; era index is fixed at 0 until M4; draft prompt exists as a God-panel developer display only).
+> **Status (12 Oct 2026): implemented and verified for the primitive start, drafting, gating, God-Mode gating, AI development and the 40-minute peace/war runs.** See `IMPLEMENTATION_RUN_STATUS.md` for the exact tests and what is partial (card catalogue is 13 cards; era progression arrived with M4; draft prompt exists as a God-panel developer display only).
 
 **Purpose.** Make the intended start real (D13, D15) and gate God Mode (D02) while keeping today's fully equipped start as a fixture.
 
@@ -533,6 +534,8 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 
 ### M3 — One live-settlement story: NPC, dungeon, duel, real consequence
 
+> **Status (12 Oct 2026): implemented and verified as one vertical slice** (one NPC, one dungeon of four puzzles, one Mastermind duel, a real deposit change); Python core, Godot-RNG-exact puzzle port, headed UI. See `IMPLEMENTATION_RUN_STATUS.md`.
+
 **Purpose.** Prove the wizard game is real (D19, D10): a settlement-driven quest where a real shortage causes a person's problem, a dungeon puzzle and a Mastermind duel change authoritative economy state.
 
 **Reuse (do not redesign).** `sim/dmb/quests` (runtime, binding, causes), `sim/dmb/people`, `narrative`, `adventure`; `content/source/quests/shortage/`, `dungeons/mine` or `cave`, `dialogue/`, `aspects/`; `DmbPuzzleLogic`/`DmbPuzzleGen`, `puzzle.gd`, `dungeon_area.tscn`; duel service and Ward Duel; `world_interaction_label.gd`, `dialogue_box.gd`; village story slice as the pattern; fire magic.
@@ -561,6 +564,8 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 
 ### M4 — VP and era progression foundation
 
+> **Status (12 Oct 2026): implemented and verified** (settlement ids and chronicle, VP ledger, four eras with a stall guard, collapse/decline/split, cycle reset on the same land, headed `eras`). S04 threshold of 10 was not reachable in 40 game minutes; working default 6.
+
 **Purpose.** D04/D07/D09/D18 foundation: settlement identity, VP ledger, era state and thresholds, in-place upgrades, faction decline/split/collapse hooks.
 
 **Reuse.** `territory.py`, `lifecycle`, `ai.py`, `sim/dmb/eras` (planner, collapse, fission) as references.
@@ -578,6 +583,8 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 
 ### M5 — Catastrophe region overlay and outbreaks
 
+> **Status (12 Oct 2026): implemented and verified** (hex overlay, escalating spread, outbreaks, treatment, terminal loss, production effect; headed `outbreak`).
+
 **Purpose.** D12: bounded-attention existential threat on a logical hex overlay.
 
 **Reuse.** `coords.py` (hex math), `sim/dmb/hazards` deck/propagation, hazard content JSON, the existing hazard/duel contract.
@@ -593,6 +600,8 @@ Common task boundary: an agent finishing a milestone commits on the feature bran
 ---
 
 ### M6 — Widelands worker economy completion and broader OpenRA content
+
+> **Status (12 Oct 2026): partial.** Coverage is in the generated `WizardRTSHybrid/docs/COVERAGE.md`; builder and mine workers, liquids and most OpenRA content are not started.
 
 **Purpose.** D05/D08 breadth; interleaved, not a gate for M3.
 

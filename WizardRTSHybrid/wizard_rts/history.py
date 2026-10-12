@@ -13,6 +13,7 @@ All of it is computed from state, never from a ranking:
 from __future__ import annotations
 
 import zlib
+import random
 from typing import Any
 
 from wizard_rts import settlements, territory, vp
@@ -213,8 +214,15 @@ def cycle_reset(world: Any) -> Any:
     st = state(world)
     cycle = int(st["cycle"]) + 1
     perm = deal_homelands(world)
-    fresh = HybridWorld(world.seed + 1000 * cycle, terrain=world.terrain is not None, map_size=world.map_size, profile=world.profile,
-                        start_perm=perm)
+    # the land is the same land (the world is re-dealt, not re-rolled): build from the terrain seed, then move the run's own randomness on
+    base = int(getattr(world, "terrain_seed", world.seed))
+    fresh = HybridWorld(base, terrain=world.terrain is not None, map_size=world.map_size, profile=world.profile, start_perm=perm)
+    fresh.terrain_seed = base
+    fresh.seed = base + 1000 * cycle
+    fresh.rng = random.Random(fresh.seed)
+    for knob in ("draft_interval_ms", "era_vp_threshold", "era_max_ms"):  # developer pacing switches carry over
+        if knob in world.__dict__:
+            setattr(fresh, knob, getattr(world, knob))
     fresh.history = {"faction": {n: {"state": "active", "last_productive_ms": 0, "peak": {"settlements": 0, "centroid": None, "weight": 0}} for n in fresh.faction_info},
                      "chronicle": [], "cycle": cycle}
     fresh.past_cycles = list(getattr(world, "past_cycles", [])) + [{

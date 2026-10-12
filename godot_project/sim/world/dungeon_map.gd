@@ -116,8 +116,11 @@ static func _dress(entities: Array, rows: Array, aid: String, p: Dictionary, st:
 		"timed_gate":
 			entities.append(_m(base, {"kind": "logs", "id": "%s_%s" % [aid, p["lever"]], "pos": [2, cy + 2], "marker": "staff",
 				"puzzle_action": {"kind": "pull"}, "text": "A lever, and a rope that runs up into the dark."}))
-			entities.append(_m(base, {"kind": "logs", "id": "%s_%s_gate" % [aid, p["id"]], "pos": [cx, oy], "marker": "door_stone",
-				"puzzle_action": {"kind": "pass"}, "text": "A gate of iron bars." + (" Lifted — and counting." if bool(st.get("open", false)) else " Down.")}))
+			# Once the room is answered the gate is gone: it stood in the only doorway (x = cx), and a solid entity there left the next room
+			# unreachable (found by the headless dungeon environment, 12 Oct 2026; tests/test_dungeons.gd _test_every_door_is_reachable).
+			if not bool(st.get("solved", false)):
+				entities.append(_m(base, {"kind": "logs", "id": "%s_%s_gate" % [aid, p["id"]], "pos": [cx, oy], "marker": "door_stone",
+					"puzzle_action": {"kind": "pass"}, "text": "A gate of iron bars." + (" Lifted — and counting." if bool(st.get("open", false)) else " Down.")}))
 		"mosaic":
 			for i in range(4):
 				entities.append(_m(base, {"kind": "logs", "id": "%s_%s_tile%d" % [aid, p["id"], i], "pos": [cx - 3 + i * 2, cy], "marker": "stone_shard",

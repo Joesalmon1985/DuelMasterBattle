@@ -78,3 +78,17 @@ Reproduce: `python3 scripts/rl_experiment.py baseline`, `train --generations 3 -
 - Observations carry no image-like map beyond a 25x25 coarse local view; a learner that scouts needs fog-of-war observations (the
   scripted AI's `_known_targets` is the intended visibility model).
 - Naval and wizard actions are not in the macro set.
+
+## Standard-budget run, 2026-10-12 (`scripts/train.py --budget standard --seed 0`)
+
+Raw results: `docs/evidence/training/<domain>.result.json` (weights stay under `~/dmb_runs`, not committed). All numbers are held-out seeds, never training seeds. The game does not require any trained weights.
+
+| Domain | Policy | Held-out result | Baselines | Verdict |
+|---|---|---|---|---|
+| Mastermind duel (150 secrets) | BC MLP | solves 73% vs random opponent, 87% vs rule-based | solver 100%, random 0.7% | Beats random by a wide margin (CI 0.65-0.79); **does not match the solver**. |
+| Outbreak | BC/PG MLP | default: return 2.51, 0 outbreaks, 0% loss; hard: 4.44, 0% loss | greedy 2.51 / 4.45; no-op -13.5 / -27.2 (100% loss on hard) | Equals greedy (it imitates it); does not exceed it. |
+| Quest | BC MLP | matches the expert on all 5 variants (216 samples) | expert | Small, deterministic; a memorised script, not general learning. |
+| Dungeon | BC + DAgger MLP | **greedy 5%, sampled 10%** solved | expert 100%, random 0% | **Failed to learn.** Failures by first unsolved puzzle: switch_chain 17, mosaic 11, timed_gate 10. Needs a better observation/action design or more budget; do not cite as a working controller. |
+| Cross-system (12 held-out) | REINFORCE MLP | return -21.0, loses every run (10.75 outbreaks) | story_first +4.25, treat_first +4.26, wait -23.8 | **Worse than all scripted baselines**; the REINFORCE curve is noisy and did not improve in 5 iterations. Scripted skills remain the reference. |
+
+What this means: the environments, baselines and statistics are sound and reproducible; the dungeon and cross-system learners are not yet competent and are reported as such. Next steps are in `NEXT_AGENT_HANDOFF.md`.

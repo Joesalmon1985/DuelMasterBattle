@@ -1,0 +1,27 @@
+{
+ "domain": "dungeon",
+ "config": {
+  "budget": "standard",
+  "seed": 0
+ },
+ "code_sha": "06ab7ec592c97469defb4f7c6adcfeb3b37402ca+dirty",
+ "started": "2026-10-12T02:10:12",
+ "python": "3.12.3",
+ "curves": [
+  {
+   "round": 0,
+   "samples": 11546,
+   "bc_loss": 0.13224090280150508
+  },
+  {
+   "round": 1,
+   "samples": 21144,
+   "bc_loss": 0.14719955337736015
+  },
+  {
+   "round": 2,
+   "samples": 30408,
+   "bc_loss": 0.21934011667799386
+  }
+ ]
+}

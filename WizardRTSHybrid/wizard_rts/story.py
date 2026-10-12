@@ -537,13 +537,9 @@ def dungeon_view(world: Any) -> dict[str, Any]:
     did = s["in_dungeon"]
     if not did:
         return {}
-    run = _run_for(world, did)
-    area = run.area()
-    return {"dungeon": did, "name": area["name"], "rows": area["rows"], "pos": list(run.state["pos"]),
-            "entities": [{"id": e["id"], "kind": e["kind"], "pos": e["pos"], "text": e.get("text", ""), "marker": e.get("marker", e.get("sprite", ""))}
-                         for e in area["entities"] if e["id"] not in run.state["taken"]],
-            "inventory": list(s["inventory"]), "solved": [run.puzzle_state(p)["solved"] for p in run.d["puzzles"]],
-            "steps": run.state["steps"]}
+    view = _run_for(world, did).view()
+    view["dungeon"] = did
+    return view
 
 
 def dungeon_move(world: Any, dx: int, dy: int) -> dict[str, Any]:

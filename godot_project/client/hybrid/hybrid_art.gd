@@ -561,30 +561,31 @@ func draw_regions(canvas: CanvasItem, snapshot: Dictionary, tpx: int) -> void:
 	var w := float(map.get("w", 544))
 	var h := float(map.get("h", 288))
 	for rid in cubes:
-		var parts := str(rid).split(":")[1].split(",")
-		var q := float(parts[0])
-		var r := float(parts[1])
-		var cx := w * 0.5 + 1.5 * size * q
-		var cy := h * 0.5 + sqrt(3.0) * size * (r + q * 0.5)
+		var parts: PackedStringArray = str(rid).split(":")[1].split(",")
+		var q: float = float(parts[0])
+		var r: float = float(parts[1])
+		var cx: float = w * 0.5 + 1.5 * size * q
+		var cy: float = h * 0.5 + sqrt(3.0) * size * (r + q * 0.5)
 		var pts := PackedVector2Array()
 		for k in 7:
 			var a := deg_to_rad(60.0 * float(k))
 			pts.append(Vector2(cx + size * cos(a), cy + size * sin(a)) * tpx)
-		var n := int(cubes[rid])
-		canvas.draw_polyline(pts, Color(0.75, 0.2 + 0.1 * n, 0.9, 0.55), 6.0)
+		var n: int = int(cubes[rid])
+		canvas.draw_polyline(pts, Color(0.95, 0.2 + 0.1 * n, 0.95, 0.9), 14.0)
 
 
 func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 	var c := Vector2(int(e["tx"]) * tpx + tpx * 0.5, int(e["ty"]) * tpx + tpx * 0.5)
 	var font := ThemeDB.fallback_font
 	if str(e.get("kind", "")) == "outbreak_clue":
-		var t := Time.get_ticks_msec() / 1000.0
-		var col := {"sickness": Color(0.55, 0.45, 0.25), "blight": Color(0.6, 0.6, 0.6), "toxic_spill": Color(0.4, 0.9, 0.3), "signal_fault": Color(0.4, 0.8, 1.0)}.get(str(e.get("hazard", "")), Color(0.7, 0.3, 0.8))
+		var t: float = Time.get_ticks_msec() / 1000.0
+		var col: Color = {"sickness": Color(0.85, 0.15, 0.7), "blight": Color(0.75, 0.75, 0.8), "toxic_spill": Color(0.5, 1.0, 0.2), "signal_fault": Color(0.3, 0.9, 1.0)}.get(str(e.get("hazard", "")), Color(0.7, 0.3, 0.8))
 		for k in 4:
-			var rise := fmod(t * 0.6 + float(k) * 0.25, 1.0)
-			canvas.draw_circle(c + Vector2(sin(t * 2.0 + k) * 8.0, -rise * 70.0), 10.0 + rise * 14.0, Color(col.r, col.g, col.b, 0.5 * (1.0 - rise)))
-		canvas.draw_rect(Rect2(c + Vector2(-16, -6), Vector2(32, 12)), Color(0.15, 0.1, 0.05, 0.8), true)
-		canvas.draw_string(font, c + Vector2(-44, 24), str(e.get("label", "outbreak")) + " (placeholder)", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 0.95, 0.7))
+			var rise: float = fmod(t * 0.6 + float(k) * 0.25, 1.0)
+			canvas.draw_circle(c + Vector2(sin(t * 2.0 + k) * 14.0, -rise * 120.0), 22.0 + rise * 26.0, Color(col.r, col.g, col.b, 0.85 * (1.0 - rise * 0.6)))
+		canvas.draw_circle(c, 26.0, Color(0.1, 0.0, 0.1, 0.9))
+		canvas.draw_arc(c, 34.0 + 6.0 * sin(t * 3.0), 0.0, TAU, 24, col, 5.0)
+		canvas.draw_string(font, c + Vector2(-70, 56), str(e.get("label", "outbreak")) + " (placeholder)", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(1, 0.95, 0.7))
 		return
 	if str(e.get("kind", "")) == "npc":
 		var col := Color(0.95, 0.65, 0.2)

@@ -1,0 +1,11 @@
+{
+ "domain": "quest",
+ "config": {
+  "budget": "standard",
+  "seed": 0
+ },
+ "code_sha": "06ab7ec592c97469defb4f7c6adcfeb3b37402ca+dirty",
+ "started": "2026-10-12T02:29:19",
+ "python": "3.12.3",
+ "curves": []
+}

@@ -173,6 +173,11 @@ def serve(port: int) -> None:
                          profile=os.environ.get("HYBRID_PROFILE", "campaign"))
     if os.environ.get("HYBRID_DRAFT_MS"):  # developer switch: safe accelerated drafting
         world.draft_interval_ms = max(1000, int(os.environ["HYBRID_DRAFT_MS"])) if tech.god_allowed(world) else world.draft_interval_ms
+    if tech.god_allowed(world):  # developer switches: a shorter era (stall guard, ms) and a lower VP bar, so the transition can be watched
+        if os.environ.get("HYBRID_ERA_MS"):
+            world.era_max_ms = max(10_000, int(os.environ["HYBRID_ERA_MS"]))
+        if os.environ.get("HYBRID_ERA_VP"):
+            world.era_vp_threshold = max(1, int(os.environ["HYBRID_ERA_VP"]))
     if os.environ.get("HYBRID_FIXTURE") and tech.god_allowed(world):  # developer: start inside a prepared scenario
         from wizard_rts.industry import fixture
 

@@ -78,7 +78,7 @@ def test_cadence_adds_a_cube_every_ten_minutes_deterministically():
     assert rg.added == 2 or sum(rg.cubes) >= 2
 
 
-def test_spread_pushes_one_cube_from_a_region_with_two_to_its_emptiest_neighbour():
+def test_spread_infects_the_emptiest_neighbour_and_the_source_keeps_its_cubes():
     w = world(enabled=True)
     rg = regions.state(w)
     i = max(range(len(rg.cubes)), key=lambda k: len(rg.neighbours[k]))
@@ -89,9 +89,11 @@ def test_spread_pushes_one_cube_from_a_region_with_two_to_its_emptiest_neighbour
     rg.next_cube_ms = 10 ** 12
     rg.next_spread_ms = 1000
     run(w, 3)
-    assert rg.cubes[i] == 1
+    assert rg.cubes[i] == 2  # the source is not relieved: an untreated region escalates
     target = min(nb, key=lambda n: (1 if n == nb[0] else 0, n))
-    assert rg.cubes[target] == (2 if target == nb[0] else 1) and sum(rg.cubes) == 3  # conserved: moved, not created
+    assert rg.cubes[target] == (2 if target == nb[0] else 1) and sum(rg.cubes) == 4  # 2 + 1 + the new infection
+    run(w, 3)
+    assert sum(rg.cubes) == 4  # once per spread interval (5 minutes), not every second
 
 
 def test_a_cube_in_a_full_region_is_an_outbreak_that_spreads_one_level():

@@ -113,8 +113,9 @@ def _dress(entities: list, rows: list, aid: str, p: dict, st: dict, oy: int, key
     elif t == "timed_gate":
         entities.append(_m(base, {"kind": "logs", "id": "%s_%s" % (aid, p["lever"]), "pos": [2, cy + 2], "marker": "staff",
                                   "puzzle_action": {"kind": "pull"}, "text": "A lever, and a rope that runs up into the dark."}))
-        entities.append(_m(base, {"kind": "logs", "id": "%s_%s_gate" % (aid, p["id"]), "pos": [cx, oy], "marker": "door_stone",
-                                  "puzzle_action": {"kind": "pass"}, "text": "A gate of iron bars." + (" Lifted — and counting." if st.get("open", False) else " Down.")}))
+        if not st.get("solved", False):  # an answered room's gate is gone (it stood in the only doorway; fixed in dungeon_map.gd on 12 Oct 2026)
+            entities.append(_m(base, {"kind": "logs", "id": "%s_%s_gate" % (aid, p["id"]), "pos": [cx, oy], "marker": "door_stone",
+                                      "puzzle_action": {"kind": "pass"}, "text": "A gate of iron bars." + (" Lifted — and counting." if st.get("open", False) else " Down.")}))
     elif t == "mosaic":
         for i in range(4):
             entities.append(_m(base, {"kind": "logs", "id": "%s_%s_tile%d" % (aid, p["id"], i), "pos": [cx - 3 + i * 2, cy], "marker": "stone_shard",
@@ -238,6 +239,14 @@ class DungeonRun:
             pass  # the logic already reset progress/gate state
         self.state["log"].append({"entity": entity_id, "action": act, "text": res["text"], "solved_now": res["solved_now"]})
         return {"status": "ok", "text": res["text"], "solved_now": res["solved_now"], "result": res}
+
+    def view(self) -> dict[str, Any]:
+        """What the wizard sees underground: tile rows, visible entities (with the texts of signs), inventory, solved flags."""
+        area = self.area()
+        return {"name": area["name"], "rows": area["rows"], "pos": list(self.state["pos"]),
+                "entities": [{"id": e["id"], "kind": e["kind"], "pos": e["pos"], "text": e.get("text", ""), "marker": e.get("marker", e.get("sprite", ""))}
+                             for e in area["entities"] if e["id"] not in self.state["taken"]],
+                "inventory": list(self.inv), "solved": [self.puzzle_state(p)["solved"] for p in self.d["puzzles"]], "steps": self.state["steps"]}
 
     def solved_all(self) -> bool:
         return all(self.puzzle_state(p)["solved"] for p in self.d["puzzles"])

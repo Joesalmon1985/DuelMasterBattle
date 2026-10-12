@@ -5,7 +5,7 @@ identical with and without outbreaks); only production speed, settlement unrest,
 counter read it. Every tile belongs to exactly one region (cube rounding of the axial coordinates). The square grid stays authoritative.
 
 Cadence (S09, data in data/outbreaks.json): every 10 game minutes one cube is added to a deterministically chosen region; every 5
-minutes a region holding 2 or more cubes pushes one to its emptiest neighbour; a cube added to a region that already holds the cap
+minutes a region holding 2 or more cubes infects its emptiest neighbour (one new cube; the source keeps its own); a cube added to a region that already holds the cap
 (3) is an *outbreak*: it spreads one cube to every neighbour. Eight outbreaks end the cycle (terminal loss, an explicit rule). Only the
 wizard can treat: he must stand in the region and stay for the channel time; one cube is removed per treatment, with a cooldown.
 """
@@ -185,7 +185,7 @@ def regions_quantum(world: Any) -> None:
     now = int(world.dmb.clock.get("game_ms", 0))
     if getattr(world, "outbreaks_enabled", True):
         if now >= s.next_cube_ms:
-            s.next_cube_ms = now + const("interval_ms")
+            s.next_cube_ms = now + int(const("interval_ms") * float(getattr(world, "outbreak_interval_scale", 1.0)))  # scenario difficulty knob
             _add_cube(world, s, _pick_region(world, s), now, "cadence")
         if now >= s.next_spread_ms:
             s.next_spread_ms = now + const("spread_ms")
@@ -193,8 +193,7 @@ def regions_quantum(world: Any) -> None:
                 if s.cubes[i] >= 2 and s.neighbours[i]:
                     tgt = min(s.neighbours[i], key=lambda n: (s.cubes[n], n))
                     if s.cubes[tgt] < const("cube_cap"):
-                        s.cubes[i] -= 1
-                        _add_cube(world, s, tgt, now, "spread")
+                        _add_cube(world, s, tgt, now, "spread")  # the infection spreads: the source keeps its cubes, so untreated regions escalate
     _treatment(world, s, now)
     if world.economy_quanta % 600 == 0:  # once a game minute: unrest from the cubes in each settlement's region
         _unrest(world, s)

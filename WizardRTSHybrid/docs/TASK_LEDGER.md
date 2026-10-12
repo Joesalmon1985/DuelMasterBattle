@@ -69,3 +69,8 @@ Compiling OpenRA is not by itself the hybrid military milestone. T-MIL stays sou
 | T-RUN-M1 | Campaign profiles, primitive start, tech cards, gating, God-Mode gating | VERIFIED | `tests/test_campaign_tech.py`, headed `campaign` / `campaign_dev`, `docs/evidence/m1/` |
 | T-RUN-M2 | Mindustry industrial-to-unit slice on existing deposits (D21) | VERIFIED | `tests/test_industry_*.py`, headed `industry`, `docs/evidence/m2/` |
 | T-RUN-M3..M6 | Story, VP/eras, outbreaks, content breadth | NOT STARTED | `docs/IMPLEMENTATION_RUN_STATUS.md` |
+| T-M3 | Live-settlement story slice (NPC, dungeon, duel, consequence) | 1 | T-M1 | VERIFIED | `test_story_slice.py`, `test_puzzle_parity.py`, `test_puzzle_exhaustive.py`; headed `run_hybrid_story.gd`, `docs/evidence/m3` |
+| T-M4 | VP ledger, eras, cycle reset on the same land | 1 | T-M1 | VERIFIED | `test_vp_eras.py`; headed `run_hybrid_eras.gd`, `docs/evidence/m4` |
+| T-M5 | Hex-region outbreaks | 1 | T-M1 | VERIFIED | `test_outbreaks.py`; headed `run_hybrid_outbreak.gd`, `docs/evidence/m5` |
+| T-M6 | Content breadth (workers, liquids, more OpenRA) | 2 | T-M2 | PARTIAL | `docs/COVERAGE.md` |
+| T-ENVS | Six headless environments and a training harness | 1 | T-M3..M5 | VERIFIED (harness); training PARTIAL | `tests/test_*_env.py`, `test_nn.py`, `test_training_smoke.py`; results in `TRAINING_PROGRAMME.md` (dungeon and cross-system policies failed) |

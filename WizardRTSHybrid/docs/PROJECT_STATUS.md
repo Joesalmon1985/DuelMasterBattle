@@ -1,6 +1,6 @@
 # Project status
 
-> **Direction update 2026-10-11.** The approved game direction is `docs/DuelMasterBattle_Design_v0_5.md` (decisions `docs/DECISION_REGISTER.md`; real status and gaps `docs/CURRENT_STATUS_AND_GAPS.md`). Where this file mentions a 20 by 20 hex world, two factions, or "do not implement Mindustry", it is superseded. Kept unchanged below as evidence.
+> **Direction update 2026-10-11.** The approved game direction is `docs/DuelMasterBattle_Design_v0_5.md` (decisions `docs/DECISION_REGISTER.md`; real status and gaps `docs/CURRENT_STATUS_AND_GAPS.md`). Where this file mentions a 20 by 20 hex world, two factions, or "do not implement Mindustry", it is superseded. Kept unchanged below as evidence. **Current status of the run that followed: `docs/IMPLEMENTATION_RUN_STATUS.md` (M1-M5 done, M6 partial, training mixed).**
 
 Branch `feature/hybrid-playtest-fixes-v03` (session 3, playtest fixes; see `docs/PLAYTEST_FIXES.md`). Honest inventory: `docs/STATE_OF_PLAY.md`. Hand-over to the Windows machine: `docs/WINDOWS_HANDOVER.md`. Last updated at the end of session 2 (Ubuntu ThinkPad T460).
 

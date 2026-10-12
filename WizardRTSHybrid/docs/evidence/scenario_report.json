@@ -1,0 +1,86 @@
+{
+ "code_sha": "06ab7ec592c97469defb4f7c6adcfeb3b37402ca+dirty",
+ "date": "2026-10-12T04:37:01",
+ "python": "3.12.3",
+ "suites": [
+  "smoke"
+ ],
+ "results": [
+  {
+   "item": "smoke:world_profiles",
+   "ok": true,
+   "seconds": 3.43,
+   "hashes": {
+    "campaign": "46cbc88023ef",
+    "developer": "2f8e37363b98",
+    "test_showcase": "25b6040c41e8"
+   }
+  },
+  {
+   "item": "smoke:duel",
+   "ok": true,
+   "seconds": 0.1,
+   "hash": "14c5346506d7b00c",
+   "steps": 4
+  },
+  {
+   "item": "smoke:dungeon",
+   "ok": true,
+   "seconds": 0.14,
+   "hash": "e891ee88187baf5f",
+   "steps": 69
+  },
+  {
+   "item": "smoke:quest",
+   "ok": true,
+   "seconds": 5.54,
+   "hash": "c37e084d0d9255bc",
+   "steps": 9
+  },
+  {
+   "item": "smoke:outbreak",
+   "ok": true,
+   "seconds": 0.08,
+   "result": {
+    "return": 2.596,
+    "outbreaks": 0,
+    "treated": 8,
+    "lost": false,
+    "reason": "horizon",
+    "cubes_left": 1,
+    "steps": 165
+   }
+  },
+  {
+   "item": "smoke:fullgame",
+   "ok": true,
+   "seconds": 3.35,
+   "result": {
+    "return": 4.108,
+    "reason": "horizon",
+    "quest": "completed",
+    "outbreaks": 0,
+    "treated": 12,
+    "steps": 26
+   }
+  },
+  {
+   "item": "smoke:strategy",
+   "ok": true,
+   "seconds": 5.93,
+   "result": {
+    "return": 1.09,
+    "score": 4.38,
+    "reason": "horizon",
+    "steps": 15,
+    "buildings": 8,
+    "settlements": 1,
+    "cards": 1,
+    "kills": 0,
+    "building_kills": 0,
+    "army": 1
+   }
+  }
+ ],
+ "all_ok": true
+}
