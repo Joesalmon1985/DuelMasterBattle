@@ -492,10 +492,11 @@ def _expansion_site(world: Any, name: str, unit: dict | None, bad: list | None =
         return None
     probe = {"id": "probe", "definition": definition, "faction_name": name, "alive": True, "tx": 0, "ty": 0}
     legal = []
+    frontier = bool(getattr(world, "nocards", False))
     for y in range(8, t.h - 8, 6):
         for x in range(8, t.w - 8, 6):
-            d = territory.cheb((x, y), (home["tx"], home["ty"]))
-            if d > 95 or not t.ground(x, y) or territory.separation_problem(world, name, (x, y)):
+            d = territory.frontier_distance(world, name, (x, y)) if frontier else territory.cheb((x, y), (home["tx"], home["ty"]))
+            if d > (70 if frontier else 95) or not t.ground(x, y) or territory.separation_problem(world, name, (x, y)):
                 continue
             if bad and any(territory.cheb((x, y), tuple(b)) < 10 for b in bad):
                 continue
@@ -574,7 +575,7 @@ def expansion_step(world: Any, name: str, wh: dict) -> None:
     if any(i["unit"] in ("mcv", "settlers") for b in mine for i in b.get("queue", [])):
         return
     ccs = territory.command_centers(world, name)
-    cap = MAX_CC_BY_ERA[min(_era(world), 3)]
+    cap = 10**6 if getattr(world, "nocards", False) else MAX_CC_BY_ERA[min(_era(world), 3)]  # nocards: growth is limited by wares, space and food, not a quota
     if len(ccs) >= cap:
         return
     if _food(world, name, wh) < 4 and len(ccs) >= 2:

@@ -66,6 +66,11 @@ def covering(world: Any, faction: str, tile: tuple[int, int]) -> dict | None:
     return best[1] if best else None
 
 
+def frontier_distance(world: Any, faction: str, tile: tuple[int, int]) -> int:
+    """Chebyshev distance from `tile` to the faction's nearest command centre (growth proceeds from the frontier, not from the capital)."""
+    return min((cheb(tile, (c["tx"], c["ty"])) for c in command_centers(world, faction)), default=10**6)
+
+
 def in_territory(world: Any, faction: str, tile: tuple[int, int]) -> bool:
     return covering(world, faction, tile) is not None
 

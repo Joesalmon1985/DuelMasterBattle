@@ -76,8 +76,17 @@ def _state(world: Any, faction: str) -> dict[str, Any] | None:
     return getattr(world, "tech", {}).get(faction)
 
 
+# Plan v2 P2 "foundation set": what a faction needs to feed itself and found more settlements without any card. Used only in
+# the `nocards` test mode until the content graph (P3) makes the foundation a first-class, compiled set.
+FOUNDATION_KINDS = ("tavern",)
+FOUNDATION_UNITS = ("settlers",)
+FOUNDATION_PATTERNS = ("tavern", "inn")
+
+
 def unlocked_kinds(world: Any, faction: str) -> set[str]:
     out = set(primitive()["kinds"])
+    if getattr(world, "nocards", False):
+        out.update(FOUNDATION_KINDS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
@@ -87,6 +96,8 @@ def unlocked_kinds(world: Any, faction: str) -> set[str]:
 
 def unlocked_units(world: Any, faction: str) -> set[str]:
     out = set(primitive()["units"])
+    if getattr(world, "nocards", False):
+        out.update(FOUNDATION_UNITS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
@@ -96,6 +107,8 @@ def unlocked_units(world: Any, faction: str) -> set[str]:
 
 def _patterns(world: Any, faction: str) -> list[str]:
     out = list(primitive()["wl_patterns"])
+    if getattr(world, "nocards", False):
+        out.extend(FOUNDATION_PATTERNS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
@@ -148,7 +161,7 @@ def draftable(world: Any, faction: str) -> list[str]:
 def tech_quantum(world: Any) -> None:
     """Open a draft round per faction every `draft_interval_ms` (S05). An offer stays selectable for `offer_window_ms`, then lapses
     (logged); a new round replaces whatever is still open."""
-    if not gated(world):
+    if not gated(world) or getattr(world, "nocards", False):  # nocards: the plan v2 "no-card civilisation" test mode, drafting off
         return
     now = int(world.dmb.clock.get("game_ms", 0))
     for name in list(world.faction_info):
