@@ -55,15 +55,18 @@ def _clear_of_centres(world: Any, t: tuple[int, int]) -> bool:
 
 
 def _spawn_tile(world: Any, s: Any, i: int) -> tuple[int, int] | None:
-    cands = [b for b in sorted(world.buildings.values(), key=lambda x: x["id"]) if "hp" in b and int(b["hp"]) > 0 and not is_nest(b)
+    cands = [b for b in world.buildings.values() if "hp" in b and int(b["hp"]) > 0 and not is_nest(b)
              and s.region_at(b["tx"], b["ty"]) == i and not b.get("destroyed") and not b.get("command_center")]
     if cands:
-        anchor = sorted(cands, key=lambda b: (not b.get("working"), not b.get("working_once"), b["id"]))[0]
+        anchor = min(cands, key=lambda b: (not b.get("working"), not b.get("working_once"), b["id"]))
         centre = (anchor["tx"], anchor["ty"])
     else:
         q, r = s.axials[i]
         centre = (int(s.w / 2 + 1.5 * s.size * q), int(s.h / 2 + math.sqrt(3.0) * s.size * (r + q / 2)))
     occupied = {(int(u["tx"]), int(u["ty"])) for u in world.units.values() if u.get("alive", True)}
+    from wizard_rts import territory
+
+    centres = [(c["tx"], c["ty"]) for c in territory.command_centers(world, None)]
     for rad in range(3, 20):
         for dy in range(-rad, rad + 1):
             for dx in range(-rad, rad + 1):
@@ -71,7 +74,8 @@ def _spawn_tile(world: Any, s: Any, i: int) -> tuple[int, int] | None:
                     continue
                 t = (centre[0] + dx, centre[1] + dy)
                 if (world.tile_in_map(*t) and t not in world.blocked and t not in world.tree_tiles and t not in world.road_tile_set
-                        and t not in world.reserved_tiles and t not in occupied and s.region_at(*t) == i and _clear_of_centres(world, t)):
+                        and t not in world.reserved_tiles and t not in occupied and s.region_at(*t) == i
+                        and all(max(abs(t[0] - c[0]), abs(t[1] - c[1])) >= CC_CLEARANCE for c in centres)):
                     return t
     return None
 

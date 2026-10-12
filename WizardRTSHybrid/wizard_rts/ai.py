@@ -519,15 +519,28 @@ def _water_near(world: Any, tile: tuple[int, int], radius: int, sx: int, sy: int
     comp = t.water_comp[sy * t.w + sx] if t.in_bounds(sx, sy) else 0
     if not comp:
         return None
-    best = None
+    # First tile in (dy, dx) order with the smallest Manhattan distance; rows and columns that cannot beat the best so far are skipped.
+    best_d = 1 << 30
+    best_t = None
+    W, H, wc, blocked = t.w, t.h, t.water_comp, world.blocked
     for dy in range(-radius, radius + 1):
+        ady = -dy if dy < 0 else dy
+        if ady >= best_d:
+            continue
+        y = tile[1] + dy
+        if y < 0 or y >= H:
+            continue
+        row = y * W
         for dx in range(-radius, radius + 1):
-            x, y = tile[0] + dx, tile[1] + dy
-            if t.in_bounds(x, y) and t.water_comp[y * t.w + x] == comp and (x, y) not in world.blocked:
-                d = abs(dx) + abs(dy)
-                if best is None or d < best[0]:
-                    best = (d, (x, y))
-    return best[1] if best else None
+            adx = -dx if dx < 0 else dx
+            d = adx + ady
+            if d >= best_d:
+                continue
+            x = tile[0] + dx
+            if 0 <= x < W and wc[row + x] == comp and (x, y) not in blocked:
+                best_d = d
+                best_t = (x, y)
+    return best_t
 
 
 # ------------------------------------------------------------------ tribe planner
