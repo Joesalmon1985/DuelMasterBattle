@@ -439,8 +439,10 @@ def _road_path(world: Any, start: tuple[int, int], goal: tuple[int, int], ends: 
             for t in world.roads[rid]:
                 if not world.tile_blocked_for_carrier(tuple(t)):
                     shared.add(tuple(t))
+    hazard = world.hazard_tile if world.hazard_tile is not None and world.tile_blocked_for_carrier(tuple(world.hazard_tile)) else None
+
     def open_tile(t: tuple[int, int]) -> bool:
-        return t == goal or (((t not in blocked and t not in roads and t not in trees) or t in shared) and world.tile_in_map(*t))
+        return t == goal or (((t not in blocked and t not in roads and t not in trees) or t in shared) and t != hazard and world.tile_in_map(*t))
 
     # fail fast: an endpoint walled in on all four sides (a site dropped into a forest) cannot be reached; the full search would
     # explore the whole box before saying so
@@ -494,7 +496,7 @@ def _road_path(world: Any, start: tuple[int, int], goal: tuple[int, int], ends: 
                     m = 1
                 else:
                     t = (x + dx, y + dy)
-                    m = 1 if (((t not in blocked and t not in roads and t not in trees) or t in shared) and ground(t[0], t[1])) else 2
+                    m = 1 if (((t not in blocked and t not in roads and t not in trees) or t in shared) and t != hazard and ground(t[0], t[1])) else 2
                 memo[ni] = m
             if m == 2:
                 continue
@@ -520,6 +522,27 @@ def build_road(world: Any, faction_name: str, a: str, b: str, limit: int = 70) -
         return {"status": "rejected", "reason": "no_path"}
     rid = add_road(world, world.faction_info[faction_name]["id"], faction_name, a, b, path)
     return {"status": "ok", "road": rid, "length": len(path)}
+
+
+def reroute(world: Any, faction_name: str, building_id: str) -> dict[str, Any]:
+    """Replace a building's roads that cross a tile carriers cannot pass (the Ward Duel hazard) with a new road to its settlement's
+    command centre that avoids it. Wares waiting at either end are kept if the new road can carry them (lifecycle._remove_road)."""
+    from wizard_rts.lifecycle import _remove_road
+
+    b = world.buildings.get(building_id)
+    if b is None or b["faction_name"] != faction_name:
+        return {"status": "rejected", "reason": "not_your_building"}
+    bad = [rid for nxt, rid in world.adjacency.get(building_id, []) if any(world.tile_blocked_for_carrier(tuple(t)) for t in world.roads.get(rid, []))]
+    if not bad:
+        return {"status": "rejected", "reason": "no_blocked_road"}
+    cc = territory.settlement_of(world, b)
+    if cc is None:
+        return {"status": "rejected", "reason": "no_settlement"}
+    for rid in bad:
+        _remove_road(world, rid)
+    out = build_road(world, faction_name, building_id, cc["id"])
+    world.events.append({"kind": "road_rerouted", "faction": faction_name, "building": building_id, "removed": len(bad), "status": out["status"]})
+    return out
 
 
 # ------------------------------------------------------------------ recruitment

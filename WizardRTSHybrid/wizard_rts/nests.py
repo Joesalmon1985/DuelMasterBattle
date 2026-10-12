@@ -45,9 +45,18 @@ def weapon_name(world: Any) -> str:
     return "DMB_Nest%d" % int(cfg(world)["era"])
 
 
+CC_CLEARANCE = 9  # tiles between a nest and any command centre: a nest on a capital's doorstep shot every unit it produced (Red, 12 Oct)
+
+
+def _clear_of_centres(world: Any, t: tuple[int, int]) -> bool:
+    from wizard_rts import territory
+
+    return all(territory.cheb(t, (c["tx"], c["ty"])) >= CC_CLEARANCE for c in territory.command_centers(world, None))
+
+
 def _spawn_tile(world: Any, s: Any, i: int) -> tuple[int, int] | None:
     cands = [b for b in sorted(world.buildings.values(), key=lambda x: x["id"]) if "hp" in b and int(b["hp"]) > 0 and not is_nest(b)
-             and s.region_at(b["tx"], b["ty"]) == i and not b.get("destroyed")]
+             and s.region_at(b["tx"], b["ty"]) == i and not b.get("destroyed") and not b.get("command_center")]
     if cands:
         anchor = sorted(cands, key=lambda b: (not b.get("working"), not b.get("working_once"), b["id"]))[0]
         centre = (anchor["tx"], anchor["ty"])
@@ -55,14 +64,14 @@ def _spawn_tile(world: Any, s: Any, i: int) -> tuple[int, int] | None:
         q, r = s.axials[i]
         centre = (int(s.w / 2 + 1.5 * s.size * q), int(s.h / 2 + math.sqrt(3.0) * s.size * (r + q / 2)))
     occupied = {(int(u["tx"]), int(u["ty"])) for u in world.units.values() if u.get("alive", True)}
-    for rad in range(3, 14):
+    for rad in range(3, 20):
         for dy in range(-rad, rad + 1):
             for dx in range(-rad, rad + 1):
                 if max(abs(dx), abs(dy)) != rad:
                     continue
                 t = (centre[0] + dx, centre[1] + dy)
                 if (world.tile_in_map(*t) and t not in world.blocked and t not in world.tree_tiles and t not in world.road_tile_set
-                        and t not in world.reserved_tiles and t not in occupied and s.region_at(*t) == i):
+                        and t not in world.reserved_tiles and t not in occupied and s.region_at(*t) == i and _clear_of_centres(world, t)):
                     return t
     return None
 

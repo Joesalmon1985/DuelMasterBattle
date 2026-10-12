@@ -219,7 +219,11 @@ def scan_requests_and_outputs(world: Any) -> None:
             have = int(world.stocks.get(bid, {}).get(good, 0)) + flight.get((good, bid), 0)
             if have >= cap:
                 continue
-            sources = [w["id"] for w in _warehouses(world, building["faction"]) if int(world.stocks.get(w["id"], {}).get(good, 0)) > 0]
+            # a warehouse building a unit itself (settlers, a caravan's goods) holds back that unit's cost for it: otherwise the mines
+            # took every ration the moment it arrived and a queued settlers' wagon waited for ever (12 Oct 2026)
+            sources = [w["id"] for w in _warehouses(world, building["faction"])
+                       if w["id"] != bid  # a warehouse never "fetches" from itself: that posted a one-node transfer no carrier ever moved
+                       and int(world.stocks.get(w["id"], {}).get(good, 0)) - world.recipe_requests.get(w["id"], {}).get(good, 0) > 0]
             path = _nearest(world, bid, sources)  # roads are undirected
             if path is None:
                 world.shortages[(bid, good)] = world.shortages.get((bid, good), 0) + 1

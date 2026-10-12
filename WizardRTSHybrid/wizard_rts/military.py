@@ -152,17 +152,20 @@ class _Others:
     military_quantum builds once and _walk/kill_unit keep current. Same answers as the set it replaces, without rebuilding it for
     every walking unit (that was quadratic in the number of units)."""
 
-    __slots__ = ("occ", "mine")
+    __slots__ = ("occ", "mine", "extra")
 
-    def __init__(self, occ: dict, mine: tuple[int, int] | None) -> None:
-        self.occ, self.mine = occ, mine
+    def __init__(self, occ: dict, mine: tuple[int, int] | None, extra: frozenset = frozenset()) -> None:
+        self.occ, self.mine, self.extra = occ, mine, extra
 
     def __contains__(self, t: object) -> bool:
+        if t in self.extra:
+            return True
         n = self.occ.get(t, 0)
         return n - (1 if t == self.mine else 0) > 0
 
     def __iter__(self):
-        return (t for t, n in self.occ.items() if n - (1 if t == self.mine else 0) > 0)
+        yield from (t for t, n in self.occ.items() if n - (1 if t == self.mine else 0) > 0)
+        yield from self.extra
 
     def __len__(self) -> int:
         return sum(1 for _t in self)
@@ -177,12 +180,38 @@ def _occupancy(world: Any) -> dict:
     return occ
 
 
+CIVILIANS = ("dmb.settlers", "openra.mcv", "dmb.caravan")  # unarmed vehicles keep out of a blight nest's field of fire
+
+
+def _danger(world: Any) -> frozenset:
+    """Tiles a blight nest can shoot at (its weapon range + 1), recomputed once a game second."""
+    key = world.military_quanta // 10
+    hit = world.__dict__.get("_danger")
+    if hit is not None and hit[0] == key:
+        return hit[1]
+    tiles = set()
+    for b in world.buildings.values():
+        if b.get("kind") == "blight_nest" and int(b.get("hp", 0)) > 0:
+            w = building_weapon(b)
+            r = int(float(w["range"]) + 1) if w else 5
+            for dy in range(-r, r + 1):
+                for dx in range(-r, r + 1):
+                    if dx * dx + dy * dy <= r * r:
+                        tiles.add((b["tx"] + dx, b["ty"] + dy))
+    world._danger = (key, frozenset(tiles))
+    return world._danger[1]
+
+
 def _occupied(world: Any, me: dict) -> _Others:
     occ = world.__dict__.get("_occ")
     if occ is None or world.__dict__.get("_occ_q") != world.military_quanta:
         occ = world._occ = _occupancy(world)  # outside military_quantum (or first use this quantum): count now
         world._occ_q = world.military_quanta
-    return _Others(occ, (me["tx"], me["ty"]) if me.get("alive", True) and me.get("id") in world.units else None)
+    extra = _danger(world) if me.get("definition") in CIVILIANS else frozenset()
+    here = (me["tx"], me["ty"])
+    if here in extra:
+        extra = frozenset()  # already inside: walk out by any way rather than freeze
+    return _Others(occ, here if me.get("alive", True) and me.get("id") in world.units else None, extra)
 
 
 def _occ_move(world: Any, frm: tuple, to: tuple | None) -> None:
@@ -467,6 +496,12 @@ def kill_unit(world: Any, entity: dict, by: str = "") -> None:
     entity["path"] = []
     world.stats["destroyed"] += 1
     world.stats["units_lost"] = world.stats.get("units_lost", 0) + 1
+    from wizard_rts import territory as _terr
+
+    if _terr.is_founder(entity):
+        from wizard_rts import ai_plus
+
+        ai_plus.founder_lost(world, entity, by)
     if entity.get("cargo"):  # an MCV or settlers' wagon dies with the starter kit it carried
         from wizard_rts.lifecycle import lose
 

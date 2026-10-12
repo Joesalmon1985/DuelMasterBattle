@@ -69,6 +69,8 @@ def text(world: Any, e: dict) -> str | None:
         return "%s reopened a workplace (%s)." % (f, e.get("how", ""))
     if k == "treatment_done":
         return "The wizard treated %s (%d marks left)." % (e.get("region", ""), int(e.get("cubes", 0)))
+    if k == "ai_attack" and e.get("target_kind") == "blight_nest":
+        return "%s sends %d units against a blight nest." % (f, int(e.get("units", 0)))
     if k == "ai_attack":
         return "%s attacks %s's %s with %d units." % (f, e.get("of", ""), str(e.get("target_kind", "")).replace("wl:", ""), int(e.get("units", 0)))
     if k == "ai_retreat":

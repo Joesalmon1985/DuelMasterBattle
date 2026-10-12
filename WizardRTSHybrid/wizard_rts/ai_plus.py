@@ -252,6 +252,11 @@ def _settlement_step(world: Any, name: str, wh: dict, main: bool) -> None:
     mine = [b for b in base._mine(world, name) if territory.settlement_of(world, b) is wh]
     now = _now(world)
     cool_road = world.__dict__.setdefault("_ai_noroad", {})
+    if world.hazard_tile is not None:  # a road through a tile carriers cannot pass strands its goods: lay one round it
+        for b in mine:
+            if b["kind"] != "warehouse" and any(world.tile_blocked_for_carrier(tuple(t)) for _n, rid in world.adjacency.get(b["id"], []) for t in world.roads.get(rid, [])):
+                if con.reroute(world, name, b["id"])["status"] == "ok":
+                    note(world, name, "rerouted %s round a blocked road" % b["kind"])
     for b in mine:  # repair the road network first (a building with no road can get nothing)
         if b["kind"] not in ("warehouse", "ranger") and not world.adjacency.get(b["id"]) and cool_road.get(b["id"], -1) <= now:
             if base._road(world, name, b["id"], wh["id"])["status"] != "ok":
@@ -448,8 +453,28 @@ def trade_step(world: Any, name: str, wh: dict) -> None:
 
 # ------------------------------------------------------------------ expansion
 
+def _seg_dist(p: tuple, a: tuple, b: tuple) -> float:
+    ax, ay, bx, by = a[0], a[1], b[0], b[1]
+    dx, dy = bx - ax, by - ay
+    L = dx * dx + dy * dy
+    t = 0.0 if L == 0 else max(0.0, min(1.0, ((p[0] - ax) * dx + (p[1] - ay) * dy) / L))
+    return math.hypot(p[0] - (ax + t * dx), p[1] - (ay + t * dy))
+
+
+def _nests(world: Any) -> list[dict]:
+    return [b for b in world.buildings.values() if b.get("kind") == "blight_nest" and int(b.get("hp", 0)) > 0]
+
+
 def _site_value(world: Any, name: str, tile: tuple[int, int]) -> float:
     v = base._site_score(world, name, tile)
+    home = con.faction_warehouse(world, name)
+    if home is not None:  # a wagon walking past a blight nest is shot: no site whose road leads by one
+        from wizard_rts.military import building_weapon
+
+        for nb in _nests(world):
+            w = building_weapon(nb)
+            if w and _seg_dist((nb["tx"], nb["ty"]), (home["tx"], home["ty"]), tile) <= float(w["range"]) + 4:
+                v -= 200
     if _infected(world, tile, 1):
         v -= 40
     enemy = min((territory.cheb(tile, (b["tx"], b["ty"])) for b in territory.command_centers(world, None) if b["faction_name"] != name), default=200)
@@ -491,6 +516,14 @@ def _expansion_site(world: Any, name: str, unit: dict | None, bad: list | None =
         if find_path(world, start, tile, limit=500, avoid=set(), max_nodes=250_000, loco=loco) is not None:
             return tile
     return None
+
+
+def founder_lost(world: Any, unit: dict, by: str) -> None:
+    """Called when a founder dies: remember it (the faction holds expansion for a while and turns on the nest that did it)."""
+    shooter = world.buildings.get(by)
+    world.__dict__.setdefault("_ai_founder_lost", {})[unit["faction_name"]] = int(world.dmb.clock.get("game_ms", 0))
+    if shooter is not None and shooter.get("kind") == "blight_nest":
+        world.__dict__.setdefault("_ai_nest_priority", {})[unit["faction_name"]] = shooter["id"]
 
 
 def _drive(world: Any, name: str, u: dict, now: int) -> None:
@@ -556,12 +589,19 @@ def expansion_step(world: Any, name: str, wh: dict) -> None:
     options += [(b, "mcv") for b in mine if b["kind"] == "vehicle_factory" and b.get("operational") and tech.unit_allowed(world, name, "mcv")]
     if not options:
         return
+    lost = world.__dict__.get("_ai_founder_lost", {}).get(name)
+    if lost is not None and now - lost < 5 * 60_000:
+        note(world, name, "expansion waits: a blight nest killed our last founder")
+        return
     b, founder = options[-1] if len(options) > 1 and base._can_pay(world, name, con.RECIPES["vehicle_factory"]["mcv"]["cost"]) else options[0]
     cost = con.RECIPES["warehouse" if founder == "settlers" else "vehicle_factory"][founder]["cost"]
     short = {g: n - base._stock(world, name, g, wh) for g, n in cost.items() if base._stock(world, name, g, wh) < n and g not in base.FLOWING}
-    if short:  # a wagon waiting in the queue would hold the warehouse's goods hostage: wait until the cargo is there
+    if short and not any(base._makes(world, name, g) for g in short):
+        # nothing of ours makes what is missing: queuing would only hold the store's goods hostage
         note(world, name, "settlers wait for %s" % ", ".join("%s %d" % kv for kv in sorted(short.items())))
         return
+    # otherwise queue now: a queued founder reserves its goods in the warehouse as they arrive (logistics), so the mines cannot keep
+    # taking every ration first (Red never expanded that way in the 12 Oct runs)
     if now - st.get("site_checked", -10**9) < 60_000 and not st.get("site_ok"):
         return
     st["site_checked"] = now
@@ -743,6 +783,21 @@ def military_step(world: Any, name: str) -> None:
     # 2. attack: gather a squad at the rally point, launch it only with a measured advantage
     size = SQUAD_BY_ERA[min(_era(world), 3)]
     guard = max(2, len(army) // 4)
+    prio = world.__dict__.get("_ai_nest_priority", {}).get(name)
+    pn = world.buildings.get(prio) if prio else None
+    if sq is None and pn is not None and int(pn.get("hp", 0)) > 0 and idle:
+        pool = sorted(idle, key=lambda u: u["id"])
+        power = sum(unit_strength(u) for u in pool)
+        if power >= force_near(world, (pn["tx"], pn["ty"]), 9.0, name, True):  # everything we have, once it at least matches the nest
+            squads[name] = {"ids": [u["id"] for u in pool], "size0": len(pool), "target": pn["id"], "since": now}
+            world.events.append({"kind": "ai_attack", "faction": name, "target": pn["id"], "units": len(pool), "target_kind": "blight_nest", "of": "",
+                                 "distance": 0, "policy": POLICY})
+            base._send(world, pool, pn)
+            idle = []
+        else:
+            note(world, name, "gathering to clear the nest that blocks our expansion (%.0f of %.0f)" % (power, force_near(world, (pn["tx"], pn["ty"]), 9.0, name, True)))
+    elif prio and (pn is None or int(pn.get("hp", 0)) <= 0):
+        world._ai_nest_priority.pop(name, None)
     if sq is None and len(idle) >= size + guard:
         pool = sorted(idle, key=lambda u: (-unit_strength(u), u["id"]))[: len(idle) - guard]
         target = _pick_target(world, name, pool)
