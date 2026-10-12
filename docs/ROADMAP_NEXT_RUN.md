@@ -1,5 +1,7 @@
 # Roadmap for the next development run(s)
 
+> **Proposed next programme (not started, awaiting owner approval):** `PLAN_ECONOMY_TECH_ERA_PROGRAMME.md` (no-card civilisation, content graph, 7-Wonders draft ring, paper/scriptorium, single-faction 10-VP eras, content waves). This roadmap's M1-M6 are unchanged.
+
 **Authorised for this run (owner instruction of 11 October 2026): the stop-after-each-milestone rule is superseded for that run only; branches are still never merged to `main`.** Live status per milestone, with completed / partial / blocked / not started, is in `IMPLEMENTATION_RUN_STATUS.md`; the restart point is `NEXT_AGENT_HANDOFF.md`. Original text: this is a plan; the run started on `NEXT_RUN_KICKOFF_PROMPT.md`. Decisions: `DECISION_REGISTER.md`. Gaps: `CURRENT_STATUS_AND_GAPS.md`.
 
 ## 0. Ordering and rules
