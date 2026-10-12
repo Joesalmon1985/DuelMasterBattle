@@ -24,6 +24,8 @@ ERA_VP_THRESHOLD = 6  # legacy single threshold; a world attribute era_vp_thresh
 ERA_VP_THRESHOLDS = (6, 8, 8)  # world VP gained to leave Prehistoric, Historic, Modern; Modern was 10 until measured (+1 VP per ~10 min in Modern)
 ERA_MAX_MS = 75 * 60_000
 CHECK_EVERY = 10  # economy quanta
+ERA_VP_END = 10  # drafting v2: one faction's current VP that ends an era (plan 5.6 candidates 8-14; the study P12 decides)
+ERA_SUSTAIN_MS = 60_000  # debounce, not a minimum era length
 
 
 def ledger(world: Any) -> dict[str, Any]:
@@ -111,6 +113,10 @@ def advance_era(world: Any, reason: str) -> bool:
     if st["index"] >= len(tech.ERAS) - 1:
         return False
     now = int(world.dmb.clock.get("game_ms", 0))
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.end_era(world)  # the leftover-pack rule reads current VP at this instant, before the new era starts
     st["index"] += 1
     st["started_ms"] = now
     st["base"] = totals(world)
@@ -126,6 +132,22 @@ def vp_quantum(world: Any) -> None:
         return
     st = era_state(world)
     now = int(world.dmb.clock.get("game_ms", 0))
+    from wizard_rts import draft
+
+    if draft.enabled(world):  # plan v2 5.4: a faction's CURRENT VP reaching the era bar, held for the sustain window
+        top = max(totals(world).values(), default=0)
+        if top >= int(getattr(world, "era_vp_end", ERA_VP_END)):
+            st.setdefault("above_since", now)
+        else:
+            st.pop("above_since", None)
+        due = "vp_threshold" if "above_since" in st and now - st["above_since"] >= int(getattr(world, "era_sustain_ms", ERA_SUSTAIN_MS)) else (
+            "stall_guard" if now - st["started_ms"] >= int(getattr(world, "era_max_ms", ERA_MAX_MS)) else "")
+        if due:
+            st.pop("above_since", None)
+            if not advance_era(world, due) and not getattr(world, "cycle_pending", False):
+                world.cycle_pending = True
+                world.events.append({"kind": "cycle_due", "reason": due})
+        return
     due = "vp_threshold" if progress(world) >= threshold(world) else ("stall_guard" if now - st["started_ms"] >= int(getattr(world, "era_max_ms", ERA_MAX_MS)) else "")
     if due:
         if not advance_era(world, due) and not getattr(world, "cycle_pending", False):

@@ -52,6 +52,10 @@ def collapse(world: Any, faction: str) -> None:
 
     fs = state(world)["faction"][faction]
     fs["state"] = "collapsed"
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.on_collapse(world, faction)
     for b in sorted(world.buildings.values(), key=lambda x: x["id"]):
         if b["faction_name"] == faction and not b.get("destroyed") and "hp" in b:
             b["hp"] = 0
@@ -135,6 +139,10 @@ def split(world: Any, faction: str, breakaway: dict) -> str:
     for w in list(world.workers.values()) + list(world.carriers.values()):
         if w.get("faction_name") == faction and w.get("building") in world.buildings and world.buildings[w["building"]]["faction_name"] == base:
             w["faction_name"], w["faction"] = base, fid
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.on_split(world, faction, base)
     _note(world, faction, "split", successor=base, settlement=breakaway["id"], buildings=moved_b, units=moved_u, pressures=why)
     return base
 

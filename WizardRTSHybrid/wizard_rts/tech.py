@@ -163,6 +163,11 @@ def tech_quantum(world: Any) -> None:
     (logged); a new round replaces whatever is still open."""
     if not gated(world) or getattr(world, "nocards", False):  # nocards: the plan v2 "no-card civilisation" test mode, drafting off
         return
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.quantum(world)
+        return
     now = int(world.dmb.clock.get("game_ms", 0))
     for name in list(world.faction_info):
         st = world.tech.setdefault(name, new_state())
@@ -201,11 +206,17 @@ def draft(world: Any, faction: str, card_id: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "not_offered"}
     # the physical prerequisite is checked again at the moment of choice: a smithy destroyed since the offer withdraws it
     c = cards()[card_id]
-    if not _working(world, faction, c["requires_working"]):
+    from wizard_rts import draft as _draft
+
+    if not _draft.enabled(world) and not _working(world, faction, c["requires_working"]):
         return {"status": "rejected", "reason": "prerequisite_lost"}
     st["cards"].append(card_id)
     rejected = [x for x in st["offers"] if x != card_id]
     st["offers"] = []
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.on_pick(world, faction, card_id)
     if st.get("history"):
         st["history"][-1]["picked"] = card_id
     _apply_effect(world, faction, c)
@@ -295,5 +306,9 @@ def snapshot(world: Any) -> dict[str, Any]:
 
 def on_era_change(world: Any) -> None:
     """S05: every faction gets one extra draft round on each era change (the next round opens at the next tick)."""
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        return  # drafting v2 deals a whole phase at the era start (draft.quantum notices the new era)
     for st in getattr(world, "tech", {}).values():
         st["next_round_ms"] = 0
