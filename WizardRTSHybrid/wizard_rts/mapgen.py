@@ -151,7 +151,7 @@ def _features_imported(g: T.TerrainGrid, rng: random.Random) -> None:
     rocks = sorted({tuple(r) for r in rocks if tuple(r) not in taken})
     animals = []
     for cx, cy in g.starts:
-        for _ in range(60):
+        for _ in range(20):  # owner (12 Oct 2026): fewer animals; about a third of the old herds (60), still game for the hunters
             x, y = cx + rng.randint(-22, 22), cy + rng.randint(-20, 20)
             if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 36:
                 animals.append([x, y, "deer" if rng.random() < 0.7 else "bunny"])
@@ -483,7 +483,7 @@ def _features(g: T.TerrainGrid, rng: random.Random, homes, moist: list[float]) -
             x, y = cx + rng.randint(-22, 22), cy + rng.randint(-20, 20)
             if g.in_bounds(x, y) and g.cls[y * w + x] == T.ARABLE and (x - cx) ** 2 + (y - cy) ** 2 > 36:
                 animals.append([x, y, "deer" if rng.random() < 0.7 else "bunny"])
-    for _ in range(500):
+    for _ in range(150):  # was 500 wild animals
         x, y = rng.randrange(w), rng.randrange(h)
         if g.cls[y * w + x] == T.ARABLE:
             animals.append([x, y, "deer" if rng.random() < 0.6 else "bunny"])

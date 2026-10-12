@@ -42,7 +42,7 @@ WARE_WEIGHT = {"iron": 3.0, "gold": 5.0, "coal": 1.5, "ration": 1.5, "plank": 1.
 
 # Card priorities per era (earlier = more urgent when nothing else is pressing). Needs move cards up (score_card).
 PRIORITY = {
-    0: ["farming", "settlers", "cookery", "warrior_bands", "mining", "smelting", "crafts", "slings", "husbandry"],
+    0: ["farming", "settlers", "cookery", "warrior_bands", "mining", "smelting", "trade", "crafts", "slings", "husbandry"],
     1: ["metalwork", "drill_tactics", "motor_pool", "fortification", "armour", "weaving", "grenadiers", "artillery", "rocketry", "seafaring"],
     2: ["automation", "heavy_armour", "industry", "unit_fabrication", "tesla", "rocket_artillery", "deep_mining", "submarines"],
     3: ["tesla_armour", "machine_war", "shock_troops", "phase_armour", "arcology"],
@@ -89,6 +89,18 @@ def strength_of(definition: str, hp: int | None = None) -> float:
     return math.sqrt(max(1, hp if hp is not None else int(r["hp"]))) * (dps / 100.0 + 0.1) * (1.0 + rng / 8.0)
 
 
+def building_strength(b: dict) -> float:
+    """An armed building's fighting value from the weapon it actually fires (OpenRA defence, settlement militia, blight nest)."""
+    from wizard_rts.military import building_weapon
+
+    w = building_weapon(b)
+    if not w:
+        return 0.0
+    dmg = sum(int(h.get("damage", 0)) for h in w.get("warheads", [])) * max(1, int(w.get("burst", 1)))
+    dps = dmg / max(1.0, int(w.get("reload", 25)) * 0.04)
+    return math.sqrt(max(1, int(b.get("hp", 1)))) * (dps / 100.0 + 0.1) * (1.0 + float(w.get("range", 1.0)) / 8.0)
+
+
 def unit_strength(u: dict) -> float:
     return strength_of(u.get("definition", ""), int(u.get("hp", 1)))
 
@@ -109,7 +121,7 @@ def force_near(world: Any, pos: tuple[float, float], radius: float, side: str, e
         if (b["faction_name"] != side) != enemy or int(b.get("hp", 0)) <= 0 or b.get("constructing"):
             continue
         if math.hypot(b["tx"] - pos[0], b["ty"] - pos[1]) <= radius and building_weapon(b):
-            total += strength_of(b.get("definition", ""), int(b["hp"]))
+            total += building_strength(b)
     return total
 
 
@@ -367,6 +379,71 @@ def economy_step(world: Any, name: str) -> None:
     if _era(world) >= 1:
         _link_outposts(world, name, wh)
     expansion_step(world, name, wh)
+    trade_step(world, name, wh)
+
+
+TRADABLE = ("log", "plank", "granite", "meat", "fish", "wheat", "bread", "coal", "iron_ore", "iron", "ration", "water")
+
+
+def _wants(world: Any, name: str, wh: dict) -> list[tuple[str, int]]:
+    """What the faction is short of, most urgent first (ware, amount to ask for)."""
+    era = _era(world)
+    have = lambda g: base._stock(world, name, g, wh)  # noqa: E731
+    out = []
+    if have("ration") < 4:
+        out.append(("ration", 5))
+    if era >= 1 and have("iron") < 3:
+        out.append(("iron", 3))
+    if have("plank") < 5:
+        out.append(("plank", 6))
+    if have("granite") < 5:
+        out.append(("granite", 6))
+    if any(b["faction_name"] == name and b["kind"] == "smelter" for b in world.buildings.values()) and have("coal") < 3:
+        out.append(("coal", 5))
+    return out
+
+
+def trade_step(world: Any, name: str, wh: dict) -> None:
+    """Offer the largest surplus for the worst shortage, by caravan, to a faction we are at peace with (past partners first)."""
+    from wizard_rts import trade
+
+    if not tech.unit_allowed(world, name, "caravan") or trade.active(world, name):
+        return
+    now = _now(world)
+    st = world.__dict__.setdefault("_ai_trade", {}).setdefault(name, {"next": 0})
+    if now < st["next"]:
+        return
+    st["next"] = now + 120_000
+    wants = _wants(world, name, wh)
+    if not wants:
+        return
+    stock = world.stocks.get(wh["id"], {})
+    for want, n_want in wants:
+        surplus = sorted(((int(stock.get(g, 0)), g) for g in TRADABLE if g != want and int(stock.get(g, 0)) >= 30), reverse=True)
+        if not surplus:
+            note(world, name, "trade: nothing in surplus to offer for %s" % want)
+            return
+        give = surplus[0][1]
+        n_give = int(math.ceil(trade.value({want: n_want}) / trade.WARE_VALUE.get(give, 1.5) * 1.15))
+        if int(stock.get(give, 0)) - n_give - trade.CARAVAN_COST.get(give, 0) < 10:
+            continue
+        best = None
+        for cc in territory.command_centers(world, None):
+            p = cc["faction_name"]
+            if p == name or not p or trade.hostile(world, name, p) or not trade.can_supply(world, cc, {want: n_want}):
+                continue
+            d = territory.cheb((wh["tx"], wh["ty"]), (cc["tx"], cc["ty"]))
+            score = 30 * trade.partners_traded(world, name, p) - d / 4.0
+            if best is None or score > best[0]:
+                best = (score, cc)
+        if best is None:
+            note(world, name, "trade: no peaceful partner has %s" % want)
+            continue
+        res = trade.send_caravan(world, name, wh["id"], best[1]["id"], {give: n_give}, {want: n_want})
+        if res["status"] == "ok":
+            note(world, name, "trade: %d %s for %d %s with %s" % (n_give, give, n_want, want, best[1]["faction_name"]))
+            return
+        note(world, name, "trade refused: %s" % res["reason"])
 
 
 # ------------------------------------------------------------------ expansion
@@ -561,6 +638,15 @@ def _recruit(world: Any, name: str, mine: list[dict]) -> None:
 
 def _target_value(world: Any, name: str, b: dict, centre: tuple[float, float], power: float) -> float:
     d = math.hypot(b["tx"] - centre[0], b["ty"] - centre[1])
+    if b.get("kind") == "blight_nest":
+        # an outbreak nest is worth clearing only where it hurts us: in or beside one of our settlements; the reward grows with its cubes
+        near = any(territory.cheb((b["tx"], b["ty"]), (cc["tx"], cc["ty"])) <= territory.radius_of(cc) + 14 for cc in territory.command_centers(world, name))
+        if not near:
+            return -1.0
+        defence = force_near(world, (b["tx"], b["ty"]), 9.0, name, True)
+        if power < ATTACK_RATIO * defence:
+            return -1.0
+        return (12.0 + 8.0 * int(b.get("nest_cubes", 1))) / (1.0 + d / 40.0)
     value = 30.0 if b.get("command_center") and b.get("outpost") else (22.0 if b.get("command_center") else 8.0)
     if b["kind"] in ("barracks", "vehicle_factory", "war_lodge", "mdy:ground_factory"):
         value = max(value, 14.0)
@@ -657,9 +743,11 @@ def military_step(world: Any, name: str) -> None:
     # 2. attack: gather a squad at the rally point, launch it only with a measured advantage
     size = SQUAD_BY_ERA[min(_era(world), 3)]
     guard = max(2, len(army) // 4)
-    if sq is None and now >= ATTACK_AFTER_MS and len(idle) >= size + guard:
+    if sq is None and len(idle) >= size + guard:
         pool = sorted(idle, key=lambda u: (-unit_strength(u), u["id"]))[: len(idle) - guard]
         target = _pick_target(world, name, pool)
+        if target is not None and now < ATTACK_AFTER_MS and target.get("kind") != "blight_nest":
+            target = None  # before the war window only an outbreak nest at home is worth a sortie
         if target is not None:
             squads[name] = {"ids": [u["id"] for u in pool], "size0": len(pool), "target": target["id"], "since": now}
             world.events.append({"kind": "ai_attack", "faction": name, "target": target["id"], "units": len(pool), "target_kind": target["kind"],

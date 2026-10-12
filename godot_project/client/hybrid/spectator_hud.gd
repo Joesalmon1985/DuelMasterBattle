@@ -23,6 +23,7 @@ var inspected := "Red"
 var _acc := 0.0
 var _last_draft_key := ""
 var _rows: Dictionary = {}
+var _mono: SystemFont
 
 
 func setup(p_world: Node, p_god: Node) -> void:
@@ -32,12 +33,12 @@ func setup(p_world: Node, p_god: Node) -> void:
 	layer.name = "SpectatorLayer"
 	layer.layer = 16
 	world.add_child(layer)
-	top = _label("SpectatorTop", Vector2(330, 10), 18, Color(1.0, 0.93, 0.7))
-	top.custom_minimum_size = Vector2(940, 0)
+	top = _label("SpectatorTop", Vector2(470, 8), 17, Color(1.0, 0.93, 0.7))  # right of the God Mode panel (x 10-450)
+	top.custom_minimum_size = Vector2(900, 0)
 	top.autowrap_mode = TextServer.AUTOWRAP_WORD
 	var speeds := HBoxContainer.new()
 	speeds.name = "SpectatorSpeed"
-	speeds.position = Vector2(330, 62)
+	speeds.position = Vector2(470, 74)
 	layer.add_child(speeds)
 	pause_btn = Button.new()
 	pause_btn.name = "Pause"
@@ -60,17 +61,19 @@ func setup(p_world: Node, p_god: Node) -> void:
 	panel.name = "FactionTable"
 	panel.position = Vector2(-560, 96)
 	panel.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	panel.offset_left = -560
+	panel.offset_left = -650
 	panel.offset_top = 96
 	layer.add_child(panel)
 	table = VBoxContainer.new()
 	panel.add_child(table)
+	_mono = SystemFont.new()  # the faction table is a fixed-width grid: columns line up
+	_mono.font_names = PackedStringArray(["DejaVu Sans Mono", "Liberation Mono", "Ubuntu Mono", "Monospace"])
 	var dp := PanelContainer.new()
 	dp.name = "DraftPanel"
 	dp.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	dp.offset_left = -560
+	dp.offset_left = -650
 	dp.offset_top = 330
-	dp.custom_minimum_size = Vector2(548, 0)
+	dp.custom_minimum_size = Vector2(638, 0)
 	layer.add_child(dp)
 	var dv := VBoxContainer.new()
 	dp.add_child(dv)
@@ -171,7 +174,9 @@ func _fill_table(snap: Dictionary) -> void:
 	if not _rows.has(hdr_key):
 		var h := Label.new()
 		h.text = "Faction        tribe        AI     state      set VP crd army food unrest"
-		h.add_theme_font_size_override("font_size", 14)
+		h.text = "%-14s %-12s %-8s %-10s %3s %2s %3s %4s %4s %6s" % ["Faction", "tribe", "AI", "state", "set", "VP", "crd", "army", "food", "unrest"]
+		h.add_theme_font_size_override("font_size", 13)
+		h.add_theme_font_override("font", _mono)
 		table.add_child(h)
 		_rows[hdr_key] = h
 	for r in rows:
@@ -184,7 +189,8 @@ func _fill_table(snap: Dictionary) -> void:
 			b = Button.new()
 			b.name = "Inspect_%s" % name
 			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-			b.add_theme_font_size_override("font_size", 14)
+			b.add_theme_font_size_override("font_size", 13)
+			b.add_theme_font_override("font", _mono)
 			b.pressed.connect(inspect.bind(name))
 			b.tooltip_text = "Inspect %s (camera, draft offer). The AI keeps playing." % name
 			table.add_child(b)
@@ -197,7 +203,7 @@ func _fill_table(snap: Dictionary) -> void:
 			tag = " [YOU]"
 		elif name == inspected:
 			tag = " <"
-		b.text = "%-14s %-12s %-6s %-10s %2d %2d %3d %4d %4d  %.2f%s" % [name.substr(0, 14), str(r.get("tribe", "")).substr(0, 12), str(r.get("policy", "")),
+		b.text = "%-14s %-12s %-8s %-10s %3d %2d %3d %4d %4d %6.2f%s" % [name.substr(0, 14), str(r.get("tribe", "")).substr(0, 12), str(r.get("policy", "")),
 			str(r.get("state", "")), int(r.get("settlements", 0)), int(r.get("vp", 0)), int(r.get("cards", 0)), int(r.get("army", 0)), int(r.get("food", 0)),
 			float(r.get("unrest", 0.0)), tag]
 	for k in _rows.keys():

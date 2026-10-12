@@ -156,6 +156,9 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	if definition.begins_with("story."):  # the wizard's story people and places: labelled placeholders
 		_draw_story(canvas, entity, tpx)
 		return
+	if definition == "dmb.blight_nest":
+		_draw_nest(canvas, entity, tpx)
+		return
 	if definition.begins_with("mindustry."):  # labelled placeholders: the Mindustry art is not imported (docs/MINDUSTRY_PROVENANCE.md)
 		industry.draw_entity(canvas, self, entity, tpx, faction_colors.get(str(entity.get("faction_name", "")), Color(0.7, 0.7, 0.7)))
 		return
@@ -622,3 +625,28 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 		canvas.draw_rect(Rect2(c + Vector2(-16, -10), Vector2(32, 36)), Color(0.02, 0.02, 0.03), true)
 		canvas.draw_arc(c + Vector2(0, -10), 16, PI, TAU, 16, Color(0.7, 0.6, 0.4), 4.0)
 		canvas.draw_string(font, c + Vector2(-58, 50), "Disused gallery (E)", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(0.9, 0.85, 0.7) if not open else Color(0.6, 1, 0.7))
+
+
+## A blight nest (outbreak as a hostile, immobile actor): a pulsing mound, one health bar per cube. Placeholder shapes, labelled.
+func _draw_nest(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
+	var c := Vector2(int(e["tx"]) * tpx + tpx * 0.5, int(e["ty"]) * tpx + tpx * 0.5)
+	var t: float = Time.get_ticks_msec() / 1000.0
+	var pulse := 0.5 + 0.5 * sin(t * 3.0)
+	canvas.draw_circle(c, 40.0 + 6.0 * pulse, Color(0.35, 0.05, 0.3, 0.55))
+	canvas.draw_circle(c, 28.0, Color(0.12, 0.02, 0.1))
+	for k in 7:
+		var a := float(k) * TAU / 7.0 + t * 0.4
+		canvas.draw_line(c + Vector2(cos(a), sin(a)) * 22.0, c + Vector2(cos(a), sin(a)) * (46.0 + 6.0 * pulse), Color(0.85, 0.2, 0.75), 4.0)
+	canvas.draw_circle(c, 10.0 + 3.0 * pulse, Color(1.0, 0.4, 0.9))
+	var cubes := maxi(1, int(e.get("nest_cubes", 1)))
+	var frac := clampf(float(e.get("hp", 0)) / maxf(1.0, float(e.get("max_hp", 1))), 0.0, 1.0)
+	var w := 96.0
+	for k in cubes:  # one bar per cube: each bar shot away removes a cube from the region
+		var x0 := c.x - w * 0.5 + k * (w / cubes)
+		var fill := clampf(frac * cubes - k, 0.0, 1.0)
+		canvas.draw_rect(Rect2(Vector2(x0 + 2, c.y - 70), Vector2(w / cubes - 4, 10)), Color(0.15, 0.0, 0.1), true)
+		canvas.draw_rect(Rect2(Vector2(x0 + 2, c.y - 70), Vector2((w / cubes - 4) * fill, 10)), Color(1.0, 0.3, 0.8), true)
+	var font := ThemeDB.fallback_font
+	var txt := "%s (%d)" % [str(e.get("label", "Blight nest")), cubes]
+	var tw := font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 26).x
+	canvas.draw_string(font, c + Vector2(-tw * 0.5, 74), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color(1, 0.8, 1))

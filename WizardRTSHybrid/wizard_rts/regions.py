@@ -178,7 +178,7 @@ def _outbreak_damage(world: Any, s: Regions, i: int, now: int) -> None:
 
     if not hasattr(world, "recipe_requests"):  # a stub world of the outbreak environment: cubes only, no buildings to burn
         return
-    cands = [b for b in sorted(world.buildings.values(), key=lambda x: x["id"]) if "hp" in b and int(b["hp"]) > 0 and not b.get("command_center")
+    cands = [b for b in sorted(world.buildings.values(), key=lambda x: x["id"]) if "hp" in b and int(b["hp"]) > 0 and not b.get("command_center") and b["kind"] != "blight_nest"
              and not b.get("constructing") and not b.get("destroyed") and s.region_at(b["tx"], b["ty"]) == i]
     if cands:
         victim = sorted(cands, key=lambda b: (not b.get("working"), not b.get("working_once"), b["id"]))[0]
@@ -196,7 +196,7 @@ def _outbreak_damage(world: Any, s: Regions, i: int, now: int) -> None:
 def _pick_region(world: Any, s: Regions) -> int:
     """Deterministic: a seeded stream per cube number, among regions that hold a building (an empty wilderness cannot suffer)."""
     rng = random.Random(f"{world.seed}:outbreak:{s.added + s.outbreaks}")
-    inhabited = sorted({s.region_at(b["tx"], b["ty"]) for b in world.buildings.values() if "hp" in b})
+    inhabited = sorted({s.region_at(b["tx"], b["ty"]) for b in world.buildings.values() if "hp" in b and b["kind"] != "blight_nest"})
     pool = inhabited or list(range(len(s.axials)))
     return pool[rng.randrange(len(pool))]
 

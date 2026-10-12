@@ -26,7 +26,7 @@ from wizard_rts.world import HybridWorld  # noqa: E402
 
 # Faction-level commands: God Mode and the training surface (D02). The wizard's own ops (snapshot, pose, advance, interact,
 # resolve, fire, menu, terrain, tile, resources) stay available in every profile.
-GOD_OPS = frozenset({"control", "build", "road", "queue", "cancel", "move", "deploy", "stop", "rally", "demolish", "ai", "speed",
+GOD_OPS = frozenset({"trade", "control", "build", "road", "queue", "cancel", "move", "deploy", "stop", "rally", "demolish", "ai", "speed",
                      "order", "suggest", "spawn", "damage", "draft", "grant_card", "belt", "upgrade", "configure", "fixture"})
 
 
@@ -44,6 +44,11 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return {"status": "ok", "tech": tech.snapshot(world)}
     if op == "cards":  # the card catalogue by era (read-only: what each card is, unlocks and needs)
         return {"status": "ok", "catalogue": tech.catalogue(), "offer_size": tech.OFFER_SIZE}
+    if op == "trade":
+        from wizard_rts import trade
+
+        return trade.send_caravan(world, str(message.get("faction", "")), str(message.get("from", "")), str(message.get("to", "")),
+                                  dict(message.get("give", {})), dict(message.get("want", {})))
     if op == "draft":
         return world.draft(str(message.get("faction", "")), str(message.get("card", "")))
     if op == "belt":

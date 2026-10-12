@@ -84,9 +84,11 @@ def test_out_of_range_units_do_not_shoot() -> None:
     assert rifle["hp"] == rifle["max_hp"] and tank["hp"] == tank["max_hp"]
 
 
-def test_tank_shells_a_widelands_warehouse_in_steps_of_versus_wood() -> None:
+def test_tank_shells_a_widelands_building_in_steps_of_versus_wood() -> None:
     w = _world()
-    target = next(i for i, b in w.buildings.items() if b["kind"] == "warehouse" and b["faction_name"] == "Blue")
+    capital = next(b for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] == "Blue")
+    assert capital["max_hp"] == 200_000 and capital["armor"] == "Concrete"  # a capital is stone-built (12 Oct 2026)
+    target = next(i for i, b in w.buildings.items() if b["kind"] == "processor" and b["faction_name"] == "Blue")
     b = w.buildings[target]
     assert b["max_hp"] == 50_000 and b["armor"] == "Wood"
     t = _open_tile(w, (b["tx"] - 10, b["ty"] + 3))

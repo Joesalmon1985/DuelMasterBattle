@@ -59,6 +59,10 @@ def building_weapon(b: dict) -> dict | None:
     r = rules.actor(definition) if definition.startswith("openra.") else None
     if r and r["armaments"] and b.get("operational", True):
         return rules.weapon(r["armaments"][0])
+    if b.get("kind") == "blight_nest" and not b.get("destroyed"):
+        from wizard_rts import nests
+
+        return rules.weapon(nests.weapon_name(_world_ref[0])) if _world_ref else rules.weapon("DMB_Nest0")
     if b.get("command_center") and b.get("operational", True) and not b.get("destroyed") and not b.get("constructing"):
         # a settlement's militia (a Widelands headquarters holds soldiers): a small raid cannot simply walk in (12 Oct 2026)
         return rules.weapon("DMB_Militia")
@@ -92,7 +96,7 @@ def _requires_ok(expr: str, conds: set[str]) -> bool:
 def target_types(entity: dict) -> set[str]:
     """OpenRA Targetable.TargetTypes of an entity right now (conditions such as a cloaked submarine apply)."""
     definition = entity.get("definition", "")
-    r = rules.actor(definition) if (definition.startswith(("openra.", "mindustry.")) or definition == "widelands.soldier") else None
+    r = rules.actor(definition) if (definition.startswith(("openra.", "mindustry.")) or definition in ("widelands.soldier", "dmb.blight_nest")) else None
     if r is None:
         return {"GroundActor", "Structure"} if "target_type" in entity else {"GroundActor"}  # Widelands buildings and units
     targ = r.get("targetable")
@@ -419,6 +423,9 @@ def kill_unit(world: Any, entity: dict, by: str = "") -> None:
     world.fstat(entity["faction_name"], "loss_value", value)
     shooter = world.units.get(by) or world.buildings.get(by)
     if shooter is not None:
+        from wizard_rts import trade
+
+        trade.note_hostility(world, shooter.get("faction_name", ""), entity.get("faction_name", ""))
         world.fstat(shooter["faction_name"], "kill_value", value)
         world.fstat(shooter["faction_name"], "unit_kills")
     world.effects.append({"t": "explosion", "x1": entity["tx"], "y1": entity["ty"], "x2": entity["tx"], "y2": entity["ty"], "ttl_ms": 800, "keep": 3, "p": ""})
@@ -629,7 +636,11 @@ def _building_step(world: Any, b: dict) -> None:
         b["cooldown_ms"] = rules.reload_ms(w)
 
 
+_world_ref: list = []  # the world being stepped (building_weapon has no world argument; the nest weapon depends on the era)
+
+
 def military_quantum(world: Any) -> None:
+    _world_ref[:] = [world]
     world.military_quanta += 1
     world.path_searches = 0  # route searches started this quantum (military._walk spends PATH_SEARCHES_PER_QUANTUM of them)
     world.join_searches = 0
@@ -644,8 +655,8 @@ def military_quantum(world: Any) -> None:
         if unit.get("alive", True):
             _unit_step(world, unit)
     for b in list(world.buildings.values()):
-        if "hp" in b and int(b["hp"]) > 0 and (b.get("definition", "").startswith("openra.") or b.get("command_center")):
-            _building_step(world, b)  # OpenRA defences, and every settlement's militia (building_weapon)
+        if "hp" in b and int(b["hp"]) > 0 and (b.get("definition", "").startswith("openra.") or b.get("command_center") or b.get("kind") == "blight_nest"):
+            _building_step(world, b)  # OpenRA defences, every settlement's militia and the blight nests (building_weapon)
     if world.military_quanta % 20 == 0:
         alive = [u["id"] for u in world.units.values() if u.get("alive", True)]
         if len(alive) >= 2:

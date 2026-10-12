@@ -197,13 +197,26 @@ def scan_requests_and_outputs(world: Any) -> None:
     def priority(b: dict) -> int:
         return 0 if b.get("constructing") else (1 if b["id"] in world.recipe_requests or b.get("disrupted") else 2)  # repairs too
 
+    # wares on their way, per (ware, destination): built once per scan and kept up to date as this scan posts transfers (the same
+    # numbers in_flight() would count; it used to be recounted for every request, quadratic in the wares on the roads)
+    flight: dict[tuple[str, str], int] = {}
+    for queue in world.node_wares.values():
+        for t in queue:
+            k = (t["good"], t["path"][-1])
+            flight[k] = flight.get(k, 0) + 1
+    for c in world.carriers.values():
+        t = c["cargo"]
+        if t:
+            k = (t["good"], t["path"][-1])
+            flight[k] = flight.get(k, 0) + 1
+
     for building in sorted(world.buildings.values(), key=priority):
         if "hp" not in building or not (building.get("operational", True) or building.get("constructing")):
             continue
         io = io_for(world, building)
         bid = building["id"]
         for good, cap in io.get("requests", {}).items():
-            have = int(world.stocks.get(bid, {}).get(good, 0)) + in_flight(world, good, bid)
+            have = int(world.stocks.get(bid, {}).get(good, 0)) + flight.get((good, bid), 0)
             if have >= cap:
                 continue
             sources = [w["id"] for w in _warehouses(world, building["faction"]) if int(world.stocks.get(w["id"], {}).get(good, 0)) > 0]
@@ -214,6 +227,7 @@ def scan_requests_and_outputs(world: Any) -> None:
             path.reverse()
             if _take(world, path[0], good):
                 _post(world, path[0], _new_transfer(world, good, building["faction"], path))
+                flight[(good, path[-1])] = flight.get((good, path[-1]), 0) + 1
                 world.events.append({"kind": "request_filled", "building": bid, "good": good, "from": path[0]})
         for good in io.get("outputs", []):
             if int(world.stocks.get(bid, {}).get(good, 0)) <= 0 or len(world.node_wares.get(bid, [])) >= NODE_QUEUE_LIMIT:
@@ -223,6 +237,7 @@ def scan_requests_and_outputs(world: Any) -> None:
                 continue
             if _take(world, bid, good):
                 _post(world, bid, _new_transfer(world, good, building["faction"], path))
+                flight[(good, path[-1])] = flight.get((good, path[-1]), 0) + 1
 
 
 def _arrive(world: Any, carrier: dict, transfer: dict, node: str) -> None:
@@ -255,8 +270,13 @@ def _step_carrier(world: Any, carrier: dict) -> None:
     last = len(road) - 1
 
     def waiting_for_this_road(node: str) -> dict | None:
+        # a ware waits for this road when its next hop is the road's other end and that hop resolves to this road (the first road
+        # between the two nodes): resolved once per node instead of once per queued ware
+        other = b if node == a else a
+        if _hop_road(world, node, other) != carrier["road_id"]:
+            return None
         for t in world.node_wares.get(node, []):
-            if t["path"][t["i"]] == node and t["i"] + 1 < len(t["path"]) and _hop_road(world, node, t["path"][t["i"] + 1]) == carrier["road_id"]:
+            if t["path"][t["i"]] == node and t["i"] + 1 < len(t["path"]) and t["path"][t["i"] + 1] == other:
                 return t
         return None
 

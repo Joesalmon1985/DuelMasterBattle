@@ -33,6 +33,12 @@ for _name, _label, _hp, _speed, _weapon in (("dmb_clubman", "Clubman", 9000, 54,
     HYBRID_ACTORS[_name] = {"name": _label, "hp": _hp, "armor": "None", "speed": _speed, "cost": 0, "queue": "", "prerequisites": "",
                             "armaments": [_weapon], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False,
                             "locomotor": "foot", "source": "hybrid-defined Prehistoric unit"}
+HYBRID_ACTORS["dmb_blight_nest"] = {"name": "Blight nest", "hp": 40000, "armor": "Light", "speed": 0, "cost": 0, "queue": "", "prerequisites": "",
+                                    "armaments": [], "target_types": ["GroundActor", "Structure", "Blight"], "mobile": False, "is_building": True,
+                                    "locomotor": "", "source": "hybrid-defined outbreak nest (wizard_rts/nests.py); its weapon comes from the era table"}
+HYBRID_ACTORS["dmb_caravan"] = {"name": "Caravan", "hp": 6000, "armor": "None", "speed": 50, "cost": 0, "queue": "", "prerequisites": "",
+                                "armaments": [], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False,
+                                "locomotor": "foot", "source": "hybrid-defined trade caravan (wizard_rts/trade.py)"}
 HYBRID_ACTORS["dmb_settlers"] = {"name": "Settlers", "hp": 8000, "armor": "None", "speed": 46, "cost": 0, "queue": "", "prerequisites": "",
                                  "armaments": [], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False,
                                  "locomotor": "foot", "source": "hybrid-defined Prehistoric settlement founder"}
@@ -50,7 +56,7 @@ HYBRID_WEAPONS: dict[str, dict[str, Any]] = {
     },
     "DMB_Militia": {
         "range": 5.5, "min_range": 0.0, "reload": 25, "burst": 1, "burst_delay": 5, "projectile": "InstantHit",
-        "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor"], "invalid_targets": [],
+        "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor"], "invalid_targets": ["Blight"],
         "warheads": [{"type": "SpreadDamage", "damage": 900, "spread": 0.0, "versus": {"None": 100, "Light": 45, "Heavy": 15, "Wood": 30, "Concrete": 10}, "valid_targets": ["GroundActor"]}],
         "source": "hybrid-defined: the settlement militia every command centre fields (Widelands headquarters soldiers)",
     },
@@ -67,11 +73,22 @@ HYBRID_WEAPONS: dict[str, dict[str, Any]] = {
 }
 
 
+def nest_weapons() -> dict[str, dict[str, Any]]:
+    """The blight nest's weapon per era (data/outbreaks.json `nests`): it hits units (GroundActor) only, never buildings."""
+    cfg = json.loads((DATA.parent / "outbreaks.json").read_text(encoding="utf-8"))["nests"]["eras"]
+    return {f"DMB_Nest{e['era']}": {
+        "range": float(e["range"]), "min_range": 0.0, "reload": int(e["reload"]), "burst": 1, "burst_delay": 5, "projectile": "InstantHit",
+        "projectile_speed": 0, "valid_targets": ["Ground", "GroundActor"], "invalid_targets": ["Structure"],
+        "warheads": [{"type": "SpreadDamage", "damage": int(e["damage"]), "spread": 0.0, "versus": dict(e["versus"]), "valid_targets": ["GroundActor"]}],
+        "source": "hybrid-defined blight nest (outbreak overlay as a hostile, immobile actor)"} for e in cfg}
+
+
 @lru_cache(maxsize=1)
 def _load() -> dict[str, Any]:
     data = json.loads(DATA.read_text(encoding="utf-8"))
     data["actors"].update(HYBRID_ACTORS)
     data["weapons"].update(HYBRID_WEAPONS)
+    data["weapons"].update(nest_weapons())
     from wizard_rts.industry import registry  # Mindustry units: the same actor/weapon schema, scaled in mindustry_overrides.json
 
     actors, weapons = registry.unit_rules()

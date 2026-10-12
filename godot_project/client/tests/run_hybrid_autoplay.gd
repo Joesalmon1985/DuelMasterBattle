@@ -81,7 +81,7 @@ func _feed_has(kind: String, extra: Callable = Callable()) -> bool:
 func _card_building_working() -> bool:
 	for e in _world._snapshot.get("entities", []):
 		if str(e.get("class", "")) == "building" and str(e.get("kind", "")) in ["farm", "war_lodge", "tavern", "mine", "ironmine", "smelter"] \
-				and not bool(e.get("constructing", false)) and not str(e.get("status_text", "")).begins_with("Under construction"):
+				and not e.has("constructing") and not str(e.get("status_text", "")).begins_with("Under construction"):
 			return true
 	return false
 

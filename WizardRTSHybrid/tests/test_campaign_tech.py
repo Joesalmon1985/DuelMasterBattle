@@ -160,7 +160,7 @@ def test_card_json_is_consistent():
         for k in c["requires_working"]:
             assert k in known
         for u in c["units"]:
-            assert any(u in v for v in con2.RECIPES.values()) or registry.ground_unit(u), (c["id"], u)
+            assert any(u in v for v in con2.RECIPES.values()) or registry.ground_unit(u) or u == "caravan", (c["id"], u)  # caravans: trade.py
     # every hybrid and Mindustry kind is reachable: primitive or unlocked by at least one card
     covered = PRIMITIVE_KINDS | {k for c in cards.values() for k in c["kinds"]}
     assert covered == known

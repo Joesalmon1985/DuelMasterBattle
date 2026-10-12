@@ -230,5 +230,5 @@ WALK_MS = 600
 # Wild animals (world/critters/*). reproduction_rate is a percent chance per breeding check.
 ANIMAL_SPECIES = {"deer": {"reproduction": 40, "move_ms": 1500}, "bunny": {"reproduction": 50, "move_ms": 1200}}
 ANIMAL_BREED_CHECK_MS = 120_000
-ANIMAL_CAP_NEAR = 10  # animals within 14 cells of one another before breeding stops
+ANIMAL_CAP_NEAR = 6  # animals within 14 cells of one another before breeding stops (was 10; owner asked for fewer animals)
 START_WARES = {"log": 12, "plank": 6, "ration": 10}

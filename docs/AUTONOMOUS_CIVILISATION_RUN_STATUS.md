@@ -34,7 +34,10 @@ measurement; **partial** = works for the cases named; **not done**.
 | 13 | Quest/healer discoverability (worker sprites, names, "!" marker, objective line, outbreak status, labelled region) | done, headed check pending |
 | 14 | God Mode spectator HUD (era reasons, faction table, 7-card draft panel, event feed, pause/speeds, explicit Take control) | done, headed check pending |
 | 15 | Licensed art for new units/buildings (OpenRA SHP from conquer.mix, Mindustry sprites) | not done |
-| 16 | `launch_scenario.sh autoplay` and a headed 16x autoplay test | not done |
+| 16 | `launch_scenario.sh autoplay` and a headed 16x autoplay test | done: `run_hybrid_autoplay.gd` saw first draft, a card's building working, battle, catastrophe, new settlement and a natural (VP) Historic transition at game 31:21 (10.2x real pace on a loaded machine) |
+| 17 | Blight nests: each infected region holds an immobile hostile actor whose health bars are its cubes (era table in `outbreaks.json`), fought with the shared combat code; the improved AI clears nests near its settlements when its squad is strong enough | done: `wizard_rts/nests.py`, `tests/test_nests_trade.py` |
+| 18 | Fewer animals (homeland herds 60 -> 20, wild 500 -> 150, breeding cap 10 -> 6) | done (295 animals on seed 507) |
+| 19 | Trade caravans (Trade card): surplus for shortage between factions at peace, goods carried physically and kept in the ledger; the improved AI trades with past partners first | done: `wizard_rts/trade.py`, `tests/test_nests_trade.py` |
 
 ## Changes that were bugs, found by simulation
 

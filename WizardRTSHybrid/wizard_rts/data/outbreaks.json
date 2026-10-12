@@ -1,16 +1,155 @@
 {
-  "_doc": "Era-specific outbreak kinds (D12, S09). `affects` names a building group; `factor` is the production multiplier per cube in the region (cubes stack: factor ** cubes, floored at min_factor); `unrest` is added to a settlement in the region per game minute per cube; `clue` is the placeholder picture. Tunable data, not Mindustry/OpenRA/Widelands content.",
-  "constants": {"interval_ms": 600000, "spread_ms": 300000, "treat_ms": 8000, "treat_cooldown_ms": 20000, "cube_cap": 3, "loss_outbreaks": 8, "region_size": 56},
-  "groups": {
-    "all_production": {"kinds": ["*"]},
-    "food": {"kinds": ["farm", "bakery", "tavern", "hunter", "well", "wl:*farm*", "wl:*fisher*", "wl:*hunter*", "wl:*bakery*", "wl:*tavern*", "wl:*mill*"]},
-    "mining": {"kinds": ["mine", "ironmine", "mdy:mechanical_drill", "mdy:pneumatic_drill", "wl:*mine*"]},
-    "industry": {"kinds": ["mdy:*"]}
+ "_doc": "Era-specific outbreak kinds (D12, S09). `affects` names a building group; `factor` is the production multiplier per cube in the region (cubes stack: factor ** cubes, floored at min_factor); `unrest` is added to a settlement in the region per game minute per cube; `clue` is the placeholder picture. Tunable data, not Mindustry/OpenRA/Widelands content.",
+ "constants": {
+  "interval_ms": 600000,
+  "spread_ms": 300000,
+  "treat_ms": 8000,
+  "treat_cooldown_ms": 20000,
+  "cube_cap": 3,
+  "loss_outbreaks": 8,
+  "region_size": 56
+ },
+ "groups": {
+  "all_production": {
+   "kinds": [
+    "*"
+   ]
   },
-  "kinds": [
-    {"era": 0, "id": "sickness", "label": "Sickness in the ground", "affects": "all_production", "factor": 0.8, "min_factor": 0.4, "unrest": 0.02, "clue": "withered ground"},
-    {"era": 1, "id": "blight", "label": "Blight", "affects": "food", "factor": 0.6, "min_factor": 0.2, "unrest": 0.03, "clue": "grey fields"},
-    {"era": 2, "id": "toxic_spill", "label": "Toxic spill", "affects": "mining", "factor": 0.6, "min_factor": 0.2, "unrest": 0.03, "clue": "green smoke"},
-    {"era": 3, "id": "signal_fault", "label": "Signal fault", "affects": "industry", "factor": 0.5, "min_factor": 0.1, "unrest": 0.04, "clue": "flickering lights"}
+  "food": {
+   "kinds": [
+    "farm",
+    "bakery",
+    "tavern",
+    "hunter",
+    "well",
+    "wl:*farm*",
+    "wl:*fisher*",
+    "wl:*hunter*",
+    "wl:*bakery*",
+    "wl:*tavern*",
+    "wl:*mill*"
+   ]
+  },
+  "mining": {
+   "kinds": [
+    "mine",
+    "ironmine",
+    "mdy:mechanical_drill",
+    "mdy:pneumatic_drill",
+    "wl:*mine*"
+   ]
+  },
+  "industry": {
+   "kinds": [
+    "mdy:*"
+   ]
+  }
+ },
+ "kinds": [
+  {
+   "era": 0,
+   "id": "sickness",
+   "label": "Sickness in the ground",
+   "affects": "all_production",
+   "factor": 0.8,
+   "min_factor": 0.4,
+   "unrest": 0.02,
+   "clue": "withered ground"
+  },
+  {
+   "era": 1,
+   "id": "blight",
+   "label": "Blight",
+   "affects": "food",
+   "factor": 0.6,
+   "min_factor": 0.2,
+   "unrest": 0.03,
+   "clue": "grey fields"
+  },
+  {
+   "era": 2,
+   "id": "toxic_spill",
+   "label": "Toxic spill",
+   "affects": "mining",
+   "factor": 0.6,
+   "min_factor": 0.2,
+   "unrest": 0.03,
+   "clue": "green smoke"
+  },
+  {
+   "era": 3,
+   "id": "signal_fault",
+   "label": "Signal fault",
+   "affects": "industry",
+   "factor": 0.5,
+   "min_factor": 0.1,
+   "unrest": 0.04,
+   "clue": "flickering lights"
+  }
+ ],
+ "nests": {
+  "_doc": "Blight nests (owner, 12 Oct 2026): every infected region holds one immobile, factionless hostile building near its busiest workplace. Its health is cubes x hp_per_cube of the CURRENT era; each health bar lost removes one cube. armor is an OpenRA armour class; the weapon hits units only (never buildings) through the shared combat code. Tuned so a Prehistoric band can just clear one cube, Historic needs a real force, Modern/Dystopian need heavy units.",
+  "eras": [
+   {
+    "era": 0,
+    "hp_per_cube": 40000,
+    "armor": "Light",
+    "damage": 1500,
+    "range": 4.5,
+    "reload": 25,
+    "versus": {
+     "None": 100,
+     "Light": 70,
+     "Heavy": 30,
+     "Wood": 0,
+     "Concrete": 0
+    }
+   },
+   {
+    "era": 1,
+    "hp_per_cube": 110000,
+    "armor": "Heavy",
+    "damage": 4500,
+    "range": 6.0,
+    "reload": 28,
+    "versus": {
+     "None": 100,
+     "Light": 80,
+     "Heavy": 80,
+     "Wood": 0,
+     "Concrete": 0
+    }
+   },
+   {
+    "era": 2,
+    "hp_per_cube": 260000,
+    "armor": "Heavy",
+    "damage": 9000,
+    "range": 7.0,
+    "reload": 28,
+    "versus": {
+     "None": 100,
+     "Light": 85,
+     "Heavy": 65,
+     "Wood": 0,
+     "Concrete": 0
+    }
+   },
+   {
+    "era": 3,
+    "hp_per_cube": 480000,
+    "armor": "Concrete",
+    "damage": 15000,
+    "range": 8.0,
+    "reload": 28,
+    "versus": {
+     "None": 100,
+     "Light": 90,
+     "Heavy": 75,
+     "Wood": 0,
+     "Concrete": 0
+    }
+   }
   ]
+ }
 }

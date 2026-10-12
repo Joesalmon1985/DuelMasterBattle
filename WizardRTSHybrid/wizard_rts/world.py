@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import disruption, feed, history, regions, settlements, society, story, tech, vp
+from wizard_rts import disruption, feed, history, nests, regions, settlements, society, story, tech, trade, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -82,6 +82,8 @@ class EventLog(list):
         kind = e.get("kind", "")
         if kind.startswith("ai_") and e.get("faction"):
             self._world.fstat(e["faction"], kind)
+        if kind == "ai_attack" and e.get("faction") and e.get("of"):
+            trade.note_hostility(self._world, e["faction"], e["of"])  # an attack ends any peace for trade
         if kind in feed.KINDS:
             feed.capture(self._world, e)
         self.total = getattr(self, "total", 0) + 1
@@ -290,6 +292,11 @@ class HybridWorld:
             return 0
         if int(building.get("hp", 0)) <= 0:
             return 0
+        if by:
+            building["last_hit_by"] = by
+            sh = self.units.get(by) or self.buildings.get(by)
+            if sh is not None:
+                trade.note_hostility(self, sh.get("faction_name", ""), building.get("faction_name", ""))  # who dealt the last blow (a blight nest credits the faction that cleared a cube)
         versus_percent = damage_versus(versus or {}, [str(building.get("armor", ""))])
         applied = warhead_damage(int(raw_damage), [], versus_percent)
         before = int(building["hp"])
@@ -838,6 +845,8 @@ class HybridWorld:
             story.story_quantum(self)
             vp.vp_quantum(self)
             regions.regions_quantum(self)
+            nests.nest_quantum(self)
+            trade.trade_quantum(self)
             disruption.disruption_quantum(self)
             society.society_quantum(self)
             history.history_quantum(self)
@@ -1075,6 +1084,9 @@ class HybridWorld:
                 res = {"mine": "coal", "ironmine": "iron", "well": "water"}[building["kind"]]
                 row["deposit_left"] = self.resource_total((building["tx"], building["ty"]), 2, res)
                 row["inexhaustible"] = terrain_mod.is_mineral(res)  # D22: the figure is the site's richness, not a stock that runs out
+            if building.get("kind") == "blight_nest":
+                row["nest_cubes"] = int(building.get("nest_cubes", 1))
+                row["region"] = building.get("nest", "")
             if building.get("disrupted"):
                 d = building["disrupted"]
                 row["disrupted"] = {"cause": d["cause"], "label": d["label"], "since_ms": d["since_ms"], "repair": dict(d["repair"]),

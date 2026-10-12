@@ -80,7 +80,7 @@ func setup(p_world: Node) -> void:
 	mode_btn.visible = god_enabled
 	toast = Label.new()
 	toast.name = "Toast"
-	toast.position = Vector2(300, 60)
+	toast.position = Vector2(470, 112)  # below the spectator HUD rows (era text, speeds)
 	toast.add_theme_color_override("font_color", Color(1, 0.95, 0.6))
 	toast.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	toast.add_theme_constant_override("outline_size", 6)

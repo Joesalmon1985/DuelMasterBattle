@@ -102,7 +102,7 @@ def disruption_quantum(world: Any) -> None:
     for bid, b in sorted(world.buildings.items()):
         if b.get("disrupted") or b.get("constructing") or "hp" not in b or int(b["hp"]) <= 0 or b.get("command_center"):
             continue
-        if not b.get("operational", True) or b["kind"] in ("warehouse",):
+        if not b.get("operational", True) or b["kind"] in ("warehouse", "blight_nest"):
             continue
         rng = random.Random(f"{world.seed}:disrupt:{bid}:{minute}")
         cubes, hazard = _region_cubes(world, b)

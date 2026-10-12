@@ -4,6 +4,28 @@
  "display_scale_note": "Terrain is 1:1 with the 64px tile. Widelands buildings and trees use scale 2 so their authored hotspots stay the ground contact. Workers use scale 4 so a carrier frame sits near the wizard's height. OpenRA sprites use scale 2, except the 24px gun turret at scale 3.",
  "items": [
   {
+   "id": "dmb.caravan",
+   "status": "alias_placeholder",
+   "game": "widelands",
+   "license": "GPL-2.0-or-later",
+   "source": "data/tribes/workers/barbarians/carrier/walk_e_1.png",
+   "source_note": "Trade caravan: hybrid unit, drawn with the Widelands carrier",
+   "godot": "res://client/hybrid/art/widelands/carrier_e.png",
+   "mode": "sheet",
+   "width": 39,
+   "height": 84,
+   "columns": 3,
+   "rows": 4,
+   "frames": 10,
+   "hotspot": [
+    6,
+    16
+   ],
+   "scale": 4,
+   "fps": 10,
+   "alias_of": "widelands.carrier"
+  },
+  {
    "id": "dmb.clubman",
    "status": "alias_placeholder",
    "game": "widelands",

@@ -13,7 +13,7 @@ FEED_LEN = 40
 KINDS = {
     "era_advanced", "card_drafted", "deployed", "settlement_destroyed", "vp_conquest", "faction_declined", "faction_recovered", "faction_split",
     "faction_collapsed", "outbreak", "outbreak_cube", "catastrophe_destroyed", "disrupted", "disruption_cleared", "treatment_done", "ai_attack",
-    "ai_retreat", "cycle_due", "terminal_loss", "ai_industry_placed", "story_quest_offered", "draft_offer",
+    "ai_retreat", "caravan_traded", "nest_destroyed", "nest_cube_cleared", "cycle_due", "terminal_loss", "ai_industry_placed", "story_quest_offered", "draft_offer",
 }
 ERA_NAMES = {"prehistoric": "Prehistoric", "historic": "Historic", "modern": "Modern", "dystopian": "Dystopian Future"}
 
@@ -73,6 +73,13 @@ def text(world: Any, e: dict) -> str | None:
         return "%s attacks %s's %s with %d units." % (f, e.get("of", ""), str(e.get("target_kind", "")).replace("wl:", ""), int(e.get("units", 0)))
     if k == "ai_retreat":
         return "%s's attack failed: %d of %d units fall back." % (f, int(e.get("left", 0)), int(e.get("launched", 0)))
+    if k == "caravan_traded":
+        return "%s traded %s with %s for %s." % (f, ", ".join("%d %s" % (n, g) for g, n in e.get("give", {}).items()), e.get("partner", ""),
+                                                 ", ".join("%d %s" % (n, g) for g, n in e.get("want", {}).items()))
+    if k == "nest_cube_cleared":
+        return "%s cut a blight nest back in %s (-%d)." % (e.get("by") or "Someone", e.get("region", ""), int(e.get("cubes", 0)))
+    if k == "nest_destroyed":
+        return "A blight nest was destroyed in %s: the region is clean." % e.get("region", "")
     if k == "cycle_due":
         return "The historical cycle is over."
     if k == "terminal_loss":

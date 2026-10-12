@@ -677,6 +677,23 @@
    "effect": {
     "territory_bonus": 4
    }
+  },
+  {
+   "id": "dmb.card.trade",
+   "name": "Trade",
+   "era": 0,
+   "summary": "Caravans carry surplus goods to a faction you are at peace with and bring back what you lack.",
+   "kinds": [],
+   "units": [
+    "caravan"
+   ],
+   "wl_patterns": [],
+   "requires_cards": [
+    "dmb.card.farming"
+   ],
+   "requires_working": [
+    "farm"
+   ]
   }
  ]
 }
