@@ -9,6 +9,12 @@ from sim.dmb.military.movement import StrategicMovement
 from sim.dmb.military.units import MilitaryService
 
 
+def _spawn_formation(director: FormationDirector, unit: dict) -> dict:
+    fid = unit.get("formation_id")
+    assert fid, "spawn attaches a home formation"
+    return director.get(str(fid))
+
+
 def _board_line() -> dict:
     return {
         "nodes": {
@@ -35,7 +41,7 @@ def test_seconds_alone_move_zero_nodes() -> None:
     mil = MilitaryService(state)
     director = FormationDirector(state)
     u = mil.spawn("unit.ancient.line", home_node_id="n1", faction_id="faction:a", era="prehistoric", factory_id="f")
-    form = director.group([u["id"]], faction_id="faction:a", node_id="n1")
+    form = _spawn_formation(director, u)
     before = form["node_id"]
     # No activate call — Game Time / seconds alone must not move.
     assert director.get(form["id"])["node_id"] == before
@@ -46,7 +52,7 @@ def test_inactive_faction_stays() -> None:
     mil = MilitaryService(state)
     director = FormationDirector(state)
     u = mil.spawn("unit.ancient.line", home_node_id="n1", faction_id="faction:a", era="prehistoric", factory_id="f")
-    form = director.group([u["id"]], faction_id="faction:a", node_id="n1")
+    form = _spawn_formation(director, u)
     try:
         director.activate(form["id"], ["n2"], active_faction_id="faction:b")
         raise AssertionError("inactive should fail")
@@ -62,7 +68,8 @@ def test_hostile_first_edge_stops_second() -> None:
     friendly = mil.spawn("unit.ancient.line", home_node_id="n1", faction_id="faction:a", era="prehistoric", factory_id="f")
     enemy = mil.spawn("unit.ancient.line", home_node_id="n2", faction_id="faction:b", era="prehistoric", factory_id="f")
     assert enemy["node_id"] == "n2"
-    form = director.group([friendly["id"]], faction_id="faction:a", node_id="n1")
+    state.units[friendly["id"]]["spawned_turn"] = 0
+    form = _spawn_formation(director, friendly)
     result = director.activate(form["id"], ["n2", "n3"], active_faction_id="faction:a")
     assert result["node_id"] == "n2"
     assert result["stopped"] is True
@@ -79,7 +86,8 @@ def test_new_unit_gets_no_past_move() -> None:
     old["spawned_turn"] = 1
     new = mil.spawn("unit.ancient.skirmisher", home_node_id="n1", faction_id="faction:a", era="prehistoric", factory_id="f")
     assert new["spawned_turn"] == 5
-    form = director.group([old["id"], new["id"]], faction_id="faction:a", node_id="n1")
+    form = _spawn_formation(director, old)
+    assert new["formation_id"] == form["id"]
     director.activate(form["id"], ["n2"], active_faction_id="faction:a", turn=5)
     assert state.units[old["id"]]["node_id"] == "n2"
     assert state.units[new["id"]]["node_id"] == "n1"  # new unit stays this activation
@@ -91,7 +99,7 @@ def test_blocked_retreat_revalidates() -> None:
     move = StrategicMovement(state)
     director = FormationDirector(state)
     u = mil.spawn("unit.ancient.heavy", home_node_id="n2", faction_id="faction:a", era="prehistoric", factory_id="f")
-    form = director.group([u["id"]], faction_id="faction:a", node_id="n2")
+    form = _spawn_formation(director, u)
     form["entry_strength"] = 400
     state.units[u["id"]]["current_health"] = 50  # below 25% of 400
     state.settlements["s1"] = {"id": "s1", "node_id": "n1", "faction_id": "faction:a"}

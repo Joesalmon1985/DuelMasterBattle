@@ -17,6 +17,9 @@ const ChroniclePanel = preload("res://client/ui/chronicle.gd")
 const InventoryPanel = preload("res://client/ui/inventory_panel.gd")
 const GrimoirePanel = preload("res://client/ui/grimoire.gd")
 const KnowledgePanel = preload("res://client/ui/knowledge.gd")
+const SpellbookModel = preload("res://client/ui/spellbook/spellbook_model.gd")
+const SpellbookHost = preload("res://client/ui/spellbook/spellbook_host.gd")
+const SpellbookReviewBinder = preload("res://client/ui/spellbook/spellbook_review_binder.gd")
 
 const LocalBattle = preload("res://client/combat/local_battle.gd")
 const EncounterHost = preload("res://client/encounters/encounter_host.gd")
@@ -28,6 +31,15 @@ const INDUSTRY_FIELDS := [
 	"industry_workers", "industry_connections", "industry_factories",
 	"hazards", "items", "units", "carts", "orders", "player", "clock",
 	"presentation", "battles", "world_map", "chronicle",
+]
+## Privileged review projection only — never merged into normal Play Latest pages.
+const REVIEW_VIEW_FIELDS := [
+	"overworld_area", "fx_village", "fx_era", "fx_industry", "fx_hazard", "fx_cargo",
+	"industry", "buildings", "industry_workers", "industry_connections", "industry_factories",
+	"hazards", "items", "units", "carts", "orders", "player", "clock", "people",
+	"presentation", "battles", "world_map", "chronicle", "chronicle_debug",
+	"stocks", "settlements", "factions", "tech_draft", "research", "diplomacy",
+	"command_receipts",
 ]
 
 var _launcher
@@ -42,6 +54,11 @@ var _chronicle_panel
 var _inventory_panel
 var _grimoire_panel
 var _knowledge_panel
+var _spell_model
+var _spell_host
+var _spell_binder
+var _spell_pause_owned := false
+var _spell_pause_token := ""
 var _ui_modal_pause := ""
 var _ui_layer: CanvasLayer
 var _fx_era_panel: PanelContainer
@@ -56,6 +73,17 @@ var _fx_era_transitioned := false
 var _map_open_pending := false
 var _transition_seen_id := ""
 var _time_hud: Label
+var _wait_btn: Button
+var _watch_btn: Button
+var _watch_pause_btn: Button
+var _watch_speed_btn: Button
+var _watch_status: Label
+var _watch_active := false
+var _watch_paused := false
+var _watch_speed := 1
+var _watch_turns_done := 0
+var _watch_ms_done := 0
+var _watch_acc := 0.0
 var _boot_done := false
 var _village_ready := false
 var _project_root := ""
@@ -70,6 +98,8 @@ var _paused := false
 var _focus := true
 var _bridge_down := false
 var _pause_token := ""
+var _focus_pause_token := ""
+var _duel_pause_token := ""
 var _clock_inflight_id := ""
 var _clock_inflight_seq := -1
 var _pose_sync_acc := 0.0
@@ -84,9 +114,13 @@ var _long_event_log: RichTextLabel
 var _long_panel: VBoxContainer
 var _battle
 var _battle_host
+var _battle_lease_opened := false
+var _hosted_battle_id := ""
 var _spectator_node := ""
 var _follow_major := false
 var _last_travel_feedback := ""
+var _hud_wait_pending := false
+var _hud_wait_id := ""
 
 
 func _ready() -> void:
@@ -123,6 +157,7 @@ func _ready() -> void:
 	_time_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_time_hud.text = "Turn — · Game Time: …"
 	add_child(_time_hud)
+	_setup_wait_watch_hud()
 	_clock = ClockDriver.new()
 	_clock.advance_requested.connect(_on_clock_advance)
 	_launcher = SidecarLauncher.new()
@@ -180,6 +215,7 @@ func _ready() -> void:
 	_knowledge_panel.closed.connect(_on_ui_modal_closed)
 	_knowledge_panel.open_world_map_requested.connect(_on_knowledge_open_map)
 	_ui_layer.add_child(_knowledge_panel)
+	_setup_spellbook()
 	_project_root = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	if _project_root.ends_with("godot_project"):
 		_project_root = _project_root.get_base_dir()
@@ -254,6 +290,7 @@ func _boot() -> void:
 
 	_boot_done = true
 	_village_ready = true
+	_on_spellbook_boot_ready()
 	_sync_pose(true)
 	await get_tree().create_timer(2.0).timeout
 	if is_instance_valid(_status) and not _long_world and not _is_fx_era():
@@ -289,8 +326,11 @@ func _process(delta: float) -> void:
 		if _overworld != null and _overworld.has_method("sync_dynamic_person_poses"):
 			_overworld.sync_dynamic_person_poses()
 	_maybe_host_local_battle()
+	_tick_local_battle(delta)
 	if _long_world and _long_autorun:
 		_long_world_tick(delta)
+	if _watch_active and not _watch_paused:
+		_watch_world_tick(delta)
 
 
 func _notification(what: int) -> void:
@@ -448,31 +488,57 @@ func notify_local_step() -> void:
 
 
 func acquire_pause(reason: String = "choice") -> String:
-	if _pause_token != "":
-		return _pause_token
+	## Always allocate a distinct server token. Multiple UI owners may hold pauses.
 	var reply := _cmd("Pause", {"reason": reason})
 	if str(reply.get("status", "")) == "ACCEPTED":
-		_pause_token = str(reply.get("payload", {}).get("token", ""))
+		var token := str(reply.get("payload", {}).get("token", ""))
+		_pause_token = token
 		_paused = true
 		if _clock:
 			_clock.open_pause_screen()
 		if _workers:
 			_workers.set_frozen(true)
-	return _pause_token
+		return token
+	return ""
 
 
-func release_pause() -> void:
-	if _pause_token == "":
-		_paused = false
+func release_pause(token: String = "") -> void:
+	var t := token if token != "" else _pause_token
+	if t == "":
+		_paused = _any_local_pause()
 		return
-	_cmd("Resume", {"token": _pause_token})
-	_pause_token = ""
-	_paused = false
-	if _clock:
-		_clock.close_pause_screen()
-		_clock.notify_focus(true)
-	if _workers:
-		_workers.set_frozen(false)
+	_cmd("Resume", {"token": t})
+	if _pause_token == t:
+		_pause_token = ""
+	if _spell_pause_token == t:
+		_spell_pause_token = ""
+		_spell_pause_owned = false
+	if _map_pause_token == t:
+		_map_pause_token = ""
+	if _ui_modal_pause == t:
+		_ui_modal_pause = ""
+	if _focus_pause_token == t:
+		_focus_pause_token = ""
+	if _duel_pause_token == t:
+		_duel_pause_token = ""
+	_paused = _any_local_pause()
+	if not _paused:
+		if _clock:
+			_clock.close_pause_screen()
+			_clock.notify_focus(true)
+		if _workers:
+			_workers.set_frozen(false)
+
+
+func _any_local_pause() -> bool:
+	return (
+		_pause_token != ""
+		or _spell_pause_token != ""
+		or _map_pause_token != ""
+		or _ui_modal_pause != ""
+		or _focus_pause_token != ""
+		or _duel_pause_token != ""
+	)
 
 
 func _on_bridge_failed(_reason: String) -> void:
@@ -536,10 +602,26 @@ func _apply_world_layers(area: Dictionary) -> void:
 	## Visual layers + Overworld collision must both follow Python entity payloads.
 	## WorldLayerPresenters moves stone meshes; sync_dynamic_obstacles_from_area
 	## clears stale _entity_at blocks when rockfall.blocks_walk becomes false.
+	_ensure_world_layer_presenters()
 	if _layers != null and _layers.has_method("apply_area"):
 		_layers.apply_area(area)
 	if _overworld != null and _overworld.has_method("sync_dynamic_obstacles_from_area"):
 		_overworld.sync_dynamic_obstacles_from_area(area)
+
+
+func _ensure_world_layer_presenters() -> void:
+	if _layers != null and is_instance_valid(_layers):
+		return
+	_layers = WorldLayerPresenters.new()
+	_layers.name = "WorldLayerPresenters"
+	if _overworld == null:
+		return
+	if _overworld.get("_actors_root") != null:
+		_layers.bind_host(_overworld._actors_root)
+		_overworld._actors_root.add_child(_layers)
+	else:
+		_layers.bind_host(_overworld)
+		_overworld.add_child(_layers)
 
 
 func _refresh_time_hud(view: Dictionary = {}) -> void:
@@ -549,11 +631,17 @@ func _refresh_time_hud(view: Dictionary = {}) -> void:
 	if clock.is_empty() and not _last_industry.is_empty():
 		clock = _coerce_dict(_last_industry.get("clock"))
 	var turn := int(clock.get("turn", 0))
+	var round_n := int(clock.get("round", clock.get("draft_round", turn / 2)))
+	var game_ms := int(clock.get("game_ms", _game_ms_sample))
+	_game_ms_sample = game_ms
 	var running := not _paused and _focus and not _bridge_down
 	var state_txt := "paused" if _paused or not _focus else "running"
-	_time_hud.text = "Turn %s · Game Time: %s" % [turn, state_txt]
-	if clock.has("game_ms"):
-		_game_ms_sample = int(clock.get("game_ms", _game_ms_sample))
+	_time_hud.text = "Turn %s · Round %s · Game Time %ss · %s" % [
+		turn, round_n, int(game_ms / 1000.0), state_txt
+	]
+	_refresh_wait_watch_hud()
+	if not running:
+		pass
 
 
 func _input(event: InputEvent) -> void:
@@ -573,6 +661,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_K:
 			_toggle_knowledge()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_B:
+			_toggle_spellbook()
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ESCAPE and _era_presenter != null and _era_presenter.is_playing():
 			_era_presenter.skip()
@@ -595,7 +686,7 @@ func _apply_fixture_status() -> void:
 	elif _long_world:
 		_status.text = "LONG-WORLD observer — fast-forward / event log (dev only)"
 	else:
-		_status.text = "Explore — M map · I inventory · G grimoire · K knowledge"
+		_status.text = "Explore — M map · I inventory · G grimoire · K knowledge · B spellbook"
 
 
 func _raise_shell_overlays() -> void:
@@ -605,10 +696,14 @@ func _raise_shell_overlays() -> void:
 	if _ui_layer != null:
 		_ui_layer.visible = true
 	var modal_open := false
+	var spell_open: bool = _spell_host != null and _spell_model != null \
+		and _spell_model.host_mode == SpellbookModel.HostMode.OPEN
 	for p in [_map_panel, _chronicle_panel, _inventory_panel, _grimoire_panel, _knowledge_panel]:
 		if p != null and p.visible:
 			modal_open = true
 			break
+	if spell_open:
+		modal_open = true
 	if _fx_era_panel != null:
 		_fx_era_panel.visible = not modal_open
 		if not modal_open:
@@ -620,6 +715,8 @@ func _raise_shell_overlays() -> void:
 	for p in [_map_panel, _chronicle_panel, _inventory_panel, _grimoire_panel, _knowledge_panel]:
 		if p != null and p.visible:
 			p.move_to_front()
+	if spell_open and _spell_host != null:
+		_spell_host.move_to_front()
 
 
 func _maybe_setup_fx_era_ui(view: Dictionary = {}) -> void:
@@ -889,7 +986,7 @@ func _open_world_map_now() -> void:
 func _on_map_closed() -> void:
 	_map_open_pending = false
 	if _map_pause_token != "":
-		release_pause()
+		release_pause(_map_pause_token)
 		_map_pause_token = ""
 	_raise_shell_overlays()
 
@@ -905,7 +1002,7 @@ func _ensure_ui_modal_pause() -> void:
 
 func _on_ui_modal_closed() -> void:
 	if _ui_modal_pause != "":
-		release_pause()
+		release_pause(_ui_modal_pause)
 		_ui_modal_pause = ""
 	_raise_shell_overlays()
 
@@ -950,6 +1047,270 @@ func _toggle_knowledge() -> void:
 	var entries: Array = view.get("knowledge", [])
 	_knowledge_panel.show_knowledge(entries)
 	_raise_shell_overlays()
+
+
+func _setup_spellbook() -> void:
+	_spell_model = SpellbookModel.new()
+	_spell_binder = SpellbookReviewBinder.new()
+	_spell_binder.setup(_spell_model, "g05")
+	_register_spellbook_handlers()
+	_spell_host = SpellbookHost.new()
+	_spell_host.name = "SpellbookHost"
+	_ui_layer.add_child(_spell_host)
+	_spell_host.bind_model(_spell_model)
+	_spell_host.action_requested.connect(_on_spellbook_action)
+	_spell_host.close_requested.connect(_on_spellbook_closed)
+	_spell_host.overlay_blocking_changed.connect(_on_spellbook_overlay_blocking)
+	if SpellbookReviewBinder.review_enabled():
+		var btn: Button = _spell_host.compact_open_button()
+		if btn != null:
+			btn.text = "Spellbook"
+
+
+func _register_spellbook_handlers() -> void:
+	_spell_binder.register("review_start", func(_p): return _spellbook_review_start())
+	_spell_binder.register("review_load_chapter", func(_p): return _spellbook_load_chapter())
+	_spell_binder.register("review_wait", func(_p): return _spellbook_wait_once())
+	_spell_binder.register("review_close_watch", func(_p): return _spellbook_close_and_watch())
+	_spell_binder.register("review_feedback_clear", func(_p): return _spellbook_feedback("Clear"))
+	_spell_binder.register("review_feedback_unclear", func(_p): return _spellbook_feedback("Unclear"))
+	_spell_binder.register("review_feedback_broken", func(_p): return _spellbook_feedback("Broken"))
+	_spell_binder.register("review_replay", func(_p): return _spellbook_load_chapter())
+	_spell_binder.register("review_next", func(_p): return _spellbook_next_chapter())
+	_spell_binder.register("capture_issue", func(_p): return _spellbook_capture_issue())
+
+
+func _on_spellbook_boot_ready() -> void:
+	if _spell_binder == null or _client == null:
+		return
+	_refresh_spellbook_views()
+	_spell_binder.set_ready()
+	_sync_spellbook_live()
+
+
+func _toggle_spellbook() -> void:
+	if _spell_host == null or _spell_model == null or _client == null:
+		return
+	if _spell_model.host_mode == SpellbookModel.HostMode.OPEN:
+		_spell_model.close_book()
+		return
+	_refresh_spellbook_views()
+	_sync_spellbook_live()
+	_spell_model.open_book()
+	_raise_shell_overlays()
+
+
+func _refresh_spellbook_views() -> void:
+	if _spell_binder == null or _client == null:
+		return
+	if SpellbookReviewBinder.review_enabled():
+		var player_view: Dictionary = probe_player(REVIEW_VIEW_FIELDS)
+		var economy_view: Dictionary = probe_economy(REVIEW_VIEW_FIELDS)
+		_spell_binder.refresh_diagnostics(player_view, economy_view)
+	else:
+		var player_view: Dictionary = probe_player(INDUSTRY_FIELDS)
+		var area: Dictionary = _coerce_dict(player_view.get("overworld_area"))
+		var clock: Dictionary = _coerce_dict(player_view.get("clock"))
+		var player: Dictionary = _coerce_dict(player_view.get("player"))
+		_spell_binder.bind_player_safe({
+			"title": "Spellbook",
+			"status": "Turn %s" % str(clock.get("turn", "?")),
+			"details": str(area.get("name", player.get("node_id", "World"))),
+			"notes": "Learned facts only — no debug data in normal play.",
+			"body": "Walk the world, talk to people, and use Grimoire (G) for prepared magic.",
+			"paused": _paused,
+		})
+
+
+func _sync_spellbook_live() -> void:
+	if _spell_binder == null:
+		return
+	var badge := SpellbookReviewBinder.review_enabled()
+	var prompt := "Review session" if badge else "Player info"
+	_spell_binder.sync_live(_status.text if _status else "", _time_hud.text if _time_hud else "", prompt, _paused)
+
+
+func _on_spellbook_action(action_id: String, payload: Dictionary, token: String) -> void:
+	_spell_binder.handle_action(action_id, payload, token)
+	_refresh_spellbook_views()
+	_sync_spellbook_live()
+
+
+func _on_spellbook_closed() -> void:
+	_release_spellbook_pause_if_owned()
+	_raise_shell_overlays()
+
+
+func _on_spellbook_overlay_blocking(blocking: bool) -> void:
+	if blocking:
+		_ensure_spellbook_pause()
+	else:
+		_release_spellbook_pause_if_owned()
+	_raise_shell_overlays()
+
+
+func _ensure_spellbook_pause() -> void:
+	if _spell_pause_owned and _spell_pause_token != "":
+		return
+	_spell_pause_token = acquire_pause("spellbook")
+	_spell_pause_owned = _spell_pause_token != ""
+
+
+func _release_spellbook_pause_if_owned() -> void:
+	if not _spell_pause_owned:
+		return
+	if _spell_pause_token != "":
+		release_pause(_spell_pause_token)
+	_spell_pause_owned = false
+	_spell_pause_token = ""
+
+
+func _spellbook_review_start() -> Dictionary:
+	_spell_binder.mark_review_started()
+	return {"status": "OK", "message": "Review started — chapter 1"}
+
+
+func _spellbook_wait_once() -> Dictionary:
+	var view: Dictionary = probe_player(["player"])
+	var node := str(view.get("player", {}).get("node_id", str(_fx_meta.get("node_id", "node:1"))))
+	var reply := _cmd("Wait", {"current_node": node, "press_id": "spellbook-wait-%d" % Time.get_ticks_msec()})
+	if str(reply.get("status", "")) == "ACCEPTED":
+		reproject_from_python()
+	return reply
+
+
+func _spellbook_close_and_watch() -> Dictionary:
+	if _spell_model != null and _spell_model.host_mode == SpellbookModel.HostMode.OPEN:
+		_spell_model.close_book()
+	_release_spellbook_pause_if_owned()
+	_start_watch_world()
+	return {"status": "OK", "message": "Book closed — watching world (Wait + Game Time)"}
+
+
+func _spellbook_feedback(kind: String) -> Dictionary:
+	_spell_binder.set_feedback(kind)
+	return {"status": "OK", "message": "Marked %s" % kind}
+
+
+func _spellbook_chapter_slot() -> String:
+	var ch: Dictionary = _spell_binder.current_chapter()
+	var slot := str(ch.get("checkpoint_slot", "")).strip_edges()
+	if slot != "":
+		return slot
+	return str(OS.get_environment("DMB_SAVE_SLOT"))
+
+
+func _spellbook_load_chapter() -> Dictionary:
+	var ch: Dictionary = _spell_binder.current_chapter()
+	var slot := str(ch.get("checkpoint_slot", "")).strip_edges()
+	if slot == "":
+		slot = _spellbook_chapter_slot()
+	var cp_path := str(ch.get("checkpoint_path", "")).strip_edges()
+	if cp_path != "":
+		var abs_path := cp_path
+		if not abs_path.is_absolute_path():
+			abs_path = _project_root.path_join(cp_path)
+		if not FileAccess.file_exists(abs_path):
+			return {"status": "REJECTED", "message": "Checkpoint file missing: %s" % abs_path}
+		var save_root := _project_root.path_join(".dmb_saves")
+		DirAccess.make_dir_recursive_absolute(save_root)
+		var cleaned := ""
+		for i in range(slot.length()):
+			var c := slot[i]
+			var code := c.unicode_at(0)
+			var ok := (code >= 48 and code <= 57) or (code >= 65 and code <= 90) or (code >= 97 and code <= 122) or c == "-" or c == "_"
+			if ok:
+				cleaned += c
+		if cleaned == "":
+			cleaned = "review_checkpoint"
+		var dest := save_root.path_join("%s.json" % cleaned)
+		var src := FileAccess.open(abs_path, FileAccess.READ)
+		if src == null:
+			return {"status": "REJECTED", "message": "Cannot read checkpoint"}
+		var body := src.get_as_text()
+		src.close()
+		var dst := FileAccess.open(dest, FileAccess.WRITE)
+		if dst == null:
+			return {"status": "REJECTED", "message": "Cannot write save slot"}
+		dst.store_string(body)
+		dst.close()
+		slot = cleaned
+	if slot == "":
+		return {"status": "REJECTED", "message": "Chapter checkpoint slot not configured yet"}
+	var reply := load_slot(slot)
+	_refresh_spellbook_views()
+	return reply
+
+
+func _spellbook_next_chapter() -> Dictionary:
+	if _spell_binder.chapter_count() <= 0:
+		return {"status": "REJECTED", "message": "No chapters loaded"}
+	var prev: int = int(_spell_binder.chapter_index())
+	var next: int = mini(prev + 1, _spell_binder.chapter_count() - 1)
+	if next == prev:
+		return {"status": "REJECTED", "message": "Already on last chapter"}
+	_spell_binder.set_chapter_index(next)
+	var reply := _spellbook_load_chapter()
+	var st := str(reply.get("status", ""))
+	if st != "ACCEPTED" and st != "OK":
+		# Failed checkpoint load must stay failed — do not keep the advanced chapter.
+		_spell_binder.set_chapter_index(prev)
+		return {
+			"status": "REJECTED",
+			"message": "Checkpoint load failed; stayed on chapter %d. %s"
+			% [prev + 1, str(reply.get("message", reply.get("code", "")))],
+		}
+	return reply
+
+
+func _spellbook_capture_issue() -> Dictionary:
+	var dir_path := _project_root.path_join("logs/polish_review")
+	DirAccess.make_dir_recursive_absolute(dir_path)
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
+	var base := "issue_%s" % stamp
+	var path := dir_path.path_join("%s.json" % base)
+	var png_path := dir_path.path_join("%s.png" % base)
+	var payload: Dictionary = _spell_binder.export_issue_context()
+	payload["status_line"] = _status.text if _status else ""
+	payload["time_hud"] = _time_hud.text if _time_hud else ""
+	payload["fixture"] = str(OS.get_environment("DMB_FIXTURE"))
+	payload["seed"] = str(OS.get_environment("DMB_SEED"))
+	payload["save_slot"] = str(OS.get_environment("DMB_SAVE_SLOT"))
+	payload["source_sha"] = str(OS.get_environment("DMB_SOURCE_SHA"))
+	payload["viewport"] = {
+		"size": [get_viewport_rect().size.x, get_viewport_rect().size.y],
+	}
+	var view: Dictionary = probe_player(REVIEW_VIEW_FIELDS) if SpellbookReviewBinder.review_enabled() else probe_player(INDUSTRY_FIELDS)
+	payload["clock"] = _coerce_dict(view.get("clock"))
+	payload["world_version"] = view.get("world_version")
+	payload["receipts_tail"] = _short_receipts(view)
+	# PNG capture of the current viewport.
+	var img: Image = get_viewport().get_texture().get_image()
+	var png_ok := false
+	if img != null:
+		png_ok = img.save_png(png_path) == OK
+	payload["png_path"] = png_path if png_ok else ""
+	payload["png_ok"] = png_ok
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return {"status": "REJECTED", "message": "Could not write %s" % path}
+	file.store_string(JSON.stringify(payload, "\t"))
+	file.close()
+	_spell_binder.append_log("issue captured: %s png=%s" % [path, str(png_ok)])
+	if not png_ok:
+		return {"status": "OK", "message": "Issue JSON saved; PNG capture failed"}
+	return {"status": "OK", "message": "Issue saved (JSON + PNG) to logs/polish_review/"}
+
+
+func _short_receipts(view: Dictionary) -> Array:
+	var receipts = view.get("command_receipts", [])
+	if typeof(receipts) != TYPE_ARRAY:
+		return []
+	var out: Array = []
+	var start := maxi(0, receipts.size() - 5)
+	for i in range(start, receipts.size()):
+		out.append(receipts[i])
+	return out
 
 
 func _on_inventory_action(action: String, item_id: String, extra: Dictionary) -> void:
@@ -1008,9 +1369,8 @@ func _enter_ward_duel_presentation() -> void:
 	if _presentation == null:
 		_presentation = PresentationMode.new()
 		_presentation.bind(_overworld, _ui_layer, [_status, _time_hud], _duel_layer, _duel_host)
-	if _battle != null and is_instance_valid(_battle):
-		_battle.visible = false
-		_battle.process_mode = Node.PROCESS_MODE_DISABLED
+	if _battle != null and not _battle.closed:
+		_battle.frozen = true
 	_presentation.set_mode(PresentationMode.Mode.WARD_DUEL)
 
 
@@ -1025,9 +1385,8 @@ func _leave_ward_duel_presentation() -> void:
 			_overworld.process_mode = Node.PROCESS_MODE_INHERIT
 		return
 	_presentation.set_mode(PresentationMode.Mode.WORLD)
-	if _battle != null and is_instance_valid(_battle):
-		_battle.visible = true
-		_battle.process_mode = Node.PROCESS_MODE_INHERIT
+	if _battle != null and not _battle.closed:
+		_battle.frozen = false
 	_raise_shell_overlays()
 
 
@@ -1371,6 +1730,18 @@ func invoke_knowledge_for_test() -> void:
 	_toggle_knowledge()
 
 
+func invoke_spellbook_for_test() -> void:
+	_toggle_spellbook()
+
+
+func spellbook_host() -> Control:
+	return _spell_host
+
+
+func spellbook_model():
+	return _spell_model
+
+
 func inventory_panel() -> Control:
 	return _inventory_panel
 
@@ -1523,6 +1894,11 @@ func _append_long_event(text: String) -> void:
 	_long_event_log.append_text(text + "\n")
 
 
+func _tick_local_battle(delta: float) -> void:
+	if _battle != null and is_instance_valid(_battle) and _battle.has_method("tick"):
+		_battle.tick(delta * 1000.0)
+
+
 func _maybe_host_local_battle() -> void:
 	## When the viewed node has an active battle, mount LocalBattle (G04 reuse).
 	if _client == null or _overworld == null:
@@ -1560,3 +1936,175 @@ func _exit_tree() -> void:
 	VillageTestRunner.clear()
 	if _launcher != null:
 		_launcher.stop()
+
+
+func _setup_wait_watch_hud() -> void:
+	var row := HBoxContainer.new()
+	row.name = "WaitWatchHud"
+	row.set_anchors_preset(PRESET_TOP_LEFT)
+	row.offset_left = 8
+	row.offset_top = 50
+	row.offset_right = 520
+	row.offset_bottom = 98
+	row.add_theme_constant_override("separation", 8)
+	row.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(row)
+	_wait_btn = Button.new()
+	_wait_btn.name = "WaitButton"
+	_wait_btn.text = "Wait"
+	_wait_btn.custom_minimum_size = Vector2(88, 40)
+	_wait_btn.focus_mode = Control.FOCUS_NONE
+	_wait_btn.pressed.connect(_on_hud_wait_pressed)
+	row.add_child(_wait_btn)
+	_watch_btn = Button.new()
+	_watch_btn.name = "WatchWorldButton"
+	_watch_btn.text = "Watch world"
+	_watch_btn.custom_minimum_size = Vector2(120, 40)
+	_watch_btn.focus_mode = Control.FOCUS_NONE
+	_watch_btn.pressed.connect(_on_watch_toggle)
+	row.add_child(_watch_btn)
+	_watch_pause_btn = Button.new()
+	_watch_pause_btn.name = "WatchPauseButton"
+	_watch_pause_btn.text = "Pause"
+	_watch_pause_btn.custom_minimum_size = Vector2(72, 40)
+	_watch_pause_btn.focus_mode = Control.FOCUS_NONE
+	_watch_pause_btn.disabled = true
+	_watch_pause_btn.pressed.connect(_on_watch_pause_toggle)
+	row.add_child(_watch_pause_btn)
+	_watch_speed_btn = Button.new()
+	_watch_speed_btn.name = "WatchSpeedButton"
+	_watch_speed_btn.text = "1×"
+	_watch_speed_btn.custom_minimum_size = Vector2(56, 40)
+	_watch_speed_btn.focus_mode = Control.FOCUS_NONE
+	_watch_speed_btn.disabled = true
+	_watch_speed_btn.pressed.connect(_on_watch_speed_cycle)
+	row.add_child(_watch_speed_btn)
+	_watch_status = Label.new()
+	_watch_status.name = "WatchStatus"
+	_watch_status.text = ""
+	_watch_status.add_theme_font_size_override("font_size", 12)
+	_watch_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(_watch_status)
+
+
+func _refresh_wait_watch_hud() -> void:
+	if _wait_btn != null:
+		var duel_active: bool = _duel_adapter != null and bool(_duel_adapter.is_active())
+		var book_open: bool = _spell_model != null and _spell_model.host_mode == SpellbookModel.HostMode.OPEN
+		var blocked: bool = _hud_wait_pending or _bridge_down or duel_active or book_open
+		_wait_btn.disabled = blocked
+		_wait_btn.text = "Waiting…" if _hud_wait_pending else "Wait"
+	if _watch_btn != null:
+		_watch_btn.text = "Stop watch" if _watch_active else "Watch world"
+		_watch_btn.disabled = _bridge_down or (_duel_adapter != null and _duel_adapter.is_active())
+	if _watch_pause_btn != null:
+		_watch_pause_btn.disabled = not _watch_active
+		_watch_pause_btn.text = "Resume" if _watch_paused else "Pause"
+	if _watch_speed_btn != null:
+		_watch_speed_btn.disabled = not _watch_active
+		_watch_speed_btn.text = "%d×" % _watch_speed
+	if _watch_status != null:
+		if _watch_active:
+			_watch_status.text = "Watched %d turns · %ds sim" % [_watch_turns_done, int(_watch_ms_done / 1000.0)]
+		else:
+			_watch_status.text = ""
+
+
+func _on_hud_wait_pressed() -> void:
+	if _hud_wait_pending or _client == null or _bridge_down:
+		return
+	if _spell_model != null and _spell_model.host_mode == SpellbookModel.HostMode.OPEN:
+		return
+	if _duel_adapter != null and _duel_adapter.is_active():
+		return
+	var view: Dictionary = probe_player(["player", "clock"])
+	var node := str(view.get("player", {}).get("node_id", str(_fx_meta.get("node_id", "node:1"))))
+	_cmd_seq += 1
+	_hud_wait_id = "hud-wait-%d" % _cmd_seq
+	_hud_wait_pending = true
+	_refresh_wait_watch_hud()
+	var reply := _cmd("Wait", {"current_node": node, "press_id": _hud_wait_id})
+	_hud_wait_pending = false
+	if str(reply.get("status", "")) == "ACCEPTED":
+		reproject_from_python()
+	_refresh_wait_watch_hud()
+
+
+func _on_watch_toggle() -> void:
+	if _watch_active:
+		_stop_watch_world()
+	else:
+		_start_watch_world()
+
+
+func _start_watch_world() -> void:
+	if _client == null or _bridge_down:
+		return
+	if _spell_model != null and _spell_model.host_mode == SpellbookModel.HostMode.OPEN:
+		_spell_model.close_book()
+		_release_spellbook_pause_if_owned()
+	_watch_active = true
+	_watch_paused = false
+	_watch_acc = 0.0
+	_watch_turns_done = 0
+	_watch_ms_done = 0
+	_refresh_wait_watch_hud()
+
+
+func _stop_watch_world() -> void:
+	_watch_active = false
+	_watch_paused = false
+	_refresh_wait_watch_hud()
+
+
+func _on_watch_pause_toggle() -> void:
+	if not _watch_active:
+		return
+	_watch_paused = not _watch_paused
+	_refresh_wait_watch_hud()
+
+
+func _on_watch_speed_cycle() -> void:
+	if not _watch_active:
+		return
+	match _watch_speed:
+		1:
+			_watch_speed = 2
+		2:
+			_watch_speed = 5
+		_:
+			_watch_speed = 1
+	_refresh_wait_watch_hud()
+
+
+func _watch_world_tick(delta: float) -> void:
+	## Ordered Wait + AdvanceGame through the production sidecar. Bounded quanta.
+	if _client == null or _bridge_down:
+		return
+	if _spell_model != null and _spell_model.host_mode == SpellbookModel.HostMode.OPEN:
+		# Opening the book pauses observation without releasing focus/duel pauses.
+		return
+	if _duel_adapter != null and _duel_adapter.is_active():
+		return
+	if _clock_inflight_id != "" or _hud_wait_pending or _any_local_pause():
+		return
+	_watch_acc += delta * float(maxi(1, _watch_speed))
+	if _watch_acc < 0.55:
+		return
+	_watch_acc = 0.0
+	var player: Dictionary = _coerce_dict(_last_industry.get("player"))
+	var node_id := str(player.get("node_id", _fx_meta.get("node_id", "")))
+	_cmd_seq += 1
+	var wait_reply := _cmd("Wait", {"current_node": node_id, "press_id": "watch-wait-%d" % _cmd_seq})
+	if str(wait_reply.get("status", "")) != "ACCEPTED":
+		_refresh_wait_watch_hud()
+		return
+	_watch_turns_done += 1
+	var clock: Dictionary = _coerce_dict(probe_player(["clock"]).get("clock"))
+	var next_seq := int(clock.get("clock_sequence", 0)) + 1
+	var adv_reply := _cmd("AdvanceGame", {"delta_ms": 30000, "clock_sequence": next_seq})
+	if str(adv_reply.get("status", "")) == "ACCEPTED":
+		_watch_ms_done += 30000
+		_game_ms_sample = int(_coerce_dict(adv_reply.get("payload", {})).get("game_ms", _game_ms_sample + 30000))
+	reproject_from_python()
+	_refresh_wait_watch_hud()

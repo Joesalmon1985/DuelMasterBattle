@@ -1,0 +1,98 @@
+[
+  {
+    "seed": 507,
+    "ok": true,
+    "reason": "",
+    "brains": [
+      [
+        "faction:1",
+        "policy-im-build"
+      ],
+      [
+        "faction:2",
+        "policy-im-trade"
+      ]
+    ],
+    "draft": true
+  },
+  {
+    "seed": 508,
+    "ok": true,
+    "reason": "",
+    "brains": [
+      [
+        "faction:1",
+        "policy-im-build"
+      ],
+      [
+        "faction:2",
+        "policy-im-trade"
+      ]
+    ],
+    "draft": true
+  },
+  {
+    "seed": 509,
+    "ok": true,
+    "reason": "",
+    "brains": [
+      [
+        "faction:1",
+        "policy-im-build"
+      ],
+      [
+        "faction:2",
+        "policy-im-trade"
+      ]
+    ],
+    "draft": true
+  },
+  {
+    "seed": 510,
+    "ok": true,
+    "reason": "",
+    "brains": [
+      [
+        "faction:1",
+        "policy-im-build"
+      ],
+      [
+        "faction:2",
+        "policy-im-trade"
+      ]
+    ],
+    "draft": true
+  },
+  {
+    "seed": 511,
+    "ok": true,
+    "reason": "",
+    "brains": [
+      [
+        "faction:1",
+        "policy-im-build"
+      ],
+      [
+        "faction:2",
+        "policy-im-trade"
+      ]
+    ],
+    "draft": true
+  },
+  {
+    "seed": 512,
+    "ok": true,
+    "reason": "",
+    "brains": [
+      [
+        "faction:1",
+        "policy-im-build"
+      ],
+      [
+        "faction:2",
+        "policy-im-trade"
+      ]
+    ],
+    "draft": true
+  }
+]

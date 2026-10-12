@@ -9,6 +9,8 @@ const FACTION_COLORS := {
 	"faction:2": Color("#3A6EA5"),
 	"faction:3": Color("#3D8B57"),
 	"faction:4": Color("#B85C38"),
+	"faction:5": Color("#8B3A8B"),
+	"faction:6": Color("#2F6F7A"),
 	"faction:red": Color(0.82, 0.22, 0.22),
 	"faction:blue": Color(0.22, 0.42, 0.88),
 	"faction:a": Color(0.75, 0.55, 0.15),

@@ -1,0 +1,12 @@
+{
+  "seed": 507,
+  "checkpoints": [
+    "CP-CARGO",
+    "CP-ERA",
+    "CP-INDUSTRY",
+    "CP-ROUND",
+    "CP-START",
+    "CP-WARD"
+  ],
+  "dir": "Pack/DuelMasterBattle_Build_Pack/tracking/polish/checkpoints/seed507"
+}

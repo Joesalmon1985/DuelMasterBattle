@@ -1,0 +1,17 @@
+{
+  "id": "quest.catastrophe.outbreak_treatment",
+  "schema_version": 1,
+  "version": 1,
+  "family": "catastrophe",
+  "source": "Authored for the hybrid on the legacy catastrophe template schema (godot_project/content/source/quests/catastrophe/*.json). Placeholder wording.",
+  "required_cause": {"kinds": ["outbreak"], "detail": "Two or more outbreak cubes sit in the hex region of a standing settlement."},
+  "binding": {"stakeholder_role": "healer", "bind_existing_entities_only": true, "competing_cost": "Time spent in this region is not spent elsewhere.", "compulsory_main_quest": false},
+  "stages": [{"id": "offered", "index": 0}, {"id": "investigate", "index": 1}, {"id": "treatment", "index": 2}, {"id": "resolution", "index": 3}],
+  "statuses": ["offered", "active", "suspended", "completed", "resolved_by_world", "failed_with_consequence"],
+  "solutions": [{"id": "treat_region", "cost_bearer": "wizard_time", "branch": "treated", "effects": [{"kind": "cubes_removed"}]}],
+  "world_resolved_route": {"when": "region_cubes_zero_without_wizard", "status": "resolved_by_world"},
+  "invalid_target_route": {"when": "settlement_destroyed", "status": "failed_with_consequence", "branch": "destroyed_settlement"},
+  "abandon_route": {"when": "wizard_gives_up", "status": "failed_with_consequence", "branch": "abandoned"},
+  "persistent_return": {"dedupe_by": ["template_id", "cause_id", "stakeholder_id"], "preserve_on_leave": true, "no_duplicate_reward": true},
+  "tunables": {"min_cubes": 2}
+}

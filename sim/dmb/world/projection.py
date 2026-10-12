@@ -612,7 +612,21 @@ class _LocalProjectionGeographyMixin:
                 }
             )
         record["exits"] = bound
-
+        # Isolated / no-topology nodes still need four cardinal walk targets for
+        # local projection acceptance (T078). Prefer topology-bound exits above.
+        if not bound:
+            record["exits"] = [
+                {
+                    "id": f"exit.{direction}",
+                    "grid": list(grids[direction]),
+                    "direction": direction,
+                    "label": f"Path {direction}",
+                    "passage": "trail",
+                    "interactive": True,
+                    "quiet_label": True,
+                }
+                for direction in ("north", "south", "east", "west")
+            ]
     def _apply_manifest_bindings(self, record: dict[str, Any], manifest: dict[str, Any] | None) -> None:
         if not manifest:
             # Bind any live buildings/people already on this node.

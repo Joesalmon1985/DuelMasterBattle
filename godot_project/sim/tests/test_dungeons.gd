@@ -14,6 +14,7 @@ func run() -> void:
 	_test_save_roundtrip()
 	_test_determinism()
 	_test_network_walk_is_solvable()
+	_test_every_door_is_reachable()
 
 
 func _test_towers_at_setup() -> void:
@@ -201,3 +202,48 @@ func _test_network_walk_is_solvable() -> void:
 			assert_true(bool(st["solved"]), "%s offerings room solves" % d["id"])
 			assert_true(need in items, "%s keeps the imported %s" % [d["id"], need])
 		pockets.append(str(d["provides"]))
+
+
+## Walk the generated map the way the player can: '#' and solid entities block. After a room is answered the way to the next room must
+## be open, for every template (the timed gate used to stay in the doorway).
+func _test_every_door_is_reachable() -> void:
+	var solid := ["fire", "creature", "wizard", "npc", "corpse", "pickup", "sign", "door", "logs", "boulder", "rockfall"]
+	var bad := 0
+	for s in range(1, 61):
+		var d := {"id": "cave_%d" % s, "kind": "cave", "faction": "Red", "seed": s * 7919, "provides": "sigil_x%d" % s,
+			"needs": {"item": "sigil_ash", "from": "settlement"}}
+		d["puzzles"] = DmbPuzzleGen.generate(d)
+		for room in range(3):
+			var states := {}
+			for r in range(room + 1):
+				var p: Dictionary = d["puzzles"][r]
+				var st := DmbPuzzleLogic.fresh_state(p)
+				st["solved"] = true
+				states["%s/%s" % [d["id"], p["id"]]] = st
+			var area: Dictionary = DmbDungeonMap.area_for(d, states, "node_1", [3, 4])
+			var rows: Array = area["rows"]
+			var blocked := {}
+			for e in area["entities"]:
+				if str(e["kind"]) in solid:
+					blocked[Vector2i(int(e["pos"][0]), int(e["pos"][1]))] = true
+			var start := Vector2i(5, DmbDungeonMap.room_origin_y(room) + 6)
+			var goal := Vector2i(6, DmbDungeonMap.room_origin_y(room + 1) + 6)
+			var seen := {start: true}
+			var queue: Array = [start]
+			var found := false
+			while not queue.is_empty():
+				var cur: Vector2i = queue.pop_front()
+				if cur == goal:
+					found = true
+					break
+				for dd in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+					var n: Vector2i = cur + dd
+					if seen.has(n) or n.y < 0 or n.y >= rows.size() or n.x < 0 or n.x >= String(rows[0]).length():
+						continue
+					if String(rows[n.y])[n.x] == "#" or blocked.has(n):
+						continue
+					seen[n] = true
+					queue.append(n)
+			if not found:
+				bad += 1
+	assert_eq(bad, 0, "every answered room opens the way to the next, for every template")

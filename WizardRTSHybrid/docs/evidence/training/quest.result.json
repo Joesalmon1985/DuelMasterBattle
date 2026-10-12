@@ -1,0 +1,96 @@
+{
+ "eval": {
+  "base": {
+   "net": {
+    "success": 1.0,
+    "return": 1.41,
+    "reasons": [
+     "reached_dungeon_with_the_sigil"
+    ]
+   },
+   "expert": {
+    "success": 1.0,
+    "return": 1.41,
+    "reasons": [
+     "reached_dungeon_with_the_sigil"
+    ]
+   }
+  },
+  "world_fix_first": {
+   "net": {
+    "success": 0.0,
+    "return": -0.03000000000000001,
+    "reasons": [
+     "resolved_by_world"
+    ]
+   },
+   "expert": {
+    "success": 0.0,
+    "return": -0.03000000000000001,
+    "reasons": [
+     "resolved_by_world"
+    ]
+   }
+  },
+  "mine_destroyed": {
+   "net": {
+    "success": 0.0,
+    "return": -0.33,
+    "reasons": [
+     "failed_with_consequence"
+    ]
+   },
+   "expert": {
+    "success": 0.0,
+    "return": -0.33,
+    "reasons": [
+     "failed_with_consequence"
+    ]
+   }
+  },
+  "npc_dead": {
+   "net": {
+    "success": 0.0,
+    "return": -0.07999999999999999,
+    "reasons": [
+     "suspended"
+    ]
+   },
+   "expert": {
+    "success": 0.0,
+    "return": -0.07999999999999999,
+    "reasons": [
+     "suspended"
+    ]
+   }
+  },
+  "reload": {
+   "net": {
+    "success": 1.0,
+    "return": 1.4399999999999997,
+    "reasons": [
+     "reached_dungeon_with_the_sigil"
+    ]
+   },
+   "expert": {
+    "success": 1.0,
+    "return": 1.4399999999999997,
+    "reasons": [
+     "reached_dungeon_with_the_sigil"
+    ]
+   }
+  }
+ },
+ "bc_final_loss": 0.08555924611420804,
+ "samples": 216,
+ "seeds": {
+  "train": [
+   0,
+   23
+  ],
+  "test": [
+   100,
+   111
+  ]
+ }
+}

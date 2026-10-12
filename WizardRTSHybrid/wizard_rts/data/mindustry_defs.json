@@ -1,0 +1,5561 @@
+{
+ "_provenance": {
+  "checked_out_commit": "26b66f9bdbd3a77b32f10f3cb350a9a737d5f012",
+  "commit": "26b66f9bdbd3a77b32f10f3cb350a9a737d5f012",
+  "files": [
+   "Items.java",
+   "Liquids.java",
+   "Blocks.java",
+   "UnitTypes.java"
+  ],
+  "license": "GPL-3.0",
+  "note": "Original numbers only; hybrid adaptation is in mindustry_overrides.json",
+  "source": "https://github.com/Anuken/Mindustry",
+  "units": "ticks/60 = seconds; power in power-units per second; sizes in tiles"
+ },
+ "blocks": {
+  "additive-reconstructor": {
+   "category": "units",
+   "class": "Reconstructor",
+   "consume_items": {
+    "graphite": 40,
+    "silicon": 40
+   },
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "size": 3
+   },
+   "health": null,
+   "java_name": "additiveReconstructor",
+   "requirements": {
+    "copper": 200,
+    "lead": 120,
+    "silicon": 90
+   },
+   "size": 3
+  },
+  "afflict": {
+   "category": "turret",
+   "class": "PowerTurret",
+   "consume_power_per_second": 300.0,
+   "consume_power_per_tick": 5.0,
+   "fields": {
+    "heatRequirement": 10.0,
+    "inaccuracy": 1.0,
+    "maxHeatEfficiency": 2.0,
+    "range": 350,
+    "recoil": 3.0,
+    "reload": 100.0,
+    "researchCostMultiplier": 0.04,
+    "rotateSpeed": 1.5,
+    "scaledHealth": 220,
+    "shake": 2.0,
+    "shootCone": 20.0,
+    "shootY": 4,
+    "size": 4
+   },
+   "health": null,
+   "java_name": "afflict",
+   "requirements": {
+    "graphite": 250,
+    "oxide": 40,
+    "silicon": 200,
+    "surge-alloy": 100
+   },
+   "size": 4
+  },
+  "air-factory": {
+   "category": "units",
+   "class": "UnitFactory",
+   "consume_power_per_second": 72.0,
+   "consume_power_per_tick": 1.2,
+   "fields": {
+    "size": 3
+   },
+   "health": null,
+   "java_name": "airFactory",
+   "plans": [
+    {
+     "requirements": {
+      "silicon": 15
+     },
+     "time_seconds": 15.0,
+     "time_ticks": 900.0,
+     "unit": "flare"
+    },
+    {
+     "requirements": {
+      "lead": 15,
+      "silicon": 30
+     },
+     "time_seconds": 35.0,
+     "time_ticks": 2100.0,
+     "unit": "mono"
+    }
+   ],
+   "requirements": {
+    "copper": 60,
+    "lead": 70
+   },
+   "size": 3
+  },
+  "arc": {
+   "category": "turret",
+   "class": "PowerTurret",
+   "consume_power_per_second": 198.0,
+   "consume_power_per_tick": 3.3,
+   "fields": {
+    "health": 260,
+    "range": 90.0,
+    "recoil": 1.0,
+    "reload": 35.0,
+    "rotateSpeed": 8.0,
+    "shootCone": 40.0,
+    "size": 1,
+    "targetAir": false
+   },
+   "health": 260,
+   "java_name": "arc",
+   "requirements": {
+    "copper": 50,
+    "lead": 50
+   },
+   "size": 1
+  },
+  "armored-conveyor": {
+   "category": "distribution",
+   "class": "ArmoredConveyor",
+   "fields": {
+    "displayedSpeed": 11.0,
+    "health": 180,
+    "speed": 0.08
+   },
+   "health": 180,
+   "java_name": "armoredConveyor",
+   "requirements": {
+    "metaglass": 1,
+    "plastanium": 1,
+    "thorium": 1
+   },
+   "size": 1
+  },
+  "armored-duct": {
+   "category": "distribution",
+   "class": "Duct",
+   "fields": {
+    "armored": true,
+    "health": 140,
+    "speed": 4.0
+   },
+   "health": 140,
+   "java_name": "armoredDuct",
+   "requirements": {
+    "beryllium": 2,
+    "tungsten": 1
+   },
+   "size": 1
+  },
+  "atmospheric-concentrator": {
+   "category": "crafting",
+   "class": "HeatCrafter",
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "ambientSoundVolume": 0.06,
+    "hasLiquids": true,
+    "heatRequirement": 6.0,
+    "liquidCapacity": 40.0,
+    "researchCostMultiplier": 1.1,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "atmosphericConcentrator",
+   "requirements": {
+    "beryllium": 180,
+    "oxide": 60,
+    "silicon": 150
+   },
+   "size": 3
+  },
+  "barrier-projector": {
+   "category": "effect",
+   "class": "DirectionalForceProjector",
+   "consume_power_per_second": 240.0,
+   "consume_power_per_tick": 4.0,
+   "fields": {
+    "cooldownBrokenBase": 0.35,
+    "cooldownNormal": 3.0,
+    "length": 36,
+    "shieldHealth": 2000.0,
+    "size": 3,
+    "width": 50.0
+   },
+   "health": null,
+   "java_name": "barrierProjector",
+   "requirements": {
+    "silicon": 125,
+    "surge-alloy": 100
+   },
+   "size": 3
+  },
+  "basic-assembler-module": {
+   "category": "units",
+   "class": "UnitAssemblerModule",
+   "consume_power_per_second": 240.0,
+   "consume_power_per_tick": 4.0,
+   "fields": {
+    "researchCostMultiplier": 0.75,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "basicAssemblerModule",
+   "requirements": {
+    "carbide": 300,
+    "oxide": 200,
+    "phase-fabric": 400,
+    "thorium": 500
+   },
+   "size": 5
+  },
+  "battery": {
+   "category": "power",
+   "class": "Battery",
+   "fields": {
+    "baseExplosiveness": 1.0
+   },
+   "health": null,
+   "java_name": "battery",
+   "power_buffer": 4000.0,
+   "requirements": {
+    "copper": 5,
+    "lead": 20
+   },
+   "size": 1
+  },
+  "battery-large": {
+   "category": "power",
+   "class": "Battery",
+   "fields": {
+    "baseExplosiveness": 5.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "batteryLarge",
+   "power_buffer": 50000.0,
+   "requirements": {
+    "lead": 50,
+    "silicon": 30,
+    "titanium": 20
+   },
+   "size": 3
+  },
+  "beam-node": {
+   "category": "power",
+   "class": "BeamNode",
+   "fields": {
+    "fogRadius": 1,
+    "health": 90,
+    "range": 10
+   },
+   "health": 90,
+   "java_name": "beamNode",
+   "power_buffer": 1000.0,
+   "requirements": {
+    "beryllium": 8
+   },
+   "size": 1
+  },
+  "beam-tower": {
+   "category": "power",
+   "class": "BeamNode",
+   "fields": {
+    "fogRadius": 2,
+    "range": 23,
+    "scaledHealth": 90,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "beamTower",
+   "power_buffer": 40000.0,
+   "requirements": {
+    "beryllium": 30,
+    "oxide": 10,
+    "silicon": 10
+   },
+   "size": 3
+  },
+  "beryllium-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "armor": 2.0,
+    "buildCostMultiplier": 8.0
+   },
+   "health": null,
+   "java_name": "berylliumWall",
+   "requirements": {
+    "beryllium": 6
+   },
+   "size": 1
+  },
+  "blast-door": {
+   "category": "defense",
+   "class": "AutoDoor",
+   "fields": {
+    "armor": 14.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "blastDoor",
+   "requirements": {
+    "silicon": 24,
+    "tungsten": 24
+   },
+   "size": 2
+  },
+  "blast-drill": {
+   "category": "production",
+   "class": "Drill",
+   "consume_liquid": {
+    "liquid": "water",
+    "per_tick": 0.1
+   },
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "drill": {
+    "drill_time": 280,
+    "hardness_multiplier": 50.0,
+    "items_per_second": {
+     "beryllium": 2.2326,
+     "coal": 2.5263,
+     "copper": 2.9091,
+     "lead": 2.9091,
+     "sand": 3.4286,
+     "scrap": 3.4286,
+     "thorium": 2.0,
+     "titanium": 2.2326,
+     "tungsten": 1.8113
+    },
+    "tier": 5
+   },
+   "fields": {
+    "drawRim": true,
+    "drillTime": 280,
+    "hasPower": true,
+    "itemCapacity": 20,
+    "liquidBoostIntensity": 1.8,
+    "rotateSpeed": 6.0,
+    "size": 4,
+    "tier": 5,
+    "updateEffectChance": 0.03,
+    "warmupSpeed": 0.01
+   },
+   "health": null,
+   "java_name": "blastDrill",
+   "requirements": {
+    "copper": 65,
+    "silicon": 60,
+    "thorium": 75,
+    "titanium": 50
+   },
+   "size": 4
+  },
+  "blast-mixer": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "pyratite": 1,
+    "spore-pod": 1
+   },
+   "consume_power_per_second": 24.0,
+   "consume_power_per_tick": 0.4,
+   "fields": {
+    "hasItems": true,
+    "hasPower": true,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "blastMixer",
+   "output_item": {
+    "blast-compound": 1
+   },
+   "requirements": {
+    "lead": 30,
+    "titanium": 20
+   },
+   "size": 2
+  },
+  "breach": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "ammoPerShot": 2,
+    "coolantMultiplier": 6.0,
+    "range": 190,
+    "recoil": 2.0,
+    "reload": 40.0,
+    "researchCostMultiplier": 0.05,
+    "rotateSpeed": 1.5,
+    "scaledHealth": 180,
+    "shake": 1.0,
+    "shootCone": 3.0,
+    "shootY": -2,
+    "size": 3,
+    "targetUnderBlocks": false
+   },
+   "health": null,
+   "java_name": "breach",
+   "requirements": {
+    "beryllium": 150,
+    "graphite": 250,
+    "silicon": 150
+   },
+   "size": 3
+  },
+  "bridge-conduit": {
+   "category": "liquid",
+   "class": "LiquidBridge",
+   "fields": {
+    "arrowSpacing": 6.0,
+    "hasPower": false,
+    "range": 4
+   },
+   "health": null,
+   "java_name": "bridgeConduit",
+   "requirements": {
+    "graphite": 4,
+    "metaglass": 8
+   },
+   "size": 1
+  },
+  "bridge-conveyor": {
+   "category": "distribution",
+   "class": "BufferedItemBridge",
+   "fields": {
+    "arrowSpacing": 6.0,
+    "bufferCapacity": 14,
+    "range": 4,
+    "speed": 74.0
+   },
+   "health": null,
+   "java_name": "itemBridge",
+   "requirements": {
+    "copper": 6,
+    "lead": 6
+   },
+   "size": 1
+  },
+  "build-tower": {
+   "category": "effect",
+   "class": "BuildTurret",
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "buildSpeed": 1.5,
+    "range": 200.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "buildTower",
+   "requirements": {
+    "oxide": 40,
+    "silicon": 150,
+    "thorium": 60
+   },
+   "size": 3
+  },
+  "carbide-crucible": {
+   "category": "crafting",
+   "class": "HeatCrafter",
+   "consume_items": {
+    "graphite": 3,
+    "tungsten": 2
+   },
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "ambientSoundVolume": 0.09,
+    "heatRequirement": 10.0,
+    "itemCapacity": 20,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "carbideCrucible",
+   "output_item": {
+    "carbide": 1
+   },
+   "requirements": {
+    "oxide": 60,
+    "thorium": 150,
+    "tungsten": 110
+   },
+   "size": 3
+  },
+  "carbide-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "armor": 16.0
+   },
+   "health": null,
+   "java_name": "carbideWall",
+   "requirements": {
+    "carbide": 6,
+    "thorium": 6
+   },
+   "size": 1
+  },
+  "chemical-combustion-chamber": {
+   "category": "power",
+   "class": "ConsumeGenerator",
+   "fields": {
+    "ambientSoundVolume": 0.06,
+    "powerProduction": 10.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "chemicalCombustionChamber",
+   "power_production_per_second": 600.0,
+   "requirements": {
+    "graphite": 40,
+    "oxide": 40,
+    "silicon": 30,
+    "tungsten": 40
+   },
+   "size": 3
+  },
+  "cliff-crusher": {
+   "category": "production",
+   "class": "WallCrafter",
+   "fields": {
+    "ambientSoundVolume": 0.04,
+    "drillTime": 110.0,
+    "fogRadius": 2,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "cliffCrusher",
+   "requirements": {
+    "beryllium": 20,
+    "graphite": 25
+   },
+   "size": 2
+  },
+  "coal-centrifuge": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_liquid": {
+    "liquid": "oil",
+    "per_tick": 0.1
+   },
+   "consume_power_per_second": 42.0,
+   "consume_power_per_tick": 0.7,
+   "craft_seconds": 0.5,
+   "fields": {
+    "craftTime": 30.0,
+    "rotateDraw": false,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "coalCentrifuge",
+   "output_item": {
+    "coal": 1
+   },
+   "requirements": {
+    "graphite": 40,
+    "lead": 30,
+    "titanium": 20
+   },
+   "size": 2
+  },
+  "combustion-generator": {
+   "category": "power",
+   "class": "ConsumeGenerator",
+   "fields": {
+    "ambientSoundVolume": 0.03,
+    "itemDuration": 120.0,
+    "powerProduction": 1.0
+   },
+   "health": null,
+   "java_name": "combustionGenerator",
+   "power_production_per_second": 60.0,
+   "requirements": {
+    "copper": 25,
+    "lead": 15
+   },
+   "size": 1
+  },
+  "conduit": {
+   "category": "liquid",
+   "class": "Conduit",
+   "fields": {
+    "health": 45
+   },
+   "health": 45,
+   "java_name": "conduit",
+   "requirements": {
+    "metaglass": 1
+   },
+   "size": 1
+  },
+  "constructor": {
+   "category": "units",
+   "class": "Constructor",
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "buildSpeed": 0.6,
+    "hasPower": true,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "constructor",
+   "requirements": {
+    "beryllium": 150,
+    "silicon": 100,
+    "tungsten": 80
+   },
+   "size": 3
+  },
+  "container": {
+   "category": "effect",
+   "class": "StorageBlock",
+   "fields": {
+    "itemCapacity": 300,
+    "scaledHealth": 55,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "container",
+   "requirements": {
+    "titanium": 100
+   },
+   "size": 2
+  },
+  "conveyor": {
+   "category": "distribution",
+   "class": "Conveyor",
+   "conveyor": {
+    "capacity": 3,
+    "displayed_items_per_second": 4.2,
+    "item_space": 0.4,
+    "speed": 0.03,
+    "tiles_per_second": 1.8
+   },
+   "fields": {
+    "buildCostMultiplier": 2.0,
+    "displayedSpeed": 4.2,
+    "health": 45,
+    "speed": 0.03
+   },
+   "health": 45,
+   "java_name": "conveyor",
+   "requirements": {
+    "copper": 1
+   },
+   "size": 1
+  },
+  "copper-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "researchCostMultiplier": 0.1
+   },
+   "health": null,
+   "java_name": "copperWall",
+   "requirements": {
+    "copper": 6
+   },
+   "size": 1
+  },
+  "core-acropolis": {
+   "category": "effect",
+   "class": "CoreBlock",
+   "fields": {
+    "armor": 15.0,
+    "buildCostMultiplier": 0.7,
+    "health": 30000,
+    "incinerateNonBuildable": true,
+    "itemCapacity": 4000,
+    "requiresCoreZone": true,
+    "researchCostMultiplier": 0.1,
+    "size": 6,
+    "unitCapModifier": 15
+   },
+   "health": 30000,
+   "java_name": "coreAcropolis",
+   "requirements": {
+    "beryllium": 6000,
+    "carbide": 3000,
+    "oxide": 3000,
+    "silicon": 5000,
+    "tungsten": 5000
+   },
+   "size": 6
+  },
+  "core-bastion": {
+   "category": "effect",
+   "class": "CoreBlock",
+   "fields": {
+    "alwaysUnlocked": true,
+    "armor": 5.0,
+    "buildCostMultiplier": 0.7,
+    "health": 4500,
+    "incinerateNonBuildable": true,
+    "isFirstTier": true,
+    "itemCapacity": 2000,
+    "requiresCoreZone": true,
+    "researchCostMultiplier": 0.07,
+    "size": 4,
+    "unitCapModifier": 15
+   },
+   "health": 4500,
+   "java_name": "coreBastion",
+   "requirements": {
+    "beryllium": 800,
+    "graphite": 1000,
+    "silicon": 1000
+   },
+   "size": 4
+  },
+  "core-citadel": {
+   "category": "effect",
+   "class": "CoreBlock",
+   "fields": {
+    "armor": 10.0,
+    "buildCostMultiplier": 0.7,
+    "health": 16000,
+    "incinerateNonBuildable": true,
+    "itemCapacity": 3000,
+    "requiresCoreZone": true,
+    "researchCostMultiplier": 0.17,
+    "size": 5,
+    "unitCapModifier": 15
+   },
+   "health": 16000,
+   "java_name": "coreCitadel",
+   "requirements": {
+    "beryllium": 4000,
+    "oxide": 1000,
+    "silicon": 4000,
+    "tungsten": 3000
+   },
+   "size": 5
+  },
+  "core-foundation": {
+   "category": "effect",
+   "class": "CoreBlock",
+   "fields": {
+    "health": 3500,
+    "itemCapacity": 9000,
+    "researchCostMultiplier": 0.07,
+    "size": 4,
+    "unitCapModifier": 16
+   },
+   "health": 3500,
+   "java_name": "coreFoundation",
+   "requirements": {
+    "copper": 3000,
+    "lead": 3000,
+    "silicon": 2000
+   },
+   "size": 4
+  },
+  "core-nucleus": {
+   "category": "effect",
+   "class": "CoreBlock",
+   "fields": {
+    "health": 6000,
+    "itemCapacity": 13000,
+    "researchCostMultiplier": 0.11,
+    "size": 5,
+    "unitCapModifier": 24
+   },
+   "health": 6000,
+   "java_name": "coreNucleus",
+   "requirements": {
+    "copper": 8000,
+    "lead": 8000,
+    "silicon": 5000,
+    "thorium": 4000
+   },
+   "size": 5
+  },
+  "cryofluid-mixer": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "titanium": 1
+   },
+   "consume_power_per_second": 60.0,
+   "consume_power_per_tick": 1.0,
+   "craft_seconds": 2.0,
+   "fields": {
+    "craftTime": 120,
+    "hasItems": true,
+    "hasLiquids": true,
+    "hasPower": true,
+    "liquidCapacity": 24.0,
+    "outputsLiquid": true,
+    "rotate": false,
+    "size": 2,
+    "solid": true
+   },
+   "health": null,
+   "java_name": "cryofluidMixer",
+   "requirements": {
+    "lead": 65,
+    "silicon": 40,
+    "titanium": 60
+   },
+   "size": 2
+  },
+  "cultivator": {
+   "category": "production",
+   "class": "AttributeCrafter",
+   "craft_seconds": 1.6667,
+   "fields": {
+    "craftTime": 100,
+    "hasItems": true,
+    "hasLiquids": true,
+    "hasPower": true,
+    "legacyReadWarmup": true,
+    "maxBoost": 2.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "cultivator",
+   "output_item": {
+    "spore-pod": 1
+   },
+   "requirements": {
+    "copper": 25,
+    "lead": 25,
+    "silicon": 10
+   },
+   "size": 2
+  },
+  "cyanogen-synthesizer": {
+   "category": "crafting",
+   "class": "HeatCrafter",
+   "consume_items": {
+    "graphite": 1
+   },
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "ambientSoundVolume": 0.08,
+    "heatRequirement": 5.0,
+    "liquidCapacity": 80.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "cyanogenSynthesizer",
+   "requirements": {
+    "beryllium": 90,
+    "carbide": 50,
+    "silicon": 80
+   },
+   "size": 3
+  },
+  "cyclone": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "inaccuracy": 10.0,
+    "range": 200.0,
+    "recoil": 1.5,
+    "recoilTime": 10,
+    "recoils": 3,
+    "reload": 8.0,
+    "rotateSpeed": 10.0,
+    "scaledHealth": 145,
+    "shootCone": 30.0,
+    "shootY": 10.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "cyclone",
+   "requirements": {
+    "copper": 200,
+    "plastanium": 80,
+    "titanium": 125
+   },
+   "size": 3
+  },
+  "deconstructor": {
+   "category": "units",
+   "class": "PayloadDeconstructor",
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "deconstructSpeed": 2.0,
+    "itemCapacity": 250,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "deconstructor",
+   "requirements": {
+    "beryllium": 250,
+    "carbide": 250,
+    "oxide": 100,
+    "silicon": 250
+   },
+   "size": 5
+  },
+  "differential-generator": {
+   "category": "power",
+   "class": "ConsumeGenerator",
+   "consume_items": {
+    "pyratite": 1
+   },
+   "consume_liquid": {
+    "liquid": "cryofluid",
+    "per_tick": 0.1
+   },
+   "fields": {
+    "ambientSoundVolume": 0.03,
+    "hasItems": true,
+    "hasLiquids": true,
+    "itemDuration": 220.0,
+    "powerProduction": 18.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "differentialGenerator",
+   "power_production_per_second": 1080.0,
+   "requirements": {
+    "copper": 70,
+    "lead": 100,
+    "metaglass": 50,
+    "silicon": 65,
+    "titanium": 50
+   },
+   "size": 3
+  },
+  "diffuse": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "ammoPerShot": 3,
+    "consumeAmmoOnce": true,
+    "coolantMultiplier": 6.0,
+    "inaccuracy": 0.2,
+    "maxAmmo": 30,
+    "range": 125,
+    "recoil": 2.0,
+    "reload": 30.0,
+    "rotateSpeed": 3.0,
+    "scaledHealth": 210,
+    "shake": 1.0,
+    "shootCone": 40.0,
+    "shootY": 5.0,
+    "size": 3,
+    "targetUnderBlocks": false,
+    "velocityRnd": 0.17
+   },
+   "health": null,
+   "java_name": "diffuse",
+   "requirements": {
+    "beryllium": 150,
+    "graphite": 200,
+    "silicon": 200,
+    "tungsten": 50
+   },
+   "size": 3
+  },
+  "diode": {
+   "category": "power",
+   "class": "PowerDiode",
+   "fields": {},
+   "health": null,
+   "java_name": "diode",
+   "requirements": {
+    "metaglass": 10,
+    "plastanium": 5,
+    "silicon": 10
+   },
+   "size": 1
+  },
+  "disassembler": {
+   "category": "crafting",
+   "class": "Separator",
+   "consume_items": {
+    "scrap": 1
+   },
+   "consume_liquid": {
+    "liquid": "slag",
+    "per_tick": 0.12
+   },
+   "consume_power_per_second": 240.0,
+   "consume_power_per_tick": 4.0,
+   "fields": {
+    "craftTime": 15.0,
+    "hasPower": true,
+    "itemCapacity": 20,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "disassembler",
+   "requirements": {
+    "plastanium": 40,
+    "silicon": 150,
+    "thorium": 80,
+    "titanium": 100
+   },
+   "size": 3
+  },
+  "disperse": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "consumeAmmoOnce": true,
+    "coolantMultiplier": 2.5,
+    "inaccuracy": 8.0,
+    "range": 310.0,
+    "reload": 9.0,
+    "rotateSpeed": 5.0,
+    "scaledHealth": 280,
+    "shootCone": 30.0,
+    "shootWarmupSpeed": 0.08,
+    "shootY": 15.0,
+    "size": 4,
+    "targetGround": false
+   },
+   "health": null,
+   "java_name": "disperse",
+   "requirements": {
+    "beryllium": 350,
+    "oxide": 150,
+    "silicon": 200,
+    "thorium": 50
+   },
+   "size": 4
+  },
+  "distributor": {
+   "category": "distribution",
+   "class": "Router",
+   "fields": {
+    "buildCostMultiplier": 3.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "distributor",
+   "requirements": {
+    "copper": 4,
+    "lead": 4
+   },
+   "size": 2
+  },
+  "door": {
+   "category": "defense",
+   "class": "Door",
+   "fields": {},
+   "health": null,
+   "java_name": "door",
+   "requirements": {
+    "silicon": 4,
+    "titanium": 6
+   },
+   "size": 1
+  },
+  "duct": {
+   "category": "distribution",
+   "class": "Duct",
+   "fields": {
+    "health": 90,
+    "speed": 4.0
+   },
+   "health": 90,
+   "java_name": "duct",
+   "requirements": {
+    "beryllium": 1
+   },
+   "size": 1
+  },
+  "duct-bridge": {
+   "category": "distribution",
+   "class": "DuctBridge",
+   "fields": {
+    "buildCostMultiplier": 2.0,
+    "health": 90,
+    "researchCostMultiplier": 0.3,
+    "speed": 4.0
+   },
+   "health": 90,
+   "java_name": "ductBridge",
+   "requirements": {
+    "beryllium": 20
+   },
+   "size": 1
+  },
+  "duct-router": {
+   "category": "distribution",
+   "class": "DuctRouter",
+   "fields": {
+    "health": 90,
+    "regionRotated1": 1,
+    "solid": false,
+    "speed": 4.0
+   },
+   "health": 90,
+   "java_name": "ductRouter",
+   "requirements": {
+    "beryllium": 10
+   },
+   "size": 1
+  },
+  "duct-unloader": {
+   "category": "distribution",
+   "class": "DirectionalUnloader",
+   "fields": {
+    "health": 120,
+    "regionRotated1": 1,
+    "solid": false,
+    "speed": 4.0,
+    "underBullets": true
+   },
+   "health": 120,
+   "java_name": "ductUnloader",
+   "requirements": {
+    "graphite": 20,
+    "silicon": 20,
+    "tungsten": 10
+   },
+   "size": 1
+  },
+  "duo": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "health": 250,
+    "inaccuracy": 2.0,
+    "range": 110,
+    "recoil": 0.5,
+    "recoils": 2,
+    "reload": 20.0,
+    "researchCostMultiplier": 0.05,
+    "rotateSpeed": 10.0,
+    "shootCone": 15.0,
+    "shootY": 3.0
+   },
+   "health": 250,
+   "java_name": "duo",
+   "requirements": {
+    "copper": 35
+   },
+   "size": 1
+  },
+  "electric-heater": {
+   "category": "crafting",
+   "class": "HeatProducer",
+   "fields": {
+    "heatOutput": 3.0,
+    "itemCapacity": 0,
+    "regionRotated1": 1,
+    "researchCostMultiplier": 4.0,
+    "rotateDraw": false,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "electricHeater",
+   "requirements": {
+    "oxide": 30,
+    "tungsten": 30
+   },
+   "size": 2
+  },
+  "electrolyzer": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_power_per_second": 60.0,
+   "consume_power_per_tick": 1.0,
+   "craft_seconds": 0.1667,
+   "fields": {
+    "ambientSoundVolume": 0.08,
+    "craftTime": 10.0,
+    "invertFlip": true,
+    "liquidCapacity": 50.0,
+    "regionRotated1": 3,
+    "researchCostMultiplier": 1.2,
+    "rotate": true,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "electrolyzer",
+   "requirements": {
+    "beryllium": 130,
+    "graphite": 40,
+    "silicon": 50,
+    "tungsten": 80
+   },
+   "size": 3
+  },
+  "eruption-drill": {
+   "category": "production",
+   "class": "BurstDrill",
+   "consume_power_per_second": 360.0,
+   "consume_power_per_tick": 6.0,
+   "fields": {
+    "arrowOffset": 2.0,
+    "arrowSpacing": 5.0,
+    "arrows": 2,
+    "fogRadius": 5,
+    "hasPower": true,
+    "itemCapacity": 50,
+    "shake": 4.0,
+    "size": 5,
+    "tier": 7
+   },
+   "health": null,
+   "java_name": "eruptionDrill",
+   "requirements": {
+    "oxide": 20,
+    "silicon": 200,
+    "thorium": 120,
+    "tungsten": 200
+   },
+   "size": 5
+  },
+  "exponential-reconstructor": {
+   "category": "units",
+   "class": "Reconstructor",
+   "consume_items": {
+    "plastanium": 650,
+    "silicon": 850,
+    "titanium": 750
+   },
+   "consume_liquid": {
+    "liquid": "cryofluid",
+    "per_tick": 1.0
+   },
+   "consume_power_per_second": 780.0,
+   "consume_power_per_tick": 13.0,
+   "fields": {
+    "liquidCapacity": 60.0,
+    "size": 7
+   },
+   "health": null,
+   "java_name": "exponentialReconstructor",
+   "requirements": {
+    "lead": 2000,
+    "phase-fabric": 600,
+    "plastanium": 450,
+    "silicon": 1000,
+    "thorium": 750,
+    "titanium": 2000
+   },
+   "size": 7
+  },
+  "flux-reactor": {
+   "category": "power",
+   "class": "VariableReactor",
+   "fields": {
+    "ambientSoundVolume": 0.13,
+    "explosionDamage": 2500,
+    "explosionMinWarmup": 0.5,
+    "explosionRadius": 17,
+    "liquidCapacity": 30.0,
+    "maxHeat": 140.0,
+    "powerProduction": 120.0,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "fluxReactor",
+   "power_production_per_second": 7200.0,
+   "requirements": {
+    "carbide": 200,
+    "graphite": 300,
+    "oxide": 100,
+    "silicon": 600,
+    "surge-alloy": 300
+   },
+   "size": 5
+  },
+  "force-projector": {
+   "category": "effect",
+   "class": "ForceProjector",
+   "consume_items": {
+    "phase-fabric": 1
+   },
+   "consume_power_per_second": 240.0,
+   "consume_power_per_tick": 4.0,
+   "fields": {
+    "cooldownBrokenBase": 0.35,
+    "cooldownLiquid": 1.2,
+    "cooldownNormal": 1.5,
+    "phaseRadiusBoost": 80.0,
+    "radius": 101.7,
+    "shieldHealth": 750.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "forceProjector",
+   "requirements": {
+    "lead": 100,
+    "silicon": 125,
+    "titanium": 75
+   },
+   "size": 3
+  },
+  "foreshadow": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "consume_power_per_second": 600.0,
+   "consume_power_per_tick": 10.0,
+   "fields": {
+    "ammoPerShot": 5,
+    "coolantMultiplier": 0.4,
+    "maxAmmo": 40,
+    "recoil": 5.0,
+    "reload": 200.0,
+    "rotateSpeed": 2.0,
+    "scaledHealth": 150,
+    "shake": 4.0,
+    "shootCone": 2.0,
+    "size": 4
+   },
+   "health": null,
+   "java_name": "foreshadow",
+   "requirements": {
+    "copper": 1000,
+    "metaglass": 600,
+    "plastanium": 200,
+    "silicon": 600,
+    "surge-alloy": 300
+   },
+   "size": 4
+  },
+  "fuse": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "range": 90.0,
+    "recoil": 5.0,
+    "reload": 35.0,
+    "scaledHealth": 220,
+    "shake": 4.0,
+    "shootCone": 30,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "fuse",
+   "requirements": {
+    "copper": 225,
+    "graphite": 225,
+    "thorium": 100
+   },
+   "size": 3
+  },
+  "graphite-press": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "coal": 2
+   },
+   "craft_seconds": 1.5,
+   "fields": {
+    "craftTime": 90.0,
+    "hasItems": true,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "graphitePress",
+   "output_item": {
+    "graphite": 1
+   },
+   "requirements": {
+    "copper": 75,
+    "lead": 30
+   },
+   "size": 2
+  },
+  "ground-factory": {
+   "category": "units",
+   "class": "UnitFactory",
+   "consume_power_per_second": 72.0,
+   "consume_power_per_tick": 1.2,
+   "fields": {
+    "size": 3
+   },
+   "health": null,
+   "java_name": "groundFactory",
+   "plans": [
+    {
+     "requirements": {
+      "lead": 10,
+      "silicon": 10
+     },
+     "time_seconds": 15.0,
+     "time_ticks": 900.0,
+     "unit": "dagger"
+    },
+    {
+     "requirements": {
+      "coal": 10,
+      "silicon": 8
+     },
+     "time_seconds": 10.0,
+     "time_ticks": 600.0,
+     "unit": "crawler"
+    },
+    {
+     "requirements": {
+      "lead": 20,
+      "silicon": 30,
+      "titanium": 20
+     },
+     "time_seconds": 40.0,
+     "time_ticks": 2400.0,
+     "unit": "nova"
+    }
+   ],
+   "requirements": {
+    "copper": 50,
+    "lead": 120,
+    "silicon": 80
+   },
+   "size": 3
+  },
+  "hail": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "health": 260,
+    "inaccuracy": 1.0,
+    "range": 235.0,
+    "recoil": 2.0,
+    "reload": 60.0,
+    "shootCone": 10.0,
+    "targetAir": false
+   },
+   "health": 260,
+   "java_name": "hail",
+   "requirements": {
+    "copper": 40,
+    "graphite": 17
+   },
+   "size": 1
+  },
+  "heat-redirector": {
+   "category": "crafting",
+   "class": "HeatConductor",
+   "fields": {
+    "regionRotated1": 1,
+    "researchCostMultiplier": 10.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "heatRedirector",
+   "requirements": {
+    "graphite": 10,
+    "tungsten": 10
+   },
+   "size": 3
+  },
+  "heat-router": {
+   "category": "crafting",
+   "class": "HeatConductor",
+   "fields": {
+    "regionRotated1": 1,
+    "researchCostMultiplier": 10.0,
+    "size": 3,
+    "splitHeat": true
+   },
+   "health": null,
+   "java_name": "heatRouter",
+   "requirements": {
+    "graphite": 10,
+    "tungsten": 15
+   },
+   "size": 3
+  },
+  "hyper-processor": {
+   "category": "logic",
+   "class": "LogicBlock",
+   "consume_liquid": {
+    "liquid": "cryofluid",
+    "per_tick": 0.08
+   },
+   "fields": {
+    "hasLiquids": true,
+    "instructionsPerTick": 25,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "hyperProcessor",
+   "requirements": {
+    "lead": 450,
+    "silicon": 150,
+    "surge-alloy": 50,
+    "thorium": 75
+   },
+   "size": 3
+  },
+  "impact-drill": {
+   "category": "production",
+   "class": "BurstDrill",
+   "consume_liquid": {
+    "liquid": "water",
+    "per_tick": 0.2
+   },
+   "fields": {
+    "fogRadius": 4,
+    "hasPower": true,
+    "itemCapacity": 40,
+    "researchCostMultiplier": 0.5,
+    "shake": 4.0,
+    "size": 4,
+    "tier": 6
+   },
+   "health": null,
+   "java_name": "impactDrill",
+   "requirements": {
+    "beryllium": 90,
+    "graphite": 60,
+    "silicon": 70
+   },
+   "size": 4
+  },
+  "impact-reactor": {
+   "category": "power",
+   "class": "ImpactReactor",
+   "consume_items": {
+    "blast-compound": 1
+   },
+   "consume_liquid": {
+    "liquid": "cryofluid",
+    "per_tick": 0.25
+   },
+   "consume_power_per_second": 1500.0,
+   "consume_power_per_tick": 25.0,
+   "fields": {
+    "ambientSoundVolume": 0.07,
+    "health": 900,
+    "itemDuration": 140.0,
+    "powerProduction": 130.0,
+    "size": 4
+   },
+   "health": 900,
+   "java_name": "impactReactor",
+   "power_production_per_second": 7800.0,
+   "requirements": {
+    "graphite": 400,
+    "lead": 500,
+    "metaglass": 250,
+    "silicon": 300,
+    "surge-alloy": 250,
+    "thorium": 100
+   },
+   "size": 4
+  },
+  "impulse-pump": {
+   "category": "liquid",
+   "class": "Pump",
+   "consume_power_per_second": 78.0,
+   "consume_power_per_tick": 1.3,
+   "fields": {
+    "hasPower": true,
+    "liquidCapacity": 40.0,
+    "pumpAmount": 0.22,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "impulsePump",
+   "requirements": {
+    "copper": 80,
+    "metaglass": 90,
+    "silicon": 30,
+    "thorium": 35,
+    "titanium": 40
+   },
+   "size": 3
+  },
+  "incinerator": {
+   "category": "crafting",
+   "class": "Incinerator",
+   "consume_power_per_second": 30.0,
+   "consume_power_per_tick": 0.5,
+   "fields": {
+    "health": 90
+   },
+   "health": 90,
+   "java_name": "incinerator",
+   "requirements": {
+    "graphite": 5,
+    "lead": 15
+   },
+   "size": 1
+  },
+  "inverted-sorter": {
+   "category": "distribution",
+   "class": "Sorter",
+   "fields": {
+    "buildCostMultiplier": 3.0,
+    "invert": true
+   },
+   "health": null,
+   "java_name": "invertedSorter",
+   "requirements": {
+    "copper": 2,
+    "lead": 2
+   },
+   "size": 1
+  },
+  "junction": {
+   "category": "distribution",
+   "class": "Junction",
+   "fields": {
+    "buildCostMultiplier": 6.0,
+    "capacity": 6,
+    "health": 30,
+    "speed": 26
+   },
+   "health": 30,
+   "java_name": "junction",
+   "requirements": {
+    "copper": 2
+   },
+   "size": 1
+  },
+  "kiln": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "lead": 1,
+    "sand": 1
+   },
+   "consume_power_per_second": 36.0,
+   "consume_power_per_tick": 0.6,
+   "craft_seconds": 0.5,
+   "fields": {
+    "ambientSoundVolume": 0.07,
+    "craftTime": 30.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "kiln",
+   "output_item": {
+    "metaglass": 1
+   },
+   "requirements": {
+    "copper": 60,
+    "graphite": 30,
+    "lead": 30
+   },
+   "size": 2
+  },
+  "lancer": {
+   "category": "turret",
+   "class": "PowerTurret",
+   "consume_power_per_second": 360.0,
+   "consume_power_per_tick": 6.0,
+   "fields": {
+    "accurateDelay": false,
+    "moveWhileCharging": false,
+    "range": 165.0,
+    "recoil": 2.0,
+    "reload": 80.0,
+    "scaledHealth": 280,
+    "shake": 2.0,
+    "size": 2,
+    "targetAir": false
+   },
+   "health": null,
+   "java_name": "lancer",
+   "requirements": {
+    "copper": 60,
+    "lead": 70,
+    "silicon": 60,
+    "titanium": 30
+   },
+   "size": 2
+  },
+  "large-constructor": {
+   "category": "units",
+   "class": "Constructor",
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "buildSpeed": 0.75,
+    "hasPower": true,
+    "maxBlockSize": 4,
+    "minBlockSize": 3,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "largeConstructor",
+   "requirements": {
+    "oxide": 150,
+    "phase-fabric": 40,
+    "silicon": 150,
+    "tungsten": 200
+   },
+   "size": 5
+  },
+  "large-logic-display": {
+   "category": "logic",
+   "class": "LogicDisplay",
+   "fields": {
+    "displaySize": 176,
+    "size": 6
+   },
+   "health": null,
+   "java_name": "largeLogicDisplay",
+   "requirements": {
+    "lead": 200,
+    "metaglass": 100,
+    "phase-fabric": 75,
+    "silicon": 150
+   },
+   "size": 6
+  },
+  "large-payload-mass-driver": {
+   "category": "units",
+   "class": "PayloadMassDriver",
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "chargeTime": 100.0,
+    "maxPayloadSize": 3.5,
+    "range": 1100.0,
+    "reload": 130.0,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "largePayloadMassDriver",
+   "requirements": {
+    "graphite": 100,
+    "oxide": 30,
+    "silicon": 200,
+    "thorium": 200,
+    "tungsten": 200
+   },
+   "size": 5
+  },
+  "large-plasma-bore": {
+   "category": "production",
+   "class": "BeamDrill",
+   "consume_power_per_second": 48.0,
+   "consume_power_per_tick": 0.8,
+   "fields": {
+    "drillTime": 100.0,
+    "fogRadius": 4,
+    "itemCapacity": 20,
+    "laserWidth": 0.7,
+    "range": 6,
+    "size": 3,
+    "tier": 5
+   },
+   "health": null,
+   "java_name": "largePlasmaBore",
+   "requirements": {
+    "beryllium": 100,
+    "oxide": 25,
+    "silicon": 100,
+    "tungsten": 70
+   },
+   "size": 3
+  },
+  "laser-drill": {
+   "category": "production",
+   "class": "Drill",
+   "consume_liquid": {
+    "liquid": "water",
+    "per_tick": 0.08
+   },
+   "consume_power_per_second": 66.0,
+   "consume_power_per_tick": 1.1,
+   "drill": {
+    "drill_time": 280,
+    "hardness_multiplier": 50.0,
+    "items_per_second": {
+     "beryllium": 1.2558,
+     "coal": 1.4211,
+     "copper": 1.6364,
+     "lead": 1.6364,
+     "sand": 1.9286,
+     "scrap": 1.9286,
+     "thorium": 1.125,
+     "titanium": 1.2558
+    },
+    "tier": 4
+   },
+   "fields": {
+    "drillTime": 280,
+    "hasPower": true,
+    "size": 3,
+    "tier": 4
+   },
+   "health": null,
+   "java_name": "laserDrill",
+   "requirements": {
+    "copper": 35,
+    "graphite": 30,
+    "silicon": 30,
+    "titanium": 20
+   },
+   "size": 3
+  },
+  "liquid-container": {
+   "category": "liquid",
+   "class": "LiquidRouter",
+   "fields": {
+    "liquidCapacity": 700.0,
+    "size": 2,
+    "solid": true
+   },
+   "health": null,
+   "java_name": "liquidContainer",
+   "requirements": {
+    "metaglass": 15,
+    "titanium": 10
+   },
+   "size": 2
+  },
+  "liquid-junction": {
+   "category": "liquid",
+   "class": "LiquidJunction",
+   "fields": {
+    "solid": false
+   },
+   "health": null,
+   "java_name": "liquidJunction",
+   "requirements": {
+    "graphite": 4,
+    "metaglass": 8
+   },
+   "size": 1
+  },
+  "liquid-router": {
+   "category": "liquid",
+   "class": "LiquidRouter",
+   "fields": {
+    "liquidCapacity": 20.0,
+    "solid": false,
+    "underBullets": true
+   },
+   "health": null,
+   "java_name": "liquidRouter",
+   "requirements": {
+    "graphite": 4,
+    "metaglass": 2
+   },
+   "size": 1
+  },
+  "liquid-tank": {
+   "category": "liquid",
+   "class": "LiquidRouter",
+   "fields": {
+    "health": 500,
+    "liquidCapacity": 1800.0,
+    "size": 3,
+    "solid": true
+   },
+   "health": 500,
+   "java_name": "liquidTank",
+   "requirements": {
+    "metaglass": 40,
+    "titanium": 30
+   },
+   "size": 3
+  },
+  "logic-display": {
+   "category": "logic",
+   "class": "LogicDisplay",
+   "fields": {
+    "displaySize": 80,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "logicDisplay",
+   "requirements": {
+    "lead": 100,
+    "metaglass": 50,
+    "silicon": 50
+   },
+   "size": 3
+  },
+  "logic-processor": {
+   "category": "logic",
+   "class": "LogicBlock",
+   "fields": {
+    "instructionsPerTick": 8,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "logicProcessor",
+   "requirements": {
+    "graphite": 60,
+    "lead": 320,
+    "silicon": 80,
+    "thorium": 50
+   },
+   "size": 2
+  },
+  "lustre": {
+   "category": "turret",
+   "class": "ContinuousTurret",
+   "fields": {
+    "aimChangeSpeed": 0.9,
+    "loopSoundVolume": 1.0,
+    "range": 250.0,
+    "rotateSpeed": 0.9,
+    "scaledHealth": 210,
+    "shootCone": 360.0,
+    "shootWarmupSpeed": 0.08,
+    "shootY": 0.5,
+    "size": 4
+   },
+   "health": null,
+   "java_name": "lustre",
+   "requirements": {
+    "carbide": 90,
+    "graphite": 200,
+    "oxide": 50,
+    "silicon": 250
+   },
+   "size": 4
+  },
+  "malign": {
+   "category": "turret",
+   "class": "PowerTurret",
+   "consume_power_per_second": 600.0,
+   "consume_power_per_tick": 10.0,
+   "fields": {
+    "heatRequirement": 90.0,
+    "loopSoundVolume": 1.3,
+    "maxHeatEfficiency": 2.0,
+    "minWarmup": 0.96,
+    "range": 370,
+    "recoil": 0.5,
+    "recoilTime": 30.0,
+    "reload": 9.0,
+    "rotateSpeed": 2.0,
+    "scaledHealth": 370,
+    "shake": 3.0,
+    "shootCone": 100.0,
+    "shootWarmupSpeed": 0.03,
+    "size": 5,
+    "velocityRnd": 0.15,
+    "warmupMaintainTime": 30.0
+   },
+   "health": null,
+   "java_name": "malign",
+   "requirements": {
+    "beryllium": 2000,
+    "carbide": 400,
+    "graphite": 800,
+    "phase-fabric": 300,
+    "silicon": 800
+   },
+   "size": 5
+  },
+  "mass-driver": {
+   "category": "distribution",
+   "class": "MassDriver",
+   "consume_power_per_second": 105.0,
+   "consume_power_per_tick": 1.75,
+   "fields": {
+    "itemCapacity": 120,
+    "range": 440.0,
+    "reload": 200.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "massDriver",
+   "requirements": {
+    "lead": 125,
+    "silicon": 75,
+    "thorium": 50,
+    "titanium": 125
+   },
+   "size": 3
+  },
+  "mech-assembler": {
+   "category": "units",
+   "class": "UnitAssembler",
+   "consume_power_per_second": 210.0,
+   "consume_power_per_tick": 3.5,
+   "fields": {
+    "areaSize": 13,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "mechAssembler",
+   "requirements": {
+    "carbide": 200,
+    "oxide": 200,
+    "silicon": 900,
+    "thorium": 600,
+    "tungsten": 500
+   },
+   "size": 5
+  },
+  "mech-fabricator": {
+   "category": "units",
+   "class": "UnitFactory",
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "configurable": false,
+    "fogRadius": 3,
+    "researchCostMultiplier": 0.65,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "mechFabricator",
+   "plans": [
+    {
+     "requirements": {
+      "beryllium": 50,
+      "silicon": 70
+     },
+     "time_seconds": 40.0,
+     "time_ticks": 2400.0,
+     "unit": "merui"
+    }
+   ],
+   "requirements": {
+    "graphite": 300,
+    "silicon": 200,
+    "tungsten": 60
+   },
+   "size": 3
+  },
+  "mech-refabricator": {
+   "category": "units",
+   "class": "Reconstructor",
+   "consume_items": {
+    "silicon": 50,
+    "tungsten": 40
+   },
+   "consume_power_per_second": 150.0,
+   "consume_power_per_tick": 2.5,
+   "fields": {
+    "researchCostMultiplier": 0.75,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "mechRefabricator",
+   "requirements": {
+    "beryllium": 250,
+    "silicon": 150,
+    "tungsten": 120
+   },
+   "size": 3
+  },
+  "mechanical-drill": {
+   "category": "production",
+   "class": "Drill",
+   "consume_liquid": {
+    "liquid": "water",
+    "per_tick": 0.05
+   },
+   "drill": {
+    "drill_time": 600,
+    "hardness_multiplier": 50.0,
+    "items_per_second": {
+     "coal": 0.3429,
+     "copper": 0.3692,
+     "lead": 0.3692,
+     "sand": 0.4,
+     "scrap": 0.4
+    },
+    "tier": 2
+   },
+   "fields": {
+    "drillTime": 600,
+    "size": 2,
+    "tier": 2
+   },
+   "health": null,
+   "java_name": "mechanicalDrill",
+   "requirements": {
+    "copper": 12
+   },
+   "size": 2
+  },
+  "mechanical-pump": {
+   "category": "liquid",
+   "class": "Pump",
+   "fields": {},
+   "health": null,
+   "java_name": "mechanicalPump",
+   "requirements": {
+    "copper": 15,
+    "metaglass": 10
+   },
+   "size": 1
+  },
+  "meltdown": {
+   "category": "turret",
+   "class": "LaserTurret",
+   "consume_power_per_second": 1020.0,
+   "consume_power_per_tick": 17.0,
+   "fields": {
+    "firingMoveFract": 0.5,
+    "loopSoundVolume": 2.0,
+    "range": 195.0,
+    "recoil": 4.0,
+    "reload": 90.0,
+    "scaledHealth": 200,
+    "shake": 2.0,
+    "shootCone": 40.0,
+    "shootDuration": 230.0,
+    "size": 4
+   },
+   "health": null,
+   "java_name": "meltdown",
+   "requirements": {
+    "copper": 1200,
+    "graphite": 300,
+    "lead": 350,
+    "silicon": 325,
+    "surge-alloy": 325
+   },
+   "size": 4
+  },
+  "melter": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "scrap": 1
+   },
+   "consume_power_per_second": 60.0,
+   "consume_power_per_tick": 1.0,
+   "craft_seconds": 0.1667,
+   "fields": {
+    "craftTime": 10.0,
+    "health": 200
+   },
+   "health": 200,
+   "java_name": "melter",
+   "requirements": {
+    "copper": 30,
+    "graphite": 45,
+    "lead": 35
+   },
+   "size": 1
+  },
+  "memory-bank": {
+   "category": "logic",
+   "class": "MemoryBlock",
+   "fields": {
+    "memoryCapacity": 512,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "memoryBank",
+   "requirements": {
+    "copper": 30,
+    "graphite": 80,
+    "phase-fabric": 30,
+    "silicon": 80
+   },
+   "size": 2
+  },
+  "memory-cell": {
+   "category": "logic",
+   "class": "MemoryBlock",
+   "fields": {
+    "memoryCapacity": 64
+   },
+   "health": null,
+   "java_name": "memoryCell",
+   "requirements": {
+    "copper": 30,
+    "graphite": 30,
+    "silicon": 30
+   },
+   "size": 1
+  },
+  "mend-projector": {
+   "category": "effect",
+   "class": "MendProjector",
+   "consume_items": {
+    "phase-fabric": 1
+   },
+   "consume_power_per_second": 90.0,
+   "consume_power_per_tick": 1.5,
+   "fields": {
+    "healPercent": 11.0,
+    "phaseBoost": 15.0,
+    "range": 85.0,
+    "reload": 250.0,
+    "scaledHealth": 80,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "mendProjector",
+   "requirements": {
+    "copper": 50,
+    "lead": 100,
+    "silicon": 40,
+    "titanium": 25
+   },
+   "size": 2
+  },
+  "mender": {
+   "category": "effect",
+   "class": "MendProjector",
+   "consume_items": {
+    "silicon": 1
+   },
+   "consume_power_per_second": 18.0,
+   "consume_power_per_tick": 0.3,
+   "fields": {
+    "healPercent": 4.0,
+    "health": 80,
+    "phaseBoost": 4.0,
+    "phaseRangeBoost": 20.0,
+    "range": 40.0,
+    "reload": 200.0,
+    "size": 1
+   },
+   "health": 80,
+   "java_name": "mender",
+   "requirements": {
+    "copper": 25,
+    "lead": 30
+   },
+   "size": 1
+  },
+  "message": {
+   "category": "logic",
+   "class": "MessageBlock",
+   "fields": {},
+   "health": null,
+   "java_name": "message",
+   "requirements": {
+    "copper": 5,
+    "graphite": 5
+   },
+   "size": 1
+  },
+  "micro-processor": {
+   "category": "logic",
+   "class": "LogicBlock",
+   "fields": {
+    "instructionsPerTick": 2,
+    "size": 1
+   },
+   "health": null,
+   "java_name": "microProcessor",
+   "requirements": {
+    "copper": 90,
+    "lead": 50,
+    "silicon": 50
+   },
+   "size": 1
+  },
+  "multi-press": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "coal": 3
+   },
+   "consume_liquid": {
+    "liquid": "water",
+    "per_tick": 0.1
+   },
+   "consume_power_per_second": 108.0,
+   "consume_power_per_tick": 1.8,
+   "craft_seconds": 0.5,
+   "fields": {
+    "craftTime": 30.0,
+    "hasItems": true,
+    "hasLiquids": true,
+    "hasPower": true,
+    "itemCapacity": 20,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "multiPress",
+   "output_item": {
+    "graphite": 2
+   },
+   "requirements": {
+    "graphite": 50,
+    "lead": 100,
+    "silicon": 25,
+    "titanium": 100
+   },
+   "size": 3
+  },
+  "multiplicative-reconstructor": {
+   "category": "units",
+   "class": "Reconstructor",
+   "consume_items": {
+    "metaglass": 40,
+    "silicon": 130,
+    "titanium": 80
+   },
+   "consume_power_per_second": 360.0,
+   "consume_power_per_tick": 6.0,
+   "fields": {
+    "size": 5
+   },
+   "health": null,
+   "java_name": "multiplicativeReconstructor",
+   "requirements": {
+    "lead": 650,
+    "silicon": 450,
+    "thorium": 650,
+    "titanium": 350
+   },
+   "size": 5
+  },
+  "naval-factory": {
+   "category": "units",
+   "class": "UnitFactory",
+   "consume_power_per_second": 72.0,
+   "consume_power_per_tick": 1.2,
+   "fields": {
+    "floating": true,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "navalFactory",
+   "plans": [
+    {
+     "requirements": {
+      "metaglass": 35,
+      "silicon": 20
+     },
+     "time_seconds": 45.0,
+     "time_ticks": 2700.0,
+     "unit": "risso"
+    },
+    {
+     "requirements": {
+      "metaglass": 25,
+      "silicon": 15,
+      "titanium": 20
+     },
+     "time_seconds": 50.0,
+     "time_ticks": 3000.0,
+     "unit": "retusa"
+    }
+   ],
+   "requirements": {
+    "copper": 150,
+    "lead": 130,
+    "metaglass": 120
+   },
+   "size": 3
+  },
+  "neoplasia-reactor": {
+   "category": "power",
+   "class": "HeaterGenerator",
+   "consume_items": {
+    "phase-fabric": 1
+   },
+   "fields": {
+    "ambientSoundVolume": 0.2,
+    "explodeOnFull": true,
+    "explosionDamage": 2000,
+    "explosionMinWarmup": 0.5,
+    "explosionPuddleAmount": 200.0,
+    "explosionPuddles": 80,
+    "explosionRadius": 9,
+    "heatOutput": 60.0,
+    "itemCapacity": 10,
+    "liquidCapacity": 80.0,
+    "powerProduction": 140.0,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "neoplasiaReactor",
+   "power_production_per_second": 8400.0,
+   "requirements": {
+    "carbide": 300,
+    "oxide": 150,
+    "phase-fabric": 300,
+    "silicon": 500,
+    "surge-alloy": 200,
+    "tungsten": 1000
+   },
+   "size": 5
+  },
+  "oil-extractor": {
+   "category": "production",
+   "class": "Fracker",
+   "consume_items": {
+    "sand": 1
+   },
+   "consume_liquid": {
+    "liquid": "water",
+    "per_tick": 0.15
+   },
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "baseEfficiency": 0.0,
+    "itemUseTime": 60.0,
+    "liquidCapacity": 30.0,
+    "pumpAmount": 0.25,
+    "size": 3,
+    "updateEffectChance": 0.05
+   },
+   "health": null,
+   "java_name": "oilExtractor",
+   "requirements": {
+    "copper": 150,
+    "graphite": 175,
+    "lead": 115,
+    "silicon": 75,
+    "thorium": 115
+   },
+   "size": 3
+  },
+  "overdrive-dome": {
+   "category": "effect",
+   "class": "OverdriveProjector",
+   "consume_items": {
+    "phase-fabric": 1,
+    "silicon": 1
+   },
+   "consume_power_per_second": 600.0,
+   "consume_power_per_tick": 10.0,
+   "fields": {
+    "hasBoost": false,
+    "range": 200.0,
+    "size": 3,
+    "speedBoost": 2.5,
+    "useTime": 300.0
+   },
+   "health": null,
+   "java_name": "overdriveDome",
+   "requirements": {
+    "lead": 200,
+    "plastanium": 80,
+    "silicon": 130,
+    "surge-alloy": 120,
+    "titanium": 130
+   },
+   "size": 3
+  },
+  "overdrive-projector": {
+   "category": "effect",
+   "class": "OverdriveProjector",
+   "consume_items": {
+    "phase-fabric": 1
+   },
+   "consume_power_per_second": 210.0,
+   "consume_power_per_tick": 3.5,
+   "fields": {
+    "size": 2
+   },
+   "health": null,
+   "java_name": "overdriveProjector",
+   "requirements": {
+    "lead": 100,
+    "plastanium": 30,
+    "silicon": 75,
+    "titanium": 75
+   },
+   "size": 2
+  },
+  "overflow-duct": {
+   "category": "distribution",
+   "class": "OverflowDuct",
+   "fields": {
+    "health": 90,
+    "researchCostMultiplier": 1.5,
+    "solid": false,
+    "speed": 4.0
+   },
+   "health": 90,
+   "java_name": "overflowDuct",
+   "requirements": {
+    "beryllium": 8,
+    "graphite": 8
+   },
+   "size": 1
+  },
+  "overflow-gate": {
+   "category": "distribution",
+   "class": "OverflowGate",
+   "fields": {
+    "buildCostMultiplier": 3.0
+   },
+   "health": null,
+   "java_name": "overflowGate",
+   "requirements": {
+    "copper": 4,
+    "lead": 2
+   },
+   "size": 1
+  },
+  "oxidation-chamber": {
+   "category": "crafting",
+   "class": "HeatProducer",
+   "consume_items": {
+    "beryllium": 1
+   },
+   "consume_power_per_second": 30.0,
+   "consume_power_per_tick": 0.5,
+   "fields": {
+    "ambientSoundVolume": 0.08,
+    "heatOutput": 5.0,
+    "liquidCapacity": 30.0,
+    "regionRotated1": 2,
+    "researchCostMultiplier": 1.1,
+    "rotateDraw": false,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "oxidationChamber",
+   "output_item": {
+    "oxide": 1
+   },
+   "requirements": {
+    "beryllium": 120,
+    "graphite": 80,
+    "silicon": 100,
+    "tungsten": 120
+   },
+   "size": 3
+  },
+  "parallax": {
+   "category": "turret",
+   "class": "TractorBeamTurret",
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "damage": 0.3,
+    "force": 12.0,
+    "hasPower": true,
+    "range": 240.0,
+    "rotateSpeed": 10,
+    "scaledForce": 6.0,
+    "scaledHealth": 160,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "parallax",
+   "requirements": {
+    "graphite": 30,
+    "silicon": 120,
+    "titanium": 90
+   },
+   "size": 2
+  },
+  "payload-conveyor": {
+   "category": "units",
+   "class": "PayloadConveyor",
+   "fields": {
+    "canOverdrive": false
+   },
+   "health": null,
+   "java_name": "payloadConveyor",
+   "requirements": {
+    "copper": 10,
+    "graphite": 10
+   },
+   "size": 1
+  },
+  "payload-loader": {
+   "category": "units",
+   "class": "PayloadLoader",
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "fogRadius": 5,
+    "hasPower": true,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "payloadLoader",
+   "requirements": {
+    "graphite": 50,
+    "silicon": 50,
+    "tungsten": 80
+   },
+   "size": 3
+  },
+  "payload-mass-driver": {
+   "category": "units",
+   "class": "PayloadMassDriver",
+   "consume_power_per_second": 30.0,
+   "consume_power_per_tick": 0.5,
+   "fields": {
+    "chargeTime": 90.0,
+    "fogRadius": 5,
+    "maxPayloadSize": 2.5,
+    "range": 700.0,
+    "reload": 130.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "payloadMassDriver",
+   "requirements": {
+    "graphite": 50,
+    "silicon": 120,
+    "tungsten": 120
+   },
+   "size": 3
+  },
+  "payload-router": {
+   "category": "units",
+   "class": "PayloadRouter",
+   "fields": {
+    "canOverdrive": false
+   },
+   "health": null,
+   "java_name": "payloadRouter",
+   "requirements": {
+    "copper": 10,
+    "graphite": 15
+   },
+   "size": 1
+  },
+  "payload-unloader": {
+   "category": "units",
+   "class": "PayloadUnloader",
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "fogRadius": 5,
+    "hasPower": true,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "payloadUnloader",
+   "requirements": {
+    "graphite": 50,
+    "silicon": 50,
+    "tungsten": 30
+   },
+   "size": 3
+  },
+  "phase-conduit": {
+   "category": "liquid",
+   "class": "LiquidBridge",
+   "consume_power_per_second": 18.0,
+   "consume_power_per_tick": 0.3,
+   "fields": {
+    "arrowPeriod": 0.9,
+    "arrowTimeScl": 2.75,
+    "canOverdrive": false,
+    "hasPower": true,
+    "pulse": true,
+    "range": 12
+   },
+   "health": null,
+   "java_name": "phaseConduit",
+   "requirements": {
+    "metaglass": 20,
+    "phase-fabric": 5,
+    "silicon": 7,
+    "titanium": 10
+   },
+   "size": 1
+  },
+  "phase-conveyor": {
+   "category": "distribution",
+   "class": "ItemBridge",
+   "consume_power_per_second": 18.0,
+   "consume_power_per_tick": 0.3,
+   "fields": {
+    "arrowPeriod": 0.9,
+    "arrowTimeScl": 2.75,
+    "hasPower": true,
+    "pulse": true,
+    "range": 12
+   },
+   "health": null,
+   "java_name": "phaseConveyor",
+   "requirements": {
+    "graphite": 10,
+    "lead": 10,
+    "phase-fabric": 5,
+    "silicon": 7
+   },
+   "size": 1
+  },
+  "phase-heater": {
+   "category": "crafting",
+   "class": "HeatProducer",
+   "consume_items": {
+    "phase-fabric": 1
+   },
+   "fields": {
+    "heatOutput": 15.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "phaseHeater",
+   "requirements": {
+    "beryllium": 30,
+    "carbide": 30,
+    "oxide": 30
+   },
+   "size": 2
+  },
+  "phase-synthesizer": {
+   "category": "crafting",
+   "class": "HeatCrafter",
+   "consume_items": {
+    "sand": 6,
+    "thorium": 2
+   },
+   "consume_power_per_second": 480.0,
+   "consume_power_per_tick": 8.0,
+   "fields": {
+    "ambientSoundVolume": 0.04,
+    "heatRequirement": 8.0,
+    "itemCapacity": 40,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "phaseSynthesizer",
+   "output_item": {
+    "phase-fabric": 1
+   },
+   "requirements": {
+    "carbide": 90,
+    "silicon": 100,
+    "thorium": 100,
+    "tungsten": 200
+   },
+   "size": 3
+  },
+  "phase-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "chanceDeflect": 10.0,
+    "flashHit": true
+   },
+   "health": null,
+   "java_name": "phaseWall",
+   "requirements": {
+    "phase-fabric": 6
+   },
+   "size": 1
+  },
+  "phase-weaver": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "sand": 10,
+    "thorium": 4
+   },
+   "consume_power_per_second": 300.0,
+   "consume_power_per_tick": 5.0,
+   "craft_seconds": 2.0,
+   "fields": {
+    "ambientSoundVolume": 0.02,
+    "craftTime": 120.0,
+    "hasPower": true,
+    "itemCapacity": 20,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "phaseWeaver",
+   "output_item": {
+    "phase-fabric": 1
+   },
+   "requirements": {
+    "lead": 120,
+    "silicon": 130,
+    "thorium": 75
+   },
+   "size": 2
+  },
+  "plasma-bore": {
+   "category": "production",
+   "class": "BeamDrill",
+   "consume_power_per_second": 9.0,
+   "consume_power_per_tick": 0.15,
+   "fields": {
+    "drillTime": 160.0,
+    "fogRadius": 3,
+    "range": 5,
+    "size": 2,
+    "tier": 3
+   },
+   "health": null,
+   "java_name": "plasmaBore",
+   "requirements": {
+    "beryllium": 40
+   },
+   "size": 2
+  },
+  "plastanium-compressor": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "titanium": 2
+   },
+   "consume_liquid": {
+    "liquid": "oil",
+    "per_tick": 0.25
+   },
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "craft_seconds": 1.0,
+   "fields": {
+    "craftTime": 60.0,
+    "hasItems": true,
+    "health": 320,
+    "liquidCapacity": 60.0,
+    "size": 2
+   },
+   "health": 320,
+   "java_name": "plastaniumCompressor",
+   "output_item": {
+    "plastanium": 1
+   },
+   "requirements": {
+    "graphite": 60,
+    "lead": 115,
+    "silicon": 80,
+    "titanium": 80
+   },
+   "size": 2
+  },
+  "plastanium-conveyor": {
+   "category": "distribution",
+   "class": "StackConveyor",
+   "fields": {
+    "health": 75,
+    "itemCapacity": 10
+   },
+   "health": 75,
+   "java_name": "plastaniumConveyor",
+   "requirements": {
+    "graphite": 1,
+    "plastanium": 1,
+    "silicon": 1
+   },
+   "size": 1
+  },
+  "plastanium-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "absorbLasers": true,
+    "insulated": true,
+    "schematicPriority": 10
+   },
+   "health": null,
+   "java_name": "plastaniumWall",
+   "requirements": {
+    "metaglass": 2,
+    "plastanium": 5
+   },
+   "size": 1
+  },
+  "plated-conduit": {
+   "category": "liquid",
+   "class": "ArmoredConduit",
+   "fields": {
+    "health": 220,
+    "liquidCapacity": 16.0,
+    "liquidPressure": 1.025
+   },
+   "health": 220,
+   "java_name": "platedConduit",
+   "requirements": {
+    "metaglass": 1,
+    "plastanium": 1,
+    "thorium": 2
+   },
+   "size": 1
+  },
+  "pneumatic-drill": {
+   "category": "production",
+   "class": "Drill",
+   "consume_liquid": {
+    "liquid": "water",
+    "per_tick": 0.06
+   },
+   "drill": {
+    "drill_time": 400,
+    "hardness_multiplier": 50.0,
+    "items_per_second": {
+     "beryllium": 0.4364,
+     "coal": 0.48,
+     "copper": 0.5333,
+     "lead": 0.5333,
+     "sand": 0.6,
+     "scrap": 0.6,
+     "titanium": 0.4364
+    },
+    "tier": 3
+   },
+   "fields": {
+    "drillTime": 400,
+    "size": 2,
+    "tier": 3
+   },
+   "health": null,
+   "java_name": "pneumaticDrill",
+   "requirements": {
+    "copper": 18,
+    "graphite": 10
+   },
+   "size": 2
+  },
+  "power-node": {
+   "category": "power",
+   "class": "PowerNode",
+   "fields": {
+    "laserRange": 6,
+    "maxNodes": 10
+   },
+   "health": null,
+   "java_name": "powerNode",
+   "power_node": {
+    "laser_range": 6,
+    "max_nodes": 10
+   },
+   "requirements": {
+    "copper": 1,
+    "lead": 3
+   },
+   "size": 1
+  },
+  "power-node-large": {
+   "category": "power",
+   "class": "PowerNode",
+   "fields": {
+    "laserRange": 15.0,
+    "maxNodes": 15,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "powerNodeLarge",
+   "power_node": {
+    "laser_range": 15.0,
+    "max_nodes": 15
+   },
+   "requirements": {
+    "lead": 10,
+    "silicon": 3,
+    "titanium": 5
+   },
+   "size": 2
+  },
+  "prime-refabricator": {
+   "category": "units",
+   "class": "Reconstructor",
+   "consume_items": {
+    "silicon": 100,
+    "thorium": 80
+   },
+   "consume_power_per_second": 300.0,
+   "consume_power_per_tick": 5.0,
+   "fields": {
+    "size": 5
+   },
+   "health": null,
+   "java_name": "primeRefabricator",
+   "requirements": {
+    "oxide": 200,
+    "silicon": 400,
+    "thorium": 250,
+    "tungsten": 200
+   },
+   "size": 5
+  },
+  "pulse-conduit": {
+   "category": "liquid",
+   "class": "Conduit",
+   "fields": {
+    "health": 90,
+    "liquidCapacity": 16.0,
+    "liquidPressure": 1.025
+   },
+   "health": 90,
+   "java_name": "pulseConduit",
+   "requirements": {
+    "metaglass": 1,
+    "titanium": 2
+   },
+   "size": 1
+  },
+  "pulverizer": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "scrap": 1
+   },
+   "consume_power_per_second": 30.0,
+   "consume_power_per_tick": 0.5,
+   "craft_seconds": 0.6667,
+   "fields": {
+    "ambientSoundVolume": 0.025,
+    "craftTime": 40.0
+   },
+   "health": null,
+   "java_name": "pulverizer",
+   "output_item": {
+    "sand": 1
+   },
+   "requirements": {
+    "copper": 30,
+    "lead": 25
+   },
+   "size": 1
+  },
+  "pyratite-mixer": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "coal": 1,
+    "lead": 2,
+    "sand": 2
+   },
+   "consume_power_per_second": 12.0,
+   "consume_power_per_tick": 0.2,
+   "fields": {
+    "hasItems": true,
+    "hasPower": true,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "pyratiteMixer",
+   "output_item": {
+    "pyratite": 1
+   },
+   "requirements": {
+    "copper": 50,
+    "lead": 25
+   },
+   "size": 2
+  },
+  "pyrolysis-generator": {
+   "category": "power",
+   "class": "ConsumeGenerator",
+   "fields": {
+    "ambientSoundVolume": 0.06,
+    "powerProduction": 25.0,
+    "researchCostMultiplier": 0.4,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "pyrolysisGenerator",
+   "power_production_per_second": 1500.0,
+   "requirements": {
+    "carbide": 50,
+    "graphite": 50,
+    "oxide": 60,
+    "silicon": 50
+   },
+   "size": 3
+  },
+  "regen-projector": {
+   "category": "effect",
+   "class": "RegenProjector",
+   "consume_items": {
+    "phase-fabric": 1
+   },
+   "consume_power_per_second": 60.0,
+   "consume_power_per_tick": 1.0,
+   "fields": {
+    "range": 28,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "regenProjector",
+   "requirements": {
+    "beryllium": 80,
+    "oxide": 40,
+    "silicon": 80,
+    "tungsten": 60
+   },
+   "size": 3
+  },
+  "reinforced-bridge-conduit": {
+   "category": "liquid",
+   "class": "DirectionLiquidBridge",
+   "fields": {
+    "hasPower": false,
+    "range": 4,
+    "researchCostMultiplier": 1,
+    "underBullets": true
+   },
+   "health": null,
+   "java_name": "reinforcedBridgeConduit",
+   "requirements": {
+    "beryllium": 20,
+    "graphite": 8
+   },
+   "size": 1
+  },
+  "reinforced-conduit": {
+   "category": "liquid",
+   "class": "ArmoredConduit",
+   "fields": {
+    "health": 250,
+    "leaks": true,
+    "liquidCapacity": 20.0,
+    "liquidPressure": 1.03,
+    "researchCostMultiplier": 3,
+    "underBullets": true
+   },
+   "health": 250,
+   "java_name": "reinforcedConduit",
+   "requirements": {
+    "beryllium": 2
+   },
+   "size": 1
+  },
+  "reinforced-container": {
+   "category": "effect",
+   "class": "StorageBlock",
+   "fields": {
+    "coreMerge": false,
+    "itemCapacity": 80,
+    "scaledHealth": 120,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "reinforcedContainer",
+   "requirements": {
+    "graphite": 40,
+    "tungsten": 30
+   },
+   "size": 2
+  },
+  "reinforced-liquid-container": {
+   "category": "liquid",
+   "class": "LiquidRouter",
+   "fields": {
+    "liquidCapacity": 1000.0,
+    "researchCostMultiplier": 4,
+    "size": 2,
+    "solid": true
+   },
+   "health": null,
+   "java_name": "reinforcedLiquidContainer",
+   "requirements": {
+    "beryllium": 16,
+    "tungsten": 10
+   },
+   "size": 2
+  },
+  "reinforced-liquid-junction": {
+   "category": "liquid",
+   "class": "LiquidJunction",
+   "fields": {
+    "buildCostMultiplier": 3.0,
+    "health": 260,
+    "researchCostMultiplier": 1,
+    "solid": false,
+    "underBullets": true
+   },
+   "health": 260,
+   "java_name": "reinforcedLiquidJunction",
+   "requirements": {
+    "beryllium": 8,
+    "graphite": 4
+   },
+   "size": 1
+  },
+  "reinforced-liquid-router": {
+   "category": "liquid",
+   "class": "LiquidRouter",
+   "fields": {
+    "liquidCapacity": 30.0,
+    "researchCostMultiplier": 3,
+    "solid": false,
+    "underBullets": true
+   },
+   "health": null,
+   "java_name": "reinforcedLiquidRouter",
+   "requirements": {
+    "beryllium": 4,
+    "graphite": 8
+   },
+   "size": 1
+  },
+  "reinforced-liquid-tank": {
+   "category": "liquid",
+   "class": "LiquidRouter",
+   "fields": {
+    "liquidCapacity": 2700.0,
+    "liquidPadding": 2.0,
+    "size": 3,
+    "solid": true
+   },
+   "health": null,
+   "java_name": "reinforcedLiquidTank",
+   "requirements": {
+    "beryllium": 50,
+    "tungsten": 40
+   },
+   "size": 3
+  },
+  "reinforced-message": {
+   "category": "logic",
+   "class": "MessageBlock",
+   "fields": {
+    "health": 100
+   },
+   "health": 100,
+   "java_name": "reinforcedMessage",
+   "requirements": {
+    "beryllium": 5,
+    "graphite": 10
+   },
+   "size": 1
+  },
+  "reinforced-payload-conveyor": {
+   "category": "units",
+   "class": "PayloadConveyor",
+   "fields": {
+    "canOverdrive": false,
+    "health": 800,
+    "moveTime": 35.0,
+    "researchCostMultiplier": 4.0,
+    "underBullets": true
+   },
+   "health": 800,
+   "java_name": "reinforcedPayloadConveyor",
+   "requirements": {
+    "tungsten": 10
+   },
+   "size": 1
+  },
+  "reinforced-payload-router": {
+   "category": "units",
+   "class": "PayloadRouter",
+   "fields": {
+    "canOverdrive": false,
+    "health": 800,
+    "moveTime": 35.0,
+    "researchCostMultiplier": 4.0,
+    "underBullets": true
+   },
+   "health": 800,
+   "java_name": "reinforcedPayloadRouter",
+   "requirements": {
+    "tungsten": 15
+   },
+   "size": 1
+  },
+  "reinforced-pump": {
+   "category": "liquid",
+   "class": "Pump",
+   "fields": {
+    "liquidCapacity": 160.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "reinforcedPump",
+   "requirements": {
+    "beryllium": 40,
+    "silicon": 20,
+    "tungsten": 30
+   },
+   "size": 2
+  },
+  "reinforced-surge-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "armor": 20.0,
+    "lightningChance": 0.05,
+    "lightningDamage": 30.0
+   },
+   "health": null,
+   "java_name": "reinforcedSurgeWall",
+   "requirements": {
+    "surge-alloy": 6,
+    "tungsten": 2
+   },
+   "size": 1
+  },
+  "reinforced-vault": {
+   "category": "effect",
+   "class": "StorageBlock",
+   "fields": {
+    "coreMerge": false,
+    "itemCapacity": 900,
+    "scaledHealth": 120,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "reinforcedVault",
+   "requirements": {
+    "beryllium": 100,
+    "thorium": 70,
+    "tungsten": 125
+   },
+   "size": 3
+  },
+  "repair-point": {
+   "category": "units",
+   "class": "RepairTurret",
+   "fields": {
+    "beamWidth": 0.73,
+    "powerUse": 1.0,
+    "pulseRadius": 5.0,
+    "repairRadius": 60.0,
+    "repairSpeed": 0.45
+   },
+   "health": null,
+   "java_name": "repairPoint",
+   "requirements": {
+    "copper": 30,
+    "lead": 30,
+    "silicon": 20
+   },
+   "size": 1
+  },
+  "repair-turret": {
+   "category": "units",
+   "class": "RepairTurret",
+   "fields": {
+    "acceptCoolant": true,
+    "beamWidth": 1.1,
+    "coolantMultiplier": 1.6,
+    "coolantUse": 0.16,
+    "length": 6.0,
+    "powerUse": 5.0,
+    "pulseRadius": 6.1,
+    "repairRadius": 145.0,
+    "repairSpeed": 3.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "repairTurret",
+   "requirements": {
+    "plastanium": 60,
+    "silicon": 90,
+    "thorium": 80
+   },
+   "size": 2
+  },
+  "ripple": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "ammoEjectBack": 5.0,
+    "ammoPerShot": 2,
+    "inaccuracy": 12.0,
+    "minRange": 50.0,
+    "range": 290.0,
+    "recoil": 6.0,
+    "reload": 60.0,
+    "scaledHealth": 130,
+    "shake": 2.0,
+    "size": 3,
+    "targetAir": false,
+    "velocityRnd": 0.2
+   },
+   "health": null,
+   "java_name": "ripple",
+   "requirements": {
+    "copper": 150,
+    "graphite": 135,
+    "titanium": 60
+   },
+   "size": 3
+  },
+  "rotary-pump": {
+   "category": "liquid",
+   "class": "Pump",
+   "consume_power_per_second": 18.0,
+   "consume_power_per_tick": 0.3,
+   "fields": {
+    "hasPower": true,
+    "liquidCapacity": 30.0,
+    "pumpAmount": 0.2,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "rotaryPump",
+   "requirements": {
+    "copper": 70,
+    "metaglass": 50,
+    "silicon": 20,
+    "titanium": 35
+   },
+   "size": 2
+  },
+  "router": {
+   "category": "distribution",
+   "class": "Router",
+   "fields": {
+    "buildCostMultiplier": 4.0
+   },
+   "health": null,
+   "java_name": "router",
+   "requirements": {
+    "copper": 3
+   },
+   "size": 1
+  },
+  "rtg-generator": {
+   "category": "power",
+   "class": "ConsumeGenerator",
+   "fields": {
+    "powerProduction": 4.5,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "rtgGenerator",
+   "power_production_per_second": 270.0,
+   "requirements": {
+    "lead": 100,
+    "phase-fabric": 25,
+    "plastanium": 75,
+    "silicon": 75,
+    "thorium": 50
+   },
+   "size": 2
+  },
+  "salvo": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "ammoEjectBack": 3.0,
+    "consumeAmmoOnce": false,
+    "range": 190.0,
+    "recoil": 0.0,
+    "reload": 31.0,
+    "scaledHealth": 240,
+    "shake": 1.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "salvo",
+   "requirements": {
+    "copper": 100,
+    "graphite": 80,
+    "titanium": 50
+   },
+   "size": 2
+  },
+  "scathe": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "ammoPerShot": 15,
+    "coolantMultiplier": 6.0,
+    "fogRadiusMultiplier": 0.4,
+    "maxAmmo": 30,
+    "minWarmup": 0.94,
+    "range": 1350,
+    "recoil": 0.5,
+    "reload": 600.0,
+    "rotateSpeed": 0.9,
+    "scaledHealth": 220,
+    "shake": 6.0,
+    "shootCone": 1.0,
+    "shootWarmupSpeed": 0.03,
+    "shootY": -1,
+    "size": 4,
+    "targetAir": false,
+    "targetUnderBlocks": false
+   },
+   "health": null,
+   "java_name": "scathe",
+   "requirements": {
+    "carbide": 200,
+    "graphite": 400,
+    "oxide": 100,
+    "silicon": 450,
+    "tungsten": 500
+   },
+   "size": 4
+  },
+  "scatter": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "inaccuracy": 17.0,
+    "range": 220.0,
+    "recoil": 1.0,
+    "reload": 18.0,
+    "researchCostMultiplier": 0.05,
+    "rotateSpeed": 15.0,
+    "scaledHealth": 200,
+    "shootCone": 35.0,
+    "size": 2,
+    "targetGround": false
+   },
+   "health": null,
+   "java_name": "scatter",
+   "requirements": {
+    "copper": 85,
+    "lead": 45
+   },
+   "size": 2
+  },
+  "scorch": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "coolantMultiplier": 1.5,
+    "health": 400,
+    "range": 60.0,
+    "recoil": 0.0,
+    "reload": 6.0,
+    "shootCone": 50.0,
+    "shootY": 3,
+    "targetAir": false
+   },
+   "health": 400,
+   "java_name": "scorch",
+   "requirements": {
+    "copper": 25,
+    "graphite": 22
+   },
+   "size": 1
+  },
+  "segment": {
+   "category": "turret",
+   "class": "PointDefenseTurret",
+   "consume_power_per_second": 480.0,
+   "consume_power_per_tick": 8.0,
+   "fields": {
+    "bulletDamage": 30.0,
+    "hasPower": true,
+    "range": 180.0,
+    "reload": 8.0,
+    "scaledHealth": 250,
+    "shootLength": 5.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "segment",
+   "requirements": {
+    "phase-fabric": 40,
+    "silicon": 130,
+    "thorium": 80,
+    "titanium": 40
+   },
+   "size": 2
+  },
+  "separator": {
+   "category": "crafting",
+   "class": "Separator",
+   "consume_power_per_second": 66.0,
+   "consume_power_per_tick": 1.1,
+   "fields": {
+    "craftTime": 35.0,
+    "hasPower": true,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "separator",
+   "requirements": {
+    "copper": 30,
+    "titanium": 25
+   },
+   "size": 2
+  },
+  "ship-assembler": {
+   "category": "units",
+   "class": "UnitAssembler",
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "areaSize": 13,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "shipAssembler",
+   "requirements": {
+    "carbide": 100,
+    "oxide": 200,
+    "silicon": 800,
+    "thorium": 400,
+    "tungsten": 500
+   },
+   "size": 5
+  },
+  "ship-fabricator": {
+   "category": "units",
+   "class": "UnitFactory",
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "configurable": false,
+    "fogRadius": 3,
+    "researchCostMultiplier": 0.5,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "shipFabricator",
+   "plans": [
+    {
+     "requirements": {
+      "graphite": 50,
+      "silicon": 70
+     },
+     "time_seconds": 40.0,
+     "time_ticks": 2400.0,
+     "unit": "elude"
+    }
+   ],
+   "requirements": {
+    "beryllium": 200,
+    "silicon": 250
+   },
+   "size": 3
+  },
+  "ship-refabricator": {
+   "category": "units",
+   "class": "Reconstructor",
+   "consume_items": {
+    "silicon": 60,
+    "tungsten": 40
+   },
+   "consume_power_per_second": 150.0,
+   "consume_power_per_tick": 2.5,
+   "fields": {
+    "size": 3
+   },
+   "health": null,
+   "java_name": "shipRefabricator",
+   "requirements": {
+    "beryllium": 200,
+    "oxide": 40,
+    "silicon": 150,
+    "tungsten": 100
+   },
+   "size": 3
+  },
+  "shock-mine": {
+   "category": "effect",
+   "class": "ShockMine",
+   "fields": {
+    "damage": 25,
+    "hasShadow": false,
+    "health": 50,
+    "length": 10,
+    "tendrils": 4,
+    "tileDamage": 7.0
+   },
+   "health": 50,
+   "java_name": "shockMine",
+   "requirements": {
+    "lead": 25,
+    "silicon": 12
+   },
+   "size": 1
+  },
+  "shockwave-tower": {
+   "category": "effect",
+   "class": "ShockwaveTower",
+   "fields": {
+    "range": 170.0,
+    "reload": 80.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "shockwaveTower",
+   "requirements": {
+    "oxide": 30,
+    "silicon": 150,
+    "surge-alloy": 50,
+    "tungsten": 100
+   },
+   "size": 3
+  },
+  "silicon-arc-furnace": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "graphite": 1,
+    "sand": 4
+   },
+   "consume_power_per_second": 360.0,
+   "consume_power_per_tick": 6.0,
+   "craft_seconds": 0.8333,
+   "fields": {
+    "ambientSoundVolume": 0.12,
+    "craftTime": 50.0,
+    "fogRadius": 3,
+    "hasLiquids": false,
+    "hasPower": true,
+    "itemCapacity": 30,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "siliconArcFurnace",
+   "output_item": {
+    "silicon": 4
+   },
+   "requirements": {
+    "beryllium": 70,
+    "graphite": 80
+   },
+   "size": 3
+  },
+  "silicon-crucible": {
+   "category": "crafting",
+   "class": "AttributeCrafter",
+   "consume_items": {
+    "coal": 4,
+    "pyratite": 1,
+    "sand": 6
+   },
+   "consume_power_per_second": 240.0,
+   "consume_power_per_tick": 4.0,
+   "craft_seconds": 1.5,
+   "fields": {
+    "ambientSoundVolume": 0.07,
+    "boostScale": 0.15,
+    "craftTime": 90.0,
+    "hasLiquids": false,
+    "hasPower": true,
+    "itemCapacity": 30,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "siliconCrucible",
+   "output_item": {
+    "silicon": 8
+   },
+   "requirements": {
+    "metaglass": 80,
+    "plastanium": 35,
+    "silicon": 60,
+    "titanium": 120
+   },
+   "size": 3
+  },
+  "silicon-smelter": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "coal": 1,
+    "sand": 2
+   },
+   "consume_power_per_second": 30.0,
+   "consume_power_per_tick": 0.5,
+   "craft_seconds": 0.6667,
+   "fields": {
+    "ambientSoundVolume": 0.07,
+    "craftTime": 40.0,
+    "hasLiquids": false,
+    "hasPower": true,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "siliconSmelter",
+   "output_item": {
+    "silicon": 1
+   },
+   "requirements": {
+    "copper": 30,
+    "lead": 25
+   },
+   "size": 2
+  },
+  "slag-heater": {
+   "category": "crafting",
+   "class": "HeatProducer",
+   "fields": {
+    "heatOutput": 8.0,
+    "itemCapacity": 0,
+    "liquidCapacity": 40.0,
+    "regionRotated1": 1,
+    "researchCostMultiplier": 4.0,
+    "rotateDraw": false,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "slagHeater",
+   "requirements": {
+    "beryllium": 20,
+    "oxide": 20,
+    "tungsten": 50
+   },
+   "size": 3
+  },
+  "slag-incinerator": {
+   "category": "crafting",
+   "class": "ItemIncinerator",
+   "fields": {
+    "size": 1
+   },
+   "health": null,
+   "java_name": "slagIncinerator",
+   "requirements": {
+    "tungsten": 15
+   },
+   "size": 1
+  },
+  "small-deconstructor": {
+   "category": "units",
+   "class": "PayloadDeconstructor",
+   "consume_power_per_second": 60.0,
+   "consume_power_per_tick": 1.0,
+   "fields": {
+    "deconstructSpeed": 1.0,
+    "itemCapacity": 100,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "smallDeconstructor",
+   "requirements": {
+    "beryllium": 100,
+    "graphite": 80,
+    "oxide": 40,
+    "silicon": 100
+   },
+   "size": 3
+  },
+  "smite": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "ammoPerShot": 2,
+    "coolantMultiplier": 6.0,
+    "loopSoundVolume": 0.8,
+    "minWarmup": 0.99,
+    "range": 300,
+    "recoil": 2.0,
+    "reload": 100.0,
+    "rotateSpeed": 1.5,
+    "scaledHealth": 350,
+    "shake": 2.0,
+    "shootCone": 30.0,
+    "shootWarmupSpeed": 0.04,
+    "shootY": 15.0,
+    "size": 5,
+    "warmupMaintainTime": 30.0
+   },
+   "health": null,
+   "java_name": "smite",
+   "requirements": {
+    "carbide": 500,
+    "oxide": 200,
+    "phase-fabric": 300,
+    "silicon": 800,
+    "surge-alloy": 400
+   },
+   "size": 5
+  },
+  "solar-panel": {
+   "category": "power",
+   "class": "SolarGenerator",
+   "fields": {
+    "powerProduction": 0.1
+   },
+   "health": null,
+   "java_name": "solarPanel",
+   "power_production_per_second": 6.0,
+   "requirements": {
+    "lead": 10,
+    "silicon": 15
+   },
+   "size": 1
+  },
+  "solar-panel-large": {
+   "category": "power",
+   "class": "SolarGenerator",
+   "fields": {
+    "powerProduction": 1.3,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "largeSolarPanel",
+   "power_production_per_second": 78.0,
+   "requirements": {
+    "lead": 80,
+    "phase-fabric": 15,
+    "silicon": 110
+   },
+   "size": 3
+  },
+  "sorter": {
+   "category": "distribution",
+   "class": "Sorter",
+   "fields": {
+    "buildCostMultiplier": 3.0
+   },
+   "health": null,
+   "java_name": "sorter",
+   "requirements": {
+    "copper": 2,
+    "lead": 2
+   },
+   "size": 1
+  },
+  "spectre": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "coolantMultiplier": 0.5,
+    "inaccuracy": 3.0,
+    "range": 260.0,
+    "recoil": 3.0,
+    "reload": 7.0,
+    "scaledHealth": 160,
+    "shake": 2.0,
+    "shootCone": 24.0,
+    "size": 4
+   },
+   "health": null,
+   "java_name": "spectre",
+   "requirements": {
+    "copper": 900,
+    "graphite": 300,
+    "plastanium": 175,
+    "surge-alloy": 250,
+    "thorium": 250
+   },
+   "size": 4
+  },
+  "spore-press": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "spore-pod": 1
+   },
+   "consume_power_per_second": 42.0,
+   "consume_power_per_tick": 0.7,
+   "craft_seconds": 0.3333,
+   "fields": {
+    "craftTime": 20.0,
+    "hasLiquids": true,
+    "hasPower": true,
+    "health": 320,
+    "liquidCapacity": 60.0,
+    "size": 2
+   },
+   "health": 320,
+   "java_name": "sporePress",
+   "requirements": {
+    "lead": 35,
+    "silicon": 30
+   },
+   "size": 2
+  },
+  "steam-generator": {
+   "category": "power",
+   "class": "ConsumeGenerator",
+   "consume_liquid": {
+    "liquid": "water",
+    "per_tick": 0.1
+   },
+   "fields": {
+    "ambientSoundVolume": 0.06,
+    "hasLiquids": true,
+    "itemDuration": 90.0,
+    "powerProduction": 5.5,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "steamGenerator",
+   "power_production_per_second": 330.0,
+   "requirements": {
+    "copper": 35,
+    "graphite": 25,
+    "lead": 40,
+    "silicon": 30
+   },
+   "size": 2
+  },
+  "sublimate": {
+   "category": "turret",
+   "class": "ContinuousLiquidTurret",
+   "fields": {
+    "loopSoundVolume": 1.0,
+    "scaledHealth": 210,
+    "shootY": 7.0,
+    "size": 3,
+    "targetInterval": 5.0,
+    "targetUnderBlocks": false
+   },
+   "health": null,
+   "java_name": "sublimate",
+   "requirements": {
+    "beryllium": 400,
+    "oxide": 40,
+    "silicon": 200,
+    "tungsten": 150
+   },
+   "size": 3
+  },
+  "surge-conveyor": {
+   "category": "distribution",
+   "class": "StackConveyor",
+   "fields": {
+    "baseEfficiency": 1.0,
+    "conductivePower": true,
+    "consumesPower": true,
+    "hasPower": true,
+    "health": 130,
+    "itemCapacity": 10,
+    "outputRouter": false,
+    "underBullets": true
+   },
+   "health": 130,
+   "java_name": "surgeConveyor",
+   "requirements": {
+    "surge-alloy": 1,
+    "tungsten": 1
+   },
+   "size": 1
+  },
+  "surge-crucible": {
+   "category": "crafting",
+   "class": "HeatCrafter",
+   "consume_items": {
+    "silicon": 3
+   },
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "ambientSoundVolume": 0.9,
+    "heatRequirement": 10.0,
+    "itemCapacity": 20,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "surgeCrucible",
+   "output_item": {
+    "surge-alloy": 1
+   },
+   "requirements": {
+    "graphite": 80,
+    "oxide": 80,
+    "silicon": 100,
+    "tungsten": 80
+   },
+   "size": 3
+  },
+  "surge-router": {
+   "category": "distribution",
+   "class": "StackRouter",
+   "fields": {
+    "baseEfficiency": 1.0,
+    "conductivePower": true,
+    "consumesPower": true,
+    "hasPower": true,
+    "health": 130,
+    "solid": false,
+    "speed": 6.0,
+    "underBullets": true
+   },
+   "health": 130,
+   "java_name": "surgeRouter",
+   "requirements": {
+    "surge-alloy": 5,
+    "tungsten": 1
+   },
+   "size": 1
+  },
+  "surge-smelter": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "copper": 3,
+    "lead": 4,
+    "silicon": 3,
+    "titanium": 2
+   },
+   "consume_power_per_second": 240.0,
+   "consume_power_per_tick": 4.0,
+   "craft_seconds": 1.25,
+   "fields": {
+    "craftTime": 75.0,
+    "hasPower": true,
+    "itemCapacity": 20,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "surgeSmelter",
+   "output_item": {
+    "surge-alloy": 1
+   },
+   "requirements": {
+    "lead": 80,
+    "silicon": 80,
+    "thorium": 70
+   },
+   "size": 3
+  },
+  "surge-tower": {
+   "category": "power",
+   "class": "PowerNode",
+   "fields": {
+    "laserRange": 40.0,
+    "maxNodes": 2,
+    "schematicPriority": -15,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "surgeTower",
+   "power_node": {
+    "laser_range": 40.0,
+    "max_nodes": 2
+   },
+   "requirements": {
+    "lead": 10,
+    "silicon": 15,
+    "surge-alloy": 15,
+    "titanium": 7
+   },
+   "size": 2
+  },
+  "surge-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "lightningChance": 0.05
+   },
+   "health": null,
+   "java_name": "surgeWall",
+   "requirements": {
+    "surge-alloy": 6
+   },
+   "size": 1
+  },
+  "swarmer": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "consumeAmmoOnce": false,
+    "inaccuracy": 10.0,
+    "range": 240.0,
+    "reload": 30.0,
+    "scaledHealth": 300,
+    "shootY": 4.5,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "swarmer",
+   "requirements": {
+    "graphite": 35,
+    "plastanium": 45,
+    "silicon": 30,
+    "titanium": 35
+   },
+   "size": 2
+  },
+  "switch": {
+   "category": "logic",
+   "class": "SwitchBlock",
+   "fields": {},
+   "health": null,
+   "java_name": "switchBlock",
+   "requirements": {
+    "copper": 5,
+    "graphite": 5
+   },
+   "size": 1
+  },
+  "tank-assembler": {
+   "category": "units",
+   "class": "UnitAssembler",
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "areaSize": 13,
+    "researchCostMultiplier": 0.4,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "tankAssembler",
+   "requirements": {
+    "carbide": 80,
+    "oxide": 150,
+    "silicon": 500,
+    "thorium": 500
+   },
+   "size": 5
+  },
+  "tank-fabricator": {
+   "category": "units",
+   "class": "UnitFactory",
+   "consume_power_per_second": 120.0,
+   "consume_power_per_tick": 2.0,
+   "fields": {
+    "configurable": false,
+    "fogRadius": 3,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "tankFabricator",
+   "plans": [
+    {
+     "requirements": {
+      "beryllium": 40,
+      "silicon": 50
+     },
+     "time_seconds": 35.0,
+     "time_ticks": 2100.0,
+     "unit": "stell"
+    }
+   ],
+   "requirements": {
+    "beryllium": 150,
+    "silicon": 200
+   },
+   "size": 3
+  },
+  "tank-refabricator": {
+   "category": "units",
+   "class": "Reconstructor",
+   "consume_items": {
+    "silicon": 40,
+    "tungsten": 30
+   },
+   "consume_power_per_second": 180.0,
+   "consume_power_per_tick": 3.0,
+   "fields": {
+    "researchCostMultiplier": 0.75,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "tankRefabricator",
+   "requirements": {
+    "beryllium": 200,
+    "silicon": 100,
+    "tungsten": 80
+   },
+   "size": 3
+  },
+  "tetrative-reconstructor": {
+   "category": "units",
+   "class": "Reconstructor",
+   "consume_items": {
+    "phase-fabric": 350,
+    "plastanium": 600,
+    "silicon": 1000,
+    "surge-alloy": 500
+   },
+   "consume_liquid": {
+    "liquid": "cryofluid",
+    "per_tick": 3.0
+   },
+   "consume_power_per_second": 1500.0,
+   "consume_power_per_tick": 25.0,
+   "fields": {
+    "liquidCapacity": 180.0,
+    "size": 9
+   },
+   "health": null,
+   "java_name": "tetrativeReconstructor",
+   "requirements": {
+    "lead": 4000,
+    "phase-fabric": 600,
+    "plastanium": 600,
+    "silicon": 3000,
+    "surge-alloy": 800,
+    "thorium": 1000
+   },
+   "size": 9
+  },
+  "thermal-generator": {
+   "category": "power",
+   "class": "ThermalGenerator",
+   "fields": {
+    "ambientSoundVolume": 0.06,
+    "effectChance": 0.011,
+    "floating": true,
+    "powerProduction": 1.8,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "thermalGenerator",
+   "power_production_per_second": 108.0,
+   "requirements": {
+    "copper": 40,
+    "graphite": 35,
+    "lead": 50,
+    "metaglass": 40,
+    "silicon": 35
+   },
+   "size": 2
+  },
+  "thorium-reactor": {
+   "category": "power",
+   "class": "NuclearReactor",
+   "consume_items": {
+    "thorium": 1
+   },
+   "fields": {
+    "ambientSoundVolume": 0.24,
+    "health": 700,
+    "heating": 0.02,
+    "itemDuration": 360.0,
+    "powerProduction": 15.0,
+    "size": 3
+   },
+   "health": 700,
+   "java_name": "thoriumReactor",
+   "power_production_per_second": 900.0,
+   "requirements": {
+    "graphite": 150,
+    "lead": 300,
+    "metaglass": 50,
+    "silicon": 200,
+    "thorium": 150
+   },
+   "size": 3
+  },
+  "thorium-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {},
+   "health": null,
+   "java_name": "thoriumWall",
+   "requirements": {
+    "thorium": 6
+   },
+   "size": 1
+  },
+  "titan": {
+   "category": "turret",
+   "class": "ItemTurret",
+   "fields": {
+    "ammoPerShot": 4,
+    "coolantMultiplier": 1.5,
+    "minWarmup": 0.85,
+    "range": 390.0,
+    "recoil": 1.0,
+    "rotateSpeed": 1.4,
+    "scaledHealth": 250,
+    "shake": 4.0,
+    "shootWarmupSpeed": 0.08,
+    "shootY": 7.0,
+    "size": 4,
+    "targetAir": false
+   },
+   "health": null,
+   "java_name": "titan",
+   "requirements": {
+    "silicon": 300,
+    "thorium": 400,
+    "tungsten": 250
+   },
+   "size": 4
+  },
+  "titanium-conveyor": {
+   "category": "distribution",
+   "class": "Conveyor",
+   "conveyor": {
+    "capacity": 3,
+    "displayed_items_per_second": 11.0,
+    "item_space": 0.4,
+    "speed": 0.08,
+    "tiles_per_second": 4.8
+   },
+   "fields": {
+    "displayedSpeed": 11.0,
+    "health": 65,
+    "speed": 0.08
+   },
+   "health": 65,
+   "java_name": "titaniumConveyor",
+   "requirements": {
+    "copper": 1,
+    "lead": 1,
+    "titanium": 1
+   },
+   "size": 1
+  },
+  "titanium-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {},
+   "health": null,
+   "java_name": "titaniumWall",
+   "requirements": {
+    "titanium": 6
+   },
+   "size": 1
+  },
+  "tsunami": {
+   "category": "turret",
+   "class": "LiquidTurret",
+   "fields": {
+    "inaccuracy": 4.0,
+    "liquidCapacity": 40.0,
+    "range": 190.0,
+    "recoil": 1.0,
+    "reload": 3.0,
+    "scaledHealth": 250,
+    "shootCone": 45.0,
+    "size": 3,
+    "velocityRnd": 0.1
+   },
+   "health": null,
+   "java_name": "tsunami",
+   "requirements": {
+    "lead": 400,
+    "metaglass": 100,
+    "thorium": 100,
+    "titanium": 250
+   },
+   "size": 3
+  },
+  "tungsten-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "armor": 14.0,
+    "buildCostMultiplier": 8.0
+   },
+   "health": null,
+   "java_name": "tungstenWall",
+   "requirements": {
+    "tungsten": 6
+   },
+   "size": 1
+  },
+  "turbine-condenser": {
+   "category": "power",
+   "class": "ThermalGenerator",
+   "fields": {
+    "ambientSoundVolume": 0.06,
+    "displayEfficiency": false,
+    "effectChance": 0.04,
+    "fogRadius": 3,
+    "hasLiquids": true,
+    "liquidCapacity": 20.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "turbineCondenser",
+   "requirements": {
+    "beryllium": 60
+   },
+   "size": 3
+  },
+  "underflow-duct": {
+   "category": "distribution",
+   "class": "OverflowDuct",
+   "fields": {
+    "health": 90,
+    "invert": true,
+    "researchCostMultiplier": 1.5,
+    "solid": false,
+    "speed": 4.0
+   },
+   "health": 90,
+   "java_name": "underflowDuct",
+   "requirements": {
+    "beryllium": 8,
+    "graphite": 8
+   },
+   "size": 1
+  },
+  "underflow-gate": {
+   "category": "distribution",
+   "class": "OverflowGate",
+   "fields": {
+    "buildCostMultiplier": 3.0,
+    "invert": true
+   },
+   "health": null,
+   "java_name": "underflowGate",
+   "requirements": {
+    "copper": 4,
+    "lead": 2
+   },
+   "size": 1
+  },
+  "unit-cargo-loader": {
+   "category": "distribution",
+   "class": "UnitCargoLoader",
+   "fields": {
+    "itemCapacity": 200,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "unitCargoLoader",
+   "requirements": {
+    "oxide": 20,
+    "silicon": 80,
+    "surge-alloy": 50
+   },
+   "size": 3
+  },
+  "unit-cargo-unload-point": {
+   "category": "distribution",
+   "class": "UnitCargoUnloadPoint",
+   "fields": {
+    "itemCapacity": 100,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "unitCargoUnloadPoint",
+   "requirements": {
+    "silicon": 60,
+    "tungsten": 60
+   },
+   "size": 2
+  },
+  "unit-repair-tower": {
+   "category": "units",
+   "class": "RepairTower",
+   "consume_power_per_second": 60.0,
+   "consume_power_per_tick": 1.0,
+   "fields": {
+    "healAmount": 1.5,
+    "range": 100.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "unitRepairTower",
+   "requirements": {
+    "graphite": 90,
+    "silicon": 90,
+    "tungsten": 80
+   },
+   "size": 2
+  },
+  "unloader": {
+   "category": "effect",
+   "class": "Unloader",
+   "fields": {},
+   "health": null,
+   "java_name": "unloader",
+   "requirements": {
+    "silicon": 30,
+    "titanium": 25
+   },
+   "size": 1
+  },
+  "vault": {
+   "category": "effect",
+   "class": "StorageBlock",
+   "fields": {
+    "itemCapacity": 1000,
+    "scaledHealth": 55,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "vault",
+   "requirements": {
+    "thorium": 125,
+    "titanium": 250
+   },
+   "size": 3
+  },
+  "vent-condenser": {
+   "category": "production",
+   "class": "AttributeCrafter",
+   "consume_power_per_second": 30.0,
+   "consume_power_per_tick": 0.5,
+   "craft_seconds": 2.0,
+   "fields": {
+    "ambientSoundVolume": 0.06,
+    "baseEfficiency": 0.0,
+    "craftTime": 120.0,
+    "displayEfficiency": false,
+    "hasLiquids": true,
+    "liquidCapacity": 60.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "ventCondenser",
+   "requirements": {
+    "beryllium": 60,
+    "graphite": 20
+   },
+   "size": 3
+  },
+  "water-extractor": {
+   "category": "production",
+   "class": "SolidPump",
+   "consume_power_per_second": 90.0,
+   "consume_power_per_tick": 1.5,
+   "fields": {
+    "liquidCapacity": 30.0,
+    "pumpAmount": 0.11,
+    "rotateSpeed": 1.4,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "waterExtractor",
+   "requirements": {
+    "copper": 30,
+    "graphite": 30,
+    "lead": 30,
+    "metaglass": 30
+   },
+   "size": 2
+  },
+  "wave": {
+   "category": "turret",
+   "class": "LiquidTurret",
+   "fields": {
+    "inaccuracy": 5.0,
+    "liquidCapacity": 10.0,
+    "range": 110.0,
+    "recoil": 0.0,
+    "reload": 3.0,
+    "scaledHealth": 250,
+    "shootCone": 50.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "wave",
+   "requirements": {
+    "copper": 25,
+    "lead": 75,
+    "metaglass": 45
+   },
+   "size": 2
+  }
+ },
+ "items": {
+  "beryllium": {
+   "buildable": true,
+   "cost": 1.2,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 3,
+   "radioactivity": 0.0
+  },
+  "blast-compound": {
+   "buildable": false,
+   "cost": 1.0,
+   "explosiveness": 1.2,
+   "flammability": 0.4,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "carbide": {
+   "buildable": true,
+   "cost": 1.4,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "coal": {
+   "buildable": false,
+   "cost": 1.0,
+   "explosiveness": 0.2,
+   "flammability": 1.0,
+   "hardness": 2,
+   "radioactivity": 0.0
+  },
+  "copper": {
+   "buildable": true,
+   "cost": 0.5,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 1,
+   "radioactivity": 0.0
+  },
+  "dormant-cyst": {
+   "buildable": true,
+   "cost": 1.0,
+   "explosiveness": 0.0,
+   "flammability": 0.1,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "fissile-matter": {
+   "buildable": true,
+   "cost": 1.0,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 1.5
+  },
+  "graphite": {
+   "buildable": true,
+   "cost": 1.0,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "lead": {
+   "buildable": true,
+   "cost": 0.7,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 1,
+   "radioactivity": 0.0
+  },
+  "metaglass": {
+   "buildable": true,
+   "cost": 1.5,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "oxide": {
+   "buildable": true,
+   "cost": 1.2,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "phase-fabric": {
+   "buildable": true,
+   "cost": 1.3,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.6
+  },
+  "plastanium": {
+   "buildable": true,
+   "cost": 1.3,
+   "explosiveness": 0.2,
+   "flammability": 0.1,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "pyratite": {
+   "buildable": false,
+   "cost": 1.0,
+   "explosiveness": 0.4,
+   "flammability": 1.4,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "sand": {
+   "buildable": false,
+   "cost": 1.0,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "scrap": {
+   "buildable": true,
+   "cost": 1.0,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "silicon": {
+   "buildable": true,
+   "cost": 0.8,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "spore-pod": {
+   "buildable": false,
+   "cost": 1.0,
+   "explosiveness": 0.0,
+   "flammability": 1.15,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "surge-alloy": {
+   "buildable": true,
+   "cost": 1.2,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 0,
+   "radioactivity": 0.0
+  },
+  "thorium": {
+   "buildable": true,
+   "cost": 1.1,
+   "explosiveness": 0.2,
+   "flammability": 0.0,
+   "hardness": 4,
+   "radioactivity": 1.0
+  },
+  "titanium": {
+   "buildable": true,
+   "cost": 1.0,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 3,
+   "radioactivity": 0.0
+  },
+  "tungsten": {
+   "buildable": true,
+   "cost": 1.5,
+   "explosiveness": 0.0,
+   "flammability": 0.0,
+   "hardness": 5,
+   "radioactivity": 0.0
+  }
+ },
+ "liquids": {
+  "arkycite": {
+   "flammability": 0.4,
+   "viscosity": 0.7
+  },
+  "cryofluid": {
+   "heatCapacity": 0.9,
+   "temperature": 0.25
+  },
+  "cyanogen": {
+   "flammability": 2.0
+  },
+  "gallium": {},
+  "hydrogen": {
+   "flammability": 1.0
+  },
+  "nitrogen": {},
+  "oil": {
+   "explosiveness": 1.2,
+   "flammability": 1.2,
+   "heatCapacity": 0.7,
+   "viscosity": 0.75
+  },
+  "ozone": {
+   "explosiveness": 1.0,
+   "flammability": 1.0
+  },
+  "slag": {
+   "temperature": 1.0,
+   "viscosity": 0.7
+  },
+  "water": {
+   "heatCapacity": 0.4
+  }
+ },
+ "units": {
+  "aegires": {
+   "armor": 12.0,
+   "flying": false,
+   "health": 12000,
+   "hit_size": 44.0,
+   "java_name": "aegires",
+   "range": null,
+   "speed": 0.7,
+   "weapons": []
+  },
+  "alpha": {
+   "armor": 0,
+   "flying": true,
+   "health": 150.0,
+   "hit_size": 8.0,
+   "java_name": "alpha",
+   "range": null,
+   "speed": 3.0,
+   "weapons": [
+    {
+     "bullet_speed": 2.5,
+     "damage": 11.0,
+     "lifetime": 60.0,
+     "reload_ticks": 17.0
+    }
+   ]
+  },
+  "antumbra": {
+   "armor": 9.0,
+   "flying": true,
+   "health": 7200,
+   "hit_size": 46.0,
+   "java_name": "antumbra",
+   "range": null,
+   "speed": 0.8,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 20.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 35
+    },
+    {
+     "bullet_speed": 7.0,
+     "damage": 55.0,
+     "lifetime": 25.0,
+     "reload_ticks": 12
+    }
+   ]
+  },
+  "arkyid": {
+   "armor": 6.0,
+   "flying": false,
+   "health": 8000,
+   "hit_size": 23.0,
+   "java_name": "arkyid",
+   "range": null,
+   "speed": 0.62,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 9.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 14.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 22.0
+    },
+    {
+     "bullet_speed": 2.0,
+     "damage": 12.0,
+     "lifetime": 70.0,
+     "reload_ticks": 45
+    }
+   ]
+  },
+  "atrax": {
+   "armor": 3.0,
+   "flying": false,
+   "health": 600,
+   "hit_size": 13.0,
+   "java_name": "atrax",
+   "range": null,
+   "speed": 0.6,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 57.0,
+     "reload_ticks": 9.0
+    }
+   ]
+  },
+  "beta": {
+   "armor": 0,
+   "flying": true,
+   "health": 170.0,
+   "hit_size": 9.0,
+   "java_name": "beta",
+   "range": null,
+   "speed": 3.3,
+   "weapons": [
+    {
+     "bullet_speed": 3.0,
+     "damage": 11.0,
+     "lifetime": 60.0,
+     "reload_ticks": 20.0
+    }
+   ]
+  },
+  "block": {
+   "armor": 0,
+   "flying": false,
+   "health": 1,
+   "hit_size": 0.0,
+   "java_name": "block",
+   "range": null,
+   "speed": 0.0,
+   "weapons": []
+  },
+  "bryde": {
+   "armor": 7.0,
+   "flying": false,
+   "health": 910,
+   "hit_size": 20.0,
+   "java_name": "bryde",
+   "range": null,
+   "speed": 0.85,
+   "weapons": [
+    {
+     "bullet_speed": 3.2,
+     "damage": 15.0,
+     "lifetime": 84.0,
+     "reload_ticks": 65.0
+    },
+    {
+     "bullet_speed": 2.7,
+     "damage": 12.0,
+     "lifetime": 70.0,
+     "reload_ticks": 20.0
+    }
+   ]
+  },
+  "corvus": {
+   "armor": 9.0,
+   "flying": false,
+   "health": 18000.0,
+   "hit_size": 29.0,
+   "java_name": "corvus",
+   "range": null,
+   "speed": 0.3,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 65.0,
+     "reload_ticks": 350.0
+    }
+   ]
+  },
+  "crawler": {
+   "armor": 0,
+   "flying": false,
+   "health": 200,
+   "hit_size": 8.0,
+   "java_name": "crawler",
+   "range": 40.0,
+   "speed": 1.0,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 24.0
+    }
+   ]
+  },
+  "cyerce": {
+   "armor": 6.0,
+   "flying": false,
+   "health": 870,
+   "hit_size": 20.0,
+   "java_name": "cyerce",
+   "range": null,
+   "speed": 0.86,
+   "weapons": [
+    {
+     "bullet_speed": 2.5,
+     "damage": 25.0,
+     "lifetime": 80.0,
+     "reload_ticks": 60.0
+    }
+   ]
+  },
+  "dagger": {
+   "armor": 0,
+   "flying": false,
+   "health": 150,
+   "hit_size": 8.0,
+   "java_name": "dagger",
+   "range": null,
+   "speed": 0.5,
+   "weapons": [
+    {
+     "bullet_speed": 2.5,
+     "damage": 9.0,
+     "lifetime": 60.0,
+     "reload_ticks": 13.0
+    }
+   ]
+  },
+  "eclipse": {
+   "armor": 13.0,
+   "flying": true,
+   "health": 22000,
+   "hit_size": 58.0,
+   "java_name": "eclipse",
+   "range": null,
+   "speed": 0.54,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 45.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 9.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 12.0
+    }
+   ]
+  },
+  "flare": {
+   "armor": 0,
+   "flying": true,
+   "health": 70,
+   "hit_size": 9,
+   "java_name": "flare",
+   "range": null,
+   "speed": 2.7,
+   "weapons": [
+    {
+     "bullet_speed": 2.5,
+     "damage": 9.0,
+     "lifetime": 45.0,
+     "reload_ticks": 20.0
+    }
+   ]
+  },
+  "fortress": {
+   "armor": 9.0,
+   "flying": false,
+   "health": 900,
+   "hit_size": 13.0,
+   "java_name": "fortress",
+   "range": null,
+   "speed": 0.43,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 120.0,
+     "reload_ticks": 60.0
+    }
+   ]
+  },
+  "gamma": {
+   "armor": 0,
+   "flying": true,
+   "health": 220.0,
+   "hit_size": 11.0,
+   "java_name": "gamma",
+   "range": null,
+   "speed": 3.55,
+   "weapons": [
+    {
+     "bullet_speed": 3.5,
+     "damage": 11.0,
+     "lifetime": 70.0,
+     "reload_ticks": 15.0
+    }
+   ]
+  },
+  "horizon": {
+   "armor": 3.0,
+   "flying": true,
+   "health": 340,
+   "hit_size": 10.0,
+   "java_name": "horizon",
+   "range": 140.0,
+   "speed": 1.65,
+   "weapons": [
+    {
+     "bullet_speed": 27.0,
+     "damage": 25.0,
+     "lifetime": null,
+     "reload_ticks": 12.0
+    }
+   ]
+  },
+  "mace": {
+   "armor": 4.0,
+   "flying": false,
+   "health": 550,
+   "hit_size": 10.0,
+   "java_name": "mace",
+   "range": null,
+   "speed": 0.5,
+   "weapons": [
+    {
+     "bullet_speed": 4.2,
+     "damage": 37.0,
+     "lifetime": 13.0,
+     "reload_ticks": 11.0
+    }
+   ]
+  },
+  "mega": {
+   "armor": 3.0,
+   "flying": true,
+   "health": 460,
+   "hit_size": 16.05,
+   "java_name": "mega",
+   "range": null,
+   "speed": 2.5,
+   "weapons": [
+    {
+     "bullet_speed": 5.2,
+     "damage": 10.0,
+     "lifetime": 35.0,
+     "reload_ticks": 24.0
+    },
+    {
+     "bullet_speed": 5.2,
+     "damage": 8.0,
+     "lifetime": 35.0,
+     "reload_ticks": 15.0
+    }
+   ]
+  },
+  "minke": {
+   "armor": 4.0,
+   "flying": false,
+   "health": 600,
+   "hit_size": 13.0,
+   "java_name": "minke",
+   "range": null,
+   "speed": 0.9,
+   "weapons": [
+    {
+     "bullet_speed": 4.2,
+     "damage": 3.0,
+     "lifetime": 60.0,
+     "reload_ticks": 10.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 80.0,
+     "reload_ticks": 30.0
+    }
+   ]
+  },
+  "mono": {
+   "armor": 0,
+   "flying": true,
+   "health": 100,
+   "hit_size": null,
+   "java_name": "mono",
+   "range": 50.0,
+   "speed": 1.5,
+   "weapons": []
+  },
+  "navanax": {
+   "armor": 16.0,
+   "flying": false,
+   "health": 20000,
+   "hit_size": 58.0,
+   "java_name": "navanax",
+   "range": null,
+   "speed": 0.65,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 155.0,
+     "reload_ticks": 170.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 60.0,
+     "reload_ticks": 65.0
+    }
+   ]
+  },
+  "nova": {
+   "armor": 1.0,
+   "flying": false,
+   "health": 120.0,
+   "hit_size": 8.0,
+   "java_name": "nova",
+   "range": null,
+   "speed": 0.55,
+   "weapons": [
+    {
+     "bullet_speed": 5.2,
+     "damage": 13.0,
+     "lifetime": 30.0,
+     "reload_ticks": 24.0
+    }
+   ]
+  },
+  "oct": {
+   "armor": 16.0,
+   "flying": true,
+   "health": 24000,
+   "hit_size": 66.0,
+   "java_name": "oct",
+   "range": null,
+   "speed": 0.8,
+   "weapons": []
+  },
+  "omura": {
+   "armor": 16.0,
+   "flying": false,
+   "health": 22000,
+   "hit_size": 58.0,
+   "java_name": "omura",
+   "range": null,
+   "speed": 0.62,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 110.0
+    }
+   ]
+  },
+  "oxynoe": {
+   "armor": 4.0,
+   "flying": false,
+   "health": 560,
+   "hit_size": 14.0,
+   "java_name": "oxynoe",
+   "range": null,
+   "speed": 0.83,
+   "weapons": [
+    {
+     "bullet_speed": 3.4,
+     "damage": 23.0,
+     "lifetime": 18.0,
+     "reload_ticks": 5.0
+    }
+   ]
+  },
+  "poly": {
+   "armor": 0,
+   "flying": true,
+   "health": 400,
+   "hit_size": 9.0,
+   "java_name": "poly",
+   "range": 130.0,
+   "speed": 2.6,
+   "weapons": [
+    {
+     "bullet_speed": 4.0,
+     "damage": 12.0,
+     "lifetime": 50.0,
+     "reload_ticks": 30.0
+    }
+   ]
+  },
+  "pulsar": {
+   "armor": 4.0,
+   "flying": false,
+   "health": 320.0,
+   "hit_size": 11.0,
+   "java_name": "pulsar",
+   "range": null,
+   "speed": 0.7,
+   "weapons": [
+    {
+     "bullet_speed": 0.0001,
+     "damage": 0.0,
+     "lifetime": null,
+     "reload_ticks": 36.0
+    }
+   ]
+  },
+  "quad": {
+   "armor": 8.0,
+   "flying": true,
+   "health": 6000,
+   "hit_size": 36.0,
+   "java_name": "quad",
+   "range": 140.0,
+   "speed": 1.2,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 70.0,
+     "reload_ticks": 55.0
+    }
+   ]
+  },
+  "quasar": {
+   "armor": 9.0,
+   "flying": false,
+   "health": 640.0,
+   "hit_size": 13.0,
+   "java_name": "quasar",
+   "range": null,
+   "speed": 0.4,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 55.0
+    }
+   ]
+  },
+  "reign": {
+   "armor": 18.0,
+   "flying": false,
+   "health": 24000,
+   "hit_size": 26.0,
+   "java_name": "reign",
+   "range": null,
+   "speed": 0.4,
+   "weapons": [
+    {
+     "bullet_speed": 13.0,
+     "damage": 80.0,
+     "lifetime": 15.0,
+     "reload_ticks": 9.0
+    }
+   ]
+  },
+  "retusa": {
+   "armor": 3.0,
+   "flying": false,
+   "health": 270,
+   "hit_size": 11.0,
+   "java_name": "retusa",
+   "range": 100.0,
+   "speed": 0.9,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 87.0,
+     "reload_ticks": 90.0
+    }
+   ]
+  },
+  "risso": {
+   "armor": 2.0,
+   "flying": false,
+   "health": 280,
+   "hit_size": 10.0,
+   "java_name": "risso",
+   "range": null,
+   "speed": 1.1,
+   "weapons": [
+    {
+     "bullet_speed": 2.5,
+     "damage": 9.0,
+     "lifetime": 60.0,
+     "reload_ticks": 13.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 65.0,
+     "reload_ticks": 25.0
+    }
+   ]
+  },
+  "scepter": {
+   "armor": 10.0,
+   "flying": false,
+   "health": 9000,
+   "hit_size": 22.0,
+   "java_name": "scepter",
+   "range": null,
+   "speed": 0.36,
+   "weapons": [
+    {
+     "bullet_speed": 7.0,
+     "damage": 50.0,
+     "lifetime": 25.0,
+     "reload_ticks": 45.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 13.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 16.0
+    }
+   ]
+  },
+  "sei": {
+   "armor": 12.0,
+   "flying": false,
+   "health": 11000,
+   "hit_size": 39.0,
+   "java_name": "sei",
+   "range": null,
+   "speed": 0.73,
+   "weapons": [
+    {
+     "bullet_speed": 4.2,
+     "damage": 42.0,
+     "lifetime": 62.0,
+     "reload_ticks": 45.0
+    },
+    {
+     "bullet_speed": 7.0,
+     "damage": 57.0,
+     "lifetime": 35.0,
+     "reload_ticks": 60.0
+    }
+   ]
+  },
+  "spiroct": {
+   "armor": 5.0,
+   "flying": false,
+   "health": 1000,
+   "hit_size": 15.0,
+   "java_name": "spiroct",
+   "range": null,
+   "speed": 0.54,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 35.0,
+     "reload_ticks": 14.0
+    },
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 25.0,
+     "reload_ticks": 18.0
+    }
+   ]
+  },
+  "toxopid": {
+   "armor": 13.0,
+   "flying": false,
+   "health": 22000,
+   "hit_size": 26.0,
+   "java_name": "toxopid",
+   "range": null,
+   "speed": 0.5,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 30
+    },
+    {
+     "bullet_speed": 3.0,
+     "damage": 50.0,
+     "lifetime": 80.0,
+     "reload_ticks": 210
+    }
+   ]
+  },
+  "vela": {
+   "armor": 9.0,
+   "flying": false,
+   "health": 8200.0,
+   "hit_size": 24.0,
+   "java_name": "vela",
+   "range": null,
+   "speed": 0.44,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": 160.0,
+     "reload_ticks": 155.0
+    }
+   ]
+  },
+  "zenith": {
+   "armor": 5.0,
+   "flying": true,
+   "health": 700,
+   "hit_size": 20.0,
+   "java_name": "zenith",
+   "range": 140.0,
+   "speed": 1.7,
+   "weapons": [
+    {
+     "bullet_speed": 3.0,
+     "damage": 14.0,
+     "lifetime": 50.0,
+     "reload_ticks": 40.0
+    }
+   ]
+  }
+ }
+}

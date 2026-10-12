@@ -106,11 +106,27 @@ def _clear_settlement_catastrophe_cubes(state, plan) -> None:
     ]
 
 
-def load_prehistoric_world(seed: int = 507) -> WorldSim:
-    """Authoritative Prehistoric world — full board + one simple boulder quest."""
+def load_prehistoric_world(
+    seed: int = 507,
+    *,
+    faction_count: int | None = None,
+    cores_per_faction: int | None = None,
+) -> WorldSim:
+    """Authoritative Prehistoric world — full board + one simple boulder quest.
+
+    Review preset: factions=6, cores_per_faction=1 via args or env
+    ``DMB_FACTION_COUNT`` / ``DMB_CORES_PER_FACTION``. Default remains C04
+    two-faction / two-core.
+    """
+    import os
+
+    if faction_count is None:
+        faction_count = int(os.environ.get("DMB_FACTION_COUNT") or "2")
+    if cores_per_faction is None:
+        cores_per_faction = int(os.environ.get("DMB_CORES_PER_FACTION") or "2")
     sim = bootstrap_world(world_id="world:prehistoric", seed=seed)
     state = sim.state
-    plan = BoardBuilder.generate(seed, 2)
+    plan = BoardBuilder.generate(seed, faction_count, cores_per_faction=cores_per_faction)
     WorldSetupService(state).apply(plan)
 
     # Label settlements with distinct player-facing names.
@@ -182,10 +198,24 @@ def load_prehistoric_world(seed: int = 507) -> WorldSim:
     state.clock["active_faction_id"] = state.clock["scheduled_faction_ids"][0]
     state.clock["completed_seats"] = []
     state.clock["round_complete"] = False
+    state.clock.setdefault("era", "prehistoric")
+    state.clock.setdefault("era_id", "prehistoric")
+    from sim.dmb.technology.draft import DraftService
+
+    DraftService(state).deal("prehistoric", list(state.clock["scheduled_faction_ids"]))
+    # Assign saved trained specialist policies when artifacts exist (P5 / R10).
+    from sim.dmb.ai.policy import PolicyService
+
+    trained = ["policy-im-build", "policy-im-trade", "policy-im-war"]
+    pol = PolicyService(state)
+    for idx, fid in enumerate(state.clock["scheduled_faction_ids"]):
+        pol.assign_brain(fid, trained[idx % len(trained)])
     state.board["g05"] = {
         "mode": "full_prehistoric_world_boulder_quest",
         "quest_enabled": True,
         "seed": seed,
+        "faction_count": plan.faction_count,
+        "cores_per_faction": int(getattr(plan, "cores_per_faction", 2) or 2),
         "start_node_id": start_node,
         "start_settlement_id": settlement_id,
         "start_faction_id": faction_id,

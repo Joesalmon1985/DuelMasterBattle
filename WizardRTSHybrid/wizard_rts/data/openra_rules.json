@@ -1,0 +1,5640 @@
+{
+ "source": "OpenRA bleed e7e9e4ad mods/ra rules + weapons",
+ "locomotors": {
+  "foot": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 89,
+    "Road": 111,
+    "Bridge": 111,
+    "Ore": 89,
+    "Gems": 89,
+    "Beach": 89
+   },
+   "crushes": [
+    "mine",
+    "crate"
+   ]
+  },
+  "wheeled": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 50,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 50
+   },
+   "crushes": [
+    "mine",
+    "crate"
+   ]
+  },
+  "heavywheeled": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 50,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 50
+   },
+   "crushes": [
+    "wall",
+    "mine",
+    "crate",
+    "infantry"
+   ]
+  },
+  "lighttracked": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 88,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 88
+   },
+   "crushes": [
+    "wall",
+    "mine",
+    "crate"
+   ]
+  },
+  "tracked": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 88,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 88
+   },
+   "crushes": [
+    "wall",
+    "infantry",
+    "mine",
+    "crate"
+   ]
+  },
+  "heavytracked": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 88,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 88
+   },
+   "crushes": [
+    "wall",
+    "infantry",
+    "mine",
+    "crate",
+    "heavywall"
+   ]
+  },
+  "naval": {
+   "speeds": {
+    "Water": 100
+   },
+   "crushes": [
+    "crate"
+   ]
+  },
+  "lcraft": {
+   "speeds": {
+    "Water": 100,
+    "Beach": 70
+   },
+   "crushes": [
+    "crate"
+   ]
+  }
+ },
+ "actors": {
+  "mig": {
+   "name": "MIG",
+   "hp": 8000,
+   "armor": "Light",
+   "speed": 0,
+   "cost": 2000,
+   "queue": "Aircraft",
+   "prerequisites": "~afld, stek, ~techlevel.high",
+   "armaments": [
+    "Maverick"
+   ],
+   "target_types": [],
+   "mobile": false,
+   "is_building": false,
+   "locomotor": "",
+   "build_at": "Plane",
+   "targetable": {
+    "Targetable@GROUND": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!airborne"
+    },
+    "Targetable@AIRBORNE": {
+     "types": [
+      "AirborneActor"
+     ],
+     "requires": "airborne"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!airborne && damaged"
+    }
+   }
+  },
+  "yak": {
+   "name": "YAK",
+   "hp": 6000,
+   "armor": "Light",
+   "speed": 0,
+   "cost": 1350,
+   "queue": "Aircraft",
+   "prerequisites": "~afld, ~techlevel.medium",
+   "armaments": [
+    "ChainGun.Yak"
+   ],
+   "target_types": [],
+   "mobile": false,
+   "is_building": false,
+   "locomotor": "",
+   "build_at": "Plane",
+   "targetable": {
+    "Targetable@GROUND": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!airborne"
+    },
+    "Targetable@AIRBORNE": {
+     "types": [
+      "AirborneActor"
+     ],
+     "requires": "airborne"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!airborne && damaged"
+    }
+   }
+  },
+  "tran": {
+   "name": "TRAN",
+   "hp": 14000,
+   "armor": "Light",
+   "speed": 0,
+   "cost": 900,
+   "queue": "Aircraft",
+   "prerequisites": "~hpad, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [],
+   "mobile": false,
+   "is_building": false,
+   "locomotor": "",
+   "build_at": "Helicopter",
+   "targetable": {
+    "Targetable@GROUND": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!airborne"
+    },
+    "Targetable@AIRBORNE": {
+     "types": [
+      "AirborneActor"
+     ],
+     "requires": "airborne"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!airborne && damaged"
+    }
+   }
+  },
+  "heli": {
+   "name": "HELI",
+   "hp": 12000,
+   "armor": "Light",
+   "speed": 0,
+   "cost": 2000,
+   "queue": "Aircraft",
+   "prerequisites": "~hpad, atek, ~techlevel.high",
+   "armaments": [
+    "HellfireAA",
+    "HellfireAG"
+   ],
+   "target_types": [],
+   "mobile": false,
+   "is_building": false,
+   "locomotor": "",
+   "build_at": "Helicopter",
+   "targetable": {
+    "Targetable@GROUND": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!airborne"
+    },
+    "Targetable@AIRBORNE": {
+     "types": [
+      "AirborneActor"
+     ],
+     "requires": "airborne"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!airborne && damaged"
+    }
+   }
+  },
+  "hind": {
+   "name": "HIND",
+   "hp": 10000,
+   "armor": "Light",
+   "speed": 0,
+   "cost": 1500,
+   "queue": "Aircraft",
+   "prerequisites": "~disabled, ~hpad, ~techlevel.medium",
+   "armaments": [
+    "ChainGun"
+   ],
+   "target_types": [],
+   "mobile": false,
+   "is_building": false,
+   "locomotor": "",
+   "build_at": "Helicopter",
+   "targetable": {
+    "Targetable@GROUND": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!airborne"
+    },
+    "Targetable@AIRBORNE": {
+     "types": [
+      "AirborneActor"
+     ],
+     "requires": "airborne"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!airborne && damaged"
+    }
+   }
+  },
+  "mh60": {
+   "name": "MH60",
+   "hp": 10000,
+   "armor": "Light",
+   "speed": 0,
+   "cost": 1500,
+   "queue": "Aircraft",
+   "prerequisites": "~hpad, ~techlevel.medium",
+   "armaments": [
+    "ChainGun"
+   ],
+   "target_types": [],
+   "mobile": false,
+   "is_building": false,
+   "locomotor": "",
+   "build_at": "Helicopter",
+   "targetable": {
+    "Targetable@GROUND": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!airborne"
+    },
+    "Targetable@AIRBORNE": {
+     "types": [
+      "AirborneActor"
+     ],
+     "requires": "airborne"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!airborne && damaged"
+    }
+   }
+  },
+  "e7": {
+   "name": "E7",
+   "hp": 10000,
+   "armor": "None",
+   "speed": 68,
+   "cost": 1800,
+   "queue": "Infantry",
+   "prerequisites": "~tent, atek, ~techlevel.high",
+   "armaments": [
+    "Colt45"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "harv": {
+   "name": "HARV",
+   "hp": 60000,
+   "armor": "Heavy",
+   "speed": 72,
+   "cost": 1100,
+   "queue": "Vehicle",
+   "prerequisites": "proc, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "heavywheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "truk": {
+   "name": "TRUK",
+   "hp": 11000,
+   "armor": "Light",
+   "speed": 113,
+   "cost": 500,
+   "queue": "Vehicle",
+   "prerequisites": "~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "ant": {
+   "name": "Ant",
+   "hp": 75000,
+   "armor": "None",
+   "speed": 92,
+   "cost": 300,
+   "queue": "Infantry",
+   "prerequisites": "~barracks, ~bio",
+   "armaments": [
+    "mandible"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Ant"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "lighttracked",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Ant"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "zombie": {
+   "name": "Zombie",
+   "hp": 25000,
+   "armor": "None",
+   "speed": 39,
+   "cost": 100,
+   "queue": "Infantry",
+   "prerequisites": "~barracks, ~bio",
+   "armaments": [
+    "claw"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "spy": {
+   "name": "SPY",
+   "hp": 2500,
+   "armor": "None",
+   "speed": 54,
+   "cost": 500,
+   "queue": "Infantry",
+   "prerequisites": "~!infantry.england, dome, ~tent, ~techlevel.medium",
+   "armaments": [
+    "SilencedPPK"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "e6": {
+   "name": "E6",
+   "hp": 2500,
+   "armor": "None",
+   "speed": 54,
+   "cost": 400,
+   "queue": "Infantry",
+   "prerequisites": "~barracks, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "thf": {
+   "name": "THF",
+   "hp": 8000,
+   "armor": "None",
+   "speed": 72,
+   "cost": 500,
+   "queue": "Infantry",
+   "prerequisites": "~barr, dome, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "cloak": {
+    "delay_ticks": 120,
+    "detection_types": [
+     "Cloak"
+    ]
+   },
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "spen": {
+   "name": "SPEN",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 800,
+   "queue": "Building",
+   "prerequisites": "anypower, ~structures.soviet, ~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "WaterActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "XXX xxx XXX",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Water"
+    ],
+    "requires_buildable_adjacent": 8
+   },
+   "produces": [
+    "Ship",
+    "Submarine"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      -1,
+      2
+     ],
+     "spawn_offset": [
+      0,
+      -213,
+      0
+     ],
+     "facing": 384
+    },
+    {
+     "exit_cell": [
+      3,
+      2
+     ],
+     "spawn_offset": [
+      0,
+      -213,
+      0
+     ],
+     "facing": 640
+    },
+    {
+     "exit_cell": [
+      0,
+      0
+     ],
+     "spawn_offset": [
+      0,
+      0,
+      0
+     ],
+     "facing": 128
+    },
+    {
+     "exit_cell": [
+      2,
+      0
+     ],
+     "spawn_offset": [
+      0,
+      0,
+      0
+     ],
+     "facing": 896
+    },
+    {
+     "exit_cell": [
+      0,
+      2
+     ],
+     "spawn_offset": [
+      -1024,
+      1024,
+      0
+     ],
+     "facing": 640
+    },
+    {
+     "exit_cell": [
+      2,
+      2
+     ],
+     "spawn_offset": [
+      1024,
+      1024,
+      0
+     ],
+     "facing": 896
+    },
+    {
+     "exit_cell": [
+      0,
+      0
+     ],
+     "spawn_offset": [
+      -1024,
+      -1024,
+      0
+     ],
+     "facing": 384
+    },
+    {
+     "exit_cell": [
+      2,
+      0
+     ],
+     "spawn_offset": [
+      1024,
+      -1024,
+      0
+     ],
+     "facing": 128
+    }
+   ],
+   "detect": {
+    "range": 10.0,
+    "types": [
+     "Underwater"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "syrd": {
+   "name": "SYRD",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1000,
+   "queue": "Building",
+   "prerequisites": "anypower, ~structures.allies, ~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "WaterActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "XXX xxx XXX",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Water"
+    ],
+    "requires_buildable_adjacent": 8
+   },
+   "produces": [
+    "Ship",
+    "Boat"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      0,
+      2
+     ],
+     "spawn_offset": [
+      -1024,
+      1024,
+      0
+     ],
+     "facing": 640
+    },
+    {
+     "exit_cell": [
+      2,
+      2
+     ],
+     "spawn_offset": [
+      1024,
+      1024,
+      0
+     ],
+     "facing": 896
+    },
+    {
+     "exit_cell": [
+      0,
+      0
+     ],
+     "spawn_offset": [
+      -1024,
+      -1024,
+      0
+     ],
+     "facing": 384
+    },
+    {
+     "exit_cell": [
+      2,
+      0
+     ],
+     "spawn_offset": [
+      1024,
+      -1024,
+      0
+     ],
+     "facing": 128
+    }
+   ],
+   "detect": {
+    "range": 10.0,
+    "types": [
+     "Underwater"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "fix": {
+   "name": "FIX",
+   "hp": 80000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1200,
+   "queue": "Building",
+   "prerequisites": "weap, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "_+_ +++ _+_",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "mslo": {
+   "name": "MSLO",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 2500,
+   "queue": "Defense",
+   "prerequisites": "techcenter, ~techlevel.unrestricted",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx",
+    "dimensions": "2,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "iron": {
+   "name": "IRON",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 2000,
+   "queue": "Defense",
+   "prerequisites": "stek, ~structures.soviet, ~techlevel.unrestricted",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "++ xx",
+    "dimensions": "2,2",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "dome": {
+   "name": "DOME",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1500,
+   "queue": "Building",
+   "prerequisites": "proc, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "atek": {
+   "name": "ATEK",
+   "hp": 60000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1500,
+   "queue": "Building",
+   "prerequisites": "weap, dome, ~structures.allies, ~techlevel.high",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "weap": {
+   "name": "WEAP",
+   "hp": 150000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 2000,
+   "queue": "Building",
+   "prerequisites": "proc, ~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxx xxx ===",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Vehicle"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      1,
+      2
+     ],
+     "spawn_offset": [
+      213,
+      -128,
+      0
+     ],
+     "facing": 0
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "proc": {
+   "name": "PROC",
+   "hp": 90000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1400,
+   "queue": "Building",
+   "prerequisites": "anypower, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "ThiefInfiltrate",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "_X_ xxx X== ===",
+    "dimensions": "3,4",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "ThiefInfiltrate",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "hpad": {
+   "name": "HPAD",
+   "hp": 80000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 500,
+   "queue": "Building",
+   "prerequisites": "dome, ~structures.allies, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Aircraft",
+    "Helicopter"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      0,
+      0
+     ],
+     "spawn_offset": [
+      0,
+      -256,
+      0
+     ],
+     "facing": 896
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "afld": {
+   "name": "AFLD",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 500,
+   "queue": "Building",
+   "prerequisites": "dome, ~structures.soviet, ~techlevel.medium, ~!structures.ukraine",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxx xxx",
+    "dimensions": "3,2",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Aircraft",
+    "Plane"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      1,
+      1
+     ],
+     "spawn_offset": [
+      0,
+      0,
+      0
+     ],
+     "facing": 768
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "powr": {
+   "name": "POWR",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 300,
+   "queue": "Building",
+   "prerequisites": "~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "apwr": {
+   "name": "APWR",
+   "hp": 70000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 500,
+   "queue": "Building",
+   "prerequisites": "dome, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxx Xxx ===",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "barr": {
+   "name": "BARR",
+   "hp": 60000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 500,
+   "queue": "Building",
+   "prerequisites": "anypower, ~structures.soviet, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Infantry",
+    "Soldier"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      1,
+      2
+     ],
+     "spawn_offset": [
+      -170,
+      810,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      0,
+      2
+     ],
+     "spawn_offset": [
+      -725,
+      640,
+      0
+     ],
+     "facing": 0
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "tent": {
+   "name": "TENT",
+   "hp": 60000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 500,
+   "queue": "Building",
+   "prerequisites": "anypower, ~structures.allies, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Infantry",
+    "Soldier"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      1,
+      2
+     ],
+     "spawn_offset": [
+      -42,
+      810,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      0,
+      2
+     ],
+     "spawn_offset": [
+      -725,
+      640,
+      0
+     ],
+     "facing": 0
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "fpwr": {
+   "name": "FPWR",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 30,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "tenf": {
+   "name": "TENF",
+   "hp": 60000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 50,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "syrf": {
+   "name": "SYRF",
+   "hp": 100000,
+   "armor": "Light",
+   "speed": 0,
+   "cost": 100,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "WaterActor",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "XXX xxx XXX",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Water"
+    ],
+    "requires_buildable_adjacent": 8
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "spef": {
+   "name": "SPEF",
+   "hp": 100000,
+   "armor": "Light",
+   "speed": 0,
+   "cost": 80,
+   "queue": "Defense",
+   "prerequisites": "~disabled",
+   "armaments": [],
+   "target_types": [
+    "WaterActor",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "XXX xxx XXX",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Water"
+    ],
+    "requires_buildable_adjacent": 8
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "weaf": {
+   "name": "WEAF",
+   "hp": 150000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 200,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxx xxx ===",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "domf": {
+   "name": "DOMF",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 180,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "fixf": {
+   "name": "FIXF",
+   "hp": 80000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 120,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "_=_ xxx _=_",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "fapw": {
+   "name": "FAPW",
+   "hp": 70000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 50,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxx Xxx ===",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "atef": {
+   "name": "ATEF",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 150,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.high",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "pdof": {
+   "name": "PDOF",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 150,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.unrestricted",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx",
+    "dimensions": "2,2",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "mslf": {
+   "name": "MSLF",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 250,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.unrestricted",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx",
+    "dimensions": "2,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "facf": {
+   "name": "FACF",
+   "hp": 150000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 200,
+   "queue": "Defense",
+   "prerequisites": "~structures.france, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxX xxx XxX ===",
+    "dimensions": "3,4",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "dog": {
+   "name": "DOG",
+   "hp": 1800,
+   "armor": "None",
+   "speed": 100,
+   "cost": 200,
+   "queue": "Infantry",
+   "prerequisites": "~kenn, ~techlevel.infonly",
+   "armaments": [
+    "DogJaw"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Dog",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "e1": {
+   "name": "E1",
+   "hp": 5000,
+   "armor": "None",
+   "speed": 54,
+   "cost": 100,
+   "queue": "Infantry",
+   "prerequisites": "~barracks, ~techlevel.infonly",
+   "armaments": [
+    "M1Carbine"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "e2": {
+   "name": "E2",
+   "hp": 5000,
+   "armor": "None",
+   "speed": 68,
+   "cost": 150,
+   "queue": "Infantry",
+   "prerequisites": "~barr, ~techlevel.infonly",
+   "armaments": [
+    "Grenade"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "e3": {
+   "name": "E3",
+   "hp": 4500,
+   "armor": "None",
+   "speed": 54,
+   "cost": 300,
+   "queue": "Infantry",
+   "prerequisites": "~barracks, ~techlevel.infonly",
+   "armaments": [
+    "RedEye",
+    "Dragon"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "e4": {
+   "name": "E4",
+   "hp": 4000,
+   "armor": "None",
+   "speed": 54,
+   "cost": 300,
+   "queue": "Infantry",
+   "prerequisites": "~barr, ftur, ~techlevel.low",
+   "armaments": [
+    "Flamer"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "medi": {
+   "name": "MEDI",
+   "hp": 6000,
+   "armor": "None",
+   "speed": 49,
+   "cost": 200,
+   "queue": "Infantry",
+   "prerequisites": "~tent, ~techlevel.infonly",
+   "armaments": [
+    "Heal"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "mech": {
+   "name": "MECH",
+   "hp": 8000,
+   "armor": "None",
+   "speed": 49,
+   "cost": 500,
+   "queue": "Infantry",
+   "prerequisites": "~tent, fix, ~techlevel.medium",
+   "armaments": [
+    "Repair"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "shok": {
+   "name": "SHOK",
+   "hp": 5000,
+   "armor": "None",
+   "speed": 54,
+   "cost": 350,
+   "queue": "Infantry",
+   "prerequisites": "~barr, stek, tsla, ~infantry.russia, ~techlevel.high",
+   "armaments": [
+    "PortaTesla"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "fireant": {
+   "name": "FireAnt",
+   "hp": 7500,
+   "armor": "Heavy",
+   "speed": 68,
+   "cost": 300,
+   "queue": "Infantry",
+   "prerequisites": "~disabled",
+   "armaments": [
+    "AntFireball"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Ant"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "lighttracked",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Ant"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "scoutant": {
+   "name": "ScoutAnt",
+   "hp": 8500,
+   "armor": "Light",
+   "speed": 92,
+   "cost": 300,
+   "queue": "Infantry",
+   "prerequisites": "~disabled",
+   "armaments": [
+    "mandible"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Ant"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "lighttracked",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Ant"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "warriorant": {
+   "name": "WarriorAnt",
+   "hp": 12500,
+   "armor": "Heavy",
+   "speed": 56,
+   "cost": 300,
+   "queue": "Infantry",
+   "prerequisites": "~disabled",
+   "armaments": [
+    "MandibleHeavy"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Ant"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "lighttracked",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Ant"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "ss": {
+   "name": "SS",
+   "hp": 25000,
+   "armor": "Light",
+   "speed": 78,
+   "cost": 950,
+   "queue": "Ship",
+   "prerequisites": "~spen, ~techlevel.low",
+   "armaments": [
+    "TorpTube"
+   ],
+   "target_types": [
+    "WaterActor",
+    "Ship",
+    "Submarine",
+    "Repair"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "naval",
+   "build_at": "Submarine",
+   "cloak": {
+    "delay_ticks": 50,
+    "detection_types": [
+     "Underwater"
+    ]
+   },
+   "detect": {
+    "range": 5.0,
+    "types": [
+     "Underwater"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Ship",
+      "Submarine",
+      "Repair"
+     ],
+     "requires": "!underwater"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "damaged"
+    },
+    "Targetable@UNDERWATER": {
+     "types": [
+      "Underwater",
+      "Submarine"
+     ],
+     "requires": "underwater"
+    }
+   }
+  },
+  "msub": {
+   "name": "MSUB",
+   "hp": 40000,
+   "armor": "Light",
+   "speed": 44,
+   "cost": 2000,
+   "queue": "Ship",
+   "prerequisites": "~spen, stek, ~techlevel.high",
+   "armaments": [
+    "SubMissile",
+    "SubMissileAA"
+   ],
+   "target_types": [
+    "WaterActor",
+    "Ship",
+    "Submarine",
+    "Repair"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "naval",
+   "build_at": "Submarine",
+   "cloak": {
+    "delay_ticks": 100,
+    "detection_types": [
+     "Underwater"
+    ]
+   },
+   "detect": {
+    "range": 4.0,
+    "types": [
+     "Underwater"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Ship",
+      "Submarine",
+      "Repair"
+     ],
+     "requires": "!underwater"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "damaged"
+    },
+    "Targetable@UNDERWATER": {
+     "types": [
+      "Underwater",
+      "Submarine"
+     ],
+     "requires": "underwater"
+    }
+   }
+  },
+  "dd": {
+   "name": "DD",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 92,
+   "cost": 1000,
+   "queue": "Ship",
+   "prerequisites": "~syrd, dome, ~techlevel.medium",
+   "armaments": [
+    "Stinger",
+    "DepthCharge",
+    "StingerAA"
+   ],
+   "target_types": [
+    "WaterActor",
+    "Ship"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "naval",
+   "build_at": "Boat",
+   "detect": {
+    "range": 4.0,
+    "types": [
+     "Underwater"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Ship"
+     ],
+     "requires": ""
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "damaged"
+    }
+   }
+  },
+  "ca": {
+   "name": "CA",
+   "hp": 80000,
+   "armor": "Heavy",
+   "speed": 44,
+   "cost": 2400,
+   "queue": "Ship",
+   "prerequisites": "~syrd, atek, ~techlevel.high",
+   "armaments": [
+    "8Inch",
+    "8Inch"
+   ],
+   "target_types": [
+    "WaterActor",
+    "Ship"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "naval",
+   "build_at": "Boat",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Ship"
+     ],
+     "requires": ""
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "damaged"
+    }
+   }
+  },
+  "lst": {
+   "name": "LST",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 115,
+   "cost": 500,
+   "queue": "Ship",
+   "prerequisites": "~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "WaterActor",
+    "Ship"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "lcraft",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Ship"
+     ],
+     "requires": ""
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "damaged"
+    }
+   }
+  },
+  "pt": {
+   "name": "PT",
+   "hp": 20000,
+   "armor": "Heavy",
+   "speed": 142,
+   "cost": 500,
+   "queue": "Ship",
+   "prerequisites": "~syrd, ~techlevel.low",
+   "armaments": [
+    "2Inch",
+    "DepthCharge"
+   ],
+   "target_types": [
+    "WaterActor",
+    "Ship"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "naval",
+   "build_at": "Boat",
+   "detect": {
+    "range": 4.0,
+    "types": [
+     "Underwater"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "WaterActor",
+      "Ship"
+     ],
+     "requires": ""
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "damaged"
+    }
+   }
+  },
+  "gap": {
+   "name": "GAP",
+   "hp": 50000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 800,
+   "queue": "Defense",
+   "prerequisites": "atek, ~structures.allies, ~techlevel.high",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "pdox": {
+   "name": "PDOX",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1500,
+   "queue": "Defense",
+   "prerequisites": "atek, ~structures.allies, ~techlevel.unrestricted",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx",
+    "dimensions": "2,2",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "tsla": {
+   "name": "TSLA",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 1200,
+   "queue": "Defense",
+   "prerequisites": "weap, ~structures.soviet, ~techlevel.medium",
+   "armaments": [
+    "TeslaZap"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "detect": {
+    "range": 6.0,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "agun": {
+   "name": "AGUN",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 800,
+   "queue": "Defense",
+   "prerequisites": "dome, ~structures.allies, ~techlevel.medium",
+   "armaments": [
+    "ZSU-23"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "pbox": {
+   "name": "PBOX",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 600,
+   "queue": "Defense",
+   "prerequisites": "tent, ~structures.allies, ~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "detect": {
+    "range": 6.0,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "hbox": {
+   "name": "HBOX",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 750,
+   "queue": "Defense",
+   "prerequisites": "tent, ~structures.allies, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "cloak": {
+    "delay_ticks": 60,
+    "detection_types": []
+   },
+   "detect": {
+    "range": 6.0,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "gun": {
+   "name": "GUN",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 800,
+   "queue": "Defense",
+   "prerequisites": "tent, ~structures.allies, ~techlevel.medium",
+   "armaments": [
+    "TurretGun"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "detect": {
+    "range": 6.0,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "ftur": {
+   "name": "FTUR",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 600,
+   "queue": "Defense",
+   "prerequisites": "barr, ~structures.soviet, ~techlevel.low",
+   "armaments": [
+    "FireballLauncher"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "detect": {
+    "range": 5.0,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "sam": {
+   "name": "SAM",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 700,
+   "queue": "Defense",
+   "prerequisites": "dome, ~structures.soviet, ~techlevel.medium",
+   "armaments": [
+    "Nike"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx",
+    "dimensions": "2,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "fact": {
+   "name": "FACT",
+   "hp": 150000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 2000,
+   "queue": "Building",
+   "prerequisites": "~disabled",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxX xxx XxX ===",
+    "dimensions": "3,4",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Building",
+    "Defense"
+   ],
+   "exits": [],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "silo": {
+   "name": "SILO",
+   "hp": 30000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 150,
+   "queue": "Defense",
+   "prerequisites": "proc, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "ThiefInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "ThiefInfiltrate"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "stek": {
+   "name": "STEK",
+   "hp": 80000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1500,
+   "queue": "Building",
+   "prerequisites": "weap, dome, ~structures.soviet, ~techlevel.high",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "XxX XxX ===",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "kenn": {
+   "name": "KENN",
+   "hp": 30000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 200,
+   "queue": "Building",
+   "prerequisites": "anypower, ~structures.soviet, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Infantry",
+    "Dog"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      -1,
+      1
+     ],
+     "spawn_offset": [
+      -280,
+      400,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      0,
+      1
+     ],
+     "spawn_offset": [
+      -280,
+      400,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      -1,
+      0
+     ],
+     "spawn_offset": [
+      -280,
+      400,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      -1,
+      -1
+     ],
+     "spawn_offset": [
+      -280,
+      400,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      0,
+      -1
+     ],
+     "spawn_offset": [
+      -280,
+      400,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      1,
+      -1
+     ],
+     "spawn_offset": [
+      -280,
+      400,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      1,
+      0
+     ],
+     "spawn_offset": [
+      -280,
+      400,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      1,
+      1
+     ],
+     "spawn_offset": [
+      -280,
+      400,
+      0
+     ],
+     "facing": 0
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "sbag": {
+   "name": "SBAG",
+   "hp": 15000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 30,
+   "queue": "Defense",
+   "prerequisites": "fact, ~structures.allies, ~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "DetonateAttack",
+    "Wall",
+    "NoAutoTarget"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 7
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "DetonateAttack",
+      "Wall",
+      "NoAutoTarget"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "fenc": {
+   "name": "FENC",
+   "hp": 15000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 30,
+   "queue": "Defense",
+   "prerequisites": "fact, ~structures.soviet, ~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "DetonateAttack",
+    "Wall",
+    "NoAutoTarget"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 7
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "DetonateAttack",
+      "Wall",
+      "NoAutoTarget"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "brik": {
+   "name": "BRIK",
+   "hp": 40000,
+   "armor": "Concrete",
+   "speed": 0,
+   "cost": 200,
+   "queue": "Defense",
+   "prerequisites": "fact, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "DetonateAttack",
+    "Wall",
+    "NoAutoTarget"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 7
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "DetonateAttack",
+      "Wall",
+      "NoAutoTarget"
+     ],
+     "requires": ""
+    }
+   }
+  },
+  "v2rl": {
+   "name": "V2RL",
+   "hp": 20000,
+   "armor": "Light",
+   "speed": 72,
+   "cost": 900,
+   "queue": "Vehicle",
+   "prerequisites": "dome, ~vehicles.soviet, ~techlevel.medium",
+   "armaments": [
+    "SCUD"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "1tnk": {
+   "name": "1TNK",
+   "hp": 23000,
+   "armor": "Heavy",
+   "speed": 113,
+   "cost": 700,
+   "queue": "Vehicle",
+   "prerequisites": "~vehicles.allies, ~techlevel.low",
+   "armaments": [
+    "25mm"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "2tnk": {
+   "name": "2TNK",
+   "hp": 46000,
+   "armor": "Heavy",
+   "speed": 72,
+   "cost": 850,
+   "queue": "Vehicle",
+   "prerequisites": "fix, ~vehicles.allies, ~techlevel.medium",
+   "armaments": [
+    "90mm"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "3tnk": {
+   "name": "3TNK",
+   "hp": 60000,
+   "armor": "Heavy",
+   "speed": 64,
+   "cost": 1150,
+   "queue": "Vehicle",
+   "prerequisites": "fix, ~vehicles.soviet, ~techlevel.medium",
+   "armaments": [
+    "105mm"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "4tnk": {
+   "name": "4TNK",
+   "hp": 90000,
+   "armor": "Heavy",
+   "speed": 43,
+   "cost": 2000,
+   "queue": "Vehicle",
+   "prerequisites": "fix, stek, ~vehicles.soviet, ~techlevel.high",
+   "armaments": [
+    "120mm",
+    "MammothTusk"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "heavytracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "arty": {
+   "name": "ARTY",
+   "hp": 10000,
+   "armor": "Light",
+   "speed": 72,
+   "cost": 850,
+   "queue": "Vehicle",
+   "prerequisites": "dome, ~vehicles.allies, ~techlevel.medium",
+   "armaments": [
+    "155mm"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "lighttracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "mcv": {
+   "name": "MCV",
+   "hp": 60000,
+   "armor": "Light",
+   "speed": 60,
+   "cost": 2000,
+   "queue": "Vehicle",
+   "prerequisites": "fix, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "heavywheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "jeep": {
+   "name": "JEEP",
+   "hp": 15000,
+   "armor": "Light",
+   "speed": 164,
+   "cost": 500,
+   "queue": "Vehicle",
+   "prerequisites": "~vehicles.allies, ~techlevel.low",
+   "armaments": [
+    "M60mg"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "apc": {
+   "name": "APC",
+   "hp": 35000,
+   "armor": "Heavy",
+   "speed": 128,
+   "cost": 850,
+   "queue": "Vehicle",
+   "prerequisites": "~vehicles.soviet, ~techlevel.low",
+   "armaments": [
+    "M60mg"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "mnly": {
+   "name": "MNLY",
+   "hp": 30000,
+   "armor": "Heavy",
+   "speed": 113,
+   "cost": 800,
+   "queue": "Vehicle",
+   "prerequisites": "fix, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Vehicle",
+    "Mine"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "detect": {
+    "range": 5.0,
+    "types": [
+     "Mine"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle",
+      "Mine"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "mgg": {
+   "name": "MGG",
+   "hp": 22000,
+   "armor": "Heavy",
+   "speed": 72,
+   "cost": 1000,
+   "queue": "Vehicle",
+   "prerequisites": "atek, ~vehicles.england, ~techlevel.high",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "mrj": {
+   "name": "MRJ",
+   "hp": 22000,
+   "armor": "Heavy",
+   "speed": 68,
+   "cost": 1000,
+   "queue": "Vehicle",
+   "prerequisites": "atek, ~vehicles.allies, ~techlevel.high",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "ttnk": {
+   "name": "TTNK",
+   "hp": 40000,
+   "armor": "Light",
+   "speed": 92,
+   "cost": 1350,
+   "queue": "Vehicle",
+   "prerequisites": "tsla, stek, ~vehicles.russia, ~techlevel.high",
+   "armaments": [
+    "TTankZap"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "ftrk": {
+   "name": "FTRK",
+   "hp": 15000,
+   "armor": "Light",
+   "speed": 113,
+   "cost": 600,
+   "queue": "Vehicle",
+   "prerequisites": "~vehicles.soviet, ~techlevel.low",
+   "armaments": [
+    "FLAK-23-AA",
+    "FLAK-23-AG"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "dtrk": {
+   "name": "DTRK",
+   "hp": 2800,
+   "armor": "Light",
+   "speed": 67,
+   "cost": 2500,
+   "queue": "Vehicle",
+   "prerequisites": "stek, ~vehicles.ukraine, ~techlevel.high",
+   "armaments": [
+    "DemoTruckTargeting"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "ctnk": {
+   "name": "CTNK",
+   "hp": 40000,
+   "armor": "Light",
+   "speed": 86,
+   "cost": 1350,
+   "queue": "Vehicle",
+   "prerequisites": "atek, ~vehicles.germany, ~techlevel.high",
+   "armaments": [
+    "APTusk"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "heavywheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "qtnk": {
+   "name": "QTNK",
+   "hp": 90000,
+   "armor": "Heavy",
+   "speed": 46,
+   "cost": 2000,
+   "queue": "Vehicle",
+   "prerequisites": "fix, stek, ~vehicles.soviet, ~techlevel.high",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "MADTank",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "MADTank",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  },
+  "stnk": {
+   "name": "STNK",
+   "hp": 35000,
+   "armor": "Light",
+   "speed": 128,
+   "cost": 1000,
+   "queue": "Vehicle",
+   "prerequisites": "atek, ~vehicles.france, ~techlevel.high",
+   "armaments": [
+    "APTusk.stnk"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "heavywheeled",
+   "cloak": {
+    "delay_ticks": 175,
+    "detection_types": []
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   }
+  }
+ },
+ "weapons": {
+  "105mm": {
+   "range": 4.75,
+   "min_range": 0.0,
+   "reload": 70,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 75,
+      "Light": 75,
+      "Concrete": 50,
+      "Heavy": 115
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "120mm": {
+   "range": 4.75,
+   "min_range": 0.0,
+   "reload": 90,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [
+    "Air",
+    "Infantry"
+   ],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 75,
+      "Light": 75,
+      "Concrete": 50,
+      "Heavy": 115
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "155mm": {
+   "range": 12.0,
+   "min_range": 4.0,
+   "reload": 85,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 170,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 23000,
+     "spread": 0.416015625,
+     "versus": {
+      "None": 60,
+      "Wood": 40,
+      "Light": 60,
+      "Concrete": 50,
+      "Heavy": 25
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "25mm": {
+   "range": 4.75,
+   "min_range": 0.0,
+   "reload": 21,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 853,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2500,
+     "spread": 0.125,
+     "versus": {
+      "None": 32,
+      "Wood": 52,
+      "Light": 116,
+      "Concrete": 32,
+      "Heavy": 48
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "2Inch": {
+   "range": 5.5,
+   "min_range": 0.0,
+   "reload": 60,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [
+    "Underwater"
+   ],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2500,
+     "spread": 0.25,
+     "versus": {
+      "None": 28,
+      "Wood": 72,
+      "Light": 72,
+      "Concrete": 48
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "8Inch": {
+   "range": 20.0,
+   "min_range": 3.0,
+   "reload": 250,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 204,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2500,
+     "spread": 0.2080078125,
+     "versus": {
+      "None": 60,
+      "Wood": 35,
+      "Light": 60,
+      "Concrete": 100,
+      "Heavy": 25
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "90mm": {
+   "range": 4.75,
+   "min_range": 0.0,
+   "reload": 50,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 75,
+      "Light": 75,
+      "Concrete": 50,
+      "Heavy": 115
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "APTusk": {
+   "range": 6.0,
+   "min_range": 0.5,
+   "reload": 60,
+   "burst": 2,
+   "burst_delay": 0,
+   "projectile": "Missile",
+   "projectile_speed": 298,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 5000,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 34,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "APTusk.stnk": {
+   "range": 6.0,
+   "min_range": 0.5,
+   "reload": 100,
+   "burst": 1,
+   "burst_delay": 0,
+   "projectile": "Missile",
+   "projectile_speed": 298,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 5000,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 34,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "AntFireball": {
+   "range": 4.0,
+   "min_range": 0.0,
+   "reload": 50,
+   "burst": 2,
+   "burst_delay": 20,
+   "projectile": "Bullet",
+   "projectile_speed": 200,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor",
+    "Trees"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4000,
+     "spread": 0.2080078125,
+     "versus": {
+      "None": 80,
+      "Wood": 85,
+      "Tree": 50,
+      "Light": 45,
+      "Heavy": 20,
+      "Concrete": 15
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor",
+      "Trees"
+     ]
+    }
+   ]
+  },
+  "ChainGun": {
+   "range": 5.0,
+   "min_range": 0.75,
+   "reload": 10,
+   "burst": 2,
+   "burst_delay": 0,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2500,
+     "spread": 0.125,
+     "versus": {
+      "None": 144,
+      "Wood": 60,
+      "Light": 72,
+      "Heavy": 28,
+      "Concrete": 28
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "ChainGun.Yak": {
+   "range": 5.0,
+   "min_range": 2.5,
+   "reload": 3,
+   "burst": 2,
+   "burst_delay": 0,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4000,
+     "spread": 0.125,
+     "versus": {
+      "None": 100,
+      "Wood": 50,
+      "Light": 60,
+      "Heavy": 25,
+      "Concrete": 25
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "Colt45": {
+   "range": 7.0,
+   "min_range": 0.0,
+   "reload": 7,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Infantry",
+    "Barrel"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 10000,
+     "spread": 0.041015625,
+     "versus": {},
+     "valid_targets": [
+      "Barrel",
+      "Infantry"
+     ]
+    }
+   ]
+  },
+  "DemoTruckTargeting": {
+   "range": 2.0,
+   "min_range": 0.0,
+   "reload": 1,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "DetonateAttack"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "TargetDamage",
+     "damage": 0,
+     "spread": 0.0,
+     "versus": {},
+     "valid_targets": [
+      "DetonateAttack"
+     ]
+    }
+   ]
+  },
+  "DepthCharge": {
+   "range": 5.0,
+   "min_range": 0.0,
+   "reload": 60,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 125,
+   "valid_targets": [
+    "Underwater"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.125,
+     "versus": {
+      "None": 90,
+      "Wood": 40,
+      "Light": 100,
+      "Concrete": 50,
+      "Heavy": 25
+     },
+     "valid_targets": [
+      "Submarine"
+     ]
+    }
+   ]
+  },
+  "DogJaw": {
+   "range": 3.0,
+   "min_range": 0.0,
+   "reload": 10,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Infantry"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "TargetDamage",
+     "damage": 100000,
+     "spread": 0.0,
+     "versus": {},
+     "valid_targets": [
+      "Infantry"
+     ]
+    }
+   ]
+  },
+  "Dragon": {
+   "range": 5.0,
+   "min_range": 0.5,
+   "reload": 50,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 213,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 5000,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 34,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "FLAK-23-AA": {
+   "range": 8.0,
+   "min_range": 0.0,
+   "reload": 10,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1200,
+     "spread": 0.2080078125,
+     "versus": {},
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "FLAK-23-AG": {
+   "range": 6.0,
+   "min_range": 0.0,
+   "reload": 10,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2000,
+     "spread": 0.2080078125,
+     "versus": {
+      "None": 40,
+      "Wood": 10,
+      "Light": 60,
+      "Heavy": 10,
+      "Concrete": 20
+     },
+     "valid_targets": [
+      "AirborneActor",
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "FireballLauncher": {
+   "range": 5.0,
+   "min_range": 0.0,
+   "reload": 70,
+   "burst": 2,
+   "burst_delay": 20,
+   "projectile": "Bullet",
+   "projectile_speed": 250,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor",
+    "Trees"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 15000,
+     "spread": 0.2080078125,
+     "versus": {
+      "None": 90,
+      "Wood": 50,
+      "Tree": 50,
+      "Light": 50,
+      "Heavy": 25,
+      "Concrete": 20
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor",
+      "Trees"
+     ]
+    }
+   ]
+  },
+  "Flamer": {
+   "range": 5.0,
+   "min_range": 0.0,
+   "reload": 50,
+   "burst": 15,
+   "burst_delay": 1,
+   "projectile": "Bullet",
+   "projectile_speed": 170,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor",
+    "Trees"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1000,
+     "spread": 0.3330078125,
+     "versus": {
+      "None": 70,
+      "Wood": 80,
+      "Tree": 80,
+      "Light": 40,
+      "Heavy": 20,
+      "Concrete": 10
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor",
+      "Trees"
+     ]
+    }
+   ]
+  },
+  "Grenade": {
+   "range": 4.0,
+   "min_range": 0.0,
+   "reload": 60,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 136,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.25,
+     "versus": {
+      "None": 60,
+      "Wood": 100,
+      "Light": 25,
+      "Concrete": 100,
+      "Heavy": 25
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "Heal": {
+   "range": 4.0,
+   "min_range": 0.0,
+   "reload": 80,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Heal"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": -5000,
+     "spread": 0.2080078125,
+     "versus": {},
+     "valid_targets": [
+      "Heal"
+     ]
+    }
+   ]
+  },
+  "HellfireAA": {
+   "range": 4.0,
+   "min_range": 1.25,
+   "reload": 30,
+   "burst": 2,
+   "burst_delay": 10,
+   "projectile": "Missile",
+   "projectile_speed": 492,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 3000,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 100,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "HellfireAG": {
+   "range": 5.0,
+   "min_range": 1.25,
+   "reload": 34,
+   "burst": 2,
+   "burst_delay": 10,
+   "projectile": "Missile",
+   "projectile_speed": 256,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 90,
+      "Light": 90,
+      "Heavy": 100,
+      "Concrete": 100
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "M1Carbine": {
+   "range": 5.0,
+   "min_range": 0.0,
+   "reload": 20,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1000,
+     "spread": 0.125,
+     "versus": {
+      "None": 150,
+      "Wood": 30,
+      "Light": 40,
+      "Heavy": 10,
+      "Concrete": 10
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "M60mg": {
+   "range": 4.0,
+   "min_range": 0.0,
+   "reload": 30,
+   "burst": 5,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1000,
+     "spread": 0.125,
+     "versus": {
+      "None": 150,
+      "Wood": 10,
+      "Light": 30,
+      "Heavy": 10,
+      "Concrete": 10
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "MammothTusk": {
+   "range": 6.5,
+   "min_range": 0.5,
+   "reload": 60,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 341,
+   "valid_targets": [
+    "AirborneActor",
+    "Infantry"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 5000,
+     "spread": 0.25,
+     "versus": {
+      "None": 100,
+      "Wood": 74,
+      "Light": 60,
+      "Heavy": 24,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "AirborneActor",
+      "Infantry"
+     ]
+    }
+   ]
+  },
+  "MandibleHeavy": {
+   "range": 1.5,
+   "min_range": 0.0,
+   "reload": 15,
+   "burst": 2,
+   "burst_delay": 20,
+   "projectile": "Bullet",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 10000,
+     "spread": 0.2080078125,
+     "versus": {
+      "None": 100,
+      "Wood": 10,
+      "Light": 90,
+      "Heavy": 35,
+      "Concrete": 20
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "Maverick": {
+   "range": 9.0,
+   "min_range": 2.0,
+   "reload": 50,
+   "burst": 2,
+   "burst_delay": 7,
+   "projectile": "Missile",
+   "projectile_speed": 256,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 7000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 90,
+      "Light": 90,
+      "Heavy": 115,
+      "Concrete": 100
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "Nike": {
+   "range": 7.5,
+   "min_range": 0.5,
+   "reload": 15,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 341,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4500,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 100,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "PortaTesla": {
+   "range": 6.0,
+   "min_range": 0.0,
+   "reload": 70,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "TeslaZap",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4500,
+     "spread": 0.041015625,
+     "versus": {
+      "None": 1000,
+      "Wood": 73,
+      "Heavy": 60
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "RedEye": {
+   "range": 7.5,
+   "min_range": 0.5,
+   "reload": 50,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 298,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2400,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 100,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "Repair": {
+   "range": 4.0,
+   "min_range": 0.0,
+   "reload": 80,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Repair"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": -2000,
+     "spread": 0.2080078125,
+     "versus": {},
+     "valid_targets": [
+      "Repair"
+     ]
+    }
+   ]
+  },
+  "SCUD": {
+   "range": 10.0,
+   "min_range": 4.0,
+   "reload": 215,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 170,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4500,
+     "spread": 0.3330078125,
+     "versus": {
+      "None": 90,
+      "Wood": 75,
+      "Light": 70,
+      "Heavy": 40,
+      "Concrete": 100,
+      "Tree": 75
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor",
+      "Trees"
+     ]
+    }
+   ]
+  },
+  "SilencedPPK": {
+   "range": 2.5,
+   "min_range": 0.0,
+   "reload": 80,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Infantry",
+    "Barrel"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 15000,
+     "spread": 0.125,
+     "versus": {},
+     "valid_targets": [
+      "Barrel",
+      "Infantry"
+     ]
+    }
+   ]
+  },
+  "Stinger": {
+   "range": 7.5,
+   "min_range": 0.5,
+   "reload": 60,
+   "burst": 2,
+   "burst_delay": 0,
+   "projectile": "Missile",
+   "projectile_speed": 170,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [
+    "Underwater"
+   ],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2500,
+     "spread": 0.125,
+     "versus": {
+      "None": 36,
+      "Wood": 88,
+      "Light": 66,
+      "Heavy": 120,
+      "Concrete": 60
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "StingerAA": {
+   "range": 7.5,
+   "min_range": 0.5,
+   "reload": 60,
+   "burst": 2,
+   "burst_delay": 0,
+   "projectile": "Missile",
+   "projectile_speed": 255,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [
+    "Underwater"
+   ],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1650,
+     "spread": 0.125,
+     "versus": {
+      "None": 36,
+      "Wood": 88,
+      "Light": 100,
+      "Heavy": 120,
+      "Concrete": 60
+     },
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "SubMissile": {
+   "range": 20.0,
+   "min_range": 0.5,
+   "reload": 300,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 215,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2500,
+     "spread": 0.416015625,
+     "versus": {
+      "None": 80,
+      "Wood": 50,
+      "Light": 48,
+      "Heavy": 30,
+      "Concrete": 100
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "SubMissileAA": {
+   "range": 8.0,
+   "min_range": 0.5,
+   "reload": 300,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 234,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 450,
+     "spread": 0.416015625,
+     "versus": {
+      "None": 80,
+      "Wood": 50,
+      "Light": 100,
+      "Heavy": 30,
+      "Concrete": 100
+     },
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "TTankZap": {
+   "range": 7.0,
+   "min_range": 0.0,
+   "reload": 120,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "TeslaZap",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 10000,
+     "spread": 0.041015625,
+     "versus": {
+      "None": 1000
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "TeslaZap": {
+   "range": 7.0,
+   "min_range": 0.0,
+   "reload": 3,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "TeslaZap",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 10000,
+     "spread": 0.041015625,
+     "versus": {
+      "None": 1000,
+      "Wood": 60
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "TorpTube": {
+   "range": 9.0,
+   "min_range": 0.0,
+   "reload": 100,
+   "burst": 2,
+   "burst_delay": 15,
+   "projectile": "Missile",
+   "projectile_speed": 85,
+   "valid_targets": [
+    "Water",
+    "WaterActor",
+    "Underwater",
+    "Bridge"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 18000,
+     "spread": 0.416015625,
+     "versus": {
+      "Wood": 75,
+      "Light": 75,
+      "Heavy": 100,
+      "Concrete": 500
+     },
+     "valid_targets": [
+      "WaterActor",
+      "Underwater",
+      "Bridge"
+     ]
+    }
+   ]
+  },
+  "TurretGun": {
+   "range": 6.5,
+   "min_range": 0.0,
+   "reload": 30,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.125,
+     "versus": {
+      "None": 20,
+      "Wood": 50,
+      "Light": 75,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "ZSU-23": {
+   "range": 10.0,
+   "min_range": 0.0,
+   "reload": 6,
+   "burst": 2,
+   "burst_delay": 0,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 900,
+     "spread": 0.2080078125,
+     "versus": {},
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  }
+ }
+}

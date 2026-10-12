@@ -1,0 +1,45 @@
+{
+ "started": "2026-10-12 14:55:19",
+ "git_sha": "3191892af868005c7f4de54eb9497fb41425b7e4",
+ "git_dirty": false,
+ "mode": "war",
+ "pairing": "mirror",
+ "seeds": [
+  507,
+  11,
+  23,
+  101,
+  102,
+  103
+ ],
+ "minutes": 90,
+ "map": "standard",
+ "every_s": 60,
+ "jobs": 2,
+ "profile": "campaign",
+ "wizard_pilot": false,
+ "machine": {
+  "python": "3.12.3",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "cpus": 4
+ },
+ "argv": [
+  "WizardRTSHybrid/scripts/run_civilisation_tournament.py",
+  "--mode",
+  "war",
+  "--seeds",
+  "507",
+  "11",
+  "23",
+  "101",
+  "102",
+  "103",
+  "--minutes",
+  "90",
+  "--jobs",
+  "2",
+  "--report-dir",
+  "/home/joe/dmb_runs/civ_war90_c"
+ ],
+ "wall_s": 5680.8
+}

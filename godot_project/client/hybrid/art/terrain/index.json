@@ -1,0 +1,81 @@
+{
+ "widelands_commit": "47c5cae8c6cb080e4bf86163a3873bd0847bc0e4",
+ "terrains": {
+  "summer_water": {
+   "file": "summer_water.png",
+   "is": "water",
+   "source": "data/world/terrains/summer/water/water_00.png",
+   "frames": 33
+  },
+  "summer_beach": {
+   "file": "summer_beach.png",
+   "is": "walkable",
+   "source": "data/world/terrains/summer/beach/idle.png"
+  },
+  "summer_meadow1": {
+   "file": "summer_meadow1.png",
+   "is": "arable",
+   "source": "data/world/terrains/summer/meadow1/idle.png"
+  },
+  "summer_meadow2": {
+   "file": "summer_meadow2.png",
+   "is": "arable",
+   "source": "data/world/terrains/summer/meadow2/idle.png"
+  },
+  "summer_meadow3": {
+   "file": "summer_meadow3.png",
+   "is": "arable",
+   "source": "data/world/terrains/summer/meadow3/idle.png"
+  },
+  "summer_meadow4": {
+   "file": "summer_meadow4.png",
+   "is": "arable",
+   "source": "data/world/terrains/summer/meadow4/idle.png"
+  },
+  "summer_steppe": {
+   "file": "summer_steppe.png",
+   "is": "arable",
+   "source": "data/world/terrains/summer/steppe/idle.png"
+  },
+  "summer_steppe_barren": {
+   "file": "summer_steppe_barren.png",
+   "is": "arable",
+   "source": "data/world/terrains/summer/steppe_barren/idle.png"
+  },
+  "summer_mountain_meadow": {
+   "file": "summer_mountain_meadow.png",
+   "is": "arable",
+   "source": "data/world/terrains/summer/mountain_meadow/idle.png"
+  },
+  "summer_mountain1": {
+   "file": "summer_mountain1.png",
+   "is": "mineable",
+   "source": "data/world/terrains/summer/mountain1/idle.png"
+  },
+  "summer_mountain2": {
+   "file": "summer_mountain2.png",
+   "is": "mineable",
+   "source": "data/world/terrains/summer/mountain2/idle.png"
+  },
+  "summer_mountain3": {
+   "file": "summer_mountain3.png",
+   "is": "mineable",
+   "source": "data/world/terrains/summer/mountain3/idle.png"
+  },
+  "summer_mountain4": {
+   "file": "summer_mountain4.png",
+   "is": "mineable",
+   "source": "data/world/terrains/summer/mountain4/idle.png"
+  },
+  "summer_forested_mountain1": {
+   "file": "summer_forested_mountain1.png",
+   "is": "mineable",
+   "source": "data/world/terrains/summer/forested_mountain1/idle.png"
+  },
+  "summer_snow": {
+   "file": "summer_snow.png",
+   "is": "unreachable",
+   "source": "data/world/terrains/summer/snow/idle.png"
+  }
+ }
+}

@@ -1,0 +1,57 @@
+{
+  "pinned": "2026-10-10",
+  "note": "Full-history clones live in WizardRTSHybrid/external and are gitignored. Recreate them with scripts/setup_external.ps1. Hybrid play does not read these trees.",
+  "sources": [
+    {
+      "id": "widelands",
+      "url": "https://github.com/widelands/widelands",
+      "branch": "master",
+      "commit": "47c5cae8c6cb080e4bf86163a3873bd0847bc0e4",
+      "license": "GPL-2.0-or-later",
+      "dependencies": [
+        "CMake",
+        "GCC >= 8 or Clang >= 7 or MSVC",
+        "SDL2",
+        "the libraries listed in the Widelands compiling guide"
+      ],
+      "build": "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build"
+    },
+    {
+      "id": "openra",
+      "url": "https://github.com/OpenRA/OpenRA",
+      "branch": "bleed",
+      "commit": "e7e9e4ad270221d7fb9725b348c75504d48c1ebd",
+      "license": "GPL-3.0-or-later",
+      "dependencies": [
+        ".NET 10 SDK",
+        "Windows PowerShell >= 4"
+      ],
+      "build": "dotnet build OpenRA.slnx -c Debug"
+    },
+    {
+      "id": "openra-mod-sdk",
+      "url": "https://github.com/OpenRA/OpenRAModSDK",
+      "branch": "master",
+      "commit": "df103939c7e472e715b9fce7cbaf7e35b54dc037",
+      "license": "GPL-3.0-or-later",
+      "dependencies": [
+        ".NET SDK",
+        "the OpenRA engine fetched by make.ps1"
+      ],
+      "build": "make.cmd"
+    },
+    {
+      "id": "mindustry",
+      "url": "https://github.com/Anuken/Mindustry",
+      "branch": "v146",
+      "tag": "v146",
+      "commit": "26b66f9bdbd3a77b32f10f3cb350a9a737d5f012",
+      "license": "GPL-3.0-or-later",
+      "dependencies": [
+        "none for import (Java source is read as text; no JDK needed)"
+      ],
+      "build": "not built; sparse checkout of core/src/mindustry/{content,type,world,ctype} and sprite folders",
+      "note": "Pinned stable release v146 (commit date 2023-09-03). Reference/import lab only; no Java runtime in play."
+    }
+  ]
+}

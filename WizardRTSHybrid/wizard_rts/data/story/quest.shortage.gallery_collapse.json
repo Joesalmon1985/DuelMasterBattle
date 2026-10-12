@@ -1,0 +1,112 @@
+{
+  "id": "quest.shortage.gallery_collapse",
+  "schema_version": 1,
+  "version": 2,
+  "family": "shortage",
+  "source": "Authored for the hybrid on the legacy shortage template schema (godot_project/content/source/quests/shortage/*.json). Placeholder wording: no named-character canon (D19). Version 2 (12 Oct 2026): D22 made mineral sites inexhaustible, so the cause is a real gallery collapse (disruption.py), not a used-up vein.",
+  "required_cause": {
+    "kinds": [
+      "gallery_collapse"
+    ],
+    "detail": "A working mine's gallery has caved in (a real closure: no output until timber props are delivered and the faction digs it out, or the wizard reopens the old way in); the workplaces that need its ware stall."
+  },
+  "binding": {
+    "stakeholder_role": "miner",
+    "bind_existing_entities_only": true,
+    "competing_cost": "Another quest elsewhere may be waiting while the wizard is underground.",
+    "era_continuity": "The cause rebinds to the successor mine after an ordinary era transition.",
+    "death_displacement": "A displaced miner uses displaced_target_route.",
+    "compulsory_main_quest": false
+  },
+  "stages": [
+    {
+      "id": "offered",
+      "index": 0
+    },
+    {
+      "id": "investigate",
+      "index": 1
+    },
+    {
+      "id": "gallery",
+      "index": 2
+    },
+    {
+      "id": "resolution",
+      "index": 3
+    }
+  ],
+  "statuses": [
+    "offered",
+    "active",
+    "suspended",
+    "completed",
+    "resolved_by_world",
+    "failed_with_consequence"
+  ],
+  "solutions": [
+    {
+      "id": "reopen_gallery",
+      "cost_bearer": "wizard_time",
+      "branch": "warden_solved",
+      "effects": [
+        {
+          "kind": "reopen_gallery",
+          "mode": "full",
+          "note": "the warden's code was broken: the old gallery bypasses the fall and the mine reopens at once"
+        }
+      ]
+    },
+    {
+      "id": "shore_gallery",
+      "cost_bearer": "wizard_time",
+      "branch": "warden_unsolved",
+      "effects": [
+        {
+          "kind": "reopen_gallery",
+          "mode": "thin",
+          "note": "casts ran out: the wizard shows the miners a shorter way through; the faction's dig-out needs only two more minutes once the props are there"
+        }
+      ]
+    }
+  ],
+  "world_resolved_route": {
+    "when": "faction_repaired_the_collapse",
+    "status": "resolved_by_world"
+  },
+  "invalid_target_route": {
+    "when": "mine_destroyed",
+    "status": "failed_with_consequence",
+    "branch": "destroyed_mine"
+  },
+  "dead_target_route": {
+    "when": "stakeholder_dead",
+    "status": "suspended"
+  },
+  "abandon_route": {
+    "when": "wizard_gives_up",
+    "status": "failed_with_consequence",
+    "branch": "abandoned",
+    "note": "the miner remembers; the shortage persists"
+  },
+  "persistent_return": {
+    "dedupe_by": [
+      "template_id",
+      "cause_id",
+      "stakeholder_id"
+    ],
+    "preserve_on_leave": true,
+    "no_duplicate_reward": true
+  },
+  "dungeon": {
+    "kind": "cave",
+    "entrance": "disused gallery beside the mine",
+    "rooms": 4,
+    "guardian": "gallery warden (Mastermind duel)"
+  },
+  "tunables": {
+    "thin_repair_left_ms": 120000,
+    "duel_extra_casts_with_evidence": 2,
+    "persuade_threshold": "easy"
+  }
+}

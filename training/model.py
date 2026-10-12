@@ -122,16 +122,30 @@ class CandidateScorer:
         path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
     @classmethod
-    def load(cls, path: Path, *, expect_schema_hash: str | None = None) -> "CandidateScorer":
+    def load(
+        cls,
+        path: Path,
+        *,
+        expect_schema_hash: str | None = None,
+        allow_line_ending_compat: bool = True,
+    ) -> "CandidateScorer":
+        from training.environment import schema_hash, schema_hashes_compatible
+
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
         if payload.get("format") != "dmb_candidate_scorer_v1":
             raise ValueError("unsupported model format")
         sh = str(payload.get("schema_hash") or "")
-        if expect_schema_hash is not None and sh != expect_schema_hash:
-            raise ValueError(f"schema mismatch: model={sh} expected={expect_schema_hash}")
         current = schema_hash()
-        if sh != current:
-            raise ValueError(f"schema mismatch: model={sh} current={current}")
+        if allow_line_ending_compat:
+            if expect_schema_hash is not None and not schema_hashes_compatible(sh, expect_schema_hash):
+                raise ValueError(f"schema mismatch: model={sh} expected={expect_schema_hash}")
+            if not schema_hashes_compatible(sh, current):
+                raise ValueError(f"schema mismatch: model={sh} current={current}")
+        else:
+            if expect_schema_hash is not None and sh != expect_schema_hash:
+                raise ValueError(f"schema mismatch: model={sh} expected={expect_schema_hash}")
+            if sh != current:
+                raise ValueError(f"schema mismatch: model={sh} current={current}")
         params = {k: np.asarray(v, dtype=np.float64) for k, v in payload["params"].items()}
         return cls(
             params=params,

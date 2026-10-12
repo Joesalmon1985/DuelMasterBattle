@@ -28,7 +28,16 @@ def test_content_loads_and_catalog_validates() -> None:
     assert "building.primary" in buildings
     assert "building.processor" in buildings
     assert "building.factory" in buildings
-    assert len([u for u in units if u.startswith("unit.")]) == 6
+    unit_ids = [u for u in units if u.startswith("unit.")]
+    assert unit_ids
+    archetypes = {"skirmisher", "line", "heavy"}
+    for era in ("ancient", "historic", "modern", "future"):
+        era_arches = {
+            str((units[u].get("fields") or {}).get("archetype") or "")
+            for u in unit_ids
+            if str(units[u].get("era_id") or "") == era
+        }
+        assert archetypes <= era_arches, f"{era} missing baseline archetypes"
     catalog = DefinitionCatalog()
     catalog.load(list(buildings.values()) + list(units.values()))
     assert catalog.catalog_hash
@@ -118,7 +127,7 @@ def test_repair_restores_full_health() -> None:
     assert repaired["usable_capacity"] == pytest.approx(1.0)
 
 
-def test_baseline_facility_set_and_six_units() -> None:
+def test_baseline_facility_set_and_era_unit_archetypes() -> None:
     state = _world()
     svc = BuildingService(state)
     sid = "settlement:1"
@@ -146,4 +155,9 @@ def test_baseline_facility_set_and_six_units() -> None:
     assert kinds == {"centre", "warehouse", "primary", "processor", "factory"}
     assert sum(1 for r in state.buildings.values() if r["slot_kind"] == "factory") == 3
     units = load_unit_definitions()
-    assert len(units) == 6
+    ancient_arches = {
+        str((units[u].get("fields") or {}).get("archetype") or "")
+        for u in units
+        if str(units[u].get("era_id") or "") == "ancient"
+    }
+    assert ancient_arches == {"skirmisher", "line", "heavy"}

@@ -1,0 +1,7 @@
+seed,leg,minutes,final_era,era_transitions,vp_threshold_transitions,stall_guard_transitions,splits,collapses,declines,outbreaks,settlements_destroyed,wall_s,step_ms_p95,peak_rss_mb,failures
+11,A,60,2,2,2,0,2,0,1,0,1,398.5,263.15,98.2,0
+11,B,60,2,2,2,0,3,0,1,0,0,373.0,264.49,98.2,0
+23,A,60,2,2,2,0,1,0,0,0,1,256.3,150.91,103.9,0
+23,B,60,2,2,2,0,2,0,0,0,0,325.1,236.59,103.9,0
+507,A,60,1,1,1,0,1,0,0,2,0,372.0,248.11,63.2,0
+507,B,60,2,2,2,0,1,0,0,0,0,354.9,254.93,70.4,0

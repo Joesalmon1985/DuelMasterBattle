@@ -1,0 +1,249 @@
+{
+ "widelands.barbarians_lumberjacks_hut": {
+  "status": "tested",
+  "evidence": "tests/test_forestry.py; godot run_hybrid_forestry.gd; docs/evidence/forestry"
+ },
+ "widelands.barbarians_rangers_hut": {
+  "status": "tested",
+  "evidence": "tests/test_forestry.py; godot run_hybrid_forestry.gd"
+ },
+ "widelands.barbarians_lumberjack": {
+  "status": "tested",
+  "evidence": "worker programme harvest, forest_data.py"
+ },
+ "widelands.barbarians_ranger": {
+  "status": "tested",
+  "evidence": "worker programme plant, forest_data.py"
+ },
+ "widelands.barbarians_carrier": {
+  "status": "integrated",
+  "evidence": "economy.py road carriers; one ware per trip"
+ },
+ "widelands.log": {
+  "status": "tested",
+  "evidence": "created only by a felled tree"
+ },
+ "widelands.barbarians_warehouse": {
+  "status": "scaffolded",
+  "evidence": "stock list only; no requests/priorities"
+ },
+ "widelands.empire_sawmill": {
+  "status": "tested",
+  "evidence": "source programme: needs planks, consume log:2, sleep 16.4 s, animate 20 s, produce planks"
+ },
+ "openra.barracks": {
+  "status": "integrated",
+  "evidence": "construction.py recipe queue consumes delivered planks; tests/test_commands.py; godot run_hybrid_god.gd"
+ },
+ "openra.weap": {
+  "status": "integrated",
+  "evidence": "recipe queue (tank, 2 planks); tests/test_commands.py"
+ },
+ "openra.proc": {
+  "status": "missing",
+  "evidence": "removed from default hybrid by design (no refinery economy)"
+ },
+ "openra.e1": {
+  "status": "integrated",
+  "evidence": "recruited from barracks queue, obeys move/attack orders; run_hybrid_god.gd"
+ },
+ "openra.3tnk": {
+  "status": "integrated",
+  "evidence": "recruited from war factory queue; attack order tested"
+ },
+ "openra.gun": {
+  "status": "scaffolded",
+  "evidence": "placeable via build menu; no weapon yet"
+ },
+ "widelands.barbarians_coalmine": {
+  "status": "tested",
+  "evidence": "finite 5x5 field, yield 33.33%, when_empty 5%; tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares); ration input not modelled yet"
+ },
+ "widelands.barbarians_ironmine": {
+  "status": "tested",
+  "evidence": "tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares)"
+ },
+ "widelands.barbarians_smelting_works": {
+  "status": "tested",
+  "evidence": "iron program only (gold program missing); tests/test_resources.py, tests/test_commands.py (chain), tests/test_logistics.py (conservation of 7 wares)"
+ },
+ "widelands.barbarians_ax_workshop": {
+  "status": "tested",
+  "evidence": "produce_ax only; chain test in tests/test_commands.py"
+ },
+ "widelands.barbarians_quarry": {
+  "status": "tested",
+  "evidence": "stonemason walks to a real rock, shrinks it, granite carried home; tests/test_resources.py"
+ },
+ "widelands.barbarians_stonemason": {
+  "status": "tested",
+  "evidence": "cut_granite worker programme"
+ },
+ "widelands.barbarians_barracks": {
+  "status": "scaffolded",
+  "evidence": "recruit consumes ax (source recipe), recruits an OpenRA rifleman, not a barbarian soldier"
+ },
+ "widelands.ax": {
+  "status": "tested",
+  "evidence": "made by ax workshop from mined coal and smelted iron"
+ },
+ "widelands.coal": {
+  "status": "tested",
+  "evidence": "mined from deposit"
+ },
+ "widelands.iron_ore": {
+  "status": "tested",
+  "evidence": "mined from deposit"
+ },
+ "widelands.iron": {
+  "status": "tested",
+  "evidence": "smelted"
+ },
+ "widelands.granite": {
+  "status": "tested",
+  "evidence": "cut from a rock"
+ },
+ "widelands.barbarians_farm": {
+  "status": "tested",
+  "evidence": "farmer plants wheat fields that grow tiny/small/medium/ripe (30/45/50 s), harvest only when ripe, rot after 8m20s; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_farmer": {
+  "status": "tested",
+  "evidence": "plant + harvest worker programmes; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_hunters_hut": {
+  "status": "tested",
+  "evidence": "hunter reserves, walks to and removes a real animal; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_hunter": {
+  "status": "tested",
+  "evidence": "hunt programme; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_well": {
+  "status": "tested",
+  "evidence": "finite water field, yield 100%, when_empty 65% (fails when no nodes remain); tests/test_food.py"
+ },
+ "widelands.barbarians_tavern": {
+  "status": "tested",
+  "evidence": "ration from bread, fish or meat; tests/test_food.py; headed run_hybrid_food.gd; docs/evidence/food"
+ },
+ "widelands.barbarians_bakery": {
+  "status": "tested",
+  "evidence": "water:3 wheat:3 -> 2 bread; tests/test_logistics.py conservation"
+ },
+ "widelands.ration": {
+  "status": "tested",
+  "evidence": "mines consume one per cycle; tests/test_food.py"
+ },
+ "widelands.wheat": {
+  "status": "tested",
+  "evidence": "from a ripe field only"
+ },
+ "widelands.meat": {
+  "status": "tested",
+  "evidence": "from a hunted animal only"
+ },
+ "widelands.water": {
+  "status": "tested",
+  "evidence": "from a well deposit"
+ },
+ "widelands.barbarians_bread": {
+  "status": "tested",
+  "evidence": "bakery"
+ },
+ "mindustry.mechanical-drill": {
+  "status": "verified",
+  "evidence": "drill on existing deposits, reserve exact, belt backpressure; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.pneumatic-drill": {
+  "status": "tested",
+  "evidence": "titanium 2 reserve units per item; tier 3; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.conveyor": {
+  "status": "verified",
+  "evidence": "1.8 tiles/s, spacing 0.4, capacity 3, runs paid per 3 tiles; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.power-node": {
+  "status": "verified",
+  "evidence": "laser links range 6, adjacency graphs; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.combustion-generator": {
+  "status": "tested",
+  "evidence": "burns coal 0.5/s, 60 power/s; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.solar-panel": {
+  "status": "tested",
+  "evidence": "6 power/s, adjacency; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.solar-panel-large": {
+  "status": "verified",
+  "evidence": "78 power/s; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.battery": {
+  "status": "tested",
+  "evidence": "buffers surplus, bridges a gap; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.silicon-smelter": {
+  "status": "verified",
+  "evidence": "coal 1 + sand 2 -> silicon, 30 power/s; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.graphite-press": {
+  "status": "adapted",
+  "evidence": "in the registry and card list; no behaviour test beyond the crafter code path shared with the smelter; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.ground-factory": {
+  "status": "verified",
+  "evidence": "dagger plan 15 s, 72 power/s; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.dagger": {
+  "status": "verified",
+  "evidence": "unit joins world.units, fights an OpenRA rifleman; headed run_hybrid_industry.gd, docs/evidence/m2; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.coal": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.copper": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.item.lead": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.sand": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.titanium": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ },
+ "mindustry.item.silicon": {
+  "status": "tested",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py; tests/test_ai_industry.py (AI places the line)",
+  "ai_usable": true
+ },
+ "mindustry.item.graphite": {
+  "status": "adapted",
+  "evidence": "ware mdy.* in belts and buffers; tests/test_industry_mechanics.py; tests/test_industry_slice.py",
+  "ai_usable": false
+ }
+}

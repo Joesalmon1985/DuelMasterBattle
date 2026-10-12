@@ -198,6 +198,23 @@ func _build_layers() -> void:
 	_actors_root.add_child(_john)
 
 
+## Persistent controllers mounted under Actors by the shell / G05 host.
+## Disposable area visuals (NPCs, props anchors, semantic labels) are cleared.
+func _is_persistent_actor(c: Node) -> bool:
+	if c == null or not is_instance_valid(c):
+		return false
+	if c == _john:
+		return true
+	var n := str(c.name)
+	if n == "WorkerController" or n == "WorldLayerPresenters" or n == "LocalBattle":
+		return true
+	if c.is_in_group("dmb_person_presenter"):
+		return true
+	if c.is_in_group("dmb_world_layer_presenter"):
+		return true
+	return false
+
+
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
 	layer.name = "UI"
@@ -353,8 +370,9 @@ func load_area(id: String, at: Vector2i, facing: String = "down") -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c != _john:
-			c.queue_free()
+		if _is_persistent_actor(c):
+			continue
+		c.queue_free()
 	_entities.clear()
 	_entity_at.clear()
 	_fire_frames.clear()
@@ -637,9 +655,18 @@ func _process(delta: float) -> void:
 		_move_t += delta / STEP_SECONDS
 		_anim_time += delta
 		if _move_t >= 1.0:
+			var carry := (_move_t - 1.0) * STEP_SECONDS  # time left over from this frame belongs to the next tile
 			_moving = false
 			_john.position = _move_to
 			_arrived()
+			# Held direction: start the next tile inside the same frame so the walk never stops for a frame between tiles.
+			if not _input_locked and not _scripted_running and not _carried_move_blocked():
+				var again := _movement_input()
+				if again != Vector2i.ZERO:
+					_try_step(again)
+					if _moving:
+						_move_t = carry / STEP_SECONDS
+						_john.position = _move_from.lerp(_move_to, _move_t)
 		else:
 			_john.position = _move_from.lerp(_move_to, _move_t)
 		_update_john_sprite(int(_anim_time * 8) % 2)
@@ -1337,8 +1364,9 @@ func _rebuild_entities() -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c != _john:
-			c.queue_free()
+		if _is_persistent_actor(c):
+			continue
+		c.queue_free()
 	_entities.clear()
 	_entity_at.clear()
 	_fire_frames.clear()
@@ -2712,8 +2740,9 @@ func _finish_kit_build(at: Vector2i, facing: String) -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c != _john:
-			c.queue_free()
+		if _is_persistent_actor(c):
+			continue
+		c.queue_free()
 	_entities.clear()
 	_entity_at.clear()
 	_fire_frames.clear()
@@ -3019,10 +3048,7 @@ func _finish_village_build(at: Vector2i, facing: String) -> void:
 	for c in _props_root.get_children():
 		c.queue_free()
 	for c in _actors_root.get_children():
-		if c == _john:
-			continue
-		# Preserve G05 WorkerController / activity presenters mounted under actors.
-		if str(c.name) == "WorkerController" or c.is_in_group("dmb_person_presenter"):
+		if _is_persistent_actor(c):
 			continue
 		c.queue_free()
 	_entities.clear()

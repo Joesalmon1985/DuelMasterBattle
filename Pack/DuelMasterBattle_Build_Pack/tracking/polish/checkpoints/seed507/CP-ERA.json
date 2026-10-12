@@ -1,0 +1,12 @@
+{
+  "checkpoint_id": "CP-ERA",
+  "seed": 507,
+  "fixture": "FX-MVP",
+  "replay_hash": "cb7e1a86fc6a41a6",
+  "meta": {
+    "chapter": 8,
+    "arranged": true,
+    "label": "FX-ERA diagnostic near-threshold"
+  },
+  "commands": []
+}

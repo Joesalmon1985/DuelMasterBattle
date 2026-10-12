@@ -1,0 +1,5 @@
+# DuelMasterBattle — repository entry
+
+The active development is the wizard-led hybrid in `WizardRTSHybrid/`. Start at `WizardRTSHybrid/CLAUDE.md` and `WizardRTSHybrid/AGENTS.md`. The approved direction is `docs/DuelMasterBattle_Design_v0_5.md`; the decision register is `docs/DECISION_REGISTER.md`.
+
+The rest of this repository (`sim/dmb`, `godot_project`, `tests`, `DD`, `python_prototype`, older `docs/*`) is the earlier Catan-era game and its quest, dialogue, dungeon and Mastermind duel assets. Reuse them, do not delete them, and treat their economy/map rules as superseded (see `docs/CURRENT_STATUS_AND_GAPS.md` section 5). Root `README.md` is a historical Village Test note.

@@ -28,6 +28,11 @@ const RESPONSE_WIDTH := 280.0
 const RESPONSE_MIN_H := 56.0
 const RESPONSE_GAP := 8.0
 const VIEW_MARGIN := 8.0
+## Reserved chrome that must not cover Travel/action cards (status, Wait row, pad).
+const RESERVED_TOP := 104.0
+const RESERVED_BOTTOM := 200.0
+const RESERVED_LEFT := 8.0
+const RESERVED_RIGHT := 8.0
 const ANCHOR_HIT := 24.0
 
 var _state := STATE_LABEL
@@ -304,7 +309,7 @@ func presentation_rect() -> Rect2:
 ## Where the passive LABEL would sit, even while this label is hidden.
 func passive_placement_rect() -> Rect2:
 	var label_size := _label_size_for(display_text() if _state == STATE_LABEL else _resolved_label())
-	var view := get_viewport().get_visible_rect() if is_inside_tree() else Rect2(0, 0, 720, 1280)
+	var view := usable_world_rect(get_viewport().get_visible_rect()) if is_inside_tree() else Rect2(0, 100, 720, 980)
 	return Rect2(placed_origin(screen_anchor(), label_size, view), label_size)
 
 
@@ -674,14 +679,29 @@ func _follow() -> void:
 		return
 	var content := _preferred_size()
 	_panel_size = content
-	var view := get_viewport().get_visible_rect()
+	var view := usable_world_rect(get_viewport().get_visible_rect())
 	global_position = placed_origin(screen_anchor(), content, view)
 	size = content
 	custom_minimum_size = content
 	if _state == STATE_RESPONSES and _scroll != null:
-		_scroll.position = Vector2.ZERO
-		_scroll.size = content
-		_scroll.custom_minimum_size = content
+		# keep the responses below the spoken description (_layout_responses placed them there); resetting the scroll box to the
+		# top made the fire-magic buttons cover the observation text (owner playtest, 12 Oct 2026)
+		var speech_h := 0.0
+		if _button != null and _button.visible:
+			speech_h = _button.size.y + 10.0
+		_scroll.position = Vector2(0, speech_h)
+		var shown := Vector2(content.x, maxf(RESPONSE_MIN_H, content.y - speech_h))
+		_scroll.size = shown
+		_scroll.custom_minimum_size = shown
+
+
+## Usable rectangle below/around HUD chrome. Exit Travel cards must stay here.
+static func usable_world_rect(view: Rect2) -> Rect2:
+	var top := view.position.y + RESERVED_TOP
+	var left := view.position.x + RESERVED_LEFT
+	var width := maxf(64.0, view.size.x - RESERVED_LEFT - RESERVED_RIGHT)
+	var height := maxf(64.0, view.size.y - RESERVED_TOP - RESERVED_BOTTOM)
+	return Rect2(left, top, width, height)
 
 
 ## Presentation placement only. Do not use this to decide whether the target
@@ -696,6 +716,11 @@ static func placed_origin(screen: Vector2, size: Vector2, view: Rect2) -> Vector
 	var bottom := view.position.y + view.size.y
 	if pos.y + size.y > bottom - VIEW_MARGIN and above.y >= view.position.y + VIEW_MARGIN:
 		pos = above
+	# Prefer flipping below/above again if the chosen side still overflows usable HUD space.
+	if pos.y < view.position.y + VIEW_MARGIN:
+		pos = below
+	if pos.y + size.y > bottom - VIEW_MARGIN:
+		pos.y = maxf(view.position.y + VIEW_MARGIN, bottom - size.y - VIEW_MARGIN)
 	pos.x = clampf(pos.x, view.position.x + VIEW_MARGIN, maxf(view.position.x + VIEW_MARGIN, right - size.x - VIEW_MARGIN))
 	pos.y = clampf(pos.y, view.position.y + VIEW_MARGIN, maxf(view.position.y + VIEW_MARGIN, bottom - size.y - VIEW_MARGIN))
 	return pos

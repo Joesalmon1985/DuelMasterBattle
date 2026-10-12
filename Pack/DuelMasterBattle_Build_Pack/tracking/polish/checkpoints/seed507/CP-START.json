@@ -1,0 +1,11 @@
+{
+  "checkpoint_id": "CP-START",
+  "seed": 507,
+  "fixture": "FX-MVP",
+  "replay_hash": "6743946ecf027693",
+  "meta": {
+    "chapter": 1,
+    "node": "node:35"
+  },
+  "commands": []
+}

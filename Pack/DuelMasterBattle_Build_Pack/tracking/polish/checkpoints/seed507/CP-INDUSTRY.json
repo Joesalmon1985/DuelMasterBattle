@@ -1,0 +1,332 @@
+{
+  "checkpoint_id": "CP-INDUSTRY",
+  "seed": 507,
+  "fixture": "FX-MVP",
+  "replay_hash": "265e88b39db16fac",
+  "meta": {
+    "chapter": 3,
+    "game_ms": 120000
+  },
+  "commands": [
+    {
+      "sequence": 1,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 1
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 2
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 3
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 4
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 5
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 6
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 7
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 8
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 9
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 10
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 11
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 12
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 13
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 14
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 15
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 16
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 17
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 18
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 19
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 20
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 21
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 22
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 23
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 24
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 25
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 26
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 27
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 28
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 29
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 30
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 31
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 32
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 33
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 34
+      }
+    },
+    {
+      "sequence": 35,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 35
+      }
+    },
+    {
+      "sequence": 36,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 36
+      }
+    },
+    {
+      "sequence": 37,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 37
+      }
+    },
+    {
+      "sequence": 38,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 38
+      }
+    },
+    {
+      "sequence": 39,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 39
+      }
+    },
+    {
+      "sequence": 40,
+      "kind": "AdvanceGame",
+      "payload": {
+        "delta_ms": 3000,
+        "clock_sequence": 40
+      }
+    }
+  ]
+}

@@ -218,6 +218,20 @@ class TechnologyService:
             )
         return totals
 
+    def logistics_multiplier(self, faction_id: str, kind: str) -> float:
+        """1 + stacked percent bonus for logistics-scoped effect kinds."""
+        bonus = float(self.effective_modifiers(faction_id).get(kind, 0.0))
+        return 1.0 + bonus
+
+    def cart_capacity_bonus(self, faction_id: str) -> int:
+        return int(round(float(self.effective_modifiers(faction_id).get("cart_capacity", 0.0))))
+
+    def unit_stat_multipliers(self, faction_id: str, *, era: str) -> tuple[float, float]:
+        mods = self.effective_modifiers(faction_id, asset_era=era, scope="unit_era")
+        health = 1.0 + float(mods.get("unit_health", 0.0))
+        attack = 1.0 + float(mods.get("unit_attack", 0.0))
+        return health, attack
+
     def inherit_to_successor(self, source_faction_id: str, successor_faction_id: str) -> dict[str, Any]:
         """Fission copy of research history into a new faction bucket."""
         source = deepcopy(self.research_of(source_faction_id))

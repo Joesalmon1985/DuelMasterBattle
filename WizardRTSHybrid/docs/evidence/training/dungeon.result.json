@@ -1,0 +1,40 @@
+{
+ "eval": {
+  "net_greedy": {
+   "solve_rate": 0.05,
+   "mean_steps": 478.25,
+   "illegal": 0
+  },
+  "net_sampled": {
+   "solve_rate": 0.1,
+   "mean_steps": 456.65,
+   "illegal": 0
+  },
+  "expert": {
+   "solve_rate": 1.0,
+   "mean_steps": 70.5,
+   "illegal": 0
+  },
+  "random": {
+   "solve_rate": 0.0,
+   "mean_steps": 500.0,
+   "illegal": 0
+  }
+ },
+ "failures_by_first_unsolved_puzzle": {
+  "timed_gate": 10,
+  "mosaic": 11,
+  "switch_chain": 17
+ },
+ "samples": 30408,
+ "seeds": {
+  "train": [
+   0,
+   159
+  ],
+  "test": [
+   700,
+   739
+  ]
+ }
+}

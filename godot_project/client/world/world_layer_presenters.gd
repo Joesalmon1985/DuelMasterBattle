@@ -9,15 +9,35 @@ const HazardActor = preload("res://client/world/hazard_actor.gd")
 
 const TPX := 64.0
 
+## Geometric actors live under this presenter, not as siblings under Overworld
+## actors. Area rebuilds must preserve this node or remount it intentionally.
 var _root: Node2D
 var _by_id: Dictionary = {}
 
 
-func bind_host(actors_root: Node2D) -> void:
-	_root = actors_root
+func bind_host(_actors_root: Node2D) -> void:
+	if not is_in_group("dmb_world_layer_presenter"):
+		add_to_group("dmb_world_layer_presenter")
+	_ensure_owned_root()
+
+
+func _ready() -> void:
+	if not is_in_group("dmb_world_layer_presenter"):
+		add_to_group("dmb_world_layer_presenter")
+	_ensure_owned_root()
+
+
+func _ensure_owned_root() -> void:
+	if _root != null and is_instance_valid(_root):
+		return
+	_root = Node2D.new()
+	_root.name = "OwnedWorldActors"
+	_root.y_sort_enabled = true
+	add_child(_root)
 
 
 func clear() -> void:
+	_ensure_owned_root()
 	for id in _by_id.keys():
 		var n: Node = _by_id[id]
 		if is_instance_valid(n):
@@ -26,6 +46,7 @@ func clear() -> void:
 
 
 func apply_area(area: Dictionary) -> void:
+	_ensure_owned_root()
 	if _root == null:
 		return
 	var keep: Dictionary = {}

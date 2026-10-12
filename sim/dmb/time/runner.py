@@ -60,7 +60,9 @@ class TurnRunner:
         """Execute one named stage; used by Travel/Wait and tests."""
         self.stage_id = stage
         payload: dict[str, Any] = {"stage": stage}
-        if stage == "2_production":
+        if stage == "0_boundary":
+            payload.update(self._stage_boundary())
+        elif stage == "2_production":
             payload.update(self._stage_production())
         elif stage == "3_logistics":
             payload.update(self._stage_logistics())
@@ -69,6 +71,16 @@ class TurnRunner:
         elif stage == "5_active_decisions":
             payload.update(self._stage_active_decisions())
         return payload
+
+    def _stage_boundary(self) -> dict[str, Any]:
+        """Scheduled hazard deck draw / cube placement (R05)."""
+        if not self.state.hazards.get("catastrophe"):
+            return {"hazard_placement": {"status": "skipped", "reason": "no_catastrophe"}}
+        from sim.dmb.hazards.service import CatastropheService
+
+        difficulty = str(self.state.clock.get("hazard_difficulty") or "standard")
+        result = CatastropheService(self.state, difficulty=difficulty).resolve_placement()
+        return {"hazard_placement": result}
 
     def _stage_production(self) -> dict[str, Any]:
         if not self.state.settlements:
@@ -383,6 +395,7 @@ class TurnRunner:
                     "turn": self.state.clock["turn"],
                 }
             if stage in {
+                "0_boundary",
                 "2_production",
                 "3_logistics",
                 "4_completions",
@@ -507,11 +520,21 @@ class TurnRunner:
 
     def _discard_tech_draft_on_interrupt(self) -> None:
         draft = getattr(self.state, "tech_draft", None)
-        if isinstance(draft, dict) and draft.get("active"):
-            from sim.dmb.technology.draft import DraftService
+        if not isinstance(draft, dict) or not draft.get("active"):
+            return
+        # EraService already discarded old hands and dealt the next era. Do not
+        # throw away those new hands when the interrupted seat finishes.
+        current_era = str(
+            self.state.clock.get("era") or self.state.clock.get("era_id") or self.state.board.get("era_id") or ""
+        )
+        draft_era = str(draft.get("era") or "")
+        if current_era and draft_era and draft_era == current_era:
+            return
+        from sim.dmb.technology.draft import DraftService
 
-            DraftService(self.state).discard_for_era(reason=str(self.state.clock.get("interrupt_reason") or "interrupt"))
-
+        DraftService(self.state).discard_for_era(
+            reason=str(self.state.clock.get("interrupt_reason") or "interrupt")
+        )
     def _maybe_resolve_tech_draft(self, seat: dict[str, Any]) -> dict[str, Any]:
         """On completed World Round, resolve one simultaneous tech pick when a draft is active."""
         if not seat.get("round_complete"):

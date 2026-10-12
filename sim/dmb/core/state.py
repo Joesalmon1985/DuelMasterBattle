@@ -144,6 +144,8 @@ class WorldState:
             "factions": lambda: deepcopy(self.factions),
             "fx_cargo": lambda: deepcopy(self.board.get("fx_cargo") or {}),
             "tech_draft": lambda: deepcopy(getattr(self, "tech_draft", {}) or {}),
+            "research": lambda: deepcopy(getattr(self, "research", {}) or {}),
+            "diplomacy": lambda: deepcopy(getattr(self, "diplomacy", {}) or {}),
             "industry": lambda: deepcopy(self.industry),
             "fx_industry": lambda: deepcopy(self.board.get("fx_industry") or {}),
             "fx_battle": lambda: deepcopy(self.board.get("fx_battle") or {}),
@@ -272,6 +274,9 @@ class WorldState:
             "command_receipts": deepcopy(self.command_receipts),
             "definitions": deepcopy(self.definitions),
             "rng": deepcopy(self.rng),
+            "research": deepcopy(self.research),
+            "tech_draft": deepcopy(self.tech_draft),
+            "diplomacy": deepcopy(self.diplomacy),
             "legacy_godot_world_tick_enabled": False,
             "legacy_godot_world_save_enabled": False,
         }
@@ -317,6 +322,9 @@ class WorldState:
             command_receipts=dict(payload.get("command_receipts", {})),
             definitions=dict(payload.get("definitions", {})),
             rng=dict(payload.get("rng", {})),
+            research=dict(payload.get("research", {})),
+            tech_draft=dict(payload.get("tech_draft", {})),
+            diplomacy=dict(payload.get("diplomacy", {})),
             legacy_godot_world_tick_enabled=False,
             legacy_godot_world_save_enabled=False,
         )

@@ -2,8 +2,9 @@ extends Control
 class_name SpellbookHost
 
 ## Reusable animated spellbook presentation. Binds to SpellbookModel only.
-## Open book is a bounded centred panel (not a full-viewport overlay). Artwork
-## fits inside the panel; the dim blocker sits behind and only covers outside clicks.
+## Open book is a bounded centred panel. All text/controls live inside measured
+## parchment-safe rectangles (see SpellbookMargins) — never on leather, spine,
+## decorations, or outside the drawn artwork.
 
 const Margins = preload("res://client/ui/spellbook/spellbook_margins.gd")
 const ModelScript = preload("res://client/ui/spellbook/spellbook_model.gd")
@@ -14,7 +15,6 @@ signal close_requested
 signal exit_menu_requested
 signal classic_hud_toggled(enabled: bool)
 signal world_target_needed(active: bool)
-## Emitted when open/confirm overlay starts or stops blocking underlying HUD.
 signal overlay_blocking_changed(blocking: bool)
 
 var model = null
@@ -25,19 +25,23 @@ var _compact_btn: Button
 var _compact_summary: Label
 var _open_root: Control
 var _art: TextureRect
-var _panel_close: Button
+var _debug_layer: Control
 var _content_left: Control
 var _content_right: Control
 var _content_single: Control
+var _scroll_left: ScrollContainer
+var _scroll_right: ScrollContainer
+var _scroll_single: ScrollContainer
 var _left_box: VBoxContainer
 var _right_box: VBoxContainer
 var _single_box: VBoxContainer
+var _panel_close: Button
 var _header: Label
 var _result_lbl: Label
 var _body: RichTextLabel
 var _actions: VBoxContainer
 var _nav: HBoxContainer
-var _page_tabs: HBoxContainer
+var _page_tabs: Control
 var _log: RichTextLabel
 var _confirm_panel: PanelContainer
 var _targeting_card: Control
@@ -50,6 +54,10 @@ var _press_guard_key := ""
 var _last_built_page := ""
 var _built := false
 var _was_blocking := false
+var _tex_size := Vector2(1248, 832)
+var _panel_size := Vector2.ZERO
+var _drawn_size := Vector2.ZERO
+var _drawn_origin := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -84,7 +92,6 @@ func _ensure_built() -> void:
 
 
 func _build() -> void:
-	# Dimmer sits behind the book panel. It must never sit above book controls.
 	_blocker = ColorRect.new()
 	_blocker.name = "SpellbookBlocker"
 	_blocker.color = Color(0, 0, 0, 0.42)
@@ -188,13 +195,14 @@ func _build() -> void:
 	_style_ink_button(cancel)
 	tv.add_child(cancel)
 
-	# Bounded book panel — STOP so panel chrome receives clicks; never full-viewport.
 	_open_root = Control.new()
 	_open_root.name = "OpenBook"
 	_open_root.visible = false
 	_open_root.mouse_filter = Control.MOUSE_FILTER_STOP
+	_open_root.clip_contents = true
 
 	_art = TextureRect.new()
+	_art.name = "BookArt"
 	_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -202,25 +210,34 @@ func _build() -> void:
 	_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_open_root.add_child(_art)
 
-	_content_left = _make_content_slot()
-	_content_right = _make_content_slot()
-	_content_single = _make_content_slot()
+	_debug_layer = Control.new()
+	_debug_layer.name = "LayoutDebug"
+	_debug_layer.set_anchors_preset(PRESET_FULL_RECT)
+	_debug_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_debug_layer.visible = false
+	_open_root.add_child(_debug_layer)
+
+	var left_pack := _make_page_viewport("LeftPage")
+	_content_left = left_pack["slot"]
+	_scroll_left = left_pack["scroll"]
+	_left_box = left_pack["box"]
+	var right_pack := _make_page_viewport("RightPage")
+	_content_right = right_pack["slot"]
+	_scroll_right = right_pack["scroll"]
+	_right_box = right_pack["box"]
+	var single_pack := _make_page_viewport("SinglePage")
+	_content_single = single_pack["slot"]
+	_scroll_single = single_pack["scroll"]
+	_single_box = single_pack["box"]
 	_open_root.add_child(_content_left)
 	_open_root.add_child(_content_right)
 	_open_root.add_child(_content_single)
 
-	_left_box = _mount_page_box(_content_left)
-	_right_box = _mount_page_box(_content_right)
-	_single_box = _mount_page_box(_content_single)
-
+	# Close lives inside parchment via page chrome — keep a handle for tests.
 	_panel_close = Button.new()
 	_panel_close.name = "CloseBook"
-	_panel_close.text = "Close book"
+	_panel_close.visible = false
 	_panel_close.focus_mode = Control.FOCUS_NONE
-	_panel_close.custom_minimum_size = Margins.PANEL_CLOSE_SIZE
-	_panel_close.mouse_filter = Control.MOUSE_FILTER_STOP
-	_panel_close.pressed.connect(_on_close_pressed)
-	_style_ink_button(_panel_close)
 	_open_root.add_child(_panel_close)
 
 	add_child(_open_root)
@@ -236,32 +253,36 @@ func _build() -> void:
 	add_child(_confirm_panel)
 
 
-func _make_content_slot() -> Control:
-	## Plain Control keeps the fractional art rect; MarginContainer children would
-	## expand the slot from page content and break pointer hit-testing.
+## Hard parchment viewport: clip + scroll. Content cannot paint outside the slot.
+func _make_page_viewport(slot_name: String) -> Dictionary:
 	var slot := Control.new()
+	slot.name = slot_name
 	slot.visible = false
 	slot.mouse_filter = Control.MOUSE_FILTER_STOP
-	# Do not clip — lean spell buttons must remain pointer-reachable.
-	slot.clip_contents = false
-	return slot
+	slot.clip_contents = true
 
+	var scroll := ScrollContainer.new()
+	scroll.name = "PageScroll"
+	scroll.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	scroll.mouse_filter = Control.MOUSE_FILTER_STOP
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	slot.add_child(scroll)
 
-func _mount_page_box(slot: Control) -> VBoxContainer:
 	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 8)
-	margin.add_theme_constant_override("margin_right", 8)
-	margin.add_theme_constant_override("margin_top", 8)
-	margin.add_theme_constant_override("margin_bottom", 8)
+	margin.name = "InnerPad"
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	margin.mouse_filter = Control.MOUSE_FILTER_STOP
-	slot.add_child(margin)
+	scroll.add_child(margin)
+
 	var box := VBoxContainer.new()
+	box.name = "PageBox"
 	box.add_theme_constant_override("separation", 6)
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_child(box)
-	return box
+	return {"slot": slot, "scroll": scroll, "box": box, "margin": margin}
 
 
 func _process(_delta: float) -> void:
@@ -316,7 +337,6 @@ func _refresh_visibility() -> void:
 	_open_root.visible = mode == ModelScript.HostMode.OPEN
 	_blocker.visible = mode == ModelScript.HostMode.OPEN or not model.confirm_pending.is_empty()
 	_targeting_card.visible = mode == ModelScript.HostMode.TARGETING
-	# Host stays IGNORE so empty chrome never swallows world/targeting clicks.
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if mode == ModelScript.HostMode.OPEN or not model.confirm_pending.is_empty():
 		z_index = 80
@@ -399,64 +419,128 @@ func _layout_art_slots() -> void:
 	var vp := get_viewport_rect().size
 	if vp.x < 8.0 or vp.y < 8.0:
 		return
-	_use_spread = vp.x >= Margins.SPREAD_MIN_WIDTH and vp.x * 0.34 >= Margins.SPREAD_MIN_PAGE_WIDTH
-	var tex_path := Margins.TEX_BOOK if _use_spread else Margins.TEX_PAGE
-	_art.texture = load(tex_path)
-	var tex: Texture2D = _art.texture
-	var tex_size := Vector2(1248, 832) if _use_spread else Vector2(640, 896)
-	if tex != null:
-		tex_size = Vector2(tex.get_width(), tex.get_height())
 
-	var max_w: float
-	var max_h: float
+	# Candidate panel sizes for both art modes; choose spread only if parchment stays readable.
+	var book_tex: Texture2D = load(Margins.TEX_BOOK)
+	var page_tex: Texture2D = load(Margins.TEX_PAGE)
+	var book_size := Vector2(1248, 832)
+	var page_size := Vector2(1248, 832)
+	if book_tex != null:
+		book_size = Vector2(book_tex.get_width(), book_tex.get_height())
+	if page_tex != null:
+		page_size = Vector2(page_tex.get_width(), page_tex.get_height())
+
+	var land_panel := _fit_panel(
+		vp,
+		book_size,
+		Margins.OPEN_MAX_WIDTH_LANDSCAPE,
+		Margins.OPEN_MAX_HEIGHT_LANDSCAPE,
+		Margins.OPEN_VIEWPORT_FRAC_W_LANDSCAPE,
+		Margins.OPEN_VIEWPORT_FRAC_H_LANDSCAPE
+	)
+	var port_panel := _fit_panel(
+		vp,
+		page_size,
+		Margins.OPEN_MAX_WIDTH_PORTRAIT,
+		Margins.OPEN_MAX_HEIGHT_PORTRAIT,
+		Margins.OPEN_VIEWPORT_FRAC_W_PORTRAIT,
+		Margins.OPEN_VIEWPORT_FRAC_H_PORTRAIT
+	)
+	var left_safe := Margins.safe_page_pixel_size(land_panel, book_size, Margins.BOOK_LEFT)
+	var right_safe := Margins.safe_page_pixel_size(land_panel, book_size, Margins.BOOK_RIGHT)
+	_use_spread = left_safe.x >= Margins.MIN_SAFE_PAGE_WIDTH_PX \
+		and right_safe.x >= Margins.MIN_SAFE_PAGE_WIDTH_PX \
+		and left_safe.y >= Margins.MIN_SAFE_PAGE_HEIGHT_PX \
+		and right_safe.y >= Margins.MIN_SAFE_PAGE_HEIGHT_PX \
+		and vp.x >= vp.y  # prefer single-page in tall portrait even if wide enough
+
+	# Final panel must still keep readable parchment; otherwise fall back to single-page.
 	if _use_spread:
-		max_w = minf(Margins.OPEN_MAX_WIDTH_LANDSCAPE, vp.x * Margins.OPEN_VIEWPORT_FRAC_W_LANDSCAPE)
-		max_h = minf(Margins.OPEN_MAX_HEIGHT_LANDSCAPE, vp.y * Margins.OPEN_VIEWPORT_FRAC_H_LANDSCAPE)
-	else:
-		max_w = minf(Margins.OPEN_MAX_WIDTH_PORTRAIT, vp.x * Margins.OPEN_VIEWPORT_FRAC_W_PORTRAIT)
-		max_h = minf(Margins.OPEN_MAX_HEIGHT_PORTRAIT, vp.y * Margins.OPEN_VIEWPORT_FRAC_H_PORTRAIT)
+		var check_left := Margins.safe_page_pixel_size(land_panel, book_size, Margins.BOOK_LEFT)
+		var check_right := Margins.safe_page_pixel_size(land_panel, book_size, Margins.BOOK_RIGHT)
+		if check_left.x < Margins.MIN_SAFE_PAGE_WIDTH_PX \
+				or check_right.x < Margins.MIN_SAFE_PAGE_WIDTH_PX \
+				or check_left.y < Margins.MIN_SAFE_PAGE_HEIGHT_PX \
+				or check_right.y < Margins.MIN_SAFE_PAGE_HEIGHT_PX:
+			_use_spread = false
 
-	var fit := minf(max_w / tex_size.x, max_h / tex_size.y)
-	var panel := tex_size * fit
+	var tex: Texture2D = book_tex if _use_spread else page_tex
+	_art.texture = tex
+	_tex_size = book_size if _use_spread else page_size
+	_panel_size = land_panel if _use_spread else port_panel
+
+	var fit := minf(_panel_size.x / _tex_size.x, _panel_size.y / _tex_size.y)
+	_drawn_size = _tex_size * fit
+	# Keep open_root == drawn art bounds (no empty letterbox) so frac slots match pixels.
+	_panel_size = _drawn_size
+	_drawn_origin = Vector2.ZERO
+
 	_open_root.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	_open_root.size = panel
-	_open_root.position = (vp - panel) * 0.5
-	_open_root.pivot_offset = panel * 0.5
+	_open_root.size = _panel_size
+	_open_root.position = (vp - _panel_size) * 0.5
+	_open_root.pivot_offset = _panel_size * 0.5
 
 	_art.set_anchors_preset(PRESET_FULL_RECT)
 	_art.offset_left = 0
 	_art.offset_right = 0
 	_art.offset_top = 0
 	_art.offset_bottom = 0
+	_art.stretch_mode = TextureRect.STRETCH_SCALE  # panel already aspect-fit; fill exactly
 
+	var pad := Margins.inner_pad_px(minf(_drawn_size.x, _drawn_size.y))
 	if _use_spread:
-		_place_slot(_content_left, Margins.BOOK_LEFT, panel, tex_size)
-		_place_slot(_content_right, Margins.BOOK_RIGHT, panel, tex_size)
+		_place_slot(_content_left, Margins.BOOK_LEFT, pad)
+		_place_slot(_content_right, Margins.BOOK_RIGHT, pad)
 		_content_left.visible = true
 		_content_right.visible = true
 		_content_single.visible = false
 	else:
-		_place_slot(_content_single, Margins.PAGE_CONTENT, panel, tex_size)
+		_place_slot(_content_single, Margins.PAGE_CONTENT, pad)
 		_content_left.visible = false
 		_content_right.visible = false
 		_content_single.visible = true
 
-	if _panel_close != null:
-		_panel_close.position = Vector2(panel.x - Margins.PANEL_CLOSE_SIZE.x - 10.0, 8.0)
-		_panel_close.size = Margins.PANEL_CLOSE_SIZE
-		_panel_close.move_to_front()
+	_refresh_layout_debug()
 
 
-func _place_slot(slot: Control, frac: Rect2, panel: Vector2, tex_size: Vector2) -> void:
-	# Artwork is aspect-fit into the panel; content slots track the drawn parchment.
-	var scale := minf(panel.x / tex_size.x, panel.y / tex_size.y)
-	var drawn := tex_size * scale
-	var origin := (panel - drawn) * 0.5
+func _fit_panel(
+	vp: Vector2,
+	tex_size: Vector2,
+	max_w: float,
+	max_h: float,
+	frac_w: float,
+	frac_h: float
+) -> Vector2:
+	var avail := Vector2(minf(max_w, vp.x * frac_w), minf(max_h, vp.y * frac_h))
+	var fit := minf(avail.x / tex_size.x, avail.y / tex_size.y)
+	return tex_size * fit
+
+
+func _place_slot(slot: Control, frac: Rect2, pad: float) -> void:
+	var r := Margins.slot_rect_in_panel(frac, _panel_size, _tex_size)
 	slot.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	slot.anchor_right = 0.0
 	slot.anchor_bottom = 0.0
-	slot.position = origin + Vector2(frac.position.x * drawn.x, frac.position.y * drawn.y)
-	slot.size = Vector2(frac.size.x * drawn.x, frac.size.y * drawn.y)
+	slot.position = r.position
+	slot.size = r.size
+	slot.clip_contents = true
+	var pi := int(round(pad))
+	for child in slot.get_children():
+		if child is ScrollContainer:
+			var scroll := child as ScrollContainer
+			scroll.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+			scroll.clip_contents = true
+			scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+			for m in child.get_children():
+				if m is MarginContainer:
+					m.add_theme_constant_override("margin_left", pi)
+					m.add_theme_constant_override("margin_right", pi)
+					m.add_theme_constant_override("margin_top", pi)
+					m.add_theme_constant_override("margin_bottom", pi)
+					# Lock scroll content to viewport width so labels wrap inside parchment.
+					var view_w := maxf(32.0, r.size.x)
+					m.custom_minimum_size = Vector2(view_w, 0.0)
+					m.size_flags_horizontal = Control.SIZE_FILL
 
 
 func _rebuild_page_content() -> void:
@@ -484,8 +568,59 @@ func _rebuild_page_content() -> void:
 			_fill_status_column(_single_box)
 			_fill_page_column(_single_box, page)
 
+	_constrain_page_box_widths()
 	if animate and not Margins.reduced_motion():
 		_play_page_transition()
+
+
+func _constrain_page_box_widths() -> void:
+	## Keep page VBox width ≤ parchment viewport so autowrap works and nothing grows wider.
+	for pair in [
+		[_scroll_left, _left_box, _content_left],
+		[_scroll_right, _right_box, _content_right],
+		[_scroll_single, _single_box, _content_single],
+	]:
+		var scroll: ScrollContainer = pair[0]
+		var box: VBoxContainer = pair[1]
+		var slot: Control = pair[2]
+		if scroll == null or box == null or slot == null or not slot.visible:
+			continue
+		var pad := 0
+		for m in scroll.get_children():
+			if m is MarginContainer:
+				pad = int(m.get_theme_constant("margin_left")) \
+					+ int(m.get_theme_constant("margin_right"))
+				m.custom_minimum_size = Vector2(maxf(32.0, slot.size.x), 0.0)
+		var inner_w := maxf(24.0, slot.size.x - float(pad) - 4.0)
+		box.custom_minimum_size = Vector2(inner_w, 0.0)
+		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_force_wrap_width(box, inner_w)
+
+
+func _force_wrap_width(node: Control, width: float) -> void:
+	if node == null or width < 8.0:
+		return
+	if node is Label:
+		var lbl := node as Label
+		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		lbl.custom_minimum_size = Vector2(width, lbl.custom_minimum_size.y)
+	elif node is RichTextLabel:
+		var rtl := node as RichTextLabel
+		rtl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		rtl.fit_content = true
+		rtl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		rtl.custom_minimum_size = Vector2(width, rtl.custom_minimum_size.y)
+	elif node is Button or node is OptionButton:
+		node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# Keep touch height; only cap width.
+		var h: float = node.custom_minimum_size.y
+		if h < Margins.TOUCH_MIN:
+			h = Margins.TOUCH_MIN
+		node.custom_minimum_size = Vector2(0.0, h)
+	for child in node.get_children():
+		if child is Control:
+			_force_wrap_width(child as Control, width)
 
 
 func _is_lean_page(page: Dictionary) -> bool:
@@ -496,15 +631,13 @@ func _is_lean_page(page: Dictionary) -> bool:
 
 
 func _fill_lean_nav(box: VBoxContainer, _page: Dictionary) -> void:
-	## Principal spell/hazard pages: title, tabs — no status/result dump.
 	_add_heading(box, model.title)
 	_add_caption(box, "Select a spell, then a unit in the world.")
-	_add_page_tabs(box)
-	_add_nav_row(box, false)
+	_add_page_nav(box)
+	_add_close_row(box)
 
 
 func _fill_lean_actions(box: VBoxContainer, page: Dictionary) -> void:
-	## Large direct buttons — no ScrollContainer so targets stay hit-testable.
 	_add_heading(box, str(page.get("title", "Spells")))
 	var hint := str(page.get("body", ""))
 	if hint != "":
@@ -518,6 +651,7 @@ func _fill_lean_actions(box: VBoxContainer, page: Dictionary) -> void:
 
 
 func _fill_status_column(box: VBoxContainer) -> void:
+	## Left parchment (or top of single page): title, essential status, page nav, Close.
 	_add_heading(box, model.title)
 	_add_caption(box, model.conn_label() + (" · Game Time frozen" if model.paused_badge else ""))
 	if model.error_reason != "":
@@ -530,81 +664,118 @@ func _fill_status_column(box: VBoxContainer) -> void:
 	_result_lbl.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.RESULT_FONT))
 	_paint_result(_result_lbl)
 	box.add_child(_result_lbl)
-	_add_page_tabs(box)
-	_add_nav_row(box, true)
+	_add_page_nav(box)
+	_add_close_row(box)
 
 
-func _add_page_tabs(box: VBoxContainer) -> void:
-	_page_tabs = HBoxContainer.new()
-	_page_tabs.add_theme_constant_override("separation", Margins.TOUCH_GAP)
-	box.add_child(_page_tabs)
+## Width-safe navigation: prev/next + OptionButton. Never a nonwrapping HBox of all tabs.
+func _add_page_nav(box: VBoxContainer) -> void:
+	var wrap := VBoxContainer.new()
+	wrap.add_theme_constant_override("separation", 4)
+	wrap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(wrap)
+	_page_tabs = wrap
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	wrap.add_child(row)
+
+	var prev := Button.new()
+	prev.text = "◀"
+	prev.focus_mode = Control.FOCUS_NONE
+	prev.custom_minimum_size = Vector2(Margins.TOUCH_MIN, Margins.TOUCH_MIN)
+	prev.disabled = model.page_index <= 0
+	prev.pressed.connect(func(): _on_tab(model.page_index - 1))
+	_style_ink_button(prev)
+	row.add_child(prev)
+
+	var selector := OptionButton.new()
+	selector.focus_mode = Control.FOCUS_NONE
+	selector.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	selector.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
+	selector.clip_text = true
 	for i in model.pages.size():
 		var p: Dictionary = model.pages[i]
-		var tab := Button.new()
-		tab.text = str(p.get("title", p.get("id", "?")))
-		tab.focus_mode = Control.FOCUS_NONE
-		tab.toggle_mode = true
-		tab.button_pressed = i == model.page_index
-		tab.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
-		tab.pressed.connect(_on_tab.bind(i))
-		_style_ink_button(tab)
-		_page_tabs.add_child(tab)
+		selector.add_item(str(p.get("title", p.get("id", "?"))))
+	selector.select(model.page_index)
+	selector.item_selected.connect(_on_tab)
+	_style_ink_button(selector)
+	row.add_child(selector)
+
+	var next := Button.new()
+	next.text = "▶"
+	next.focus_mode = Control.FOCUS_NONE
+	next.custom_minimum_size = Vector2(Margins.TOUCH_MIN, Margins.TOUCH_MIN)
+	next.disabled = model.page_index >= model.pages.size() - 1
+	next.pressed.connect(func(): _on_tab(model.page_index + 1))
+	_style_ink_button(next)
+	row.add_child(next)
+
+	var page_lbl := Label.new()
+	page_lbl.text = "Page %d / %d" % [model.page_index + 1, max(1, model.pages.size())]
+	page_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	page_lbl.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.CAPTION_FONT))
+	page_lbl.add_theme_color_override("font_color", Margins.TEXT_MUTED)
+	wrap.add_child(page_lbl)
 
 
-func _add_nav_row(box: VBoxContainer, include_exit: bool) -> void:
+func _add_close_row(box: VBoxContainer) -> void:
 	_nav = HBoxContainer.new()
 	_nav.add_theme_constant_override("separation", Margins.TOUCH_GAP)
+	_nav.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(_nav)
 	var close_btn := Button.new()
-	close_btn.text = "Close book"
+	close_btn.text = "Close"
 	close_btn.focus_mode = Control.FOCUS_NONE
+	close_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	close_btn.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
 	close_btn.pressed.connect(_on_close_pressed)
 	_style_ink_button(close_btn)
 	_nav.add_child(close_btn)
-	if include_exit:
-		var menu_btn := Button.new()
-		menu_btn.text = "Exit to menu"
-		menu_btn.focus_mode = Control.FOCUS_NONE
-		menu_btn.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
-		menu_btn.pressed.connect(_on_exit_menu_pressed)
-		_style_ink_button(menu_btn)
-		_nav.add_child(menu_btn)
+	# Keep panel_close handle pointing at the live in-parchment control for tests.
+	_panel_close = close_btn
+	var menu_btn := Button.new()
+	menu_btn.text = "Menu"
+	menu_btn.focus_mode = Control.FOCUS_NONE
+	menu_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	menu_btn.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
+	menu_btn.pressed.connect(_on_exit_menu_pressed)
+	_style_ink_button(menu_btn)
+	_nav.add_child(menu_btn)
 
 
 func _fill_page_column(box: VBoxContainer, page: Dictionary) -> void:
+	## Right parchment (or lower single-page): selected page body + actions.
+	## Already inside a ScrollContainer — do not nest another scroll.
 	_add_heading(box, str(page.get("title", "")))
 	var kind := str(page.get("kind", "info"))
 	if kind == "log":
 		_log = RichTextLabel.new()
 		_log.bbcode_enabled = false
-		_log.fit_content = false
-		_log.scroll_active = true
-		_log.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		_log.custom_minimum_size = Vector2(0, 160)
+		_log.fit_content = true
+		_log.scroll_active = false
+		_log.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_log.custom_minimum_size = Vector2(0, 120)
 		_log.add_theme_font_size_override("normal_font_size", Margins.scaled_font(Margins.CAPTION_FONT))
 		_log.add_theme_color_override("default_color", Margins.TEXT_INK)
 		_log.selection_enabled = true
 		for line in model.log_lines:
 			_log.append_text(str(line) + "\n")
 		box.add_child(_log)
-	else:
-		var body := str(page.get("body", ""))
-		if body != "":
-			_add_body(box, body, Margins.TEXT_INK)
-		var scroll := ScrollContainer.new()
-		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		scroll.custom_minimum_size = Vector2(0, 120)
-		scroll.mouse_filter = Control.MOUSE_FILTER_STOP
-		box.add_child(scroll)
-		_actions = VBoxContainer.new()
-		_actions.add_theme_constant_override("separation", Margins.TOUCH_GAP)
-		_actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		scroll.add_child(_actions)
-		var actions: Array = page.get("actions", [])
-		for act in actions:
-			_add_action_button(_actions, act)
+		return
+
+	var body := str(page.get("body", ""))
+	if body != "":
+		# Plain ink on parchment — no opaque panel that reads as a generic UI card.
+		_add_body(box, body, Margins.TEXT_INK)
+
+	_actions = VBoxContainer.new()
+	_actions.add_theme_constant_override("separation", Margins.TOUCH_GAP)
+	_actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(_actions)
+	for act in page.get("actions", []):
+		_add_action_button(_actions, act)
 
 
 func _add_action_button(parent: VBoxContainer, act: Dictionary) -> void:
@@ -614,7 +785,9 @@ func _add_action_button(parent: VBoxContainer, act: Dictionary) -> void:
 	b.text = label
 	b.focus_mode = Control.FOCUS_NONE
 	b.custom_minimum_size = Vector2(0, Margins.TOUCH_MIN)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.mouse_filter = Control.MOUSE_FILTER_STOP
+	b.clip_text = true
 	b.disabled = bool(act.get("disabled", false)) or model.pending_token != "" \
 		or model.conn_state == ModelScript.ConnState.DISCONNECTED
 	if str(act.get("hint", "")) != "":
@@ -666,6 +839,7 @@ func _add_heading(box: VBoxContainer, text: String) -> void:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.HEADING_FONT))
 	l.add_theme_color_override("font_color", Margins.TEXT_ACCENT)
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(l)
 
 
@@ -675,6 +849,7 @@ func _add_caption(box: VBoxContainer, text: String) -> void:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.CAPTION_FONT))
 	l.add_theme_color_override("font_color", Margins.TEXT_MUTED)
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(l)
 
 
@@ -686,15 +861,18 @@ func _add_body(box: VBoxContainer, text: String, color: Color) -> void:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.BODY_FONT))
 	l.add_theme_color_override("font_color", color)
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(l)
 
 
 func _clear_box(box: VBoxContainer) -> void:
+	if box == null:
+		return
 	for c in box.get_children():
 		c.queue_free()
 
 
-func _style_ink_button(b: Button) -> void:
+func _style_ink_button(b: BaseButton) -> void:
 	b.add_theme_font_size_override("font_size", Margins.scaled_font(Margins.BODY_FONT))
 	b.add_theme_color_override("font_color", Margins.TEXT_INK)
 	b.add_theme_color_override("font_disabled_color", Margins.TEXT_MUTED)
@@ -710,12 +888,62 @@ func _play_page_transition() -> void:
 	_tween.tween_property(target, "modulate:a", 1.0, Margins.DUR_PAGE)
 
 
+func _refresh_layout_debug() -> void:
+	for c in _debug_layer.get_children():
+		c.queue_free()
+	_debug_layer.visible = Margins.layout_debug_enabled() and _open_root.visible
+	if not _debug_layer.visible:
+		return
+	# Drawn texture bounds
+	_debug_layer.add_child(_debug_rect(_drawn_origin, _drawn_size, Color(0.2, 0.8, 1.0, 0.85), "drawn"))
+	if _use_spread:
+		var lr := Margins.slot_rect_in_panel(Margins.BOOK_LEFT, _panel_size, _tex_size)
+		var rr := Margins.slot_rect_in_panel(Margins.BOOK_RIGHT, _panel_size, _tex_size)
+		_debug_layer.add_child(_debug_rect(lr.position, lr.size, Color(0.2, 1.0, 0.3, 0.9), "left-safe"))
+		_debug_layer.add_child(_debug_rect(rr.position, rr.size, Color(1.0, 0.85, 0.2, 0.9), "right-safe"))
+	else:
+		var sr := Margins.slot_rect_in_panel(Margins.PAGE_CONTENT, _panel_size, _tex_size)
+		_debug_layer.add_child(_debug_rect(sr.position, sr.size, Color(1.0, 0.4, 0.9, 0.9), "page-safe"))
+
+
+func _debug_rect(pos: Vector2, size: Vector2, color: Color, label: String) -> Control:
+	var root := Control.new()
+	root.position = pos
+	root.size = size
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var border := ColorRect.new()
+	border.color = Color(color.r, color.g, color.b, 0.12)
+	border.set_anchors_preset(PRESET_FULL_RECT)
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(border)
+	# Four edge lines
+	for edge in [
+		[Vector2(0, 0), Vector2(size.x, 2)],
+		[Vector2(0, size.y - 2), Vector2(size.x, 2)],
+		[Vector2(0, 0), Vector2(2, size.y)],
+		[Vector2(size.x - 2, 0), Vector2(2, size.y)],
+	]:
+		var line := ColorRect.new()
+		line.color = color
+		line.position = edge[0]
+		line.size = edge[1]
+		line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		root.add_child(line)
+	var lbl := Label.new()
+	lbl.text = label
+	lbl.position = Vector2(4, 4)
+	lbl.add_theme_font_size_override("font_size", 12)
+	lbl.add_theme_color_override("font_color", color)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(lbl)
+	return root
+
+
 func _on_open_pressed() -> void:
 	if _duplicate_press("open"):
 		return
 	if model == null:
 		return
-	# Toggle: if somehow reachable while open, close instead.
 	if model.host_mode == ModelScript.HostMode.OPEN:
 		_on_close_pressed()
 		return
@@ -769,8 +997,11 @@ func _on_cancel_targeting() -> void:
 
 
 func _on_tab(index: int) -> void:
-	if model:
-		model.goto_page(index)
+	if model == null:
+		return
+	if index < 0 or index >= model.pages.size():
+		return
+	model.goto_page(index)
 
 
 func _on_action_pressed(action_id: String, payload: Dictionary, opts: Dictionary) -> void:
@@ -782,7 +1013,6 @@ func _on_action_pressed(action_id: String, payload: Dictionary, opts: Dictionary
 
 
 func _on_blocker_input(event: InputEvent) -> void:
-	## Outside the bounded book: swallow world clicks; click/tap closes the book.
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
 		if mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:
@@ -800,7 +1030,6 @@ func _on_blocker_input(event: InputEvent) -> void:
 
 
 func _duplicate_press(key: String = "") -> bool:
-	## Guard only identical consecutive presses — never block Open→Shield.
 	var now := Time.get_ticks_msec()
 	if key != "" and key == _press_guard_key and now < _press_guard_msec:
 		return true
@@ -835,3 +1064,83 @@ func compact_open_button() -> Button:
 
 func panel_close_button() -> Button:
 	return _panel_close
+
+
+func uses_spread() -> bool:
+	return _use_spread
+
+
+## Geometry for automated layout assertions (global coordinates).
+func layout_geometry() -> Dictionary:
+	var out := {
+		"use_spread": _use_spread,
+		"panel": open_panel_rect(),
+		"drawn_local": Rect2(_drawn_origin, _drawn_size),
+		"safe_fracs": {
+			"left": Margins.BOOK_LEFT,
+			"right": Margins.BOOK_RIGHT,
+			"page": Margins.PAGE_CONTENT,
+		},
+		"viewports": [],
+	}
+	if not _open_root.visible:
+		return out
+	var origin := _open_root.global_position
+	out["drawn_global"] = Rect2(origin + _drawn_origin, _drawn_size)
+	if _use_spread:
+		out["safe_left_local"] = Margins.slot_rect_in_panel(Margins.BOOK_LEFT, _panel_size, _tex_size)
+		out["safe_right_local"] = Margins.slot_rect_in_panel(Margins.BOOK_RIGHT, _panel_size, _tex_size)
+		out["safe_left_global"] = Rect2(origin + out["safe_left_local"].position, out["safe_left_local"].size)
+		out["safe_right_global"] = Rect2(origin + out["safe_right_local"].position, out["safe_right_local"].size)
+	else:
+		out["safe_page_local"] = Margins.slot_rect_in_panel(Margins.PAGE_CONTENT, _panel_size, _tex_size)
+		out["safe_page_global"] = Rect2(origin + out["safe_page_local"].position, out["safe_page_local"].size)
+	for slot in [_content_left, _content_right, _content_single]:
+		if slot != null and slot.visible:
+			out["viewports"].append({
+				"name": slot.name,
+				"global": slot.get_global_rect(),
+				"clip": slot.clip_contents,
+			})
+	return out
+
+
+## Returns human-readable violation strings; empty means layout is inside safe rects.
+func layout_violations(epsilon: float = 1.5) -> Array:
+	var geo := layout_geometry()
+	var violations: Array = []
+	if not bool(geo.get("use_spread", false)) and not geo.has("safe_page_global"):
+		return ["book not open / no geometry"]
+	var safes: Array = []
+	if bool(geo.get("use_spread", false)):
+		safes.append(["LeftPage", geo.get("safe_left_global")])
+		safes.append(["RightPage", geo.get("safe_right_global")])
+	else:
+		safes.append(["SinglePage", geo.get("safe_page_global")])
+	for vp in geo.get("viewports", []):
+		var name := str(vp.get("name", ""))
+		var rect: Rect2 = vp.get("global")
+		var matched = null
+		for pair in safes:
+			if str(pair[0]) == name or (name == "SinglePage" and str(pair[0]) == "SinglePage"):
+				matched = pair[1]
+				break
+		if matched == null:
+			# Map LeftPage/RightPage names
+			for pair in safes:
+				if name.begins_with(str(pair[0]).substr(0, 4)):
+					matched = pair[1]
+					break
+		if matched == null:
+			continue
+		var safe: Rect2 = matched
+		if rect.position.x < safe.position.x - epsilon \
+				or rect.position.y < safe.position.y - epsilon \
+				or rect.end.x > safe.end.x + epsilon \
+				or rect.end.y > safe.end.y + epsilon:
+			violations.append(
+				"%s viewport %s outside safe %s" % [name, str(rect), str(safe)]
+			)
+		if not bool(vp.get("clip", false)):
+			violations.append("%s missing clip_contents" % name)
+	return violations
