@@ -9,6 +9,9 @@ the workplace's output stock. Carriers (economy.py) are separate.
 from __future__ import annotations
 
 import heapq
+from array import array
+
+INF = float("inf")
 from typing import Any
 
 from wizard_rts import imm, regions, resources, wl_defs
@@ -248,8 +251,10 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
     dirs = [(dx, dy, dy * W + dx) for dx, dy in world.move_dirs]
     four = len(dirs) == 4
     open_heap = [(0.0, 0, s)]
-    came: dict[int, int] = {}
-    cost = {s: 0.0}
+    # flat arrays instead of dicts (12 Oct 2026, performance): the same exploration order and tie-breaks, so the same paths
+    came = array("i", [-1]) * (W * H)
+    cost = array("d", [INF]) * (W * H)
+    cost[s] = 0.0
     counter = 0
     heappop, heappush = heapq.heappop, heapq.heappush
     while open_heap:
@@ -274,7 +279,7 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
                 continue
             if dx and dy and ((cur + dx) in blk or (cur + dy * W) in blk):
                 continue
-            if n not in cost or base < cost[n]:
+            if base < cost[n]:
                 cost[n] = base
                 came[n] = cur
                 counter += 1

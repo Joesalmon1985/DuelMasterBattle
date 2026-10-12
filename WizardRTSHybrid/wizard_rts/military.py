@@ -223,7 +223,8 @@ def _shared_route(world: Any, here: tuple[int, int], goal: tuple[int, int], othe
     failed = world.__dict__.setdefault("_route_failed", {})
     key = (loco, goal)
     cell = (here[0] // 12, here[1] // 12)
-    if world.military_quanta - failed.get((key, cell), -10**9) < 100:
+    backoff = 600 if loco in ("naval", "lcraft") else 100  # a ship's failing search spans the whole sea: retry it far less often
+    if world.military_quanta - failed.get((key, cell), -10**9) < backoff:
         return None  # nobody near here could get there a few seconds ago; do not repeat a failing wide search every quantum
     hit = None if fresh else cache.get(key)
     if hit is not None and world.military_quanta - hit["q"] > 600:
@@ -246,7 +247,9 @@ def _shared_route(world: Any, here: tuple[int, int], goal: tuple[int, int], othe
     if world.path_searches >= PATH_SEARCHES_PER_QUANTUM:
         return _NO_BUDGET
     world.path_searches += 1
-    path = find_path(world, here, goal, limit=400, avoid=others, max_nodes=150_000, loco=loco)
+    # a unit that was jammed and routes round the jam needs a local detour, not a map-wide search (late-game profiles: a third of the
+    # simulation time went into fresh re-routes of jammed soldiers); a fresh search that fails is cached like any other
+    path = find_path(world, here, goal, limit=400, avoid=others, max_nodes=20_000 if fresh else 150_000, loco=loco)
     if path is None and loco in ("naval", "lcraft"):
         path = _path_toward(world, here, goal, others, loco)  # a ship goes as near as the water allows
     if path is None:

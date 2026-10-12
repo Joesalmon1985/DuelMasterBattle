@@ -22,6 +22,8 @@ DECLINE_IDLE_MS = 10 * 60_000
 SPLIT_MIN_SETTLEMENTS = 3  # 12 Oct 2026: factions hold 3-6 settlements in the measured games; 4 never occurred
 SPLIT_DISTANCE = 50  # S12 leaves N open: about three settlement radii (outposts are 16, homes 34)
 SPLIT_UNREST = 0.6
+SPLIT_COOLDOWN_MS = 20 * 60_000  # a faction splits at most once in this long (a tournament game split one faction six times in a row)
+SUCCESSOR_GRACE_MS = 30 * 60_000  # a new successor holds together this long before it can split again
 CHECK_EVERY = 10
 
 
@@ -74,6 +76,10 @@ def split_candidates(world: Any, faction: str) -> tuple[dict, dict] | None:
     st = settlements.standing(world, faction)
     if len(st) < SPLIT_MIN_SETTLEMENTS:
         return None
+    now = int(world.dmb.clock.get("game_ms", 0))
+    fs = state(world)["faction"].get(faction, {})
+    if now - int(fs.get("last_split_ms", -10**9)) < SPLIT_COOLDOWN_MS or now - int(fs.get("born_ms", -10**9)) < SUCCESSOR_GRACE_MS:
+        return None
     size = {r["id"]: sum(1 for b in world.buildings.values() if b.get("settlement_id") == r["id"] or settlements.of(world, b) == r["id"]) for r in st}
     ranked = sorted(st, key=lambda r: (-size[r["id"]], r["id"]))
     a, b = ranked[0], ranked[1]
@@ -91,7 +97,10 @@ def split(world: Any, faction: str, breakaway: dict) -> str:
     parent = world.faction_info[faction]
     fid = str(world.dmb.ids.new("faction"))
     world.faction_info[base] = {"id": fid, "name": base, "color": parent["color"], "tribe": parent.get("tribe", "barbarians"), "parent": faction}
-    state(world)["faction"][base] = {"state": "active", "last_productive_ms": int(world.dmb.clock.get("game_ms", 0)), "peak": {"settlements": 0, "centroid": None, "weight": 0}}
+    now_ms = int(world.dmb.clock.get("game_ms", 0))
+    state(world)["faction"][base] = {"state": "active", "last_productive_ms": now_ms, "born_ms": now_ms, "peak": {"settlements": 0, "centroid": None, "weight": 0}}
+    state(world)["faction"][faction]["last_split_ms"] = now_ms
+    breakaway["unrest"] = 0.2  # independence: the grievance that drove the split is answered
     from wizard_rts import tech
 
     world.tech[base] = {**tech.new_state(), "cards": list(world.tech[faction]["cards"]), "round": world.tech[faction]["round"]}

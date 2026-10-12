@@ -21,7 +21,7 @@ from typing import Any
 from wizard_rts import settlements, tech
 
 ERA_VP_THRESHOLD = 6  # legacy single threshold; a world attribute era_vp_threshold overrides every era (developer pacing switch)
-ERA_VP_THRESHOLDS = (6, 8, 10)  # world VP gained to leave Prehistoric, Historic, Modern (tuned by scripts/run_civilisation_tournament.py)
+ERA_VP_THRESHOLDS = (6, 8, 8)  # world VP gained to leave Prehistoric, Historic, Modern; Modern was 10 until measured (+1 VP per ~10 min in Modern)
 ERA_MAX_MS = 75 * 60_000
 CHECK_EVERY = 10  # economy quanta
 
