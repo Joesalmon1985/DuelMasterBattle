@@ -147,8 +147,56 @@ def _dist(ax: float, ay: float, bx: float, by: float) -> float:
     return math.hypot(ax - bx, ay - by)
 
 
-def _occupied(world: Any, me: dict) -> set[tuple[int, int]]:
-    return {(u["tx"], u["ty"]) for u in world.units.values() if u.get("alive", True) and u is not me}
+class _Others:
+    """The tiles other live units stand on, as seen by one unit: a view over the quantum's occupancy count (world._occ), which
+    military_quantum builds once and _walk/kill_unit keep current. Same answers as the set it replaces, without rebuilding it for
+    every walking unit (that was quadratic in the number of units)."""
+
+    __slots__ = ("occ", "mine")
+
+    def __init__(self, occ: dict, mine: tuple[int, int] | None) -> None:
+        self.occ, self.mine = occ, mine
+
+    def __contains__(self, t: object) -> bool:
+        n = self.occ.get(t, 0)
+        return n - (1 if t == self.mine else 0) > 0
+
+    def __iter__(self):
+        return (t for t, n in self.occ.items() if n - (1 if t == self.mine else 0) > 0)
+
+    def __len__(self) -> int:
+        return sum(1 for _t in self)
+
+
+def _occupancy(world: Any) -> dict:
+    occ: dict = {}
+    for u in world.units.values():
+        if u.get("alive", True):
+            k = (u["tx"], u["ty"])
+            occ[k] = occ.get(k, 0) + 1
+    return occ
+
+
+def _occupied(world: Any, me: dict) -> _Others:
+    occ = world.__dict__.get("_occ")
+    if occ is None or world.__dict__.get("_occ_q") != world.military_quanta:
+        occ = world._occ = _occupancy(world)  # outside military_quantum (or first use this quantum): count now
+        world._occ_q = world.military_quanta
+    return _Others(occ, (me["tx"], me["ty"]) if me.get("alive", True) and me.get("id") in world.units else None)
+
+
+def _occ_move(world: Any, frm: tuple, to: tuple | None) -> None:
+    occ = world.__dict__.get("_occ")
+    if occ is None or world.__dict__.get("_occ_q") != world.military_quanta:
+        return
+    if frm is not None:
+        n = occ.get(frm, 0) - 1
+        if n > 0:
+            occ[frm] = n
+        else:
+            occ.pop(frm, None)
+    if to is not None:
+        occ[to] = occ.get(to, 0) + 1
 
 
 def _facing(dx: int, dy: int) -> str:
@@ -262,6 +310,7 @@ def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.
         return "moving"
     if unit["progress_ms"] * pct >= unit.get("move_ms", 760) * 100:
         unit["facing"] = _facing(nxt[0] - here[0], nxt[1] - here[1])
+        _occ_move(world, (unit["tx"], unit["ty"]), (nxt[0], nxt[1]))
         unit["tx"], unit["ty"] = nxt
         unit["path"].pop(0)
         unit["progress_ms"] = 0
@@ -406,6 +455,8 @@ def kill_unit(world: Any, entity: dict, by: str = "") -> None:
     if not entity.get("alive", True):
         return
     entity["hp"] = 0
+    if entity.get("alive", True):
+        _occ_move(world, (entity["tx"], entity["ty"]), None)
     entity["alive"] = False
     entity["status"] = "dead"
     entity.pop("order", None)
@@ -642,6 +693,8 @@ _world_ref: list = []  # the world being stepped (building_weapon has no world a
 def military_quantum(world: Any) -> None:
     _world_ref[:] = [world]
     world.military_quanta += 1
+    world._occ = _occupancy(world)  # tile -> live units on it, kept current through this quantum by _walk and kill_unit
+    world._occ_q = world.military_quanta
     world.path_searches = 0  # route searches started this quantum (military._walk spends PATH_SEARCHES_PER_QUANTUM of them)
     world.join_searches = 0
     if world.military_quanta % SCAN_EVERY == 0:

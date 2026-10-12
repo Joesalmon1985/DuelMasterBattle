@@ -44,7 +44,8 @@ FACTIONS = ("Red", "Blue", "Green", "Yellow", "Purple", "Orange")
 MAJOR = ("era_advanced", "card_drafted", "draft_lapsed", "deployed", "settlement_destroyed", "vp_conquest", "faction_declined", "faction_recovered",
          "faction_split", "faction_collapsed", "outbreak", "outbreak_cube", "catastrophe_destroyed", "disrupted", "disruption_cleared",
          "treatment_done", "ai_attack", "ai_retreat", "ai_expand_deploy", "ai_expand_rejected", "cycle_due", "terminal_loss", "building_destroyed",
-         "ai_industry_placed", "ai_link_outpost", "tribe_fallback")
+         "ai_industry_placed", "ai_link_outpost", "tribe_fallback", "nest_spawned", "nest_cube_cleared", "nest_destroyed", "caravan_sent",
+         "caravan_traded", "caravan_refused")
 GAMES = {"widelands": "wl", "openra": "ora", "hybrid": "hyb", "mindustry": "mdy"}
 
 
@@ -97,6 +98,8 @@ def sample(world, t_wall: float, step_ms: list[float]) -> list[dict]:
             "units_produced": int(fs.get("units_produced", 0)), "unit_kills": int(fs.get("unit_kills", 0)), "building_kills": int(fs.get("building_kills", 0)),
             "building_losses": int(fs.get("building_losses", 0)), "loss_value": int(fs.get("loss_value", 0)),
             "attacks": int(fs.get("ai_attack", 0)), "defends": int(fs.get("ai_defend", 0)), "founded": int(fs.get("command_centers_deployed", 0)),
+            "nest_cubes_cleared": int(fs.get("nest_cubes_cleared", 0)), "trades": int(fs.get("trades_done", 0)), "caravans": int(fs.get("caravans_sent", 0)),
+            "disruptions": int(fs.get("disruptions", 0)), "repairs": int(fs.get("repairs", 0)),
             "log": stock["log"], "plank": stock["plank"], "granite": stock["granite"], "coal": stock["coal"], "iron": stock["iron"], "gold": stock["gold"],
             "ration": stock["ration"], "food": sum(stock[g] for g in ("ration", "bread", "meat", "fish", "smoked_fish", "smoked_meat")),
             "unrest": round(max((float(r.get("unrest", 0.0)) for r in recs), default=0.0), 3),
@@ -191,7 +194,7 @@ def final_rows(results: list[dict]) -> list[dict]:
 def compare(results: list[dict]) -> dict:
     rows = final_rows(results)
     keys = ("vp", "settlements", "cards", "buildings", "army", "army_strength", "units_produced", "unit_kills", "building_kills", "building_losses",
-            "founded", "food", "iron", "unrest")
+            "founded", "food", "iron", "unrest", "nest_cubes_cleared", "trades", "disruptions")
     out = {}
     for pol in ("plus", "baseline"):
         sel = [r for r in rows if r["policy"] == pol and not r["parent"]]
