@@ -57,10 +57,16 @@ def state(world: Any) -> dict[str, Any]:
     return s
 
 
+OUTBREAK_TEMPLATE = TEMPLATE.with_name("quest.catastrophe.outbreak_treatment.json")
+OUTBREAK_TEMPLATE_ID = "quest.catastrophe.outbreak_treatment"
+
+
 def _binder(world: Any) -> QuestBinder:
     b = QuestBinder(world.dmb)
-    if TEMPLATE_ID not in world.dmb.definitions.get("quest_templates", {}):
-        b.register_template(json.loads(TEMPLATE.read_text()))
+    have = world.dmb.definitions.get("quest_templates", {})
+    for tid, path in ((TEMPLATE_ID, TEMPLATE), (OUTBREAK_TEMPLATE_ID, OUTBREAK_TEMPLATE)):
+        if tid not in have:
+            b.register_template(json.loads(path.read_text()))
     return b
 
 
@@ -197,10 +203,11 @@ def story_quantum(world: Any) -> None:
             if not any(q["mine"] == bid and world.dmb.quests.get(qid, {}).get("status") in ("completed", "failed_with_consequence")
                        and q["outcome"] in ("abandoned",) for qid, q in s["quests"].items()):
                 _open_quest(world, b)
+    _outbreak_quantum(world)
     svc = QuestService(world.dmb)
     for qid, q in sorted(s["quests"].items()):
         quest = world.dmb.quests.get(qid)
-        if quest is None or quest["status"] not in OPEN:
+        if quest is None or quest["status"] not in OPEN or q.get("family") == "outbreak":
             continue
         mine = world.buildings.get(q["mine"])
         if mine is None or mine.get("destroyed") or int(mine.get("hp", 1)) <= 0:
@@ -216,6 +223,67 @@ def story_quantum(world: Any) -> None:
             q["outcome"] = "resolved_by_world"
             _log(world, "story_quest_resolved_by_world", quest=qid, mine=q["mine"])
             _release_duel(world, q)
+
+
+def _outbreak_quantum(world: Any) -> None:
+    """Outbreak family: a healer and a quest for every standing settlement whose hex region holds two or more cubes."""
+    from wizard_rts import regions
+
+    s = state(world)
+    rg = regions.state(world)
+    if rg is None:
+        return
+    svc = QuestService(world.dmb)
+    open_regions = {q["region"] for qid, q in s["quests"].items() if q.get("family") == "outbreak" and world.dmb.quests.get(qid, {}).get("status") in OPEN}
+    if sum(1 for qid in s["quests"] if world.dmb.quests.get(qid, {}).get("status") in OPEN) < MAX_OPEN_QUESTS:
+        for rec in sorted(settlements.standing(world), key=lambda r: r["id"]):
+            i = rg.region_at(rec["tile"][0], rec["tile"][1])
+            rid = rg.rid(i)
+            if rg.cubes[i] >= 2 and rid not in open_regions and not any(q.get("family") == "outbreak" and q["region"] == rid and q["settlement"] == rec["id"]
+                                                                      and world.dmb.quests[qid]["status"] != "resolved_by_world" and q["outcome"] == "abandoned" for qid, q in s["quests"].items()):
+                centre = world.buildings.get(rec["centre"])
+                if centre is None:
+                    continue
+                tile = _free_tile_near(world, centre, 4, _taken_tiles(world)) or (centre["tx"], centre["ty"])
+                person = PeopleService(world.dmb).create_person(name=f"Healer of {rec['name']}", role="worker", workplace_id=centre["id"], affiliation=rec["faction"],
+                                                                 area_id="hybrid.world", position=[tile[0], tile[1]], dialogue_profile="dialogue.anchor", anchor=True, profile_flags=["worker"])
+                s["npcs"][person["id"]] = {"building": centre["id"], "tile": [tile[0], tile[1]], "role": "healer", "settlement": rec["id"], "faction": rec["faction"]}
+                cause = CauseTracker(world.dmb).observe_changes([{"kind": "outbreak", "affected_entity_id": rid, "stakeholder_id": person["id"], "site_id": rec["id"],
+                                                                "template_id": OUTBREAK_TEMPLATE_ID}])
+                if not cause or cause[0].get("status") == "deduped":
+                    continue
+                out = _binder(world).bind(OUTBREAK_TEMPLATE_ID, cause[0]["cause"])
+                if out["status"] != "bound":
+                    continue
+                qid = out["quest"]["id"]
+                s["quests"][qid] = {"family": "outbreak", "region": rid, "mine": "", "npc": person["id"], "dungeon": "", "resource": "", "settlement": rec["id"],
+                                    "faction": rec["faction"], "stage": "offered", "evidence": 0, "learned": [], "sigil_given": False, "persuaded": False, "outcome": "",
+                                    "opened_ms": int(world.dmb.clock.get("game_ms", 0)), "duel": {"attempts": 0, "result": ""}, "start_cubes": rg.cubes[i]}
+                open_regions.add(rid)
+                _log(world, "story_quest_offered", quest=qid, region=rid, npc=person["id"], settlement=rec["id"], family="outbreak")
+    for qid, q in sorted(s["quests"].items()):
+        quest = world.dmb.quests.get(qid)
+        if q.get("family") != "outbreak" or quest is None or quest["status"] not in OPEN:
+            continue
+        rec = settlements.record(world, q["settlement"])
+        i = rg.index[tuple(int(x) for x in q["region"].split(":")[1].split(","))]
+        if rec is None or rec["state"] != "standing":
+            svc.evaluate(qid, world_signals={"site_destroyed": True})
+            q["outcome"] = "destroyed_settlement"
+            _log(world, "story_quest_failed", quest=qid, why="settlement_destroyed")
+        elif rg.cubes[i] == 0:
+            if q.get("treated_by_wizard"):
+                if quest["status"] == "offered":
+                    svc.accept(qid)
+                svc.evaluate(qid, world_signals={"output_confirmed": True, "intervention": "treated"})
+                CauseTracker(world.dmb).resolve(quest["cause_id"], reason="treated")
+                q["outcome"] = "treated"
+                q["stage"] = "resolution"
+            else:
+                CauseTracker(world.dmb).resolve(quest["cause_id"], reason="world_fix")
+                svc.evaluate(qid, world_signals={"world_repaired": True})
+                q["outcome"] = "resolved_by_world"
+            _log(world, "story_quest_closed", quest=qid, outcome=q["outcome"])
 
 
 def _displace(world: Any, q: dict) -> None:
@@ -278,8 +346,34 @@ def _quest_of_npc(world: Any, npc_id: str) -> tuple[str, dict] | None:
     return best
 
 
+def _outbreak_facts(world: Any, q: dict) -> dict[str, Any]:
+    from wizard_rts import regions
+
+    rg = regions.state(world)
+    i = rg.index[tuple(int(x) for x in q["region"].split(":")[1].split(","))]
+    k = next((x for x in regions.config()["kinds"] if x["id"] == rg.kind[i]), regions.config()["kinds"][0])
+    rec = settlements.record(world, q["settlement"]) or {}
+    sample = next((b for b in sorted(world.buildings.values(), key=lambda x: x["id"]) if b["faction_name"] == q["faction"] and "hp" in b
+                   and rg.region_at(b["tx"], b["ty"]) == i and regions.production_factor(world, b) < 1.0), None)
+    return {"cubes": rg.cubes[i], "label": k["label"], "clue": k["clue"], "factor": regions.production_factor(world, sample) if sample else 1.0,
+            "unrest": round(float(rec.get("unrest", 0.0)), 2), "settlement": rec.get("name", q["faction"])}
+
+
 def _lines(world: Any, qid: str, q: dict) -> list[str]:
     quest = world.dmb.quests[qid]
+    if q.get("family") == "outbreak":
+        f = _outbreak_facts(world, q)
+        st = quest["status"]
+        if st == "completed":
+            return ["The %s is gone from the region. Work is back to full speed." % f["label"].lower()]
+        if st == "resolved_by_world":
+            return ["It passed on its own. I cannot say how."]
+        if st == "failed_with_consequence":
+            return ["You said you could not help. The %s stays." % f["label"].lower() if q["outcome"] == "abandoned" else "The settlement is gone."]
+        lines = ["%s: %d %s in the region, and you can see it (%s)." % (f["settlement"], f["cubes"], "mark" if f["cubes"] == 1 else "marks", f["clue"])]
+        if f["factor"] < 1.0:
+            lines.append("Work in the affected workplaces runs at about %d%% of its normal pace. Unrest in the settlement: %.2f." % (round(f["factor"] * 100), f["unrest"]))
+        return lines
     f = facts(world, q)
     status = quest["status"]
     lines: list[str] = []
@@ -313,6 +407,9 @@ def _choices(world: Any, qid: str, q: dict) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     if status not in OPEN:
         return out
+    if q.get("family") == "outbreak":
+        return [{"id": "accept_treat", "text": "I will treat the region. Stand in it and hold still.", "available": status == "offered"},
+                {"id": "give_up", "text": "I cannot help.", "available": True}]
     out.append({"id": "ask_cause", "text": "What happened to the seam?", "available": "cause" not in q["learned"]})
     out.append({"id": "ask_gallery", "text": "Is there another way to the ore?", "available": "cause" in q["learned"] and "gallery" not in q["learned"]})
     out.append({"id": "accept_help", "text": "I will go down the old gallery.", "available": "gallery" in q["learned"] and not q["sigil_given"]})
@@ -352,6 +449,11 @@ def choose(world: Any, npc_id: str, choice: str) -> dict[str, Any]:
     svc = QuestService(world.dmb)
     people = PeopleService(world.dmb)
     text = ""
+    if choice == "accept_treat":
+        svc.accept(qid)
+        q["stage"] = "treatment"
+        text = "'Stand anywhere in the region and send the word `treat`. It takes a few seconds, and you must not leave.'"
+        return {"status": "ok", "text": text, "lines": _lines(world, qid, q), "choices": _choices(world, qid, q)}
     if choice == "ask_cause":
         q["learned"].append("cause")
         q["evidence"] = min(2, q["evidence"] + 1)
@@ -682,13 +784,17 @@ def snapshot(world: Any) -> dict[str, Any]:
 
 # ------------------------------------------------------------------ the wizard's command surface
 
-WIZARD_OPS = ("talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view")
+WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view")
 
 
 def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
     """The only ways the wizard acts in the story. Faction control is not here (D02)."""
     op = str(message.get("op", ""))
-    if op == "talk":
+    if op == "treat":
+        from wizard_rts import regions
+
+        out = regions.begin_treatment(world)
+    elif op == "talk":
         out = talk(world, str(message.get("npc", "")))
     elif op == "choose":
         out = choose(world, str(message.get("npc", "")), str(message.get("choice", "")))

@@ -147,7 +147,10 @@ def modern_fixture(world: Any, faction: str = "Red") -> dict[str, Any]:
 
     if not tech.god_allowed(world):
         raise PermissionError("the Modern fixture is a developer/test command")
-    world.era_index = max(world.era_index, 2)
+    from wizard_rts import vp
+
+    if world.era_index < 2:
+        vp.set_era(world, 2)
     grant_cards(world, faction)
     grant_goods(world, faction)
     wh = con.faction_warehouse(world, faction)

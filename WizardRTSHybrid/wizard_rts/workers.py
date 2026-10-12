@@ -11,7 +11,7 @@ from __future__ import annotations
 import heapq
 from typing import Any
 
-from wizard_rts import imm, resources, wl_defs
+from wizard_rts import imm, regions, resources, wl_defs
 from wizard_rts import terrain as terrain_mod
 from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
@@ -883,6 +883,9 @@ def production_quantum(world: Any) -> None:
                 _fail(world, building, "deposit")
         elif cmd == "produce":
             for g, n in args.items():
+                n = regions.yield_count(world, building, n)  # an outbreak in the region lowers what a finished programme yields
+                if n <= 0:
+                    continue
                 produce(world, building["id"], g, n)
                 world.stats["produce"] += n
                 world.stats["made_" + g] = world.stats.get("made_" + g, 0) + n

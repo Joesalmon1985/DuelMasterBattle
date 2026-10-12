@@ -454,6 +454,8 @@ def drill_options(world: Any, b: dict) -> dict[str, dict[str, Any]]:
 
 
 def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict) -> None:
+    from wizard_rts import regions
+
     opts = drill_options(world, b)
     item = X.choose_item(opts, m.get("target"))
     if item is None:
@@ -476,7 +478,7 @@ def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict) -> None:
         m["state"] = "output blocked"
     else:
         m["state"] = "drilling"
-        m["progress"] += TICKS_PER_Q * len(o["tiles"])
+        m["progress"] += TICKS_PER_Q * len(o["tiles"]) * regions.production_factor(world, b)  # an outbreak in the region slows the drill
         if m["progress"] >= delay:
             if X.take_reserve(world, o):
                 m["progress"] -= int(delay)
@@ -512,8 +514,10 @@ def _crafter_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
         if spec["power_use_per_s"] > 0 and satisfaction <= 0:
             m["state"] = "no power"
         else:
+            from wizard_rts import regions
+
             m["state"] = "working"
-            m["progress"] += TICKS_PER_Q * satisfaction
+            m["progress"] += TICKS_PER_Q * satisfaction * regions.production_factor(world, b)
             if m["progress"] >= spec["craft_ticks"]:
                 m["progress"] -= spec["craft_ticks"]
                 for w, n in spec["consume_items"].items():
@@ -537,8 +541,10 @@ def _factory_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
     if satisfaction <= 0:
         m["state"] = "no power"
         return
+    from wizard_rts import regions
+
     m["state"] = "building"
-    m["progress"] += TICKS_PER_Q * satisfaction
+    m["progress"] += TICKS_PER_Q * satisfaction * regions.production_factor(world, b)
     if m["progress"] >= plan["ticks"]:
         tile = _exit_tile(world, b)
         if tile is None:

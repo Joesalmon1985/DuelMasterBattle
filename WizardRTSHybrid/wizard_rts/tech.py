@@ -203,3 +203,9 @@ def snapshot(world: Any) -> dict[str, Any]:
     return {"profile": world.profile, "gated": gated(world), "god": god_allowed(world),
             "factions": {n: {"cards": list(s["cards"]), "offers": list(s["offers"]), "round": s["round"],
                              "next_round_ms": s["next_round_ms"]} for n, s in getattr(world, "tech", {}).items()}}
+
+
+def on_era_change(world: Any) -> None:
+    """S05: every faction gets one extra draft round on each era change (the next round opens at the next tick)."""
+    for st in getattr(world, "tech", {}).values():
+        st["next_round_ms"] = 0

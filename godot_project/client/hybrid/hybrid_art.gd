@@ -152,6 +152,9 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var definition := str(entity.get("definition", ""))
 	if bool(entity.get("inside", false)):
 		return
+	if definition.begins_with("story."):  # the wizard's story people and places: labelled placeholders
+		_draw_story(canvas, entity, tpx)
+		return
 	if definition.begins_with("mindustry."):  # labelled placeholders: the Mindustry art is not imported (docs/MINDUSTRY_PROVENANCE.md)
 		industry.draw_entity(canvas, self, entity, tpx, faction_colors.get(str(entity.get("faction_name", "")), Color(0.7, 0.7, 0.7)))
 		return
@@ -545,3 +548,56 @@ func _eight(facing: String) -> int:
 			return 7
 		_:
 			return 4
+
+
+## Outline of every hex region that holds an outbreak cube (the overlay is logical: it changes no movement or placement).
+func draw_regions(canvas: CanvasItem, snapshot: Dictionary, tpx: int) -> void:
+	var reg: Dictionary = snapshot.get("regions", {})
+	var cubes: Dictionary = reg.get("cubes", {})
+	if cubes.is_empty():
+		return
+	var size := float(reg.get("size", 56))
+	var map: Dictionary = snapshot.get("map", {})
+	var w := float(map.get("w", 544))
+	var h := float(map.get("h", 288))
+	for rid in cubes:
+		var parts := str(rid).split(":")[1].split(",")
+		var q := float(parts[0])
+		var r := float(parts[1])
+		var cx := w * 0.5 + 1.5 * size * q
+		var cy := h * 0.5 + sqrt(3.0) * size * (r + q * 0.5)
+		var pts := PackedVector2Array()
+		for k in 7:
+			var a := deg_to_rad(60.0 * float(k))
+			pts.append(Vector2(cx + size * cos(a), cy + size * sin(a)) * tpx)
+		var n := int(cubes[rid])
+		canvas.draw_polyline(pts, Color(0.75, 0.2 + 0.1 * n, 0.9, 0.55), 6.0)
+
+
+func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
+	var c := Vector2(int(e["tx"]) * tpx + tpx * 0.5, int(e["ty"]) * tpx + tpx * 0.5)
+	var font := ThemeDB.fallback_font
+	if str(e.get("kind", "")) == "outbreak_clue":
+		var t := Time.get_ticks_msec() / 1000.0
+		var col := {"sickness": Color(0.55, 0.45, 0.25), "blight": Color(0.6, 0.6, 0.6), "toxic_spill": Color(0.4, 0.9, 0.3), "signal_fault": Color(0.4, 0.8, 1.0)}.get(str(e.get("hazard", "")), Color(0.7, 0.3, 0.8))
+		for k in 4:
+			var rise := fmod(t * 0.6 + float(k) * 0.25, 1.0)
+			canvas.draw_circle(c + Vector2(sin(t * 2.0 + k) * 8.0, -rise * 70.0), 10.0 + rise * 14.0, Color(col.r, col.g, col.b, 0.5 * (1.0 - rise)))
+		canvas.draw_rect(Rect2(c + Vector2(-16, -6), Vector2(32, 12)), Color(0.15, 0.1, 0.05, 0.8), true)
+		canvas.draw_string(font, c + Vector2(-44, 24), str(e.get("label", "outbreak")) + " (placeholder)", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 0.95, 0.7))
+		return
+	if str(e.get("kind", "")) == "npc":
+		var col := Color(0.95, 0.65, 0.2)
+		canvas.draw_circle(c + Vector2(0, -18), 11, Color(0.95, 0.8, 0.65))
+		canvas.draw_rect(Rect2(c + Vector2(-13, -8), Vector2(26, 32)), col, true)
+		canvas.draw_rect(Rect2(c + Vector2(-13, -8), Vector2(26, 32)), Color(0.25, 0.15, 0.05), false, 3.0)
+		canvas.draw_string(font, c + Vector2(-34, 44), "MINER (placeholder)", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 1, 0.8))
+		if bool(e.get("has_quest", false)):
+			canvas.draw_circle(c + Vector2(0, -44), 12, Color(1, 0.9, 0.2))
+			canvas.draw_string(font, c + Vector2(-4, -38), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(0.3, 0.1, 0.0))
+	else:
+		var open := bool(e.get("solved", false))
+		canvas.draw_rect(Rect2(c + Vector2(-26, -26), Vector2(52, 52)), Color(0.12, 0.1, 0.1), true)
+		canvas.draw_rect(Rect2(c + Vector2(-16, -10), Vector2(32, 36)), Color(0.02, 0.02, 0.03), true)
+		canvas.draw_arc(c + Vector2(0, -10), 16, PI, TAU, 16, Color(0.7, 0.6, 0.4), 4.0)
+		canvas.draw_string(font, c + Vector2(-40, 46), "GALLERY (placeholder)", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.9, 0.85, 0.7) if not open else Color(0.6, 1, 0.7))

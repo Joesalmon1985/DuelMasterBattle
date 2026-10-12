@@ -24,6 +24,9 @@ def register(world: Any, building: dict) -> str:
         "home": home, "chronicle": [{"event": "founded", "game_ms": int(world.dmb.clock.get("game_ms", 0)), "cause": "founding"}],
     }
     building["settlement_id"] = sid
+    from wizard_rts import vp
+
+    vp.note_founded(world, sid, faction)
     return sid
 
 

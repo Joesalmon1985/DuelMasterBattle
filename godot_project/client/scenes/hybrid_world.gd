@@ -7,6 +7,7 @@ const HybridArt = preload("res://client/hybrid/hybrid_art.gd")
 const GodMode = preload("res://client/hybrid/god_mode.gd")
 const TerrainView = preload("res://client/hybrid/terrain_view.gd")
 const WizardLabels = preload("res://client/hybrid/wizard_labels.gd")
+const StoryUi = preload("res://client/hybrid/story_ui.gd")
 
 ## Continuous hybrid world. Movement, camera, and the retained duel board
 ## come from the existing Overworld and DmbDuelLeaseAdapter. The Python
@@ -31,6 +32,7 @@ var _camera_nudge := Vector2.ZERO
 var camera_focus := Vector2.INF
 var god: Node
 var wizard_labels: Node  # semantic labels and fire magic (Wizard Mode)
+var story_ui: Node  # the wizard's story: people, dialogue, dungeon, duel (placeholders over the Python ops)
 var terrain = null  # TerrainView once the sim has sent its terrain
 var selected_ids: Dictionary = {}:
 	set(v):
@@ -90,6 +92,10 @@ func _ready() -> void:
 	wizard_labels.name = "WizardLabels"
 	add_child(wizard_labels)
 	wizard_labels.setup(self)
+	story_ui = StoryUi.new()
+	story_ui.name = "StoryUi"
+	add_child(story_ui)
+	story_ui.setup(self)
 
 
 func _process(delta: float) -> void:
@@ -125,6 +131,10 @@ func _sort_y(e: Dictionary) -> int:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Wizard Mode: a left click on any entity opens its label (description far away, fire magic close up)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and story_ui != null and not _duel_open and not story_ui.dialog.visible:
+		if story_ui.try_click(event.position):
+			get_viewport().set_input_as_handled()
+			return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and wizard_labels != null and not _duel_open:
 		if wizard_labels.try_click(event.position):
 			get_viewport().set_input_as_handled()
@@ -276,6 +286,7 @@ func _draw() -> void:
 		for tile in road:
 			if tile is Array and int(tile[0]) >= vx0 and int(tile[0]) <= vx1 and int(tile[1]) >= vy0 and int(tile[1]) <= vy1:
 				_art.draw_road(self, tile, TPX)
+	_art.draw_regions(self, _snapshot, TPX)
 	_art.industry.draw_belts(self, _snapshot.get("industry", {}), TPX, vx0, vy0, vx1, vy1)
 	_art.industry.draw_links(self, _snapshot, TPX)
 	var rows: Array = []

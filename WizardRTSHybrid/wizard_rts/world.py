@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import settlements, story, tech
+from wizard_rts import history, regions, settlements, story, tech, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -89,7 +89,7 @@ PRIMITIVE_SHOWCASE = ("quarry", "hunter", "well")  # with the producer, sawmill 
 
 class HybridWorld:
     def __init__(self, seed: int = 507, minimal: bool = False, terrain: bool | None = None, map_size: str = "standard",
-                 profile: str | None = None) -> None:
+                 profile: str | None = None, start_perm: list[int] | None = None) -> None:
         """terrain=True builds the square-grid Widelands-derived map; terrain=False is the legacy flat world.
 
         None reads HYBRID_TERRAIN (default "1"). The legacy world stays available so the
@@ -99,6 +99,8 @@ class HybridWorld:
             terrain = os.environ.get("HYBRID_TERRAIN", "1") != "0"
         self.profile = profile or ("test_minimal" if minimal else "test_showcase")  # tech.PROFILES; the server defaults to "campaign"
         tech.profile_flags(self.profile)
+        self.start_perm = list(start_perm) if start_perm else None  # S07: which homeland each faction (in FACTIONS order) starts on
+        self.cycle_pending = False
         self.era_index = 0
         self.draft_interval_ms = tech.DRAFT_INTERVAL_MS
         self.terrain: terrain_mod.TerrainGrid | None = mapgen.generate(int(seed), map_size) if terrain else None
@@ -157,6 +159,7 @@ class HybridWorld:
             self._layout()
         tech.init_world(self)
         industry.init_world(self)
+        vp.era_state(self)
 
     def tile_in_map(self, tx: int, ty: int) -> bool:
         """True where a ground unit, worker, carrier or road may be. With terrain: inside the grid and on land."""
@@ -293,6 +296,7 @@ class HybridWorld:
             self.stats["buildings_lost"] = self.stats.get("buildings_lost", 0) + 1
             self.effects.append({"t": "explosion", "x1": building["tx"], "y1": building["ty"], "x2": building["tx"], "y2": building["ty"], "ttl_ms": 2500, "keep": 3, "p": ""})
             self.events.append({"kind": "building_destroyed", "id": building_id, "faction": building["faction_name"]})
+            vp.on_destroyed(self, building, by)
             self.fstat(building["faction_name"], "building_losses")
             shooter = self.units.get(by) or self.buildings.get(by)
             if shooter is not None:
@@ -377,6 +381,8 @@ class HybridWorld:
     def _home_center(self, q: int, r: int) -> tuple[int, int]:
         if self.terrain is not None:
             idx = [f[1] for f in FACTIONS].index((q, r))
+            if self.start_perm:
+                idx = self.start_perm[idx]
             return tuple(self.terrain.starts[idx])
         return hex_center_tile(q, r)
 
@@ -774,6 +780,9 @@ class HybridWorld:
             con.construction_quantum(self)
             industry.industry_quantum(self)
             story.story_quantum(self)
+            vp.vp_quantum(self)
+            regions.regions_quantum(self)
+            history.history_quantum(self)
             con.recruitment_quantum(self)
             lifecycle_quantum(self)
             territory.deploy_quantum(self)
@@ -1027,6 +1036,7 @@ class HybridWorld:
             for rock in self.rocks.values():
                 entities.append(self._rock_row(rock))
         entities.extend(story.entity_rows(self))
+        entities.extend(regions.entity_rows(self))
         for animal in self.animals.values():
             row = {
                 "id": animal["id"], "class": "animal", "kind": "animal", "definition": animal["definition"],
@@ -1116,6 +1126,9 @@ class HybridWorld:
             "tech": tech.snapshot(self),
             "industry": industry.snapshot(self),
             "story": story.snapshot(self),
+            "era": vp.snapshot(self),
+            "history": history.snapshot(self),
+            "regions": regions.snapshot(self),
         }
 
 

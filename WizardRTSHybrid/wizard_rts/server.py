@@ -176,6 +176,10 @@ def serve(port: int) -> None:
     if os.environ.get("HYBRID_FIXTURE") and tech.god_allowed(world):  # developer: start inside a prepared scenario
         from wizard_rts.industry import fixture
 
+        if os.environ["HYBRID_FIXTURE"] == "outbreak":
+            from wizard_rts import regions as _regions
+
+            print("HYBRID_FIXTURE_READY", json.dumps(_regions.fixture_outbreak(world)), flush=True)
         if os.environ["HYBRID_FIXTURE"] == "story":
             from wizard_rts import story_fixture
 
@@ -208,6 +212,11 @@ def serve(port: int) -> None:
                             reply = {"status": "rejected", "reason": "bad_json"}
                         else:
                             reply = _handle(world, message)
+                            if getattr(world, "cycle_pending", False) and tech.god_allowed(world) is not None:
+                                from wizard_rts import history
+
+                                world = history.cycle_reset(world)  # a new cycle: only the wizard carries over (D11)
+                                reply = {"status": "ok", "cycle_reset": True, "snapshot": world.snapshot()}
                         conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
             except (ConnectionError, OSError):
                 continue
