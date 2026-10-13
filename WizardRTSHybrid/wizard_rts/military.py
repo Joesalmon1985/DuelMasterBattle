@@ -652,6 +652,12 @@ def _engage(world: Any, unit: dict, w: dict | None, chase: bool, leash: float) -
     names = _weapon_order(unit)
     if not names:
         return False
+    if unit.get("ammo_max") and int(unit.get("ammo", 0)) <= 0:
+        # an empty ammunition pool (aircraft, minelayers): the unit cannot fight, so it neither chases nor reports "attacking"; it rearms at a pad
+        unit["target"] = None
+        if unit.get("status") == "attacking":
+            unit["status"] = "idle"
+        return False
     target = unit.get("target")
     if target is not None and _target_pos(world, target) is None:
         target = unit["target"] = None

@@ -403,3 +403,19 @@ def test_a_pillbox_shoots_an_enemy_soldier_in_range(actor):
     hp0 = foe["hp"]
     run(w, 6)
     assert foe["hp"] < hp0
+
+
+def test_an_aircraft_with_no_ammunition_and_no_pad_stops_attacking():
+    w = world()
+    unlock(w, "Red")
+    spot = free_spot(w)
+    plane = own(w, "openra.mig", spot)
+    foe = enemy(w, "openra.3tnk", (spot[0] + 3, spot[1]), hp=10**8)
+    run(w, 10)
+    assert plane["status"] == "attacking"
+    plane["ammo"] = 0
+    run(w, 10)
+    assert plane["status"] != "attacking" and plane.get("target") is None
+    hp = foe["hp"]
+    run(w, 10)
+    assert foe["hp"] == hp  # it does not damage anything with an empty pool
