@@ -35,7 +35,7 @@ from wizard_rts import rules
 from wizard_rts import tribes
 from wizard_rts.animals import spawn_animal
 from wizard_rts.programs_data import RESOURCE_PER_NODE, ROCK_AMOUNT, START_WARES
-from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path  # noqa: E402
+from wizard_rts.workers import forestry_quantum, new_id, plant_tree, find_path, TreeDict  # noqa: E402
 from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
@@ -44,7 +44,7 @@ from wizard_rts import disruption, feed, history, nests, regions, settlements, s
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
-from wizard_rts import diagnostics, territory  # noqa: E402
+from wizard_rts import diagnostics, diplomacy, territory  # noqa: E402
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
 
 WORLD_ID = "hybrid.world"
@@ -95,7 +95,7 @@ PRIMITIVE_SHOWCASE = ("quarry", "hunter", "well")  # with the producer, sawmill 
 
 class HybridWorld:
     def __init__(self, seed: int = 507, minimal: bool = False, terrain: bool | None = None, map_size: str = "standard",
-                 profile: str | None = None, start_perm: list[int] | None = None) -> None:
+                 profile: str | None = None, start_perm: list[int] | None = None, legacy_draft: bool = False) -> None:
         """terrain=True builds the square-grid Widelands-derived map; terrain=False is the legacy flat world.
 
         None reads HYBRID_TERRAIN (default "1"). The legacy world stays available so the
@@ -108,6 +108,9 @@ class HybridWorld:
         self.start_perm = list(start_perm) if start_perm else None  # S07: which homeland each faction (in FACTIONS order) starts on
         self.cycle_pending = False
         self.era_index = 0
+        self.legacy_draft = bool(legacy_draft)  # True keeps the hand-written card set and the old offers (regression tests only); every gated world otherwise drafts v2
+        if tech.gated(self) and not self.legacy_draft:
+            self.cardset, self.draft_v2 = "v2", True
         self.draft_interval_ms = tech.DRAFT_INTERVAL_MS
         self.terrain: terrain_mod.TerrainGrid | None = mapgen.generate(int(seed), map_size) if terrain else None
         self.map_size = map_size
@@ -132,7 +135,7 @@ class HybridWorld:
         self.ai_enabled = os.environ.get("HYBRID_AI", "1") != "0"
         self.ai_factions: set[str] | None = None  # None: the built-in AI plays every faction; a set restricts it (training agents play the rest)
         self.resources: dict[tuple[int, int], dict[str, int]] = {}
-        self.trees: dict[str, dict[str, Any]] = {}
+        self.trees: dict[str, dict[str, Any]] = TreeDict()
         self.tree_tiles: dict[tuple[int, int], str] = {}
         self.workers: dict[str, dict[str, Any]] = {}
         self.reserved_tiles: set[tuple[int, int]] = set()
@@ -142,7 +145,7 @@ class HybridWorld:
         self.path_searches = 0
         self.join_searches = 0
         self.carrier_respawn: dict[str, int] = {}  # road id -> ms until a new carrier walks out (logistics.carrier_quantum)
-        self.cc_ids: dict[str, None] = {}  # warehouses = command centres, in creation order (a dict, not a set: string hashes are salted per process and would make runs differ)
+        self.cc_ids: dict[str, None] = territory.CcDict()  # warehouses = command centres, in creation order (a dict, not a set: string hashes are salted per process and would make runs differ)
         self.cc_buffer = territory.BUFFER  # extra tiles between two command centres' build areas
         self.faction_info: dict[str, dict[str, str]] = {}
         self.controlled_faction = ""
@@ -352,6 +355,26 @@ class HybridWorld:
         if b.get("worker_ids") is not None and any(r not in self.workers for r in b["worker_ids"].values()):
             return "Waiting for a worker"
         return "Working" if b.get("waiting_worker") else "Idle"
+
+    def turret_slot(self, unit: dict) -> int | None:
+        """The 32-frame slot (counter-clockwise from north, the Red Alert frame order) a turret must show to aim at the unit's current target."""
+        from wizard_rts.military import _target_pos
+
+        pos = _target_pos(self, unit["target"])
+        if pos is None:
+            return None
+        dx, dy = float(pos[0]) - unit["tx"], float(pos[1]) - unit["ty"]
+        if dx == 0 and dy == 0:
+            return None
+        import math
+
+        return int(round(math.degrees(math.atan2(-dx, -dy)) / 11.25)) % 32
+
+    def note_produced(self, faction: str, entity: str) -> None:
+        """Count a completed building or produced unit by entity id (`wl:...`, `barracks`, `unit:tank`) with the time of the first one.
+        Kept outside the snapshot: it feeds the inspector and the content reports and must not change the state hash."""
+        rec = self.__dict__.setdefault("entity_stats", {}).setdefault(faction, {}).setdefault(entity, {"count": 0, "first_ms": int(self.dmb.clock.get("game_ms", 0))})
+        rec["count"] += 1
 
     def fstat(self, faction: str, key: str, amount: float = 1) -> None:
         """Per-faction counters (kills, losses): the reward signals of the training interface and a battle report."""
@@ -835,6 +858,8 @@ class HybridWorld:
         return {"status": "ok", "snapshot": self.snapshot() if snapshot else None}
 
     def advance(self, ms: int, sequence: int, snapshot: bool = True, tree_sync: bool | None = None) -> dict[str, Any]:
+        if getattr(self, "collective_loss", False):  # terminal: every faction lost. Time stops; the cycle ends by an explicit reset (history.cycle_reset), never silently
+            return {"status": "terminal", "quanta": 0, "terminal": history.outcome(self), "snapshot": self.snapshot(tree_sync=tree_sync) if snapshot else None}
         quanta = self.clock.request_advance(int(ms) * int(self.time_scale), int(sequence))
         for _ in range(quanta):
             forestry_quantum(self)
@@ -854,6 +879,7 @@ class HybridWorld:
             lifecycle_quantum(self)
             territory.deploy_quantum(self)
             tech.tech_quantum(self)
+            diplomacy.diplomacy_quantum(self)
             diagnostics.watch_quantum(self)
             if self.ai_enabled:
                 ai_quantum(self)
@@ -935,6 +961,11 @@ class HybridWorld:
         from wizard_rts.industry import commands as ind_commands
 
         out = ind_commands.place_belt(self, faction, tiles, end_dir)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def enhance(self, faction: str, building: str, to_kind: str = "") -> dict[str, Any]:
+        out = con.enhance_building(self, faction, str(building), str(to_kind))
         out["snapshot"] = self.snapshot()
         return out
 
@@ -1150,6 +1181,10 @@ class HybridWorld:
             row["hp"] = unit["hp"]
             row["max_hp"] = unit["max_hp"]
             row["alive"] = unit["alive"]
+            if getattr(self, "visual_state", False) and unit.get("target") and unit.get("alive", True):
+                t32 = self.turret_slot(unit)
+                if t32 is not None:
+                    row["turret"] = t32  # presentation only; off in headless runs so state hashes do not change
             if unit.get("order"):
                 row["order"] = dict(unit["order"])
             entities.append(row)

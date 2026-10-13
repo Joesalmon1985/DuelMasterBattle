@@ -62,3 +62,8 @@ These are the only open items. Each has a recommended default; an implementation
 - Final Mindustry source pin (SHA) — chosen by the implementation agent at the start of M2 and recorded in `sources/manifest.json`.
 - Art for Mindustry blocks and units. Mindustry art is GPL with its own asset terms; check before copying. Placeholder shapes are acceptable, labelled as such.
 - Windows frame-rate budgets: unmeasured. Ubuntu T460 is about 7 fps headed on the full map.
+
+
+## 4. Proposed changes pending owner review (12 October 2026)
+
+`PLAN_ECONOMY_TECH_ERA_PROGRAMME.md` proposes superseding D04's provisional threshold, S12/S13/S14 (split wording, world-summed VP, 4-minute independent offers) and removing the command-centre caps in the AIs. **Nothing here is approved.** The owner's answers to Q1-Q15 in section 10 of that plan will be recorded as new D-rows; until then the rules above stay in force.

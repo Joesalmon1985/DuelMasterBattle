@@ -1,0 +1,4 @@
+{"policy": "ignore", "era_limit": 99, "total_limit": 8, "seed": 1, "lost": true, "minutes_to_loss": 73.0, "outbreaks": 12, "cubes_cleared": 0, "truces": 0, "pressure_end": 1.5, "wall_s": 651.8}
+{"policy": "selfish", "era_limit": 99, "total_limit": 8, "seed": 1, "lost": false, "minutes_to_loss": "", "outbreaks": 0, "cubes_cleared": 9, "truces": 0, "pressure_end": 0.0, "wall_s": 706.7}
+{"policy": "ignore", "era_limit": 99, "total_limit": 8, "seed": 2, "lost": true, "minutes_to_loss": 85.0, "outbreaks": 12, "cubes_cleared": 10, "truces": 0, "pressure_end": 1.5, "wall_s": 742.5}
+{"policy": "selfish", "era_limit": 99, "total_limit": 8, "seed": 2, "lost": false, "minutes_to_loss": "", "outbreaks": 0, "cubes_cleared": 2, "truces": 0, "pressure_end": 0.0, "wall_s": 751.8}

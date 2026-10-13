@@ -15,11 +15,11 @@ PRIMITIVE_KINDS = set(tech.primitive()["kinds"])
 
 @pytest.fixture(scope="module")
 def campaign():
-    return HybridWorld(SEED, profile="campaign")
+    return HybridWorld(SEED, profile="campaign", legacy_draft=True)
 
 
 def _fresh():
-    return HybridWorld(SEED, profile="campaign")
+    return HybridWorld(SEED, profile="campaign", legacy_draft=True)
 
 
 def test_profiles_defined_and_unknown_rejected():
@@ -59,7 +59,7 @@ def test_locked_unit_queue_rejected():
     wh = con.faction_warehouse(w, "Red")
     b = w._building(w.faction_info["Red"]["id"], "Red", "barracks", (wh["tx"] + 9, wh["ty"] + 9), "Barracks", "openra.barracks")
     assert con.queue_unit(w, b, "infantry")["reason"] == "locked_by_card"
-    tech.grant(HybridWorld(SEED, profile="developer"), "Red", "dmb.card.drill_tactics")  # grant is a developer command
+    tech.grant(HybridWorld(SEED, profile="developer", legacy_draft=True), "Red", "dmb.card.drill_tactics")  # grant is a developer command
     assert tech.grant(w, "Red", "dmb.card.drill_tactics") == {"status": "rejected", "reason": "god_mode_disabled"}
 
 
@@ -121,7 +121,7 @@ def test_ai_drafts_and_builds_unlocked_only():
 
 
 def test_god_ops_rejected_in_campaign_accepted_in_developer():
-    camp, dev = _fresh(), HybridWorld(SEED, profile="developer")
+    camp, dev = _fresh(), HybridWorld(SEED, profile="developer", legacy_draft=True)
     wh = con.faction_warehouse(dev, "Red")
     for op in sorted(server.GOD_OPS):
         reply = server._handle(camp, {"op": op, "faction": "Red", "kind": "quarry", "tx": 1, "ty": 1})
@@ -141,7 +141,7 @@ def test_env_draft_action_and_mask():
     mask = env.legal_actions("Red")
     assert mask["draft"], mask["draft"]
     kinds_buildable = {m["kind"] for m in mask["build"]}
-    assert kinds_buildable <= PRIMITIVE_KINDS
+    assert kinds_buildable <= PRIMITIVE_KINDS | set(tech.FOUNDATION_KINDS)  # v2 worlds add the foundation set (tavern, clinic)
     r = env.apply("Red", {"op": "draft", "card": mask["draft"][0]})
     assert r["status"] == "ok"
     assert env.apply("Red", {"op": "draft", "card": "dmb.card.smelting"})["status"] == "rejected"
@@ -162,14 +162,17 @@ def test_card_json_is_consistent():
         for u in c["units"]:
             assert any(u in v for v in con2.RECIPES.values()) or registry.ground_unit(u) or u == "caravan", (c["id"], u)  # caravans: trade.py
     # every hybrid and Mindustry kind is reachable: primitive or unlocked by at least one card
-    covered = PRIMITIVE_KINDS | {k for c in cards.values() for k in c["kinds"]}
-    assert covered == known
+    from wizard_rts.content import graph
+
+    # the generated v2 cards (drafting v2) also unlock kinds, among them hybrid buildings that exist only there (the scriptorium)
+    covered = PRIMITIVE_KINDS | {k for c in cards.values() for k in c["kinds"]} | {k for c in graph.generated_cards().values() for k in c["kinds"]} | set(tech.FOUNDATION_KINDS)
+    assert covered == known  # (the foundation kinds, among them the v2-only clinic, need no card)
     for k in registry.kinds():  # the registry's own card pointer agrees with the card file
         assert k in cards[registry.block(k)["card"]]["kinds"], k
 
 
 def test_hash_stable_across_processes():
-    code = "from wizard_rts.world import HybridWorld; w=HybridWorld(507, profile='campaign'); w.advance(2000,1); print(w.state_hash())"
+    code = "from wizard_rts.world import HybridWorld; w=HybridWorld(507, profile='campaign', legacy_draft=True); w.advance(2000,1); print(w.state_hash())"
     outs = []
     for hs in ("0", "123"):
         root = __import__("pathlib").Path(__file__).resolve().parents[1]
@@ -186,7 +189,7 @@ def test_forty_minute_campaign_every_faction_develops(mode):
     simulation to stay lawful (a legitimate military defeat does not fail the run)."""
     from wizard_rts import ledger
 
-    w = HybridWorld(SEED, profile="campaign")
+    w = HybridWorld(SEED, profile="campaign", legacy_draft=True)
     w.ai_enabled = True
     w.ai_aggressive = mode == "war"
     initial = ledger.snapshot_totals(w)

@@ -52,6 +52,10 @@ def collapse(world: Any, faction: str) -> None:
 
     fs = state(world)["faction"][faction]
     fs["state"] = "collapsed"
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.on_collapse(world, faction)
     for b in sorted(world.buildings.values(), key=lambda x: x["id"]):
         if b["faction_name"] == faction and not b.get("destroyed") and "hp" in b:
             b["hp"] = 0
@@ -135,6 +139,10 @@ def split(world: Any, faction: str, breakaway: dict) -> str:
     for w in list(world.workers.values()) + list(world.carriers.values()):
         if w.get("faction_name") == faction and w.get("building") in world.buildings and world.buildings[w["building"]]["faction_name"] == base:
             w["faction_name"], w["faction"] = base, fid
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.on_split(world, faction, base)
     _note(world, faction, "split", successor=base, settlement=breakaway["id"], buildings=moved_b, units=moved_u, pressures=why)
     return base
 
@@ -225,6 +233,24 @@ def deal_homelands(world: Any) -> list[int]:
     return [assignment[n] for n in root_names] + [i for i in range(len(starts)) if i not in assignment.values()][:0]
 
 
+CARRIED_SETTINGS = ("draft_interval_ms", "era_vp_threshold", "era_max_ms", "legacy_draft", "cardset", "draft_v2", "nocards", "era_vp_end", "era_vp_step",
+                    "era_sustain_ms", "loss_outbreaks_per_era", "loss_outbreaks_total", "outbreaks_enabled", "outbreak_interval_scale", "diplomacy_enabled",
+                    "nest_policy", "attack_ratio", "ai_policy", "ai_enabled", "ai_factions", "visual_state", "neural_drafters", "time_scale")
+
+
+def outcome(world: Any) -> dict[str, Any]:
+    """How the current cycle ends (or None): a collective loss is every faction losing, whatever their VP; otherwise the last era closed."""
+    if getattr(world, "collective_loss", False):
+        from wizard_rts import regions
+
+        s = regions.state(world)
+        return {"result": "collective_loss", "winner": "", "losers": list(world.faction_info), "cause": getattr(s, "lost_by", "") if s else "",
+                "outbreaks": s.outbreaks if s else 0, "era_outbreaks": dict(s.era_outbreaks) if s else {}}
+    if getattr(world, "cycle_pending", False):
+        return {"result": "cycle_complete", "winner": "", "losers": [], "cause": "last_era_over"}
+    return {}
+
+
 def cycle_reset(world: Any) -> Any:
     """Return a NEW HybridWorld for the next cycle. Persisting: the wizard (pose, Aspect scores) and a summary of the old cycle.
     Not persisting: every settlement, building, unit, worker, person, quest, item, road and stock (D11)."""
@@ -235,18 +261,19 @@ def cycle_reset(world: Any) -> Any:
     perm = deal_homelands(world)
     # the land is the same land (the world is re-dealt, not re-rolled): build from the terrain seed, then move the run's own randomness on
     base = int(getattr(world, "terrain_seed", world.seed))
-    fresh = HybridWorld(base, terrain=world.terrain is not None, map_size=world.map_size, profile=world.profile, start_perm=perm)
+    fresh = HybridWorld(base, terrain=world.terrain is not None, map_size=world.map_size, profile=world.profile, start_perm=perm, legacy_draft=bool(getattr(world, "legacy_draft", False)))
     fresh.terrain_seed = base
     fresh.seed = base + 1000 * cycle
     fresh.rng = random.Random(fresh.seed)
-    for knob in ("draft_interval_ms", "era_vp_threshold", "era_max_ms"):  # developer pacing switches carry over
+    for knob in CARRIED_SETTINGS:  # rules and pacing switches survive a cycle: the new world must play by the same rules (v2 drafting, limits, diplomacy...)
         if knob in world.__dict__:
-            setattr(fresh, knob, getattr(world, knob))
+            val = getattr(world, knob)
+            setattr(fresh, knob, dict(val) if isinstance(val, dict) else (set(val) if isinstance(val, set) else val))
     fresh.history = {"faction": {n: {"state": "active", "last_productive_ms": 0, "peak": {"settlements": 0, "centroid": None, "weight": 0}} for n in fresh.faction_info},
                      "chronicle": [], "cycle": cycle}
     fresh.past_cycles = list(getattr(world, "past_cycles", [])) + [{
         "cycle": cycle - 1, "seed": world.seed, "game_ms": int(world.dmb.clock.get("game_ms", 0)), "era": vp.era_state(world)["index"],
-        "peaks": {n: dict(f["peak"]) for n, f in st["faction"].items()}, "vp": vp.totals(world), "homeland_deal": perm}]
+        "peaks": {n: dict(f["peak"]) for n, f in st["faction"].items()}, "vp": vp.totals(world), "homeland_deal": perm, "outcome": outcome(world)}]
     # the wizard keeps his character: pose and Aspect scores. Nothing else crosses over.
     fresh.player = {"tx": fresh.player["tx"], "ty": fresh.player["ty"], "facing": world.player.get("facing", "down")}
     from sim.dmb.narrative.aspects import AspectService
@@ -255,11 +282,12 @@ def cycle_reset(world: Any) -> Any:
     if scores:
         store = AspectService(fresh.dmb)._store()
         store.setdefault("scores", {})["player"] = scores
-    world.events.append({"kind": "cycle_reset", "cycle": cycle})
+    world.events.append({"kind": "cycle_reset", "cycle": cycle, "outcome": outcome(world).get("result", "")})
     return fresh
 
 
 def snapshot(world: Any) -> dict[str, Any]:
     st = state(world)
     return {"cycle": st["cycle"], "factions": {n: f["state"] for n, f in st["faction"].items()}, "chronicle": st["chronicle"][-12:],
-            "cycle_pending": bool(getattr(world, "cycle_pending", False))}
+            "cycle_pending": bool(getattr(world, "cycle_pending", False)), "outcome": outcome(world),
+            "past": [{"cycle": c["cycle"], "outcome": c.get("outcome", {}).get("result", "")} for c in getattr(world, "past_cycles", [])]}

@@ -7,6 +7,7 @@
   "treat_cooldown_ms": 20000,
   "cube_cap": 3,
   "loss_outbreaks": 8,
+  "loss_outbreaks_per_era": 8,
   "region_size": 56
  },
  "groups": {

@@ -242,3 +242,27 @@ def test_expansion_episode_is_deterministic_and_saves_and_replays() -> None:
     twin.step({"Red": []})
     assert twin.state_hash() == h_cont
     assert len(env.flatten(env.observe("Red"))) == len(env.flatten(env.observe("Red")))
+
+
+def test_turret_slot_points_at_the_target_in_red_alert_frame_order():
+    import math
+
+    from wizard_rts.world import HybridWorld
+
+    w = HybridWorld(507, profile="test_showcase")
+    w.ai_enabled = False
+    w.visual_state = True
+    red, blue = w.faction_info["Red"], w.faction_info["Blue"]
+    shooter = w._unit(red["id"], "Red", "tank", "Tank", "openra.3tnk", (80, 80))
+    w.units[shooter]["weapon"] = "120mm"
+    cases = {(80, 70): 0, (70, 80): 8, (80, 90): 16, (90, 80): 24, (70, 70): 4, (90, 70): 28}  # N, W, S, E, NW, NE (counter-clockwise from north)
+    for (tx, ty), slot in cases.items():
+        victim = w._unit(blue["id"], "Blue", "tank", "Tank", "openra.3tnk", (tx, ty))
+        w.units[shooter]["target"] = {"kind": "unit", "id": victim}
+        assert w.turret_slot(w.units[shooter]) == slot, (tx, ty)
+        row = next(e for e in w.snapshot()["entities"] if e["id"] == shooter)
+        assert row["turret"] == slot
+        w.units.pop(victim)
+    w.visual_state = False
+    w.units[shooter]["target"] = {"kind": "unit", "id": w._unit(blue["id"], "Blue", "tank", "Tank", "openra.3tnk", (80, 70))}
+    assert "turret" not in next(e for e in w.snapshot()["entities"] if e["id"] == shooter)  # headless runs never carry it (hash-neutral)

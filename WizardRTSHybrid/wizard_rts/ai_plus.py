@@ -36,6 +36,12 @@ MAX_CC_BY_ERA = (3, 4, 5, 6)
 ARMY_CAP_BY_ERA = (10, 20, 28, 34)
 SQUAD_BY_ERA = (5, 7, 9, 11)
 ATTACK_RATIO = 1.4  # our squad strength over the defenders' near the target
+
+
+def attack_ratio(world: Any) -> float:
+    """`world.attack_ratio` overrides it (the era study); the v2 modes (nocards, cards v2) attack at parity, the older modes keep 1.4."""
+    r = getattr(world, "attack_ratio", None)
+    return float(r) if r else (1.0 if tech.foundation_on(world) else ATTACK_RATIO)
 RETREAT_RATIO = 0.6
 ATTACK_AFTER_MS = 10 * 60_000
 WARE_WEIGHT = {"iron": 3.0, "gold": 5.0, "coal": 1.5, "ration": 1.5, "plank": 1.0, "log": 0.5, "granite": 0.8, "ax": 2.5}
@@ -137,8 +143,72 @@ def _threats(world: Any, name: str) -> list[tuple[dict, dict]]:
 
 # ------------------------------------------------------------------ drafting
 
+MILITARY_KINDS = ("barracks", "vehicle_factory", "war_lodge", "defense", "flame_tower", "tesla_coil", "naval_yard", "sub_pen")
+
+
+def score_generated(world: Any, name: str, cid: str) -> tuple[float, str]:
+    """Value of a content-graph card for this faction now: does the entity fit its tribe, extend a working chain, answer a shortage or a threat."""
+    from wizard_rts.content import graph
+
+    ents = graph.entities()
+    tribe = world.faction_info.get(name, {}).get("tribe", "")
+    c = tech.lookup()[cid]
+    s, why = 40.0 - 2.0 * c["era"], "base"
+    threatened = bool(_threats(world, name)) or world.fstats.get(name, {}).get("building_losses", 0) > 0
+    held_kinds = {b["kind"] for b in world.buildings.values() if b["faction_name"] == name and "hp" in b and int(b["hp"]) > 0}
+    for eid in c["entities"]:
+        e = ents[eid]
+        if e["type"] == "building" and e["game"] == "widelands":
+            if e["tribe"] != tribe:
+                s -= 60
+                why = "another tribe's building"
+                continue
+            fresh = [g for g in e.get("outputs", []) if not base._makes(world, name, g)]
+            s += 12 * min(len(fresh), 2)
+            fed = sum(1 for g in e.get("inputs", []) if base._makes(world, name, g) or base._stock(world, name, g) > 0)
+            s += 6 * fed - 6 * (len(e.get("inputs", [])) - fed)
+            if any(g in ("ration", "bread", "fish", "meat") for g in e.get("outputs", [])) and _food(world, name) < 8:
+                s += 30
+                why = "food is short"
+            if any(g in ("iron", "coal", "gold", "iron_ore", "coal_ore") for g in e.get("outputs", [])) and _era(world) >= 1:
+                s += 14
+                why = "metal for an army"
+        elif e["type"] == "building":
+            if eid in MILITARY_KINDS:
+                have_military = any(k in MILITARY_KINDS for k in held_kinds)
+                s += 30 if threatened else (24 if not have_military else 8)  # the first military building is worth a pick even in peace: no army, no conquest, no era VP
+                why = "under threat" if threatened else ("first military building" if not have_military else "military")
+            if eid.startswith("mdy:"):
+                from wizard_rts import ai_industry
+
+                have_line = sum(1 for k in ai_industry.LINE_KINDS if tech.kind_allowed(world, name, k))
+                if eid in ai_industry.LINE_KINDS and not tech.kind_allowed(world, name, eid):
+                    s += 12 + 6 * have_line  # the drill -> belt -> smelter -> factory line only works whole: each part is worth more once others are held
+                    why = "completes the industrial line (%d of %d)" % (have_line, len(ai_industry.LINE_KINDS))
+            if eid in ("farm", "mine", "ironmine", "smelter", "smithy") and eid not in held_kinds:
+                s += 40 if eid != "farm" else 18  # the metal chain is the gate to every weapon: the 8-game content report showed 18 unit cards drafted and never built
+                why = "metal chain for an army" if eid != "farm" else why
+            if eid == "scriptorium":
+                s += 22  # paper buys a bonus pick every round it holds two sheets, without taking a card from anyone's pack
+                why = "paper gives bonus picks"
+        else:
+            unit = eid[5:]
+            producer = e["producer"]
+            held = {k for cid2 in world.tech[name]["cards"] for k in tech.lookup()[cid2].get("kinds", ())}
+            if producer not in held and not tech.kind_allowed(world, name, producer) and producer != "warehouse":
+                s -= 35
+                why = "no building to make it"
+            if threatened:
+                s += 15
+            if producer in held_kinds or tech.kind_allowed(world, name, producer):
+                s += 10  # a unit whose factory this faction already has can be built at once
+    return s, why
+
+
 def score_card(world: Any, name: str, cid: str) -> tuple[float, str]:
-    c = tech.cards()[cid]
+    if cid.startswith("gen."):
+        return score_generated(world, name, cid)
+    c = tech.lookup()[cid]
     short = cid.split(".")[-1]
     era = _era(world)
     order = PRIORITY.get(c["era"], [])
@@ -177,8 +247,15 @@ def pick_card(world: Any, name: str) -> str | None:
     st = world.tech.get(name)
     if not st or not st["offers"]:
         return None
+    neural = world.__dict__.get("neural_drafters", {}).get(name)
+    if neural is not None:  # plan v2 9.2 module swap: a learned scorer drafts for this faction, everything else stays heuristic
+        return neural.pick(world, name, list(st["offers"]))
     scored = sorted(((score_card(world, name, cid), cid) for cid in st["offers"]), key=lambda x: (-x[0][0], x[1]))
     (score, why), cid = scored[0]
+    if "draft_recorder" in world.__dict__:
+        from wizard_rts.learn import draft_module
+
+        draft_module.record(world, name, list(st["offers"]), cid)
     note(world, name, "draft %s (%s; %d offered)" % (cid.split(".")[-1], why, len(st["offers"])))
     world.events.append({"kind": "ai_draft_reason", "faction": name, "card": cid, "why": why, "score": round(score, 1),
                          "offered": len(st["offers"])})
@@ -190,6 +267,19 @@ def pick_card(world: Any, name: str) -> str | None:
 def _infected(world: Any, tile: tuple[int, int], at_least: int = 2) -> bool:
     rg = world.__dict__.get("regions")
     return rg is not None and rg.cubes[rg.region_at(tile[0], tile[1])] >= at_least
+
+
+def _infected_near(world: Any, tile: tuple[int, int]) -> bool:
+    """Any cube within a clinic's reach of this tile (the clinic treats neighbouring regions too)."""
+    from wizard_rts import regions
+
+    rg = regions.state(world)
+    return rg is not None and any(rg.cubes[i] >= 1 for i in regions._regions_near(world, rg, tile[0], tile[1]))
+
+
+def _responds(world: Any, name: str) -> bool:
+    """False only for the `ignore` reference policy of the catastrophe study (no clinics, no nest hunting)."""
+    return world.__dict__.get("nest_policy", {}).get(name, "selfish") != "ignore"
 
 
 def _targets(world: Any, name: str, wh: dict, main: bool, mine: list[dict]) -> list[tuple[str, int]]:
@@ -210,9 +300,13 @@ def _targets(world: Any, name: str, wh: dict, main: bool, mine: list[dict]) -> l
         out += [("farm", 1), ("tavern", 1), ("well", 1)]
         out += [("flame_tower", 1)] if era >= 1 else [("war_lodge", 0)]
         out += [("defense", 1), ("tesla_coil", 1 if era >= 2 else 0)]
+        if tech.foundation_on(world) and _responds(world, name) and _infected_near(world, (wh["tx"], wh["ty"])):
+            out.insert(0, ("clinic", 1))
         return out
     wood = max(3, 2 + n // 8)
     out: list[tuple[str, int]] = []
+    if tech.foundation_on(world) and _responds(world, name) and _infected_near(world, (wh["tx"], wh["ty"])):
+        out.append(("clinic", 1))  # an outbreak in this settlement's region: a clinic treats it (cubes cost rations and water)
     if threatened:
         out += [("war_lodge", 1), ("defense", 2), ("flame_tower", 1), ("tesla_coil", 1)]
     out += [("producer", wood), ("ranger", wood - 1), ("processor", 2 if logs > 40 and planks < 15 else 1), ("quarry", 3 if granite < 10 else 2)]
@@ -350,6 +444,39 @@ def tribe_step(world: Any, name: str, wh: dict) -> None:
             return
         st["cool"][bname] = now + 90_000 + zlib.crc32(bname.encode()) % 60_000
         note(world, name, "no site for tribe building %s" % bname)
+    if getattr(world, "cardset", "") == "v2":
+        card_step(world, name, wh)
+
+
+def card_step(world: Any, name: str, wh: dict) -> bool:
+    """Use what was drafted (plan v2 5.3): place one building a held card unlocks that this faction does not have yet and can pay for.
+    The first v2 runs showed only 35% of unlocked entities ever built, because the planner knows its fixed quotas and tribe chains only."""
+    from wizard_rts import wl_defs
+
+    now = _now(world)
+    st = world.__dict__.setdefault("_ai_cardstep", {}).setdefault(name, {"cool": {}})
+    tribe = world.faction_info.get(name, {}).get("tribe")
+    have_kinds = {b["kind"] for b in world.buildings.values() if b["faction_name"] == name and int(b.get("hp", 1)) > 0}
+    for cid in world.tech.get(name, {}).get("cards", []):
+        for eid in tech.lookup()[cid].get("entities", []):
+            if eid.startswith("unit:") or eid in have_kinds or st["cool"].get(eid, -1) > now:
+                continue
+            spec = con.build_spec(eid)
+            if spec is None or not tech.kind_allowed(world, name, eid) or not base._can_pay(world, name, spec["cost"]):
+                continue
+            if eid.startswith(wl_defs.PREFIX):
+                if spec.get("tribe") != tribe:
+                    continue
+                site = base._build_tribe_building(world, name, eid[len(wl_defs.PREFIX):], wh)
+            elif eid in ("mine", "ironmine"):
+                site = base._build_mine(world, name, eid, wh) if base._deposit_site(world, name, eid) else None
+            else:
+                site = base._place_near(world, name, eid, wh)
+            if site:
+                world.events.append({"kind": "ai_build", "faction": name, "building": eid, "id": site, "policy": POLICY, "why": "drafted"})
+                return True
+            st["cool"][eid] = now + 120_000 + zlib.crc32(eid.encode()) % 60_000
+    return False
 
 
 def _link_outposts(world: Any, name: str, home: dict) -> None:
@@ -451,6 +578,45 @@ def trade_step(world: Any, name: str, wh: dict) -> None:
         note(world, name, "trade refused: %s" % res["reason"])
 
 
+AID_GIVE = {"ration": 4, "water": 4}
+
+
+def aid_step(world: Any, name: str, wh: dict) -> None:
+    """Cooperative policy (plan v2 7.2/7.3): carry rations and water to a partner (truce, peace or alliance) whose clinic stands in an infected
+    region with an empty larder. A caravan is the physical channel, and the partner pays a token log, so it is an ordinary fair trade."""
+    from wizard_rts import diplomacy, regions, trade
+
+    if not getattr(world, "diplomacy_enabled", False) or world.__dict__.get("nest_policy", {}).get(name, "selfish") != "coop":
+        return
+    if not tech.unit_allowed(world, name, "caravan") or trade.active(world, name):
+        return
+    now = _now(world)
+    st = world.__dict__.setdefault("_ai_aid", {}).setdefault(name, {"next": 0})
+    if now < st["next"]:
+        return
+    st["next"] = now + 120_000
+    rg = regions.state(world)
+    stock = world.stocks.get(wh["id"], {})
+    if rg is None or any(int(stock.get(g, 0)) < n + 6 for g, n in AID_GIVE.items()):
+        return
+    for cc in territory.command_centers(world, None):
+        p = cc["faction_name"]
+        if p == name or diplomacy.state_of(world, name, p) == "war" or not trade.can_supply(world, cc, {"log": 1}):
+            continue
+        clinic = next((b for b in world.buildings.values() if b["faction_name"] == p and b["kind"] == "clinic" and b.get("operational") and int(b.get("hp", 1)) > 0
+                       and territory.settlement_of(world, b) is cc), None)
+        if clinic is None or regions.cubes_here(world, clinic) < 1:
+            continue
+        if any(int(world.stocks.get(cc["id"], {}).get(g, 0)) >= 2 for g in AID_GIVE):
+            continue  # it still has something to work with
+        res = trade.send_caravan(world, name, wh["id"], cc["id"], dict(AID_GIVE), {"log": 1})
+        if res["status"] == "ok":
+            world.fstat(name, "aid_sent")
+            note(world, name, "aid: rations and water to %s's clinic" % p)
+            world.events.append({"kind": "aid_sent", "faction": name, "partner": p, "to": cc["id"]})
+            return
+
+
 # ------------------------------------------------------------------ expansion
 
 def _seg_dist(p: tuple, a: tuple, b: tuple) -> float:
@@ -492,10 +658,11 @@ def _expansion_site(world: Any, name: str, unit: dict | None, bad: list | None =
         return None
     probe = {"id": "probe", "definition": definition, "faction_name": name, "alive": True, "tx": 0, "ty": 0}
     legal = []
+    frontier = bool(tech.foundation_on(world))
     for y in range(8, t.h - 8, 6):
         for x in range(8, t.w - 8, 6):
-            d = territory.cheb((x, y), (home["tx"], home["ty"]))
-            if d > 95 or not t.ground(x, y) or territory.separation_problem(world, name, (x, y)):
+            d = territory.frontier_distance(world, name, (x, y)) if frontier else territory.cheb((x, y), (home["tx"], home["ty"]))
+            if d > (70 if frontier else 95) or not t.ground(x, y) or territory.separation_problem(world, name, (x, y)):
                 continue
             if bad and any(territory.cheb((x, y), tuple(b)) < 10 for b in bad):
                 continue
@@ -551,6 +718,13 @@ def _drive(world: Any, name: str, u: dict, now: int) -> None:
         site = _expansion_site(world, name, u, st["bad"], u["definition"])
         st.update(site=list(site) if site else None, fails=0, since=now)
         if site is None:
+            if territory.deploy_check(world, u) is None:  # nowhere better to go (boxed in by rivals and water): unfold where it stands rather than hold its wares forever
+                res = territory.deploy(world, u["id"])
+                if res["status"] == "ok":
+                    note(world, name, "no other legal site: the founder unfolds where it stands")
+                    world.fstat(name, "mcv_deployed")
+                    world.events.append({"kind": "ai_expand_deploy", "faction": name, "tile": [here[0], here[1]], "policy": POLICY, "why": "no other site"})
+                    return
             note(world, name, "founder has no reachable legal site")
             return
         world.events.append({"kind": "ai_expand_site", "faction": name, "tile": list(site), "policy": POLICY})
@@ -574,7 +748,7 @@ def expansion_step(world: Any, name: str, wh: dict) -> None:
     if any(i["unit"] in ("mcv", "settlers") for b in mine for i in b.get("queue", [])):
         return
     ccs = territory.command_centers(world, name)
-    cap = MAX_CC_BY_ERA[min(_era(world), 3)]
+    cap = 10**6 if tech.foundation_on(world) else MAX_CC_BY_ERA[min(_era(world), 3)]  # nocards: growth is limited by wares, space and food, not a quota
     if len(ccs) >= cap:
         return
     if _food(world, name, wh) < 4 and len(ccs) >= 2:
@@ -680,18 +854,29 @@ def _target_value(world: Any, name: str, b: dict, centre: tuple[float, float], p
     d = math.hypot(b["tx"] - centre[0], b["ty"] - centre[1])
     if b.get("kind") == "blight_nest":
         # an outbreak nest is worth clearing only where it hurts us: in or beside one of our settlements; the reward grows with its cubes
-        near = any(territory.cheb((b["tx"], b["ty"]), (cc["tx"], cc["ty"])) <= territory.radius_of(cc) + 14 for cc in territory.command_centers(world, name))
+        policy = world.__dict__.get("nest_policy", {}).get(name, "selfish")  # plan v2 7.4 reference policies: ignore | selfish | coop
+        if policy == "ignore":
+            return -1.0
+        from wizard_rts import diplomacy
+
+        scope = territory.command_centers(world, None if policy == "coop" else name)  # coop: a nest beside ANY settlement is everybody's problem
+        near = any(territory.cheb((b["tx"], b["ty"]), (cc["tx"], cc["ty"])) <= territory.radius_of(cc) + 14 for cc in scope)
         if not near:
             return -1.0
+        if policy == "coop":
+            defence = force_near(world, (b["tx"], b["ty"]), 9.0, name, True)
+            if power < attack_ratio(world) * defence:
+                return -1.0
+            return (12.0 + 8.0 * int(b.get("nest_cubes", 1))) * (1.0 + 2.0 * diplomacy.pressure(world)) / (1.0 + d / 40.0)
         defence = force_near(world, (b["tx"], b["ty"]), 9.0, name, True)
-        if power < ATTACK_RATIO * defence:
+        if power < attack_ratio(world) * defence:
             return -1.0
         return (12.0 + 8.0 * int(b.get("nest_cubes", 1))) / (1.0 + d / 40.0)
     value = 30.0 if b.get("command_center") and b.get("outpost") else (22.0 if b.get("command_center") else 8.0)
     if b["kind"] in ("barracks", "vehicle_factory", "war_lodge", "mdy:ground_factory"):
         value = max(value, 14.0)
     defence = force_near(world, (b["tx"], b["ty"]), 12.0, name, True)
-    if power < ATTACK_RATIO * defence:
+    if power < attack_ratio(world) * defence:
         return -1.0  # not with this squad
     return value / (1.0 + d / 40.0) / (1.0 + defence / max(power, 1.0))
 
@@ -848,4 +1033,7 @@ def decide(world: Any, name: str) -> None:
     if pick:
         tech.draft(world, name, pick)
     economy_step(world, name)
+    wh0 = con.faction_warehouse(world, name)
+    if wh0 is not None and int(wh0.get("hp", 0)) > 0:
+        aid_step(world, name, wh0)
     military_step(world, name)

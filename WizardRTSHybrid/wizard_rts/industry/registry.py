@@ -29,14 +29,21 @@ def overrides() -> dict[str, Any]:
 
 def ware(item: str) -> str:
     """Inventory ware id of a Mindustry item."""
-    return overrides()["ware_map"][item]
+    m = overrides()["ware_map"]
+    if item in m:
+        return m[item]
+    from wizard_rts.industry import blocks as B
+
+    return B.ware_of_item(item)
 
 
 def item_of(ware_id: str) -> str | None:
     for k, v in overrides()["ware_map"].items():
         if k != "_doc" and v == ware_id:
             return k
-    return None
+    from wizard_rts.industry import blocks as B
+
+    return B.item_of_ware(ware_id)
 
 
 @lru_cache(maxsize=None)
@@ -82,12 +89,54 @@ def _blocks() -> dict[str, dict[str, Any]]:
     return out
 
 
+IMPLEMENTED_ROLES: set[str] = set()  # roles engine.py can simulate; a generic block is offered (cards, menu) only when its role is here
+
+
+@lru_cache(maxsize=None)
+def _generic(kind: str) -> dict[str, Any] | None:
+    """A block of mindustry_full.json that has no hand-tuned override: the original slice's spec shape plus the generic fields."""
+    from wizard_rts.industry import blocks as B
+
+    g = B.spec(kind)
+    if g is None:
+        return None
+    spec = dict(g)
+    spec["card"] = "dmb.card.industry"
+    spec["upgrade_from"] = []
+    spec["cost_source"] = "hybrid conversion of Mindustry v146 requirements (industry/blocks.py hybrid_cost)"
+    f = g["fields"]
+    if g["role"] == "drill":
+        spec["tier"] = int(f.get("tier", 2))
+        spec["drill_ticks"] = float(f.get("drillTime", 600))
+        spec["hardness_multiplier"] = 50.0
+    if g["role"] == "belt":
+        spec["belt"] = {"speed": float(f.get("speed", 0.03)), "tiles_per_second": round(float(f.get("speed", 0.03)) * TICKS, 4), "item_space": 0.4, "capacity": 3}
+    if g["role"] == "node":
+        spec["laser_range"] = int(f.get("laserRange", f.get("range", 6)))
+        spec["max_nodes"] = int(f.get("maxNodes", 10))
+    if g["role"] == "generator":
+        spec["item_duration_ticks"] = float(f.get("itemDuration", 120))
+        spec["fuel_min_flammability"] = 0.2
+        spec["solar"] = g["class"] == "SolarGenerator"
+    if g["role"] == "unit_factory":
+        spec["plans"] = [{"unit": p["unit"], "ticks": int(p["time_ticks"] or 0), "requirements": {B.ware_of_item(i): int(n) for i, n in p["requirements"].items()}}
+                         for p in (g.get("plans") or [])]
+    spec["power_buffer"] = g["power_buffer"]
+    return spec
+
+
 def kinds() -> list[str]:
-    return sorted(_blocks())
+    from wizard_rts.industry import blocks as B
+
+    extra = [k for k in B.functional_kinds() if k not in _blocks() and B.spec(k)["role"] in IMPLEMENTED_ROLES]
+    return sorted(set(_blocks()) | set(extra))
 
 
 def block(kind: str) -> dict[str, Any] | None:
-    return _blocks().get(kind)
+    b = _blocks().get(kind)
+    if b is not None:
+        return b
+    return _generic(kind) if kind.startswith(PREFIX) else None
 
 
 def build_spec(kind: str) -> dict[str, Any] | None:

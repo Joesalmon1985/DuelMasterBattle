@@ -14,7 +14,7 @@ SEED = 507
 
 
 def world(profile="test_showcase"):
-    w = HybridWorld(SEED, profile=profile)
+    w = HybridWorld(SEED, profile=profile, legacy_draft=True)
     w.ai_enabled = False
     w._seq = 0
     return w

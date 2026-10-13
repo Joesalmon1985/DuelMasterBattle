@@ -1,0 +1,191 @@
+{
+ "run": {
+  "id": "ubuntu-autonomous-v2",
+  "branch": "work/ubuntu-autonomous-v2",
+  "machine": "joe-ThinkPad-T460 (Ubuntu 24.04, i5-6200U 2c/4t, 15 GB, no GPU, ~18 GB free disk)",
+  "note": "Run was authorised for the Windows PC; that machine crashed, so it continues on the Ubuntu laptop (Tier A). Windows-only items (probe on Windows, ps1 supervisor wrapper, sleep prevention) are deferred or done as cross-platform code.",
+  "started": "2026-10-12T23:30:11+01:00",
+  "start_sha": "11b70b24f4ee06db4aac41571394714e87061b2d",
+  "plan": "docs/PLAN_FULL_PROGRAMME_V2.md",
+  "ended": "2026-10-13T06:15:59+01:00"
+ },
+ "milestones": {
+  "P0": {
+   "status": "done_except_windows",
+   "done": [
+    "probe_hardware.py (Linux run committed; Windows run pending)",
+    "audit_catalogues.py (reproduces plan 3.1 counts)",
+    "ledger + QUESTIONS",
+    "hash_gate.py (record/check, per-minute hashes)",
+    "autorun/supervisor.py (restart back-off, stall kill, same-error stop, STOP file, disk guard) + 4 tests",
+    "smoke_gate.py",
+    "tournament uses spawn context (Windows-safe)",
+    "tournament resume from per-game checkpoints (+test)",
+    "Windows sleep-prevention supervisor wrapper (untested)",
+    "asset_ledger.csv generator, contract audit, catalogue audit"
+   ],
+   "todo": [
+    "Windows sleep-prevention wrapper (.ps1) untested",
+    "DMB_RUNS pruning of old logs",
+    "kill-and-resume equality test for tournaments (checkpoint per game exists only as final report)"
+   ],
+   "note": "Windows probe, .ps1 wrapper and cross-OS hash test are written/planned but untested (no Windows machine in this run)"
+  },
+  "P1": {
+   "status": "partly_done",
+   "done": [
+    "TreeDict slot buckets",
+    "A* inner loop",
+    "optional C A* kernel with identical-path test (ctypes, python fallback)",
+    "_water_near and nest spawn tile",
+    "hash-equal at 5/15/50 min (3 seeds) and 120 min recorded",
+    "CcDict command-centre cache",
+    "frontier site search without per-tile scans, 1-minute no-site memo",
+    "nest spawn ring generation"
+   ],
+   "measured": "idle machine, seed 507: 15 min 35.5x -> 42.9x; 30 min 19.2x -> 30.7x (1.6x), hash equal at every minute; 50 min 6.6x -> 17.8x (baseline under load); see docs/perf/RESULTS.md",
+   "todo": [
+    "PyPy trial",
+    "Numba/SoA kernels (P8)",
+    "native combat/logistics kernels",
+    "mid-game target 25x (now 18x), late 8x (now 5-6x)",
+    "10-seed hash baseline (job stopped)"
+   ]
+  },
+  "P2": {
+   "status": "partly_done",
+   "done": [
+    "nocards mode (foundation = primitive + settlers + tavern), quota removed under foundation_on, frontier expansion site search",
+    "evidence docs/evidence/p2_nocards/summary.md: all factions >= 3 settlements by minute 30 in 3 seeds"
+   ],
+   "todo": [
+    "builders/mine workers as entities",
+    "founding cost scaling with distance and count",
+    "unrest terms for empire size/logistic distance",
+    "markets",
+    "bound worker_failed no_tree/no_rock retries (45k per 120 min)",
+    "standing count falls below 3 for some factions late (Blue/Red/Purple): investigate"
+   ],
+   "acceptance": "10 seeds x 120 min nocards: 0 validation failures; Red/Yellow 10/10 and Green 9/10 found 3+, Blue 2/10 (hemmed in by rivals' separation zones; founders also killed by a nest on their road before the clinic reach fix)",
+   "evidence": "docs/evidence/p2_nocards/acceptance_10seeds.md"
+  },
+  "P3": {
+   "status": "partly_done",
+   "done": [
+    "wizard_rts/draft.py: era-start 7-round ring, 6 min rounds, default picks, alternating direction, leftover rule at 8 VP, splits/collapse, reserve-deck bonus hook",
+    "era end on current VP with 60 s debounce and rising bar (leader VP + 4) to stop cascades",
+    "content graph: 196 entities, 121 generated cards (94 single, 27 pair), exact unlocks, tribe-balanced dealing, static checks",
+    "14+6 tests incl. 1000-phase conservation property test",
+    "paper + scriptorium + bonus hand from warehouse paper (3 tests)",
+    "Mindustry slice (11 buildings, 3 units) and 6 calibrated new units in the content graph: 137 cards",
+    "AI card_step: cards-used rate 35% -> 67%",
+    "caravans are foundation (trade from the start)"
+   ],
+   "todo": [
+    "paper + scriptorium + bonus hook content",
+    "Modern/Dystopian cards (need Mindustry entities, only 6 cards in eras 2-3)",
+    "AI drafting quality (picks are heuristic)",
+    "era bar study (P12)",
+    "remove old card system after v2 default"
+   ],
+   "note": "137 cards; draft v2 default stays OFF (world.cardset='v2' + draft_v2 switch) until the AI plays it competently; old card system untouched"
+  },
+  "P4": {
+   "status": "started",
+   "done": [
+    "pure-Python MIX decryption (mix_crypto.py)",
+    "e2 e3 shok ttnk ctnk real art",
+    "facing fix + Godot facing proof test",
+    "Widelands building state sheets (80 working, 50 build, 26 empty, 16 unoccupied) + client state selection + Godot proof",
+    "generic RA roster importer: 24 more units (ships, aircraft, infantry specials), 0 alias placeholders among units",
+    "asset contract audit numbers",
+    "independent turret layers for 5 vehicles + sim aim field + client + proof"
+   ],
+   "todo": [
+    "layered atlas + turret layer",
+    "palette remap shader",
+    "Mindustry drawer programs",
+    "asset ledger csv",
+    "Widelands animation contract audit"
+   ]
+  },
+  "P5": {
+   "status": "mostly_done",
+   "done": [
+    "inspector.py views: catalogue (art status), factions (production counters), draft (leftover prediction), catastrophe; server op 'inspect' (God only)",
+    "Godot inspector panel in God Mode (real art, facing/state previews, missing-art filter), server-free + headed proofs with screenshots"
+   ],
+   "todo": [
+    "Godot panel + headed tests"
+   ],
+   "note": "inspector panel works with real art; remaining: more filters (faction, production status), animated Mindustry/Widelands previews beyond sheets"
+  },
+  "P10": {
+   "status": "started",
+   "done": [
+    "per-era and cumulative loss counters + collective_loss flag",
+    "diplomacy relations + offers + cooperative rule (off by default)",
+    "nest policies ignore/selfish/coop",
+    "clinic building + cure command",
+    "catastrophe study runner; v1 result: at cadence scale 0.12 every policy loses collectively at ~42 min (old cards, no clinics)",
+    "aid caravans",
+    "clinic reach 24 tiles",
+    "study 1 and 2 results (docs/evidence/p10_catastrophe)",
+    "scale 0.3, 2 seeds: ignore loses 2/2 (min 73, 85), selfish (clinics+nest hunting) 0/2 with 0 outbreaks; scale 0.12: clinics delay loss 44->64 min"
+   ],
+   "todo": [
+    "thresholds calibration at scales 0.2-0.5 with >=10 seeds",
+    "physical cooperation beyond rations/water",
+    "per-era limit grid"
+   ]
+  },
+  "P7": {
+   "status": "started",
+   "done": [
+    "calibrated recipes (wizard_rts/calibrate.py) for flamethrower, commando, attack dog, destroyer, cruiser, missile sub; card-only",
+    "importer art for 24 more RA units"
+   ],
+   "todo": [
+    "aircraft mechanics",
+    "transports/capture/repair/support powers",
+    "remaining RA buildings (7 of 43 have art)",
+    "independent turret layers (needs sim turret angle)"
+   ]
+  },
+  "P14": {
+   "status": "started",
+   "done": [
+    "wizard_rts/learn/draft_module.py (features, scorer, recorder, NeuralDrafter hook)",
+    "imitation of the heuristic drafter: held-out top-1 88.6% on 8 unseen games (random 25%, first-offer 33%), 3,649 parameters",
+    "module-swap evaluation script (running)",
+    "module-swap result: neural drafter equal to heuristic (vp +0.08 [0,0.25], buildings -0.33 [-1.9,1.2], used_rate +0.00) on 12 held-out seeds"
+   ],
+   "todo": [
+    "module-swap result",
+    "economy/military/trade/catastrophe/industrialisation modules",
+    "coordinator",
+    "RL stages (needs faster sim and Tier B)"
+   ]
+  },
+  "P12": {
+   "status": "started",
+   "done": [
+    "era study runner knobs, report script, first results"
+   ],
+   "finding": "bar 8 ends era 0 at minute 24-33 in every game; bar 10 never reached (stall guard 75 min); no game reached era 2 by VP: needs conquest, AIs rarely attack",
+   "evidence": "docs/evidence/p12_era_study/summary.md",
+   "todo": [
+    "bar 9 + step 2, 10+ seeds, AI aggression"
+   ]
+  },
+  "P17": {
+   "status": "started",
+   "done": [
+    "content_report.py (dealt/drafted/built diagnosis), content_status.md, asset contract audit"
+   ],
+   "finding": "8 games: 92 of 137 cards drafted and built; 20 drafted by their tribe and never built (18 are unit cards: no ax/metal chain drafted); 18 dealt never drafted (mine, ironmine, smelter, smithy, Mindustry parts) -> AI metal-chain valuation raised"
+  }
+ },
+ "open_questions": "docs/ledger/QUESTIONS.md",
+ "next_action": "See docs/V2_RUN_REPORT.md section 9 (resume) and docs/ledger/RUNBOOK.md"
+}

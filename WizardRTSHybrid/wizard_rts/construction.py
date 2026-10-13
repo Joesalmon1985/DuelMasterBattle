@@ -75,6 +75,14 @@ BUILD_MENU: dict[str, dict[str, Any]] = {
         "label": "Smelting works", "definition": "widelands.smelting_works", "game": "widelands",
         "cost": {"log": 3, "plank": 1, "granite": 1}, "cost_source": "barbarians/smelting_works buildcost with planks for blackwood, no grout or reed",
     },
+    "clinic": {
+        "label": "Clinic", "definition": "dmb.clinic", "game": "hybrid",
+        "cost": {"log": 3, "plank": 2, "granite": 1}, "cost_source": "hybrid-defined containment building (plan v2 7.2); no upstream equivalent",
+    },
+    "scriptorium": {
+        "label": "Scriptorium", "definition": "dmb.scriptorium", "game": "hybrid",
+        "cost": {"log": 3, "plank": 3}, "cost_source": "hybrid-defined (paper and the scriptorium do not exist upstream; plan v2 5.3)",
+    },
     "smithy": {
         "label": "Ax workshop", "definition": "widelands.ax_workshop", "game": "widelands",
         "cost": {"log": 3, "plank": 2, "granite": 1}, "cost_source": "hybrid-defined from barbarians/ax_workshop",
@@ -194,7 +202,7 @@ MENU_SIZE = {
     "naval_yard": "water3", "sub_pen": "water3",
     "producer": "small", "ranger": "small", "processor": "medium", "farm": "big", "hunter": "small", "well": "small",
     "tavern": "medium", "bakery": "medium", "mine": "mine", "ironmine": "mine", "quarry": "small",
-    "smelter": "medium", "smithy": "medium", "barracks": "medium", "vehicle_factory": "big", "defense": "small",
+    "smelter": "medium", "smithy": "medium", "scriptorium": "medium", "clinic": "medium", "barracks": "medium", "vehicle_factory": "big", "defense": "small",
     "war_lodge": "medium", "flame_tower": "small", "tesla_coil": "small",
 }
 
@@ -265,7 +273,8 @@ def build_spec(kind: str) -> dict[str, Any] | None:
     return {
         "size": spec.get("size", ""),
         "label": spec["label"], "definition": spec["definition"], "game": "widelands", "tribe": spec["tribe"],
-        "cost": dict(spec["cost"]), "cost_source": f"{spec['tribe']}/{spec['name']} buildcost (imported)",
+        "cost": dict(spec["cost"]), "cost_source": f"{spec['tribe']}/{spec['name']} " + ("enhancement_cost (imported; built only by enhancing " + spec["enhanced_from"] + ")" if spec.get("enhanced_from") else "buildcost (imported)"),
+        "enhancement_of": spec.get("enhanced_from", ""),
     }
 
 
@@ -288,6 +297,8 @@ def check_placement(world: Any, faction_name: str, kind: str, tx: int, ty: int) 
         return "unknown_faction", {}
     if not tech.kind_allowed(world, faction_name, kind):
         return "locked_by_card", {"spec": spec, "info": info}
+    if spec.get("enhancement_of"):  # Widelands enhancements exist only as an upgrade of a standing building (`enhance_building`)
+        return "enhancement_only", {"spec": spec, "info": info}
     tile = (int(tx), int(ty))
     home = faction_warehouse(world, faction_name)
     ctx: dict[str, Any] = {"spec": spec, "info": info, "tile": tile, "home": home}
@@ -349,6 +360,50 @@ def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -
     world.recipe_requests[bid] = dict(spec["cost"])
     world.events.append({"kind": "construction_started", "id": bid, "building_kind": kind, "faction": faction_name})
     return {"status": "ok", "id": bid}
+
+
+def enhance_building(world: Any, faction_name: str, building_id: str, to_kind: str = "") -> dict[str, Any]:
+    """Widelands in-place enhancement (`enhancement = {name, enhancement_cost}`): the standing building becomes a construction site of its
+    upgrade, paid for in delivered wares. The old building's worker retires, wares in its input stock are lost (booked as consumed), and
+    nothing is produced until the site completes. Tile, footprint, id, faction and history are kept."""
+    b = world.buildings.get(str(building_id))
+    if b is None or "hp" not in b:
+        return {"status": "rejected", "reason": "no_building"}
+    if b["faction_name"] != faction_name:
+        return {"status": "rejected", "reason": "not_yours"}
+    base = wl_defs.spec_for_kind(b["kind"]) if b["kind"].startswith(wl_defs.PREFIX) else None
+    if base is None or not base.get("enhances_to"):
+        return {"status": "rejected", "reason": "not_upgradeable"}
+    target = base["enhances_to"]
+    if to_kind and to_kind != target:
+        return {"status": "rejected", "reason": "not_upgradeable"}
+    spec = build_spec(target)
+    if spec is None:
+        return {"status": "rejected", "reason": "unknown_kind"}
+    if not tech.kind_allowed(world, faction_name, target):
+        return {"status": "rejected", "reason": "locked_by_card"}
+    if b.get("constructing") or not b.get("operational", True) or int(b.get("hp", 1)) <= 0 or b.get("destroyed"):
+        return {"status": "rejected", "reason": "not_operational"}
+    from wizard_rts.lifecycle import lose
+
+    for wid in [w for w, w_ in world.workers.items() if w_.get("building") == b["id"]]:
+        w = world.workers.pop(wid)
+        if w.get("carrying"):
+            lose(world, w["carrying"], 1)
+    for good, n in sorted(world.stocks.get(b["id"], {}).items()):
+        lose(world, good, int(n))
+    world.stocks[b["id"]] = {}
+    for key in ("worker_id", "worker_ids", "stack", "sleep_ms", "waiting_worker", "worker_done", "prog_failed", "stall", "respawn_ms", "worker_fail", "disrupted"):
+        b.pop(key, None)
+    from_kind = b["kind"]
+    b.setdefault("history", []).append({"event": "enhanced", "from": from_kind, "to": target, "game_ms": int(world.dmb.clock.get("game_ms", 0))})
+    b["kind"], b["definition"], b["label"] = target, spec["definition"], f"{faction_name} {spec['label']}"
+    b["operational"], b["working"] = False, False
+    b["constructing"] = {"cost": dict(spec["cost"]), "progress_ms": 0, "enhance_from": from_kind}
+    b["hp"] = max(1, b["max_hp"] // 10)
+    world.recipe_requests[b["id"]] = dict(spec["cost"])
+    world.events.append({"kind": "construction_started", "id": b["id"], "building_kind": target, "faction": faction_name, "enhance_from": from_kind})
+    return {"status": "ok", "id": b["id"], "kind": target, "cost": dict(spec["cost"])}
 
 
 def naval_site(world: Any, tile: tuple[int, int], home: dict | None) -> tuple[str | None, tuple[int, int] | None, list[tuple[int, int]]]:
@@ -424,6 +479,7 @@ def construction_quantum(world: Any) -> None:
             world.recipe_requests.pop(bid, None)
             world.events.append({"kind": "construction_done", "id": bid, "building_kind": b["kind"]})
             world.fstat(b["faction_name"], "buildings_completed")
+            world.note_produced(b["faction_name"], b["kind"])
 
 
 # ------------------------------------------------------------------ roads
@@ -543,6 +599,15 @@ def reroute(world: Any, faction_name: str, building_id: str) -> dict[str, Any]:
     out = build_road(world, faction_name, building_id, cc["id"])
     world.events.append({"kind": "road_rerouted", "faction": faction_name, "building": building_id, "removed": len(bad), "status": out["status"]})
     return out
+
+
+# Units added on 13 Oct 2026 with costs calibrated from OpenRA credits (wizard_rts/calibrate.py). Card-only: tech.unit_allowed hides them
+# from ungated profiles so the earlier showcase roster, and the baselines recorded against it, are unchanged.
+from wizard_rts import calibrate as _calibrate  # noqa: E402
+from wizard_rts import rules as _rules  # noqa: E402
+
+for _b, _units in _calibrate.new_recipes(_rules.actor).items():
+    RECIPES.setdefault(_b, {}).update(_units)
 
 
 # ------------------------------------------------------------------ recruitment
@@ -694,5 +759,6 @@ def recruitment_quantum(world: Any) -> None:
             queue.pop(0)
             world.stats["recruited"] = world.stats.get("recruited", 0) + 1
             world.events.append({"kind": "unit_produced", "building": bid, "unit": uid, "unit_kind": head["unit"]})
+            world.note_produced(b["faction_name"], "unit:" + head["unit"])
             world.fstat(b["faction_name"], "units_produced")
             _sync_requests(world, b)

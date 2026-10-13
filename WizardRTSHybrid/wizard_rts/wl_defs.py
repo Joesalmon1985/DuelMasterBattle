@@ -185,7 +185,9 @@ def building_spec(name: str) -> dict[str, Any] | None:
     return {
         "kind": PREFIX + name, "name": name, "tribe": b["tribe"], "label": b.get("descname") or name,
         "programs": programs, "inputs": {g: int(n) for g, n in b["inputs"].items()}, "outputs": outputs,
-        "cost": dict(b["buildcost"]), "worker_for_program": workers, "dir": b["dir"], "size": b.get("size", ""),
+        "cost": dict(b["buildcost"] or b.get("enhancement_cost") or {}), "worker_for_program": workers,
+        "enhanced_from": (PREFIX + b["enhanced_from"]) if b.get("enhanced_from") else "",
+        "enhances_to": (PREFIX + b["enhancement"]["to"]) if b.get("enhancement") else "", "enhancement_cost": dict((b.get("enhancement") or {}).get("cost", {})), "dir": b["dir"], "size": b.get("size", ""),
         "definition": f"widelands.{name}",
     }
 

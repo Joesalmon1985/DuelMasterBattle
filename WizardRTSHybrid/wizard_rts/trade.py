@@ -43,6 +43,10 @@ def note_hostility(world: Any, a: str, b: str) -> None:
 
 
 def hostile(world: Any, a: str, b: str) -> bool:
+    from wizard_rts import diplomacy
+
+    if diplomacy.state_of(world, a, b) != "war":
+        return False  # a truce, peace or alliance (plan v2 7.3) opens trade whatever happened before it
     t = world.__dict__.get("_hostile", {}).get("|".join(sorted((a, b))))
     return t is not None and int(world.dmb.clock.get("game_ms", 0)) - t < HOSTILE_MS
 

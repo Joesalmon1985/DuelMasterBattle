@@ -40,16 +40,45 @@ def radius_of(b: dict) -> int:
     return int(b.get("territory", HOME_RADIUS))
 
 
+class CcDict(dict):
+    """world.cc_ids (command-centre building ids in creation order) that remembers the building records list built from it.
+    The list is rebuilt only when an id is added or removed; hp, faction and aliveness are still read per call (11k calls a game second
+    in a 100-minute game made this the top cost of the profile)."""
+
+    def __init__(self, *a: Any, **k: Any) -> None:
+        super().__init__(*a, **k)
+        self.cache: list | None = None
+
+    def __reduce__(self) -> tuple:
+        return (CcDict, (dict(self),))
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.cache = None
+        super().__setitem__(key, value)
+
+    def __delitem__(self, key: str) -> None:
+        self.cache = None
+        super().__delitem__(key)
+
+    def pop(self, key: str, *default: Any) -> Any:
+        self.cache = None
+        return super().pop(key, *default)
+
+    def clear(self) -> None:
+        self.cache = None
+        super().clear()
+
+
 def command_centers(world: Any, faction: str | None = None, alive: bool = True) -> list[dict]:
-    out = []
-    for bid in world.cc_ids:
-        b = world.buildings.get(bid)
-        if b is None or (faction is not None and b["faction_name"] != faction):
-            continue
-        if alive and int(b.get("hp", 1)) <= 0:
-            continue
-        out.append(b)
-    return out
+    ids = world.cc_ids
+    lst = getattr(ids, "cache", None)
+    if lst is None:
+        lst = [b for bid in ids if (b := world.buildings.get(bid)) is not None]
+        if isinstance(ids, CcDict):
+            ids.cache = lst
+    if faction is None and not alive:
+        return list(lst)
+    return [b for b in lst if (faction is None or b["faction_name"] == faction) and (not alive or int(b.get("hp", 1)) > 0)]
 
 
 def cheb(a: tuple[int, int], b: tuple[int, int]) -> int:
@@ -64,6 +93,11 @@ def covering(world: Any, faction: str, tile: tuple[int, int]) -> dict | None:
         if d <= radius_of(b) and (best is None or d < best[0]):
             best = (d, b)
     return best[1] if best else None
+
+
+def frontier_distance(world: Any, faction: str, tile: tuple[int, int]) -> int:
+    """Chebyshev distance from `tile` to the faction's nearest command centre (growth proceeds from the frontier, not from the capital)."""
+    return min((cheb(tile, (c["tx"], c["ty"])) for c in command_centers(world, faction)), default=10**6)
 
 
 def in_territory(world: Any, faction: str, tile: tuple[int, int]) -> bool:

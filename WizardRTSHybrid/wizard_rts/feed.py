@@ -39,7 +39,7 @@ def text(world: Any, e: dict) -> str | None:
     if k == "card_drafted":
         from wizard_rts import tech
 
-        c = tech.cards().get(e.get("card", ""), {})
+        c = tech.lookup().get(e.get("card", ""), {})
         return "%s drafted %s." % (f, c.get("name", e.get("card", "")))
     if k == "draft_offer":
         return None  # every four minutes for every faction: too frequent for the feed (the draft panel shows it)

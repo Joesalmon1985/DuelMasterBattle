@@ -83,6 +83,8 @@ class Regions:
         self.kind: list[str] = [""] * len(self.axials)
         self.neighbours = [[self.index[(q + dq, r + dr)] for dq, dr in NEIGHBOURS if (q + dq, r + dr) in self.index] for q, r in self.axials]
         self.outbreaks = 0
+        self.era_outbreaks: dict[int, int] = {}  # outbreaks per era index: the per-era loss counter (plan v2 7.2); not part of the snapshot
+        self.lost_by = ""
         self.added = 0
         self.next_cube_ms = const("interval_ms")
         self.next_spread_ms = const("spread_ms")
@@ -159,6 +161,8 @@ def _add_cube(world: Any, s: Regions, i: int, now: int, source: str, depth: int 
         s.kind[i] = k["id"]
     if s.cubes[i] >= cap:
         s.outbreaks += 1
+        e = int(getattr(world, "era_index", 0))
+        s.era_outbreaks[e] = s.era_outbreaks.get(e, 0) + 1
         s.log.append({"game_ms": now, "event": "outbreak", "region": s.rid(i), "source": source})
         world.events.append({"kind": "outbreak", "region": s.rid(i), "count": s.outbreaks, "hazard": s.kind[i]})
         _outbreak_damage(world, s, i, now)
@@ -193,6 +197,47 @@ def _outbreak_damage(world: Any, s: Regions, i: int, now: int) -> None:
             rec["unrest"] = min(1.0, float(rec.get("unrest", 0.0)) + 0.2)
 
 
+CURE_RADIUS = 24  # a clinic treats the regions its tile and the points 24 tiles to each side fall in (a settlement straddles region borders)
+
+
+def _regions_near(world: Any, s: Regions, tx: int, ty: int) -> list[int]:
+    out: list[int] = []
+    for dx, dy in ((0, 0), (CURE_RADIUS, 0), (-CURE_RADIUS, 0), (0, CURE_RADIUS), (0, -CURE_RADIUS)):
+        x, y = tx + dx, ty + dy
+        if 0 <= x < s.w and 0 <= y < s.h:
+            i = s.region_at(x, y)
+            if i not in out:
+                out.append(i)
+    return out
+
+
+def cubes_here(world: Any, building: dict) -> int:
+    """Outbreak cubes a clinic at this building could treat: the most in any region within its reach."""
+    s = state(world)
+    if s is None:
+        return 0
+    return max((s.cubes[i] for i in _regions_near(world, s, building["tx"], building["ty"])), default=0)
+
+
+def cure(world: Any, building: dict, cubes: int = 1) -> int:
+    """A clinic's finished cycle: remove up to `cubes` outbreak cubes from the most infected region in its reach (the wizard's treatment, by a
+    building). Returns how many."""
+    s = state(world)
+    if s is None:
+        return 0
+    near = _regions_near(world, s, building["tx"], building["ty"])
+    i = max(near, key=lambda r: (s.cubes[r], -r), default=None)
+    if i is None or s.cubes[i] <= 0:
+        return 0
+    n = min(cubes, s.cubes[i])
+    s.cubes[i] -= n
+    s.cured = getattr(s, "cured", 0) + n
+    world.fstat(building["faction_name"], "cubes_cured", n)
+    world.stats["cubes_cured"] = world.stats.get("cubes_cured", 0) + n
+    world.events.append({"kind": "cube_cured", "building": building["id"], "faction": building["faction_name"], "region": s.rid(i), "cubes_left": s.cubes[i]})
+    return n
+
+
 def _pick_region(world: Any, s: Regions) -> int:
     """Deterministic: a seeded stream per cube number, among regions that hold a building (an empty wilderness cannot suffer)."""
     rng = random.Random(f"{world.seed}:outbreak:{s.added + s.outbreaks}")
@@ -220,10 +265,15 @@ def regions_quantum(world: Any) -> None:
     _treatment(world, s, now)
     if world.economy_quanta % 600 == 0:  # once a game minute: unrest from the cubes in each settlement's region
         _unrest(world, s)
-    if s.outbreaks >= const("loss_outbreaks") and not s.lost:
+    per_era = int(getattr(world, "loss_outbreaks_per_era", config()["constants"].get("loss_outbreaks_per_era", const("loss_outbreaks"))))
+    total = int(getattr(world, "loss_outbreaks_total", const("loss_outbreaks")))
+    era_now = s.era_outbreaks.get(int(getattr(world, "era_index", 0)), 0)
+    if (s.outbreaks >= total or era_now >= per_era) and not s.lost:
         s.lost = True
+        s.lost_by = "total" if s.outbreaks >= total else "era"
         world.cycle_pending = True  # terminal loss: the cycle ends by explicit rule (history.cycle_reset)
-        world.events.append({"kind": "terminal_loss", "outbreaks": s.outbreaks})
+        world.collective_loss = True  # every faction loses: no winner, whatever the VP (plan v2 7.2)
+        world.events.append({"kind": "terminal_loss", "outbreaks": s.outbreaks, "era_outbreaks": era_now, "cause": s.lost_by, "collective": True})
 
 
 def _unrest(world: Any, s: Regions) -> None:

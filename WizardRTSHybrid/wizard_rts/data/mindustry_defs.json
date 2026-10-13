@@ -250,6 +250,22 @@
    },
    "size": 3
   },
+  "beam-link": {
+   "category": "power",
+   "class": "LongPowerNode",
+   "fields": {
+    "autolink": false,
+    "laserRange": 1000.0,
+    "laserScale": 0.8,
+    "maxNodes": 1,
+    "scaledHealth": 130,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "beamLink",
+   "requirements": {},
+   "size": 3
+  },
   "beam-node": {
    "category": "power",
    "class": "BeamNode",
@@ -298,6 +314,21 @@
     "beryllium": 6
    },
    "size": 1
+  },
+  "beryllium-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "armor": 2.0,
+    "buildCostMultiplier": 5.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "berylliumWallLarge",
+   "requirements": {
+    "beryllium": 24
+   },
+   "size": 2
   },
   "blast-door": {
    "category": "defense",
@@ -465,6 +496,21 @@
    },
    "size": 3
   },
+  "canvas": {
+   "category": "logic",
+   "class": "CanvasBlock",
+   "fields": {
+    "canvasSize": 12,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "canvas",
+   "requirements": {
+    "beryllium": 10,
+    "silicon": 10
+   },
+   "size": 2
+  },
   "carbide-crucible": {
    "category": "crafting",
    "class": "HeatCrafter",
@@ -505,6 +551,21 @@
     "thorium": 6
    },
    "size": 1
+  },
+  "carbide-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "armor": 16.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "carbideWallLarge",
+   "requirements": {
+    "carbide": 24,
+    "thorium": 24
+   },
+   "size": 2
   },
   "chemical-combustion-chamber": {
    "category": "power",
@@ -669,6 +730,19 @@
    },
    "size": 1
   },
+  "copper-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "size": 2
+   },
+   "health": null,
+   "java_name": "copperWallLarge",
+   "requirements": {
+    "copper": 24
+   },
+   "size": 2
+  },
   "core-acropolis": {
    "category": "effect",
    "class": "CoreBlock",
@@ -781,6 +855,25 @@
     "thorium": 4000
    },
    "size": 5
+  },
+  "core-shard": {
+   "category": "effect",
+   "class": "CoreBlock",
+   "fields": {
+    "alwaysUnlocked": true,
+    "health": 1100,
+    "isFirstTier": true,
+    "itemCapacity": 4000,
+    "size": 3,
+    "unitCapModifier": 8
+   },
+   "health": 1100,
+   "java_name": "coreShard",
+   "requirements": {
+    "copper": 1000,
+    "lead": 800
+   },
+   "size": 3
   },
   "cryofluid-mixer": {
    "category": "crafting",
@@ -1059,6 +1152,20 @@
     "titanium": 6
    },
    "size": 1
+  },
+  "door-large": {
+   "category": "defense",
+   "class": "Door",
+   "fields": {
+    "size": 2
+   },
+   "health": null,
+   "java_name": "doorLarge",
+   "requirements": {
+    "silicon": 16,
+    "titanium": 24
+   },
+   "size": 2
   },
   "duct": {
    "category": "distribution",
@@ -1438,6 +1545,29 @@
    },
    "size": 1
   },
+  "heat-reactor": {
+   "category": "crafting",
+   "class": "HeatProducer",
+   "consume_items": {
+    "thorium": 3
+   },
+   "fields": {
+    "itemCapacity": 20,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "heatReactor",
+   "output_item": {
+    "fissile-matter": 1
+   },
+   "requirements": {
+    "carbide": 10,
+    "graphite": 20,
+    "oxide": 70,
+    "thorium": 80
+   },
+   "size": 3
+  },
   "heat-redirector": {
    "category": "crafting",
    "class": "HeatConductor",
@@ -1471,6 +1601,21 @@
    },
    "size": 3
   },
+  "heat-source": {
+   "category": "crafting",
+   "class": "HeatProducer",
+   "fields": {
+    "heatOutput": 1000.0,
+    "regionRotated1": 1,
+    "rotateDraw": false,
+    "size": 1,
+    "warmupRate": 1000.0
+   },
+   "health": null,
+   "java_name": "heatSource",
+   "requirements": {},
+   "size": 1
+  },
   "hyper-processor": {
    "category": "logic",
    "class": "LogicBlock",
@@ -1492,6 +1637,24 @@
     "thorium": 75
    },
    "size": 3
+  },
+  "illuminator": {
+   "category": "effect",
+   "class": "LightBlock",
+   "consume_power_per_second": 3.0,
+   "consume_power_per_tick": 0.05,
+   "fields": {
+    "brightness": 0.75,
+    "radius": 140.0
+   },
+   "health": null,
+   "java_name": "illuminator",
+   "requirements": {
+    "graphite": 12,
+    "lead": 8,
+    "silicon": 8
+   },
+   "size": 1
   },
   "impact-drill": {
    "category": "production",
@@ -1588,6 +1751,30 @@
    },
    "size": 1
   },
+  "interplanetary-accelerator": {
+   "category": "effect",
+   "class": "Accelerator",
+   "consume_power_per_second": 600.0,
+   "consume_power_per_tick": 10.0,
+   "fields": {
+    "buildCostMultiplier": 0.5,
+    "hasPower": true,
+    "researchCostMultiplier": 0.1,
+    "scaledHealth": 80,
+    "size": 7
+   },
+   "health": null,
+   "java_name": "interplanetaryAccelerator",
+   "requirements": {
+    "copper": 16000,
+    "phase-fabric": 5000,
+    "silicon": 11000,
+    "surge-alloy": 6000,
+    "thorium": 13000,
+    "titanium": 12000
+   },
+   "size": 7
+  },
   "inverted-sorter": {
    "category": "distribution",
    "class": "Sorter",
@@ -1601,6 +1788,28 @@
     "copper": 2,
     "lead": 2
    },
+   "size": 1
+  },
+  "item-source": {
+   "category": "distribution",
+   "class": "ItemSource",
+   "fields": {
+    "alwaysUnlocked": true
+   },
+   "health": null,
+   "java_name": "itemSource",
+   "requirements": {},
+   "size": 1
+  },
+  "item-void": {
+   "category": "distribution",
+   "class": "ItemVoid",
+   "fields": {
+    "alwaysUnlocked": true
+   },
+   "health": null,
+   "java_name": "itemVoid",
+   "requirements": {},
    "size": 1
   },
   "junction": {
@@ -1758,6 +1967,20 @@
    },
    "size": 3
   },
+  "large-shield-projector": {
+   "category": "effect",
+   "class": "BaseShield",
+   "consume_power_per_second": 300.0,
+   "consume_power_per_tick": 5.0,
+   "fields": {
+    "radius": 400.0,
+    "size": 4
+   },
+   "health": null,
+   "java_name": "largeShieldProjector",
+   "requirements": {},
+   "size": 4
+  },
   "laser-drill": {
    "category": "production",
    "class": "Drill",
@@ -1795,6 +2018,26 @@
     "graphite": 30,
     "silicon": 30,
     "titanium": 20
+   },
+   "size": 3
+  },
+  "launch-pad": {
+   "category": "effect",
+   "class": "LaunchPad",
+   "consume_power_per_second": 240.0,
+   "consume_power_per_tick": 4.0,
+   "fields": {
+    "hasPower": true,
+    "itemCapacity": 100,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "launchPad",
+   "requirements": {
+    "copper": 350,
+    "lead": 200,
+    "silicon": 140,
+    "titanium": 150
    },
    "size": 3
   },
@@ -1844,6 +2087,17 @@
    },
    "size": 1
   },
+  "liquid-source": {
+   "category": "liquid",
+   "class": "LiquidSource",
+   "fields": {
+    "alwaysUnlocked": true
+   },
+   "health": null,
+   "java_name": "liquidSource",
+   "requirements": {},
+   "size": 1
+  },
   "liquid-tank": {
    "category": "liquid",
    "class": "LiquidRouter",
@@ -1860,6 +2114,17 @@
     "titanium": 30
    },
    "size": 3
+  },
+  "liquid-void": {
+   "category": "liquid",
+   "class": "LiquidVoid",
+   "fields": {
+    "alwaysUnlocked": true
+   },
+   "health": null,
+   "java_name": "liquidVoid",
+   "requirements": {},
+   "size": 1
   },
   "logic-display": {
    "category": "logic",
@@ -2612,6 +2877,18 @@
    },
    "size": 1
   },
+  "payload-source": {
+   "category": "units",
+   "class": "PayloadSource",
+   "fields": {
+    "alwaysUnlocked": true,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "payloadSource",
+   "requirements": {},
+   "size": 5
+  },
   "payload-unloader": {
    "category": "units",
    "class": "PayloadUnloader",
@@ -2630,6 +2907,18 @@
     "tungsten": 30
    },
    "size": 3
+  },
+  "payload-void": {
+   "category": "units",
+   "class": "PayloadVoid",
+   "fields": {
+    "alwaysUnlocked": true,
+    "size": 5
+   },
+   "health": null,
+   "java_name": "payloadVoid",
+   "requirements": {},
+   "size": 5
   },
   "phase-conduit": {
    "category": "liquid",
@@ -2736,6 +3025,21 @@
     "phase-fabric": 6
    },
    "size": 1
+  },
+  "phase-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "chanceDeflect": 10.0,
+    "flashHit": true,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "phaseWallLarge",
+   "requirements": {
+    "phase-fabric": 24
+   },
+   "size": 2
   },
   "phase-weaver": {
    "category": "crafting",
@@ -2850,6 +3154,23 @@
    },
    "size": 1
   },
+  "plastanium-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "absorbLasers": true,
+    "insulated": true,
+    "schematicPriority": 10,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "plastaniumWallLarge",
+   "requirements": {
+    "metaglass": 8,
+    "plastanium": 20
+   },
+   "size": 2
+  },
   "plated-conduit": {
    "category": "liquid",
    "class": "ArmoredConduit",
@@ -2940,6 +3261,28 @@
     "titanium": 5
    },
    "size": 2
+  },
+  "power-source": {
+   "category": "power",
+   "class": "PowerSource",
+   "fields": {
+    "alwaysUnlocked": true
+   },
+   "health": null,
+   "java_name": "powerSource",
+   "requirements": {},
+   "size": 1
+  },
+  "power-void": {
+   "category": "power",
+   "class": "PowerVoid",
+   "fields": {
+    "alwaysUnlocked": true
+   },
+   "health": null,
+   "java_name": "powerVoid",
+   "requirements": {},
+   "size": 1
   },
   "prime-refabricator": {
    "category": "units",
@@ -3048,6 +3391,23 @@
     "silicon": 50
    },
    "size": 3
+  },
+  "radar": {
+   "category": "effect",
+   "class": "Radar",
+   "consume_power_per_second": 36.0,
+   "consume_power_per_tick": 0.6,
+   "fields": {
+    "fogRadius": 34
+   },
+   "health": null,
+   "java_name": "radar",
+   "requirements": {
+    "beryllium": 10,
+    "graphite": 50,
+    "silicon": 60
+   },
+   "size": 1
   },
   "regen-projector": {
    "category": "effect",
@@ -3271,6 +3631,23 @@
     "tungsten": 2
    },
    "size": 1
+  },
+  "reinforced-surge-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "armor": 20.0,
+    "lightningChance": 0.05,
+    "lightningDamage": 30.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "reinforcedSurgeWallLarge",
+   "requirements": {
+    "surge-alloy": 24,
+    "tungsten": 8
+   },
+   "size": 2
   },
   "reinforced-vault": {
    "category": "effect",
@@ -3511,6 +3888,60 @@
    },
    "size": 1
   },
+  "scrap-wall": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "variants": 5
+   },
+   "health": null,
+   "java_name": "scrapWall",
+   "requirements": {
+    "scrap": 6
+   },
+   "size": 1
+  },
+  "scrap-wall-gigantic": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "size": 4
+   },
+   "health": null,
+   "java_name": "scrapWallGigantic",
+   "requirements": {
+    "scrap": 96
+   },
+   "size": 4
+  },
+  "scrap-wall-huge": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "size": 3,
+    "variants": 3
+   },
+   "health": null,
+   "java_name": "scrapWallHuge",
+   "requirements": {
+    "scrap": 54
+   },
+   "size": 3
+  },
+  "scrap-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "size": 2,
+    "variants": 4
+   },
+   "health": null,
+   "java_name": "scrapWallLarge",
+   "requirements": {
+    "scrap": 24
+   },
+   "size": 2
+  },
   "segment": {
    "category": "turret",
    "class": "PointDefenseTurret",
@@ -3552,6 +3983,19 @@
     "titanium": 25
    },
    "size": 2
+  },
+  "shield-projector": {
+   "category": "effect",
+   "class": "BaseShield",
+   "consume_power_per_second": 300.0,
+   "consume_power_per_tick": 5.0,
+   "fields": {
+    "size": 3
+   },
+   "health": null,
+   "java_name": "shieldProjector",
+   "requirements": {},
+   "size": 3
   },
   "ship-assembler": {
    "category": "units",
@@ -3752,6 +4196,29 @@
     "lead": 25
    },
    "size": 2
+  },
+  "slag-centrifuge": {
+   "category": "crafting",
+   "class": "GenericCrafter",
+   "consume_items": {
+    "sand": 1
+   },
+   "fields": {
+    "liquidCapacity": 80.0,
+    "size": 3
+   },
+   "health": null,
+   "java_name": "slagCentrifuge",
+   "output_item": {
+    "scrap": 1
+   },
+   "requirements": {
+    "carbide": 70,
+    "graphite": 60,
+    "oxide": 40,
+    "silicon": 40
+   },
+   "size": 3
   },
   "slag-heater": {
    "category": "crafting",
@@ -4115,6 +4582,20 @@
    },
    "size": 1
   },
+  "surge-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "lightningChance": 0.05,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "surgeWallLarge",
+   "requirements": {
+    "surge-alloy": 24
+   },
+   "size": 2
+  },
   "swarmer": {
    "category": "turret",
    "class": "ItemTurret",
@@ -4310,6 +4791,32 @@
    },
    "size": 1
   },
+  "thorium-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "size": 2
+   },
+   "health": null,
+   "java_name": "thoriumWallLarge",
+   "requirements": {
+    "thorium": 24
+   },
+   "size": 2
+  },
+  "thruster": {
+   "category": "defense",
+   "class": "Thruster",
+   "fields": {
+    "size": 4
+   },
+   "health": null,
+   "java_name": "thruster",
+   "requirements": {
+    "scrap": 96
+   },
+   "size": 4
+  },
   "titan": {
    "category": "turret",
    "class": "ItemTurret",
@@ -4371,6 +4878,19 @@
    },
    "size": 1
   },
+  "titanium-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "size": 2
+   },
+   "health": null,
+   "java_name": "titaniumWallLarge",
+   "requirements": {
+    "titanium": 24
+   },
+   "size": 2
+  },
   "tsunami": {
    "category": "turret",
    "class": "LiquidTurret",
@@ -4408,6 +4928,21 @@
     "tungsten": 6
    },
    "size": 1
+  },
+  "tungsten-wall-large": {
+   "category": "defense",
+   "class": "Wall",
+   "fields": {
+    "armor": 14.0,
+    "buildCostMultiplier": 5.0,
+    "size": 2
+   },
+   "health": null,
+   "java_name": "tungstenWallLarge",
+   "requirements": {
+    "tungsten": 24
+   },
+   "size": 2
   },
   "turbine-condenser": {
    "category": "power",
@@ -4604,6 +5139,49 @@
     "metaglass": 45
    },
    "size": 2
+  },
+  "world-cell": {
+   "category": "logic",
+   "class": "MemoryBlock",
+   "fields": {
+    "forceDark": true,
+    "memoryCapacity": 128,
+    "privileged": true,
+    "targetable": false
+   },
+   "health": null,
+   "java_name": "worldCell",
+   "requirements": {},
+   "size": 1
+  },
+  "world-message": {
+   "category": "logic",
+   "class": "MessageBlock",
+   "fields": {
+    "privileged": true,
+    "targetable": false
+   },
+   "health": null,
+   "java_name": "worldMessage",
+   "requirements": {},
+   "size": 1
+  },
+  "world-processor": {
+   "category": "logic",
+   "class": "LogicBlock",
+   "fields": {
+    "canOverdrive": false,
+    "forceDark": true,
+    "instructionsPerTick": 8,
+    "maxInstructionsPerTick": 500,
+    "privileged": true,
+    "size": 1,
+    "targetable": false
+   },
+   "health": null,
+   "java_name": "worldProcessor",
+   "requirements": {},
+   "size": 1
   }
  },
  "items": {
@@ -4800,6 +5378,12 @@
   "hydrogen": {
    "flammability": 1.0
   },
+  "neoplasm": {
+   "flammability": 0.0,
+   "heatCapacity": 0.4,
+   "temperature": 0.54,
+   "viscosity": 0.85
+  },
   "nitrogen": {},
   "oil": {
    "explosiveness": 1.2,
@@ -4844,6 +5428,46 @@
      "damage": 11.0,
      "lifetime": 60.0,
      "reload_ticks": 17.0
+    }
+   ]
+  },
+  "anthicus": {
+   "armor": 7.0,
+   "flying": false,
+   "health": 2900,
+   "hit_size": 21.0,
+   "java_name": "anthicus",
+   "range": null,
+   "speed": 0.65,
+   "weapons": [
+    {
+     "bullet_speed": 140.0,
+     "damage": 25.0,
+     "lifetime": 12.0,
+     "reload_ticks": 130.0
+    },
+    {
+     "bullet_speed": 140.0,
+     "damage": 25.0,
+     "lifetime": 12.0,
+     "reload_ticks": 1.0
+    }
+   ]
+  },
+  "anthicus-missile": {
+   "armor": 0,
+   "flying": false,
+   "health": 55,
+   "hit_size": null,
+   "java_name": "spawnUnit",
+   "range": null,
+   "speed": 3.7,
+   "weapons": [
+    {
+     "bullet_speed": 140.0,
+     "damage": 25.0,
+     "lifetime": 12.0,
+     "reload_ticks": 1.0
     }
    ]
   },
@@ -4911,6 +5535,16 @@
     }
    ]
   },
+  "assembly-drone": {
+   "armor": 0,
+   "flying": true,
+   "health": 90,
+   "hit_size": null,
+   "java_name": "assemblyDrone",
+   "range": null,
+   "speed": 1.3,
+   "weapons": []
+  },
   "atrax": {
    "armor": 3.0,
    "flying": false,
@@ -4925,6 +5559,23 @@
      "damage": null,
      "lifetime": 57.0,
      "reload_ticks": 9.0
+    }
+   ]
+  },
+  "avert": {
+   "armor": 3.0,
+   "flying": true,
+   "health": 1100.0,
+   "hit_size": 12.0,
+   "java_name": "avert",
+   "range": null,
+   "speed": 2.0,
+   "weapons": [
+    {
+     "bullet_speed": 5.0,
+     "damage": 34.0,
+     "lifetime": 18.0,
+     "reload_ticks": 35.0
     }
    ]
   },
@@ -4975,6 +5626,57 @@
      "damage": 12.0,
      "lifetime": 70.0,
      "reload_ticks": 20.0
+    }
+   ]
+  },
+  "cleroi": {
+   "armor": 5.0,
+   "flying": false,
+   "health": 1100,
+   "hit_size": 14.0,
+   "java_name": "cleroi",
+   "range": null,
+   "speed": 0.7,
+   "weapons": [
+    {
+     "bullet_speed": 3.5,
+     "damage": 30.0,
+     "lifetime": 40.0,
+     "reload_ticks": 30.0
+    }
+   ]
+  },
+  "collaris": {
+   "armor": 9.0,
+   "flying": false,
+   "health": 18000,
+   "hit_size": 44.0,
+   "java_name": "collaris",
+   "range": null,
+   "speed": 1.1,
+   "weapons": [
+    {
+     "bullet_speed": 5.5,
+     "damage": 260.0,
+     "lifetime": 70.0,
+     "reload_ticks": 130.0
+    }
+   ]
+  },
+  "conquer": {
+   "armor": 26.0,
+   "flying": false,
+   "health": 22000,
+   "hit_size": 46.0,
+   "java_name": "conquer",
+   "range": null,
+   "speed": 0.48,
+   "weapons": [
+    {
+     "bullet_speed": 8.0,
+     "damage": 360.0,
+     "lifetime": 35.0,
+     "reload_ticks": 100.0
     }
    ]
   },
@@ -5046,6 +5748,46 @@
     }
    ]
   },
+  "disrupt": {
+   "armor": 9.0,
+   "flying": true,
+   "health": 12000.0,
+   "hit_size": 46.0,
+   "java_name": "disrupt",
+   "range": null,
+   "speed": 1.0,
+   "weapons": [
+    {
+     "bullet_speed": 140.0,
+     "damage": 25.0,
+     "lifetime": 50.0,
+     "reload_ticks": 70.0
+    },
+    {
+     "bullet_speed": 140.0,
+     "damage": 25.0,
+     "lifetime": 50.0,
+     "reload_ticks": 1.0
+    }
+   ]
+  },
+  "disrupt-missile": {
+   "armor": 0,
+   "flying": false,
+   "health": 70,
+   "hit_size": null,
+   "java_name": "spawnUnit",
+   "range": null,
+   "speed": 4.6,
+   "weapons": [
+    {
+     "bullet_speed": 140.0,
+     "damage": 25.0,
+     "lifetime": 50.0,
+     "reload_ticks": 1.0
+    }
+   ]
+  },
   "eclipse": {
    "armor": 13.0,
    "flying": true,
@@ -5074,6 +5816,43 @@
      "reload_ticks": 12.0
     }
    ]
+  },
+  "elude": {
+   "armor": 1.0,
+   "flying": false,
+   "health": 600.0,
+   "hit_size": 11.0,
+   "java_name": "elude",
+   "range": null,
+   "speed": 1.8,
+   "weapons": [
+    {
+     "bullet_speed": 5.0,
+     "damage": 16.0,
+     "lifetime": 30.0,
+     "reload_ticks": 40.0
+    }
+   ]
+  },
+  "emanate": {
+   "armor": 3.0,
+   "flying": true,
+   "health": 700.0,
+   "hit_size": 12.0,
+   "java_name": "emanate",
+   "range": null,
+   "speed": 7.5,
+   "weapons": []
+  },
+  "evoke": {
+   "armor": 1.0,
+   "flying": true,
+   "health": 300.0,
+   "hit_size": 9.0,
+   "java_name": "evoke",
+   "range": null,
+   "speed": 5.6,
+   "weapons": []
   },
   "flare": {
    "armor": 0,
@@ -5143,6 +5922,43 @@
     }
    ]
   },
+  "incite": {
+   "armor": 2.0,
+   "flying": true,
+   "health": 500.0,
+   "hit_size": 11.0,
+   "java_name": "incite",
+   "range": null,
+   "speed": 7.0,
+   "weapons": []
+  },
+  "latum": {
+   "armor": 12,
+   "flying": false,
+   "health": 20000,
+   "hit_size": 48.0,
+   "java_name": "latum",
+   "range": null,
+   "speed": 1.0,
+   "weapons": []
+  },
+  "locus": {
+   "armor": 8.0,
+   "flying": false,
+   "health": 2100,
+   "hit_size": 18.0,
+   "java_name": "locus",
+   "range": null,
+   "speed": 0.7,
+   "weapons": [
+    {
+     "bullet_speed": null,
+     "damage": null,
+     "lifetime": null,
+     "reload_ticks": 18.0
+    }
+   ]
+  },
   "mace": {
    "armor": 4.0,
    "flying": false,
@@ -5159,6 +5975,16 @@
      "reload_ticks": 11.0
     }
    ]
+  },
+  "manifold": {
+   "armor": 0,
+   "flying": true,
+   "health": 200.0,
+   "hit_size": 11.0,
+   "java_name": "manifold",
+   "range": null,
+   "speed": 3.5,
+   "weapons": []
   },
   "mega": {
    "armor": 3.0,
@@ -5180,6 +6006,23 @@
      "damage": 8.0,
      "lifetime": 35.0,
      "reload_ticks": 15.0
+    }
+   ]
+  },
+  "merui": {
+   "armor": 4.0,
+   "flying": false,
+   "health": 680,
+   "hit_size": 9.0,
+   "java_name": "merui",
+   "range": null,
+   "speed": 0.72,
+   "weapons": [
+    {
+     "bullet_speed": 3.0,
+     "damage": 40.0,
+     "lifetime": 50.0,
+     "reload_ticks": 60.0
     }
    ]
   },
@@ -5256,6 +6099,23 @@
     }
    ]
   },
+  "obviate": {
+   "armor": 6.0,
+   "flying": true,
+   "health": 2300.0,
+   "hit_size": 25.0,
+   "java_name": "obviate",
+   "range": null,
+   "speed": 1.8,
+   "weapons": [
+    {
+     "bullet_speed": 0.0001,
+     "damage": 0.0,
+     "lifetime": 14.0,
+     "reload_ticks": 140.0
+    }
+   ]
+  },
   "oct": {
    "armor": 16.0,
    "flying": true,
@@ -5317,6 +6177,23 @@
     }
    ]
   },
+  "precept": {
+   "armor": 11.0,
+   "flying": false,
+   "health": 5000,
+   "hit_size": 26.0,
+   "java_name": "precept",
+   "range": null,
+   "speed": 0.64,
+   "weapons": [
+    {
+     "bullet_speed": 7.0,
+     "damage": 120.0,
+     "lifetime": 28.0,
+     "reload_ticks": 80.0
+    }
+   ]
+  },
   "pulsar": {
    "armor": 4.0,
    "flying": false,
@@ -5368,6 +6245,46 @@
     }
    ]
   },
+  "quell": {
+   "armor": 4.0,
+   "flying": true,
+   "health": 6000.0,
+   "hit_size": 36.0,
+   "java_name": "quell",
+   "range": null,
+   "speed": 1.1,
+   "weapons": [
+    {
+     "bullet_speed": 110.0,
+     "damage": 25.0,
+     "lifetime": 60.0,
+     "reload_ticks": 55.0
+    },
+    {
+     "bullet_speed": 110.0,
+     "damage": 25.0,
+     "lifetime": null,
+     "reload_ticks": 1.0
+    }
+   ]
+  },
+  "quell-missile": {
+   "armor": 0,
+   "flying": false,
+   "health": 45,
+   "hit_size": null,
+   "java_name": "spawnUnit",
+   "range": null,
+   "speed": 4.3,
+   "weapons": [
+    {
+     "bullet_speed": 110.0,
+     "damage": 25.0,
+     "lifetime": null,
+     "reload_ticks": 1.0
+    }
+   ]
+  },
   "reign": {
    "armor": 18.0,
    "flying": false,
@@ -5384,6 +6301,16 @@
      "reload_ticks": 9.0
     }
    ]
+  },
+  "renale": {
+   "armor": 2,
+   "flying": false,
+   "health": 500,
+   "hit_size": 9.0,
+   "java_name": "renale",
+   "range": null,
+   "speed": 1.2,
+   "weapons": []
   },
   "retusa": {
    "armor": 3.0,
@@ -5500,6 +6427,40 @@
     }
    ]
   },
+  "stell": {
+   "armor": 6.0,
+   "flying": false,
+   "health": 850,
+   "hit_size": 12.0,
+   "java_name": "stell",
+   "range": null,
+   "speed": 0.75,
+   "weapons": [
+    {
+     "bullet_speed": 4.0,
+     "damage": 40.0,
+     "lifetime": 40.0,
+     "reload_ticks": 50.0
+    }
+   ]
+  },
+  "tecta": {
+   "armor": 5.0,
+   "flying": false,
+   "health": 7300,
+   "hit_size": 23.0,
+   "java_name": "tecta",
+   "range": null,
+   "speed": 0.6,
+   "weapons": [
+    {
+     "bullet_speed": 4.2,
+     "damage": 60.0,
+     "lifetime": 55.0,
+     "reload_ticks": 40.0
+    }
+   ]
+  },
   "toxopid": {
    "armor": 13.0,
    "flying": false,
@@ -5520,6 +6481,29 @@
      "damage": 50.0,
      "lifetime": 80.0,
      "reload_ticks": 210
+    }
+   ]
+  },
+  "vanquish": {
+   "armor": 20.0,
+   "flying": false,
+   "health": 11000,
+   "hit_size": 28.0,
+   "java_name": "vanquish",
+   "range": null,
+   "speed": 0.63,
+   "weapons": [
+    {
+     "bullet_speed": 8.0,
+     "damage": 190.0,
+     "lifetime": 18.0,
+     "reload_ticks": 70.0
+    },
+    {
+     "bullet_speed": 4.5,
+     "damage": 25.0,
+     "lifetime": null,
+     "reload_ticks": null
     }
    ]
   },

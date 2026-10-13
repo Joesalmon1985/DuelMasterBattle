@@ -27,7 +27,7 @@ from wizard_rts.world import HybridWorld  # noqa: E402
 # Faction-level commands: God Mode and the training surface (D02). The wizard's own ops (snapshot, pose, advance, interact,
 # resolve, fire, menu, terrain, tile, resources) stay available in every profile.
 GOD_OPS = frozenset({"trade", "control", "build", "road", "queue", "cancel", "move", "deploy", "stop", "rally", "demolish", "ai", "speed",
-                     "order", "suggest", "spawn", "damage", "draft", "grant_card", "belt", "upgrade", "configure", "fixture"})
+                     "order", "suggest", "spawn", "damage", "draft", "grant_card", "inspect", "belt", "upgrade", "enhance", "configure", "fixture"})
 
 
 def _handle(world: HybridWorld, message: dict) -> dict:
@@ -44,6 +44,14 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return {"status": "ok", "tech": tech.snapshot(world)}
     if op == "cards":  # the card catalogue by era (read-only: what each card is, unlocks and needs)
         return {"status": "ok", "catalogue": tech.catalogue(), "offer_size": tech.OFFER_SIZE}
+    if op == "inspect":  # God Mode inspector (plan v2 8.6): read-only views computed from the authoritative world
+        from wizard_rts import inspector
+
+        what = str(message.get("what", ""))
+        views = {"catalogue": inspector.catalogue, "factions": inspector.factions, "draft": inspector.draft_view, "catastrophe": inspector.catastrophe}
+        if what not in views:
+            return {"status": "rejected", "reason": "unknown_view", "views": sorted(views)}
+        return {"status": "ok", "what": what, "data": views[what](world)}
     if op == "trade":
         from wizard_rts import trade
 
@@ -55,6 +63,8 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return world.belt(str(message.get("faction", "")), list(message.get("tiles", [])), message.get("end_dir"))
     if op == "upgrade":
         return world.upgrade(str(message.get("faction", "")), str(message.get("building", "")), str(message.get("to", "")))
+    if op == "enhance":
+        return world.enhance(str(message.get("faction", "")), str(message.get("building", "")), str(message.get("to", "")))
     if op == "configure":
         return world.configure(str(message.get("faction", "")), str(message.get("building", "")), str(message.get("key", "")), message.get("value"))
     if op == "fixture":  # developer: prepared scenarios (the M2 Modern industry slice)
@@ -175,9 +185,15 @@ def _handle(world: HybridWorld, message: dict) -> dict:
     return {"status": "rejected", "reason": "unknown_op"}
 
 
+TERMINAL_HOLD_REPLIES = 3
+
+
 def serve(port: int) -> None:
     world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"),
                          profile=os.environ.get("HYBRID_PROFILE", "campaign"))
+    world.visual_state = True  # the client gets presentation fields (turret aim); never set in headless runs, so state hashes are unchanged
+    if os.environ.get("HYBRID_CARDSET") == "legacy":  # regression only: the hand-written cards and the old offers; v2 drafting is the default for gated profiles
+        world.legacy_draft, world.cardset, world.draft_v2 = True, "", False
     if os.environ.get("HYBRID_DRAFT_MS"):  # developer switch: safe accelerated drafting
         world.draft_interval_ms = max(1000, int(os.environ["HYBRID_DRAFT_MS"])) if tech.god_allowed(world) else world.draft_interval_ms
     if tech.god_allowed(world):  # developer switches: a shorter era (stall guard, ms) and a lower VP bar, so the transition can be watched
@@ -232,8 +248,15 @@ def serve(port: int) -> None:
                             if getattr(world, "cycle_pending", False) and tech.god_allowed(world) is not None:
                                 from wizard_rts import history
 
+                                world.terminal_replies = int(world.__dict__.get("terminal_replies", 0)) + 1
+                                if world.terminal_replies <= TERMINAL_HOLD_REPLIES:  # the client sees the terminal snapshot (outcome, HUD banner) before the new cycle replaces it
+                                    if isinstance(reply, dict) and "snapshot" not in reply:
+                                        reply["terminal"] = history.outcome(world)
+                                    conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
+                                    continue
+                                ended = history.outcome(world)  # recorded in past_cycles before the new world replaces this one; a collective loss is never silent
                                 world = history.cycle_reset(world)  # a new cycle: only the wizard carries over (D11)
-                                reply = {"status": "ok", "cycle_reset": True, "snapshot": world.snapshot()}
+                                reply = {"status": "ok", "cycle_reset": True, "ended_cycle": ended, "snapshot": world.snapshot()}
                         conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
             except (ConnectionError, OSError):
                 continue

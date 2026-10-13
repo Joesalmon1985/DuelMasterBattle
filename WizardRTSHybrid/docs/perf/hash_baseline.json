@@ -1,0 +1,75 @@
+{
+ "map": "standard",
+ "minutes": 15,
+ "runs": [
+  {
+   "seed": 507,
+   "hashes": [
+    "a4c79bd1eb1d4eb1a7925165911e238495b960da",
+    "a48d11f295b5eca050989b1bad6009f2121eec9e",
+    "eb3c9c310756813a49260bc8937cc5e9f1918d26",
+    "c76116a7a8f24caae2e54849b304e47677d31da1",
+    "eb1e1de222a63af8dab820e22f4b500a03b2fdfe",
+    "8f89d9c48c7292f27ab56fdc0d3fa3df37d8829c",
+    "946d207365a182c4b8b615e10220daa547a4a20c",
+    "b91155b9290c3be2ffc89c35dc24e56fe1d9c742",
+    "29c72b1dc1ed2c1f855f79058e571a6fab262148",
+    "bb3a611307d04295a4332c568be43f1508fc0884",
+    "81cb99fcaa1f56499772b49f72afe5a12088cdc4",
+    "3201be362cee3cc123d894f8e1ea4e6fc9e2f2e4",
+    "766e7ef663fda8a8ca06a668d922151f89541f7a",
+    "69b8e28a699f1129f61110122450b0da2feb6dac",
+    "b317aff928f8575ebeb3c4d2dc566954ac57b10c"
+   ],
+   "wall_s": 28.6,
+   "x_realtime": 31.4,
+   "buildings": 190
+  },
+  {
+   "seed": 11,
+   "hashes": [
+    "2d921351eaa76f297cbf76a0ee646e22b9b621fb",
+    "f71e97f7e88b384bfbb4d435cc8025fbdfda82b0",
+    "beffb2fd2844465d2862be8bde65464f9907b26e",
+    "8525ced0aa407781f6b7c3056257a0c4c0f76be2",
+    "43cd73bbb16c89104926c58ec9da92745e52ceef",
+    "af13403f5a824091bf431fd49fa876581c4dbf1b",
+    "7a2d6246ddeb6f3ed5352cb040fd4fb7149850bc",
+    "b1e22e6dab26fe3d480e77f9c759dc5f2b182e76",
+    "c04825820441811071943209405aa5f675ef66fd",
+    "c47fb6e9e9ad3e84fe0a08b160c60cbe1e9fdcbc",
+    "a9931e89fa931c7492c6d2cd108a942727dd572b",
+    "a40950229b63a48134540db3616ff14153c654ee",
+    "1ded679187a4690a135b7673130c111e942a694e",
+    "63d27cb74e49e3d849db6d45839ac8a796c45419",
+    "6a9bc4995cd951f6e511a315b559084f6e696218"
+   ],
+   "wall_s": 28.4,
+   "x_realtime": 31.7,
+   "buildings": 181
+  },
+  {
+   "seed": 23,
+   "hashes": [
+    "cc1bfb629c96463e0a07eecaf1b99f836e450656",
+    "934c33dff3a71f8988561b342e8b7c8bad5aaeb1",
+    "686baba88c11445d3f24030bec93454af99a1d4a",
+    "a9f20abf3bae2690c3d3b65eedd1b2b0781094ea",
+    "8600458fa53f5271bbda39cb98b53198933f5d5c",
+    "e514851d48f5abc5b24bf15580ec7d0273d2ea20",
+    "2405ad0ede2b9205bbf8ed2a16923b3ff0720715",
+    "f33c6a6f4b08ee822f6126477344de0885167b00",
+    "56f3cd358ef23a18fb1ef9bfeef92020e70178fe",
+    "4b79d29331bc57e01e6ae1e8ab36b7f2a2172501",
+    "a5c287f09c070e51a9f8b9f8ea244de9512337c6",
+    "c154d9db133cdd3a5f6a408d1593ceacea8b78cf",
+    "01eb66872c32465cb8f9e9fb4a459d0818be1447",
+    "6e4f84efc7de15f9bc7580f890a25fb2ce10cf98",
+    "211145531ffea6b8b9bc00b5c49353248526c5bb"
+   ],
+   "wall_s": 28.5,
+   "x_realtime": 31.5,
+   "buildings": 188
+  }
+ ]
+}

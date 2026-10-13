@@ -1,0 +1,4 @@
+{"policy": "selfish", "era_limit": 99, "total_limit": 8, "seed": 1, "lost": true, "minutes_to_loss": 56.0, "outbreaks": 12, "cubes_cleared": 0, "truces": 0, "pressure_end": 1.5, "wall_s": 381.7}
+{"policy": "coop", "era_limit": 99, "total_limit": 8, "seed": 1, "lost": true, "minutes_to_loss": 56.0, "outbreaks": 12, "cubes_cleared": 0, "truces": 49, "pressure_end": 1.5, "wall_s": 391.6}
+{"policy": "coop", "era_limit": 99, "total_limit": 8, "seed": 2, "lost": false, "minutes_to_loss": "", "outbreaks": 0, "cubes_cleared": 3, "truces": 0, "pressure_end": 0.0, "wall_s": 649.2}
+{"policy": "selfish", "era_limit": 99, "total_limit": 8, "seed": 2, "lost": false, "minutes_to_loss": "", "outbreaks": 0, "cubes_cleared": 3, "truces": 0, "pressure_end": 0.0, "wall_s": 650.7}

@@ -160,17 +160,60 @@ def remove_tree(world: Any, tree_id: str, reason: str) -> None:
 TREE_STRIDE = 10  # a tree is processed once per second (staggered by id), not every 100 ms: its timers are tens of seconds
 
 
+def _slot_of(key: str) -> int:
+    try:
+        return int(key.split(":")[1]) % TREE_STRIDE
+    except (IndexError, ValueError):  # an id that is not "kind:number" (never produced by new_id) still gets a stable bucket
+        return 0
+
+
+class TreeDict(dict):
+    """world.trees, with ids bucketed by processing slot so tree_quantum visits one tenth of the trees per tick.
+
+    Behaviour is identical to a plain dict (insertion order, snapshot); the buckets keep the same relative order inside a slot."""
+
+    def __init__(self, *a: Any, **k: Any) -> None:
+        super().__init__(*a, **k)
+        self.buckets: list[dict] = [{} for _ in range(TREE_STRIDE)]
+        self.fresh: list[str] = []  # added since the last tree_quantum: their "slot" field is written there, as before
+        for k_ in self:
+            self.buckets[_slot_of(k_)][k_] = None
+            self.fresh.append(k_)
+
+    def __reduce__(self) -> tuple:
+        return (TreeDict, (dict(self),))  # pickle and deepcopy rebuild the buckets from the items (a plain dict subclass would call __setitem__ first)
+
+    def copy(self) -> "TreeDict":
+        return TreeDict(dict(self))
+
+    def __setitem__(self, key: str, value: dict) -> None:
+        if key not in self:
+            self.buckets[_slot_of(key)][key] = None
+            self.fresh.append(key)
+        super().__setitem__(key, value)
+
+    def pop(self, key: str, *default: Any) -> Any:
+        self.buckets[_slot_of(key)].pop(key, None)
+        return super().pop(key, *default)
+
+    def __delitem__(self, key: str) -> None:
+        self.buckets[_slot_of(key)].pop(key, None)
+        super().__delitem__(key)
+
+
 def tree_quantum(world: Any) -> None:
     phase = world.military_quanta % TREE_STRIDE
     step = QUANTUM_MS * TREE_STRIDE
-    for tree_id in list(world.trees):
-        tree = world.trees.get(tree_id)
+    trees = world.trees
+    if trees.fresh:
+        for tree_id in trees.fresh:
+            tree = trees.get(tree_id)
+            if tree is not None and tree.get("slot") is None:
+                tree["slot"] = _slot_of(tree_id)
+        trees.fresh.clear()
+    for tree_id in list(trees.buckets[phase]):
+        tree = trees.get(tree_id)
         if tree is None:
-            continue
-        slot = tree.get("slot")
-        if slot is None:
-            slot = tree["slot"] = int(tree_id.split(":")[1]) % TREE_STRIDE
-        if slot != phase:
             continue
         if "imm" in tree:
             imm.tick(world, tree, step)
@@ -235,6 +278,46 @@ def _passable(world: Any, loco: str) -> bytearray:
     return got
 
 
+_NATIVE = [False, None]  # [resolved, lib]
+
+
+def _native_astar():
+    if not _NATIVE[0]:
+        _NATIVE[0] = True
+        from wizard_rts import native
+
+        _NATIVE[1] = native.astar_lib()
+    return _NATIVE[1]
+
+
+def _find_path_native(lib: Any, W: int, H: int, ok: bytearray, blk: set, joined: set | None, s: int, g: int, sx: int, sy: int, gx: int, gy: int,
+                      limit: int, max_nodes: int, four: bool, move_dirs: Any) -> list[tuple[int, int]] | None:
+    """The C twin of the loop below: identical results (tests/test_native_astar.py)."""
+    import ctypes
+
+    blkb = bytearray(W * H)
+    n_tiles = W * H
+    for i in blk:
+        if 0 <= i < n_tiles:  # an avoid tile off the map is harmless in the set version, so skip it here
+            blkb[i] = 1
+    jb = None
+    if joined is not None:
+        jarr = bytearray(W * H)
+        for i in joined:
+            if 0 <= i < n_tiles:
+                jarr[i] = 1
+        jb = ctypes.addressof((ctypes.c_char * (W * H)).from_buffer(jarr))
+    nd = len(move_dirs)
+    ddx = (ctypes.c_int * nd)(*[d[0] for d in move_dirs])
+    ddy = (ctypes.c_int * nd)(*[d[1] for d in move_dirs])
+    out = (ctypes.c_int * (W * H))()
+    n = lib.dmb_astar(W, H, ctypes.addressof((ctypes.c_char * (W * H)).from_buffer(ok)), ctypes.addressof((ctypes.c_char * (W * H)).from_buffer(blkb)),
+                      jb, s, g, sx, sy, gx, gy, limit, max_nodes, 1 if four else 0, ddx, ddy, nd, out)
+    if n < 0:
+        return None
+    return [(out[i] % W, out[i] // W) for i in range(n)]
+
+
 def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], limit: int, avoid: set | None, max_nodes: int, loco: str,
                     join: dict | None) -> list[tuple[int, int]] | None:
     """The same A* as find_path over integer tile ids and a precomputed passability table (about three times faster)."""
@@ -250,6 +333,9 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
     joined = {y * W + x for x, y in join} if join else None
     dirs = [(dx, dy, dy * W + dx) for dx, dy in world.move_dirs]
     four = len(dirs) == 4
+    lib = _native_astar()
+    if lib is not None:
+        return _find_path_native(lib, W, H, ok, blk, joined, s, g, sx, sy, gx, gy, limit, max_nodes, four, world.move_dirs)
     open_heap = [(0.0, 0, s)]
     # flat arrays instead of dicts (12 Oct 2026, performance): the same exploration order and tie-breaks, so the same paths
     came = array("i", [-1]) * (W * H)
@@ -257,6 +343,8 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
     cost[s] = 0.0
     counter = 0
     heappop, heappush = heapq.heappop, heapq.heappush
+    xlo, xhi = max(0, sx - limit), min(W - 1, sx + limit)  # the window and the map edge as one bounds test
+    ylo, yhi = max(0, sy - limit), min(H - 1, sy + limit)
     while open_heap:
         _f, _c, cur = heappop(open_heap)
         if counter > max_nodes:
@@ -268,11 +356,12 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
                 cur = came[cur]
             out.reverse()
             return out
-        cx, cy = cur % W, cur // W
+        cy, cx = divmod(cur, W)
         base = cost[cur] + 1.0
         for dx, dy, di in dirs:
-            nx, ny = cx + dx, cy + dy
-            if nx < 0 or ny < 0 or nx >= W or ny >= H or nx - sx > limit or sx - nx > limit or ny - sy > limit or sy - ny > limit:
+            nx = cx + dx
+            ny = cy + dy
+            if nx < xlo or nx > xhi or ny < ylo or ny > yhi:
                 continue
             n = cur + di
             if not ok[n] or (n != g and n in blk):
@@ -283,8 +372,13 @@ def _find_path_fast(world: Any, start: tuple[int, int], goal: tuple[int, int], l
                 cost[n] = base
                 came[n] = cur
                 counter += 1
-                h = (abs(gx - nx) + abs(gy - ny)) if four else max(abs(gx - nx), abs(gy - ny))
-                heappush(open_heap, (base + h, counter, n))
+                ax = gx - nx
+                ay = gy - ny
+                if ax < 0:
+                    ax = -ax
+                if ay < 0:
+                    ay = -ay
+                heappush(open_heap, (base + ((ax + ay) if four else (ax if ax > ay else ay)), counter, n))
     return None
 
 
@@ -889,6 +983,12 @@ def production_quantum(world: Any) -> None:
         elif cmd == "mine":
             if not _mine(world, building, args):
                 _fail(world, building, "deposit")
+        elif cmd == "cure_needed":
+            if not regions.cubes_here(world, building):
+                building["stall"] = {"reason": "not_needed", "detail": "its region is clean", "at_ms": int(world.dmb.clock.get("game_ms", 0))}
+                _skip(building)
+        elif cmd == "cure":
+            regions.cure(world, building, int(args.get("cubes", 1)))
         elif cmd == "produce":
             for g, n in args.items():
                 n = regions.yield_count(world, building, n)  # an outbreak in the region lowers what a finished programme yields

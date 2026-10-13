@@ -1,0 +1,40 @@
+{
+ "host": "joe-ThinkPad-T460",
+ "system": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+ "python": "3.12.3",
+ "cpu": "Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz",
+ "logical_cores": 4,
+ "ram_gb": 15.5,
+ "gpus": [
+  "00:02.0 VGA compatible controller: Intel Corporation Skylake GT2 [HD Graphics 520] (rev 07)"
+ ],
+ "free_disk_gb": {
+  "/home/joe": 18.4,
+  "/home/joe/Projects/DuelMasterBattle/WizardRTSHybrid": 18.4
+ },
+ "toolchain": {
+  "binaries": {
+   "python3": "/usr/bin/python3",
+   "python": null,
+   "py": null,
+   "pypy3": null,
+   "godot": null,
+   "dotnet": null,
+   "gcc": "/usr/bin/gcc",
+   "cc": "/usr/bin/cc",
+   "cargo": null,
+   "rustc": null,
+   "nvidia-smi": null,
+   "git": "/usr/bin/git",
+   "wine": "/usr/bin/wine"
+  },
+  "python_modules": {
+   "numpy": "1.26.4",
+   "torch": null,
+   "numba": null,
+   "pytest": "7.4.4",
+   "scipy": null
+  }
+ },
+ "taken_at": "2026-10-12T23:36:31+0100"
+}

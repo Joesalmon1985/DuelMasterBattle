@@ -44,6 +44,12 @@ func load_catalogue() -> void:
 		elif str(item.get("mode", "")) == "sequence":
 			for path in item.get("frames_godot", []):
 				_remember(str(path), str(path))
+			if item.has("layers"):
+				var l: Dictionary = item["layers"]
+				for f in range(int(l.get("facings", 32))):
+					for key in ["body_prefix", "turret_prefix"]:
+						var lp := "res://client/hybrid/art/openra/%s-%04d.png" % [str(l[key]), f]
+						_remember(lp, lp)
 
 
 func draw_terrain(canvas: CanvasItem, origin: Vector2i, radius: int, tpx: int) -> void:
@@ -200,6 +206,16 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var top_left := anchor - Vector2(float(hotspot[0]), float(hotspot[1])) * scale
 	var src := _source_rect(item, tex, drawn)
 	_draw_marker(canvas, entity, anchor)
+	if item.has("layers") and entity.has("turret"):
+		# independent turret (plan v2 8.4): the hull follows the heading, the turret the aim the simulation reports in `turret` (0..31, counter-clockwise from north)
+		var lt: Array = layer_textures(item, drawn)
+		if lt[0] != null and lt[1] != null:
+			var lsize := Vector2(lt[0].get_width(), lt[0].get_height()) * scale
+			canvas.draw_texture_rect(lt[0], Rect2(top_left, lsize), false)
+			canvas.draw_texture_rect(lt[1], Rect2(top_left, lsize), false)
+			_draw_cargo(canvas, entity, anchor, float(hotspot[1]) * scale)
+			_draw_health(canvas, entity, anchor)
+			return
 	canvas.draw_texture_rect_region(tex, Rect2(top_left, frame_size * scale), src)
 	_draw_cargo(canvas, entity, anchor, float(hotspot[1]) * scale)
 	_draw_health(canvas, entity, anchor)
@@ -429,6 +445,15 @@ func _item_for(entity: Dictionary) -> Dictionary:
 		if items.has(tkey):
 			return items[tkey]
 		return items.get(definition, {})
+	if str(entity.get("class", "")) == "building" and definition.begins_with("widelands."):
+		# state animations imported from the building's own Lua declaration (scripts/import_widelands_states.py); idle stays the fallback
+		var state := ""
+		if entity.has("constructing"):
+			state = "build"
+		elif bool(entity.get("working", false)):
+			state = "working"
+		if state != "" and items.has("%s.%s" % [definition, state]):
+			return items["%s.%s" % [definition, state]]
 	if str(entity.get("class", "")) == "animal":
 		var akey := "%s.idle" % definition
 		if str(entity.get("status", "")) == "moving":
@@ -462,8 +487,28 @@ func _frame_texture(item: Dictionary, entity: Dictionary) -> Texture2D:
 	return _tex(str(item.get("id", "")))
 
 
+func _ccw_slot(facing: int) -> int:
+	# Red Alert sprite frames run counter-clockwise from north (OpenRA facing 0 = north, increasing towards west), while _eight() counts
+	# clockwise (n, ne, e, se, s, sw, w, nw). Without this an east-bound unit drew its north-west frame (13 Oct 2026, checked on 3tnk and e1).
+	return (8 - facing) % 8
+
+
+## Body and turret frames of a layered vehicle: the body slot comes from the heading (like any sequence), the turret slot from the
+## simulation's `turret` aim and falls back to the heading when the unit has no target.
+func layer_indices(item: Dictionary, entity: Dictionary) -> Dictionary:
+	var body := _sequence_index(item, entity)
+	return {"body": body, "turret": int(entity.get("turret", body)) % 32}
+
+
+func layer_textures(item: Dictionary, entity: Dictionary) -> Array:
+	var ix := layer_indices(item, entity)
+	var l: Dictionary = item.get("layers", {})
+	return [_tex("res://client/hybrid/art/openra/%s-%04d.png" % [str(l.get("body_prefix", "")), int(ix["body"])]),
+			_tex("res://client/hybrid/art/openra/%s-%04d.png" % [str(l.get("turret_prefix", "")), int(ix["turret"])])]
+
+
 func _sequence_index(item: Dictionary, entity: Dictionary) -> int:
-	var facing := _eight(str(entity.get("facing", "s")))
+	var facing := _ccw_slot(_eight(str(entity.get("facing", "s"))))
 	var moving := str(entity.get("status", "")) == "moving"
 	if item.has("run_start") and moving:
 		var length := int(item.get("run_length", 1))
@@ -471,8 +516,9 @@ func _sequence_index(item: Dictionary, entity: Dictionary) -> int:
 		if int(item.get("fps", 0)) > 0 and length > 1:
 			tick = int(Time.get_ticks_msec() / (1000.0 / float(item.get("fps", 1)))) % length
 		return int(item.get("run_start", 0)) + facing * length + tick
-	if int(item.get("facing_count", 0)) == 32:
-		return facing * 4
+	var fcount := maxi(int(item.get("facing_count", 0)), int(item.get("facings", 1)))
+	if fcount >= 16:
+		return facing * (fcount / 8)  # 16 or 32 frames around the circle: eight compass headings pick every 2nd or 4th
 	if int(item.get("facings", 1)) <= 1:
 		var length := maxi(int(item.get("length", 1)), 1)
 		var tick := 0

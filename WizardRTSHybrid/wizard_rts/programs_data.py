@@ -183,6 +183,23 @@ BUILDING_PROGRAMS: dict[str, list[tuple[str, dict]]] = {
         ("animate", {"ms": 35_000}),
         ("produce", {"iron": 1}),
     ],
+    # hybrid-defined (plan v2 5.3): paper does not exist in Widelands or Mindustry. One plank and one water make a sheet.
+    "scriptorium": [
+        ("needs", {"good": "paper"}),
+        ("consume", {"plank": 1, "water": 1}),
+        ("sleep", {"ms": 30_000}),
+        ("animate", {"ms": 15_000}),
+        ("produce", {"paper": 1}),
+    ],
+    # hybrid-defined (plan v2 7.2): a clinic treats one outbreak cube in its own region per cycle, paid in rations and water. It does nothing
+    # (and consumes nothing) while its region is clean.
+    "clinic": [
+        ("cure_needed", {}),
+        ("consume", {"ration": 1, "water": 1}),
+        ("sleep", {"ms": 60_000}),
+        ("animate", {"ms": 20_000}),
+        ("cure", {"cubes": 1}),
+    ],
     # barbarians/ax_workshop (produce_ax)
     "smithy": [
         ("needs", {"good": "ax"}),
@@ -199,6 +216,8 @@ BUILDING_INPUTS: dict[str, dict[str, int]] = {
     "processor": {"log": 8},
     "smelter": {"coal": 8, "iron_ore": 8},
     "smithy": {"coal": 8, "iron": 8},
+    "scriptorium": {"plank": 6, "water": 6},
+    "clinic": {"ration": 4, "water": 4},
     "mine": {"ration": 6},
     "ironmine": {"ration": 6},
     "tavern": {"fish": 4, "meat": 4, "bread": 4},
@@ -212,6 +231,8 @@ BUILDING_OUTPUTS: dict[str, list[str]] = {
     "ironmine": ["iron_ore"],
     "smelter": ["iron"],
     "smithy": ["ax"],
+    "scriptorium": ["paper"],
+    "clinic": [],
     "farm": ["wheat"],
     "hunter": ["meat"],
     "well": ["water"],
@@ -219,7 +240,7 @@ BUILDING_OUTPUTS: dict[str, list[str]] = {
     "bakery": ["bread"],
 }
 # "economy needs": a ware is wanted while the faction's warehouses hold fewer than this.
-ECONOMY_TARGETS = {"plank": 20, "coal": 24, "iron_ore": 12, "iron": 10, "ax": 8, "granite": 16, "ration": 16, "bread": 8, "water": 12, "meat": 10, "wheat": 12}
+ECONOMY_TARGETS = {"paper": 6, "plank": 20, "coal": 24, "iron_ore": 12, "iron": 10, "ax": 8, "granite": 16, "ration": 16, "bread": 8, "water": 12, "meat": 10, "wheat": 12}
 # Resource fields: per-node amounts placed around a mine's tile (radius 2 = 25 nodes).
 RESOURCE_PER_NODE = {"coal": 30, "iron": 30, "water": 20, "gold": 20, "stones": 20}
 ROCK_AMOUNT = 6

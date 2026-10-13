@@ -41,11 +41,11 @@ sys.path.insert(0, str(HYB.parent))
 
 SIDE_A = ("Red", "Green", "Purple")
 FACTIONS = ("Red", "Blue", "Green", "Yellow", "Purple", "Orange")
-MAJOR = ("era_advanced", "card_drafted", "draft_lapsed", "deployed", "settlement_destroyed", "vp_conquest", "faction_declined", "faction_recovered",
+MAJOR = ("era_advanced", "draft_leftovers", "draft_phase", "relation_changed", "terminal_loss", "aid_sent", "cube_cured", "card_drafted", "draft_lapsed", "deployed", "settlement_destroyed", "vp_conquest", "faction_declined", "faction_recovered",
          "faction_split", "faction_collapsed", "outbreak", "outbreak_cube", "catastrophe_destroyed", "disrupted", "disruption_cleared",
          "treatment_done", "ai_attack", "ai_retreat", "ai_expand_deploy", "ai_expand_rejected", "cycle_due", "terminal_loss", "building_destroyed",
          "ai_industry_placed", "ai_link_outpost", "tribe_fallback", "nest_spawned", "nest_cube_cleared", "nest_destroyed", "caravan_sent",
-         "caravan_traded", "caravan_refused")
+         "caravan_traded", "caravan_refused", "caravan_lost")
 GAMES = {"widelands": "wl", "openra": "ora", "hybrid": "hyb", "mindustry": "mdy"}
 
 
@@ -110,7 +110,7 @@ def sample(world, t_wall: float, step_ms: list[float]) -> list[dict]:
 
 
 def play(job: dict) -> dict:
-    """One game, in its own process (fork). Returns rows and the summary; heavy output is written by the parent."""
+    """One game, in its own process (spawned, so it also works on Windows). Returns rows and the summary; heavy output is written by the parent."""
     os.environ["HYBRID_AI"] = "1"
     from wizard_rts import history, ledger, vp
     from wizard_rts.world import HybridWorld
@@ -120,6 +120,15 @@ def play(job: dict) -> dict:
     w.ai_enabled = True
     w.ai_policy = dict(job["policies"])
     w.ai_aggressive = job["mode"] != "peace"
+    if job.get("nocards"):
+        w.nocards = True  # plan v2 P2: drafting off, foundation set only, no settlement quota
+    if job.get("attack_ratio"):
+        w.attack_ratio = float(job["attack_ratio"])
+    if job.get("draft"):
+        w.cardset, w.draft_v2 = "v2", True  # plan v2 P3: generated 1-2 entity cards, era-start seven-round ring draft
+        for key in ("era_vp_end", "era_vp_step", "era_sustain_ms"):  # P12 era study knobs
+            if job.get(key) is not None:
+                setattr(w, key, int(job[key]))
     if job["mode"] == "crisis":
         w.outbreak_interval_scale = 0.5
     pilot = None
@@ -142,7 +151,7 @@ def play(job: dict) -> dict:
         new = getattr(evs, "total", len(evs)) - seen  # the window is trimmed now and then: count from the log's own total
         for e in (evs[-new:] if 0 < new <= len(evs) else (evs if new > 0 else [])):
             if e.get("kind") in MAJOR:
-                events.append({"game_ms": int(w.dmb.clock.get("game_ms", 0)), **{k: v for k, v in e.items() if isinstance(v, (str, int, float, bool, list))}})
+                events.append({"game_ms": int(w.dmb.clock.get("game_ms", 0)), **{k: v for k, v in e.items() if isinstance(v, (str, int, float, bool, list, dict))}})
         seen = getattr(evs, "total", len(evs))
         if (s + 1) % job["every"] == 0 or s + 1 == total_s:
             series += sample(w, time.time() - t0, step_ms[-job["every"]:])
@@ -276,6 +285,13 @@ def main() -> None:
     ap.add_argument("--pairing", choices=("mirror", "all-plus", "all-baseline"), default="mirror")
     ap.add_argument("--every", type=int, default=60, help="sample period in game seconds")
     ap.add_argument("--jobs", type=int, default=2, help="games played in parallel (the T460 has 4 cores; keep 2-3)")
+    ap.add_argument("--allow-sha-mismatch", action="store_true", help="reuse finished games saved by a different commit when resuming")
+    ap.add_argument("--nocards", action="store_true", help="no-card civilisation: drafting off, foundation set only (plan v2 P2)")
+    ap.add_argument("--draft", action="store_true", help="drafting v2 with the generated content-graph cards (plan v2 P3)")
+    ap.add_argument("--attack-ratio", type=float, default=None, help="plus AI: squad strength over the defence needed to attack (default 1.4, 1.0 in the v2 modes)")
+    ap.add_argument("--era-vp-end", type=int, default=None, help="draft mode: first era bar (VP of one faction); default vp.ERA_VP_END")
+    ap.add_argument("--era-vp-step", type=int, default=None, help="draft mode: later bars are leader VP + step")
+    ap.add_argument("--era-sustain-s", type=int, default=None, help="draft mode: seconds the bar must be held (the debounce)")
     ap.add_argument("--wizard-pilot", action="store_true", help="crisis mode: add the scripted wizard agent (public moves only)")
     ap.add_argument("--report-dir", default=str(Path.home() / "dmb_runs" / "civ_latest"))
     args = ap.parse_args()
@@ -283,7 +299,8 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     legs = ("A", "B") if args.pairing == "mirror" else ("-",)
     jobs = [{"seed": s, "leg": leg, "mode": args.mode, "map": args.map, "minutes": args.minutes, "every": args.every,
-             "policies": policies(args.pairing, leg), "wizard_pilot": args.wizard_pilot} for s in args.seeds for leg in legs]
+             "policies": policies(args.pairing, leg), "wizard_pilot": args.wizard_pilot, "nocards": args.nocards, "draft": args.draft, "attack_ratio": args.attack_ratio,
+             "era_vp_end": args.era_vp_end, "era_vp_step": args.era_vp_step, "era_sustain_ms": None if args.era_sustain_s is None else args.era_sustain_s * 1000} for s in args.seeds for leg in legs]
     sha = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=str(HYB)).stdout.strip()
     dirty = bool(subprocess.run(["git", "status", "--porcelain", "--", "wizard_rts"], capture_output=True, text=True, cwd=str(HYB)).stdout.strip())
     manifest = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "git_sha": sha, "git_dirty": dirty, "mode": args.mode, "pairing": args.pairing,
@@ -292,18 +309,47 @@ def main() -> None:
                 "argv": sys.argv}
     t0 = time.time()
     results = []
-    if args.jobs > 1:
+    # Resume (plan v2 11.3): every finished game is written atomically to <report-dir>/games/; a re-run with the same arguments loads those and
+    # plays only the rest. A game from a different commit (or an edited wizard_rts) is not reused unless --allow-sha-mismatch.
+    games_dir = out / "games"
+    games_dir.mkdir(exist_ok=True)
+    stamp = {"sha": sha, "dirty": dirty}
+
+    def save_game(r: dict) -> None:
+        path = games_dir / f"{r['job']['seed']}{r['job']['leg']}.json"
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps({"stamp": stamp, "result": r}, default=str))
+        os.replace(tmp, path)
+
+    todo = []
+    for j in jobs:
+        path = games_dir / f"{j['seed']}{j['leg']}.json"
+        if path.exists():
+            try:
+                saved = json.loads(path.read_text())
+                if saved["result"]["job"] == j and (saved["stamp"] == stamp or args.allow_sha_mismatch):
+                    results.append(saved["result"])
+                    print(f"resumed seed {j['seed']}{j['leg']} from {path.name}", flush=True)
+                    continue
+                print(f"not reusing {path.name}: different arguments or code version", flush=True)
+            except (OSError, ValueError, KeyError):
+                print(f"unreadable {path.name}: playing it again", flush=True)
+        todo.append(j)
+    jobs = todo
+    if args.jobs > 1 and jobs:
         import multiprocessing as mp
 
-        with mp.get_context("fork").Pool(args.jobs) as pool:
+        with mp.get_context("spawn").Pool(args.jobs) as pool:
             for r in pool.imap_unordered(play, jobs):
                 results.append(r)
+                save_game(r)
                 s = r["summary"]
                 print(f"seed {s['seed']}{s['leg']}: era {s['era']} vp {s['vp']} wall {s['wall_s']} s failures {len(r['failures'])}", flush=True)
     else:
         for j in jobs:
             r = play(j)
             results.append(r)
+            save_game(r)
             s = r["summary"]
             print(f"seed {s['seed']}{s['leg']}: era {s['era']} vp {s['vp']} wall {s['wall_s']} s failures {len(r['failures'])}", flush=True)
     results.sort(key=lambda r: (r["job"]["seed"], r["job"]["leg"]))

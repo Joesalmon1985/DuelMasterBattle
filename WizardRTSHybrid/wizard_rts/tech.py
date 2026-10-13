@@ -25,6 +25,7 @@ OFFER_WINDOW_MS = 3 * 60_000  # how long an open offer stays selectable (world.o
 OFFER_SIZE = 7  # owner: a pack of up to seven; fewer when fewer cards are eligible (never padded)
 RESTRICTED = ("_deeper", "_deep")  # Widelands deep mines need a card that names the suffix (deep_mining), not just "mine"
 ERAS = ("prehistoric", "historic", "modern", "dystopian")
+from wizard_rts.calibrate import CARD_ONLY as _CARD_ONLY  # noqa: E402  (units reached only through cards; calibrate.py imports nothing from the game)
 
 PROFILES: dict[str, dict[str, bool]] = {
     "campaign": {"gated": True, "god": False, "primitive_start": True},
@@ -41,6 +42,28 @@ def _data() -> dict[str, Any]:
 
 def cards() -> dict[str, dict[str, Any]]:
     return {c["id"]: c for c in _data()["cards"]}
+
+
+_LOOKUP: list = [None, None]
+
+
+def lookup() -> dict[str, dict[str, Any]]:
+    """Every card that can be held: the hand-written set plus the generated content-graph set (`gen.*`). Held cards resolve here."""
+    base = cards()
+    if _LOOKUP[0] is not base:
+        from wizard_rts.content import graph
+
+        _LOOKUP[0], _LOOKUP[1] = base, {**base, **graph.generated_cards()}
+    return _LOOKUP[1]
+
+
+def pool(world: Any) -> dict[str, dict[str, Any]]:
+    """The cards drafting v2 deals: the generated set when `world.cardset == "v2"`, else the hand-written set."""
+    if getattr(world, "cardset", "") == "v2":
+        from wizard_rts.content import graph
+
+        return graph.generated_cards()
+    return cards()
 
 
 def primitive() -> dict[str, Any]:
@@ -76,30 +99,56 @@ def _state(world: Any, faction: str) -> dict[str, Any] | None:
     return getattr(world, "tech", {}).get(faction)
 
 
+# Plan v2 P2 "foundation set": what a faction needs to feed itself and found more settlements without any card. Used only in
+# the `nocards` test mode until the content graph (P3) makes the foundation a first-class, compiled set.
+FOUNDATION_KINDS = ("tavern", "clinic")  # the clinic: every faction can answer an outbreak on its own (plan v2 7.2)
+FOUNDATION_UNITS = ("settlers", "caravan")  # trade is part of the core loop (plan v2 5.2 rule 3): a faction without a smelter can buy iron
+FOUNDATION_PATTERNS = ("tavern", "inn")
+
+
+def foundation_on(world: Any) -> bool:
+    return bool(getattr(world, "nocards", False) or getattr(world, "cardset", "") == "v2")
+
+
 def unlocked_kinds(world: Any, faction: str) -> set[str]:
     out = set(primitive()["kinds"])
+    if foundation_on(world):
+        out.update(FOUNDATION_KINDS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
-            out.update(cards()[cid]["kinds"])
+            out.update(lookup()[cid]["kinds"])
     return out
 
 
 def unlocked_units(world: Any, faction: str) -> set[str]:
     out = set(primitive()["units"])
+    if foundation_on(world):
+        out.update(FOUNDATION_UNITS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
-            out.update(cards()[cid]["units"])
+            out.update(lookup()[cid]["units"])
+    return out
+
+
+def _exact_wl(world: Any, faction: str) -> set[str]:
+    st = _state(world, faction)
+    out: set[str] = set()
+    if st:
+        for cid in st["cards"]:
+            out.update(lookup()[cid].get("wl_kinds", ()))
     return out
 
 
 def _patterns(world: Any, faction: str) -> list[str]:
     out = list(primitive()["wl_patterns"])
+    if foundation_on(world):
+        out.extend(FOUNDATION_PATTERNS)
     st = _state(world, faction)
     if st:
         for cid in st["cards"]:
-            out.extend(cards()[cid]["wl_patterns"])
+            out.extend(lookup()[cid]["wl_patterns"])
     return out
 
 
@@ -107,6 +156,8 @@ def kind_allowed(world: Any, faction: str, kind: str) -> bool:
     if not gated(world):
         return True
     if kind.startswith("wl:"):
+        if kind in _exact_wl(world, faction):
+            return True
         name = kind[3:]
         pats = _patterns(world, faction)
         for suffix in RESTRICTED:
@@ -117,7 +168,9 @@ def kind_allowed(world: Any, faction: str, kind: str) -> bool:
 
 
 def unit_allowed(world: Any, faction: str, unit_kind: str) -> bool:
-    return not gated(world) or unit_kind in unlocked_units(world, faction)
+    if not gated(world):
+        return unit_kind not in _CARD_ONLY  # ungated profiles keep the earlier roster; the newer units are reached through cards
+    return unit_kind in unlocked_units(world, faction)
 
 
 def _working(world: Any, faction: str, kinds: list[str]) -> bool:
@@ -148,7 +201,12 @@ def draftable(world: Any, faction: str) -> list[str]:
 def tech_quantum(world: Any) -> None:
     """Open a draft round per faction every `draft_interval_ms` (S05). An offer stays selectable for `offer_window_ms`, then lapses
     (logged); a new round replaces whatever is still open."""
-    if not gated(world):
+    if not gated(world) or getattr(world, "nocards", False):  # nocards: the plan v2 "no-card civilisation" test mode, drafting off
+        return
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.quantum(world)
         return
     now = int(world.dmb.clock.get("game_ms", 0))
     for name in list(world.faction_info):
@@ -164,7 +222,7 @@ def tech_quantum(world: Any) -> None:
         pool = draftable(world, name)
         rng = random.Random(f"{world.seed}:{name}:{st['round']}")
         rng.shuffle(pool)
-        st["offers"] = sorted(pool[:OFFER_SIZE], key=lambda c: (cards()[c]["era"], c))
+        st["offers"] = sorted(pool[:OFFER_SIZE], key=lambda c: (lookup()[c]["era"], c))
         st["round"] += 1
         st["next_round_ms"] = now + int(getattr(world, "draft_interval_ms", DRAFT_INTERVAL_MS))
         st["expires_ms"] = now + min(int(getattr(world, "offer_window_ms", OFFER_WINDOW_MS)), int(getattr(world, "draft_interval_ms", DRAFT_INTERVAL_MS)))
@@ -187,12 +245,20 @@ def draft(world: Any, faction: str, card_id: str) -> dict[str, Any]:
     if card_id not in st["offers"]:
         return {"status": "rejected", "reason": "not_offered"}
     # the physical prerequisite is checked again at the moment of choice: a smithy destroyed since the offer withdraws it
-    c = cards()[card_id]
-    if not _working(world, faction, c["requires_working"]):
+    c = lookup()[card_id]
+    from wizard_rts import draft as _draft
+
+    if not _draft.enabled(world) and not _working(world, faction, c["requires_working"]):
         return {"status": "rejected", "reason": "prerequisite_lost"}
+    if _draft.enabled(world) and _draft.bonus_only(world, faction, card_id) and not _draft.bonus_ready(world, faction):
+        return {"status": "rejected", "reason": "no_paper"}  # the paper (or the scriptorium) is gone since the hand was dealt
     st["cards"].append(card_id)
     rejected = [x for x in st["offers"] if x != card_id]
     st["offers"] = []
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        draft.on_pick(world, faction, card_id)
     if st.get("history"):
         st["history"][-1]["picked"] = card_id
     _apply_effect(world, faction, c)
@@ -216,14 +282,14 @@ def territory_bonus(world: Any, faction: str) -> int:
     st = _state(world, faction)
     if not st:
         return 0
-    return sum(int((cards()[cid].get("effect") or {}).get("territory_bonus", 0)) for cid in st["cards"] if cid in cards())
+    return sum(int((lookup()[cid].get("effect") or {}).get("territory_bonus", 0)) for cid in st["cards"] if cid in lookup())
 
 
 def card_info(card_id: str) -> dict[str, Any]:
     """What the draft panel shows for a card: era, explanation, what it unlocks and what it needs."""
-    c = cards()[card_id]
+    c = lookup()[card_id]
     return {"id": card_id, "name": c["name"], "era": ERAS[c["era"]], "summary": c.get("summary", ""), "kinds": list(c["kinds"]),
-            "units": list(c["units"]), "wl_patterns": list(c["wl_patterns"]), "requires_cards": [cards()[r]["name"] for r in c["requires_cards"]],
+            "units": list(c["units"]), "wl_patterns": list(c["wl_patterns"]), "requires_cards": [lookup()[r]["name"] for r in c["requires_cards"]],
             "requires_working": list(c["requires_working"]), "effect": dict(c.get("effect") or {})}
 
 
@@ -240,9 +306,9 @@ def grant(world: Any, faction: str, card_id: str) -> dict[str, Any]:
     if not god_allowed(world):
         return {"status": "rejected", "reason": "god_mode_disabled"}
     st = _state(world, faction)
-    if st is None or card_id not in cards():
+    if st is None or card_id not in lookup():
         return {"status": "rejected", "reason": "unknown_card"}
-    for cid in cards()[card_id]["requires_cards"] + [card_id]:
+    for cid in lookup()[card_id]["requires_cards"] + [card_id]:
         if cid not in st["cards"]:
             if cid != card_id:
                 grant(world, faction, cid)
@@ -275,12 +341,16 @@ def snapshot(world: Any) -> dict[str, Any]:
         out["factions"][n] = {"cards": list(s["cards"]), "offers": list(s["offers"]), "round": s["round"], "next_round_ms": s["next_round_ms"],
                               "next_round_in_ms": max(0, s["next_round_ms"] - now), "expires_ms": s.get("expires_ms", 0),
                               "expires_in_ms": max(0, s.get("expires_ms", 0) - now) if s["offers"] else 0,
-                              "offer_names": {c: cards()[c]["name"] for c in s["offers"]}, "last_pick": last.get("picked", ""),
+                              "offer_names": {c: lookup()[c]["name"] for c in s["offers"]}, "last_pick": last.get("picked", ""),
                               "lapsed": int(s.get("lapsed", 0)), "eligible": int(last.get("eligible", 0))}
     return out
 
 
 def on_era_change(world: Any) -> None:
     """S05: every faction gets one extra draft round on each era change (the next round opens at the next tick)."""
+    from wizard_rts import draft
+
+    if draft.enabled(world):
+        return  # drafting v2 deals a whole phase at the era start (draft.quantum notices the new era)
     for st in getattr(world, "tech", {}).values():
         st["next_round_ms"] = 0

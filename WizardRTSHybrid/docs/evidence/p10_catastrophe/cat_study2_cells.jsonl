@@ -1,0 +1,12 @@
+{"policy": "ignore", "era_limit": 99, "total_limit": 8, "seed": 1, "lost": true, "minutes_to_loss": 38.8, "outbreaks": 8, "cubes_cleared": 13, "truces": 0, "pressure_end": 1.0, "wall_s": 264.0}
+{"policy": "ignore", "era_limit": 99, "total_limit": 8, "seed": 2, "lost": true, "minutes_to_loss": 47.2, "outbreaks": 9, "cubes_cleared": 5, "truces": 0, "pressure_end": 1.12, "wall_s": 369.0}
+{"policy": "ignore", "era_limit": 99, "total_limit": 8, "seed": 3, "lost": true, "minutes_to_loss": 42.4, "outbreaks": 13, "cubes_cleared": 5, "truces": 0, "pressure_end": 1.62, "wall_s": 272.2}
+{"policy": "ignore", "era_limit": 99, "total_limit": 8, "seed": 4, "lost": true, "minutes_to_loss": 44.8, "outbreaks": 9, "cubes_cleared": 15, "truces": 0, "pressure_end": 1.12, "wall_s": 303.2}
+{"policy": "selfish", "era_limit": 99, "total_limit": 8, "seed": 1, "lost": true, "minutes_to_loss": 38.8, "outbreaks": 8, "cubes_cleared": 13, "truces": 0, "pressure_end": 1.0, "wall_s": 223.5}
+{"policy": "selfish", "era_limit": 99, "total_limit": 8, "seed": 2, "lost": true, "minutes_to_loss": 47.2, "outbreaks": 9, "cubes_cleared": 5, "truces": 0, "pressure_end": 1.12, "wall_s": 331.6}
+{"policy": "selfish", "era_limit": 99, "total_limit": 8, "seed": 3, "lost": true, "minutes_to_loss": 42.4, "outbreaks": 13, "cubes_cleared": 5, "truces": 0, "pressure_end": 1.62, "wall_s": 278.6}
+{"policy": "coop", "era_limit": 99, "total_limit": 8, "seed": 1, "lost": true, "minutes_to_loss": 38.8, "outbreaks": 8, "cubes_cleared": 13, "truces": 15, "pressure_end": 1.0, "wall_s": 262.0}
+{"policy": "selfish", "era_limit": 99, "total_limit": 8, "seed": 4, "lost": true, "minutes_to_loss": 42.4, "outbreaks": 12, "cubes_cleared": 4, "truces": 0, "pressure_end": 1.5, "wall_s": 317.9}
+{"policy": "coop", "era_limit": 99, "total_limit": 8, "seed": 3, "lost": true, "minutes_to_loss": 42.4, "outbreaks": 13, "cubes_cleared": 5, "truces": 21, "pressure_end": 1.62, "wall_s": 314.1}
+{"policy": "coop", "era_limit": 99, "total_limit": 8, "seed": 2, "lost": true, "minutes_to_loss": 47.2, "outbreaks": 9, "cubes_cleared": 5, "truces": 0, "pressure_end": 1.12, "wall_s": 399.1}
+{"policy": "coop", "era_limit": 99, "total_limit": 8, "seed": 4, "lost": true, "minutes_to_loss": 42.4, "outbreaks": 12, "cubes_cleared": 4, "truces": 15, "pressure_end": 1.5, "wall_s": 332.3}

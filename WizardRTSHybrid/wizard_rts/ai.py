@@ -18,7 +18,7 @@ import zlib
 from typing import Any
 
 from wizard_rts import construction as con
-from wizard_rts import tech, territory
+from wizard_rts import diplomacy, tech, territory
 
 ROAD_LIMIT = 45  # a site more than this far from its command centre by road is not worth a wide failed search
 DECIDE_EVERY = 50  # quanta (5 s) between decisions per faction
@@ -331,7 +331,7 @@ def expansion_step(world: Any, name: str, wh: dict) -> None:
         return
     queued = any(i["unit"] in ("mcv", "settlers") for b in mine for i in b.get("queue", []))
     state = world.__dict__.setdefault("_ai_expand", {}).setdefault(name, {"last": -10**9})
-    if queued or len(territory.command_centers(world, name)) >= MAX_CC or now < EXPAND_AFTER_MS or now - state["last"] < EXPAND_REPEAT_MS:
+    if queued or len(territory.command_centers(world, name)) >= (10**6 if tech.foundation_on(world) else MAX_CC) or now < EXPAND_AFTER_MS or now - state["last"] < EXPAND_REPEAT_MS:
         return
     # 12 Oct 2026 rule adaptation (not a strategy change): the Prehistoric settlers' wagon from the warehouse is the same founder as the MCV
     factories = [(b, "mcv") for b in mine if b["kind"] == "vehicle_factory" and b.get("operational") and tech.unit_allowed(world, name, "mcv")]
@@ -376,11 +376,21 @@ def _find_expansion_site(world: Any, name: str, mcv: dict | None, bad: list | No
         return None
     probe = {"id": "probe", "definition": territory.MCV_DEFINITION, "faction_name": name, "alive": True, "tx": 0, "ty": 0}
     legal = []
+    frontier = bool(tech.foundation_on(world))
+    now = int(world.dmb.clock.get("game_ms", 0))
+    if frontier and mcv is None and now - world.__dict__.setdefault("_ai_nosite", {}).get(name, -10**9) < 60_000:
+        return None  # asked again within a minute of "no legal site anywhere": the answer cannot have changed much (frontier mode only)
+    mine_cc = [(c["tx"], c["ty"]) for c in territory.command_centers(world, name)]
     for y in range(8, t.h - 8, 8):
         for x in range(8, t.w - 8, 8):
             tile = (x, y)
-            d = territory.cheb(tile, (home["tx"], home["ty"]))
-            if d > 110 or not t.ground(x, y) or territory.separation_problem(world, name, tile):
+            if frontier:
+                d = min((max(abs(x - cx), abs(y - cy)) for cx, cy in mine_cc), default=10**6)
+                if d > 70:  # nocards: expand outward from any settlement; wares, food and free ground are the real limits
+                    continue
+            else:
+                d = territory.cheb(tile, (home["tx"], home["ty"]))
+            if (not frontier and d > 110) or not t.ground(x, y) or territory.separation_problem(world, name, tile):
                 continue
             if bad and any(territory.cheb(tile, tuple(b)) < 12 for b in bad):
                 continue
@@ -399,6 +409,8 @@ def _find_expansion_site(world: Any, name: str, mcv: dict | None, bad: list | No
             return tile  # only asked whether a site exists
         if find_path(world, start, tile, limit=600, avoid=set(), max_nodes=300_000, loco="heavywheeled") is not None:
             return tile
+    if frontier and mcv is None:
+        world.__dict__.setdefault("_ai_nosite", {})[name] = now
     return None
 
 
@@ -519,15 +531,28 @@ def _water_near(world: Any, tile: tuple[int, int], radius: int, sx: int, sy: int
     comp = t.water_comp[sy * t.w + sx] if t.in_bounds(sx, sy) else 0
     if not comp:
         return None
-    best = None
+    # First tile in (dy, dx) order with the smallest Manhattan distance; rows and columns that cannot beat the best so far are skipped.
+    best_d = 1 << 30
+    best_t = None
+    W, H, wc, blocked = t.w, t.h, t.water_comp, world.blocked
     for dy in range(-radius, radius + 1):
+        ady = -dy if dy < 0 else dy
+        if ady >= best_d:
+            continue
+        y = tile[1] + dy
+        if y < 0 or y >= H:
+            continue
+        row = y * W
         for dx in range(-radius, radius + 1):
-            x, y = tile[0] + dx, tile[1] + dy
-            if t.in_bounds(x, y) and t.water_comp[y * t.w + x] == comp and (x, y) not in world.blocked:
-                d = abs(dx) + abs(dy)
-                if best is None or d < best[0]:
-                    best = (d, (x, y))
-    return best[1] if best else None
+            adx = -dx if dx < 0 else dx
+            d = adx + ady
+            if d >= best_d:
+                continue
+            x = tile[0] + dx
+            if 0 <= x < W and wc[row + x] == comp and (x, y) not in blocked:
+                best_d = d
+                best_t = (x, y)
+    return best_t
 
 
 # ------------------------------------------------------------------ tribe planner
@@ -602,7 +627,26 @@ def _build_tribe_building_now(world: Any, name: str, bname: str, wh: dict) -> st
 
     kind = wl_defs.PREFIX + bname
     spec = con.build_spec(kind)
-    if spec is None or not tech.kind_allowed(world, name, kind) or not _can_pay(world, name, spec["cost"]):
+    if spec is None or not tech.kind_allowed(world, name, kind):
+        return None
+    if spec.get("enhancement_of"):  # an upgrade exists only by enhancing a standing base building: build a base for it, then enhance it
+        base = spec["enhancement_of"]
+        mine = [b for b in world.buildings.values() if b["faction_name"] == name and b["kind"] == base and int(b.get("hp", 1)) > 0]
+        mark = [b for b in mine if b.get("enhance_target") == kind]
+        if mark:
+            site = mark[0]
+            if site.get("operational") and not site.get("constructing") and _can_pay(world, name, spec["cost"]):
+                if con.enhance_building(world, name, site["id"])["status"] == "ok":
+                    site.pop("enhance_target", None)
+                    return site["id"]
+            return None
+        if not tech.kind_allowed(world, name, base):
+            return None
+        bid = _build_tribe_building_now(world, name, base[len(wl_defs.PREFIX):], wh)
+        if bid:
+            world.buildings[bid]["enhance_target"] = kind
+        return bid
+    if not _can_pay(world, name, spec["cost"]):
         return None
     mining = [a["resource"] for prog in wl_defs.building_spec(bname)["programs"].values() for cmd, a in prog if cmd == "mine"]
     if mining:
@@ -723,7 +767,7 @@ def _known_targets(world: Any, name: str) -> list[dict]:
     pts = _own_points(world, name)
     out = []
     for b in world.buildings.values():
-        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0:
+        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0 or not diplomacy.hostile(world, name, b["faction_name"]):
             continue
         if b["id"] not in known:
             if b["kind"] == "warehouse" and not b.get("outpost"):
@@ -916,7 +960,7 @@ def _send(world: Any, units: list[dict], target: dict) -> None:
 def _nearest_enemy_unit(world: Any, name: str, pos: tuple[int, int], radius: float) -> dict | None:
     best = None
     for u in world.units.values():
-        if u["faction_name"] == name or not u.get("alive", True):
+        if u["faction_name"] == name or not u.get("alive", True) or not diplomacy.hostile(world, name, u["faction_name"]):
             continue
         d = math.hypot(u["tx"] - pos[0], u["ty"] - pos[1])
         if d <= radius and (best is None or d < best[0]):
