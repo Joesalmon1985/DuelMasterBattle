@@ -748,6 +748,13 @@ def _unit_step(world: Any, unit: dict) -> None:
         world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "cannot_hit_target"})
         return
     name, wi = use
+    if dist < wi.get("min_range", 0):  # too close for this weapon (artillery): back off along the line away from the target first
+        away = (unit["tx"] + (1 if unit["tx"] >= building["tx"] else -1), unit["ty"] + (1 if unit["ty"] >= building["ty"] else -1))
+        if _walk(world, unit, away) == "stuck":
+            unit.pop("order", None)
+            unit["status"] = "idle"
+            world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "inside_min_range"})
+        return
     if dist <= wi["range"]:
         unit["path"] = []
         unit["status"] = "attacking"

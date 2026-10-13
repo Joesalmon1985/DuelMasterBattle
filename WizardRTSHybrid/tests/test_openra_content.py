@@ -455,3 +455,21 @@ def test_tanya_plants_c4_on_an_enemy_building_and_it_goes_off():
     assert int(b["hp"]) <= 0 or b["id"] not in w.buildings or b.get("destroyed")
     assert u.get("alive", True)
     assert w.ability("Red", "c4", unit=u["id"], building=building(w, "barracks", "Red")["id"])["reason"] == "cannot_plant"
+
+
+def test_artillery_ordered_onto_a_target_inside_its_minimum_range_backs_off_then_fires():
+    from wizard_rts import military
+
+    w = world("test_showcase")
+    b = building(w, "barracks", "Blue")
+    u = _unit_near(w, "openra.arty", "Red", b)
+    u["weapons"], u["weapon"] = ["155mm"], "155mm"
+    u["cds"] = {"155mm": 0}
+    u["tx"], u["ty"] = b["tx"], b["ty"] + 2
+    assert military.order_attack(w, u["id"], b["id"])["status"] == "ok"
+    start = b["hp"]
+    d0 = ((u["tx"] - b["tx"]) ** 2 + (u["ty"] - b["ty"]) ** 2) ** 0.5
+    run(w, 25)
+    d1 = ((u["tx"] - b["tx"]) ** 2 + (u["ty"] - b["ty"]) ** 2) ** 0.5
+    assert d0 < 4.0 <= d1 + 0.01
+    assert b["hp"] < start
