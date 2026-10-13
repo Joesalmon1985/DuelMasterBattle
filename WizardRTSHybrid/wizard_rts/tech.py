@@ -101,7 +101,7 @@ def _state(world: Any, faction: str) -> dict[str, Any] | None:
 # Plan v2 P2 "foundation set": what a faction needs to feed itself and found more settlements without any card. Used only in
 # the `nocards` test mode until the content graph (P3) makes the foundation a first-class, compiled set.
 FOUNDATION_KINDS = ("tavern",)
-FOUNDATION_UNITS = ("settlers",)
+FOUNDATION_UNITS = ("settlers", "caravan")  # trade is part of the core loop (plan v2 5.2 rule 3): a faction without a smelter can buy iron
 FOUNDATION_PATTERNS = ("tavern", "inn")
 
 

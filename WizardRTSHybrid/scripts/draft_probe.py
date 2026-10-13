@@ -44,6 +44,7 @@ def main() -> None:
     st = draft.state(w)
     print("draft state: era", st["era"], "round", st["round"], "defaults", st["default_picks"], "dups", st["duplicated_cards"], "phases", st["phases"])
     print({k: v for k, v in ev.most_common(12)})
+    print("trade events:", {k: ev[k] for k in ("caravan_sent", "caravan_traded", "caravan_failed", "trade_offer") if k in ev})
     from wizard_rts import inspector
 
     tot = used = 0

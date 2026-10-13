@@ -124,6 +124,9 @@ def play(job: dict) -> dict:
         w.nocards = True  # plan v2 P2: drafting off, foundation set only, no settlement quota
     if job.get("draft"):
         w.cardset, w.draft_v2 = "v2", True  # plan v2 P3: generated 1-2 entity cards, era-start seven-round ring draft
+        for key in ("era_vp_end", "era_vp_step", "era_sustain_ms"):  # P12 era study knobs
+            if job.get(key) is not None:
+                setattr(w, key, int(job[key]))
     if job["mode"] == "crisis":
         w.outbreak_interval_scale = 0.5
     pilot = None
@@ -283,6 +286,9 @@ def main() -> None:
     ap.add_argument("--allow-sha-mismatch", action="store_true", help="reuse finished games saved by a different commit when resuming")
     ap.add_argument("--nocards", action="store_true", help="no-card civilisation: drafting off, foundation set only (plan v2 P2)")
     ap.add_argument("--draft", action="store_true", help="drafting v2 with the generated content-graph cards (plan v2 P3)")
+    ap.add_argument("--era-vp-end", type=int, default=None, help="draft mode: first era bar (VP of one faction); default vp.ERA_VP_END")
+    ap.add_argument("--era-vp-step", type=int, default=None, help="draft mode: later bars are leader VP + step")
+    ap.add_argument("--era-sustain-s", type=int, default=None, help="draft mode: seconds the bar must be held (the debounce)")
     ap.add_argument("--wizard-pilot", action="store_true", help="crisis mode: add the scripted wizard agent (public moves only)")
     ap.add_argument("--report-dir", default=str(Path.home() / "dmb_runs" / "civ_latest"))
     args = ap.parse_args()
@@ -290,7 +296,8 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     legs = ("A", "B") if args.pairing == "mirror" else ("-",)
     jobs = [{"seed": s, "leg": leg, "mode": args.mode, "map": args.map, "minutes": args.minutes, "every": args.every,
-             "policies": policies(args.pairing, leg), "wizard_pilot": args.wizard_pilot, "nocards": args.nocards, "draft": args.draft} for s in args.seeds for leg in legs]
+             "policies": policies(args.pairing, leg), "wizard_pilot": args.wizard_pilot, "nocards": args.nocards, "draft": args.draft,
+             "era_vp_end": args.era_vp_end, "era_vp_step": args.era_vp_step, "era_sustain_ms": None if args.era_sustain_s is None else args.era_sustain_s * 1000} for s in args.seeds for leg in legs]
     sha = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=str(HYB)).stdout.strip()
     dirty = bool(subprocess.run(["git", "status", "--porcelain", "--", "wizard_rts"], capture_output=True, text=True, cwd=str(HYB)).stdout.strip())
     manifest = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "git_sha": sha, "git_dirty": dirty, "mode": args.mode, "pairing": args.pairing,
