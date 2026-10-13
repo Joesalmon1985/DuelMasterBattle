@@ -771,9 +771,20 @@ def _target_value(world: Any, name: str, b: dict, centre: tuple[float, float], p
     d = math.hypot(b["tx"] - centre[0], b["ty"] - centre[1])
     if b.get("kind") == "blight_nest":
         # an outbreak nest is worth clearing only where it hurts us: in or beside one of our settlements; the reward grows with its cubes
-        near = any(territory.cheb((b["tx"], b["ty"]), (cc["tx"], cc["ty"])) <= territory.radius_of(cc) + 14 for cc in territory.command_centers(world, name))
+        policy = world.__dict__.get("nest_policy", {}).get(name, "selfish")  # plan v2 7.4 reference policies: ignore | selfish | coop
+        if policy == "ignore":
+            return -1.0
+        from wizard_rts import diplomacy
+
+        scope = territory.command_centers(world, None if policy == "coop" else name)  # coop: a nest beside ANY settlement is everybody's problem
+        near = any(territory.cheb((b["tx"], b["ty"]), (cc["tx"], cc["ty"])) <= territory.radius_of(cc) + 14 for cc in scope)
         if not near:
             return -1.0
+        if policy == "coop":
+            defence = force_near(world, (b["tx"], b["ty"]), 9.0, name, True)
+            if power < ATTACK_RATIO * defence:
+                return -1.0
+            return (12.0 + 8.0 * int(b.get("nest_cubes", 1))) * (1.0 + 2.0 * diplomacy.pressure(world)) / (1.0 + d / 40.0)
         defence = force_near(world, (b["tx"], b["ty"]), 9.0, name, True)
         if power < ATTACK_RATIO * defence:
             return -1.0

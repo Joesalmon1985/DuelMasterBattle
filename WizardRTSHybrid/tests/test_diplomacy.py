@@ -88,3 +88,23 @@ def test_cooperative_ai_rule_signs_truces_under_catastrophe_pressure():
         w.relations.pop(k)
     run(w, 12)
     assert diplomacy.state_of(w, "Red", "Blue") == "war" and diplomacy.state_of(w, "Blue", "Green") == "truce"
+
+
+def test_nest_policies_ignore_selfish_and_coop():
+    from wizard_rts import ai_plus, territory
+
+    w = world()
+    blue_cc = territory.command_centers(w, "Blue")[0]
+    nest = {"kind": "blight_nest", "tx": blue_cc["tx"] + 3, "ty": blue_cc["ty"], "nest_cubes": 3, "faction": "", "faction_name": "", "hp": 1000}
+    centre = (nest["tx"] - 2.0, nest["ty"])
+    value = lambda name: ai_plus._target_value(w, name, nest, centre, 1e12)  # noqa: E731
+    assert value("Red") == -1.0  # selfish (default): the nest is beside Blue's centre, not Red's
+    w.nest_policy = {"Red": "coop", "Blue": "ignore"}
+    assert value("Red") > 0  # cooperative: a nest beside anyone's settlement is everybody's problem
+    assert value("Blue") == -1.0  # ignore: never
+    w.outbreaks_enabled = False
+    from wizard_rts import regions
+
+    base = value("Red")
+    regions.state(w).outbreaks = 6
+    assert value("Red") > base  # the more of the loss limit is used, the more it is worth
