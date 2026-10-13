@@ -29,11 +29,15 @@ def _now(world: Any) -> int:
 # ------------------------------------------------------------------ shipyards
 
 def ship_cost(tribe: str) -> dict[str, int]:
-    imm = wl_defs.defs()["immovables"].get(f"{tribe}_shipconstruction") or {}
+    """What a tribe's ship costs: the buildcost of its shipconstruction immovable when the data has it, else the inputs of the tribe's own shipyard
+    (Widelands sizes a yard's input queues to the ship's cost). Never another tribe's wares: V4 fixed a barbarian fallback that left four tribes unable to launch."""
+    d = wl_defs.defs()
+    imm = d["immovables"].get(f"{tribe}_shipconstruction") or {}
     cost = imm.get("buildcost")
     if cost:
         return dict(cost)
-    return {"blackwood": 10, "log": 2, "cloth": 4}
+    yard = d["buildings"].get(f"{tribe}_shipyard") or {}
+    return {w: int(n) for w, n in (yard.get("inputs") or {}).items() if int(n) > 0}
 
 
 def _site_tile(world: Any, b: dict, radius: int = 6) -> tuple[int, int] | None:
