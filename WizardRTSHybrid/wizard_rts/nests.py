@@ -68,15 +68,16 @@ def _spawn_tile(world: Any, s: Any, i: int) -> tuple[int, int] | None:
 
     centres = [(c["tx"], c["ty"]) for c in territory.command_centers(world, None)]
     for rad in range(3, 20):
-        for dy in range(-rad, rad + 1):
-            for dx in range(-rad, rad + 1):
-                if max(abs(dx), abs(dy)) != rad:
-                    continue
-                t = (centre[0] + dx, centre[1] + dy)
-                if (world.tile_in_map(*t) and t not in world.blocked and t not in world.tree_tiles and t not in world.road_tile_set
-                        and t not in world.reserved_tiles and t not in occupied and s.region_at(*t) == i
-                        and all(max(abs(t[0] - c[0]), abs(t[1] - c[1])) >= CC_CLEARANCE for c in centres)):
-                    return t
+        ring = [(dx, -rad) for dx in range(-rad, rad + 1)]  # the same cells in the same order as scanning the square and keeping Chebyshev == rad
+        for dy in range(-rad + 1, rad):
+            ring += [(-rad, dy), (rad, dy)]
+        ring += [(dx, rad) for dx in range(-rad, rad + 1)]
+        for dx, dy in ring:
+            t = (centre[0] + dx, centre[1] + dy)
+            if (world.tile_in_map(*t) and t not in world.blocked and t not in world.tree_tiles and t not in world.road_tile_set
+                    and t not in world.reserved_tiles and t not in occupied and s.region_at(*t) == i
+                    and all(max(abs(t[0] - c[0]), abs(t[1] - c[1])) >= CC_CLEARANCE for c in centres)):
+                return t
     return None
 
 
