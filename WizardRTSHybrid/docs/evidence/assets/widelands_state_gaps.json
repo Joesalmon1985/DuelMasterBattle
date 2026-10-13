@@ -1,0 +1,295 @@
+{
+ "declared_without_files": {
+  "amazons_cassava_plantation": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_cassava_root_cooker": [
+   "unoccupied"
+  ],
+  "amazons_charcoal_kiln": [
+   "unoccupied"
+  ],
+  "amazons_chocolate_brewery": [
+   "unoccupied"
+  ],
+  "amazons_cocoa_farm": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_dressmakery": [
+   "unoccupied"
+  ],
+  "amazons_food_preserver": [
+   "unoccupied"
+  ],
+  "amazons_furnace": [
+   "unoccupied"
+  ],
+  "amazons_gold_digger_dwelling": [
+   "build",
+   "unoccupied",
+   "empty"
+  ],
+  "amazons_hunter_gatherers_hut": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_initiation_site": [
+   "unoccupied"
+  ],
+  "amazons_jungle_preservers_hut": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_liana_cutters_hut": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_rare_tree_cutters_hut": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_rope_weaver_booth": [
+   "unoccupied"
+  ],
+  "amazons_stone_workshop": [
+   "unoccupied"
+  ],
+  "amazons_stonecutters_hut": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_stonemine": [
+   "build",
+   "unoccupied",
+   "empty"
+  ],
+  "amazons_tapir_farm": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_woodcutters_hut": [
+   "build",
+   "unoccupied"
+  ],
+  "atlanteans_armorsmithy": [
+   "working"
+  ],
+  "atlanteans_coalmine": [
+   "working",
+   "empty"
+  ],
+  "atlanteans_crystalmine": [
+   "working",
+   "empty"
+  ],
+  "atlanteans_gold_spinning_mill": [
+   "working"
+  ],
+  "atlanteans_goldmine": [
+   "working",
+   "empty"
+  ],
+  "atlanteans_horsefarm": [
+   "working"
+  ],
+  "atlanteans_ironmine": [
+   "working",
+   "empty"
+  ],
+  "atlanteans_smelting_works": [
+   "working"
+  ],
+  "atlanteans_spiderfarm": [
+   "working"
+  ],
+  "atlanteans_toolsmithy": [
+   "working"
+  ],
+  "atlanteans_weaponsmithy": [
+   "working"
+  ],
+  "atlanteans_weaving_mill": [
+   "working"
+  ],
+  "atlanteans_well": [
+   "working"
+  ],
+  "barbarians_bakery": [
+   "working"
+  ],
+  "barbarians_brewery": [
+   "working"
+  ],
+  "barbarians_cattlefarm": [
+   "working"
+  ],
+  "barbarians_lime_kiln": [
+   "working"
+  ],
+  "barbarians_micro_brewery": [
+   "working"
+  ],
+  "barbarians_smelting_works": [
+   "working"
+  ],
+  "empire_brewery": [
+   "working"
+  ],
+  "empire_charcoal_kiln": [
+   "working"
+  ],
+  "empire_donkeyfarm": [
+   "working"
+  ],
+  "empire_inn": [
+   "working"
+  ],
+  "empire_piggery": [
+   "working"
+  ],
+  "empire_sawmill": [
+   "working"
+  ],
+  "empire_sheepfarm": [
+   "working"
+  ],
+  "empire_stonemasons_house": [
+   "working"
+  ],
+  "empire_tavern": [
+   "working"
+  ],
+  "empire_toolsmithy": [
+   "working"
+  ],
+  "empire_well": [
+   "working"
+  ],
+  "empire_winery": [
+   "working"
+  ],
+  "frisians_armor_smithy_large": [
+   "unoccupied"
+  ],
+  "frisians_armor_smithy_small": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_bakery": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_barracks": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_beekeepers_house": [
+   "unoccupied"
+  ],
+  "frisians_berry_farm": [
+   "unoccupied"
+  ],
+  "frisians_blacksmithy": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_brewery": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_brick_kiln": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_charcoal_kiln": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_coalmine": [
+   "unoccupied"
+  ],
+  "frisians_coalmine_deep": [
+   "unoccupied"
+  ],
+  "frisians_collectors_house": [
+   "unoccupied"
+  ],
+  "frisians_drinking_hall": [
+   "unoccupied"
+  ],
+  "frisians_farm": [
+   "unoccupied"
+  ],
+  "frisians_foresters_house": [
+   "unoccupied"
+  ],
+  "frisians_furnace": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_goldmine": [
+   "unoccupied"
+  ],
+  "frisians_goldmine_deep": [
+   "unoccupied"
+  ],
+  "frisians_honey_bread_bakery": [
+   "unoccupied"
+  ],
+  "frisians_hunters_house": [
+   "unoccupied"
+  ],
+  "frisians_ironmine": [
+   "unoccupied"
+  ],
+  "frisians_ironmine_deep": [
+   "unoccupied"
+  ],
+  "frisians_mead_brewery": [
+   "unoccupied"
+  ],
+  "frisians_quarry": [
+   "unoccupied"
+  ],
+  "frisians_recycling_center": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_reed_farm": [
+   "unoccupied"
+  ],
+  "frisians_reindeer_farm": [
+   "unoccupied"
+  ],
+  "frisians_rockmine": [
+   "unoccupied"
+  ],
+  "frisians_rockmine_deep": [
+   "unoccupied"
+  ],
+  "frisians_sewing_room": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_smokery": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_tailors_shop": [
+   "unoccupied"
+  ],
+  "frisians_tavern": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_weaving_mill": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_woodcutters_house": [
+   "unoccupied"
+  ]
+ }
+}

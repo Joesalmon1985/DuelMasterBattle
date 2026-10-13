@@ -429,6 +429,15 @@ func _item_for(entity: Dictionary) -> Dictionary:
 		if items.has(tkey):
 			return items[tkey]
 		return items.get(definition, {})
+	if str(entity.get("class", "")) == "building" and definition.begins_with("widelands."):
+		# state animations imported from the building's own Lua declaration (scripts/import_widelands_states.py); idle stays the fallback
+		var state := ""
+		if entity.has("constructing"):
+			state = "build"
+		elif bool(entity.get("working", false)):
+			state = "working"
+		if state != "" and items.has("%s.%s" % [definition, state]):
+			return items["%s.%s" % [definition, state]]
 	if str(entity.get("class", "")) == "animal":
 		var akey := "%s.idle" % definition
 		if str(entity.get("status", "")) == "moving":

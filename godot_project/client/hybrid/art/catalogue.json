@@ -2840,6 +2840,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.amazons_cassava_root_cooker.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/cassava_root_cooker/working",
+   "source_note": "amazons_cassava_root_cooker working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_cassava_root_cooker_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 380,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
+  },
+  {
    "id": "widelands.amazons_charcoal_burner_worker.idle",
    "status": "imported",
    "game": "widelands",
@@ -3134,6 +3156,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.amazons_charcoal_kiln.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/charcoal_kiln/working",
+   "source_note": "amazons_charcoal_kiln working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_charcoal_kiln_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 385,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    45
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
+  },
+  {
    "id": "widelands.amazons_chocolate_brewery",
    "status": "imported",
    "game": "widelands",
@@ -3153,6 +3197,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.amazons_chocolate_brewery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/chocolate_brewery/working",
+   "source_note": "amazons_chocolate_brewery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_chocolate_brewery_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 380,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
   },
   {
    "id": "widelands.amazons_cocoa_farm",
@@ -4058,6 +4124,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.amazons_dressmakery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/dressmakery/working",
+   "source_note": "amazons_dressmakery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_dressmakery_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 380,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
+  },
+  {
    "id": "widelands.amazons_food_preserver",
    "status": "imported",
    "game": "widelands",
@@ -4077,6 +4165,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.amazons_food_preserver.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/food_preserver/working",
+   "source_note": "amazons_food_preserver working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_food_preserver_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 380,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
   },
   {
    "id": "widelands.amazons_furnace",
@@ -4100,6 +4210,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.amazons_furnace.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/furnace/working",
+   "source_note": "amazons_furnace working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_furnace_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 380,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
+  },
+  {
    "id": "widelands.amazons_gold_digger_dwelling",
    "status": "imported",
    "game": "widelands",
@@ -4119,6 +4251,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.amazons_gold_digger_dwelling.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/gold_digger_dwelling/working",
+   "source_note": "amazons_gold_digger_dwelling working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_gold_digger_dwelling_working.png",
+   "mode": "sheet",
+   "width": 450,
+   "height": 325,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    39,
+    46
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
   },
   {
    "id": "widelands.amazons_gold_digger_worker.idle",
@@ -5003,6 +5157,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.amazons_initiation_site.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/initiation_site/working",
+   "source_note": "amazons_initiation_site working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_initiation_site_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 380,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
+  },
+  {
    "id": "widelands.amazons_jungle_preserver_worker.dig",
    "status": "imported",
    "game": "widelands",
@@ -5570,6 +5746,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.amazons_rope_weaver_booth.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/rope_weaver_booth/working",
+   "source_note": "amazons_rope_weaver_booth working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_rope_weaver_booth_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 380,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
+  },
+  {
    "id": "widelands.amazons_stone_carver_worker.idle",
    "status": "imported",
    "game": "widelands",
@@ -5862,6 +6060,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.amazons_stone_workshop.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/stone_workshop/working",
+   "source_note": "amazons_stone_workshop working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_stone_workshop_working.png",
+   "mode": "sheet",
+   "width": 516,
+   "height": 380,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
   },
   {
    "id": "widelands.amazons_stonecutter_worker.hacking",
@@ -6200,6 +6420,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.amazons_stonemine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/stonemine/working",
+   "source_note": "amazons_stonemine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_stonemine_working.png",
+   "mode": "sheet",
+   "width": 330,
+   "height": 192,
+   "columns": 5,
+   "rows": 3,
+   "frames": 15,
+   "hotspot": [
+    39,
+    46
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
+  },
+  {
    "id": "widelands.amazons_tapir_breeder_worker.idle",
    "status": "imported",
    "game": "widelands",
@@ -6492,6 +6734,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.amazons_tapir_farm.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/amazons/tapir_farm/working",
+   "source_note": "amazons_tapir_farm working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/amazons_tapir_farm_working.png",
+   "mode": "sheet",
+   "width": 696,
+   "height": 360,
+   "columns": 6,
+   "rows": 5,
+   "frames": 30,
+   "hotspot": [
+    71,
+    49
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
   },
   {
    "id": "widelands.amazons_trainer_worker.idle",
@@ -8048,6 +8312,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.atlanteans_bakery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/atlanteans/bakery/working",
+   "source_note": "atlanteans_bakery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/atlanteans_bakery_working.png",
+   "mode": "sheet",
+   "width": 550,
+   "height": 100,
+   "columns": 5,
+   "rows": 1,
+   "frames": 5,
+   "hotspot": [
+    54,
+    74
+   ],
+   "scale": 2,
+   "fps": 20,
+   "state": "working"
+  },
+  {
    "id": "widelands.atlanteans_barracks",
    "status": "imported",
    "game": "widelands",
@@ -8067,6 +8353,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.atlanteans_barracks.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/atlanteans/barracks/build",
+   "source_note": "atlanteans_barracks build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/atlanteans_barracks_build.png",
+   "mode": "sheet",
+   "width": 97,
+   "height": 237,
+   "columns": 1,
+   "rows": 3,
+   "frames": 3,
+   "hotspot": [
+    50,
+    56
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
   },
   {
    "id": "widelands.atlanteans_blackroot_farm",
@@ -8949,6 +9257,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.atlanteans_charcoal_kiln.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/atlanteans/charcoal_kiln/working",
+   "source_note": "atlanteans_charcoal_kiln working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/atlanteans_charcoal_kiln_working.png",
+   "mode": "sheet",
+   "width": 550,
+   "height": 84,
+   "columns": 5,
+   "rows": 1,
+   "frames": 5,
+   "hotspot": [
+    50,
+    61
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.atlanteans_coalmine",
@@ -10652,6 +10982,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.atlanteans_mill.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/atlanteans/mill/working",
+   "source_note": "atlanteans_mill working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/atlanteans_mill_working.png",
+   "mode": "sheet",
+   "width": 1060,
+   "height": 192,
+   "columns": 10,
+   "rows": 2,
+   "frames": 19,
+   "hotspot": [
+    63,
+    68
+   ],
+   "scale": 2,
+   "fps": 25,
+   "state": "working"
+  },
+  {
    "id": "widelands.atlanteans_miller_worker.walk.e",
    "status": "imported",
    "game": "widelands",
@@ -11196,6 +11548,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.atlanteans_sawmill.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/atlanteans/sawmill/working",
+   "source_note": "atlanteans_sawmill working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/atlanteans_sawmill_working.png",
+   "mode": "sheet",
+   "width": 1060,
+   "height": 192,
+   "columns": 10,
+   "rows": 2,
+   "frames": 19,
+   "hotspot": [
+    60,
+    68
+   ],
+   "scale": 2,
+   "fps": 25,
+   "state": "working"
   },
   {
    "id": "widelands.atlanteans_sawyer_worker.walk.e",
@@ -11994,6 +12368,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.atlanteans_smokery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/atlanteans/smokery/working",
+   "source_note": "atlanteans_smokery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/atlanteans_smokery_working.png",
+   "mode": "sheet",
+   "width": 550,
+   "height": 100,
+   "columns": 5,
+   "rows": 1,
+   "frames": 5,
+   "hotspot": [
+    54,
+    74
+   ],
+   "scale": 2,
+   "fps": 20,
+   "state": "working"
   },
   {
    "id": "widelands.atlanteans_spiderbreeder_worker.walk.e",
@@ -13991,6 +14387,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_ax_workshop.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ax_workshop/build",
+   "source_note": "barbarians_ax_workshop build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ax_workshop_build.png",
+   "mode": "sheet",
+   "width": 234,
+   "height": 178,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    57,
+    64
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_ax_workshop.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ax_workshop/unoccupied",
+   "source_note": "barbarians_ax_workshop unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ax_workshop_unoccupied.png",
+   "mode": "sheet",
+   "width": 120,
+   "height": 101,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    57,
+    76
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.barbarians_ax_workshop.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ax_workshop/working",
+   "source_note": "barbarians_ax_workshop working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ax_workshop_working.png",
+   "mode": "sheet",
+   "width": 468,
+   "height": 500,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    57,
+    75
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_baker_worker.walk.e",
    "status": "imported",
    "game": "widelands",
@@ -14264,6 +14726,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_bakery.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/bakery/unoccupied",
+   "source_note": "barbarians_bakery unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_bakery_unoccupied.png",
+   "mode": "sheet",
+   "width": 100,
+   "height": 78,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    41,
+    58
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
    "id": "widelands.barbarians_barracks",
    "status": "imported",
    "game": "widelands",
@@ -14285,6 +14769,28 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_barracks.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/barracks/build",
+   "source_note": "barbarians_barracks build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_barracks_build.png",
+   "mode": "sheet",
+   "width": 105,
+   "height": 228,
+   "columns": 1,
+   "rows": 3,
+   "frames": 3,
+   "hotspot": [
+    55,
+    49
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
    "id": "widelands.barbarians_big_inn",
    "status": "imported",
    "game": "widelands",
@@ -14304,6 +14810,50 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_big_inn.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/big_inn/build",
+   "source_note": "barbarians_big_inn build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_big_inn_build.png",
+   "mode": "sheet",
+   "width": 224,
+   "height": 178,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    57,
+    67
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_big_inn.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/big_inn/working",
+   "source_note": "barbarians_big_inn working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_big_inn_working.png",
+   "mode": "sheet",
+   "width": 448,
+   "height": 515,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    57,
+    81
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_blacksmith_master_worker.walk.e",
@@ -16049,6 +16599,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_charcoal_kiln.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/charcoal_kiln/build",
+   "source_note": "barbarians_charcoal_kiln build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_charcoal_kiln_build.png",
+   "mode": "sheet",
+   "width": 198,
+   "height": 142,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    50,
+    51
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_charcoal_kiln.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/charcoal_kiln/working",
+   "source_note": "barbarians_charcoal_kiln working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_charcoal_kiln_working.png",
+   "mode": "sheet",
+   "width": 400,
+   "height": 455,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    50,
+    71
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_coalmine",
    "status": "imported",
    "game": "widelands",
@@ -16068,6 +16662,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_coalmine.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine/build",
+   "source_note": "barbarians_coalmine build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_build.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 102,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_coalmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine/empty",
+   "source_note": "barbarians_coalmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_empty.png",
+   "mode": "sheet",
+   "width": 64,
+   "height": 51,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_coalmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine/working",
+   "source_note": "barbarians_coalmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_working.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 102,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_coalmine_deep",
@@ -16091,6 +16751,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_coalmine_deep.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine_deep/build",
+   "source_note": "barbarians_coalmine_deep build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_deep_build.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 104,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_coalmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine_deep/empty",
+   "source_note": "barbarians_coalmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 64,
+   "height": 52,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_coalmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine_deep/working",
+   "source_note": "barbarians_coalmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_deep_working.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 104,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_coalmine_deeper",
    "status": "imported",
    "game": "widelands",
@@ -16112,6 +16838,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_coalmine_deeper.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine_deeper/build",
+   "source_note": "barbarians_coalmine_deeper build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_deeper_build.png",
+   "mode": "sheet",
+   "width": 208,
+   "height": 116,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_coalmine_deeper.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine_deeper/empty",
+   "source_note": "barbarians_coalmine_deeper empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_deeper_empty.png",
+   "mode": "sheet",
+   "width": 104,
+   "height": 58,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_coalmine_deeper.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/coalmine_deeper/working",
+   "source_note": "barbarians_coalmine_deeper working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_coalmine_deeper_working.png",
+   "mode": "sheet",
+   "width": 208,
+   "height": 116,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_farm",
    "status": "imported",
    "game": "widelands",
@@ -16131,6 +16923,72 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.barbarians_farm.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/farm/build",
+   "source_note": "barbarians_farm build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_farm_build.png",
+   "mode": "sheet",
+   "width": 232,
+   "height": 172,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    69,
+    76
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_farm.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/farm/unoccupied",
+   "source_note": "barbarians_farm unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_farm_unoccupied.png",
+   "mode": "sheet",
+   "width": 116,
+   "height": 86,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    69,
+    76
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.barbarians_farm.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/farm/working",
+   "source_note": "barbarians_farm working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_farm_working.png",
+   "mode": "sheet",
+   "width": 464,
+   "height": 430,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    69,
+    76
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_farmer_worker.gather",
@@ -16637,6 +17495,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_fishers_hut.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/fishers_hut/build",
+   "source_note": "barbarians_fishers_hut build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_fishers_hut_build.png",
+   "mode": "sheet",
+   "width": 126,
+   "height": 120,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    39,
+    52
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_fishers_hut.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/fishers_hut/unoccupied",
+   "source_note": "barbarians_fishers_hut unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_fishers_hut_unoccupied.png",
+   "mode": "sheet",
+   "width": 76,
+   "height": 60,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    39,
+    52
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
    "id": "widelands.barbarians_gardener_worker.harvest",
    "status": "imported",
    "game": "widelands",
@@ -16952,6 +17854,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_goldmine.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine/build",
+   "source_note": "barbarians_goldmine build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_build.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 102,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_goldmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine/empty",
+   "source_note": "barbarians_goldmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_empty.png",
+   "mode": "sheet",
+   "width": 64,
+   "height": 51,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_goldmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine/working",
+   "source_note": "barbarians_goldmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_working.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 102,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_goldmine_deep",
    "status": "imported",
    "game": "widelands",
@@ -16971,6 +17939,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_goldmine_deep.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine_deep/build",
+   "source_note": "barbarians_goldmine_deep build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_deep_build.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 104,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_goldmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine_deep/empty",
+   "source_note": "barbarians_goldmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 64,
+   "height": 52,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_goldmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine_deep/working",
+   "source_note": "barbarians_goldmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_deep_working.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 104,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_goldmine_deeper",
@@ -16994,6 +18028,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_goldmine_deeper.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine_deeper/build",
+   "source_note": "barbarians_goldmine_deeper build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_deeper_build.png",
+   "mode": "sheet",
+   "width": 208,
+   "height": 116,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_goldmine_deeper.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine_deeper/empty",
+   "source_note": "barbarians_goldmine_deeper empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_deeper_empty.png",
+   "mode": "sheet",
+   "width": 104,
+   "height": 58,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_goldmine_deeper.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/goldmine_deeper/working",
+   "source_note": "barbarians_goldmine_deeper working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_goldmine_deeper_working.png",
+   "mode": "sheet",
+   "width": 208,
+   "height": 116,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_granitemine",
    "status": "imported",
    "game": "widelands",
@@ -17013,6 +18113,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_granitemine.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/granitemine/build",
+   "source_note": "barbarians_granitemine build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_granitemine_build.png",
+   "mode": "sheet",
+   "width": 178,
+   "height": 112,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    42,
+    35
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_granitemine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/granitemine/empty",
+   "source_note": "barbarians_granitemine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_granitemine_empty.png",
+   "mode": "sheet",
+   "width": 89,
+   "height": 56,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    42,
+    35
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_granitemine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/granitemine/working",
+   "source_note": "barbarians_granitemine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_granitemine_working.png",
+   "mode": "sheet",
+   "width": 178,
+   "height": 112,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    42,
+    35
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_helmsmith_worker.walk.e",
@@ -17286,6 +18452,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_helmsmithy.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/helmsmithy/build",
+   "source_note": "barbarians_helmsmithy build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_helmsmithy_build.png",
+   "mode": "sheet",
+   "width": 238,
+   "height": 178,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    65,
+    83
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_helmsmithy.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/helmsmithy/unoccupied",
+   "source_note": "barbarians_helmsmithy unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_helmsmithy_unoccupied.png",
+   "mode": "sheet",
+   "width": 119,
+   "height": 89,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    65,
+    83
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.barbarians_helmsmithy.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/helmsmithy/working",
+   "source_note": "barbarians_helmsmithy working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_helmsmithy_working.png",
+   "mode": "sheet",
+   "width": 476,
+   "height": 450,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    65,
+    83
+   ],
+   "scale": 2,
+   "fps": 20,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_hunter_worker.idle",
@@ -17582,6 +18814,50 @@
    "fps": 8
   },
   {
+   "id": "widelands.barbarians_hunters_hut.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/hunters_hut/build",
+   "source_note": "barbarians_hunters_hut build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_hunters_hut_build.png",
+   "mode": "sheet",
+   "width": 136,
+   "height": 124,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    43,
+    44
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_hunters_hut.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/hunters_hut/unoccupied",
+   "source_note": "barbarians_hunters_hut unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_hunters_hut_unoccupied.png",
+   "mode": "sheet",
+   "width": 69,
+   "height": 62,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    44,
+    44
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
    "id": "widelands.barbarians_inn",
    "status": "imported",
    "game": "widelands",
@@ -17601,6 +18877,50 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_inn.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/inn/build",
+   "source_note": "barbarians_inn build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_inn_build.png",
+   "mode": "sheet",
+   "width": 212,
+   "height": 206,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    51,
+    81
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_inn.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/inn/working",
+   "source_note": "barbarians_inn working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_inn_working.png",
+   "mode": "sheet",
+   "width": 424,
+   "height": 515,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    51,
+    81
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_innkeeper_worker.walk.e",
@@ -17876,6 +19196,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_ironmine.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine/build",
+   "source_note": "barbarians_ironmine build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_build.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 102,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_ironmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine/empty",
+   "source_note": "barbarians_ironmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_empty.png",
+   "mode": "sheet",
+   "width": 64,
+   "height": 51,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_ironmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine/working",
+   "source_note": "barbarians_ironmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_working.png",
+   "mode": "sheet",
+   "width": 128,
+   "height": 102,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    36
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_ironmine_deep",
    "status": "imported",
    "game": "widelands",
@@ -17897,6 +19283,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_ironmine_deep.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine_deep/build",
+   "source_note": "barbarians_ironmine_deep build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_deep_build.png",
+   "mode": "sheet",
+   "width": 130,
+   "height": 104,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_ironmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine_deep/empty",
+   "source_note": "barbarians_ironmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 65,
+   "height": 52,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_ironmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine_deep/working",
+   "source_note": "barbarians_ironmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_deep_working.png",
+   "mode": "sheet",
+   "width": 130,
+   "height": 104,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    21,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_ironmine_deeper",
    "status": "imported",
    "game": "widelands",
@@ -17916,6 +19368,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_ironmine_deeper.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine_deeper/build",
+   "source_note": "barbarians_ironmine_deeper build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_deeper_build.png",
+   "mode": "sheet",
+   "width": 208,
+   "height": 116,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_ironmine_deeper.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine_deeper/empty",
+   "source_note": "barbarians_ironmine_deeper empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_deeper_empty.png",
+   "mode": "sheet",
+   "width": 104,
+   "height": 58,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.barbarians_ironmine_deeper.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/ironmine_deeper/working",
+   "source_note": "barbarians_ironmine_deeper working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_ironmine_deeper_working.png",
+   "mode": "sheet",
+   "width": 208,
+   "height": 116,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    60,
+    37
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_lime_burner_worker.walk.e",
@@ -18506,6 +20024,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_lumberjacks_hut.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/lumberjacks_hut/build",
+   "source_note": "barbarians_lumberjacks_hut build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_lumberjacks_hut_build.png",
+   "mode": "sheet",
+   "width": 136,
+   "height": 136,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    42,
+    44
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_lumberjacks_hut.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/lumberjacks_hut/unoccupied",
+   "source_note": "barbarians_lumberjacks_hut unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_lumberjacks_hut_unoccupied.png",
+   "mode": "sheet",
+   "width": 80,
+   "height": 69,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    43,
+    45
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
    "id": "widelands.barbarians_metal_workshop",
    "status": "imported",
    "game": "widelands",
@@ -18525,6 +20087,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_metal_workshop.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/metal_workshop/build",
+   "source_note": "barbarians_metal_workshop build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_metal_workshop_build.png",
+   "mode": "sheet",
+   "width": 216,
+   "height": 178,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    57,
+    64
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_metal_workshop.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/metal_workshop/unoccupied",
+   "source_note": "barbarians_metal_workshop unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_metal_workshop_unoccupied.png",
+   "mode": "sheet",
+   "width": 120,
+   "height": 101,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    57,
+    76
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.barbarians_metal_workshop.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/metal_workshop/working",
+   "source_note": "barbarians_metal_workshop working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_metal_workshop_working.png",
+   "mode": "sheet",
+   "width": 448,
+   "height": 445,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    57,
+    64
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_micro_brewery",
@@ -19325,6 +20953,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_quarry.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/quarry/build",
+   "source_note": "barbarians_quarry build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_quarry_build.png",
+   "mode": "sheet",
+   "width": 142,
+   "height": 110,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    45,
+    48
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_quarry.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/quarry/unoccupied",
+   "source_note": "barbarians_quarry unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_quarry_unoccupied.png",
+   "mode": "sheet",
+   "width": 71,
+   "height": 62,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    45,
+    48
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
    "id": "widelands.barbarians_ranger_worker.dig",
    "status": "imported",
    "game": "widelands",
@@ -19533,6 +21205,50 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.barbarians_rangers_hut.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/rangers_hut/build",
+   "source_note": "barbarians_rangers_hut build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_rangers_hut_build.png",
+   "mode": "sheet",
+   "width": 138,
+   "height": 112,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    45,
+    49
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_rangers_hut.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/rangers_hut/unoccupied",
+   "source_note": "barbarians_rangers_hut unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_rangers_hut_unoccupied.png",
+   "mode": "sheet",
+   "width": 69,
+   "height": 67,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    45,
+    49
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
   },
   {
    "id": "widelands.barbarians_reed_yard",
@@ -20123,6 +21839,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_tavern.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/tavern/build",
+   "source_note": "barbarians_tavern build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_tavern_build.png",
+   "mode": "sheet",
+   "width": 210,
+   "height": 172,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    51,
+    70
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_tavern.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/tavern/working",
+   "source_note": "barbarians_tavern working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_tavern_working.png",
+   "mode": "sheet",
+   "width": 420,
+   "height": 435,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    51,
+    70
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_trainer_worker.walk.e",
    "status": "imported",
    "game": "widelands",
@@ -20268,6 +22028,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.barbarians_warmill.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/warmill/build",
+   "source_note": "barbarians_warmill build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_warmill_build.png",
+   "mode": "sheet",
+   "width": 234,
+   "height": 303,
+   "columns": 2,
+   "rows": 3,
+   "frames": 5,
+   "hotspot": [
+    57,
+    76
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_warmill.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/warmill/unoccupied",
+   "source_note": "barbarians_warmill unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_warmill_unoccupied.png",
+   "mode": "sheet",
+   "width": 120,
+   "height": 101,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    57,
+    76
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.barbarians_warmill.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/warmill/working",
+   "source_note": "barbarians_warmill working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_warmill_working.png",
+   "mode": "sheet",
+   "width": 480,
+   "height": 505,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    57,
+    76
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.barbarians_weaver_worker.walk.e",
@@ -20543,6 +22369,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_weaving_mill.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/weaving_mill/build",
+   "source_note": "barbarians_weaving_mill build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_weaving_mill_build.png",
+   "mode": "sheet",
+   "width": 120,
+   "height": 100,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    36,
+    74
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_weaving_mill.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/weaving_mill/working",
+   "source_note": "barbarians_weaving_mill working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_weaving_mill_working.png",
+   "mode": "sheet",
+   "width": 120,
+   "height": 100,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    36,
+    74
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_well",
    "status": "imported",
    "game": "widelands",
@@ -20564,6 +22434,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.barbarians_well.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/well/build",
+   "source_note": "barbarians_well build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_well_build.png",
+   "mode": "sheet",
+   "width": 58,
+   "height": 70,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    19,
+    33
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_well.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/well/working",
+   "source_note": "barbarians_well working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_well_working.png",
+   "mode": "sheet",
+   "width": 62,
+   "height": 80,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    19,
+    33
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.barbarians_wood_hardener",
    "status": "imported",
    "game": "widelands",
@@ -20583,6 +22497,72 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.barbarians_wood_hardener.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/wood_hardener/build",
+   "source_note": "barbarians_wood_hardener build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_wood_hardener_build.png",
+   "mode": "sheet",
+   "width": 194,
+   "height": 172,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    50,
+    61
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.barbarians_wood_hardener.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/wood_hardener/unoccupied",
+   "source_note": "barbarians_wood_hardener unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_wood_hardener_unoccupied.png",
+   "mode": "sheet",
+   "width": 97,
+   "height": 86,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    52,
+    64
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.barbarians_wood_hardener.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/barbarians/wood_hardener/working",
+   "source_note": "barbarians_wood_hardener working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_wood_hardener_working.png",
+   "mode": "sheet",
+   "width": 392,
+   "height": 435,
+   "columns": 4,
+   "rows": 5,
+   "frames": 20,
+   "hotspot": [
+    53,
+    65
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.beech",
@@ -21530,6 +23510,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.empire_armorsmithy.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/armorsmithy/build",
+   "source_note": "empire_armorsmithy build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_armorsmithy_build.png",
+   "mode": "sheet",
+   "width": 400,
+   "height": 98,
+   "columns": 4,
+   "rows": 1,
+   "frames": 4,
+   "hotspot": [
+    50,
+    66
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.empire_armorsmithy.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/armorsmithy/unoccupied",
+   "source_note": "empire_armorsmithy unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_armorsmithy_unoccupied.png",
+   "mode": "sheet",
+   "width": 100,
+   "height": 98,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    50,
+    66
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.empire_armorsmithy.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/armorsmithy/working",
+   "source_note": "empire_armorsmithy working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_armorsmithy_working.png",
+   "mode": "sheet",
+   "width": 1000,
+   "height": 196,
+   "columns": 10,
+   "rows": 2,
+   "frames": 20,
+   "hotspot": [
+    50,
+    66
+   ],
+   "scale": 2,
+   "fps": 5,
+   "state": "working"
+  },
+  {
    "id": "widelands.empire_baker_worker.walk.e",
    "status": "imported",
    "game": "widelands",
@@ -21803,6 +23849,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.empire_bakery.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/bakery/build",
+   "source_note": "empire_bakery build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_bakery_build.png",
+   "mode": "sheet",
+   "width": 416,
+   "height": 84,
+   "columns": 4,
+   "rows": 1,
+   "frames": 4,
+   "hotspot": [
+    50,
+    62
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.empire_bakery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/bakery/working",
+   "source_note": "empire_bakery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_bakery_working.png",
+   "mode": "sheet",
+   "width": 1040,
+   "height": 168,
+   "columns": 10,
+   "rows": 2,
+   "frames": 20,
+   "hotspot": [
+    50,
+    62
+   ],
+   "scale": 2,
+   "fps": 2,
+   "state": "working"
+  },
+  {
    "id": "widelands.empire_barracks",
    "status": "imported",
    "game": "widelands",
@@ -21822,6 +23912,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.empire_barracks.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/barracks/build",
+   "source_note": "empire_barracks build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_barracks_build.png",
+   "mode": "sheet",
+   "width": 112,
+   "height": 300,
+   "columns": 1,
+   "rows": 3,
+   "frames": 3,
+   "hotspot": [
+    51,
+    71
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
   },
   {
    "id": "widelands.empire_brewer_worker.walk.e",
@@ -22916,6 +25028,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.empire_coalmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/coalmine/empty",
+   "source_note": "empire_coalmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_coalmine_empty.png",
+   "mode": "sheet",
+   "width": 82,
+   "height": 74,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    51,
+    54
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.empire_coalmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/coalmine/working",
+   "source_note": "empire_coalmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_coalmine_working.png",
+   "mode": "sheet",
+   "width": 820,
+   "height": 74,
+   "columns": 10,
+   "rows": 1,
+   "frames": 10,
+   "hotspot": [
+    51,
+    54
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.empire_coalmine_deep",
    "status": "imported",
    "game": "widelands",
@@ -22935,6 +25091,50 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.empire_coalmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/coalmine_deep/empty",
+   "source_note": "empire_coalmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_coalmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 82,
+   "height": 86,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    51,
+    66
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.empire_coalmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/coalmine_deep/working",
+   "source_note": "empire_coalmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_coalmine_deep_working.png",
+   "mode": "sheet",
+   "width": 820,
+   "height": 86,
+   "columns": 10,
+   "rows": 1,
+   "frames": 10,
+   "hotspot": [
+    51,
+    66
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.empire_donkeybreeder_worker.walk.e",
@@ -24197,6 +26397,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.empire_goldmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/goldmine/empty",
+   "source_note": "empire_goldmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_goldmine_empty.png",
+   "mode": "sheet",
+   "width": 82,
+   "height": 74,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    51,
+    54
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.empire_goldmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/goldmine/working",
+   "source_note": "empire_goldmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_goldmine_working.png",
+   "mode": "sheet",
+   "width": 820,
+   "height": 74,
+   "columns": 10,
+   "rows": 1,
+   "frames": 10,
+   "hotspot": [
+    51,
+    54
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.empire_goldmine_deep",
    "status": "imported",
    "game": "widelands",
@@ -24216,6 +26460,50 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.empire_goldmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/goldmine_deep/empty",
+   "source_note": "empire_goldmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_goldmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 82,
+   "height": 86,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    51,
+    66
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.empire_goldmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/goldmine_deep/working",
+   "source_note": "empire_goldmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_goldmine_deep_working.png",
+   "mode": "sheet",
+   "width": 820,
+   "height": 86,
+   "columns": 10,
+   "rows": 1,
+   "frames": 10,
+   "hotspot": [
+    51,
+    66
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.empire_hunter_worker.idle",
@@ -24806,6 +27094,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.empire_ironmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/ironmine/empty",
+   "source_note": "empire_ironmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_ironmine_empty.png",
+   "mode": "sheet",
+   "width": 82,
+   "height": 74,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    51,
+    54
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.empire_ironmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/ironmine/working",
+   "source_note": "empire_ironmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_ironmine_working.png",
+   "mode": "sheet",
+   "width": 820,
+   "height": 74,
+   "columns": 10,
+   "rows": 1,
+   "frames": 10,
+   "hotspot": [
+    51,
+    54
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.empire_ironmine_deep",
    "status": "imported",
    "game": "widelands",
@@ -24825,6 +27157,50 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.empire_ironmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/ironmine_deep/empty",
+   "source_note": "empire_ironmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_ironmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 82,
+   "height": 86,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    51,
+    66
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.empire_ironmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/ironmine_deep/working",
+   "source_note": "empire_ironmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_ironmine_deep_working.png",
+   "mode": "sheet",
+   "width": 820,
+   "height": 86,
+   "columns": 10,
+   "rows": 1,
+   "frames": 10,
+   "hotspot": [
+    51,
+    66
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.empire_lumberjack_worker.hacking",
@@ -25163,6 +27539,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.empire_marblemine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/marblemine/empty",
+   "source_note": "empire_marblemine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_marblemine_empty.png",
+   "mode": "sheet",
+   "width": 82,
+   "height": 74,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    51,
+    54
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.empire_marblemine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/marblemine/working",
+   "source_note": "empire_marblemine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_marblemine_working.png",
+   "mode": "sheet",
+   "width": 820,
+   "height": 74,
+   "columns": 10,
+   "rows": 1,
+   "frames": 10,
+   "hotspot": [
+    51,
+    54
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.empire_marblemine_deep",
    "status": "imported",
    "game": "widelands",
@@ -25184,6 +27604,50 @@
    "fps": 0
   },
   {
+   "id": "widelands.empire_marblemine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/marblemine_deep/empty",
+   "source_note": "empire_marblemine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_marblemine_deep_empty.png",
+   "mode": "sheet",
+   "width": 82,
+   "height": 86,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    51,
+    66
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.empire_marblemine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/marblemine_deep/working",
+   "source_note": "empire_marblemine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_marblemine_deep_working.png",
+   "mode": "sheet",
+   "width": 820,
+   "height": 86,
+   "columns": 10,
+   "rows": 1,
+   "frames": 10,
+   "hotspot": [
+    51,
+    66
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.empire_mill",
    "status": "imported",
    "game": "widelands",
@@ -25203,6 +27667,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.empire_mill.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/mill/build",
+   "source_note": "empire_mill build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_mill_build.png",
+   "mode": "sheet",
+   "width": 188,
+   "height": 100,
+   "columns": 2,
+   "rows": 1,
+   "frames": 2,
+   "hotspot": [
+    44,
+    90
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.empire_mill.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/mill/unoccupied",
+   "source_note": "empire_mill unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_mill_unoccupied.png",
+   "mode": "sheet",
+   "width": 94,
+   "height": 100,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    44,
+    90
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.empire_mill.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/mill/working",
+   "source_note": "empire_mill working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_mill_working.png",
+   "mode": "sheet",
+   "width": 940,
+   "height": 200,
+   "columns": 10,
+   "rows": 2,
+   "frames": 19,
+   "hotspot": [
+    44,
+    90
+   ],
+   "scale": 2,
+   "fps": 15,
+   "state": "working"
   },
   {
    "id": "widelands.empire_miller_worker.walk.e",
@@ -26820,6 +29350,50 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.empire_smelting_works.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/smelting_works/build",
+   "source_note": "empire_smelting_works build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_smelting_works_build.png",
+   "mode": "sheet",
+   "width": 264,
+   "height": 94,
+   "columns": 4,
+   "rows": 1,
+   "frames": 4,
+   "hotspot": [
+    48,
+    60
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.empire_smelting_works.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/smelting_works/working",
+   "source_note": "empire_smelting_works working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_smelting_works_working.png",
+   "mode": "sheet",
+   "width": 660,
+   "height": 188,
+   "columns": 10,
+   "rows": 2,
+   "frames": 20,
+   "hotspot": [
+    48,
+    60
+   ],
+   "scale": 2,
+   "fps": 5,
+   "state": "working"
   },
   {
    "id": "widelands.empire_stonemason_worker.hacking",
@@ -28544,6 +31118,72 @@
    "fps": 0
   },
   {
+   "id": "widelands.empire_weaponsmithy.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/weaponsmithy/build",
+   "source_note": "empire_weaponsmithy build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_weaponsmithy_build.png",
+   "mode": "sheet",
+   "width": 424,
+   "height": 98,
+   "columns": 4,
+   "rows": 1,
+   "frames": 4,
+   "hotspot": [
+    48,
+    65
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.empire_weaponsmithy.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/weaponsmithy/unoccupied",
+   "source_note": "empire_weaponsmithy unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_weaponsmithy_unoccupied.png",
+   "mode": "sheet",
+   "width": 106,
+   "height": 98,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    48,
+    65
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.empire_weaponsmithy.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/weaponsmithy/working",
+   "source_note": "empire_weaponsmithy working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_weaponsmithy_working.png",
+   "mode": "sheet",
+   "width": 1060,
+   "height": 196,
+   "columns": 10,
+   "rows": 2,
+   "frames": 20,
+   "hotspot": [
+    48,
+    65
+   ],
+   "scale": 2,
+   "fps": 2,
+   "state": "working"
+  },
+  {
    "id": "widelands.empire_weaver_worker.walk.e",
    "status": "imported",
    "game": "widelands",
@@ -28815,6 +31455,72 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.empire_weaving_mill.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/weaving_mill/build",
+   "source_note": "empire_weaving_mill build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_weaving_mill_build.png",
+   "mode": "sheet",
+   "width": 192,
+   "height": 158,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    65,
+    62
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.empire_weaving_mill.unoccupied",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/weaving_mill/unoccupied",
+   "source_note": "empire_weaving_mill unoccupied animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_weaving_mill_unoccupied.png",
+   "mode": "sheet",
+   "width": 96,
+   "height": 79,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    65,
+    62
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "unoccupied"
+  },
+  {
+   "id": "widelands.empire_weaving_mill.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/weaving_mill/working",
+   "source_note": "empire_weaving_mill working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_weaving_mill_working.png",
+   "mode": "sheet",
+   "width": 288,
+   "height": 316,
+   "columns": 3,
+   "rows": 4,
+   "frames": 11,
+   "hotspot": [
+    65,
+    62
+   ],
+   "scale": 2,
+   "fps": 5,
+   "state": "working"
   },
   {
    "id": "widelands.empire_well",
@@ -29258,6 +31964,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_armor_smithy_large.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/armor_smithy_large/working",
+   "source_note": "frisians_armor_smithy_large working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_armor_smithy_large_working.png",
+   "mode": "sheet",
+   "width": 430,
+   "height": 204,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    82
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_armor_smithy_small",
    "status": "imported",
    "game": "widelands",
@@ -29277,6 +32005,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_armor_smithy_small.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/armor_smithy_small/working",
+   "source_note": "frisians_armor_smithy_small working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_armor_smithy_small_working.png",
+   "mode": "sheet",
+   "width": 425,
+   "height": 186,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    73
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_baker_master_worker.walk.e",
@@ -29804,6 +32554,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_bakery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/bakery/working",
+   "source_note": "frisians_bakery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_bakery_working.png",
+   "mode": "sheet",
+   "width": 430,
+   "height": 180,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    70
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_barracks",
    "status": "imported",
    "game": "widelands",
@@ -29823,6 +32595,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_barracks.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/barracks/working",
+   "source_note": "frisians_barracks working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_barracks_working.png",
+   "mode": "sheet",
+   "width": 460,
+   "height": 194,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    45,
+    73
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_beekeeper_worker.beeswarm",
@@ -30119,6 +32913,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_beekeepers_house.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/beekeepers_house/build",
+   "source_note": "frisians_beekeepers_house build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_beekeepers_house_build.png",
+   "mode": "sheet",
+   "width": 198,
+   "height": 71,
+   "columns": 3,
+   "rows": 1,
+   "frames": 3,
+   "hotspot": [
+    40,
+    56
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
    "id": "widelands.frisians_berry_farm",
    "status": "imported",
    "game": "widelands",
@@ -30138,6 +32954,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_berry_farm.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/berry_farm/build",
+   "source_note": "frisians_berry_farm build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_berry_farm_build.png",
+   "mode": "sheet",
+   "width": 219,
+   "height": 72,
+   "columns": 3,
+   "rows": 1,
+   "frames": 3,
+   "hotspot": [
+    40,
+    55
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
   },
   {
    "id": "widelands.frisians_berry_farmer_worker.dig",
@@ -30854,6 +33692,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_blacksmithy.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/blacksmithy/working",
+   "source_note": "frisians_blacksmithy working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_blacksmithy_working.png",
+   "mode": "sheet",
+   "width": 425,
+   "height": 184,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    72
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_brewer_master_worker.walk.e",
    "status": "imported",
    "game": "widelands",
@@ -31379,6 +34239,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_brewery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/brewery/working",
+   "source_note": "frisians_brewery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_brewery_working.png",
+   "mode": "sheet",
+   "width": 425,
+   "height": 200,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    80
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_brick_kiln",
    "status": "imported",
    "game": "widelands",
@@ -31398,6 +34280,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_brick_kiln.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/brick_kiln/working",
+   "source_note": "frisians_brick_kiln working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_brick_kiln_working.png",
+   "mode": "sheet",
+   "width": 485,
+   "height": 190,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    75
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_brickmaker_worker.walk.e",
@@ -32261,6 +35165,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_charcoal_kiln.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/charcoal_kiln/working",
+   "source_note": "frisians_charcoal_kiln working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_charcoal_kiln_working.png",
+   "mode": "sheet",
+   "width": 425,
+   "height": 212,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    82
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_coalmine",
    "status": "imported",
    "game": "widelands",
@@ -32280,6 +35206,72 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_coalmine.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/coalmine/build",
+   "source_note": "frisians_coalmine build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_coalmine_build.png",
+   "mode": "sheet",
+   "width": 146,
+   "height": 140,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    27,
+    56
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.frisians_coalmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/coalmine/empty",
+   "source_note": "frisians_coalmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_coalmine_empty.png",
+   "mode": "sheet",
+   "width": 365,
+   "height": 176,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    27,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.frisians_coalmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/coalmine/working",
+   "source_note": "frisians_coalmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_coalmine_working.png",
+   "mode": "sheet",
+   "width": 365,
+   "height": 176,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    27,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_coalmine_deep",
@@ -32303,6 +35295,50 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_coalmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/coalmine_deep/empty",
+   "source_note": "frisians_coalmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_coalmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 186,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    28,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.frisians_coalmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/coalmine_deep/working",
+   "source_note": "frisians_coalmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_coalmine_deep_working.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 192,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    28,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_collectors_house",
    "status": "imported",
    "game": "widelands",
@@ -32322,6 +35358,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_collectors_house.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/collectors_house/build",
+   "source_note": "frisians_collectors_house build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_collectors_house_build.png",
+   "mode": "sheet",
+   "width": 198,
+   "height": 70,
+   "columns": 3,
+   "rows": 1,
+   "frames": 3,
+   "hotspot": [
+    40,
+    55
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
   },
   {
    "id": "widelands.frisians_drinking_hall",
@@ -32345,6 +35403,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_drinking_hall.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/drinking_hall/working",
+   "source_note": "frisians_drinking_hall working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_drinking_hall_working.png",
+   "mode": "sheet",
+   "width": 430,
+   "height": 204,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    82
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_farm",
    "status": "imported",
    "game": "widelands",
@@ -32364,6 +35444,50 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_farm.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/farm/build",
+   "source_note": "frisians_farm build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_farm_build.png",
+   "mode": "sheet",
+   "width": 256,
+   "height": 196,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    91,
+    91
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.frisians_farm.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/farm/working",
+   "source_note": "frisians_farm working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_farm_working.png",
+   "mode": "sheet",
+   "width": 640,
+   "height": 236,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    91,
+    111
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_farmer_worker.gathering",
@@ -32891,6 +36015,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_foresters_house.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/foresters_house/build",
+   "source_note": "frisians_foresters_house build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_foresters_house_build.png",
+   "mode": "sheet",
+   "width": 219,
+   "height": 71,
+   "columns": 3,
+   "rows": 1,
+   "frames": 3,
+   "hotspot": [
+    40,
+    56
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
    "id": "widelands.frisians_fruit_collector_worker.gather",
    "status": "imported",
    "game": "widelands",
@@ -33227,6 +36373,72 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_goldmine.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/goldmine/build",
+   "source_note": "frisians_goldmine build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_goldmine_build.png",
+   "mode": "sheet",
+   "width": 146,
+   "height": 140,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    27,
+    56
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.frisians_goldmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/goldmine/empty",
+   "source_note": "frisians_goldmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_goldmine_empty.png",
+   "mode": "sheet",
+   "width": 365,
+   "height": 176,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    27,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.frisians_goldmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/goldmine/working",
+   "source_note": "frisians_goldmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_goldmine_working.png",
+   "mode": "sheet",
+   "width": 365,
+   "height": 176,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    27,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_goldmine_deep",
    "status": "imported",
    "game": "widelands",
@@ -33248,6 +36460,50 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_goldmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/goldmine_deep/empty",
+   "source_note": "frisians_goldmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_goldmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 186,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    28,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.frisians_goldmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/goldmine_deep/working",
+   "source_note": "frisians_goldmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_goldmine_deep_working.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 192,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    28,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_honey_bread_bakery",
    "status": "imported",
    "game": "widelands",
@@ -33267,6 +36523,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_honey_bread_bakery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/honey_bread_bakery/working",
+   "source_note": "frisians_honey_bread_bakery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_honey_bread_bakery_working.png",
+   "mode": "sheet",
+   "width": 430,
+   "height": 204,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    82
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_hunter_worker.idle",
@@ -33563,6 +36841,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_hunters_house.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/hunters_house/build",
+   "source_note": "frisians_hunters_house build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_hunters_house_build.png",
+   "mode": "sheet",
+   "width": 198,
+   "height": 67,
+   "columns": 3,
+   "rows": 1,
+   "frames": 3,
+   "hotspot": [
+    40,
+    52
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
    "id": "widelands.frisians_ironmine",
    "status": "imported",
    "game": "widelands",
@@ -33584,6 +36884,72 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_ironmine.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/ironmine/build",
+   "source_note": "frisians_ironmine build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_ironmine_build.png",
+   "mode": "sheet",
+   "width": 146,
+   "height": 140,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    27,
+    56
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.frisians_ironmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/ironmine/empty",
+   "source_note": "frisians_ironmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_ironmine_empty.png",
+   "mode": "sheet",
+   "width": 365,
+   "height": 174,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    27,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.frisians_ironmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/ironmine/working",
+   "source_note": "frisians_ironmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_ironmine_working.png",
+   "mode": "sheet",
+   "width": 365,
+   "height": 176,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    27,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_ironmine_deep",
    "status": "imported",
    "game": "widelands",
@@ -33603,6 +36969,50 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_ironmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/ironmine_deep/empty",
+   "source_note": "frisians_ironmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_ironmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 186,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    28,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.frisians_ironmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/ironmine_deep/working",
+   "source_note": "frisians_ironmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_ironmine_deep_working.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 192,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    28,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_landlady_worker.walk.e",
@@ -33876,6 +37286,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_mead_brewery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/mead_brewery/working",
+   "source_note": "frisians_mead_brewery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_mead_brewery_working.png",
+   "mode": "sheet",
+   "width": 430,
+   "height": 204,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    82
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_miner_master_worker.walk.e",
@@ -34403,6 +37835,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_quarry.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/quarry/build",
+   "source_note": "frisians_quarry build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_quarry_build.png",
+   "mode": "sheet",
+   "width": 198,
+   "height": 68,
+   "columns": 3,
+   "rows": 1,
+   "frames": 3,
+   "hotspot": [
+    40,
+    53
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
    "id": "widelands.frisians_recycling_center",
    "status": "imported",
    "game": "widelands",
@@ -34443,6 +37897,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_reed_farm.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/reed_farm/build",
+   "source_note": "frisians_reed_farm build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_reed_farm_build.png",
+   "mode": "sheet",
+   "width": 222,
+   "height": 73,
+   "columns": 3,
+   "rows": 1,
+   "frames": 3,
+   "hotspot": [
+    40,
+    54
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
   },
   {
    "id": "widelands.frisians_reed_farmer_worker.dig",
@@ -35033,6 +38509,50 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_reindeer_farm.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/reindeer_farm/build",
+   "source_note": "frisians_reindeer_farm build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_reindeer_farm_build.png",
+   "mode": "sheet",
+   "width": 248,
+   "height": 140,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    84,
+    61
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.frisians_reindeer_farm.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/reindeer_farm/working",
+   "source_note": "frisians_reindeer_farm working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_reindeer_farm_working.png",
+   "mode": "sheet",
+   "width": 620,
+   "height": 360,
+   "columns": 5,
+   "rows": 4,
+   "frames": 20,
+   "hotspot": [
+    84,
+    81
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_rockmine",
    "status": "imported",
    "game": "widelands",
@@ -35054,6 +38574,72 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_rockmine.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/rockmine/build",
+   "source_note": "frisians_rockmine build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_rockmine_build.png",
+   "mode": "sheet",
+   "width": 146,
+   "height": 140,
+   "columns": 2,
+   "rows": 2,
+   "frames": 4,
+   "hotspot": [
+    27,
+    56
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
+  },
+  {
+   "id": "widelands.frisians_rockmine.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/rockmine/empty",
+   "source_note": "frisians_rockmine empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_rockmine_empty.png",
+   "mode": "sheet",
+   "width": 365,
+   "height": 176,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    27,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.frisians_rockmine.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/rockmine/working",
+   "source_note": "frisians_rockmine working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_rockmine_working.png",
+   "mode": "sheet",
+   "width": 365,
+   "height": 176,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    27,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_rockmine_deep",
    "status": "imported",
    "game": "widelands",
@@ -35073,6 +38659,50 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_rockmine_deep.empty",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/rockmine_deep/empty",
+   "source_note": "frisians_rockmine_deep empty animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_rockmine_deep_empty.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 186,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    28,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "empty"
+  },
+  {
+   "id": "widelands.frisians_rockmine_deep.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/rockmine_deep/working",
+   "source_note": "frisians_rockmine_deep working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_rockmine_deep_working.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 192,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    28,
+    74
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_seamstress_master_worker.walk.e",
@@ -35600,6 +39230,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_sewing_room.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/sewing_room/working",
+   "source_note": "frisians_sewing_room working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_sewing_room_working.png",
+   "mode": "sheet",
+   "width": 425,
+   "height": 204,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    82
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_smelter_worker.walk.e",
    "status": "imported",
    "game": "widelands",
@@ -36125,6 +39777,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_smokery.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/smokery/working",
+   "source_note": "frisians_smokery working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_smokery_working.png",
+   "mode": "sheet",
+   "width": 425,
+   "height": 184,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    72
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_stonemason_worker.hacking",
    "status": "imported",
    "game": "widelands",
@@ -36419,6 +40093,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_tailors_shop.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/tailors_shop/working",
+   "source_note": "frisians_tailors_shop working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_tailors_shop_working.png",
+   "mode": "sheet",
+   "width": 430,
+   "height": 204,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    82
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_tavern",
    "status": "imported",
    "game": "widelands",
@@ -36438,6 +40134,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_tavern.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/tavern/working",
+   "source_note": "frisians_tavern working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_tavern_working.png",
+   "mode": "sheet",
+   "width": 425,
+   "height": 186,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    73
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_trainer_worker.walk.e",
@@ -36713,6 +40431,28 @@
    "fps": 8
   },
   {
+   "id": "widelands.frisians_weaving_mill.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/weaving_mill/working",
+   "source_note": "frisians_weaving_mill working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_weaving_mill_working.png",
+   "mode": "sheet",
+   "width": 450,
+   "height": 194,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    50,
+    77
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
+  },
+  {
    "id": "widelands.frisians_well",
    "status": "imported",
    "game": "widelands",
@@ -36732,6 +40472,28 @@
    ],
    "scale": 2,
    "fps": 0
+  },
+  {
+   "id": "widelands.frisians_well.working",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/well/working",
+   "source_note": "frisians_well working animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_well_working.png",
+   "mode": "sheet",
+   "width": 145,
+   "height": 78,
+   "columns": 5,
+   "rows": 2,
+   "frames": 10,
+   "hotspot": [
+    19,
+    33
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "working"
   },
   {
    "id": "widelands.frisians_woodcutter_worker.hacking",
@@ -37047,6 +40809,28 @@
    ],
    "scale": 2,
    "fps": 8
+  },
+  {
+   "id": "widelands.frisians_woodcutters_house.build",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/woodcutters_house/build",
+   "source_note": "frisians_woodcutters_house build animation (import_widelands_states.py)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_woodcutters_house_build.png",
+   "mode": "sheet",
+   "width": 198,
+   "height": 69,
+   "columns": 3,
+   "rows": 1,
+   "frames": 3,
+   "hotspot": [
+    40,
+    52
+   ],
+   "scale": 2,
+   "fps": 10,
+   "state": "build"
   },
   {
    "id": "widelands.hunter_worker.idle",
