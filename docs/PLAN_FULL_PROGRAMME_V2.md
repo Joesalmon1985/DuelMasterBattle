@@ -1,6 +1,6 @@
 # Programme plan v2: full content, assets, industrial revolution, catastrophes, neural factions
 
-Status: **PROPOSAL for owner review. Nothing here is implemented.** Written 12 October 2026 on `feature/hybrid-playtest-fixes-v03` (HEAD `5c8ea6d`). No dependency was installed, no training was run, no gameplay file was changed.
+Status: **APPROVED for implementation by the owner (autonomous run authorised 12 Oct 2026).** Implementation is in progress on `work/ubuntu-autonomous-v2`; the live state is `docs/ledger/LEDGER.md` and `ledger.json`. Originally written 12 October 2026 on `feature/hybrid-playtest-fixes-v03` (HEAD `5c8ea6d`).
 
 **Relationship to `PLAN_ECONOMY_TECH_ERA_PROGRAMME.md` (v1).** v1 answered an earlier brief. This brief changes enough that where the two disagree, **v2 wins**. The differences are listed in section 12. The measurements in v1 section 1 still stand.
 
