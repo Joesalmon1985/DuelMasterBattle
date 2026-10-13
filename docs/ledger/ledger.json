@@ -130,7 +130,8 @@
     "catastrophe study runner; v1 result: at cadence scale 0.12 every policy loses collectively at ~42 min (old cards, no clinics)",
     "aid caravans",
     "clinic reach 24 tiles",
-    "study 1 and 2 results (docs/evidence/p10_catastrophe)"
+    "study 1 and 2 results (docs/evidence/p10_catastrophe)",
+    "scale 0.3, 2 seeds: ignore loses 2/2 (min 73, 85), selfish (clinics+nest hunting) 0/2 with 0 outbreaks; scale 0.12: clinics delay loss 44->64 min"
    ],
    "todo": [
     "thresholds calibration at scales 0.2-0.5 with >=10 seeds",
