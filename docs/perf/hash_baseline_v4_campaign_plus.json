@@ -27,10 +27,10 @@
     "c474a51c5c41ebab9bbe5806e78f231746e31a7f",
     "b77a5bdb42b18ee2986cf893cb1852d5a037b167",
     "aa563269e544611f36423379c76c665b3176b0b5",
-    "0d9335a75439d096d9aa22d3cddcb700060fb2a6"
+    "1a8d3414cc1160de23b22acab4836b2e7b48f962"
    ],
-   "wall_s": 30.2,
-   "x_realtime": 39.7,
+   "wall_s": 29.0,
+   "x_realtime": 41.4,
    "buildings": 269
   },
   {
@@ -54,12 +54,12 @@
     "93f49cb61bf1f53f4df3c78ce91741b5824f27ff",
     "518a3550804b34de7521d0195f460686288ed891",
     "96d1989cd94bb33c26bd95a419a576b86f913935",
-    "1f242bd2a5b37c8054d2a8d201366d35d628f8e8",
-    "336a7c4fec1958756fce8c8a8256586ca96d1537"
+    "ca1dd3c82beaaee7b30e5ddb1a121485f5864fbb",
+    "08a045b37966f24a060bd5ae4e83550a550ba8ff"
    ],
-   "wall_s": 28.7,
-   "x_realtime": 41.7,
-   "buildings": 258
+   "wall_s": 27.9,
+   "x_realtime": 43.0,
+   "buildings": 259
   }
  ]
 }
