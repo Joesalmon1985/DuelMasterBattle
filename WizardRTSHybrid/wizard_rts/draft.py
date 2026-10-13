@@ -70,7 +70,6 @@ def deal(world: Any, era: int) -> None:
     old = sorted(c for c, v in cards.items() if v["era"] < era and c not in taken)
     rng.shuffle(cur)
     rng.shuffle(old)
-    want_cur = max(1, round(PACK_SIZE * CURRENT_ERA_SHARE + 0.499))
     packs: dict[str, list[str]] = {}
     dup = 0
     # Tribe-balanced dealing: a Widelands building only helps its own tribe, so every pack rotates through the tribes in the ring (plus the
@@ -87,7 +86,6 @@ def deal(world: Any, era: int) -> None:
 
     pool_cards = cards
     qs = {"cur": queues(cur), "old": queues(old)}
-    spare: list[str] = []
 
     def draw(kind: str, prefer: str, wrap: bool) -> str | None:
         nonlocal dup
@@ -103,14 +101,47 @@ def deal(world: Any, era: int) -> None:
 
     for f in ring:
         packs[f] = []
+    # Guarantee (plan v2 5.2, owner 13 Oct): the first pack of every seat holds the era's essential cards that the seat can use, so each faction
+    # has a way to the capabilities the era needs. Tribe cards go to their own tribe first, tribe-free cards fill the rest, no card to two seats.
+    from wizard_rts.content import cards as _C
+
+    def take_card(pred: Any) -> str | None:
+        for q in qs["cur"].values():
+            for c in q:
+                if pred(c):
+                    q.remove(c)
+                    return c
+        return None
+
+    for tag in _C.ESSENTIAL_ORDER.get(era, ()):
+        for own_tribe in (True, False):
+            for f in ring:
+                tribe = world.faction_info[f].get("tribe", "")
+                if len(packs[f]) >= PACK_SIZE or any(tag in _C.card_tags(cards[c]) for c in packs[f]):
+                    continue
+                pick = take_card(lambda c: tag in _C.card_tags(cards[c]) and _C.usable_by(cards[c], tribe) and bool(cards[c].get("tribe")) == own_tribe)
+                if pick is not None:
+                    packs[f].append(pick)
     for turn in range(PACK_SIZE):
         for seat, f in enumerate(ring):
             pack = packs[f]
+            if len(pack) >= PACK_SIZE:
+                continue
             prefer = tribes[(seat + turn) % len(tribes)]
-            kinds = ("cur", "old") if turn < want_cur else ("old", "cur")
-            card = draw(kinds[0], prefer, False) or draw(kinds[1], prefer, False) or draw("cur", prefer, True)
+            card = draw("cur", prefer, False) or draw("old", prefer, False) or draw("cur", prefer, True)
             if card is not None and card not in pack:
                 pack.append(card)
+    # a pack that came up short (a colliding copy, or a thin pool) is topped up with cards the seat does not hold yet, so every seat has a full hand
+    spare = cur + old
+    for f in ring:
+        held = _held(world, f)
+        packs[f] = [c for c in packs[f] if c not in held]  # a copy the seat already holds is no use to it
+        for c in spare:
+            if len(packs[f]) >= PACK_SIZE:
+                break
+            if c not in packs[f] and c not in held:
+                packs[f].append(c)
+                dup += 1
     reserve = [c for c in (cur + old) if all(c not in p for p in packs.values())]
     rng.shuffle(reserve)
     st.update(era=era, round=-1, open_ms=_now(world), ring=ring, packs=packs, chosen={f: False for f in ring}, reserve=reserve, bonus={})
@@ -143,6 +174,17 @@ def _publish(world: Any, faction: str) -> None:
     del s["history"][:-12]
 
 
+def _bonus_copies(world: Any, faction: str) -> list[str]:
+    """With a full ring the dealt packs use the whole era (42 cards = six packs of seven), so the reserve deck is empty: a bonus hand is then a
+    copy of cards still waiting in other seats' packs that this seat neither holds nor has in its own pack."""
+    st = state(world)
+    held = _held(world, faction)
+    mine = set(st["packs"].get(faction, []))
+    seen = sorted({c for f, p in st["packs"].items() if f != faction for c in p if c not in held and c not in mine})
+    random.Random(f"{world.seed}:bonus:{faction}:{st['round']}").shuffle(seen)
+    return seen
+
+
 def open_round(world: Any) -> None:
     st = state(world)
     st["round"] += 1
@@ -152,8 +194,11 @@ def open_round(world: Any) -> None:
     for f in st["ring"]:
         if size and not st["packs"].get(f):  # a successor that has no pack yet: one formed from the reserve deck, as long as the others
             st["packs"][f] = [st["reserve"].pop() for _ in range(min(size, len(st["reserve"])))]
-        if bonus_ready(world, f) and len(st["reserve"]) >= BONUS_HAND and f not in st["bonus"]:
-            hand = [st["reserve"].pop() for _ in range(BONUS_HAND)]
+        if bonus_ready(world, f) and f not in st["bonus"] and (len(st["reserve"]) >= BONUS_HAND or len(_bonus_copies(world, f)) >= BONUS_HAND):
+            if len(st["reserve"]) >= BONUS_HAND:
+                hand = [st["reserve"].pop() for _ in range(BONUS_HAND)]
+            else:
+                hand = _bonus_copies(world, f)[:BONUS_HAND]
             st["bonus"][f] = hand
             world.events.append({"kind": "draft_bonus_hand", "faction": f, "hand": list(hand)})
         _publish(world, f)

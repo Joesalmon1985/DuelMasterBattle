@@ -11,18 +11,26 @@ def test_static_checks_are_clean():
     assert graph.check() == []
 
 
-def test_every_card_unlocks_one_or_two_existing_entities_and_not_every_card_two():
+def test_every_card_unlocks_one_to_four_slots_and_each_era_has_exactly_42_cards():
+    from wizard_rts.content import cards as C
+
     cards = graph.generated_cards()
-    sizes = {len(c["entities"]) for c in cards.values()}
-    assert sizes == {1, 2}
-    assert sum(len(c["entities"]) == 1 for c in cards.values()) > 0.5 * len(cards)
+    assert {len(c["slots"]) for c in cards.values()} <= {1, 2, 3, 4}
+    assert max(len(c["slots"]) for c in cards.values()) == C.CAP
+    for era in range(4):
+        assert sum(c["era"] == era for c in cards.values()) == C.ERA_CARDS
 
 
-def test_every_non_foundation_building_and_unit_is_on_exactly_one_card():
+def test_every_non_foundation_building_and_unit_is_on_a_card_and_only_essentials_repeat():
     ents = graph.entities()
-    onboard = [e for c in graph.generated_cards().values() for e in c["entities"]]
-    assert len(onboard) == len(set(onboard))
+    cards = graph.generated_cards()
+    onboard = [e for c in cards.values() for e in c["entities"]]
     assert set(onboard) == {k for k, e in ents.items() if not e["foundation"]}
+    repeated = {e for e in set(onboard) if onboard.count(e) > 1}
+    for cid, c in cards.items():
+        for e in c["entities"]:
+            if e in repeated:
+                assert c["essential"], (cid, e)  # only the cards that guarantee an essential capability repeat things
 
 
 def test_foundation_lets_a_faction_feed_itself_and_found_settlements():
@@ -47,7 +55,7 @@ def test_drafting_a_generated_card_unlocks_exactly_its_entities():
     f = draft.state(w)["ring"][0]
     pack = draft.state(w)["packs"][f]
     assert len(pack) == draft.PACK_SIZE and all(c.startswith("gen.") for c in pack[:5])
-    pair = next((c for c in pack if len(tech.lookup()[c]["entities"]) == 2), None) or pack[0]
+    pair = next((c for c in pack if len(tech.lookup()[c]["entities"]) > 1), None) or pack[0]
     card = tech.lookup()[pair]
     before = {e for e in card["entities"] if (e.startswith("unit:") and tech.unit_allowed(w, f, e[5:])) or (not e.startswith("unit:") and tech.kind_allowed(w, f, e))}
     assert not before

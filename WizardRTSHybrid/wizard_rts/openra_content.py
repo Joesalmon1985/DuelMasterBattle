@@ -20,6 +20,17 @@ EXCLUDED_BUILDING = {
     "powr": "power plants: power comes from the Mindustry industry in Modern (roster rule 4.2)", "apwr": "advanced power plant: same", "proc": "ore refinery: the credit economy is replaced by wares",
     "silo": "ore silo: resource storage of the credit economy", "fact": "construction yard: disabled in the RA rules; settlers and MCVs found settlements",
     "spef": "disabled in the RA rules (prerequisite ~disabled)",
+    "atef": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "domf": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "facf": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "fapw": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "fixf": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "fpwr": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "mslf": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "pdof": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "syrf": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "tenf": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
+    "weaf": "decoy building (D27): OpenRA fakes only fool an enemy that cannot see the player; with per-faction visibility they would need a full disguise system, so they are excluded",
 }
 # actor -> (kind, label, template, size class); templates come from calibrate.TEMPLATES
 BUILDING_TEMPLATE = {"building": {"plank": 0.35, "granite": 0.3, "iron": 0.25, "coal": 0.1}, "defense": {"plank": 0.3, "granite": 0.3, "iron": 0.3, "coal": 0.1},
@@ -30,9 +41,6 @@ NEW_BUILDINGS: dict[str, tuple[str, str, str]] = {  # actor: (label, template, r
     "sam": ("SAM site", "defense", "defense"), "pbox": ("Pillbox", "defense", "defense"), "hbox": ("Camo pillbox", "defense", "defense"), "gap": ("Gap generator", "tech", "gap"),
     "brik": ("Concrete wall", "wall", "wall"), "sbag": ("Sandbags", "wall", "wall"), "fenc": ("Barbed wire", "wall", "wall"), "iron": ("Iron curtain", "tech", "power"),
     "pdox": ("Chronosphere", "tech", "power"), "mslo": ("Missile silo", "tech", "power"),
-    "atef": ("Fake tech center", "fake", "fake"), "domf": ("Fake radar dome", "fake", "fake"), "facf": ("Fake construction yard", "fake", "fake"), "fapw": ("Fake power plant", "fake", "fake"),
-    "fixf": ("Fake service depot", "fake", "fake"), "fpwr": ("Fake power plant", "fake", "fake"), "mslf": ("Fake missile silo", "fake", "fake"), "pdof": ("Fake chronosphere", "fake", "fake"),
-    "syrf": ("Fake shipyard", "fake", "fake"), "tenf": ("Fake barracks", "fake", "fake"), "weaf": ("Fake war factory", "fake", "fake"),
 }
 # actor -> (kind, label, producing building kind, template)
 NEW_UNITS: dict[str, tuple[str, str, str, str]] = {

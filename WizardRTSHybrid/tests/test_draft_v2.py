@@ -241,7 +241,8 @@ def test_thousand_phases_conserve_cards_and_never_stall(batch):
         draft.deal(w, era)
         st = draft.state(w)
         dealt = [c for p in st["packs"].values() for c in p]
-        assert len(dealt) == len(set(dealt))  # no copies while the pool is big enough
+        if n <= 6:
+            assert len(dealt) == len(set(dealt))  # a ring of up to six gets no copies; a bigger ring is dealt copies so each seat still has seven cards
         picked = []
         for r in range(draft.ROUNDS):
             assert all(st["packs"][f] for f in st["ring"]), "dead pack"
@@ -255,6 +256,12 @@ def test_thousand_phases_conserve_cards_and_never_stall(batch):
         assert st["round"] == draft.ROUNDS
         assert all(not p for p in st["packs"].values())
         held_new = [c for f in w.faction_info for c in w.tech[f]["cards"] if c in set(dealt)]
-        assert sorted(held_new) == sorted(set(held_new)) and set(held_new) <= set(dealt)
+        assert set(held_new) <= set(dealt)
+        if n <= 6:
+            assert sorted(held_new) == sorted(set(held_new))
+        else:
+            assert max(held_new.count(c) for c in set(held_new)) <= 3
         for f in st["ring"]:
-            assert len([c for c in w.tech[f]["cards"] if c in set(dealt)]) == draft.ROUNDS
+            got = len([c for c in w.tech[f]["cards"] if c in set(dealt)])
+            # a ring of up to six has no copies, so every seat picks every round; with copies a seat can be passed a last card it already holds
+            assert got == draft.ROUNDS if n <= 6 else draft.ROUNDS - 1 <= got <= draft.ROUNDS

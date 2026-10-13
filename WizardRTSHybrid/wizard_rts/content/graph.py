@@ -125,7 +125,8 @@ def foundation_kind(kind: str) -> bool:
 
 
 @lru_cache(maxsize=1)
-def entities() -> dict[str, dict[str, Any]]:
+def raw_entities() -> dict[str, dict[str, Any]]:
+    """Every functional entity with the facts the card generator needs (its era here is the legacy one; `entities` has the real one)."""
     out: dict[str, dict[str, Any]] = {}
     for kind, spec in sorted(con.full_menu().items()):
         wl = kind.startswith("wl:")
@@ -156,146 +157,62 @@ def entities() -> dict[str, dict[str, Any]]:
     return out
 
 
-def _card(slug: str, name: str, era: int, ents: list[str], summary: str) -> dict[str, Any]:
-    kinds = [e for e in ents if not e.startswith(("unit:", "wl:"))]
-    units = [e[5:] for e in ents if e.startswith("unit:")]
-    wl = [e for e in ents if e.startswith("wl:")]
-    tribe = next((entities()[e]["tribe"] for e in wl), "")
-    return {"id": PREFIX + slug, "name": name, "era": era, "summary": summary, "kinds": kinds, "units": units, "wl_patterns": [], "wl_kinds": wl, "tribe": tribe,
-            "requires_cards": [], "requires_working": [], "entities": list(ents)}
+@lru_cache(maxsize=1)
+def entities() -> dict[str, dict[str, Any]]:
+    """The entity table with the eras of the card rework (content/cards.py): the era of an entity is the era of the slot that holds it."""
+    from wizard_rts.content import cards
+
+    out = {k: dict(e) for k, e in raw_entities().items()}
+    for slot in cards.slots().values():
+        for m in slot.members:
+            if m in out:
+                out[m]["era"] = slot.era
+    return out
 
 
 @lru_cache(maxsize=1)
 def generated_cards() -> dict[str, dict[str, Any]]:
-    ents = entities()
-    cards: dict[str, dict[str, Any]] = {}
-    # Widelands: chain pairs inside one tribe
-    by_tribe: dict[str, list[str]] = {}
-    for k, e in ents.items():
-        if k.startswith("wl:") and not e["foundation"]:
-            by_tribe.setdefault(e["tribe"], []).append(k)
-    for tribe, kinds in sorted(by_tribe.items()):
-        left = list(kinds)
-        taken: set[str] = set()
-        for k in kinds:
-            if k in taken:
-                continue
-            taken.add(k)
-            partner = None
-            if _h(k) % 100 < 70:
-                outs = set(ents[k].get("outputs", []))
-                for other in left:
-                    if other not in taken and other != k and outs & set(ents[other].get("inputs", [])) and "deeper" not in other:
-                        partner = other
-                        break
-                if partner is None and _h("any:" + k) % 100 < 45:  # no chain partner: a neighbour of the same tribe (still one card, two buildings)
-                    free = [o for o in left if o not in taken and o != k and "deeper" not in o]
-                    partner = min(free, key=lambda o: _h(k + o)) if free else None
-            group = [k] + ([partner] if partner else [])
-            if partner:
-                taken.add(partner)
-            label = ents[k]["label"] + (f" + {ents[partner]['label']}" if partner else "")
-            cards[PREFIX + k[3:]] = _card(k[3:], f"{label} ({tribe})", 0, group, "A Widelands production chain for the %s." % tribe)
-    # Mindustry: the hand-written pairs, then relation pairs (an output feeding an input), then singles
-    used_m: set[str] = set()
-    for a, b in MDY_PAIRS:
-        if a in ents and b in ents:
-            cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), f"{ents[a]['label']} + {ents[b]['label']}", max(ents[a]["era"], ents[b]["era"]), [a, b], "A Mindustry chain.")
-            used_m.update((a, b))
-    for a, b in _auto_pairs(ents, used_m):
-        cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), f"{ents[a]['label']} + {ents[b]['label']}", max(ents[a]["era"], ents[b]["era"]), [a, b],
-                                                 "A Mindustry chain: %s feeds %s." % (ents[a]["label"].lower(), ents[b]["label"].lower()))
-        used_m.update((a, b))
-    for k, e in sorted(ents.items()):
-        if e["game"] == "mindustry" and e["type"] == "building" and k not in used_m:
-            cards[PREFIX + k.replace(":", "_")] = _card(k.replace(":", "_"), e["label"], e["era"], [k], "A Mindustry %s." % e["type"])
-            used_m.add(k)
-    # hybrid / OpenRA buildings with their first unit, then single units
-    unit_by_building: dict[str, list[str]] = {}
-    for u, e in ents.items():
-        if u.startswith("unit:"):
-            unit_by_building.setdefault(e["producer"], []).append(u)
-    used_units: set[str] = set()
-    for k, e in sorted(ents.items()):
-        if e["type"] != "building" or k.startswith(("wl:", "mdy:")) or e["foundation"]:
-            continue
-        units = [u for u in unit_by_building.get(k, []) if not ents[u]["foundation"]]
-        group = [k] + units[:1]
-        used_units.update(units[:1])
-        cards[PREFIX + k] = _card(k, e["label"] + (f" + {ents[units[0]]['label']}" if units else ""), max([e["era"]] + [ents[u]["era"] for u in units[:1]]), group,
-                                  "A %s" % e["label"].lower())
-    pool = [u for u, e in sorted(ents.items()) if e["type"] == "unit" and u not in used_units and not e["foundation"] and e["game"] != "mindustry"]
-    paired: set[str] = set()
-    for u in pool:  # OpenRA units: neighbours that the same building produces share a card about half the time
-        if u in paired or _h("upair:" + u) % 100 >= 55:
-            continue
-        mates = [v for v in pool if v != u and v not in paired and ents[v]["producer"] == ents[u]["producer"] and ents[v]["era"] == ents[u]["era"]]
-        if mates:
-            v = min(mates, key=lambda c: _h(u + c))
-            cards[PREFIX + u.replace(":", "_")] = _card(u.replace(":", "_"), f"{ents[u]['label']} + {ents[v]['label']}", ents[u]["era"], [u, v],
-                                                     "Unlocks the %s and the %s." % (ents[u]["label"].lower(), ents[v]["label"].lower()))
-            paired.update((u, v))
-    for u in pool:
-        if u not in paired:
-            cards[PREFIX + u.replace(":", "_")] = _card(u.replace(":", "_"), ents[u]["label"], ents[u]["era"], [u], "Unlocks the %s." % ents[u]["label"].lower())
-    mu = [u for u, e in sorted(ents.items()) if e["type"] == "unit" and e["game"] == "mindustry" and u not in used_m]
-    from wizard_rts.industry import units as U
+    from wizard_rts.content import cards
 
-    chain: dict[str, list[str]] = {}
-    for u in mu:
-        root = u
-        for _ in range(6):
-            prev = next((p for p in mu if U.upgrade_of(p[5:]) == root[5:]), None)
-            if prev is None:
-                break
-            root = prev
-        chain.setdefault(root, []).append(u)
-    for root, members in sorted(chain.items()):
-        members.sort(key=lambda x: ents[x]["tier"])
-        i = 0
-        while i < len(members):
-            if i + 1 < len(members) and _h("mpair:" + members[i]) % 100 < 60 and ents[members[i]]["producer"] != "":
-                a, b = members[i], members[i + 1]
-                cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), f"{ents[a]['label']} + {ents[b]['label']}", ents[a]["era"], [a, b],
-                                                         "Unlocks two tiers of the same line.")
-                used_m.update((a, b))
-                i += 2
-            else:
-                a = members[i]
-                cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), ents[a]["label"], ents[a]["era"], [a], "Unlocks the %s." % ents[a]["label"].lower())
-                used_m.add(a)
-                i += 1
-    return cards
+    return cards.generate()
 
 
 def check() -> list[str]:
-    """Static checks (plan 2.4): every card unlocks 1-2 entities that exist; no entity sits in two cards; foundation entities need no card."""
+    """Static checks: every card holds 1-4 slots of things that exist; every non-foundation functional entity is on a card; each era holds exactly
+    42 cards; essential capabilities have enough suppliers; the era rules hold."""
+    from wizard_rts.content import cards as C
+
     problems = []
     ents = entities()
-    seen: dict[str, str] = {}
+    seen: set[str] = set()
+    per_era = {e: 0 for e in range(C.ERAS)}
     for cid, c in generated_cards().items():
-        if not 1 <= len(c["entities"]) <= 2:
-            problems.append(f"{cid}: {len(c['entities'])} entities")
+        per_era[c["era"]] += 1
+        if not 1 <= len(c["slots"]) <= C.CAP:
+            problems.append(f"{cid}: {len(c['slots'])} slots")
         for e in c["entities"]:
             if e not in ents:
                 problems.append(f"{cid}: unknown entity {e}")
-            if e in seen:
-                problems.append(f"{e} in {cid} and {seen[e]}")
-            seen[e] = cid
-            if ents.get(e, {}).get("foundation"):
+            elif ents[e]["foundation"]:
                 problems.append(f"{cid}: foundation entity {e} needs no card")
-    for k, e in ents.items():  # era rules (owner, 13 Oct 2026)
-        if e["game"] in ("openra", "hybrid") and e["type"] == "unit" and e["era"] > OPENRA_LATEST_ERA and k.removeprefix("unit:") not in UNIT_ERA:
-            problems.append(f"{k}: an OpenRA unit must be available by Historic, not era {e['era']}")
-        if e["game"] == "openra" and e["era"] > OPENRA_LATEST_ERA:
-            problems.append(f"{k}: an OpenRA entity must be available by Historic, not era {e['era']}")
-        if e["game"] == "mindustry" and e["type"] == "unit" and e["era"] < MINDUSTRY_MILITARY_EARLIEST_ERA:
-            problems.append(f"{k}: a Mindustry military unit cannot precede the Dystopian era")
-        if e["game"] == "mindustry" and e["type"] == "building" and e["era"] < 2:
-            problems.append(f"{k}: Mindustry industry begins in Modern")
-        if e["game"] == "widelands" and e["era"] != 0:
-            problems.append(f"{k}: Widelands civilian production is Prehistoric")
+            elif ents[e]["era"] != c["era"]:
+                problems.append(f"{cid}: {e} belongs to era {ents[e]['era']}, card is era {c['era']}")
+            seen.add(e)
+    for era, n in per_era.items():
+        if n != C.ERA_CARDS:
+            problems.append(f"era {era} has {n} cards, not {C.ERA_CARDS}")
     for k, e in ents.items():
         if not e["foundation"] and e["functional"] and k not in seen:
             problems.append(f"{k}: functional but on no card")
+        if e["game"] in ("openra", "hybrid") and e["type"] == "unit" and e["era"] > OPENRA_LATEST_ERA and k.removeprefix("unit:") not in UNIT_ERA:
+            problems.append(f"{k}: an OpenRA unit must be available by Historic, not era {e['era']}")
+        if e["game"] == "openra" and e["era"] != OPENRA_LATEST_ERA:
+            problems.append(f"{k}: an OpenRA entity is Historic, not era {e['era']}")
+        if e["game"] == "mindustry" and e["type"] == "unit" and e["era"] != MINDUSTRY_MILITARY_EARLIEST_ERA:
+            problems.append(f"{k}: a Mindustry military unit is Dystopian")
+        if e["game"] == "mindustry" and e["type"] == "building" and e["era"] < 2:
+            problems.append(f"{k}: Mindustry industry begins in Modern")
+        if e["game"] == "widelands" and e["era"] > 1:
+            problems.append(f"{k}: Widelands production is Prehistoric or Historic")
+    problems += C.audit()
     return problems
