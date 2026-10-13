@@ -51,7 +51,12 @@ class HybridEnv:
         aggressive: bool = True,
         terrain: bool = True,
         profile: str = "test_showcase",
+        era_max_ms: int | None = None,
+        era_vp: int | None = None,
     ) -> None:
+        # training pacing: a shorter stall guard and/or a lower world-VP threshold per era (None keeps the rules: 75 minutes, VP 6/8/8)
+        self.era_max_ms = era_max_ms
+        self.era_vp = era_vp
         self.profile = profile
         self.seed = int(seed)
         self.map_size = map_size
@@ -74,6 +79,10 @@ class HybridEnv:
         os.environ.setdefault("HYBRID_AI", "1")
         self.world = HybridWorld(self.seed, terrain=self.use_terrain, map_size=self.map_size, profile=self.profile)
         w = self.world
+        if self.era_max_ms is not None:
+            w.era_max_ms = max(10_000, int(self.era_max_ms))
+        if self.era_vp is not None:
+            w.era_vp_threshold = max(1, int(self.era_vp))
         w.ai_enabled = True
         w.ai_aggressive = self.aggressive
         names = [f[0] for f in FACTIONS]
@@ -452,7 +461,7 @@ class HybridEnv:
     def replay(self, log: list[dict[str, Any]] | None = None) -> str:
         """Re-run a recorded episode from its seed and return the final state hash."""
         log = self.log if log is None else log
-        twin = HybridEnv(self.seed, self.map_size, self.agent_factions, self.step_ms, self.max_game_ms, self.weights, self.aggressive, self.use_terrain, self.profile)
+        twin = HybridEnv(self.seed, self.map_size, self.agent_factions, self.step_ms, self.max_game_ms, self.weights, self.aggressive, self.use_terrain, self.profile, self.era_max_ms, self.era_vp)
         twin.reset()
         for entry in log:
             twin.step(entry["actions"])

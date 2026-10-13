@@ -311,3 +311,13 @@ def test_a_save_loads_in_a_fresh_process_with_the_same_hash_and_a_foreign_format
     import pytest
     with pytest.raises(ValueError):
         HybridEnv(seed=1, agent_factions=["Red"]).load(pickle.dumps(old))
+
+
+def test_training_pacing_shortens_the_eras_and_replays_to_the_same_hash():
+    env = HybridEnv(seed=507, agent_factions=["Red"], profile="campaign", step_ms=5000, era_max_ms=60_000)
+    env.reset()
+    assert env.world.era_max_ms == 60_000
+    for _ in range(40):
+        env.step({"Red": []})
+    assert env.world.era_index >= 1  # a 60 s stall guard moves the world on within a few minutes
+    assert env.replay() == env.state_hash()
