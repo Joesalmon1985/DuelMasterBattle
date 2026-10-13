@@ -197,20 +197,39 @@ def _outbreak_damage(world: Any, s: Regions, i: int, now: int) -> None:
             rec["unrest"] = min(1.0, float(rec.get("unrest", 0.0)) + 0.2)
 
 
+CURE_RADIUS = 24  # a clinic treats the regions its tile and the points 24 tiles to each side fall in (a settlement straddles region borders)
+
+
+def _regions_near(world: Any, s: Regions, tx: int, ty: int) -> list[int]:
+    out: list[int] = []
+    for dx, dy in ((0, 0), (CURE_RADIUS, 0), (-CURE_RADIUS, 0), (0, CURE_RADIUS), (0, -CURE_RADIUS)):
+        x, y = tx + dx, ty + dy
+        if 0 <= x < s.w and 0 <= y < s.h:
+            i = s.region_at(x, y)
+            if i not in out:
+                out.append(i)
+    return out
+
+
 def cubes_here(world: Any, building: dict) -> int:
-    s = state(world)
-    return 0 if s is None else s.cubes[s.region_at(building["tx"], building["ty"])]
-
-
-def cure(world: Any, building: dict, cubes: int = 1) -> int:
-    """A clinic's finished cycle: remove up to `cubes` outbreak cubes from its own region (the wizard's treatment, by a building). Returns how many."""
+    """Outbreak cubes a clinic at this building could treat: the most in any region within its reach."""
     s = state(world)
     if s is None:
         return 0
-    i = s.region_at(building["tx"], building["ty"])
-    n = min(cubes, s.cubes[i])
-    if n <= 0:
+    return max((s.cubes[i] for i in _regions_near(world, s, building["tx"], building["ty"])), default=0)
+
+
+def cure(world: Any, building: dict, cubes: int = 1) -> int:
+    """A clinic's finished cycle: remove up to `cubes` outbreak cubes from the most infected region in its reach (the wizard's treatment, by a
+    building). Returns how many."""
+    s = state(world)
+    if s is None:
         return 0
+    near = _regions_near(world, s, building["tx"], building["ty"])
+    i = max(near, key=lambda r: (s.cubes[r], -r), default=None)
+    if i is None or s.cubes[i] <= 0:
+        return 0
+    n = min(cubes, s.cubes[i])
     s.cubes[i] -= n
     s.cured = getattr(s, "cured", 0) + n
     world.fstat(building["faction_name"], "cubes_cured", n)
