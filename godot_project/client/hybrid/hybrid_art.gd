@@ -462,8 +462,14 @@ func _frame_texture(item: Dictionary, entity: Dictionary) -> Texture2D:
 	return _tex(str(item.get("id", "")))
 
 
+func _ccw_slot(facing: int) -> int:
+	# Red Alert sprite frames run counter-clockwise from north (OpenRA facing 0 = north, increasing towards west), while _eight() counts
+	# clockwise (n, ne, e, se, s, sw, w, nw). Without this an east-bound unit drew its north-west frame (13 Oct 2026, checked on 3tnk and e1).
+	return (8 - facing) % 8
+
+
 func _sequence_index(item: Dictionary, entity: Dictionary) -> int:
-	var facing := _eight(str(entity.get("facing", "s")))
+	var facing := _ccw_slot(_eight(str(entity.get("facing", "s"))))
 	var moving := str(entity.get("status", "")) == "moving"
 	if item.has("run_start") and moving:
 		var length := int(item.get("run_length", 1))
@@ -471,7 +477,7 @@ func _sequence_index(item: Dictionary, entity: Dictionary) -> int:
 		if int(item.get("fps", 0)) > 0 and length > 1:
 			tick = int(Time.get_ticks_msec() / (1000.0 / float(item.get("fps", 1)))) % length
 		return int(item.get("run_start", 0)) + facing * length + tick
-	if int(item.get("facing_count", 0)) == 32:
+	if int(item.get("facing_count", 0)) == 32 or int(item.get("facings", 1)) == 32:
 		return facing * 4
 	if int(item.get("facings", 1)) <= 1:
 		var length := maxi(int(item.get("length", 1)), 1)

@@ -7,6 +7,9 @@ from __future__ import annotations
 
 import struct
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 
 def classic_hash(name: str) -> int:
@@ -24,12 +27,19 @@ def classic_hash(name: str) -> int:
 class Mix:
     def __init__(self, path: str | Path) -> None:
         self.data = Path(path).read_bytes()
-        assert struct.unpack_from("<H", self.data, 0)[0] == 0 and struct.unpack_from("<H", self.data, 2)[0] == 0, "encrypted or old mix"
-        count = struct.unpack_from("<H", self.data, 4)[0]
-        self.base = 10 + count * 12
         self.entries = {}
+        if struct.unpack_from("<H", self.data, 0)[0] == 0 and struct.unpack_from("<H", self.data, 2)[0] == 0:  # plain header
+            count = struct.unpack_from("<H", self.data, 4)[0]
+            self.base = 10 + count * 12
+            for i in range(count):
+                fid, off, ln = struct.unpack_from("<III", self.data, 10 + i * 12)
+                self.entries[fid] = (off, ln)
+            return
+        from mix_crypto import decrypt_header  # the Westwood encrypted header (RSA-wrapped Blowfish key), plan v2 8.3
+
+        count, _size, index, self.base = decrypt_header(self.data)
         for i in range(count):
-            fid, off, ln = struct.unpack_from("<III", self.data, 10 + i * 12)
+            fid, off, ln = struct.unpack_from("<III", index, i * 12)
             self.entries[fid] = (off, ln)
 
     def read(self, name: str) -> bytes | None:
