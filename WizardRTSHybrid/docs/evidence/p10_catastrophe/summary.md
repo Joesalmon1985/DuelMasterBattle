@@ -34,3 +34,11 @@ The clinic changes the outcome: with clinics `selfish` and `coop` lose in 3 of 4
 | selfish (clinics + nest hunting at home) | 2 | **0 of 2** | - | 0 | 5.5 |
 
 Here the response works as the plan wants it to be needed: without it the world is lost in both games at 73-85 minutes, with clinics neither game had a single outbreak (the clinics cured the cubes before any region overflowed). Together with B (scale 0.12: clinics delay the loss from minute 44 to 64) this brackets the interesting regime: scales between 0.12 and 0.3 should give "ignore loses, selfish sometimes loses, cooperative rarely". Two seeds per cell are not a probability; the calibration study (10+ seeds per cell, scales 0.15 / 0.2 / 0.25, the per-era limit grid and `coop`) is the next step and was not run for lack of time. Raw rows: `cat_study4_cells.jsonl`.
+
+## D. Cadence 0.2 (one cube every 2 minutes), v2 cards with clinics, 2 seeds per cell (last run of the session)
+| policy | games | collective loss | outbreaks (mean) | truces signed (mean) |
+| --- | ---: | ---: | ---: | ---: |
+| selfish | 2 | 1 of 2 (minute 56) | 6 | 0 |
+| coop | 2 | 1 of 2 (minute 56, **the same game**) | 6 | 24.5 |
+
+At 0.2 the response is neither always enough nor never: one game is lost at minute 56, the other has no outbreak at all. `coop` reproduces `selfish` game for game (49 truces were signed in the lost game and changed nothing): the cooperative channel (truces, aid caravans) did not matter here because the loss came from a region the clinics could not clear in time, not from missing rations. The regime for the full calibration is therefore scale 0.15-0.25; `coop` needs a stronger physical channel (squads sent to a partner's region, wares delivered before the cubes arrive) before it can beat `selfish`. Raw rows: `cat_study5_cells.jsonl`.

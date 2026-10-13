@@ -7,7 +7,7 @@ Branch `work/ubuntu-autonomous-v2` (never merged into `main`). Live state: `docs
 | --- | --- |
 | Authorised | 12 Oct 2026, minimum 8 hours of wall-clock work; the Windows PC crashed, so the run was done on the **Ubuntu ThinkPad T460** (i5-6200U 2 cores / 4 threads, 15 GB RAM, no GPU, ~18 GB free disk). `docs/evidence/hardware/hardware_joe-ThinkPad-T460.json` |
 | Started | 2026-10-12 23:30 BST |
-| Ended | 2026-10-13 06:59 BST (the 8-hour minimum was reached at 07:30; the last 30 minutes were documentation and small checks) |
+| Ended | 2026-10-13 07:30 BST (8 h 00 min of wall-clock time; the last 30 minutes were documentation, small checks and a last catastrophe-study run) |
 | Starting commit | `11b70b24f4ee06db4aac41571394714e87061b2d` (`feature/hybrid-playtest-fixes-v03`) |
 | Ending commit | `ff480f117a3d` (the final push includes this report) (`git log --oneline 11b70b2..HEAD` lists every step with its time) |
 | Active development time | the whole interactive session above, in which the agent was working or waiting on its own jobs |
@@ -41,7 +41,7 @@ Honest limits: the Windows PC was not available (hardware probe, `.ps1` supervis
 | no-card civilisation, 10 seeds (101-110), 120 min, six plus AIs | P2 acceptance, 10 seeds | 0 validation failures in 10 games; Red, Yellow 10/10 and Green 9/10 seeds found 3+ settlements, **Blue only 2/10** (hemmed in by rivals' separation zones; before a fix its founders were also killed by a nest on their road): `docs/evidence/p2_nocards/acceptance_10seeds.md` |
 | draft war tournament, seeds 507/11, 90 min, mirrored plus/baseline | P3 | `docs/evidence/p3_draft/summary.md` (plus VP 6.83 vs baseline 5.92, 0 validation failures) |
 | era-bar study (8,+2) and (10,+3), seeds 507/11, 100 min | P12 (first pass) | bar 8 ends the first era at minute 24-33 in every game, bar 10 is never reached (stall guard at 75), no game reached era 2 by VP: `docs/evidence/p12_era_study/summary.md` |
-| catastrophe study, 24 games, old cards and v2 cards | P10 | `docs/evidence/p10_catastrophe/summary.md` |
+| catastrophe study, 32 games (old cards; v2 cards at cadence scales 0.12, 0.2 and 0.3) | P10 | `docs/evidence/p10_catastrophe/summary.md` |
 | 180-minute all-systems stability run | long run | no invariant failure, memory flat at 64 MB, reached Modern at minute ~150 (stall guards): `docs/evidence/stability/summary.md` |
 | imitation data: 36 games x 45 min; module swap: 24 games x 45 min | P14 | `docs/evidence/training/` |
 
