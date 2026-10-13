@@ -30,6 +30,8 @@ def io_for(world: Any, building: dict) -> dict[str, Any]:
         return {"requests": dict(building["constructing"]["cost"])}
     kind = building.get("kind", "")
     io: dict[str, Any] = {}
+    if building.get("dismantle"):
+        return {"outputs": sorted(g for g, n in world.stocks.get(building["id"], {}).items() if int(n) > 0)}
     if kind in BUILDING_INPUTS:
         io["requests"] = dict(BUILDING_INPUTS[kind])
     if kind in BUILDING_OUTPUTS:
@@ -102,6 +104,12 @@ def carrier_quantum(world: Any) -> None:
             world.carrier_respawn.pop(rid)
             a, _b = world.road_edges[rid]
             owner = world.buildings.get(a)
+            if owner is not None and rid in world.__dict__.get("waterways", {}):
+                from wizard_rts import maritime
+
+                if not maritime.claim_ferry(world, owner["faction_name"], a):
+                    world.carrier_respawn[rid] = 1000  # no ferry yet: look again soon
+                    continue
             if owner is not None and not any(c["road_id"] == rid for c in world.carriers.values()):
                 cid = spawn_carrier(world, rid, owner["faction"], owner["faction_name"], world.roads[rid])
                 world.events.append({"kind": "carrier_respawned", "id": cid, "road": rid})
@@ -166,11 +174,14 @@ def in_flight(world: Any, good: str | None = None, dest: str | None = None) -> i
         t = c["cargo"]
         if t and (good is None or t["good"] == good) and (dest is None or t["path"][-1] == dest):
             n += 1
-    return n
+    from wizard_rts import maritime
+
+    return n + maritime.in_flight(world, good, dest)
 
 
 def _warehouses(world: Any, faction: str) -> list[dict]:
-    return [b for b in world.buildings.values() if b["kind"] == "warehouse" and b["faction"] == faction and b.get("operational", True)]
+    return [b for b in world.buildings.values() if (b["kind"] == "warehouse" or b.get("store")) and b["faction"] == faction and b.get("operational", True)
+            and not b.get("constructing") and int(b.get("hp", 1)) > 0]
 
 
 def _nearest(world: Any, src: str, candidates: list[str]) -> list[str] | None:
@@ -209,9 +220,13 @@ def scan_requests_and_outputs(world: Any) -> None:
         if t:
             k = (t["good"], t["path"][-1])
             flight[k] = flight.get(k, 0) + 1
+    for u in world.units.values():
+        for t in u.get("transfers", ()):
+            k = (t["good"], t["path"][-1])
+            flight[k] = flight.get(k, 0) + 1
 
     for building in sorted(world.buildings.values(), key=priority):
-        if "hp" not in building or not (building.get("operational", True) or building.get("constructing")):
+        if "hp" not in building or not (building.get("operational", True) or building.get("constructing") or building.get("dismantle")):
             continue
         io = io_for(world, building)
         bid = building["id"]

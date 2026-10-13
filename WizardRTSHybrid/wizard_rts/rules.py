@@ -18,6 +18,7 @@ from typing import Any
 
 DATA = Path(__file__).resolve().parent / "data" / "openra_rules.json"
 TICK_MS = 40
+MK2_HP, MK2_DAMAGE, MK2_SPEED = 1.4, 1.25, 1.1  # Modern enhanced units
 
 HYBRID_ACTORS: dict[str, dict[str, Any]] = {
     "wl_soldier": {
@@ -42,6 +43,10 @@ HYBRID_ACTORS["dmb_caravan"] = {"name": "Caravan", "hp": 6000, "armor": "None", 
 HYBRID_ACTORS["dmb_settlers"] = {"name": "Settlers", "hp": 8000, "armor": "None", "speed": 46, "cost": 0, "queue": "", "prerequisites": "",
                                  "armaments": [], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False,
                                  "locomotor": "foot", "source": "hybrid-defined Prehistoric settlement founder"}
+
+HYBRID_ACTORS["dmb_ship"] = {"name": "Ship", "hp": 50000, "armor": "Heavy", "speed": 75, "cost": 0, "queue": "", "prerequisites": "", "armaments": [],
+                             "target_types": ["WaterActor", "Ship"], "mobile": True, "is_building": False, "locomotor": "naval",
+                             "source": "hybrid-defined from the Widelands ship (hitpoints 50000, capacity 30); wizard_rts/maritime.py"}
 
 HYBRID_WEAPONS: dict[str, dict[str, Any]] = {
     "DMB_Club": {
@@ -94,6 +99,32 @@ def _load() -> dict[str, Any]:
     actors, weapons = registry.unit_rules()
     data["actors"].update(actors)
     data["weapons"].update(weapons)
+    # Modern "enhanced" variants of every Red Alert combat unit, made by the industrial assembly lines (industry/hybrid.py): +40 % health, +25 % damage, +10 % speed
+    for key, a in list(data["actors"].items()):
+        if a.get("queue") in ("Infantry", "Vehicle", "Ship", "Aircraft") and a.get("armaments") and a.get("mobile") and not key.startswith(("mk2_", "mdy_", "dmb_", "wl_")):
+            m = dict(a)
+            m["name"] = a["name"] + " Mk2"
+            m["hp"] = int(a["hp"] * MK2_HP)
+            m["speed"] = int(a["speed"] * MK2_SPEED) if a["speed"] else 0
+            names = []
+            for wn in a["armaments"]:
+                w = data["weapons"].get(wn)
+                if not w:
+                    continue
+                w2 = json.loads(json.dumps(w))
+                for wh in w2["warheads"]:
+                    wh["damage"] = int(wh["damage"] * MK2_DAMAGE) if wh["damage"] > 0 else wh["damage"]
+                data["weapons"][wn + "_Mk2"] = w2
+                names.append(wn + "_Mk2")
+            m["armaments"] = names
+            m["queue"], m["prerequisites"], m["mk2_of"] = "", "", key
+            data["actors"]["mk2_" + key] = m
+    # locomotors the original Red Alert data does not have: Mindustry legs (cross land and shallows), hover (amphibious) and any flyer (all terrain)
+    data["locomotors"].update({
+        "legs": {"speeds": {"Clear": 100, "Rough": 100, "Beach": 100, "Water": 60, "Swamp": 80, "Impassable": 0}, "crushes": []},
+        "hover": {"speeds": {"Clear": 100, "Rough": 90, "Beach": 100, "Water": 100, "Swamp": 80, "Impassable": 0}, "crushes": []},
+        "fly": {"speeds": {"Clear": 100, "Rough": 100, "Beach": 100, "Water": 100, "Swamp": 100, "Impassable": 100}, "crushes": []},
+    })
     return data
 
 
@@ -125,7 +156,7 @@ def reload_ms(w: dict[str, Any]) -> int:
 # ---------------------------------------------------------------- terrain movement and target typing
 
 # Widelands terrain class -> OpenRA terrain type used by Locomotor.TerrainSpeeds (engineering mapping)
-CLASS_TO_TERRAIN_TYPE = {0: "Clear", 1: "Rough", 2: "Beach", 3: "Water"}  # arable, mineable, walkable (beach), water; others impassable
+CLASS_TO_TERRAIN_TYPE = {0: "Clear", 1: "Rough", 2: "Beach", 3: "Water", 4: "Swamp", 5: "Impassable"}  # arable, mineable, walkable (beach), water; others impassable
 
 
 def locomotor(name: str) -> dict[str, Any]:

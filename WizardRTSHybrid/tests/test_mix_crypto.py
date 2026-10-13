@@ -68,3 +68,19 @@ def test_godot_independent_turret_proof():
     p = subprocess.run([str(GODOT), "--headless", "--path", str(repo / "godot_project"), "--script", "res://client/tests/run_hybrid_turret.gd"],
                        capture_output=True, text=True, timeout=300)
     assert "HYBRID_TURRET_OK" in p.stdout, p.stdout[-1500:]
+
+
+@pytest.mark.skipif(not GODOT.exists(), reason="no Godot binary")
+def test_godot_every_mindustry_block_and_part_texture_loads():
+    repo = Path(__file__).resolve().parents[2]
+    p = subprocess.run([str(GODOT), "--headless", "--path", str(repo / "godot_project"), "--script", "res://client/tests/run_hybrid_mindustry_art.gd"],
+                       capture_output=True, text=True, timeout=300)
+    assert "HYBRID_MINDUSTRY_ART_OK" in p.stdout, p.stdout[-1500:]
+
+
+@pytest.mark.skipif(not GODOT.exists(), reason="no Godot binary")
+def test_godot_openra_building_states_resolve_and_follow_health_and_construction():
+    repo = Path(__file__).resolve().parents[2]
+    p = subprocess.run([str(GODOT), "--headless", "--path", str(repo / "godot_project"), "--script", "res://client/tests/run_hybrid_openra_buildings.gd"],
+                       capture_output=True, text=True, timeout=300)
+    assert "HYBRID_OPENRA_BUILDINGS_OK" in p.stdout, p.stdout[-1500:]

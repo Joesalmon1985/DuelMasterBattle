@@ -120,7 +120,8 @@ def test_ship_without_goods_never_appears() -> None:
     wh = con.faction_warehouse(w, "Blue")
     site = ai._naval_site(w, "Blue", wh)
     for g in ("plank", "iron"):
-        w.stocks[wh["id"]][g] = 0
+        for b in w.buildings.values():
+            w.stocks[b["id"]][g] = 0
         w.economy_totals.totals[g] = 0
     res = w.build("Blue", "naval_yard", *site)
     produce(w, wh["id"], "plank", 8)

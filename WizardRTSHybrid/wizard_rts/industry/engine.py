@@ -24,7 +24,10 @@ ROUTER_TICKS = 8
 JUNCTION_CAP = 6
 BRIDGE_CAP = 14
 UNLOADER_PER_Q = 1
-POWER_ROLES = {"drill", "pump", "wall_drill", "heater", "mender", "overdrive", "shield", "turret", "reconstructor", "assembler", "assembler_module", "constructor",
+IMPLEMENTED = {"router", "sorter", "overflow", "junction", "bridge", "unloader", "store", "core", "pump", "conduit", "tank", "liquid_junction", "liquid_bridge",
+               "heater", "heat_conductor", "wall_drill", "harvester", "crafter", "drill", "generator", "battery", "node", "belt", "stack_belt", "unit_factory", "reconstructor", "assembler", "turret", "wall", "door", "mine", "mender", "overdrive", "shield", "repair", "radar", "incinerator", "build_turret", "mass_driver", "launch_pad", "cargo", "payload_belt", "constructor", "deconstructor", "payload_driver", "payload_loader", "accelerator", "logic", "assembler_module", "diode"}
+R.IMPLEMENTED_ROLES.update(IMPLEMENTED)
+POWER_ROLES = {"harvester", "drill", "pump", "wall_drill", "heater", "mender", "overdrive", "shield", "turret", "reconstructor", "assembler", "assembler_module", "constructor",
                "deconstructor", "payload_driver", "payload_loader", "cargo", "launch_pad", "accelerator", "mass_driver", "build_turret", "repair", "logic",
                "incinerator", "radar", "diode", "belt", "stack_belt", "bridge", "router", "wall", "junction"}
 LOGISTIC_ROLES = ("router", "sorter", "overflow", "junction", "bridge", "unloader")
@@ -89,6 +92,9 @@ def accepts(world: Any, st: Any, b: dict, ware: str, from_tile: tuple[int, int])
         return turret_accepts(world, b, ware)
     if role in ("reconstructor", "assembler", "constructor", "launch_pad", "cargo"):
         return payload_accepts(world, b, ware)
+    if role in ("heater", "pump"):
+        need = sp(b)["consume_items"].get(ware)
+        return need is not None and m["buf"].get(ware, 0) < max(10, 2 * need)
     if role == "mender" or role == "overdrive" or role == "shield" or role == "repair":
         return support_accepts(world, b, ware)
     if role == "incinerator":
@@ -143,6 +149,14 @@ def hand_over(world: Any, st: Any, b: dict, ware: str, from_tile: tuple[int, int
     return True
 
 
+def deliver_to_warehouse(world: Any, wh_id: str, ware: str) -> bool:
+    """A belt (or a machine) puts one ware into a Widelands warehouse or store: it joins the settlement's stock and the carriers can fetch it."""
+    from wizard_rts.economy import _supply
+
+    _supply(world, wh_id).add_wares(ware, 1)
+    return True
+
+
 def give(world: Any, st: Any, tile: tuple[int, int], ware: str, from_tile: tuple[int, int], ignore: str = "") -> bool:
     """Put one ware onto whatever stands on `tile` (a belt or a machine) if it takes it."""
     from wizard_rts.industry import sim as S
@@ -153,6 +167,8 @@ def give(world: Any, st: Any, tile: tuple[int, int], ware: str, from_tile: tuple
             return True
         return False
     ob = tile_building(world, st, tile)
+    if ob is None and tile in st.store_tiles:
+        return deliver_to_warehouse(world, st.store_tiles[tile], ware)
     if ob is None or ob["id"] == ignore:
         return False
     if accepts(world, st, ob, ware, from_tile):
@@ -561,3 +577,403 @@ def holdings(world: Any, b: dict) -> dict[str, int]:
     for ware, n in m.get("payload_items", {}).items():
         out[ware] = out.get(ware, 0) + int(n)
     return out
+
+
+# ------------------------------------------------------------------ crafter helpers
+
+def separator_pick(world: Any, b: dict, m: dict, spec_: dict) -> str:
+    """Separator.craft: one weighted draw from `results` (deterministic: seeded by world seed, building and cycle count)."""
+    import random
+
+    rng = random.Random(f"{world.seed}:sep:{b['id']}:{m.get('count', 0)}")
+    items = sorted(spec_["results"].items())
+    total = sum(w for _i, w in items)
+    r = rng.random() * total
+    for ware, w in items:
+        if r < w:
+            return ware
+        r -= w
+    return items[-1][0]
+
+
+def attribute_sum(world: Any, b: dict, attribute: str) -> float:
+    """Sum of an environment attribute over the footprint (Attribute.sumAttribute). Terrain mapping (hybrid): `spores` = fertile ground,
+    `heat` / `steam` = hot ground and the shore of lava (the Widelands lava terrain), `water` = water tiles, `sand` = desert and beach, `oil` = none."""
+    from wizard_rts.industry import sim as S
+
+    t = world.terrain
+    if t is None:
+        return 0.0
+    name = attribute.split(".")[-1]
+    total = 0.0
+    for (x, y) in S.footprint(b):
+        if not t.in_bounds(x, y):
+            continue
+        tn = t.terrain_name(x, y)
+        if name == "spores":
+            total += 0.15 if t.cls[y * t.w + x] == 0 else 0.0
+        elif name in ("heat", "steam"):
+            hot = any(t.in_bounds(x + dx, y + dy) and "lava" in t.terrain_name(x + dx, y + dy) for dx, dy in DIRS + ((0, 0),))
+            total += (0.75 if name == "heat" else 1.0) if hot else (0.25 if name == "heat" and ("desert" in tn or "beach" in tn) else 0.0)
+        elif name == "water":
+            total += 1.0 if t.is_water(x, y) else 0.0
+        elif name == "sand":
+            total += 1.0 if ("desert" in tn or "beach" in tn) else 0.0
+    return total
+
+
+# ------------------------------------------------------------------ power: generators, demand
+
+def fuel_ok(spec_: dict, ware: str) -> bool:
+    """Does a generator burn this ware? Explicit consume items win; else ConsumeItemFlammable (>= 0.2) or ConsumeItemRadioactive (>= 0.2)."""
+    if spec_["consume_items"]:
+        return ware in spec_["consume_items"]
+    item = R.item_of(ware)
+    if item is None:
+        return False
+    info = R.item_info(item)
+    if any("Radioactive" in o for o in spec_.get("optional_consumers", [])):
+        return info["radioactivity"] >= 0.2
+    return info["flammability"] >= 0.2
+
+
+def special_generator(spec_: dict) -> bool:
+    """Generators the original slice does not model (liquids, heat, reactors, thermal): handled by `generator_step`."""
+    if spec_["class"] == "SolarGenerator" or spec_["class"] == "PowerSource":
+        return False
+    return (bool(spec_["consume_liquids"]) or spec_["class"] != "ConsumeGenerator" or bool(spec_["consume_items"])
+            or any("Radioactive" in o for o in spec_.get("optional_consumers", [])))
+
+
+def generator_step(world: Any, st: Any, b: dict, spec_: dict, m: dict, dt_ms: int) -> float:
+    """One quantum of a generator that is not a plain flammable burner or solar panel; returns the power units produced (per quantum)."""
+    from wizard_rts.industry import fluids as F
+
+    cls = spec_["class"]
+    base = spec_["power_production_per_s"] * dt_ms / 1000.0
+    m.setdefault("burn", 0)
+    if cls == "ThermalGenerator":
+        eff = attribute_sum(world, b, "heat")
+        if "turbine" in spec_["id"]:  # turbine condenser: needs steam vents and gives water
+            eff = attribute_sum(world, b, "steam")
+        m["state"] = "producing" if eff > 0 else "no heat under it"
+        if eff > 0:
+            for liquid, per_tick in spec_["output_liquid"].items():
+                F.produce(world, b, liquid, per_tick * TICKS_PER_Q * eff)
+        return base * eff if eff > 0 else 0.0
+    if cls == "NuclearReactor":
+        return _nuclear_step(world, b, spec_, m, base)
+    ok_liq = all(m["liq"].get(l, 0.0) >= per * TICKS_PER_Q * 0.999 for l, per in spec_["consume_liquids"].items() if per)
+    # item cycle: one fuel item lasts itemDuration ticks
+    if spec_["consume_items"] or spec_["flammable"] or spec_.get("optional_consumers"):
+        if m["burn"] <= 0:
+            fuel = next((w for w in sorted(m["buf"]) if m["buf"][w] > 0 and fuel_ok(spec_, w)), None)
+            if fuel is not None and ok_liq:
+                n = max(1, int(spec_["consume_items"].get(fuel, 1)))
+                if m["buf"][fuel] >= n:
+                    m["buf"][fuel] -= n
+                    world.stats["consumed_" + fuel] = world.stats.get("consumed_" + fuel, 0) + n
+                    m["burn"] = int(spec_["item_duration_ticks"])
+        running = m["burn"] > 0 and ok_liq
+    else:
+        running = ok_liq  # liquid-only burners (chemical combustion chamber, pyrolysis)
+    if not running:
+        m["state"] = "no fuel" if (spec_["consume_items"] or spec_["flammable"]) else "no liquid"
+        return 0.0
+    if m["burn"] > 0:
+        m["burn"] = max(0, m["burn"] - TICKS_PER_Q)
+    for liquid, per in spec_["consume_liquids"].items():
+        F.consume(world, b, liquid, per * TICKS_PER_Q)
+    for liquid, per in spec_["output_liquid"].items():
+        F.produce(world, b, liquid, per * TICKS_PER_Q)
+    if spec_["heat_out"] > 0:
+        m["heat_out"] = spec_["heat_out"]
+    m["state"] = "producing"
+    return base
+
+
+def _nuclear_step(world: Any, b: dict, spec_: dict, m: dict, base: float) -> float:
+    """NuclearReactor.updateTile: output follows the fuel fraction, heat rises with it, cryofluid carries heat away, 100 % heat = meltdown."""
+    from wizard_rts.industry import fluids as F
+
+    f = spec_["fields"]
+    fuel = next(iter(spec_["consume_items"]), "mdy.thorium")
+    cap = int(f.get("itemCapacity", 30))
+    full = min(1.0, m["buf"].get(fuel, 0) / cap)
+    heating = float(f.get("heating", 0.01))
+    coolant_power = float(f.get("coolantPower", 0.5))
+    if full > 0:
+        m["heat"] += full * heating * TICKS_PER_Q
+        m["burn"] = m.get("burn", 0) + TICKS_PER_Q
+        if m["burn"] >= int(spec_["item_duration_ticks"]):
+            m["burn"] = 0
+            m["buf"][fuel] -= 1
+            world.stats["consumed_" + fuel] = world.stats.get("consumed_" + fuel, 0) + 1
+    if m["heat"] > 0:
+        liquid = F.current_of(m) if hasattr(F, "current_of") else F.current(m)
+        if liquid:
+            used = min(m["liq"].get(liquid, 0.0), m["heat"] / coolant_power)
+            F.consume(world, b, liquid, used)
+            m["heat"] = max(0.0, m["heat"] - used * coolant_power)
+    m["heat"] = max(0.0, m["heat"])
+    m["state"] = "producing" if full > 0 else "no fuel"
+    if m["heat"] >= 0.999:
+        world.events.append({"kind": "reactor_meltdown", "id": b["id"], "faction": b["faction_name"]})
+        from wizard_rts.industry import defense
+
+        defense.explode(world, b, radius=float(f.get("explosionRadius", 19)) / 2.0, damage=int(f.get("explosionDamage", 1250)))
+        return 0.0
+    return base * full
+
+
+def fuel_accepts(world: Any, b: dict, spec_: dict, m: dict, ware: str) -> bool:
+    cap = int(spec_["item_capacity"]) if spec_["class"] == "NuclearReactor" else 10
+    return fuel_ok(spec_, ware) and m["buf"].get(ware, 0) < cap
+
+
+def wants_power(world: Any, b: dict, spec_: dict, m: dict) -> bool:
+    """Does this machine draw its power this quantum? (ConsumePower: only while it has something to do.)"""
+    if spec_["power_use_per_s"] <= 0:
+        return False
+    role = m["role"]
+    if role == "drill":
+        return m.get("item") != "" and sum(m["out"].values()) < 10
+    if role == "pump":
+        return m.get("pumped", 1.0) > 0 or m["state"] in ("idle", "pumping", "full")
+    if role == "heater":
+        return heater_ready(spec_, m)
+    if role == "turret":
+        return m.get("target") is not None or m.get("charge", 0) > 0 or spec_.get("class") == "PointDefenseTurret" and m.get("target") is not None
+    if role in ("mender", "overdrive", "shield", "repair", "radar", "logic", "incinerator", "build_turret"):
+        return True
+    if role in ("reconstructor", "assembler", "constructor", "deconstructor", "payload_driver", "payload_loader", "cargo", "launch_pad", "accelerator"):
+        return m.get("busy", False)
+    if role == "mass_driver":
+        return m.get("item_total", 0) > 0 or m.get("state") in ("shooting", "linked")
+    if role == "wall_drill":
+        return True
+    if role in ("bridge", "stack_belt"):
+        return bool(m.get("buf_items"))
+    return True
+
+
+def heater_ready(spec_: dict, m: dict) -> bool:
+    return all(m["buf"].get(w, 0) >= n for w, n in spec_["consume_items"].items()) and all(
+        m["liq"].get(l, 0.0) >= per * TICKS_PER_Q * 0.999 for l, per in spec_["consume_liquids"].items())
+
+
+def needs_power(spec_: dict) -> bool:
+    return spec_["power_use_per_s"] > 0
+
+
+# ------------------------------------------------------------------ the generic quantum
+
+def step_roles(world: Any, st: Any, machines: list[dict], sat_by_machine: dict[str, float], wants: dict[str, bool], sat_graph: dict[int, float]) -> None:
+    """Everything the original slice does not do, once per quantum after the power solve."""
+    from wizard_rts.industry import fluids as F
+
+    F.step_pipes(world, st)
+    F.step_machines(world, st, machines, sat_graph)
+    diode_step(world, st, machines)
+    heat_step(world, st, machines, sat_by_machine)
+    for b in machines:
+        m = b["mdy"]
+        if b.get("disrupted"):
+            continue
+        if m["role"] == "wall_drill":
+            _wall_drill_step(world, st, b, m, sat_by_machine.get(b["id"], 1.0))
+        elif m["role"] == "harvester":
+            _harvester_step(world, st, b, m, sat_by_machine.get(b["id"], 1.0))
+    step_logistics(world, st, machines)
+    from wizard_rts.industry import defense, payload
+
+    defense.step(world, st, machines, sat_by_machine)
+    payload.step(world, st, machines, sat_by_machine)
+
+
+def _wall_drill_step(world: Any, st: Any, b: dict, m: dict, satisfaction: float) -> None:
+    """WallCrafter (cliff crusher): sand from the mountain and rock tiles along the block's edge."""
+    from wizard_rts.industry import sim as S
+    from wizard_rts import terrain as T
+
+    spec_ = sp(b)
+    t = world.terrain
+    n = 0
+    if t is not None:
+        for (x, y) in S.adjacent_tiles(S.footprint(b)):
+            if t.in_bounds(x, y) and t.cls[y * t.w + x] == T.MINEABLE:
+                n += 1
+    if n == 0:
+        m["state"] = "no wall in reach"
+        return
+    if satisfaction <= 0:
+        m["state"] = "no power"
+        return
+    if sum(m["out"].values()) >= 10:
+        m["state"] = "output blocked"
+    else:
+        m["state"] = "drilling"
+        m["progress"] += TICKS_PER_Q * min(n, spec_["size"]) * satisfaction
+        if m["progress"] >= int(spec_["fields"].get("drillTime", 110)) * 2:
+            m["progress"] = 0
+            ware = B.ware_of_item(str(spec_["refs"].get("output", "sand")) if False else "sand")
+            m["out"][ware] = m["out"].get(ware, 0) + 1
+            world.stats["made_" + ware] = world.stats.get("made_" + ware, 0) + 1
+    from wizard_rts.industry import sim as S2
+
+    S2._flush(world, st, b, m)
+
+
+def heat_step(world: Any, st: Any, machines: list[dict], sat: dict[str, float]) -> None:
+    """Heat networks: heaters and conductors that touch form a net; the net's heat is shared among its consumers in proportion to what they need."""
+    from wizard_rts.industry import sim as S
+
+    nodes = [b for b in machines if sp(b)["role"] in ("heater", "heat_conductor") or sp(b)["heat_in"] > 0 or sp(b)["heat_out"] > 0]
+    if not nodes:
+        return
+    index = {b["id"]: i for i, b in enumerate(nodes)}
+    parent = list(range(len(nodes)))
+
+    def find(a: int) -> int:
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    for b in nodes:
+        for t in S.adjacent_tiles(S.footprint(b)):
+            oid = st.tile_owner.get(t)
+            if oid in index and oid != b["id"]:
+                ra, rb = find(index[b["id"]]), find(index[oid])
+                if ra != rb:
+                    parent[max(ra, rb)] = min(ra, rb)
+    groups: dict[int, list[dict]] = {}
+    for b in nodes:
+        groups.setdefault(find(index[b["id"]]), []).append(b)
+    for _root, g in sorted(groups.items()):
+        supply = 0.0
+        for b in g:
+            m = b["mdy"]
+            s_ = sp(b)
+            if s_["role"] == "heater":
+                run = heater_run(world, st, b, m, s_, sat.get(b["id"], 1.0))
+                m["heat_out"] = s_["heat_out"] * run
+            supply += float(m.get("heat_out", 0.0)) if s_["role"] in ("heater",) or s_["heat_out"] > 0 else 0.0
+        demand = sum(sp(b)["heat_in"] for b in g if sp(b)["heat_in"] > 0)
+        for b in g:
+            s_ = sp(b)
+            if s_["heat_in"] > 0:
+                b["mdy"]["heat"] = min(s_["heat_in"] * 1.0, supply * s_["heat_in"] / demand) if demand > 0 else 0.0
+            elif s_["role"] not in ("heater", "heat_conductor"):
+                pass
+
+
+def heater_run(world: Any, st: Any, b: dict, m: dict, spec_: dict, satisfaction: float) -> float:
+    """A heat producer (electric heater, slag heater, oxidation chamber...) works while its inputs and power are there; returns 0..1 and consumes."""
+    from wizard_rts.industry import fluids as F
+    from wizard_rts.industry import sim as S
+
+    if b.get("disrupted"):
+        m["state"] = "closed"
+        return 0.0
+    if spec_["power_use_per_s"] > 0 and satisfaction <= 0:
+        m["state"] = "no power"
+        return 0.0
+    if not heater_ready(spec_, m):
+        m["state"] = "waiting for inputs"
+        return 0.0
+    if sum(m["out"].values()) >= 10:
+        m["state"] = "output blocked"
+        return 0.0
+    m["state"] = "heating"
+    for liquid, per in spec_["consume_liquids"].items():
+        F.consume(world, b, liquid, per * TICKS_PER_Q)
+    ct = spec_["craft_ticks"]
+    if spec_["consume_items"] and ct > 0:
+        m["progress"] += TICKS_PER_Q
+        if m["progress"] >= ct:
+            m["progress"] -= ct
+            for w, n in spec_["consume_items"].items():
+                m["buf"][w] -= n
+                world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
+            for w, n in spec_["output_item"].items():
+                m["out"][w] = m["out"].get(w, 0) + n
+                world.stats["made_" + w] = world.stats.get("made_" + w, 0) + n
+    S._flush(world, st, b, m)
+    return 1.0
+
+
+def diode_step(world: Any, st: Any, machines: list[dict]) -> None:
+    """PowerDiode.updateTile: charge flows from the battery graph behind it to the one in front when the back is fuller (fraction-wise)."""
+    from wizard_rts.industry import sim as S
+
+    for d in machines:
+        if sp(d)["role"] != "diode":
+            continue
+        rot = int(d["mdy"].get("rot", 0)) % 4
+        bx, by = DIRS[(rot + 2) % 4]
+        fx, fy = DIRS[rot]
+        back = st.tile_owner.get((d["tx"] + bx, d["ty"] + by))
+        front = st.tile_owner.get((d["tx"] + fx, d["ty"] + fy))
+        gb, gf = st.graph_of.get(back, -1), st.graph_of.get(front, -1)
+        if gb < 0 or gf < 0 or gb == gf:
+            continue
+        bb = [world.buildings[i] for i in st.graphs[gb] if world.buildings[i]["mdy"]["role"] == "battery"]
+        fb = [world.buildings[i] for i in st.graphs[gf] if world.buildings[i]["mdy"]["role"] == "battery"]
+        capb = sum(sp(x)["power_buffer"] for x in bb)
+        capf = sum(sp(x)["power_buffer"] for x in fb)
+        if capb <= 0 or capf <= 0:
+            continue
+        sb, sf = sum(x["mdy"]["stored"] for x in bb), sum(x["mdy"]["stored"] for x in fb)
+        fb_, ff_ = sb / capb, sf / capf
+        if fb_ > ff_:
+            amount = max(0.0, min(sb * (fb_ - ff_) / 2.0, capf * (1.0 - ff_)))
+            left = amount
+            for x in bb:
+                take = min(x["mdy"]["stored"], left)
+                x["mdy"]["stored"] -= take
+                left -= take
+            give_ = amount
+            for x in fb:
+                room = sp(x)["power_buffer"] - x["mdy"]["stored"]
+                add = min(room, give_)
+                x["mdy"]["stored"] += add
+                give_ -= add
+
+
+def _harvester_step(world: Any, st: Any, b: dict, m: dict, satisfaction: float) -> None:
+    """Tree harvester (hybrid.py): fells a grown tree within reach every cycle and puts two logs in its output; power-driven, no worker walks."""
+    from wizard_rts import workers
+    from wizard_rts.industry import sim as S
+
+    spec_ = sp(b)
+    if satisfaction <= 0:
+        m["state"] = "no power"
+        S._flush(world, st, b, m)
+        return
+    if sum(m["out"].values()) >= 10:
+        m["state"] = "output blocked"
+        S._flush(world, st, b, m)
+        return
+    m["progress"] += TICKS_PER_Q * satisfaction * m.get("od", 1.0)
+    m["state"] = "harvesting"
+    if m["progress"] >= spec_["craft_ticks"]:
+        r = int(spec_.get("harvest_radius", 9))
+        best = None
+        for tree in world.trees.values():
+            if tree.get("species") == "wheat" or tree.get("reserved_by") or tree["stage"] not in ("old", "mature"):
+                continue
+            d = max(abs(tree["tx"] - b["tx"]), abs(tree["ty"] - b["ty"]))
+            if d <= r and (best is None or (d, tree["id"]) < best[0]):
+                best = ((d, tree["id"]), tree)
+        if best is None:
+            m["state"] = "no trees in reach"
+            m["progress"] = spec_["craft_ticks"]
+        else:
+            m["progress"] -= spec_["craft_ticks"]
+            workers.remove_tree(world, best[1]["id"], "harvested")
+            for w_, n in spec_["output_item"].items():
+                m["out"][w_] = m["out"].get(w_, 0) + n
+                world.stats["made_" + w_] = world.stats.get("made_" + w_, 0) + n
+            world.stats["trees_harvested"] = world.stats.get("trees_harvested", 0) + 1
+    S._flush(world, st, b, m)

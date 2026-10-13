@@ -19,14 +19,17 @@ MAX_BELT = 120
 UPGRADE_FRACTION = 0.25  # S08: the new recipe minus the old one, plus a quarter of the old one, paid in delivered wares
 
 
-def _tile_free(world: Any, tile: tuple[int, int], extra_ok: set[tuple[int, int]] | None = None, allow_road: bool = False, allow_trees: bool = False) -> str | None:
-    """A belt may cross a road (units and carriers walk over both); a machine may not stand on one."""
+def _tile_free(world: Any, tile: tuple[int, int], extra_ok: set[tuple[int, int]] | None = None, allow_road: bool = False, allow_trees: bool = False,
+               allow_water: bool | str = False) -> str | None:
+    """A belt may cross a road (units and carriers walk over both); a machine may not stand on one. A pump may stand in the water."""
     if extra_ok and tile in extra_ok:
         return None
     if not world.tile_in_bounds(*tile):
         return "outside_map"
     if world.terrain is not None and not world.terrain.ground(*tile):
-        return "unsuitable_terrain"
+        wet_ok = allow_water == "shallow" and world.terrain.is_shallow(*tile) or allow_water is True and world.terrain.is_water(*tile)
+        if not wet_ok:
+            return "unsuitable_terrain"
     st = S.ind(world)
     if (tile in world.blocked or (tile in world.tree_tiles and not allow_trees) or (tile in world.road_tile_set and not allow_road) or tile in world.reserved_tiles
             or tile in st.belts or tile in st.tile_owner):
@@ -36,7 +39,7 @@ def _tile_free(world: Any, tile: tuple[int, int], extra_ok: set[tuple[int, int]]
     return None
 
 
-def check_machine(world: Any, faction: str, kind: str, tile: tuple[int, int], own: set[tuple[int, int]] | None = None) -> tuple[str | None, dict[str, Any]]:
+def check_machine(world: Any, faction: str, kind: str, tile: tuple[int, int], own: set[tuple[int, int]] | None = None, loose: bool = False) -> tuple[str | None, dict[str, Any]]:
     """Placement rules of a machine: inside the faction's territory, every footprint tile free ground, and (drills) existing
     resource sites underneath that the drill's tier can work. Returns (reason or None, ctx)."""
     spec = R.block(kind)
@@ -45,13 +48,18 @@ def check_machine(world: Any, faction: str, kind: str, tile: tuple[int, int], ow
     n = spec["size"]
     tiles = [(tile[0] + dx, tile[1] + dy) for dy in range(n) for dx in range(n)]
     ctx: dict[str, Any] = {"footprint": tiles}
+    wet = spec["role"] == "pump" and spec["class"] == "Pump"
     for t in tiles:
         if not territory.in_territory(world, faction, t):
             return "outside_territory", ctx
-        why = _tile_free(world, t, own)
+        why = _tile_free(world, t, own, allow_road=loose, allow_trees=loose, allow_water=True if wet else "shallow")  # Mindustry blocks may stand in shallow water; pumps in any water
         if why:
             return why, ctx
-    if spec["role"] != "drill" and not world.terrain.can_build(tile[0], tile[1], "small"):  # the anchor needs a Widelands building site; the rest only ground
+    if wet:
+        if not any(world.terrain.is_water(*t) for t in tiles):
+            return "needs_water", ctx
+        return None, ctx
+    if spec["role"] not in ("drill",) and not world.terrain.is_shallow(*tile) and not world.terrain.can_build(tile[0], tile[1], "small"):  # the anchor needs a Widelands building site; the rest only ground
         return "unsuitable_terrain", ctx
     if spec["role"] == "drill":
         if not X.options(world, tiles, int(spec["tier"])):
@@ -77,11 +85,14 @@ def check_belt(world: Any, faction: str, tiles: list[tuple[int, int]]) -> str | 
     return None
 
 
-def place_belt(world: Any, faction: str, tiles: list[Any], end_dir: int | None = None) -> dict[str, Any]:
-    """One conveyor run as a construction site: `tiles` in flow order, cost one hybrid conveyor cost per tile."""
+def place_belt(world: Any, faction: str, tiles: list[Any], end_dir: int | None = None, kind: str = "mdy:conveyor") -> dict[str, Any]:
+    """One run of belt, stack belt, duct, conduit or payload conveyor as a construction site: `tiles` in flow order, hybrid cost per tile."""
     from wizard_rts import tech
 
-    if not tech.kind_allowed(world, faction, "mdy:conveyor"):
+    spec_ = R.block(kind)
+    if spec_ is None or spec_["role"] not in S.LINE_ROLES:
+        return {"status": "rejected", "reason": "not_a_line_block"}
+    if not tech.kind_allowed(world, faction, kind):
         return {"status": "rejected", "reason": "locked_by_card"}
     info = world.faction_info.get(faction)
     if info is None:
@@ -101,9 +112,9 @@ def place_belt(world: Any, faction: str, tiles: list[Any], end_dir: int | None =
         else:
             d = (1, 0)
         dirs.append(S.DIRS.index(d))
-    spec = R.build_spec("mdy:conveyor")
-    cost = belt_cost(len(pts))
-    bid = world._building(info["id"], faction, "mdy:conveyor", pts[0], f"Conveyor x{len(pts)}", spec["definition"], block=False)
+    spec = R.build_spec(kind)
+    cost = belt_cost(len(pts)) if kind == "mdy:conveyor" else {g: n * len(pts) for g, n in spec["cost"].items()}
+    bid = world._building(info["id"], faction, kind, pts[0], f"{spec['label']} x{len(pts)}", spec["definition"], block=False)
     b = world.buildings[bid]
     b["line"] = {"tiles": [list(t) for t in pts], "dirs": dirs}
     b["operational"] = False
@@ -118,7 +129,7 @@ def place_belt(world: Any, faction: str, tiles: list[Any], end_dir: int | None =
             world.stats["trees_cleared"] = world.stats.get("trees_cleared", 0) + 1
     world.reserved_tiles.update(pts)
     world.recipe_requests[bid] = dict(cost)
-    world.events.append({"kind": "construction_started", "id": bid, "building_kind": "mdy:conveyor", "faction": faction})
+    world.events.append({"kind": "construction_started", "id": bid, "building_kind": kind, "faction": faction})
     return {"status": "ok", "id": bid, "tiles": len(pts), "cost": cost}
 
 
@@ -192,27 +203,78 @@ def upgrade_mine(world: Any, faction: str, building_id: str, to_kind: str) -> di
 
 
 def configure(world: Any, faction: str, building_id: str, key: str, value: Any) -> dict[str, Any]:
-    """Set a drill's target item or a factory's unit plan."""
+    """Settings of a built machine: a drill's `target` item, a factory's or assembler's `plan`, `item` of a sorter or unloader, `link` of a bridge,
+    mass driver, launch pad, payload driver or cargo loader, `rot` (0 east, 1 south, 2 west, 3 north) of anything with a facing, `block` of a constructor,
+    and `code` of a logic processor."""
     from wizard_rts import tech
 
     b = world.buildings.get(str(building_id))
     if b is None or b["faction_name"] != faction or b.get("mdy") is None:
         return {"status": "rejected", "reason": "no_machine"}
     m, spec = b["mdy"], R.block(b["kind"])
-    if key == "target" and m["role"] == "drill":
+    role = m["role"]
+    if key == "target" and role == "drill":
         opts = S.drill_options(world, b)
         if value not in opts:
             return {"status": "rejected", "reason": "cannot_extract_here", "options": sorted(opts)}
         m["target"] = str(value)
         m["progress"] = 0
         return {"status": "ok"}
-    if key == "plan" and m["role"] == "unit_factory":
+    if key == "plan" and role == "unit_factory":
         if value not in [p["unit"] for p in spec["plans"]]:
             return {"status": "rejected", "reason": "no_such_plan"}
         if not tech.unit_allowed(world, faction, str(value)):
             return {"status": "rejected", "reason": "locked_by_card"}
         m["plan"] = str(value)
         m["progress"] = 0
+        return {"status": "ok"}
+    if key == "plan" and role == "assembler":
+        if value not in [p["unit"] for p in spec.get("assembler_plans") or []]:
+            return {"status": "rejected", "reason": "no_such_plan"}
+        m["plan"], m["stack"], m["wait"] = str(value), {}, 0
+        return {"status": "ok"}
+    if key == "item" and role in ("sorter", "unloader"):
+        m["item"] = None if value in (None, "", "none") else str(value)
+        return {"status": "ok"}
+    if key == "recipe":
+        rec = spec.get("recipes") or {}
+        if value not in rec:
+            return {"status": "rejected", "reason": "no_such_recipe", "options": sorted(rec)}
+        m["recipe"], m["progress"] = str(value), 0
+        for ware in list(m["buf"]):  # inputs of the old recipe stay in the buffer (still counted by the ledger)
+            pass
+        return {"status": "ok"}
+    if key == "rot":
+        m["rot"] = int(value) % 4
+        return {"status": "ok"}
+    if key == "block" and role == "constructor":
+        from wizard_rts.industry import payload as PL
+
+        kind = value if str(value).startswith("mdy:") else None
+        allowed = {PL.R_kind(j) for j in spec.get("filter") or []}
+        if kind not in allowed:
+            return {"status": "rejected", "reason": "not_in_filter", "options": sorted(a for a in allowed if a)}
+        m["block"], m["wait"] = kind, 0
+        return {"status": "ok"}
+    if key == "link" and role in ("bridge", "liquid_bridge", "mass_driver", "payload_driver", "launch_pad", "cargo"):
+        t = world.buildings.get(str(value))
+        if t is None or t["faction_name"] != faction and role not in ("launch_pad",):
+            return {"status": "rejected", "reason": "no_target"}
+        if t.get("mdy") is None:
+            return {"status": "rejected", "reason": "no_target"}
+        rng = float(spec["fields"].get("range", 4 if "bridge" in role else 440))
+        tiles = rng if role in ("bridge", "liquid_bridge") else rng / 8.0
+        if role in ("bridge", "liquid_bridge"):
+            if not (t["tx"] == b["tx"] or t["ty"] == b["ty"]) or abs(t["tx"] - b["tx"]) + abs(t["ty"] - b["ty"]) > tiles or t["id"] == b["id"]:
+                return {"status": "rejected", "reason": "out_of_range"}
+        elif role != "launch_pad" and ((t["tx"] - b["tx"]) ** 2 + (t["ty"] - b["ty"]) ** 2) ** 0.5 > tiles:
+            return {"status": "rejected", "reason": "out_of_range"}
+        m["link"] = t["id"]
+        return {"status": "ok"}
+    if key == "code" and role == "logic":
+        from wizard_rts.industry import logic
+
+        logic.set_code(m, str(value))
         return {"status": "ok"}
     return {"status": "rejected", "reason": "bad_config"}
 
@@ -289,3 +351,64 @@ def attach_to_nodes(world: Any, b: dict) -> None:
         seen.add(g)
         st.links.setdefault(nid, []).append(b["id"])
     st.dirty = True
+
+
+def convert_building(world: Any, faction: str, building_id: str, to_kind: str = "") -> dict[str, Any]:
+    """Replace a standing Widelands building by the industrial block that supersedes it (hybrid.REPLACES): the same site, the S08 upgrade price in delivered wares,
+    the old worker retires and nothing is produced until the machine is finished."""
+    from wizard_rts import construction as con
+    from wizard_rts import tech
+    from wizard_rts.industry import hybrid
+
+    b = world.buildings.get(str(building_id))
+    if b is None or b["faction_name"] != faction or not b["kind"].startswith("wl:") or b.get("constructing") or b.get("dismantle") or not b.get("operational", True):
+        return {"status": "rejected", "reason": "not_convertible"}
+    base = b["kind"].split("_", 1)[1] if "_" in b["kind"] else b["kind"]
+    target = to_kind or hybrid.REPLACES.get(base)
+    if target is None or R.block(target) is None:
+        return {"status": "rejected", "reason": "no_replacement"}
+    if not tech.kind_allowed(world, faction, target):
+        return {"status": "rejected", "reason": "locked_by_card"}
+    spec = R.block(target)
+    own = {(b["tx"], b["ty"])} | {(int(p[0]), int(p[1])) for p in b.get("ground_footprint", [])}
+    n = spec["size"]
+    why, ctx = "tile_occupied", {}
+    for oy in range(0, n):  # the machine may be larger than the hut: try every placement that still covers the old tile
+        for ox in range(0, n):
+            anchor = (b["tx"] - ox, b["ty"] - oy)
+            why, ctx = check_machine(world, faction, target, anchor, own=own, loose=True)
+            if why is None:
+                break
+        if why is None:
+            break
+    if why:
+        return {"status": "rejected", "reason": why}
+    b["tx"], b["ty"] = ctx["footprint"][0]
+    old = con.build_spec(b["kind"]) or {"cost": {}}
+    cost = upgrade_cost(dict(old["cost"]), spec["cost"])
+    for wid in [w for w, w_ in world.workers.items() if w_.get("building") == b["id"]]:
+        w = world.workers.pop(wid)
+        if w.get("carrying"):
+            from wizard_rts.lifecycle import lose
+
+            lose(world, w["carrying"], 1)
+    from wizard_rts.lifecycle import lose
+
+    for good, n in sorted(world.stocks.get(b["id"], {}).items()):
+        lose(world, good, int(n))
+    world.stocks[b["id"]] = {}
+    for key in ("worker_id", "worker_ids", "stack", "sleep_ms", "waiting_worker", "worker_done", "prog_failed", "stall", "respawn_ms", "worker_fail"):
+        b.pop(key, None)
+    for t in own:
+        world.blocked.discard(t)
+    from_kind = b["kind"]
+    b.setdefault("history", []).append({"event": "converted", "from": from_kind, "to": target, "game_ms": int(world.dmb.clock.get("game_ms", 0))})
+    b["kind"], b["definition"], b["label"] = target, spec["definition"], f"{faction} {spec['label']}"
+    b["operational"], b["working"], b["mdy"] = False, False, None
+    b["constructing"] = {"cost": cost, "progress_ms": 0, "convert_from": from_kind}
+    b["hp"] = max(1, b["max_hp"] // 10)
+    b["ground_footprint"] = [list(t) for t in ctx["footprint"]]
+    world.blocked.update(ctx["footprint"])
+    world.recipe_requests[b["id"]] = dict(cost)
+    world.events.append({"kind": "construction_started", "id": b["id"], "building_kind": target, "faction": faction, "convert_from": from_kind})
+    return {"status": "ok", "id": b["id"], "kind": target, "cost": cost}

@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTENT = ROOT / "external" / "mindustry" / "core" / "src" / "mindustry" / "content"
 OUT = ROOT / "wizard_rts" / "data" / "mindustry_full.json"
 TICKS = 60.0
-CONST = {"tilesize": 8.0, "size": None, "Mathf.PI": 3.14159265, "Mathf.pi": 3.14159265, "Mathf.sqrt2": 1.41421356}
+CONST = {"tilesize": 8.0, "wallHealthMultiplier": 4.0, "size": None, "Mathf.PI": 3.14159265, "Mathf.pi": 3.14159265, "Mathf.sqrt2": 1.41421356}
 
 
 def kebab(name: str) -> str:
@@ -298,9 +298,22 @@ def parse_blocks(text: str) -> dict:
         r = fields.get("_raw", {})
         if "shootType" in r:
             d["shoot_type"] = bullet(r["shootType"], {})
-        if "plans" in r:
-            d["plans"] = [{"unit": u.group(1), "time_ticks": num(u.group(2)), "requirements": stacks(u.group(3))}
-                          for u in re.finditer(r"new UnitPlan\(UnitTypes\.(\w+),\s*([^,]+?),\s*with\(([^)]*)\)\)", r["plans"])]
+        plans = [{"unit": u.group(1), "time_ticks": num(u.group(2)), "requirements": stacks(u.group(3))}
+                 for u in re.finditer(r"new UnitPlan\(UnitTypes\.(\w+),\s*([^,]+?),\s*with\(([^)]*)\)\)", body)]
+        if plans:
+            d["plans"] = plans
+        aplans = []
+        for u in re.finditer(r"new AssemblerUnitPlan\(UnitTypes\.(\w+),\s*([^,]+?),\s*PayloadStack\.list\(([^)]*)\)\)", body):
+            pay = {}
+            parts = [x.strip() for x in u.group(3).split(",")]
+            for k in range(0, len(parts) - 1, 2):
+                pay[parts[k].split(".")[-1]] = int(num(parts[k + 1]) or 1)
+            aplans.append({"unit": u.group(1), "time_ticks": num(u.group(2)), "payload": pay})
+        if aplans:
+            d["assembler_plans"] = aplans
+        flt = re.search(r"filter\s*=\s*Seq\.with\(([^)]*)\)", body)
+        if flt:
+            d["filter"] = [x.strip().split(".")[-1] for x in flt.group(1).split(",") if x.strip()]
         for a in calls.get("upgrades.addAll", []) + calls.get("upgrades", []):
             pass
         ups = re.findall(r"new UnitType\[\]\{([^}]*)\}", body)

@@ -274,7 +274,7 @@ def build_spec(kind: str) -> dict[str, Any] | None:
         "size": spec.get("size", ""),
         "label": spec["label"], "definition": spec["definition"], "game": "widelands", "tribe": spec["tribe"],
         "cost": dict(spec["cost"]), "cost_source": f"{spec['tribe']}/{spec['name']} " + ("enhancement_cost (imported; built only by enhancing " + spec["enhanced_from"] + ")" if spec.get("enhanced_from") else "buildcost (imported)"),
-        "enhancement_of": spec.get("enhanced_from", ""),
+        "enhancement_of": spec.get("enhanced_from", ""), "store": spec.get("store", False), "port": spec.get("port", False), "market": spec.get("market", False),
     }
 
 
@@ -299,6 +299,9 @@ def check_placement(world: Any, faction_name: str, kind: str, tx: int, ty: int) 
         return "locked_by_card", {"spec": spec, "info": info}
     if spec.get("enhancement_of"):  # Widelands enhancements exist only as an upgrade of a standing building (`enhance_building`)
         return "enhancement_only", {"spec": spec, "info": info}
+    missing = _openra_content.prerequisites_met(world, faction_name, spec.get("requires", [])) if spec.get("requires") else None
+    if missing and tech.gated(world):
+        return "needs_" + missing, {"spec": spec, "info": info}
     tile = (int(tx), int(ty))
     home = faction_warehouse(world, faction_name)
     ctx: dict[str, Any] = {"spec": spec, "info": info, "tile": tile, "home": home}
@@ -357,6 +360,12 @@ def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -
     building["operational"] = False
     building["constructing"] = {"cost": dict(spec["cost"]), "progress_ms": 0}
     building["hp"] = max(1, building["max_hp"] // 10)
+    if spec.get("store"):
+        building["store"] = True  # a secondary warehouse or port: logistics treats it as a store once finished
+    if spec.get("port"):
+        building["port"] = True
+    if spec.get("market"):
+        building["market"] = True
     world.recipe_requests[bid] = dict(spec["cost"])
     world.events.append({"kind": "construction_started", "id": bid, "building_kind": kind, "faction": faction_name})
     return {"status": "ok", "id": bid}
@@ -404,6 +413,65 @@ def enhance_building(world: Any, faction_name: str, building_id: str, to_kind: s
     world.recipe_requests[b["id"]] = dict(spec["cost"])
     world.events.append({"kind": "construction_started", "id": b["id"], "building_kind": target, "faction": faction_name, "enhance_from": from_kind})
     return {"status": "ok", "id": b["id"], "kind": target, "cost": dict(spec["cost"])}
+
+
+DISMANTLE_MS = 15_000
+
+
+def dismantle_building(world: Any, faction_name: str, building_id: str) -> dict[str, Any]:
+    """Widelands dismantling: the building becomes a dismantle site that holds part of its build cost (return_on_dismantle, else half of buildcost) in its own stock;
+    the carriers take the wares to a warehouse and the site then goes away. Its worker retires, wares it held are carried off with the rest."""
+    b = world.buildings.get(str(building_id))
+    if b is None or "hp" not in b or b["faction_name"] != faction_name:
+        return {"status": "rejected", "reason": "no_building"}
+    if b["kind"] == "warehouse" or b.get("dismantle") or b.get("constructing"):
+        return {"status": "rejected", "reason": "cannot_dismantle"}
+    if b["kind"].startswith("wl:"):
+        raw = wl_defs.defs()["buildings"].get(b["kind"][3:], {})
+        back = dict(raw.get("return_on_dismantle") or {}) or {g: n // 2 for g, n in (raw.get("buildcost") or {}).items() if n // 2}
+    else:
+        spec = build_spec(b["kind"]) or {"cost": {}}
+        back = {g: n // 2 for g, n in spec["cost"].items() if n // 2}
+    for wid in [w for w, w_ in world.workers.items() if w_.get("building") == b["id"]]:
+        w = world.workers.pop(wid)
+        if w.get("carrying"):
+            world.stocks.setdefault(b["id"], {})[w["carrying"]] = world.stocks[b["id"]].get(w["carrying"], 0) + 1
+    for key in ("worker_id", "worker_ids", "stack", "sleep_ms", "waiting_worker", "queue"):
+        b.pop(key, None)
+    b["operational"], b["working"] = False, False
+    b["dismantle"] = {"ms": DISMANTLE_MS, "back": back}
+    world.recipe_requests.pop(b["id"], None)
+    mdy = b.get("mdy")
+    if mdy is not None:  # an industrial machine hands its buffers over as ordinary stock
+        stock = world.stocks.setdefault(b["id"], {})
+        for bag in (mdy["buf"], mdy["out"]):
+            for g, n in bag.items():
+                stock[g] = int(stock.get(g, 0)) + int(n)
+        b["mdy"] = None
+    stock = world.stocks.setdefault(b["id"], {})
+    for g, n in back.items():
+        from wizard_rts.economy import produce as _produce
+
+        _produce(world, b["id"], g, int(n))
+        world.stats["made_" + g] = world.stats.get("made_" + g, 0) + int(n)  # returned material re-enters the books as a source
+    world.events.append({"kind": "dismantle_started", "id": b["id"], "faction": faction_name, "back": dict(back)})
+    return {"status": "ok", "returns": dict(back)}
+
+
+def dismantle_quantum(world: Any) -> None:
+    from wizard_rts.lifecycle import begin_destruction
+
+    for bid, b in list(world.buildings.items()):
+        d = b.get("dismantle")
+        if not d:
+            continue
+        d["ms"] = max(0, d["ms"] - QUANTUM_MS)
+        if d["ms"] <= 0 and not any(int(n) > 0 for n in world.stocks.get(bid, {}).values()):
+            b["hp"] = 0
+            b.pop("dismantle")
+            world.events.append({"kind": "dismantle_done", "id": bid})
+            begin_destruction(world, b)
+            b["ruin_ms"] = 0
 
 
 def naval_site(world: Any, tile: tuple[int, int], home: dict | None) -> tuple[str | None, tuple[int, int] | None, list[tuple[int, int]]]:
@@ -460,6 +528,7 @@ def _place_naval(world: Any, faction_name: str, info: dict, kind: str, spec: dic
 
 
 def construction_quantum(world: Any) -> None:
+    dismantle_quantum(world)
     for bid, b in list(world.buildings.items()):
         site = b.get("constructing")
         if not site:
@@ -609,6 +678,11 @@ from wizard_rts import rules as _rules  # noqa: E402
 for _b, _units in _calibrate.new_recipes(_rules.actor).items():
     RECIPES.setdefault(_b, {}).update(_units)
 
+from wizard_rts import openra_content as _openra_content  # noqa: E402  (the rest of the Red Alert roster: buildings and recipes generated from the imported rules)
+
+_openra_content.install(BUILD_MENU, RECIPES, MENU_SIZE, GROUND_FOOTPRINT, _rules.actor)
+_calibrate.CARD_ONLY.update(_openra_content.card_only_units())
+
 
 # ------------------------------------------------------------------ recruitment
 
@@ -637,6 +711,9 @@ def queue_unit(world: Any, building_id: str, unit_kind: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "cannot_build_here"}
     if not tech.unit_allowed(world, b["faction_name"], unit_kind):
         return {"status": "rejected", "reason": "locked_by_card"}
+    missing = _openra_content.prerequisites_met(world, b["faction_name"], recipe.get("requires", [])) if recipe.get("requires") and tech.gated(world) else None
+    if missing:
+        return {"status": "rejected", "reason": "needs_" + missing}
     queue = b.setdefault("queue", [])
     if len(queue) >= 5:
         return {"status": "rejected", "reason": "queue_full"}

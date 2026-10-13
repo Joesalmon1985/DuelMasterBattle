@@ -137,7 +137,18 @@ func draw_entity(canvas: CanvasItem, art, e: Dictionary, tpx: int, faction_color
 	elif working:
 		col = base.lightened(0.18 + 0.12 * sin(clock * 6.0))
 	var centre := rect.get_center()
-	var tex: Texture2D = _sprite(art, "mindustry.block." + str(e.get("kind", "")).trim_prefix("mdy:"))
+	var key := "mindustry.block." + str(e.get("kind", "")).trim_prefix("mdy:")
+	var tex: Texture2D = _sprite(art, key)
+	var item: Dictionary = art.items.get(key, {}) if art != null else {}
+	if tex != null and not (item.get("parts", []) as Array).is_empty() and not building:
+		_draw_parts(canvas, art, item, rect.grow(4.0), m, working, blocked)
+		canvas.draw_rect(rect.grow(4.0), faction_color, false, 3.0)
+		if m.has("pct") and role in ["crafter", "unit_factory"]:
+			canvas.draw_rect(Rect2(rect.position + Vector2(6, rect.size.y - 14), Vector2((rect.size.x - 12) * float(m["pct"]) / 100.0, 8)), Color(0.5, 1, 0.5), true)
+		if blocked or str(m.get("state", "")).begins_with("closed"):
+			canvas.draw_string(ThemeDB.fallback_font, rect.position + Vector2(6, rect.size.y - 18), str(m.get("state", "")).to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 0.6, 0.55))
+		art._draw_health(canvas, e, centre)
+		return
 	if tex != null:
 		var tint := Color(1, 1, 1, 0.45) if building else (Color(0.55, 0.5, 0.5) if blocked else Color.WHITE)
 		canvas.draw_texture_rect(tex, rect.grow(4.0), false, tint)
@@ -176,6 +187,46 @@ func draw_entity(canvas: CanvasItem, art, e: Dictionary, tpx: int, faction_color
 	if blocked and not building:
 		canvas.draw_string(font, rect.position + Vector2(6, rect.size.y - 18), str(m.get("state", "")).to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 0.6, 0.55))
 	art._draw_health(canvas, e, centre)
+
+
+const PART_ORDER := ["bottom", "base", "main", "liquid", "rotator", "turret", "wire", "top", "weapon", "glow", "heat"]
+
+
+## Draw a block from its separate imported parts: the base stays put, a rotator spins while the machine works, a turret or weapon turns to the simulation's aim
+## angle, glow and heat layers light up only while it works. Each part is the original upstream sprite (scripts/import_mindustry_art_all.py).
+func _draw_parts(canvas: CanvasItem, art, item: Dictionary, rect: Rect2, m: Dictionary, working: bool, blocked: bool) -> void:
+	var parts: Array = item.get("parts", [])
+	var tint := Color(0.55, 0.5, 0.5) if blocked else Color.WHITE
+	for role in PART_ORDER:
+		for p in parts:
+			if str(p.get("role", "")) != role:
+				continue
+			var tex: Texture2D = _part_tex(str(p.get("file", "")))
+			if tex == null:
+				continue
+			var size := Vector2(tex.get_width(), tex.get_height()) * (rect.size.x / maxf(float(tex.get_width()), float(item.get("width", 8))))
+			var anim := str(p.get("anim", "none"))
+			var ang := 0.0
+			var col := tint
+			if anim == "spin_when_working" and working:
+				ang = clock * 3.0
+			elif anim == "aim":
+				ang = deg_to_rad(float(m.get("aim", 0.0))) + PI * 0.5
+			elif anim == "glow_when_working":
+				col = Color(1, 1, 1, 0.85 if working else 0.0)
+			elif anim == "tint_by_fill":
+				col = Color(1, 1, 1, clampf(float(m.get("fill", 0.6)), 0.15, 1.0))
+			canvas.draw_set_transform(rect.get_center(), ang, Vector2.ONE)
+			canvas.draw_texture_rect(tex, Rect2(-size * 0.5, size), false, col)
+			canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
+func _part_tex(path: String) -> Texture2D:
+	if _cache.has(path):
+		return _cache[path]
+	var tex: Texture2D = load(path) if ResourceLoader.exists(path) else null
+	_cache[path] = tex
+	return tex
 
 
 func _spoke(canvas: CanvasItem, c: Vector2, r: float, a: float) -> void:

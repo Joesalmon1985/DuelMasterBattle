@@ -42,8 +42,8 @@
    "problems": [
     "market not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "market not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_market": {
    "tribe": "atlanteans",
@@ -86,8 +86,8 @@
    "problems": [
     "market not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "market not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_market": {
    "tribe": "barbarians",
@@ -130,8 +130,8 @@
    "problems": [
     "market not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "market not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_market": {
    "tribe": "empire",
@@ -175,8 +175,8 @@
    "problems": [
     "market not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "market not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_market": {
    "tribe": "frisians",
@@ -221,8 +221,8 @@
    "problems": [
     "market not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "market not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_fortification": {
    "tribe": "amazons",
@@ -2572,8 +2572,25 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "fleet_ferry",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "fleet_ferry",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -2590,12 +2607,10 @@
     ]
    },
    "spritesheets": {},
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless fleet needs ferry"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless fleet needs ferry"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_food_preserver": {
    "tribe": "amazons",
@@ -2891,8 +2906,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: check"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_gold_digger_dwelling": {
    "tribe": "amazons",
@@ -3539,8 +3554,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: plant_balsa"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_rope_weaver_booth": {
    "tribe": "amazons",
@@ -3702,8 +3717,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: scout"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_shipyard": {
    "tribe": "amazons",
@@ -3759,7 +3774,8 @@
      {
       "cmd": "construct",
       "raw": "construct=amazons_shipconstruction worker:buildship radius:6",
-      "args": "amazons_shipconstruction worker:buildship radius:6"
+      "args": "amazons_shipconstruction worker:buildship radius:6",
+      "site": "amazons_shipconstruction"
      },
      {
       "cmd": "sleep",
@@ -3776,12 +3792,10 @@
     ]
    },
    "spritesheets": {},
-   "executable": false,
-   "problems": [
-    "ship: construct"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: ship: construct"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_stone_workshop": {
    "tribe": "amazons",
@@ -4822,8 +4836,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: fetch_water"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_wilderness_keepers_tent": {
    "tribe": "amazons",
@@ -4903,8 +4917,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: breed_fish"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_woodcutters_hut": {
    "tribe": "amazons",
@@ -6039,8 +6053,25 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "fleet_ferry",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "fleet_ferry",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -6068,12 +6099,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless fleet needs ferry"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless fleet needs ferry"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_fishbreeders_house": {
    "tribe": "atlanteans",
@@ -7153,8 +7182,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: scout"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_shipyard": {
    "tribe": "atlanteans",
@@ -7215,7 +7244,8 @@
      {
       "cmd": "construct",
       "raw": "construct=atlanteans_shipconstruction worker:buildship radius:6",
-      "args": "atlanteans_shipconstruction worker:buildship radius:6"
+      "args": "atlanteans_shipconstruction worker:buildship radius:6",
+      "site": "atlanteans_shipconstruction"
      },
      {
       "cmd": "sleep",
@@ -7243,12 +7273,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "ship: construct"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: ship: construct"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_smelting_works": {
    "tribe": "atlanteans",
@@ -10432,8 +10460,25 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "fleet_ferry",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "fleet_ferry",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -10451,12 +10496,10 @@
     ]
    },
    "spritesheets": {},
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless fleet needs ferry"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless fleet needs ferry"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_fishers_hut": {
    "tribe": "barbarians",
@@ -10577,8 +10620,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: release"
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_goldmine": {
    "tribe": "barbarians",
@@ -13101,8 +13144,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: scout"
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_shipyard": {
    "tribe": "barbarians",
@@ -13163,7 +13206,8 @@
      {
       "cmd": "construct",
       "raw": "construct=barbarians_shipconstruction worker:buildship radius:6",
-      "args": "barbarians_shipconstruction worker:buildship radius:6"
+      "args": "barbarians_shipconstruction worker:buildship radius:6",
+      "site": "barbarians_shipconstruction"
      },
      {
       "cmd": "sleep",
@@ -13191,12 +13235,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "ship: construct"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: ship: construct"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_smelting_works": {
    "tribe": "barbarians",
@@ -15288,8 +15330,25 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "fleet_ferry",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "fleet_ferry",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -15344,12 +15403,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless fleet needs ferry"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless fleet needs ferry"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_fishers_house": {
    "tribe": "empire",
@@ -17278,8 +17335,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: scout"
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_sheepfarm": {
    "tribe": "empire",
@@ -17411,7 +17468,8 @@
      {
       "cmd": "construct",
       "raw": "construct=empire_shipconstruction worker:buildship radius:6",
-      "args": "empire_shipconstruction worker:buildship radius:6"
+      "args": "empire_shipconstruction worker:buildship radius:6",
+      "site": "empire_shipconstruction"
      },
      {
       "cmd": "sleep",
@@ -17466,12 +17524,10 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "ship: construct"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: ship: construct"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_smelting_works": {
    "tribe": "empire",
@@ -19377,8 +19433,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: breed_in_pond"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_armor_smithy_large": {
    "tribe": "frisians",
@@ -21180,8 +21236,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: find_pond"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_charcoal_kiln": {
    "tribe": "frisians",
@@ -21459,8 +21515,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: dig"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_coalmine": {
    "tribe": "frisians",
@@ -21992,8 +22048,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: check_dike"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_drinking_hall": {
    "tribe": "frisians",
@@ -22309,8 +22365,25 @@
       "raw": "return=skipped unless fleet needs ferry",
       "skipped": true,
       "unless_needs": "",
-      "condition": {},
-      "other_condition": true
+      "condition": {
+       "result": "skipped",
+       "mode": "unless",
+       "conds": [
+        {
+         "type": "fleet_ferry",
+         "not": false
+        }
+       ],
+       "groups": [
+        [
+         {
+          "type": "fleet_ferry",
+          "not": false
+         }
+        ]
+       ]
+      },
+      "other_condition": false
      },
      {
       "cmd": "consume",
@@ -22348,12 +22421,10 @@
      "rows": 1
     }
    },
-   "executable": false,
-   "problems": [
-    "main: return condition return=skipped unless fleet needs ferry"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: main: return condition return=skipped unless fleet needs ferry"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_fishers_house": {
    "tribe": "frisians",
@@ -22417,8 +22488,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: fish"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_foresters_house": {
    "tribe": "frisians",
@@ -25027,8 +25098,8 @@
    },
    "executable": true,
    "problems": [],
-   "runnable": false,
-   "blocked_by": "worker_program: scout"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_sewing_room": {
    "tribe": "frisians",
@@ -25216,7 +25287,8 @@
      {
       "cmd": "construct",
       "raw": "construct=frisians_shipconstruction worker:buildship radius:6",
-      "args": "frisians_shipconstruction worker:buildship radius:6"
+      "args": "frisians_shipconstruction worker:buildship radius:6",
+      "site": "frisians_shipconstruction"
      },
      {
       "cmd": "sleep",
@@ -25253,12 +25325,10 @@
      "rows": 1
     }
    },
-   "executable": false,
-   "problems": [
-    "ship: construct"
-   ],
-   "runnable": false,
-   "blocked_by": "building_programs: ship: construct"
+   "executable": true,
+   "problems": [],
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_smokery": {
    "tribe": "frisians",
@@ -33723,7 +33793,7 @@
     "warehouse not implemented"
    ],
    "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "blocked_by": "headquarters: the hybrid warehouse (the settlement's command centre) is the starting building"
   },
   "amazons_port": {
    "tribe": "amazons",
@@ -33764,8 +33834,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "amazons_warehouse": {
    "tribe": "amazons",
@@ -33803,8 +33873,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_headquarters": {
    "tribe": "atlanteans",
@@ -33832,7 +33902,7 @@
     "warehouse not implemented"
    ],
    "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "blocked_by": "headquarters: the hybrid warehouse (the settlement's command centre) is the starting building"
   },
   "atlanteans_port": {
    "tribe": "atlanteans",
@@ -33880,8 +33950,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "atlanteans_warehouse": {
    "tribe": "atlanteans",
@@ -33914,8 +33984,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_headquarters": {
    "tribe": "barbarians",
@@ -33947,7 +34017,7 @@
     "warehouse not implemented"
    ],
    "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "blocked_by": "headquarters: the hybrid warehouse (the settlement's command centre) is the starting building"
   },
   "barbarians_headquarters_interim": {
    "tribe": "barbarians",
@@ -33975,7 +34045,7 @@
     "warehouse not implemented"
    ],
    "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "blocked_by": "headquarters: the hybrid warehouse (the settlement's command centre) is the starting building"
   },
   "barbarians_port": {
    "tribe": "barbarians",
@@ -34023,8 +34093,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "barbarians_warehouse": {
    "tribe": "barbarians",
@@ -34069,8 +34139,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_headquarters": {
    "tribe": "empire",
@@ -34101,7 +34171,7 @@
     "warehouse not implemented"
    ],
    "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "blocked_by": "headquarters: the hybrid warehouse (the settlement's command centre) is the starting building"
   },
   "empire_headquarters_shipwreck": {
    "tribe": "empire",
@@ -34132,7 +34202,7 @@
     "warehouse not implemented"
    ],
    "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "blocked_by": "headquarters: the hybrid warehouse (the settlement's command centre) is the starting building"
   },
   "empire_port": {
    "tribe": "empire",
@@ -34180,8 +34250,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "empire_warehouse": {
    "tribe": "empire",
@@ -34217,8 +34287,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_headquarters": {
    "tribe": "frisians",
@@ -34250,7 +34320,7 @@
     "warehouse not implemented"
    ],
    "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "blocked_by": "headquarters: the hybrid warehouse (the settlement's command centre) is the starting building"
   },
   "frisians_port": {
    "tribe": "frisians",
@@ -34297,8 +34367,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   },
   "frisians_warehouse": {
    "tribe": "frisians",
@@ -34343,8 +34413,8 @@
    "problems": [
     "warehouse not implemented"
    ],
-   "runnable": false,
-   "blocked_by": "warehouse not implemented"
+   "runnable": true,
+   "blocked_by": ""
   }
  },
  "workers": {
@@ -34497,10 +34567,8 @@
      "rows": 5
     }
    },
-   "executable": false,
-   "problems": [
-    "fetch_water: findspace size:swim radius:8"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_cassava_farmer": {
    "tribe": "amazons",
@@ -35537,7 +35605,7 @@
      {
       "cmd": "terraform",
       "raw": "terraform=amazons",
-      "args": "amazons"
+      "kind": "amazons"
      },
      {
       "cmd": "animate",
@@ -35658,12 +35726,8 @@
      "rows": 3
     }
    },
-   "executable": false,
-   "problems": [
-    "check: findspace size:any radius:6 terraform:amazons",
-    "terraform: findspace size:any radius:6 terraform:amazons",
-    "terraform: terraform"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_jungle_preserver": {
    "tribe": "amazons",
@@ -35901,7 +35965,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -35921,7 +35986,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -35968,11 +36034,8 @@
      "rows": 5
     }
    },
-   "executable": false,
-   "problems": [
-    "scout: scout",
-    "targeted_scouting: scout"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_shipwright": {
    "tribe": "amazons",
@@ -36006,7 +36069,8 @@
      {
       "cmd": "construct",
       "raw": "construct",
-      "args": ""
+      "args": "",
+      "site": ""
      },
      {
       "cmd": "animate",
@@ -36048,7 +36112,9 @@
      {
       "cmd": "createbob",
       "raw": "createbob=amazons_ferry",
-      "args": "amazons_ferry"
+      "bobs": [
+       "amazons_ferry"
+      ]
      },
      {
       "cmd": "return",
@@ -36104,12 +36170,8 @@
      "rows": 8
     }
    },
-   "executable": false,
-   "problems": [
-    "buildship: construct",
-    "buildferry: findspace size:swim radius:5 ferry",
-    "buildferry: createbob"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_soldier": {
    "tribe": "amazons",
@@ -36583,7 +36645,14 @@
      {
       "cmd": "createbob",
       "raw": "createbob=bunny badger fox lynx marten wildboar",
-      "args": "bunny badger fox lynx marten wildboar"
+      "bobs": [
+       "bunny",
+       "badger",
+       "fox",
+       "lynx",
+       "marten",
+       "wildboar"
+      ]
      },
      {
       "cmd": "return",
@@ -36668,11 +36737,8 @@
      "rows": 4
     }
    },
-   "executable": false,
-   "problems": [
-    "release_game: createbob",
-    "breed_fish: findspace size:swim radius:7"
-   ]
+   "executable": true,
+   "problems": []
   },
   "amazons_woodcutter": {
    "tribe": "amazons",
@@ -38498,7 +38564,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -38518,7 +38585,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -38543,11 +38611,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "scout: scout",
-    "targeted_scouting: scout"
-   ]
+   "executable": true,
+   "problems": []
   },
   "atlanteans_shipwright": {
    "tribe": "atlanteans",
@@ -38586,7 +38651,8 @@
      {
       "cmd": "construct",
       "raw": "construct",
-      "args": ""
+      "args": "",
+      "site": ""
      },
      {
       "cmd": "animate",
@@ -38628,7 +38694,9 @@
      {
       "cmd": "createbob",
       "raw": "createbob=atlanteans_ferry",
-      "args": "atlanteans_ferry"
+      "bobs": [
+       "atlanteans_ferry"
+      ]
      },
      {
       "cmd": "return",
@@ -38674,12 +38742,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "buildship: construct",
-    "buildferry: findspace size:swim radius:5 ferry",
-    "buildferry: createbob"
-   ]
+   "executable": true,
+   "problems": []
   },
   "atlanteans_smelter": {
    "tribe": "atlanteans",
@@ -39993,7 +40057,17 @@
      {
       "cmd": "createbob",
       "raw": "createbob=bunny chamois deer moose reindeer sheep stag wildboar wisent",
-      "args": "bunny chamois deer moose reindeer sheep stag wildboar wisent"
+      "bobs": [
+       "bunny",
+       "chamois",
+       "deer",
+       "moose",
+       "reindeer",
+       "sheep",
+       "stag",
+       "wildboar",
+       "wisent"
+      ]
      },
      {
       "cmd": "animate",
@@ -40044,10 +40118,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "release: createbob"
-   ]
+   "executable": true,
+   "problems": []
   },
   "barbarians_gardener": {
    "tribe": "barbarians",
@@ -40980,7 +41052,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -41000,7 +41073,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -41025,11 +41099,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "scout: scout",
-    "targeted_scouting: scout"
-   ]
+   "executable": true,
+   "problems": []
   },
   "barbarians_shipwright": {
    "tribe": "barbarians",
@@ -41075,7 +41146,8 @@
      {
       "cmd": "construct",
       "raw": "construct",
-      "args": ""
+      "args": "",
+      "site": ""
      },
      {
       "cmd": "animate",
@@ -41117,7 +41189,9 @@
      {
       "cmd": "createbob",
       "raw": "createbob=barbarians_ferry",
-      "args": "barbarians_ferry"
+      "bobs": [
+       "barbarians_ferry"
+      ]
      },
      {
       "cmd": "return",
@@ -41163,12 +41237,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "buildship: construct",
-    "buildferry: findspace size:swim radius:5 ferry",
-    "buildferry: createbob"
-   ]
+   "executable": true,
+   "problems": []
   },
   "barbarians_smelter": {
    "tribe": "barbarians",
@@ -42889,7 +42959,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -42909,7 +42980,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -42946,11 +43018,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "scout: scout",
-    "targeted_scouting: scout"
-   ]
+   "executable": true,
+   "problems": []
   },
   "empire_shepherd": {
    "tribe": "empire",
@@ -43042,7 +43111,8 @@
      {
       "cmd": "construct",
       "raw": "construct",
-      "args": ""
+      "args": "",
+      "site": ""
      },
      {
       "cmd": "animate",
@@ -43084,7 +43154,9 @@
      {
       "cmd": "createbob",
       "raw": "createbob=empire_ferry",
-      "args": "empire_ferry"
+      "bobs": [
+       "empire_ferry"
+      ]
      },
      {
       "cmd": "return",
@@ -43130,12 +43202,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "buildship: construct",
-    "buildferry: findspace size:swim radius:5 ferry",
-    "buildferry: createbob"
-   ]
+   "executable": true,
+   "problems": []
   },
   "empire_smelter": {
    "tribe": "empire",
@@ -44538,12 +44606,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "collect_coal: findobject attrib:pond_coal radius:8",
-    "make_stack: findobject attrib:pond_dry radius:8",
-    "find_pond: findobject attrib:pond_dry radius:8"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_claydigger": {
    "tribe": "frisians",
@@ -44635,10 +44699,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "dig: plant pond_dry"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_diker": {
    "tribe": "frisians",
@@ -44755,7 +44817,7 @@
      {
       "cmd": "terraform",
       "raw": "terraform=diking",
-      "args": "diking"
+      "kind": "diking"
      },
      {
       "cmd": "animate",
@@ -44807,12 +44869,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "check_build: findspace size:swim radius:5 terraform:diking",
-    "build: findspace size:swim radius:5 terraform:diking",
-    "dike: terraform"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_farmer": {
    "tribe": "frisians",
@@ -45216,11 +45274,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "fish_in_pond: findobject attrib:pond_mature radius:8",
-    "breed_in_pond: findobject attrib:pond_dry radius:8"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_forester": {
    "tribe": "frisians",
@@ -46049,7 +46104,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -46069,7 +46125,8 @@
      {
       "cmd": "scout",
       "raw": "scout=radius:15 duration:1m15s",
-      "args": "radius:15 duration:1m15s"
+      "radius": 15,
+      "ms": 75000
      },
      {
       "cmd": "return",
@@ -46105,11 +46162,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "scout: scout",
-    "targeted_scouting: scout"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_seamstress": {
    "tribe": "frisians",
@@ -46239,7 +46293,8 @@
      {
       "cmd": "construct",
       "raw": "construct",
-      "args": ""
+      "args": "",
+      "site": ""
      },
      {
       "cmd": "animate",
@@ -46281,7 +46336,9 @@
      {
       "cmd": "createbob",
       "raw": "createbob=frisians_ferry",
-      "args": "frisians_ferry"
+      "bobs": [
+       "frisians_ferry"
+      ]
      },
      {
       "cmd": "return",
@@ -46327,12 +46384,8 @@
      ]
     }
    },
-   "executable": false,
-   "problems": [
-    "buildship: construct",
-    "buildferry: findspace size:swim radius:5 ferry",
-    "buildferry: createbob"
-   ]
+   "executable": true,
+   "problems": []
   },
   "frisians_smelter": {
    "tribe": "frisians",
@@ -57345,7 +57398,8 @@
      {
       "cmd": "construct",
       "raw": "construct=idle duration:5s decay_after:3m30s",
-      "args": "idle duration:5s decay_after:3m30s"
+      "args": "idle duration:5s decay_after:3m30s",
+      "site": "idle"
      },
      {
       "cmd": "transform",
@@ -57379,7 +57433,8 @@
      {
       "cmd": "construct",
       "raw": "construct=idle duration:5s decay_after:3m30s",
-      "args": "idle duration:5s decay_after:3m30s"
+      "args": "idle duration:5s decay_after:3m30s",
+      "site": "idle"
      },
      {
       "cmd": "transform",
@@ -57414,7 +57469,8 @@
      {
       "cmd": "construct",
       "raw": "construct=idle duration:5s decay_after:3m30s",
-      "args": "idle duration:5s decay_after:3m30s"
+      "args": "idle duration:5s decay_after:3m30s",
+      "site": "idle"
      },
      {
       "cmd": "transform",
@@ -57449,7 +57505,8 @@
      {
       "cmd": "construct",
       "raw": "construct=idle duration:5s decay_after:3m30s",
-      "args": "idle duration:5s decay_after:3m30s"
+      "args": "idle duration:5s decay_after:3m30s",
+      "site": "idle"
      },
      {
       "cmd": "transform",
@@ -57484,7 +57541,8 @@
      {
       "cmd": "construct",
       "raw": "construct=idle duration:5s decay_after:3m30s",
-      "args": "idle duration:5s decay_after:3m30s"
+      "args": "idle duration:5s decay_after:3m30s",
+      "site": "idle"
      },
      {
       "cmd": "transform",

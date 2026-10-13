@@ -15,6 +15,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
+from wizard_rts import openra_abilities as abilities
 from wizard_rts import rules
 from wizard_rts.openra_damage import SOURCE as OPENRA_DAMAGE_SOURCE
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage
@@ -49,6 +50,8 @@ def init_unit(unit: dict) -> None:
     unit["weapon"] = unit["weapons"][0] if unit["weapons"] else None
     unit["cooldown_ms"] = 0
     unit["target"] = None
+    if r.get("flat_armor"):
+        unit["flat_armor"] = int(r["flat_armor"])  # Mindustry armor: subtracted from every hit (at least a quarter of it gets through)
     if r.get("cloak"):
         unit["cloaked"] = True  # OpenRA Cloak with InitialDelay 0
         unit["uncloak_ms"] = 0
@@ -56,6 +59,10 @@ def init_unit(unit: dict) -> None:
 
 def building_weapon(b: dict) -> dict | None:
     definition = b.get("definition", "")
+    if b.get("mdy") is not None and b["mdy"].get("role") == "turret" and _world_ref:
+        from wizard_rts.industry import defense
+
+        return defense.turret_weapon(_world_ref[0], b)
     r = rules.actor(definition) if definition.startswith("openra.") else None
     if r and r["armaments"] and b.get("operational", True):
         return rules.weapon(r["armaments"][0])
@@ -75,6 +82,8 @@ def _conditions(entity: dict) -> set[str]:
     out = set()
     if entity.get("cloaked"):
         out.add("underwater")
+    if entity.get("loco") == "fly" and not entity.get("landed"):
+        out.add("airborne")
     if int(entity.get("hp", 1)) < int(entity.get("max_hp", 1)):
         out.add("damaged")
     return out
@@ -174,7 +183,7 @@ class _Others:
 def _occupancy(world: Any) -> dict:
     occ: dict = {}
     for u in world.units.values():
-        if u.get("alive", True):
+        if u.get("alive", True) and u.get("loco") != "fly" and not u.get("inside"):  # flyers share tiles with everything
             k = (u["tx"], u["ty"])
             occ[k] = occ.get(k, 0) + 1
     return occ
@@ -302,6 +311,8 @@ def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.
     if here == goal or _dist(here[0], here[1], goal[0], goal[1]) <= stop_within:
         unit["path"] = []
         return "arrived"
+    if unit.get("loco") == "fly":
+        return _fly(world, unit, goal)
     others = _occupied(world, unit)
     loco = unit.get("loco")
     if goal in others and _dist(here[0], here[1], goal[0], goal[1]) <= 2.0:
@@ -350,6 +361,23 @@ def _walk(world: Any, unit: dict, goal: tuple[int, int], stop_within: float = 0.
     return "moving"
 
 
+def _fly(world: Any, unit: dict, goal: tuple[int, int]) -> str:
+    """Aircraft: straight toward the goal over anything, one tile (eight directions) per move time; no route search, no collisions."""
+    here = (int(unit["tx"]), int(unit["ty"]))
+    unit["progress_ms"] = unit.get("progress_ms", 0) + 100
+    unit["status"] = "moving"
+    if unit["progress_ms"] >= unit.get("move_ms", 760):
+        dx = (goal[0] > here[0]) - (goal[0] < here[0])
+        dy = (goal[1] > here[1]) - (goal[1] < here[1])
+        nxt = (here[0] + dx, here[1] + dy)
+        if world.tile_in_bounds(*nxt):
+            unit["facing"] = _facing(dx, dy)
+            unit["tx"], unit["ty"] = nxt
+            world.stats["move"] += 1
+        unit["progress_ms"] = 0
+    return "moving"
+
+
 def _path_toward(world: Any, here: tuple[int, int], goal: tuple[int, int], others: set, loco: str) -> list[tuple[int, int]] | None:
     """When the goal itself cannot be entered (a ship ordered to a shore tile), path to the nearest enterable tile."""
     best = None
@@ -392,7 +420,7 @@ CELL = 16
 def _build_grid(world: Any) -> None:
     grid: dict[tuple[int, int], tuple[list, list]] = {}
     for u in world.units.values():
-        if u.get("alive", True):
+        if u.get("alive", True) and not u.get("inside"):
             grid.setdefault((u["tx"] // CELL, u["ty"] // CELL), ([], []))[0].append(u)
     for b in world.buildings.values():
         if "hp" in b and int(b["hp"]) > 0:
@@ -425,6 +453,10 @@ def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float, wea
                 if weapon is not None and not weapon_can_attack(world, faction, weapon, u):
                     continue
                 d = _dist(pos[0], pos[1], u["tx"], u["ty"])
+                if u.get("disguised") and d > 2.0:
+                    continue  # a spy in disguise is not a target until someone is next to it
+                if world.__dict__.get("_gap_sources") and abilities.shrouded(world, u, {"faction": faction, "tx": pos[0], "ty": pos[1]}):
+                    continue
                 if d <= radius and (best_u is None or d < best_u[0]):
                     best_u = (d, u)
             if best_u is None:
@@ -454,7 +486,7 @@ def _fire(world: Any, shooter: dict, w: dict, target: dict, entity: dict, dist: 
     for k in range(int(w.get("burst", 1))):
         delay = flight_ms + k * int(w.get("burst_delay", 5)) * 40
         world.projectiles.append(
-            {"left_ms": delay, "target": dict(target), "warheads": w["warheads"], "shooter": shooter["id"]}
+            {"left_ms": delay, "target": dict(target), "warheads": w["warheads"], "shooter": shooter["id"], "p": w.get("projectile", "")}
         )
         world.effects.append(
             {"t": "shot", "x1": shooter["tx"], "y1": shooter["ty"], "x2": entity["tx"], "y2": entity["ty"],
@@ -477,8 +509,13 @@ def _apply_warheads(world: Any, p: dict) -> None:
         if p["target"]["kind"] == "building":
             world.damage_building(p["target"]["id"], int(wh["damage"]), ["structure"], wh.get("versus", {}) or {}, by=p["shooter"])
             continue
+        if int(entity.get("invuln_until_ms", 0)) > int(world.dmb.clock.get("game_ms", 0)):  # Iron Curtain
+            continue
         versus = damage_versus(wh.get("versus", {}), [str(entity.get("armor", "None"))])
         applied = warhead_damage(int(wh["damage"]), [], versus)
+        flat = int(entity.get("flat_armor", 0))
+        if flat:
+            applied = max(applied - flat, applied // 4)  # Damage.applyArmor
         before = int(entity["hp"])
         entity["hp"] = inflict_damage(before, int(entity["max_hp"]), applied)
         world.events.append({"kind": "unit_hit", "unit": entity["id"], "by": p["shooter"], "dealt": before - entity["hp"], "hp": entity["hp"]})
@@ -495,6 +532,7 @@ def kill_unit(world: Any, entity: dict, by: str = "") -> None:
         _occ_move(world, (entity["tx"], entity["ty"]), None)
     entity["alive"] = False
     entity["status"] = "dead"
+    abilities.on_death(world, entity, by)
     entity.pop("order", None)
     entity.pop("deploying_ms", None)
     entity["path"] = []
@@ -648,7 +686,7 @@ def _engage(world: Any, unit: dict, w: dict | None, chase: bool, leash: float) -
         unit["path"] = []
         unit["status"] = "attacking"
         unit["facing"] = _facing(int(tpos[0]) - pos[0], int(tpos[1]) - pos[1])
-        if unit["cds"].get(name, 0) <= 0 and dist >= wi.get("min_range", 0):
+        if unit["cds"].get(name, 0) <= 0 and dist >= wi.get("min_range", 0) and abilities.spend_ammo(world, unit):
             _fire(world, unit, wi, target, tpos[2], dist)
             unit["cds"][name] = rules.reload_ms(wi)
             unit["cooldown_ms"] = unit["cds"][unit["weapon"]] if unit.get("weapon") else 0
@@ -661,6 +699,8 @@ def _engage(world: Any, unit: dict, w: dict | None, chase: bool, leash: float) -
 
 
 def _unit_step(world: Any, unit: dict) -> None:
+    if unit.get("inside"):
+        return
     for n in unit.get("cds", {}):
         unit["cds"][n] = max(0, int(unit["cds"][n]) - 100)
     unit["cooldown_ms"] = unit["cds"].get(unit.get("weapon"), 0) if unit.get("weapon") else max(0, int(unit.get("cooldown_ms", 0)) - 100)
@@ -674,6 +714,8 @@ def _unit_step(world: Any, unit: dict) -> None:
                 unit["status"] = "idle"
         return
     kind = order["kind"]
+    if kind in ("board", "capture", "infiltrate"):
+        return  # openra_abilities walks and finishes these
     if kind == "move":
         if _walk(world, unit, tuple(order["tile"])) in ("arrived", "stuck"):
             unit.pop("order", None)
@@ -703,7 +745,7 @@ def _unit_step(world: Any, unit: dict) -> None:
     if dist <= wi["range"]:
         unit["path"] = []
         unit["status"] = "attacking"
-        if unit["cds"].get(name, 0) <= 0:
+        if unit["cds"].get(name, 0) <= 0 and abilities.spend_ammo(world, unit):
             _fire(world, unit, wi, {"kind": "building", "id": building["id"]}, building, dist)
             unit["cds"][name] = rules.reload_ms(wi)
         return
@@ -729,9 +771,17 @@ def _building_step(world: Any, b: dict) -> None:
     if tpos is None:
         return
     dist = _dist(b["tx"], b["ty"], tpos[0], tpos[1])
-    if dist <= w["range"] and b["cooldown_ms"] <= 0:
+    if world.__dict__.get("visual_state") and b.get("mdy") is not None:
+        b["aim"] = int(math.degrees(math.atan2(tpos[1] - b["ty"], tpos[0] - b["tx"])))  # presentation only: where the turret points (never set in headless runs)
+    if dist <= w["range"] and dist >= w.get("min_range", 0) and b["cooldown_ms"] <= 0:
         _fire(world, b, w, target, tpos[2], dist)
-        b["cooldown_ms"] = rules.reload_ms(w)
+        if b.get("mdy") is not None and b["mdy"].get("role") == "turret":
+            from wizard_rts.industry import defense
+
+            defense.on_fire(world, b, w)
+            b["cooldown_ms"] = defense.reload_ms(world, b, w)
+        else:
+            b["cooldown_ms"] = rules.reload_ms(w)
 
 
 _world_ref: list = []  # the world being stepped (building_weapon has no world argument; the nest weapon depends on the era)
@@ -755,7 +805,8 @@ def military_quantum(world: Any) -> None:
         if unit.get("alive", True):
             _unit_step(world, unit)
     for b in list(world.buildings.values()):
-        if "hp" in b and int(b["hp"]) > 0 and (b.get("definition", "").startswith("openra.") or b.get("command_center") or b.get("kind") == "blight_nest"):
+        if "hp" in b and int(b["hp"]) > 0 and (b.get("definition", "").startswith("openra.") or b.get("command_center") or b.get("kind") == "blight_nest"
+                                               or (b.get("mdy") is not None and b["mdy"].get("role") == "turret")):
             _building_step(world, b)  # OpenRA defences, every settlement's militia and the blight nests (building_weapon)
     if world.military_quanta % 20 == 0:
         alive = [u["id"] for u in world.units.values() if u.get("alive", True)]

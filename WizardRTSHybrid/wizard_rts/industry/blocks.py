@@ -54,7 +54,7 @@ ROLE_OF_CLASS = {
     "PayloadMassDriver": "payload_driver", "PayloadLoader": "payload_loader", "PayloadUnloader": "payload_loader", "UnitCargoLoader": "cargo",
     "UnitCargoUnloadPoint": "cargo", "LaunchPad": "launch_pad", "Accelerator": "accelerator",
     "LogicBlock": "logic", "MemoryBlock": "logic", "MessageBlock": "logic", "LogicDisplay": "logic", "SwitchBlock": "logic", "Radar": "radar",
-    "Incinerator": "incinerator", "ItemIncinerator": "incinerator", "Thruster": "decor",
+    "HybridCrafter": "crafter", "Incinerator": "incinerator", "ItemIncinerator": "incinerator", "Thruster": "wall",
 }
 
 HEAVY_TURRETS = {"ripple", "cyclone", "fuse", "spectre", "meltdown", "foreshadow", "salvo", "swarmer", "segment", "tsunami", "parallax", "breach", "diffuse",
@@ -133,7 +133,7 @@ def specs() -> dict[str, dict[str, Any]]:
         if not (b["category"] or b["requirements"]) or b["class"] in ("Floor", "StaticWall", "Prop", "OreBlock", "OverlayFloor", "TreeBlock", "ShallowLiquid",
                                                                     "SteamVent", "TallBlock", "SpawnBlock", "Cliff", "BuildVisibility"):
             continue
-        sandbox = b["class"] in SANDBOX or bid in SANDBOX_IDS
+        sandbox = b["class"] in SANDBOX or bid in SANDBOX_IDS or not b["requirements"]
         role = role_of(b)
         cons, outp = b["consume"], b["output"]
         full_count = role in ("wall", "belt", "door", "stack_belt", "conduit", "junction", "router", "sorter", "overflow", "bridge") and sum(b["requirements"].values()) <= 12
@@ -145,7 +145,7 @@ def specs() -> dict[str, dict[str, Any]]:
             "consume_liquids": {k: float(v) for k, v in cons["liquids"].items() if v},
             "boost_liquids": {k: float(v) for k, v in cons.get("boost", {}).get("liquids", {}).items() if v},
             "boost_items": {ware_of_item(i): int(n) for i, n in cons.get("boost", {}).get("items", {}).items()},
-            "coolant": cons["coolant"], "flammable": bool(cons["flammable"]),
+            "coolant": cons["coolant"], "flammable": bool(cons["flammable"]), "optional_consumers": list(cons["optional"]),
             "power_use_per_s": power_per_s(b), "power_buffer": float(cons["power_buffered"]),
             "power_production_per_s": round(float(b["fields"].get("powerProduction", 0.0)) * TICKS, 4),
             "output_item": {ware_of_item(i): int(n) for i, n in outp["items"].items()},
@@ -155,9 +155,13 @@ def specs() -> dict[str, dict[str, Any]]:
             "fields": dict(b["fields"]), "results": {ware_of_item(i): int(n) for i, n in b.get("results", {}).items()},
             "liquid_capacity": float(b["fields"].get("liquidCapacity", 10.0)), "item_capacity": int(b["fields"].get("itemCapacity", 10)),
             "ammo": b.get("ammo"), "shoot_type": b.get("shoot_type"), "plans": b.get("plans"), "upgrades": b.get("upgrades"),
+            "assembler_plans": b.get("assembler_plans"), "filter": b.get("filter"), "java_name": b.get("java_name", ""),
             "attribute": b.get("attribute", ""), "refs": dict(b.get("refs", {})),
         }
         out[spec["kind"]] = spec
+    from wizard_rts.industry import hybrid
+
+    out.update(hybrid.specs())  # the industrial replacements of Widelands production (hybrid.py)
     return out
 
 

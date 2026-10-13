@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import pickle
 
+import pytest
+
 from wizard_rts import draft, history, regions, tech, vp
 from wizard_rts.sim_api import HybridEnv
 from wizard_rts.world import HybridWorld
@@ -84,3 +86,26 @@ def test_loss_limits_hold_in_every_era():
         vp.era_state(w)["index"] = era
         _collapse(w)
         assert regions.state(w).lost_by in ("era", "total") and history.outcome(w)["result"] == "collective_loss"
+
+
+@pytest.mark.parametrize("era", [0, 1, 2, 3])
+def test_untreated_outbreaks_end_the_world_in_every_era_and_the_record_says_everyone_lost(era):
+    w = _world(profile="developer")
+    w.outbreaks_enabled = True
+    w.outbreak_interval_scale = 0.02
+    w.loss_outbreaks_per_era = 99
+    w.loss_outbreaks_total = 6
+    vp.set_era(w, era)
+    for _ in range(3000):
+        _run(w, 1)
+        if getattr(w, "collective_loss", False):
+            break
+    assert w.collective_loss and w.cycle_pending
+    out = history.outcome(w)
+    assert out["result"] == "collective_loss" and set(out["losers"]) == set(w.faction_info) and out["winner"] == ""
+    assert any(e["kind"] == "terminal_loss" and e["collective"] for e in w.events)
+    ms = w.dmb.clock["game_ms"]
+    _run(w, 5)
+    assert w.dmb.clock["game_ms"] == ms  # time stopped
+    assert regions.state(w).outbreaks >= 6
+    assert w.stats.get("disruptions", 0) >= 0

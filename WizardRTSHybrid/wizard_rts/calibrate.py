@@ -29,7 +29,7 @@ NEW_UNITS = [
     ("naval_yard", "cruiser", "ca", "Cruiser", "ship"),
     ("sub_pen", "missile_sub", "msub", "Missile submarine", "ship"),
 ]
-CARD_ONLY = frozenset(u for _b, u, *_ in NEW_UNITS)
+CARD_ONLY = set(u for _b, u, *_ in NEW_UNITS)  # openra_content.install adds the rest of the roster
 
 
 def recipe(credits: int, template: str) -> dict[str, Any]:

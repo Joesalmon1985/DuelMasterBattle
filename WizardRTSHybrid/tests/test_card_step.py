@@ -11,13 +11,13 @@ def test_card_step_places_one_unbuilt_drafted_building_of_its_tribe():
     w.cardset = "v2"
     tribe = w.faction_info["Red"]["tribe"]
     cheap = [cid for cid, c in sorted(graph.generated_cards().items())
-             if c["entities"][0].startswith("wl:") and c["tribe"] == tribe and set(con.build_spec(c["entities"][0])["cost"]) <= {"log", "plank", "granite"}
+             if c["entities"][0].startswith("wl:") and c["tribe"] == tribe and not con.build_spec(c["entities"][0]).get("enhancement_of")
              and "mine" not in c["entities"][0]]
     assert cheap, "no cheap building card for this tribe"
     card = cheap[0]
     assert tech.grant(w, "Red", card)["status"] == "ok"
     wh = con.faction_warehouse(w, "Red")
-    for good in ("log", "plank", "granite"):
+    for good in ("log", "plank", "granite", "blackwood", "grout", "reed", "marble", "brick", "cloth"):
         produce(w, wh["id"], good, 40)
     kinds = [e for e in graph.generated_cards()[card]["entities"]]
     before = {b["id"] for b in w.buildings.values()}

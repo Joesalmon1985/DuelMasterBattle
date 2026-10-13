@@ -20,10 +20,16 @@
   "amazons_dressmakery": [
    "unoccupied"
   ],
+  "amazons_ferry_yard": [
+   "unoccupied"
+  ],
   "amazons_food_preserver": [
    "unoccupied"
   ],
   "amazons_furnace": [
+   "unoccupied"
+  ],
+  "amazons_gardening_center": [
    "unoccupied"
   ],
   "amazons_gold_digger_dwelling": [
@@ -46,11 +52,24 @@
    "build",
    "unoccupied"
   ],
+  "amazons_port": [
+   "build"
+  ],
   "amazons_rare_tree_cutters_hut": [
    "build",
    "unoccupied"
   ],
+  "amazons_rare_tree_plantation": [
+   "unoccupied"
+  ],
   "amazons_rope_weaver_booth": [
+   "unoccupied"
+  ],
+  "amazons_scouts_hut": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_shipyard": [
    "unoccupied"
   ],
   "amazons_stone_workshop": [
@@ -68,6 +87,16 @@
   "amazons_tapir_farm": [
    "build",
    "unoccupied"
+  ],
+  "amazons_warehouse": [
+   "build"
+  ],
+  "amazons_water_gatherers_hut": [
+   "build",
+   "unoccupied"
+  ],
+  "amazons_wilderness_keepers_tent": [
+   "build"
   ],
   "amazons_woodcutters_hut": [
    "build",
@@ -97,6 +126,10 @@
   "atlanteans_ironmine": [
    "working",
    "empty"
+  ],
+  "atlanteans_shipyard": [
+   "working",
+   "unoccupied"
   ],
   "atlanteans_smelting_works": [
    "working"
@@ -129,6 +162,9 @@
    "working"
   ],
   "barbarians_micro_brewery": [
+   "working"
+  ],
+  "barbarians_shipyard": [
    "working"
   ],
   "barbarians_smelting_works": [
@@ -170,6 +206,9 @@
   "empire_winery": [
    "working"
   ],
+  "frisians_aqua_farm": [
+   "unoccupied"
+  ],
   "frisians_armor_smithy_large": [
    "unoccupied"
   ],
@@ -203,8 +242,14 @@
    "build",
    "unoccupied"
   ],
+  "frisians_charcoal_burners_house": [
+   "unoccupied"
+  ],
   "frisians_charcoal_kiln": [
    "build",
+   "unoccupied"
+  ],
+  "frisians_clay_pit": [
    "unoccupied"
   ],
   "frisians_coalmine": [
@@ -216,10 +261,20 @@
   "frisians_collectors_house": [
    "unoccupied"
   ],
+  "frisians_dikers_house": [
+   "unoccupied"
+  ],
   "frisians_drinking_hall": [
    "unoccupied"
   ],
   "frisians_farm": [
+   "unoccupied"
+  ],
+  "frisians_ferry_yard": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_fishers_house": [
    "unoccupied"
   ],
   "frisians_foresters_house": [
@@ -269,7 +324,14 @@
   "frisians_rockmine_deep": [
    "unoccupied"
   ],
+  "frisians_scouts_house": [
+   "unoccupied"
+  ],
   "frisians_sewing_room": [
+   "build",
+   "unoccupied"
+  ],
+  "frisians_shipyard": [
    "build",
    "unoccupied"
   ],

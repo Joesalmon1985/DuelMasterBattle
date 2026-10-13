@@ -362,6 +362,28 @@ class TerrainGrid:
         h.update(json.dumps(self.palette).encode())
         return h.hexdigest()
 
+    def retype(self, x: int, y: int, name: str) -> None:
+        """Change one node's terrain (terraforming: diking reclaims shallow water, a gardening centre makes barren ground fertile). The derived layers
+        are refreshed lazily by `refresh()` (at most once per call of it), the hashed `terrain` layer changes at once."""
+        if name not in self.palette:
+            self.palette.append(name)
+            self._palette_cls.append(CLASS_CODE[defs()["terrains"][name]["is"]])
+        i = y * self.w + x
+        self.terrain[i] = self.palette.index(name)
+        c = self._palette_cls[self.terrain[i]]
+        self.cls[i] = c
+        self.move[i] = MOVE_WALK if c in (ARABLE, MINEABLE, WALKABLE) else (MOVE_SWIM if c == WATER else 0)
+        self.stale = True
+
+    def refresh(self) -> bool:
+        """Recompute shore depth, water components and build caps after retype() calls. True when it did work."""
+        if not getattr(self, "stale", False):
+            return False
+        self.stale = False
+        self._compute_water()
+        self._compute_build()
+        return True
+
     def static_hash(self) -> str:
         """Hash of the layers that never change in play (terrain and height)."""
         h = hashlib.sha1()

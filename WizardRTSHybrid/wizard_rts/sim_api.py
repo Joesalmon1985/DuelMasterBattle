@@ -36,7 +36,7 @@ WARE_VALUE = {  # wealth weights: raw goods count little, processed and military
     "fish": 2, "meat": 2, "wheat": 1, "water": 0, "ax": 6, "brick": 3, "marble": 4,
 }
 DEFAULT_WEIGHTS = {"wealth": 0.01, "territory": 0.5, "kill_value": 0.002, "loss_value": -0.002, "building_kill": 1.0, "building_loss": -1.0, "alive": 0.0, "eliminated": -50.0}
-ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy", "draft", "enhance")
+ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy", "draft", "enhance", "ability", "dismantle", "convert", "waterway")
 
 
 class HybridEnv:
@@ -169,6 +169,22 @@ class HybridEnv:
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
                 return _slim(w.enhance(faction, str(action["building"]), str(action.get("to", ""))))
+            if op in ("dismantle", "convert"):
+                if not self._owns_building(faction, action["building"]):
+                    return {"status": "rejected", "reason": "not_yours"}
+                return _slim(w.dismantle(faction, str(action["building"])) if op == "dismantle" else w.convert(faction, str(action["building"]), str(action.get("to", ""))))
+            if op == "waterway":
+                if not (self._owns_building(faction, action["a"]) and self._owns_building(faction, action["b"])):
+                    return {"status": "rejected", "reason": "not_yours"}
+                return _slim(w.waterway(faction, str(action["a"]), str(action["b"])))
+            if op == "ability":  # board / unload / capture / infiltrate / lay_mine / power (additive to the action space)
+                kw = {k: v for k, v in action.items() if k not in ("op", "what")}
+                for key in ("unit", "transport"):
+                    if key in kw and not self._owns_unit(faction, kw[key]):
+                        return {"status": "rejected", "reason": "not_yours"}
+                if "building" in kw and str(action.get("what")) == "power" and not self._owns_building(faction, kw["building"]):
+                    return {"status": "rejected", "reason": "not_yours"}
+                return _slim(w.ability(faction, str(action.get("what", "")), **kw))
             if op == "rally":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}

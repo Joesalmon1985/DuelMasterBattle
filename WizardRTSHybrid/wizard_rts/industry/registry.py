@@ -17,9 +17,19 @@ PREFIX = "mdy:"
 TICKS = 60
 
 
+SYNTHETIC_ITEMS = {  # Widelands wares a drill can win from the existing deposits (owner programme 13 Oct 2026): not Mindustry items, but the same drill rules apply
+    "granite": {"hardness": 1, "cost": 1.0, "flammability": 0.0, "explosiveness": 0.0, "radioactivity": 0.0, "buildable": False},
+    "iron_ore": {"hardness": 2, "cost": 1.0, "flammability": 0.0, "explosiveness": 0.0, "radioactivity": 0.0, "buildable": False},
+    "gold_ore": {"hardness": 2, "cost": 1.0, "flammability": 0.0, "explosiveness": 0.0, "radioactivity": 0.0, "buildable": False},
+}
+
+
 @lru_cache(maxsize=1)
 def defs() -> dict[str, Any]:
-    return json.loads((DATA / "mindustry_defs.json").read_text())
+    d = json.loads((DATA / "mindustry_defs.json").read_text())
+    for k, v in SYNTHETIC_ITEMS.items():
+        d["items"].setdefault(k, v)
+    return d
 
 
 @lru_cache(maxsize=1)
@@ -32,6 +42,8 @@ def ware(item: str) -> str:
     m = overrides()["ware_map"]
     if item in m:
         return m[item]
+    if item in SYNTHETIC_ITEMS:
+        return item
     from wizard_rts.industry import blocks as B
 
     return B.ware_of_item(item)
@@ -43,6 +55,8 @@ def item_of(ware_id: str) -> str | None:
             return k
     from wizard_rts.industry import blocks as B
 
+    if ware_id in SYNTHETIC_ITEMS:
+        return ware_id
     return B.item_of_ware(ware_id)
 
 
@@ -85,6 +99,20 @@ def _blocks() -> dict[str, dict[str, Any]]:
         if o["role"] == "unit_factory":
             spec["plans"] = [{"unit": p["unit"], "ticks": int(p["time_ticks"]),
                               "requirements": {ware(i): n for i, n in p["requirements"].items()}} for p in b["plans"]]
+        from wizard_rts.industry import blocks as B
+
+        g = B.spec(o["kind"]) or {}
+        for k in ("consume_liquids", "boost_liquids", "boost_items", "output_liquid", "heat_in", "heat_out", "results", "liquid_capacity", "item_capacity", "attribute",
+                  "ammo", "shoot_type", "coolant", "flammable", "optional_consumers", "refs", "era", "health", "category", "upgrades", "assembler_plans", "filter"):
+            if k in g:
+                spec.setdefault(k, g[k])
+        for k, v in (("consume_liquids", {}), ("boost_liquids", {}), ("boost_items", {}), ("output_liquid", {}), ("heat_in", 0.0), ("heat_out", 0.0), ("results", {}),
+                     ("liquid_capacity", 10.0), ("item_capacity", 10), ("attribute", ""), ("ammo", None), ("shoot_type", None), ("coolant", None),
+                     ("flammable", False), ("optional_consumers", []), ("refs", {}), ("sandbox", False), ("era", 2), ("health", None), ("category", ""),
+                     ("upgrades", None), ("assembler_plans", None), ("filter", None)):
+            spec.setdefault(k, v)
+        spec["fields"] = dict(b["fields"])
+        spec["id"] = src_id
         out[o["kind"]] = spec
     return out
 
@@ -117,9 +145,10 @@ def _generic(kind: str) -> dict[str, Any] | None:
     if g["role"] == "generator":
         spec["item_duration_ticks"] = float(f.get("itemDuration", 120))
         spec["fuel_min_flammability"] = 0.2
-        spec["solar"] = g["class"] == "SolarGenerator"
+        spec["solar"] = g["class"] in ("SolarGenerator", "PowerSource")
     if g["role"] == "unit_factory":
-        spec["plans"] = [{"unit": p["unit"], "ticks": int(p["time_ticks"] or 0), "requirements": {B.ware_of_item(i): int(n) for i, n in p["requirements"].items()}}
+        spec["plans"] = [({"unit": p["unit"], "ticks": int(p["ticks"]), "requirements": dict(p["requirements"])} if "ticks" in p else
+                          {"unit": p["unit"], "ticks": int(p["time_ticks"] or 0), "requirements": {B.ware_of_item(i): int(n) for i, n in p["requirements"].items()}})
                          for p in (g.get("plans") or [])]
     spec["power_buffer"] = g["power_buffer"]
     return spec
@@ -127,6 +156,7 @@ def _generic(kind: str) -> dict[str, Any] | None:
 
 def kinds() -> list[str]:
     from wizard_rts.industry import blocks as B
+    from wizard_rts.industry import engine  # noqa: F401  (registers IMPLEMENTED_ROLES)
 
     extra = [k for k in B.functional_kinds() if k not in _blocks() and B.spec(k)["role"] in IMPLEMENTED_ROLES]
     return sorted(set(_blocks()) | set(extra))
@@ -189,4 +219,10 @@ def unit_rules() -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
             "is_building": False, "locomotor": o["locomotor"],
             "source": f"Mindustry v146 UnitTypes.{name}: health {src['health']}, x{hp_scale:g} hp scale",
         }
-    return actors, weapons
+    from wizard_rts.industry import units as U
+
+    all_a, all_w = U.all_rules()  # every other unit from the statement-level import; the hand-tuned three keep their entries
+    all_a, all_w = dict(all_a), dict(all_w)
+    all_a.update(actors)
+    all_w.update(weapons)
+    return all_a, all_w

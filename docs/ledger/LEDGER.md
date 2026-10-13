@@ -25,3 +25,6 @@ Machine-readable twin: `ledger.json`. Run `work/ubuntu-autonomous-v2`, started 2
 | P18 | not_started | not started |
 
 Session log: see `git log --oneline 11b70b2..HEAD` (every commit has its time) and `docs/V2_RUN_REPORT.md`.
+
+## V3 gameplay and asset programme (branch `work/gameplay-assets-v3`, 13 Oct 2026)
+See `docs/V3_RUN_REPORT.md`: eras, Mindustry engine, OpenRA roster, Widelands completion, hybrid industry, coverage report and four-era scenario done; hash baselines, sea trade, hybrid-block art and performance work outstanding.

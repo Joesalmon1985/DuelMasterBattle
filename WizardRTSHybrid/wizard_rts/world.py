@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import disruption, feed, history, nests, regions, settlements, society, story, tech, trade, vp
+from wizard_rts import disruption, feed, history, maritime, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -295,6 +295,8 @@ class HybridWorld:
             return 0
         if int(building.get("hp", 0)) <= 0:
             return 0
+        if int(building.get("invuln_until_ms", 0)) > int(self.dmb.clock.get("game_ms", 0)):  # Iron Curtain
+            return 0
         if by:
             building["last_hit_by"] = by
             sh = self.units.get(by) or self.buildings.get(by)
@@ -331,7 +333,7 @@ class HybridWorld:
             return "Under construction: waiting for " + ", ".join(need) if need else "Building (%d%%)" % int(100 * site["progress_ms"] / 20_000)
         if b["kind"].startswith("mdy:"):
             text = industry.status_text(self, b)
-            if b["kind"] == "mdy:conveyor":
+            if industry.is_line(b):
                 return "Conveyor run: %d tiles" % len(b.get("line", {}).get("tiles", []))
             return text or "Idle"
         if b["kind"] not in ("warehouse", "ranger", "defense") and not self.adjacency.get(b["id"]) and b.get("operational", True):
@@ -701,6 +703,7 @@ class HybridWorld:
             "status": "idle",
         }
         init_unit(self.units[unit_id])
+        abilities.init_unit_extras(self.units[unit_id])
         return unit_id
 
     def _building(
@@ -736,6 +739,13 @@ class HybridWorld:
             record["hp"] = record["max_hp"] = int(r["hp"]) if r else (200_000 if kind == "warehouse" else 50_000)
             record["target_type"] = "structure"
             record["armor"] = (r["armor"] if r else "Wood") or "Wood"
+            if kind.startswith("mdy:"):  # a Mindustry block: its own health (x50) and armour class
+                from wizard_rts.industry import defense as _def, registry as _reg
+
+                _sp = _reg.block(kind)
+                if _sp is not None and "health" in _sp and _sp.get("id"):
+                    record["hp"] = record["max_hp"] = _def.block_hp(_sp)
+                    record["armor"] = _def.armor_type(_sp)
             if kind == "warehouse" and not r:
                 record["armor"] = "Concrete"  # a capital is stone-built: Prehistoric clubs and spears barely scratch it, siege weapons can take it
             record["operational"] = True
@@ -863,8 +873,11 @@ class HybridWorld:
         quanta = self.clock.request_advance(int(ms) * int(self.time_scale), int(sequence))
         for _ in range(quanta):
             forestry_quantum(self)
+            if self.terrain is not None and self.economy_quanta % 600 == 599 and getattr(self.terrain, "stale", False):
+                self.terrain.refresh()  # terraforming changed nodes: shore depth, water bodies and building caps follow once a game minute
             economy_quantum(self)
             logistics_quantum(self)
+            maritime.maritime_quantum(self)
             con.construction_quantum(self)
             industry.industry_quantum(self)
             story.story_quantum(self)
@@ -884,6 +897,7 @@ class HybridWorld:
             if self.ai_enabled:
                 ai_quantum(self)
             military_quantum(self)
+            abilities.ability_quantum(self)
             if self.economy_quanta % 30 == 0:
                 self.events.append({"kind": "ai_economy", "game_ms": int(self.dmb.clock.get("game_ms", 0))})
         return {"status": "ok", "quanta": quanta, "snapshot": self.snapshot(tree_sync=tree_sync) if snapshot else None}
@@ -957,10 +971,27 @@ class HybridWorld:
         self.damage_building(building, 10**9, ["structure"], {})
         return {"status": "ok", "snapshot": self.snapshot()}
 
-    def belt(self, faction: str, tiles: list, end_dir: int | None = None) -> dict[str, Any]:
+    def dismantle(self, faction: str, building: str) -> dict[str, Any]:
+        out = con.dismantle_building(self, faction, str(building))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def convert(self, faction: str, building: str, to_kind: str = "") -> dict[str, Any]:
         from wizard_rts.industry import commands as ind_commands
 
-        out = ind_commands.place_belt(self, faction, tiles, end_dir)
+        out = ind_commands.convert_building(self, faction, str(building), str(to_kind))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def waterway(self, faction: str, a: str, b: str) -> dict[str, Any]:
+        out = maritime.build_waterway(self, faction, str(a), str(b))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def belt(self, faction: str, tiles: list, end_dir: int | None = None, kind: str = "mdy:conveyor") -> dict[str, Any]:
+        from wizard_rts.industry import commands as ind_commands
+
+        out = ind_commands.place_belt(self, faction, tiles, end_dir, kind)
         out["snapshot"] = self.snapshot()
         return out
 
@@ -1001,7 +1032,22 @@ class HybridWorld:
         return out
 
     def deploy(self, unit_id: str) -> dict[str, Any]:
+        u = self.units.get(str(unit_id))
+        if u is not None and u["definition"] in ("openra.dtrk", "openra.qtnk"):
+            out = abilities.detonate(self, str(unit_id))
+            out["snapshot"] = self.snapshot()
+            return out
         out = territory.deploy(self, str(unit_id))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def ability(self, faction: str, op: str, **kw: Any) -> dict[str, Any]:
+        """Board, unload, capture, infiltrate, lay a mine, use a support power (openra_abilities)."""
+        fn = {"board": lambda: abilities.board(self, kw["unit"], kw["transport"]), "unload": lambda: abilities.unload(self, kw["transport"], kw.get("tx"), kw.get("ty")),
+              "capture": lambda: abilities.capture(self, kw["unit"], kw["building"]), "infiltrate": lambda: abilities.infiltrate(self, kw["unit"], kw["building"]),
+              "lay_mine": lambda: abilities.lay_mine(self, kw["unit"]),
+              "power": lambda: abilities.use_power(self, faction, kw["building"], kw["tx"], kw["ty"], kw.get("tx2"), kw.get("ty2"))}.get(op)
+        out = fn() if fn else {"status": "rejected", "reason": "unknown_ability"}
         out["snapshot"] = self.snapshot()
         return out
 
@@ -1108,7 +1154,7 @@ class HybridWorld:
                 row["ruin_ms"] = int(building.get("ruin_ms", 0))
             if building.get("mdy") is not None:
                 row["mdy"] = industry.row(self, building)
-            elif building["kind"] == "mdy:conveyor" and building.get("line"):
+            elif building["kind"].startswith("mdy:") and industry.is_line(building) and building.get("line"):
                 row["line_tiles"] = len(building["line"]["tiles"])
                 row["line_live"] = bool(building.get("line_live"))
             if building["kind"] in ("mine", "ironmine", "well"):
@@ -1271,6 +1317,17 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["rally"] = list(row["rally"])
     if row.get("tribe_fallback"):
         out["tribe_fallback"] = True
+    if row.get("inside"):
+        out["inside"] = row["inside"]
+    if row.get("ship"):
+        out["ship"] = True
+        out["cargo_wares"] = len(row.get("transfers", []))
+    if row.get("passengers"):
+        out["passengers"] = list(row["passengers"])
+    if row.get("ammo_max"):
+        out["ammo"], out["ammo_max"] = int(row.get("ammo", 0)), int(row["ammo_max"])
+    if row.get("hidden"):
+        out["hidden"] = True
     if row.get("ground_footprint"):
         out["ground_footprint"] = row["ground_footprint"]
     if row.get("footprint"):

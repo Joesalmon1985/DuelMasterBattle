@@ -563,6 +563,79 @@ def worker_quantum(world: Any, worker: dict) -> None:
         _run_step(world, worker)
 
 
+TERRAFORM_TARGET = {"amazons": "summer_meadow1", "diking": "summer_meadow1"}  # the fertile terrain a reclaimed or improved node becomes
+
+
+def _land_next_to(world: Any, tile: tuple[int, int]) -> tuple[int, int] | None:
+    t = world.terrain
+    for dx, dy in ((1, 0), (0, 1), (-1, 0), (0, -1)):
+        n = (tile[0] + dx, tile[1] + dy)
+        if t.in_bounds(*n) and t.ground(*n) and n not in world.blocked and n not in world.tree_tiles and n not in world.reserved_tiles and n not in world.road_tile_set:
+            return n
+    return None
+
+
+def special_space(world: Any, worker: dict, args: dict) -> tuple[tuple[int, int], tuple[int, int], list] | None:
+    """findspace size:swim (a water node, the worker stands on the shore beside it) and findspace terraform:<kind> (a node that can be improved)."""
+    t = world.terrain
+    if t is None:
+        return None
+    here = (worker["tx"], worker["ty"])
+    radius = int(args["radius"])
+    cands: list[tuple[int, tuple[int, int], tuple[int, int]]] = []
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            x, y = here[0] + dx, here[1] + dy
+            if not t.in_bounds(x, y):
+                continue
+            if args.get("swim") and not args.get("terraform"):
+                if not t.is_water(x, y) or (args.get("ferry") and not t.is_shallow(x, y)):
+                    continue
+                stand = _land_next_to(world, (x, y))
+            elif args.get("terraform") == "diking":
+                if not t.is_shallow(x, y) or t.depth[y * t.w + x] != 1 or (x, y) in world.tree_tiles:
+                    continue
+                stand = _land_next_to(world, (x, y))
+            else:  # amazons: barren (walkable, not arable) ground is made fertile
+                if t.class_at(x, y) != 2 or (x, y) in world.blocked or (x, y) in world.tree_tiles or (x, y) in world.reserved_tiles:
+                    continue
+                stand = (x, y)
+            if stand is not None:
+                cands.append((abs(dx) + abs(dy), stand, (x, y)))
+    for _d, stand, target in sorted(cands)[:6]:
+        path = find_path(world, here, stand) if stand != here else []
+        if path is not None:
+            return stand, target, path
+    return None
+
+
+def terraform(world: Any, worker: dict, kind: str) -> bool:
+    t = world.terrain
+    if t is None:
+        return False
+    name = TERRAFORM_TARGET.get(kind)
+    if name is None or name not in __import__("wizard_rts.terrain", fromlist=["defs"]).defs()["terrains"]:
+        names = [n for n, d in __import__("wizard_rts.terrain", fromlist=["defs"]).defs()["terrains"].items() if d["is"] == "arable"]
+        name = sorted(names)[0]
+    if kind == "diking":
+        obj = _object(world, worker["target_tree"])
+        tile = (obj["tx"], obj["ty"]) if obj is not None else worker.get("swim_tile")
+        if tile is None or not t.is_water(*tile):
+            return False
+        t.retype(tile[0], tile[1], name)
+        if obj is not None:
+            remove_tree(world, obj["id"], "dike_done")
+        world.stats["land_reclaimed"] = world.stats.get("land_reclaimed", 0) + 1
+    else:
+        tile = worker.get("swim_tile") or (worker["tx"], worker["ty"])
+        if t.class_at(*tile) != 2:
+            return False
+        t.retype(tile[0], tile[1], name)
+        world.stats["land_improved"] = world.stats.get("land_improved", 0) + 1
+    world.events.append({"kind": "terraformed", "tile": list(tile), "how": kind, "worker": worker["id"]})
+    return True
+
+
 def worker_program(role: str, name: str) -> list[tuple[str, dict]]:
     legacy = WORKER_PROGRAMS.get(role)
     if legacy is not None and name in legacy:
@@ -604,7 +677,10 @@ def _run_step(world: Any, worker: dict) -> None:
             dist = max(abs(tree["tx"] - here[0]), abs(tree["ty"] - here[1]))
             if dist > args["radius"] or (best is not None and dist >= best[0]):
                 continue
-            path = find_path(world, here, (tree["tx"], tree["ty"]))
+            goal = (tree["tx"], tree["ty"])
+            if world.terrain is not None and world.terrain.is_water(*goal):  # a dike stands in the water: the diker works from the shore beside it
+                goal = _land_next_to(world, goal) or goal
+            path = find_path(world, here, goal) if goal != here else []
             if path is not None:
                 best = (dist, tree, path)
         if best is None:
@@ -621,6 +697,19 @@ def _run_step(world: Any, worker: dict) -> None:
             world.events.append({"kind": "tree_reserved", "tree": tree["id"], "worker": worker["id"]})
         if args["attrib"] == "eatable":
             tree["status"] = "frightened"
+    elif cmd == "findspace" and (args.get("swim") or args.get("terraform")):
+        spot = special_space(world, worker, args)
+        if spot is None:
+            _fail_program(world, worker, "no_space")
+            return
+        stand, target, path = spot
+        world.reserved_tiles.add(stand)
+        worker["target_tile"] = stand
+        worker["swim_tile"] = target
+        worker["path"] = path
+        worker["anim"] = "walk"
+        worker["status"] = "walking"
+        worker["target_tree"] = "@water" if args.get("swim") else worker["target_tree"]
     elif cmd == "findspace":
         radius = args["radius"]
         if args.get("resource"):
@@ -719,9 +808,15 @@ def _run_step(world: Any, worker: dict) -> None:
             _fail_program(world, worker, "not_at_space")
             return
         world.reserved_tiles.discard(tuple(tile))
+        if "shipconstruction" in args["attrib"]:
+            worker["target_tile"] = None
+            return  # the shipyard (maritime.py) manages the ship site; the shipwright only walks and works
         if args["attrib"] not in ("seed_wheat", "tree_sapling") and imm.candidates(args["attrib"]):
             names = imm.candidates(args["attrib"])
-            tree_id = imm.make(world, tuple(tile), names[world.rng.randrange(len(names))])
+            at = tuple(worker["swim_tile"]) if args["attrib"] == "dike" and worker.get("swim_tile") else tuple(tile)
+            tree_id = imm.make(world, at, names[world.rng.randrange(len(names))])
+            if args["attrib"] == "dike":
+                worker["target_tree"] = tree_id
             world.stats["fields_planted"] = world.stats.get("fields_planted", 0) + 1
             world.events.append({"kind": "field_planted", "tree": tree_id, "worker": worker["id"]})
         elif args["attrib"] == "seed_wheat":
@@ -746,6 +841,39 @@ def _run_step(world: Any, worker: dict) -> None:
         world.stats[stat] = world.stats.get(stat, 0) + 1
         if cmd == "mine":
             worker["target_tree"] = "@" + args["resource"]  # the catch: createware needs a source
+    elif cmd == "createbob":
+        from wizard_rts import animals as an
+
+        bobs = [b for b in args.get("bobs", []) if b in an.ANIMAL_SPECIES]
+        building = building_of(world, worker)
+        if bobs:  # release game: an animal of one of the listed species appears beside the keeper
+            species = bobs[world.rng.randrange(len(bobs))]
+            an.spawn_animal(world, here, species)
+            world.stats["game_released"] = world.stats.get("game_released", 0) + 1
+            world.events.append({"kind": "animal_released", "species": species, "worker": worker["id"]})
+        elif any(b.endswith("_ferry") for b in args.get("bobs", [])):  # a ferry is a worker the economy keeps as a ware until a waterway needs it
+            from wizard_rts.economy import produce as _produce
+
+            _produce(world, building["id"], "ferry", 1)
+            world.stats["made_ferry"] = world.stats.get("made_ferry", 0) + 1
+            world.events.append({"kind": "ferry_built", "worker": worker["id"], "building": building["id"]})
+    elif cmd == "scout":
+        building = building_of(world, worker)
+        seen = world.__dict__.setdefault("explored", {}).setdefault(building["faction_name"], set())
+        r = int(args["radius"])
+        for dy in range(-r, r + 1):
+            for dx in range(-r, r + 1):
+                if dx * dx + dy * dy <= r * r:
+                    seen.add((building["tx"] + dx, building["ty"] + dy))
+        worker["anim"] = "idle"
+        worker["status"] = "working"
+        worker["wait_ms"] = int(args["ms"])
+        world.stats["scouted"] = world.stats.get("scouted", 0) + 1
+        world.events.append({"kind": "scouted", "faction": building["faction_name"], "building": building["id"], "radius": r})
+    elif cmd == "terraform":
+        if not terraform(world, worker, args["kind"]):
+            _fail_program(world, worker, "no_terrain")
+            return
     elif cmd == "return":
         worker["status"] = "returning"
         _begin_return(world, worker)
@@ -924,6 +1052,10 @@ def production_quantum(world: Any) -> None:
                     ok = economy_needs(world, building["faction"], c["ware"])
                 elif c["type"] == "experience":
                     ok = False  # no training sites in the hybrid: workers never need experience
+                elif c["type"] == "fleet_ferry":
+                    from wizard_rts import maritime
+
+                    ok = maritime.needs_ferry(world, building["faction_name"])
                 else:
                     ok = any(int(stock.get(g, 0)) >= c["n"] for g in c["wares"])
                 return ok != c["not"]
@@ -949,6 +1081,14 @@ def production_quantum(world: Any) -> None:
                 uid = world._unit(building["faction"], building["faction_name"], "soldier", "Soldier", "widelands.soldier", tile)
                 world.stats["recruited"] = world.stats.get("recruited", 0) + 1
                 world.events.append({"kind": "unit_produced", "building": building["id"], "unit": uid, "unit_kind": "soldier"})
+        elif cmd == "construct":
+            from wizard_rts import maritime
+
+            why = maritime.construct_step(world, building)
+            if why is not None:
+                _fail(world, building, "construct" if why != "inputs" else "inputs", {"inputs": "waiting for ship wares", "no_coast": "no water to build a ship in"}.get(why, why))
+            else:
+                building["working"] = True
         elif cmd == "call":
             if args["target"] in programs:
                 stack.append([args["target"], 0])
