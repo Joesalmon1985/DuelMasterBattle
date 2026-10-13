@@ -159,10 +159,50 @@ def open_round(world: Any) -> None:
     world.events.append({"kind": "draft_round", "era": tech.ERAS[st["era"]], "round": st["round"] + 1, "offers": {f: list(world.tech[f]["offers"]) for f in st["ring"]}})
 
 
+PAPER_PER_PICK = 2
+
+
+def paper_stock(world: Any, faction: str) -> int:
+    return sum(int(world.stocks.get(b["id"], {}).get("paper", 0)) for b in world.buildings.values()
+               if b["faction_name"] == faction and b["kind"] == "warehouse" and int(b.get("hp", 1)) > 0)
+
+
+def has_scriptorium(world: Any, faction: str) -> bool:
+    return any(b["faction_name"] == faction and b["kind"] == "scriptorium" and b.get("operational") and not b.get("constructing") and int(b.get("hp", 1)) > 0
+               for b in world.buildings.values())
+
+
 def bonus_ready(world: Any, faction: str) -> bool:
-    """Hook for the paper economy (a working scriptorium holding paper). False until that content exists."""
+    """A working scriptorium and enough paper in the faction's stores (plan 5.3). `world.bonus_hook` overrides it (tests)."""
     hook = world.__dict__.get("bonus_hook")
-    return bool(hook and hook(world, faction))
+    if hook is not None:
+        return bool(hook(world, faction))
+    return has_scriptorium(world, faction) and paper_stock(world, faction) >= PAPER_PER_PICK
+
+
+def bonus_only(world: Any, faction: str, card_id: str) -> bool:
+    """Is this card available only through the faction's bonus hand (not in its pack, or its pack pick is already used)?"""
+    st = state(world)
+    if card_id not in st["bonus"].get(faction, []):
+        return False
+    return st["chosen"].get(faction, False) or card_id not in st["packs"].get(faction, [])
+
+
+def consume_paper(world: Any, faction: str) -> bool:
+    """Take the paper for a bonus pick out of the faction's warehouses (ware ledger: counted as consumed)."""
+    if "bonus_hook" in world.__dict__:
+        return True
+    need = PAPER_PER_PICK
+    for b in sorted((x for x in world.buildings.values() if x["faction_name"] == faction and x["kind"] == "warehouse"), key=lambda x: x["id"]):
+        have = int(world.stocks.get(b["id"], {}).get("paper", 0))
+        take = min(have, need)
+        if take:
+            from wizard_rts.economy import _supply
+
+            _supply(world, b["id"]).remove_wares("paper", take)
+            world.stats["consumed_paper"] = world.stats.get("consumed_paper", 0) + take
+            need -= take
+    return need == 0
 
 
 def on_pick(world: Any, faction: str, card_id: str) -> None:
@@ -175,6 +215,7 @@ def on_pick(world: Any, faction: str, card_id: str) -> None:
     else:
         hand = st["bonus"].pop(faction, None)
         if hand and card_id in hand:
+            consume_paper(world, faction)
             world.events.append({"kind": "draft_bonus_pick", "faction": faction, "card": card_id, "discarded": [c for c in hand if c != card_id]})
     refresh_offers(world, faction)
 

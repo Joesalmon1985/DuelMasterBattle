@@ -247,6 +247,8 @@ def draft(world: Any, faction: str, card_id: str) -> dict[str, Any]:
 
     if not _draft.enabled(world) and not _working(world, faction, c["requires_working"]):
         return {"status": "rejected", "reason": "prerequisite_lost"}
+    if _draft.enabled(world) and _draft.bonus_only(world, faction, card_id) and not _draft.bonus_ready(world, faction):
+        return {"status": "rejected", "reason": "no_paper"}  # the paper (or the scriptorium) is gone since the hand was dealt
     st["cards"].append(card_id)
     rejected = [x for x in st["offers"] if x != card_id]
     st["offers"] = []

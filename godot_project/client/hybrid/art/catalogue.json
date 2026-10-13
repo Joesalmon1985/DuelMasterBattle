@@ -48,6 +48,28 @@
    "alias_of": "widelands.soldier"
   },
   {
+   "id": "dmb.scriptorium",
+   "status": "alias_placeholder",
+   "game": "widelands",
+   "license": "GPL-2.0-or-later",
+   "source": "data/tribes/buildings/productionsites/barbarians/reed_yard/idle_00.png",
+   "source_note": "Scriptorium: hybrid building (paper, plan v2 5.3), drawn with the Widelands barbarian reed yard",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_reed_yard.png",
+   "mode": "sheet",
+   "width": 89,
+   "height": 69,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    46,
+    44
+   ],
+   "scale": 2,
+   "fps": 0,
+   "alias_of": "widelands.barbarians_reed_yard"
+  },
+  {
    "id": "dmb.settlers",
    "status": "alias_placeholder",
    "game": "widelands",

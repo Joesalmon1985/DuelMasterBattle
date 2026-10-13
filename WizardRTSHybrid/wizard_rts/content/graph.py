@@ -21,7 +21,7 @@ from wizard_rts import wl_defs
 
 PREFIX = "gen."
 HYBRID_BUILDING_ERA = {  # era of the earlier hand-written card that unlocked it (data/tech_cards.json), kept so v2 starts from the same order
-    "farm": 0, "mine": 0, "ironmine": 0, "smelter": 0, "smithy": 1, "bakery": 0, "war_lodge": 0, "barracks": 1, "vehicle_factory": 1,
+    "farm": 0, "mine": 0, "ironmine": 0, "smelter": 0, "smithy": 1, "scriptorium": 1, "bakery": 0, "war_lodge": 0, "barracks": 1, "vehicle_factory": 1,
     "defense": 1, "flame_tower": 1, "tesla_coil": 2, "naval_yard": 1, "sub_pen": 2,
 }
 UNIT_ERA = {

@@ -75,6 +75,10 @@ BUILD_MENU: dict[str, dict[str, Any]] = {
         "label": "Smelting works", "definition": "widelands.smelting_works", "game": "widelands",
         "cost": {"log": 3, "plank": 1, "granite": 1}, "cost_source": "barbarians/smelting_works buildcost with planks for blackwood, no grout or reed",
     },
+    "scriptorium": {
+        "label": "Scriptorium", "definition": "dmb.scriptorium", "game": "hybrid",
+        "cost": {"log": 3, "plank": 3}, "cost_source": "hybrid-defined (paper and the scriptorium do not exist upstream; plan v2 5.3)",
+    },
     "smithy": {
         "label": "Ax workshop", "definition": "widelands.ax_workshop", "game": "widelands",
         "cost": {"log": 3, "plank": 2, "granite": 1}, "cost_source": "hybrid-defined from barbarians/ax_workshop",
@@ -194,7 +198,7 @@ MENU_SIZE = {
     "naval_yard": "water3", "sub_pen": "water3",
     "producer": "small", "ranger": "small", "processor": "medium", "farm": "big", "hunter": "small", "well": "small",
     "tavern": "medium", "bakery": "medium", "mine": "mine", "ironmine": "mine", "quarry": "small",
-    "smelter": "medium", "smithy": "medium", "barracks": "medium", "vehicle_factory": "big", "defense": "small",
+    "smelter": "medium", "smithy": "medium", "scriptorium": "medium", "barracks": "medium", "vehicle_factory": "big", "defense": "small",
     "war_lodge": "medium", "flame_tower": "small", "tesla_coil": "small",
 }
 

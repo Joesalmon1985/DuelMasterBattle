@@ -173,6 +173,9 @@ def score_generated(world: Any, name: str, cid: str) -> tuple[float, str]:
                 why = "under threat" if threatened else "military"
             if eid in ("farm", "mine", "ironmine", "smelter") and eid not in held_kinds:
                 s += 18
+            if eid == "scriptorium":
+                s += 22  # paper buys a bonus pick every round it holds two sheets, without taking a card from anyone's pack
+                why = "paper gives bonus picks"
         else:
             unit = eid[5:]
             producer = e["producer"]
