@@ -353,6 +353,12 @@ class HybridWorld:
             return "Waiting for a worker"
         return "Working" if b.get("waiting_worker") else "Idle"
 
+    def note_produced(self, faction: str, entity: str) -> None:
+        """Count a completed building or produced unit by entity id (`wl:...`, `barracks`, `unit:tank`) with the time of the first one.
+        Kept outside the snapshot: it feeds the inspector and the content reports and must not change the state hash."""
+        rec = self.__dict__.setdefault("entity_stats", {}).setdefault(faction, {}).setdefault(entity, {"count": 0, "first_ms": int(self.dmb.clock.get("game_ms", 0))})
+        rec["count"] += 1
+
     def fstat(self, faction: str, key: str, amount: float = 1) -> None:
         """Per-faction counters (kills, losses): the reward signals of the training interface and a battle report."""
         d = self.fstats.setdefault(faction, {})

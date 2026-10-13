@@ -27,7 +27,7 @@ from wizard_rts.world import HybridWorld  # noqa: E402
 # Faction-level commands: God Mode and the training surface (D02). The wizard's own ops (snapshot, pose, advance, interact,
 # resolve, fire, menu, terrain, tile, resources) stay available in every profile.
 GOD_OPS = frozenset({"trade", "control", "build", "road", "queue", "cancel", "move", "deploy", "stop", "rally", "demolish", "ai", "speed",
-                     "order", "suggest", "spawn", "damage", "draft", "grant_card", "belt", "upgrade", "configure", "fixture"})
+                     "order", "suggest", "spawn", "damage", "draft", "grant_card", "inspect", "belt", "upgrade", "configure", "fixture"})
 
 
 def _handle(world: HybridWorld, message: dict) -> dict:
@@ -44,6 +44,14 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return {"status": "ok", "tech": tech.snapshot(world)}
     if op == "cards":  # the card catalogue by era (read-only: what each card is, unlocks and needs)
         return {"status": "ok", "catalogue": tech.catalogue(), "offer_size": tech.OFFER_SIZE}
+    if op == "inspect":  # God Mode inspector (plan v2 8.6): read-only views computed from the authoritative world
+        from wizard_rts import inspector
+
+        what = str(message.get("what", ""))
+        views = {"catalogue": inspector.catalogue, "factions": inspector.factions, "draft": inspector.draft_view}
+        if what not in views:
+            return {"status": "rejected", "reason": "unknown_view", "views": sorted(views)}
+        return {"status": "ok", "what": what, "data": views[what](world)}
     if op == "trade":
         from wizard_rts import trade
 

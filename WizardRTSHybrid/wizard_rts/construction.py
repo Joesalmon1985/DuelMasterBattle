@@ -424,6 +424,7 @@ def construction_quantum(world: Any) -> None:
             world.recipe_requests.pop(bid, None)
             world.events.append({"kind": "construction_done", "id": bid, "building_kind": b["kind"]})
             world.fstat(b["faction_name"], "buildings_completed")
+            world.note_produced(b["faction_name"], b["kind"])
 
 
 # ------------------------------------------------------------------ roads
@@ -694,5 +695,6 @@ def recruitment_quantum(world: Any) -> None:
             queue.pop(0)
             world.stats["recruited"] = world.stats.get("recruited", 0) + 1
             world.events.append({"kind": "unit_produced", "building": bid, "unit": uid, "unit_kind": head["unit"]})
+            world.note_produced(b["faction_name"], "unit:" + head["unit"])
             world.fstat(b["faction_name"], "units_produced")
             _sync_requests(world, b)
