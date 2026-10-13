@@ -26,7 +26,7 @@ from typing import Any
 from wizard_rts import construction as con
 from wizard_rts import wl_defs
 from wizard_rts import rules, tech
-from wizard_rts import diagnostics, territory
+from wizard_rts import diagnostics, territory, visibility
 from wizard_rts.coords import tile_to_hex  # noqa: F401  (kept importable for scripts)
 from wizard_rts.world import FACTIONS, HybridWorld
 
@@ -326,7 +326,11 @@ class HybridEnv:
             "mcvs": [{"id": u["id"], "tile": [u["tx"], u["ty"]], "cargo": dict(u.get("cargo") or {})} for u in units if territory.is_founder(u)],
             "known_enemy_buildings": len(w.__dict__.get("_ai_known", {}).get(faction, ())),
             "stuck_entities": sum(1 for r in diagnostics.stuck_report(w) if r["faction"] == faction),
-            "enemy_capitals": {n: [b["tx"], b["ty"]] for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] != faction for n in [b["faction_name"]]},
+            # only capitals this faction has ever seen (owner decision D): the rest of the world is not in its observation
+            "enemy_capitals": {n: [b["tx"], b["ty"]] for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] != faction
+                               and visibility.known(w, faction, b["tx"], b["ty"]) for n in [b["faction_name"]]},
+            "visible": visibility.seen_enemies(w, faction),
+            "explored_cells": len(visibility.explored_of(w, faction)),
         }
         if t is not None and wh is not None:
             obs["local_map"] = self._local_map(wh["tx"], wh["ty"], 12)
@@ -364,9 +368,10 @@ class HybridEnv:
         n = 0
         strength = 0
         nearest = None
+        srcs = visibility.sources(self.world, faction)
         for u in self.world.units.values():
-            if u["faction_name"] == faction or not u.get("alive", True):
-                continue
+            if u["faction_name"] == faction or not u.get("alive", True) or not visibility.visible(self.world, faction, u["tx"], u["ty"], srcs):
+                continue  # a threat is an enemy the faction can see
             d = abs(u["tx"] - wh["tx"]) + abs(u["ty"] - wh["ty"])
             if d <= 40:
                 n += 1

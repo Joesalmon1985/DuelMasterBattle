@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import disruption, feed, history, maritime, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, vp
+from wizard_rts import disruption, feed, history, maritime, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, visibility, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -892,6 +892,7 @@ class HybridWorld:
             disruption.disruption_quantum(self)
             society.society_quantum(self)
             history.history_quantum(self)
+            visibility.visibility_quantum(self)
             con.recruitment_quantum(self)
             lifecycle_quantum(self)
             territory.deploy_quantum(self)
