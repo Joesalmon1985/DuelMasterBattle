@@ -38,3 +38,30 @@ def test_card_step_does_nothing_without_cards_or_with_other_tribes_buildings():
     tech.grant(w, "Red", other)
     produce(w, wh["id"], "log", 40)
     assert ai_plus.card_step(w, "Red", wh) is False  # a card for another tribe's building cannot be used
+
+
+def test_a_boxed_in_founder_unfolds_where_it_stands():
+    from wizard_rts import ai_plus, territory
+
+    w = HybridWorld(507, profile="test_showcase")
+    w.ai_enabled = False
+    red = w.faction_info["Red"]
+    home = next(b for b in w.buildings.values() if b["faction_name"] == "Red" and b["kind"] == "warehouse")
+    spot = None
+    for dx in range(60, 140, 3):
+        for dy in range(-40, 40, 3):
+            probe = {"id": "p", "definition": territory.SETTLER_DEFINITION, "faction_name": "Red", "alive": True, "tx": home["tx"] + dx, "ty": home["ty"] + dy}
+            if w.tile_in_bounds(probe["tx"], probe["ty"]) and territory.deploy_check(w, probe) is None:
+                spot = (probe["tx"], probe["ty"])
+                break
+        if spot:
+            break
+    assert spot, "no legal tile for the test"
+    uid = w._unit(red["id"], "Red", "settlers", "Settlers", territory.SETTLER_DEFINITION, spot)
+    original = ai_plus._expansion_site
+    ai_plus._expansion_site = lambda *a, **k: None  # the sweep finds nothing
+    try:
+        ai_plus._drive(w, "Red", w.units[uid], int(w.dmb.clock.get("game_ms", 0)))
+    finally:
+        ai_plus._expansion_site = original
+    assert w.units[uid].get("deploying_ms") and [e for e in w.events if e["kind"] == "ai_expand_deploy" and e.get("why") == "no other site"]

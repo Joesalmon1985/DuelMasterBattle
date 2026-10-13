@@ -703,6 +703,13 @@ def _drive(world: Any, name: str, u: dict, now: int) -> None:
         site = _expansion_site(world, name, u, st["bad"], u["definition"])
         st.update(site=list(site) if site else None, fails=0, since=now)
         if site is None:
+            if territory.deploy_check(world, u) is None:  # nowhere better to go (boxed in by rivals and water): unfold where it stands rather than hold its wares forever
+                res = territory.deploy(world, u["id"])
+                if res["status"] == "ok":
+                    note(world, name, "no other legal site: the founder unfolds where it stands")
+                    world.fstat(name, "mcv_deployed")
+                    world.events.append({"kind": "ai_expand_deploy", "faction": name, "tile": [here[0], here[1]], "policy": POLICY, "why": "no other site"})
+                    return
             note(world, name, "founder has no reachable legal site")
             return
         world.events.append({"kind": "ai_expand_site", "faction": name, "tile": list(site), "policy": POLICY})
