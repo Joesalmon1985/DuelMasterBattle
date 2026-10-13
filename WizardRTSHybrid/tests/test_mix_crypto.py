@@ -60,3 +60,11 @@ def test_godot_inspector_panel_proof():
     p = subprocess.run([str(GODOT), "--headless", "--path", str(repo / "godot_project"), "--script", "res://client/tests/run_hybrid_inspector.gd"],
                        capture_output=True, text=True, timeout=300)
     assert "HYBRID_INSPECTOR_OK" in p.stdout, p.stdout[-1500:]
+
+
+@pytest.mark.skipif(not GODOT.exists(), reason="no Godot binary")
+def test_godot_independent_turret_proof():
+    repo = Path(__file__).resolve().parents[2]
+    p = subprocess.run([str(GODOT), "--headless", "--path", str(repo / "godot_project"), "--script", "res://client/tests/run_hybrid_turret.gd"],
+                       capture_output=True, text=True, timeout=300)
+    assert "HYBRID_TURRET_OK" in p.stdout, p.stdout[-1500:]
