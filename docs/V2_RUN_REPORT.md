@@ -61,7 +61,7 @@ Numbers come from the same machine but **not** from an idle one (other jobs shar
 5. Standing a lead at 8 VP ended all four eras within two game minutes (bar now rises with the leader).
 6. Late-game cost explosion from my own frontier site search (cached; one-minute no-site memo).
 7. Partly fixed: Blue's founders were sacrificed to a nest at a region border (33 wagons in one game); clinics now reach neighbouring regions (3 wagons), but Blue is still hemmed in (no legal site).
-8. Not fixed: `worker_failed` is dominated by `no_tree`/`no_rock` retries (about 45,000 per 120 game minutes); standing settlement counts of Blue/Red/Purple fall below 3 late in some seeds (splits, losses, boxed-in starts); caravans crossing rival territory are often killed (no event); the Modern content is barely drafted or built (see 7).
+8. Not a defect after checking: `worker_failed` (about 45,000 per 120 game minutes, mostly `no_tree`/`no_rock`) is each site retrying after the 10-second failure sleep (`programs_data.FAIL_SLEEP_MS`), as Widelands does; it only costs event volume (a cap on logging would be tidy). Not fixed: standing settlement counts of Blue/Red/Purple fall below 3 late in some seeds (splits, losses, boxed-in starts); caravans crossing rival territory are often killed (no event); the Modern content is barely drafted or built (see 7).
 
 ## 7. Limitations and remaining work (the plan is far from finished: about 80 sessions in total, this was one)
 * **Content**: functional vs pending is in `docs/evidence/content_status.md` (Widelands 153/242 functional, OpenRA units 24 of 49, OpenRA buildings 9 of 43, Mindustry 11 of 253 blocks and 3 of 64 units). Everything else is imported as data and listed, not claimed.
