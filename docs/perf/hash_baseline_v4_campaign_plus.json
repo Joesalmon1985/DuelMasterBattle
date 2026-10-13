@@ -1,0 +1,65 @@
+{
+ "label": "v4-2026-10-13 (wider state_hash, 168-card v3 draft)",
+ "profile": "campaign",
+ "policy": "plus",
+ "map": "standard",
+ "minutes": 20,
+ "runs": [
+  {
+   "seed": 507,
+   "hashes": [
+    "036d9c4dcb98738bea43b1cc2b892079ac9a885f",
+    "bac0cceab3006e59a4d1618c1b2a8f8be916fcac",
+    "379ee03f583cdad36ebf7419f0bc880201599769",
+    "e4249a421c6b51b4c947d285f6532f3893287fd0",
+    "6fa71ec685f3b2bf07a543368a78cec1df4c0e73",
+    "b90888a9404fe157c8d10f3ca19a6af36de9da6c",
+    "26d28fa5597ca48d00df872bf25036e84f00d749",
+    "7a2b184592e0d72eceb0cc78b97faa3cac3c8f2b",
+    "a11b01b2a32570ab48f3eb44391541105644606d",
+    "5f5dbb240da2f92182e86eed19a7c6f37106cc7a",
+    "14d6b283561fdbea93a38af3768c62f94123ad9f",
+    "4b66070dd58aa7573ba0cadf0387aa9333ab8e72",
+    "e178e4b3f09e5d71ffb180194273d09caebff687",
+    "dd0dd378eadf69aa4d0883d26f9e840e3571fa81",
+    "0542b819bf66cfebec9501e055e8dbc26325b4c0",
+    "7b11b8b8702eb814d87e053679f07eb53991c301",
+    "13932deb74061fa9e01e98501d9c664b3bc9aadc",
+    "0a524c112bd4d1c5a5b8b241596ba182dc821712",
+    "80d9745108d5e406ed1bfbaef122f144e060a630",
+    "03714558fd99eeca7567069c5939698a41489704"
+   ],
+   "wall_s": 31.6,
+   "x_realtime": 38.0,
+   "buildings": 269
+  },
+  {
+   "seed": 11,
+   "hashes": [
+    "484522da94c388a0631c6afffab96c96c0bf891a",
+    "39f931a698fcd5bf05c5529d267ef4d2a1072a65",
+    "69f555f8eab6adec709dcddacef4c408824202ef",
+    "72a70e168b84080c1a4d14d5a7549eb10188b0b9",
+    "6aeee70b8b252ce20e8ccf0fc4445688d91e42db",
+    "229d19adb6f598e2da0fa20718baad7efa007241",
+    "f794c26e1f853f8f3bee0f18aa17963a43861884",
+    "2f9861a214f54e2fd93a849700d0e7ff6f33fa02",
+    "c5311cec843e4e7b635bebaeba00056475f30159",
+    "3e15186a0acbdbebea36e9dc596e69321eb6b50e",
+    "af1101c48ac2131f807ff97650c8ce03914a9847",
+    "3bcafc3fd186b40eec153fdf2fb9a658b9c7d079",
+    "4947d1322fd6d6ab1a551d31215e78518ee83f4a",
+    "8e5e433bfb83667d83ff74a1d557cc073b7d2512",
+    "5d75989eadf7adacf9a7cf68d1ca0c2b0bbf65fc",
+    "cc4d290e201779135f1acbf06c3e1dd25f31c00e",
+    "c3667619e0544d326f5d3f7773e11715c520409e",
+    "96d1989cd94bb33c26bd95a419a576b86f913935",
+    "1f967b7f86f3db3c26cf27b23411ddc5f1bf4d4f",
+    "280c26b60aa6b773fcc1f0b164946e326cd11655"
+   ],
+   "wall_s": 30.6,
+   "x_realtime": 39.2,
+   "buildings": 258
+  }
+ ]
+}
