@@ -1,0 +1,5615 @@
+[
+ {
+  "id": "afld",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[afld]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[afld]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "agun",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[agun]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[agun]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "atek",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[atek]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[atek]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "bakery",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_bakery-mdy:hy_food_plant-bread]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "barracks",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_commands::test_barracks_queue_consumes_delivered_goods_and_unit_obeys_move",
+   "test_commands::test_damaged_barracks_recruits_slower_and_destroyed_cannot",
+   "test_playtest_fixes::test_war_factory_and_barracks_have_real_footprints"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "brik",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[brik]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[brik]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "clinic",
+  "game": "hybrid",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_diplomacy::test_clinic_cures_its_region_for_rations_and_water_and_idles_when_clean",
+   "test_diplomacy::test_cooperative_aid_caravan_carries_rations_and_water_to_a_partners_clinic"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "defense",
+  "game": "openra",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_point_defense_shoots_a_bullet_down"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "dome",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[dome]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[dome]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-barley]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-blackroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cassavaroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cocoa_beans]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-corn]"
+  ],
+  "tests_n": 13
+ },
+ {
+  "id": "fenc",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[fenc]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[fenc]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "fix",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[fix]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[fix]",
+   "test_quest_env::test_changing_world_conditions_close_or_suspend_the_quest[world_fix_first-resolved_by_world]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "flame_tower",
+  "game": "openra",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "gap",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industry_mechanics::test_battery_buffers_surplus_and_bridges_a_gap",
+   "test_mindustry_engine::test_bridge_carries_items_over_a_gap",
+   "test_openra_content::test_a_gap_generator_hides_what_it_covers_from_distant_enemies",
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[gap]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[gap]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "hbox",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_a_pillbox_shoots_an_enemy_soldier_in_range[hbox]",
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[hbox]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[hbox]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "hpad",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[hpad]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[hpad]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "hunter",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_food::test_hunter_kills_a_real_animal_and_game_breeds_back",
+   "test_widelands_completion::test_a_gamekeeper_releases_game_that_a_hunter_can_then_hunt"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "iron",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_civilisation_rules::test_mindustry_drill_on_a_shared_iron_site_never_runs_dry_and_logs_its_source",
+   "test_civilisation_rules::test_two_game_hours_of_coal_and_iron_mining_never_exhaust_the_sites",
+   "test_industrial_revolution::test_drills_win_granite_iron_ore_and_gold_ore_from_the_existing_deposits",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_arc_smelter-iron]",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_smelting_works-mdy:hy_arc_smelter-iron]"
+  ],
+  "tests_n": 11
+ },
+ {
+  "id": "ironmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "kenn",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[kenn]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[kenn]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:additive_reconstructor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-crawler-atrax]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-dagger-mace]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-flare-horizon]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-mono-poly]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-nova-pulsar]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "mdy:afflict",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:afflict]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:air_factory",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:air_factory-flare]",
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:air_factory-mono]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:arc",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_arc_smelter-iron]",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_smelting_works-mdy:hy_arc_smelter-iron]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_arc_smelter]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:silicon_arc_furnace]",
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:arc]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "mdy:armored_conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:armored_duct",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:atmospheric_concentrator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:atmospheric_concentrator]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:barrier_projector",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:basic_assembler_module",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:battery",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industry_mechanics::test_battery_buffers_surplus_and_bridges_a_gap",
+   "test_mindustry_blocks::test_a_diode_moves_charge_from_the_fuller_battery_to_the_emptier_one",
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:chemical_combustion_chamber]",
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:combustion_generator]",
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:differential_generator]"
+  ],
+  "tests_n": 17
+ },
+ {
+  "id": "mdy:battery_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:beam_node",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:beam_tower",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:beryllium_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:beryllium_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:beryllium_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:beryllium_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:beryllium_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:blast_door",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:blast_door]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:blast_drill",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:blast_drill]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:blast_mixer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:blast_mixer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:breach",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:breach]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:bridge_conduit",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:bridge_conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:build_tower",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_repair_point_heals_a_friendly_unit_and_a_build_tower_speeds_up_a_site"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:carbide_crucible",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:carbide_crucible]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:carbide_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:carbide_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:carbide_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:carbide_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:carbide_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:chemical_combustion_chamber",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:chemical_combustion_chamber]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:cliff_crusher",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:coal_centrifuge",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:coal_centrifuge]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:combustion_generator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industry_mechanics::test_combustion_generator_burns_fuel_and_conserves",
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:combustion_generator]",
+   "test_mindustry_pipeline::test_imported_block_values[combustion-generator-expect5]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:conduit",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_engine::test_an_open_conduit_end_leaks_and_the_books_still_balance",
+   "test_mindustry_engine::test_pump_and_conduit_fill_a_tank_and_the_liquid_books_balance"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:constructor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_constructor_builds_a_wall_payload_and_a_deconstructor_returns_its_materials"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:container",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_a_payload_conveyor_carries_a_unit_between_machines",
+   "test_mindustry_pipeline::test_imported_block_values[conveyor-expect2]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:copper_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:copper_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:copper_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:copper_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:copper_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:core_acropolis",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:core_bastion",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:core_citadel",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:core_foundation",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:core_nucleus",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:core_shard",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:cryofluid_mixer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:cryofluid_mixer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:cultivator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:cultivator]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:cyanogen_synthesizer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:cyanogen_synthesizer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:cyclone",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:cyclone]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:deconstructor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_constructor_builds_a_wall_payload_and_a_deconstructor_returns_its_materials"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:differential_generator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:differential_generator]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:diffuse",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:diffuse]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:diode",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_diode_moves_charge_from_the_fuller_battery_to_the_emptier_one"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:disassembler",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:disassembler]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:disperse",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:disperse]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:distributor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:door",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:blast_door]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:door]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:door_large]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:door_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:door_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:duct",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:duct_bridge",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:duct_router",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:duct_unloader",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:duo",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:duo]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:electric_heater",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:electrolyzer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:electrolyzer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:eruption_drill",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:eruption_drill]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:exponential_reconstructor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-fortress-scepter]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-mega-quad]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-quasar-vela]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-spiroct-arkyid]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-zenith-antumbra]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "mdy:flux_reactor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:flux_reactor]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:force_projector",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_force_projector_absorbs_bullets_until_it_breaks"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:foreshadow",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:foreshadow]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:fuse",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:fuse]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:graphite_press",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:graphite_press]",
+   "test_mindustry_pipeline::test_imported_block_values[graphite-press-expect4]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:ground_factory",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:ground_factory-crawler]",
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:ground_factory-dagger]",
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:ground_factory-nova]",
+   "test_mindustry_pipeline::test_imported_block_values[ground-factory-expect8]"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "mdy:hail",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:hail]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:heat_reactor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:heat_redirector",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:heat_router",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:hy_arc_smelter",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_arc_smelter-iron]",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_smelting_works-mdy:hy_arc_smelter-iron]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_arc_smelter]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:hy_assembly_airfield",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:hy_assembly_barracks",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:hy_assembly_shipyard",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:hy_assembly_vehicle_plant",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:hy_fibre_loom",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_fibre_loom-cloth]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_fibre_loom-fur]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_fibre_loom-gold_thread]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_fibre_loom-reed]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_fibre_loom-rope]"
+  ],
+  "tests_n": 11
+ },
+ {
+  "id": "mdy:hy_food_plant",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_food_plant-beer]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_food_plant-beer_strong]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_food_plant-blackroot_flour]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_food_plant-bread]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_food_plant-bread_frisians]"
+  ],
+  "tests_n": 18
+ },
+ {
+  "id": "mdy:hy_gold_refinery",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_gold_refinery-gold]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_gold_refinery]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:hy_hydroponic_farm",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-barley]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-blackroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cassavaroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cocoa_beans]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-corn]"
+  ],
+  "tests_n": 12
+ },
+ {
+  "id": "mdy:hy_material_press",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_material_press-balsa]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_material_press-blackwood]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_material_press-brick]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_material_press-clay]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_material_press-diamond]"
+  ],
+  "tests_n": 13
+ },
+ {
+  "id": "mdy:hy_protein_vat",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_protein_vat-fish]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_protein_vat-meat]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_protein_vat]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:hy_sawmill_line",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_sawmill_line-plank]",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_sawmill-mdy:hy_sawmill_line-plank]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_sawmill_line]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:hy_tool_foundry",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_tool_foundry-basket]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_tool_foundry-bread_paddle]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_tool_foundry-buckets]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_tool_foundry-chisel]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_tool_foundry-felling_ax]"
+  ],
+  "tests_n": 24
+ },
+ {
+  "id": "mdy:hy_tree_harvester",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_lumberjacks_hut-mdy:hy_tree_harvester-log]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:hy_water_bottler",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_water_bottler-water]",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_well-mdy:hy_water_bottler-water]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_water_bottler]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:hyper_processor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:impact_drill",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:impact_drill]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:impact_reactor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:impact_reactor]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:impulse_pump",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_pump_makes_its_liquid[mdy:impulse_pump]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:incinerator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_radar_reveals_ground_and_an_incinerator_destroys_what_it_is_given"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:interplanetary_accelerator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:inverted_sorter",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:junction",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_engine::test_junction_crosses_two_flows_without_mixing"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:kiln",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_lime_kiln-mdy:hy_material_press-grout]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:kiln]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:lancer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:lancer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:large_constructor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:large_logic_display",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:large_payload_mass_driver",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:large_plasma_bore",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:large_plasma_bore]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:laser_drill",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:laser_drill]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:launch_pad",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_launch_pad_ships_to_another_store_and_the_books_balance"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:liquid_container",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:liquid_junction",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:liquid_router",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:liquid_tank",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:logic_display",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:logic_processor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:lustre",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:lustre]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:malign",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:malign]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:mass_driver",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:mech_assembler",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:mech_assembler-collaris]",
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:mech_assembler-tecta]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:mech_assembler-collaris]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:mech_assembler-tecta]"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "mdy:mech_fabricator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:mech_fabricator-merui]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:mech_refabricator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:mech_refabricator-merui-cleroi]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:mechanical_drill",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industry_mechanics::test_drill_on_a_shared_site_logs_its_extraction_and_never_exhausts_it[mdy:mechanical_drill-copper-1]",
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:mechanical_drill]",
+   "test_mindustry_pipeline::test_imported_block_values[mechanical-drill-expect0]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:mechanical_pump",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_pump_makes_its_liquid[mdy:mechanical_pump]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:meltdown",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:meltdown]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:melter",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:melter]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:memory_bank",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:memory_cell",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:mend_projector",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:mender",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_mender_heals_a_damaged_neighbour_and_needs_power"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:message",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:micro_processor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:multi_press",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:multi_press]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:multiplicative_reconstructor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-atrax-spiroct]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-horizon-zenith]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-mace-fortress]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-poly-mega]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-pulsar-quasar]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "mdy:naval_factory",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_naval_units_leave_a_shore_factory_into_the_water[mdy:naval_factory-retusa]",
+   "test_mindustry_blocks::test_naval_units_leave_a_shore_factory_into_the_water[mdy:naval_factory-risso]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:neoplasia_reactor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:neoplasia_reactor]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:oil_extractor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_pump_makes_its_liquid[mdy:oil_extractor]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:overdrive_dome",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:overdrive_projector",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_an_overdrive_projector_speeds_up_a_machine_in_range"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:overflow_duct",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:overflow_gate",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_engine::test_overflow_gate_uses_the_sides_only_when_the_front_is_full"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:oxidation_chamber",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:parallax",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:parallax]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:payload_conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_payload_conveyor_carries_a_unit_between_machines"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:payload_loader",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:payload_mass_driver",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:payload_router",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:payload_unloader",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:phase_conduit",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:phase_conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:phase_heater",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:phase_synthesizer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:phase_synthesizer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:phase_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:phase_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:phase_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:phase_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:phase_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:phase_weaver",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:phase_weaver]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:plasma_bore",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:large_plasma_bore]",
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:plasma_bore]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:plastanium_compressor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:plastanium_compressor]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:plastanium_conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:plastanium_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:plastanium_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:plastanium_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:plastanium_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:plastanium_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:plated_conduit",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:pneumatic_drill",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industry_mechanics::test_drill_on_a_shared_site_logs_its_extraction_and_never_exhausts_it[mdy:pneumatic_drill-titanium-2]",
+   "test_mindustry_blocks::test_every_drill_mines_the_best_ore_its_tier_allows[mdy:pneumatic_drill]",
+   "test_mindustry_pipeline::test_imported_block_values[pneumatic-drill-expect1]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:power_node",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_pipeline::test_imported_block_values[power-node-expect7]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:power_node_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:prime_refabricator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-avert-obviate]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-cleroi-anthicus]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-locus-precept]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "mdy:pulse_conduit",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:pulverizer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:pulverizer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:pyratite_mixer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:pyratite_mixer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:pyrolysis_generator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:pyrolysis_generator]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:radar",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_radar_reveals_ground_and_an_incinerator_destroys_what_it_is_given"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:regen_projector",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_bridge_conduit",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_conduit",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_container",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_liquid_container",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_liquid_junction",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_liquid_router",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_liquid_tank",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_message",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_payload_conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_payload_router",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:reinforced_pump",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_pump_makes_its_liquid[mdy:reinforced_pump]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:reinforced_surge_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:reinforced_surge_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:reinforced_surge_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:reinforced_surge_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:reinforced_surge_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:reinforced_vault",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:repair_point",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_repair_point_heals_a_friendly_unit_and_a_build_tower_speeds_up_a_site"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:repair_turret",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:ripple",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:ripple]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:rotary_pump",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_pump_makes_its_liquid[mdy:rotary_pump]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:router",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_engine::test_router_passes_items_to_a_store"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:rtg_generator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:rtg_generator]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:salvo",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:salvo]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:scathe",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:scathe]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:scatter",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:scatter]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:scorch",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:scorch]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:scrap_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:scrap_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:scrap_wall_gigantic]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:scrap_wall_huge]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:scrap_wall_large]"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "mdy:scrap_wall_gigantic",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:scrap_wall_gigantic]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:scrap_wall_huge",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:scrap_wall_huge]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:scrap_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:scrap_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:segment",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:separator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:atmospheric_concentrator]",
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:carbide_crucible]",
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:cultivator]",
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:cyanogen_synthesizer]",
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:disassembler]"
+  ],
+  "tests_n": 10
+ },
+ {
+  "id": "mdy:shielded_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:shielded_wall]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:ship_assembler",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:ship_assembler-disrupt]",
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:ship_assembler-quell]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:ship_assembler-disrupt]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:ship_assembler-quell]"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "mdy:ship_fabricator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:ship_fabricator-elude]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:ship_refabricator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:ship_refabricator-elude-avert]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:shock_mine",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_shock_mine_hurts_an_enemy_that_stands_on_it"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:shockwave_tower",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:silicon_arc_furnace",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:silicon_arc_furnace]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:silicon_crucible",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:silicon_crucible]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:silicon_smelter",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:silicon_smelter]",
+   "test_mindustry_pipeline::test_imported_block_values[silicon-smelter-expect3]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:slag_centrifuge",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:slag_centrifuge]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:slag_heater",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:slag_incinerator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:small_deconstructor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:smite",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:smite]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:solar_panel",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:solar_panel]",
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:solar_panel_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:solar_panel_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:solar_panel_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:sorter",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_engine::test_sorter_sends_the_chosen_item_forward_and_the_rest_to_the_sides"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:spectre",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:spectre]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:spore_press",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:spore_press]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:steam_generator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:steam_generator]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:sublimate",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:sublimate]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:surge_conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:surge_crucible",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:surge_crucible]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:surge_router",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:surge_smelter",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:surge_smelter]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:surge_tower",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:surge_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:reinforced_surge_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:reinforced_surge_wall_large]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:surge_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:surge_wall_large]"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "mdy:surge_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:reinforced_surge_wall_large]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:surge_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:swarmer",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:swarmer]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:switch",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_a_processor_can_switch_a_block_off_and_a_bad_instruction_is_reported_not_fatal"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:tank_assembler",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:tank_assembler-conquer]",
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:tank_assembler-vanquish]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:tank_assembler-conquer]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:tank_assembler-vanquish]"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "mdy:tank_fabricator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:tank_fabricator-stell]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:tank_refabricator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tank_refabricator-stell-locus]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:tetrative_reconstructor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-antumbra-eclipse]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-arkyid-toxopid]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-quad-oct]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-scepter-reign]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-vela-corvus]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "mdy:thermal_generator",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:thermal_generator]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:thorium_reactor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:thorium_reactor]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:thorium_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:thorium_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:thorium_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:thorium_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:thorium_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:thruster",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:thruster]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:titan",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:titan]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:titanium_conveyor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:titanium_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:titanium_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:titanium_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:titanium_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:titanium_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:tsunami",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:tsunami]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:tungsten_wall",
+  "game": "mindustry",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:tungsten_wall]",
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:tungsten_wall_large]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "mdy:tungsten_wall_large",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_walls_and_doors_stand_with_the_health_mindustry_gives_them[mdy:tungsten_wall_large]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:turbine_condenser",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_generator_charges_a_battery_from_its_fuel[mdy:turbine_condenser]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:underflow_duct",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:underflow_gate",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:unit_cargo_loader",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:unit_cargo_unload_point",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:unit_repair_tower",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:unloader",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_engine::test_unloader_pulls_from_a_store_onto_a_belt_and_a_core_never_blocks"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:vault",
+  "game": "mindustry",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "mdy:vent_condenser",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_attribute_heat_and_separator_crafters_work_with_their_environment[mdy:vent_condenser]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:water_extractor",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_pump_makes_its_liquid[mdy:water_extractor]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mdy:wave",
+  "game": "mindustry",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_turret_hurts_an_enemy_in_range_and_spends_its_ammunition[mdy:wave]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "mine",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_ai_economy::test_a_worked_out_mine_is_replaced_where_the_deposit_remains",
+   "test_civilisation_rules::test_a_collapsed_mine_stops_and_the_faction_digs_it_out_with_props",
+   "test_industry_mechanics::test_mine_upgrade_keeps_identity_pays_real_goods_and_uses_the_same_reserve",
+   "test_mindustry_blocks::test_a_shock_mine_hurts_an_enemy_that_stands_on_it",
+   "test_quest_env::test_changing_world_conditions_close_or_suspend_the_quest[mine_destroyed-failed_with_consequence]"
+  ],
+  "tests_n": 8
+ },
+ {
+  "id": "mslo",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[mslo]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[mslo]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "naval_yard",
+  "game": "openra",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_naval::test_naval_yard_can_be_destroyed_and_frees_its_water"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "pbox",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_a_pillbox_shoots_an_enemy_soldier_in_range[pbox]",
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[pbox]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[pbox]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "pdox",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[pdox]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[pdox]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "processor",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_a_processor_can_switch_a_block_off_and_a_bad_instruction_is_reported_not_fatal",
+   "test_mindustry_blocks::test_a_processor_runs_its_program_against_linked_blocks"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "producer",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_attack_order::test_tank_destroys_producer_and_production_stops",
+   "test_openra_content::test_every_new_unit_is_built_from_delivered_wares_at_its_producer[dtrk]",
+   "test_openra_content::test_every_new_unit_is_built_from_delivered_wares_at_its_producer[e6]",
+   "test_openra_content::test_every_new_unit_is_built_from_delivered_wares_at_its_producer[ftrk]",
+   "test_openra_content::test_every_new_unit_is_built_from_delivered_wares_at_its_producer[heli]"
+  ],
+  "tests_n": 19
+ },
+ {
+  "id": "quarry",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_rock_deposit_does_not_run_dry_so_industry_replaces_the_quarry_for_good",
+   "test_resources::test_quarry_shrinks_real_rocks_and_makes_granite"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "ranger",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_forestry::test_ranger_plants_and_sapling_grows"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "sam",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[sam]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[sam]",
+   "test_openra_content::test_only_anti_air_can_hit_a_flying_aircraft_and_a_sam_does"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "sbag",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[sbag]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[sbag]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "scriptorium",
+  "game": "hybrid",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_paper_bonus::test_bonus_hand_needs_scriptorium_and_paper_and_consumes_two_sheets",
+   "test_paper_bonus::test_scriptorium_turns_plank_and_water_into_paper"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "smelter",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_arc_smelter-iron]",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_smelting_works-mdy:hy_arc_smelter-iron]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_arc_smelter]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:silicon_smelter]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:surge_smelter]"
+  ],
+  "tests_n": 6
+ },
+ {
+  "id": "smithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "stek",
+  "game": "openra",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_every_new_building_can_be_placed_paid_for_and_finished[stek]",
+   "test_openra_content::test_every_new_openra_building_is_in_the_menu_with_a_cost_a_footprint_and_prerequisites[stek]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "sub_pen",
+  "game": "openra",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "tavern",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "tesla_coil",
+  "game": "openra",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:aegires",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:anthicus",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-cleroi-anthicus]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:antumbra",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-zenith-antumbra]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-antumbra-eclipse]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:apc",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_openra_content::test_an_apc_carries_infantry_and_they_die_with_it"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:arkyid",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-spiroct-arkyid]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-arkyid-toxopid]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:artillery",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:atrax",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-crawler-atrax]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-atrax-spiroct]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:attack_dog",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:avert",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-avert-obviate]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:ship_refabricator-elude-avert]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:black_hawk",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:bryde",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:chinook",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:chrono_tank",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:cleroi",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:mech_refabricator-merui-cleroi]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-cleroi-anthicus]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:clubman",
+  "game": "hybrid",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:collaris",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:mech_assembler-collaris]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:mech_assembler-collaris]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:commando",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:conquer",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:tank_assembler-conquer]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:tank_assembler-conquer]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:corvus",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-vela-corvus]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:crawler",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:ground_factory-crawler]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-crawler-atrax]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:cruiser",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:cyerce",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:dagger",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_industry_mechanics::test_dagger_beats_a_rifleman_and_loses_to_a_tank_by_data",
+   "test_industry_mechanics::test_unit_factory_builds_a_dagger_that_joins_world_units",
+   "test_industry_slice::test_slice_produces_a_dagger_from_delivered_inputs",
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:ground_factory-dagger]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-dagger-mace]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "unit:demo_truck",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_openra_content::test_minelayer_mines_hurt_enemy_vehicles_and_a_demo_truck_goes_off"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:destroyer",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:disrupt",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:ship_assembler-disrupt]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:ship_assembler-disrupt]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:eclipse",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-antumbra-eclipse]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:elude",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:ship_fabricator-elude]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:ship_refabricator-elude-avert]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:engineer",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_openra_content::test_an_engineer_captures_an_enemy_building_and_a_half_dead_settlement"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:flak_truck",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:flamethrower",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:flare",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:air_factory-flare]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-flare-horizon]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:fortress",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-fortress-scepter]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-mace-fortress]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:gap_vehicle",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:grenadier",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_ware_classes::test_a_grenadier_may_be_paid_with_an_armour_ware_in_place_of_iron"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:horizon",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_fullgame_env::test_wait_forever_ends_in_loss_or_horizon_and_never_completes_the_story",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-flare-horizon]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-horizon-zenith]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "unit:infantry",
+  "game": "openra",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_an_apc_carries_infantry_and_they_die_with_it",
+   "test_openra_content::test_medics_heal_infantry_and_mechanics_repair_vehicles_but_not_the_other_way"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:jeep",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:landing_ship",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:light_tank",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:locus",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-locus-precept]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tank_refabricator-stell-locus]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:longbow",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:mace",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-dagger-mace]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-mace-fortress]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:mad_tank",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_openra_content::test_a_mad_tank_thumps_nearby_vehicles_and_a_jammer_deflects_missiles"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:mammoth",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:mcv",
+  "game": "openra",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_territory::test_deploy_creates_one_command_centre_and_consumes_the_mcv_once",
+   "test_territory::test_mcv_is_produced_from_delivered_wares_only",
+   "test_vp_eras::test_a_faction_with_only_an_mcv_left_has_not_collapsed",
+   "test_vp_eras::test_faction_without_command_centre_or_mcv_collapses_leaving_ruins",
+   "test_vp_eras::test_founding_adds_one_vp_once_and_an_undeployed_mcv_none"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "unit:mechanic",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:medic",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:medium_tank",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:mega",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-mega-quad]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-poly-mega]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:merui",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:mech_fabricator-merui]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:mech_refabricator-merui-cleroi]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:mig",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_openra_content::test_every_new_unit_is_built_from_delivered_wares_at_its_producer[mig]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:minelayer",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_openra_content::test_minelayer_mines_hurt_enemy_vehicles_and_a_demo_truck_goes_off"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:minke",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:missile_sub",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:mono",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:air_factory-mono]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-mono-poly]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:navanax",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:nova",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:ground_factory-nova]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-nova-pulsar]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:obviate",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-avert-obviate]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:oct",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-quad-oct]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:omura",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:oxynoe",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:patrol_boat",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_naval::test_submarine_torpedoes_a_patrol_boat_and_depth_charges_answer"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:phase_tank",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:poly",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-mono-poly]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-poly-mega]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:precept",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:prime_refabricator-locus-precept]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:pulsar",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:additive_reconstructor-nova-pulsar]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-pulsar-quasar]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:quad",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-mega-quad]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-quad-oct]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:quasar",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-quasar-vela]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-pulsar-quasar]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:quell",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:ship_assembler-quell]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:ship_assembler-quell]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:radar_jammer",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:reign",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-scepter-reign]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:retusa",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_naval_units_leave_a_shore_factory_into_the_water[mdy:naval_factory-retusa]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:risso",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_naval_units_leave_a_shore_factory_into_the_water[mdy:naval_factory-risso]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:rocket_soldier",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:scepter",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-fortress-scepter]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-scepter-reign]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:sei",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:settlers",
+  "game": "hybrid",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_civilisation_rules::test_settlers_found_a_settlement_from_the_warehouse"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:shock_trooper",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:slinger",
+  "game": "hybrid",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:spearman",
+  "game": "hybrid",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:spiroct",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-spiroct-arkyid]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-atrax-spiroct]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:spy",
+  "game": "openra",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_openra_content::test_a_spy_copies_a_card_from_a_tech_building_and_a_thief_carries_wares_home",
+   "test_openra_content::test_every_new_unit_is_built_from_delivered_wares_at_its_producer[spy]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:stell",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_factory_plan_produces_its_unit[mdy:tank_fabricator-stell]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tank_refabricator-stell-locus]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:submarine",
+  "game": "openra",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_naval::test_cloaked_submarine_is_hidden_until_it_fires_or_is_detected",
+   "test_naval::test_submarine_torpedoes_a_patrol_boat_and_depth_charges_answer"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:supply_truck",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:tank",
+  "game": "openra",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_attack_order::test_tank_destroys_producer_and_production_stops",
+   "test_combat::test_tank_beats_rifleman_with_exact_versus_damage_and_reload",
+   "test_combat::test_tank_shells_a_widelands_building_in_steps_of_versus_wood",
+   "test_combat_balance::test_two_low_tier_mindustry_units_beat_one_red_alert_heavy_tank",
+   "test_industry_mechanics::test_dagger_beats_a_rifleman_and_loses_to_a_tank_by_data"
+  ],
+  "tests_n": 13
+ },
+ {
+  "id": "unit:tecta",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:mech_assembler-tecta]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:mech_assembler-tecta]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:tesla_tank",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:thief",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_openra_content::test_a_spy_copies_a_card_from_a_tech_building_and_a_thief_carries_wares_home"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:toxopid",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-arkyid-toxopid]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:v2_launcher",
+  "game": "openra",
+  "type": "unit",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "unit:vanquish",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_an_assembler_accepts_real_payloads_and_builds_its_unit[mdy:tank_assembler-vanquish]",
+   "test_mindustry_blocks::test_every_assembler_plan_builds_its_unit_from_delivered_payloads[mdy:tank_assembler-vanquish]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:vela",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-quasar-vela]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:tetrative_reconstructor-vela-corvus]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "unit:yak",
+  "game": "openra",
+  "type": "unit",
+  "level": 2,
+  "tests": [
+   "test_openra_content::test_every_new_unit_is_built_from_delivered_wares_at_its_producer[yak]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "unit:zenith",
+  "game": "mindustry",
+  "type": "unit",
+  "level": 3,
+  "tests": [
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:exponential_reconstructor-zenith-antumbra]",
+   "test_mindustry_blocks::test_every_reconstructor_upgrade_consumes_inputs_and_makes_the_next_tier[mdy:multiplicative_reconstructor-horizon-zenith]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "vehicle_factory",
+  "game": "openra",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "war_lodge",
+  "game": "hybrid",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "well",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_food::test_well_draws_down_its_water_and_stops_when_dry",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_well-mdy:hy_water_bottler-water]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:amazons_cassava_plantation",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_cassava_root_cooker",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_charcoal_kiln",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_chocolate_brewery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_cocoa_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_dressmakery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_ferry_yard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_a_ferry_yard_makes_a_ferry_and_a_waterway_gets_its_carrier_from_it",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:barbarians_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_ferry_yard]"
+  ],
+  "tests_n": 6
+ },
+ {
+  "id": "wl:amazons_food_preserver",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_furnace",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:silicon_arc_furnace]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:amazons_gardening_center",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_gardening_center]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:amazons_gold_digger_dwelling",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_hunter_gatherers_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_initiation_site",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_jungle_preservers_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_liana_cutters_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_market",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_port",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_rare_tree_cutters_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_rare_tree_plantation",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_rare_tree_plantation]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:amazons_rope_weaver_booth",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_scouts_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_scouts_hut]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:barbarians_scouts_hut]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:amazons_shipyard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[amazons]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[atlanteans]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[barbarians]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[empire]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[frisians]"
+  ],
+  "tests_n": 11
+ },
+ {
+  "id": "wl:amazons_stone_workshop",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_stonecutters_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_stonemine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_tapir_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:amazons_warehouse",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_civilisation_rules::test_settlers_found_a_settlement_from_the_warehouse",
+   "test_logistics::test_request_pulls_from_warehouse_by_road",
+   "test_mindustry_engine::test_a_belt_can_end_in_a_widelands_warehouse_and_the_wares_join_the_settlement_stock",
+   "test_widelands_completion::test_a_secondary_warehouse_is_a_store_that_takes_the_output_of_nearby_sites_and_serves_requests"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "wl:amazons_water_gatherers_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_water_gatherers_hut]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:amazons_wilderness_keepers_tent",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_wilderness_keepers_tent]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:amazons_woodcutters_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_armorsmithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_bakery",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_bakery-mdy:hy_food_plant-bread]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:atlanteans_barracks",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_commands::test_barracks_queue_consumes_delivered_goods_and_unit_obeys_move",
+   "test_commands::test_damaged_barracks_recruits_slower_and_destroyed_cannot",
+   "test_playtest_fixes::test_war_factory_and_barracks_have_real_footprints"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:atlanteans_blackroot_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_charcoal_kiln",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_coalmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_crystalmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-barley]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-blackroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cassavaroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cocoa_beans]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-corn]"
+  ],
+  "tests_n": 13
+ },
+ {
+  "id": "wl:atlanteans_ferry_yard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_a_ferry_yard_makes_a_ferry_and_a_waterway_gets_its_carrier_from_it",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:barbarians_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_ferry_yard]"
+  ],
+  "tests_n": 6
+ },
+ {
+  "id": "wl:atlanteans_fishbreeders_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_fishers_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_fishers_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_fishers_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_fishers_house]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:atlanteans_foresters_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_gold_spinning_mill",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_goldmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_horsefarm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_hunters_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_ironmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_market",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_mill",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_weaving_mill-mdy:hy_fibre_loom-cloth]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:atlanteans_port",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_quarry",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_rock_deposit_does_not_run_dry_so_industry_replaces_the_quarry_for_good",
+   "test_resources::test_quarry_shrinks_real_rocks_and_makes_granite"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:atlanteans_sawmill",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_ai_economy::test_construction_sites_are_served_before_the_sawmill",
+   "test_forestry::test_logs_become_planks_at_sawmill",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_sawmill_line-plank]",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_sawmill-mdy:hy_sawmill_line-plank]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_sawmill_line]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "wl:atlanteans_scouts_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_scouts_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_scouts_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_scouts_house]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:atlanteans_shipyard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[amazons]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[atlanteans]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[barbarians]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[empire]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[frisians]"
+  ],
+  "tests_n": 11
+ },
+ {
+  "id": "wl:atlanteans_smelting_works",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_smelting_works-mdy:hy_arc_smelter-iron]",
+   "test_programme_failure::test_a_smelting_works_without_iron_ore_still_smelts_gold"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:atlanteans_smokery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_spiderfarm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_toolsmithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_warehouse",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_civilisation_rules::test_settlers_found_a_settlement_from_the_warehouse",
+   "test_logistics::test_request_pulls_from_warehouse_by_road",
+   "test_mindustry_engine::test_a_belt_can_end_in_a_widelands_warehouse_and_the_wares_join_the_settlement_stock",
+   "test_widelands_completion::test_a_secondary_warehouse_is_a_store_that_takes_the_output_of_nearby_sites_and_serves_requests"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "wl:atlanteans_weaponsmithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:atlanteans_weaving_mill",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_weaving_mill-mdy:hy_fibre_loom-cloth]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:atlanteans_well",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_food::test_well_draws_down_its_water_and_stops_when_dry",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_well-mdy:hy_water_bottler-water]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:atlanteans_woodcutters_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_ax_workshop",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_bakery",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_bakery-mdy:hy_food_plant-bread]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:barbarians_barracks",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_commands::test_barracks_queue_consumes_delivered_goods_and_unit_obeys_move",
+   "test_commands::test_damaged_barracks_recruits_slower_and_destroyed_cannot",
+   "test_playtest_fixes::test_war_factory_and_barracks_have_real_footprints"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:barbarians_big_inn",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_brewery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_cattlefarm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_charcoal_kiln",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_coalmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_coalmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_coalmine_deeper",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-barley]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-blackroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cassavaroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cocoa_beans]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-corn]"
+  ],
+  "tests_n": 13
+ },
+ {
+  "id": "wl:barbarians_ferry_yard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_a_ferry_yard_makes_a_ferry_and_a_waterway_gets_its_carrier_from_it",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:barbarians_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_ferry_yard]"
+  ],
+  "tests_n": 6
+ },
+ {
+  "id": "wl:barbarians_fishers_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_gamekeepers_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:barbarians_gamekeepers_hut]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:barbarians_goldmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_goldmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_goldmine_deeper",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_granitemine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_helmsmithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_hunters_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_inn",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_ironmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_ironmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_ironmine_deeper",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_lime_kiln",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_lime_kiln-mdy:hy_material_press-grout]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:barbarians_lumberjacks_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_lumberjacks_hut-mdy:hy_tree_harvester-log]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:barbarians_market",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_metal_workshop",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_metal_workshop-mdy:hy_tool_foundry-pick]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:barbarians_micro_brewery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_port",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_quarry",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_rock_deposit_does_not_run_dry_so_industry_replaces_the_quarry_for_good",
+   "test_resources::test_quarry_shrinks_real_rocks_and_makes_granite"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:barbarians_rangers_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_reed_yard",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_scouts_hut",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_scouts_hut]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:barbarians_scouts_hut]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:barbarians_shipyard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[amazons]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[atlanteans]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[barbarians]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[empire]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[frisians]"
+  ],
+  "tests_n": 11
+ },
+ {
+  "id": "wl:barbarians_smelting_works",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_smelting_works-mdy:hy_arc_smelter-iron]",
+   "test_programme_failure::test_a_smelting_works_without_iron_ore_still_smelts_gold"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:barbarians_tavern",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_warehouse",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_civilisation_rules::test_settlers_found_a_settlement_from_the_warehouse",
+   "test_logistics::test_request_pulls_from_warehouse_by_road",
+   "test_mindustry_engine::test_a_belt_can_end_in_a_widelands_warehouse_and_the_wares_join_the_settlement_stock",
+   "test_widelands_completion::test_a_secondary_warehouse_is_a_store_that_takes_the_output_of_nearby_sites_and_serves_requests"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "wl:barbarians_warmill",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:barbarians_weaving_mill",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_weaving_mill-mdy:hy_fibre_loom-cloth]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:barbarians_well",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_food::test_well_draws_down_its_water_and_stops_when_dry",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_well-mdy:hy_water_bottler-water]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:barbarians_wood_hardener",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_armorsmithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_bakery",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_bakery-mdy:hy_food_plant-bread]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:empire_barracks",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_commands::test_barracks_queue_consumes_delivered_goods_and_unit_obeys_move",
+   "test_commands::test_damaged_barracks_recruits_slower_and_destroyed_cannot",
+   "test_playtest_fixes::test_war_factory_and_barracks_have_real_footprints"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:empire_brewery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_charcoal_kiln",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_coalmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_coalmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_donkeyfarm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-barley]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-blackroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cassavaroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cocoa_beans]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-corn]"
+  ],
+  "tests_n": 13
+ },
+ {
+  "id": "wl:empire_ferry_yard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_a_ferry_yard_makes_a_ferry_and_a_waterway_gets_its_carrier_from_it",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:barbarians_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_ferry_yard]"
+  ],
+  "tests_n": 6
+ },
+ {
+  "id": "wl:empire_fishers_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_fishers_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_fishers_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_fishers_house]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:empire_foresters_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_goldmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_goldmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_hunters_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_inn",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_ironmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_ironmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_lumberjacks_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_marblemine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_marblemine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_market",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_mill",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_weaving_mill-mdy:hy_fibre_loom-cloth]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:empire_piggery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_port",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_quarry",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_rock_deposit_does_not_run_dry_so_industry_replaces_the_quarry_for_good",
+   "test_resources::test_quarry_shrinks_real_rocks_and_makes_granite"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:empire_sawmill",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_ai_economy::test_construction_sites_are_served_before_the_sawmill",
+   "test_forestry::test_logs_become_planks_at_sawmill",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_sawmill_line-plank]",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_sawmill-mdy:hy_sawmill_line-plank]",
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:hy_sawmill_line]"
+  ],
+  "tests_n": 5
+ },
+ {
+  "id": "wl:empire_scouts_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_scouts_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_scouts_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_scouts_house]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:empire_sheepfarm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_shipyard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[amazons]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[atlanteans]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[barbarians]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[empire]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[frisians]"
+  ],
+  "tests_n": 11
+ },
+ {
+  "id": "wl:empire_smelting_works",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_smelting_works-mdy:hy_arc_smelter-iron]",
+   "test_programme_failure::test_a_smelting_works_without_iron_ore_still_smelts_gold"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:empire_stonemasons_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_tavern",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_toolsmithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_vineyard",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_warehouse",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_civilisation_rules::test_settlers_found_a_settlement_from_the_warehouse",
+   "test_logistics::test_request_pulls_from_warehouse_by_road",
+   "test_mindustry_engine::test_a_belt_can_end_in_a_widelands_warehouse_and_the_wares_join_the_settlement_stock",
+   "test_widelands_completion::test_a_secondary_warehouse_is_a_store_that_takes_the_output_of_nearby_sites_and_serves_requests"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "wl:empire_weaponsmithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:empire_weaving_mill",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_weaving_mill-mdy:hy_fibre_loom-cloth]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:empire_well",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_food::test_well_draws_down_its_water_and_stops_when_dry",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_well-mdy:hy_water_bottler-water]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:empire_winery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_aqua_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_aqua_farm]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:frisians_armor_smithy_large",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_armor_smithy_small",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_bakery",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_bakery-mdy:hy_food_plant-bread]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:frisians_barracks",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_commands::test_barracks_queue_consumes_delivered_goods_and_unit_obeys_move",
+   "test_commands::test_damaged_barracks_recruits_slower_and_destroyed_cannot",
+   "test_playtest_fixes::test_war_factory_and_barracks_have_real_footprints"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:frisians_beekeepers_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_berry_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_blacksmithy",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_brewery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_brick_kiln",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_charcoal_burners_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_charcoal_burners_house]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:frisians_charcoal_kiln",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_clay_pit",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_clay_pit]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:frisians_coalmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_coalmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_collectors_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_dikers_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_dikers_house]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:frisians_drinking_hall",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-barley]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-blackroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cassavaroot]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-cocoa_beans]",
+   "test_industrial_revolution::test_every_industrial_recipe_makes_its_ware_from_physical_inputs_with_power[mdy:hy_hydroponic_farm-corn]"
+  ],
+  "tests_n": 13
+ },
+ {
+  "id": "wl:frisians_ferry_yard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_a_ferry_yard_makes_a_ferry_and_a_waterway_gets_its_carrier_from_it",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:amazons_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:barbarians_ferry_yard]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_ferry_yard]"
+  ],
+  "tests_n": 6
+ },
+ {
+  "id": "wl:frisians_fishers_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_fishers_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_fishers_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_fishers_house]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:frisians_foresters_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_furnace",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_mindustry_blocks::test_crafter_turns_its_inputs_into_its_outputs[mdy:silicon_arc_furnace]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:frisians_goldmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_goldmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_honey_bread_bakery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_hunters_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_ironmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_ironmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_market",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_mead_brewery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_port",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_quarry",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_industrial_revolution::test_the_rock_deposit_does_not_run_dry_so_industry_replaces_the_quarry_for_good",
+   "test_resources::test_quarry_shrinks_real_rocks_and_makes_granite"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:frisians_recycling_center",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_reed_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_reindeer_farm",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_rockmine",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_rockmine_deep",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_scouts_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:atlanteans_scouts_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:empire_scouts_house]",
+   "test_widelands_completion::test_the_new_production_sites_run_their_programmes_without_unsupported_commands[wl:frisians_scouts_house]"
+  ],
+  "tests_n": 3
+ },
+ {
+  "id": "wl:frisians_sewing_room",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_shipyard",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[amazons]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[atlanteans]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[barbarians]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[empire]",
+   "test_ship_costs::test_a_ship_is_paid_for_in_the_wares_its_own_shipyard_takes[frisians]"
+  ],
+  "tests_n": 11
+ },
+ {
+  "id": "wl:frisians_smokery",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_tailors_shop",
+  "game": "widelands",
+  "type": "building",
+  "level": 1,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_tavern",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ },
+ {
+  "id": "wl:frisians_warehouse",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_civilisation_rules::test_settlers_found_a_settlement_from_the_warehouse",
+   "test_logistics::test_request_pulls_from_warehouse_by_road",
+   "test_mindustry_engine::test_a_belt_can_end_in_a_widelands_warehouse_and_the_wares_join_the_settlement_stock",
+   "test_widelands_completion::test_a_secondary_warehouse_is_a_store_that_takes_the_output_of_nearby_sites_and_serves_requests"
+  ],
+  "tests_n": 4
+ },
+ {
+  "id": "wl:frisians_weaving_mill",
+  "game": "widelands",
+  "type": "building",
+  "level": 2,
+  "tests": [
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[empire_weaving_mill-mdy:hy_fibre_loom-cloth]"
+  ],
+  "tests_n": 1
+ },
+ {
+  "id": "wl:frisians_well",
+  "game": "widelands",
+  "type": "building",
+  "level": 3,
+  "tests": [
+   "test_food::test_well_draws_down_its_water_and_stops_when_dry",
+   "test_industrial_revolution::test_the_industrial_block_outproduces_the_widelands_building_it_replaces[barbarians_well-mdy:hy_water_bottler-water]"
+  ],
+  "tests_n": 2
+ },
+ {
+  "id": "wl:frisians_woodcutters_house",
+  "game": "widelands",
+  "type": "building",
+  "level": 0,
+  "tests": [],
+  "tests_n": 0
+ }
+]

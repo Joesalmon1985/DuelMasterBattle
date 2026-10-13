@@ -48,7 +48,7 @@ def visible(world: Any, faction: str, tx: int, ty: int, srcs: list[tuple[int, in
 
 
 def explored_of(world: Any, faction: str) -> set[tuple[int, int]]:
-    return world.__dict__.setdefault("explored", {}).setdefault(faction, set())
+    return world.__dict__.setdefault("vis_explored", {}).setdefault(faction, set())
 
 
 def refresh(world: Any, faction: str) -> None:
@@ -68,7 +68,9 @@ def visibility_quantum(world: Any) -> None:
 
 def known(world: Any, faction: str, tx: int, ty: int) -> bool:
     """Has the faction ever seen this tile?"""
-    return (tx // CELL, ty // CELL) in explored_of(world, faction)
+    if (tx // CELL, ty // CELL) in explored_of(world, faction):
+        return True
+    return (tx, ty) in world.__dict__.get("explored", {}).get(faction, ())  # tiles a scout or a spy revealed (workers.py, openra_abilities.py)
 
 
 def seen_enemies(world: Any, faction: str) -> dict[str, list[dict[str, Any]]]:

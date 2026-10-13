@@ -42,6 +42,6 @@ def test_the_observation_hides_capitals_never_seen():
     obs = env.observe("Red")
     blue = con.faction_warehouse(env.world, "Blue")
     assert "Blue" not in obs["enemy_capitals"] and "visible" in obs
-    env.world.explored = {}
+    env.world.vis_explored = {}
     visibility.explored_of(env.world, "Red").add((blue["tx"] // visibility.CELL, blue["ty"] // visibility.CELL))
     assert env.observe("Red")["enemy_capitals"].get("Blue") == [blue["tx"], blue["ty"]]
