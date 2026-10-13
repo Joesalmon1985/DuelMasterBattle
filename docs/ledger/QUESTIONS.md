@@ -17,3 +17,8 @@
 | Diplomacy | cooperative truce rule exists but is OFF (`world.diplomacy_enabled`) until the study | `diplomacy.py` | `tests/test_diplomacy.py` |
 | OpenRA art source | the player's own content on this machine (decrypted with `mix_crypto.py`) | `import_openra_*.py` | `docs/evidence/assets/` |
 | Widelands art states | installed Widelands 1.3.1 package (pinned checkout has no images) | `import_widelands_states.py` | `docs/evidence/assets/widelands_state_gaps.json` |
+
+## Questions for the owner raised by the evidence (recommended default in brackets)
+* Should every start position be guaranteed room for three settlements (Blue is hemmed in on the standard map)? [Yes: relax the separation buffer for the boxed-in faction, or move the start.]
+* Era pace: settlement VP saturates at 8-9 and the AIs rarely attack, so eras after the first need conquest. [Raise AI aggression and test bar 9 with step 2 before changing the rule.]
+* Cadence of outbreaks for the catastrophe study: the design default (one cube per 10 minutes) never threatened the world in 90 minutes, a 72-second cadence kills it by minute 42. [Study scales 0.2-0.5.]
