@@ -26,3 +26,11 @@ The clinic changes the outcome: with clinics `selfish` and `coop` lose in 3 of 4
 * The plan's calibration targets (7.4: ignore loses in most games, selfish in a meaningful minority, cooperative rarely) are **not met**: at this cadence even the best policy loses in most games. Cadence 0.12 is far harsher than the design default (scale 1.0) at which no game came close to the limit, so the useful scale is between; the next pass needs scales 0.2-0.5, more seeds (4 per cell is far too few for a probability) and the per-era limit grid.
 * Cooperation needs a physical channel: wares or squads sent to a rival's infected settlement (the trade caravan can carry rations and water; a squad can clear a nest in a truce partner's region). Until then `coop` cannot beat `selfish`.
 * The collective-loss flag, per-era counters, relations, nest policies and clinics are all implemented and tested (`tests/test_outbreaks.py`, `tests/test_diplomacy.py`); this study is the first use of them.
+
+## C. Intermediate cadence (scale 0.3: one cube every 3 minutes), v2 cards with clinics, 2 seeds per cell, 90-minute horizon (added at the end of the run)
+| policy | games | collective loss | minutes to loss | mean outbreaks | cubes cleared by units |
+| --- | ---: | ---: | --- | ---: | ---: |
+| ignore (no clinics, no nest hunting) | 2 | **2 of 2** | 73 and 85 | 12 | 5 |
+| selfish (clinics + nest hunting at home) | 2 | **0 of 2** | - | 0 | 5.5 |
+
+Here the response works as the plan wants it to be needed: without it the world is lost in both games at 73-85 minutes, with clinics neither game had a single outbreak (the clinics cured the cubes before any region overflowed). Together with B (scale 0.12: clinics delay the loss from minute 44 to 64) this brackets the interesting regime: scales between 0.12 and 0.3 should give "ignore loses, selfish sometimes loses, cooperative rarely". Two seeds per cell are not a probability; the calibration study (10+ seeds per cell, scales 0.15 / 0.2 / 0.25, the per-era limit grid and `coop`) is the next step and was not run for lack of time. Raw rows: `cat_study4_cells.jsonl`.
