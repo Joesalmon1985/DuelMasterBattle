@@ -160,6 +160,13 @@ def remove_tree(world: Any, tree_id: str, reason: str) -> None:
 TREE_STRIDE = 10  # a tree is processed once per second (staggered by id), not every 100 ms: its timers are tens of seconds
 
 
+def _slot_of(key: str) -> int:
+    try:
+        return int(key.split(":")[1]) % TREE_STRIDE
+    except (IndexError, ValueError):  # an id that is not "kind:number" (never produced by new_id) still gets a stable bucket
+        return 0
+
+
 class TreeDict(dict):
     """world.trees, with ids bucketed by processing slot so tree_quantum visits one tenth of the trees per tick.
 
@@ -170,7 +177,7 @@ class TreeDict(dict):
         self.buckets: list[dict] = [{} for _ in range(TREE_STRIDE)]
         self.fresh: list[str] = []  # added since the last tree_quantum: their "slot" field is written there, as before
         for k_ in self:
-            self.buckets[int(k_.split(":")[1]) % TREE_STRIDE][k_] = None
+            self.buckets[_slot_of(k_)][k_] = None
             self.fresh.append(k_)
 
     def __reduce__(self) -> tuple:
@@ -181,16 +188,16 @@ class TreeDict(dict):
 
     def __setitem__(self, key: str, value: dict) -> None:
         if key not in self:
-            self.buckets[int(key.split(":")[1]) % TREE_STRIDE][key] = None
+            self.buckets[_slot_of(key)][key] = None
             self.fresh.append(key)
         super().__setitem__(key, value)
 
     def pop(self, key: str, *default: Any) -> Any:
-        self.buckets[int(key.split(":")[1]) % TREE_STRIDE].pop(key, None)
+        self.buckets[_slot_of(key)].pop(key, None)
         return super().pop(key, *default)
 
     def __delitem__(self, key: str) -> None:
-        self.buckets[int(key.split(":")[1]) % TREE_STRIDE].pop(key, None)
+        self.buckets[_slot_of(key)].pop(key, None)
         super().__delitem__(key)
 
 
@@ -202,7 +209,7 @@ def tree_quantum(world: Any) -> None:
         for tree_id in trees.fresh:
             tree = trees.get(tree_id)
             if tree is not None and tree.get("slot") is None:
-                tree["slot"] = int(tree_id.split(":")[1]) % TREE_STRIDE
+                tree["slot"] = _slot_of(tree_id)
         trees.fresh.clear()
     for tree_id in list(trees.buckets[phase]):
         tree = trees.get(tree_id)
