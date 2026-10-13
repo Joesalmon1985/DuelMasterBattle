@@ -27,7 +27,7 @@ LOGISTICS_PERIOD = 10  # quanta between request and output scans
 
 def io_for(world: Any, building: dict) -> dict[str, Any]:
     if building.get("constructing"):
-        return {"requests": dict(building["constructing"]["cost"])}
+        return {"requests": dict(building["constructing"].get("ask") or building["constructing"]["cost"])}
     kind = building.get("kind", "")
     io: dict[str, Any] = {}
     if building.get("dismantle"):

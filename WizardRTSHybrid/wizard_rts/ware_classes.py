@@ -76,3 +76,33 @@ def resolve(recipe: dict[str, Any], stock: dict[str, int]) -> dict[str, int]:
                 cost[alt] = cost.get(alt, 0) + 1
                 short -= 1
     return cost
+
+
+SITE_CLASS = {"iron": ("armour", "tool"), "plank": ("animal",)}
+SITE_PATIENCE_MS = 120_000
+
+
+def site_subst(tribe: str, cost: dict[str, int]) -> dict[str, list[str]]:
+    """Mindustry construction (decision C, second half): the tribe's dead-end wares may stand in for iron and planks."""
+    out: dict[str, list[str]] = {}
+    for raw, classes in SITE_CLASS.items():
+        if cost.get(raw, 0) >= 1:
+            alts = [w for c in classes for w in wares_for(tribe, c)]
+            if alts:
+                out[raw] = alts
+    return out
+
+
+def site_ask(cost: dict[str, int], subst: dict[str, list[str]], held: dict[str, int]) -> dict[str, int]:
+    """What a construction site asks logistics for: each raw unit is swapped for a class ware the warehouses hold (as many as they hold)."""
+    ask = dict(cost)
+    left = {k: int(v) for k, v in held.items()}
+    for raw, alts in subst.items():
+        for alt in alts:
+            while ask.get(raw, 0) >= 1 and left.get(alt, 0) >= 1:
+                ask[raw] -= 1
+                if ask[raw] <= 0:
+                    del ask[raw]
+                ask[alt] = ask.get(alt, 0) + 1
+                left[alt] -= 1
+    return ask
