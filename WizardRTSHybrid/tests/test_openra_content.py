@@ -302,6 +302,8 @@ def test_minelayer_mines_hurt_enemy_vehicles_and_a_demo_truck_goes_off():
     ml = own(w, "openra.mnly", spot)
     assert ml["ammo"] == 5
     assert w.ability("Red", "lay_mine", unit=ml["id"])["status"] == "ok" and ml["ammo"] == 4
+    laid = [b for b in w.buildings.values() if b.get("kind") == "landmine"]
+    assert laid and not any(b.get("kind") == "mine" and b.get("definition") == "dmb.mine" for b in w.buildings.values())  # not the coal mine's kind
     foe = enemy(w, "openra.3tnk", (spot[0] + 1, spot[1]), hp=10**8)
     foe["tx"], foe["ty"] = spot
     hp0 = foe["hp"]

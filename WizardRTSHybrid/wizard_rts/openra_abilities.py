@@ -193,7 +193,7 @@ def _blast(world: Any, centre: dict, radius: float, damage: int, by: str, friend
                 military.kill_unit(world, e, by)
     for b in list(world.buildings.values()):
         if "hp" in b and int(b["hp"]) > 0 and b["id"] != centre.get("id") and _dist(b, centre) <= radius + 1 and (friendly or b["faction"] != centre["faction"]):
-            if not (centre.get("kind") == "mine"):
+            if not (centre.get("kind") == "landmine"):
                 world.damage_building(b["id"], damage, ["structure"], {}, by=by)
     world.effects.append({"t": "explosion", "x1": centre["tx"], "y1": centre["ty"], "x2": centre["tx"], "y2": centre["ty"], "ttl_ms": 1500, "keep": 3, "p": "big"})
 
@@ -375,9 +375,9 @@ def lay_mine(world: Any, unit_id: str) -> dict[str, Any]:
     u = world.units.get(unit_id)
     if u is None or u["definition"] != "openra.mnly" or int(u.get("ammo", 0)) <= 0:
         return {"status": "rejected", "reason": "cannot_lay"}
-    if any(b.get("kind") == "mine" and (b["tx"], b["ty"]) == (u["tx"], u["ty"]) for b in world.buildings.values()):
+    if any(b.get("kind") == "landmine" and (b["tx"], b["ty"]) == (u["tx"], u["ty"]) for b in world.buildings.values()):
         return {"status": "rejected", "reason": "mine_here"}
-    bid = world._building(u["faction"], u["faction_name"], "mine", (u["tx"], u["ty"]), "Mine", "dmb.mine", block=False)
+    bid = world._building(u["faction"], u["faction_name"], "landmine", (u["tx"], u["ty"]), "Mine", "dmb.mine", block=False)
     b = world.buildings[bid]
     b["hp"] = b["max_hp"] = 100
     b["armor"] = "None"
@@ -389,7 +389,7 @@ def lay_mine(world: Any, unit_id: str) -> dict[str, Any]:
 
 def _mines_step(world: Any) -> None:
     for b in list(world.buildings.values()):
-        if b.get("kind") != "mine" or int(b.get("hp", 0)) <= 0:
+        if b.get("kind") != "landmine" or int(b.get("hp", 0)) <= 0:
             continue
         for u in world.units.values():
             if u.get("alive", True) and not u.get("inside") and u["faction"] != b["faction"] and u.get("loco") not in ("fly",) and (u["tx"], u["ty"]) == (b["tx"], b["ty"]):
@@ -569,7 +569,7 @@ def _mad_step(world: Any, u: dict) -> None:
 
                     military.kill_unit(world, e, u["id"])
         for b in list(world.buildings.values()):
-            if "hp" in b and int(b["hp"]) > 0 and _dist(b, u) <= MAD_RADIUS and b["kind"] != "mine":
+            if "hp" in b and int(b["hp"]) > 0 and _dist(b, u) <= MAD_RADIUS and b["kind"] != "landmine":
                 world.damage_building(b["id"], int(b["max_hp"]) * MAD_DAMAGE_PCT // 100, ["structure"], {}, by=u["id"])
         world.effects.append({"t": "explosion", "x1": u["tx"], "y1": u["ty"], "x2": u["tx"], "y2": u["ty"], "ttl_ms": 1200, "keep": 3, "p": "mad"})
 
