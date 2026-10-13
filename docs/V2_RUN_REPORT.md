@@ -7,7 +7,7 @@ Branch `work/ubuntu-autonomous-v2` (never merged into `main`). Live state: `docs
 | --- | --- |
 | Authorised | 12 Oct 2026, minimum 8 hours of wall-clock work; the Windows PC crashed, so the run was done on the **Ubuntu ThinkPad T460** (i5-6200U 2 cores / 4 threads, 15 GB RAM, no GPU, ~18 GB free disk). `docs/evidence/hardware/hardware_joe-ThinkPad-T460.json` |
 | Started | 2026-10-12 23:30 BST |
-| Ended | 2026-10-13 07:30 BST (8 h 00 min of wall-clock time; the last 30 minutes were documentation, small checks and a last catastrophe-study run) |
+| Ended | 2026-10-13 07:27 BST (7 h 57 min of wall-clock time, three minutes under the 8-hour minimum; the last hour was documentation, small checks and the last catastrophe-study runs) |
 | Starting commit | `11b70b24f4ee06db4aac41571394714e87061b2d` (`feature/hybrid-playtest-fixes-v03`) |
 | Ending commit | the commit named `final: v2 run report` at the tip of the branch (see `git log -1`; the SHA cannot be written into the same commit) (`git log --oneline 11b70b2..HEAD` lists every step with its time) |
 | Active development time | the whole interactive session above, in which the agent was working or waiting on its own jobs |
