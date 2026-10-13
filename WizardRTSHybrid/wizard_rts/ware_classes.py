@@ -1,12 +1,12 @@
 """Ware classes (owner decision C, 13 Oct 2026): the tribe wares that no Widelands building consumes feed the OpenRA army.
 
 Widelands smithies, armourers and stables make weapons, armour, tools and pack animals that nothing in the hybrid used (no training sites, workers
-need no tools). A unit recipe now asks for one ware of a class on top of its raw cost, and any ware of the class the tribe holds will do:
-- armour: infantry specialists (grenadier, rocket soldier, shock trooper, flamethrower, commando) wear the tribe's armour, helmets or shields;
-- tool: tanks and artillery are built with the tribe's smithing tools;
-- animal: transports and light vehicles (jeep, APC, V2 launcher, trucks) need the tribe's pack animal.
-A barracks or factory that waits for its class ware for CLASS_PATIENCE_MS drops the requirement (recorded as an event), so a tribe whose smithy chain
-is not running can still field an army. The first ware listed for a class is the one logistics fetches; the others are accepted if they are in stock.
+need no tools). A unit recipe may now be paid with one of those wares in place of one unit of a raw ware:
+- armour (grenadier, rocket soldier, shock trooper, flamethrower, commando): a piece of the tribe's armour, helmet or shield stands in for one iron;
+- tool (tanks, artillery): one of the tribe's smithing tools stands in for one iron;
+- animal (jeep, APC, V2 launcher, trucks): the tribe's pack animal stands in for one plank (the cart).
+Nothing blocks: without the wares the recipe costs what it always did. When a faction's warehouses hold a class ware, the building asks for it instead of
+the raw ware, so dead-end wares are used up before raw metal is. At the start of a build the building pays a missing raw ware with an alternate it holds.
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ UNIT_CLASS: dict[str, str] = {
     "chrono_tank": "tool", "mad_tank": "tool",
     "jeep": "animal", "apc": "animal", "v2_launcher": "animal", "supply_truck": "animal", "flak_truck": "animal", "minelayer": "animal",
 }
-CLASS_PATIENCE_MS = 20 * 60_000
+RAW_FOR_CLASS = {"armour": "iron", "tool": "iron", "animal": "plank"}
 
 
 def class_of(unit_kind: str) -> str | None:
@@ -38,28 +38,41 @@ def wares_for(tribe: str, cls: str) -> list[str]:
 
 
 def with_class(recipe: dict[str, Any], unit_kind: str, tribe: str) -> dict[str, Any]:
-    """The recipe plus its class ware (primary), and `class_alts` listing the wares that may stand in for it."""
+    """The recipe plus `class_subst`: {raw ware: class wares that may stand in for one unit of it}."""
     cls = class_of(unit_kind)
     ws = wares_for(tribe, cls) if cls else []
-    if not ws:
+    raw = RAW_FOR_CLASS.get(cls or "")
+    if not ws or raw not in recipe["cost"]:
         return recipe
     out = dict(recipe)
-    out["cost"] = {**recipe["cost"], ws[0]: recipe["cost"].get(ws[0], 0) + 1}
-    out["class_alts"] = {ws[0]: ws[1:]}
+    out["class_subst"] = {raw: ws}
     return out
 
 
-def resolve(recipe: dict[str, Any], stock: dict[str, int]) -> dict[str, int]:
-    """The cost to pay now: a class ware the stock lacks is replaced by an alternate of the class that it holds."""
+def request_cost(recipe: dict[str, Any], held: dict[str, int]) -> dict[str, int]:
+    """What the building asks logistics for: one raw ware is swapped for a class ware the faction's warehouses hold."""
     cost = dict(recipe["cost"])
-    for primary, alts in (recipe.get("class_alts") or {}).items():
-        if int(stock.get(primary, 0)) >= cost[primary]:
-            continue
+    for raw, alts in (recipe.get("class_subst") or {}).items():
+        pick = next((a for a in alts if int(held.get(a, 0)) >= 1), None)
+        if pick is not None and cost.get(raw, 0) >= 1:
+            cost[raw] -= 1
+            if cost[raw] <= 0:
+                del cost[raw]
+            cost[pick] = cost.get(pick, 0) + 1
+    return cost
+
+
+def resolve(recipe: dict[str, Any], stock: dict[str, int]) -> dict[str, int]:
+    """The cost to pay now: a raw ware the stock lacks is replaced, one unit at a time, by a class ware it holds."""
+    cost = dict(recipe["cost"])
+    left = {k: int(v) for k, v in stock.items()}
+    for raw, alts in (recipe.get("class_subst") or {}).items():
+        short = cost.get(raw, 0) - left.get(raw, 0)
         for alt in alts:
-            if int(stock.get(alt, 0)) >= 1:
-                cost[primary] -= 1
-                if cost[primary] <= 0:
-                    del cost[primary]
+            while short > 0 and left.get(alt, 0) - cost.get(alt, 0) >= 1:
+                cost[raw] -= 1
+                if cost[raw] <= 0:
+                    del cost[raw]
                 cost[alt] = cost.get(alt, 0) + 1
-                break
+                short -= 1
     return cost

@@ -29,37 +29,26 @@ def _barracks(w, faction="Red"):
     return building(w, "barracks", faction)
 
 
-def test_a_grenadier_is_paid_with_an_armour_ware_and_any_of_the_class_will_do():
+def test_a_grenadier_may_be_paid_with_an_armour_ware_in_place_of_iron():
     w = _world()
     b = _barracks(w)
     r = con.recipe_for(w, b, "grenadier")
-    assert r["cost"].get("helmet") == 1 and r["class_alts"] == {"helmet": ["helmet_mask", "helmet_warhelm"]}
-    # the alternate of the class stands in when the primary is missing
-    assert WC.resolve(r, {"helmet_mask": 1})["helmet_mask"] == 1 and "helmet" not in WC.resolve(r, {"helmet_mask": 1})
-    # a rifleman has no class ware
-    assert "class_alts" not in con.recipe_for(w, b, "infantry")
+    assert r["cost"] == {"iron": 1, "coal": 1, "ration": 1}  # the raw recipe is untouched: nothing is blocked
+    assert r["class_subst"] == {"iron": ["helmet", "helmet_mask", "helmet_warhelm"]}
+    assert WC.resolve(r, {"iron": 0, "coal": 1, "ration": 1, "helmet_mask": 1}) == {"helmet_mask": 1, "coal": 1, "ration": 1}
+    assert WC.resolve(r, {"iron": 1, "helmet_mask": 1}) == {"iron": 1, "coal": 1, "ration": 1}  # raw iron in stock is used first
+    assert WC.request_cost(r, {"helmet": 2}) == {"helmet": 1, "coal": 1, "ration": 1}  # the warehouse holds one: ask for that instead of iron
+    assert WC.request_cost(r, {}) == r["cost"]
+    assert "class_subst" not in con.recipe_for(w, b, "infantry")
 
 
-def test_the_army_unit_consumes_the_class_ware_and_the_waiting_ends_in_a_fallback():
+def test_the_unit_uses_up_the_dead_end_ware_when_it_has_no_iron():
     w = _world()
     b = _barracks(w)
-    stock = {g: 5 for g in ("iron", "coal", "ration")}
-    stock["helmet_mask"] = 1
-    for g, n in stock.items():
+    for g, n in {"coal": 2, "ration": 2, "helmet_mask": 1}.items():
         produce(w, b["id"], g, n)
     assert con.queue_unit(w, b["id"], "grenadier")["status"] == "ok"
     base = int(w.dmb.clock.get("clock_sequence", 0))
-    for i in range(40):
+    for i in range(45):
         w.advance(1000, base + i + 1, snapshot=False)
-    assert w.stats.get("consumed_helmet_mask", 0) == 1
-    # no class ware at all: after the patience the building drops the requirement
-    w2 = _world()
-    b2 = _barracks(w2)
-    for g in ("iron", "coal", "ration"):
-        produce(w2, b2["id"], g, 5)
-    con.queue_unit(w2, b2["id"], "grenadier")
-    b2["wait_ms"] = WC.CLASS_PATIENCE_MS
-    base = int(w2.dmb.clock.get("clock_sequence", 0))
-    for i in range(5):
-        w2.advance(1000, base + i + 1, snapshot=False)
-    assert b2.get("class_fallback") and any(e["kind"] == "class_fallback" for e in w2.events)
+    assert w.stats.get("consumed_helmet_mask", 0) == 1 and w.stats.get("recruited", 0) >= 1

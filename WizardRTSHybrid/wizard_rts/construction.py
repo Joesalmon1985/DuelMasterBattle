@@ -22,7 +22,6 @@ from wizard_rts import tech, territory
 from wizard_rts.logistics import add_road
 
 QUANTUM_MS = 100
-CLASS_PATIENCE_MS = ware_classes.CLASS_PATIENCE_MS
 TRIBE_PATIENCE_MS = 25 * 60_000  # how long a barracks waits for its tribe's soldier wares before the ax fallback
 TERRITORY_RADIUS = 34  # tiles from the faction's warehouse
 BUILD_MS = 20_000
@@ -700,7 +699,7 @@ def recipe_for(world: Any, b: dict, unit_kind: str) -> dict[str, Any] | None:
         if cost:
             recipe = dict(recipe)
             recipe["cost"] = cost
-    if not b.get("class_fallback") and not recipe.get("cargo") and recipe.get("definition", "").startswith("openra."):
+    if not recipe.get("cargo") and recipe.get("definition", "").startswith("openra."):
         from wizard_rts import ware_classes
 
         recipe = ware_classes.with_class(recipe, unit_kind, world.faction_info.get(b["faction_name"], {}).get("tribe", "barbarians"))
@@ -755,7 +754,17 @@ def _sync_requests(world: Any, b: dict) -> None:
         world.recipe_requests.pop(b["id"], None)
         return
     need: dict[str, int] = {}
-    for good, n in recipe_for(world, b, waiting[0]["unit"])["cost"].items():
+    rec = recipe_for(world, b, waiting[0]["unit"])
+    cost = rec["cost"]
+    if rec.get("class_subst"):
+        held: dict[str, int] = {}
+        from wizard_rts.logistics import _warehouses
+
+        for wh in _warehouses(world, b["faction"]):
+            for g, n in world.stocks.get(wh["id"], {}).items():
+                held[g] = held.get(g, 0) + int(n)
+        cost = ware_classes.request_cost(rec, held)
+    for good, n in cost.items():
         need[good] = n
     world.recipe_requests[b["id"]] = need
 
@@ -812,14 +821,7 @@ def recruitment_quantum(world: Any) -> None:
                 world.events.append({"kind": "tribe_fallback", "building": bid, "faction": b["faction_name"]})
                 _sync_requests(world, b)
                 continue
-            if recipe.get("class_alts") and not b.get("class_fallback") and b["wait_ms"] >= CLASS_PATIENCE_MS:
-                # the tribe's smithing chain has not delivered the class ware: the unit is built without it (recorded)
-                b["class_fallback"] = True
-                b["wait_ms"] = 0
-                world.events.append({"kind": "class_fallback", "building": bid, "faction": b["faction_name"], "unit": head["unit"]})
-                _sync_requests(world, b)
-                continue
-            cost = ware_classes.resolve(recipe, stock) if recipe.get("class_alts") else recipe["cost"]
+            cost = ware_classes.resolve(recipe, stock) if recipe.get("class_subst") else recipe["cost"]
             if all(int(stock.get(g, 0)) >= n for g, n in cost.items()):
                 b["wait_ms"] = 0
                 carried = recipe.get("cargo", {})
