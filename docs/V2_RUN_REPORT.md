@@ -9,7 +9,7 @@ Branch `work/ubuntu-autonomous-v2` (never merged into `main`). Live state: `docs
 | Started | 2026-10-12 23:30 BST |
 | Ended | 2026-10-13 07:30 BST (8 h 00 min of wall-clock time; the last 30 minutes were documentation, small checks and a last catastrophe-study run) |
 | Starting commit | `11b70b24f4ee06db4aac41571394714e87061b2d` (`feature/hybrid-playtest-fixes-v03`) |
-| Ending commit | `ff480f117a3d` (the final push includes this report) (`git log --oneline 11b70b2..HEAD` lists every step with its time) |
+| Ending commit | the commit named `final: v2 run report` at the tip of the branch (see `git log -1`; the SHA cannot be written into the same commit) (`git log --oneline 11b70b2..HEAD` lists every step with its time) |
 | Active development time | the whole interactive session above, in which the agent was working or waiting on its own jobs |
 | Independent compute time | about 13 supervised job-hours (single-core game time 10.6 h; the jobs overlapped on the 4 threads) plus about 3 hours of foreground tests and probes (supervised background jobs, one `~/dmb_runs/<name>/STATUS.json` each; they ran concurrently on 4 threads, so wall time and CPU time differ, and many of them were slowed by sharing the machine with each other and with the test suite) |
 
