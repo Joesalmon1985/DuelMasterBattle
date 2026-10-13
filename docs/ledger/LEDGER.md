@@ -1,5 +1,8 @@
 # Implementation ledger (human summary)
 
+> **Superseded in part (13 Oct 2026).** Branch `work/mechanics-completion-v4` changed the card system (168 cards, four eras of 42, 1-4 entities each), the faction floor of six, ware classes, visibility and the command tier. Where this file disagrees, `docs/ledger/V4_HANDOVER.md` and `docs/DECISION_REGISTER.md` section 5 (D26-D32) win. S05, S06, S13 and S14 below are stale.
+
+
 Machine-readable twin: `ledger.json`. Run `work/ubuntu-autonomous-v2`, started 2026-10-12 23:30 BST from `11b70b2` on the Ubuntu laptop (the Windows PC crashed). Full report: `docs/V2_RUN_REPORT.md`; how to resume: `RUNBOOK.md`; owner questions: `QUESTIONS.md`.
 
 | Milestone | Status | One line |
