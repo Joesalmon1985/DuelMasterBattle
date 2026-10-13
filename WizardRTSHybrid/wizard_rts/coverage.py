@@ -22,7 +22,8 @@ DATA = Path(__file__).with_name("data")
 ART = HYB.parent / "godot_project" / "client" / "hybrid" / "art" / "catalogue.json"
 
 EXCLUDED_RA = {"harv": "harvester: the credit economy is replaced by wares (roster rule 4.2)", "ant": "mission-only creature", "zombie": "mission-only creature",
-               "fireant": "mission-only creature", "scoutant": "mission-only creature", "warriorant": "mission-only creature"}
+               "fireant": "mission-only creature", "scoutant": "mission-only creature", "warriorant": "mission-only creature",
+               "hind": "disabled in the RA rules (prerequisite ~disabled)"}
 SANDBOX_CLASSES = {"ItemSource", "ItemVoid", "LiquidSource", "LiquidVoid", "PowerSource", "PowerVoid", "LightBlock", "CanvasBlock"}
 
 
@@ -72,7 +73,12 @@ def build() -> list[dict[str, Any]]:
     for n, b in sorted(wl["buildings"].items()):
         kind = f"wl:{n}"
         art = art_level("widelands." + n)
-        if kind in menu:
+        if n.endswith("headquarters"):
+            add(kind, "widelands", b["type"], b.get("descname") or n, "functional", art=art, extra={"tribe": b["tribe"], "note": "the hybrid warehouse (a settlement's command centre) is the headquarters"})
+        elif "headquarters" in n:
+            add(kind, "widelands", b["type"], b.get("descname") or n, "excluded", "scenario start variant of the headquarters (interim / shipwreck): the hybrid starts every faction with one warehouse", art=art,
+                extra={"tribe": b["tribe"]})
+        elif kind in menu:
             add(kind, "widelands", b["type"], b.get("descname") or n, "functional", ent_id=kind, art=art, extra={"tribe": b["tribe"]})
         elif b["type"] in ("militarysite", "trainingsite"):
             add(kind, "widelands", b["type"], b.get("descname") or n, "excluded", "Widelands military/training: replaced by the OpenRA military (D05)", art=art, extra={"tribe": b["tribe"]})
@@ -84,7 +90,14 @@ def build() -> list[dict[str, Any]]:
     for a, r in sorted(ra["actors"].items()):
         queue = r.get("queue")
         if r.get("is_building") and queue in ("Building", "Defense"):
-            if a in have_blds:
+            from wizard_rts import openra_content as OC
+
+            if a in OC.EXCLUDED_BUILDING:
+                add("openra:" + a, "openra", "building", r.get("name", a), "excluded", OC.EXCLUDED_BUILDING[a], art=art_level("openra." + a))
+            elif a in OC.EXISTING_BUILDING and a not in have_blds:
+                add("openra:" + a, "openra", "building", r.get("name", a), "functional", ent_id=OC.EXISTING_BUILDING[a], art=art_level("openra." + a),
+                    extra={"note": "same hybrid building as " + OC.EXISTING_BUILDING[a]})
+            elif a in have_blds:
                 add("openra:" + a, "openra", "building", r.get("name", a), "functional", ent_id=have_blds[a], art=art_level("openra." + a))
             else:
                 add("openra:" + a, "openra", "building", r.get("name", a), "pending", "not in the build menu", art=art_level("openra." + a))

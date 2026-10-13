@@ -257,6 +257,8 @@ def parse_condition(rest: str) -> tuple[dict, bool]:
                 conds.append({"type": "site_has", "wares": alts, "n": n, "not": neg})
             elif part in ("workers need experience", "worker needs experience"):
                 conds.append({"type": "experience", "not": neg})
+            elif part == "fleet needs ferry":
+                conds.append({"type": "fleet_ferry", "not": neg})
             else:
                 return {}, True  # fleet needs, soldiers present, ...: not executable
         groups.append(conds)
@@ -306,6 +308,18 @@ def parse_action(line: str) -> dict:
         a["attrib"] = m.group(1) if m else ""
     elif cmd == "walk":
         a["to"] = rest
+    elif cmd == "createbob":
+        a["bobs"] = rest.split()
+    elif cmd == "scout":
+        m = re.search(r"radius:(\d+)", rest)
+        a["radius"] = int(m.group(1)) if m else 15
+        m = re.search(r"duration:(\S+)", rest)
+        a["ms"] = duration_ms(m.group(1)) if m else 60_000
+    elif cmd == "terraform":
+        a["kind"] = rest.strip()
+    elif cmd == "construct":
+        a["args"] = rest
+        a["site"] = rest.split()[0] if rest else ""
     else:
         a["args"] = rest
     return a
@@ -318,8 +332,8 @@ def parse_program(entry) -> list[dict]:
     return [parse_action(x) for x in (actions or []) if isinstance(x, str)]
 
 
-BUILDING_COMMANDS = {"consume", "produce", "sleep", "animate", "callworker", "mine", "return", "call", "playsound", "recruit"}
-WORKER_COMMANDS = {"findobject", "findspace", "walk", "animate", "callobject", "createware", "plant", "removeobject", "return", "playsound", "sleep", "mine", "breed"}
+BUILDING_COMMANDS = {"consume", "produce", "sleep", "animate", "callworker", "mine", "return", "call", "playsound", "recruit", "construct"}
+WORKER_COMMANDS = {"findobject", "findspace", "walk", "animate", "callobject", "createware", "plant", "removeobject", "return", "playsound", "sleep", "mine", "breed", "scout", "createbob", "terraform", "construct"}
 OBJECT_ATTRIBS = {"tree", "rocks", "ripe_wheat", "eatable"}
 SPACE_OK = {"", "tree_sapling", "seed_wheat"}
 
@@ -330,7 +344,7 @@ def executable_building(programs: dict[str, list[dict]]) -> tuple[bool, list[str
         for a in actions:
             if a["cmd"] not in BUILDING_COMMANDS:
                 problems.append(f"{name}: {a['cmd']}")
-            elif a["cmd"] == "return" and a.get("other_condition"):
+            elif a["cmd"] == "return" and a.get("other_condition") and "fleet needs ferry" not in a["raw"]:
                 problems.append(f"{name}: return condition {a['raw']}")
             elif a["cmd"] == "call" and a["target"] not in programs:
                 problems.append(f"{name}: call {a['target']}")
@@ -345,10 +359,12 @@ def executable_worker(programs: dict[str, list[dict]]) -> tuple[bool, list[str]]
                 problems.append(f"{name}: {a['cmd']}")
             elif a["cmd"] == "findobject" and a["attrib"] not in OBJECT_ATTRIBS and "eatable" not in a["args"] and "attrib:" in a["args"]:
                 problems.append(f"{name}: findobject {a['args']}")
-            elif a["cmd"] == "plant" and a["attrib"] not in SPACE_OK:
+            elif a["cmd"] == "plant" and a["attrib"] not in SPACE_OK and "shipconstruction" not in a.get("attrib", ""):
                 problems.append(f"{name}: plant {a['attrib']}")
-            elif a["cmd"] == "findspace" and (any(k in a["args"] for k in ("swim", "terraform", "ferry")) or (a.get("resource") and a["resource"] != "fish")):
+            elif a["cmd"] == "findspace" and (a.get("resource") and a["resource"] != "fish"):
                 problems.append(f"{name}: findspace {a['args']}")
+            elif a["cmd"] == "plant" and "shipconstruction" in a.get("attrib", ""):
+                pass
     return not problems, problems
 
 
@@ -374,6 +390,10 @@ def mark_runnable(defs: dict) -> None:
     """A building is runnable when its programmes, its workers' programmes and every ware it names are known."""
     B, W, WA = defs["buildings"], defs["workers"], defs["wares"]
     for name, b in B.items():
+        if b["type"] in ("warehouse", "market"):  # stores, ports and markets run through the logistics and trade modules; the starting headquarters is the hybrid warehouse
+            hq = "headquarters" in name
+            b["runnable"], b["blocked_by"] = (not hq), ("headquarters: the hybrid warehouse (the settlement's command centre) is the starting building" if hq else "")
+            continue
         if b["type"] != "productionsite":
             b["runnable"], b["blocked_by"] = False, f"{b['type']} not implemented"
             continue
@@ -467,7 +487,7 @@ def main() -> None:
                 }
     # every attribute some immovable carries can be searched for (findobject) or planted (plant)
     attribs = {a for imm in defs["immovables"].values() for a in imm["attributes"]}
-    attribs -= {a for a in attribs if a.startswith("pond_")}  # ponds need terraforming, which the hybrid does not do
+    attribs -= {a for a in attribs if a.endswith("_shipconstruction")}  # ship sites are the shipyard's, not searchable objects
     OBJECT_ATTRIBS.update(attribs)
     SPACE_OK.update(attribs)
     for w in defs["workers"].values():

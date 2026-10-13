@@ -43,6 +43,10 @@ HYBRID_ACTORS["dmb_settlers"] = {"name": "Settlers", "hp": 8000, "armor": "None"
                                  "armaments": [], "target_types": ["GroundActor", "Infantry"], "mobile": True, "is_building": False,
                                  "locomotor": "foot", "source": "hybrid-defined Prehistoric settlement founder"}
 
+HYBRID_ACTORS["dmb_ship"] = {"name": "Ship", "hp": 50000, "armor": "Heavy", "speed": 75, "cost": 0, "queue": "", "prerequisites": "", "armaments": [],
+                             "target_types": ["WaterActor", "Ship"], "mobile": True, "is_building": False, "locomotor": "naval",
+                             "source": "hybrid-defined from the Widelands ship (hitpoints 50000, capacity 30); wizard_rts/maritime.py"}
+
 HYBRID_WEAPONS: dict[str, dict[str, Any]] = {
     "DMB_Club": {
         "range": 1.5, "min_range": 0.0, "reload": 22, "burst": 1, "burst_delay": 5, "projectile": "InstantHit",

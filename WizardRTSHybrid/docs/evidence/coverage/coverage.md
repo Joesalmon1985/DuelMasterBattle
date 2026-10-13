@@ -6,12 +6,12 @@
 | mindustry item | 22 | 0 | 0 |
 | mindustry liquid | 11 | 0 | 0 |
 | mindustry unit | 50 | 0 | 14 |
-| openra building | 35 | 8 | 0 |
-| openra unit | 42 | 1 | 6 |
-| widelands market | 0 | 5 | 0 |
+| openra building | 37 | 0 | 6 |
+| openra unit | 42 | 0 | 7 |
+| widelands market | 5 | 0 | 0 |
 | widelands militarysite | 0 | 0 | 31 |
-| widelands productionsite | 153 | 25 | 0 |
+| widelands productionsite | 178 | 0 | 0 |
 | widelands trainingsite | 0 | 0 | 11 |
-| widelands warehouse | 0 | 17 | 0 |
+| widelands warehouse | 15 | 0 | 2 |
 
-Art level of functional entities: directional 31, layered 5, none 338, states 101, static 74
+Art level of functional entities: directional 31, layered 5, none 385, states 101, static 74

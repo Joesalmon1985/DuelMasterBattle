@@ -274,7 +274,7 @@ def build_spec(kind: str) -> dict[str, Any] | None:
         "size": spec.get("size", ""),
         "label": spec["label"], "definition": spec["definition"], "game": "widelands", "tribe": spec["tribe"],
         "cost": dict(spec["cost"]), "cost_source": f"{spec['tribe']}/{spec['name']} " + ("enhancement_cost (imported; built only by enhancing " + spec["enhanced_from"] + ")" if spec.get("enhanced_from") else "buildcost (imported)"),
-        "enhancement_of": spec.get("enhanced_from", ""),
+        "enhancement_of": spec.get("enhanced_from", ""), "store": spec.get("store", False), "port": spec.get("port", False), "market": spec.get("market", False),
     }
 
 
@@ -360,6 +360,12 @@ def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -
     building["operational"] = False
     building["constructing"] = {"cost": dict(spec["cost"]), "progress_ms": 0}
     building["hp"] = max(1, building["max_hp"] // 10)
+    if spec.get("store"):
+        building["store"] = True  # a secondary warehouse or port: logistics treats it as a store once finished
+    if spec.get("port"):
+        building["port"] = True
+    if spec.get("market"):
+        building["market"] = True
     world.recipe_requests[bid] = dict(spec["cost"])
     world.events.append({"kind": "construction_started", "id": bid, "building_kind": kind, "faction": faction_name})
     return {"status": "ok", "id": bid}

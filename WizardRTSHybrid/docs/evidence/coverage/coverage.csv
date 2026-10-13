@@ -5,39 +5,39 @@ wl:amazons_charcoal_kiln,widelands,productionsite,Charcoal Kiln,amazons,function
 wl:amazons_chocolate_brewery,widelands,productionsite,Chocolate Brewery,amazons,functional,,wl:amazons_chocolate_brewery,0,gen.amazons_chocolate_brewery,states
 wl:amazons_cocoa_farm,widelands,productionsite,Cocoa Farm,amazons,functional,,wl:amazons_cocoa_farm,0,gen.amazons_cocoa_farm,states
 wl:amazons_dressmakery,widelands,productionsite,Dressmakery,amazons,functional,,wl:amazons_dressmakery,0,gen.amazons_dressmakery,states
-wl:amazons_ferry_yard,widelands,productionsite,Ferry Yard,amazons,pending,building_programs: main: return condition return=skipped unless fleet needs ferry,,,,none
+wl:amazons_ferry_yard,widelands,productionsite,Ferry Yard,amazons,functional,,wl:amazons_ferry_yard,0,gen.amazons_ferry_yard,none
 wl:amazons_food_preserver,widelands,productionsite,Food Preserver,amazons,functional,,wl:amazons_food_preserver,0,foundation,states
 wl:amazons_fortification,widelands,militarysite,Fortification,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_fortress,widelands,militarysite,Fortress,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_furnace,widelands,productionsite,Furnace,amazons,functional,,wl:amazons_furnace,0,gen.amazons_charcoal_kiln,states
-wl:amazons_gardening_center,widelands,productionsite,Gardening Center,amazons,pending,worker_program: check,,,,none
+wl:amazons_gardening_center,widelands,productionsite,Gardening Center,amazons,functional,,wl:amazons_gardening_center,0,gen.amazons_gardening_center,none
 wl:amazons_gold_digger_dwelling,widelands,productionsite,Gold Digger Dwelling,amazons,functional,,wl:amazons_gold_digger_dwelling,0,foundation,states
-wl:amazons_headquarters,widelands,warehouse,Headquarters,amazons,pending,warehouse not implemented,,,,none
+wl:amazons_headquarters,widelands,warehouse,Headquarters,amazons,functional,,,,,none
 wl:amazons_hunter_gatherers_hut,widelands,productionsite,Hunter-Gatherer’s Hut,amazons,functional,,wl:amazons_hunter_gatherers_hut,0,foundation,static
 wl:amazons_initiation_site,widelands,productionsite,Initiation Site,amazons,functional,,wl:amazons_initiation_site,0,gen.amazons_dressmakery,states
 wl:amazons_jungle_preservers_hut,widelands,productionsite,Jungle Preserver’s Hut,amazons,functional,,wl:amazons_jungle_preservers_hut,0,foundation,states
 wl:amazons_liana_cutters_hut,widelands,productionsite,Liana Cutter’s Hut,amazons,functional,,wl:amazons_liana_cutters_hut,0,foundation,static
-wl:amazons_market,widelands,market,Market,amazons,pending,market not implemented,,,,none
+wl:amazons_market,widelands,market,Market,amazons,functional,,wl:amazons_market,0,gen.amazons_market,none
 wl:amazons_observation_tower,widelands,militarysite,Observation Tower,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_patrol_post,widelands,militarysite,Patrol Post,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:amazons_port,widelands,warehouse,Port,amazons,pending,warehouse not implemented,,,,none
+wl:amazons_port,widelands,warehouse,Port,amazons,functional,,wl:amazons_port,0,gen.amazons_port,none
 wl:amazons_rare_tree_cutters_hut,widelands,productionsite,Rare Tree Cutter’s Hut,amazons,functional,,wl:amazons_rare_tree_cutters_hut,0,foundation,static
-wl:amazons_rare_tree_plantation,widelands,productionsite,Rare Tree Plantation,amazons,pending,worker_program: plant_balsa,,,,none
+wl:amazons_rare_tree_plantation,widelands,productionsite,Rare Tree Plantation,amazons,functional,,wl:amazons_rare_tree_plantation,0,foundation,none
 wl:amazons_rope_weaver_booth,widelands,productionsite,Rope Weaver Booth,amazons,functional,,wl:amazons_rope_weaver_booth,0,gen.amazons_rope_weaver_booth,states
-wl:amazons_scouts_hut,widelands,productionsite,Scout’s Hut,amazons,pending,worker_program: scout,,,,none
-wl:amazons_shipyard,widelands,productionsite,Shipyard,amazons,pending,building_programs: ship: construct,,,,none
-wl:amazons_stone_workshop,widelands,productionsite,Stone Workshop,amazons,functional,,wl:amazons_stone_workshop,0,gen.amazons_stone_workshop,states
+wl:amazons_scouts_hut,widelands,productionsite,Scout’s Hut,amazons,functional,,wl:amazons_scouts_hut,0,gen.amazons_scouts_hut,none
+wl:amazons_shipyard,widelands,productionsite,Shipyard,amazons,functional,,wl:amazons_shipyard,0,gen.amazons_rope_weaver_booth,none
+wl:amazons_stone_workshop,widelands,productionsite,Stone Workshop,amazons,functional,,wl:amazons_stone_workshop,0,gen.amazons_ferry_yard,states
 wl:amazons_stonecutters_hut,widelands,productionsite,Stonecutter’s Hut,amazons,functional,,wl:amazons_stonecutters_hut,0,foundation,static
 wl:amazons_stonemine,widelands,productionsite,Stone Mine,amazons,functional,,wl:amazons_stonemine,0,gen.amazons_stonemine,states
-wl:amazons_tapir_farm,widelands,productionsite,Tapir Farm,amazons,functional,,wl:amazons_tapir_farm,0,gen.amazons_cocoa_farm,states
+wl:amazons_tapir_farm,widelands,productionsite,Tapir Farm,amazons,functional,,wl:amazons_tapir_farm,0,gen.amazons_stonemine,states
 wl:amazons_tower,widelands,militarysite,Tower,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_training_glade,widelands,trainingsite,Training Glade,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_treetop_sentry,widelands,militarysite,Treetop Sentry,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:amazons_warehouse,widelands,warehouse,Warehouse,amazons,pending,warehouse not implemented,,,,none
+wl:amazons_warehouse,widelands,warehouse,Warehouse,amazons,functional,,wl:amazons_warehouse,0,gen.amazons_cocoa_farm,none
 wl:amazons_warriors_dwelling,widelands,militarysite,Warriors’ Dwelling,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_warriors_gathering,widelands,trainingsite,Warriors’ Gathering,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:amazons_water_gatherers_hut,widelands,productionsite,Water Gatherer’s Hut,amazons,pending,worker_program: fetch_water,,,,none
-wl:amazons_wilderness_keepers_tent,widelands,productionsite,Wilderness Keeper’s Tent,amazons,pending,worker_program: breed_fish,,,,none
+wl:amazons_water_gatherers_hut,widelands,productionsite,Water Gatherer’s Hut,amazons,functional,,wl:amazons_water_gatherers_hut,0,gen.amazons_water_gatherers_hut,none
+wl:amazons_wilderness_keepers_tent,widelands,productionsite,Wilderness Keeper’s Tent,amazons,functional,,wl:amazons_wilderness_keepers_tent,0,gen.amazons_wilderness_keepers_tent,none
 wl:amazons_woodcutters_hut,widelands,productionsite,Woodcutter’s Hut,amazons,functional,,wl:amazons_woodcutters_hut,0,foundation,static
 wl:atlanteans_armorsmithy,widelands,productionsite,Armor Smithy,atlanteans,functional,,wl:atlanteans_armorsmithy,0,gen.atlanteans_armorsmithy,static
 wl:atlanteans_bakery,widelands,productionsite,Bakery,atlanteans,functional,,wl:atlanteans_bakery,0,gen.atlanteans_bakery,states
@@ -49,7 +49,7 @@ wl:atlanteans_coalmine,widelands,productionsite,Coal Mine,atlanteans,functional,
 wl:atlanteans_crystalmine,widelands,productionsite,Crystal Mine,atlanteans,functional,,wl:atlanteans_crystalmine,0,gen.atlanteans_crystalmine,static
 wl:atlanteans_dungeon,widelands,trainingsite,Dungeon,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:atlanteans_farm,widelands,productionsite,Farm,atlanteans,functional,,wl:atlanteans_farm,0,gen.atlanteans_farm,static
-wl:atlanteans_ferry_yard,widelands,productionsite,Ferry Yard,atlanteans,pending,building_programs: main: return condition return=skipped unless fleet needs ferry,,,,none
+wl:atlanteans_ferry_yard,widelands,productionsite,Ferry Yard,atlanteans,functional,,wl:atlanteans_ferry_yard,0,gen.atlanteans_ferry_yard,none
 wl:atlanteans_fishbreeders_house,widelands,productionsite,Fish Breeder’s House,atlanteans,functional,,wl:atlanteans_fishbreeders_house,0,gen.atlanteans_fishbreeders_house,static
 wl:atlanteans_fishers_house,widelands,productionsite,Fisher’s House,atlanteans,functional,,wl:atlanteans_fishers_house,0,foundation,static
 wl:atlanteans_foresters_house,widelands,productionsite,Forester’s House,atlanteans,functional,,wl:atlanteans_foresters_house,0,foundation,static
@@ -57,26 +57,26 @@ wl:atlanteans_gold_spinning_mill,widelands,productionsite,Gold Spinning Mill,atl
 wl:atlanteans_goldmine,widelands,productionsite,Gold Mine,atlanteans,functional,,wl:atlanteans_goldmine,0,gen.atlanteans_goldmine,static
 wl:atlanteans_guardhall,widelands,militarysite,Guardhall,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:atlanteans_guardhouse,widelands,militarysite,Guardhouse,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:atlanteans_headquarters,widelands,warehouse,Headquarters,atlanteans,pending,warehouse not implemented,,,,none
+wl:atlanteans_headquarters,widelands,warehouse,Headquarters,atlanteans,functional,,,,,none
 wl:atlanteans_horsefarm,widelands,productionsite,Horse Farm,atlanteans,functional,,wl:atlanteans_horsefarm,0,gen.atlanteans_horsefarm,static
 wl:atlanteans_hunters_house,widelands,productionsite,Hunter’s House,atlanteans,functional,,wl:atlanteans_hunters_house,0,foundation,static
 wl:atlanteans_ironmine,widelands,productionsite,Iron Mine,atlanteans,functional,,wl:atlanteans_ironmine,0,gen.atlanteans_ironmine,static
 wl:atlanteans_labyrinth,widelands,trainingsite,Labyrinth,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:atlanteans_market,widelands,market,Market,atlanteans,pending,market not implemented,,,,none
+wl:atlanteans_market,widelands,market,Market,atlanteans,functional,,wl:atlanteans_market,0,gen.atlanteans_market,none
 wl:atlanteans_mill,widelands,productionsite,Mill,atlanteans,functional,,wl:atlanteans_mill,0,gen.atlanteans_armorsmithy,states
-wl:atlanteans_port,widelands,warehouse,Port,atlanteans,pending,warehouse not implemented,,,,none
+wl:atlanteans_port,widelands,warehouse,Port,atlanteans,functional,,wl:atlanteans_port,0,gen.atlanteans_port,none
 wl:atlanteans_quarry,widelands,productionsite,Quarry,atlanteans,functional,,wl:atlanteans_quarry,0,foundation,static
 wl:atlanteans_sawmill,widelands,productionsite,Sawmill,atlanteans,functional,,wl:atlanteans_sawmill,0,foundation,states
-wl:atlanteans_scouts_house,widelands,productionsite,Scout’s House,atlanteans,pending,worker_program: scout,,,,none
-wl:atlanteans_shipyard,widelands,productionsite,Shipyard,atlanteans,pending,building_programs: ship: construct,,,,none
+wl:atlanteans_scouts_house,widelands,productionsite,Scout’s House,atlanteans,functional,,wl:atlanteans_scouts_house,0,gen.atlanteans_scouts_house,none
+wl:atlanteans_shipyard,widelands,productionsite,Shipyard,atlanteans,functional,,wl:atlanteans_shipyard,0,gen.atlanteans_shipyard,none
 wl:atlanteans_smelting_works,widelands,productionsite,Smelting Works,atlanteans,functional,,wl:atlanteans_smelting_works,0,gen.atlanteans_charcoal_kiln,static
-wl:atlanteans_smokery,widelands,productionsite,Smokery,atlanteans,functional,,wl:atlanteans_smokery,0,gen.atlanteans_blackroot_farm,states
-wl:atlanteans_spiderfarm,widelands,productionsite,Spider Farm,atlanteans,functional,,wl:atlanteans_spiderfarm,0,gen.atlanteans_spiderfarm,static
-wl:atlanteans_toolsmithy,widelands,productionsite,Toolsmithy,atlanteans,functional,,wl:atlanteans_toolsmithy,0,gen.atlanteans_spiderfarm,static
+wl:atlanteans_smokery,widelands,productionsite,Smokery,atlanteans,functional,,wl:atlanteans_smokery,0,gen.atlanteans_smokery,states
+wl:atlanteans_spiderfarm,widelands,productionsite,Spider Farm,atlanteans,functional,,wl:atlanteans_spiderfarm,0,gen.atlanteans_market,static
+wl:atlanteans_toolsmithy,widelands,productionsite,Toolsmithy,atlanteans,functional,,wl:atlanteans_toolsmithy,0,gen.atlanteans_smokery,static
 wl:atlanteans_tower,widelands,militarysite,Tower,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:atlanteans_tower_high,widelands,militarysite,High Tower,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:atlanteans_tower_small,widelands,militarysite,Small Tower,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:atlanteans_warehouse,widelands,warehouse,Warehouse,atlanteans,pending,warehouse not implemented,,,,none
+wl:atlanteans_warehouse,widelands,warehouse,Warehouse,atlanteans,functional,,wl:atlanteans_warehouse,0,gen.atlanteans_blackroot_farm,none
 wl:atlanteans_weaponsmithy,widelands,productionsite,Weapon Smithy,atlanteans,functional,,wl:atlanteans_weaponsmithy,0,gen.atlanteans_coalmine,static
 wl:atlanteans_weaving_mill,widelands,productionsite,Weaving Mill,atlanteans,functional,,wl:atlanteans_weaving_mill,0,gen.atlanteans_ironmine,static
 wl:atlanteans_well,widelands,productionsite,Well,atlanteans,functional,,wl:atlanteans_well,0,foundation,static
@@ -95,41 +95,41 @@ wl:barbarians_coalmine,widelands,productionsite,Coal Mine,barbarians,functional,
 wl:barbarians_coalmine_deep,widelands,productionsite,Deep Coal Mine,barbarians,functional,,wl:barbarians_coalmine_deep,0,gen.barbarians_coalmine_deep,states
 wl:barbarians_coalmine_deeper,widelands,productionsite,Deeper Coal Mine,barbarians,functional,,wl:barbarians_coalmine_deeper,0,gen.barbarians_coalmine_deeper,states
 wl:barbarians_farm,widelands,productionsite,Farm,barbarians,functional,,wl:barbarians_farm,0,gen.barbarians_farm,states
-wl:barbarians_ferry_yard,widelands,productionsite,Ferry Yard,barbarians,pending,building_programs: main: return condition return=skipped unless fleet needs ferry,,,,none
+wl:barbarians_ferry_yard,widelands,productionsite,Ferry Yard,barbarians,functional,,wl:barbarians_ferry_yard,0,gen.barbarians_ferry_yard,none
 wl:barbarians_fishers_hut,widelands,productionsite,Fisher’s Hut,barbarians,functional,,wl:barbarians_fishers_hut,0,foundation,states
 wl:barbarians_fortress,widelands,militarysite,Fortress,barbarians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:barbarians_gamekeepers_hut,widelands,productionsite,Gamekeeper’s Hut,barbarians,pending,worker_program: release,,,,none
+wl:barbarians_gamekeepers_hut,widelands,productionsite,Gamekeeper’s Hut,barbarians,functional,,wl:barbarians_gamekeepers_hut,0,gen.barbarians_gamekeepers_hut,none
 wl:barbarians_goldmine,widelands,productionsite,Gold Mine,barbarians,functional,,wl:barbarians_goldmine,0,gen.barbarians_goldmine,states
 wl:barbarians_goldmine_deep,widelands,productionsite,Deep Gold Mine,barbarians,functional,,wl:barbarians_goldmine_deep,0,gen.barbarians_goldmine_deep,states
 wl:barbarians_goldmine_deeper,widelands,productionsite,Deeper Gold Mine,barbarians,functional,,wl:barbarians_goldmine_deeper,0,gen.barbarians_goldmine_deeper,states
 wl:barbarians_granitemine,widelands,productionsite,Granite Mine,barbarians,functional,,wl:barbarians_granitemine,0,gen.barbarians_granitemine,states
-wl:barbarians_headquarters,widelands,warehouse,Headquarters,barbarians,pending,warehouse not implemented,,,,none
-wl:barbarians_headquarters_interim,widelands,warehouse,Headquarters,barbarians,pending,warehouse not implemented,,,,none
+wl:barbarians_headquarters,widelands,warehouse,Headquarters,barbarians,functional,,,,,none
+wl:barbarians_headquarters_interim,widelands,warehouse,Headquarters,barbarians,excluded,scenario start variant of the headquarters (interim / shipwreck): the hybrid starts every faction with one warehouse,,,,none
 wl:barbarians_helmsmithy,widelands,productionsite,Helm Smithy,barbarians,functional,,wl:barbarians_helmsmithy,0,gen.barbarians_charcoal_kiln,states
 wl:barbarians_hunters_hut,widelands,productionsite,Hunter’s Hut,barbarians,functional,,wl:barbarians_hunters_hut,0,foundation,states
 wl:barbarians_inn,widelands,productionsite,Inn,barbarians,functional,,wl:barbarians_inn,0,foundation,states
-wl:barbarians_ironmine,widelands,productionsite,Iron Mine,barbarians,functional,,wl:barbarians_ironmine,0,gen.barbarians_goldmine_deep,states
+wl:barbarians_ironmine,widelands,productionsite,Iron Mine,barbarians,functional,,wl:barbarians_ironmine,0,gen.barbarians_ironmine,states
 wl:barbarians_ironmine_deep,widelands,productionsite,Deep Iron Mine,barbarians,functional,,wl:barbarians_ironmine_deep,0,gen.barbarians_ironmine_deep,states
 wl:barbarians_ironmine_deeper,widelands,productionsite,Deeper Iron Mine,barbarians,functional,,wl:barbarians_ironmine_deeper,0,gen.barbarians_ironmine_deeper,states
 wl:barbarians_lime_kiln,widelands,productionsite,Lime Kiln,barbarians,functional,,wl:barbarians_lime_kiln,0,gen.barbarians_coalmine_deep,static
 wl:barbarians_lumberjacks_hut,widelands,productionsite,Lumberjack’s Hut,barbarians,functional,,wl:barbarians_lumberjacks_hut,0,foundation,states
-wl:barbarians_market,widelands,market,Market,barbarians,pending,market not implemented,,,,none
-wl:barbarians_metal_workshop,widelands,productionsite,Metal Workshop,barbarians,functional,,wl:barbarians_metal_workshop,0,gen.barbarians_metal_workshop,states
+wl:barbarians_market,widelands,market,Market,barbarians,functional,,wl:barbarians_market,0,gen.barbarians_market,none
+wl:barbarians_metal_workshop,widelands,productionsite,Metal Workshop,barbarians,functional,,wl:barbarians_metal_workshop,0,gen.barbarians_ferry_yard,states
 wl:barbarians_micro_brewery,widelands,productionsite,Micro Brewery,barbarians,functional,,wl:barbarians_micro_brewery,0,gen.barbarians_farm,static
-wl:barbarians_port,widelands,warehouse,Port,barbarians,pending,warehouse not implemented,,,,none
+wl:barbarians_port,widelands,warehouse,Port,barbarians,functional,,wl:barbarians_port,0,gen.barbarians_port,none
 wl:barbarians_quarry,widelands,productionsite,Quarry,barbarians,functional,,wl:barbarians_quarry,0,foundation,states
 wl:barbarians_rangers_hut,widelands,productionsite,Ranger’s Hut,barbarians,functional,,wl:barbarians_rangers_hut,0,foundation,states
-wl:barbarians_reed_yard,widelands,productionsite,Reed Yard,barbarians,functional,,wl:barbarians_reed_yard,0,gen.barbarians_metal_workshop,static
-wl:barbarians_scouts_hut,widelands,productionsite,Scout’s Hut,barbarians,pending,worker_program: scout,,,,none
+wl:barbarians_reed_yard,widelands,productionsite,Reed Yard,barbarians,functional,,wl:barbarians_reed_yard,0,gen.barbarians_market,static
+wl:barbarians_scouts_hut,widelands,productionsite,Scout’s Hut,barbarians,functional,,wl:barbarians_scouts_hut,0,gen.barbarians_scouts_hut,none
 wl:barbarians_sentry,widelands,militarysite,Sentry,barbarians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:barbarians_shipyard,widelands,productionsite,Shipyard,barbarians,pending,building_programs: ship: construct,,,,none
+wl:barbarians_shipyard,widelands,productionsite,Shipyard,barbarians,functional,,wl:barbarians_shipyard,0,gen.barbarians_shipyard,none
 wl:barbarians_smelting_works,widelands,productionsite,Smelting Works,barbarians,functional,,wl:barbarians_smelting_works,0,gen.barbarians_coalmine_deeper,static
 wl:barbarians_tavern,widelands,productionsite,Tavern,barbarians,functional,,wl:barbarians_tavern,0,foundation,states
 wl:barbarians_tower,widelands,militarysite,Tower,barbarians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:barbarians_trainingcamp,widelands,trainingsite,Training Camp,barbarians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:barbarians_warehouse,widelands,warehouse,Warehouse,barbarians,pending,warehouse not implemented,,,,none
-wl:barbarians_warmill,widelands,productionsite,War Mill,barbarians,functional,,wl:barbarians_warmill,0,gen.barbarians_warmill,states
-wl:barbarians_weaving_mill,widelands,productionsite,Weaving Mill,barbarians,functional,,wl:barbarians_weaving_mill,0,gen.barbarians_warmill,states
+wl:barbarians_warehouse,widelands,warehouse,Warehouse,barbarians,functional,,wl:barbarians_warehouse,0,gen.barbarians_goldmine_deep,none
+wl:barbarians_warmill,widelands,productionsite,War Mill,barbarians,functional,,wl:barbarians_warmill,0,gen.barbarians_port,states
+wl:barbarians_weaving_mill,widelands,productionsite,Weaving Mill,barbarians,functional,,wl:barbarians_weaving_mill,0,gen.barbarians_scouts_hut,states
 wl:barbarians_well,widelands,productionsite,Well,barbarians,functional,,wl:barbarians_well,0,foundation,states
 wl:barbarians_wood_hardener,widelands,productionsite,Wood Hardener,barbarians,functional,,wl:barbarians_wood_hardener,0,gen.barbarians_ironmine_deep,states
 wl:empire_arena,widelands,trainingsite,Arena,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
@@ -146,14 +146,14 @@ wl:empire_coalmine_deep,widelands,productionsite,Deep Coal Mine,empire,functiona
 wl:empire_colosseum,widelands,trainingsite,Colosseum,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:empire_donkeyfarm,widelands,productionsite,Donkey Farm,empire,functional,,wl:empire_donkeyfarm,0,gen.empire_donkeyfarm,static
 wl:empire_farm,widelands,productionsite,Farm,empire,functional,,wl:empire_farm,0,gen.empire_farm,static
-wl:empire_ferry_yard,widelands,productionsite,Ferry Yard,empire,pending,building_programs: main: return condition return=skipped unless fleet needs ferry,,,,none
+wl:empire_ferry_yard,widelands,productionsite,Ferry Yard,empire,functional,,wl:empire_ferry_yard,0,gen.empire_ferry_yard,none
 wl:empire_fishers_house,widelands,productionsite,Fisher’s House,empire,functional,,wl:empire_fishers_house,0,foundation,static
 wl:empire_foresters_house,widelands,productionsite,Forester’s House,empire,functional,,wl:empire_foresters_house,0,foundation,static
 wl:empire_fortress,widelands,militarysite,Fortress,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:empire_goldmine,widelands,productionsite,Gold Mine,empire,functional,,wl:empire_goldmine,0,gen.empire_goldmine,states
 wl:empire_goldmine_deep,widelands,productionsite,Deep Gold Mine,empire,functional,,wl:empire_goldmine_deep,0,gen.empire_goldmine_deep,states
-wl:empire_headquarters,widelands,warehouse,Headquarters,empire,pending,warehouse not implemented,,,,none
-wl:empire_headquarters_shipwreck,widelands,warehouse,Headquarters Shipwreck,empire,pending,warehouse not implemented,,,,none
+wl:empire_headquarters,widelands,warehouse,Headquarters,empire,functional,,,,,none
+wl:empire_headquarters_shipwreck,widelands,warehouse,Headquarters Shipwreck,empire,excluded,scenario start variant of the headquarters (interim / shipwreck): the hybrid starts every faction with one warehouse,,,,none
 wl:empire_hunters_house,widelands,productionsite,Hunter’s House,empire,functional,,wl:empire_hunters_house,0,foundation,static
 wl:empire_inn,widelands,productionsite,Inn,empire,functional,,wl:empire_inn,0,foundation,static
 wl:empire_ironmine,widelands,productionsite,Iron Mine,empire,functional,,wl:empire_ironmine,0,gen.empire_ironmine,states
@@ -161,17 +161,17 @@ wl:empire_ironmine_deep,widelands,productionsite,Deep Iron Mine,empire,functiona
 wl:empire_lumberjacks_house,widelands,productionsite,Lumberjack’s House,empire,functional,,wl:empire_lumberjacks_house,0,foundation,static
 wl:empire_marblemine,widelands,productionsite,Marble Mine,empire,functional,,wl:empire_marblemine,0,gen.empire_marblemine,states
 wl:empire_marblemine_deep,widelands,productionsite,Deep Marble Mine,empire,functional,,wl:empire_marblemine_deep,0,gen.empire_marblemine_deep,states
-wl:empire_market,widelands,market,Market,empire,pending,market not implemented,,,,none
+wl:empire_market,widelands,market,Market,empire,functional,,wl:empire_market,0,gen.empire_market,none
 wl:empire_mill,widelands,productionsite,Mill,empire,functional,,wl:empire_mill,0,gen.empire_ironmine_deep,states
 wl:empire_outpost,widelands,militarysite,Outpost,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:empire_piggery,widelands,productionsite,Piggery,empire,functional,,wl:empire_piggery,0,gen.empire_piggery,static
-wl:empire_port,widelands,warehouse,Port,empire,pending,warehouse not implemented,,,,none
+wl:empire_port,widelands,warehouse,Port,empire,functional,,wl:empire_port,0,gen.empire_port,none
 wl:empire_quarry,widelands,productionsite,Quarry,empire,functional,,wl:empire_quarry,0,foundation,static
 wl:empire_sawmill,widelands,productionsite,Sawmill,empire,functional,,wl:empire_sawmill,0,foundation,static
-wl:empire_scouts_house,widelands,productionsite,Scout’s House,empire,pending,worker_program: scout,,,,none
+wl:empire_scouts_house,widelands,productionsite,Scout’s House,empire,functional,,wl:empire_scouts_house,0,gen.empire_scouts_house,none
 wl:empire_sentry,widelands,militarysite,Sentry,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:empire_sheepfarm,widelands,productionsite,Sheep Farm,empire,functional,,wl:empire_sheepfarm,0,gen.empire_sheepfarm,static
-wl:empire_shipyard,widelands,productionsite,Shipyard,empire,pending,building_programs: ship: construct,,,,none
+wl:empire_shipyard,widelands,productionsite,Shipyard,empire,functional,,wl:empire_shipyard,0,gen.empire_shipyard,none
 wl:empire_smelting_works,widelands,productionsite,Smelting Works,empire,functional,,wl:empire_smelting_works,0,gen.empire_charcoal_kiln,states
 wl:empire_stonemasons_house,widelands,productionsite,Stonemason’s House,empire,functional,,wl:empire_stonemasons_house,0,gen.empire_donkeyfarm,static
 wl:empire_tavern,widelands,productionsite,Tavern,empire,functional,,wl:empire_tavern,0,foundation,static
@@ -179,12 +179,12 @@ wl:empire_toolsmithy,widelands,productionsite,Toolsmithy,empire,functional,,wl:e
 wl:empire_tower,widelands,militarysite,Tower,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:empire_trainingcamp,widelands,trainingsite,Training Camp,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:empire_vineyard,widelands,productionsite,Vineyard,empire,functional,,wl:empire_vineyard,0,gen.empire_vineyard,static
-wl:empire_warehouse,widelands,warehouse,Warehouse,empire,pending,warehouse not implemented,,,,none
+wl:empire_warehouse,widelands,warehouse,Warehouse,empire,functional,,wl:empire_warehouse,0,gen.empire_port,none
 wl:empire_weaponsmithy,widelands,productionsite,Weapon Smithy,empire,functional,,wl:empire_weaponsmithy,0,gen.empire_coalmine_deep,states
 wl:empire_weaving_mill,widelands,productionsite,Weaving Mill,empire,functional,,wl:empire_weaving_mill,0,gen.empire_sheepfarm,states
 wl:empire_well,widelands,productionsite,Well,empire,functional,,wl:empire_well,0,foundation,static
 wl:empire_winery,widelands,productionsite,Winery,empire,functional,,wl:empire_winery,0,gen.empire_winery,static
-wl:frisians_aqua_farm,widelands,productionsite,Aqua Farm,frisians,pending,worker_program: breed_in_pond,,,,none
+wl:frisians_aqua_farm,widelands,productionsite,Aqua Farm,frisians,functional,,wl:frisians_aqua_farm,0,gen.frisians_aqua_farm,none
 wl:frisians_armor_smithy_large,widelands,productionsite,Large Armor Smithy,frisians,functional,,wl:frisians_armor_smithy_large,0,gen.frisians_armor_smithy_large,states
 wl:frisians_armor_smithy_small,widelands,productionsite,Small Armor Smithy,frisians,functional,,wl:frisians_armor_smithy_small,0,gen.frisians_armor_smithy_small,states
 wl:frisians_bakery,widelands,productionsite,Bakery,frisians,functional,,wl:frisians_bakery,0,gen.frisians_bakery,states
@@ -194,49 +194,49 @@ wl:frisians_berry_farm,widelands,productionsite,Berry Farm,frisians,functional,,
 wl:frisians_blacksmithy,widelands,productionsite,Blacksmithy,frisians,functional,,wl:frisians_blacksmithy,0,gen.frisians_blacksmithy,states
 wl:frisians_brewery,widelands,productionsite,Brewery,frisians,functional,,wl:frisians_brewery,0,gen.frisians_brewery,states
 wl:frisians_brick_kiln,widelands,productionsite,Brick Kiln,frisians,functional,,wl:frisians_brick_kiln,0,gen.frisians_brick_kiln,states
-wl:frisians_charcoal_burners_house,widelands,productionsite,Charcoal Burner’s House,frisians,pending,worker_program: find_pond,,,,none
+wl:frisians_charcoal_burners_house,widelands,productionsite,Charcoal Burner’s House,frisians,functional,,wl:frisians_charcoal_burners_house,0,gen.frisians_charcoal_burners_house,none
 wl:frisians_charcoal_kiln,widelands,productionsite,Charcoal Kiln,frisians,functional,,wl:frisians_charcoal_kiln,0,gen.frisians_charcoal_kiln,states
-wl:frisians_clay_pit,widelands,productionsite,Clay Pit,frisians,pending,worker_program: dig,,,,none
+wl:frisians_clay_pit,widelands,productionsite,Clay Pit,frisians,functional,,wl:frisians_clay_pit,0,gen.frisians_clay_pit,none
 wl:frisians_coalmine,widelands,productionsite,Coal Mine,frisians,functional,,wl:frisians_coalmine,0,gen.frisians_coalmine,states
 wl:frisians_coalmine_deep,widelands,productionsite,Deep Coal Mine,frisians,functional,,wl:frisians_coalmine_deep,0,gen.frisians_coalmine_deep,states
 wl:frisians_collectors_house,widelands,productionsite,Fruit Collector’s House,frisians,functional,,wl:frisians_collectors_house,0,gen.frisians_collectors_house,states
-wl:frisians_dikers_house,widelands,productionsite,Diker’s House,frisians,pending,worker_program: check_dike,,,,none
+wl:frisians_dikers_house,widelands,productionsite,Diker’s House,frisians,functional,,wl:frisians_dikers_house,0,gen.frisians_dikers_house,none
 wl:frisians_drinking_hall,widelands,productionsite,Drinking Hall,frisians,functional,,wl:frisians_drinking_hall,0,gen.frisians_collectors_house,states
 wl:frisians_farm,widelands,productionsite,Farm,frisians,functional,,wl:frisians_farm,0,gen.frisians_farm,states
-wl:frisians_ferry_yard,widelands,productionsite,Ferry Yard,frisians,pending,building_programs: main: return condition return=skipped unless fleet needs ferry,,,,none
-wl:frisians_fishers_house,widelands,productionsite,Fisher’s House,frisians,pending,worker_program: fish,,,,none
+wl:frisians_ferry_yard,widelands,productionsite,Ferry Yard,frisians,functional,,wl:frisians_ferry_yard,0,gen.frisians_ferry_yard,none
+wl:frisians_fishers_house,widelands,productionsite,Fisher’s House,frisians,functional,,wl:frisians_fishers_house,0,foundation,none
 wl:frisians_foresters_house,widelands,productionsite,Forester’s House,frisians,functional,,wl:frisians_foresters_house,0,foundation,states
 wl:frisians_fortress,widelands,militarysite,Fortress,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_furnace,widelands,productionsite,Furnace,frisians,functional,,wl:frisians_furnace,0,gen.frisians_blacksmithy,states
 wl:frisians_goldmine,widelands,productionsite,Gold Mine,frisians,functional,,wl:frisians_goldmine,0,gen.frisians_goldmine,states
 wl:frisians_goldmine_deep,widelands,productionsite,Deep Gold Mine,frisians,functional,,wl:frisians_goldmine_deep,0,gen.frisians_goldmine_deep,states
-wl:frisians_headquarters,widelands,warehouse,Headquarters,frisians,pending,warehouse not implemented,,,,none
+wl:frisians_headquarters,widelands,warehouse,Headquarters,frisians,functional,,,,,none
 wl:frisians_honey_bread_bakery,widelands,productionsite,Honey Bread Bakery,frisians,functional,,wl:frisians_honey_bread_bakery,0,gen.frisians_beekeepers_house,states
 wl:frisians_hunters_house,widelands,productionsite,Hunter’s House,frisians,functional,,wl:frisians_hunters_house,0,foundation,states
 wl:frisians_ironmine,widelands,productionsite,Iron Mine,frisians,functional,,wl:frisians_ironmine,0,gen.frisians_ironmine,states
 wl:frisians_ironmine_deep,widelands,productionsite,Deep Iron Mine,frisians,functional,,wl:frisians_ironmine_deep,0,gen.frisians_ironmine_deep,states
-wl:frisians_market,widelands,market,Market,frisians,pending,market not implemented,,,,none
+wl:frisians_market,widelands,market,Market,frisians,functional,,wl:frisians_market,0,gen.frisians_market,none
 wl:frisians_mead_brewery,widelands,productionsite,Mead Brewery,frisians,functional,,wl:frisians_mead_brewery,0,gen.frisians_mead_brewery,states
 wl:frisians_outpost,widelands,militarysite,Outpost,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:frisians_port,widelands,warehouse,Port,frisians,pending,warehouse not implemented,,,,none
+wl:frisians_port,widelands,warehouse,Port,frisians,functional,,wl:frisians_port,0,gen.frisians_port,none
 wl:frisians_quarry,widelands,productionsite,Quarry,frisians,functional,,wl:frisians_quarry,0,foundation,states
 wl:frisians_recycling_center,widelands,productionsite,Recycling Center,frisians,functional,,wl:frisians_recycling_center,0,gen.frisians_coalmine,states
 wl:frisians_reed_farm,widelands,productionsite,Reed Farm,frisians,functional,,wl:frisians_reed_farm,0,gen.frisians_reed_farm,states
 wl:frisians_reindeer_farm,widelands,productionsite,Reindeer Farm,frisians,functional,,wl:frisians_reindeer_farm,0,gen.frisians_reindeer_farm,states
-wl:frisians_rockmine,widelands,productionsite,Rock Mine,frisians,functional,,wl:frisians_rockmine,0,gen.frisians_rockmine,states
+wl:frisians_rockmine,widelands,productionsite,Rock Mine,frisians,functional,,wl:frisians_rockmine,0,gen.frisians_dikers_house,states
 wl:frisians_rockmine_deep,widelands,productionsite,Deep Rock Mine,frisians,functional,,wl:frisians_rockmine_deep,0,gen.frisians_rockmine_deep,states
-wl:frisians_scouts_house,widelands,productionsite,Scout’s House,frisians,pending,worker_program: scout,,,,none
+wl:frisians_scouts_house,widelands,productionsite,Scout’s House,frisians,functional,,wl:frisians_scouts_house,0,gen.frisians_scouts_house,none
 wl:frisians_sentinel,widelands,militarysite,Sentinel,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_sewing_room,widelands,productionsite,Sewing Room,frisians,functional,,wl:frisians_sewing_room,0,gen.frisians_reindeer_farm,states
-wl:frisians_shipyard,widelands,productionsite,Shipyard,frisians,pending,building_programs: ship: construct,,,,none
-wl:frisians_smokery,widelands,productionsite,Smokery,frisians,functional,,wl:frisians_smokery,0,gen.frisians_rockmine_deep,states
+wl:frisians_shipyard,widelands,productionsite,Shipyard,frisians,functional,,wl:frisians_shipyard,0,gen.frisians_clay_pit,none
+wl:frisians_smokery,widelands,productionsite,Smokery,frisians,functional,,wl:frisians_smokery,0,gen.frisians_aqua_farm,states
 wl:frisians_tailors_shop,widelands,productionsite,Tailor’s Shop,frisians,functional,,wl:frisians_tailors_shop,0,gen.frisians_brick_kiln,states
 wl:frisians_tavern,widelands,productionsite,Tavern,frisians,functional,,wl:frisians_tavern,0,foundation,states
 wl:frisians_tower,widelands,militarysite,Tower,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_training_arena,widelands,trainingsite,Training Arena,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_training_camp,widelands,trainingsite,Training Camp,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:frisians_warehouse,widelands,warehouse,Warehouse,frisians,pending,warehouse not implemented,,,,none
-wl:frisians_weaving_mill,widelands,productionsite,Weaving Mill,frisians,functional,,wl:frisians_weaving_mill,0,gen.frisians_reed_farm,states
+wl:frisians_warehouse,widelands,warehouse,Warehouse,frisians,functional,,wl:frisians_warehouse,0,gen.frisians_rockmine_deep,none
+wl:frisians_weaving_mill,widelands,productionsite,Weaving Mill,frisians,functional,,wl:frisians_weaving_mill,0,gen.frisians_market,states
 wl:frisians_well,widelands,productionsite,Well,frisians,functional,,wl:frisians_well,0,foundation,states
 wl:frisians_woodcutters_house,widelands,productionsite,Woodcutter’s House,frisians,functional,,wl:frisians_woodcutters_house,0,foundation,states
 wl:frisians_wooden_tower,widelands,militarysite,Wooden Tower,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
@@ -249,11 +249,11 @@ openra:afld,openra,building,AFLD,,functional,,afld,1,gen.afld,none
 openra:agun,openra,building,AGUN,,functional,,agun,1,gen.agun,none
 openra:ant,openra,unit,Ant,,excluded,mission-only creature,,,,none
 openra:apc,openra,unit,APC,,functional,,unit:apc,1,gen.vehicle_factory,directional
-openra:apwr,openra,building,APWR,,pending,not in the build menu,,,,none
+openra:apwr,openra,building,APWR,,excluded,advanced power plant: same,,,,none
 openra:arty,openra,unit,ARTY,,functional,,unit:artillery,1,gen.unit_artillery,directional
 openra:atef,openra,building,ATEF,,functional,,atef,1,gen.atef,none
 openra:atek,openra,building,ATEK,,functional,,atek,1,gen.atek,none
-openra:barr,openra,building,BARR,,pending,not in the build menu,,,,none
+openra:barr,openra,building,BARR,,functional,,barracks,1,gen.barracks,none
 openra:brik,openra,building,BRIK,,functional,,brik,1,gen.brik,none
 openra:ca,openra,unit,CA,,functional,,unit:cruiser,1,gen.naval_yard,directional
 openra:ctnk,openra,unit,CTNK,,functional,,unit:chrono_tank,1,gen.unit_tank,directional
@@ -269,7 +269,7 @@ openra:e4,openra,unit,E4,,functional,,unit:flamethrower,1,gen.unit_thief,directi
 openra:e6,openra,unit,E6,,functional,,unit:engineer,1,gen.unit_medic,directional
 openra:e7,openra,unit,E7,,functional,,unit:commando,1,gen.barracks,directional
 openra:facf,openra,building,FACF,,functional,,facf,1,gen.facf,none
-openra:fact,openra,building,FACT,,pending,not in the build menu,,,,static
+openra:fact,openra,building,FACT,,excluded,construction yard: disabled in the RA rules; settlers and MCVs found settlements,,,,static
 openra:fapw,openra,building,FAPW,,functional,,fapw,1,gen.fapw,none
 openra:fenc,openra,building,FENC,,functional,,fenc,1,gen.fenc,none
 openra:fireant,openra,unit,FireAnt,,excluded,mission-only creature,,,,none
@@ -283,7 +283,7 @@ openra:gun,openra,building,GUN,,functional,,defense,1,gen.defense,directional
 openra:harv,openra,unit,HARV,,excluded,harvester: the credit economy is replaced by wares (roster rule 4.2),,,,none
 openra:hbox,openra,building,HBOX,,functional,,hbox,1,gen.hbox,none
 openra:heli,openra,unit,HELI,,functional,,unit:longbow,1,gen.unit_chinook,directional
-openra:hind,openra,unit,HIND,,pending,no recipe / mechanic,,,,directional
+openra:hind,openra,unit,HIND,,excluded,disabled in the RA rules (prerequisite ~disabled),,,,directional
 openra:hpad,openra,building,HPAD,,functional,,hpad,1,gen.hpad,none
 openra:iron,openra,building,IRON,,functional,,iron,1,gen.iron,none
 openra:jeep,openra,unit,JEEP,,functional,,unit:jeep,1,gen.unit_jeep,layered
@@ -303,16 +303,16 @@ openra:msub,openra,unit,MSUB,,functional,,unit:missile_sub,1,gen.sub_pen,directi
 openra:pbox,openra,building,PBOX,,functional,,pbox,1,gen.pbox,static
 openra:pdof,openra,building,PDOF,,functional,,pdof,1,gen.pdof,none
 openra:pdox,openra,building,PDOX,,functional,,pdox,1,gen.pdox,none
-openra:powr,openra,building,POWR,,pending,not in the build menu,,,,none
-openra:proc,openra,building,PROC,,pending,not in the build menu,,,,static
+openra:powr,openra,building,POWR,,excluded,power plants: power comes from the Mindustry industry in Modern (roster rule 4.2),,,,none
+openra:proc,openra,building,PROC,,excluded,ore refinery: the credit economy is replaced by wares,,,,static
 openra:pt,openra,unit,PT,,functional,,unit:patrol_boat,1,gen.unit_destroyer,directional
 openra:qtnk,openra,unit,QTNK,,functional,,unit:mad_tank,1,gen.unit_mad_tank,directional
 openra:sam,openra,building,SAM,,functional,,sam,1,gen.sam,none
 openra:sbag,openra,building,SBAG,,functional,,sbag,1,gen.sbag,none
 openra:scoutant,openra,unit,ScoutAnt,,excluded,mission-only creature,,,,none
 openra:shok,openra,unit,SHOK,,functional,,unit:shock_trooper,1,gen.unit_shock_trooper,directional
-openra:silo,openra,building,SILO,,pending,not in the build menu,,,,none
-openra:spef,openra,building,SPEF,,pending,not in the build menu,,,,none
+openra:silo,openra,building,SILO,,excluded,ore silo: resource storage of the credit economy,,,,none
+openra:spef,openra,building,SPEF,,excluded,disabled in the RA rules (prerequisite ~disabled),,,,none
 openra:spen,openra,building,SPEN,,functional,,sub_pen,1,gen.sub_pen,none
 openra:spy,openra,unit,SPY,,functional,,unit:spy,1,gen.unit_spy,directional
 openra:ss,openra,unit,SS,,functional,,unit:submarine,1,gen.unit_submarine,directional
@@ -321,7 +321,7 @@ openra:stnk,openra,unit,STNK,,functional,,unit:phase_tank,1,gen.unit_radar_jamme
 openra:syrd,openra,building,SYRD,,functional,,naval_yard,1,gen.naval_yard,none
 openra:syrf,openra,building,SYRF,,functional,,syrf,1,gen.syrf,none
 openra:tenf,openra,building,TENF,,functional,,tenf,1,gen.tenf,none
-openra:tent,openra,building,TENT,,pending,not in the build menu,,,,none
+openra:tent,openra,building,TENT,,functional,,barracks,1,gen.barracks,none
 openra:thf,openra,unit,THF,,functional,,unit:thief,1,gen.unit_thief,static
 openra:tran,openra,unit,TRAN,,functional,,unit:chinook,1,gen.unit_chinook,none
 openra:truk,openra,unit,TRUK,,functional,,unit:supply_truck,1,gen.unit_supply_truck,directional

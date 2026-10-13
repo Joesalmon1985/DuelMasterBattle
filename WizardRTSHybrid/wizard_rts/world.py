@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import disruption, feed, history, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, vp
+from wizard_rts import disruption, feed, history, maritime, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -873,8 +873,11 @@ class HybridWorld:
         quanta = self.clock.request_advance(int(ms) * int(self.time_scale), int(sequence))
         for _ in range(quanta):
             forestry_quantum(self)
+            if self.terrain is not None and self.economy_quanta % 600 == 599 and getattr(self.terrain, "stale", False):
+                self.terrain.refresh()  # terraforming changed nodes: shore depth, water bodies and building caps follow once a game minute
             economy_quantum(self)
             logistics_quantum(self)
+            maritime.maritime_quantum(self)
             con.construction_quantum(self)
             industry.industry_quantum(self)
             story.story_quantum(self)
@@ -967,6 +970,11 @@ class HybridWorld:
             return {"status": "rejected", "reason": "cannot_demolish_warehouse", "snapshot": self.snapshot()}
         self.damage_building(building, 10**9, ["structure"], {})
         return {"status": "ok", "snapshot": self.snapshot()}
+
+    def waterway(self, faction: str, a: str, b: str) -> dict[str, Any]:
+        out = maritime.build_waterway(self, faction, str(a), str(b))
+        out["snapshot"] = self.snapshot()
+        return out
 
     def belt(self, faction: str, tiles: list, end_dir: int | None = None, kind: str = "mdy:conveyor") -> dict[str, Any]:
         from wizard_rts.industry import commands as ind_commands
@@ -1299,6 +1307,9 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["tribe_fallback"] = True
     if row.get("inside"):
         out["inside"] = row["inside"]
+    if row.get("ship"):
+        out["ship"] = True
+        out["cargo_wares"] = len(row.get("transfers", []))
     if row.get("passengers"):
         out["passengers"] = list(row["passengers"])
     if row.get("ammo_max"):

@@ -172,6 +172,10 @@ def on_death(world: Any, u: dict, by: str) -> None:
             p.pop("inside", None)
             military.kill_unit(world, p, by)
     u["passengers"] = []
+    if u.get("ship"):
+        from wizard_rts import maritime
+
+        maritime.sink(world, u)
     if u["definition"] == "openra.dtrk" and not u.get("detonated"):
         u["detonated"] = True
         _blast(world, u, DEMO_RADIUS, DEMO_DAMAGE, by or u["id"])

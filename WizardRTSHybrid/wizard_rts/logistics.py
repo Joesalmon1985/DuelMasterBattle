@@ -102,6 +102,12 @@ def carrier_quantum(world: Any) -> None:
             world.carrier_respawn.pop(rid)
             a, _b = world.road_edges[rid]
             owner = world.buildings.get(a)
+            if owner is not None and rid in world.__dict__.get("waterways", {}):
+                from wizard_rts import maritime
+
+                if not maritime.claim_ferry(world, owner["faction_name"], a):
+                    world.carrier_respawn[rid] = 1000  # no ferry yet: look again soon
+                    continue
             if owner is not None and not any(c["road_id"] == rid for c in world.carriers.values()):
                 cid = spawn_carrier(world, rid, owner["faction"], owner["faction_name"], world.roads[rid])
                 world.events.append({"kind": "carrier_respawned", "id": cid, "road": rid})
@@ -166,7 +172,9 @@ def in_flight(world: Any, good: str | None = None, dest: str | None = None) -> i
         t = c["cargo"]
         if t and (good is None or t["good"] == good) and (dest is None or t["path"][-1] == dest):
             n += 1
-    return n
+    from wizard_rts import maritime
+
+    return n + maritime.in_flight(world, good, dest)
 
 
 def _warehouses(world: Any, faction: str) -> list[dict]:
@@ -208,6 +216,10 @@ def scan_requests_and_outputs(world: Any) -> None:
     for c in world.carriers.values():
         t = c["cargo"]
         if t:
+            k = (t["good"], t["path"][-1])
+            flight[k] = flight.get(k, 0) + 1
+    for u in world.units.values():
+        for t in u.get("transfers", ()):
             k = (t["good"], t["path"][-1])
             flight[k] = flight.get(k, 0) + 1
 

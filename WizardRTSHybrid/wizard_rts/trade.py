@@ -31,6 +31,11 @@ WARE_VALUE = {"log": 1.0, "plank": 2.0, "granite": 1.5, "coal": 2.0, "iron_ore":
               "marble_column": 3.0, "cloth": 2.5, "brick": 2.0, "grout": 2.0, "blackwood": 2.0, "reed": 1.0, "rope": 2.0}
 
 
+def is_post(b: dict) -> bool:
+    """A building a caravan can leave from or arrive at: a command centre, a secondary warehouse, a port, a Mindustry core or a market."""
+    return (b["kind"] == "warehouse" or bool(b.get("store")) or bool(b.get("market"))) and b.get("operational", True) and not b.get("constructing")
+
+
 def value(goods: dict[str, int]) -> float:
     return sum(WARE_VALUE.get(g, 1.5) * int(n) for g, n in goods.items())
 
@@ -65,7 +70,7 @@ def send_caravan(world: Any, faction: str, wh_id: str, partner_wh_id: str, give:
     from wizard_rts.military import order_move
 
     wh, pw = world.buildings.get(wh_id), world.buildings.get(partner_wh_id)
-    if wh is None or pw is None or wh["kind"] != "warehouse" or pw["kind"] != "warehouse" or int(wh.get("hp", 0)) <= 0 or int(pw.get("hp", 0)) <= 0:
+    if wh is None or pw is None or not is_post(wh) or not is_post(pw) or int(wh.get("hp", 0)) <= 0 or int(pw.get("hp", 0)) <= 0:
         return {"status": "rejected", "reason": "no_warehouse"}
     if wh["faction_name"] != faction or pw["faction_name"] == faction:
         return {"status": "rejected", "reason": "not_a_trade"}

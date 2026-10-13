@@ -12,6 +12,7 @@ A generic building kind is the string "wl:<widelands name>".
 from __future__ import annotations
 
 import json
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -71,6 +72,8 @@ def convert_actions(actions: list[dict]) -> list[tuple[str, dict]]:
                 out.append(("return", {"skipped": bool(a.get("skipped"))}))
         elif cmd == "recruit":
             out.append(("recruit", {"unit": a.get("target", "")}))
+        elif cmd == "construct":
+            out.append(("construct", {"site": a.get("args", "").split()[0] if a.get("args") else ""}))
         else:
             out.append(("unsupported", {"cmd": cmd}))
     return out
@@ -120,6 +123,12 @@ def convert_worker_actions(actions: list[dict]) -> list[tuple[str, dict]]:
             if "saplingsearches:" in args:
                 sapl = int(args.split("saplingsearches:")[1].split()[0])
             step = {"radius": int(a["radius"] or 3), "avoid": "", "saplingsearches": sapl}
+            if "size:swim" in args:
+                step["swim"] = True
+            if "terraform:" in args:
+                step["terraform"] = args.split("terraform:")[1].split()[0]
+            if re.search(r"\bferry\b", args):
+                step["ferry"] = True
             if a.get("resource"):
                 step["resource"] = a["resource"]
                 step["breed"] = bool(a.get("breed"))
@@ -140,6 +149,14 @@ def convert_worker_actions(actions: list[dict]) -> list[tuple[str, dict]]:
             out.append(("plant", {"attrib": a["attrib"]}))
         elif cmd == "removeobject":
             out.append(("removeobject", {}))
+        elif cmd == "createbob":
+            out.append(("createbob", {"bobs": list(a.get("bobs", []))}))
+        elif cmd == "scout":
+            out.append(("scout", {"radius": int(a.get("radius", 15)), "ms": int(a.get("ms", 60_000))}))
+        elif cmd == "terraform":
+            out.append(("terraform", {"kind": a.get("kind", "")}))
+        elif cmd == "construct":
+            out.append(("construct", {"site": a.get("site", "")}))
         elif cmd == "return":
             out.append(("return", {}))
         else:
@@ -189,6 +206,7 @@ def building_spec(name: str) -> dict[str, Any] | None:
         "enhanced_from": (PREFIX + b["enhanced_from"]) if b.get("enhanced_from") else "",
         "enhances_to": (PREFIX + b["enhancement"]["to"]) if b.get("enhancement") else "", "enhancement_cost": dict((b.get("enhancement") or {}).get("cost", {})), "dir": b["dir"], "size": b.get("size", ""),
         "definition": f"widelands.{name}",
+        "building_type": b["type"], "port": name.endswith("_port"), "store": b["type"] == "warehouse", "market": b["type"] == "market",
     }
 
 
