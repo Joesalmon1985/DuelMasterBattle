@@ -24,7 +24,8 @@ ERA_VP_THRESHOLD = 6  # legacy single threshold; a world attribute era_vp_thresh
 ERA_VP_THRESHOLDS = (6, 8, 8)  # world VP gained to leave Prehistoric, Historic, Modern; Modern was 10 until measured (+1 VP per ~10 min in Modern)
 ERA_MAX_MS = 75 * 60_000
 CHECK_EVERY = 10  # economy quanta
-ERA_VP_END = 10  # drafting v2: one faction's current VP that ends an era (plan 5.6 candidates 8-14; the study P12 decides)
+ERA_VP_END = 8  # drafting v2: one faction's current VP that ends an era (plan 5.6 candidates 8-14; provisional 8 from the 90-min probe where leaders reach 8-9 by minute 40; the P12 study decides)
+ERA_VP_STEP = 4  # drafting v2: the bar of the next era is the leader's current VP plus this (never below ERA_VP_END), so a standing lead cannot end every era at once
 ERA_SUSTAIN_MS = 60_000  # debounce, not a minimum era length
 
 
@@ -120,6 +121,7 @@ def advance_era(world: Any, reason: str) -> bool:
     st["index"] += 1
     st["started_ms"] = now
     st["base"] = totals(world)
+    st["bar"] = max(int(getattr(world, "era_vp_end", ERA_VP_END)), max(st["base"].values(), default=0) + int(getattr(world, "era_vp_step", ERA_VP_STEP)))
     st["log"].append({"era": tech.ERAS[st["index"]], "game_ms": now, "reason": reason, "vp": dict(st["base"])})
     world.era_index = st["index"]
     tech.on_era_change(world)
@@ -136,7 +138,7 @@ def vp_quantum(world: Any) -> None:
 
     if draft.enabled(world):  # plan v2 5.4: a faction's CURRENT VP reaching the era bar, held for the sustain window
         top = max(totals(world).values(), default=0)
-        if top >= int(getattr(world, "era_vp_end", ERA_VP_END)):
+        if top >= int(st.get("bar", getattr(world, "era_vp_end", ERA_VP_END))):
             st.setdefault("above_since", now)
         else:
             st.pop("above_since", None)
@@ -155,13 +157,19 @@ def vp_quantum(world: Any) -> None:
             world.events.append({"kind": "cycle_due", "reason": due})
 
 
+def draft_on(world: Any) -> bool:
+    from wizard_rts import draft
+
+    return draft.enabled(world)
+
+
 def snapshot(world: Any) -> dict[str, Any]:
     st = era_state(world)
     now = int(world.dmb.clock.get("game_ms", 0))
     guard = int(getattr(world, "era_max_ms", ERA_MAX_MS))
     last = st["log"][-1] if st["log"] else None
     return {"era": tech.ERAS[st["index"]], "era_index": st["index"], "vp": totals(world), "progress": progress(world), "gains": gains(world),
-            "threshold": threshold(world), "started_ms": st["started_ms"], "elapsed_ms": now - st["started_ms"],
+            "threshold": int(st.get("bar", threshold(world))) if draft_on(world) else threshold(world), "started_ms": st["started_ms"], "elapsed_ms": now - st["started_ms"],
             "stall_guard_in_ms": max(0, st["started_ms"] + guard - now), "next_era": tech.ERAS[st["index"] + 1] if st["index"] + 1 < len(tech.ERAS) else "",
             "last_reason": last["reason"] if last else "", "log": [dict(e) for e in st["log"]]}
 

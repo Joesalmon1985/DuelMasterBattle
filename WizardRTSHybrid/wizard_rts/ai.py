@@ -331,7 +331,7 @@ def expansion_step(world: Any, name: str, wh: dict) -> None:
         return
     queued = any(i["unit"] in ("mcv", "settlers") for b in mine for i in b.get("queue", []))
     state = world.__dict__.setdefault("_ai_expand", {}).setdefault(name, {"last": -10**9})
-    if queued or len(territory.command_centers(world, name)) >= (10**6 if getattr(world, "nocards", False) else MAX_CC) or now < EXPAND_AFTER_MS or now - state["last"] < EXPAND_REPEAT_MS:
+    if queued or len(territory.command_centers(world, name)) >= (10**6 if tech.foundation_on(world) else MAX_CC) or now < EXPAND_AFTER_MS or now - state["last"] < EXPAND_REPEAT_MS:
         return
     # 12 Oct 2026 rule adaptation (not a strategy change): the Prehistoric settlers' wagon from the warehouse is the same founder as the MCV
     factories = [(b, "mcv") for b in mine if b["kind"] == "vehicle_factory" and b.get("operational") and tech.unit_allowed(world, name, "mcv")]
@@ -376,7 +376,7 @@ def _find_expansion_site(world: Any, name: str, mcv: dict | None, bad: list | No
         return None
     probe = {"id": "probe", "definition": territory.MCV_DEFINITION, "faction_name": name, "alive": True, "tx": 0, "ty": 0}
     legal = []
-    frontier = bool(getattr(world, "nocards", False))
+    frontier = bool(tech.foundation_on(world))
     for y in range(8, t.h - 8, 8):
         for x in range(8, t.w - 8, 8):
             tile = (x, y)

@@ -137,7 +137,57 @@ def _threats(world: Any, name: str) -> list[tuple[dict, dict]]:
 
 # ------------------------------------------------------------------ drafting
 
+MILITARY_KINDS = ("barracks", "vehicle_factory", "war_lodge", "defense", "flame_tower", "tesla_coil", "naval_yard", "sub_pen")
+
+
+def score_generated(world: Any, name: str, cid: str) -> tuple[float, str]:
+    """Value of a content-graph card for this faction now: does the entity fit its tribe, extend a working chain, answer a shortage or a threat."""
+    from wizard_rts.content import graph
+
+    ents = graph.entities()
+    tribe = world.faction_info.get(name, {}).get("tribe", "")
+    c = tech.lookup()[cid]
+    s, why = 40.0 - 2.0 * c["era"], "base"
+    threatened = bool(_threats(world, name)) or world.fstats.get(name, {}).get("building_losses", 0) > 0
+    held_kinds = {b["kind"] for b in world.buildings.values() if b["faction_name"] == name and "hp" in b and int(b["hp"]) > 0}
+    for eid in c["entities"]:
+        e = ents[eid]
+        if e["type"] == "building" and e["game"] == "widelands":
+            if e["tribe"] != tribe:
+                s -= 60
+                why = "another tribe's building"
+                continue
+            fresh = [g for g in e.get("outputs", []) if not base._makes(world, name, g)]
+            s += 12 * min(len(fresh), 2)
+            fed = sum(1 for g in e.get("inputs", []) if base._makes(world, name, g) or base._stock(world, name, g) > 0)
+            s += 6 * fed - 6 * (len(e.get("inputs", [])) - fed)
+            if any(g in ("ration", "bread", "fish", "meat") for g in e.get("outputs", [])) and _food(world, name) < 8:
+                s += 30
+                why = "food is short"
+            if any(g in ("iron", "coal", "gold", "iron_ore", "coal_ore") for g in e.get("outputs", [])) and _era(world) >= 1:
+                s += 14
+                why = "metal for an army"
+        elif e["type"] == "building":
+            if eid in MILITARY_KINDS:
+                s += 30 if threatened else 8
+                why = "under threat" if threatened else "military"
+            if eid in ("farm", "mine", "ironmine", "smelter") and eid not in held_kinds:
+                s += 18
+        else:
+            unit = eid[5:]
+            producer = e["producer"]
+            held = {k for cid2 in world.tech[name]["cards"] for k in tech.lookup()[cid2].get("kinds", ())}
+            if producer not in held and not tech.kind_allowed(world, name, producer) and producer != "warehouse":
+                s -= 35
+                why = "no building to make it"
+            if threatened:
+                s += 15
+    return s, why
+
+
 def score_card(world: Any, name: str, cid: str) -> tuple[float, str]:
+    if cid.startswith("gen."):
+        return score_generated(world, name, cid)
     c = tech.lookup()[cid]
     short = cid.split(".")[-1]
     era = _era(world)
@@ -492,7 +542,7 @@ def _expansion_site(world: Any, name: str, unit: dict | None, bad: list | None =
         return None
     probe = {"id": "probe", "definition": definition, "faction_name": name, "alive": True, "tx": 0, "ty": 0}
     legal = []
-    frontier = bool(getattr(world, "nocards", False))
+    frontier = bool(tech.foundation_on(world))
     for y in range(8, t.h - 8, 6):
         for x in range(8, t.w - 8, 6):
             d = territory.frontier_distance(world, name, (x, y)) if frontier else territory.cheb((x, y), (home["tx"], home["ty"]))
@@ -575,7 +625,7 @@ def expansion_step(world: Any, name: str, wh: dict) -> None:
     if any(i["unit"] in ("mcv", "settlers") for b in mine for i in b.get("queue", [])):
         return
     ccs = territory.command_centers(world, name)
-    cap = 10**6 if getattr(world, "nocards", False) else MAX_CC_BY_ERA[min(_era(world), 3)]  # nocards: growth is limited by wares, space and food, not a quota
+    cap = 10**6 if tech.foundation_on(world) else MAX_CC_BY_ERA[min(_era(world), 3)]  # nocards: growth is limited by wares, space and food, not a quota
     if len(ccs) >= cap:
         return
     if _food(world, name, wh) < 4 and len(ccs) >= 2:

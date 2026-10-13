@@ -74,7 +74,8 @@ def _card(slug: str, name: str, era: int, ents: list[str], summary: str) -> dict
     kinds = [e for e in ents if not e.startswith(("unit:", "wl:"))]
     units = [e[5:] for e in ents if e.startswith("unit:")]
     wl = [e for e in ents if e.startswith("wl:")]
-    return {"id": PREFIX + slug, "name": name, "era": era, "summary": summary, "kinds": kinds, "units": units, "wl_patterns": [], "wl_kinds": wl,
+    tribe = next((entities()[e]["tribe"] for e in wl), "")
+    return {"id": PREFIX + slug, "name": name, "era": era, "summary": summary, "kinds": kinds, "units": units, "wl_patterns": [], "wl_kinds": wl, "tribe": tribe,
             "requires_cards": [], "requires_working": [], "entities": list(ents)}
 
 

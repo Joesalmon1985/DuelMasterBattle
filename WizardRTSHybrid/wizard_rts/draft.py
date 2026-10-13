@@ -73,28 +73,42 @@ def deal(world: Any, era: int) -> None:
     want_cur = max(1, round(PACK_SIZE * CURRENT_ERA_SHARE + 0.499))
     packs: dict[str, list[str]] = {}
     dup = 0
-    pools = {"cur": cur, "old": old}
-    cursor = {"cur": 0, "old": 0}
+    # Tribe-balanced dealing: a Widelands building only helps its own tribe, so every pack rotates through the tribes in the ring (plus the
+    # tribe-free cards), which gives each seat cards it can use in the first packs it sees and keeps the rest as trade-offs and denial.
+    tribes = sorted({world.faction_info[f].get("tribe", "") for f in ring} | {""})
 
-    def draw(kind: str, wrap: bool) -> str | None:
+    def queues(cards_: list[str]) -> dict[str, list[str]]:
+        q: dict[str, list[str]] = {t: [] for t in tribes}
+        q["~other"] = []
+        for c in cards_:
+            t = pool_cards[c].get("tribe", "")
+            q[t if t in q else "~other"].append(c)
+        return q
+
+    pool_cards = cards
+    qs = {"cur": queues(cur), "old": queues(old)}
+    spare: list[str] = []
+
+    def draw(kind: str, prefer: str, wrap: bool) -> str | None:
         nonlocal dup
-        pool = pools[kind]
-        if not pool or (cursor[kind] >= len(pool) and not wrap):
-            return None
-        card = pool[cursor[kind] % len(pool)]
-        if cursor[kind] >= len(pool):
-            dup += 1  # the catalogue is smaller than the demand: a copy is dealt (reported)
-        cursor[kind] += 1
-        return card
+        q = qs[kind]
+        order = [prefer] + [t for t in q if t != prefer]
+        for t in order:
+            if q[t]:
+                return q[t].pop(0)
+        if wrap and (cur or old):
+            dup += 1
+            return (cur + old)[dup % len(cur + old)]
+        return None
 
-    # current-era cards first, spread round-robin so no pack is starved while another is full; then older undrafted cards; copies last
     for f in ring:
         packs[f] = []
     for turn in range(PACK_SIZE):
-        for f in ring:
+        for seat, f in enumerate(ring):
             pack = packs[f]
+            prefer = tribes[(seat + turn) % len(tribes)]
             kinds = ("cur", "old") if turn < want_cur else ("old", "cur")
-            card = draw(kinds[0], False) or draw(kinds[1], False) or draw("cur", True) or draw("old", True)
+            card = draw(kinds[0], prefer, False) or draw(kinds[1], prefer, False) or draw("cur", prefer, True)
             if card is not None and card not in pack:
                 pack.append(card)
     reserve = [c for c in (cur + old) if all(c not in p for p in packs.values())]
