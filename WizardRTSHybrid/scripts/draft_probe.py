@@ -35,6 +35,8 @@ def main() -> None:
         w.advance(1000, i + 1, snapshot=False)
         for e in w.events:
             ev[e["kind"]] += 1
+            if e["kind"] == "unit_produced":
+                ev["unit_produced:" + str(e.get("unit_kind"))] += 1
             if e["kind"] in ("era_advanced", "draft_leftovers", "draft_phase"):
                 print(i // 60, e["kind"], {k: v for k, v in e.items() if k != "kind"} if e["kind"] != "draft_phase" else e["era"])
         w.events.clear()
@@ -44,6 +46,7 @@ def main() -> None:
     st = draft.state(w)
     print("draft state: era", st["era"], "round", st["round"], "defaults", st["default_picks"], "dups", st["duplicated_cards"], "phases", st["phases"])
     print({k: v for k, v in ev.most_common(12)})
+    print("units produced:", {k[5:]: v for k, v in ev.items() if k.startswith("unit_produced:")}, "attack events:", ev["ai_attack"])
     print("trade events:", {k: ev[k] for k in ("caravan_sent", "caravan_traded", "caravan_failed", "trade_offer") if k in ev})
     from wizard_rts import inspector
 

@@ -179,8 +179,9 @@ def score_generated(world: Any, name: str, cid: str) -> tuple[float, str]:
                 if eid in ai_industry.LINE_KINDS and not tech.kind_allowed(world, name, eid):
                     s += 12 + 6 * have_line  # the drill -> belt -> smelter -> factory line only works whole: each part is worth more once others are held
                     why = "completes the industrial line (%d of %d)" % (have_line, len(ai_industry.LINE_KINDS))
-            if eid in ("farm", "mine", "ironmine", "smelter") and eid not in held_kinds:
-                s += 18
+            if eid in ("farm", "mine", "ironmine", "smelter", "smithy") and eid not in held_kinds:
+                s += 40 if eid != "farm" else 18  # the metal chain is the gate to every weapon: the 8-game content report showed 18 unit cards drafted and never built
+                why = "metal chain for an army" if eid != "farm" else why
             if eid == "scriptorium":
                 s += 22  # paper buys a bonus pick every round it holds two sheets, without taking a card from anyone's pack
                 why = "paper gives bonus picks"
