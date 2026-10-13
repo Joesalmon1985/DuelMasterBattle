@@ -95,7 +95,7 @@ PRIMITIVE_SHOWCASE = ("quarry", "hunter", "well")  # with the producer, sawmill 
 
 class HybridWorld:
     def __init__(self, seed: int = 507, minimal: bool = False, terrain: bool | None = None, map_size: str = "standard",
-                 profile: str | None = None, start_perm: list[int] | None = None) -> None:
+                 profile: str | None = None, start_perm: list[int] | None = None, legacy_draft: bool = False) -> None:
         """terrain=True builds the square-grid Widelands-derived map; terrain=False is the legacy flat world.
 
         None reads HYBRID_TERRAIN (default "1"). The legacy world stays available so the
@@ -108,6 +108,9 @@ class HybridWorld:
         self.start_perm = list(start_perm) if start_perm else None  # S07: which homeland each faction (in FACTIONS order) starts on
         self.cycle_pending = False
         self.era_index = 0
+        self.legacy_draft = bool(legacy_draft)  # True keeps the hand-written card set and the old offers (regression tests only); every gated world otherwise drafts v2
+        if tech.gated(self) and not self.legacy_draft:
+            self.cardset, self.draft_v2 = "v2", True
         self.draft_interval_ms = tech.DRAFT_INTERVAL_MS
         self.terrain: terrain_mod.TerrainGrid | None = mapgen.generate(int(seed), map_size) if terrain else None
         self.map_size = map_size
@@ -855,6 +858,8 @@ class HybridWorld:
         return {"status": "ok", "snapshot": self.snapshot() if snapshot else None}
 
     def advance(self, ms: int, sequence: int, snapshot: bool = True, tree_sync: bool | None = None) -> dict[str, Any]:
+        if getattr(self, "collective_loss", False):  # terminal: every faction lost. Time stops; the cycle ends by an explicit reset (history.cycle_reset), never silently
+            return {"status": "terminal", "quanta": 0, "terminal": history.outcome(self), "snapshot": self.snapshot(tree_sync=tree_sync) if snapshot else None}
         quanta = self.clock.request_advance(int(ms) * int(self.time_scale), int(sequence))
         for _ in range(quanta):
             forestry_quantum(self)
@@ -956,6 +961,11 @@ class HybridWorld:
         from wizard_rts.industry import commands as ind_commands
 
         out = ind_commands.place_belt(self, faction, tiles, end_dir)
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def enhance(self, faction: str, building: str, to_kind: str = "") -> dict[str, Any]:
+        out = con.enhance_building(self, faction, str(building), str(to_kind))
         out["snapshot"] = self.snapshot()
         return out
 

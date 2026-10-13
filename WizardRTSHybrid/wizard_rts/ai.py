@@ -627,7 +627,26 @@ def _build_tribe_building_now(world: Any, name: str, bname: str, wh: dict) -> st
 
     kind = wl_defs.PREFIX + bname
     spec = con.build_spec(kind)
-    if spec is None or not tech.kind_allowed(world, name, kind) or not _can_pay(world, name, spec["cost"]):
+    if spec is None or not tech.kind_allowed(world, name, kind):
+        return None
+    if spec.get("enhancement_of"):  # an upgrade exists only by enhancing a standing base building: build a base for it, then enhance it
+        base = spec["enhancement_of"]
+        mine = [b for b in world.buildings.values() if b["faction_name"] == name and b["kind"] == base and int(b.get("hp", 1)) > 0]
+        mark = [b for b in mine if b.get("enhance_target") == kind]
+        if mark:
+            site = mark[0]
+            if site.get("operational") and not site.get("constructing") and _can_pay(world, name, spec["cost"]):
+                if con.enhance_building(world, name, site["id"])["status"] == "ok":
+                    site.pop("enhance_target", None)
+                    return site["id"]
+            return None
+        if not tech.kind_allowed(world, name, base):
+            return None
+        bid = _build_tribe_building_now(world, name, base[len(wl_defs.PREFIX):], wh)
+        if bid:
+            world.buildings[bid]["enhance_target"] = kind
+        return bid
+    if not _can_pay(world, name, spec["cost"]):
         return None
     mining = [a["resource"] for prog in wl_defs.building_spec(bname)["programs"].values() for cmd, a in prog if cmd == "mine"]
     if mining:

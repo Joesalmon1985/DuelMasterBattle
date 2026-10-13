@@ -397,6 +397,16 @@ def mark_runnable(defs: dict) -> None:
         b["runnable"], b["blocked_by"] = not reason, reason
 
 
+def _enhancement(entry: dict) -> dict:
+    """`enhancement = {name = <target>, enhancement_cost = {...}}` on a building: it can be upgraded in place into <target> for that cost."""
+    e = entry.get("enhancement")
+    if not isinstance(e, dict) or not e.get("name"):
+        return {}
+    cost = {ware(k): int(v) for k, v in (e.get("enhancement_cost") or {}).items() if isinstance(v, (int, float))}
+    back = {ware(k): int(v) for k, v in (e.get("enhancement_return_on_dismantle") or {}).items() if isinstance(v, (int, float))}
+    return {"to": str(e["name"]), "cost": cost, "return_on_dismantle": back}
+
+
 def main() -> None:
     defs: dict[str, dict] = {"buildings": {}, "workers": {}, "wares": {}, "immovables": {}, "errors": []}
     for path in sorted((DATA / "tribes").rglob("init.lua")):
@@ -417,6 +427,7 @@ def main() -> None:
                     "descname": entry.get("descname", ""), "dir": path.parent.relative_to(DATA).as_posix(),
                     "animations": {k: {"hotspot": v.get("hotspot")} for k, v in (entry.get("animations") or {}).items() if isinstance(v, dict)},
                     "buildcost": {ware(k): int(v) for k, v in (entry.get("buildcost") or {}).items() if isinstance(v, (int, float))},
+                    "enhancement": _enhancement(entry),
                     "inputs": inputs(entry), "working_positions": {k: v for k, v in (entry.get("working_positions") or {}).items()},
                     "programs": progs, "spritesheets": sheets(entry), "executable": ok, "problems": problems[:6],
                 }
@@ -462,6 +473,11 @@ def main() -> None:
     for w in defs["workers"].values():
         if w["programs"]:
             w["executable"], w["problems"] = (lambda r: (r[0], r[1][:6]))(executable_worker(w["programs"]))
+    for a, b in defs["buildings"].items():  # the target of an enhancement has no buildcost: it exists only as an upgrade of `enhanced_from`
+        e = b.get("enhancement") or {}
+        t = defs["buildings"].get(e.get("to", ""))
+        if t is not None:
+            t["enhanced_from"], t["enhancement_cost"] = a, dict(e["cost"])
     mark_runnable(defs)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(defs, indent=1), encoding="utf-8")

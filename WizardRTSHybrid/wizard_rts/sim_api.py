@@ -24,6 +24,7 @@ import pickle
 from typing import Any
 
 from wizard_rts import construction as con
+from wizard_rts import wl_defs
 from wizard_rts import rules, tech
 from wizard_rts import diagnostics, territory
 from wizard_rts.coords import tile_to_hex  # noqa: F401  (kept importable for scripts)
@@ -35,7 +36,7 @@ WARE_VALUE = {  # wealth weights: raw goods count little, processed and military
     "fish": 2, "meat": 2, "wheat": 1, "water": 0, "ax": 6, "brick": 3, "marble": 4,
 }
 DEFAULT_WEIGHTS = {"wealth": 0.01, "territory": 0.5, "kill_value": 0.002, "loss_value": -0.002, "building_kill": 1.0, "building_loss": -1.0, "alive": 0.0, "eliminated": -50.0}
-ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy", "draft")
+ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy", "draft", "enhance")
 
 
 class HybridEnv:
@@ -118,11 +119,17 @@ class HybridEnv:
         terminated = {f: not self._alive(f) for f in self.agent_factions}
         done_all = len(alive) <= 1 or (self.agent_factions and all(terminated.values()))
         truncated = self.game_ms >= self.max_game_ms
+        from wizard_rts import history
+
+        lost_together = bool(getattr(w, "collective_loss", False))
+        if lost_together:  # catastrophe limit reached: every faction lost, whatever its VP (plan v2 7.2); reported once as a terminal loss for each agent
+            terminated = {f: True for f in self.agent_factions}
+            done_all = True
         for f in self.agent_factions:
             if terminated[f] and f not in self.__dict__.setdefault("_dead_reported", set()):
                 self._dead_reported.add(f)
                 rewards[f] += self.weights["eliminated"]
-        info = {"game_ms": self.game_ms, "results": results, "alive": alive, "episode_over": bool(done_all or truncated)}
+        info = {"game_ms": self.game_ms, "results": results, "alive": alive, "episode_over": bool(done_all or truncated), "outcome": history.outcome(w)}
         return {f: self.observe(f) for f in self.agent_factions}, rewards, terminated, truncated, info
 
     def _trim_events(self) -> None:
@@ -158,6 +165,10 @@ class HybridEnv:
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
                 return _slim(w.demolish(str(action["building"])))
+            if op == "enhance":  # Widelands in-place upgrade (additive to the action space)
+                if not self._owns_building(faction, action["building"]):
+                    return {"status": "rejected", "reason": "not_yours"}
+                return _slim(w.enhance(faction, str(action["building"]), str(action.get("to", ""))))
             if op == "rally":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
@@ -214,6 +225,10 @@ class HybridEnv:
                     out["queue"].append({"building": b["id"], "unit": unit})
             if b["kind"] != "warehouse":
                 out["demolish"].append(b["id"])
+            if b.get("operational") and b["kind"].startswith("wl:"):
+                up = (wl_defs.spec_for_kind(b["kind"]) or {}).get("enhances_to")
+                if up and tech.kind_allowed(w, faction, up):
+                    out.setdefault("enhance", []).append({"building": b["id"], "to": up})
         units = [u for u in w.units.values() if u["faction_name"] == faction and u.get("alive", True)]
         out["move_units"] = [{"id": u["id"], "loco": u.get("loco", "foot")} for u in units]
         for u in units:

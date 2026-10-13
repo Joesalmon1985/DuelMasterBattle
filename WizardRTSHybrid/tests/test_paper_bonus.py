@@ -60,7 +60,7 @@ def test_bonus_hand_needs_scriptorium_and_paper_and_consumes_two_sheets():
     packs_before = {f: list(p) for f, p in st["packs"].items()}
     hand = list(st["bonus"]["Red"])
     # first the normal pick, then the bonus pick
-    assert tech.draft(w, "Red", w.tech["Red"]["offers"][0])["status"] == "ok"
+    assert tech.draft(w, "Red", next(c for c in w.tech["Red"]["offers"] if c in st["packs"]["Red"]))["status"] == "ok"
     assert {f: list(p) for f, p in st["packs"].items() if f != "Red"} == {f: p for f, p in packs_before.items() if f != "Red"}
     assert tech.draft(w, "Red", hand[0])["status"] == "ok"
     assert w.stocks[wh]["paper"] == 1 and w.stats["consumed_paper"] == 2

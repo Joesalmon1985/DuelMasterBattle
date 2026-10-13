@@ -23,7 +23,7 @@ def _mine_site(w, res="coal"):
 
 def test_two_game_hours_of_coal_and_iron_mining_never_exhaust_the_sites():
     """ActMine runs about every 45-60 s in Widelands; 400 successful digs per mine is far more than two game hours of work."""
-    w = HybridWorld(507, profile="campaign")
+    w = HybridWorld(507, profile="campaign", legacy_draft=True)
     for res in ("coal", "iron"):
         site = _mine_site(w, res)
         b = {"id": "test-mine-" + res, "tx": site[0], "ty": site[1], "kind": "mine", "faction_name": "Red"}
@@ -35,7 +35,7 @@ def test_two_game_hours_of_coal_and_iron_mining_never_exhaust_the_sites():
 
 
 def test_mindustry_drill_on_a_shared_iron_site_never_runs_dry_and_logs_its_source():
-    w = HybridWorld(507, profile="campaign")
+    w = HybridWorld(507, profile="campaign", legacy_draft=True)
     site = _mine_site(w, "iron")
     tiles = [(site[0] + dx, site[1] + dy) for dx in (0, 1) for dy in (0, 1)]
     opts = X.options(w, tiles, 2)
@@ -58,7 +58,7 @@ def test_fish_stays_finite():
 # ------------------------------------------------------------------ disruptions and catastrophes
 
 def _developed(seconds=300, profile="test_showcase"):
-    w = HybridWorld(507, profile=profile)
+    w = HybridWorld(507, profile=profile, legacy_draft=True)
     w.ai_enabled = False
     w.dmb.hazards["catastrophe"]["cubes"][w.hazard_id]["active"] = False
     for i in range(seconds):
@@ -189,7 +189,7 @@ def settlements_of(w, name):
 # ------------------------------------------------------------------ cards and eras
 
 def test_offers_hold_up_to_seven_eligible_cards_never_padded_and_lapse_when_unpicked():
-    w = HybridWorld(507, profile="campaign")
+    w = HybridWorld(507, profile="campaign", legacy_draft=True)
     w.ai_enabled = False
     w.advance(1000, 1, snapshot=False)
     st = w.tech["Red"]
@@ -205,7 +205,7 @@ def test_offers_hold_up_to_seven_eligible_cards_never_padded_and_lapse_when_unpi
 
 
 def test_deep_mines_need_the_deep_mining_card():
-    w = HybridWorld(507, profile="campaign")
+    w = HybridWorld(507, profile="campaign", legacy_draft=True)
     w.tech["Red"]["cards"] = ["dmb.card.mining"]
     assert tech.kind_allowed(w, "Red", "wl:barbarians_coalmine")
     assert not tech.kind_allowed(w, "Red", "wl:barbarians_coalmine_deep")
@@ -214,7 +214,7 @@ def test_deep_mines_need_the_deep_mining_card():
 
 
 def test_era_advances_on_world_vp_gain_and_reports_the_reason():
-    w = HybridWorld(507, profile="campaign")
+    w = HybridWorld(507, profile="campaign", legacy_draft=True)
     assert vp.threshold(w) == vp.ERA_VP_THRESHOLDS[0]
     st = vp.era_state(w)
     for f in list(w.faction_info)[:6]:
@@ -229,7 +229,7 @@ def test_era_advances_on_world_vp_gain_and_reports_the_reason():
 
 
 def test_settlers_found_a_settlement_from_the_warehouse():
-    w = HybridWorld(507, profile="developer")
+    w = HybridWorld(507, profile="developer", legacy_draft=True)
     w.ai_enabled = False
     tech.grant(w, "Purple", "dmb.card.settlers")
     wh = con.faction_warehouse(w, "Purple")
@@ -264,7 +264,7 @@ def test_settlers_found_a_settlement_from_the_warehouse():
 # ------------------------------------------------------------------ the wizard
 
 def test_the_wizard_cannot_stand_on_a_tree_or_a_rock():
-    w = HybridWorld(507, profile="campaign")
+    w = HybridWorld(507, profile="campaign", legacy_draft=True)
     tree = next(t for t in w.trees.values() if w.tree_solid(t))
     rock = next(iter(w.rocks.values()))
     assert w.set_pose(tree["tx"], tree["ty"], "down", snapshot=False)["reason"] == "obstacle"
@@ -277,7 +277,7 @@ def test_the_wizard_cannot_stand_on_a_tree_or_a_rock():
 def test_the_wizard_pilot_walks_tile_by_tile_and_treats_by_the_public_rule():
     from wizard_rts import wizard_pilot
 
-    w = HybridWorld(507, profile="developer")
+    w = HybridWorld(507, profile="developer", legacy_draft=True)
     w.ai_enabled = False
     w.outbreaks_enabled = False
     s = regions.state(w)

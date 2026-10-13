@@ -21,15 +21,14 @@ from wizard_rts import wl_defs
 
 PREFIX = "gen."
 HYBRID_BUILDING_ERA = {  # era of the earlier hand-written card that unlocked it (data/tech_cards.json), kept so v2 starts from the same order
-    "farm": 0, "mine": 0, "ironmine": 0, "smelter": 0, "smithy": 1, "scriptorium": 1, "clinic": 0, "bakery": 0, "war_lodge": 0, "barracks": 1, "vehicle_factory": 1,
-    "defense": 1, "flame_tower": 1, "tesla_coil": 2, "naval_yard": 1, "sub_pen": 2,
+    "farm": 0, "mine": 0, "ironmine": 0, "smelter": 0, "smithy": 0, "scriptorium": 0, "clinic": 0, "bakery": 0, "war_lodge": 0, "barracks": 1, "vehicle_factory": 1,
+    "defense": 1, "flame_tower": 1, "tesla_coil": 1, "naval_yard": 1, "sub_pen": 1,
 }
-UNIT_ERA = {
-    "clubman": 0, "spearman": 0, "slinger": 0, "settlers": 0, "infantry": 1, "grenadier": 1, "rocket_soldier": 1, "tank": 1, "jeep": 1,
-    "light_tank": 1, "medium_tank": 1, "apc": 1, "artillery": 1, "mammoth": 1, "v2_launcher": 1, "mcv": 1, "patrol_boat": 1,
-    "tesla_tank": 2, "phase_tank": 2, "chrono_tank": 3, "shock_trooper": 3, "submarine": 2,
-    "flamethrower": 1, "attack_dog": 1, "destroyer": 1, "commando": 3, "cruiser": 2, "missile_sub": 2,
+UNIT_ERA = {  # rule (owner, 13 Oct 2026): the whole OpenRA roster is available by Historic (era 1); primitive Widelands troops and settlers are Prehistoric
+    "clubman": 0, "spearman": 0, "slinger": 0, "settlers": 0,
 }
+OPENRA_LATEST_ERA = 1
+MINDUSTRY_MILITARY_EARLIEST_ERA = 3
 
 
 MDY_ERA: dict[str, int] = {}  # every functional Mindustry building is Modern (era 2): the whole industrial line must be draftable inside one era; units are Dystopian
@@ -83,7 +82,7 @@ def entities() -> dict[str, dict[str, Any]]:
     for building, recipes in sorted(con.RECIPES.items()):
         for unit, rec in sorted(recipes.items()):
             out["unit:" + unit] = {"id": "unit:" + unit, "type": "unit", "game": "openra" if str(rec.get("definition", "")).startswith("openra.") else "hybrid",
-                                   "tribe": "", "label": rec["label"], "era": UNIT_ERA.get(unit, 1), "cost": dict(rec.get("cost", {})), "producer": building,
+                                   "tribe": "", "label": rec["label"], "era": UNIT_ERA.get(unit, OPENRA_LATEST_ERA), "cost": dict(rec.get("cost", {})), "producer": building,
                                    "foundation": unit in ("settlers",), "functional": True}
     return out
 
@@ -171,6 +170,17 @@ def check() -> list[str]:
             seen[e] = cid
             if ents.get(e, {}).get("foundation"):
                 problems.append(f"{cid}: foundation entity {e} needs no card")
+    for k, e in ents.items():  # era rules (owner, 13 Oct 2026)
+        if e["game"] in ("openra", "hybrid") and e["type"] == "unit" and e["era"] > OPENRA_LATEST_ERA and k.removeprefix("unit:") not in UNIT_ERA:
+            problems.append(f"{k}: an OpenRA unit must be available by Historic, not era {e['era']}")
+        if e["game"] == "openra" and e["era"] > OPENRA_LATEST_ERA:
+            problems.append(f"{k}: an OpenRA entity must be available by Historic, not era {e['era']}")
+        if e["game"] == "mindustry" and e["type"] == "unit" and e["era"] < MINDUSTRY_MILITARY_EARLIEST_ERA:
+            problems.append(f"{k}: a Mindustry military unit cannot precede the Dystopian era")
+        if e["game"] == "mindustry" and e["type"] == "building" and e["era"] < 2:
+            problems.append(f"{k}: Mindustry industry begins in Modern")
+        if e["game"] == "widelands" and e["era"] != 0:
+            problems.append(f"{k}: Widelands civilian production is Prehistoric")
     for k, e in ents.items():
         if not e["foundation"] and e["functional"] and k not in seen:
             problems.append(f"{k}: functional but on no card")

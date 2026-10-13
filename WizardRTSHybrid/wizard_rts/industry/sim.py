@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from wizard_rts.industry import engine as E
 from wizard_rts.industry import extraction as X
 from wizard_rts.industry import registry as R
 
@@ -31,6 +32,10 @@ class Industry:
 
     def __init__(self) -> None:
         self.belts: dict[tuple[int, int], dict[str, Any]] = {}
+        self.pipes: dict[tuple[int, int], dict[str, Any]] = {}  # conduit tiles: {d, liq, amt, line, cap}
+        self.pbelts: dict[tuple[int, int], dict[str, Any]] = {}  # payload conveyor tiles: {d, load, line}
+        self.heat_nets: list[list[str]] = []
+        self.heat_of: dict[str, int] = {}
         self.tile_owner: dict[tuple[int, int], str] = {}  # machine footprint tile -> building id
         self.links: dict[str, list[str]] = {}  # power node id -> linked building ids
         self.order: list[tuple[int, int]] = []
@@ -137,7 +142,10 @@ def rebuild(world: Any) -> None:
 
 def _powered_role(b: dict) -> bool:
     spec = R.block(b["kind"])
-    return bool(spec) and spec["role"] in ("crafter", "generator", "battery", "node", "unit_factory")
+    if not spec:
+        return False
+    return spec["role"] in ("crafter", "generator", "battery", "node", "unit_factory") or (
+        spec["role"] in E.POWER_ROLES and (spec["power_use_per_s"] > 0 or spec["power_buffer"] > 0 or spec["power_production_per_s"] > 0))
 
 
 # ------------------------------------------------------------------ machine init

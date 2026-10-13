@@ -23,6 +23,7 @@
     "rubber": 3,
     "rope": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -66,6 +67,7 @@
     "quartz": 1,
     "spidercloth": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -109,6 +111,7 @@
     "grout": 3,
     "reed": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -153,6 +156,7 @@
     "marble_column": 1,
     "cloth": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -188,6 +192,7 @@
     "log": 5,
     "reed": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -241,6 +246,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -249,6 +255,13 @@
    "problems": [
     "militarysite not implemented"
    ],
+   "enhanced_from": "amazons_fortress",
+   "enhancement_cost": {
+    "ironwood": 4,
+    "granite": 2,
+    "quartz": 2,
+    "rope": 2
+   },
    "runnable": false,
    "blocked_by": "militarysite not implemented"
   },
@@ -279,6 +292,20 @@
     "quartz": 1,
     "log": 2,
     "rubber": 2
+   },
+   "enhancement": {
+    "to": "amazons_fortification",
+    "cost": {
+     "ironwood": 4,
+     "granite": 2,
+     "quartz": 2,
+     "rope": 2
+    },
+    "return_on_dismantle": {
+     "ironwood": 2,
+     "granite": 1,
+     "quartz": 1
+    }
    },
    "inputs": {},
    "working_positions": {},
@@ -313,6 +340,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -321,6 +349,13 @@
    "problems": [
     "militarysite not implemented"
    ],
+   "enhanced_from": "amazons_tower",
+   "enhancement_cost": {
+    "ironwood": 1,
+    "rope": 1,
+    "balsa": 2,
+    "quartz": 1
+   },
    "runnable": false,
    "blocked_by": "militarysite not implemented"
   },
@@ -350,6 +385,7 @@
     "log": 1,
     "rope": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -388,6 +424,19 @@
     "log": 2,
     "ironwood": 2
    },
+   "enhancement": {
+    "to": "amazons_observation_tower",
+    "cost": {
+     "ironwood": 1,
+     "rope": 1,
+     "balsa": 2,
+     "quartz": 1
+    },
+    "return_on_dismantle": {
+     "ironwood": 1,
+     "balsa": 1
+    }
+   },
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -424,6 +473,7 @@
     "log": 1,
     "rope": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -460,6 +510,7 @@
     "ironwood": 3,
     "granite": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -494,6 +545,7 @@
     "diamond": 1,
     "quartz": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -526,6 +578,7 @@
     "granite": 4,
     "diamond": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -557,6 +610,7 @@
     "plank": 1,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -589,6 +643,17 @@
     "granite": 4,
     "spidercloth": 1
    },
+   "enhancement": {
+    "to": "atlanteans_tower_high",
+    "cost": {
+     "log": 1,
+     "plank": 1,
+     "granite": 2
+    },
+    "return_on_dismantle": {
+     "granite": 1
+    }
+   },
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -616,6 +681,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -624,6 +690,12 @@
    "problems": [
     "militarysite not implemented"
    ],
+   "enhanced_from": "atlanteans_tower",
+   "enhancement_cost": {
+    "log": 1,
+    "plank": 1,
+    "granite": 2
+   },
    "runnable": false,
    "blocked_by": "militarysite not implemented"
   },
@@ -647,6 +719,7 @@
     "plank": 2,
     "granite": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -677,6 +750,7 @@
     "blackwood": 5,
     "grout": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -724,6 +798,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -752,6 +827,13 @@
    "problems": [
     "militarysite not implemented"
    ],
+   "enhanced_from": "barbarians_fortress",
+   "enhancement_cost": {
+    "blackwood": 9,
+    "log": 5,
+    "granite": 4,
+    "grout": 2
+   },
    "runnable": false,
    "blocked_by": "militarysite not implemented"
   },
@@ -775,6 +857,21 @@
     "log": 5,
     "granite": 4,
     "grout": 2
+   },
+   "enhancement": {
+    "to": "barbarians_citadel",
+    "cost": {
+     "blackwood": 9,
+     "log": 5,
+     "granite": 4,
+     "grout": 2
+    },
+    "return_on_dismantle": {
+     "blackwood": 4,
+     "log": 2,
+     "granite": 3,
+     "grout": 1
+    }
    },
    "inputs": {},
    "working_positions": {},
@@ -825,6 +922,7 @@
    "buildcost": {
     "blackwood": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -876,6 +974,7 @@
     "log": 1,
     "granite": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -921,6 +1020,7 @@
     "granite": 2,
     "marble": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -939,6 +1039,13 @@
    "problems": [
     "militarysite not implemented"
    ],
+   "enhanced_from": "empire_outpost",
+   "enhancement_cost": {
+    "log": 1,
+    "plank": 2,
+    "granite": 1,
+    "marble": 1
+   },
    "runnable": false,
    "blocked_by": "militarysite not implemented"
   },
@@ -953,6 +1060,16 @@
    "buildcost": {
     "log": 1,
     "plank": 2
+   },
+   "enhancement": {
+    "to": "empire_sentry",
+    "cost": {
+     "plank": 1,
+     "granite": 1
+    },
+    "return_on_dismantle": {
+     "granite": 1
+    }
    },
    "inputs": {},
    "working_positions": {},
@@ -984,6 +1101,7 @@
    "dir": "tribes/buildings/militarysites/empire/castle",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1002,6 +1120,13 @@
    "problems": [
     "militarysite not implemented"
    ],
+   "enhanced_from": "empire_fortress",
+   "enhancement_cost": {
+    "plank": 5,
+    "marble_column": 4,
+    "marble": 4,
+    "granite": 2
+   },
    "runnable": false,
    "blocked_by": "militarysite not implemented"
   },
@@ -1019,6 +1144,21 @@
     "granite": 8,
     "marble": 2,
     "marble_column": 2
+   },
+   "enhancement": {
+    "to": "empire_castle",
+    "cost": {
+     "plank": 5,
+     "marble_column": 4,
+     "marble": 4,
+     "granite": 2
+    },
+    "return_on_dismantle": {
+     "plank": 2,
+     "marble_column": 2,
+     "marble": 3,
+     "granite": 1
+    }
    },
    "inputs": {},
    "working_positions": {},
@@ -1064,6 +1204,19 @@
     "granite": 1,
     "marble": 1
    },
+   "enhancement": {
+    "to": "empire_barrier",
+    "cost": {
+     "log": 1,
+     "plank": 2,
+     "granite": 1,
+     "marble": 1
+    },
+    "return_on_dismantle": {
+     "plank": 1,
+     "granite": 1
+    }
+   },
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1098,6 +1251,7 @@
     "log": 1,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1116,6 +1270,11 @@
    "problems": [
     "militarysite not implemented"
    ],
+   "enhanced_from": "empire_blockhouse",
+   "enhancement_cost": {
+    "plank": 1,
+    "granite": 1
+   },
    "runnable": false,
    "blocked_by": "militarysite not implemented"
   },
@@ -1133,6 +1292,7 @@
     "granite": 4,
     "marble_column": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1184,6 +1344,7 @@
     "log": 3,
     "reed": 5
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1236,6 +1397,7 @@
     "log": 1,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1287,6 +1449,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1339,6 +1502,7 @@
     "log": 4,
     "reed": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1389,6 +1553,16 @@
     "log": 3,
     "reed": 1
    },
+   "enhancement": {
+    "to": "frisians_wooden_tower_high",
+    "cost": {
+     "log": 2,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "log": 1
+    }
+   },
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1436,6 +1610,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -1455,6 +1630,11 @@
    "problems": [
     "militarysite not implemented"
    ],
+   "enhanced_from": "frisians_wooden_tower",
+   "enhancement_cost": {
+    "log": 2,
+    "reed": 1
+   },
    "runnable": false,
    "blocked_by": "militarysite not implemented"
   },
@@ -1484,6 +1664,7 @@
     "rope": 2,
     "granite": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_cassava_farmer": 1
@@ -1568,6 +1749,7 @@
     "granite": 4,
     "rope": 2
    },
+   "enhancement": {},
    "inputs": {
     "cassavaroot": 4,
     "water": 8
@@ -1668,6 +1850,7 @@
     "granite": 4,
     "ironwood": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -1755,6 +1938,7 @@
     "rubber": 2,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {
     "cocoa_beans": 4,
     "water": 8
@@ -1842,6 +2026,7 @@
     "rubber": 2,
     "granite": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_cocoa_farmer": 1
@@ -1937,6 +2122,7 @@
     "rubber": 3,
     "rope": 1
    },
+   "enhancement": {},
    "inputs": {
     "ironwood": 2,
     "balsa": 6,
@@ -2367,6 +2553,7 @@
     "rubber": 3,
     "rope": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -2437,6 +2624,7 @@
     "rope": 2,
     "rubber": 1
    },
+   "enhancement": {},
    "inputs": {
     "coal": 3,
     "bread": 6,
@@ -2529,6 +2717,7 @@
     "granite": 5,
     "ironwood": 2
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "gold_dust": 8
@@ -2621,6 +2810,7 @@
     "granite": 2,
     "rope": 2
    },
+   "enhancement": {},
    "inputs": {
     "coal": 3,
     "fish": 3
@@ -2735,6 +2925,7 @@
     "log": 4,
     "rope": 1
    },
+   "enhancement": {},
    "inputs": {
     "ration": 3,
     "water": 10
@@ -2839,6 +3030,7 @@
     "log": 3,
     "rope": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_hunter_gatherer": 1
@@ -2923,6 +3115,7 @@
     "rubber": 5,
     "rope": 2
    },
+   "enhancement": {},
    "inputs": {
     "spear_wooden": 5,
     "tunic": 5,
@@ -3012,6 +3205,7 @@
     "log": 3,
     "rope": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_jungle_preserver": 1
@@ -3080,6 +3274,7 @@
    "buildcost": {
     "log": 5
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_liana_cutter": 1
@@ -3144,6 +3339,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_woodcutter_master": 1
@@ -3216,6 +3412,12 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "amazons_woodcutters_hut",
+   "enhancement_cost": {
+    "log": 1,
+    "granite": 1,
+    "rope": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -3239,6 +3441,7 @@
     "granite": 3,
     "rope": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_jungle_master": 1
@@ -3365,6 +3568,7 @@
     "granite": 2,
     "rubber": 1
    },
+   "enhancement": {},
    "inputs": {
     "liana": 8
    },
@@ -3443,6 +3647,7 @@
     "log": 2,
     "rope": 1
    },
+   "enhancement": {},
    "inputs": {
     "ration": 2
    },
@@ -3527,6 +3732,7 @@
     "rubber": 3,
     "rope": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 5,
     "balsa": 5,
@@ -3604,6 +3810,7 @@
     "rubber": 2,
     "granite": 2
    },
+   "enhancement": {},
    "inputs": {
     "granite": 4,
     "quartz": 7,
@@ -4217,6 +4424,7 @@
    "buildcost": {
     "log": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_stonecutter": 1
@@ -4282,6 +4490,7 @@
     "log": 4,
     "rope": 1
    },
+   "enhancement": {},
    "inputs": {
     "ration": 8
    },
@@ -4461,6 +4670,7 @@
     "log": 5,
     "rope": 2
    },
+   "enhancement": {},
    "inputs": {
     "cassavaroot": 8,
     "water": 8
@@ -4573,6 +4783,7 @@
     "granite": 1,
     "rubber": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_carrier": 1
@@ -4626,6 +4837,7 @@
     "log": 1,
     "rope": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "amazons_wilderness_keeper": 1
@@ -4718,6 +4930,18 @@
    "buildcost": {
     "log": 4
    },
+   "enhancement": {
+    "to": "amazons_rare_tree_cutters_hut",
+    "cost": {
+     "log": 1,
+     "granite": 1,
+     "rope": 1
+    },
+    "return_on_dismantle": {
+     "log": 1,
+     "rope": 1
+    }
+   },
    "inputs": {},
    "working_positions": {
     "amazons_woodcutter": 1
@@ -4787,6 +5011,7 @@
     "plank": 2,
     "quartz": 1
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron": 8,
@@ -4908,6 +5133,7 @@
     "plank": 2,
     "granite": 3
    },
+   "enhancement": {},
    "inputs": {
     "water": 8,
     "cornmeal": 4,
@@ -4993,6 +5219,7 @@
     "plank": 2,
     "spidercloth": 3
    },
+   "enhancement": {},
    "inputs": {
     "tabard": 8,
     "trident_light": 8,
@@ -5068,6 +5295,7 @@
     "granite": 2,
     "log": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_blackroot_farmer": 1
@@ -5136,6 +5364,7 @@
     "granite": 3,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -5227,6 +5456,7 @@
     "plank": 4,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "smoked_fish": 10,
     "smoked_meat": 6,
@@ -5379,6 +5609,7 @@
     "plank": 4,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "smoked_fish": 10,
     "smoked_meat": 6,
@@ -5718,6 +5949,7 @@
     "plank": 2,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_farmer": 1
@@ -5787,6 +6019,7 @@
     "granite": 3,
     "spidercloth": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 6,
     "spidercloth": 3
@@ -5862,6 +6095,7 @@
     "plank": 1,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_fishbreeder": 1
@@ -5905,6 +6139,7 @@
     "log": 1,
     "plank": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_fisher": 1
@@ -5949,6 +6184,7 @@
     "plank": 1,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_forester": 1
@@ -5999,6 +6235,7 @@
     "granite": 1,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {
     "gold": 5
    },
@@ -6085,6 +6322,7 @@
     "plank": 4,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "smoked_fish": 10,
     "smoked_meat": 6,
@@ -6211,6 +6449,7 @@
     "granite": 2,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {
     "water": 8,
     "corn": 8
@@ -6285,6 +6524,7 @@
     "plank": 1,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_hunter": 1
@@ -6341,6 +6581,7 @@
     "plank": 4,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "smoked_fish": 10,
     "smoked_meat": 6,
@@ -6471,6 +6712,7 @@
     "granite": 3,
     "plank": 2
    },
+   "enhancement": {},
    "inputs": {
     "corn": 6,
     "blackroot": 6
@@ -6706,6 +6948,7 @@
     "log": 2,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_stonecutter": 1
@@ -6749,6 +6992,7 @@
     "log": 2,
     "granite": 3
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -6833,6 +7077,7 @@
     "log": 2,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {
     "smoked_fish": 2,
     "bread": 2
@@ -6944,6 +7189,7 @@
     "granite": 3,
     "spidercloth": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 2,
     "plank": 10,
@@ -7031,6 +7277,7 @@
     "plank": 1,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron_ore": 8,
@@ -7223,6 +7470,7 @@
     "plank": 1,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "fish": 4,
     "meat": 4,
@@ -7401,6 +7649,7 @@
     "granite": 2,
     "plank": 2
    },
+   "enhancement": {},
    "inputs": {
     "water": 7,
     "corn": 7
@@ -7479,6 +7728,7 @@
     "plank": 2,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 6,
     "spider_silk": 4,
@@ -8076,6 +8326,7 @@
     "spidercloth": 1,
     "quartz": 1
    },
+   "enhancement": {},
    "inputs": {
     "plank": 8,
     "coal": 8,
@@ -8407,6 +8658,7 @@
     "granite": 4,
     "plank": 2
    },
+   "enhancement": {},
    "inputs": {
     "spider_silk": 8,
     "gold_thread": 4
@@ -8586,6 +8838,7 @@
     "granite": 1,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_carrier": 1
@@ -8645,6 +8898,7 @@
     "log": 2,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "atlanteans_woodcutter": 1
@@ -8691,6 +8945,21 @@
     }
    },
    "buildcost": {},
+   "enhancement": {
+    "to": "barbarians_warmill",
+    "cost": {
+     "log": 1,
+     "blackwood": 1,
+     "granite": 2,
+     "grout": 1,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "blackwood": 1,
+     "granite": 1,
+     "grout": 1
+    }
+   },
    "inputs": {
     "coal": 8,
     "iron": 8
@@ -8901,6 +9170,14 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_metal_workshop",
+   "enhancement_cost": {
+    "log": 1,
+    "blackwood": 1,
+    "granite": 2,
+    "grout": 1,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -8937,6 +9214,7 @@
     "granite": 2,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "water": 6,
     "wheat": 6
@@ -9022,6 +9300,7 @@
     "grout": 4,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {
     "ax": 8,
     "recruit": 8
@@ -9091,6 +9370,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "fish": 4,
     "meat": 4,
@@ -9276,6 +9556,12 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_inn",
+   "enhancement_cost": {
+    "log": 1,
+    "grout": 3,
+    "reed": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -9301,6 +9587,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "water": 8,
     "wheat": 8
@@ -9350,6 +9637,12 @@
    "spritesheets": {},
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_micro_brewery",
+   "enhancement_cost": {
+    "log": 3,
+    "granite": 1,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -9379,6 +9672,7 @@
     "granite": 2,
     "blackwood": 1
    },
+   "enhancement": {},
    "inputs": {
     "water": 8,
     "wheat": 8
@@ -9453,6 +9747,7 @@
     "grout": 2,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -9545,6 +9840,17 @@
    "buildcost": {
     "log": 4,
     "granite": 2
+   },
+   "enhancement": {
+    "to": "barbarians_coalmine_deep",
+    "cost": {
+     "log": 4,
+     "granite": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "granite": 1
+    }
    },
    "inputs": {
     "ration": 6
@@ -9680,6 +9986,17 @@
     }
    },
    "buildcost": {},
+   "enhancement": {
+    "to": "barbarians_coalmine_deeper",
+    "cost": {
+     "log": 4,
+     "granite": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "granite": 1
+    }
+   },
    "inputs": {
     "snack": 6
    },
@@ -9800,6 +10117,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_coalmine",
+   "enhancement_cost": {
+    "log": 4,
+    "granite": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -9825,6 +10147,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 6
    },
@@ -9951,6 +10274,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_coalmine_deep",
+   "enhancement_cost": {
+    "log": 4,
+    "granite": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -9974,6 +10302,7 @@
     "blackwood": 1,
     "granite": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_farmer": 1
@@ -10083,6 +10412,7 @@
     "granite": 3,
     "cloth": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 6,
     "cloth": 3
@@ -10152,6 +10482,7 @@
    "buildcost": {
     "log": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_fisher": 1
@@ -10205,6 +10536,7 @@
     "log": 4,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_gamekeeper": 1
@@ -10272,6 +10604,17 @@
    "buildcost": {
     "log": 4,
     "granite": 2
+   },
+   "enhancement": {
+    "to": "barbarians_goldmine_deep",
+    "cost": {
+     "log": 4,
+     "granite": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "granite": 1
+    }
    },
    "inputs": {
     "ration": 6
@@ -10371,6 +10714,17 @@
     }
    },
    "buildcost": {},
+   "enhancement": {
+    "to": "barbarians_goldmine_deeper",
+    "cost": {
+     "log": 4,
+     "granite": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "granite": 1
+    }
+   },
    "inputs": {
     "snack": 6
    },
@@ -10491,6 +10845,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_goldmine",
+   "enhancement_cost": {
+    "log": 4,
+    "granite": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -10516,6 +10875,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 6
    },
@@ -10637,6 +10997,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_goldmine_deep",
+   "enhancement_cost": {
+    "log": 4,
+    "granite": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -10665,6 +11030,7 @@
     "log": 4,
     "granite": 2
    },
+   "enhancement": {},
    "inputs": {
     "ration": 8
    },
@@ -10805,6 +11171,7 @@
     "grout": 2,
     "reed": 3
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron": 8,
@@ -11001,6 +11368,7 @@
     "log": 4,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_hunter": 1
@@ -11060,6 +11428,17 @@
     }
    },
    "buildcost": {},
+   "enhancement": {
+    "to": "barbarians_big_inn",
+    "cost": {
+     "log": 1,
+     "grout": 3,
+     "reed": 2
+    },
+    "return_on_dismantle": {
+     "grout": 2
+    }
+   },
    "inputs": {
     "fish": 4,
     "meat": 4,
@@ -11194,6 +11573,12 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_tavern",
+   "enhancement_cost": {
+    "log": 2,
+    "grout": 2,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -11221,6 +11606,17 @@
    "buildcost": {
     "log": 4,
     "granite": 2
+   },
+   "enhancement": {
+    "to": "barbarians_ironmine_deep",
+    "cost": {
+     "log": 4,
+     "granite": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "granite": 1
+    }
    },
    "inputs": {
     "ration": 6
@@ -11320,6 +11716,17 @@
     }
    },
    "buildcost": {},
+   "enhancement": {
+    "to": "barbarians_ironmine_deeper",
+    "cost": {
+     "log": 4,
+     "granite": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "granite": 1
+    }
+   },
    "inputs": {
     "snack": 6
    },
@@ -11440,6 +11847,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_ironmine",
+   "enhancement_cost": {
+    "log": 4,
+    "granite": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -11465,6 +11877,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 6
    },
@@ -11591,6 +12004,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_ironmine_deep",
+   "enhancement_cost": {
+    "log": 4,
+    "granite": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -11620,6 +12038,7 @@
     "granite": 2,
     "blackwood": 1
    },
+   "enhancement": {},
    "inputs": {
     "granite": 6,
     "water": 6,
@@ -11712,6 +12131,7 @@
    "buildcost": {
     "log": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_lumberjack": 1
@@ -11773,6 +12193,21 @@
     "granite": 2,
     "grout": 1,
     "reed": 1
+   },
+   "enhancement": {
+    "to": "barbarians_ax_workshop",
+    "cost": {
+     "log": 1,
+     "blackwood": 1,
+     "granite": 2,
+     "grout": 1,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "blackwood": 1,
+     "granite": 1,
+     "grout": 1
+    }
    },
    "inputs": {
     "log": 8,
@@ -12306,6 +12741,18 @@
     "granite": 3,
     "reed": 2
    },
+   "enhancement": {
+    "to": "barbarians_brewery",
+    "cost": {
+     "log": 3,
+     "granite": 1,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "log": 1,
+     "granite": 1
+    }
+   },
    "inputs": {
     "water": 8,
     "wheat": 8
@@ -12406,6 +12853,7 @@
    "buildcost": {
     "log": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_stonemason": 1
@@ -12458,6 +12906,7 @@
    "buildcost": {
     "log": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_ranger": 1
@@ -12520,6 +12969,7 @@
     "log": 5,
     "granite": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_gardener": 1
@@ -12587,6 +13037,7 @@
     "log": 2,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {
     "ration": 2
    },
@@ -12686,6 +13137,7 @@
     "granite": 3,
     "cloth": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 2,
     "blackwood": 10,
@@ -12774,6 +13226,7 @@
     "grout": 1,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron_ore": 8,
@@ -12966,6 +13419,18 @@
     "granite": 1,
     "reed": 1
    },
+   "enhancement": {
+    "to": "barbarians_inn",
+    "cost": {
+     "log": 2,
+     "grout": 2,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "log": 1,
+     "grout": 1
+    }
+   },
    "inputs": {
     "fish": 4,
     "meat": 4,
@@ -13067,6 +13532,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron": 8,
@@ -13449,6 +13915,14 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "barbarians_ax_workshop",
+   "enhancement_cost": {
+    "log": 1,
+    "blackwood": 1,
+    "granite": 2,
+    "grout": 1,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -13484,6 +13958,7 @@
     "granite": 2,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "reed": 8
    },
@@ -13556,6 +14031,7 @@
    "buildcost": {
     "log": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "barbarians_carrier": 1
@@ -13634,6 +14110,7 @@
     "log": 3,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -13730,6 +14207,7 @@
     "marble": 2,
     "marble_column": 3
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron": 8,
@@ -13973,6 +14451,7 @@
     "plank": 2,
     "granite": 3
    },
+   "enhancement": {},
    "inputs": {
     "water": 6,
     "flour": 6
@@ -14076,6 +14555,7 @@
     "marble_column": 2,
     "cloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "armor_helmet": 8,
     "spear_wooden": 8,
@@ -14144,6 +14624,7 @@
     "plank": 2,
     "granite": 2
    },
+   "enhancement": {},
    "inputs": {
     "water": 7,
     "wheat": 7
@@ -14233,6 +14714,7 @@
     "granite": 2,
     "marble": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -14313,6 +14795,17 @@
    "buildcost": {
     "log": 4,
     "plank": 2
+   },
+   "enhancement": {
+    "to": "empire_coalmine_deep",
+    "cost": {
+     "log": 4,
+     "plank": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "plank": 1
+    }
    },
    "inputs": {
     "ration": 6,
@@ -14453,6 +14946,7 @@
    "dir": "tribes/buildings/productionsites/empire/coalmine_deep",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 6,
     "beer": 6
@@ -14591,6 +15085,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "empire_coalmine",
+   "enhancement_cost": {
+    "log": 4,
+    "plank": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -14607,6 +15106,7 @@
     "granite": 2,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {
     "water": 8,
     "wheat": 8
@@ -14695,6 +15195,7 @@
     "marble": 2,
     "marble_column": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "empire_farmer": 1
@@ -14767,6 +15268,7 @@
     "granite": 3,
     "cloth": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 6,
     "cloth": 3
@@ -14862,6 +15364,7 @@
     "plank": 1,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "empire_fisher": 1
@@ -14909,6 +15412,7 @@
     "plank": 1,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "empire_forester": 1
@@ -14954,6 +15458,17 @@
    "buildcost": {
     "log": 4,
     "plank": 2
+   },
+   "enhancement": {
+    "to": "empire_goldmine_deep",
+    "cost": {
+     "log": 4,
+     "plank": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "plank": 1
+    }
    },
    "inputs": {
     "ration": 6,
@@ -15089,6 +15604,7 @@
    "dir": "tribes/buildings/productionsites/empire/goldmine_deep",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 6,
     "wine": 6
@@ -15217,6 +15733,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "empire_goldmine",
+   "enhancement_cost": {
+    "log": 4,
+    "plank": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -15233,6 +15754,7 @@
     "plank": 1,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "empire_hunter": 1
@@ -15276,6 +15798,7 @@
    "dir": "tribes/buildings/productionsites/empire/inn",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "fish": 6,
     "meat": 6,
@@ -15409,6 +15932,12 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "empire_tavern",
+   "enhancement_cost": {
+    "plank": 2,
+    "marble": 2,
+    "marble_column": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -15423,6 +15952,17 @@
    "buildcost": {
     "log": 4,
     "plank": 2
+   },
+   "enhancement": {
+    "to": "empire_ironmine_deep",
+    "cost": {
+     "log": 4,
+     "plank": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "plank": 1
+    }
    },
    "inputs": {
     "ration": 6,
@@ -15563,6 +16103,7 @@
    "dir": "tribes/buildings/productionsites/empire/ironmine_deep",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 6,
     "beer": 6
@@ -15696,6 +16237,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "empire_ironmine",
+   "enhancement_cost": {
+    "log": 4,
+    "plank": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -15711,6 +16257,7 @@
     "log": 2,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "empire_lumberjack": 1
@@ -15756,6 +16303,17 @@
    "buildcost": {
     "log": 4,
     "plank": 2
+   },
+   "enhancement": {
+    "to": "empire_marblemine_deep",
+    "cost": {
+     "log": 4,
+     "plank": 2
+    },
+    "return_on_dismantle": {
+     "log": 2,
+     "plank": 1
+    }
    },
    "inputs": {
     "ration": 6,
@@ -16066,6 +16624,7 @@
    "dir": "tribes/buildings/productionsites/empire/marblemine_deep",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 6,
     "wine": 6
@@ -16254,6 +16813,11 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "empire_marblemine",
+   "enhancement_cost": {
+    "log": 4,
+    "plank": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -16270,6 +16834,7 @@
     "granite": 3,
     "marble": 1
    },
+   "enhancement": {},
    "inputs": {
     "wheat": 6
    },
@@ -16375,6 +16940,7 @@
     "granite": 2,
     "marble_column": 2
    },
+   "enhancement": {},
    "inputs": {
     "water": 7,
     "wheat": 7
@@ -16463,6 +17029,7 @@
     "log": 2,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "empire_stonemason": 1
@@ -16559,6 +17126,7 @@
     "granite": 1,
     "plank": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -16645,6 +17213,7 @@
     "log": 2,
     "granite": 1
    },
+   "enhancement": {},
    "inputs": {
     "ration": 2
    },
@@ -16725,6 +17294,7 @@
     "granite": 2,
     "plank": 2
    },
+   "enhancement": {},
    "inputs": {
     "water": 7,
     "wheat": 7
@@ -16815,6 +17385,7 @@
     "granite": 3,
     "cloth": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 2,
     "plank": 10,
@@ -16915,6 +17486,7 @@
     "granite": 4,
     "marble": 2
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron_ore": 8,
@@ -17129,6 +17701,7 @@
     "granite": 1,
     "marble": 3
    },
+   "enhancement": {},
    "inputs": {
     "marble": 6
    },
@@ -17215,6 +17788,18 @@
     "plank": 2,
     "granite": 2,
     "marble": 1
+   },
+   "enhancement": {
+    "to": "empire_inn",
+    "cost": {
+     "plank": 2,
+     "marble": 2,
+     "marble_column": 1
+    },
+    "return_on_dismantle": {
+     "plank": 1,
+     "marble": 2
+    }
    },
    "inputs": {
     "fish": 5,
@@ -17315,6 +17900,7 @@
     "marble": 2,
     "marble_column": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 8,
     "iron": 8
@@ -17918,6 +18504,7 @@
     "marble": 2,
     "marble_column": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "empire_vinefarmer": 1
@@ -17990,6 +18577,7 @@
     "marble": 2,
     "marble_column": 3
    },
+   "enhancement": {},
    "inputs": {
     "plank": 8,
     "coal": 8,
@@ -18358,6 +18946,7 @@
     "granite": 3,
     "marble": 1
    },
+   "enhancement": {},
    "inputs": {
     "wool": 6
    },
@@ -18450,6 +19039,7 @@
     "granite": 1,
     "marble": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "empire_carrier": 1
@@ -18524,6 +19114,7 @@
     "marble": 2,
     "marble_column": 1
    },
+   "enhancement": {},
    "inputs": {
     "grape": 8
    },
@@ -18610,6 +19201,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {
     "water": 5,
     "fruit": 2
@@ -18804,6 +19396,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron": 8,
@@ -19015,6 +19608,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_armor_smithy_small",
+   "enhancement_cost": {
+    "brick": 2,
+    "granite": 1,
+    "log": 1,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -19038,6 +19638,19 @@
     "granite": 1,
     "log": 2,
     "reed": 2
+   },
+   "enhancement": {
+    "to": "frisians_armor_smithy_large",
+    "cost": {
+     "brick": 2,
+     "granite": 1,
+     "log": 1,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "brick": 2,
+     "granite": 1
+    }
    },
    "inputs": {
     "coal": 8,
@@ -19278,6 +19891,20 @@
     "log": 2,
     "reed": 2
    },
+   "enhancement": {
+    "to": "frisians_honey_bread_bakery",
+    "cost": {
+     "brick": 3,
+     "log": 3,
+     "granite": 1,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "brick": 2,
+     "granite": 1,
+     "log": 2
+    }
+   },
    "inputs": {
     "barley": 7,
     "water": 7
@@ -19405,6 +20032,7 @@
     "log": 3,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "sword_short": 8,
     "fur_garment": 8,
@@ -19506,6 +20134,7 @@
     "log": 1,
     "reed": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_beekeeper": 1
@@ -19570,6 +20199,7 @@
     "log": 2,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_berry_farmer": 1
@@ -19635,6 +20265,7 @@
     "log": 1,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "iron": 7,
     "log": 7,
@@ -20200,6 +20831,19 @@
     "log": 2,
     "reed": 2
    },
+   "enhancement": {
+    "to": "frisians_mead_brewery",
+    "cost": {
+     "brick": 3,
+     "granite": 2,
+     "log": 1,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "brick": 2,
+     "granite": 1
+    }
+   },
    "inputs": {
     "barley": 7,
     "water": 7
@@ -20327,6 +20971,7 @@
     "log": 1,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "granite": 3,
     "clay": 6,
@@ -20431,6 +21076,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 6
    },
@@ -20558,6 +21204,7 @@
     "log": 1,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 8,
     "clay": 4
@@ -20659,6 +21306,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {
     "water": 4
    },
@@ -20835,6 +21483,20 @@
     "log": 2,
     "reed": 1
    },
+   "enhancement": {
+    "to": "frisians_coalmine_deep",
+    "cost": {
+     "brick": 2,
+     "granite": 1,
+     "log": 1,
+     "reed": 2
+    },
+    "return_on_dismantle": {
+     "brick": 1,
+     "log": 1,
+     "reed": 1
+    }
+   },
    "inputs": {
     "ration": 8
    },
@@ -20984,6 +21646,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 8
    },
@@ -21131,6 +21794,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_coalmine",
+   "enhancement_cost": {
+    "brick": 2,
+    "granite": 1,
+    "log": 1,
+    "reed": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -21154,6 +21824,7 @@
     "log": 2,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_fruit_collector": 1
@@ -21219,6 +21890,7 @@
     "granite": 2,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "log": 8
    },
@@ -21339,6 +22011,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "fruit": 4,
     "honey_bread": 4,
@@ -21471,6 +22144,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_tavern",
+   "enhancement_cost": {
+    "brick": 1,
+    "granite": 2,
+    "log": 1,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -21495,6 +22175,7 @@
     "log": 2,
     "reed": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_farmer": 1
@@ -21608,6 +22289,7 @@
     "reed": 2,
     "cloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 6,
     "cloth": 3
@@ -21693,6 +22375,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_fisher": 1
@@ -21757,6 +22440,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_forester": 1
@@ -21822,6 +22506,7 @@
     "log": 1,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "iron_ore": 8,
@@ -22054,6 +22739,20 @@
     "log": 2,
     "reed": 1
    },
+   "enhancement": {
+    "to": "frisians_goldmine_deep",
+    "cost": {
+     "brick": 2,
+     "granite": 1,
+     "log": 1,
+     "reed": 2
+    },
+    "return_on_dismantle": {
+     "brick": 1,
+     "log": 1,
+     "reed": 1
+    }
+   },
    "inputs": {
     "ration": 8
    },
@@ -22167,6 +22866,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 8
    },
@@ -22304,6 +23004,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_goldmine",
+   "enhancement_cost": {
+    "brick": 2,
+    "granite": 1,
+    "log": 1,
+    "reed": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -22323,6 +23030,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "barley": 8,
     "water": 8,
@@ -22543,6 +23251,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_bakery",
+   "enhancement_cost": {
+    "brick": 3,
+    "log": 3,
+    "granite": 1,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -22566,6 +23281,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_hunter": 1
@@ -22677,6 +23393,20 @@
     "granite": 2,
     "log": 2,
     "reed": 1
+   },
+   "enhancement": {
+    "to": "frisians_ironmine_deep",
+    "cost": {
+     "brick": 2,
+     "granite": 1,
+     "log": 1,
+     "reed": 2
+    },
+    "return_on_dismantle": {
+     "brick": 1,
+     "log": 1,
+     "reed": 1
+    }
    },
    "inputs": {
     "ration": 8
@@ -22791,6 +23521,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 8
    },
@@ -22938,6 +23669,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_ironmine",
+   "enhancement_cost": {
+    "brick": 2,
+    "granite": 1,
+    "log": 1,
+    "reed": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -22957,6 +23695,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "barley": 8,
     "water": 8,
@@ -23177,6 +23916,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_brewery",
+   "enhancement_cost": {
+    "brick": 3,
+    "granite": 2,
+    "log": 1,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -23200,6 +23946,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_stonemason": 1
@@ -23265,6 +24012,7 @@
     "log": 2,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "coal": 8,
     "scrap_iron": 8,
@@ -23566,6 +24314,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_reed_farmer": 1
@@ -23655,6 +24404,7 @@
     "log": 2,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "barley": 8,
     "water": 8
@@ -23860,6 +24610,20 @@
     "log": 2,
     "reed": 1
    },
+   "enhancement": {
+    "to": "frisians_rockmine_deep",
+    "cost": {
+     "brick": 2,
+     "granite": 1,
+     "log": 1,
+     "reed": 2
+    },
+    "return_on_dismantle": {
+     "brick": 1,
+     "log": 1,
+     "reed": 1
+    }
+   },
    "inputs": {
     "ration": 8
    },
@@ -24014,6 +24778,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "meal": 8
    },
@@ -24166,6 +24931,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_rockmine",
+   "enhancement_cost": {
+    "brick": 2,
+    "granite": 1,
+    "log": 1,
+    "reed": 2
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -24190,6 +24962,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {
     "ration": 2
    },
@@ -24277,6 +25050,19 @@
     "granite": 1,
     "log": 1,
     "reed": 1
+   },
+   "enhancement": {
+    "to": "frisians_tailors_shop",
+    "cost": {
+     "brick": 1,
+     "granite": 2,
+     "log": 2,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "granite": 1,
+     "log": 1
+    }
    },
    "inputs": {
     "fur": 8
@@ -24404,6 +25190,7 @@
     "reed": 2,
     "cloth": 1
    },
+   "enhancement": {},
    "inputs": {
     "log": 10,
     "cloth": 6,
@@ -24494,6 +25281,7 @@
     "log": 1,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "meat": 6,
     "fish": 6,
@@ -24683,6 +25471,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "fur_garment": 8,
     "iron": 8,
@@ -24811,6 +25600,13 @@
    },
    "executable": true,
    "problems": [],
+   "enhanced_from": "frisians_sewing_room",
+   "enhancement_cost": {
+    "brick": 1,
+    "granite": 2,
+    "log": 2,
+    "reed": 1
+   },
    "runnable": true,
    "blocked_by": ""
   },
@@ -24833,6 +25629,20 @@
     "brick": 3,
     "log": 2,
     "reed": 2
+   },
+   "enhancement": {
+    "to": "frisians_drinking_hall",
+    "cost": {
+     "brick": 1,
+     "granite": 2,
+     "log": 1,
+     "reed": 1
+    },
+    "return_on_dismantle": {
+     "brick": 1,
+     "granite": 1,
+     "reed": 1
+    }
    },
    "inputs": {
     "fruit": 4,
@@ -25055,6 +25865,7 @@
     "log": 3,
     "reed": 2
    },
+   "enhancement": {},
    "inputs": {
     "fur": 6,
     "reed": 6
@@ -25156,6 +25967,7 @@
     "granite": 2,
     "brick": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_carrier": 1
@@ -25227,6 +26039,7 @@
     "log": 1,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {
     "frisians_woodcutter": 1
@@ -25301,6 +26114,7 @@
     "rope": 2,
     "gold": 3
    },
+   "enhancement": {},
    "inputs": {
     "fish": 5,
     "meat": 5,
@@ -26559,6 +27373,7 @@
     "rope": 2,
     "gold": 1
    },
+   "enhancement": {},
    "inputs": {
     "fish": 4,
     "meat": 4,
@@ -26936,6 +27751,7 @@
     "gold": 2,
     "log": 4
    },
+   "enhancement": {},
    "inputs": {
     "smoked_fish": 6,
     "smoked_meat": 6,
@@ -27536,6 +28352,7 @@
     "diamond": 2,
     "gold": 2
    },
+   "enhancement": {},
    "inputs": {
     "smoked_fish": 6,
     "smoked_meat": 6,
@@ -28167,6 +28984,7 @@
     "gold": 4,
     "reed": 3
    },
+   "enhancement": {},
    "inputs": {
     "meat": 6,
     "fish": 6,
@@ -28535,6 +29353,7 @@
     "gold": 4,
     "reed": 3
    },
+   "enhancement": {},
    "inputs": {
     "fish": 6,
     "meat": 6,
@@ -29660,6 +30479,24 @@
     "plank": 5,
     "marble_column": 2
    },
+   "enhancement": {
+    "to": "empire_colosseum",
+    "cost": {
+     "plank": 2,
+     "granite": 4,
+     "marble": 4,
+     "cloth": 2,
+     "gold": 4,
+     "marble_column": 4
+    },
+    "return_on_dismantle": {
+     "plank": 1,
+     "granite": 2,
+     "marble": 2,
+     "gold": 2,
+     "marble_column": 2
+    }
+   },
    "inputs": {
     "fish": 6,
     "meat": 6,
@@ -29822,6 +30659,7 @@
    "dir": "tribes/buildings/trainingsites/empire/colosseum",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {
     "fish": 8,
     "meat": 8,
@@ -30064,6 +30902,15 @@
    "problems": [
     "trainingsite not implemented"
    ],
+   "enhanced_from": "empire_arena",
+   "enhancement_cost": {
+    "plank": 2,
+    "granite": 4,
+    "marble": 4,
+    "cloth": 2,
+    "gold": 4,
+    "marble_column": 4
+   },
    "runnable": false,
    "blocked_by": "trainingsite not implemented"
   },
@@ -30084,6 +30931,7 @@
     "marble_column": 3,
     "cloth": 2
    },
+   "enhancement": {},
    "inputs": {
     "fish": 6,
     "meat": 6,
@@ -31206,6 +32054,7 @@
     "gold": 3,
     "reed": 4
    },
+   "enhancement": {},
    "inputs": {
     "smoked_fish": 6,
     "smoked_meat": 6,
@@ -32070,6 +32919,7 @@
     "gold": 1,
     "reed": 3
    },
+   "enhancement": {},
    "inputs": {
     "beer": 6,
     "bread_frisians": 6,
@@ -32863,6 +33713,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -32904,6 +33755,7 @@
     "gold": 2,
     "rope": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -32942,6 +33794,7 @@
     "rubber": 1,
     "rope": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -32969,6 +33822,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -32997,6 +33851,7 @@
     "spidercloth": 3,
     "gold": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33050,6 +33905,7 @@
     "quartz": 1,
     "spidercloth": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33070,6 +33926,7 @@
    "dir": "tribes/buildings/warehouses/barbarians/headquarters",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33108,6 +33965,7 @@
     }
    },
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33136,6 +33994,7 @@
     "reed": 4,
     "gold": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33182,6 +34041,7 @@
     "grout": 3,
     "reed": 1
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33221,6 +34081,7 @@
    "dir": "tribes/buildings/warehouses/empire/headquarters",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33251,6 +34112,7 @@
    "dir": "tribes/buildings/warehouses/empire/headquarters_shipwreck",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33289,6 +34151,7 @@
     "cloth": 3,
     "gold": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33335,6 +34198,7 @@
     "marble": 3,
     "marble_column": 2
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33365,6 +34229,7 @@
    "dir": "tribes/buildings/warehouses/frisians/headquarters",
    "animations": {},
    "buildcost": {},
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33403,6 +34268,7 @@
     "gold": 2,
     "reed": 4
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},
@@ -33448,6 +34314,7 @@
     "log": 2,
     "reed": 3
    },
+   "enhancement": {},
    "inputs": {},
    "working_positions": {},
    "programs": {},

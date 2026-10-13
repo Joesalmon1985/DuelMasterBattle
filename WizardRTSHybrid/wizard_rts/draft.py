@@ -33,9 +33,9 @@ def enabled(world: Any) -> bool:
 
 
 def state(world: Any) -> dict[str, Any]:
-    st = world.__dict__.get("draft")
+    st = world.__dict__.get("draft_state")
     if st is None:
-        st = world.draft = {"era": -1, "round": ROUNDS, "open_ms": 0, "ring": [], "packs": {}, "chosen": {}, "reserve": [], "bonus": {}, "log": [],
+        st = world.draft_state = {"era": -1, "round": ROUNDS, "open_ms": 0, "ring": [], "packs": {}, "chosen": {}, "reserve": [], "bonus": {}, "log": [],
                             "default_picks": 0, "phases": 0, "duplicated_cards": 0}
     return st
 

@@ -8,7 +8,7 @@ SEED = 507
 
 
 def world(draft_v2=True):
-    w = HybridWorld(SEED, profile="campaign", map_size="small") if False else HybridWorld(SEED, profile="campaign")
+    w = HybridWorld(SEED, profile="campaign", legacy_draft=True)
     w.ai_enabled = False
     w.draft_v2 = draft_v2
     w._seq = 0
@@ -192,7 +192,7 @@ def test_bonus_hand_comes_from_the_reserve_and_never_touches_packs(big_catalogue
 @pytest.mark.parametrize("era", [0, 1, 2, 3])
 def test_dealing_invariants_across_seeds(era, big_catalogue):
     for seed in range(20):
-        w = HybridWorld(seed, profile="campaign")
+        w = HybridWorld(seed, profile="campaign", legacy_draft=True)
         w.ai_enabled = False
         w.draft_v2 = True
         draft.deal(w, era)
