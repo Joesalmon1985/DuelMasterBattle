@@ -292,7 +292,6 @@ def test_a_spy_copies_a_card_from_a_tech_building_and_a_thief_carries_wares_home
     assert w.ability("Red", "infiltrate", unit=thief["id"], building=cc["id"])["status"] == "ok"
     run(w, 120)
     assert w.stocks[cc["id"]].get("gold", 0) < before
-    assert w.stats.get("wares_stolen", 0) == 0 or True
     assert w.events and any(e["kind"] in ("stolen", "loot_delivered") for e in w.events)
 
 
