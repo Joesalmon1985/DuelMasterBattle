@@ -49,3 +49,14 @@ def test_godot_building_state_art_proof():
     p = subprocess.run([str(GODOT), "--headless", "--path", str(repo / "godot_project"), "--script", "res://client/tests/run_hybrid_building_states.gd"],
                        capture_output=True, text=True, timeout=300)
     assert "HYBRID_BUILDING_STATES_OK" in p.stdout, p.stdout[-1500:]
+
+
+@pytest.mark.skipif(not GODOT.exists(), reason="no Godot binary")
+def test_godot_inspector_panel_proof():
+    """Regenerates the catalogue the Python inspector produces and lets the real Godot panel resolve a texture for every imported entity."""
+    repo = Path(__file__).resolve().parents[2]
+    gen = subprocess.run([sys.executable, str(repo / "WizardRTSHybrid" / "scripts" / "export_inspector_fixture.py")], capture_output=True, text=True, timeout=300)
+    assert gen.returncode == 0, gen.stderr[-800:]
+    p = subprocess.run([str(GODOT), "--headless", "--path", str(repo / "godot_project"), "--script", "res://client/tests/run_hybrid_inspector.gd"],
+                       capture_output=True, text=True, timeout=300)
+    assert "HYBRID_INSPECTOR_OK" in p.stdout, p.stdout[-1500:]
