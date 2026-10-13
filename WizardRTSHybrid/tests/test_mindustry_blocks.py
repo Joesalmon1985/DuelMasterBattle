@@ -758,3 +758,26 @@ def test_an_assembler_accepts_real_payloads_and_builds_its_unit(kind, unit):
     assert all(m["stack"].get(k, 0) >= v for k, v in plan["payload"].items()), m["stack"]
     run(w, int(plan["time_ticks"] / 60) + 15)
     assert _units_of(w, unit), (kind, unit, m["state"])
+
+
+@pytest.mark.parametrize("kind", kinds_of("door"))
+def test_a_door_blocks_enemies_and_opens_for_its_own_faction(kind):
+    w = world()
+    n = R.block(kind)["size"]
+    x, y = F.open_ground(w, "Red", n + 6, n + 4)
+    d = put(w, kind, (x + 3, y + 2))
+    fp = [tuple(t) for t in w.buildings[d]["ground_footprint"]]
+    run(w, 2)
+    assert all(t in w.blocked for t in fp)  # closed: nobody walks through
+    from test_openra_content import enemy, own
+
+    foe = enemy(w, "openra.e1", (fp[0][0] - 1, fp[0][1]))
+    run(w, 2)
+    assert all(t in w.blocked for t in fp), "an enemy beside the door does not open it"
+    w.units.pop(foe["id"])
+    mine = own(w, "openra.e1", (fp[0][0] - 1, fp[0][1]))
+    run(w, 2)
+    assert not any(t in w.blocked for t in fp), "a unit of the door's own faction opens it"
+    mine["tx"], mine["ty"] = fp[0][0] - 6, fp[0][1] - 6
+    run(w, 2)
+    assert all(t in w.blocked for t in fp), "and it closes again once nobody is near"
