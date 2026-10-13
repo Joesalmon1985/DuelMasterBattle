@@ -182,5 +182,6 @@ def set_era(world: Any, index: int) -> None:
     st["index"] = max(0, min(int(index), len(tech.ERAS) - 1))
     st["started_ms"] = int(world.dmb.clock.get("game_ms", 0))
     st["base"] = totals(world)
+    st["bar"] = max(int(getattr(world, "era_vp_end", ERA_VP_END)), max(st["base"].values(), default=0) + int(getattr(world, "era_vp_step", ERA_VP_STEP)))
     world.era_index = st["index"]
     tech.on_era_change(world)

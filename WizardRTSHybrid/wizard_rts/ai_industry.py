@@ -16,14 +16,20 @@ from wizard_rts import tech
 NEEDED = {"plank": 70, "granite": 40, "iron": 30}  # the goods the fixture's line costs (about), with a margin
 RETRY_MS = 10 * 60_000
 CARDS = ("dmb.card.automation", "dmb.card.industry", "dmb.card.unit_fabrication")
+# the machines of the line itself (industry.fixture.modern_fixture); with the generated cards (drafting v2) each is a separate pick
+LINE_KINDS = ("mdy:mechanical_drill", "mdy:conveyor", "mdy:silicon_smelter", "mdy:ground_factory", "mdy:power_node", "mdy:solar_panel_large")
+
+
+def line_unlocked(world: Any, name: str) -> bool:
+    st = world.tech.get(name) or {"cards": []}
+    return all(c in st["cards"] for c in CARDS) or (getattr(world, "cardset", "") == "v2" and all(tech.kind_allowed(world, name, k) for k in LINE_KINDS))
 
 
 def industry_step(world: Any, name: str, wh: dict) -> bool:
     """Called from the faction's economy decision. True when it placed a line this call."""
     if world.terrain is None or int(getattr(world, "era_index", 0)) < 2:
         return False
-    st = world.tech.get(name)
-    if not st or not all(c in st["cards"] for c in CARDS):
+    if not line_unlocked(world, name):
         return False
     state = world.__dict__.setdefault("_ai_industry", {}).setdefault(name, {"built": False, "retry_ms": 0, "fails": 0})
     now = int(world.dmb.clock.get("game_ms", 0))

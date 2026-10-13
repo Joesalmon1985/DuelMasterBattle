@@ -171,6 +171,13 @@ def score_generated(world: Any, name: str, cid: str) -> tuple[float, str]:
             if eid in MILITARY_KINDS:
                 s += 30 if threatened else 8
                 why = "under threat" if threatened else "military"
+            if eid.startswith("mdy:"):
+                from wizard_rts import ai_industry
+
+                have_line = sum(1 for k in ai_industry.LINE_KINDS if tech.kind_allowed(world, name, k))
+                if eid in ai_industry.LINE_KINDS and not tech.kind_allowed(world, name, eid):
+                    s += 12 + 6 * have_line  # the drill -> belt -> smelter -> factory line only works whole: each part is worth more once others are held
+                    why = "completes the industrial line (%d of %d)" % (have_line, len(ai_industry.LINE_KINDS))
             if eid in ("farm", "mine", "ironmine", "smelter") and eid not in held_kinds:
                 s += 18
             if eid == "scriptorium":

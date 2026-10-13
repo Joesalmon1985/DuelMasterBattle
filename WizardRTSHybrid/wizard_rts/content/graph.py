@@ -32,7 +32,7 @@ UNIT_ERA = {
 }
 
 
-MDY_ERA = {"mdy:solar_panel_large": 3, "mdy:pneumatic_drill": 3, "mdy:silicon_smelter": 3, "mdy:graphite_press": 2, "mdy:battery": 3, "mdy:ground_factory": 3}
+MDY_ERA: dict[str, int] = {}  # every functional Mindustry building is Modern (era 2): the whole industrial line must be draftable inside one era; units are Dystopian
 MDY_UNITS = {"dagger": 3, "crawler": 3, "nova": 3}
 # hand-written pairs (an input-output chain or a producer with its first product), reviewed once; every other Mindustry entity is a single card
 MDY_PAIRS = [("mdy:mechanical_drill", "mdy:conveyor"), ("mdy:combustion_generator", "mdy:power_node"), ("mdy:solar_panel", "mdy:battery"),
