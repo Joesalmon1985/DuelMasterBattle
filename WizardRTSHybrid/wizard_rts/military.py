@@ -506,6 +506,9 @@ def kill_unit(world: Any, entity: dict, by: str = "") -> None:
         from wizard_rts import ai_plus
 
         ai_plus.founder_lost(world, entity, by)
+    if entity.get("trade"):  # a trade or aid caravan lost on the road (a rival's soldiers, a nest): visible in the logs now, it used to vanish silently
+        world.events.append({"kind": "caravan_lost", "faction": entity["faction_name"], "partner": entity["trade"].get("partner", ""), "by": by,
+                             "cargo": dict(entity.get("cargo") or {})})
     if entity.get("cargo"):  # an MCV or settlers' wagon dies with the starter kit it carried
         from wizard_rts.lifecycle import lose
 

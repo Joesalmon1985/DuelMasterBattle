@@ -45,7 +45,7 @@ MAJOR = ("era_advanced", "draft_leftovers", "draft_phase", "relation_changed", "
          "faction_split", "faction_collapsed", "outbreak", "outbreak_cube", "catastrophe_destroyed", "disrupted", "disruption_cleared",
          "treatment_done", "ai_attack", "ai_retreat", "ai_expand_deploy", "ai_expand_rejected", "cycle_due", "terminal_loss", "building_destroyed",
          "ai_industry_placed", "ai_link_outpost", "tribe_fallback", "nest_spawned", "nest_cube_cleared", "nest_destroyed", "caravan_sent",
-         "caravan_traded", "caravan_refused")
+         "caravan_traded", "caravan_refused", "caravan_lost")
 GAMES = {"widelands": "wl", "openra": "ora", "hybrid": "hyb", "mindustry": "mdy"}
 
 

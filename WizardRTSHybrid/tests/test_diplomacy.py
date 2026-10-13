@@ -197,3 +197,15 @@ def test_cooperative_aid_caravan_carries_rations_and_water_to_a_partners_clinic(
     assert ev and ev[0]["partner"] == "Blue" and w.fstats["Red"]["aid_sent"] == 1
     sent = next(e for e in w.events if e["kind"] == "caravan_sent")
     assert sent["give"] == ai_plus.AID_GIVE and sent["want"] == {"log": 1}
+
+
+def test_a_killed_caravan_is_logged():
+    from wizard_rts import military
+
+    w = world()
+    uid = w._unit(w.faction_info["Red"]["id"], "Red", "caravan", "Caravan", "dmb.caravan", (70, 70))
+    w.units[uid]["cargo"] = {"log": 3}
+    w.units[uid]["trade"] = {"partner": "Blue", "home": "x", "partner_wh": "y", "give": {"log": 3}, "want": {"plank": 1}, "leg": "out", "since_ms": 0}
+    military.kill_unit(w, w.units[uid], "unit:1")
+    ev = [e for e in w.events if e["kind"] == "caravan_lost"]
+    assert ev and ev[0]["partner"] == "Blue" and ev[0]["cargo"] == {"log": 3}
