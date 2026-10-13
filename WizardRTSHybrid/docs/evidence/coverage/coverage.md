@@ -14,4 +14,4 @@
 | widelands trainingsite | 0 | 0 | 11 |
 | widelands warehouse | 15 | 0 | 2 |
 
-Art level of functional entities: directional 31, layered 5, none 385, states 101, static 74
+Art level of functional entities: directional 30, layered 291, none 55, states 163, static 57

@@ -258,3 +258,25 @@ def test_ponds_turn_water_into_clay_fish_and_charcoal():
     run(w, 400)
     ponds = [o for o in w.trees.values() if str(o.get("imm", "")).startswith("pond")]
     assert ponds or w.stats.get("made_clay", 0) >= 1, (clay.get("stall"), w.stats.get("made_clay"))
+
+
+def test_a_caravan_carries_mindustry_wares_between_two_factions_stores_and_the_books_balance():
+    from wizard_rts import ledger, trade
+    w = world()
+    wa, wb = con.faction_warehouse(w, "Red"), con.faction_warehouse(w, "Blue")
+    produce(w, wa["id"], "mdy.silicon", 30)
+    produce(w, wa["id"], "log", 10)
+    produce(w, wa["id"], "ration", 5)
+    produce(w, wb["id"], "plank", 40)
+    w.stats["made_mdy.silicon"] = w.stats.get("made_mdy.silicon", 0)
+    snap = ledger.snapshot_totals(w)
+    r = trade.send_caravan(w, "Red", wa["id"], wb["id"], {"mdy.silicon": 10}, {"plank": 8})
+    assert r["status"] == "ok", r
+    assert w.stocks[wa["id"]]["mdy.silicon"] == 20  # left the supplier's inventory at once
+    for _ in range(40):
+        run(w, 30)
+        if any(e["kind"] in ("caravan_traded", "caravan_refused", "caravan_lost") for e in w.events):
+            break
+    run(w, 200)
+    assert w.stocks[wb["id"]].get("mdy.silicon", 0) >= 10  # arrived in the recipient's inventory
+    assert not ledger.check(w, snap)

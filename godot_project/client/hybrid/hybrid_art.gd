@@ -183,6 +183,8 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 		if definition not in missing:
 			missing.append(definition)
 		return
+	if item.has("states") and str(entity.get("class", "")) == "building" and not item.has("footprint_cells") and _draw_state_building(canvas, entity, item, tpx):
+		return
 	var tex: Texture2D = _frame_texture(item, entity)
 	if tex == null:
 		if definition not in missing:
@@ -272,6 +274,53 @@ func _draw_footprint_building(canvas: CanvasItem, entity: Dictionary, item: Dict
 
 ## A building at 0 HP burns for a few seconds before the simulation removes it. Widelands buildings are replaced by the
 ## Widelands `destroyed_building` fire sheet; an OpenRA structure keeps its (darkened) picture with the same fire over it.
+## A Red Alert building from its imported state animations (scripts/import_openra_buildings.py): the construction animation (`make`) follows the build progress,
+## `damaged` / `critical` replace `idle` below half / a quarter of the health, `active` plays while the building works, multi-frame states loop at their fps.
+func state_for(entity: Dictionary, item: Dictionary) -> String:
+	var states: Dictionary = item.get("states", {})
+	var ratio := float(entity.get("hp", 1)) / maxf(float(entity.get("max_hp", 1)), 1.0)
+	if entity.has("constructing") and states.has("make"):
+		return "make"
+	if ratio < 0.25 and states.has("critical"):
+		return "critical"
+	if ratio < 0.5 and states.has("damaged"):
+		return "damaged"
+	if bool(entity.get("working", false)) and states.has("active"):
+		return "active"
+	return "idle"
+
+
+func state_texture(entity: Dictionary, item: Dictionary, time: float) -> Texture2D:
+	var states: Dictionary = item.get("states", {})
+	var st: String = state_for(entity, item)
+	var info: Dictionary = states.get(st, {})
+	var files: Array = info.get("files", [])
+	if files.is_empty():
+		return null
+	var ix := 0
+	if st == "make":
+		var ratio := clampf((float(entity.get("hp", 1)) / maxf(float(entity.get("max_hp", 1)), 1.0) - 0.1) / 0.9, 0.0, 0.999)
+		ix = int(ratio * float(files.size()))
+	elif files.size() > 1 and int(info.get("fps", 0)) > 0 and int(info.get("facings", 1)) <= 1:
+		ix = int(time * float(info["fps"])) % files.size()
+	var path := str(files[ix])
+	if not textures.has(path):
+		_remember(path, path)  # state frames are decoded on first use
+	return _tex(path)
+
+
+func _draw_state_building(canvas: CanvasItem, entity: Dictionary, item: Dictionary, tpx: int) -> bool:
+	var tex := state_texture(entity, item, Time.get_ticks_msec() / 1000.0)
+	if tex == null:
+		return false
+	var scale := float(item.get("scale", 2.6667))
+	var hotspot: Array = item.get("hotspot", [tex.get_width() / 2, int(tex.get_height() * 0.85)])
+	var anchor := Vector2(int(entity.get("tx", 0)) * tpx + tpx * 0.5, int(entity.get("ty", 0)) * tpx + tpx * 0.5)
+	canvas.draw_texture_rect(tex, Rect2(anchor - Vector2(float(hotspot[0]), float(hotspot[1])) * scale, Vector2(tex.get_width(), tex.get_height()) * scale), false)
+	_draw_health(canvas, entity, anchor)
+	return true
+
+
 func _draw_ruin(canvas: CanvasItem, entity: Dictionary, tpx: int) -> bool:
 	var fire: Dictionary = items.get("widelands.destroyed_building", {})
 	var tex: Texture2D = _tex("widelands.destroyed_building")

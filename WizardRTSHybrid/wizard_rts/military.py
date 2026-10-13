@@ -771,6 +771,8 @@ def _building_step(world: Any, b: dict) -> None:
     if tpos is None:
         return
     dist = _dist(b["tx"], b["ty"], tpos[0], tpos[1])
+    if world.__dict__.get("visual_state") and b.get("mdy") is not None:
+        b["aim"] = int(math.degrees(math.atan2(tpos[1] - b["ty"], tpos[0] - b["tx"])))  # presentation only: where the turret points (never set in headless runs)
     if dist <= w["range"] and dist >= w.get("min_range", 0) and b["cooldown_ms"] <= 0:
         _fire(world, b, w, target, tpos[2], dist)
         if b.get("mdy") is not None and b["mdy"].get("role") == "turret":

@@ -176,9 +176,10 @@ def _edge(b: dict, spec: dict, rot: int) -> tuple[int, int]:
 
 def _free_tile_near(world: Any, st: Any, b: dict, first: tuple[int, int], unit: str) -> tuple[int, int] | None:
     from wizard_rts.industry import sim as S
+    from wizard_rts import rules as _rules
 
-    info = U.rules_for(unit)
-    loco = info[0]["locomotor"] if info else "foot"
+    info = U.rules_for(unit) if not unit.startswith("mk2_") else (_rules.actor("openra." + unit), None)
+    loco = info[0]["locomotor"] if info and info[0] else "foot"
     occupied = {(u["tx"], u["ty"]) for u in world.units.values() if u.get("alive", True)}
     ring = [first] + [t for t in S.adjacent_tiles(S.footprint(b)) if t != first]
     for t in ring:
@@ -192,6 +193,13 @@ def _free_tile_near(world: Any, st: Any, b: dict, first: tuple[int, int], unit: 
 
 def spawn_unit(world: Any, b: dict, payload: dict, tile: tuple[int, int]) -> str:
     name = payload["unit"]
+    if name.startswith("mk2_"):  # an enhanced Red Alert unit from an assembly line
+        uid = world._unit(b["faction"], b["faction_name"], name, U.label_of(name.replace("mk2_", "") + " mk2"), "openra." + name, tile)
+        world.units[uid]["mk2"] = True
+        world.fstat(b["faction_name"], "units_built")
+        world.fstat(b["faction_name"], "mk2_units_built")
+        world.events.append({"kind": "unit_produced", "building": b["id"], "unit": uid, "unit_kind": name, "faction": b["faction_name"]})
+        return uid
     r = U.rules_for(name)
     uid = world._unit(b["faction"], b["faction_name"], "mdy_" + name, U.label_of(name), "mindustry." + name.replace("-", "_"), tile)
     u = world.units[uid]

@@ -282,7 +282,7 @@ def test_a_second_tier_unit_needs_its_card():
     assert {u["mdy_unit"] for u in w.units.values() if u.get("mdy_unit")} == {"dagger"}  # it stays a dagger: the reconstructor refuses a payload it may not upgrade
 
 
-FACTORY_PLANS = [(k, p["unit"]) for k in kinds_of("unit_factory") for p in (R.block(k)["plans"] or [])]
+FACTORY_PLANS = [(k, p["unit"]) for k in kinds_of("unit_factory") if R.block(k).get("game") != "hybrid" for p in (R.block(k)["plans"] or [])]
 UPGRADES = [(k, pair[0], pair[1]) for k in kinds_of("reconstructor") for pair in (R.block(k)["upgrades"] or []) if len(pair) > 1]
 
 

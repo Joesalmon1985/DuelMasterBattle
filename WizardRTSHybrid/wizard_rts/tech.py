@@ -167,7 +167,21 @@ def kind_allowed(world: Any, faction: str, kind: str) -> bool:
     return kind in unlocked_kinds(world, faction)
 
 
+def _mk2_base(unit_kind: str) -> str | None:
+    """`mk2_1tnk` -> the recipe kind of openra.1tnk (light_tank), or None when the roster has no such recipe."""
+    from wizard_rts import construction as _con
+
+    for recipes in _con.RECIPES.values():
+        for kind, r in recipes.items():
+            if r.get("definition") == "openra." + unit_kind[4:]:
+                return kind
+    return None
+
+
 def unit_allowed(world: Any, faction: str, unit_kind: str) -> bool:
+    if unit_kind.startswith("mk2_"):  # an assembly line may build the enhanced version of whatever the faction may build in the original (the line itself is card-gated)
+        base = _mk2_base(unit_kind)
+        return base is not None and unit_allowed(world, faction, base)
     if not gated(world):
         return unit_kind not in _CARD_ONLY  # ungated profiles keep the earlier roster; the newer units are reached through cards
     return unit_kind in unlocked_units(world, faction)

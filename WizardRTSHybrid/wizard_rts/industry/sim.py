@@ -806,6 +806,10 @@ def row(world: Any, b: dict) -> dict[str, Any]:
     m = b["mdy"]
     spec = R.block(b["kind"])
     out: dict[str, Any] = {"role": m["role"], "state": m["state"]}
+    if m.get("liq") and spec.get("liquid_capacity"):
+        out["fill"] = round(sum(m["liq"].values()) / max(1.0, float(spec["liquid_capacity"])), 2)
+    if m["role"] == "turret" and "aim" in b:
+        out["aim"] = b["aim"]
     if m["role"] == "drill":
         out.update(item=m["item"], rate=m["rate_milli"], left=m["reserve_left"])
     elif m["role"] == "crafter":

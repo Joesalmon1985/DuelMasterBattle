@@ -41,8 +41,10 @@ def art_level(prefix: str, extra: tuple[str, ...] = ()) -> str:
     if not ids:
         return "none"
     items = [cat[k] for k in ids]
-    if any(i.get("layers") for i in items):
+    if any(i.get("layers") or i.get("parts") for i in items):
         return "layered"
+    if any(i.get("states") for i in items):
+        return "states"
     if any(int(i.get("facings", 1)) > 1 or ".walk." in i["id"] for i in items):
         return "directional"
     if len(ids) > 1 or any(int(i.get("frames", 1)) > 1 for i in items):

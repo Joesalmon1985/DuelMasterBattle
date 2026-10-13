@@ -197,3 +197,29 @@ def test_dismantling_returns_part_of_the_build_cost_through_the_carriers_and_rem
     after = {g: w.stocks[wh["id"]].get(g, 0) for g in before}
     assert any(after[g] > before[g] for g in r["returns"] if g in after) or sum(w.stocks[wh["id"]].values()) > 0
     assert not ledger.check(w, snap)
+
+
+def test_assembly_lines_make_measurably_better_red_alert_units_from_items_and_power():
+    from wizard_rts import duel_matrix as D, rules
+    from test_mindustry_engine import unlock
+    base, mk2 = rules.actor("openra.3tnk"), rules.actor("openra.mk2_3tnk")
+    assert mk2["hp"] > base["hp"] and mk2["speed"] > base["speed"]
+    assert rules.weapon(mk2["armaments"][0])["warheads"][0]["damage"] > rules.weapon(base["armaments"][0])["warheads"][0]["damage"]
+    r = D.fight("openra.mk2_3tnk", "openra.3tnk", seconds=150)
+    assert r["winner"] == "A" and r["hp_a"] > 0.2, r
+    w = world()
+    unlock(w)
+    spec = R.block("mdy:hy_assembly_vehicle_plant")
+    x, y = F.open_ground(w, "Red", 10, 6)
+    f = put(w, "mdy:hy_assembly_vehicle_plant", (x + 1, y + 1))
+    put(w, "mdy:power_source", (x + 1, y + 5))
+    m = w.buildings[f]["mdy"]
+    m["rot"] = 0
+    plan = next(p for p in spec["plans"] if p["unit"] == "mk2_3tnk")
+    m["plan"] = "mk2_3tnk"
+    for ware, k in plan["requirements"].items():
+        m["buf"][ware] = k * 2
+        w.stats["made_" + ware] = w.stats.get("made_" + ware, 0) + k * 2
+    run(w, int(plan["ticks"] / 60) + 20)
+    made = [u for u in w.units.values() if u.get("mk2") and u["definition"] == "openra.mk2_3tnk"]
+    assert made and all(w.stats.get("consumed_" + g, 0) >= n for g, n in plan["requirements"].items())

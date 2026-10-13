@@ -18,6 +18,7 @@ from typing import Any
 
 DATA = Path(__file__).resolve().parent / "data" / "openra_rules.json"
 TICK_MS = 40
+MK2_HP, MK2_DAMAGE, MK2_SPEED = 1.4, 1.25, 1.1  # Modern enhanced units
 
 HYBRID_ACTORS: dict[str, dict[str, Any]] = {
     "wl_soldier": {
@@ -98,6 +99,26 @@ def _load() -> dict[str, Any]:
     actors, weapons = registry.unit_rules()
     data["actors"].update(actors)
     data["weapons"].update(weapons)
+    # Modern "enhanced" variants of every Red Alert combat unit, made by the industrial assembly lines (industry/hybrid.py): +40 % health, +25 % damage, +10 % speed
+    for key, a in list(data["actors"].items()):
+        if a.get("queue") in ("Infantry", "Vehicle", "Ship", "Aircraft") and a.get("armaments") and a.get("mobile") and not key.startswith(("mk2_", "mdy_", "dmb_", "wl_")):
+            m = dict(a)
+            m["name"] = a["name"] + " Mk2"
+            m["hp"] = int(a["hp"] * MK2_HP)
+            m["speed"] = int(a["speed"] * MK2_SPEED) if a["speed"] else 0
+            names = []
+            for wn in a["armaments"]:
+                w = data["weapons"].get(wn)
+                if not w:
+                    continue
+                w2 = json.loads(json.dumps(w))
+                for wh in w2["warheads"]:
+                    wh["damage"] = int(wh["damage"] * MK2_DAMAGE) if wh["damage"] > 0 else wh["damage"]
+                data["weapons"][wn + "_Mk2"] = w2
+                names.append(wn + "_Mk2")
+            m["armaments"] = names
+            m["queue"], m["prerequisites"], m["mk2_of"] = "", "", key
+            data["actors"]["mk2_" + key] = m
     # locomotors the original Red Alert data does not have: Mindustry legs (cross land and shallows), hover (amphibious) and any flyer (all terrain)
     data["locomotors"].update({
         "legs": {"speeds": {"Clear": 100, "Rough": 100, "Beach": 100, "Water": 60, "Swamp": 80, "Impassable": 0}, "crushes": []},

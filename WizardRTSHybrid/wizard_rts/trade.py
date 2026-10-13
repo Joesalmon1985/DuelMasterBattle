@@ -36,8 +36,21 @@ def is_post(b: dict) -> bool:
     return (b["kind"] == "warehouse" or bool(b.get("store")) or bool(b.get("market"))) and b.get("operational", True) and not b.get("constructing")
 
 
+def ware_value(g: str) -> float:
+    """Mindustry wares are worth twice their item cost (data/mindustry_defs.json); unknown Widelands wares default to 1.5."""
+    if g in WARE_VALUE:
+        return WARE_VALUE[g]
+    if g.startswith("mdy."):
+        from wizard_rts.industry import registry as R
+
+        item = R.item_of(g)
+        if item:
+            return 2.0 * float(R.item_info(item)["cost"]) + 1.0
+    return 1.5
+
+
 def value(goods: dict[str, int]) -> float:
-    return sum(WARE_VALUE.get(g, 1.5) * int(n) for g, n in goods.items())
+    return sum(ware_value(g) * int(n) for g, n in goods.items())
 
 
 def note_hostility(world: Any, a: str, b: str) -> None:

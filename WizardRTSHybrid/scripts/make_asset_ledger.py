@@ -25,6 +25,7 @@ def files_of(item: dict) -> list[str]:
     lay = item.get("layers")
     if lay:  # independent turret layers: <prefix>-NNNN.png for each facing
         out += [f"res://client/hybrid/art/openra/{lay[k]}-{f:04d}.png" for k in ("body_prefix", "turret_prefix") for f in range(int(lay.get("facings", 32)))]
+    out += [pt["file"] for pt in item.get("parts", [])]
     return [p.replace("res://client/hybrid/art/", "") for p in dict.fromkeys(out)]
 
 

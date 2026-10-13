@@ -147,7 +147,8 @@ def _generic(kind: str) -> dict[str, Any] | None:
         spec["fuel_min_flammability"] = 0.2
         spec["solar"] = g["class"] in ("SolarGenerator", "PowerSource")
     if g["role"] == "unit_factory":
-        spec["plans"] = [{"unit": p["unit"], "ticks": int(p["time_ticks"] or 0), "requirements": {B.ware_of_item(i): int(n) for i, n in p["requirements"].items()}}
+        spec["plans"] = [({"unit": p["unit"], "ticks": int(p["ticks"]), "requirements": dict(p["requirements"])} if "ticks" in p else
+                          {"unit": p["unit"], "ticks": int(p["time_ticks"] or 0), "requirements": {B.ware_of_item(i): int(n) for i, n in p["requirements"].items()}})
                          for p in (g.get("plans") or [])]
     spec["power_buffer"] = g["power_buffer"]
     return spec

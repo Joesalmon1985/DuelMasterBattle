@@ -102,7 +102,35 @@ def specs() -> dict[str, dict[str, Any]]:
         _block("hy-tool-foundry", "Tool foundry", 2, {"iron": 6, "plank": 4, "granite": 4, "mdy.graphite": 4},
                {t: {"consume_items": {"iron": 1, "plank": 1}, "output": {t: 2}, "ticks": 60, "power": 0.7} for t in TOOLS}),
     ]
+    blocks += _assembly_lines()
     return {b["kind"]: b for b in blocks}
+
+
+def _assembly_lines() -> list[dict[str, Any]]:
+    """Modern assembly lines: electric, item-fed factories that make an enhanced (Mk2) version of every Red Alert combat unit."""
+    import json
+    from pathlib import Path
+
+    ra = json.loads((Path(__file__).resolve().parents[1] / "data" / "openra_rules.json").read_text())["actors"]
+    lines = {"hy-assembly-barracks": ("Assembly barracks", ("Infantry",), 3), "hy-assembly-vehicle-plant": ("Assembly vehicle plant", ("Vehicle",), 4),
+             "hy-assembly-shipyard": ("Assembly shipyard", ("Ship",), 4), "hy-assembly-airfield": ("Assembly airfield", ("Aircraft",), 4)}
+    out = []
+    for bid, (label, queues, size) in lines.items():
+        plans = []
+        for key, a in sorted(ra.items()):
+            if a.get("queue") in queues and a.get("armaments") and a.get("mobile") and not key.startswith(("mk2_",)) and key not in ("harv",) and "~disabled" not in a.get("prerequisites", ""):
+                c = int(a["cost"])
+                req = {"mdy.silicon": max(2, c // 120), "mdy.titanium": max(1, c // 250), "mdy.graphite": max(1, c // 400)}
+                if c >= 1500:
+                    req["mdy.plastanium"] = max(1, c // 600)
+                plans.append({"unit": "mk2_" + key, "ticks": 480 + c * 2, "requirements": req})
+        spec = _block(bid, label, size, {"iron": 8, "plank": 8, "granite": 6, "mdy.silicon": 12, "mdy.titanium": 8},
+                      {"mk2": {"consume_items": {}, "output": {"mk2": 1}, "ticks": 60, "power": 2.0}}, role="unit_factory",
+                      extra={"class": "UnitFactory", "plans": plans, "fields": {"size": size}, "default_recipe": "mk2"})
+        spec.pop("recipes", None)
+        spec["default_recipe"] = ""
+        out.append(spec)
+    return out
 
 
 def effective(spec: dict[str, Any], m: dict[str, Any]) -> dict[str, Any]:
