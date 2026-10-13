@@ -1,0 +1,28 @@
+# P10 catastrophe study, first pass (13 Oct 2026)
+
+Runner: `scripts/catastrophe_study.py` (six plus AIs, outbreak cadence scaled to 0.12, i.e. one cube every 72 game seconds, cumulative loss limit 8 outbreaks, per-era limit off, 4 seeds per cell, 90-minute horizon, game stops at collective loss). Policies: `ignore` (no clinics, no nest hunting), `selfish` (clinics and nest hunting in own settlements), `coop` (selfish + nest hunting anywhere, scaled by pressure, + cooperative truces under pressure).
+
+## A. Old hand-written cards, no clinics (nothing but combat can remove cubes)
+
+| policy | era limit | total limit | games | P(collective loss) | median minutes to loss | mean outbreaks | mean cubes cleared | mean truces |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| ignore | 99 | 8 | 4 | 1.00 | 43.599999999999994 | 9.8 | 9.5 | 0.0 |
+| selfish | 99 | 8 | 4 | 1.00 | 42.4 | 10.5 | 6.8 | 0.0 |
+| coop | 99 | 8 | 4 | 1.00 | 42.4 | 10.5 | 6.8 | 12.8 |
+
+Every policy loses at about minute 42-47. Identical outcomes for `ignore` and `selfish` on three of four seeds: the AIs' nest policy changes nothing at this pressure, because nests are mostly killed (or not) by units and defences that happen to be nearby.
+
+## B. Generated cards v2, clinic available to every faction (foundation building; rations and water per cube)
+
+| policy | era limit | total limit | games | P(collective loss) | median minutes to loss | mean outbreaks | mean cubes cleared | mean truces |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| ignore | 99 | 8 | 4 | 1.00 | 43.6 | 10.2 | 7.5 | 0.0 |
+| selfish | 99 | 8 | 4 | 0.75 | 64.0 | 8.2 | 5.5 | 0.0 |
+| coop | 99 | 8 | 4 | 0.75 | 64.0 | 8.2 | 5.5 | 21.8 |
+
+The clinic changes the outcome: with clinics `selfish` and `coop` lose in 3 of 4 games at a median of minute 64 against minute 44 for `ignore`, and one game survives the whole 90 minutes. `coop` and `selfish` are identical in outcome: the truces (about 22 per game) are signed but nothing in a truce moves wares or soldiers to a rival's region, so cooperation has no effect yet.
+
+## Reading and what is not met
+* The plan's calibration targets (7.4: ignore loses in most games, selfish in a meaningful minority, cooperative rarely) are **not met**: at this cadence even the best policy loses in most games. Cadence 0.12 is far harsher than the design default (scale 1.0) at which no game came close to the limit, so the useful scale is between; the next pass needs scales 0.2-0.5, more seeds (4 per cell is far too few for a probability) and the per-era limit grid.
+* Cooperation needs a physical channel: wares or squads sent to a rival's infected settlement (the trade caravan can carry rations and water; a squad can clear a nest in a truce partner's region). Until then `coop` cannot beat `selfish`.
+* The collective-loss flag, per-era counters, relations, nest policies and clinics are all implemented and tested (`tests/test_outbreaks.py`, `tests/test_diplomacy.py`); this study is the first use of them.

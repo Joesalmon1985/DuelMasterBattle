@@ -169,8 +169,9 @@ def score_generated(world: Any, name: str, cid: str) -> tuple[float, str]:
                 why = "metal for an army"
         elif e["type"] == "building":
             if eid in MILITARY_KINDS:
-                s += 30 if threatened else 8
-                why = "under threat" if threatened else "military"
+                have_military = any(k in MILITARY_KINDS for k in held_kinds)
+                s += 30 if threatened else (24 if not have_military else 8)  # the first military building is worth a pick even in peace: no army, no conquest, no era VP
+                why = "under threat" if threatened else ("first military building" if not have_military else "military")
             if eid.startswith("mdy:"):
                 from wizard_rts import ai_industry
 
@@ -192,6 +193,8 @@ def score_generated(world: Any, name: str, cid: str) -> tuple[float, str]:
                 why = "no building to make it"
             if threatened:
                 s += 15
+            if producer in held_kinds or tech.kind_allowed(world, name, producer):
+                s += 10  # a unit whose factory this faction already has can be built at once
     return s, why
 
 
