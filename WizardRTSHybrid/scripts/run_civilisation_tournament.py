@@ -110,7 +110,7 @@ def sample(world, t_wall: float, step_ms: list[float]) -> list[dict]:
 
 
 def play(job: dict) -> dict:
-    """One game, in its own process (fork). Returns rows and the summary; heavy output is written by the parent."""
+    """One game, in its own process (spawned, so it also works on Windows). Returns rows and the summary; heavy output is written by the parent."""
     os.environ["HYBRID_AI"] = "1"
     from wizard_rts import history, ledger, vp
     from wizard_rts.world import HybridWorld
@@ -120,6 +120,10 @@ def play(job: dict) -> dict:
     w.ai_enabled = True
     w.ai_policy = dict(job["policies"])
     w.ai_aggressive = job["mode"] != "peace"
+    if job.get("nocards"):
+        w.nocards = True  # plan v2 P2: drafting off, foundation set only, no settlement quota
+    if job.get("draft"):
+        w.cardset, w.draft_v2 = "v2", True  # plan v2 P3: generated 1-2 entity cards, era-start seven-round ring draft
     if job["mode"] == "crisis":
         w.outbreak_interval_scale = 0.5
     pilot = None
@@ -276,6 +280,8 @@ def main() -> None:
     ap.add_argument("--pairing", choices=("mirror", "all-plus", "all-baseline"), default="mirror")
     ap.add_argument("--every", type=int, default=60, help="sample period in game seconds")
     ap.add_argument("--jobs", type=int, default=2, help="games played in parallel (the T460 has 4 cores; keep 2-3)")
+    ap.add_argument("--nocards", action="store_true", help="no-card civilisation: drafting off, foundation set only (plan v2 P2)")
+    ap.add_argument("--draft", action="store_true", help="drafting v2 with the generated content-graph cards (plan v2 P3)")
     ap.add_argument("--wizard-pilot", action="store_true", help="crisis mode: add the scripted wizard agent (public moves only)")
     ap.add_argument("--report-dir", default=str(Path.home() / "dmb_runs" / "civ_latest"))
     args = ap.parse_args()
@@ -283,7 +289,7 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     legs = ("A", "B") if args.pairing == "mirror" else ("-",)
     jobs = [{"seed": s, "leg": leg, "mode": args.mode, "map": args.map, "minutes": args.minutes, "every": args.every,
-             "policies": policies(args.pairing, leg), "wizard_pilot": args.wizard_pilot} for s in args.seeds for leg in legs]
+             "policies": policies(args.pairing, leg), "wizard_pilot": args.wizard_pilot, "nocards": args.nocards, "draft": args.draft} for s in args.seeds for leg in legs]
     sha = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=str(HYB)).stdout.strip()
     dirty = bool(subprocess.run(["git", "status", "--porcelain", "--", "wizard_rts"], capture_output=True, text=True, cwd=str(HYB)).stdout.strip())
     manifest = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "git_sha": sha, "git_dirty": dirty, "mode": args.mode, "pairing": args.pairing,
@@ -295,7 +301,7 @@ def main() -> None:
     if args.jobs > 1:
         import multiprocessing as mp
 
-        with mp.get_context("fork").Pool(args.jobs) as pool:
+        with mp.get_context("spawn").Pool(args.jobs) as pool:
             for r in pool.imap_unordered(play, jobs):
                 results.append(r)
                 s = r["summary"]

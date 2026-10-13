@@ -45,6 +45,7 @@ def main() -> int:
     ap.add_argument("--seeds", type=int, nargs="*", default=[507, 11, 23])
     ap.add_argument("--minutes", type=int, default=20)
     ap.add_argument("--map", default="standard")
+    ap.add_argument("--limit-minutes", type=int, default=0, help="check: compare only the first N minutes of the baseline (smoke gate)")
     a = ap.parse_args()
     if a.mode == "record":
         res = [run(s, a.minutes, a.map) for s in a.seeds]
@@ -56,7 +57,9 @@ def main() -> int:
     base = json.loads(Path(a.baseline).read_text())
     bad = 0
     for b in base["runs"]:
-        r = run(b["seed"], base["minutes"], base["map"])
+        n = min(base["minutes"], a.limit_minutes) if a.limit_minutes else base["minutes"]
+        r = run(b["seed"], n, base["map"])
+        b = {**b, "hashes": b["hashes"][:n]}
         div = next((i for i, (x, y) in enumerate(zip(r["hashes"], b["hashes"])) if x != y), None)
         status = "OK" if div is None else f"DIVERGED at minute {div + 1}"
         bad += div is not None
