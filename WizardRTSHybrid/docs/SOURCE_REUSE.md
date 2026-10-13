@@ -13,3 +13,11 @@
 | Mindustry v146 | `26b66f9b…` | `Items.java`, `Liquids.java`, `Blocks.java`, `UnitTypes.java`; formulas of `Drill`, `Conveyor`, `UnitFactory`, `PowerNode` | Item hardness/cost, block requirements, craft/drill/belt/power numbers, dagger stats | imported to JSON and used by `wizard_rts/industry/` with labelled hybrid overrides | `tests/test_mindustry_pipeline.py`, `test_industry_mechanics.py`, `test_industry_slice.py`; headed `run_hybrid_industry.gd` | Ground units only; no liquids, routers, art or sound (placeholders). Costs are hybrid adaptation. |
 
 Carrier schedule and soldier stepping in `wizard_rts/economy.py` and `wizard_rts/military.py` are `provisional-scaffolding`. They are not listed as Widelands or OpenRA reuse.
+
+## Autonomous v2 run additions (13 Oct 2026, Ubuntu laptop)
+
+| Item | Source | Licence / note |
+| --- | --- | --- |
+| `scripts/mix_crypto.py`: Westwood MIX header decryption (RSA-wrapped Blowfish key). Blowfish tables computed from the digits of pi and checked against the published first words and a published test vector; the 42-byte public key string is the well-known Westwood key published in the C&C community tools (XCC, OpenRA `MixFile`). Byte orders (modulus big-endian, key-block integers little-endian, standard big-endian Blowfish) were found by trial against `hires.mix` until the header was consistent with the file size. | Algorithm and public key are public knowledge; this implementation was written from the format description, not copied from OpenRA source (the OpenRA C# `MixFile.cs` is not in `external/`). | `tests/test_mix_crypto.py`. |
+| Art `art/openra/{e2,e3,shok}-*.png` (stand 0-7, run 16-63) and `{ttnk,ctnk}-0000..0031.png` replace the alias placeholders | `hires.mix`, `expand/hires1.mix`, `expand/expand2.mix` of the player's own Red Alert content, decoded by `mix_crypto.py` and `shp_td.py` via `scripts/import_openra_units.py` | As the other Red Alert sprites: use permitted for this project, not relicensed. The Tesla tank `spinner` frames (32-63) are not imported yet. |
+| Sprite facing: Red Alert frames run counter-clockwise from north; `hybrid_art.gd` now maps compass facing to that order | OpenRA facing convention (0 = north, increasing towards west), verified on 3TNK and E1 frames | `godot_project/client/tests/run_hybrid_facing.gd` |

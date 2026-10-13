@@ -9,9 +9,107 @@
   "plan": "docs/PLAN_FULL_PROGRAMME_V2.md"
  },
  "milestones": {
-  "P0": {"status": "in_progress", "done": ["probe_hardware.py (Linux run committed)", "audit_catalogues.py (reproduces plan 3.1 counts)", "ledger", "hash_gate.py"], "todo": ["supervisor + resumable run framework", "disk guards (DMB_RUNS)", "spawn fix for tournament", "smoke gate script"]},
-  "P1": {"status": "in_progress", "done": ["TreeDict slot buckets (hash-equal)"], "todo": ["territory cache", "spatial hash _scan", "waiting_for_this_road index", "AI affordability cache", "PyPy trial"]},
-  "P2": {"status": "not_started"}, "P3": {"status": "not_started"}
+  "P0": {
+   "status": "mostly_done",
+   "done": [
+    "probe_hardware.py (Linux run committed; Windows run pending)",
+    "audit_catalogues.py (reproduces plan 3.1 counts)",
+    "ledger + QUESTIONS",
+    "hash_gate.py (record/check, per-minute hashes)",
+    "autorun/supervisor.py (restart back-off, stall kill, same-error stop, STOP file, disk guard) + 4 tests",
+    "smoke_gate.py",
+    "tournament uses spawn context (Windows-safe)"
+   ],
+   "todo": [
+    "Windows sleep-prevention wrapper (.ps1) untested",
+    "DMB_RUNS pruning of old logs",
+    "kill-and-resume equality test for tournaments (checkpoint per game exists only as final report)"
+   ]
+  },
+  "P1": {
+   "status": "in_progress",
+   "done": [
+    "TreeDict slot buckets",
+    "A* inner loop",
+    "optional C A* kernel with identical-path test (ctypes, python fallback)",
+    "_water_near and nest spawn tile",
+    "hash-equal at 5/15/50 min (3 seeds) and 120 min recorded"
+   ],
+   "measured": "seed 507 50 min: 6.6x -> 17.8x realtime (baseline recorded under CPU contention); 120 min game 695 s wall = 10.4x average",
+   "todo": [
+    "territory cache",
+    "spatial hash _scan",
+    "logistics waiting_for_this_road index",
+    "PyPy trial",
+    "Numba/SoA (P8)"
+   ]
+  },
+  "P2": {
+   "status": "partly_done",
+   "done": [
+    "nocards mode (foundation = primitive + settlers + tavern), quota removed under foundation_on, frontier expansion site search",
+    "evidence docs/evidence/p2_nocards/summary.md: all factions >= 3 settlements by minute 30 in 3 seeds"
+   ],
+   "todo": [
+    "builders/mine workers as entities",
+    "founding cost scaling with distance and count",
+    "unrest terms for empire size/logistic distance",
+    "markets",
+    "bound worker_failed no_tree/no_rock retries (45k per 120 min)",
+    "standing count falls below 3 for some factions late (Blue/Red/Purple): investigate"
+   ]
+  },
+  "P3": {
+   "status": "partly_done",
+   "done": [
+    "wizard_rts/draft.py: era-start 7-round ring, 6 min rounds, default picks, alternating direction, leftover rule at 8 VP, splits/collapse, reserve-deck bonus hook",
+    "era end on current VP with 60 s debounce and rising bar (leader VP + 4) to stop cascades",
+    "content graph: 196 entities, 121 generated cards (94 single, 27 pair), exact unlocks, tribe-balanced dealing, static checks",
+    "14+6 tests incl. 1000-phase conservation property test"
+   ],
+   "todo": [
+    "paper + scriptorium + bonus hook content",
+    "Modern/Dystopian cards (need Mindustry entities, only 6 cards in eras 2-3)",
+    "AI drafting quality (picks are heuristic)",
+    "era bar study (P12)",
+    "remove old card system after v2 default"
+   ]
+  },
+  "P4": {
+   "status": "started",
+   "done": [
+    "pure-Python MIX decryption (mix_crypto.py)",
+    "e2 e3 shok ttnk ctnk real art",
+    "facing fix + Godot facing proof test"
+   ],
+   "todo": [
+    "layered atlas + turret layer",
+    "palette remap shader",
+    "Mindustry drawer programs",
+    "asset ledger csv",
+    "Widelands animation contract audit"
+   ]
+  },
+  "P5": {
+   "status": "started",
+   "done": [
+    "inspector.py views: catalogue (art status), factions (production counters), draft (leftover prediction), catastrophe; server op 'inspect' (God only)"
+   ],
+   "todo": [
+    "Godot panel + headed tests"
+   ]
+  },
+  "P10": {
+   "status": "started",
+   "done": [
+    "per-era and cumulative loss counters + collective_loss flag"
+   ],
+   "todo": [
+    "relations/diplomacy",
+    "hospital/containment chain",
+    "calibration study"
+   ]
+  }
  },
  "open_questions": "docs/ledger/QUESTIONS.md",
  "next_action": "Finish baseline pytest, commit, continue P1 caches under hash_gate"
