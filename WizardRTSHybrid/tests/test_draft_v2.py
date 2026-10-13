@@ -222,6 +222,7 @@ class Stub:
         self.cardset = "v2"
         self.draft_v2 = True
         self.history = {"faction": {}}
+        self.buildings, self.stocks, self.stats = {}, {}, {}  # the paper rule looks for a scriptorium and paper
 
 
 @pytest.mark.parametrize("batch", range(4))
