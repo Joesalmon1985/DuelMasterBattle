@@ -200,6 +200,29 @@ def naval_traits(a: dict) -> dict:
     return out
 
 
+ABILITY_TRAITS = ("Aircraft", "AmmoPool", "Cargo", "Passenger", "Repairable", "RepairableNear", "RepairsUnits", "Captures", "Capturable", "ExternalCapturable", "Infiltrates",
+                  "Infiltrable", "InfiltrateForCash", "InfiltrateForSupportPower", "InfiltrateForExploration", "InfiltrateForPowerOutage", "Minelayer", "Mine", "Demolition", "Demolishable",
+                  "NukePower", "GrantExternalConditionPower", "ChronoshiftPower", "ParatroopersPower", "AirstrikePower", "SpawnActorPower", "ProduceActorPower", "GivesBuildableArea",
+                  "Power", "ProvidesPrerequisite", "Transforms", "ProductionAirdrop", "Reservable", "Selfheal", "Wall", "Crushable", "GainsExperience", "WithBuildingRepairIcon",
+                  "RepairsBridges", "Disguise", "IgnoresDisguise", "Sellable", "HealthPercentageDamage", "ChangesHealth", "ChronoshiftDeploy", "TeleportNetwork", "AttackAircraft",
+                  "AttackFrontal", "AttackTurreted", "AttackGarrisoned", "ParatroopersPower", "Hovers", "HoversNote", "ReturnOnIdle", "FallsToEarth", "JamsMissiles", "AutoTarget",
+                  "ProximityCaptor", "ProximityCapturable", "RevealsShroud", "CreatesShroud", "GpsPower", "SupportPowerManager", "ScaredyCat", "TakeCover", "MadTank", "DeployToUpgrade",
+                  "GrantConditionOnDeploy", "AirstrikePowerInfo", "SelfHealing", "RepairableBuilding", "WithSpriteBody", "WithMakeAnimation", "EngineerRepair", "DamagedByTerrain")
+
+
+def ability_traits(a: dict) -> dict:
+    """The scalar settings of the traits that give an actor its special functions (aircraft, cargo, repair, capture, infiltration, mines, support powers...)."""
+    out: dict = {}
+    for key, slot in a.items():
+        base = key.split("@")[0]
+        if base in ABILITY_TRAITS:
+            kids = {k: v["_v"] for k, v in slot["_c"].items() if v["_v"] != ""}
+            if slot["_v"]:
+                kids["_value"] = slot["_v"]
+            out[key] = kids
+    return out
+
+
 def locomotors() -> dict:
     """TerrainSpeeds per locomotor from mods/ra/rules/world.yaml (percent of base speed by terrain type)."""
     table = load(RA / "rules")
@@ -234,7 +257,7 @@ def main() -> None:
                 if wn and "garrison" not in key.lower():
                     arms.append(wn)
                     wanted_weapons.add(wn)
-        speed = to_int(val(a, "Mobile", "Speed"), 0)
+        speed = to_int(val(a, "Mobile", "Speed"), 0) or to_int(val(a, "Aircraft", "Speed"), 0)
         out_actors[name.lower()] = {
             "name": name,
             "hp": hp,
@@ -245,13 +268,16 @@ def main() -> None:
             "prerequisites": val(a, "Buildable", "Prerequisites", default=""),
             "armaments": arms,
             "target_types": [t.strip() for t in str(val(a, "Targetable", "TargetTypes", default="")).split(",") if t.strip()],
-            "mobile": "Mobile" in a,
+            "mobile": "Mobile" in a or "Aircraft" in a,
             "is_building": "Building" in a,
-            "locomotor": val(a, "Mobile", "Locomotor", default=""),
+            "locomotor": val(a, "Mobile", "Locomotor", default="") or ("fly" if "Aircraft" in a else ""),
         }
         extra = naval_traits(a)
         if extra:
             out_actors[name.lower()].update(extra)
+        ab = ability_traits(a)
+        if ab:
+            out_actors[name.lower()]["abilities"] = ab
     out_weapons = {w: weapon_info(weapons, w) for w in sorted(wanted_weapons) if w in weapons}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"source": "OpenRA bleed e7e9e4ad mods/ra rules + weapons", "locomotors": locomotors(), "actors": out_actors, "weapons": out_weapons}, indent=1), encoding="utf-8")

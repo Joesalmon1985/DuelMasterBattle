@@ -18,8 +18,8 @@ DMG_SCALE = 25
 CELLS_PER_WORLD = 0.4 / 8.0
 SPEED_SCALE = 115.0
 MS_PER_TICK = 1000.0 / 60.0
-INTERNAL = {"block", "anthicus-missile", "disrupt-missile", "quell-missile"}
-CORE_UNITS = {"alpha", "beta", "gamma"}  # spawned by cores for the player; not producible
+INTERNAL = {"block", "anthicus-missile", "disrupt-missile", "quell-missile", "assembly-drone", "manifold", "latum", "renale"}  # drones, missiles and two types no block of v146 produces
+CORE_UNITS = {"alpha", "beta", "gamma", "evoke", "incite", "emanate"}  # spawned by cores for the player; not producible
 LOCO = {"mech": "foot", "legs": "legs", "crawl": "foot", "tank": "tracked", "naval": "naval", "air": "fly", "hover": "hover", "tether": "fly"}
 SUPPORT = {"mono", "poly", "mega", "quad", "oct", "nova", "pulsar", "quasar", "retusa", "oxynoe", "cyerce", "aegires", "navanax", "evoke", "incite", "emanate"}
 
@@ -41,6 +41,9 @@ def chains() -> dict[str, int]:
     for b in blocks.values():
         for p in b.get("plans") or []:
             tier[p["unit"]] = 1
+    for b in blocks.values():
+        for k, p in enumerate(b.get("assembler_plans") or []):  # Erekir assemblers make the fourth and fifth tier of each line
+            tier[p["unit"]] = 4 + k
     for _ in range(6):
         for b in blocks.values():
             for pair in b.get("upgrades") or []:

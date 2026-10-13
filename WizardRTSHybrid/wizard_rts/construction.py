@@ -299,6 +299,9 @@ def check_placement(world: Any, faction_name: str, kind: str, tx: int, ty: int) 
         return "locked_by_card", {"spec": spec, "info": info}
     if spec.get("enhancement_of"):  # Widelands enhancements exist only as an upgrade of a standing building (`enhance_building`)
         return "enhancement_only", {"spec": spec, "info": info}
+    missing = _openra_content.prerequisites_met(world, faction_name, spec.get("requires", [])) if spec.get("requires") else None
+    if missing and tech.gated(world):
+        return "needs_" + missing, {"spec": spec, "info": info}
     tile = (int(tx), int(ty))
     home = faction_warehouse(world, faction_name)
     ctx: dict[str, Any] = {"spec": spec, "info": info, "tile": tile, "home": home}
@@ -609,6 +612,11 @@ from wizard_rts import rules as _rules  # noqa: E402
 for _b, _units in _calibrate.new_recipes(_rules.actor).items():
     RECIPES.setdefault(_b, {}).update(_units)
 
+from wizard_rts import openra_content as _openra_content  # noqa: E402  (the rest of the Red Alert roster: buildings and recipes generated from the imported rules)
+
+_openra_content.install(BUILD_MENU, RECIPES, MENU_SIZE, GROUND_FOOTPRINT, _rules.actor)
+_calibrate.CARD_ONLY.update(_openra_content.card_only_units())
+
 
 # ------------------------------------------------------------------ recruitment
 
@@ -637,6 +645,9 @@ def queue_unit(world: Any, building_id: str, unit_kind: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "cannot_build_here"}
     if not tech.unit_allowed(world, b["faction_name"], unit_kind):
         return {"status": "rejected", "reason": "locked_by_card"}
+    missing = _openra_content.prerequisites_met(world, b["faction_name"], recipe.get("requires", [])) if recipe.get("requires") and tech.gated(world) else None
+    if missing:
+        return {"status": "rejected", "reason": "needs_" + missing}
     queue = b.setdefault("queue", [])
     if len(queue) >= 5:
         return {"status": "rejected", "reason": "queue_full"}

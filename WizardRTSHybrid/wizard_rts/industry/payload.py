@@ -105,7 +105,11 @@ def accepts_payload(world: Any, st: Any, b: dict, payload: dict, from_tile: tupl
         if m.get("payload") is not None:
             return False
         if role == "reconstructor":
-            return payload.get("type") == "unit" and U.upgrade_of(payload["unit"]) is not None and _facing_ok(b, from_tile)
+            from wizard_rts import tech
+
+            up = U.upgrade_of(payload["unit"])
+            ok_upgrade = any(len(pair) > 1 and pair[0] == payload["unit"] for pair in (R.block(b["kind"]).get("upgrades") or []))
+            return (payload.get("type") == "unit" and up is not None and ok_upgrade and tech.unit_allowed(world, b["faction_name"], up) and _facing_ok(b, from_tile))
         if role == "payload_loader":
             return payload.get("type") == "block"
         return True

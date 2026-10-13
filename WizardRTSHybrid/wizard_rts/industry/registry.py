@@ -141,6 +141,7 @@ def _generic(kind: str) -> dict[str, Any] | None:
 
 def kinds() -> list[str]:
     from wizard_rts.industry import blocks as B
+    from wizard_rts.industry import engine  # noqa: F401  (registers IMPLEMENTED_ROLES)
 
     extra = [k for k in B.functional_kinds() if k not in _blocks() and B.spec(k)["role"] in IMPLEMENTED_ROLES]
     return sorted(set(_blocks()) | set(extra))

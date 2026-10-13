@@ -167,7 +167,7 @@ def test_card_json_is_consistent():
     # the generated v2 cards (drafting v2) also unlock kinds, among them hybrid buildings that exist only there (the scriptorium)
     covered = PRIMITIVE_KINDS | {k for c in cards.values() for k in c["kinds"]} | {k for c in graph.generated_cards().values() for k in c["kinds"]} | set(tech.FOUNDATION_KINDS)
     assert covered == known  # (the foundation kinds, among them the v2-only clinic, need no card)
-    for k in registry.kinds():  # the registry's own card pointer agrees with the card file
+    for k in sorted(registry._blocks()):  # the hand-tuned first slice: its card pointer agrees with the card file (the generic blocks are on generated cards)
         assert k in cards[registry.block(k)["card"]]["kinds"], k
 
 

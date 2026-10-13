@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import disruption, feed, history, nests, regions, settlements, society, story, tech, trade, vp
+from wizard_rts import disruption, feed, history, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -294,6 +294,8 @@ class HybridWorld:
         if building is None or building.get("target_type") not in target_types:
             return 0
         if int(building.get("hp", 0)) <= 0:
+            return 0
+        if int(building.get("invuln_until_ms", 0)) > int(self.dmb.clock.get("game_ms", 0)):  # Iron Curtain
             return 0
         if by:
             building["last_hit_by"] = by
@@ -701,6 +703,7 @@ class HybridWorld:
             "status": "idle",
         }
         init_unit(self.units[unit_id])
+        abilities.init_unit_extras(self.units[unit_id])
         return unit_id
 
     def _building(
@@ -891,6 +894,7 @@ class HybridWorld:
             if self.ai_enabled:
                 ai_quantum(self)
             military_quantum(self)
+            abilities.ability_quantum(self)
             if self.economy_quanta % 30 == 0:
                 self.events.append({"kind": "ai_economy", "game_ms": int(self.dmb.clock.get("game_ms", 0))})
         return {"status": "ok", "quanta": quanta, "snapshot": self.snapshot(tree_sync=tree_sync) if snapshot else None}
@@ -1008,7 +1012,22 @@ class HybridWorld:
         return out
 
     def deploy(self, unit_id: str) -> dict[str, Any]:
+        u = self.units.get(str(unit_id))
+        if u is not None and u["definition"] in ("openra.dtrk", "openra.qtnk"):
+            out = abilities.detonate(self, str(unit_id))
+            out["snapshot"] = self.snapshot()
+            return out
         out = territory.deploy(self, str(unit_id))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def ability(self, faction: str, op: str, **kw: Any) -> dict[str, Any]:
+        """Board, unload, capture, infiltrate, lay a mine, use a support power (openra_abilities)."""
+        fn = {"board": lambda: abilities.board(self, kw["unit"], kw["transport"]), "unload": lambda: abilities.unload(self, kw["transport"], kw.get("tx"), kw.get("ty")),
+              "capture": lambda: abilities.capture(self, kw["unit"], kw["building"]), "infiltrate": lambda: abilities.infiltrate(self, kw["unit"], kw["building"]),
+              "lay_mine": lambda: abilities.lay_mine(self, kw["unit"]),
+              "power": lambda: abilities.use_power(self, faction, kw["building"], kw["tx"], kw["ty"], kw.get("tx2"), kw.get("ty2"))}.get(op)
+        out = fn() if fn else {"status": "rejected", "reason": "unknown_ability"}
         out["snapshot"] = self.snapshot()
         return out
 
@@ -1278,6 +1297,14 @@ def _entity_row(row: dict[str, Any]) -> dict[str, Any]:
         out["rally"] = list(row["rally"])
     if row.get("tribe_fallback"):
         out["tribe_fallback"] = True
+    if row.get("inside"):
+        out["inside"] = row["inside"]
+    if row.get("passengers"):
+        out["passengers"] = list(row["passengers"])
+    if row.get("ammo_max"):
+        out["ammo"], out["ammo_max"] = int(row.get("ammo", 0)), int(row["ammo_max"])
+    if row.get("hidden"):
+        out["hidden"] = True
     if row.get("ground_footprint"):
         out["ground_footprint"] = row["ground_footprint"]
     if row.get("footprint"):

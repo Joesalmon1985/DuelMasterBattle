@@ -9,7 +9,7 @@ wl:amazons_ferry_yard,widelands,productionsite,Ferry Yard,amazons,pending,buildi
 wl:amazons_food_preserver,widelands,productionsite,Food Preserver,amazons,functional,,wl:amazons_food_preserver,0,foundation,states
 wl:amazons_fortification,widelands,militarysite,Fortification,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_fortress,widelands,militarysite,Fortress,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:amazons_furnace,widelands,productionsite,Furnace,amazons,functional,,wl:amazons_furnace,0,gen.amazons_furnace,states
+wl:amazons_furnace,widelands,productionsite,Furnace,amazons,functional,,wl:amazons_furnace,0,gen.amazons_charcoal_kiln,states
 wl:amazons_gardening_center,widelands,productionsite,Gardening Center,amazons,pending,worker_program: check,,,,none
 wl:amazons_gold_digger_dwelling,widelands,productionsite,Gold Digger Dwelling,amazons,functional,,wl:amazons_gold_digger_dwelling,0,foundation,states
 wl:amazons_headquarters,widelands,warehouse,Headquarters,amazons,pending,warehouse not implemented,,,,none
@@ -29,7 +29,7 @@ wl:amazons_shipyard,widelands,productionsite,Shipyard,amazons,pending,building_p
 wl:amazons_stone_workshop,widelands,productionsite,Stone Workshop,amazons,functional,,wl:amazons_stone_workshop,0,gen.amazons_stone_workshop,states
 wl:amazons_stonecutters_hut,widelands,productionsite,Stonecutter’s Hut,amazons,functional,,wl:amazons_stonecutters_hut,0,foundation,static
 wl:amazons_stonemine,widelands,productionsite,Stone Mine,amazons,functional,,wl:amazons_stonemine,0,gen.amazons_stonemine,states
-wl:amazons_tapir_farm,widelands,productionsite,Tapir Farm,amazons,functional,,wl:amazons_tapir_farm,0,gen.amazons_tapir_farm,states
+wl:amazons_tapir_farm,widelands,productionsite,Tapir Farm,amazons,functional,,wl:amazons_tapir_farm,0,gen.amazons_cocoa_farm,states
 wl:amazons_tower,widelands,militarysite,Tower,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_training_glade,widelands,trainingsite,Training Glade,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:amazons_treetop_sentry,widelands,militarysite,Treetop Sentry,amazons,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
@@ -63,14 +63,14 @@ wl:atlanteans_hunters_house,widelands,productionsite,Hunter’s House,atlanteans
 wl:atlanteans_ironmine,widelands,productionsite,Iron Mine,atlanteans,functional,,wl:atlanteans_ironmine,0,gen.atlanteans_ironmine,static
 wl:atlanteans_labyrinth,widelands,trainingsite,Labyrinth,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:atlanteans_market,widelands,market,Market,atlanteans,pending,market not implemented,,,,none
-wl:atlanteans_mill,widelands,productionsite,Mill,atlanteans,functional,,wl:atlanteans_mill,0,gen.atlanteans_blackroot_farm,states
+wl:atlanteans_mill,widelands,productionsite,Mill,atlanteans,functional,,wl:atlanteans_mill,0,gen.atlanteans_armorsmithy,states
 wl:atlanteans_port,widelands,warehouse,Port,atlanteans,pending,warehouse not implemented,,,,none
 wl:atlanteans_quarry,widelands,productionsite,Quarry,atlanteans,functional,,wl:atlanteans_quarry,0,foundation,static
 wl:atlanteans_sawmill,widelands,productionsite,Sawmill,atlanteans,functional,,wl:atlanteans_sawmill,0,foundation,states
 wl:atlanteans_scouts_house,widelands,productionsite,Scout’s House,atlanteans,pending,worker_program: scout,,,,none
 wl:atlanteans_shipyard,widelands,productionsite,Shipyard,atlanteans,pending,building_programs: ship: construct,,,,none
 wl:atlanteans_smelting_works,widelands,productionsite,Smelting Works,atlanteans,functional,,wl:atlanteans_smelting_works,0,gen.atlanteans_charcoal_kiln,static
-wl:atlanteans_smokery,widelands,productionsite,Smokery,atlanteans,functional,,wl:atlanteans_smokery,0,gen.atlanteans_smokery,states
+wl:atlanteans_smokery,widelands,productionsite,Smokery,atlanteans,functional,,wl:atlanteans_smokery,0,gen.atlanteans_blackroot_farm,states
 wl:atlanteans_spiderfarm,widelands,productionsite,Spider Farm,atlanteans,functional,,wl:atlanteans_spiderfarm,0,gen.atlanteans_spiderfarm,static
 wl:atlanteans_toolsmithy,widelands,productionsite,Toolsmithy,atlanteans,functional,,wl:atlanteans_toolsmithy,0,gen.atlanteans_spiderfarm,static
 wl:atlanteans_tower,widelands,militarysite,Tower,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
@@ -78,7 +78,7 @@ wl:atlanteans_tower_high,widelands,militarysite,High Tower,atlanteans,excluded,W
 wl:atlanteans_tower_small,widelands,militarysite,Small Tower,atlanteans,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:atlanteans_warehouse,widelands,warehouse,Warehouse,atlanteans,pending,warehouse not implemented,,,,none
 wl:atlanteans_weaponsmithy,widelands,productionsite,Weapon Smithy,atlanteans,functional,,wl:atlanteans_weaponsmithy,0,gen.atlanteans_coalmine,static
-wl:atlanteans_weaving_mill,widelands,productionsite,Weaving Mill,atlanteans,functional,,wl:atlanteans_weaving_mill,0,gen.atlanteans_weaving_mill,static
+wl:atlanteans_weaving_mill,widelands,productionsite,Weaving Mill,atlanteans,functional,,wl:atlanteans_weaving_mill,0,gen.atlanteans_ironmine,static
 wl:atlanteans_well,widelands,productionsite,Well,atlanteans,functional,,wl:atlanteans_well,0,foundation,static
 wl:atlanteans_woodcutters_house,widelands,productionsite,Woodcutter’s House,atlanteans,functional,,wl:atlanteans_woodcutters_house,0,foundation,static
 wl:barbarians_ax_workshop,widelands,productionsite,Ax Workshop,barbarians,functional,,wl:barbarians_ax_workshop,0,gen.barbarians_ax_workshop,states
@@ -108,7 +108,7 @@ wl:barbarians_headquarters_interim,widelands,warehouse,Headquarters,barbarians,p
 wl:barbarians_helmsmithy,widelands,productionsite,Helm Smithy,barbarians,functional,,wl:barbarians_helmsmithy,0,gen.barbarians_charcoal_kiln,states
 wl:barbarians_hunters_hut,widelands,productionsite,Hunter’s Hut,barbarians,functional,,wl:barbarians_hunters_hut,0,foundation,states
 wl:barbarians_inn,widelands,productionsite,Inn,barbarians,functional,,wl:barbarians_inn,0,foundation,states
-wl:barbarians_ironmine,widelands,productionsite,Iron Mine,barbarians,functional,,wl:barbarians_ironmine,0,gen.barbarians_ironmine,states
+wl:barbarians_ironmine,widelands,productionsite,Iron Mine,barbarians,functional,,wl:barbarians_ironmine,0,gen.barbarians_goldmine_deep,states
 wl:barbarians_ironmine_deep,widelands,productionsite,Deep Iron Mine,barbarians,functional,,wl:barbarians_ironmine_deep,0,gen.barbarians_ironmine_deep,states
 wl:barbarians_ironmine_deeper,widelands,productionsite,Deeper Iron Mine,barbarians,functional,,wl:barbarians_ironmine_deeper,0,gen.barbarians_ironmine_deeper,states
 wl:barbarians_lime_kiln,widelands,productionsite,Lime Kiln,barbarians,functional,,wl:barbarians_lime_kiln,0,gen.barbarians_coalmine_deep,static
@@ -119,7 +119,7 @@ wl:barbarians_micro_brewery,widelands,productionsite,Micro Brewery,barbarians,fu
 wl:barbarians_port,widelands,warehouse,Port,barbarians,pending,warehouse not implemented,,,,none
 wl:barbarians_quarry,widelands,productionsite,Quarry,barbarians,functional,,wl:barbarians_quarry,0,foundation,states
 wl:barbarians_rangers_hut,widelands,productionsite,Ranger’s Hut,barbarians,functional,,wl:barbarians_rangers_hut,0,foundation,states
-wl:barbarians_reed_yard,widelands,productionsite,Reed Yard,barbarians,functional,,wl:barbarians_reed_yard,0,gen.barbarians_reed_yard,static
+wl:barbarians_reed_yard,widelands,productionsite,Reed Yard,barbarians,functional,,wl:barbarians_reed_yard,0,gen.barbarians_metal_workshop,static
 wl:barbarians_scouts_hut,widelands,productionsite,Scout’s Hut,barbarians,pending,worker_program: scout,,,,none
 wl:barbarians_sentry,widelands,militarysite,Sentry,barbarians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:barbarians_shipyard,widelands,productionsite,Shipyard,barbarians,pending,building_programs: ship: construct,,,,none
@@ -129,9 +129,9 @@ wl:barbarians_tower,widelands,militarysite,Tower,barbarians,excluded,Widelands m
 wl:barbarians_trainingcamp,widelands,trainingsite,Training Camp,barbarians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:barbarians_warehouse,widelands,warehouse,Warehouse,barbarians,pending,warehouse not implemented,,,,none
 wl:barbarians_warmill,widelands,productionsite,War Mill,barbarians,functional,,wl:barbarians_warmill,0,gen.barbarians_warmill,states
-wl:barbarians_weaving_mill,widelands,productionsite,Weaving Mill,barbarians,functional,,wl:barbarians_weaving_mill,0,gen.barbarians_weaving_mill,states
+wl:barbarians_weaving_mill,widelands,productionsite,Weaving Mill,barbarians,functional,,wl:barbarians_weaving_mill,0,gen.barbarians_warmill,states
 wl:barbarians_well,widelands,productionsite,Well,barbarians,functional,,wl:barbarians_well,0,foundation,states
-wl:barbarians_wood_hardener,widelands,productionsite,Wood Hardener,barbarians,functional,,wl:barbarians_wood_hardener,0,gen.barbarians_wood_hardener,states
+wl:barbarians_wood_hardener,widelands,productionsite,Wood Hardener,barbarians,functional,,wl:barbarians_wood_hardener,0,gen.barbarians_ironmine_deep,states
 wl:empire_arena,widelands,trainingsite,Arena,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:empire_armorsmithy,widelands,productionsite,Armor Smithy,empire,functional,,wl:empire_armorsmithy,0,gen.empire_armorsmithy,states
 wl:empire_bakery,widelands,productionsite,Bakery,empire,functional,,wl:empire_bakery,0,gen.empire_bakery,states
@@ -162,7 +162,7 @@ wl:empire_lumberjacks_house,widelands,productionsite,Lumberjack’s House,empire
 wl:empire_marblemine,widelands,productionsite,Marble Mine,empire,functional,,wl:empire_marblemine,0,gen.empire_marblemine,states
 wl:empire_marblemine_deep,widelands,productionsite,Deep Marble Mine,empire,functional,,wl:empire_marblemine_deep,0,gen.empire_marblemine_deep,states
 wl:empire_market,widelands,market,Market,empire,pending,market not implemented,,,,none
-wl:empire_mill,widelands,productionsite,Mill,empire,functional,,wl:empire_mill,0,gen.empire_mill,states
+wl:empire_mill,widelands,productionsite,Mill,empire,functional,,wl:empire_mill,0,gen.empire_ironmine_deep,states
 wl:empire_outpost,widelands,militarysite,Outpost,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:empire_piggery,widelands,productionsite,Piggery,empire,functional,,wl:empire_piggery,0,gen.empire_piggery,static
 wl:empire_port,widelands,warehouse,Port,empire,pending,warehouse not implemented,,,,none
@@ -173,7 +173,7 @@ wl:empire_sentry,widelands,militarysite,Sentry,empire,excluded,Widelands militar
 wl:empire_sheepfarm,widelands,productionsite,Sheep Farm,empire,functional,,wl:empire_sheepfarm,0,gen.empire_sheepfarm,static
 wl:empire_shipyard,widelands,productionsite,Shipyard,empire,pending,building_programs: ship: construct,,,,none
 wl:empire_smelting_works,widelands,productionsite,Smelting Works,empire,functional,,wl:empire_smelting_works,0,gen.empire_charcoal_kiln,states
-wl:empire_stonemasons_house,widelands,productionsite,Stonemason’s House,empire,functional,,wl:empire_stonemasons_house,0,gen.empire_marblemine,static
+wl:empire_stonemasons_house,widelands,productionsite,Stonemason’s House,empire,functional,,wl:empire_stonemasons_house,0,gen.empire_donkeyfarm,static
 wl:empire_tavern,widelands,productionsite,Tavern,empire,functional,,wl:empire_tavern,0,foundation,static
 wl:empire_toolsmithy,widelands,productionsite,Toolsmithy,empire,functional,,wl:empire_toolsmithy,0,gen.empire_toolsmithy,static
 wl:empire_tower,widelands,militarysite,Tower,empire,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
@@ -207,7 +207,7 @@ wl:frisians_ferry_yard,widelands,productionsite,Ferry Yard,frisians,pending,buil
 wl:frisians_fishers_house,widelands,productionsite,Fisher’s House,frisians,pending,worker_program: fish,,,,none
 wl:frisians_foresters_house,widelands,productionsite,Forester’s House,frisians,functional,,wl:frisians_foresters_house,0,foundation,states
 wl:frisians_fortress,widelands,militarysite,Fortress,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
-wl:frisians_furnace,widelands,productionsite,Furnace,frisians,functional,,wl:frisians_furnace,0,gen.frisians_coalmine,states
+wl:frisians_furnace,widelands,productionsite,Furnace,frisians,functional,,wl:frisians_furnace,0,gen.frisians_blacksmithy,states
 wl:frisians_goldmine,widelands,productionsite,Gold Mine,frisians,functional,,wl:frisians_goldmine,0,gen.frisians_goldmine,states
 wl:frisians_goldmine_deep,widelands,productionsite,Deep Gold Mine,frisians,functional,,wl:frisians_goldmine_deep,0,gen.frisians_goldmine_deep,states
 wl:frisians_headquarters,widelands,warehouse,Headquarters,frisians,pending,warehouse not implemented,,,,none
@@ -220,7 +220,7 @@ wl:frisians_mead_brewery,widelands,productionsite,Mead Brewery,frisians,function
 wl:frisians_outpost,widelands,militarysite,Outpost,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_port,widelands,warehouse,Port,frisians,pending,warehouse not implemented,,,,none
 wl:frisians_quarry,widelands,productionsite,Quarry,frisians,functional,,wl:frisians_quarry,0,foundation,states
-wl:frisians_recycling_center,widelands,productionsite,Recycling Center,frisians,functional,,wl:frisians_recycling_center,0,gen.frisians_coalmine_deep,states
+wl:frisians_recycling_center,widelands,productionsite,Recycling Center,frisians,functional,,wl:frisians_recycling_center,0,gen.frisians_coalmine,states
 wl:frisians_reed_farm,widelands,productionsite,Reed Farm,frisians,functional,,wl:frisians_reed_farm,0,gen.frisians_reed_farm,states
 wl:frisians_reindeer_farm,widelands,productionsite,Reindeer Farm,frisians,functional,,wl:frisians_reindeer_farm,0,gen.frisians_reindeer_farm,states
 wl:frisians_rockmine,widelands,productionsite,Rock Mine,frisians,functional,,wl:frisians_rockmine,0,gen.frisians_rockmine,states
@@ -229,14 +229,14 @@ wl:frisians_scouts_house,widelands,productionsite,Scout’s House,frisians,pendi
 wl:frisians_sentinel,widelands,militarysite,Sentinel,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_sewing_room,widelands,productionsite,Sewing Room,frisians,functional,,wl:frisians_sewing_room,0,gen.frisians_reindeer_farm,states
 wl:frisians_shipyard,widelands,productionsite,Shipyard,frisians,pending,building_programs: ship: construct,,,,none
-wl:frisians_smokery,widelands,productionsite,Smokery,frisians,functional,,wl:frisians_smokery,0,gen.frisians_smokery,states
-wl:frisians_tailors_shop,widelands,productionsite,Tailor’s Shop,frisians,functional,,wl:frisians_tailors_shop,0,gen.frisians_tailors_shop,states
+wl:frisians_smokery,widelands,productionsite,Smokery,frisians,functional,,wl:frisians_smokery,0,gen.frisians_rockmine_deep,states
+wl:frisians_tailors_shop,widelands,productionsite,Tailor’s Shop,frisians,functional,,wl:frisians_tailors_shop,0,gen.frisians_brick_kiln,states
 wl:frisians_tavern,widelands,productionsite,Tavern,frisians,functional,,wl:frisians_tavern,0,foundation,states
 wl:frisians_tower,widelands,militarysite,Tower,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_training_arena,widelands,trainingsite,Training Arena,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_training_camp,widelands,trainingsite,Training Camp,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
 wl:frisians_warehouse,widelands,warehouse,Warehouse,frisians,pending,warehouse not implemented,,,,none
-wl:frisians_weaving_mill,widelands,productionsite,Weaving Mill,frisians,functional,,wl:frisians_weaving_mill,0,gen.frisians_weaving_mill,states
+wl:frisians_weaving_mill,widelands,productionsite,Weaving Mill,frisians,functional,,wl:frisians_weaving_mill,0,gen.frisians_reed_farm,states
 wl:frisians_well,widelands,productionsite,Well,frisians,functional,,wl:frisians_well,0,foundation,states
 wl:frisians_woodcutters_house,widelands,productionsite,Woodcutter’s House,frisians,functional,,wl:frisians_woodcutters_house,0,foundation,states
 wl:frisians_wooden_tower,widelands,militarysite,Wooden Tower,frisians,excluded,Widelands military/training: replaced by the OpenRA military (D05),,,,none
@@ -245,441 +245,441 @@ openra:1tnk,openra,unit,1TNK,,functional,,unit:light_tank,1,gen.unit_light_tank,
 openra:2tnk,openra,unit,2TNK,,functional,,unit:medium_tank,1,gen.unit_medium_tank,layered
 openra:3tnk,openra,unit,3TNK,,functional,,unit:tank,1,gen.unit_tank,layered
 openra:4tnk,openra,unit,4TNK,,functional,,unit:mammoth,1,gen.unit_mammoth,layered
-openra:afld,openra,building,AFLD,,pending,not in the build menu,,,,none
-openra:agun,openra,building,AGUN,,pending,not in the build menu,,,,none
+openra:afld,openra,building,AFLD,,functional,,afld,1,gen.afld,none
+openra:agun,openra,building,AGUN,,functional,,agun,1,gen.agun,none
 openra:ant,openra,unit,Ant,,excluded,mission-only creature,,,,none
 openra:apc,openra,unit,APC,,functional,,unit:apc,1,gen.vehicle_factory,directional
 openra:apwr,openra,building,APWR,,pending,not in the build menu,,,,none
 openra:arty,openra,unit,ARTY,,functional,,unit:artillery,1,gen.unit_artillery,directional
-openra:atef,openra,building,ATEF,,pending,not in the build menu,,,,none
-openra:atek,openra,building,ATEK,,pending,not in the build menu,,,,none
+openra:atef,openra,building,ATEF,,functional,,atef,1,gen.atef,none
+openra:atek,openra,building,ATEK,,functional,,atek,1,gen.atek,none
 openra:barr,openra,building,BARR,,pending,not in the build menu,,,,none
-openra:brik,openra,building,BRIK,,pending,not in the build menu,,,,none
+openra:brik,openra,building,BRIK,,functional,,brik,1,gen.brik,none
 openra:ca,openra,unit,CA,,functional,,unit:cruiser,1,gen.naval_yard,directional
-openra:ctnk,openra,unit,CTNK,,functional,,unit:chrono_tank,1,gen.unit_chrono_tank,directional
+openra:ctnk,openra,unit,CTNK,,functional,,unit:chrono_tank,1,gen.unit_tank,directional
 openra:dd,openra,unit,DD,,functional,,unit:destroyer,1,gen.unit_destroyer,directional
-openra:dog,openra,unit,DOG,,functional,,unit:attack_dog,1,gen.barracks,directional
-openra:dome,openra,building,DOME,,pending,not in the build menu,,,,none
-openra:domf,openra,building,DOMF,,pending,not in the build menu,,,,none
-openra:dtrk,openra,unit,DTRK,,pending,no recipe / mechanic,,,,directional
+openra:dog,openra,unit,DOG,,functional,,unit:attack_dog,1,gen.kenn,directional
+openra:dome,openra,building,DOME,,functional,,dome,1,gen.dome,none
+openra:domf,openra,building,DOMF,,functional,,domf,1,gen.domf,none
+openra:dtrk,openra,unit,DTRK,,functional,,unit:demo_truck,1,gen.unit_demo_truck,directional
 openra:e1,openra,unit,E1,,functional,,unit:infantry,1,gen.unit_infantry,directional
-openra:e2,openra,unit,E2,,functional,,unit:grenadier,1,gen.unit_grenadier,directional
-openra:e3,openra,unit,E3,,functional,,unit:rocket_soldier,1,gen.unit_rocket_soldier,directional
-openra:e4,openra,unit,E4,,functional,,unit:flamethrower,1,gen.unit_flamethrower,directional
-openra:e6,openra,unit,E6,,pending,no recipe / mechanic,,,,directional
-openra:e7,openra,unit,E7,,functional,,unit:commando,1,gen.unit_commando,directional
-openra:facf,openra,building,FACF,,pending,not in the build menu,,,,none
+openra:e2,openra,unit,E2,,functional,,unit:grenadier,1,gen.unit_shock_trooper,directional
+openra:e3,openra,unit,E3,,functional,,unit:rocket_soldier,1,gen.unit_infantry,directional
+openra:e4,openra,unit,E4,,functional,,unit:flamethrower,1,gen.unit_thief,directional
+openra:e6,openra,unit,E6,,functional,,unit:engineer,1,gen.unit_medic,directional
+openra:e7,openra,unit,E7,,functional,,unit:commando,1,gen.barracks,directional
+openra:facf,openra,building,FACF,,functional,,facf,1,gen.facf,none
 openra:fact,openra,building,FACT,,pending,not in the build menu,,,,static
-openra:fapw,openra,building,FAPW,,pending,not in the build menu,,,,none
-openra:fenc,openra,building,FENC,,pending,not in the build menu,,,,none
+openra:fapw,openra,building,FAPW,,functional,,fapw,1,gen.fapw,none
+openra:fenc,openra,building,FENC,,functional,,fenc,1,gen.fenc,none
 openra:fireant,openra,unit,FireAnt,,excluded,mission-only creature,,,,none
-openra:fix,openra,building,FIX,,pending,not in the build menu,,,,none
-openra:fixf,openra,building,FIXF,,pending,not in the build menu,,,,none
-openra:fpwr,openra,building,FPWR,,pending,not in the build menu,,,,none
-openra:ftrk,openra,unit,FTRK,,pending,no recipe / mechanic,,,,none
+openra:fix,openra,building,FIX,,functional,,fix,1,gen.fix,none
+openra:fixf,openra,building,FIXF,,functional,,fixf,1,gen.fixf,none
+openra:fpwr,openra,building,FPWR,,functional,,fpwr,1,gen.fpwr,none
+openra:ftrk,openra,unit,FTRK,,functional,,unit:flak_truck,1,gen.unit_demo_truck,none
 openra:ftur,openra,building,FTUR,,functional,,flame_tower,1,gen.flame_tower,static
-openra:gap,openra,building,GAP,,pending,not in the build menu,,,,none
+openra:gap,openra,building,GAP,,functional,,gap,1,gen.gap,none
 openra:gun,openra,building,GUN,,functional,,defense,1,gen.defense,directional
 openra:harv,openra,unit,HARV,,excluded,harvester: the credit economy is replaced by wares (roster rule 4.2),,,,none
-openra:hbox,openra,building,HBOX,,pending,not in the build menu,,,,none
-openra:heli,openra,unit,HELI,,pending,no recipe / mechanic,,,,directional
+openra:hbox,openra,building,HBOX,,functional,,hbox,1,gen.hbox,none
+openra:heli,openra,unit,HELI,,functional,,unit:longbow,1,gen.unit_chinook,directional
 openra:hind,openra,unit,HIND,,pending,no recipe / mechanic,,,,directional
-openra:hpad,openra,building,HPAD,,pending,not in the build menu,,,,none
-openra:iron,openra,building,IRON,,pending,not in the build menu,,,,none
+openra:hpad,openra,building,HPAD,,functional,,hpad,1,gen.hpad,none
+openra:iron,openra,building,IRON,,functional,,iron,1,gen.iron,none
 openra:jeep,openra,unit,JEEP,,functional,,unit:jeep,1,gen.unit_jeep,layered
-openra:kenn,openra,building,KENN,,pending,not in the build menu,,,,none
-openra:lst,openra,unit,LST,,pending,no recipe / mechanic,,,,static
+openra:kenn,openra,building,KENN,,functional,,kenn,1,gen.kenn,none
+openra:lst,openra,unit,LST,,functional,,unit:landing_ship,1,gen.unit_landing_ship,static
 openra:mcv,openra,unit,MCV,,functional,,unit:mcv,1,gen.unit_mcv,directional
-openra:mech,openra,unit,MECH,,pending,no recipe / mechanic,,,,static
-openra:medi,openra,unit,MEDI,,pending,no recipe / mechanic,,,,static
-openra:mgg,openra,unit,MGG,,pending,no recipe / mechanic,,,,directional
-openra:mh60,openra,unit,MH60,,pending,no recipe / mechanic,,,,none
-openra:mig,openra,unit,MIG,,pending,no recipe / mechanic,,,,directional
-openra:mnly,openra,unit,MNLY,,pending,no recipe / mechanic,,,,directional
-openra:mrj,openra,unit,MRJ,,pending,no recipe / mechanic,,,,directional
-openra:mslf,openra,building,MSLF,,pending,not in the build menu,,,,none
-openra:mslo,openra,building,MSLO,,pending,not in the build menu,,,,none
+openra:mech,openra,unit,MECH,,functional,,unit:mechanic,1,gen.unit_mechanic,static
+openra:medi,openra,unit,MEDI,,functional,,unit:medic,1,gen.unit_medic,static
+openra:mgg,openra,unit,MGG,,functional,,unit:gap_vehicle,1,gen.unit_gap_vehicle,directional
+openra:mh60,openra,unit,MH60,,functional,,unit:black_hawk,1,gen.hpad,none
+openra:mig,openra,unit,MIG,,functional,,unit:mig,1,gen.afld,directional
+openra:mnly,openra,unit,MNLY,,functional,,unit:minelayer,1,gen.unit_minelayer,directional
+openra:mrj,openra,unit,MRJ,,functional,,unit:radar_jammer,1,gen.unit_radar_jammer,directional
+openra:mslf,openra,building,MSLF,,functional,,mslf,1,gen.mslf,none
+openra:mslo,openra,building,MSLO,,functional,,mslo,1,gen.mslo,none
 openra:msub,openra,unit,MSUB,,functional,,unit:missile_sub,1,gen.sub_pen,directional
-openra:pbox,openra,building,PBOX,,pending,not in the build menu,,,,static
-openra:pdof,openra,building,PDOF,,pending,not in the build menu,,,,none
-openra:pdox,openra,building,PDOX,,pending,not in the build menu,,,,none
+openra:pbox,openra,building,PBOX,,functional,,pbox,1,gen.pbox,static
+openra:pdof,openra,building,PDOF,,functional,,pdof,1,gen.pdof,none
+openra:pdox,openra,building,PDOX,,functional,,pdox,1,gen.pdox,none
 openra:powr,openra,building,POWR,,pending,not in the build menu,,,,none
 openra:proc,openra,building,PROC,,pending,not in the build menu,,,,static
-openra:pt,openra,unit,PT,,functional,,unit:patrol_boat,1,gen.unit_patrol_boat,directional
-openra:qtnk,openra,unit,QTNK,,pending,no recipe / mechanic,,,,directional
-openra:sam,openra,building,SAM,,pending,not in the build menu,,,,none
-openra:sbag,openra,building,SBAG,,pending,not in the build menu,,,,none
+openra:pt,openra,unit,PT,,functional,,unit:patrol_boat,1,gen.unit_destroyer,directional
+openra:qtnk,openra,unit,QTNK,,functional,,unit:mad_tank,1,gen.unit_mad_tank,directional
+openra:sam,openra,building,SAM,,functional,,sam,1,gen.sam,none
+openra:sbag,openra,building,SBAG,,functional,,sbag,1,gen.sbag,none
 openra:scoutant,openra,unit,ScoutAnt,,excluded,mission-only creature,,,,none
 openra:shok,openra,unit,SHOK,,functional,,unit:shock_trooper,1,gen.unit_shock_trooper,directional
 openra:silo,openra,building,SILO,,pending,not in the build menu,,,,none
 openra:spef,openra,building,SPEF,,pending,not in the build menu,,,,none
 openra:spen,openra,building,SPEN,,functional,,sub_pen,1,gen.sub_pen,none
-openra:spy,openra,unit,SPY,,pending,no recipe / mechanic,,,,directional
+openra:spy,openra,unit,SPY,,functional,,unit:spy,1,gen.unit_spy,directional
 openra:ss,openra,unit,SS,,functional,,unit:submarine,1,gen.unit_submarine,directional
-openra:stek,openra,building,STEK,,pending,not in the build menu,,,,none
-openra:stnk,openra,unit,STNK,,functional,,unit:phase_tank,1,gen.unit_phase_tank,directional
+openra:stek,openra,building,STEK,,functional,,stek,1,gen.stek,none
+openra:stnk,openra,unit,STNK,,functional,,unit:phase_tank,1,gen.unit_radar_jammer,directional
 openra:syrd,openra,building,SYRD,,functional,,naval_yard,1,gen.naval_yard,none
-openra:syrf,openra,building,SYRF,,pending,not in the build menu,,,,none
-openra:tenf,openra,building,TENF,,pending,not in the build menu,,,,none
+openra:syrf,openra,building,SYRF,,functional,,syrf,1,gen.syrf,none
+openra:tenf,openra,building,TENF,,functional,,tenf,1,gen.tenf,none
 openra:tent,openra,building,TENT,,pending,not in the build menu,,,,none
-openra:thf,openra,unit,THF,,pending,no recipe / mechanic,,,,static
-openra:tran,openra,unit,TRAN,,pending,no recipe / mechanic,,,,none
-openra:truk,openra,unit,TRUK,,pending,no recipe / mechanic,,,,directional
+openra:thf,openra,unit,THF,,functional,,unit:thief,1,gen.unit_thief,static
+openra:tran,openra,unit,TRAN,,functional,,unit:chinook,1,gen.unit_chinook,none
+openra:truk,openra,unit,TRUK,,functional,,unit:supply_truck,1,gen.unit_supply_truck,directional
 openra:tsla,openra,building,TSLA,,functional,,tesla_coil,1,gen.tesla_coil,static
 openra:ttnk,openra,unit,TTNK,,functional,,unit:tesla_tank,1,gen.unit_tesla_tank,directional
-openra:v2rl,openra,unit,V2RL,,functional,,unit:v2_launcher,1,gen.unit_v2_launcher,directional
+openra:v2rl,openra,unit,V2RL,,functional,,unit:v2_launcher,1,gen.unit_gap_vehicle,directional
 openra:warriorant,openra,unit,WarriorAnt,,excluded,mission-only creature,,,,none
-openra:weaf,openra,building,WEAF,,pending,not in the build menu,,,,none
+openra:weaf,openra,building,WEAF,,functional,,weaf,1,gen.weaf,none
 openra:weap,openra,building,WEAP,,functional,,vehicle_factory,1,gen.vehicle_factory,static
-openra:yak,openra,unit,YAK,,pending,no recipe / mechanic,,,,directional
+openra:yak,openra,unit,YAK,,functional,,unit:yak,1,gen.unit_yak,directional
 openra:zombie,openra,unit,Zombie,,excluded,mission-only creature,,,,none
-mdy:additive-reconstructor,mindustry,Reconstructor,additive-reconstructor,,pending,class Reconstructor not simulated,,,,none
-mdy:afflict,mindustry,PowerTurret,afflict,,pending,class PowerTurret not simulated,,,,none
-mdy:air-factory,mindustry,UnitFactory,air-factory,,pending,class UnitFactory not simulated,,,,none
-mdy:arc,mindustry,PowerTurret,arc,,pending,class PowerTurret not simulated,,,,none
-mdy:armored-conveyor,mindustry,ArmoredConveyor,armored-conveyor,,pending,class ArmoredConveyor not simulated,,,,none
-mdy:armored-duct,mindustry,Duct,armored-duct,,pending,class Duct not simulated,,,,none
-mdy:atmospheric-concentrator,mindustry,HeatCrafter,atmospheric-concentrator,,pending,class HeatCrafter not simulated,,,,none
-mdy:barrier-projector,mindustry,DirectionalForceProjector,barrier-projector,,pending,class DirectionalForceProjector not simulated,,,,none
-mdy:basic-assembler-module,mindustry,UnitAssemblerModule,basic-assembler-module,,pending,class UnitAssemblerModule not simulated,,,,none
+mdy:additive-reconstructor,mindustry,Reconstructor,additive-reconstructor,,functional,,mdy:additive_reconstructor,2,gen.mdy_additive_reconstructor,none
+mdy:afflict,mindustry,PowerTurret,afflict,,functional,,mdy:afflict,2,gen.mdy_afflict,none
+mdy:air-factory,mindustry,UnitFactory,air-factory,,functional,,mdy:air_factory,2,gen.mdy_air_factory,none
+mdy:arc,mindustry,PowerTurret,arc,,functional,,mdy:arc,2,gen.mdy_arc,none
+mdy:armored-conveyor,mindustry,ArmoredConveyor,armored-conveyor,,functional,,mdy:armored_conveyor,2,gen.mdy_armored_conveyor,none
+mdy:armored-duct,mindustry,Duct,armored-duct,,functional,,mdy:armored_duct,2,gen.mdy_armored_duct,none
+mdy:atmospheric-concentrator,mindustry,HeatCrafter,atmospheric-concentrator,,functional,,mdy:atmospheric_concentrator,2,gen.mdy_lustre,none
+mdy:barrier-projector,mindustry,DirectionalForceProjector,barrier-projector,,functional,,mdy:barrier_projector,2,gen.mdy_barrier_projector,none
+mdy:basic-assembler-module,mindustry,UnitAssemblerModule,basic-assembler-module,,functional,,mdy:basic_assembler_module,2,gen.mdy_basic_assembler_module,none
 mdy:battery,mindustry,Battery,battery,,functional,,mdy:battery,2,gen.mdy_solar_panel,static
-mdy:battery-large,mindustry,Battery,battery-large,,pending,class Battery not simulated,,,,none
-mdy:beam-link,mindustry,LongPowerNode,beam-link,,pending,class LongPowerNode not simulated,,,,none
-mdy:beam-node,mindustry,BeamNode,beam-node,,pending,class BeamNode not simulated,,,,none
-mdy:beam-tower,mindustry,BeamNode,beam-tower,,pending,class BeamNode not simulated,,,,none
-mdy:beryllium-wall,mindustry,Wall,beryllium-wall,,pending,class Wall not simulated,,,,none
-mdy:beryllium-wall-large,mindustry,Wall,beryllium-wall-large,,pending,class Wall not simulated,,,,none
-mdy:blast-door,mindustry,AutoDoor,blast-door,,pending,class AutoDoor not simulated,,,,none
-mdy:blast-drill,mindustry,Drill,blast-drill,,pending,class Drill not simulated,,,,none
-mdy:blast-mixer,mindustry,GenericCrafter,blast-mixer,,pending,class GenericCrafter not simulated,,,,none
-mdy:breach,mindustry,ItemTurret,breach,,pending,class ItemTurret not simulated,,,,none
-mdy:bridge-conduit,mindustry,LiquidBridge,bridge-conduit,,pending,class LiquidBridge not simulated,,,,none
-mdy:bridge-conveyor,mindustry,BufferedItemBridge,bridge-conveyor,,pending,class BufferedItemBridge not simulated,,,,none
-mdy:build-tower,mindustry,BuildTurret,build-tower,,pending,class BuildTurret not simulated,,,,none
-mdy:canvas,mindustry,CanvasBlock,canvas,,excluded,developer sandbox block,,,,none
-mdy:carbide-crucible,mindustry,HeatCrafter,carbide-crucible,,pending,class HeatCrafter not simulated,,,,none
-mdy:carbide-wall,mindustry,Wall,carbide-wall,,pending,class Wall not simulated,,,,none
-mdy:carbide-wall-large,mindustry,Wall,carbide-wall-large,,pending,class Wall not simulated,,,,none
-mdy:chemical-combustion-chamber,mindustry,ConsumeGenerator,chemical-combustion-chamber,,pending,class ConsumeGenerator not simulated,,,,none
-mdy:cliff-crusher,mindustry,WallCrafter,cliff-crusher,,pending,class WallCrafter not simulated,,,,none
-mdy:coal-centrifuge,mindustry,GenericCrafter,coal-centrifuge,,pending,class GenericCrafter not simulated,,,,none
+mdy:battery-large,mindustry,Battery,battery-large,,functional,,mdy:battery_large,2,gen.mdy_battery_large,none
+mdy:beam-link,mindustry,LongPowerNode,beam-link,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:beam-node,mindustry,BeamNode,beam-node,,functional,,mdy:beam_node,2,gen.mdy_beam_node,none
+mdy:beam-tower,mindustry,BeamNode,beam-tower,,functional,,mdy:beam_tower,2,gen.mdy_beam_tower,none
+mdy:beryllium-wall,mindustry,Wall,beryllium-wall,,functional,,mdy:beryllium_wall,2,gen.mdy_beryllium_wall,none
+mdy:beryllium-wall-large,mindustry,Wall,beryllium-wall-large,,functional,,mdy:beryllium_wall_large,2,gen.mdy_beryllium_wall_large,none
+mdy:blast-door,mindustry,AutoDoor,blast-door,,functional,,mdy:blast_door,2,gen.mdy_blast_door,none
+mdy:blast-drill,mindustry,Drill,blast-drill,,functional,,mdy:blast_drill,2,gen.mdy_blast_drill,none
+mdy:blast-mixer,mindustry,GenericCrafter,blast-mixer,,functional,,mdy:blast_mixer,2,gen.mdy_blast_mixer,none
+mdy:breach,mindustry,ItemTurret,breach,,functional,,mdy:breach,2,gen.mdy_container,none
+mdy:bridge-conduit,mindustry,LiquidBridge,bridge-conduit,,functional,,mdy:bridge_conduit,2,gen.mdy_bridge_conduit,none
+mdy:bridge-conveyor,mindustry,BufferedItemBridge,bridge-conveyor,,functional,,mdy:bridge_conveyor,2,gen.mdy_duct_unloader,none
+mdy:build-tower,mindustry,BuildTurret,build-tower,,functional,,mdy:build_tower,2,gen.mdy_build_tower,none
+mdy:canvas,mindustry,CanvasBlock,canvas,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:carbide-crucible,mindustry,HeatCrafter,carbide-crucible,,functional,,mdy:carbide_crucible,2,gen.mdy_repair_turret,none
+mdy:carbide-wall,mindustry,Wall,carbide-wall,,functional,,mdy:carbide_wall,2,gen.mdy_carbide_wall,none
+mdy:carbide-wall-large,mindustry,Wall,carbide-wall-large,,functional,,mdy:carbide_wall_large,2,gen.mdy_carbide_wall_large,none
+mdy:chemical-combustion-chamber,mindustry,ConsumeGenerator,chemical-combustion-chamber,,functional,,mdy:chemical_combustion_chamber,2,gen.mdy_shielded_wall,none
+mdy:cliff-crusher,mindustry,WallCrafter,cliff-crusher,,functional,,mdy:cliff_crusher,2,gen.mdy_cliff_crusher,none
+mdy:coal-centrifuge,mindustry,GenericCrafter,coal-centrifuge,,functional,,mdy:coal_centrifuge,2,gen.mdy_basic_assembler_module,none
 mdy:combustion-generator,mindustry,ConsumeGenerator,combustion-generator,,functional,,mdy:combustion_generator,2,gen.mdy_combustion_generator,static
-mdy:conduit,mindustry,Conduit,conduit,,pending,class Conduit not simulated,,,,none
-mdy:constructor,mindustry,Constructor,constructor,,pending,class Constructor not simulated,,,,none
-mdy:container,mindustry,StorageBlock,container,,pending,class StorageBlock not simulated,,,,none
+mdy:conduit,mindustry,Conduit,conduit,,functional,,mdy:conduit,2,gen.mdy_conduit,none
+mdy:constructor,mindustry,Constructor,constructor,,functional,,mdy:constructor,2,gen.mdy_surge_tower,none
+mdy:container,mindustry,StorageBlock,container,,functional,,mdy:container,2,gen.mdy_container,none
 mdy:conveyor,mindustry,Conveyor,conveyor,,functional,,mdy:conveyor,2,gen.mdy_mechanical_drill,static
-mdy:copper-wall,mindustry,Wall,copper-wall,,pending,class Wall not simulated,,,,none
-mdy:copper-wall-large,mindustry,Wall,copper-wall-large,,pending,class Wall not simulated,,,,none
-mdy:core-acropolis,mindustry,CoreBlock,core-acropolis,,pending,class CoreBlock not simulated,,,,none
-mdy:core-bastion,mindustry,CoreBlock,core-bastion,,pending,class CoreBlock not simulated,,,,none
-mdy:core-citadel,mindustry,CoreBlock,core-citadel,,pending,class CoreBlock not simulated,,,,none
-mdy:core-foundation,mindustry,CoreBlock,core-foundation,,pending,class CoreBlock not simulated,,,,none
-mdy:core-nucleus,mindustry,CoreBlock,core-nucleus,,pending,class CoreBlock not simulated,,,,none
-mdy:core-shard,mindustry,CoreBlock,core-shard,,pending,class CoreBlock not simulated,,,,none
-mdy:cryofluid-mixer,mindustry,GenericCrafter,cryofluid-mixer,,pending,class GenericCrafter not simulated,,,,none
-mdy:cultivator,mindustry,AttributeCrafter,cultivator,,pending,class AttributeCrafter not simulated,,,,none
-mdy:cyanogen-synthesizer,mindustry,HeatCrafter,cyanogen-synthesizer,,pending,class HeatCrafter not simulated,,,,none
-mdy:cyclone,mindustry,ItemTurret,cyclone,,pending,class ItemTurret not simulated,,,,none
-mdy:deconstructor,mindustry,PayloadDeconstructor,deconstructor,,pending,class PayloadDeconstructor not simulated,,,,none
-mdy:differential-generator,mindustry,ConsumeGenerator,differential-generator,,pending,class ConsumeGenerator not simulated,,,,none
-mdy:diffuse,mindustry,ItemTurret,diffuse,,pending,class ItemTurret not simulated,,,,none
-mdy:diode,mindustry,PowerDiode,diode,,pending,class PowerDiode not simulated,,,,none
-mdy:disassembler,mindustry,Separator,disassembler,,pending,class Separator not simulated,,,,none
-mdy:disperse,mindustry,ItemTurret,disperse,,pending,class ItemTurret not simulated,,,,none
-mdy:distributor,mindustry,Router,distributor,,pending,class Router not simulated,,,,none
-mdy:door,mindustry,Door,door,,pending,class Door not simulated,,,,none
-mdy:door-large,mindustry,Door,door-large,,pending,class Door not simulated,,,,none
-mdy:duct,mindustry,Duct,duct,,pending,class Duct not simulated,,,,none
-mdy:duct-bridge,mindustry,DuctBridge,duct-bridge,,pending,class DuctBridge not simulated,,,,none
-mdy:duct-router,mindustry,DuctRouter,duct-router,,pending,class DuctRouter not simulated,,,,none
-mdy:duct-unloader,mindustry,DirectionalUnloader,duct-unloader,,pending,class DirectionalUnloader not simulated,,,,none
-mdy:duo,mindustry,ItemTurret,duo,,pending,class ItemTurret not simulated,,,,none
-mdy:electric-heater,mindustry,HeatProducer,electric-heater,,pending,class HeatProducer not simulated,,,,none
-mdy:electrolyzer,mindustry,GenericCrafter,electrolyzer,,pending,class GenericCrafter not simulated,,,,none
-mdy:eruption-drill,mindustry,BurstDrill,eruption-drill,,pending,class BurstDrill not simulated,,,,none
-mdy:exponential-reconstructor,mindustry,Reconstructor,exponential-reconstructor,,pending,class Reconstructor not simulated,,,,none
-mdy:flux-reactor,mindustry,VariableReactor,flux-reactor,,pending,class VariableReactor not simulated,,,,none
-mdy:force-projector,mindustry,ForceProjector,force-projector,,pending,class ForceProjector not simulated,,,,none
-mdy:foreshadow,mindustry,ItemTurret,foreshadow,,pending,class ItemTurret not simulated,,,,none
-mdy:fuse,mindustry,ItemTurret,fuse,,pending,class ItemTurret not simulated,,,,none
+mdy:copper-wall,mindustry,Wall,copper-wall,,functional,,mdy:copper_wall,2,gen.mdy_copper_wall,none
+mdy:copper-wall-large,mindustry,Wall,copper-wall-large,,functional,,mdy:copper_wall_large,2,gen.mdy_core_shard,none
+mdy:core-acropolis,mindustry,CoreBlock,core-acropolis,,functional,,mdy:core_acropolis,2,gen.mdy_core_acropolis,none
+mdy:core-bastion,mindustry,CoreBlock,core-bastion,,functional,,mdy:core_bastion,2,gen.mdy_core_bastion,none
+mdy:core-citadel,mindustry,CoreBlock,core-citadel,,functional,,mdy:core_citadel,2,gen.mdy_core_citadel,none
+mdy:core-foundation,mindustry,CoreBlock,core-foundation,,functional,,mdy:core_foundation,2,gen.mdy_core_foundation,none
+mdy:core-nucleus,mindustry,CoreBlock,core-nucleus,,functional,,mdy:core_nucleus,2,gen.mdy_core_nucleus,none
+mdy:core-shard,mindustry,CoreBlock,core-shard,,functional,,mdy:core_shard,2,gen.mdy_core_shard,none
+mdy:cryofluid-mixer,mindustry,GenericCrafter,cryofluid-mixer,,functional,,mdy:cryofluid_mixer,2,gen.mdy_cryofluid_mixer,none
+mdy:cultivator,mindustry,AttributeCrafter,cultivator,,functional,,mdy:cultivator,2,gen.mdy_cultivator,none
+mdy:cyanogen-synthesizer,mindustry,HeatCrafter,cyanogen-synthesizer,,functional,,mdy:cyanogen_synthesizer,2,gen.mdy_ship_assembler,none
+mdy:cyclone,mindustry,ItemTurret,cyclone,,functional,,mdy:cyclone,2,gen.mdy_force_projector,none
+mdy:deconstructor,mindustry,PayloadDeconstructor,deconstructor,,functional,,mdy:deconstructor,2,gen.mdy_deconstructor,none
+mdy:differential-generator,mindustry,ConsumeGenerator,differential-generator,,functional,,mdy:differential_generator,2,gen.mdy_cryofluid_mixer,none
+mdy:diffuse,mindustry,ItemTurret,diffuse,,functional,,mdy:diffuse,2,gen.mdy_diffuse,none
+mdy:diode,mindustry,PowerDiode,diode,,functional,,mdy:diode,2,gen.mdy_blast_door,none
+mdy:disassembler,mindustry,Separator,disassembler,,functional,,mdy:disassembler,2,gen.mdy_disassembler,none
+mdy:disperse,mindustry,ItemTurret,disperse,,functional,,mdy:disperse,2,gen.mdy_disperse,none
+mdy:distributor,mindustry,Router,distributor,,functional,,mdy:distributor,2,gen.mdy_tank_assembler,none
+mdy:door,mindustry,Door,door,,functional,,mdy:door,2,gen.mdy_door,none
+mdy:door-large,mindustry,Door,door-large,,functional,,mdy:door_large,2,gen.mdy_door_large,none
+mdy:duct,mindustry,Duct,duct,,functional,,mdy:duct,2,gen.mdy_duct,none
+mdy:duct-bridge,mindustry,DuctBridge,duct-bridge,,functional,,mdy:duct_bridge,2,gen.mdy_duct_bridge,none
+mdy:duct-router,mindustry,DuctRouter,duct-router,,functional,,mdy:duct_router,2,gen.mdy_duct_router,none
+mdy:duct-unloader,mindustry,DirectionalUnloader,duct-unloader,,functional,,mdy:duct_unloader,2,gen.mdy_duct_unloader,none
+mdy:duo,mindustry,ItemTurret,duo,,functional,,mdy:duo,2,gen.mdy_duo,none
+mdy:electric-heater,mindustry,HeatProducer,electric-heater,,functional,,mdy:electric_heater,2,gen.mdy_electric_heater,none
+mdy:electrolyzer,mindustry,GenericCrafter,electrolyzer,,functional,,mdy:electrolyzer,2,gen.mdy_thorium_reactor,none
+mdy:eruption-drill,mindustry,BurstDrill,eruption-drill,,functional,,mdy:eruption_drill,2,gen.mdy_eruption_drill,none
+mdy:exponential-reconstructor,mindustry,Reconstructor,exponential-reconstructor,,functional,,mdy:exponential_reconstructor,2,gen.mdy_exponential_reconstructor,none
+mdy:flux-reactor,mindustry,VariableReactor,flux-reactor,,functional,,mdy:flux_reactor,2,gen.mdy_kiln,none
+mdy:force-projector,mindustry,ForceProjector,force-projector,,functional,,mdy:force_projector,2,gen.mdy_force_projector,none
+mdy:foreshadow,mindustry,ItemTurret,foreshadow,,functional,,mdy:foreshadow,2,gen.mdy_beam_tower,none
+mdy:fuse,mindustry,ItemTurret,fuse,,functional,,mdy:fuse,2,gen.mdy_phase_wall_large,none
 mdy:graphite-press,mindustry,GenericCrafter,graphite-press,,functional,,mdy:graphite_press,2,gen.mdy_graphite_press,static
 mdy:ground-factory,mindustry,UnitFactory,ground-factory,,functional,,mdy:ground_factory,2,gen.mdy_ground_factory,static
-mdy:hail,mindustry,ItemTurret,hail,,pending,class ItemTurret not simulated,,,,none
-mdy:heat-reactor,mindustry,HeatProducer,heat-reactor,,pending,class HeatProducer not simulated,,,,none
-mdy:heat-redirector,mindustry,HeatConductor,heat-redirector,,pending,class HeatConductor not simulated,,,,none
-mdy:heat-router,mindustry,HeatConductor,heat-router,,pending,class HeatConductor not simulated,,,,none
-mdy:heat-source,mindustry,HeatProducer,heat-source,,pending,class HeatProducer not simulated,,,,none
-mdy:hyper-processor,mindustry,LogicBlock,hyper-processor,,pending,class LogicBlock not simulated,,,,none
-mdy:illuminator,mindustry,LightBlock,illuminator,,excluded,developer sandbox block,,,,none
-mdy:impact-drill,mindustry,BurstDrill,impact-drill,,pending,class BurstDrill not simulated,,,,none
-mdy:impact-reactor,mindustry,ImpactReactor,impact-reactor,,pending,class ImpactReactor not simulated,,,,none
-mdy:impulse-pump,mindustry,Pump,impulse-pump,,pending,class Pump not simulated,,,,none
-mdy:incinerator,mindustry,Incinerator,incinerator,,pending,class Incinerator not simulated,,,,none
-mdy:interplanetary-accelerator,mindustry,Accelerator,interplanetary-accelerator,,pending,class Accelerator not simulated,,,,none
-mdy:inverted-sorter,mindustry,Sorter,inverted-sorter,,pending,class Sorter not simulated,,,,none
-mdy:item-source,mindustry,ItemSource,item-source,,excluded,developer sandbox block,,,,none
-mdy:item-void,mindustry,ItemVoid,item-void,,excluded,developer sandbox block,,,,none
-mdy:junction,mindustry,Junction,junction,,pending,class Junction not simulated,,,,none
-mdy:kiln,mindustry,GenericCrafter,kiln,,pending,class GenericCrafter not simulated,,,,none
-mdy:lancer,mindustry,PowerTurret,lancer,,pending,class PowerTurret not simulated,,,,none
-mdy:large-constructor,mindustry,Constructor,large-constructor,,pending,class Constructor not simulated,,,,none
-mdy:large-logic-display,mindustry,LogicDisplay,large-logic-display,,pending,class LogicDisplay not simulated,,,,none
-mdy:large-payload-mass-driver,mindustry,PayloadMassDriver,large-payload-mass-driver,,pending,class PayloadMassDriver not simulated,,,,none
-mdy:large-plasma-bore,mindustry,BeamDrill,large-plasma-bore,,pending,class BeamDrill not simulated,,,,none
-mdy:large-shield-projector,mindustry,BaseShield,large-shield-projector,,pending,class BaseShield not simulated,,,,none
-mdy:laser-drill,mindustry,Drill,laser-drill,,pending,class Drill not simulated,,,,none
-mdy:launch-pad,mindustry,LaunchPad,launch-pad,,pending,class LaunchPad not simulated,,,,none
-mdy:liquid-container,mindustry,LiquidRouter,liquid-container,,pending,class LiquidRouter not simulated,,,,none
-mdy:liquid-junction,mindustry,LiquidJunction,liquid-junction,,pending,class LiquidJunction not simulated,,,,none
-mdy:liquid-router,mindustry,LiquidRouter,liquid-router,,pending,class LiquidRouter not simulated,,,,none
-mdy:liquid-source,mindustry,LiquidSource,liquid-source,,excluded,developer sandbox block,,,,none
-mdy:liquid-tank,mindustry,LiquidRouter,liquid-tank,,pending,class LiquidRouter not simulated,,,,none
-mdy:liquid-void,mindustry,LiquidVoid,liquid-void,,excluded,developer sandbox block,,,,none
-mdy:logic-display,mindustry,LogicDisplay,logic-display,,pending,class LogicDisplay not simulated,,,,none
-mdy:logic-processor,mindustry,LogicBlock,logic-processor,,pending,class LogicBlock not simulated,,,,none
-mdy:lustre,mindustry,ContinuousTurret,lustre,,pending,class ContinuousTurret not simulated,,,,none
-mdy:malign,mindustry,PowerTurret,malign,,pending,class PowerTurret not simulated,,,,none
-mdy:mass-driver,mindustry,MassDriver,mass-driver,,pending,class MassDriver not simulated,,,,none
-mdy:mech-assembler,mindustry,UnitAssembler,mech-assembler,,pending,class UnitAssembler not simulated,,,,none
-mdy:mech-fabricator,mindustry,UnitFactory,mech-fabricator,,pending,class UnitFactory not simulated,,,,none
-mdy:mech-refabricator,mindustry,Reconstructor,mech-refabricator,,pending,class Reconstructor not simulated,,,,none
+mdy:hail,mindustry,ItemTurret,hail,,functional,,mdy:hail,2,gen.mdy_hail,none
+mdy:heat-reactor,mindustry,HeatProducer,heat-reactor,,functional,,mdy:heat_reactor,2,gen.mdy_smite,none
+mdy:heat-redirector,mindustry,HeatConductor,heat-redirector,,functional,,mdy:heat_redirector,2,gen.mdy_core_bastion,none
+mdy:heat-router,mindustry,HeatConductor,heat-router,,functional,,mdy:heat_router,2,gen.mdy_heat_router,none
+mdy:heat-source,mindustry,HeatProducer,heat-source,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:hyper-processor,mindustry,LogicBlock,hyper-processor,,functional,,mdy:hyper_processor,2,gen.mdy_reinforced_payload_router,none
+mdy:illuminator,mindustry,LightBlock,illuminator,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:impact-drill,mindustry,BurstDrill,impact-drill,,functional,,mdy:impact_drill,2,gen.mdy_impact_drill,none
+mdy:impact-reactor,mindustry,ImpactReactor,impact-reactor,,functional,,mdy:impact_reactor,2,gen.mdy_large_constructor,none
+mdy:impulse-pump,mindustry,Pump,impulse-pump,,functional,,mdy:impulse_pump,2,gen.mdy_impulse_pump,none
+mdy:incinerator,mindustry,Incinerator,incinerator,,functional,,mdy:incinerator,2,gen.mdy_hail,none
+mdy:interplanetary-accelerator,mindustry,Accelerator,interplanetary-accelerator,,functional,,mdy:interplanetary_accelerator,2,gen.mdy_reinforced_container,none
+mdy:inverted-sorter,mindustry,Sorter,inverted-sorter,,functional,,mdy:inverted_sorter,2,gen.mdy_plastanium_conveyor,none
+mdy:item-source,mindustry,ItemSource,item-source,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:item-void,mindustry,ItemVoid,item-void,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:junction,mindustry,Junction,junction,,functional,,mdy:junction,2,gen.mdy_junction,none
+mdy:kiln,mindustry,GenericCrafter,kiln,,functional,,mdy:kiln,2,gen.mdy_kiln,none
+mdy:lancer,mindustry,PowerTurret,lancer,,functional,,mdy:lancer,2,gen.mdy_thorium_wall,none
+mdy:large-constructor,mindustry,Constructor,large-constructor,,functional,,mdy:large_constructor,2,gen.mdy_large_constructor,none
+mdy:large-logic-display,mindustry,LogicDisplay,large-logic-display,,functional,,mdy:large_logic_display,2,gen.mdy_barrier_projector,none
+mdy:large-payload-mass-driver,mindustry,PayloadMassDriver,large-payload-mass-driver,,functional,,mdy:large_payload_mass_driver,2,gen.mdy_large_payload_mass_driver,none
+mdy:large-plasma-bore,mindustry,BeamDrill,large-plasma-bore,,functional,,mdy:large_plasma_bore,2,gen.mdy_phase_conveyor,none
+mdy:large-shield-projector,mindustry,BaseShield,large-shield-projector,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:laser-drill,mindustry,Drill,laser-drill,,functional,,mdy:laser_drill,2,gen.mdy_laser_drill,none
+mdy:launch-pad,mindustry,LaunchPad,launch-pad,,functional,,mdy:launch_pad,2,gen.mdy_launch_pad,none
+mdy:liquid-container,mindustry,LiquidRouter,liquid-container,,functional,,mdy:liquid_container,2,gen.mdy_liquid_container,none
+mdy:liquid-junction,mindustry,LiquidJunction,liquid-junction,,functional,,mdy:liquid_junction,2,gen.mdy_liquid_junction,none
+mdy:liquid-router,mindustry,LiquidRouter,liquid-router,,functional,,mdy:liquid_router,2,gen.mdy_liquid_router,none
+mdy:liquid-source,mindustry,LiquidSource,liquid-source,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:liquid-tank,mindustry,LiquidRouter,liquid-tank,,functional,,mdy:liquid_tank,2,gen.mdy_cultivator,none
+mdy:liquid-void,mindustry,LiquidVoid,liquid-void,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:logic-display,mindustry,LogicDisplay,logic-display,,functional,,mdy:logic_display,2,gen.mdy_logic_display,none
+mdy:logic-processor,mindustry,LogicBlock,logic-processor,,functional,,mdy:logic_processor,2,gen.mdy_logic_processor,none
+mdy:lustre,mindustry,ContinuousTurret,lustre,,functional,,mdy:lustre,2,gen.mdy_lustre,none
+mdy:malign,mindustry,PowerTurret,malign,,functional,,mdy:malign,2,gen.mdy_phase_wall,none
+mdy:mass-driver,mindustry,MassDriver,mass-driver,,functional,,mdy:mass_driver,2,gen.mdy_core_foundation,none
+mdy:mech-assembler,mindustry,UnitAssembler,mech-assembler,,functional,,mdy:mech_assembler,2,gen.mdy_mech_assembler,none
+mdy:mech-fabricator,mindustry,UnitFactory,mech-fabricator,,functional,,mdy:mech_fabricator,2,gen.mdy_mech_fabricator,none
+mdy:mech-refabricator,mindustry,Reconstructor,mech-refabricator,,functional,,mdy:mech_refabricator,2,gen.mdy_mech_refabricator,none
 mdy:mechanical-drill,mindustry,Drill,mechanical-drill,,functional,,mdy:mechanical_drill,2,gen.mdy_mechanical_drill,static
-mdy:mechanical-pump,mindustry,Pump,mechanical-pump,,pending,class Pump not simulated,,,,none
-mdy:meltdown,mindustry,LaserTurret,meltdown,,pending,class LaserTurret not simulated,,,,none
-mdy:melter,mindustry,GenericCrafter,melter,,pending,class GenericCrafter not simulated,,,,none
-mdy:memory-bank,mindustry,MemoryBlock,memory-bank,,pending,class MemoryBlock not simulated,,,,none
-mdy:memory-cell,mindustry,MemoryBlock,memory-cell,,pending,class MemoryBlock not simulated,,,,none
-mdy:mend-projector,mindustry,MendProjector,mend-projector,,pending,class MendProjector not simulated,,,,none
-mdy:mender,mindustry,MendProjector,mender,,pending,class MendProjector not simulated,,,,none
-mdy:message,mindustry,MessageBlock,message,,pending,class MessageBlock not simulated,,,,none
-mdy:micro-processor,mindustry,LogicBlock,micro-processor,,pending,class LogicBlock not simulated,,,,none
-mdy:multi-press,mindustry,GenericCrafter,multi-press,,pending,class GenericCrafter not simulated,,,,none
-mdy:multiplicative-reconstructor,mindustry,Reconstructor,multiplicative-reconstructor,,pending,class Reconstructor not simulated,,,,none
-mdy:naval-factory,mindustry,UnitFactory,naval-factory,,pending,class UnitFactory not simulated,,,,none
-mdy:neoplasia-reactor,mindustry,HeaterGenerator,neoplasia-reactor,,pending,class HeaterGenerator not simulated,,,,none
-mdy:oil-extractor,mindustry,Fracker,oil-extractor,,pending,class Fracker not simulated,,,,none
-mdy:overdrive-dome,mindustry,OverdriveProjector,overdrive-dome,,pending,class OverdriveProjector not simulated,,,,none
-mdy:overdrive-projector,mindustry,OverdriveProjector,overdrive-projector,,pending,class OverdriveProjector not simulated,,,,none
-mdy:overflow-duct,mindustry,OverflowDuct,overflow-duct,,pending,class OverflowDuct not simulated,,,,none
-mdy:overflow-gate,mindustry,OverflowGate,overflow-gate,,pending,class OverflowGate not simulated,,,,none
-mdy:oxidation-chamber,mindustry,HeatProducer,oxidation-chamber,,pending,class HeatProducer not simulated,,,,none
-mdy:parallax,mindustry,TractorBeamTurret,parallax,,pending,class TractorBeamTurret not simulated,,,,none
-mdy:payload-conveyor,mindustry,PayloadConveyor,payload-conveyor,,pending,class PayloadConveyor not simulated,,,,none
-mdy:payload-loader,mindustry,PayloadLoader,payload-loader,,pending,class PayloadLoader not simulated,,,,none
-mdy:payload-mass-driver,mindustry,PayloadMassDriver,payload-mass-driver,,pending,class PayloadMassDriver not simulated,,,,none
-mdy:payload-router,mindustry,PayloadRouter,payload-router,,pending,class PayloadRouter not simulated,,,,none
-mdy:payload-source,mindustry,PayloadSource,payload-source,,pending,class PayloadSource not simulated,,,,none
-mdy:payload-unloader,mindustry,PayloadUnloader,payload-unloader,,pending,class PayloadUnloader not simulated,,,,none
-mdy:payload-void,mindustry,PayloadVoid,payload-void,,pending,class PayloadVoid not simulated,,,,none
-mdy:phase-conduit,mindustry,LiquidBridge,phase-conduit,,pending,class LiquidBridge not simulated,,,,none
-mdy:phase-conveyor,mindustry,ItemBridge,phase-conveyor,,pending,class ItemBridge not simulated,,,,none
-mdy:phase-heater,mindustry,HeatProducer,phase-heater,,pending,class HeatProducer not simulated,,,,none
-mdy:phase-synthesizer,mindustry,HeatCrafter,phase-synthesizer,,pending,class HeatCrafter not simulated,,,,none
-mdy:phase-wall,mindustry,Wall,phase-wall,,pending,class Wall not simulated,,,,none
-mdy:phase-wall-large,mindustry,Wall,phase-wall-large,,pending,class Wall not simulated,,,,none
-mdy:phase-weaver,mindustry,GenericCrafter,phase-weaver,,pending,class GenericCrafter not simulated,,,,none
-mdy:plasma-bore,mindustry,BeamDrill,plasma-bore,,pending,class BeamDrill not simulated,,,,none
-mdy:plastanium-compressor,mindustry,GenericCrafter,plastanium-compressor,,pending,class GenericCrafter not simulated,,,,none
-mdy:plastanium-conveyor,mindustry,StackConveyor,plastanium-conveyor,,pending,class StackConveyor not simulated,,,,none
-mdy:plastanium-wall,mindustry,Wall,plastanium-wall,,pending,class Wall not simulated,,,,none
-mdy:plastanium-wall-large,mindustry,Wall,plastanium-wall-large,,pending,class Wall not simulated,,,,none
-mdy:plated-conduit,mindustry,ArmoredConduit,plated-conduit,,pending,class ArmoredConduit not simulated,,,,none
+mdy:mechanical-pump,mindustry,Pump,mechanical-pump,,functional,,mdy:mechanical_pump,2,gen.mdy_mechanical_pump,none
+mdy:meltdown,mindustry,LaserTurret,meltdown,,functional,,mdy:meltdown,2,gen.mdy_meltdown,none
+mdy:melter,mindustry,GenericCrafter,melter,,functional,,mdy:melter,2,gen.mdy_surge_crucible,none
+mdy:memory-bank,mindustry,MemoryBlock,memory-bank,,functional,,mdy:memory_bank,2,gen.mdy_memory_bank,none
+mdy:memory-cell,mindustry,MemoryBlock,memory-cell,,functional,,mdy:memory_cell,2,gen.mdy_memory_cell,none
+mdy:mend-projector,mindustry,MendProjector,mend-projector,,functional,,mdy:mend_projector,2,gen.mdy_mend_projector,none
+mdy:mender,mindustry,MendProjector,mender,,functional,,mdy:mender,2,gen.mdy_mender,none
+mdy:message,mindustry,MessageBlock,message,,functional,,mdy:message,2,gen.mdy_message,none
+mdy:micro-processor,mindustry,LogicBlock,micro-processor,,functional,,mdy:micro_processor,2,gen.mdy_ripple,none
+mdy:multi-press,mindustry,GenericCrafter,multi-press,,functional,,mdy:multi_press,2,gen.mdy_reinforced_liquid_router,none
+mdy:multiplicative-reconstructor,mindustry,Reconstructor,multiplicative-reconstructor,,functional,,mdy:multiplicative_reconstructor,2,gen.mdy_multiplicative_reconstructor,none
+mdy:naval-factory,mindustry,UnitFactory,naval-factory,,functional,,mdy:naval_factory,2,gen.mdy_naval_factory,none
+mdy:neoplasia-reactor,mindustry,HeaterGenerator,neoplasia-reactor,,functional,,mdy:neoplasia_reactor,2,gen.mdy_mech_refabricator,none
+mdy:oil-extractor,mindustry,Fracker,oil-extractor,,functional,,mdy:oil_extractor,2,gen.mdy_oil_extractor,none
+mdy:overdrive-dome,mindustry,OverdriveProjector,overdrive-dome,,functional,,mdy:overdrive_dome,2,gen.mdy_overdrive_dome,none
+mdy:overdrive-projector,mindustry,OverdriveProjector,overdrive-projector,,functional,,mdy:overdrive_projector,2,gen.mdy_overdrive_projector,none
+mdy:overflow-duct,mindustry,OverflowDuct,overflow-duct,,functional,,mdy:overflow_duct,2,gen.mdy_overflow_duct,none
+mdy:overflow-gate,mindustry,OverflowGate,overflow-gate,,functional,,mdy:overflow_gate,2,gen.mdy_blast_drill,none
+mdy:oxidation-chamber,mindustry,HeatProducer,oxidation-chamber,,functional,,mdy:oxidation_chamber,2,gen.mdy_oxidation_chamber,none
+mdy:parallax,mindustry,TractorBeamTurret,parallax,,functional,,mdy:parallax,2,gen.mdy_parallax,none
+mdy:payload-conveyor,mindustry,PayloadConveyor,payload-conveyor,,functional,,mdy:payload_conveyor,2,gen.mdy_payload_conveyor,none
+mdy:payload-loader,mindustry,PayloadLoader,payload-loader,,functional,,mdy:payload_loader,2,gen.mdy_payload_loader,none
+mdy:payload-mass-driver,mindustry,PayloadMassDriver,payload-mass-driver,,functional,,mdy:payload_mass_driver,2,gen.mdy_thorium_wall_large,none
+mdy:payload-router,mindustry,PayloadRouter,payload-router,,functional,,mdy:payload_router,2,gen.mdy_payload_router,none
+mdy:payload-source,mindustry,PayloadSource,payload-source,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:payload-unloader,mindustry,PayloadUnloader,payload-unloader,,functional,,mdy:payload_unloader,2,gen.mdy_payload_unloader,none
+mdy:payload-void,mindustry,PayloadVoid,payload-void,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:phase-conduit,mindustry,LiquidBridge,phase-conduit,,functional,,mdy:phase_conduit,2,gen.mdy_phase_conduit,none
+mdy:phase-conveyor,mindustry,ItemBridge,phase-conveyor,,functional,,mdy:phase_conveyor,2,gen.mdy_phase_conveyor,none
+mdy:phase-heater,mindustry,HeatProducer,phase-heater,,functional,,mdy:phase_heater,2,gen.mdy_vault,none
+mdy:phase-synthesizer,mindustry,HeatCrafter,phase-synthesizer,,functional,,mdy:phase_synthesizer,2,gen.mdy_phase_synthesizer,none
+mdy:phase-wall,mindustry,Wall,phase-wall,,functional,,mdy:phase_wall,2,gen.mdy_phase_wall,none
+mdy:phase-wall-large,mindustry,Wall,phase-wall-large,,functional,,mdy:phase_wall_large,2,gen.mdy_phase_wall_large,none
+mdy:phase-weaver,mindustry,GenericCrafter,phase-weaver,,functional,,mdy:phase_weaver,2,gen.mdy_phase_weaver,none
+mdy:plasma-bore,mindustry,BeamDrill,plasma-bore,,functional,,mdy:plasma_bore,2,gen.mdy_plasma_bore,none
+mdy:plastanium-compressor,mindustry,GenericCrafter,plastanium-compressor,,functional,,mdy:plastanium_compressor,2,gen.mdy_plastanium_compressor,none
+mdy:plastanium-conveyor,mindustry,StackConveyor,plastanium-conveyor,,functional,,mdy:plastanium_conveyor,2,gen.mdy_plastanium_conveyor,none
+mdy:plastanium-wall,mindustry,Wall,plastanium-wall,,functional,,mdy:plastanium_wall,2,gen.mdy_plastanium_wall,none
+mdy:plastanium-wall-large,mindustry,Wall,plastanium-wall-large,,functional,,mdy:plastanium_wall_large,2,gen.mdy_plastanium_wall_large,none
+mdy:plated-conduit,mindustry,ArmoredConduit,plated-conduit,,functional,,mdy:plated_conduit,2,gen.mdy_plated_conduit,none
 mdy:pneumatic-drill,mindustry,Drill,pneumatic-drill,,functional,,mdy:pneumatic_drill,2,gen.mdy_pneumatic_drill,static
 mdy:power-node,mindustry,PowerNode,power-node,,functional,,mdy:power_node,2,gen.mdy_combustion_generator,static
-mdy:power-node-large,mindustry,PowerNode,power-node-large,,pending,class PowerNode not simulated,,,,none
-mdy:power-source,mindustry,PowerSource,power-source,,excluded,developer sandbox block,,,,none
-mdy:power-void,mindustry,PowerVoid,power-void,,excluded,developer sandbox block,,,,none
-mdy:prime-refabricator,mindustry,Reconstructor,prime-refabricator,,pending,class Reconstructor not simulated,,,,none
-mdy:pulse-conduit,mindustry,Conduit,pulse-conduit,,pending,class Conduit not simulated,,,,none
-mdy:pulverizer,mindustry,GenericCrafter,pulverizer,,pending,class GenericCrafter not simulated,,,,none
-mdy:pyratite-mixer,mindustry,GenericCrafter,pyratite-mixer,,pending,class GenericCrafter not simulated,,,,none
-mdy:pyrolysis-generator,mindustry,ConsumeGenerator,pyrolysis-generator,,pending,class ConsumeGenerator not simulated,,,,none
-mdy:radar,mindustry,Radar,radar,,pending,class Radar not simulated,,,,none
-mdy:regen-projector,mindustry,RegenProjector,regen-projector,,pending,class RegenProjector not simulated,,,,none
-mdy:reinforced-bridge-conduit,mindustry,DirectionLiquidBridge,reinforced-bridge-conduit,,pending,class DirectionLiquidBridge not simulated,,,,none
-mdy:reinforced-conduit,mindustry,ArmoredConduit,reinforced-conduit,,pending,class ArmoredConduit not simulated,,,,none
-mdy:reinforced-container,mindustry,StorageBlock,reinforced-container,,pending,class StorageBlock not simulated,,,,none
-mdy:reinforced-liquid-container,mindustry,LiquidRouter,reinforced-liquid-container,,pending,class LiquidRouter not simulated,,,,none
-mdy:reinforced-liquid-junction,mindustry,LiquidJunction,reinforced-liquid-junction,,pending,class LiquidJunction not simulated,,,,none
-mdy:reinforced-liquid-router,mindustry,LiquidRouter,reinforced-liquid-router,,pending,class LiquidRouter not simulated,,,,none
-mdy:reinforced-liquid-tank,mindustry,LiquidRouter,reinforced-liquid-tank,,pending,class LiquidRouter not simulated,,,,none
-mdy:reinforced-message,mindustry,MessageBlock,reinforced-message,,pending,class MessageBlock not simulated,,,,none
-mdy:reinforced-payload-conveyor,mindustry,PayloadConveyor,reinforced-payload-conveyor,,pending,class PayloadConveyor not simulated,,,,none
-mdy:reinforced-payload-router,mindustry,PayloadRouter,reinforced-payload-router,,pending,class PayloadRouter not simulated,,,,none
-mdy:reinforced-pump,mindustry,Pump,reinforced-pump,,pending,class Pump not simulated,,,,none
-mdy:reinforced-surge-wall,mindustry,Wall,reinforced-surge-wall,,pending,class Wall not simulated,,,,none
-mdy:reinforced-surge-wall-large,mindustry,Wall,reinforced-surge-wall-large,,pending,class Wall not simulated,,,,none
-mdy:reinforced-vault,mindustry,StorageBlock,reinforced-vault,,pending,class StorageBlock not simulated,,,,none
-mdy:repair-point,mindustry,RepairTurret,repair-point,,pending,class RepairTurret not simulated,,,,none
-mdy:repair-turret,mindustry,RepairTurret,repair-turret,,pending,class RepairTurret not simulated,,,,none
-mdy:ripple,mindustry,ItemTurret,ripple,,pending,class ItemTurret not simulated,,,,none
-mdy:rotary-pump,mindustry,Pump,rotary-pump,,pending,class Pump not simulated,,,,none
-mdy:router,mindustry,Router,router,,pending,class Router not simulated,,,,none
-mdy:rtg-generator,mindustry,ConsumeGenerator,rtg-generator,,pending,class ConsumeGenerator not simulated,,,,none
-mdy:salvo,mindustry,ItemTurret,salvo,,pending,class ItemTurret not simulated,,,,none
-mdy:scathe,mindustry,ItemTurret,scathe,,pending,class ItemTurret not simulated,,,,none
-mdy:scatter,mindustry,ItemTurret,scatter,,pending,class ItemTurret not simulated,,,,none
-mdy:scorch,mindustry,ItemTurret,scorch,,pending,class ItemTurret not simulated,,,,none
-mdy:scrap-wall,mindustry,Wall,scrap-wall,,pending,class Wall not simulated,,,,none
-mdy:scrap-wall-gigantic,mindustry,Wall,scrap-wall-gigantic,,pending,class Wall not simulated,,,,none
-mdy:scrap-wall-huge,mindustry,Wall,scrap-wall-huge,,pending,class Wall not simulated,,,,none
-mdy:scrap-wall-large,mindustry,Wall,scrap-wall-large,,pending,class Wall not simulated,,,,none
-mdy:segment,mindustry,PointDefenseTurret,segment,,pending,class PointDefenseTurret not simulated,,,,none
-mdy:separator,mindustry,Separator,separator,,pending,class Separator not simulated,,,,none
-mdy:shield-projector,mindustry,BaseShield,shield-projector,,pending,class BaseShield not simulated,,,,none
-mdy:ship-assembler,mindustry,UnitAssembler,ship-assembler,,pending,class UnitAssembler not simulated,,,,none
-mdy:ship-fabricator,mindustry,UnitFactory,ship-fabricator,,pending,class UnitFactory not simulated,,,,none
-mdy:ship-refabricator,mindustry,Reconstructor,ship-refabricator,,pending,class Reconstructor not simulated,,,,none
-mdy:shock-mine,mindustry,ShockMine,shock-mine,,pending,class ShockMine not simulated,,,,none
-mdy:shockwave-tower,mindustry,ShockwaveTower,shockwave-tower,,pending,class ShockwaveTower not simulated,,,,none
-mdy:silicon-arc-furnace,mindustry,GenericCrafter,silicon-arc-furnace,,pending,class GenericCrafter not simulated,,,,none
-mdy:silicon-crucible,mindustry,AttributeCrafter,silicon-crucible,,pending,class AttributeCrafter not simulated,,,,none
+mdy:power-node-large,mindustry,PowerNode,power-node-large,,functional,,mdy:power_node_large,2,gen.mdy_power_node_large,none
+mdy:power-source,mindustry,PowerSource,power-source,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:power-void,mindustry,PowerVoid,power-void,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:prime-refabricator,mindustry,Reconstructor,prime-refabricator,,functional,,mdy:prime_refabricator,2,gen.mdy_prime_refabricator,none
+mdy:pulse-conduit,mindustry,Conduit,pulse-conduit,,functional,,mdy:pulse_conduit,2,gen.mdy_message,none
+mdy:pulverizer,mindustry,GenericCrafter,pulverizer,,functional,,mdy:pulverizer,2,gen.mdy_pulverizer,none
+mdy:pyratite-mixer,mindustry,GenericCrafter,pyratite-mixer,,functional,,mdy:pyratite_mixer,2,gen.mdy_disassembler,none
+mdy:pyrolysis-generator,mindustry,ConsumeGenerator,pyrolysis-generator,,functional,,mdy:pyrolysis_generator,2,gen.mdy_launch_pad,none
+mdy:radar,mindustry,Radar,radar,,functional,,mdy:radar,2,gen.mdy_radar,none
+mdy:regen-projector,mindustry,RegenProjector,regen-projector,,functional,,mdy:regen_projector,2,gen.mdy_battery_large,none
+mdy:reinforced-bridge-conduit,mindustry,DirectionLiquidBridge,reinforced-bridge-conduit,,functional,,mdy:reinforced_bridge_conduit,2,gen.mdy_oil_extractor,none
+mdy:reinforced-conduit,mindustry,ArmoredConduit,reinforced-conduit,,functional,,mdy:reinforced_conduit,2,gen.mdy_reinforced_conduit,none
+mdy:reinforced-container,mindustry,StorageBlock,reinforced-container,,functional,,mdy:reinforced_container,2,gen.mdy_reinforced_container,none
+mdy:reinforced-liquid-container,mindustry,LiquidRouter,reinforced-liquid-container,,functional,,mdy:reinforced_liquid_container,2,gen.mdy_phase_conduit,none
+mdy:reinforced-liquid-junction,mindustry,LiquidJunction,reinforced-liquid-junction,,functional,,mdy:reinforced_liquid_junction,2,gen.mdy_reinforced_liquid_junction,none
+mdy:reinforced-liquid-router,mindustry,LiquidRouter,reinforced-liquid-router,,functional,,mdy:reinforced_liquid_router,2,gen.mdy_reinforced_liquid_router,none
+mdy:reinforced-liquid-tank,mindustry,LiquidRouter,reinforced-liquid-tank,,functional,,mdy:reinforced_liquid_tank,2,gen.mdy_vent_condenser,none
+mdy:reinforced-message,mindustry,MessageBlock,reinforced-message,,functional,,mdy:reinforced_message,2,gen.mdy_reinforced_message,none
+mdy:reinforced-payload-conveyor,mindustry,PayloadConveyor,reinforced-payload-conveyor,,functional,,mdy:reinforced_payload_conveyor,2,gen.mdy_reinforced_payload_conveyor,none
+mdy:reinforced-payload-router,mindustry,PayloadRouter,reinforced-payload-router,,functional,,mdy:reinforced_payload_router,2,gen.mdy_reinforced_payload_router,none
+mdy:reinforced-pump,mindustry,Pump,reinforced-pump,,functional,,mdy:reinforced_pump,2,gen.mdy_reinforced_pump,none
+mdy:reinforced-surge-wall,mindustry,Wall,reinforced-surge-wall,,functional,,mdy:reinforced_surge_wall,2,gen.mdy_reinforced_vault,none
+mdy:reinforced-surge-wall-large,mindustry,Wall,reinforced-surge-wall-large,,functional,,mdy:reinforced_surge_wall_large,2,gen.mdy_reinforced_surge_wall_large,none
+mdy:reinforced-vault,mindustry,StorageBlock,reinforced-vault,,functional,,mdy:reinforced_vault,2,gen.mdy_reinforced_vault,none
+mdy:repair-point,mindustry,RepairTurret,repair-point,,functional,,mdy:repair_point,2,gen.mdy_prime_refabricator,none
+mdy:repair-turret,mindustry,RepairTurret,repair-turret,,functional,,mdy:repair_turret,2,gen.mdy_repair_turret,none
+mdy:ripple,mindustry,ItemTurret,ripple,,functional,,mdy:ripple,2,gen.mdy_ripple,none
+mdy:rotary-pump,mindustry,Pump,rotary-pump,,functional,,mdy:rotary_pump,2,gen.mdy_rotary_pump,none
+mdy:router,mindustry,Router,router,,functional,,mdy:router,2,gen.mdy_pneumatic_drill,none
+mdy:rtg-generator,mindustry,ConsumeGenerator,rtg-generator,,functional,,mdy:rtg_generator,2,gen.mdy_eruption_drill,none
+mdy:salvo,mindustry,ItemTurret,salvo,,functional,,mdy:salvo,2,gen.mdy_salvo,none
+mdy:scathe,mindustry,ItemTurret,scathe,,functional,,mdy:scathe,2,gen.mdy_scathe,none
+mdy:scatter,mindustry,ItemTurret,scatter,,functional,,mdy:scatter,2,gen.mdy_scatter,none
+mdy:scorch,mindustry,ItemTurret,scorch,,functional,,mdy:scorch,2,gen.mdy_mender,none
+mdy:scrap-wall,mindustry,Wall,scrap-wall,,functional,,mdy:scrap_wall,2,gen.mdy_scrap_wall,none
+mdy:scrap-wall-gigantic,mindustry,Wall,scrap-wall-gigantic,,functional,,mdy:scrap_wall_gigantic,2,gen.mdy_scrap_wall_gigantic,none
+mdy:scrap-wall-huge,mindustry,Wall,scrap-wall-huge,,functional,,mdy:scrap_wall_huge,2,gen.mdy_scrap_wall_huge,none
+mdy:scrap-wall-large,mindustry,Wall,scrap-wall-large,,functional,,mdy:scrap_wall_large,2,gen.mdy_electric_heater,none
+mdy:segment,mindustry,PointDefenseTurret,segment,,functional,,mdy:segment,2,gen.mdy_segment,none
+mdy:separator,mindustry,Separator,separator,,functional,,mdy:separator,2,gen.mdy_overdrive_projector,none
+mdy:shield-projector,mindustry,BaseShield,shield-projector,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:ship-assembler,mindustry,UnitAssembler,ship-assembler,,functional,,mdy:ship_assembler,2,gen.mdy_ship_assembler,none
+mdy:ship-fabricator,mindustry,UnitFactory,ship-fabricator,,functional,,mdy:ship_fabricator,2,gen.mdy_ship_fabricator,none
+mdy:ship-refabricator,mindustry,Reconstructor,ship-refabricator,,functional,,mdy:ship_refabricator,2,gen.mdy_ship_refabricator,none
+mdy:shock-mine,mindustry,ShockMine,shock-mine,,functional,,mdy:shock_mine,2,gen.mdy_scatter,none
+mdy:shockwave-tower,mindustry,ShockwaveTower,shockwave-tower,,functional,,mdy:shockwave_tower,2,gen.mdy_shockwave_tower,none
+mdy:silicon-arc-furnace,mindustry,GenericCrafter,silicon-arc-furnace,,functional,,mdy:silicon_arc_furnace,2,gen.mdy_surge_smelter,none
+mdy:silicon-crucible,mindustry,AttributeCrafter,silicon-crucible,,functional,,mdy:silicon_crucible,2,gen.mdy_salvo,none
 mdy:silicon-smelter,mindustry,GenericCrafter,silicon-smelter,,functional,,mdy:silicon_smelter,2,gen.mdy_graphite_press,static
-mdy:slag-centrifuge,mindustry,GenericCrafter,slag-centrifuge,,pending,class GenericCrafter not simulated,,,,none
-mdy:slag-heater,mindustry,HeatProducer,slag-heater,,pending,class HeatProducer not simulated,,,,none
-mdy:slag-incinerator,mindustry,ItemIncinerator,slag-incinerator,,pending,class ItemIncinerator not simulated,,,,none
-mdy:small-deconstructor,mindustry,PayloadDeconstructor,small-deconstructor,,pending,class PayloadDeconstructor not simulated,,,,none
-mdy:smite,mindustry,ItemTurret,smite,,pending,class ItemTurret not simulated,,,,none
+mdy:slag-centrifuge,mindustry,GenericCrafter,slag-centrifuge,,functional,,mdy:slag_centrifuge,2,gen.mdy_pulverizer,none
+mdy:slag-heater,mindustry,HeatProducer,slag-heater,,functional,,mdy:slag_heater,2,gen.mdy_slag_heater,none
+mdy:slag-incinerator,mindustry,ItemIncinerator,slag-incinerator,,functional,,mdy:slag_incinerator,2,gen.mdy_plastanium_wall,none
+mdy:small-deconstructor,mindustry,PayloadDeconstructor,small-deconstructor,,functional,,mdy:small_deconstructor,2,gen.mdy_small_deconstructor,none
+mdy:smite,mindustry,ItemTurret,smite,,functional,,mdy:smite,2,gen.mdy_smite,none
 mdy:solar-panel,mindustry,SolarGenerator,solar-panel,,functional,,mdy:solar_panel,2,gen.mdy_solar_panel,static
-mdy:solar-panel-large,mindustry,SolarGenerator,solar-panel-large,,functional,,mdy:solar_panel_large,2,gen.mdy_solar_panel_large,static
-mdy:sorter,mindustry,Sorter,sorter,,pending,class Sorter not simulated,,,,none
-mdy:spectre,mindustry,ItemTurret,spectre,,pending,class ItemTurret not simulated,,,,none
-mdy:spore-press,mindustry,GenericCrafter,spore-press,,pending,class GenericCrafter not simulated,,,,none
-mdy:steam-generator,mindustry,ConsumeGenerator,steam-generator,,pending,class ConsumeGenerator not simulated,,,,none
-mdy:sublimate,mindustry,ContinuousLiquidTurret,sublimate,,pending,class ContinuousLiquidTurret not simulated,,,,none
-mdy:surge-conveyor,mindustry,StackConveyor,surge-conveyor,,pending,class StackConveyor not simulated,,,,none
-mdy:surge-crucible,mindustry,HeatCrafter,surge-crucible,,pending,class HeatCrafter not simulated,,,,none
-mdy:surge-router,mindustry,StackRouter,surge-router,,pending,class StackRouter not simulated,,,,none
-mdy:surge-smelter,mindustry,GenericCrafter,surge-smelter,,pending,class GenericCrafter not simulated,,,,none
-mdy:surge-tower,mindustry,PowerNode,surge-tower,,pending,class PowerNode not simulated,,,,none
-mdy:surge-wall,mindustry,Wall,surge-wall,,pending,class Wall not simulated,,,,none
-mdy:surge-wall-large,mindustry,Wall,surge-wall-large,,pending,class Wall not simulated,,,,none
-mdy:swarmer,mindustry,ItemTurret,swarmer,,pending,class ItemTurret not simulated,,,,none
-mdy:switch,mindustry,SwitchBlock,switch,,pending,class SwitchBlock not simulated,,,,none
-mdy:tank-assembler,mindustry,UnitAssembler,tank-assembler,,pending,class UnitAssembler not simulated,,,,none
-mdy:tank-fabricator,mindustry,UnitFactory,tank-fabricator,,pending,class UnitFactory not simulated,,,,none
-mdy:tank-refabricator,mindustry,Reconstructor,tank-refabricator,,pending,class Reconstructor not simulated,,,,none
-mdy:tetrative-reconstructor,mindustry,Reconstructor,tetrative-reconstructor,,pending,class Reconstructor not simulated,,,,none
-mdy:thermal-generator,mindustry,ThermalGenerator,thermal-generator,,pending,class ThermalGenerator not simulated,,,,none
-mdy:thorium-reactor,mindustry,NuclearReactor,thorium-reactor,,pending,class NuclearReactor not simulated,,,,none
-mdy:thorium-wall,mindustry,Wall,thorium-wall,,pending,class Wall not simulated,,,,none
-mdy:thorium-wall-large,mindustry,Wall,thorium-wall-large,,pending,class Wall not simulated,,,,none
-mdy:thruster,mindustry,Thruster,thruster,,pending,class Thruster not simulated,,,,none
-mdy:titan,mindustry,ItemTurret,titan,,pending,class ItemTurret not simulated,,,,none
-mdy:titanium-conveyor,mindustry,Conveyor,titanium-conveyor,,pending,class Conveyor not simulated,,,,none
-mdy:titanium-wall,mindustry,Wall,titanium-wall,,pending,class Wall not simulated,,,,none
-mdy:titanium-wall-large,mindustry,Wall,titanium-wall-large,,pending,class Wall not simulated,,,,none
-mdy:tsunami,mindustry,LiquidTurret,tsunami,,pending,class LiquidTurret not simulated,,,,none
-mdy:tungsten-wall,mindustry,Wall,tungsten-wall,,pending,class Wall not simulated,,,,none
-mdy:tungsten-wall-large,mindustry,Wall,tungsten-wall-large,,pending,class Wall not simulated,,,,none
-mdy:turbine-condenser,mindustry,ThermalGenerator,turbine-condenser,,pending,class ThermalGenerator not simulated,,,,none
-mdy:underflow-duct,mindustry,OverflowDuct,underflow-duct,,pending,class OverflowDuct not simulated,,,,none
-mdy:underflow-gate,mindustry,OverflowGate,underflow-gate,,pending,class OverflowGate not simulated,,,,none
-mdy:unit-cargo-loader,mindustry,UnitCargoLoader,unit-cargo-loader,,pending,class UnitCargoLoader not simulated,,,,none
-mdy:unit-cargo-unload-point,mindustry,UnitCargoUnloadPoint,unit-cargo-unload-point,,pending,class UnitCargoUnloadPoint not simulated,,,,none
-mdy:unit-repair-tower,mindustry,RepairTower,unit-repair-tower,,pending,class RepairTower not simulated,,,,none
-mdy:unloader,mindustry,Unloader,unloader,,pending,class Unloader not simulated,,,,none
-mdy:vault,mindustry,StorageBlock,vault,,pending,class StorageBlock not simulated,,,,none
-mdy:vent-condenser,mindustry,AttributeCrafter,vent-condenser,,pending,class AttributeCrafter not simulated,,,,none
-mdy:water-extractor,mindustry,SolidPump,water-extractor,,pending,class SolidPump not simulated,,,,none
-mdy:wave,mindustry,LiquidTurret,wave,,pending,class LiquidTurret not simulated,,,,none
-mdy:world-cell,mindustry,MemoryBlock,world-cell,,pending,class MemoryBlock not simulated,,,,none
-mdy:world-message,mindustry,MessageBlock,world-message,,pending,class MessageBlock not simulated,,,,none
-mdy:world-processor,mindustry,LogicBlock,world-processor,,pending,class LogicBlock not simulated,,,,none
-mdyu:aegires,mindustry,unit,aegires,,pending,unit type not simulated,,,,none
-mdyu:alpha,mindustry,unit,alpha,,pending,unit type not simulated,,,,none
-mdyu:anthicus,mindustry,unit,anthicus,,pending,unit type not simulated,,,,none
-mdyu:anthicus-missile,mindustry,unit,anthicus-missile,,pending,unit type not simulated,,,,none
-mdyu:antumbra,mindustry,unit,antumbra,,pending,unit type not simulated,,,,none
-mdyu:arkyid,mindustry,unit,arkyid,,pending,unit type not simulated,,,,none
-mdyu:assembly-drone,mindustry,unit,assembly-drone,,pending,unit type not simulated,,,,none
-mdyu:atrax,mindustry,unit,atrax,,pending,unit type not simulated,,,,none
-mdyu:avert,mindustry,unit,avert,,pending,unit type not simulated,,,,none
-mdyu:beta,mindustry,unit,beta,,pending,unit type not simulated,,,,none
-mdyu:block,mindustry,unit,block,,excluded,internal entity (not a producible unit),,,,none
-mdyu:bryde,mindustry,unit,bryde,,pending,unit type not simulated,,,,none
-mdyu:cleroi,mindustry,unit,cleroi,,pending,unit type not simulated,,,,none
-mdyu:collaris,mindustry,unit,collaris,,pending,unit type not simulated,,,,none
-mdyu:conquer,mindustry,unit,conquer,,pending,unit type not simulated,,,,none
-mdyu:corvus,mindustry,unit,corvus,,pending,unit type not simulated,,,,none
+mdy:solar-panel-large,mindustry,SolarGenerator,solar-panel-large,,functional,,mdy:solar_panel_large,2,gen.mdy_impulse_pump,static
+mdy:sorter,mindustry,Sorter,sorter,,functional,,mdy:sorter,2,gen.mdy_reinforced_payload_conveyor,none
+mdy:spectre,mindustry,ItemTurret,spectre,,functional,,mdy:spectre,2,gen.mdy_spectre,none
+mdy:spore-press,mindustry,GenericCrafter,spore-press,,functional,,mdy:spore_press,2,gen.mdy_plastanium_compressor,none
+mdy:steam-generator,mindustry,ConsumeGenerator,steam-generator,,functional,,mdy:steam_generator,2,gen.mdy_meltdown,none
+mdy:sublimate,mindustry,ContinuousLiquidTurret,sublimate,,functional,,mdy:sublimate,2,gen.mdy_sublimate,none
+mdy:surge-conveyor,mindustry,StackConveyor,surge-conveyor,,functional,,mdy:surge_conveyor,2,gen.mdy_armored_duct,none
+mdy:surge-crucible,mindustry,HeatCrafter,surge-crucible,,functional,,mdy:surge_crucible,2,gen.mdy_surge_crucible,none
+mdy:surge-router,mindustry,StackRouter,surge-router,,functional,,mdy:surge_router,2,gen.mdy_surge_wall,none
+mdy:surge-smelter,mindustry,GenericCrafter,surge-smelter,,functional,,mdy:surge_smelter,2,gen.mdy_surge_smelter,none
+mdy:surge-tower,mindustry,PowerNode,surge-tower,,functional,,mdy:surge_tower,2,gen.mdy_surge_tower,none
+mdy:surge-wall,mindustry,Wall,surge-wall,,functional,,mdy:surge_wall,2,gen.mdy_surge_wall,none
+mdy:surge-wall-large,mindustry,Wall,surge-wall-large,,functional,,mdy:surge_wall_large,2,gen.mdy_surge_wall_large,none
+mdy:swarmer,mindustry,ItemTurret,swarmer,,functional,,mdy:swarmer,2,gen.mdy_unit_repair_tower,none
+mdy:switch,mindustry,SwitchBlock,switch,,functional,,mdy:switch,2,gen.mdy_switch,none
+mdy:tank-assembler,mindustry,UnitAssembler,tank-assembler,,functional,,mdy:tank_assembler,2,gen.mdy_tank_assembler,none
+mdy:tank-fabricator,mindustry,UnitFactory,tank-fabricator,,functional,,mdy:tank_fabricator,2,gen.mdy_tank_fabricator,none
+mdy:tank-refabricator,mindustry,Reconstructor,tank-refabricator,,functional,,mdy:tank_refabricator,2,gen.mdy_tank_refabricator,none
+mdy:tetrative-reconstructor,mindustry,Reconstructor,tetrative-reconstructor,,functional,,mdy:tetrative_reconstructor,2,gen.mdy_tetrative_reconstructor,none
+mdy:thermal-generator,mindustry,ThermalGenerator,thermal-generator,,functional,,mdy:thermal_generator,2,gen.mdy_small_deconstructor,none
+mdy:thorium-reactor,mindustry,NuclearReactor,thorium-reactor,,functional,,mdy:thorium_reactor,2,gen.mdy_thorium_reactor,none
+mdy:thorium-wall,mindustry,Wall,thorium-wall,,functional,,mdy:thorium_wall,2,gen.mdy_thorium_wall,none
+mdy:thorium-wall-large,mindustry,Wall,thorium-wall-large,,functional,,mdy:thorium_wall_large,2,gen.mdy_thorium_wall_large,none
+mdy:thruster,mindustry,Thruster,thruster,,functional,,mdy:thruster,2,gen.mdy_thruster,none
+mdy:titan,mindustry,ItemTurret,titan,,functional,,mdy:titan,2,gen.mdy_mechanical_pump,none
+mdy:titanium-conveyor,mindustry,Conveyor,titanium-conveyor,,functional,,mdy:titanium_conveyor,2,gen.mdy_plasma_bore,none
+mdy:titanium-wall,mindustry,Wall,titanium-wall,,functional,,mdy:titanium_wall,2,gen.mdy_titanium_wall,none
+mdy:titanium-wall-large,mindustry,Wall,titanium-wall-large,,functional,,mdy:titanium_wall_large,2,gen.mdy_titanium_wall_large,none
+mdy:tsunami,mindustry,LiquidTurret,tsunami,,functional,,mdy:tsunami,2,gen.mdy_tsunami,none
+mdy:tungsten-wall,mindustry,Wall,tungsten-wall,,functional,,mdy:tungsten_wall,2,gen.mdy_tungsten_wall,none
+mdy:tungsten-wall-large,mindustry,Wall,tungsten-wall-large,,functional,,mdy:tungsten_wall_large,2,gen.mdy_tungsten_wall_large,none
+mdy:turbine-condenser,mindustry,ThermalGenerator,turbine-condenser,,functional,,mdy:turbine_condenser,2,gen.mdy_liquid_container,none
+mdy:underflow-duct,mindustry,OverflowDuct,underflow-duct,,functional,,mdy:underflow_duct,2,gen.mdy_junction,none
+mdy:underflow-gate,mindustry,OverflowGate,underflow-gate,,functional,,mdy:underflow_gate,2,gen.mdy_duct,none
+mdy:unit-cargo-loader,mindustry,UnitCargoLoader,unit-cargo-loader,,functional,,mdy:unit_cargo_loader,2,gen.mdy_unit_cargo_loader,none
+mdy:unit-cargo-unload-point,mindustry,UnitCargoUnloadPoint,unit-cargo-unload-point,,functional,,mdy:unit_cargo_unload_point,2,gen.mdy_unit_cargo_unload_point,none
+mdy:unit-repair-tower,mindustry,RepairTower,unit-repair-tower,,functional,,mdy:unit_repair_tower,2,gen.mdy_unit_repair_tower,none
+mdy:unloader,mindustry,Unloader,unloader,,functional,,mdy:unloader,2,gen.mdy_laser_drill,none
+mdy:vault,mindustry,StorageBlock,vault,,functional,,mdy:vault,2,gen.mdy_vault,none
+mdy:vent-condenser,mindustry,AttributeCrafter,vent-condenser,,functional,,mdy:vent_condenser,2,gen.mdy_vent_condenser,none
+mdy:water-extractor,mindustry,SolidPump,water-extractor,,functional,,mdy:water_extractor,2,gen.mdy_water_extractor,none
+mdy:wave,mindustry,LiquidTurret,wave,,functional,,mdy:wave,2,gen.mdy_wave,none
+mdy:world-cell,mindustry,MemoryBlock,world-cell,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:world-message,mindustry,MessageBlock,world-message,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdy:world-processor,mindustry,LogicBlock,world-processor,,excluded,developer sandbox block (no requirements or sandbox class),,,,none
+mdyu:aegires,mindustry,unit,aegires,,functional,,unit:aegires,3,gen.unit_aegires,none
+mdyu:alpha,mindustry,unit,alpha,,excluded,"core builder unit: spawned for the player by a core, not produced",,,,none
+mdyu:anthicus,mindustry,unit,anthicus,,functional,,unit:anthicus,3,gen.unit_anthicus,none
+mdyu:antumbra,mindustry,unit,antumbra,,functional,,unit:antumbra,3,gen.unit_antumbra,none
+mdyu:arkyid,mindustry,unit,arkyid,,functional,,unit:arkyid,3,gen.unit_arkyid,none
+mdyu:atrax,mindustry,unit,atrax,,functional,,unit:atrax,3,gen.unit_crawler,none
+mdyu:avert,mindustry,unit,avert,,functional,,unit:avert,3,gen.unit_avert,none
+mdyu:beta,mindustry,unit,beta,,excluded,"core builder unit: spawned for the player by a core, not produced",,,,none
+mdyu:bryde,mindustry,unit,bryde,,functional,,unit:bryde,3,gen.unit_minke,none
+mdyu:cleroi,mindustry,unit,cleroi,,functional,,unit:cleroi,3,gen.unit_cleroi,none
+mdyu:collaris,mindustry,unit,collaris,,functional,,unit:collaris,3,gen.unit_collaris,none
+mdyu:conquer,mindustry,unit,conquer,,functional,,unit:conquer,3,gen.unit_conquer,none
+mdyu:corvus,mindustry,unit,corvus,,functional,,unit:corvus,3,gen.unit_corvus,none
 mdyu:crawler,mindustry,unit,crawler,,functional,,unit:crawler,3,gen.unit_crawler,static
-mdyu:cyerce,mindustry,unit,cyerce,,pending,unit type not simulated,,,,none
+mdyu:cyerce,mindustry,unit,cyerce,,functional,,unit:cyerce,3,gen.unit_oxynoe,none
 mdyu:dagger,mindustry,unit,dagger,,functional,,unit:dagger,3,gen.mdy_ground_factory,static
-mdyu:disrupt,mindustry,unit,disrupt,,pending,unit type not simulated,,,,none
-mdyu:disrupt-missile,mindustry,unit,disrupt-missile,,pending,unit type not simulated,,,,none
-mdyu:eclipse,mindustry,unit,eclipse,,pending,unit type not simulated,,,,none
-mdyu:elude,mindustry,unit,elude,,pending,unit type not simulated,,,,none
-mdyu:emanate,mindustry,unit,emanate,,pending,unit type not simulated,,,,none
-mdyu:evoke,mindustry,unit,evoke,,pending,unit type not simulated,,,,none
-mdyu:flare,mindustry,unit,flare,,pending,unit type not simulated,,,,none
-mdyu:fortress,mindustry,unit,fortress,,pending,unit type not simulated,,,,none
-mdyu:gamma,mindustry,unit,gamma,,pending,unit type not simulated,,,,none
-mdyu:horizon,mindustry,unit,horizon,,pending,unit type not simulated,,,,none
-mdyu:incite,mindustry,unit,incite,,pending,unit type not simulated,,,,none
-mdyu:latum,mindustry,unit,latum,,pending,unit type not simulated,,,,none
-mdyu:locus,mindustry,unit,locus,,pending,unit type not simulated,,,,none
-mdyu:mace,mindustry,unit,mace,,pending,unit type not simulated,,,,none
-mdyu:manifold,mindustry,unit,manifold,,pending,unit type not simulated,,,,none
-mdyu:mega,mindustry,unit,mega,,pending,unit type not simulated,,,,none
-mdyu:merui,mindustry,unit,merui,,pending,unit type not simulated,,,,none
-mdyu:minke,mindustry,unit,minke,,pending,unit type not simulated,,,,none
-mdyu:mono,mindustry,unit,mono,,pending,unit type not simulated,,,,none
-mdyu:navanax,mindustry,unit,navanax,,pending,unit type not simulated,,,,none
+mdyu:disrupt,mindustry,unit,disrupt,,functional,,unit:disrupt,3,gen.unit_disrupt,none
+mdyu:eclipse,mindustry,unit,eclipse,,functional,,unit:eclipse,3,gen.unit_antumbra,none
+mdyu:elude,mindustry,unit,elude,,functional,,unit:elude,3,gen.unit_elude,none
+mdyu:emanate,mindustry,unit,emanate,,excluded,"core builder unit: spawned for the player by a core, not produced",,,,none
+mdyu:evoke,mindustry,unit,evoke,,excluded,"core builder unit: spawned for the player by a core, not produced",,,,none
+mdyu:flare,mindustry,unit,flare,,functional,,unit:flare,3,gen.mdy_air_factory,none
+mdyu:fortress,mindustry,unit,fortress,,functional,,unit:fortress,3,gen.mdy_multiplicative_reconstructor,none
+mdyu:gamma,mindustry,unit,gamma,,excluded,"core builder unit: spawned for the player by a core, not produced",,,,none
+mdyu:horizon,mindustry,unit,horizon,,functional,,unit:horizon,3,gen.unit_horizon,none
+mdyu:incite,mindustry,unit,incite,,excluded,"core builder unit: spawned for the player by a core, not produced",,,,none
+mdyu:locus,mindustry,unit,locus,,functional,,unit:locus,3,gen.unit_locus,none
+mdyu:mace,mindustry,unit,mace,,functional,,unit:mace,3,gen.mdy_additive_reconstructor,none
+mdyu:mega,mindustry,unit,mega,,functional,,unit:mega,3,gen.unit_mega,none
+mdyu:merui,mindustry,unit,merui,,functional,,unit:merui,3,gen.mdy_mech_fabricator,none
+mdyu:minke,mindustry,unit,minke,,functional,,unit:minke,3,gen.unit_minke,none
+mdyu:mono,mindustry,unit,mono,,functional,,unit:mono,3,gen.unit_mono,none
+mdyu:navanax,mindustry,unit,navanax,,functional,,unit:navanax,3,gen.unit_navanax,none
 mdyu:nova,mindustry,unit,nova,,functional,,unit:nova,3,gen.unit_nova,static
-mdyu:obviate,mindustry,unit,obviate,,pending,unit type not simulated,,,,none
-mdyu:oct,mindustry,unit,oct,,pending,unit type not simulated,,,,none
-mdyu:omura,mindustry,unit,omura,,pending,unit type not simulated,,,,none
-mdyu:oxynoe,mindustry,unit,oxynoe,,pending,unit type not simulated,,,,none
-mdyu:poly,mindustry,unit,poly,,pending,unit type not simulated,,,,none
-mdyu:precept,mindustry,unit,precept,,pending,unit type not simulated,,,,none
-mdyu:pulsar,mindustry,unit,pulsar,,pending,unit type not simulated,,,,none
-mdyu:quad,mindustry,unit,quad,,pending,unit type not simulated,,,,none
-mdyu:quasar,mindustry,unit,quasar,,pending,unit type not simulated,,,,none
-mdyu:quell,mindustry,unit,quell,,pending,unit type not simulated,,,,none
-mdyu:quell-missile,mindustry,unit,quell-missile,,pending,unit type not simulated,,,,none
-mdyu:reign,mindustry,unit,reign,,pending,unit type not simulated,,,,none
-mdyu:renale,mindustry,unit,renale,,pending,unit type not simulated,,,,none
-mdyu:retusa,mindustry,unit,retusa,,pending,unit type not simulated,,,,none
-mdyu:risso,mindustry,unit,risso,,pending,unit type not simulated,,,,none
-mdyu:scepter,mindustry,unit,scepter,,pending,unit type not simulated,,,,none
-mdyu:sei,mindustry,unit,sei,,pending,unit type not simulated,,,,none
-mdyu:spiroct,mindustry,unit,spiroct,,pending,unit type not simulated,,,,none
-mdyu:stell,mindustry,unit,stell,,pending,unit type not simulated,,,,none
-mdyu:tecta,mindustry,unit,tecta,,pending,unit type not simulated,,,,none
-mdyu:toxopid,mindustry,unit,toxopid,,pending,unit type not simulated,,,,none
-mdyu:vanquish,mindustry,unit,vanquish,,pending,unit type not simulated,,,,none
-mdyu:vela,mindustry,unit,vela,,pending,unit type not simulated,,,,none
-mdyu:zenith,mindustry,unit,zenith,,pending,unit type not simulated,,,,none
-mdyi:beryllium,mindustry,item,beryllium,,pending,no ware id,,,,none
-mdyi:blast-compound,mindustry,item,blast-compound,,pending,no ware id,,,,none
-mdyi:carbide,mindustry,item,carbide,,pending,no ware id,,,,none
+mdyu:obviate,mindustry,unit,obviate,,functional,,unit:obviate,3,gen.unit_obviate,none
+mdyu:oct,mindustry,unit,oct,,functional,,unit:oct,3,gen.unit_oct,none
+mdyu:omura,mindustry,unit,omura,,functional,,unit:omura,3,gen.unit_sei,none
+mdyu:oxynoe,mindustry,unit,oxynoe,,functional,,unit:oxynoe,3,gen.unit_oxynoe,none
+mdyu:poly,mindustry,unit,poly,,functional,,unit:poly,3,gen.unit_poly,none
+mdyu:precept,mindustry,unit,precept,,functional,,unit:precept,3,gen.unit_locus,none
+mdyu:pulsar,mindustry,unit,pulsar,,functional,,unit:pulsar,3,gen.unit_pulsar,none
+mdyu:quad,mindustry,unit,quad,,functional,,unit:quad,3,gen.unit_mega,none
+mdyu:quasar,mindustry,unit,quasar,,functional,,unit:quasar,3,gen.unit_quasar,none
+mdyu:quell,mindustry,unit,quell,,functional,,unit:quell,3,gen.unit_quell,none
+mdyu:reign,mindustry,unit,reign,,functional,,unit:reign,3,gen.mdy_tetrative_reconstructor,none
+mdyu:retusa,mindustry,unit,retusa,,functional,,unit:retusa,3,gen.mdy_ship_fabricator,none
+mdyu:risso,mindustry,unit,risso,,functional,,unit:risso,3,gen.mdy_naval_factory,none
+mdyu:scepter,mindustry,unit,scepter,,functional,,unit:scepter,3,gen.mdy_exponential_reconstructor,none
+mdyu:sei,mindustry,unit,sei,,functional,,unit:sei,3,gen.unit_sei,none
+mdyu:spiroct,mindustry,unit,spiroct,,functional,,unit:spiroct,3,gen.unit_spiroct,none
+mdyu:stell,mindustry,unit,stell,,functional,,unit:stell,3,gen.mdy_tank_fabricator,none
+mdyu:tecta,mindustry,unit,tecta,,functional,,unit:tecta,3,gen.unit_tecta,none
+mdyu:toxopid,mindustry,unit,toxopid,,functional,,unit:toxopid,3,gen.unit_arkyid,none
+mdyu:vanquish,mindustry,unit,vanquish,,functional,,unit:vanquish,3,gen.unit_vanquish,none
+mdyu:vela,mindustry,unit,vela,,functional,,unit:vela,3,gen.unit_vela,none
+mdyu:zenith,mindustry,unit,zenith,,functional,,unit:zenith,3,gen.unit_horizon,none
+mdyu:anthicus-missile,mindustry,unit,anthicus-missile,,excluded,internal entity (block unit or missile),,,,none
+mdyu:assembly-drone,mindustry,unit,assembly-drone,,excluded,internal entity (block unit or missile),,,,none
+mdyu:block,mindustry,unit,block,,excluded,internal entity (block unit or missile),,,,none
+mdyu:disrupt-missile,mindustry,unit,disrupt-missile,,excluded,internal entity (block unit or missile),,,,none
+mdyu:latum,mindustry,unit,latum,,excluded,internal entity (block unit or missile),,,,none
+mdyu:manifold,mindustry,unit,manifold,,excluded,internal entity (block unit or missile),,,,none
+mdyu:quell-missile,mindustry,unit,quell-missile,,excluded,internal entity (block unit or missile),,,,none
+mdyu:renale,mindustry,unit,renale,,excluded,internal entity (block unit or missile),,,,none
+mdyi:beryllium,mindustry,item,beryllium,,functional,,,,,none
+mdyi:blast-compound,mindustry,item,blast-compound,,functional,,,,,none
+mdyi:carbide,mindustry,item,carbide,,functional,,,,,none
 mdyi:coal,mindustry,item,coal,,functional,,,,,none
 mdyi:copper,mindustry,item,copper,,functional,,,,,none
-mdyi:dormant-cyst,mindustry,item,dormant-cyst,,pending,no ware id,,,,none
-mdyi:fissile-matter,mindustry,item,fissile-matter,,pending,no ware id,,,,none
+mdyi:dormant-cyst,mindustry,item,dormant-cyst,,functional,,,,,none
+mdyi:fissile-matter,mindustry,item,fissile-matter,,functional,,,,,none
 mdyi:graphite,mindustry,item,graphite,,functional,,,,,none
 mdyi:lead,mindustry,item,lead,,functional,,,,,none
 mdyi:metaglass,mindustry,item,metaglass,,functional,,,,,none
-mdyi:oxide,mindustry,item,oxide,,pending,no ware id,,,,none
-mdyi:phase-fabric,mindustry,item,phase-fabric,,pending,no ware id,,,,none
-mdyi:plastanium,mindustry,item,plastanium,,pending,no ware id,,,,none
-mdyi:pyratite,mindustry,item,pyratite,,pending,no ware id,,,,none
+mdyi:oxide,mindustry,item,oxide,,functional,,,,,none
+mdyi:phase-fabric,mindustry,item,phase-fabric,,functional,,,,,none
+mdyi:plastanium,mindustry,item,plastanium,,functional,,,,,none
+mdyi:pyratite,mindustry,item,pyratite,,functional,,,,,none
 mdyi:sand,mindustry,item,sand,,functional,,,,,none
 mdyi:scrap,mindustry,item,scrap,,functional,,,,,none
 mdyi:silicon,mindustry,item,silicon,,functional,,,,,none
-mdyi:spore-pod,mindustry,item,spore-pod,,pending,no ware id,,,,none
-mdyi:surge-alloy,mindustry,item,surge-alloy,,pending,no ware id,,,,none
+mdyi:spore-pod,mindustry,item,spore-pod,,functional,,,,,none
+mdyi:surge-alloy,mindustry,item,surge-alloy,,functional,,,,,none
 mdyi:thorium,mindustry,item,thorium,,functional,,,,,none
 mdyi:titanium,mindustry,item,titanium,,functional,,,,,none
-mdyi:tungsten,mindustry,item,tungsten,,pending,no ware id,,,,none
-mdyl:arkycite,mindustry,liquid,arkycite,,pending,liquid network not simulated,,,,none
-mdyl:cryofluid,mindustry,liquid,cryofluid,,pending,liquid network not simulated,,,,none
-mdyl:cyanogen,mindustry,liquid,cyanogen,,pending,liquid network not simulated,,,,none
-mdyl:gallium,mindustry,liquid,gallium,,pending,liquid network not simulated,,,,none
-mdyl:hydrogen,mindustry,liquid,hydrogen,,pending,liquid network not simulated,,,,none
-mdyl:neoplasm,mindustry,liquid,neoplasm,,pending,liquid network not simulated,,,,none
-mdyl:nitrogen,mindustry,liquid,nitrogen,,pending,liquid network not simulated,,,,none
-mdyl:oil,mindustry,liquid,oil,,pending,liquid network not simulated,,,,none
-mdyl:ozone,mindustry,liquid,ozone,,pending,liquid network not simulated,,,,none
-mdyl:slag,mindustry,liquid,slag,,pending,liquid network not simulated,,,,none
-mdyl:water,mindustry,liquid,water,,pending,liquid network not simulated,,,,none
+mdyi:tungsten,mindustry,item,tungsten,,functional,,,,,none
+mdyl:arkycite,mindustry,liquid,arkycite,,functional,,,,,none
+mdyl:cryofluid,mindustry,liquid,cryofluid,,functional,,,,,none
+mdyl:cyanogen,mindustry,liquid,cyanogen,,functional,,,,,none
+mdyl:gallium,mindustry,liquid,gallium,,functional,,,,,none
+mdyl:hydrogen,mindustry,liquid,hydrogen,,functional,,,,,none
+mdyl:neoplasm,mindustry,liquid,neoplasm,,functional,,,,,none
+mdyl:nitrogen,mindustry,liquid,nitrogen,,functional,,,,,none
+mdyl:oil,mindustry,liquid,oil,,functional,,,,,none
+mdyl:ozone,mindustry,liquid,ozone,,functional,,,,,none
+mdyl:slag,mindustry,liquid,slag,,functional,,,,,none
+mdyl:water,mindustry,liquid,water,,functional,,,,,none

@@ -20,14 +20,16 @@ UPGRADE_FRACTION = 0.25  # S08: the new recipe minus the old one, plus a quarter
 
 
 def _tile_free(world: Any, tile: tuple[int, int], extra_ok: set[tuple[int, int]] | None = None, allow_road: bool = False, allow_trees: bool = False,
-               allow_water: bool = False) -> str | None:
+               allow_water: bool | str = False) -> str | None:
     """A belt may cross a road (units and carriers walk over both); a machine may not stand on one. A pump may stand in the water."""
     if extra_ok and tile in extra_ok:
         return None
     if not world.tile_in_bounds(*tile):
         return "outside_map"
-    if world.terrain is not None and not world.terrain.ground(*tile) and not (allow_water and world.terrain.is_water(*tile)):
-        return "unsuitable_terrain"
+    if world.terrain is not None and not world.terrain.ground(*tile):
+        wet_ok = allow_water == "shallow" and world.terrain.is_shallow(*tile) or allow_water is True and world.terrain.is_water(*tile)
+        if not wet_ok:
+            return "unsuitable_terrain"
     st = S.ind(world)
     if (tile in world.blocked or (tile in world.tree_tiles and not allow_trees) or (tile in world.road_tile_set and not allow_road) or tile in world.reserved_tiles
             or tile in st.belts or tile in st.tile_owner):
@@ -50,14 +52,14 @@ def check_machine(world: Any, faction: str, kind: str, tile: tuple[int, int], ow
     for t in tiles:
         if not territory.in_territory(world, faction, t):
             return "outside_territory", ctx
-        why = _tile_free(world, t, own, allow_water=wet)
+        why = _tile_free(world, t, own, allow_water=True if wet else "shallow")  # Mindustry blocks may stand in shallow water; pumps in any water
         if why:
             return why, ctx
     if wet:
         if not any(world.terrain.is_water(*t) for t in tiles):
             return "needs_water", ctx
         return None, ctx
-    if spec["role"] not in ("drill",) and not world.terrain.can_build(tile[0], tile[1], "small"):  # the anchor needs a Widelands building site; the rest only ground
+    if spec["role"] not in ("drill",) and not world.terrain.is_shallow(*tile) and not world.terrain.can_build(tile[0], tile[1], "small"):  # the anchor needs a Widelands building site; the rest only ground
         return "unsuitable_terrain", ctx
     if spec["role"] == "drill":
         if not X.options(world, tiles, int(spec["tier"])):
@@ -201,27 +203,70 @@ def upgrade_mine(world: Any, faction: str, building_id: str, to_kind: str) -> di
 
 
 def configure(world: Any, faction: str, building_id: str, key: str, value: Any) -> dict[str, Any]:
-    """Set a drill's target item or a factory's unit plan."""
+    """Settings of a built machine: a drill's `target` item, a factory's or assembler's `plan`, `item` of a sorter or unloader, `link` of a bridge,
+    mass driver, launch pad, payload driver or cargo loader, `rot` (0 east, 1 south, 2 west, 3 north) of anything with a facing, `block` of a constructor,
+    and `code` of a logic processor."""
     from wizard_rts import tech
 
     b = world.buildings.get(str(building_id))
     if b is None or b["faction_name"] != faction or b.get("mdy") is None:
         return {"status": "rejected", "reason": "no_machine"}
     m, spec = b["mdy"], R.block(b["kind"])
-    if key == "target" and m["role"] == "drill":
+    role = m["role"]
+    if key == "target" and role == "drill":
         opts = S.drill_options(world, b)
         if value not in opts:
             return {"status": "rejected", "reason": "cannot_extract_here", "options": sorted(opts)}
         m["target"] = str(value)
         m["progress"] = 0
         return {"status": "ok"}
-    if key == "plan" and m["role"] == "unit_factory":
+    if key == "plan" and role == "unit_factory":
         if value not in [p["unit"] for p in spec["plans"]]:
             return {"status": "rejected", "reason": "no_such_plan"}
         if not tech.unit_allowed(world, faction, str(value)):
             return {"status": "rejected", "reason": "locked_by_card"}
         m["plan"] = str(value)
         m["progress"] = 0
+        return {"status": "ok"}
+    if key == "plan" and role == "assembler":
+        if value not in [p["unit"] for p in spec.get("assembler_plans") or []]:
+            return {"status": "rejected", "reason": "no_such_plan"}
+        m["plan"], m["stack"], m["wait"] = str(value), {}, 0
+        return {"status": "ok"}
+    if key == "item" and role in ("sorter", "unloader"):
+        m["item"] = None if value in (None, "", "none") else str(value)
+        return {"status": "ok"}
+    if key == "rot":
+        m["rot"] = int(value) % 4
+        return {"status": "ok"}
+    if key == "block" and role == "constructor":
+        from wizard_rts.industry import payload as PL
+
+        kind = value if str(value).startswith("mdy:") else None
+        allowed = {PL.R_kind(j) for j in spec.get("filter") or []}
+        if kind not in allowed:
+            return {"status": "rejected", "reason": "not_in_filter", "options": sorted(a for a in allowed if a)}
+        m["block"], m["wait"] = kind, 0
+        return {"status": "ok"}
+    if key == "link" and role in ("bridge", "liquid_bridge", "mass_driver", "payload_driver", "launch_pad", "cargo"):
+        t = world.buildings.get(str(value))
+        if t is None or t["faction_name"] != faction and role not in ("launch_pad",):
+            return {"status": "rejected", "reason": "no_target"}
+        if t.get("mdy") is None:
+            return {"status": "rejected", "reason": "no_target"}
+        rng = float(spec["fields"].get("range", 4 if "bridge" in role else 440))
+        tiles = rng if role in ("bridge", "liquid_bridge") else rng / 8.0
+        if role in ("bridge", "liquid_bridge"):
+            if not (t["tx"] == b["tx"] or t["ty"] == b["ty"]) or abs(t["tx"] - b["tx"]) + abs(t["ty"] - b["ty"]) > tiles or t["id"] == b["id"]:
+                return {"status": "rejected", "reason": "out_of_range"}
+        elif role != "launch_pad" and ((t["tx"] - b["tx"]) ** 2 + (t["ty"] - b["ty"]) ** 2) ** 0.5 > tiles:
+            return {"status": "rejected", "reason": "out_of_range"}
+        m["link"] = t["id"]
+        return {"status": "ok"}
+    if key == "code" and role == "logic":
+        from wizard_rts.industry import logic
+
+        logic.set_code(m, str(value))
         return {"status": "ok"}
     return {"status": "rejected", "reason": "bad_config"}
 

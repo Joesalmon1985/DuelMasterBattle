@@ -587,7 +587,7 @@ def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisfac
                 F.consume(world, b, liquid, per * TICKS_PER_Q)
                 boost = max(boost, float(spec["fields"].get("liquidBoostIntensity", 1.6)) ** 2)
         m["boost"] = boost
-        m["progress"] += TICKS_PER_Q * len(o["tiles"]) * pwr * boost * regions.production_factor(world, b)  # an outbreak in the region slows the drill
+        m["progress"] += TICKS_PER_Q * len(o["tiles"]) * pwr * boost * m.get("od", 1.0) * regions.production_factor(world, b)  # an outbreak in the region slows the drill
         if m["progress"] >= delay:
             if X.take_reserve(world, o):
                 b["working_once"] = True
@@ -657,7 +657,7 @@ def _crafter_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
             from wizard_rts import regions
 
             m["state"] = "working"
-            m["progress"] += TICKS_PER_Q * satisfaction * eff * regions.production_factor(world, b)
+            m["progress"] += TICKS_PER_Q * satisfaction * eff * m.get("od", 1.0) * regions.production_factor(world, b)
             for liquid, per_tick in spec.get("consume_liquids", {}).items():
                 F.consume(world, b, liquid, per_tick * TICKS_PER_Q * satisfaction * eff)
             for liquid, per_tick in spec.get("output_liquid", {}).items():
@@ -684,7 +684,12 @@ def _crafter_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
 # ---- unit factory
 
 def _factory_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisfaction: float, wants: bool) -> None:
+    from wizard_rts import tech
+
     plan = _plan(spec, m)
+    if not tech.unit_allowed(world, b["faction_name"], plan["unit"]):
+        m["state"] = "locked by card"
+        return
     if not wants:
         m["state"] = "waiting for inputs"
         return
@@ -694,7 +699,7 @@ def _factory_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
     from wizard_rts import regions
 
     m["state"] = "building"
-    m["progress"] += TICKS_PER_Q * satisfaction * regions.production_factor(world, b)
+    m["progress"] += TICKS_PER_Q * satisfaction * m.get("od", 1.0) * regions.production_factor(world, b)
     if m["progress"] >= plan["ticks"]:
         from wizard_rts.industry import payload as PL
 

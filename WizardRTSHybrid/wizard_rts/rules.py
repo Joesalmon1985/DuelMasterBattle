@@ -94,6 +94,12 @@ def _load() -> dict[str, Any]:
     actors, weapons = registry.unit_rules()
     data["actors"].update(actors)
     data["weapons"].update(weapons)
+    # locomotors the original Red Alert data does not have: Mindustry legs (cross land and shallows), hover (amphibious) and any flyer (all terrain)
+    data["locomotors"].update({
+        "legs": {"speeds": {"Clear": 100, "Rough": 100, "Beach": 100, "Water": 60, "Swamp": 80, "Impassable": 0}, "crushes": []},
+        "hover": {"speeds": {"Clear": 100, "Rough": 90, "Beach": 100, "Water": 100, "Swamp": 80, "Impassable": 0}, "crushes": []},
+        "fly": {"speeds": {"Clear": 100, "Rough": 100, "Beach": 100, "Water": 100, "Swamp": 100, "Impassable": 100}, "crushes": []},
+    })
     return data
 
 
@@ -125,7 +131,7 @@ def reload_ms(w: dict[str, Any]) -> int:
 # ---------------------------------------------------------------- terrain movement and target typing
 
 # Widelands terrain class -> OpenRA terrain type used by Locomotor.TerrainSpeeds (engineering mapping)
-CLASS_TO_TERRAIN_TYPE = {0: "Clear", 1: "Rough", 2: "Beach", 3: "Water"}  # arable, mineable, walkable (beach), water; others impassable
+CLASS_TO_TERRAIN_TYPE = {0: "Clear", 1: "Rough", 2: "Beach", 3: "Water", 4: "Swamp", 5: "Impassable"}  # arable, mineable, walkable (beach), water; others impassable
 
 
 def locomotor(name: str) -> dict[str, Any]:

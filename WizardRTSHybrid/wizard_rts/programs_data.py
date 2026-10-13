@@ -222,6 +222,8 @@ BUILDING_INPUTS: dict[str, dict[str, int]] = {
     "ironmine": {"ration": 6},
     "tavern": {"fish": 4, "meat": 4, "bread": 4},
     "bakery": {"water": 6, "wheat": 6},
+    "fix": {"iron": 4}, "hpad": {"iron": 4}, "afld": {"iron": 4, "ration": 3},  # repairs and rearming are paid in iron; the airfield's paratroopers eat rations
+    "mslo": {"iron": 4, "coal": 4, "gold": 2}, "iron": {"gold": 1, "iron": 2}, "pdox": {"gold": 1, "iron": 2},
 }
 BUILDING_OUTPUTS: dict[str, list[str]] = {
     "producer": ["log"],

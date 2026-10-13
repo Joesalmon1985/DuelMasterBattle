@@ -95,30 +95,43 @@ def build() -> list[dict[str, Any]]:
                 add("openra:" + a, "openra", "unit", r.get("name", a), "functional", ent_id="unit:" + have_units[a], art=art_level("openra." + a))
             else:
                 add("openra:" + a, "openra", "unit", r.get("name", a), "pending", "no recipe / mechanic", art=art_level("openra." + a))
+    from wizard_rts.industry import blocks as B
+    from wizard_rts.industry import units as U
+
     md = json.loads((DATA / "mindustry_defs.json").read_text())
-    mkinds = {b["id"]: k for k, b in ((k, mdy.block(k)) for k in mdy.kinds())}
+    mkinds = {R_id(k): k for k in mdy.kinds()}
     for n, b in sorted(md["blocks"].items()):
         art = art_level("mindustry.block." + n.replace("-", "_"))
-        if b["class"] in SANDBOX_CLASSES:
-            add("mdy:" + n, "mindustry", b["class"], n, "excluded", "developer sandbox block", art=art)
+        kind = B.kind_of(n)
+        sp = B.spec(kind)
+        if sp is not None and sp["sandbox"]:
+            add("mdy:" + n, "mindustry", b["class"], n, "excluded", "developer sandbox block (no requirements or sandbox class)", art=art)
         elif n in mkinds:
-            add("mdy:" + n, "mindustry", b["class"], n, "functional", ent_id=mkinds[n], art=art)
+            add("mdy:" + n, "mindustry", b["class"], n, "functional", ent_id=mkinds[n], art=art, extra={"role": sp["role"] if sp else ""})
         else:
             add("mdy:" + n, "mindustry", b["class"], n, "pending", "class " + b["class"] + " not simulated", art=art)
-    func_units = set(mdy.overrides()["units"]["ground_units"])
-    for n, u in sorted(md["units"].items()):
+    for n in U.unit_list():
         art = art_level("mindustry.unit." + n.replace("-", "_"))
-        if u["health"] is not None and u["health"] <= 1:
-            add("mdyu:" + n, "mindustry", "unit", n, "excluded", "internal entity (not a producible unit)", art=art)
-        elif n in func_units:
-            add("mdyu:" + n, "mindustry", "unit", n, "functional", ent_id="unit:" + n, art=art)
+        if n in U.CORE_UNITS:
+            add("mdyu:" + n, "mindustry", "unit", n, "excluded", "core builder unit: spawned for the player by a core, not produced", art=art)
+        elif ("unit:" + n) in ents:
+            add("mdyu:" + n, "mindustry", "unit", n, "functional", ent_id="unit:" + n, art=art, extra={"tier": U.chains().get(n, 0)})
         else:
-            add("mdyu:" + n, "mindustry", "unit", n, "pending", "unit type not simulated", art=art)
+            add("mdyu:" + n, "mindustry", "unit", n, "pending", "no factory, reconstructor or assembler plan produces it", art=art)
+    for n in sorted(U.INTERNAL):
+        add("mdyu:" + n, "mindustry", "unit", n, "excluded", "internal entity (block unit or missile)", art="none")
     for n in sorted(md["items"]):
-        add("mdyi:" + n, "mindustry", "item", n, "functional" if n in mdy.overrides()["ware_map"] else "pending", "" if n in mdy.overrides()["ware_map"] else "no ware id", art="none")
+        add("mdyi:" + n, "mindustry", "item", n, "functional", ent_id="", art="none")
     for n in sorted(md["liquids"]):
-        add("mdyl:" + n, "mindustry", "liquid", n, "pending", "liquid network not simulated")
+        add("mdyl:" + n, "mindustry", "liquid", n, "functional", ent_id="", art="none")
     return rows
+
+
+def R_id(kind: str) -> str:
+    from wizard_rts.industry import registry as mdy
+
+    sp = mdy.block(kind)
+    return sp["id"] if sp and sp.get("id") else kind[4:].replace("_", "-")
 
 
 def summary(rows: list[dict[str, Any]]) -> dict[str, dict[str, int]]:

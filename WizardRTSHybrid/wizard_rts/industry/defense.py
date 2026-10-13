@@ -85,7 +85,7 @@ def turret_targets(spec: dict) -> list[str]:
 # ------------------------------------------------------------------ turrets: state
 
 def init_turret(world: Any, b: dict, m: dict, spec: dict) -> None:
-    m.update(ammo=[], target=None, charge=0, liq_used=0.0, kills=0, shots=0, od=1.0)
+    m.update(ammo=[], target=None, charge=0, liq_used=0.0, kills=0, shots=0, od=1.0, timer=0)
 
 
 def _bullets(spec: dict) -> dict[str, dict]:
@@ -149,6 +149,8 @@ def active_bullet(world: Any, b: dict) -> tuple[str, dict] | None:
     st = spec.get("shoot_type")
     if st:
         return "power", st
+    if cls == "TractorBeamTurret":
+        return "power", {"class": "LaserBulletType", "damage": 0.3}
     return None
 
 

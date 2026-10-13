@@ -507,7 +507,17 @@ func layer_textures(item: Dictionary, entity: Dictionary) -> Array:
 			_tex("res://client/hybrid/art/openra/%s-%04d.png" % [str(l.get("turret_prefix", "")), int(ix["turret"])])]
 
 
+## The file number of the frame to draw: the logical position from `_sequence_raw`, mapped through the item's `frame_indexes` when that position is
+## not itself one of the extracted files (a single-facing sequence whose only frame is number 178, for instance).
 func _sequence_index(item: Dictionary, entity: Dictionary) -> int:
+	var ix := _sequence_raw(item, entity)
+	var fi: Array = item.get("frame_indexes", [])
+	if fi.is_empty() or fi.has(ix):
+		return ix
+	return int(fi[ix % fi.size()])
+
+
+func _sequence_raw(item: Dictionary, entity: Dictionary) -> int:
 	var facing := _ccw_slot(_eight(str(entity.get("facing", "s"))))
 	var moving := str(entity.get("status", "")) == "moving"
 	if item.has("run_start") and moving:

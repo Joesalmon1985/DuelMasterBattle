@@ -122,7 +122,7 @@
    "name": "MIG",
    "hp": 8000,
    "armor": "Light",
-   "speed": 0,
+   "speed": 223,
    "cost": 2000,
    "queue": "Aircraft",
    "prerequisites": "~afld, stek, ~techlevel.high",
@@ -130,9 +130,9 @@
     "Maverick"
    ],
    "target_types": [],
-   "mobile": false,
+   "mobile": true,
    "is_building": false,
-   "locomotor": "",
+   "locomotor": "fly",
    "build_at": "Plane",
    "targetable": {
     "Targetable@GROUND": {
@@ -153,6 +153,63 @@
       "Repair"
      ],
      "requires": "!airborne && damaged"
+    }
+   },
+   "abilities": {
+    "Aircraft": {
+     "AirborneCondition": "airborne",
+     "CruiseAltitude": "2560",
+     "TurnSpeed": "16",
+     "Speed": "223",
+     "RepulsionSpeed": "40",
+     "MaximumPitch": "56"
+    },
+    "ProximityCaptor": {
+     "Types": "Plane"
+    },
+    "Capturable": {
+     "Types": "aircraft",
+     "RequiresCondition": "!airborne"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "HoldFire"
+    },
+    "RevealsShroud": {
+     "MinRange": "11c0",
+     "Range": "13c0",
+     "Type": "GroundPosition",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "11c0",
+     "Type": "GroundPosition"
+    },
+    "AttackAircraft": {
+     "FacingTolerance": "80",
+     "PersistentTargeting": "false",
+     "OpportunityFire": "False"
+    },
+    "AmmoPool": {
+     "Ammo": "8",
+     "AmmoCondition": "ammo"
     }
    }
   },
@@ -160,7 +217,7 @@
    "name": "YAK",
    "hp": 6000,
    "armor": "Light",
-   "speed": 0,
+   "speed": 178,
    "cost": 1350,
    "queue": "Aircraft",
    "prerequisites": "~afld, ~techlevel.medium",
@@ -168,9 +225,9 @@
     "ChainGun.Yak"
    ],
    "target_types": [],
-   "mobile": false,
+   "mobile": true,
    "is_building": false,
-   "locomotor": "",
+   "locomotor": "fly",
    "build_at": "Plane",
    "targetable": {
     "Targetable@GROUND": {
@@ -192,21 +249,79 @@
      ],
      "requires": "!airborne && damaged"
     }
+   },
+   "abilities": {
+    "Aircraft": {
+     "AirborneCondition": "airborne",
+     "CruiseAltitude": "2560",
+     "TurnSpeed": "16",
+     "Speed": "178",
+     "RepulsionSpeed": "40",
+     "MaximumPitch": "56"
+    },
+    "ProximityCaptor": {
+     "Types": "Plane"
+    },
+    "Capturable": {
+     "Types": "aircraft",
+     "RequiresCondition": "!airborne"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "HoldFire"
+    },
+    "RevealsShroud": {
+     "MinRange": "9c0",
+     "Range": "11c0",
+     "Type": "GroundPosition",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "9c0",
+     "Type": "GroundPosition"
+    },
+    "AttackAircraft": {
+     "FacingTolerance": "80",
+     "PersistentTargeting": "false",
+     "OpportunityFire": "False"
+    },
+    "AmmoPool": {
+     "Ammo": "18",
+     "ReloadDelay": "11",
+     "AmmoCondition": "ammo"
+    }
    }
   },
   "tran": {
    "name": "TRAN",
    "hp": 14000,
    "armor": "Light",
-   "speed": 0,
+   "speed": 128,
    "cost": 900,
    "queue": "Aircraft",
    "prerequisites": "~hpad, ~techlevel.medium",
    "armaments": [],
    "target_types": [],
-   "mobile": false,
+   "mobile": true,
    "is_building": false,
-   "locomotor": "",
+   "locomotor": "fly",
    "build_at": "Helicopter",
    "targetable": {
     "Targetable@GROUND": {
@@ -228,13 +343,70 @@
      ],
      "requires": "!airborne && damaged"
     }
+   },
+   "abilities": {
+    "Aircraft": {
+     "AirborneCondition": "airborne",
+     "CanHover": "True",
+     "CruisingCondition": "cruising",
+     "WaitDistanceFromResupplyBase": "4c0",
+     "TakeOffOnResupply": "true",
+     "VTOL": "true",
+     "LandableTerrainTypes": "Clear, Rough, Road, Ore, Beach, Gems",
+     "Crushes": "crate, mine, infantry",
+     "CanSlide": "True",
+     "TurnSpeed": "20",
+     "Speed": "128",
+     "AltitudeVelocity": "0c58"
+    },
+    "ProximityCaptor": {
+     "Types": "Plane"
+    },
+    "Capturable": {
+     "Types": "aircraft",
+     "RequiresCondition": "!airborne"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Hovers@CRUISING": {
+     "RequiresCondition": "cruising"
+    },
+    "RevealsShroud": {
+     "MinRange": "6c0",
+     "Range": "8c0",
+     "Type": "GroundPosition",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "6c0",
+     "Type": "GroundPosition"
+    },
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "8",
+     "AfterUnloadDelay": "40"
+    }
    }
   },
   "heli": {
    "name": "HELI",
    "hp": 12000,
    "armor": "Light",
-   "speed": 0,
+   "speed": 149,
    "cost": 2000,
    "queue": "Aircraft",
    "prerequisites": "~hpad, atek, ~techlevel.high",
@@ -243,9 +415,9 @@
     "HellfireAG"
    ],
    "target_types": [],
-   "mobile": false,
+   "mobile": true,
    "is_building": false,
-   "locomotor": "",
+   "locomotor": "fly",
    "build_at": "Helicopter",
    "targetable": {
     "Targetable@GROUND": {
@@ -266,6 +438,72 @@
       "Repair"
      ],
      "requires": "!airborne && damaged"
+    }
+   },
+   "abilities": {
+    "Aircraft": {
+     "AirborneCondition": "airborne",
+     "CanHover": "True",
+     "CruisingCondition": "cruising",
+     "WaitDistanceFromResupplyBase": "4c0",
+     "TakeOffOnResupply": "true",
+     "VTOL": "true",
+     "LandableTerrainTypes": "Clear, Rough, Road, Ore, Beach, Gems",
+     "Crushes": "crate, mine, infantry",
+     "CanSlide": "True",
+     "TurnSpeed": "16",
+     "Speed": "149"
+    },
+    "ProximityCaptor": {
+     "Types": "Plane"
+    },
+    "Capturable": {
+     "Types": "aircraft",
+     "RequiresCondition": "!airborne"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Hovers@CRUISING": {
+     "RequiresCondition": "cruising"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "HoldFire"
+    },
+    "RevealsShroud": {
+     "MinRange": "10c0",
+     "Range": "12c0",
+     "Type": "GroundPosition",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "10c0",
+     "Type": "GroundPosition"
+    },
+    "AttackAircraft": {
+     "FacingTolerance": "80",
+     "PersistentTargeting": "false",
+     "AttackType": "Hover",
+     "OpportunityFire": "False"
+    },
+    "AmmoPool": {
+     "Ammo": "8",
+     "AmmoCondition": "ammo"
     }
    }
   },
@@ -273,7 +511,7 @@
    "name": "HIND",
    "hp": 10000,
    "armor": "Light",
-   "speed": 0,
+   "speed": 112,
    "cost": 1500,
    "queue": "Aircraft",
    "prerequisites": "~disabled, ~hpad, ~techlevel.medium",
@@ -281,9 +519,9 @@
     "ChainGun"
    ],
    "target_types": [],
-   "mobile": false,
+   "mobile": true,
    "is_building": false,
-   "locomotor": "",
+   "locomotor": "fly",
    "build_at": "Helicopter",
    "targetable": {
     "Targetable@GROUND": {
@@ -305,13 +543,80 @@
      ],
      "requires": "!airborne && damaged"
     }
+   },
+   "abilities": {
+    "Aircraft": {
+     "AirborneCondition": "airborne",
+     "CanHover": "True",
+     "CruisingCondition": "cruising",
+     "WaitDistanceFromResupplyBase": "4c0",
+     "TakeOffOnResupply": "true",
+     "VTOL": "true",
+     "LandableTerrainTypes": "Clear, Rough, Road, Ore, Beach, Gems",
+     "Crushes": "crate, mine, infantry",
+     "CanSlide": "True",
+     "TurnSpeed": "16",
+     "Speed": "112"
+    },
+    "ProximityCaptor": {
+     "Types": "Plane"
+    },
+    "Capturable": {
+     "Types": "aircraft",
+     "RequiresCondition": "!airborne"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Hovers@CRUISING": {
+     "RequiresCondition": "cruising"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "HoldFire"
+    },
+    "RevealsShroud": {
+     "MinRange": "8c0",
+     "Range": "10c0",
+     "Type": "GroundPosition",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "8c0",
+     "Type": "GroundPosition"
+    },
+    "AttackAircraft": {
+     "FacingTolerance": "80",
+     "PersistentTargeting": "false",
+     "AttackType": "Hover",
+     "OpportunityFire": "False"
+    },
+    "AmmoPool": {
+     "Ammo": "24",
+     "ReloadDelay": "8",
+     "AmmoCondition": "ammo"
+    }
    }
   },
   "mh60": {
    "name": "MH60",
    "hp": 10000,
    "armor": "Light",
-   "speed": 0,
+   "speed": 112,
    "cost": 1500,
    "queue": "Aircraft",
    "prerequisites": "~hpad, ~techlevel.medium",
@@ -319,9 +624,9 @@
     "ChainGun"
    ],
    "target_types": [],
-   "mobile": false,
+   "mobile": true,
    "is_building": false,
-   "locomotor": "",
+   "locomotor": "fly",
    "build_at": "Helicopter",
    "targetable": {
     "Targetable@GROUND": {
@@ -342,6 +647,72 @@
       "Repair"
      ],
      "requires": "!airborne && damaged"
+    }
+   },
+   "abilities": {
+    "Aircraft": {
+     "AirborneCondition": "airborne",
+     "CanHover": "True",
+     "CruisingCondition": "cruising",
+     "WaitDistanceFromResupplyBase": "4c0",
+     "TakeOffOnResupply": "true",
+     "VTOL": "true",
+     "LandableTerrainTypes": "Clear, Rough, Road, Ore, Beach, Gems",
+     "Crushes": "crate, mine, infantry",
+     "CanSlide": "True",
+     "TurnSpeed": "16",
+     "Speed": "112"
+    },
+    "ProximityCaptor": {
+     "Types": "Plane"
+    },
+    "Capturable": {
+     "Types": "aircraft",
+     "RequiresCondition": "!airborne"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Hovers@CRUISING": {
+     "RequiresCondition": "cruising"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "HoldFire"
+    },
+    "RevealsShroud": {
+     "MinRange": "8c0",
+     "Range": "10c0",
+     "Type": "GroundPosition",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "8c0",
+     "Type": "GroundPosition"
+    },
+    "AttackAircraft": {
+     "FacingTolerance": "80",
+     "PersistentTargeting": "false",
+     "AttackType": "Hover"
+    },
+    "AmmoPool": {
+     "Ammo": "24",
+     "ReloadDelay": "8",
+     "AmmoCondition": "ammo"
     }
    }
   },
@@ -386,6 +757,54 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "6c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience",
+     "CustomPipType": "red",
+     "Voice": "Move"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "Demolition": {
+     "DetonationDelay": "45",
+     "Voice": "Demolish"
+    }
    }
   },
   "harv": {
@@ -418,6 +837,31 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "ChangesHealth": {
+     "Step": "100",
+     "Delay": "25",
+     "StartIfBelow": "50",
+     "DamageCooldown": "500"
+    }
    }
   },
   "truk": {
@@ -449,6 +893,25 @@
       "Repair"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
     }
    }
   },
@@ -493,6 +956,42 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "5"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    }
    }
   },
   "zombie": {
@@ -535,6 +1034,48 @@
       "Heal"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "5"
     }
    }
   },
@@ -579,6 +1120,65 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "5c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience",
+     "CustomPipType": "blue",
+     "Voice": "Move"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "HoldFire",
+     "ScanRadius": "5"
+    },
+    "Disguise": {
+     "DisguisedCondition": "disguise"
+    },
+    "Infiltrates": {
+     "Types": "SpyInfiltrate",
+     "Notification": "BuildingInfiltrated",
+     "TextNotification": "notification-building-infiltrated"
+    },
+    "IgnoresDisguise": {}
    }
   },
   "e6": {
@@ -619,6 +1219,62 @@
       "Heal"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience",
+     "CustomPipType": "yellow"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50"
+    },
+    "Captures": {
+     "PlayerExperience": "10",
+     "RequiresCondition": "!global-reusable-engineers",
+     "CaptureTypes": "building",
+     "CaptureDelay": "200"
+    },
+    "RepairsBridges": {},
+    "Captures@REUSABLE": {
+     "RequiresCondition": "global-reusable-engineers",
+     "CaptureTypes": "building",
+     "PlayerExperience": "10",
+     "CaptureDelay": "375",
+     "ConsumedByCapture": "False",
+     "EnterCursor": "ability",
+     "EnterBlockedCursor": "move-blocked"
     }
    }
   },
@@ -666,6 +1322,52 @@
       "Heal"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "5c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience",
+     "CustomPipType": "blue"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud",
+     "WarnProbability": "95"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "Captures": {
+     "PlayerExperience": "10",
+     "CaptureTypes": "vehicle, aircraft"
+    },
+    "Infiltrates": {
+     "Types": "ThiefInfiltrate",
+     "Notification": "BuildingInfiltrated",
+     "TextNotification": "notification-building-infiltrated"
     }
    }
   },
@@ -815,6 +1517,89 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RepairsUnits": {
+     "PlayerExperience": "5",
+     "HpPerStep": "1000",
+     "StartRepairingNotification": "Repairing",
+     "StartRepairingTextNotification": "notification-repairing",
+     "FinishRepairingNotification": "UnitRepaired",
+     "FinishRepairingTextNotification": "notification-unit-repaired"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "powerproxy.sonarpulse",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@soviet": {
+     "Factions": "soviet, russia, ukraine",
+     "Prerequisite": "ships.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanilla": {
+     "Factions": "soviet",
+     "Prerequisite": "ships.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russia": {
+     "Factions": "russia",
+     "Prerequisite": "ships.russia"
+    },
+    "ProvidesPrerequisite@ukraine": {
+     "Factions": "ukraine",
+     "Prerequisite": "ships.ukraine"
+    },
+    "ProvidesPrerequisite@sovietstructure": {
+     "RequiresPrerequisites": "structures.soviet",
+     "Prerequisite": "ships.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanillastructure": {
+     "RequiresPrerequisites": "structures.sovietvanilla",
+     "Prerequisite": "ships.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russianstructure": {
+     "RequiresPrerequisites": "structures.russia",
+     "Prerequisite": "ships.russia"
+    },
+    "ProvidesPrerequisite@ukrainianstructure": {
+     "RequiresPrerequisites": "structures.ukraine",
+     "Prerequisite": "ships.ukraine"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "syrd": {
@@ -915,6 +1700,97 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RepairsUnits": {
+     "PlayerExperience": "5",
+     "HpPerStep": "1000",
+     "StartRepairingNotification": "Repairing",
+     "StartRepairingTextNotification": "notification-repairing",
+     "FinishRepairingNotification": "UnitRepaired",
+     "FinishRepairingTextNotification": "notification-unit-repaired"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "powerproxy.sonarpulse",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "ships.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "ships.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "ships.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "ships.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "ships.germany"
+    },
+    "ProvidesPrerequisite@alliedstructure": {
+     "RequiresPrerequisites": "structures.allies",
+     "Prerequisite": "ships.allies"
+    },
+    "ProvidesPrerequisite@alliedvanillastructure": {
+     "RequiresPrerequisites": "structures.alliesvanilla",
+     "Prerequisite": "ships.alliesvanilla"
+    },
+    "ProvidesPrerequisite@englishstructure": {
+     "RequiresPrerequisites": "structures.england",
+     "Prerequisite": "ships.england"
+    },
+    "ProvidesPrerequisite@frenchstructure": {
+     "RequiresPrerequisites": "structures.france",
+     "Prerequisite": "ships.france"
+    },
+    "ProvidesPrerequisite@germanstructure": {
+     "RequiresPrerequisites": "structures.germany",
+     "Prerequisite": "ships.germany"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "fix": {
@@ -954,6 +1830,57 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RepairsUnits": {
+     "PlayerExperience": "5",
+     "HpPerStep": "1000",
+     "Interval": "7",
+     "StartRepairingNotification": "Repairing",
+     "StartRepairingTextNotification": "notification-repairing",
+     "FinishRepairingNotification": "UnitRepaired",
+     "FinishRepairingTextNotification": "notification-unit-repaired"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Reservable": {},
+    "Power": {
+     "Amount": "-30"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "mslo": {
@@ -994,6 +1921,84 @@
       "SpyInfiltrate"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RequiresCondition": "!disabled",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@Offline": {
+     "Range": "5c0",
+     "RequiresCondition": "disabled"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0",
+     "RequiresCondition": "!disabled"
+    },
+    "NukePower": {
+     "PauseOnCondition": "disabled",
+     "Cursor": "nuke",
+     "Icon": "abomb",
+     "ChargeInterval": "13500",
+     "Name": "actor-mslo.nukepower-name",
+     "Description": "actor-mslo.nukepower-description",
+     "BeginChargeSpeechNotification": "AbombPrepping",
+     "EndChargeSpeechNotification": "AbombReady",
+     "SelectTargetSpeechNotification": "SelectTarget",
+     "InsufficientPowerSpeechNotification": "InsufficientPower",
+     "IncomingSpeechNotification": "AbombLaunchDetected",
+     "SelectTargetTextNotification": "notification-select-target",
+     "InsufficientPowerTextNotification": "notification-insufficient-power",
+     "BeginChargeTextNotification": "notification-abomb-prepping",
+     "EndChargeTextNotification": "notification-abomb-ready",
+     "IncomingTextNotification": "notification-abomb-launch-detected",
+     "MissileWeapon": "atomic",
+     "MissileImage": "atomic",
+     "MissileDelay": "5",
+     "SpawnOffset": "1c0,427,0",
+     "DisplayTimerRelationships": "Ally, Neutral, Enemy",
+     "DisplayBeacon": "True",
+     "DisplayRadarPing": "True",
+     "BeaconPoster": "atomicon",
+     "CameraRange": "10c0",
+     "ArrowSequence": "arrow",
+     "ClockSequence": "clock",
+     "CircleSequence": "circles",
+     "SupportPowerPaletteOrder": "70"
+    },
+    "Power": {
+     "Amount": "-150"
     }
    }
   },
@@ -1036,6 +2041,76 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RequiresCondition": "!disabled",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@Offline": {
+     "Range": "5c0",
+     "RequiresCondition": "disabled"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0",
+     "RequiresCondition": "!disabled"
+    },
+    "GrantExternalConditionPower@IRONCURTAIN": {
+     "PauseOnCondition": "disabled",
+     "Icon": "invuln",
+     "ChargeInterval": "3000",
+     "Name": "actor-iron.grantexternalconditionpower-ironcurtain-name",
+     "Description": "actor-iron.grantexternalconditionpower-ironcurtain-description",
+     "Duration": "400",
+     "SelectTargetSpeechNotification": "SelectTarget",
+     "InsufficientPowerSpeechNotification": "InsufficientPower",
+     "BeginChargeSpeechNotification": "IronCurtainCharging",
+     "EndChargeSpeechNotification": "IronCurtainReady",
+     "SelectTargetTextNotification": "notification-select-target",
+     "InsufficientPowerTextNotification": "notification-insufficient-power",
+     "BeginChargeTextNotification": "notification-iron-curtain-charging",
+     "EndChargeTextNotification": "notification-iron-curtain-ready",
+     "DisplayRadarPing": "True",
+     "Condition": "invulnerability",
+     "OnFireSound": "ironcur9.aud",
+     "SupportPowerPaletteOrder": "10",
+     "Dimensions": "3, 3",
+     "Footprint": "_x_ xxx _x_",
+     "BlockedCursor": "move-blocked"
+    },
+    "Power": {
+     "Amount": "-200"
+    }
    }
   },
   "dome": {
@@ -1077,6 +2152,58 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForExploration": {
+     "PlayerExperience": "10",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "6c0",
+     "Range": "10c0",
+     "RequiresCondition": "!disabled",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@Offline": {
+     "Range": "5c0",
+     "RequiresCondition": "disabled"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "6c0",
+     "RequiresCondition": "!disabled"
+    },
+    "Power": {
+     "Amount": "-40"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "atek": {
@@ -1118,6 +2245,63 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "ProvidesPrerequisite": {
+     "Prerequisite": "techcenter"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "GpsPower": {
+     "PauseOnCondition": "disabled",
+     "Icon": "gps",
+     "OneShot": "true",
+     "ChargeInterval": "12000",
+     "Name": "actor-atek.gpspower-name",
+     "Description": "actor-atek.gpspower-description",
+     "RevealDelay": "375",
+     "LaunchSpeechNotification": "SatelliteLaunched",
+     "LaunchTextNotification": "notification-satellite-launched",
+     "DisplayTimerRelationships": "Ally, Neutral, Enemy",
+     "SupportPowerPaletteOrder": "90"
+    },
+    "Power": {
+     "Amount": "-200"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "weap": {
@@ -1176,6 +2360,124 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "vehicles.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "vehicles.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "vehicles.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "vehicles.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "vehicles.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "vehicles.germany"
+    },
+    "ProvidesPrerequisite@soviet": {
+     "Factions": "soviet, russia, ukraine",
+     "Prerequisite": "vehicles.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanilla": {
+     "Factions": "soviet",
+     "Prerequisite": "vehicles.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russia": {
+     "Factions": "russia",
+     "Prerequisite": "vehicles.russia"
+    },
+    "ProvidesPrerequisite@ukraine": {
+     "Factions": "ukraine",
+     "Prerequisite": "vehicles.ukraine"
+    },
+    "ProvidesPrerequisite@alliedstructure": {
+     "RequiresPrerequisites": "structures.allies",
+     "Prerequisite": "vehicles.allies"
+    },
+    "ProvidesPrerequisite@alliedvanillastructure": {
+     "RequiresPrerequisites": "structures.alliesvanilla",
+     "Prerequisite": "vehicles.alliesvanilla"
+    },
+    "ProvidesPrerequisite@englishstructure": {
+     "RequiresPrerequisites": "structures.england",
+     "Prerequisite": "vehicles.england"
+    },
+    "ProvidesPrerequisite@frenchstructure": {
+     "RequiresPrerequisites": "structures.france",
+     "Prerequisite": "vehicles.france"
+    },
+    "ProvidesPrerequisite@germanstructure": {
+     "RequiresPrerequisites": "structures.germany",
+     "Prerequisite": "vehicles.germany"
+    },
+    "ProvidesPrerequisite@sovietstructure": {
+     "RequiresPrerequisites": "structures.soviet",
+     "Prerequisite": "vehicles.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanillastructure": {
+     "RequiresPrerequisites": "structures.sovietvanilla",
+     "Prerequisite": "vehicles.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russianstructure": {
+     "RequiresPrerequisites": "structures.russia",
+     "Prerequisite": "vehicles.russia"
+    },
+    "ProvidesPrerequisite@ukrainianstructure": {
+     "RequiresPrerequisites": "structures.ukraine",
+     "Prerequisite": "vehicles.ukraine"
+    },
+    "Power": {
+     "Amount": "-30"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "proc": {
@@ -1219,6 +2521,55 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForCash": {
+     "PlayerExperience": "5",
+     "PlayerExperiencePercentage": "1",
+     "Percentage": "50",
+     "Types": "SpyInfiltrate, ThiefInfiltrate",
+     "InfiltratedNotification": "CreditsStolen",
+     "InfiltratedTextNotification": "notification-credits-stolen"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Power": {
+     "Amount": "-30"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "hpad": {
@@ -1278,6 +2629,93 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "aircraft.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Reservable": {},
+    "Power": {
+     "Amount": "-10"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "aircraft.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "aircraft.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "aircraft.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "aircraft.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "aircraft.germany"
+    },
+    "ProvidesPrerequisite@alliedstructure": {
+     "RequiresPrerequisites": "structures.allies",
+     "Prerequisite": "aircraft.allies"
+    },
+    "ProvidesPrerequisite@alliedvanillastructure": {
+     "RequiresPrerequisites": "structures.alliesvanilla",
+     "Prerequisite": "aircraft.alliesvanilla"
+    },
+    "ProvidesPrerequisite@englishstructure": {
+     "RequiresPrerequisites": "structures.england",
+     "Prerequisite": "aircraft.england"
+    },
+    "ProvidesPrerequisite@frenchstructure": {
+     "RequiresPrerequisites": "structures.france",
+     "Prerequisite": "aircraft.france"
+    },
+    "ProvidesPrerequisite@germanstructure": {
+     "RequiresPrerequisites": "structures.germany",
+     "Prerequisite": "aircraft.germany"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "afld": {
@@ -1337,6 +2775,159 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "aircraft.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Reservable": {},
+    "ProvidesPrerequisite@soviet": {
+     "Factions": "soviet, russia, ukraine",
+     "Prerequisite": "aircraft.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanilla": {
+     "Factions": "soviet",
+     "Prerequisite": "aircraft.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russia": {
+     "Factions": "russia",
+     "Prerequisite": "aircraft.russia"
+    },
+    "ProvidesPrerequisite@ukraine": {
+     "Factions": "ukraine",
+     "Prerequisite": "aircraft.ukraine"
+    },
+    "ProvidesPrerequisite@sovietstructure": {
+     "RequiresPrerequisites": "structures.soviet",
+     "Prerequisite": "aircraft.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanillastructure": {
+     "RequiresPrerequisites": "structures.sovietvanilla",
+     "Prerequisite": "aircraft.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russianstructure": {
+     "RequiresPrerequisites": "structures.russia",
+     "Prerequisite": "aircraft.russia"
+    },
+    "ProvidesPrerequisite@ukrainianstructure": {
+     "RequiresPrerequisites": "structures.ukraine",
+     "Prerequisite": "aircraft.ukraine"
+    },
+    "AirstrikePower@spyplane": {
+     "OrderName": "SovietSpyPlane",
+     "Prerequisites": "aircraft.soviet",
+     "Icon": "spyplane",
+     "ChargeInterval": "3750",
+     "Name": "actor-afld.airstrikepower-spyplane-name",
+     "Description": "actor-afld.airstrikepower-spyplane-description",
+     "SelectTargetSpeechNotification": "SelectTarget",
+     "EndChargeSpeechNotification": "SpyPlaneReady",
+     "SelectTargetTextNotification": "notification-select-target",
+     "EndChargeTextNotification": "notification-spy-plane-ready",
+     "CameraActor": "camera.spyplane",
+     "CameraRemoveDelay": "150",
+     "UnitType": "u2",
+     "QuantizedFacings": "8",
+     "DisplayBeacon": "true",
+     "BeaconPoster": "camicon",
+     "ArrowSequence": "arrow",
+     "ClockSequence": "clock",
+     "CircleSequence": "circles",
+     "UseDirectionalTarget": "True",
+     "DirectionArrowAnimation": "paradirection",
+     "SupportPowerPaletteOrder": "60"
+    },
+    "ParatroopersPower@paratroopers": {
+     "OrderName": "SovietParatroopers",
+     "Prerequisites": "aircraft.soviet",
+     "Icon": "paratroopers",
+     "ChargeInterval": "7500",
+     "Name": "actor-afld.paratrooperspower-paratroopers-name",
+     "Description": "actor-afld.paratrooperspower-paratroopers-description",
+     "DropItems": "E1R1,E1R1,E1R1,E3R1,E3R1",
+     "ReinforcementsArrivedSpeechNotification": "ReinforcementsArrived",
+     "SelectTargetSpeechNotification": "SelectTarget",
+     "ReinforcementsArrivedTextNotification": "notification-reinforcements-have-arrived",
+     "SelectTargetTextNotification": "notification-select-target",
+     "AllowImpassableCells": "false",
+     "QuantizedFacings": "8",
+     "CameraActor": "camera.paradrop",
+     "DisplayBeacon": "true",
+     "BeaconPoster": "pinficon",
+     "ArrowSequence": "arrow",
+     "ClockSequence": "clock",
+     "CircleSequence": "circles",
+     "UseDirectionalTarget": "True",
+     "DirectionArrowAnimation": "paradirection",
+     "SupportPowerPaletteOrder": "50"
+    },
+    "AirstrikePower@parabombs": {
+     "OrderName": "UkraineParabombs",
+     "Prerequisites": "aircraft.ukraine",
+     "Icon": "parabombs",
+     "ChargeInterval": "7500",
+     "Name": "actor-afld.airstrikepower-parabombs-name",
+     "Description": "actor-afld.airstrikepower-parabombs-description",
+     "SelectTargetSpeechNotification": "SelectTarget",
+     "SelectTargetTextNotification": "notification-select-target",
+     "CameraActor": "camera",
+     "CameraRemoveDelay": "150",
+     "UnitType": "badr.bomber",
+     "QuantizedFacings": "8",
+     "DisplayBeacon": "true",
+     "BeaconPoster": "pbmbicon",
+     "SquadSize": "1",
+     "SquadOffset": "1792,1792,0",
+     "ArrowSequence": "arrow",
+     "ClockSequence": "clock",
+     "CircleSequence": "circles",
+     "UseDirectionalTarget": "True",
+     "DirectionArrowAnimation": "paradirection",
+     "SupportPowerPaletteOrder": "40"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@buildingname": {
+     "Prerequisite": "afld"
+    }
    }
   },
   "powr": {
@@ -1378,6 +2969,49 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForPowerOutage": {
+     "Types": "SpyInfiltrate",
+     "PlayerExperience": "0"
+    },
+    "Power": {
+     "RequiresCondition": "!disabled",
+     "Amount": "100"
+    },
+    "ProvidesPrerequisite": {
+     "Prerequisite": "anypower"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
    }
   },
   "apwr": {
@@ -1418,6 +3052,49 @@
       "SpyInfiltrate"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForPowerOutage": {
+     "Types": "SpyInfiltrate",
+     "PlayerExperience": "0"
+    },
+    "Power": {
+     "RequiresCondition": "!disabled",
+     "Amount": "200"
+    },
+    "ProvidesPrerequisite": {
+     "Prerequisite": "anypower"
+    },
+    "RevealsShroud": {
+     "Range": "5c0"
     }
    }
   },
@@ -1490,6 +3167,87 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "barracks.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "ProvidesPrerequisite": {
+     "Prerequisite": "barracks"
+    },
+    "ProvidesPrerequisite@soviet": {
+     "Factions": "soviet, russia, ukraine",
+     "Prerequisite": "infantry.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanilla": {
+     "Factions": "soviet",
+     "Prerequisite": "infantry.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russia": {
+     "Factions": "russia",
+     "Prerequisite": "infantry.russia"
+    },
+    "ProvidesPrerequisite@ukraine": {
+     "Factions": "ukraine",
+     "Prerequisite": "infantry.ukraine"
+    },
+    "ProvidesPrerequisite@sovietstructure": {
+     "RequiresPrerequisites": "structures.soviet",
+     "Prerequisite": "infantry.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanillastructure": {
+     "RequiresPrerequisites": "structures.sovietvanilla",
+     "Prerequisite": "infantry.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russianstructure": {
+     "RequiresPrerequisites": "structures.russia",
+     "Prerequisite": "infantry.russia"
+    },
+    "ProvidesPrerequisite@ukrainianstructure": {
+     "RequiresPrerequisites": "structures.ukraine",
+     "Prerequisite": "infantry.ukraine"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "tent": {
@@ -1561,6 +3319,95 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "barracks.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "ProvidesPrerequisite@barracks": {
+     "Prerequisite": "barracks"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "infantry.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "infantry.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "infantry.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "infantry.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "infantry.germany"
+    },
+    "ProvidesPrerequisite@alliedstructure": {
+     "RequiresPrerequisites": "structures.allies",
+     "Prerequisite": "infantry.allies"
+    },
+    "ProvidesPrerequisite@alliedvanillastructure": {
+     "RequiresPrerequisites": "structures.alliesvanilla",
+     "Prerequisite": "infantry.alliesvanilla"
+    },
+    "ProvidesPrerequisite@englishstructure": {
+     "RequiresPrerequisites": "structures.england",
+     "Prerequisite": "infantry.england"
+    },
+    "ProvidesPrerequisite@frenchstructure": {
+     "RequiresPrerequisites": "structures.france",
+     "Prerequisite": "infantry.france"
+    },
+    "ProvidesPrerequisite@germanstructure": {
+     "RequiresPrerequisites": "structures.germany",
+     "Prerequisite": "infantry.germany"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "fpwr": {
@@ -1601,6 +3448,38 @@
       "SpyInfiltrate"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
     }
    }
   },
@@ -1643,6 +3522,38 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
+    }
    }
   },
   "syrf": {
@@ -1679,6 +3590,38 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
+    }
    }
   },
   "spef": {
@@ -1714,6 +3657,38 @@
       "SpyInfiltrate"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
     }
    }
   },
@@ -1756,6 +3731,38 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
+    }
    }
   },
   "domf": {
@@ -1797,6 +3804,38 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
+    }
    }
   },
   "fixf": {
@@ -1835,6 +3874,38 @@
       "Structure"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
     }
    }
   },
@@ -1877,6 +3948,38 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
+    }
    }
   },
   "atef": {
@@ -1917,6 +4020,38 @@
       "SpyInfiltrate"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
     }
    }
   },
@@ -1959,6 +4094,38 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
+    }
    }
   },
   "mslf": {
@@ -2000,6 +4167,38 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
+    }
    }
   },
   "facf": {
@@ -2038,6 +4237,38 @@
       "Structure"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "1c0"
     }
    }
   },
@@ -2080,6 +4311,46 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "5c512"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience",
+     "Voice": "Move"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "AutoTarget": {
+     "InitialStance": "AttackAnything"
+    },
+    "IgnoresDisguise": {}
    }
   },
   "e1": {
@@ -2123,6 +4394,51 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    }
    }
   },
   "e2": {
@@ -2165,6 +4481,52 @@
       "Heal"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50",
+     "ProneOffset": "256,64,-331"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
     }
    }
   },
@@ -2210,6 +4572,53 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50",
+     "ProneOffset": "384,0,-395"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "5"
+    }
    }
   },
   "e4": {
@@ -2252,6 +4661,52 @@
       "Heal"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50",
+     "ProneOffset": "160,0,-288"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
     }
    }
   },
@@ -2296,6 +4751,50 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "3c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience",
+     "CustomPipType": "blue"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {}
    }
   },
   "mech": {
@@ -2339,6 +4838,61 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "3c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience",
+     "CustomPipType": "blue",
+     "Voice": "Move"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0",
+     "Voice": "Action"
+    },
+    "Captures": {
+     "CaptureTypes": "husk",
+     "PlayerExperience": "10"
+    },
+    "Infiltrates": {
+     "Types": "Husk",
+     "ValidRelationships": "Ally",
+     "EnterCursor": "goldwrench"
+    },
+    "AutoTarget": {}
    }
   },
   "shok": {
@@ -2381,6 +4935,54 @@
       "Heal"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "5c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience",
+     "Voice": "Move"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50",
+     "ProneOffset": "227,0,-245"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0",
+     "Voice": "Attack"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
     }
    }
   },
@@ -2425,6 +5027,42 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "5"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    }
    }
   },
   "scoutant": {
@@ -2468,6 +5106,42 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "7"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    }
    }
   },
   "warriorant": {
@@ -2510,6 +5184,42 @@
       "Heal"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "5"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
     }
    }
   },
@@ -2568,6 +5278,41 @@
       "Submarine"
      ],
      "requires": "underwater"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "ProximityCaptor": {
+     "Types": "Ship"
+    },
+    "RepairableNear": {
+     "RepairActors": "spen, syrd"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "8c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
     }
    }
   },
@@ -2628,6 +5373,45 @@
      ],
      "requires": "underwater"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "ProximityCaptor": {
+     "Types": "Ship"
+    },
+    "RepairableNear": {
+     "RepairActors": "spen, syrd"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "ReturnFire"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "8c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackFrontal": {
+     "TargetFrozenActors": "True",
+     "ForceFireIgnoresActors": "True",
+     "FacingTolerance": "0"
+    }
    }
   },
   "dd": {
@@ -2671,6 +5455,39 @@
      ],
      "requires": "damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "ProximityCaptor": {
+     "Types": "Ship"
+    },
+    "RepairableNear": {
+     "RepairActors": "spen, syrd"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
    }
   },
   "ca": {
@@ -2707,6 +5524,43 @@
      ],
      "requires": "damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "ProximityCaptor": {
+     "Types": "Ship"
+    },
+    "RepairableNear": {
+     "RepairActors": "spen, syrd"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "7c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "Turrets": "primary, secondary",
+     "TargetFrozenActors": "True",
+     "ForceFireIgnoresActors": "True"
+    }
    }
   },
   "lst": {
@@ -2738,6 +5592,41 @@
       "Repair"
      ],
      "requires": "damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "ProximityCaptor": {
+     "Types": "Ship"
+    },
+    "RepairableNear": {
+     "RepairActors": "spen, syrd"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "Cargo": {
+     "Types": "Infantry, Vehicle",
+     "MaxWeight": "5",
+     "PassengerFacing": "0",
+     "LoadingCondition": "notmobile"
     }
    }
   },
@@ -2781,6 +5670,39 @@
      ],
      "requires": "damaged"
     }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "ProximityCaptor": {
+     "Types": "Ship"
+    },
+    "RepairableNear": {
+     "RepairActors": "spen, syrd"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "6c0",
+     "Range": "8c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "6c0"
+    },
+    "AttackTurreted": {}
    }
   },
   "gap": {
@@ -2819,6 +5741,53 @@
       "Structure"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {
+     "PauseOnCondition": "disabled"
+    },
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "CreatesShroud": {
+     "Range": "6c0",
+     "RequiresCondition": "!disabled"
+    },
+    "Power": {
+     "Amount": "-60"
     }
    }
   },
@@ -2861,6 +5830,110 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {
+     "PauseOnCondition": "disabled"
+    },
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RequiresCondition": "!disabled",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@Offline": {
+     "Range": "5c0",
+     "RequiresCondition": "disabled"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0",
+     "RequiresCondition": "!disabled"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "pdox.germany"
+    },
+    "ProvidesPrerequisite@germanstructure": {
+     "RequiresPrerequisites": "structures.germany",
+     "Prerequisite": "pdox.germany"
+    },
+    "ChronoshiftPower@chronoshift": {
+     "OrderName": "Chronoshift",
+     "PauseOnCondition": "disabled",
+     "Prerequisites": "!pdox.germany",
+     "Icon": "chrono",
+     "ChargeInterval": "3000",
+     "Name": "actor-pdox.chronoshiftpower-chronoshift-name",
+     "Description": "actor-pdox.chronoshiftpower-chronoshift-description",
+     "SelectTargetSpeechNotification": "SelectTarget",
+     "InsufficientPowerSpeechNotification": "InsufficientPower",
+     "BeginChargeSpeechNotification": "ChronosphereCharging",
+     "EndChargeSpeechNotification": "ChronosphereReady",
+     "SelectTargetTextNotification": "notification-select-target",
+     "InsufficientPowerTextNotification": "notification-insufficient-power",
+     "BeginChargeTextNotification": "notification-chronosphere-charging",
+     "EndChargeTextNotification": "notification-chronosphere-ready",
+     "Duration": "400",
+     "KillCargo": "true",
+     "DisplayRadarPing": "True",
+     "SupportPowerPaletteOrder": "20",
+     "Dimensions": "3, 3",
+     "Footprint": "_x_ xxx _x_"
+    },
+    "ChronoshiftPower@advancedchronoshift": {
+     "OrderName": "AdvancedChronoshift",
+     "PauseOnCondition": "disabled",
+     "Prerequisites": "pdox.germany",
+     "Icon": "chrono",
+     "ChargeInterval": "3000",
+     "Name": "actor-pdox.chronoshiftpower-advancedchronoshift-name",
+     "Description": "actor-pdox.chronoshiftpower-advancedchronoshift-description",
+     "SelectTargetSpeechNotification": "SelectTarget",
+     "InsufficientPowerSpeechNotification": "InsufficientPower",
+     "BeginChargeSpeechNotification": "ChronosphereCharging",
+     "EndChargeSpeechNotification": "ChronosphereReady",
+     "SelectTargetTextNotification": "notification-select-target",
+     "InsufficientPowerTextNotification": "notification-insufficient-power",
+     "BeginChargeTextNotification": "notification-chronosphere-charging",
+     "EndChargeTextNotification": "notification-chronosphere-charging",
+     "Duration": "400",
+     "KillCargo": "true",
+     "DisplayRadarPing": "True",
+     "SupportPowerPaletteOrder": "30",
+     "Dimensions": "5, 5",
+     "Footprint": "__x__ _xxx_ xxxxx _xxx_ __x__"
+    },
+    "Power": {
+     "Amount": "-200"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "tsla": {
@@ -2910,6 +5983,48 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "6c0",
+     "Range": "7c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "6c0"
+    },
+    "Power": {
+     "Amount": "-80"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "agun": {
@@ -2952,6 +6067,48 @@
       "Defense"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {},
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "PauseOnCondition": "disabled || build-incomplete"
+    },
+    "Power": {
+     "Amount": "-50"
     }
    }
   },
@@ -2999,6 +6156,58 @@
       "Defense"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "1",
+     "InitialUnits": "e1"
+    },
+    "AttackGarrisoned": {
+     "PauseOnCondition": "build-incomplete",
+     "Armaments": "garrisoned",
+     "PortOffsets": "384,0,128, 224,-341,128, -224,-341,128, -384,0,128, -224,341,128, 224,341,128",
+     "PortYaws": "0, 176, 341, 512, 682, 853",
+     "PortCones": "88, 88, 88, 88, 88, 88"
+    },
+    "Power": {
+     "Amount": "-20"
     }
    }
   },
@@ -3051,6 +6260,58 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "1",
+     "InitialUnits": "e1"
+    },
+    "AttackGarrisoned": {
+     "PauseOnCondition": "build-incomplete",
+     "Armaments": "garrisoned",
+     "PortOffsets": "384,0,128, 224,-341,128, -224,-341,128, -384,0,128, -224,341,128, 224,341,128",
+     "PortYaws": "0, 176, 341, 512, 682, 853",
+     "PortCones": "88, 88, 88, 88, 88, 88"
+    },
+    "Power": {
+     "Amount": "-20"
+    }
    }
   },
   "gun": {
@@ -3099,6 +6360,49 @@
       "Defense"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c512",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "PauseOnCondition": "build-incomplete"
+    },
+    "Power": {
+     "Amount": "-40"
     }
    }
   },
@@ -3149,6 +6453,50 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "PauseOnCondition": "build-incomplete"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "sam": {
@@ -3191,6 +6539,48 @@
       "Defense"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {},
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "8c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "PauseOnCondition": "disabled || build-incomplete"
+    },
+    "Power": {
+     "Amount": "-40"
     }
    }
   },
@@ -3236,6 +6626,90 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !chrono-vortex && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "structures.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "structures.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "structures.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "structures.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "structures.germany"
+    },
+    "ProvidesPrerequisite@soviet": {
+     "Factions": "soviet, russia, ukraine",
+     "Prerequisite": "structures.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanilla": {
+     "Factions": "soviet",
+     "Prerequisite": "structures.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russia": {
+     "Factions": "russia",
+     "Prerequisite": "structures.russia"
+    },
+    "ProvidesPrerequisite@ukraine": {
+     "Factions": "ukraine",
+     "Prerequisite": "structures.ukraine"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Transforms": {
+     "RequiresCondition": "factundeploy",
+     "PauseOnCondition": "chrono-vortex || being-captured || being-demolished || build-incomplete",
+     "IntoActor": "mcv",
+     "Offset": "1,1",
+     "Facing": "384"
+    },
+    "Power": {
+     "Amount": "0"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "silo": {
@@ -3277,6 +6751,45 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "InfiltrateForCash": {
+     "Percentage": "50",
+     "PlayerExperience": "5",
+     "PlayerExperiencePercentage": "1",
+     "Types": "ThiefInfiltrate",
+     "InfiltratedNotification": "CreditsStolen",
+     "InfiltratedTextNotification": "notification-credits-stolen"
+    },
+    "Power": {
+     "Amount": "-10"
+    }
    }
   },
   "stek": {
@@ -3316,6 +6829,50 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "ProvidesPrerequisite": {
+     "Prerequisite": "techcenter"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Power": {
+     "Amount": "-100"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "kenn": {
@@ -3457,6 +7014,39 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Power": {
+     "Amount": "-10"
+    },
+    "ProvidesPrerequisite@buildingname": {}
    }
   },
   "sbag": {
@@ -3495,6 +7085,14 @@
       "NoAutoTarget"
      ],
      "requires": ""
+    }
+   },
+   "abilities": {
+    "Crushable": {
+     "CrushClasses": "wall"
+    },
+    "Sellable": {
+     "SellSounds": "cashturn.aud"
     }
    }
   },
@@ -3535,6 +7133,14 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "Crushable": {
+     "CrushClasses": "wall"
+    },
+    "Sellable": {
+     "SellSounds": "cashturn.aud"
+    }
    }
   },
   "brik": {
@@ -3574,6 +7180,14 @@
      ],
      "requires": ""
     }
+   },
+   "abilities": {
+    "Crushable": {
+     "CrushClasses": "heavywall"
+    },
+    "Sellable": {
+     "SellSounds": "cashturn.aud"
+    }
    }
   },
   "v2rl": {
@@ -3607,6 +7221,52 @@
       "Repair"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "10"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackFrontal": {
+     "TargetFrozenActors": "True",
+     "ForceFireIgnoresActors": "True",
+     "FacingTolerance": "0"
     }
    }
   },
@@ -3642,6 +7302,47 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
    }
   },
   "2tnk": {
@@ -3676,6 +7377,47 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
    }
   },
   "3tnk": {
@@ -3710,6 +7452,47 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
    }
   },
   "4tnk": {
@@ -3745,6 +7528,53 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {},
+    "ChangesHealth": {
+     "Step": "100",
+     "Delay": "3",
+     "StartIfBelow": "50",
+     "DamageCooldown": "150"
+    }
    }
   },
   "arty": {
@@ -3779,6 +7609,51 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackFrontal": {
+     "TargetFrozenActors": "True",
+     "ForceFireIgnoresActors": "True",
+     "FacingTolerance": "0"
+    }
    }
   },
   "mcv": {
@@ -3810,6 +7685,33 @@
       "Repair"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Transforms": {
+     "IntoActor": "fact",
+     "Offset": "-1,-1",
+     "Facing": "384",
+     "TransformSounds": "placbldg.aud, build5.aud",
+     "NoTransformNotification": "BuildingCannotPlaceAudio",
+     "NoTransformTextNotification": "notification-cannot-deploy-here"
     }
    }
   },
@@ -3845,6 +7747,52 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "7c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {},
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "1",
+     "LoadingCondition": "notmobile"
+    }
    }
   },
   "apc": {
@@ -3878,6 +7826,54 @@
       "Repair"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "5",
+     "LoadingCondition": "notmobile"
     }
    }
   },
@@ -3919,6 +7915,52 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Minelayer": {
+     "Mine": "MINV",
+     "TileUnknownName": "build-valid",
+     "TerrainTypes": "Clear, Road, Beach, Ore, Gems, Rough, Bridge"
+    },
+    "AmmoPool": {
+     "Ammo": "5",
+     "RearmSound": "minelay1.aud"
+    }
    }
   },
   "mgg": {
@@ -3951,6 +7993,33 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "CreatesShroud": {
+     "Range": "7c0"
+    }
    }
   },
   "mrj": {
@@ -3982,6 +8051,29 @@
       "Repair"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "RevealsShroud": {
+     "Range": "7c0"
+    },
+    "JamsMissiles": {
+     "Range": "5c0",
+     "DeflectionRelationships": "Neutral, Enemy"
     }
    }
   },
@@ -4017,6 +8109,47 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "6c0",
+     "Range": "7c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "6c0"
+    },
+    "AttackTurreted": {}
    }
   },
   "ftrk": {
@@ -4052,6 +8185,47 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
    }
   },
   "dtrk": {
@@ -4085,6 +8259,31 @@
       "Repair"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "512"
+    },
+    "GrantConditionOnDeploy": {
+     "DeployedCondition": "triggered"
     }
    }
   },
@@ -4120,6 +8319,49 @@
      ],
      "requires": "!parachute && damaged"
     }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    }
    }
   },
   "qtnk": {
@@ -4153,6 +8395,33 @@
       "Repair"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "MadTank": {
+     "DeployedCondition": "deployed"
     }
    }
   },
@@ -4191,6 +8460,54 @@
       "Repair"
      ],
      "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "ReturnFire"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "7c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {},
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "5",
+     "LoadingCondition": "notmobile"
     }
    }
   }

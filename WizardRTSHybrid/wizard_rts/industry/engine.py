@@ -25,7 +25,7 @@ JUNCTION_CAP = 6
 BRIDGE_CAP = 14
 UNLOADER_PER_Q = 1
 IMPLEMENTED = {"router", "sorter", "overflow", "junction", "bridge", "unloader", "store", "core", "pump", "conduit", "tank", "liquid_junction", "liquid_bridge",
-               "heater", "heat_conductor", "wall_drill", "crafter", "drill", "generator", "battery", "node", "belt", "stack_belt", "unit_factory"}
+               "heater", "heat_conductor", "wall_drill", "crafter", "drill", "generator", "battery", "node", "belt", "stack_belt", "unit_factory", "reconstructor", "assembler", "turret", "wall", "door", "mine", "mender", "overdrive", "shield", "repair", "radar", "incinerator", "build_turret", "mass_driver", "launch_pad", "cargo", "payload_belt", "constructor", "deconstructor", "payload_driver", "payload_loader", "accelerator", "logic", "assembler_module", "diode"}
 R.IMPLEMENTED_ROLES.update(IMPLEMENTED)
 POWER_ROLES = {"drill", "pump", "wall_drill", "heater", "mender", "overdrive", "shield", "turret", "reconstructor", "assembler", "assembler_module", "constructor",
                "deconstructor", "payload_driver", "payload_loader", "cargo", "launch_pad", "accelerator", "mass_driver", "build_turret", "repair", "logic",

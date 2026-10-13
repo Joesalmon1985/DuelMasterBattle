@@ -2,16 +2,16 @@
 
 | group | functional | pending | excluded |
 | --- | ---: | ---: | ---: |
-| mindustry block | 11 | 234 | 8 |
-| mindustry item | 10 | 12 | 0 |
-| mindustry liquid | 0 | 11 | 0 |
-| mindustry unit | 3 | 60 | 1 |
-| openra building | 6 | 37 | 0 |
-| openra unit | 24 | 19 | 6 |
+| mindustry block | 236 | 0 | 17 |
+| mindustry item | 22 | 0 | 0 |
+| mindustry liquid | 11 | 0 | 0 |
+| mindustry unit | 50 | 0 | 14 |
+| openra building | 35 | 8 | 0 |
+| openra unit | 42 | 1 | 6 |
 | widelands market | 0 | 5 | 0 |
 | widelands militarysite | 0 | 0 | 31 |
 | widelands productionsite | 153 | 25 | 0 |
 | widelands trainingsite | 0 | 0 | 11 |
 | widelands warehouse | 0 | 17 | 0 |
 
-Art level of functional entities: directional 20, layered 5, none 12, states 101, static 69
+Art level of functional entities: directional 31, layered 5, none 338, states 101, static 74

@@ -32,10 +32,77 @@ MINDUSTRY_MILITARY_EARLIEST_ERA = 3
 
 
 MDY_ERA: dict[str, int] = {}  # every functional Mindustry building is Modern (era 2): the whole industrial line must be draftable inside one era; units are Dystopian
-MDY_UNITS = {"dagger": 3, "crawler": 3, "nova": 3}
+def _mdy_units() -> dict[str, int]:
+    from wizard_rts.industry import units as U
+
+    return {n: MINDUSTRY_MILITARY_EARLIEST_ERA for n in U.unit_list() if U.is_producible(n)}
 # hand-written pairs (an input-output chain or a producer with its first product), reviewed once; every other Mindustry entity is a single card
 MDY_PAIRS = [("mdy:mechanical_drill", "mdy:conveyor"), ("mdy:combustion_generator", "mdy:power_node"), ("mdy:solar_panel", "mdy:battery"),
-             ("mdy:graphite_press", "mdy:silicon_smelter"), ("mdy:ground_factory", "unit:dagger")]
+             ("mdy:graphite_press", "mdy:silicon_smelter"), ("mdy:ground_factory", "unit:dagger"), ("mdy:air_factory", "unit:flare"), ("mdy:naval_factory", "unit:risso"),
+             ("mdy:additive_reconstructor", "unit:mace"), ("mdy:multiplicative_reconstructor", "unit:fortress"), ("mdy:exponential_reconstructor", "unit:scepter"),
+             ("mdy:tetrative_reconstructor", "unit:reign"), ("mdy:mech_fabricator", "unit:merui"), ("mdy:ship_fabricator", "unit:retusa"), ("mdy:tank_fabricator", "unit:stell")]
+
+
+def _mdy_producer(unit: str) -> str:
+    from wizard_rts.industry import blocks as B
+    from wizard_rts.industry import units as U
+
+    if U.chains().get(unit, 1) == 1:
+        for k, sp in sorted(B.specs().items()):
+            if any(p["unit"] == unit for p in sp.get("plans") or []):
+                return k
+    for k, sp in sorted(B.specs().items()):
+        for pair in sp.get("upgrades") or []:
+            if len(pair) > 1 and pair[1] == unit:
+                return k
+    for k, sp in sorted(B.specs().items()):
+        if any(p["unit"] == unit for p in sp.get("assembler_plans") or []):
+            return k
+    return ""
+
+
+def _io(kind: str) -> tuple[set[str], set[str]]:
+    from wizard_rts.industry import registry as mdy
+
+    sp = mdy.block(kind)
+    if sp is None:
+        return set(), set()
+    outs = set(sp["output_item"]) | set(sp["output_liquid"]) | set(sp.get("results", {}))
+    ins = set(sp["consume_items"]) | set(sp["consume_liquids"])
+    if sp["role"] in ("generator",) or sp["power_production_per_s"] > 0:
+        outs.add("power")
+    if sp["power_use_per_s"] > 0:
+        ins.add("power")
+    if sp["role"] == "drill":
+        outs.add("ore")
+    if sp["role"] in ("belt", "stack_belt", "router", "sorter", "overflow", "junction", "bridge", "unloader"):
+        ins.add("ore")
+        outs.add("ore")
+    if sp["role"] in ("conduit", "tank", "liquid_junction", "liquid_bridge"):
+        ins.add("water")
+        outs.add("water")
+    return outs, ins
+
+
+def _auto_pairs(ents: dict[str, dict], taken: set[str]) -> list[tuple[str, str]]:
+    """About 45 % of the remaining Mindustry blocks of an era go two to a card, each with a block it exchanges something with (an output of one is an
+    input of the other); deterministic (stable hashes only). Units are paired elsewhere."""
+    pairs: list[tuple[str, str]] = []
+    left = [k for k, e in sorted(ents.items()) if e["game"] == "mindustry" and e["type"] == "building" and k not in taken]
+    done: set[str] = set()
+    for k in sorted(left, key=_h):
+        if k in done or _h("pair:" + k) % 100 >= 42:
+            continue
+        o1, i1 = _io(k)
+        cands = [c for c in left if c != k and c not in done and ents[c]["era"] == ents[k]["era"]]
+        rel = [c for c in cands if (o1 & _io(c)[1]) or (i1 & _io(c)[0])]
+        pool = rel or cands
+        if not pool:
+            continue
+        partner = min(pool, key=lambda c: _h(k + c))
+        pairs.append((k, partner))
+        done.update((k, partner))
+    return pairs
 
 
 def _h(name: str) -> int:
@@ -63,7 +130,7 @@ def entities() -> dict[str, dict[str, Any]]:
     for kind, spec in sorted(con.full_menu().items()):
         wl = kind.startswith("wl:")
         out[kind] = {"id": kind, "type": "building", "game": spec.get("game", "hybrid"), "tribe": spec.get("tribe", ""), "label": spec["label"],
-                     "era": 0 if wl else HYBRID_BUILDING_ERA.get(kind, 0), "cost": dict(spec["cost"]), "foundation": foundation_kind(kind),
+                     "era": 0 if wl else (OPENRA_LATEST_ERA if spec.get("game") == "openra" else HYBRID_BUILDING_ERA.get(kind, 0)), "cost": dict(spec["cost"]), "foundation": foundation_kind(kind),
                      "functional": True}
         if wl:
             ws = wl_defs.spec_for_kind(kind)
@@ -75,10 +142,12 @@ def entities() -> dict[str, dict[str, Any]]:
         b = mdy.build_spec(kind)
         out[kind] = {"id": kind, "type": "building", "game": "mindustry", "tribe": "", "label": b["label"], "era": MDY_ERA.get(kind, 2), "cost": dict(b["cost"]),
                      "foundation": False, "functional": True}
-    for unit, era in MDY_UNITS.items():
-        u = mdy.ground_unit(unit)
-        out["unit:" + unit] = {"id": "unit:" + unit, "type": "unit", "game": "mindustry", "tribe": "", "label": u["label"], "era": era, "cost": {},
-                               "producer": "mdy:ground_factory", "foundation": False, "functional": True, "definition": u["definition"]}
+    from wizard_rts.industry import units as U
+
+    for unit, era in _mdy_units().items():
+        out["unit:" + unit] = {"id": "unit:" + unit, "type": "unit", "game": "mindustry", "tribe": "", "label": U.label_of(unit), "era": era, "cost": {},
+                               "producer": _mdy_producer(unit), "foundation": False, "functional": True, "definition": "mindustry." + unit.replace("-", "_"),
+                               "tier": U.chains().get(unit, 1)}
     for building, recipes in sorted(con.RECIPES.items()):
         for unit, rec in sorted(recipes.items()):
             out["unit:" + unit] = {"id": "unit:" + unit, "type": "unit", "game": "openra" if str(rec.get("definition", "")).startswith("openra.") else "hybrid",
@@ -113,25 +182,32 @@ def generated_cards() -> dict[str, dict[str, Any]]:
                 continue
             taken.add(k)
             partner = None
-            if _h(k) % 100 < 55:
+            if _h(k) % 100 < 70:
                 outs = set(ents[k].get("outputs", []))
                 for other in left:
                     if other not in taken and other != k and outs & set(ents[other].get("inputs", [])) and "deeper" not in other:
                         partner = other
                         break
+                if partner is None and _h("any:" + k) % 100 < 45:  # no chain partner: a neighbour of the same tribe (still one card, two buildings)
+                    free = [o for o in left if o not in taken and o != k and "deeper" not in o]
+                    partner = min(free, key=lambda o: _h(k + o)) if free else None
             group = [k] + ([partner] if partner else [])
             if partner:
                 taken.add(partner)
             label = ents[k]["label"] + (f" + {ents[partner]['label']}" if partner else "")
             cards[PREFIX + k[3:]] = _card(k[3:], f"{label} ({tribe})", 0, group, "A Widelands production chain for the %s." % tribe)
-    # Mindustry: the hand-written pairs, then everything left alone
+    # Mindustry: the hand-written pairs, then relation pairs (an output feeding an input), then singles
     used_m: set[str] = set()
     for a, b in MDY_PAIRS:
         if a in ents and b in ents:
             cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), f"{ents[a]['label']} + {ents[b]['label']}", max(ents[a]["era"], ents[b]["era"]), [a, b], "A Mindustry chain.")
             used_m.update((a, b))
+    for a, b in _auto_pairs(ents, used_m):
+        cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), f"{ents[a]['label']} + {ents[b]['label']}", max(ents[a]["era"], ents[b]["era"]), [a, b],
+                                                 "A Mindustry chain: %s feeds %s." % (ents[a]["label"].lower(), ents[b]["label"].lower()))
+        used_m.update((a, b))
     for k, e in sorted(ents.items()):
-        if e["game"] == "mindustry" and k not in used_m:
+        if e["game"] == "mindustry" and e["type"] == "building" and k not in used_m:
             cards[PREFIX + k.replace(":", "_")] = _card(k.replace(":", "_"), e["label"], e["era"], [k], "A Mindustry %s." % e["type"])
             used_m.add(k)
     # hybrid / OpenRA buildings with their first unit, then single units
@@ -148,9 +224,47 @@ def generated_cards() -> dict[str, dict[str, Any]]:
         used_units.update(units[:1])
         cards[PREFIX + k] = _card(k, e["label"] + (f" + {ents[units[0]]['label']}" if units else ""), max([e["era"]] + [ents[u]["era"] for u in units[:1]]), group,
                                   "A %s" % e["label"].lower())
-    for u, e in sorted(ents.items()):
-        if e["type"] == "unit" and u not in used_units and not e["foundation"] and e["game"] != "mindustry":
-            cards[PREFIX + u.replace(":", "_")] = _card(u.replace(":", "_"), e["label"], e["era"], [u], "Unlocks the %s." % e["label"].lower())
+    pool = [u for u, e in sorted(ents.items()) if e["type"] == "unit" and u not in used_units and not e["foundation"] and e["game"] != "mindustry"]
+    paired: set[str] = set()
+    for u in pool:  # OpenRA units: neighbours that the same building produces share a card about half the time
+        if u in paired or _h("upair:" + u) % 100 >= 55:
+            continue
+        mates = [v for v in pool if v != u and v not in paired and ents[v]["producer"] == ents[u]["producer"] and ents[v]["era"] == ents[u]["era"]]
+        if mates:
+            v = min(mates, key=lambda c: _h(u + c))
+            cards[PREFIX + u.replace(":", "_")] = _card(u.replace(":", "_"), f"{ents[u]['label']} + {ents[v]['label']}", ents[u]["era"], [u, v],
+                                                     "Unlocks the %s and the %s." % (ents[u]["label"].lower(), ents[v]["label"].lower()))
+            paired.update((u, v))
+    for u in pool:
+        if u not in paired:
+            cards[PREFIX + u.replace(":", "_")] = _card(u.replace(":", "_"), ents[u]["label"], ents[u]["era"], [u], "Unlocks the %s." % ents[u]["label"].lower())
+    mu = [u for u, e in sorted(ents.items()) if e["type"] == "unit" and e["game"] == "mindustry" and u not in used_m]
+    from wizard_rts.industry import units as U
+
+    chain: dict[str, list[str]] = {}
+    for u in mu:
+        root = u
+        for _ in range(6):
+            prev = next((p for p in mu if U.upgrade_of(p[5:]) == root[5:]), None)
+            if prev is None:
+                break
+            root = prev
+        chain.setdefault(root, []).append(u)
+    for root, members in sorted(chain.items()):
+        members.sort(key=lambda x: ents[x]["tier"])
+        i = 0
+        while i < len(members):
+            if i + 1 < len(members) and _h("mpair:" + members[i]) % 100 < 60 and ents[members[i]]["producer"] != "":
+                a, b = members[i], members[i + 1]
+                cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), f"{ents[a]['label']} + {ents[b]['label']}", ents[a]["era"], [a, b],
+                                                         "Unlocks two tiers of the same line.")
+                used_m.update((a, b))
+                i += 2
+            else:
+                a = members[i]
+                cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), ents[a]["label"], ents[a]["era"], [a], "Unlocks the %s." % ents[a]["label"].lower())
+                used_m.add(a)
+                i += 1
     return cards
 
 

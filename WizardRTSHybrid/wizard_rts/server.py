@@ -27,7 +27,7 @@ from wizard_rts.world import HybridWorld  # noqa: E402
 # Faction-level commands: God Mode and the training surface (D02). The wizard's own ops (snapshot, pose, advance, interact,
 # resolve, fire, menu, terrain, tile, resources) stay available in every profile.
 GOD_OPS = frozenset({"trade", "control", "build", "road", "queue", "cancel", "move", "deploy", "stop", "rally", "demolish", "ai", "speed",
-                     "order", "suggest", "spawn", "damage", "draft", "grant_card", "inspect", "belt", "upgrade", "enhance", "configure", "fixture"})
+                     "order", "suggest", "spawn", "damage", "draft", "grant_card", "inspect", "belt", "upgrade", "enhance", "configure", "ability", "fixture"})
 
 
 def _handle(world: HybridWorld, message: dict) -> dict:
@@ -63,6 +63,9 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         return world.belt(str(message.get("faction", "")), list(message.get("tiles", [])), message.get("end_dir"), str(message.get("kind", "mdy:conveyor")))
     if op == "upgrade":
         return world.upgrade(str(message.get("faction", "")), str(message.get("building", "")), str(message.get("to", "")))
+    if op == "ability":
+        kw = {k: v for k, v in message.items() if k not in ("op", "faction", "what")}
+        return world.ability(str(message.get("faction", "")), str(message.get("what", "")), **kw)
     if op == "enhance":
         return world.enhance(str(message.get("faction", "")), str(message.get("building", "")), str(message.get("to", "")))
     if op == "configure":

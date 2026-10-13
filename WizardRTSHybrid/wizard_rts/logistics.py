@@ -170,7 +170,8 @@ def in_flight(world: Any, good: str | None = None, dest: str | None = None) -> i
 
 
 def _warehouses(world: Any, faction: str) -> list[dict]:
-    return [b for b in world.buildings.values() if b["kind"] == "warehouse" and b["faction"] == faction and b.get("operational", True)]
+    return [b for b in world.buildings.values() if (b["kind"] == "warehouse" or b.get("store")) and b["faction"] == faction and b.get("operational", True)
+            and not b.get("constructing") and int(b.get("hp", 1)) > 0]
 
 
 def _nearest(world: Any, src: str, candidates: list[str]) -> list[str] | None:
