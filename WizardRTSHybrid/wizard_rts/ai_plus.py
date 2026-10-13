@@ -252,6 +252,11 @@ def _infected(world: Any, tile: tuple[int, int], at_least: int = 2) -> bool:
     return rg is not None and rg.cubes[rg.region_at(tile[0], tile[1])] >= at_least
 
 
+def _responds(world: Any, name: str) -> bool:
+    """False only for the `ignore` reference policy of the catastrophe study (no clinics, no nest hunting)."""
+    return world.__dict__.get("nest_policy", {}).get(name, "selfish") != "ignore"
+
+
 def _targets(world: Any, name: str, wh: dict, main: bool, mine: list[dict]) -> list[tuple[str, int]]:
     """(kind, wanted count) in priority order for one settlement, from the faction's measurements."""
     era = _era(world)
@@ -270,12 +275,12 @@ def _targets(world: Any, name: str, wh: dict, main: bool, mine: list[dict]) -> l
         out += [("farm", 1), ("tavern", 1), ("well", 1)]
         out += [("flame_tower", 1)] if era >= 1 else [("war_lodge", 0)]
         out += [("defense", 1), ("tesla_coil", 1 if era >= 2 else 0)]
-        if tech.foundation_on(world) and _infected(world, (wh["tx"], wh["ty"]), 1):
+        if tech.foundation_on(world) and _responds(world, name) and _infected(world, (wh["tx"], wh["ty"]), 1):
             out.insert(0, ("clinic", 1))
         return out
     wood = max(3, 2 + n // 8)
     out: list[tuple[str, int]] = []
-    if tech.foundation_on(world) and _infected(world, (wh["tx"], wh["ty"]), 1):
+    if tech.foundation_on(world) and _responds(world, name) and _infected(world, (wh["tx"], wh["ty"]), 1):
         out.append(("clinic", 1))  # an outbreak in this settlement's region: a clinic treats it (cubes cost rations and water)
     if threatened:
         out += [("war_lodge", 1), ("defense", 2), ("flame_tower", 1), ("tesla_coil", 1)]

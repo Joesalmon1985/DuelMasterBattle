@@ -32,6 +32,8 @@ def play(job: dict) -> dict:
 
     t0 = time.time()
     w = HybridWorld(job["seed"], terrain=True, map_size="standard", profile="campaign")
+    if job.get("v2"):
+        w.cardset, w.draft_v2 = "v2", True  # generated cards; the clinic is a foundation building there
     w.outbreak_interval_scale = job["scale"]
     w.loss_outbreaks_per_era, w.loss_outbreaks_total = job["era_limit"], job["total_limit"]
     w.nest_policy = {n: job["policy"] for n in w.faction_info}
@@ -58,6 +60,7 @@ def main() -> None:
     ap.add_argument("--minutes", type=int, default=60)
     ap.add_argument("--scale", type=float, default=0.35)
     ap.add_argument("--jobs", type=int, default=2)
+    ap.add_argument("--v2", action="store_true", help="play with the generated cards (clinics available to every faction)")
     ap.add_argument("--policies", nargs="+", default=["ignore", "selfish", "coop"])
     ap.add_argument("--limits", nargs="+", default=["99:8", "6:12", "4:8"], help="era:total pairs")
     ap.add_argument("--out", default=str(Path.home() / "dmb_runs" / "cat_study"))
@@ -74,7 +77,7 @@ def main() -> None:
     for pol, lim, seed in itertools.product(a.policies, a.limits, a.seeds):
         e, t = (int(x) for x in lim.split(":"))
         if (pol, e, t, seed) not in done:
-            jobs.append({"policy": pol, "era_limit": e, "total_limit": t, "seed": seed, "minutes": a.minutes, "scale": a.scale})
+            jobs.append({"policy": pol, "era_limit": e, "total_limit": t, "seed": seed, "minutes": a.minutes, "scale": a.scale, "v2": a.v2})
     print(len(jobs), "games to play", flush=True)
     with mp.get_context("spawn").Pool(a.jobs) as pool, cells.open("a") as fh:
         for r in pool.imap_unordered(play, jobs):
