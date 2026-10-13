@@ -165,8 +165,8 @@ def test_card_json_is_consistent():
     from wizard_rts.content import graph
 
     # the generated v2 cards (drafting v2) also unlock kinds, among them hybrid buildings that exist only there (the scriptorium)
-    covered = PRIMITIVE_KINDS | {k for c in cards.values() for k in c["kinds"]} | {k for c in graph.generated_cards().values() for k in c["kinds"]}
-    assert covered == known
+    covered = PRIMITIVE_KINDS | {k for c in cards.values() for k in c["kinds"]} | {k for c in graph.generated_cards().values() for k in c["kinds"]} | set(tech.FOUNDATION_KINDS)
+    assert covered == known  # (the foundation kinds, among them the v2-only clinic, need no card)
     for k in registry.kinds():  # the registry's own card pointer agrees with the card file
         assert k in cards[registry.block(k)["card"]]["kinds"], k
 
