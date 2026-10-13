@@ -39,3 +39,29 @@ def test_same_seed_same_game_across_processes_with_expansion() -> None:
     b = _run("98765", 14)
     assert a == b, f"two processes disagree:\n{a}\n{b}"
     assert int(a.split()[1]) >= 7, "the run must include at least one deployed command centre (6 homes + 1) so expansion is covered"
+
+
+PROGRAM_V2 = r"""
+import sys
+sys.path.insert(0, %r)
+from wizard_rts.world import HybridWorld
+from wizard_rts import draft
+w = HybridWorld(seed=507, profile="campaign")
+w.cardset, w.draft_v2 = "v2", True
+for i in range(%d * 60):
+    w.advance(1000, i + 1, snapshot=False)
+st = draft.state(w)
+print(w.state_hash(), sorted((f, tuple(c)) for f, s in w.tech.items() for c in [s["cards"]]), st["round"])
+"""
+
+
+def test_drafting_v2_is_deterministic_across_processes() -> None:
+    """The generated cards, the tribe-balanced deal, the ring and the AI picks must not depend on string-hash salting."""
+    def run(hashseed: str) -> str:
+        env = dict(os.environ, PYTHONHASHSEED=hashseed, HYBRID_AI="1", HYBRID_AI_POLICY="plus")
+        out = subprocess.run([sys.executable, "-c", PROGRAM_V2 % (str(HYB), 13)], env=env, capture_output=True, text=True, timeout=900, cwd=str(HYB))
+        assert out.returncode == 0, out.stderr[-2000:]
+        return out.stdout.strip().splitlines()[-1]
+
+    a, b = run("3"), run("424242")
+    assert a == b, f"two processes disagree:\n{a}\n{b}"

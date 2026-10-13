@@ -143,3 +143,15 @@ def test_clinic_cures_its_region_for_rations_and_water_and_idles_when_clean():
     assert rg.cubes[i] <= 2 and w.stats.get("cubes_cured", 0) >= 1 and w.fstats["Red"]["cubes_cured"] >= 1
     assert w.stats["consumed_ration"] >= 1 and w.stats["consumed_water"] >= 1
     assert [e for e in w.events if e["kind"] == "cube_cured"]
+
+
+def test_a_truce_opens_trade_after_recent_hostility():
+    from wizard_rts import trade
+
+    w = world()
+    trade.note_hostility(w, "Red", "Blue")
+    assert trade.hostile(w, "Red", "Blue")
+    diplomacy.set_state(w, "Red", "Blue", "truce", 60_000)
+    assert not trade.hostile(w, "Red", "Blue")
+    diplomacy.break_treaty(w, "Red", "Blue")
+    assert trade.hostile(w, "Red", "Blue")  # the earlier attack still counts once the war resumes
