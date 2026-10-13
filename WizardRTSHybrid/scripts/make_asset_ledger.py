@@ -22,6 +22,9 @@ def files_of(item: dict) -> list[str]:
     if item.get("godot"):
         out.append(item["godot"])
     out += list(item.get("frames_godot", []))
+    lay = item.get("layers")
+    if lay:  # independent turret layers: <prefix>-NNNN.png for each facing
+        out += [f"res://client/hybrid/art/openra/{lay[k]}-{f:04d}.png" for k in ("body_prefix", "turret_prefix") for f in range(int(lay.get("facings", 32)))]
     return [p.replace("res://client/hybrid/art/", "") for p in dict.fromkeys(out)]
 
 
