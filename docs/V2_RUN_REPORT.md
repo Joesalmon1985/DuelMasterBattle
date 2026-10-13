@@ -11,7 +11,7 @@ Branch `work/ubuntu-autonomous-v2` (never merged into `main`). Live state: `docs
 | Starting commit | `11b70b24f4ee06db4aac41571394714e87061b2d` (`feature/hybrid-playtest-fixes-v03`) |
 | Ending commit | `ff480f117a3d` (the final push includes this report) (`git log --oneline 11b70b2..HEAD` lists every step with its time) |
 | Active development time | the whole interactive session above, in which the agent was working or waiting on its own jobs |
-| Independent compute time | about 13 supervised job-hours (single-core game time 10.6 h; the jobs overlapped on the 4 threads) plus about 3 hours of foreground tests and probes (supervised background jobs, listed in section 9; they ran concurrently on 4 threads, so wall time and CPU time differ, and many of them were slowed by sharing the machine with each other and with the test suite) |
+| Independent compute time | about 13 supervised job-hours (single-core game time 10.6 h; the jobs overlapped on the 4 threads) plus about 3 hours of foreground tests and probes (supervised background jobs, one `~/dmb_runs/<name>/STATUS.json` each; they ran concurrently on 4 threads, so wall time and CPU time differ, and many of them were slowed by sharing the machine with each other and with the test suite) |
 
 Honest limits: the Windows PC was not available (hardware probe, `.ps1` supervisor wrapper and cross-OS state-hash test are written but **untested on Windows**); no PyTorch/Numba/PyPy was installed (CPU-only NumPy training; Q6 default says add them once approved, not needed for what was done).
 
@@ -46,10 +46,11 @@ Honest limits: the Windows PC was not available (hardware probe, `.ps1` supervis
 | imitation data: 36 games x 45 min; module swap: 24 games x 45 min | P14 | `docs/evidence/training/` |
 
 ## 5. Performance (measured, hash-equal throughout)
-Numbers come from the same machine but **not** from an idle one (other jobs shared the CPU for most of the run), so they understate the gains.
-* Early game, seed 507, six AIs, 15 min: 31.4x -> 47.7x realtime (tree buckets, tighter A*, C kernel, caches).
-* 50-minute game: 6.6x -> about 18x realtime (the 6.6x baseline was itself measured under load).
-* No-card civilisation, minute 90 (about 430 buildings): warm-up 848 s -> 439 s; two profiled game minutes 42 s. The late-game cost I introduced myself (frontier site search, 85 of 163 profiled seconds) was found by the long profile and fixed.
+Same machine; the idle-machine rows are the clean comparison against the starting commit (details in `docs/perf/RESULTS.md`).
+* Early game, seed 507, six AIs, 15 min, **idle machine**: 35.5x -> 42.9x realtime, same hash.
+* 30 game minutes, seed 507, **idle machine**: 19.2x (93.9 s) -> 30.7x (58.6 s), **1.6x faster**, state hash equal at all 30 minute marks.
+* 50-minute game: 6.6x -> about 17-18x realtime (the 6.6x starting figure was measured while another job ran, so the true ratio is smaller; the gain grows with game length because pathfinding dominates).
+* No-card civilisation, minute 90 (about 430 buildings): warm-up 848 s -> 439 s (both on a shared CPU); two profiled game minutes 42 s. The late-game cost I introduced myself (frontier site search, 85 of 163 profiled seconds) was found by the long profile and fixed.
 * Determinism: state hashes equal to the pre-change commit at minutes 1-15 (3 seeds), 1-50 (2 seeds), recorded at 120; cross-process hash tests pass for the old and the v2 world.
 * Not done: PyPy/Numba/structure-of-arrays (P8), native kernels beyond A*, 10-seed baseline (the recording job was stopped to free CPU), Windows numbers.
 
@@ -61,7 +62,7 @@ Numbers come from the same machine but **not** from an idle one (other jobs shar
 5. Standing a lead at 8 VP ended all four eras within two game minutes (bar now rises with the leader).
 6. Late-game cost explosion from my own frontier site search (cached; one-minute no-site memo).
 7. Partly fixed: Blue's founders were sacrificed to a nest at a region border (33 wagons in one game); clinics now reach neighbouring regions (3 wagons), but Blue is still hemmed in (no legal site).
-8. Not a defect after checking: `worker_failed` (about 45,000 per 120 game minutes, mostly `no_tree`/`no_rock`) is each site retrying after the 10-second failure sleep (`programs_data.FAIL_SLEEP_MS`), as Widelands does; it only costs event volume (a cap on logging would be tidy). Not fixed: standing settlement counts of Blue/Red/Purple fall below 3 late in some seeds (splits, losses, boxed-in starts); caravans crossing rival territory are often killed (no event); the Modern content is barely drafted or built (see 7).
+8. Not a defect after checking: `worker_failed` (about 45,000 per 120 game minutes, mostly `no_tree`/`no_rock`) is each site retrying after the 10-second failure sleep (`programs_data.FAIL_SLEEP_MS`), as Widelands does; it only costs event volume (a cap on logging would be tidy). Not fixed: standing settlement counts of Blue/Red/Purple fall below 3 late in some seeds (splits, losses, boxed-in starts); caravans crossing rival territory are often killed (now logged as `caravan_lost`, not yet analysed); the Modern content is barely drafted or built (see 7).
 
 ## 7. Limitations and remaining work (the plan is far from finished: about 80 sessions in total, this was one)
 * **Content**: functional vs pending is in `docs/evidence/content_status.md` (Widelands 153/242 functional, OpenRA units 24 of 49, OpenRA buildings 9 of 43, Mindustry 11 of 253 blocks and 3 of 64 units). Everything else is imported as data and listed, not claimed.
