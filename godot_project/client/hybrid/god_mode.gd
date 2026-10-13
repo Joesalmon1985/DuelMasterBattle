@@ -72,12 +72,14 @@ func setup(p_world: Node) -> void:
 		mode_btn.add_theme_stylebox_override(state, box)
 	mode_btn.pressed.connect(toggle)
 	layer.add_child(mode_btn)
+	_build_inspector()
 	_build_panel()
 	_build_minimap()
 	var prof: Dictionary = world._sim.op({"op": "profile"})
 	profile = str(prof.get("profile", ""))
 	god_enabled = bool(prof.get("god", true))
 	mode_btn.visible = god_enabled
+	inspector_btn.visible = god_enabled
 	toast = Label.new()
 	toast.name = "Toast"
 	toast.position = Vector2(470, 112)  # below the spectator HUD rows (era text, speeds)
@@ -106,6 +108,47 @@ func setup(p_world: Node) -> void:
 	var start := OS.get_environment("HYBRID_START_MODE").to_lower()
 	if start == "god" or "--god" in OS.get_cmdline_user_args():
 		enter.call_deferred()
+
+
+const InspectorPanel = preload("res://client/hybrid/inspector_panel.gd")
+var inspector_overlay: PanelContainer
+var inspector_btn: Button
+var inspector_view = null
+
+
+func _build_inspector() -> void:
+	# the technology inspector (plan v2 8.6): every card with the real imported art of what it unlocks, animated and rotatable
+	inspector_btn = Button.new()
+	inspector_btn.name = "InspectorButton"
+	inspector_btn.text = "Tech inspector (I)"
+	inspector_btn.position = Vector2(320, 12)
+	inspector_btn.custom_minimum_size = Vector2(150, 34)
+	inspector_btn.pressed.connect(toggle_inspector)
+	layer.add_child(inspector_btn)
+	inspector_overlay = PanelContainer.new()
+	inspector_overlay.name = "InspectorOverlay"
+	inspector_overlay.position = Vector2(400, 150)  # the project's base size is 1920x1080: clear of the God panel (left) and the top rows
+	inspector_overlay.custom_minimum_size = Vector2(1280, 840)
+	inspector_overlay.visible = false
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = Color(0.08, 0.09, 0.12, 0.985)
+	bg.border_color = Color(0.7, 0.6, 1.0)
+	bg.set_border_width_all(2)
+	bg.set_corner_radius_all(8)
+	inspector_overlay.add_theme_stylebox_override("panel", bg)
+	layer.add_child(inspector_overlay)
+
+
+func toggle_inspector() -> void:
+	if inspector_overlay == null:
+		return
+	inspector_overlay.visible = not inspector_overlay.visible
+	if inspector_overlay.visible and inspector_view == null:
+		inspector_view = InspectorPanel.new()
+		inspector_view.custom_minimum_size = Vector2(1260, 820)
+		inspector_overlay.add_child(inspector_view)
+		var reply: Dictionary = world._sim.op({"op": "inspect", "what": "catalogue"})
+		inspector_view.load_catalogue(reply.get("data", {}))
 
 
 func _build_panel() -> void:
@@ -360,6 +403,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		var k: InputEventKey = event
 		if k.keycode == KEY_G and not world._duel_open and god_enabled:
 			toggle()
+			get_viewport().set_input_as_handled()
+			return
+		if k.keycode == KEY_I and active and god_enabled:
+			toggle_inspector()
 			get_viewport().set_input_as_handled()
 			return
 		if not active:

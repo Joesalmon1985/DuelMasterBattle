@@ -186,6 +186,8 @@ def _handle(world: HybridWorld, message: dict) -> dict:
 def serve(port: int) -> None:
     world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"),
                          profile=os.environ.get("HYBRID_PROFILE", "campaign"))
+    if os.environ.get("HYBRID_CARDSET") == "v2":  # plan v2: generated content-graph cards and the era-start ring draft (default off until the studies are done)
+        world.cardset, world.draft_v2 = "v2", True
     if os.environ.get("HYBRID_DRAFT_MS"):  # developer switch: safe accelerated drafting
         world.draft_interval_ms = max(1000, int(os.environ["HYBRID_DRAFT_MS"])) if tech.god_allowed(world) else world.draft_interval_ms
     if tech.god_allowed(world):  # developer switches: a shorter era (stall guard, ms) and a lower VP bar, so the transition can be watched

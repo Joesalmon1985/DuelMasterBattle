@@ -1,0 +1,3269 @@
+{
+ "cards": [
+  {
+   "id": "gen.amazons_cassava_plantation",
+   "name": "Cassava Plantation + Cassava Root Cooker (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_cassava_plantation",
+     "label": "Cassava Plantation",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_cassava_plantation",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:amazons_cassava_root_cooker",
+     "label": "Cassava Root Cooker",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_cassava_root_cooker",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_charcoal_kiln",
+   "name": "Charcoal Kiln (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_charcoal_kiln",
+     "label": "Charcoal Kiln",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_charcoal_kiln",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_chocolate_brewery",
+   "name": "Chocolate Brewery (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_chocolate_brewery",
+     "label": "Chocolate Brewery",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_chocolate_brewery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_cocoa_farm",
+   "name": "Cocoa Farm (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_cocoa_farm",
+     "label": "Cocoa Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_cocoa_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_dressmakery",
+   "name": "Dressmakery + Initiation Site (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_dressmakery",
+     "label": "Dressmakery",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_dressmakery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:amazons_initiation_site",
+     "label": "Initiation Site",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_initiation_site",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_furnace",
+   "name": "Furnace (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_furnace",
+     "label": "Furnace",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_furnace",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_rope_weaver_booth",
+   "name": "Rope Weaver Booth (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_rope_weaver_booth",
+     "label": "Rope Weaver Booth",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_rope_weaver_booth",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_stone_workshop",
+   "name": "Stone Workshop (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_stone_workshop",
+     "label": "Stone Workshop",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_stone_workshop",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_stonemine",
+   "name": "Stone Mine (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_stonemine",
+     "label": "Stone Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_stonemine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.amazons_tapir_farm",
+   "name": "Tapir Farm (amazons)",
+   "era": "prehistoric",
+   "tribe": "amazons",
+   "summary": "A Widelands production chain for the amazons.",
+   "entities": [
+    {
+     "id": "wl:amazons_tapir_farm",
+     "label": "Tapir Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.amazons_tapir_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_armorsmithy",
+   "name": "Armor Smithy (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_armorsmithy",
+     "label": "Armor Smithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_armorsmithy",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_bakery",
+   "name": "Bakery (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_bakery",
+     "label": "Bakery",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_bakery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_barracks",
+   "name": "Barracks (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_barracks",
+     "label": "Barracks",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_barracks",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_blackroot_farm",
+   "name": "Blackroot Farm + Mill (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_blackroot_farm",
+     "label": "Blackroot Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_blackroot_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:atlanteans_mill",
+     "label": "Mill",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_mill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_charcoal_kiln",
+   "name": "Charcoal Kiln + Smelting Works (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_charcoal_kiln",
+     "label": "Charcoal Kiln",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_charcoal_kiln",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:atlanteans_smelting_works",
+     "label": "Smelting Works",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_smelting_works",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_coalmine",
+   "name": "Coal Mine + Weapon Smithy (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_coalmine",
+     "label": "Coal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_coalmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:atlanteans_weaponsmithy",
+     "label": "Weapon Smithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_weaponsmithy",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_crystalmine",
+   "name": "Crystal Mine (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_crystalmine",
+     "label": "Crystal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_crystalmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_farm",
+   "name": "Farm (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_farm",
+     "label": "Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_fishbreeders_house",
+   "name": "Fish Breeder\u2019s House (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_fishbreeders_house",
+     "label": "Fish Breeder\u2019s House",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_fishbreeders_house",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_goldmine",
+   "name": "Gold Mine (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_goldmine",
+     "label": "Gold Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_goldmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_horsefarm",
+   "name": "Horse Farm (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_horsefarm",
+     "label": "Horse Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_horsefarm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_ironmine",
+   "name": "Iron Mine (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_ironmine",
+     "label": "Iron Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_ironmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_smokery",
+   "name": "Smokery (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_smokery",
+     "label": "Smokery",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_smokery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_spiderfarm",
+   "name": "Spider Farm + Toolsmithy (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_spiderfarm",
+     "label": "Spider Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_spiderfarm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:atlanteans_toolsmithy",
+     "label": "Toolsmithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_toolsmithy",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.atlanteans_weaving_mill",
+   "name": "Weaving Mill (atlanteans)",
+   "era": "prehistoric",
+   "tribe": "atlanteans",
+   "summary": "A Widelands production chain for the atlanteans.",
+   "entities": [
+    {
+     "id": "wl:atlanteans_weaving_mill",
+     "label": "Weaving Mill",
+     "type": "building",
+     "art": {
+      "key": "widelands.atlanteans_weaving_mill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.bakery",
+   "name": "Bakery",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "A bakery",
+   "entities": [
+    {
+     "id": "bakery",
+     "label": "Bakery",
+     "type": "building",
+     "art": {
+      "key": "widelands.bakery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_ax_workshop",
+   "name": "Ax Workshop + Barracks (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_ax_workshop",
+     "label": "Ax Workshop",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_ax_workshop",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:barbarians_barracks",
+     "label": "Barracks",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_barracks",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_bakery",
+   "name": "Bakery (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_bakery",
+     "label": "Bakery",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_bakery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_brewery",
+   "name": "Brewery (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_brewery",
+     "label": "Brewery",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_brewery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_cattlefarm",
+   "name": "Cattle Farm (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_cattlefarm",
+     "label": "Cattle Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_cattlefarm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_charcoal_kiln",
+   "name": "Charcoal Kiln + Helm Smithy (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_charcoal_kiln",
+     "label": "Charcoal Kiln",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_charcoal_kiln",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:barbarians_helmsmithy",
+     "label": "Helm Smithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_helmsmithy",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_coalmine",
+   "name": "Coal Mine (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_coalmine",
+     "label": "Coal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_coalmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_coalmine_deep",
+   "name": "Deep Coal Mine + Lime Kiln (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_coalmine_deep",
+     "label": "Deep Coal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_coalmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:barbarians_lime_kiln",
+     "label": "Lime Kiln",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_lime_kiln",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_coalmine_deeper",
+   "name": "Deeper Coal Mine + Smelting Works (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_coalmine_deeper",
+     "label": "Deeper Coal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_coalmine_deeper",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:barbarians_smelting_works",
+     "label": "Smelting Works",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_smelting_works",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_farm",
+   "name": "Farm + Micro Brewery (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_farm",
+     "label": "Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:barbarians_micro_brewery",
+     "label": "Micro Brewery",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_micro_brewery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_goldmine",
+   "name": "Gold Mine (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_goldmine",
+     "label": "Gold Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_goldmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_goldmine_deep",
+   "name": "Deep Gold Mine (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_goldmine_deep",
+     "label": "Deep Gold Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_goldmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_goldmine_deeper",
+   "name": "Deeper Gold Mine (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_goldmine_deeper",
+     "label": "Deeper Gold Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_goldmine_deeper",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_granitemine",
+   "name": "Granite Mine (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_granitemine",
+     "label": "Granite Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_granitemine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_ironmine",
+   "name": "Iron Mine (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_ironmine",
+     "label": "Iron Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_ironmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_ironmine_deep",
+   "name": "Deep Iron Mine (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_ironmine_deep",
+     "label": "Deep Iron Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_ironmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_ironmine_deeper",
+   "name": "Deeper Iron Mine (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_ironmine_deeper",
+     "label": "Deeper Iron Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_ironmine_deeper",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_metal_workshop",
+   "name": "Metal Workshop (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_metal_workshop",
+     "label": "Metal Workshop",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_metal_workshop",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_reed_yard",
+   "name": "Reed Yard (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_reed_yard",
+     "label": "Reed Yard",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_reed_yard",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_warmill",
+   "name": "War Mill (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_warmill",
+     "label": "War Mill",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_warmill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_weaving_mill",
+   "name": "Weaving Mill (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_weaving_mill",
+     "label": "Weaving Mill",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_weaving_mill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barbarians_wood_hardener",
+   "name": "Wood Hardener (barbarians)",
+   "era": "prehistoric",
+   "tribe": "barbarians",
+   "summary": "A Widelands production chain for the barbarians.",
+   "entities": [
+    {
+     "id": "wl:barbarians_wood_hardener",
+     "label": "Wood Hardener",
+     "type": "building",
+     "art": {
+      "key": "widelands.barbarians_wood_hardener",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_armorsmithy",
+   "name": "Armor Smithy (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_armorsmithy",
+     "label": "Armor Smithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_armorsmithy",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_bakery",
+   "name": "Bakery (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_bakery",
+     "label": "Bakery",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_bakery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_barracks",
+   "name": "Barracks (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_barracks",
+     "label": "Barracks",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_barracks",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_brewery",
+   "name": "Brewery + Coal Mine (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_brewery",
+     "label": "Brewery",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_brewery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:empire_coalmine",
+     "label": "Coal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_coalmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_charcoal_kiln",
+   "name": "Charcoal Kiln + Smelting Works (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_charcoal_kiln",
+     "label": "Charcoal Kiln",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_charcoal_kiln",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:empire_smelting_works",
+     "label": "Smelting Works",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_smelting_works",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_coalmine_deep",
+   "name": "Deep Coal Mine + Weapon Smithy (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_coalmine_deep",
+     "label": "Deep Coal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_coalmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:empire_weaponsmithy",
+     "label": "Weapon Smithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_weaponsmithy",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_donkeyfarm",
+   "name": "Donkey Farm (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_donkeyfarm",
+     "label": "Donkey Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_donkeyfarm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_farm",
+   "name": "Farm (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_farm",
+     "label": "Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_goldmine",
+   "name": "Gold Mine (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_goldmine",
+     "label": "Gold Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_goldmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_goldmine_deep",
+   "name": "Deep Gold Mine (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_goldmine_deep",
+     "label": "Deep Gold Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_goldmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_ironmine",
+   "name": "Iron Mine (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_ironmine",
+     "label": "Iron Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_ironmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_ironmine_deep",
+   "name": "Deep Iron Mine (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_ironmine_deep",
+     "label": "Deep Iron Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_ironmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_marblemine",
+   "name": "Marble Mine + Stonemason\u2019s House (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_marblemine",
+     "label": "Marble Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_marblemine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:empire_stonemasons_house",
+     "label": "Stonemason\u2019s House",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_stonemasons_house",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_marblemine_deep",
+   "name": "Deep Marble Mine (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_marblemine_deep",
+     "label": "Deep Marble Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_marblemine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_mill",
+   "name": "Mill (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_mill",
+     "label": "Mill",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_mill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_piggery",
+   "name": "Piggery (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_piggery",
+     "label": "Piggery",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_piggery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_sheepfarm",
+   "name": "Sheep Farm + Weaving Mill (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_sheepfarm",
+     "label": "Sheep Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_sheepfarm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:empire_weaving_mill",
+     "label": "Weaving Mill",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_weaving_mill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_toolsmithy",
+   "name": "Toolsmithy (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_toolsmithy",
+     "label": "Toolsmithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_toolsmithy",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_vineyard",
+   "name": "Vineyard (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_vineyard",
+     "label": "Vineyard",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_vineyard",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.empire_winery",
+   "name": "Winery (empire)",
+   "era": "prehistoric",
+   "tribe": "empire",
+   "summary": "A Widelands production chain for the empire.",
+   "entities": [
+    {
+     "id": "wl:empire_winery",
+     "label": "Winery",
+     "type": "building",
+     "art": {
+      "key": "widelands.empire_winery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.farm",
+   "name": "Farm",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "A farm",
+   "entities": [
+    {
+     "id": "farm",
+     "label": "Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_armor_smithy_large",
+   "name": "Large Armor Smithy (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_armor_smithy_large",
+     "label": "Large Armor Smithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_armor_smithy_large",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_armor_smithy_small",
+   "name": "Small Armor Smithy + Barracks (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_armor_smithy_small",
+     "label": "Small Armor Smithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_armor_smithy_small",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:frisians_barracks",
+     "label": "Barracks",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_barracks",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_bakery",
+   "name": "Bakery (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_bakery",
+     "label": "Bakery",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_bakery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_beekeepers_house",
+   "name": "Beekeeper\u2019s House + Honey Bread Bakery (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_beekeepers_house",
+     "label": "Beekeeper\u2019s House",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_beekeepers_house",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:frisians_honey_bread_bakery",
+     "label": "Honey Bread Bakery",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_honey_bread_bakery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_berry_farm",
+   "name": "Berry Farm (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_berry_farm",
+     "label": "Berry Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_berry_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_blacksmithy",
+   "name": "Blacksmithy (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_blacksmithy",
+     "label": "Blacksmithy",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_blacksmithy",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_brewery",
+   "name": "Brewery (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_brewery",
+     "label": "Brewery",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_brewery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_brick_kiln",
+   "name": "Brick Kiln (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_brick_kiln",
+     "label": "Brick Kiln",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_brick_kiln",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_charcoal_kiln",
+   "name": "Charcoal Kiln (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_charcoal_kiln",
+     "label": "Charcoal Kiln",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_charcoal_kiln",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_coalmine",
+   "name": "Coal Mine + Furnace (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_coalmine",
+     "label": "Coal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_coalmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:frisians_furnace",
+     "label": "Furnace",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_furnace",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_coalmine_deep",
+   "name": "Deep Coal Mine + Recycling Center (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_coalmine_deep",
+     "label": "Deep Coal Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_coalmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:frisians_recycling_center",
+     "label": "Recycling Center",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_recycling_center",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_collectors_house",
+   "name": "Fruit Collector\u2019s House + Drinking Hall (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_collectors_house",
+     "label": "Fruit Collector\u2019s House",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_collectors_house",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:frisians_drinking_hall",
+     "label": "Drinking Hall",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_drinking_hall",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_farm",
+   "name": "Farm (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_farm",
+     "label": "Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_goldmine",
+   "name": "Gold Mine (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_goldmine",
+     "label": "Gold Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_goldmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_goldmine_deep",
+   "name": "Deep Gold Mine (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_goldmine_deep",
+     "label": "Deep Gold Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_goldmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_ironmine",
+   "name": "Iron Mine (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_ironmine",
+     "label": "Iron Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_ironmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_ironmine_deep",
+   "name": "Deep Iron Mine (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_ironmine_deep",
+     "label": "Deep Iron Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_ironmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_mead_brewery",
+   "name": "Mead Brewery (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_mead_brewery",
+     "label": "Mead Brewery",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_mead_brewery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_reed_farm",
+   "name": "Reed Farm (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_reed_farm",
+     "label": "Reed Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_reed_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_reindeer_farm",
+   "name": "Reindeer Farm + Sewing Room (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_reindeer_farm",
+     "label": "Reindeer Farm",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_reindeer_farm",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "wl:frisians_sewing_room",
+     "label": "Sewing Room",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_sewing_room",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_rockmine",
+   "name": "Rock Mine (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_rockmine",
+     "label": "Rock Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_rockmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_rockmine_deep",
+   "name": "Deep Rock Mine (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_rockmine_deep",
+     "label": "Deep Rock Mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_rockmine_deep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_smokery",
+   "name": "Smokery (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_smokery",
+     "label": "Smokery",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_smokery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_tailors_shop",
+   "name": "Tailor\u2019s Shop (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_tailors_shop",
+     "label": "Tailor\u2019s Shop",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_tailors_shop",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.frisians_weaving_mill",
+   "name": "Weaving Mill (frisians)",
+   "era": "prehistoric",
+   "tribe": "frisians",
+   "summary": "A Widelands production chain for the frisians.",
+   "entities": [
+    {
+     "id": "wl:frisians_weaving_mill",
+     "label": "Weaving Mill",
+     "type": "building",
+     "art": {
+      "key": "widelands.frisians_weaving_mill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.ironmine",
+   "name": "Iron mine",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "A iron mine",
+   "entities": [
+    {
+     "id": "ironmine",
+     "label": "Iron mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.ironmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mine",
+   "name": "Coal mine",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "A coal mine",
+   "entities": [
+    {
+     "id": "mine",
+     "label": "Coal mine",
+     "type": "building",
+     "art": {
+      "key": "widelands.coalmine",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.smelter",
+   "name": "Smelting works",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "A smelting works",
+   "entities": [
+    {
+     "id": "smelter",
+     "label": "Smelting works",
+     "type": "building",
+     "art": {
+      "key": "widelands.smelting_works",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_slinger",
+   "name": "Slinger",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "Unlocks the slinger.",
+   "entities": [
+    {
+     "id": "unit:slinger",
+     "label": "Slinger",
+     "type": "unit",
+     "art": {
+      "key": "dmb.slinger",
+      "status": "alias_placeholder",
+      "alias_of": "widelands.soldier",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_spearman",
+   "name": "Spearman",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "Unlocks the spearman.",
+   "entities": [
+    {
+     "id": "unit:spearman",
+     "label": "Spearman",
+     "type": "unit",
+     "art": {
+      "key": "dmb.spearman",
+      "status": "alias_placeholder",
+      "alias_of": "widelands.soldier",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.war_lodge",
+   "name": "War lodge + Clubman",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "A war lodge",
+   "entities": [
+    {
+     "id": "war_lodge",
+     "label": "War lodge",
+     "type": "building",
+     "art": {
+      "key": "dmb.war_lodge",
+      "status": "alias_placeholder",
+      "alias_of": "widelands.barbarians_barracks",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "unit:clubman",
+     "label": "Clubman",
+     "type": "unit",
+     "art": {
+      "key": "dmb.clubman",
+      "status": "alias_placeholder",
+      "alias_of": "widelands.soldier",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.barracks",
+   "name": "Barracks + Attack dog",
+   "era": "historic",
+   "tribe": "",
+   "summary": "A barracks",
+   "entities": [
+    {
+     "id": "barracks",
+     "label": "Barracks",
+     "type": "building",
+     "art": {
+      "key": "openra.barracks",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 1
+     }
+    },
+    {
+     "id": "unit:attack_dog",
+     "label": "Attack dog",
+     "type": "unit",
+     "art": {
+      "key": "openra.dog",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 8
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.defense",
+   "name": "Gun turret",
+   "era": "historic",
+   "tribe": "",
+   "summary": "A gun turret",
+   "entities": [
+    {
+     "id": "defense",
+     "label": "Gun turret",
+     "type": "building",
+     "art": {
+      "key": "openra.gun",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.flame_tower",
+   "name": "Flame tower",
+   "era": "historic",
+   "tribe": "",
+   "summary": "A flame tower",
+   "entities": [
+    {
+     "id": "flame_tower",
+     "label": "Flame tower",
+     "type": "building",
+     "art": {
+      "key": "openra.ftur",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.scriptorium",
+   "name": "Scriptorium",
+   "era": "historic",
+   "tribe": "",
+   "summary": "A scriptorium",
+   "entities": [
+    {
+     "id": "scriptorium",
+     "label": "Scriptorium",
+     "type": "building",
+     "art": {
+      "key": "dmb.scriptorium",
+      "status": "alias_placeholder",
+      "alias_of": "widelands.barbarians_reed_yard",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.smithy",
+   "name": "Ax workshop",
+   "era": "historic",
+   "tribe": "",
+   "summary": "A ax workshop",
+   "entities": [
+    {
+     "id": "smithy",
+     "label": "Ax workshop",
+     "type": "building",
+     "art": {
+      "key": "widelands.ax_workshop",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_artillery",
+   "name": "Artillery",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the artillery.",
+   "entities": [
+    {
+     "id": "unit:artillery",
+     "label": "Artillery",
+     "type": "unit",
+     "art": {
+      "key": "openra.arty",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_destroyer",
+   "name": "Destroyer",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the destroyer.",
+   "entities": [
+    {
+     "id": "unit:destroyer",
+     "label": "Destroyer",
+     "type": "unit",
+     "art": {
+      "key": "openra.dd",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 16
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_flamethrower",
+   "name": "Flamethrower",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the flamethrower.",
+   "entities": [
+    {
+     "id": "unit:flamethrower",
+     "label": "Flamethrower",
+     "type": "unit",
+     "art": {
+      "key": "openra.e4",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 8
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_grenadier",
+   "name": "Grenadier",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the grenadier.",
+   "entities": [
+    {
+     "id": "unit:grenadier",
+     "label": "Grenadier",
+     "type": "unit",
+     "art": {
+      "key": "openra.e2",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 8
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_infantry",
+   "name": "Rifleman",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the rifleman.",
+   "entities": [
+    {
+     "id": "unit:infantry",
+     "label": "Rifleman",
+     "type": "unit",
+     "art": {
+      "key": "openra.e1",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 8
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_jeep",
+   "name": "Ranger jeep",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the ranger jeep.",
+   "entities": [
+    {
+     "id": "unit:jeep",
+     "label": "Ranger jeep",
+     "type": "unit",
+     "art": {
+      "key": "openra.jeep",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_light_tank",
+   "name": "Light tank",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the light tank.",
+   "entities": [
+    {
+     "id": "unit:light_tank",
+     "label": "Light tank",
+     "type": "unit",
+     "art": {
+      "key": "openra.1tnk",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_mammoth",
+   "name": "Mammoth tank",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the mammoth tank.",
+   "entities": [
+    {
+     "id": "unit:mammoth",
+     "label": "Mammoth tank",
+     "type": "unit",
+     "art": {
+      "key": "openra.4tnk",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_mcv",
+   "name": "MCV",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the mcv.",
+   "entities": [
+    {
+     "id": "unit:mcv",
+     "label": "MCV",
+     "type": "unit",
+     "art": {
+      "key": "openra.mcv",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_medium_tank",
+   "name": "Medium tank",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the medium tank.",
+   "entities": [
+    {
+     "id": "unit:medium_tank",
+     "label": "Medium tank",
+     "type": "unit",
+     "art": {
+      "key": "openra.2tnk",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_patrol_boat",
+   "name": "Patrol boat",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the patrol boat.",
+   "entities": [
+    {
+     "id": "unit:patrol_boat",
+     "label": "Patrol boat",
+     "type": "unit",
+     "art": {
+      "key": "openra.pt",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 16
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_rocket_soldier",
+   "name": "Rocket soldier",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the rocket soldier.",
+   "entities": [
+    {
+     "id": "unit:rocket_soldier",
+     "label": "Rocket soldier",
+     "type": "unit",
+     "art": {
+      "key": "openra.e3",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 8
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_tank",
+   "name": "Tank",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the tank.",
+   "entities": [
+    {
+     "id": "unit:tank",
+     "label": "Tank",
+     "type": "unit",
+     "art": {
+      "key": "openra.3tnk",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_v2_launcher",
+   "name": "V2 launcher",
+   "era": "historic",
+   "tribe": "",
+   "summary": "Unlocks the v2 launcher.",
+   "entities": [
+    {
+     "id": "unit:v2_launcher",
+     "label": "V2 launcher",
+     "type": "unit",
+     "art": {
+      "key": "openra.v2rl",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.vehicle_factory",
+   "name": "War factory + APC",
+   "era": "historic",
+   "tribe": "",
+   "summary": "A war factory",
+   "entities": [
+    {
+     "id": "vehicle_factory",
+     "label": "War factory",
+     "type": "building",
+     "art": {
+      "key": "openra.weap",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 1
+     }
+    },
+    {
+     "id": "unit:apc",
+     "label": "APC",
+     "type": "unit",
+     "art": {
+      "key": "openra.apc",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_combustion_generator",
+   "name": "Combustion generator + Power node",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A Mindustry chain.",
+   "entities": [
+    {
+     "id": "mdy:combustion_generator",
+     "label": "Combustion generator",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.combustion_generator",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "mdy:power_node",
+     "label": "Power node",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.power_node",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_mechanical_drill",
+   "name": "Mechanical drill + Conveyor",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A Mindustry chain.",
+   "entities": [
+    {
+     "id": "mdy:mechanical_drill",
+     "label": "Mechanical drill",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.mechanical_drill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "mdy:conveyor",
+     "label": "Conveyor",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.conveyor",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.naval_yard",
+   "name": "Naval yard + Cruiser",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A naval yard",
+   "entities": [
+    {
+     "id": "naval_yard",
+     "label": "Naval yard",
+     "type": "building",
+     "art": {
+      "key": "openra.syrd",
+      "status": "missing"
+     }
+    },
+    {
+     "id": "unit:cruiser",
+     "label": "Cruiser",
+     "type": "unit",
+     "art": {
+      "key": "openra.ca",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 16
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.sub_pen",
+   "name": "Submarine pen + Missile submarine",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A submarine pen",
+   "entities": [
+    {
+     "id": "sub_pen",
+     "label": "Submarine pen",
+     "type": "building",
+     "art": {
+      "key": "openra.spen",
+      "status": "missing"
+     }
+    },
+    {
+     "id": "unit:missile_sub",
+     "label": "Missile submarine",
+     "type": "unit",
+     "art": {
+      "key": "openra.msub",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 16
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.tesla_coil",
+   "name": "Tesla coil",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A tesla coil",
+   "entities": [
+    {
+     "id": "tesla_coil",
+     "label": "Tesla coil",
+     "type": "building",
+     "art": {
+      "key": "openra.tsla",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_phase_tank",
+   "name": "Phase transport",
+   "era": "modern",
+   "tribe": "",
+   "summary": "Unlocks the phase transport.",
+   "entities": [
+    {
+     "id": "unit:phase_tank",
+     "label": "Phase transport",
+     "type": "unit",
+     "art": {
+      "key": "openra.stnk",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_submarine",
+   "name": "Submarine",
+   "era": "modern",
+   "tribe": "",
+   "summary": "Unlocks the submarine.",
+   "entities": [
+    {
+     "id": "unit:submarine",
+     "label": "Submarine",
+     "type": "unit",
+     "art": {
+      "key": "openra.ss",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 16
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_tesla_tank",
+   "name": "Tesla tank",
+   "era": "modern",
+   "tribe": "",
+   "summary": "Unlocks the tesla tank.",
+   "entities": [
+    {
+     "id": "unit:tesla_tank",
+     "label": "Tesla tank",
+     "type": "unit",
+     "art": {
+      "key": "openra.ttnk",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_graphite_press",
+   "name": "Graphite press + Silicon smelter",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "A Mindustry chain.",
+   "entities": [
+    {
+     "id": "mdy:graphite_press",
+     "label": "Graphite press",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.graphite_press",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "mdy:silicon_smelter",
+     "label": "Silicon smelter",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.silicon_smelter",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_ground_factory",
+   "name": "Ground factory + Dagger",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "A Mindustry chain.",
+   "entities": [
+    {
+     "id": "mdy:ground_factory",
+     "label": "Ground factory",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.ground_factory",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "unit:dagger",
+     "label": "Dagger",
+     "type": "unit",
+     "art": {
+      "key": "mindustry.unit.dagger",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_pneumatic_drill",
+   "name": "Pneumatic drill",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "A Mindustry building.",
+   "entities": [
+    {
+     "id": "mdy:pneumatic_drill",
+     "label": "Pneumatic drill",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.pneumatic_drill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_solar_panel",
+   "name": "Solar panel + Battery",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "A Mindustry chain.",
+   "entities": [
+    {
+     "id": "mdy:solar_panel",
+     "label": "Solar panel",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.solar_panel",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "mdy:battery",
+     "label": "Battery",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.battery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_solar_panel_large",
+   "name": "Large solar panel",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "A Mindustry building.",
+   "entities": [
+    {
+     "id": "mdy:solar_panel_large",
+     "label": "Large solar panel",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.solar_panel_large",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_chrono_tank",
+   "name": "Chrono tank",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "Unlocks the chrono tank.",
+   "entities": [
+    {
+     "id": "unit:chrono_tank",
+     "label": "Chrono tank",
+     "type": "unit",
+     "art": {
+      "key": "openra.ctnk",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 32
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_commando",
+   "name": "Commando",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "Unlocks the commando.",
+   "entities": [
+    {
+     "id": "unit:commando",
+     "label": "Commando",
+     "type": "unit",
+     "art": {
+      "key": "openra.e7",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 8
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_crawler",
+   "name": "Crawler",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "A Mindustry unit.",
+   "entities": [
+    {
+     "id": "unit:crawler",
+     "label": "Crawler",
+     "type": "unit",
+     "art": {
+      "key": "mindustry.unit.crawler",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_nova",
+   "name": "Nova",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "A Mindustry unit.",
+   "entities": [
+    {
+     "id": "unit:nova",
+     "label": "Nova",
+     "type": "unit",
+     "art": {
+      "key": "mindustry.unit.nova",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.unit_shock_trooper",
+   "name": "Shock trooper",
+   "era": "dystopian",
+   "tribe": "",
+   "summary": "Unlocks the shock trooper.",
+   "entities": [
+    {
+     "id": "unit:shock_trooper",
+     "label": "Shock trooper",
+     "type": "unit",
+     "art": {
+      "key": "openra.shok",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sequence",
+      "facings": 8
+     }
+    }
+   ]
+  }
+ ],
+ "count": 137,
+ "entities_without_real_art": [
+  "naval_yard",
+  "scriptorium",
+  "sub_pen",
+  "unit:clubman",
+  "unit:slinger",
+  "unit:spearman",
+  "war_lodge"
+ ]
+}
