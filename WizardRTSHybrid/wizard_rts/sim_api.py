@@ -230,6 +230,14 @@ class HybridEnv:
                 sites = self._sites(faction, kind, wh, site_samples)
                 if sites:
                     out["build"].append({"kind": kind, "sites": sites})
+        listed = {e["kind"] for e in out["build"]}
+        for kind, spec in self._generated_menu(faction).items():  # the faction's own Widelands buildings and the Mindustry machines it has unlocked
+            if kind in listed or not tech.kind_allowed(w, faction, kind):
+                continue
+            if all(stocks.get(g, 0) >= n for g, n in spec["cost"].items()):
+                sites = self._sites(faction, kind, wh, site_samples)
+                if sites:
+                    out["build"].append({"kind": kind, "sites": sites})
         mine = [b for b in w.buildings.values() if b["faction_name"] == faction and int(b.get("hp", 1)) > 0]
         for b in mine:
             if b["kind"] != "warehouse" and not w.adjacency.get(b["id"]):
@@ -261,15 +269,40 @@ class HybridEnv:
         if armed:
             from wizard_rts.military import target_types
 
-            for e in w.buildings.values():
-                if e["faction_name"] != faction and "hp" in e and int(e["hp"]) > 0:
-                    if any(rules.can_hit(rules.weapon(n), target_types(e)) for u in armed for n in u.get("weapons", [])):
-                        out["attack"].append(e["id"])
+            srcs = visibility.sources(w, faction)
+            for e in list(w.buildings.values()) + list(w.units.values()):
+                if e["faction_name"] == faction or "hp" not in e or int(e["hp"]) <= 0 or not e.get("alive", True) or e.get("inside"):
+                    continue
+                if not visibility.visible(w, faction, e["tx"], e["ty"], srcs):
+                    continue  # an agent can only attack what it can see
+                if any(rules.can_hit(rules.weapon(n), target_types(e)) for u in armed for n in u.get("weapons", [])):
+                    out["attack"].append(e["id"])
         return out
+
+    def _generated_menu(self, faction: str) -> dict[str, dict[str, Any]]:
+        """Buildable kinds beyond BUILD_MENU for this faction: its tribe's runnable wl: buildings (not enhancement-only) and every mdy: machine."""
+        tribe = self.world.faction_info[faction].get("tribe", "")
+        cache = self.__dict__.setdefault("_gen_menu", {})
+        if tribe not in cache:
+            menu = {}
+            for kind, spec in con.full_menu().items():
+                if kind in con.BUILD_MENU or spec.get("enhancement_of"):
+                    continue
+                if spec.get("game") == "widelands" and spec.get("tribe") != tribe:
+                    continue
+                menu[kind] = spec
+            from wizard_rts.industry import registry as ind_registry
+
+            for kind in ind_registry.kinds():
+                spec = con.build_spec(kind)
+                if spec is not None and kind not in menu:
+                    menu[kind] = spec
+            cache[tribe] = menu
+        return cache[tribe]
 
     def _sites(self, faction: str, kind: str, wh: dict, k: int) -> list[list[int]]:
         w = self.world
-        spec = con.BUILD_MENU[kind]
+        spec = con.build_spec(kind)
         out: list[list[int]] = []
         if not tech.kind_allowed(w, faction, kind):
             return out

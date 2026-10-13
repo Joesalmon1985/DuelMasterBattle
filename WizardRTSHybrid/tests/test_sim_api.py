@@ -266,3 +266,24 @@ def test_turret_slot_points_at_the_target_in_red_alert_frame_order():
     w.visual_state = False
     w.units[shooter]["target"] = {"kind": "unit", "id": w._unit(blue["id"], "Blue", "tank", "Tank", "openra.3tnk", (80, 70))}
     assert "turret" not in next(e for e in w.snapshot()["entities"] if e["id"] == shooter)  # headless runs never carry it (hash-neutral)
+
+
+def test_legal_actions_cover_widelands_and_mindustry_kinds_and_every_listed_build_works():
+    env = HybridEnv(seed=507, agent_factions=["Red"], profile="test_showcase")
+    env.reset()
+    w = env.world
+    from wizard_rts.industry import registry as ind
+
+    wh = con.faction_warehouse(w, "Red")
+    wares = {g for spec in con.full_menu().values() for g in spec["cost"]} | {g for k in ind.kinds() for g in (con.build_spec(k) or {"cost": {}})["cost"]}
+    for g in wares:
+        w.stocks[wh["id"]][g] = 500
+    legal = env.legal_actions("Red")
+    kinds = {e["kind"] for e in legal["build"]}
+    assert any(k.startswith("wl:barbarians_") for k in kinds) and not any(k.startswith("wl:empire_") for k in kinds)
+    assert any(k.startswith("mdy:") for k in kinds)
+    for e in legal["build"]:
+        x, y = e["sites"][0]
+        assert con.check_placement(w, "Red", e["kind"], x, y)[0] is None, e["kind"]  # every listed site is one the simulation accepts
+    wl = next(e for e in legal["build"] if e["kind"].startswith("wl:"))
+    assert env.apply("Red", {"op": "build", "kind": wl["kind"], "tx": wl["sites"][0][0], "ty": wl["sites"][0][1]})["status"] == "ok"
