@@ -957,8 +957,14 @@ WORKER_FAIL_TEXT = {
 
 
 def _fail(world: Any, building: dict, why: str, detail: str = "") -> None:
-    """A programme failed: drop every frame and wait before trying again."""
-    building["stack"] = [["main", 0]]
+    """A programme failed. A called sub-programme (a failed `consume`, a missing worker result) ends only itself: the main programme carries on with its
+    next `call`, as Widelands does with a recently failed programme, so one starved product does not block the others (V4 P2). A failure in main
+    itself drops back to its start. Either way the site waits before its next attempt."""
+    stack = building.get("stack") or []
+    if len(stack) > 1:
+        building["stack"] = stack[:1]  # main keeps its place; the failed frames are dropped
+    else:
+        building["stack"] = [["main", 0]]
     building["sleep_ms"] = FAIL_SLEEP_MS
     if why == "worker":
         detail = WORKER_FAIL_TEXT.get(building.get("worker_fail", ""), building.get("worker_fail", ""))
