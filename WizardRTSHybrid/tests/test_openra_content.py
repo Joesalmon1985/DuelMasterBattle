@@ -419,3 +419,39 @@ def test_an_aircraft_with_no_ammunition_and_no_pad_stops_attacking():
     hp = foe["hp"]
     run(w, 10)
     assert foe["hp"] == hp  # it does not damage anything with an empty pool
+
+
+def _unit_near(w, definition, faction, b):
+    from wizard_rts import construction as _c  # noqa: F401
+
+    for u in w.units.values():
+        if u["faction_name"] == faction:
+            u2 = u
+            break
+    u2["definition"] = definition
+    u2["tx"], u2["ty"] = b["tx"], b["ty"] + 1
+    u2["hp"] = u2.get("max_hp", u2["hp"])
+    return u2
+
+
+def test_an_engineer_repairs_a_damaged_friendly_building_and_survives():
+    w = world("test_showcase")
+    b = building(w, "barracks", "Red")
+    b["hp"] = b["max_hp"] // 2
+    u = _unit_near(w, "openra.e6", "Red", b)
+    assert w.ability("Red", "repair", unit=u["id"], building=b["id"])["status"] == "ok"
+    before = b["hp"]
+    run(w, 6)
+    assert b["hp"] > before and u.get("alive", True)
+    assert w.ability("Red", "repair", unit=u["id"], building=home(w, "Red")["id"])["reason"] == "undamaged"
+
+
+def test_tanya_plants_c4_on_an_enemy_building_and_it_goes_off():
+    w = world("test_showcase")
+    b = building(w, "barracks", "Blue")
+    u = _unit_near(w, "openra.e7", "Red", b)
+    assert w.ability("Red", "c4", unit=u["id"], building=b["id"])["status"] == "ok"
+    run(w, 6)
+    assert int(b["hp"]) <= 0 or b["id"] not in w.buildings or b.get("destroyed")
+    assert u.get("alive", True)
+    assert w.ability("Red", "c4", unit=u["id"], building=building(w, "barracks", "Red")["id"])["reason"] == "cannot_plant"

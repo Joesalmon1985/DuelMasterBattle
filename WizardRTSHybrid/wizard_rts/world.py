@@ -1079,6 +1079,7 @@ class HybridWorld:
         fn = {"board": lambda: abilities.board(self, kw["unit"], kw["transport"]), "unload": lambda: abilities.unload(self, kw["transport"], kw.get("tx"), kw.get("ty")),
               "capture": lambda: abilities.capture(self, kw["unit"], kw["building"]), "infiltrate": lambda: abilities.infiltrate(self, kw["unit"], kw["building"]),
               "lay_mine": lambda: abilities.lay_mine(self, kw["unit"]),
+              "repair": lambda: abilities.repair_building(self, kw["unit"], kw["building"]), "c4": lambda: abilities.plant_c4(self, kw["unit"], kw["building"]),
               "power": lambda: abilities.use_power(self, faction, kw["building"], kw["tx"], kw["ty"], kw.get("tx2"), kw.get("ty2"))}.get(op)
         out = fn() if fn else {"status": "rejected", "reason": "unknown_ability"}
         out["snapshot"] = self.snapshot()

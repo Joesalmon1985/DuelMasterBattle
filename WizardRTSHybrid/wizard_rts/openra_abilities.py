@@ -26,6 +26,10 @@ CAPTURE_MS = 8000
 INFILTRATE_MS = 4000
 STEAL_MAX = 8
 MINE_DAMAGE = 12000
+C4_MS = 2000
+C4_DAMAGE_PCT = 100  # Tanya's charge destroys any building that is not a command centre; a command centre loses half its health
+ENGINEER_REPAIR_MS = 1000
+ENGINEER_REPAIR_PCT = 2  # percent of maximum health per ENGINEER_REPAIR_MS
 DEMO_DAMAGE = 60000
 DEMO_RADIUS = 3.5
 MAD_DAMAGE_PCT = 60
@@ -235,6 +239,32 @@ def capture(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
     return {"status": "ok"}
 
 
+def repair_building(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
+    """An engineer mends a damaged building of its own faction (OpenRA: engineers repair; the engineer is not used up)."""
+    u, b = world.units.get(unit_id), world.buildings.get(building_id)
+    if u is None or b is None or u["definition"] != "openra.e6":
+        return {"status": "rejected", "reason": "not_an_engineer"}
+    if b["faction"] != u["faction"] or "hp" not in b or b.get("constructing") or int(b["hp"]) <= 0:
+        return {"status": "rejected", "reason": "cannot_repair"}
+    if int(b["hp"]) >= int(b["max_hp"]):
+        return {"status": "rejected", "reason": "undamaged"}
+    u["order"] = {"kind": "repair", "target": building_id, "ms": 0}
+    u["path"] = []
+    return {"status": "ok"}
+
+
+def plant_c4(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
+    """Tanya plants a C4 charge on an enemy building; it goes off after C4_MS and Tanya survives."""
+    u, b = world.units.get(unit_id), world.buildings.get(building_id)
+    if u is None or b is None or u["definition"] != "openra.e7":
+        return {"status": "rejected", "reason": "not_tanya"}
+    if b["faction"] == u["faction"] or "hp" not in b or int(b["hp"]) <= 0 or b.get("constructing"):
+        return {"status": "rejected", "reason": "cannot_plant"}
+    u["order"] = {"kind": "c4", "target": building_id, "ms": 0}
+    u["path"] = []
+    return {"status": "ok"}
+
+
 def infiltrate(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
     u, b = world.units.get(unit_id), world.buildings.get(building_id)
     if u is None or b is None or u["definition"] not in ("openra.spy", "openra.thf") or b["faction"] == u["faction"] or int(b.get("hp", 0)) <= 0:
@@ -248,7 +278,7 @@ def _order_step(world: Any, u: dict) -> None:
     from wizard_rts import military
 
     o = u.get("order")
-    if not o or o.get("kind") not in ("capture", "infiltrate"):
+    if not o or o.get("kind") not in ("capture", "infiltrate", "repair", "c4"):
         return
     b = world.buildings.get(o["target"])
     if b is None or int(b.get("hp", 0)) <= 0:
@@ -260,6 +290,19 @@ def _order_step(world: Any, u: dict) -> None:
         return
     u["status"] = "working"
     o["ms"] += QUANTUM_MS
+    if o["kind"] == "repair":
+        if o["ms"] % ENGINEER_REPAIR_MS == 0:
+            b["hp"] = min(int(b["max_hp"]), int(b["hp"]) + max(1, int(b["max_hp"]) * ENGINEER_REPAIR_PCT // 100))
+        if int(b["hp"]) >= int(b["max_hp"]):
+            u.pop("order", None)
+        return
+    if o["kind"] == "c4":
+        if o["ms"] >= C4_MS:
+            u.pop("order", None)
+            dmg = int(b["max_hp"]) // 2 if b.get("command_center") else int(b["hp"])
+            world.events.append({"kind": "c4", "building": b["id"], "by": u["id"]})
+            world.damage_building(b["id"], dmg, ["structure"], {}, by=u["id"])
+        return
     need = CAPTURE_MS if o["kind"] == "capture" else INFILTRATE_MS
     if o["ms"] < need:
         return
@@ -688,7 +731,7 @@ def ability_quantum(world: Any) -> None:
             continue
         if u.get("order") and u["order"].get("kind") == "board":
             _boarding_step(world, u)
-        elif u.get("order") and u["order"].get("kind") in ("capture", "infiltrate"):
+        elif u.get("order") and u["order"].get("kind") in ("capture", "infiltrate", "repair", "c4"):
             _order_step(world, u)
         if u["definition"] in ("openra.medi", "openra.mech"):
             _heal_step(world, u)

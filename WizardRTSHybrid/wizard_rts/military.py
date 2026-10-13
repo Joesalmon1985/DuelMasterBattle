@@ -720,7 +720,7 @@ def _unit_step(world: Any, unit: dict) -> None:
                 unit["status"] = "idle"
         return
     kind = order["kind"]
-    if kind in ("board", "capture", "infiltrate"):
+    if kind in ("board", "capture", "infiltrate", "repair", "c4"):
         return  # openra_abilities walks and finishes these
     if kind == "move":
         if _walk(world, unit, tuple(order["tile"])) in ("arrived", "stuck"):
