@@ -250,6 +250,8 @@ def belt_accepts(st: Industry, tile: tuple[int, int], from_tile: tuple[int, int]
     dx, dy = DIRS[b["d"]]
     if (tile[0] + dx, tile[1] + dy) == from_tile:
         return False  # the source is where this belt delivers to
+    if b.get("armored") and from_tile not in st.belts and (tile[0] - dx, tile[1] - dy) != from_tile:
+        return False  # ArmoredConveyor.acceptItem: from a non-conveyor only straight from behind, never from the side
     items = b["items"]
     return len(items) < b.get("cap", BELT_CAP) and (not items or items[-1][1] >= b.get("space", ITEM_SPACE))
 
@@ -404,7 +406,7 @@ def _activate_line(world: Any, st: Industry, b: dict) -> None:
         elif role == "payload_belt":
             st.pbelts[key] = {"d": int(d), "load": None, "prog": 0, "line": b["id"], "faction": b["faction"], "faction_name": b["faction_name"]}
         else:
-            st.belts[key] = {"d": int(d), "items": [], "line": b["id"], "blocked": False, **belt_params(b["kind"])}
+            st.belts[key] = {"d": int(d), "items": [], "line": b["id"], "blocked": False, "armored": R.block(b["kind"])["class"] in ("ArmoredConveyor", "ArmoredDuct"), **belt_params(b["kind"])}
     b["line_live"] = True
     for t in b["line"]["tiles"]:
         world.reserved_tiles.discard((int(t[0]), int(t[1])))

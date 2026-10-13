@@ -781,3 +781,23 @@ def test_a_door_blocks_enemies_and_opens_for_its_own_faction(kind):
     mine["tx"], mine["ty"] = fp[0][0] - 6, fp[0][1] - 6
     run(w, 2)
     assert all(t in w.blocked for t in fp), "and it closes again once nobody is near"
+
+
+def test_an_armored_conveyor_refuses_side_input_from_non_conveyors():
+    from types import SimpleNamespace
+
+    from wizard_rts.industry import sim as isim
+
+    belt = {"d": 0, "items": [], "armored": True}  # direction 0 delivers one way; compute behind/side from DIRS
+    dx, dy = isim.DIRS[0]
+    tile = (5, 5)
+    st = SimpleNamespace(belts={tile: belt})
+    behind = (tile[0] - dx, tile[1] - dy)
+    side = (tile[0] - dy, tile[1] + dx)
+    assert isim.belt_accepts(st, tile, behind)
+    assert not isim.belt_accepts(st, tile, side)
+    st.belts[side] = {"d": 0, "items": []}  # a conveyor may still feed from the side
+    assert isim.belt_accepts(st, tile, side)
+    belt["armored"] = False
+    del st.belts[side]
+    assert isim.belt_accepts(st, tile, side)
