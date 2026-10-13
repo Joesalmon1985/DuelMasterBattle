@@ -173,6 +173,12 @@ class TreeDict(dict):
             self.buckets[int(k_.split(":")[1]) % TREE_STRIDE][k_] = None
             self.fresh.append(k_)
 
+    def __reduce__(self) -> tuple:
+        return (TreeDict, (dict(self),))  # pickle and deepcopy rebuild the buckets from the items (a plain dict subclass would call __setitem__ first)
+
+    def copy(self) -> "TreeDict":
+        return TreeDict(dict(self))
+
     def __setitem__(self, key: str, value: dict) -> None:
         if key not in self:
             self.buckets[int(key.split(":")[1]) % TREE_STRIDE][key] = None

@@ -97,7 +97,7 @@ def parse_items(text: str) -> dict:
 
 def parse_liquids(text: str) -> dict:
     out = {}
-    for m in re.finditer(r"(\w+)\s*=\s*new Liquid\(\"([\w-]+)\"[^{]*\{\{", text):
+    for m in re.finditer(r"(\w+)\s*=\s*new \w*Liquid\(\"([\w-]+)\"[^{]*\{\{", text):
         body, _ = find_body(text, m.start())
         f = scalar_fields(body)
         out[m.group(2)] = {k: f[k] for k in ("temperature", "viscosity", "heatCapacity", "flammability", "explosiveness") if k in f}
@@ -106,13 +106,16 @@ def parse_liquids(text: str) -> dict:
 
 def parse_blocks(text: str) -> dict:
     blocks = {}
+    by_java: dict[str, dict] = {}
+    deferred: list[tuple[str, str, int]] = []  # (block name, base java name, multiplier): `ItemStack.mult(copperWall.requirements, 4)` (large walls)
     for m in re.finditer(r"(\w+)\s*=\s*new (\w+)\(\"([\w-]+)\"\)\s*\{\{", text):
         body, _ = find_body(text, m.start())
-        req = re.search(r"requirements\(Category\.(\w+),\s*with\(([^)]*)\)", body)
-        if not req:
+        req = re.search(r"requirements\(Category\.(\w+),\s*(?:BuildVisibility\.\w+,\s*)?with\(([^)]*)\)", body)
+        mult = None if req else re.search(r"requirements\(Category\.(\w+),\s*(?:BuildVisibility\.\w+,\s*)?ItemStack\.mult\((\w+)\.requirements,\s*(\d+)\)", body)
+        if not req and not mult:
             continue
         f = scalar_fields(body)
-        d = {"java_name": m.group(1), "class": m.group(2), "category": req.group(1), "requirements": stacks(req.group(2)),
+        d = {"java_name": m.group(1), "class": m.group(2), "category": (req or mult).group(1), "requirements": stacks(req.group(2)) if req else {},
              "size": f.get("size", 1), "health": f.get("health"), "fields": f}
         ci = re.search(r"consumeItems\(with\(([^)]*)\)\)", body)
         if ci:
@@ -144,6 +147,12 @@ def parse_blocks(text: str) -> dict:
         if "powerProduction" in f:
             d["power_production_per_second"] = round(f["powerProduction"] * TICKS, 4)
         blocks[m.group(3)] = d
+        by_java[m.group(1)] = d
+        if mult:
+            deferred.append((m.group(3), mult.group(2), int(mult.group(3))))
+    for name, base_java, k in deferred:
+        if base_java in by_java:
+            blocks[name]["requirements"] = {i: n * k for i, n in by_java[base_java]["requirements"].items()}
     return blocks
 
 
@@ -169,7 +178,7 @@ def derive(blocks: dict, items: dict) -> None:
 
 def parse_units(text: str) -> dict:
     out = {}
-    for m in re.finditer(r"(\w+)\s*=\s*new UnitType\(\"([\w-]+)\"\)\s*\{\{", text):
+    for m in re.finditer(r"(\w+)\s*=\s*new \w*UnitType\(\"([\w-]+)\"\)\s*\{\{", text):
         body, _ = find_body(text, m.start())
         f = scalar_fields(body)
         weapons = []
