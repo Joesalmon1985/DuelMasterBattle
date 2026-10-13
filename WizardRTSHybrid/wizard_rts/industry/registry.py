@@ -85,6 +85,20 @@ def _blocks() -> dict[str, dict[str, Any]]:
         if o["role"] == "unit_factory":
             spec["plans"] = [{"unit": p["unit"], "ticks": int(p["time_ticks"]),
                               "requirements": {ware(i): n for i, n in p["requirements"].items()}} for p in b["plans"]]
+        from wizard_rts.industry import blocks as B
+
+        g = B.spec(o["kind"]) or {}
+        for k in ("consume_liquids", "boost_liquids", "boost_items", "output_liquid", "heat_in", "heat_out", "results", "liquid_capacity", "item_capacity", "attribute",
+                  "ammo", "shoot_type", "coolant", "flammable", "optional_consumers", "refs", "era", "health", "category", "upgrades", "assembler_plans", "filter"):
+            if k in g:
+                spec.setdefault(k, g[k])
+        for k, v in (("consume_liquids", {}), ("boost_liquids", {}), ("boost_items", {}), ("output_liquid", {}), ("heat_in", 0.0), ("heat_out", 0.0), ("results", {}),
+                     ("liquid_capacity", 10.0), ("item_capacity", 10), ("attribute", ""), ("ammo", None), ("shoot_type", None), ("coolant", None),
+                     ("flammable", False), ("optional_consumers", []), ("refs", {}), ("sandbox", False), ("era", 2), ("health", None), ("category", ""),
+                     ("upgrades", None), ("assembler_plans", None), ("filter", None)):
+            spec.setdefault(k, v)
+        spec["fields"] = dict(b["fields"])
+        spec["id"] = src_id
         out[o["kind"]] = spec
     return out
 
@@ -117,7 +131,7 @@ def _generic(kind: str) -> dict[str, Any] | None:
     if g["role"] == "generator":
         spec["item_duration_ticks"] = float(f.get("itemDuration", 120))
         spec["fuel_min_flammability"] = 0.2
-        spec["solar"] = g["class"] == "SolarGenerator"
+        spec["solar"] = g["class"] in ("SolarGenerator", "PowerSource")
     if g["role"] == "unit_factory":
         spec["plans"] = [{"unit": p["unit"], "ticks": int(p["time_ticks"] or 0), "requirements": {B.ware_of_item(i): int(n) for i, n in p["requirements"].items()}}
                          for p in (g.get("plans") or [])]
@@ -189,4 +203,10 @@ def unit_rules() -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
             "is_building": False, "locomotor": o["locomotor"],
             "source": f"Mindustry v146 UnitTypes.{name}: health {src['health']}, x{hp_scale:g} hp scale",
         }
-    return actors, weapons
+    from wizard_rts.industry import units as U
+
+    all_a, all_w = U.all_rules()  # every other unit from the statement-level import; the hand-tuned three keep their entries
+    all_a, all_w = dict(all_a), dict(all_w)
+    all_a.update(actors)
+    all_w.update(weapons)
+    return all_a, all_w

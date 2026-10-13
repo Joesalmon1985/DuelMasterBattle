@@ -1,255 +1,271 @@
 {
-  "_doc": "Explicit hybrid adaptation of the imported Mindustry numbers (pinned v146, see mindustry_defs.json). Everything here is OUR decision, not upstream data; each section says what it adapts. The importer output is never edited.",
-  "schema": 1,
-  "ware_map": {
-    "_doc": "Mindustry item -> hybrid inventory ware id. Coal is the same physical ware as the Widelands coal so a coal mine can feed a smelter. All other Mindustry items are new inventory wares (mdy.*), never new deposits.",
-    "coal": "coal",
-    "copper": "mdy.copper",
-    "lead": "mdy.lead",
-    "sand": "mdy.sand",
-    "titanium": "mdy.titanium",
-    "silicon": "mdy.silicon",
-    "graphite": "mdy.graphite",
-    "metaglass": "mdy.metaglass",
-    "scrap": "mdy.scrap",
-    "thorium": "mdy.thorium"
+ "_doc": "Explicit hybrid adaptation of the imported Mindustry numbers (pinned v146, see mindustry_defs.json). Everything here is OUR decision, not upstream data; each section says what it adapts. The importer output is never edited.",
+ "schema": 1,
+ "ware_map": {
+  "_doc": "Mindustry item -> hybrid inventory ware id. Coal is the same physical ware as the Widelands coal so a coal mine can feed a smelter. All other Mindustry items are new inventory wares (mdy.*), never new deposits.",
+  "coal": "coal",
+  "copper": "mdy.copper",
+  "lead": "mdy.lead",
+  "sand": "mdy.sand",
+  "titanium": "mdy.titanium",
+  "silicon": "mdy.silicon",
+  "graphite": "mdy.graphite",
+  "metaglass": "mdy.metaglass",
+  "scrap": "mdy.scrap",
+  "thorium": "mdy.thorium"
+ },
+ "block_sizes_note": "Footprint sizes are upstream (Blocks.java size) in tiles; one hybrid tile is one Widelands node.",
+ "blocks": {
+  "mechanical-drill": {
+   "kind": "mdy:mechanical_drill",
+   "label": "Mechanical drill",
+   "role": "drill",
+   "hybrid_cost": {
+    "plank": 4,
+    "granite": 3
+   },
+   "card": "dmb.card.automation",
+   "upgrade_from": [
+    "mine",
+    "ironmine"
+   ]
   },
-  "block_sizes_note": "Footprint sizes are upstream (Blocks.java size) in tiles; one hybrid tile is one Widelands node.",
-  "blocks": {
-    "mechanical-drill": {
-      "kind": "mdy:mechanical_drill",
-      "label": "Mechanical drill",
-      "role": "drill",
-      "hybrid_cost": {
-        "plank": 4,
-        "granite": 3
-      },
-      "card": "dmb.card.automation",
-      "upgrade_from": [
-        "mine",
-        "ironmine"
-      ]
-    },
-    "pneumatic-drill": {
-      "kind": "mdy:pneumatic_drill",
-      "label": "Pneumatic drill",
-      "role": "drill",
-      "hybrid_cost": {
-        "plank": 4,
-        "granite": 4,
-        "iron": 3
-      },
-      "card": "dmb.card.industry",
-      "upgrade_from": [
-        "mine",
-        "ironmine",
-        "mdy:mechanical_drill"
-      ]
-    },
-    "conveyor": {
-      "kind": "mdy:conveyor",
-      "label": "Conveyor",
-      "role": "belt",
-      "hybrid_cost_per_tiles": {
-        "tiles": 3,
-        "cost": {
-          "plank": 1
-        }
-      },
-      "card": "dmb.card.automation"
-    },
-    "power-node": {
-      "kind": "mdy:power_node",
-      "label": "Power node",
-      "role": "node",
-      "hybrid_cost": {
-        "plank": 1,
-        "iron": 1
-      },
-      "card": "dmb.card.automation"
-    },
-    "combustion-generator": {
-      "kind": "mdy:combustion_generator",
-      "label": "Combustion generator",
-      "role": "generator",
-      "hybrid_cost": {
-        "plank": 3,
-        "granite": 3,
-        "iron": 2
-      },
-      "card": "dmb.card.automation"
-    },
-    "solar-panel": {
-      "kind": "mdy:solar_panel",
-      "label": "Solar panel",
-      "role": "generator",
-      "hybrid_cost": {
-        "plank": 1,
-        "iron": 1
-      },
-      "card": "dmb.card.automation"
-    },
-    "solar-panel-large": {
-      "kind": "mdy:solar_panel_large",
-      "label": "Large solar panel",
-      "role": "generator",
-      "hybrid_cost": {
-        "plank": 6,
-        "granite": 4,
-        "iron": 8
-      },
-      "card": "dmb.card.industry"
-    },
-    "battery": {
-      "kind": "mdy:battery",
-      "label": "Battery",
-      "role": "battery",
-      "hybrid_cost": {
-        "plank": 2,
-        "iron": 3
-      },
-      "card": "dmb.card.industry"
-    },
-    "silicon-smelter": {
-      "kind": "mdy:silicon_smelter",
-      "label": "Silicon smelter",
-      "role": "crafter",
-      "hybrid_cost": {
-        "plank": 4,
-        "granite": 6,
-        "iron": 4
-      },
-      "card": "dmb.card.industry"
-    },
-    "graphite-press": {
-      "kind": "mdy:graphite_press",
-      "label": "Graphite press",
-      "role": "crafter",
-      "hybrid_cost": {
-        "plank": 4,
-        "granite": 6,
-        "iron": 3
-      },
-      "card": "dmb.card.industry"
-    },
-    "ground-factory": {
-      "kind": "mdy:ground_factory",
-      "label": "Ground factory",
-      "role": "unit_factory",
-      "hybrid_cost": {
-        "plank": 8,
-        "granite": 8,
-        "iron": 8
-      },
-      "card": "dmb.card.unit_fabrication"
+  "pneumatic-drill": {
+   "kind": "mdy:pneumatic_drill",
+   "label": "Pneumatic drill",
+   "role": "drill",
+   "hybrid_cost": {
+    "plank": 4,
+    "granite": 4,
+    "iron": 3
+   },
+   "card": "dmb.card.industry",
+   "upgrade_from": [
+    "mine",
+    "ironmine",
+    "mdy:mechanical_drill"
+   ]
+  },
+  "conveyor": {
+   "kind": "mdy:conveyor",
+   "label": "Conveyor",
+   "role": "belt",
+   "hybrid_cost_per_tiles": {
+    "tiles": 3,
+    "cost": {
+     "plank": 1
     }
+   },
+   "card": "dmb.card.automation"
   },
-  "cost_note": "S11: construction is paid in delivered Widelands goods. Conversion used to pick the numbers (then rounded by hand): copper->iron, lead->granite, silicon/titanium->iron, one plank per structural part, about one quarter of the Mindustry item count. Upstream requirements are kept in the registry as `source_cost` for comparison.",
-  "extraction": {
-    "_doc": "Which wares an extractor can pull from the EXISTING Widelands deposit kinds (terrain res_kind). No new deposits exist: every rule reads the same reserve the Widelands mine reads. units_per_item = reserve units consumed per output item (the conversion factor); min_tier = the drill tier (Mindustry Drill.tier) needed. Extraction by the Widelands mine programme is unchanged.",
-    "deposit_rules": {
-      "coal": [
-        {
-          "item": "coal",
-          "min_tier": 2,
-          "units_per_item": 1
-        }
-      ],
-      "iron": [
-        {
-          "item": "copper",
-          "min_tier": 2,
-          "units_per_item": 1
-        },
-        {
-          "item": "lead",
-          "min_tier": 2,
-          "units_per_item": 1
-        },
-        {
-          "item": "titanium",
-          "min_tier": 3,
-          "units_per_item": 2
-        }
-      ],
-      "stones": [
-        {
-          "item": "scrap",
-          "min_tier": 2,
-          "units_per_item": 1
-        }
-      ],
-      "gold": []
-    },
-    "floor_rules": {
-      "sand": {
-        "terrain_name_contains": [
-          "desert",
-          "beach"
-        ],
-        "item": "sand",
-        "min_tier": 2,
-        "infinite": true,
-        "note": "sand derives from existing desert/beach terrain; a floor drop has no finite reserve"
-      }
-    },
-    "widelands_unchanged": {
-      "coal": "coal",
-      "iron": "iron_ore"
-    }
+  "power-node": {
+   "kind": "mdy:power_node",
+   "label": "Power node",
+   "role": "node",
+   "hybrid_cost": {
+    "plank": 1,
+    "iron": 1
+   },
+   "card": "dmb.card.automation"
   },
-  "units": {
-    "_doc": "Mindustry unit -> an actor/weapon record in the shared combat rules (rules.HYBRID_ACTORS). hp and damage use OpenRA's internal scale (50 HP = 5000). Scales are adaptation: relative era strength is a tunable, recorded here.",
-    "hp_scale": 50,
-    "damage_scale": 25,
-    "ground_units": {
-      "dagger": {
-        "definition": "mindustry.dagger",
-        "label": "Dagger",
-        "armor": "Light",
-        "speed": 60,
-        "range_cells": 6.0,
-        "locomotor": "foot",
-        "target_types": [
-          "GroundActor",
-          "Vehicle"
-        ],
-        "mirrored_weapons": 2,
-        "note": "speed and range are hybrid values: upstream speed 0.5 px/tick (3.75 tiles/s) and bullet range 150 world units are in Mindustry tile units, not the RTS cell"
-      },
-      "crawler": {
-        "definition": "mindustry.crawler",
-        "label": "Crawler",
-        "armor": "None",
-        "speed": 95,
-        "range_cells": 1.2,
-        "locomotor": "foot",
-        "target_types": [
-          "GroundActor",
-          "Infantry"
-        ],
-        "mirrored_weapons": 1,
-        "damage": 30.0,
-        "reload_ticks": 24.0,
-        "note": "upstream crawler explodes on contact (no bullet damage in the weapon row); hybrid: a short-range charge every 24 ticks, damage from its 70-80 splash"
-      },
-      "nova": {
-        "definition": "mindustry.nova",
-        "label": "Nova",
-        "armor": "None",
-        "speed": 62,
-        "range_cells": 7.0,
-        "locomotor": "foot",
-        "target_types": [
-          "GroundActor",
-          "Infantry"
-        ],
-        "mirrored_weapons": 1,
-        "note": "speed and range are hybrid values in RTS cells (upstream 0.55 px/tick, laser bolt range ~ 150 world units)"
-      }
-    }
+  "combustion-generator": {
+   "kind": "mdy:combustion_generator",
+   "label": "Combustion generator",
+   "role": "generator",
+   "hybrid_cost": {
+    "plank": 3,
+    "granite": 3,
+    "iron": 2
+   },
+   "card": "dmb.card.automation"
   },
-  "power": {
-    "_doc": "Upstream powerProduction/consumePower are per tick; the registry converts to per second. Adjacent power blocks share a graph (Block.connectedPower) and nodes link by laser within laserRange."
+  "solar-panel": {
+   "kind": "mdy:solar_panel",
+   "label": "Solar panel",
+   "role": "generator",
+   "hybrid_cost": {
+    "plank": 1,
+    "iron": 1
+   },
+   "card": "dmb.card.automation"
+  },
+  "solar-panel-large": {
+   "kind": "mdy:solar_panel_large",
+   "label": "Large solar panel",
+   "role": "generator",
+   "hybrid_cost": {
+    "plank": 6,
+    "granite": 4,
+    "iron": 8
+   },
+   "card": "dmb.card.industry"
+  },
+  "battery": {
+   "kind": "mdy:battery",
+   "label": "Battery",
+   "role": "battery",
+   "hybrid_cost": {
+    "plank": 2,
+    "iron": 3
+   },
+   "card": "dmb.card.industry"
+  },
+  "silicon-smelter": {
+   "kind": "mdy:silicon_smelter",
+   "label": "Silicon smelter",
+   "role": "crafter",
+   "hybrid_cost": {
+    "plank": 4,
+    "granite": 6,
+    "iron": 4
+   },
+   "card": "dmb.card.industry"
+  },
+  "graphite-press": {
+   "kind": "mdy:graphite_press",
+   "label": "Graphite press",
+   "role": "crafter",
+   "hybrid_cost": {
+    "plank": 4,
+    "granite": 6,
+    "iron": 3
+   },
+   "card": "dmb.card.industry"
+  },
+  "ground-factory": {
+   "kind": "mdy:ground_factory",
+   "label": "Ground factory",
+   "role": "unit_factory",
+   "hybrid_cost": {
+    "plank": 8,
+    "granite": 8,
+    "iron": 8
+   },
+   "card": "dmb.card.unit_fabrication"
   }
+ },
+ "cost_note": "S11: construction is paid in delivered Widelands goods. Conversion used to pick the numbers (then rounded by hand): copper->iron, lead->granite, silicon/titanium->iron, one plank per structural part, about one quarter of the Mindustry item count. Upstream requirements are kept in the registry as `source_cost` for comparison.",
+ "extraction": {
+  "_doc": "Which wares an extractor can pull from the EXISTING Widelands deposit kinds (terrain res_kind). No new deposits exist: every rule reads the same reserve the Widelands mine reads. units_per_item = reserve units consumed per output item (the conversion factor); min_tier = the drill tier (Mindustry Drill.tier) needed. Extraction by the Widelands mine programme is unchanged.",
+  "deposit_rules": {
+   "coal": [
+    {
+     "item": "coal",
+     "min_tier": 2,
+     "units_per_item": 1
+    }
+   ],
+   "iron": [
+    {
+     "item": "copper",
+     "min_tier": 2,
+     "units_per_item": 1
+    },
+    {
+     "item": "lead",
+     "min_tier": 2,
+     "units_per_item": 1
+    },
+    {
+     "item": "titanium",
+     "min_tier": 3,
+     "units_per_item": 2
+    }
+   ],
+   "stones": [
+    {
+     "item": "scrap",
+     "min_tier": 2,
+     "units_per_item": 1
+    },
+    {
+     "item": "beryllium",
+     "min_tier": 3,
+     "units_per_item": 2
+    }
+   ],
+   "gold": [
+    {
+     "item": "thorium",
+     "min_tier": 4,
+     "units_per_item": 3
+    },
+    {
+     "item": "tungsten",
+     "min_tier": 5,
+     "units_per_item": 3
+    }
+   ]
+  },
+  "floor_rules": {
+   "sand": {
+    "terrain_name_contains": [
+     "desert",
+     "beach"
+    ],
+    "item": "sand",
+    "min_tier": 2,
+    "infinite": true,
+    "note": "sand derives from existing desert/beach terrain; a floor drop has no finite reserve"
+   }
+  },
+  "widelands_unchanged": {
+   "coal": "coal",
+   "iron": "iron_ore"
+  }
+ },
+ "units": {
+  "_doc": "Mindustry unit -> an actor/weapon record in the shared combat rules (rules.HYBRID_ACTORS). hp and damage use OpenRA's internal scale (50 HP = 5000). Scales are adaptation: relative era strength is a tunable, recorded here.",
+  "hp_scale": 50,
+  "damage_scale": 25,
+  "ground_units": {
+   "dagger": {
+    "definition": "mindustry.dagger",
+    "label": "Dagger",
+    "armor": "Light",
+    "speed": 60,
+    "range_cells": 6.0,
+    "locomotor": "foot",
+    "target_types": [
+     "GroundActor",
+     "Vehicle"
+    ],
+    "mirrored_weapons": 2,
+    "note": "speed and range are hybrid values: upstream speed 0.5 px/tick (3.75 tiles/s) and bullet range 150 world units are in Mindustry tile units, not the RTS cell"
+   },
+   "crawler": {
+    "definition": "mindustry.crawler",
+    "label": "Crawler",
+    "armor": "None",
+    "speed": 95,
+    "range_cells": 1.2,
+    "locomotor": "foot",
+    "target_types": [
+     "GroundActor",
+     "Infantry"
+    ],
+    "mirrored_weapons": 1,
+    "damage": 30.0,
+    "reload_ticks": 24.0,
+    "note": "upstream crawler explodes on contact (no bullet damage in the weapon row); hybrid: a short-range charge every 24 ticks, damage from its 70-80 splash"
+   },
+   "nova": {
+    "definition": "mindustry.nova",
+    "label": "Nova",
+    "armor": "None",
+    "speed": 62,
+    "range_cells": 7.0,
+    "locomotor": "foot",
+    "target_types": [
+     "GroundActor",
+     "Infantry"
+    ],
+    "mirrored_weapons": 1,
+    "note": "speed and range are hybrid values in RTS cells (upstream 0.55 px/tick, laser bolt range ~ 150 world units)"
+   }
+  }
+ },
+ "power": {
+  "_doc": "Upstream powerProduction/consumePower are per tick; the registry converts to per second. Adjacent power blocks share a graph (Block.connectedPower) and nodes link by laser within laserRange."
+ }
 }

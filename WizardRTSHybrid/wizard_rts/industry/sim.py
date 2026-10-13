@@ -25,6 +25,23 @@ ITEM_SPACE = 400
 BELT_CAP = 3
 BUFFER = 10  # Block.itemCapacity default
 BATTERY_SOC = 1.0
+BASE_SPEED = 180  # basic conveyor: 0.03 * 60 tiles/s = 1.8 tiles/s = 180/1000 tile per 100 ms quantum
+
+
+def belt_params(kind: str) -> dict[str, int]:
+    """Speed (1/1000 tile per quantum), items per tile and spacing of a belt-like block (Conveyor.speed, StackConveyor itemCapacity, Duct)."""
+    sp = R.block(kind)
+    f = sp["fields"] if sp and "fields" in sp else {}
+    if sp is None or sp["role"] == "belt" and sp.get("class") == "Conveyor" and kind == "mdy:conveyor":
+        return {"spd": BASE_SPEED, "cap": BELT_CAP, "space": ITEM_SPACE}
+    speed = float(f.get("speed", 0.03))
+    if sp["role"] == "stack_belt":
+        return {"spd": int(round(speed * 60 * 100)), "cap": int(f.get("itemCapacity", 10)), "space": 100}
+    if sp["class"] in ("Duct", "ArmoredDuct"):
+        return {"spd": int(round(0.08 * 60 * 100)), "cap": 2, "space": 500}
+    return {"spd": int(round(speed * 60 * 100)), "cap": BELT_CAP, "space": ITEM_SPACE}
+LINE_ROLES = ("belt", "stack_belt", "conduit", "payload_belt")
+LEGACY_ROLES = ("drill", "crafter", "generator", "battery", "node", "unit_factory", "belt")
 
 
 class Industry:
@@ -34,6 +51,8 @@ class Industry:
         self.belts: dict[tuple[int, int], dict[str, Any]] = {}
         self.pipes: dict[tuple[int, int], dict[str, Any]] = {}  # conduit tiles: {d, liq, amt, line, cap}
         self.pbelts: dict[tuple[int, int], dict[str, Any]] = {}  # payload conveyor tiles: {d, load, line}
+        self.pipe_order: list[tuple[int, int]] = []
+        self.shipments: list[dict[str, Any]] = []
         self.heat_nets: list[list[str]] = []
         self.heat_of: dict[str, int] = {}
         self.tile_owner: dict[tuple[int, int], str] = {}  # machine footprint tile -> building id
@@ -61,7 +80,13 @@ def ind(world: Any) -> Industry:
 # ------------------------------------------------------------------ structure
 
 def is_machine(b: dict) -> bool:
-    return b.get("kind", "").startswith(R.PREFIX) and b["kind"] != "mdy:conveyor"
+    return b.get("kind", "").startswith(R.PREFIX) and not is_line(b)
+
+
+def is_line(b: dict) -> bool:
+    """A run of belt, stack belt, conduit or payload conveyor tiles (one building record for the whole run)."""
+    sp = R.block(b.get("kind", "")) if b.get("kind", "").startswith(R.PREFIX) else None
+    return bool(sp) and sp["role"] in LINE_ROLES
 
 
 def footprint(b: dict) -> list[tuple[int, int]]:
@@ -101,6 +126,16 @@ def rebuild(world: Any) -> None:
             n += 1
         depth[tile] = n
     st.order = sorted(st.belts, key=lambda t: (depth[t], t))
+    pdepth: dict[tuple[int, int], int] = {}
+    for tile in sorted(st.pipes):
+        seen, cur, n = set(), tile, 0
+        while cur in st.pipes and cur not in seen:
+            seen.add(cur)
+            dx, dy = DIRS[st.pipes[cur]["d"]]
+            cur = (cur[0] + dx, cur[1] + dy)
+            n += 1
+        pdepth[tile] = n
+    st.pipe_order = sorted(st.pipes, key=lambda t: (pdepth[t], t))
     # power graphs: adjacency (Block.connectedPower) plus laser links
     ids = sorted(b["id"] for b in world.buildings.values() if is_machine(b) and b.get("mdy") is not None and int(b.get("hp", 1)) > 0
                  and _powered_role(b))
@@ -153,8 +188,10 @@ def _powered_role(b: dict) -> bool:
 def _init_machine(world: Any, b: dict) -> None:
     spec = R.block(b["kind"])
     role = spec["role"]
-    m: dict[str, Any] = {"role": role, "buf": {}, "out": {}, "progress": 0, "state": "idle", "dump_i": 0}
-    if role == "drill":
+    m: dict[str, Any] = {"role": role, "buf": {}, "out": {}, "progress": 0, "state": "idle", "dump_i": 0, "liq": {}, "heat": 0.0, "count": 0}
+    if role not in LEGACY_ROLES:
+        E.init_role(world, b, m, spec)
+    elif role == "drill":
         m.update(target=b.pop("mdy_target", None), item="", reserve_left=-1, rate_milli=0)
     elif role == "generator":
         m.update(burn=0)
@@ -180,6 +217,8 @@ def machine_accepts(world: Any, b: dict, ware: str) -> bool:
         return need is not None and m["buf"].get(ware, 0) < max(BUFFER, 2 * need)
     if role == "generator" and spec["solar"]:
         return False
+    if role == "generator" and E.special_generator(spec):
+        return E.fuel_accepts(world, b, spec, m, ware)
     if role == "generator":
         item = R.item_of(ware)
         return item is not None and R.item_info(item)["flammability"] >= spec["fuel_min_flammability"] and m["buf"].get(ware, 0) < BUFFER
@@ -206,7 +245,7 @@ def belt_accepts(st: Industry, tile: tuple[int, int], from_tile: tuple[int, int]
     if (tile[0] + dx, tile[1] + dy) == from_tile:
         return False  # the source is where this belt delivers to
     items = b["items"]
-    return len(items) < BELT_CAP and (not items or items[-1][1] >= ITEM_SPACE)
+    return len(items) < b.get("cap", BELT_CAP) and (not items or items[-1][1] >= b.get("space", ITEM_SPACE))
 
 
 def belt_put(st: Industry, tile: tuple[int, int], ware: str) -> None:
@@ -214,10 +253,10 @@ def belt_put(st: Industry, tile: tuple[int, int], ware: str) -> None:
 
 
 def _belt_step(world: Any, st: Industry) -> None:
-    speed = int(round(R.block("mdy:conveyor")["belt"]["tiles_per_second"] * 1000 * QUANTUM_MS / 1000))  # 1/1000 tile per quantum
     for tile in st.order:
         belt = st.belts[tile]
         items = belt["items"]
+        speed = belt.get("spd", BASE_SPEED)
         if not items:
             continue
         dx, dy = DIRS[belt["d"]]
@@ -231,14 +270,13 @@ def _belt_step(world: Any, st: Industry) -> None:
             if nxt in st.belts:
                 if belt_accepts(st, nxt, tile):
                     ahead = st.belts[nxt]["items"]
-                    pos = raw - 1000 if not ahead else min(raw - 1000, ahead[-1][1] - ITEM_SPACE)
+                    pos = raw - 1000 if not ahead else min(raw - 1000, ahead[-1][1] - st.belts[nxt].get("space", ITEM_SPACE))
                     belt_put(st, nxt, ware)
                     ahead[-1][1] = pos
                     moved = True
             else:
                 owner = st.tile_owner.get(nxt)
-                if owner is not None and machine_accepts(world, world.buildings[owner], ware):
-                    world.buildings[owner]["mdy"]["buf"][ware] = world.buildings[owner]["mdy"]["buf"].get(ware, 0) + 1
+                if owner is not None and E.accepts(world, st, world.buildings[owner], ware, tile) and E.hand_over(world, st, world.buildings[owner], ware, tile):
                     moved = True
             if moved:
                 items.pop(0)
@@ -251,7 +289,7 @@ def _belt_step(world: Any, st: Industry) -> None:
             items[0][1] = raw
             start = 1
         for i in range(start, len(items)):
-            limit = 1000 if i == 0 else items[i - 1][1] - ITEM_SPACE
+            limit = 1000 if i == 0 else items[i - 1][1] - belt.get("space", ITEM_SPACE)
             items[i][1] = max(items[i][1], min(items[i][1] + speed, limit))
 
 
@@ -270,11 +308,12 @@ def dump(world: Any, st: Industry, b: dict, ware: str) -> bool:
                 return True
         else:
             owner = st.tile_owner.get(tile)
-            if owner and owner != b["id"] and machine_accepts(world, world.buildings[owner], ware):
+            if owner and owner != b["id"]:
                 ob = world.buildings[owner]
-                ob["mdy"]["buf"][ware] = ob["mdy"]["buf"].get(ware, 0) + 1
-                m["dump_i"] = (m["dump_i"] + k + 1) % n
-                return True
+                src = _belt_source_tile(b, tile)
+                if E.accepts(world, st, ob, ware, src) and E.hand_over(world, st, ob, ware, src):
+                    m["dump_i"] = (m["dump_i"] + k + 1) % n
+                    return True
     return False
 
 
@@ -297,7 +336,7 @@ def industry_quantum(world: Any) -> None:
         kind = b["kind"]
         if not kind.startswith(R.PREFIX):
             continue
-        if kind == "mdy:conveyor":
+        if R.block(kind) is not None and R.block(kind)["role"] in LINE_ROLES:
             if b.get("operational") and not b.get("constructing") and b.get("line") and not b.get("line_live"):
                 _activate_line(world, st, b)
                 changed = True
@@ -311,12 +350,20 @@ def industry_quantum(world: Any) -> None:
         elif b.get("mdy") is not None and int(b.get("hp", 1)) <= 0:
             _destroy_machine(world, b)
             changed = True
-    lines = {bl["line"] for bl in st.belts.values()}
+    lines = {bl["line"] for bl in st.belts.values()} | {bl["line"] for bl in st.pipes.values()} | {bl["line"] for bl in st.pbelts.values()}
     for lid in sorted(lines):
         if lid not in world.buildings:  # the building was purged: its belts go with it
             for tile in [t for t, bl in st.belts.items() if bl["line"] == lid]:
                 for ware, _p in st.belts.pop(tile)["items"]:
                     world.stats["consumed_" + ware] = world.stats.get("consumed_" + ware, 0) + 1
+            for tile in [t for t, bl in st.pipes.items() if bl["line"] == lid]:
+                p_ = st.pipes.pop(tile)
+                if p_["liq"] and p_["amt"] > 0:
+                    world.stats["liq_lost_" + p_["liq"]] = world.stats.get("liq_lost_" + p_["liq"], 0.0) + p_["amt"]
+            for tile in [t for t, bl in st.pbelts.items() if bl["line"] == lid]:
+                pb_ = st.pbelts.pop(tile)
+                if pb_["load"]:
+                    _lose_payload(world, pb_["load"])
             changed = True
     if changed or st.dirty or st.fresh:
         rebuild(world)
@@ -337,8 +384,16 @@ def industry_quantum(world: Any) -> None:
 
 
 def _activate_line(world: Any, st: Industry, b: dict) -> None:
+    role = R.block(b["kind"])["role"]
     for (x, y), d in zip(b["line"]["tiles"], b["line"]["dirs"]):
-        st.belts[(int(x), int(y))] = {"d": int(d), "items": [], "line": b["id"], "blocked": False}
+        key = (int(x), int(y))
+        if role == "conduit":
+            sp = R.block(b["kind"])
+            st.pipes[key] = {"d": int(d), "liq": None, "amt": 0.0, "cap": float(sp["liquid_capacity"]), "line": b["id"], "armored": sp["class"] == "ArmoredConduit"}
+        elif role == "payload_belt":
+            st.pbelts[key] = {"d": int(d), "load": None, "prog": 0, "line": b["id"], "faction": b["faction"], "faction_name": b["faction_name"]}
+        else:
+            st.belts[key] = {"d": int(d), "items": [], "line": b["id"], "blocked": False, **belt_params(b["kind"])}
     b["line_live"] = True
     for t in b["line"]["tiles"]:
         world.reserved_tiles.discard((int(t[0]), int(t[1])))
@@ -347,10 +402,23 @@ def _activate_line(world: Any, st: Industry, b: dict) -> None:
 
 def _destroy_line(world: Any, st: Industry, b: dict) -> None:
     for (x, y) in b["line"]["tiles"]:
-        belt = st.belts.pop((int(x), int(y)), None)
+        key = (int(x), int(y))
+        belt = st.belts.pop(key, None)
         for ware, _p in (belt["items"] if belt else []):
             world.stats["consumed_" + ware] = world.stats.get("consumed_" + ware, 0) + 1  # destroyed with the belt: a logged sink
+        pipe = st.pipes.pop(key, None)
+        if pipe and pipe["liq"] and pipe["amt"] > 0:
+            world.stats["liq_lost_" + pipe["liq"]] = world.stats.get("liq_lost_" + pipe["liq"], 0.0) + pipe["amt"]
+        pb = st.pbelts.pop(key, None)
+        if pb and pb["load"]:
+            _lose_payload(world, pb["load"])
     b["line_live"] = False
+
+
+def _lose_payload(world: Any, pl: dict) -> None:
+    if pl.get("type") == "block":
+        for w, n in pl.get("stock", {}).items():
+            world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
 
 
 def _destroy_machine(world: Any, b: dict) -> None:
@@ -358,6 +426,12 @@ def _destroy_machine(world: Any, b: dict) -> None:
     for bag in (m["buf"], m["out"]):
         for ware, n in bag.items():
             world.stats["consumed_" + ware] = world.stats.get("consumed_" + ware, 0) + n  # lost with the machine: a logged sink
+    for ware, n in E.holdings(world, b).items():
+        world.stats["consumed_" + ware] = world.stats.get("consumed_" + ware, 0) + n
+    for liquid, qty in m.get("liq", {}).items():
+        world.stats["liq_lost_" + liquid] = world.stats.get("liq_lost_" + liquid, 0.0) + qty
+    if m.get("payload"):
+        _lose_payload(world, m["payload"])
     b["mdy"] = None
     b["operational"] = False
     ind(world).links.pop(b["id"], None)
@@ -386,6 +460,8 @@ def _power_and_machines(world: Any, st: Industry, machines: list[dict]) -> None:
             wants[b["id"]] = all(m["buf"].get(w, 0) >= n for w, n in plan["requirements"].items()) or m["progress"] > 0
             if wants[b["id"]]:
                 demand[g] = demand.get(g, 0.0) + spec["power_use_per_s"] * QUANTUM_MS / 1000
+        elif role == "generator" and E.special_generator(spec):
+            supply[g] = supply.get(g, 0.0) + E.generator_step(world, st, b, spec, m, QUANTUM_MS)
         elif role == "generator" and spec["solar"]:
             supply[g] = supply.get(g, 0.0) + spec["power_production_per_s"] * QUANTUM_MS / 1000
             m["state"] = "producing"
@@ -404,6 +480,10 @@ def _power_and_machines(world: Any, st: Industry, machines: list[dict]) -> None:
                 m["state"] = "no fuel"
         elif role == "battery":
             batt_room[g] = batt_room.get(g, 0.0) + (spec["power_buffer"] - m["stored"])
+        else:
+            wants[b["id"]] = E.wants_power(world, b, spec, m)
+            if wants[b["id"]]:
+                demand[g] = demand.get(g, 0.0) + spec["power_use_per_s"] * QUANTUM_MS / 1000
     # 2. satisfaction per graph; batteries buffer the difference
     sat: dict[int, float] = {}
     for gi in set(list(demand) + list(supply) + list(batt_room)):
@@ -444,15 +524,19 @@ def _power_and_machines(world: Any, st: Industry, machines: list[dict]) -> None:
             m["state"] = "closed: " + b["disrupted"]["label"].lower()
             continue
         if role == "drill":
-            _drill_step(world, st, b, spec, m)
+            _drill_step(world, st, b, spec, m, sat.get(st.graph_of.get(b["id"], -1), 0.0), wants.get(b["id"], True))
         elif role == "crafter":
             _crafter_step(world, st, b, spec, m, sat.get(st.graph_of.get(b["id"], -1), 0.0), wants[b["id"]])
         elif role == "unit_factory":
             _factory_step(world, st, b, spec, m, sat.get(st.graph_of.get(b["id"], -1), 0.0), wants[b["id"]])
-        b["working"] = m["state"] in ("working", "drilling", "burning", "building", "producing")
+        b["working"] = m["state"] in ("working", "drilling", "burning", "building", "producing", "pumping", "sending", "shooting", "mending")
+    sat_by_machine = {b["id"]: sat.get(st.graph_of.get(b["id"], -1), 0.0 if E.needs_power(R.block(b["kind"])) else 1.0) for b in machines}
+    E.step_roles(world, st, machines, sat_by_machine, wants, sat)
 
 
 def machine_accepts_fuel(spec: dict, ware: str) -> bool:
+    if E.special_generator(spec):
+        return E.fuel_ok(spec, ware)
     item = R.item_of(ware)
     return item is not None and R.item_info(item)["flammability"] >= spec["fuel_min_flammability"]
 
@@ -464,8 +548,16 @@ def drill_options(world: Any, b: dict) -> dict[str, dict[str, Any]]:
     return X.options(world, footprint(b), int(spec["tier"]))
 
 
-def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict) -> None:
+def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisfaction: float = 1.0, wants: bool = True) -> None:
     from wizard_rts import regions
+    from wizard_rts.industry import fluids as F
+
+    powered = spec.get("power_use_per_s", 0) > 0
+    if powered and satisfaction <= 0:
+        m["state"] = "no power"
+        _flush(world, st, b, m)
+        return
+    pwr = satisfaction if powered else 1.0
 
     opts = drill_options(world, b)
     item = X.choose_item(opts, m.get("target"))
@@ -489,7 +581,13 @@ def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict) -> None:
         m["state"] = "output blocked"
     else:
         m["state"] = "drilling"
-        m["progress"] += TICKS_PER_Q * len(o["tiles"]) * regions.production_factor(world, b)  # an outbreak in the region slows the drill
+        boost = 1.0
+        for liquid, per in spec.get("boost_liquids", {}).items():  # Drill: optional coolant/water raises the speed by liquidBoostIntensity squared
+            if m["liq"].get(liquid, 0.0) >= per * TICKS_PER_Q:
+                F.consume(world, b, liquid, per * TICKS_PER_Q)
+                boost = max(boost, float(spec["fields"].get("liquidBoostIntensity", 1.6)) ** 2)
+        m["boost"] = boost
+        m["progress"] += TICKS_PER_Q * len(o["tiles"]) * pwr * boost * regions.production_factor(world, b)  # an outbreak in the region slows the drill
         if m["progress"] >= delay:
             if X.take_reserve(world, o):
                 b["working_once"] = True
@@ -518,10 +616,40 @@ def _flush(world: Any, st: Industry, b: dict, m: dict) -> None:
 
 def _crafter_ready(spec: dict, m: dict) -> bool:
     out_total = sum(m["out"].values())
-    return all(m["buf"].get(w, 0) >= n for w, n in spec["consume_items"].items()) and out_total < BUFFER
+    if not (all(m["buf"].get(w, 0) >= n for w, n in spec["consume_items"].items()) and out_total < BUFFER):
+        return False
+    for liquid, per_tick in spec.get("consume_liquids", {}).items():
+        if m["liq"].get(liquid, 0.0) < per_tick * TICKS_PER_Q * 0.999:
+            return False
+    for liquid, per_tick in spec.get("output_liquid", {}).items():
+        if m["liq"].get(liquid, 0.0) + per_tick * TICKS_PER_Q > spec.get("liquid_capacity", 10.0) + 1e-9:
+            return False  # the tank is full: Mindustry stops a crafter whose liquid output cannot be emitted
+    return True
+
+
+def _efficiency(world: Any, b: dict, spec: dict, m: dict) -> float:
+    """Attribute crafters (cultivator, vent condenser, silicon crucible): base + boost from the ground under them; heat crafters: delivered heat."""
+    eff = 1.0
+    f = spec.get("fields", {})
+    if spec.get("attribute"):
+        base = float(f.get("baseEfficiency", 1.0))
+        attr = E.attribute_sum(world, b, spec["attribute"])
+        eff = base + min(float(f.get("maxBoost", 1.0)), float(f.get("boostScale", 1.0)) * attr)
+        if attr < float(f.get("minEfficiency", -1.0)) or eff <= 0:  # AttributeCrafter: the site must hold at least minEfficiency of the attribute
+            return 0.0
+    if spec.get("heat_in", 0) > 0:
+        eff *= min(1.0, m.get("heat", 0.0) / spec["heat_in"])
+    return eff
 
 
 def _crafter_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisfaction: float, wants: bool) -> None:
+    from wizard_rts.industry import fluids as F
+
+    eff = _efficiency(world, b, spec, m) if wants else 0.0
+    if wants and eff <= 0:
+        m["state"] = "needs heat" if spec.get("heat_in", 0) > 0 and m.get("heat", 0.0) <= 0 else "unsuited ground"
+        _flush(world, st, b, m)
+        return
     if wants:
         if spec["power_use_per_s"] > 0 and satisfaction <= 0:
             m["state"] = "no power"
@@ -529,13 +657,23 @@ def _crafter_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
             from wizard_rts import regions
 
             m["state"] = "working"
-            m["progress"] += TICKS_PER_Q * satisfaction * regions.production_factor(world, b)
-            if m["progress"] >= spec["craft_ticks"]:
+            m["progress"] += TICKS_PER_Q * satisfaction * eff * regions.production_factor(world, b)
+            for liquid, per_tick in spec.get("consume_liquids", {}).items():
+                F.consume(world, b, liquid, per_tick * TICKS_PER_Q * satisfaction * eff)
+            for liquid, per_tick in spec.get("output_liquid", {}).items():
+                F.produce(world, b, liquid, per_tick * TICKS_PER_Q * satisfaction * eff)
+            if spec["craft_ticks"] <= 0 and spec.get("output_liquid"):
+                m["progress"] = 0  # a continuous converter (pump-like): no item cycle
+            elif m["progress"] >= spec["craft_ticks"]:
                 m["progress"] -= spec["craft_ticks"]
+                m["count"] = m.get("count", 0) + 1
                 for w, n in spec["consume_items"].items():
                     m["buf"][w] -= n
                     world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
-                for w, n in spec["output_item"].items():
+                outs = dict(spec["output_item"])
+                if spec.get("results"):  # Separator.craft: one weighted draw per cycle
+                    outs = {E.separator_pick(world, b, m, spec): 1}
+                for w, n in outs.items():
                     m["out"][w] = m["out"].get(w, 0) + n
                     world.stats["made_" + w] = world.stats.get("made_" + w, 0) + n
     else:
@@ -558,8 +696,9 @@ def _factory_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
     m["state"] = "building"
     m["progress"] += TICKS_PER_Q * satisfaction * regions.production_factor(world, b)
     if m["progress"] >= plan["ticks"]:
-        tile = _exit_tile(world, b)
-        if tile is None:
+        from wizard_rts.industry import payload as PL
+
+        if not PL.emit_unit_from_factory(world, st, b, plan["unit"]):
             m["state"] = "exit blocked"
             m["progress"] = plan["ticks"]
             return
@@ -567,7 +706,6 @@ def _factory_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
         for w, n in plan["requirements"].items():
             m["buf"][w] -= n
             world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
-        _spawn(world, b, plan["unit"], tile)
 
 
 def _exit_tile(world: Any, b: dict) -> tuple[int, int] | None:
@@ -605,12 +743,17 @@ def holdings(world: Any) -> dict[str, int]:
             for bag in (m["buf"], m["out"]):
                 for ware, n in bag.items():
                     out[ware] = out.get(ware, 0) + n
+            for ware, n in E.holdings(world, b).items():
+                out[ware] = out.get(ware, 0) + n
+    for sh in getattr(st, "shipments", []):
+        for ware, n in sh["items"].items():
+            out[ware] = out.get(ware, 0) + n
     return out
 
 
 def status_text(world: Any, b: dict) -> str | None:
     m = b.get("mdy")
-    if b["kind"] == "mdy:conveyor":
+    if is_line(b):
         return None
     if m is None:
         return None

@@ -49,6 +49,8 @@ def init_unit(unit: dict) -> None:
     unit["weapon"] = unit["weapons"][0] if unit["weapons"] else None
     unit["cooldown_ms"] = 0
     unit["target"] = None
+    if r.get("flat_armor"):
+        unit["flat_armor"] = int(r["flat_armor"])  # Mindustry armor: subtracted from every hit (at least a quarter of it gets through)
     if r.get("cloak"):
         unit["cloaked"] = True  # OpenRA Cloak with InitialDelay 0
         unit["uncloak_ms"] = 0
@@ -56,6 +58,10 @@ def init_unit(unit: dict) -> None:
 
 def building_weapon(b: dict) -> dict | None:
     definition = b.get("definition", "")
+    if b.get("mdy") is not None and b["mdy"].get("role") == "turret" and _world_ref:
+        from wizard_rts.industry import defense
+
+        return defense.turret_weapon(_world_ref[0], b)
     r = rules.actor(definition) if definition.startswith("openra.") else None
     if r and r["armaments"] and b.get("operational", True):
         return rules.weapon(r["armaments"][0])
@@ -479,6 +485,9 @@ def _apply_warheads(world: Any, p: dict) -> None:
             continue
         versus = damage_versus(wh.get("versus", {}), [str(entity.get("armor", "None"))])
         applied = warhead_damage(int(wh["damage"]), [], versus)
+        flat = int(entity.get("flat_armor", 0))
+        if flat:
+            applied = max(applied - flat, applied // 4)  # Damage.applyArmor
         before = int(entity["hp"])
         entity["hp"] = inflict_damage(before, int(entity["max_hp"]), applied)
         world.events.append({"kind": "unit_hit", "unit": entity["id"], "by": p["shooter"], "dealt": before - entity["hp"], "hp": entity["hp"]})
@@ -729,9 +738,15 @@ def _building_step(world: Any, b: dict) -> None:
     if tpos is None:
         return
     dist = _dist(b["tx"], b["ty"], tpos[0], tpos[1])
-    if dist <= w["range"] and b["cooldown_ms"] <= 0:
+    if dist <= w["range"] and dist >= w.get("min_range", 0) and b["cooldown_ms"] <= 0:
         _fire(world, b, w, target, tpos[2], dist)
-        b["cooldown_ms"] = rules.reload_ms(w)
+        if b.get("mdy") is not None and b["mdy"].get("role") == "turret":
+            from wizard_rts.industry import defense
+
+            defense.on_fire(world, b, w)
+            b["cooldown_ms"] = defense.reload_ms(world, b, w)
+        else:
+            b["cooldown_ms"] = rules.reload_ms(w)
 
 
 _world_ref: list = []  # the world being stepped (building_weapon has no world argument; the nest weapon depends on the era)
@@ -755,7 +770,8 @@ def military_quantum(world: Any) -> None:
         if unit.get("alive", True):
             _unit_step(world, unit)
     for b in list(world.buildings.values()):
-        if "hp" in b and int(b["hp"]) > 0 and (b.get("definition", "").startswith("openra.") or b.get("command_center") or b.get("kind") == "blight_nest"):
+        if "hp" in b and int(b["hp"]) > 0 and (b.get("definition", "").startswith("openra.") or b.get("command_center") or b.get("kind") == "blight_nest"
+                                               or (b.get("mdy") is not None and b["mdy"].get("role") == "turret")):
             _building_step(world, b)  # OpenRA defences, every settlement's militia and the blight nests (building_weapon)
     if world.military_quanta % 20 == 0:
         alive = [u["id"] for u in world.units.values() if u.get("alive", True)]

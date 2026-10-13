@@ -19,13 +19,14 @@ MAX_BELT = 120
 UPGRADE_FRACTION = 0.25  # S08: the new recipe minus the old one, plus a quarter of the old one, paid in delivered wares
 
 
-def _tile_free(world: Any, tile: tuple[int, int], extra_ok: set[tuple[int, int]] | None = None, allow_road: bool = False, allow_trees: bool = False) -> str | None:
-    """A belt may cross a road (units and carriers walk over both); a machine may not stand on one."""
+def _tile_free(world: Any, tile: tuple[int, int], extra_ok: set[tuple[int, int]] | None = None, allow_road: bool = False, allow_trees: bool = False,
+               allow_water: bool = False) -> str | None:
+    """A belt may cross a road (units and carriers walk over both); a machine may not stand on one. A pump may stand in the water."""
     if extra_ok and tile in extra_ok:
         return None
     if not world.tile_in_bounds(*tile):
         return "outside_map"
-    if world.terrain is not None and not world.terrain.ground(*tile):
+    if world.terrain is not None and not world.terrain.ground(*tile) and not (allow_water and world.terrain.is_water(*tile)):
         return "unsuitable_terrain"
     st = S.ind(world)
     if (tile in world.blocked or (tile in world.tree_tiles and not allow_trees) or (tile in world.road_tile_set and not allow_road) or tile in world.reserved_tiles
@@ -45,13 +46,18 @@ def check_machine(world: Any, faction: str, kind: str, tile: tuple[int, int], ow
     n = spec["size"]
     tiles = [(tile[0] + dx, tile[1] + dy) for dy in range(n) for dx in range(n)]
     ctx: dict[str, Any] = {"footprint": tiles}
+    wet = spec["role"] == "pump" and spec["class"] == "Pump"
     for t in tiles:
         if not territory.in_territory(world, faction, t):
             return "outside_territory", ctx
-        why = _tile_free(world, t, own)
+        why = _tile_free(world, t, own, allow_water=wet)
         if why:
             return why, ctx
-    if spec["role"] != "drill" and not world.terrain.can_build(tile[0], tile[1], "small"):  # the anchor needs a Widelands building site; the rest only ground
+    if wet:
+        if not any(world.terrain.is_water(*t) for t in tiles):
+            return "needs_water", ctx
+        return None, ctx
+    if spec["role"] not in ("drill",) and not world.terrain.can_build(tile[0], tile[1], "small"):  # the anchor needs a Widelands building site; the rest only ground
         return "unsuitable_terrain", ctx
     if spec["role"] == "drill":
         if not X.options(world, tiles, int(spec["tier"])):
@@ -77,11 +83,14 @@ def check_belt(world: Any, faction: str, tiles: list[tuple[int, int]]) -> str | 
     return None
 
 
-def place_belt(world: Any, faction: str, tiles: list[Any], end_dir: int | None = None) -> dict[str, Any]:
-    """One conveyor run as a construction site: `tiles` in flow order, cost one hybrid conveyor cost per tile."""
+def place_belt(world: Any, faction: str, tiles: list[Any], end_dir: int | None = None, kind: str = "mdy:conveyor") -> dict[str, Any]:
+    """One run of belt, stack belt, duct, conduit or payload conveyor as a construction site: `tiles` in flow order, hybrid cost per tile."""
     from wizard_rts import tech
 
-    if not tech.kind_allowed(world, faction, "mdy:conveyor"):
+    spec_ = R.block(kind)
+    if spec_ is None or spec_["role"] not in S.LINE_ROLES:
+        return {"status": "rejected", "reason": "not_a_line_block"}
+    if not tech.kind_allowed(world, faction, kind):
         return {"status": "rejected", "reason": "locked_by_card"}
     info = world.faction_info.get(faction)
     if info is None:
@@ -101,9 +110,9 @@ def place_belt(world: Any, faction: str, tiles: list[Any], end_dir: int | None =
         else:
             d = (1, 0)
         dirs.append(S.DIRS.index(d))
-    spec = R.build_spec("mdy:conveyor")
-    cost = belt_cost(len(pts))
-    bid = world._building(info["id"], faction, "mdy:conveyor", pts[0], f"Conveyor x{len(pts)}", spec["definition"], block=False)
+    spec = R.build_spec(kind)
+    cost = belt_cost(len(pts)) if kind == "mdy:conveyor" else {g: n * len(pts) for g, n in spec["cost"].items()}
+    bid = world._building(info["id"], faction, kind, pts[0], f"{spec['label']} x{len(pts)}", spec["definition"], block=False)
     b = world.buildings[bid]
     b["line"] = {"tiles": [list(t) for t in pts], "dirs": dirs}
     b["operational"] = False
@@ -118,7 +127,7 @@ def place_belt(world: Any, faction: str, tiles: list[Any], end_dir: int | None =
             world.stats["trees_cleared"] = world.stats.get("trees_cleared", 0) + 1
     world.reserved_tiles.update(pts)
     world.recipe_requests[bid] = dict(cost)
-    world.events.append({"kind": "construction_started", "id": bid, "building_kind": "mdy:conveyor", "faction": faction})
+    world.events.append({"kind": "construction_started", "id": bid, "building_kind": kind, "faction": faction})
     return {"status": "ok", "id": bid, "tiles": len(pts), "cost": cost}
 
 

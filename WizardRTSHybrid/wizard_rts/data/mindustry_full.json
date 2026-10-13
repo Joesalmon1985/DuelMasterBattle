@@ -938,9 +938,10 @@
    },
    "fields": {
     "armor": 2,
-    "buildCostMultiplier": 8
+    "buildCostMultiplier": 8,
+    "health": 520
    },
-   "health": null,
+   "health": 520,
    "id": "beryllium-wall",
    "java_name": "berylliumWall",
    "output": {
@@ -974,9 +975,10 @@
    "fields": {
     "armor": 2,
     "buildCostMultiplier": 5,
+    "health": 2080,
     "size": 2
    },
-   "health": null,
+   "health": 2080,
    "id": "beryllium-wall-large",
    "java_name": "berylliumWallLarge",
    "mult_of": [
@@ -1013,9 +1015,10 @@
    },
    "fields": {
     "armor": 14,
+    "health": 2800,
     "size": 2
    },
-   "health": null,
+   "health": 2800,
    "id": "blast-door",
    "java_name": "blastDoor",
    "output": {
@@ -1436,9 +1439,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
-    "armor": 16
+    "armor": 16,
+    "health": 1080
    },
-   "health": null,
+   "health": 1080,
    "id": "carbide-wall",
    "java_name": "carbideWall",
    "output": {
@@ -1472,9 +1476,10 @@
    },
    "fields": {
     "armor": 16,
+    "health": 4320,
     "size": 2
    },
-   "health": null,
+   "health": 4320,
    "id": "carbide-wall-large",
    "java_name": "carbideWallLarge",
    "mult_of": [
@@ -1893,6 +1898,15 @@
     "hasPower": true,
     "size": 3
    },
+   "filter": [
+    "tungstenWallLarge",
+    "berylliumWallLarge",
+    "carbideWallLarge",
+    "reinforcedSurgeWallLarge",
+    "reinforcedLiquidContainer",
+    "reinforcedContainer",
+    "beamNode"
+   ],
    "health": null,
    "id": "constructor",
    "java_name": "constructor",
@@ -1997,9 +2011,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 320,
     "researchCostMultiplier": 0.1
    },
-   "health": null,
+   "health": 320,
    "id": "copper-wall",
    "java_name": "copperWall",
    "output": {
@@ -2031,9 +2046,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 1280,
     "size": 2
    },
-   "health": null,
+   "health": 1280,
    "id": "copper-wall-large",
    "java_name": "copperWallLarge",
    "mult_of": [
@@ -3456,8 +3472,10 @@
     "power_buffered": 0.0,
     "power_per_tick": 0.0
    },
-   "fields": {},
-   "health": null,
+   "fields": {
+    "health": 400
+   },
+   "health": 400,
    "id": "door",
    "java_name": "door",
    "output": {
@@ -3489,9 +3507,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 1600,
     "size": 2
    },
-   "health": null,
+   "health": 1600,
    "id": "door-large",
    "java_name": "doorLarge",
    "mult_of": [
@@ -6078,6 +6097,24 @@
    "size": 3
   },
   "mech-assembler": {
+   "assembler_plans": [
+    {
+     "payload": {
+      "merui": 5,
+      "tungstenWallLarge": 12
+     },
+     "time_ticks": 4200,
+     "unit": "tecta"
+    },
+    {
+     "payload": {
+      "carbideWallLarge": 20,
+      "cleroi": 6
+     },
+     "time_ticks": 10800,
+     "unit": "collaris"
+    }
+   ],
    "category": "units",
    "class": "UnitAssembler",
    "consume": {
@@ -6147,6 +6184,16 @@
     "items": {},
     "liquid": {}
    },
+   "plans": [
+    {
+     "requirements": {
+      "beryllium": 50,
+      "silicon": 70
+     },
+     "time_ticks": 2400,
+     "unit": "merui"
+    }
+   ],
    "refs": {},
    "requirements": {
     "graphite": 300,
@@ -7660,9 +7707,10 @@
    },
    "fields": {
     "chanceDeflect": 10,
-    "flashHit": true
+    "flashHit": true,
+    "health": 600
    },
-   "health": null,
+   "health": 600,
    "id": "phase-wall",
    "java_name": "phaseWall",
    "output": {
@@ -7696,9 +7744,10 @@
    "fields": {
     "chanceDeflect": 10,
     "flashHit": true,
+    "health": 2400,
     "size": 2
    },
-   "health": null,
+   "health": 2400,
    "id": "phase-wall-large",
    "java_name": "phaseWallLarge",
    "mult_of": [
@@ -7901,10 +7950,11 @@
    },
    "fields": {
     "absorbLasers": true,
+    "health": 500,
     "insulated": true,
     "schematicPriority": 10
    },
-   "health": null,
+   "health": 500,
    "id": "plastanium-wall",
    "java_name": "plastaniumWall",
    "output": {
@@ -7938,11 +7988,12 @@
    },
    "fields": {
     "absorbLasers": true,
+    "health": 2000,
     "insulated": true,
     "schematicPriority": 10,
     "size": 2
    },
-   "health": null,
+   "health": 2000,
    "id": "plastanium-wall-large",
    "java_name": "plastaniumWallLarge",
    "mult_of": [
@@ -9329,10 +9380,11 @@
    },
    "fields": {
     "armor": 20,
+    "health": 1000,
     "lightningChance": 0.05,
     "lightningDamage": 30
    },
-   "health": null,
+   "health": 1000,
    "id": "reinforced-surge-wall",
    "java_name": "reinforcedSurgeWall",
    "output": {
@@ -9366,11 +9418,12 @@
    },
    "fields": {
     "armor": 20,
+    "health": 4000,
     "lightningChance": 0.05,
     "lightningDamage": 30,
     "size": 2
    },
-   "health": null,
+   "health": 4000,
    "id": "reinforced-surge-wall-large",
    "java_name": "reinforcedSurgeWallLarge",
    "mult_of": [
@@ -10436,9 +10489,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 240,
     "variants": 5
    },
-   "health": null,
+   "health": 240,
    "id": "scrap-wall",
    "java_name": "scrapWall",
    "output": {
@@ -10470,9 +10524,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 3840,
     "size": 4
    },
-   "health": null,
+   "health": 3840,
    "id": "scrap-wall-gigantic",
    "java_name": "scrapWallGigantic",
    "mult_of": [
@@ -10508,10 +10563,11 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 2160,
     "size": 3,
     "variants": 3
    },
-   "health": null,
+   "health": 2160,
    "id": "scrap-wall-huge",
    "java_name": "scrapWallHuge",
    "mult_of": [
@@ -10547,10 +10603,11 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 960,
     "size": 2,
     "variants": 4
    },
-   "health": null,
+   "health": 960,
    "id": "scrap-wall-large",
    "java_name": "scrapWallLarge",
    "mult_of": [
@@ -10809,10 +10866,11 @@
     "conductivePower": true,
     "consumesPower": true,
     "hasPower": true,
+    "health": 4160,
     "outputsPower": false,
     "size": 2
    },
-   "health": null,
+   "health": 4160,
    "id": "shielded-wall",
    "java_name": "shieldedWall",
    "output": {
@@ -10830,6 +10888,24 @@
    "wall": true
   },
   "ship-assembler": {
+   "assembler_plans": [
+    {
+     "payload": {
+      "berylliumWallLarge": 12,
+      "elude": 4
+     },
+     "time_ticks": 3600,
+     "unit": "quell"
+    },
+    {
+     "payload": {
+      "avert": 6,
+      "carbideWallLarge": 20
+     },
+     "time_ticks": 10800,
+     "unit": "disrupt"
+    }
+   ],
    "category": "units",
    "class": "UnitAssembler",
    "consume": {
@@ -10899,6 +10975,16 @@
     "items": {},
     "liquid": {}
    },
+   "plans": [
+    {
+     "requirements": {
+      "graphite": 50,
+      "silicon": 70
+     },
+     "time_ticks": 2400,
+     "unit": "elude"
+    }
+   ],
    "refs": {},
    "requirements": {
     "beryllium": 200,
@@ -12209,9 +12295,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 920,
     "lightningChance": 0.05
    },
-   "health": null,
+   "health": 920,
    "id": "surge-wall",
    "java_name": "surgeWall",
    "output": {
@@ -12243,10 +12330,11 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 3680,
     "lightningChance": 0.05,
     "size": 2
    },
-   "health": null,
+   "health": 3680,
    "id": "surge-wall-large",
    "java_name": "surgeWallLarge",
    "mult_of": [
@@ -12419,6 +12507,24 @@
    "size": 1
   },
   "tank-assembler": {
+   "assembler_plans": [
+    {
+     "payload": {
+      "stell": 4,
+      "tungstenWallLarge": 10
+     },
+     "time_ticks": 3000,
+     "unit": "vanquish"
+    },
+    {
+     "payload": {
+      "carbideWallLarge": 20,
+      "locus": 6
+     },
+     "time_ticks": 10800,
+     "unit": "conquer"
+    }
+   ],
    "category": "units",
    "class": "UnitAssembler",
    "consume": {
@@ -12487,6 +12593,16 @@
     "items": {},
     "liquid": {}
    },
+   "plans": [
+    {
+     "requirements": {
+      "beryllium": 40,
+      "silicon": 50
+     },
+     "time_ticks": 2100,
+     "unit": "stell"
+    }
+   ],
    "refs": {},
    "requirements": {
     "beryllium": 150,
@@ -12760,8 +12876,10 @@
     "power_buffered": 0.0,
     "power_per_tick": 0.0
    },
-   "fields": {},
-   "health": null,
+   "fields": {
+    "health": 800
+   },
+   "health": 800,
    "id": "thorium-wall",
    "java_name": "thoriumWall",
    "output": {
@@ -12793,9 +12911,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 3200,
     "size": 2
    },
-   "health": null,
+   "health": 3200,
    "id": "thorium-wall-large",
    "java_name": "thoriumWallLarge",
    "mult_of": [
@@ -12831,9 +12950,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 3520,
     "size": 4
    },
-   "health": null,
+   "health": 3520,
    "id": "thruster",
    "java_name": "thruster",
    "output": {
@@ -12967,8 +13087,10 @@
     "power_buffered": 0.0,
     "power_per_tick": 0.0
    },
-   "fields": {},
-   "health": null,
+   "fields": {
+    "health": 440
+   },
+   "health": 440,
    "id": "titanium-wall",
    "java_name": "titaniumWall",
    "output": {
@@ -13000,9 +13122,10 @@
     "power_per_tick": 0.0
    },
    "fields": {
+    "health": 1760,
     "size": 2
    },
-   "health": null,
+   "health": 1760,
    "id": "titanium-wall-large",
    "java_name": "titaniumWallLarge",
    "mult_of": [
@@ -13125,9 +13248,10 @@
    },
    "fields": {
     "armor": 14,
-    "buildCostMultiplier": 8
+    "buildCostMultiplier": 8,
+    "health": 720
    },
-   "health": null,
+   "health": 720,
    "id": "tungsten-wall",
    "java_name": "tungstenWall",
    "output": {
@@ -13161,9 +13285,10 @@
    "fields": {
     "armor": 14,
     "buildCostMultiplier": 5,
+    "health": 2880,
     "size": 2
    },
-   "health": null,
+   "health": 2880,
    "id": "tungsten-wall-large",
    "java_name": "tungstenWallLarge",
    "mult_of": [

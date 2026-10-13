@@ -331,7 +331,7 @@ class HybridWorld:
             return "Under construction: waiting for " + ", ".join(need) if need else "Building (%d%%)" % int(100 * site["progress_ms"] / 20_000)
         if b["kind"].startswith("mdy:"):
             text = industry.status_text(self, b)
-            if b["kind"] == "mdy:conveyor":
+            if industry.is_line(b):
                 return "Conveyor run: %d tiles" % len(b.get("line", {}).get("tiles", []))
             return text or "Idle"
         if b["kind"] not in ("warehouse", "ranger", "defense") and not self.adjacency.get(b["id"]) and b.get("operational", True):
@@ -736,6 +736,13 @@ class HybridWorld:
             record["hp"] = record["max_hp"] = int(r["hp"]) if r else (200_000 if kind == "warehouse" else 50_000)
             record["target_type"] = "structure"
             record["armor"] = (r["armor"] if r else "Wood") or "Wood"
+            if kind.startswith("mdy:"):  # a Mindustry block: its own health (x50) and armour class
+                from wizard_rts.industry import defense as _def, registry as _reg
+
+                _sp = _reg.block(kind)
+                if _sp is not None and "health" in _sp and _sp.get("id"):
+                    record["hp"] = record["max_hp"] = _def.block_hp(_sp)
+                    record["armor"] = _def.armor_type(_sp)
             if kind == "warehouse" and not r:
                 record["armor"] = "Concrete"  # a capital is stone-built: Prehistoric clubs and spears barely scratch it, siege weapons can take it
             record["operational"] = True
@@ -957,10 +964,10 @@ class HybridWorld:
         self.damage_building(building, 10**9, ["structure"], {})
         return {"status": "ok", "snapshot": self.snapshot()}
 
-    def belt(self, faction: str, tiles: list, end_dir: int | None = None) -> dict[str, Any]:
+    def belt(self, faction: str, tiles: list, end_dir: int | None = None, kind: str = "mdy:conveyor") -> dict[str, Any]:
         from wizard_rts.industry import commands as ind_commands
 
-        out = ind_commands.place_belt(self, faction, tiles, end_dir)
+        out = ind_commands.place_belt(self, faction, tiles, end_dir, kind)
         out["snapshot"] = self.snapshot()
         return out
 
@@ -1108,7 +1115,7 @@ class HybridWorld:
                 row["ruin_ms"] = int(building.get("ruin_ms", 0))
             if building.get("mdy") is not None:
                 row["mdy"] = industry.row(self, building)
-            elif building["kind"] == "mdy:conveyor" and building.get("line"):
+            elif building["kind"].startswith("mdy:") and industry.is_line(building) and building.get("line"):
                 row["line_tiles"] = len(building["line"]["tiles"])
                 row["line_live"] = bool(building.get("line_live"))
             if building["kind"] in ("mine", "ironmine", "well"):

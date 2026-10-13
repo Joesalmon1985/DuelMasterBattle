@@ -60,7 +60,7 @@ def _handle(world: HybridWorld, message: dict) -> dict:
     if op == "draft":
         return world.draft(str(message.get("faction", "")), str(message.get("card", "")))
     if op == "belt":
-        return world.belt(str(message.get("faction", "")), list(message.get("tiles", [])), message.get("end_dir"))
+        return world.belt(str(message.get("faction", "")), list(message.get("tiles", [])), message.get("end_dir"), str(message.get("kind", "mdy:conveyor")))
     if op == "upgrade":
         return world.upgrade(str(message.get("faction", "")), str(message.get("building", "")), str(message.get("to", "")))
     if op == "enhance":
