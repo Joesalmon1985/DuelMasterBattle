@@ -280,6 +280,7 @@ def main() -> None:
     ap.add_argument("--pairing", choices=("mirror", "all-plus", "all-baseline"), default="mirror")
     ap.add_argument("--every", type=int, default=60, help="sample period in game seconds")
     ap.add_argument("--jobs", type=int, default=2, help="games played in parallel (the T460 has 4 cores; keep 2-3)")
+    ap.add_argument("--allow-sha-mismatch", action="store_true", help="reuse finished games saved by a different commit when resuming")
     ap.add_argument("--nocards", action="store_true", help="no-card civilisation: drafting off, foundation set only (plan v2 P2)")
     ap.add_argument("--draft", action="store_true", help="drafting v2 with the generated content-graph cards (plan v2 P3)")
     ap.add_argument("--wizard-pilot", action="store_true", help="crisis mode: add the scripted wizard agent (public moves only)")
@@ -298,18 +299,47 @@ def main() -> None:
                 "argv": sys.argv}
     t0 = time.time()
     results = []
-    if args.jobs > 1:
+    # Resume (plan v2 11.3): every finished game is written atomically to <report-dir>/games/; a re-run with the same arguments loads those and
+    # plays only the rest. A game from a different commit (or an edited wizard_rts) is not reused unless --allow-sha-mismatch.
+    games_dir = out / "games"
+    games_dir.mkdir(exist_ok=True)
+    stamp = {"sha": sha, "dirty": dirty}
+
+    def save_game(r: dict) -> None:
+        path = games_dir / f"{r['job']['seed']}{r['job']['leg']}.json"
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps({"stamp": stamp, "result": r}, default=str))
+        os.replace(tmp, path)
+
+    todo = []
+    for j in jobs:
+        path = games_dir / f"{j['seed']}{j['leg']}.json"
+        if path.exists():
+            try:
+                saved = json.loads(path.read_text())
+                if saved["result"]["job"] == j and (saved["stamp"] == stamp or args.allow_sha_mismatch):
+                    results.append(saved["result"])
+                    print(f"resumed seed {j['seed']}{j['leg']} from {path.name}", flush=True)
+                    continue
+                print(f"not reusing {path.name}: different arguments or code version", flush=True)
+            except (OSError, ValueError, KeyError):
+                print(f"unreadable {path.name}: playing it again", flush=True)
+        todo.append(j)
+    jobs = todo
+    if args.jobs > 1 and jobs:
         import multiprocessing as mp
 
         with mp.get_context("spawn").Pool(args.jobs) as pool:
             for r in pool.imap_unordered(play, jobs):
                 results.append(r)
+                save_game(r)
                 s = r["summary"]
                 print(f"seed {s['seed']}{s['leg']}: era {s['era']} vp {s['vp']} wall {s['wall_s']} s failures {len(r['failures'])}", flush=True)
     else:
         for j in jobs:
             r = play(j)
             results.append(r)
+            save_game(r)
             s = r["summary"]
             print(f"seed {s['seed']}{s['leg']}: era {s['era']} vp {s['vp']} wall {s['wall_s']} s failures {len(r['failures'])}", flush=True)
     results.sort(key=lambda r: (r["job"]["seed"], r["job"]["leg"]))
