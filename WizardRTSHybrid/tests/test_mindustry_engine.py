@@ -257,3 +257,30 @@ def test_an_open_conduit_end_leaks_and_the_books_still_balance():
     run(w, 20)
     assert w.stats.get("liq_lost_water", 0.0) > 1.0
     assert FL.liquid_books(w) == []
+
+
+def test_a_belt_can_end_in_a_widelands_warehouse_and_the_wares_join_the_settlement_stock():
+    from wizard_rts import construction as con
+    w = world()
+    wh = con.faction_warehouse(w, "Red")
+    # a belt of three tiles whose last tile points at the warehouse tile
+    for dx, dy in S.DIRS:
+        tiles = [(wh["tx"] - 3 * dx + k * dx, wh["ty"] - 3 * dy + k * dy) for k in range(3)]
+        if all(C._tile_free(w, t, allow_trees=True, allow_road=True) is None for t in tiles):
+            break
+    else:
+        import pytest
+        pytest.skip("no free approach to the warehouse on this seed")
+    for t in tiles:
+        tid = w.tree_tiles.get(t)
+        if tid:
+            from wizard_rts.workers import remove_tree
+            remove_tree(w, tid, "test")
+    belt(w, tiles, S.DIRS.index((dx, dy)))
+    run(w, 1)
+    snap = ledger.snapshot_totals(w)
+    before = int(w.stocks[wh["id"]].get("mdy.silicon", 0))
+    feed(w, tiles[0], "mdy.silicon", 4)
+    run(w, 12)
+    assert int(w.stocks[wh["id"]].get("mdy.silicon", 0)) - before == 4
+    assert not ledger.check(w, snap)

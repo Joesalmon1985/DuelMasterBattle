@@ -149,6 +149,14 @@ def hand_over(world: Any, st: Any, b: dict, ware: str, from_tile: tuple[int, int
     return True
 
 
+def deliver_to_warehouse(world: Any, wh_id: str, ware: str) -> bool:
+    """A belt (or a machine) puts one ware into a Widelands warehouse or store: it joins the settlement's stock and the carriers can fetch it."""
+    from wizard_rts.economy import _supply
+
+    _supply(world, wh_id).add_wares(ware, 1)
+    return True
+
+
 def give(world: Any, st: Any, tile: tuple[int, int], ware: str, from_tile: tuple[int, int], ignore: str = "") -> bool:
     """Put one ware onto whatever stands on `tile` (a belt or a machine) if it takes it."""
     from wizard_rts.industry import sim as S
@@ -159,6 +167,8 @@ def give(world: Any, st: Any, tile: tuple[int, int], ware: str, from_tile: tuple
             return True
         return False
     ob = tile_building(world, st, tile)
+    if ob is None and tile in st.store_tiles:
+        return deliver_to_warehouse(world, st.store_tiles[tile], ware)
     if ob is None or ob["id"] == ignore:
         return False
     if accepts(world, st, ob, ware, from_tile):

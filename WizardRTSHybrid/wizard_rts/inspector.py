@@ -25,30 +25,67 @@ def _art() -> dict[str, dict[str, Any]]:
 
 
 def art_key(entity: str) -> str:
-    """The art catalogue id that draws an entity (a building's definition, a unit recipe's definition)."""
+    """The art catalogue id that draws an entity: a building's definition, a unit's definition, `mindustry.block.<name>` / `mindustry.unit.<name>` for Mindustry, the base actor for Mk2."""
     if entity.startswith("unit:"):
         kind = entity[5:]
-        from wizard_rts.industry import registry as mdy
+        if kind.startswith("mk2_"):
+            return "openra." + kind[4:]
+        from wizard_rts.content import graph
 
-        if mdy.ground_unit(kind):
-            return str(mdy.ground_unit(kind)["definition"])
+        d = str(graph.entities().get(entity, {}).get("definition", ""))
+        if d.startswith("mindustry."):
+            return "mindustry.unit." + d.split(".", 1)[1]
+        if d:
+            return d
         for recipes in con.RECIPES.values():
             if kind in recipes:
                 return str(recipes[kind].get("definition", ""))
         return ""
+    if entity.startswith("mdy:"):
+        return "mindustry.block." + entity[4:]
     spec = con.build_spec(entity)
     return str(spec.get("definition", "")) if spec else ""
 
 
 def art_status(entity: str) -> dict[str, Any]:
     key = art_key(entity)
-    if key.startswith("mindustry.") and key.count(".") == 1:  # the art catalogue files Mindustry pictures under block. / unit.
-        key = "mindustry.%s.%s" % ("unit" if entity.startswith("unit:") else "block", key.split(".", 1)[1].replace("-", "_"))
     item = _art().get(key)
+    if item is None and key.startswith("widelands."):
+        item = _art().get(key)
     if item is None:
         return {"key": key, "status": "missing"}
     return {"key": key, "status": item.get("status", "imported"), "alias_of": item.get("alias_of", ""), "mode": item.get("mode", ""),
-            "facings": item.get("facings", 1)}
+            "facings": item.get("facings", 1), "parts": [p["role"] for p in item.get("parts", [])], "states": sorted(item.get("states", {})),
+            "layers": bool(item.get("layers"))}
+
+
+def coverage_view(world: Any) -> dict[str, Any]:
+    """The content coverage table (wizard_rts/coverage.py) summarised, with the entities still lacking art or a card."""
+    from wizard_rts import coverage
+
+    rows = coverage.build()
+    return {"summary": coverage.summary(rows), "pending": [r["key"] for r in rows if r["status"] == "pending"],
+            "functional_without_art": sorted(r["key"] for r in rows if r["status"] == "functional" and r["art"] in ("none", "placeholder")),
+            "functional_without_card": sorted(r["key"] for r in rows if r["status"] == "functional" and r["entity"] and not r["card"])}
+
+
+def buildable_now(world: Any, faction: str, entity: str) -> dict[str, Any]:
+    """Can this faction use the entity right now: is its producer standing, its prerequisites met, its card held? (the 'is the chain functional' column)"""
+    from wizard_rts import openra_content as oc
+    from wizard_rts.content import graph
+
+    e = graph.entities().get(entity)
+    if e is None:
+        return {"ok": False, "why": "unknown"}
+    if e["type"] == "unit":
+        prod = e.get("producer", "")
+        have = any(b["faction_name"] == faction and b["kind"] == prod and b.get("operational") and not b.get("constructing") for b in world.buildings.values()) or prod in ("warehouse",)
+        req = (con.RECIPES.get(prod, {}).get(entity[5:], {}) or {}).get("requires", [])
+        missing = oc.prerequisites_met(world, faction, req) if req else None
+        return {"ok": bool(have) and not missing, "why": "" if have and not missing else (f"needs {missing}" if missing else f"no working {prod}")}
+    spec = con.build_spec(entity)
+    miss = oc.prerequisites_met(world, faction, spec.get("requires", [])) if spec and spec.get("requires") else None
+    return {"ok": spec is not None and not miss, "why": f"needs {miss}" if miss else ""}
 
 
 def catalogue(world: Any) -> dict[str, Any]:
@@ -73,7 +110,8 @@ def factions(world: Any) -> dict[str, Any]:
             c = tech.lookup()[cid]
             ents = c.get("entities") or [*c.get("kinds", []), *("unit:" + u for u in c.get("units", [])), *c.get("wl_kinds", [])]
             held.append({"card": cid, "era": tech.ERAS[c["era"]],
-                         "entities": [{"id": e, "produced": stats.get(f, {}).get(e, {}).get("count", 0), "first_ms": stats.get(f, {}).get(e, {}).get("first_ms")}
+                         "entities": [{"id": e, "produced": stats.get(f, {}).get(e, {}).get("count", 0), "first_ms": stats.get(f, {}).get(e, {}).get("first_ms"),
+                                       "usable_now": buildable_now(world, f, e)}
                                       for e in ents]})
         out[f] = {"cards": held, "unproduced": sorted(e["id"] for h in held for e in h["entities"] if not e["produced"])}
     return out

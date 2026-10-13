@@ -53,6 +53,7 @@ class Industry:
         self.pipes: dict[tuple[int, int], dict[str, Any]] = {}  # conduit tiles: {d, liq, amt, line, cap}
         self.pbelts: dict[tuple[int, int], dict[str, Any]] = {}  # payload conveyor tiles: {d, load, line}
         self.pipe_order: list[tuple[int, int]] = []
+        self.store_tiles: dict[tuple[int, int], str] = {}  # tile of a Widelands warehouse / store -> its id: a belt may end in one (the bridge between the two economies)
         self.shipments: list[dict[str, Any]] = []
         self.heat_nets: list[list[str]] = []
         self.heat_of: dict[str, int] = {}
@@ -127,6 +128,8 @@ def rebuild(world: Any) -> None:
             n += 1
         depth[tile] = n
     st.order = sorted(st.belts, key=lambda t: (depth[t], t))
+    st.store_tiles = {(b["tx"], b["ty"]): b["id"] for b in world.buildings.values()
+                      if (b["kind"] == "warehouse" or b.get("store")) and not b["kind"].startswith(R.PREFIX) and b.get("operational") and not b.get("constructing") and int(b.get("hp", 1)) > 0}
     pdepth: dict[tuple[int, int], int] = {}
     for tile in sorted(st.pipes):
         seen, cur, n = set(), tile, 0
@@ -281,6 +284,8 @@ def _belt_step(world: Any, st: Industry) -> None:
                 owner = st.tile_owner.get(nxt)
                 if owner is not None and E.accepts(world, st, world.buildings[owner], ware, tile) and E.hand_over(world, st, world.buildings[owner], ware, tile):
                     moved = True
+                elif owner is None and nxt in st.store_tiles and E.deliver_to_warehouse(world, st.store_tiles[nxt], ware):
+                    moved = True
             if moved:
                 items.pop(0)
                 start = 0
@@ -309,6 +314,9 @@ def dump(world: Any, st: Industry, b: dict, ware: str) -> bool:
                 belt_put(st, tile, ware)
                 m["dump_i"] = (m["dump_i"] + k + 1) % n
                 return True
+        elif tile in st.store_tiles and E.deliver_to_warehouse(world, st.store_tiles[tile], ware):
+            m["dump_i"] = (m["dump_i"] + k + 1) % n
+            return True
         else:
             owner = st.tile_owner.get(tile)
             if owner and owner != b["id"]:

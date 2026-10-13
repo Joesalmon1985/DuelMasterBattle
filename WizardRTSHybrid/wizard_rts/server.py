@@ -48,7 +48,7 @@ def _handle(world: HybridWorld, message: dict) -> dict:
         from wizard_rts import inspector
 
         what = str(message.get("what", ""))
-        views = {"catalogue": inspector.catalogue, "factions": inspector.factions, "draft": inspector.draft_view, "catastrophe": inspector.catastrophe}
+        views = {"catalogue": inspector.catalogue, "factions": inspector.factions, "draft": inspector.draft_view, "catastrophe": inspector.catastrophe, "coverage": inspector.coverage_view}
         if what not in views:
             return {"status": "rejected", "reason": "unknown_view", "views": sorted(views)}
         return {"status": "ok", "what": what, "data": views[what](world)}
