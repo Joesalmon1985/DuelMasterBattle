@@ -409,7 +409,7 @@ def main() -> None:
             if not name:
                 continue
             rel = path.relative_to(DATA).as_posix()
-            if kind in ("productionsite", "warehouse", "militarysite", "trainingsite"):
+            if kind in ("productionsite", "warehouse", "militarysite", "trainingsite", "market"):
                 progs = {k: parse_program(v) for k, v in (entry.get("programs") or {}).items() if isinstance(v, (dict, list))}
                 ok, problems = executable_building(progs) if kind == "productionsite" else (False, [f"{kind} not implemented"])
                 defs["buildings"][name] = {
@@ -420,7 +420,7 @@ def main() -> None:
                     "inputs": inputs(entry), "working_positions": {k: v for k, v in (entry.get("working_positions") or {}).items()},
                     "programs": progs, "spritesheets": sheets(entry), "executable": ok, "problems": problems[:6],
                 }
-            elif kind in ("worker", "carrier", "soldier"):
+            elif kind in ("worker", "carrier", "soldier", "ferry"):
                 progs = {k: parse_program(v) for k, v in (entry.get("programs") or {}).items() if isinstance(v, (dict, list))}
                 ok, problems = executable_worker(progs) if progs else (kind == "carrier", [])
                 defs["workers"][name] = {

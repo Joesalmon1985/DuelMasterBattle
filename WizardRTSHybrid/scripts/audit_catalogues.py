@@ -35,7 +35,11 @@ def widelands_dirs() -> dict[str, set[str]]:
         for f in (base / kind).rglob("init.lua"):
             d = f.parent
             tribe = d.parent.name
-            out[kind].add(d.name if kind == "wares" or tribe not in TRIBES else f"{tribe}_{d.name}")
+            if kind == "wares":  # per-tribe pictures of one ware (bread_<tribe> is `bread`) and the importer's name for planks
+                name = re.sub(r"^bread_\w+$", "bread", d.name)
+                out[kind].add({"planks": "plank"}.get(name, name))
+            else:
+                out[kind].add(d.name if tribe not in TRIBES else f"{tribe}_{d.name}")
     return out
 
 

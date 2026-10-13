@@ -1,5 +1,224 @@
 {
  "buildings": {
+  "amazons_market": {
+   "tribe": "amazons",
+   "type": "market",
+   "source": "tribes/buildings/markets/amazons/market/init.lua",
+   "size": "big",
+   "descname": "Market",
+   "dir": "tribes/buildings/markets/amazons/market",
+   "animations": {
+    "idle": {
+     "hotspot": [
+      92,
+      107
+     ]
+    }
+   },
+   "buildcost": {
+    "balsa": 3,
+    "granite": 2,
+    "quartz": 1,
+    "log": 4,
+    "rubber": 3,
+    "rope": 3
+   },
+   "inputs": {},
+   "working_positions": {},
+   "programs": {},
+   "spritesheets": {
+    "build": {
+     "hotspot": [
+      92,
+      107
+     ],
+     "frames": 3,
+     "columns": 3,
+     "rows": 1
+    }
+   },
+   "executable": false,
+   "problems": [
+    "market not implemented"
+   ],
+   "runnable": false,
+   "blocked_by": "market not implemented"
+  },
+  "atlanteans_market": {
+   "tribe": "atlanteans",
+   "type": "market",
+   "source": "tribes/buildings/markets/atlanteans/market/init.lua",
+   "size": "big",
+   "descname": "Market",
+   "dir": "tribes/buildings/markets/atlanteans/market",
+   "animations": {
+    "idle": {
+     "hotspot": [
+      85,
+      105
+     ]
+    }
+   },
+   "buildcost": {
+    "log": 3,
+    "plank": 3,
+    "granite": 4,
+    "quartz": 1,
+    "spidercloth": 3
+   },
+   "inputs": {},
+   "working_positions": {},
+   "programs": {},
+   "spritesheets": {
+    "build": {
+     "frames": 2,
+     "columns": 2,
+     "rows": 1,
+     "hotspot": [
+      85,
+      105
+     ]
+    }
+   },
+   "executable": false,
+   "problems": [
+    "market not implemented"
+   ],
+   "runnable": false,
+   "blocked_by": "market not implemented"
+  },
+  "barbarians_market": {
+   "tribe": "barbarians",
+   "type": "market",
+   "source": "tribes/buildings/markets/barbarians/market/init.lua",
+   "size": "big",
+   "descname": "Market",
+   "dir": "tribes/buildings/markets/barbarians/market",
+   "animations": {
+    "idle": {
+     "hotspot": [
+      107,
+      102
+     ]
+    }
+   },
+   "buildcost": {
+    "log": 3,
+    "blackwood": 3,
+    "granite": 5,
+    "grout": 3,
+    "reed": 4
+   },
+   "inputs": {},
+   "working_positions": {},
+   "programs": {},
+   "spritesheets": {
+    "build": {
+     "frames": 2,
+     "columns": 2,
+     "rows": 1,
+     "hotspot": [
+      107,
+      102
+     ]
+    }
+   },
+   "executable": false,
+   "problems": [
+    "market not implemented"
+   ],
+   "runnable": false,
+   "blocked_by": "market not implemented"
+  },
+  "empire_market": {
+   "tribe": "empire",
+   "type": "market",
+   "source": "tribes/buildings/markets/empire/market/init.lua",
+   "size": "big",
+   "descname": "Market",
+   "dir": "tribes/buildings/markets/empire/market",
+   "animations": {
+    "idle": {
+     "hotspot": [
+      104,
+      97
+     ]
+    }
+   },
+   "buildcost": {
+    "log": 3,
+    "plank": 2,
+    "granite": 2,
+    "marble": 3,
+    "marble_column": 1,
+    "cloth": 2
+   },
+   "inputs": {},
+   "working_positions": {},
+   "programs": {},
+   "spritesheets": {
+    "build": {
+     "frames": 2,
+     "columns": 2,
+     "rows": 1,
+     "hotspot": [
+      104,
+      97
+     ]
+    }
+   },
+   "executable": false,
+   "problems": [
+    "market not implemented"
+   ],
+   "runnable": false,
+   "blocked_by": "market not implemented"
+  },
+  "frisians_market": {
+   "tribe": "frisians",
+   "type": "market",
+   "source": "tribes/buildings/markets/frisians/market/init.lua",
+   "size": "big",
+   "descname": "Market",
+   "dir": "tribes/buildings/markets/frisians/market",
+   "animations": {},
+   "buildcost": {
+    "brick": 5,
+    "granite": 4,
+    "log": 5,
+    "reed": 4
+   },
+   "inputs": {},
+   "working_positions": {},
+   "programs": {},
+   "spritesheets": {
+    "idle": {
+     "hotspot": [
+      90,
+      95
+     ],
+     "frames": 10,
+     "columns": 5,
+     "rows": 2,
+     "fps": 10
+    },
+    "build": {
+     "hotspot": [
+      90,
+      95
+     ],
+     "frames": 5,
+     "columns": 5,
+     "rows": 1
+    }
+   },
+   "executable": false,
+   "problems": [
+    "market not implemented"
+   ],
+   "runnable": false,
+   "blocked_by": "market not implemented"
+  },
   "amazons_fortification": {
    "tribe": "amazons",
    "type": "militarysite",
@@ -33886,6 +34105,41 @@
    "executable": false,
    "problems": []
   },
+  "amazons_ferry": {
+   "tribe": "amazons",
+   "type": "ferry",
+   "source": "tribes/workers/amazons/ferry/init.lua",
+   "descname": "Ferry",
+   "dir": "tribes/workers/amazons/ferry",
+   "animations": {},
+   "buildcost": {},
+   "programs": {},
+   "spritesheets": {
+    "idle": {
+     "hotspot": [
+      28,
+      21
+     ],
+     "fps": 15,
+     "frames": 30,
+     "columns": 6,
+     "rows": 5
+    },
+    "walk": {
+     "directional": true,
+     "hotspot": [
+      38,
+      25
+     ],
+     "fps": 15,
+     "frames": 30,
+     "columns": 5,
+     "rows": 6
+    }
+   },
+   "executable": false,
+   "problems": []
+  },
   "amazons_geologist": {
    "tribe": "amazons",
    "type": "worker",
@@ -36539,6 +36793,54 @@
    "executable": true,
    "problems": []
   },
+  "atlanteans_ferry": {
+   "tribe": "atlanteans",
+   "type": "ferry",
+   "source": "tribes/workers/atlanteans/ferry/init.lua",
+   "descname": "Ferry",
+   "dir": "tribes/workers/atlanteans/ferry",
+   "animations": {},
+   "buildcost": {},
+   "programs": {},
+   "spritesheets": {
+    "idle": {
+     "hotspot": [
+      22,
+      22
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 8,
+     "frames": 39
+    },
+    "walk": {
+     "basename": "sail",
+     "directional": true,
+     "hotspot": [
+      22,
+      22
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 8,
+     "frames": 40
+    },
+    "walkload": {
+     "basename": "sail",
+     "directional": true,
+     "hotspot": [
+      22,
+      22
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 8,
+     "frames": 40
+    }
+   },
+   "executable": false,
+   "problems": []
+  },
   "atlanteans_fishbreeder": {
    "tribe": "atlanteans",
    "type": "worker",
@@ -38631,6 +38933,54 @@
     }
    },
    "executable": true,
+   "problems": []
+  },
+  "barbarians_ferry": {
+   "tribe": "barbarians",
+   "type": "ferry",
+   "source": "tribes/workers/barbarians/ferry/init.lua",
+   "descname": "Ferry",
+   "dir": "tribes/workers/barbarians/ferry",
+   "animations": {},
+   "buildcost": {},
+   "programs": {},
+   "spritesheets": {
+    "idle": {
+     "hotspot": [
+      29,
+      19
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 8,
+     "frames": 40
+    },
+    "walk": {
+     "basename": "sail",
+     "directional": true,
+     "hotspot": [
+      29,
+      19
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 4,
+     "frames": 20
+    },
+    "walkload": {
+     "basename": "sail",
+     "directional": true,
+     "hotspot": [
+      29,
+      19
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 4,
+     "frames": 20
+    }
+   },
+   "executable": false,
    "problems": []
   },
   "barbarians_fisher": {
@@ -40792,6 +41142,54 @@
     }
    },
    "executable": true,
+   "problems": []
+  },
+  "empire_ferry": {
+   "tribe": "empire",
+   "type": "ferry",
+   "source": "tribes/workers/empire/ferry/init.lua",
+   "descname": "Ferry",
+   "dir": "tribes/workers/empire/ferry",
+   "animations": {},
+   "buildcost": {},
+   "programs": {},
+   "spritesheets": {
+    "idle": {
+     "hotspot": [
+      29,
+      25
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 8,
+     "frames": 40
+    },
+    "walk": {
+     "basename": "sail",
+     "directional": true,
+     "hotspot": [
+      29,
+      25
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 8,
+     "frames": 40
+    },
+    "walkload": {
+     "basename": "sail",
+     "directional": true,
+     "hotspot": [
+      29,
+      25
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 8,
+     "frames": 40
+    }
+   },
+   "executable": false,
    "problems": []
   },
   "empire_fisher": {
@@ -43716,6 +44114,54 @@
     }
    },
    "executable": true,
+   "problems": []
+  },
+  "frisians_ferry": {
+   "tribe": "frisians",
+   "type": "ferry",
+   "source": "tribes/workers/frisians/ferry/init.lua",
+   "descname": "Ferry",
+   "dir": "tribes/workers/frisians/ferry",
+   "animations": {},
+   "buildcost": {},
+   "programs": {},
+   "spritesheets": {
+    "idle": {
+     "hotspot": [
+      21,
+      18
+     ],
+     "fps": 10,
+     "columns": 5,
+     "rows": 2,
+     "frames": 10
+    },
+    "walk": {
+     "basename": "sail",
+     "directional": true,
+     "hotspot": [
+      21,
+      18
+     ],
+     "fps": 15,
+     "columns": 5,
+     "rows": 3,
+     "frames": 15
+    },
+    "walkload": {
+     "basename": "sail",
+     "directional": true,
+     "hotspot": [
+      21,
+      18
+     ],
+     "fps": 15,
+     "columns": 5,
+     "rows": 3,
+     "frames": 15
+    }
+   },
+   "executable": false,
    "problems": []
   },
   "frisians_fisher": {
