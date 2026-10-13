@@ -353,6 +353,20 @@ class HybridWorld:
             return "Waiting for a worker"
         return "Working" if b.get("waiting_worker") else "Idle"
 
+    def turret_slot(self, unit: dict) -> int | None:
+        """The 32-frame slot (counter-clockwise from north, the Red Alert frame order) a turret must show to aim at the unit's current target."""
+        from wizard_rts.military import _target_pos
+
+        pos = _target_pos(self, unit["target"])
+        if pos is None:
+            return None
+        dx, dy = float(pos[0]) - unit["tx"], float(pos[1]) - unit["ty"]
+        if dx == 0 and dy == 0:
+            return None
+        import math
+
+        return int(round(math.degrees(math.atan2(-dx, -dy)) / 11.25)) % 32
+
     def note_produced(self, faction: str, entity: str) -> None:
         """Count a completed building or produced unit by entity id (`wl:...`, `barracks`, `unit:tank`) with the time of the first one.
         Kept outside the snapshot: it feeds the inspector and the content reports and must not change the state hash."""
@@ -1157,6 +1171,10 @@ class HybridWorld:
             row["hp"] = unit["hp"]
             row["max_hp"] = unit["max_hp"]
             row["alive"] = unit["alive"]
+            if getattr(self, "visual_state", False) and unit.get("target") and unit.get("alive", True):
+                t32 = self.turret_slot(unit)
+                if t32 is not None:
+                    row["turret"] = t32  # presentation only; off in headless runs so state hashes do not change
             if unit.get("order"):
                 row["order"] = dict(unit["order"])
             entities.append(row)

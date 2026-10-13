@@ -186,6 +186,7 @@ def _handle(world: HybridWorld, message: dict) -> dict:
 def serve(port: int) -> None:
     world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"),
                          profile=os.environ.get("HYBRID_PROFILE", "campaign"))
+    world.visual_state = True  # the client gets presentation fields (turret aim); never set in headless runs, so state hashes are unchanged
     if os.environ.get("HYBRID_CARDSET") == "v2":  # plan v2: generated content-graph cards and the era-start ring draft (default off until the studies are done)
         world.cardset, world.draft_v2 = "v2", True
     if os.environ.get("HYBRID_DRAFT_MS"):  # developer switch: safe accelerated drafting

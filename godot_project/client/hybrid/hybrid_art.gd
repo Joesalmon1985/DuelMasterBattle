@@ -44,6 +44,12 @@ func load_catalogue() -> void:
 		elif str(item.get("mode", "")) == "sequence":
 			for path in item.get("frames_godot", []):
 				_remember(str(path), str(path))
+			if item.has("layers"):
+				var l: Dictionary = item["layers"]
+				for f in range(int(l.get("facings", 32))):
+					for key in ["body_prefix", "turret_prefix"]:
+						var lp := "res://client/hybrid/art/openra/%s-%04d.png" % [str(l[key]), f]
+						_remember(lp, lp)
 
 
 func draw_terrain(canvas: CanvasItem, origin: Vector2i, radius: int, tpx: int) -> void:
@@ -200,6 +206,16 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	var top_left := anchor - Vector2(float(hotspot[0]), float(hotspot[1])) * scale
 	var src := _source_rect(item, tex, drawn)
 	_draw_marker(canvas, entity, anchor)
+	if item.has("layers") and entity.has("turret"):
+		# independent turret (plan v2 8.4): the hull follows the heading, the turret the aim the simulation reports in `turret` (0..31, counter-clockwise from north)
+		var lt: Array = layer_textures(item, drawn)
+		if lt[0] != null and lt[1] != null:
+			var lsize := Vector2(lt[0].get_width(), lt[0].get_height()) * scale
+			canvas.draw_texture_rect(lt[0], Rect2(top_left, lsize), false)
+			canvas.draw_texture_rect(lt[1], Rect2(top_left, lsize), false)
+			_draw_cargo(canvas, entity, anchor, float(hotspot[1]) * scale)
+			_draw_health(canvas, entity, anchor)
+			return
 	canvas.draw_texture_rect_region(tex, Rect2(top_left, frame_size * scale), src)
 	_draw_cargo(canvas, entity, anchor, float(hotspot[1]) * scale)
 	_draw_health(canvas, entity, anchor)
@@ -475,6 +491,20 @@ func _ccw_slot(facing: int) -> int:
 	# Red Alert sprite frames run counter-clockwise from north (OpenRA facing 0 = north, increasing towards west), while _eight() counts
 	# clockwise (n, ne, e, se, s, sw, w, nw). Without this an east-bound unit drew its north-west frame (13 Oct 2026, checked on 3tnk and e1).
 	return (8 - facing) % 8
+
+
+## Body and turret frames of a layered vehicle: the body slot comes from the heading (like any sequence), the turret slot from the
+## simulation's `turret` aim and falls back to the heading when the unit has no target.
+func layer_indices(item: Dictionary, entity: Dictionary) -> Dictionary:
+	var body := _sequence_index(item, entity)
+	return {"body": body, "turret": int(entity.get("turret", body)) % 32}
+
+
+func layer_textures(item: Dictionary, entity: Dictionary) -> Array:
+	var ix := layer_indices(item, entity)
+	var l: Dictionary = item.get("layers", {})
+	return [_tex("res://client/hybrid/art/openra/%s-%04d.png" % [str(l.get("body_prefix", "")), int(ix["body"])]),
+			_tex("res://client/hybrid/art/openra/%s-%04d.png" % [str(l.get("turret_prefix", "")), int(ix["turret"])])]
 
 
 func _sequence_index(item: Dictionary, entity: Dictionary) -> int:

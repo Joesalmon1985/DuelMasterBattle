@@ -60,6 +60,17 @@ func _run() -> void:
 	if east == west or east == -1:
 		print("FAIL facing does not change the preview")
 		bad += 1
+	# a layered tank: aiming the turret changes the picture, the hull stays
+	var tank: Dictionary = panel.art.items.get("openra.3tnk", {})
+	panel.facing = "e"
+	panel.turret_slot = 0
+	var aim_n := _image_hash(panel.preview_texture(tank))
+	panel.turret_slot = 8
+	var aim_w := _image_hash(panel.preview_texture(tank))
+	panel.turret_slot = -1
+	if aim_n == aim_w or aim_n == -1:
+		print("FAIL turret aim does not change the preview")
+		bad += 1
 	# building state: a working sheet is selected and differs from idle
 	panel.state = "idle"
 	var bld: Dictionary = panel.art.items.get("widelands.barbarians_lumberjacks_hut", {})

@@ -502,7 +502,13 @@
    ],
    "scale": 3,
    "fps": 0,
-   "prefix": "1tnk"
+   "prefix": "1tnk",
+   "layers": {
+    "body_prefix": "1tnk-body",
+    "turret_prefix": "1tnk-turret",
+    "facings": 32,
+    "note": "turret frames Start 32 Facings 32 (mods/ra/sequences/vehicles.yaml); the composited files remain"
+   }
   },
   {
    "id": "openra.2tnk",
@@ -589,7 +595,13 @@
    ],
    "scale": 3,
    "fps": 0,
-   "prefix": "2tnk"
+   "prefix": "2tnk",
+   "layers": {
+    "body_prefix": "2tnk-body",
+    "turret_prefix": "2tnk-turret",
+    "facings": 32,
+    "note": "turret frames Start 32 Facings 32 (mods/ra/sequences/vehicles.yaml); the composited files remain"
+   }
   },
   {
    "id": "openra.3tnk",
@@ -676,7 +688,13 @@
    ],
    "scale": 3,
    "fps": 0,
-   "prefix": "3tnk"
+   "prefix": "3tnk",
+   "layers": {
+    "body_prefix": "3tnk-body",
+    "turret_prefix": "3tnk-turret",
+    "facings": 32,
+    "note": "turret frames Start 32 Facings 32 (mods/ra/sequences/vehicles.yaml); the composited files remain"
+   }
   },
   {
    "id": "openra.4tnk",
@@ -763,7 +781,13 @@
    ],
    "scale": 2.6666666666666665,
    "fps": 0,
-   "prefix": "4tnk"
+   "prefix": "4tnk",
+   "layers": {
+    "body_prefix": "4tnk-body",
+    "turret_prefix": "4tnk-turret",
+    "facings": 32,
+    "note": "turret frames Start 32 Facings 32 (mods/ra/sequences/vehicles.yaml); the composited files remain"
+   }
   },
   {
    "id": "openra.apc",
@@ -2692,7 +2716,13 @@
    ],
    "scale": 3,
    "fps": 0,
-   "prefix": "jeep"
+   "prefix": "jeep",
+   "layers": {
+    "body_prefix": "jeep-body",
+    "turret_prefix": "jeep-turret",
+    "facings": 32,
+    "note": "turret frames Start 32 Facings 32 (mods/ra/sequences/vehicles.yaml); the composited files remain"
+   }
   },
   {
    "id": "openra.lst",

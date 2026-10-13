@@ -14,6 +14,7 @@ var shown: Array = []
 var selected: Dictionary = {}
 var facing := "e"
 var state := "idle"
+var turret_slot := -1  # -1: the turret follows the hull; 0..31: aim (counter-clockwise from north) for layered vehicles
 var previews: Array = []  # {entity, item, rect}
 var _t := 0.0
 
@@ -88,6 +89,19 @@ func _build_ui() -> void:
 		sb.text = s
 		sb.pressed.connect(func(): set_state(s))
 		state_row.add_child(sb)
+	var turret_row := HBoxContainer.new()
+	detail.add_child(turret_row)
+	var tl := Label.new()
+	tl.text = "turret aim (vehicles with a turret): follows hull"
+	turret_row.add_child(tl)
+	var ts := HSlider.new()
+	ts.min_value = -1
+	ts.max_value = 31
+	ts.step = 1
+	ts.value = -1
+	ts.custom_minimum_size = Vector2(320, 24)
+	ts.value_changed.connect(func(v): _on_turret(v, tl))
+	turret_row.add_child(ts)
 	preview_box = HFlowContainer.new()
 	detail.add_child(preview_box)
 
@@ -176,6 +190,12 @@ func set_facing(f: String) -> void:
 	_refresh_previews()
 
 
+func _on_turret(v: float, label: Label) -> void:
+	turret_slot = int(v)
+	label.text = "turret aim: follows hull" if turret_slot < 0 else "turret aim slot %d (0 = north, 8 = west, 16 = south, 24 = east)" % turret_slot
+	_refresh_previews()
+
+
 func set_state(s: String) -> void:
 	state = s
 	_refresh_previews()
@@ -193,6 +213,13 @@ func preview_texture(item: Dictionary, time: float = 0.0) -> Texture2D:
 	var it := item_for_state(item)
 	if it.is_empty():
 		return null
+	if str(it.get("mode", "")) == "sequence" and it.has("layers") and turret_slot >= 0:
+		var lt: Array = art.layer_textures(it, {"facing": facing, "status": "idle", "turret": turret_slot})
+		if lt[0] != null and lt[1] != null:
+			var img: Image = (lt[0] as Texture2D).get_image().duplicate()
+			var top: Image = (lt[1] as Texture2D).get_image()
+			img.blend_rect(top, Rect2i(Vector2i.ZERO, top.get_size()), Vector2i.ZERO)
+			return ImageTexture.create_from_image(img)
 	if str(it.get("mode", "")) == "sequence":
 		var index := art._sequence_index(it, {"facing": facing, "status": "moving" if state == "working" else "idle"})
 		return art._tex("res://client/hybrid/art/openra/%s-%04d.png" % [str(it.get("prefix", "")), index])
