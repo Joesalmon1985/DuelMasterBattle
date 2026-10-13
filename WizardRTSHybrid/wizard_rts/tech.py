@@ -25,6 +25,7 @@ OFFER_WINDOW_MS = 3 * 60_000  # how long an open offer stays selectable (world.o
 OFFER_SIZE = 7  # owner: a pack of up to seven; fewer when fewer cards are eligible (never padded)
 RESTRICTED = ("_deeper", "_deep")  # Widelands deep mines need a card that names the suffix (deep_mining), not just "mine"
 ERAS = ("prehistoric", "historic", "modern", "dystopian")
+from wizard_rts.calibrate import CARD_ONLY as _CARD_ONLY  # noqa: E402  (units reached only through cards; calibrate.py imports nothing from the game)
 
 PROFILES: dict[str, dict[str, bool]] = {
     "campaign": {"gated": True, "god": False, "primitive_start": True},
@@ -168,9 +169,7 @@ def kind_allowed(world: Any, faction: str, kind: str) -> bool:
 
 def unit_allowed(world: Any, faction: str, unit_kind: str) -> bool:
     if not gated(world):
-        from wizard_rts.calibrate import CARD_ONLY
-
-        return unit_kind not in CARD_ONLY  # ungated profiles keep the earlier roster; the newer units are reached through cards
+        return unit_kind not in _CARD_ONLY  # ungated profiles keep the earlier roster; the newer units are reached through cards
     return unit_kind in unlocked_units(world, faction)
 
 
