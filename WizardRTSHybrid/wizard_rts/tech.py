@@ -167,7 +167,11 @@ def kind_allowed(world: Any, faction: str, kind: str) -> bool:
 
 
 def unit_allowed(world: Any, faction: str, unit_kind: str) -> bool:
-    return not gated(world) or unit_kind in unlocked_units(world, faction)
+    if not gated(world):
+        from wizard_rts.calibrate import CARD_ONLY
+
+        return unit_kind not in CARD_ONLY  # ungated profiles keep the earlier roster; the newer units are reached through cards
+    return unit_kind in unlocked_units(world, faction)
 
 
 def _working(world: Any, faction: str, kinds: list[str]) -> bool:

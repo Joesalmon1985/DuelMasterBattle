@@ -550,6 +550,15 @@ def reroute(world: Any, faction_name: str, building_id: str) -> dict[str, Any]:
     return out
 
 
+# Units added on 13 Oct 2026 with costs calibrated from OpenRA credits (wizard_rts/calibrate.py). Card-only: tech.unit_allowed hides them
+# from ungated profiles so the earlier showcase roster, and the baselines recorded against it, are unchanged.
+from wizard_rts import calibrate as _calibrate  # noqa: E402
+from wizard_rts import rules as _rules  # noqa: E402
+
+for _b, _units in _calibrate.new_recipes(_rules.actor).items():
+    RECIPES.setdefault(_b, {}).update(_units)
+
+
 # ------------------------------------------------------------------ recruitment
 
 def recipe_for(world: Any, b: dict, unit_kind: str) -> dict[str, Any] | None:

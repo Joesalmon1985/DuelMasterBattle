@@ -28,6 +28,7 @@ UNIT_ERA = {
     "clubman": 0, "spearman": 0, "slinger": 0, "settlers": 0, "infantry": 1, "grenadier": 1, "rocket_soldier": 1, "tank": 1, "jeep": 1,
     "light_tank": 1, "medium_tank": 1, "apc": 1, "artillery": 1, "mammoth": 1, "v2_launcher": 1, "mcv": 1, "patrol_boat": 1,
     "tesla_tank": 2, "phase_tank": 2, "chrono_tank": 3, "shock_trooper": 3, "submarine": 2,
+    "flamethrower": 1, "attack_dog": 1, "destroyer": 1, "commando": 3, "cruiser": 2, "missile_sub": 2,
 }
 
 
