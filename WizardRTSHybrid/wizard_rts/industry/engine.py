@@ -25,9 +25,9 @@ JUNCTION_CAP = 6
 BRIDGE_CAP = 14
 UNLOADER_PER_Q = 1
 IMPLEMENTED = {"router", "sorter", "overflow", "junction", "bridge", "unloader", "store", "core", "pump", "conduit", "tank", "liquid_junction", "liquid_bridge",
-               "heater", "heat_conductor", "wall_drill", "crafter", "drill", "generator", "battery", "node", "belt", "stack_belt", "unit_factory", "reconstructor", "assembler", "turret", "wall", "door", "mine", "mender", "overdrive", "shield", "repair", "radar", "incinerator", "build_turret", "mass_driver", "launch_pad", "cargo", "payload_belt", "constructor", "deconstructor", "payload_driver", "payload_loader", "accelerator", "logic", "assembler_module", "diode"}
+               "heater", "heat_conductor", "wall_drill", "harvester", "crafter", "drill", "generator", "battery", "node", "belt", "stack_belt", "unit_factory", "reconstructor", "assembler", "turret", "wall", "door", "mine", "mender", "overdrive", "shield", "repair", "radar", "incinerator", "build_turret", "mass_driver", "launch_pad", "cargo", "payload_belt", "constructor", "deconstructor", "payload_driver", "payload_loader", "accelerator", "logic", "assembler_module", "diode"}
 R.IMPLEMENTED_ROLES.update(IMPLEMENTED)
-POWER_ROLES = {"drill", "pump", "wall_drill", "heater", "mender", "overdrive", "shield", "turret", "reconstructor", "assembler", "assembler_module", "constructor",
+POWER_ROLES = {"harvester", "drill", "pump", "wall_drill", "heater", "mender", "overdrive", "shield", "turret", "reconstructor", "assembler", "assembler_module", "constructor",
                "deconstructor", "payload_driver", "payload_loader", "cargo", "launch_pad", "accelerator", "mass_driver", "build_turret", "repair", "logic",
                "incinerator", "radar", "diode", "belt", "stack_belt", "bridge", "router", "wall", "junction"}
 LOGISTIC_ROLES = ("router", "sorter", "overflow", "junction", "bridge", "unloader")
@@ -772,6 +772,8 @@ def step_roles(world: Any, st: Any, machines: list[dict], sat_by_machine: dict[s
             continue
         if m["role"] == "wall_drill":
             _wall_drill_step(world, st, b, m, sat_by_machine.get(b["id"], 1.0))
+        elif m["role"] == "harvester":
+            _harvester_step(world, st, b, m, sat_by_machine.get(b["id"], 1.0))
     step_logistics(world, st, machines)
     from wizard_rts.industry import defense, payload
 
@@ -927,3 +929,41 @@ def diode_step(world: Any, st: Any, machines: list[dict]) -> None:
                 add = min(room, give_)
                 x["mdy"]["stored"] += add
                 give_ -= add
+
+
+def _harvester_step(world: Any, st: Any, b: dict, m: dict, satisfaction: float) -> None:
+    """Tree harvester (hybrid.py): fells a grown tree within reach every cycle and puts two logs in its output; power-driven, no worker walks."""
+    from wizard_rts import workers
+    from wizard_rts.industry import sim as S
+
+    spec_ = sp(b)
+    if satisfaction <= 0:
+        m["state"] = "no power"
+        S._flush(world, st, b, m)
+        return
+    if sum(m["out"].values()) >= 10:
+        m["state"] = "output blocked"
+        S._flush(world, st, b, m)
+        return
+    m["progress"] += TICKS_PER_Q * satisfaction * m.get("od", 1.0)
+    m["state"] = "harvesting"
+    if m["progress"] >= spec_["craft_ticks"]:
+        r = int(spec_.get("harvest_radius", 9))
+        best = None
+        for tree in world.trees.values():
+            if tree.get("species") == "wheat" or tree.get("reserved_by") or tree["stage"] not in ("old", "mature"):
+                continue
+            d = max(abs(tree["tx"] - b["tx"]), abs(tree["ty"] - b["ty"]))
+            if d <= r and (best is None or (d, tree["id"]) < best[0]):
+                best = ((d, tree["id"]), tree)
+        if best is None:
+            m["state"] = "no trees in reach"
+            m["progress"] = spec_["craft_ticks"]
+        else:
+            m["progress"] -= spec_["craft_ticks"]
+            workers.remove_tree(world, best[1]["id"], "harvested")
+            for w_, n in spec_["output_item"].items():
+                m["out"][w_] = m["out"].get(w_, 0) + n
+                world.stats["made_" + w_] = world.stats.get("made_" + w_, 0) + n
+            world.stats["trees_harvested"] = world.stats.get("trees_harvested", 0) + 1
+    S._flush(world, st, b, m)

@@ -140,7 +140,7 @@ def entities() -> dict[str, dict[str, Any]]:
 
     for kind in mdy.kinds():  # the Mindustry slice that is functional today (plan v2 P9 and P11 grow this)
         b = mdy.build_spec(kind)
-        out[kind] = {"id": kind, "type": "building", "game": "mindustry", "tribe": "", "label": b["label"], "era": MDY_ERA.get(kind, 2), "cost": dict(b["cost"]),
+        out[kind] = {"id": kind, "type": "building", "game": "mindustry", "family": "industrial-hybrid" if kind.startswith("mdy:hy_") else "mindustry", "tribe": "", "label": b["label"], "era": MDY_ERA.get(kind, 2), "cost": dict(b["cost"]),
                      "foundation": False, "functional": True}
     from wizard_rts.industry import units as U
 

@@ -15,6 +15,7 @@ from __future__ import annotations
 from typing import Any
 
 from wizard_rts.industry import engine as E
+from wizard_rts.industry import hybrid as H
 from wizard_rts.industry import extraction as X
 from wizard_rts.industry import registry as R
 
@@ -211,6 +212,8 @@ def machine_accepts(world: Any, b: dict, ware: str) -> bool:
     if m is None or b.get("constructing") or int(b.get("hp", 1)) <= 0:
         return False
     spec = R.block(b["kind"])
+    if spec.get("recipes"):
+        spec = H.effective(spec, m)
     role = m["role"]
     if role == "crafter":
         need = spec["consume_items"].get(ware)
@@ -449,6 +452,8 @@ def _power_and_machines(world: Any, st: Industry, machines: list[dict]) -> None:
     for b in machines:
         m = b["mdy"]
         spec = R.block(b["kind"])
+        if spec.get("recipes"):
+            spec = H.effective(spec, m)
         role = m["role"]
         g = st.graph_of.get(b["id"], -1)
         if role == "crafter":
@@ -519,6 +524,8 @@ def _power_and_machines(world: Any, st: Industry, machines: list[dict]) -> None:
     for b in machines:
         m = b["mdy"]
         spec = R.block(b["kind"])
+        if spec.get("recipes"):
+            spec = H.effective(spec, m)
         role = m["role"]
         if b.get("disrupted"):  # closed by a collapse or an outbreak (disruption.py): no work until repaired
             m["state"] = "closed: " + b["disrupted"]["label"].lower()

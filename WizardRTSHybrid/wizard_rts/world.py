@@ -971,6 +971,18 @@ class HybridWorld:
         self.damage_building(building, 10**9, ["structure"], {})
         return {"status": "ok", "snapshot": self.snapshot()}
 
+    def dismantle(self, faction: str, building: str) -> dict[str, Any]:
+        out = con.dismantle_building(self, faction, str(building))
+        out["snapshot"] = self.snapshot()
+        return out
+
+    def convert(self, faction: str, building: str, to_kind: str = "") -> dict[str, Any]:
+        from wizard_rts.industry import commands as ind_commands
+
+        out = ind_commands.convert_building(self, faction, str(building), str(to_kind))
+        out["snapshot"] = self.snapshot()
+        return out
+
     def waterway(self, faction: str, a: str, b: str) -> dict[str, Any]:
         out = maritime.build_waterway(self, faction, str(a), str(b))
         out["snapshot"] = self.snapshot()

@@ -54,7 +54,7 @@ ROLE_OF_CLASS = {
     "PayloadMassDriver": "payload_driver", "PayloadLoader": "payload_loader", "PayloadUnloader": "payload_loader", "UnitCargoLoader": "cargo",
     "UnitCargoUnloadPoint": "cargo", "LaunchPad": "launch_pad", "Accelerator": "accelerator",
     "LogicBlock": "logic", "MemoryBlock": "logic", "MessageBlock": "logic", "LogicDisplay": "logic", "SwitchBlock": "logic", "Radar": "radar",
-    "Incinerator": "incinerator", "ItemIncinerator": "incinerator", "Thruster": "wall",
+    "HybridCrafter": "crafter", "Incinerator": "incinerator", "ItemIncinerator": "incinerator", "Thruster": "wall",
 }
 
 HEAVY_TURRETS = {"ripple", "cyclone", "fuse", "spectre", "meltdown", "foreshadow", "salvo", "swarmer", "segment", "tsunami", "parallax", "breach", "diffuse",
@@ -159,6 +159,9 @@ def specs() -> dict[str, dict[str, Any]]:
             "attribute": b.get("attribute", ""), "refs": dict(b.get("refs", {})),
         }
         out[spec["kind"]] = spec
+    from wizard_rts.industry import hybrid
+
+    out.update(hybrid.specs())  # the industrial replacements of Widelands production (hybrid.py)
     return out
 
 

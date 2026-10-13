@@ -415,6 +415,65 @@ def enhance_building(world: Any, faction_name: str, building_id: str, to_kind: s
     return {"status": "ok", "id": b["id"], "kind": target, "cost": dict(spec["cost"])}
 
 
+DISMANTLE_MS = 15_000
+
+
+def dismantle_building(world: Any, faction_name: str, building_id: str) -> dict[str, Any]:
+    """Widelands dismantling: the building becomes a dismantle site that holds part of its build cost (return_on_dismantle, else half of buildcost) in its own stock;
+    the carriers take the wares to a warehouse and the site then goes away. Its worker retires, wares it held are carried off with the rest."""
+    b = world.buildings.get(str(building_id))
+    if b is None or "hp" not in b or b["faction_name"] != faction_name:
+        return {"status": "rejected", "reason": "no_building"}
+    if b["kind"] == "warehouse" or b.get("dismantle") or b.get("constructing"):
+        return {"status": "rejected", "reason": "cannot_dismantle"}
+    if b["kind"].startswith("wl:"):
+        raw = wl_defs.defs()["buildings"].get(b["kind"][3:], {})
+        back = dict(raw.get("return_on_dismantle") or {}) or {g: n // 2 for g, n in (raw.get("buildcost") or {}).items() if n // 2}
+    else:
+        spec = build_spec(b["kind"]) or {"cost": {}}
+        back = {g: n // 2 for g, n in spec["cost"].items() if n // 2}
+    for wid in [w for w, w_ in world.workers.items() if w_.get("building") == b["id"]]:
+        w = world.workers.pop(wid)
+        if w.get("carrying"):
+            world.stocks.setdefault(b["id"], {})[w["carrying"]] = world.stocks[b["id"]].get(w["carrying"], 0) + 1
+    for key in ("worker_id", "worker_ids", "stack", "sleep_ms", "waiting_worker", "queue"):
+        b.pop(key, None)
+    b["operational"], b["working"] = False, False
+    b["dismantle"] = {"ms": DISMANTLE_MS, "back": back}
+    world.recipe_requests.pop(b["id"], None)
+    mdy = b.get("mdy")
+    if mdy is not None:  # an industrial machine hands its buffers over as ordinary stock
+        stock = world.stocks.setdefault(b["id"], {})
+        for bag in (mdy["buf"], mdy["out"]):
+            for g, n in bag.items():
+                stock[g] = int(stock.get(g, 0)) + int(n)
+        b["mdy"] = None
+    stock = world.stocks.setdefault(b["id"], {})
+    for g, n in back.items():
+        from wizard_rts.economy import produce as _produce
+
+        _produce(world, b["id"], g, int(n))
+        world.stats["made_" + g] = world.stats.get("made_" + g, 0) + int(n)  # returned material re-enters the books as a source
+    world.events.append({"kind": "dismantle_started", "id": b["id"], "faction": faction_name, "back": dict(back)})
+    return {"status": "ok", "returns": dict(back)}
+
+
+def dismantle_quantum(world: Any) -> None:
+    from wizard_rts.lifecycle import begin_destruction
+
+    for bid, b in list(world.buildings.items()):
+        d = b.get("dismantle")
+        if not d:
+            continue
+        d["ms"] = max(0, d["ms"] - QUANTUM_MS)
+        if d["ms"] <= 0 and not any(int(n) > 0 for n in world.stocks.get(bid, {}).values()):
+            b["hp"] = 0
+            b.pop("dismantle")
+            world.events.append({"kind": "dismantle_done", "id": bid})
+            begin_destruction(world, b)
+            b["ruin_ms"] = 0
+
+
 def naval_site(world: Any, tile: tuple[int, int], home: dict | None) -> tuple[str | None, tuple[int, int] | None, list[tuple[int, int]]]:
     """A water-built OpenRA yard: 3x3 water footprint around `tile`, on a navigable body, beside land the faction can reach.
 
@@ -469,6 +528,7 @@ def _place_naval(world: Any, faction_name: str, info: dict, kind: str, spec: dic
 
 
 def construction_quantum(world: Any) -> None:
+    dismantle_quantum(world)
     for bid, b in list(world.buildings.items()):
         site = b.get("constructing")
         if not site:

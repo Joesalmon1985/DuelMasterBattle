@@ -17,9 +17,19 @@ PREFIX = "mdy:"
 TICKS = 60
 
 
+SYNTHETIC_ITEMS = {  # Widelands wares a drill can win from the existing deposits (owner programme 13 Oct 2026): not Mindustry items, but the same drill rules apply
+    "granite": {"hardness": 1, "cost": 1.0, "flammability": 0.0, "explosiveness": 0.0, "radioactivity": 0.0, "buildable": False},
+    "iron_ore": {"hardness": 2, "cost": 1.0, "flammability": 0.0, "explosiveness": 0.0, "radioactivity": 0.0, "buildable": False},
+    "gold_ore": {"hardness": 2, "cost": 1.0, "flammability": 0.0, "explosiveness": 0.0, "radioactivity": 0.0, "buildable": False},
+}
+
+
 @lru_cache(maxsize=1)
 def defs() -> dict[str, Any]:
-    return json.loads((DATA / "mindustry_defs.json").read_text())
+    d = json.loads((DATA / "mindustry_defs.json").read_text())
+    for k, v in SYNTHETIC_ITEMS.items():
+        d["items"].setdefault(k, v)
+    return d
 
 
 @lru_cache(maxsize=1)
@@ -32,6 +42,8 @@ def ware(item: str) -> str:
     m = overrides()["ware_map"]
     if item in m:
         return m[item]
+    if item in SYNTHETIC_ITEMS:
+        return item
     from wizard_rts.industry import blocks as B
 
     return B.ware_of_item(item)
@@ -43,6 +55,8 @@ def item_of(ware_id: str) -> str | None:
             return k
     from wizard_rts.industry import blocks as B
 
+    if ware_id in SYNTHETIC_ITEMS:
+        return ware_id
     return B.item_of_ware(ware_id)
 
 

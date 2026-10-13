@@ -18,6 +18,10 @@ DMG_SCALE = 25
 CELLS_PER_WORLD = 0.4 / 8.0
 SPEED_SCALE = 115.0
 MS_PER_TICK = 1000.0 / 60.0
+# Era strength (hybrid adaptation, recorded in docs/ledger/QUESTIONS.md): the Dystopian military revolution. Health and damage of every Mindustry unit are multiplied by
+# the bonus of its tier, so that a unit of tier N beats its Red Alert counterpart (tier 1 ~ rifleman/jeep/patrol boat, 2 ~ medium tank, 3 ~ mammoth/destroyer,
+# 4-5 beyond) with most of its health left. tests/test_combat_balance.py states the requirement; scripts/combat_matrix.py prints the matrix.
+TIER_BONUS = {0: 1.5, 1: 1.5, 2: 1.6, 3: 1.8, 4: 2.0, 5: 2.2}
 INTERNAL = {"block", "anthicus-missile", "disrupt-missile", "quell-missile", "assembly-drone", "manifold", "latum", "renale"}  # drones, missiles and two types no block of v146 produces
 CORE_UNITS = {"alpha", "beta", "gamma", "evoke", "incite", "emanate"}  # spawned by cores for the player; not producible
 LOCO = {"mech": "foot", "legs": "legs", "crawl": "foot", "tank": "tracked", "naval": "naval", "air": "fly", "hover": "hover", "tether": "fly"}
@@ -141,8 +145,12 @@ def rules_for(name: str) -> tuple[dict, dict] | None:
     else:
         ttypes = ["GroundActor", "Infantry" if hit < 12 else "Vehicle"]
     speed = min(220, max(30, int(_n(u.get("speed"), 0.5) * SPEED_SCALE)))
+    bonus = TIER_BONUS.get(chains().get(name, 1), 1.5)
+    for wd in weapons.values():
+        for wh in wd["warheads"]:
+            wh["damage"] = max(1, int(round(wh["damage"] * bonus)))
     actor = {
-        "name": label_of(name), "hp": int(round(_n(u.get("health"), 100.0) * HP_SCALE)), "armor": armor_class(armor), "flat_armor": int(round(armor * DMG_SCALE)),
+        "name": label_of(name), "hp": int(round(_n(u.get("health"), 100.0) * HP_SCALE * bonus)), "armor": armor_class(armor), "flat_armor": int(round(armor * DMG_SCALE)),
         "speed": speed, "cost": 0, "queue": "", "prerequisites": "", "armaments": names, "target_types": ttypes, "mobile": True, "is_building": False,
         "locomotor": loco, "flying": flying, "naval": naval, "tier": chains().get(name, 0), "payload": "payload" in kind,
         "source": f"Mindustry v146 UnitTypes.{u['java_name']}: health {u.get('health')}, armor {armor}",

@@ -170,6 +170,11 @@
      "item": "titanium",
      "min_tier": 3,
      "units_per_item": 2
+    },
+    {
+     "item": "iron_ore",
+     "min_tier": 2,
+     "units_per_item": 1
     }
    ],
    "stones": [
@@ -182,6 +187,11 @@
      "item": "beryllium",
      "min_tier": 3,
      "units_per_item": 2
+    },
+    {
+     "item": "granite",
+     "min_tier": 2,
+     "units_per_item": 1
     }
    ],
    "gold": [
@@ -194,6 +204,11 @@
      "item": "tungsten",
      "min_tier": 5,
      "units_per_item": 3
+    },
+    {
+     "item": "gold_ore",
+     "min_tier": 2,
+     "units_per_item": 1
     }
    ]
   },

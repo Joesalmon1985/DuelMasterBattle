@@ -30,6 +30,8 @@ def io_for(world: Any, building: dict) -> dict[str, Any]:
         return {"requests": dict(building["constructing"]["cost"])}
     kind = building.get("kind", "")
     io: dict[str, Any] = {}
+    if building.get("dismantle"):
+        return {"outputs": sorted(g for g, n in world.stocks.get(building["id"], {}).items() if int(n) > 0)}
     if kind in BUILDING_INPUTS:
         io["requests"] = dict(BUILDING_INPUTS[kind])
     if kind in BUILDING_OUTPUTS:
@@ -224,7 +226,7 @@ def scan_requests_and_outputs(world: Any) -> None:
             flight[k] = flight.get(k, 0) + 1
 
     for building in sorted(world.buildings.values(), key=priority):
-        if "hp" not in building or not (building.get("operational", True) or building.get("constructing")):
+        if "hp" not in building or not (building.get("operational", True) or building.get("constructing") or building.get("dismantle")):
             continue
         io = io_for(world, building)
         bid = building["id"]
