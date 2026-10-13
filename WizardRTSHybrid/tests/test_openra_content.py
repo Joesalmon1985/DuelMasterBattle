@@ -127,7 +127,7 @@ def test_every_new_unit_is_built_from_delivered_wares_at_its_producer(actor):
     for pre in OC.UNIT_PREREQ_OVERRIDE.get(actor, []):
         building(w, pre)
     b = next((x for x in w.buildings.values() if x["faction_name"] == "Red" and x["kind"] == producer and x.get("operational")), None) or building(w, producer)
-    rec = con.RECIPES[producer][kind]
+    rec = con.recipe_for(w, b, kind)  # the recipe with its tribe's class ware (decision C)
     for g, n in rec["cost"].items():
         produce(w, b["id"], g, n)
     r = con.queue_unit(w, b["id"], kind)
