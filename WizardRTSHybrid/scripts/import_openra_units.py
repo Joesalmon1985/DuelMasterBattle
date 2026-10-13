@@ -40,6 +40,7 @@ ALIASES = {  # unit without readable art -> (picture it borrows, why)
     "dmb.slinger": ("widelands.soldier", "Prehistoric slinger: hybrid actor, drawn with the Widelands soldier"),
     "dmb.caravan": ("widelands.carrier", "Trade caravan: hybrid unit, drawn with the Widelands carrier"),
     "dmb.settlers": ("widelands.carrier", "Settlers' wagon: hybrid founder, drawn with the Widelands carrier"),
+    "dmb.clinic": ("widelands.barbarians_tavern", "Clinic: hybrid containment building (plan v2 7.2), drawn with the Widelands barbarian tavern"),
     "dmb.scriptorium": ("widelands.barbarians_reed_yard", "Scriptorium: hybrid building (paper, plan v2 5.3), drawn with the Widelands barbarian reed yard"),
     "dmb.war_lodge": ("widelands.barbarians_barracks", "War lodge: hybrid Prehistoric building, drawn with the Widelands barbarian barracks"),
 }

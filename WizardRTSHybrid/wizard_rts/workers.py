@@ -976,6 +976,12 @@ def production_quantum(world: Any) -> None:
         elif cmd == "mine":
             if not _mine(world, building, args):
                 _fail(world, building, "deposit")
+        elif cmd == "cure_needed":
+            if not regions.cubes_here(world, building):
+                building["stall"] = {"reason": "not_needed", "detail": "its region is clean", "at_ms": int(world.dmb.clock.get("game_ms", 0))}
+                _skip(building)
+        elif cmd == "cure":
+            regions.cure(world, building, int(args.get("cubes", 1)))
         elif cmd == "produce":
             for g, n in args.items():
                 n = regions.yield_count(world, building, n)  # an outbreak in the region lowers what a finished programme yields

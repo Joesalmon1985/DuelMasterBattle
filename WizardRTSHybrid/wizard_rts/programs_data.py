@@ -191,6 +191,15 @@ BUILDING_PROGRAMS: dict[str, list[tuple[str, dict]]] = {
         ("animate", {"ms": 15_000}),
         ("produce", {"paper": 1}),
     ],
+    # hybrid-defined (plan v2 7.2): a clinic treats one outbreak cube in its own region per cycle, paid in rations and water. It does nothing
+    # (and consumes nothing) while its region is clean.
+    "clinic": [
+        ("cure_needed", {}),
+        ("consume", {"ration": 1, "water": 1}),
+        ("sleep", {"ms": 60_000}),
+        ("animate", {"ms": 20_000}),
+        ("cure", {"cubes": 1}),
+    ],
     # barbarians/ax_workshop (produce_ax)
     "smithy": [
         ("needs", {"good": "ax"}),
@@ -208,6 +217,7 @@ BUILDING_INPUTS: dict[str, dict[str, int]] = {
     "smelter": {"coal": 8, "iron_ore": 8},
     "smithy": {"coal": 8, "iron": 8},
     "scriptorium": {"plank": 6, "water": 6},
+    "clinic": {"ration": 4, "water": 4},
     "mine": {"ration": 6},
     "ironmine": {"ration": 6},
     "tavern": {"fish": 4, "meat": 4, "bread": 4},
@@ -222,6 +232,7 @@ BUILDING_OUTPUTS: dict[str, list[str]] = {
     "smelter": ["iron"],
     "smithy": ["ax"],
     "scriptorium": ["paper"],
+    "clinic": [],
     "farm": ["wheat"],
     "hunter": ["meat"],
     "well": ["water"],

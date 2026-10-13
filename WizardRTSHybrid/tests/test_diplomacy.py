@@ -108,3 +108,38 @@ def test_nest_policies_ignore_selfish_and_coop():
     base = value("Red")
     regions.state(w).outbreaks = 6
     assert value("Red") > base  # the more of the loss limit is used, the more it is worth
+
+
+def test_clinic_cures_its_region_for_rations_and_water_and_idles_when_clean():
+    from wizard_rts import construction as con, regions
+    from wizard_rts.economy import produce
+
+    w = HybridWorld(507, profile="test_showcase")
+    w.ai_enabled = False
+    w.outbreaks_enabled = False
+    w._seq = 0
+    home = next(b for b in w.buildings.values() if b["faction_name"] == "Red" and b["kind"] == "warehouse")
+    placed = None
+    for dx in range(6, 30):
+        for dy in range(6, 30):
+            r = w.build("Red", "clinic", home["tx"] + dx, home["ty"] + dy)
+            if r["status"] == "ok":
+                placed = r["id"]
+                break
+        if placed:
+            break
+    assert placed
+    b = w.buildings[placed]
+    b.pop("constructing", None)
+    b["operational"], b["hp"] = True, b["max_hp"]
+    produce(w, placed, "ration", 2)
+    produce(w, placed, "water", 2)
+    rg = regions.state(w)
+    i = rg.region_at(b["tx"], b["ty"])
+    run(w, 100)
+    assert w.stocks[placed].get("ration", 0) == 2  # a clean region: nothing consumed, nothing cured
+    rg.cubes[i] = 3
+    run(w, 200)
+    assert rg.cubes[i] <= 2 and w.stats.get("cubes_cured", 0) >= 1 and w.fstats["Red"]["cubes_cured"] >= 1
+    assert w.stats["consumed_ration"] >= 1 and w.stats["consumed_water"] >= 1
+    assert [e for e in w.events if e["kind"] == "cube_cured"]

@@ -26,6 +26,28 @@
    "alias_of": "widelands.carrier"
   },
   {
+   "id": "dmb.clinic",
+   "status": "alias_placeholder",
+   "game": "widelands",
+   "license": "GPL-2.0-or-later",
+   "source": "data/tribes/buildings/productionsites/barbarians/tavern/idle_00.png",
+   "source_note": "Clinic: hybrid containment building (plan v2 7.2), drawn with the Widelands barbarian tavern",
+   "godot": "res://client/hybrid/art/widelands/gen/barbarians_tavern.png",
+   "mode": "sheet",
+   "width": 112,
+   "height": 110,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    57,
+    88
+   ],
+   "scale": 2,
+   "fps": 0,
+   "alias_of": "widelands.barbarians_tavern"
+  },
+  {
    "id": "dmb.clubman",
    "status": "alias_placeholder",
    "game": "widelands",

@@ -1120,6 +1120,27 @@
    ]
   },
   {
+   "id": "gen.clinic",
+   "name": "Clinic",
+   "era": "prehistoric",
+   "tribe": "",
+   "summary": "A clinic",
+   "entities": [
+    {
+     "id": "clinic",
+     "label": "Clinic",
+     "type": "building",
+     "art": {
+      "key": "dmb.clinic",
+      "status": "alias_placeholder",
+      "alias_of": "widelands.barbarians_tavern",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
    "id": "gen.empire_armorsmithy",
    "name": "Armor Smithy (empire)",
    "era": "prehistoric",
@@ -3256,8 +3277,9 @@
    ]
   }
  ],
- "count": 137,
+ "count": 138,
  "entities_without_real_art": [
+  "clinic",
   "naval_yard",
   "scriptorium",
   "sub_pen",

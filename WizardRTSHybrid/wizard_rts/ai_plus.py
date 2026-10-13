@@ -270,9 +270,13 @@ def _targets(world: Any, name: str, wh: dict, main: bool, mine: list[dict]) -> l
         out += [("farm", 1), ("tavern", 1), ("well", 1)]
         out += [("flame_tower", 1)] if era >= 1 else [("war_lodge", 0)]
         out += [("defense", 1), ("tesla_coil", 1 if era >= 2 else 0)]
+        if tech.foundation_on(world) and _infected(world, (wh["tx"], wh["ty"]), 1):
+            out.insert(0, ("clinic", 1))
         return out
     wood = max(3, 2 + n // 8)
     out: list[tuple[str, int]] = []
+    if tech.foundation_on(world) and _infected(world, (wh["tx"], wh["ty"]), 1):
+        out.append(("clinic", 1))  # an outbreak in this settlement's region: a clinic treats it (cubes cost rations and water)
     if threatened:
         out += [("war_lodge", 1), ("defense", 2), ("flame_tower", 1), ("tesla_coil", 1)]
     out += [("producer", wood), ("ranger", wood - 1), ("processor", 2 if logs > 40 and planks < 15 else 1), ("quarry", 3 if granite < 10 else 2)]

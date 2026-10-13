@@ -197,6 +197,28 @@ def _outbreak_damage(world: Any, s: Regions, i: int, now: int) -> None:
             rec["unrest"] = min(1.0, float(rec.get("unrest", 0.0)) + 0.2)
 
 
+def cubes_here(world: Any, building: dict) -> int:
+    s = state(world)
+    return 0 if s is None else s.cubes[s.region_at(building["tx"], building["ty"])]
+
+
+def cure(world: Any, building: dict, cubes: int = 1) -> int:
+    """A clinic's finished cycle: remove up to `cubes` outbreak cubes from its own region (the wizard's treatment, by a building). Returns how many."""
+    s = state(world)
+    if s is None:
+        return 0
+    i = s.region_at(building["tx"], building["ty"])
+    n = min(cubes, s.cubes[i])
+    if n <= 0:
+        return 0
+    s.cubes[i] -= n
+    s.cured = getattr(s, "cured", 0) + n
+    world.fstat(building["faction_name"], "cubes_cured", n)
+    world.stats["cubes_cured"] = world.stats.get("cubes_cured", 0) + n
+    world.events.append({"kind": "cube_cured", "building": building["id"], "faction": building["faction_name"], "region": s.rid(i), "cubes_left": s.cubes[i]})
+    return n
+
+
 def _pick_region(world: Any, s: Regions) -> int:
     """Deterministic: a seeded stream per cube number, among regions that hold a building (an empty wilderness cannot suffer)."""
     rng = random.Random(f"{world.seed}:outbreak:{s.added + s.outbreaks}")
