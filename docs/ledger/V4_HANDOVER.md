@@ -1,20 +1,30 @@
 # V4 handover (branch `work/mechanics-completion-v4`)
 
-Plan: `docs/PLAN_MECHANICS_COMPLETION_V4.md`. Not merged to `main`; no neural-network work started.
+Plan: `docs/PLAN_MECHANICS_COMPLETION_V4.md`. Decisions: `docs/DECISION_REGISTER.md` section 5 (D26-D32). Not merged to `main`. No neural-network work started.
 
-## Done and pushed
-- P1 cards: `wizard_rts/content/cards.py` (168 cards, 42 per era, 1-4 entities, essential tags, perfect-matching audit); `graph.check()` returns `[]`; dealer essential-card guarantee in `draft.deal`; AI picker for `gen.*` cards (`tech._ai_pick_generated`); bonus hands fall back to copies when the reserve is empty.
-- Fake buildings excluded (D27); Mk2 skipped for excluded actors.
-- Faction floor (D28): `history.MIN_FACTIONS`, `FLOOR_DELAY_MS`, `_floor_candidates`.
-- Decisions D26-D32 recorded in `docs/DECISION_REGISTER.md` section 5.
+## State at this handover
+- Test suite: all green on the branch (run `python3 -m pytest WizardRTSHybrid/tests -q -n 2 -p no:cacheprovider --ignore=WizardRTSHybrid/tests/test_five_minutes.py`, about 13 minutes on 2 CPUs).
+- Long games (`scripts/long_stability.py --minutes 120`, campaign profile, v2 draft, plus AI, diplomacy, nests): seeds 7 and 11 finished with no invariant failures (ware ledger, negative stocks, VP replay). Seed 7 ended in the Historic era with 8 factions, seed 11 in the Modern era with 7. Throughput about 9x real time late in the game. Nothing in these runs reached Dystopian.
+- Hash baselines: `docs/perf/hash_baseline_v4.json` (showcase world, baseline AI, 3 seeds, 20 min) and `docs/perf/hash_baseline_v4_campaign_plus.json` (campaign profile, plus AI, 2 seeds, 20 min). `tests/test_hash_baseline.py` checks the first 3 minutes. A gameplay change must re-record them (`scripts/hash_gate.py record ...`) under a new label.
 
-## Known limits
-- Historic readiness is 92% under the smart picker (the repeated tribe's second faction can lose its smithing card to its sibling).
-- Modern is saturated (35 of 42 cards at 4 slots); some Modern and Dystopian cards are thematically loose.
-- In rings above 6 the dealer hands out copies; a seat can be passed a last card it already holds (7 or 6 picks).
-- Weaponless "functional" Mindustry units remain (P2 backlog).
-- `scripts/hash_gate.py` baselines are stale (they diverge at minute 1); P0 re-records them under a new version label.
-- Headed Godot proof must be run on the owner's machine.
+## Done (all pushed)
+- **P1 cards and drafting.** `wizard_rts/content/cards.py`: 168 cards, four eras of 42, 1-4 entities each, essential-card tags, a perfect-matching audit (`graph.check()` returns `[]`). The dealer puts the era's essential cards a seat can use in its first pack (`draft.deal`). Short packs are topped up; bonus hands fall back to copies when the reserve is empty. The baseline AI picks generated cards by usability and missing capability (`tech._ai_pick_generated`). Monte Carlo test: `tests/test_draft_reachability.py`.
+- **Faction floor (D28).** `history.MIN_FACTIONS = 6`, `MAX_FACTIONS = 8`, floor splits after `FLOOR_DELAY_MS`; a collapsed faction's pack returns to the reserve.
+- **P0.** `state_hash` now also covers the raw building, unit, stock, worker, carrier, tech, stat, history and draft records. Baselines re-recorded. Vacuous assertions replaced. Stale status files carry a "superseded" banner.
+- **P2 defects fixed.** Per-tribe ship cost; a failed sub-programme no longer resets the main programme (smelting works starvation); landmines are their own building kind; pillboxes carry their rifle; assemblers accept real unit and block payloads (tecta, collaris, quell, disrupt, vanquish, conquer buildable by delivery); five weaponless Mindustry combat units get tier-peer weapons; an aircraft with an empty ammunition pool stops attacking; fake OpenRA buildings excluded (D27).
+- **P3 (OpenRA half of decision C).** `wizard_rts/ware_classes.py`: armour, tool and pack-animal wares of each tribe stand in for iron or planks in OpenRA recipes; the building asks for them when the warehouses hold them. Nothing blocks.
+- **P4.** Faction command tier (`world._not_mine`, faction argument on queue/cancel/move/stop/rally/demolish/deploy/order/ability); minimal visibility layer (`wizard_rts/visibility.py`; observations list only what is seen or explored, attacks only on visible targets); `legal_actions` covers the faction's own `wl:` buildings and all `mdy:` machines; saves are versioned and hash-checked, with a fresh-process load test.
 
-## Next
-P0 hash baselines and `state_hash` widening; P2 defect backlog; P3 ware-class costs (D31); P4 command tier, visibility (D32), `legal_actions`; P5 sweep tests and readiness report.
+## Not done (honest list, in suggested order)
+1. **Mindustry half of decision C.** Mindustry buildings already cost granite, iron and planks, but dead-end wares do not substitute for them yet.
+2. **Evidence catalogue (L0-L4).** The generator and the `@pytest.mark.entity` plugin of plan section 5 are not built; `coverage.py` still uses the functional/pending/excluded table.
+3. **Widelands.** Transfers are not re-routed when a road is cut; dismantling mid-carry and enhancement can lose booked stock; markets and sea trade are still flags; the Frisian recycling centre has no input producer; resident workers (decision E) are not done; machine feeding from a warehouse is missing.
+4. **OpenRA.** Not modelled: Tanya C4, chrono teleport, engineer repair, spy disguise, parabombs, spy plane, GPS, phase transport cargo; spread damage hits the primary target only; crushing unused; minimum range ignored on explicit orders; Mk2 variants lose abilities and Mk2 aircraft cannot rearm; no attack-unit, guard or stance command.
+5. **Mindustry.** No unit abilities; doors never open; armoured, plastanium and stack conveyors and ducts are plain belts; payload router code unreachable; turret bullet effects; logic `control` gaps; `state_hash` is wider but turret ammunition, memory cells and pipe contents are not specifically asserted.
+6. **AI use of content.** `cards_used_rate` was 0.32 and 0.37 in the two long games: the plus AI builds about a third of what its cards unlock. The AI also never reached Dystopian in 120 minutes (era pacing, decision G study not run).
+7. **Draft limits.** Historic readiness is about 92% for a sensible drafter (the second faction of a repeated tribe can lose its smithing card to its sibling); in rings above six the dealer hands out copies.
+8. **Headed Godot proof** must be run on the owner's machine (`godot` is not installed in the build container).
+
+## Resume
+- Re-run the long game: `python3 WizardRTSHybrid/scripts/long_stability.py --minutes 120 --seed 7 --out ~/dmb_runs/stab7`.
+- Re-record baselines after a rules change: `python3 WizardRTSHybrid/scripts/hash_gate.py record --out docs/perf/hash_baseline_v4.json --minutes 20` and `HYBRID_AI_POLICY=plus python3 WizardRTSHybrid/scripts/hash_gate.py record --profile campaign --out docs/perf/hash_baseline_v4_campaign_plus.json --seeds 507 11 --minutes 20`.
