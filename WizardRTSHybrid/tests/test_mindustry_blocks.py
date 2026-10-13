@@ -718,3 +718,43 @@ def test_a_core_is_a_store_for_both_economies_roads_deliver_to_it_and_unloaders_
     # a road from the core to the settlement lets Widelands carriers take and bring wares: the core is listed as a warehouse
     from wizard_rts import logistics
     assert core in [b["id"] for b in logistics._warehouses(w, w.buildings[core]["faction"])]
+
+
+@pytest.mark.parametrize("kind,unit", ASSEMBLER_PLANS)
+def test_an_assembler_accepts_real_payloads_and_builds_its_unit(kind, unit):
+    """No faked stack: each payload goes through give_payload, which refuses what the plan does not want and what it already has enough of."""
+    from wizard_rts.industry import blocks as B
+    from wizard_rts.industry import payload as P
+
+    spec = R.block(kind)
+    w = world()
+    n = spec["size"]
+    x, y = F.open_ground(w, "Red", n + 5, n + 3)
+    a = put(w, kind, (x + 1, y + 1))
+    put(w, "mdy:power_source", (x + 1, y + 1 + n))
+    m = w.buildings[a]["mdy"]
+    stuff(w, a, spec)
+    plan = next(p for p in spec["assembler_plans"] if p["unit"] == unit)
+    m["plan"] = unit
+    from wizard_rts.industry import sim as S
+
+    run(w, 1)
+    st = S.ind(w)
+    tile = (w.buildings[a]["tx"], w.buildings[a]["ty"])
+    src = (tile[0] - 5, tile[1])
+
+    def payload_for(java: str) -> dict:
+        blk = next((bid for bid, d in B.full()["blocks"].items() if d.get("java_name") == java), None)
+        if blk is not None:
+            return {"type": "block", "block": blk, "stock": {}, "cap": 10}
+        return {"type": "unit", "unit": java, "faction": "Red", "hp": 1.0}
+
+    assert not P.accepts_payload(w, st, w.buildings[a], {"type": "unit", "unit": "dagger", "faction": "Red", "hp": 1.0}, src)  # not in the plan
+    for java, need in plan["payload"].items():
+        for _ in range(need):
+            assert P.accepts_payload(w, st, w.buildings[a], payload_for(java), src), (kind, unit, java)
+            assert P.give_payload(w, st, tile, payload_for(java), src)
+            run(w, 1)
+    assert all(m["stack"].get(k, 0) >= v for k, v in plan["payload"].items()), m["stack"]
+    run(w, int(plan["time_ticks"] / 60) + 15)
+    assert _units_of(w, unit), (kind, unit, m["state"])
