@@ -44,8 +44,15 @@ def main() -> None:
     st = draft.state(w)
     print("draft state: era", st["era"], "round", st["round"], "defaults", st["default_picks"], "dups", st["duplicated_cards"], "phases", st["phases"])
     print({k: v for k, v in ev.most_common(12)})
-    for f, s in w.tech.items():
-        print(f, [c.split(".", 1)[1] for c in s["cards"]])
+    from wizard_rts import inspector
+
+    tot = used = 0
+    for f, view in inspector.factions(w).items():
+        ents = [e for h in view["cards"] for e in h["entities"]]
+        tot += len(ents)
+        used += sum(1 for e in ents if e["produced"])
+        print(f, "entities used %d/%d" % (sum(1 for e in ents if e["produced"]), len(ents)), "unproduced:", [u.replace("wl:", "")[:28] for u in view["unproduced"]][:10])
+    print("cards-used rate: %d/%d = %.0f%%" % (used, tot, 100.0 * used / max(1, tot)))
 
 
 if __name__ == "__main__":

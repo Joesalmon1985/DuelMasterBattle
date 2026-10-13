@@ -407,6 +407,39 @@ def tribe_step(world: Any, name: str, wh: dict) -> None:
             return
         st["cool"][bname] = now + 90_000 + zlib.crc32(bname.encode()) % 60_000
         note(world, name, "no site for tribe building %s" % bname)
+    if getattr(world, "cardset", "") == "v2":
+        card_step(world, name, wh)
+
+
+def card_step(world: Any, name: str, wh: dict) -> bool:
+    """Use what was drafted (plan v2 5.3): place one building a held card unlocks that this faction does not have yet and can pay for.
+    The first v2 runs showed only 35% of unlocked entities ever built, because the planner knows its fixed quotas and tribe chains only."""
+    from wizard_rts import wl_defs
+
+    now = _now(world)
+    st = world.__dict__.setdefault("_ai_cardstep", {}).setdefault(name, {"cool": {}})
+    tribe = world.faction_info.get(name, {}).get("tribe")
+    have_kinds = {b["kind"] for b in world.buildings.values() if b["faction_name"] == name and int(b.get("hp", 1)) > 0}
+    for cid in world.tech.get(name, {}).get("cards", []):
+        for eid in tech.lookup()[cid].get("entities", []):
+            if eid.startswith("unit:") or eid in have_kinds or st["cool"].get(eid, -1) > now:
+                continue
+            spec = con.build_spec(eid)
+            if spec is None or not tech.kind_allowed(world, name, eid) or not base._can_pay(world, name, spec["cost"]):
+                continue
+            if eid.startswith(wl_defs.PREFIX):
+                if spec.get("tribe") != tribe:
+                    continue
+                site = base._build_tribe_building(world, name, eid[len(wl_defs.PREFIX):], wh)
+            elif eid in ("mine", "ironmine"):
+                site = base._build_mine(world, name, eid, wh) if base._deposit_site(world, name, eid) else None
+            else:
+                site = base._place_near(world, name, eid, wh)
+            if site:
+                world.events.append({"kind": "ai_build", "faction": name, "building": eid, "id": site, "policy": POLICY, "why": "drafted"})
+                return True
+            st["cool"][eid] = now + 120_000 + zlib.crc32(eid.encode()) % 60_000
+    return False
 
 
 def _link_outposts(world: Any, name: str, home: dict) -> None:
