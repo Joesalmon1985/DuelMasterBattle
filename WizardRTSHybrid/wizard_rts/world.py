@@ -182,6 +182,10 @@ class HybridWorld:
         import json
 
         h = hashlib.sha1(json.dumps(self.snapshot(), sort_keys=True, default=str).encode())
+        # the snapshot is what a client sees; the raw records hold the rest (turret ammo, line state, stocks, cards, drafting, history), so a
+        # change in any of them changes the hash (V4 P0: the old hash missed Mindustry ammo and most hidden state)
+        raw = {n: getattr(self, n, None) for n in ("buildings", "units", "stocks", "workers", "carriers", "tech", "stats", "fstats", "faction_info", "history", "draft_state", "wares_ledger")}
+        h.update(json.dumps(raw, sort_keys=True, default=str).encode())
         if self.terrain is not None:
             h.update(self.terrain.state_hash().encode())
         return h.hexdigest()

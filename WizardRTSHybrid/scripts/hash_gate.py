@@ -49,7 +49,7 @@ def main() -> int:
     a = ap.parse_args()
     if a.mode == "record":
         res = [run(s, a.minutes, a.map) for s in a.seeds]
-        doc = {"map": a.map, "minutes": a.minutes, "runs": res}
+        doc = {"label": "v4-2026-10-13 (wider state_hash, 168-card v3 draft)", "map": a.map, "minutes": a.minutes, "runs": res}
         Path(a.out).write_text(json.dumps(doc, indent=1))
         for r in res:
             print(r["seed"], r["x_realtime"], "x", r["hashes"][-1])
