@@ -4,4 +4,4 @@ The active development is the wizard-led hybrid in `WizardRTSHybrid/`. Start at 
 
 The rest of this repository (`sim/dmb`, `godot_project`, `tests`, `DD`, `python_prototype`, older `docs/*`) is the earlier Catan-era game and its quest, dialogue, dungeon and Mastermind duel assets. Reuse them, do not delete them, and treat their economy/map rules as superseded (see `docs/CURRENT_STATUS_AND_GAPS.md` section 5). Root `README.md` is a historical Village Test note.
 
-Proposed (unapproved) programme: `docs/PLAN_FULL_PROGRAMME_V2.md` (supersedes parts of `docs/PLAN_ECONOMY_TECH_ERA_PROGRAMME.md`). Do not implement it without an explicit owner instruction.
+Approved programme (owner authorised an autonomous implementation run on 12 Oct 2026): `docs/PLAN_FULL_PROGRAMME_V2.md` (supersedes parts of `docs/PLAN_ECONOMY_TECH_ERA_PROGRAMME.md`). Its live state is `docs/ledger/LEDGER.md` (+ `RUNBOOK.md`, `QUESTIONS.md`) and the run report `docs/V2_RUN_REPORT.md`; the work is on branch `work/ubuntu-autonomous-v2` and has not been merged into `main` (the owner decides).
