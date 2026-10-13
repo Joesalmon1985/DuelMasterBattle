@@ -86,3 +86,16 @@ def draft_view(world: Any) -> dict[str, Any]:
             "reserve": len(st["reserve"]), "vp": totals, "era_bar": int(era.get("bar", getattr(world, "era_vp_end", vp.ERA_VP_END))),
             "if_era_ended_now": {"awarded": would_award, "lost": would_lose, "leftover_vp": draft.LEFTOVER_VP},
             "default_picks": st["default_picks"], "duplicated_cards": st["duplicated_cards"]}
+
+
+def catastrophe(world: Any) -> dict[str, Any]:
+    from wizard_rts import regions
+
+    s = regions.state(world)
+    if s is None:
+        return {"enabled": False}
+    e = int(getattr(world, "era_index", 0))
+    return {"enabled": True, "outbreaks_total": s.outbreaks, "total_limit": int(getattr(world, "loss_outbreaks_total", regions.const("loss_outbreaks"))),
+            "outbreaks_this_era": s.era_outbreaks.get(e, 0), "era_limit": int(getattr(world, "loss_outbreaks_per_era", regions.config()["constants"].get("loss_outbreaks_per_era", regions.const("loss_outbreaks")))),
+            "by_era": {tech.ERAS[k]: v for k, v in sorted(s.era_outbreaks.items())}, "lost": s.lost, "lost_by": s.lost_by,
+            "cubes": {s.rid(i): c for i, c in enumerate(s.cubes) if c}}

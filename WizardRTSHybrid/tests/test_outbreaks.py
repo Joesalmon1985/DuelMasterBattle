@@ -296,3 +296,31 @@ def test_outbreak_state_is_deterministic_across_processes():
         assert r.returncode == 0, r.stderr[-500:]
         outs.append(r.stdout.strip())
     assert outs[0] == outs[1] and "region:" in outs[0]
+
+
+def test_per_era_and_total_loss_counters_end_the_cycle_for_everyone():
+    w = world(enabled=False)
+    rg = regions.state(w)
+    w.loss_outbreaks_per_era = 3
+    run(w, 1)
+    for _ in range(3):  # three overflows in the current era
+        rg.cubes[0] = regions.const("cube_cap")
+        regions._add_cube(w, rg, 0, 0, "test")
+    assert rg.era_outbreaks[0] == 3 and rg.outbreaks == 3
+    run(w, 1)
+    assert rg.lost and rg.lost_by == "era" and w.collective_loss
+    ev = [e for e in w.events if e["kind"] == "terminal_loss"][-1]
+    assert ev["collective"] and ev["cause"] == "era" and ev["era_outbreaks"] == 3
+
+    w2 = world(enabled=False)
+    rg2 = regions.state(w2)
+    w2.loss_outbreaks_total = 4
+    w2.loss_outbreaks_per_era = 99
+    for era in (0, 1):  # two outbreaks in each of two eras: no era limit is reached, the cumulative one is
+        w2.era_index = era
+        for _ in range(2):
+            rg2.cubes[1] = regions.const("cube_cap")
+            regions._add_cube(w2, rg2, 1, 0, "test")
+    run(w2, 1)
+    assert rg2.era_outbreaks[0] == 2 and rg2.era_outbreaks[1] >= 2 and sum(rg2.era_outbreaks.values()) == rg2.outbreaks  # spreads overflow neighbours too
+    assert rg2.lost and rg2.lost_by == "total" and all(v < 99 for v in rg2.era_outbreaks.values())

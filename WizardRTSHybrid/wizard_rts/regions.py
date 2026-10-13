@@ -83,6 +83,8 @@ class Regions:
         self.kind: list[str] = [""] * len(self.axials)
         self.neighbours = [[self.index[(q + dq, r + dr)] for dq, dr in NEIGHBOURS if (q + dq, r + dr) in self.index] for q, r in self.axials]
         self.outbreaks = 0
+        self.era_outbreaks: dict[int, int] = {}  # outbreaks per era index: the per-era loss counter (plan v2 7.2); not part of the snapshot
+        self.lost_by = ""
         self.added = 0
         self.next_cube_ms = const("interval_ms")
         self.next_spread_ms = const("spread_ms")
@@ -159,6 +161,8 @@ def _add_cube(world: Any, s: Regions, i: int, now: int, source: str, depth: int 
         s.kind[i] = k["id"]
     if s.cubes[i] >= cap:
         s.outbreaks += 1
+        e = int(getattr(world, "era_index", 0))
+        s.era_outbreaks[e] = s.era_outbreaks.get(e, 0) + 1
         s.log.append({"game_ms": now, "event": "outbreak", "region": s.rid(i), "source": source})
         world.events.append({"kind": "outbreak", "region": s.rid(i), "count": s.outbreaks, "hazard": s.kind[i]})
         _outbreak_damage(world, s, i, now)
@@ -220,10 +224,15 @@ def regions_quantum(world: Any) -> None:
     _treatment(world, s, now)
     if world.economy_quanta % 600 == 0:  # once a game minute: unrest from the cubes in each settlement's region
         _unrest(world, s)
-    if s.outbreaks >= const("loss_outbreaks") and not s.lost:
+    per_era = int(getattr(world, "loss_outbreaks_per_era", config()["constants"].get("loss_outbreaks_per_era", const("loss_outbreaks"))))
+    total = int(getattr(world, "loss_outbreaks_total", const("loss_outbreaks")))
+    era_now = s.era_outbreaks.get(int(getattr(world, "era_index", 0)), 0)
+    if (s.outbreaks >= total or era_now >= per_era) and not s.lost:
         s.lost = True
+        s.lost_by = "total" if s.outbreaks >= total else "era"
         world.cycle_pending = True  # terminal loss: the cycle ends by explicit rule (history.cycle_reset)
-        world.events.append({"kind": "terminal_loss", "outbreaks": s.outbreaks})
+        world.collective_loss = True  # every faction loses: no winner, whatever the VP (plan v2 7.2)
+        world.events.append({"kind": "terminal_loss", "outbreaks": s.outbreaks, "era_outbreaks": era_now, "cause": s.lost_by, "collective": True})
 
 
 def _unrest(world: Any, s: Regions) -> None:
