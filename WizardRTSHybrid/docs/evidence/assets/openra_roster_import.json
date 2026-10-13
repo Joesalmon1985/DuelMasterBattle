@@ -1,0 +1,33 @@
+{
+ "imported": [
+  "ca",
+  "dd",
+  "dog",
+  "dtrk",
+  "e4",
+  "e6",
+  "e7",
+  "heli",
+  "hind",
+  "lst",
+  "mech",
+  "medi",
+  "mgg",
+  "mig",
+  "mnly",
+  "mrj",
+  "msub",
+  "pt",
+  "qtnk",
+  "spy",
+  "ss",
+  "thf",
+  "truk",
+  "yak"
+ ],
+ "not_imported": {
+  "ftrk": "ftrk.shp not in any package",
+  "mh60": "mh60.shp not in any package",
+  "tran": "tran2.shp not in any package"
+ }
+}

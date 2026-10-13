@@ -486,8 +486,9 @@ func _sequence_index(item: Dictionary, entity: Dictionary) -> int:
 		if int(item.get("fps", 0)) > 0 and length > 1:
 			tick = int(Time.get_ticks_msec() / (1000.0 / float(item.get("fps", 1)))) % length
 		return int(item.get("run_start", 0)) + facing * length + tick
-	if int(item.get("facing_count", 0)) == 32 or int(item.get("facings", 1)) == 32:
-		return facing * 4
+	var fcount := maxi(int(item.get("facing_count", 0)), int(item.get("facings", 1)))
+	if fcount >= 16:
+		return facing * (fcount / 8)  # 16 or 32 frames around the circle: eight compass headings pick every 2nd or 4th
 	if int(item.get("facings", 1)) <= 1:
 		var length := maxi(int(item.get("length", 1)), 1)
 		var tick := 0
