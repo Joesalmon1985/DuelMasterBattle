@@ -1,0 +1,31 @@
+{
+ "host": "joe-ThinkPad-T460",
+ "python": "3.12.3",
+ "cpus": 4,
+ "recorded": "2026-10-13 06:11",
+ "loadavg": [
+  1.0673828125,
+  1.33203125,
+  2.63134765625
+ ],
+ "scenarios": [
+  {
+   "scenario": "early",
+   "game_s": 900,
+   "wall_s": 21.0,
+   "x_realtime": 42.9,
+   "buildings": 190,
+   "peak_rss_mb": 59,
+   "state_hash": "b317aff928f8575ebeb3c4d2dc566954ac57b10c"
+  },
+  {
+   "scenario": "mid",
+   "game_s": 600,
+   "wall_s": 33.7,
+   "x_realtime": 17.8,
+   "buildings": 386,
+   "peak_rss_mb": 66,
+   "state_hash": "58011e395e45e99f21b585fb9b79efe45ca2ac71"
+  }
+ ]
+}
