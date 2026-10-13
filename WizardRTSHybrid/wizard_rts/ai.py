@@ -377,11 +377,15 @@ def _find_expansion_site(world: Any, name: str, mcv: dict | None, bad: list | No
     probe = {"id": "probe", "definition": territory.MCV_DEFINITION, "faction_name": name, "alive": True, "tx": 0, "ty": 0}
     legal = []
     frontier = bool(tech.foundation_on(world))
+    now = int(world.dmb.clock.get("game_ms", 0))
+    if frontier and mcv is None and now - world.__dict__.setdefault("_ai_nosite", {}).get(name, -10**9) < 60_000:
+        return None  # asked again within a minute of "no legal site anywhere": the answer cannot have changed much (frontier mode only)
+    mine_cc = [(c["tx"], c["ty"]) for c in territory.command_centers(world, name)]
     for y in range(8, t.h - 8, 8):
         for x in range(8, t.w - 8, 8):
             tile = (x, y)
             if frontier:
-                d = territory.frontier_distance(world, name, tile)
+                d = min((max(abs(x - cx), abs(y - cy)) for cx, cy in mine_cc), default=10**6)
                 if d > 70:  # nocards: expand outward from any settlement; wares, food and free ground are the real limits
                     continue
             else:
@@ -405,6 +409,8 @@ def _find_expansion_site(world: Any, name: str, mcv: dict | None, bad: list | No
             return tile  # only asked whether a site exists
         if find_path(world, start, tile, limit=600, avoid=set(), max_nodes=300_000, loco="heavywheeled") is not None:
             return tile
+    if frontier and mcv is None:
+        world.__dict__.setdefault("_ai_nosite", {})[name] = now
     return None
 
 

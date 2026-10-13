@@ -142,7 +142,7 @@ class HybridWorld:
         self.path_searches = 0
         self.join_searches = 0
         self.carrier_respawn: dict[str, int] = {}  # road id -> ms until a new carrier walks out (logistics.carrier_quantum)
-        self.cc_ids: dict[str, None] = {}  # warehouses = command centres, in creation order (a dict, not a set: string hashes are salted per process and would make runs differ)
+        self.cc_ids: dict[str, None] = territory.CcDict()  # warehouses = command centres, in creation order (a dict, not a set: string hashes are salted per process and would make runs differ)
         self.cc_buffer = territory.BUFFER  # extra tiles between two command centres' build areas
         self.faction_info: dict[str, dict[str, str]] = {}
         self.controlled_faction = ""
