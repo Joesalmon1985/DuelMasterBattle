@@ -116,7 +116,8 @@ def deal(world: Any, era: int) -> None:
     st.update(era=era, round=-1, open_ms=_now(world), ring=ring, packs=packs, chosen={f: False for f in ring}, reserve=reserve, bonus={})
     st["phases"] += 1
     st["duplicated_cards"] += dup
-    world.events.append({"kind": "draft_phase", "era": tech.ERAS[era], "ring": list(ring), "pack_sizes": {f: len(p) for f, p in packs.items()}, "reserve": len(reserve)})
+    world.events.append({"kind": "draft_phase", "era": tech.ERAS[era], "ring": list(ring), "pack_sizes": {f: len(p) for f, p in packs.items()}, "reserve": len(reserve),
+                         "dealt": sorted({c for p in packs.values() for c in p})})
     open_round(world)
 
 
