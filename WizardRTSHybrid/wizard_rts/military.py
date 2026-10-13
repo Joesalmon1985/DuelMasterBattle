@@ -400,6 +400,9 @@ def _build_grid(world: Any) -> None:
     world._grid = grid
 
 
+from wizard_rts.diplomacy import hostile_ids  # noqa: E402
+
+
 def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float, weapon: dict | None = None) -> dict | None:
     """Nearest enemy unit, or building if no unit, within radius (cells). Uses the per-scan grid."""
     grid = getattr(world, "_grid", None)
@@ -417,7 +420,7 @@ def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float, wea
             if cell is None:
                 continue
             for u in cell[0]:
-                if u["faction"] == faction or not u.get("alive", True) or (peace and u["faction"]):
+                if u["faction"] == faction or not u.get("alive", True) or (peace and u["faction"]) or (u["faction"] and not hostile_ids(world, faction, u["faction"])):
                     continue
                 if weapon is not None and not weapon_can_attack(world, faction, weapon, u):
                     continue
@@ -426,7 +429,7 @@ def _scan(world: Any, faction: str, pos: tuple[float, float], radius: float, wea
                     best_u = (d, u)
             if best_u is None:
                 for b in cell[1]:
-                    if b["faction"] == faction or int(b["hp"]) <= 0 or (peace and b["faction"]):
+                    if b["faction"] == faction or int(b["hp"]) <= 0 or (peace and b["faction"]) or (b["faction"] and not hostile_ids(world, faction, b["faction"])):
                         continue
                     if weapon is not None and not rules.can_hit(weapon, target_types(b)):
                         continue
@@ -547,6 +550,8 @@ def order_attack(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "no_target"}
     if unit["faction"] == building["faction"]:
         return {"status": "rejected", "reason": "friendly"}
+    if building["faction"] and not hostile_ids(world, unit["faction"], building["faction"]):
+        return {"status": "rejected", "reason": "not_at_war"}
     if not unit.get("weapon"):
         return {"status": "rejected", "reason": "no_weapon"}
     if int(building["hp"]) <= 0:

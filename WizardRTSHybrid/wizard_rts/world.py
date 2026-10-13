@@ -44,7 +44,7 @@ from wizard_rts import disruption, feed, history, nests, regions, settlements, s
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
-from wizard_rts import diagnostics, territory  # noqa: E402
+from wizard_rts import diagnostics, diplomacy, territory  # noqa: E402
 from wizard_rts.openra_damage import damage_versus, inflict_damage, warhead_damage  # noqa: E402
 
 WORLD_ID = "hybrid.world"
@@ -860,6 +860,7 @@ class HybridWorld:
             lifecycle_quantum(self)
             territory.deploy_quantum(self)
             tech.tech_quantum(self)
+            diplomacy.diplomacy_quantum(self)
             diagnostics.watch_quantum(self)
             if self.ai_enabled:
                 ai_quantum(self)

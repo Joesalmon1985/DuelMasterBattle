@@ -227,8 +227,15 @@ def pick_card(world: Any, name: str) -> str | None:
     st = world.tech.get(name)
     if not st or not st["offers"]:
         return None
+    neural = world.__dict__.get("neural_drafters", {}).get(name)
+    if neural is not None:  # plan v2 9.2 module swap: a learned scorer drafts for this faction, everything else stays heuristic
+        return neural.pick(world, name, list(st["offers"]))
     scored = sorted(((score_card(world, name, cid), cid) for cid in st["offers"]), key=lambda x: (-x[0][0], x[1]))
     (score, why), cid = scored[0]
+    if "draft_recorder" in world.__dict__:
+        from wizard_rts.learn import draft_module
+
+        draft_module.record(world, name, list(st["offers"]), cid)
     note(world, name, "draft %s (%s; %d offered)" % (cid.split(".")[-1], why, len(st["offers"])))
     world.events.append({"kind": "ai_draft_reason", "faction": name, "card": cid, "why": why, "score": round(score, 1),
                          "offered": len(st["offers"])})

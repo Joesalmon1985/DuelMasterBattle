@@ -18,7 +18,7 @@ import zlib
 from typing import Any
 
 from wizard_rts import construction as con
-from wizard_rts import tech, territory
+from wizard_rts import diplomacy, tech, territory
 
 ROAD_LIMIT = 45  # a site more than this far from its command centre by road is not worth a wide failed search
 DECIDE_EVERY = 50  # quanta (5 s) between decisions per faction
@@ -742,7 +742,7 @@ def _known_targets(world: Any, name: str) -> list[dict]:
     pts = _own_points(world, name)
     out = []
     for b in world.buildings.values():
-        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0:
+        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0 or not diplomacy.hostile(world, name, b["faction_name"]):
             continue
         if b["id"] not in known:
             if b["kind"] == "warehouse" and not b.get("outpost"):
@@ -935,7 +935,7 @@ def _send(world: Any, units: list[dict], target: dict) -> None:
 def _nearest_enemy_unit(world: Any, name: str, pos: tuple[int, int], radius: float) -> dict | None:
     best = None
     for u in world.units.values():
-        if u["faction_name"] == name or not u.get("alive", True):
+        if u["faction_name"] == name or not u.get("alive", True) or not diplomacy.hostile(world, name, u["faction_name"]):
             continue
         d = math.hypot(u["tx"] - pos[0], u["ty"] - pos[1])
         if d <= radius and (best is None or d < best[0]):
