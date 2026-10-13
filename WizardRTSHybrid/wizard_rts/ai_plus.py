@@ -36,6 +36,12 @@ MAX_CC_BY_ERA = (3, 4, 5, 6)
 ARMY_CAP_BY_ERA = (10, 20, 28, 34)
 SQUAD_BY_ERA = (5, 7, 9, 11)
 ATTACK_RATIO = 1.4  # our squad strength over the defenders' near the target
+
+
+def attack_ratio(world: Any) -> float:
+    """`world.attack_ratio` overrides it (the era study); the v2 modes (nocards, cards v2) attack at parity, the older modes keep 1.4."""
+    r = getattr(world, "attack_ratio", None)
+    return float(r) if r else (1.0 if tech.foundation_on(world) else ATTACK_RATIO)
 RETREAT_RATIO = 0.6
 ATTACK_AFTER_MS = 10 * 60_000
 WARE_WEIGHT = {"iron": 3.0, "gold": 5.0, "coal": 1.5, "ration": 1.5, "plank": 1.0, "log": 0.5, "granite": 0.8, "ax": 2.5}
@@ -859,18 +865,18 @@ def _target_value(world: Any, name: str, b: dict, centre: tuple[float, float], p
             return -1.0
         if policy == "coop":
             defence = force_near(world, (b["tx"], b["ty"]), 9.0, name, True)
-            if power < ATTACK_RATIO * defence:
+            if power < attack_ratio(world) * defence:
                 return -1.0
             return (12.0 + 8.0 * int(b.get("nest_cubes", 1))) * (1.0 + 2.0 * diplomacy.pressure(world)) / (1.0 + d / 40.0)
         defence = force_near(world, (b["tx"], b["ty"]), 9.0, name, True)
-        if power < ATTACK_RATIO * defence:
+        if power < attack_ratio(world) * defence:
             return -1.0
         return (12.0 + 8.0 * int(b.get("nest_cubes", 1))) / (1.0 + d / 40.0)
     value = 30.0 if b.get("command_center") and b.get("outpost") else (22.0 if b.get("command_center") else 8.0)
     if b["kind"] in ("barracks", "vehicle_factory", "war_lodge", "mdy:ground_factory"):
         value = max(value, 14.0)
     defence = force_near(world, (b["tx"], b["ty"]), 12.0, name, True)
-    if power < ATTACK_RATIO * defence:
+    if power < attack_ratio(world) * defence:
         return -1.0  # not with this squad
     return value / (1.0 + d / 40.0) / (1.0 + defence / max(power, 1.0))
 
