@@ -394,3 +394,13 @@ def test_chronosphere_moves_units_and_returns_them():
     assert abs(u["tx"] - dest[0]) <= 3
     run(w, 25)
     assert abs(u["tx"] - a[0]) <= 3
+
+
+@pytest.mark.parametrize("actor", ["pbox", "hbox"])
+def test_a_pillbox_shoots_an_enemy_soldier_in_range(actor):
+    w = world()
+    pb = building(w, actor)
+    foe = enemy(w, "openra.e1", (pb["tx"] + 3, pb["ty"]), hp=10**6)
+    hp0 = foe["hp"]
+    run(w, 6)
+    assert foe["hp"] < hp0
