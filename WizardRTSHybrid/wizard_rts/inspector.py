@@ -28,6 +28,10 @@ def art_key(entity: str) -> str:
     """The art catalogue id that draws an entity (a building's definition, a unit recipe's definition)."""
     if entity.startswith("unit:"):
         kind = entity[5:]
+        from wizard_rts.industry import registry as mdy
+
+        if mdy.ground_unit(kind):
+            return str(mdy.ground_unit(kind)["definition"])
         for recipes in con.RECIPES.values():
             if kind in recipes:
                 return str(recipes[kind].get("definition", ""))
@@ -38,6 +42,8 @@ def art_key(entity: str) -> str:
 
 def art_status(entity: str) -> dict[str, Any]:
     key = art_key(entity)
+    if key.startswith("mindustry.") and key.count(".") == 1:  # the art catalogue files Mindustry pictures under block. / unit.
+        key = "mindustry.%s.%s" % ("unit" if entity.startswith("unit:") else "block", key.split(".", 1)[1].replace("-", "_"))
     item = _art().get(key)
     if item is None:
         return {"key": key, "status": "missing"}

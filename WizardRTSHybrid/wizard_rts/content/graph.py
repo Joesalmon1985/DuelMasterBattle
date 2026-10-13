@@ -31,6 +31,13 @@ UNIT_ERA = {
 }
 
 
+MDY_ERA = {"mdy:solar_panel_large": 3, "mdy:pneumatic_drill": 3, "mdy:silicon_smelter": 3, "mdy:graphite_press": 2, "mdy:battery": 3, "mdy:ground_factory": 3}
+MDY_UNITS = {"dagger": 3, "crawler": 3, "nova": 3}
+# hand-written pairs (an input-output chain or a producer with its first product), reviewed once; every other Mindustry entity is a single card
+MDY_PAIRS = [("mdy:mechanical_drill", "mdy:conveyor"), ("mdy:combustion_generator", "mdy:power_node"), ("mdy:solar_panel", "mdy:battery"),
+             ("mdy:graphite_press", "mdy:silicon_smelter"), ("mdy:ground_factory", "unit:dagger")]
+
+
 def _h(name: str) -> int:
     return zlib.crc32(name.encode())
 
@@ -62,6 +69,16 @@ def entities() -> dict[str, dict[str, Any]]:
             ws = wl_defs.spec_for_kind(kind)
             out[kind]["inputs"] = sorted(ws["inputs"]) if ws else []
             out[kind]["outputs"] = list(ws["outputs"]) if ws else []
+    from wizard_rts.industry import registry as mdy
+
+    for kind in mdy.kinds():  # the Mindustry slice that is functional today (plan v2 P9 and P11 grow this)
+        b = mdy.build_spec(kind)
+        out[kind] = {"id": kind, "type": "building", "game": "mindustry", "tribe": "", "label": b["label"], "era": MDY_ERA.get(kind, 2), "cost": dict(b["cost"]),
+                     "foundation": False, "functional": True}
+    for unit, era in MDY_UNITS.items():
+        u = mdy.ground_unit(unit)
+        out["unit:" + unit] = {"id": "unit:" + unit, "type": "unit", "game": "mindustry", "tribe": "", "label": u["label"], "era": era, "cost": {},
+                               "producer": "mdy:ground_factory", "foundation": False, "functional": True, "definition": u["definition"]}
     for building, recipes in sorted(con.RECIPES.items()):
         for unit, rec in sorted(recipes.items()):
             out["unit:" + unit] = {"id": "unit:" + unit, "type": "unit", "game": "openra" if str(rec.get("definition", "")).startswith("openra.") else "hybrid",
@@ -107,6 +124,16 @@ def generated_cards() -> dict[str, dict[str, Any]]:
                 taken.add(partner)
             label = ents[k]["label"] + (f" + {ents[partner]['label']}" if partner else "")
             cards[PREFIX + k[3:]] = _card(k[3:], f"{label} ({tribe})", 0, group, "A Widelands production chain for the %s." % tribe)
+    # Mindustry: the hand-written pairs, then everything left alone
+    used_m: set[str] = set()
+    for a, b in MDY_PAIRS:
+        if a in ents and b in ents:
+            cards[PREFIX + a.replace(":", "_")] = _card(a.replace(":", "_"), f"{ents[a]['label']} + {ents[b]['label']}", max(ents[a]["era"], ents[b]["era"]), [a, b], "A Mindustry chain.")
+            used_m.update((a, b))
+    for k, e in sorted(ents.items()):
+        if e["game"] == "mindustry" and k not in used_m:
+            cards[PREFIX + k.replace(":", "_")] = _card(k.replace(":", "_"), e["label"], e["era"], [k], "A Mindustry %s." % e["type"])
+            used_m.add(k)
     # hybrid / OpenRA buildings with their first unit, then single units
     unit_by_building: dict[str, list[str]] = {}
     for u, e in ents.items():
@@ -114,7 +141,7 @@ def generated_cards() -> dict[str, dict[str, Any]]:
             unit_by_building.setdefault(e["producer"], []).append(u)
     used_units: set[str] = set()
     for k, e in sorted(ents.items()):
-        if e["type"] != "building" or k.startswith("wl:") or e["foundation"]:
+        if e["type"] != "building" or k.startswith(("wl:", "mdy:")) or e["foundation"]:
             continue
         units = [u for u in unit_by_building.get(k, []) if not ents[u]["foundation"]]
         group = [k] + units[:1]
@@ -122,7 +149,7 @@ def generated_cards() -> dict[str, dict[str, Any]]:
         cards[PREFIX + k] = _card(k, e["label"] + (f" + {ents[units[0]]['label']}" if units else ""), max([e["era"]] + [ents[u]["era"] for u in units[:1]]), group,
                                   "A %s" % e["label"].lower())
     for u, e in sorted(ents.items()):
-        if e["type"] == "unit" and u not in used_units and not e["foundation"]:
+        if e["type"] == "unit" and u not in used_units and not e["foundation"] and e["game"] != "mindustry":
             cards[PREFIX + u.replace(":", "_")] = _card(u.replace(":", "_"), e["label"], e["era"], [u], "Unlocks the %s." % e["label"].lower())
     return cards
 
