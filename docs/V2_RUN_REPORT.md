@@ -11,7 +11,7 @@ Branch `work/ubuntu-autonomous-v2` (never merged into `main`). Live state: `docs
 | Starting commit | `11b70b24f4ee06db4aac41571394714e87061b2d` (`feature/hybrid-playtest-fixes-v03`) |
 | Ending commit | @END_SHA@ (`git log --oneline 11b70b2..HEAD` lists every step with its time) |
 | Active development time | the whole interactive session above, in which the agent was working or waiting on its own jobs |
-| Independent compute time | @COMPUTE@ (supervised background jobs, listed in section 9; they ran concurrently on 4 threads, so wall time and CPU time differ, and many of them were slowed by sharing the machine with each other and with the test suite) |
+| Independent compute time | about 13 supervised job-hours (single-core game time 10.6 h; the jobs overlapped on the 4 threads) plus about 3 hours of foreground tests and probes (supervised background jobs, listed in section 9; they ran concurrently on 4 threads, so wall time and CPU time differ, and many of them were slowed by sharing the machine with each other and with the test suite) |
 
 Honest limits: the Windows PC was not available (hardware probe, `.ps1` supervisor wrapper and cross-OS state-hash test are written but **untested on Windows**); no PyTorch/Numba/PyPy was installed (CPU-only NumPy training; Q6 default says add them once approved, not needed for what was done).
 
@@ -38,11 +38,11 @@ Honest limits: the Windows PC was not available (hardware probe, `.ps1` supervis
 | --- | --- | --- |
 | 120-minute standard game, six plus AIs | late-game baseline hashes | 695 s wall = 10.4x realtime |
 | no-card civilisation, seeds 507/11/23, 120 min | P2 | `docs/evidence/p2_nocards/summary.md` |
-| @NOCARDS_ACC@ | P2 acceptance, 10 seeds | @NOCARDS_RESULT@ |
+| no-card civilisation, 10 seeds (101-110), 120 min, six plus AIs | P2 acceptance, 10 seeds | 0 validation failures in 10 games; Red, Yellow 10/10 and Green 9/10 seeds found 3+ settlements, **Blue only 2/10** (hemmed in by rivals' separation zones; before a fix its founders were also killed by a nest on their road): `docs/evidence/p2_nocards/acceptance_10seeds.md` |
 | draft war tournament, seeds 507/11, 90 min, mirrored plus/baseline | P3 | `docs/evidence/p3_draft/summary.md` (plus VP 6.83 vs baseline 5.92, 0 validation failures) |
-| era-bar study (8,+2) and (10,+3), seeds 507/11, 100 min | P12 (first pass) | @ERA@ |
+| era-bar study (8,+2) and (10,+3), seeds 507/11, 100 min | P12 (first pass) | bar 8 ends the first era at minute 24-33 in every game, bar 10 is never reached (stall guard at 75), no game reached era 2 by VP: `docs/evidence/p12_era_study/summary.md` |
 | catastrophe study, 24 games, old cards and v2 cards | P10 | `docs/evidence/p10_catastrophe/summary.md` |
-| 180-minute all-systems stability run | long run | @STABILITY@ |
+| 180-minute all-systems stability run | long run | no invariant failure, memory flat at 64 MB, reached Modern at minute ~150 (stall guards): `docs/evidence/stability/summary.md` |
 | imitation data: 36 games x 45 min; module swap: 24 games x 45 min | P14 | `docs/evidence/training/` |
 
 ## 5. Performance (measured, hash-equal throughout)
