@@ -67,3 +67,16 @@ These are the only open items. Each has a recommended default; an implementation
 ## 4. Proposed changes pending owner review (12 October 2026)
 
 `PLAN_ECONOMY_TECH_ERA_PROGRAMME.md` proposes superseding D04's provisional threshold, S12/S13/S14 (split wording, world-summed VP, 4-minute independent offers) and removing the command-centre caps in the AIs. **Nothing here is approved.** The owner's answers to Q1-Q15 in section 10 of that plan will be recorded as new D-rows; until then the rules above stay in force.
+
+
+## 5. Decisions of 13 October 2026 (owner answers to `PLAN_MECHANICS_COMPLETION_V4.md`)
+
+| ID | Decision | Detail |
+|---|---|---|
+| D26 | Card rework | Every card unlocks 1-4 buildings or units. Cards are sorted into four eras of exactly 42 cards each: Prehistoric, Historic, Modern, Dystopian (168 in total). Widelands production is split between Prehistoric and the Historic metal age; Mindustry military buildings (turrets, walls, factories) are Dystopian. After seven cards a faction can have every capability the era requires; across the world every card is dealt, so all technology exists somewhere. Supersedes the 1-2 entity cards of S05/S06/S13/S14 (stale). |
+| D27 | Fake buildings excluded | The 11 OpenRA decoy buildings (`atef domf facf fapw fixf fpwr mslf pdof syrf tenf weaf`) are excluded: they only matter when an enemy cannot see the player and would need a disguise system. Their Mk2 variants are not generated either. |
+| D28 | Faction floor | The world keeps at least six active factions. Below six for five game minutes the faction with the most settlements splits off a successor without unrest (two settlements more than 24 tiles apart suffice). Voluntary unrest splits stop at eight factions. A collapsed faction's unpicked pack returns to the reserve deck. |
+| D29 | Bare start | Factions start with the foundation only (feed themselves, found settlements) and develop by what they draft first. The dealer guarantees each seat's first pack holds the era's essential cards it can use. |
+| D30 | Dystopia only | The fifth era (Utopia) is deferred. |
+| D31 | Wares feed everything | Unused wares feed OpenRA unit recipes and Mindustry construction costs (phase P3). |
+| D32 | Per-faction visibility | A minimal per-faction visibility layer is added (phase P4). |

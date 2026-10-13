@@ -370,6 +370,6 @@ def on_collapse(world: Any, faction: str) -> None:
     st = state(world)
     if faction in st["ring"]:
         st["ring"].remove(faction)
-        st["packs"].pop(faction, None)
+        st["reserve"].extend(c for c in st["packs"].pop(faction, []) if c not in st["reserve"])  # the unpicked cards go back to the deck, not out of the world
         st["chosen"].pop(faction, None)
         world.tech.get(faction, {})["offers"] = []

@@ -100,7 +100,11 @@ def _load() -> dict[str, Any]:
     data["actors"].update(actors)
     data["weapons"].update(weapons)
     # Modern "enhanced" variants of every Red Alert combat unit, made by the industrial assembly lines (industry/hybrid.py): +40 % health, +25 % damage, +10 % speed
+    from wizard_rts.openra_content import EXCLUDED_UNIT
+
     for key, a in list(data["actors"].items()):
+        if key in EXCLUDED_UNIT:
+            continue  # a mission-only or disabled actor gets no enhanced variant either
         if a.get("queue") in ("Infantry", "Vehicle", "Ship", "Aircraft") and a.get("armaments") and a.get("mobile") and not key.startswith(("mk2_", "mdy_", "dmb_", "wl_")):
             m = dict(a)
             m["name"] = a["name"] + " Mk2"

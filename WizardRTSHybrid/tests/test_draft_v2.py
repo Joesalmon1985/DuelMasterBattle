@@ -265,3 +265,18 @@ def test_thousand_phases_conserve_cards_and_never_stall(batch):
             got = len([c for c in w.tech[f]["cards"] if c in set(dealt)])
             # a ring of up to six has no copies, so every seat picks every round; with copies a seat can be passed a last card it already holds
             assert got == draft.ROUNDS if n <= 6 else draft.ROUNDS - 1 <= got <= draft.ROUNDS
+
+
+def test_baseline_ai_picks_a_usable_card_that_gives_a_missing_essential():
+    from wizard_rts.content import cards as C
+
+    w = Stub(11, 6, 0, __import__("random").Random(11))
+    pool = tech.pool(w)
+    f = next(iter(w.faction_info))
+    tribe = w.faction_info[f].get("tribe", "")
+    offers = sorted(pool)[:0] + [c for c, v in pool.items() if v["era"] == 0][:20]
+    w.tech[f]["offers"] = offers
+    pick = tech.ai_pick(w, f)
+    assert pick in offers and C.usable_by(pool[pick], tribe)
+    if any(C.usable_by(pool[c], tribe) and "mil_pre" in C.card_tags(pool[c]) for c in offers):
+        assert "mil_pre" in C.card_tags(pool[pick])
