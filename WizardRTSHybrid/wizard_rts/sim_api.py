@@ -156,15 +156,15 @@ class HybridEnv:
             if op == "queue":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.queue(str(action["building"]), str(action["unit"])))
+                return _slim(w.queue(str(action["building"]), str(action["unit"]), faction=faction))
             if op == "cancel":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.cancel(str(action["building"]), int(action["index"])))
+                return _slim(w.cancel(str(action["building"]), int(action["index"]), faction=faction))
             if op == "demolish":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.demolish(str(action["building"])))
+                return _slim(w.demolish(str(action["building"]), faction=faction))
             if op == "enhance":  # Widelands in-place upgrade (additive to the action space)
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
@@ -188,22 +188,22 @@ class HybridEnv:
             if op == "rally":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.rally(str(action["building"]), int(action["tx"]), int(action["ty"])))
+                return _slim(w.rally(str(action["building"]), int(action["tx"]), int(action["ty"]), faction=faction))
             units = [u for u in action.get("units", []) if self._owns_unit(faction, u)]
             if not units and op in ("move", "stop"):
                 return {"status": "rejected", "reason": "no_units"}
             if op == "move":
-                return _slim(w.move(units, int(action["tx"]), int(action["ty"]), bool(action.get("attack_move", False))))
+                return _slim(w.move(units, int(action["tx"]), int(action["ty"]), bool(action.get("attack_move", False)), faction=faction))
             if op == "stop":
-                return _slim(w.stop(units))
+                return _slim(w.stop(units, faction=faction))
             if op == "deploy":  # an MCV becomes a command centre where it stands (same command as God Mode's Deploy button)
                 if not self._owns_unit(faction, action["unit"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.deploy(str(action["unit"])))
+                return _slim(w.deploy(str(action["unit"]), faction=faction))
             if op == "order":
                 if not self._owns_unit(faction, action["unit"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.order(str(action["unit"]), str(action["target"])))
+                return _slim(w.order(str(action["unit"]), str(action["target"]), faction=faction))
         except (KeyError, TypeError, ValueError) as exc:
             return {"status": "rejected", "reason": f"malformed:{type(exc).__name__}"}
         return {"status": "rejected", "reason": "unhandled"}
