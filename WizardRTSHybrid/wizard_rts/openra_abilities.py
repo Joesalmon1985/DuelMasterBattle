@@ -723,6 +723,25 @@ def _power_events_step(world: Any) -> None:
 
 # ------------------------------------------------------------------ the quantum
 
+def _crush_step(world: Any) -> None:
+    """Tracked and heavy wheeled vehicles run over hostile infantry on the tile they enter (OpenRA Mobile.Crushes / Crushable)."""
+    from wizard_rts import diplomacy, military
+
+    crushers = [u for u in _live_units(world) if u.get("loco") in ("tracked", "heavytracked", "heavywheeled") and u.get("path") is not None
+                and "infantry" in rules.locomotor(u["loco"]).get("crushes", [])]
+    if not crushers:
+        return
+    foot: dict[tuple[int, int], list[dict]] = {}
+    for u in _live_units(world):
+        if is_infantry(u):
+            foot.setdefault((int(u["tx"]), int(u["ty"])), []).append(u)
+    for c in crushers:
+        for v in foot.get((int(c["tx"]), int(c["ty"])), []):
+            if v.get("alive", True) and v["faction_name"] != c["faction_name"] and diplomacy.hostile(world, c["faction_name"], v["faction_name"]):
+                world.events.append({"kind": "crushed", "unit": v["id"], "by": c["id"]})
+                military.kill_unit(world, v, c["id"])
+
+
 def ability_quantum(world: Any) -> None:
     _gap_cache(world)
     _carry_passengers(world)
@@ -745,6 +764,7 @@ def ability_quantum(world: Any) -> None:
         for b in world.buildings.values():
             if b["kind"] in ("fix", "hpad", "afld") and b.get("operational") and not b.get("constructing") and int(b.get("hp", 1)) > 0:
                 _depot_step(world, b, 500)
+    _crush_step(world)
     _mines_step(world)
     _jam_step(world)
     _power_events_step(world)

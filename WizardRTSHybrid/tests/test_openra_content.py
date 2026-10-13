@@ -473,3 +473,20 @@ def test_artillery_ordered_onto_a_target_inside_its_minimum_range_backs_off_then
     d1 = ((u["tx"] - b["tx"]) ** 2 + (u["ty"] - b["ty"]) ** 2) ** 0.5
     assert d0 < 4.0 <= d1 + 0.01
     assert b["hp"] < start
+
+
+def test_a_tracked_vehicle_crushes_hostile_infantry_on_its_tile_but_not_friends():
+    w = world("test_showcase")
+    h = home(w, "Red")
+    tank = next(u for u in w.units.values() if u["faction_name"] == "Red")
+    tank["definition"], tank["loco"] = "openra.3tnk", "tracked"
+    tank["tx"], tank["ty"] = h["tx"] + 6, h["ty"] + 6
+    foes = [u for u in w.units.values() if u["faction_name"] == "Blue"][:1]
+    mates = [u for u in w.units.values() if u["faction_name"] == "Red" and u is not tank][:1]
+    for u, lab in ((foes[0], "foe"), (mates[0], "mate")):
+        u["definition"], u["loco"] = "openra.e1", "foot"
+        u["tx"], u["ty"] = tank["tx"], tank["ty"]
+    w.diplomacy_state = getattr(w, "diplomacy_state", None)
+    run(w, 1)
+    assert not foes[0].get("alive", True) or foes[0]["hp"] <= 0
+    assert mates[0].get("alive", True) and mates[0]["hp"] > 0
