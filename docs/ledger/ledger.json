@@ -18,7 +18,10 @@
     "hash_gate.py (record/check, per-minute hashes)",
     "autorun/supervisor.py (restart back-off, stall kill, same-error stop, STOP file, disk guard) + 4 tests",
     "smoke_gate.py",
-    "tournament uses spawn context (Windows-safe)"
+    "tournament uses spawn context (Windows-safe)",
+    "tournament resume from per-game checkpoints (+test)",
+    "Windows sleep-prevention supervisor wrapper (untested)",
+    "asset_ledger.csv generator, contract audit, catalogue audit"
    ],
    "todo": [
     "Windows sleep-prevention wrapper (.ps1) untested",
@@ -33,9 +36,12 @@
     "A* inner loop",
     "optional C A* kernel with identical-path test (ctypes, python fallback)",
     "_water_near and nest spawn tile",
-    "hash-equal at 5/15/50 min (3 seeds) and 120 min recorded"
+    "hash-equal at 5/15/50 min (3 seeds) and 120 min recorded",
+    "CcDict command-centre cache",
+    "frontier site search without per-tile scans, 1-minute no-site memo",
+    "nest spawn ring generation"
    ],
-   "measured": "seed 507 50 min: 6.6x -> 17.8x realtime (baseline recorded under CPU contention); 120 min game 695 s wall = 10.4x average",
+   "measured": "50-min seed 507: 6.6x -> ~18x realtime (baseline recorded under CPU contention); 90-min nocards game warm-up 848 s -> 439 s; profiled 2 game minutes at minute 90 in 42 s; 120-min game 695 s",
    "todo": [
     "territory cache",
     "spatial hash _scan",
@@ -65,7 +71,11 @@
     "wizard_rts/draft.py: era-start 7-round ring, 6 min rounds, default picks, alternating direction, leftover rule at 8 VP, splits/collapse, reserve-deck bonus hook",
     "era end on current VP with 60 s debounce and rising bar (leader VP + 4) to stop cascades",
     "content graph: 196 entities, 121 generated cards (94 single, 27 pair), exact unlocks, tribe-balanced dealing, static checks",
-    "14+6 tests incl. 1000-phase conservation property test"
+    "14+6 tests incl. 1000-phase conservation property test",
+    "paper + scriptorium + bonus hand from warehouse paper (3 tests)",
+    "Mindustry slice (11 buildings, 3 units) and 6 calibrated new units in the content graph: 137 cards",
+    "AI card_step: cards-used rate 35% -> 67%",
+    "caravans are foundation (trade from the start)"
    ],
    "todo": [
     "paper + scriptorium + bonus hook content",
@@ -80,7 +90,10 @@
    "done": [
     "pure-Python MIX decryption (mix_crypto.py)",
     "e2 e3 shok ttnk ctnk real art",
-    "facing fix + Godot facing proof test"
+    "facing fix + Godot facing proof test",
+    "Widelands building state sheets (80 working, 50 build, 26 empty, 16 unoccupied) + client state selection + Godot proof",
+    "generic RA roster importer: 24 more units (ships, aircraft, infantry specials), 0 alias placeholders among units",
+    "asset contract audit numbers"
    ],
    "todo": [
     "layered atlas + turret layer",
@@ -93,7 +106,8 @@
   "P5": {
    "status": "started",
    "done": [
-    "inspector.py views: catalogue (art status), factions (production counters), draft (leftover prediction), catastrophe; server op 'inspect' (God only)"
+    "inspector.py views: catalogue (art status), factions (production counters), draft (leftover prediction), catastrophe; server op 'inspect' (God only)",
+    "Godot inspector panel in God Mode (real art, facing/state previews, missing-art filter), server-free + headed proofs with screenshots"
    ],
    "todo": [
     "Godot panel + headed tests"
@@ -102,15 +116,46 @@
   "P10": {
    "status": "started",
    "done": [
-    "per-era and cumulative loss counters + collective_loss flag"
+    "per-era and cumulative loss counters + collective_loss flag",
+    "diplomacy relations + offers + cooperative rule (off by default)",
+    "nest policies ignore/selfish/coop",
+    "clinic building + cure command",
+    "catastrophe study runner; v1 result: at cadence scale 0.12 every policy loses collectively at ~42 min (old cards, no clinics)"
    ],
    "todo": [
     "relations/diplomacy",
     "hospital/containment chain",
     "calibration study"
    ]
+  },
+  "P7": {
+   "status": "started",
+   "done": [
+    "calibrated recipes (wizard_rts/calibrate.py) for flamethrower, commando, attack dog, destroyer, cruiser, missile sub; card-only",
+    "importer art for 24 more RA units"
+   ],
+   "todo": [
+    "aircraft mechanics",
+    "transports/capture/repair/support powers",
+    "remaining RA buildings (7 of 43 have art)",
+    "independent turret layers (needs sim turret angle)"
+   ]
+  },
+  "P14": {
+   "status": "started",
+   "done": [
+    "wizard_rts/learn/draft_module.py (features, scorer, recorder, NeuralDrafter hook)",
+    "imitation of the heuristic drafter: held-out top-1 88.6% on 8 unseen games (random 25%, first-offer 33%), 3,649 parameters",
+    "module-swap evaluation script (running)"
+   ],
+   "todo": [
+    "module-swap result",
+    "economy/military/trade/catastrophe/industrialisation modules",
+    "coordinator",
+    "RL stages (needs faster sim and Tier B)"
+   ]
   }
  },
  "open_questions": "docs/ledger/QUESTIONS.md",
- "next_action": "Finish baseline pytest, commit, continue P1 caches under hash_gate"
+ "next_action": "Read the module-swap and catastrophe v2 study results in ~/dmb_runs/{draft_swap,cat_study3_v2}; run the full suite; era study (P12) with --era-vp-step 2/4; content report; final handover"
 }

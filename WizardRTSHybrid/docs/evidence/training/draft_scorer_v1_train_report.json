@@ -1,0 +1,21 @@
+{
+ "games": 32,
+ "train_picks": 1211,
+ "heldout_picks": 403,
+ "random_top1": 0.253,
+ "first_offer_top1": 0.325,
+ "train_top1": 0.96,
+ "heldout_top1": 0.886,
+ "loss_first": 0.608,
+ "loss_last": 0.122,
+ "params": 3649,
+ "hidden": [
+  48,
+  24
+ ],
+ "epochs": 60,
+ "heldout_top1_era0": 0.912,
+ "heldout_n_era0": 283,
+ "heldout_top1_era1": 0.825,
+ "heldout_n_era1": 120
+}
