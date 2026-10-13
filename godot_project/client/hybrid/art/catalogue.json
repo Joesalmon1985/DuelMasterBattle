@@ -40294,6 +40294,28 @@
    "fps": 10
   },
   {
+   "id": "widelands.empire_ferry_yard",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/empire/ferry_yard/unoccupied",
+   "source_note": "widelands.empire_ferry_yard idle: first frame of its unoccupied sheet (fill_idle)",
+   "godot": "res://client/hybrid/art/widelands/gen/empire_ferry_yard_unoccupied.png",
+   "mode": "sheet",
+   "width": 96,
+   "height": 76,
+   "columns": 1,
+   "rows": 1,
+   "frames": 1,
+   "hotspot": [
+    56,
+    58
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "idle"
+  },
+  {
    "id": "widelands.empire_ferry_yard.build",
    "status": "imported",
    "game": "widelands",
@@ -49996,6 +50018,28 @@
    "scale": 2,
    "fps": 10,
    "state": "working"
+  },
+  {
+   "id": "widelands.frisians_clay_pit",
+   "status": "imported",
+   "game": "widelands",
+   "license": "Widelands artwork, GPL-2.0-or-later (data/tribes). Copied from the installed Widelands package; Widelands copyright holders credited in its data/txts/AUTHORS.",
+   "source": "tribes/buildings/productionsites/frisians/clay_pit/working",
+   "source_note": "widelands.frisians_clay_pit idle: first frame of its working sheet (fill_idle)",
+   "godot": "res://client/hybrid/art/widelands/gen/frisians_clay_pit_working.png",
+   "mode": "sheet",
+   "width": 370,
+   "height": 168,
+   "columns": 5,
+   "rows": 2,
+   "frames": 1,
+   "hotspot": [
+    40,
+    68
+   ],
+   "scale": 2,
+   "fps": 0,
+   "state": "idle"
   },
   {
    "id": "widelands.frisians_clay_pit.build",

@@ -1846,7 +1846,13 @@
      "type": "building",
      "art": {
       "key": "widelands.empire_ferry_yard",
-      "status": "missing"
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1,
+      "parts": [],
+      "states": [],
+      "layers": false
      }
     }
    ]
@@ -2596,7 +2602,13 @@
      "type": "building",
      "art": {
       "key": "widelands.frisians_clay_pit",
-      "status": "missing"
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1,
+      "parts": [],
+      "states": [],
+      "layers": false
      }
     },
     {
@@ -12343,14 +12355,12 @@
   "wl:barbarians_port",
   "wl:barbarians_scouts_hut",
   "wl:barbarians_warehouse",
-  "wl:empire_ferry_yard",
   "wl:empire_market",
   "wl:empire_port",
   "wl:empire_scouts_house",
   "wl:empire_warehouse",
   "wl:frisians_aqua_farm",
   "wl:frisians_charcoal_burners_house",
-  "wl:frisians_clay_pit",
   "wl:frisians_dikers_house",
   "wl:frisians_ferry_yard",
   "wl:frisians_market",

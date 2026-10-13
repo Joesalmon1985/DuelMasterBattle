@@ -92,10 +92,10 @@ def test_overrides_are_labelled_adaptation_and_registry_keeps_source_cost():
     assert R.ware("copper") == "mdy.copper" and R.ware("coal") == "coal"  # coal is the shared Widelands ware
     for k in sorted(R._blocks()):  # the hand-tuned first slice is paid in Widelands goods only; the generic blocks (industry/blocks.py) need Mindustry wares for advanced parts
         s = R.block(k)
-        assert s["card"].startswith("dmb.card.") and s["definition"].startswith("mindustry.")
+        assert s["card"].startswith("dmb.card.") and s["definition"].startswith(("mindustry.", "dmb.industry."))
         assert all(g in ("plank", "granite", "iron", "log") for g in s["cost"]), k
     for k in R.kinds():
-        assert R.block(k)["definition"].startswith("mindustry.") and R.block(k)["cost"], k
+        assert R.block(k)["definition"].startswith(("mindustry.", "dmb.industry.")) and R.block(k)["cost"], k
 
 
 def test_unit_adaptation_scales_recorded():

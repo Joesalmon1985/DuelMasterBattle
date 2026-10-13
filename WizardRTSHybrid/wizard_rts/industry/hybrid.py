@@ -150,7 +150,7 @@ def ware_sources() -> dict[str, list[str]]:
     """Widelands ware -> the industrial block kinds that make it (drills for raw ore and stone, hybrid blocks for the rest)."""
     out: dict[str, list[str]] = {}
     for kind, s in specs().items():
-        for recipe in s["recipes"]:
+        for recipe in s.get("recipes", {}):
             out.setdefault(recipe, []).append(kind)
     out["granite"] = out.get("granite", []) + ["drill:stones"]
     out["iron_ore"] = ["drill:iron"]

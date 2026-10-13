@@ -29,6 +29,22 @@ def frames_of(base: Path, state: str) -> list[Path]:
     return sorted(p for p in base.glob(f"{state}_[0-9][0-9].png") if not p.stem.endswith("_pc"))
 
 
+def fill_idle(by_id: dict) -> int:
+    """Sites that only declare working/build/unoccupied sheets (ferry yard, clay pit...) get a still idle item: the first frame of their working (or unoccupied) sheet."""
+    n = 0
+    for key in sorted(by_id):
+        if not key.endswith(".working"):
+            continue
+        base = key[: -len(".working")]
+        if base in by_id:
+            continue
+        src = dict(by_id.get(base + ".unoccupied") or by_id[key])
+        src.update(id=base, state="idle", frames=1, fps=0, source_note=f"{base} idle: first frame of its {src.get('state', 'working')} sheet (fill_idle)")
+        by_id[base] = src
+        n += 1
+    return n
+
+
 def main() -> int:
     root = Path(sys.argv[1] if len(sys.argv) > 1 else "/usr/share/games/widelands/data")
     if not root.is_dir():
@@ -71,6 +87,7 @@ def main() -> int:
                 "width": im.width, "height": im.height, "columns": cols, "rows": rows, "frames": n, "hotspot": list(meta.get("hotspot") or idle.get("hotspot") or [0, 0]),
                 "scale": 2, "fps": int(meta.get("fps", 10)) if n > 1 else 0, "state": state}
             added += 1
+    fill_idle(by_id)
     cat["items"] = sorted(by_id.values(), key=lambda i: i["id"])
     CAT.write_text(json.dumps(cat, indent=1), encoding="utf-8")
     out = HYB / "docs" / "evidence" / "assets"

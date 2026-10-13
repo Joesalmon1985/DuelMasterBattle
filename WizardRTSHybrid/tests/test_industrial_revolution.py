@@ -36,8 +36,9 @@ def test_every_consumed_widelands_ware_has_an_industrial_source_or_a_written_rea
 
 def test_every_hybrid_industrial_block_and_recipe_is_data_complete():
     for kind, s in H.specs().items():
-        assert s["cost"] and s["recipes"] and s["role"] in ("crafter", "harvester")
-        for name, r in s["recipes"].items():
+        assert s["cost"] and s["role"] in ("crafter", "harvester", "unit_factory")
+        assert s.get("recipes") or "assembly" in kind  # assembly lines make units from Mk1 units, not wares
+        for name, r in s.get("recipes", {}).items():
             assert r["output"] and r["ticks"] > 0 and r.get("power", 0) >= 0, (kind, name)
 
 

@@ -47,7 +47,11 @@ func _run() -> void:
 		else:
 			ok = ok and String(building.get("id", "")) == base
 		var frames := int(working.get("frames", 1))
-		var moving := frames < 2 or _frame_diff(working, 0, 1) > 0
+		var moving := frames < 2  # a one-frame working sheet is a legitimate static state
+		for f in range(1, frames):
+			if moving:
+				break
+			moving = _frame_diff(working, 0, f) > 0  # some later frame differs from the first (frames 0 and 1 can be identical)
 		if not ok or not moving:
 			print("  FAIL ", sid, " selected=", ok, " frames=", frames, " frames_differ=", moving)
 			bad += 1
