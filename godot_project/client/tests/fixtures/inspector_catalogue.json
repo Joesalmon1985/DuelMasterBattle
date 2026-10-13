@@ -1120,27 +1120,6 @@
    ]
   },
   {
-   "id": "gen.clinic",
-   "name": "Clinic",
-   "era": "prehistoric",
-   "tribe": "",
-   "summary": "A clinic",
-   "entities": [
-    {
-     "id": "clinic",
-     "label": "Clinic",
-     "type": "building",
-     "art": {
-      "key": "dmb.clinic",
-      "status": "alias_placeholder",
-      "alias_of": "widelands.barbarians_tavern",
-      "mode": "sheet",
-      "facings": 1
-     }
-    }
-   ]
-  },
-  {
    "id": "gen.empire_armorsmithy",
    "name": "Armor Smithy (empire)",
    "era": "prehistoric",
@@ -2854,6 +2833,39 @@
    ]
   },
   {
+   "id": "gen.mdy_graphite_press",
+   "name": "Graphite press + Silicon smelter",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A Mindustry chain.",
+   "entities": [
+    {
+     "id": "mdy:graphite_press",
+     "label": "Graphite press",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.graphite_press",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "mdy:silicon_smelter",
+     "label": "Silicon smelter",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.silicon_smelter",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
    "id": "gen.mdy_mechanical_drill",
    "name": "Mechanical drill + Conveyor",
    "era": "modern",
@@ -2878,6 +2890,81 @@
      "type": "building",
      "art": {
       "key": "mindustry.block.conveyor",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_pneumatic_drill",
+   "name": "Pneumatic drill",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A Mindustry building.",
+   "entities": [
+    {
+     "id": "mdy:pneumatic_drill",
+     "label": "Pneumatic drill",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.pneumatic_drill",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_solar_panel",
+   "name": "Solar panel + Battery",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A Mindustry chain.",
+   "entities": [
+    {
+     "id": "mdy:solar_panel",
+     "label": "Solar panel",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.solar_panel",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    },
+    {
+     "id": "mdy:battery",
+     "label": "Battery",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.battery",
+      "status": "imported",
+      "alias_of": "",
+      "mode": "sheet",
+      "facings": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "gen.mdy_solar_panel_large",
+   "name": "Large solar panel",
+   "era": "modern",
+   "tribe": "",
+   "summary": "A Mindustry building.",
+   "entities": [
+    {
+     "id": "mdy:solar_panel_large",
+     "label": "Large solar panel",
+     "type": "building",
+     "art": {
+      "key": "mindustry.block.solar_panel_large",
       "status": "imported",
       "alias_of": "",
       "mode": "sheet",
@@ -3031,39 +3118,6 @@
    ]
   },
   {
-   "id": "gen.mdy_graphite_press",
-   "name": "Graphite press + Silicon smelter",
-   "era": "dystopian",
-   "tribe": "",
-   "summary": "A Mindustry chain.",
-   "entities": [
-    {
-     "id": "mdy:graphite_press",
-     "label": "Graphite press",
-     "type": "building",
-     "art": {
-      "key": "mindustry.block.graphite_press",
-      "status": "imported",
-      "alias_of": "",
-      "mode": "sheet",
-      "facings": 1
-     }
-    },
-    {
-     "id": "mdy:silicon_smelter",
-     "label": "Silicon smelter",
-     "type": "building",
-     "art": {
-      "key": "mindustry.block.silicon_smelter",
-      "status": "imported",
-      "alias_of": "",
-      "mode": "sheet",
-      "facings": 1
-     }
-    }
-   ]
-  },
-  {
    "id": "gen.mdy_ground_factory",
    "name": "Ground factory + Dagger",
    "era": "dystopian",
@@ -3088,81 +3142,6 @@
      "type": "unit",
      "art": {
       "key": "mindustry.unit.dagger",
-      "status": "imported",
-      "alias_of": "",
-      "mode": "sheet",
-      "facings": 1
-     }
-    }
-   ]
-  },
-  {
-   "id": "gen.mdy_pneumatic_drill",
-   "name": "Pneumatic drill",
-   "era": "dystopian",
-   "tribe": "",
-   "summary": "A Mindustry building.",
-   "entities": [
-    {
-     "id": "mdy:pneumatic_drill",
-     "label": "Pneumatic drill",
-     "type": "building",
-     "art": {
-      "key": "mindustry.block.pneumatic_drill",
-      "status": "imported",
-      "alias_of": "",
-      "mode": "sheet",
-      "facings": 1
-     }
-    }
-   ]
-  },
-  {
-   "id": "gen.mdy_solar_panel",
-   "name": "Solar panel + Battery",
-   "era": "dystopian",
-   "tribe": "",
-   "summary": "A Mindustry chain.",
-   "entities": [
-    {
-     "id": "mdy:solar_panel",
-     "label": "Solar panel",
-     "type": "building",
-     "art": {
-      "key": "mindustry.block.solar_panel",
-      "status": "imported",
-      "alias_of": "",
-      "mode": "sheet",
-      "facings": 1
-     }
-    },
-    {
-     "id": "mdy:battery",
-     "label": "Battery",
-     "type": "building",
-     "art": {
-      "key": "mindustry.block.battery",
-      "status": "imported",
-      "alias_of": "",
-      "mode": "sheet",
-      "facings": 1
-     }
-    }
-   ]
-  },
-  {
-   "id": "gen.mdy_solar_panel_large",
-   "name": "Large solar panel",
-   "era": "dystopian",
-   "tribe": "",
-   "summary": "A Mindustry building.",
-   "entities": [
-    {
-     "id": "mdy:solar_panel_large",
-     "label": "Large solar panel",
-     "type": "building",
-     "art": {
-      "key": "mindustry.block.solar_panel_large",
       "status": "imported",
       "alias_of": "",
       "mode": "sheet",
@@ -3277,9 +3256,8 @@
    ]
   }
  ],
- "count": 138,
+ "count": 137,
  "entities_without_real_art": [
-  "clinic",
   "naval_yard",
   "scriptorium",
   "sub_pen",
