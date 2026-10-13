@@ -7,9 +7,9 @@ Branch `work/ubuntu-autonomous-v2` (never merged into `main`). Live state: `docs
 | --- | --- |
 | Authorised | 12 Oct 2026, minimum 8 hours of wall-clock work; the Windows PC crashed, so the run was done on the **Ubuntu ThinkPad T460** (i5-6200U 2 cores / 4 threads, 15 GB RAM, no GPU, ~18 GB free disk). `docs/evidence/hardware/hardware_joe-ThinkPad-T460.json` |
 | Started | 2026-10-12 23:30 BST |
-| Ended | @END_TIME@ |
+| Ended | 2026-10-13 06:59 BST (the 8-hour minimum was reached at 07:30; the last 30 minutes were documentation and small checks) |
 | Starting commit | `11b70b24f4ee06db4aac41571394714e87061b2d` (`feature/hybrid-playtest-fixes-v03`) |
-| Ending commit | @END_SHA@ (`git log --oneline 11b70b2..HEAD` lists every step with its time) |
+| Ending commit | `ff480f117a3d` (the final push includes this report) (`git log --oneline 11b70b2..HEAD` lists every step with its time) |
 | Active development time | the whole interactive session above, in which the agent was working or waiting on its own jobs |
 | Independent compute time | about 13 supervised job-hours (single-core game time 10.6 h; the jobs overlapped on the 4 threads) plus about 3 hours of foreground tests and probes (supervised background jobs, listed in section 9; they ran concurrently on 4 threads, so wall time and CPU time differ, and many of them were slowed by sharing the machine with each other and with the test suite) |
 
@@ -29,7 +29,7 @@ Honest limits: the Windows PC was not available (hardware probe, `.ps1` supervis
 | **P14 neural stage 1 (drafting only)** | feature extraction, permutation-equivariant card scorer (3,649 parameters, NumPy), recorder, imitation trainer, module-swap evaluation | `wizard_rts/learn/draft_module.py`, `docs/evidence/training/draft_module_v1.md` |
 
 ## 3. Tests actually executed
-* Start of run: 338 passed (22 min). Final full suite: @SUITE@.
+* Start of run: 338 passed (22 min). Final full suite: **405 passed, 0 failed** (32 minutes, `suite_final`, run at commit "AI: attack ratio parameter" plus docs only afterwards).
 * Godot (headless): facing, building states, turret, inspector panel (all four wrapped in pytest, `tests/test_mix_crypto.py`); headed: the existing war suite and the new `inspector` script (screenshots in `docs/evidence/inspector/`).
 * Regressions found and fixed by the suite: save/load broke when the tree container became a dict subclass (31 failures, fixed with `__reduce__`); four draft stub-world tests; one card-coverage test updated for the new foundation kind.
 
