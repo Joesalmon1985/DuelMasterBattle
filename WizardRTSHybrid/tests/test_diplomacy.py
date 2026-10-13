@@ -155,3 +155,45 @@ def test_a_truce_opens_trade_after_recent_hostility():
     assert not trade.hostile(w, "Red", "Blue")
     diplomacy.break_treaty(w, "Red", "Blue")
     assert trade.hostile(w, "Red", "Blue")  # the earlier attack still counts once the war resumes
+
+
+def test_cooperative_aid_caravan_carries_rations_and_water_to_a_partners_clinic():
+    from wizard_rts import ai_plus, construction as con, regions, territory
+    from wizard_rts.economy import produce
+
+    w = HybridWorld(507, profile="test_showcase")
+    w.ai_enabled = False
+    w.outbreaks_enabled = False
+    w.diplomacy_enabled = True
+    w.nest_policy = {"Red": "coop"}
+    w._seq = 0
+    blue_wh = territory.command_centers(w, "Blue")[0]
+    red_wh = territory.command_centers(w, "Red")[0]
+    # a Blue clinic in an infected region with an empty larder
+    placed = None
+    for dx in range(6, 30):
+        for dy in range(6, 30):
+            r = w.build("Blue", "clinic", blue_wh["tx"] + dx, blue_wh["ty"] + dy)
+            if r["status"] == "ok":
+                placed = r["id"]
+                break
+        if placed:
+            break
+    b = w.buildings[placed]
+    b.pop("constructing", None)
+    b["operational"], b["hp"] = True, b["max_hp"]
+    regions.state(w).cubes[regions.state(w).region_at(b["tx"], b["ty"])] = 2
+    produce(w, red_wh["id"], "ration", 30)
+    produce(w, red_wh["id"], "water", 30)
+    produce(w, blue_wh["id"], "log", 30)
+    ai_plus.aid_step(w, "Red", red_wh)
+    assert not [e for e in w.events if e["kind"] == "aid_sent"]  # at war: no aid
+    diplomacy.set_state(w, "Red", "Blue", "truce", 3_600_000)
+    w.stocks[blue_wh["id"]]["ration"] = 0
+    w.stocks[blue_wh["id"]]["water"] = 0
+    w._ai_aid["Red"]["next"] = 0  # the first call above spent the two-minute cadence
+    ai_plus.aid_step(w, "Red", red_wh)
+    ev = [e for e in w.events if e["kind"] == "aid_sent"]
+    assert ev and ev[0]["partner"] == "Blue" and w.fstats["Red"]["aid_sent"] == 1
+    sent = next(e for e in w.events if e["kind"] == "caravan_sent")
+    assert sent["give"] == ai_plus.AID_GIVE and sent["want"] == {"log": 1}

@@ -563,6 +563,45 @@ def trade_step(world: Any, name: str, wh: dict) -> None:
         note(world, name, "trade refused: %s" % res["reason"])
 
 
+AID_GIVE = {"ration": 4, "water": 4}
+
+
+def aid_step(world: Any, name: str, wh: dict) -> None:
+    """Cooperative policy (plan v2 7.2/7.3): carry rations and water to a partner (truce, peace or alliance) whose clinic stands in an infected
+    region with an empty larder. A caravan is the physical channel, and the partner pays a token log, so it is an ordinary fair trade."""
+    from wizard_rts import diplomacy, regions, trade
+
+    if not getattr(world, "diplomacy_enabled", False) or world.__dict__.get("nest_policy", {}).get(name, "selfish") != "coop":
+        return
+    if not tech.unit_allowed(world, name, "caravan") or trade.active(world, name):
+        return
+    now = _now(world)
+    st = world.__dict__.setdefault("_ai_aid", {}).setdefault(name, {"next": 0})
+    if now < st["next"]:
+        return
+    st["next"] = now + 120_000
+    rg = regions.state(world)
+    stock = world.stocks.get(wh["id"], {})
+    if rg is None or any(int(stock.get(g, 0)) < n + 6 for g, n in AID_GIVE.items()):
+        return
+    for cc in territory.command_centers(world, None):
+        p = cc["faction_name"]
+        if p == name or diplomacy.state_of(world, name, p) == "war" or not trade.can_supply(world, cc, {"log": 1}):
+            continue
+        clinic = next((b for b in world.buildings.values() if b["faction_name"] == p and b["kind"] == "clinic" and b.get("operational") and int(b.get("hp", 1)) > 0
+                       and territory.settlement_of(world, b) is cc), None)
+        if clinic is None or regions.cubes_here(world, clinic) < 1:
+            continue
+        if any(int(world.stocks.get(cc["id"], {}).get(g, 0)) >= 2 for g in AID_GIVE):
+            continue  # it still has something to work with
+        res = trade.send_caravan(world, name, wh["id"], cc["id"], dict(AID_GIVE), {"log": 1})
+        if res["status"] == "ok":
+            world.fstat(name, "aid_sent")
+            note(world, name, "aid: rations and water to %s's clinic" % p)
+            world.events.append({"kind": "aid_sent", "faction": name, "partner": p, "to": cc["id"]})
+            return
+
+
 # ------------------------------------------------------------------ expansion
 
 def _seg_dist(p: tuple, a: tuple, b: tuple) -> float:
@@ -972,4 +1011,7 @@ def decide(world: Any, name: str) -> None:
     if pick:
         tech.draft(world, name, pick)
     economy_step(world, name)
+    wh0 = con.faction_warehouse(world, name)
+    if wh0 is not None and int(wh0.get("hp", 0)) > 0:
+        aid_step(world, name, wh0)
     military_step(world, name)
