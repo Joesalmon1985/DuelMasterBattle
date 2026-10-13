@@ -149,7 +149,7 @@ def play(job: dict) -> dict:
         new = getattr(evs, "total", len(evs)) - seen  # the window is trimmed now and then: count from the log's own total
         for e in (evs[-new:] if 0 < new <= len(evs) else (evs if new > 0 else [])):
             if e.get("kind") in MAJOR:
-                events.append({"game_ms": int(w.dmb.clock.get("game_ms", 0)), **{k: v for k, v in e.items() if isinstance(v, (str, int, float, bool, list))}})
+                events.append({"game_ms": int(w.dmb.clock.get("game_ms", 0)), **{k: v for k, v in e.items() if isinstance(v, (str, int, float, bool, list, dict))}})
         seen = getattr(evs, "total", len(evs))
         if (s + 1) % job["every"] == 0 or s + 1 == total_s:
             series += sample(w, time.time() - t0, step_ms[-job["every"]:])
