@@ -287,3 +287,27 @@ def test_legal_actions_cover_widelands_and_mindustry_kinds_and_every_listed_buil
         assert con.check_placement(w, "Red", e["kind"], x, y)[0] is None, e["kind"]  # every listed site is one the simulation accepts
     wl = next(e for e in legal["build"] if e["kind"].startswith("wl:"))
     assert env.apply("Red", {"op": "build", "kind": wl["kind"], "tx": wl["sites"][0][0], "ty": wl["sites"][0][1]})["status"] == "ok"
+
+
+def test_a_save_loads_in_a_fresh_process_with_the_same_hash_and_a_foreign_format_is_refused(tmp_path):
+    import pickle
+    import subprocess
+    import sys
+
+    env = HybridEnv(seed=507, agent_factions=["Red"])
+    env.reset()
+    for _ in range(3):
+        env.step({"Red": []})
+    blob = env.save()
+    f = tmp_path / "save.bin"
+    f.write_bytes(blob)
+    h = env.world.state_hash()
+    code = ("import sys; sys.path.insert(0, %r); from wizard_rts.sim_api import HybridEnv; e = HybridEnv(seed=1, agent_factions=['Red']); "
+            "e.load(open(%r, 'rb').read()); print(e.world.state_hash())") % (str(Path(__file__).resolve().parents[1]), str(f))
+    out = subprocess.run([sys.executable, "-I", "-c", code], capture_output=True, text=True, timeout=120)
+    assert out.stdout.strip() == h, out.stderr
+    old = pickle.loads(blob)
+    old["format"] = 1
+    import pytest
+    with pytest.raises(ValueError):
+        HybridEnv(seed=1, agent_factions=["Red"]).load(pickle.dumps(old))

@@ -436,12 +436,18 @@ class HybridEnv:
         )
 
     # ---------------------------------------------------------------- save / restore / replay
+    SAVE_FORMAT = 2  # V4: saves carry a format number and the state hash; a save from another format is refused instead of half-loading
+
     def save(self) -> bytes:
-        return pickle.dumps({"world": self.world, "log": self.log, "seq": self._seq, "score": self._score, "seen": self._events_seen, "seed": self.seed}, protocol=5)
+        return pickle.dumps({"format": self.SAVE_FORMAT, "hash": self.world.state_hash(), "world": self.world, "log": self.log, "seq": self._seq, "score": self._score, "seen": self._events_seen, "seed": self.seed}, protocol=5)
 
     def load(self, blob: bytes) -> None:
         d = pickle.loads(blob)
+        if d.get("format") != self.SAVE_FORMAT:
+            raise ValueError(f"save format {d.get('format')!r} is not {self.SAVE_FORMAT}: re-record it with this version")
         self.world, self.log, self._seq, self._score, self._events_seen, self.seed = d["world"], d["log"], d["seq"], d["score"], d["seen"], d["seed"]
+        if self.world.state_hash() != d["hash"]:
+            raise ValueError("the loaded world does not match the hash recorded in the save")
 
     def replay(self, log: list[dict[str, Any]] | None = None) -> str:
         """Re-run a recorded episode from its seed and return the final state hash."""
