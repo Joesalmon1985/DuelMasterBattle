@@ -1,0 +1,52 @@
+{
+ "tribe": "frisians",
+ "note": "Generated syllables for placeholder names. No canon names (D19); owner-approved names replace this file.",
+ "given_a": [
+  "Tje",
+  "Hyl",
+  "Wob",
+  "Sjo",
+  "Dou",
+  "Ayl",
+  "Rem",
+  "Ede",
+  "Fok",
+  "Gau"
+ ],
+ "given_b": [
+  "rk",
+  "ke",
+  "bren",
+  "erd",
+  "we",
+  "tse",
+  "ward",
+  "mer",
+  "ke",
+  "dert"
+ ],
+ "family_a": [
+  "van der ",
+  "ter ",
+  "op de ",
+  "uit de ",
+  "in 't ",
+  "aan de ",
+  "bij de ",
+  "over de ",
+  "onder de ",
+  "naast de "
+ ],
+ "family_b": [
+  "Wier",
+  "Dijk",
+  "Terp",
+  "Meer",
+  "Haven",
+  "Polder",
+  "Veen",
+  "Wad",
+  "Brug",
+  "Sloot"
+ ]
+}

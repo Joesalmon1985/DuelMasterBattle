@@ -1,0 +1,52 @@
+{
+ "tribe": "atlanteans",
+ "note": "Generated syllables for placeholder names. No canon names (D19); owner-approved names replace this file.",
+ "given_a": [
+  "Ae",
+  "Thal",
+  "Cly",
+  "Nere",
+  "Ist",
+  "Pel",
+  "Oro",
+  "Amph",
+  "Lys",
+  "Eud"
+ ],
+ "given_b": [
+  "mos",
+  "ria",
+  "phon",
+  "ides",
+  "nea",
+  "stra",
+  "lon",
+  "thea",
+  "mene",
+  "dora"
+ ],
+ "family_a": [
+  "Deep",
+  "Tide",
+  "Salt",
+  "Wave",
+  "Pearl",
+  "Coral",
+  "Kelp",
+  "Shoal",
+  "Brine",
+  "Foam"
+ ],
+ "family_b": [
+  "warden",
+  "singer",
+  "reader",
+  "keeper",
+  "caller",
+  "weaver",
+  "diver",
+  "runner",
+  "mender",
+  "sounder"
+ ]
+}

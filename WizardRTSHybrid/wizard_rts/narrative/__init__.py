@@ -21,7 +21,7 @@ def _wizard_default() -> dict[str, Any]:
 
 def _fresh() -> dict[str, Any]:
     return {"version": config.version(), "wizard": _wizard_default(), "links": {}, "residents": {}, "conversations": {},
-            "quests": {}, "settlements": {}, "log": []}
+            "quests": {}, "settlements": {}, "watch": {"events_seen": 0}, "log": []}
 
 
 def enabled(world: Any) -> bool:
@@ -49,6 +49,10 @@ def carry_over(old: Any, new: Any) -> dict[str, Any]:
 
 
 def tick(world: Any) -> None:
-    """Once per game second, from `story.story_quantum`, only when the state exists. Later milestones hang the director, residents and
-    the link watcher here; Milestone A.2 is the empty, counted pass."""
-    perf.count("tick")
+    """Once per game second, from `story.story_quantum`, only when the state exists: the link watcher, then characters for the bodies the
+    wizard has come near. Later milestones hang residents, the tutorial and the director here."""
+    from wizard_rts.narrative import characters
+
+    with perf.timed("tick"):
+        characters.watch(world)
+        characters.link_nearby(world)

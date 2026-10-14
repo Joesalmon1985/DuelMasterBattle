@@ -105,6 +105,7 @@ func describe(e: Dictionary) -> Dictionary:
 	var faction := str(e.get("faction_name", ""))
 	var title := str(e.get("label", cls)).strip_edges()
 	var far := ""
+	var who: String = world.story_ui.person_name(str(e.get("id", ""))) if world.story_ui != null and cls in ["worker", "carrier", "unit"] else ""
 	match cls:
 		"tree":
 			var sp := _species(e)
@@ -142,8 +143,11 @@ func describe(e: Dictionary) -> Dictionary:
 			far = "A rock formation holding %d loads of granite." % int(e.get("amount", 0))
 		_:
 			far = title
+	if who != "":  # a body with a character: the person's name leads, and the role stays in the description
+		far = "%s. %s" % [who, far]
+		title = who
 	var near := far + "\nYou are close enough to burn it with fire magic."
-	return {"title": title, "far": far, "near": near}
+	return {"title": title, "far": far, "near": near, "person": who}
 
 
 func _semantic(e: Dictionary) -> Dictionary:
@@ -403,10 +407,14 @@ func _on_interact(key: String) -> void:
 	if str(resolved.get("mode", "")) != "interact":
 		lbl.open_observation()  # at a distance a click only describes the thing
 		return
-	lbl.begin_speech([str(resolved.get("observe_near", ""))], [
+	var options: Array = [
 		{"index": 0, "label": "Burn it with fire magic"},
 		{"index": 1, "label": "Leave it alone"},
-	])
+	]
+	var who := str(describe(e).get("person", ""))
+	if who != "":
+		options.push_front({"index": 2, "label": "Talk to %s" % who})
+	lbl.begin_speech([str(resolved.get("observe_near", ""))], options)
 	# the description and the choices appear together: advance the one-line speech on the next frame
 	await get_tree().process_frame
 	await get_tree().process_frame  # the label ignores a second press in the frame counter value of the first
@@ -417,6 +425,11 @@ func _on_interact(key: String) -> void:
 func _on_response(key: String, index: int) -> void:
 	var id := key.trim_prefix("hybrid:")
 	var lbl = label_for(id)
+	if index == 2:  # "Talk to <name>": the story dialogue over the simulation's own body
+		if lbl != null:
+			lbl.collapse()
+		world.story_ui.talk_to(id)
+		return
 	if index != 0:
 		if lbl != null:
 			lbl.collapse()

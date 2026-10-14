@@ -1,0 +1,16 @@
+{
+ "intro": {
+  "worker": [
+   "I am {name}. I work here as the {role}.",
+   "{name}, {role}. Mind the work."
+  ],
+  "carrier": [
+   "I am {name}. I carry what the road gives me.",
+   "{name}. I walk this road."
+  ],
+  "soldier": [
+   "I am {name}, one of the {faction} soldiers.",
+   "{name}. I stand with the {faction}."
+  ]
+ }
+}

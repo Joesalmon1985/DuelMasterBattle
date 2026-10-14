@@ -83,7 +83,9 @@ func objective_text() -> String:
 	var lines: PackedStringArray = []
 	var near := nearest_interactive()
 	if not near.is_empty():
-		if str(near.get("class", "")) == "npc":
+		if str(near.get("class", "")) in ["worker", "carrier", "unit"]:
+			lines.append("Press E (or click, then Talk) to talk to %s." % person_name(str(near.get("id", ""))))
+		elif str(near.get("class", "")) == "npc":
 			lines.append("Press E (or click) to talk to %s." % str(near.get("label", "them")))
 		else:
 			lines.append("Press E to enter %s." % str(near.get("label", "the gallery")))
@@ -298,7 +300,7 @@ func try_click(screen_pos: Vector2) -> bool:
 func use_entity(e: Dictionary) -> void:
 	var p: Dictionary = world._snapshot.get("player", {})
 	var dist := absi(int(p.get("tx", 0)) - int(e["tx"])) + absi(int(p.get("ty", 0)) - int(e["ty"]))
-	if str(e["class"]) == "npc":
+	if str(e["class"]) in ["npc", "worker", "carrier", "unit"]:
 		var reply := _op({"op": "talk", "npc": str(e["id"])})
 		if str(reply.get("status", "")) == "ok":
 			npc_id = str(e["id"])
@@ -313,17 +315,57 @@ func use_entity(e: Dictionary) -> void:
 			_toast("The gallery is too far (%s)" % str(reply.get("reason", "")))
 
 
+## The simulation's own workers, carriers and soldiers that have a character: {body id: {person_id, name, has_quest, quest_status}}.
+func persons() -> Dictionary:
+	var st = world._snapshot.get("story", {})
+	if typeof(st) != TYPE_DICTIONARY:
+		return {}
+	var p = st.get("persons", {})
+	return p if typeof(p) == TYPE_DICTIONARY else {}
+
+
+func person_name(id: String) -> String:
+	var rec = persons().get(id, null)
+	return str(rec.get("name", "")) if typeof(rec) == TYPE_DICTIONARY else ""
+
+
+## A drawn body (not one inside its building, not a corpse) that is a talk target.
+func is_person_row(e: Dictionary) -> bool:
+	return str(e.get("class", "")) in ["worker", "carrier", "unit"] and persons().has(str(e.get("id", ""))) and not bool(e.get("inside", false)) and bool(e.get("alive", true))
+
+
+## The nearest thing E talks to or enters. The story's own people and entrances win over the simulation's workers, and a worker is not offered
+## while a route hazard is within reach (E starts that duel there).
 func nearest_interactive() -> Dictionary:
 	var p: Dictionary = world._snapshot.get("player", {})
 	var best := {}
 	var bd := 999
+	var best_body := {}
+	var bbd := 999
+	var hazard_near := false
 	for e in world._snapshot.get("entities", []):
+		var d := absi(int(p.get("tx", 0)) - int(e["tx"])) + absi(int(p.get("ty", 0)) - int(e["ty"]))
 		if str(e.get("class", "")) in ["npc", "landmark"]:
-			var d := absi(int(p.get("tx", 0)) - int(e["tx"])) + absi(int(p.get("ty", 0)) - int(e["ty"]))
 			if d <= TALK_RANGE and d < bd:
 				bd = d
 				best = e
-	return best
+		elif str(e.get("kind", "")) == "hazard":
+			if maxi(absi(int(p.get("tx", 0)) - int(e["tx"])), absi(int(p.get("ty", 0)) - int(e["ty"]))) <= TALK_RANGE:
+				hazard_near = true
+		elif d <= TALK_RANGE and d < bbd and is_person_row(e):
+			bbd = d
+			best_body = e
+	if not best.is_empty() or hazard_near:
+		return best
+	return best_body
+
+
+## Talk to a body by its entity id (the label's "Talk to" choice).
+func talk_to(id: String) -> void:
+	for e in world._snapshot.get("entities", []):
+		if typeof(e) == TYPE_DICTIONARY and str(e.get("id", "")) == id:
+			use_entity(e)
+			return
 
 
 func _toast(text: String) -> void:
@@ -335,7 +377,7 @@ func _toast(text: String) -> void:
 func _show_dialog(reply: Dictionary) -> void:
 	dialog.visible = true
 	world._input_locked = true
-	dialog_title.text = "%s  [%s]" % [str(reply.get("name", "")), str(reply.get("quest_status", ""))]
+	dialog_title.text = str(reply.get("name", "")) if str(reply.get("quest_status", "")) == "" else "%s  [%s]" % [str(reply.get("name", "")), str(reply.get("quest_status", ""))]
 	dialog_text.text = "\n".join(PackedStringArray(reply.get("lines", [])))
 	for c in choices_box.get_children():
 		choices_box.remove_child(c)

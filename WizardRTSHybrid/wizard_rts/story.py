@@ -440,6 +440,12 @@ def talk(world: Any, npc_id: str) -> dict[str, Any]:
     s = state(world)
     npc = s["npcs"].get(npc_id)
     if npc is None:
+        if "narrative" in world.__dict__:  # the simulation's own workers, carriers and soldiers
+            from wizard_rts.narrative import characters
+
+            body = characters.talk(world, npc_id)
+            if body is not None:
+                return body
         return {"status": "rejected", "reason": "no_such_person"}
     if not _near(world, npc["tile"], TALK_RANGE):
         return {"status": "rejected", "reason": "too_far"}
@@ -776,9 +782,10 @@ def entity_rows(world: Any) -> list[dict[str, Any]]:
 def snapshot(world: Any) -> dict[str, Any]:
     out = _story_snapshot(world)
     if "narrative" in world.__dict__:
-        from wizard_rts.narrative import events
+        from wizard_rts.narrative import characters, events
 
         out["narrative"] = {"version": world.narrative["version"], "events": events.recent(world)}
+        out["persons"] = characters.persons_view(world)
     return out
 
 
