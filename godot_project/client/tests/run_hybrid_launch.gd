@@ -52,6 +52,13 @@ func _shot(name: String) -> void:
 	print("LAUNCH_SHOT %s" % name)
 
 
+## Let the camera move AND draw before a screen position is computed: a window that is not in front gets no draws, and the canvas transform
+## would be the old one (clicks then land on the wrong place).
+func _settle() -> void:
+	await _frames(3)
+	await RenderingServer.frame_post_draw
+
+
 func _key(code: int) -> void:
 	for pressed in [true, false]:
 		var e := InputEventKey.new()
@@ -114,13 +121,22 @@ func _total_buildings() -> int:
 	return n
 
 
+## A story person (the teacher, a villager) stands within eight tiles: the worker walks about, and a click that lands near them opens their dialogue instead.
+func _near_resident(e: Dictionary) -> bool:
+	for n in _world._snapshot.get("entities", []):
+		if typeof(n) == TYPE_DICTIONARY and str(n.get("class", "")) == "npc":
+			if maxi(absi(int(n["tx"]) - int(e["tx"])), absi(int(n["ty"]) - int(e["ty"]))) <= 8:
+				return true
+	return false
+
+
 ## The Red worker outside its hut that is nearest the wizard ("" when there is none).
 func _nearest_red_worker() -> String:
 	var me: Vector2i = _world._john_pos
 	var best := ""
 	var bd := 1 << 30
 	for e in _world._snapshot.get("entities", []):
-		if str(e.get("class", "")) == "worker" and str(e.get("faction_name", "")) == "Red" and not bool(e.get("inside", false)):
+		if str(e.get("class", "")) == "worker" and str(e.get("faction_name", "")) == "Red" and not bool(e.get("inside", false)) and not _near_resident(e):
 			var d := absi(me.x - int(e["tx"])) + absi(me.y - int(e["ty"]))
 			if d < bd:
 				bd = d
@@ -143,9 +159,13 @@ func _teleport_next_to(id: String) -> bool:
 ## Put the camera on the entity and click its picture with a real mouse press and release.
 func _click_entity(id: String, dy := 0.35) -> void:
 	var e := _by_id(id)
-	var wp: Vector2 = (Vector2(float(e["tx"]), float(e["ty"])) + Vector2(0.5, dy)) * float(_world.TPX)
+	var pos := Vector2(float(e["tx"]), float(e["ty"]))
+	var vis: Dictionary = _world._art._vis.get(id, {})
+	if not vis.is_empty():
+		pos = vis["pos"]  # the art layer glides a figure toward its tile: click where it is drawn, not where it is going
+	var wp: Vector2 = (pos + Vector2(0.5, dy)) * float(_world.TPX)
 	_world.camera_focus = wp
-	await _frames(3)
+	await _settle()
 	var sp: Vector2 = _world.get_canvas_transform() * wp
 	var m := InputEventMouseMotion.new()
 	m.position = _win(sp)
@@ -166,6 +186,8 @@ func _run() -> void:
 	root.add_child(_world)
 	DisplayServer.window_set_size(Vector2i(1280, 720))
 	await _frames(40)
+	await _frames(20)
+	_world.story_ui.finish_opening()  # the arrival text belongs to run_hybrid_tutorial.gd
 
 	# ---- the integrated launch: the real world, the campaign profile, Wizard Mode state present
 	var prof: Dictionary = _world._sim.op({"op": "profile"})

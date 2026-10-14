@@ -268,7 +268,53 @@ func _on_action() -> void:
 		push_error("Retained duel failed to open")
 
 
+## A story Ward Duel (a lesson or a quest): the board is the retained one, hosted by the same adapter as the route hazard, over a Python lease.
+## `lease` is the server's reply to the choice that began it: {"status": "started", "payload": {"public": ..., "duel": ...}}.
+var _story_duel_id := ""
+var _story_follow_up: Variant = null
+
+
+func open_story_duel(lease: Dictionary) -> bool:
+	if _duel_open:
+		return false
+	_story_duel_id = str(lease.get("payload", {}).get("duel", {}).get("id", ""))
+	_story_follow_up = null
+	_duel_open = true
+	_input_locked = true
+	_duel_host.mouse_filter = Control.MOUSE_FILTER_STOP
+	if not _adapter.begin_from_start_reply(_duel_host, lease, Callable(self, "_cmd")):
+		_duel_open = false
+		_input_locked = false
+		_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_story_duel_id = ""
+		push_error("Story duel failed to open")
+		return false
+	return true
+
+
+## What the board saw, for the server to verify: every cast with its feedback, and the enemy's Ward (revealed by the end of a duel).
+func _story_duel_report(payload: Dictionary) -> Dictionary:
+	var report := {"op": "duel_resolve", "duel_id": _story_duel_id, "outcome": str(payload.get("outcome", "")),
+		"player_casts": int(payload.get("player_casts", 0)), "enemy_casts": int(payload.get("enemy_casts", 0)), "history": [], "enemy_ward": []}
+	var board = _adapter._board
+	if board != null and is_instance_valid(board) and board.get("game") != null:
+		var g = board.game
+		for rec in g.player_history:
+			report["history"].append({"pattern": Array(rec.pattern_by_locus), "fracture": int(rec.fracture_count), "echo": int(rec.echo_count), "broke": bool(rec.broke_ward)})
+		report["enemy_ward"] = Array(g.get_enemy_ward())
+	return report
+
+
 func _cmd(kind: String, payload: Dictionary = {}) -> Dictionary:
+	if _story_duel_id != "":
+		if kind == "HazardDuelCheckpoint":
+			return _sim.op({"op": "duel_checkpoint", "duel_id": _story_duel_id, "checkpoint": payload.get("checkpoint", {})})
+		if kind == "ResolveHazardDuel":
+			var reply: Dictionary = _sim.op(_story_duel_report(payload))
+			_story_follow_up = reply.get("follow_up", null)
+			_story_duel_id = ""
+			return reply
+		return {}
 	if kind != "ResolveHazardDuel":
 		return {}
 	return _sim.op({
@@ -286,6 +332,9 @@ func _on_duel_finished(outcome: String, _payload: Dictionary) -> void:
 	var reply := _sim.op({"op": "snapshot"})
 	_apply_snapshot(reply.get("snapshot", {}))
 	_hud_area_lbl.text = "Duel %s" % outcome
+	if story_ui != null and _story_follow_up != null:
+		story_ui.show_follow_up(_story_follow_up)  # the teacher answers
+		_story_follow_up = null
 	queue_redraw()
 
 

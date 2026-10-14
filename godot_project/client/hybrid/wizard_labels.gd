@@ -453,7 +453,7 @@ func cast_fire(id: String) -> Dictionary:
 		world._hud_area_lbl.text = "Fire!"
 	else:
 		var why := str(reply.get("reason", "failed"))
-		var text: String = {"too_far": "Too far away: walk closer to burn it.", "recharging": "The fire needs a moment to gather.", "already_destroyed": "It is already burning.", "already_dead": "It is already dead.", "no_target": "It is gone."}.get(why, "The spell fizzles (%s)." % why)
+		var text: String = {"too_far": "Too far away: walk closer to burn it.", "recharging": "The fire needs a moment to gather.", "already_destroyed": "It is already burning.", "already_dead": "It is already dead.", "no_target": "It is gone.", "spell_unknown": "You have not learned any magic yet. Find your teacher."}.get(why, "The spell fizzles (%s)." % why)
 		if lbl != null:
 			lbl.begin_speech([text], [])
 	return reply

@@ -708,7 +708,7 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 		var healer := str(e.get("role", "")) == "healer"
 		var ring := Color(0.4, 1.0, 0.55) if healer else Color(1.0, 0.8, 0.25)
 		canvas.draw_arc(c + Vector2(0, 10), 26, 0.0, TAU, 28, Color(ring.r, ring.g, ring.b, 0.9), 4.0)  # a ring on the ground: someone to talk to
-		var fig := {"id": "fig:" + str(e.get("id", "")), "class": "worker", "definition": str(e.get("figure", "widelands.barbarians_miner_worker")),
+		var fig := {"id": "fig:" + str(e.get("id", "")), "class": "worker", "kind": "worker", "anim": "idle", "definition": str(e.get("figure", "widelands.barbarians_miner_worker")),
 			"tx": e["tx"], "ty": e["ty"], "facing": "se", "status": "idle", "faction_name": str(e.get("faction_name", "")), "_static": true}
 		if _item_for(fig).is_empty():
 			canvas.draw_circle(c + Vector2(0, -18), 11, Color(0.95, 0.8, 0.65))

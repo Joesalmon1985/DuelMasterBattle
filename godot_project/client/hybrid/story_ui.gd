@@ -31,6 +31,11 @@ var duel_hist: RichTextLabel
 var duel_info: Label
 var guess: Array = [-1, -1, -1, -1]
 var last_status := ""
+var journal: PanelContainer  # lessons, spells, the quest and notes (J)
+var journal_text: RichTextLabel
+var _opening_pages: Array = []
+var _opening_i := 0
+var _opening_done := false
 var hint: Label  # the objective line: where the quest giver is, what E or T will do here, the outbreak in this region
 var _hint_acc := 0.0
 
@@ -44,6 +49,7 @@ func setup(p_world: Node) -> void:
 	_build_dialog()
 	_build_dungeon()
 	_build_duel()
+	_build_journal()
 	hint = Label.new()
 	hint.name = "StoryHint"
 	hint.position = Vector2(16, 150)
@@ -62,6 +68,9 @@ func _process(delta: float) -> void:
 	if _hint_acc < 0.25 or hint == null:
 		return
 	_hint_acc = 0.0
+	_maybe_show_opening()
+	if journal.visible:
+		_refresh_journal()
 	hint.text = objective_text()
 	hint.visible = hint.text != "" and not dungeon.visible and (world.god == null or not world.god.active)
 
@@ -99,7 +108,10 @@ func objective_text() -> String:
 					bd = d
 					best = e
 		if not best.is_empty():
-			lines.append("Quest: %s needs you - %d tiles %s. Walk beside them and press E." % [str(best.get("label", "someone")), bd, _dir(int(best["tx"]) - px, int(best["ty"]) - py)])
+			var what := str(best.get("hint", ""))
+			if what == "":
+				what = "Quest"
+			lines.append("%s\n%s is %d tiles %s. Walk beside them and press E (or click, then Talk)." % [what, str(best.get("label", "someone")), bd, _dir(int(best["tx"]) - px, int(best["ty"]) - py)])
 	var reg: Dictionary = snap.get("regions", {})
 	var here := str(reg.get("player_region", ""))
 	if int(reg.get("player_cubes", 0)) > 0:
@@ -394,6 +406,11 @@ func _show_dialog(reply: Dictionary) -> void:
 
 func _choose(choice: String) -> void:
 	var reply := _op({"op": "choose", "npc": npc_id, "choice": choice})
+	if str(reply.get("status", "")) == "ok" and reply.has("duel_lease"):
+		var lease: Dictionary = reply["duel_lease"]
+		close_dialog()
+		world.open_story_duel(lease)  # the board takes over; the teacher answers when it finishes (show_follow_up)
+		return
 	if str(reply.get("status", "")) == "ok":
 		dialog_text.text = str(reply.get("text", "")) + "\n\n" + "\n".join(PackedStringArray(reply.get("lines", [])))
 		for c in choices_box.get_children():
@@ -409,6 +426,9 @@ func _choose(choice: String) -> void:
 
 
 func close_dialog() -> void:
+	if npc_id != "" and dialog.visible and _opening_pages.is_empty():
+		world._sim.op({"op": "end_talk", "npc": npc_id})  # the person goes back to their routine
+	npc_id = ""
 	dialog.visible = false
 	world._input_locked = dungeon.visible
 
@@ -420,10 +440,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	var k: InputEventKey = event
 	if dialog.visible and k.keycode == KEY_ESCAPE:
-		close_dialog()
+		if not _opening_pages.is_empty():
+			finish_opening()
+		else:
+			close_dialog()
 		get_viewport().set_input_as_handled()
 		return
 	if not dungeon.visible:
+		if k.keycode == KEY_J and not dialog.visible:
+			toggle_journal()
+			get_viewport().set_input_as_handled()
+			return
+		if k.keycode == KEY_ESCAPE and journal.visible:
+			journal.visible = false
+			get_viewport().set_input_as_handled()
+			return
 		if k.keycode == KEY_T:
 			var reply := _op({"op": "treat"})
 			_toast("Treatment: %s" % str(reply.get("status", reply.get("reason", ""))))
@@ -568,3 +599,140 @@ func submit_guess() -> void:
 	if str(reply.get("status", "")) in ["solved", "exhausted"]:
 		duel.visible = false
 		msg_label.text = "The warden yields (%s). Walk back out when you are ready." % str(reply.get("result", {}).get("outcome", ""))
+
+
+# ---------------------------------------------------------------- the opening, the follow-up after a duel, the journal
+
+## After a lesson duel the teacher answers: the server's `follow_up` is an ordinary talk reply.
+func show_follow_up(follow: Variant) -> void:
+	if typeof(follow) != TYPE_DICTIONARY or str(follow.get("status", "")) != "ok":
+		return
+	npc_id = str(follow.get("npc", ""))
+	_show_dialog(follow)
+
+
+func narrative() -> Dictionary:
+	var st = world._snapshot.get("story", {})
+	var n = st.get("narrative", {}) if typeof(st) == TYPE_DICTIONARY else {}
+	return n if typeof(n) == TYPE_DICTIONARY else {}
+
+
+func journal_data() -> Dictionary:
+	var j = narrative().get("journal", {})
+	return j if typeof(j) == TYPE_DICTIONARY else {}
+
+
+func _maybe_show_opening() -> void:
+	if _opening_done or dialog.visible or dungeon.visible or world._duel_open:
+		return
+	var lines: Array = journal_data().get("opening", [])
+	if lines.is_empty():
+		return
+	_opening_pages = lines.duplicate()
+	_opening_i = 0
+	world.paused = true  # the world waits while the arrival is read
+	_show_opening_page()
+
+
+func _show_opening_page() -> void:
+	dialog.visible = true
+	world._input_locked = true
+	dialog_title.text = "Arrival"
+	dialog_text.text = str(_opening_pages[_opening_i])
+	for c in choices_box.get_children():
+		choices_box.remove_child(c)
+		c.queue_free()
+	var b := Button.new()
+	b.name = "OpeningNext"
+	b.text = "Continue" if _opening_i < _opening_pages.size() - 1 else "Begin"
+	b.add_theme_font_size_override("font_size", 18)
+	b.pressed.connect(_opening_next)
+	choices_box.add_child(b)
+
+
+func _opening_next() -> void:
+	_opening_i += 1
+	if _opening_i < _opening_pages.size():
+		_show_opening_page()
+		return
+	finish_opening()
+
+
+## Close the arrival text (also what a test calls): the simulation is told it has been seen, and time runs again.
+func finish_opening() -> void:
+	_opening_done = true
+	if not _opening_pages.is_empty():
+		_opening_pages = []
+		dialog.visible = false
+		world._input_locked = dungeon.visible
+		world.paused = false
+		world._sim.op({"op": "opening_done"})
+
+
+func _build_journal() -> void:
+	journal = PanelContainer.new()
+	journal.name = "StoryJournal"
+	journal.position = Vector2(60, 90)
+	journal.custom_minimum_size = Vector2(560, 0)
+	journal.visible = false
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0.09, 0.07, 0.12, 0.96)
+	box.border_color = Color(0.85, 0.7, 0.35)
+	box.set_border_width_all(2)
+	box.set_corner_radius_all(6)
+	box.set_content_margin_all(12)
+	journal.add_theme_stylebox_override("panel", box)
+	var v := VBoxContainer.new()
+	journal.add_child(v)
+	var title := Label.new()
+	title.text = "Journal  (J to close)"
+	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.45))
+	v.add_child(title)
+	journal_text = RichTextLabel.new()
+	journal_text.name = "JournalText"
+	journal_text.fit_content = true
+	journal_text.custom_minimum_size = Vector2(536, 120)
+	journal_text.bbcode_enabled = false
+	journal_text.add_theme_font_size_override("normal_font_size", 17)
+	v.add_child(journal_text)
+	layer.add_child(journal)
+
+
+func journal_string() -> String:
+	var j := journal_data()
+	if j.is_empty():
+		return "Nothing yet."
+	var out: PackedStringArray = []
+	var spells: Array = j.get("spells", [])
+	out.append("Spells: %s   Weave: %d slots" % [", ".join(PackedStringArray(spells)) if not spells.is_empty() else "none yet", int(j.get("weave_size", 0))])
+	out.append("")
+	out.append("Lessons")
+	for l in j.get("lessons", []):
+		out.append("  [%s] %s" % ["x" if bool(l.get("done", false)) else " ", str(l.get("title", ""))])
+	var nxt := str(j.get("next_lesson", ""))
+	if nxt != "":
+		out.append("  Next: " + nxt)
+	var q: Dictionary = j.get("quest", {})
+	if str(q.get("status", "none")) != "none":
+		out.append("")
+		out.append("%s  (%s)" % [str(q.get("title", "")), str(q.get("status", ""))])
+		if str(q.get("objective", "")) != "":
+			out.append("  " + str(q["objective"]))
+	var notes: Array = j.get("notes", [])
+	if not notes.is_empty():
+		out.append("")
+		out.append("Notes")
+		for n in notes:
+			out.append("  - " + str(n.get("text", "")))
+	return "\n".join(out)
+
+
+func _refresh_journal() -> void:
+	journal_text.text = journal_string()
+
+
+func toggle_journal() -> void:
+	journal.visible = not journal.visible
+	if journal.visible:
+		_refresh_journal()
