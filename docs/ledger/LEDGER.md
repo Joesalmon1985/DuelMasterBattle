@@ -13,12 +13,12 @@ Machine-readable twin: `ledger.json`. Run `work/ubuntu-autonomous-v2`, started 2
 | P3 | partly_done | draft v2 + 137 generated cards + paper/bonus; default off |
 | P4 | started | MIX decryption, 24+5 units of art, facing fix, building states, 5 turret layers |
 | P5 | mostly_done | God Mode inspector with real art, headed proof |
-| P6 | not_started | markets/ferries imported as data only |
-| P7 | started | 6 calibrated units; 24/49 RA units functional |
+| P6 | superseded by D33 | markets/ferries imported as data only (content freeze: no new content imports) |
+| P7 | superseded by D33 | 6 calibrated units; 24/49 RA units functional (content freeze) |
 | P8 | not_started | not started (PyPy, Numba) |
-| P9 | not_started | not started (industrial index; AI barely drafts Mindustry) |
+| P9 | superseded by D33 | not started (industrial index; AI barely drafts Mindustry) (content freeze) |
 | P10 | started | clinic, diplomacy, nest policies, study runner; targets not met |
-| P11 | not_started | not started |
+| P11 | superseded by D33 | not started (content freeze) |
 | P12 | started | first pass: bar 8 vs 10, AIs do not reach era 2 |
 | P13 | not_started | not started |
 | P14 | started | drafting module by imitation only |

@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -18,7 +20,9 @@ HYBRID = Path(__file__).resolve().parents[1]
 def _load_script(name: str):
     spec = importlib.util.spec_from_file_location(name, HYBRID / "scripts" / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    # The importers refuse to run while the roster is frozen (D33); this test only reads their parsing helpers, so unfreeze for the import alone.
+    with mock.patch.dict(os.environ, {"DMB_UNFREEZE": "1", "DMB_UNFREEZE_REASON": "unit test of parsing helpers"}):
+        spec.loader.exec_module(module)
     return module
 
 
