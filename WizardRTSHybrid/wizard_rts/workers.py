@@ -9,6 +9,7 @@ the workplace's output stock. Carriers (economy.py) are separate.
 from __future__ import annotations
 
 import heapq
+import weakref
 from array import array
 
 INF = float("inf")
@@ -261,20 +262,25 @@ def _seed(world: Any, tree: dict) -> None:
 
 # ---------------------------------------------------------------- paths
 
-_PASSABLE: dict = {}
+_PASSABLE: "weakref.WeakKeyDictionary" = weakref.WeakKeyDictionary()  # terrain object -> {locomotor: table}
 
 
 def _passable(world: Any, loco: str) -> bytearray:
-    """One byte per tile: may this locomotor enter it (static terrain only; roads only make a tile faster)."""
+    """One byte per tile: may this locomotor enter it (static terrain only; roads only make a tile faster).
+
+    Cached per terrain OBJECT, weakly. (It used to be keyed by id(terrain): once a world was freed, a later world whose terrain landed at the
+    same address was handed the old world's table, wrong for its map: a crash with the native kernel when the sizes differed and silently wrong
+    paths when they did not. Any process that plays more than one game, such as a training worker, would hit it.)"""
     from wizard_rts import rules
 
     t = world.terrain
-    key = (id(t), loco)
-    got = _PASSABLE.get(key)
+    tables = _PASSABLE.get(t)
+    if tables is None:
+        tables = _PASSABLE[t] = {}
+    got = tables.get(loco)
     if got is None:
         table = rules.speed_table(loco)
-        got = bytearray(1 if table[c] > 0 else 0 for c in t.cls)
-        _PASSABLE[key] = got
+        got = tables[loco] = bytearray(1 if table[c] > 0 else 0 for c in t.cls)
     return got
 
 

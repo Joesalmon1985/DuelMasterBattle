@@ -118,9 +118,10 @@ def test_visible_regions_follow_sight():
     assert there != here or there  # sight moved with the soldier: its new surroundings count
 
 
-def test_the_memory_is_deterministic():
+def test_the_memory_is_deterministic(monkeypatch):
+    monkeypatch.setenv("HYBRID_AI", "1")  # restored afterwards: conftest runs the other tests with the AI off
+
     def run():
-        os.environ["HYBRID_AI"] = "1"
         e = HybridEnv(seed=11, agent_factions=(), profile="campaign", step_ms=1000)
         e.reset()
         for _ in range(600):

@@ -767,6 +767,52 @@ def _known_targets(world: Any, name: str) -> list[dict]:
     return out
 
 
+RECON_COLS = (0.12, 0.3, 0.5, 0.7, 0.88)  # waypoints for reconnaissance: a fixed grid over the map (public geometry, not other factions' positions)
+RECON_ROWS = (0.2, 0.5, 0.8)
+
+
+def recon_step(world: Any, name: str, units: list[dict]) -> bool:
+    """The AI knows only what it has seen (T1.1), so with an army ready and no enemy building known it must look: one detachment attack-moves
+    to the nearest waypoint of the map grid this faction has never seen (and has not been sent to), a reachable tile nearby. Returns True when a
+    detachment was sent. At most one detachment is out at a time; when every waypoint has been tried the sweep starts again."""
+    from wizard_rts.military import order_move
+
+    t = world.terrain
+    if t is None or not units:
+        return False
+    st = world.__dict__.setdefault("_ai_recon", {}).setdefault(name, {"ids": [], "tried": []})
+    out = [world.units[i] for i in st["ids"] if i in world.units and world.units[i].get("alive", True)]
+    if any(u.get("order") for u in out):
+        return False  # a detachment is still on its way
+    cx = sum(u["tx"] for u in units) / len(units)
+    cy = sum(u["ty"] for u in units) / len(units)
+    for _sweep in range(2):
+        best = None
+        for fy in RECON_ROWS:
+            for fx in RECON_COLS:
+                wx, wy = int(fx * t.w), int(fy * t.h)
+                if [wx, wy] in st["tried"] or visibility.known(world, name, wx, wy):
+                    continue
+                spot = next(((wx + dx, wy + dy) for r in range(0, 11, 2) for dy in range(-r, r + 1, 2) for dx in range(-r, r + 1, 2)
+                             if max(abs(dx), abs(dy)) == r and world.tile_speed("foot", wx + dx, wy + dy) > 0 and (wx + dx, wy + dy) not in world.blocked), None)
+                if spot is None:
+                    st["tried"].append([wx, wy])  # water or rock all around: not a place to walk to
+                    continue
+                d = math.hypot(spot[0] - cx, spot[1] - cy)
+                if best is None or d < best[0]:
+                    best = (d, [wx, wy], spot)
+        if best is not None:
+            break
+        st["tried"] = []  # everything has been tried: sweep again (the memory of buildings only changes when a place is looked at again)
+    if best is None:
+        return False
+    st["tried"].append(best[1])
+    st["ids"] = [u["id"] for u in units]
+    order_move(world, st["ids"], best[2][0], best[2][1], attack_move=True)
+    world.events.append({"kind": "ai_recon", "faction": name, "to": list(best[2]), "units": len(units)})
+    return True
+
+
 def _posts(world: Any, name: str, cc: dict) -> list[tuple[int, int]]:
     """Guard posts of one command centre: three tiles GUARD_OUT towards the nearest enemy centre, spread across the approach."""
     cache = world.__dict__.setdefault("_ai_posts", {})
@@ -926,6 +972,8 @@ def military_step(world: Any, name: str) -> None:
             world.events.append({"kind": "ai_attack", "faction": name, "target": target["id"], "units": len(idle), "target_kind": target["kind"], "of": target["faction_name"],
                                  "distance": round(math.hypot(target["tx"] - idle[0]["tx"], target["ty"] - idle[0]["ty"]))})
             _send(world, idle, target)
+            return
+        if target is None and recon_step(world, name, idle):
             return
     _station(world, name, idle)
 

@@ -1053,9 +1053,18 @@ def military_step(world: Any, name: str) -> None:
             base._send(world, pool, target)
             ids = {u["id"] for u in pool}
             idle = [u for u in idle if u["id"] not in ids]
+        elif now >= ATTACK_AFTER_MS and recon_step_plus(world, name, pool):
+            pass  # no enemy building is known: a detachment looks for one
         else:
             note(world, name, "no target worth the risk for %d units" % len(pool))
     _garrison(world, name, idle)
+
+
+def recon_step_plus(world: Any, name: str, pool: list[dict]) -> bool:
+    """Reconnaissance with the stronger half of the free army (at least two units); see ai.recon_step."""
+    if len(pool) < 2 or base._known_targets(world, name):
+        return False  # known targets exist: they are simply not worth the risk yet
+    return base.recon_step(world, name, pool[: max(2, len(pool) // 2)])
 
 
 def _garrison(world: Any, name: str, idle: list[dict]) -> None:

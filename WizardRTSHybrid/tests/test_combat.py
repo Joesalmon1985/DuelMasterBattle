@@ -148,6 +148,12 @@ def test_ai_builds_recruits_and_attacks_without_free_goods() -> None:
     # a Red squad already exists (as if the economy had delivered it): the AI should use it
     for _ in range(7):
         w._unit(w.faction_info["Red"]["id"], "Red", "infantry", "Rifleman", "openra.e1", _open_tile(w, (w.player["tx"] + 12, w.player["ty"] + 6)))
+    from wizard_rts import visibility
+
+    red_squad = [u for u in w.units.values() if u["faction_name"] == "Red" and u.get("weapon")]
+    foe = min((b for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] != "Red"),
+              key=lambda b: abs(b["tx"] - red_squad[0]["tx"]) + abs(b["ty"] - red_squad[0]["ty"]))
+    visibility.remember(w, "Red", foe)  # this test is about the attack decision: Red has seen the nearest enemy capital (the AI only knows what it has seen, T1.1)
     _step(w, 6000)  # 10 game minutes
     after = {n: sum(1 for b in w.buildings.values() if b["faction_name"] == n and b["kind"] == "producer" and int(b["hp"]) > 0) for n in w.faction_info}
     assert after["Red"] >= 2 and sum(after.values()) >= 8, after  # the attacked faction may have lost some
