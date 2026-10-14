@@ -16,7 +16,7 @@ from array import array
 from typing import Any
 
 from wizard_rts.coords import tile_to_hex
-from wizard_rts import wl_defs
+from wizard_rts import wl_defs, ware_classes
 from wizard_rts.economy import _supply
 from wizard_rts import tech, territory
 from wizard_rts.logistics import add_road
@@ -367,6 +367,8 @@ def place_building(world: Any, faction_name: str, kind: str, tx: int, ty: int) -
     if spec.get("market"):
         building["market"] = True
     world.recipe_requests[bid] = dict(spec["cost"])
+    if kind.startswith("mdy:"):
+        _class_site(world, building, faction_name)
     world.events.append({"kind": "construction_started", "id": bid, "building_kind": kind, "faction": faction_name})
     return {"status": "ok", "id": bid}
 
@@ -527,6 +529,31 @@ def _place_naval(world: Any, faction_name: str, info: dict, kind: str, spec: dic
     return {"status": "ok", "id": bid, "door": list(door)}
 
 
+def _class_site(world: Any, b: dict, faction_name: str) -> None:
+    """A Mindustry site asks for the tribe's dead-end wares in place of iron and planks when the warehouses hold them."""
+    site = b["constructing"]
+    subst = ware_classes.site_subst(world.faction_info.get(faction_name, {}).get("tribe", "barbarians"), site["cost"])
+    if not subst:
+        return
+    from wizard_rts.logistics import _warehouses
+
+    held: dict[str, int] = {}
+    for wh in _warehouses(world, b["faction"]):
+        for g, n in world.stocks.get(wh["id"], {}).items():
+            held[g] = held.get(g, 0) + int(n)
+    ask = ware_classes.site_ask(site["cost"], subst, held)
+    if ask == site["cost"]:
+        return
+    site["class_subst"] = subst
+    site["ask"] = ask
+    site["wait_ms"] = 0
+    world.recipe_requests[b["id"]] = dict(ask)
+
+
+def _site_cost(site: dict, stock: dict) -> dict[str, int]:
+    return ware_classes.resolve({"cost": site["cost"], "class_subst": site["class_subst"]}, stock) if site.get("class_subst") else site["cost"]
+
+
 def construction_quantum(world: Any) -> None:
     dismantle_quantum(world)
     for bid, b in list(world.buildings.items()):
@@ -534,12 +561,18 @@ def construction_quantum(world: Any) -> None:
         if not site:
             continue
         stock = world.stocks.get(bid, {})
-        if not all(int(stock.get(g, 0)) >= n for g, n in site["cost"].items()):
+        cost = _site_cost(site, stock)
+        if not all(int(stock.get(g, 0)) >= n for g, n in cost.items()):
+            if site.get("ask"):
+                site["wait_ms"] = site.get("wait_ms", 0) + QUANTUM_MS
+                if site["wait_ms"] >= ware_classes.SITE_PATIENCE_MS:  # the class wares went elsewhere: ask for the raw wares after all
+                    site.pop("ask")
+                    world.recipe_requests[bid] = dict(site["cost"])
             continue
         site["progress_ms"] += QUANTUM_MS
         b["hp"] = min(b["max_hp"], max(b["hp"], int(b["max_hp"] * (0.1 + 0.9 * site["progress_ms"] / BUILD_MS))))
         if site["progress_ms"] >= BUILD_MS:
-            for good, n in site["cost"].items():
+            for good, n in cost.items():
                 _supply(world, bid).remove_wares(good, n)
                 world.stats["consumed_" + good] = world.stats.get("consumed_" + good, 0) + n
             b.pop("constructing")
@@ -699,6 +732,10 @@ def recipe_for(world: Any, b: dict, unit_kind: str) -> dict[str, Any] | None:
         if cost:
             recipe = dict(recipe)
             recipe["cost"] = cost
+    if not recipe.get("cargo") and recipe.get("definition", "").startswith("openra."):
+        from wizard_rts import ware_classes
+
+        recipe = ware_classes.with_class(recipe, unit_kind, world.faction_info.get(b["faction_name"], {}).get("tribe", "barbarians"))
     return recipe
 
 
@@ -730,7 +767,7 @@ def cancel_queue(world: Any, building_id: str, index: int) -> dict[str, Any]:
     item = b["queue"].pop(int(index))
     if item["state"] == "building":  # goods were taken at start; refund them to the building stock and un-book the consumption
         rec = recipe_for(world, b, item["unit"])
-        for good, n in rec["cost"].items():
+        for good, n in (item.get("paid") or rec["cost"]).items():
             from wizard_rts.economy import produce
 
             produce(world, building_id, good, n)
@@ -750,7 +787,17 @@ def _sync_requests(world: Any, b: dict) -> None:
         world.recipe_requests.pop(b["id"], None)
         return
     need: dict[str, int] = {}
-    for good, n in recipe_for(world, b, waiting[0]["unit"])["cost"].items():
+    rec = recipe_for(world, b, waiting[0]["unit"])
+    cost = rec["cost"]
+    if rec.get("class_subst"):
+        held: dict[str, int] = {}
+        from wizard_rts.logistics import _warehouses
+
+        for wh in _warehouses(world, b["faction"]):
+            for g, n in world.stocks.get(wh["id"], {}).items():
+                held[g] = held.get(g, 0) + int(n)
+        cost = ware_classes.request_cost(rec, held)
+    for good, n in cost.items():
         need[good] = n
     world.recipe_requests[b["id"]] = need
 
@@ -807,10 +854,12 @@ def recruitment_quantum(world: Any) -> None:
                 world.events.append({"kind": "tribe_fallback", "building": bid, "faction": b["faction_name"]})
                 _sync_requests(world, b)
                 continue
-            if all(int(stock.get(g, 0)) >= n for g, n in recipe["cost"].items()):
+            cost = ware_classes.resolve(recipe, stock) if recipe.get("class_subst") else recipe["cost"]
+            if all(int(stock.get(g, 0)) >= n for g, n in cost.items()):
                 b["wait_ms"] = 0
                 carried = recipe.get("cargo", {})
-                for g, n in recipe["cost"].items():
+                head["paid"] = dict(cost)
+                for g, n in cost.items():
                     _supply(world, bid).remove_wares(g, n)
                     used = n - int(carried.get(g, 0))  # what is loaded on the vehicle is moved, not consumed
                     if used:

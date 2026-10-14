@@ -652,6 +652,12 @@ def _engage(world: Any, unit: dict, w: dict | None, chase: bool, leash: float) -
     names = _weapon_order(unit)
     if not names:
         return False
+    if unit.get("ammo_max") and int(unit.get("ammo", 0)) <= 0:
+        # an empty ammunition pool (aircraft, minelayers): the unit cannot fight, so it neither chases nor reports "attacking"; it rearms at a pad
+        unit["target"] = None
+        if unit.get("status") == "attacking":
+            unit["status"] = "idle"
+        return False
     target = unit.get("target")
     if target is not None and _target_pos(world, target) is None:
         target = unit["target"] = None
@@ -714,7 +720,7 @@ def _unit_step(world: Any, unit: dict) -> None:
                 unit["status"] = "idle"
         return
     kind = order["kind"]
-    if kind in ("board", "capture", "infiltrate"):
+    if kind in ("board", "capture", "infiltrate", "repair", "c4"):
         return  # openra_abilities walks and finishes these
     if kind == "move":
         if _walk(world, unit, tuple(order["tile"])) in ("arrived", "stuck"):
@@ -742,6 +748,13 @@ def _unit_step(world: Any, unit: dict) -> None:
         world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "cannot_hit_target"})
         return
     name, wi = use
+    if dist < wi.get("min_range", 0):  # too close for this weapon (artillery): back off along the line away from the target first
+        away = (unit["tx"] + (1 if unit["tx"] >= building["tx"] else -1), unit["ty"] + (1 if unit["ty"] >= building["ty"] else -1))
+        if _walk(world, unit, away) == "stuck":
+            unit.pop("order", None)
+            unit["status"] = "idle"
+            world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "inside_min_range"})
+        return
     if dist <= wi["range"]:
         unit["path"] = []
         unit["status"] = "attacking"

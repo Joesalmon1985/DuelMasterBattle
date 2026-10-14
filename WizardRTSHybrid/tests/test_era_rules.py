@@ -32,12 +32,15 @@ def test_mindustry_units_never_precede_dystopian_and_industry_never_precedes_mod
                 assert c["era"] >= 2, (cid, e)
 
 
-def test_widelands_production_is_all_prehistoric():
+def test_widelands_production_is_prehistoric_or_the_historic_metal_age():
     cards = graph.generated_cards()
     ents = graph.entities()
     for cid, c in cards.items():
         if any(ents[e]["game"] == "widelands" for e in c["entities"]):
-            assert c["era"] == 0, cid
+            assert c["era"] in (0, 1), cid
+    # the metal age holds the mining, smelting and smithing chains; the base economy stays Prehistoric
+    assert any(c["era"] == 1 and "metal" in c["tags"] for c in cards.values())
+    assert any(c["era"] == 0 and c["tribe"] for c in cards.values())
 
 
 def test_gated_worlds_draft_v2_by_default_and_legacy_is_explicit():

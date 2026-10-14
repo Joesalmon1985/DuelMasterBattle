@@ -342,7 +342,30 @@ def ai_pick(world: Any, faction: str) -> str | None:
     for cid in order:
         if cid in st["offers"]:
             return cid
+    gens = [c for c in st["offers"] if c.startswith("gen.")]
+    if gens:
+        return _ai_pick_generated(world, faction, st, gens)
     return st["offers"][0]
+
+
+def _ai_pick_generated(world: Any, faction: str, st: dict[str, Any], gens: list[str]) -> str:
+    """Generated cards: one this tribe can use that gives a capability the era still needs, then any card it can use, then the rest; ties by id."""
+    from wizard_rts.content import cards as C
+
+    tribe = world.faction_info.get(faction, {}).get("tribe", "")
+    pool_ = lookup()
+    era = int(getattr(world, "era_index", 0))
+    held = {c for c in st["cards"] if c.startswith("gen.")}
+    need = C.missing(held, tribe, era) if era in C.REQUIRED else []
+    order = {t: i for i, t in enumerate(C.ESSENTIAL_ORDER.get(era, ()))}
+
+    def rank(cid: str) -> tuple:
+        c = pool_[cid]
+        usable = C.usable_by(c, tribe)
+        gives = [t for t in need if t in C.card_tags(c)]
+        return (not usable, not gives, min((order.get(t, 9) for t in gives), default=9), -len(c.get("entities", ())), cid)
+
+    return min(gens, key=rank)
 
 
 def snapshot(world: Any) -> dict[str, Any]:

@@ -26,7 +26,7 @@ def test_factions_expand_recruit_move_attack_and_do_not_stall() -> None:
     last = result["final"]["factions"]
     assert sum(1 for f in last.values() if f["mcv_deployed"] >= 1) >= 4, "at least four factions deployed a second command centre"
     assert sum(f["attacks"] for f in last.values()) >= 3
-    assert sum(1 for f in last.values() if f["navy"] > 0) >= 1 or sum(f["fleet_attacks"] + f["fleet_defends"] for f in last.values()) >= 0
+    assert sum(1 for f in last.values() if f["navy"] > 0) >= 1 or sum(f["fleet_attacks"] + f["fleet_defends"] for f in last.values()) >= 1
     assert result["worst_step_ms"] < 4000, "a single simulation step must never freeze the game for seconds"
 
 

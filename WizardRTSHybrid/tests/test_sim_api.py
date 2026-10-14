@@ -266,3 +266,58 @@ def test_turret_slot_points_at_the_target_in_red_alert_frame_order():
     w.visual_state = False
     w.units[shooter]["target"] = {"kind": "unit", "id": w._unit(blue["id"], "Blue", "tank", "Tank", "openra.3tnk", (80, 70))}
     assert "turret" not in next(e for e in w.snapshot()["entities"] if e["id"] == shooter)  # headless runs never carry it (hash-neutral)
+
+
+def test_legal_actions_cover_widelands_and_mindustry_kinds_and_every_listed_build_works():
+    env = HybridEnv(seed=507, agent_factions=["Red"], profile="test_showcase")
+    env.reset()
+    w = env.world
+    from wizard_rts.industry import registry as ind
+
+    wh = con.faction_warehouse(w, "Red")
+    wares = {g for spec in con.full_menu().values() for g in spec["cost"]} | {g for k in ind.kinds() for g in (con.build_spec(k) or {"cost": {}})["cost"]}
+    for g in wares:
+        w.stocks[wh["id"]][g] = 500
+    legal = env.legal_actions("Red")
+    kinds = {e["kind"] for e in legal["build"]}
+    assert any(k.startswith("wl:barbarians_") for k in kinds) and not any(k.startswith("wl:empire_") for k in kinds)
+    assert any(k.startswith("mdy:") for k in kinds)
+    for e in legal["build"]:
+        x, y = e["sites"][0]
+        assert con.check_placement(w, "Red", e["kind"], x, y)[0] is None, e["kind"]  # every listed site is one the simulation accepts
+    wl = next(e for e in legal["build"] if e["kind"].startswith("wl:"))
+    assert env.apply("Red", {"op": "build", "kind": wl["kind"], "tx": wl["sites"][0][0], "ty": wl["sites"][0][1]})["status"] == "ok"
+
+
+def test_a_save_loads_in_a_fresh_process_with_the_same_hash_and_a_foreign_format_is_refused(tmp_path):
+    import pickle
+    import subprocess
+    import sys
+
+    env = HybridEnv(seed=507, agent_factions=["Red"])
+    env.reset()
+    for _ in range(3):
+        env.step({"Red": []})
+    blob = env.save()
+    f = tmp_path / "save.bin"
+    f.write_bytes(blob)
+    h = env.world.state_hash()
+    code = ("import sys; sys.path.insert(0, %r); from wizard_rts.sim_api import HybridEnv; e = HybridEnv(seed=1, agent_factions=['Red']); "
+            "e.load(open(%r, 'rb').read()); print(e.world.state_hash())") % (str(Path(__file__).resolve().parents[1]), str(f))
+    out = subprocess.run([sys.executable, "-I", "-c", code], capture_output=True, text=True, timeout=120)
+    assert out.stdout.strip() == h, out.stderr
+    old = pickle.loads(blob)
+    old["format"] = 1
+    import pytest
+    with pytest.raises(ValueError):
+        HybridEnv(seed=1, agent_factions=["Red"]).load(pickle.dumps(old))
+
+
+def test_training_pacing_shortens_the_eras_and_replays_to_the_same_hash():
+    env = HybridEnv(seed=507, agent_factions=["Red"], profile="campaign", step_ms=5000, era_max_ms=60_000)
+    env.reset()
+    assert env.world.era_max_ms == 60_000
+    for _ in range(40):
+        env.step({"Red": []})
+    assert env.world.era_index >= 1  # a 60 s stall guard moves the world on within a few minutes
+    assert env.replay() == env.state_hash()

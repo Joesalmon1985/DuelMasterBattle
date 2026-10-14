@@ -307,3 +307,64 @@ def test_restlessness_is_tracked_only_while_unrest_stays_high():
     rec["unrest"] = 0.5
     society._track_restless(rec, 6000)
     assert "restless_since_ms" not in rec  # one calm minute resets it
+
+
+# ------------------------------------------------------------------ faction floor (owner 13 Oct)
+
+def test_below_six_factions_a_two_settlement_faction_may_split_without_unrest():
+    from wizard_rts import history
+
+    w = _developed(30, profile="developer")
+    names = list(w.faction_info)
+    assert history.active_count(w) >= history.MIN_FACTIONS
+    assert history.split_candidates(w, names[0]) is None  # at six no split without unrest
+    for n in names[history.MIN_FACTIONS - 1:]:
+        history.state(w)["faction"][n]["state"] = "collapsed"
+    assert history.active_count(w) < history.MIN_FACTIONS
+    live = [n for n in names if history.state(w)["faction"][n]["state"] != "collapsed"]
+    # a lone-settlement faction cannot split: it needs two settlements
+    assert all(history.split_candidates(w, n) is None for n in live if len(settlements_of(w, n)) < 2)
+
+
+def test_voluntary_splits_stop_at_the_ceiling():
+    from wizard_rts import history
+
+    w = _developed(30, profile="developer")
+    history.MAX_FACTIONS, old = 1, history.MAX_FACTIONS
+    try:
+        assert all(history.split_candidates(w, n) is None for n in w.faction_info)
+    finally:
+        history.MAX_FACTIONS = old
+
+
+def test_the_floor_refills_the_ring_after_a_delay_with_the_largest_faction_splitting():
+    from wizard_rts import history
+
+    w = _developed(30, profile="developer")
+    name = "Orange"
+    home = con.faction_warehouse(w, name)
+    t = w.terrain
+    founded = 0
+    for y in range(8, t.h - 8, 4):
+        for x in range(8, t.w - 8, 4):
+            if founded >= 1:
+                break
+            d = territory.cheb((x, y), (home["tx"], home["ty"]))
+            if d < 40 or d > 140:
+                continue
+            u = {"id": "u", "definition": territory.SETTLER_DEFINITION, "faction_name": name, "alive": True, "tx": x, "ty": y}
+            if territory.deploy_check(w, u) is None:
+                uid = w._unit(w.faction_info[name]["id"], name, "settlers", "Settlers", territory.SETTLER_DEFINITION, (x, y))
+                territory._create_command_center(w, w.units[uid])
+                founded += 1
+    assert founded == 1 and len(settlements_of(w, name)) == 2
+    others = [n for n in w.faction_info if n != name]
+    for n in others[history.MIN_FACTIONS - 2:]:
+        history.state(w)["faction"][n]["state"] = "collapsed"
+    assert history.active_count(w) < history.MIN_FACTIONS
+    assert history.split_candidates(w, name) is None  # not yet: the world must stay below the floor for FLOOR_DELAY_MS
+    w.dmb.clock["game_ms"] = int(w.dmb.clock["game_ms"]) + history.FLOOR_DELAY_MS
+    cand = history.split_candidates(w, name)
+    assert cand is not None
+    successor = history.split(w, name, cand[1])
+    assert w.faction_info[successor]["parent"] == name and history.active_count(w) == history.MIN_FACTIONS

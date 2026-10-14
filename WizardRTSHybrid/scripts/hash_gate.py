@@ -24,8 +24,8 @@ os.environ.setdefault("HYBRID_AI", "1")
 from wizard_rts.world import HybridWorld  # noqa: E402
 
 
-def run(seed: int, minutes: int, map_size: str) -> dict:
-    w = HybridWorld(seed, terrain=True, map_size=map_size)
+def run(seed: int, minutes: int, map_size: str, profile: str = "") -> dict:
+    w = HybridWorld(seed, terrain=True, map_size=map_size, profile=profile) if profile else HybridWorld(seed, terrain=True, map_size=map_size)
     hashes = []
     t0 = time.time()
     for i in range(minutes * 60):
@@ -45,20 +45,22 @@ def main() -> int:
     ap.add_argument("--seeds", type=int, nargs="*", default=[507, 11, 23])
     ap.add_argument("--minutes", type=int, default=20)
     ap.add_argument("--map", default="standard")
+    ap.add_argument("--profile", default="", help="e.g. campaign (v2 draft); with HYBRID_AI_POLICY=plus for the plus AI")
     ap.add_argument("--limit-minutes", type=int, default=0, help="check: compare only the first N minutes of the baseline (smoke gate)")
     a = ap.parse_args()
     if a.mode == "record":
-        res = [run(s, a.minutes, a.map) for s in a.seeds]
-        doc = {"map": a.map, "minutes": a.minutes, "runs": res}
+        res = [run(s, a.minutes, a.map, a.profile) for s in a.seeds]
+        doc = {"label": "v4-2026-10-13 (wider state_hash, 168-card v3 draft)", "profile": a.profile, "policy": os.environ.get("HYBRID_AI_POLICY", "baseline"), "map": a.map, "minutes": a.minutes, "runs": res}
         Path(a.out).write_text(json.dumps(doc, indent=1))
         for r in res:
             print(r["seed"], r["x_realtime"], "x", r["hashes"][-1])
         return 0
     base = json.loads(Path(a.baseline).read_text())
+    os.environ["HYBRID_AI_POLICY"] = base.get("policy", "baseline")
     bad = 0
     for b in base["runs"]:
         n = min(base["minutes"], a.limit_minutes) if a.limit_minutes else base["minutes"]
-        r = run(b["seed"], n, base["map"])
+        r = run(b["seed"], n, base["map"], base.get("profile", ""))
         b = {**b, "hashes": b["hashes"][:n]}
         div = next((i for i, (x, y) in enumerate(zip(r["hashes"], b["hashes"])) if x != y), None)
         status = "OK" if div is None else f"DIVERGED at minute {div + 1}"

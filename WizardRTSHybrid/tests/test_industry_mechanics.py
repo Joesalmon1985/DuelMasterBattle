@@ -331,7 +331,7 @@ def test_dagger_beats_a_rifleman_and_loses_to_a_tank_by_data():
     w, a, b = fight("mindustry.dagger", "openra.e1", "infantry")
     assert w.units[a]["alive"] and not w.units[b]["alive"]
     assert w.units[a]["hp"] < w.units[a]["max_hp"]  # the same damage model: it took hits
-    assert w.fstats["Red"].get("kills", 0) >= 1 or w.fstats["Blue"].get("losses", 0) >= 0
+    assert w.fstats["Red"].get("unit_kills", 0) >= 1 or w.fstats["Blue"].get("unit_losses", 0) >= 1
     w2, a2, b2 = fight("mindustry.dagger", "openra.3tnk", "tank", seconds=120)
     assert not w2.units[a2].get("alive", True) or not w2.units[b2].get("alive", True)
 

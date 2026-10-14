@@ -115,6 +115,16 @@ def accepts_payload(world: Any, st: Any, b: dict, payload: dict, from_tile: tupl
         return True
     if role == "payload_belt":
         return m.get("payload") is None
+    if role == "assembler":
+        # UnitAssembler.acceptPayload: only what the chosen plan still needs (units by type, blocks by block), one payload at a time
+        if m.get("payload") is not None:
+            return False
+        plan = next((p for p in R.block(b["kind"]).get("assembler_plans") or [] if p["unit"] == m.get("plan")), None)
+        if plan is None:
+            return False
+        key = payload.get("unit") if payload.get("type") == "unit" else payload.get("block")
+        jk = next((k for k in plan["payload"] if k == key or k.lower() == str(key).replace("-", "").lower() or _java_eq(k, key)), None)
+        return jk is not None and m["stack"].get(jk, 0) < plan["payload"][jk]
     return False
 
 

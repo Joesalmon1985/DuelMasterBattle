@@ -26,7 +26,7 @@ from typing import Any
 from wizard_rts import construction as con
 from wizard_rts import wl_defs
 from wizard_rts import rules, tech
-from wizard_rts import diagnostics, territory
+from wizard_rts import diagnostics, territory, visibility
 from wizard_rts.coords import tile_to_hex  # noqa: F401  (kept importable for scripts)
 from wizard_rts.world import FACTIONS, HybridWorld
 
@@ -51,7 +51,12 @@ class HybridEnv:
         aggressive: bool = True,
         terrain: bool = True,
         profile: str = "test_showcase",
+        era_max_ms: int | None = None,
+        era_vp: int | None = None,
     ) -> None:
+        # training pacing: a shorter stall guard and/or a lower world-VP threshold per era (None keeps the rules: 75 minutes, VP 6/8/8)
+        self.era_max_ms = era_max_ms
+        self.era_vp = era_vp
         self.profile = profile
         self.seed = int(seed)
         self.map_size = map_size
@@ -74,6 +79,10 @@ class HybridEnv:
         os.environ.setdefault("HYBRID_AI", "1")
         self.world = HybridWorld(self.seed, terrain=self.use_terrain, map_size=self.map_size, profile=self.profile)
         w = self.world
+        if self.era_max_ms is not None:
+            w.era_max_ms = max(10_000, int(self.era_max_ms))
+        if self.era_vp is not None:
+            w.era_vp_threshold = max(1, int(self.era_vp))
         w.ai_enabled = True
         w.ai_aggressive = self.aggressive
         names = [f[0] for f in FACTIONS]
@@ -156,15 +165,15 @@ class HybridEnv:
             if op == "queue":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.queue(str(action["building"]), str(action["unit"])))
+                return _slim(w.queue(str(action["building"]), str(action["unit"]), faction=faction))
             if op == "cancel":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.cancel(str(action["building"]), int(action["index"])))
+                return _slim(w.cancel(str(action["building"]), int(action["index"]), faction=faction))
             if op == "demolish":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.demolish(str(action["building"])))
+                return _slim(w.demolish(str(action["building"]), faction=faction))
             if op == "enhance":  # Widelands in-place upgrade (additive to the action space)
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
@@ -188,22 +197,22 @@ class HybridEnv:
             if op == "rally":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.rally(str(action["building"]), int(action["tx"]), int(action["ty"])))
+                return _slim(w.rally(str(action["building"]), int(action["tx"]), int(action["ty"]), faction=faction))
             units = [u for u in action.get("units", []) if self._owns_unit(faction, u)]
             if not units and op in ("move", "stop"):
                 return {"status": "rejected", "reason": "no_units"}
             if op == "move":
-                return _slim(w.move(units, int(action["tx"]), int(action["ty"]), bool(action.get("attack_move", False))))
+                return _slim(w.move(units, int(action["tx"]), int(action["ty"]), bool(action.get("attack_move", False)), faction=faction))
             if op == "stop":
-                return _slim(w.stop(units))
+                return _slim(w.stop(units, faction=faction))
             if op == "deploy":  # an MCV becomes a command centre where it stands (same command as God Mode's Deploy button)
                 if not self._owns_unit(faction, action["unit"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.deploy(str(action["unit"])))
+                return _slim(w.deploy(str(action["unit"]), faction=faction))
             if op == "order":
                 if not self._owns_unit(faction, action["unit"]):
                     return {"status": "rejected", "reason": "not_yours"}
-                return _slim(w.order(str(action["unit"]), str(action["target"])))
+                return _slim(w.order(str(action["unit"]), str(action["target"]), faction=faction))
         except (KeyError, TypeError, ValueError) as exc:
             return {"status": "rejected", "reason": f"malformed:{type(exc).__name__}"}
         return {"status": "rejected", "reason": "unhandled"}
@@ -226,6 +235,14 @@ class HybridEnv:
         if wh is None:
             return out
         for kind, spec in con.BUILD_MENU.items():
+            if all(stocks.get(g, 0) >= n for g, n in spec["cost"].items()):
+                sites = self._sites(faction, kind, wh, site_samples)
+                if sites:
+                    out["build"].append({"kind": kind, "sites": sites})
+        listed = {e["kind"] for e in out["build"]}
+        for kind, spec in self._generated_menu(faction).items():  # the faction's own Widelands buildings and the Mindustry machines it has unlocked
+            if kind in listed or not tech.kind_allowed(w, faction, kind):
+                continue
             if all(stocks.get(g, 0) >= n for g, n in spec["cost"].items()):
                 sites = self._sites(faction, kind, wh, site_samples)
                 if sites:
@@ -261,15 +278,40 @@ class HybridEnv:
         if armed:
             from wizard_rts.military import target_types
 
-            for e in w.buildings.values():
-                if e["faction_name"] != faction and "hp" in e and int(e["hp"]) > 0:
-                    if any(rules.can_hit(rules.weapon(n), target_types(e)) for u in armed for n in u.get("weapons", [])):
-                        out["attack"].append(e["id"])
+            srcs = visibility.sources(w, faction)
+            for e in list(w.buildings.values()) + list(w.units.values()):
+                if e["faction_name"] == faction or "hp" not in e or int(e["hp"]) <= 0 or not e.get("alive", True) or e.get("inside"):
+                    continue
+                if not visibility.visible(w, faction, e["tx"], e["ty"], srcs):
+                    continue  # an agent can only attack what it can see
+                if any(rules.can_hit(rules.weapon(n), target_types(e)) for u in armed for n in u.get("weapons", [])):
+                    out["attack"].append(e["id"])
         return out
+
+    def _generated_menu(self, faction: str) -> dict[str, dict[str, Any]]:
+        """Buildable kinds beyond BUILD_MENU for this faction: its tribe's runnable wl: buildings (not enhancement-only) and every mdy: machine."""
+        tribe = self.world.faction_info[faction].get("tribe", "")
+        cache = self.__dict__.setdefault("_gen_menu", {})
+        if tribe not in cache:
+            menu = {}
+            for kind, spec in con.full_menu().items():
+                if kind in con.BUILD_MENU or spec.get("enhancement_of"):
+                    continue
+                if spec.get("game") == "widelands" and spec.get("tribe") != tribe:
+                    continue
+                menu[kind] = spec
+            from wizard_rts.industry import registry as ind_registry
+
+            for kind in ind_registry.kinds():
+                spec = con.build_spec(kind)
+                if spec is not None and kind not in menu:
+                    menu[kind] = spec
+            cache[tribe] = menu
+        return cache[tribe]
 
     def _sites(self, faction: str, kind: str, wh: dict, k: int) -> list[list[int]]:
         w = self.world
-        spec = con.BUILD_MENU[kind]
+        spec = con.build_spec(kind)
         out: list[list[int]] = []
         if not tech.kind_allowed(w, faction, kind):
             return out
@@ -326,7 +368,11 @@ class HybridEnv:
             "mcvs": [{"id": u["id"], "tile": [u["tx"], u["ty"]], "cargo": dict(u.get("cargo") or {})} for u in units if territory.is_founder(u)],
             "known_enemy_buildings": len(w.__dict__.get("_ai_known", {}).get(faction, ())),
             "stuck_entities": sum(1 for r in diagnostics.stuck_report(w) if r["faction"] == faction),
-            "enemy_capitals": {n: [b["tx"], b["ty"]] for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] != faction for n in [b["faction_name"]]},
+            # only capitals this faction has ever seen (owner decision D): the rest of the world is not in its observation
+            "enemy_capitals": {n: [b["tx"], b["ty"]] for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] != faction
+                               and visibility.known(w, faction, b["tx"], b["ty"]) for n in [b["faction_name"]]},
+            "visible": visibility.seen_enemies(w, faction),
+            "explored_cells": len(visibility.explored_of(w, faction)),
         }
         if t is not None and wh is not None:
             obs["local_map"] = self._local_map(wh["tx"], wh["ty"], 12)
@@ -364,9 +410,10 @@ class HybridEnv:
         n = 0
         strength = 0
         nearest = None
+        srcs = visibility.sources(self.world, faction)
         for u in self.world.units.values():
-            if u["faction_name"] == faction or not u.get("alive", True):
-                continue
+            if u["faction_name"] == faction or not u.get("alive", True) or not visibility.visible(self.world, faction, u["tx"], u["ty"], srcs):
+                continue  # a threat is an enemy the faction can see
             d = abs(u["tx"] - wh["tx"]) + abs(u["ty"] - wh["ty"])
             if d <= 40:
                 n += 1
@@ -398,17 +445,23 @@ class HybridEnv:
         )
 
     # ---------------------------------------------------------------- save / restore / replay
+    SAVE_FORMAT = 2  # V4: saves carry a format number and the state hash; a save from another format is refused instead of half-loading
+
     def save(self) -> bytes:
-        return pickle.dumps({"world": self.world, "log": self.log, "seq": self._seq, "score": self._score, "seen": self._events_seen, "seed": self.seed}, protocol=5)
+        return pickle.dumps({"format": self.SAVE_FORMAT, "hash": self.world.state_hash(), "world": self.world, "log": self.log, "seq": self._seq, "score": self._score, "seen": self._events_seen, "seed": self.seed}, protocol=5)
 
     def load(self, blob: bytes) -> None:
         d = pickle.loads(blob)
+        if d.get("format") != self.SAVE_FORMAT:
+            raise ValueError(f"save format {d.get('format')!r} is not {self.SAVE_FORMAT}: re-record it with this version")
         self.world, self.log, self._seq, self._score, self._events_seen, self.seed = d["world"], d["log"], d["seq"], d["score"], d["seen"], d["seed"]
+        if self.world.state_hash() != d["hash"]:
+            raise ValueError("the loaded world does not match the hash recorded in the save")
 
     def replay(self, log: list[dict[str, Any]] | None = None) -> str:
         """Re-run a recorded episode from its seed and return the final state hash."""
         log = self.log if log is None else log
-        twin = HybridEnv(self.seed, self.map_size, self.agent_factions, self.step_ms, self.max_game_ms, self.weights, self.aggressive, self.use_terrain, self.profile)
+        twin = HybridEnv(self.seed, self.map_size, self.agent_factions, self.step_ms, self.max_game_ms, self.weights, self.aggressive, self.use_terrain, self.profile, self.era_max_ms, self.era_vp)
         twin.reset()
         for entry in log:
             twin.step(entry["actions"])

@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import disruption, feed, history, maritime, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, vp
+from wizard_rts import disruption, feed, history, maritime, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, visibility, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -182,6 +182,10 @@ class HybridWorld:
         import json
 
         h = hashlib.sha1(json.dumps(self.snapshot(), sort_keys=True, default=str).encode())
+        # the snapshot is what a client sees; the raw records hold the rest (turret ammo, line state, stocks, cards, drafting, history), so a
+        # change in any of them changes the hash (V4 P0: the old hash missed Mindustry ammo and most hidden state)
+        raw = {n: getattr(self, n, None) for n in ("buildings", "units", "stocks", "workers", "carriers", "tech", "stats", "fstats", "faction_info", "history", "draft_state", "wares_ledger")}
+        h.update(json.dumps(raw, sort_keys=True, default=str).encode())
         if self.terrain is not None:
             h.update(self.terrain.state_hash().encode())
         return h.hexdigest()
@@ -888,6 +892,7 @@ class HybridWorld:
             disruption.disruption_quantum(self)
             society.society_quantum(self)
             history.history_quantum(self)
+            visibility.visibility_quantum(self)
             con.recruitment_quantum(self)
             lifecycle_quantum(self)
             territory.deploy_quantum(self)
@@ -935,34 +940,56 @@ class HybridWorld:
         out["snapshot"] = self.snapshot()
         return out
 
-    def queue(self, building: str, unit_kind: str) -> dict[str, Any]:
-        out = con.queue_unit(self, building, unit_kind)
+    def _not_mine(self, faction: str | None, building: Any = None, units: Any = ()) -> dict[str, Any] | None:
+        """The faction command tier (V4 P4): with a faction given, every building and unit named must belong to it. None means God Mode (no faction)."""
+        if faction is None:
+            return None
+        if faction not in self.faction_info:
+            return {"status": "rejected", "reason": "unknown_faction"}
+        if building is not None:
+            b = self.buildings.get(str(building))
+            if b is not None and b.get("faction_name") != faction:
+                return {"status": "rejected", "reason": "not_yours"}
+        for u in units:
+            e = self.units.get(str(u))
+            if e is not None and e.get("faction_name") != faction:
+                return {"status": "rejected", "reason": "not_yours"}
+        return None
+
+    def queue(self, building: str, unit_kind: str, faction: str | None = None) -> dict[str, Any]:
+        out = self._not_mine(faction, building) or con.queue_unit(self, building, unit_kind)
         out["snapshot"] = self.snapshot()
         return out
 
-    def cancel(self, building: str, index: int) -> dict[str, Any]:
-        out = con.cancel_queue(self, building, index)
+    def cancel(self, building: str, index: int, faction: str | None = None) -> dict[str, Any]:
+        out = self._not_mine(faction, building) or con.cancel_queue(self, building, index)
         out["snapshot"] = self.snapshot()
         return out
 
-    def move(self, units: list[str], tx: int, ty: int, attack_move: bool = False) -> dict[str, Any]:
-        out = order_move(self, [str(u) for u in units], tx, ty, attack_move)
+    def move(self, units: list[str], tx: int, ty: int, attack_move: bool = False, faction: str | None = None) -> dict[str, Any]:
+        out = self._not_mine(faction, units=units) or order_move(self, [str(u) for u in units], tx, ty, attack_move)
         out["snapshot"] = self.snapshot()
         return out
 
-    def stop(self, units: list[str]) -> dict[str, Any]:
-        out = order_stop(self, [str(u) for u in units])
+    def stop(self, units: list[str], faction: str | None = None) -> dict[str, Any]:
+        out = self._not_mine(faction, units=units) or order_stop(self, [str(u) for u in units])
         out["snapshot"] = self.snapshot()
         return out
 
-    def rally(self, building: str, tx: int, ty: int) -> dict[str, Any]:
+    def rally(self, building: str, tx: int, ty: int, faction: str | None = None) -> dict[str, Any]:
+        denied = self._not_mine(faction, building)
+        if denied:
+            return {**denied, "snapshot": self.snapshot()}
         b = self.buildings.get(building)
         if b is None or b["kind"] not in con.RECIPES or not self.tile_in_map(int(tx), int(ty)):
             return {"status": "rejected", "reason": "no_rally", "snapshot": self.snapshot()}
         b["rally"] = [int(tx), int(ty)]
         return {"status": "ok", "snapshot": self.snapshot()}
 
-    def demolish(self, building: str) -> dict[str, Any]:
+    def demolish(self, building: str, faction: str | None = None) -> dict[str, Any]:
+        denied = self._not_mine(faction, building)
+        if denied:
+            return {**denied, "snapshot": self.snapshot()}
         b = self.buildings.get(building)
         if b is None or "hp" not in b:
             return {"status": "rejected", "reason": "no_building", "snapshot": self.snapshot()}
@@ -1031,7 +1058,10 @@ class HybridWorld:
         out["snapshot"] = self.snapshot()
         return out
 
-    def deploy(self, unit_id: str) -> dict[str, Any]:
+    def deploy(self, unit_id: str, faction: str | None = None) -> dict[str, Any]:
+        denied = self._not_mine(faction, units=[unit_id])
+        if denied:
+            return {**denied, "snapshot": self.snapshot()}
         u = self.units.get(str(unit_id))
         if u is not None and u["definition"] in ("openra.dtrk", "openra.qtnk"):
             out = abilities.detonate(self, str(unit_id))
@@ -1043,16 +1073,20 @@ class HybridWorld:
 
     def ability(self, faction: str, op: str, **kw: Any) -> dict[str, Any]:
         """Board, unload, capture, infiltrate, lay a mine, use a support power (openra_abilities)."""
+        denied = self._not_mine(faction, units=[kw[k] for k in ("unit", "transport") if k in kw]) or (self._not_mine(faction, kw["building"]) if op in ("power",) and "building" in kw else None)
+        if denied:
+            return {**denied, "snapshot": self.snapshot()}
         fn = {"board": lambda: abilities.board(self, kw["unit"], kw["transport"]), "unload": lambda: abilities.unload(self, kw["transport"], kw.get("tx"), kw.get("ty")),
               "capture": lambda: abilities.capture(self, kw["unit"], kw["building"]), "infiltrate": lambda: abilities.infiltrate(self, kw["unit"], kw["building"]),
               "lay_mine": lambda: abilities.lay_mine(self, kw["unit"]),
+              "repair": lambda: abilities.repair_building(self, kw["unit"], kw["building"]), "c4": lambda: abilities.plant_c4(self, kw["unit"], kw["building"]),
               "power": lambda: abilities.use_power(self, faction, kw["building"], kw["tx"], kw["ty"], kw.get("tx2"), kw.get("ty2"))}.get(op)
         out = fn() if fn else {"status": "rejected", "reason": "unknown_ability"}
         out["snapshot"] = self.snapshot()
         return out
 
-    def order(self, unit_id: str, target_id: str) -> dict[str, Any]:
-        result = order_attack(self, str(unit_id), str(target_id))
+    def order(self, unit_id: str, target_id: str, faction: str | None = None) -> dict[str, Any]:
+        result = self._not_mine(faction, units=[unit_id]) or order_attack(self, str(unit_id), str(target_id))
         result["snapshot"] = self.snapshot()
         return result
 

@@ -333,6 +333,8 @@ def step(world: Any, st: Any, machines: list[dict], sat: dict[str, float]) -> No
             m["state"] = "burning" if s > 0 or spec["power_use_per_s"] <= 0 else "no power"
         elif role == "radar":
             _radar_step(world, b, m, spec, s)
+        elif role == "door":
+            _door_step(world, b, m)
         elif role == "logic":
             from wizard_rts.industry import logic
 
@@ -351,6 +353,26 @@ def step(world: Any, st: Any, machines: list[dict], sat: dict[str, float]) -> No
         for o in machines:
             if o["faction"] == p["faction"] and o["id"] != p["id"] and _in_range(p, o, rng):
                 o["mdy"]["od"] = max(o["mdy"]["od"], boost)
+
+
+def _door_step(world: Any, b: dict, m: dict) -> None:
+    """Doors (Mindustry Door/AutoDoor): closed they block every unit like a wall; a unit of the door's own faction beside or on it opens it, and it closes again
+    when nobody of that faction is near and nothing stands in the gap. `m['forced']` (set by logic `control enabled`) holds it open or shut."""
+    from wizard_rts.industry import sim as S
+
+    fp = [tuple(t) for t in S.footprint(b)]
+    near = any(u.get("alive", True) and u["faction_name"] == b["faction_name"] and not u.get("inside") and u.get("loco") != "fly"
+               and any(max(abs(u["tx"] - x), abs(u["ty"] - y)) <= 1 for x, y in fp) for u in world.units.values())
+    standing = any(u.get("alive", True) and not u.get("inside") and u.get("loco") != "fly" and (u["tx"], u["ty"]) in fp for u in world.units.values())
+    forced = m.get("forced")
+    want_open = near or standing if forced is None else bool(forced)
+    if want_open:
+        for t in fp:
+            world.blocked.discard(t)
+        m["open"], m["state"] = True, "open"
+    elif not standing:
+        world.blocked.update(fp)
+        m["open"], m["state"] = False, "closed"
 
 
 def _turret_step(world: Any, st: Any, b: dict, m: dict, spec: dict, s: float) -> None:

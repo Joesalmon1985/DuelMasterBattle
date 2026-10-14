@@ -1,5 +1,8 @@
 # Roadmap for the next development run(s)
 
+> **Superseded in part (13 Oct 2026).** Branch `work/mechanics-completion-v4` changed the card system (168 cards, four eras of 42, 1-4 entities each), the faction floor of six, ware classes, visibility and the command tier. Where this file disagrees, `docs/ledger/V4_HANDOVER.md` and `docs/DECISION_REGISTER.md` section 5 (D26-D32) win. S05, S06, S13 and S14 below are stale.
+
+
 > **Proposed next programme (not started, awaiting owner approval):** `PLAN_ECONOMY_TECH_ERA_PROGRAMME.md` (no-card civilisation, content graph, 7-Wonders draft ring, paper/scriptorium, single-faction 10-VP eras, content waves). This roadmap's M1-M6 are unchanged.
 
 **Authorised for this run (owner instruction of 11 October 2026): the stop-after-each-milestone rule is superseded for that run only; branches are still never merged to `main`.** Live status per milestone, with completed / partial / blocked / not started, is in `IMPLEMENTATION_RUN_STATUS.md`; the restart point is `NEXT_AGENT_HANDOFF.md`. Original text: this is a plan; the run started on `NEXT_RUN_KICKOFF_PROMPT.md`. Decisions: `DECISION_REGISTER.md`. Gaps: `CURRENT_STATUS_AND_GAPS.md`.

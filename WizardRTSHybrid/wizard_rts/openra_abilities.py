@@ -26,6 +26,10 @@ CAPTURE_MS = 8000
 INFILTRATE_MS = 4000
 STEAL_MAX = 8
 MINE_DAMAGE = 12000
+C4_MS = 2000
+C4_DAMAGE_PCT = 100  # Tanya's charge destroys any building that is not a command centre; a command centre loses half its health
+ENGINEER_REPAIR_MS = 1000
+ENGINEER_REPAIR_PCT = 2  # percent of maximum health per ENGINEER_REPAIR_MS
 DEMO_DAMAGE = 60000
 DEMO_RADIUS = 3.5
 MAD_DAMAGE_PCT = 60
@@ -193,7 +197,7 @@ def _blast(world: Any, centre: dict, radius: float, damage: int, by: str, friend
                 military.kill_unit(world, e, by)
     for b in list(world.buildings.values()):
         if "hp" in b and int(b["hp"]) > 0 and b["id"] != centre.get("id") and _dist(b, centre) <= radius + 1 and (friendly or b["faction"] != centre["faction"]):
-            if not (centre.get("kind") == "mine"):
+            if not (centre.get("kind") == "landmine"):
                 world.damage_building(b["id"], damage, ["structure"], {}, by=by)
     world.effects.append({"t": "explosion", "x1": centre["tx"], "y1": centre["ty"], "x2": centre["tx"], "y2": centre["ty"], "ttl_ms": 1500, "keep": 3, "p": "big"})
 
@@ -235,6 +239,32 @@ def capture(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
     return {"status": "ok"}
 
 
+def repair_building(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
+    """An engineer mends a damaged building of its own faction (OpenRA: engineers repair; the engineer is not used up)."""
+    u, b = world.units.get(unit_id), world.buildings.get(building_id)
+    if u is None or b is None or u["definition"] != "openra.e6":
+        return {"status": "rejected", "reason": "not_an_engineer"}
+    if b["faction"] != u["faction"] or "hp" not in b or b.get("constructing") or int(b["hp"]) <= 0:
+        return {"status": "rejected", "reason": "cannot_repair"}
+    if int(b["hp"]) >= int(b["max_hp"]):
+        return {"status": "rejected", "reason": "undamaged"}
+    u["order"] = {"kind": "repair", "target": building_id, "ms": 0}
+    u["path"] = []
+    return {"status": "ok"}
+
+
+def plant_c4(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
+    """Tanya plants a C4 charge on an enemy building; it goes off after C4_MS and Tanya survives."""
+    u, b = world.units.get(unit_id), world.buildings.get(building_id)
+    if u is None or b is None or u["definition"] != "openra.e7":
+        return {"status": "rejected", "reason": "not_tanya"}
+    if b["faction"] == u["faction"] or "hp" not in b or int(b["hp"]) <= 0 or b.get("constructing"):
+        return {"status": "rejected", "reason": "cannot_plant"}
+    u["order"] = {"kind": "c4", "target": building_id, "ms": 0}
+    u["path"] = []
+    return {"status": "ok"}
+
+
 def infiltrate(world: Any, unit_id: str, building_id: str) -> dict[str, Any]:
     u, b = world.units.get(unit_id), world.buildings.get(building_id)
     if u is None or b is None or u["definition"] not in ("openra.spy", "openra.thf") or b["faction"] == u["faction"] or int(b.get("hp", 0)) <= 0:
@@ -248,7 +278,7 @@ def _order_step(world: Any, u: dict) -> None:
     from wizard_rts import military
 
     o = u.get("order")
-    if not o or o.get("kind") not in ("capture", "infiltrate"):
+    if not o or o.get("kind") not in ("capture", "infiltrate", "repair", "c4"):
         return
     b = world.buildings.get(o["target"])
     if b is None or int(b.get("hp", 0)) <= 0:
@@ -260,6 +290,19 @@ def _order_step(world: Any, u: dict) -> None:
         return
     u["status"] = "working"
     o["ms"] += QUANTUM_MS
+    if o["kind"] == "repair":
+        if o["ms"] % ENGINEER_REPAIR_MS == 0:
+            b["hp"] = min(int(b["max_hp"]), int(b["hp"]) + max(1, int(b["max_hp"]) * ENGINEER_REPAIR_PCT // 100))
+        if int(b["hp"]) >= int(b["max_hp"]):
+            u.pop("order", None)
+        return
+    if o["kind"] == "c4":
+        if o["ms"] >= C4_MS:
+            u.pop("order", None)
+            dmg = int(b["max_hp"]) // 2 if b.get("command_center") else int(b["hp"])
+            world.events.append({"kind": "c4", "building": b["id"], "by": u["id"]})
+            world.damage_building(b["id"], dmg, ["structure"], {}, by=u["id"])
+        return
     need = CAPTURE_MS if o["kind"] == "capture" else INFILTRATE_MS
     if o["ms"] < need:
         return
@@ -375,9 +418,9 @@ def lay_mine(world: Any, unit_id: str) -> dict[str, Any]:
     u = world.units.get(unit_id)
     if u is None or u["definition"] != "openra.mnly" or int(u.get("ammo", 0)) <= 0:
         return {"status": "rejected", "reason": "cannot_lay"}
-    if any(b.get("kind") == "mine" and (b["tx"], b["ty"]) == (u["tx"], u["ty"]) for b in world.buildings.values()):
+    if any(b.get("kind") == "landmine" and (b["tx"], b["ty"]) == (u["tx"], u["ty"]) for b in world.buildings.values()):
         return {"status": "rejected", "reason": "mine_here"}
-    bid = world._building(u["faction"], u["faction_name"], "mine", (u["tx"], u["ty"]), "Mine", "dmb.mine", block=False)
+    bid = world._building(u["faction"], u["faction_name"], "landmine", (u["tx"], u["ty"]), "Mine", "dmb.mine", block=False)
     b = world.buildings[bid]
     b["hp"] = b["max_hp"] = 100
     b["armor"] = "None"
@@ -389,7 +432,7 @@ def lay_mine(world: Any, unit_id: str) -> dict[str, Any]:
 
 def _mines_step(world: Any) -> None:
     for b in list(world.buildings.values()):
-        if b.get("kind") != "mine" or int(b.get("hp", 0)) <= 0:
+        if b.get("kind") != "landmine" or int(b.get("hp", 0)) <= 0:
             continue
         for u in world.units.values():
             if u.get("alive", True) and not u.get("inside") and u["faction"] != b["faction"] and u.get("loco") not in ("fly",) and (u["tx"], u["ty"]) == (b["tx"], b["ty"]):
@@ -569,7 +612,7 @@ def _mad_step(world: Any, u: dict) -> None:
 
                     military.kill_unit(world, e, u["id"])
         for b in list(world.buildings.values()):
-            if "hp" in b and int(b["hp"]) > 0 and _dist(b, u) <= MAD_RADIUS and b["kind"] != "mine":
+            if "hp" in b and int(b["hp"]) > 0 and _dist(b, u) <= MAD_RADIUS and b["kind"] != "landmine":
                 world.damage_building(b["id"], int(b["max_hp"]) * MAD_DAMAGE_PCT // 100, ["structure"], {}, by=u["id"])
         world.effects.append({"t": "explosion", "x1": u["tx"], "y1": u["ty"], "x2": u["tx"], "y2": u["ty"], "ttl_ms": 1200, "keep": 3, "p": "mad"})
 
@@ -680,6 +723,25 @@ def _power_events_step(world: Any) -> None:
 
 # ------------------------------------------------------------------ the quantum
 
+def _crush_step(world: Any) -> None:
+    """Tracked and heavy wheeled vehicles run over hostile infantry on the tile they enter (OpenRA Mobile.Crushes / Crushable)."""
+    from wizard_rts import diplomacy, military
+
+    crushers = [u for u in _live_units(world) if u.get("loco") in ("tracked", "heavytracked", "heavywheeled") and u.get("path") is not None
+                and "infantry" in rules.locomotor(u["loco"]).get("crushes", [])]
+    if not crushers:
+        return
+    foot: dict[tuple[int, int], list[dict]] = {}
+    for u in _live_units(world):
+        if is_infantry(u):
+            foot.setdefault((int(u["tx"]), int(u["ty"])), []).append(u)
+    for c in crushers:
+        for v in foot.get((int(c["tx"]), int(c["ty"])), []):
+            if v.get("alive", True) and v["faction_name"] != c["faction_name"] and diplomacy.hostile(world, c["faction_name"], v["faction_name"]):
+                world.events.append({"kind": "crushed", "unit": v["id"], "by": c["id"]})
+                military.kill_unit(world, v, c["id"])
+
+
 def ability_quantum(world: Any) -> None:
     _gap_cache(world)
     _carry_passengers(world)
@@ -688,7 +750,7 @@ def ability_quantum(world: Any) -> None:
             continue
         if u.get("order") and u["order"].get("kind") == "board":
             _boarding_step(world, u)
-        elif u.get("order") and u["order"].get("kind") in ("capture", "infiltrate"):
+        elif u.get("order") and u["order"].get("kind") in ("capture", "infiltrate", "repair", "c4"):
             _order_step(world, u)
         if u["definition"] in ("openra.medi", "openra.mech"):
             _heal_step(world, u)
@@ -702,6 +764,7 @@ def ability_quantum(world: Any) -> None:
         for b in world.buildings.values():
             if b["kind"] in ("fix", "hpad", "afld") and b.get("operational") and not b.get("constructing") and int(b.get("hp", 1)) > 0:
                 _depot_step(world, b, 500)
+    _crush_step(world)
     _mines_step(world)
     _jam_step(world)
     _power_events_step(world)
