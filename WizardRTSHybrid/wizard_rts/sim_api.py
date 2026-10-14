@@ -54,7 +54,9 @@ class HybridEnv:
         profile: str = "test_showcase",
         era_max_ms: int | None = None,
         era_vp: int | None = None,
+        rewards: bool = True,
     ) -> None:
+        self.rewards = bool(rewards)  # False: step() skips the shaped-reward bookkeeping (about a third of its cost) and returns 0.0 rewards
         # training pacing: a shorter stall guard and/or a lower world-VP threshold per era (None keeps the rules: 75 minutes, VP 6/8/8)
         self.era_max_ms = era_max_ms
         self.era_vp = era_vp
@@ -72,6 +74,7 @@ class HybridEnv:
         self._seq = 0
         self._score: dict[str, float] = {}
         self._events_seen = 0
+        self._trimmed = 0  # events dropped from the front of world.events so far: lets a reader keep an absolute cursor
 
     # ---------------------------------------------------------------- lifecycle
     def reset(self, seed: int | None = None) -> dict[str, dict[str, Any]]:
@@ -94,6 +97,7 @@ class HybridEnv:
         self.log = []
         self._seq = 0
         self._events_seen = len(w.events)
+        self._trimmed = 0
         self._score = {n: self._score_of(n) for n in names}
         return {n: self.observe(n) for n in self.agent_factions}
 
@@ -135,11 +139,14 @@ class HybridEnv:
             remaining -= chunk
         self._trim_events()
         names = [f[0] for f in FACTIONS]
-        new = {n: self._score_of(n) for n in names}
-        rewards = {f: round(new[f] - self._score[f] + self._alive_bonus(f), 6) for f in self.agent_factions}
+        if self.rewards:
+            new = {n: self._score_of(n) for n in names}
+            rewards = {f: round(new[f] - self._score[f] + self._alive_bonus(f), 6) for f in self.agent_factions}
+            self._score = new
+        else:
+            rewards = {f: 0.0 for f in self.agent_factions}
         for f in self.seats():
             rewards.setdefault(f, 0.0)  # a successor seat has no reward stream of its own
-        self._score = new
         alive = [n for n in names if self._alive(n)]
         terminated = {f: not self._alive(f) for f in self.agent_factions}
         extra = {f: not self._alive(f) for f in self.seats() if f not in terminated}
@@ -163,6 +170,17 @@ class HybridEnv:
         ev = self.world.events
         if len(ev) > 50_000:
             del ev[:25_000]
+            self._trimmed += 25_000
+
+    def event_cursor(self) -> int:
+        """An absolute position in the event stream (the end of it now); pass it to events_since."""
+        return self._trimmed + len(self.world.events)
+
+    def events_since(self, cursor: int) -> tuple[list[dict[str, Any]], int]:
+        """(events appended after `cursor`, the new cursor). Events trimmed before they were read are lost, never repeated."""
+        ev = self.world.events
+        start = max(0, cursor - self._trimmed)
+        return ev[start:], self._trimmed + len(ev)
 
     # ---------------------------------------------------------------- actions
     def apply(self, faction: str, action: dict[str, Any]) -> dict[str, Any]:
@@ -579,13 +597,14 @@ class HybridEnv:
     SAVE_FORMAT = 2  # V4: saves carry a format number and the state hash; a save from another format is refused instead of half-loading
 
     def save(self) -> bytes:
-        return pickle.dumps({"format": self.SAVE_FORMAT, "hash": self.world.state_hash(), "world": self.world, "log": self.log, "seq": self._seq, "score": self._score, "seen": self._events_seen, "seed": self.seed}, protocol=5)
+        return pickle.dumps({"format": self.SAVE_FORMAT, "hash": self.world.state_hash(), "world": self.world, "log": self.log, "seq": self._seq, "score": self._score, "seen": self._events_seen, "seed": self.seed, "trimmed": self._trimmed}, protocol=5)
 
     def load(self, blob: bytes) -> None:
         d = pickle.loads(blob)
         if d.get("format") != self.SAVE_FORMAT:
             raise ValueError(f"save format {d.get('format')!r} is not {self.SAVE_FORMAT}: re-record it with this version")
         self.world, self.log, self._seq, self._score, self._events_seen, self.seed = d["world"], d["log"], d["seq"], d["score"], d["seen"], d["seed"]
+        self._trimmed = int(d.get("trimmed", 0))
         if self.world.state_hash() != d["hash"]:
             raise ValueError("the loaded world does not match the hash recorded in the save")
 
