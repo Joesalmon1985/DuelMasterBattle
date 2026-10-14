@@ -36,11 +36,11 @@ def main() -> int:
     md.append("\nArt level of functional entities: " + ", ".join(f"{k} {v}" for k, v in sorted(art.items())) + "\n")
     text = "\n".join(md)
     if "--check" in sys.argv:
-        old = (OUT / "coverage.csv").read_text() if (OUT / "coverage.csv").is_file() else ""
+        old = (OUT / "coverage.csv").read_text(encoding="utf-8") if (OUT / "coverage.csv").is_file() else ""
         return 0 if old == buf.getvalue() else 1
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "coverage.csv").write_text(buf.getvalue())
-    (OUT / "coverage.md").write_text(text)
+    (OUT / "coverage.csv").write_text(buf.getvalue(), encoding="utf-8")
+    (OUT / "coverage.md").write_text(text, encoding="utf-8")
     print(text)
     return 0
 
