@@ -3,7 +3,7 @@
 Entities come from the game's own registries, so a card can only ever unlock something that exists:
   buildings  construction.full_menu()  (hybrid kinds plus every runnable Widelands building, key `wl:<tribe>_<name>`)
   units      construction.RECIPES      (unit kind -> producing building)
-A card unlocks one or two entities. Cards are generated deterministically (no randomness, only stable hashes of names):
+A card unlocks several entities (ERA_MIN_ENTITIES by era; the base generator makes one or two and `_augment` tops them up, so an entity may appear on several cards). Cards are generated deterministically (no randomness, only stable hashes of names):
   * a Widelands building and, for about half of them, a partner of the same tribe that consumes what it makes (a chain pair);
   * a hybrid/OpenRA building together with its first unit, and every further unit alone.
 Ids are `gen.<slug>`. They coexist with the hand-written `dmb.card.*` set; the old draft ignores `gen.` cards and drafting v2 deals only
@@ -165,8 +165,52 @@ def _card(slug: str, name: str, era: int, ents: list[str], summary: str) -> dict
             "requires_cards": [], "requires_working": [], "entities": list(ents)}
 
 
+# Faster progression (owner, 14 Oct 2026): every card unlocks one more entity than before, and at least this many in its era. The extra entities come from the
+# same game and tribe and are never later than the card's era; they may also sit on other cards (overlap is what keeps thousands of distinct packs possible).
+ERA_MIN_ENTITIES = {0: 2, 1: 3, 2: 4, 3: 4}
+
+
+def _augment(base: dict[str, dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    ents = entities()
+    movable = {k: e for k, e in ents.items() if not e["foundation"] and e["functional"] and "deeper" not in k}
+    out: dict[str, dict[str, Any]] = {}
+    seen: set[tuple] = set()
+    for cid, c in sorted(base.items()):
+        es = list(c["entities"])
+        first = ents[es[0]]
+        want = max(len(es) + 1, ERA_MIN_ENTITIES.get(c["era"], 4))
+        producers = {first.get("producer") or first["id"]} | {ents[e].get("producer") or e for e in es}
+        outs = set().union(*[set(ents[e].get("outputs", [])) for e in es])
+        ins = set().union(*[set(ents[e].get("inputs", [])) for e in es])
+
+        def rank(k: str) -> tuple[int, int]:
+            e = movable[k]
+            related = (k in producers) or (e.get("producer") in producers) or bool(outs & set(e.get("inputs", []))) or bool(ins & set(e.get("outputs", [])))
+            return (0 if related else 1, _h(cid + "+" + k))
+
+        cands = [k for k, e in movable.items() if k not in es and e["game"] == first["game"] and e["tribe"] == c["tribe"] and e["era"] <= c["era"]]
+        if first["game"] == "mindustry":  # a building card draws buildings, a unit card draws units of the same line
+            cands = [k for k in cands if movable[k]["type"] == first["type"]]
+        ranked, need = sorted(cands, key=rank), want - len(es)
+        for shift in range(max(1, len(ranked) - need + 1)):  # the first window of candidates that makes this card a new combination
+            pick = es + ranked[shift: shift + need]
+            if tuple(sorted(pick)) not in seen:
+                break
+        es = pick
+        seen.add(tuple(sorted(es)))
+        labels = [ents[e]["label"] for e in es]
+        name = " + ".join(labels[:2]) + (f" + {len(labels) - 2} more" if len(labels) > 2 else "") + (f" ({c['tribe']})" if c["tribe"] else "")
+        out[cid] = _card(cid[len(PREFIX):], name, c["era"], es, "Unlocks %d: %s." % (len(es), ", ".join(l.lower() for l in labels)))
+    return out
+
+
 @lru_cache(maxsize=1)
 def generated_cards() -> dict[str, dict[str, Any]]:
+    return _augment(_base_cards())
+
+
+@lru_cache(maxsize=1)
+def _base_cards() -> dict[str, dict[str, Any]]:
     ents = entities()
     cards: dict[str, dict[str, Any]] = {}
     # Widelands: chain pairs inside one tribe
@@ -269,18 +313,18 @@ def generated_cards() -> dict[str, dict[str, Any]]:
 
 
 def check() -> list[str]:
-    """Static checks (plan 2.4): every card unlocks 1-2 entities that exist; no entity sits in two cards; foundation entities need no card."""
+    """Static checks (plan 2.4): every card unlocks at least its era's minimum of entities that exist; no entity sits in two cards; foundation entities need no card."""
     problems = []
     ents = entities()
     seen: dict[str, str] = {}
     for cid, c in generated_cards().items():
-        if not 1 <= len(c["entities"]) <= 2:
-            problems.append(f"{cid}: {len(c['entities'])} entities")
+        if len(c["entities"]) < ERA_MIN_ENTITIES.get(c["era"], 4):
+            problems.append(f"{cid}: {len(c['entities'])} entities, era {c['era']} needs {ERA_MIN_ENTITIES.get(c['era'], 4)}")
+        if len(set(c["entities"])) != len(c["entities"]):
+            problems.append(f"{cid}: repeats an entity")
         for e in c["entities"]:
             if e not in ents:
                 problems.append(f"{cid}: unknown entity {e}")
-            if e in seen:
-                problems.append(f"{e} in {cid} and {seen[e]}")
             seen[e] = cid
             if ents.get(e, {}).get("foundation"):
                 problems.append(f"{cid}: foundation entity {e} needs no card")
