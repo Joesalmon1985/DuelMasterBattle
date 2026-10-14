@@ -66,4 +66,5 @@ Legend: `[ ]` not started, `[~]` in progress (say what is left), `[x]` done.
 - [ ] Session reviews every 5 sessions under `docs/evidence/neuroevo/progress/`
 
 ## Session log (newest first)
+- 2026-10-14 (Claude Fable 5.1): `work/mechanics-completion-v4` merged at `1b404a8b` on the owner's request (conflicts: v4's 168-card system kept over PR #17's rule; register renumbered D33/D34). Merged-tree checks: 84 tests passed (sim API, VP/eras, outbreaks, content graph, coverage, NN, hash baseline, visibility, ware classes, draft reachability, determinism); roster now 582 entities / 168 cards; 40-minute bench 79 s. No implementation task started.
 - 2026-10-14 (Claude Fable 5.1): plan and execution plan written and approved; no task started. Benchmarks in `WizardRTSHybrid/docs/evidence/neuroevo/bench_240/`.

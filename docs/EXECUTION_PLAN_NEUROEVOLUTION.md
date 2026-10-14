@@ -1,6 +1,6 @@
 # Execution plan: content freeze and hierarchical neuroevolution
 
-This is the task-by-task guide for the agent that implements `docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md` (call it "the design"). The owner approved the design and every default in its section 15 on 14 October 2026 (decision register D26, D27, N01-N09). Do the tasks in order. Each task says what to build, how to test it, when it is done, and what to commit. When this document and the design disagree, this document wins; when the code disagrees with either, trust the code and the tests, then fix the document.
+This is the task-by-task guide for the agent that implements `docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md` (call it "the design"). The owner approved the design and every default in its section 15 on 14 October 2026 (decision register D33, D34, N01-N09). Do the tasks in order. Each task says what to build, how to test it, when it is done, and what to commit. When this document and the design disagree, this document wins; when the code disagrees with either, trust the code and the tests, then fix the document.
 
 Repository root is `C:\Users\joesa\Documents\Cursor\DuelMaster\DuelMasterBattle`; the simulation package is `WizardRTSHybrid/wizard_rts/`; the new package is `WizardRTSHybrid/neuro/`. Commands below are for Windows (`py -3`); on Linux use `python3`.
 
@@ -47,9 +47,9 @@ def rss_mb() -> int:
 
 Replace every `resource.getrusage(...)` with `sysinfo.rss_mb()`. Also make `scripts/bench_full_game.py` use it. Test: `py -3 WizardRTSHybrid/scripts/bench_sim.py --minutes 2` prints JSON on Windows; `py -3 WizardRTSHybrid/scripts/run_civilisation_tournament.py --seeds 507 --minutes 3 --jobs 1 --report-dir %TEMP%\civ_smoke` completes. Done when both run. Commit `neuro(T0.4): Windows-safe memory reporting`.
 
-### T0.5 Re-record the hash baselines at the frozen commit
+### T0.5 Hash baselines on Windows
 
-`py -3 WizardRTSHybrid/scripts/hash_gate.py record --out WizardRTSHybrid/docs/perf/hash_baseline.json --seeds 507 11 23 --minutes 20` and `record --out WizardRTSHybrid/docs/perf/hash_baseline_mid.json --seeds 507 11 --minutes 50`. Then `check` against each immediately (must pass: same process, same code). Commit with the message saying the baselines were re-recorded because V3 changed behaviour without re-recording.
+The merged v4 work already recorded current baselines: `docs/perf/hash_baseline_v4.json` (showcase world, baseline AI) and `docs/perf/hash_baseline_v4_campaign_plus.json` (campaign, plus AI), checked by `WizardRTSHybrid/tests/test_hash_baseline.py` (first 3 minutes). Run that test and `py -3 WizardRTSHybrid/scripts/hash_gate.py check --baseline docs/perf/hash_baseline_v4.json` on this PC. If the hashes differ here (the baselines were recorded under Python 3.12/3.13 on Linux; a float or hash-order difference would show at minute 1), do **not** edit the simulation: re-record both files under the label `_v4_windows` with `hash_gate.py record` (same seeds and minutes), make `test_hash_baseline.py` pick the file by platform, and write in the ledger that Linux and Windows baselines differ (that is itself a finding for the determinism work). The older `WizardRTSHybrid/docs/perf/hash_baseline*.json` files are stale (V3 changed behaviour without re-recording) and are left as history.
 
 ### T0.6 The roster manifest and `freeze.py`
 
@@ -70,7 +70,7 @@ def manifest() -> dict                      # loads MANIFEST (cached)
 def check() -> list[str]                    # human-readable differences live vs manifest: added/removed ids per list, excluded entries no longer excluded, data hash mismatches, version string
 ```
 
-The counting logic exists in `WizardRTSHybrid/docs/evidence/neuroevo/scripts/count_entities.py` (expected: 593 entities, 96 `unit:` ids among them, 380 cards, 33 hand cards; prototype hash `d2e8c059922e35800fcf215e6d324d76851e32a7eaf501da95e7ca6f1184b353` for the four-list prototype; the final hash will differ because wares, items and liquids are added).
+The counting logic exists in `WizardRTSHybrid/docs/evidence/neuroevo/scripts/count_entities.py`. Measured on the merged tree (`1b404a8b`, after `work/mechanics-completion-v4`): **582 entities** (486 buildings: 206 Widelands, 25 OpenRA, 252 Mindustry, 3 hybrid; 96 units: 42 OpenRA, 50 Mindustry, 4 hybrid), **168 generated cards** (four eras of 42, 1-4 slots each, `content/cards.py`), 33 hand cards, 41 hybrid build-menu kinds, 234 `full_menu` kinds; four-list prototype hash `7afaf3ae773ef391ddc9458babb96ea645d4f3106b6a34f5f3f234cd8a3d43f4` (the final hash will differ because wares, items and liquids are added). The 11 OpenRA decoy buildings are excluded by D27 and must appear in `excluded`.
 
 Create `WizardRTSHybrid/scripts/freeze_content.py`:
 
@@ -82,12 +82,12 @@ py -3 WizardRTSHybrid/scripts/freeze_content.py --bump minor --reason "..."   # 
 
 `--write` refuses if the manifest exists (use `--bump`). The manifest JSON has the keys shown in the design, section 2.2, plus `base_commit` from `git rev-parse --short HEAD`.
 
-Create `docs/CONTENT_FREEZE.md`: what is frozen, why (D26), the counts, how to run the check, the rule for bumps (reason, owner approval), and an empty changelog table.
+Create `docs/CONTENT_FREEZE.md`: what is frozen, why (D33), the counts, how to run the check, the rule for bumps (reason, owner approval), and an empty changelog table.
 
 Create `WizardRTSHybrid/tests/test_content_freeze.py`:
 
 * `test_manifest_matches_live_registries`: `freeze.check() == []`.
-* `test_counts`: manifest counts equal the design's numbers (593/497/96/380/33/128/22/11).
+* `test_counts`: manifest counts equal the measured numbers (entities 582, buildings 486, units 96, cards 168, hand cards 33, wares 128, items 22, liquids 11).
 * `test_excluded_stay_excluded`: every id in `manifest()["excluded"]` has status `excluded` in `coverage.build()`.
 * `test_data_files_unchanged`: `data_hashes() == manifest()["data_files"]`.
 * `test_source_pins_unchanged`: the three commit SHAs in `sources/manifest.json` equal the ones recorded in `content_freeze.json["source_pins"]`.
@@ -100,7 +100,7 @@ Done when all six pass and `coverage_report.py --check` still passes. Commit `ne
 Add to the top of every `WizardRTSHybrid/scripts/import_*.py` (23 files), right after the docstring:
 
 ```python
-from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D26)
+from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D33)
 freeze_guard.require_unfreeze(__file__)
 ```
 
@@ -108,14 +108,14 @@ with `WizardRTSHybrid/wizard_rts/freeze_guard.py`:
 
 ```python
 def require_unfreeze(script: str) -> None:
-    """Exit 3 with a notice unless DMB_UNFREEZE=1 is set and --reason <text> is in sys.argv (D26)."""
+    """Exit 3 with a notice unless DMB_UNFREEZE=1 is set and --reason <text> is in sys.argv (D33)."""
 ```
 
 Mind the `sys.path` setup each script does before importing `wizard_rts`; place the guard after it. Done when `test_importers_refuse_without_unfreeze` passes and `DMB_UNFREEZE=1 py -3 scripts/import_openra_rules.py --reason test --help` reaches argparse. Commit `neuro(T0.7): importer guards`.
 
 ### T0.8 Documents and ledger for M0
 
-Mark plan v2's P6/P7/P9/P11 rows in `docs/ledger/LEDGER.md` as "superseded by D26". Run the full test suite once on Windows and record the result (count, failures, time) in the ledger; fix only failures caused by this milestone, list the others as pre-existing. **OWNER CHECKPOINT.**
+Mark plan v2's P6/P7/P9/P11 rows in `docs/ledger/LEDGER.md` as "superseded by D33". Run the full test suite once on Windows and record the result (count, failures, time) in the ledger; fix only failures caused by this milestone, list the others as pre-existing. **OWNER CHECKPOINT.**
 
 ---
 
@@ -123,25 +123,20 @@ Mark plan v2's P6/P7/P9/P11 rows in `docs/ledger/LEDGER.md` as "superseded by D2
 
 ### T1.1 Visibility model
 
-Create `WizardRTSHybrid/neuro/__init__.py` (empty) and `WizardRTSHybrid/neuro/vision.py`:
+**What v4 already provides** (`wizard_rts/visibility.py`, D32): sight sources per faction (units 7 tiles, aircraft 10, buildings 8, a command centre its territory), `visible(world, faction, tx, ty)`, an explored-cell memory (`known`), `seen_enemies` (what is in sight now), `visibility_quantum` every 2 game seconds in `HybridWorld.advance`; `HybridEnv.observe` filters `enemy_capitals` by `known` and `threats` by `visible`, and `legal_actions["attack"]` lists only visible targets. **What is missing:** a memory of enemy *buildings* once seen (position, kind, last hp, last seen time, removal when seen gone), use of that memory by the heuristic AI (`ai._known_targets` still reads the global `_ai_known` set) and a per-faction list for the controller. Extend `visibility.py` rather than writing a parallel module; create `WizardRTSHybrid/neuro/__init__.py` (empty) and `WizardRTSHybrid/neuro/vision.py` as a thin facade over it with this interface (the constants below are the existing ones; keep them):
 
 ```python
-SIGHT = 32          # tiles (Chebyshev) around own buildings and alive units; matches ai.SIGHT
-CELL = 16           # coarse cell for the seen-grid
-REFRESH_QUANTA = 50 # recompute every 5 s of game time
-
-def state(world) -> dict            # world.__dict__["vision"] = {faction: {"seen": set[(cx,cy)], "seen_ms": int, "memory": {enemy_building_id: {...}}}}
-def refresh(world, faction) -> None  # rebuild the seen-cell set from own buildings/units (sorted iteration), then update memory:
-                                     #   every enemy building (not blight nests of faction "") whose tile is in a seen cell -> memory[id] = {"tile", "kind", "faction_name", "hp", "last_seen_ms"}
-                                     #   a remembered building that is destroyed/gone and whose tile is currently seen -> removed from memory
-def can_see_tile(world, faction, tx, ty) -> bool
-def visible_units(world, faction) -> list[dict]      # alive enemy units in seen cells, sorted by id (nests' units too)
-def known_enemy_buildings(world, faction) -> list[dict]   # memory values sorted by id (may be stale: that is the point)
-def visible_regions(world, faction) -> set[int]      # catastrophe regions containing a seen cell
-def vision_quantum(world) -> None    # called from HybridWorld.advance every REFRESH_QUANTA for every faction in world.faction_info
+# wizard_rts/visibility.py (existing constants): SIGHT_UNIT = 7, SIGHT_AIR = 10, SIGHT_BUILDING = 8, CELL = 4, QUANTA = 20
+def memory_of(world, faction) -> dict[str, dict]     # NEW: world.__dict__["vis_memory"][faction] = {enemy_building_id: {"tile", "kind", "faction_name", "hp", "last_seen_ms"}}
+def refresh(world, faction) -> None                  # EXTEND: after updating explored cells, every enemy building (not blight nests of faction "") in sight -> memory[id] updated;
+                                                     #   a remembered building whose tile is in sight and which is destroyed/gone -> removed. Sorted iteration only.
+def visible_units(world, faction) -> list[dict]      # NEW: alive, non-cloaked enemy units in sight, sorted by id (seen_enemies()["units"] rows)
+def known_enemy_buildings(world, faction) -> list[dict]   # NEW: memory values sorted by id (may be stale: that is the point)
+def visible_regions(world, faction) -> set[int]      # NEW: catastrophe regions containing a tile in sight (sample the region table at the sight sources)
+# neuro/vision.py re-exports these and adds nothing else.
 ```
 
-Hook `vision_quantum` into `HybridWorld.advance` right before `ai_quantum`. Make the heuristic AI use it: `ai._known_targets` returns `vision.known_enemy_buildings` filtered as before (keep its 32-tile rule identical, so behaviour changes only where the old code saw more). Replace in `HybridEnv.observe`: `enemy_capitals` -> only remembered enemy warehouses; `threats` -> computed from `visible_units`; `known_enemy_buildings` -> `len(known_enemy_buildings)`. `legal_actions["attack"]` lists only remembered buildings.
+`visibility_quantum` already runs in `HybridWorld.advance`; keep its cadence. Make the heuristic AI use the memory: `ai._known_targets` returns `visibility.known_enemy_buildings` filtered as before (keep its 32-tile "becomes known" rule by seeding the memory from the same sources it used, so behaviour changes only where the old code saw more than the faction's sight). Replace in `HybridEnv.observe`: `enemy_capitals` -> only remembered enemy warehouses; `threats` -> computed from `visible_units`; `known_enemy_buildings` -> `len(known_enemy_buildings)`. `legal_actions["attack"]` lists only remembered buildings.
 
 Tests `WizardRTSHybrid/tests/test_neuro_vision.py`: (a) on a fresh `campaign` world, Red's observation contains no enemy capital and no attack target (homes are more than 32 tiles apart: assert the distance first); (b) move a Red unit (God command `move`, developer profile) next to Blue's warehouse, advance 10 s: Blue's warehouse is in Red's memory and in `legal_actions["attack"]`; (c) kill that unit (`military.kill_unit`), advance 10 s: the memory entry remains (remembered); (d) destroy the warehouse by God `damage`, advance with a Red observer nearby: entry removed; (e) determinism: two worlds, same seed, 10 minutes with AI on, identical `vision.state` after sorting.
 
@@ -157,7 +152,7 @@ In `history.split`, after creating the successor: if `world.ai_factions is not N
 
 ### T1.4 Action surface
 
-Extend `HybridEnv.ACTION_OPS` and `apply` with: `belt` (`w.belt(faction, tiles, end_dir, kind)`), `upgrade` (`w.upgrade(faction, building, to)`), `configure` (`w.configure(faction, building, key, value)`), `link_power` (`industry.commands.link_power`), `trade` (`trade.send_caravan(world, faction, wh_id, partner_wh_id, give, want)`, ownership of `wh_id` checked, partner must be a remembered or allied warehouse), `propose` (`diplomacy.propose(world, a, b, state, duration_ms)`), `respond` (`diplomacy.respond(world, offer_id, accept)` only for offers addressed to the faction). Every new branch checks ownership like the existing ones. Add `observe=True` parameter to `step`; when False, return `{}` for observations (saves 1-4 ms per agent per step). Tests in `test_neuro_actions_env.py`: each new op is rejected for a foreign building/unit with `not_yours`, accepted in a small developer-profile fixture where it is legal (use `industry.fixture` for belts and power; two allied factions for trade), and a malformed payload returns `malformed:*`. Commit `neuro(T1.4): full action surface in HybridEnv`.
+Already there after v4: `legal_actions` lists the faction's own `wl:` buildings and every `mdy:` machine it has unlocked (`_generated_menu`), attacks only on visible targets, the faction command tier (`world._not_mine`, `faction=` on queue/cancel/move/stop/rally/demolish/deploy/order/ability), versioned hash-checked saves (`SAVE_FORMAT = 2`), and training pacing knobs `era_max_ms` / `era_vp` (do **not** use these in training: full rules only). Extend `HybridEnv.ACTION_OPS` and `apply` with: `belt` (`w.belt(faction, tiles, end_dir, kind)`), `upgrade` (`w.upgrade(faction, building, to)`), `configure` (`w.configure(faction, building, key, value)`), `link_power` (`industry.commands.link_power`), `trade` (`trade.send_caravan(world, faction, wh_id, partner_wh_id, give, want)`, ownership of `wh_id` checked, partner must be a remembered or allied warehouse), `propose` (`diplomacy.propose(world, a, b, state, duration_ms)`), `respond` (`diplomacy.respond(world, offer_id, accept)` only for offers addressed to the faction). Every new branch checks ownership like the existing ones. Add `observe=True` parameter to `step`; when False, return `{}` for observations (saves 1-4 ms per agent per step). Tests in `test_neuro_actions_env.py`: each new op is rejected for a foreign building/unit with `not_yours`, accepted in a small developer-profile fixture where it is legal (use `industry.fixture` for belts and power; two allied factions for trade), and a malformed payload returns `malformed:*`. Commit `neuro(T1.4): full action surface in HybridEnv`.
 
 ### T1.5 Episode runner
 
