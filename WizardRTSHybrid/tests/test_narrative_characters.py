@@ -191,3 +191,13 @@ def test_without_the_layer_nothing_is_created():
     w = HybridWorld()
     step(w, 1000, 3)
     assert not w.dmb.people and "narrative" not in w.__dict__ and "persons" not in w.snapshot()["story"]
+
+
+def test_every_kind_of_body_can_be_talked_to():
+    """Workers, carriers and soldiers all answer (a carrier once crashed the server: no baseline line for its role)."""
+    w = new_world()
+    for eid in (sorted(w.workers)[0], sorted(w.carriers)[0], sorted(w.units)[0]):
+        row = characters.locate(w, eid)[1]
+        stand_beside(w, row)
+        r = story.dispatch(w, {"op": "talk", "npc": eid})
+        assert r["status"] == "ok" and r["name"] in r["lines"][0] and len(r["lines"]) == 2, (eid, r)

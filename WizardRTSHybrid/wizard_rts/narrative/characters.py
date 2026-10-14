@@ -269,4 +269,4 @@ def talk(world: Any, entity_id: str) -> dict[str, Any] | None:
     pool = base["intro"][role_key]
     intro = pool[_rng(world, link_key(kind, entity_id), "intro").randrange(len(pool))].format(
         name=person["name"], role=str(link["role"]).replace("_", " "), faction=row.get("faction_name", ""))
-    return {"status": "ok", "npc": entity_id, "person": pid, "name": person["name"], "lines": [intro, base["roles"][role_key]], "choices": []}
+    return {"status": "ok", "npc": entity_id, "person": pid, "name": person["name"], "lines": [intro, base["roles"]["soldier" if kind == "unit" else "worker"]], "choices": []}

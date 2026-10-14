@@ -284,7 +284,14 @@ def serve(port: int) -> None:
                         except json.JSONDecodeError:
                             reply = {"status": "rejected", "reason": "bad_json"}
                         else:
-                            reply = _handle(world, message)
+                            try:
+                                reply = _handle(world, message)
+                            except Exception as exc:  # a bug in one op must not kill the simulator (the client would lose its connection and the world)
+                                import traceback
+
+                                traceback.print_exc()
+                                sys.stdout.flush()
+                                reply = {"status": "error", "reason": "server_error", "detail": f"{type(exc).__name__}: {exc}", "op": str(message.get("op", ""))}
                             swapped = reply.pop("_swap", None)  # a load: the loaded world replaces this one (the reply already carries its snapshot)
                             if swapped is not None:
                                 world = swapped
