@@ -1,6 +1,6 @@
 # Wizard narrative audit: existing story, quest, dialogue and settlement systems
 
-Branch `feature/wizard-settlement-stories`, created 14 October 2026 from `origin/feature/neuroevolution-plan` at `4b67f55c00892decf43c8ce6736167a919abf235`. Read against the code and tests of that tree, not against documentation alone. Companion documents: `PLAN_WIZARD_SETTLEMENT_STORIES.md` (architecture), `EXECUTION_PLAN_WIZARD_SETTLEMENT_STORIES.md` (tasks), `WIZARD_STORY_INTEGRATION_CONTRACT.md` (boundaries with the neuroevolution programme), `ledger/WIZARD_STORIES_PROGRESS.md` (checklist). Nothing in this document changes code; it is the inventory the plan is built on.
+Branch `feature/wizard-settlement-stories`, created 14 October 2026 from `origin/feature/neuroevolution-plan` at `4b67f55c00892decf43c8ce6736167a919abf235`. Read against the code and tests of that tree, not against documentation alone. Revised 14 October 2026 after the owner's review: sections 9 to 13 (duel systems, the worker programme model, character lifecycle facilities, save and load, the launch path) were added, the summary gained findings 10 to 14, and section 8 was reduced to a record (the training path is the other workstream's concern). Companion documents: `PLAN_WIZARD_SETTLEMENT_STORIES.md` (architecture), `EXECUTION_PLAN_WIZARD_SETTLEMENT_STORIES.md` (tasks), `WIZARD_STORY_INTEGRATION_CONTRACT.md` (boundaries with the neuroevolution programme), `ledger/WIZARD_STORIES_PROGRESS.md` (checklist). Nothing in this document changes code; it is the inventory the plan is built on.
 
 Status words: **WORKS** (a passing test exercises it on the hybrid world), **LEGACY-WORKS** (passes its own tests in the Catan-era runtime, not connected to the hybrid), **DATA** (content present, no runtime reads it in the hybrid), **TEST-ONLY**, **SUPERSEDED**, **ABSENT**. Reuse words: **REUSE** (call it as it is), **ADAPT** (keep the module, change its binding), **MIGRATE** (keep the content, move it into the new template format), **ARCHIVE** (keep the file, do not build on it), **EXCLUDE**.
 
@@ -17,6 +17,11 @@ Status words: **WORKS** (a passing test exercises it on the hybrid world), **LEG
 7. **The legacy `story_quantum` runs in every world, including training worlds**, from `HybridWorld.advance` (`world.py` line 887) with no switch, and its state is part of `state_hash()` through `snapshot()`. Any gate added for the neuroevolution programme therefore interacts with the recorded hash baselines (section 8).
 8. **Wizard Mode has no save/load.** `HybridEnv.save/load` pickles the whole world (format 2, hash-checked) for developer and training use; `wizard_rts/server.py` has no save or load op, and the Godot hybrid client never persists. Story state is already inside the pickled world (`world.story`, `world.dmb`), so the missing piece is a server op and a client call, not a new format.
 9. **Nothing in the hybrid teaches magic.** The wizard can burn things within three tiles (`magic.py`), treat an outbreak region (`regions.begin_treatment`) and cast Flame, Frost or Vine on dungeon puzzles (`puzzle/logic.py` checks `ctx["spells"]`; the hybrid passes every spell). There is no known-spell list on the wizard, no mentor and no practice duel. The First Adventure (Halvard's staff, Ashby's lessons) exists only in the retired standalone Godot adventure.
+10. **The retained Ward Duel is already parametric and already hosted inside the hybrid world** (section 9): per-combatant weave and ward sizes 1 to 8, any spell pool, `fixed_ward`, bot policies and think bands; `game_board.tscn` runs under a Python lease from `hybrid_world.gd` through `DmbDuelLeaseAdapter`; tiers come from `progression.json`. A three-colour, three-slot tutorial is a new tier and a new lease kind, not a new duel system. The Mastermind warden is a second, one-sided mechanic and is retired from play.
+11. **Workers run Widelands programme stacks** (section 10): `callworker` holds the building until the worker reports back; reservations, the ware in hand and the return path are explicit fields. A legitimate "come outside" interruption is one additive worker state inside `workers.py`; nothing else in the simulation kills or moves workers except fire magic, a destroyed workplace and a lost path.
+12. **The people registry already has the lifecycle vocabulary** (section 11): `displace`, `record_death` with tombstones, `assign_job` keeping the id, relationships, known facts, history; what is absent is residents, movement, a person-to-entity link and a departure state.
+13. **Save is one op pair away** (section 12): the pickle format, the hash check, lease checkpoints and dungeon-run state exist; the server lacks `save`/`load` and the client lacks a pause menu.
+14. **The integrated launch works today** (section 13): `launch_scenario.sh campaign` starts the six-faction simulation and drops the wizard beside the Red settlement with labels, fire magic and the hazard duel; what is missing is a teacher, a way to talk to the simulation's own workers, building interaction, a journal and save/load.
 
 ---
 
@@ -64,7 +69,7 @@ The architecture documents `INTEGRATED_RUNTIME_ARCHITECTURE.md` and `CANONICAL_G
 
 Measured on this branch with `scripts`-style loops (`HybridWorld(seed, profile="campaign")`, AIs on, 60 game minutes, one game second per `advance`), to establish what the training path currently pays for the story code and whether quests open without a wizard:
 
-Scripts and raw output: `WizardRTSHybrid/docs/evidence/narrative/audit/` (`measure_story.py`, `equiv_story.py`; to become `scripts/narrative_evidence.py` in W0.3). Hardware: the Ubuntu laptop, other work running; wall times are indicative only, the cProfile run is about seven times slower than an unprofiled one.
+Scripts and raw output: `WizardRTSHybrid/docs/evidence/narrative/audit/` (`measure_story.py`, `equiv_story.py`; kept as evidence, not promoted to a script: the training path is not this programme's work). Hardware: the Ubuntu laptop, other work running; wall times are indicative only, the cProfile run is about seven times slower than an unprofiled one.
 
 | Measurement | Seed 507 | Seed 11 |
 | --- | --- | --- |
@@ -78,7 +83,7 @@ Scripts and raw output: `WizardRTSHybrid/docs/evidence/narrative/audit/` (`measu
 | `world.events.total` after 40 minutes, on versus off | 79,383 versus 79,382 (the one `story_quest_offered` event) | not run |
 | unprofiled wall time, 40 minutes, on versus off | 116.8 s versus 117.1 s (noise) | not run |
 
-Three conclusions. First, the legacy story layer costs well under one percent of a training game and opens about one quest per hour of game time (outbreaks reach two cubes; mine collapses are rare at `COLLAPSE_PER_MIN = 0.004`). Second, it has **no effect on factions or on the simulation's random stream**: switching it off leaves every faction-level record identical for 40 minutes. Third, it **does** change `state_hash()` from the first minute, because `snapshot()["story"]` is `{}` when the story dict was never created and a six-key record when it was; so a gate that switches the layer off in training changes every recorded baseline hash at once, unless `story.snapshot` returns the same empty shape in both cases (a one-line change in the wizard-owned `story.py`, proposed as part of S1 in the contract), after which hashes differ only once a quest actually opens.
+Three conclusions. First, the legacy story layer costs well under one percent of a training game and opens about one quest per hour of game time (outbreaks reach two cubes; mine collapses are rare at `COLLAPSE_PER_MIN = 0.004`). Second, it has **no effect on factions or on the simulation's random stream**: switching it off leaves every faction-level record identical for 40 minutes. Third, it **does** change `state_hash()` from the first minute, because `snapshot()["story"]` is `{}` when the story dict was never created and a six-key record when it was; so a gate that switches the layer off in training changes every recorded baseline hash at once, unless `story.snapshot` returns the same empty shape in both cases (a one-line change in the wizard-owned `story.py` that this programme does not make, since no gate is being designed; recorded for whoever reconciles the branches), after which hashes would differ only once a quest actually opens.
 
 Interpretation is in section 8 and in the integration contract.
 
@@ -99,7 +104,7 @@ Interpretation is in section 8 and in the integration contract.
 | `wizard_pilot.py` | WORKS (crisis experiments) | Walks the wizard at 4 tiles/s by A* and treats regions. | Yes | REUSE for travel steps in the playthrough harness | `regions`, `set_pose` |
 | `envs/quest_env.py`, `dungeon_env.py`, `duel_env.py`, `outbreak_env.py`, `_world_cache.py` | WORKS (32 tests) | Headless environments with scenario knobs (`world_fix_first`, `mine_destroyed`, `npc_dead`, `reload`). | Yes | REUSE; extend `_world_cache` with a "stories" scenario (several settlements with assigned stories) | `story_fixture` |
 | `puzzle/` (`gen`, `logic`, `dungeon`, `items`, `rng`) | WORKS (`test_puzzle_parity` 6 Godot-RNG-exact, `test_puzzle_exhaustive`) | Eight puzzle templates, four-room dungeon, inventory, Godot-RNG parity. | Yes | REUSE | `data/puzzle_items.json` |
-| `duel/ward.py`, `sim/dmb/adventure/mastermind.py`, `duels.py` | WORKS (`test_ward_parity` 5; `tests/sim/test_u05_retained_ward_duel.py`) | Ward Duel logical core and bot policies; `MastermindDuel` (4 slots, 6 colours, 10 casts; `attach(duel, rng)`); `HazardDuelService` for cube duels with the `hazard_duel` pause token. | Yes | REUSE; a practice duel for the tutorial is `MastermindDuel.attach` with a seeded `random.Random` and raised `max_casts`, exactly as `story.duel_begin` does | |
+| `duel/ward.py`, `sim/dmb/adventure/mastermind.py`, `duels.py` | WORKS (`test_ward_parity` 5; `tests/sim/test_u05_retained_ward_duel.py`) | Ward Duel logical core and bot policies; `MastermindDuel` (4 slots, 6 colours, 10 casts; `attach(duel, rng)`); `HazardDuelService` for cube duels with the `hazard_duel` pause token. | Yes | REUSE the Ward Duel (`ward.py`, the lease path in `duels.py`, the hosted board) as the one duel of Wizard Mode; the tutorial is a 3x3 tier of it (section 9); Mastermind stays for `MastermindEnv` only | |
 | `magic.py` | WORKS (`test_fire_magic` 5) | Fire within three tiles through the real destruction lifecycles. | Yes | REUSE; a known-spell gate belongs in the wizard-only `server.py` path, never in `magic.py` (section 8) | |
 | `regions.begin_treatment` | WORKS | The `treat` wizard op. | Yes | REUSE | |
 | `society.py` unrest and pressures | WORKS | Per-settlement `unrest` 0..1 from hunger, closures, war, isolation, garrison, plenty; docstring says quest systems may set unrest. | Yes | REUSE as a story *signal*; bounded unrest deltas are a candidate typed effect | |
@@ -260,13 +265,88 @@ Fifteen archetypes cover every category in the owner's list from existing materi
 3. **People**: a Person is bound to an existing worker, carrier or unit whenever one plays the role; the director creates a Person only for household roles that the simulation does not model, capped per settlement, and never for presentation.
 4. **Effects**: two registries, narrative-only and world-altering; world-altering effects call existing simulation APIs only (`disruption.clear`, `regions.cure`, `trade.send_caravan` when `can_supply`, `diplomacy.propose/respond`, bounded `unrest` on the settlement record, `history_fact`); nothing creates wares, buildings or units.
 5. **Dialogue**: offline packs, deterministic selection, fact placeholders, safe fallback; no runtime model.
-6. **Training**: the narrative layer is gated; see the contract for the mechanism and the hash-baseline consequence.
+6. **Duel**: the retained Ward Duel is the one duel of Wizard Mode; the tutorial is a three-colour, three-slot tier of it; the warden becomes a Ward Duel.
+7. **Characters**: persistent identities from a modular archetype library; residents are narrative-owned Person records with routines; every character is mortal under one lifecycle; dead stays dead.
+8. **Work interruption**: one additive change in `workers.py` (`summon`/`release`) gives the building interaction a real economic cost.
+9. **Isolation**: the narrative layer exists only when `server.py` creates `world.narrative`; `world.py` is not changed; the training path is documented in the contract, not designed for.
 
 ---
 
-## 8. The training-path question in one place
+## 8. The training path (record only)
 
-* `story.story_quantum` runs in every `HybridWorld` (`world.py` line 887) and in `_world_cache.attention_advance`. It is deterministic (sorted iteration, `zlib.crc32` seeds, `random.Random(seed)` instances; it never touches `world.rng`).
-* Its state reaches `state_hash()` through `snapshot()["story"]` and `story.entity_rows`. With the story switched off the hash differs from minute 1 (the empty `{}` versus the six-key empty record, section 2.4) and, once fixed to the same shape, only in worlds where a quest opens. The recorded baselines (`docs/perf/hash_baseline_v4.json`, 20 minutes) were recorded with the story on.
-* Its effect on factions: none by construction when no wizard acts (persons and dungeon entrances occupy no blocked tiles; `CauseTracker`, `QuestService` and `PeopleService` records are read by nothing in the faction code; `world.events` receives `story_*` events that no AI reads). The measurement in section 2.4 reports the observed cost and the faction-level comparison.
-* Consequence: a gate that switches the legacy story off in training changes the recorded hashes once, at a moment the neuroevolution agent chooses (its own T1.1 re-records them anyway). The contract proposes that order.
+Measured in section 2.4: the legacy `story.story_quantum` runs in every `HybridWorld` (`world.py` line 887) and in `_world_cache.attention_advance`, costs under one percent of a training game, opens about one quest per game hour, changes nothing for factions or `world.rng`, and is part of `state_hash()` through `snapshot()["story"]`. The owner has ruled that gating it, re-recording baselines or coordinating the other workstream is outside this programme. This programme therefore leaves the legacy call exactly as it is, adds its own behaviour only when `world.narrative` exists (never in `HybridEnv` worlds), and records the facts above and the foreseeable merge points in `WIZARD_STORY_INTEGRATION_CONTRACT.md` section 6 for whoever reconciles the branches.
+
+
+---
+
+## 9. Duel systems audit (added 14 October 2026 for the three-colour, three-slot tutorial)
+
+### 9.1 The two mechanics
+
+| Implementation | Mechanic | Parameters | State owner | Status | Decision |
+| --- | --- | --- | --- | --- | --- |
+| `sim/dmb/adventure/mastermind.py` `MastermindDuel` | one-sided code-breaking: the player guesses the warden's secret; feedback exact/colour; the warden never casts | fixed `SLOT_COUNT = 4`, `COLOUR_COUNT = 6`, `MAX_CASTS = 10` (module constants) | Python (`attach` on a duel dict; `story.duel_begin` with a seeded `random.Random` and the `story_duel` pause token) | WORKS (`test_story_slice`, `test_duel_env::test_canonical_configuration_reproduces_the_games_own_duel_exactly`) | keep for the headless `MastermindEnv` and its tests; **retire as the warden's duel** (C.4) |
+| Retained Ward Duel: `godot_project/sim/battle_sim.gd` (`DmbBattleSim`), `combatant.gd`, `feedback.gd`, `weave_bot.gd`, `candidate_gen.gd`, `auto_cast.gd`, `difficulty_profiles.gd`, `encounters.gd`, `bestiary.gd`; Python port `wizard_rts/duel/ward.py` | two-sided: each side hides a Ward (`ward_size` loci from `ward_pool`) and casts weaves (`weave_size` spells from `attack_pool`); fracture/echo/fade; first broken Ward loses; timed cast windows in Godot, turns in Python | per combatant, `weave_size` and `ward_size` 1 to 8, any pool from the ten-colour palette, `fixed_ward`, `allow_repeats`, `max_casts`, bot logic `random`/`candidate_filter`/`capped_minimax`, think band; `DmbProgression` grew John's weave 2 → 3 → 4 | Godot runs the real-time duel; under a **lease** Python issues the encounter and seed and accepts the result (`world.resolve` → `HazardDuelService.resolve`, idempotent) | WORKS (`test_ward_parity` 5: scoring, candidate filter and ward generation bit-for-bit with Godot's RNG; `tests/sim/test_u05_retained_ward_duel.py`; headed `run_hybrid_duel.gd`) | **the one duel of Wizard Mode** |
+
+The bestiary already contains three-slot, two- or three-colour opponents (`steam_sprite` 3/2, `hedge_wizard` 3/2+1, `ashby_lesson2` 3/2) and one-slot, three-colour (`blue_apprentice`); the First Adventure's lessons (`client/world/story_events.gd`) are exactly "told ward (`fixed_ward`), then hidden, then a fair fight" with `training: true` so a loss costs nothing. These are the patterns the tutorial reuses; no name from them enters canon (D19).
+
+### 9.2 The lease path, as built
+
+`HybridWorld.interact()` → `HazardDuelService.begin(cube)`: builds the encounter with `encounter_for_tier(tier)` from `godot_project/content/source/duel_rules/progression.json` (baseline 4/6/10; tiers `duel.tier_0` 4/6, `tier_1` 5/7, `tier_2` 6/8; `supported_caps` 6 slots, 8 colours; `era_binding`), derives `bot_seed` from the legacy RNG stream and the cube id, sets the `hazard_duel` pause token and freezes buffs, stores the lease in `world.dmb.leases[id]` with `encounter`, `bot_seed`, `checkpoint`, `pause_token`, `state`. `hybrid_world.gd._on_action` → `DmbDuelLeaseAdapter.begin_from_start_reply` → `game_board.configure_from_lease` (player and enemy combatants from `encounter`, the seed) → the board plays → `_return_to_world` calls back with `outcome`, cast counts and `export_checkpoint()` → `ResolveHazardDuel` → `world.resolve(duel_id, success)` (idempotent; asserts entity ids and the wizard's pose unchanged). `save_checkpoint` refuses a secret reroll; `resume` restores a mid-window duel. Observations: (1) the tier file is the only sanctioned way to change mechanics (its own note); (2) Godot decides the outcome today and Python trusts the boolean; (3) Python can reproduce the enemy ward for `candidate_filter` and `random` bots (`WeaveBot.generate_ward` uses `GodotRng(seed + 999)`, parity-tested) and so can verify a reported history; (4) the board has no "reveal the rival ward during play" switch (wards are revealed only on FINISHED), so a told-ward lesson is told in dialogue and enforced by `fixed_ward`, with an optional ten-line board flag for presentation.
+
+### 9.3 Gaps for the tutorial
+
+No wizard-side progression record in the hybrid (`DmbProgression` lives only in the retired adventure); no lease kind other than the hazard; `story_ui.gd` draws a four-slot Mastermind board; `story.duel_begin` is hard-wired to Mastermind; no three-colour tier. All addressed in plan section 2.1 with sizes.
+
+---
+
+## 10. Worker and building work model (added for the building interaction)
+
+Verified in `wizard_rts/workers.py`:
+
+* A worker row (`spawn_worker`, line 434) holds `role`, `building`, `tx/ty`, `path`, `progress_ms`, `anim`, `carrying`, `program`, `pc`, `wait_ms`, `target_tree`, `target_tile`, `returning`, `status`. `building["worker_ids"][role]` is the only link from a building to its workers.
+* `production_quantum` (line 985) runs each building's programme stack (`building["stack"]`, Widelands semantics): `callworker` sets the worker's programme and `building["waiting_worker"] = True`, leaving the frame un-advanced until `building["worker_done"]`; `sleep`/`animate` set `sleep_ms` (and `working`); `needs`/`return` handle demand; `_fail` drops failed frames and sets `stall` and `FAIL_SLEEP_MS`; a missing worker is respawned after `respawn_ms` (30 s after an abort).
+* `worker_quantum` (line 537): destroyed or non-operational building → `worker_abort`; walking consumes `path` one tile per `WALK_MS`; `returning` → `_arrive_home` (stores `carrying` through `economy.produce`, sets `worker_done`); `wait_ms`; `_run_step` executes programme steps (`findobject` reserves a tree or rock and walks, `findspace`, terraform, work, return).
+* `_fail_program` releases reservations, marks `prog_failed` on the building and returns the worker; `_arrive_home` then reports `worker_done`, and the building calls `_fail(..., "worker")`.
+* `worker_abort` (fire magic, destroyed workplace, no path home) removes the row, loses the ware in hand (`stats["lost"]`), and schedules a replacement.
+* The snapshot marks a worker `inside` when idle at the building tile with no path (`world.py` line 1244); Godot does not draw inside workers.
+* Nothing in the simulation kills a worker except fire magic, a destroyed workplace and `no_path_home` (grep of `worker_abort(` callers). Soldiers destroy buildings; they never target workers or carriers. Carriers die by `kill_carrier` (fire, road removal). Units die by `kill_unit` (combat, abilities, collapse, fire).
+
+Consequence for the design: the interruption must be a first-class worker state inside `workers.py` (plan section 8.2), because the building's `waiting_worker` frame and the worker's `pc` are private to that module; any external hack (clearing `program` from outside) would leave `waiting_worker` set forever or advance the frame wrongly. The additive change is small and inert without a call.
+
+---
+
+## 11. Character lifecycle facilities (added for mortal residents)
+
+| Facility | Where | Status | Use |
+| --- | --- | --- | --- |
+| `PeopleService.create_person` (name, role, workplace, affiliation, node, area, position, dialogue profile, flags), `assign_job` (one workplace at a time, id kept), `relocate`, `displace` (alive, unhoused, `displace_reason`), `record_death` (`alive = False`, `status = "dead"`, tombstone with profile refs), `displace_workplace`, relationships, known facts, history refs, `promote_profile`, profile states `active/employed/idle/displaced/dead/leader/worker` | `sim/dmb/people/registry.py` | WORKS (`tests/sim/test_t028_people.py`, `test_t077_people_profiles.py`) | the lifecycle states of plan section 5.2 map onto these; `departed` is a new `status` value written by the narrative layer on the record (the registry does not validate `status` values) |
+| `story._displace` (on a destroyed mine, the created miner is displaced) | `story.py` line 297 | WORKS | the only lifecycle transition the hybrid performs today; replaced by the link watcher |
+| `history.cycle_reset` carries the wizard's pose and Aspect scores into the fresh world | `history.py` line 293 | WORKS | the model for carrying `world.narrative["wizard"]` (done in `server.py`, not in `history.py`) |
+| Dialogue profiles (`dialogue.worker`, `dialogue.anchor`, ...), goals, preferences | `godot_project/content/source/people/*.json` | LEGACY-WORKS | reused as the voice layer under archetypes |
+| 88 character profiles (94 columns: role, district, voice register, sentence shape, tics, temperament, desires, fears, secret, worldview scores, attitudes, conflict style, relationships, routine, quest hook, complication, alternate solution, puzzle, reward, five lines, absence consequence) | `docs/characters/DMB_Character_Profiles_88_Disco_Elysium_Depth.csv` | DATA | converted once into the archetype library with names, districts and bases stripped (plan section 4.2) |
+
+Absent: residents (no spouses, children, elders), any link between Persons and simulation rows, a lifecycle query, a departure state, and any movement for created persons (the story's persons stand still on a free tile).
+
+---
+
+## 12. Save and load, as built (added for the acceptance requirement)
+
+| Path | What it does | Status |
+| --- | --- | --- |
+| `HybridEnv.save()` / `load()` (`sim_api.py` line 448) | `pickle` protocol 5 of `{"format": 2, "hash": state_hash(), "world", "log", "seq", "score", "seen", "seed"}`; `load` refuses another format; whole-world fidelity proven by `test_story_slice::test_save_reload_and_reenter_never_reapply_or_respawn` and `test_duel_env::test_replay_and_save_load_reproduce_the_state_hash` | WORKS (developer and training use) |
+| `wizard_rts/server.py` | no `save` or `load` op; no file I/O; cycle reset swaps a fresh world in place (line 267) | ABSENT for Wizard Mode |
+| `godot_project/client/scripts/save_data.gd` (`DmbSaveData`) | a `ConfigFile` at `user://save.cfg` for settings (difficulty, reduce motion, how-to-play seen) | LEGACY-WORKS; not a game save |
+| Lease checkpoints (`HazardDuelService.save_checkpoint/resume`, `battle_sim.export_checkpoint/restore_checkpoint`) | mid-duel state with secret lock and RNG state; the board restores a checkpoint on `configure_from_lease` | WORKS (`tests/sim/test_u05_*`) |
+| Dungeon runs | `world.story["dungeons"][did]["run"]` is part of the pickled world; the wizard re-enters at the mouth | WORKS |
+
+So the acceptance requirement is met by one server op pair, an atomic file writer, a version key and the restoration policy of plan section 12, not by a new persistence framework.
+
+---
+
+## 13. Wizard Mode launch and controls, as built (added for Milestone A)
+
+* `scripts/launch_scenario.sh campaign` → `launch_hybrid.sh wizard`: `HYBRID_PROFILE=campaign` (`tech.PROFILES`: gated, no God Mode, primitive start), `python3 -m wizard_rts.server` on port 8765, Godot 4.5.1 on `client/scenes/hybrid_world.tscn`. Developer fixtures: `story` (a collapsed Red mine with its miner, gallery and warden), `outbreak`, `modern_industry`; `autoplay` spectator.
+* `hybrid_world.gd` (extends the retained `Overworld` for movement and camera): polls `advance` every 200 ms with the elapsed wall milliseconds (the AIs play in between), sends `pose` on every tile crossed (`set_pose` validates blocked and solid tiles), draws snapshot entities and the static tree and rock deltas, hosts the duel layer and the adapter, builds `GodMode`, `WizardLabels`, `StoryUi` and the era HUD. Left click: `story_ui.try_click` (only `npc` and `landmark` rows), then `wizard_labels.try_click` (any entity: description far away, fire magic close up). E: `interact` (the route hazard duel). In the story UI: arrows move in a dungeon, E uses, 1 to 8 pick an item, Q/F/R spells, T treat.
+* The wizard starts "just east of the Red settlement" (`world._layout`: `_stand_near(red["road"])`); the route hazard cube is placed on Red's first road.
+* Missing for the owner's experience (all in Milestones A to C): a talk target for the simulation's own workers (today only story `npc` rows), building interaction, a journal and lessons panel, a pause menu with save and load, and a teacher.

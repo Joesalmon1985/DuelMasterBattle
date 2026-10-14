@@ -1,133 +1,127 @@
-# Wizard story integration contract
+# Wizard story integration contract: interface assumptions and foreseeable merge conflicts
 
-The boundaries between the wizard narrative programme (`feature/wizard-settlement-stories`), the authoritative world simulation, the Godot presentation and the neuroevolution programme (`feature/neuroevolution-plan`). Both programmes read this file; only the owner changes it. Status: **PROPOSED with the plan (14 October 2026)**.
+What the wizard narrative programme (`feature/wizard-settlement-stories`) relies on, what it changes, and where it may later collide with the neuroevolution programme (`feature/neuroevolution-plan`). Status: **REVISED with the plan, 14 October 2026; a record, not a coordination plan.** Per the owner's direction this programme does no integration work on the other agent's behalf, designs no training gates, and schedules no baseline changes; the two branches are reconciled separately by the owner when appropriate.
 
 ---
 
 ## 1. Principles
 
 1. One world (`HybridWorld`), one clock, one quest state owner (`QuestService`), one person identity per human (`CANONICAL_GAME_ONTOLOGY.md`), typed effects with receipts only.
-2. The narrative layer is **optional and isolated**: enabled for Wizard Mode (the server), disabled for headless faction training and evaluation. Disabled means one attribute read per game second and nothing else.
-3. The neuroevolution programme's training inputs are invariant under the narrative layer: observations, legal actions, decision timing, RNG consumption, physics, economy, combat, settlement and building behaviour, VP, catastrophe timing, the frozen roster, and (once the shared change lands) the recorded state hashes with the layer off.
-4. Shared files change rarely, minimally, by the procedure in section 4, and never overwrite newer neuroevolution work.
-5. The content roster is frozen (D33). Narrative templates, casts, dialogue packs and config are data, not content; `freeze.check()` must stay empty on both branches.
+2. The narrative layer exists only in Wizard Mode by construction: `world.narrative` is created by `server.py` (and by wizard-facing environments on request), never by `HybridWorld.__init__` or `HybridEnv`. A world without it runs exactly the code that runs today (the legacy `story.story_quantum` included, unchanged).
+3. `wizard_rts/world.py` is not changed by this programme. Narrative behaviour attaches through the wizard-owned `story.py` hooks that `world.py` already calls (`story.story_quantum`, `story.entity_rows`, `story.snapshot`, `story.WIZARD_OPS`).
+4. The frozen roster (D33) is untouched: templates, packs, casts, archetypes, names, opponents and config are data; `freeze.check()` stays empty on every commit.
+5. The faction AIs learn of the wizard only through the shared world (plan section 9.2). No narrative state is read by `ai*.py`, `diplomacy.py` or `trade.py`, and this is tested.
 
 ---
 
-## 2. File and module ownership matrix
+## 2. File and module ownership (what this programme touches)
 
-| Path | Owner | Wizard programme may | Neuroevolution programme may |
-| --- | --- | --- | --- |
-| `WizardRTSHybrid/wizard_rts/narrative/**`, `data/narrative/**`, `data/story/**` | wizard | create, change | read |
-| `WizardRTSHybrid/wizard_rts/story.py`, `story_agent.py`, `story_fixture.py`, `dungeon_agent.py`, `mastermind_solvers.py`, `wizard_pilot.py`, `puzzle/**`, `duel/**`, `magic.py` | wizard | change | read (do not depend on internals) |
-| `WizardRTSHybrid/wizard_rts/envs/{quest,dungeon,duel,outbreak}_env.py`, `envs/_world_cache.py` | wizard | change | read |
-| `WizardRTSHybrid/wizard_rts/server.py` | wizard (the Godot path; not used by training) | change ops, fixtures, save/load | read; coordinate before adding a spectator op |
-| `godot_project/client/hybrid/story_ui.gd`, `wizard_labels.gd`, `client/scenes/hybrid_world.gd`, `client/tests/run_hybrid_story*.gd`, `run_hybrid_stories.gd`, `run_hybrid_tutorial.gd` | wizard | change | read |
-| `tools/dialogue_generation/**`, `generated/dialogue/**`, `docs/characters/**`, the two workbooks | wizard | change tools and exports; never move or rewrite the workbooks | read |
-| `sim/dmb/quests/**`, `people/**`, `narrative/**`, `adventure/mastermind.py`, `adventure/duels.py`, `time/clock.py` | shared legacy, **frozen by convention** | call; add wrappers in `wizard_rts/narrative/` rather than editing | call |
-| `WizardRTSHybrid/wizard_rts/world.py` | **shared** | the gate and the snapshot fields only (section 4) | everything else |
-| `WizardRTSHybrid/wizard_rts/sim_api.py`, `visibility.py`, `ai.py`, `ai_plus.py`, `ai_industry.py`, `history.py`, `freeze.py`, `freeze_guard.py`, `sysinfo.py`, `learn/**`, `native/**` | neuroevolution | read only; propose changes through section 4 | change |
-| `WizardRTSHybrid/neuro/**`, `train_ai.py`, root `*.bat` launchers for training, `docs/EXECUTION_PLAN_NEUROEVOLUTION.md`, `docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md`, `docs/ledger/NEUROEVO_PROGRESS.md`, `docs/CONTENT_FREEZE.md`, `docs/perf/hash_baseline*.json`, `WizardRTSHybrid/tests/test_neuro_*.py`, `test_content_freeze.py`, `test_hash_baseline.py`, `test_sim_api.py` | neuroevolution | never | change |
-| Every other `wizard_rts/*.py` (economy, logistics, workers, construction, military, industry, regions, disruption, society, trade, diplomacy, tech, vp, settlements, territory, lifecycle, terrain, mapgen, ...) | simulation core, **shared read-only for the wizard programme** | read; propose through section 4 if an API is missing | change (behaviour changes re-record baselines by their rules) |
-| `WizardRTSHybrid/tests/test_story_slice.py`, `test_quest_env.py`, `test_dungeon_env.py`, `test_duel_env.py`, `test_outbreak_env.py`, `test_puzzle_*.py`, `test_ward_parity.py`, `test_fire_magic.py`, `test_narrative_*.py` | wizard | change | keep green |
-| `WizardRTSHybrid/tests/conftest.py`, `test_determinism.py` | shared | not changed by the wizard programme | change |
-| `docs/DECISION_REGISTER.md`, `docs/ledger/LEDGER.md`, `CLAUDE.md`, `WizardRTSHybrid/AGENTS.md`, `docs/NEXT_AGENT_HANDOFF.md` | owner / shared | append rows only at sync points | append rows |
-| `docs/WIZARD_*.md`, `docs/PLAN_WIZARD_SETTLEMENT_STORIES.md`, `docs/EXECUTION_PLAN_WIZARD_SETTLEMENT_STORIES.md`, `docs/ledger/WIZARD_STORIES_PROGRESS.md` | wizard | change | read |
-
----
-
-## 3. Protected interfaces (what the wizard programme relies on, read-only)
-
-| Interface | Used for | Stability request |
+| Path | This programme | Note |
 | --- | --- | --- |
-| `HybridWorld.advance`, `snapshot`, `state_hash`, `set_pose`, `solid_for_wizard`, `tile_in_map`, `player`, `seed`, `economy_quanta`, `events` (read), `dmb` slots | everything | keep names; additive changes fine |
-| `world.buildings[id]` fields `kind`, `faction_name`, `tx`, `ty`, `hp`, `destroyed`, `operational`, `constructing`, `disrupted`, `stall`, `worker_ids`, `settlement_id`, `ground_footprint` | context, casting, facts | keep names |
-| `world.workers[id]` fields `id`, `role`, `building`, `tx`, `ty`, `carrying`, `status`, `program`; `world.carriers`, `world.units` (`faction_name`, `alive`, `weapon`, `tx`, `ty`, `definition`) | casting, person link | keep names; the wizard programme adds `person_id` (written only when narrative is enabled) |
-| `settlements.{register,of,record,standing,mark_destroyed}`, `world.dmb.settlements[sid]` (`faction`, `state`, `centre`, `tile`, `unrest`, `pressures`, `chronicle`) | slots, context | keep |
-| `territory.{settlement_of,covering,radius_of,command_centers,cheb}` | context, travel | keep |
-| `disruption.{is_mine,active,clear,REPAIR}`, `regions.{state,cubes_here,production_factor,cure,begin_treatment,region_at}`, `society.pressures`, `trade.{send_caravan,can_supply,hostile,partners_traded,is_post}`, `diplomacy.{state_of,hostile,propose,respond}`, `history.state`, `vp.era_state`, `tech.god_allowed`, `wl_defs.spec_for_kind`, `workers._roles_of` | predicates and world effects | keep signatures; behaviour changes are theirs to make |
-| Event kinds read (never written) by the director: `building_destroyed`, `settlement_destroyed`, `worker_aborted`, `worker_spawned`, `disruption`, `disruption_cleared`, `outbreak`, `era_advanced`, `split`, `collapse`, `caravan_*`, `diplomacy_*`; `world.events.total` | dirtiness | keep kinds; adding kinds is fine |
-| `HybridEnv.save/load` pickle format (`SAVE_FORMAT`) | Wizard Mode save reuses it | tell the wizard programme when it bumps |
-| `freeze.manifest()`, `freeze.check()` | template validation (every referenced kind must be on the roster) | keep |
+| `WizardRTSHybrid/wizard_rts/narrative/**`, `data/narrative/**`, `data/story/**` | creates and changes | new package and data |
+| `wizard_rts/story.py`, `story_agent.py`, `story_fixture.py`, `dungeon_agent.py`, `mastermind_solvers.py`, `wizard_pilot.py`, `puzzle/**`, `duel/**`, `magic.py` | changes | wizard-owned since M3; `magic.py` gains residents as fire targets (D.3) |
+| `wizard_rts/envs/{quest,dungeon,duel,outbreak}_env.py`, `envs/_world_cache.py` | changes | wizard-facing environments |
+| `wizard_rts/server.py` | changes | ops (`save`, `load`, the narrative ops through `story.dispatch`), fixtures `stories`, `acceptance`, `HYBRID_LOAD_SLOT`, cycle-reset carry-over of `world.narrative["wizard"]` |
+| `wizard_rts/workers.py` | **one additive change** (C.2) | `summon`, `release`, a `summoned` branch in `worker_quantum`, a `prog_interrupted` guard in `production_quantum`; inert unless a wizard op calls `summon`; proven by `test_hash_baseline.py`, `test_determinism.py`, `test_forestry.py`, `test_logistics.py` |
+| `godot_project/content/source/duel_rules/progression.json` | adds two tiers | `duel.tutorial_3x3`, `duel.wizard_3x3`; baseline and `era_binding` unchanged |
+| `godot_project/client/hybrid/{story_ui,wizard_labels}.gd`, `client/scenes/hybrid_world.gd`, `client/scripts/game_board.gd` (optional reveal flag), `client/tests/run_hybrid_*.gd` | changes | presentation |
+| `tools/dialogue_generation/**`, `generated/dialogue/**` | changes tools and exports | never moves or rewrites the workbooks or the 88-profile CSV |
+| `sim/dmb/quests/**`, `people/**`, `narrative/**`, `adventure/{mastermind,duels}.py`, `time/clock.py` | calls only | "frozen by convention": wrappers live in `wizard_rts/narrative/` |
+| `WizardRTSHybrid/tests/test_story_slice.py`, `test_quest_env.py`, `test_dungeon_env.py`, `test_duel_env.py`, `test_outbreak_env.py`, `test_puzzle_*.py`, `test_ward_parity.py`, `test_fire_magic.py`, `test_narrative_*.py`, `test_wizard_*.py` | changes | |
+| `docs/WIZARD_*.md`, `docs/PLAN_WIZARD_SETTLEMENT_STORIES.md`, `docs/EXECUTION_PLAN_WIZARD_SETTLEMENT_STORIES.md`, `docs/ledger/WIZARD_STORIES_PROGRESS.md` | changes | |
+| `docs/DECISION_REGISTER.md` | appends rows only at a checkpoint the owner names | |
+| **Never**: `wizard_rts/world.py`, `sim_api.py`, `visibility.py`, `ai.py`, `ai_plus.py`, `ai_industry.py`, `history.py`, `freeze.py`, `freeze_guard.py`, `sysinfo.py`, `neuro/**`, `train_ai.py`, `docs/perf/hash_baseline*.json`, `docs/EXECUTION_PLAN_NEUROEVOLUTION.md`, `docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md`, `docs/ledger/NEUROEVO_PROGRESS.md`, `docs/CONTENT_FREEZE.md`, `tests/test_neuro_*.py`, `test_content_freeze.py`, `test_hash_baseline.py`, `test_sim_api.py`, `tests/conftest.py`, `test_determinism.py` | read only | the other workstream's files and the shared gates |
 
 ---
 
-## 4. Shared-file changes: what, why, when
+## 3. Interface assumptions (what this programme relies on, read-only)
 
-Only three shared changes are foreseen. Each is small, each is proposed as a patch with evidence, and the neuroevolution agent applies it on its branch at a checkpoint of its choosing (so it re-records any baseline in the same commit, by its own rule 8).
-
-| Id | File | Change | Why unavoidable | Training impact | Tests that must pass | When | Postponable |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| S1 | `wizard_rts/world.py` | `self.narrative_enabled = os.environ.get("HYBRID_NARRATIVE", "1") != "0"` in `__init__`; in `advance`: `if self.narrative_enabled: story.story_quantum(self); narrative.director_quantum(self)` (replacing the unconditional `story.story_quantum(self)`) | the gate must sit where the quanta run | env unset: identical hashes (the audit's W0.2 test). `HYBRID_NARRATIVE=0` in training workers: faction-only state and `world.rng` are identical for 40 minutes (measured, audit section 2.4), but `state_hash()` differs from the current baselines **from minute 1** because `snapshot()["story"]` is `{}` when the story dict was never created. S1 therefore includes a one-line change in the wizard-owned `story.py` so `story.snapshot` returns the same empty six-key shape whether or not the dict exists; after that, hashes differ only in worlds where a quest actually opens (measured: one outbreak quest in 60 minutes on seed 507). Cost saved: about 0.3% of wall time (measured). | `test_hash_baseline` (env unset), `test_determinism`, `test_sim_api`, `test_story_slice` | at the neuroevolution agent's next baseline re-record or at M7 (T1.1 already re-recorded `hash_baseline_v5*.json` on 14 Oct, after this branch was cut) | yes: until then training runs with the env var unset and pays the measured cost |
-| S2 | `wizard_rts/world.py` `snapshot()` | worker and unit rows gain `person_id`, `has_quest`, `quest_status`, `label` **only when `narrative_enabled` and a link exists** (otherwise the row is byte-identical) | Godot draws one actor per person from the snapshot | none with the layer off (rows unchanged); with it on, `state_hash` changes only in Wizard Mode worlds | as S1 | with S1 | yes |
-| S3 | `wizard_rts/story.py` | narrative events to `world.narrative["log"]` instead of `world.events`; person link instead of `_ensure_npc` | `HybridEnv` and the controller's event filter must not see narrative events; one actor per person | with the layer off nothing runs; with it on (final integrated game) the controller's event window no longer carries `story_*` kinds | `test_story_slice`, `test_quest_env`, `test_outbreak_env` | wizard branch, any time (file is wizard-owned); becomes effective for training only with S1 | n/a |
-
-Recommended order: S3 and the W0 isolation tests on the wizard branch first (evidence), then S1+S2 as one patch to the neuroevolution agent with the `equiv` and `cost` numbers attached. The wizard programme never changes `RULES_VERSION`; if the neuroevolution agent judges the hash change from S1 to be a rule change, it bumps `RULES_VERSION` (champions become "re-evaluate", not incompatible, by its section 10.4 rule).
-
-Additional API requests go through the same table as new rows; the default answer to "I need a new simulation API" is to compose existing ones in `wizard_rts/narrative/`.
+| Interface | Used for | Assumption |
+| --- | --- | --- |
+| `HybridWorld.advance` calling `story.story_quantum(self)` every quantum; `snapshot()` calling `story.entity_rows(self)` and `story.snapshot(self)`; `server.py` dispatching `story.WIZARD_OPS` | the narrative tick, rows and ops | these three call sites stay (they exist since M3) |
+| `world.buildings[id]` fields `kind`, `faction_name`, `tx`, `ty`, `hp`, `destroyed`, `operational`, `constructing`, `disrupted`, `stall`, `worker_ids`, `settlement_id`, `ground_footprint`, `stack`, `waiting_worker`, `working` | context, casting, facts, the summon | names kept |
+| `world.workers[id]` fields `id`, `role`, `building`, `tx`, `ty`, `carrying`, `status`, `program`, `pc`, `path`, `returning`, `target_tree`, `target_tile`, `anim`; `workers.{find_path,_release,_begin_return,_arrive_home,_fail_program,worker_abort,_roles_of}` | the summon and the link | names kept; the summon composes these |
+| `world.carriers`, `world.units` (`faction_name`, `alive`, `weapon`, `tx`, `ty`, `definition`, `order`) | casting, link watcher | names kept |
+| `settlements.{register,of,record,standing,mark_destroyed}`, `world.dmb.settlements[sid]` (`faction`, `state`, `centre`, `tile`, `unrest`, `pressures`, `chronicle`) | slots, context, residents' anchors | kept |
+| `territory.{settlement_of,covering,radius_of,command_centers,cheb}` | context, travel | kept |
+| `disruption.{is_mine,active,clear,REPAIR}`, `regions.{state,cubes_here,production_factor,cure,begin_treatment,region_at}`, `society.pressures`, `trade.{send_caravan,can_supply,hostile,partners_traded}`, `diplomacy.{state_of,hostile,propose}`, `history.{state,split,cycle_reset}` (read; `cycle_reset` called by `server.py` as today), `vp.era_state`, `tech.{god_allowed,profile_flags}`, `wl_defs.spec_for_kind`, `lifecycle.purge_building` behaviour (drops the worker; emits `building_removed`) | predicates, world effects, mortality | signatures kept; behaviour changes are the simulation's to make |
+| Event kinds read (never written) by the watcher: `building_removed`, `settlement_destroyed`, `worker_aborted`, `worker_spawned`, `carrier_killed`, `disruption`, `disruption_cleared`, `outbreak`, `era_advanced`, `split`, `collapse`, `caravan_*`, `diplomacy_*`; `world.events.total` | dirtiness, mortality | kinds kept; new kinds are fine |
+| `HybridEnv.SAVE_FORMAT` (2) and its pickle shape | Wizard Mode saves reuse the format number and shape | a bump is noticed by `test_wizard_save.py`; the wizard save adds `narrative_version` |
+| `sim/dmb/adventure/duels.py`: `encounter_for_tier`, `load_duel_progression`, the lease record shape (`id`, `kind`, `encounter`, `bot_seed`, `checkpoint`, `pause_token`, `state`), `HazardDuelService.save_checkpoint/resume` semantics (secret lock) | the story Ward lease copies the shape; the hazard lease is untouched | kept |
+| `godot_project/sim/{combatant,battle_sim,feedback,weave_bot,candidate_gen,auto_cast}.gd` and `wizard_rts/duel/ward.py` parity | the 3x3 duel, Python verification of reported casts | parity holds for `candidate_filter` and `random` (bit-for-bit) and `fixed_ward`; `capped_minimax` wards are not used for verified leases |
+| `client/encounters/duel_lease_adapter.gd`, `game_board.configure_from_lease`, `export_checkpoint`/`restore_checkpoint` | hosting the board for story leases | kept |
+| `freeze.manifest()`, `freeze.check()` | template validation; the freeze gate | kept |
 
 ---
 
-## 5. Feature gating and deterministic guarantees
+## 4. Changes this programme makes to shared simulation files, and why
+
+| Id | File | Change | Why unavoidable | Smallest form | Proof it changes nothing else |
+| --- | --- | --- | --- | --- | --- |
+| W1 | `wizard_rts/workers.py` | `summon(world, worker, tile, by)`, `release(world, worker)`; `worker_quantum`: a summoned worker walks its path then stands `conversing`; `production_quantum`: `if building.pop("prog_interrupted", False): pass` instead of advancing the frame when the worker reports back | the owner requires a real economic interruption when a worker is asked outside; the building's programme stack and the worker's step counter are private to `workers.py`, and faking it from outside (clearing `program` without the stack knowing) would corrupt `waiting_worker` | about 25 additive lines; no existing line changes except the one `waiting_worker` branch, which gains a `pop` before its existing logic | `test_hash_baseline.py`, `test_determinism.py`, `test_forestry.py`, `test_logistics.py`, `test_programme_failure.py`, `test_widelands_sweep.py` unchanged; `test_narrative_interrupt.py` proves the summon's accounting |
+| W2 | `wizard_rts/magic.py` | `find` includes narrative residents; `fire` kills one through `residents.kill` | residents must be as mortal as workers; `magic.py` is wizard-owned, listed here because `world.fire` calls it | one more `(cls, table)` pair and one branch | `test_fire_magic.py` unchanged; hash tests unchanged (no resident exists without `world.narrative`) |
+
+No other core file changes. If a later milestone finds it needs one (for example a carrier pause on the road), it is recorded here as a new row with the same four columns and reported to the owner before it is made.
+
+---
+
+## 5. Guarantees and the tests that hold them
 
 | Guarantee | Mechanism | Test |
 | --- | --- | --- |
-| Off in training | `HYBRID_NARRATIVE=0` set by the training workers (one line in `neuro/workers.py` and `neuro/episode.py`, applied by the neuroevolution agent with S1); the `HybridEnv` constructor may also set `world.narrative_enabled = False` | `test_narrative_isolation` (a): 3-minute hashes equal with env unset vs "1"; (b): no `world.narrative`, no `world.story` with "0" |
-| On in Wizard Mode | `server.py` sets `world.narrative_enabled = True` after construction, every profile | headed `story` |
-| No observation leak | `HybridEnv.observe` and `legal_actions` never read `world.narrative`, `world.story` or `world.dmb.people/quests` | `test_narrative_isolation` (d): identical observation dicts with the layer on and off after a story opened (the story fixture world with AI on) |
-| No RNG shift | the narrative package never calls `world.rng`; its randomness is `random.Random(crc32(...))` per decision | `grep -n "world.rng\|\.rng\." wizard_rts/narrative/` empty (a test); `test_narrative_isolation` (e): `world.rng.getstate()` equal on/off after 20 minutes |
-| No `world.events` writes | `narrative/events.py` only | `test_narrative_isolation` (f): `world.events.total` equal on/off |
-| No hidden iteration order | sorted iteration, dict insertion order for registries, `PYTHONHASHSEED` two-process test | `test_narrative_director` (b) |
-| No wall clock | `game_ms` only | `grep -n "time\.\|datetime" wizard_rts/narrative/` limited to `perf.py` |
-| Frozen roster untouched | templates reference kinds by id; validator checks against `freeze.manifest()`; no importer run | `test_content_freeze` green on the wizard branch at every commit |
-| Negligible cost when off | one attribute read per quantum | `test_narrative_perf` (disabled path under 5 microseconds per quantum) |
-| Bounded cost when on | budgeted director, cached contexts | `test_narrative_perf` numbers in the ledger |
-| Save compatibility | narrative state inside the pickled world; `SAVE_FORMAT` unchanged | `test_narrative_living` reload cases |
+| A world without `world.narrative` behaves exactly as today | no gate; the tick is `if "narrative" in world.__dict__` inside `story.story_quantum` | `test_narrative_isolation` (a): 3-minute `state_hash` on seeds 507 and 11 equals the pre-change value; `test_hash_baseline` green |
+| `HybridEnv` never creates narrative state | `enable` is called only by `server.py` and by the wizard environments | `grep -n narrative wizard_rts/world.py wizard_rts/sim_api.py` empty (asserted in a test) |
+| Factions cannot read the story | no narrative reads in the AI modules | `test_narrative_separation` (grep and the same-decisions test) |
+| No new `world.events` kinds | `narrative/events.py` only | `world.events.total` equal with and without the narrative pass over a story fixture |
+| No RNG shift | `world.rng` never called by `narrative/` | a grep test; `world.rng.getstate()` equal with and without narrative after 20 minutes |
+| No wall clock | `game_ms` only | grep limited to `perf.py` |
+| Frozen roster untouched | data only; validator against `freeze.manifest()` | `test_content_freeze` green on every commit |
+| Save compatibility | the `HybridEnv` pickle shape plus `narrative_version`, atomic writes, refusal rules | `test_wizard_save.py` |
+| Negligible cost without Wizard Mode | one dict lookup per quantum | `test_narrative_perf` (disabled path under 5 microseconds per quantum) |
+| Bounded cost with Wizard Mode | budgeted director and residents, cached contexts | `test_narrative_perf` numbers in the ledger |
 
 ---
 
-## 6. Branch and merge procedure
+## 6. Branches and foreseeable merge conflicts (documentation only)
 
 ### 6.1 Branches
 
-* `feature/neuroevolution-plan`: workstream 1 (training). Milestone branches `feature/neuroevolution-m<N>` may appear; the wizard programme tracks only the main one.
-* `feature/wizard-settlement-stories`: workstream 2 (this plan). Created from `4b67f55c` on the neuroevolution branch so it carries the content freeze, the command tier, visibility and the wider `state_hash`. By the time the plan was committed the neuroevolution branch had moved to `fa0dea0d` (T1.1-T1.4: visibility memory, successor control, alive rule, action surface, baselines v5); none of those commits touches a wizard-owned file or `world.py`, and the first sync happens at their M1 checkpoint per section 6.2.
-* `integration/wizard-neuro` (to be created by the owner or at the owner's word at the first sync point): where the two meet; never a working branch for either agent.
+* `feature/neuroevolution-plan`: the training workstream. At the time of this revision it stands at `cb2f538e` (T1.1 to T1.5: visibility memory, successor control, alive rule, full action surface, episode runner; baselines `hash_baseline_v5*.json`). Those commits touch `ai.py`, `history.py`, `sim_api.py`, `visibility.py`, `workers.py` (+2 lines for `visibility.reveal`), `openra_abilities.py`, `scripts/hash_gate.py`, `tests/test_hash_baseline.py`, `neuro/**`; none touches a wizard-owned file or `world.py`.
+* `feature/wizard-settlement-stories`: this programme, cut from `4b67f55c`. It does not merge the other branch in on its own; the owner reconciles when appropriate.
 
-### 6.2 Sync points
+### 6.2 Where the two branches may collide, and the mechanical resolution
 
-The wizard branch merges `origin/feature/neuroevolution-plan` **only** at the neuroevolution programme's OWNER CHECKPOINTS (end of M1, M3, M5, M6 in its ledger), never between them, and only after the owner has accepted that checkpoint. This avoids merging half-finished training work. Between sync points the wizard programme works against the interfaces in section 3, which the neuroevolution plan does not change (its M1 changes `visibility`, `history.split` successors, `HybridEnv` alive and actions; none is on the wizard's list).
+| File | This branch | The other branch (observed or likely) | Resolution when the owner reconciles |
+| --- | --- | --- | --- |
+| `wizard_rts/workers.py` | W1 (summon, release, two guards) | T1.1 added `visibility.reveal` calls (2 lines) and may add more | both are additive in different functions; take both; rerun `test_narrative_interrupt`, `test_hash_baseline` |
+| `wizard_rts/magic.py` | W2 | none expected | ours |
+| `wizard_rts/story.py` | many changes | none expected (not on their file list) | ours |
+| `wizard_rts/server.py` | ops, fixtures, load slot, cycle carry-over | possibly spectator or training ops | both; `_handle` is a chain of `if op ==` blocks, so hunks are independent |
+| `wizard_rts/history.py` | untouched (read) | successor control, alive rule | theirs; our `cycle_reset` carry-over lives in `server.py`, not here |
+| `wizard_rts/world.py` | untouched | changed by them | theirs, no conflict |
+| `wizard_rts/sim_api.py`, `visibility.py`, `ai*.py` | untouched | changed by them | theirs, no conflict |
+| `docs/perf/hash_baseline*.json`, `tests/test_hash_baseline.py` | untouched; W1 keeps the hashes identical | re-recorded by them | theirs; our `test_narrative_isolation` records its own reference hashes from the code it runs on, so it stays green after any re-record |
+| `godot_project/content/source/duel_rules/progression.json` | two tiers | none expected | ours |
+| `godot_project/client/**` | several files | none expected | ours |
+| `docs/DECISION_REGISTER.md`, `docs/ledger/LEDGER.md` | appended rows at an owner-named checkpoint | appended rows | keep both sets of rows |
+| `WizardRTSHybrid/tests/conftest.py`, `test_determinism.py` | untouched | may change | theirs |
 
-Merge direction is always **their branch into ours**. Conflict rule: in any file the neuroevolution programme owns or that is shared, **take theirs**, then re-apply the wizard hunks (S1, S2 are small and recorded as separate commits so they re-apply mechanically). Never resolve a conflict by keeping an older wizard-branch version of a simulation file.
+Potential semantic (non-textual) conflicts to check at reconciliation: (1) if the other branch changes worker row fields or `production_quantum`'s `waiting_worker` logic, W1 must be re-read against it; (2) if the other branch bumps `HybridEnv.SAVE_FORMAT`, `persist.py` follows it; (3) if the other branch gives `story.py` new responsibilities or removes the `story_quantum` call from `advance` (not planned by their documents), the narrative tick needs a new home, which would be the first `world.py` change and would be raised with the owner; (4) if the other branch adds event kinds the watcher cares about, the watcher's allowlist is extended.
 
-### 6.3 The final integration
+### 6.3 Model compatibility note
 
-1. The neuroevolution agent has applied S1+S2 (with its baseline re-record) on its branch; the wizard branch has synced to that commit (W9.1).
-2. `integration/wizard-neuro` is created from `feature/neuroevolution-plan` at that commit; `feature/wizard-settlement-stories` is merged into it (fast-forward expected after W9.1; otherwise the conflict rule above).
-3. Gates on the integration branch, all green: the full hybrid suite (`python3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py`), `tests/sim` legacy quest/dialogue/people tests, `test_determinism.py`, `test_neuro_determinism.py` (when it exists), `hash_gate.py check` against the branch's baselines with `HYBRID_NARRATIVE` unset, `freeze_content.py --check`, the headed suite including `story stories tutorial`, the dialogue factory tests, and `narrative_evidence.py equiv` on two seeds.
-4. Model compatibility: models trained with `HYBRID_NARRATIVE=0` keep their `roster_version`, `ARCH_VERSION`, schema versions unchanged by this programme; if `RULES_VERSION` was bumped for S1, the champion is re-evaluated under the integrated code once (its rule), not discarded.
-5. The owner merges `integration/wizard-neuro` into `main` when both agents have signed the gates in their ledgers.
-
-### 6.4 Divergence handling
-
-| Situation | Action |
-| --- | --- |
-| The neuroevolution agent changes a protected interface (section 3) | it says so in `NEUROEVO_PROGRESS.md`; the wizard agent adapts at the next sync point; never a hotfix on their branch by the wizard agent |
-| The wizard agent needs an API that only a shared file can provide | add a row to section 4; implement in `narrative/` by composition until the row is accepted |
-| Both touched `world.py` | theirs, then re-apply S1/S2 by hand, run `test_narrative_isolation`, `test_hash_baseline` |
-| A baseline re-record on their branch makes `test_hash_baseline` fail on ours after sync | expected; the test reads their baselines, so it passes after the sync merge; never re-record baselines on the wizard branch |
-| Training is running from a run directory code copy | unaffected by any merge (their section 9.5 copies the code); no coordination needed |
+Nothing in this programme changes observations, legal actions, the roster, `RULES_VERSION` or the hash baselines; W1 and W2 are inert in worlds without a wizard op. Any later reconciliation is therefore a textual merge, not a retraining question. This is a statement of what this branch does, not a commitment made for the other agent.
 
 ---
 
-## 7. Test gates per programme
+## 7. Test gates on this branch
 
-| Gate | Wizard branch, every commit | Wizard branch, every milestone | Integration |
-| --- | --- | --- | --- |
-| `test_narrative_*`, `test_story_slice`, `test_quest_env` | yes | yes | yes |
-| `test_content_freeze`, `test_determinism` | yes | yes | yes |
-| `test_hash_baseline` (env unset) | after any `world.py` touch | yes | yes |
-| full hybrid suite | | yes | yes |
-| headed `story` (+ `stories`, `tutorial` once they exist) | after any Godot touch | yes | yes |
-| `tools/dialogue_generation/tests` | after any tools touch | yes | yes |
-| `test_neuro_*`, `hash_gate check`, `train_ai.py smoke` | never run by the wizard agent | | yes (run by the neuroevolution agent or the owner) |
+| Gate | Every commit | Every milestone |
+| --- | --- | --- |
+| `test_narrative_*`, `test_wizard_*`, `test_story_slice`, `test_quest_env`, `test_duel_env`, `test_ward_parity`, `test_fire_magic` | yes | yes |
+| `test_content_freeze`, `test_determinism` | yes | yes |
+| `test_hash_baseline`, `test_forestry`, `test_logistics`, `test_programme_failure` | after any `workers.py` or `magic.py` touch | yes |
+| full hybrid suite | | yes |
+| headed scripts (`launch`, `tutorial`, `quest`, `story`, `stories`, `acceptance` as they exist) | after any Godot touch | yes |
+| `tools/dialogue_generation/tests` | after any tools touch | yes |
+| `test_neuro_*`, `hash_gate check`, training smoke | never run by this programme | |
