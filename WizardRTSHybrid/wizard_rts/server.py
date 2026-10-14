@@ -30,8 +30,28 @@ GOD_OPS = frozenset({"trade", "control", "build", "road", "queue", "cancel", "mo
                      "order", "suggest", "spawn", "damage", "draft", "grant_card", "inspect", "belt", "upgrade", "enhance", "configure", "ability", "dismantle", "convert", "waterway", "fixture"})
 
 
+def _save_load(world: HybridWorld, message: dict) -> dict:
+    """Wizard Mode save and load (narrative/persist.py). A load replies with the loaded world under `_swap`; `serve` strips it and rebinds."""
+    from wizard_rts.narrative import persist
+
+    op = str(message.get("op", ""))
+    slot = str(message.get("slot", ""))
+    try:
+        path = persist.slot_path(world.profile, slot)
+        if op == "save":
+            return {"status": "ok", "slot": slot, **persist.save_world(world, path)}
+        loaded, info = persist.load_world(persist.prev_path(path) if message.get("prev") else path)
+    except persist.SaveError as exc:
+        return {"status": "rejected", "reason": exc.reason, "detail": exc.detail, "prev": exc.prev}
+    loaded.visual_state = True
+    return {"status": "ok", "slot": slot, "loaded": True, **info, "terrain": loaded.terrain.wire() if loaded.terrain is not None else None,
+            "snapshot": loaded.snapshot(tree_sync=False), "_swap": loaded}  # tree_sync False: the client gets every tree again (full delta)
+
+
 def _handle(world: HybridWorld, message: dict) -> dict:
     op = str(message.get("op", ""))
+    if op in ("save", "load"):
+        return _save_load(world, message)
     if op in GOD_OPS and not tech.god_allowed(world):
         return {"status": "rejected", "reason": "god_mode_disabled", "profile": world.profile}
     if op in story.WIZARD_OPS:  # the wizard's own story actions: open in every profile, narrow by construction
@@ -230,6 +250,16 @@ def serve(port: int) -> None:
         if os.environ["HYBRID_FIXTURE"] == "modern_industry":
             ids = fixture.modern_fixture(world, os.environ.get("HYBRID_FIXTURE_FACTION", "Red"))
             print("HYBRID_FIXTURE_READY", json.dumps({k: v for k, v in ids.items() if k != "plan"}), flush=True)
+    if os.environ.get("HYBRID_LOAD_SLOT"):  # `launch_scenario.sh campaign --load <slot>`: resume before the client connects
+        from wizard_rts.narrative import persist
+
+        try:
+            world, info = persist.load_world(persist.slot_path(world.profile, os.environ["HYBRID_LOAD_SLOT"]))
+        except persist.SaveError as exc:
+            print("HYBRID_LOAD_FAILED", exc.reason, exc.detail, exc.prev, flush=True)
+            sys.exit(2)
+        world.visual_state = True
+        print("HYBRID_LOADED", json.dumps({k: info[k] for k in ("path", "game_ms", "profile", "seed", "hash_mismatch")}), flush=True)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(("127.0.0.1", port))
@@ -255,6 +285,9 @@ def serve(port: int) -> None:
                             reply = {"status": "rejected", "reason": "bad_json"}
                         else:
                             reply = _handle(world, message)
+                            swapped = reply.pop("_swap", None)  # a load: the loaded world replaces this one (the reply already carries its snapshot)
+                            if swapped is not None:
+                                world = swapped
                             if getattr(world, "cycle_pending", False) and tech.god_allowed(world) is not None:
                                 from wizard_rts import history
 

@@ -2,8 +2,10 @@ extends SceneTree
 
 ## Headed Wizard Mode launch test (execution plan A.3 and A.4). The campaign world is the real HybridWorld with its six faction AIs: the scene
 ## connects, the factions are simulated for 90 game seconds and build, the wizard comes up to a real Red worker outside its hut, clicks it with a
-## real mouse press, chooses "Talk to <name>" in its label, and the story dialogue opens with that worker's name. A.4 adds the save and load part.
-## Needs the sim on HYBRID_SIM_PORT with HYBRID_PROFILE=campaign (the AIs are on by default).
+## real mouse press, chooses "Talk to <name>" in its label, and the story dialogue opens with that worker's name. A.4: Escape opens the pause menu
+## (Save game, Continue), a save to slot `test` then 30 game seconds then a load puts the clock and the wizard back, and the client autosave
+## (HYBRID_AUTOSAVE_SECONDS=5) writes `auto` within seconds but never while a dialogue is open.
+## Needs the sim on HYBRID_SIM_PORT with HYBRID_PROFILE=campaign (the AIs are on by default) and HYBRID_AUTOSAVE_SECONDS=5, DMB_RUNS shared with the sim.
 
 var _world: Node
 var _fails: Array[String] = []
@@ -48,6 +50,34 @@ func _shot(name: String) -> void:
 	DirAccess.make_dir_recursive_absolute(_dir)
 	image.save_png(_dir.replace("\\", "/") + "/%s.png" % name)
 	print("LAUNCH_SHOT %s" % name)
+
+
+func _key(code: int) -> void:
+	for pressed in [true, false]:
+		var e := InputEventKey.new()
+		e.keycode = code
+		e.physical_keycode = code
+		e.pressed = pressed
+		Input.parse_input_event(e)
+		await _frames(1)
+	await _frames(2)
+
+
+## Where the simulator writes a slot (the sim and this test share DMB_RUNS; the default is ~/dmb_runs).
+func _save_file(slot: String) -> String:
+	var runs := OS.get_environment("DMB_RUNS")
+	if runs == "":
+		runs = OS.get_environment("HOME") + "/dmb_runs"
+	return "%s/saves/campaign/%s.pkl" % [runs, slot]
+
+
+func _wait_until(cond: Callable, seconds := 10.0) -> bool:
+	var t0 := Time.get_ticks_msec()
+	while not cond.call():
+		await _frames(2)
+		if (Time.get_ticks_msec() - t0) / 1000.0 > seconds:
+			return false
+	return true
 
 
 func _by_id(id: String) -> Dictionary:
@@ -207,6 +237,55 @@ func _run() -> void:
 	sui.close_dialog()
 	await _frames(4)
 	_check(not sui.dialog.visible, "the dialogue closes")
+
+	# ---- A.4: pause menu, save, load
+	_check(is_equal_approx(_world.autosave_seconds, 5.0), "HYBRID_AUTOSAVE_SECONDS reaches the client (%s)" % str(_world.autosave_seconds))
+	var started_msec := Time.get_unix_time_from_system()
+	await _key(KEY_ESCAPE)
+	_check(await _wait_until(func(): return _world.ui_dialogue_waiting_choice(), 5.0), "Escape opens the pause menu")
+	_check(_world.autosave_wait_reason() == "menu", "an autosave waits while the menu is open (%s)" % _world.autosave_wait_reason())
+	await _shot("launch_pause_menu")
+	_world.ui_dialogue_choose("Save game")
+	_check(await _wait_until(func(): return _world.ui_dialogue_open() and not _world.ui_dialogue_waiting_choice(), 5.0), "the menu confirms the save")
+	for _tap in 8:  # the first tap finishes the typed line, the next one dismisses it
+		if _world.ui_dialogue_waiting_choice():
+			break
+		_world.ui_dialogue_advance()
+		await _frames(6)
+	_check(_world.ui_dialogue_waiting_choice(), "the menu returns")
+	_world.ui_dialogue_choose("Continue")
+	_check(await _wait_until(func(): return not _world._menu_open, 5.0), "Continue closes the menu")
+	_check(FileAccess.file_exists(_save_file("manual")), "the manual save exists (%s)" % _save_file("manual"))
+
+	var t0_ms := int(_world._snapshot.get("game_ms", 0))
+	var home: Vector2i = _world._john_pos
+	var saved: Dictionary = _world.save_slot("test")
+	_check(str(saved.get("status", "")) == "ok" and int(saved.get("game_ms", -1)) == t0_ms, "save to slot test at game_ms %d (%s)" % [t0_ms, str(saved.get("status", ""))])
+	_sim_advance(30)
+	_world.set_john_pos(home + Vector2i(0, 3) if _world.is_walkable(home + Vector2i(0, 3)) else home + Vector2i(0, -3))
+	_world._arrived()
+	await _frames(3)
+	var t1_ms := int(_world._snapshot.get("game_ms", 0))
+	_check(t1_ms >= t0_ms + 30000, "30 more game seconds pass (%d -> %d)" % [t0_ms, t1_ms])
+	var loaded: Dictionary = _world.load_slot("test")
+	_check(str(loaded.get("status", "")) == "ok" and not bool(loaded.get("hash_mismatch", true)), "load slot test (%s)" % str(loaded.get("status", loaded.get("reason", ""))))
+	_check(int(_world._snapshot.get("game_ms", 0)) == t0_ms, "the clock went back to %d (now %d)" % [t0_ms, int(_world._snapshot.get("game_ms", 0))])
+	_check(_world._john_pos == home and int(_world._snapshot["player"]["tx"]) == home.x, "the wizard is where he was saved %s (now %s)" % [str(home), str(_world._john_pos)])
+	_check(_world.terrain != null and _world._snapshot.get("entities", []).size() > 100, "the terrain and the world are drawn again (%d rows)" % _world._snapshot.get("entities", []).size())
+	_check(_world.story_ui.person_name(wid) == pname, "the worker is still %s after the load" % pname)
+	var bad: Dictionary = _world.load_slot("no_such_slot")
+	_check(str(bad.get("reason", "")) == "missing" and int(_world._snapshot.get("game_ms", 0)) == t0_ms, "loading a missing slot is refused and changes nothing")
+
+	# ---- A.4: the client autosave waits for a quiet moment
+	_world.story_ui.talk_to(wid)
+	await _frames(4)
+	_check(_world.story_ui.dialog.visible and _world.autosave_wait_reason() == "dialogue", "a dialogue is open and holds the autosave (%s)" % _world.autosave_wait_reason())
+	var count_open: int = _world.autosave_count
+	await create_timer(7.0).timeout  # longer than HYBRID_AUTOSAVE_SECONDS: the autosave is due but must wait
+	_check(_world.autosave_count == count_open, "no autosave while the dialogue is open (count %d)" % _world.autosave_count)
+	_world.story_ui.close_dialog()
+	_check(await _wait_until(func(): return _world.autosave_count > count_open, 10.0), "the autosave is written within 10 s of the dialogue closing (count %d)" % _world.autosave_count)
+	_check(FileAccess.file_exists(_save_file("auto")) and float(FileAccess.get_modified_time(_save_file("auto"))) >= started_msec - 1.0, "auto.pkl exists and is fresh")
 
 	if _fails.is_empty():
 		print("HYBRID_LAUNCH_OK")

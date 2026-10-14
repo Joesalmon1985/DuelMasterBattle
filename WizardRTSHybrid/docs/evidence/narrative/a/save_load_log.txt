@@ -1,0 +1,35 @@
+LAUNCH ok   the campaign profile (campaign)
+LAUNCH ok   the snapshot carries the Wizard Mode narrative state
+LAUNCH ok   the factions play on their own: buildings 48 -> 60 after 90 game seconds (Red 8 -> 10; now Red 10, Blue 10, Green 10, Yellow 10, Purple 10, Orange 10)
+LAUNCH ok   a Red worker is outside its hut
+LAUNCH ok   the wizard stands beside it
+LAUNCH ok   the wizard stands beside it again
+LAUNCH ok   the worker worker:2 has a character in story.persons (14 near the wizard)
+LAUNCH ok   the character has a full name (Gordak Thunderaxe)
+LAUNCH ok   clicking the worker opens its label with choices (state RESPONSES)
+LAUNCH ok   the label offers 'Talk to Gordak Thunderaxe'
+LAUNCH ok   the label names the worker
+LAUNCH ok   the dialogue opens
+LAUNCH ok   the dialogue title is the worker's name (Gordak Thunderaxe)
+LAUNCH ok   the first line is the worker introducing themselves
+LAUNCH ok   the dialogue closes
+LAUNCH ok   HYBRID_AUTOSAVE_SECONDS reaches the client (5.0)
+LAUNCH ok   Escape opens the pause menu
+LAUNCH ok   an autosave waits while the menu is open (menu)
+LAUNCH ok   the menu confirms the save
+LAUNCH ok   the menu returns
+LAUNCH ok   Continue closes the menu
+LAUNCH ok   the manual save exists (/tmp/dmb_runs_headed_test/saves/campaign/manual.pkl)
+LAUNCH ok   save to slot test at game_ms 97000 (ok)
+LAUNCH ok   30 more game seconds pass (97000 -> 127000)
+LAUNCH ok   load slot test (ok)
+LAUNCH ok   the clock went back to 97000 (now 97000)
+LAUNCH ok   the wizard is where he was saved (82, 54) (now (82, 54))
+LAUNCH ok   the terrain and the world are drawn again (2772 rows)
+LAUNCH ok   the worker is still Gordak Thunderaxe after the load
+LAUNCH ok   loading a missing slot is refused and changes nothing
+LAUNCH ok   a dialogue is open and holds the autosave (dialogue)
+LAUNCH ok   no autosave while the dialogue is open (count 2)
+LAUNCH ok   the autosave is written within 10 s of the dialogue closing (count 3)
+LAUNCH ok   auto.pkl exists and is fresh
+HYBRID_LAUNCH_OK

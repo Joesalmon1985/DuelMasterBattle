@@ -39,6 +39,10 @@ var wizard_labels: Node  # semantic labels and fire magic (Wizard Mode)
 var era_hud: Label  # era, victory points and cycle: a developer read-out of the simulation's own state
 var story_ui: Node  # the wizard's story: people, dialogue, dungeon, duel (placeholders over the Python ops)
 var terrain = null  # TerrainView once the sim has sent its terrain
+var autosave_seconds := 300.0  # real seconds of play between autosaves; the client times it, the simulation reads no wall clock (HYBRID_AUTOSAVE_SECONDS overrides)
+var autosave_count := 0
+var _autosave_acc := 0.0
+var _menu_open := false  # the pause menu is showing
 var selected_ids: Dictionary = {}:
 	set(v):
 		selected_ids = v
@@ -46,6 +50,8 @@ var selected_ids: Dictionary = {}:
 
 
 func _ready() -> void:
+	if OS.get_environment("HYBRID_AUTOSAVE_SECONDS") != "":
+		autosave_seconds = maxf(1.0, float(OS.get_environment("HYBRID_AUTOSAVE_SECONDS")))
 	_build_layers()
 	_build_ui()
 	_font = ThemeDB.fallback_font
@@ -134,6 +140,7 @@ func _era_text(snap: Dictionary) -> String:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	_autosave_tick(delta)
 	_art.industry.begin_frame(delta)
 	if _camera_nudge != Vector2.ZERO:
 		_camera.position += _camera_nudge
@@ -382,3 +389,112 @@ func _draw() -> void:
 	_art.draw_effects(self, _snapshot.get("effects", []), TPX)
 	if god != null:
 		god.draw_overlay(self)
+
+
+# ---------------------------------------------------------------- save, load, pause menu and autosave (Wizard Mode; the Python server owns the files)
+
+const SAVE_SLOTS := {"Manual save": "manual", "Quit save": "quit", "Autosave": "auto"}
+
+
+## A save is a pure read of the world on the server: slot names are "manual" (pause menu), "quit" (on leaving) and "auto" (timed here).
+func save_slot(slot: String) -> Dictionary:
+	var reply: Dictionary = _sim.op({"op": "save", "slot": slot})
+	if str(reply.get("status", "")) == "ok":
+		_hud_area_lbl.text = "Saved (%s)" % slot
+	return reply
+
+
+## Load a slot and rebuild everything the client drew from the old world: terrain, entity rows, the wizard's place, labels and story panels.
+func load_slot(slot: String, prev := false) -> Dictionary:
+	var reply: Dictionary = _sim.op({"op": "load", "slot": slot, "prev": prev})
+	if str(reply.get("status", "")) != "ok":
+		return reply
+	var tview = TerrainView.new()
+	if tview.load_from(reply):
+		terrain = tview
+	if story_ui != null:
+		story_ui.close_dialog()
+	if wizard_labels != null:
+		wizard_labels._clear_all()
+	_art._vis.clear()
+	selected_ids = {}
+	_static_rows.clear()
+	_solid.clear()
+	_solid_tile_of.clear()
+	_apply_snapshot(reply.get("snapshot", {}))
+	_seq = int(_snapshot.get("clock_sequence", 0))
+	_clock_acc = 0.0
+	_place_john_from_snapshot()
+	_update_john_sprite(0)
+	if story_ui != null:
+		story_ui.refresh()
+	_hud_area_lbl.text = "Loaded (%s)" % slot
+	queue_redraw()
+	return reply
+
+
+## Why an autosave has to wait ("" when the moment is quiet): a duel board, a dialogue, a dungeon view, the pause menu or a summoned worker.
+func autosave_wait_reason() -> String:
+	if _snapshot.is_empty():
+		return "no_world"
+	if _duel_open:
+		return "duel"
+	if _menu_open:
+		return "menu"
+	if story_ui != null:
+		if story_ui.dialog.visible:
+			return "dialogue"
+		if story_ui.dungeon.visible:
+			return "dungeon"
+		var st = _snapshot.get("story", {})
+		if typeof(st) == TYPE_DICTIONARY and not (st.get("summoned", []) as Array).is_empty():
+			return "summoned"
+	if _input_locked:
+		return "locked"
+	return ""
+
+
+func _autosave_tick(delta: float) -> void:
+	if _snapshot.is_empty():
+		return
+	_autosave_acc += delta
+	if _autosave_acc < autosave_seconds or autosave_wait_reason() != "":
+		return  # not due yet, or sent at the next quiet moment
+	_autosave_acc = 0.0
+	if str(save_slot("auto").get("status", "")) == "ok":
+		autosave_count += 1
+
+
+## Escape and the menu button: Continue, Save game, Load game, Save and quit.
+func _on_menu() -> void:
+	if _input_locked or _duel_open or _snapshot.is_empty():
+		return
+	_input_locked = true
+	_menu_open = true
+	_touch.set_enabled(false)
+	while true:
+		var choice: String = await _dialogue.choose_async("Paused.", ["Continue", "Save game", "Load game", "Save and quit"])
+		if choice == "Save game":
+			var r := save_slot("manual")
+			await _dialogue.say_async("", "Game saved." if str(r.get("status", "")) == "ok" else "The game could not be saved (%s)." % str(r.get("reason", "")))
+		elif choice == "Load game":
+			var pick: String = await _dialogue.choose_async("Load which save?", SAVE_SLOTS.keys() + ["Back"])
+			if SAVE_SLOTS.has(pick):
+				var r := load_slot(str(SAVE_SLOTS[pick]))
+				if str(r.get("status", "")) == "ok":
+					break
+				await _dialogue.say_async("", "That save cannot be loaded (%s)." % str(r.get("reason", "")))
+		elif choice == "Save and quit":
+			save_slot("quit")
+			get_tree().quit()
+			return
+		else:
+			break
+	_menu_open = false
+	_input_locked = false
+	_touch.set_enabled(true)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _snapshot.is_empty():
+		save_slot("quit")  # closing the window saves first
