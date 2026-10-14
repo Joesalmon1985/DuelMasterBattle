@@ -1,5 +1,29 @@
 # Next agent handoff
 
+## RESTART NOTE, 14 Oct 2026 (paused by the owner during M6): read this first
+
+**Branch** `feature/neuroevolution-plan`; never merge to `main`; `docs/release_notes.md` is always modified locally and must never be committed (never `git add -A`).
+**Last code commit** `e0c2bb3e` ("neuro(M5): workers, evolution loop, imitation, persistence, CLI, launchers, reports, tactical controller"); the pause commit follows it.
+
+**Done and evidenced:** M0-M5 (content freeze, vision/environment, observation and candidates, networks (genome 87,430 floats) and controller, fitness/manifest/league/curriculum, workers, evolution loop with an imitation lineage, persistence, CLI `train_ai.py`, five launchers, session reports) plus the tactical controller code (`neuro/tactical.py`, N11). Full Windows suite **1207 passed, 19 skipped, 0 failed** (`cd WizardRTSHybrid; py -3 -m pytest tests`, 27 minutes). Ledger: `docs/ledger/NEUROEVO_PROGRESS.md`.
+
+**NOT done:** (1) the M6 acceptance judgement: the 8-hour proving run was paused after 40 minutes (generations 0-3) and has not been judged; `scripts/judge_proof.py` has not been run; evidence of the partial run is in `docs/evidence/neuroevo/m6_proof/partial/` (README with the numbers). (2) M7 performance pass (not started; needs an idle machine). (3) M8 ablation: N11 is implemented and plugged into the controller, but `tests/test_neuro_tactical.py` showed **0 orders issued** in its game, so engagement is unproven; no with/without comparison exists, and N11's weights only matter in a run trained with `tactical: true`. (4) M9: the default config is already `full240` in `Train AI.bat`, but the checklist and the first overnight session have not happened. (5) **M10 must not be started** (owner decision N10); all training stays at catastrophe level C0.
+
+**Resume the proving run:** `py -3 train_ai.py train --run proving --config proving60 --hours 8 --workers 14 --keep-awake --no-models` from the repository root. It resumes only if the code is unchanged (code hash, versions and config name must match the run's manifest); if you changed code under `wizard_rts/`, `neuro/` or `sim/dmb/` it starts a new run instead (the old one stays in `%USERPROFILE%\dmb_runs
+euro\proving`, do not delete it). Run it **detached** (`Start-Process` from PowerShell with redirected output); a foreground or tool-managed background command can be killed. Stop it with `py -3 train_ai.py stop --run proving` (graceful: games in flight finish; `--now` abandons them). A graceful stop mid-generation leaves a partial generation (as generation 3 was) which is used only if at least 4 children finished.
+**Judge it:** `py -3 WizardRTSHybrid/scripts/judge_proof.py` (held-out final best against generation-0 best on 8 seeds x 2 legs; writes `docs/evidence/neuroevo/m6_proof/report.md`). Acceptance: mean advantage above 0, bootstrap 90% lower bound above 0, every one of the 8 seeds won. A run that merely completes fails. If it fails, diagnose in the plan's order (the script prints the four checks).
+
+**Key findings so far**
+- Victory points equal standing settlements (plus conquests), so fitness only differs between controllers once settlements are founded; a random genome stays at 1 VP for 60 minutes, heuristic AIs reach 4-7. The 60-minute landscape is sparse.
+- The M2 candidate set had no way to explore, so a neural faction could never see an expansion site; M5 added an H5 "scout" candidate (non-attack move to unexplored waypoints of the public reconnaissance grid).
+- The imitation lineage (shadow games of the heuristic, ridge fit of the head output layers, `wait_margin` 0.6 so the mean wait score is -0.6) sometimes reaches 2 VP; without the shift it hardly acts. Roads (H2) are never imitated (the heuristic creates none through road edges), H7/H8 are never imitated.
+- First proving generations: neural seats were 40-75 fitness points WORSE than the heuristic (mean advantage -63, -69, -54, -75; best -49, -54, -39, -70), no trend yet; the imitation parent (-64, -54, -45) was ahead of the random parent (-65, -70, -58, -73) in generations 0-2. A random genome picks H8 (diplomacy) at about a third of its commands.
+- A generation of 60-minute games takes 7-9 minutes with 14 workers (38 games); a 240-minute generation (population 24, 4 seeds) will take roughly 1.5-2 hours, so one 8-hour night is only 4-5 generations: M7 matters.
+- Worker design: one subprocess per game from the run's frozen code copy (`neuro/workers.py`), not a multiprocessing pool.
+
+**Rules:** the content roster is frozen (`docs/CONTENT_FREEZE.md`, `scripts/freeze_content.py --check`); catastrophe level C0 only; report negative results exactly as they are; update the ledger per task; commit per task and push; run the hash gate for any simulator change (M7).
+**Machine:** Windows 11, Python 3.14, gcc on the user PATH (open a new shell or read the user PATH to see it), 8 cores / 16 threads, 32 GB. Quick neuro tests: `py -3 -m pytest tests/test_neuro_*.py` (about 15 minutes in total, several start subprocess games). `train_ai.py smoke` takes about 2 minutes.
+
 ## 14 Oct 2026: content freeze and hierarchical neuroevolution (APPROVED; implementation starts at task T0.1)
 
 **Read first, in this order:** `docs/EXECUTION_PLAN_NEUROEVOLUTION.md` (the task-by-task guide you execute), `docs/ledger/NEUROEVO_PROGRESS.md` (which tasks are done), then `docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md` (the design the tasks implement). Branch `feature/neuroevolution-plan`, cut from `origin/main` at `fd6e3d80`. The owner approved the plan and all its recommended defaults on 14 Oct 2026 (register D33/D34, N01-N09).
