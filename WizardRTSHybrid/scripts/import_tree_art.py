@@ -4,6 +4,11 @@ import_assets.py rebuilds the whole art folder (and needs the OpenRA content pac
 so this script merges just the species sheets into catalogue.json. Run: python3 scripts/import_tree_art.py
 """
 from __future__ import annotations
+import sys as _sys  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D33)
+freeze_guard.require_unfreeze(__file__)
 
 import importlib.util
 import json
