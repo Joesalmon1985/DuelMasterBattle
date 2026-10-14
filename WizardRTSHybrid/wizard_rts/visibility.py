@@ -147,15 +147,28 @@ def known(world: Any, faction: str, tx: int, ty: int) -> bool:
     return (tx, ty) in world.__dict__.get("explored", {}).get(faction, ())  # tiles a scout or a spy revealed (workers.py, openra_abilities.py)
 
 
+def _in_sight(srcs: list[tuple[int, int, int]], xs: list[int], ys: list[int]) -> list[bool]:
+    """For each point: is it within some source's Chebyshev radius? (numpy over points x sources; identical to calling `visible` per point)"""
+    import numpy as np
+
+    if not srcs or not xs:
+        return [False] * len(xs)
+    sa = np.asarray(srcs, dtype=np.int64)
+    px, py = np.asarray(xs, dtype=np.int64)[:, None], np.asarray(ys, dtype=np.int64)[:, None]
+    return ((np.abs(px - sa[None, :, 0]) <= sa[None, :, 2]) & (np.abs(py - sa[None, :, 1]) <= sa[None, :, 2])).any(axis=1).tolist()
+
+
 def seen_enemies(world: Any, faction: str) -> dict[str, list[dict[str, Any]]]:
     """Other factions' buildings and units that are in sight right now."""
     srcs = sources(world, faction)
+    bl = [b for b in world.buildings.values() if b.get("faction_name") not in (faction, None) and "hp" in b and int(b["hp"]) > 0 and not b.get("destroyed")]
+    ul = [u for u in world.units.values() if u.get("faction_name") not in (faction, None) and u.get("alive", True) and not u.get("inside") and not u.get("cloaked")]
+    bv = _in_sight(srcs, [b["tx"] for b in bl], [b["ty"] for b in bl])
+    uv = _in_sight(srcs, [u["tx"] for u in ul], [u["ty"] for u in ul])
     bs = [{"id": b["id"], "faction": b["faction_name"], "kind": b["kind"], "tile": [b["tx"], b["ty"]], "hp": round(int(b["hp"]) / max(1, int(b.get("max_hp", b["hp"]))), 2)}
-          for b in world.buildings.values() if b.get("faction_name") not in (faction, None) and "hp" in b and int(b["hp"]) > 0 and not b.get("destroyed")
-          and visible(world, faction, b["tx"], b["ty"], srcs)]
+          for b, v in zip(bl, bv) if v]
     us = [{"id": u["id"], "faction": u["faction_name"], "kind": u["kind"], "tile": [u["tx"], u["ty"]], "hp": round(int(u["hp"]) / max(1, int(u["max_hp"])), 2)}
-          for u in world.units.values() if u.get("faction_name") not in (faction, None) and u.get("alive", True) and not u.get("inside") and not u.get("cloaked")
-          and visible(world, faction, u["tx"], u["ty"], srcs)]
+          for u, v in zip(ul, uv) if v]
     return {"buildings": bs, "units": us}
 
 
