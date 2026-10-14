@@ -36,7 +36,8 @@ WARE_VALUE = {  # wealth weights: raw goods count little, processed and military
     "fish": 2, "meat": 2, "wheat": 1, "water": 0, "ax": 6, "brick": 3, "marble": 4,
 }
 DEFAULT_WEIGHTS = {"wealth": 0.01, "territory": 0.5, "kill_value": 0.002, "loss_value": -0.002, "building_kill": 1.0, "building_loss": -1.0, "alive": 0.0, "eliminated": -50.0}
-ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy", "draft", "enhance", "ability", "dismantle", "convert", "waterway")
+ACTION_OPS = ("build", "road", "queue", "cancel", "move", "order", "demolish", "rally", "stop", "deploy", "draft", "enhance", "ability", "dismantle", "convert", "waterway",
+              "belt", "upgrade", "configure", "link_power", "trade", "propose", "respond", "break_treaty")
 
 
 class HybridEnv:
@@ -115,9 +116,10 @@ class HybridEnv:
         return self.world.state_hash()
 
     # ---------------------------------------------------------------- stepping
-    def step(self, actions: dict[str, list[dict[str, Any]]] | None = None):
-        """Apply each agent faction's actions (in faction order), advance `step_ms`, return
-        (observations, rewards, terminated, truncated, info). Rewards are per agent faction."""
+    def step(self, actions: dict[str, list[dict[str, Any]]] | None = None, observe: bool = True):
+        """Apply each seat's actions (the agent factions and their successors, in order), advance `step_ms`, return
+        (observations, rewards, terminated, truncated, info). Rewards are per agent faction. With observe=False the observations
+        are `{}` (a controller that builds its own features skips the 1-4 ms per seat that observe() costs)."""
         w = self.world
         actions = actions or {}
         results: dict[str, list[dict[str, Any]]] = {}
@@ -155,7 +157,7 @@ class HybridEnv:
                 rewards[f] += self.weights["eliminated"]
         info = {"game_ms": self.game_ms, "results": results, "alive": alive, "episode_over": bool(done_all or truncated), "outcome": history.outcome(w), "seats": self.seats(),
                 "faction_states": {n: history.state(w)["faction"].get(n, {}).get("state", "active") for n in sorted(w.faction_info)}}
-        return {f: self.observe(f) for f in self.seats()}, rewards, {**terminated, **extra}, truncated, info
+        return ({f: self.observe(f) for f in self.seats()} if observe else {}), rewards, {**terminated, **extra}, truncated, info
 
     def _trim_events(self) -> None:
         ev = self.world.events
@@ -210,6 +212,57 @@ class HybridEnv:
                 if "building" in kw and str(action.get("what")) == "power" and not self._owns_building(faction, kw["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
                 return _slim(w.ability(faction, str(action.get("what", "")), **kw))
+            if op == "belt":  # one run of belt, duct, conduit or payload conveyor as a construction site (Modern era)
+                tiles = [[int(t[0]), int(t[1])] for t in action["tiles"]]
+                end_dir = action.get("end_dir")
+                return _slim(w.belt(faction, tiles, None if end_dir is None else int(end_dir), str(action.get("kind", "mdy:conveyor"))))
+            if op == "upgrade":  # a mine or drill becomes advanced equipment on the same site
+                if not self._owns_building(faction, action["building"]):
+                    return {"status": "rejected", "reason": "not_yours"}
+                return _slim(w.upgrade(faction, str(action["building"]), str(action["to"])))
+            if op == "configure":  # a machine's setting: drill target, factory plan, sorter item, bridge link, rotation, ...
+                if not self._owns_building(faction, action["building"]):
+                    return {"status": "rejected", "reason": "not_yours"}
+                return _slim(w.configure(faction, str(action["building"]), str(action["key"]), action["value"]))
+            if op == "link_power":
+                a_id, b_id = str(action["a"]), str(action["b"])
+                if not (self._owns_building(faction, a_id) and self._owns_building(faction, b_id)):
+                    return {"status": "rejected", "reason": "not_yours"}
+                from wizard_rts.industry import commands as ind_commands
+
+                return _slim(ind_commands.link_power(w, faction, a_id, b_id))
+            if op == "trade":  # a caravan from an own warehouse to a partner's warehouse the faction knows (remembered, in sight, or an ally's)
+                from wizard_rts import trade
+
+                wh_id, partner = str(action["building"]), str(action["partner"])
+                give = {str(g): int(n) for g, n in dict(action["give"]).items()}
+                want = {str(g): int(n) for g, n in dict(action["want"]).items()}
+                if not self._owns_building(faction, wh_id):
+                    return {"status": "rejected", "reason": "not_yours"}
+                if not self._may_trade_with(faction, partner):
+                    return {"status": "rejected", "reason": "unknown_partner"}
+                return _slim(trade.send_caravan(w, faction, wh_id, partner, give, want))
+            if op == "propose":  # a truce, peace or alliance offer from this faction
+                from wizard_rts import diplomacy
+
+                other = str(action["to"])
+                if other not in w.faction_info or other == faction:
+                    return {"status": "rejected", "reason": "bad_offer"}
+                return _slim(diplomacy.propose(w, faction, other, str(action.get("state", "truce")), int(action.get("duration_ms", diplomacy.TRUCE_MS))))
+            if op == "respond":  # accept or refuse an offer addressed to this faction
+                from wizard_rts import diplomacy
+
+                offer = w.__dict__.get("offers", {}).get(str(action["offer"]))
+                if offer is not None and offer["to"] != faction:
+                    return {"status": "rejected", "reason": "not_yours"}
+                return _slim(diplomacy.respond(w, str(action["offer"]), bool(action["accept"])))
+            if op == "break_treaty":
+                from wizard_rts import diplomacy
+
+                other = str(action["with"])
+                if other not in w.faction_info or other == faction:
+                    return {"status": "rejected", "reason": "bad_relation"}
+                return _slim(diplomacy.break_treaty(w, faction, other, why="agent"))
             if op == "rally":
                 if not self._owns_building(faction, action["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
@@ -231,7 +284,7 @@ class HybridEnv:
                 if not self._may_target(faction, str(action["target"])):
                     return {"status": "rejected", "reason": "not_visible"}  # an agent can only attack what it can see or remembers seeing
                 return _slim(w.order(str(action["unit"]), str(action["target"]), faction=faction))
-        except (KeyError, TypeError, ValueError) as exc:
+        except (KeyError, IndexError, TypeError, ValueError, AttributeError) as exc:
             return {"status": "rejected", "reason": f"malformed:{type(exc).__name__}"}
         return {"status": "rejected", "reason": "unhandled"}
 
@@ -248,6 +301,18 @@ class HybridEnv:
         if target_id in visibility.memory_of(w, faction):
             return True
         return e is not None and visibility.visible(w, faction, e["tx"], e["ty"])
+
+    def _may_trade_with(self, faction: str, partner_id: str) -> bool:
+        """A partner warehouse the faction has seen (memory or sight) or that belongs to an ally."""
+        from wizard_rts import diplomacy
+
+        w = self.world
+        pw = w.buildings.get(partner_id)
+        if pw is None:
+            return False
+        if diplomacy.state_of(w, faction, pw["faction_name"]) == "alliance":
+            return True
+        return partner_id in visibility.memory_of(w, faction) or visibility.visible(w, faction, pw["tx"], pw["ty"])
 
     def _owns_unit(self, faction: str, uid: Any) -> bool:
         u = self.world.units.get(str(uid))
@@ -302,6 +367,7 @@ class HybridEnv:
                     site = ai._find_expansion_site(w, faction, u)
                     if site is not None:
                         out["expansion_sites"].append({"unit": u["id"], "tile": list(site)})
+        self._mechanics_masks(faction, out)
         armed = [u for u in units if u.get("weapon")]
         if armed:
             from wizard_rts.military import target_types
@@ -323,6 +389,35 @@ class HybridEnv:
                     out["attack"].append(e["id"])
             out["attack"].sort()
         return out
+
+    def _mechanics_masks(self, faction: str, out: dict[str, Any]) -> None:
+        """What the faction may attempt with the industry, trade and diplomacy commands now (the simulation still has the final word)."""
+        from wizard_rts import diplomacy, history, tech, trade
+        from wizard_rts.industry import registry as ind_registry
+
+        w = self.world
+        mine = sorted((b for b in w.buildings.values() if b["faction_name"] == faction and int(b.get("hp", 0)) > 0 and not b.get("constructing")), key=lambda b: b["id"])
+        out["upgrade"], out["configure"], out["link_power"] = [], [], []
+        drills = [(k, ind_registry.block(k)) for k in ind_registry.kinds()]
+        drills = [(k, s) for k, s in drills if s and s["role"] == "drill" and tech.kind_allowed(w, faction, k)]
+        for b in mine:
+            for kind, spec in drills:
+                if b["kind"] in spec["upgrade_from"]:
+                    out["upgrade"].append({"building": b["id"], "to": kind})
+            if b.get("mdy") is not None:
+                out["configure"].append({"building": b["id"], "role": b["mdy"]["role"]})
+                if b["mdy"]["role"] == "node":
+                    out["link_power"].append(b["id"])
+        live = [n for n in sorted(w.faction_info) if n != faction and history.state(w)["faction"].get(n, {}).get("state") != "collapsed"]
+        out["propose"] = [{"to": n, "states": [s for s in diplomacy.STATES[1:] if s != diplomacy.state_of(w, faction, n)]} for n in live]
+        out["break_treaty"] = [n for n in live if diplomacy.state_of(w, faction, n) != "war"]
+        out["respond"] = [{"offer": o["id"], "from": o["from"], "state": o["state"]} for o in sorted(w.__dict__.get("offers", {}).values(), key=lambda o: o["id"]) if o["to"] == faction]
+        posts = [b for b in mine if trade.is_post(b)]
+        partners = sorted((p for p in (w.buildings.get(r["id"]) for r in visibility.known_enemy_buildings(w, faction)) if p is not None and trade.is_post(p) and int(p.get("hp", 0)) > 0
+                           and not trade.hostile(w, faction, p["faction_name"])), key=lambda p: p["id"])
+        allied = sorted((b for b in w.buildings.values() if b["faction_name"] != faction and b.get("faction_name") and trade.is_post(b) and int(b.get("hp", 0)) > 0
+                         and diplomacy.state_of(w, faction, b["faction_name"]) == "alliance"), key=lambda p: p["id"])
+        out["trade"] = [{"building": b["id"], "partner": p["id"], "partner_faction": p["faction_name"]} for b in posts for p in {x["id"]: x for x in partners + allied}.values()][:64]
 
     def _generated_menu(self, faction: str) -> dict[str, dict[str, Any]]:
         """Buildable kinds beyond BUILD_MENU for this faction: its tribe's runnable wl: buildings (not enhancement-only) and every mdy: machine."""
