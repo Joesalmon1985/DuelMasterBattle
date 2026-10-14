@@ -28,3 +28,6 @@ Session log: see `git log --oneline 11b70b2..HEAD` (every commit has its time) a
 
 ## V3 gameplay and asset programme (branch `work/gameplay-assets-v3`, 13 Oct 2026)
 See `docs/V3_RUN_REPORT.md`: eras, Mindustry engine, OpenRA roster, Widelands completion, hybrid industry, coverage report and four-era scenario done; hash baselines, sea trade, hybrid-block art and performance work outstanding.
+
+## Content freeze and hierarchical neuroevolution (branch `feature/neuroevolution-plan`, 14 Oct 2026)
+Plan written, **awaiting owner approval**: `docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md` (milestones M0-M9; proposed decisions D26/D27 in the register, section 5). Nothing implemented. Benchmarks and audits: `WizardRTSHybrid/docs/evidence/neuroevo/`. If approved, P6/P7/P9/P11 above are superseded (no more content imports) and P14-P16 are replaced by the plan's M2-M9.
