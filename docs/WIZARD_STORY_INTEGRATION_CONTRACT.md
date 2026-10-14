@@ -1,6 +1,6 @@
 # Wizard story integration contract: interface assumptions and foreseeable merge conflicts
 
-What the wizard narrative programme (`feature/wizard-settlement-stories`) relies on, what it changes, and where it may later collide with the neuroevolution programme (`feature/neuroevolution-plan`). Status: **REVISED with the plan, 14 October 2026; a record, not a coordination plan.** Per the owner's direction this programme does no integration work on the other agent's behalf, designs no training gates, and schedules no baseline changes; the two branches are reconciled separately by the owner when appropriate.
+What the wizard narrative programme (`feature/wizard-settlement-stories`) relies on, what it changes, and where it may later collide with the neuroevolution programme (`feature/neuroevolution-plan`). Status: **APPROVED with the plan, 14 October 2026; a record, not a coordination plan.** Implementation happens on `feature/wizard-mode-implementation` (handover: `WIZARD_IMPLEMENTATION_HANDOFF.md`). Per the owner's direction this programme does no integration work on the other agent's behalf, designs no training gates, and schedules no baseline changes; the two branches are reconciled separately by the owner when appropriate.
 
 ---
 
@@ -76,7 +76,7 @@ No other core file changes. If a later milestone finds it needs one (for example
 | No RNG shift | `world.rng` never called by `narrative/` | a grep test; `world.rng.getstate()` equal with and without narrative after 20 minutes |
 | No wall clock | `game_ms` only | grep limited to `perf.py` |
 | Frozen roster untouched | data only; validator against `freeze.manifest()` | `test_content_freeze` green on every commit |
-| Save compatibility | the `HybridEnv` pickle shape plus `narrative_version`, atomic writes, refusal rules | `test_wizard_save.py` |
+| Save compatibility | the `HybridEnv` pickle shape plus `narrative_version`, atomic writes, refusal rules; autosave is timed by the Godot client, never by the server (no wall clock in the simulation) | `test_wizard_save.py` |
 | Negligible cost without Wizard Mode | one dict lookup per quantum | `test_narrative_perf` (disabled path under 5 microseconds per quantum) |
 | Bounded cost with Wizard Mode | budgeted director and residents, cached contexts | `test_narrative_perf` numbers in the ledger |
 
@@ -87,7 +87,7 @@ No other core file changes. If a later milestone finds it needs one (for example
 ### 6.1 Branches
 
 * `feature/neuroevolution-plan`: the training workstream. At the time of this revision it stands at `cb2f538e` (T1.1 to T1.5: visibility memory, successor control, alive rule, full action surface, episode runner; baselines `hash_baseline_v5*.json`). Those commits touch `ai.py`, `history.py`, `sim_api.py`, `visibility.py`, `workers.py` (+2 lines for `visibility.reveal`), `openra_abilities.py`, `scripts/hash_gate.py`, `tests/test_hash_baseline.py`, `neuro/**`; none touches a wizard-owned file or `world.py`.
-* `feature/wizard-settlement-stories`: this programme, cut from `4b67f55c`. It does not merge the other branch in on its own; the owner reconciles when appropriate.
+* `feature/wizard-settlement-stories`: this programme's planning branch, cut from `4b67f55c`. `feature/wizard-mode-implementation`: the implementation branch, created from the final pushed HEAD of the planning branch in its own worktree (handover section C). Neither merges the other workstream's branch in on its own; the owner reconciles when appropriate.
 
 ### 6.2 Where the two branches may collide, and the mechanical resolution
 
