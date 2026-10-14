@@ -7,12 +7,8 @@ HYB = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HYB)); sys.path.insert(0, str(HYB.parent))
 os.environ["HYBRID_AI"] = "1"
 os.environ.setdefault("HYBRID_AI_POLICY", "plus")
-try:
-    import psutil
-    def rss_mb(): return round(psutil.Process().memory_info().rss / 2**20)
-except Exception:
-    def rss_mb(): return -1
 from wizard_rts import vp, history, regions  # noqa: E402
+from wizard_rts.sysinfo import rss_mb  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
 def main():

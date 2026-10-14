@@ -28,7 +28,6 @@ import json
 import math
 import os
 import platform
-import resource
 import subprocess
 import sys
 import time
@@ -38,6 +37,8 @@ from pathlib import Path
 HYB = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HYB))
 sys.path.insert(0, str(HYB.parent))
+
+from wizard_rts import sysinfo  # noqa: E402
 
 SIDE_A = ("Red", "Green", "Purple")
 FACTIONS = ("Red", "Blue", "Green", "Yellow", "Purple", "Orange")
@@ -168,7 +169,7 @@ def play(job: dict) -> dict:
                "era": era["index"], "era_log": era["log"], "vp": vp.totals(w), "history": {n: f["state"] for n, f in history.state(w)["faction"].items()},
                "chronicle": history.state(w)["chronicle"], "outbreaks": getattr(w.__dict__.get("regions"), "outbreaks", 0),
                "stats": {k: v for k, v in w.stats.items() if not k.startswith(("made_", "consumed_"))}, "state_hash": w.state_hash(),
-               "peak_rss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0, 1),
+               "peak_rss_mb": sysinfo.rss_mb(),
                "step_ms_p50": round(sorted(step_ms)[len(step_ms) // 2], 2), "step_ms_p95": round(sorted(step_ms)[int(len(step_ms) * 0.95)], 2),
                "step_ms_max": round(max(step_ms), 1), "policies": job["policies"], "pilot": bool(pilot), "pilot_log": pilot.log[-40:] if pilot else []}
     return {"job": job, "series": series, "events": events, "failures": failures, "summary": summary}

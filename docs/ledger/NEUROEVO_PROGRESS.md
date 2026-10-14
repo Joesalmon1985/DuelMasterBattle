@@ -5,10 +5,10 @@ Tasks are defined in `docs/EXECUTION_PLAN_NEUROEVOLUTION.md`; the design is `doc
 Legend: `[ ]` not started, `[~]` in progress (say what is left), `[x]` done.
 
 ## M0 Freeze the catalogue and prepare the machine
-- [ ] T0.1 Verify the environment
-- [ ] T0.2 Optional packages (psutil)
-- [ ] T0.3 C compiler for the native A* kernel (N03)
-- [ ] T0.4 Windows fixes for `resource` imports (`sysinfo.rss_mb`)
+- [x] T0.1 Verify the environment — Python 3.14.0, numpy 2.4.0, `git status --short` shows only `docs/release_notes.md`; the 7-file subset gave `67 passed in 100 s` (plan expected 64; the subset has grown since)
+- [x] T0.2 Optional packages (psutil) — psutil 7.2.2 installed
+- [x] T0.3 C compiler for the native A* kernel (N03) — `winget install BrechtSanders.WinLibs.POSIX.UCRT` worked first try (gcc 16.2.0, user PATH; open a new shell to see it); `pytest tests/test_native_astar.py` -> 1 passed, not skipped
+- [x] T0.4 Windows fixes for `resource` imports (`sysinfo.rss_mb`) — `wizard_rts/sysinfo.py` (psutil, resource, ctypes; all three probes agree at ~18 MB); also fixed `perf_gate.py`, a fourth script importing `resource` that the plan did not list; `bench_full_game.py` now uses it too; `bench_sim.py --minutes 2` prints JSON (82.7x realtime, 64 MB), `run_civilisation_tournament.py --seeds 507 --minutes 3 --jobs 1` exit 0 (peak_rss_mb 71/74)
 - [ ] T0.5 Re-record hash baselines
 - [ ] T0.6 Roster manifest, `freeze.py`, `freeze_content.py`, `CONTENT_FREEZE.md`, `test_content_freeze.py`
 - [ ] T0.7 Importer guards
@@ -66,5 +66,6 @@ Legend: `[ ]` not started, `[~]` in progress (say what is left), `[x]` done.
 - [ ] Session reviews every 5 sessions under `docs/evidence/neuroevo/progress/`
 
 ## Session log (newest first)
+- 2026-10-14 (Claude Sonnet 5.5): started M0. T0.1-T0.4 done (see ticks above). Next: T0.5 hash baselines on Windows.
 - 2026-10-14 (Claude Fable 5.1): `work/mechanics-completion-v4` merged at `1b404a8b` on the owner's request (conflicts: v4's 168-card system kept over PR #17's rule; register renumbered D33/D34). Merged-tree checks: 84 tests passed (sim API, VP/eras, outbreaks, content graph, coverage, NN, hash baseline, visibility, ware classes, draft reachability, determinism); roster now 582 entities / 168 cards; 40-minute bench 79 s. No implementation task started.
 - 2026-10-14 (Claude Fable 5.1): plan and execution plan written and approved; no task started. Benchmarks in `WizardRTSHybrid/docs/evidence/neuroevo/bench_240/`.
