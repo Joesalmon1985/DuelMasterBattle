@@ -1,0 +1,17 @@
+{
+  "narrative_version": 1,
+  "narrative": {
+    "unlock_after_ms": 1200000,
+    "slots_per_settlement": 3,
+    "journal_cap": 4
+  },
+  "tutorial": {
+    "palette": [0, 1, 6],
+    "expire_ms": 1800000,
+    "essential": ["meet", "colours", "told_ward", "hidden_ward"]
+  },
+  "save": {
+    "autosave_seconds": 300
+  },
+  "log_cap": 400
+}

@@ -13,7 +13,7 @@ Legend: `[ ]` not started, `[~]` in progress (say what is left), `[x]` done.
 
 ## A Verify the integrated launch
 - [x] A.1 Baseline test counts and launch audit evidence: hybrid set 95 passed (294 s); legacy set 23 passed; headed duel/wizard/campaign PASS. Pre-existing: (1) `tools/dialogue_generation/tests` cannot be collected, `openpyxl` not installed; (2) headed `story` FAILS 3 stale pre-D22 "deposit used up" checks (fixed in C.4). Evidence `WizardRTSHybrid/docs/evidence/narrative/a/baseline.md`
-- [ ] A.2 Narrative state container and tick (`story.story_quantum` hook; `server.py` enables; no `world.py` change)
+- [x] A.2 Narrative state container and tick: `narrative/{__init__,config,events,perf}.py`, `data/narrative/config.json`, 2-line hook in `story.story_quantum`, `server.py` enables and carries the wizard over a cycle reset. `test_narrative_isolation.py` 10 passed (reference hashes seeds 507/11 equal to the pre-change values; faction-only hash, `world.rng` state and `events.total` identical with the layer on; real server process publishes `story.narrative`). With quick set + `test_content_freeze`, `test_hash_baseline`, `test_determinism`: 84 passed
 - [ ] A.3 The simulation's own workers as characters: identity, link, `persons` join, Godot talk target; `run_hybrid_launch.gd`
 - [ ] A.4 Basic save and load (`persist.py`, `save`/`load` ops, pause menu, quit save, client-timed autosave, `--load`)
 - [ ] A.5 Wrap-up: quick set, hash and determinism tests, headed `launch story duel wizard campaign`, owner hand launch. **OWNER CHECKPOINT A**

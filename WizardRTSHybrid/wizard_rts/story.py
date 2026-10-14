@@ -29,7 +29,7 @@ from sim.dmb.quests.causes import CauseTracker
 from sim.dmb.quests.runtime import QuestService
 from sim.dmb.time.clock import ClockService
 
-from wizard_rts import disruption, settlements
+from wizard_rts import disruption, narrative, settlements
 from wizard_rts.puzzle import gen as puzzle_gen
 from wizard_rts.puzzle import items as puzzle_items
 from wizard_rts.puzzle.dungeon import ENTRY, DungeonRun
@@ -230,6 +230,8 @@ def story_quantum(world: Any) -> None:
             q["outcome"] = "resolved_by_world"
             _log(world, "story_quest_resolved_by_world", quest=qid, mine=q["mine"])
             _release_duel(world, q)
+    if "narrative" in world.__dict__:  # Wizard Mode only: server.py creates world.narrative; HybridEnv and training worlds never have it
+        narrative.tick(world)
 
 
 def _outbreak_quantum(world: Any) -> None:
@@ -772,6 +774,15 @@ def entity_rows(world: Any) -> list[dict[str, Any]]:
 
 
 def snapshot(world: Any) -> dict[str, Any]:
+    out = _story_snapshot(world)
+    if "narrative" in world.__dict__:
+        from wizard_rts.narrative import events
+
+        out["narrative"] = {"version": world.narrative["version"], "events": events.recent(world)}
+    return out
+
+
+def _story_snapshot(world: Any) -> dict[str, Any]:
     s = world.__dict__.get("story")
     if not s:
         return {}

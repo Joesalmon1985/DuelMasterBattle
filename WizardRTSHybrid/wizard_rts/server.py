@@ -19,7 +19,7 @@ for entry in (str(_HERE), str(_ROOT)):
         sys.path.insert(0, entry)
 
 from wizard_rts import construction as con  # noqa: E402
-from wizard_rts import story, tech  # noqa: E402
+from wizard_rts import narrative, story, tech  # noqa: E402
 from wizard_rts.coords import tile_to_hex  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
@@ -201,6 +201,7 @@ def serve(port: int) -> None:
     world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"),
                          profile=os.environ.get("HYBRID_PROFILE", "campaign"))
     world.visual_state = True  # the client gets presentation fields (turret aim); never set in headless runs, so state hashes are unchanged
+    narrative.enable(world)  # Wizard Mode state lives only in worlds this server creates (never in HybridEnv or training worlds)
     if os.environ.get("HYBRID_CARDSET") == "legacy":  # regression only: the hand-written cards and the old offers; v2 drafting is the default for gated profiles
         world.legacy_draft, world.cardset, world.draft_v2 = True, "", False
     if os.environ.get("HYBRID_DRAFT_MS"):  # developer switch: safe accelerated drafting
@@ -264,7 +265,9 @@ def serve(port: int) -> None:
                                     conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
                                     continue
                                 ended = history.outcome(world)  # recorded in past_cycles before the new world replaces this one; a collective loss is never silent
+                                old_world = world
                                 world = history.cycle_reset(world)  # a new cycle: only the wizard carries over (D11)
+                                narrative.carry_over(old_world, world)  # the wizard's spells, lessons and duels cross the reset too
                                 reply = {"status": "ok", "cycle_reset": True, "ended_cycle": ended, "snapshot": world.snapshot()}
                         conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
             except (ConnectionError, OSError):
