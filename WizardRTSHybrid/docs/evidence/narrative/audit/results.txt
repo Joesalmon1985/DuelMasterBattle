@@ -1,0 +1,6 @@
+# seed 507, 60 min, campaign, cProfile
+{'seed': 507, 'minutes': 60, 'profile': 'campaign', 'wall_s': 607.1, 'x_realtime': 5.9, 'story_quantum_cum_s': 1.881, 'story_share_pct': 0.31, 'quests': {'quest:1': ('offered', 'outbreak')}, 'npcs': 1, 'people': 1, 'dungeons': 0, 'buildings': 402, 'settlements': 41, 'workers': 239}
+# seed 11, 60 min, campaign, cProfile
+{'seed': 11, 'minutes': 60, 'profile': 'campaign', 'wall_s': 585.8, 'x_realtime': 6.1, 'story_quantum_cum_s': 1.852, 'story_share_pct': 0.32, 'quests': {'quest:1': ('offered', 'shortage')}, 'npcs': 1, 'people': 1, 'dungeons': 1, 'buildings': 396, 'settlements': 42, 'workers': 240}
+# seed 507, 40 min, story on vs off
+{"seed": 507, "minutes": 40, "wall_on_s": 116.8, "wall_off_s": 117.1, "quests_on": 1, "people_on": 1, "events_on": 79383, "quests_off": 0, "people_off": 0, "events_off": 79382, "first_minute_faction_hash_differs": null, "first_minute_rng_differs": null, "first_minute_full_state_hash_differs": 1}
