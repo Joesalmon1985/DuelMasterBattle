@@ -6,6 +6,8 @@ COMMAND CODES. The head feature widths are fixed by the plan, so a command type 
   H5 type flags (t_enemy_building, t_nest, t_defend, t_rally): attack-move on an enemy building 1000, on a nest 0100, defend 0010, rally 0001, stop (hold) 0000,
      focus `order` on an enemy building 1100, on a nest 0101, rally point of a factory 0001 with distance 0, ability on an enemy building (capture, infiltrate,
      c4) 1001, repair 0011, power strike 1010, board or unload 0110, lay mine 0111.
+     scout (a plain, non-attack move of a squad to an unexplored waypoint of the fixed reconnaissance grid; added in M5 because without it a faction can never
+     see an expansion site): 0000 with distance > 0 (stop has distance 0).
   H9 action flags (a_demolish, a_dismantle_convert, a_enhance_upgrade, a_other): demolish 1000, dismantle 0100, convert 0110, enhance/upgrade 0010,
      configure 0001, cancel a queue entry 1001.
 M3 may add a learned op embedding to the head inputs; that would change the declared widths and is left to the owner (see the milestone report).

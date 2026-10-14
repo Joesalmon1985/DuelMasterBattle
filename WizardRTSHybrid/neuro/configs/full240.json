@@ -1,0 +1,23 @@
+{
+ "name": "full240",
+ "population": 24,
+ "seeds_per_generation": 4,
+ "game_minutes": 240,
+ "map_size": "standard",
+ "workers": 14,
+ "hours": 8,
+ "imitation_fraction": 0.25,
+ "imitation_games": 20,
+ "wall_cap_s": 7200,
+ "stall_s": 1800,
+ "max_run_gb": 20,
+ "promote": true,
+ "curriculum": {
+  "levels": {
+   "C0": 1.0
+  },
+  "current": "C0",
+  "retention_fraction": 0.25,
+  "retention_tolerance": 50
+ }
+}

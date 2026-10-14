@@ -54,6 +54,7 @@ class SeatResult:
     tier: str
     commands: int
     rejected: int
+    metrics: dict = field(default_factory=dict)  # behaviour inputs: conquest_vp, total_vp, founded, cured, aid, trades
 
 
 @dataclass
@@ -124,7 +125,12 @@ def _score_seats(world: Any, roots: list[str], end_reason: str, t_end_min: float
         else:
             f, tier = fit.seat_fitness(cfg, end_reason, t_end_min, seat_vp, "collapsed" if dead else "active", at, [now_vp[o] for o in all_roots if o != r])
         c = counts.get(r, [0, 0])
-        out.append(SeatResult(r, int(seat_vp), "collapsed" if dead else "active", at, round(f, 3), tier, c[0], c[1]))
+        fs = [world.fstats.get(n, {}) for n in members]
+        metrics = {"conquest_vp": sum(_permanent_vp(world, n) for n in members), "total_vp": int(now_vp[r]),
+                   "founded": int(sum(d.get("command_centers_deployed", 0) + d.get("mcv_deployed", 0) for d in fs)),
+                   "cured": int(sum(d.get("cubes_cured", 0) + d.get("nest_cubes_cleared", 0) for d in fs)), "aid": int(sum(d.get("aid_sent", 0) for d in fs)),
+                   "trades": int(sum(d.get("trades_done", 0) for d in fs))}
+        out.append(SeatResult(r, int(seat_vp), "collapsed" if dead else "active", at, round(f, 3), tier, c[0], c[1], metrics))
     return out
 
 

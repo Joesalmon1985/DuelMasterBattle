@@ -7,13 +7,16 @@ from typing import Any
 import numpy as np
 
 from neuro import schema as S
+from neuro import vision
 from neuro.cand_base import Candidate, feat
 from wizard_rts import diplomacy, regions, tech, trade
+from wizard_rts.ai import RECON_COLS, RECON_ROWS
 
 SQUAD_LINK = 6  # idle armed units within this many tiles of each other form one squad (single-link clustering)
 MAX_SQUADS = 4
 MAX_ENEMY_TARGETS = 4
 MAX_NEST_TARGETS = 2
+MAX_SCOUT_POINTS = 3  # unexplored waypoints offered to each squad (the same fixed grid the heuristic AIs scout, which is public map geometry)
 ENEMY_REACH = 120
 NEST_REACH = 80
 MAX_TRADE = 48
@@ -63,6 +66,17 @@ class WarCandidates:
             out.append(sorted(group))
         return out
 
+    @staticmethod
+    def scout_points(fr: Any, cx: float, cy: float) -> list[tuple[int, int]]:
+        """The (up to MAX_SCOUT_POINTS) waypoints of the fixed reconnaissance grid the faction has not seen, nearest to (cx, cy) first."""
+        t = fr.world.terrain
+        if t is None:
+            return []
+        pts = [(int(fx * t.w), int(fy * t.h)) for fy in RECON_ROWS for fx in RECON_COLS]
+        pts = [p for p in pts if not vision.known(fr.world, fr.me, p[0], p[1])]
+        pts.sort(key=lambda p: (math.hypot(p[0] - cx, p[1] - cy), p))
+        return pts[:MAX_SCOUT_POINTS]
+
     def military(self, obs: Any) -> list[Candidate]:
         """(squad, target) orders. A squad is a cluster of idle armed units; targets are the enemy buildings of factions at war that the faction remembers, blight nests
         it has seen, its own settlements with enemies in sight (defend) and its own centres (rally). The order is an attack-move of the whole squad to the target."""
@@ -90,7 +104,7 @@ class WarCandidates:
                 near = float(fr.e_str[np.abs(ev - tile).max(axis=1) <= 12].sum()) if len(ev) else 0.0
                 return strength[k] / (strength[k] + near + 1.0)
 
-            def add(kind: str, tile: tuple[int, int], key_id: str, t_hp: float, kind_row: int, target_b: int, **fields: float) -> None:
+            def add(kind: str, tile: tuple[int, int], key_id: str, t_hp: float, kind_row: int, target_b: int, attack_move: bool = True, **fields: float) -> None:
                 tile = self.approach(fr, rows, tile)
                 if tile is None:
                     return
@@ -101,7 +115,7 @@ class WarCandidates:
                 row[S.N1_RAW.index("operational")] = 1.0
                 dc = float(np.abs(fr.cc_xy - tile).max(axis=1).min()) if len(fr.cc_xy) else 340.0
                 row[S.N1_RAW.index("dist_centre")] = min(dc, 340.0) / 34.0
-                out.append(Candidate("H5", {"op": "move", "units": ids, "tx": int(tile[0]), "ty": int(tile[1]), "attack_move": True}, f, ("H5", kind, key_id, sid, len(rows)),
+                out.append(Candidate("H5", {"op": "move", "units": ids, "tx": int(tile[0]), "ty": int(tile[1]), "attack_move": attack_move}, f, ("H5", kind, key_id, sid, len(rows)),
                                      {"squad": list(rows), "target_kind": kind_row, "target_n1": row, "target_b": target_b, "tile": tile}))
 
             near = sorted(((math.hypot(m["tile"][0] - cx, m["tile"][1] - cy), m["id"], m) for m in enemy_b), key=lambda t: (t[0], t[1]))
@@ -117,6 +131,8 @@ class WarCandidates:
                 cc = min(fr.standing, key=lambda c: (math.hypot(c["tx"] - cx, c["ty"] - cy), c["id"]))
                 if math.hypot(cc["tx"] - cx, cc["ty"] - cy) > 8:
                     add("rally", (cc["tx"], cc["ty"] + 4), cc["id"], 1.0, fr.idx.get("warehouse", 0), obs.b_ids.index(cc["id"]) if cc["id"] in obs.b_ids else -1, t_rally=1.0)
+            for pt in self.scout_points(fr, cx, cy):  # reconnaissance: a plain move to an unexplored waypoint; its feature code is "no target flag set, distance > 0"
+                add("scout", pt, f"{pt[0]},{pt[1]}", 1.0, 0, -1, attack_move=False)
         out += self.extra_orders(obs, fr, [groups[k] for k in order], enemy_b)
         return out
 

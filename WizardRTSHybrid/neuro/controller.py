@@ -26,6 +26,7 @@ from neuro.candidates import CandidateGenerator
 from neuro.cand_base import Candidate
 from neuro.nets import Nets
 from neuro.observer import FactionObserver
+from neuro.tactical import Tactical, as_candidate
 from neuro.obs_world import EVENT_CATEGORIES
 
 MAX_COMMANDS = 4
@@ -93,7 +94,7 @@ class Controller:
         self.reject_reasons: dict[str, int] = {}
         self.tick_ms: list[float] = []
         self.ticks = 0
-        self.tactical = tactical
+        self.tactical: Tactical | None = tactical
         if env is not None:
             self.attach(env)
 
@@ -102,10 +103,12 @@ class Controller:
         self.env = env
         self.observer = FactionObserver(env.world, self.faction)
         self.gen = CandidateGenerator(env, self.faction, self.observer)
+        if getattr(self.cfg, "tactical", False):
+            self.tactical = Tactical(self)
 
     def spawn_for(self, faction: str) -> "Controller":
         """The controller of a split successor: the same genome, its own memory and decision state (N07)."""
-        sub = Controller(None, faction, self.nets, self.cfg, self.seed ^ zlib.crc32(faction.encode()), self.log, self.tactical)
+        sub = Controller(None, faction, self.nets, self.cfg, self.seed ^ zlib.crc32(faction.encode()), self.log)
         sub.attach(self.env)
         return sub
 
@@ -138,6 +141,10 @@ class Controller:
         trigger = self._due(game_s)
         if trigger:
             out += self._tick(game_s, trigger)
+        elif self.tactical is not None and game_s % self.cfg.tactical_s == 0:
+            for cmd, label in self.tactical.tick(game_s):
+                self._inflight.append((as_candidate(cmd, label), [], True))  # never retried
+                out.append(cmd)
         if out:
             self.last_command_s = game_s
         return out
@@ -150,6 +157,8 @@ class Controller:
         cands = self.gen.all(obs)
         th = self.brain.think(obs, cands, self.memory, (game_s - self.last_command_s) / 60.0)
         self.memory = th.memory
+        if self.tactical is not None:
+            self.tactical.remember(obs, th.enc)
         chosen = self._select(cands, th)
         cmds = []
         for cand, rest in chosen:

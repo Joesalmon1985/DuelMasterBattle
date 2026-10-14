@@ -43,23 +43,31 @@ def _git(*args: str) -> str:
 
 def git_state() -> dict:
     sha = _git("rev-parse", "HEAD")
-    dirty = [ln[3:] for ln in _git("status", "--porcelain", "--", "WizardRTSHybrid", "sim", "train_ai.py").splitlines()]
+    dirty = [ln[3:] for ln in _git("status", "--porcelain", "--", "WizardRTSHybrid", "sim", "train_ai.py", ":(exclude)WizardRTSHybrid/neuro/models").splitlines()]
     return {"sha": sha, "dirty": bool(dirty), "dirty_files": sorted(dirty)[:20]}
 
 
-def tree_hash(root: Path) -> str:
-    """sha256 over the sorted relative file names and contents of a code tree (caches and compiled files excluded)."""
-    key = f"tree:{root}"
+def tree_hash(root: Path, exclude: tuple[str, ...] = ()) -> str:
+    """sha256 over the sorted relative file names and contents of a code tree (caches, compiled files and the named top-level folders excluded)."""
+    key = f"tree:{root}:{exclude}"
     if key in _cache:
         return _cache[key]
     h = hashlib.sha256()
     for p in sorted(root.rglob("*")):
-        if p.is_file() and "__pycache__" not in p.parts and p.suffix not in (".pyc", ".pyd", ".so", ".dll"):
+        rel = p.relative_to(root)
+        if p.is_file() and "__pycache__" not in p.parts and p.suffix not in (".pyc", ".pyd", ".so", ".dll") and not (rel.parts and rel.parts[0] in exclude):
             h.update(p.relative_to(root).as_posix().encode())
             h.update(b"\0")
             h.update(hashlib.sha256(p.read_bytes()).digest())
     _cache[key] = h.hexdigest()
     return _cache[key]
+
+
+def code_hash(top: Path | None = None) -> str:
+    """One hash over the code a worker imports: wizard_rts, neuro (without its models, configs and caches) and the legacy sim/dmb. `top` is the repository root or a run's code copy."""
+    top = top or REPO
+    parts = [tree_hash(top / "WizardRTSHybrid" / "wizard_rts"), tree_hash(top / "WizardRTSHybrid" / "neuro", ("models", "configs")), tree_hash(top / "sim" / "dmb")]
+    return hashlib.sha256("|".join(parts).encode()).hexdigest()
 
 
 def hardware() -> dict:
@@ -84,6 +92,7 @@ def build(config: dict | None = None) -> dict:
         "roster_hash": freeze.roster_hash(),
         "rules_version": RULES_VERSION,
         "wizard_rts_sha256": tree_hash(HYB / "wizard_rts"),
+        "code_sha256": code_hash(),
         "architecture": {"version": nets.ARCH_VERSION, "genome_size": nets.genome_size()},
         "obs_schema": {"version": S.OBS_SCHEMA_VERSION, "hash": obs_schema_hash()},
         "act_schema_version": ACT_SCHEMA_VERSION,
