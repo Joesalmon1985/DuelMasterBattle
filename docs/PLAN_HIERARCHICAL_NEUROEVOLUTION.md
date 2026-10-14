@@ -1,6 +1,6 @@
 # Plan: content freeze and hierarchical neuroevolution of faction controllers
 
-Status: **PROPOSED, awaiting the owner's review.** Nothing in this document is implemented except the audits and benchmarks it cites. Written 14 October 2026 on branch `feature/neuroevolution-plan`, cut from `origin/main` at `fd6e3d80` (merge of PR #17). Owner brief: "Freeze content and plan hierarchical neuroevolution".
+Status: **APPROVED by the owner on 14 October 2026 with every recommended default of section 15** (decision register D26, D27, N01-N09). The step-by-step implementation guide for the executing agent is `docs/EXECUTION_PLAN_NEUROEVOLUTION.md`; progress is tracked in `docs/ledger/NEUROEVO_PROGRESS.md`. Nothing in this document was implemented at the time of writing except the audits and benchmarks it cites. Written 14 October 2026 on branch `feature/neuroevolution-plan`, cut from `origin/main` at `fd6e3d80` (merge of PR #17). Owner brief: "Freeze content and plan hierarchical neuroevolution".
 
 Evidence conventions: a number marked **measured** was produced in this session on the owner's Windows PC (AMD Ryzen 7 5800X, 8 cores / 16 threads, 32 GB, RTX 3060, Python 3.14, NumPy 2.4, no PyTorch, no C compiler) with the scripts named in section 11; a number marked **estimate** is derived from measurements and says how; **reported** means taken from an earlier run report and not re-measured here.
 
@@ -685,7 +685,9 @@ Shortest credible path to "a command I can leave running": M0 -> M1 -> M2 -> M3 
 
 ## 15. Decisions needed from the owner
 
-| Id | Question | Recommended default |
+**Resolved 14 October 2026: the owner approved every recommended default below** (register rows D26, D27, N01-N09).
+
+| Id | Question | Recommended default (approved) |
 | --- | --- | --- |
 | Q1 | Approve the content freeze as decision **D26** ("The imported catalogue at `fd6e3d80` is the permanent roster; no new buildings, units, wares, items or liquids; fixes and rebalancing continue within it") and the priority change as **D27** ("Development priority is autonomous faction play by hierarchical neuroevolution; D24's 'neural training is secondary' is superseded") | yes to both |
 | Q2 | Training outbreak cadence: use a calibrated `outbreak_interval_scale` recorded as a training parameter (section 8.5), with held-out evaluation also at 1.0? | yes; the study in M4 picks it; nothing in `outbreaks.json` changes |

@@ -8,7 +8,7 @@ DuelMasterBattle is a **wizard-led adventure inside an autonomous civilisation s
 
 Read in this order:
 
-0. `../docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md` — **proposed 14 Oct 2026, awaiting the owner**: the content roster is to be frozen (no new buildings, units, wares, items or liquids; fixes and rebalancing of existing entities continue) and the next programme is hierarchical neuroevolution of faction controllers in the headless simulation. If the owner has approved it, follow its roadmap (M0 first) and treat plan v2's content waves as superseded; if not, do not import content and do not start it.
+0. `../docs/EXECUTION_PLAN_NEUROEVOLUTION.md` — **the current programme (approved 14 Oct 2026, D26/D27)**: the content roster is frozen (no new buildings, units, wares, items or liquids; fixes and rebalancing of existing entities continue) and the work is hierarchical neuroevolution of faction controllers in the headless simulation. The design is `../docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md`; progress is `../docs/ledger/NEUROEVO_PROGRESS.md`. Plan v2's content waves (P6/P7/P9/P11) are superseded. Never run an importer without `DMB_UNFREEZE=1`.
 1. `../docs/DuelMasterBattle_Design_v0_5.md` — what the game is.
 2. `../docs/DECISION_REGISTER.md` — D01–D20 are closed (APPROVED). Only the S-items are open, with defaults. Do not re-ask them.
 3. `../docs/ARCHITECTURE_CONTRACT.md` — authority, registries, conservation, commands.

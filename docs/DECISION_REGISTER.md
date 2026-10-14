@@ -68,9 +68,25 @@ These are the only open items. Each has a recommended default; an implementation
 
 `PLAN_ECONOMY_TECH_ERA_PROGRAMME.md` proposes superseding D04's provisional threshold, S12/S13/S14 (split wording, world-summed VP, 4-minute independent offers) and removing the command-centre caps in the AIs. **Nothing here is approved.** The owner's answers to Q1-Q15 in section 10 of that plan will be recorded as new D-rows; until then the rules above stay in force.
 
-## 5. Proposed decisions pending owner review (14 October 2026, `PLAN_HIERARCHICAL_NEUROEVOLUTION.md`)
+## 5. Content freeze and neuroevolution (14 October 2026, `PLAN_HIERARCHICAL_NEUROEVOLUTION.md`)
 
-| ID | Proposed decision | Status | Consequence if approved |
+Status: **D26 and D27 APPROVED by the owner on 14 October 2026, together with every recommended default of the plan's section 15 (N01-N09 below).** Implementation follows `docs/EXECUTION_PLAN_NEUROEVOLUTION.md`.
+
+| ID | Decision | Status | Consequence |
 | --- | --- | --- | --- |
-| D26 | **Permanent content freeze.** The imported catalogue at commit `fd6e3d80` (593 content-graph entities: 497 buildings, 96 units; 380 generated cards; 128 Widelands wares; 22 Mindustry items, 11 liquids) is the roster of the game. No new buildings, units, wares, items or liquids are imported from Widelands, OpenRA, Mindustry or any other game, and catalogues are not updated when upstream changes. D05's "all relevant" and D25's "every relevant ... should become constructible" are satisfied by what is present and closed. Fixing, completing, rebalancing, re-costing, re-arting and speeding up existing entities continues; removing or renaming an entity to ease the freeze is forbidden. The roster is recorded in `wizard_rts/data/content_freeze.json` and enforced by `tests/test_content_freeze.py`. | PROPOSED | Plan v2 milestones P6, P7, P9, P11 (content waves) are superseded; importers refuse to run without `DMB_UNFREEZE=1 --reason`. |
-| D27 | **Development priority: autonomous factions by hierarchical neuroevolution.** Collections of small specialised networks control factions through the legal command surface, compete in 240-simulated-minute headless games, and are selected by victory points under a hard survival tier (no collective outbreak loss). Supersedes D24's "neural training is secondary"; the heuristic AIs remain as opponents and controls. | PROPOSED | The roadmap in the plan (M0-M9) becomes the programme; the training suite is `train_ai.py`. |
+| D26 | **Permanent content freeze.** The imported catalogue at commit `fd6e3d80` (593 content-graph entities: 497 buildings, 96 units; 380 generated cards; 128 Widelands wares; 22 Mindustry items, 11 liquids) is the roster of the game. No new buildings, units, wares, items or liquids are imported from Widelands, OpenRA, Mindustry or any other game, and catalogues are not updated when upstream changes. D05's "all relevant" and D25's "every relevant ... should become constructible" are satisfied by what is present and closed. Fixing, completing, rebalancing, re-costing, re-arting and speeding up existing entities continues; removing or renaming an entity to ease the freeze is forbidden. The roster is recorded in `wizard_rts/data/content_freeze.json` and enforced by `tests/test_content_freeze.py`. | APPROVED (owner, 14 Oct 2026) | Plan v2 milestones P6, P7, P9, P11 (content waves) are superseded; importers refuse to run without `DMB_UNFREEZE=1 --reason`. |
+| D27 | **Development priority: autonomous factions by hierarchical neuroevolution.** Collections of small specialised networks control factions through the legal command surface, compete in 240-simulated-minute headless games, and are selected by victory points under a hard survival tier (no collective outbreak loss). Supersedes D24's "neural training is secondary"; the heuristic AIs remain as opponents and controls. | APPROVED (owner, 14 Oct 2026) | The roadmap in the plan (M0-M9) is the programme; the training suite is `train_ai.py` with the root launchers `Train AI.bat`, `AI Training Status.bat`, `Evaluate Best AI.bat`, `Stop AI Training.bat`. |
+
+Approved implementation defaults (the plan's Q2-Q10; configurable constants, recorded in every run manifest):
+
+| ID | Default | Source |
+| --- | --- | --- |
+| N01 | Training worlds use an `outbreak_interval_scale` chosen by the M4 calibration study (largest scale at which six `plus` AIs lose 20-40% of 240-minute worlds); held-out evaluation reports results at the training scale and at 1.0; `data/outbreaks.json` is unchanged. | Q2 |
+| N02 | Generation 0 may contain up to 25% imitation-seeded genomes (ridge regression to the heuristic AI's choices), tagged `seed=imitation`; switch `evolution.imitation_fraction` (0 disables). | Q3 |
+| N03 | A C compiler (MinGW-w64 via winget, or MSVC Build Tools) is installed on the training PC so the existing native A* kernel runs; pure Python remains the fallback. | Q4 |
+| N04 | A candidate plays three of the six seats per game (mirrored legs A/B). | Q5 |
+| N05 | Runs live in `%DMB_RUNS%` (default `%USERPROFILE%\dmb_runs`), 20 GB cap per run, refuse to start below 10 GB free. The current champion is also copied into the repository at `WizardRTSHybrid/neuro/models/`. | Q6 |
+| N06 | Unattended overnight runs on the owner's PC are allowed; the launcher prevents sleep while training. | Q7 |
+| N07 | A split successor of a candidate's seat is played by the same candidate (extra seat); a successor of a heuristic seat joins `ai_factions`. | Q8 |
+| N08 | No PyTorch or other ML framework; NumPy only. `psutil` is an optional, tiny addition for memory reporting. | Q9 |
+| N09 | `work/mechanics-completion-v4` is for the owner to read; the programme does not depend on it. | Q10 |
