@@ -1,0 +1,411 @@
+[
+ {
+  "minute": 20,
+  "per_faction": {
+   "Red": {
+    "observe_first_ms": 26.06,
+    "candidates_first_ms": 28.29,
+    "observe_ms": 2.44,
+    "candidates_ms": 4.34,
+    "observe_max_ms": 2.79,
+    "candidates_max_ms": 7.14,
+    "buildings": 27,
+    "units": 11,
+    "settlements": 3
+   },
+   "Blue": {
+    "observe_first_ms": 22.0,
+    "candidates_first_ms": 27.28,
+    "observe_ms": 5.22,
+    "candidates_ms": 6.82,
+    "observe_max_ms": 5.84,
+    "candidates_max_ms": 8.33,
+    "buildings": 36,
+    "units": 1,
+    "settlements": 3
+   },
+   "Green": {
+    "observe_first_ms": 19.72,
+    "candidates_first_ms": 26.43,
+    "observe_ms": 2.94,
+    "candidates_ms": 4.44,
+    "observe_max_ms": 3.66,
+    "candidates_max_ms": 6.88,
+    "buildings": 46,
+    "units": 1,
+    "settlements": 6
+   },
+   "Yellow": {
+    "observe_first_ms": 21.72,
+    "candidates_first_ms": 17.87,
+    "observe_ms": 4.19,
+    "candidates_ms": 1.05,
+    "observe_max_ms": 4.92,
+    "candidates_max_ms": 1.37,
+    "buildings": 41,
+    "units": 1,
+    "settlements": 5
+   },
+   "Purple": {
+    "observe_first_ms": 21.36,
+    "candidates_first_ms": 29.68,
+    "observe_ms": 3.39,
+    "candidates_ms": 5.26,
+    "observe_max_ms": 4.19,
+    "candidates_max_ms": 8.34,
+    "buildings": 48,
+    "units": 2,
+    "settlements": 6
+   },
+   "Orange": {
+    "observe_first_ms": 19.74,
+    "candidates_first_ms": 17.72,
+    "observe_ms": 2.9,
+    "candidates_ms": 1.14,
+    "observe_max_ms": 3.39,
+    "candidates_max_ms": 1.19,
+    "buildings": 51,
+    "units": 1,
+    "settlements": 5
+   }
+  },
+  "mean_observe_ms": 3.51,
+  "mean_candidates_ms": 3.84,
+  "max_observe_ms": 5.84,
+  "max_candidates_ms": 8.34,
+  "candidates_per_head_mean": {
+   "H1": 60.0,
+   "H2": 3.0,
+   "H3": 3.3,
+   "H4": 0.2,
+   "H5": 5.5,
+   "H6": 0.0,
+   "H7": 0.0,
+   "H8": 15.0,
+   "H9": 48.5
+  },
+  "acceptance": {
+   "H1": {
+    "accepted": 32,
+    "tried": 32,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H2": {
+    "accepted": 18,
+    "tried": 18,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H3": {
+    "accepted": 20,
+    "tried": 20,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H4": {
+    "accepted": 1,
+    "tried": 1,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H5": {
+    "accepted": 15,
+    "tried": 15,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H8": {
+    "accepted": 48,
+    "tried": 48,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H9": {
+    "accepted": 48,
+    "tried": 48,
+    "rate": 1.0,
+    "reasons": {}
+   }
+  },
+  "world": {
+   "buildings": 251,
+   "units": 17,
+   "pickle_mb": 4.1
+  }
+ },
+ {
+  "minute": 60,
+  "per_faction": {
+   "Red": {
+    "observe_first_ms": 34.71,
+    "candidates_first_ms": 46.94,
+    "observe_ms": 5.24,
+    "candidates_ms": 6.83,
+    "observe_max_ms": 6.24,
+    "candidates_max_ms": 15.93,
+    "buildings": 57,
+    "units": 11,
+    "settlements": 6
+   },
+   "Blue": {
+    "observe_first_ms": 27.57,
+    "candidates_first_ms": 36.92,
+    "observe_ms": 4.52,
+    "candidates_ms": 4.76,
+    "observe_max_ms": 5.14,
+    "candidates_max_ms": 7.43,
+    "buildings": 51,
+    "units": 0,
+    "settlements": 4
+   },
+   "Green": {
+    "observe_first_ms": 25.81,
+    "candidates_first_ms": 36.18,
+    "observe_ms": 3.52,
+    "candidates_ms": 5.2,
+    "observe_max_ms": 4.41,
+    "candidates_max_ms": 8.49,
+    "buildings": 56,
+    "units": 1,
+    "settlements": 6
+   },
+   "Yellow": {
+    "observe_first_ms": 29.47,
+    "candidates_first_ms": 38.44,
+    "observe_ms": 6.36,
+    "candidates_ms": 5.55,
+    "observe_max_ms": 7.09,
+    "candidates_max_ms": 9.44,
+    "buildings": 56,
+    "units": 1,
+    "settlements": 6
+   },
+   "Purple": {
+    "observe_first_ms": 33.46,
+    "candidates_first_ms": 59.66,
+    "observe_ms": 9.38,
+    "candidates_ms": 10.05,
+    "observe_max_ms": 11.09,
+    "candidates_max_ms": 30.33,
+    "buildings": 73,
+    "units": 9,
+    "settlements": 7
+   },
+   "Orange": {
+    "observe_first_ms": 31.17,
+    "candidates_first_ms": 36.47,
+    "observe_ms": 7.94,
+    "candidates_ms": 5.07,
+    "observe_max_ms": 8.63,
+    "candidates_max_ms": 7.99,
+    "buildings": 69,
+    "units": 0,
+    "settlements": 4
+   }
+  },
+  "mean_observe_ms": 6.16,
+  "mean_candidates_ms": 6.24,
+  "max_observe_ms": 11.09,
+  "max_candidates_ms": 30.33,
+  "candidates_per_head_mean": {
+   "H1": 96.0,
+   "H2": 4.0,
+   "H3": 6.3,
+   "H4": 0.0,
+   "H5": 9.5,
+   "H6": 0.0,
+   "H7": 1.0,
+   "H8": 21.0,
+   "H9": 48.3
+  },
+  "acceptance": {
+   "H1": {
+    "accepted": 48,
+    "tried": 48,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H2": {
+    "accepted": 24,
+    "tried": 24,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H3": {
+    "accepted": 36,
+    "tried": 36,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H5": {
+    "accepted": 16,
+    "tried": 16,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H7": {
+    "accepted": 0,
+    "tried": 6,
+    "rate": 0.0,
+    "reasons": {
+     "partner_cannot_supply": 6
+    }
+   },
+   "H8": {
+    "accepted": 48,
+    "tried": 48,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H9": {
+    "accepted": 48,
+    "tried": 48,
+    "rate": 1.0,
+    "reasons": {}
+   }
+  },
+  "world": {
+   "buildings": 396,
+   "units": 22,
+   "pickle_mb": 4.5
+  }
+ },
+ {
+  "minute": 120,
+  "per_faction": {
+   "Red": {
+    "observe_first_ms": 65.64,
+    "candidates_first_ms": 109.53,
+    "observe_ms": 6.81,
+    "candidates_ms": 9.36,
+    "observe_max_ms": 8.72,
+    "candidates_max_ms": 16.22,
+    "buildings": 90,
+    "units": 24,
+    "settlements": 6
+   },
+   "Blue": {
+    "observe_first_ms": 40.15,
+    "candidates_first_ms": 106.96,
+    "observe_ms": 3.79,
+    "candidates_ms": 7.75,
+    "observe_max_ms": 4.37,
+    "candidates_max_ms": 12.54,
+    "buildings": 64,
+    "units": 0,
+    "settlements": 4
+   },
+   "Green": {
+    "observe_first_ms": 41.42,
+    "candidates_first_ms": 92.51,
+    "observe_ms": 4.36,
+    "candidates_ms": 8.56,
+    "observe_max_ms": 5.45,
+    "candidates_max_ms": 14.46,
+    "buildings": 68,
+    "units": 1,
+    "settlements": 6
+   },
+   "Yellow": {
+    "observe_first_ms": 47.04,
+    "candidates_first_ms": 65.2,
+    "observe_ms": 9.84,
+    "candidates_ms": 7.96,
+    "observe_max_ms": 10.92,
+    "candidates_max_ms": 13.36,
+    "buildings": 76,
+    "units": 0,
+    "settlements": 6
+   },
+   "Purple": {
+    "observe_first_ms": 50.42,
+    "candidates_first_ms": 78.01,
+    "observe_ms": 11.99,
+    "candidates_ms": 8.93,
+    "observe_max_ms": 13.79,
+    "candidates_max_ms": 16.06,
+    "buildings": 98,
+    "units": 22,
+    "settlements": 7
+   },
+   "Orange": {
+    "observe_first_ms": 43.5,
+    "candidates_first_ms": 72.64,
+    "observe_ms": 6.1,
+    "candidates_ms": 7.58,
+    "observe_max_ms": 6.94,
+    "candidates_max_ms": 14.18,
+    "buildings": 89,
+    "units": 0,
+    "settlements": 4
+   }
+  },
+  "mean_observe_ms": 7.15,
+  "mean_candidates_ms": 8.36,
+  "max_observe_ms": 13.79,
+  "max_candidates_ms": 16.22,
+  "candidates_per_head_mean": {
+   "H1": 96.0,
+   "H2": 3.5,
+   "H3": 7.5,
+   "H4": 0.0,
+   "H5": 8.0,
+   "H6": 0.0,
+   "H7": 18.2,
+   "H8": 21.0,
+   "H9": 50.7
+  },
+  "acceptance": {
+   "H1": {
+    "accepted": 48,
+    "tried": 48,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H2": {
+    "accepted": 21,
+    "tried": 21,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H3": {
+    "accepted": 38,
+    "tried": 38,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H5": {
+    "accepted": 22,
+    "tried": 22,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H7": {
+    "accepted": 2,
+    "tried": 32,
+    "rate": 0.062,
+    "reasons": {
+     "partner_cannot_supply": 30
+    }
+   },
+   "H8": {
+    "accepted": 48,
+    "tried": 48,
+    "rate": 1.0,
+    "reasons": {}
+   },
+   "H9": {
+    "accepted": 48,
+    "tried": 48,
+    "rate": 1.0,
+    "reasons": {}
+   }
+  },
+  "world": {
+   "buildings": 524,
+   "units": 47,
+   "pickle_mb": 4.7
+  }
+ }
+]

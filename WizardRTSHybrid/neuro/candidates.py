@@ -45,6 +45,31 @@ class CandidateGenerator(SiteCandidates, EconomyCandidates, WarCandidates, Extra
         self._kinds: list[str] = []
         self.timings: dict[str, float] = {}
 
+    # ------------------------------------------------------------------------------------------------------------------------ cached unlock tests
+    def _allow_tables(self) -> tuple[dict, dict]:
+        """Memo tables for tech.kind_allowed / tech.unit_allowed, valid while the faction's cards and the era are unchanged (each call otherwise re-reads the card table)."""
+        w = self.world
+        sig = (len(w.tech.get(self.faction, {}).get("cards", [])), int(getattr(w, "era_index", 0)))
+        if getattr(self, "_allow_sig", None) != sig:
+            self._allow_sig, self._allow_kind, self._allow_unit = sig, {}, {}
+        return self._allow_kind, self._allow_unit
+
+    def kind_ok(self, kind: str) -> bool:
+        from wizard_rts import tech
+
+        table, _ = self._allow_tables()
+        if kind not in table:
+            table[kind] = tech.kind_allowed(self.world, self.faction, kind)
+        return table[kind]
+
+    def unit_ok(self, unit: str) -> bool:
+        from wizard_rts import tech
+
+        _, table = self._allow_tables()
+        if unit not in table:
+            table[unit] = tech.unit_allowed(self.world, self.faction, unit)
+        return table[unit]
+
     # ------------------------------------------------------------------------------------------------------------------------ bookkeeping
     def on_events(self, events: list[dict]) -> None:
         self.observer.on_events(events)

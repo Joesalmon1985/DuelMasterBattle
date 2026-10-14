@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import zlib
+
 import numpy as np
 
 from neuro import features as F
@@ -41,7 +43,7 @@ class SiteCandidates:
             menu = con.full_menu()
             kinds = set(menu) | set(ind.kinds())
             self._kinds = sorted(k for k in kinds if (con.build_spec(k) or {}).get("size") != "water3" or True)
-            self._kinds = [k for k in self._kinds if con.build_spec(k) is not None and not (con.build_spec(k) or {}).get("enhancement_of") and tech.kind_allowed(w, me, k)]
+            self._kinds = [k for k in self._kinds if con.build_spec(k) is not None and not (con.build_spec(k) or {}).get("enhancement_of") and self.kind_ok(k)]
             self._kind_sig = sig
         return self._kinds
 
@@ -137,13 +139,18 @@ class SiteCandidates:
         v[9], v[10] = float(water), float(d > radius - 6)
         return v
 
+    @staticmethod
+    def ring_ttl(settlement_centre: str) -> int:
+        """Ring caches live RING_REFRESH_S to RING_REFRESH_S + 80 game seconds, a fixed offset per settlement, so they are not all rebuilt in the same decision."""
+        return RING_REFRESH_S + 20 * (zlib.crc32(settlement_centre.encode()) % 5)
+
     def ring_sites(self, fr: Any, cc: dict, cls: str) -> list[tuple[tuple[int, int], np.ndarray]]:
         """Up to N_SITES_PER_CLASS candidate tiles of one size class around a settlement centre, with their site vectors, cached for RING_REFRESH_S game seconds.
         A site must satisfy the terrain's build capability for the class, lie in the centre's build area, and be free of trees, roads, buildings and reservations;
         sites are taken nearest first (a site beside a road counts two tiles nearer) and at least SITE_SPACING apart. Stale entries are dropped by the live check."""
         key = (cc["id"], cls)
         hit = self._site_cache.get(key)
-        if hit is not None and fr.game_s - hit[0] < RING_REFRESH_S:
+        if hit is not None and fr.game_s - hit[0] < self.ring_ttl(cc["id"]):
             return hit[1]
         t = fr.world.terrain
         out: list[tuple[tuple[int, int], np.ndarray]] = []
@@ -178,20 +185,28 @@ class SiteCandidates:
                         picked.append(tile)
                         if len(picked) == N_SITES_PER_CLASS:
                             break
-                out = [(p, self._site_vector(fr, p, cc, g)) for p in picked]
+                out = [(p, None) for p in picked]  # the site vector is computed when a site is offered (site_vec)
         self._site_cache[key] = (fr.game_s, out)
         return out
+
+    def site_vec(self, fr: Any, cc: dict, tile: tuple[int, int]) -> np.ndarray:
+        """The 11 static site fields of a site, computed once per (settlement, tile) while the ring cache lives."""
+        cache = self.__dict__.setdefault("_vec_cache", {})
+        key = (cc["id"], tile)
+        hit = cache.get(key)
+        if hit is None or fr.game_s - hit[0] > 600:
+            hit = cache[key] = (fr.game_s, self._site_vector(fr, tile, cc, self._grid(fr)))
+        return hit[1]
 
     def naval_sites(self, fr: Any, cc: dict) -> list[tuple[tuple[int, int], np.ndarray]]:
         key = (cc["id"], "water3")
         hit = self._site_cache.get(key)
-        if hit is not None and fr.game_s - hit[0] < RING_REFRESH_S:
+        if hit is not None and fr.game_s - hit[0] < 4 * self.ring_ttl(cc["id"]):  # the shore does not move: this search is the dearest of the lot
             return hit[1]
         site = ai._naval_site(fr.world, fr.me, cc)
         out = []
         if site is not None:
-            g = self._grid(fr)
-            out = [(tuple(site), self._site_vector(fr, tuple(site), cc, g))]
+            out = [(tuple(site), None)]
         self._site_cache[key] = (fr.game_s, out)
         return out
 
@@ -211,11 +226,30 @@ class SiteCandidates:
             cache[kind] = plain
         return cache[kind]
 
+    def placement_ok(self, fr: Any, kind: str, tile: tuple[int, int]) -> bool:
+        """`check_placement` for a kind with special rules (mines, rocks, fish, extra footprint, Mindustry machines, ports, docks): the verdict is cached for a minute and
+        trusted only while the tile is still free, because the full check is the expensive part of a decision."""
+        w = fr.world
+        cache = self.__dict__.setdefault("_placement_cache", {})
+        hit = cache.get((kind, tile))
+        free = not (tile in w.blocked or tile in w.tree_tiles or tile in w.road_tile_set or tile in w.reserved_tiles
+                    or tile in fr.scratch.setdefault("unit_tiles", {(u["tx"], u["ty"]) for u in w.units.values() if u.get("alive", True)}))
+        if hit is not None and fr.game_s - hit[0] < 150 and (free or not hit[1]):
+            return hit[1] and free
+        ok = con.check_placement(w, fr.me, kind, tile[0], tile[1])[0] is None
+        cache[(kind, tile)] = (fr.game_s, ok)
+        return ok
+
     def quick_check(self, fr: Any, kind: str, spec: dict, tile: tuple[int, int]) -> bool:
         """`check_placement` for a plain kind: prerequisites, build area, free tile, no unit on it, terrain capability. The kind is already unlocked (it is in the pool)."""
         w = fr.world
-        if spec.get("requires") and tech.gated(w) and con._openra_content.prerequisites_met(w, fr.me, spec.get("requires", [])):
-            return False
+        if spec.get("requires") and tech.gated(w):
+            memo = fr.scratch.setdefault("prereq", {})
+            req = tuple(spec["requires"])
+            if req not in memo:
+                memo[req] = con._openra_content.prerequisites_met(w, fr.me, list(req))
+            if memo[req]:
+                return False
         if tile in w.blocked or tile in w.tree_tiles or tile in w.road_tile_set or tile in w.reserved_tiles or tile in fr.scratch.setdefault("unit_tiles", {(u["tx"], u["ty"]) for u in w.units.values() if u.get("alive", True)}):
             return False
         if not territory.in_territory(w, fr.me, tile):
@@ -264,11 +298,9 @@ class SiteCandidates:
                     if self.is_plain(kind, spec):
                         if not self.quick_check(fr, kind, spec, tile):
                             continue
-                    else:
-                        why, _ctx = con.check_placement(w, me, kind, tile[0], tile[1])
-                        if why is not None:
-                            continue
-                    site = vec.copy()
+                    elif not self.placement_ok(fr, kind, tile):
+                        continue
+                    site = (vec if vec is not None else self.site_vec(fr, cc, tile)).copy()
                     rg = regions.state(w)
                     cubes = self.observer.known_cubes(fr, rg.region_at(*tile)) if rg is not None else 0
                     row = fr.idx.get(kind, 0)

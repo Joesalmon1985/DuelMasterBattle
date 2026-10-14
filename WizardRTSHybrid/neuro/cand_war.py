@@ -17,6 +17,7 @@ MAX_NEST_TARGETS = 2
 ENEMY_REACH = 120
 NEST_REACH = 80
 MAX_TRADE = 48
+ASK = 4  # wares asked for in a trade candidate
 RESERVE = 12  # wares of a group kept at home before the rest counts as surplus
 GIVE_CAP = 14
 AID_GIVE = {"ration": 4, "water": 4}
@@ -29,6 +30,21 @@ class WarCandidates:
     observer: Any
 
     # ------------------------------------------------------------------------------------------------------------------------ H5
+    @staticmethod
+    def approach(fr: Any, rows: list[int], tile: tuple[int, int]) -> tuple[int, int] | None:
+        """The tile nearest the target (within three tiles) that some unit of the squad can enter, or None: an attack-move onto sea or rock would be refused."""
+        w = fr.world
+        locos = {fr.own_u[r].get("loco") for r in rows}
+        for radius in range(0, 4):
+            for dy in range(-radius, radius + 1):
+                for dx in range(-radius, radius + 1):
+                    if max(abs(dx), abs(dy)) != radius:
+                        continue
+                    t = (int(tile[0]) + dx, int(tile[1]) + dy)
+                    if w.tile_in_bounds(*t) and any(w.tile_speed(lo, *t) > 0 for lo in locos):
+                        return t
+        return None
+
     @staticmethod
     def squads(fr: Any, armed_rows: list[int]) -> list[list[int]]:
         """Single-link clusters (SQUAD_LINK tiles) of the given own-unit rows, deterministic: rows sorted by unit id, clusters by their lowest row."""
@@ -75,6 +91,9 @@ class WarCandidates:
                 return strength[k] / (strength[k] + near + 1.0)
 
             def add(kind: str, tile: tuple[int, int], key_id: str, t_hp: float, kind_row: int, target_b: int, **fields: float) -> None:
+                tile = self.approach(fr, rows, tile)
+                if tile is None:
+                    return
                 d = math.hypot(tile[0] - cx, tile[1] - cy)
                 f = feat("H5", distance=min(d, 200.0) / 200.0, force_ratio=ratio(tile), **fields)
                 row = np.zeros(len(S.N1_RAW), dtype=np.float32)
@@ -143,17 +162,21 @@ class WarCandidates:
                     ware_g = max((k for k in st if F.group_of(k) == g and int(st[k]) > 0), key=lambda k: (int(st[k]), k), default=None)
                     if ware_g is None:
                         continue
-                    n_give = min(GIVE_CAP, int(st[ware_g]) - 6 - int(trade.CARAVAN_COST.get(ware_g, 0)))
-                    if n_give < 2:
+                    cap_give = min(GIVE_CAP, int(st[ware_g]) - 6 - int(trade.CARAVAN_COST.get(ware_g, 0)))
+                    if cap_give < 2:
                         continue
                     for h in wants:
                         if h == g:
                             continue
                         ware_h = WANT_WARE[int(h)]
-                        n_want = int(trade.ware_value(ware_g) * n_give * 0.8 / trade.ware_value(ware_h))
-                        if n_want < 1:
+                        # a small, balanced deal: ask for ASK wares and give just over their value (a partner keeps RESERVE of every ware, so big asks are refused)
+                        n_want = ASK
+                        n_give = math.ceil(1.1 * trade.ware_value(ware_h) * n_want / trade.ware_value(ware_g))
+                        if n_give > cap_give:
+                            n_give = cap_give
+                            n_want = int(trade.ware_value(ware_g) * n_give / 1.1 / trade.ware_value(ware_h))
+                        if n_want < 1 or n_give < 1:
                             continue
-                        n_want = min(n_want, 8)
                         f = feat("H7", surplus=(group_stock[g] - RESERVE) / 50.0, deficit=(RESERVE - group_stock[h]) / 50.0 if group_stock[h] < RESERVE else 0.0, **base,
                                  **{f"give_{S.GROUP_NAMES[g]}": 1.0, f"want_{S.GROUP_NAMES[h]}": 1.0})
                         out.append(Candidate("H7", {"op": "trade", "building": post["id"], "partner": m["id"], "give": {ware_g: n_give}, "want": {ware_h: n_want}}, f,

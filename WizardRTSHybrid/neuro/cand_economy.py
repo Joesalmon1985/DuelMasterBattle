@@ -128,7 +128,7 @@ class EconomyCandidates:
                 continue
             for unit in sorted(con.RECIPES[b["kind"]]):
                 recipe = con.recipe_for(w, b, unit)
-                if recipe is None or not tech.unit_allowed(w, me, unit):
+                if recipe is None or not self.unit_ok(unit):
                     continue
                 if recipe.get("requires") and tech.gated(w) and con._openra_content.prerequisites_met(w, me, recipe.get("requires", [])):
                     continue
@@ -188,7 +188,7 @@ class EconomyCandidates:
         from wizard_rts.industry import registry as ind
 
         drills = [(k, ind.block(k)) for k in ind.kinds()]
-        drills = [(k, s) for k, s in drills if s and s["role"] == "drill" and tech.kind_allowed(w, me, k)]
+        drills = [(k, s) for k, s in drills if s and s["role"] == "drill" and self.kind_ok(k)]
         improve: list[Candidate] = []
         plain: list[tuple[float, str, Candidate]] = []
         s_of = obs.b_settlement
@@ -199,7 +199,7 @@ class EconomyCandidates:
             static = fr.ks[refs["kind_row"]]
             if b["kind"].startswith("wl:"):
                 up = (wl_defs.spec_for_kind(b["kind"]) or {}).get("enhances_to")
-                if up and tech.kind_allowed(w, me, up):
+                if up and self.kind_ok(up):
                     improve.append(Candidate("H9", {"op": "enhance", "building": b["id"], "to": up}, feat("H9", a_enhance_upgrade=1.0), ("H9", "enhance", b["id"]), refs))
             for kind, spec in drills:
                 if b["kind"] in spec["upgrade_from"]:

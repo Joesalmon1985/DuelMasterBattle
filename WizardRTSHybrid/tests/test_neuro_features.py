@@ -402,3 +402,12 @@ def test_an_expansion_site_is_not_dropped_because_of_something_the_faction_has_n
 def test_the_schema_document_is_current():
     out = subprocess.run([sys.executable, str(Path(__file__).resolve().parents[1] / "scripts" / "dump_obs_schema.py"), "--check"], capture_output=True, text=True, timeout=120)
     assert out.returncode == 0, "docs/NEURO_OBS_SCHEMA.md is stale: run py -3 WizardRTSHybrid/scripts/dump_obs_schema.py"
+
+
+PINNED_SCHEMA_HASH = "f6e5375ea1330bb1b6fc3c915b9f049ac31a3ed1c95cdb537238613555f0f892"
+
+
+def test_the_schema_hash_is_pinned():
+    """Changing any field list, width or ware group, or the roster, changes the observation a trained model was built for. Update this constant (and bump
+    schema.OBS_SCHEMA_VERSION and regenerate docs/NEURO_OBS_SCHEMA.md) only on purpose."""
+    assert F.obs_schema_hash() == PINNED_SCHEMA_HASH

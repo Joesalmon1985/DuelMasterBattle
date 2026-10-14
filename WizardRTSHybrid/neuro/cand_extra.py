@@ -238,7 +238,7 @@ class ExtraCandidates:
                                                  ("H9", "configure", b["id"], "target", opt), {**refs, "op": "configure"}))
                 elif m.get("role") == "unit_factory":
                     for p in spec["plans"]:
-                        if p["unit"] != m.get("plan") and tech.unit_allowed(w, me, p["unit"]):
+                        if p["unit"] != m.get("plan") and self.unit_ok(p["unit"]):
                             out.append(Candidate("H9", {"op": "configure", "building": b["id"], "key": "plan", "value": p["unit"]}, feat("H9", a_other=1.0),
                                                  ("H9", "configure", b["id"], "plan", p["unit"]), {**refs, "op": "configure"}))
                 elif m.get("role") == "assembler":
@@ -249,7 +249,7 @@ class ExtraCandidates:
             if b["kind"].startswith("wl:") and b.get("operational", True) and not b.get("dismantle"):
                 base = b["kind"].split("_", 1)[1] if "_" in b["kind"] else b["kind"]
                 target = hybrid.REPLACES.get(base)
-                if target is not None and R.block(target) is not None and tech.kind_allowed(w, me, target):
+                if target is not None and R.block(target) is not None and self.kind_ok(target):
                     out.append(Candidate("H9", {"op": "convert", "building": b["id"], "to": target}, feat("H9", a_dismantle_convert=1.0, a_enhance_upgrade=1.0),
                                          ("H9", "convert", b["id"], target), {**refs, "op": "convert"}))
         return out

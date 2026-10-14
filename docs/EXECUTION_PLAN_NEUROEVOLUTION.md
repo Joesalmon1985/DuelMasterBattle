@@ -194,7 +194,7 @@ Full suite; hash gate (re-recorded in T1.1); ledger. **OWNER CHECKPOINT.**
 
 `WizardRTSHybrid/neuro/features.py`, part 1:
 
-* `KIND_INDEX: dict[str, int]` from `freeze.manifest()["entities"]` order (593 rows; index 0 reserved for "unknown"). `KIND_STATIC: np.ndarray [594, 24]` float32 with columns: game one-hot 4 (widelands, openra, mindustry, hybrid), type 2 (building, unit), era 4, size 3 (small, medium, big; units 0), is_military, is_clinic, is_centre (warehouse/MCV/settlers), produces group 6, consumes group 6 (wares from `wl_defs.spec_for_kind` inputs/outputs mapped to `WARE_GROUPS`; Mindustry via `industry.registry.block` consume/output items), minus the log cost total as the 24th column. Document the exact column order in the module docstring; it is part of `OBS_SCHEMA_VERSION = "obs-1.0.0"`.
+* `KIND_INDEX: dict[str, int]` from `freeze.manifest()["entities"]` order. **Resolved in M2 (definitive: `neuro/schema.py`, `docs/NEURO_OBS_SCHEMA.md`):** 586 rows, not 594 (the 593 was the pre-v4 roster): row 0 unknown, rows 1-582 the roster, rows 583-585 the three in-play kinds outside the roster (`warehouse`, `blight_nest`, `unit:soldier`); `features.n_kinds()`. `KIND_STATIC` is `[586, 24]` float32: the listed columns summed to 29, so they were compressed to game one-hot 4, is_unit, era/3, size ordinal, is_military, is_clinic, is_centre, is_factory, produces group 6, consumes group 6, log1p cost/5 (24 columns, because H1=108 and H9=100 are built on 24). Every other field list that did not sum to its declared width was completed with named added fields (listed in `schema.py`); the declared widths are unchanged. `OBS_SCHEMA_VERSION = "obs-1.0.0"`.
 * `KEY_WARES` (24, fixed order): `log plank granite coal iron_ore iron gold ration bread meat fish wheat water ax brick marble blackwood grout reed cloth smoked_fish smoked_meat beer paper`.
 * `WARE_GROUPS` (6): food, wood, stone, metal, cloth_tools, industrial; a `group_of(ware) -> int|None` using `learn.draft_module.WARE_GROUPS` extended with Mindustry items (`mdy.*` -> industrial).
 * `CARD_FEATURES(world, faction, card_id) -> np.ndarray[28]` = `learn.draft_module.card_features` (reuse; its first four blocks are static, the rest live).
@@ -244,7 +244,7 @@ N1 (32,32,16)  N3 (28,24,12)  N2 (100,64,24)  N4 (102,48,16)  N5 (12,16,8)  N6 (
 N8 (50,32,16)  N8card (31,16,1)  N13slot (16,8)  N13 (17,16,8)  N14region (10,8)  N14 (56,32,12)
 N9 (124,64,16)  N10 (63,32,16)  N12 (112,64,57)  N11 (74,32,4)
 H0 (41,16,1)  H1 (108,48,1)  H2 (70,32,1)  H3 (84,32,1)  H4 (60,32,1)  H5 (96,48,1)  H6 (49,16,1)  H7 (60,24,1)  H8 (50,24,1)  H9 (100,32,1)
-EMB kind embedding (594, 8)   TEMP head temperatures (10,)  
+EMB kind embedding (586, 8) (`features.n_kinds()`)   TEMP head temperatures (10,)  
 ```
 
 Each entry is an MLP `in -> hidden (tanh) -> out (linear)`; two-layer entries have no hidden. Provide `genome_size()`, `slices()` (name -> (start, stop)), `random_genome(rng) -> np.ndarray[float32]` (He init, temperatures 1.0, embeddings N(0, 0.3)), `Nets(genome)` with a `forward_<name>(x)` for each entry operating on 2-D batches, and the pooling helper `pool(X) -> concat(mean, max)`. N12's output 57 = context 32 + memory 16 + priorities 8 + wait 1. Save/load through `persist.py` (T5.3) only. Tests `test_neuro_nets.py`: round trip flat -> modules -> flat exact; forward shapes for batch 0 (returns `(0, out)`), 1 and 500; `sum(sizes) == genome_size()` (expect roughly 75 k; record the exact number in the ledger and in `ARCH_VERSION` notes). Commit `neuro(T3.1): genome layout and networks`.
