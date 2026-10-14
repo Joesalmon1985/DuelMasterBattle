@@ -123,10 +123,9 @@ def claim_ferry(world: Any, faction: str, near: str) -> bool:
     return True
 
 
-def build_waterway(world: Any, faction: str, a: str, b: str) -> dict[str, Any]:
-    """A road over shallow water between two buildings of the faction that stand on a shore (at most MAX_WATERWAY_WATER water nodes)."""
+def plan_waterway(world: Any, faction: str, a: str, b: str) -> dict[str, Any]:
+    """The search `build_waterway` runs, with no side effects: {"status": "ok", "path", "wet"} or a rejection with its reason."""
     from collections import deque
-    from wizard_rts.logistics import add_road
 
     ba, bb = world.buildings.get(a), world.buildings.get(b)
     t = world.terrain
@@ -164,13 +163,24 @@ def build_waterway(world: Any, faction: str, a: str, b: str) -> dict[str, Any]:
     while path[-1] != start:
         path.append(prev[path[-1]][0])
     path.reverse()
+    return {"status": "ok", "path": path, "wet": prev[goal][1]}
+
+
+def build_waterway(world: Any, faction: str, a: str, b: str) -> dict[str, Any]:
+    """A road over shallow water between two buildings of the faction that stand on a shore (at most MAX_WATERWAY_WATER water nodes)."""
+    from wizard_rts.logistics import add_road
+
+    plan = plan_waterway(world, faction, a, b)
+    if plan["status"] != "ok":
+        return plan
+    ba, path = world.buildings[a], plan["path"]
     rid = add_road(world, ba["faction"], faction, a, b, path)
     for cid in [c for c, car in world.carriers.items() if car["road_id"] == rid]:
         world.carriers.pop(cid)  # a waterway has no walking carrier: it waits for a ferry
     world.carrier_respawn[rid] = 0
     world.__dict__.setdefault("waterways", {})[rid] = {"faction": faction, "since_ms": _now(world)}
-    world.events.append({"kind": "waterway_built", "road": rid, "faction": faction, "water": prev[goal][1]})
-    return {"status": "ok", "road": rid, "water_nodes": prev[goal][1]}
+    world.events.append({"kind": "waterway_built", "road": rid, "faction": faction, "water": plan["wet"]})
+    return {"status": "ok", "road": rid, "water_nodes": plan["wet"]}
 
 
 # ------------------------------------------------------------------ ports and ships

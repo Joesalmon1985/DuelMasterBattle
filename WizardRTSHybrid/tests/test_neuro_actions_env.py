@@ -202,3 +202,20 @@ def test_step_can_skip_the_observation():
     assert obs == {} and "Red" in rewards and "Red" in terminated and info["game_ms"] > 0
     obs2, *_ = env.step({})
     assert "Red" in obs2
+
+
+def test_abilities_that_name_a_building_need_a_building_the_faction_can_see_or_remembers():
+    env = _env()
+    w = env.world
+    foe = con.faction_warehouse(w, "Blue")["id"]
+    mine = con.faction_warehouse(w, "Red")["id"]
+    engineer = w._unit(w.faction_info["Red"]["id"], "Red", "engineer", "Engineer", "openra.e6", (con.faction_warehouse(w, "Red")["tx"] + 3, con.faction_warehouse(w, "Red")["ty"] + 3))
+    for what in ("capture", "infiltrate", "c4"):
+        res = env.apply("Red", {"op": "ability", "what": what, "unit": engineer, "building": foe})
+        assert res["status"] == "rejected" and res["reason"] == "not_visible", (what, res)
+    assert env.apply("Red", {"op": "ability", "what": "repair", "unit": engineer, "building": foe})["reason"] == "not_yours"
+    from wizard_rts import visibility
+
+    visibility.remember(w, "Red", w.buildings[foe])  # once seen, the building may be named (the simulator then judges the ability itself)
+    assert env.apply("Red", {"op": "ability", "what": "capture", "unit": engineer, "building": foe})["reason"] != "not_visible"
+    assert env.apply("Red", {"op": "ability", "what": "repair", "unit": engineer, "building": mine})["reason"] == "undamaged"

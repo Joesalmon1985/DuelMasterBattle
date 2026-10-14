@@ -227,6 +227,10 @@ class HybridEnv:
                         return {"status": "rejected", "reason": "not_yours"}
                 if "building" in kw and str(action.get("what")) == "power" and not self._owns_building(faction, kw["building"]):
                     return {"status": "rejected", "reason": "not_yours"}
+                if "building" in kw and str(action.get("what")) in ("capture", "infiltrate", "c4") and not self._may_target(faction, str(kw["building"])):
+                    return {"status": "rejected", "reason": "not_visible"}  # an agent can only act on what it can see or remembers seeing
+                if "building" in kw and str(action.get("what")) == "repair" and not self._owns_building(faction, kw["building"]):
+                    return {"status": "rejected", "reason": "not_yours"}
                 return _slim(w.ability(faction, str(action.get("what", "")), **kw))
             if op == "belt":  # one run of belt, duct, conduit or payload conveyor as a construction site (Modern era)
                 tiles = [[int(t[0]), int(t[1])] for t in action["tiles"]]
