@@ -94,7 +94,7 @@ Approved implementation defaults (the plan's Q2-Q10; configurable constants, rec
 
 | ID | Default | Source |
 | --- | --- | --- |
-| N01 | Training worlds use an `outbreak_interval_scale` chosen by the M4 calibration study (largest scale at which six `plus` AIs lose 20-40% of 240-minute worlds); held-out evaluation reports results at the training scale and at 1.0; `data/outbreaks.json` is unchanged. | Q2 |
+| N01 | Training worlds use an `outbreak_interval_scale` chosen by a calibration study (largest scale at which six `plus` AIs lose 20-40% of 240-minute worlds); held-out evaluation reports results at the training scale and at 1.0; `data/outbreaks.json` is unchanged. **Amended by N10 (14 Oct 2026): the study moved from M4 to M10 and does not gate stage 1.** | Q2 |
 | N02 | Generation 0 may contain up to 25% imitation-seeded genomes (ridge regression to the heuristic AI's choices), tagged `seed=imitation`; switch `evolution.imitation_fraction` (0 disables). | Q3 |
 | N03 | A C compiler (MinGW-w64 via winget, or MSVC Build Tools) is installed on the training PC so the existing native A* kernel runs; pure Python remains the fallback. | Q4 |
 | N04 | A candidate plays three of the six seats per game (mirrored legs A/B). | Q5 |
@@ -103,3 +103,4 @@ Approved implementation defaults (the plan's Q2-Q10; configurable constants, rec
 | N07 | A split successor of a candidate's seat is played by the same candidate (extra seat); a successor of a heuristic seat joins `ai_factions`. | Q8 |
 | N08 | No PyTorch or other ML framework; NumPy only. `psutil` is an optional, tiny addition for memory reporting. | Q9 |
 | N09 | `work/mechanics-completion-v4` was merged into the programme branch on 14 Oct 2026 at the owner's request (its D26-D32 stand; the freeze and neuroevolution rows were renumbered D33/D34). | Q10 |
+| N10 | **Catastrophe curriculum (owner direction, 14 Oct 2026).** Stage 1 evolves core strategic competence (drafting, economy, construction, logistics, expansion, diplomacy, military, victory points) at the default catastrophe setting (level C0, `outbreak_interval_scale` 1.0). Catastrophe difficulty is configurable and recorded in manifests; once the neural factions beat the heuristic AI at ordinary play it is raised in owner-approved steps, fine-tuning the best earlier networks, with retention games at earlier levels to detect forgetting. No catastrophe mechanic, test or neural observation/action is removed; the content roster is untouched. Design 7.8; execution plan T4.4 and M10. | Q2 |

@@ -1,6 +1,6 @@
 # Execution plan: content freeze and hierarchical neuroevolution
 
-This is the task-by-task guide for the agent that implements `docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md` (call it "the design"). The owner approved the design and every default in its section 15 on 14 October 2026 (decision register D33, D34, N01-N09). Do the tasks in order. Each task says what to build, how to test it, when it is done, and what to commit. When this document and the design disagree, this document wins; when the code disagrees with either, trust the code and the tests, then fix the document.
+This is the task-by-task guide for the agent that implements `docs/PLAN_HIERARCHICAL_NEUROEVOLUTION.md` (call it "the design"). The owner approved the design and every default in its section 15 on 14 October 2026 (decision register D33, D34, N01-N09). Do the tasks in order. Each task says what to build, how to test it, when it is done, and what to commit. **Amended 14 October 2026 (decision N10):** catastrophe difficulty is a progressive curriculum. All training until the owner says otherwise runs at the default catastrophe setting (level C0, `outbreak_interval_scale` 1.0); the outbreak calibration study moved from M4 to the new milestone M10. When this document and the design disagree, this document wins; when the code disagrees with either, trust the code and the tests, then fix the document.
 
 Repository root is `C:\Users\joesa\Documents\Cursor\DuelMaster\DuelMasterBattle`; the simulation package is `WizardRTSHybrid/wizard_rts/`; the new package is `WizardRTSHybrid/neuro/`. Commands below are for Windows (`py -3`); on Linux use `python3`.
 
@@ -17,8 +17,9 @@ Repository root is `C:\Users\joesa\Documents\Cursor\DuelMaster\DuelMasterBattle`
 7. **Tests after every task.** Quick suite for the touched areas plus `py -3 -m pytest WizardRTSHybrid/tests/test_sim_api.py WizardRTSHybrid/tests/test_content_freeze.py -q`. The full suite (`py -3 -m pytest WizardRTSHybrid/tests -q --ignore=WizardRTSHybrid/tests/test_five_minutes.py`, 30-40 minutes) at the end of every milestone.
 8. **Hash gate.** Any change inside `wizard_rts/` that is meant to preserve behaviour must pass `py -3 WizardRTSHybrid/scripts/hash_gate.py check --baseline WizardRTSHybrid/docs/perf/hash_baseline.json` (baselines re-recorded in T0.5). A change that is meant to alter behaviour (M1 visibility, successor control) re-records the baselines in the same commit and says so in the message.
 9. **Commits.** One task per commit when practical, message `neuro(T<id>): <what>` and the attribution line the harness requires. Never `git add -A`; add the files you touched. Never commit `~/dmb_runs`, `*.npz` outside `WizardRTSHybrid/neuro/models/`, or `docs/release_notes.md` (a Windows case-collision artifact that always shows as modified).
-10. **Stop points.** Stop and report to the owner at the end of M0, M1, M3, M5 and M6 (the ledger says "OWNER CHECKPOINT"). Report: what works, test counts, measured numbers, anything that deviates from the design.
+10. **Stop points.** Stop and report to the owner at the end of M0, M1, M3, M5 and M6, and before every increase of the catastrophe level in M10 (the ledger says "OWNER CHECKPOINT"). Report: what works, test counts, measured numbers, anything that deviates from the design.
 11. **Honesty.** A run that completes is not learning. Report negative results exactly as the previous reports did (`docs/TRAINING_PROGRAMME.md`).
+12. **Catastrophe curriculum (N10).** Train and evaluate at level C0 (default cadence) until the owner approves a harder level. The level label and scale are configuration, recorded in every manifest, model and game result, and never alter the content roster. Do not remove or weaken catastrophe mechanics, their tests, or the controller's catastrophe observations and actions; they stay in place without selection pressure yet.
 
 ---
 
@@ -164,14 +165,14 @@ class EpisodeConfig:
     seed: int; game_minutes: int = 240; map_size: str = "standard"; profile: str = "campaign"
     agent_seats: tuple[str, ...] = ()            # factions controlled by controllers
     opponents: dict[str, str] = field(default_factory=dict)   # faction -> "plus" | "baseline" | "champion:<id>" | "archive:<id>"
-    outbreak_interval_scale: float = 1.0; diplomacy: bool = True; nest_policy: str = "coop"
+    outbreak_interval_scale: float = 1.0; catastrophe_level: str = "C0"; diplomacy: bool = True; nest_policy: str = "coop"
     checkpoint_game_minutes: int = 30; wall_cap_s: int = 7200
     decision_s: int = 60; boot_decision_s: int = 20; boot_minutes: int = 10; event_min_gap_s: int = 15; tactical_s: int = 5; tactical: bool = False
 
 @dataclass
 class SeatResult: faction: str; vp: int; state: str; collapsed_at_min: float | None; fitness: float; tier: str; commands: int; rejected: int
 @dataclass
-class EpisodeResult: seed: int; end_reason: str; t_end_min: float; outcome: dict; outbreaks: int; seats: list[SeatResult]; control_seats: list[SeatResult]
+class EpisodeResult: seed: int; catastrophe_level: str; outbreak_interval_scale: float; end_reason: str; t_end_min: float; outcome: dict; outbreaks: int; seats: list[SeatResult]; control_seats: list[SeatResult]
                      state_hash: str; wall_s: float; vp_replay_ok: bool; ledger_ok: bool; checkpoints: int; decisions_logged: int
 
 def run_episode(cfg: EpisodeConfig, controllers: dict[str, "Controller"], log_dir: Path | None, heartbeat: Path | None = None) -> EpisodeResult
@@ -267,7 +268,7 @@ Tests `test_neuro_controller.py`: (a) a random genome plays 20 minutes on the sm
 
 ---
 
-## Milestone M4: fitness, league, manifest, calibration
+## Milestone M4: fitness, league, manifest, curriculum configuration
 
 ### T4.1 Fitness
 
@@ -286,15 +287,30 @@ Permanent VP of a collapsed seat = conquest awards only (`vp.ledger` entries wit
 
 ### T4.2 Manifest and versions
 
-`WizardRTSHybrid/wizard_rts/__init__.py`: add `RULES_VERSION = "rules-2026-10-14"` (bump whenever a rule changes). `WizardRTSHybrid/neuro/manifest.py`: `build(config) -> dict` with git SHA and dirty flag, `freeze.ROSTER_VERSION` and `roster_hash()`, `RULES_VERSION`, sha256 of the `wizard_rts/` tree (sorted file list, contents), `ARCH_VERSION`, `OBS_SCHEMA_VERSION` + `obs_schema_hash()`, `ACT_SCHEMA_VERSION = "act-1.0.0"`, `FIT_SCHEMA_VERSION = "fit-1.0.0"`, the config, hardware (`scripts/probe_hardware.py` logic reused), Python/NumPy versions, seed stream names. `compatible(a, b) -> "same" | "reevaluate" | "incompatible"` by the rule in design 10.4. Tests: changing `RULES_VERSION` -> `reevaluate`; changing `ROSTER_VERSION` -> `incompatible`. Commit.
+`WizardRTSHybrid/wizard_rts/__init__.py`: add `RULES_VERSION = "rules-2026-10-14"` (bump whenever a rule changes). `WizardRTSHybrid/neuro/manifest.py`: `build(config) -> dict` with git SHA and dirty flag, `freeze.ROSTER_VERSION` and `roster_hash()`, `RULES_VERSION`, sha256 of the `wizard_rts/` tree (sorted file list, contents), `ARCH_VERSION`, `OBS_SCHEMA_VERSION` + `obs_schema_hash()`, `ACT_SCHEMA_VERSION = "act-1.0.0"`, `FIT_SCHEMA_VERSION = "fit-1.0.0"`, the config including the curriculum (levels, scales, current level), the catastrophe `level` and `outbreak_interval_scale` as top-level fields, hardware (`scripts/probe_hardware.py` logic reused), Python/NumPy versions, seed stream names. `compatible(a, b) -> "same" | "reevaluate" | "incompatible"` by the rule in design 10.4. Tests: changing `RULES_VERSION` -> `reevaluate`; changing the catastrophe level or scale -> `reevaluate` (the intended curriculum path, design 7.8); changing `ROSTER_VERSION` -> `incompatible`; the manifest of a default run says level `C0`, scale 1.0. Commit.
 
 ### T4.3 League
 
-`WizardRTSHybrid/neuro/league.py`: `OpponentMixer(cfg, rng)` returns per game the three opponent seats (`plus` 0.40, `baseline` 0.10, champion 0.25, archive 0.25; falls back to heuristics when the archive is empty), mirrored seat sets A = (Red, Green, Purple) / B = (Blue, Yellow, Orange); `ChampionArchive(dir)` with `add(genome, manifest, evaluation) -> id` (never deletes), `current() -> id`, `BehaviourGrid` 3x3x2 over (conquest VP share, settlements founded, cubes cured + aid delivered) keeping the best fitness per cell; `promotion_decision(paired_results) -> dict` implementing design 7.5 (bootstrap 90% lower bound of the mean paired advantage > 0 and loss rate not higher; sequential stop after 6 games only if decisive). Tests: a candidate with better training mean but a losing held-out record is not promoted; archive never shrinks; mixer is deterministic for a seed. Commit.
+`WizardRTSHybrid/neuro/league.py`: `OpponentMixer(cfg, rng)` returns per game the three opponent seats (`plus` 0.40, `baseline` 0.10, champion 0.25, archive 0.25; falls back to heuristics when the archive is empty), mirrored seat sets A = (Red, Green, Purple) / B = (Blue, Yellow, Orange); `ChampionArchive(dir)` with `add(genome, manifest, evaluation) -> id` (never deletes), `current() -> id`, `BehaviourGrid` 3x3x2 over (conquest VP share, settlements founded, cubes cured + aid delivered) keeping the best fitness per cell; `promotion_decision(paired_results, retention: dict[str, paired_results] | None = None) -> dict` implementing design 7.5 (bootstrap 90% lower bound of the mean paired advantage > 0 and loss rate not higher; sequential stop after 6 games only if decisive) and, when `retention` (earlier level -> paired held-out results against the champion) is given, the retention rule of design 7.8 rule 4 (default tolerance 50 fitness points). Tests: a candidate with better training mean but a losing held-out record is not promoted; a candidate better at the current level but significantly worse at an earlier level is not promoted; archive never shrinks; mixer is deterministic for a seed. Commit.
 
-### T4.4 Outbreak calibration study (N01)
+### T4.4 Catastrophe curriculum configuration (N10; the calibration study that stood here is now T10.1)
 
-Script `WizardRTSHybrid/scripts/calibrate_outbreaks.py`: for scale in {1.0, 0.5, 0.35, 0.25}, 10 seeds each (seeds 9000-9009), 240-minute six-`plus` games through a `spawn` pool of 14, using `episode.run_episode` with no agent seats; output `docs/evidence/neuroevo/m4_calibration/summary.md` with P(collective loss), median minute of loss, mean outbreaks, cubes cured, per scale. Choose the largest scale with 20-40% loss; write it into `neuro/configs/full240.json` and `proving60.json` as `outbreak_interval_scale` with a comment field naming the study. If no scale qualifies, write the table and stop: **owner decision**. Budget: 40 games, about 1.5 hours. Commit the evidence and configs.
+Create `WizardRTSHybrid/neuro/curriculum.py`:
+
+```python
+@dataclass
+class Curriculum:
+    levels: dict[str, float] = field(default_factory=lambda: {"C0": 1.0})   # label -> outbreak_interval_scale, ordered easiest to hardest
+    current: str = "C0"; retention_fraction: float = 0.25; retention_tolerance: float = 50.0
+    def scale_of(self, level: str) -> float           # ValueError for an unknown label
+    def earlier(self) -> list[str]                    # levels below `current`, in ladder order
+    def draw(self, rng: np.random.Generator) -> str   # `current`, except that with probability retention_fraction an earlier level (uniform) is drawn when one exists
+    def to_json(self) -> dict; @staticmethod from_json(d: dict) -> "Curriculum"   # validated
+```
+
+Validation: labels unique; the first level is the default cadence (`C0`, scale 1.0); scales strictly decrease along the ladder and lie in (0, 1.0]; `current` is a level. `smoke.json`, `proving60.json` and `full240.json` each carry `"curriculum": {"levels": {"C0": 1.0}, "current": "C0", "retention_fraction": 0.25, "retention_tolerance": 50}`: one rung, the default setting. `run_episode` sets the world's `outbreak_interval_scale` from the drawn level and records label and scale in `EpisodeResult`. The mechanism that applies the scale already exists (`world.outbreak_interval_scale`); do not touch `data/outbreaks.json`.
+
+Tests `test_neuro_curriculum.py`: one level -> every draw is `C0` with scale 1.0; unknown level rejected; invalid ladders rejected (first level not 1.0, non-decreasing scales, duplicate labels); with `{C0: 1.0, C1: 0.5}` and `current: C1` the draw is deterministic for a seed and about `retention_fraction` of 2000 draws land on `C0`; the level and scale appear in the manifest (T4.2) and in `EpisodeResult`; applying a level leaves `freeze.roster_hash()` and `freeze.check()` unchanged. Commit `neuro(T4.4): catastrophe curriculum configuration`.
 
 ---
 
@@ -324,7 +340,7 @@ class Evolution:
         # 7. checkpoint, logs, prune
 ```
 
-Imitation seeding (N02): `neuro/imitation.py` fits each head's weights by ridge regression on `(features of the heuristic's chosen candidate, features of the alternatives)` pairs recorded from 20 control games (the recorder is a `Controller` in "shadow" mode that logs candidates but issues no commands while the heuristic plays the seat). Children tagged `seed=imitation`. Tests `test_neuro_evolve_smoke.py`: `population=4`, `seeds_per_generation=1`, 10-minute games, small map, 2 generations in-process (pool of 2): generation summaries written, `theta` changed, checkpoint exists; a second `Evolution` constructed from the checkpoint reports the same generation index and `theta`.
+Curriculum (N10): every job carries a `catastrophe_level` drawn by `Curriculum.draw` (always `C0` while the ladder has one rung); the control game of a seed uses the same level as that seed's candidate games; generation summaries report the mean advantage per level. Imitation seeding (N02): `neuro/imitation.py` fits each head's weights by ridge regression on `(features of the heuristic's chosen candidate, features of the alternatives)` pairs recorded from 20 control games (the recorder is a `Controller` in "shadow" mode that logs candidates but issues no commands while the heuristic plays the seat). Children tagged `seed=imitation`. Tests `test_neuro_evolve_smoke.py`: `population=4`, `seeds_per_generation=1`, 10-minute games, small map, 2 generations in-process (pool of 2): generation summaries written, `theta` changed, checkpoint exists; a second `Evolution` constructed from the checkpoint reports the same generation index and `theta`.
 
 ### T5.3 Persistence
 
@@ -335,9 +351,9 @@ Imitation seeding (N02): `neuro/imitation.py` fits each head's weights by ridge 
 `WizardRTSHybrid/neuro/cli.py` and the thin root `train_ai.py`:
 
 ```
-train_ai.py train   [--config full240|proving60|smoke|<path>] [--run NAME|auto] [--workers 14] [--population 24] [--episode-game-minutes N] [--hours H] [--generations N] [--seed-from best|archive|none] [--allow-dirty]
+train_ai.py train   [--config full240|proving60|smoke|<path>] [--run NAME|auto] [--workers 14] [--population 24] [--episode-game-minutes N] [--hours H] [--generations N] [--seed-from best|archive|none] [--catastrophe-level C0] [--allow-dirty]
 train_ai.py resume  [--run NAME|latest] [--hours H]
-train_ai.py evaluate --model best|<path> [--games 12] [--outbreak-scale training|1.0|<x>] [--workers 14]
+train_ai.py evaluate --model best|<path> [--games 12] [--catastrophe-level C0|all|<label>] [--outbreak-scale training|1.0|<x>] [--workers 14]
 train_ai.py status  [--run NAME|latest]
 train_ai.py export  [--run NAME|latest] --out DIR
 train_ai.py smoke
@@ -353,7 +369,7 @@ Semantics the launchers rely on:
 * On every clean stop **and** on every promotion: copy the champion to `WizardRTSHybrid/neuro/models/best_ai.json` + `.npz` (only when a champion exists; never overwritten by a worse one because only promotions change the champion), and write the session report (T5.6). Commit these two model files to git at owner checkpoints only (they are small, about 300 KB).
 * Exit codes: 0 clean, 2 refused (dirty tree, incompatible, low disk), 3 crashed with traceback in `runs/<name>/crash.log`.
 
-`neuro/configs/smoke.json` (small map, 10-minute games, population 4, 1 seed, 2 workers), `proving60.json` (60-minute games, population 16, 2 seeds, 14 workers), `full240.json` (design 9.3 values). Test: `train_ai.py smoke` finishes in under 10 minutes on this PC and leaves a resumable run plus a session report.
+`neuro/configs/smoke.json` (small map, 10-minute games, population 4, 1 seed, 2 workers), `proving60.json` (60-minute games, population 16, 2 seeds, 14 workers), `full240.json` (design 9.3 values); all three at catastrophe level C0 (T4.4). Test: `train_ai.py smoke` finishes in under 10 minutes on this PC and leaves a resumable run plus a session report.
 
 ### T5.5 Windows launchers (root of the repository)
 
@@ -392,7 +408,7 @@ Verdict: IMPROVING | FLAT | WORSE | TOO EARLY TO SAY   (best advantage trend ove
 
 This session: generations <a>..<b> (<n> new), <games> games (<control> controls), <sim hours> simulated hours in <wall hours> wall hours (<x>x real time per worker), <workers> workers.
 Champion: <id> (promoted this session: yes/no; held-out: mean advantage +<a> [90% lower bound <lb>], collective-loss rate <r> vs control <rc>). Saved to WizardRTSHybrid/neuro/models/best_ai.json.
-Collective loss: candidates <p>% of worlds, controls <pc>% (training outbreak scale <s>).
+Collective loss: candidates <p>% of worlds, controls <pc>% (catastrophe level <L>, outbreak scale <s>; one line per level once the curriculum has several).
 
 | generation | best advantage | mean advantage | best raw fitness | control loss rate | commands per tick | rejected % | sigma (mean) |
 | ... one row per generation this session ... |
@@ -416,7 +432,7 @@ Notes: <wall caps, voided games, crashes, anything the owner should know>
 
 ### T6.1 Run
 
-`Prove Evolution Overnight.bat` (config `proving60`: 60-minute games, population 16, 2 seeds per generation, 14 workers, 8 hours; about 8-12 generations expected). Imitation fraction 0.25 (N02). Before starting: `train_ai.py smoke` green; disk and the training outbreak scale recorded.
+`Prove Evolution Overnight.bat` (config `proving60`, catastrophe level C0 = the default cadence: 60-minute games, population 16, 2 seeds per generation, 14 workers, 8 hours; about 8-12 generations expected). Imitation fraction 0.25 (N02). Before starting: `train_ai.py smoke` green; disk and the training outbreak scale recorded.
 
 ### T6.2 Judge
 
@@ -438,10 +454,28 @@ O1-O5 of design 11.5 in order, each a separate commit with `hash_gate check` gre
 
 ## Milestone M9: the 240-minute programme
 
-1. Switch the default config to `full240` (it already is the `Train AI.bat` default; M6 used the proving config explicitly).
+1. Switch the default config to `full240` (it already is the `Train AI.bat` default; M6 used the proving config explicitly). The catastrophe level stays `C0`; do not raise it without the owner (M10).
 2. First overnight run with `Train AI.bat`; next morning read `LAST_SESSION_REPORT.md`; `Evaluate Best AI.bat`.
 3. Repeat sessions. The champion archive and the behaviour grid grow; `best_ai.json` changes only on promotion. Commit `WizardRTSHybrid/neuro/models/` after each session the owner wants kept.
 4. Every 5 sessions: a short review in `docs/evidence/neuroevo/progress/<date>.md` (champion lineage, held-out numbers at the training scale and at 1.0, strategies in the grid, open problems).
+
+---
+
+## Milestone M10: catastrophe curriculum (stage 2; starts only on the owner's decision)
+
+Prerequisite: M9 has shown that the neural champion beats the heuristic AI at ordinary play (held-out advantage with a bootstrap 90% lower bound above 0 at 240 minutes, level C0). Nothing in M0-M9 waits for this milestone. The rules are design section 7.8.
+
+### T10.1 Outbreak calibration study (formerly T4.4; N01 as amended by N10)
+
+Script `WizardRTSHybrid/scripts/calibrate_outbreaks.py`: for scale in {1.0, 0.5, 0.35, 0.25}, 10 seeds each (seeds 9000-9009), 240-minute six-`plus` games through a `spawn` pool of 14, using `episode.run_episode` with no agent seats; output `docs/evidence/neuroevo/m10_calibration/summary.md` with P(collective loss), median minute of loss, mean outbreaks, cubes cured, per scale. Propose the ladder: the largest scale with 20-40% loss is the hardest planned level, intermediate rungs lie between C0 and it. Write the proposal into the report, **not** into the configs: the owner approves the ladder. If no scale qualifies, write the table and stop: **owner decision**. Budget: 40 games, about 1.5 hours. Commit the evidence.
+
+### T10.2 Retention wiring
+
+`Evolution` plays `retention_fraction` of each generation's games at earlier levels with their own control games; `league.promotion_decision` receives the held-out earlier-level results (`retention=`); the session report prints mean advantage per level and flags a drop below the tolerance as `FORGETTING`. Test: a two-level smoke run (small map, 10-minute games, scales 1.0 and 0.5) produces per-level advantages and a retention verdict.
+
+### T10.3 First level increase
+
+**OWNER CHECKPOINT before the run.** Add the approved rung to `curriculum.levels`, set `current`, and run `train --seed-from best` (the lower-level champion is the starting point and remains in the archive). Report: advantage at the new level, advantage at every earlier level (forgetting evidence), collective-loss rates of candidate and control, behaviour-grid changes. Repeat for each rung; each increase needs the owner's approval.
 
 ---
 
@@ -452,11 +486,11 @@ train_ai.py
 Train AI.bat  Stop AI Training.bat  AI Training Status.bat  Evaluate Best AI.bat  Prove Evolution Overnight.bat
 docs/CONTENT_FREEZE.md  docs/EXECUTION_PLAN_NEUROEVOLUTION.md (this)  docs/ledger/NEUROEVO_PROGRESS.md
 WizardRTSHybrid/wizard_rts/freeze.py  freeze_guard.py  sysinfo.py  data/content_freeze.json
-WizardRTSHybrid/scripts/freeze_content.py  calibrate_outbreaks.py  bench_full_game.py (exists)
-WizardRTSHybrid/neuro/__init__.py vision.py features.py candidates.py nets.py controller.py tactical.py episode.py fitness.py manifest.py league.py evolve.py imitation.py persist.py workers.py report.py cli.py config.py
+WizardRTSHybrid/scripts/freeze_content.py  calibrate_outbreaks.py (M10)  bench_full_game.py (exists)
+WizardRTSHybrid/neuro/__init__.py vision.py features.py candidates.py nets.py controller.py tactical.py episode.py fitness.py manifest.py league.py evolve.py imitation.py persist.py workers.py report.py cli.py config.py curriculum.py
 WizardRTSHybrid/neuro/configs/smoke.json proving60.json full240.json
 WizardRTSHybrid/neuro/models/best_ai.json best_ai.npz LAST_SESSION_REPORT.md   (written by training; committed at checkpoints)
-WizardRTSHybrid/tests/test_content_freeze.py test_neuro_vision.py test_neuro_successor.py test_neuro_actions_env.py test_neuro_episode.py test_neuro_features.py test_neuro_candidates.py test_neuro_nets.py test_neuro_controller.py test_neuro_determinism.py test_neuro_fitness.py test_neuro_manifest.py test_neuro_league.py test_neuro_evolve_smoke.py test_neuro_persist.py test_neuro_storage.py
+WizardRTSHybrid/tests/test_content_freeze.py test_neuro_vision.py test_neuro_successor.py test_neuro_actions_env.py test_neuro_episode.py test_neuro_features.py test_neuro_candidates.py test_neuro_nets.py test_neuro_controller.py test_neuro_determinism.py test_neuro_fitness.py test_neuro_manifest.py test_neuro_league.py test_neuro_evolve_smoke.py test_neuro_persist.py test_neuro_storage.py test_neuro_curriculum.py
 WizardRTSHybrid/docs/evidence/neuroevo/<milestone>/...
 %DMB_RUNS%\neuro\<run>\{manifest.json, code/, checkpoints/, games/, decisions/, champions/, reports/, generations.jsonl, STATUS.json, STOP}
 ```

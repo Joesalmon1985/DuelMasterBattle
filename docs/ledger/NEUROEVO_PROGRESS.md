@@ -31,11 +31,11 @@ Legend: `[ ]` not started, `[~]` in progress (say what is left), `[x]` done.
 - [ ] T3.1 Genome layout and networks (`neuro/nets.py`), round-trip and shape tests, exact genome size recorded here: ______
 - [ ] T3.2 Controller (`neuro/controller.py`), decision log, `play` command, determinism test. **OWNER CHECKPOINT**
 
-## M4 Fitness, league, manifest, calibration
+## M4 Fitness, league, manifest, curriculum configuration
 - [ ] T4.1 Fitness (`neuro/fitness.py`) with table-driven tests
-- [ ] T4.2 Manifest and versions (`RULES_VERSION`, `neuro/manifest.py`, compatibility rule)
-- [ ] T4.3 League (`neuro/league.py`): opponent mixer, champion archive, behaviour grid, promotion decision
-- [ ] T4.4 Outbreak calibration study (N01); chosen `outbreak_interval_scale`: ______ (evidence `docs/evidence/neuroevo/m4_calibration/`)
+- [ ] T4.2 Manifest and versions (`RULES_VERSION`, `neuro/manifest.py`, compatibility rule; records the catastrophe level and scale)
+- [ ] T4.3 League (`neuro/league.py`): opponent mixer, champion archive, behaviour grid, promotion decision (with the optional retention rule)
+- [ ] T4.4 Catastrophe curriculum configuration (N10, `neuro/curriculum.py`, one rung C0 = scale 1.0; the calibration study that stood here moved to T10.1)
 
 ## M5 Evolution loop, persistence, CLI, launchers, reports
 - [ ] T5.1 Workers (`neuro/workers.py`): spawn pool, heartbeats, wall cap, repro.json
@@ -65,7 +65,15 @@ Legend: `[ ]` not started, `[~]` in progress (say what is left), `[x]` done.
 - [ ] First overnight `Train AI.bat` session and report read by the owner
 - [ ] Session reviews every 5 sessions under `docs/evidence/neuroevo/progress/`
 
+## M10 Catastrophe curriculum (stage 2; starts only on the owner's decision after M9)
+- [ ] T10.1 Outbreak calibration study (formerly T4.4; proposes the ladder, owner approves). Evidence `docs/evidence/neuroevo/m10_calibration/`
+- [ ] T10.2 Retention wiring (games at earlier levels, retention rule in promotion, per-level report)
+- [ ] T10.3 First level increase and each later rung. **OWNER CHECKPOINT before every increase**
+
+Catastrophe level in force for all training until the owner says otherwise: **C0 (default cadence, `outbreak_interval_scale` 1.0)**.
+
 ## Session log (newest first)
+- 2026-10-14 (Claude Sonnet 5.5): owner approved M0 and gave new direction. Done: explicit utf-8 for the puzzle and ward parity fixtures (`test_puzzle_parity.py`, `test_ward_parity.py`: 11 passed; commit `d60f092a`). Decision N10 recorded (design 0.6 and 7.8, 8.5, 9.x, 10.x, 12, 13 M4/M9/M10, 14, 15 Q2; execution plan 0, T1.5, T4.2-T4.4, T5.x, T6.1, M9, new M10, appendix; register N01/N10): catastrophe difficulty is a progressive curriculum; stage 1 trains at the default setting; calibration study moved from M4 to M10; nothing removed.
 - 2026-10-14 (Claude Sonnet 5.5): M0 complete (T0.1-T0.8); stopped at the M0 OWNER CHECKPOINT. Deviations from the plan text: 67 not 64 tests in the T0.1 subset; 20 importers not 23; `perf_gate.py` also needed the `resource` fix; no hash re-record needed (Windows matches the Linux baselines); fixed a Windows encoding bug in `coverage_report.py --check`. Not started: M1.
 - 2026-10-14 (Claude Fable 5.1): `work/mechanics-completion-v4` merged at `1b404a8b` on the owner's request (conflicts: v4's 168-card system kept over PR #17's rule; register renumbered D33/D34). Merged-tree checks: 84 tests passed (sim API, VP/eras, outbreaks, content graph, coverage, NN, hash baseline, visibility, ware classes, draft reachability, determinism); roster now 582 entities / 168 cards; 40-minute bench 79 s. No implementation task started.
 - 2026-10-14 (Claude Fable 5.1): plan and execution plan written and approved; no task started. Benchmarks in `WizardRTSHybrid/docs/evidence/neuroevo/bench_240/`.
