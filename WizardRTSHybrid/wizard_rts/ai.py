@@ -18,7 +18,7 @@ import zlib
 from typing import Any
 
 from wizard_rts import construction as con
-from wizard_rts import diplomacy, tech, territory
+from wizard_rts import diplomacy, tech, territory, visibility
 
 ROAD_LIMIT = 45  # a site more than this far from its command centre by road is not worth a wide failed search
 DECIDE_EVERY = 50  # quanta (5 s) between decisions per faction
@@ -52,7 +52,6 @@ NAVAL_BUILDINGS = ("naval_yard", "sub_pen")
 ATTACK_AFTER_MS = 12 * 60_000  # was 20 minutes: the build-up alone made the factions look inert (docs/PLAYTEST_FIXES.md, AI diagnosis)
 GUARD_OUT = 12  # guard posts stand this many tiles from a command centre, towards the nearest enemy
 RETREAT_BELOW = 0.4  # a squad that is down to this share of its launch size is recalled
-SIGHT = 32  # tiles: an enemy building this close to one of our buildings or units becomes a known target
 BOTTLENECK_EVERY_MS = 60_000
 BOTTLENECK_CAP = {"producer": 6, "ranger": 6, "processor": 3, "quarry": 4}
 BOTTLENECK_FIX = {"log": ("producer", "ranger"), "plank": ("processor",), "granite": ("quarry",)}
@@ -754,30 +753,17 @@ def _bottleneck_step(world: Any, name: str, wh: dict) -> None:
     world.events.append({"kind": "ai_bottleneck", "faction": name, "ware": ware, "shortages": n, "raised": raised})
 
 
-def _own_points(world: Any, name: str) -> list[tuple[int, int]]:
-    pts = [(b["tx"], b["ty"]) for b in world.buildings.values() if b["faction_name"] == name and int(b.get("hp", 1)) > 0]
-    pts += [(u["tx"], u["ty"]) for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("weapon")]
-    return pts
-
-
 def _known_targets(world: Any, name: str) -> list[dict]:
-    """Enemy buildings this faction has found: every home capital (start positions are public) plus whatever has come within SIGHT of
-    one of its own buildings or armed units. Scouting is therefore the army's own marching: it sees what it walks past."""
-    known = world.__dict__.setdefault("_ai_known", {}).setdefault(name, set())
-    pts = _own_points(world, name)
+    """Enemy buildings this faction has found, from its visibility memory (visibility.py): what its own buildings and units have seen, or a
+    scout or spy has shown it. Scouting is therefore the army's own marching: it sees what it walks past. The memory may be stale; a
+    remembered building that no longer exists is not offered as a target."""
+    mem = visibility.memory_of(world, name)
     out = []
-    for b in world.buildings.values():
-        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0 or not diplomacy.hostile(world, name, b["faction_name"]):
+    for bid in sorted(mem):
+        b = world.buildings.get(bid)
+        if b is None or "hp" not in b or int(b["hp"]) <= 0 or not diplomacy.hostile(world, name, b["faction_name"]):
             continue
-        if b["id"] not in known:
-            if b["kind"] == "warehouse" and not b.get("outpost"):
-                known.add(b["id"])
-            elif any(abs(b["tx"] - x) <= SIGHT and abs(b["ty"] - y) <= SIGHT for x, y in pts):
-                known.add(b["id"])
-                world.events.append({"kind": "ai_scouted", "faction": name, "building": b["id"], "of": b["faction_name"]})
-        if b["id"] in known:
-            out.append(b)
-    known.intersection_update(world.buildings.keys())
+        out.append(b)
     return out
 
 

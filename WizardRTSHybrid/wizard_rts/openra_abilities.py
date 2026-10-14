@@ -10,7 +10,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from wizard_rts import rules
+from wizard_rts import rules, visibility
 
 QUANTUM_MS = 100
 TRANSPORT = {  # definition -> (capacity, accepted classes, passenger weight rule)
@@ -381,6 +381,7 @@ def _do_spy(world: Any, u: dict, b: dict) -> None:
                 for dx in range(-8, 9, 2):
                     for dy in range(-8, 9, 2):
                         seen.add((o["tx"] + dx, o["ty"] + dy))
+        visibility.reveal(world, me, seen)
         effect = "reveal"
     elif b["kind"] in ("atek", "stek", "barracks", "vehicle_factory", "afld", "hpad", "naval_yard", "scriptorium"):
         mine = set(world.tech.get(me, {}).get("cards", []))

@@ -183,6 +183,11 @@ def split(world: Any, faction: str, breakaway: dict) -> str:
     if draft.enabled(world):
         draft.on_split(world, faction, base)
     _note(world, faction, "split", successor=base, settlement=breakaway["id"], buildings=moved_b, units=moved_u, pressures=why)
+    if world.ai_factions is not None:  # HybridEnv games (N07): the built-in AI plays only the seats it was given, so a successor must be assigned
+        if faction in world.ai_factions:
+            world.ai_factions.add(base)  # a successor of a heuristic seat is played by the built-in AI
+        else:
+            world.__dict__.setdefault("agent_successors", {}).setdefault(faction, []).append(base)  # a successor of an agent seat is an extra seat of that agent
     return base
 
 

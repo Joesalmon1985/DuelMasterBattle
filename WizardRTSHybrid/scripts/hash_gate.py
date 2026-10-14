@@ -1,6 +1,6 @@
 """State-hash equality gate for behaviour-preserving optimisations (plan v2 section 10.2).
 
-    python3 scripts/hash_gate.py record --out docs/perf/hash_baseline.json [--seeds 507 11 23] [--minutes 20]
+    python3 scripts/hash_gate.py record --out docs/perf/hash_baseline.json [--seeds 507 11 23] [--minutes 20] [--label "v5-..."]
     python3 scripts/hash_gate.py check  --baseline docs/perf/hash_baseline.json
 
 Runs HybridWorld with the faction AIs on, advancing one game second per call, and records world.state_hash() every
@@ -46,11 +46,12 @@ def main() -> int:
     ap.add_argument("--minutes", type=int, default=20)
     ap.add_argument("--map", default="standard")
     ap.add_argument("--profile", default="", help="e.g. campaign (v2 draft); with HYBRID_AI_POLICY=plus for the plus AI")
+    ap.add_argument("--label", default="v4-2026-10-13 (wider state_hash, 168-card v3 draft)", help="record: the baseline's label (a behaviour change re-records under a new one)")
     ap.add_argument("--limit-minutes", type=int, default=0, help="check: compare only the first N minutes of the baseline (smoke gate)")
     a = ap.parse_args()
     if a.mode == "record":
         res = [run(s, a.minutes, a.map, a.profile) for s in a.seeds]
-        doc = {"label": "v4-2026-10-13 (wider state_hash, 168-card v3 draft)", "profile": a.profile, "policy": os.environ.get("HYBRID_AI_POLICY", "baseline"), "map": a.map, "minutes": a.minutes, "runs": res}
+        doc = {"label": a.label, "profile": a.profile, "policy": os.environ.get("HYBRID_AI_POLICY", "baseline"), "map": a.map, "minutes": a.minutes, "runs": res}
         Path(a.out).write_text(json.dumps(doc, indent=1))
         for r in res:
             print(r["seed"], r["x_realtime"], "x", r["hashes"][-1])

@@ -44,4 +44,6 @@ def test_the_observation_hides_capitals_never_seen():
     assert "Blue" not in obs["enemy_capitals"] and "visible" in obs
     env.world.vis_explored = {}
     visibility.explored_of(env.world, "Red").add((blue["tx"] // visibility.CELL, blue["ty"] // visibility.CELL))
+    assert "Blue" not in env.observe("Red")["enemy_capitals"]  # an explored cell is not a sighting: whatever stands there now may be new (T1.1)
+    visibility.reveal(env.world, "Red", {(blue["tx"], blue["ty"])})  # what a scout or a spy shows
     assert env.observe("Red")["enemy_capitals"].get("Blue") == [blue["tx"], blue["ty"]]

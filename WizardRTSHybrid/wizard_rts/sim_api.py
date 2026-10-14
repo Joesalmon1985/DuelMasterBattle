@@ -96,6 +96,17 @@ class HybridEnv:
         self._score = {n: self._score_of(n) for n in names}
         return {n: self.observe(n) for n in self.agent_factions}
 
+    def seats_of(self, faction: str) -> list[str]:
+        """The faction and every split successor it has been given, recursively (N07: the same controller plays them all)."""
+        out = [faction]
+        for s in self.world.__dict__.get("agent_successors", {}).get(faction, []):
+            out += self.seats_of(s)
+        return out
+
+    def seats(self) -> list[str]:
+        """Every faction an agent plays now: the agent factions in order, each followed by its successors."""
+        return [s for f in self.agent_factions for s in self.seats_of(f)]
+
     @property
     def game_ms(self) -> int:
         return int(self.world.dmb.clock.get("game_ms", 0))
@@ -110,9 +121,10 @@ class HybridEnv:
         w = self.world
         actions = actions or {}
         results: dict[str, list[dict[str, Any]]] = {}
-        for faction in self.agent_factions:
+        seats = self.seats()
+        for faction in seats:
             results[faction] = [self.apply(faction, a) for a in actions.get(faction, [])]
-        self.log.append({"game_ms": self.game_ms, "actions": {f: [dict(a) for a in actions.get(f, [])] for f in self.agent_factions}})
+        self.log.append({"game_ms": self.game_ms, "actions": {f: [dict(a) for a in actions.get(f, [])] for f in seats}})
         remaining = self.step_ms
         while remaining > 0:
             chunk = min(remaining, 1000)
@@ -123,9 +135,12 @@ class HybridEnv:
         names = [f[0] for f in FACTIONS]
         new = {n: self._score_of(n) for n in names}
         rewards = {f: round(new[f] - self._score[f] + self._alive_bonus(f), 6) for f in self.agent_factions}
+        for f in self.seats():
+            rewards.setdefault(f, 0.0)  # a successor seat has no reward stream of its own
         self._score = new
         alive = [n for n in names if self._alive(n)]
         terminated = {f: not self._alive(f) for f in self.agent_factions}
+        extra = {f: not self._alive(f) for f in self.seats() if f not in terminated}
         done_all = len(alive) <= 1 or (self.agent_factions and all(terminated.values()))
         truncated = self.game_ms >= self.max_game_ms
         from wizard_rts import history
@@ -138,8 +153,9 @@ class HybridEnv:
             if terminated[f] and f not in self.__dict__.setdefault("_dead_reported", set()):
                 self._dead_reported.add(f)
                 rewards[f] += self.weights["eliminated"]
-        info = {"game_ms": self.game_ms, "results": results, "alive": alive, "episode_over": bool(done_all or truncated), "outcome": history.outcome(w)}
-        return {f: self.observe(f) for f in self.agent_factions}, rewards, terminated, truncated, info
+        info = {"game_ms": self.game_ms, "results": results, "alive": alive, "episode_over": bool(done_all or truncated), "outcome": history.outcome(w), "seats": self.seats(),
+                "faction_states": {n: history.state(w)["faction"].get(n, {}).get("state", "active") for n in sorted(w.faction_info)}}
+        return {f: self.observe(f) for f in self.seats()}, rewards, {**terminated, **extra}, truncated, info
 
     def _trim_events(self) -> None:
         ev = self.world.events
@@ -212,6 +228,8 @@ class HybridEnv:
             if op == "order":
                 if not self._owns_unit(faction, action["unit"]):
                     return {"status": "rejected", "reason": "not_yours"}
+                if not self._may_target(faction, str(action["target"])):
+                    return {"status": "rejected", "reason": "not_visible"}  # an agent can only attack what it can see or remembers seeing
                 return _slim(w.order(str(action["unit"]), str(action["target"]), faction=faction))
         except (KeyError, TypeError, ValueError) as exc:
             return {"status": "rejected", "reason": f"malformed:{type(exc).__name__}"}
@@ -220,6 +238,16 @@ class HybridEnv:
     def _owns_building(self, faction: str, bid: Any) -> bool:
         b = self.world.buildings.get(str(bid))
         return b is not None and b["faction_name"] == faction
+
+    def _may_target(self, faction: str, target_id: str) -> bool:
+        """May this faction name this entity as a target? Its own things, anything in its memory of enemy buildings, anything in sight now."""
+        w = self.world
+        e = w.buildings.get(target_id) or w.units.get(target_id)
+        if e is not None and e.get("faction_name") == faction:
+            return True
+        if target_id in visibility.memory_of(w, faction):
+            return True
+        return e is not None and visibility.visible(w, faction, e["tx"], e["ty"])
 
     def _owns_unit(self, faction: str, uid: Any) -> bool:
         u = self.world.units.get(str(uid))
@@ -278,14 +306,22 @@ class HybridEnv:
         if armed:
             from wizard_rts.military import target_types
 
-            srcs = visibility.sources(w, faction)
-            for e in list(w.buildings.values()) + list(w.units.values()):
-                if e["faction_name"] == faction or "hp" not in e or int(e["hp"]) <= 0 or not e.get("alive", True) or e.get("inside"):
+            # an agent can attack what it can see now (units, nests) and the enemy buildings it remembers seeing (the memory may be stale)
+            seen = visibility.seen_enemies(w, faction)
+            cands = [w.units[r["id"]] for r in seen["units"] if r["id"] in w.units]
+            cands += [w.buildings[r["id"]] for r in seen["buildings"] if not r["faction"] and r["id"] in w.buildings]  # blight nests belong to nobody
+            for r in visibility.known_enemy_buildings(w, faction):
+                b = w.buildings.get(r["id"])
+                if b is None:
+                    out["attack"].append(r["id"])  # remembered, but it may be gone: nobody has looked
+                else:
+                    cands.append(b)
+            for e in cands:
+                if e["id"] in out["attack"] or e.get("inside"):
                     continue
-                if not visibility.visible(w, faction, e["tx"], e["ty"], srcs):
-                    continue  # an agent can only attack what it can see
                 if any(rules.can_hit(rules.weapon(n), target_types(e)) for u in armed for n in u.get("weapons", [])):
                     out["attack"].append(e["id"])
+            out["attack"].sort()
         return out
 
     def _generated_menu(self, faction: str) -> dict[str, dict[str, Any]]:
@@ -351,7 +387,7 @@ class HybridEnv:
         obs: dict[str, Any] = {
             "faction": faction,
             "game_ms": self.game_ms,
-            "alive": wh is not None and int(wh["hp"]) > 0,
+            "alive": self._alive(faction),
             "stocks": _stocks(w, faction),
             "buildings": building_n,
             "constructing": constructing,
@@ -366,11 +402,10 @@ class HybridEnv:
                 for c in territory.command_centers(w, faction)
             ],
             "mcvs": [{"id": u["id"], "tile": [u["tx"], u["ty"]], "cargo": dict(u.get("cargo") or {})} for u in units if territory.is_founder(u)],
-            "known_enemy_buildings": len(w.__dict__.get("_ai_known", {}).get(faction, ())),
+            "known_enemy_buildings": len(visibility.memory_of(w, faction)),
             "stuck_entities": sum(1 for r in diagnostics.stuck_report(w) if r["faction"] == faction),
-            # only capitals this faction has ever seen (owner decision D): the rest of the world is not in its observation
-            "enemy_capitals": {n: [b["tx"], b["ty"]] for b in w.buildings.values() if b["kind"] == "warehouse" and b["faction_name"] != faction
-                               and visibility.known(w, faction, b["tx"], b["ty"]) for n in [b["faction_name"]]},
+            # only capitals this faction has seen and remembers (owner decision D, T1.1): the rest of the world is not in its observation
+            "enemy_capitals": {e["faction_name"]: list(e["tile"]) for e in visibility.known_enemy_buildings(w, faction) if e["kind"] == "warehouse"},
             "visible": visibility.seen_enemies(w, faction),
             "explored_cells": len(visibility.explored_of(w, faction)),
         }
@@ -410,10 +445,8 @@ class HybridEnv:
         n = 0
         strength = 0
         nearest = None
-        srcs = visibility.sources(self.world, faction)
-        for u in self.world.units.values():
-            if u["faction_name"] == faction or not u.get("alive", True) or not visibility.visible(self.world, faction, u["tx"], u["ty"], srcs):
-                continue  # a threat is an enemy the faction can see
+        for row in visibility.visible_units(self.world, faction):  # a threat is an enemy the faction can see
+            u = self.world.units[row["id"]]
             d = abs(u["tx"] - wh["tx"]) + abs(u["ty"] - wh["ty"])
             if d <= 40:
                 n += 1
@@ -425,8 +458,11 @@ class HybridEnv:
 
     # ---------------------------------------------------------------- reward pieces
     def _alive(self, faction: str) -> bool:
-        wh = con.faction_warehouse(self.world, faction)
-        return wh is not None and int(wh["hp"]) > 0
+        """A faction lives until history collapses it (no standing settlement and no founder unit). Losing the capital building alone does not
+        end it: the faction may hold other settlements and can recover (V4 history rules)."""
+        from wizard_rts import history
+
+        return history.state(self.world)["faction"].get(faction, {}).get("state") != "collapsed"
 
     def _alive_bonus(self, faction: str) -> float:
         return self.weights["alive"] if self._alive(faction) else 0.0

@@ -14,7 +14,7 @@ from array import array
 INF = float("inf")
 from typing import Any
 
-from wizard_rts import imm, regions, resources, wl_defs
+from wizard_rts import imm, regions, resources, visibility, wl_defs
 from wizard_rts import terrain as terrain_mod
 from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
@@ -865,6 +865,7 @@ def _run_step(world: Any, worker: dict) -> None:
             for dx in range(-r, r + 1):
                 if dx * dx + dy * dy <= r * r:
                     seen.add((building["tx"] + dx, building["ty"] + dy))
+        visibility.reveal(world, building["faction_name"], seen)
         worker["anim"] = "idle"
         worker["status"] = "working"
         worker["wait_ms"] = int(args["ms"])

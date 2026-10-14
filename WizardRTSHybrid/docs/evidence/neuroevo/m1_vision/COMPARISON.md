@@ -1,0 +1,7 @@
+# T1.1 before and after: heuristic AIs find enemies only through their visibility memory
+
+Tournament `run_civilisation_tournament.py` (3 `plus` vs 3 `baseline` seats, legs A and B, standard map). `before` = commit `4b67f55c` (old rule: every home capital is public and anything within 32 tiles of an own building or armed unit is known); `after_sight` = the committed rule (only what `visibility.py` shows: sight, scouts, spies); `after_wide` = an experiment that also kept the 32-tile rule (rejected: it gives the AI far more awareness than a neural controller will have).
+
+* **40 min, seeds 507 and 11 (4 games each):** `plus` VP 7.0 / `baseline` VP 6.17 in all three runs (identical); wins by VP 3.5 : 0.5 in all three; kills and army sizes within noise (`baseline` army 17.1 before, 21.0 after). Wars are rare at 40 minutes, so the rule barely matters yet.
+* **120 min, seed 507 (2 games, `long120/`):** `plus` VP 4.67 -> 5.5, `baseline` VP 11.83 -> 9.67 (sight) or 14.17 (wide); building kills by `baseline` 68 -> 44.5 (sight): wars still happen without free capital knowledge. At 120 minutes `baseline` out-scores `plus` both before and after (a pre-existing weakness of `plus`, important context for the neural control games).
+* **Throughput:** `bench_sim --minutes 15`: 75.5x realtime before, 75.9-76.4x after; peak memory 66 -> 64 MB. State hashes: the showcase/baseline-AI baseline diverges from minute 12 (intended), campaign/plus is unchanged for its first 20 minutes; both re-recorded as `docs/perf/hash_baseline_v5*.json`.
