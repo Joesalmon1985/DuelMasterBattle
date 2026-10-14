@@ -20,6 +20,7 @@ for entry in (str(_HERE), str(_ROOT)):
 
 from wizard_rts import construction as con  # noqa: E402
 from wizard_rts import narrative, story, tech  # noqa: E402
+from wizard_rts.narrative import tutorial, wizard  # noqa: E402
 from wizard_rts.coords import tile_to_hex  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
@@ -44,6 +45,7 @@ def _save_load(world: HybridWorld, message: dict) -> dict:
     except persist.SaveError as exc:
         return {"status": "rejected", "reason": exc.reason, "detail": exc.detail, "prev": exc.prev}
     loaded.visual_state = True
+    tutorial.start(loaded)
     return {"status": "ok", "slot": slot, "loaded": True, **info, "terrain": loaded.terrain.wire() if loaded.terrain is not None else None,
             "snapshot": loaded.snapshot(tree_sync=False), "_swap": loaded}  # tree_sync False: the client gets every tree again (full delta)
 
@@ -133,6 +135,8 @@ def _handle(world: HybridWorld, message: dict) -> dict:
     if op == "move":
         return world.move(list(message.get("units", [])), int(message.get("tx", 0)), int(message.get("ty", 0)), bool(message.get("attack_move", False)))
     if op == "fire":
+        if world.profile == "campaign" and "narrative" in world.__dict__ and not wizard.knows(world, wizard.FLAME):  # magic has to be learned first
+            return {"status": "rejected", "reason": "spell_unknown", "spell": "Flame"}
         reply = world.fire(str(message.get("target", "")))
         if message.get("light"):
             reply.pop("snapshot", None)
@@ -222,6 +226,7 @@ def serve(port: int) -> None:
                          profile=os.environ.get("HYBRID_PROFILE", "campaign"))
     world.visual_state = True  # the client gets presentation fields (turret aim); never set in headless runs, so state hashes are unchanged
     narrative.enable(world)  # Wizard Mode state lives only in worlds this server creates (never in HybridEnv or training worlds)
+    tutorial.start(world)  # campaign only: the teacher stands beside the wizard (a loaded world keeps its own)
     if os.environ.get("HYBRID_CARDSET") == "legacy":  # regression only: the hand-written cards and the old offers; v2 drafting is the default for gated profiles
         world.legacy_draft, world.cardset, world.draft_v2 = True, "", False
     if os.environ.get("HYBRID_DRAFT_MS"):  # developer switch: safe accelerated drafting
@@ -259,6 +264,7 @@ def serve(port: int) -> None:
             print("HYBRID_LOAD_FAILED", exc.reason, exc.detail, exc.prev, flush=True)
             sys.exit(2)
         world.visual_state = True
+        tutorial.start(world)
         print("HYBRID_LOADED", json.dumps({k: info[k] for k in ("path", "game_ms", "profile", "seed", "hash_mismatch")}), flush=True)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -308,6 +314,7 @@ def serve(port: int) -> None:
                                 old_world = world
                                 world = history.cycle_reset(world)  # a new cycle: only the wizard carries over (D11)
                                 narrative.carry_over(old_world, world)  # the wizard's spells, lessons and duels cross the reset too
+                                tutorial.start(world)
                                 reply = {"status": "ok", "cycle_reset": True, "ended_cycle": ended, "snapshot": world.snapshot()}
                         conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
             except (ConnectionError, OSError):

@@ -1,0 +1,517 @@
+{
+ "id": "gossip",
+ "note": "Placeholder authored text (owner review pending). A purely narrative quarrel between villagers: it changes nothing in the simulation.",
+ "speakers": {
+  "aggrieved": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "a_closed_fence",
+       "lines": [
+        "I hear Orrik has been out at dawn with a hammer and a post. Well. Perhaps he can be taught after all.",
+        "Thank you for what you said. My hens are laying again, which is the real proof of peace."
+       ],
+       "when": {
+        "requires": [
+         "outcome_fence",
+         "heard_a"
+        ],
+        "forbids": [
+         "closed_a"
+        ]
+       },
+       "sets": [
+        "closed_a"
+       ]
+      },
+      {
+       "id": "a_closed_coins",
+       "lines": [
+        "He sent coins? Coins, for a fence my grandfather built? ...Still. I will not turn good silver away, and the hens do not know the difference.",
+        "You meant well, wizard. We will manage."
+       ],
+       "when": {
+        "requires": [
+         "outcome_coins",
+         "heard_a"
+        ],
+        "forbids": [
+         "closed_a"
+        ]
+       },
+       "sets": [
+        "closed_a"
+       ]
+      },
+      {
+       "id": "a_closed_none",
+       "lines": [
+        "You said nothing, then. That is also an answer. We will keep not speaking, Orrik and I, and the hens will go on pecking at his wheel ruts."
+       ],
+       "when": {
+        "requires": [
+         "outcome_none",
+         "heard_a"
+        ],
+        "forbids": [
+         "closed_a"
+        ]
+       },
+       "sets": [
+        "closed_a"
+       ]
+      },
+      {
+       "id": "a_after",
+       "lines": [
+        "There is nothing more to say about it. Thank you for listening, wizard."
+       ],
+       "when": {
+        "requires": [
+         "closed_a"
+        ]
+       }
+      },
+      {
+       "id": "a_hub",
+       "lines": [
+        "Have you come about Orrik? Everyone does."
+       ],
+       "when": {
+        "requires": [
+         "heard_a"
+        ]
+       }
+      },
+      {
+       "id": "a_first",
+       "lines": [
+        "You are the wizard the teacher spoke of. Then you will have heard. I will tell you, so you hear it right: his cart went through my hen-run at midsummer."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "what_happened",
+       "text": "What happened between you and Orrik?",
+       "when": {
+        "forbids": [
+         "heard_a"
+        ]
+       },
+       "lines": [
+        "He took the short way through the lane with a full cart, and the fence went down with six of my hens' nests behind it. Three hens did not come back.",
+        "He did not stop. He did not even look round. Then at the well he said it was my fence that stood in the road. My fence! It has stood there since before he had a cart."
+       ],
+       "sets": [
+        "heard_a"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "what_do_you_want",
+       "text": "What would settle it for you?",
+       "when": {
+        "requires": [
+         "heard_a"
+        ],
+        "forbids": [
+         "asked_want"
+        ]
+       },
+       "lines": [
+        "A fence, first. Then a plain word that it was his doing. I do not need him to grovel. I need him to look at what he broke."
+       ],
+       "sets": [
+        "asked_want"
+       ]
+      },
+      {
+       "id": "leave",
+       "text": "I will leave you to your hens.",
+       "lines": [
+        "Mind the fence, it is not quite finished."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "accused": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "b_closed_fence",
+       "lines": [
+        "A post and a hammer, yes. I will not pretend I did it for peace. The hens kept looking at me. But if she will take a mended fence, I will mend it and keep my mouth shut about the road.",
+        "You told her, did you? Good. Thank you, wizard."
+       ],
+       "when": {
+        "requires": [
+         "outcome_fence",
+         "heard_b"
+        ],
+        "forbids": [
+         "closed_b"
+        ]
+       },
+       "sets": [
+        "closed_b"
+       ]
+      },
+      {
+       "id": "b_closed_coins",
+       "lines": [
+        "You are telling me she took the coins and said nothing? ...Good. That is more than I hoped. I will leave a sack of onions at her gate too, so it is not only silver.",
+        "Thank you, wizard."
+       ],
+       "when": {
+        "requires": [
+         "outcome_coins",
+         "heard_b"
+        ],
+        "forbids": [
+         "closed_b"
+        ]
+       },
+       "sets": [
+        "closed_b"
+       ]
+      },
+      {
+       "id": "b_closed_none",
+       "lines": [
+        "Nothing, then. I suppose I wanted someone to take my side and no one will. Fine. I will go the long way round the lane."
+       ],
+       "when": {
+        "requires": [
+         "outcome_none",
+         "heard_b"
+        ],
+        "forbids": [
+         "closed_b"
+        ]
+       },
+       "sets": [
+        "closed_b"
+       ]
+      },
+      {
+       "id": "b_after",
+       "lines": [
+        "It is over, or as over as these things get. Thank you for hearing me out."
+       ],
+       "when": {
+        "requires": [
+         "closed_b"
+        ]
+       }
+      },
+      {
+       "id": "b_hub",
+       "lines": [
+        "I suppose Brenna sent you. Or the whole lane did."
+       ],
+       "when": {
+        "requires": [
+         "heard_b"
+        ]
+       }
+      },
+      {
+       "id": "b_first",
+       "lines": [
+        "So the wizard has come to judge me. Go on, ask. Everyone else has already decided."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "what_happened",
+       "text": "What happened between you and Brenna?",
+       "when": {
+        "forbids": [
+         "heard_b"
+        ]
+       },
+       "lines": [
+        "The harvest cart was heavy and the lane was narrow. Her fence was leaning out into the road, as it has done for years, and a wheel caught it. I did not see the hens. I swear by my axle I did not see the hens.",
+        "I came back the next day to say so, and she was already telling the whole lane what kind of man I am. So I said her fence was in the road. It was true. It was also unhelpful."
+       ],
+       "sets": [
+        "heard_b"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "what_do_you_want",
+       "text": "What would settle it for you?",
+       "when": {
+        "requires": [
+         "heard_b"
+        ],
+        "forbids": [
+         "asked_want"
+        ]
+       },
+       "lines": [
+        "I would pay for the hens. I would mend the fence, if she asked it of me instead of telling it to everyone else. I would like it if the lane stopped looking at me over their gates."
+       ],
+       "sets": [
+        "asked_want"
+       ]
+      },
+      {
+       "id": "leave",
+       "text": "I will leave you to your yard.",
+       "lines": [
+        "Mind the cart. Yes. Everyone says that."
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "neighbour": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "n_done_fence",
+       "lines": [
+        "Orrik with a hammer! I never thought I would see it. Brenna says she has not forgiven him, which in this lane means she has.",
+        "The lane owes you a thank-you, wizard. I will make sure everyone knows you only listened and carried a word."
+       ],
+       "when": {
+        "requires": [
+         "closed_a",
+         "closed_b",
+         "outcome_fence"
+        ],
+        "forbids": [
+         "done"
+        ]
+       },
+       "sets": [
+        "done"
+       ],
+       "effects": [
+        {
+         "kind": "journal_note",
+         "text": "Brenna and Orrik: I suggested Orrik mend her fence first. He did. The lane is talking again."
+        }
+       ]
+      },
+      {
+       "id": "n_done_coins",
+       "lines": [
+        "Silver for the hens and onions at her gate. It is not the same as a mended fence, but it keeps the lane quiet. I will take quiet.",
+        "Thank you, wizard. Not many would have listened to a lane's worth of gossip."
+       ],
+       "when": {
+        "requires": [
+         "closed_a",
+         "closed_b",
+         "outcome_coins"
+        ],
+        "forbids": [
+         "done"
+        ]
+       },
+       "sets": [
+        "done"
+       ],
+       "effects": [
+        {
+         "kind": "journal_note",
+         "text": "Brenna and Orrik: I suggested he pay for the hens. She took the coins. The fence is still crooked, but they nod to each other now."
+        }
+       ]
+      },
+      {
+       "id": "n_done_none",
+       "lines": [
+        "You did not interfere. Perhaps that is wisdom, perhaps it is only caution. Either way they are still not speaking and half the lane has stopped speaking to the other half.",
+        "I understand why. It was their quarrel."
+       ],
+       "when": {
+        "requires": [
+         "closed_a",
+         "closed_b",
+         "outcome_none"
+        ],
+        "forbids": [
+         "done"
+        ]
+       },
+       "sets": [
+        "done"
+       ],
+       "effects": [
+        {
+         "kind": "journal_note",
+         "text": "Brenna and Orrik: I left it to them. They are still not speaking."
+        }
+       ]
+      },
+      {
+       "id": "n_after",
+       "lines": [
+        "The lane is as it is. Thank you for your trouble, wizard."
+       ],
+       "when": {
+        "requires": [
+         "done"
+        ]
+       }
+      },
+      {
+       "id": "n_both",
+       "lines": [
+        "You have heard them both, then. Well? Everyone wants to know what the wizard thinks."
+       ],
+       "when": {
+        "requires": [
+         "heard_a",
+         "heard_b"
+        ],
+        "forbids": [
+         "outcome_fence",
+         "outcome_coins",
+         "outcome_none"
+        ]
+       }
+      },
+      {
+       "id": "n_waiting",
+       "lines": [
+        "Have you been to see them yet? I have told everyone you would."
+       ],
+       "when": {
+        "requires": [
+         "gossip_heard"
+        ],
+        "forbids": [
+         "outcome_fence",
+         "outcome_coins",
+         "outcome_none"
+        ]
+       }
+      },
+      {
+       "id": "n_first",
+       "lines": [
+        "Oh! The wizard. You will want to hear about Brenna and Orrik. Everyone does. I am Ilda the weaver, and I have a very good view of both gates."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "gossip",
+       "text": "What do people say about Brenna and Orrik?",
+       "when": {
+        "forbids": [
+         "gossip_heard"
+        ]
+       },
+       "lines": [
+        "That Orrik drove through her hens out of spite. That Brenna's fence leaned into the road for ten years and nobody dared say so. That the hens would have forgiven him by now.",
+        "I say it is a bad business and both of them are too proud. But I would say that, I borrowed a rake from each of them last spring."
+       ],
+       "sets": [
+        "gossip_heard"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "say_fence",
+       "text": "Tell them: Orrik mends the fence first, then they speak.",
+       "when": {
+        "requires": [
+         "heard_a",
+         "heard_b"
+        ],
+        "forbids": [
+         "outcome_fence",
+         "outcome_coins",
+         "outcome_none"
+        ]
+       },
+       "lines": [
+        "I will say so. The fence first. It is not a bad idea."
+       ],
+       "sets": [
+        "outcome_fence"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "say_coins",
+       "text": "Tell them: Orrik pays for the hens, and that is the end of it.",
+       "when": {
+        "requires": [
+         "heard_a",
+         "heard_b"
+        ],
+        "forbids": [
+         "outcome_fence",
+         "outcome_coins",
+         "outcome_none"
+        ]
+       },
+       "lines": [
+        "I will say so. Silver is quicker than carpentry."
+       ],
+       "sets": [
+        "outcome_coins"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "say_nothing",
+       "text": "Say nothing. It is theirs to settle.",
+       "when": {
+        "requires": [
+         "heard_a",
+         "heard_b"
+        ],
+        "forbids": [
+         "outcome_fence",
+         "outcome_coins",
+         "outcome_none"
+        ]
+       },
+       "lines": [
+        "As you like. I will not carry anything either."
+       ],
+       "sets": [
+        "outcome_none"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "leave",
+       "text": "I will go and see them myself.",
+       "lines": [
+        "Mind your step at the carter's gate."
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "names": {
+  "aggrieved": "Brenna",
+  "accused": "Orrik",
+  "neighbour": "Ilda"
+ },
+ "roles": {
+  "aggrieved": "farmer",
+  "accused": "baker",
+  "neighbour": "weaver"
+ },
+ "title": "The Hen and the Cart"
+}

@@ -138,6 +138,9 @@ def load_world(path: Path | str) -> tuple[Any, dict[str, Any]]:
     payload = migrate(payload)
     world = payload["world"]
     narrative.enable(world)  # a save from a world that had no Wizard Mode state gains it here
+    from wizard_rts.narrative import duel_lease
+
+    duel_lease.abandon(world, "load")  # a duel that was open at the save is not resumed (no checkpoint is kept yet): the pause is released, the attempt not counted
     mismatch = world.state_hash() != payload["hash"]
     return world, {"path": str(path), "game_ms": int(payload.get("game_ms", 0)), "profile": payload.get("profile", world.profile),
                    "seed": payload.get("seed", world.seed), "hash": payload["hash"], "hash_mismatch": mismatch, "recovered": mismatch}

@@ -143,6 +143,8 @@ def _taken_tiles(world: Any) -> set[tuple[int, int]]:
     s = state(world)
     out = {tuple(n["tile"]) for n in s["npcs"].values()}
     out |= {tuple(d["entrance"]["tile"]) for d in s["dungeons"].values()}
+    if "narrative" in world.__dict__:
+        out |= {tuple(r["tile"]) for r in world.narrative["residents"].values()}
     return out
 
 
@@ -440,6 +442,10 @@ def talk(world: Any, npc_id: str) -> dict[str, Any]:
     s = state(world)
     npc = s["npcs"].get(npc_id)
     if npc is None:
+        if "narrative" in world.__dict__ and npc_id in world.narrative["residents"]:  # a resident the narrative layer created (the teacher, the villagers)
+            from wizard_rts.narrative import tutorial
+
+            return tutorial.talk(world, npc_id)
         if "narrative" in world.__dict__:  # the simulation's own workers, carriers and soldiers
             from wizard_rts.narrative import characters
 
@@ -460,6 +466,10 @@ def talk(world: Any, npc_id: str) -> dict[str, Any]:
 
 def choose(world: Any, npc_id: str, choice: str) -> dict[str, Any]:
     s = state(world)
+    if "narrative" in world.__dict__ and npc_id in world.narrative["residents"]:
+        from wizard_rts.narrative import tutorial
+
+        return tutorial.choose(world, npc_id, choice)
     res = talk(world, npc_id)
     if res["status"] != "ok" or "quest" not in res:
         return res
@@ -662,6 +672,12 @@ def duel_guess(world: Any, guess: list[int]) -> dict[str, Any]:
 def duel_abandon(world: Any) -> dict[str, Any]:
     d = state(world)["duel"]
     if d is None:
+        if "narrative" in world.__dict__:  # a story Ward lease (the lesson duels) is closed without counting
+            from wizard_rts.narrative import duel_lease
+
+            out = duel_lease.abandon(world)
+            if out["closed"]:
+                return out
         return {"status": "rejected", "reason": "no_duel"}
     return {"status": "ok", "result": _end_duel(world, d, "abandoned")}
 
@@ -758,9 +774,13 @@ def _figure(tribe: str, role: str) -> str:
 def entity_rows(world: Any) -> list[dict[str, Any]]:
     """NPCs and dungeon entrances as ordinary snapshot entities (what Godot draws and labels)."""
     s = world.__dict__.get("story")
-    if not s:
-        return []
     rows = []
+    if "narrative" in world.__dict__:  # residents: the teacher and the villagers of the narrative layer
+        from wizard_rts.narrative import residents, tutorial
+
+        rows.extend(residents.entity_rows(world, tutorial.row_info(world)))
+    if not s:
+        return rows
     for pid, n in sorted(s["npcs"].items()):
         person = world.dmb.people.get(pid, {})
         found = _quest_of_npc(world, pid)
@@ -786,6 +806,9 @@ def snapshot(world: Any) -> dict[str, Any]:
 
         out["narrative"] = {"version": world.narrative["version"], "events": events.recent(world)}
         out["persons"] = characters.persons_view(world)
+        from wizard_rts.narrative import tutorial
+
+        out["narrative"]["journal"] = tutorial.snapshot(world)
     return out
 
 
@@ -801,7 +824,8 @@ def _story_snapshot(world: Any) -> dict[str, Any]:
 
 # ------------------------------------------------------------------ the wizard's command surface
 
-WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view")
+WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",
+              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal")
 
 
 def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
@@ -827,6 +851,10 @@ def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         out = duel_guess(world, list(message.get("guess", [])))
     elif op == "duel_abandon":
         out = duel_abandon(world)
+    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal"):
+        from wizard_rts.narrative import ops
+
+        out = ops.handle(world, message)
     else:
         out = {"status": "ok"}
     out["view"] = dungeon_view(world) if state(world)["in_dungeon"] else {}

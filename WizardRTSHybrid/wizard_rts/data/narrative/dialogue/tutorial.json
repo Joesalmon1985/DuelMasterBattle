@@ -1,0 +1,253 @@
+{
+ "id": "tutorial",
+ "note": "Placeholder authored text (owner review pending). The teacher's lessons: meet, colours, told_ward, hidden_ward, world.",
+ "speakers": {
+  "teacher": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "first",
+       "when": {
+        "forbids": [
+         "meet"
+        ]
+       },
+       "sets": [
+        "meet"
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "meet"
+        }
+       ],
+       "lines": [
+        "So you have found us. I am {name}. I teach what little magic this valley still remembers.",
+        "These people go about their work whether you help or not. Magic is how you answer the world back, and it is worth learning properly.",
+        "Ask, and I will teach you."
+       ]
+      },
+      {
+       "id": "told_won",
+       "when": {
+        "requires": [
+         "told_fresh",
+         "told_won"
+        ]
+       },
+       "clears": [
+        "told_fresh"
+       ],
+       "lines": [
+        "You broke my Ward. That is what a fracture is: the right colour in the right place, and every place broken.",
+        "Next, a fair fight. Mine will be hidden, and so will yours."
+       ]
+      },
+      {
+       "id": "told_lost",
+       "when": {
+        "requires": [
+         "told_fresh"
+        ],
+        "forbids": [
+         "told_won"
+        ]
+       },
+       "clears": [
+        "told_fresh"
+       ],
+       "lines": [
+        "You did not break it, though I told you what it was. Remember: fracture is the right colour in the right place; echo is the right colour in the wrong place; fade is neither.",
+        "Try again whenever you like, or move on. The lesson counts either way."
+       ]
+      },
+      {
+       "id": "hidden_won",
+       "when": {
+        "requires": [
+         "hidden_fresh",
+         "hidden_won"
+        ]
+       },
+       "clears": [
+        "hidden_fresh"
+       ],
+       "lines": [
+        "Broken, and fairly. You read the echoes well. That is the whole craft: guess, listen, and guess better."
+       ]
+      },
+      {
+       "id": "hidden_lost",
+       "when": {
+        "requires": [
+         "hidden_fresh"
+        ],
+        "forbids": [
+         "hidden_won"
+        ]
+       },
+       "clears": [
+        "hidden_fresh"
+       ],
+       "lines": [
+        "My Ward held, or yours fell first. Either way you have fought a hidden Ward, and that is the lesson. Fight me again whenever you want practice."
+       ]
+      },
+      {
+       "when": {
+        "lessons": [
+         "hidden_ward"
+        ]
+       },
+       "lines": [
+        "You have the basics. Magic is not only for duels, though: walk through the village and listen to people."
+       ]
+      },
+      {
+       "when": {
+        "lessons": [
+         "told_ward"
+        ]
+       },
+       "lines": [
+        "You have broken a Ward I named aloud. Now try one you cannot see."
+       ]
+      },
+      {
+       "when": {
+        "lessons": [
+         "colours"
+        ]
+       },
+       "lines": [
+        "You know your three colours. Try your hand against my Ward when you are ready."
+       ]
+      },
+      {
+       "lines": [
+        "What would you like to learn?"
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "learn_colours",
+       "text": "Teach me magic.",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "not_lessons": [
+         "colours"
+        ]
+       },
+       "lines": [
+        "Three colours to begin: Flame, which burns; Frost, which stills; Vine, which binds.",
+        "In a duel each wizard hides a Ward of three places, each filled with one colour. You cast a weave of three, one colour to a place. Fracture: right colour, right place. Echo: right colour, wrong place. Fade: neither.",
+        "Flame also works in the world now. Stand close to a tree or a building and click it to burn it. Be sure of your target; fire does not ask twice."
+       ],
+       "effects": [
+        {
+         "kind": "learn_spell",
+         "spells": [
+          0,
+          1,
+          6
+         ],
+         "weave_size": 3
+        },
+        {
+         "kind": "complete_lesson",
+         "lesson": "colours"
+        }
+       ],
+       "sets": [
+        "colours"
+       ]
+      },
+      {
+       "id": "told_practice",
+       "text": "Let me try to break your Ward. You tell me what it is.",
+       "when": {
+        "lessons": [
+         "colours"
+        ]
+       },
+       "lines": [
+        "My Ward is Frost, Vine, Frost. I will not change it. Break it in as few casts as you can."
+       ],
+       "effects": [
+        {
+         "kind": "begin_duel",
+         "opponent": "opponent.teacher_told",
+         "purpose": "told_ward",
+         "fixed_ward": [
+          1,
+          6,
+          1
+         ]
+        }
+       ]
+      },
+      {
+       "id": "hidden_duel",
+       "text": "Fight me properly, with hidden Wards.",
+       "when": {
+        "lessons": [
+         "told_ward"
+        ]
+       },
+       "lines": [
+        "Mine is hidden now, and yours is hidden from me. We cast until one Ward breaks."
+       ],
+       "effects": [
+        {
+         "kind": "begin_duel",
+         "opponent": "opponent.teacher_hidden",
+         "purpose": "hidden_ward"
+        }
+       ]
+      },
+      {
+       "id": "ask_village",
+       "text": "Is anyone in the village in need of help?",
+       "when": {
+        "lessons": [
+         "colours"
+        ],
+        "unlocked": true,
+        "requires": []
+       },
+       "lines": [
+        "Not help like a spell. Trouble like a quarrel. A hen-keeper and a carter at the end of the lane have not spoken since midsummer, and everyone around them has taken a side.",
+        "Go and hear it from them. Look for the figures with a golden mark over their heads, a little way from the centre of the village."
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "world"
+        }
+       ],
+       "sets": [
+        "rumour_known"
+       ]
+      },
+      {
+       "id": "farewell",
+       "text": "Thank you. I will go.",
+       "lines": [
+        "Walk well. Come back when you want another lesson."
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "opening": [
+  "You have walked three days, and the valley opens below you: timber houses, smoke, a road, people already at work. None of them were waiting for you.",
+  "A wizard here is not a ruler. You cannot command these people and they will not stop for you. But you can walk among them, listen, and answer what you find with magic.",
+  "Near the road, someone in a teacher's grey is standing as if expecting you. Walk up to them and press E, or click them and choose Talk."
+ ]
+}

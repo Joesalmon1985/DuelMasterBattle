@@ -138,7 +138,8 @@ def test_server_creates_the_layer_and_publishes_it():
             buf += conn.recv(1 << 20)
         reply = json.loads(buf.split(b"\n", 1)[0])
         story = reply["snapshot"]["story"]
-        assert story["narrative"] == {"version": narrative.config.version(), "events": []}
+        assert story["narrative"]["version"] == narrative.config.version() and [e["kind"] for e in story["narrative"]["events"]] == ["resident_arrived"]
+        assert len(story["narrative"]["journal"]["lessons"]) == 5 and len(story["narrative"]["journal"]["opening"]) == 3  # campaign: the opening and a teacher
     finally:
         proc.kill()
         proc.wait()
