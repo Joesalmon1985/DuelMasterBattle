@@ -130,3 +130,19 @@ def test_a_full_240_minute_game_with_three_random_seats_completes():
     res = run_episode(cfg, {f: RandomController(f, cfg, seed=3) for f in cfg.agent_seats})
     assert res.end_reason in ("horizon", "collective_loss", "agent_collapsed") and res.vp_replay_ok and res.ledger_ok
     print("240-minute episode wall seconds:", res.wall_s, "end:", res.end_reason, "t_end:", res.t_end_min)
+
+
+def test_the_event_cursor_survives_the_world_trimming_its_log():
+    os.environ.setdefault("HYBRID_AI", "1")
+    env = HybridEnv(seed=11, map_size="small", agent_factions=(), step_ms=1000, rewards=False)
+    env.reset()
+    w = env.world
+    cursor = env.event_cursor()
+    w.events.extend({"kind": "marker", "i": i} for i in range(7000))  # more than economy.EVENT_CAP: the next economy quantum trims the log
+    env.step({}, observe=False)
+    events, new_cursor = env.events_since(cursor)
+    marks = [e["i"] for e in events if e["kind"] == "marker"]
+    assert marks and marks[-1] == 6999 and marks == sorted(marks)  # the newest markers survive, in order, none repeated
+    assert new_cursor - cursor >= 7000 and w.__dict__.get("events_trimmed", 0) > 0
+    again, same = env.events_since(new_cursor)
+    assert again == [] and same == new_cursor

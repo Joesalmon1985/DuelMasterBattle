@@ -15,7 +15,7 @@ from array import array
 INF = float("inf")
 from typing import Any
 
-from wizard_rts import imm, regions, resources, visibility, wl_defs
+from wizard_rts import flow, imm, regions, resources, visibility, wl_defs
 from wizard_rts import terrain as terrain_mod
 from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
@@ -518,6 +518,7 @@ def _arrive_home(world: Any, worker: dict) -> None:
         produce(world, building["id"], good, 1)
         world.stats["produce"] += 1
         world.stats["made_" + good] = world.stats.get("made_" + good, 0) + 1
+        flow.note(world, building, "made", good, 1)
         world.events.append({"kind": "ware_stored", "worker": worker["id"], "building": building["id"], "good": good})
         worker["carrying"] = ""
     worker["returning"] = False
@@ -1087,6 +1088,7 @@ def production_quantum(world: Any) -> None:
                 good = unit_ware.split("_", 1)[-1]
                 _produce(world, building["id"], good, 1)
                 world.stats["made_" + good] = world.stats.get("made_" + good, 0) + 1
+                flow.note(world, building, "made", good, 1)
                 world.events.append({"kind": "produced", "building": building["id"], "good": good})
                 continue
             tile = con._exit_tile(world, building)
@@ -1110,6 +1112,7 @@ def production_quantum(world: Any) -> None:
                 for g, n in args.items():
                     _supply(world, building["id"]).remove_wares(g, n)
                     world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
+                    flow.note(world, building, "consumed", g, n)
             else:
                 _fail(world, building, "inputs", "waiting for " + ", ".join("%s %d" % (g, n - int(stock.get(g, 0))) for g, n in args.items() if int(stock.get(g, 0)) < n))
         elif cmd == "consume_any":
@@ -1117,6 +1120,7 @@ def production_quantum(world: Any) -> None:
             if pick is not None:
                 _supply(world, building["id"]).remove_wares(pick, 1)
                 world.stats["consumed_" + pick] = world.stats.get("consumed_" + pick, 0) + 1
+                flow.note(world, building, "consumed", pick, 1)
             else:
                 _fail(world, building, "inputs", "waiting for one of " + ", ".join(args["goods"]))
         elif cmd == "consume_groups":
@@ -1133,6 +1137,7 @@ def production_quantum(world: Any) -> None:
                 for g, n in picks:
                     _supply(world, building["id"]).remove_wares(g, n)
                     world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
+                    flow.note(world, building, "consumed", g, n)
         elif cmd == "mine":
             if not _mine(world, building, args):
                 _fail(world, building, "deposit")
@@ -1150,6 +1155,7 @@ def production_quantum(world: Any) -> None:
                 produce(world, building["id"], g, n)
                 world.stats["produce"] += n
                 world.stats["made_" + g] = world.stats.get("made_" + g, 0) + n
+                flow.note(world, building, "made", g, n)
                 world.events.append({"kind": "produced", "building": building["id"], "good": g})
         else:
             _fail(world, building, "unsupported")

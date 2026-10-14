@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from wizard_rts import flow
 from wizard_rts.industry import engine as E
 from wizard_rts.industry import hybrid as H
 from wizard_rts.industry import extraction as X
@@ -611,6 +612,7 @@ def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisfac
                 m["progress"] -= int(delay)
                 m["out"][ware] = m["out"].get(ware, 0) + 1
                 world.stats["made_" + ware] = world.stats.get("made_" + ware, 0) + 1
+                flow.note(world, b, "made", ware, 1)
                 world.stats["drilled_" + ware] = world.stats.get("drilled_" + ware, 0) + 1
             else:
                 m["state"] = "deposit used up"
@@ -687,12 +689,14 @@ def _crafter_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
                 for w, n in spec["consume_items"].items():
                     m["buf"][w] -= n
                     world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
+                    flow.note(world, b, "consumed", w, n)
                 outs = dict(spec["output_item"])
                 if spec.get("results"):  # Separator.craft: one weighted draw per cycle
                     outs = {E.separator_pick(world, b, m, spec): 1}
                 for w, n in outs.items():
                     m["out"][w] = m["out"].get(w, 0) + n
                     world.stats["made_" + w] = world.stats.get("made_" + w, 0) + n
+                    flow.note(world, b, "made", w, n)
     else:
         m["state"] = "output blocked" if sum(m["out"].values()) >= BUFFER else "waiting for inputs"
     _flush(world, st, b, m)
@@ -728,6 +732,7 @@ def _factory_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
         for w, n in plan["requirements"].items():
             m["buf"][w] -= n
             world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
+            flow.note(world, b, "consumed", w, n)
 
 
 def _exit_tile(world: Any, b: dict) -> tuple[int, int] | None:

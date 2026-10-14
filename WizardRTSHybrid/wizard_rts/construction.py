@@ -16,6 +16,7 @@ from array import array
 from typing import Any
 
 from wizard_rts.coords import tile_to_hex
+from wizard_rts import flow  # noqa: E402
 from wizard_rts import wl_defs, ware_classes
 from wizard_rts.economy import _supply
 from wizard_rts import tech, territory
@@ -575,6 +576,7 @@ def construction_quantum(world: Any) -> None:
             for good, n in cost.items():
                 _supply(world, bid).remove_wares(good, n)
                 world.stats["consumed_" + good] = world.stats.get("consumed_" + good, 0) + n
+                flow.note(world, b, "consumed", good, n)
             b.pop("constructing")
             b["operational"] = True
             b["hp"] = b["max_hp"]
@@ -864,6 +866,7 @@ def recruitment_quantum(world: Any) -> None:
                     used = n - int(carried.get(g, 0))  # what is loaded on the vehicle is moved, not consumed
                     if used:
                         world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + used
+                        flow.note(world, world.buildings[bid], "consumed", g, used)
                 head["state"] = "building"
                 world.stats["recruit_started"] = world.stats.get("recruit_started", 0) + 1
                 world.events.append({"kind": "recruit_started", "building": bid, "unit": head["unit"]})
