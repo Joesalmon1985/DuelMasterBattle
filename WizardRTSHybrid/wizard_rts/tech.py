@@ -40,8 +40,15 @@ def _data() -> dict[str, Any]:
     return json.loads(DATA.read_text())
 
 
-def cards() -> dict[str, dict[str, Any]]:
+@lru_cache(maxsize=1)
+def _cards_by_id() -> dict[str, dict[str, Any]]:
     return {c["id"]: c for c in _data()["cards"]}
+
+
+def cards() -> dict[str, dict[str, Any]]:
+    """The hand-written cards by id. The dict is built once (the old per-call rebuild also defeated the identity test in `lookup`, which then re-merged 168 generated cards on
+    every call: 9% of a late-game profile); callers must not mutate it."""
+    return _cards_by_id()
 
 
 _LOOKUP: list = [None, None]

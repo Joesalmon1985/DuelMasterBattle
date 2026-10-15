@@ -51,7 +51,7 @@ Legend: `[ ]` not started, `[~]` in progress (say what is left), `[x]` done.
 - [ ] T6.2 Judgement against the acceptance rule; report `docs/evidence/neuroevo/m6_proof/report.md`. **OWNER CHECKPOINT**
 
 ## M7 Performance pass (hash-equal)
-- [ ] O1 command-centre / settlement caches
+- [x] O1 command-centre / settlement caches — territory lookups (`settlement_of`, `frontier_distance`, `covering`, `separation_problem`) iterate the cached centre list without building a list or calling `cheb`; same results in the same order. Also found by profiling (not in the plan): `tech.cards()` rebuilt its dict on every call, which defeated the identity test in `tech.lookup()` and re-merged the 168 generated cards 242,000 times in 2 game minutes (9% of a late-game profile); now cached. Hash gate OK on both v5 baselines after each; 116 related tests pass. Measured only as profile call counts (75.0 M -> 69.0 M calls for 3 game minutes at minute 40) because the machine was busy with the proving run; no idle-machine wall figure and no 240-minute re-measurement yet. O2-O5 and the 800 s target are NOT done (a per-call index of logistics warehouses and production sites needs invalidation at every place that mutates a building, which I judged too risky for the gain)
 - [ ] O2 logistics request index
 - [ ] O3 idle-site wake-up heap
 - [ ] O4 spatial hash for scans
