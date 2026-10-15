@@ -14,7 +14,7 @@ from array import array
 INF = float("inf")
 from typing import Any
 
-from wizard_rts import imm, regions, resources, wl_defs
+from wizard_rts import hold, imm, regions, resources, wl_defs
 from wizard_rts import terrain as terrain_mod
 from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
@@ -538,6 +538,8 @@ def worker_quantum(world: Any, worker: dict) -> None:
     building = world.buildings.get(worker["building"])
     if building is None or not building.get("operational", True):
         worker_abort(world, worker, "workplace_destroyed")
+        return
+    if worker.get("held_until_ms") is not None and hold.is_held(world, worker):  # the wizard is talking to this worker (hold.py): nothing advances
         return
     if worker["path"]:
         worker["progress_ms"] += QUANTUM_MS

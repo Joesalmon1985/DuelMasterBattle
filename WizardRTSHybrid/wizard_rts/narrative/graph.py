@@ -46,7 +46,26 @@ def unlocked(world: Any) -> bool:
     return all(wizard.lesson_done(world, l) for l in essential) or int(world.dmb.clock.get("game_ms", 0)) >= int(config.get("narrative", "unlock_after_ms", 0))
 
 
-def holds(world: Any, template: str, when: dict[str, Any] | None) -> bool:
+def _fact_ok(facts: dict[str, Any], cond: dict[str, Any]) -> bool:
+    v = facts.get(cond["name"])
+    if v is None:
+        return False
+    if "gte" in cond and not (v >= cond["gte"]):
+        return False
+    if "lte" in cond and not (v <= cond["lte"]):
+        return False
+    if "eq" in cond and v != cond["eq"]:
+        return False
+    if cond.get("truthy") and not v:
+        return False
+    if cond.get("falsy") and v:
+        return False
+    return True
+
+
+def holds(world: Any, template: str, when: dict[str, Any] | None, ctx: dict[str, Any] | None = None) -> bool:
+    """A variant's or choice's condition: flags of this template (`requires`/`forbids`), lessons, the unlock, a quest's state, and facts about the
+    speaker and the world (`facts`: [{name, gte|lte|eq|truthy|falsy}], read from the simulation by `occupations.facts_for`)."""
     if not when:
         return True
     f = flags(world, template)
@@ -58,7 +77,13 @@ def holds(world: Any, template: str, when: dict[str, Any] | None) -> bool:
         return False
     if "unlocked" in when and bool(when["unlocked"]) != unlocked(world):
         return False
-    return True
+    if "quest" in when:
+        from wizard_rts.narrative import quests
+
+        if quests.status(world, when["quest"]["id"]) not in when["quest"]["in"]:
+            return False
+    facts = (ctx or {}).get("facts", {})
+    return all(_fact_ok(facts, c) for c in when.get("facts", []))
 
 
 # ------------------------------------------------------------------ effects: typed, narrative-only, with receipts
@@ -79,12 +104,12 @@ def _begin_duel(world: Any, ctx: dict, eff: dict) -> dict:
     r = duel_lease.begin(world, eff["opponent"], purpose=eff["purpose"], fixed_ward=eff.get("fixed_ward"))
     if r["status"] != "started":
         return {"duel_error": r.get("reason", "")}
-    world.narrative["conversations"].pop(ctx["speaker_pid"], None)
     return {"duel_lease": r}
 
 
 def _note(world: Any, ctx: dict, eff: dict) -> dict:
-    wizard.wiz(world)["journal_notes"].append({"game_ms": int(world.dmb.clock.get("game_ms", 0)), "text": eff["text"], "source": ctx["template"]})
+    wizard.wiz(world)["journal_notes"].append({"game_ms": int(world.dmb.clock.get("game_ms", 0)), "text": eff["text"].format_map(placeholders(ctx)),
+                                               "source": ctx["template"]})
     return {}
 
 
@@ -118,8 +143,27 @@ def _node(world: Any, template: str, speaker: str) -> dict[str, Any]:
     return nodes[state(world)["node"].get(f"{template}/{speaker}", HUB)]
 
 
-def _fmt(lines: list[str], ctx: dict[str, Any]) -> list[str]:
-    return [l.format(name=ctx["name"]) for l in lines]
+class _Env(dict):
+    def __missing__(self, key: str) -> str:
+        return "..."  # an unknown placeholder never crashes a conversation (test_narrative_content checks every line against the known names)
+
+
+def placeholders(ctx: dict[str, Any]) -> dict[str, Any]:
+    return _Env({"name": ctx["name"], **ctx.get("cast", {}), **ctx.get("facts", {})})
+
+
+def _fmt(lines: list[Any], ctx: dict[str, Any], world: Any = None, template: str = "") -> list[str]:
+    """Format lines with the placeholders (the speaker's name, the cast's names, facts about the world). A line may be {"text", "when"} and is then
+    only spoken while its condition holds (this is how a line stays true to the world)."""
+    env = placeholders(ctx)
+    out = []
+    for l in lines:
+        if isinstance(l, dict):
+            if world is not None and not holds(world, template, l.get("when"), ctx):
+                continue
+            l = l["text"]
+        out.append(l.format_map(env))
+    return out
 
 
 def view(world: Any, ctx: dict[str, Any]) -> dict[str, Any]:
@@ -129,11 +173,11 @@ def view(world: Any, ctx: dict[str, Any]) -> dict[str, Any]:
     lines: list[str] = []
     extras: dict[str, Any] = {}
     for v in node.get("variants", []):
-        if holds(world, t, v.get("when")):
-            lines = _fmt(v["lines"], ctx)
+        if holds(world, t, v.get("when"), ctx):
+            lines = _fmt(v["lines"], ctx, world, t)
             extras = apply(world, ctx, f"v:{v['id']}", v) if "id" in v else {}
             break
-    choices = [{"id": c["id"], "text": c["text"], "available": True} for c in node.get("choices", []) if holds(world, t, c.get("when"))]
+    choices = [{"id": c["id"], "text": c["text"].format_map(placeholders(ctx)), "available": True} for c in node.get("choices", []) if holds(world, t, c.get("when"), ctx)]
     return {"lines": lines, "choices": choices, "extras": extras}
 
 
@@ -145,12 +189,14 @@ def talk(world: Any, ctx: dict[str, Any]) -> dict[str, Any]:
 def choose(world: Any, ctx: dict[str, Any], choice_id: str) -> dict[str, Any] | None:
     t, sp = ctx["template"], ctx["speaker"]
     node = _node(world, t, sp)
-    choice = next((c for c in node.get("choices", []) if c["id"] == choice_id and holds(world, t, c.get("when"))), None)
+    choice = next((c for c in node.get("choices", []) if c["id"] == choice_id and holds(world, t, c.get("when"), ctx)), None)
     if choice is None:
         return None
     extras = apply(world, ctx, f"c:{choice['id']}", choice)
     state(world)["node"][f"{t}/{sp}"] = choice.get("goto", HUB)
-    out = view(world, ctx) if not extras.get("duel_lease") else {"lines": [], "choices": [], "extras": {}}
-    out["text"] = "\n".join(_fmt(choice.get("lines", []), ctx))
+    ends = bool(choice.get("ends")) or bool(extras.get("duel_lease"))  # the conversation's end is declared by the data (or by a duel starting), never guessed from a label
+    out = view(world, ctx) if not ends else {"lines": [], "choices": [], "extras": {}}
+    out["text"] = "\n".join(_fmt(choice.get("lines", []), ctx, world, t))
     out["extras"] = {**extras, **out["extras"]}
+    out["ends"] = ends
     return out

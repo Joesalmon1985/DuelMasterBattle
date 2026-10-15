@@ -1,10 +1,17 @@
 extends Node
 class_name HybridStoryUi
 
-## Presentation of the wizard's story over the one simulation: a person to talk to, a dialogue panel, the dungeon underground and the
-## Mastermind duel board. No rules live here: every action is a wizard op sent to the Python world (talk, choose, enter, dungeon_move,
-## dungeon_interact, duel_begin, duel_guess, duel_abandon) and every picture is drawn from the reply. All pictures are labelled
-## placeholders (coloured shapes), not final art.
+## Presentation of the wizard's story over the one simulation: conversations, the arrival text, the journal, the dungeon underground and the Mastermind
+## duel board. No rules live here: every action is a wizard op sent to the Python world (talk, choose, end_talk, enter, dungeon_move, ...) and every
+## picture is drawn from the reply. Conversations, the arrival and the journal are DmbNarrativeCards (client/ui/narrative_card.gd): one look, sized
+## in physical pixels, scrolling when long.
+##
+## The conversation lifecycle the server defines (narrative/conversation.py) is followed exactly: a reply has `ends`; when it does the card shows the
+## final response with ONE acknowledge button (Continue, or Begin the duel); Escape, the Leave button and the acknowledge button all end the
+## conversation on the server (`end_talk`), which releases the person to go back to their work. Nothing on the client guesses from a button's label.
+
+const _VT = preload("res://client/scripts/visual_theme.gd")
+const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 
 const TALK_RANGE := 3
 const TILE := 26
@@ -14,11 +21,19 @@ const COLOUR_NAMES := ["Red", "Blue", "Green", "Yellow", "Purple", "Orange"]
 
 var world: Node
 var layer: CanvasLayer
-var dialog: PanelContainer
+var dialog_card: Control   # the conversation card (DmbNarrativeCard, kind sheet)
+var dialog: Control        # the same card: `dialog.visible` is "a conversation is open"
 var dialog_title: Label
 var dialog_text: RichTextLabel
 var choices_box: VBoxContainer
+var opening_card: Control  # the arrival text (modal)
+var journal: Control       # the journal (modal)
+var journal_text: RichTextLabel
 var npc_id := ""
+var conv_ends := false
+var conv_duel: Dictionary = {}  # a duel lease waiting for the acknowledge button
+var _conv_ms := 0
+var _conv_managed := false  # the server owns this conversation's lifecycle (narrative/conversation.py): its replies carry a `subtitle`; the legacy story people's do not
 var dungeon: Control
 var inv_label: Label
 var msg_label: Label
@@ -31,13 +46,10 @@ var duel_hist: RichTextLabel
 var duel_info: Label
 var guess: Array = [-1, -1, -1, -1]
 var last_status := ""
-var journal: PanelContainer  # lessons, spells, the quest and notes (J)
-var journal_text: RichTextLabel
 var _opening_pages: Array = []
 var _opening_i := 0
 var _opening_done := false
-var hint: Label  # the objective line: where the quest giver is, what E or T will do here, the outbreak in this region
-var _hint_acc := 0.0
+var _acc := 0.0
 
 
 func setup(p_world: Node) -> void:
@@ -46,42 +58,52 @@ func setup(p_world: Node) -> void:
 	layer.name = "StoryLayer"
 	layer.layer = 14
 	world.add_child(layer)
-	_build_dialog()
+	dialog_card = NarrativeCard.new()
+	layer.add_child(dialog_card)
+	dialog_card.setup(world, "sheet", "StoryDialog")
+	dialog_card.choice_pressed.connect(_choose)
+	dialog_card.footer_pressed.connect(_on_footer)
+	dialog = dialog_card
+	dialog_title = dialog_card.title_label
+	dialog_text = dialog_card.body_label
+	choices_box = dialog_card.choices_box
+	opening_card = NarrativeCard.new()
+	layer.add_child(opening_card)
+	opening_card.setup(world, "modal", "StoryArrival")
+	opening_card.footer_pressed.connect(_on_opening_footer)
+	journal = NarrativeCard.new()
+	layer.add_child(journal)
+	journal.setup(world, "modal", "StoryJournal")
+	journal.footer_pressed.connect(func(_id: String) -> void: set_journal_visible(false))
+	journal_text = journal.body_label
 	_build_dungeon()
 	_build_duel()
-	_build_journal()
-	hint = Label.new()
-	hint.name = "StoryHint"
-	hint.position = Vector2(16, 150)
-	hint.custom_minimum_size = Vector2(760, 0)
-	hint.autowrap_mode = TextServer.AUTOWRAP_WORD
-	hint.add_theme_font_size_override("font_size", 20)
-	hint.add_theme_color_override("font_color", Color(1.0, 0.93, 0.55))
-	hint.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.95))
-	hint.add_theme_constant_override("outline_size", 5)
-	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.add_child(hint)
 
 
 func _process(delta: float) -> void:
-	_hint_acc += delta
-	if _hint_acc < 0.25 or hint == null:
+	_acc += delta
+	if _acc < 0.25:
 		return
-	_hint_acc = 0.0
+	_acc = 0.0
 	_maybe_show_opening()
 	if journal.visible:
-		_refresh_journal()
-	hint.text = objective_text()
-	hint.visible = hint.text != "" and not dungeon.visible and (world.god == null or not world.god.active)
+		journal_text.text = journal_string()
+	_check_conversation_alive()
+
+
+## True when a card (conversation, arrival, journal) owns the screen.
+func covering() -> bool:
+	return dialog.visible or opening_card.visible or journal.visible or dungeon.visible
 
 
 static func _dir(dx: int, dy: int) -> String:
-	var ns := "N" if dy < -2 else ("S" if dy > 2 else "")
-	var ew := "W" if dx < -2 else ("E" if dx > 2 else "")
-	return ns + ew if ns + ew != "" else "here"
+	var ns := "north" if dy < -2 else ("south" if dy > 2 else "")
+	var ew := "west" if dx < -2 else ("east" if dx > 2 else "")
+	return (ns + ("-" if ns != "" and ew != "" else "") + ew) if ns + ew != "" else "here"
 
 
-## One or two lines that tell the player what to do next, computed from the snapshot (never from quest text).
+## The HUD's objective: the outbreak in this region, else the journal's current objective (the next lesson or the open quest), else the legacy
+## story fixture's quest giver; plus what E does if someone is within reach.
 func objective_text() -> String:
 	var snap: Dictionary = world._snapshot
 	if snap.is_empty():
@@ -90,28 +112,6 @@ func objective_text() -> String:
 	var px := int(p.get("tx", 0))
 	var py := int(p.get("ty", 0))
 	var lines: PackedStringArray = []
-	var near := nearest_interactive()
-	if not near.is_empty():
-		if str(near.get("class", "")) in ["worker", "carrier", "unit"]:
-			lines.append("Press E (or click, then Talk) to talk to %s." % person_name(str(near.get("id", ""))))
-		elif str(near.get("class", "")) == "npc":
-			lines.append("Press E (or click) to talk to %s." % str(near.get("label", "them")))
-		else:
-			lines.append("Press E to enter %s." % str(near.get("label", "the gallery")))
-	else:
-		var best := {}
-		var bd := 1 << 30
-		for e in snap.get("entities", []):
-			if typeof(e) == TYPE_DICTIONARY and str(e.get("class", "")) == "npc" and bool(e.get("has_quest", false)):
-				var d := absi(px - int(e["tx"])) + absi(py - int(e["ty"]))
-				if d < bd:
-					bd = d
-					best = e
-		if not best.is_empty():
-			var what := str(best.get("hint", ""))
-			if what == "":
-				what = "Quest"
-			lines.append("%s\n%s is %d tiles %s. Walk beside them and press E (or click, then Talk)." % [what, str(best.get("label", "someone")), bd, _dir(int(best["tx"]) - px, int(best["ty"]) - py)])
 	var reg: Dictionary = snap.get("regions", {})
 	var here := str(reg.get("player_region", ""))
 	if int(reg.get("player_cubes", 0)) > 0:
@@ -125,49 +125,31 @@ func objective_text() -> String:
 		else:
 			t += " Press T and stand still %.0f s to remove one mark." % (float(reg.get("treat_ms", 8000)) / 1000.0)
 		lines.append(t)
+	var goal := str(journal_data().get("objective", ""))
+	if goal != "":
+		lines.append(goal)
+	else:
+		var best := {}
+		var bd := 1 << 30
+		for e in snap.get("entities", []):
+			if typeof(e) == TYPE_DICTIONARY and str(e.get("class", "")) == "npc" and bool(e.get("has_quest", false)):
+				var d := absi(px - int(e["tx"])) + absi(py - int(e["ty"]))
+				if d < bd:
+					bd = d
+					best = e
+		if not best.is_empty():
+			lines.append("%s is %d tiles %s." % [str(best.get("label", "Someone")), bd, _dir(int(best["tx"]) - px, int(best["ty"]) - py)])
+	var near := nearest_interactive()
+	if not near.is_empty():
+		var who := str(near.get("label", "them"))
+		if str(near.get("class", "")) in ["worker", "carrier", "unit"]:
+			who = person_name(str(near.get("id", "")))
+		lines.append(("Press E to enter %s." if str(near.get("class", "")) == "landmark" else "Press E to talk to %s.") % who)
 	return "\n".join(lines)
 
 
+
 # ---------------------------------------------------------------- panels
-
-func _build_dialog() -> void:
-	dialog = PanelContainer.new()
-	dialog.name = "StoryDialog"
-	dialog.position = Vector2(300, 360)
-	dialog.custom_minimum_size = Vector2(760, 0)
-	dialog.visible = false
-	var box := StyleBoxFlat.new()  # an opaque, framed panel: the conversation must be readable over a busy settlement
-	box.bg_color = Color(0.09, 0.07, 0.12, 0.96)
-	box.border_color = Color(0.85, 0.7, 0.35)
-	box.set_border_width_all(2)
-	box.set_corner_radius_all(6)
-	box.set_content_margin_all(12)
-	dialog.add_theme_stylebox_override("panel", box)
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 6)
-	dialog.add_child(v)
-	dialog_title = Label.new()
-	dialog_title.name = "DialogTitle"
-	dialog_title.add_theme_font_size_override("font_size", 22)
-	dialog_title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.45))
-	v.add_child(dialog_title)
-	dialog_text = RichTextLabel.new()
-	dialog_text.name = "DialogText"
-	dialog_text.fit_content = true
-	dialog_text.custom_minimum_size = Vector2(736, 70)
-	dialog_text.bbcode_enabled = false
-	dialog_text.add_theme_font_size_override("normal_font_size", 18)
-	v.add_child(dialog_text)
-	choices_box = VBoxContainer.new()
-	choices_box.name = "Choices"
-	v.add_child(choices_box)
-	var close := Button.new()
-	close.name = "DialogClose"
-	close.text = "Leave (Esc)"
-	close.pressed.connect(close_dialog)
-	v.add_child(close)
-	layer.add_child(dialog)
-
 
 func _build_dungeon() -> void:
 	dungeon = Control.new()
@@ -280,19 +262,16 @@ func _selected_item() -> String:
 
 # ---------------------------------------------------------------- dialogue
 
+## Clicks on the dungeon entrance. People, buildings and trees are picked by the inspect panel (wizard_labels.gd).
 func person_at(screen_pos: Vector2) -> Dictionary:
-	# the figure is drawn above its tile and is small: accept a click on the body or the head, nearest person first (owner playtest:
-	# a click on the miner landed on the mine behind him and only offered fire magic)
 	var xf: Transform2D = world.get_viewport().get_canvas_transform().affine_inverse()
-	var wp: Vector2 = xf * screen_pos
-	var cell := wp / float(world.TPX)
+	var cell: Vector2 = (xf * screen_pos) / float(world.TPX)
 	var best := {}
 	var bd := 1.25
 	for e in world._snapshot.get("entities", []):
-		if typeof(e) != TYPE_DICTIONARY or not str(e.get("class", "")) in ["npc", "landmark"]:
+		if typeof(e) != TYPE_DICTIONARY or str(e.get("class", "")) != "landmark":
 			continue
-		var centre := Vector2(float(e["tx"]) + 0.5, float(e["ty"]) + (0.0 if str(e.get("class", "")) == "npc" else 0.5))
-		var d := centre.distance_to(cell)
+		var d := Vector2(float(e["tx"]) + 0.5, float(e["ty"]) + 0.5).distance_to(cell)
 		if d < bd:
 			bd = d
 			best = e
@@ -310,21 +289,33 @@ func try_click(screen_pos: Vector2) -> bool:
 
 
 func use_entity(e: Dictionary) -> void:
-	var p: Dictionary = world._snapshot.get("player", {})
-	var dist := absi(int(p.get("tx", 0)) - int(e["tx"])) + absi(int(p.get("ty", 0)) - int(e["ty"]))
 	if str(e["class"]) in ["npc", "worker", "carrier", "unit"]:
 		var reply := _op({"op": "talk", "npc": str(e["id"])})
 		if str(reply.get("status", "")) == "ok":
-			npc_id = str(e["id"])
+			_conv_ms = int(world._snapshot.get("game_ms", 0))
 			_show_dialog(reply)
 		else:
-			_toast("%s (%s)" % [str(e.get("label", "")), str(reply.get("reason", ""))])
+			_toast(_why(str(reply.get("reason", "")), e))
 	elif str(e["class"]) == "landmark":
 		var reply := _op({"op": "enter", "dungeon": str(e["dungeon"])})
 		if str(reply.get("status", "")) == "ok":
 			close_dialog()
 		else:
 			_toast("The gallery is too far (%s)" % str(reply.get("reason", "")))
+
+
+func _why(reason: String, e: Dictionary) -> String:
+	var who := person_name(str(e.get("id", ""))) if person_name(str(e.get("id", ""))) != "" else str(e.get("label", "them"))
+	match reason:
+		"too_far":
+			return "Walk closer to talk to %s." % who
+		"duel_open":
+			return "Finish the duel first."
+		"dead":
+			return "%s is gone." % who
+		"no_such_person":
+			return "%s is not here any more." % who
+	return "%s cannot talk now (%s)." % [who, reason]
 
 
 ## The simulation's own workers, carriers and soldiers that have a character: {body id: {person_id, name, has_quest, quest_status}}.
@@ -381,78 +372,128 @@ func talk_to(id: String) -> void:
 
 
 func _toast(text: String) -> void:
-	if world.god != null:
-		world.god._say(text)
 	print("STORY toast: ", text)
+	if world.hud != null:
+		world.hud.flash(text)
+	elif world.god != null:
+		world.god._say(text)
+
+
+## What a reply says: the person's answer to the last choice, then what they say next.
+func reply_text(reply: Dictionary) -> String:
+	var parts: PackedStringArray = []
+	if str(reply.get("text", "")) != "":
+		parts.append(str(reply["text"]))
+	var lines: Array = reply.get("lines", [])
+	if not lines.is_empty():
+		parts.append("\n\n".join(PackedStringArray(lines)))
+	return "\n\n".join(parts)
 
 
 func _show_dialog(reply: Dictionary) -> void:
-	dialog.visible = true
-	world._input_locked = true
-	dialog_title.text = str(reply.get("name", "")) if str(reply.get("quest_status", "")) == "" else "%s  [%s]" % [str(reply.get("name", "")), str(reply.get("quest_status", ""))]
-	dialog_text.text = "\n".join(PackedStringArray(reply.get("lines", [])))
-	for c in choices_box.get_children():
-		choices_box.remove_child(c)
-		c.queue_free()
+	npc_id = str(reply.get("npc", npc_id))
+	_conv_managed = reply.has("subtitle")
+	conv_ends = bool(reply.get("ends", false))
+	var lease = reply.get("duel_lease", {})
+	conv_duel = lease if typeof(lease) == TYPE_DICTIONARY else {}
+	var choices: Array = []
 	for c in reply.get("choices", []):
-		var b := Button.new()
-		b.name = "Choice_%s" % str(c["id"])
-		b.text = str(c["text"])
-		b.disabled = not bool(c.get("available", false))
-		b.add_theme_font_size_override("font_size", 18)
-		b.pressed.connect(_choose.bind(str(c["id"])))
-		choices_box.add_child(b)
+		choices.append({"id": str(c["id"]), "text": str(c["text"]), "disabled": not bool(c.get("available", true))})
+	var footer: Array = []
+	if conv_ends:
+		footer.append({"id": "ack", "text": "Begin the duel" if not conv_duel.is_empty() else "Continue", "kind": "primary"})
+	else:
+		footer.append({"id": "leave", "text": "Leave (Esc)"})
+	dialog_card.show_card(str(reply.get("name", "")), str(reply.get("subtitle", "")), reply_text(reply), choices, footer)
+	world._input_locked = true
 
 
 func _choose(choice: String) -> void:
 	var reply := _op({"op": "choose", "npc": npc_id, "choice": choice})
-	if str(reply.get("status", "")) == "ok" and reply.has("duel_lease"):
-		var lease: Dictionary = reply["duel_lease"]
-		close_dialog()
-		world.open_story_duel(lease)  # the board takes over; the teacher answers when it finishes (show_follow_up)
-		return
 	if str(reply.get("status", "")) == "ok":
-		dialog_text.text = str(reply.get("text", "")) + "\n\n" + "\n".join(PackedStringArray(reply.get("lines", [])))
-		for c in choices_box.get_children():
-			choices_box.remove_child(c)
-			c.queue_free()
-		for c in reply.get("choices", []):
-			var b := Button.new()
-			b.name = "Choice_%s" % str(c["id"])
-			b.text = str(c["text"])
-			b.disabled = not bool(c.get("available", false))
-			b.pressed.connect(_choose.bind(str(c["id"])))
-			choices_box.add_child(b)
+		_show_dialog(reply)
+	else:
+		_toast("That is no longer possible (%s)." % str(reply.get("reason", "")))
 
 
-func close_dialog() -> void:
-	if npc_id != "" and dialog.visible and _opening_pages.is_empty():
-		world._sim.op({"op": "end_talk", "npc": npc_id})  # the person goes back to their routine
+func _on_footer(id: String) -> void:
+	if id == "ack":
+		acknowledge()
+	else:
+		close_dialog()
+
+
+## The final response has been read: end the conversation, then (if one was waiting) open the duel board.
+func acknowledge() -> void:
+	var lease := conv_duel
+	close_dialog(false)
+	if not lease.is_empty():
+		world.open_story_duel(lease)
+
+
+## The one way a conversation closes on the client: the server is told (the person is released), a duel that was waiting for its acknowledgement is
+## abandoned unless `abandon_duel` is false, and control returns to the game.
+func close_dialog(abandon_duel := true) -> void:
+	if npc_id != "" and dialog.visible:
+		if abandon_duel and not conv_duel.is_empty():
+			world._sim.op({"op": "duel_abandon"})
+		world._sim.op({"op": "end_talk", "npc": npc_id, "reason": "closed"})
 	npc_id = ""
-	dialog.visible = false
-	world._input_locked = dungeon.visible
+	conv_ends = false
+	conv_duel = {}
+	dialog_card.hide_card()
+	world._input_locked = dungeon.visible or opening_card.visible
 
 
-# ---------------------------------------------------------------- dungeon
+## The server can end a conversation (the person walked off the map, died, was removed, the talk went idle): the card closes with it.
+func _check_conversation_alive() -> void:
+	if not dialog.visible or npc_id == "" or world._duel_open or not _conv_managed:
+		return
+	var snap_ms := int(world._snapshot.get("game_ms", 0))
+	if snap_ms <= _conv_ms + 1500:
+		return  # no snapshot from after the conversation began yet
+	if not (journal_data().get("talking", []) as Array).has(npc_id):
+		npc_id = ""
+		conv_ends = false
+		conv_duel = {}
+		dialog_card.hide_card()
+		world._input_locked = dungeon.visible
+		_toast("The conversation ended.")
+
+
+# ---------------------------------------------------------------- keys
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed and not event.echo):
 		return
 	var k: InputEventKey = event
-	if dialog.visible and k.keycode == KEY_ESCAPE:
-		if not _opening_pages.is_empty():
+	if opening_card.visible:  # the arrival text: Escape skips it (the Skip button does the same), Enter continues
+		if k.keycode == KEY_ESCAPE:
 			finish_opening()
-		else:
-			close_dialog()
+		elif k.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
+			opening_card.activate_primary()
+		get_viewport().set_input_as_handled()  # the arrival is modal: no other key reaches the game behind it
+		return
+	if dialog.visible:  # a conversation owns the keyboard: Escape leaves (or acknowledges), Enter takes the primary button, 1-9 pick a reply
+		if k.keycode == KEY_ESCAPE:
+			if conv_ends:
+				acknowledge()
+			else:
+				close_dialog()
+		elif k.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
+			dialog_card.activate_primary()
+		elif k.keycode >= KEY_1 and k.keycode <= KEY_9:
+			dialog_card.activate_choice_index(k.keycode - KEY_1)
+		get_viewport().set_input_as_handled()  # a conversation is modal: E, T and the rest do not reach the game behind it
+		return
+	if journal.visible:
+		if k.keycode == KEY_ESCAPE or k.keycode == KEY_J:
+			set_journal_visible(false)
 		get_viewport().set_input_as_handled()
 		return
 	if not dungeon.visible:
-		if k.keycode == KEY_J and not dialog.visible:
-			toggle_journal()
-			get_viewport().set_input_as_handled()
-			return
-		if k.keycode == KEY_ESCAPE and journal.visible:
-			journal.visible = false
+		if k.keycode == KEY_J:
+			set_journal_visible(true)
 			get_viewport().set_input_as_handled()
 			return
 		if k.keycode == KEY_T:
@@ -603,11 +644,11 @@ func submit_guess() -> void:
 
 # ---------------------------------------------------------------- the opening, the follow-up after a duel, the journal
 
-## After a lesson duel the teacher answers: the server's `follow_up` is an ordinary talk reply.
+## After a lesson duel the teacher answers: the server's `follow_up` is an ordinary talk reply (it begins a new conversation with the same person).
 func show_follow_up(follow: Variant) -> void:
 	if typeof(follow) != TYPE_DICTIONARY or str(follow.get("status", "")) != "ok":
 		return
-	npc_id = str(follow.get("npc", ""))
+	_conv_ms = int(world._snapshot.get("game_ms", 0))
 	_show_dialog(follow)
 
 
@@ -623,7 +664,7 @@ func journal_data() -> Dictionary:
 
 
 func _maybe_show_opening() -> void:
-	if _opening_done or dialog.visible or dungeon.visible or world._duel_open:
+	if _opening_done or dialog.visible or dungeon.visible or world._duel_open or opening_card.visible:
 		return
 	var lines: Array = journal_data().get("opening", [])
 	if lines.is_empty():
@@ -635,68 +676,38 @@ func _maybe_show_opening() -> void:
 
 
 func _show_opening_page() -> void:
-	dialog.visible = true
 	world._input_locked = true
-	dialog_title.text = "Arrival"
-	dialog_text.text = str(_opening_pages[_opening_i])
-	for c in choices_box.get_children():
-		choices_box.remove_child(c)
-		c.queue_free()
-	var b := Button.new()
-	b.name = "OpeningNext"
-	b.text = "Continue" if _opening_i < _opening_pages.size() - 1 else "Begin"
-	b.add_theme_font_size_override("font_size", 18)
-	b.pressed.connect(_opening_next)
-	choices_box.add_child(b)
+	var dots := ""
+	for i in _opening_pages.size():
+		dots += ("o " if i == _opening_i else ". ").replace("o", "\u25CF").replace(".", "\u25CB")
+	var last := _opening_i >= _opening_pages.size() - 1
+	opening_card.show_card("Arrival", "", str(_opening_pages[_opening_i]), [],
+		[{"id": "skip", "text": "Skip"}, {"id": "next", "text": "Begin" if last else "Continue", "kind": "primary"}],
+		"%s   %d / %d" % [dots.strip_edges(), _opening_i + 1, _opening_pages.size()])
 
 
-func _opening_next() -> void:
+func _on_opening_footer(id: String) -> void:
+	if id == "skip":
+		finish_opening()
+		return
 	_opening_i += 1
 	if _opening_i < _opening_pages.size():
 		_show_opening_page()
-		return
-	finish_opening()
+	else:
+		finish_opening()
 
 
-## Close the arrival text (also what a test calls): the simulation is told it has been seen, and time runs again.
+## Close the arrival text (Skip, Escape and Begin all end here, and so does a test): the simulation is told it has been seen, and time runs again.
 func finish_opening() -> void:
 	_opening_done = true
 	if not _opening_pages.is_empty():
 		_opening_pages = []
-		dialog.visible = false
-		world._input_locked = dungeon.visible
+		opening_card.hide_card()
+		world._input_locked = dungeon.visible or dialog.visible
 		world.paused = false
 		world._sim.op({"op": "opening_done"})
-
-
-func _build_journal() -> void:
-	journal = PanelContainer.new()
-	journal.name = "StoryJournal"
-	journal.position = Vector2(60, 90)
-	journal.custom_minimum_size = Vector2(560, 0)
-	journal.visible = false
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color(0.09, 0.07, 0.12, 0.96)
-	box.border_color = Color(0.85, 0.7, 0.35)
-	box.set_border_width_all(2)
-	box.set_corner_radius_all(6)
-	box.set_content_margin_all(12)
-	journal.add_theme_stylebox_override("panel", box)
-	var v := VBoxContainer.new()
-	journal.add_child(v)
-	var title := Label.new()
-	title.text = "Journal  (J to close)"
-	title.add_theme_font_size_override("font_size", 22)
-	title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.45))
-	v.add_child(title)
-	journal_text = RichTextLabel.new()
-	journal_text.name = "JournalText"
-	journal_text.fit_content = true
-	journal_text.custom_minimum_size = Vector2(536, 120)
-	journal_text.bbcode_enabled = false
-	journal_text.add_theme_font_size_override("normal_font_size", 17)
-	v.add_child(journal_text)
-	layer.add_child(journal)
+	else:
+		opening_card.hide_card()
 
 
 func journal_string() -> String:
@@ -705,34 +716,36 @@ func journal_string() -> String:
 		return "Nothing yet."
 	var out: PackedStringArray = []
 	var spells: Array = j.get("spells", [])
-	out.append("Spells: %s   Weave: %d slots" % [", ".join(PackedStringArray(spells)) if not spells.is_empty() else "none yet", int(j.get("weave_size", 0))])
+	out.append("Spells: %s.  Weave: %d slots." % [", ".join(PackedStringArray(spells)) if not spells.is_empty() else "none yet", int(j.get("weave_size", 0))])
 	out.append("")
-	out.append("Lessons")
+	out.append("LESSONS")
 	for l in j.get("lessons", []):
 		out.append("  [%s] %s" % ["x" if bool(l.get("done", false)) else " ", str(l.get("title", ""))])
 	var nxt := str(j.get("next_lesson", ""))
 	if nxt != "":
 		out.append("  Next: " + nxt)
-	var q: Dictionary = j.get("quest", {})
-	if str(q.get("status", "none")) != "none":
+	for q in j.get("quests", []):
 		out.append("")
-		out.append("%s  (%s)" % [str(q.get("title", "")), str(q.get("status", ""))])
+		out.append("%s  (%s)" % [str(q.get("title", "")).to_upper(), str(q.get("status", ""))])
 		if str(q.get("objective", "")) != "":
 			out.append("  " + str(q["objective"]))
+		for who in q.get("people", []):
+			out.append("  - %s, %s: %s" % [str(who.get("name", "")), str(who.get("occupation", "")), str(who.get("where", ""))])
 	var notes: Array = j.get("notes", [])
 	if not notes.is_empty():
 		out.append("")
-		out.append("Notes")
+		out.append("NOTES")
 		for n in notes:
 			out.append("  - " + str(n.get("text", "")))
 	return "\n".join(out)
 
 
-func _refresh_journal() -> void:
-	journal_text.text = journal_string()
+func set_journal_visible(on: bool) -> void:
+	if on:
+		journal.show_card("Journal", "", journal_string(), [], [{"id": "close", "text": "Close (J)", "kind": "primary"}])
+	else:
+		journal.hide_card()
 
 
 func toggle_journal() -> void:
-	journal.visible = not journal.visible
-	if journal.visible:
-		_refresh_journal()
+	set_journal_visible(not journal.visible)

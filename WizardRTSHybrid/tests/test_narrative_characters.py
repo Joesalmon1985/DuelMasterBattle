@@ -156,10 +156,11 @@ def test_talk_op_names_the_worker_and_respects_range():
     stand_beside(w, jack)
     r = story.dispatch(w, {"op": "talk", "npc": jack["id"]})
     assert r["status"] == "ok" and r["name"] == w.dmb.people[r["person"]]["name"] and r["name"] in r["lines"][0]
-    assert len(r["lines"]) == 2 and r["choices"] == []
+    assert r["subtitle"].startswith("Lumberjack") and r["ends"] is False and "farewell" in [c["id"] for c in r["choices"]]
     assert story.dispatch(w, {"op": "talk", "npc": "worker:nope"})["reason"] == "no_such_person"
+    story.dispatch(w, {"op": "end_talk", "npc": jack["id"]})
     again = story.dispatch(w, {"op": "talk", "npc": jack["id"]})
-    assert again["person"] == r["person"] and again["lines"] == r["lines"]
+    assert again["person"] == r["person"] and again["lines"] != r["lines"]  # the same person, and they do not repeat the introduction
 
 
 def test_dead_soldiers_cannot_be_talked_to_and_die_as_persons():
@@ -200,4 +201,5 @@ def test_every_kind_of_body_can_be_talked_to():
         row = characters.locate(w, eid)[1]
         stand_beside(w, row)
         r = story.dispatch(w, {"op": "talk", "npc": eid})
-        assert r["status"] == "ok" and r["name"] in r["lines"][0] and len(r["lines"]) == 2, (eid, r)
+        assert r["status"] == "ok" and r["name"] in r["lines"][0] and r["subtitle"] and r["choices"], (eid, r)
+        story.dispatch(w, {"op": "end_talk", "npc": eid})

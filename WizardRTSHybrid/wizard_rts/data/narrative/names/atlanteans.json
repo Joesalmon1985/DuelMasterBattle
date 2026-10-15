@@ -11,7 +11,13 @@
   "Oro",
   "Amph",
   "Lys",
-  "Eud"
+  "Eud",
+  "Ara",
+  "Nym",
+  "Kor",
+  "Ser",
+  "Dio",
+  "Hel"
  ],
  "given_b": [
   "mos",
@@ -23,7 +29,13 @@
   "lon",
   "thea",
   "mene",
-  "dora"
+  "dora",
+  "ides",
+  "ura",
+  "ope",
+  "thos",
+  "eia",
+  "anor"
  ],
  "family_a": [
   "Deep",

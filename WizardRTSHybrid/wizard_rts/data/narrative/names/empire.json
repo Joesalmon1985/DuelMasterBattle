@@ -11,7 +11,13 @@
   "Sev",
   "Pla",
   "Vib",
-  "Cor"
+  "Cor",
+  "Nas",
+  "Ger",
+  "Rut",
+  "Han",
+  "Ven",
+  "Dom"
  ],
  "given_b": [
   "cus",
@@ -23,7 +29,13 @@
   "rus",
   "ena",
   "dus",
-  "nia"
+  "nia",
+  "tia",
+  "ius",
+  "ica",
+  "ron",
+  "ela",
+  "ard"
  ],
  "family_a": [
   "Aure",

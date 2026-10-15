@@ -15,6 +15,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
+from wizard_rts import hold
 from wizard_rts import openra_abilities as abilities
 from wizard_rts import rules
 from wizard_rts.openra_damage import SOURCE as OPENRA_DAMAGE_SOURCE
@@ -706,6 +707,8 @@ def _engage(world: Any, unit: dict, w: dict | None, chase: bool, leash: float) -
 
 def _unit_step(world: Any, unit: dict) -> None:
     if unit.get("inside"):
+        return
+    if unit.get("held_until_ms") is not None and hold.is_held(world, unit):  # being talked to (hold.py): its order and path are kept for when it is released
         return
     for n in unit.get("cds", {}):
         unit["cds"][n] = max(0, int(unit["cds"][n]) - 100)

@@ -217,11 +217,19 @@
          "colours"
         ],
         "unlocked": true,
-        "requires": []
+        "quest": {
+         "id": "forest_dispute",
+         "in": [
+          "offered",
+          "active",
+          "done"
+         ]
+        }
        },
        "lines": [
-        "Not help like a spell. Trouble like a quarrel. A hen-keeper and a carter at the end of the lane have not spoken since midsummer, and everyone around them has taken a side.",
-        "Go and hear it from them. Look for the figures with a golden mark over their heads, a little way from the centre of the village."
+        "Not help like a spell. Trouble like a quarrel. {cutter} the lumberjack and {planter} the forester have stopped speaking: one wants every ripe tree down for the sawmill, the other wants the young ones left alone to grow.",
+        "{witness} saw some of it. {cutter_where}. {planter_where}.",
+        "Go and hear them yourself. They are ordinary people with a real disagreement, and what you say to them will be remembered."
        ],
        "effects": [
         {
@@ -234,11 +242,39 @@
        ]
       },
       {
+       "id": "ask_village_none",
+       "text": "Is anyone in the village in need of help?",
+       "when": {
+        "lessons": [
+         "colours"
+        ],
+        "unlocked": true,
+        "quest": {
+         "id": "forest_dispute",
+         "in": [
+          "none",
+          "unavailable",
+          "interrupted"
+         ]
+        }
+       },
+       "lines": [
+        "Nothing that a wizard could mend. The settlement is quiet and everyone is at their work. Look around, listen, and come back when you have heard something."
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "world"
+        }
+       ]
+      },
+      {
        "id": "farewell",
        "text": "Thank you. I will go.",
        "lines": [
         "Walk well. Come back when you want another lesson."
-       ]
+       ],
+       "ends": true
       }
      ]
     }

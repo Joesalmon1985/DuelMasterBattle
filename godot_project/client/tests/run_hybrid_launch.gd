@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Headed Wizard Mode launch test (execution plan A.3 and A.4). The campaign world is the real HybridWorld with its six faction AIs: the scene
 ## connects, the factions are simulated for 90 game seconds and build, the wizard comes up to a real Red worker outside its hut, clicks it with a
-## real mouse press, chooses "Talk to <name>" in its label, and the story dialogue opens with that worker's name. A.4: Escape opens the pause menu
+## real mouse press (the inspect card opens), presses Talk on it, and the conversation opens with that worker's name. A.4: Escape opens the pause menu
 ## (Save game, Continue), a save to slot `test` then 30 game seconds then a load puts the clock and the wizard back, and the client autosave
 ## (HYBRID_AUTOSAVE_SECONDS=5) writes `auto` within seconds but never while a dialogue is open.
 ## Needs the sim on HYBRID_SIM_PORT with HYBRID_PROFILE=campaign (the AIs are on by default) and HYBRID_AUTOSAVE_SECONDS=5, DMB_RUNS shared with the sim.
@@ -54,6 +54,18 @@ func _shot(name: String) -> void:
 
 ## Let the camera move AND draw before a screen position is computed: a window that is not in front gets no draws, and the canvas transform
 ## would be the old one (clicks then land on the wrong place).
+func _click_at(vpos: Vector2) -> void:
+	var m := InputEventMouseMotion.new()
+	m.position = _win(vpos)
+	m.global_position = _win(vpos)
+	Input.parse_input_event(m)
+	await _frames(1)
+	_mouse(vpos, true)
+	await _frames(1)
+	_mouse(vpos, false)
+	await _frames(4)
+
+
 func _settle() -> void:
 	await _frames(3)
 	await RenderingServer.frame_post_draw
@@ -228,27 +240,22 @@ func _run() -> void:
 	_check(pname != "" and pname.contains(" "), "the character has a full name (%s)" % pname)
 	_world._camera.zoom = Vector2(1.0, 1.0)
 	await _click_entity(wid)
-	var lbl = _world.wizard_labels.label_for(wid)
+	var panel = _world.wizard_labels.panel
 	for _retry in 2:
-		if lbl != null and lbl.interaction_state() == "RESPONSES":
+		if panel.visible and _world.wizard_labels.current_id == wid:
 			break
 		await _click_entity(wid, 0.2)
-		lbl = _world.wizard_labels.label_for(wid)
-	_check(lbl != null and lbl.interaction_state() == "RESPONSES", "clicking the worker opens its label with choices (state %s)" % (lbl.interaction_state() if lbl != null else "none"))
-	var talk_offered := false
-	if lbl != null:
-		for t in lbl.response_labels():
-			if str(t).begins_with("Talk to " + pname):
-				talk_offered = true
-	_check(talk_offered, "the label offers 'Talk to %s'" % pname)
-	_check(pname in str(lbl.display_text()) if lbl != null else false, "the label names the worker")
-	await _frames(20)  # the label finishes its one-line speech and arms its choices (the wizard test waits the same)
+	_check(panel.visible and _world.wizard_labels.current_id == wid, "clicking the worker opens its inspect card")
+	_check(panel.title_label.text == pname, "the card names the worker (%s)" % panel.title_label.text)
+	_check(panel.subtitle_label.text.contains("settlement"), "and says what they do (%s)" % panel.subtitle_label.text)
+	await _frames(10)
+	var talk: Button = panel.choices_box.get_node_or_null("Choice_talk")
+	_check(talk != null and not talk.disabled, "the card offers Talk")
+	await _settle()
+	if talk != null:
+		var tc: Vector2 = talk.get_global_rect().get_center()
+		await _click_at(tc)
 	var t0 := Time.get_ticks_msec()
-	while lbl != null and not lbl.responses_input_armed() and Time.get_ticks_msec() - t0 < 5000:
-		await _frames(2)  # the label arms its choices a moment after they appear
-	if lbl != null:
-		lbl.press_response(2)
-	t0 = Time.get_ticks_msec()
 	while not _world.story_ui.dialog.visible and Time.get_ticks_msec() - t0 < 5000:
 		await _frames(2)
 	var sui = _world.story_ui
@@ -264,18 +271,16 @@ func _run() -> void:
 	_check(is_equal_approx(_world.autosave_seconds, 5.0), "HYBRID_AUTOSAVE_SECONDS reaches the client (%s)" % str(_world.autosave_seconds))
 	var started_msec := Time.get_unix_time_from_system()
 	await _key(KEY_ESCAPE)
-	_check(await _wait_until(func(): return _world.ui_dialogue_waiting_choice(), 5.0), "Escape opens the pause menu")
+	_check(await _wait_until(func(): return _world.menu_card.visible, 5.0), "Escape opens the pause menu")
 	_check(_world.autosave_wait_reason() == "menu", "an autosave waits while the menu is open (%s)" % _world.autosave_wait_reason())
+	await _settle()
 	await _shot("launch_pause_menu")
-	_world.ui_dialogue_choose("Save game")
-	_check(await _wait_until(func(): return _world.ui_dialogue_open() and not _world.ui_dialogue_waiting_choice(), 5.0), "the menu confirms the save")
-	for _tap in 8:  # the first tap finishes the typed line, the next one dismisses it
-		if _world.ui_dialogue_waiting_choice():
-			break
-		_world.ui_dialogue_advance()
-		await _frames(6)
-	_check(_world.ui_dialogue_waiting_choice(), "the menu returns")
-	_world.ui_dialogue_choose("Continue")
+	var save_btn: Button = _world.menu_card.choice_button("save")
+	await _click_at(save_btn.get_global_rect().get_center())
+	await _settle()
+	_check(_world.menu_card.body_label.text == "Game saved.", "the menu confirms the save (%s)" % _world.menu_card.body_label.text)
+	var cont_btn: Button = _world.menu_card.choice_button("continue")
+	await _click_at(cont_btn.get_global_rect().get_center())
 	_check(await _wait_until(func(): return not _world._menu_open, 5.0), "Continue closes the menu")
 	_check(FileAccess.file_exists(_save_file("manual")), "the manual save exists (%s)" % _save_file("manual"))
 

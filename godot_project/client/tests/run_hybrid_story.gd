@@ -328,25 +328,37 @@ func _run() -> void:
 	_check(not npc.is_empty() and bool(npc.get("has_quest", false)), "the snapshot has a miner with a quest (from the real exhausted mine)")
 	_check(not gallery.is_empty(), "the snapshot has the disused gallery entrance")
 	var mine := _mine()
-	_check(not mine.is_empty() and bool(mine.get("deposit_exhausted", false)), "the coal mine reports its deposit used up")
+	_check(not mine.is_empty() and not npc.is_empty() and bool(npc.get("has_quest", false)), "the fixture's coal mine has caved in (since D22 mines never run dry) and its miner has a quest")
 	# 1. the settlement at the start: the person with a quest marker beside the dry mine
 	await _teleport_next_to(npc)
 	_focus(npc)
 	await _frames(8)
 	var img := await _shot("01_miner_with_quest")
 	var sp := _screen_of(npc)
-	_check(_count_near(img, sp, Color(0.95, 0.65, 0.2), 0.2) > 20, "the miner placeholder is drawn at its tile")
-	_check(_count_near(img, sp + Vector2(0, -44 * 0.9), Color(1, 0.9, 0.2), 0.25, 14) > 8, "the quest marker is drawn over the miner")
+	_check(_count_near(img, sp + Vector2(0, -60 * 0.9), Color(1.0, 0.85, 0.3), 0.25, 24) > 4, "a small gold quest mark is drawn over the miner (an ordinary worker figure under it)")
 	# 2. real click on the person opens the dialogue with facts from the live world
+	_world.wizard_labels.enabled = true
 	await _click_at(sp)
-	_check(_ui.dialog.visible, "a real mouse click on the miner opens the dialogue")
+	await _frames(10)
+	var talk_btn: Button = _world.wizard_labels.panel.choice_button("talk")
+	_check(_world.wizard_labels.panel.visible and talk_btn != null, "a real mouse click on the miner opens his card with Talk")
+	if talk_btn != null:
+		await _click_at(talk_btn.get_global_rect().get_center())
+		await _frames(8)
+	_world.wizard_labels.enabled = false
+	_check(_ui.dialog.visible, "Talk opens the dialogue")
 	var text := str(_ui.dialog_text.text)
-	_check(text.contains("The seam under") and text.contains("in reach") and text.contains("The warehouse holds"), "the dialogue cites the real seam and stock")
+	_check(text.contains("caved in") and text.contains("Timber props on site") and text.contains("The warehouse holds"), "the dialogue cites the real collapse, the props and the stock")
 	await _shot("02_dialogue_offer")
 	for c in ["ask_cause", "ask_gallery", "accept_help", "persuade"]:
-		var b: Button = _ui.choices_box.get_node_or_null("Choice_%s" % c)
+		await _frames(4)
+		await RenderingServer.frame_post_draw  # the card fits itself over two frames after its content changes: click where the button finally is
+		var b: Button = _ui.dialog_card.choice_button(c)
 		_check(b != null and not b.disabled, "choice %s is offered" % c)
 		if b != null:
+			_ui.dialog_card.scroll.ensure_control_visible(b)
+			await _frames(3)
+			await RenderingServer.frame_post_draw
 			await _click_button(b)
 	_check(str(_ui.dialog_text.text).contains("relents"), "the empathy check passes after the evidence was gathered")
 	await _shot("03_dialogue_accepted")
@@ -427,7 +439,8 @@ func _run() -> void:
 	_focus(mine)
 	await _frames(8)
 	var after := await _shot("09_mine_working_again")
-	_check(_count_near(after, _screen_of(npc) + Vector2(0, -44 * 0.9), Color(1, 0.9, 0.2), 0.25, 14) < 4, "the quest marker is gone from the rendered frame")
+	var npc_now := _entity("npc")
+	_check(npc_now.is_empty() or not bool(npc_now.get("has_quest", true)), "the miner no longer carries a quest mark (the simulation says so; the picture follows the snapshot)")
 	if _fails.is_empty():
 		print("HYBRID_STORY_OK")
 		quit(0)

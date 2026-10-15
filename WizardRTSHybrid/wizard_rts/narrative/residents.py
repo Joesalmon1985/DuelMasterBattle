@@ -18,7 +18,6 @@ from wizard_rts.narrative import characters, events
 
 BEAT_MS = 20_000
 ROUTINE_RADIUS = 2
-CONVERSATION_MS = 15_000  # a conversation that was never closed freezes the routine for at most this long (game time)
 FIGURES = {  # the Widelands worker sprite that stands for a role, by tribe (art in godot_project/client/hybrid/art/widelands/gen)
     "teacher": {"barbarians": "barbarians_trainer", "empire": "empire_trainer", "atlanteans": "atlanteans_trainer", "frisians": "frisians_trainer", "amazons": "amazons_trainer"},
     "weaver": {"barbarians": "barbarians_weaver", "empire": "empire_weaver", "atlanteans": "atlanteans_weaver", "frisians": "frisians_seamstress", "amazons": "amazons_dressmaker"},
@@ -82,22 +81,10 @@ def figure(rec: dict[str, Any]) -> str:
     return "widelands.%s_worker" % by_tribe.get(rec["tribe"], by_tribe["barbarians"])
 
 
-def start_conversation(world: Any, pid: str) -> None:
-    world.narrative["conversations"][pid] = int(world.dmb.clock.get("game_ms", 0))
-
-
-def end_conversation(world: Any, pid: str | None = None) -> None:
-    conv = world.narrative["conversations"]
-    for k in ([pid] if pid else list(conv)):
-        conv.pop(k, None)
-
-
 def quantum(world: Any) -> None:
     """Once a game second: let each resident whose beat is due step to another tile near its post (unless someone is talking to it)."""
     now = int(world.dmb.clock.get("game_ms", 0))
-    conv = world.narrative["conversations"]
-    for pid in [p for p, t in conv.items() if now - int(t) > CONVERSATION_MS]:
-        conv.pop(pid)
+    conv = world.narrative["conversations"]  # a resident being talked to stands still (conversation.py ends abandoned conversations)
     for pid, r in sorted(table(world).items()):
         if r["status"] != "present" or pid in conv or now < r["next_beat_ms"]:
             continue

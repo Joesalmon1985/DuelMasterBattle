@@ -120,18 +120,22 @@ func _npcs() -> Array:
 	return out
 
 
-func _npc_named(name: String) -> Dictionary:
-	for e in _npcs():
-		if str(e.get("label", "")) == name:
-			return e
-	return {}
-
-
 func _teacher() -> Dictionary:
 	for e in _npcs():
 		if str(e.get("role", "")) == "teacher":
 			return e
 	return {}
+
+
+## The entity id of the person with this name (people near the wizard are published with their names).
+func _id_of(person_name: String) -> String:
+	for id in _ui.persons():
+		if str(_ui.persons()[id].get("name", "")) == person_name:
+			return str(id)
+	for e in _npcs():
+		if str(e.get("label", "")) == person_name:
+			return str(e["id"])
+	return ""
 
 
 func _journal() -> Dictionary:
@@ -146,7 +150,11 @@ func _lesson_done(id: String) -> bool:
 	return false
 
 
-## Stand next to a person and click their picture (the real mouse path: story_ui picks the person, the dialogue opens).
+func _talking() -> Array:
+	return _journal().get("talking", [])
+
+
+## Stand next to a person, click their picture (the real mouse path: the inspect card opens), and press Talk on it.
 func _talk_to(person: Dictionary) -> void:
 	var e := _by_id(str(person["id"]))  # (the person's tile now, not where they were when the caller looked)
 	for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(2, 0), Vector2i(0, 2), Vector2i(-2, 0), Vector2i(0, -2)]:
@@ -157,41 +165,63 @@ func _talk_to(person: Dictionary) -> void:
 			break
 	await _frames(3)
 	_world._camera.zoom = Vector2(1.0, 1.0)
-	var wp: Vector2 = (Vector2(float(e["tx"]), float(e["ty"])) + Vector2(0.5, 0.0)) * float(_world.TPX)
+	var pos := Vector2(float(e["tx"]), float(e["ty"]))
+	var vis: Dictionary = _world._art._vis.get(str(e["id"]), {})
+	if not vis.is_empty():
+		pos = vis["pos"]  # click where the figure is drawn
+	var wp: Vector2 = (pos + Vector2(0.5, 0.2)) * float(_world.TPX)
 	_world.camera_focus = wp
 	await _settle()
-	await _click_at(_world.get_canvas_transform() * (wp + Vector2(0, float(_world.TPX) * 0.2)))
-	await _wait_until(func(): return _ui.dialog.visible, 4.0)
+	await _click_at(_world.get_canvas_transform() * wp)
+	await _wait_until(func(): return _world.wizard_labels.panel.visible and _world.wizard_labels.current_id == str(e["id"]), 3.0)
+	var talk: Button = _world.wizard_labels.panel.choices_box.get_node_or_null("Choice_talk")
+	if talk != null and not talk.disabled:
+		await _click_button(talk)
+	await _wait_until(func(): return _ui.dialog.visible, 3.0)
 
 
 func _choice(id: String) -> Button:
-	for c in _ui.choices_box.get_children():
-		if str(c.name) == "Choice_" + id:
-			return c
-	return null
+	return _ui.dialog_card.choice_button(id)
 
 
 func _choice_ids() -> Array:
-	var out: Array = []
-	for c in _ui.choices_box.get_children():
-		out.append(str(c.name).trim_prefix("Choice_"))
-	return out
+	return _ui.dialog_card.choice_ids()
 
 
 func _press_choice(id: String) -> bool:
 	await _wait_until(func(): return _choice(id) != null, 3.0)
+	await _settle()  # the card fits itself over two frames after its content changes: click where the button finally is
 	var b := _choice(id)
 	if b == null or b.disabled:
+		return false
+	_ui.dialog_card.scroll.ensure_control_visible(b)  # a long conversation scrolls: bring the button into view, as a player would
+	await _settle()
+	await _click_button(b)
+	return true
+
+
+## The visible footer button: Leave (Esc) while a conversation goes on, Continue / Begin the duel once it has ended.
+func _footer(id: String) -> Button:
+	return _ui.dialog_card.footer_button(id)
+
+
+func _acknowledge() -> bool:
+	await _settle()
+	var b := _footer("ack")
+	if b == null:
 		return false
 	await _click_button(b)
 	return true
 
 
-func _close_dialog() -> void:
-	if _ui.dialog.visible:
-		_ui.close_dialog()
+func _leave() -> void:
+	await _settle()
+	var b := _footer("leave")
+	if b != null:
+		await _click_button(b)
+	elif _ui.dialog.visible:
+		await _acknowledge()
 	await _frames(3)
-
 
 
 # ---------------------------------------------------------------- the real board
@@ -251,42 +281,45 @@ func _run() -> void:
 	var prof: Dictionary = _world._sim.op({"op": "profile"})
 	_check(str(prof.get("profile", "")) == "campaign", "the campaign profile")
 
-	# ---- the opening
-	_check(await _wait_until(func(): return _ui.dialog.visible and _ui.dialog_title.text == "Arrival", 4.0), "the arrival text opens by itself")
+	# ---- the opening: three pages, a progress indicator, Continue and Begin
+	_check(await _wait_until(func(): return _ui.opening_card.visible, 4.0), "the arrival text opens by itself")
 	_check(_world.paused, "the world waits while it is read")
 	await _shot("opening")
 	for _i in 3:
-		var nb: Button = _ui.choices_box.get_child(0)
+		var nb: Button = _ui.opening_card.footer_button("next")
 		await _click_button(nb)
-	_check(not _ui.dialog.visible and not _world.paused, "after three pages the arrival closes and time runs again")
-	_check(await _wait_until(func(): return _ui.journal_data().get("opening", ["x"]).is_empty(), 4.0), "the simulation has recorded that the arrival was seen")
-
-	# ---- meet the teacher, learn the colours, burn something with the new magic
+	_check(not _ui.opening_card.visible and not _world.paused, "after three pages the arrival closes and time runs again")
+	_check(await _wait_until(func(): return _journal().get("opening", ["x"]).is_empty(), 4.0), "the simulation has recorded that the arrival was seen")
 	_world.paused = true  # nobody wanders off between a click and its answer; the test advances time itself when it needs to
+
+	# ---- meet the teacher: click, inspect, Talk
 	var teacher := _teacher()
-	_check(not teacher.is_empty() and bool(teacher.get("has_quest", false)) and str(teacher.get("hint", "")).begins_with("Lesson:"), "a teacher with a lesson marker stands near the wizard")
-	var tree_id := ""
-	for e in _world._snapshot.get("entities", []):
-		if str(e.get("class", "")) == "tree" and str(e.get("stage", "")) in ["old", "mature"]:
-			var d := maxi(absi(int(e["tx"]) - _world._john_pos.x), absi(int(e["ty"]) - _world._john_pos.y))
-			if d <= 3:
-				tree_id = str(e["id"])
-				break
-	var refused: Dictionary = _world._sim.op({"op": "fire", "target": tree_id if tree_id != "" else "tree:1"})
+	_check(not teacher.is_empty() and bool(teacher.get("has_quest", false)), "a teacher with a small lesson mark stands near the wizard")
+	var refused: Dictionary = _world._sim.op({"op": "fire", "target": "tree:1"})
 	_check(str(refused.get("reason", "")) == "spell_unknown", "fire magic is refused before the first lesson (%s)" % str(refused.get("reason", refused.get("status", ""))))
 	await _talk_to(teacher)
-	_check(_ui.dialog.visible and _ui.dialog_title.text == str(teacher["label"]), "clicking the teacher opens a dialogue with their name (%s)" % _ui.dialog_title.text)
-	_check("learn_colours" in _choice_ids(), "the teacher offers to teach magic")
+	_check(_ui.dialog.visible and _ui.dialog_title.text == str(teacher["label"]), "clicking the teacher, then Talk, opens a conversation with their name (%s)" % _ui.dialog_title.text)
+	_check(_ui.dialog_card.subtitle_label.text == "Teacher", "the card says who they are (%s)" % _ui.dialog_card.subtitle_label.text)
+	_check("learn_colours" in _choice_ids() and _footer("leave") != null, "the teacher offers to teach magic, and Leave is there")
 	await _shot("teacher")
 	_check(_lesson_done("meet"), "the first meeting is a lesson done")
 	_check(await _press_choice("learn_colours"), "choose: Teach me magic")
 	_check(_lesson_done("colours") and _journal().get("spells", []).has("Flame"), "the colours are learned: %s, weave %d" % [str(_journal().get("spells", [])), int(_journal().get("weave_size", 0))])
+	_check(_ui.dialog.visible and not _ui.conv_ends, "the conversation goes on after a choice that leads to more")
 	await _shot("colours")
+	await _leave()
+	_check(not _ui.dialog.visible and _talking().is_empty(), "Leave closes it and the teacher is released")
 
-	# ---- a Ward you were told: the teacher's Ward is Frost, Vine, Frost (1, 6, 1); break it on the real board
+	# ---- a Ward you were told. The teacher's closing line is shown and acknowledged BEFORE the board opens.
+	await _talk_to(_teacher())
 	_check(await _press_choice("told_practice"), "choose: Let me try to break your Ward")
+	_check(_ui.dialog.visible and _ui.conv_ends and _ui.dialog_text.text.contains("Frost, Vine, Frost") and _ui.choices_box.get_child_count() == 0,
+		"the teacher's last words are shown, with no other choices (%s)" % _ui.dialog_text.text.replace("\n", " "))
+	_check(not _world._duel_open and _footer("ack") != null and _footer("ack").text == "Begin the duel", "the board has not opened yet: one button, 'Begin the duel'")
+	await _shot("told_ward_intro")
+	_check(await _acknowledge(), "acknowledge")
 	await _wait_until(func(): return _on_board(), 5.0)
-	_check(_on_board(), "the retained board opens in the scene")
+	_check(_on_board() and not _ui.dialog.visible, "the retained board opens in the scene and the conversation is closed")
 	var board := _board()
 	if _on_board():
 		board.ui_set_fast_cast(true)
@@ -302,13 +335,13 @@ func _run() -> void:
 		await _frames(10)
 		_check(await _wait_until(func(): return _ui.dialog.visible, 4.0), "the teacher answers after the duel")
 		_check(_lesson_done("told_ward"), "the lesson is done after a verified duel")
-		var wins: int = int(_world._sim.op({"op": "journal"}).get("journal", {}).get("lessons", []).size())
 		print("TUTORIAL teacher says: ", _ui.dialog_text.text.replace("\n", " | "))
 		await _shot("told_ward_result")
 		_check(_choice("hidden_duel") != null, "the teacher now offers the hidden-Ward duel")
 
-	# ---- a hidden Ward: a real fight. The wizard keeps every Ward that is consistent with the feedback so far and casts one of them each turn.
+	# ---- a hidden Ward: a real fight. The wizard keeps every Ward consistent with the feedback so far and casts one of them each turn.
 	_check(await _press_choice("hidden_duel"), "choose: Fight me properly, with hidden Wards")
+	_check(await _acknowledge(), "acknowledge the teacher's closing words")
 	await _wait_until(func(): return _on_board(), 5.0)
 	board = _board()
 	_check(_on_board(), "the board opens for the hidden-Ward duel")
@@ -340,55 +373,86 @@ func _run() -> void:
 		await _frames(10)
 		_check(await _wait_until(func(): return _ui.dialog.visible, 4.0), "the teacher answers after the duel")
 		_check(_lesson_done("hidden_ward"), "having fought a hidden Ward completes the lesson")
-		print("TUTORIAL teacher says: ", _ui.dialog_text.text.replace("\n", " | "))
 		await _shot("hidden_ward_result")
 
-	# ---- the village: the stories unlock, three villagers appear, the teacher says where
+	# ---- the village: the stories unlock and the teacher says who and where, by the names of people who really work here
 	_check("ask_village" in _choice_ids(), "the teacher offers the village question once the lessons are done (%s)" % str(_choice_ids()))
 	_check(await _press_choice("ask_village"), "choose: Is anyone in the village in need of help?")
-	await _close_dialog()
-	_sim_advance(3)
+	var tell: String = _ui.dialog_text.text
+	await _leave()
+	_sim_advance(2)
 	await _frames(4)
-	var ilda := _npc_named("Ilda")
-	var brenna := _npc_named("Brenna")
-	var orrik := _npc_named("Orrik")
-	_check(not ilda.is_empty() and not brenna.is_empty() and not orrik.is_empty(), "Brenna, Orrik and Ilda stand in the village")
-	_check(bool(brenna.get("has_quest", false)) and str(brenna.get("hint", "")).begins_with("Quest:"), "they carry the quest marker")
-	_check(str(_journal().get("quest", {}).get("status", "")) == "offered", "the journal lists the quarrel as offered")
+	var quest: Dictionary = {}
+	for q in _journal().get("quests", []):
+		quest = q
+	_check(not quest.is_empty() and str(quest.get("status", "")) == "offered" and str(quest.get("title", "")) == "The Forest Dispute", "the journal lists The Forest Dispute as offered")
+	var people: Dictionary = {}
+	for who in quest.get("people", []):
+		people[str(who["role"])] = who
+	_check(people.size() == 3 and str(people["cutter"]["occupation"]) == "lumberjack" and str(people["planter"]["occupation"]) == "forester", "three people: a lumberjack, a forester and a witness (%s)" % str(people.keys()))
+	for role in people:
+		_check(tell.contains(str(people[role]["name"])), "the teacher named %s" % str(people[role]["name"]))
+		_check(str(people[role]["where"]).contains("tiles"), "the journal says where %s is: '%s'" % [str(people[role]["name"]), str(people[role]["where"])])
+	var ids := {}
+	for role in people:
+		ids[role] = _id_of(str(people[role]["name"]))
+		_check(ids[role] != "", "%s is one of the settlement's own figures on the map (%s)" % [str(people[role]["name"]), str(ids[role])])
+		var row := _by_id(str(ids[role]))
+		_check(not row.is_empty() and str(row.get("class", "")) in ["worker", "unit"] and not row.has("has_quest"), "and looks like any other worker: class %s, no quest mark" % str(row.get("class", "")))
+	await _shot("quest_offered")
 
-	# ---- the quarrel, through the dialogue buttons
-	await _talk_to(ilda)
-	_check(_ui.dialog.visible and _ui.dialog_title.text == "Ilda", "Ilda talks")
-	_check(await _press_choice("gossip"), "ask Ilda what people say")
-	await _shot("gossip_ilda")
-	await _close_dialog()
-	await _talk_to(brenna)
-	_check(await _press_choice("what_happened"), "hear Brenna's side")
-	await _close_dialog()
-	await _talk_to(orrik)
-	_check(await _press_choice("what_happened"), "hear Orrik's side")
-	await _close_dialog()
-	await _talk_to(ilda)
-	_check("say_fence" in _choice_ids() and "say_coins" in _choice_ids() and "say_nothing" in _choice_ids(), "having heard both, Ilda's advice is asked: %s" % str(_choice_ids()))
-	_check(await _press_choice("say_fence"), "suggest that Orrik mends the fence first")
-	await _close_dialog()
-	await _talk_to(brenna)
-	_check("hammer" in _ui.dialog_text.text, "Brenna has heard")
-	await _close_dialog()
-	await _talk_to(orrik)
-	_check("fence" in _ui.dialog_text.text, "Orrik has heard")
-	await _close_dialog()
-	await _talk_to(ilda)
-	_check("hammer" in _ui.dialog_text.text, "Ilda closes the story")
-	await _close_dialog()
-	_check(str(_journal().get("quest", {}).get("status", "")) == "done", "the quest is done")
-	_check(_journal().get("notes", []).size() == 1, "the journal has the note")
+	# ---- the quarrel, through real conversations with ordinary people
+	var woodcutter: String = ids["cutter"]
+	var forester: String = ids["planter"]
+	var witness: String = ids["witness"]
+	await _talk_to(_by_id(woodcutter))
+	_check(_ui.dialog_title.text == str(people["cutter"]["name"]) and _ui.dialog_card.subtitle_label.text.begins_with("Lumberjack"), "the woodcutter talks, as himself (%s, %s)" % [_ui.dialog_title.text, _ui.dialog_card.subtitle_label.text])
+	_check("what_happened" in _choice_ids() and "farewell" in _choice_ids() or "leave" in _choice_ids(), "he has the dispute to tell about, and also the ordinary things a lumberjack says: %s" % str(_choice_ids()))
+	var topic := ""
+	for id in _choice_ids():
+		if str(id).begins_with("topic:"):
+			topic = str(id)
+	_check(topic != "" and await _press_choice(topic), "ask him an everyday question")
+	_check(topic != "" and _choice(topic) == null, "the answer is shown and that question is not offered again")
+	await _shot("worker_conversation")
+	_check(await _press_choice("what_happened"), "hear the woodcutter's side")
+	await _leave()
+	await _talk_to(_by_id(forester))
+	_check(_ui.dialog_card.subtitle_label.text.begins_with("Forester"), "the forester talks (%s)" % _ui.dialog_card.subtitle_label.text)
+	_check(await _press_choice("what_happened"), "hear the forester's side")
+	await _leave()
+	await _talk_to(_by_id(witness))
+	_check(_ui.dialog_card.subtitle_label.text.begins_with("Soldier"), "the witness is a soldier (%s)" % _ui.dialog_card.subtitle_label.text)
+	_check("say_compromise" in _choice_ids() and "say_cutter" in _choice_ids() and "say_planter" in _choice_ids() and "say_nothing" in _choice_ids(), "having heard both, the four ways to answer are offered")
+	_check(str(_choice("say_compromise").text).contains(str(people["cutter"]["name"])), "and they name the real people")
+	_check(await _press_choice("say_compromise"), "suggest they share the clearing")
+	await _leave()
+	await _talk_to(_by_id(woodcutter))
+	_check(_ui.dialog_text.text.contains("Share the clearing"), "the woodcutter reacts: '%s'" % _ui.dialog_text.text.substr(0, 60).replace("\n", " "))
+	await _leave()
+	await _talk_to(_by_id(forester))
+	await _leave()
+	await _talk_to(_by_id(witness))
+	_check(_ui.dialog_text.text.contains("shared clearing"), "and the witness closes it")
+	await _leave()
+	var done: Dictionary = {}
+	for q in _journal().get("quests", []):
+		done = q
+	_check(str(done.get("status", "")) == "done", "the quest is done")
+	_check(_journal().get("notes", []).size() == 1 and str(_journal()["notes"][0]["text"]).contains(str(people["cutter"]["name"])), "the journal has the note, with real names")
 	_sim_advance(2)
 	await _frames(4)
 	await _key(KEY_J)
-	_check(_ui.journal.visible and _ui.journal_text.text.contains("The Hen and the Cart  (done)"), "the Journal (J) shows the finished quest")
+	_check(_ui.journal.visible and _ui.journal_text.text.contains("THE FOREST DISPUTE  (done)"), "the Journal (J) shows the finished quest")
 	await _shot("journal")
 	await _key(KEY_J)
+	# afterwards they are still ordinary people
+	await _talk_to(_by_id(woodcutter))
+	var everyday := false
+	for id in _choice_ids():
+		everyday = everyday or str(id).begins_with("topic:")
+	_check(everyday and "what_happened" not in _choice_ids(), "afterwards the woodcutter is still an ordinary person with ordinary things to say")
+	await _leave()
 
 	if _fails.is_empty():
 		print("HYBRID_TUTORIAL_OK")

@@ -705,24 +705,19 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 		canvas.draw_string(font, c + Vector2(-70, 56), str(e.get("label", "outbreak")) + " (outbreak mark)", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(1, 0.95, 0.7))
 		return
 	if str(e.get("kind", "")) == "npc":
-		var healer := str(e.get("role", "")) == "healer"
-		var ring := Color(0.4, 1.0, 0.55) if healer else Color(1.0, 0.8, 0.25)
-		canvas.draw_arc(c + Vector2(0, 10), 26, 0.0, TAU, 28, Color(ring.r, ring.g, ring.b, 0.9), 4.0)  # a ring on the ground: someone to talk to
+		# A resident is drawn exactly like any worker: the same figure, no ring, no name plate (names appear when you inspect or talk to someone).
+		# Only a person with something to teach carries a small gold mark: a tutorial affordance, not a separate look for narrative people.
 		var fig := {"id": "fig:" + str(e.get("id", "")), "class": "worker", "kind": "worker", "anim": "idle", "definition": str(e.get("figure", "widelands.barbarians_miner_worker")),
 			"tx": e["tx"], "ty": e["ty"], "facing": "se", "status": "idle", "faction_name": str(e.get("faction_name", "")), "_static": true}
 		if _item_for(fig).is_empty():
 			canvas.draw_circle(c + Vector2(0, -18), 11, Color(0.95, 0.8, 0.65))
-			canvas.draw_rect(Rect2(c + Vector2(-13, -8), Vector2(26, 32)), ring, true)
+			canvas.draw_rect(Rect2(c + Vector2(-13, -8), Vector2(26, 32)), Color(0.45, 0.4, 0.7), true)
 		else:
 			draw_entity(canvas, fig, tpx)
-		var name := str(e.get("label", "Healer" if healer else "Miner"))
-		var w := font.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, 34).x
-		canvas.draw_rect(Rect2(c + Vector2(-w * 0.5 - 8, 32), Vector2(w + 16, 42)), Color(0, 0, 0, 0.7), true)
-		canvas.draw_string(font, c + Vector2(-w * 0.5, 64), name, HORIZONTAL_ALIGNMENT_LEFT, -1, 34, ring)
 		if bool(e.get("has_quest", false)):
-			var bob := 4.0 * sin(Time.get_ticks_msec() / 250.0)
-			canvas.draw_circle(c + Vector2(0, -78 + bob), 16, Color(1, 0.9, 0.2))
-			canvas.draw_circle(c + Vector2(0, -78 + bob), 16, Color(0.3, 0.1, 0.0), false, 3.0)
+			var bob := 3.0 * sin(Time.get_ticks_msec() / 300.0)
+			var top := c + Vector2(0, -70 + bob)
+			canvas.draw_colored_polygon(PackedVector2Array([top + Vector2(0, -9), top + Vector2(7, 0), top + Vector2(0, 9), top + Vector2(-7, 0)]), Color(1.0, 0.85, 0.3))
 			canvas.draw_string(font, c + Vector2(-5, -69 + bob), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color(0.3, 0.1, 0.0))
 	else:
 		var open := bool(e.get("solved", false))

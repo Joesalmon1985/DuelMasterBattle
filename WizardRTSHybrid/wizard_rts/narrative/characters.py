@@ -37,18 +37,6 @@ def _names(tribe: str) -> dict[str, Any]:
     return json.loads(path.read_text())
 
 
-SETTLEMENT_NORMAL = DATA.parents[3] / "godot_project" / "content" / "source" / "dialogue" / "settlement_normal.json"
-
-
-@lru_cache(maxsize=1)
-def _baseline() -> dict[str, Any]:
-    """Introductions (ours) plus each role's baseline line, read from the game's existing `settlement_normal.json` pack."""
-    base = json.loads((DATA / "dialogue" / "baseline.json").read_text())
-    roles = {e["speaker_role"]: e["text"] for e in json.loads(SETTLEMENT_NORMAL.read_text()) if e["id"] in ("dialogue.worker.baseline", "dialogue.soldier.baseline")}
-    base["roles"] = roles
-    return base
-
-
 def _rng(world: Any, key: str, purpose: str) -> random.Random:
     return random.Random(zlib.crc32(f"{world.seed}|{key}|{purpose}".encode()))
 
@@ -244,29 +232,3 @@ def persons_view(world: Any) -> dict[str, dict[str, Any]]:
         out[link["id"]] = {"person_id": pid, "name": person["name"], "has_quest": bool(found and world.dmb.quests[found[0]]["status"] in story.OPEN),
                            "quest_status": world.dmb.quests[found[0]]["status"] if found else ""}
     return out
-
-
-def talk(world: Any, entity_id: str) -> dict[str, Any] | None:
-    """Talk to a simulation body by its stable id: None when the id is not a body (the caller then rejects it), else the dialogue reply.
-
-    Baseline lines only (the role's line from `settlement_normal.json` and a neutral introduction); archetype intros arrive with D.1.
-    """
-    found = locate(world, entity_id)
-    if found is None:
-        return None
-    kind, row = found
-    if kind == "unit" and not row.get("alive", True):
-        return {"status": "rejected", "reason": "dead"}
-    if abs(int(world.player["tx"]) - int(row["tx"])) + abs(int(world.player["ty"]) - int(row["ty"])) > TALK_RANGE:
-        return {"status": "rejected", "reason": "too_far"}
-    pid = person_for(world, kind, entity_id)
-    if pid is None:
-        return {"status": "rejected", "reason": "no_such_person"}
-    person = world.dmb.people[pid]
-    link = person["link"]
-    base = _baseline()
-    role_key = "soldier" if kind == "unit" else ("carrier" if kind == "carrier" else "worker")
-    pool = base["intro"][role_key]
-    intro = pool[_rng(world, link_key(kind, entity_id), "intro").randrange(len(pool))].format(
-        name=person["name"], role=str(link["role"]).replace("_", " "), faction=row.get("faction_name", ""))
-    return {"status": "ok", "npc": entity_id, "person": pid, "name": person["name"], "lines": [intro, base["roles"]["soldier" if kind == "unit" else "worker"]], "choices": []}

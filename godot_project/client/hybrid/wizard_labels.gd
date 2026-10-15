@@ -1,42 +1,48 @@
 extends Node
 class_name HybridWizardLabels
 
-## Wizard Mode semantic labels over the hybrid world. This reuses the existing DuelMasterBattle interaction surface
-## (client/world/world_interaction_label.gd and sim/world/world_interaction_resolver.gd) with the same semantic contract
-## {knowledge_key, labels, observe_far, observe_near, interaction}: it does not add a second interaction system.
+## Wizard Mode inspection. Nothing floats over the world: clicking (or tapping) a person, a building, a tree or any other entity opens ONE inspect card
+## (DmbNarrativeCard) with what it is and what the wizard can do with it: Talk, Burn it with fire magic, ask a worker out of a building. The click
+## is taken on release (so a pinch or a drag never selects anything) and picks the figure that is drawn under the pointer: a person standing in a
+## doorway beats the building, a building beats the tree behind it.
 ##
-## - A few salient entities near the wizard carry a passive LABEL (trees only when very close), so a crowded base stays readable.
-## - Clicking ANY entity, near or far, opens its label: far shows the description (OBSERVATION); within FIRE_RANGE it speaks and offers
-##   the choices "Burn it with fire magic" / "Leave it alone" (RESPONSES).
-## - Fire magic is a command to the simulation by stable entity id (`fire`). The simulation re-checks the range from the wizard's
-##   authoritative tile, so a stale client cannot burn what is far away. Pictures are never deleted locally: the next snapshot decides.
+## Fire magic is a command to the simulation by stable id (`fire`). The simulation re-checks the range from the wizard's authoritative tile and, in
+## the campaign, that Flame has been learned, so a stale client cannot burn what is far away or what it has no magic for. Pictures are never deleted
+## locally: the next snapshot decides.
 
-const _Label = preload("res://client/world/world_interaction_label.gd")
-const _Resolver = preload("res://sim/world/world_interaction_resolver.gd")
+const _VT = preload("res://client/scripts/visual_theme.gd")
+const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 
 const FIRE_RANGE := 3  # tiles; must equal wizard_rts/magic.py FIRE_RANGE
-const PASSIVE_RADIUS := 6
-const TREE_PASSIVE_RADIUS := 3
-const MAX_PASSIVE := 3  # owner playtest 12 Oct 2026: six labels in a settlement overlapped; three short, non-overlapping ones
-const PASSIVE_CLASSES := ["building", "unit"]  # workers, carriers, animals, trees and rocks label only when clicked
+const CALL_RANGE := 6  # tiles; must equal wizard_rts/narrative/conversation.py CALLOUT_RANGE
 const REFRESH_SECONDS := 0.3
-const PRIORITY := {"unit": 0, "building": 1, "worker": 2, "carrier": 3, "animal": 4, "rock": 5, "tree": 6}
+const PRIORITY := {"npc": 0, "unit": 0, "building": 1, "worker": 2, "carrier": 3, "animal": 4, "rock": 5, "tree": 6}
+const OCCUPATION := {"ranger": "Forester", "lumberjack": "Lumberjack", "stonemason": "Stonemason", "hunter": "Hunter", "carrier": "Carrier", "soldier": "Soldier"}
 
 var world: Node
 var enabled := true
-var _entries: Dictionary = {}  # entity id -> {"lbl": label, "anchor": Node2D, "open": bool}
-var _anchor_root: Node2D
-var _acc := 0.0
-var _last_pos := Vector2i(-1, -1)
+var panel: Control  # the inspect card (DmbNarrativeCard)
+var current_id := ""
 var last_cast: Dictionary = {}
 var last_reply: Dictionary = {}
+var _workers: Array = []  # people at the open building, from the server: [{id, person, name, role, inside}]
+var _who: Dictionary = {}  # the open person, from the server: {name, subtitle}
+var _note := ""
+var _sig := ""  # what the card shows now: it is only rebuilt when this changes (a rebuild would swallow a click in progress)
+var _acc := 0.0
 
 
 func setup(p_world: Node) -> void:
 	world = p_world
-	_anchor_root = Node2D.new()
-	_anchor_root.name = "WizardLabelAnchors"
-	world.add_child(_anchor_root)
+	var layer := CanvasLayer.new()
+	layer.name = "InspectLayer"
+	layer.layer = 13
+	world.add_child(layer)
+	panel = NarrativeCard.new()
+	layer.add_child(panel)
+	panel.setup(world, "sheet", "InspectPanel")
+	panel.choice_pressed.connect(_on_action)
+	panel.footer_pressed.connect(func(_id: String) -> void: close())
 
 
 func _active() -> bool:
@@ -46,22 +52,18 @@ func _active() -> bool:
 
 
 func _process(delta: float) -> void:
-	if not _active():
-		_clear_all()
+	if not panel.visible:
+		return
+	if not _active() or (world.story_ui != null and (world.story_ui.dialog.visible or world.story_ui.opening_card.visible)):
+		close()
 		return
 	_acc += delta
 	if _acc >= REFRESH_SECONDS:
 		_acc = 0.0
-		_refresh_passive()
-	if world._john_pos != _last_pos:
-		_last_pos = world._john_pos
-		for id in _entries:
-			var lbl = _entries[id]["lbl"]
-			if is_instance_valid(lbl) and lbl.is_expanded():
-				lbl.notify_player_moved()  # walking away closes a conversation, as everywhere else in the game
-	for id in _entries.keys():
-		_place_anchor(str(id))
-	_drop_vanished()
+		if entity(current_id).is_empty():
+			close()  # it is gone (burned, died, walked off the map): the next snapshot decided
+		else:
+			_render()
 
 
 # ------------------------------------------------------------------ entities and descriptions
@@ -150,177 +152,6 @@ func describe(e: Dictionary) -> Dictionary:
 	return {"title": title, "far": far, "near": near, "person": who}
 
 
-func _semantic(e: Dictionary) -> Dictionary:
-	var d := describe(e)
-	return {
-		"knowledge_key": "hybrid:%s" % str(e["id"]),
-		"labels": [{"level": 0, "text": short_title(e)}],
-		"observe_far": d["far"],
-		"observe_near": d["near"],
-		"interaction": "fire",
-		"dismiss_on_move": true,
-	}
-
-
-# ------------------------------------------------------------------ label lifecycle
-
-func labels() -> Dictionary:
-	var out := {}
-	for id in _entries:
-		out[id] = _entries[id]["lbl"]
-	return out
-
-
-func label_for(id: String):
-	if _entries.has(id):
-		return _entries[id]["lbl"]
-	return null
-
-
-func _ensure(e: Dictionary):
-	var id := str(e["id"])
-	if _entries.has(id):
-		return _entries[id]["lbl"]
-	var anchor := Node2D.new()
-	_anchor_root.add_child(anchor)
-	var lbl = _Label.new()
-	lbl.name = "Wizard_%s" % id.replace(":", "_")
-	world._semantic_root.add_child(lbl)
-	lbl.bind_bridge(_semantic(e), id, anchor, world._camera, Vector2(0, -40), Callable(self, "_level"))
-	lbl.interact_requested.connect(_on_interact)
-	lbl.response_chosen.connect(_on_response)
-	_entries[id] = {"lbl": lbl, "anchor": anchor, "open": false}
-	_place_anchor(id)
-	return lbl
-
-
-func _level(_key: String) -> int:
-	return 1
-
-
-func _place_anchor(id: String) -> void:
-	if not _entries.has(id):
-		return
-	var e := entity(id)
-	if e.is_empty():
-		return
-	var tpx: float = world.TPX
-	var tile := Vector2(float(e.get("tx", 0)), float(e.get("ty", 0)))
-	var vis: Dictionary = world._art._vis.get(id, {})
-	if not vis.is_empty():
-		tile = vis["pos"]
-	var centre := (tile + Vector2(0.5, 0.5)) * tpx
-	var tiles := _tiles(e)
-	if tiles.size() > 1:
-		var top := 1 << 30
-		var minx := 1 << 30
-		var maxx := -(1 << 30)
-		for t in tiles:
-			top = mini(top, t.y)
-			minx = mini(minx, t.x)
-			maxx = maxi(maxx, t.x)
-		centre = Vector2((minx + maxx + 1) * 0.5, float(top)) * tpx
-	(_entries[id]["anchor"] as Node2D).global_position = centre
-
-
-func _drop_vanished() -> void:
-	for id in _entries.keys():
-		if entity(str(id)).is_empty():
-			_remove(str(id))
-
-
-func _remove(id: String) -> void:
-	if not _entries.has(id):
-		return
-	var rec: Dictionary = _entries[id]
-	if is_instance_valid(rec["lbl"]):
-		rec["lbl"].queue_free()
-	if is_instance_valid(rec["anchor"]):
-		rec["anchor"].queue_free()
-	_entries.erase(id)
-
-
-func _clear_all() -> void:
-	for id in _entries.keys():
-		_remove(str(id))
-
-
-func _refresh_passive() -> void:
-	var me: Vector2i = world._john_pos
-	var cands: Array = []
-	for e in world._snapshot.get("entities", []):
-		if typeof(e) != TYPE_DICTIONARY:
-			continue
-		var cls := str(e.get("class", ""))
-		if not cls in PASSIVE_CLASSES or str(e.get("kind", "")) == "hazard" or bool(e.get("inside", false)):
-			continue
-		var d := distance_to(e)
-		if d > PASSIVE_RADIUS:
-			continue
-		cands.append([int(PRIORITY[cls]) * 100 + d, e])
-	cands.sort_custom(func(a, b): return a[0] < b[0])
-	var keep := {}
-	var taken: Array = []  # screen rectangles already used by a kept label: a label that would overlap one is not shown
-	for c in cands:
-		if keep.size() >= MAX_PASSIVE:
-			break
-		var r := _passive_rect(c[1])
-		var clash := false
-		for t in taken:
-			if (t as Rect2).intersects(r):
-				clash = true
-				break
-		if clash:
-			continue
-		taken.append(r)
-		keep[str(c[1]["id"])] = c[1]
-	if world.story_ui != null and world.story_ui.dialog.visible:
-		keep.clear()  # an open conversation owns the screen
-	for id in _entries.keys():
-		var lbl = _entries[id]["lbl"]
-		if not keep.has(id) and not (is_instance_valid(lbl) and lbl.is_expanded()):
-			_remove(str(id))
-	for id in keep:
-		var lbl = _ensure(keep[id])
-		if is_instance_valid(lbl) and not lbl.is_expanded():
-			lbl.update_semantic(_semantic(keep[id]))
-	# one expanded interaction owns the foreground: other labels step aside while it talks
-	var owner = null
-	for id in _entries:
-		var lbl = _entries[id]["lbl"]
-		if is_instance_valid(lbl) and lbl.is_expanded():
-			owner = lbl
-	for id in _entries:
-		var lbl = _entries[id]["lbl"]
-		if not is_instance_valid(lbl):
-			continue
-		lbl.set_foreground(lbl == owner)
-		lbl.set_passive_suppressed(owner != null and lbl != owner and not lbl.is_expanded())
-
-
-## Where a passive label would sit on screen (title width estimate), used to keep labels apart.
-func _passive_rect(e: Dictionary) -> Rect2:
-	# the same geometry world_interaction_label uses for a LABEL: width clamp(72 + 11 * chars, 96, 220), 48 high, 8 px above its anchor
-	var tpx: float = world.TPX
-	var wp := (Vector2(float(e.get("tx", 0)), float(e.get("ty", 0))) + Vector2(0.5, 0.5)) * tpx + Vector2(0, -40)
-	var sp: Vector2 = world.get_canvas_transform() * wp
-	var w := clampf(72.0 + float(short_title(e).length()) * 11.0, 96.0, 220.0)
-	return Rect2(sp - Vector2(w * 0.5, 56.0), Vector2(w, 48.0)).grow(4.0)
-
-
-## A short passive title: the kind of thing, not the faction and the full description.
-func short_title(e: Dictionary) -> String:
-	var t := str(describe(e)["title"])
-	var faction := str(e.get("faction_name", ""))
-	if faction != "" and t.begins_with(faction + " "):
-		t = t.substr(faction.length() + 1)
-	if t.length() > 22:
-		t = t.substr(0, 21) + "…"
-	return t
-
-
-# ------------------------------------------------------------------ pointer
-
 ## The entity under a screen position (any distance), or {}.
 func pick(screen_pos: Vector2) -> Dictionary:
 	var wp: Vector2 = world.get_canvas_transform().affine_inverse() * screen_pos
@@ -356,7 +187,7 @@ func pick(screen_pos: Vector2) -> Dictionary:
 			if not vis.is_empty():
 				pos = vis["pos"]
 			var centre := pos + Vector2(0.5, 0.35)
-			var reach := 0.75 if cls in ["unit", "worker", "carrier", "animal"] else 0.6
+			var reach := 0.75 if cls in ["unit", "worker", "carrier", "animal", "npc"] else 0.6
 			if cls == "tree":
 				centre = pos + Vector2(0.5, -0.45)  # a tree's crown is drawn above the tile it stands on: that is where people click
 				reach = 0.75
@@ -368,73 +199,172 @@ func pick(screen_pos: Vector2) -> Dictionary:
 	return best
 
 
-## Left click in Wizard Mode. Returns true when the click opened an entity's label.
-func try_click(screen_pos: Vector2) -> bool:
-	if not _active():
-		return false
-	var e := pick(screen_pos)
-	if e.is_empty():
-		for id in _entries:
-			var lbl = _entries[id]["lbl"]
-			if is_instance_valid(lbl) and lbl.is_expanded():
-				lbl.collapse()
-		return false
-	open(str(e["id"]))
-	return true
+# ------------------------------------------------------------------ the inspect card
+
+func person_row(e: Dictionary) -> bool:
+	if str(e.get("class", "")) == "npc":
+		return true
+	return str(e.get("class", "")) in ["worker", "carrier", "unit"] and not bool(e.get("inside", false)) and bool(e.get("alive", true))
 
 
+func occupation_of(e: Dictionary) -> String:
+	var cls := str(e.get("class", ""))
+	if cls == "worker":
+		return str(OCCUPATION.get(str(e.get("role", "")), str(e.get("role", "worker")).replace("_", " ").capitalize()))
+	if cls == "carrier":
+		return "Carrier"
+	if cls == "unit":
+		return "Soldier" if str(e.get("kind", "")) == "soldier" else str(e.get("label", "Unit"))
+	if cls == "npc":
+		return str(e.get("role", "villager")).capitalize()
+	return ""
+
+
+## Fire is gated by learning Flame in the campaign only (the server decides; the journal says whether it is gated, and what is known).
+func flame_known() -> bool:
+	var journal: Dictionary = world.story_ui.journal_data() if world.story_ui != null else {}
+	if journal.is_empty() or not bool(journal.get("magic_gated", false)):
+		return true
+	return (journal.get("spells", []) as Array).has("Flame")
+
+
+## Open the inspect card for the entity with this id.
 func open(id: String) -> void:
 	var e := entity(id)
 	if e.is_empty():
 		return
-	for other in _entries:
-		var o = _entries[other]["lbl"]
-		if other != id and is_instance_valid(o) and o.is_expanded():
-			o.collapse()
-	var lbl = _ensure(e)
-	lbl.update_semantic(_semantic(e))
-	lbl.collapse()
-	lbl.press()  # LABEL -> interact_requested: far observes, near offers fire
+	current_id = id
+	_workers = []
+	_who = {}
+	_note = ""
+	if person_row(e) and world._sim != null:
+		var who: Dictionary = world._sim.op({"op": "inspect_person", "npc": id})  # the server names everyone, near or far: one Person per body
+		if str(who.get("status", "")) == "ok":
+			_who = who
+	if str(e.get("class", "")) == "building" and world._sim != null:
+		var reply: Dictionary = world._sim.op({"op": "inspect_building", "building": id})
+		if str(reply.get("status", "")) == "ok":
+			_workers = reply.get("people", [])
+	_render()
 
 
-func _on_interact(key: String) -> void:
-	var id := key.trim_prefix("hybrid:")
-	var e := entity(id)
-	var lbl = label_for(id)
-	if e.is_empty() or lbl == null:
-		return
-	var resolved: Dictionary = _Resolver.resolve(_semantic(e), null, in_range(e), 1)
-	if str(resolved.get("mode", "")) != "interact":
-		lbl.open_observation()  # at a distance a click only describes the thing
-		return
-	var options: Array = [
-		{"index": 0, "label": "Burn it with fire magic"},
-		{"index": 1, "label": "Leave it alone"},
-	]
-	var who := str(describe(e).get("person", ""))
-	if who != "":
-		options.push_front({"index": 2, "label": "Talk to %s" % who})
-	lbl.begin_speech([str(resolved.get("observe_near", ""))], options)
-	# the description and the choices appear together: advance the one-line speech on the next frame
-	await get_tree().process_frame
-	await get_tree().process_frame  # the label ignores a second press in the frame counter value of the first
-	if is_instance_valid(lbl) and lbl.interaction_state() == "SPEECH":
-		lbl.press()
+func close() -> void:
+	_sig = ""
+	current_id = ""
+	_workers = []
+	_who = {}
+	if panel != null:
+		panel.hide_card()
 
 
-func _on_response(key: String, index: int) -> void:
-	var id := key.trim_prefix("hybrid:")
-	var lbl = label_for(id)
-	if index == 2:  # "Talk to <name>": the story dialogue over the simulation's own body
-		if lbl != null:
-			lbl.collapse()
-		world.story_ui.talk_to(id)
+func _render() -> void:
+	var e := entity(current_id)
+	if e.is_empty():
 		return
-	if index != 0:
-		if lbl != null:
-			lbl.collapse()
+	var d := describe(e)
+	var cls := str(e.get("class", ""))
+	var near := in_range(e)
+	var actions: Array = []
+	var title := str(d["title"])
+	var subtitle := ""
+	var body := str(d["far"])
+	if person_row(e):
+		var pname := str(_who.get("name", e.get("label", "")))
+		title = pname if pname != "" else title
+		subtitle = str(_who.get("subtitle", occupation_of(e)))
+		body = describe_person(e)
+		var close_enough: bool = _manhattan(e) <= world.story_ui.TALK_RANGE
+		actions.append({"id": "talk", "text": "Talk" if close_enough else "Talk (walk closer)", "kind": "primary", "disabled": not close_enough})
+	elif cls == "building":
+		subtitle = "Building - %s" % (str(e.get("faction_name", "")) if str(e.get("faction_name", "")) != "" else "no faction")
+		body = str(e.get("status_text", "")) if str(e.get("status_text", "")) != "" else str(d["far"])
+		if bool(e.get("destroyed", false)):
+			body = "It is burning down."
+		if int(e.get("hp", 0)) < int(e.get("max_hp", 0)) and not bool(e.get("destroyed", false)):
+			body += " Damaged: %d of %d." % [int(e.get("hp", 0)) / 100, int(e.get("max_hp", 0)) / 100]
+		for w in _workers:
+			var line := "%s, %s" % [str(w["name"]), str(OCCUPATION.get(str(w["role"]), str(w["role"])))]
+			body += "\n" + line + (" - inside" if bool(w["inside"]) else " - out at work")
+			if bool(w["inside"]):
+				var can := maxi(absi(world._john_pos.x - int(e["tx"])), absi(world._john_pos.y - int(e["ty"]))) <= CALL_RANGE
+				actions.append({"id": "call:" + str(w["id"]), "text": "Ask %s to come out" % str(w["name"]) + ("" if can else " (walk closer)"), "disabled": not can})
+	else:
+		subtitle = cls.capitalize()
+	if _note != "":
+		body += "\n\n" + _note
+	var can_burn := near and flame_known()
+	var burn_text := "Burn it with fire magic"
+	if not flame_known():
+		burn_text += " (you have no magic yet)"
+	elif not near:
+		burn_text += " (walk closer)"
+	actions.append({"id": "burn", "text": burn_text, "disabled": not can_burn})
+	# The card is only rebuilt when WHO it is about or WHAT can be done changes; a changing description (a building's status text) is updated in place,
+	# so a click that is in flight on a button is never lost to a rebuild.
+	var sig := JSON.stringify([title, subtitle, actions])
+	if sig == _sig and panel.visible:
+		if panel.body_label.text != body:
+			panel.body_label.text = body
+			panel.relayout()
 		return
-	cast_fire(id)
+	_sig = sig
+	panel.show_card(title, subtitle, body, actions, [{"id": "close", "text": "Close"}])
+
+
+func describe_person(e: Dictionary) -> String:
+	var cls := str(e.get("class", ""))
+	var bits: PackedStringArray = []
+	var carrying := str(e.get("carrying", ""))
+	if cls == "worker":
+		bits.append("Carrying a %s." % carrying if carrying != "" else "Not carrying anything.")
+		var st := str(e.get("status", ""))
+		if st != "" and st != "idle":
+			bits.append("Currently %s." % st.replace("_", " "))
+		else:
+			bits.append("Waiting for work.")
+	elif cls == "carrier":
+		bits.append("Carrying a %s along the road." % str(e.get("cargo", "")) if str(e.get("cargo", "")) != "" else "Walking the road with nothing to carry.")
+	elif cls == "unit":
+		bits.append("Health %d of %d." % [int(e.get("hp", 0)) / 100, int(e.get("max_hp", 0)) / 100])
+	elif cls == "npc":
+		bits.append("Stands near where you arrived.")
+	return " ".join(bits)
+
+
+func _manhattan(e: Dictionary) -> int:
+	return absi(world._john_pos.x - int(e["tx"])) + absi(world._john_pos.y - int(e["ty"]))
+
+
+func _on_action(id: String) -> void:
+	var e := entity(current_id)
+	if e.is_empty():
+		return
+	if id == "talk":
+		var target := current_id
+		close()
+		world.story_ui.talk_to(target)
+	elif id == "burn":
+		var target := current_id
+		var reply := cast_fire(target)
+		if str(reply.get("status", "")) == "ok":
+			close()
+		else:
+			_note = fire_message(str(reply.get("reason", "failed")))
+			_render()
+	elif id.begins_with("call:"):
+		var wid := id.trim_prefix("call:")
+		var reply: Dictionary = world._sim.op({"op": "call_out", "npc": wid})
+		if str(reply.get("status", "")) == "coming":
+			close()
+			world.story_ui._toast("%s is coming out." % str(reply.get("name", "They")))
+		else:
+			_note = {"too_far": "Walk closer to the building first.", "not_inside": "They are not inside.", "no_room": "There is no room to step out."}.get(str(reply.get("reason", "")), "They cannot come out now.")
+			_render()
+
+
+func fire_message(why: String) -> String:
+	return {"too_far": "Too far away: walk closer to burn it.", "recharging": "The fire needs a moment to gather.", "already_destroyed": "It is already burning.",
+		"already_dead": "It is already dead.", "no_target": "It is gone.", "spell_unknown": "You have not learned any magic yet. Find your teacher."}.get(why, "The spell fizzles (%s)." % why)
 
 
 ## The Fire interaction: a simulation command by stable id. The reply decides what is shown.
@@ -445,15 +375,20 @@ func cast_fire(id: String) -> Dictionary:
 	last_reply = reply
 	if reply.has("snapshot"):
 		world._apply_snapshot(reply["snapshot"])
-	var lbl = label_for(id)
 	if str(reply.get("status", "")) == "ok":
-		if lbl != null:
-			lbl.collapse()
-		_remove(id)
 		world._hud_area_lbl.text = "Fire!"
-	else:
-		var why := str(reply.get("reason", "failed"))
-		var text: String = {"too_far": "Too far away: walk closer to burn it.", "recharging": "The fire needs a moment to gather.", "already_destroyed": "It is already burning.", "already_dead": "It is already dead.", "no_target": "It is gone.", "spell_unknown": "You have not learned any magic yet. Find your teacher."}.get(why, "The spell fizzles (%s)." % why)
-		if lbl != null:
-			lbl.begin_speech([text], [])
 	return reply
+
+
+# ------------------------------------------------------------------ pointer
+
+## Left click in Wizard Mode (taken on release). Returns true when it opened an inspect card; a click on empty ground closes the open one.
+func try_click(screen_pos: Vector2) -> bool:
+	if not _active():
+		return false
+	var e := pick(screen_pos)
+	if e.is_empty():
+		close()
+		return false
+	open(str(e["id"]))
+	return true

@@ -442,16 +442,10 @@ def talk(world: Any, npc_id: str) -> dict[str, Any]:
     s = state(world)
     npc = s["npcs"].get(npc_id)
     if npc is None:
-        if "narrative" in world.__dict__ and npc_id in world.narrative["residents"]:  # a resident the narrative layer created (the teacher, the villagers)
-            from wizard_rts.narrative import tutorial
+        if "narrative" in world.__dict__:  # anyone else: the teacher, or any worker, carrier or soldier (narrative/conversation.py owns the lifecycle)
+            from wizard_rts.narrative import conversation
 
-            return tutorial.talk(world, npc_id)
-        if "narrative" in world.__dict__:  # the simulation's own workers, carriers and soldiers
-            from wizard_rts.narrative import characters
-
-            body = characters.talk(world, npc_id)
-            if body is not None:
-                return body
+            return conversation.talk(world, npc_id)
         return {"status": "rejected", "reason": "no_such_person"}
     if not _near(world, npc["tile"], TALK_RANGE):
         return {"status": "rejected", "reason": "too_far"}
@@ -466,10 +460,10 @@ def talk(world: Any, npc_id: str) -> dict[str, Any]:
 
 def choose(world: Any, npc_id: str, choice: str) -> dict[str, Any]:
     s = state(world)
-    if "narrative" in world.__dict__ and npc_id in world.narrative["residents"]:
-        from wizard_rts.narrative import tutorial
+    if "narrative" in world.__dict__ and npc_id not in s["npcs"]:
+        from wizard_rts.narrative import conversation
 
-        return tutorial.choose(world, npc_id, choice)
+        return conversation.choose(world, npc_id, choice)
     res = talk(world, npc_id)
     if res["status"] != "ok" or "quest" not in res:
         return res
@@ -825,7 +819,7 @@ def _story_snapshot(world: Any) -> dict[str, Any]:
 # ------------------------------------------------------------------ the wizard's command surface
 
 WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",
-              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal")
+              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person")
 
 
 def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
@@ -851,7 +845,7 @@ def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         out = duel_guess(world, list(message.get("guess", [])))
     elif op == "duel_abandon":
         out = duel_abandon(world)
-    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal"):
+    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person"):
         from wizard_rts.narrative import ops
 
         out = ops.handle(world, message)

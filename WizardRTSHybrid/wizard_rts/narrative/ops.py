@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from wizard_rts.narrative import duel_lease, residents, tutorial, wizard
+from wizard_rts.narrative import conversation, duel_lease, tutorial, wizard
 
-OPS = ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal")
+OPS = ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person")
 FOUGHT = ("victory", "defeat", "clash", "stalemate")
 
 
@@ -19,8 +19,13 @@ def handle(world: Any, message: dict[str, Any]) -> dict[str, Any]:
     if op == "duel_resolve":
         return resolve(world, message)
     if op == "end_talk":
-        residents.end_conversation(world, str(message.get("npc", "")) or None)
-        return {"status": "ok"}
+        return {"status": "ok", "ended": conversation.end(world, str(message.get("npc", "")) or None, str(message.get("reason", "closed")))}
+    if op == "call_out":
+        return conversation.call_out(world, str(message.get("npc", "")))
+    if op == "inspect_person":
+        return conversation.inspect_person(world, str(message.get("npc", "")))
+    if op == "inspect_building":
+        return conversation.inspect_building(world, str(message.get("building", "")))
     if op == "opening_done":
         wizard.wiz(world)["opening_seen"] = True
         return {"status": "ok"}

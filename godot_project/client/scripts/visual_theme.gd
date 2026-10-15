@@ -180,3 +180,91 @@ static func apply_label_secondary(lbl: Label) -> void:
 static func apply_label_caption(lbl: Label) -> void:
 	lbl.add_theme_font_size_override("font_size", FONT_CAPTION)
 	lbl.add_theme_color_override("font_color", COLOR_TEXT_SECONDARY)
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------
+# Narrative UI: conversations, the arrival text, the journal, inspect panels, the campaign HUD and the pause menu share ONE look.
+# Arcane fantasy with classic strategy-game chrome: deep indigo cards, a restrained muted-gold edge, parchment text, gold only for names and the
+# one primary action. Widgets are built by DmbNarrativeCard (client/ui/narrative_card.gd) and sized by DmbResponsiveModal.metrics(): every size
+# there is in PHYSICAL pixels, so these functions take `k`, the virtual units per physical pixel (1 / the stretch scale).
+# ---------------------------------------------------------------------------------------------------------------------------------
+
+const COLOR_CARD := Color("#161230")
+const COLOR_CARD_INNER := Color("#201a3e")
+const COLOR_CARD_EDGE := Color("#9a7b3f")        # muted gold
+const COLOR_PARCHMENT := Color("#efe6cf")        # body text
+const COLOR_PARCHMENT_DIM := Color("#c8bea4")    # secondary text
+const COLOR_GOLD := Color("#e2bb5e")             # names, titles, the primary action
+const COLOR_CHOICE := Color("#2a2350")
+const COLOR_CHOICE_HOVER := Color("#3a3070")
+const COLOR_CHOICE_EDGE := Color("#5b4fb8")
+const COLOR_HUD_BG := Color(0.07, 0.06, 0.16, 0.82)
+const NARR_TOUCH_MIN := 48.0                     # physical px: the smallest tappable control
+
+
+static func narr_card_style(k: float, radius: float = 10.0) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = COLOR_CARD
+	s.border_color = COLOR_CARD_EDGE
+	s.set_border_width_all(maxi(1, int(round(1.5 * k))))
+	s.set_corner_radius_all(int(round(radius * k)))
+	s.shadow_color = Color(0, 0, 0, 0.5)
+	s.shadow_size = int(round(8 * k))
+	s.shadow_offset = Vector2(0, 3 * k)
+	var m := int(round(14 * k))
+	s.content_margin_left = m
+	s.content_margin_right = m
+	s.content_margin_top = int(round(12 * k))
+	s.content_margin_bottom = int(round(12 * k))
+	return s
+
+
+static func narr_hud_style(k: float) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = COLOR_HUD_BG
+	s.border_color = COLOR_CARD_EDGE.darkened(0.15)
+	s.set_border_width_all(maxi(1, int(round(1.0 * k))))
+	s.set_corner_radius_all(int(round(8 * k)))
+	s.content_margin_left = int(round(10 * k))
+	s.content_margin_right = int(round(10 * k))
+	s.content_margin_top = int(round(6 * k))
+	s.content_margin_bottom = int(round(7 * k))
+	return s
+
+
+static func narr_button_style(k: float, kind: String, state: String) -> StyleBoxFlat:
+	## kind: "choice" (a reply the wizard can give) or "primary" (Continue, Begin, Talk: the one gold action); state: normal, hover, pressed, disabled.
+	var s := StyleBoxFlat.new()
+	var primary := kind == "primary"
+	s.bg_color = (Color("#3b2f12") if primary else COLOR_CHOICE)
+	s.border_color = (COLOR_GOLD if primary else COLOR_CHOICE_EDGE)
+	match state:
+		"hover":
+			s.bg_color = (Color("#4d3d17") if primary else COLOR_CHOICE_HOVER)
+		"pressed":
+			s.bg_color = s.bg_color.darkened(0.25)
+		"disabled":
+			s.bg_color = Color("#1d1936")
+			s.border_color = Color("#3a3160")
+	s.set_border_width_all(maxi(1, int(round((2.0 if primary else 1.5) * k))))
+	s.set_corner_radius_all(int(round(8 * k)))
+	s.content_margin_left = int(round(14 * k))
+	s.content_margin_right = int(round(14 * k))
+	s.content_margin_top = int(round(8 * k))
+	s.content_margin_bottom = int(round(8 * k))
+	return s
+
+
+static func style_narr_button(b: Button, k: float, kind: String, font_px: float) -> void:
+	for st in ["normal", "hover", "pressed", "disabled"]:
+		b.add_theme_stylebox_override(st, narr_button_style(k, kind, st))
+	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	b.add_theme_font_size_override("font_size", int(round(font_px * k)))
+	b.add_theme_color_override("font_color", COLOR_GOLD if kind == "primary" else COLOR_PARCHMENT)
+	b.add_theme_color_override("font_hover_color", COLOR_PARCHMENT)
+	b.add_theme_color_override("font_pressed_color", COLOR_PARCHMENT)
+	b.add_theme_color_override("font_disabled_color", COLOR_PARCHMENT_DIM.darkened(0.4))
+	b.focus_mode = Control.FOCUS_NONE
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT if kind == "choice" else HORIZONTAL_ALIGNMENT_CENTER
+	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	b.clip_text = false
