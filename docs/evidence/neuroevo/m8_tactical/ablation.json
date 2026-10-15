@@ -1,0 +1,137 @@
+{
+ "summary": {
+  "n_pairs": 12,
+  "mean_advantage": 0.0,
+  "lower90": 0.0,
+  "upper90": 0.0,
+  "seeds": 6,
+  "seed_wins": 0,
+  "loss_rate_candidate": 0.0,
+  "loss_rate_reference": 0.0,
+  "mean_f_candidate": 1020.7222222222223,
+  "mean_f_reference": 1020.7222222222223,
+  "tactical_orders_total": 37
+ },
+ "pairs": [
+  {
+   "seed": 4413785,
+   "leg": "A",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1022.3333333333334,
+   "f_ref": 1022.3333333333334,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4413785,
+   "leg": "B",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1018.0,
+   "f_ref": 1018.0,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4267694,
+   "leg": "A",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1024.0,
+   "f_ref": 1024.0,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4267694,
+   "leg": "B",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1003.3333333333334,
+   "f_ref": 1003.3333333333334,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4767400,
+   "leg": "A",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1028.0,
+   "f_ref": 1028.0,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4767400,
+   "leg": "B",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1018.0,
+   "f_ref": 1018.0,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4611082,
+   "leg": "A",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1028.0,
+   "f_ref": 1028.0,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4611082,
+   "leg": "B",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1025.3333333333333,
+   "f_ref": 1025.3333333333333,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4264595,
+   "leg": "A",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1028.0,
+   "f_ref": 1028.0,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4264595,
+   "leg": "B",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1002.0,
+   "f_ref": 1002.0,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4927236,
+   "leg": "A",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1032.3333333333333,
+   "f_ref": 1032.3333333333333,
+   "end_cand": "horizon"
+  },
+  {
+   "seed": 4927236,
+   "leg": "B",
+   "adv": 0.0,
+   "cand_lost": false,
+   "champ_lost": false,
+   "f_cand": 1019.3333333333334,
+   "f_ref": 1019.3333333333334,
+   "end_cand": "horizon"
+  }
+ ]
+}

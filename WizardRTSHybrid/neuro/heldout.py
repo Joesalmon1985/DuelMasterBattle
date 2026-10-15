@@ -29,7 +29,8 @@ def seat_values(res: dict, seats: tuple[str, ...], key: str = "seats") -> dict[s
 
 
 def paired_heldout(pool: GamePool, out_dir: Path, candidate: Path, reference: Path | None, seeds: list[int], game_minutes: int, map_size: str, level: str = "C0",
-                   scale: float = 1.0, wall_cap_s: int = 7200, tactical: bool = False, stop: Any = None, log_decisions: bool = False) -> list[dict]:
+                   scale: float = 1.0, wall_cap_s: int = 7200, tactical: bool = False, stop: Any = None, log_decisions: bool = False,
+                   ref_tactical: bool | None = None) -> list[dict]:
     out_dir = Path(out_dir)
     jobs = []
     for s in seeds:
@@ -42,7 +43,8 @@ def paired_heldout(pool: GamePool, out_dir: Path, candidate: Path, reference: Pa
             jobs.append(make_job(f"cand_{s}_{leg}", out_dir / f"cand_{s}_{leg}", ep, seats, {"kind": "candidate", "seed": s, "leg": leg}, log_decisions=log_decisions and leg == "A"))
             if reference is not None:
                 seats = {x: f"genome:{reference}" for x in mine} | {x: "plus" for x in theirs}
-                jobs.append(make_job(f"ref_{s}_{leg}", out_dir / f"ref_{s}_{leg}", ep, seats, {"kind": "reference", "seed": s, "leg": leg}))
+                ep_ref = ep if ref_tactical is None else {**ep, "tactical": bool(ref_tactical)}  # the M8 ablation plays the same genome with the tactical controller on and off
+                jobs.append(make_job(f"ref_{s}_{leg}", out_dir / f"ref_{s}_{leg}", ep_ref, seats, {"kind": "reference", "seed": s, "leg": leg}))
     res = pool.run(jobs, stop=stop)
     pairs = []
     for s in seeds:
