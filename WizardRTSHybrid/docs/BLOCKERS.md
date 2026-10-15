@@ -21,3 +21,5 @@
 - Observed: source launch log in `docs/original_runs/OPENRA.md`. No screenshot of that window was taken.
 - Cause: the process was stopped on purpose so it would not keep the display. This is not a compile failure.
 - Next: launch again and save a frame before starting a match. Do not treat the missing screenshot as a failed build.
+
+| 15 Oct 2026 | Android two-phone acceptance (`../docs/MOBILE_LAN_MULTIPLAYER.md` §10) | `adb devices` lists nothing; the Android emulator needs `/dev/kvm` and the user is not in the `kvm` group (`id` shows no kvm) | Not an error: no hardware. The host-capable APK is built by `scripts/android/build_apk.sh`; the staged Python passes an isolated self-test on the build machine | Attach a phone (USB debugging) and run §10; or add the user to `kvm` and install an arm64/x86_64 system image |
