@@ -1,5 +1,28 @@
 # Next agent handoff
 
+## INTEGRATION, 15 Oct 2026: training, multiplayer and the wizard campaign are all on `main`
+
+The owner asked on 15 Oct 2026 for the three workstreams to be brought together and merged into `main`. `main` now holds, in this order:
+
+1. `feature/neuroevolution-plan` (62 commits): hierarchical neuroevolution, `train_ai.py`, the content freeze. Restart note: the next section of this file.
+2. `feature/wizard-mode-implementation` (14 commits beyond its fork from the neuro branch at `4b67f55c`): the settlement-stories plan, the wizard campaign, narrative, dialogue, quests, save and load, the responsive UI. Entry: `docs/WIZARD_IMPLEMENTATION_HANDOFF.md`, ledger `docs/ledger/WIZARD_STORIES_PROGRESS.md`.
+3. `feature/mobile-lan-multiplayer` (5 commits from `143797ba`): LAN host and client, PvP Ward duels, Android packaging. Entry: `docs/MOBILE_LAN_MULTIPLAYER.md`.
+
+Two conflicts, both resolved by keeping both sides:
+
+- `WizardRTSHybrid/wizard_rts/workers.py`: one import line (`flow`, `visibility` from the neuro branch; `hold` from the wizard branch).
+- `godot_project/client/scenes/hybrid_world.gd`: the wizard HUD, pause menu, zoom, save and autosave (wizard branch) and the LAN client (multiplayer branch) share one scene script. The wizard `_on_menu` dispatches to the LAN menu (`_mp_on_menu`, Continue or Leave) in a LAN game; autosave and the quit-save are skipped when `mp` is true because the host owns the world. The LAN hotkeys (C, Y, N) are read after the pause menu and before the zoom keys.
+
+Verification on the merged tree (Windows 11, Python 3.14, Godot 4.5.1): 
+
+- Python: `python -m pytest WizardRTSHybrid/tests --ignore=WizardRTSHybrid/tests/test_five_minutes.py`: **1372 passed, 20 skipped, 1 failed** (34 min, sharing the CPU with the headed runs). The failure, `test_lan_multiplayer.py::test_bad_json_and_oversize_lines_do_not_kill_the_host`, was a bug carried in from the multiplayer branch, not a merge effect: `net/host.py` read `t_op` and `message` after a bad-JSON reply, where they were unbound, so the host thread died and both clients timed out. Fixed here (both are bound before the parse); `test_lan_multiplayer.py` and `test_lan_story_shared.py` then pass 17 of 17.
+- Godot headless (Godot 4.5.1, after `--import`): `run_lan_parse.gd` loads all eight LAN and world scripts and the net duel mirror checks pass (`HYBRID_LAN_PARSE_OK`); `run_hybrid_coords.gd` passes.
+- Headed, each against a fresh simulator: `launch` (campaign profile: pause menu, a conversation, autosave), `campaign`, `wizard` and the LAN `two_clients` acceptance (two wizards on screen, a declined challenge, a full human-versus-human Ward duel through the real board, back to the world) all **PASS**. Screenshots were written to a scratch folder, not to the evidence tree.
+- Not verified here: the rest of the headed suite (the four pre-existing failures `playtest`, `campaign_dev`, `industry`, `eras` noted in the wizard ledger were not rerun), the Android APK, physical phones, and a training run on the merged tree. Cosmetic: in a LAN game the LAN status line sits against the campaign HUD at the top right.
+
+The "never merge to `main`" rule in the sections below was the standing rule for the agents on those branches; it was lifted for this one merge by the owner's instruction. It stands again for whatever comes next: work on a branch, and let the owner decide the merge.
+
+
 ## RESTART NOTE, 15 Oct 2026 (M0-M8 built; M6 judged FAIL; M9 setup ready, no training started): read this first
 
 **Branch** `feature/neuroevolution-plan`; never merge to `main`; `docs/release_notes.md` is always modified locally and must never be committed (never `git add -A`).

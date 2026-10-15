@@ -224,12 +224,13 @@ class HostServer:
             if not line.strip():
                 continue
             self.stats["messages"] += 1
+            t_op = self.clock()
+            message: Any = None
             try:
                 message = json.loads(line.decode("utf-8"))
             except (UnicodeDecodeError, json.JSONDecodeError):
-                reply: dict[str, Any] = {"status": "rejected", "reason": "bad_json"}
+                reply: dict[str, Any] = {"status": "rejected", "reason": "bad_json"}  # timed and counted under op "?" like any other line
             else:
-                t_op = self.clock()
                 try:
                     reply = self.session.handle(conn, message, self.clock())
                 except Exception as exc:  # noqa: BLE001 - one bad op must not take the world down for everyone
