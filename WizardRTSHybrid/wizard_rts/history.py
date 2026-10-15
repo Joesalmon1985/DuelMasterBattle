@@ -276,6 +276,8 @@ def cycle_reset(world: Any) -> Any:
         "peaks": {n: dict(f["peak"]) for n, f in st["faction"].items()}, "vp": vp.totals(world), "homeland_deal": perm, "outcome": outcome(world)}]
     # the wizard keeps his character: pose and Aspect scores. Nothing else crosses over.
     fresh.player = {"tx": fresh.player["tx"], "ty": fresh.player["ty"], "facing": world.player.get("facing", "down")}
+    if getattr(world, "players", None):  # LAN multiplayer: every wizard keeps his record (the host rebinds the aliases, net/session.py)
+        fresh.players = {pid: dict(p) for pid, p in world.players.items()}
     from sim.dmb.narrative.aspects import AspectService
 
     scores = dict(AspectService(world.dmb)._store().get("scores", {}).get("player", {}))
