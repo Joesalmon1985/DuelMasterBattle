@@ -52,3 +52,30 @@ def test_seed_streams_never_overlap_and_children_are_mirrored(tmp_path):
     ids = {e.id for e in plan}
     assert len(ids) == len(plan)
     assert plan == plan and [e.id for e in ev._plan(0)] == [e.id for e in plan]  # deterministic
+
+
+def _fabricate(ev, parent_adv, anchor_adv):
+    lin = ev.lineages["random"]
+    plan = ev._plan(5)
+    for e in plan:
+        v = parent_adv if e.kind == "parent" else (anchor_adv if e.kind == "anchor" else -50.0 + (3.0 if e.sign > 0 else 0.0))
+        e.samples, e.raw, e.tiers, e.metrics, e.levels = [v, v], [1000.0, 1000.0], ["S", "S"], [{}, {}], ["C0", "C0"]
+        e.stats = [{"commands": 10, "ticks": 5, "rejected": 0, "by_head": {"H1": [10, 0]}}]
+    return plan, lin
+
+
+def test_the_anchor_guard_reverts_a_worse_parent_and_accepts_a_better_one(tmp_path):
+    cfg = EvolutionConfig.from_dict({**CFG, "population": 4})
+    ev = Evolution(tmp_path / "run", cfg, M.build(cfg.to_dict()))
+    lin = ev.lineages["random"]
+    lin.anchor = lin.theta.copy()
+    good = lin.theta.copy()
+    lin.theta = (lin.theta + 0.01).astype(np.float32)  # the new parent differs from the anchor, so both are evaluated on the same games
+    plan, _ = _fabricate(ev, -30.0, -10.0)  # parent 20 points worse than the anchor on the same games
+    assert sum(e.kind == "anchor" for e in plan) == 1 and [e.games for e in plan if e.kind == "anchor"] == [e.games for e in plan if e.kind == "parent"]
+    info = ev._update(plan, 5)["lineages"]["random"]
+    assert info["reverted"] is True and info["accepted"] is False and np.array_equal(lin.theta, good) and lin.t == 0 and lin.reverts == 1
+    lin.theta = (good + 0.02).astype(np.float32)
+    plan, _ = _fabricate(ev, -5.0, -10.0)  # 5 points better
+    info = ev._update(plan, 6)["lineages"]["random"]
+    assert info["accepted"] is True and info["reverted"] is False and lin.accepts == 1 and lin.t == 1 and not np.array_equal(lin.anchor, good)

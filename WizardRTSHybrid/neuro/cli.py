@@ -250,6 +250,8 @@ def cmd_train(a: argparse.Namespace) -> int:
                 session["notes"].append(f"generation {summary['generation']} aborted: {summary.get('reason')}")
                 break
             line = f"generation {summary['generation']}: best advantage {summary.get('best_advantage')}, mean {summary.get('mean_advantage')}, {summary['wall_s']:.0f} s"
+            guard = "/".join(("revert" if v.get("reverted") else "keep" if v.get("accepted") else "-") for v in summary.get("lineages", {}).values())
+            line += f", anchor guard {guard}"
             if summary.get("promotion") and summary["promotion"].get("champion"):
                 line += f", PROMOTED {summary['promotion']['champion']}"
             print(line, flush=True)

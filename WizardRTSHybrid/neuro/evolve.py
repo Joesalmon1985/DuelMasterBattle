@@ -87,6 +87,9 @@ class Lineage:
     t: int
     sigma: dict[str, float]
     parent_adv: list[float] = field(default_factory=list)
+    anchor: np.ndarray | None = None  # the best-known mean (accepted by a paired comparison); re-evaluated with the parent on the same games every generation
+    accepts: int = 0
+    reverts: int = 0
 
     @staticmethod
     def fresh(name: str, theta: np.ndarray, sigma0: float) -> "Lineage":
@@ -174,7 +177,7 @@ class Evolution:
         self.base_genome = np.load(self.dir / "theta0.npy")
 
     def state(self) -> dict:
-        return {"generation": self.generation_index, "lineages": {k: {"name": v.name, "theta": v.theta, "m": v.m, "v": v.v, "t": v.t, "sigma": v.sigma,
+        return {"generation": self.generation_index, "lineages": {k: {"name": v.name, "theta": v.theta, "m": v.m, "v": v.v, "t": v.t, "sigma": v.sigma, "anchor": v.anchor, "accepts": v.accepts, "reverts": v.reverts,
                                                                       "parent_adv": v.parent_adv} for k, v in self.lineages.items()},
                 "grid": self.grid.to_json(), "history": self.history, "champion": self.champion, "heldout_n": self.heldout_n, "imitation_done": self.imitation_done,
                 "pending_reeval": self.pending_reeval, "config": self.cfg.to_dict(), "manifest": self.manifest}
@@ -255,6 +258,8 @@ class Evolution:
             share = c.population if len(lins) == 1 else (max(2, int(round(c.population * (c.imitation_fraction if lin.name == "imitation" else 1 - c.imitation_fraction)))))
             n_pairs = max(1, share // 2) if c.mirrored else max(1, share)
             entries.append(Entry(f"g{g}-{lin.name[:3]}-parent", lin.name, "parent", -1, 0, lin.theta.copy(), None, [], ordinal))
+            if lin.anchor is not None and not np.array_equal(lin.anchor, lin.theta):  # same games as the parent: a paired comparison
+                entries.append(Entry(f"g{g}-{lin.name[:3]}-anchor", lin.name, "anchor", -1, 0, lin.anchor.copy(), None, [], ordinal))
             ordinal += 1
             for j, (eps, mods) in enumerate(self._noise(lin, g, li, n_pairs)):
                 signs = (1, -1) if c.mirrored else (1,)
@@ -367,10 +372,24 @@ class Evolution:
         for name, lin in list(self.lineages.items()):
             mine = [e for e in entries if e.lineage == name]
             parent = next(e for e in mine if e.kind == "parent")
+            anchor_e = next((e for e in mine if e.kind == "anchor"), None)
             kids = [e for e in mine if e.kind == "child" and e.samples]
             lin.parent_adv.append(parent.adv if parent.samples else float("nan"))
             info: dict[str, Any] = {"parent_adv": parent.adv, "children": len(kids)}
-            if len(kids) >= 2:
+            # the guard: a parent that did worse than the anchor on the very same games goes back to the anchor (and the gradient step of this generation is dropped)
+            reverted = False
+            if lin.anchor is None:
+                lin.anchor = lin.theta.copy()
+            elif anchor_e is not None and parent.samples and anchor_e.samples:
+                d = parent.adv - anchor_e.adv
+                info["anchor_adv"], info["anchor_diff"] = anchor_e.adv, d
+                if d >= 0:
+                    lin.anchor, lin.accepts, info["accepted"] = lin.theta.copy(), lin.accepts + 1, True
+                else:
+                    lin.theta, lin.m, lin.v, lin.t = lin.anchor.copy(), np.zeros_like(lin.m), np.zeros_like(lin.v), 0
+                    lin.reverts, reverted, info["accepted"] = lin.reverts + 1, True, False
+            info["reverted"] = reverted
+            if len(kids) >= 2 and not reverted:
                 adv = np.array([e.adv for e in kids])
                 order = adv.argsort().argsort().astype(np.float64)
                 w = order / (len(kids) - 1) - 0.5
@@ -412,10 +431,12 @@ class Evolution:
             la, lb = last(a), last(b)
             if not (np.isnan(la) or np.isnan(lb)):
                 if lb > la + c.adopt_margin:
-                    a.theta = b.theta.copy()
+                    a.theta, a.anchor = b.theta.copy(), b.theta.copy()
+                    a.m, a.v, a.t = np.zeros_like(a.m), np.zeros_like(a.v), 0
                     out["adopted"] = "random adopted imitation"
                 elif la > lb + c.adopt_margin:
-                    b.theta = a.theta.copy()
+                    b.theta, b.anchor = a.theta.copy(), a.theta.copy()
+                    b.m, b.v, b.t = np.zeros_like(b.m), np.zeros_like(b.v), 0
                     out["adopted"] = "imitation adopted random"
         valid = [e for e in entries if e.samples]
         out["best_entry"] = {"id": best_all.id, "lineage": best_all.lineage, "adv": best_all.adv, "raw": float(np.mean(best_all.raw))} if best_all else None
