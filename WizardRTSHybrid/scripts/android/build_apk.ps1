@@ -42,7 +42,10 @@ if (Test-Path $out) { Remove-Item $out -Force }
 $log = Join-Path $outDir "export-$(if ($ClientOnly) { 'client' } else { $Kind }).log"
 Write-Host "exporting '$preset' with $godot (log: $log)"
 $exportFlag = if ($Kind -eq "release") { "--export-release" } else { "--export-debug" }
-& $godot --headless --path (Join-Path $repo "godot_project") $exportFlag $preset $out 2>&1 | Tee-Object -FilePath $log | Select-String -Pattern "error|Error|FAIL|BUILD |warning: unused|Chaquopy|chaquopy" | ForEach-Object { $_.Line }
+$esc = [regex]::Escape([string][char]27) + "\[[0-9;]*m"  # terminal colour codes in Godot's progress lines
+$lines = & $godot --headless --path (Join-Path $repo "godot_project") $exportFlag $preset $out 2>&1 | ForEach-Object { ($_ | Out-String).TrimEnd() -replace $esc, "" }
+[IO.File]::WriteAllLines($log, [string[]]$lines, (New-Object System.Text.UTF8Encoding $false))
+$lines | Select-String -Pattern "error|Error|FAIL|BUILD |What went wrong|Chaquopy|chaquopy" | ForEach-Object { $_.Line }
 
 if (-not (Test-Path $out)) {
     Write-Host "ANDROID_APK_FAILED (see $log)" -ForegroundColor Red
@@ -51,17 +54,13 @@ if (-not (Test-Path $out)) {
 }
 $size = [math]::Round((Get-Item $out).Length / 1MB, 1)
 Write-Host "APK: $out ($size MB)"
-& $python - $out @"
-import sys, zipfile
-z = zipfile.ZipFile(sys.argv[1])
-names = z.namelist()
-py = [n for n in names if n.startswith("assets/chaquopy/")]
-libs = [n for n in names if n.startswith("lib/")]
-print("APK entries:", len(names), "chaquopy assets:", len(py), "native libs:", len(libs))
-print("python runtime:", [n for n in libs if "python" in n][:4])
-print("godot:", [n for n in libs if "godot" in n][:2])
-print("signed:", any(n.startswith("META-INF/") and n.endswith((".RSA", ".EC", ".SF")) for n in names))
-"@
+$inspectArgs = @((Join-Path $hyb "scripts/android/inspect_apk.py"), $out)
+if ($ClientOnly) { $inspectArgs += "--client-only" }
+& $python @inspectArgs
+if ($LASTEXITCODE -ne 0) { Write-Host "ANDROID_APK_FAILED: the APK does not contain what a phone needs (see above)" -ForegroundColor Red; exit 1 }
+$apksigner = Join-Path $script:SdkRoot "build-tools/35.0.0/apksigner.bat"
+& $apksigner verify --print-certs $out 2>&1 | Select-String -Pattern "Verifies|DOES NOT VERIFY|certificate DN|ERROR" | ForEach-Object { "signature: " + $_.Line }
+if ($LASTEXITCODE -ne 0) { Write-Host "ANDROID_APK_FAILED: the APK is not signed (check the debug keystore in the editor settings)" -ForegroundColor Red; exit 1 }
 Write-Host "ANDROID_APK_OK $out" -ForegroundColor Green
 if ($Install) {
     & "$PSScriptRoot\install_apk.ps1" -Apk $out

@@ -128,12 +128,27 @@ chaquopy {
     cfg = build / "config.gradle"
     if cfg.is_file():
         c = cfg.read_text(encoding="utf-8")
+        # Godot's export passes -Pexport_enabled_abis for the main build but not for its copy-and-rename gradle call, where
+        # the template falls back to all four ABIs and Chaquopy refuses the 32-bit ones ("Python is not available for the
+        # ABI 'armeabi-v7a'"); default to the 64-bit ABIs Chaquopy ships
+        all_abis = 'enabledABIs = "armeabi-v7a|arm64-v8a|x86|x86_64|"'
+        if all_abis in c:
+            c = c.replace(all_abis, 'enabledABIs = "arm64-v8a|x86_64|"  // DuelMasterBattle: Chaquopy has no 32-bit CPython')
+            cfg.write_text(c, encoding="utf-8")
         ndks = sorted(p.name for p in (sdk / "ndk").glob("*") if p.is_dir()) if (sdk / "ndk").is_dir() else []
         m = re.search(r"ndkVersion\s*:\s*'([^']+)'", c)
         if m and ndks and m.group(1) not in ndks:
             c = c.replace(m.group(0), "ndkVersion         : '%s'" % ndks[-1])
             cfg.write_text(c, encoding="utf-8")
             log("config.gradle: using installed NDK %s instead of %s" % (ndks[-1], m.group(1)))
+
+    # no gradle daemon: Godot's export leaves a daemon (a 1 GB JVM, three-hour idle timeout) that inherits the export's output
+    # pipe, so a script waiting for Godot's output never sees EOF; without the daemon each build pays a JVM start instead
+    props = build / "gradle.properties"
+    if props.is_file():
+        pt = props.read_text(encoding="utf-8")
+        if "org.gradle.daemon=" not in pt:
+            props.write_text(pt.rstrip("\n") + "\n# DuelMasterBattle: no lingering daemon after a headless export\norg.gradle.daemon=false\n", encoding="utf-8")
 
     # the plugin class and its registration through the host activity (no manifest edits: Godot regenerates the manifest)
     dst = build / "src" / "com" / "duelmasterbattle" / "pysim"

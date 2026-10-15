@@ -120,8 +120,11 @@ works for this; it is a plain Godot export and cannot host.
 Verified on this PC on 15 October 2026 (Windows 11, Python 3.14, Godot 4.5.1): the LAN host, two clients, a complete
 host-scored Ward duel, shared quests, reconnection (17 automated tests over real sockets), the Godot client against a
 Python host with a scripted second human (headed acceptance with screenshots), the Python sources staged for the phone and
-self-tested in isolation, and the gradle template overlay. Not yet verified anywhere: an APK produced by this pipeline
-(the gradle and Chaquopy steps have never run; this PC did not have the Android tools when this was written) and the game
-on physical phones. The apprentice campaign (lessons, the stranger) has been played single-player; two players inside it
+self-tested in isolation, the gradle template overlay, and **the APK itself**: `Setup Android Build Tools.bat` and
+`Build Android APK.bat` were run on this PC on 15 October 2026 and produced `build\android\DuelMasterBattle-debug.apk`
+(152 MB; arm64 only; signed with the debug key, APK signature scheme v2; CPython 3.14 and the packed game sources inside;
+package `com.duelmasterbattle.game` 0.1.0, min SDK 24, target SDK 35). Not yet verified anywhere: the game on physical
+phones (none was attached to this PC), so whether the packed Python starts on a real phone is the first thing the two-phone
+session will tell. The apprentice campaign (lessons, the stranger) has been played single-player; two players inside it
 over the LAN is untested, so expect the story beats to follow the host's wizard. Treat the first two-phone session as the
 test it is: `docs/MOBILE_LAN_MULTIPLAYER.md` section 10 is the step-by-step checklist, and section 11 lists the known limits.

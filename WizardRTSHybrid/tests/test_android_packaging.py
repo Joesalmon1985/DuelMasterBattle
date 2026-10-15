@@ -21,7 +21,11 @@ import setup_gradle_build as sgb  # noqa: E402
 
 SETTINGS = "pluginManagement {\n    plugins {\n        id 'com.android.application' version versions.androidGradlePlugin\n        id 'org.jetbrains.kotlin.android' version versions.kotlinVersion\n    }\n}\n"
 BUILD = "plugins {\n    id 'com.android.application'\n    id 'org.jetbrains.kotlin.android'\n}\n\nandroid {\n    defaultConfig {\n    }\n}\n"
-CONFIG = "ext.versions = [\n    ndkVersion         : '28.1.13356709',\n]\n"
+CONFIG = (
+    "ext.versions = [\n    ndkVersion         : '28.1.13356709',\n]\n"
+    "ext.getExportEnabledABIs = { ->\n    if (enabledABIs == null || enabledABIs.isEmpty()) {\n"
+    '        enabledABIs = "armeabi-v7a|arm64-v8a|x86|x86_64|"\n    }\n}\n'
+)
 APP = "package com.godot.game;\n\nimport org.godotengine.godot.GodotActivity;\n\npublic class GodotApp extends GodotActivity {\n}\n"
 
 
@@ -32,6 +36,7 @@ def make_template(tmp_path: Path) -> Path:
         z.writestr("settings.gradle", SETTINGS)
         z.writestr("build.gradle", BUILD)
         z.writestr("config.gradle", CONFIG)
+        z.writestr("gradle.properties", "org.gradle.jvmargs=-Xmx4536m\norg.gradle.warning.mode=all\n")
         z.writestr("src/com/godot/game/GodotApp.java", APP)
         z.writestr("libs/debug/godot-lib.template_debug.aar", "stub")
     return templates
@@ -60,13 +65,19 @@ def test_template_install_and_overlay_are_idempotent(tmp_path: Path) -> None:
     assert "build/" in (project / "android" / ".gitignore").read_text(encoding="utf-8")
     settings = (build / "settings.gradle").read_text(encoding="utf-8")
     gradle = (build / "build.gradle").read_text(encoding="utf-8")
+    cfg_text = (build / "config.gradle").read_text(encoding="utf-8")
     app = (build / "src" / "com" / "godot" / "game" / "GodotApp.java").read_text(encoding="utf-8")
     assert settings.count("com.chaquo.python") == 1 and "17.1.0" in settings
     assert gradle.count("id 'com.chaquo.python'") == 1 and gradle.count("chaquopy {") == 1
     assert ('version "%s"' % version) in gradle
     assert 'buildPython "' in gradle and "\\" not in gradle.split('buildPython "', 1)[1].split('"', 1)[0]
     assert 'srcDir "python_src"' in gradle
-    assert "ndkVersion         : '27.0.12077973'" in (build / "config.gradle").read_text(encoding="utf-8")
+    assert "ndkVersion         : '27.0.12077973'" in cfg_text
+    # Godot's copy-and-rename gradle call passes no ABI list; the template default must not include the 32-bit ABIs
+    # (Chaquopy: "Python is not available for the ABI 'armeabi-v7a'")
+    assert 'enabledABIs = "arm64-v8a|x86_64|"' in cfg_text and "armeabi-v7a|arm64-v8a" not in cfg_text
+    props = (build / "gradle.properties").read_text(encoding="utf-8")
+    assert props.count("org.gradle.daemon=false") == 1 and props.startswith("org.gradle.jvmargs"), "a lingering gradle daemon holds the export's output pipe"
     assert app.count("public Set<GodotPlugin> getHostPlugins") == 1 and "import com.duelmasterbattle.pysim.PySimPlugin;" in app
     assert (build / "src" / "com" / "duelmasterbattle" / "pysim" / "PySimPlugin.kt").read_text(encoding="utf-8") == (HYB / "scripts" / "android" / "overlay" / "PySimPlugin.kt").read_text(encoding="utf-8")
     # second run: same template version, nothing duplicated, the template is not re-extracted
@@ -77,6 +88,8 @@ def test_template_install_and_overlay_are_idempotent(tmp_path: Path) -> None:
     assert marker.is_file(), "an unchanged template must not be re-extracted"
     assert (build / "settings.gradle").read_text(encoding="utf-8") == settings
     assert (build / "build.gradle").read_text(encoding="utf-8") == gradle
+    assert (build / "config.gradle").read_text(encoding="utf-8") == cfg_text
+    assert (build / "gradle.properties").read_text(encoding="utf-8") == props
     assert (build / "src" / "com" / "godot" / "game" / "GodotApp.java").read_text(encoding="utf-8") == app
     # a different Godot version re-extracts
     r = run(args + ["--godot-version", "4.6.0.stable"])

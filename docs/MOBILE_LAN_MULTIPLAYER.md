@@ -164,7 +164,8 @@ Chaquopy packages the same Python major.minor as the build Python, so the script
 before) and a second preset `Android Client` (no gradle, no Python) is the fallback for phones joining a PC host
 (`Host LAN Game.bat`, which starts the host with `--first-joiner-hosts` so the first phone gets the START button when the PC
 has no wizard of its own). Verified here: the harness (17 + 2 tests), the Godot parse check, the staging self-test and
-`tests/test_android_packaging.py`; **still no APK and no phone**, the gradle and Chaquopy steps are unrun.
+`tests/test_android_packaging.py`, and then **the APK itself** (`build/android/DuelMasterBattle-debug.apk`, 152 MB, signed, arm64, CPython
+3.14 inside; `docs/ANDROID_EXPORT.md` has the numbers and the two gradle pitfalls fixed on the way). **No phone has run it.**
 
 One APK serves both roles: the Python runtime is started only when hosting (or for single player on a phone, as a private session
 bound to `127.0.0.1`). The export preset enables the gradle build, `INTERNET`, `ACCESS_WIFI_STATE` and `ACCESS_NETWORK_STATE`,
@@ -322,7 +323,7 @@ the `kvm` group), so steps 1–11 have not been executed on phones. See §11 for
 
 ## 11. Known bugs, limits and remaining work
 
-- **No APK was produced in this run.** `scripts/android/build_apk.sh debug` reaches Godot's export (template installed, overlay
+- **(Resolved 15 Oct 2026 on Windows: the APK builds; see `docs/ANDROID_EXPORT.md`.) No APK was produced in this run.** `scripts/android/build_apk.sh debug` reaches Godot's export (template installed, overlay
   applied, Python staged and self-tested, preset and project settings fixed: ETC2/ASTC import, icon, `android/.build_version`), but
   the two export attempts after those fixes were stopped by the session harness for low system memory (the laptop had ~3 GB free
   beside the owner's desktop applications; the gradle JVM asks for 4.5 GB). Nothing in the pipeline has yet run gradle, so the

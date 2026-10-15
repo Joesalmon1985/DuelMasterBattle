@@ -44,6 +44,12 @@ Root launchers: `Setup Android Build Tools.bat`, `Build Android APK.bat [client|
 
 ## Status
 
-The toolchain scripts and the overlay are tested; **no APK has yet been produced by this pipeline and no phone has run the
-game** (15 October 2026). The first build will tell whether the Chaquopy and Kotlin steps hold; failures go to
-`WizardRTSHybrid/docs/BLOCKERS.md`.
+**The pipeline produced the APK on the owner's PC on 15 October 2026** (`build/android/DuelMasterBattle-debug.apk`, 152 MB,
+arm64-v8a, `apksigner verify` passes with the debug certificate, scheme v2; `inspect_apk.py`: 13,699 entries, CPython 3.14
+runtime, `assets/chaquopy/app.imy` with the staged sources; Chaquopy 17.1.0 and the Kotlin plugin compiled first time). Two
+pitfalls were found and are handled by `setup_gradle_build.py`: Godot's export runs gradle twice and its second call (copy
+and rename) passes no `export_enabled_abis`, so the template defaulted to all four ABIs and Chaquopy refused `armeabi-v7a`;
+the overlay now defaults the list to `arm64-v8a|x86_64`. And the gradle daemon Godot leaves behind (a 1 GB JVM) inherits the
+export's output pipe, so a script waiting for Godot's output never sees EOF; the overlay sets `org.gradle.daemon=false`.
+Godot's headless log holds only its own progress; gradle's output is in `%USERPROFILE%\.gradle\daemon\<version>\daemon-*.out.log`
+when a daemon ran. **No phone has run the game yet.** Failures on a device go to `WizardRTSHybrid/docs/BLOCKERS.md`.

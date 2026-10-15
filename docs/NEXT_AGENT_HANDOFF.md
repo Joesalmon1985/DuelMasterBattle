@@ -8,10 +8,11 @@ missing was a Windows build path, a signed preset, and a way for a PC host to st
 `README_ANDROID_TWO_PHONES.md` (root). Engineering summary: `docs/ANDROID_EXPORT.md`; details and limits: `docs/MOBILE_LAN_MULTIPLAYER.md`
 sections 5, 10, 11; work log entry in `WizardRTSHybrid/docs/WORK_LOG.md`.
 
-**State:** scripts and tests done and green on this PC; **no APK built yet** (the Android toolchain, about 3 GB with an SDK licence
-the owner must accept, was not downloaded by the agent) and **no phone has run the game**. Next steps, in order: `Setup Android Build
-Tools.bat`, `Build Android APK.bat` (first gradle run: ~10-20 min, internet), `Install APK On Phones.bat` with both phones on USB
-debugging, then the manual checklist in `docs/MOBILE_LAN_MULTIPLAYER.md` section 10. If the gradle/Chaquopy step fails, record the
+**State:** scripts and tests green on this PC; the toolchain is installed (owner's go-ahead, 15 Oct 2026 evening) and **the APK is
+built**: `build/android/DuelMasterBattle-debug.apk` (152 MB, signed, arm64, CPython 3.14 inside; details and the two gradle pitfalls
+fixed in `docs/ANDROID_EXPORT.md`). **No phone has run the game** (none was attached). Next steps, in order: `Install APK On Phones.bat`
+with both phones on USB debugging (or copy the APK), then the manual checklist in `docs/MOBILE_LAN_MULTIPLAYER.md` section 10; the
+first thing to confirm on a phone is that WIZARD WORLD / HOST LOCAL GAME reaches the lobby (the packed Python starting). If the gradle/Chaquopy step fails, record the
 exact error in `WizardRTSHybrid/docs/BLOCKERS.md`; the fallback that needs no Chaquopy is `Build Android APK.bat client` plus
 `Host LAN Game.bat` on the PC. Open question for the owner: the apprentice campaign with two wizards over the LAN is untested
 (the story quantum runs as the host's wizard, section 11).

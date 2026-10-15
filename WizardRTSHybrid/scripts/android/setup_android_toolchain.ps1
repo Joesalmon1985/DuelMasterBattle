@@ -11,7 +11,7 @@
 #
 # The Android SDK licence must be accepted by you: the script runs "sdkmanager --licenses" and waits for your answers.
 # Close the Godot editor before running this (it rewrites the editor settings file when it exits).
-param([switch]$SkipTemplates)
+param([switch]$SkipTemplates, [switch]$AcceptLicenses)  # -AcceptLicenses: answer y to the SDK licence prompts (only when the owner said so)
 $ErrorActionPreference = "Stop"
 . "$PSScriptRoot\android_env.ps1"
 
@@ -29,7 +29,9 @@ function Get-File([string]$Url, [string]$Dest, [string]$Sha256 = "") {
         Write-Host "already downloaded: $Dest"
     } else {
         Write-Host "downloading $Url"
-        & curl.exe -L --fail --retry 3 -C - -o "$Dest.part" $Url
+        $curl = Join-Path $env:SystemRoot "System32/curl.exe"
+        if (-not (Test-Path $curl)) { $curl = "curl.exe" }
+        & $curl -L --fail --retry 3 -C - -sS -o "$Dest.part" $Url
         if ($LASTEXITCODE -ne 0) { throw "download failed: $Url" }
         Move-Item "$Dest.part" $Dest -Force
     }
@@ -41,9 +43,9 @@ function Get-File([string]$Url, [string]$Dest, [string]$Sha256 = "") {
 
 function Expand-Zip([string]$Zip, [string]$Dest) {
     New-Item -ItemType Directory -Force $Dest | Out-Null
-    $tar = Get-Command tar.exe -ErrorAction SilentlyContinue
-    if ($tar) {
-        & tar.exe -xf $Zip -C $Dest
+    $tar = Join-Path $env:SystemRoot "System32/tar.exe"  # Windows' own bsdtar (a Git Bash tar on PATH cannot read C:\ paths)
+    if (Test-Path $tar) {
+        & $tar -xf $Zip -C $Dest
         if ($LASTEXITCODE -ne 0) { throw "could not extract $Zip" }
     } else {
         Expand-Archive -Path $Zip -DestinationPath $Dest -Force
@@ -89,7 +91,11 @@ if (-not (Test-Path (Join-Path $sdk "ndk\28.1.13356709"))) { $missingPkgs += "nd
 if ($missingPkgs.Count -gt 0) {
     Write-Host ""
     Write-Host "The Android SDK licence has to be accepted by you. Answer the prompts below (y)." -ForegroundColor Yellow
-    & $sdkmanager --sdk_root="$sdk" --licenses
+    if ($AcceptLicenses) {
+        ("y`n" * 40) | & $sdkmanager --sdk_root="$sdk" --licenses
+    } else {
+        & $sdkmanager --sdk_root="$sdk" --licenses
+    }
     Write-Host "installing: $($SdkPackages -join ', ') (the NDK alone is about 700 MB)"
     & $sdkmanager --sdk_root="$sdk" $SdkPackages
     if ($LASTEXITCODE -ne 0) { throw "sdkmanager failed (licence not accepted, or no internet?)" }
