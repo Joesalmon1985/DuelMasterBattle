@@ -55,6 +55,18 @@ func _run() -> void:
 		return _die("remote avatar not drawn")
 	print("HYBRID_LAN_REMOTE %s" % JSON.stringify({"id": other_id, "tile": [others[other_id]["tx"], others[other_id]["ty"]], "me": [world._john_pos.x, world._john_pos.y]}))
 	await _shot(world, "lan_two_wizards")
+	# the LAN status line must not sit on the campaign HUD card or the top bar, in portrait and in landscape
+	var clear := _status_clear(world, "720x1280")
+	DisplayServer.window_set_size(Vector2i(1280, 720))
+	for _f in 6:
+		await process_frame
+	await _shot(world, "lan_two_wizards_landscape")
+	clear = _status_clear(world, "1280x720") and clear
+	DisplayServer.window_set_size(Vector2i(720, 1280))
+	for _f in 6:
+		await process_frame
+	if not clear:
+		return _die("LAN status label overlaps the HUD")
 	# 2. this client moves; the host accepts the steps (the pose in the next state poll matches)
 	var start: Vector2i = world._john_pos
 	var moved := false
@@ -201,6 +213,16 @@ func _run() -> void:
 	print("HYBRID_LAN_STATS %s" % JSON.stringify(stats))
 	print("HYBRID_LAN_OK")
 	quit(0)
+
+
+func _status_clear(world: Node, label: String) -> bool:
+	var status: Rect2 = world._mp_status.get_global_rect()
+	var card: Rect2 = world.hud.panel.get_global_rect()
+	var bar: Rect2 = world._hud.get_global_rect()
+	var view: Rect2 = world.get_viewport().get_visible_rect()
+	var ok := not status.intersects(card) and not status.intersects(bar) and view.encloses(status) and status.size.x > 100.0
+	print("HYBRID_LAN_STATUS_LAYOUT %s %s status=%s card=%s bar=%s view=%s" % [label, "ok" if ok else "OVERLAP", status, card, bar, view])
+	return ok
 
 
 func _die(msg: String) -> void:
