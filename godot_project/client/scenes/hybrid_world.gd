@@ -297,6 +297,7 @@ func relayout_ui() -> void:
 			story_ui.opening_card if story_ui != null else null, story_ui.journal if story_ui != null else null]:
 		if c != null:
 			c.relayout()
+	_mp_relayout()
 	apply_zoom()
 
 
@@ -871,18 +872,15 @@ func _mp_build_ui() -> void:
 	_mp_status = Label.new()
 	_mp_status.name = "LanStatus"
 	_mp_status.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	_mp_status.offset_left = -520
-	_mp_status.offset_right = -12
-	_mp_status.offset_top = 10
-	_mp_status.offset_bottom = 40
 	_mp_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_mp_status.add_theme_font_size_override("font_size", 20)
+	_mp_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_mp_status.add_theme_color_override("font_color", Color(0.75, 0.95, 1.0))
 	_mp_status.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
-	_mp_status.add_theme_constant_override("outline_size", 4)
 	_mp_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_mp_status.text = "LAN"
 	layer.add_child(_mp_status)
+	_mp_relayout()
+	get_viewport().size_changed.connect(_mp_relayout)
 	_mp_toast = Label.new()
 	_mp_toast.name = "LanToast"
 	_mp_toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
@@ -898,6 +896,7 @@ func _mp_build_ui() -> void:
 	_mp_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_mp_toast.visible = false
 	layer.add_child(_mp_toast)
+
 	_mp_challenge_btn = Button.new()
 	_mp_challenge_btn.name = "ChallengeButton"
 	_mp_challenge_btn.text = "⚔ Challenge"
@@ -951,6 +950,34 @@ func _mp_build_ui() -> void:
 		var accept: bool = bool(spec[1])
 		b.pressed.connect(func(): mp_respond(accept))
 		row.add_child(b)
+
+
+## The LAN status line sits under the top bar, to the right of the campaign HUD card (never over either), sized in physical pixels like the HUD.
+func _mp_relayout() -> void:
+	if _mp_status == null:
+		return
+	var info := ResponsiveModal.window_info(self)
+	var m := ResponsiveModal.metrics(info, "sheet")
+	var k: float = info["k"]
+	var vis: Vector2 = info["vis"]
+	var margin := float(m["margin"]) * k
+	var gap := float(m["gap"]) * k
+	var left := margin
+	if hud != null and hud.panel != null:
+		left = hud.panel.position.x + hud.panel.custom_minimum_size.x + gap
+	var top := 58.0 * k
+	if _hud != null and is_instance_valid(_hud):
+		# the bar's minimum size is known before its first layout pass; its rect only after
+		var bar_bottom := maxf(_hud.get_global_rect().end.y, _hud.offset_top + _hud.get_combined_minimum_size().y)
+		top = maxf(top, bar_bottom + gap)
+	var font := int(round(float(m["small"]) * k * 0.95))
+	_mp_status.add_theme_font_size_override("font_size", font)
+	_mp_status.add_theme_constant_override("outline_size", int(round(4.0 * k)))
+	_mp_status.offset_left = left - vis.x
+	_mp_status.offset_right = -margin
+	_mp_status.offset_top = top
+	_mp_status.offset_bottom = top + float(font) * 2.6  # room for two wrapped lines on a narrow portrait window
+
 
 
 func _mp_process(delta: float) -> void:
