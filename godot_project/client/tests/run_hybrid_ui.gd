@@ -294,6 +294,34 @@ func _run() -> void:
 		await _shot("ui_%s_menu" % tag)
 		await _key(KEY_ESCAPE)
 		_check(not _world.menu_card.visible and not _world._input_locked, "menu %s: Escape closes it" % tag)
+		# -- the campaign's scene card (a page with a long text and eight answers) and the Game Over screen
+		var cam: Node = _world.campaign_ui
+		var answers: Array = []
+		for k in 8:
+			answers.append({"id": "resp:t:9:%d" % k, "text": "%s answer %d, long enough that it has to wrap onto a second line on a narrow window." % ["[Resolve]" if k == 0 else "Reply", k], "available": true})
+		cam._show_page({"id": "t", "i": 9, "n": 11, "speaker": "attacker", "name": "Istthea Saltrunner", "text": "The apprentice. A child with a borrowed staff. Your teacher was the best of them, and it took me less than a breath. I could end you the same way. " .repeat(2), "choices": answers, "focus": [], "fx": "", "last": false, "answer": {}, "needs_answer": true, "final": ""})
+		await _settle()
+		_check(cam.scene_card.visible, "scene %s: opens" % tag)
+		_geometry(cam.scene_card, "scene %s" % tag)
+		await _scrolls_to_end(cam.scene_card, "scene %s" % tag)
+		if size == Vector2i(450, 800):
+			await _shot("ui_%s_scene_answers" % tag)
+		cam._show_page({"id": "t", "i": 10, "n": 11, "speaker": "narrator", "name": "", "text": "He turns. For the first time he sees you.", "choices": [], "focus": [], "fx": "", "last": true, "answer": {}, "needs_answer": false, "final": "duel"})
+		await _settle()
+		_geometry(cam.scene_card, "scene narrator %s" % tag)
+		_check(cam.scene_card.footer_button("next") != null and cam.scene_card.footer_button("next").text == "Begin the duel", "scene %s: the last page begins the duel" % tag)
+		cam.scene_card.hide_card()
+		cam.scene_active = false
+		cam._show_game_over({"text": "The apprentice was defeated."})
+		await _settle()
+		_geometry(cam.over_card, "game over %s" % tag)
+		_check(cam.over_card.footer_button("new") != null and cam.over_card.footer_button("quit") != null, "game over %s: New game and Quit" % tag)
+		if size == Vector2i(450, 800):
+			await _shot("ui_%s_game_over" % tag)
+		cam.over_card.hide_card()
+		cam.over_shown = false
+		_world._input_locked = false
+		_world.paused = true
 
 	var real_n := 0
 	for s in SIZES:

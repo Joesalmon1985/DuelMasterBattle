@@ -49,7 +49,7 @@ def public_view(rec: dict[str, Any]) -> dict[str, Any]:
 
 
 def _combatants(world: Any, opp: dict[str, Any], fixed_ward: list[int] | None) -> tuple[dict, dict]:
-    player = wizard.combatant(world, int(opp.get("max_casts", 8)))
+    player = wizard.combatant(world, int(opp.get("player_max_casts", opp.get("max_casts", 8))))  # a forgiving budget for the apprentice is configuration, not a different rule
     pool = list(player["attack_pool"])
     enemy = {"id": "story_rival", "display_name": opp["display_name"], "archetype": "wizard", "kind": "wizard",
              "weave_size": player["weave_size"], "ward_size": player["ward_size"], "attack_pool": list(pool), "ward_pool": list(pool),
@@ -61,7 +61,7 @@ def _combatants(world: Any, opp: dict[str, Any], fixed_ward: list[int] | None) -
     return player, enemy
 
 
-def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] | None = None) -> dict[str, Any]:
+def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] | None = None, display_name: str | None = None) -> dict[str, Any]:
     """Open a lease against `opponent_id`; the reply has the shape `DmbDuelLeaseAdapter.begin_from_start_reply` reads."""
     if opponent_id not in opponents():
         return {"status": "rejected", "reason": "unknown_opponent"}
@@ -73,6 +73,8 @@ def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] |
     attempt = 1 + sum(1 for a in attempts if a["purpose"] == purpose)
     bot_seed = zlib.crc32(f"{world.seed}|{purpose}|{attempt}".encode()) & 0x7FFFFFFF
     player, enemy = _combatants(world, opp, fixed_ward)
+    if display_name:
+        enemy["display_name"] = display_name
     encounter = encounter_for_tier(opp["tier"])
     encounter["player_combatant"], encounter["enemy_combatant"] = player, enemy
     encounter["attack_pool"], encounter["ward_pool"] = list(player["attack_pool"]), list(player["ward_pool"])
@@ -144,6 +146,16 @@ def verify(rec: dict[str, Any], report: dict[str, Any]) -> tuple[bool, str]:
     return True, "ok"
 
 
+LETHAL = "stranger_duel"  # the one duel whose only winning end is a verified victory (campaign.py): any other way out of it is the apprentice's death
+
+
+def _voided(world: Any, rec: dict[str, Any], why: str) -> None:
+    if rec["purpose"] == LETHAL:
+        from wizard_rts.narrative import campaign
+
+        campaign.on_duel_void(world, rec, why)
+
+
 def _release(world: Any, rec: dict[str, Any]) -> None:
     ClockService(world.dmb.clock).release_pause(rec.get("pause_token", ""))
 
@@ -159,6 +171,7 @@ def resolve(world: Any, lease_id: str, report: dict[str, Any]) -> dict[str, Any]
     if not ok:
         rec["state"], rec["outcome"] = "VOIDED", "void"
         events.log(world, "duel_voided", lease=lease_id, why=why)
+        _voided(world, rec, "rejected")
         return {"status": "rejected", "reason": "report_rejected", "detail": why, "purpose": rec["purpose"]}
     outcome = str(report["outcome"])
     result = "won" if outcome in WIN_OUTCOMES else ("lost" if outcome == "defeat" else "draw")
@@ -181,4 +194,5 @@ def abandon(world: Any, reason: str = "abandoned") -> dict[str, Any]:
     _release(world, rec)
     rec["state"], rec["outcome"] = "VOIDED", reason
     events.log(world, "duel_voided", lease=rec["id"], why=reason)
+    _voided(world, rec, reason)
     return {"status": "ok", "closed": True, "purpose": rec["purpose"]}

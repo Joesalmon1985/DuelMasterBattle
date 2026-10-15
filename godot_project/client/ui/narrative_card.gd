@@ -98,6 +98,7 @@ func setup(p_world: Node, p_kind: String, p_name: String) -> void:
 ## inside the scrolling body; footer buttons are named Footer_<id> and stay visible below it.
 func show_card(title: String, subtitle: String, body: String, choices: Array, footer: Array, progress := "") -> void:
 	title_label.text = title
+	title_label.visible = title != ""  # a narrator's page has no speaker
 	subtitle_label.text = subtitle
 	subtitle_label.visible = subtitle != ""
 	progress_label.text = progress

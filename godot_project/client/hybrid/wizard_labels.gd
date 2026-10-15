@@ -274,7 +274,8 @@ func _render() -> void:
 		subtitle = str(_who.get("subtitle", occupation_of(e)))
 		body = describe_person(e)
 		var close_enough: bool = _manhattan(e) <= world.story_ui.TALK_RANGE
-		actions.append({"id": "talk", "text": "Talk" if close_enough else "Talk (walk closer)", "kind": "primary", "disabled": not close_enough})
+		if not bool(_who.get("dead", e.get("dead", false))) and not bool(_who.get("hostile", e.get("hostile", false))):
+			actions.append({"id": "talk", "text": "Talk" if close_enough else "Talk (walk closer)", "kind": "primary", "disabled": not close_enough})
 	elif cls == "building":
 		subtitle = "Building - %s" % (str(e.get("faction_name", "")) if str(e.get("faction_name", "")) != "" else "no faction")
 		body = str(e.get("status_text", "")) if str(e.get("status_text", "")) != "" else str(d["far"])
@@ -298,7 +299,8 @@ func _render() -> void:
 		burn_text += " (you have no magic yet)"
 	elif not near:
 		burn_text += " (walk closer)"
-	actions.append({"id": "burn", "text": burn_text, "disabled": not can_burn})
+	if cls != "npc":  # the narrative people (the mentor's body, the stranger) are not targets of the world's fire magic
+		actions.append({"id": "burn", "text": burn_text, "disabled": not can_burn})
 	# The card is only rebuilt when WHO it is about or WHAT can be done changes; a changing description (a building's status text) is updated in place,
 	# so a click that is in flight on a button is never lost to a rebuild.
 	var sig := JSON.stringify([title, subtitle, actions])
@@ -327,7 +329,12 @@ func describe_person(e: Dictionary) -> String:
 	elif cls == "unit":
 		bits.append("Health %d of %d." % [int(e.get("hp", 0)) / 100, int(e.get("max_hp", 0)) / 100])
 	elif cls == "npc":
-		bits.append("Stands near where you arrived.")
+		if bool(e.get("dead", false)):
+			bits.append("Their body lies where they fell. People have not dared to move it yet.")
+		elif bool(e.get("hostile", false)):
+			bits.append("A stranger in a dark travelling cloak. The air around him feels wrong.")
+		else:
+			bits.append("Stands where they usually stand, watching the square.")
 	return " ".join(bits)
 
 

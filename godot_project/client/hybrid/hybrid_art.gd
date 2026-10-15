@@ -707,6 +707,13 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 	if str(e.get("kind", "")) == "npc":
 		# A resident is drawn exactly like any worker: the same figure, no ring, no name plate (names appear when you inspect or talk to someone).
 		# Only a person with something to teach carries a small gold mark: a tutorial affordance, not a separate look for narrative people.
+		if bool(e.get("dead", false)):
+			_draw_body(canvas, c)
+			return
+		if bool(e.get("hostile", false)):  # the stranger: the one figure with an aura (he is an event in the world, not a villager)
+			var pulse := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 260.0)
+			canvas.draw_circle(c + Vector2(0, 6), 30.0 + 5.0 * pulse, Color(0.35, 0.1, 0.55, 0.30))
+			canvas.draw_arc(c + Vector2(0, 6), 34.0 + 4.0 * pulse, 0.0, TAU, 28, Color(0.7, 0.4, 1.0, 0.8), 2.5)
 		var fig := {"id": "fig:" + str(e.get("id", "")), "class": "worker", "kind": "worker", "anim": "idle", "definition": str(e.get("figure", "widelands.barbarians_miner_worker")),
 			"tx": e["tx"], "ty": e["ty"], "facing": "se", "status": "idle", "faction_name": str(e.get("faction_name", "")), "_static": true}
 		if _item_for(fig).is_empty():
@@ -725,6 +732,16 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 		canvas.draw_rect(Rect2(c + Vector2(-16, -10), Vector2(32, 36)), Color(0.02, 0.02, 0.03), true)
 		canvas.draw_arc(c + Vector2(0, -10), 16, PI, TAU, 16, Color(0.7, 0.6, 0.4), 4.0)
 		canvas.draw_string(font, c + Vector2(-58, 50), "Disused gallery (E)", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(0.9, 0.85, 0.7) if not open else Color(0.6, 1, 0.7))
+
+
+## A person who has died where they fell: a robed figure lying down with the staff beside them (drawn, not a sprite: the tribes' art has no fallen pose).
+func _draw_body(canvas: CanvasItem, c: Vector2) -> void:
+	canvas.draw_set_transform(c + Vector2(0, 10), -0.12, Vector2.ONE)
+	canvas.draw_rect(Rect2(Vector2(-30, -9), Vector2(50, 18)), Color(0.28, 0.26, 0.42), true)
+	canvas.draw_rect(Rect2(Vector2(-30, -9), Vector2(50, 18)), Color(0.12, 0.1, 0.2), false, 2.0)
+	canvas.draw_circle(Vector2(26, -2), 9.0, Color(0.88, 0.74, 0.62))
+	canvas.draw_line(Vector2(-26, 17), Vector2(34, 14), Color(0.5, 0.35, 0.2), 4.0)
+	canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
 ## A blight nest (outbreak as a hostile, immobile actor): a pulsing mound, one health bar per cube. Placeholder shapes, labelled.

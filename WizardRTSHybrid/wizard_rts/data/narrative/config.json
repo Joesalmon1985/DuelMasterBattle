@@ -6,12 +6,42 @@
     "journal_cap": 4
   },
   "tutorial": {
-    "palette": [0, 1, 6],
+    "palette": [
+      0,
+      1,
+      6
+    ],
     "expire_ms": 1800000,
-    "essential": ["meet", "colours", "told_ward", "hidden_ward"]
+    "essential": [
+      "meet",
+      "colours",
+      "told_ward",
+      "hidden_ward"
+    ]
   },
   "save": {
     "autosave_seconds": 300
   },
-  "log_cap": 400
+  "log_cap": 400,
+  "campaign": {
+    "explore_min_ms": 180000,
+    "explore_fallback_ms": 420000,
+    "explore_min_contacts": 3,
+    "arrival_distance": 14,
+    "arrival_walk_cap_ms": 60000,
+    "witness_radius": 12,
+    "aftermath_min_talks": 2,
+    "aftermath_fallback_ms": 150000,
+    "start_aspects": {
+      "reason": 2,
+      "empathy": 2,
+      "authority": 1,
+      "guile": 1,
+      "resolve": 2,
+      "curiosity": 3,
+      "wonder": 2
+    },
+    "mentor_relationship": 40,
+    "dead_after_defeat": "The apprentice was defeated."
+  }
 }

@@ -24,7 +24,7 @@ REQUIRED = ("format", "hash", "narrative_version", "world")
 
 
 class SaveError(Exception):
-    """A save was refused or could not be read. `reason` is one of: bad_slot, missing, corrupt, format, newer_version, older_version, io."""
+    """A save was refused or could not be read. `reason` is one of: bad_slot, game_over, missing, corrupt, format, newer_version, older_version, io."""
 
     def __init__(self, reason: str, detail: str = "", prev: str = "") -> None:
         super().__init__(f"{reason}: {detail}" if detail else reason)
@@ -83,6 +83,10 @@ def _valid(path: Path) -> bool:
 def save_world(world: Any, path: Path | str) -> dict[str, Any]:
     """Write `world` to `path` atomically (tmp file, fsync, `os.replace`), keeping the previous valid save as `<slot>.prev.pkl`."""
     path = Path(path)
+    from wizard_rts.narrative import campaign
+
+    if campaign.over(world):  # a dead apprentice is never written over a living one's slot
+        raise SaveError("game_over", "the apprentice is dead: there is nothing to save")
     game_ms = int(world.dmb.clock.get("game_ms", 0))
     digest = world.state_hash()
     payload = {"format": save_format(), "hash": digest, "narrative_version": config.version(), "world": world,
@@ -141,7 +145,8 @@ def load_world(path: Path | str) -> tuple[Any, dict[str, Any]]:
     from wizard_rts.narrative import conversation, duel_lease
 
     conversation.close_all(world, "load")  # nobody is left held or mid-conversation by a save
-    duel_lease.abandon(world, "load")  # a duel that was open at the save is not resumed (no checkpoint is kept yet): the pause is released, the attempt not counted
+    duel_lease.abandon(world, "load")  # a lesson duel that was open at the save is not resumed (no checkpoint is kept yet): the pause is released, the attempt not counted.
+    # (The stranger's lethal duel is the exception: being open when the game was saved and loaded is a way out of it, so `abandon` ends the game, see campaign.on_duel_void.)
     mismatch = world.state_hash() != payload["hash"]
     return world, {"path": str(path), "game_ms": int(payload.get("game_ms", 0)), "profile": payload.get("profile", world.profile),
                    "seed": payload.get("seed", world.seed), "hash": payload["hash"], "hash_mismatch": mismatch, "recovered": mismatch}

@@ -122,7 +122,7 @@ func _npcs() -> Array:
 
 func _teacher() -> Dictionary:
 	for e in _npcs():
-		if str(e.get("role", "")) == "teacher":
+		if str(e.get("role", "")) in ["teacher", "mentor"]:
 			return e
 	return {}
 
@@ -299,7 +299,7 @@ func _run() -> void:
 	_check(str(refused.get("reason", "")) == "spell_unknown", "fire magic is refused before the first lesson (%s)" % str(refused.get("reason", refused.get("status", ""))))
 	await _talk_to(teacher)
 	_check(_ui.dialog.visible and _ui.dialog_title.text == str(teacher["label"]), "clicking the teacher, then Talk, opens a conversation with their name (%s)" % _ui.dialog_title.text)
-	_check(_ui.dialog_card.subtitle_label.text == "Teacher", "the card says who they are (%s)" % _ui.dialog_card.subtitle_label.text)
+	_check(_ui.dialog_card.subtitle_label.text == "Mentor", "the card says who they are (%s)" % _ui.dialog_card.subtitle_label.text)
 	_check("learn_colours" in _choice_ids() and _footer("leave") != null, "the teacher offers to teach magic, and Leave is there")
 	await _shot("teacher")
 	_check(_lesson_done("meet"), "the first meeting is a lesson done")

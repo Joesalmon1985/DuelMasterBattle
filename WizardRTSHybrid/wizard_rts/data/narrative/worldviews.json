@@ -1,0 +1,103 @@
+{
+ "note": "The seven worldviews and their score deltas, copied from tools/dialogue_generation/worldviews.json (the Dialogue Factory's source of truth) so no runtime path imports tools/. tests/test_worldviews.py fails if the two diverge.",
+ "worldviews": [
+  {
+   "code": "M",
+   "key": "monarchist",
+   "name": "Monarchist",
+   "delta": {
+    "M": 3,
+    "A": -1,
+    "R": 0,
+    "G": 0,
+    "S": 0,
+    "D": 0,
+    "C": -1
+   }
+  },
+  {
+   "code": "A",
+   "key": "anarchist",
+   "name": "Anarchist",
+   "delta": {
+    "M": -1,
+    "A": 3,
+    "R": 0,
+    "G": -1,
+    "S": 0,
+    "D": 1,
+    "C": 0
+   }
+  },
+  {
+   "code": "R",
+   "key": "religious",
+   "name": "Religious",
+   "delta": {
+    "M": 0,
+    "A": 0,
+    "R": 3,
+    "G": 0,
+    "S": -1,
+    "D": 1,
+    "C": -1
+   }
+  },
+  {
+   "code": "G",
+   "key": "guildist",
+   "name": "Guildist",
+   "delta": {
+    "M": 0,
+    "A": -1,
+    "R": 0,
+    "G": 3,
+    "S": 0,
+    "D": -1,
+    "C": 0
+   }
+  },
+  {
+   "code": "S",
+   "key": "arcane",
+   "name": "Arcane Supremacist",
+   "delta": {
+    "M": -1,
+    "A": 0,
+    "R": -1,
+    "G": 0,
+    "S": 3,
+    "D": -1,
+    "C": 0
+   }
+  },
+  {
+   "code": "D",
+   "key": "druidic",
+   "name": "Druidic",
+   "delta": {
+    "M": 0,
+    "A": 1,
+    "R": 1,
+    "G": -1,
+    "S": -1,
+    "D": 3,
+    "C": 0
+   }
+  },
+  {
+   "code": "C",
+   "key": "cracked",
+   "name": "Illuminated / Mad",
+   "delta": {
+    "M": -1,
+    "A": 0,
+    "R": -1,
+    "G": 0,
+    "S": 1,
+    "D": 0,
+    "C": 3
+   }
+  }
+ ]
+}

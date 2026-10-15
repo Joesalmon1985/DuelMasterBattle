@@ -57,8 +57,8 @@ def test_a_new_campaign_world_opens_with_a_teacher_beside_the_wizard():
     row = next(r for r in snap["entities"] if r["id"] == t)
     assert row["class"] == "npc" and row["has_quest"] and row["label"] == w.dmb.people[t]["name"]
     j = snap["story"]["narrative"]["journal"]
-    assert len(j["opening"]) == 3 and [l["done"] for l in j["lessons"]] == [False] * 5 and j["quests"] == []
-    assert j["objective"].startswith("Talk to your teacher")
+    assert len(j["opening"]) == 3 and [l["done"] for l in j["lessons"]] == [False] * 6 and j["quests"] == []
+    assert j["objective"].startswith("Talk to your mentor")
     story.dispatch(w, {"op": "opening_done"})
     assert w.snapshot()["story"]["narrative"]["journal"]["opening"] == []
 
@@ -78,7 +78,7 @@ def test_fire_magic_has_to_be_learned_first():
     nh.talk(w, t)
     r = nh.pick(w, t, "learn_colours")
     assert wizard.spells(w) == [0, 1, 6] and wizard.wiz(w)["weave_size"] == 3 and wizard.lesson_done(w, "colours")
-    assert "Flame" in r["text"] and nh.ids(r)[:1] == ["told_practice"]
+    assert "Flame" in r["text"] and "told_practice" in nh.ids(r)
     row = w.trees[tree]
     w.player["tx"], w.player["ty"] = row["tx"], row["ty"]
     assert server._handle(w, {"op": "fire", "target": tree})["status"] == "ok"
@@ -88,12 +88,13 @@ def test_lessons_are_offered_in_order_and_the_first_talk_completes_meet():
     w = nh.world()
     t = go_to_teacher(w)
     r = nh.talk(w, t)
-    assert wizard.lesson_done(w, "meet") and nh.ids(r) == ["learn_colours", "farewell"]
+    assert wizard.lesson_done(w, "meet") and nh.ids(r) == ["learn_colours", "why_not_rule", "farewell"]
     nh.end(w, t)
     assert nh.talk(w, t)["lines"] == ["What would you like to learn?"]  # the introduction is shown once
     nh.pick(w, t, "learn_colours")
     nh.end(w, t)
-    assert nh.ids(nh.talk(w, t)) == ["told_practice", "farewell"]  # the hidden duel needs the told one, the village question needs the unlock
+    ids = nh.ids(nh.talk(w, t))
+    assert "told_practice" in ids and "hidden_duel" not in ids and "ask_village" not in ids  # the hidden duel needs the told one, the village question the lessons
 
 
 def test_the_told_ward_duel_has_the_told_ward_and_a_lost_duel_still_completes_the_lesson():
@@ -109,11 +110,11 @@ def test_the_told_ward_duel_has_the_told_ward_and_a_lost_duel_still_completes_th
     assert story.dispatch(w, {"op": "talk", "npc": t})["reason"] == "duel_open"
     out = finish_duel(w, r, win=False)
     assert out["outcome"] in ("lost", "draw") and wizard.lesson_done(w, "told_ward") and not w.dmb.clock["pause_tokens"]
-    assert any("did not break it" in l for l in out["follow_up"]["lines"])
+    assert any("It held" in l for l in out["follow_up"]["lines"])
     nh.end(w, t)
     nh.talk(w, t)
     out2 = finish_duel(w, nh.pick(w, t, "told_practice"), win=True)  # it can be tried again
-    assert out2["outcome"] == "won" and any("You broke my Ward" in l for l in out2["follow_up"]["lines"])
+    assert out2["outcome"] == "won" and any(("Broken" in l or "Three casts" in l) for l in out2["follow_up"]["lines"])
 
 
 def test_fleeing_a_lesson_duel_does_not_count():
@@ -210,5 +211,5 @@ def test_lessons_survive_save_and_load_and_an_open_duel_is_voided(tmp_path):
     assert wizard.spells(loaded) == [0, 1, 6] and wizard.lesson_done(loaded, "colours") and wizard.lesson_done(loaded, "meet")
     assert loaded.dmb.leases[lid]["state"] == "VOIDED" and not loaded.dmb.clock["pause_tokens"] and not conversation.table(loaded)
     assert not wizard.lesson_done(loaded, "told_ward")
-    assert nh.ids(nh.talk(loaded, t))[0] == "told_practice"  # the teacher offers the duel again
+    assert "told_practice" in nh.ids(nh.talk(loaded, t))  # the teacher offers the duel again
     assert tutorial.state(loaded)["teacher"] == t and len(residents.table(loaded)) == 1

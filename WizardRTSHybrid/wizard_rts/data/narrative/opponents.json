@@ -1,11 +1,32 @@
 {
   "note": "Opponents of Wizard Mode's Ward Duels: combatant fields plus a think band (seconds). Pools default to the wizard's known spells; `fixed_ward` of the string \"told\" takes the ward the lesson names aloud.",
   "opponent.teacher_told": {
-    "display_name": "Your teacher", "tier": "duel.tutorial_3x3", "bot_logic": "random", "bot_mistake_rate": 0.4,
-    "think_min_seconds": 20.0, "think_max_seconds": 40.0, "max_casts": 8, "fixed_ward": "told"
+    "display_name": "Your teacher",
+    "tier": "duel.tutorial_3x3",
+    "bot_logic": "random",
+    "bot_mistake_rate": 0.4,
+    "think_min_seconds": 20.0,
+    "think_max_seconds": 40.0,
+    "max_casts": 8,
+    "fixed_ward": "told"
   },
   "opponent.teacher_hidden": {
-    "display_name": "Your teacher", "tier": "duel.tutorial_3x3", "bot_logic": "candidate_filter", "bot_mistake_rate": 0.4,
-    "think_min_seconds": 26.0, "think_max_seconds": 48.0, "max_casts": 8
+    "display_name": "Your teacher",
+    "tier": "duel.tutorial_3x3",
+    "bot_logic": "candidate_filter",
+    "bot_mistake_rate": 0.4,
+    "think_min_seconds": 26.0,
+    "think_max_seconds": 48.0,
+    "max_casts": 8
+  },
+  "opponent.stranger": {
+    "display_name": "The stranger",
+    "tier": "duel.tutorial_3x3",
+    "bot_logic": "random",
+    "bot_mistake_rate": 0.5,
+    "think_min_seconds": 45.0,
+    "think_max_seconds": 75.0,
+    "max_casts": 8,
+    "player_max_casts": 12
   }
 }

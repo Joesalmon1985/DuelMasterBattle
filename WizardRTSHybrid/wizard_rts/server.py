@@ -20,7 +20,7 @@ for entry in (str(_HERE), str(_ROOT)):
 
 from wizard_rts import construction as con  # noqa: E402
 from wizard_rts import narrative, story, tech  # noqa: E402
-from wizard_rts.narrative import tutorial, wizard  # noqa: E402
+from wizard_rts.narrative import campaign, tutorial, wizard  # noqa: E402
 from wizard_rts.coords import tile_to_hex  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
@@ -50,8 +50,17 @@ def _save_load(world: HybridWorld, message: dict) -> dict:
             "snapshot": loaded.snapshot(tree_sync=False), "_swap": loaded}  # tree_sync False: the client gets every tree again (full delta)
 
 
+AFTER_DEATH = frozenset({"snapshot", "advance", "profile", "terrain", "tile", "resources", "menu", "tech", "cards", "load", "new_game", "journal"})
+
+
 def _handle(world: HybridWorld, message: dict) -> dict:
     op = str(message.get("op", ""))
+    if "narrative" in world.__dict__ and campaign.over(world) and op not in AFTER_DEATH:  # the apprentice is dead: nothing but starting again, loading, or looking
+        return {"status": "rejected", "reason": "game_over", "op": op}
+    if op == "new_game":
+        fresh = new_world()
+        return {"status": "ok", "new_game": True, "terrain": fresh.terrain.wire() if fresh.terrain is not None else None,
+                "snapshot": fresh.snapshot(tree_sync=False), "_swap": fresh}
     if op in ("save", "load"):
         return _save_load(world, message)
     if op in GOD_OPS and not tech.god_allowed(world):
@@ -221,7 +230,8 @@ def _handle(world: HybridWorld, message: dict) -> dict:
 TERMINAL_HOLD_REPLIES = 3
 
 
-def serve(port: int) -> None:
+def new_world() -> HybridWorld:
+    """A fresh world configured from the environment (the launcher's switches). The server starts with one; the Game Over screen's New Game asks for another."""
     world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"),
                          profile=os.environ.get("HYBRID_PROFILE", "campaign"))
     world.visual_state = True  # the client gets presentation fields (turret aim); never set in headless runs, so state hashes are unchanged
@@ -255,6 +265,11 @@ def serve(port: int) -> None:
         if os.environ["HYBRID_FIXTURE"] == "modern_industry":
             ids = fixture.modern_fixture(world, os.environ.get("HYBRID_FIXTURE_FACTION", "Red"))
             print("HYBRID_FIXTURE_READY", json.dumps({k: v for k, v in ids.items() if k != "plan"}), flush=True)
+    return world
+
+
+def serve(port: int) -> None:
+    world = new_world()
     if os.environ.get("HYBRID_LOAD_SLOT"):  # `launch_scenario.sh campaign --load <slot>`: resume before the client connects
         from wizard_rts.narrative import persist
 

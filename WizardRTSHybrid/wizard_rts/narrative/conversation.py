@@ -17,7 +17,7 @@ from __future__ import annotations
 from typing import Any
 
 from wizard_rts import hold, workers
-from wizard_rts.narrative import characters, duel_lease, events, graph, occupations, quests, residents
+from wizard_rts.narrative import campaign, characters, duel_lease, events, graph, occupations, quests, residents
 
 IDLE_MS = 120_000  # a conversation nobody has touched for this long (game time) ends by itself
 LEAVE_RANGE = characters.TALK_RANGE + 3  # walking this far (Manhattan) from the person ends the conversation
@@ -52,7 +52,8 @@ def _distance(world: Any, sp: dict[str, Any]) -> int:
 
 def subtitle(world: Any, sp: dict[str, Any]) -> str:
     if sp["kind"] == "resident":
-        return sp["res"]["role"].capitalize()
+        role = "Mentor" if sp["res"]["role"] == "teacher" else sp["res"]["role"].capitalize()
+        return f"{role} (dead)" if sp["res"]["status"] == "dead" else role
     faction = sp["row"].get("faction_name", "")
     return f"{occupations.label(sp)} of the {faction} settlement" if faction else occupations.label(sp)
 
@@ -75,9 +76,14 @@ def _ctx(world: Any, sp: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[st
 
         tutorial.refresh(world)  # the stories may have unlocked a moment ago: cast them before the teacher answers
         r = sp["res"]
-        return {"template": r["graph"], "speaker": r["speaker"], "speaker_pid": sp["pid"], "name": name, "cast": quests.cast_names(world, "forest_dispute"), "facts": {}}, {}
+        return {"template": r["graph"], "speaker": r["speaker"], "speaker_pid": sp["pid"], "name": name,
+                "cast": {**campaign.names_for(world, sp["pid"]), **quests.cast_names(world, "forest_dispute")}, "facts": {}}, {}
     facts = occupations.facts_for(world, sp)
-    return quests.ctx_for(world, sp), {"name": name, "facts": facts, "cast": {}}
+    octx = {"template": "occupation", "speaker": "occupation", "speaker_pid": sp["pid"], "name": name, "facts": facts, "cast": campaign.names_for(world, sp["pid"])}
+    gctx = quests.ctx_for(world, sp)
+    if gctx is not None:
+        gctx["cast"] = {**campaign.names_for(world, sp["pid"]), **gctx["cast"]}
+    return gctx, octx
 
 
 def _compose(world: Any, sp: dict[str, Any], asked: set[str], fresh: bool) -> tuple[list[str], list[dict[str, Any]], dict[str, Any]]:
@@ -89,6 +95,10 @@ def _compose(world: Any, sp: dict[str, Any], asked: set[str], fresh: bool) -> tu
     if gctx is not None:
         gv = graph.talk(world, gctx) if fresh else graph.view(world, gctx)
         lines, choices, extras = list(gv["lines"]), list(gv["choices"]), dict(gv["extras"])
+        if fresh and sp["kind"] != "resident":  # a person with a part in a quest still has something to say about the stranger first
+            react = occupations.reaction_lines(world, sp, octx)
+            if react:
+                lines = react + lines
     if sp["kind"] != "resident":
         ov = occupations.view(world, sp, octx, intro=fresh and not lines, asked=asked)
         lines += ov["lines"]
@@ -98,9 +108,20 @@ def _compose(world: Any, sp: dict[str, Any], asked: set[str], fresh: bool) -> tu
     return lines, choices, extras
 
 
+def _pending_responses(world: Any, sp: dict[str, Any], octx: dict[str, Any], conv: dict[str, Any]) -> list[dict[str, Any]]:
+    """The apprentice's possible replies to the last thing this person said, if it invited one (a topic with `responses`), until one is given."""
+    out: list[dict[str, Any]] = []
+    for tid in conv.get("asked", []):
+        t = occupations.topic_def(world, sp, tid)
+        if t is not None and t.get("responses"):
+            out += graph.response_choices(world, octx, "topic:" + tid, t["responses"])
+    return out
+
+
 def begin(world: Any, sp: dict[str, Any]) -> None:
     for other in [k for k in table(world) if k != sp["key"]]:
         end(world, other, "another")
+    campaign.note_contact(world, sp["pid"])
     table(world)[sp["key"]] = {"kind": sp["kind"], "pid": sp["pid"], "since_ms": now(world), "last_ms": now(world), "asked": []}
     if sp["row"] is not None:
         hold.hold(world, sp["row"])
@@ -114,10 +135,18 @@ def talk(world: Any, key: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "no_such_person"}
     if sp["kind"] == "unit" and not sp["row"].get("alive", True):
         return {"status": "rejected", "reason": "dead"}
+    if sp["kind"] == "resident" and sp["res"]["status"] != "present":
+        return {"status": "rejected", "reason": "dead" if sp["res"]["status"] == "dead" else "gone"}
+    if campaign.over(world):
+        return {"status": "rejected", "reason": "game_over"}
+    if campaign.active_scene(world) is not None:
+        return {"status": "rejected", "reason": "scene"}
     if _distance(world, sp) > characters.TALK_RANGE:
         return {"status": "rejected", "reason": "too_far"}
     if duel_lease.active(world) is not None:
         return {"status": "rejected", "reason": "duel_open"}
+    if sp["kind"] == "resident" and sp["res"].get("hostile"):  # the stranger speaks only in the scenes of the story
+        return _reply(world, sp, ["The stranger's eyes pass over you as if you were furniture."], [], ends=True)
     if sp["kind"] == "unit" and sp["row"].get("target") is not None:  # fighting: no conversation, and nothing is held
         return _reply(world, sp, ["Not now. Can't you see I am busy?"], [], ends=True)
     begin(world, sp)
@@ -140,12 +169,23 @@ def choose(world: Any, key: str, choice: str) -> dict[str, Any]:
     asked = set(conv["asked"])
     gctx, octx = _ctx(world, sp)
     if choice.startswith("topic:") and sp["kind"] != "resident":
-        lines = occupations.topic(world, sp, octx, choice[len("topic:"):])
-        if lines is None:
+        res = occupations.topic(world, sp, octx, choice[len("topic:"):])
+        if res is None:
             return {"status": "rejected", "reason": "choice_unavailable"}
         conv["asked"].append(choice[len("topic:"):])
         _l, choices, extras = _compose(world, sp, set(conv["asked"]), False)
-        return _reply(world, sp, [], choices, text="\n".join(lines), extras=extras)
+        choices = _pending_responses(world, sp, octx, conv) + choices
+        extras = {**extras, **res["extras"], "check": res["check"]}
+        return _reply(world, sp, [], choices, text="\n".join(res["lines"]), extras=extras)
+    if choice.startswith("resp:") and sp["kind"] != "resident":
+        _r, _k, tid, rid = choice.split(":", 3)
+        t = occupations.topic_def(world, sp, tid)
+        out = graph.respond(world, octx, "topic:" + tid, t["responses"], rid) if t is not None else None
+        if out is None:
+            return {"status": "rejected", "reason": "choice_unavailable"}
+        _l, choices, extras = _compose(world, sp, set(conv["asked"]), False)
+        choices = _pending_responses(world, sp, octx, conv) + choices
+        return _reply(world, sp, [], choices, text="\n".join(out["lines"] + out["reply"]), extras={**extras, **out["extras"], "check": out["check"], "reaction": out["reaction"]})
     if choice == "farewell" and sp["kind"] != "resident":
         return _reply(world, sp, [], [], ends=True, text=occupations.data()["farewell"])
     if gctx is None:
@@ -163,7 +203,10 @@ def choose(world: Any, key: str, choice: str) -> dict[str, Any]:
         choices += ov["choices"]
         if not any(c["id"] in ("leave", "farewell") for c in choices):
             choices.append(dict(FAREWELL))
-    return _reply(world, sp, [] if ends else out["lines"], [] if ends else choices, ends=ends, text=out.get("text", ""), extras=out["extras"])
+    extras = dict(out["extras"])
+    if out.get("check"):
+        extras["check"] = out["check"]
+    return _reply(world, sp, [] if ends else out["lines"], [] if ends else choices, ends=ends, text=out.get("text", ""), extras=extras)
 
 
 def end(world: Any, key: str | None = None, reason: str = "closed") -> int:
@@ -197,7 +240,10 @@ def inspect_person(world: Any, key: str) -> dict[str, Any]:
     sp = resolve(world, key)
     if sp is None:
         return {"status": "rejected", "reason": "no_such_person"}
-    return {"status": "ok", "npc": key, "person": sp["pid"], "name": world.dmb.people[sp["pid"]]["name"], "subtitle": subtitle(world, sp)}
+    campaign.note_inspect(world, key)
+    dead = sp["kind"] == "resident" and sp["res"]["status"] == "dead"
+    return {"status": "ok", "npc": key, "person": sp["pid"], "name": world.dmb.people[sp["pid"]]["name"], "subtitle": subtitle(world, sp), "dead": dead,
+            "hostile": bool(sp["kind"] == "resident" and sp["res"].get("hostile"))}
 
 
 def inspect_building(world: Any, building_id: str) -> dict[str, Any]:
@@ -205,6 +251,7 @@ def inspect_building(world: Any, building_id: str) -> dict[str, Any]:
     b = world.buildings.get(building_id)
     if b is None:
         return {"status": "rejected", "reason": "no_such_building"}
+    campaign.note_inspect(world, building_id)
     people = []
     for role, wid in sorted((b.get("worker_ids") or {}).items()):
         row = world.workers.get(wid)

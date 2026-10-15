@@ -18,6 +18,7 @@ const TILE := 26
 const KIND_COLOR := {"door": Color(0.55, 0.4, 0.25), "logs": Color(0.6, 0.6, 0.7), "sign": Color(0.9, 0.85, 0.6), "pickup": Color(0.95, 0.8, 0.2), "exit": Color(0.4, 0.9, 0.5)}
 const COLOURS := [Color(0.9, 0.25, 0.2), Color(0.3, 0.55, 0.95), Color(0.3, 0.8, 0.35), Color(0.95, 0.85, 0.25), Color(0.7, 0.4, 0.9), Color(0.95, 0.6, 0.2)]
 const COLOUR_NAMES := ["Red", "Blue", "Green", "Yellow", "Purple", "Orange"]
+const WORLDVIEW_NAMES := {"M": "Monarchist", "A": "Anarchist", "R": "Religious", "G": "Guildist", "S": "Arcane Supremacist", "D": "Druidic", "C": "Illuminated"}
 
 var world: Node
 var layer: CanvasLayer
@@ -349,6 +350,8 @@ func nearest_interactive() -> Dictionary:
 	for e in world._snapshot.get("entities", []):
 		var d := absi(int(p.get("tx", 0)) - int(e["tx"])) + absi(int(p.get("ty", 0)) - int(e["ty"]))
 		if str(e.get("class", "")) in ["npc", "landmark"]:
+			if bool(e.get("dead", false)) or bool(e.get("hostile", false)):
+				continue  # nobody to talk to: the mentor's body, the stranger
 			if d <= TALK_RANGE and d < bd:
 				bd = d
 				best = e
@@ -710,11 +713,36 @@ func finish_opening() -> void:
 		opening_card.hide_card()
 
 
+## The Game Over screen's New game: nothing of the old world's panels survives (the arrival text will show again for the new one).
+func reset_for_new_game() -> void:
+	_opening_done = false
+	_opening_pages = []
+	_opening_i = 0
+	opening_card.hide_card()
+	journal.hide_card()
+	npc_id = ""
+	conv_ends = false
+	conv_duel = {}
+	view = {}
+	dungeon.visible = false
+	_progress_reset()
+
+
+func _progress_reset() -> void:
+	if world.has_method("reset_progress_notice"):
+		world.reset_progress_notice()
+
+
 func journal_string() -> String:
 	var j := journal_data()
 	if j.is_empty():
 		return "Nothing yet."
 	var out: PackedStringArray = []
+	var goal := str(j.get("objective", ""))
+	if goal != "":
+		out.append("OBJECTIVE")
+		out.append("  " + goal)
+		out.append("")
 	var spells: Array = j.get("spells", [])
 	out.append("Spells: %s.  Weave: %d slots." % [", ".join(PackedStringArray(spells)) if not spells.is_empty() else "none yet", int(j.get("weave_size", 0))])
 	out.append("")
@@ -737,6 +765,32 @@ func journal_string() -> String:
 		out.append("NOTES")
 		for n in notes:
 			out.append("  - " + str(n.get("text", "")))
+	var c = j.get("campaign", {})
+	if typeof(c) == TYPE_DICTIONARY and not (c as Dictionary).is_empty():
+		var asp = c.get("aspects", {})
+		if typeof(asp) == TYPE_DICTIONARY and not (asp as Dictionary).is_empty():
+			out.append("")
+			out.append("ASPECTS")
+			var bits: PackedStringArray = []
+			for a in ["reason", "empathy", "authority", "guile", "resolve", "curiosity", "wonder"]:
+				bits.append("%s %d" % [str(a).capitalize(), int(asp.get(a, 0))])
+			out.append("  " + ", ".join(bits))
+		var wv = c.get("worldview", {})
+		if typeof(wv) == TYPE_DICTIONARY and not (wv as Dictionary).is_empty():
+			var lean := ""
+			var best := 0
+			for code in WORLDVIEW_NAMES:
+				if int(wv.get(code, 0)) > best:
+					best = int(wv[code])
+					lean = str(WORLDVIEW_NAMES[code])
+			if lean != "":
+				out.append("")
+				out.append("LEANINGS")
+				var parts: PackedStringArray = []
+				for code in WORLDVIEW_NAMES:
+					if int(wv.get(code, 0)) != 0:
+						parts.append("%s %d" % [str(WORLDVIEW_NAMES[code]), int(wv[code])])
+				out.append("  Leaning: %s (%s)" % [lean, ", ".join(parts)])
 	return "\n".join(out)
 
 

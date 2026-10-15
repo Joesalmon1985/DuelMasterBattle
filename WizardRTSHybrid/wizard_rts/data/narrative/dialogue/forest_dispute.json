@@ -616,7 +616,19 @@
        "sets": [
         "outcome_compromise"
        ],
-       "goto": "hub"
+       "goto": "hub",
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 5,
+         "who": "cutter"
+        },
+        {
+         "kind": "relationship",
+         "delta": 5,
+         "who": "planter"
+        }
+       ]
       },
       {
        "id": "say_cutter",
@@ -639,7 +651,19 @@
        "sets": [
         "outcome_cutter"
        ],
-       "goto": "hub"
+       "goto": "hub",
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 10,
+         "who": "cutter"
+        },
+        {
+         "kind": "relationship",
+         "delta": -4,
+         "who": "planter"
+        }
+       ]
       },
       {
        "id": "say_planter",
@@ -662,7 +686,19 @@
        "sets": [
         "outcome_planter"
        ],
-       "goto": "hub"
+       "goto": "hub",
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 10,
+         "who": "planter"
+        },
+        {
+         "kind": "relationship",
+         "delta": -4,
+         "who": "cutter"
+        }
+       ]
       },
       {
        "id": "say_nothing",
@@ -685,7 +721,19 @@
        "sets": [
         "outcome_none"
        ],
-       "goto": "hub"
+       "goto": "hub",
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": -1,
+         "who": "cutter"
+        },
+        {
+         "kind": "relationship",
+         "delta": -1,
+         "who": "planter"
+        }
+       ]
       },
       {
        "id": "leave",

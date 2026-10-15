@@ -470,5 +470,249 @@
     }
    ]
   }
- }
+ },
+ "shared_topics": [
+  {
+   "id": "opinion_mentor",
+   "text": "What do you think of {mentor}?",
+   "when": {
+    "stage": [
+     "training",
+     "explore",
+     "arrival"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The best of us. They never asked for thanks, which is why nobody thinks to give it.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "fond"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Keeps to themselves. Clever, I suppose, but clever is not the same as caring.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "wary"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Fair, and a little distant. I would not say a bad word of them.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "respectful"
+       ]
+      }
+     }
+    },
+    {
+     "text": "They taught half the settlement their letters, and never raised a hand to anyone.",
+     "when": {
+      "persona": {
+       "trait": [
+        "warm",
+        "gentle"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Stubborn as a root. Which is not a complaint.",
+     "when": {
+      "persona": {
+       "trait": [
+        "wry",
+        "stoic"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "opinion_wizards",
+   "text": "What do you make of wizards, in general?",
+   "when": {
+    "stage": [
+     "training",
+     "explore",
+     "arrival"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Somebody should be in charge who can actually do things. It might as well be them.",
+     "when": {
+      "persona": {
+       "primary": [
+        "S"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Wizards, kings, headmen. Same disease, different hats.",
+     "when": {
+      "persona": {
+       "primary": [
+        "A"
+       ]
+      }
+     }
+    },
+    {
+     "text": "A gift is a trust. They answer to something above themselves, or they should.",
+     "when": {
+      "persona": {
+       "primary": [
+        "R"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Fine, so long as they pay for what they break. Everyone does.",
+     "when": {
+      "persona": {
+       "primary": [
+        "G"
+       ]
+      }
+     }
+    },
+    {
+     "text": "The land has its own ways. A wizard who forgets that will find out. Gently or not.",
+     "when": {
+      "persona": {
+       "primary": [
+        "D"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Useful, if they keep to their duty. Dangerous otherwise. Same as a sword.",
+     "when": {
+      "persona": {
+       "primary": [
+        "M"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Have you noticed they all talk in threes? Three colours, three places. As if somebody had written it.",
+     "when": {
+      "persona": {
+       "primary": [
+        "C"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "opinion_apprentice",
+   "text": "Does it bother you, having an apprentice wizard about the place?",
+   "when": {
+    "stage": [
+     "training",
+     "explore",
+     "arrival"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Bother me? It makes me prouder of the village, if you want the truth.",
+     "when": {
+      "persona": {
+       "magic": [
+        "devoted"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Not at all. Folk like you remind us to be better than we are.",
+     "when": {
+      "persona": {
+       "magic": [
+        "reverent"
+       ]
+      }
+     }
+    },
+    {
+     "text": "As long as you stay out of my way and mind the timber, no.",
+     "when": {
+      "persona": {
+       "magic": [
+        "practical"
+       ]
+      }
+     }
+    },
+    {
+     "text": "A little. You are young. Young and powerful is a thing worth watching.",
+     "when": {
+      "persona": {
+       "magic": [
+        "cautious"
+       ]
+      }
+     }
+    },
+    {
+     "text": "I would rather you did not stand near my work, if it is the same to you.",
+     "when": {
+      "persona": {
+       "magic": [
+        "wary"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "thanks_dispute",
+   "text": "I heard you had some trouble in the forest.",
+   "when": {
+    "stage": [
+     "training",
+     "explore",
+     "arrival",
+     "aftermath",
+     "complete"
+    ],
+    "quest": {
+     "id": "forest_dispute",
+     "in": [
+      "done"
+     ]
+    },
+    "relationship": {
+     "gte": 10
+    }
+   },
+   "lines": [
+    "You settled it, or tried. That counts for more than most. If you ever want a favour, ask."
+   ],
+   "effects": [
+    {
+     "kind": "fact",
+     "id": "favour_offered"
+    }
+   ]
+  }
+ ]
 }

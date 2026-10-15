@@ -18,6 +18,9 @@ ENV_OVERRIDES = {
     "HYBRID_NARRATIVE_UNLOCK_MS": ("narrative", "unlock_after_ms", int),
     "HYBRID_TUTORIAL_EXPIRE_MS": ("tutorial", "expire_ms", int),
     "HYBRID_AUTOSAVE_SECONDS": ("save", "autosave_seconds", float),
+    "HYBRID_EXPLORE_MIN_MS": ("campaign", "explore_min_ms", int),
+    "HYBRID_EXPLORE_FALLBACK_MS": ("campaign", "explore_fallback_ms", int),
+    "HYBRID_AFTERMATH_FALLBACK_MS": ("campaign", "aftermath_fallback_ms", int),
 }
 
 

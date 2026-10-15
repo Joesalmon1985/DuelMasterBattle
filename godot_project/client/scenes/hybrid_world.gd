@@ -8,6 +8,7 @@ const GodMode = preload("res://client/hybrid/god_mode.gd")
 const TerrainView = preload("res://client/hybrid/terrain_view.gd")
 const WizardLabels = preload("res://client/hybrid/wizard_labels.gd")
 const StoryUi = preload("res://client/hybrid/story_ui.gd")
+const CampaignUi = preload("res://client/hybrid/campaign_ui.gd")
 const CampaignHud = preload("res://client/ui/campaign_hud.gd")
 const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 const ResponsiveModal = preload("res://client/ui/responsive_modal.gd")
@@ -43,6 +44,7 @@ var wizard_labels: Node  # semantic labels and fire magic (Wizard Mode)
 var era_hud: Label  # era, victory points and cycle: the stats read-out inside the campaign HUD (shown when the HUD title is tapped)
 var hud: Control  # the campaign HUD: era and cycle, the current objective, a journal button
 var menu_card: Control  # the pause menu (a DmbNarrativeCard)
+var campaign_ui: Node  # the opening campaign's scenes and the Game Over screen (campaign_ui.gd)
 var story_ui: Node  # the wizard's story: people, dialogue, dungeon, duel (placeholders over the Python ops)
 var terrain = null  # TerrainView once the sim has sent its terrain
 ## Camera zoom is stored as PHYSICAL pixels per map tile (so "how close" means the same on a phone and a monitor) and converted with the stretch scale.
@@ -127,6 +129,10 @@ func _ready() -> void:
 	story_ui.name = "StoryUi"
 	add_child(story_ui)
 	story_ui.setup(self)
+	campaign_ui = CampaignUi.new()  # after the story panels: it sees the keyboard first while a scene or the Game Over screen is up
+	campaign_ui.name = "CampaignUi"
+	add_child(campaign_ui)
+	campaign_ui.setup(self, story_ui)
 	var hud_layer := CanvasLayer.new()
 	hud_layer.name = "HudLayer"
 	hud_layer.layer = 6
@@ -165,7 +171,7 @@ func _era_text(snap: Dictionary) -> String:
 func _process(delta: float) -> void:
 	super._process(delta)
 	if hud != null and story_ui != null:
-		hud.set_covered(story_ui.covering() or _duel_open or _menu_open or (god != null and god.active))
+		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or (god != null and god.active))
 	_autosave_tick(delta)
 	_art.industry.begin_frame(delta)
 	if _camera_nudge != Vector2.ZERO:
@@ -602,6 +608,24 @@ func load_slot(slot: String, prev := false) -> Dictionary:
 	var reply: Dictionary = _sim.op({"op": "load", "slot": slot, "prev": prev})
 	if str(reply.get("status", "")) != "ok":
 		return reply
+	_adopt_world(reply)
+	_hud_area_lbl.text = "Loaded (%s)" % slot
+	return reply
+
+
+## The Game Over screen's New game: the server replaces the world with a fresh one (the same switches as at launch), and the client starts over.
+func new_game() -> bool:
+	var reply: Dictionary = _sim.op({"op": "new_game"})
+	if str(reply.get("status", "")) != "ok":
+		return false
+	_adopt_world(reply)
+	_hud_area_lbl.text = "New game"
+	if story_ui != null:
+		story_ui.reset_for_new_game()
+	return true
+
+
+func _adopt_world(reply: Dictionary) -> void:
 	var tview = TerrainView.new()
 	if tview.load_from(reply):
 		terrain = tview
@@ -614,6 +638,9 @@ func load_slot(slot: String, prev := false) -> Dictionary:
 	_static_rows.clear()
 	_solid.clear()
 	_solid_tile_of.clear()
+	camera_focus = Vector2.INF
+	paused = false
+	_input_locked = false
 	_apply_snapshot(reply.get("snapshot", {}))
 	_seq = int(_snapshot.get("clock_sequence", 0))
 	_clock_acc = 0.0
@@ -621,9 +648,7 @@ func load_slot(slot: String, prev := false) -> Dictionary:
 	_update_john_sprite(0)
 	if story_ui != null:
 		story_ui.refresh()
-	_hud_area_lbl.text = "Loaded (%s)" % slot
 	queue_redraw()
-	return reply
 
 
 ## Why an autosave has to wait ("" when the moment is quiet): a duel board, a dialogue, a dungeon view, the pause menu or a summoned worker.
@@ -642,6 +667,8 @@ func autosave_wait_reason() -> String:
 		var st = _snapshot.get("story", {})
 		if typeof(st) == TYPE_DICTIONARY and not (st.get("summoned", []) as Array).is_empty():
 			return "summoned"
+	if campaign_ui != null and campaign_ui.covering():
+		return "scene"
 	if _input_locked:
 		return "locked"
 	return ""
@@ -660,7 +687,7 @@ func _autosave_tick(delta: float) -> void:
 
 ## Escape and the menu button: Continue, Save game, Load game, Save and quit (a card of the same style as every other narrative panel).
 func _on_menu() -> void:
-	if _input_locked or _duel_open or _snapshot.is_empty() or _menu_open:
+	if _input_locked or _duel_open or _snapshot.is_empty() or _menu_open or (campaign_ui != null and campaign_ui.covering()):
 		return
 	_input_locked = true
 	_menu_open = true
@@ -737,6 +764,10 @@ func _notice_progress() -> void:
 		elif notes > int(_progress["notes"]):
 			hud.flash("A note was added to your journal.")
 	_progress = {"done": done, "status": status, "notes": notes}
+
+
+func reset_progress_notice() -> void:
+	_progress = {}
 
 
 func _update_hud(snap: Dictionary) -> void:

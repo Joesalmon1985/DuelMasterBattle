@@ -272,7 +272,7 @@ def test_without_the_roles_the_quest_is_not_forced_into_the_settlement():
     ids = nh.ids(nh.talk(w, t))
     assert "ask_village_none" in ids and "ask_village" not in ids
     out = nh.pick(w, t, "ask_village_none")
-    assert "Nothing that a wizard could mend" in out["text"] and wizard.lesson_done(w, "world")
+    assert "Come back when you have heard something" in out["text"] and wizard.lesson_done(w, "world")
 
 
 # ------------------------------------------------------------------ everyday talk
@@ -301,7 +301,7 @@ def test_ordinary_people_talk_as_what_they_are_and_only_say_what_is_true():
     facts = occupations.facts_for(w, conversation.resolve(w, uid))
     assert facts["has_barracks"] is False
     barr = occupations.topic(w, conversation.resolve(w, uid), {"name": "x", "facts": facts}, "no_barracks")
-    assert barr == ["No barracks yet. We are few and the settlement is small."]
+    assert barr["lines"] == ["No barracks yet. We are few and the settlement is small."]
     assert occupations.topic(w, conversation.resolve(w, uid), {"name": "x", "facts": facts}, "barracks") is None  # it is not claimed
 
 
@@ -344,7 +344,7 @@ def test_repeated_conversations_vary_and_do_not_repeat_the_introduction():
 # ------------------------------------------------------------------ the content itself
 
 def test_every_line_uses_only_placeholders_that_exist():
-    known = {"name", "faction", "workplace", "settlement", "trees_big", "saplings", "rocks", "animals", "logs", "soldiers", "barracks", "carrying",
+    known = {"name", "mentor", "attacker", "faction", "workplace", "settlement", "trees_big", "saplings", "rocks", "animals", "logs", "soldiers", "barracks", "carrying",
              "cutter", "planter", "witness", "cutter_where", "planter_where", "witness_where", "cutter_role", "planter_role", "witness_role"}
     def strings(o):
         if isinstance(o, str):
@@ -355,7 +355,7 @@ def test_every_line_uses_only_placeholders_that_exist():
         elif isinstance(o, list):
             for x in o:
                 yield from strings(x)
-    for name in ("tutorial", "forest_dispute", "occupations"):
+    for name in ("tutorial", "forest_dispute", "occupations", "aftermath", "campaign_scenes"):
         data = json.loads((HERE / "wizard_rts" / "data" / "narrative" / "dialogue" / f"{name}.json").read_text())
         n = 0
         for line in strings(data):

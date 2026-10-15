@@ -819,7 +819,7 @@ def _story_snapshot(world: Any) -> dict[str, Any]:
 # ------------------------------------------------------------------ the wizard's command surface
 
 WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",
-              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person")
+              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose")
 
 
 def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
@@ -845,7 +845,7 @@ def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         out = duel_guess(world, list(message.get("guess", [])))
     elif op == "duel_abandon":
         out = duel_abandon(world)
-    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person"):
+    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose"):
         from wizard_rts.narrative import ops
 
         out = ops.handle(world, message)

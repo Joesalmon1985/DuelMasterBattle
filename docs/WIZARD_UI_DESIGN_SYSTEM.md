@@ -50,6 +50,8 @@ over two frames after any content change (wrapped text only knows its height onc
 | Journal | `story_ui.gd` (`journal`) | modal | Close (J) |
 | Inspect (person, building, tree, ...) | `wizard_labels.gd` (`panel`) | sheet | Talk, Ask <name> to come out, Burn it with fire magic, Close |
 | Pause menu | `hybrid_world.gd` (`menu_card`) | modal | Continue, Save game, Load game, Save and quit; Load lists the three slots |
+| Scene page (the stranger's arrival, the confrontation, the victory) | `campaign_ui.gd` (`scene_card`) | sheet | the speaker's name and role, the page, the apprentice's answers when the page asks for one (an Aspect check shows its Aspect and, afterwards, the figures: score, evidence, relationship against the threshold), `1 / 11` progress, one Continue (or Begin the duel on the last page); the world waits, the camera is guided to the speaker |
+| Game over | `campaign_ui.gd` (`over_card`) | modal | New game (primary), Quit; nothing else reaches the dead apprentice's game (no pause menu, no Escape) |
 | HUD | `campaign_hud.gd` | top left | the title (era and cycle) opens the full read-out; Journal (J) |
 
 ## 4. HUD
@@ -75,6 +77,7 @@ arrival, the journal, a menu or a duel owns the screen, so it never sits on a co
 | --- | --- |
 | `run_hybrid_ui.gd` (`ui`) | at five window sizes: arrival, conversation (ordinary and very long), journal (very long), inspect (person, building, tree), pause menu and HUD are inside the viewport; no text or button sticks out; body text is at least 16 physical px; every button is at least 44 px; long content scrolls to its last line; the footer stays visible; the HUD steps aside; Escape, Leave and Continue behave the same |
 | `run_hybrid_camera.gd` (`camera`) | default closeness; `+ = -` numpad; wheel; pinch zooms and selects nothing; limits; persistence; cards do not change size with zoom; nothing zooms behind a conversation; clicks pick the right figure at three zoom levels; the same closeness in another window |
+| `run_hybrid_apprentice.gd` (`apprentice_win`, `apprentice_lose`) | the whole opening at the project's 450 x 800 window through the real UI and the real board: lessons, Aspect checks, worldview answers, exploration, the stranger's scenes, the mentor's death, the lethal duel, then the aftermath and the final objective, or Game Over and New game |
 | `run_hybrid_conversation.gd` (`conversation`) | a moving lumberjack, forester, carrier and soldier stop and stand while others keep moving, and resume; death during a conversation closes it |
 | `run_hybrid_tutorial.gd` (`tutorial`), `run_hybrid_launch.gd` (`launch`), `run_hybrid_wizard.gd` (`wizard`) | the whole opening, the lessons, both duels, the quest, save and load, fire magic, all through the real UI |
 
