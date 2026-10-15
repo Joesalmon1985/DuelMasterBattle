@@ -69,13 +69,19 @@ class CcDict(dict):
         super().clear()
 
 
-def command_centers(world: Any, faction: str | None = None, alive: bool = True) -> list[dict]:
+def _cc_list(world: Any) -> list[dict]:
+    """The cached list of every command-centre building (alive or not) in id-dict order; callers must not mutate it."""
     ids = world.cc_ids
     lst = getattr(ids, "cache", None)
     if lst is None:
         lst = [b for bid in ids if (b := world.buildings.get(bid)) is not None]
         if isinstance(ids, CcDict):
             ids.cache = lst
+    return lst
+
+
+def command_centers(world: Any, faction: str | None = None, alive: bool = True) -> list[dict]:
+    lst = _cc_list(world)
     if faction is None and not alive:
         return list(lst)
     return [b for b in lst if (faction is None or b["faction_name"] == faction) and (not alive or int(b.get("hp", 1)) > 0)]
@@ -88,8 +94,11 @@ def cheb(a: tuple[int, int], b: tuple[int, int]) -> int:
 def covering(world: Any, faction: str, tile: tuple[int, int]) -> dict | None:
     """The faction's command centre whose build area contains the tile (the nearest one), or None."""
     best = None
-    for b in command_centers(world, faction):
-        d = cheb(tile, (b["tx"], b["ty"]))
+    tx, ty = tile
+    for b in _cc_list(world):  # the same filter as command_centers(world, faction), without building the list
+        if b["faction_name"] != faction or int(b.get("hp", 1)) <= 0:
+            continue
+        d = max(abs(tx - b["tx"]), abs(ty - b["ty"]))
         if d <= radius_of(b) and (best is None or d < best[0]):
             best = (d, b)
     return best[1] if best else None
@@ -97,7 +106,14 @@ def covering(world: Any, faction: str, tile: tuple[int, int]) -> dict | None:
 
 def frontier_distance(world: Any, faction: str, tile: tuple[int, int]) -> int:
     """Chebyshev distance from `tile` to the faction's nearest command centre (growth proceeds from the frontier, not from the capital)."""
-    return min((cheb(tile, (c["tx"], c["ty"])) for c in command_centers(world, faction)), default=10**6)
+    tx, ty = tile
+    best = 10**6
+    for c in _cc_list(world):
+        if c["faction_name"] == faction and int(c.get("hp", 1)) > 0:
+            d = max(abs(tx - c["tx"]), abs(ty - c["ty"]))
+            if d < best:
+                best = d
+    return best
 
 
 def in_territory(world: Any, faction: str, tile: tuple[int, int]) -> bool:
@@ -107,11 +123,15 @@ def in_territory(world: Any, faction: str, tile: tuple[int, int]) -> bool:
 def settlement_of(world: Any, b: dict) -> dict | None:
     """The command centre a building belongs to: the nearest of its faction's centres."""
     best = None
-    for cc in command_centers(world, b["faction_name"]):
-        d = cheb((b["tx"], b["ty"]), (cc["tx"], cc["ty"]))
-        if best is None or d < best[0]:
-            best = (d, cc)
-    return best[1] if best else None
+    bx, by, f = b["tx"], b["ty"], b["faction_name"]
+    bd = 0
+    for cc in _cc_list(world):
+        if cc["faction_name"] != f or int(cc.get("hp", 1)) <= 0:
+            continue
+        d = max(abs(bx - cc["tx"]), abs(by - cc["ty"]))
+        if best is None or d < bd:
+            best, bd = cc, d
+    return best
 
 
 def footprint(tile: tuple[int, int], definition: str = MCV_DEFINITION) -> list[tuple[int, int]]:
@@ -122,8 +142,9 @@ def footprint(tile: tuple[int, int], definition: str = MCV_DEFINITION) -> list[t
 def separation_problem(world: Any, faction: str, tile: tuple[int, int]) -> str | None:
     """None if a centre at `tile` keeps clear of every other centre's area, else which kind of area it would overlap."""
     buffer = int(getattr(world, "cc_buffer", BUFFER))
-    for other in command_centers(world, None):
-        if cheb(tile, (other["tx"], other["ty"])) <= OUTPOST_RADIUS + radius_of(other) + buffer:
+    tx, ty = tile
+    for other in _cc_list(world):
+        if int(other.get("hp", 1)) > 0 and max(abs(tx - other["tx"]), abs(ty - other["ty"])) <= OUTPOST_RADIUS + radius_of(other) + buffer:
             return "overlaps_friendly_territory" if other["faction_name"] == faction else "overlaps_enemy_territory"
     return None
 

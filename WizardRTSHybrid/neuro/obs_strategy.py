@@ -176,7 +176,7 @@ class StrategyMixin:
 
     def expansion_sites(self, fr: Any) -> list[tuple[int, tuple[int, int]]]:
         """The N_TOP_CANDIDATES founding sites offered to the controller, as [(distance to the frontier, tile)]: nearest first, at least SITE_SPREAD tiles
-        apart (a fixed rule, not a score). A site must lie within SITE_FRONTIER of one of the faction's centres, on ground it has explored, clear of its own
+        apart (a fixed rule, not a score). A site must lie within SITE_FRONTIER of one of the faction's centres, on any ground (M5: the explored-ground condition was dropped, it made expansion impossible before a scout had walked there), clear of its own
         centres and of the enemy centres it remembers, and pass the local terrain rules; the lattice is filtered with numpy first and the terrain rules run lazily
         in order of distance until four sites are chosen. Cached for two game minutes while the set of centres and the memory are unchanged."""
         w = fr.world
@@ -205,7 +205,7 @@ class StrategyMixin:
                 tile = (int(pts[i, 0]), int(pts[i, 1]))
                 if any(max(abs(tile[0] - c[1][0]), abs(tile[1] - c[1][1])) < SITE_SPREAD for c in chosen):
                     continue
-                if vision.known(w, fr.me, tile[0], tile[1]) and self.local_site_ok(fr, tile):
+                if self.local_site_ok(fr, tile):  # terrain rules only: like the heuristic AIs, the controller may send a founder to ground it has not looked at yet
                     chosen.append((int(d[i]), tile))
                     if len(chosen) == S.N_TOP_CANDIDATES:
                         break
