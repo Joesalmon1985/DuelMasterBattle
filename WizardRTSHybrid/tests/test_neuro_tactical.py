@@ -46,3 +46,37 @@ def test_a_game_with_the_tactical_controller_on_runs_clean_and_is_replayable():
     assert r1.end_reason in ("horizon", "agent_collapsed") and r1.vp_replay_ok and r1.ledger_ok and r1.state_hash == r2.state_hash
     assert all(isinstance(c.tactical, Tactical) for c in c1.values())
     print("\n[tactical] orders issued:", {s: c.tactical.orders_issued for s, c in c1.items()})
+
+
+def test_a_squad_next_to_a_visible_enemy_gets_each_of_the_four_orders_and_the_simulator_accepts_them():
+    """Engagement on purpose: the rich world has six riflemen by the capital, a Blue raider in sight and a blight nest; N11's output bias forces each order in turn."""
+    import copy
+    import pickle
+
+    from neuro import nets as NN
+    from wizard_rts.sim_api import HybridEnv
+    from tests.neuro_worlds import rich_world
+
+    base = pickle.dumps(rich_world(), protocol=5)
+    seen_ops = {}
+    for order, name in enumerate(("hold", "attack", "focus", "retreat")):
+        w = pickle.loads(base)
+        env = HybridEnv(seed=1, map_size="standard", agent_factions=("Red",), step_ms=1000, profile="campaign")
+        env.world = w
+        g = NN.random_genome(np.random.default_rng(2))
+        n = NN.Nets(g)
+        n.w["N11"]["W2"][:] = 0.0
+        n.w["N11"]["b2"][:] = -5.0
+        n.w["N11"]["b2"][order] = 5.0
+        cfg = EpisodeConfig(seed=1, game_minutes=60, map_size="standard", agent_seats=("Red",), tactical=True)
+        ctl = Controller(env, "Red", n, cfg, 0, None)
+        t = int(w.dmb.clock["game_ms"]) // 1000
+        ctl._tick(t, "strategic")  # fills the cache N11 reads
+        cmds = ctl.tactical.tick(t + 5)
+        assert cmds, f"no tactical order for {name}"
+        for cmd, label in cmds:
+            assert label == name
+            seen_ops.setdefault(name, set()).add(cmd["op"])
+            assert env.apply("Red", cmd).get("status") == "ok", (name, cmd, env.apply("Red", cmd))
+        assert ctl.tactical.orders_issued[order] == len(cmds)
+    assert seen_ops["hold"] == {"stop"} and seen_ops["attack"] == {"move"} and seen_ops["focus"] == {"order"} and seen_ops["retreat"] == {"move"}
