@@ -8,6 +8,11 @@ const GodMode = preload("res://client/hybrid/god_mode.gd")
 const TerrainView = preload("res://client/hybrid/terrain_view.gd")
 const WizardLabels = preload("res://client/hybrid/wizard_labels.gd")
 const StoryUi = preload("res://client/hybrid/story_ui.gd")
+const CampaignUi = preload("res://client/hybrid/campaign_ui.gd")
+const CampaignHud = preload("res://client/ui/campaign_hud.gd")
+const NarrativeCard = preload("res://client/ui/narrative_card.gd")
+const ResponsiveModal = preload("res://client/ui/responsive_modal.gd")
+const SaveData = preload("res://client/scripts/save_data.gd")
 
 ## Continuous hybrid world. Movement, camera, and the retained duel board
 ## come from the existing Overworld and DmbDuelLeaseAdapter. The Python
@@ -36,9 +41,28 @@ var _camera_nudge := Vector2.ZERO
 var camera_focus := Vector2.INF
 var god: Node
 var wizard_labels: Node  # semantic labels and fire magic (Wizard Mode)
-var era_hud: Label  # era, victory points and cycle: a developer read-out of the simulation's own state
+var era_hud: Label  # era, victory points and cycle: the stats read-out inside the campaign HUD (shown when the HUD title is tapped)
+var hud: Control  # the campaign HUD: era and cycle, the current objective, a journal button
+var menu_card: Control  # the pause menu (a DmbNarrativeCard)
+var campaign_ui: Node  # the opening campaign's scenes and the Game Over screen (campaign_ui.gd)
 var story_ui: Node  # the wizard's story: people, dialogue, dungeon, duel (placeholders over the Python ops)
 var terrain = null  # TerrainView once the sim has sent its terrain
+## Camera zoom is stored as PHYSICAL pixels per map tile (so "how close" means the same on a phone and a monitor) and converted with the stretch scale.
+const ZOOM_DEFAULT_PX := 52.0
+const ZOOM_MIN_PX := 26.0
+const ZOOM_MAX_PX := 128.0
+const ZOOM_STEP := 1.15
+var zoom_px := ZOOM_DEFAULT_PX
+var _touches: Dictionary = {}  # screen-touch index -> position, for the two-finger pinch
+var _pinch_dist := 0.0
+var _pinch_active := false
+var _pinch_seen := false  # a pinch happened since the last press: that press is not a click
+var _pinch_block_until := 0
+var _press: Dictionary = {}  # the left press that may become a click: {"pos", "target"}
+var autosave_seconds := 300.0  # real seconds of play between autosaves; the client times it, the simulation reads no wall clock (HYBRID_AUTOSAVE_SECONDS overrides)
+var autosave_count := 0
+var _autosave_acc := 0.0
+var _menu_open := false  # the pause menu is showing
 var selected_ids: Dictionary = {}:
 	set(v):
 		selected_ids = v
@@ -46,6 +70,8 @@ var selected_ids: Dictionary = {}:
 
 
 func _ready() -> void:
+	if OS.get_environment("HYBRID_AUTOSAVE_SECONDS") != "":
+		autosave_seconds = maxf(1.0, float(OS.get_environment("HYBRID_AUTOSAVE_SECONDS")))
 	_build_layers()
 	_build_ui()
 	_font = ThemeDB.fallback_font
@@ -57,7 +83,9 @@ func _ready() -> void:
 	grid_w = 2000
 	grid_h = 2000
 	test_mode = true
-	_camera.zoom = Vector2(0.48, 0.48)
+	zoom_px = clampf(float(SaveData.get_setting("hybrid_zoom_px", ZOOM_DEFAULT_PX)), ZOOM_MIN_PX, ZOOM_MAX_PX)
+	apply_zoom()
+	get_viewport().size_changed.connect(apply_zoom)
 	_art.load_catalogue()
 	_camera.position_smoothing_enabled = false
 	# Overworld leaves the scene fader opaque until an area fade. This scene
@@ -101,19 +129,27 @@ func _ready() -> void:
 	story_ui.name = "StoryUi"
 	add_child(story_ui)
 	story_ui.setup(self)
+	campaign_ui = CampaignUi.new()  # after the story panels: it sees the keyboard first while a scene or the Game Over screen is up
+	campaign_ui.name = "CampaignUi"
+	add_child(campaign_ui)
+	campaign_ui.setup(self, story_ui)
 	var hud_layer := CanvasLayer.new()
-	hud_layer.name = "EraHudLayer"
-	hud_layer.layer = 5
+	hud_layer.name = "HudLayer"
+	hud_layer.layer = 6
 	add_child(hud_layer)
-	era_hud = Label.new()
-	era_hud.name = "EraHud"
-	era_hud.position = Vector2(16, 104)
-	era_hud.add_theme_font_size_override("font_size", 24)
-	era_hud.add_theme_color_override("font_color", Color(0.95, 0.9, 0.7))
-	era_hud.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
-	era_hud.add_theme_constant_override("outline_size", 4)
-	era_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hud_layer.add_child(era_hud)
+	hud = CampaignHud.new()
+	hud_layer.add_child(hud)
+	hud.setup(self)
+	hud.journal_requested.connect(func() -> void: story_ui.set_journal_visible(not story_ui.journal.visible))
+	era_hud = hud.stats_label
+	var menu_layer := CanvasLayer.new()
+	menu_layer.name = "MenuLayer"
+	menu_layer.layer = 16
+	add_child(menu_layer)
+	menu_card = NarrativeCard.new()
+	menu_layer.add_child(menu_card)
+	menu_card.setup(self, "modal", "PauseMenu")
+	menu_card.choice_pressed.connect(_on_menu_choice)
 
 
 func _era_text(snap: Dictionary) -> String:
@@ -134,6 +170,9 @@ func _era_text(snap: Dictionary) -> String:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	if hud != null and story_ui != null:
+		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or (god != null and god.active))
+	_autosave_tick(delta)
 	_art.industry.begin_frame(delta)
 	if _camera_nudge != Vector2.ZERO:
 		_camera.position += _camera_nudge
@@ -165,16 +204,136 @@ func _sort_y(e: Dictionary) -> int:
 	return y
 
 
+## Pinch-to-zoom and click suppression. A pinch (two touches) zooms the world and can never select anything; the touches also arrive as an emulated
+## mouse press for the first finger, so a press that turned into a pinch is not a click (clicks are taken on release, see _unhandled_input).
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			_touches[event.index] = event.position
+			if _touches.size() >= 2 and not _pinch_active:
+				_pinch_active = true
+				_pinch_seen = true
+				_press = {}
+				_pinch_dist = _touch_distance()
+		else:
+			_touches.erase(event.index)
+			if _pinch_active and _touches.size() < 2:
+				_pinch_active = false
+				_pinch_block_until = Time.get_ticks_msec() + 250
+	elif event is InputEventScreenDrag:
+		_touches[event.index] = event.position
+		if _pinch_active and _touches.size() >= 2:
+			var d := _touch_distance()
+			if _pinch_dist > 1.0 and d > 1.0:
+				zoom_by(d / _pinch_dist)
+			_pinch_dist = d
+			get_viewport().set_input_as_handled()
+			return
+	elif event is InputEventMagnifyGesture:
+		zoom_by(event.factor)
+		get_viewport().set_input_as_handled()
+		return
+	if (_pinch_active or Time.get_ticks_msec() < _pinch_block_until) and (event is InputEventMouseButton or event is InputEventMouseMotion):
+		get_viewport().set_input_as_handled()
+
+
+func _touch_distance() -> float:
+	var pts: Array = _touches.values()
+	return (pts[0] as Vector2).distance_to(pts[1] as Vector2) if pts.size() >= 2 else 0.0
+
+
+func _stretch_scale() -> float:
+	return float(ResponsiveModal.window_info(self)["scale"])
+
+
+## Re-lay-out every narrative panel (the viewport's size_changed does it in play; a test that simulates another window size calls this).
+func relayout_ui() -> void:
+	for c in [hud, menu_card, wizard_labels.panel if wizard_labels != null else null, story_ui.dialog_card if story_ui != null else null,
+			story_ui.opening_card if story_ui != null else null, story_ui.journal if story_ui != null else null]:
+		if c != null:
+			c.relayout()
+	apply_zoom()
+
+
+func apply_zoom() -> void:
+	var z := zoom_px / (float(TPX) * _stretch_scale())
+	_camera.zoom = Vector2(z, z)
+
+
+func set_zoom_px(v: float, persist := true) -> void:
+	zoom_px = clampf(v, ZOOM_MIN_PX, ZOOM_MAX_PX)
+	apply_zoom()
+	if persist:
+		SaveData.set_setting("hybrid_zoom_px", zoom_px)
+
+
+func zoom_by(factor: float) -> void:
+	set_zoom_px(zoom_px * factor)
+
+
+## Zoom keys and the mouse wheel only act when nothing else owns the screen (no conversation, menu, journal, duel or God Mode).
+func _zoom_input_ok() -> bool:
+	return not _duel_open and not _menu_open and (story_ui == null or not story_ui.covering()) and (god == null or not god.active)
+
+
+func _click_target(pos: Vector2) -> String:
+	if story_ui != null:
+		var lm: Dictionary = story_ui.person_at(pos)
+		if not lm.is_empty():
+			return "landmark:" + str(lm["id"])
+	if wizard_labels != null and wizard_labels.enabled:
+		var e: Dictionary = wizard_labels.pick(pos)
+		if not e.is_empty():
+			return str(e["id"])
+	return ""
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	# Wizard Mode: a left click on any entity opens its label (description far away, fire magic close up)
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and story_ui != null and not _duel_open and not story_ui.dialog.visible:
-		if story_ui.try_click(event.position):
+	if _menu_open:
+		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+			_close_menu()
+			get_viewport().set_input_as_handled()
+		return
+	if event is InputEventKey and event.pressed and not event.echo and _zoom_input_ok():
+		if event.keycode in [KEY_PLUS, KEY_EQUAL, KEY_KP_ADD]:
+			zoom_by(ZOOM_STEP)
 			get_viewport().set_input_as_handled()
 			return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and wizard_labels != null and not _duel_open:
-		if wizard_labels.try_click(event.position):
+		if event.keycode in [KEY_MINUS, KEY_KP_SUBTRACT]:
+			zoom_by(1.0 / ZOOM_STEP)
 			get_viewport().set_input_as_handled()
 			return
+	if event is InputEventMouseButton and event.pressed and _zoom_input_ok() and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		zoom_by(ZOOM_STEP if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0 / ZOOM_STEP)
+		get_viewport().set_input_as_handled()
+		return
+	# Wizard Mode: a left click on anything opens its inspect card. The press only remembers what is under the pointer; the click happens on release,
+	# and not at all if a pinch or a drag happened in between.
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not _duel_open and story_ui != null and not story_ui.covering():
+		if event.pressed:
+			_pinch_seen = false
+			var target := _click_target(event.position)
+			if target != "":
+				_press = {"pos": event.position, "target": target}
+				get_viewport().set_input_as_handled()
+				return
+		else:
+			var had: Dictionary = _press
+			_press = {}
+			if not had.is_empty():
+				var moved: float = (had["pos"] as Vector2).distance_to(event.position)
+				if not _pinch_seen and moved < 24.0:
+					var t := str(had["target"])
+					if t.begins_with("landmark:"):
+						for e in _snapshot.get("entities", []):
+							if str(e.get("id", "")) == t.trim_prefix("landmark:"):
+								story_ui.use_entity(e)
+					else:
+						wizard_labels.open(t)
+				get_viewport().set_input_as_handled()
+				return
+			if wizard_labels != null and wizard_labels.panel.visible and not _pinch_seen:
+				wizard_labels.close()  # a click on empty ground puts the inspect card away
 	super._unhandled_input(event)
 
 
@@ -261,7 +420,53 @@ func _on_action() -> void:
 		push_error("Retained duel failed to open")
 
 
+## A story Ward Duel (a lesson or a quest): the board is the retained one, hosted by the same adapter as the route hazard, over a Python lease.
+## `lease` is the server's reply to the choice that began it: {"status": "started", "payload": {"public": ..., "duel": ...}}.
+var _story_duel_id := ""
+var _story_follow_up: Variant = null
+
+
+func open_story_duel(lease: Dictionary) -> bool:
+	if _duel_open:
+		return false
+	_story_duel_id = str(lease.get("payload", {}).get("duel", {}).get("id", ""))
+	_story_follow_up = null
+	_duel_open = true
+	_input_locked = true
+	_duel_host.mouse_filter = Control.MOUSE_FILTER_STOP
+	if not _adapter.begin_from_start_reply(_duel_host, lease, Callable(self, "_cmd")):
+		_duel_open = false
+		_input_locked = false
+		_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_story_duel_id = ""
+		push_error("Story duel failed to open")
+		return false
+	return true
+
+
+## What the board saw, for the server to verify: every cast with its feedback, and the enemy's Ward (revealed by the end of a duel).
+func _story_duel_report(payload: Dictionary) -> Dictionary:
+	var report := {"op": "duel_resolve", "duel_id": _story_duel_id, "outcome": str(payload.get("outcome", "")),
+		"player_casts": int(payload.get("player_casts", 0)), "enemy_casts": int(payload.get("enemy_casts", 0)), "history": [], "enemy_ward": []}
+	var board = _adapter._board
+	if board != null and is_instance_valid(board) and board.get("game") != null:
+		var g = board.game
+		for rec in g.player_history:
+			report["history"].append({"pattern": Array(rec.pattern_by_locus), "fracture": int(rec.fracture_count), "echo": int(rec.echo_count), "broke": bool(rec.broke_ward)})
+		report["enemy_ward"] = Array(g.get_enemy_ward())
+	return report
+
+
 func _cmd(kind: String, payload: Dictionary = {}) -> Dictionary:
+	if _story_duel_id != "":
+		if kind == "HazardDuelCheckpoint":
+			return _sim.op({"op": "duel_checkpoint", "duel_id": _story_duel_id, "checkpoint": payload.get("checkpoint", {})})
+		if kind == "ResolveHazardDuel":
+			var reply: Dictionary = _sim.op(_story_duel_report(payload))
+			_story_follow_up = reply.get("follow_up", null)
+			_story_duel_id = ""
+			return reply
+		return {}
 	if kind != "ResolveHazardDuel":
 		return {}
 	return _sim.op({
@@ -279,6 +484,9 @@ func _on_duel_finished(outcome: String, _payload: Dictionary) -> void:
 	var reply := _sim.op({"op": "snapshot"})
 	_apply_snapshot(reply.get("snapshot", {}))
 	_hud_area_lbl.text = "Duel %s" % outcome
+	if story_ui != null and _story_follow_up != null:
+		story_ui.show_follow_up(_story_follow_up)  # the teacher answers
+		_story_follow_up = null
 	queue_redraw()
 
 
@@ -307,9 +515,7 @@ func _apply_snapshot(snap: Dictionary) -> void:
 				_static_rows[str(e["id"])] = e
 				_note_solid(e)
 	_snapshot = snap
-	if era_hud != null:
-		era_hud.text = _era_text(snap)
-		era_hud.visible = god == null or not god.active  # in God Mode the spectator HUD shows the era with its reasons
+	_update_hud(snap)
 	_blocked.clear()
 	for item in snap.get("blocked", []):
 		if item is Array and item.size() >= 2:
@@ -382,3 +588,200 @@ func _draw() -> void:
 	_art.draw_effects(self, _snapshot.get("effects", []), TPX)
 	if god != null:
 		god.draw_overlay(self)
+
+
+# ---------------------------------------------------------------- save, load, pause menu and autosave (Wizard Mode; the Python server owns the files)
+
+const SAVE_SLOTS := {"Manual save": "manual", "Quit save": "quit", "Autosave": "auto"}
+
+
+## A save is a pure read of the world on the server: slot names are "manual" (pause menu), "quit" (on leaving) and "auto" (timed here).
+func save_slot(slot: String) -> Dictionary:
+	var reply: Dictionary = _sim.op({"op": "save", "slot": slot})
+	if str(reply.get("status", "")) == "ok":
+		_hud_area_lbl.text = "Saved (%s)" % slot
+	return reply
+
+
+## Load a slot and rebuild everything the client drew from the old world: terrain, entity rows, the wizard's place, labels and story panels.
+func load_slot(slot: String, prev := false) -> Dictionary:
+	var reply: Dictionary = _sim.op({"op": "load", "slot": slot, "prev": prev})
+	if str(reply.get("status", "")) != "ok":
+		return reply
+	_adopt_world(reply)
+	_hud_area_lbl.text = "Loaded (%s)" % slot
+	return reply
+
+
+## The Game Over screen's New game: the server replaces the world with a fresh one (the same switches as at launch), and the client starts over.
+func new_game() -> bool:
+	var reply: Dictionary = _sim.op({"op": "new_game"})
+	if str(reply.get("status", "")) != "ok":
+		return false
+	_adopt_world(reply)
+	_hud_area_lbl.text = "New game"
+	if story_ui != null:
+		story_ui.reset_for_new_game()
+	return true
+
+
+func _adopt_world(reply: Dictionary) -> void:
+	var tview = TerrainView.new()
+	if tview.load_from(reply):
+		terrain = tview
+	if story_ui != null:
+		story_ui.close_dialog()
+	if wizard_labels != null:
+		wizard_labels.close()
+	_art._vis.clear()
+	selected_ids = {}
+	_static_rows.clear()
+	_solid.clear()
+	_solid_tile_of.clear()
+	camera_focus = Vector2.INF
+	paused = false
+	_input_locked = false
+	_apply_snapshot(reply.get("snapshot", {}))
+	_seq = int(_snapshot.get("clock_sequence", 0))
+	_clock_acc = 0.0
+	_place_john_from_snapshot()
+	_update_john_sprite(0)
+	if story_ui != null:
+		story_ui.refresh()
+	queue_redraw()
+
+
+## Why an autosave has to wait ("" when the moment is quiet): a duel board, a dialogue, a dungeon view, the pause menu or a summoned worker.
+func autosave_wait_reason() -> String:
+	if _snapshot.is_empty():
+		return "no_world"
+	if _duel_open:
+		return "duel"
+	if _menu_open:
+		return "menu"
+	if story_ui != null:
+		if story_ui.dialog.visible:
+			return "dialogue"
+		if story_ui.dungeon.visible:
+			return "dungeon"
+		var st = _snapshot.get("story", {})
+		if typeof(st) == TYPE_DICTIONARY and not (st.get("summoned", []) as Array).is_empty():
+			return "summoned"
+	if campaign_ui != null and campaign_ui.covering():
+		return "scene"
+	if _input_locked:
+		return "locked"
+	return ""
+
+
+func _autosave_tick(delta: float) -> void:
+	if _snapshot.is_empty():
+		return
+	_autosave_acc += delta
+	if _autosave_acc < autosave_seconds or autosave_wait_reason() != "":
+		return  # not due yet, or sent at the next quiet moment
+	_autosave_acc = 0.0
+	if str(save_slot("auto").get("status", "")) == "ok":
+		autosave_count += 1
+
+
+## Escape and the menu button: Continue, Save game, Load game, Save and quit (a card of the same style as every other narrative panel).
+func _on_menu() -> void:
+	if _input_locked or _duel_open or _snapshot.is_empty() or _menu_open or (campaign_ui != null and campaign_ui.covering()):
+		return
+	_input_locked = true
+	_menu_open = true
+	_touch.set_enabled(false)
+	_show_menu_root("")
+
+
+func _show_menu_root(note: String) -> void:
+	menu_card.show_card("Paused", "", note, [
+		{"id": "continue", "text": "Continue", "kind": "primary"}, {"id": "save", "text": "Save game"},
+		{"id": "load", "text": "Load game"}, {"id": "quit", "text": "Save and quit"}], [])
+
+
+func _close_menu() -> void:
+	_menu_open = false
+	menu_card.hide_card()
+	_input_locked = false
+	_touch.set_enabled(true)
+
+
+func _on_menu_choice(id: String) -> void:
+	match id:
+		"continue":
+			_close_menu()
+		"save":
+			var r := save_slot("manual")
+			_show_menu_root("Game saved." if str(r.get("status", "")) == "ok" else "The game could not be saved (%s)." % str(r.get("reason", "")))
+		"load":
+			var items: Array = []
+			for label in SAVE_SLOTS:
+				items.append({"id": "slot:" + str(SAVE_SLOTS[label]), "text": str(label)})
+			items.append({"id": "back", "text": "Back"})
+			menu_card.show_card("Load which save?", "", "", items, [])
+		"back":
+			_show_menu_root("")
+		"quit":
+			save_slot("quit")
+			get_tree().quit()
+		_:
+			if id.begins_with("slot:"):
+				var r := load_slot(id.trim_prefix("slot:"))
+				if str(r.get("status", "")) == "ok":
+					_close_menu()
+				else:
+					_show_menu_root("That save cannot be loaded (%s)." % str(r.get("reason", "")))
+
+
+## The HUD: era and cycle first, the current objective under it, the full read-out behind the title.
+var _progress := {}  # what the journal showed last time: lessons done, quest status, notes (for the "something changed" notice)
+
+
+func _notice_progress() -> void:
+	var j: Dictionary = story_ui.journal_data() if story_ui != null else {}
+	if j.is_empty():
+		return
+	var done := 0
+	var last_title := ""
+	for l in j.get("lessons", []):
+		if bool(l.get("done", false)):
+			done += 1
+			last_title = str(l.get("title", ""))
+	var status := ""
+	var title := ""
+	for q in j.get("quests", []):
+		status = str(q.get("status", ""))
+		title = str(q.get("title", ""))
+	var notes: int = (j.get("notes", []) as Array).size()
+	if not _progress.is_empty():
+		if done > int(_progress["done"]):
+			hud.flash("Lesson learned: %s." % last_title)
+		elif status != str(_progress["status"]) and status != "":
+			hud.flash({"offered": "New in your journal: %s." % title, "active": "%s: you are getting to the bottom of it." % title,
+				"done": "%s is settled. It is in your journal." % title, "interrupted": "%s can no longer be settled." % title}.get(status, ""))
+		elif notes > int(_progress["notes"]):
+			hud.flash("A note was added to your journal.")
+	_progress = {"done": done, "status": status, "notes": notes}
+
+
+func reset_progress_notice() -> void:
+	_progress = {}
+
+
+func _update_hud(snap: Dictionary) -> void:
+	if hud == null:
+		return
+	_notice_progress()
+	var era: Dictionary = snap.get("era", {})
+	var hist: Dictionary = snap.get("history", {})
+	var title := "%s - Cycle %d" % [str(era.get("era", "")).capitalize(), int(hist.get("cycle", 0))] if not era.is_empty() else "Wizard RTS"
+	if bool(hist.get("cycle_pending", false)):
+		title += " - the cycle ends"
+	hud.set_state(title, _era_text(snap), story_ui.objective_text() if story_ui != null else "")
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _snapshot.is_empty():
+		save_slot("quit")  # closing the window saves first

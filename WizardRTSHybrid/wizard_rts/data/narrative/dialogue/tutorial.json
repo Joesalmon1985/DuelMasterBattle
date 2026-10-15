@@ -1,0 +1,668 @@
+{
+ "id": "tutorial",
+ "note": "Placeholder authored text (owner review pending). The mentor's lessons: meet, colours, told_ward, hidden_ward, then the world. The mentor is the apprentice's teacher; their conviction is that magic is a responsibility, not an entitlement.",
+ "speakers": {
+  "teacher": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "first",
+       "when": {
+        "forbids": [
+         "meet"
+        ]
+       },
+       "sets": [
+        "meet"
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "meet"
+        }
+       ],
+       "lines": [
+        "There you are. Late again, but I will forgive it. I was late to my own first lesson, and my teacher never let me forget it.",
+        "You have read the three Colours and the Weave until the pages wore thin. Today we stop reading. Today you cast.",
+        "Ask me what you like first. A wizard who does not ask questions is only a person with dangerous hands."
+       ]
+      },
+      {
+       "id": "told_won_quick",
+       "when": {
+        "requires": [
+         "told_fresh",
+         "told_won",
+         "quick"
+        ]
+       },
+       "clears": [
+        "told_fresh"
+       ],
+       "lines": [
+        "Three casts, and a clean break. I told you what it was, and you listened to the feedback instead of guessing. That is already more than most.",
+        "Now a fair fight. Mine will be hidden, and so will yours."
+       ]
+      },
+      {
+       "id": "told_won",
+       "when": {
+        "requires": [
+         "told_fresh",
+         "told_won"
+        ]
+       },
+       "clears": [
+        "told_fresh"
+       ],
+       "lines": [
+        "Broken. That is what a fracture is: the right colour in the right place, until every place has given way.",
+        "Next, a fair fight. Mine will be hidden, and so will yours."
+       ]
+      },
+      {
+       "id": "told_lost",
+       "when": {
+        "requires": [
+         "told_fresh"
+        ],
+        "forbids": [
+         "told_won"
+        ]
+       },
+       "clears": [
+        "told_fresh"
+       ],
+       "lines": [
+        "It held, though I told you what it was. Do not be ashamed; this is what practice is for, and nothing here can hurt you.",
+        "Remember: fracture is the right colour in the right place; echo is the right colour in the wrong place; fade is neither. Try again whenever you like, or move on. The lesson counts either way."
+       ]
+      },
+      {
+       "id": "hidden_won_quick",
+       "when": {
+        "requires": [
+         "hidden_fresh",
+         "hidden_won",
+         "quick"
+        ]
+       },
+       "clears": [
+        "hidden_fresh"
+       ],
+       "lines": [
+        "Quickly, and fairly. You read the echoes better than I did at your age, and I will deny saying so."
+       ]
+      },
+      {
+       "id": "hidden_won",
+       "when": {
+        "requires": [
+         "hidden_fresh",
+         "hidden_won"
+        ]
+       },
+       "clears": [
+        "hidden_fresh"
+       ],
+       "lines": [
+        "Broken, and fairly. You read the echoes well. That is the whole craft: guess, listen, and guess better."
+       ]
+      },
+      {
+       "id": "hidden_lost",
+       "when": {
+        "requires": [
+         "hidden_fresh"
+        ],
+        "forbids": [
+         "hidden_won"
+        ]
+       },
+       "clears": [
+        "hidden_fresh"
+       ],
+       "lines": [
+        "My Ward held, or yours fell first. Either way you have fought a hidden Ward, and that is the lesson. A teacher who never loses is a teacher who never lets you try; fight me again whenever you want practice."
+       ]
+      },
+      {
+       "id": "flame_praise",
+       "when": {
+        "lessons": [
+         "flame_world"
+        ],
+        "forbids": [
+         "flame_praised"
+        ]
+       },
+       "sets": [
+        "flame_praised"
+       ],
+       "lines": [
+        "I smelled smoke from the square. So you have tried Flame on something that was not a candle. Good. Fire is the first honest teacher: it never forgives a careless hand."
+       ]
+      },
+      {
+       "when": {
+        "lessons": [
+         "hidden_ward"
+        ],
+        "stage": [
+         "explore",
+         "arrival"
+        ]
+       },
+       "lines": [
+        "You have the basics, and that is all they are. Magic is not for duels. Walk the village and listen to people. Whatever you cast, you will cast it for them."
+       ]
+      },
+      {
+       "when": {
+        "lessons": [
+         "hidden_ward"
+        ]
+       },
+       "lines": [
+        "I have taught you what I can for now."
+       ]
+      },
+      {
+       "when": {
+        "lessons": [
+         "told_ward"
+        ]
+       },
+       "lines": [
+        "You have broken a Ward I named aloud. Now try one you cannot see."
+       ]
+      },
+      {
+       "when": {
+        "lessons": [
+         "colours"
+        ]
+       },
+       "lines": [
+        "You know your three colours. Try your hand against my Ward when you are ready."
+       ]
+      },
+      {
+       "lines": [
+        "What would you like to learn?"
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "learn_colours",
+       "text": "Teach me magic.",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "not_lessons": [
+         "colours"
+        ]
+       },
+       "lines": [
+        "Three colours to begin: Flame, which burns; Frost, which stills; Vine, which binds. Hold each one in your mind before you cast it, and let go of the rest.",
+        "In a duel each wizard hides a Ward of three places, each filled with one colour. You cast a weave of three, one colour to a place. Fracture: right colour, right place. Echo: right colour, wrong place. Fade: neither. Break the Ward and the duel is yours.",
+        "Flame also works on the world. Stand close to a tree or a building and click it to burn it. Be certain of your target; fire does not ask twice."
+       ],
+       "effects": [
+        {
+         "kind": "learn_spell",
+         "spells": [
+          0,
+          1,
+          6
+         ],
+         "weave_size": 3
+        },
+        {
+         "kind": "complete_lesson",
+         "lesson": "colours"
+        }
+       ],
+       "sets": [
+        "colours"
+       ]
+      },
+      {
+       "id": "ask_wards",
+       "text": "Why does a Ward have three places? Who decided that?",
+       "when": {
+        "lessons": [
+         "colours"
+        ]
+       },
+       "check": {
+        "aspect": "curiosity",
+        "threshold": "demanding",
+        "evidence": [
+         {
+          "id": "has_fought",
+          "when": {
+           "lessons": [
+            "told_ward"
+           ]
+          },
+          "mod": 1
+         }
+        ]
+       },
+       "lines": [
+        "{name} leans on the staff and considers you for a moment."
+       ],
+       "pass": {
+        "lines": [
+         "Nobody asks that. Good. Three is the smallest number that can hide a pattern and still be a pattern. The old masters wove their Wards so that a Ward remembers the hand that wrote it. Mine remembers me. Yours will remember you."
+        ],
+        "effects": [
+         {
+          "kind": "fact",
+          "id": "ward_lore"
+         }
+        ]
+       },
+       "fail": {
+        "lines": [
+         "Because it is. That is how it was taught to me, and I never thought to ask. Perhaps you will, one day, when you know a little more."
+        ]
+       }
+      },
+      {
+       "id": "ask_glow",
+       "text": "There is a light around your staff when you cast. That is not Flame, is it?",
+       "when": {
+        "lessons": [
+         "colours"
+        ]
+       },
+       "check": {
+        "aspect": "wonder",
+        "threshold": "demanding",
+        "evidence": [
+         {
+          "id": "ward_lore",
+          "when": {
+           "fact": [
+            "ward_lore"
+           ]
+          },
+          "mod": 1
+         },
+         {
+          "id": "fought",
+          "when": {
+           "lessons": [
+            "hidden_ward"
+           ]
+          },
+          "mod": 1
+         }
+        ]
+       },
+       "pass": {
+        "lines": [
+         "...No. It is not Flame. It is something older than the schools, and the schools stopped teaching it for good reasons and bad ones. I live here and not in a tower because of it. Tell no one."
+        ],
+        "effects": [
+         {
+          "kind": "fact",
+          "id": "mentor_old_craft"
+         }
+        ]
+       },
+       "fail": {
+        "lines": [
+         "A trick of the evening light. Come, you are staring."
+        ]
+       }
+      },
+      {
+       "id": "ask_reason",
+       "text": "Explain how to read fracture and echo properly, as a method.",
+       "when": {
+        "lessons": [
+         "colours"
+        ]
+       },
+       "check": {
+        "aspect": "reason",
+        "threshold": "easy"
+       },
+       "pass": {
+        "lines": [
+         "Every Fade is information: if a colour fades everywhere, it is not in the Ward at all, and you can stop spending casts on it. A fracture pins a place; keep it there and vary the rest. An echo tells you where not to put a colour. Never cast what the last answer already ruled out."
+        ],
+        "effects": [
+         {
+          "kind": "fact",
+          "id": "ward_method"
+         }
+        ]
+       },
+       "fail": {
+        "lines": [
+         "Pay attention to what the Ward tells you, and do not guess the same thing twice. The rest is practice."
+        ]
+       }
+      },
+      {
+       "id": "told_practice",
+       "text": "Let me try to break your Ward. You tell me what it is.",
+       "when": {
+        "lessons": [
+         "colours"
+        ]
+       },
+       "lines": [
+        "My Ward is Frost, Vine, Frost. I will not change it. Break it in as few casts as you can."
+       ],
+       "effects": [
+        {
+         "kind": "begin_duel",
+         "opponent": "opponent.teacher_told",
+         "purpose": "told_ward",
+         "fixed_ward": [
+          1,
+          6,
+          1
+         ]
+        }
+       ]
+      },
+      {
+       "id": "hidden_duel",
+       "text": "Fight me properly, with hidden Wards.",
+       "when": {
+        "lessons": [
+         "told_ward"
+        ]
+       },
+       "lines": [
+        "Mine is hidden now, and so is yours. We cast until one Ward breaks. Do not pull your casts; I will know."
+       ],
+       "effects": [
+        {
+         "kind": "begin_duel",
+         "opponent": "opponent.teacher_hidden",
+         "purpose": "hidden_ward"
+        }
+       ]
+      },
+      {
+       "id": "why_not_rule",
+       "text": "You could do anything you liked. Why does no wizard simply rule?",
+       "when": {
+        "requires": [
+         "meet"
+        ]
+       },
+       "once": true,
+       "goto": "creed",
+       "lines": [
+        "{name} is quiet for a while.",
+        "Because power is a debt, not a deed. Whoever can break a Ward can break a door, a promise, a person. The more you can do, the more you owe the people who cannot. That is all I know of governing: I owe, and I pay.",
+        "What do you make of that?"
+       ]
+      },
+      {
+       "id": "ask_village",
+       "text": "What should I do now?",
+       "when": {
+        "lessons": [
+         "hidden_ward"
+        ],
+        "quest": {
+         "id": "forest_dispute",
+         "in": [
+          "offered",
+          "active",
+          "done"
+         ]
+        },
+        "unlocked": true
+       },
+       "lines": [
+        "Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never carried a log or stood a watch casts for people he does not understand.",
+        "There is a quarrel you might hear: {cutter} the lumberjack and {planter} the forester have stopped speaking. One wants every ripe tree down for the sawmill, the other wants the young ones left to grow. {witness} saw part of it. {cutter_where}. {planter_where}. It is no emergency, and you need not help; but they are ordinary people with a real disagreement, and what you say will be remembered."
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "world"
+        }
+       ],
+       "sets": [
+        "rumour_known"
+       ]
+      },
+      {
+       "id": "ask_village_none",
+       "text": "What should I do now?",
+       "when": {
+        "lessons": [
+         "hidden_ward"
+        ]
+       },
+       "lines": [
+        "Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never carried a log or stood a watch casts for people he does not understand. Come back when you have heard something."
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "world"
+        }
+       ]
+      },
+      {
+       "id": "farewell",
+       "text": "Thank you. I will go.",
+       "lines": [
+        "Walk well. Come back when you want another lesson."
+       ],
+       "ends": true
+      }
+     ]
+    },
+    "creed": {
+     "variants": [
+      {
+       "lines": []
+      }
+     ],
+     "choices": [
+      {
+       "id": "creed_d",
+       "text": "Then what we can do belongs to the land, not to us.",
+       "lines": [
+        "\"Yes,\" {name} says, and the old face softens. \"Balance. We borrow from the world. You listen better than you pretend.\""
+       ],
+       "ends": false,
+       "goto": "hub",
+       "sets": [
+        "creed_done"
+       ],
+       "effects": [
+        {
+         "kind": "worldview",
+         "code": "D",
+         "scope": "global"
+        },
+        {
+         "kind": "relationship",
+         "delta": 3
+        },
+        {
+         "kind": "fact",
+         "id": "mentor_creed"
+        }
+       ]
+      },
+      {
+       "id": "creed_m",
+       "text": "Then a wizard serves, the way a good steward serves.",
+       "lines": [
+        "\"Serves, and answers for it. Yes. Authority is a weight carried for others. You will do.\""
+       ],
+       "ends": false,
+       "goto": "hub",
+       "sets": [
+        "creed_done"
+       ],
+       "effects": [
+        {
+         "kind": "worldview",
+         "code": "M",
+         "scope": "global"
+        },
+        {
+         "kind": "relationship",
+         "delta": 3
+        },
+        {
+         "kind": "fact",
+         "id": "mentor_creed"
+        }
+       ]
+      },
+      {
+       "id": "creed_a",
+       "text": "Or nobody should rule anybody, wizard or not.",
+       "lines": [
+        "\"Perhaps. I will not argue it. I would only add that the day nobody rules is the day everyone must carry what rulers carry. Few want that load.\""
+       ],
+       "ends": false,
+       "goto": "hub",
+       "sets": [
+        "creed_done"
+       ],
+       "effects": [
+        {
+         "kind": "worldview",
+         "code": "A",
+         "scope": "global"
+        },
+        {
+         "kind": "relationship",
+         "delta": 1
+        },
+        {
+         "kind": "fact",
+         "id": "mentor_creed"
+        }
+       ]
+      },
+      {
+       "id": "creed_g",
+       "text": "Then pay it honestly: teach, trade, and keep fair books.",
+       "lines": [
+        "\"Fair books. I have not heard it put that way, but a debt that is written down is harder to forget. Yes.\""
+       ],
+       "ends": false,
+       "goto": "hub",
+       "sets": [
+        "creed_done"
+       ],
+       "effects": [
+        {
+         "kind": "worldview",
+         "code": "G",
+         "scope": "global"
+        },
+        {
+         "kind": "relationship",
+         "delta": 1
+        },
+        {
+         "kind": "fact",
+         "id": "mentor_creed"
+        }
+       ]
+      },
+      {
+       "id": "creed_s",
+       "text": "And yet someone has to lead, and surely those who understand the Weave should.",
+       "lines": [
+        "\"Surely. It is what every tyrant thinks first, and the kindest ones think it longest.\" {name} does not smile. \"Keep that thought where you can see it. It will grow if you feed it.\""
+       ],
+       "ends": false,
+       "goto": "hub",
+       "sets": [
+        "creed_done"
+       ],
+       "effects": [
+        {
+         "kind": "worldview",
+         "code": "S",
+         "scope": "global"
+        },
+        {
+         "kind": "relationship",
+         "delta": -3
+        },
+        {
+         "kind": "fact",
+         "id": "mentor_creed"
+        }
+       ]
+      },
+      {
+       "id": "creed_r",
+       "text": "I think it is a vow, whether we say so or not.",
+       "lines": [
+        "\"A vow. Yes. That is the word I could not find. We do not choose the gift, but we choose what we promise with it.\""
+       ],
+       "ends": false,
+       "goto": "hub",
+       "sets": [
+        "creed_done"
+       ],
+       "effects": [
+        {
+         "kind": "worldview",
+         "code": "R",
+         "scope": "global"
+        },
+        {
+         "kind": "relationship",
+         "delta": 3
+        },
+        {
+         "kind": "fact",
+         "id": "mentor_creed"
+        }
+       ]
+      },
+      {
+       "id": "creed_leave",
+       "text": "I will think about it.",
+       "lines": [
+        "\"Do.\""
+       ],
+       "goto": "hub",
+       "sets": [
+        "creed_done"
+       ],
+       "effects": [
+        {
+         "kind": "fact",
+         "id": "mentor_creed"
+        }
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "opening": [
+  "Six winters ago you came to {settlement} with a gift nobody could explain. {mentor} took you in and taught you what the old books call the Weave. By any honest measure you are still an apprentice.",
+  "Magic is rare here, and it matters, but it does not make anyone a ruler. The woodcutters fell timber, the carriers haul it, the soldiers keep the road, and none of them will stop their day because a wizard walked by.",
+  "This morning {mentor} sent for you. Find them near the square: walk up and press E, or click them and choose Talk."
+ ]
+}

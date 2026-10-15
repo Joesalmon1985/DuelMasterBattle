@@ -1,0 +1,751 @@
+{
+ "id": "forest_dispute",
+ "title": "The Forest Dispute",
+ "note": "Placeholder authored text (owner review pending). A narrative-only quest between people who really work in the settlement: it changes nothing in the simulation. The cast is chosen from existing workers, carriers and soldiers by `cast` (see narrative/quests.py); nobody is created for it.",
+ "cast": {
+  "cutter": {
+   "pick": [
+    {
+     "kind": "worker",
+     "roles": [
+      "lumberjack"
+     ]
+    }
+   ],
+   "label": "woodcutter"
+  },
+  "planter": {
+   "pick": [
+    {
+     "kind": "worker",
+     "roles": [
+      "ranger"
+     ]
+    }
+   ],
+   "label": "forester"
+  },
+  "witness": {
+   "pick": [
+    {
+     "kind": "unit",
+     "unit_kinds": [
+      "soldier"
+     ]
+    },
+    {
+     "kind": "worker",
+     "roles": [
+      "stonemason",
+      "hunter"
+     ]
+    },
+    {
+     "kind": "carrier"
+    }
+   ],
+   "label": "witness",
+   "optional": false
+  }
+ },
+ "speakers": {
+  "cutter": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "c_closed_compromise",
+       "lines": [
+        "Share the clearing. Well. I cut the old ones, {planter} marks the young ones with stakes, and neither of us shouts. I can live with that.",
+        "You carried it fairly, wizard. I will not forget it."
+       ],
+       "when": {
+        "requires": [
+         "outcome_compromise",
+         "heard_cutter"
+        ],
+        "forbids": [
+         "closed_cutter"
+        ]
+       },
+       "sets": [
+        "closed_cutter"
+       ]
+      },
+      {
+       "id": "c_closed_cutter",
+       "lines": [
+        "So the settlement's need counts for something after all. Good. I will still keep clear of the staked ground, I am not a fool, but I will not be shouted at for doing my work."
+       ],
+       "when": {
+        "requires": [
+         "outcome_cutter",
+         "heard_cutter"
+        ],
+        "forbids": [
+         "closed_cutter"
+        ]
+       },
+       "sets": [
+        "closed_cutter"
+       ]
+      },
+      {
+       "id": "c_closed_planter",
+       "lines": [
+        "You backed {planter}. Hm. Then the sawmill goes hungry for a season and I walk further for every log. I hope the saplings are worth it."
+       ],
+       "when": {
+        "requires": [
+         "outcome_planter",
+         "heard_cutter"
+        ],
+        "forbids": [
+         "closed_cutter"
+        ]
+       },
+       "sets": [
+        "closed_cutter"
+       ]
+      },
+      {
+       "id": "c_closed_none",
+       "lines": [
+        "You did nothing, then. That is also a choice, wizard. {planter} and I will go on not speaking, and the trees will take care of themselves, one way or another."
+       ],
+       "when": {
+        "requires": [
+         "outcome_none",
+         "heard_cutter"
+        ],
+        "forbids": [
+         "closed_cutter"
+        ]
+       },
+       "sets": [
+        "closed_cutter"
+       ]
+      },
+      {
+       "id": "c_after",
+       "lines": [
+        "That is behind us now, or as far behind as these things go. Thank you for hearing me out."
+       ],
+       "when": {
+        "requires": [
+         "closed_cutter"
+        ]
+       }
+      },
+      {
+       "id": "c_hub",
+       "lines": [
+        "Back again? Everyone has an opinion on this."
+       ],
+       "when": {
+        "requires": [
+         "heard_cutter"
+        ]
+       }
+      },
+      {
+       "id": "c_first",
+       "lines": [
+        "I am cutting what I am meant to cut. The settlement needs timber, and the sawmill and the builders eat it faster than I can carry it.",
+        {
+         "text": "There are {logs} logs in the warehouses and it is never enough.",
+         "when": {
+          "facts": [
+           {
+            "name": "logs",
+            "gte": 1
+           }
+          ]
+         }
+        },
+        {
+         "text": "There is not a single log in the store, and still I am told to wait.",
+         "when": {
+          "facts": [
+           {
+            "name": "logs",
+            "eq": 0
+           }
+          ]
+         }
+        },
+        "And now {planter} says I am cutting too much. Have you come to tell me how to do my job?"
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "what_happened",
+       "text": "What happened between you and {planter}?",
+       "lines": [
+        "The old trees near my hut were ripe. {planter} has been planting new saplings in the same clearings and says I should leave a stretch alone until they take. I cannot do my work around a field of seedlings.",
+        "I may have felled a few young ones in the brush. A pole looks like a tree when you are in a hurry. But the forest is full of trees, and the store is not."
+       ],
+       "when": {
+        "forbids": [
+         "heard_cutter"
+        ]
+       },
+       "sets": [
+        "heard_cutter"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "what_do_you_want",
+       "text": "What would settle it for you?",
+       "lines": [
+        "A part of the forest I may cut without being shouted at. And a promise that nobody plants on top of my next tree."
+       ],
+       "when": {
+        "requires": [
+         "heard_cutter"
+        ],
+        "forbids": [
+         "asked_cutter_want"
+        ]
+       },
+       "sets": [
+        "asked_cutter_want"
+       ]
+      },
+      {
+       "id": "leave",
+       "text": "I will let you get on.",
+       "lines": [
+        "Mind the axe, then."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  },
+  "planter": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "p_closed_compromise",
+       "lines": [
+        "He agreed to the stakes? Then I will mark the young trees where he can see them, and he will cut the old ones. It is a start. Thank you, wizard."
+       ],
+       "when": {
+        "requires": [
+         "outcome_compromise",
+         "heard_planter"
+        ],
+        "forbids": [
+         "closed_planter"
+        ]
+       },
+       "sets": [
+        "closed_planter"
+       ]
+      },
+      {
+       "id": "p_closed_cutter",
+       "lines": [
+        "So timber comes first. I understand it; I plant for the settlement too. I will put the seedlings further from the hut and hope {cutter} leaves them alone."
+       ],
+       "when": {
+        "requires": [
+         "outcome_cutter",
+         "heard_planter"
+        ],
+        "forbids": [
+         "closed_planter"
+        ]
+       },
+       "sets": [
+        "closed_planter"
+       ]
+      },
+      {
+       "id": "p_closed_planter",
+       "lines": [
+        "Thank you. The seedlings thank you too, though they cannot say so. I will keep them staked, and {cutter} will have to cut elsewhere."
+       ],
+       "when": {
+        "requires": [
+         "outcome_planter",
+         "heard_planter"
+        ],
+        "forbids": [
+         "closed_planter"
+        ]
+       },
+       "sets": [
+        "closed_planter"
+       ]
+      },
+      {
+       "id": "p_closed_none",
+       "lines": [
+        "You stayed out of it. I hoped for more, but I will not blame you. I will keep planting and {cutter} will keep cutting, and we will see which of us is still here in ten years."
+       ],
+       "when": {
+        "requires": [
+         "outcome_none",
+         "heard_planter"
+        ],
+        "forbids": [
+         "closed_planter"
+        ]
+       },
+       "sets": [
+        "closed_planter"
+       ]
+      },
+      {
+       "id": "p_after",
+       "lines": [
+        "It is settled as far as it will be. Thank you for listening, wizard."
+       ],
+       "when": {
+        "requires": [
+         "closed_planter"
+        ]
+       }
+      },
+      {
+       "id": "p_hub",
+       "lines": [
+        "Careful where you step."
+       ],
+       "when": {
+        "requires": [
+         "heard_planter"
+        ]
+       }
+      },
+      {
+       "id": "p_first",
+       "lines": [
+        "Careful. There are seedlings under your boots.",
+        "You are the wizard everyone is talking about. If you are here about {cutter}, I will say what I told him: the young trees cannot be cut yet."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "what_happened",
+       "text": "What happened between you and {cutter}?",
+       "lines": [
+        {
+         "text": "I plant where the old ones were felled, so the forest comes back. There are {saplings} saplings and poles around me right now, and {cutter} has already chopped some of them.",
+         "when": {
+          "facts": [
+           {
+            "name": "saplings",
+            "gte": 1
+           }
+          ]
+         }
+        },
+        {
+         "text": "I plant where the old ones were felled, so the forest comes back. I have hardly anything in the ground yet, and I only asked for a season of leave.",
+         "when": {
+          "facts": [
+           {
+            "name": "saplings",
+            "eq": 0
+           }
+          ]
+         }
+        },
+        "I know he has to cut. I do not know why he must cut *those*."
+       ],
+       "when": {
+        "forbids": [
+         "heard_planter"
+        ]
+       },
+       "sets": [
+        "heard_planter"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "what_do_you_want",
+       "text": "What would settle it for you?",
+       "lines": [
+        "Stakes around the young trees, and a word that he will leave them be. That is all. I do not need him to like me."
+       ],
+       "when": {
+        "requires": [
+         "heard_planter"
+        ],
+        "forbids": [
+         "asked_planter_want"
+        ]
+       },
+       "sets": [
+        "asked_planter_want"
+       ]
+      },
+      {
+       "id": "leave",
+       "text": "I will let you get on.",
+       "lines": [
+        "Mind the seedlings."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  },
+  "witness": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "w_done_compromise",
+       "lines": [
+        "A shared clearing, stakes and an axe. I never thought I would see those two agree on anything. The lane will talk about it for weeks.",
+        "Thank you for listening, wizard."
+       ],
+       "when": {
+        "requires": [
+         "closed_cutter",
+         "closed_planter",
+         "outcome_compromise"
+        ],
+        "forbids": [
+         "done"
+        ]
+       },
+       "sets": [
+        "done"
+       ],
+       "effects": [
+        {
+         "kind": "journal_note",
+         "text": "The Forest Dispute: I suggested {cutter} cut only the old trees and {planter} stake the young ones. They agreed to share the clearing."
+        }
+       ]
+      },
+      {
+       "id": "w_done_cutter",
+       "lines": [
+        "You backed the axe. The sawmill will be pleased, and {planter} will not, but the store will fill. I suppose that is something.",
+        "Thank you for hearing it out, wizard."
+       ],
+       "when": {
+        "requires": [
+         "closed_cutter",
+         "closed_planter",
+         "outcome_cutter"
+        ],
+        "forbids": [
+         "done"
+        ]
+       },
+       "sets": [
+        "done"
+       ],
+       "effects": [
+        {
+         "kind": "journal_note",
+         "text": "The Forest Dispute: I backed {cutter}. Timber comes first, and {planter} will plant further away."
+        }
+       ]
+      },
+      {
+       "id": "w_done_planter",
+       "lines": [
+        "You backed the saplings. Then it is a lean season for the sawmill, and {cutter} will not thank you. But the trees will come back, and that is not nothing.",
+        "Thank you for hearing it out, wizard."
+       ],
+       "when": {
+        "requires": [
+         "closed_cutter",
+         "closed_planter",
+         "outcome_planter"
+        ],
+        "forbids": [
+         "done"
+        ]
+       },
+       "sets": [
+        "done"
+       ],
+       "effects": [
+        {
+         "kind": "journal_note",
+         "text": "The Forest Dispute: I backed {planter}. The young trees are staked and {cutter} must cut elsewhere."
+        }
+       ]
+      },
+      {
+       "id": "w_done_none",
+       "lines": [
+        "You stayed out of it. They are still not speaking, and everyone around them has noticed.",
+        "I understand why. It was theirs to settle."
+       ],
+       "when": {
+        "requires": [
+         "closed_cutter",
+         "closed_planter",
+         "outcome_none"
+        ],
+        "forbids": [
+         "done"
+        ]
+       },
+       "sets": [
+        "done"
+       ],
+       "effects": [
+        {
+         "kind": "journal_note",
+         "text": "The Forest Dispute: I left it to {cutter} and {planter}. They are still not speaking."
+        }
+       ]
+      },
+      {
+       "id": "w_after",
+       "lines": [
+        "The forest is as it is. Thank you for your trouble, wizard."
+       ],
+       "when": {
+        "requires": [
+         "done"
+        ]
+       }
+      },
+      {
+       "id": "w_both",
+       "lines": [
+        "You have heard them both. Well? Everyone wants to know what the wizard thinks."
+       ],
+       "when": {
+        "requires": [
+         "heard_cutter",
+         "heard_planter"
+        ],
+        "forbids": [
+         "outcome_compromise",
+         "outcome_cutter",
+         "outcome_planter",
+         "outcome_none"
+        ]
+       }
+      },
+      {
+       "id": "w_waiting",
+       "lines": [
+        "Have you spoken to them yet? I told them you might."
+       ],
+       "when": {
+        "requires": [
+         "witness_saw"
+        ],
+        "forbids": [
+         "outcome_compromise",
+         "outcome_cutter",
+         "outcome_planter",
+         "outcome_none"
+        ]
+       }
+      },
+      {
+       "id": "w_first",
+       "lines": [
+        "I was passing the clearing when I saw the two of them, so I know a little. Not much, but a little."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "witness_saw",
+       "text": "What did you see?",
+       "lines": [
+        "{cutter} with an axe on one shoulder, {planter} with a basket of saplings, and both of them red in the face at the edge of the clearing. I could not tell you who was in the right. I can tell you neither of them was lying."
+       ],
+       "when": {
+        "forbids": [
+         "witness_saw"
+        ]
+       },
+       "sets": [
+        "witness_saw"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "witness_gossip",
+       "text": "What do people say?",
+       "lines": [
+        "That {cutter} cuts without looking and {planter} plants without asking. That the sawmill is hungry and the saplings are slow. That somebody ought to say something, and nobody wants to be the one."
+       ],
+       "when": {
+        "forbids": [
+         "witness_gossip"
+        ]
+       },
+       "sets": [
+        "witness_gossip"
+       ],
+       "goto": "hub"
+      },
+      {
+       "id": "say_compromise",
+       "text": "Suggest they share the clearing: {cutter} cuts the old trees, {planter} stakes the young ones.",
+       "lines": [
+        "I will pass that on. It might work, if neither of them has to lose face."
+       ],
+       "when": {
+        "requires": [
+         "heard_cutter",
+         "heard_planter"
+        ],
+        "forbids": [
+         "outcome_compromise",
+         "outcome_cutter",
+         "outcome_planter",
+         "outcome_none"
+        ]
+       },
+       "sets": [
+        "outcome_compromise"
+       ],
+       "goto": "hub",
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 5,
+         "who": "cutter"
+        },
+        {
+         "kind": "relationship",
+         "delta": 5,
+         "who": "planter"
+        }
+       ]
+      },
+      {
+       "id": "say_cutter",
+       "text": "Back {cutter}: the settlement needs timber now.",
+       "lines": [
+        "Timber first. I will say so. {planter} will not like it."
+       ],
+       "when": {
+        "requires": [
+         "heard_cutter",
+         "heard_planter"
+        ],
+        "forbids": [
+         "outcome_compromise",
+         "outcome_cutter",
+         "outcome_planter",
+         "outcome_none"
+        ]
+       },
+       "sets": [
+        "outcome_cutter"
+       ],
+       "goto": "hub",
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 10,
+         "who": "cutter"
+        },
+        {
+         "kind": "relationship",
+         "delta": -4,
+         "who": "planter"
+        }
+       ]
+      },
+      {
+       "id": "say_planter",
+       "text": "Back {planter}: let the young trees grow.",
+       "lines": [
+        "Saplings first. I will say so. {cutter} will not like it."
+       ],
+       "when": {
+        "requires": [
+         "heard_cutter",
+         "heard_planter"
+        ],
+        "forbids": [
+         "outcome_compromise",
+         "outcome_cutter",
+         "outcome_planter",
+         "outcome_none"
+        ]
+       },
+       "sets": [
+        "outcome_planter"
+       ],
+       "goto": "hub",
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 10,
+         "who": "planter"
+        },
+        {
+         "kind": "relationship",
+         "delta": -4,
+         "who": "cutter"
+        }
+       ]
+      },
+      {
+       "id": "say_nothing",
+       "text": "Stay out of it. It is theirs to settle.",
+       "lines": [
+        "As you like. I will not carry anything either."
+       ],
+       "when": {
+        "requires": [
+         "heard_cutter",
+         "heard_planter"
+        ],
+        "forbids": [
+         "outcome_compromise",
+         "outcome_cutter",
+         "outcome_planter",
+         "outcome_none"
+        ]
+       },
+       "sets": [
+        "outcome_none"
+       ],
+       "goto": "hub",
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": -1,
+         "who": "cutter"
+        },
+        {
+         "kind": "relationship",
+         "delta": -1,
+         "who": "planter"
+        }
+       ]
+      },
+      {
+       "id": "leave",
+       "text": "I will let you get on.",
+       "lines": [
+        "Keep your eyes open, wizard."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  }
+ }
+}

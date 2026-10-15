@@ -29,7 +29,7 @@ from sim.dmb.quests.causes import CauseTracker
 from sim.dmb.quests.runtime import QuestService
 from sim.dmb.time.clock import ClockService
 
-from wizard_rts import disruption, settlements
+from wizard_rts import disruption, narrative, settlements
 from wizard_rts.puzzle import gen as puzzle_gen
 from wizard_rts.puzzle import items as puzzle_items
 from wizard_rts.puzzle.dungeon import ENTRY, DungeonRun
@@ -143,6 +143,8 @@ def _taken_tiles(world: Any) -> set[tuple[int, int]]:
     s = state(world)
     out = {tuple(n["tile"]) for n in s["npcs"].values()}
     out |= {tuple(d["entrance"]["tile"]) for d in s["dungeons"].values()}
+    if "narrative" in world.__dict__:
+        out |= {tuple(r["tile"]) for r in world.narrative["residents"].values()}
     return out
 
 
@@ -230,6 +232,8 @@ def story_quantum(world: Any) -> None:
             q["outcome"] = "resolved_by_world"
             _log(world, "story_quest_resolved_by_world", quest=qid, mine=q["mine"])
             _release_duel(world, q)
+    if "narrative" in world.__dict__:  # Wizard Mode only: server.py creates world.narrative; HybridEnv and training worlds never have it
+        narrative.tick(world)
 
 
 def _outbreak_quantum(world: Any) -> None:
@@ -438,6 +442,10 @@ def talk(world: Any, npc_id: str) -> dict[str, Any]:
     s = state(world)
     npc = s["npcs"].get(npc_id)
     if npc is None:
+        if "narrative" in world.__dict__:  # anyone else: the teacher, or any worker, carrier or soldier (narrative/conversation.py owns the lifecycle)
+            from wizard_rts.narrative import conversation
+
+            return conversation.talk(world, npc_id)
         return {"status": "rejected", "reason": "no_such_person"}
     if not _near(world, npc["tile"], TALK_RANGE):
         return {"status": "rejected", "reason": "too_far"}
@@ -452,6 +460,10 @@ def talk(world: Any, npc_id: str) -> dict[str, Any]:
 
 def choose(world: Any, npc_id: str, choice: str) -> dict[str, Any]:
     s = state(world)
+    if "narrative" in world.__dict__ and npc_id not in s["npcs"]:
+        from wizard_rts.narrative import conversation
+
+        return conversation.choose(world, npc_id, choice)
     res = talk(world, npc_id)
     if res["status"] != "ok" or "quest" not in res:
         return res
@@ -654,6 +666,12 @@ def duel_guess(world: Any, guess: list[int]) -> dict[str, Any]:
 def duel_abandon(world: Any) -> dict[str, Any]:
     d = state(world)["duel"]
     if d is None:
+        if "narrative" in world.__dict__:  # a story Ward lease (the lesson duels) is closed without counting
+            from wizard_rts.narrative import duel_lease
+
+            out = duel_lease.abandon(world)
+            if out["closed"]:
+                return out
         return {"status": "rejected", "reason": "no_duel"}
     return {"status": "ok", "result": _end_duel(world, d, "abandoned")}
 
@@ -750,9 +768,13 @@ def _figure(tribe: str, role: str) -> str:
 def entity_rows(world: Any) -> list[dict[str, Any]]:
     """NPCs and dungeon entrances as ordinary snapshot entities (what Godot draws and labels)."""
     s = world.__dict__.get("story")
-    if not s:
-        return []
     rows = []
+    if "narrative" in world.__dict__:  # residents: the teacher and the villagers of the narrative layer
+        from wizard_rts.narrative import residents, tutorial
+
+        rows.extend(residents.entity_rows(world, tutorial.row_info(world)))
+    if not s:
+        return rows
     for pid, n in sorted(s["npcs"].items()):
         person = world.dmb.people.get(pid, {})
         found = _quest_of_npc(world, pid)
@@ -772,6 +794,19 @@ def entity_rows(world: Any) -> list[dict[str, Any]]:
 
 
 def snapshot(world: Any) -> dict[str, Any]:
+    out = _story_snapshot(world)
+    if "narrative" in world.__dict__:
+        from wizard_rts.narrative import characters, events
+
+        out["narrative"] = {"version": world.narrative["version"], "events": events.recent(world)}
+        out["persons"] = characters.persons_view(world)
+        from wizard_rts.narrative import tutorial
+
+        out["narrative"]["journal"] = tutorial.snapshot(world)
+    return out
+
+
+def _story_snapshot(world: Any) -> dict[str, Any]:
     s = world.__dict__.get("story")
     if not s:
         return {}
@@ -783,7 +818,8 @@ def snapshot(world: Any) -> dict[str, Any]:
 
 # ------------------------------------------------------------------ the wizard's command surface
 
-WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view")
+WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",
+              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose")
 
 
 def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
@@ -809,6 +845,10 @@ def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         out = duel_guess(world, list(message.get("guess", [])))
     elif op == "duel_abandon":
         out = duel_abandon(world)
+    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose"):
+        from wizard_rts.narrative import ops
+
+        out = ops.handle(world, message)
     else:
         out = {"status": "ok"}
     out["view"] = dungeon_view(world) if state(world)["in_dungeon"] else {}

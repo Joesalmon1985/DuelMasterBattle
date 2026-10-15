@@ -32,6 +32,20 @@
       "colour_count": 8,
       "max_casts": 12,
       "allow_repeats": true
+    },
+    {
+      "id": "duel.tutorial_3x3",
+      "slot_count": 3,
+      "colour_count": 3,
+      "max_casts": 8,
+      "allow_repeats": true
+    },
+    {
+      "id": "duel.wizard_3x3",
+      "slot_count": 3,
+      "colour_count": 3,
+      "max_casts": 8,
+      "allow_repeats": true
     }
   ],
   "supported_caps": {

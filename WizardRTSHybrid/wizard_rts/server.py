@@ -19,7 +19,8 @@ for entry in (str(_HERE), str(_ROOT)):
         sys.path.insert(0, entry)
 
 from wizard_rts import construction as con  # noqa: E402
-from wizard_rts import story, tech  # noqa: E402
+from wizard_rts import narrative, story, tech  # noqa: E402
+from wizard_rts.narrative import campaign, tutorial, wizard  # noqa: E402
 from wizard_rts.coords import tile_to_hex  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
@@ -30,8 +31,38 @@ GOD_OPS = frozenset({"trade", "control", "build", "road", "queue", "cancel", "mo
                      "order", "suggest", "spawn", "damage", "draft", "grant_card", "inspect", "belt", "upgrade", "enhance", "configure", "ability", "dismantle", "convert", "waterway", "fixture"})
 
 
+def _save_load(world: HybridWorld, message: dict) -> dict:
+    """Wizard Mode save and load (narrative/persist.py). A load replies with the loaded world under `_swap`; `serve` strips it and rebinds."""
+    from wizard_rts.narrative import persist
+
+    op = str(message.get("op", ""))
+    slot = str(message.get("slot", ""))
+    try:
+        path = persist.slot_path(world.profile, slot)
+        if op == "save":
+            return {"status": "ok", "slot": slot, **persist.save_world(world, path)}
+        loaded, info = persist.load_world(persist.prev_path(path) if message.get("prev") else path)
+    except persist.SaveError as exc:
+        return {"status": "rejected", "reason": exc.reason, "detail": exc.detail, "prev": exc.prev}
+    loaded.visual_state = True
+    tutorial.start(loaded)
+    return {"status": "ok", "slot": slot, "loaded": True, **info, "terrain": loaded.terrain.wire() if loaded.terrain is not None else None,
+            "snapshot": loaded.snapshot(tree_sync=False), "_swap": loaded}  # tree_sync False: the client gets every tree again (full delta)
+
+
+AFTER_DEATH = frozenset({"snapshot", "advance", "profile", "terrain", "tile", "resources", "menu", "tech", "cards", "load", "new_game", "journal"})
+
+
 def _handle(world: HybridWorld, message: dict) -> dict:
     op = str(message.get("op", ""))
+    if "narrative" in world.__dict__ and campaign.over(world) and op not in AFTER_DEATH:  # the apprentice is dead: nothing but starting again, loading, or looking
+        return {"status": "rejected", "reason": "game_over", "op": op}
+    if op == "new_game":
+        fresh = new_world()
+        return {"status": "ok", "new_game": True, "terrain": fresh.terrain.wire() if fresh.terrain is not None else None,
+                "snapshot": fresh.snapshot(tree_sync=False), "_swap": fresh}
+    if op in ("save", "load"):
+        return _save_load(world, message)
     if op in GOD_OPS and not tech.god_allowed(world):
         return {"status": "rejected", "reason": "god_mode_disabled", "profile": world.profile}
     if op in story.WIZARD_OPS:  # the wizard's own story actions: open in every profile, narrow by construction
@@ -113,6 +144,8 @@ def _handle(world: HybridWorld, message: dict) -> dict:
     if op == "move":
         return world.move(list(message.get("units", [])), int(message.get("tx", 0)), int(message.get("ty", 0)), bool(message.get("attack_move", False)))
     if op == "fire":
+        if world.profile == "campaign" and "narrative" in world.__dict__ and not wizard.knows(world, wizard.FLAME):  # magic has to be learned first
+            return {"status": "rejected", "reason": "spell_unknown", "spell": "Flame"}
         reply = world.fire(str(message.get("target", "")))
         if message.get("light"):
             reply.pop("snapshot", None)
@@ -197,10 +230,13 @@ def _handle(world: HybridWorld, message: dict) -> dict:
 TERMINAL_HOLD_REPLIES = 3
 
 
-def serve(port: int) -> None:
+def new_world() -> HybridWorld:
+    """A fresh world configured from the environment (the launcher's switches). The server starts with one; the Game Over screen's New Game asks for another."""
     world = HybridWorld(seed=int(os.environ.get("HYBRID_SEED", "507")), map_size=os.environ.get("HYBRID_MAP", "standard"),
                          profile=os.environ.get("HYBRID_PROFILE", "campaign"))
     world.visual_state = True  # the client gets presentation fields (turret aim); never set in headless runs, so state hashes are unchanged
+    narrative.enable(world)  # Wizard Mode state lives only in worlds this server creates (never in HybridEnv or training worlds)
+    tutorial.start(world)  # campaign only: the teacher stands beside the wizard (a loaded world keeps its own)
     if os.environ.get("HYBRID_CARDSET") == "legacy":  # regression only: the hand-written cards and the old offers; v2 drafting is the default for gated profiles
         world.legacy_draft, world.cardset, world.draft_v2 = True, "", False
     if os.environ.get("HYBRID_DRAFT_MS"):  # developer switch: safe accelerated drafting
@@ -229,6 +265,22 @@ def serve(port: int) -> None:
         if os.environ["HYBRID_FIXTURE"] == "modern_industry":
             ids = fixture.modern_fixture(world, os.environ.get("HYBRID_FIXTURE_FACTION", "Red"))
             print("HYBRID_FIXTURE_READY", json.dumps({k: v for k, v in ids.items() if k != "plan"}), flush=True)
+    return world
+
+
+def serve(port: int) -> None:
+    world = new_world()
+    if os.environ.get("HYBRID_LOAD_SLOT"):  # `launch_scenario.sh campaign --load <slot>`: resume before the client connects
+        from wizard_rts.narrative import persist
+
+        try:
+            world, info = persist.load_world(persist.slot_path(world.profile, os.environ["HYBRID_LOAD_SLOT"]))
+        except persist.SaveError as exc:
+            print("HYBRID_LOAD_FAILED", exc.reason, exc.detail, exc.prev, flush=True)
+            sys.exit(2)
+        world.visual_state = True
+        tutorial.start(world)
+        print("HYBRID_LOADED", json.dumps({k: info[k] for k in ("path", "game_ms", "profile", "seed", "hash_mismatch")}), flush=True)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(("127.0.0.1", port))
@@ -253,7 +305,17 @@ def serve(port: int) -> None:
                         except json.JSONDecodeError:
                             reply = {"status": "rejected", "reason": "bad_json"}
                         else:
-                            reply = _handle(world, message)
+                            try:
+                                reply = _handle(world, message)
+                            except Exception as exc:  # a bug in one op must not kill the simulator (the client would lose its connection and the world)
+                                import traceback
+
+                                traceback.print_exc()
+                                sys.stdout.flush()
+                                reply = {"status": "error", "reason": "server_error", "detail": f"{type(exc).__name__}: {exc}", "op": str(message.get("op", ""))}
+                            swapped = reply.pop("_swap", None)  # a load: the loaded world replaces this one (the reply already carries its snapshot)
+                            if swapped is not None:
+                                world = swapped
                             if getattr(world, "cycle_pending", False) and tech.god_allowed(world) is not None:
                                 from wizard_rts import history
 
@@ -264,7 +326,10 @@ def serve(port: int) -> None:
                                     conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
                                     continue
                                 ended = history.outcome(world)  # recorded in past_cycles before the new world replaces this one; a collective loss is never silent
+                                old_world = world
                                 world = history.cycle_reset(world)  # a new cycle: only the wizard carries over (D11)
+                                narrative.carry_over(old_world, world)  # the wizard's spells, lessons and duels cross the reset too
+                                tutorial.start(world)
                                 reply = {"status": "ok", "cycle_reset": True, "ended_cycle": ended, "snapshot": world.snapshot()}
                         conn.sendall(json.dumps(reply, separators=(",", ":")).encode("utf-8") + b"\n")
             except (ConnectionError, OSError):
