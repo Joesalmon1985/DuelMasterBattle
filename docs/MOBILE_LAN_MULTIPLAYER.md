@@ -153,6 +153,19 @@ settings were needed for a headless Android export and are now in `project.godot
 (the launcher icon). Godot 4.5 keeps the template's version id in `android/.build_version` (the parent of the build directory),
 which the setup script writes.
 
+Windows (15 October 2026, owner's PC): the owner-facing path is `README_ANDROID_TWO_PHONES.md` at the repository root. The
+toolchain is installed once by `WizardRTSHybrid/scripts/android/setup_android_toolchain.ps1` (`Setup Android Build Tools.bat`:
+JDK 17, SDK command-line tools, platform-tools, build-tools 35, platform 35, NDK 28.1, the 4.5.1 export templates, the debug
+keystore and the `export/android/*` editor settings in `%APPDATA%\Godot\editor_settings-4.5.tres`; the SDK licence prompt is left to
+the user). `build_apk.ps1` (`Build Android APK.bat`) runs the cross-platform `setup_gradle_build.py` (the former bash overlay
+logic, now shared by `setup_gradle_build.sh`) and the headless export, then `install_apk.ps1` installs on every attached phone.
+Chaquopy packages the same Python major.minor as the build Python, so the scripts use `py -3` (3.14 here) for both; the
+`python3.12` requirement above is Ubuntu's. The `Android` preset is now **signed** (it exported an unsigned, uninstallable APK
+before) and a second preset `Android Client` (no gradle, no Python) is the fallback for phones joining a PC host
+(`Host LAN Game.bat`, which starts the host with `--first-joiner-hosts` so the first phone gets the START button when the PC
+has no wizard of its own). Verified here: the harness (17 + 2 tests), the Godot parse check, the staging self-test and
+`tests/test_android_packaging.py`; **still no APK and no phone**, the gradle and Chaquopy steps are unrun.
+
 One APK serves both roles: the Python runtime is started only when hosting (or for single player on a phone, as a private session
 bound to `127.0.0.1`). The export preset enables the gradle build, `INTERNET`, `ACCESS_WIFI_STATE` and `ACCESS_NETWORK_STATE`,
 minSdk 24, targetSdk 35, arm64-v8a, version 0.1.0.

@@ -1,29 +1,49 @@
-# Android Export
+# Android export
+
+**Start at [`../README_ANDROID_TWO_PHONES.md`](../README_ANDROID_TWO_PHONES.md)**: the owner-facing instructions for building the
+app on Windows, installing it on two phones and playing a LAN game. The architecture and the known limits are in
+[`MOBILE_LAN_MULTIPLAYER.md`](MOBILE_LAN_MULTIPLAYER.md). This file is the engineering summary of the export itself.
+
+## Presets (`godot_project/export_presets.cfg`)
+
+| Preset | Gradle | Output | Use |
+| --- | --- | --- | --- |
+| `Android` | yes (Chaquopy CPython + the `DmbPySim` plugin) | `build/android/DuelMasterBattle-debug.apk` | the game: a phone can host the world and join |
+| `Android Client` | no (plain Godot export) | `build/android/DuelMasterBattle-client.apk` | joins only (a PC or another phone hosts); the fallback while the gradle build is unproven |
+
+Both: `arm64-v8a` only (Chaquopy's CPython is 64-bit), min SDK 24, target SDK 35, package `com.duelmasterbattle.game`,
+version `0.1.0` (must equal `wizard_rts/net/protocol.py` `GAME_VERSION`: the phones compare it in `hello`), **signed with the
+debug keystore** (an unsigned APK does not install), permissions internet, network state, Wi-Fi state, vibrate. Project settings
+already set for the export: `gl_compatibility` renderer, ETC2/ASTC import, portrait 720x1280 stretch, touch from mouse.
+
+## Toolchain (Godot 4.5)
+
+JDK 17, Android SDK command-line tools, platform-tools, build-tools 35.0.0, platform 35, NDK 28.1.13356709 (any installed NDK
+is accepted by `setup_gradle_build.py`), the Godot 4.5.1 export templates (`android_source.zip` for the gradle build,
+`android_debug.apk` for the plain export), a debug keystore, and the editor settings `export/android/java_sdk_path`,
+`android_sdk_path`, `debug_keystore*` (the headless export reads them from `editor_settings-4.5.tres`, not from the environment).
+
+Windows: `WizardRTSHybrid/scripts/android/setup_android_toolchain.ps1` installs all of it into the user profile
+(`%LOCALAPPDATA%\DuelMasterBattle\android-tools`, `%LOCALAPPDATA%\Android\Sdk`, `%APPDATA%\Godot\...`); the SDK licence prompt is
+left to the user. Linux: `scripts/android/build_apk.sh` expects them at the paths in its header.
+
+## Build steps
+
+1. `scripts/android/setup_gradle_build.py` (cross-platform): unpack the gradle template into `godot_project/android/build`
+   (version in `android/.build_version`), apply the Chaquopy overlay to `settings.gradle` / `build.gradle`, swap the NDK pin
+   for an installed one, drop in `PySimPlugin.kt` and register it in `GodotApp.java`, then stage the Python sources
+   (`stage_python.py`: `wizard_rts`, `sim`, `godot_project/content/source`, isolated self-test). Chaquopy packages the same
+   Python major.minor as the build Python, so the script defaults both to the interpreter running it (3.11 to 3.15).
+   Idempotent; `tests/test_android_packaging.py` checks it on a synthetic template.
+2. `godot --headless --path godot_project --export-debug "Android" build/android/DuelMasterBattle-debug.apk`
+   (`scripts/android/build_apk.ps1` on Windows, `build_apk.sh` on Linux; both verify the APK's contents afterwards).
+3. `scripts/android/install_apk.ps1`: `adb install -r` on every attached device.
+
+Root launchers: `Setup Android Build Tools.bat`, `Build Android APK.bat [client|noinstall]`, `Install APK On Phones.bat`,
+`Host LAN Game.bat` (the PC-hosted fallback; `--first-joiner-hosts` gives the first phone the START button).
 
 ## Status
-**Not built in this run.** Android export templates for Godot 4.4.1 were not installed on the build machine. Web export was built and verified locally.
 
-## Prerequisites (when attempting)
-1. Install Godot 4.4.1 Android export templates:
-   - Editor → **Editor** → **Manage Export Templates** → Download 4.4.1
-   - Or copy to `~/.local/share/godot/export_templates/4.4.1.stable/`
-2. Install Android SDK + JDK (Godot docs: [Exporting for Android](https://docs.godotengine.org/en/4.4/tutorials/export/exporting_for_android.html))
-3. Configure debug keystore in editor export preset.
-
-## Steps (outline)
-1. Open `godot_project` in Godot 4.4.1 editor.
-2. **Project → Export** → Add **Android** preset.
-3. Set package name, permissions, orientation (portrait + landscape).
-4. Export APK or AAB to `build/android/` (gitignored).
-
-## Mobile UI checklist
-- [ ] Peg slots large enough to tap (min 48dp).
-- [ ] Colour picker scrollable on narrow screens.
-- [ ] Status text readable without horizontal scroll.
-- [ ] Lock / Submit buttons reachable in portrait.
-- [ ] Result panel fits on screen.
-- [ ] New game restarts cleanly.
-
-## Current project readiness
-- UI uses Control nodes with minimum sizes on pegs (48×48).
-- Further responsive layout pass recommended before store release.
+The toolchain scripts and the overlay are tested; **no APK has yet been produced by this pipeline and no phone has run the
+game** (15 October 2026). The first build will tell whether the Chaquopy and Kotlin steps hold; failures go to
+`WizardRTSHybrid/docs/BLOCKERS.md`.

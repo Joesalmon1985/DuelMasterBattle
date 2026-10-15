@@ -86,3 +86,20 @@ Owner brief: two phones on one Wi-Fi, one living world, human-versus-human Ward 
 - Android: `scripts/android/` (gradle template + Chaquopy overlay + staged Python + headless export).
 - Tests: `tests/test_lan_multiplayer.py` (16), `tests/test_lan_story_shared.py` (1), `scripts/run_lan_headed.sh parse|two_clients` (screenshots in `docs/evidence/lan/`). Baseline suite before the change: 865 passed, 10 skipped (43 min). Subset after: clean environment, world, sim_api, story slice, fire magic, determinism, ward parity, retained duel: 47 passed.
 - Physical two-phone acceptance: BLOCKED (no device, no emulator access). See `BLOCKERS.md`.
+
+## 15 October 2026 — two-phone MVP packaging on Windows (branch `feature/mobile-mvp-two-device`, from `main` at `1f8945f6`)
+
+- Objective: the owner wants to try the game on two Android phones (cooperative or competitive, their choice) and a simple install README.
+- Found on `main`: the LAN host/client/PvP code and the Android packaging from `feature/mobile-lan-multiplayer`; the build scripts are
+  Linux-only; this PC has Godot 4.5.1 but no export templates, no JDK 17, no Android SDK; the `Android` preset had `package/signed=false`
+  (an unsigned APK cannot be installed); a PC-hosted game could never start (only the holder of the host secret may `start`).
+- Changes: `scripts/android/setup_gradle_build.py` (cross-platform template install + Chaquopy/DmbPySim overlay, Python version rule,
+  idempotent; the `.sh` is a wrapper), `android_env.ps1`, `setup_android_toolchain.ps1`, `build_apk.ps1`, `install_apk.ps1`, root launchers
+  `Setup Android Build Tools.bat`, `Build Android APK.bat`, `Install APK On Phones.bat`, `Host LAN Game.bat`; preset `Android` signed and
+  renamed output `DuelMasterBattle-debug.apk`; new preset `Android Client` (plain export); `MultiplayerSession(first_joiner_hosts=)` and
+  `host.py --first-joiner-hosts`; `README_ANDROID_TWO_PHONES.md`; `docs/ANDROID_EXPORT.md` rewritten (it described the 4.4.1 Mastermind app).
+- Verified (Windows 11, Python 3.14, Godot 4.5.1): `test_lan_multiplayer.py` + `test_lan_story_shared.py` 19 passed (two new tests);
+  `test_android_packaging.py` 5 passed; `run_lan_parse.gd` `HYBRID_LAN_PARSE_OK`; `stage_python.py` on Windows: 379 files, 7.3 MB,
+  isolated self-test ok (3.14); `build_apk.ps1` without the toolchain reports the seven missing items and stops.
+- Not done: the toolchain download (about 3 GB, SDK licence to accept) and therefore the APK and the phones. Next: run
+  `Setup Android Build Tools.bat`, then `Build Android APK.bat`; record the first gradle/Chaquopy outcome in BLOCKERS.md if it fails.

@@ -1,5 +1,21 @@
 # Next agent handoff
 
+## 15 Oct 2026 (later): two-phone MVP packaging (branch `feature/mobile-mvp-two-device`, cut from `main` at `1f8945f6`)
+
+The owner's next goal is the MVP on two Android phones: co-operative (walk, talk, quests, outbreaks, watch the world) or competitive
+(a Ward duel) as the two players choose. Everything the game needs for that was already on `main` from the LAN merge; what was
+missing was a Windows build path, a signed preset, and a way for a PC host to start a game. Entry for the owner:
+`README_ANDROID_TWO_PHONES.md` (root). Engineering summary: `docs/ANDROID_EXPORT.md`; details and limits: `docs/MOBILE_LAN_MULTIPLAYER.md`
+sections 5, 10, 11; work log entry in `WizardRTSHybrid/docs/WORK_LOG.md`.
+
+**State:** scripts and tests done and green on this PC; **no APK built yet** (the Android toolchain, about 3 GB with an SDK licence
+the owner must accept, was not downloaded by the agent) and **no phone has run the game**. Next steps, in order: `Setup Android Build
+Tools.bat`, `Build Android APK.bat` (first gradle run: ~10-20 min, internet), `Install APK On Phones.bat` with both phones on USB
+debugging, then the manual checklist in `docs/MOBILE_LAN_MULTIPLAYER.md` section 10. If the gradle/Chaquopy step fails, record the
+exact error in `WizardRTSHybrid/docs/BLOCKERS.md`; the fallback that needs no Chaquopy is `Build Android APK.bat client` plus
+`Host LAN Game.bat` on the PC. Open question for the owner: the apprentice campaign with two wizards over the LAN is untested
+(the story quantum runs as the host's wizard, section 11).
+
 ## INTEGRATION, 15 Oct 2026: training, multiplayer and the wizard campaign are all on `main`
 
 The owner asked on 15 Oct 2026 for the three workstreams to be brought together and merged into `main`. `main` now holds, in this order:
