@@ -13,6 +13,8 @@ const CampaignHud = preload("res://client/ui/campaign_hud.gd")
 const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 const ResponsiveModal = preload("res://client/ui/responsive_modal.gd")
 const SaveData = preload("res://client/scripts/save_data.gd")
+const NetDuelSim = preload("res://client/duel/net_duel_sim.gd")
+const GameBoardScene = preload("res://client/scenes/game_board.tscn")
 
 ## Continuous hybrid world. Movement, camera, and the retained duel board
 ## come from the existing Overworld and DmbDuelLeaseAdapter. The Python
@@ -68,6 +70,31 @@ var selected_ids: Dictionary = {}:
 		selected_ids = v
 		_art.selected = v
 
+# ---- LAN multiplayer (docs/MOBILE_LAN_MULTIPLAYER.md). The host owns the clock; this client sends one `move` per tile and
+# polls `state` asynchronously; other wizards are actors glided between polls; a Ward duel against another human is the
+# retained board over DmbNetDuelSim (the host scores every cast).
+var mp := false
+var _mp_state_pending := false
+var _mp_seq := 0
+var _mp_players: Dictionary = {}  # id -> last row seen
+var _mp_status: Label
+var _mp_toast: Label
+var _mp_toast_t := 0.0
+var _mp_invite_panel: PanelContainer
+var _mp_invite_lbl: Label
+var _mp_invite: Dictionary = {}
+var _mp_challenge_btn: Button
+var _mp_reconnect_acc := 0.0
+var _mp_lost := false
+var _mp_polls := 0
+var _mp_bytes_at_start := 0
+var _mp_started_ms := 0
+var _pvp_board: Node = null
+var _pvp_sim = null
+var _pvp_duel_id := ""
+var _pvp_last_outcome := ""
+const MP_SPRITES := ["red_mage", "hedge_mage", "blue_mage", "assassin"]
+
 
 func _ready() -> void:
 	if OS.get_environment("HYBRID_AUTOSAVE_SECONDS") != "":
@@ -102,17 +129,24 @@ func _ready() -> void:
 	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_duel_layer.add_child(_duel_host)
 	_adapter.finished.connect(_on_duel_finished)
-	var port := int(OS.get_environment("HYBRID_SIM_PORT"))
-	if port <= 0:
-		port = 8765
-	if not _sim.connect_to(port):
-		push_error("Hybrid sim server is not running on 127.0.0.1:%d" % port)
-		_hud_area_lbl.text = "Sim server missing"
-		return
+	mp = LanSession.is_multiplayer()
+	if mp:
+		if not _mp_connect():
+			push_error("LAN host unreachable: %s" % LanSession.last_error)
+			_hud_area_lbl.text = "Host unreachable"
+			return
+	else:
+		var port := int(OS.get_environment("HYBRID_SIM_PORT"))
+		if port <= 0:
+			port = 8765
+		if not _sim.connect_to(port):
+			push_error("Hybrid sim server is not running on 127.0.0.1:%d" % port)
+			_hud_area_lbl.text = "Sim server missing"
+			return
 	var tview = TerrainView.new()
-	if tview.load_from(_sim.op({"op": "terrain"})):
+	if tview.load_from(_sim.op({"op": "terrain"}, 20000)):
 		terrain = tview
-	var reply := _sim.op({"op": "snapshot"})
+	var reply: Dictionary = _sim.op({"op": "state", "full": true}, 20000) if mp else _sim.op({"op": "snapshot"})
 	_apply_snapshot(reply.get("snapshot", {}))
 	_place_john_from_snapshot()
 	_update_john_sprite(0)
@@ -150,6 +184,13 @@ func _ready() -> void:
 	menu_layer.add_child(menu_card)
 	menu_card.setup(self, "modal", "PauseMenu")
 	menu_card.choice_pressed.connect(_on_menu_choice)
+	if mp:
+		_mp_build_ui()
+		_mp_apply(reply)
+		_mp_started_ms = Time.get_ticks_msec()
+		_mp_bytes_at_start = _sim.bytes_in
+	if mp or OS.has_feature("mobile"):
+		_touch.set_action_visible(true)  # phones: the interact button is always on
 
 
 func _era_text(snap: Dictionary) -> String:
@@ -178,6 +219,10 @@ func _process(delta: float) -> void:
 		_camera.position += _camera_nudge
 	if camera_focus != Vector2.INF:
 		_camera.position = camera_focus
+	if mp:
+		_mp_process(delta)
+		queue_redraw()
+		return
 	if _snapshot.is_empty() or _duel_open:
 		queue_redraw()
 		return
@@ -294,6 +339,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			_close_menu()
 			get_viewport().set_input_as_handled()
 		return
+	if mp and event is InputEventKey and event.pressed and not event.echo and _mp_key(event.keycode):
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and not event.echo and _zoom_input_ok():
 		if event.keycode in [KEY_PLUS, KEY_EQUAL, KEY_KP_ADD]:
 			zoom_by(ZOOM_STEP)
@@ -339,6 +387,17 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _arrived() -> void:
 	if _sim._peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+		return
+	if mp:
+		# one validated step per tile; the host answers with the authoritative pose (a refusal snaps the avatar back)
+		_mp_seq += 1
+		_sim.request({"op": "move", "seq": _mp_seq, "tx": _john_pos.x, "ty": _john_pos.y, "facing": _john_facing}, Callable(self, "_on_move_reply"))
+		var me: Dictionary = _snapshot.get("player", {})
+		me["tx"] = _john_pos.x
+		me["ty"] = _john_pos.y
+		me["facing"] = _john_facing
+		_update_prompt()
+		_mp_update_challenge_button()
 		return
 	# light reply: the clock only needs to know where he stands, not the whole world back on every tile
 	var reply := _sim.op({
@@ -675,7 +734,7 @@ func autosave_wait_reason() -> String:
 
 
 func _autosave_tick(delta: float) -> void:
-	if _snapshot.is_empty():
+	if _snapshot.is_empty() or mp:
 		return
 	_autosave_acc += delta
 	if _autosave_acc < autosave_seconds or autosave_wait_reason() != "":
@@ -687,6 +746,9 @@ func _autosave_tick(delta: float) -> void:
 
 ## Escape and the menu button: Continue, Save game, Load game, Save and quit (a card of the same style as every other narrative panel).
 func _on_menu() -> void:
+	if mp:
+		_mp_on_menu()  # the host owns the world: Continue or Leave, nothing to save here
+		return
 	if _input_locked or _duel_open or _snapshot.is_empty() or _menu_open or (campaign_ui != null and campaign_ui.covering()):
 		return
 	_input_locked = true
@@ -783,5 +845,438 @@ func _update_hud(snap: Dictionary) -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _snapshot.is_empty():
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _snapshot.is_empty() and not mp:
 		save_slot("quit")  # closing the window saves first
+
+# ---------------------------------------------------------------------------
+# LAN multiplayer
+# ---------------------------------------------------------------------------
+
+func _mp_connect() -> bool:
+	if LanSession.sim != null and LanSession.sim.connected():
+		_sim = LanSession.sim
+		return true
+	var reply: Dictionary = LanSession.connect_and_hello(LanSession.host_address, LanSession.port, LanSession.join_code, LanSession.default_player_name(), LanSession.host_secret, LanSession.token)
+	if str(reply.get("status", "")) != "ok":
+		return false
+	_sim = LanSession.sim
+	return true
+
+
+func _mp_build_ui() -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "LanLayer"
+	layer.layer = 12
+	add_child(layer)
+	_mp_status = Label.new()
+	_mp_status.name = "LanStatus"
+	_mp_status.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	_mp_status.offset_left = -520
+	_mp_status.offset_right = -12
+	_mp_status.offset_top = 10
+	_mp_status.offset_bottom = 40
+	_mp_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_mp_status.add_theme_font_size_override("font_size", 20)
+	_mp_status.add_theme_color_override("font_color", Color(0.75, 0.95, 1.0))
+	_mp_status.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	_mp_status.add_theme_constant_override("outline_size", 4)
+	_mp_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mp_status.text = "LAN"
+	layer.add_child(_mp_status)
+	_mp_toast = Label.new()
+	_mp_toast.name = "LanToast"
+	_mp_toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_mp_toast.offset_left = -360
+	_mp_toast.offset_right = 360
+	_mp_toast.offset_top = 150
+	_mp_toast.offset_bottom = 200
+	_mp_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_mp_toast.add_theme_font_size_override("font_size", 26)
+	_mp_toast.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4))
+	_mp_toast.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	_mp_toast.add_theme_constant_override("outline_size", 6)
+	_mp_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mp_toast.visible = false
+	layer.add_child(_mp_toast)
+	_mp_challenge_btn = Button.new()
+	_mp_challenge_btn.name = "ChallengeButton"
+	_mp_challenge_btn.text = "⚔ Challenge"
+	_mp_challenge_btn.focus_mode = Control.FOCUS_NONE
+	_mp_challenge_btn.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	_mp_challenge_btn.offset_left = -16 - 230
+	_mp_challenge_btn.offset_right = -16
+	_mp_challenge_btn.offset_top = -108 - 110 - 16 - 72
+	_mp_challenge_btn.offset_bottom = -108 - 110 - 16
+	_mp_challenge_btn.add_theme_font_size_override("font_size", 24)
+	_mp_challenge_btn.add_theme_stylebox_override("normal", _VT.gem_button_style())
+	_mp_challenge_btn.add_theme_stylebox_override("hover", _VT.gem_button_style())
+	_mp_challenge_btn.add_theme_stylebox_override("pressed", _VT.gem_button_style(true))
+	_mp_challenge_btn.add_theme_color_override("font_color", _VT.COLOR_ACCENT_GOLD)
+	_mp_challenge_btn.pressed.connect(func(): mp_challenge())
+	_mp_challenge_btn.visible = false
+	layer.add_child(_mp_challenge_btn)
+	_mp_invite_panel = PanelContainer.new()
+	_mp_invite_panel.name = "InvitePanel"
+	_mp_invite_panel.add_theme_stylebox_override("panel", _VT.panel_style(16))
+	_mp_invite_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_mp_invite_panel.offset_left = -300
+	_mp_invite_panel.offset_right = 300
+	_mp_invite_panel.offset_top = -120
+	_mp_invite_panel.offset_bottom = 120
+	_mp_invite_panel.visible = false
+	layer.add_child(_mp_invite_panel)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 16)
+	_mp_invite_panel.add_child(v)
+	_mp_invite_lbl = Label.new()
+	_mp_invite_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_mp_invite_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_mp_invite_lbl.add_theme_font_size_override("font_size", 26)
+	_VT.apply_label_primary(_mp_invite_lbl)
+	v.add_child(_mp_invite_lbl)
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 24)
+	v.add_child(row)
+	for spec in [["Accept", true], ["Decline", false]]:
+		var b := Button.new()
+		b.name = str(spec[0]) + "Button"
+		b.text = str(spec[0])
+		b.custom_minimum_size = Vector2(190, 68)
+		b.add_theme_font_size_override("font_size", 26)
+		if bool(spec[1]):
+			_VT.style_primary_button(b)
+		else:
+			_VT.style_secondary_button(b)
+		var accept: bool = bool(spec[1])
+		b.pressed.connect(func(): mp_respond(accept))
+		row.add_child(b)
+
+
+func _mp_process(delta: float) -> void:
+	_sim.poll()
+	if _mp_toast_t > 0.0:
+		_mp_toast_t -= delta
+		if _mp_toast_t <= 0.0:
+			_mp_toast.visible = false
+	if not _sim.connected():
+		_mp_lost = true
+		_mp_state_pending = false
+		_mp_reconnect_acc += delta
+		_mp_status.text = "LAN · connection lost · reconnecting…"
+		if _mp_reconnect_acc >= 2.0:
+			_mp_reconnect_acc = 0.0
+			var r: Dictionary = LanSession.connect_and_hello(LanSession.host_address, LanSession.port, LanSession.join_code, LanSession.default_player_name(), LanSession.host_secret, LanSession.token)
+			if str(r.get("status", "")) == "ok":
+				_sim = LanSession.sim
+				_mp_lost = false
+				var full: Dictionary = _sim.op({"op": "state", "full": true}, 20000)
+				_apply_snapshot(full.get("snapshot", {}))
+				_place_john_from_snapshot()  # the host's pose is the truth after a reconnect
+				_mp_apply(full)
+				_mp_toast_show("Reconnected")
+		return
+	_clock_acc += delta
+	if _clock_acc >= POLL_SECONDS and not _mp_state_pending:
+		_clock_acc = 0.0
+		_mp_state_pending = true
+		_sim.request({"op": "state", "seq": _mp_seq}, Callable(self, "_on_state_reply"))
+
+
+func _on_state_reply(reply: Dictionary) -> void:
+	_mp_state_pending = false
+	if str(reply.get("status", "")) != "ok":
+		return
+	_mp_polls += 1
+	_apply_snapshot(reply.get("snapshot", {}))
+	_mp_apply(reply)
+
+
+func _mp_apply(reply: Dictionary) -> void:
+	_mp_apply_players(reply.get("snapshot", {}).get("players", []))
+	for n in reply.get("notices", []):
+		if typeof(n) == TYPE_DICTIONARY:
+			_mp_notice(n)
+	var inv: Dictionary = reply.get("invite", {}) if typeof(reply.get("invite", {})) == TYPE_DICTIONARY else {}
+	if inv.is_empty() != _mp_invite.is_empty() or str(inv.get("duel_id", "")) != str(_mp_invite.get("duel_id", "")):
+		_mp_invite = inv
+		_mp_invite_panel.visible = not inv.is_empty() and not _duel_open
+		if not inv.is_empty():
+			var f: Dictionary = inv.get("format", {})
+			_mp_invite_lbl.text = "%s challenges you to a Ward duel\n%d spells · %d colours · %d casts" % [str(inv.get("from_name", "A wizard")), int(f.get("slots", 3)), int(f.get("colours", 3)), int(f.get("max_casts", 10))]
+	_mp_handle_duel(reply.get("duel", {}) if typeof(reply.get("duel", {})) == TYPE_DICTIONARY else {})
+	_mp_status.text = _mp_status_text(reply)
+	_mp_update_challenge_button()
+
+
+func _mp_apply_players(rows: Array) -> void:
+	var seen := {}
+	for row in rows:
+		if typeof(row) != TYPE_DICTIONARY:
+			continue
+		var pid := str(row.get("id", ""))
+		if pid == "" or bool(row.get("you", false)):
+			continue
+		seen[pid] = true
+		var tile := Vector2i(int(row.get("tx", 0)), int(row.get("ty", 0)))
+		var facing := str(row.get("facing", "down"))
+		var key := "lan:" + pid
+		var node: Sprite2D = actor(key)
+		if node == null:
+			var idx := maxi(0, int(pid.substr(1)) - 2)
+			node = spawn_actor(key, MP_SPRITES[idx % MP_SPRITES.size()], tile, facing)
+			node.set_meta("tile", tile)
+			var lbl := Label.new()
+			lbl.name = "Name"
+			lbl.text = str(row.get("name", pid))
+			lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			lbl.add_theme_font_size_override("font_size", 18)
+			lbl.add_theme_color_override("font_color", Color.html(str(row.get("colour", "#ffffff"))))
+			lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+			lbl.add_theme_constant_override("outline_size", 5)
+			lbl.size = Vector2(160, 24)
+			lbl.scale = Vector2(1.0 / maxf(node.scale.x, 0.01), 1.0 / maxf(node.scale.y, 0.01))
+			lbl.position = Vector2(8.0 - 80.0 / maxf(node.scale.x, 0.01), -7.0)
+			node.add_child(lbl)
+		else:
+			var prev: Vector2i = node.get_meta("tile", tile)
+			if prev != tile:
+				node.set_meta("tile", tile)
+				move_actor(key, tile, POLL_SECONDS)  # glide between polls (interpolation); facing follows the motion
+			elif str(node.get_meta("facing", "")) != facing:
+				face_actor(key, facing)
+		node.modulate.a = 1.0 if bool(row.get("connected", true)) else 0.45
+		_mp_players[pid] = row
+	for pid in _mp_players.keys():
+		if not seen.has(pid):
+			remove_actor("lan:" + pid)
+			_mp_players.erase(pid)
+
+
+func _mp_handle_duel(view: Dictionary) -> void:
+	if view.is_empty():
+		if _pvp_board != null and _pvp_sim != null and _pvp_sim.result == null:
+			_mp_close_pvp_board("cancelled")  # the host dropped the duel (a cycle reset)
+		return
+	var state := str(view.get("state", ""))
+	var duel_id := str(view.get("duel_id", ""))
+	if _pvp_board == null:
+		if state in ["setup", "active"]:
+			_mp_open_pvp_board(view)
+		elif state == "finished" and duel_id != _pvp_duel_id:
+			# finished while this screen had no board (a reconnect): acknowledge and tell the player
+			_pvp_duel_id = duel_id
+			var r: Dictionary = view.get("result", {})
+			_mp_toast_show("Duel %s (%s)" % [str(r.get("outcome", "")), str(r.get("reason", ""))])
+			_sim.op({"op": "pvp_leave"})
+		return
+	if _pvp_sim != null and duel_id == _pvp_duel_id:
+		_pvp_sim.apply_view(view)
+
+
+func _mp_open_pvp_board(view: Dictionary) -> void:
+	_mp_invite_panel.visible = false
+	_mp_invite = {}
+	_pvp_duel_id = str(view.get("duel_id", ""))
+	_pvp_sim = NetDuelSim.new(_sim, view)
+	var board = GameBoardScene.instantiate()
+	if not board.has_method("configure_from_network"):
+		push_error("GameBoard missing configure_from_network")
+		board.queue_free()
+		return
+	var request := {"lease_id": _pvp_duel_id, "duel_id": _pvp_duel_id, "kind": "pvp_ward_duel", "encounter": view.get("encounter", {}),
+		"bot_seed": 0, "checkpoint": {}, "forced_defeat_by_cast": 0}
+	board.configure_from_network(request, _pvp_sim, Callable(self, "_on_pvp_board_finished"))
+	_pvp_board = board
+	_duel_open = true
+	_input_locked = true
+	_held_dir = Vector2i.ZERO
+	_touch.set_enabled(false)
+	_duel_host.mouse_filter = Control.MOUSE_FILTER_STOP
+	_duel_host.add_child(board)
+	if board is Control:
+		board.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_mp_toast_show("Ward duel with %s" % str(view.get("rival", {}).get("name", "a wizard")))
+
+
+func _on_pvp_board_finished(outcome: String, _details: Dictionary) -> void:
+	_pvp_last_outcome = outcome
+	_sim.op({"op": "pvp_leave"})
+	_mp_close_pvp_board(outcome)
+
+
+func _mp_close_pvp_board(outcome: String) -> void:
+	if _pvp_board != null and is_instance_valid(_pvp_board):
+		_pvp_board.queue_free()
+	_pvp_board = null
+	_pvp_sim = null
+	_duel_open = false
+	_input_locked = false
+	_touch.set_enabled(true)
+	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_hud_area_lbl.text = "Duel %s" % outcome
+	queue_redraw()
+
+
+func _mp_nearby_player() -> Dictionary:
+	var best := {}
+	var best_d := 99
+	for pid in _mp_players:
+		var row: Dictionary = _mp_players[pid]
+		if not bool(row.get("connected", true)) or bool(row.get("in_duel", false)):
+			continue
+		var d := absi(int(row.get("tx", 0)) - _john_pos.x) + absi(int(row.get("ty", 0)) - _john_pos.y)
+		if d <= 2 and d < best_d:
+			best = row
+			best_d = d
+	return best
+
+
+func _mp_update_challenge_button() -> void:
+	if _mp_challenge_btn == null:
+		return
+	var near := _mp_nearby_player()
+	_mp_challenge_btn.visible = not near.is_empty() and not _duel_open and _mp_invite.is_empty()
+	if not near.is_empty():
+		_mp_challenge_btn.text = "⚔ Duel %s" % str(near.get("name", ""))
+
+
+func mp_challenge() -> Dictionary:
+	var near := _mp_nearby_player()
+	if near.is_empty():
+		_mp_toast_show("Walk up to the other wizard first")
+		return {}
+	var reply: Dictionary = _sim.op({"op": "pvp_challenge", "target": str(near.get("id", "")), "format": "three"})
+	if str(reply.get("status", "")) == "ok":
+		_mp_toast_show("Challenge sent to %s…" % str(near.get("name", "")))
+	else:
+		_mp_toast_show("Cannot challenge: %s" % str(reply.get("reason", "")))
+	return reply
+
+
+func mp_respond(accept: bool) -> Dictionary:
+	if _mp_invite.is_empty():
+		return {}
+	var reply: Dictionary = _sim.op({"op": "pvp_respond", "duel_id": str(_mp_invite.get("duel_id", "")), "accept": accept})
+	_mp_invite = {}
+	_mp_invite_panel.visible = false
+	if accept and str(reply.get("status", "")) == "ok":
+		_mp_handle_duel(reply.get("duel", {}))
+	elif accept:
+		_mp_toast_show("Could not accept: %s" % str(reply.get("reason", "")))
+	return reply
+
+
+func _mp_notice(n: Dictionary) -> void:
+	var who := str(n.get("name", n.get("by_name", "")))
+	match str(n.get("kind", "")):
+		"player_joined":
+			_mp_toast_show("%s joined the world" % who)
+		"player_left":
+			_mp_toast_show("%s lost connection" % who)
+		"player_reconnected":
+			_mp_toast_show("%s is back" % who)
+		"declined":
+			_mp_toast_show("%s declined the duel" % who)
+		"accepted":
+			_mp_toast_show("%s accepted!" % who)
+		"invite_expired":
+			_mp_toast_show("No answer to your challenge")
+		"cycle_reset":
+			_mp_toast_show("A new cycle begins")
+
+
+func _mp_toast_show(text: String) -> void:
+	if _mp_toast == null:
+		return
+	_mp_toast.text = text
+	_mp_toast.visible = true
+	_mp_toast_t = 3.0
+
+
+func _mp_status_text(reply: Dictionary) -> String:
+	var online := int(reply.get("players_online", 0))
+	var paused := bool(_snapshot.get("paused", false))
+	return "LAN %s · %d online · %d ms%s" % ["host" if LanSession.is_host else "joined", online, _sim.last_round_trip_ms, "  ·  PAUSED" if paused else ""]
+
+
+func _mp_key(keycode: int) -> bool:
+	if _duel_open:
+		return false
+	match keycode:
+		KEY_C:
+			mp_challenge()
+			return true
+		KEY_Y:
+			if not _mp_invite.is_empty():
+				mp_respond(true)
+				return true
+		KEY_N:
+			if not _mp_invite.is_empty():
+				mp_respond(false)
+				return true
+	return false
+
+
+func _on_move_reply(reply: Dictionary) -> void:
+	if str(reply.get("status", "")) == "ok":
+		_mp_seq = maxi(_mp_seq, int(reply.get("seq", _mp_seq)))
+		return
+	var reason := str(reply.get("reason", ""))
+	if reason in ["stale_seq", "disconnected", "not_connected"] or not reply.has("tx"):
+		return
+	# the host refused the step: snap back to the authoritative tile
+	set_john_pos(Vector2i(int(reply.get("tx", _john_pos.x)), int(reply.get("ty", _john_pos.y))), str(reply.get("facing", _john_facing)))
+	_mp_seq = maxi(_mp_seq, int(reply.get("seq", _mp_seq)))
+	if reason == "occupied":
+		_mp_toast_show("Someone is standing there")
+	elif reason == "in_duel":
+		pass
+	else:
+		_mp_toast_show("You cannot walk there")
+
+
+## Test and inspection API.
+func ui_mp_players() -> Dictionary:
+	return _mp_players.duplicate(true)
+
+
+func ui_mp_board() -> Node:
+	return _pvp_board
+
+
+func ui_mp_sim():
+	return _pvp_sim
+
+
+func ui_mp_invite() -> Dictionary:
+	return _mp_invite.duplicate(true)
+
+
+func ui_mp_stats() -> Dictionary:
+	var secs := maxf(0.001, float(Time.get_ticks_msec() - _mp_started_ms) / 1000.0)
+	return {"polls": _mp_polls, "bytes_in": _sim.bytes_in - _mp_bytes_at_start, "bytes_per_s": float(_sim.bytes_in - _mp_bytes_at_start) / secs,
+		"round_trip_ms": _sim.last_round_trip_ms, "fps": Engine.get_frames_per_second(), "lost": _mp_lost, "last_outcome": _pvp_last_outcome}
+
+
+## The pause menu over the LAN: nothing to save here (the host owns the world); leaving tells the host and stops a local host.
+func _mp_on_menu() -> void:
+	if _input_locked:
+		return
+	_input_locked = true
+	_touch.set_enabled(false)
+	var title := "LAN game — you are hosting" if LanSession.is_host else "LAN game — joined %s" % LanSession.host_address
+	var choice: String = await _dialogue.choose_async(title, ["Continue", "Leave game"])
+	if choice == "Leave game":
+		mp_leave()
+		return
+	_input_locked = false
+	_touch.set_enabled(true)
+
+
+func mp_leave() -> void:
+	if _sim != null and _sim.connected():
+		_sim.op({"op": "leave"}, 1000)
+	LanSession.stop_local_host()
+	LanSession.reset()
+	get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")

@@ -161,6 +161,7 @@ class HybridWorld:
         self.hazard_id = ""
         self.hazard_tile: tuple[int, int] | None = None
         self.player = {"tx": 0, "ty": 0, "facing": "down"}
+        self.players: dict[str, dict[str, Any]] = {}  # LAN multiplayer only (wizard_rts/net/session.py): id -> {id, name, colour, tx, ty, facing}; empty in single player
         self._pending_links: list[tuple[str, str]] = []
         if minimal:
             self._layout_minimal()
@@ -864,7 +865,7 @@ class HybridWorld:
         if self.solid_for_wizard(tile):  # P1.1: a standing tree or a rock is solid; saplings, stumps and cleared tiles are not
             return {"status": "rejected", "reason": "obstacle", "snapshot": self.snapshot() if snapshot else None}
         previous = tile_to_hex(self.player["tx"], self.player["ty"])
-        self.player = {"tx": tile[0], "ty": tile[1], "facing": str(facing or "down")}
+        self.player.update(tx=tile[0], ty=tile[1], facing=str(facing or "down"))  # in place: a multiplayer player record aliases this dict
         current = tile_to_hex(tile[0], tile[1])
         if current != previous:
             self.events.append({"kind": "hex_cross", "from": list(previous), "to": list(current)})
@@ -1138,20 +1139,27 @@ class HybridWorld:
         dy = abs(self.player["ty"] - self.hazard_tile[1])
         return dx + dy <= 1
 
-    def tree_delta(self, full: bool) -> dict[str, Any]:
+    def tree_delta(self, full: bool, sent: dict[str, Any] | None = None, view: tuple[int, int, int] | None = None) -> dict[str, Any]:
         """Trees changed since the last delta sent (one client). Trees are 90 % of the snapshot and change rarely, so the
-        Godot client asks for them as a delta and rebuilds the full list locally; the simulation is unchanged."""
-        sent = self.__dict__.setdefault("_tree_sent", {})
+        Godot client asks for them as a delta and rebuilds the full list locally; the simulation is unchanged.
+        `sent` is that client's own bookkeeping (the LAN host keeps one per connection); `view` (cx, cy, radius) limits the
+        upserts to a window around a player (a phone never needs the whole forest)."""
+        if sent is None:
+            sent = self.__dict__.setdefault("_tree_sent", {})
         if full:
             sent.clear()
         upsert = []
         for tree_id, tree in self.trees.items():
+            if view is not None and (abs(int(tree["tx"]) - view[0]) > view[2] or abs(int(tree["ty"]) - view[1]) > view[2]):
+                continue
             sig = (tree["definition"], tree["stage"])
             if sent.get(tree_id) != sig:
                 sent[tree_id] = sig
                 upsert.append({"id": tree_id, "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"], "tx": tree["tx"], "ty": tree["ty"],
                                "solid": self.tree_solid(tree)})
         for rock_id, rock in self.rocks.items():
+            if view is not None and (abs(int(rock["tx"]) - view[0]) > view[2] or abs(int(rock["ty"]) - view[1]) > view[2]):
+                continue
             sig = ("rock", rock["amount"])
             if sent.get(rock_id) != sig:
                 sent[rock_id] = sig
@@ -1168,9 +1176,10 @@ class HybridWorld:
             "tx": rock["tx"], "ty": rock["ty"], "alive": True, "faction": "", "label": "Rocks", "amount": rock["amount"],
         }
 
-    def snapshot(self, tree_sync: bool | None = None) -> dict[str, Any]:
+    def snapshot(self, tree_sync: bool | None = None, tree_sent: dict[str, Any] | None = None, view: tuple[int, int, int] | None = None) -> dict[str, Any]:
         """tree_sync None: trees inline (tests, headless). False: a client that wants everything now (sends a full delta).
-        True: a client that applies deltas."""
+        True: a client that applies deltas. `tree_sent`/`view`: per-connection delta bookkeeping and an area-of-interest window
+        (cx, cy, radius) for the LAN host; with `view` the entity rows are limited to that window (buildings by their anchor)."""
         q, r = tile_to_hex(self.player["tx"], self.player["ty"])
         entities = []
         for building in self.buildings.values():
@@ -1281,9 +1290,14 @@ class HybridWorld:
                     "alive": True,
                 }
             )
-        out_tree = {} if tree_sync is None else {"tree_delta": self.tree_delta(full=not tree_sync)}
+        if view is not None:
+            entities = [e for e in entities if _in_view(e, view)]
+        out_tree = {} if tree_sync is None else {"tree_delta": self.tree_delta(full=not tree_sync, sent=tree_sent, view=view)}
+        out_players = {"players": [{"id": p["id"], "name": p.get("name", p["id"]), "colour": p.get("colour", ""), "tx": p["tx"], "ty": p["ty"], "facing": p["facing"]}
+                                   for _k, p in sorted(self.players.items())]} if self.players else {}
         return {
             **out_tree,
+            **out_players,
             "world_id": WORLD_ID,
             "seed": self.seed,
             "game_ms": int(self.dmb.clock.get("game_ms", 0)),
@@ -1323,6 +1337,15 @@ class HybridWorld:
             "ai_notes": {k: list(v[-4:]) for k, v in self.__dict__.get("ai_notes", {}).items()},
             "regions": regions.snapshot(self),
         }
+
+
+def _in_view(e: dict[str, Any], view: tuple[int, int, int]) -> bool:
+    """Area of interest: a row is sent to a client when its tile (a building: its anchor) is within `radius` of the window centre."""
+    if "anchor" in e:
+        ex, ey = int(e["anchor"][0]), int(e["anchor"][1])
+    else:
+        ex, ey = int(e.get("tx", 0)), int(e.get("ty", 0))
+    return abs(ex - view[0]) <= view[2] and abs(ey - view[1]) <= view[2]
 
 
 def _entity_row(row: dict[str, Any]) -> dict[str, Any]:

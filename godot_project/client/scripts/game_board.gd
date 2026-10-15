@@ -130,6 +130,21 @@ var _lease_mode := false
 var _lease_config: Dictionary = {}
 var _lease_finished_cb: Callable = Callable()
 var _lease_started := false
+var _net_mode := false  # a LAN Ward duel: the host owns the rules, `_net_sim` (DmbNetDuelSim) mirrors its view
+var _net_sim = null
+var _last_phase := -1
+
+
+## A human-versus-human LAN duel. The board is configured BEFORE add_child, as for a lease; `net_sim` already carries the
+## host's first view and is attached to the combatants built from `request.encounter`. Returns through `finished_cb` like a lease.
+func configure_from_network(request: Dictionary, net_sim, finished_cb: Callable = Callable()) -> void:
+	configure_from_lease(request, finished_cb)
+	_net_mode = true
+	_net_sim = net_sim
+
+
+func is_network_duel() -> bool:
+	return _net_mode
 
 
 func configure_from_lease(request: Dictionary, finished_cb: Callable = Callable()) -> void:
@@ -697,7 +712,11 @@ func start_new_game(bot_seed: int = -1) -> void:
 	if bot_seed < 0:
 		bot_seed = randi() % 1000000
 	_bot_seed = bot_seed
-	game = _BattleSim.new(_player_c, _enemy_c, bot_seed)
+	if _net_mode and _net_sim != null:
+		game = _net_sim
+		game.attach(_player_c, _enemy_c)
+	else:
+		game = _BattleSim.new(_player_c, _enemy_c, bot_seed)
 	# D3: the authored prologue's guarantee. Only the PROLOGUE_FORCED_DEFEAT policy
 	# can switch this on; every other battle leaves it at 0 (off).
 	var adv := _adventure()
@@ -738,6 +757,13 @@ func start_new_game(bot_seed: int = -1) -> void:
 func _process(delta: float) -> void:
 	if game == null:
 		return
+	if game.phase != _last_phase:  # a network duel changes phase from the host's view, not from a button on this screen
+		var was := _last_phase
+		_last_phase = game.phase
+		if was >= 0:
+			_refresh_all()
+			if game.phase == _RealtimeSim.Phase.DUELING and _net_mode:
+				_show_toast("Both Wards are set. Cast!")
 	if game.phase == _RealtimeSim.Phase.DUELING and not _paused_by_menu:
 		game.advance_time(delta)
 		_time_since_start += delta
@@ -839,11 +865,19 @@ func _on_lock_pressed() -> void:
 				_loci_slots[i].flash_wrong()
 		return
 	game.lock_player_ward_and_start()
+	if _net_mode and not game.ward_locked():
+		_sfx("denied")
+		_show_toast("The host refused that Ward (%s)" % game.last_error())
+		return
 	_selected_locus = 0
 	_sfx("cast")
 	_PlayabilityHaptics.pulse_medium()
 	_refresh_all()
-	_show_toast("Ward locked! Your first cast opens in 5 seconds.")
+	if _net_mode:
+		_show_toast("Ward locked! Waiting for the rival's Ward…")
+		_hint_lbl.text = "Your Ward is hidden from the rival. The duel starts when both are set."
+	else:
+		_show_toast("Ward locked! Your first cast opens in 5 seconds.")
 
 
 func _on_cast_pressed() -> void:
@@ -1062,6 +1096,9 @@ func _refresh_timers() -> void:
 		_cast_button.set_state(_CastButton.State.DISABLED, 0.0, 0.0, "", "No casts left")
 		return
 	if not window_open:
+		if bool(st.get("network", false)):
+			_cast_button.set_state(_CastButton.State.BLOCKED, 1.0, 1.0, "", "rival's turn")
+			return
 		var charge := clampf(elapsed / min_c, 0.0, 1.0)
 		_cast_button.set_state(_CastButton.State.CHARGING, charge, 1.0, "%d" % int(ceil(until_cast)), "")
 		return
@@ -1097,6 +1134,8 @@ func _refresh_rival_status() -> void:
 		state = "spent"
 	elif _rival_cast_flash > 0.0:
 		state = "cast"
+	elif bool(st.get("network", false)):
+		state = "waiting" if progress >= 1.0 else "thinking"
 	elif progress < 0.55:
 		state = "studying"
 	else:
@@ -1118,6 +1157,12 @@ func _refresh_rival_status() -> void:
 				_rival_wizard.play_cast_windup()
 			"spent":
 				_rival_status_lbl.text = "Out of casts"
+				_rival_status_lbl.add_theme_color_override("font_color", _VT.COLOR_TEXT_SECONDARY)
+			"waiting":
+				_rival_status_lbl.text = "Has cast — your turn"
+				_rival_status_lbl.add_theme_color_override("font_color", _VT.COLOR_ACCENT_GOLD)
+			"thinking":
+				_rival_status_lbl.text = "Choosing a cast…"
 				_rival_status_lbl.add_theme_color_override("font_color", _VT.COLOR_TEXT_SECONDARY)
 
 
@@ -1436,7 +1481,14 @@ func _show_menu_overlay() -> void:
 		_set_paused(false)
 	)
 	_overlay_button("How to play", false, func(): _show_help_overlay(false))
-	if _lease_mode:
+	if _net_mode:
+		# A LAN duel: giving up is a forfeit the host records; the rival wins. Nothing here changes scene.
+		_overlay_button("Give up (the rival wins)", false, func():
+			_overlay.visible = false
+			_set_paused(false)
+			game.forfeit()
+		)
+	elif _lease_mode:
 		# Hazard Challenge lease: abandon returns to G04 world, not quick-duel chrome.
 		_overlay_button("Abandon challenge", false, func(): _return_to_world("fled"))
 	elif _adventure_mode:
@@ -1502,7 +1554,7 @@ func _show_result() -> void:
 	_overlay_text(r.message, false)
 	_overlay_ward_row("Their Ward", game.get_enemy_ward())
 	_overlay_ward_row("Your Ward", game.get_player_ward())
-	_overlay_text("You cast %d · Rival cast %d" % [r.human_guess_count, r.bot_guess_count], false)
+	_overlay_text("You cast %d · %s cast %d" % [r.human_guess_count, "Rival" if not _net_mode else _enemy_c.display_name, r.bot_guess_count], false)
 	if _lease_mode:
 		# Leased hazard duels must return via the lease callback — never Play again.
 		_overlay_button("Continue", true, func(): _return_to_world(r.outcome))

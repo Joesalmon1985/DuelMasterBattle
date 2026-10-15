@@ -150,6 +150,36 @@ func _build() -> void:
 	_quick_btn.pressed.connect(_show_quick_duel)
 	mv.add_child(_quick_btn)
 
+	var world_btn := Button.new()
+	world_btn.name = "WizardWorldButton"
+	world_btn.text = "WIZARD WORLD  (single player)"
+	world_btn.custom_minimum_size = Vector2(0, 60)
+	_VT.style_secondary_button(world_btn)
+	world_btn.pressed.connect(_on_wizard_world)
+	mv.add_child(world_btn)
+
+	var lan_row := HBoxContainer.new()
+	lan_row.add_theme_constant_override("separation", 12)
+	mv.add_child(lan_row)
+	var host_btn := Button.new()
+	host_btn.name = "HostButton"
+	host_btn.text = "HOST LOCAL GAME"
+	host_btn.custom_minimum_size = Vector2(0, 64)
+	host_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_VT.style_primary_button(host_btn)
+	host_btn.add_theme_font_size_override("font_size", 22)
+	host_btn.pressed.connect(func(): _open_lan("host"))
+	lan_row.add_child(host_btn)
+	var join_btn := Button.new()
+	join_btn.name = "JoinButton"
+	join_btn.text = "JOIN LOCAL GAME"
+	join_btn.custom_minimum_size = Vector2(0, 64)
+	join_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_VT.style_primary_button(join_btn)
+	join_btn.add_theme_font_size_override("font_size", 22)
+	join_btn.pressed.connect(func(): _open_lan("join"))
+	lan_row.add_child(join_btn)
+
 	var g01 := Button.new()
 	g01.text = "G01 FX-CLOCK  (Python-backed runtime playtest)"
 	g01.custom_minimum_size = Vector2(0, 60)
@@ -477,3 +507,22 @@ func ui_show_help() -> void:
 
 func _on_g01_fx_clock() -> void:
 	get_tree().change_scene_to_file("res://client/scenes/g01_shell.tscn")
+
+
+## Local Wi-Fi play (docs/MOBILE_LAN_MULTIPLAYER.md): the host runs the authoritative world on its own device.
+func _open_lan(mode: String) -> void:
+	LanSession.reset()
+	LanSession.mode = mode
+	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
+
+
+## The wizard's single-player world. On a phone the world runs inside this app as a private hosted session;
+## on a desktop the classic 127.0.0.1 simulator is expected (scripts/launch_hybrid.sh).
+func _on_wizard_world() -> void:
+	LanSession.reset()
+	if Engine.has_singleton("DmbPySim") or OS.has_feature("mobile"):
+		LanSession.mode = "host"
+		LanSession.private_session = true
+		get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
+		return
+	get_tree().change_scene_to_file("res://client/scenes/hybrid_world.tscn")
