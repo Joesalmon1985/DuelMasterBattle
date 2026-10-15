@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Build the Android debug APK (host-capable: Godot client + CPython world via Chaquopy) with a headless Godot gradle export.
 #   scripts/android/build_apk.sh [debug|release]      output: build/android/DuelMasterBattle-<kind>.apk (repo root, gitignored)
-# Needs: Godot 4.5.1 editor (GODOT), its Android export templates, Android SDK (ANDROID_HOME), JDK 17, python3.12 on PATH,
+# Needs: Godot 4.5.1 editor (GODOT), its Android export templates, Android SDK (ANDROID_HOME), JDK 17, a Python 3.11-3.15 as
+# BUILD_PYTHON (default python3; its major.minor is the Python packaged into the APK; Windows: scripts/android/build_apk.ps1),
 # internet for the first gradle run (Gradle, AGP, Chaquopy and the Android CPython runtime are downloaded once).
 set -euo pipefail
 HYB="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -11,7 +12,7 @@ KIND="${1:-debug}"
 export ANDROID_HOME="${ANDROID_HOME:-$HOME/Android}"
 export JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk-amd64}"
 export PATH="$JAVA_HOME/bin:$PATH"
-"$HYB/scripts/android/setup_gradle_build.sh"
+BUILD_PYTHON="${BUILD_PYTHON:-python3}" "$HYB/scripts/android/setup_gradle_build.sh"
 mkdir -p "$REPO/build/android"
 OUT="$REPO/build/android/DuelMasterBattle-$KIND.apk"
 rm -f "$OUT"

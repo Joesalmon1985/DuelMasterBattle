@@ -289,7 +289,8 @@ class HostServer:
 
 def build(args: argparse.Namespace) -> HostServer:
     world = new_world(args.seed, args.map, args.profile)
-    session = MultiplayerSession(world, name=args.name, join_code=args.code, host_secret=args.secret, max_players=args.max_players, view_radius=args.view_radius)
+    session = MultiplayerSession(world, name=args.name, join_code=args.code, host_secret=args.secret, max_players=args.max_players, view_radius=args.view_radius,
+                                 first_joiner_hosts=bool(getattr(args, "first_joiner_hosts", False)))
     return HostServer(world, session, bind=args.bind, port=args.port, discovery_port=None if args.no_discovery else args.discovery_port)
 
 
@@ -307,6 +308,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--profile", default=os.environ.get("HYBRID_PROFILE", "campaign"))
     ap.add_argument("--max-players", type=int, default=2)
     ap.add_argument("--view-radius", type=int, default=protocol.DEFAULT_VIEW_RADIUS)
+    ap.add_argument("--first-joiner-hosts", action="store_true",
+                    help="this machine has no wizard of its own (a PC hosting for phones): the first player to join with the code gets the host role and the START button")
     ap.add_argument("--stats-every", type=float, default=0.0, help="print HYBRID_HOST_STATS every N seconds")
     ap.add_argument("--ready-file", default="", help="also write the ready line's JSON to this file (the Godot launcher polls it)")
     return ap.parse_args(argv)

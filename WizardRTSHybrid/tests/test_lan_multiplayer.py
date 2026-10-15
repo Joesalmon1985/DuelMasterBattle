@@ -563,3 +563,35 @@ def test_single_player_world_unchanged_by_the_multiplayer_hooks() -> None:
     assert w.player is rec, "set_pose updates the record in place"
     assert w.tree_delta(True) == w.tree_delta(True, sent={}) or True
     assert w.snapshot(tree_sync=False)["tree_delta"]["full"] is True
+
+
+def test_first_joiner_hosts_when_the_host_machine_has_no_wizard() -> None:
+    """A PC hosting for two phones ('Host LAN Game.bat'): nobody holds the host secret, so the first wizard to join with the
+    code gets the host role (and the START button); the second is an ordinary player; the secret still outranks both."""
+    r = Rig(first_joiner_hosts=True)
+    try:
+        a, b = r.client("Alice"), r.client("Bob")
+        ha = a.hello(code=CODE)
+        assert ha["status"] == "ok" and ha["host"] is True
+        hb = b.hello(code=CODE)
+        assert hb["status"] == "ok" and hb["host"] is False
+        assert b.start()["status"] == "rejected"
+        assert a.start()["status"] == "ok"
+        assert a.state(full=True)["session_state"] == "playing"
+        assert b.state(full=True)["session_state"] == "playing"
+        names = {p["id"]: p for p in r.session.lobby_view()["players"]}
+        assert sum(1 for p in names.values() if p["host"]) == 1
+        # reconnecting keeps the role; a wrong code is still refused
+        a.close()
+        a2 = r.client("Alice")
+        assert a2.hello(token=ha["token"])["host"] is True
+        c = r.client("Eve")
+        assert c.hello(code="0000")["status"] == "rejected"
+    finally:
+        r.close()
+
+
+def test_first_joiner_hosts_is_off_by_default(rig: Rig) -> None:
+    b = rig.client("Bob")
+    assert b.hello(code=CODE)["host"] is False
+    assert b.start()["status"] == "rejected"

@@ -1,5 +1,22 @@
 # Next agent handoff
 
+## 15 Oct 2026 (later): two-phone MVP packaging (branch `feature/mobile-mvp-two-device`, cut from `main` at `1f8945f6`)
+
+The owner's next goal is the MVP on two Android phones: co-operative (walk, talk, quests, outbreaks, watch the world) or competitive
+(a Ward duel) as the two players choose. Everything the game needs for that was already on `main` from the LAN merge; what was
+missing was a Windows build path, a signed preset, and a way for a PC host to start a game. Entry for the owner:
+`README_ANDROID_TWO_PHONES.md` (root). Engineering summary: `docs/ANDROID_EXPORT.md`; details and limits: `docs/MOBILE_LAN_MULTIPLAYER.md`
+sections 5, 10, 11; work log entry in `WizardRTSHybrid/docs/WORK_LOG.md`.
+
+**State:** scripts and tests green on this PC; the toolchain is installed (owner's go-ahead, 15 Oct 2026 evening) and **the APK is
+built**: `build/android/DuelMasterBattle-debug.apk` (152 MB, signed, arm64, CPython 3.14 inside; details and the two gradle pitfalls
+fixed in `docs/ANDROID_EXPORT.md`). **No phone has run the game** (none was attached). Next steps, in order: `Install APK On Phones.bat`
+with both phones on USB debugging (or copy the APK), then the manual checklist in `docs/MOBILE_LAN_MULTIPLAYER.md` section 10; the
+first thing to confirm on a phone is that WIZARD WORLD / HOST LOCAL GAME reaches the lobby (the packed Python starting). If the gradle/Chaquopy step fails, record the
+exact error in `WizardRTSHybrid/docs/BLOCKERS.md`; the fallback that needs no Chaquopy is `Build Android APK.bat client` plus
+`Host LAN Game.bat` on the PC. Open question for the owner: the apprentice campaign with two wizards over the LAN is untested
+(the story quantum runs as the host's wizard, section 11).
+
 ## INTEGRATION, 15 Oct 2026: training, multiplayer and the wizard campaign are all on `main`
 
 The owner asked on 15 Oct 2026 for the three workstreams to be brought together and merged into `main`. `main` now holds, in this order:

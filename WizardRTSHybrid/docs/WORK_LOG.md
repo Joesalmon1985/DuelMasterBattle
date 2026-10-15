@@ -86,3 +86,28 @@ Owner brief: two phones on one Wi-Fi, one living world, human-versus-human Ward 
 - Android: `scripts/android/` (gradle template + Chaquopy overlay + staged Python + headless export).
 - Tests: `tests/test_lan_multiplayer.py` (16), `tests/test_lan_story_shared.py` (1), `scripts/run_lan_headed.sh parse|two_clients` (screenshots in `docs/evidence/lan/`). Baseline suite before the change: 865 passed, 10 skipped (43 min). Subset after: clean environment, world, sim_api, story slice, fire magic, determinism, ward parity, retained duel: 47 passed.
 - Physical two-phone acceptance: BLOCKED (no device, no emulator access). See `BLOCKERS.md`.
+
+## 15 October 2026 — two-phone MVP packaging on Windows (branch `feature/mobile-mvp-two-device`, from `main` at `1f8945f6`)
+
+- Objective: the owner wants to try the game on two Android phones (cooperative or competitive, their choice) and a simple install README.
+- Found on `main`: the LAN host/client/PvP code and the Android packaging from `feature/mobile-lan-multiplayer`; the build scripts are
+  Linux-only; this PC has Godot 4.5.1 but no export templates, no JDK 17, no Android SDK; the `Android` preset had `package/signed=false`
+  (an unsigned APK cannot be installed); a PC-hosted game could never start (only the holder of the host secret may `start`).
+- Changes: `scripts/android/setup_gradle_build.py` (cross-platform template install + Chaquopy/DmbPySim overlay, Python version rule,
+  idempotent; the `.sh` is a wrapper), `android_env.ps1`, `setup_android_toolchain.ps1`, `build_apk.ps1`, `install_apk.ps1`, root launchers
+  `Setup Android Build Tools.bat`, `Build Android APK.bat`, `Install APK On Phones.bat`, `Host LAN Game.bat`; preset `Android` signed and
+  renamed output `DuelMasterBattle-debug.apk`; new preset `Android Client` (plain export); `MultiplayerSession(first_joiner_hosts=)` and
+  `host.py --first-joiner-hosts`; `README_ANDROID_TWO_PHONES.md`; `docs/ANDROID_EXPORT.md` rewritten (it described the 4.4.1 Mastermind app).
+- Verified (Windows 11, Python 3.14, Godot 4.5.1): `test_lan_multiplayer.py` + `test_lan_story_shared.py` 19 passed (two new tests);
+  `test_android_packaging.py` 5 passed; `run_lan_parse.gd` `HYBRID_LAN_PARSE_OK`; `stage_python.py` on Windows: 379 files, 7.3 MB,
+  isolated self-test ok (3.14); `build_apk.ps1` without the toolchain reports the seven missing items and stops.
+- Later the same evening, with the owner's go-ahead for the downloads and the SDK licence: `setup_android_toolchain.ps1 -AcceptLicenses`
+  installed JDK 17.0.20.1, cmdline-tools 15859902, platform-tools, build-tools 35.0.0, platform 35, NDK 28.1.13356709, the 4.5.1 templates,
+  the keystore and the editor settings (two script fixes on the way: Git Bash's `tar` and `curl` on PATH cannot read `C:\` paths, so the
+  Windows ones in `System32` are used). First `build_apk.ps1`: gradle + Chaquopy + Kotlin BUILD SUCCESSFUL in 1m29s on the first run, then
+  Godot's copy-and-rename gradle call failed ("Python 3.14 is not available for the ABI 'armeabi-v7a'": that call passes no ABI list and
+  the template defaults to all four); fixed in the overlay (`enabledABIs` default `arm64-v8a|x86_64`). Second build produced
+  `build/android/DuelMasterBattle-debug.apk` (152 MB) but the script hung: the gradle daemon inherited the export's output pipe; fixed
+  with `org.gradle.daemon=false` in the overlay. `apksigner verify`: v2 signature, CN=Android Debug. `inspect_apk.py` (new): arm64 only,
+  libpython3.14, libgodot_android, `assets/chaquopy/app.imy`. `aapt dump badging`: `com.duelmasterbattle.game` 0.1.0, sdk 24/35,
+  INTERNET, ACCESS_WIFI_STATE, ACCESS_NETWORK_STATE, VIBRATE. No phone attached (`adb devices` empty), so nothing ran on a device.

@@ -80,8 +80,10 @@ class MultiplayerSession:
     def __init__(self, world: Any, name: str = "DuelMasterBattle", join_code: str | None = None, host_secret: str | None = None,
                  max_players: int = 2, clock: Callable[[], float] = time.monotonic, view_radius: int = protocol.DEFAULT_VIEW_RADIUS,
                  cast_timeout_s: float = pvp.CAST_TIMEOUT_S, invite_timeout_s: float = pvp.INVITE_TIMEOUT_S,
-                 disconnect_grace_s: float = DISCONNECT_GRACE_S, remove_after_s: float = REMOVE_AFTER_S) -> None:
+                 disconnect_grace_s: float = DISCONNECT_GRACE_S, remove_after_s: float = REMOVE_AFTER_S, first_joiner_hosts: bool = False) -> None:
         self.world = world
+        # a host without a player of its own (a PC hosting for two phones): the first wizard to join with the code becomes the host player
+        self.first_joiner_hosts = bool(first_joiner_hosts)
         self.name = str(name)[:40] or "DuelMasterBattle"
         self.join_code = str(join_code) if join_code is not None else "%04d" % (secrets.randbelow(10000))
         self.host_secret = host_secret or secrets.token_hex(8)
@@ -312,6 +314,8 @@ class MultiplayerSession:
         link = next((l for l in self.links.values() if token and secrets.compare_digest(l.token, token)), None)
         if link is None and not is_host and str(message.get("code", "")) != self.join_code:
             return {"status": "rejected", "reason": "bad_code"}
+        if link is None and not is_host and self.first_joiner_hosts and not any(l.host for l in self.links.values()):
+            is_host = True
         if link is None and is_host:
             link = next((l for l in self.links.values() if l.host), None)
         reconnect = link is not None
