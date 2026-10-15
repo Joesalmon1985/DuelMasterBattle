@@ -19,7 +19,10 @@ def run(w, s):
 
 
 def give_scriptorium(w, faction="Red"):
-    assert tech.grant(w, faction, "gen.scriptorium")["status"] == "ok"
+    from wizard_rts.content import graph
+
+    card = next(cid for cid, c in sorted(graph.generated_cards().items()) if "scriptorium" in c["entities"])
+    assert tech.grant(w, faction, card)["status"] == "ok"
     home = next(b for b in w.buildings.values() if b["faction_name"] == faction and b["kind"] == "warehouse")
     placed = None
     for dx in range(6, 30):

@@ -9,12 +9,13 @@ the workplace's output stock. Carriers (economy.py) are separate.
 from __future__ import annotations
 
 import heapq
+import weakref
 from array import array
 
 INF = float("inf")
 from typing import Any
 
-from wizard_rts import imm, regions, resources, wl_defs
+from wizard_rts import flow, hold, imm, regions, resources, visibility, wl_defs
 from wizard_rts import terrain as terrain_mod
 from wizard_rts.programs_data import (
     BUILDING_PROGRAMS,
@@ -261,20 +262,25 @@ def _seed(world: Any, tree: dict) -> None:
 
 # ---------------------------------------------------------------- paths
 
-_PASSABLE: dict = {}
+_PASSABLE: "weakref.WeakKeyDictionary" = weakref.WeakKeyDictionary()  # terrain object -> {locomotor: table}
 
 
 def _passable(world: Any, loco: str) -> bytearray:
-    """One byte per tile: may this locomotor enter it (static terrain only; roads only make a tile faster)."""
+    """One byte per tile: may this locomotor enter it (static terrain only; roads only make a tile faster).
+
+    Cached per terrain OBJECT, weakly. (It used to be keyed by id(terrain): once a world was freed, a later world whose terrain landed at the
+    same address was handed the old world's table, wrong for its map: a crash with the native kernel when the sizes differed and silently wrong
+    paths when they did not. Any process that plays more than one game, such as a training worker, would hit it.)"""
     from wizard_rts import rules
 
     t = world.terrain
-    key = (id(t), loco)
-    got = _PASSABLE.get(key)
+    tables = _PASSABLE.get(t)
+    if tables is None:
+        tables = _PASSABLE[t] = {}
+    got = tables.get(loco)
     if got is None:
         table = rules.speed_table(loco)
-        got = bytearray(1 if table[c] > 0 else 0 for c in t.cls)
-        _PASSABLE[key] = got
+        got = tables[loco] = bytearray(1 if table[c] > 0 else 0 for c in t.cls)
     return got
 
 
@@ -512,6 +518,7 @@ def _arrive_home(world: Any, worker: dict) -> None:
         produce(world, building["id"], good, 1)
         world.stats["produce"] += 1
         world.stats["made_" + good] = world.stats.get("made_" + good, 0) + 1
+        flow.note(world, building, "made", good, 1)
         world.events.append({"kind": "ware_stored", "worker": worker["id"], "building": building["id"], "good": good})
         worker["carrying"] = ""
     worker["returning"] = False
@@ -538,6 +545,8 @@ def worker_quantum(world: Any, worker: dict) -> None:
     building = world.buildings.get(worker["building"])
     if building is None or not building.get("operational", True):
         worker_abort(world, worker, "workplace_destroyed")
+        return
+    if worker.get("held_until_ms") is not None and hold.is_held(world, worker):  # the wizard is talking to this worker (hold.py): nothing advances
         return
     if worker["path"]:
         worker["progress_ms"] += QUANTUM_MS
@@ -865,6 +874,7 @@ def _run_step(world: Any, worker: dict) -> None:
             for dx in range(-r, r + 1):
                 if dx * dx + dy * dy <= r * r:
                     seen.add((building["tx"] + dx, building["ty"] + dy))
+        visibility.reveal(world, building["faction_name"], seen)
         worker["anim"] = "idle"
         worker["status"] = "working"
         worker["wait_ms"] = int(args["ms"])
@@ -957,8 +967,14 @@ WORKER_FAIL_TEXT = {
 
 
 def _fail(world: Any, building: dict, why: str, detail: str = "") -> None:
-    """A programme failed: drop every frame and wait before trying again."""
-    building["stack"] = [["main", 0]]
+    """A programme failed. A called sub-programme (a failed `consume`, a missing worker result) ends only itself: the main programme carries on with its
+    next `call`, as Widelands does with a recently failed programme, so one starved product does not block the others (V4 P2). A failure in main
+    itself drops back to its start. Either way the site waits before its next attempt."""
+    stack = building.get("stack") or []
+    if len(stack) > 1:
+        building["stack"] = stack[:1]  # main keeps its place; the failed frames are dropped
+    else:
+        building["stack"] = [["main", 0]]
     building["sleep_ms"] = FAIL_SLEEP_MS
     if why == "worker":
         detail = WORKER_FAIL_TEXT.get(building.get("worker_fail", ""), building.get("worker_fail", ""))
@@ -1074,6 +1090,7 @@ def production_quantum(world: Any) -> None:
                 good = unit_ware.split("_", 1)[-1]
                 _produce(world, building["id"], good, 1)
                 world.stats["made_" + good] = world.stats.get("made_" + good, 0) + 1
+                flow.note(world, building, "made", good, 1)
                 world.events.append({"kind": "produced", "building": building["id"], "good": good})
                 continue
             tile = con._exit_tile(world, building)
@@ -1097,6 +1114,7 @@ def production_quantum(world: Any) -> None:
                 for g, n in args.items():
                     _supply(world, building["id"]).remove_wares(g, n)
                     world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
+                    flow.note(world, building, "consumed", g, n)
             else:
                 _fail(world, building, "inputs", "waiting for " + ", ".join("%s %d" % (g, n - int(stock.get(g, 0))) for g, n in args.items() if int(stock.get(g, 0)) < n))
         elif cmd == "consume_any":
@@ -1104,6 +1122,7 @@ def production_quantum(world: Any) -> None:
             if pick is not None:
                 _supply(world, building["id"]).remove_wares(pick, 1)
                 world.stats["consumed_" + pick] = world.stats.get("consumed_" + pick, 0) + 1
+                flow.note(world, building, "consumed", pick, 1)
             else:
                 _fail(world, building, "inputs", "waiting for one of " + ", ".join(args["goods"]))
         elif cmd == "consume_groups":
@@ -1120,6 +1139,7 @@ def production_quantum(world: Any) -> None:
                 for g, n in picks:
                     _supply(world, building["id"]).remove_wares(g, n)
                     world.stats["consumed_" + g] = world.stats.get("consumed_" + g, 0) + n
+                    flow.note(world, building, "consumed", g, n)
         elif cmd == "mine":
             if not _mine(world, building, args):
                 _fail(world, building, "deposit")
@@ -1137,6 +1157,7 @@ def production_quantum(world: Any) -> None:
                 produce(world, building["id"], g, n)
                 world.stats["produce"] += n
                 world.stats["made_" + g] = world.stats.get("made_" + g, 0) + n
+                flow.note(world, building, "made", g, n)
                 world.events.append({"kind": "produced", "building": building["id"], "good": g})
         else:
             _fail(world, building, "unsupported")

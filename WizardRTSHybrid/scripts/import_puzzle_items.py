@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Generate wizard_rts/data/puzzle_items.json from the game's own GDScript catalogue (godot_project/sim/world/items.gd and
 client/scripts/colour_data.gd). The Python puzzle port reads names and tags from here; the parity test checks them against Godot."""
+import sys as _sys  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D33)
+freeze_guard.require_unfreeze(__file__)
 import json, re
 from pathlib import Path
 

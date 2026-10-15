@@ -68,9 +68,14 @@ def fire(world: Any, target_id: str) -> dict[str, Any]:
     if d > FIRE_RANGE:
         return {"status": "rejected", "reason": "too_far", "distance": d, "range": FIRE_RANGE}
     now = int(world.dmb.clock.get("game_ms", 0))
-    if now < getattr(world, "_fire_ready_ms", 0):
-        return {"status": "rejected", "reason": "recharging"}
-    world._fire_ready_ms = now + COOLDOWN_MS
+    if getattr(world, "players", None):  # LAN: each wizard recharges on his own (the record world.player is bound to the acting player)
+        if now < int(world.player.get("fire_ready_ms", 0)):
+            return {"status": "rejected", "reason": "recharging"}
+        world.player["fire_ready_ms"] = now + COOLDOWN_MS
+    else:
+        if now < getattr(world, "_fire_ready_ms", 0):
+            return {"status": "rejected", "reason": "recharging"}
+        world._fire_ready_ms = now + COOLDOWN_MS
     px, py = world.player["tx"], world.player["ty"]
     tx, ty = int(row["tx"]), int(row["ty"])
     world.effects.append({"t": "bolt", "x1": px, "y1": py, "x2": tx, "y2": ty, "ttl_ms": 400, "keep": 3, "p": "Missile"})

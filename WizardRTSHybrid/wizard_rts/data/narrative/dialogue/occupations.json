@@ -1,0 +1,718 @@
+{
+ "note": "Reusable conversations by occupation (placeholder authored text, owner review pending). Facts are read from the simulation by narrative/occupations.py; a line only appears when its facts hold, so nothing claims what the world does not contain.",
+ "farewell": "Goodbye.",
+ "roles": {
+  "lumberjack": {
+   "label": "Lumberjack",
+   "intro": [
+    "{name}, lumberjack. I fell the old trees and the carriers haul the logs away.",
+    "Mind the axe. I am {name}; I cut timber for the {faction} settlement."
+   ],
+   "hub": [
+    "Yes?",
+    "Make it quick, there is a tree waiting.",
+    "What is it?"
+   ],
+   "topics": [
+    {
+     "id": "work",
+     "text": "What does a lumberjack do all day?",
+     "lines": [
+      "I walk out to a tree that has stood long enough, fell it, carry the log back and start again."
+     ]
+    },
+    {
+     "id": "carrying",
+     "text": "What are you carrying?",
+     "lines": [
+      "A {carrying}, as you see. It goes to {workplace}."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "carrying",
+        "truthy": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "forest_thick",
+     "text": "How is the forest around here?",
+     "lines": [
+      "Plenty of tall trees within a short walk: {trees_big} of them near me right now."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "trees_big",
+        "gte": 8
+       }
+      ]
+     }
+    },
+    {
+     "id": "forest_thin",
+     "text": "How is the forest around here?",
+     "lines": [
+      "The big trees close to the hut are getting few, {trees_big} within a short walk. I go further each time."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "trees_big",
+        "lte": 7
+       }
+      ]
+     }
+    },
+    {
+     "id": "young",
+     "text": "And the young trees?",
+     "lines": [
+      "{saplings} saplings and poles close by. I leave those alone, mostly."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "saplings",
+        "gte": 1
+       }
+      ]
+     }
+    },
+    {
+     "id": "store",
+     "text": "Is there timber in the store?",
+     "lines": [
+      "{logs} logs in the warehouses of the {faction} settlement. The sawmill and the builders will want every one of them."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "logs",
+        "gte": 1
+       }
+      ]
+     }
+    },
+    {
+     "id": "store_empty",
+     "text": "Is there timber in the store?",
+     "lines": [
+      "Not one log, the last I looked. That is why I am out here."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "logs",
+        "eq": 0
+       }
+      ]
+     }
+    },
+    {
+     "id": "strangers",
+     "text": "Anything to worry about?",
+     "lines": [
+      "Soldiers of another colour have been seen close by. I keep my axe near."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "hostile_near",
+        "truthy": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "ranger": {
+   "label": "Forester",
+   "intro": [
+    "{name}, forester. I plant saplings and watch them grow.",
+    "I am {name}. Somebody has to see that there are trees for next year."
+   ],
+   "hub": [
+    "Yes?",
+    "Careful where you step, there are seedlings.",
+    "What would you like to know?"
+   ],
+   "topics": [
+    {
+     "id": "work",
+     "text": "What does a forester do?",
+     "lines": [
+      "I find open ground, dig a hole and plant a sapling. Then I do it again. The trees do the rest, slowly."
+     ]
+    },
+    {
+     "id": "young",
+     "text": "How are the young trees?",
+     "lines": [
+      "{saplings} saplings and poles within sight of me. Every one of them is a log in some future year."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "saplings",
+        "gte": 1
+       }
+      ]
+     }
+    },
+    {
+     "id": "none_planted",
+     "text": "How are the young trees?",
+     "lines": [
+      "Hardly any yet. It takes a long time for a seedling to become a log."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "saplings",
+        "eq": 0
+       }
+      ]
+     }
+    },
+    {
+     "id": "timber",
+     "text": "Does the settlement need more timber?",
+     "lines": [
+      "It always does. But a forest cut faster than it grows is a forest that ends."
+     ]
+    },
+    {
+     "id": "lumberjack",
+     "text": "Do you work with the lumberjack?",
+     "lines": [
+      "We share the same trees, though not always the same idea of how fast they should become logs."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "has_lumberjack",
+        "truthy": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "stonemason": {
+   "label": "Stonemason",
+   "intro": [
+    "{name}, stonemason. I cut stone from the rocks by the quarry.",
+    "I am {name}. If it is hard and grey, I probably cut it."
+   ],
+   "hub": [
+    "Yes?",
+    "Watch your feet, there is stone dust.",
+    "What is it?"
+   ],
+   "topics": [
+    {
+     "id": "work",
+     "text": "What do you do?",
+     "lines": [
+      "I chip granite from the rock near the quarry and carry it back to be stored. Slow work, but stone does not rot."
+     ]
+    },
+    {
+     "id": "rocks",
+     "text": "How much rock is left?",
+     "lines": [
+      "{rocks} rock formations still stand around me. Plenty of work yet."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "rocks",
+        "gte": 1
+       }
+      ]
+     }
+    },
+    {
+     "id": "building",
+     "text": "What is the stone for?",
+     "lines": [
+      "For building, mostly. Every wall and every foundation starts as somebody's rock."
+     ]
+    }
+   ]
+  },
+  "hunter": {
+   "label": "Hunter",
+   "intro": [
+    "{name}, hunter. I follow the game and bring meat home.",
+    "I am {name}. Quiet feet and patient eyes, that is the whole trade."
+   ],
+   "hub": [
+    "Shh. What is it?",
+    "Yes?",
+    "Speak softly."
+   ],
+   "topics": [
+    {
+     "id": "work",
+     "text": "What do you hunt?",
+     "lines": [
+      "Whatever the woods give: deer, mostly. I track it, shoot it and carry it back."
+     ]
+    },
+    {
+     "id": "game",
+     "text": "Is there much game?",
+     "lines": [
+      "{animals} animals within sight of me this morning."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "animals",
+        "gte": 1
+       }
+      ]
+     }
+    },
+    {
+     "id": "game_none",
+     "text": "Is there much game?",
+     "lines": [
+      "Nothing in sight at the moment. The animals know when someone is looking for them."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "animals",
+        "eq": 0
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "carrier": {
+   "label": "Carrier",
+   "intro": [
+    "{name}. I carry wares along this road, one load at a time.",
+    "I am {name}, a carrier. Nobody notices the road until it stops."
+   ],
+   "hub": [
+    "Yes? I have somewhere to be.",
+    "Mind the load.",
+    "What is it?"
+   ],
+   "topics": [
+    {
+     "id": "work",
+     "text": "What do you carry?",
+     "lines": [
+      "Whatever the buildings hand me: logs, stone, and what the settlement needs next. I walk my stretch of road and hand it on."
+     ]
+    },
+    {
+     "id": "load",
+     "text": "What is that you are carrying?",
+     "lines": [
+      "A {carrying}. It is going where the road leads."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "carrying",
+        "truthy": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "empty",
+     "text": "Are you carrying anything?",
+     "lines": [
+      "Nothing just now. I walk back and forth until someone has something for me."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "carrying",
+        "falsy": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "soldier": {
+   "label": "Soldier",
+   "intro": [
+    "{name}. I am one of the {faction} soldiers.",
+    "I am {name}, a soldier of the {faction} settlement."
+   ],
+   "hub": [
+    "At ease. What is it?",
+    "Yes?",
+    "State your business."
+   ],
+   "topics": [
+    {
+     "id": "duty",
+     "text": "What are your duties?",
+     "lines": [
+      "I stand ready. If strangers come, I am the one who goes out to meet them."
+     ]
+    },
+    {
+     "id": "settlement",
+     "text": "How secure is the settlement?",
+     "lines": [
+      "{soldiers} of us stand with the {faction} settlement. It is not many."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "soldiers",
+        "gte": 1
+       }
+      ]
+     }
+    },
+    {
+     "id": "no_barracks",
+     "text": "Do you have a barracks?",
+     "lines": [
+      "No barracks yet. We are few and the settlement is small."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "has_barracks",
+        "falsy": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "barracks",
+     "text": "Do you have a barracks?",
+     "lines": [
+      "We have {barracks}, yes. It is where soldiers are made."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "has_barracks",
+        "truthy": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "threat",
+     "text": "Any trouble lately?",
+     "lines": [
+      "Soldiers of another colour have been seen near here. We are watching."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "hostile_near",
+        "truthy": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "quiet",
+     "text": "Any trouble lately?",
+     "lines": [
+      "Quiet, so far. I do not trust the quiet, but I will take it."
+     ],
+     "when": {
+      "facts": [
+       {
+        "name": "hostile_near",
+        "falsy": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "worker": {
+   "label": "Worker",
+   "intro": [
+    "{name}. I work at {workplace}.",
+    "I am {name}. {workplace}, if you are looking for me."
+   ],
+   "hub": [
+    "Yes?",
+    "What is it?",
+    "Busy day."
+   ],
+   "topics": [
+    {
+     "id": "work",
+     "text": "What do you do here?",
+     "lines": [
+      "I keep {workplace} running for the {faction} settlement."
+     ]
+    },
+    {
+     "id": "settlement",
+     "text": "How is the settlement doing?",
+     "lines": [
+      "It grows a little every day. That is all I can say for sure."
+     ]
+    }
+   ]
+  }
+ },
+ "shared_topics": [
+  {
+   "id": "opinion_mentor",
+   "text": "What do you think of {mentor}?",
+   "when": {
+    "stage": [
+     "training",
+     "explore",
+     "arrival"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The best of us. They never asked for thanks, which is why nobody thinks to give it.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "fond"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Keeps to themselves. Clever, I suppose, but clever is not the same as caring.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "wary"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Fair, and a little distant. I would not say a bad word of them.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "respectful"
+       ]
+      }
+     }
+    },
+    {
+     "text": "They taught half the settlement their letters, and never raised a hand to anyone.",
+     "when": {
+      "persona": {
+       "trait": [
+        "warm",
+        "gentle"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Stubborn as a root. Which is not a complaint.",
+     "when": {
+      "persona": {
+       "trait": [
+        "wry",
+        "stoic"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "opinion_wizards",
+   "text": "What do you make of wizards, in general?",
+   "when": {
+    "stage": [
+     "training",
+     "explore",
+     "arrival"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Somebody should be in charge who can actually do things. It might as well be them.",
+     "when": {
+      "persona": {
+       "primary": [
+        "S"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Wizards, kings, headmen. Same disease, different hats.",
+     "when": {
+      "persona": {
+       "primary": [
+        "A"
+       ]
+      }
+     }
+    },
+    {
+     "text": "A gift is a trust. They answer to something above themselves, or they should.",
+     "when": {
+      "persona": {
+       "primary": [
+        "R"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Fine, so long as they pay for what they break. Everyone does.",
+     "when": {
+      "persona": {
+       "primary": [
+        "G"
+       ]
+      }
+     }
+    },
+    {
+     "text": "The land has its own ways. A wizard who forgets that will find out. Gently or not.",
+     "when": {
+      "persona": {
+       "primary": [
+        "D"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Useful, if they keep to their duty. Dangerous otherwise. Same as a sword.",
+     "when": {
+      "persona": {
+       "primary": [
+        "M"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Have you noticed they all talk in threes? Three colours, three places. As if somebody had written it.",
+     "when": {
+      "persona": {
+       "primary": [
+        "C"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "opinion_apprentice",
+   "text": "Does it bother you, having an apprentice wizard about the place?",
+   "when": {
+    "stage": [
+     "training",
+     "explore",
+     "arrival"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Bother me? It makes me prouder of the village, if you want the truth.",
+     "when": {
+      "persona": {
+       "magic": [
+        "devoted"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Not at all. Folk like you remind us to be better than we are.",
+     "when": {
+      "persona": {
+       "magic": [
+        "reverent"
+       ]
+      }
+     }
+    },
+    {
+     "text": "As long as you stay out of my way and mind the timber, no.",
+     "when": {
+      "persona": {
+       "magic": [
+        "practical"
+       ]
+      }
+     }
+    },
+    {
+     "text": "A little. You are young. Young and powerful is a thing worth watching.",
+     "when": {
+      "persona": {
+       "magic": [
+        "cautious"
+       ]
+      }
+     }
+    },
+    {
+     "text": "I would rather you did not stand near my work, if it is the same to you.",
+     "when": {
+      "persona": {
+       "magic": [
+        "wary"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "thanks_dispute",
+   "text": "I heard you had some trouble in the forest.",
+   "when": {
+    "stage": [
+     "training",
+     "explore",
+     "arrival",
+     "aftermath",
+     "complete"
+    ],
+    "quest": {
+     "id": "forest_dispute",
+     "in": [
+      "done"
+     ]
+    },
+    "relationship": {
+     "gte": 10
+    }
+   },
+   "lines": [
+    "You settled it, or tried. That counts for more than most. If you ever want a favour, ask."
+   ],
+   "effects": [
+    {
+     "kind": "fact",
+     "id": "favour_offered"
+    }
+   ]
+  }
+ ]
+}

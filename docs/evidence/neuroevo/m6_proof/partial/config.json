@@ -1,0 +1,22 @@
+{
+ "name": "proving60",
+ "population": 16,
+ "seeds_per_generation": 2,
+ "game_minutes": 60,
+ "map_size": "standard",
+ "workers": 14,
+ "hours": 8.0,
+ "imitation_fraction": 0.25,
+ "imitation_games": 20,
+ "wall_cap_s": 3600,
+ "stall_s": 1200,
+ "promote": true,
+ "curriculum": {
+  "levels": {
+   "C0": 1.0
+  },
+  "current": "C0",
+  "retention_fraction": 0.25,
+  "retention_tolerance": 50
+ }
+}

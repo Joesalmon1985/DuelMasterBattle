@@ -14,7 +14,6 @@ import io
 import json
 import os
 import pstats
-import resource
 import sys
 import time
 from pathlib import Path
@@ -24,6 +23,7 @@ sys.path.insert(0, str(HYB))
 sys.path.insert(0, str(HYB.parent))
 os.environ.setdefault("HYBRID_AI", "1")
 
+from wizard_rts import sysinfo  # noqa: E402
 from wizard_rts.sim_api import HybridEnv  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
@@ -63,7 +63,7 @@ def main() -> None:
     snap = time.time()
     s = json.dumps(w.snapshot())
     snap_ms = (time.time() - snap) * 1000
-    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024
+    rss = sysinfo.rss_mb()
     out = {
         "map": "legacy" if args.legacy else args.map, "seed": args.seed, "generate_s": round(gen, 2), "game_s": seconds, "wall_s": round(wall, 2),
         "x_realtime": round(seconds / wall, 1), "snapshot_kb": len(s) // 1024, "snapshot_ms": round(snap_ms, 1), "peak_rss_mb": round(rss),

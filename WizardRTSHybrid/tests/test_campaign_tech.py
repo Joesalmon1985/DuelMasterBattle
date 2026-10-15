@@ -141,7 +141,9 @@ def test_env_draft_action_and_mask():
     mask = env.legal_actions("Red")
     assert mask["draft"], mask["draft"]
     kinds_buildable = {m["kind"] for m in mask["build"]}
-    assert kinds_buildable <= PRIMITIVE_KINDS | set(tech.FOUNDATION_KINDS)  # v2 worlds add the foundation set (tavern, clinic)
+    own_wl = {k for k in kinds_buildable if k.startswith("wl:")}
+    assert all(k.startswith("wl:barbarians_") for k in own_wl)  # the foundation's own-tribe Widelands buildings are listed too (V4: the mask covers them)
+    assert kinds_buildable - own_wl <= PRIMITIVE_KINDS | set(tech.FOUNDATION_KINDS)  # v2 worlds add the foundation set (tavern, clinic)
     r = env.apply("Red", {"op": "draft", "card": mask["draft"][0]})
     assert r["status"] == "ok"
     assert env.apply("Red", {"op": "draft", "card": "dmb.card.smelting"})["status"] == "rejected"

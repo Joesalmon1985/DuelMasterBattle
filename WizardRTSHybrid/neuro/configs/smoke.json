@@ -1,0 +1,24 @@
+{
+ "name": "smoke",
+ "population": 4,
+ "seeds_per_generation": 1,
+ "game_minutes": 10,
+ "map_size": "small",
+ "workers": 2,
+ "hours": 0.2,
+ "imitation_fraction": 0.25,
+ "imitation_games": 2,
+ "wall_cap_s": 900,
+ "stall_s": 300,
+ "promote": true,
+ "promotion_min_games": 2,
+ "promotion_full_games": 4,
+ "curriculum": {
+  "levels": {
+   "C0": 1.0
+  },
+  "current": "C0",
+  "retention_fraction": 0.25,
+  "retention_tolerance": 50
+ }
+}

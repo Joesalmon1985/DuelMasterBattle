@@ -13,7 +13,6 @@ import argparse
 import json
 import os
 import platform
-import resource
 import sys
 import time
 from pathlib import Path
@@ -23,6 +22,7 @@ sys.path.insert(0, str(HYB))
 sys.path.insert(0, str(HYB.parent))
 os.environ.setdefault("HYBRID_AI", "1")
 
+from wizard_rts import sysinfo  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
 
@@ -38,7 +38,7 @@ def scenario(name: str) -> dict:
         w.advance(1000, i + 1, snapshot=False)
     wall = time.time() - t0
     return {"scenario": name, "game_s": window, "wall_s": round(wall, 1), "x_realtime": round(window / wall, 1), "buildings": len(w.buildings),
-            "peak_rss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024), "state_hash": w.state_hash()}
+            "peak_rss_mb": sysinfo.rss_mb(), "state_hash": w.state_hash()}
 
 
 def main() -> int:

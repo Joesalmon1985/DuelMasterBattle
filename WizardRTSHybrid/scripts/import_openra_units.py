@@ -11,6 +11,11 @@ are imported for real. The hybrid Prehistoric actors still get an honest ALIAS e
 never counts them as their own art. Run: python3 scripts/import_openra_units.py [path/to/conquer.mix]
 """
 from __future__ import annotations
+import sys as _sys  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D33)
+freeze_guard.require_unfreeze(__file__)
 
 import copy
 import json

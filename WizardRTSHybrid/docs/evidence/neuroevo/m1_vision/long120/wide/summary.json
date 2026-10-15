@@ -1,0 +1,515 @@
+{
+ "compare": {
+  "plus": {
+   "n": 6,
+   "survived": 6,
+   "collapsed": 0,
+   "vp": 4.17,
+   "settlements": 3.83,
+   "cards": 24.17,
+   "buildings": 59.17,
+   "army": 6.0,
+   "army_strength": 350052.85,
+   "units_produced": 32.67,
+   "unit_kills": 79.5,
+   "building_kills": 6.33,
+   "building_losses": 85.67,
+   "founded": 7.67,
+   "food": 122.67,
+   "iron": 0.0,
+   "unrest": 1.0,
+   "nest_cubes_cleared": 0.17,
+   "trades": 0.0,
+   "disruptions": 1.5,
+   "vp_ci95": 2.23,
+   "army_strength_ci95": 663496.31,
+   "buildings_ci95": 42.85
+  },
+  "baseline": {
+   "n": 6,
+   "survived": 6,
+   "collapsed": 0,
+   "vp": 14.17,
+   "settlements": 9.33,
+   "cards": 24.33,
+   "buildings": 86.33,
+   "army": 8.0,
+   "army_strength": 23883.65,
+   "units_produced": 171.0,
+   "unit_kills": 25.17,
+   "building_kills": 91.17,
+   "building_losses": 6.0,
+   "founded": 9.33,
+   "food": 9.0,
+   "iron": 1.83,
+   "unrest": 0.89,
+   "nest_cubes_cleared": 0.0,
+   "trades": 0.0,
+   "disruptions": 2.5,
+   "vp_ci95": 8.14,
+   "army_strength_ci95": 22831.8,
+   "buildings_ci95": 15.76
+  },
+  "game_wins_by_vp": {
+   "plus": 0.0,
+   "baseline": 2.0
+  }
+ },
+ "games": [
+  {
+   "seed": 507,
+   "leg": "A",
+   "mode": "war",
+   "map": "standard",
+   "minutes": 120,
+   "wall_s": 407.4,
+   "era": 3,
+   "era_log": [
+    {
+     "era": "historic",
+     "game_ms": 1809000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 7,
+      "Blue": 3,
+      "Green": 6,
+      "Yellow": 6,
+      "Purple": 7,
+      "Orange": 8
+     }
+    },
+    {
+     "era": "modern",
+     "game_ms": 3999000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 7,
+      "Blue": 2,
+      "Green": 6,
+      "Yellow": 9,
+      "Purple": 5,
+      "Orange": 12,
+      "Blue-2": 1,
+      "Purple-2": 1
+     }
+    },
+    {
+     "era": "dystopian",
+     "game_ms": 4583000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 7,
+      "Blue": 2,
+      "Green": 4,
+      "Yellow": 9,
+      "Purple": 4,
+      "Orange": 16,
+      "Blue-2": 1,
+      "Purple-2": 1
+     }
+    }
+   ],
+   "vp": {
+    "Red": 7,
+    "Blue": 5,
+    "Green": 1,
+    "Yellow": 11,
+    "Purple": 3,
+    "Orange": 27,
+    "Blue-2": 1,
+    "Purple-2": 1
+   },
+   "history": {
+    "Red": "active",
+    "Blue": "active",
+    "Green": "active",
+    "Yellow": "active",
+    "Purple": "declining",
+    "Orange": "active",
+    "Blue-2": "declining",
+    "Purple-2": "declining"
+   },
+   "chronicle": [
+    {
+     "game_ms": 3720000,
+     "faction": "Blue",
+     "event": "split",
+     "successor": "Blue-2",
+     "settlement": "settlement:13",
+     "buildings": 8,
+     "units": 2,
+     "pressures": {
+      "hunger": 0.03,
+      "closures": 0.02,
+      "isolation": 0.01,
+      "garrison": -0.01
+     }
+    },
+    {
+     "game_ms": 3810000,
+     "faction": "Purple",
+     "event": "split",
+     "successor": "Purple-2",
+     "settlement": "settlement:27",
+     "buildings": 10,
+     "units": 0,
+     "pressures": {
+      "isolation": 0.01,
+      "plenty": -0.02
+     }
+    },
+    {
+     "game_ms": 4320000,
+     "faction": "Blue-2",
+     "event": "declined",
+     "why": "idle_10_minutes"
+    },
+    {
+     "game_ms": 5629000,
+     "faction": "Purple-2",
+     "event": "declined",
+     "why": "idle_10_minutes"
+    },
+    {
+     "game_ms": 6086000,
+     "faction": "Purple",
+     "event": "declined",
+     "why": "lost_capital"
+    },
+    {
+     "game_ms": 6495000,
+     "faction": "Purple-2",
+     "event": "recovered"
+    },
+    {
+     "game_ms": 7151000,
+     "faction": "Purple-2",
+     "event": "declined",
+     "why": "idle_10_minutes"
+    }
+   ],
+   "outbreaks": 0,
+   "stats": {
+    "deliver": 16972,
+    "blocked": 0,
+    "move": 500011,
+    "attack": 9256,
+    "destroyed": 859,
+    "produce": 17042,
+    "recruit_started": 679,
+    "saplings_planted": 14676,
+    "recruited": 677,
+    "deployed": 50,
+    "fish_caught": 787,
+    "outbreak_losses": 46,
+    "scouted": 48,
+    "units_lost": 613,
+    "lost": 1600,
+    "destroyed_granite": 177,
+    "destroyed_log": 276,
+    "destroyed_plank": 231,
+    "destroyed_ration": 171,
+    "cubes_cured": 7,
+    "fields_planted": 609,
+    "destroyed_meat": 214,
+    "disruptions": 12,
+    "nest_cubes_cleared": 1,
+    "buildings_lost": 246,
+    "disruption_ms_lost": 4115000,
+    "mined_from_inexhaustible_deposit": 528,
+    "mined_from_inexhaustible_deposit:coal": 344,
+    "mined_from_inexhaustible_deposit:iron": 143,
+    "destroyed_carrier": 112,
+    "destroyed_recruit": 112,
+    "mined_from_inexhaustible_deposit:gold": 41,
+    "destroyed_water": 244,
+    "destroyed_fish": 19,
+    "destroyed_iron": 1,
+    "drilled_mdy.sand": 20,
+    "destroyed_coal": 2,
+    "destroyed_gold": 8,
+    "destroyed_ironwood": 5,
+    "destroyed_liana": 20,
+    "destroyed_quartz": 8
+   },
+   "state_hash": "8ffad53df10f55bed5e9defb1ae1dc9e9564577d",
+   "peak_rss_mb": 93,
+   "step_ms_p50": 47.78,
+   "step_ms_p95": 142.36,
+   "step_ms_max": 544.9,
+   "policies": {
+    "Red": "plus",
+    "Blue": "baseline",
+    "Green": "plus",
+    "Yellow": "baseline",
+    "Purple": "plus",
+    "Orange": "baseline"
+   },
+   "pilot": false,
+   "pilot_log": []
+  },
+  {
+   "seed": 507,
+   "leg": "B",
+   "mode": "war",
+   "map": "standard",
+   "minutes": 120,
+   "wall_s": 369.4,
+   "era": 3,
+   "era_log": [
+    {
+     "era": "historic",
+     "game_ms": 1499000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 4,
+      "Blue": 3,
+      "Green": 5,
+      "Yellow": 6,
+      "Purple": 5,
+      "Orange": 8
+     }
+    },
+    {
+     "era": "modern",
+     "game_ms": 4519000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 7,
+      "Blue": 3,
+      "Green": 8,
+      "Yellow": 10,
+      "Purple": 12,
+      "Orange": 4,
+      "Green-2": 1
+     }
+    },
+    {
+     "era": "dystopian",
+     "game_ms": 5194000,
+     "reason": "vp_threshold",
+     "vp": {
+      "Red": 7,
+      "Blue": 3,
+      "Green": 8,
+      "Yellow": 9,
+      "Purple": 16,
+      "Orange": 2,
+      "Green-2": 1,
+      "Orange-2": 1
+     }
+    }
+   ],
+   "vp": {
+    "Red": 9,
+    "Blue": 8,
+    "Green": 6,
+    "Yellow": 4,
+    "Purple": 27,
+    "Orange": 2,
+    "Green-2": 0,
+    "Orange-2": 0,
+    "Yellow-2": 1,
+    "Green-3": 1
+   },
+   "history": {
+    "Red": "active",
+    "Blue": "active",
+    "Green": "declining",
+    "Yellow": "declining",
+    "Purple": "active",
+    "Orange": "declining",
+    "Green-2": "collapsed",
+    "Orange-2": "collapsed",
+    "Yellow-2": "declining",
+    "Green-3": "declining"
+   },
+   "chronicle": [
+    {
+     "game_ms": 3240000,
+     "faction": "Green",
+     "event": "split",
+     "successor": "Green-2",
+     "settlement": "settlement:30",
+     "buildings": 10,
+     "units": 3,
+     "pressures": {
+      "isolation": 0.01,
+      "garrison": -0.01
+     }
+    },
+    {
+     "game_ms": 4634000,
+     "faction": "Orange",
+     "event": "declined",
+     "why": "lost_capital"
+    },
+    {
+     "game_ms": 4650000,
+     "faction": "Orange",
+     "event": "split",
+     "successor": "Orange-2",
+     "settlement": "settlement:31",
+     "buildings": 8,
+     "units": 0,
+     "pressures": {
+      "war": 0.42
+     }
+    },
+    {
+     "game_ms": 4738000,
+     "faction": "Green-2",
+     "event": "declined",
+     "why": "idle_10_minutes"
+    },
+    {
+     "game_ms": 5247000,
+     "faction": "Orange-2",
+     "event": "collapsed",
+     "ruins": 6
+    },
+    {
+     "game_ms": 5400000,
+     "faction": "Yellow",
+     "event": "split",
+     "successor": "Yellow-2",
+     "settlement": "settlement:19",
+     "buildings": 18,
+     "units": 0,
+     "pressures": {
+      "war": 0.06,
+      "isolation": 0.01,
+      "plenty": -0.02
+     }
+    },
+    {
+     "game_ms": 5829000,
+     "faction": "Green-2",
+     "event": "collapsed",
+     "ruins": 8
+    },
+    {
+     "game_ms": 5850000,
+     "faction": "Green",
+     "event": "split",
+     "successor": "Green-3",
+     "settlement": "settlement:13",
+     "buildings": 7,
+     "units": 0,
+     "pressures": {
+      "isolation": 0.01
+     }
+    },
+    {
+     "game_ms": 6000000,
+     "faction": "Yellow-2",
+     "event": "declined",
+     "why": "idle_10_minutes"
+    },
+    {
+     "game_ms": 6228000,
+     "faction": "Yellow-2",
+     "event": "recovered"
+    },
+    {
+     "game_ms": 6394000,
+     "faction": "Green",
+     "event": "declined",
+     "why": "lost_capital"
+    },
+    {
+     "game_ms": 6450000,
+     "faction": "Green-3",
+     "event": "declined",
+     "why": "idle_10_minutes"
+    },
+    {
+     "game_ms": 6847000,
+     "faction": "Yellow-2",
+     "event": "declined",
+     "why": "idle_10_minutes"
+    },
+    {
+     "game_ms": 6902000,
+     "faction": "Yellow",
+     "event": "declined",
+     "why": "lost_capital"
+    }
+   ],
+   "outbreaks": 0,
+   "stats": {
+    "deliver": 14713,
+    "blocked": 14357,
+    "move": 408291,
+    "attack": 26097,
+    "destroyed": 820,
+    "produce": 14988,
+    "recruit_started": 549,
+    "saplings_planted": 13946,
+    "recruited": 545,
+    "deployed": 52,
+    "fish_caught": 1094,
+    "units_lost": 480,
+    "lost": 3023,
+    "destroyed_granite": 314,
+    "destroyed_log": 689,
+    "destroyed_plank": 211,
+    "destroyed_ration": 129,
+    "disruptions": 13,
+    "fields_planted": 678,
+    "outbreak_losses": 98,
+    "destroyed_water": 279,
+    "buildings_lost": 340,
+    "scouted": 78,
+    "mined_from_inexhaustible_deposit": 311,
+    "mined_from_inexhaustible_deposit:coal": 204,
+    "cubes_cured": 4,
+    "mined_from_inexhaustible_deposit:iron": 107,
+    "destroyed_fish": 266,
+    "destroyed_meat": 270,
+    "game_released": 40,
+    "disruption_ms_lost": 6229000,
+    "destroyed_carrier": 136,
+    "destroyed_recruit": 144,
+    "nest_cubes_cleared": 1,
+    "destroyed_bread": 17,
+    "destroyed_coal": 7,
+    "destroyed_corn": 102,
+    "destroyed_wheat": 141,
+    "destroyed_smoked_fish": 10,
+    "destroyed_smoked_meat": 16,
+    "destroyed_beer_strong": 17,
+    "destroyed_blackwood": 6,
+    "destroyed_cloth": 16,
+    "destroyed_gold": 24,
+    "destroyed_grout": 4,
+    "destroyed_iron": 8,
+    "destroyed_ox": 3,
+    "healed": 16,
+    "destroyed_iron_ore": 15,
+    "destroyed_barley": 62,
+    "destroyed_reed": 1,
+    "destroyed_blackroot": 98,
+    "destroyed_diamond": 8,
+    "destroyed_horse": 21,
+    "destroyed_quartz": 7,
+    "destroyed_spidercloth": 2
+   },
+   "state_hash": "886c38c1616b249625759d38c9f1f61f79989783",
+   "peak_rss_mb": 92,
+   "step_ms_p50": 42.83,
+   "step_ms_p95": 128.82,
+   "step_ms_max": 469.0,
+   "policies": {
+    "Red": "baseline",
+    "Blue": "plus",
+    "Green": "baseline",
+    "Yellow": "plus",
+    "Purple": "baseline",
+    "Orange": "plus"
+   },
+   "pilot": false,
+   "pilot_log": []
+  }
+ ]
+}

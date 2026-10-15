@@ -1,0 +1,366 @@
+{
+ "note": "Placeholder authored scenes (owner review pending). Pages are acknowledged one at a time; effects apply once when a page is first shown.",
+ "response_sets": {
+  "stranger_answers": [
+   {
+    "id": "firm",
+    "text": "Try it.",
+    "check": {
+     "aspect": "resolve",
+     "threshold": "demanding",
+     "evidence": [
+      {
+       "id": "trained",
+       "when": {
+        "lessons": [
+         "hidden_ward"
+        ]
+       },
+       "mod": 1
+      },
+      {
+       "id": "creed",
+       "when": {
+        "fact": [
+         "mentor_creed"
+        ]
+       },
+       "mod": 1
+      }
+     ]
+    },
+    "lines": [],
+    "pass": {
+     "lines": [
+      "You say it steadily, and for a heartbeat his certainty flickers."
+     ],
+     "effects": [
+      {
+       "kind": "fact",
+       "id": "stood_firm"
+      }
+     ]
+    },
+    "fail": {
+     "lines": [
+      "Your voice shakes on the second word. He hears it."
+     ]
+    },
+    "reply": {
+     "neutral": [
+      "\"Brave. Brave is what the dead are told they were.\""
+     ]
+    }
+   },
+   {
+    "id": "s",
+    "text": "He was weaker than you. That is simply how power works.",
+    "worldview": "S",
+    "lines": [],
+    "reply": {
+     "agree": [
+      "\"At last, a student who has been listening. Weakness is not a crime, boy, but it is a verdict.\""
+     ],
+     "neutral": [
+      "\"True, and you know it. Good.\""
+     ],
+     "disagree": [
+      "\"Do not flatter me.\""
+     ]
+    }
+   },
+   {
+    "id": "a",
+    "text": "Nobody gave you the right to do this.",
+    "worldview": "A",
+    "lines": [],
+    "reply": {
+     "agree": [
+      "\"No one gives rights. I took one, and you will see whether it holds.\""
+     ],
+     "neutral": [
+      "\"Rights are what the strong have left over. Hold on to yours, if you can.\""
+     ],
+     "disagree": [
+      "\"A right nobody grants? Then yours is as thin as his was.\""
+     ]
+    }
+   },
+   {
+    "id": "r",
+    "text": "He kept his vows. You have broken every one of yours.",
+    "worldview": "R",
+    "lines": [],
+    "reply": {
+     "agree": [
+      "\"I broke them gladly, when the gods would not keep theirs.\""
+     ],
+     "neutral": [
+      "\"Vows. I made mine to people who were not there when they were needed.\""
+     ],
+     "disagree": [
+      "\"Vows are what the weak swear to feel safe. Spare me the sermon.\""
+     ]
+    }
+   },
+   {
+    "id": "d",
+    "text": "You have torn something out of this place that will not grow back.",
+    "worldview": "D",
+    "lines": [],
+    "reply": {
+     "agree": [
+      "\"The valley will grow what it grows. I will not apologise to a hill.\""
+     ],
+     "neutral": [
+      "\"Things grow back. People who can do what I do are rarer.\""
+     ],
+     "disagree": [
+      "\"Balance is what the powerless call their fear. Spare me the hill-talk.\""
+     ]
+    }
+   },
+   {
+    "id": "g",
+    "text": "He taught half this village their trade. What does your grievance pay for that?",
+    "worldview": "G",
+    "lines": [],
+    "reply": {
+     "agree": [
+      "\"Nothing. And that is the whole of my point: the world has no price for what I will do.\""
+     ],
+     "neutral": [
+      "\"A trade, a debt. Everything balances in the end.\""
+     ],
+     "disagree": [
+      "\"Count the dead of Harrowmere, then come and talk to me about ledgers.\""
+     ]
+    }
+   },
+   {
+    "id": "m",
+    "text": "He had a duty to this village. You had no claim on it at all.",
+    "worldview": "M",
+    "lines": [],
+    "reply": {
+     "agree": [
+      "\"Duty. Claim. Titles, at last, from a child. I did not expect the word.\""
+     ],
+     "neutral": [
+      "\"Perhaps. Claims are made by the one still standing.\""
+     ],
+     "disagree": [
+      "\"A claim needs someone to enforce it. Look around you: who is enforcing his?\""
+     ]
+    }
+   },
+   {
+    "id": "c",
+    "text": "...This feels like a play. These are exactly the lines a villain gives.",
+    "worldview": "C",
+    "lines": [],
+    "reply": {
+     "agree": [
+      "\"Then you see it too. The pattern. The rooms that repeat. I thought I was alone.\""
+     ],
+     "neutral": [
+      "\"If it is a play, it is the only one I can bear to stay in.\""
+     ],
+     "disagree": [
+      "\"Do not mock me.\""
+     ]
+    },
+    "when": {
+     "fact": [
+      "mentor_old_craft"
+     ]
+    }
+   }
+  ]
+ },
+ "scenes": {
+  "notice": {
+   "final": "arrival",
+   "pages": [
+    {
+     "speaker": "narrator",
+     "lines": [
+      "A stranger in a dark travelling cloak is walking into {settlement} along the road. Nobody has stopped him. Under the cloak, light moves like something alive."
+     ],
+     "focus": "attacker"
+    }
+   ]
+  },
+  "confrontation": {
+   "final": "duel",
+   "pages": [
+    {
+     "speaker": "narrator",
+     "lines": [
+      "{mentor} has stopped what they were doing. The staff that has leaned in the corner of every lesson is in their hand."
+     ],
+     "focus": "mentor"
+    },
+    {
+     "speaker": "mentor",
+     "lines": [
+      "{attacker}. I had hoped never to see this day. You have grown thin."
+     ],
+     "focus": "mentor"
+    },
+    {
+     "speaker": "attacker",
+     "lines": [
+      "Thin. Yes. Ten winters of doing what you would not teach me to do. I walked through the blight at Harrowmere while you taught children to light candles. They begged for anyone with power to command the sickness, the lords, anything. Nobody was permitted to. I learned what that costs."
+     ],
+     "focus": "attacker"
+    },
+    {
+     "speaker": "mentor",
+     "lines": [
+      "And you decided that the answer was to be the one permitted. Power is not a licence, {attacker}. It is what we owe the ones who cannot do what we can."
+     ],
+     "focus": "mentor"
+    },
+    {
+     "speaker": "attacker",
+     "lines": [
+      "A comforting thing to say with a roof over your head. I came to ask you once more to stand with me. The Weave answers to the strongest. The world should too."
+     ],
+     "focus": "attacker"
+    },
+    {
+     "speaker": "mentor",
+     "lines": [
+      "No."
+     ],
+     "focus": "mentor"
+    },
+    {
+     "speaker": "narrator",
+     "lines": [
+      "{attacker} lifts one hand. The light under his cloak opens like a door. {mentor} raises a Ward, a good one, three-fold and old, and it shatters like thin ice."
+     ],
+     "focus": "mentor",
+     "fx": "flash"
+    },
+    {
+     "speaker": "narrator",
+     "lines": [
+      "{mentor} falls. The staff rolls across the dirt and lies still. All around the square, people stop and stare."
+     ],
+     "focus": "mentor",
+     "fx": "shake",
+     "effects": [
+      {
+       "kind": "kill_mentor"
+      }
+     ]
+    },
+    {
+     "speaker": "narrator",
+     "lines": [
+      "He turns. For the first time he sees you."
+     ],
+     "focus": "player"
+    },
+    {
+     "speaker": "attacker",
+     "lines": [
+      "The apprentice. A child with a borrowed staff. Your teacher was the best of them, and it took me less than a breath. I could end you the same way."
+     ],
+     "focus": "attacker",
+     "responses": "$stranger_answers"
+    },
+    {
+     "speaker": "attacker",
+     "lines": [
+      "But I am not a butcher, and I want you to understand what you are standing against. A Ward against a Ward, then, on the old rules: three colours, three places, and a boy who learned them this week. I will not even use both hands. Break mine and I will leave. If I break yours, there will be nobody left who remembers {mentor}'s name."
+     ],
+     "focus": "attacker"
+    }
+   ]
+  },
+  "confrontation_alone": {
+   "final": "duel",
+   "pages": [
+    {
+     "speaker": "narrator",
+     "lines": [
+      "The stranger stops in the middle of {settlement} and looks around as if counting the houses. People watch him from doorways and say nothing."
+     ],
+     "focus": "attacker",
+     "fx": "flash"
+    },
+    {
+     "speaker": "attacker",
+     "lines": [
+      "I came for my old teacher, {mentor}. I find the village has already buried them and left a child with their staff. Very well."
+     ],
+     "focus": "attacker"
+    },
+    {
+     "speaker": "narrator",
+     "lines": [
+      "He turns. For the first time he sees you."
+     ],
+     "focus": "player"
+    },
+    {
+     "speaker": "attacker",
+     "lines": [
+      "The apprentice. Whatever they taught you, I am what the world is about to be. I could end you with one hand."
+     ],
+     "focus": "attacker",
+     "responses": "$stranger_answers"
+    },
+    {
+     "speaker": "attacker",
+     "lines": [
+      "But I am not a butcher. A Ward against a Ward, then, on the old rules: three colours, three places, and a boy who learned them this week. Break mine and I will leave. If I break yours, nobody will remember who you were."
+     ],
+     "focus": "attacker"
+    }
+   ]
+  },
+  "victory": {
+   "final": "aftermath",
+   "pages": [
+    {
+     "speaker": "narrator",
+     "lines": [
+      "The stranger's Ward breaks, and the light under his cloak gutters out. He staggers and stares at his own open hand as if it belonged to someone else."
+     ],
+     "focus": "attacker",
+     "fx": "flash"
+    },
+    {
+     "speaker": "attacker",
+     "lines": [
+      "Lucky. Lucky, and taught by a better teacher than you deserve. This is not finished. There is a craft older than the schools, and I know where it is kept. I will come back when you are able to bear it."
+     ],
+     "focus": "attacker"
+    },
+    {
+     "speaker": "narrator",
+     "lines": [
+      "He backs away and the cloak closes around him. By the time the square has found its voice again, the road is empty."
+     ],
+     "focus": "attacker",
+     "effects": [
+      {
+       "kind": "retreat"
+      }
+     ]
+    },
+    {
+     "speaker": "narrator",
+     "lines": [
+      "{mentor} lies where they fell. The settlement is silent; the work has stopped. Then, somewhere, an axe falls again, because trees do not wait for grief. People will want to talk, and you should listen."
+     ],
+     "focus": "mentor"
+    }
+   ]
+  }
+ }
+}

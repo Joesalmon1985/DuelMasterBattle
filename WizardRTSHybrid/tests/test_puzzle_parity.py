@@ -27,8 +27,8 @@ def data():
         out = ROOT / "tests" / "fixtures" / "_fresh_parity.json"
         subprocess.run([godot, "--headless", "--path", str(ROOT.parent / "godot_project"), "--script", "res://client/tests/export_puzzle_parity.gd", "--", str(out)],
                        check=True, capture_output=True)
-        return json.loads(out.read_text())
-    with gzip.open(FIX, "rt") as f:
+        return json.loads(out.read_text(encoding="utf-8"))
+    with gzip.open(FIX, "rt", encoding="utf-8") as f:
         return json.load(f)
 
 

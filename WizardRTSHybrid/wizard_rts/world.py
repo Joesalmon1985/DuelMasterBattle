@@ -40,7 +40,7 @@ from wizard_rts.military import MOVEMENT_PROVENANCE  # noqa: E402
 from wizard_rts.military import PROVENANCE as MILITARY_PROVENANCE  # noqa: E402
 from wizard_rts.military import init_unit, military_quantum, order_attack, order_move, order_stop
 from wizard_rts.lifecycle import begin_destruction, lifecycle_quantum
-from wizard_rts import disruption, feed, history, maritime, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, vp
+from wizard_rts import disruption, feed, history, maritime, nests, openra_abilities as abilities, regions, settlements, society, story, tech, trade, visibility, vp
 from wizard_rts.industry import sim as industry
 from wizard_rts.ai import ai_quantum
 from wizard_rts import construction as con  # noqa: E402
@@ -161,6 +161,7 @@ class HybridWorld:
         self.hazard_id = ""
         self.hazard_tile: tuple[int, int] | None = None
         self.player = {"tx": 0, "ty": 0, "facing": "down"}
+        self.players: dict[str, dict[str, Any]] = {}  # LAN multiplayer only (wizard_rts/net/session.py): id -> {id, name, colour, tx, ty, facing}; empty in single player
         self._pending_links: list[tuple[str, str]] = []
         if minimal:
             self._layout_minimal()
@@ -182,6 +183,10 @@ class HybridWorld:
         import json
 
         h = hashlib.sha1(json.dumps(self.snapshot(), sort_keys=True, default=str).encode())
+        # the snapshot is what a client sees; the raw records hold the rest (turret ammo, line state, stocks, cards, drafting, history), so a
+        # change in any of them changes the hash (V4 P0: the old hash missed Mindustry ammo and most hidden state)
+        raw = {n: getattr(self, n, None) for n in ("buildings", "units", "stocks", "workers", "carriers", "tech", "stats", "fstats", "faction_info", "history", "draft_state", "wares_ledger")}
+        h.update(json.dumps(raw, sort_keys=True, default=str).encode())
         if self.terrain is not None:
             h.update(self.terrain.state_hash().encode())
         return h.hexdigest()
@@ -860,7 +865,7 @@ class HybridWorld:
         if self.solid_for_wizard(tile):  # P1.1: a standing tree or a rock is solid; saplings, stumps and cleared tiles are not
             return {"status": "rejected", "reason": "obstacle", "snapshot": self.snapshot() if snapshot else None}
         previous = tile_to_hex(self.player["tx"], self.player["ty"])
-        self.player = {"tx": tile[0], "ty": tile[1], "facing": str(facing or "down")}
+        self.player.update(tx=tile[0], ty=tile[1], facing=str(facing or "down"))  # in place: a multiplayer player record aliases this dict
         current = tile_to_hex(tile[0], tile[1])
         if current != previous:
             self.events.append({"kind": "hex_cross", "from": list(previous), "to": list(current)})
@@ -888,6 +893,7 @@ class HybridWorld:
             disruption.disruption_quantum(self)
             society.society_quantum(self)
             history.history_quantum(self)
+            visibility.visibility_quantum(self)
             con.recruitment_quantum(self)
             lifecycle_quantum(self)
             territory.deploy_quantum(self)
@@ -935,34 +941,56 @@ class HybridWorld:
         out["snapshot"] = self.snapshot()
         return out
 
-    def queue(self, building: str, unit_kind: str) -> dict[str, Any]:
-        out = con.queue_unit(self, building, unit_kind)
+    def _not_mine(self, faction: str | None, building: Any = None, units: Any = ()) -> dict[str, Any] | None:
+        """The faction command tier (V4 P4): with a faction given, every building and unit named must belong to it. None means God Mode (no faction)."""
+        if faction is None:
+            return None
+        if faction not in self.faction_info:
+            return {"status": "rejected", "reason": "unknown_faction"}
+        if building is not None:
+            b = self.buildings.get(str(building))
+            if b is not None and b.get("faction_name") != faction:
+                return {"status": "rejected", "reason": "not_yours"}
+        for u in units:
+            e = self.units.get(str(u))
+            if e is not None and e.get("faction_name") != faction:
+                return {"status": "rejected", "reason": "not_yours"}
+        return None
+
+    def queue(self, building: str, unit_kind: str, faction: str | None = None) -> dict[str, Any]:
+        out = self._not_mine(faction, building) or con.queue_unit(self, building, unit_kind)
         out["snapshot"] = self.snapshot()
         return out
 
-    def cancel(self, building: str, index: int) -> dict[str, Any]:
-        out = con.cancel_queue(self, building, index)
+    def cancel(self, building: str, index: int, faction: str | None = None) -> dict[str, Any]:
+        out = self._not_mine(faction, building) or con.cancel_queue(self, building, index)
         out["snapshot"] = self.snapshot()
         return out
 
-    def move(self, units: list[str], tx: int, ty: int, attack_move: bool = False) -> dict[str, Any]:
-        out = order_move(self, [str(u) for u in units], tx, ty, attack_move)
+    def move(self, units: list[str], tx: int, ty: int, attack_move: bool = False, faction: str | None = None) -> dict[str, Any]:
+        out = self._not_mine(faction, units=units) or order_move(self, [str(u) for u in units], tx, ty, attack_move)
         out["snapshot"] = self.snapshot()
         return out
 
-    def stop(self, units: list[str]) -> dict[str, Any]:
-        out = order_stop(self, [str(u) for u in units])
+    def stop(self, units: list[str], faction: str | None = None) -> dict[str, Any]:
+        out = self._not_mine(faction, units=units) or order_stop(self, [str(u) for u in units])
         out["snapshot"] = self.snapshot()
         return out
 
-    def rally(self, building: str, tx: int, ty: int) -> dict[str, Any]:
+    def rally(self, building: str, tx: int, ty: int, faction: str | None = None) -> dict[str, Any]:
+        denied = self._not_mine(faction, building)
+        if denied:
+            return {**denied, "snapshot": self.snapshot()}
         b = self.buildings.get(building)
         if b is None or b["kind"] not in con.RECIPES or not self.tile_in_map(int(tx), int(ty)):
             return {"status": "rejected", "reason": "no_rally", "snapshot": self.snapshot()}
         b["rally"] = [int(tx), int(ty)]
         return {"status": "ok", "snapshot": self.snapshot()}
 
-    def demolish(self, building: str) -> dict[str, Any]:
+    def demolish(self, building: str, faction: str | None = None) -> dict[str, Any]:
+        denied = self._not_mine(faction, building)
+        if denied:
+            return {**denied, "snapshot": self.snapshot()}
         b = self.buildings.get(building)
         if b is None or "hp" not in b:
             return {"status": "rejected", "reason": "no_building", "snapshot": self.snapshot()}
@@ -1031,7 +1059,10 @@ class HybridWorld:
         out["snapshot"] = self.snapshot()
         return out
 
-    def deploy(self, unit_id: str) -> dict[str, Any]:
+    def deploy(self, unit_id: str, faction: str | None = None) -> dict[str, Any]:
+        denied = self._not_mine(faction, units=[unit_id])
+        if denied:
+            return {**denied, "snapshot": self.snapshot()}
         u = self.units.get(str(unit_id))
         if u is not None and u["definition"] in ("openra.dtrk", "openra.qtnk"):
             out = abilities.detonate(self, str(unit_id))
@@ -1043,16 +1074,20 @@ class HybridWorld:
 
     def ability(self, faction: str, op: str, **kw: Any) -> dict[str, Any]:
         """Board, unload, capture, infiltrate, lay a mine, use a support power (openra_abilities)."""
+        denied = self._not_mine(faction, units=[kw[k] for k in ("unit", "transport") if k in kw]) or (self._not_mine(faction, kw["building"]) if op in ("power",) and "building" in kw else None)
+        if denied:
+            return {**denied, "snapshot": self.snapshot()}
         fn = {"board": lambda: abilities.board(self, kw["unit"], kw["transport"]), "unload": lambda: abilities.unload(self, kw["transport"], kw.get("tx"), kw.get("ty")),
               "capture": lambda: abilities.capture(self, kw["unit"], kw["building"]), "infiltrate": lambda: abilities.infiltrate(self, kw["unit"], kw["building"]),
               "lay_mine": lambda: abilities.lay_mine(self, kw["unit"]),
+              "repair": lambda: abilities.repair_building(self, kw["unit"], kw["building"]), "c4": lambda: abilities.plant_c4(self, kw["unit"], kw["building"]),
               "power": lambda: abilities.use_power(self, faction, kw["building"], kw["tx"], kw["ty"], kw.get("tx2"), kw.get("ty2"))}.get(op)
         out = fn() if fn else {"status": "rejected", "reason": "unknown_ability"}
         out["snapshot"] = self.snapshot()
         return out
 
-    def order(self, unit_id: str, target_id: str) -> dict[str, Any]:
-        result = order_attack(self, str(unit_id), str(target_id))
+    def order(self, unit_id: str, target_id: str, faction: str | None = None) -> dict[str, Any]:
+        result = self._not_mine(faction, units=[unit_id]) or order_attack(self, str(unit_id), str(target_id))
         result["snapshot"] = self.snapshot()
         return result
 
@@ -1104,20 +1139,27 @@ class HybridWorld:
         dy = abs(self.player["ty"] - self.hazard_tile[1])
         return dx + dy <= 1
 
-    def tree_delta(self, full: bool) -> dict[str, Any]:
+    def tree_delta(self, full: bool, sent: dict[str, Any] | None = None, view: tuple[int, int, int] | None = None) -> dict[str, Any]:
         """Trees changed since the last delta sent (one client). Trees are 90 % of the snapshot and change rarely, so the
-        Godot client asks for them as a delta and rebuilds the full list locally; the simulation is unchanged."""
-        sent = self.__dict__.setdefault("_tree_sent", {})
+        Godot client asks for them as a delta and rebuilds the full list locally; the simulation is unchanged.
+        `sent` is that client's own bookkeeping (the LAN host keeps one per connection); `view` (cx, cy, radius) limits the
+        upserts to a window around a player (a phone never needs the whole forest)."""
+        if sent is None:
+            sent = self.__dict__.setdefault("_tree_sent", {})
         if full:
             sent.clear()
         upsert = []
         for tree_id, tree in self.trees.items():
+            if view is not None and (abs(int(tree["tx"]) - view[0]) > view[2] or abs(int(tree["ty"]) - view[1]) > view[2]):
+                continue
             sig = (tree["definition"], tree["stage"])
             if sent.get(tree_id) != sig:
                 sent[tree_id] = sig
                 upsert.append({"id": tree_id, "class": "tree", "kind": "tree", "definition": tree["definition"], "stage": tree["stage"], "tx": tree["tx"], "ty": tree["ty"],
                                "solid": self.tree_solid(tree)})
         for rock_id, rock in self.rocks.items():
+            if view is not None and (abs(int(rock["tx"]) - view[0]) > view[2] or abs(int(rock["ty"]) - view[1]) > view[2]):
+                continue
             sig = ("rock", rock["amount"])
             if sent.get(rock_id) != sig:
                 sent[rock_id] = sig
@@ -1134,9 +1176,10 @@ class HybridWorld:
             "tx": rock["tx"], "ty": rock["ty"], "alive": True, "faction": "", "label": "Rocks", "amount": rock["amount"],
         }
 
-    def snapshot(self, tree_sync: bool | None = None) -> dict[str, Any]:
+    def snapshot(self, tree_sync: bool | None = None, tree_sent: dict[str, Any] | None = None, view: tuple[int, int, int] | None = None) -> dict[str, Any]:
         """tree_sync None: trees inline (tests, headless). False: a client that wants everything now (sends a full delta).
-        True: a client that applies deltas."""
+        True: a client that applies deltas. `tree_sent`/`view`: per-connection delta bookkeeping and an area-of-interest window
+        (cx, cy, radius) for the LAN host; with `view` the entity rows are limited to that window (buildings by their anchor)."""
         q, r = tile_to_hex(self.player["tx"], self.player["ty"])
         entities = []
         for building in self.buildings.values():
@@ -1247,9 +1290,14 @@ class HybridWorld:
                     "alive": True,
                 }
             )
-        out_tree = {} if tree_sync is None else {"tree_delta": self.tree_delta(full=not tree_sync)}
+        if view is not None:
+            entities = [e for e in entities if _in_view(e, view)]
+        out_tree = {} if tree_sync is None else {"tree_delta": self.tree_delta(full=not tree_sync, sent=tree_sent, view=view)}
+        out_players = {"players": [{"id": p["id"], "name": p.get("name", p["id"]), "colour": p.get("colour", ""), "tx": p["tx"], "ty": p["ty"], "facing": p["facing"]}
+                                   for _k, p in sorted(self.players.items())]} if self.players else {}
         return {
             **out_tree,
+            **out_players,
             "world_id": WORLD_ID,
             "seed": self.seed,
             "game_ms": int(self.dmb.clock.get("game_ms", 0)),
@@ -1289,6 +1337,15 @@ class HybridWorld:
             "ai_notes": {k: list(v[-4:]) for k, v in self.__dict__.get("ai_notes", {}).items()},
             "regions": regions.snapshot(self),
         }
+
+
+def _in_view(e: dict[str, Any], view: tuple[int, int, int]) -> bool:
+    """Area of interest: a row is sent to a client when its tile (a building: its anchor) is within `radius` of the window centre."""
+    if "anchor" in e:
+        ex, ey = int(e["anchor"][0]), int(e["anchor"][1])
+    else:
+        ex, ey = int(e.get("tx", 0)), int(e.get("ty", 0))
+    return abs(ex - view[0]) <= view[2] and abs(ey - view[1]) <= view[2]
 
 
 def _entity_row(row: dict[str, Any]) -> dict[str, Any]:

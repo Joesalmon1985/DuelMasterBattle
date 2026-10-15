@@ -94,7 +94,7 @@ func _run() -> void:
 			break
 	_check(blocked_tested, "found a solid tile beside a walkable one")
 
-	# 2. passive labels in the middle of a settlement
+	# 2. nothing floats over a settlement: no passive labels, no open card, until something is clicked
 	var wh := {}
 	for e in _ents():
 		if str(e.get("kind", "")) == "warehouse" and str(e.get("faction_name", "")) == "Red":
@@ -106,19 +106,8 @@ func _run() -> void:
 			break
 	await _put(spot)
 	await _frames(40)
-	var shown: Array = []
-	for id in _labels._entries:
-		var lbl = _labels._entries[id]["lbl"]
-		if is_instance_valid(lbl) and lbl.visible and not lbl.is_expanded():
-			shown.append(lbl)
-	_check(shown.size() >= 1 and shown.size() <= 3, "a few passive labels in the settlement: %d" % shown.size())
-	var overlap := false
-	for i in shown.size():
-		for j in range(i + 1, shown.size()):
-			if (shown[i].screen_rect() as Rect2).intersects(shown[j].screen_rect()):
-				overlap = true
-	_check(not overlap, "no two passive labels overlap")
-	await _shot("02_settlement_labels")
+	_check(not _labels.panel.visible, "no inspect card is open in the middle of a settlement")
+	await _shot("02_settlement_no_labels")
 
 	# 3. a fire-magic interaction keeps its buttons below the description
 	var target := {}
@@ -138,21 +127,19 @@ func _run() -> void:
 	if not target.is_empty():
 		_labels.open(str(target["id"]))
 		await _frames(30)
-		var lbl = _labels.label_for(str(target["id"]))
-		_check(lbl != null and lbl.interaction_state() == "RESPONSES", "the interaction offers its choices (state %s)" % (lbl.interaction_state() if lbl != null else "none"))
-		if lbl != null and lbl.interaction_state() == "RESPONSES":
-			var speech: Rect2 = lbl._button.get_global_rect()
-			var ok := true
-			for i in lbl.response_labels().size():
-				var rr: Rect2 = lbl.response_button(i).get_global_rect()
-				if rr.position.y < speech.end.y - 1.0 or rr.intersects(speech.grow(-1.0)):
-					ok = false
-			_check(ok, "the choices sit below the description (speech %s)" % str(speech))
-			var vis: Rect2 = get_root().get_visible_rect()
-			_check(vis.encloses(lbl.get_global_rect().grow(-2.0)), "the whole panel is on screen")
+		_check(_labels.panel.visible and _labels.current_id == str(target["id"]), "the building's inspect card opens")
+		var panel = _labels.panel
+		var body_rect: Rect2 = panel.body_label.get_global_rect()
+		var ok := true
+		for b in panel.choices_box.get_children():
+			var rr: Rect2 = (b as Control).get_global_rect()
+			if rr.position.y < body_rect.end.y - 1.0:
+				ok = false
+		_check(ok, "the choices sit below the description (text ends at %.0f)" % body_rect.end.y)
+		var vis: Rect2 = get_root().get_visible_rect()
+		_check(vis.encloses(panel.panel.get_global_rect().grow(-2.0)), "the whole card is on screen")
 		await _shot("03_fire_magic_choices_below_text")
-		if lbl != null:
-			lbl.collapse()
+		_labels.close()
 
 	# 4. the quest: objective line, E to talk, the real cause in the words
 	await _frames(20)
@@ -163,7 +150,7 @@ func _run() -> void:
 	_check(not npc.is_empty() and bool(npc.get("has_quest", false)), "the story fixture opened a quest for a real person")
 	if not npc.is_empty():
 		var hint: String = _world.story_ui.objective_text()
-		_check(hint.contains("Quest:") and hint.contains(str(npc.get("label", "?"))), "the objective line names the quest giver: '%s'" % hint)
+		_check(hint.contains(str(npc.get("label", "?"))) and hint.contains("tiles"), "the objective line says where the quest giver is: '%s'" % hint)
 		await _shot("04_quest_objective_line")
 		var nt := Vector2i(int(npc["tx"]), int(npc["ty"]))
 		var stood := false

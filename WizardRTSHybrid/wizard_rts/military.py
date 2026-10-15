@@ -15,6 +15,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
+from wizard_rts import hold
 from wizard_rts import openra_abilities as abilities
 from wizard_rts import rules
 from wizard_rts.openra_damage import SOURCE as OPENRA_DAMAGE_SOURCE
@@ -652,6 +653,12 @@ def _engage(world: Any, unit: dict, w: dict | None, chase: bool, leash: float) -
     names = _weapon_order(unit)
     if not names:
         return False
+    if unit.get("ammo_max") and int(unit.get("ammo", 0)) <= 0:
+        # an empty ammunition pool (aircraft, minelayers): the unit cannot fight, so it neither chases nor reports "attacking"; it rearms at a pad
+        unit["target"] = None
+        if unit.get("status") == "attacking":
+            unit["status"] = "idle"
+        return False
     target = unit.get("target")
     if target is not None and _target_pos(world, target) is None:
         target = unit["target"] = None
@@ -701,6 +708,8 @@ def _engage(world: Any, unit: dict, w: dict | None, chase: bool, leash: float) -
 def _unit_step(world: Any, unit: dict) -> None:
     if unit.get("inside"):
         return
+    if unit.get("held_until_ms") is not None and hold.is_held(world, unit):  # being talked to (hold.py): its order and path are kept for when it is released
+        return
     for n in unit.get("cds", {}):
         unit["cds"][n] = max(0, int(unit["cds"][n]) - 100)
     unit["cooldown_ms"] = unit["cds"].get(unit.get("weapon"), 0) if unit.get("weapon") else max(0, int(unit.get("cooldown_ms", 0)) - 100)
@@ -714,7 +723,7 @@ def _unit_step(world: Any, unit: dict) -> None:
                 unit["status"] = "idle"
         return
     kind = order["kind"]
-    if kind in ("board", "capture", "infiltrate"):
+    if kind in ("board", "capture", "infiltrate", "repair", "c4"):
         return  # openra_abilities walks and finishes these
     if kind == "move":
         if _walk(world, unit, tuple(order["tile"])) in ("arrived", "stuck"):
@@ -742,6 +751,13 @@ def _unit_step(world: Any, unit: dict) -> None:
         world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "cannot_hit_target"})
         return
     name, wi = use
+    if dist < wi.get("min_range", 0):  # too close for this weapon (artillery): back off along the line away from the target first
+        away = (unit["tx"] + (1 if unit["tx"] >= building["tx"] else -1), unit["ty"] + (1 if unit["ty"] >= building["ty"] else -1))
+        if _walk(world, unit, away) == "stuck":
+            unit.pop("order", None)
+            unit["status"] = "idle"
+            world.events.append({"kind": "order_failed", "unit": unit["id"], "reason": "inside_min_range"})
+        return
     if dist <= wi["range"]:
         unit["path"] = []
         unit["status"] = "attacking"

@@ -395,6 +395,63 @@ def _settlement_step(world: Any, name: str, wh: dict, main: bool) -> None:
             return
     if main and sites + placed < limit and not placed:
         tribe_step(world, name, wh)
+        if sites + placed == 0:
+            unlocked_step(world, name, wh, mine)
+
+
+def unlocked_step(world: Any, name: str, wh: dict, mine: list[dict]) -> None:
+    """Use what the cards unlock (V4: the AI built only about a third of its drafted buildings). Every thirty game seconds, when nothing is under
+    construction, one drafted building of the faction's own tribe or of the OpenRA and Mindustry sets that the faction does not yet have, newest card
+    first, if it can pay and find a site. Cooled down per kind when it cannot."""
+    from wizard_rts.content import graph
+
+    now = _now(world)
+    st = world.__dict__.setdefault("_ai_unlocked", {}).setdefault(name, {"next": 0, "cool": {}})
+    if now < st["next"]:
+        return
+    st["next"] = now + 30_000
+    held = {b["kind"] for b in mine}
+    ents = graph.entities()
+    for cid in reversed(world.tech.get(name, {}).get("cards", [])):
+        c = tech.lookup().get(cid) or {}
+        for e in c.get("entities", ()):
+            en = ents.get(e)
+            if en is None or en["type"] != "building" or e in held or st["cool"].get(e, -1) > now:
+                continue
+            if en["game"] == "widelands" and en.get("tribe") != world.faction_info.get(name, {}).get("tribe"):
+                continue
+            if con.build_spec(e) is None or con.build_spec(e).get("enhancement_of") or not tech.kind_allowed(world, name, e):
+                continue
+            if not base._affordable(world, name, e, wh):
+                st["cool"][e] = now + 60_000
+                continue
+            site = base._place_near(world, name, e, wh)
+            if not site:
+                st["cool"][e] = now + 90_000
+                continue
+            world.events.append({"kind": "ai_build", "faction": name, "building": e, "id": site, "settlement": wh["id"], "policy": POLICY, "why": "unlocked"})
+            return
+    # no building left to place: try each drafted unit once, so the army is not limited to the units the fixed recruit list names
+    owned: dict[str, int] = {}
+    for u in world.units.values():
+        if u["faction_name"] == name and u.get("alive", True):
+            owned[u["kind"]] = owned.get(u["kind"], 0) + 1
+    for cid in reversed(world.tech.get(name, {}).get("cards", [])):
+        for e in (tech.lookup().get(cid) or {}).get("entities", ()):
+            if not e.startswith("unit:"):
+                continue
+            kind = e[5:]
+            if owned.get(kind, 0) >= 2 or st["cool"].get(e, -1) > now:
+                continue
+            producer = next((b for b in mine if b.get("operational") and not b.get("constructing") and kind in con.RECIPES.get(b["kind"], {}) and len(b.get("queue", [])) < 2), None)
+            if producer is None:
+                st["cool"][e] = now + 60_000
+                continue
+            if con.queue_unit(world, producer["id"], kind)["status"] == "ok":
+                world.events.append({"kind": "ai_recruit", "faction": name, "unit": kind, "building": producer["id"], "policy": POLICY, "why": "unlocked"})
+                st["cool"][e] = now + 120_000
+                return
+            st["cool"][e] = now + 120_000
 
 
 def tribe_step(world: Any, name: str, wh: dict) -> None:
@@ -996,9 +1053,18 @@ def military_step(world: Any, name: str) -> None:
             base._send(world, pool, target)
             ids = {u["id"] for u in pool}
             idle = [u for u in idle if u["id"] not in ids]
+        elif now >= ATTACK_AFTER_MS and recon_step_plus(world, name, pool):
+            pass  # no enemy building is known: a detachment looks for one
         else:
             note(world, name, "no target worth the risk for %d units" % len(pool))
     _garrison(world, name, idle)
+
+
+def recon_step_plus(world: Any, name: str, pool: list[dict]) -> bool:
+    """Reconnaissance with the stronger half of the free army (at least two units); see ai.recon_step."""
+    if len(pool) < 2 or base._known_targets(world, name):
+        return False  # known targets exist: they are simply not worth the risk yet
+    return base.recon_step(world, name, pool[: max(2, len(pool) // 2)])
 
 
 def _garrison(world: Any, name: str, idle: list[dict]) -> None:

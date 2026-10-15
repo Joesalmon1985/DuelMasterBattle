@@ -1,0 +1,577 @@
+"""The opening campaign: an apprentice, free exploration, a stranger who kills the mentor, a lethal Ward Duel, the aftermath, and one objective.
+
+One state machine in `world.narrative["campaign"]`, advanced once per game second by `tick` and by the player's acknowledgements (`scene_next`):
+
+    training -> explore -> arrival -> confrontation -> duel -> victory -> aftermath -> complete        (or -> game_over from the duel)
+
+* **training**: the mentor's lessons (`tutorial.py`, `data/narrative/dialogue/tutorial.json`). The essential lessons are in `config.json`.
+* **explore**: a configurable stretch of ordinary play (`campaign.explore_min_ms` of *game* time, so a paused or backgrounded client does not advance it).
+  The attack comes when that time has passed and the player has made enough contact with the settlement (people spoken to, things inspected), or when
+  `explore_fallback_ms` has passed whatever the player did, and only when nothing else owns the player (no conversation, no duel, no dungeon).
+* **arrival**: the stranger, a resident with a name, a persona and a body in the world, walks in over a real path; the mentor stands to meet him.
+* **confrontation**: a scripted scene (`data/narrative/dialogue/campaign_scenes.json`) of pages the player acknowledges, with the camera guided by `focus`.
+  Its pages carry effects that happen exactly once: the mentor is killed (a real Person death, `kill_mentor`), the apprentice may answer (worldview
+  responses, Aspect checks), and the last page begins the duel.
+* **duel**: a genuine Ward Duel lease (`duel_lease`), verified by Python. Only a verified victory wins. A defeat, a draw, a stalemate, leaving the board, a
+  report that does not verify, and a save that is loaded with the duel open all end the game: `game_over`, a terminal state (pause token held, every
+  op but starting again refused, saves refused).
+* **victory / aftermath / complete**: the stranger retreats (he is alive and will be able to return; nothing is started now), the villagers react
+  according to who they are and what they saw (`aftermath.json`), and after a few conversations (or a fallback time) the journal records
+  *Seek greater magical power.*
+
+Nothing here touches the simulation's rules: the stranger and the mentor are residents (narrative-owned bodies), the world keeps running during
+exploration and the walk-in, and the clock is paused only by the client during scenes and by the duel and game-over pause tokens.
+"""
+
+from __future__ import annotations
+
+import json
+import random
+import zlib
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
+
+from sim.dmb.people.registry import PeopleService
+from sim.dmb.time.clock import ClockService
+
+from wizard_rts import settlements
+from wizard_rts.narrative import characters, checks, config, conversation, duel_lease, events, graph, personas, residents, wizard
+
+SCENES = Path(__file__).resolve().parents[1] / "data" / "narrative" / "dialogue" / "campaign_scenes.json"
+STAGES = ("training", "explore", "arrival", "confrontation", "duel", "victory", "aftermath", "complete", "game_over")
+DUEL_PURPOSE = duel_lease.LETHAL
+OPPONENT = "opponent.stranger"
+NOTE_SOURCE = "campaign"
+
+
+@lru_cache(maxsize=1)
+def _file() -> dict[str, Any]:
+    return json.loads(SCENES.read_text())
+
+
+def scenes() -> dict[str, Any]:
+    return _file()["scenes"]
+
+
+def page_responses(page: dict[str, Any]) -> list[dict[str, Any]]:
+    """A page's possible answers: inline, or a named set shared by several scenes (`"$stranger_answers"`)."""
+    r = page.get("responses", [])
+    return _file()["response_sets"][r[1:]] if isinstance(r, str) else r
+
+
+def now(world: Any) -> int:
+    return int(world.dmb.clock.get("game_ms", 0))
+
+
+def _fresh() -> dict[str, Any]:
+    return {"stage": "training", "stage_ms": 0, "explore_start_ms": None, "contacts": [], "inspected": [], "scene": None, "attacker": "", "witnesses": [],
+            "mentor_fate": "", "events_seen": 0, "aftermath_talks": [], "aftermath_start_ms": None, "outcome": "", "attack_log": []}
+
+
+def state(world: Any) -> dict[str, Any]:
+    st = world.narrative.get("campaign")
+    if st is None:
+        st = world.narrative["campaign"] = _fresh()
+        if all(wizard.lesson_done(world, l) for l in config.get("tutorial", "essential", [])):  # a world that is already past the lessons (an older save)
+            st["stage"], st["explore_start_ms"], st["stage_ms"] = "explore", now(world), now(world)
+        m = world.narrative.get("tutorial", {}).get("teacher", "")
+        if m in world.dmb.people and "persona" not in world.dmb.people[m]:  # a mentor cast by an earlier build has no persona or relationship yet
+            personas.set_authored(world, m, "mentor")
+            if "player" not in world.dmb.people[m].setdefault("relationship_map", {}):
+                PeopleService(world.dmb).set_relationship(m, checks.ACTOR, int(config.get("campaign", "mentor_relationship", 40)))
+    return st
+
+
+def stage(world: Any) -> str:
+    return state(world)["stage"] if "narrative" in world.__dict__ else ""
+
+
+def over(world: Any) -> bool:
+    return "narrative" in world.__dict__ and world.narrative.get("campaign", {}).get("stage") == "game_over"
+
+
+def _set_stage(world: Any, name: str) -> None:
+    st = state(world)
+    events.log(world, "campaign_stage", stage=name, previous=st["stage"])
+    st["stage"], st["stage_ms"] = name, now(world)
+
+
+def mentor(world: Any) -> str:
+    from wizard_rts.narrative import tutorial
+
+    return tutorial.state(world)["teacher"]
+
+
+def mentor_present(world: Any) -> bool:
+    pid = mentor(world)
+    r = residents.table(world).get(pid)
+    return bool(pid and r is not None and r["status"] == "present" and world.dmb.people.get(pid, {}).get("alive", True))
+
+
+def names(world: Any) -> dict[str, str]:
+    """The names the scenes and the villagers use: the mentor, the stranger (only to those who saw him), the settlement."""
+    from wizard_rts.narrative import tutorial
+
+    st = state(world)
+    people = world.dmb.people
+    return {"mentor": people[mentor(world)]["name"] if mentor(world) in people else "the mentor",
+            "attacker": people[st["attacker"]]["name"] if st["attacker"] in people else "the stranger",
+            "settlement": village(world)}
+
+
+SUFFIXES = ("Hold", "Wick", "Ford", "Rest", "Stead")
+
+
+def village(world: Any) -> str:
+    """The settlement's name in the story (the simulation calls it 'Red home 1'): generated once from the tribe's syllables and kept."""
+    from wizard_rts.narrative import tutorial
+
+    st = state(world)
+    if st.get("village"):
+        return st["village"]
+    mentor_rec = residents.table(world).get(mentor(world))
+    if mentor_rec is None:
+        return "the settlement"
+    tribe = mentor_rec["tribe"]
+    ident = characters.identity_for(world, tribe, "settlement:" + str(mentor_rec["settlement"]))
+    rng = random.Random(zlib.crc32(f"{world.seed}|{mentor_rec['settlement']}|village".encode()))
+    st["village"] = f"{ident['given']} {rng.choice(SUFFIXES)}"
+    return st["village"]
+
+
+def names_for(world: Any, pid: str | None) -> dict[str, str]:
+    """The placeholders a person may use: the stranger is named only by those who saw him; the others speak of 'the stranger'."""
+    n = names(world)
+    if knowledge(world, pid) != "witnessed":
+        n["attacker"] = "the stranger"
+    return n
+
+
+# ------------------------------------------------------------------ knowledge: who knows what about the attack
+
+def knowledge(world: Any, pid: str | None) -> str:
+    """none (before the attack), witnessed (the speaker was near), or rumour (they have heard)."""
+    st = state(world)
+    if not st["mentor_fate"] or st["stage"] in ("training", "explore", "arrival"):
+        return "none"
+    if pid == st["attacker"] or pid == mentor(world):
+        return "witnessed"
+    link = (world.dmb.people.get(pid or "", {}).get("link") or {})
+    key = characters.link_key(link.get("kind", ""), link.get("id", ""))
+    return "witnessed" if key in st["witnesses"] else "rumour"
+
+
+# ------------------------------------------------------------------ contact and the exploration phase
+
+def note_contact(world: Any, pid: str) -> None:
+    """The apprentice spoke to `pid` (called when a conversation begins)."""
+    if "narrative" not in world.__dict__ or pid == mentor(world):
+        return
+    st = state(world)
+    if st["stage"] == "explore" and pid not in st["contacts"]:
+        st["contacts"].append(pid)
+    elif st["stage"] in ("aftermath", "victory") and pid not in st["aftermath_talks"] and pid != st["attacker"]:
+        st["aftermath_talks"].append(pid)
+
+
+def note_inspect(world: Any, key: str) -> None:
+    st = state(world)
+    if st["stage"] == "explore" and key not in st["inspected"] and key != mentor(world):
+        st["inspected"].append(key)
+
+
+def explore_due(world: Any) -> dict[str, Any]:
+    """Whether the attack is due, and why (the same answer the tests and the HUD read)."""
+    st = state(world)
+    elapsed = now(world) - int(st["explore_start_ms"] or now(world))
+    contact = len(st["contacts"]) + len(st["inspected"])
+    need = int(config.get("campaign", "explore_min_contacts", 3))
+    by_play = elapsed >= int(config.get("campaign", "explore_min_ms", 180000)) and contact >= need
+    by_fallback = elapsed >= int(config.get("campaign", "explore_fallback_ms", 420000))
+    return {"elapsed_ms": elapsed, "contacts": contact, "needed": need, "due": by_play or by_fallback, "by": "play" if by_play else ("fallback" if by_fallback else "")}
+
+
+def _quiet(world: Any) -> bool:
+    """Nothing else owns the player: no conversation, no duel, no dungeon, and no open story duel."""
+    story = world.__dict__.get("story") or {}
+    return (not conversation.table(world) and duel_lease.active(world) is None and not story.get("in_dungeon") and not story.get("duel"))
+
+
+# ------------------------------------------------------------------ the tick
+
+def tick(world: Any) -> None:
+    from wizard_rts.narrative import tutorial
+
+    if not tutorial.state(world)["started"]:
+        return
+    st = state(world)
+    if st["stage"] == "game_over":
+        return
+    _watch_fire(world, st)
+    s = st["stage"]
+    if s == "training" and all(wizard.lesson_done(world, l) for l in config.get("tutorial", "essential", [])):
+        if not all(wizard.knows(world, sp) for sp in wizard.palette()) or int(wizard.wiz(world)["weave_size"]) < 3:
+            wizard.learn(world, wizard.palette(), 3)  # the lessons are recorded but the magic is not (an inconsistent save): the progression is applied, never just the flag
+            events.log(world, "spells_repaired", spells=wizard.spells(world))
+        st["explore_start_ms"] = now(world)
+        _set_stage(world, "explore")
+    elif s == "explore":
+        if explore_due(world)["due"] and _quiet(world) and not st["scene"]:
+            start_arrival(world)
+    elif s == "arrival" and not st["scene"]:
+        _arrival_step(world, st)
+    elif s == "duel" and duel_lease.active(world) is None and not st["scene"]:
+        _lost_duel(world, "no_duel")  # the stage says a duel is under way but there is none: a lethal duel is never skipped
+    elif s == "aftermath":
+        _aftermath_step(world, st)
+    if s in ("victory", "aftermath", "complete"):
+        _stranger_leaves(world, st)
+
+
+def _watch_fire(world: Any, st: dict[str, Any]) -> None:
+    """The first time the apprentice burns anything with Flame, the lesson of using it in the world is done (optional; nothing waits for it)."""
+    total = int(world.events.total)
+    fresh = total - int(st["events_seen"])
+    st["events_seen"] = total
+    if fresh <= 0 or wizard.lesson_done(world, "flame_world"):
+        return
+    window = list(world.events)
+    recent = window[-fresh:] if fresh <= len(window) else window
+    if any(e["kind"] == "fire_magic" for e in recent) and wizard.complete_lesson(world, "flame_world"):
+        events.log(world, "lesson_done", lesson="flame_world")
+
+
+# ------------------------------------------------------------------ arrival of the stranger
+
+def _spawn(world: Any, goal: tuple[int, int]) -> tuple[tuple[int, int], int] | None:
+    """A walkable tile far from `goal` with a real path to it, so the stranger visibly walks in: rings of decreasing distance, seeded order."""
+    rng = random.Random(zlib.crc32(f"{world.seed}|stranger|spawn".encode()))
+    base = int(config.get("campaign", "arrival_distance", 14))
+    for radius in (base, base - 3, base - 6, 5):
+        offsets = [(dx, dy) for dx in range(-radius, radius + 1) for dy in range(-radius, radius + 1) if max(abs(dx), abs(dy)) == radius]
+        rng.shuffle(offsets)
+        for dx, dy in offsets[:24]:
+            t = residents.free_tile(world, goal[0] + dx, goal[1] + dy, 1)
+            if t is None:
+                continue
+            from wizard_rts import workers
+
+            path = workers.find_path(world, t, goal, limit=radius + 24)
+            if path is not None and len(path) <= radius * 4:
+                return t, len(path)
+    return None
+
+
+def start_arrival(world: Any) -> bool:
+    """The exploration is over: the stranger enters the settlement. Exactly once (the attacker's presence is the latch)."""
+    st = state(world)
+    if st["attacker"] or st["stage"] != "explore":
+        return False
+    m = mentor(world)
+    anchor = residents.table(world)[m]["tile"] if m in residents.table(world) else [int(world.player["tx"]), int(world.player["ty"])]
+    goal = residents.free_tile(world, anchor[0], anchor[1], 2) or tuple(anchor)
+    found = _spawn(world, goal)
+    spawn = found[0] if found else (residents.free_tile(world, anchor[0], anchor[1], 5) or goal)
+    spec = personas.authored()["characters"]["attacker"]
+    ident_tribe = spec["tribe"]
+    rec = residents.table(world).get(m, {})
+    pid = residents.create(world, settlement=rec.get("settlement", ""), role="stranger", graph="", speaker="", tile=spawn, tribe=rec.get("tribe", "barbarians"),
+                           faction=rec.get("faction", ""), key="attacker", identity_tribe=ident_tribe)
+    personas.set_authored(world, pid, "attacker")
+    st["attacker"] = pid
+    st["stranger_goal"] = [goal[0], goal[1]]
+    residents.table(world)[pid]["hostile"] = True
+    if found:
+        residents.walk_to(world, pid, goal, limit=found[1] + 10)
+    if m in residents.table(world):
+        residents.table(world)[m]["stay"] = True  # the mentor stops to meet him
+    _set_stage(world, "arrival")
+    st["arrival_ms"] = now(world)
+    events.log(world, "stranger_arrived", person=pid, spawn=list(spawn))
+    start_scene(world, "notice")
+    return True
+
+
+def _arrival_step(world: Any, st: dict[str, Any]) -> None:
+    pid = st["attacker"]
+    r = residents.table(world)[pid]
+    goal = st["stranger_goal"]
+    close = max(abs(r["tile"][0] - goal[0]), abs(r["tile"][1] - goal[1])) <= 1
+    if (close or not r.get("walk")) or now(world) - int(st["arrival_ms"]) > int(config.get("campaign", "arrival_walk_cap_ms", 60000)):
+        if _quiet(world):
+            start_confrontation(world)
+
+
+def start_confrontation(world: Any) -> None:
+    st = state(world)
+    m = mentor(world)
+    present = mentor_present(world)
+    if not present and not st["mentor_fate"]:
+        st["mentor_fate"] = "died_earlier"  # the mentor was already lost to something else: never resurrected, never killed twice
+        wizard.wiz(world)["mentor_dead"] = True
+    centre = residents.table(world)[m]["tile"] if m in residents.table(world) else [int(world.player["tx"]), int(world.player["ty"])]
+    r = int(config.get("campaign", "witness_radius", 12))
+    st["witnesses"] = sorted(characters.link_key(kind, eid) for kind, table in characters.TABLES.items() for eid, row in getattr(world, table).items()
+                             if max(abs(int(row["tx"]) - centre[0]), abs(int(row["ty"]) - centre[1])) <= r)
+    residents.table(world)[st["attacker"]]["walk"] = []
+    _set_stage(world, "confrontation")
+    start_scene(world, "confrontation" if present else "confrontation_alone")
+
+
+# ------------------------------------------------------------------ scenes: pages the player acknowledges
+
+def scene_ctx(world: Any) -> dict[str, Any]:
+    st = state(world)
+    return {"template": "scene", "speaker": "scene", "speaker_pid": st["attacker"], "name": names(world)["attacker"], "cast": names(world), "facts": {}}
+
+
+def active_scene(world: Any) -> dict[str, Any] | None:
+    return state(world).get("scene")
+
+
+def start_scene(world: Any, scene_id: str) -> None:
+    st = state(world)
+    conversation.end(world, None, "scene")
+    st["scene"] = {"id": scene_id, "i": 0, "applied": -1, "answered": {}}
+    _enter_page(world, 0)
+
+
+def _page(world: Any, sc: dict[str, Any]) -> dict[str, Any]:
+    return scenes()[sc["id"]]["pages"][sc["i"]]
+
+
+def _enter_page(world: Any, i: int) -> None:
+    """Apply a page's effects, once, when it is first shown (a reload or a repeated request never applies them again)."""
+    sc = state(world)["scene"]
+    sc["i"] = i
+    if i <= sc["applied"]:
+        return
+    sc["applied"] = i
+    ctx = scene_ctx(world)
+    for eff in _page(world, sc).get("effects", []):
+        _SCENE_EFFECTS[eff["kind"]](world, ctx, eff)
+
+
+def scene_view(world: Any) -> dict[str, Any] | None:
+    """What the client shows for the current page of the scene: speaker, text, camera focus, and the answers open to the apprentice."""
+    sc = active_scene(world)
+    if sc is None:
+        return None
+    ctx = scene_ctx(world)
+    spec = scenes()[sc["id"]]
+    page = _page(world, sc)
+    n = names(world)
+    key = f"{sc['id']}:{sc['i']}"
+    answered = sc["answered"].get(key)
+    text = "\n\n".join(graph._fmt(page["lines"], ctx, world, "scene"))
+    choices: list[dict[str, Any]] = []
+    if answered is None and page_responses(page):
+        choices = graph.response_choices(world, ctx, key, page_responses(page))
+    who = page.get("speaker", "narrator")
+    speaker_name = {"narrator": "", "mentor": n["mentor"], "attacker": n["attacker"], "apprentice": "You"}.get(who, who)
+    out = {"id": sc["id"], "i": sc["i"], "n": len(spec["pages"]), "speaker": who, "name": speaker_name, "text": text, "choices": choices,
+           "focus": _focus(world, page.get("focus", "mentor")), "fx": page.get("fx", ""), "last": sc["i"] >= len(spec["pages"]) - 1,
+           "answer": answered or {}, "needs_answer": bool(choices), "final": spec.get("final", "")}
+    return out
+
+
+def _focus(world: Any, who: str) -> list[int]:
+    st = state(world)
+    if who == "player":
+        return [int(world.player["tx"]), int(world.player["ty"])]
+    pid = st["attacker"] if who == "attacker" else mentor(world)
+    r = residents.table(world).get(pid)
+    return [int(r["tile"][0]), int(r["tile"][1])] if r else [int(world.player["tx"]), int(world.player["ty"])]
+
+
+def scene_choose(world: Any, choice_id: str) -> dict[str, Any]:
+    sc = active_scene(world)
+    if sc is None:
+        return {"status": "rejected", "reason": "no_scene"}
+    page = _page(world, sc)
+    key = f"{sc['id']}:{sc['i']}"
+    if key in sc["answered"] or not choice_id.startswith("resp:" + key + ":"):
+        return {"status": "rejected", "reason": "choice_unavailable"}
+    ctx = scene_ctx(world)
+    out = graph.respond(world, ctx, key, page_responses(page), choice_id[len("resp:" + key + ":"):])
+    if out is None:
+        return {"status": "rejected", "reason": "choice_unavailable"}
+    sc["answered"][key] = {"text": "\n".join(out["lines"]), "reply": "\n".join(out["reply"]), "check": out["check"], "reaction": out["reaction"]}
+    return {"status": "ok", "scene": scene_view(world)}
+
+
+def scene_next(world: Any) -> dict[str, Any]:
+    """The player acknowledges the page: the next page (its effects apply now), or, after the last, the scene's ending action."""
+    st = state(world)
+    sc = st["scene"]
+    if sc is None:
+        return {"status": "rejected", "reason": "no_scene"}
+    view = scene_view(world)
+    if view["needs_answer"]:
+        return {"status": "rejected", "reason": "answer_required"}
+    if not view["last"]:
+        _enter_page(world, sc["i"] + 1)
+        return {"status": "ok", "scene": scene_view(world)}
+    final = scenes()[sc["id"]].get("final", "")
+    st["scene"] = None
+    out: dict[str, Any] = {"status": "ok", "scene": None, "ended": sc["id"]}
+    if final == "duel":
+        lease = duel_lease.begin(world, OPPONENT, purpose=DUEL_PURPOSE, display_name=names(world)["attacker"])
+        if lease["status"] != "started":
+            _lost_duel(world, "no_lease:" + str(lease.get("reason", "")))
+        else:
+            lease["payload"]["duel"]["speaker"] = ""
+            out["duel_lease"] = lease
+            _set_stage(world, "duel")
+    elif final == "arrival":
+        pass  # the stranger is already walking; control returns to the player
+    elif final == "aftermath":
+        st["aftermath_start_ms"] = now(world)
+        _set_stage(world, "aftermath")
+    return out
+
+
+# ------------------------------------------------------------------ scene effects
+
+def _kill_mentor(world: Any, ctx: dict[str, Any], eff: dict[str, Any]) -> None:
+    """The mentor dies, for real: a Person death with its tombstone, a body in the world, a journal note. Idempotent; never touches an already-dead mentor."""
+    st = state(world)
+    pid = mentor(world)
+    if st["mentor_fate"] or pid not in world.dmb.people:
+        return
+    st["mentor_fate"] = "killed_by_stranger"
+    wizard.wiz(world)["mentor_dead"] = True  # crosses a cycle reset with the wizard: a new cycle never casts a second mentor
+    rec = world.dmb.people[pid]
+    if rec.get("alive", True):
+        PeopleService(world.dmb).record_death(pid, cause_id="killed_by:" + st["attacker"])
+    residents.table(world)[pid]["status"] = "dead"
+    residents.table(world)[pid]["walk"] = []
+    conversation.end(world, pid, "died")
+    events.log(world, "character_died", person=pid, name=rec["name"], cause="killed_by:" + st["attacker"])
+    n = names(world)
+    wizard.wiz(world)["journal_notes"].append({"game_ms": now(world), "text": f"{n['mentor']}, my teacher, was killed in {n['settlement']} by a wizard who called himself {n['attacker']}.",
+                                               "source": NOTE_SOURCE})
+
+
+def _retreat(world: Any, ctx: dict[str, Any], eff: dict[str, Any]) -> None:
+    """The stranger leaves: he walks away from the apprentice and, a little later, is gone. He is alive and keeps his identity."""
+    st = state(world)
+    pid = st["attacker"]
+    r = residents.table(world).get(pid)
+    if r is None or r["status"] != "present":
+        return
+    px, py = int(world.player["tx"]), int(world.player["ty"])
+    best = None
+    for dist in (18, 14, 10, 6):
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)):
+            t = residents.free_tile(world, r["tile"][0] + dx * dist, r["tile"][1] + dy * dist, 1)
+            if t is not None and (best is None or abs(t[0] - px) + abs(t[1] - py) > best[0]):
+                if residents.walk_to(world, pid, t, limit=dist * 3 + 10):
+                    best = (abs(t[0] - px) + abs(t[1] - py), t)
+                    break
+        if best:
+            break
+    r["leaving"] = True
+    events.log(world, "stranger_retreats", person=pid)
+
+
+def _note(world: Any, ctx: dict[str, Any], eff: dict[str, Any]) -> None:
+    wizard.wiz(world)["journal_notes"].append({"game_ms": now(world), "text": eff["text"].format_map(graph.placeholders(ctx)), "source": NOTE_SOURCE})
+
+
+def _fact(world: Any, ctx: dict[str, Any], eff: dict[str, Any]) -> None:
+    wizard.learn_fact(world, eff["id"])
+
+
+def _aspect(world: Any, ctx: dict[str, Any], eff: dict[str, Any]) -> None:
+    checks.change_once(world, eff["aspect"], int(eff["delta"]), "scene/" + eff["id"])
+
+
+_SCENE_EFFECTS = {"kill_mentor": _kill_mentor, "retreat": _retreat, "note": _note, "fact": _fact, "aspect": _aspect}
+
+
+# ------------------------------------------------------------------ the duel's end
+
+def on_duel_resolved(world: Any, lease: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
+    """The stranger's duel finished and the report verified. A victory is the only way on; everything else ends the game."""
+    st = state(world)
+    if out["outcome"] != "won":
+        return game_over(world, "duel_" + str(out["outcome"]))
+    st["outcome"] = "victory"
+    checks.change_once(world, "resolve", 1, "campaign/duel_victory")
+    wizard.wiz(world)["journal_notes"].append({"game_ms": now(world), "text": "I defeated the stranger with the magic my teacher taught me. He withdrew from the village, alive.", "source": NOTE_SOURCE})
+    _set_stage(world, "victory")
+    start_scene(world, "victory")
+    return {"status": "ok", "stage": "victory"}
+
+
+def on_duel_void(world: Any, lease: dict[str, Any], why: str) -> dict[str, Any]:
+    """The lethal duel was left, abandoned, rejected or lost to a load: it is a defeat (there is no way to step out of it)."""
+    return game_over(world, "duel_" + why)
+
+
+def _lost_duel(world: Any, why: str) -> dict[str, Any]:
+    return game_over(world, why)
+
+
+def game_over(world: Any, cause: str) -> dict[str, Any]:
+    """The apprentice dies. Terminal: recorded once, the clock is held, every op but a new game is refused (`server.py`), saves are refused."""
+    st = state(world)
+    if st["stage"] == "game_over":
+        return {"status": "ok", "stage": "game_over", "already": True}
+    conversation.close_all(world, "game_over")
+    duel_lease.abandon(world, "game_over")
+    st["scene"] = None
+    st["outcome"] = "defeat"
+    wizard.wiz(world)["fate"] = {"alive": False, "cause": cause, "game_ms": now(world), "text": config.get("campaign", "dead_after_defeat", "The apprentice was defeated.")}
+    world.dmb.tombstones["player"] = {"kind": "wizard", "display_name": "the apprentice", "cause_id": cause, "profile_refs": {}}
+    events.log(world, "player_died", cause=cause)
+    _set_stage(world, "game_over")
+    ClockService(world.dmb.clock).acquire_pause("game_over", "player")
+    return {"status": "ok", "stage": "game_over"}
+
+
+# ------------------------------------------------------------------ the aftermath and the one objective
+
+def _aftermath_step(world: Any, st: dict[str, Any]) -> None:
+    talks = len(st["aftermath_talks"])
+    elapsed = now(world) - int(st["aftermath_start_ms"] or now(world))
+    if (talks >= int(config.get("campaign", "aftermath_min_talks", 2)) or elapsed >= int(config.get("campaign", "aftermath_fallback_ms", 150000))) and not conversation.table(world):
+        complete(world)
+
+
+def _stranger_leaves(world: Any, st: dict[str, Any]) -> None:
+    r = residents.table(world).get(st["attacker"])
+    if r is not None and r["status"] == "present" and r.get("leaving") and not r.get("walk"):
+        residents.remove(world, st["attacker"], "gone")
+        events.log(world, "stranger_gone", person=st["attacker"])
+
+
+def complete(world: Any) -> None:
+    """The introduction is over: the journal records the objective. The next chapter is not started here."""
+    st = state(world)
+    if st["stage"] == "complete":
+        return
+    _set_stage(world, "complete")
+    wizard.wiz(world)["campaign_finished"] = True
+    wizard.wiz(world)["journal_notes"].append({"game_ms": now(world), "text": "Objective: seek greater magical power. What I know is not enough; the people here believe there are teachers and traditions beyond this valley.",
+                                               "source": NOTE_SOURCE})
+
+
+# ------------------------------------------------------------------ what the client and the HUD read
+
+def objective(world: Any) -> str:
+    st = state(world)
+    return {"explore": "Explore the settlement and talk to the people who live in it.", "arrival": "A stranger is coming.",
+            "victory": "", "aftermath": "Speak with the people of the settlement about what happened.", "complete": "Seek greater magical power.",
+            "game_over": "The apprentice was defeated."}.get(st["stage"], "")
+
+
+def snapshot(world: Any) -> dict[str, Any]:
+    st = state(world)
+    fate = wizard.wiz(world).get("fate")
+    return {"stage": st["stage"], "scene": scene_view(world), "game_over": dict(fate) if fate and not fate.get("alive", True) else {}, "mentor_fate": st["mentor_fate"],
+            "explore": explore_due(world) if st["stage"] == "explore" else {}, "aspects": checks.scores(world), "worldview": wizard.worldview_scores(world),
+            "worldview_primary": wizard.worldview_primary(world), "mentor": mentor(world),
+            "mentor_dead": st["mentor_fate"] in ("killed_by_stranger", "died_earlier"), "stranger": st["attacker"]}

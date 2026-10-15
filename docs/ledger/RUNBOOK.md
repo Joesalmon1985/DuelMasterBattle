@@ -1,5 +1,8 @@
 # Runbook: how to resume and re-run everything from the v2 run
 
+> **Superseded in part (13 Oct 2026).** Branch `work/mechanics-completion-v4` changed the card system (168 cards, four eras of 42, 1-4 entities each), the faction floor of six, ware classes, visibility and the command tier. Where this file disagrees, `docs/ledger/V4_HANDOVER.md` and `docs/DECISION_REGISTER.md` section 5 (D26-D32) win. S05, S06, S13 and S14 below are stale.
+
+
 All commands run from the repository root. Logs and large outputs go to `~/dmb_runs/` (set `DMB_RUNS` to move it); nothing large is committed.
 
 ## Start of a session

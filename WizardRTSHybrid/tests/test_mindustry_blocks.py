@@ -718,3 +718,86 @@ def test_a_core_is_a_store_for_both_economies_roads_deliver_to_it_and_unloaders_
     # a road from the core to the settlement lets Widelands carriers take and bring wares: the core is listed as a warehouse
     from wizard_rts import logistics
     assert core in [b["id"] for b in logistics._warehouses(w, w.buildings[core]["faction"])]
+
+
+@pytest.mark.parametrize("kind,unit", ASSEMBLER_PLANS)
+def test_an_assembler_accepts_real_payloads_and_builds_its_unit(kind, unit):
+    """No faked stack: each payload goes through give_payload, which refuses what the plan does not want and what it already has enough of."""
+    from wizard_rts.industry import blocks as B
+    from wizard_rts.industry import payload as P
+
+    spec = R.block(kind)
+    w = world()
+    n = spec["size"]
+    x, y = F.open_ground(w, "Red", n + 5, n + 3)
+    a = put(w, kind, (x + 1, y + 1))
+    put(w, "mdy:power_source", (x + 1, y + 1 + n))
+    m = w.buildings[a]["mdy"]
+    stuff(w, a, spec)
+    plan = next(p for p in spec["assembler_plans"] if p["unit"] == unit)
+    m["plan"] = unit
+    from wizard_rts.industry import sim as S
+
+    run(w, 1)
+    st = S.ind(w)
+    tile = (w.buildings[a]["tx"], w.buildings[a]["ty"])
+    src = (tile[0] - 5, tile[1])
+
+    def payload_for(java: str) -> dict:
+        blk = next((bid for bid, d in B.full()["blocks"].items() if d.get("java_name") == java), None)
+        if blk is not None:
+            return {"type": "block", "block": blk, "stock": {}, "cap": 10}
+        return {"type": "unit", "unit": java, "faction": "Red", "hp": 1.0}
+
+    assert not P.accepts_payload(w, st, w.buildings[a], {"type": "unit", "unit": "dagger", "faction": "Red", "hp": 1.0}, src)  # not in the plan
+    for java, need in plan["payload"].items():
+        for _ in range(need):
+            assert P.accepts_payload(w, st, w.buildings[a], payload_for(java), src), (kind, unit, java)
+            assert P.give_payload(w, st, tile, payload_for(java), src)
+            run(w, 1)
+    assert all(m["stack"].get(k, 0) >= v for k, v in plan["payload"].items()), m["stack"]
+    run(w, int(plan["time_ticks"] / 60) + 15)
+    assert _units_of(w, unit), (kind, unit, m["state"])
+
+
+@pytest.mark.parametrize("kind", kinds_of("door"))
+def test_a_door_blocks_enemies_and_opens_for_its_own_faction(kind):
+    w = world()
+    n = R.block(kind)["size"]
+    x, y = F.open_ground(w, "Red", n + 6, n + 4)
+    d = put(w, kind, (x + 3, y + 2))
+    fp = [tuple(t) for t in w.buildings[d]["ground_footprint"]]
+    run(w, 2)
+    assert all(t in w.blocked for t in fp)  # closed: nobody walks through
+    from test_openra_content import enemy, own
+
+    foe = enemy(w, "openra.e1", (fp[0][0] - 1, fp[0][1]))
+    run(w, 2)
+    assert all(t in w.blocked for t in fp), "an enemy beside the door does not open it"
+    w.units.pop(foe["id"])
+    mine = own(w, "openra.e1", (fp[0][0] - 1, fp[0][1]))
+    run(w, 2)
+    assert not any(t in w.blocked for t in fp), "a unit of the door's own faction opens it"
+    mine["tx"], mine["ty"] = fp[0][0] - 6, fp[0][1] - 6
+    run(w, 2)
+    assert all(t in w.blocked for t in fp), "and it closes again once nobody is near"
+
+
+def test_an_armored_conveyor_refuses_side_input_from_non_conveyors():
+    from types import SimpleNamespace
+
+    from wizard_rts.industry import sim as isim
+
+    belt = {"d": 0, "items": [], "armored": True}  # direction 0 delivers one way; compute behind/side from DIRS
+    dx, dy = isim.DIRS[0]
+    tile = (5, 5)
+    st = SimpleNamespace(belts={tile: belt})
+    behind = (tile[0] - dx, tile[1] - dy)
+    side = (tile[0] - dy, tile[1] + dx)
+    assert isim.belt_accepts(st, tile, behind)
+    assert not isim.belt_accepts(st, tile, side)
+    st.belts[side] = {"d": 0, "items": []}  # a conveyor may still feed from the side
+    assert isim.belt_accepts(st, tile, side)
+    belt["armored"] = False
+    del st.belts[side]
+    assert isim.belt_accepts(st, tile, side)

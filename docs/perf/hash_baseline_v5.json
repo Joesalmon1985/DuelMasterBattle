@@ -1,0 +1,93 @@
+{
+ "label": "v5-2026-10-14 (T1.1 visibility memory + AI reconnaissance; AIs see only what visibility.py shows them)",
+ "profile": "",
+ "policy": "baseline",
+ "map": "standard",
+ "minutes": 20,
+ "runs": [
+  {
+   "seed": 507,
+   "hashes": [
+    "91dd296d340eab9a38a247fcc04ff8c8605b3ce2",
+    "62713fe9f145c5c3d3b6c94ccb2055202e50dc67",
+    "3dd6bb7bc79fcf11c670cd757075d82c4334c885",
+    "492a5530bef1d8bc6968341da9ebbecebbbf304f",
+    "36518a79d482e2d8181144ac93201a44c34139b2",
+    "cfe120ee47301d05a3ed5aae5c2af20ba6331e57",
+    "4aaa1f3f44f62cdac8ba8c1845eca5a2bfe9f460",
+    "122e10424681b4febadcf674e60db3a84195158b",
+    "71dd6c0206562620e19b4998afb99447dd95d5fd",
+    "bfae71fb403cf11f2e6e2c5064dfadb27acb37a0",
+    "f217d4c9dc44d2f4ded14e44dea73384a0898799",
+    "65896cb684272711234e1b347ba8acc214265b10",
+    "9b430e939c5de6e419dd0f2a34fc875d5e0e554c",
+    "186411d65f66d5a3531d71c5b3078d9dabbc4b1e",
+    "1ae4d44c61333b75ec40d2ab1a0b4e6fe9239bd1",
+    "369a09139aa4ba3bda4c341d5ddbc51ef24f1698",
+    "d903b94138d7a3a70d62c52ae45c76ae3f61c97f",
+    "d8c46ae4dca2ec704a2262fd827f400584c3ccca",
+    "03e04c2b2d80025127a42b5049247e8aeff3e81e",
+    "e0304def8ea1838cb62edd488800f55ad3cc2fb3"
+   ],
+   "wall_s": 17.4,
+   "x_realtime": 68.9,
+   "buildings": 222
+  },
+  {
+   "seed": 11,
+   "hashes": [
+    "49f832b79f5ffcebaef85b1e08fa4146781ce267",
+    "aa1ef99b65d66ddc2f8f858e6d941e572a505148",
+    "a9c846366f3674e23131273aef5de1a0f9200cfe",
+    "d90d549ab158a4449ba0acb86f3db2ceb2f3f690",
+    "55dda9851ca9f565073552dcba49088cd6a3165d",
+    "4faaf48648daaf6154cdab3d7a36596af283470e",
+    "2f944acd540c8217e6f0620ab34d28143f4b3f79",
+    "0876aaf1d0047ba687ffa5d901d36d00b35390eb",
+    "9d83b80d6606525c92ebc34a95edba8003b76497",
+    "775b728c3a9b2d61893285df0b1d8e3b97ca2210",
+    "1d12773e7b62243dc2c03c5a8e7c009ae88dc67a",
+    "014fcdfa4ac0ee38cf2d26c4a8c6bd0e22d50335",
+    "6d92fba28de6ad891f180433933bc1a31a8f54f9",
+    "9a4c74467105b5fb4307a0671c825ddacdde3226",
+    "4bb9f70300b8d2a7cdec967362ea7d123a356dd9",
+    "c9d98ac32316fb036e18eee06b764499f87f7e4d",
+    "ab40fb6f9739add6e138bdc9aa07e9b31615e52b",
+    "c3d8cc202ba09f6e47247d35fcdf7959a7bdff6a",
+    "bd33e163336ed2b0965de823375c0b73e9dbd4e6",
+    "a0c7a1f4a6552cfe4a884963d1fc9883a87da78a"
+   ],
+   "wall_s": 17.7,
+   "x_realtime": 67.8,
+   "buildings": 233
+  },
+  {
+   "seed": 23,
+   "hashes": [
+    "2dc5fc63497b1b31f76d03feeff160b8be0b7615",
+    "e41fa7cd309454fef6a6a8808295b52ba195996c",
+    "c35f07f9f209829f6f8b017741964550f799e2c9",
+    "1042094516a1cb2082e3145587d469208be65fc2",
+    "7524802e3ec69be5f4d75436fdd536a77045b8ae",
+    "dba75799a9ca65ecb370770b6fedb0a3ce873def",
+    "c531b5cc1053ba03d8164cd51a350ec17ddf3d15",
+    "563e84f462c50cf79dfa49dff86e7eb0e590fd85",
+    "ae2985a6ecc2464a465c4139462e6f17fa692f1e",
+    "8fb9660778e732ee5d50c3a79f470e4d8607df71",
+    "7d0fa7aad1db6e674bc9d66346bcfc450f92d1e4",
+    "08ea7854a08f269dd73add7717afa993781800f2",
+    "98ff2fdb38df015355a5dba95e722add4d18858c",
+    "866947b53a20b624c944b578d01dc03458eda0e4",
+    "2b7e4ad16f5a6053e0fa2c9ab2529b15d3e3ac0f",
+    "7b4fc0ce55890211a93d602eb86c0c13c22980c3",
+    "e07bd50e82e9f84d77966438cd43fd71802c9cff",
+    "82eb6f8b06e41a5d2db94500417459b1230b81cd",
+    "dfd03770b2a5db84cf8968b12b0482d8f6c2b2cb",
+    "ecaa07bdc821e8ffcb87b2b45092791ba3be50c3"
+   ],
+   "wall_s": 17.6,
+   "x_realtime": 68.1,
+   "buildings": 226
+  }
+ ]
+}

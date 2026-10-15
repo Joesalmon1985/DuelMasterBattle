@@ -17,7 +17,7 @@ from collections import deque
 from typing import Any
 
 from wizard_rts.economy import _supply, produce
-from wizard_rts import wl_defs
+from wizard_rts import hold, wl_defs
 from wizard_rts.programs_data import BUILDING_INPUTS, BUILDING_OUTPUTS
 from wizard_rts.workers import facing, new_id
 
@@ -27,7 +27,7 @@ LOGISTICS_PERIOD = 10  # quanta between request and output scans
 
 def io_for(world: Any, building: dict) -> dict[str, Any]:
     if building.get("constructing"):
-        return {"requests": dict(building["constructing"]["cost"])}
+        return {"requests": dict(building["constructing"].get("ask") or building["constructing"]["cost"])}
     kind = building.get("kind", "")
     io: dict[str, Any] = {}
     if building.get("dismantle"):
@@ -347,4 +347,6 @@ def logistics_quantum(world: Any) -> None:
     if n % 5 == 0:
         carrier_quantum(world)
         for carrier in world.carriers.values():
+            if carrier.get("held_until_ms") is not None and hold.is_held(world, carrier):  # being talked to (hold.py)
+                continue
             _step_carrier(world, carrier)

@@ -11,6 +11,11 @@ with the sequence's own frame numbers.
 Run: python3 scripts/import_openra_roster.py [content dir]   (default ~/Videos/.config/openra/Content/ra/v2)
 """
 from __future__ import annotations
+import sys as _sys  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D33)
+freeze_guard.require_unfreeze(__file__)
 
 import json
 import re

@@ -1,0 +1,70 @@
+{
+ "git": {
+  "sha": "e0c2bb3ea7181ab1b19c7c527ac104e2a119db6e",
+  "dirty": false,
+  "dirty_files": []
+ },
+ "roster_version": "roster-1.0.0",
+ "roster_hash": "c0c611eb5390e8fcb7d8183c978891f5b097cb0f344e2030726935464206b595",
+ "rules_version": "rules-2026-10-14",
+ "wizard_rts_sha256": "ddb940f3288f37fef528223a2cca0033ff0d8b92d1b9228500555e5c6d9ce3e3",
+ "code_sha256": "543942540addafeeef4bc5c0b947fdfb646a9cb01736cf51d7a813fa049724e4",
+ "architecture": {
+  "version": "arch-1.0.0",
+  "genome_size": 87430
+ },
+ "obs_schema": {
+  "version": "obs-1.0.0",
+  "hash": "f6e5375ea1330bb1b6fc3c915b9f049ac31a3ed1c95cdb537238613555f0f892"
+ },
+ "act_schema_version": "act-1.0.0",
+ "fit_schema_version": "fit-1.0.0",
+ "catastrophe_level": "C0",
+ "outbreak_interval_scale": 1.0,
+ "curriculum": {
+  "levels": {
+   "C0": 1.0
+  },
+  "current": "C0",
+  "retention_fraction": 0.25,
+  "retention_tolerance": 50.0
+ },
+ "config": {
+  "name": "proving60",
+  "population": 16,
+  "seeds_per_generation": 2,
+  "game_minutes": 60,
+  "map_size": "standard",
+  "workers": 14,
+  "hours": 8.0,
+  "imitation_fraction": 0.25,
+  "imitation_games": 20,
+  "wall_cap_s": 3600,
+  "stall_s": 1200,
+  "promote": true,
+  "curriculum": {
+   "levels": {
+    "C0": 1.0
+   },
+   "current": "C0",
+   "retention_fraction": 0.25,
+   "retention_tolerance": 50
+  }
+ },
+ "hardware": {
+  "machine": "Bedroom_PC",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cpu_count": 16,
+  "ram_gb": 34.3,
+  "physical_cores": 8
+ },
+ "python": "3.14.0",
+ "numpy": "2.4.0",
+ "seed_streams": [
+  "train",
+  "heldout",
+  "control",
+  "evolution",
+  "imitation"
+ ]
+}

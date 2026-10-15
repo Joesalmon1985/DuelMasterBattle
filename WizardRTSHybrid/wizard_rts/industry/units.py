@@ -169,4 +169,30 @@ def all_rules() -> tuple[dict[str, dict], dict[str, dict]]:
         if r:
             actors["mdy_" + n] = r[0]
             weapons.update(r[1])
+    _arm_missile_units(actors, weapons)
     return actors, weapons
+
+
+def _arm_missile_units(actors: dict[str, dict], weapons: dict[str, dict]) -> None:
+    """Combat units whose bullets are spawned missiles or unevaluated expressions (anthicus, collaris, conquer, disrupt, quell) came out weaponless.
+    They get the average per-shot damage, reload and range of the armed units of their own tier and movement class (V4 P2); the source line says so."""
+    support = SUPPORT | CORE_UNITS
+    for key, a in actors.items():
+        name = key[4:]
+        if a["armaments"] or name in support:
+            continue
+        peers = [p for k, p in actors.items() if p["armaments"] and p.get("tier") == a.get("tier") and p.get("flying") == a.get("flying") and p.get("naval") == a.get("naval")]
+        if not peers:
+            peers = [p for p in actors.values() if p["armaments"] and p.get("tier") == a.get("tier")]
+        if not peers:
+            continue
+        ws = [weapons[w] for p in peers for w in p["armaments"]]
+        dmg = sum(sum(wh["damage"] for wh in w["warheads"]) for w in ws) / len(ws)
+        w0 = dict(ws[0])
+        w0.update(range=round(sum(w["range"] for w in ws) / len(ws), 3), reload=max(1, round(sum(w["reload"] for w in ws) / len(ws))), burst=1,
+                  warheads=[{**ws[0]["warheads"][0], "damage": max(1, int(round(dmg)))}],
+                  source=f"V4 estimate for {name}: average of the armed tier-{a.get('tier')} units (its own missile bullets are not imported)")
+        wname = f"MDY_{name}_est"
+        weapons[wname] = w0
+        a["armaments"] = [wname]
+        a["target_types"] = list(a["target_types"])

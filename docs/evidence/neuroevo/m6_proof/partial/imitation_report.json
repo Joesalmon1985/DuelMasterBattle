@@ -1,0 +1,58 @@
+{
+ "H1": {
+  "rows": 34453,
+  "positives": 538,
+  "fitted": true,
+  "separation": 1.004921952829431
+ },
+ "H2": {
+  "rows": 20570,
+  "positives": 0,
+  "fitted": true,
+  "separation": null
+ },
+ "H3": {
+  "rows": 13316,
+  "positives": 167,
+  "fitted": true,
+  "separation": 1.3540471860209469
+ },
+ "H4": {
+  "rows": 1175,
+  "positives": 67,
+  "fitted": true,
+  "separation": 1.0700873007251186
+ },
+ "H5": {
+  "rows": 37850,
+  "positives": 1122,
+  "fitted": true,
+  "separation": 1.4087884410705658
+ },
+ "H6": {
+  "rows": 1560,
+  "positives": 240,
+  "fitted": true,
+  "separation": 1.0282364682252352
+ },
+ "H7": {
+  "rows": 2446,
+  "positives": 0,
+  "fitted": true,
+  "separation": null
+ },
+ "H8": {
+  "rows": 38400,
+  "positives": 0,
+  "fitted": true,
+  "separation": null
+ },
+ "H9": {
+  "rows": 39165,
+  "positives": 45,
+  "fitted": true,
+  "separation": 1.9366800543988334
+ },
+ "wait_shift": -0.5092133283615112,
+ "games": 20
+}

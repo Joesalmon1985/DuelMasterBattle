@@ -1,0 +1,30 @@
+{
+ "random": {
+  "candidate": "theta/gen_000022_ran.npy",
+  "reference": "theta0.npy",
+  "n_pairs": 12,
+  "mean_advantage": 15.361111111111112,
+  "lower90": 11.722222222222221,
+  "upper90": 19.055555555555554,
+  "seeds": 6,
+  "seed_wins": 6,
+  "loss_rate_candidate": 0.0,
+  "loss_rate_reference": 0.0,
+  "mean_f_candidate": 1018.5277777777778,
+  "mean_f_reference": 1003.1666666666665
+ },
+ "imitation": {
+  "candidate": "theta/gen_000022_imi.npy",
+  "reference": "theta0_imitation.npy",
+  "n_pairs": 12,
+  "mean_advantage": -1.1944444444444446,
+  "lower90": -3.8611111111111107,
+  "upper90": 1.472222222222222,
+  "seeds": 6,
+  "seed_wins": 2,
+  "loss_rate_candidate": 0.0,
+  "loss_rate_reference": 0.0,
+  "mean_f_candidate": 1020.7222222222223,
+  "mean_f_reference": 1021.9166666666666
+ }
+}

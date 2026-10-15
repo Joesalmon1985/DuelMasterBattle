@@ -6,6 +6,11 @@ the catalogue, the same way the other OpenRA items were imported. Use of the art
 Run: python3 scripts/import_openra_mcv.py [path/to/conquer.mix]
 """
 from __future__ import annotations
+import sys as _sys  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D33)
+freeze_guard.require_unfreeze(__file__)
 
 import json
 import sys

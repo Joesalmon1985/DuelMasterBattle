@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from wizard_rts import flow
 from wizard_rts.industry import blocks as B
 from wizard_rts.industry import registry as R
 
@@ -819,6 +820,7 @@ def _wall_drill_step(world: Any, st: Any, b: dict, m: dict, satisfaction: float)
             ware = B.ware_of_item(str(spec_["refs"].get("output", "sand")) if False else "sand")
             m["out"][ware] = m["out"].get(ware, 0) + 1
             world.stats["made_" + ware] = world.stats.get("made_" + ware, 0) + 1
+            flow.note(world, b, "made", ware, 1)
     from wizard_rts.industry import sim as S2
 
     S2._flush(world, st, b, m)
@@ -896,9 +898,11 @@ def heater_run(world: Any, st: Any, b: dict, m: dict, spec_: dict, satisfaction:
             for w, n in spec_["consume_items"].items():
                 m["buf"][w] -= n
                 world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
+                flow.note(world, b, "consumed", w, n)
             for w, n in spec_["output_item"].items():
                 m["out"][w] = m["out"].get(w, 0) + n
                 world.stats["made_" + w] = world.stats.get("made_" + w, 0) + n
+                flow.note(world, b, "made", w, n)
     S._flush(world, st, b, m)
     return 1.0
 
@@ -975,5 +979,6 @@ def _harvester_step(world: Any, st: Any, b: dict, m: dict, satisfaction: float) 
             for w_, n in spec_["output_item"].items():
                 m["out"][w_] = m["out"].get(w_, 0) + n
                 world.stats["made_" + w_] = world.stats.get("made_" + w_, 0) + n
+                flow.note(world, b, "made", w_, n)
             world.stats["trees_harvested"] = world.stats.get("trees_harvested", 0) + 1
     S._flush(world, st, b, m)

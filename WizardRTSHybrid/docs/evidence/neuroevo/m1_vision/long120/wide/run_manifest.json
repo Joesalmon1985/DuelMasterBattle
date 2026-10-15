@@ -1,0 +1,33 @@
+{
+ "started": "2026-10-14 15:01:05",
+ "git_sha": "4b67f55c00892decf43c8ce6736167a919abf235",
+ "git_dirty": true,
+ "mode": "war",
+ "pairing": "mirror",
+ "seeds": [
+  507
+ ],
+ "minutes": 120,
+ "map": "standard",
+ "every_s": 60,
+ "jobs": 2,
+ "profile": "campaign",
+ "wizard_pilot": false,
+ "machine": {
+  "python": "3.14.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cpus": 16
+ },
+ "argv": [
+  "WizardRTSHybrid/scripts/run_civilisation_tournament.py",
+  "--seeds",
+  "507",
+  "--minutes",
+  "120",
+  "--jobs",
+  "2",
+  "--report-dir",
+  "WizardRTSHybrid/docs/evidence/neuroevo/m1_vision/long120/wide"
+ ],
+ "wall_s": 407.7
+}

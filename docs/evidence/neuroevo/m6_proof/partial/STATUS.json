@@ -1,0 +1,11 @@
+{
+ "state": "stopped",
+ "run": "proving",
+ "generation": 4,
+ "jobs_done": 28,
+ "jobs_total": 38,
+ "session_start": 1792012263.7492461,
+ "hours": 8.0,
+ "updated": "2026-10-14 22:51:42",
+ "elapsed_s": 2439.023349046707
+}

@@ -12,7 +12,6 @@ import argparse
 import collections
 import json
 import os
-import resource
 import sys
 import time
 from pathlib import Path
@@ -23,7 +22,7 @@ sys.path.insert(0, str(HYB.parent))
 os.environ["HYBRID_AI"] = "1"
 os.environ["HYBRID_AI_POLICY"] = "plus"
 
-from wizard_rts import diplomacy, inspector, ledger, vp  # noqa: E402
+from wizard_rts import diplomacy, inspector, ledger, sysinfo, vp  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
 
@@ -52,7 +51,7 @@ def main() -> None:
         if (i + 1) % 300 == 0:
             now = time.time()
             row = {"minute": (i + 1) // 60, "wall_s_per_5min": round(now - last, 1), "x_realtime": round(300 / (now - last), 1), "buildings": len(w.buildings), "units": sum(1 for u in w.units.values() if u.get("alive", True)),
-                   "workers": len(w.workers), "carriers": len(w.carriers), "era": w.era_index, "vp": vp.totals(w), "rss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024),
+                   "workers": len(w.workers), "carriers": len(w.carriers), "era": w.era_index, "vp": vp.totals(w), "rss_mb": sysinfo.rss_mb(),
                    "relations": len(w.__dict__.get("relations", {}))}
             last = now
             prog.write(json.dumps(row) + "\n")
@@ -68,7 +67,7 @@ def main() -> None:
     ents = [e for v in fv.values() for h in v["cards"] for e in h["entities"]]
     summary = {"seed": a.seed, "minutes": a.minutes, "wall_s": round(time.time() - t0), "failures": failures, "events": dict(ev.most_common(40)), "state_hash": w.state_hash(),
                "era": w.era_index, "vp": vp.totals(w), "cards_used_rate": round(sum(1 for e in ents if e["produced"]) / max(1, len(ents)), 3),
-               "collective_loss": bool(getattr(w, "collective_loss", False)), "peak_rss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024)}
+               "collective_loss": bool(getattr(w, "collective_loss", False)), "peak_rss_mb": sysinfo.rss_mb()}
     (out / "summary.json").write_text(json.dumps(summary, indent=1, default=str))
     print(json.dumps(summary, indent=1, default=str)[:1500])
 

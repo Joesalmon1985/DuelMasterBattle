@@ -21,10 +21,10 @@ def data():
         out = ROOT / "tests" / "fixtures" / "_fresh_ward.json"
         subprocess.run([godot, "--headless", "--path", str(ROOT.parent / "godot_project"), "--script", "res://client/tests/export_ward_parity.gd", "--", str(out)],
                        check=True, capture_output=True)
-        d = json.loads(out.read_text())
+        d = json.loads(out.read_text(encoding="utf-8"))
         out.unlink()
         return d
-    with gzip.open(FIX, "rt") as f:
+    with gzip.open(FIX, "rt", encoding="utf-8") as f:
         return json.load(f)
 
 

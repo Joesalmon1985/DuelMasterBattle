@@ -18,7 +18,7 @@ import zlib
 from typing import Any
 
 from wizard_rts import construction as con
-from wizard_rts import diplomacy, tech, territory
+from wizard_rts import diplomacy, tech, territory, visibility
 
 ROAD_LIMIT = 45  # a site more than this far from its command centre by road is not worth a wide failed search
 DECIDE_EVERY = 50  # quanta (5 s) between decisions per faction
@@ -52,7 +52,6 @@ NAVAL_BUILDINGS = ("naval_yard", "sub_pen")
 ATTACK_AFTER_MS = 12 * 60_000  # was 20 minutes: the build-up alone made the factions look inert (docs/PLAYTEST_FIXES.md, AI diagnosis)
 GUARD_OUT = 12  # guard posts stand this many tiles from a command centre, towards the nearest enemy
 RETREAT_BELOW = 0.4  # a squad that is down to this share of its launch size is recalled
-SIGHT = 32  # tiles: an enemy building this close to one of our buildings or units becomes a known target
 BOTTLENECK_EVERY_MS = 60_000
 BOTTLENECK_CAP = {"producer": 6, "ranger": 6, "processor": 3, "quarry": 4}
 BOTTLENECK_FIX = {"log": ("producer", "ranger"), "plank": ("processor",), "granite": ("quarry",)}
@@ -754,31 +753,64 @@ def _bottleneck_step(world: Any, name: str, wh: dict) -> None:
     world.events.append({"kind": "ai_bottleneck", "faction": name, "ware": ware, "shortages": n, "raised": raised})
 
 
-def _own_points(world: Any, name: str) -> list[tuple[int, int]]:
-    pts = [(b["tx"], b["ty"]) for b in world.buildings.values() if b["faction_name"] == name and int(b.get("hp", 1)) > 0]
-    pts += [(u["tx"], u["ty"]) for u in world.units.values() if u["faction_name"] == name and u.get("alive", True) and u.get("weapon")]
-    return pts
-
-
 def _known_targets(world: Any, name: str) -> list[dict]:
-    """Enemy buildings this faction has found: every home capital (start positions are public) plus whatever has come within SIGHT of
-    one of its own buildings or armed units. Scouting is therefore the army's own marching: it sees what it walks past."""
-    known = world.__dict__.setdefault("_ai_known", {}).setdefault(name, set())
-    pts = _own_points(world, name)
+    """Enemy buildings this faction has found, from its visibility memory (visibility.py): what its own buildings and units have seen, or a
+    scout or spy has shown it. Scouting is therefore the army's own marching: it sees what it walks past. The memory may be stale; a
+    remembered building that no longer exists is not offered as a target."""
+    mem = visibility.memory_of(world, name)
     out = []
-    for b in world.buildings.values():
-        if b["faction_name"] == name or "hp" not in b or int(b["hp"]) <= 0 or not diplomacy.hostile(world, name, b["faction_name"]):
+    for bid in sorted(mem):
+        b = world.buildings.get(bid)
+        if b is None or "hp" not in b or int(b["hp"]) <= 0 or not diplomacy.hostile(world, name, b["faction_name"]):
             continue
-        if b["id"] not in known:
-            if b["kind"] == "warehouse" and not b.get("outpost"):
-                known.add(b["id"])
-            elif any(abs(b["tx"] - x) <= SIGHT and abs(b["ty"] - y) <= SIGHT for x, y in pts):
-                known.add(b["id"])
-                world.events.append({"kind": "ai_scouted", "faction": name, "building": b["id"], "of": b["faction_name"]})
-        if b["id"] in known:
-            out.append(b)
-    known.intersection_update(world.buildings.keys())
+        out.append(b)
     return out
+
+
+RECON_COLS = (0.12, 0.3, 0.5, 0.7, 0.88)  # waypoints for reconnaissance: a fixed grid over the map (public geometry, not other factions' positions)
+RECON_ROWS = (0.2, 0.5, 0.8)
+
+
+def recon_step(world: Any, name: str, units: list[dict]) -> bool:
+    """The AI knows only what it has seen (T1.1), so with an army ready and no enemy building known it must look: one detachment attack-moves
+    to the nearest waypoint of the map grid this faction has never seen (and has not been sent to), a reachable tile nearby. Returns True when a
+    detachment was sent. At most one detachment is out at a time; when every waypoint has been tried the sweep starts again."""
+    from wizard_rts.military import order_move
+
+    t = world.terrain
+    if t is None or not units:
+        return False
+    st = world.__dict__.setdefault("_ai_recon", {}).setdefault(name, {"ids": [], "tried": []})
+    out = [world.units[i] for i in st["ids"] if i in world.units and world.units[i].get("alive", True)]
+    if any(u.get("order") for u in out):
+        return False  # a detachment is still on its way
+    cx = sum(u["tx"] for u in units) / len(units)
+    cy = sum(u["ty"] for u in units) / len(units)
+    for _sweep in range(2):
+        best = None
+        for fy in RECON_ROWS:
+            for fx in RECON_COLS:
+                wx, wy = int(fx * t.w), int(fy * t.h)
+                if [wx, wy] in st["tried"] or visibility.known(world, name, wx, wy):
+                    continue
+                spot = next(((wx + dx, wy + dy) for r in range(0, 11, 2) for dy in range(-r, r + 1, 2) for dx in range(-r, r + 1, 2)
+                             if max(abs(dx), abs(dy)) == r and world.tile_speed("foot", wx + dx, wy + dy) > 0 and (wx + dx, wy + dy) not in world.blocked), None)
+                if spot is None:
+                    st["tried"].append([wx, wy])  # water or rock all around: not a place to walk to
+                    continue
+                d = math.hypot(spot[0] - cx, spot[1] - cy)
+                if best is None or d < best[0]:
+                    best = (d, [wx, wy], spot)
+        if best is not None:
+            break
+        st["tried"] = []  # everything has been tried: sweep again (the memory of buildings only changes when a place is looked at again)
+    if best is None:
+        return False
+    st["tried"].append(best[1])
+    st["ids"] = [u["id"] for u in units]
+    order_move(world, st["ids"], best[2][0], best[2][1], attack_move=True)
+    world.events.append({"kind": "ai_recon", "faction": name, "to": list(best[2]), "units": len(units)})
+    return True
 
 
 def _posts(world: Any, name: str, cc: dict) -> list[tuple[int, int]]:
@@ -940,6 +972,8 @@ def military_step(world: Any, name: str) -> None:
             world.events.append({"kind": "ai_attack", "faction": name, "target": target["id"], "units": len(idle), "target_kind": target["kind"], "of": target["faction_name"],
                                  "distance": round(math.hypot(target["tx"] - idle[0]["tx"], target["ty"] - idle[0]["ty"]))})
             _send(world, idle, target)
+            return
+        if target is None and recon_step(world, name, idle):
             return
     _station(world, name, idle)
 

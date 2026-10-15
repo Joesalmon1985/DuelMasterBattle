@@ -1,0 +1,73 @@
+{
+ "note": "Authored characters and the tendencies behind generated personas. Placeholder prose; owner review pending.",
+ "traits": [
+  "warm",
+  "gruff",
+  "anxious",
+  "proud",
+  "curious",
+  "pious",
+  "wry",
+  "stoic",
+  "blunt",
+  "gentle"
+ ],
+ "tendencies": {
+  "lumberjack": {
+   "G": 2,
+   "M": 1
+  },
+  "ranger": {
+   "D": 3,
+   "R": 1
+  },
+  "stonemason": {
+   "G": 1,
+   "M": 1,
+   "R": 1
+  },
+  "hunter": {
+   "D": 2,
+   "A": 1
+  },
+  "carrier": {
+   "G": 1,
+   "A": 1
+  },
+  "soldier": {
+   "M": 2,
+   "R": 1
+  },
+  "worker": {}
+ },
+ "characters": {
+  "mentor": {
+   "role": "mentor",
+   "tribe_from": "settlement",
+   "persona": {
+    "primary": "D",
+    "secondary": "M",
+    "traits": [
+     "stoic",
+     "wry"
+    ],
+    "magic": "reverent",
+    "mentor": "respectful"
+   }
+  },
+  "attacker": {
+   "role": "stranger",
+   "tribe": "atlanteans",
+   "persona": {
+    "primary": "S",
+    "secondary": "C",
+    "traits": [
+     "proud",
+     "blunt"
+    ],
+    "magic": "devoted",
+    "mentor": "wary"
+   }
+  }
+ }
+}

@@ -108,4 +108,4 @@ def test_untreated_outbreaks_end_the_world_in_every_era_and_the_record_says_ever
     _run(w, 5)
     assert w.dmb.clock["game_ms"] == ms  # time stopped
     assert regions.state(w).outbreaks >= 6
-    assert w.stats.get("disruptions", 0) >= 0
+    assert isinstance(w.stats.get("disruptions", 0), int)

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Ubuntu launcher for the directly inspectable scenarios (owner run of 11 Oct 2026, section G).
 #   scripts/launch_scenario.sh campaign        primitive campaign start, no God Mode (the shipped profile); play as the wizard
+#   scripts/launch_scenario.sh campaign --load <slot>   resume a save (slots: manual, quit, auto; saved under $DMB_RUNS/saves/campaign, default ~/dmb_runs).
+#                                              Escape in the game: Continue, Save game, Load game, Save and quit. Autosave about every 5 real minutes.
 #   scripts/launch_scenario.sh drafting        developer profile, God Mode panel open, a draft offer every 60 game seconds
 #   scripts/launch_scenario.sh industry        Modern fixture: drills on existing deposits -> belts -> powered smelter -> factory -> dagger
 #   scripts/launch_scenario.sh story           a dry mine, its miner, the gallery below it, four puzzles, the warden's duel, a changed deposit
@@ -15,12 +17,14 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 case "${1:-}" in
-  campaign) export HYBRID_PROFILE=campaign; exec "$HERE/launch_hybrid.sh" wizard ;;
+  campaign) export HYBRID_PROFILE=campaign
+            if [ "${2:-}" = "--load" ]; then export HYBRID_LOAD_SLOT="${3:?usage: launch_scenario.sh campaign --load <slot>}"; fi
+            exec "$HERE/launch_hybrid.sh" wizard ;;
   drafting) export HYBRID_PROFILE=developer HYBRID_DRAFT_MS="${HYBRID_DRAFT_MS:-60000}"; exec "$HERE/launch_hybrid.sh" god ;;
   industry) export HYBRID_PROFILE=developer HYBRID_FIXTURE=modern_industry HYBRID_ALLOW_SPAWN=1; exec "$HERE/launch_hybrid.sh" god ;;
   story) export HYBRID_PROFILE=developer HYBRID_FIXTURE=story; exec "$HERE/launch_hybrid.sh" wizard ;;
   outbreak) export HYBRID_PROFILE=developer HYBRID_FIXTURE=outbreak; exec "$HERE/launch_hybrid.sh" wizard ;;
   autoplay) export HYBRID_PROFILE=developer HYBRID_START_SPEED="${HYBRID_START_SPEED:-16}" HYBRID_AI_POLICY="${HYBRID_AI_POLICY:-mixed}" HYBRID_SEED="${HYBRID_SEED:-507}"; exec "$HERE/launch_hybrid.sh" god ;;
   eras) export HYBRID_PROFILE=developer HYBRID_ERA_MS="${HYBRID_ERA_MS:-120000}" HYBRID_ERA_VP="${HYBRID_ERA_VP:-3}" HYBRID_DRAFT_MS="${HYBRID_DRAFT_MS:-30000}"; exec "$HERE/launch_hybrid.sh" god ;;
-  *) sed -n 2,15p "$0"; exit 1 ;;
+  *) sed -n 2,17p "$0"; exit 1 ;;
 esac

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from wizard_rts import flow
 from wizard_rts.industry import engine as E
 from wizard_rts.industry import hybrid as H
 from wizard_rts.industry import extraction as X
@@ -250,6 +251,8 @@ def belt_accepts(st: Industry, tile: tuple[int, int], from_tile: tuple[int, int]
     dx, dy = DIRS[b["d"]]
     if (tile[0] + dx, tile[1] + dy) == from_tile:
         return False  # the source is where this belt delivers to
+    if b.get("armored") and from_tile not in st.belts and (tile[0] - dx, tile[1] - dy) != from_tile:
+        return False  # ArmoredConveyor.acceptItem: from a non-conveyor only straight from behind, never from the side
     items = b["items"]
     return len(items) < b.get("cap", BELT_CAP) and (not items or items[-1][1] >= b.get("space", ITEM_SPACE))
 
@@ -404,7 +407,7 @@ def _activate_line(world: Any, st: Industry, b: dict) -> None:
         elif role == "payload_belt":
             st.pbelts[key] = {"d": int(d), "load": None, "prog": 0, "line": b["id"], "faction": b["faction"], "faction_name": b["faction_name"]}
         else:
-            st.belts[key] = {"d": int(d), "items": [], "line": b["id"], "blocked": False, **belt_params(b["kind"])}
+            st.belts[key] = {"d": int(d), "items": [], "line": b["id"], "blocked": False, "armored": R.block(b["kind"])["class"] in ("ArmoredConveyor", "ArmoredDuct"), **belt_params(b["kind"])}
     b["line_live"] = True
     for t in b["line"]["tiles"]:
         world.reserved_tiles.discard((int(t[0]), int(t[1])))
@@ -609,6 +612,7 @@ def _drill_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisfac
                 m["progress"] -= int(delay)
                 m["out"][ware] = m["out"].get(ware, 0) + 1
                 world.stats["made_" + ware] = world.stats.get("made_" + ware, 0) + 1
+                flow.note(world, b, "made", ware, 1)
                 world.stats["drilled_" + ware] = world.stats.get("drilled_" + ware, 0) + 1
             else:
                 m["state"] = "deposit used up"
@@ -685,12 +689,14 @@ def _crafter_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
                 for w, n in spec["consume_items"].items():
                     m["buf"][w] -= n
                     world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
+                    flow.note(world, b, "consumed", w, n)
                 outs = dict(spec["output_item"])
                 if spec.get("results"):  # Separator.craft: one weighted draw per cycle
                     outs = {E.separator_pick(world, b, m, spec): 1}
                 for w, n in outs.items():
                     m["out"][w] = m["out"].get(w, 0) + n
                     world.stats["made_" + w] = world.stats.get("made_" + w, 0) + n
+                    flow.note(world, b, "made", w, n)
     else:
         m["state"] = "output blocked" if sum(m["out"].values()) >= BUFFER else "waiting for inputs"
     _flush(world, st, b, m)
@@ -726,6 +732,7 @@ def _factory_step(world: Any, st: Industry, b: dict, spec: dict, m: dict, satisf
         for w, n in plan["requirements"].items():
             m["buf"][w] -= n
             world.stats["consumed_" + w] = world.stats.get("consumed_" + w, 0) + n
+            flow.note(world, b, "consumed", w, n)
 
 
 def _exit_tile(world: Any, b: dict) -> tuple[int, int] | None:

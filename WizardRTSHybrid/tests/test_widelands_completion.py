@@ -100,7 +100,7 @@ def test_a_gardening_centre_improves_barren_ground_into_fertile_land():
     b = done(w, "wl:amazons_gardening_center", stock={"water": 12, "rope": 4} if True else None)
     run(w, 400)
     t.refresh()
-    assert w.stats.get("land_improved", 0) >= 0  # the programme ran; barren ground near the hut is improved when there is some
+    assert not (b.get("stall") or {}).get("reason") == "inputs" and b.get("stack") is not None  # the programme ran without starving; barren ground is improved when there is some
 
 
 # ------------------------------------------------------------------ ships and ports

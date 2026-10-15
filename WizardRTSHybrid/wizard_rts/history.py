@@ -26,6 +26,10 @@ SPLIT_COOLDOWN_MS = 40 * 60_000  # a faction splits at most once in this long (2
 SPLIT_SUSTAIN_MS = 10 * 60_000  # the unrest must have stood at SPLIT_UNREST or above this long (society.society_quantum keeps restless_since_ms)
 SUCCESSOR_GRACE_MS = 30 * 60_000  # a new successor holds together this long before it can split again
 CHECK_EVERY = 10
+MIN_FACTIONS = 6  # owner 13 Oct: the world keeps at least six active factions so the whole technology can be drafted across it
+MAX_FACTIONS = 8  # a voluntary (unrest) split is not allowed above this many
+FLOOR_DELAY_MS = 5 * 60_000  # the world must stay below the floor this long (a conquest or a quick recapture is not a collapse)
+FLOOR_DISTANCE = 24  # below the floor a split needs only two settlements this far apart, joined or not, restless or not
 
 
 def state(world: Any) -> dict[str, Any]:
@@ -77,9 +81,24 @@ def _connected(world: Any, a: str, b: str) -> bool:
     return b in seen
 
 
+def active_count(world: Any) -> int:
+    return sum(1 for n in world.faction_info if state(world)["faction"].get(n, {}).get("state") != "collapsed")
+
+
 def split_candidates(world: Any, faction: str) -> tuple[dict, dict] | None:
     st = settlements.standing(world, faction)
-    if len(st) < SPLIT_MIN_SETTLEMENTS:
+    n_active = active_count(world)
+    founders = sum(1 for i in world.faction_info.values() if not i.get("parent"))
+    hist = state(world)
+    if n_active >= min(MIN_FACTIONS, founders):
+        hist.pop("below_since_ms", None)
+    elif len(st) >= 2:  # a small test world is not pushed up to six
+        now_ms = int(world.dmb.clock.get("game_ms", 0))
+        since = hist.setdefault("below_since_ms", now_ms)
+        if now_ms - since < FLOOR_DELAY_MS:
+            return None
+        return _floor_candidates(world, faction, st)  # below the floor the largest faction gives up a settlement to a new one
+    if n_active >= MAX_FACTIONS or len(st) < SPLIT_MIN_SETTLEMENTS:
         return None
     now = int(world.dmb.clock.get("game_ms", 0))
     fs = state(world)["faction"].get(faction, {})
@@ -94,6 +113,26 @@ def split_candidates(world: Any, faction: str) -> tuple[dict, dict] | None:
     if not (restless(world, a) or restless(world, b)):
         return None
     return a, b
+
+
+def _floor_candidates(world: Any, faction: str, st: list[dict]) -> tuple[dict, dict] | None:
+    """Only the faction with the most settlements (ties by name) splits, so one faction per check refills the ring."""
+    now = int(world.dmb.clock.get("game_ms", 0))
+    fs = state(world)["faction"].get(faction, {})
+    if now - int(fs.get("born_ms", -10**9)) < SUCCESSOR_GRACE_MS:
+        return None
+    def count(n: str) -> int:
+        return len(settlements.standing(world, n))
+    live = [n for n in world.faction_info if state(world)["faction"].get(n, {}).get("state") != "collapsed"]
+    if faction != max(live, key=lambda n: (count(n), n)):
+        return None
+    size = {r["id"]: sum(1 for b in world.buildings.values() if b.get("settlement_id") == r["id"] or settlements.of(world, b) == r["id"]) for r in st}
+    ranked = sorted(st, key=lambda r: (-size[r["id"]], r["id"]))
+    a = ranked[0]
+    for b in ranked[1:]:
+        if max(abs(a["tile"][0] - b["tile"][0]), abs(a["tile"][1] - b["tile"][1])) > FLOOR_DISTANCE:
+            return a, b
+    return None
 
 
 def restless(world: Any, rec: dict) -> bool:
@@ -144,6 +183,11 @@ def split(world: Any, faction: str, breakaway: dict) -> str:
     if draft.enabled(world):
         draft.on_split(world, faction, base)
     _note(world, faction, "split", successor=base, settlement=breakaway["id"], buildings=moved_b, units=moved_u, pressures=why)
+    if world.ai_factions is not None:  # HybridEnv games (N07): the built-in AI plays only the seats it was given, so a successor must be assigned
+        if faction in world.ai_factions:
+            world.ai_factions.add(base)  # a successor of a heuristic seat is played by the built-in AI
+        else:
+            world.__dict__.setdefault("agent_successors", {}).setdefault(faction, []).append(base)  # a successor of an agent seat is an extra seat of that agent
     return base
 
 
@@ -276,6 +320,8 @@ def cycle_reset(world: Any) -> Any:
         "peaks": {n: dict(f["peak"]) for n, f in st["faction"].items()}, "vp": vp.totals(world), "homeland_deal": perm, "outcome": outcome(world)}]
     # the wizard keeps his character: pose and Aspect scores. Nothing else crosses over.
     fresh.player = {"tx": fresh.player["tx"], "ty": fresh.player["ty"], "facing": world.player.get("facing", "down")}
+    if getattr(world, "players", None):  # LAN multiplayer: every wizard keeps his record (the host rebinds the aliases, net/session.py)
+        fresh.players = {pid: dict(p) for pid, p in world.players.items()}
     from sim.dmb.narrative.aspects import AspectService
 
     scores = dict(AspectService(world.dmb)._store().get("scores", {}).get("player", {}))

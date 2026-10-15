@@ -127,7 +127,7 @@ def test_every_new_unit_is_built_from_delivered_wares_at_its_producer(actor):
     for pre in OC.UNIT_PREREQ_OVERRIDE.get(actor, []):
         building(w, pre)
     b = next((x for x in w.buildings.values() if x["faction_name"] == "Red" and x["kind"] == producer and x.get("operational")), None) or building(w, producer)
-    rec = con.RECIPES[producer][kind]
+    rec = con.recipe_for(w, b, kind)  # the recipe with its tribe's class ware (decision C)
     for g, n in rec["cost"].items():
         produce(w, b["id"], g, n)
     r = con.queue_unit(w, b["id"], kind)
@@ -292,7 +292,6 @@ def test_a_spy_copies_a_card_from_a_tech_building_and_a_thief_carries_wares_home
     assert w.ability("Red", "infiltrate", unit=thief["id"], building=cc["id"])["status"] == "ok"
     run(w, 120)
     assert w.stocks[cc["id"]].get("gold", 0) < before
-    assert w.stats.get("wares_stolen", 0) == 0 or True
     assert w.events and any(e["kind"] in ("stolen", "loot_delivered") for e in w.events)
 
 
@@ -302,6 +301,8 @@ def test_minelayer_mines_hurt_enemy_vehicles_and_a_demo_truck_goes_off():
     ml = own(w, "openra.mnly", spot)
     assert ml["ammo"] == 5
     assert w.ability("Red", "lay_mine", unit=ml["id"])["status"] == "ok" and ml["ammo"] == 4
+    laid = [b for b in w.buildings.values() if b.get("kind") == "landmine"]
+    assert laid and not any(b.get("kind") == "mine" and b.get("definition") == "dmb.mine" for b in w.buildings.values())  # not the coal mine's kind
     foe = enemy(w, "openra.3tnk", (spot[0] + 1, spot[1]), hp=10**8)
     foe["tx"], foe["ty"] = spot
     hp0 = foe["hp"]
@@ -392,3 +393,100 @@ def test_chronosphere_moves_units_and_returns_them():
     assert abs(u["tx"] - dest[0]) <= 3
     run(w, 25)
     assert abs(u["tx"] - a[0]) <= 3
+
+
+@pytest.mark.parametrize("actor", ["pbox", "hbox"])
+def test_a_pillbox_shoots_an_enemy_soldier_in_range(actor):
+    w = world()
+    pb = building(w, actor)
+    foe = enemy(w, "openra.e1", (pb["tx"] + 3, pb["ty"]), hp=10**6)
+    hp0 = foe["hp"]
+    run(w, 6)
+    assert foe["hp"] < hp0
+
+
+def test_an_aircraft_with_no_ammunition_and_no_pad_stops_attacking():
+    w = world()
+    unlock(w, "Red")
+    spot = free_spot(w)
+    plane = own(w, "openra.mig", spot)
+    foe = enemy(w, "openra.3tnk", (spot[0] + 3, spot[1]), hp=10**8)
+    run(w, 10)
+    assert plane["status"] == "attacking"
+    plane["ammo"] = 0
+    run(w, 10)
+    assert plane["status"] != "attacking" and plane.get("target") is None
+    hp = foe["hp"]
+    run(w, 10)
+    assert foe["hp"] == hp  # it does not damage anything with an empty pool
+
+
+def _unit_near(w, definition, faction, b):
+    from wizard_rts import construction as _c  # noqa: F401
+
+    for u in w.units.values():
+        if u["faction_name"] == faction:
+            u2 = u
+            break
+    u2["definition"] = definition
+    u2["tx"], u2["ty"] = b["tx"], b["ty"] + 1
+    u2["hp"] = u2.get("max_hp", u2["hp"])
+    return u2
+
+
+def test_an_engineer_repairs_a_damaged_friendly_building_and_survives():
+    w = world("test_showcase")
+    b = building(w, "barracks", "Red")
+    b["hp"] = b["max_hp"] // 2
+    u = _unit_near(w, "openra.e6", "Red", b)
+    assert w.ability("Red", "repair", unit=u["id"], building=b["id"])["status"] == "ok"
+    before = b["hp"]
+    run(w, 6)
+    assert b["hp"] > before and u.get("alive", True)
+    assert w.ability("Red", "repair", unit=u["id"], building=home(w, "Red")["id"])["reason"] == "undamaged"
+
+
+def test_tanya_plants_c4_on_an_enemy_building_and_it_goes_off():
+    w = world("test_showcase")
+    b = building(w, "barracks", "Blue")
+    u = _unit_near(w, "openra.e7", "Red", b)
+    assert w.ability("Red", "c4", unit=u["id"], building=b["id"])["status"] == "ok"
+    run(w, 6)
+    assert int(b["hp"]) <= 0 or b["id"] not in w.buildings or b.get("destroyed")
+    assert u.get("alive", True)
+    assert w.ability("Red", "c4", unit=u["id"], building=building(w, "barracks", "Red")["id"])["reason"] == "cannot_plant"
+
+
+def test_artillery_ordered_onto_a_target_inside_its_minimum_range_backs_off_then_fires():
+    from wizard_rts import military
+
+    w = world("test_showcase")
+    b = building(w, "barracks", "Blue")
+    u = _unit_near(w, "openra.arty", "Red", b)
+    u["weapons"], u["weapon"] = ["155mm"], "155mm"
+    u["cds"] = {"155mm": 0}
+    u["tx"], u["ty"] = b["tx"], b["ty"] + 2
+    assert military.order_attack(w, u["id"], b["id"])["status"] == "ok"
+    start = b["hp"]
+    d0 = ((u["tx"] - b["tx"]) ** 2 + (u["ty"] - b["ty"]) ** 2) ** 0.5
+    run(w, 25)
+    d1 = ((u["tx"] - b["tx"]) ** 2 + (u["ty"] - b["ty"]) ** 2) ** 0.5
+    assert d0 < 4.0 <= d1 + 0.01
+    assert b["hp"] < start
+
+
+def test_a_tracked_vehicle_crushes_hostile_infantry_on_its_tile_but_not_friends():
+    w = world("test_showcase")
+    h = home(w, "Red")
+    tank = next(u for u in w.units.values() if u["faction_name"] == "Red")
+    tank["definition"], tank["loco"] = "openra.3tnk", "tracked"
+    tank["tx"], tank["ty"] = h["tx"] + 6, h["ty"] + 6
+    foes = [u for u in w.units.values() if u["faction_name"] == "Blue"][:1]
+    mates = [u for u in w.units.values() if u["faction_name"] == "Red" and u is not tank][:1]
+    for u, lab in ((foes[0], "foe"), (mates[0], "mate")):
+        u["definition"], u["loco"] = "openra.e1", "foot"
+        u["tx"], u["ty"] = tank["tx"], tank["ty"]
+    w.diplomacy_state = getattr(w, "diplomacy_state", None)
+    run(w, 1)
+    assert not foes[0].get("alive", True) or foes[0]["hp"] <= 0
+    assert mates[0].get("alive", True) and mates[0]["hp"] > 0

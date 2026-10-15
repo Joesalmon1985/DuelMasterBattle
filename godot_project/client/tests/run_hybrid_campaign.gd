@@ -63,6 +63,8 @@ func _run() -> void:
 	root.add_child(_world)
 	DisplayServer.window_set_size(Vector2i(1280, 720))
 	await _frames(40)
+	await _frames(20)
+	_world.story_ui.finish_opening()  # the arrival text (campaign only) belongs to run_hybrid_tutorial.gd
 	var god: Node = _world.god
 	var prof: Dictionary = _world._sim.op({"op": "profile"})
 	_check(str(prof.get("profile", "")) == expect, "sim profile is %s (got %s)" % [expect, str(prof.get("profile", ""))])

@@ -1,5 +1,8 @@
 # Current status, feature inventory and design gaps
 
+> **Superseded in part (13 Oct 2026).** Branch `work/mechanics-completion-v4` changed the card system (168 cards, four eras of 42, 1-4 entities each), the faction floor of six, ware classes, visibility and the command tier. Where this file disagrees, `docs/ledger/V4_HANDOVER.md` and `docs/DECISION_REGISTER.md` section 5 (D26-D32) win. S05, S06, S13 and S14 below are stale.
+
+
 > **Update 13 Oct 2026 (autonomous v2 run, branch `work/ubuntu-autonomous-v2`).** Since this inventory: no-card civilisation, era-start ring drafting with 137 generated cards, paper/scriptorium, clinics, relations/diplomacy, a content graph and God Mode inspector, a C A* kernel (about 1.6x faster at minute 30, hash-equal), MIX decryption and 29 more units of real art, building state sheets, a sprite-facing fix and independent turret layers are in. What works, what is partial and what is still absent is listed with evidence in `docs/V2_RUN_REPORT.md` and `docs/evidence/content_status.md`. This file below is otherwise unchanged.
 
 Inspected 11 October 2026 on branch `feature/hybrid-playtest-fixes-v03`, HEAD `55d7762`. Source of truth for *what exists*: the code and tests. This file summarises them and distinguishes five levels:

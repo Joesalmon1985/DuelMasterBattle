@@ -119,6 +119,7 @@ func _run() -> void:
 	await _frames(40)
 	_ui = _world.story_ui
 	_world.wizard_labels.enabled = false
+	_world.hud.modulate.a = 0.0  # the HUD would cover part of the picture this test samples
 	_sim_advance(12)  # the healer's quest opens from the cubes within a second or two
 	await _frames(6)
 	var reg: Dictionary = _world._snapshot.get("regions", {})
@@ -156,10 +157,18 @@ func _run() -> void:
 	_world._camera.zoom = Vector2(0.9, 0.9)
 	_world.camera_focus = (Vector2(float(healer["tx"]), float(healer["ty"])) + Vector2(0.5, 0.5)) * float(_world.TPX)
 	await _frames(8)
+	_world.wizard_labels.enabled = true
 	await _click_at(_screen_of(healer))
-	_check(_ui.dialog.visible and str(_ui.dialog_text.text).contains("marks"), "clicking the healer opens a dialogue that counts the marks")
+	await _frames(10)
+	var talk_btn: Button = _world.wizard_labels.panel.choice_button("talk")
+	_check(_world.wizard_labels.panel.visible and talk_btn != null, "clicking the healer opens her card with Talk")
+	if talk_btn != null:
+		await _click_at(talk_btn.get_global_rect().get_center())
+		await _frames(8)
+	_world.wizard_labels.enabled = false
+	_check(_ui.dialog.visible and str(_ui.dialog_text.text).contains("marks"), "Talk opens a dialogue that counts the marks")
 	await _shot("02_healer_dialogue")
-	var accept: Button = _ui.choices_box.get_node_or_null("Choice_accept_treat")
+	var accept: Button = _ui.dialog_card.choice_button("accept_treat")
 	_check(accept != null, "the dialogue offers to treat the region")
 	if accept != null:
 		await _click_at(accept.get_global_rect().get_center())

@@ -9,6 +9,11 @@ wizard_rts/data/mindustry_overrides.json and are merged by wizard_rts/industry/r
 Usage: python3 scripts/import_mindustry_defs.py [--check]   (--check fails if the JSON is out of date)
 """
 from __future__ import annotations
+import sys as _sys  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D33)
+freeze_guard.require_unfreeze(__file__)
 
 import json
 import re

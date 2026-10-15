@@ -12,6 +12,11 @@ Output (original numbers; ticks are 1/60 s; the hybrid adaptation stays in mindu
 Usage: python3 scripts/import_mindustry_full.py [--check]
 """
 from __future__ import annotations
+import sys as _sys  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+from wizard_rts import freeze_guard  # noqa: E402  (content is frozen: D33)
+freeze_guard.require_unfreeze(__file__)
 
 import json
 import re

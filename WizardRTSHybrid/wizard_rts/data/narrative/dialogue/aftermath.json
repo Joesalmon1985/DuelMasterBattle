@@ -1,0 +1,748 @@
+{
+ "note": "Placeholder authored text (owner review pending). What people say after the stranger: first reactions by trade, knowledge and persona; topics that use Aspect checks and worldview responses.",
+ "reactions": [
+  {
+   "id": "soldier_w",
+   "when": {
+    "role": [
+     "soldier"
+    ],
+    "knows": [
+     "witnessed"
+    ]
+   },
+   "lines": [
+    "You. You are alive.",
+    "Six years on the watch and I have never seen anybody put down like that. {mentor}'s Ward went like a pane of glass, and then you did the same to him. Sit down before you fall down."
+   ]
+  },
+  {
+   "id": "soldier_r",
+   "when": {
+    "role": [
+     "soldier"
+    ],
+    "knows": [
+     "rumour"
+    ]
+   },
+   "lines": [
+    "The watch heard it before we saw it: a noise like the sky tearing. A wizard in black in the square, and {mentor} dead.",
+    "They say you beat him. A child with a borrowed staff. I want to believe it, and I would also like to stop shaking."
+   ]
+  },
+  {
+   "id": "ranger_w_fond",
+   "when": {
+    "role": [
+     "ranger"
+    ],
+    "knows": [
+     "witnessed"
+    ],
+    "persona": {
+     "mentor": [
+      "fond"
+     ]
+    }
+   },
+   "lines": [
+    "{mentor} walked the nursery rows at dusk and talked to the saplings as if they might answer.",
+    "I will plant something where they fell. Not a tree; a tree is for living things. Something small and stubborn."
+   ]
+  },
+  {
+   "id": "ranger_any",
+   "when": {
+    "role": [
+     "ranger"
+    ]
+   },
+   "lines": [
+    "The young trees do not know yet. I do. {mentor} is dead, and the forest goes on without them, and I do not know which of those is crueller.",
+    {
+     "text": "They never cared for the forest, but they never harmed it either. That is more than I can say for most.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "wary"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "lumberjack_w",
+   "when": {
+    "role": [
+     "lumberjack"
+    ],
+    "knows": [
+     "witnessed"
+    ]
+   },
+   "lines": [
+    "I have felled my share of oak and I know what falls and stays down. {mentor} stays down. If one of them can do that in a square full of people, what stops the next from doing it to the mill, the woods, the lot?"
+   ]
+  },
+  {
+   "id": "lumberjack_r",
+   "when": {
+    "role": [
+     "lumberjack"
+    ],
+    "knows": [
+     "rumour"
+    ]
+   },
+   "lines": [
+    "They say a wizard walked in with the light behind him and killed {mentor} like swatting a fly. I keep my axe sharper than I used to. For what good it would do."
+   ]
+  },
+  {
+   "id": "carrier_any",
+   "when": {
+    "role": [
+     "carrier"
+    ]
+   },
+   "lines": [
+    "I carry what I am given and walk where I am sent, and today I did not make my round, because nobody could.",
+    "You should not stay. A man like that has friends, or will make them, and the next one will not be so easy. There are roads out of here."
+   ]
+  },
+  {
+   "id": "hunter_any",
+   "when": {
+    "role": [
+     "hunter"
+    ]
+   },
+   "lines": [
+    "I track what hides. That one did not hide at all; he walked in as if the village owed him the road. Be careful, apprentice. The ones who do not hide are the ones with nothing left to fear."
+   ]
+  },
+  {
+   "id": "stone_any",
+   "when": {
+    "role": [
+     "stonemason"
+    ]
+   },
+   "lines": [
+    "My grandfather cut a stone for the first wizard who lived here. He used to say the old ones did not shout. They simply asked, and the world agreed. That stranger did not ask.",
+    "There was a tradition once, before the schools. I would not know where to look for it."
+   ]
+  },
+  {
+   "id": "w_fond",
+   "when": {
+    "knows": [
+     "witnessed"
+    ],
+    "persona": {
+     "mentor": [
+      "fond"
+     ]
+    }
+   },
+   "lines": [
+    "I was there. {mentor} did right by me more than once and I never said so. Now it is too late."
+   ]
+  },
+  {
+   "id": "w_wary",
+   "when": {
+    "knows": [
+     "witnessed"
+    ],
+    "persona": {
+     "mentor": [
+      "wary"
+     ]
+    }
+   },
+   "lines": [
+    "I was there. I did not always agree with {mentor}, and I would not wish that on anyone."
+   ]
+  },
+  {
+   "id": "w_any",
+   "when": {
+    "knows": [
+     "witnessed"
+    ]
+   },
+   "lines": [
+    "I saw it. I do not have words for it yet. Give me a moment."
+   ]
+  },
+  {
+   "id": "r_fond",
+   "when": {
+    "knows": [
+     "rumour"
+    ],
+    "persona": {
+     "mentor": [
+      "fond"
+     ]
+    }
+   },
+   "lines": [
+    "I heard it in the middle of my work. They say {mentor} is dead. I had to sit down."
+   ]
+  },
+  {
+   "id": "r_any",
+   "when": {
+    "knows": [
+     "rumour"
+    ]
+   },
+   "lines": [
+    "Everyone is talking about it. {mentor} dead, a stranger wizard, and you. I do not know what to think."
+   ]
+  }
+ ],
+ "topics": [
+  {
+   "id": "t_happened",
+   "text": "What happened here today?",
+   "priority": true,
+   "when": {
+    "stage": [
+     "aftermath",
+     "complete"
+    ]
+   },
+   "lines": [
+    {
+     "text": "It was {attacker}, he said. He called {mentor} by name, as if they had known each other a long time. He wanted something from them, and {mentor} refused.",
+     "when": {
+      "knows": [
+       "witnessed"
+      ]
+     }
+    },
+    {
+     "text": "I was not there. I heard a stranger came for {mentor}, and that you fought him and he fled. That is all anyone agrees on.",
+     "when": {
+      "knows": [
+       "rumour"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "t_meaning",
+   "text": "How are you taking it?",
+   "priority": true,
+   "when": {
+    "stage": [
+     "aftermath",
+     "complete"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Badly. They were more than a teacher to this village.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "fond"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Strangely. I did not love them, but I did not want this.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "wary"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Quietly. It is too large to feel yet.",
+     "when": {
+      "persona": {
+       "mentor": [
+        "respectful"
+       ]
+      }
+     }
+    },
+    {
+     "text": "And a wizard did it, and wizards are the thing I was afraid of.",
+     "when": {
+      "persona": {
+       "magic": [
+        "wary",
+        "cautious"
+       ]
+      }
+     }
+    },
+    {
+     "text": "And I'm watching you, because you have the same gift.",
+     "when": {
+      "persona": {
+       "magic": [
+        "wary"
+       ]
+      },
+      "relationship": {
+       "lte": 5
+      }
+     }
+    }
+   ],
+   "responses": [
+    {
+     "id": "s",
+     "worldview": "S",
+     "text": "He was stronger. Strength decides who gets to stand.",
+     "reply": {
+      "agree": [
+       "\"Yes. That is how I have seen it too, and it frightens me how easy it is to say.\""
+      ],
+      "neutral": [
+       "\"Maybe. I cannot say it comforts me.\""
+      ],
+      "disagree": [
+       "\"That is the stranger's creed, and I would not repeat it in this village.\""
+      ]
+     }
+    },
+    {
+     "id": "a",
+     "worldview": "A",
+     "text": "No one gets to decide who lives. Not him, not any wizard.",
+     "reply": {
+      "agree": [
+       "\"Aye. No masters. If more people said it out loud, he would have found the square empty.\""
+      ],
+      "neutral": [
+       "\"Nobody decided it, he just did. Easy to say it should not have been so.\""
+      ],
+      "disagree": [
+       "\"Fine words. Fine words do not stop a man with a Ward.\""
+      ]
+     }
+    },
+    {
+     "id": "r",
+     "worldview": "R",
+     "text": "A life was taken here. It needs a rite, and it needs answering.",
+     "reply": {
+      "agree": [
+       "\"A rite, yes. And justice. May the dead rest and the living remember.\""
+      ],
+      "neutral": [
+       "\"A rite, perhaps. I do not know who we would ask to say it.\""
+      ],
+      "disagree": [
+       "\"Rites for the dead do not fix anything for the living.\""
+      ]
+     }
+    },
+    {
+     "id": "d",
+     "worldview": "D",
+     "text": "Something has been torn out of this valley that it cannot mend alone.",
+     "reply": {
+      "agree": [
+       "\"I feel it too. The air is wrong. The land keeps count, even if we do not.\""
+      ],
+      "neutral": [
+       "\"The valley will go on. We will have to decide how.\""
+      ],
+      "disagree": [
+       "\"The valley! A man is dead and you talk of the valley.\""
+      ]
+     }
+    },
+    {
+     "id": "g",
+     "worldview": "G",
+     "text": "Half this village's work came through them. We need to keep the settlement standing.",
+     "reply": {
+      "agree": [
+       "\"Aye. Orders still have to be filled, and mouths still have to be fed. Somebody has to think of it.\""
+      ],
+      "neutral": [
+       "\"Maybe. It feels cold to think about work today.\""
+      ],
+      "disagree": [
+       "\"A friend is dead and you count the cost in orders?\""
+      ]
+     }
+    },
+    {
+     "id": "m",
+     "worldview": "M",
+     "text": "The village lost a guardian. It needs someone who will take responsibility.",
+     "reply": {
+      "agree": [
+       "\"A guardian. Yes. Someone has to answer for what happens here now.\""
+      ],
+      "neutral": [
+       "\"Perhaps. I would not know who.\""
+      ],
+      "disagree": [
+       "\"Nobody is anybody's guardian here. We look after ourselves.\""
+      ]
+     }
+    },
+    {
+     "id": "c",
+     "worldview": "C",
+     "text": "It is all so neat. A teacher falls and a pupil rises. As if it had been written.",
+     "when": {
+      "fact": [
+       "mentor_old_craft"
+      ]
+     },
+     "reply": {
+      "agree": [
+       "\"You feel it too? The edges are too clean. I have thought it since morning.\""
+      ],
+      "neutral": [
+       "\"Strange thing to say. Perhaps grief does that.\""
+      ],
+      "disagree": [
+       "\"Written! They are dead, apprentice. Nobody wrote it.\""
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "t_stranger",
+   "text": "Did anyone know him? Where did he come from?",
+   "when": {
+    "stage": [
+     "aftermath",
+     "complete"
+    ]
+   },
+   "check": {
+    "aspect": "curiosity",
+    "threshold": "demanding",
+    "evidence": [
+     {
+      "id": "witness",
+      "when": {
+       "knows": [
+        "witnessed"
+       ]
+      },
+      "mod": 1
+     },
+     {
+      "id": "glow",
+      "when": {
+       "fact": [
+        "mentor_old_craft"
+       ]
+      },
+      "mod": 1
+     }
+    ]
+   },
+   "pass": {
+    "lines": [
+     "He said a name when he arrived. Harrowmere. And something about \"the old craft\", as though {mentor} owed it to him. That is all I know, but I have not said it to anyone else."
+    ],
+    "effects": [
+     {
+      "kind": "fact",
+      "id": "stranger_harrowmere"
+     },
+     {
+      "kind": "journal_note",
+      "text": "A clue: the stranger spoke of Harrowmere and of 'the old craft' that {mentor} would not teach him."
+     }
+    ]
+   },
+   "fail": {
+    "lines": [
+     "I could not tell you. He is a stranger. I only know what he did."
+    ]
+   }
+  },
+  {
+   "id": "t_comfort",
+   "text": "I am sorry. I know what {mentor} meant to you.",
+   "when": {
+    "stage": [
+     "aftermath",
+     "complete"
+    ],
+    "persona": {
+     "mentor": [
+      "fond"
+     ]
+    }
+   },
+   "check": {
+    "aspect": "empathy",
+    "threshold": "easy"
+   },
+   "pass": {
+    "lines": [
+     "You mean that. Thank you. Sit a moment, would you? It helps, not being alone with it."
+    ],
+    "effects": [
+     {
+      "kind": "relationship",
+      "delta": 6,
+      "scope": "person"
+     }
+    ]
+   },
+   "fail": {
+    "lines": [
+     "Thank you. I would rather not talk."
+    ]
+   }
+  },
+  {
+   "id": "t_authority",
+   "text": "Report, soldier. What did you see of his magic?",
+   "when": {
+    "stage": [
+     "aftermath",
+     "complete"
+    ],
+    "role": [
+     "soldier"
+    ],
+    "knows": [
+     "witnessed"
+    ]
+   },
+   "check": {
+    "aspect": "authority",
+    "threshold": "easy",
+    "evidence": [
+     {
+      "id": "stood",
+      "when": {
+       "fact": [
+        "stood_firm"
+       ]
+      },
+      "mod": 1
+     }
+    ]
+   },
+   "pass": {
+    "lines": [
+     "Sir. Er. Yes. He cast with his left hand only, and he never looked at his own Ward. He was careless, or very sure of himself. Either way, he was never afraid of you."
+    ],
+    "effects": [
+     {
+      "kind": "fact",
+      "id": "stranger_careless"
+     }
+    ]
+   },
+   "fail": {
+    "lines": [
+     "I answer to the watch captain, not to apprentices. Ask me as a person and I may tell you."
+    ]
+   }
+  },
+  {
+   "id": "t_guile",
+   "text": "The mentor told me what he wanted. Confirm it for me, would you?",
+   "when": {
+    "stage": [
+     "aftermath",
+     "complete"
+    ],
+    "knows": [
+     "witnessed"
+    ]
+   },
+   "check": {
+    "aspect": "guile",
+    "threshold": "easy",
+    "evidence": [
+     {
+      "id": "clue",
+      "when": {
+       "fact": [
+        "stranger_harrowmere"
+       ]
+      },
+      "mod": 1
+     }
+    ]
+   },
+   "pass": {
+    "lines": [
+     "You already know? Then yes. The old craft. That is what he demanded, and {mentor} said no three times."
+    ],
+    "effects": [
+     {
+      "kind": "fact",
+      "id": "stranger_demand"
+     }
+    ]
+   },
+   "fail": {
+    "lines": [
+     "I do not know what you mean. And I do not like being tested. I thought we were friends."
+    ],
+    "effects": [
+     {
+      "kind": "relationship",
+      "delta": -2,
+      "scope": "person"
+     }
+    ]
+   }
+  },
+  {
+   "id": "t_boast",
+   "text": "Tell me exactly what you saw.",
+   "when": {
+    "stage": [
+     "aftermath",
+     "complete"
+    ],
+    "knows": [
+     "rumour"
+    ],
+    "persona": {
+     "trait": [
+      "proud",
+      "blunt"
+     ]
+    }
+   },
+   "lines": [
+    "I saw all of it, from the first spark. {mentor} went down on their knees before a word was said, and the stranger laughed."
+   ],
+   "check": {
+    "aspect": "reason",
+    "threshold": "easy"
+   },
+   "pass": {
+    "lines": [
+     "Wait. {mentor} spoke to him first; everyone near says so. So you were not... All right. I was at the quarry road, and I only heard. Please do not tell anyone."
+    ]
+   },
+   "fail": {
+    "lines": [
+     "As I said."
+    ]
+   }
+  },
+  {
+   "id": "t_leave",
+   "text": "I am not strong enough for what comes next. Where could I learn more?",
+   "priority": true,
+   "when": {
+    "stage": [
+     "aftermath",
+     "complete"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The groves are older than any village. The druids there kept things the schools lost.",
+     "when": {
+      "persona": {
+       "any": [
+        "D"
+       ]
+      }
+     }
+    },
+    {
+     "text": "The cloisters keep a library, and the monks do not refuse a sincere student.",
+     "when": {
+      "persona": {
+       "any": [
+        "R"
+       ]
+      }
+     }
+    },
+    {
+     "text": "The guild-schools in the river towns teach a craft for a fee. Not pretty, but honest.",
+     "when": {
+      "persona": {
+       "any": [
+        "G"
+       ]
+      }
+     }
+    },
+    {
+     "text": "A real master. Not someone who calls themselves one. Look for the old courts where the court mages served.",
+     "when": {
+      "persona": {
+       "any": [
+        "M"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Find whoever calls themselves a master and make them prove it. The strongest teach, the rest follow.",
+     "when": {
+      "persona": {
+       "any": [
+        "S"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Wherever the roads are not yet drawn. I do not trust a school with a gate.",
+     "when": {
+      "persona": {
+       "any": [
+        "A"
+       ]
+      }
+     }
+    },
+    {
+     "text": "There is a place the patterns keep returning to. I cannot say where. You will know it.",
+     "when": {
+      "persona": {
+       "any": [
+        "C"
+       ]
+      }
+     }
+    },
+    "I do not know where, only that it is not here. Whatever he knew, he learned somewhere, and the same somewhere may have taught others.",
+    {
+     "text": "You helped me when you did not have to. I'll ask around and tell you what I hear.",
+     "when": {
+      "relationship": {
+       "gte": 10
+      }
+     }
+    }
+   ],
+   "effects": [
+    {
+     "kind": "fact",
+     "id": "seek_power_heard"
+    }
+   ]
+  }
+ ]
+}
