@@ -852,3 +852,29 @@ func ui_mp_stats() -> Dictionary:
 	var secs := maxf(0.001, float(Time.get_ticks_msec() - _mp_started_ms) / 1000.0)
 	return {"polls": _mp_polls, "bytes_in": _sim.bytes_in - _mp_bytes_at_start, "bytes_per_s": float(_sim.bytes_in - _mp_bytes_at_start) / secs,
 		"round_trip_ms": _sim.last_round_trip_ms, "fps": Engine.get_frames_per_second(), "lost": _mp_lost, "last_outcome": _pvp_last_outcome}
+
+
+## The pause menu over the LAN: nothing to save here (the host owns the world); leaving tells the host and stops a local host.
+func _on_menu() -> void:
+	if not mp:
+		super._on_menu()
+		return
+	if _input_locked:
+		return
+	_input_locked = true
+	_touch.set_enabled(false)
+	var title := "LAN game — you are hosting" if LanSession.is_host else "LAN game — joined %s" % LanSession.host_address
+	var choice: String = await _dialogue.choose_async(title, ["Continue", "Leave game"])
+	if choice == "Leave game":
+		mp_leave()
+		return
+	_input_locked = false
+	_touch.set_enabled(true)
+
+
+func mp_leave() -> void:
+	if _sim != null and _sim.connected():
+		_sim.op({"op": "leave"}, 1000)
+	LanSession.stop_local_host()
+	LanSession.reset()
+	get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")

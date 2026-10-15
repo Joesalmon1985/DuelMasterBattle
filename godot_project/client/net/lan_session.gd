@@ -237,3 +237,8 @@ static func describe_error(reason: String) -> String:
 		"disconnected":
 			return "The connection to the host was lost."
 	return "Could not join: %s" % reason
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
+		stop_local_host()  # a desktop python host must not outlive the window; on Android the plugin's thread ends with the app

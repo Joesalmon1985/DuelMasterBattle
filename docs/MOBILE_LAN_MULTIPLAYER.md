@@ -9,7 +9,8 @@ world, walk around together and fight a real human-versus-human Ward duel, with 
 
 Status in one line: **the Python-authoritative LAN game is implemented and tested end to end on desktop (automated two-client
 harness, headed Godot acceptance with screenshots); the host-capable Android APK packaging is implemented (Chaquopy CPython inside
-the Godot app); physical two-phone verification is BLOCKED (no device or emulator on this machine).** Section 11 has the details.
+the Godot app) but no APK was produced in this run (the headless export was stopped for memory pressure on the build laptop before
+gradle ran); physical two-phone verification is BLOCKED (no device or emulator on this machine).** Section 11 has the details.
 
 ## 1. Architecture audit (M1) and risks
 
@@ -146,7 +147,11 @@ Requirements: Godot 4.5.1 editor and its Android export templates (`~/.local/sha
 SDK 35 with build-tools 35 and an NDK (the overlay points the template at the installed NDK), JDK 17 (`JAVA_HOME`), `python3.12` on
 the build machine (Chaquopy's `buildPython` must match the app's Python minor version), internet for the first gradle run. The
 editor settings used are `export/android/*` in `~/.config/godot/editor_settings-4.5.tres` (SDK, JDK, debug keystore).
-`godot_project/android/build` is generated and gitignored; the committed parts are the scripts and the overlay.
+`godot_project/android/build` is generated and gitignored; the committed parts are the scripts and the overlay. Two project
+settings were needed for a headless Android export and are now in `project.godot`: `rendering/textures/vram_compression/import_etc2_astc=true`
+(without it Godot 4.5 refuses the preset with an *empty* "configuration errors" message) and `application/config/icon`
+(the launcher icon). Godot 4.5 keeps the template's version id in `android/.build_version` (the parent of the build directory),
+which the setup script writes.
 
 One APK serves both roles: the Python runtime is started only when hosting (or for single player on a phone, as a private session
 bound to `127.0.0.1`). The export preset enables the gradle build, `INTERNET`, `ACCESS_WIFI_STATE` and `ACCESS_NETWORK_STATE`,
@@ -304,6 +309,12 @@ the `kvm` group), so steps 1–11 have not been executed on phones. See §11 for
 
 ## 11. Known bugs, limits and remaining work
 
+- **No APK was produced in this run.** `scripts/android/build_apk.sh debug` reaches Godot's export (template installed, overlay
+  applied, Python staged and self-tested, preset and project settings fixed: ETC2/ASTC import, icon, `android/.build_version`), but
+  the two export attempts after those fixes were stopped by the session harness for low system memory (the laptop had ~3 GB free
+  beside the owner's desktop applications; the gradle JVM asks for 4.5 GB). Nothing in the pipeline has yet run gradle, so the
+  Chaquopy/Kotlin steps are **unverified**. Rerun `WizardRTSHybrid/scripts/android/build_apk.sh debug` on a machine with ~8 GB
+  free and internet; the first run downloads Gradle 8.11.1, AGP 8.6.1, Chaquopy 17.1 and the Android CPython 3.12 runtime.
 - **Physical devices: not verified.** The APK path (template, overlay, staging, export) was exercised on this machine; the Chaquopy
   runtime was never started on a phone here. The first device run should tap WIZARD WORLD (a private hosted session on the phone) and
   check `LanSession.host_status()` reaches `ready`; `DmbPySim.selfTest()` returns the world's build time and hash as evidence.

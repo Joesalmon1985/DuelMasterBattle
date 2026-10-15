@@ -6,6 +6,7 @@ config/name="DuelMasterBattle"
 config/description="Duelling Mastermind — authoritative sim + client"
 run/main_scene="res://client/scenes/main_menu.tscn"
 config/features=PackedStringArray("4.4")
+config/icon="res://assets/pixel/portraits/john.png"
 
 [autoload]
 EncounterSession="*res://client/scripts/encounter_session.gd"
@@ -29,4 +30,5 @@ pointing/emulate_touch_from_mouse=true
 
 [rendering]
 renderer/rendering_method="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 textures/canvas_textures/default_texture_filter=0
