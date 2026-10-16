@@ -103,7 +103,9 @@ Limits: Wi-Fi networks with client isolation (guest networks, some campus networ
 
 ## 4. How hosting and joining work
 
-Main menu: **WIZARD WORLD (single player)**, **HOST LOCAL GAME**, **JOIN LOCAL GAME** (`client/scripts/main_menu.gd`).
+Main menu (0.2.0): **Play Single Player**, **Host Multiplayer**, **Join Multiplayer**, **Settings** (`client/scripts/main_menu.gd`); the old adventure,
+Quick Duel and the G01 testing entry are developer tools in `dev_menu.tscn`. Single player is the same Wizard World in a private session (one human
+seat and the AI companion, bound to 127.0.0.1); see `docs/ANDROID_PLAYTEST_CORRECTIONS.md`.
 
 Host: name, game name, a four-digit join code (random, editable), map size → **START HOSTING** builds the world on this device
 (a few seconds; the screen says so), connects this device's client to it with the host secret, and shows the **lobby** (players,
@@ -174,7 +176,7 @@ minSdk 24, targetSdk 35, arm64-v8a, version 0.1.0.
 ## 6. The protocol
 
 Newline-delimited JSON over TCP, one request → one reply, in order on one stream; UDP for discovery. Platform-neutral (no Godot
-types). `PROTOCOL_VERSION = 1`, `GAME_VERSION = "0.1.0"` (`wizard_rts/net/protocol.py`; the same constants in
+types). `PROTOCOL_VERSION = 2`, `GAME_VERSION = "0.2.0"` (0.1.0 and PROTOCOL 1 were the first phone build) (`wizard_rts/net/protocol.py`; the same constants in
 `client/net/lan_session.gd`). A client sends both in `hello`; a different protocol is refused outright, a different major.minor
 game version is refused (`version_mismatch`).
 
@@ -188,6 +190,8 @@ game version is refused (`version_mismatch`).
 | `pvp_challenge {target, format}`, `pvp_respond {duel_id, accept}`, `pvp_ward {ward}`, `pvp_cast {attack, cast_seq}`, `pvp_forfeit`, `pvp_leave`, `pvp_view` | players | §8 |
 | `terrain`, `tile`, `resources`, `profile`, `tech`, `cards`, `menu` | players | read-only world views (the existing server ops) |
 | `interact`, `resolve`, `fire`, `treat`, `talk`, `choose`, `enter`, `dungeon_move`, `dungeon_interact`, `duel_begin`, `duel_guess`, `duel_abandon`, `story_view` | players | the wizard's own actions, passed to the existing server op table *as that player* (`session.acting`), refused while in a PvP duel; replies carry no snapshot |
+| `duel_resolve`, `duel_checkpoint`, `end_talk`, `opening_done`, `journal`, `call_out`, `inspect_building`, `inspect_person`, `scene_next`, `scene_choose` | players | the narrative ops of Wizard World (the apprenticeship, lessons, the stranger, conversations), acting as that player's seat in the party (`narrative/party.py`) |
+| `save`, `new_game` | the host, only in a one-human private session | Wizard World save slots and a fresh campaign (`session._solo_op`); a shared world has neither |
 | anything else | – | `not_allowed_in_multiplayer` (faction commands, `advance`, `speed`, `ai`, `spawn`, `damage`, `inspect`, `fixture`, `snapshot`, `pose`, …) |
 
 The `state` reply: `{you, session_state, snapshot, duel, invite, outgoing, players_online, notices, pose, view_radius}`. The
@@ -244,12 +248,14 @@ owns everything (`net/pvp.py`):
    duelists (`in_duel`).
 3. **Ward setup** – each player sends `pvp_ward` once (validated: `slots` spells from the `pool`, repeats as the format says). The
    board shows "The rival is weaving a Ward…" until both are in; the rival's slots are `?`.
-4. **Active** – a round is one cast by each player, in any order. `pvp_cast {attack, cast_seq}` is scored at once against the
-   rival's hidden ward (the caster learns fracture/echo/fade); the round closes when both have cast; a player who has not cast 60 s
-   after the rival's cast gets a random legal weave cast for him (the board's auto-cast rule). The board shows "Has cast — your
-   turn" / "Choosing a cast…" and blocks the cast button with "rival's turn".
-5. **Result** – at the close of a round: a broken ward, or both out of casts → `compute_result`: victory, defeat, clash (both broke
-   in the same round), stalemate (both exhausted). Forfeit (`pvp_forfeit`, the board's "Give up") and a disconnect beyond the
+4. **Active** – real time, no rounds (0.2.0). Each player has their own history, cast counter (`cast_seq`) and allowance (`max_casts`). `pvp_cast {attack,
+   cast_seq}` is scored at once against the rival's hidden ward (the caster learns fracture/echo/fade) and the caster may cast again immediately: a player can make
+   three guesses while the rival makes none. A repeated `cast_seq` returns the original feedback (no extra guess); a skipped or old one is `bad_cast_seq`; past the
+   allowance it is `no_casts_left`. A player who has not cast for 60 s (from the start of the duel or their last cast) gets a random legal weave cast for them (the
+   board's auto-cast rule), which uses up one of their own casts. The board never says "waiting for the rival" (a player is only ever blocked by an empty allowance).
+5. **Result** – the first legal cast that breaks the rival's ward ends the duel on the host and wins it for its caster; every later cast is refused (`finished`),
+   so simultaneous winning casts have exactly one winner (arrival order at the host). If nobody breaks a ward, the duel ends when both have used their whole
+   allowance and `compute_result` decides (a draw when both are exhausted; the board's rule). Forfeit (`pvp_forfeit`, the board's "Give up") and a disconnect beyond the
    20 s grace end it the same way. The pause token is released the moment the duel ends, so the world never stays frozen behind a
    player who does not press Continue. Only then does the view carry `rival_ward`.
 6. **Return** – Continue → `pvp_leave` → the board closes, input unlocks, both wizards stand where they were in the same world.
@@ -296,9 +302,9 @@ Install `build/android/DuelMasterBattle-debug.apk` on two arm64 Android phones (
 
 1. Turn mobile data off on both phones (airplane mode, then Wi-Fi back on) to show nothing needs the internet.
 2. Connect both to the same Wi-Fi (a phone hotspot is fine and avoids client isolation).
-3. Phone A: **HOST LOCAL GAME** → name, game name, note the join code → **START HOSTING**. Wait for the lobby (the world is built on
+3. Phone A: **Host Multiplayer** → name, game name, note the join code → **START HOSTING**. Wait for the lobby (the world is built on
    the phone; expect roughly 10–20 s on a mid-range phone for `small`).
-4. Phone B: **JOIN LOCAL GAME** → name, the code → tap the game in "Games on this Wi-Fi" (or type Phone A's address shown in its
+4. Phone B: **Join Multiplayer** → name, the code → tap the game in "Games on this Wi-Fi" (or type Phone A's address shown in its
    lobby) → the lobby shows both names.
 5. Phone A: **START THE WORLD**. Both phones enter the world beside the Red settlement; each sees its own wizard centred and the
    other wizard with a name label. The top-right line reads `LAN host/joined · 2 online · N ms`.

@@ -111,3 +111,16 @@ Owner brief: two phones on one Wi-Fi, one living world, human-versus-human Ward 
   with `org.gradle.daemon=false` in the overlay. `apksigner verify`: v2 signature, CN=Android Debug. `inspect_apk.py` (new): arm64 only,
   libpython3.14, libgodot_android, `assets/chaquopy/app.imy`. `aapt dump badging`: `com.duelmasterbattle.game` 0.1.0, sdk 24/35,
   INTERNET, ACCESS_WIFI_STATE, ACCESS_NETWORK_STATE, VIBRATE. No phone attached (`adb devices` empty), so nothing ran on a device.
+
+## 16 Oct 2026: Android playtest corrections (0.2.0)
+
+Branch `fix/android-playtest-corrections` from `main` at `2ccb9469`. Four faults from the first physical two-phone playtest, one pass; the full account is
+`docs/ANDROID_PLAYTEST_CORRECTIONS.md`. Art: root cause was `Image.load`/`FileAccess` on `res://` source PNGs (absent from an export; the 0.1.0 APK held all 6,316
+`.ctex` textures), fixed with `client/scripts/asset_loader.gd`, lazy registration in `hybrid_art.gd`, `asset_audit.py` + `inspect_apk.py` gates and
+`verify_art_export.py` (an exported pack loads all 2,565 catalogue items). Menu: Wizard World only, old menu is `dev_menu.tscn`. The hosted world had no narrative layer; it
+does now, with save/continue for single player. Party and seats (`narrative/party.py`) make the campaign work for one or two humans; the AI fellow apprentice
+(`net/ai_wizard.py`) is a participant using `session.dispatch`. PvP duels are real-time with independent casts (`net/pvp.py`). Version 0.2.0 / code 2 / protocol 2, same package
+and signing certificate (SHA-256 6055f324...). Tests: `test_pvp_realtime`, `test_wizard_party`, `test_ai_wizard`, `test_android_assets`; Godot `run_menu_routes`,
+`run_single_player_flow`, `run_single_player_duel`, `run_art_export_probe`, headed `run_lan_two_clients`. Baseline failure found and left alone (it fails on `main` too):
+`tests/scenarios/test_catastrophe.py::test_treatment_and_saved_ledger` (legacy `sim/dmb` military formations). No phone attached: nothing ran on a device.
+

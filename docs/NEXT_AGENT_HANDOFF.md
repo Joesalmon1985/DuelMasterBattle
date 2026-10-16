@@ -1,5 +1,20 @@
 # Next agent handoff
 
+## 16 Oct 2026: Android playtest corrections, 0.2.0 (branch `fix/android-playtest-corrections`, from `main` at `2ccb9469`)
+
+The first physical two-phone playtest of 0.1.0 worked as a LAN game and showed four faults; all four are corrected, with tests, in 0.2.0. Full account:
+**`docs/ANDROID_PLAYTEST_CORRECTIONS.md`** (read it first). In one paragraph: (1) the imported art did not show because `hybrid_art.gd` and `art.gd` read source PNGs
+that a Godot export does not ship (it ships `.ctex` + a `.import` remap); every run-time image now goes through `client/scripts/asset_loader.gd`, there is an asset audit
+(`scripts/android/asset_audit.py`, run by `inspect_apk.py`) and an exported-pack probe (`verify_art_export.py`); (2) the player menu is Wizard World only (Play Single Player,
+Host Multiplayer, Join Multiplayer, Settings), the old menu is `dev_menu.tscn` behind `DMB_DEV_MENU=1`; (3) the hosted world is now the real Wizard World (it had no narrative layer),
+the campaign runs for one or two humans (`narrative/party.py`, seats, personal death, first victory repels the stranger for all) and a single-player game has an AI fellow
+apprentice (`net/ai_wizard.py`) who uses the same dispatch and duel interface as a human; (4) PvP Ward duels are real-time with independent casts (`net/pvp.py`, no rounds).
+GAME_VERSION 0.2.0, PROTOCOL 2, Android version code 2, same package and signing key. **No physical phone has run 0.2.0** (none attached): do the two-phone checklist
+(`docs/MOBILE_LAN_MULTIPLAYER.md` section 10 plus the additions in the corrections doc, section 7). Commands: `python -m pytest WizardRTSHybrid/tests -q` (the
+new tests: `test_pvp_realtime`, `test_wizard_party`, `test_ai_wizard`, `test_android_assets`), the Godot scripts `client/tests/run_menu_routes.gd`, `run_single_player_flow.gd`,
+`run_single_player_duel.gd`, `run_art_export_probe.gd`, and `Build Android APK.bat noinstall`. Windows pitfalls met again: Git Bash has no `pkill` (headed tests leak Python hosts: kill by
+command line in PowerShell), and `.gd.uid`/`.import` files are untracked on purpose.
+
 ## 15 Oct 2026 (later): two-phone MVP packaging (branch `feature/mobile-mvp-two-device`, cut from `main` at `1f8945f6`)
 
 The owner's next goal is the MVP on two Android phones: co-operative (walk, talk, quests, outbreaks, watch the world) or competitive
@@ -12,7 +27,7 @@ sections 5, 10, 11; work log entry in `WizardRTSHybrid/docs/WORK_LOG.md`.
 built**: `build/android/DuelMasterBattle-debug.apk` (152 MB, signed, arm64, CPython 3.14 inside; details and the two gradle pitfalls
 fixed in `docs/ANDROID_EXPORT.md`). **No phone has run the game** (none was attached). Next steps, in order: `Install APK On Phones.bat`
 with both phones on USB debugging (or copy the APK), then the manual checklist in `docs/MOBILE_LAN_MULTIPLAYER.md` section 10; the
-first thing to confirm on a phone is that WIZARD WORLD / HOST LOCAL GAME reaches the lobby (the packed Python starting). If the gradle/Chaquopy step fails, record the
+first thing to confirm on a phone is that Play Single Player / Host Multiplayer reaches the lobby (the packed Python starting). If the gradle/Chaquopy step fails, record the
 exact error in `WizardRTSHybrid/docs/BLOCKERS.md`; the fallback that needs no Chaquopy is `Build Android APK.bat client` plus
 `Host LAN Game.bat` on the PC. Open question for the owner: the apprentice campaign with two wizards over the LAN is untested
 (the story quantum runs as the host's wizard, section 11).

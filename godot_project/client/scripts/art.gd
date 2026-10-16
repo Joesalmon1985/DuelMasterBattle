@@ -1,6 +1,8 @@
 class_name DmbArt
 extends RefCounted
 
+const AssetLoader = preload("res://client/scripts/asset_loader.gd")
+
 static var _cache: Dictionary = {}
 static var _manifest_cache: Dictionary = {}
 
@@ -35,14 +37,10 @@ const COMPOSITE_ROOT := "generated/composite/"
 static func load_texture(relative_path: String) -> Texture2D:
 	if _cache.has(relative_path):
 		return _cache[relative_path]
-	var full: String = ProjectSettings.globalize_path("res://assets/" + relative_path)
-	if not FileAccess.file_exists(full):
+	# res:// directly, through the package-safe loader: an export has the imported .ctex, not the PNG on disk.
+	var tex := AssetLoader.load_texture("res://assets/" + relative_path)
+	if tex == null:
 		return null
-	var img := Image.new()
-	var err := img.load(full)
-	if err != OK:
-		return null
-	var tex := ImageTexture.create_from_image(img)
 	_cache[relative_path] = tex
 	return tex
 
@@ -113,7 +111,7 @@ static func load_wizard_manifest(archetype: String) -> Dictionary:
 	if _manifest_cache.has(archetype):
 		return _manifest_cache[archetype]
 	var path := composite_wizard_manifest_path(archetype)
-	var full := ProjectSettings.globalize_path("res://assets/" + path)
+	var full := "res://assets/" + path
 	if not FileAccess.file_exists(full):
 		_manifest_cache[archetype] = {}
 		return {}

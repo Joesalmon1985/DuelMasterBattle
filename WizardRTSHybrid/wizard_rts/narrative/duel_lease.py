@@ -19,7 +19,7 @@ from sim.dmb.adventure.duels import encounter_for_tier
 from sim.dmb.time.clock import ClockService
 
 from wizard_rts.duel import ward
-from wizard_rts.narrative import events, wizard
+from wizard_rts.narrative import events, party, wizard
 
 KIND = "story_ward_duel"
 OPPONENTS = Path(__file__).resolve().parents[1] / "data" / "narrative" / "opponents.json"
@@ -36,11 +36,21 @@ def _leases(world: Any) -> dict[str, Any]:
     return world.dmb.leases
 
 
-def active(world: Any) -> dict[str, Any] | None:
+def active(world: Any, seat: str | None = None) -> dict[str, Any] | None:
+    """The open story duel of the wizard acting now (or of `seat`). Every wizard has at most one; they do not see each other's."""
+    mine = party.current(world) if seat is None else seat
     for lid, rec in sorted(_leases(world).items()):
-        if rec.get("kind") == KIND and rec.get("state") == "ACTIVE":
+        if rec.get("kind") == KIND and rec.get("state") == "ACTIVE" and rec.get("seat", "") == mine:
             return rec
     return None
+
+
+def active_any(world: Any) -> list[dict[str, Any]]:
+    return [rec for _lid, rec in sorted(_leases(world).items()) if rec.get("kind") == KIND and rec.get("state") == "ACTIVE"]
+
+
+def _mine(world: Any, rec: dict[str, Any] | None) -> bool:
+    return rec is not None and rec.get("kind") == KIND and rec.get("seat", "") == party.current(world)
 
 
 def public_view(rec: dict[str, Any]) -> dict[str, Any]:
@@ -79,10 +89,12 @@ def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] |
     encounter["player_combatant"], encounter["enemy_combatant"] = player, enemy
     encounter["attack_pool"], encounter["ward_pool"] = list(player["attack_pool"]), list(player["ward_pool"])
     lid = world.dmb.ids.new("lease")
-    token = ClockService(world.dmb.clock).acquire_pause("story_duel", lid)
+    # one wizard alone freezes the world while they fight, as always; with company the world keeps living (the others are not in the duel)
+    token = "" if party.multi(world) else ClockService(world.dmb.clock).acquire_pause("story_duel", lid)
     rec = {"id": lid, "kind": KIND, "state": "ACTIVE", "playable": True, "engine": "DmbBattleSim", "scene": "res://client/scenes/game_board.tscn",
            "bot_seed": bot_seed, "progression_id": opp["tier"], "encounter": encounter, "checkpoint": {}, "forced_defeat_by_cast": 0,
-           "pause_token": token, "opponent": opponent_id, "purpose": purpose, "attempt": attempt, "fixed_ward": list(fixed_ward or []), "cube_id": ""}
+           "pause_token": token, "opponent": opponent_id, "purpose": purpose, "attempt": attempt, "fixed_ward": list(fixed_ward or []), "cube_id": "",
+           "seat": party.current(world)}
     _leases(world)[lid] = rec
     events.log(world, "duel_begun", lease=lid, opponent=opponent_id, purpose=purpose, attempt=attempt)
     return {"status": "started", "payload": {"public": public_view(rec), "duel": rec}}
@@ -90,7 +102,7 @@ def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] |
 
 def checkpoint(world: Any, lease_id: str, cp: dict[str, Any]) -> dict[str, Any]:
     rec = _leases(world).get(lease_id)
-    if rec is None or rec.get("kind") != KIND:
+    if not _mine(world, rec):
         return {"status": "missing_duel"}
     if rec["state"] != "ACTIVE":
         return {"status": "idempotent", "outcome": rec.get("outcome")}
@@ -157,12 +169,24 @@ def _voided(world: Any, rec: dict[str, Any], why: str) -> None:
 
 
 def _release(world: Any, rec: dict[str, Any]) -> None:
-    ClockService(world.dmb.clock).release_pause(rec.get("pause_token", ""))
+    if rec.get("pause_token"):
+        ClockService(world.dmb.clock).release_pause(rec["pause_token"])
+
+
+def release_spared(world: Any, seat: str, why: str) -> bool:
+    """End `seat`'s story duel without a verdict and without any penalty (the stranger withdrew from somebody else's victory)."""
+    rec = active(world, seat)
+    if rec is None:
+        return False
+    _release(world, rec)
+    rec["state"], rec["outcome"] = "VOIDED", why
+    events.log(world, "duel_released", lease=rec["id"], why=why, seat=seat)
+    return True
 
 
 def resolve(world: Any, lease_id: str, report: dict[str, Any]) -> dict[str, Any]:
     rec = _leases(world).get(lease_id)
-    if rec is None or rec.get("kind") != KIND:
+    if not _mine(world, rec):
         return {"status": "rejected", "reason": "missing_duel"}
     if rec["state"] != "ACTIVE":
         return {"status": "idempotent", "outcome": rec.get("outcome"), "verified": rec["state"] == "RESOLVED"}

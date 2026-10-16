@@ -1,0 +1,29 @@
+{
+  "note": "AI wizards: participants that stand in for a missing human wizard. They use the same actions, rules and duel interface as a person (net/session.py dispatch); this file is only their character. Placeholder prose; owner review pending.",
+  "companion": "mira",
+  "wizards": {
+    "mira": {
+      "name": "Mira",
+      "role": "fellow apprentice",
+      "persona": {"primary": "D", "secondary": "R", "traits": ["curious", "gentle"], "magic": "reverent", "mentor": "fond"},
+      "think_s": [5.0, 11.0],
+      "guess_logic": "candidate_filter",
+      "mistake_rate": 0.0,
+      "step_s": [0.45, 0.8],
+      "follow": {"near": 2, "far": 6},
+      "start_relationship": 25,
+      "accept_if_relationship_at_least": -10,
+      "win_relationship": 3,
+      "loss_relationship": -4,
+      "challenges_unprompted": false,
+      "lines": {
+        "greet": ["I learned my colours here a season ago. Stay close and I will show you the village.", "Another apprentice! Do you duel? I could use the practice."],
+        "accept": ["Very well. Hide your Ward and I will hide mine.", "Gladly. Three colours, no tricks.", "A race, then. Do not think too long."],
+        "decline": ["Not just now. Ask me again in a little while.", "I would rather not, after that last one. Give me a moment."],
+        "win": ["Your Ward held that time. The next one will not be so easy for you.", "Broken! Practice makes it easier, you will see."],
+        "lose": ["Well cast. You read my Ward faster than I read yours.", "You were quicker. I will remember how you opened."],
+        "draw": ["Neither of us broke through. Again some day."]
+      }
+    }
+  }
+}

@@ -7,8 +7,8 @@ when a message changes shape; bump GAME_VERSION with every release of the app.
 
 from __future__ import annotations
 
-PROTOCOL_VERSION = 1
-GAME_VERSION = "0.1.0"  # the app version the APK is built from (also in godot_project/export_presets.cfg version/name)
+PROTOCOL_VERSION = 2  # 2: real-time PvP casts (no rounds), the narrative ops, single-player save/continue
+GAME_VERSION = "0.2.0"  # the app version the APK is built from (also in godot_project/export_presets.cfg version/name)
 
 DEFAULT_PORT = 8765
 DISCOVERY_PORT = 8767
@@ -23,12 +23,17 @@ PLAYER_OPS = frozenset({
     "terrain", "tile", "resources", "profile", "tech", "cards", "menu",  # read-only world views
     "interact", "resolve", "fire",  # the wizard's own actions (hazard duel lease, fire magic)
     "treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",  # story.WIZARD_OPS
+    "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose",  # the narrative ops (Wizard World)
+    "save", "new_game",  # a single-player session only (session._solo_op); a shared world has no save slot of its own
     "pvp_challenge", "pvp_respond", "pvp_ward", "pvp_cast", "pvp_forfeit", "pvp_leave", "pvp_view",
 })
 PRE_HELLO_OPS = frozenset({"hello", "info", "ping"})
 PASSTHROUGH_OPS = frozenset({"terrain", "tile", "resources", "profile", "tech", "cards", "menu", "interact", "resolve", "fire",
-                             "treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view"})
-HOST_ONLY_OPS = frozenset({"start"})
+                             "treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",
+                             "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person",
+                             "scene_next", "scene_choose"})
+HOST_ONLY_OPS = frozenset({"start", "save", "new_game"})
+SOLO_OPS = frozenset({"save", "new_game"})  # allowed only while the session is a one-human private game (max_players == 1)
 
 
 def game_compatible(client_game: str) -> bool:

@@ -42,7 +42,7 @@ func _ensure_autoloads() -> void:
 # ---------------------------------------------------------------------------------
 
 func _test_menu_resume_states() -> void:
-	var menu = load("res://client/scenes/main_menu.tscn").instantiate()
+	var menu = load("res://client/scenes/dev_menu.tscn").instantiate()
 	root.add_child(menu)
 	await process_frame
 	assert_true(not menu.ui_resume_enabled(), "Resume disabled with no save")
@@ -50,7 +50,7 @@ func _test_menu_resume_states() -> void:
 	_adv.save()
 	menu.queue_free()
 	await process_frame
-	menu = load("res://client/scenes/main_menu.tscn").instantiate()
+	menu = load("res://client/scenes/dev_menu.tscn").instantiate()
 	root.add_child(menu)
 	await process_frame
 	assert_true(menu.ui_resume_enabled(), "Resume enabled once a save exists")

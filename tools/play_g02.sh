@@ -40,7 +40,7 @@ export DMB_SEED="${DMB_SEED:-202}"
 echo "Using Godot: $GODOT_BIN"
 echo "Fixture: $DMB_FIXTURE seed=$DMB_SEED"
 
-SCENE="res://client/scenes/main_menu.tscn"
+SCENE="res://client/scenes/dev_menu.tscn"
 RESOLUTION="450x800"
 ARGS=()
 while [[ $# -gt 0 ]]; do

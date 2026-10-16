@@ -192,7 +192,7 @@ def bump_relationship(world: Any, pid: str, delta: int) -> int:
     from sim.dmb.people.registry import PeopleService
 
     cur = checks.relationship(world, pid)
-    PeopleService(world.dmb).set_relationship(pid, checks.ACTOR, cur + delta)
+    PeopleService(world.dmb).set_relationship(pid, checks.actor(world), cur + delta)
     return checks.relationship(world, pid)
 
 

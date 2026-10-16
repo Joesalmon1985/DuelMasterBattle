@@ -26,15 +26,59 @@ for entry in (str(_HERE), str(_ROOT)):
     if entry not in sys.path:
         sys.path.insert(0, entry)
 
-from wizard_rts import history, tech  # noqa: E402
+from wizard_rts import history, narrative, tech  # noqa: E402
+from wizard_rts.narrative import tutorial  # noqa: E402
 from wizard_rts.net import protocol  # noqa: E402
 from wizard_rts.net.session import MultiplayerSession  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
 
 
-def new_world(seed: int = 507, map_size: str = "small", profile: str = "campaign") -> HybridWorld:
+def new_world(seed: int = 507, map_size: str = "small", profile: str = "campaign", wizard: bool = True) -> HybridWorld:
+    """A fresh Wizard World: the same world `server.new_world` builds for the classic single-player game (the autonomous civilisation plus
+    the narrative layer and the apprentice's mentor). `wizard=False` is the bare simulation, for the harness tests that never talk to anyone."""
     world = HybridWorld(seed=int(seed), map_size=map_size, profile=profile)
     world.visual_state = True  # presentation fields for the clients (as server.serve does)
+    if wizard:
+        narrative.enable(world)  # Wizard Mode state lives only in worlds a server creates (never in HybridEnv or training worlds)
+        tutorial.start(world)  # campaign only: the mentor stands beside the wizard (a loaded world keeps its own)
+    return world
+
+
+def latest_save(profile: str = "campaign") -> Path | None:
+    """The newest valid Wizard World save of this device, any slot (quit, auto, manual), or None."""
+    from wizard_rts.narrative import persist
+
+    best: tuple[float, Path] | None = None
+    for slot in ("quit", "auto", "manual"):
+        try:
+            path = persist.slot_path(profile, slot)
+        except persist.SaveError:
+            continue
+        if path.exists() and persist._valid(path):
+            mtime = path.stat().st_mtime
+            if best is None or mtime > best[0]:
+                best = (mtime, path)
+    return best[1] if best else None
+
+
+def load_saved_world(profile: str = "campaign") -> HybridWorld | None:
+    """Continue: the newest Wizard World save, ready to be hosted. The single wizard of a save becomes the host's wizard again
+    (`world.players` is rebuilt by the session), and a damaged save falls back to its `.prev` twin."""
+    from wizard_rts.narrative import persist
+
+    path = latest_save(profile)
+    if path is None:
+        return None
+    try:
+        world, _info = persist.load_world(path)
+    except persist.SaveError as exc:
+        if exc.prev:
+            world, _info = persist.load_world(exc.prev)
+        else:
+            return None
+    world.visual_state = True
+    world.players = {}
+    tutorial.start(world)
     return world
 
 
@@ -80,6 +124,11 @@ class HostServer:
         self.stop_flag = False
         self.stats = {"bytes_in": 0, "bytes_out": 0, "messages": 0, "replies": 0, "advances": 0, "quanta": 0, "probes": 0, "connections": 0, "tick_ms_max": 0.0, "tick_ms_total": 0.0, "ticks": 0}
         self.per_conn: dict[socket.socket, dict[str, int]] = {}
+        session.on_world_swap = self._adopt_world  # a single-player New game replaces the world object
+
+    def _adopt_world(self, world: HybridWorld) -> None:
+        self.world = world
+        self.seq = int(world.dmb.clock.get("clock_sequence", 0))
 
     # ---------------------------------------------------------------- lifecycle
     def start(self) -> None:
@@ -169,7 +218,12 @@ class HostServer:
             self.stats["advance_ms_max"] = spent
             self.stats["advance_ms_max_quanta"] = int(reply.get("quanta", 0))
         if getattr(self.world, "cycle_pending", False) and tech.god_allowed(self.world) is not None:
-            self.world = history.cycle_reset(self.world)  # a new cycle: every wizard carries over (session.rebind)
+            old = self.world
+            self.world = history.cycle_reset(old)  # a new cycle: every wizard carries over (session.rebind)
+            self.world.visual_state = True
+            if narrative.enabled(old):
+                narrative.carry_over(old, self.world)  # the wizard's spells, lessons and duels cross the reset too
+                tutorial.start(self.world)
             self.session.rebind(self.world)
             self.seq = int(self.world.dmb.clock.get("clock_sequence", 0))
 
@@ -288,9 +342,12 @@ class HostServer:
 
 
 def build(args: argparse.Namespace) -> HostServer:
-    world = new_world(args.seed, args.map, args.profile)
+    if getattr(args, "runs_dir", ""):
+        os.environ["DMB_RUNS"] = str(args.runs_dir)
+    world = (load_saved_world(args.profile) if getattr(args, "continue_game", False) else None) or new_world(args.seed, args.map, args.profile)
     session = MultiplayerSession(world, name=args.name, join_code=args.code, host_secret=args.secret, max_players=args.max_players, view_radius=args.view_radius,
-                                 first_joiner_hosts=bool(getattr(args, "first_joiner_hosts", False)))
+                                 first_joiner_hosts=bool(getattr(args, "first_joiner_hosts", False)),
+                                 world_factory=lambda: new_world(args.seed, args.map, args.profile), ai_companions=1 if int(args.max_players) == 1 else 0)
     return HostServer(world, session, bind=args.bind, port=args.port, discovery_port=None if args.no_discovery else args.discovery_port)
 
 
@@ -310,6 +367,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--view-radius", type=int, default=protocol.DEFAULT_VIEW_RADIUS)
     ap.add_argument("--first-joiner-hosts", action="store_true",
                     help="this machine has no wizard of its own (a PC hosting for phones): the first player to join with the code gets the host role and the START button")
+    ap.add_argument("--runs-dir", default="", help="where Wizard World saves live (DMB_RUNS); the menu looks in the same folder")
+    ap.add_argument("--continue", dest="continue_game", action="store_true", help="host the newest Wizard World save of this device instead of a new world")
     ap.add_argument("--stats-every", type=float, default=0.0, help="print HYBRID_HOST_STATS every N seconds")
     ap.add_argument("--ready-file", default="", help="also write the ready line's JSON to this file (the Godot launcher polls it)")
     return ap.parse_args(argv)

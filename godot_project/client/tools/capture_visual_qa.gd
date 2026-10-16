@@ -110,7 +110,7 @@ func _to_duel(ward: Array = [0, 1, 3, 4]) -> void:
 func _shot_main_menu() -> void:
 	_clear()
 	await process_frame
-	_menu = load("res://client/scenes/main_menu.tscn").instantiate()
+	_menu = load("res://client/scenes/dev_menu.tscn").instantiate()
 	root.add_child(_menu)
 
 

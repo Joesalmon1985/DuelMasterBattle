@@ -1,40 +1,32 @@
 extends Control
 
-## Main menu: pick a rival difficulty and start the duel. Everything else
-## (rules, settings) lives behind small buttons so the first tap is obvious.
+## The main menu: Wizard World, and nothing else. One game, two ways to play it.
+##
+##   Play Single Player   a private Wizard World of your own (the campaign: the apprenticeship, the stranger, the settlement that goes on living),
+##                        with an AI fellow apprentice for company; Continue if a campaign is saved on this device
+##   Host Multiplayer     host the same world for a friend on the same Wi-Fi
+##   Join Multiplayer     join a friend's world
+##   Settings
+##
+## The older adventure (Ashwell, Trial Day), Quick Duel and the G01 testing entry are developer tools: they live in dev_menu.tscn and are reachable
+## only through dev_mode.gd's switches. This menu never reads the old adventure's save, so old save data cannot send a player anywhere.
 
 const _VT = preload("res://client/scripts/visual_theme.gd")
-const _Encounters = preload("res://sim/encounters.gd")
-const _DifficultyProfiles = preload("res://sim/difficulty_profiles.gd")
 const _SaveData = preload("res://client/scripts/save_data.gd")
-const _SpellSlot = preload("res://client/components/spell_slot.gd")
+const _DevMode = preload("res://client/scripts/dev_mode.gd")
 const _Art = preload("res://client/scripts/art.gd")
 
-const HOW_TO_PLAY := [
-	"You and your opponent each hide a Ward of spells. Spells may repeat.",
-	"Guess each other's Ward. After every cast you learn how many spells were right — never which ones.",
-	"●  green — right spell in the right place\n○  amber ring — right spell in the wrong place\n·  grey — spell not in the Ward at all",
-	"You can cast 5 seconds after your window opens, and must cast within 60. Ten casts each.",
-	"Break their Ward first to win.",
-	"Adventure: walk with the pad, tap ✦ to talk, take, douse fires and face creatures. Your weave (how many spells you cast at once) grows as you learn.",
-]
-
-var _difficulties: Array = []
-var _selected_difficulty: String = "medium"
-var _diff_buttons: Array = []
-var _diff_desc_lbl: Label
 var _panel_vbox: VBoxContainer
 var _overlay: ColorRect
 var _overlay_vbox: VBoxContainer
-var _start_btn: Button
-var _resume_btn: Button
-var _quick_btn: Button
-var _confirm_pending: bool = false
+var single_btn: Button
+var host_btn: Button
+var join_btn: Button
+var settings_btn: Button
+var dev_btn: Button = null
 
 
 func _ready() -> void:
-	_difficulties = _DifficultyProfiles.all_profiles()
-	_selected_difficulty = _SaveData.get_last_difficulty()
 	_build()
 
 
@@ -43,10 +35,9 @@ func _build() -> void:
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg.color = _VT.COLOR_BG_DEEP
 	add_child(bg)
-	# Pixel-art dark fantasy backdrop (imported from the spare sprites pack).
 	var pano := TextureRect.new()
 	pano.set_anchors_preset(Control.PRESET_FULL_RECT)
-	pano.texture = load("res://assets/pixel/backdrops/title_panorama.png")
+	pano.texture = _Art.load_texture("pixel/backdrops/title_panorama.png")
 	pano.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	pano.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	pano.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -82,7 +73,7 @@ func _build() -> void:
 	title.add_theme_constant_override("outline_size", 10)
 	_panel_vbox.add_child(title)
 	var sub := Label.new()
-	sub.text = "A woodcutter. A dead man's staff. Four knots to learn."
+	sub.text = "Wizard World"
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_VT.apply_label_secondary(sub)
@@ -94,18 +85,17 @@ func _build() -> void:
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_panel_vbox.add_child(spacer)
 
-	# John and the Red wizard face off across the title.
 	var duel_row := HBoxContainer.new()
 	duel_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	duel_row.add_theme_constant_override("separation", 60)
 	_panel_vbox.add_child(duel_row)
-	for path in ["res://assets/pixel/portraits/john.png", "res://assets/pixel/portraits/arcanist.png"]:
+	for path in ["pixel/portraits/john.png", "pixel/portraits/arcanist.png"]:
 		var tr := TextureRect.new()
 		tr.custom_minimum_size = Vector2(160, 160)
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		tr.texture = load(path)
+		tr.texture = _Art.load_texture(path)
 		if path.ends_with("arcanist.png"):
 			tr.flip_h = true
 		duel_row.add_child(tr)
@@ -124,86 +114,26 @@ func _build() -> void:
 	menu_panel.add_theme_stylebox_override("panel", _VT.flat_panel_style(Color(0.08, 0.06, 0.14, 0.88), 16))
 	_panel_vbox.add_child(menu_panel)
 	var mv := VBoxContainer.new()
-	mv.add_theme_constant_override("separation", 12)
+	mv.add_theme_constant_override("separation", 14)
 	menu_panel.add_child(mv)
 
-	_start_btn = Button.new()
-	_start_btn.text = "NEW GAME"
-	_start_btn.custom_minimum_size = Vector2(0, 76)
-	_VT.style_primary_button(_start_btn)
-	_start_btn.add_theme_font_size_override("font_size", 30)
-	_start_btn.pressed.connect(_on_new_game)
-	mv.add_child(_start_btn)
-
-	_resume_btn = Button.new()
-	_resume_btn.custom_minimum_size = Vector2(0, 76)
-	_VT.style_primary_button(_resume_btn)
-	_resume_btn.add_theme_font_size_override("font_size", 30)
-	_resume_btn.pressed.connect(_on_resume)
-	mv.add_child(_resume_btn)
-	_refresh_resume()
-
-	_quick_btn = Button.new()
-	_quick_btn.text = "Quick Duel  (4-slot wizard match)"
-	_quick_btn.custom_minimum_size = Vector2(0, 60)
-	_VT.style_secondary_button(_quick_btn)
-	_quick_btn.pressed.connect(_show_quick_duel)
-	mv.add_child(_quick_btn)
-
-	var world_btn := Button.new()
-	world_btn.name = "WizardWorldButton"
-	world_btn.text = "WIZARD WORLD  (single player)"
-	world_btn.custom_minimum_size = Vector2(0, 60)
-	_VT.style_secondary_button(world_btn)
-	world_btn.pressed.connect(_on_wizard_world)
-	mv.add_child(world_btn)
-
-	var lan_row := HBoxContainer.new()
-	lan_row.add_theme_constant_override("separation", 12)
-	mv.add_child(lan_row)
-	var host_btn := Button.new()
-	host_btn.name = "HostButton"
-	host_btn.text = "HOST LOCAL GAME"
-	host_btn.custom_minimum_size = Vector2(0, 64)
-	host_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_VT.style_primary_button(host_btn)
-	host_btn.add_theme_font_size_override("font_size", 22)
+	single_btn = _menu_button(mv, "SingleButton", "Play Single Player", true, 30, 84)
+	single_btn.pressed.connect(_on_single_player)
+	host_btn = _menu_button(mv, "HostButton", "Host Multiplayer", true, 30, 84)
 	host_btn.pressed.connect(func(): _open_lan("host"))
-	lan_row.add_child(host_btn)
-	var join_btn := Button.new()
-	join_btn.name = "JoinButton"
-	join_btn.text = "JOIN LOCAL GAME"
-	join_btn.custom_minimum_size = Vector2(0, 64)
-	join_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_VT.style_primary_button(join_btn)
-	join_btn.add_theme_font_size_override("font_size", 22)
+	join_btn = _menu_button(mv, "JoinButton", "Join Multiplayer", true, 30, 84)
 	join_btn.pressed.connect(func(): _open_lan("join"))
-	lan_row.add_child(join_btn)
+	settings_btn = _menu_button(mv, "SettingsButton", "Settings", false, 26, 68)
+	settings_btn.pressed.connect(_show_settings)
+	if _DevMode.enabled():
+		dev_btn = _menu_button(mv, "DevButton", "Developer tools", false, 20, 52)
+		dev_btn.pressed.connect(func(): get_tree().change_scene_to_file("res://client/scenes/dev_menu.tscn"))
 
-	var g01 := Button.new()
-	g01.text = "G01 FX-CLOCK  (Python-backed runtime playtest)"
-	g01.custom_minimum_size = Vector2(0, 60)
-	_VT.style_secondary_button(g01)
-	g01.pressed.connect(_on_g01_fx_clock)
-	mv.add_child(g01)
-
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
-	mv.add_child(row)
-	var how := Button.new()
-	how.text = "How to play"
-	how.custom_minimum_size = Vector2(0, 56)
-	how.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_VT.style_secondary_button(how)
-	how.pressed.connect(_show_how_to_play)
-	row.add_child(how)
-	var settings := Button.new()
-	settings.text = "Settings"
-	settings.custom_minimum_size = Vector2(0, 56)
-	settings.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_VT.style_secondary_button(settings)
-	settings.pressed.connect(_show_settings)
-	row.add_child(settings)
+	var ver := Label.new()
+	ver.text = "v%s" % LanSession.GAME_VERSION
+	ver.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_secondary(ver)
+	_panel_vbox.add_child(ver)
 
 	_overlay = ColorRect.new()
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -222,32 +152,86 @@ func _build() -> void:
 	panel.add_child(_overlay_vbox)
 
 
-func _adventure() -> Node:
-	return get_node("/root/Adventure")
-
-
-func _refresh_resume() -> void:
-	var has: bool = _adventure().has_save()
-	_resume_btn.disabled = not has
-	if has:
-		_resume_btn.text = "RESUME GAME"
-		_resume_btn.tooltip_text = ""
+func _menu_button(parent: Control, node_name: String, text_value: String, primary: bool, font_size: int, height: int) -> Button:
+	var b := Button.new()
+	b.name = node_name
+	b.text = text_value
+	b.custom_minimum_size = Vector2(0, height)
+	if primary:
+		_VT.style_primary_button(b)
 	else:
-		_resume_btn.text = "RESUME — no saved game"
-	var summary: String = _adventure().save_summary()
-	if summary != "":
-		_resume_btn.text = "RESUME GAME\n" + summary
-		_resume_btn.add_theme_font_size_override("font_size", 24)
+		_VT.style_secondary_button(b)
+	b.add_theme_font_size_override("font_size", font_size)
+	parent.add_child(b)
+	return b
 
 
-func _on_new_game() -> void:
-	if _adventure().has_save():
-		_confirm_new_game()
+# ---------------------------------------------------------------- the four entries
+
+## Wizard World alone. A saved campaign on this device is offered first; everything else starts a new one. Either way it is the same world the
+## multiplayer game hosts, running in a private session on this device (the phone's Python host, or a local Python process on a PC).
+func _on_single_player() -> void:
+	if LanSession.has_wizard_save():
+		_show_continue_choice()
 		return
-	_begin_new_game()
+	_begin_single(false)
 
 
-func _confirm_new_game() -> void:
+func _begin_single(continue_game: bool) -> void:
+	LanSession.reset()
+	var sfx := get_node_or_null("/root/Sfx")
+	if sfx:
+		sfx.cast()
+	if _DevMode.classic_sim():
+		get_tree().change_scene_to_file("res://client/scenes/hybrid_world.tscn")  # the developer launchers' own server on 127.0.0.1
+		return
+	LanSession.mode = "host"
+	LanSession.private_session = true
+	LanSession.continue_game = continue_game
+	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
+
+
+## Local Wi-Fi play (docs/MOBILE_LAN_MULTIPLAYER.md): the host runs the authoritative world on its own device; a friend joins it.
+func _open_lan(mode: String) -> void:
+	LanSession.reset()
+	LanSession.mode = mode
+	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
+
+
+func _show_continue_choice() -> void:
+	_clear_overlay()
+	var t := Label.new()
+	t.text = "Wizard World"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_title(t)
+	_overlay_vbox.add_child(t)
+	var l := Label.new()
+	l.text = "Your campaign is saved on this device."
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_secondary(l)
+	_overlay_vbox.add_child(l)
+	var cont := Button.new()
+	cont.name = "ContinueButton"
+	cont.text = "Continue campaign"
+	cont.custom_minimum_size = Vector2(0, 76)
+	_VT.style_primary_button(cont)
+	cont.pressed.connect(func():
+		_overlay.visible = false
+		_begin_single(true))
+	_overlay_vbox.add_child(cont)
+	var fresh := Button.new()
+	fresh.name = "NewCampaignButton"
+	fresh.text = "Start a new campaign"
+	fresh.custom_minimum_size = Vector2(0, 64)
+	_VT.style_secondary_button(fresh)
+	fresh.pressed.connect(_confirm_new_campaign)
+	_overlay_vbox.add_child(fresh)
+	_overlay_close_button("Back")
+	_overlay.visible = true
+
+
+func _confirm_new_campaign() -> void:
 	_clear_overlay()
 	var t := Label.new()
 	t.text = "Start over?"
@@ -255,128 +239,25 @@ func _confirm_new_game() -> void:
 	_VT.apply_label_title(t)
 	_overlay_vbox.add_child(t)
 	var l := Label.new()
-	l.text = "You already have a saved game:\n%s\n\nStarting a New Game will erase it. There is only one save." % _adventure().save_summary()
+	l.text = "A new campaign begins a new Wizard World. Your saved campaign stays until the new one saves over it."
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_VT.apply_label_secondary(l)
 	_overlay_vbox.add_child(l)
 	var yes := Button.new()
-	yes.text = "Erase and start new"
+	yes.name = "ConfirmNewButton"
+	yes.text = "Start a new campaign"
 	yes.custom_minimum_size = Vector2(0, 64)
 	_VT.style_secondary_button(yes)
-	yes.add_theme_color_override("font_color", _VT.COLOR_DANGER)
 	yes.pressed.connect(func():
 		_overlay.visible = false
-		_begin_new_game()
-	)
+		_begin_single(false))
 	_overlay_vbox.add_child(yes)
-	_overlay_close_button("Keep my game")
+	_overlay_close_button("Keep my campaign")
 	_overlay.visible = true
 
 
-func _begin_new_game() -> void:
-	_adventure().new_game()
-	_adventure().save()
-	var sfx := get_node_or_null("/root/Sfx")
-	if sfx:
-		sfx.cast()
-	get_tree().change_scene_to_file("res://client/scenes/overworld.tscn")
-
-
-func _on_resume() -> void:
-	if not _adventure().load_game():
-		_refresh_resume()
-		return
-	var sfx := get_node_or_null("/root/Sfx")
-	if sfx:
-		sfx.tap()
-	get_tree().change_scene_to_file("res://client/scenes/overworld.tscn")
-
-
-func _show_quick_duel() -> void:
-	_clear_overlay()
-	_diff_buttons.clear()
-	var t := Label.new()
-	t.text = "Quick Duel"
-	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_VT.apply_label_title(t)
-	_overlay_vbox.add_child(t)
-	var l := Label.new()
-	l.text = "A straight four-slot Ward duel against a rival wizard. Six spells, ten casts each."
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_VT.apply_label_secondary(l)
-	_overlay_vbox.add_child(l)
-	var diff_row := HBoxContainer.new()
-	diff_row.add_theme_constant_override("separation", 10)
-	_overlay_vbox.add_child(diff_row)
-	for d in _difficulties:
-		var b := Button.new()
-		b.text = d.display_name
-		b.custom_minimum_size = Vector2(0, 64)
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		_VT.style_secondary_button(b)
-		var id: String = d.id
-		b.pressed.connect(func(): _select_difficulty(id))
-		diff_row.add_child(b)
-		_diff_buttons.append(b)
-	_diff_desc_lbl = Label.new()
-	_diff_desc_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_diff_desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_diff_desc_lbl.custom_minimum_size = Vector2(0, 60)
-	_VT.apply_label_secondary(_diff_desc_lbl)
-	_overlay_vbox.add_child(_diff_desc_lbl)
-	_select_difficulty(_selected_difficulty)
-	var go := Button.new()
-	go.text = "Start Duel"
-	go.custom_minimum_size = Vector2(0, 72)
-	_VT.style_primary_button(go)
-	go.pressed.connect(_on_start_duel)
-	_overlay_vbox.add_child(go)
-	_overlay_close_button("Back")
-	_overlay.visible = true
-
-
-func _select_difficulty(id: String) -> void:
-	var found := false
-	for d in _difficulties:
-		if d.id == id:
-			found = true
-	if not found:
-		id = "medium"
-	_selected_difficulty = id
-	if _diff_buttons.is_empty():
-		return
-	for i in range(_difficulties.size()):
-		var d = _difficulties[i]
-		var b: Button = _diff_buttons[i]
-		var s := _VT.secondary_button_style()
-		if d.id == id:
-			s.bg_color = Color("#3d3580")
-			s.border_color = _VT.COLOR_ACCENT_GOLD
-			s.set_border_width_all(3)
-			_diff_desc_lbl.text = d.description
-		else:
-			s.bg_color = Color("#1b1633")
-			s.border_color = Color("#3a3160")
-		b.add_theme_stylebox_override("normal", s)
-		b.add_theme_stylebox_override("hover", s)
-
-
-func _session() -> Node:
-	return get_node("/root/EncounterSession")
-
-
-func _on_start_duel() -> void:
-	_adventure().clear_pending_battle()
-	_session().set_encounter(_Encounters.DEFAULT_ENCOUNTER_ID)
-	_session().set_difficulty(_selected_difficulty)
-	_SaveData.set_last_difficulty(_selected_difficulty)
-	var sfx := get_node_or_null("/root/Sfx")
-	if sfx:
-		sfx.cast()
-	get_tree().change_scene_to_file("res://client/scenes/game_board.tscn")
-
+# ---------------------------------------------------------------- settings
 
 func _clear_overlay() -> void:
 	for c in _overlay_vbox.get_children():
@@ -390,24 +271,6 @@ func _overlay_close_button(text_value: String = "Back") -> void:
 	_VT.style_primary_button(b)
 	b.pressed.connect(func(): _overlay.visible = false)
 	_overlay_vbox.add_child(b)
-
-
-func _show_how_to_play() -> void:
-	_clear_overlay()
-	var t := Label.new()
-	t.text = "How to play"
-	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_VT.apply_label_title(t)
-	_overlay_vbox.add_child(t)
-	for line in HOW_TO_PLAY:
-		var l := Label.new()
-		l.text = line
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_VT.apply_label_secondary(l)
-		_overlay_vbox.add_child(l)
-	_overlay_close_button("Got it")
-	_overlay.visible = true
 
 
 func _show_settings() -> void:
@@ -439,15 +302,11 @@ func _show_settings() -> void:
 		check.toggled.connect(func(on): _SaveData.set_setting(key, on))
 		h.add_child(check)
 		_overlay_vbox.add_child(h)
-	var reset := Button.new()
-	reset.text = "Show tutorial again next duel"
-	reset.custom_minimum_size = Vector2(0, 56)
-	_VT.style_secondary_button(reset)
-	reset.pressed.connect(func():
-		_SaveData.set_setting("seen_how_to_play", false)
-		reset.text = "Tutorial will show next duel ✓"
-	)
-	_overlay_vbox.add_child(reset)
+	var about := Label.new()
+	about.text = "Duel Master Battle %s" % LanSession.GAME_VERSION
+	about.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_secondary(about)
+	_overlay_vbox.add_child(about)
 	_overlay_close_button("Back")
 	_overlay.visible = true
 
@@ -462,67 +321,31 @@ class _Vignette:
 			draw_circle(c, r * (0.2 + 0.8 * t), Color(0.3, 0.22, 0.55, 0.07 * (1.0 - t)))
 
 
-# --- UI smoke API ------------------------------------------------------------
+# ---------------------------------------------------------------- test API (client/tests/run_menu_routes.gd)
 
-func ui_action_start_encounter(_encounter_id: String = "") -> void:
-	_on_start_duel()
-
-
-func ui_new_game() -> void:
-	_on_new_game()
-
-
-func ui_resume() -> void:
-	_on_resume()
+func ui_visible_entries() -> Array:
+	var out: Array = []
+	for b in [single_btn, host_btn, join_btn, settings_btn, dev_btn]:
+		if b != null and b.visible:
+			out.append(b.text)
+	return out
 
 
-func ui_confirm_overwrite() -> void:
-	_overlay.visible = false
-	_begin_new_game()
+func ui_press_single() -> void:
+	_on_single_player()
 
 
-func ui_resume_enabled() -> bool:
-	return not _resume_btn.disabled
+func ui_press_host() -> void:
+	_open_lan("host")
 
 
-func ui_action_select_difficulty(difficulty_id: String) -> void:
-	_select_difficulty(difficulty_id)
+func ui_press_join() -> void:
+	_open_lan("join")
 
 
-func ui_get_selected_difficulty() -> String:
-	return _selected_difficulty
+func ui_show_settings() -> void:
+	_show_settings()
 
 
-func ui_has_help_panel() -> bool:
-	return _overlay != null
-
-
-func ui_is_overlay_visible() -> bool:
+func ui_overlay_visible() -> bool:
 	return _overlay.visible
-
-
-func ui_show_help() -> void:
-	_show_how_to_play()
-
-
-func _on_g01_fx_clock() -> void:
-	get_tree().change_scene_to_file("res://client/scenes/g01_shell.tscn")
-
-
-## Local Wi-Fi play (docs/MOBILE_LAN_MULTIPLAYER.md): the host runs the authoritative world on its own device.
-func _open_lan(mode: String) -> void:
-	LanSession.reset()
-	LanSession.mode = mode
-	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
-
-
-## The wizard's single-player world. On a phone the world runs inside this app as a private hosted session;
-## on a desktop the classic 127.0.0.1 simulator is expected (scripts/launch_hybrid.sh).
-func _on_wizard_world() -> void:
-	LanSession.reset()
-	if Engine.has_singleton("DmbPySim") or OS.has_feature("mobile"):
-		LanSession.mode = "host"
-		LanSession.private_session = true
-		get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
-		return
-	get_tree().change_scene_to_file("res://client/scenes/hybrid_world.tscn")

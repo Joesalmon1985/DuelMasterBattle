@@ -24,7 +24,7 @@ func _run() -> void:
 
 	# 01 main menu (no save) / 02 with save
 	_adv.delete_save()
-	var menu = load("res://client/scenes/main_menu.tscn").instantiate()
+	var menu = load("res://client/scenes/dev_menu.tscn").instantiate()
 	root.add_child(menu)
 	await _frames(4)
 	_capture("01_menu_no_save.png")
@@ -34,7 +34,7 @@ func _run() -> void:
 	_adv.save()
 	menu.queue_free()
 	await process_frame
-	menu = load("res://client/scenes/main_menu.tscn").instantiate()
+	menu = load("res://client/scenes/dev_menu.tscn").instantiate()
 	root.add_child(menu)
 	await _frames(4)
 	_capture("02_menu_with_save.png")

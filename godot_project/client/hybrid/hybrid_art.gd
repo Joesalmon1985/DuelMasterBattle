@@ -1,6 +1,7 @@
 extends RefCounted
 
 const HexCoords = preload("res://client/hybrid/hex_coords.gd")
+const AssetLoader = preload("res://client/scripts/asset_loader.gd")
 
 ## Draws imported Widelands and OpenRA sprites. Missing catalogue entries are
 ## recorded and not replaced with rectangles.
@@ -13,6 +14,7 @@ var _ts := 1.0
 var _last_ms := 0
 var _frames := 0
 var textures: Dictionary = {}
+var _paths: Dictionary = {}  # key -> res:// path of an image that exists; decoded on first use (a phone cannot hold 7000 textures)
 var missing: Array[String] = []
 var show_markers := false
 var faction_colors: Dictionary = {}
@@ -304,8 +306,8 @@ func state_texture(entity: Dictionary, item: Dictionary, time: float) -> Texture
 	elif files.size() > 1 and int(info.get("fps", 0)) > 0 and int(info.get("facings", 1)) <= 1:
 		ix = int(time * float(info["fps"])) % files.size()
 	var path := str(files[ix])
-	if not textures.has(path):
-		_remember(path, path)  # state frames are decoded on first use
+	if not textures.has(path) and not _paths.has(path) and path not in missing:
+		_remember(path, path)  # state frames are registered on first use
 	return _tex(path)
 
 
@@ -616,17 +618,29 @@ func _frame_size(item: Dictionary, tex: Texture2D) -> Vector2:
 func _remember(key: String, path: String) -> void:
 	if path == "":
 		return
-	var image := Image.new()
-	var err := image.load(path)
-	if err != OK:
+	# Registered, not decoded: the existence check goes through the package-safe loader (an Android export has the imported
+	# .ctex, not the PNG), and the texture itself is loaded the first time something draws it.
+	if not AssetLoader.exists(path):
 		if key not in missing:
 			missing.append(key)
 		return
-	textures[key] = ImageTexture.create_from_image(image)
+	_paths[key] = path
 
 
 func _tex(key: String) -> Texture2D:
-	return textures.get(key) as Texture2D
+	var cached: Variant = textures.get(key)
+	if cached != null:
+		return cached as Texture2D
+	if not _paths.has(key):
+		return null
+	var tex := AssetLoader.load_texture(str(_paths[key]))
+	if tex == null:
+		if key not in missing:
+			missing.append(key)
+		_paths.erase(key)
+		return null
+	textures[key] = tex
+	return tex
 
 
 func _sheet_facing(facing: String) -> String:

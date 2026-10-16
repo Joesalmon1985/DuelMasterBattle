@@ -56,7 +56,7 @@ func _new_board():
 
 
 func _test_main_menu() -> void:
-	var menu = load("res://client/scenes/main_menu.tscn").instantiate()
+	var menu = load("res://client/scenes/dev_menu.tscn").instantiate()
 	root.add_child(menu)
 	await process_frame
 	assert_true(menu.ui_has_help_panel(), "menu builds")
