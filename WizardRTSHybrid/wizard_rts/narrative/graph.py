@@ -13,7 +13,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable
 
-from wizard_rts.narrative import checks, config, duel_lease, events, personas, wizard
+from wizard_rts.narrative import checks, config, duel_lease, events, ledger, personas, wizard
 
 DIALOGUE = Path(__file__).resolve().parents[1] / "data" / "narrative" / "dialogue"
 HUB = "hub"
@@ -196,9 +196,17 @@ def bump_relationship(world: Any, pid: str, delta: int) -> int:
     return checks.relationship(world, pid)
 
 
+def _ledger(world: Any, ctx: dict, eff: dict) -> dict:
+    """Count a behaviour (`key`) for the world and for the wizard acting now: what people say later reads it back as a fact."""
+    from wizard_rts.narrative import mortality, party
+
+    ledger.bump(world, str(eff["key"]), seat=mortality.me(world) if party.order(world) else None, n=int(eff.get("n", 1)))
+    return {}
+
+
 EFFECTS: dict[str, Callable[[Any, dict, dict], dict]] = {"learn_spell": _learn, "complete_lesson": _lesson, "begin_duel": _begin_duel, "journal_note": _note,
-                                                         "aspect": _aspect, "worldview": _worldview, "relationship": _relationship, "fact": _fact}
-REPEATABLE = {"begin_duel"}  # every other effect is applied once per (template, id)
+                                                         "aspect": _aspect, "worldview": _worldview, "relationship": _relationship, "fact": _fact, "ledger": _ledger}
+REPEATABLE = {"begin_duel", "ledger"}  # every other effect is applied once per (template, id)
 
 
 def apply(world: Any, ctx: dict[str, Any], rid: str, block: dict[str, Any]) -> dict[str, Any]:

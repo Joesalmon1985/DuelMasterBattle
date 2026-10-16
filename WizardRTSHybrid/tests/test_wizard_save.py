@@ -100,11 +100,11 @@ def test_a_newer_narrative_version_is_refused(world, tmp_path):
 def test_an_older_version_without_a_migration_is_refused_and_with_one_is_migrated(world, tmp_path, monkeypatch):
     path = tmp_path / "o.pkl"
     persist.save_world(world, path)
-    monkeypatch.setattr(config, "version", lambda: 2)
+    monkeypatch.setattr(config, "version", lambda: config._file()["narrative_version"] + 1)
     with pytest.raises(persist.SaveError) as e:
         persist.load_world(path)
     assert e.value.reason == "older_version"
-    monkeypatch.setitem(persist.MIGRATIONS, 1, lambda payload: payload)
+    monkeypatch.setitem(persist.MIGRATIONS, config._file()["narrative_version"], lambda payload: payload)
     loaded, _ = persist.load_world(path)
     assert loaded.state_hash() == world.state_hash()
 

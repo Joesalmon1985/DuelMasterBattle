@@ -50,7 +50,8 @@ def _save_load(world: HybridWorld, message: dict) -> dict:
             "snapshot": loaded.snapshot(tree_sync=False), "_swap": loaded}  # tree_sync False: the client gets every tree again (full delta)
 
 
-AFTER_DEATH = frozenset({"snapshot", "advance", "profile", "terrain", "tile", "resources", "menu", "tech", "cards", "load", "new_game", "journal"})
+AFTER_DEATH = frozenset({"snapshot", "advance", "profile", "terrain", "tile", "resources", "menu", "tech", "cards", "load", "new_game", "journal", "save", "story_view",
+                         "inspect_person", "inspect_building"})
 
 
 def _handle(world: HybridWorld, message: dict) -> dict:

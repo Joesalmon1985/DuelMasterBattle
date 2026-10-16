@@ -70,8 +70,9 @@ def test_a_single_human_who_loses_the_lethal_duel_is_over():
     t.wait_for_stage("confrontation")
     rec = t.through_scene(joe)["duel_lease"]["payload"]["duel"]
     fight(t, joe, rec, False)
-    assert campaign.stage(t.world) == "game_over" and campaign.over(t.world)
-    assert joe.op("talk", npc=t.mentor)["status"] == "rejected"
+    assert campaign.stage(t.world) == "duel" and campaign.over(t.world), "the stage never records a defeat; the wizard's fate does"
+    assert joe.op("talk", npc=t.mentor)["reason"] in ("dead", "ending")
+    assert t.session.ending and t.session.ending["kind"] == "human_dead", "alone, death ends the session (the world is saved with the body)"
 
 
 # ------------------------------------------------------------------ two humans
@@ -233,7 +234,8 @@ def test_the_campaign_is_over_when_no_human_is_left():
     fight(t, joe, rec_j, False)
     assert campaign.stage(t.world) == "duel"
     fight(t, ann, rec_a, False)
-    assert campaign.stage(t.world) == "game_over" and campaign.over_for_all(t.world)
+    assert campaign.stage(t.world) == "duel" and campaign.over_for_all(t.world)
+    assert t.session.ending and t.session.ending["kind"] == "all_dead"
 
 
 def test_a_wizard_who_goes_away_never_blocks_the_story_and_is_told_what_they_missed():

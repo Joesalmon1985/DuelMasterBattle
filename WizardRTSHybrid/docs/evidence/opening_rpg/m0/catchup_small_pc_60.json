@@ -1,0 +1,433 @@
+{
+ "map": "small",
+ "seed": 507,
+ "build_s": 1.03,
+ "minutes": 60,
+ "wall_s_total": 78.87,
+ "wall_s_per_sim_minute": 1.31,
+ "x_realtime": 45.6,
+ "python": "3.14.0",
+ "platform": "win32",
+ "rows": [
+  {
+   "minute": 1,
+   "wall_s": 0.71,
+   "buildings": 54,
+   "workers": 30,
+   "units": 6
+  },
+  {
+   "minute": 2,
+   "wall_s": 0.35,
+   "buildings": 60,
+   "workers": 36,
+   "units": 6
+  },
+  {
+   "minute": 3,
+   "wall_s": 0.38,
+   "buildings": 66,
+   "workers": 42,
+   "units": 6
+  },
+  {
+   "minute": 4,
+   "wall_s": 0.32,
+   "buildings": 72,
+   "workers": 48,
+   "units": 6
+  },
+  {
+   "minute": 5,
+   "wall_s": 0.29,
+   "buildings": 76,
+   "workers": 51,
+   "units": 6
+  },
+  {
+   "minute": 6,
+   "wall_s": 0.41,
+   "buildings": 78,
+   "workers": 53,
+   "units": 8
+  },
+  {
+   "minute": 7,
+   "wall_s": 0.44,
+   "buildings": 81,
+   "workers": 56,
+   "units": 11
+  },
+  {
+   "minute": 8,
+   "wall_s": 0.61,
+   "buildings": 91,
+   "workers": 60,
+   "units": 8
+  },
+  {
+   "minute": 9,
+   "wall_s": 0.56,
+   "buildings": 97,
+   "workers": 66,
+   "units": 8
+  },
+  {
+   "minute": 10,
+   "wall_s": 0.7,
+   "buildings": 107,
+   "workers": 74,
+   "units": 10
+  },
+  {
+   "minute": 11,
+   "wall_s": 0.61,
+   "buildings": 114,
+   "workers": 81,
+   "units": 10
+  },
+  {
+   "minute": 12,
+   "wall_s": 0.77,
+   "buildings": 125,
+   "workers": 87,
+   "units": 9
+  },
+  {
+   "minute": 13,
+   "wall_s": 0.7,
+   "buildings": 135,
+   "workers": 97,
+   "units": 9
+  },
+  {
+   "minute": 14,
+   "wall_s": 0.67,
+   "buildings": 141,
+   "workers": 103,
+   "units": 11
+  },
+  {
+   "minute": 15,
+   "wall_s": 0.75,
+   "buildings": 156,
+   "workers": 113,
+   "units": 10
+  },
+  {
+   "minute": 16,
+   "wall_s": 0.72,
+   "buildings": 162,
+   "workers": 115,
+   "units": 10
+  },
+  {
+   "minute": 17,
+   "wall_s": 0.75,
+   "buildings": 169,
+   "workers": 121,
+   "units": 11
+  },
+  {
+   "minute": 18,
+   "wall_s": 0.85,
+   "buildings": 179,
+   "workers": 124,
+   "units": 9
+  },
+  {
+   "minute": 19,
+   "wall_s": 0.81,
+   "buildings": 185,
+   "workers": 128,
+   "units": 10
+  },
+  {
+   "minute": 20,
+   "wall_s": 0.84,
+   "buildings": 191,
+   "workers": 131,
+   "units": 14
+  },
+  {
+   "minute": 21,
+   "wall_s": 0.83,
+   "buildings": 193,
+   "workers": 132,
+   "units": 20
+  },
+  {
+   "minute": 22,
+   "wall_s": 0.96,
+   "buildings": 197,
+   "workers": 136,
+   "units": 29
+  },
+  {
+   "minute": 23,
+   "wall_s": 1.01,
+   "buildings": 201,
+   "workers": 137,
+   "units": 38
+  },
+  {
+   "minute": 24,
+   "wall_s": 1.21,
+   "buildings": 203,
+   "workers": 138,
+   "units": 51
+  },
+  {
+   "minute": 25,
+   "wall_s": 1.35,
+   "buildings": 207,
+   "workers": 139,
+   "units": 58
+  },
+  {
+   "minute": 26,
+   "wall_s": 1.36,
+   "buildings": 208,
+   "workers": 139,
+   "units": 68
+  },
+  {
+   "minute": 27,
+   "wall_s": 1.43,
+   "buildings": 211,
+   "workers": 140,
+   "units": 75
+  },
+  {
+   "minute": 28,
+   "wall_s": 1.5,
+   "buildings": 212,
+   "workers": 142,
+   "units": 84
+  },
+  {
+   "minute": 29,
+   "wall_s": 1.67,
+   "buildings": 213,
+   "workers": 143,
+   "units": 92
+  },
+  {
+   "minute": 30,
+   "wall_s": 1.57,
+   "buildings": 216,
+   "workers": 145,
+   "units": 98
+  },
+  {
+   "minute": 31,
+   "wall_s": 1.61,
+   "buildings": 217,
+   "workers": 145,
+   "units": 96
+  },
+  {
+   "minute": 32,
+   "wall_s": 1.66,
+   "buildings": 218,
+   "workers": 146,
+   "units": 103
+  },
+  {
+   "minute": 33,
+   "wall_s": 1.73,
+   "buildings": 219,
+   "workers": 146,
+   "units": 103
+  },
+  {
+   "minute": 34,
+   "wall_s": 1.66,
+   "buildings": 220,
+   "workers": 147,
+   "units": 106
+  },
+  {
+   "minute": 35,
+   "wall_s": 1.75,
+   "buildings": 221,
+   "workers": 148,
+   "units": 108
+  },
+  {
+   "minute": 36,
+   "wall_s": 1.78,
+   "buildings": 221,
+   "workers": 149,
+   "units": 113
+  },
+  {
+   "minute": 37,
+   "wall_s": 1.87,
+   "buildings": 224,
+   "workers": 150,
+   "units": 114
+  },
+  {
+   "minute": 38,
+   "wall_s": 1.78,
+   "buildings": 226,
+   "workers": 151,
+   "units": 115
+  },
+  {
+   "minute": 39,
+   "wall_s": 1.78,
+   "buildings": 227,
+   "workers": 151,
+   "units": 114
+  },
+  {
+   "minute": 40,
+   "wall_s": 1.81,
+   "buildings": 230,
+   "workers": 154,
+   "units": 110
+  },
+  {
+   "minute": 41,
+   "wall_s": 2.07,
+   "buildings": 230,
+   "workers": 154,
+   "units": 101
+  },
+  {
+   "minute": 42,
+   "wall_s": 1.84,
+   "buildings": 232,
+   "workers": 155,
+   "units": 105
+  },
+  {
+   "minute": 43,
+   "wall_s": 1.83,
+   "buildings": 229,
+   "workers": 153,
+   "units": 114
+  },
+  {
+   "minute": 44,
+   "wall_s": 1.83,
+   "buildings": 231,
+   "workers": 155,
+   "units": 113
+  },
+  {
+   "minute": 45,
+   "wall_s": 1.92,
+   "buildings": 234,
+   "workers": 156,
+   "units": 107
+  },
+  {
+   "minute": 46,
+   "wall_s": 1.79,
+   "buildings": 235,
+   "workers": 158,
+   "units": 114
+  },
+  {
+   "minute": 47,
+   "wall_s": 1.89,
+   "buildings": 236,
+   "workers": 160,
+   "units": 115
+  },
+  {
+   "minute": 48,
+   "wall_s": 1.95,
+   "buildings": 238,
+   "workers": 162,
+   "units": 119
+  },
+  {
+   "minute": 49,
+   "wall_s": 1.98,
+   "buildings": 238,
+   "workers": 162,
+   "units": 115
+  },
+  {
+   "minute": 50,
+   "wall_s": 1.92,
+   "buildings": 241,
+   "workers": 164,
+   "units": 97
+  },
+  {
+   "minute": 51,
+   "wall_s": 1.71,
+   "buildings": 242,
+   "workers": 164,
+   "units": 99
+  },
+  {
+   "minute": 52,
+   "wall_s": 1.8,
+   "buildings": 242,
+   "workers": 165,
+   "units": 98
+  },
+  {
+   "minute": 53,
+   "wall_s": 1.8,
+   "buildings": 242,
+   "workers": 165,
+   "units": 92
+  },
+  {
+   "minute": 54,
+   "wall_s": 1.7,
+   "buildings": 243,
+   "workers": 166,
+   "units": 90
+  },
+  {
+   "minute": 55,
+   "wall_s": 1.74,
+   "buildings": 243,
+   "workers": 166,
+   "units": 93
+  },
+  {
+   "minute": 56,
+   "wall_s": 1.75,
+   "buildings": 242,
+   "workers": 164,
+   "units": 92
+  },
+  {
+   "minute": 57,
+   "wall_s": 1.74,
+   "buildings": 242,
+   "workers": 163,
+   "units": 88
+  },
+  {
+   "minute": 58,
+   "wall_s": 1.69,
+   "buildings": 241,
+   "workers": 165,
+   "units": 88
+  },
+  {
+   "minute": 59,
+   "wall_s": 1.73,
+   "buildings": 242,
+   "workers": 164,
+   "units": 83
+  },
+  {
+   "minute": 60,
+   "wall_s": 1.63,
+   "buildings": 241,
+   "workers": 164,
+   "units": 83
+  }
+ ]
+}

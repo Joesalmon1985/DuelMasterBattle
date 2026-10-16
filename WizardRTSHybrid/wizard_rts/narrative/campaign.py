@@ -91,14 +91,13 @@ def over(world: Any) -> bool:
     """The campaign is over for the wizard acting now: the stage is `game_over` (nobody is left), or this wizard has died (in company the others go on)."""
     if "narrative" not in world.__dict__:
         return False
-    if world.narrative.get("campaign", {}).get("stage") == "game_over":
-        return True
     fate = world.narrative["wizard"].get("fate")
     return bool(fate) and not fate.get("alive", True)
 
 
 def over_for_all(world: Any) -> bool:
-    return "narrative" in world.__dict__ and world.narrative.get("campaign", {}).get("stage") == "game_over"
+    """Nobody human is left alive in this world (the stage itself never records a defeat: a new wizard may still arrive)."""
+    return "narrative" in world.__dict__ and "campaign" in world.narrative and not _someone_alive(world)
 
 
 def _guest_seat(world: Any) -> str:
@@ -248,8 +247,6 @@ def tick(world: Any) -> None:
     if not tutorial.state(world)["started"]:
         return
     st = state(world)
-    if st["stage"] == "game_over":
-        return
     _watch_fire(world, st)
     s = st["stage"]
     if s == "training" and _training_done(world, st):
@@ -638,27 +635,22 @@ def _lost_duel(world: Any, why: str) -> dict[str, Any]:
 
 
 def game_over(world: Any, cause: str) -> dict[str, Any]:
-    """The apprentice dies. Alone, this is terminal: recorded once, the clock is held, every op but a new game is refused (`server.py`), saves are
-    refused. In company death is personal: this wizard's fate is recorded and they are out of the story, the world and the others go on, and the
-    campaign is over for everybody only when no human wizard is left alive."""
+    """The apprentice acting now dies (the stranger's duel lost, left or voided). Death is personal and the same everywhere (`mortality.die`): a
+    body, a tombstone, the ledger, the mother; the world and the other wizards go on. Whether the game ends for this player is the session's
+    decision (a private session ends with its human; a shared one when every human is dead); the classic single-process server marks the death
+    final at once. The campaign stage never changes for it: a new wizard may still arrive in this world."""
+    from wizard_rts.narrative import mortality
+
     st = state(world)
-    if st["stage"] == "game_over":
-        return {"status": "ok", "stage": "game_over", "already": True}
-    if party.multi(world) and over(world):
+    if over(world):
         return {"status": "ok", "stage": st["stage"], "already": True}
-    conversation.close_all(world, "game_over")
-    duel_lease.abandon(world, "game_over")
     _set_scene(world, None)
-    wizard.wiz(world)["fate"] = {"alive": False, "cause": cause, "game_ms": now(world), "text": config.get("campaign", "dead_after_defeat", "The apprentice was defeated.")}
-    me = checks.actor(world)
-    world.dmb.tombstones[me] = {"kind": "wizard", "display_name": "the apprentice", "cause_id": cause, "profile_refs": {}}
+    seat = mortality.me(world)
+    out = mortality.die(world, seat, cause, by=st.get("attacker", ""))
     events.log(world, "player_died", cause=cause, seat=party.current(world))
-    if party.multi(world) and _someone_alive(world):
-        return {"status": "ok", "stage": st["stage"], "personal": True}
-    st["outcome"] = "defeat"
-    _set_stage(world, "game_over")
-    ClockService(world.dmb.clock).acquire_pause("game_over", "player")
-    return {"status": "ok", "stage": "game_over"}
+    if not st["outcome"] and not _someone_alive(world):
+        st["outcome"] = "defeat"
+    return {"status": "ok", "stage": st["stage"], "personal": True, "death": out}
 
 
 def _someone_alive(world: Any) -> bool:
@@ -711,7 +703,8 @@ def objective(world: Any) -> str:
 def snapshot(world: Any) -> dict[str, Any]:
     st = state(world)
     fate = wizard.wiz(world).get("fate")
-    return {"stage": st["stage"], "scene": scene_view(world), "game_over": dict(fate) if fate and not fate.get("alive", True) else {}, "mentor_fate": st["mentor_fate"],
+    return {"stage": st["stage"], "scene": scene_view(world), "game_over": dict(fate) if fate and not fate.get("alive", True) and fate.get("terminal") else {},
+            "dead": dict(fate) if fate and not fate.get("alive", True) else {}, "mentor_fate": st["mentor_fate"],
             "explore": explore_due(world) if st["stage"] == "explore" else {}, "aspects": checks.scores(world), "worldview": wizard.worldview_scores(world),
             "worldview_primary": wizard.worldview_primary(world), "mentor": mentor(world),
             "mentor_dead": st["mentor_fate"] in ("killed_by_stranger", "died_earlier"), "stranger": st["attacker"]}

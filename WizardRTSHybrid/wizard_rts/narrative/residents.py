@@ -81,7 +81,10 @@ def create(world: Any, *, settlement: str, role: str, graph: str, speaker: str, 
 
 
 def figure(rec: dict[str, Any]) -> str:
-    by_tribe = FIGURES.get("mentor" if rec["role"] == "teacher" else rec["role"], FIGURES["farmer"])
+    if rec.get("figure"):  # a body row names its own picture (the wizard's avatar lying down)
+        return str(rec["figure"])
+    role = {"teacher": "mentor", "mother": "weaver"}.get(rec["role"], rec["role"])
+    by_tribe = FIGURES.get(role, FIGURES["farmer"])
     return "widelands.%s_worker" % by_tribe.get(rec["tribe"], by_tribe["barbarians"])
 
 
@@ -137,5 +140,5 @@ def entity_rows(world: Any, row_info: Any) -> list[dict[str, Any]]:
         rows.append({"id": pid, "class": "npc", "kind": "npc", "definition": "story.resident", "faction": "", "faction_name": r["faction"],
                      "label": person.get("name", "Villager"), "tx": r["tile"][0], "ty": r["tile"][1], "alive": bool(person.get("alive", True)) and r["status"] == "present",
                      "figure": figure(r), "role": r["role"], "dead": r["status"] == "dead", "hostile": bool(r.get("hostile")), "quest_status": info.get("quest_status", ""), "has_quest": bool(info.get("has_quest", False)),
-                     "hint": info.get("hint", "")})
+                     "hint": info.get("hint", ""), **({"body": True, "seat": r.get("seat", ""), "avatar": r.get("avatar", "")} if r["role"] == "body" else {})})
     return rows

@@ -125,6 +125,21 @@ class HostServer:
         self.stats = {"bytes_in": 0, "bytes_out": 0, "messages": 0, "replies": 0, "advances": 0, "quanta": 0, "probes": 0, "connections": 0, "tick_ms_max": 0.0, "tick_ms_total": 0.0, "ticks": 0}
         self.per_conn: dict[socket.socket, dict[str, int]] = {}
         session.on_world_swap = self._adopt_world  # a single-player New game replaces the world object
+        session.on_ending = self._on_ending  # every human is dead: the world is saved with the bodies in it and the session winds down
+        self.stop_at: float | None = None
+        self.ending_save: dict[str, Any] | None = None
+
+    def _on_ending(self, session: MultiplayerSession) -> None:
+        """The session's game has ended. The host's own world (a private session, or the hosting installation's world) is saved as it is, dead
+        apprentices and all; the clients read `ending` from their state polls, show it and leave; the host stops once they have, or after a while."""
+        if narrative.enabled(self.world) and session.max_players == 1:
+            from wizard_rts import server
+
+            try:
+                self.ending_save = server._handle(self.world, {"op": "save", "slot": "quit"})
+            except Exception as exc:  # noqa: BLE001 - a save that fails must not keep the session alive for ever
+                self.ending_save = {"status": "error", "detail": str(exc)}
+        self.stop_at = self.clock() + 30.0
 
     def _adopt_world(self, world: HybridWorld) -> None:
         self.world = world
@@ -193,6 +208,8 @@ class HostServer:
         for conn in self.session.orphaned_conns:
             self._close(conn, notify=False)
         self.session.orphaned_conns.clear()
+        if self.stop_at is not None and (now >= self.stop_at or not any(l.connected for l in self.session.links.values() if not l.ai)):
+            self.stop_flag = True
         spent = (self.clock() - t0) * 1000.0
         self.stats["ticks"] += 1
         self.stats["tick_ms_total"] += spent

@@ -6,7 +6,7 @@ from typing import Any
 
 from wizard_rts.narrative import campaign, conversation, duel_lease, tutorial, wizard
 
-OPS = ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose")
+OPS = ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose", "resurrect")
 FOUGHT = ("victory", "defeat", "clash", "stalemate")
 
 
@@ -38,6 +38,10 @@ def handle(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         return {"status": "ok"}
     if op == "journal":
         return {"status": "ok", "journal": tutorial.snapshot(world)}
+    if op == "resurrect":
+        from wizard_rts.narrative import mortality
+
+        return mortality.resurrect_begin(world, mortality.me(world), str(message.get("target", "")))
     return {"status": "rejected", "reason": "unknown_op"}
 
 

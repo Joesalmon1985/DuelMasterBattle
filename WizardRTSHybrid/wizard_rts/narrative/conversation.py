@@ -76,8 +76,13 @@ def _ctx(world: Any, sp: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[st
 
         tutorial.refresh(world)  # the stories may have unlocked a moment ago: cast them before the teacher answers
         r = sp["res"]
+        from wizard_rts.narrative import ledger, mortality, mother
+
+        facts = ledger.facts(world, mortality.me(world))
+        if r["role"] == mother.ROLE:
+            facts.update(mother.facts(world, sp["pid"]))
         return {"template": r["graph"], "speaker": r["speaker"], "speaker_pid": sp["pid"], "name": name,
-                "cast": {**campaign.names_for(world, sp["pid"]), **quests.cast_names(world, "forest_dispute")}, "facts": {}}, {}
+                "cast": {**campaign.names_for(world, sp["pid"]), **quests.cast_names(world, "forest_dispute")}, "facts": facts}, {}
     facts = occupations.facts_for(world, sp)
     octx = {"template": "occupation", "speaker": "occupation", "speaker_pid": sp["pid"], "name": name, "facts": facts, "cast": campaign.names_for(world, sp["pid"])}
     gctx = quests.ctx_for(world, sp)

@@ -14,6 +14,7 @@ const _VT = preload("res://client/scripts/visual_theme.gd")
 const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 
 const FIRE_RANGE := 3  # tiles; must equal wizard_rts/magic.py FIRE_RANGE
+const RESURRECT_RANGE := 2  # tiles (Manhattan); must equal config.json mortality.resurrect_range
 const CALL_RANGE := 6  # tiles; must equal wizard_rts/narrative/conversation.py CALLOUT_RANGE
 const REFRESH_SECONDS := 0.3
 const PRIORITY := {"npc": 0, "unit": 0, "building": 1, "worker": 2, "carrier": 3, "animal": 4, "rock": 5, "tree": 6}
@@ -276,6 +277,11 @@ func _render() -> void:
 		var close_enough: bool = _manhattan(e) <= world.story_ui.TALK_RANGE
 		if not bool(_who.get("dead", e.get("dead", false))) and not bool(_who.get("hostile", e.get("hostile", false))):
 			actions.append({"id": "talk", "text": "Talk" if close_enough else "Talk (walk closer)", "kind": "primary", "disabled": not close_enough})
+		elif bool(e.get("body", false)) and str(e.get("seat", "")) != LanSession.player_id:
+			# a fallen apprentice: standing beside the body, a living wizard can bring them back (the host runs the channel)
+			var near_body: bool = _manhattan(e) <= RESURRECT_RANGE
+			var me_dead: bool = world.has_method("ui_dead") and world.ui_dead()
+			actions.append({"id": "resurrect", "text": "Bring them back" if near_body else "Bring them back (walk closer)", "kind": "primary", "disabled": not near_body or me_dead})
 	elif cls == "building":
 		subtitle = "Building - %s" % (str(e.get("faction_name", "")) if str(e.get("faction_name", "")) != "" else "no faction")
 		body = str(e.get("status_text", "")) if str(e.get("status_text", "")) != "" else str(d["far"])
@@ -329,7 +335,9 @@ func describe_person(e: Dictionary) -> String:
 	elif cls == "unit":
 		bits.append("Health %d of %d." % [int(e.get("hp", 0)) / 100, int(e.get("max_hp", 0)) / 100])
 	elif cls == "npc":
-		if bool(e.get("dead", false)):
+		if bool(e.get("body", false)):
+			bits.append("An apprentice, dead where they fell. The weave of three can call them back, if somebody stands beside them and holds it.")
+		elif bool(e.get("dead", false)):
 			bits.append("Their body lies where they fell. People have not dared to move it yet.")
 		elif bool(e.get("hostile", false)):
 			bits.append("A stranger in a dark travelling cloak. The air around him feels wrong.")
@@ -350,6 +358,16 @@ func _on_action(id: String) -> void:
 		var target := current_id
 		close()
 		world.story_ui.talk_to(target)
+	elif id == "resurrect":
+		var seat := str(e.get("seat", current_id))
+		var reply: Dictionary = world._sim.op({"op": "resurrect", "target": seat})
+		if str(reply.get("status", "")) == "started":
+			close()
+			world._hud_area_lbl.text = "Weaving…"
+		else:
+			_note = {"too_far": "Stand beside the body first.", "already_channelling": "You are already weaving.", "dead": "The dead cannot weave.",
+				"no_body": "There is nobody there to bring back."}.get(str(reply.get("reason", "")), "The weave will not take (%s)." % str(reply.get("reason", "")))
+			_render()
 	elif id == "burn":
 		var target := current_id
 		var reply := cast_fire(target)

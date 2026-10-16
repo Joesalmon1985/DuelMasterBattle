@@ -272,19 +272,24 @@ def test_defeat_is_terminal():
     rec = cp.to_duel(w)
     lid = rec["id"]
     out = cp.fight(w, rec, False)
-    assert out["outcome"] in ("lost", "draw") and out["campaign"]["stage"] == "game_over"
+    assert out["outcome"] in ("lost", "draw") and out["campaign"]["stage"] == "duel", "the stage never records a defeat (a new wizard may arrive)"
     assert campaign.over(w) and wizard.wiz(w)["fate"]["alive"] is False and "player" in w.dmb.tombstones
+    assert wizard.wiz(w)["fate"]["terminal"], "alone and without a session, nobody can bring the apprentice back"
     assert w.dmb.leases[lid]["state"] == "RESOLVED"  # the duel was released properly
     snap = w.snapshot()["story"]["narrative"]["journal"]["campaign"]
-    assert snap["stage"] == "game_over" and snap["game_over"]["text"] == "The apprentice was defeated."
+    assert snap["stage"] == "duel" and snap["game_over"]["text"] == "The apprentice was defeated."
     assert [e["kind"] for e in w.narrative["log"]].count("player_died") == 1
-    # nothing can go on with the dead character
+    from wizard_rts.narrative import mortality
+
+    body = mortality.body_of(w, mortality.me(w))
+    assert body and any(e.get("id") == body and e.get("dead") for e in w.snapshot()["entities"]), "the body lies in the world"
+    # nothing can go on with the dead character (saving the world is allowed: it is permanent, the body is part of it)
     for op in ({"op": "pose", "tx": 1, "ty": 1}, {"op": "fire", "target": next(iter(w.trees))}, {"op": "talk", "npc": cp.mentor(w)}, {"op": "interact"},
-               {"op": "move", "units": [], "tx": 1, "ty": 1}, {"op": "save", "slot": "x"}):
+               {"op": "move", "units": [], "tx": 1, "ty": 1}):
         assert server._handle(w, op)["reason"] == "game_over", op
     ms = int(w.dmb.clock["game_ms"])
     nh.adv(w, 30)
-    assert int(w.dmb.clock["game_ms"]) == ms  # the world is held
+    assert int(w.dmb.clock["game_ms"]) > ms  # the world goes on without the apprentice
     # recorded once, however many times the report is repeated
     again = story.dispatch(w, {"op": "duel_resolve", "duel_id": lid, **cp.play(rec, win=False)})
     assert again.get("reason") == "game_over" or again.get("status") in ("idempotent", "rejected")
@@ -311,14 +316,13 @@ def test_every_other_way_out_of_the_lethal_duel_is_the_apprentices_death(how, tm
     assert not w.dmb.leases[rec["id"]]["state"] == "ACTIVE" and wizard.wiz(w)["fate"]["alive"] is False
 
 
-def test_a_dead_apprentice_is_never_restored_into_an_active_game(tmp_path):
+def test_a_dead_apprentice_is_saved_with_the_world_and_loads_dead(tmp_path):
     w = nh.world()
     persist.save_world(w, tmp_path / "before.pkl")  # an earlier valid save is still valid
     cp.fight(w, cp.to_duel(w), False)
-    with pytest.raises(persist.SaveError) as err:
-        persist.save_world(w, tmp_path / "after.pkl")
-    assert err.value.reason == "game_over" and not (tmp_path / "after.pkl").exists()
-    assert server._handle(w, {"op": "save", "slot": "quit"})["reason"] == "game_over"
+    out = persist.save_world(w, tmp_path / "after.pkl")  # the world is permanent: the dead apprentice and the body are part of it
+    after, _ = persist.load_world(out["path"])
+    assert campaign.over(after) and after.narrative["mortality"]["bodies"]
     older, _ = persist.load_world(tmp_path / "before.pkl")
     assert not campaign.over(older) and campaign.stage(older) == "training"  # loading an earlier save is the player's explicit choice
     # even if a dead world were written by some other route, it loads as dead

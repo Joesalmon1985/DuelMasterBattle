@@ -83,10 +83,7 @@ def _valid(path: Path) -> bool:
 def save_world(world: Any, path: Path | str) -> dict[str, Any]:
     """Write `world` to `path` atomically (tmp file, fsync, `os.replace`), keeping the previous valid save as `<slot>.prev.pkl`."""
     path = Path(path)
-    from wizard_rts.narrative import campaign
-
-    if campaign.over(world):  # a dead apprentice is never written over a living one's slot
-        raise SaveError("game_over", "the apprentice is dead: there is nothing to save")
+    # a dead apprentice is saved like a living one: the world is permanent and the body is part of it (plan section 3.3)
     game_ms = int(world.dmb.clock.get("game_ms", 0))
     digest = world.state_hash()
     payload = {"format": save_format(), "hash": digest, "narrative_version": config.version(), "world": world,
@@ -109,7 +106,9 @@ def save_world(world: Any, path: Path | str) -> dict[str, Any]:
 
 # ------------------------------------------------------------------ load
 
-MIGRATIONS: dict[int, Any] = {}  # narrative_version n -> function(payload) -> payload at n + 1 (none exist yet; the mechanism does)
+MIGRATIONS: dict[int, Any] = {  # narrative_version n -> function(payload) -> payload at n + 1
+    1: lambda payload: payload,  # 2: mortality, the ledger, the mothers; all created lazily by their modules, nothing in the save changes shape
+}
 
 
 def migrate(payload: dict[str, Any]) -> dict[str, Any]:
