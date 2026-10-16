@@ -297,6 +297,9 @@ func use_entity(e: Dictionary) -> void:
 			_show_dialog(reply)
 		else:
 			_toast(_why(str(reply.get("reason", "")), e))
+	elif str(e["class"]) == "landmark" and str(e.get("kind", "")) == "trial_gate":
+		if world.trial_mode != null:
+			world.trial_mode.enter()
 	elif str(e["class"]) == "landmark":
 		var reply := _op({"op": "enter", "dungeon": str(e["dungeon"])})
 		if str(reply.get("status", "")) == "ok":
@@ -505,6 +508,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if k.keycode == KEY_E:
+			if world.trial_mode != null and world.trial_mode.active:
+				return  # inside the Trial the zone owns E (trial_mode.gd)
 			var e := nearest_interactive()
 			if not e.is_empty():
 				use_entity(e)

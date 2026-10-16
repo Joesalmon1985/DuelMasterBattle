@@ -17,12 +17,12 @@ Sources: `DD/Deathtrap_Dungeon_Canonical_Adaptation_Report.md`, the backbone JSO
 
 | Zone (legacy id) | Source passages | Legacy | Wizard World | Notes |
 | --- | --- | --- | --- | --- |
-| Trial gate, official, contestants | report section 3 | the old `trial_gate` area (Ashwell adventure, not exported) | M5 | the roll, the six contestants entering in order |
-| Crystal Entrance (`dd_entrance`) | 1, 270 | implemented | M5 | aid box, the table of boxes |
-| Footprint Fork (`dd_fork`) | 66, 119 | implemented | M5 | arrow, footprints, Giant Fly on the east loop, draught to the service tunnels |
-| Footprint Galleries (`dd_galleries`) | 293, 382 | implemented | M5 | the old man's riddle, the petrified Knight, torch, bell, chest, Guard Dog |
-| Throm's Pit (`dd_pit`) | 154, 22, 184, 63, 311, 323 | implemented | M5 | lower / be lowered / jump / climb alone; ally or betray |
-| Lower Route (`dd_lower`) | 194, 138, 52, 169, 288, 221 | implemented | M5 | red book (weave), black book (potion), Cave Trolls (Throm fights one), bone ring |
+| Trial gate, official, contestants | report section 3 | the old `trial_gate` area (Ashwell adventure, not exported) | **ported (M5)**: a landmark on the map 18 to 30 tiles from the village, the Rollkeeper (resident, `trial_gate.json`) and five contestants who go in ahead | the roll, the six contestants entering in order |
+| Crystal Entrance (`dd_entrance`) | 1, 270 | implemented | **ported (M5)** | aid box, the table of boxes |
+| Footprint Fork (`dd_fork`) | 66, 119 | implemented | **ported (M5)** | arrow, footprints, Giant Fly on the east loop, draught to the service tunnels |
+| Footprint Galleries (`dd_galleries`) | 293, 382 | implemented | **ported (M5)** | the old man's riddle, the petrified Knight, torch, bell, chest, Guard Dog |
+| Throm's Pit (`dd_pit`) | 154, 22, 184, 63, 311, 323 | implemented | **ported (M5)**: the first wizard to cross decides for the run | lower / be lowered / jump / climb alone; ally or betray |
+| Lower Route (`dd_lower`) | 194, 138, 52, 169, 288, 221 | implemented | **ported (M5)** | red book (weave), black book (potion), Cave Trolls (Throm fights one), bone ring |
 | Trialmaster Complex (`dd_trialmaster`) | 60, 365, 290, 191, 84, 302, 379 | implemented | M6 | Dwarf, dice, cobra, Throm's forced duel, the concealed way |
 | Idol Cavern (`dd_idol`) | 37, 240, 351, 239, 34, 89 | implemented | M6 | Flying Guardians, emerald eye, the false eye |
 | Drowned Grotto (`dd_grotto`) | 281, 399, 192 | implemented | M6 | Boa Constrictor, the dying Elf, bread, charm (diamond clue) |
@@ -67,6 +67,15 @@ Sources: `DD/Deathtrap_Dungeon_Canonical_Adaptation_Report.md`, the backbone JSO
 | Manticore | CSV | implemented (legacy) | the old man's clue (it hates light) is a legacy addition, **not canon** |
 | The Red Wizard as a contestant and a rematch | plot document (invented for the Ashwell adventure) | implemented (legacy) | **not canon**; Wizard World's equivalent recurring rival is the stranger of the opening (decision D1); the legacy rival encounter is not ported |
 | Contestant roster: Knight, Elf, two Barbarians (Throm), assassin | report section 3 | implemented (legacy, as states) | the assassin and the later Ninja are **not proven** to be one person; kept distinct |
+
+## How the port reads the legacy (M5)
+
+`wizard_rts/trial/zones.py` loads `legacy_zones.json` and lays `data/trial/zones_wizard.json` over it (the ported list, text fixes, item ids).
+`opponents.py` turns a legacy bestiary entry into a Ward Duel opponent on the 3x3 tier with the Ward pool cut to the apprentice's palette;
+the Guard Dog's one-colour Ward and the Cave Troll are lethal (a lost duel is a death inside the zone, the body keeps its pockets); the Giant Fly lets
+a loser escape wounded. A draw (both Wards broken in one round) leaves the creature where it was. `events.py` holds the riddle, Throm's pit
+and the black book as the book has them; the riddle's number stays unverified (see above). The run is shared: one live run per world, a position
+and pockets per wizard, taken and defeated things gone for everyone, bodies of an ended run left for the next contestants to search.
 
 ## Palette mapping (the legacy's colours in Wizard World)
 

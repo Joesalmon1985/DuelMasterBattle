@@ -13,7 +13,7 @@ func _run() -> void:
 	var failed := false
 	for path in ["res://client/hybrid/sim_client.gd", "res://client/net/lan_session.gd", "res://client/net/lan_discovery.gd",
 			"res://client/duel/net_duel_sim.gd", "res://client/scenes/lan_menu.gd", "res://client/scripts/game_board.gd",
-			"res://client/scenes/hybrid_world.gd", "res://client/scripts/main_menu.gd", "res://client/scripts/dev_menu.gd", "res://client/scripts/dev_mode.gd", "res://client/scripts/asset_loader.gd"]:
+			"res://client/scenes/hybrid_world.gd", "res://client/scripts/main_menu.gd", "res://client/scripts/dev_menu.gd", "res://client/scripts/dev_mode.gd", "res://client/scripts/asset_loader.gd", "res://client/hybrid/trial_mode.gd"]:
 		var s = load(path)
 		if s == null or not (s is GDScript) or not s.can_instantiate():
 			print("HYBRID_LAN_PARSE_FAIL %s" % path)

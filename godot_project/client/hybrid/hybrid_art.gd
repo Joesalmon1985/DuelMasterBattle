@@ -743,6 +743,21 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 			var top := c + Vector2(0, -70 + bob)
 			canvas.draw_colored_polygon(PackedVector2Array([top + Vector2(0, -9), top + Vector2(7, 0), top + Vector2(0, 9), top + Vector2(-7, 0)]), Color(1.0, 0.85, 0.3))
 			canvas.draw_string(font, c + Vector2(-5, -69 + bob), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color(0.3, 0.1, 0.0))
+	elif str(e.get("kind", "")) == "trial_gate":
+		# The Trial's gate: a dark arch cut into the hill, two torches, the Rollkeeper's table is a resident beside it. Placeholder shapes, labelled.
+		var t: float = Time.get_ticks_msec() / 1000.0
+		canvas.draw_rect(Rect2(c + Vector2(-46, -58), Vector2(92, 76)), Color(0.22, 0.2, 0.18), true)
+		canvas.draw_rect(Rect2(c + Vector2(-30, -42), Vector2(60, 60)), Color(0.03, 0.02, 0.04), true)
+		canvas.draw_arc(c + Vector2(0, -42), 30, PI, TAU, 20, Color(0.45, 0.4, 0.3), 6.0)
+		for k in 2:
+			var tx := c + Vector2(-40 + 80 * k, -48)
+			var flick := 0.5 + 0.5 * sin(t * 9.0 + float(k) * 2.1)
+			canvas.draw_rect(Rect2(tx + Vector2(-3, 0), Vector2(6, 22)), Color(0.35, 0.25, 0.15), true)
+			canvas.draw_circle(tx + Vector2(0, -4), 7.0 + 2.0 * flick, Color(1.0, 0.75, 0.25, 0.9))
+			canvas.draw_circle(tx + Vector2(0, -6), 3.5 + 1.5 * flick, Color(1.0, 0.95, 0.7))
+		var inside := int(e.get("inside", 0))
+		var tag := "The Trial of Champions" + (" (%d inside)" % inside if inside > 0 else "")
+		canvas.draw_string(font, c + Vector2(-96, 42), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(0.95, 0.9, 0.75))
 	else:
 		var open := bool(e.get("solved", false))
 		canvas.draw_rect(Rect2(c + Vector2(-26, -26), Vector2(52, 52)), Color(0.12, 0.1, 0.1), true)

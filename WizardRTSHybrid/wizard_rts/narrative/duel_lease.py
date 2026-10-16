@@ -163,8 +163,10 @@ def verify(rec: dict[str, Any], report: dict[str, Any]) -> tuple[bool, str]:
         return False, "victory_unearned"
     if outcome in ("clash",) and not broke_any:
         return False, "clash_unearned"
-    if outcome in ("defeat", "stalemate") and broke_any:
+    if outcome == "defeat" and broke_any:
         return False, "broke_ward_but_no_win"
+    if outcome == "stalemate" and broke_any and int(report.get("enemy_casts", 0)) != len(history):
+        return False, "broke_ward_but_no_win"  # a draw is both Wards broken in the same round (ward.py): the enemy cast as often as the player
     return True, "ok"
 
 

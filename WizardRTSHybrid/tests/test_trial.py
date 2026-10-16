@@ -133,7 +133,17 @@ def test_a_creature_is_a_lease_a_win_clears_it_for_both_and_the_fly_lets_you_esc
     assert enc["enemy_combatant"]["ward_pool"] == [1, 6] and enc["enemy_combatant"]["max_casts"] == 6 and enc["player_combatant"]["max_casts"] == 8
     out = joe.op("duel_resolve", duel_id=rec["id"], **play(rec, win=False))
     assert out["trial"]["wounded"] and not mortality.is_dead(t.world, joe.id), "the Giant Fly lets you escape, hurt"
-    out = joe.op("duel_resolve", duel_id=joe.op("trial_interact", entity="fly_east")["duel_lease"]["payload"]["duel"]["id"], **play(joe.op("trial_view") and trial.state(t.world) and __import__("wizard_rts.narrative.duel_lease", fromlist=["duel_lease"]).active(t.world, joe.id), win=True))
+    for attempt in range(8):  # a draw (both Wards broken in one round) leaves the fly alive; the next attempt is a new lease
+        r = joe.op("trial_interact", entity="fly_east")
+        assert r["status"] == "started", r
+        rec = r["duel_lease"]["payload"]["duel"]
+        if attempt == 0:
+            assert rec["encounter"]["player_combatant"]["max_casts"] == 7, "wounded: one cast fewer"
+        out = joe.op("duel_resolve", duel_id=rec["id"], **play(rec, win=True))
+        assert out["status"] == "resolved", out
+        if out["outcome"] == "won":
+            break
+        assert (out["trial"].get("draw") or out["trial"].get("wounded")) and not mortality.is_dead(t.world, joe.id), "the fly never kills"
     assert out["trial"]["killed"]
     goto(t, ann, "dd_fork", 15, 6)
     assert "fly_east" not in {e["id"] for e in ann.op("trial_view")["view"]["entities"]}, "shared: Ann finds it already dead"
@@ -234,6 +244,7 @@ def test_the_lower_route_the_red_book_grows_the_weave_and_the_troll_is_lethal():
     assert r["weave"] == 4
     with joe.seat_state():
         assert wizard.wiz(t.world)["weave_size"] == 4
+    goto(t, joe, "dd_lower", 6, 5)
     r = joe.op("trial_interact", entity="black_book")
     assert r["item"]["id"] == "vial" and r["event"] == "black_book" and [c["id"] for c in r["prompt"]["choices"]] == ["drink", "rub", "leave"]
     r = joe.op("trial_choose", entity="black_book", choice="drink")
@@ -244,12 +255,15 @@ def test_the_lower_route_the_red_book_grows_the_weave_and_the_troll_is_lethal():
     rec = r["duel_lease"]["payload"]["duel"]
     assert rec["encounter"]["player_combatant"]["weave_size"] == 4, "the red book's fourth place is real on the board"
     out = joe.op("duel_resolve", duel_id=rec["id"], **play(rec, win=True))
+    assert out["status"] == "resolved", out
     if out["outcome"] == "won":
         assert out["trial"]["killed"] and trial.run(t.world)["throm"] == "wounded" and trial.run(t.world)["flags"].get("troll_down")
         v = joe.op("trial_view")["view"]
         assert "bone_ring" in {e["id"] for e in v["entities"]}
-    else:
+    elif out["outcome"] == "lost":
         assert mortality.is_dead(t.world, joe.id), "a Cave Troll finishes a losing apprentice"
+    else:
+        assert out["trial"]["draw"] and not mortality.is_dead(t.world, joe.id)
 
 
 def test_leaving_by_the_door_puts_the_wizard_back_at_the_gate_and_the_run_goes_on():

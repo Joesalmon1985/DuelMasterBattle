@@ -9,6 +9,7 @@ const TerrainView = preload("res://client/hybrid/terrain_view.gd")
 const WizardLabels = preload("res://client/hybrid/wizard_labels.gd")
 const StoryUi = preload("res://client/hybrid/story_ui.gd")
 const CampaignUi = preload("res://client/hybrid/campaign_ui.gd")
+const TrialMode = preload("res://client/hybrid/trial_mode.gd")
 const CampaignHud = preload("res://client/ui/campaign_hud.gd")
 const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 const ResponsiveModal = preload("res://client/ui/responsive_modal.gd")
@@ -48,6 +49,7 @@ var hud: Control  # the campaign HUD: era and cycle, the current objective, a jo
 var menu_card: Control  # the pause menu (a DmbNarrativeCard)
 var campaign_ui: Node  # the opening campaign's scenes and the Game Over screen (campaign_ui.gd)
 var story_ui: Node  # the wizard's story: people, dialogue, dungeon, duel (placeholders over the Python ops)
+var trial_mode: Node  # the Trial of Champions: zone mode (trial_mode.gd); `trial_mode.active` is "inside"
 var terrain = null  # TerrainView once the sim has sent its terrain
 ## Camera zoom is stored as PHYSICAL pixels per map tile (so "how close" means the same on a phone and a monitor) and converted with the stretch scale.
 const ZOOM_DEFAULT_PX := 52.0
@@ -175,6 +177,10 @@ func _ready() -> void:
 	story_ui.name = "StoryUi"
 	add_child(story_ui)
 	story_ui.setup(self)
+	trial_mode = TrialMode.new()
+	trial_mode.name = "TrialMode"
+	add_child(trial_mode)
+	trial_mode.setup(self)
 	campaign_ui = CampaignUi.new()  # after the story panels: it sees the keyboard first while a scene or the Game Over screen is up
 	campaign_ui.name = "CampaignUi"
 	add_child(campaign_ui)
@@ -228,7 +234,7 @@ func _era_text(snap: Dictionary) -> String:
 func _process(delta: float) -> void:
 	super._process(delta)
 	if hud != null and story_ui != null:
-		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or (god != null and god.active))
+		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or (god != null and god.active) or (trial_mode != null and trial_mode.covering()))
 	_autosave_tick(delta)
 	_art.industry.begin_frame(delta)
 	if _camera_nudge != Vector2.ZERO:
@@ -374,6 +380,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	# Wizard Mode: a left click on anything opens its inspect card. The press only remembers what is under the pointer; the click happens on release,
 	# and not at all if a pinch or a drag happened in between.
+	if trial_mode != null and trial_mode.active and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not _duel_open:
+		if trial_mode.tap(event.position):
+			get_viewport().set_input_as_handled()
+			return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not _duel_open and story_ui != null and not story_ui.covering():
 		if event.pressed:
 			_pinch_seen = false
@@ -404,6 +414,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _arrived() -> void:
 	if _sim._peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+		return
+	if trial_mode != null and trial_mode.active:
+		trial_mode.arrived()
+		_update_prompt()
 		return
 	if mp:
 		# one validated step per tile; the host answers with the authoritative pose (a refusal snaps the avatar back)
@@ -445,12 +459,16 @@ func tile_ground(x: int, y: int) -> bool:
 
 
 func _tile_char(_x: int, _y: int) -> String:
+	if trial_mode != null and trial_mode.active:
+		return super._tile_char(_x, _y)  # a zone: the legacy area's rows (cave walls, floor, water)
 	if not tile_ground(_x, _y):
 		return " "
 	return "."
 
 
 func is_walkable(p: Vector2i) -> bool:
+	if trial_mode != null and trial_mode.active:  # a zone: the legacy rule (cave walls, things standing on tiles) plus the other wizard
+		return super.is_walkable(p) and not trial_mode.blocked(p)
 	if not tile_ground(p.x, p.y):
 		return false
 	return not _blocked.has(p) and not _solid.has(p)
@@ -481,6 +499,14 @@ func _unnote_solid(id: String) -> void:
 func _on_action() -> void:
 	if _duel_open or _snapshot.is_empty():
 		return
+	if trial_mode != null and trial_mode.active:
+		trial_mode.interact()
+		return
+	if mp and story_ui != null:  # Wizard World's action button: the nearest person or landmark (the gate), as E does
+		var near: Dictionary = story_ui.nearest_interactive()
+		if not near.is_empty():
+			story_ui.use_entity(near)
+			return
 	var reply := _sim.op({"op": "interact"})
 	if str(reply.get("status", "")) != "started":
 		_hud_area_lbl.text = "Walk up to the hazard"
@@ -541,6 +567,9 @@ func _cmd(kind: String, payload: Dictionary = {}) -> Dictionary:
 			var reply: Dictionary = _sim.op(_story_duel_report(payload))
 			_story_follow_up = reply.get("follow_up", null)
 			_story_duel_id = ""
+			var trial = reply.get("trial", null)
+			if typeof(trial) == TYPE_DICTIONARY and trial_mode != null:
+				trial_mode.after_duel(trial)
 			var pest = reply.get("pest", null)
 			if typeof(pest) == TYPE_DICTIONARY and not (pest as Dictionary).is_empty():
 				if bool(pest.get("killed", false)):
@@ -642,6 +671,8 @@ func _place_john_from_snapshot() -> void:
 
 
 func _draw() -> void:
+	if trial_mode != null and trial_mode.active:
+		return  # a zone is tile sprites and actors (the Overworld's builders); the hex world is not drawn behind it
 	var cam_tile := Vector2i(int(_camera.position.x / TPX), int(_camera.position.y / TPX))
 	if terrain != null:
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -1080,7 +1111,11 @@ func _on_state_reply(reply: Dictionary) -> void:
 
 
 func _mp_apply(reply: Dictionary) -> void:
-	_mp_apply_players(reply.get("snapshot", {}).get("players", []))
+	if trial_mode != null:
+		var tv = reply.get("trial", {})
+		trial_mode.apply(tv if typeof(tv) == TYPE_DICTIONARY else {})
+	if trial_mode == null or not trial_mode.active:
+		_mp_apply_players(reply.get("snapshot", {}).get("players", []))
 	for n in reply.get("notices", []):
 		if typeof(n) == TYPE_DICTIONARY:
 			_mp_notice(n)
@@ -1545,7 +1580,10 @@ func _leave_dead_mode() -> void:
 	if _ending.is_empty():
 		_input_locked = false
 		_touch.set_enabled(true)
-	_place_john_from_snapshot()  # the host stood us up where the body lay
+	if trial_mode != null and trial_mode.active:
+		trial_mode.apply(trial_mode.view)  # stood up beside the body, inside the zone
+	else:
+		_place_john_from_snapshot()  # the host stood us up where the body lay
 	_hud_area_lbl.text = "Alive again"
 
 

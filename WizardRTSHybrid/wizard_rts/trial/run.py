@@ -201,7 +201,7 @@ def leave(world: Any) -> dict[str, Any]:
     rec = seat_rec(world, seat)
     if rec is None or not rec["inside"]:
         return {"status": "rejected", "reason": "not_inside"}
-    if rec["zone"] != zones.ENTRY_ZONE or int(rec["y"]) < zones.ENTRY_POS[1]:
+    if not _at_door(rec):
         return {"status": "rejected", "reason": "not_at_the_door"}
     if duel_lease.active(world) is not None:
         return {"status": "rejected", "reason": "duel_open"}
@@ -274,7 +274,12 @@ def view(world: Any, seat: str | None = None) -> dict[str, Any]:
     bodies += [{"seat": s, "name": b["name"], "x": b["x"], "y": b["y"], "pockets": list(b["pockets"]), "old": True} for s, b in sorted(state(world)["dead"].items()) if b["zone"] == zid]
     return {"run": r["id"], "zone": zid, "name": z["name"], "pos": [rec["x"], rec["y"]], "facing": rec["facing"], "entities": ents, "others": others, "bodies": bodies,
             "pockets": [{"id": i, "name": ITEM_NAMES.get(i, i)} for i in rec["pockets"]], "gems": list(rec["gems"]), "conditions": list(rec["conditions"]),
-            "throm": r["throm"], "ended": r.get("ended"), "visited": list(rec["visited"]), "at_door": zid == zones.ENTRY_ZONE and int(rec["y"]) >= zones.ENTRY_POS[1]}
+            "throm": r["throm"], "ended": r.get("ended"), "visited": list(rec["visited"]), "at_door": _at_door(rec)}
+
+
+def _at_door(rec: dict[str, Any]) -> bool:
+    """The way out: the doorway tiles of the first zone (the entry tile and its neighbours on the bottom rows)."""
+    return rec["zone"] == zones.ENTRY_ZONE and int(rec["y"]) >= zones.ENTRY_POS[1] and abs(int(rec["x"]) - zones.ENTRY_POS[0]) <= 1
 
 
 # ------------------------------------------------------------------ moving
@@ -509,6 +514,9 @@ def on_duel_resolved(world: Any, lease: dict[str, Any], out: dict[str, Any]) -> 
         text = {"troll_lower1": "Your troll goes down. Throm finishes his, but his arm hangs wrong.\n\n\"Keep walking,\" he says. \"Don't look at it.\"\n\nSomething glints where your troll fell.",
                 "fly_east": "The fly spins down into the dark, buzzing, and does not come up.", "dog_gal1": "The mastiff folds, silent to the end."}.get(eid, f"{opponents.bestiary()[enemy]['display_name']} is broken. The path is clearer.")
         return {"trial": True, "killed": True, "text": text, "entity": eid}
+    if out.get("outcome") == "draw":  # both Wards broke in the same breath: nobody wins, nobody dies, the creature stays
+        events.log(world, "trial_draw", seat=seat, zone=zid, entity=eid, enemy=enemy)
+        return {"trial": True, "killed": False, "draw": True, "text": f"You break each other's Wards in the same breath. {opponents.bestiary()[enemy]['display_name']} backs off into the dark, and so do you.", "entity": eid}
     lethal = enemy in opponents.LETHAL
     if lethal:
         mortality.die(world, seat, f"trial:{enemy}", by=enemy, terminal=False)

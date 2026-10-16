@@ -24,6 +24,7 @@ Authority
 
 from __future__ import annotations
 
+import os
 import secrets
 import time
 from collections import deque
@@ -362,6 +363,11 @@ class MultiplayerSession:
             return self.state_view(link, message, now)
         if op == "move":
             return self.move(link, message, now)
+        if op == "teleport":  # headed tests: a long walk is not what they test
+            if os.environ.get("HYBRID_DEV_OPS") != "1" or self.state != "playing" or not link.spawned:
+                return {"status": "rejected", "reason": "not_allowed", "op": op}
+            self.world.players[link.id].update(tx=int(message.get("tx", 0)), ty=int(message.get("ty", 0)), facing="down")
+            return {"status": "ok", **self._pose(link)}
         if op.startswith("pvp_"):
             return self._pvp(link, op, message, now)
         if op in PASSTHROUGH_OPS:

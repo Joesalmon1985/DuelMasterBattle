@@ -39,9 +39,9 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [x] Headed `run_hybrid_warehouse.gd` PASS (rats drawn as Mindustry crawler/dagger sprites, rat card, keeper complaint, first fight, warehouse clear, thanks): evidence `WizardRTSHybrid/docs/evidence/opening_rpg/m4/w01..w06.png`
 
 ## M5 The Trial, first half
-- [ ] `wizard_rts/trial/`: run, zones, positions, shared items, triggers, choices, conditions, leases, death, run end and reset
-- [ ] The gate with official and contestants; zones A to D; pocket strip; drawn by the legacy tile builder in the hybrid scene
-- [ ] `tests/test_trial.py`; headed `run_hybrid_trial_a_d.gd`; canon table updated
+- [x] `wizard_rts/trial/` (`zones.py` legacy data + `data/trial/zones_wizard.json` overlay, `opponents.py` bestiary → Ward Duel specs with `duel_lease.begin(spec=)`, `events.py` riddle / Throm's pit / black book, `run.py` one shared run per world, a position and pockets per wizard, validated steps and exits, interactions and choices, creature leases (`purpose trial:<zone>:<entity>`), lethal losses → `mortality.die` with the body in the zone, resurrection beside it (mortality's Trial hooks), run end when all inside are dead, bodies kept for the next run); ops `trial_enter/move/interact/choose/leave/view`; `session.state_view` carries `trial` and each player's zone position; world `move` and PvP challenges refused inside; a same-round draw (both Wards broken) is now accepted by `duel_lease.verify` and leaves the creature — `tests/test_trial.py` (11 passed)
+- [x] The gate: a landmark 18 to 30 tiles from home (`trial_gate` row, drawn by `hybrid_art._draw_story`), the Rollkeeper and five contestants as residents (`trial_gate.json`, placeholder text), contestants go in ahead; zones A to D ported; Godot zone mode `client/hybrid/trial_mode.gd` (the Overworld's legacy tile builder draws the zone inside the hybrid scene, every step validated by `trial_move` with a stale-poll rule, the Trial card for readings / riddles / creature introductions / bodies / the way out, pocket strip, Leave button at the door, the other wizard and bodies from the host's view, the resurrection channel drawn over the tiles); host dev op `teleport` (`HYBRID_DEV_OPS=1`, headed tests only)
+- [x] Headed `run_hybrid_trial_a_d.gd` PASS over `scripts/run_lan_headed.sh trial` (gate on the map, enter unprepared, cave tiles built, real validated steps and a wall, Sukumvit's box into the pocket strip, the crystal, the exit into the Footprint Fork, a sign, the Giant Fly on the REAL board (victory removes it), leaving refused away from the door): evidence `WizardRTSHybrid/docs/evidence/opening_rpg/m5/t01..t07.png`; `docs/TRIAL_CANON_STATUS.md` updated (zones A to D ported, the port's reading of the legacy)
 
 ## M6 The Trial, second half
 - [ ] Zones E to K; spell and weave growth; the champion's exit
@@ -54,5 +54,6 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [ ] APK build, asset audit, exported-pack probe, two-phone checklist extended, build and test instructions
 
 ## Session log (newest first)
+- 16 Oct 2026 (session 1, continued): M5 done (Python 11 tests, headed PASS). Next: M6 zones E to K.
 - 16 Oct 2026 (session 1, continued): M4 done (Python and headed PASS). `wizard_rts/trial/` package and its wiring (ops, protocol, session, mortality hooks) landed with M4 as a scaffold; M5 tests next.
 - 16 Oct 2026 (session 1): M0, M1, M2, M3 done (Python and Godot, headed PASS for each). Next: M4 the village.

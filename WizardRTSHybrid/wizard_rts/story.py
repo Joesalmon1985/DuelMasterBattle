@@ -854,6 +854,7 @@ def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         out = ops.handle(world, message)
     else:
         out = {"status": "ok"}
-    out["view"] = dungeon_view(world) if state(world)["in_dungeon"] else {}
+    if not op.startswith("trial_"):  # the Trial's ops carry their own `view` (the zone)
+        out["view"] = dungeon_view(world) if state(world)["in_dungeon"] else {}
     out["duel"] = duel_view(world)
     return out
