@@ -7,7 +7,7 @@ extends Node
 
 const SimClient = preload("res://client/hybrid/sim_client.gd")
 
-const PROTOCOL_VERSION := 2  # 2: real-time PvP casts, the narrative ops, single-player save/continue
+const PROTOCOL_VERSION := 3  # 3: mortal apprentices, the Trial, the catch-up page; 2: real-time PvP casts, the narrative ops, single-player save/continue
 const GAME_VERSION := "0.2.0"  # must match WizardRTSHybrid/wizard_rts/net/protocol.py
 const DEFAULT_PORT := 8765
 const DISCOVERY_PORT := 8767

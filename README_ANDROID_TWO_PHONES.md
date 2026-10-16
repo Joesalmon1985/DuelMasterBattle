@@ -3,8 +3,15 @@
 There is one game, **Wizard World**: a living civilisation with a wizard's apprenticeship inside it. The main menu has four entries,
 **Play Single Player**, **Host Multiplayer**, **Join Multiplayer** and **Settings**. Alone you play the same world with a fellow
 apprentice, Mira, for company (an AI wizard who walks with you and will duel you for practice); with a friend you share it.
-The notes below are about the two-phone game. (Version 0.2.0 replaces 0.1.0: install it on **both** phones, a 0.1.0 phone
-cannot join a 0.2.0 host.)
+The notes below are about the two-phone game. (Version 0.3.0 replaces 0.2.0: install it on **both** phones, an older phone
+cannot join a 0.3.0 host.)
+
+**New in 0.3.0 (16 October 2026):** apprentices are mortal (a lost duel between apprentices is a death; the living one can bring the
+dead one back; your mother has words), the world never starts over (Continue as, A new apprentice, a world that catches up on the
+time it was closed), a free opening with no objective, the village's rats and disputes, and the Trial of Champions east of the
+village: a shared dungeon drawn in the old pixel art, with the book's choices, Ward duels on the real board and a champion's door.
+Read `docs/OPENING_RPG_PLAYER_GUIDE.md` (one page) and run `docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md` on the phones: none of it has
+been played on a phone yet.
 
 Two people, two phones, one Wi-Fi, one living world. One phone runs the world and plays in it; the other joins. Nothing
 needs the internet once the app is installed. Whether the game turns cooperative or competitive is up to the two of you:
@@ -141,3 +148,8 @@ phones (none was attached to this PC), so whether the packed Python starts on a 
 session will tell. The apprentice campaign (lessons, the stranger) has been played single-player; two players inside it
 over the LAN is untested, so expect the story beats to follow the host's wizard. Treat the first two-phone session as the
 test it is: `docs/MOBILE_LAN_MULTIPLAYER.md` section 10 is the step-by-step checklist, and section 11 lists the known limits.
+
+**0.3.0 (16 October 2026):** the opening-RPG programme (mortality, the permanent world, the free opening, the village, the Trial,
+Mira) is proven on this PC by Python tests through real sessions and by headed Godot runs with screenshots
+(`docs/ledger/OPENING_RPG_PROGRESS.md`), and the 0.3.0 APK is built with the asset audit and the exported-pack art probe extended
+to the Trial's pixel art. **No phone has run 0.3.0.** The owner's run is `docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md`.

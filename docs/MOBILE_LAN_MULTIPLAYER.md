@@ -298,6 +298,8 @@ Continue, free movement afterwards. Screenshots: `WizardRTSHybrid/docs/evidence/
 
 ## 10. Manual two-phone test
 
+*(0.3.0: the opening-RPG scenarios A to H are a separate checklist, `docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md`; the steps below still apply.)*
+
 Install `build/android/DuelMasterBattle-debug.apk` on two arm64 Android phones (`adb install -r`, or copy and open the file).
 
 1. Turn mobile data off on both phones (airplane mode, then Wi-Fi back on) to show nothing needs the internet.

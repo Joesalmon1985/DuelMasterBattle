@@ -53,9 +53,13 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [x] Owner review index of every placeholder bank: `docs/DIALOGUE_REVIEW.md` (generated string counts, tick boxes); every bank's `note` still says review pending. Not done: "pick up what she is told to" (no telling-Mira mechanic exists; left for the owner's review of M7 as a candidate)
 
 ## M8 Android and the two-phone acceptance
-- [ ] APK build, asset audit, exported-pack probe, two-phone checklist extended, build and test instructions
+- [x] APK 0.3.0 built on this PC (`Build Android APK.bat noinstall` → `build/android/DuelMasterBattle-debug.apk`, 145.4 MB, arm64, signed with the debug key, CPython 3.14 and the packed sources inside, manifest 0.3.0 / version code 3; isolated self-test of the packed Python: narrative on, Mira, save/continue, protocol 3); GAME_VERSION 0.3.0, PROTOCOL_VERSION 3 (`net/protocol.py`, `client/net/lan_session.gd`, both export presets)
+- [x] Asset audit (repository and the APK: 6,316 imported textures and remaps, 2,565 catalogue items, 22 literal paths, nothing missing) and the exported-pack art probe extended to the Trial's pixel art and the rats' sprites (`run_art_export_probe.gd` `TRIAL_PIXEL`, 45 files: cave tiles, props, people, creatures): `ART_PROBE_TRIAL 45 pixel files`, `ART_PROBE_OK`
+- [x] Two-phone checklist for the brief's scenarios A to H: `docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md`; build and test instructions: `README_ANDROID_TWO_PHONES.md` (0.3.0 paragraph, status), `docs/MOBILE_LAN_MULTIPLAYER.md` section 10 pointer; player guide `docs/OPENING_RPG_PLAYER_GUIDE.md`; handoff `docs/NEXT_AGENT_HANDOFF.md` first section; repository entry `CLAUDE.md`
+- [ ] **Owner's two-phone playtest (OC6)**: not run (no phone attached). The phone measurements of M0 (catch-up rate, frame rate in a zone) are recorded in the checklist's section H for the owner to fill in
 
 ## Session log (newest first)
+- 16 Oct 2026 (session 1, end): M8 done on the PC (APK 0.3.0, audit, probe, docs); the owner's two-phone run (OC6) is the one open item. Commits on `feature/opening-rpg-and-trial` (from `main` at `e6e6399b`): `8001a718` plan, `93570051` M0+M1, `f16e8f4b` M2+M3, `f81bf624` M4, `ca198f37` M5, `864fbc8f` M6, `ae71ce36` M7, then M8 (this commit) and the final suite note.
 - 16 Oct 2026 (session 1, continued): M7 done (Python). Next: M8 Android.
 - 16 Oct 2026 (session 1, continued): M6 done (Python 23 Trial tests, headed full run PASS). Next: M7 Mira in the story and the Trial.
 - 16 Oct 2026 (session 1, continued): M5 done (Python 11 tests, headed PASS). Next: M6 zones E to K.

@@ -1,5 +1,27 @@
 # Next agent handoff
 
+## 16 Oct 2026 (later): the opening RPG and the Trial of Champions, 0.3.0 (branch `feature/opening-rpg-and-trial`, from `main` at `e6e6399b`)
+
+The owner signed off `docs/PLAN_OPENING_RPG_AND_DEATHTRAP.md` and lifted the checkpoints ("work through to M8"). All eight milestones are on
+the branch, one commit each (the ledger `docs/ledger/OPENING_RPG_PROGRESS.md` lists tests, headed runs and evidence per milestone; the session
+log at its bottom has the commit hashes). In one paragraph: apprentices die and are brought back beside the body (`narrative/mortality.py`,
+`ledger.py`, `mother.py`), the world is permanent across sessions and generations (`net/host.py` `prepare_world`, `narrative/persist.py`
+sidecar + migrations, `clockdebt.py` catch-up, `party.retire`), the opening is free (no objective; the stranger comes anyway; a judgement
+scene), the village has rats and disputes (`narrative/pests.py`, `autoduel.py`, `quests.py` templates), the Trial is a shared run on the host
+(`wizard_rts/trial/`: zones from the exported legacy data plus `data/trial/zones_wizard.json`, the book's choices in `events.py`, creatures and
+people as Ward Duel leases, lethal losses, death and resurrection inside, the champion's exit) drawn by the client's zone mode
+(`client/hybrid/trial_mode.gd` over the Overworld's legacy tile builder), and Mira follows the human into the Trial (`net/ai_wizard.py`).
+GAME_VERSION 0.3.0, PROTOCOL 3, Android version code 3. The 0.3.0 APK was built on this PC (`build/android/DuelMasterBattle-debug.apk`); the
+exported-pack art probe now covers the Trial's pixel art and the rats' sprites. **No phone has run 0.3.0**: the owner's run is
+`docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md`; the phone measurements of M0 (catch-up rate, frame rate in a zone) are still owed there.
+Player-facing: `docs/OPENING_RPG_PLAYER_GUIDE.md`. Every dialogue bank is placeholder prose awaiting the owner (`docs/DIALOGUE_REVIEW.md`).
+Known gaps, stated: Mira neither fights nor picks things up in the Trial; the Trial's unverified passages stay unverified
+(`docs/TRIAL_CANON_STATUS.md`); the Rollkeeper and contestants are drawn as the resident placeholder figures. Commands: `py -3 -m pytest
+WizardRTSHybrid/tests -q` (new suites `test_mortality`, `test_permanent_world`, `test_free_opening`, `test_village`, `test_trial`,
+`test_mira_trial`), headed `WizardRTSHybrid/scripts/run_lan_headed.sh {mortality|trial|trial_full}` and `run_headed_suite.sh warehouse`
+(GODOT must point at the console exe), `Build Android APK.bat noinstall`. Rules kept: the content roster is frozen (rats, bodies, contestants
+are narrative residents, not roster entities), `docs/release_notes.md` is never committed, merging into `main` is the owner's call.
+
 ## 16 Oct 2026: Android playtest corrections, 0.2.0 (branch `fix/android-playtest-corrections`, from `main` at `2ccb9469`)
 
 The first physical two-phone playtest of 0.1.0 worked as a LAN game and showed four faults; all four are corrected, with tests, in 0.2.0. Full account:
