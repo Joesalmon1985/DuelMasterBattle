@@ -145,6 +145,17 @@ def test_the_new_apk_updates_the_installed_one():
         assert opts["version/name"].strip('"') == protocol.GAME_VERSION
 
 
+def test_the_client_and_the_host_say_the_same_version_and_protocol():
+    """0.3.0 shipped with the client still saying 0.2.0: the phone's own client was refused by its own host (`version_mismatch`). All of them must agree."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("check_versions", HYB / "scripts" / "android" / "check_versions.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    v = mod.versions()
+    assert mod.problems(v) == [], v
+
+
 # ------------------------------------------------------------------ one game: the menu and the project
 
 def test_the_player_menu_is_wizard_world_only():

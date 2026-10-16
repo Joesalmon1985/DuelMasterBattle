@@ -21,6 +21,8 @@ if ($missing.Count -gt 0) {
     $missing | ForEach-Object { Write-Host "  - $_" }
     exit 1
 }
+& $python (Join-Path $hyb "scripts/android/check_versions.py")
+if ($LASTEXITCODE -ne 0) { Write-Host "ANDROID_APK_FAILED: the host and the client disagree on the version (they would refuse each other with version_mismatch)" -ForegroundColor Red; exit 1 }
 $jdk = Get-JdkHome
 $env:JAVA_HOME = $jdk
 $env:ANDROID_HOME = $script:SdkRoot
