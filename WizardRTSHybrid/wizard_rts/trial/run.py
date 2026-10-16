@@ -137,6 +137,14 @@ def seat_rec(world: Any, seat: str | None = None) -> dict[str, Any] | None:
     return r["seats"].get(seat if seat is not None else me(world))
 
 
+def zone_distance(world: Any, a: str, b: str) -> int | None:
+    """Manhattan distance between two wizards inside the Trial when they are in the same zone; None when either is outside or they are apart."""
+    ra, rb = seat_rec(world, a), seat_rec(world, b)
+    if ra is None or rb is None or not ra["inside"] or not rb["inside"] or ra["zone"] != rb["zone"]:
+        return None
+    return abs(int(ra["x"]) - int(rb["x"])) + abs(int(ra["y"]) - int(rb["y"]))
+
+
 def inside(world: Any, seat: str | None = None) -> bool:
     s = seat_rec(world, seat)
     return bool(s and s["inside"])
@@ -273,7 +281,7 @@ def view(world: Any, seat: str | None = None) -> dict[str, Any]:
     others = []
     for s, o in sorted(r["seats"].items()):
         if s != rec["seat"] and o["inside"] and o["zone"] == zid:
-            others.append({"seat": s, "name": mortality.name_of(world, s), "x": o["x"], "y": o["y"], "facing": o["facing"], "dead": mortality.is_dead(world, s)})
+            others.append({"id": s, "seat": s, "name": mortality.name_of(world, s), "x": o["x"], "y": o["y"], "facing": o["facing"], "dead": mortality.is_dead(world, s)})
     bodies = [{"seat": s, "name": b["name"], "x": b["x"], "y": b["y"], "pockets": list(b["pockets"])} for s, b in sorted(r["bodies"].items()) if b["zone"] == zid]
     bodies += [{"seat": s, "name": b["name"], "x": b["x"], "y": b["y"], "pockets": list(b["pockets"]), "old": True} for s, b in sorted(state(world)["dead"].items())
                if b["zone"] == zid and not s.startswith(r["id"] + ":")]  # this run's own dead are listed above, as themselves

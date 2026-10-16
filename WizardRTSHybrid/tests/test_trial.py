@@ -656,3 +656,89 @@ def test_three_wrong_orders_scatter_the_gems_to_be_picked_up_again():
     assert joe.op("trial_interact", entity="scattered_emerald")["gem"] == "emerald"
     assert joe.op("trial_view")["view"]["gems"] == ["emerald"]
     assert not trial.run(t.world).get("ended")
+
+
+# ---------------------------------------------------------------- playtest fixes (17 Oct 2026): duels in the dungeon, scenes wait outside
+
+def test_two_wizards_in_the_same_zone_can_duel_and_the_loser_dies_in_the_dungeon():
+    from test_mortality import OTHER, WARD
+
+    t = Table(humans=2)
+    joe, ann = t.people
+    enter(t, joe)
+    enter(t, ann)
+    goto(t, joe, "dd_galleries", 9, 9)
+    goto(t, ann, "dd_fork", 9, 9)
+    assert joe.op("pvp_challenge", target=ann.id)["reason"] == "inside_trial", "a different zone is out of reach"
+    goto(t, ann, "dd_galleries", 20, 9)
+    assert joe.op("pvp_challenge", target=ann.id)["reason"] == "too_far", "the zone's own tiles measure the distance"
+    goto(t, ann, "dd_galleries", 10, 9)
+    r = joe.op("pvp_challenge", target=ann.id)
+    assert r["status"] == "ok", r
+    assert ann.op("pvp_respond", duel_id=r["duel_id"], accept=True)["status"] == "ok"
+    assert joe.op("trial_move", dx=1, dy=0)["reason"] == "in_duel", "no walking in the middle of a duel"
+    assert joe.op("pvp_ward", ward=OTHER)["status"] == "ok" and ann.op("pvp_ward", ward=list(WARD))["status"] == "ok"
+    assert joe.op("pvp_cast", attack=list(WARD), cast_seq=1)["broken"]
+    joe.op("pvp_leave")
+    ann.op("pvp_leave")
+    assert mortality.is_dead(t.world, ann.id)
+    body = trial.body_of(t.world, ann.id)
+    assert body and body["zone"] == "dd_galleries" and (body["x"], body["y"]) == (10, 9), "she lies where she fell, inside"
+    assert joe.op("resurrect", target=ann.id)["status"] == "started"
+    t.advance(mortality.resurrect_ms() / 1000.0 + 1.5)
+    assert not mortality.is_dead(t.world, ann.id) and trial.inside(t.world, ann.id)
+
+
+def test_mira_can_be_challenged_again_inside_the_dungeon_after_being_brought_back():
+    t = Table(humans=1, ai=1)
+    t.advance(1)
+    joe = t.people[0]
+    (ai,) = t.session.ais.values()
+    mira = ai.link
+    at_gate(t, joe)
+    t.world.players[mira.id]["tx"], t.world.players[mira.id]["ty"] = joe.pose["tx"] + 1, joe.pose["ty"]
+    assert joe.op("trial_enter")["status"] == "ok"
+    t.advance(10)
+    assert trial.inside(t.world, mira.id)
+    d = trial.zone_distance(t.world, joe.id, mira.id)
+    assert d is not None
+    got = None
+    for _ in range(4):  # she declines twice (accept_after_challenges), then the third is accepted
+        r = joe.op("pvp_challenge", target=mira.id)
+        if r["status"] == "rejected" and r["reason"] == "too_far":
+            goto(t, joe, trial.seat_rec(t.world, mira.id)["zone"], trial.seat_rec(t.world, mira.id)["x"], trial.seat_rec(t.world, mira.id)["y"] + 1)
+            r = joe.op("pvp_challenge", target=mira.id)
+        assert r["status"] == "ok", r
+        t.advance(6)
+        if joe.link.duel_id and joe.link.duel_id in t.session.duels:
+            got = t.session.duels[joe.link.duel_id]
+            break
+    assert got is not None and got.state == "setup", "Mira accepted a duel inside the Trial"
+
+
+def test_the_stranger_scene_waits_until_the_wizard_is_out_of_the_dungeon(monkeypatch):
+    import _campaign as camp
+
+    camp.quick(monkeypatch, min_ms=20_000, fallback_ms=60_000, aftermath_fallback_ms=40_000)
+    t = Table(humans=1)
+    joe = t.people[0]
+    t.learn(joe)
+    t.advance(2)
+    t.meet_people(joe, 3)
+    enter(t, joe)
+    from wizard_rts.narrative import campaign, party
+
+    for _ in range(300):
+        t.advance(1)
+        with party.as_player(t.world, joe.id):
+            if campaign.active_scene(t.world) is not None:
+                break
+    with party.as_player(t.world, joe.id):
+        assert campaign.active_scene(t.world) is not None, "the stranger came while she was inside"
+        assert campaign.scene_view(t.world) is None, "but she is not interrupted in the dungeon"
+    with party.as_player(t.world, joe.id):
+        assert campaign.snapshot(t.world)["scene"] is None, "the journal the client reads carries no scene to open"
+    goto(t, joe, "dd_entrance", 10, 11)
+    assert joe.op("trial_leave")["status"] == "ok"
+    with party.as_player(t.world, joe.id):
+        assert campaign.scene_view(t.world) is not None, "the scene is waiting for her outside"

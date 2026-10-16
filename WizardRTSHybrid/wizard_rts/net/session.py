@@ -626,7 +626,8 @@ class MultiplayerSession:
     def _passthrough(self, link: Link, op: str, message: dict[str, Any]) -> dict[str, Any]:
         from wizard_rts import server  # the single-player op table: the same validated world operations
 
-        if op in ("interact", "resolve", "fire", "treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon"):
+        if op in ("interact", "resolve", "fire", "treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon",
+                  "trial_move", "trial_interact", "trial_choose", "trial_enter", "trial_leave"):
             duel = self.duels.get(link.duel_id)
             if duel is not None and duel.state != "finished":
                 return {"status": "rejected", "reason": "in_duel", "op": op}
@@ -651,6 +652,12 @@ class MultiplayerSession:
                 "expires_in_s": max(0.0, inv["expires_at"] - now)}
 
     def _distance(self, a: Link, b: Link) -> int:
+        if "narrative" in self.world.__dict__:
+            from wizard_rts.trial import run as trial
+
+            zd = trial.zone_distance(self.world, a.id, b.id)
+            if zd is not None:  # both in the same zone of the Trial: its own tiles
+                return zd
         pa, pb = self.world.players[a.id], self.world.players[b.id]
         return abs(int(pa["tx"]) - int(pb["tx"])) + abs(int(pa["ty"]) - int(pb["ty"]))
 
@@ -718,8 +725,8 @@ class MultiplayerSession:
         if "narrative" in self.world.__dict__:
             from wizard_rts.trial import run as trial
 
-            if trial.inside(self.world, link.id) or trial.inside(self.world, target.id):
-                return {"status": "rejected", "reason": "inside_trial"}
+            if (trial.inside(self.world, link.id) or trial.inside(self.world, target.id)) and trial.zone_distance(self.world, link.id, target.id) is None:
+                return {"status": "rejected", "reason": "inside_trial"}  # one in the dungeon and one out, or in different zones: not within reach
         if self._in_open_duel(link) or self._in_open_duel(target):
             return {"status": "rejected", "reason": "already_in_duel"}
         if link.outgoing:
@@ -745,7 +752,7 @@ class MultiplayerSession:
         if "narrative" not in w.__dict__ or link.ai or link.id not in party.seats(w):
             return False
         with party.as_player(w, link.id):
-            return duel_lease.active(w) is not None or campaign.active_scene(w) is not None
+            return duel_lease.active(w) is not None or campaign.scene_view(w) is not None  # a scene the wizard cannot see (they are in the dungeon) is not in the way
 
     def _respond(self, link: Link, message: dict[str, Any], now: float) -> dict[str, Any]:
         inv = link.invite

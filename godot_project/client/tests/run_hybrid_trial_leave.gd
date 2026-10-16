@@ -68,6 +68,17 @@ func _run() -> void:
 	_world.trial_mode.enter()
 	await _frames(10)
 	print("TRIAL inside: " + _state())
+	# the camera must follow the wizard however the view is zoomed, even standing at the very edge of a small zone
+	for zoom_px in [52.0, 110.0, 30.0]:
+		_world.set_zoom_px(zoom_px, false)
+		await _frames(6)
+		var centre: Vector2 = _world._camera.get_screen_center_position()
+		var want: Vector2 = _world._john.position + Vector2(_world.TPX * 0.5, _world.TPX * 0.5)
+		print("TRIAL camera zoom_px=%s centre=%s player=%s off_by=%s" % [str(zoom_px), str(centre), str(want), str((centre - want).length())])
+		if (centre - want).length() > 2.0:
+			print("HYBRID_TRIAL_FAIL camera is not on the player at zoom_px=%s" % str(zoom_px))
+	_world.set_zoom_px(52.0, false)
+	await _frames(4)
 	_world.trial_mode.leave()
 	await _frames(3)
 	print("TRIAL after 3 frames: " + _state())

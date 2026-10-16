@@ -62,6 +62,10 @@ Both phones on the same APK (0.3.0, version code 3; a 0.2.0 phone is refused wit
 
 ## G. Death in the Trial, and the next contestants (M5, M6)
 
+0. (Added after the first phone playtest.) Inside the Trial the other wizard (Mira in single player) can be challenged when she stands within two tiles
+   in the same zone: the **Duel** button appears there too; the loser dies where they stood and the winner can bring them back. The stranger's scene is
+   never shown inside the dungeon: it waits and opens when you walk out of the gate. Zoom (pinch or +/-) keeps your wizard in the middle of the screen.
+
 1. Phone A loses to the Trialmastiff in the galleries: dead inside the zone, the body drawn where they fell, the zone stays on screen.
 2. Phone B walks to the body (same zone, within two tiles), taps it → **Bring them back**: A stands up beside the body with their pockets.
 3. Both die inside (two lethal losses): the ending card for both; the run ends. Phone A: **A new apprentice** → enter the Trial again: a new run, the

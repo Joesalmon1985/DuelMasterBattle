@@ -134,10 +134,10 @@ func _enter_zone(v: Dictionary) -> void:
 	for k in _others.values():
 		world.remove_actor(k)
 	_others.clear()
-	world._mp_challenge_btn.visible = false
 	_host_pos = Vector2i(int(pos[0]), int(pos[1]))
 	_seen_pos = Vector2i(-1, -1)
 	world.load_area(zone, Vector2i(int(pos[0]), int(pos[1])), str(v.get("facing", "up")))
+	_free_camera()  # load_area limited the camera to the small zone: it must follow the wizard (and zoom on them) wherever they stand
 	world._clear_semantic_labels()  # the legacy semantic layer stays out: the host owns every interaction here
 	for e in world._entities:
 		e.erase("semantic")
@@ -560,6 +560,13 @@ func leave() -> Dictionary:
 	return reply
 
 
+func _free_camera() -> void:
+	world._camera.limit_left = -10000000
+	world._camera.limit_top = -10000000
+	world._camera.limit_right = 10000000
+	world._camera.limit_bottom = 10000000
+
+
 func _exit_zone() -> void:
 	active = false
 	view = {}
@@ -588,10 +595,7 @@ func _exit_zone() -> void:
 	world.area = {"id": "hybrid", "name": "Wizard RTS", "rows": ["."]}
 	world.grid_w = 2000
 	world.grid_h = 2000
-	world._camera.limit_left = -10000000  # load_area clamped the camera to the zone; the hex world has no such edge
-	world._camera.limit_top = -10000000
-	world._camera.limit_right = 10000000
-	world._camera.limit_bottom = 10000000
+	_free_camera()
 	world._hud_area_lbl.text = "Wizard RTS"
 	world._prompt_lbl.text = ""
 	world._touch.set_action_label("")

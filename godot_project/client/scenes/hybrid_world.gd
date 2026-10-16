@@ -1250,6 +1250,15 @@ func _mp_close_pvp_board(outcome: String) -> void:
 func _mp_nearby_player() -> Dictionary:
 	var best := {}
 	var best_d := 99
+	if trial_mode != null and trial_mode.active:  # inside the Trial: the wizards in this zone, on the zone's tiles
+		for o in trial_mode.view.get("others", []):
+			if bool(o.get("dead", false)):
+				continue
+			var dz := absi(int(o.get("x", 0)) - _john_pos.x) + absi(int(o.get("y", 0)) - _john_pos.y)
+			if dz <= 2 and dz < best_d:
+				best = {"id": str(o.get("id", o.get("seat", ""))), "name": str(o.get("name", ""))}
+				best_d = dz
+		return best
 	for pid in _mp_players:
 		var row: Dictionary = _mp_players[pid]
 		if not bool(row.get("connected", true)) or bool(row.get("in_duel", false)):

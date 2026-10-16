@@ -532,6 +532,11 @@ def scene_view(world: Any) -> dict[str, Any] | None:
     sc = active_scene(world)
     if sc is None:
         return None
+    from wizard_rts.narrative import mortality
+    from wizard_rts.trial import run as trial
+
+    if trial.inside(world, mortality.me(world)):  # a wizard in the dungeon is not interrupted: the scene is shown when they come out (it stays theirs)
+        return None
     ctx = scene_ctx(world)
     spec = scenes()[sc["id"]]
     page = _page(world, sc)
