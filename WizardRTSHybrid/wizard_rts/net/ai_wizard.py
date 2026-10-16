@@ -153,7 +153,7 @@ class AiWizard:
         if not inv:
             return
         if self.answer_at is None:
-            self.answer_at = now + self.rng.uniform(1.2, 3.2)  # a person takes a moment to answer
+            self.answer_at = now + self.rng.uniform(0.6, 1.6)  # a person takes a moment to answer
             return
         if now < self.answer_at:
             return
@@ -217,7 +217,7 @@ class AiWizard:
     def _after_duel(self, duel: Any, now: float) -> None:
         link = self.link
         if self.leave_at is None:
-            self.leave_at = now + 2.5
+            self.leave_at = now + 1.5
             res = duel.result or {}
             rival = duel.rival(link.id)
             other = self.session.links.get(rival)

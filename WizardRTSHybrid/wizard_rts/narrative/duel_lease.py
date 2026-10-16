@@ -19,7 +19,7 @@ from sim.dmb.adventure.duels import encounter_for_tier
 from sim.dmb.time.clock import ClockService
 
 from wizard_rts.duel import ward
-from wizard_rts.narrative import events, party, wizard
+from wizard_rts.narrative import config, events, party, wizard
 
 KIND = "story_ward_duel"
 OPPONENTS = Path(__file__).resolve().parents[1] / "data" / "narrative" / "opponents.json"
@@ -63,7 +63,7 @@ def _combatants(world: Any, opp: dict[str, Any], fixed_ward: list[int] | None) -
     pool = list(player["attack_pool"])
     enemy = {"id": "story_rival", "display_name": opp["display_name"], "archetype": str(opp.get("archetype", "wizard")), "kind": "wizard",
              "weave_size": player["weave_size"], "ward_size": player["ward_size"], "attack_pool": list(pool), "ward_pool": list(pool),
-             "allow_repeats": True, "max_casts": int(opp.get("max_casts", 8)), "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
+             "allow_repeats": True, "max_casts": int(opp.get("max_casts", 8)), "min_cast_seconds": float(config.get("duel", "min_cast_seconds", 2.0)), "max_cast_seconds": 60.0,
              "bot_logic": opp["bot_logic"], "bot_solver_cap": int(opp.get("bot_solver_cap", 60)), "bot_mistake_rate": float(opp.get("bot_mistake_rate", 0.0)),
              "think_min_seconds": float(opp["think_min_seconds"]), "think_max_seconds": float(opp["think_max_seconds"])}
     if fixed_ward:

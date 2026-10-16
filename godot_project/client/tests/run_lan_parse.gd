@@ -67,6 +67,26 @@ func _run() -> void:
 		print("HYBRID_LAN_PARSE_FAIL net sim result")
 		quit(1)
 		return
+	# a four-colour duel (a wizard's fourth duel on): the host's view lists four spells and the sim accepts the fourth in a Ward
+	var view4 := view.duplicate(true)
+	view4["state"] = "setup"
+	view4["format"] = {"slots": 3, "colours": 4, "max_casts": 10, "allow_repeats": true, "pool": [0, 1, 3, 4]}
+	view4["your_ward"] = []
+	view4["rival_history"] = []
+	view4.erase("result")
+	view4.erase("rival_ward")
+	for who in ["player_combatant", "enemy_combatant"]:
+		view4["encounter"][who]["attack_pool"] = [0, 1, 3, 4]
+		view4["encounter"][who]["ward_pool"] = [0, 1, 3, 4]
+	var sim4 = NetSim.new(null, view4)
+	sim4.attach(DmbCombatant.make(view4["encounter"]["player_combatant"]), DmbCombatant.make(view4["encounter"]["enemy_combatant"]))
+	sim4.set_player_ward_locus(0, 4)
+	sim4.set_player_ward_locus(1, 1)
+	sim4.set_player_ward_locus(2, 4)
+	if not sim4.can_lock_player_ward():
+		print("HYBRID_LAN_PARSE_FAIL a four-colour duel cannot lock a ward using the fourth colour")
+		quit(1)
+		return
 	# the LAN menu pages
 	var menu = load("res://client/scenes/lan_menu.tscn").instantiate()
 	root.add_child(menu)

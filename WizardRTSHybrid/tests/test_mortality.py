@@ -232,7 +232,9 @@ def test_mira_declines_until_provoked_then_fights_seriously():
     (ai,) = t.session.ais.values()
     beside(t, joe, type("P", (), {"pose": t.world.players[ai.link.id]})())
     declines = 0
+    mira_p = type("P", (), {"pose": t.world.players[ai.link.id]})()
     for n in range(3):
+        beside(t, joe, mira_p)  # she keeps company and may have shifted her weight a tile while she answered
         r = joe.op("pvp_challenge", target=ai.link.id)
         assert r["status"] == "ok", r
         t.advance(5)
@@ -255,8 +257,10 @@ def test_mira_killed_by_the_human_is_resurrected_and_remembers_it():
     mira = type("P", (), {"pose": t.world.players[ai.link.id], "id": ai.link.id})()
     beside(t, joe, mira)
     for _ in range(2):
+        beside(t, joe, mira)
         assert joe.op("pvp_challenge", target=ai.link.id)["status"] == "ok"
         t.advance(5)
+    beside(t, joe, mira)
     r = joe.op("pvp_challenge", target=ai.link.id)
     assert r["status"] == "ok"
     t.advance(5)
@@ -339,3 +343,49 @@ def test_narrative_off_worlds_are_untouched():
     w = new_world(507, "small", "campaign", wizard=False)
     assert "narrative" not in w.__dict__
     assert mortality.is_dead(w, "p1") is False and ledger.count(w, "kills") == 0 and mother.is_grounded(w, "p1") is False
+
+
+# ---------------------------------------------------------------- four colours between players (17 Oct 2026)
+
+def test_a_duel_has_three_colours_for_the_first_three_duels_and_four_from_the_fourth():
+    t = Table(humans=2)
+    joe, ann = t.people
+    seen = []
+    for n in range(5):
+        for h in (joe, ann):
+            h.op("pvp_leave")
+            if mortality.is_dead(t.world, h.id):
+                with party.as_player(t.world, h.id):
+                    pass
+        # a fresh pair of the living: bring the dead back by the game's own channel, then challenge
+        for dead in (joe, ann):
+            if mortality.is_dead(t.world, dead.id):
+                other = ann if dead is joe else joe
+                beside(t, other, dead)
+                assert other.op("resurrect", target=dead.id)["status"] == "started"
+                t.advance(mortality.resurrect_ms() / 1000.0 + 1.5)
+        beside(t, joe, ann)
+        r = joe.op("pvp_challenge", target=ann.id)
+        assert r["status"] == "ok", (n, r)
+        seen.append((r["format"]["colours"], r["format"]["slots"]))
+        assert ann.op("pvp_respond", duel_id=r["duel_id"], accept=True)["status"] == "ok"
+        view = joe.op("state")["duel"]
+        assert len(view["format"]["pool"]) == r["format"]["colours"], "the board is told which colours"
+        assert joe.op("pvp_ward", ward=[view["format"]["pool"][0]] * 3)["status"] == "ok"
+        assert ann.op("pvp_ward", ward=[view["format"]["pool"][-1]] * 3)["status"] == "ok"
+        cast = joe.op("pvp_cast", attack=[view["format"]["pool"][-1]] * 3, cast_seq=1)
+        assert cast["broken"]
+        joe.op("pvp_leave")
+        ann.op("pvp_leave")
+    assert seen == [(3, 3), (3, 3), (3, 3), (4, 3), (4, 3)], seen
+    r = joe.op("pvp_ward", ward=[0, 0, 0])  # (the duel is over: nothing more to set)
+    assert r["status"] == "rejected"
+
+
+def test_a_named_format_is_still_as_named_and_a_world_without_counts_stays_at_three():
+    from wizard_rts.net import pvp
+
+    assert pvp.make_format("three", 99)["colours"] == 3
+    assert pvp.make_format(None, 99)["colours"] == 4 and pvp.make_format("auto", 3)["colours"] == 4 and pvp.make_format("auto", 2)["colours"] == 3
+    assert pvp.make_format(None, None)["colours"] == 3 and pvp.make_format("classic", 0)["colours"] == 6
+    assert pvp.make_format(None, 5)["pool"] == [0, 1, 3, 4]

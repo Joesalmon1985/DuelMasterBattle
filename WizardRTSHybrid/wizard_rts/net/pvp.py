@@ -34,14 +34,20 @@ FORMATS = {  # name -> slots, colours; the first PvP format is the accessible th
     "three": {"slots": 3, "colours": 3, "max_casts": 10, "allow_repeats": True},
     "classic": {"slots": 4, "colours": 6, "max_casts": 10, "allow_repeats": True},
 }
+FOURTH_COLOUR_AFTER = 3  # a duel between players has three colours until both wizards have played this many duels; from then on it has four (Light joins)
+ADAPTIVE = (None, "", "auto", "adaptive")  # the format the app asks for: the host picks the colours by how many duels the two wizards have played
 CAST_TIMEOUT_S = 60.0
 INVITE_TIMEOUT_S = 30.0
 CHALLENGE_RANGE = 2  # tiles (Manhattan): stand next to the other wizard
 
 
-def make_format(spec: dict[str, Any] | str | None) -> dict[str, Any]:
+def make_format(spec: dict[str, Any] | str | None, duels_played: int | None = None) -> dict[str, Any]:
+    """The rules of a duel. `duels_played` is the smaller of the two wizards' PvP duel counts (None: a world that does not count them): the adaptive format
+    (no name, or "auto") is three colours for the first duels and four once both wizards have played `FOURTH_COLOUR_AFTER` of them. A named format is as named."""
     base = dict(FORMATS["three"])
-    if isinstance(spec, str):
+    if spec in ADAPTIVE and duels_played is not None and int(duels_played) >= FOURTH_COLOUR_AFTER:
+        base["colours"] = 4
+    if isinstance(spec, str) and spec not in ADAPTIVE:
         base = dict(FORMATS.get(spec, FORMATS["three"]))
     elif isinstance(spec, dict):
         for k in ("slots", "colours", "max_casts"):

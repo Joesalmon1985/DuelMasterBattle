@@ -1284,7 +1284,7 @@ func mp_challenge() -> Dictionary:
 	if near.is_empty():
 		_mp_toast_show("Walk up to the other wizard first")
 		return {}
-	var reply: Dictionary = _sim.op({"op": "pvp_challenge", "target": str(near.get("id", "")), "format": "three"})
+	var reply: Dictionary = _sim.op({"op": "pvp_challenge", "target": str(near.get("id", "")), "format": "auto"})  # the host picks three colours, or four once both have played three duels
 	if str(reply.get("status", "")) == "ok":
 		_mp_toast_show("Challenge sent to %s…" % str(near.get("name", "")))
 	else:

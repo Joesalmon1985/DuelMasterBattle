@@ -118,4 +118,4 @@ def combatant(world: Any, max_casts: int = 8) -> dict[str, Any]:
     pool = sorted(w["spells"]) or palette()
     return {"id": "player", "display_name": "You", "archetype": "player", "kind": "player", "weave_size": size, "ward_size": size,
             "attack_pool": list(pool), "ward_pool": list(pool), "allow_repeats": True, "max_casts": int(max_casts),
-            "min_cast_seconds": 5.0, "max_cast_seconds": 60.0}
+            "min_cast_seconds": float(config.get("duel", "min_cast_seconds", 2.0)), "max_cast_seconds": 60.0}

@@ -739,7 +739,10 @@ class MultiplayerSession:
             return {"status": "rejected", "reason": "busy_in_story"}
         self._duel_counter += 1
         duel_id = f"pvp{self._duel_counter}"
-        fmt = pvp.make_format(message.get("format"))
+        played = None
+        if "narrative" in self.world.__dict__:  # the colours grow with experience: the smaller of the two wizards' counts decides, so neither meets a colour they have not earned
+            played = min(ledger.count(self.world, "pvp_duels", link.id), ledger.count(self.world, "pvp_duels", target.id))
+        fmt = pvp.make_format(message.get("format"), played)
         target.invite = {"duel_id": duel_id, "from": link.id, "from_name": link.name, "format": fmt, "expires_at": now + self.invite_timeout_s}
         link.outgoing = duel_id
         target.notice("challenged", duel_id=duel_id, by=link.id, by_name=link.name)
